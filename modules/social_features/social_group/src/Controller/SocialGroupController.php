@@ -47,6 +47,18 @@ class SocialGroupController extends ControllerBase {
   }
 
   /**
+   * Callback function of the stream page of a group.
+   *
+   * @return array
+   *   A renderable array.
+   */
+  public function groupStream() {
+    return [
+      '#markup' => '',
+    ];
+  }
+
+  /**
    * The title callback for the entity.group_content.add_form.
    *
    * @return string

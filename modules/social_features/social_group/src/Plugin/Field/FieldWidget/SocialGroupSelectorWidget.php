@@ -16,6 +16,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\group\Entity\Group;
+use Drupal\group\Plugin\GroupContentEnablerManager;
 use Drupal\user\Entity\User;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -39,17 +40,19 @@ class SocialGroupSelectorWidget extends OptionsSelectWidget implements Container
   protected $configFactory;
   protected $moduleHander;
   protected $currentUser;
+  protected $pluginManager;
 
   /**
    * Creates a SocialGroupSelectorWidget instance.
    *
    * {@inheritdoc}
    */
-  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, array $third_party_settings, ConfigFactoryInterface $configFactory, AccountProxyInterface $currentUser, ModuleHandler $moduleHandler) {
+  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, array $third_party_settings, ConfigFactoryInterface $configFactory, AccountProxyInterface $currentUser, ModuleHandler $moduleHandler, GroupContentEnablerManager $pluginManager) {
     parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $third_party_settings);
     $this->configFactory = $configFactory;
     $this->moduleHander = $moduleHandler;
     $this->currentUser = $currentUser;
+    $this->pluginManager = $pluginManager;
   }
 
   /**
@@ -64,7 +67,8 @@ class SocialGroupSelectorWidget extends OptionsSelectWidget implements Container
       $configuration['third_party_settings'],
       $container->get('config.factory'),
       $container->get('current_user'),
-      $container->get('module_handler')
+      $container->get('module_handler'),
+      $container->get('plugin.manager.group_content_enabler')
     );
   }
 
@@ -79,12 +83,46 @@ class SocialGroupSelectorWidget extends OptionsSelectWidget implements Container
    */
   protected function getOptions(FieldableEntityInterface $entity) {
     if (!isset($this->options)) {
+
+      // Must be a node.
+      if ($entity->getEntityTypeId() !== 'node') {
+        // We only handle nodes. When using this widget on other content types,
+        // we simply return the normal options.
+        return parent::getOptions($entity);
+      }
+
+      // Get the bundle fron the node.
+      $entity_type = $entity->bundle();
+
       $account = $entity->getOwner();
       // Limit the settable options for the current user account.
       $options = $this->fieldDefinition
         ->getFieldStorageDefinition()
         ->getOptionsProvider($this->column, $entity)
         ->getSettableOptions($account);
+
+      // Check for each group type if the content type is installed.
+      foreach ($options as $key => $optgroup) {
+        // Groups are in the array below.
+        if (is_array($optgroup)) {
+          // Loop through the groups.
+          foreach ($optgroup as $gid => $title) {
+            // If the group exists.
+            if ($group = Group::load($gid)) {
+              // Load all installed plugins for this group type.
+              $plugin_ids = $this->pluginManager->getInstalledIds($group->getGroupType());
+              // If the bundle is not installed,
+              // then unset the entire optiongroup (=group type).
+              if (!in_array('group_node:' . $entity_type, $plugin_ids)) {
+                unset($options[$key]);
+              }
+            }
+            // We need to check only one of each group type,
+            // so break out the second each.
+            break;
+          }
+        }
+      }
 
       // Remove groups the user does not have create access to.
       if (!$account->hasPermission('manage all groups')) {
