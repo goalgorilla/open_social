@@ -14,15 +14,24 @@
 // http://api.jqueryui.com/dialog/#theming
 //
 
-
 @keyframes fadein {
-  from { opacity: 0; }
-  to   { opacity: $modal-backdrop-opacity; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: $modal-backdrop-opacity;
+  }
 }
 
 @keyframes fadein_scale {
-  from { opacity: 0; transform: translateY(-30px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .ui-front {
@@ -53,7 +62,6 @@
   width: 1px;
 }
 
-
 .ui-dialog {
   overflow-x: hidden;
   overflow-y: auto;
@@ -67,7 +75,7 @@
   z-index: $zindex-modal;
   background-color: $modal-content-bg;
   border: 1px solid $modal-content-border-color;
-  box-shadow: 0 3px 9px rgba(0,0,0,.5);
+  box-shadow: 0 3px 9px rgba(0, 0, 0, .5);
   background-clip: padding-box;
   backface-visibility: hidden;
   animation: fadein_scale 0.5s ease-out;
@@ -141,7 +149,6 @@
   }
 }
 
-
 // Kill the scroll on the body
 .modal-open {
   overflow: hidden;
@@ -168,8 +175,11 @@
     transform: translate(0, -25%);
     transition: transform 0.3s ease-out;
   }
-  &.in .modal-dialog { transform: translate(0, 0); }
+  &.in .modal-dialog {
+    transform: translate(0, 0);
+  }
 }
+
 .modal-open .modal {
   overflow-x: hidden;
   overflow-y: auto;
@@ -189,7 +199,7 @@
   border: 1px solid $modal-content-fallback-border-color; //old browsers fallback (ie8 etc)
   border: 1px solid $modal-content-border-color;
   border-radius: 12px;
-  box-shadow: 0 3px 9px rgba(0,0,0,.5);
+  box-shadow: 0 3px 9px rgba(0, 0, 0, .5);
   background-clip: padding-box;
   // Remove focus outline from opened modal
   outline: 0;
@@ -209,7 +219,7 @@
     padding: 2rem 1rem;
 
     @media(min-width: 900px) {
-      padding: 2rem 2.5rem  2.5rem;
+      padding: 2rem 2.5rem 2.5rem;
     }
 
   }
@@ -238,15 +248,16 @@
   }
 
   .form-actions {
-    display:flex;
+    display: flex;
     justify-content: space-between;
     flex: 0 0 50%;
     margin-bottom: 0;
   }
 
   .btn {
-    padding: 0.5rem 2rem;
-    width: 100%;
+    padding: 0.5rem 2rem !important;
+    width: 100% !important;
+    height: auto !important;
   }
 
   .btn + .btn {
@@ -258,4 +269,10 @@
     margin-right: 1rem;
   }
 
+}
+
+.ui-dialog-buttonpane {
+  .ui-dialog--narrow & {
+    padding: 0 1rem 1rem;
+  }
 }
