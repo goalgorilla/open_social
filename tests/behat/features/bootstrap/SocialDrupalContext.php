@@ -99,6 +99,13 @@ class SocialDrupalContext extends DrupalContext {
   }
 
   /**
+   * @When I empty the queue
+   */
+  public function iEmptyTheQueue() {
+    activity_creator_empty_queue();
+  }
+
+  /**
    * @When I wait for the queue to be empty
    */
   public function iWaitForTheQueueToBeEmpty()
