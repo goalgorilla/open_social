@@ -54,9 +54,8 @@ Feature: Private files
     # Check the files
     And User "private_file_user_1" should have uploaded "5" private files and "0" public files
     Then I open and check the access of the files uploaded by "private_file_user_1" and I expect access "allowed"
-    Given I logout
-    And I open the "topic" node with title "Private: topic"
-    Then I should see "Access denied. You must log in to view this page."
+
+    When I logout
     Then I open and check the access of the files uploaded by "private_file_user_1" and I expect access "denied"
 
   Scenario: Upload files in the WYSIWYG
@@ -83,7 +82,6 @@ Feature: Private files
     And I should see "Private WYSIWYG: topic" in the "Hero block"
     And The image path in the body description should be private
     Then I open and check the access of the files uploaded by "wysiwyg_private_user_1" and I expect access "allowed"
+
     When I logout
-    And I open the "topic" node with title "Private WYSIWYG: topic"
-    Then I should see "Access denied. You must log in to view this page."
     Then I open and check the access of the files uploaded by "wysiwyg_private_user_1" and I expect access "denied"
