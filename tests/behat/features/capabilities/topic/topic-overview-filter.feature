@@ -8,9 +8,11 @@ Feature: Topic Overview Filter
   Scenario: Successfully filter the topic overview
     Given "topic_types" terms:
       | name                  |
-      | Official company news |
+      | News                  |
+    And I am logged in as an "authenticated user"
     And I am on "/all-topics"
     Then I should see "All topics"
-    And I select "Official company news" from "is the type of"
-    And I press the "Apply" button
-    And I should see "Topics of type Official company news"
+    And I click the element with css selector "select#edit-field-topic-type-target-id"
+    And I click "News"
+    Then I press the "Apply" button
+    And I should see "Topics of type News"
