@@ -60,10 +60,10 @@ Feature: Move content after creation
     And I am on "/all-topics"
     And I should see "I love this sport"
     And I click "I love this sport"
+    And I empty the queue
     And I click "Edit content"
     And I select group "- None -"
     And I press "Save"
-    And I empty the queue
     And I run cron
     Then I should not see "Motorboats" in the "Main content"
     And I should not see "Kayaking" in the "Main content"
