@@ -7,3 +7,4 @@ projects[drupal][patch][] = "https://www.drupal.org/files/issues/image_restrict_
 projects[drupal][patch][] = "https://www.drupal.org/files/issues/2599228-31.patch"
 projects[drupal][patch][] = "https://www.drupal.org/files/issues/get-commented-entity-2580551.52.patch"
 projects[drupal][patch][] = "https://www.drupal.org/files/issues/2018-03-14/736066-296-328.patch"
+projects[drupal][patch][] = "https://www.drupal.org/files/issues/2018-04-18/modal-buttons_0.patch"
