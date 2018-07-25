@@ -8,11 +8,8 @@ Feature: Manage data policy revisions
 
     Given I enable the module "social_gdpr"
 
-    Given users:
-      | name             | mail                         | status | roles       |
-      | behatsitemanager | behatsitemanager@example.com | 1      | sitemanager |
-
-    Given I am logged in as "behatsitemanager"
+    Given I am logged in as a user with the "sitemanager" role and I have the following fields:
+      | name | behatsitemanager |
     When I am on "data-policy/revisions/add"
     Then I should see "Active" in the ".form-item-active-revision:not(.form-disabled) .control-label" element
     And I should see "Create new revision" in the ".form-item-new-revision.form-disabled .control-label" element
