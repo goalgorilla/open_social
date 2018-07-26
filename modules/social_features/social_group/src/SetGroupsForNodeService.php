@@ -48,7 +48,7 @@ class SetGroupsForNodeService {
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
-  public function setGroupsForNode(NodeInterface $node, array $groups_to_remove, array $groups_to_add, array $original_groups = []) {
+  public function setGroupsForNode(NodeInterface $node, array $groups_to_remove, array $groups_to_add, array $original_groups = [], $is_new = FALSE) {
     $moved = FALSE;
 
     // Remove the notifications related to the node if a group is added or
@@ -116,8 +116,8 @@ class SetGroupsForNodeService {
       }
     }
 
-    // Invoke hook_social_group_move.
-    if ($moved) {
+    // Invoke hook_social_group_move if the content is not new.
+    if ($moved && !$is_new) {
       $hook = 'social_group_move';
 
       foreach ($this->moduleHandler->getImplementations($hook) as $module) {
