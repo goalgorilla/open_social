@@ -1,4 +1,4 @@
-@api @like @stability @DS-2971 @stability-3
+@api @like @stability @DS-2971 @stability-3 @like-post-stream @javascript
 Feature: Like post stream
   Benefit: In order to like a post in the stream
   Role: As a LU
@@ -24,27 +24,26 @@ Feature: Like post stream
     And I wait for AJAX to finish
 
     Given I am logged in as "user_1"
-    And I click the xth "0" element with the css ".notification-bell a"
-    Then I should see "Notification centre"
-    And I should see "Isaac Newton likes your post"
-    And I click "Isaac Newton likes your post"
+    And I am on "/notifications"
+    Then I should see "Isaac Newton likes your post"
 
-  @AN
+  @AN @like-post-stream-anonymous
   Scenario: As an anonymous user I want to see the amount of likes of public content
     Given users:
       | name     | mail               | status | field_profile_first_name | field_profile_last_name |
       | user_1   | mail_1@example.com | 1      | Albert                   | Einstein                |
+    Given I set the configuration item "system.site" with key "page.front" to "/stream"
     Given I am logged in as "user_1"
-    And I am on the homepage
+    And I am on "/stream"
     When I fill in "Say something to the Community" with "This is a public post."
     And I select post visibility "Public"
     And I press "Post"
     Then I should see the success message "Your post has been posted."
     And I should see "This is a public post."
-    And I should be on "/stream"
+    Then I should be on "/stream"
 
     Given I am an anonymous user
-    And I am on "/stream"
+    And I am on the homepage
     Then I should see "This is a public post."
     And I click the xth "0" element with the css ".vote-like a.disable-status"
     Then the ".count" element should not contain "1"

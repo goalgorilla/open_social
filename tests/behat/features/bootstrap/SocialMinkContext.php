@@ -18,7 +18,6 @@ use Behat\Behat\Hook\Scope\AfterStepScope;
  */
 class SocialMinkContext extends MinkContext {
 
-
   /**
    * @override MinkContext::assertRegionHeading()
    *
