@@ -38,7 +38,7 @@ Feature: Visibility
     Then I should see "All topics"
     And I should see "Behat Topic public"
 
-    Given I set the configuration item "entity_access_by_field.settings" with key "default_visibility" to "Community"
+    Given I set the configuration item "entity_access_by_field.settings" with key "default_visibility" to "community"
     Given topic content:
       | title                 | field_topic_type | status |
       | Behat Topic community | Blog             | 1      |
