@@ -7,6 +7,7 @@ Feature: Private files
   Scenario: Create the files
     Given I enable the module "social_file_private"
     And I enable the module "social_comment_upload"
+    And I set the configuration item "entity_access_by_field.settings" with key "default_visibility" to "community"
     And users:
       | name                  | mail                            | status | field_profile_first_name  | field_profile_last_name | field_profile_organization | field_profile_function |
       | private_file_user_1   | private_file_user_1@example.com | 1      | Private                   | Ryan                    | Privateering               | Private              |
@@ -60,6 +61,7 @@ Feature: Private files
 
   Scenario: Upload files in the WYSIWYG
     Given I enable the module "social_file_private"
+    And I set the configuration item "entity_access_by_field.settings" with key "default_visibility" to "community"
     And users:
       | name                     | mail                               | status | field_profile_first_name  | field_profile_last_name | field_profile_organization | field_profile_function |
       | wysiwyg_private_user_1   | wysiwyg_private_user_1@example.com | 1      | Real Slim                 | Shady                    | Privateering               | Private              |
