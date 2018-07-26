@@ -16,8 +16,7 @@ use Behat\Behat\Hook\Scope\AfterStepScope;
 /**
  * Defines application features from the specific context.
  */
-class SocialMinkContext extends MinkContext{
-
+class SocialMinkContext extends MinkContext {
 
   /**
    * @override MinkContext::assertRegionHeading()
