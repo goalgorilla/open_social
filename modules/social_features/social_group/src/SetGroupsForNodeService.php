@@ -66,7 +66,11 @@ class SetGroupsForNodeService {
         $template = 'create_' . $node->bundle() . '_group';
         $messages = $this->entityTypeManager->getStorage('message')
           ->loadByProperties(['template' => $template]);
-        $entity_query->condition('field_activity_message.target_id', array_keys($messages), 'IN');
+
+        // Make sure we have a message template to work with.
+        if ($messages) {
+          $entity_query->condition('field_activity_message.target_id', array_keys($messages), 'IN');
+        }
 
         $moved = TRUE;
       }
@@ -79,7 +83,11 @@ class SetGroupsForNodeService {
         $template = 'create_' . $node->bundle() . '_community';
         $messages = $this->entityTypeManager->getStorage('message')
           ->loadByProperties(['template' => $template]);
-        $entity_query->condition('field_activity_message.target_id', array_keys($messages), 'IN');
+
+        // Make sure we have a message template to work with.
+        if ($messages) {
+          $entity_query->condition('field_activity_message.target_id', array_keys($messages), 'IN');
+        }
 
         $moved = TRUE;
       }
