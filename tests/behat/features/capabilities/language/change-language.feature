@@ -1,4 +1,4 @@
-@api @account @language @stability @LU @DS-1382 @stability-2
+@api @account @language @stability @LU @DS-1382 @stability-2 @change-language
 Feature: Multilingual Open Social
   Benefit: Deliver site in users own language
   Role: LU
