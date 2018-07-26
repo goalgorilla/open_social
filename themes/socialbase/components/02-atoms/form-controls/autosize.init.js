@@ -1,6 +1,5 @@
 (function ($) {
 
-
   Drupal.behaviors.textareaAutogrow = {
     attach: function (context, settings) {
 
