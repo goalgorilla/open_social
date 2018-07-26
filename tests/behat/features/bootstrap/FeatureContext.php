@@ -293,6 +293,25 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
     throw new \InvalidArgumentException(sprintf('Element not found with the css: "%s"', $css));
   }
 
+  /**
+   * Click on the element with the provided CSS Selector
+   *
+   * @When /^I click the element with css selector "([^"]*)"$/
+   */
+  public function iClickTheElementWithCSSSelector($cssSelector)
+  {
+    $session = $this->getSession();
+    $element = $session->getPage()->find(
+      'xpath',
+      $session->getSelectorsHandler()->selectorToXpath('css', $cssSelector) // just changed xpath to css
+    );
+    if (null === $element) {
+      throw new \InvalidArgumentException(sprintf('Could not evaluate CSS Selector: "%s"', $cssSelector));
+    }
+
+    $element->click();
+  }
+
     /**
      * @When /^I click the post visibility dropdown/
      */

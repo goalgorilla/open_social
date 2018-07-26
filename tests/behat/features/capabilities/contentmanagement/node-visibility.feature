@@ -1,4 +1,4 @@
-@api @contentmanagement @stability @perfect @critical @DS-158 @stability-1
+@api @contentmanagement @stability @perfect @critical @DS-158 @stability-1 @node-visibility
 Feature: Visibility
   Benefit: In order to control the distribution of information and to secure my privacy
   Role: As a LU
