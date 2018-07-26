@@ -30,7 +30,15 @@
         return false;
     }
 
-    // Override the select handler initiated in core/misc/autocomplete.js by our custom one.
-    Drupal.autocomplete.options.select = selectHandlerCustom;
+
+
+  Drupal.behaviors.autoComplete = {
+    attach: function (context, settings) {
+
+      // Override the select handler initiated in core/misc/autocomplete.js by our custom one.
+      Drupal.autocomplete.options.select = selectHandlerCustom;
+
+    }
+  };
 
 })(jQuery);
