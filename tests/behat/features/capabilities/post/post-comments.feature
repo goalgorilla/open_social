@@ -1,4 +1,4 @@
-@api @post @stability @perfect @critical @DS-250 @DS-251 @DS-675 @database @stability-2
+@api @post @stability @perfect @critical @DS-250 @DS-251 @DS-675 @database @stability-2 @post-comments
 Feature: Comment on a Post
   Benefit: In order to give my opinion on a post
   Role: As a LU
