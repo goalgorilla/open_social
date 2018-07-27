@@ -6,6 +6,7 @@
  */
 
 use Drupal\Core\Url;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\views\ViewExecutable;
 use Drupal\views\Plugin\views\cache\CachePluginBase;
 use Drupal\Component\Render\PlainTextOutput;
@@ -91,9 +92,8 @@ function social_event_an_enroll_preprocess_page_hero_data(array &$variables) {
 
   if (is_object($node)) {
     if (!empty($variables['event_enrollment'])) {
-      if ($node->getType() == 'event') {
-        if ($account->isAnonymous()) {
-
+      if ($account->isAnonymous()) {
+        if (social_event_an_enroll_is_enabled($node)) {
           $form = \Drupal::formBuilder()
             ->getForm('Drupal\social_event_an_enroll\Form\EventAnEnrollActionForm');
 
@@ -106,9 +106,14 @@ function social_event_an_enroll_preprocess_page_hero_data(array &$variables) {
             'social_event_an_enroll.enroll_form',
           ];
 
-          if (in_array(\Drupal::routeMatch()->getRouteName(), $an_enroll_routes)) {
+          if (in_array(\Drupal::routeMatch()
+            ->getRouteName(), $an_enroll_routes)) {
             unset($variables['event_enrollment']);
           }
+        }
+        else {
+          // @TODO: Fix this, and show enroll with redirect  to login.
+          unset($variables['event_enrollment']);
         }
       }
     }
@@ -226,5 +231,36 @@ function social_event_an_enroll_menu_local_tasks_alter(&$data, $route_name) {
   // always and not only on the mentioned routes.
   if (!$can_show_an_enrollments_link) {
     unset($data['tabs'][0]['views_view:view.manage_enrollments.page']);
+  }
+}
+
+/**
+ * Check if anonymous enrollment is allowed for given event.
+ */
+function social_event_an_enroll_is_enabled(Node $node) {
+  $is_event = $node->getType() === 'event';
+  $is_public = $node->get('field_content_visibility')->getString() === 'public';
+  $is_event_an_enroll = !empty($node->get('field_event_an_enroll')->value);
+  return $is_event && $is_public && $is_event_an_enroll;
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function social_event_an_enroll_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  $event_forms = [
+    'node_event_form',
+    'node_event_edit_form',
+  ];
+
+  if (in_array($form_id, $event_forms)) {
+    // @TODO: Fix states when group is selected.
+    $form['field_event_an_enroll']['#states'] = [
+      'visible' => [
+        ':input[name="field_content_visibility"]' => [
+          'value' => 'public',
+        ],
+      ],
+    ];
   }
 }
