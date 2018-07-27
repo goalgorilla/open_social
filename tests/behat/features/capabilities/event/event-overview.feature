@@ -1,4 +1,4 @@
-@api @event @stability @overview @DS-421 @stability-2
+@api @event @stability @overview @DS-421 @stability-2 @event-overview
 Feature: Overview
   Benefit: In order to learn details over an Event
   Role: As a User
