@@ -7,6 +7,7 @@
 
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\node\NodeInterface;
+use Drupal\group\Entity\GroupContent;
 
 /**
  * Implements hook_entity_insert().
@@ -20,7 +21,18 @@ function activity_basics_entity_insert(EntityInterface $entity) {
  */
 function activity_basics_social_group_move(NodeInterface $node) {
   $node->setCreatedTime($node->getChangedTime());
-  _activity_basics_entity_action($node, 'move_entity_action');
+
+  // If the node is placed within a new group, we add the move_entity_action
+  // activity.
+  $group_contents = GroupContent::loadByEntity($node);
+  if (!empty($group_contents)) {
+    _activity_basics_entity_action($node, 'move_entity_action');
+  }
+  // If the node is placed from a group in to the community, we add the
+  // create_node-bundle_community activity.
+  if (empty($group_contents)) {
+    _activity_basics_entity_action($node, 'create_entitiy_action');
+  }
 }
 
 /**
