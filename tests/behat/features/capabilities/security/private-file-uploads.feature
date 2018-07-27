@@ -1,4 +1,4 @@
-@api @security @stability @perfect @critical @DS-3605 @DS-5350 @stability-1
+@api @security @stability @perfect @critical @DS-3605 @DS-5350 @stability-1 @private-file-uploads
 Feature: Private files
   Benefit: Upload files to private file directory
   Role: As a LU
@@ -7,6 +7,7 @@ Feature: Private files
   Scenario: Create the files
     Given I enable the module "social_file_private"
     And I enable the module "social_comment_upload"
+    And I set the configuration item "entity_access_by_field.settings" with key "default_visibility" to "community"
     And users:
       | name                  | mail                            | status | field_profile_first_name  | field_profile_last_name | field_profile_organization | field_profile_function |
       | private_file_user_1   | private_file_user_1@example.com | 1      | Private                   | Ryan                    | Privateering               | Private              |
@@ -54,13 +55,13 @@ Feature: Private files
     # Check the files
     And User "private_file_user_1" should have uploaded "5" private files and "0" public files
     Then I open and check the access of the files uploaded by "private_file_user_1" and I expect access "allowed"
-    Given I logout
-    And I open the "topic" node with title "Private: topic"
-    Then I should see "Access denied. You must log in to view this page."
+
+    When I logout
     Then I open and check the access of the files uploaded by "private_file_user_1" and I expect access "denied"
 
   Scenario: Upload files in the WYSIWYG
     Given I enable the module "social_file_private"
+    And I set the configuration item "entity_access_by_field.settings" with key "default_visibility" to "community"
     And users:
       | name                     | mail                               | status | field_profile_first_name  | field_profile_last_name | field_profile_organization | field_profile_function |
       | wysiwyg_private_user_1   | wysiwyg_private_user_1@example.com | 1      | Real Slim                 | Shady                    | Privateering               | Private              |
@@ -83,7 +84,6 @@ Feature: Private files
     And I should see "Private WYSIWYG: topic" in the "Hero block"
     And The image path in the body description should be private
     Then I open and check the access of the files uploaded by "wysiwyg_private_user_1" and I expect access "allowed"
+
     When I logout
-    And I open the "topic" node with title "Private WYSIWYG: topic"
-    Then I should see "Access denied. You must log in to view this page."
     Then I open and check the access of the files uploaded by "wysiwyg_private_user_1" and I expect access "denied"

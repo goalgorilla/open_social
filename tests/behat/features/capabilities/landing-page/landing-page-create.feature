@@ -1,4 +1,4 @@
-@api @landing-page @stability @perfect @critical @DS-4130 @stability-4
+@api @landing-page @stability @perfect @critical @DS-4130 @stability-4 @landing-page-create
 Feature: Create Landing Page
   Benefit: In order to share useful information with users
   Role: AN
@@ -10,13 +10,16 @@ Feature: Create Landing Page
     Given event content:
       | title          | field_event_date | status | field_content_visibility |
       | Featured Event | +10 minutes      | 1      | public                   |
-
+    Given "topic_types" terms:
+      | name                  |
+      | News                  |
+      | Blog                  |
     Given topic content:
       | title            | field_topic_type | status | field_content_visibility |
       | Featured Topic 1 | News             | 1      | public                   |
       | Featured Topic 2 | Blog             | 1      | public                   |
     # Create Landing Page Hero
-    Given I am logged in as an "sitemanager"
+    Given I am logged in as an "contentmanager"
     When I am on "node/add/landing_page"
     And I fill in the following:
       | Title | This is a dynamic page |
