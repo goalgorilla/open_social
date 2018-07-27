@@ -235,11 +235,18 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
      */
     public function iSelectGroup($group) {
 
-      $option = $this->getGroupIdFromTitle($group);
+      if ($group === "- None -") {
+        $option = '_none';
+      }
+
+      if ($group !== "- None -") {
+        $option = $this->getGroupIdFromTitle($group);
+      }
 
       if (!$option) {
         throw new \InvalidArgumentException(sprintf('Could not find group for "%s"', $group));
       }
+
       $this->getSession()->getPage()->selectFieldOption('edit-groups', $option);
 
     }
@@ -284,6 +291,25 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
       $count++;
     }
     throw new \InvalidArgumentException(sprintf('Element not found with the css: "%s"', $css));
+  }
+
+  /**
+   * Click on the element with the provided CSS Selector
+   *
+   * @When /^I click the element with css selector "([^"]*)"$/
+   */
+  public function iClickTheElementWithCSSSelector($cssSelector)
+  {
+    $session = $this->getSession();
+    $element = $session->getPage()->find(
+      'xpath',
+      $session->getSelectorsHandler()->selectorToXpath('css', $cssSelector) // just changed xpath to css
+    );
+    if (null === $element) {
+      throw new \InvalidArgumentException(sprintf('Could not evaluate CSS Selector: "%s"', $cssSelector));
+    }
+
+    $element->click();
   }
 
     /**

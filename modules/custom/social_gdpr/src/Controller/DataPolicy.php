@@ -82,6 +82,16 @@ class DataPolicy extends DataPolicyBase {
           $link['url'] = Url::fromRoute($routes[$operation], $link['url']->getRouteParameters());
         }
       }
+
+      /** @var \Drupal\Core\Url $url */
+      $url = &$row[1]['data']['#links']['view']['url'];
+
+      $parameters = $url->getRouteParameters();
+
+      $row = [
+        'data' => $row,
+        'class' => ['revision-' . $parameters['data_policy_revision']],
+      ];
     }
 
     return $build;
