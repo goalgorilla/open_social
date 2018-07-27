@@ -1,4 +1,4 @@
-@api @group @stability @DS-956 @DS-4211 @stability-2
+@api @group @stability @DS-956 @DS-4211 @stability-2 @group-edit-open
 Feature: Edit my group as a group manager
   Benefit: So I can update the group based on the changes in the group
   Role: As a GM
@@ -74,7 +74,7 @@ Feature: Edit my group as a group manager
     And I show hidden checkboxes
     And I check the box "Group Manager"
     And I press "Save"
-    And I click the xth "5" element with the css ".dropdown-toggle"
+    And I click the element with css selector ".region--content table tr.odd .dropdown-toggle"
     And I click "Remove"
     Then I should see "Remove a member"
     And I should see "Are you sure you want to remove Group Manager One from Test open group?"

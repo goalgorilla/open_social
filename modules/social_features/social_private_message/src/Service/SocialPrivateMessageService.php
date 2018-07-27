@@ -108,7 +108,7 @@ class SocialPrivateMessageService extends PrivateMessageService {
       'WHERE owner_delete_time.delete_time <= messages.created ';
     $vars = [':uid' => $uid];
 
-    $query .= 'GROUP BY thread.id ORDER BY MAX(thread.updated) ASC, thread.id';
+    $query .= 'GROUP BY thread.id ORDER BY MAX(thread.updated) DESC, thread.id';
 
     $thread_ids = $this->database->query(
       $query,
