@@ -1,4 +1,4 @@
-@account @profile @AN @perfect @api @DS-2082 @stability @stability-2
+@account @profile @AN @perfect @api @DS-2082 @stability @stability-2 @hide-profile-email
 Feature: I want to be able to hide my email address
   Benefit: In order to have better privacy
   Role: LU
