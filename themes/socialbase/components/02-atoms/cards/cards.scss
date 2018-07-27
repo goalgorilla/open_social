@@ -55,6 +55,10 @@
   flex-direction: column;
   margin-bottom: $card-spacer-y;
   background-clip: padding-box;
+
+  // IE Fix: Default flex values for <IE11 is `flex: 0 0 auto` while other
+  // browsers and the spec says `flex: 0 1 auto`. We make it compliant here.
+  flex-grow: 1;
 }
 
 .card__title {
