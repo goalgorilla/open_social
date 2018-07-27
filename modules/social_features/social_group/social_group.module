@@ -647,7 +647,9 @@ function social_group_field_widget_form_alter(&$element, FormStateInterface $for
       $element['#default_value'] = $default_value[0]['value'];
     }
     else {
-      $element['#default_value'] = 'community';
+      $default_visibility = \Drupal::configFactory()->get('entity_access_by_field.settings')
+        ->get('default_visibility');
+      $element['#default_value'] = $default_visibility;
     }
     $entity = $form_state->getFormObject()->getEntity();
 
@@ -725,9 +727,9 @@ function social_group_menu_local_tasks_alter(&$data, $route_name) {
     $data['tabs'][0]['group.content']['#link']['title'] = t('Manage members');
   }
 
-  // Change the default 'View' tab title.
-  if (isset($data['tabs'][0]['group.view']['#link'])) {
-    $data['tabs'][0]['group.view']['#link']['title'] = t('Stream');
+  // Remove the default View tab.
+  if (isset($data['tabs'][0]['group.view'])) {
+    unset($data['tabs'][0]['group.view']);
   }
 
   // Remove Edit tab. Edit will always go through Floating Edit Button.
@@ -1054,7 +1056,7 @@ function social_group_field_info_alter(&$info) {
  * Implements hook_entity_base_field_info_alter().
  */
 function social_group_entity_base_field_info_alter(&$fields, EntityTypeInterface $entity_type) {
-  $entity_types = ['node', 'user'];
+  $entity_types = ['node'];
   if (in_array($entity_type->id(), $entity_types)) {
     if (isset($fields['groups'])) {
       /* @var \Drupal\Core\Field\BaseFieldDefinition $fields['groups'] */
@@ -1094,6 +1096,15 @@ function social_group_form_node_form_alter(&$form, FormStateInterface $form_stat
           unset($form['actions']['submit']['#submit'][$submit_key]);
         }
       }
+
+      /* @var \Drupal\node\Entity\Node $node */
+      $node = $form_state->getFormObject()->getEntity();
+      // Store if the node is new or not.
+      $form['is_new'] = [
+        '#type' => 'value',
+        '#value' => $node->isNew(),
+      ];
+
       $form['actions']['submit']['#submit'][] = 'social_group_save_group_from_node';
     }
   }
@@ -1110,6 +1121,10 @@ function social_group_form_node_form_alter(&$form, FormStateInterface $form_stat
 function social_group_save_group_from_node(array $form, FormStateInterface $form_state) {
   /* @var \Drupal\node\Entity\Node $node */
   $node = $form_state->getFormObject()->getEntity();
+
+  // Check if the created node is new or updated.
+  $is_new = NULL !== $form_state->getValue('is_new') ? $form_state->getValue('is_new') : FALSE;
+
   $original_groups = [];
   $groups_to_add = [];
   $groups_to_remove = [];
@@ -1131,7 +1146,7 @@ function social_group_save_group_from_node(array $form, FormStateInterface $form
 
   // Now make sure the relevant GroupContent is removed or added.
   $setGroupsForNodeService = \Drupal::service('social_group.set_groups_for_node_service');
-  $setGroupsForNodeService->setGroupsForNode($node, $groups_to_remove, $groups_to_add, $original_groups);
+  $setGroupsForNodeService->setGroupsForNode($node, $groups_to_remove, $groups_to_add, $original_groups, $is_new);
 }
 
 /**
