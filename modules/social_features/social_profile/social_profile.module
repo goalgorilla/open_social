@@ -97,6 +97,13 @@ function social_profile_form_profile_profile_edit_form_alter(array &$form, FormS
   $user = \Drupal::currentUser();
   $account = \Drupal::routeMatch()->getParameter('user');
 
+  /** @var \Drupal\profile\Entity\Profile $profile */
+  $profile = $form_state->getFormObject()->getEntity();
+
+  if (!$account instanceof User && $profile instanceof Profile) {
+    $account = $profile->getOwner();
+  }
+
   // Check for permission on custom edit profile tags, it's only for CM+ who can
   // actually edit a users profile and add profile tags there.
   if (!$user->hasPermission('edit profile tags')) {
