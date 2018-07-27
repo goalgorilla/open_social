@@ -16,8 +16,7 @@ use Behat\Behat\Hook\Scope\AfterStepScope;
 /**
  * Defines application features from the specific context.
  */
-class SocialMinkContext extends MinkContext{
-
+class SocialMinkContext extends MinkContext {
 
   /**
    * @override MinkContext::assertRegionHeading()
@@ -39,6 +38,22 @@ class SocialMinkContext extends MinkContext{
     }
 
     throw new \Exception(sprintf('The heading "%s" was not found in the "%s" region on the page %s', $heading, $region, $this->getSession()->getCurrentUrl()));
+  }
+
+  /**
+   * @override MinkContext::assertCheckBox()
+   */
+  public function assertCheckBox($checkbox) {
+    $this->getSession()->executeScript("
+      var inputs = document.getElementsByTagName('input');
+      for (var i = 0; i < inputs.length; i++) {
+        inputs[i].style.opacity = 1;
+        inputs[i].style.left = 0;
+        inputs[i].style.position = 'relative';
+      }
+    ");
+
+    parent::assertCheckBox($checkbox);
   }
 
 
@@ -101,4 +116,41 @@ class SocialMinkContext extends MinkContext{
 
     $this->attachFileToField($field, $path);
   }
+
+  /**
+   * @Then I should see checked the box :checkbox
+   */
+  public function iShouldSeeCheckedTheBox($checkbox) {
+    $checkbox = $this->fixStepArgument($checkbox);
+
+    if (!$this->getSession()->getPage()->hasCheckedField($checkbox)) {
+      $field = $this->getSession()->getPage()->findField($checkbox);
+
+      if (null === $field) {
+        throw new \Exception(sprintf('The checkbox "%s" with id|name|label|value was not found', $checkbox));
+      }
+      else {
+        throw new \Exception(sprintf('The checkbox "%s" is not checked', $checkbox));
+      }
+    }
+  }
+
+  /**
+   * @Then I should see unchecked the box :checkbox
+   */
+  public function iShouldSeeUncheckedTheBox($checkbox) {
+    $checkbox = $this->fixStepArgument($checkbox);
+
+    if (!$this->getSession()->getPage()->hasUncheckedField($checkbox)) {
+      $field = $this->getSession()->getPage()->findField($checkbox);
+
+      if (null === $field) {
+        throw new \Exception(sprintf('The checkbox "%s" with id|name|label|value was not found', $checkbox));
+      }
+      else {
+        throw new \Exception(sprintf('The checkbox "%s" is checked', $checkbox));
+      }
+    }
+  }
+
 }
