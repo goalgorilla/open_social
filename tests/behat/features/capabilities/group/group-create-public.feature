@@ -1,4 +1,4 @@
-@api @group @DS-4211 @ECI-632 @stability @stability-1
+@api @group @DS-4211 @ECI-632 @stability @stability-1 @group-create-public
 Feature: Create Public Group
   Benefit: So I can work together with others in a relative small circle
   Role: As a LU
@@ -39,7 +39,7 @@ Feature: Create Public Group
 
     And I should see "Test public group" in the "Hero block"
     And I should see the button "Joined"
-    And I click the xth "4" element with the css ".dropdown-toggle"
+    And I click the element with css selector "#hero .dropdown-toggle"
     And I should see the link "Leave group"
     And I should see the link "Edit group" in the "Hero block"
     And I should see "Technopark" in the "Hero block"
@@ -116,7 +116,7 @@ Feature: Create Public Group
     And I should see "Test group topic" in the "Main content"
     And I should see "Test public group" in the "Main content"
 
-    And I click the xth "4" element with the css ".dropdown-toggle"
+    And I click the element with css selector "#hero .dropdown-toggle"
     And I should see the link "Leave group"
     And I click "Leave group"
     And I should see "Test public group" in the "Hero block"
