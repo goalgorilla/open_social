@@ -312,7 +312,22 @@ display:
             default_group_multiple: {  }
             group_items: {  }
           plugin_id: node_access
-      sorts: {  }
+      sorts:
+        created:
+          id: created
+          table: node_field_data
+          field: created
+          relationship: gc__node
+          group_type: group
+          admin_label: sort_created
+          order: DESC
+          exposed: false
+          expose:
+            label: ''
+          granularity: second
+          entity_type: node
+          entity_field: created
+          plugin_id: date
       title: 'Group Topics'
       header: {  }
       footer: {  }
