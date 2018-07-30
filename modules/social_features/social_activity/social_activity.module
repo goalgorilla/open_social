@@ -27,7 +27,8 @@ function social_activity_social_user_account_header_items(array $context) {
   $account_notifications = \Drupal::service('activity_creator.activity_notifications');
   $num_notifications = count($account_notifications->getNotifications($account, [ACTIVITY_STATUS_RECEIVED]));
 
-  // Todo: Find a way to automate these badge classes as social_private_message uses them too.
+  // Todo: Find a way to automate these badge classes
+  // as social_private_message uses them too.
   $notifications_icon = 'notifications_none';
 
   if ($num_notifications > 0) {

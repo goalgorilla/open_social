@@ -7,7 +7,7 @@ use Drupal\Core\Render\Element\Container;
 /**
  * Provides a container element without a div wrapper.
  *
- * Example
+ * Example:
  * @code
  * $build['container'] = [
  *   '#type' => 'unwrapped_container',
@@ -36,4 +36,5 @@ class UnwrappedContainer extends Container {
 
     return $info;
   }
+
 }
