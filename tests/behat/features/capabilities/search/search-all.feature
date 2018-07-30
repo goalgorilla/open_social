@@ -1,4 +1,4 @@
-@api @search @stability @DS-3624 @stability-3
+@api @search @stability @DS-3624 @stability-3 @search-all
 Feature: Search
   Benefit: In order to find specific content of any type
   Role: As a LU
@@ -10,8 +10,8 @@ Feature: Search
       | tjakka user    | 1      | maxic  |
     Given groups:
       | title             | description     | author        | type                  | language |
-      | Tjakka group      | Tjakka group    | chrishall   | closed_group          | en       |
-      | Tjakka grouptwo   | Tjakka group    | chrishall   | open_group            | en       |
+      | Tjakka group      | Tjakka group    | tjakka user   | closed_group          | en       |
+      | Tjakka grouptwo   | Tjakka group    | tjakka user   | open_group            | en       |
     Given "event" content:
       | title             | body          |
       | Tjakka event      | Description   |
