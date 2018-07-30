@@ -25,8 +25,8 @@ Feature: Multilingual Open Social
     And I wait for AJAX to finish
     And I translate "Interface language" to "Taalinstelling" for "nl"
     And I translate "Create New Content" to "Inhoud aanmaken" for "nl"
-    And I translate "New event" to "Nieuw evenement" for "nl"
-    And I translate "New group" to "Nieuwe groep" for "nl"
+    And I translate "New Event" to "Nieuw evenement" for "nl"
+    And I translate "New Group" to "Nieuwe groep" for "nl"
     And I translate "Settings" to "Instellingen" for "nl"
 
 
