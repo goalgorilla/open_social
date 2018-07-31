@@ -43,9 +43,6 @@
 %}
 {% for type, messages in message_list %}
 {%
-  set classes = []
-%}
-{%
   set classes = [
     'alert',
     'alert-' ~ status_classes[type],
@@ -67,5 +64,7 @@
   {% else %}
     {{ messages|first }}
   {% endif %}
+  {# Remove type specific classes. #}
+  {% set attributes = attributes.removeClass(classes) %}
 </div>
 {% endfor %}
