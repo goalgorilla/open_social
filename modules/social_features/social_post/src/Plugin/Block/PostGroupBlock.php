@@ -33,7 +33,7 @@ class PostGroupBlock extends PostBlock {
     $group = _social_group_get_current_group();
 
     if (is_object($group)) {
-      if ($group->hasPermission('add post entities in group', $account)) {
+      if ($group->hasPermission('add post entities in group', $account) && $account->hasPermission("add post entities")) {
         $membership = $group->getMember($account);
         $context = [];
         if (!empty($membership)) {
