@@ -29,11 +29,11 @@ class GroupAddBlock extends BlockBase {
     $route_user_id = \Drupal::routeMatch()->getParameter('user');
 
     // Show this block only on current user Groups page.
-    $can_create_groups = False;
+    $can_create_groups = FALSE;
     foreach (GroupType::loadMultiple() as $group_type) {
       $permissions = 'create ' . $group_type->id() . ' group';
       if ($account->hasPermission($permissions)) {
-        $can_create_groups = True;
+        $can_create_groups = TRUE;
         break;
       }
     }
