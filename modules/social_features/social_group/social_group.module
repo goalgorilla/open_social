@@ -1095,15 +1095,6 @@ function social_group_form_node_form_alter(&$form, FormStateInterface $form_stat
           unset($form['actions']['submit']['#submit'][$submit_key]);
         }
       }
-
-      /* @var \Drupal\node\Entity\Node $node */
-      $node = $form_state->getFormObject()->getEntity();
-      // Store if the node is new or not.
-      $form['is_new'] = [
-        '#type' => 'value',
-        '#value' => $node->isNew(),
-      ];
-
       $form['actions']['submit']['#submit'][] = 'social_group_save_group_from_node';
     }
   }
@@ -1120,10 +1111,6 @@ function social_group_form_node_form_alter(&$form, FormStateInterface $form_stat
 function social_group_save_group_from_node(array $form, FormStateInterface $form_state) {
   /* @var \Drupal\node\Entity\Node $node */
   $node = $form_state->getFormObject()->getEntity();
-
-  // Check if the created node is new or updated.
-  $is_new = NULL !== $form_state->getValue('is_new') ? $form_state->getValue('is_new') : FALSE;
-
   $original_groups = [];
   $groups_to_add = [];
   $groups_to_remove = [];
@@ -1145,7 +1132,7 @@ function social_group_save_group_from_node(array $form, FormStateInterface $form
 
   // Now make sure the relevant GroupContent is removed or added.
   $setGroupsForNodeService = \Drupal::service('social_group.set_groups_for_node_service');
-  $setGroupsForNodeService->setGroupsForNode($node, $groups_to_remove, $groups_to_add, $original_groups, $is_new);
+  $setGroupsForNodeService->setGroupsForNode($node, $groups_to_remove, $groups_to_add, $original_groups);
 }
 
 /**
