@@ -110,8 +110,7 @@ class EventAnEnrollActionForm extends EnrollActionForm {
 
       if ($enrollment = array_pop($enrollments)) {
         $enrollment->delete();
-        $message = $this->t('You are no longer enrolled to this event.');
-        drupal_set_message($message);
+        $this->messenger->addMessage($this->t('You are no longer enrolled in this event. Your personal data used for the enrollment is also deleted.'));
       }
     }
   }

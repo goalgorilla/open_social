@@ -238,10 +238,12 @@ function social_event_an_enroll_menu_local_tasks_alter(&$data, $route_name) {
  * Check if anonymous enrollment is allowed for given event.
  */
 function social_event_an_enroll_is_enabled(Node $node) {
+  $config = \Drupal::config('social_event_an_enroll.settings');
+  $is_global_enabled = $config->get('event_an_enroll');
   $is_event = $node->getType() === 'event';
   $is_public = $node->get('field_content_visibility')->getString() === 'public';
   $is_event_an_enroll = !empty($node->get('field_event_an_enroll')->value);
-  return $is_event && $is_public && $is_event_an_enroll;
+  return $is_global_enabled && $is_event && $is_public && $is_event_an_enroll;
 }
 
 /**
@@ -257,10 +259,11 @@ function social_event_an_enroll_form_alter(&$form, FormStateInterface $form_stat
     // @TODO: Fix states when group is selected.
     $form['field_event_an_enroll']['#states'] = [
       'visible' => [
-        ':input[name="field_content_visibility"]' => [
-          'value' => 'public',
-        ],
+        ':input[name="field_content_visibility"]' => ['value' => 'public'],
       ],
     ];
+
+    $config = \Drupal::config('social_event_an_enroll.settings');
+    $form['field_event_an_enroll']['#access'] = $config->get('event_an_enroll');
   }
 }

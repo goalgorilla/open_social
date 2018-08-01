@@ -101,8 +101,7 @@ class EventAnEnrollForm extends EnrollActionForm {
       if ($enrollment = array_pop($enrollments)) {
         $values['field_token'] = $enrollment->get('field_token')->getString();
 
-        $message = $this->t('You have been already enrolled to this event. You have also received a notification via email.');
-        drupal_set_message($message);
+        $this->messenger->addMessage($this->t('You have been already enrolled to this event. You have also received a notification via email.'));
       }
       else {
         $values['field_token'] = Crypt::randomBytesBase64();
@@ -115,8 +114,7 @@ class EventAnEnrollForm extends EnrollActionForm {
         $cache_tag = 'enrollment:' . $nid . '-' . $uid;
         Cache::invalidateTags([$cache_tag]);
 
-        $message = $this->t('You have successfully enrolled to this event. You have also received a notification via email.');
-        drupal_set_message($message);
+        $this->messenger->addMessage($this->t('You have successfully enrolled to this event. You have also received a notification via email.'));
       }
 
       // Redirect anonymous use to login page before enrolling to an event.
