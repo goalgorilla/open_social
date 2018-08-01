@@ -28,7 +28,7 @@ class GroupAddBlock extends BlockBase {
     $route_user_id = \Drupal::routeMatch()->getParameter('user');
 
     // Show this block only on current user Groups page.
-    if ($current_user->id() == $route_user_id) {
+    if ($current_user->id() == $route_user_id && ($account->hasPermission("create open_group group") || $account->hasPermission("creat closed group") || $account->hasPermission("create public_group group"))) {
       return AccessResult::allowed();
     }
 
