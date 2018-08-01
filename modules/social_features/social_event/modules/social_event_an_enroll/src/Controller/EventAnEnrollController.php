@@ -60,12 +60,16 @@ class EventAnEnrollController extends ControllerBase {
    * Determines if user has access to enroll form.
    */
   public function enrollAccess(NodeInterface $node) {
-    $node_visibility = $node->get('field_content_visibility')->getString();
-    if ($node_visibility !== 'public') {
-      return AccessResult::forbidden();
+    $config = $this->config('social_event_an_enroll.settings');
+    $is_global_enabled = $config->get('event_an_enroll');
+    $is_event = $node->getType() === 'event';
+    $is_public = $node->get('field_content_visibility')->getString() === 'public';
+    $is_event_an_enroll = !empty($node->get('field_event_an_enroll')->value);
+    if ($is_global_enabled && $is_event && $is_public && $is_event_an_enroll) {
+      return AccessResult::allowed();
     }
 
-    return AccessResult::allowed();
+    return AccessResult::forbidden();
   }
 
   /**

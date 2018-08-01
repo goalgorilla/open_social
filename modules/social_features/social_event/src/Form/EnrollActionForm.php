@@ -157,6 +157,7 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
     ];
 
     $submit_text = $this->t('Enroll');
+    $to_enroll_status = '1';
     $enrollment_open = TRUE;
 
     // Add the enrollment closed label.
@@ -165,20 +166,19 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
       $enrollment_open = FALSE;
     }
 
-    $conditions = [
-      'field_account' => $uid,
-      'field_event' => $nid,
-    ];
+    if (!$current_user->isAnonymous()) {
+      $conditions = [
+        'field_account' => $uid,
+        'field_event' => $nid,
+      ];
 
-    $to_enroll_status = '1';
-
-    $enrollments = $this->entityStorage->loadByProperties($conditions);
-
-    if ($enrollment = array_pop($enrollments)) {
-      $current_enrollment_status = $enrollment->field_enrollment_status->value;
-      if ($current_enrollment_status === '1') {
-        $submit_text = $this->t('Enrolled');
-        $to_enroll_status = '0';
+      $enrollments = $this->entityStorage->loadByProperties($conditions);
+      if ($enrollment = array_pop($enrollments)) {
+        $current_enrollment_status = $enrollment->field_enrollment_status->value;
+        if ($current_enrollment_status === '1') {
+          $submit_text = $this->t('Enrolled');
+          $to_enroll_status = '0';
+        }
       }
     }
 
@@ -264,7 +264,7 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
     $nid = $form_state->getValue('event');
 
     // Redirect anonymous use to login page before enrolling to an event.
-    if ($uid === 0) {
+    if ($current_user->isAnonymous()) {
       $node_url = Url::fromRoute('entity.node.canonical', ['node' => $nid])
         ->toString();
       $form_state->setRedirect('user.login',

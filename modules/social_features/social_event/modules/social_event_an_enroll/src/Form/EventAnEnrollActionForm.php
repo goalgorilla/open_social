@@ -35,7 +35,35 @@ class EventAnEnrollActionForm extends EnrollActionForm {
     }
 
     if (!empty($token) && social_event_an_enroll_token_exists($token, $nid)) {
-      $form = parent::buildForm($form, $form_state);
+      $form['event'] = [
+        '#type' => 'hidden',
+        '#value' => $nid,
+      ];
+
+      $form['enroll_for_this_event'] = [
+        '#type' => 'submit',
+        '#value' => $this->t('Enrolled'),
+        '#attributes' => [
+          'class' => [
+            'btn',
+            'btn-accent brand-bg-accent',
+            'btn-lg btn-raised',
+            'dropdown-toggle',
+            'waves-effect',
+          ],
+          'autocomplete' => 'off',
+          'data-toggle' => 'dropdown',
+          'aria-haspopup' => 'true',
+          'aria-expanded' => 'false',
+          'data-caret' => 'true',
+        ]
+      ];
+
+      $cancel_text = $this->t('Cancel enrollment');
+      $form['feedback_user_has_enrolled'] = [
+        '#markup' => '<ul class="dropdown-menu dropdown-menu-right"><li><a href="#" class="enroll-form-submit"> ' . $cancel_text . ' </a></li></ul>',
+      ];
+      $form['#attached']['library'][] = 'social_event/form_submit';
     }
     else {
       if ($this->eventHasBeenFinished($node)) {
@@ -110,7 +138,7 @@ class EventAnEnrollActionForm extends EnrollActionForm {
 
       if ($enrollment = array_pop($enrollments)) {
         $enrollment->delete();
-        $this->messenger->addMessage($this->t('You are no longer enrolled in this event. Your personal data used for the enrollment is also deleted.'));
+        drupal_set_message($this->t('You are no longer enrolled in this event. Your personal data used for the enrollment is also deleted.'));
       }
     }
   }
