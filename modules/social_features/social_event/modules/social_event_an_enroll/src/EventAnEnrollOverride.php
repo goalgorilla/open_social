@@ -7,13 +7,13 @@ use Drupal\Core\Config\ConfigFactoryOverrideInterface;
 use Drupal\Core\Config\StorageInterface;
 
 /**
- * Class SociaEventAnEnrollOverride.
+ * Class EventAnEnrollOverride.
  *
  * Override event form.
  *
  * @package Drupal\social_event_an_enroll
  */
-class SociaEventAnEnrollOverride implements ConfigFactoryOverrideInterface {
+class EventAnEnrollOverride implements ConfigFactoryOverrideInterface {
 
   /**
    * Returns config overrides.
@@ -22,7 +22,7 @@ class SociaEventAnEnrollOverride implements ConfigFactoryOverrideInterface {
     $overrides = [];
     $config_factory = \Drupal::service('config.factory');
 
-    // Add field_group and field_comment_files.
+    // Add field_event_an_enroll to event form.
     $config_name = 'core.entity_form_display.node.event.default';
     if (in_array($config_name, $names)) {
       $config = $config_factory->getEditable($config_name);
@@ -52,7 +52,7 @@ class SociaEventAnEnrollOverride implements ConfigFactoryOverrideInterface {
    * {@inheritdoc}
    */
   public function getCacheSuffix() {
-    return 'SociaEventAnEnrollOverride';
+    return 'EventAnEnrollOverride';
   }
 
   /**
