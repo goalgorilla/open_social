@@ -35,7 +35,7 @@ class ExportUser extends ContentEntityBase {
 
       // Append header.
       $headers = [
-        t('ID'),
+        t('User ID'),
         t('UUID'),
         t('First name'),
         t('Last name'),
