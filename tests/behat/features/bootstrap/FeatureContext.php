@@ -235,18 +235,11 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
      */
     public function iSelectGroup($group) {
 
-      if ($group === "- None -") {
-        $option = '_none';
-      }
-
-      if ($group !== "- None -") {
-        $option = $this->getGroupIdFromTitle($group);
-      }
+      $option = $this->getGroupIdFromTitle($group);
 
       if (!$option) {
         throw new \InvalidArgumentException(sprintf('Could not find group for "%s"', $group));
       }
-
       $this->getSession()->getPage()->selectFieldOption('edit-groups', $option);
 
     }
