@@ -792,6 +792,7 @@ function social_group_menu_local_actions_alter(&$local_actions) {
 function social_group_entity_type_alter(array &$entity_types) {
   /* @var $entity_types \Drupal\Core\Entity\EntityTypeInterface[] */
   $entity_types['group_content']->setListBuilderClass('Drupal\social_group\Controller\SocialGroupContentListBuilder');
+  $entity_types['group']->setListBuilderClass('Drupal\social_group\Controller\SocialGroupListBuilder');
 }
 
 /**
