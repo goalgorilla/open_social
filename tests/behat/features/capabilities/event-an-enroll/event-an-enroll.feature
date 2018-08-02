@@ -32,7 +32,7 @@ Feature: Enroll for an event without an account
     Then I should see the button "Enrolled"
     When I press the "Enrolled" button
     And I click "Cancel enrollment"
-    Then I should see the success message "You are no longer enrolled to this event."
+    Then I should see the success message "You are no longer enrolled in this event. Your personal data used for the enrollment is also deleted."
     And I should see "AN Event 1" in the "Hero block"
     And I should see the link "Enroll" in the "Hero block"
     # Duplicate Enrollment.
