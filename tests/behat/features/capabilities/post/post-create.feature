@@ -1,4 +1,4 @@
-@api @post @stability @perfect @critical @DS-244 @DS-245 @DS-247 @DS-248 @DS-674 @DS-676 @database @stability-1
+@api @post @stability @perfect @critical @DS-244 @DS-245 @DS-247 @DS-248 @DS-674 @DS-676 @database @stability-1 @post-create
 Feature: Create Post
   Benefit: In order to share knowledge with people
   Role: As a LU
