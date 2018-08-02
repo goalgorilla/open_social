@@ -647,7 +647,9 @@ function social_group_field_widget_form_alter(&$element, FormStateInterface $for
       $element['#default_value'] = $default_value[0]['value'];
     }
     else {
-      $element['#default_value'] = 'community';
+      $default_visibility = \Drupal::configFactory()->get('entity_access_by_field.settings')
+        ->get('default_visibility');
+      $element['#default_value'] = $default_visibility;
     }
     $entity = $form_state->getFormObject()->getEntity();
 
@@ -1053,7 +1055,7 @@ function social_group_field_info_alter(&$info) {
  * Implements hook_entity_base_field_info_alter().
  */
 function social_group_entity_base_field_info_alter(&$fields, EntityTypeInterface $entity_type) {
-  $entity_types = ['node', 'user'];
+  $entity_types = ['node'];
   if (in_array($entity_type->id(), $entity_types)) {
     if (isset($fields['groups'])) {
       /* @var \Drupal\Core\Field\BaseFieldDefinition $fields['groups'] */

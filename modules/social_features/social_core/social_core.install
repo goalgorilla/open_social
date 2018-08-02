@@ -841,7 +841,22 @@ function social_core_update_8026() {
  */
 function social_core_update_8027() {
   $modules = array(
-      'exif_orientation',
-    );
+    'exif_orientation',
+  );
   \Drupal::service('module_installer')->install($modules);
+}
+/**
+ * Re-save settings for r4032login to enable redirect to destination.
+ */
+function social_core_update_8028() {
+  if (\Drupal::moduleHandler()->moduleExists('r4032login')) {
+    $config = \Drupal::configFactory()->getEditable('r4032login.settings');
+    if (!$config->get('redirect_to_destination')) {
+      $config->set('redirect_to_destination', TRUE);
+    }
+    if (!$config->get('destination_parameter_override')) {
+      $config->set('destination_parameter_override', '');
+    }
+    $config->save();
+  }
 }
