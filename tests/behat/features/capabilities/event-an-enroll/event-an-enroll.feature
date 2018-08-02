@@ -8,8 +8,8 @@ Feature: Enroll for an event without an account
   Scenario: Successfully enroll to an event as AN user
     Given I enable the module "social_event_an_enroll"
     Given event content:
-      | title         | field_event_date | status | field_content_visibility |
-      | AN Event 1    | +2 days          | 1      | public                   |
+      | title         | field_event_date | status | field_content_visibility | field_event_an_enroll |
+      | AN Event 1    | +2 days          | 1      | public                   | 1                     |
     Given I open the "event" node with title "AN Event 1"
     Then I should see "AN Event 1" in the "Hero block"
     And I should see the link "Enroll" in the "Hero block"
@@ -26,7 +26,7 @@ Feature: Enroll for an event without an account
       | Last name     | Doe   |
       | Email address | john@doe.com |
     And I press "Enroll in event"
-    Then I should see the success message "You have successfully enrolled to this event. You have also received a notification via email."
+    Then I should see the success message "You have successfully enrolled to this event. Also you are now following the event, which means you will receive notifications when a new comment is placed."
     # Cancel enrollment.
     And I should see "AN Event 1" in the "Hero block"
     Then I should see the button "Enrolled"
@@ -44,7 +44,7 @@ Feature: Enroll for an event without an account
       | Last name     | Doe   |
       | Email address | john@doe.com |
     And I press "Enroll in event"
-    Then I should see the success message "You have successfully enrolled to this event. You have also received a notification via email."
+    Then I should see the success message "You have successfully enrolled to this event. Also you are now following the event, which means you will receive notifications when a new comment is placed."
     Given I open the "event" node with title "AN Event 1"
     When I click "Enroll"
     And I wait for AJAX to finish
@@ -54,7 +54,7 @@ Feature: Enroll for an event without an account
       | Last name     | Doe   |
       | Email address | john@doe.com |
     And I press "Enroll in event"
-    Then I should see the success message "You have been already enrolled to this event. You have also received a notification via email."
+    Then I should see the success message "You have successfully enrolled to this event. Also you are now following the event, which means you will receive notifications when a new comment is placed."
     # AS CM+ I should see Anonymous enrollments.
     Given I am logged in as a user with the "contentmanager" role
     And I open the "event" node with title "AN Event 1"

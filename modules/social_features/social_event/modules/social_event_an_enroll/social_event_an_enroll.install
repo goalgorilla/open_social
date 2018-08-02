@@ -93,3 +93,12 @@ function social_event_an_enroll_update_8001() {
   $config->set('event_an_enroll_email_body', "You have been enrolled in the event [event name]. \nYou can cancel your enrollment anytime using this link [event url]");
   $config->save();
 }
+
+/**
+ * Enable Event AN Enroll globally by default.
+ */
+function social_event_an_enroll_update_8002() {
+  $config = \Drupal::service('config.factory')->getEditable('social_event_an_enroll.settings');
+  $config->set('event_an_enroll', TRUE);
+  $config->save();
+}
