@@ -55,6 +55,7 @@ function social_comment_form_comment_form_alter(&$form, FormStateInterface $form
       // See social_post_form_comment_post_comment_form_alter for posts.
       if ($form_id !== 'comment_post_comment_form') {
         $form['#action'] = \Drupal::request()->getRequestUri();
+        $form['field_comment_body']['widget'][0]['#placeholder'] = t('Add a comment');
       }
       break;
   }

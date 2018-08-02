@@ -5,6 +5,7 @@
  * Builds placeholder replacement tokens for Social Like module.
  */
 
+use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\votingapi\Entity\Vote;
 
@@ -63,7 +64,13 @@ function social_like_tokens($type, $tokens, array $data, array $options, Bubblea
             // Check if the content type is node.
             if ($content_type === 'node') {
               // Then get the bundle name.
-              $content_type = $entity->bundle();
+              $content_type = Unicode::strtolower(\Drupal::entityTypeManager()
+                ->getStorage('node_type')
+                ->load($entity->bundle())
+                ->label());
+            }
+            if ($content_type === 'post' || $content_type === 'photo' || $content_type === 'comment') {
+              $content_type = Unicode::strtolower($entity->getEntityType()->getLabel());
             }
 
             $replacements[$original] = $content_type;
