@@ -49,17 +49,15 @@ display:
           sort_asc_label: Asc
           sort_desc_label: Desc
       pager:
-        type: full
+        type: mini
         options:
           items_per_page: 10
           offset: 0
           id: 0
           total_pages: null
           tags:
-            previous: '‹ Previous'
-            next: 'Next ›'
-            first: '« First'
-            last: 'Last »'
+            previous: ‹‹
+            next: ››
           expose:
             items_per_page: false
             items_per_page_label: 'Items per page'
@@ -68,7 +66,6 @@ display:
             items_per_page_options_all_label: '- All -'
             offset: false
             offset_label: Offset
-          quantity: 9
       style:
         type: default
       row:
@@ -127,10 +124,10 @@ display:
           hide_alter_empty: true
           view_mode: default
       filters:
-        activity_visibility_access_filter:
-          id: activity_visibility_access_filter
+        activity_post_visibility_access_filter:
+          id: activity_post_visibility_access_filter
           table: activity
-          field: activity_visibility_access_filter
+          field: activity_post_visibility_access_filter
           relationship: none
           group_type: group
           admin_label: ''
@@ -163,7 +160,7 @@ display:
             default_group_multiple: {  }
             group_items: {  }
           entity_type: activity
-          plugin_id: activity_visibility_access
+          plugin_id: activity_post_visibility_access
         field_activity_destinations_value:
           id: field_activity_destinations_value
           table: activity__field_activity_destinations

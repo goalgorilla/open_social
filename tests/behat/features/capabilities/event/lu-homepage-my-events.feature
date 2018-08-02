@@ -1,4 +1,4 @@
-@api @event @stability @perfect @my @upcoming @profile @block @LU @critical @DS-1053 @stability-3
+@api @event @stability @perfect @my @upcoming @profile @block @LU @critical @DS-1053 @stability-3 @lu-homepage-my-events
 Feature: See my upcoming events
   Benefit: In order to know which events I signed up for
   Role: LU
@@ -26,9 +26,9 @@ Feature: See my upcoming events
     Then I should see "Enrolled"
 
     When I go to the homepage
-    Then I should not see "My Behat Event created" in the "Sidebar second"
-    And I should see "My Behat Event enrolled" in the "Sidebar second"
-    And I should see "Enrolled" in the "Sidebar second"
+    Then I should not see "My Behat Event created" in the ".view-display-id-block_my_upcoming_events" element
+    And I should see "My Behat Event enrolled" in the ".view-display-id-block_my_upcoming_events" element
+    And I should see "Enrolled" in the ".view-display-id-block_my_upcoming_events" element
 
     When I am at "user"
     And I click "Events"

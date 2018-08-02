@@ -1,4 +1,4 @@
-@account @profile @AN @perfect @api @DS-3440 @stability @stability-4
+@account @profile @AN @perfect @api @DS-3440 @stability @stability-4 @hide-profile-field-groups
 Feature: I want to be able to hide certain profile information
   Benefit: In order to have better privacy
   Role: LU
@@ -6,16 +6,17 @@ Feature: I want to be able to hide certain profile information
 
   Scenario: Successfully hide certain profile information
     Given I enable the module "social_profile_privacy"
-    Given users:
+    And I set the configuration item "social_profile_privacy.settings" with key "user_form_display_field_groups.group_profile_contact_info" to "group_profile_contact_info"
+    And users:
       | name          | mail                  | status |
       | user_1        | user_1@example.com    | 1      |
       | user_2        | user_2@example.com    | 1      |
 
     # Set your profile information and privacy settings.
-    Given I am logged in as "user_1"
+    When I am logged in as "user_1"
     And I am on "/user"
     And I click "Edit profile information"
-    When I fill in the following:
+    And I fill in the following:
       | Phone number | 911 |
 
     And I select "UA" from "Country"

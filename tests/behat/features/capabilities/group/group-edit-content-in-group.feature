@@ -1,4 +1,4 @@
-@api @group @DS-4357 @stability @stability-3
+@api @group @DS-4357 @stability @stability-3 @group-edit-content-in-group
 Feature: Move content after creation
   Benefit: Have full control over where I place my content
   Role: As a LU+
@@ -7,15 +7,19 @@ Feature: Move content after creation
   Scenario: Successfully add new content with the group selector
 
     Given users:
-      | name  | pass | mail                     | status |
+      | name  | pass | mail              | status |
       | harry | 1234 | harry@example.com | 1      |
       | sally | 1234 | sally@example.com | 1      |
     Given groups:
-      | title    | description     | author   | type        | language |
-      | Motorboats | Vroem vroem..  | sally | closed_group  | en |
-      | Kayaking | Kayaking in NY | harry | open_group  | en |
+      | title      | description    | author | type       | language |
+      | Motorboats | Vroem vroem..  | sally  | open_group | en       |
+      | Kayaking   | Kayaking in NY | harry  | open_group | en       |
     # Create a new topic
     When I am logged in as "harry"
+    And I am on "/all-groups"
+    And I click "Motorboats"
+    And I click "Join"
+    And I press "Join group"
     And I am on "node/add/topic"
     And I select group "Kayaking"
     And I wait for AJAX to finish
@@ -25,6 +29,7 @@ Feature: Move content after creation
     And I click radio button "Discussion"
     And I press "Save"
     And I should see "Kayaking" in the "Main content"
+    And I wait for "2" seconds
 
     # Edit topic
     When I click "Edit content"

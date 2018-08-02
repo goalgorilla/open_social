@@ -90,13 +90,13 @@ abstract class DemoUser extends DemoContent {
       }
 
       // Load image by uuid and set to a profile.
-      if (!empty($item['picture'])) {
-        $item['picture'] = $this->preparePicture($item['picture']);
+      if (!empty($item['image'])) {
+        $item['image'] = $this->prepareImage($item['image'], $item['image_alt']);
       }
       else {
         // Set "null" to exclude errors during saving
-        // (in cases when picture will equal to "false").
-        $item['picture'] = NULL;
+        // (in cases when image will equal to "false").
+        $item['image'] = NULL;
       }
 
       if (!empty($item['expertise'])) {
@@ -162,32 +162,6 @@ abstract class DemoUser extends DemoContent {
   }
 
   /**
-   * Prepares data about an image of a profile.
-   *
-   * @param string $picture
-   *   The picture by uuid.
-   *
-   * @return array
-   *   Returns an array.
-   */
-  protected function preparePicture($picture) {
-    $value = NULL;
-    $files = $this->fileStorage->loadByProperties([
-      'uuid' => $picture,
-    ]);
-
-    if ($files) {
-      $value = [
-        [
-          'target_id' => current($files)->id(),
-        ],
-      ];
-    }
-
-    return $value;
-  }
-
-  /**
    * Returns taxonomy terms for UUIDs.
    *
    * @param array $values
@@ -224,7 +198,7 @@ abstract class DemoUser extends DemoContent {
    *   The profile field item.
    */
   protected function fillProfile(ProfileInterface $profile, array $item) {
-    $profile->field_profile_image = $item['picture'];
+    $profile->field_profile_image = $item['image'];
     $profile->field_profile_first_name = $item['first_name'];
     $profile->field_profile_last_name = $item['last_name'];
     $profile->field_profile_organization = $item['organization'];

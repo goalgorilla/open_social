@@ -91,7 +91,7 @@ abstract class DemoGroup extends DemoContent {
 
       // Load image by uuid and set to a group.
       if (!empty($item['image'])) {
-        $item['image'] = $this->prepareImage($item['image']);
+        $item['image'] = $this->prepareImage($item['image'], $item['image_alt']);
       }
       else {
         // Set "null" to exclude errors during saving
@@ -197,32 +197,6 @@ abstract class DemoGroup extends DemoContent {
         $entity->addMember($account, $values);
       }
     }
-  }
-
-  /**
-   * Prepares data about an image of a group.
-   *
-   * @param string $image
-   *   The uuid of the image.
-   *
-   * @return array
-   *   Returns an array.
-   */
-  protected function prepareImage($image) {
-    $value = NULL;
-    $files = $this->fileStorage->loadByProperties([
-      'uuid' => $image,
-    ]);
-
-    if ($files) {
-      $value = [
-        [
-          'target_id' => current($files)->id(),
-        ],
-      ];
-    }
-
-    return $value;
   }
 
   /**

@@ -17,6 +17,7 @@
 #}
 
 {{ attach_library('socialbase/comment') }}
+{{ attach_library('socialbase/page-node')}}
 
 {%
   set classes = [
@@ -26,9 +27,15 @@
   ]
 %}
 
-{{ content.links }}
+{% if published %}
+  {{ content.links }}
+{% endif %}
+{% if not published %}
+  <div class="node--unpublished__label">{% trans %} unpublished {% endtrans %}</div>
+{% endif %}
 
 <div{{ attributes.addClass(classes) }}>
+
 
   {{ content|without('links', 'field_post_comments', 'like_and_dislike', 'field_post_image', 'user_id') }}
 

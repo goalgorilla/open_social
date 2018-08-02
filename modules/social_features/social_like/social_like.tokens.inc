@@ -5,6 +5,7 @@
  * Builds placeholder replacement tokens for Social Like module.
  */
 
+use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\votingapi\Entity\Vote;
 
@@ -41,7 +42,7 @@ function social_like_token_info() {
  */
 function social_like_tokens($type, $tokens, array $data, array $options, BubbleableMetadata $bubbleable_metadata) {
   $replacements = [];
-  if ($type == 'vote' && !empty($data['message'])) {
+  if ($type == 'social_like' && !empty($data['message'])) {
     /** @var \Drupal\message\Entity\Message $message */
     $message = $data['message'];
     /** @var \Drupal\votingapi\Entity\Vote $vote */
@@ -50,19 +51,26 @@ function social_like_tokens($type, $tokens, array $data, array $options, Bubblea
         switch ($name) {
 
           case 'liked_entity':
-            $storage = \Drupal::entityManager()->getStorage($vote->getVotedEntityType());
+            $storage = \Drupal::entityTypeManager()->getStorage($vote->getVotedEntityType());
             $entity = $storage->load($vote->getVotedEntityId());
-            $replacements[$original] = $entity->toUrl()->toString();
+            $url_options = ['absolute' => TRUE];
+            $replacements[$original] = $entity->toUrl('canonical', $url_options)->toString();
             break;
 
           case 'liked_content_type':
-            $storage = \Drupal::entityManager()->getStorage($vote->getVotedEntityType());
+            $storage = \Drupal::entityTypeManager()->getStorage($vote->getVotedEntityType());
             $entity = $storage->load($vote->getVotedEntityId());
             $content_type = $entity->getEntityTypeId();
             // Check if the content type is node.
             if ($content_type === 'node') {
               // Then get the bundle name.
-              $content_type = $entity->bundle();
+              $content_type = Unicode::strtolower(\Drupal::entityTypeManager()
+                ->getStorage('node_type')
+                ->load($entity->bundle())
+                ->label());
+            }
+            if ($content_type === 'post' || $content_type === 'photo' || $content_type === 'comment') {
+              $content_type = Unicode::strtolower($entity->getEntityType()->getLabel());
             }
 
             $replacements[$original] = $content_type;

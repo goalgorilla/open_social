@@ -3,6 +3,8 @@
 
 use Drupal\DrupalExtension\Context\DrupalContext;
 use Behat\Mink\Element\Element;
+use Drupal\big_pipe\Render\Placeholder\BigPipeStrategy;
+use Behat\Mink\Exception\UnsupportedDriverActionException;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 
 use Behat\Gherkin\Node\TableNode;
@@ -12,6 +14,34 @@ use Behat\Gherkin\Node\TableNode;
  */
 class SocialDrupalContext extends DrupalContext {
 
+  /**
+   * Prepares Big Pipe NOJS cookie if needed.
+   *
+   * Add support for Bigpipe in Behat tests.
+   *
+   * Original PR here:
+   * https://github.com/jhedstrom/drupalextension/pull/325
+   *
+   * @BeforeScenario
+   */
+  public function prepareBigPipeNoJsCookie(BeforeScenarioScope $scope) {
+    try {
+      // Check if JavaScript can be executed by Driver.
+      $this->getSession()->getDriver()->executeScript('true');
+    }
+    catch (UnsupportedDriverActionException $e) {
+      // Set NOJS cookie.
+      if ($this
+        ->getSession()) {
+        $this
+          ->getSession()
+          ->setCookie(BigPipeStrategy::NOJS_COOKIE, TRUE);
+      }
+    }
+    catch (\Exception $e) {
+      // Mute exceptions.
+    }
+  }
 
   /**
    * @beforeScenario @api
@@ -33,7 +63,10 @@ class SocialDrupalContext extends DrupalContext {
    * @Given I am viewing my :type( content):
    */
   public function assertViewingMyNode($type, TableNode $fields) {
-    if (!isset($this->user->uid)) {
+
+    $user_manager = $this->getUserManager();
+    $user = $user_manager->getCurrentUser();
+    if (!$user) {
       throw new \Exception(sprintf('There is no current logged in user to create a node for.'));
     }
 
@@ -47,8 +80,7 @@ class SocialDrupalContext extends DrupalContext {
       $node->{$field} = $value;
     }
 
-    $node->uid = $this->user->uid;
-
+    $node->uid = $user->uid;
     $saved = $this->nodeCreate($node);
 
     // Set internal browser on the node.
