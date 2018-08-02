@@ -88,6 +88,7 @@ class SocialUserLoginForm extends UserLoginForm {
 
     $form['username_login']['sign-up-link'] = [
       '#markup' => $this->t("Don't have an account yet? @link", ["@link" => $sign_up_link]),
+      '#weight' => 1000,
     ];
 
     $form['actions'] = ['#type' => 'actions'];
