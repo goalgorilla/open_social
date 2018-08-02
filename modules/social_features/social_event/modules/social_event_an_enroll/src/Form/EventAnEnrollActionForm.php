@@ -56,7 +56,7 @@ class EventAnEnrollActionForm extends EnrollActionForm {
           'aria-haspopup' => 'true',
           'aria-expanded' => 'false',
           'data-caret' => 'true',
-        ]
+        ],
       ];
 
       $cancel_text = $this->t('Cancel enrollment');
