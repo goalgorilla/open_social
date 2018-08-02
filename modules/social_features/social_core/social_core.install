@@ -840,11 +840,12 @@ function social_core_update_8026() {
  * Install exif_orientation module.
  */
 function social_core_update_8027() {
-  $modules = array(
+  $modules = [
     'exif_orientation',
-  );
+  ];
   \Drupal::service('module_installer')->install($modules);
 }
+
 /**
  * Re-save settings for r4032login to enable redirect to destination.
  */
