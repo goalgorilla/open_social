@@ -245,6 +245,249 @@ function social_user_export_groups_count(UserInterface $account) {
 }
 
 /**
+ * Returns the organization of a user.
+ *
+ * @param \Drupal\user\UserInterface $account
+ *   The account to get the data for.
+ *
+ * @return string
+ *   The organization where the user belongs to.
+ */
+function social_user_export_user_organization(UserInterface $account) {
+  $query = \Drupal::database()->select('profile__field_profile_organization', 'po');
+  $query->addField('po', 'field_profile_organization_value');
+  $query->join('profile', 'p', 'p.uid = po.entity_id');
+  $query->condition('p.uid', $account->id());
+
+  return $query
+    ->execute()
+    ->fetchField();
+}
+
+/**
+ * Returns function of the user.
+ *
+ * @param \Drupal\User\UserInterface $account
+ *   User account to get user's function.
+ *
+ * @return string
+ *   Returns user's function.
+ */
+function social_user_export_user_function(UserInterface $account) {
+  $query = \Drupal::database()->select('profile__field_profile_function', 'pf');
+  $query->addField('pf', 'field_profile_function_value');
+  $query->join('profile', 'p', 'p.uid = pf.entity_id');
+  $query->condition('p.uid', $account->id());
+
+  return $query
+    ->execute()
+    ->fetchField();
+}
+
+/**
+ * Returns user interest.
+ *
+ * @param \Drupal\user\UserInterface $account
+ *   User account to get user's interest.
+ *
+ * @return string
+ *   Returns interest of user.
+ */
+function social_user_export_user_interest(UserInterface $account) {
+  $query = \Drupal::database()->select('taxonomy_term_field_data', 'td');
+  // Reporting the interest as entity type (could be topic, event...).
+  $query->addField('td', 'name');
+  $query->join('search_api_db_social_users', 'su', 'su.field_profile_interests = td.tid');
+  $query->condition('su.uid', $account->id());
+
+  return $query
+    ->execute()
+    ->fetchField();
+}
+
+/**
+ * Returns user's profile tag.
+ *
+ * @param \Drupal\user\UserInterface $account
+ *   User's account.
+ *
+ * @return string
+ *   Returns profile tag.
+ */
+function social_user_export_user_profile_tag(UserInterface $account) {
+  $query = \Drupal::database()->select('taxonomy_term_field_data', 'td');
+  // Reporting the profile tag as entity type.
+  $query->addField('td', 'name');
+  $query->join('search_api_db_social_users', 'su', 'su.field_profile_profile_tag = td.tid');
+  $query->condition('su.uid', $account->id());
+
+  return $query
+    ->execute()
+    ->fetchField();
+}
+
+/**
+ * Returns user's skill or expertize.
+ *
+ * @param \Drupal\user\UserInterface $account
+ *   User's account.
+ *
+ * @return string
+ *   Returns user's skill.
+ */
+function social_user_export_user_expertize(UserInterface $account) {
+  $query = \Drupal::database()->select('taxonomy_term_field_data', 'td');
+  // Reporting the profile tag as entity type.
+  $query->addField('td', 'name');
+  $query->join('search_api_db_social_users', 'su', 'su.field_profile_expertise = td.tid');
+  $query->condition('su.uid', $account->id());
+
+  return $query
+    ->execute()
+    ->fetchField();
+}
+
+/**
+ * Return Phone number of user.
+ *
+ * @param \Drupal\user\UserInterface $account
+ *   User account to get the phone number.
+ *
+ * @return mixed
+ *   Returns user's phone number.
+ */
+function social_user_export_user_phone_number(UserInterface $account) {
+  $query = \Drupal::database()->select('profile__field_profile_phone_number', 'ppn');
+  $query->addField('ppn', 'field_profile_phone_number_value');
+  $query->join('profile', 'p', 'p.uid = ppn.entity_id');
+  $query->condition('p.uid', $account->id());
+
+  return $query
+    ->execute()
+    ->fetchField();
+}
+
+/**
+ * Returns country code of user.
+ *
+ * @param \Drupal\user\UserInterface $account
+ *   User's account to get country code of user.
+ *
+ * @return mixed
+ *   Returns country code of a user.
+ */
+function social_user_export_user_country_code(UserInterface $account) {
+  $query = \Drupal::database()->select('profile__field_profile_address', 'pa');
+  $query->addField('pa', 'field_profile_address_country_code');
+  $query->join('profile', 'p', 'p.profile_id = pa.entity_id');
+  $query->condition('pa.entity_id', $account->id());
+
+  return $query
+    ->execute()
+    ->fetchField();
+}
+
+/**
+ * Returns Administrative address of a user.
+ *
+ * @param \Drupal\user\UserInterface $account
+ *   User's account to get the administrative area.
+ *
+ * @return string
+ *   Returns the administrative address of a user.
+ */
+function social_user_export_user_administrative_address(UserInterface $account) {
+  $query = \Drupal::database()->select('profile__field_profile_address', 'pa');
+  $query->addField('pa', 'field_profile_address_administrative_area');
+  $query->join('profile', 'p', 'p.uid = pa.entity_id');
+  $query->condition('p.uid', $account->id());
+
+  return $query
+    ->execute()
+    ->fetchField();
+}
+
+/**
+ * Returns local address.
+ *
+ * @param \Drupal\user\UserInterface $account
+ *   User's account to return local address.
+ *
+ * @return string
+ *   Returns user's local address.
+ */
+function social_user_export_user_local_address(UserInterface $account) {
+  $query = \Drupal::database()->select('profile__field_profile_address', 'pa');
+  $query->addField('pa', 'field_profile_address_locality');
+  $query->join('profile', 'p', 'p.uid = pa.entity_id');
+  $query->condition('p.uid', $account->id());
+
+  return $query
+    ->execute()
+    ->fetchField();
+}
+
+/**
+ * Returns Postal code.
+ *
+ * @param \Drupal\user\UserInterface $account
+ *   User's account to get user's postal code.
+ *
+ * @return mixed
+ *   Returns user's postal code.
+ */
+function social_user_export_user_postal_code(UserInterface $account) {
+  $query = \Drupal::database()->select('profile__field_profile_address', 'pa');
+  $query->addField('pa', 'field_profile_address_postal_code');
+  $query->join('profile', 'p', 'p.uid = pa.entity_id');
+  $query->condition('p.uid', $account->id());
+
+  return $query
+    ->execute()
+    ->fetchField();
+}
+
+/**
+ * Returns first address.
+ *
+ * @param \Drupal\user\UserInterface $account
+ *   User's account to get address.
+ *
+ * @return mixed
+ *   Returns first address of User.
+ */
+function social_user_export_user_address_line1(UserInterface $account) {
+  $query = \Drupal::database()->select('profile__field_profile_address', 'pa');
+  $query->addField('pa', 'field_profile_address_address_line1');
+  $query->join('profile', 'p', 'p.uid = pa.entity_id');
+  $query->condition('p.uid', $account->id());
+
+  return $query
+    ->execute()
+    ->fetchField();
+}
+
+/**
+ * Returns user's address line 2.
+ *
+ * @param \Drupal\user\UserInterface $account
+ *   User's account to get address.
+ *
+ * @return mixed
+ *   Returns address of user.
+ */
+function social_user_export_user_address_line2(UserInterface $account) {
+  $query = \Drupal::database()->select('profile__field_profile_address', 'pa');
+  $query->addField('pa', 'field_profile_address_address_line2');
+  $query->join('profile', 'p', 'p.uid = pa.entity_id');
+  $query->condition('p.uid', $account->id());
+
+  return $query
+    ->execute()
+    ->fetchField();
+}
+
+/**
  * Returns number of private messages sent per user.
  *
  * @param \Drupal\user\UserInterface $account
