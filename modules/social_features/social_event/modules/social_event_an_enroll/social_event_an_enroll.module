@@ -262,12 +262,14 @@ function social_event_an_enroll_form_alter(&$form, FormStateInterface $form_stat
  * Implements hook_ENTIT_YTYPE_update().
  */
 function social_event_an_enroll_node_update(Node $node) {
-  // Add warning if visibility was changed for already enabled AN enroll.
-  $is_event_an_enroll = !empty($node->get('field_event_an_enroll')->value);
-  $new_visibility = $node->get('field_content_visibility')->getString();
-  $old_visibility = $node->original->get('field_content_visibility')->getString();
+  if ($node->getType() === 'event') {
+    // Add warning if visibility was changed for already enabled AN enroll.
+    $is_event_an_enroll = !empty($node->get('field_event_an_enroll')->value);
+    $new_visibility = $node->get('field_content_visibility')->getString();
+    $old_visibility = $node->original->get('field_content_visibility')->getString();
 
-  if ($is_event_an_enroll && $old_visibility == 'public' && $new_visibility != 'public') {
-    drupal_set_message(t('Anonymous enrollment could be enabled only for public events, and will be disabled now.'), 'warning');
+    if ($is_event_an_enroll && $old_visibility == 'public' && $new_visibility != 'public') {
+      drupal_set_message(t('Anonymous enrollment could only be enabled when the visibility of the event is Public.'), 'warning');
+    }
   }
 }
