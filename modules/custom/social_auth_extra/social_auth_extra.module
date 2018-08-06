@@ -90,10 +90,16 @@ function _social_auth_extra_get_buttons($type = 'login') {
 
     $form['social_auth_extra'] = [
       '#type' => 'fieldset',
+      '#attributes' => [
+        'class' => ['social-auth-buttons'],
+      ],
       '#title' => new TranslatableMarkup('@action with <b>Social Accounts</b>', [
         '@action' => $type === 'register' ? $sign_up : $login,
       ]),
       '#weight' => -100,
+      '#attached' => [
+        'library' => ['socialbase/form--social-auth-buttons'],
+      ],
     ];
 
     // If there's a help text for social signup/login we display it to the user.
