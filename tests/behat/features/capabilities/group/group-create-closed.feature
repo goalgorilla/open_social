@@ -76,7 +76,7 @@ Feature: Create Closed Group
   # Lets add another user on the Manage members tab.
     When I click "Test closed group"
     And I click "Manage members"
-    And I click "Add member"
+    And I click "Add members"
     And I fill in "Group User Two" for "Select a member"
     And I press "Save"
     Then I click "Members"
