@@ -28,22 +28,24 @@ class SocialProfileFieldsOverride implements ConfigFactoryOverrideInterface {
       $config = $config_factory->getEditable($config_name);
 
       $third_party = $config->get('third_party_settings');
-      $third_party['field_group']['group_profile_names_image']['children'][] = 'field_profile_nick_name';
+      if (isset($third_party['field_group']['group_profile_names_image'])) {
+        $third_party['field_group']['group_profile_names_image']['children'][] = 'field_profile_nick_name';
 
-      $content = $config->get('content');
-      $content['field_profile_nick_name'] = [
-        'weight' => 0,
-        'settings' => [
-          'size' => '60',
-          'placeholder' => '',
-        ],
-        'third_party_settings' => [],
-        'type' => 'string_textfield',
-        'region' => 'content',
-      ];
+        $content = $config->get('content');
+        $content['field_profile_nick_name'] = [
+          'weight' => 0,
+          'settings' => [
+            'size' => '60',
+            'placeholder' => '',
+          ],
+          'third_party_settings' => [],
+          'type' => 'string_textfield',
+          'region' => 'content',
+        ];
 
-      $overrides[$config_name]['third_party_settings'] = $third_party;
-      $overrides[$config_name]['content'] = $content;
+        $overrides[$config_name]['third_party_settings'] = $third_party;
+        $overrides[$config_name]['content'] = $content;
+      }
     }
 
     // Add field_group and field_comment_files.
