@@ -65,7 +65,7 @@ class SocialGroupController extends ControllerBase {
    *   The page title.
    */
   public function groupAddMemberTitle() {
-    return $this->t('Add a member');
+    return $this->t('Add members');
   }
 
   /**

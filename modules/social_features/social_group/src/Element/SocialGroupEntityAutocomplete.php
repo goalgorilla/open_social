@@ -2,6 +2,7 @@
 
 namespace Drupal\social_group\Element;
 
+use Drupal\Core\Entity\EntityReferenceSelection\SelectionWithAutocreateInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\social_core\Entity\Element\EntityAutocomplete;
 use Drupal\Component\Utility\Tags;
@@ -38,6 +39,7 @@ class SocialGroupEntityAutocomplete extends EntityAutocomplete {
 
         /* @var /Drupal\Core\Entity\EntityReferenceSelection\SelectionInterface $handler */
         $handler = \Drupal::service('plugin.manager.entity_reference_selection')->getInstance($options);
+        $autocreate = (bool) $element['#autocreate'] && $handler instanceof SelectionWithAutocreateInterface;
         // Try to get a match from the input string when the user didn't use
         // the autocomplete but filled in a value manually.
         // Got this from the parent::validateEntityAutocomplete.
@@ -67,13 +69,13 @@ class SocialGroupEntityAutocomplete extends EntityAutocomplete {
 
     // If we have duplicates, provide an error message.
     if (!empty($duplicated_values)) {
-      $usernames = "";
-      foreach ($duplicated_values as $values) {
-        $usernames .= $values . " ";
-      }
+      $usernames = implode(', ', $duplicated_values);
 
-      $message = t('Users: @usernames are already members of the group, 
-      you can\'t add them again', ['@usernames' => $usernames]);
+      $message = \Drupal::translation()->formatPlural(count($duplicated_values),
+        "@usernames is already member of the group, you can't add them again",
+        "@usernames are already members of the group, you can't add them again",
+        ['@usernames' => $usernames]
+      )->__toString();
 
       // We have to kick in a form set error here, or else the
       // GroupContentCardinalityValidator will kick in and show a faulty
