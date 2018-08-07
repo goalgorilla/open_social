@@ -31,8 +31,8 @@ class SocialProfileFieldsOverride implements ConfigFactoryOverrideInterface {
       if (isset($third_party['field_group']['group_profile_names_image'])) {
         $third_party['field_group']['group_profile_names_image']['children'][] = 'field_profile_nick_name';
 
-        $content = $config->get('content');
-        $content['field_profile_nick_name'] = [
+        // Add the nick name field to the profile.
+        $overrides[$config_name]['content']['field_profile_nick_name'] = [
           'weight' => 0,
           'settings' => [
             'size' => '60',
@@ -43,8 +43,11 @@ class SocialProfileFieldsOverride implements ConfigFactoryOverrideInterface {
           'region' => 'content',
         ];
 
-        $overrides[$config_name]['third_party_settings'] = $third_party;
-        $overrides[$config_name]['content'] = $content;
+        // We use the entire children array because a deep merge on a numerical
+        // key array doesn't work.
+        $children = $third_party['field_group']['group_profile_names_image']['children'];
+        $children[] = 'field_profile_nick_name';
+        $overrides[$config_name]['third_party_settings']['field_group']['group_profile_names_image']['children'] = $children;
       }
     }
 
