@@ -2,6 +2,7 @@
 
 namespace Drupal\social_user_export;
 
+use Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException;
 use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Url;
 use Drupal\user\UserInterface;
@@ -46,7 +47,7 @@ class ExportUser extends ContentEntityBase {
         t('Last access'),
         t('Registration date'),
         t('Status'),
-        t('country code'),
+        t('Country code'),
         t('Administrative address'),
         t('Address locality'),
         t('Postal code'),
@@ -56,9 +57,9 @@ class ExportUser extends ContentEntityBase {
         t('Organization'),
         t('Function'),
         t('Skills'),
-        t('Roles'),
-        t('Interest'),
+        t('Interests'),
         t('Profile tag'),
+        t('Roles'),
         t('Posts created'),
         t('Comments created'),
         t('Topics created'),
@@ -82,7 +83,6 @@ class ExportUser extends ContentEntityBase {
     // Add formatter.
     $encoder = \Drupal::service('csv_serialization.encoder.csv');
     $csv->addFormatter([$encoder, 'formatRow']);
-    $roles = $entity->getRoles();
     $status = $entity->get('status')->getValue();
 
     // Format last login time.
@@ -101,12 +101,22 @@ class ExportUser extends ContentEntityBase {
       $last_access = t('never');
     }
 
+    /** @var \Drupal\profile\ProfileStorageInterface $storage */
+    // Check if entity type 'profile' exists.
+    $storage = \Drupal::entityTypeManager()->getStorage('profile');
+    if (!empty($storage)) {
+      $user_profile = $storage->loadByUser($entity, 'profile', TRUE);
+    }
+    else {
+      $user_profile = NULL;
+    }
+
     // Add row.
     $row = [
       $entity->id(),
       $entity->uuid(),
-      social_user_export_first_name($entity),
-      social_user_export_last_name($entity),
+      _social_user_export_profile_get_field_value('field_profile_first_name', $user_profile),
+      _social_user_export_profile_get_field_value('field_profile_last_name', $user_profile),
       $entity->getAccountName(),
       $entity->getDisplayName(),
       $entity->getEmail(),
@@ -114,19 +124,19 @@ class ExportUser extends ContentEntityBase {
       $last_access,
       \Drupal::service('date.formatter')->format($entity->getCreatedTime(), 'custom', 'Y/m/d - H:i'),
       !empty($status[0]['value']) ? t('Active') : t('Blocked'),
-      social_user_export_user_country_code($entity),
-      social_user_export_user_administrative_address($entity),
-      social_user_export_user_local_address($entity),
-      social_user_export_user_postal_code($entity),
-      social_user_export_user_address_line1($entity),
-      social_user_export_user_address_line2($entity),
-      social_user_export_user_phone_number($entity),
-      social_user_export_user_organization($entity),
-      social_user_export_user_function($entity),
-      social_user_export_user_expertize($entity),
-      implode(', ', $roles),
-      social_user_export_user_interest($entity),
-      social_user_export_user_profile_tag($entity),
+      _social_user_export_profile_get_address('field_profile_address', 'country_code', $user_profile),
+      _social_user_export_profile_get_address('field_profile_address', 'administrative_area', $user_profile),
+      _social_user_export_profile_get_address('field_profile_address', 'locality', $user_profile),
+      _social_user_export_profile_get_address('field_profile_address', 'postal_code', $user_profile),
+      _social_user_export_profile_get_address('field_profile_address', 'address_line1', $user_profile),
+      _social_user_export_profile_get_address('field_profile_address', 'address_line2', $user_profile),
+      _social_user_export_profile_get_field_value('field_profile_phone_number', $user_profile),
+      _social_user_export_profile_get_field_value('field_profile_organization', $user_profile),
+      _social_user_export_profile_get_field_value('field_profile_function', $user_profile),
+      _social_user_export_profile_get_taxonomy_field_value('field_profile_expertise', $user_profile),
+      _social_user_export_profile_get_taxonomy_field_value('field_profile_interests', $user_profile),
+      _social_user_export_profile_get_taxonomy_field_value('field_profile_profile_tag', $user_profile),
+      implode(', ', $entity->getRoles()),
       social_user_export_posts_count($entity),
       social_user_export_comments_count($entity),
       social_user_export_nodes_count($entity, 'topic'),
