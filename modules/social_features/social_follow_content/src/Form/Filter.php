@@ -70,13 +70,15 @@ class Filter extends FormBase {
 
     asort($types);
 
+    $arguments = $this->requestStack->getCurrentRequest()->query->all();
+
     $form['type'] = [
       '#type' => 'select',
       '#title' => $this->t('Type'),
       '#options' => $types,
       '#empty_option' => $this->t('- Any -'),
       '#empty_value' => 'All',
-      '#default_value' => $this->requestStack->getCurrentRequest()->query->get('type'),
+      '#default_value' => isset($arguments['type']) ? $arguments['type'] : NULL,
     ];
 
     $form['actions'] = [
@@ -88,7 +90,7 @@ class Filter extends FormBase {
       '#value' => $this->t('Apply'),
     ];
 
-    if ($form['type']['#default_value']) {
+    if ($arguments) {
       $form['actions']['reset'] = [
         '#type' => 'link',
         '#title' => $this->t('Reset'),
@@ -103,14 +105,11 @@ class Filter extends FormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    $options = [];
-    $type = $form_state->getValue('type');
-
-    if ($type !== 'All') {
-      $options['query']['type'] = $type;
-    }
-
-    $form_state->setRedirect('social_follow_content.overview', [], $options);
+    $form_state->setRedirect('social_follow_content.overview', [], [
+      'query' => [
+        'type' => $form_state->getValue('type'),
+      ],
+    ]);
   }
 
 }

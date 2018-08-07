@@ -4,6 +4,7 @@ namespace Drupal\social_follow_content\Controller;
 
 use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -66,6 +67,12 @@ class Overview extends ControllerBase {
 
     $type = $this->requestStack->getCurrentRequest()->query->get('type');
 
+    if ($type === 'All') {
+      $type = NULL;
+    }
+
+    $titles = $types = [];
+
     /** @var \Drupal\flag\FlaggingInterface $flagging */
     foreach ($storage->loadMultiple($flaggings) as $flagging) {
       $entity = $flagging->getFlaggable();
@@ -86,6 +93,7 @@ class Overview extends ControllerBase {
       $row = [];
 
       $row['title'] = $entity->toLink($title);
+      $titles[$entity->id()] = $row['title']->getText();
 
       if ($entity_type === 'node') {
         $row['type'] = $node_types[$bundle]->label();
@@ -94,20 +102,50 @@ class Overview extends ControllerBase {
         $row['type'] = $this->t('Post');
       }
 
+      $types[$entity->id()] = $row['type'];
+
+      if (!is_string($types[$entity->id()])) {
+        $types[$entity->id()] = $types[$entity->id()]->render();
+      }
+
       $flag = $flagging->getFlag();
 
       $row['operations']['data'] = $flag->getLinkTypePlugin()
         ->getAsLink($flag, $entity)
         ->toRenderable();
 
-      $rows[] = $row;
+      $rows[$entity->id()] = $row;
     }
 
     if (empty($rows)) {
       return [];
     }
 
-    return [
+    $sortable_columns = ['title', 'type'];
+    $sortable_methods = ['asc' => 'desc', 'desc' => 'asc'];
+    $sortable_column = $this->requestStack->getCurrentRequest()->query->get('order');
+
+    if (in_array($sortable_column, $sortable_columns)) {
+      $sortable_method = $this->requestStack->getCurrentRequest()->query->get('sort');
+
+      if (!in_array($sortable_method, $sortable_methods)) {
+        $sortable_method = 'asc';
+      }
+
+      $list_name = $sortable_column . 's';
+      $sortable_function = $sortable_method === 'asc' ? 'asort' : 'arsort';
+
+      $sortable_function($$list_name);
+
+      $unsorted_rows = $rows;
+      $rows = [];
+
+      foreach (array_keys($$list_name) as $entity_id) {
+        $rows[$entity_id] = $unsorted_rows[$entity_id];
+      }
+    }
+
+    $build = [
       'table' => [
         '#type' => 'table',
         '#header' => [
@@ -124,6 +162,45 @@ class Overview extends ControllerBase {
         '#type' => 'pager',
       ],
     ];
+
+    foreach ($sortable_columns as $column) {
+      if ($is_sortable_column = $sortable_column === $column) {
+        $current_sortable_method = $sortable_method;
+      }
+      else {
+        $current_sortable_method = 'desc';
+      }
+
+      $current_sortable_method = $sortable_methods[$current_sortable_method];
+
+      if ($is_sortable_column) {
+        $build['table']['#header'][$column] = [
+          'text' => [
+            '#markup' => $build['table']['#header'][$column],
+          ],
+          'indicator' => [
+            '#theme' => 'tablesort_indicator',
+            '#style' => $current_sortable_method,
+          ],
+        ];
+      }
+
+      $build['table']['#header'][$column] = [
+        'data' => [
+          '#type' => 'link',
+          '#title' => $build['table']['#header'][$column],
+          '#url' => Url::fromRoute('social_follow_content.overview', [], [
+            'query' => [
+              'type' => $type ?: 'All',
+              'order' => $column,
+              'sort' => $current_sortable_method,
+            ],
+          ]),
+        ],
+      ];
+    }
+
+    return $build;
   }
 
 }
