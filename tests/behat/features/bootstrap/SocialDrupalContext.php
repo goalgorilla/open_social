@@ -129,26 +129,10 @@ class SocialDrupalContext extends DrupalContext {
   }
 
   /**
-   * @When I empty the queue
-   */
-  public function iEmptyTheQueue() {
-    $this->processQueue(TRUE);
-  }
-
-  /**
    * @When I wait for the queue to be empty
    */
-  public function iWaitForTheQueueToBeEmpty() {
-    $this->processQueue();
-  }
-
-  /**
-   * Process queue items.
-   *
-   * @param bool $just_delete
-   *   If set to TRUE, it doesn't process the items, but simply deletes them.
-   */
-  protected function processQueue($just_delete = FALSE) {
+  public function iWaitForTheQueueToBeEmpty()
+  {
     $workerManager = \Drupal::service('plugin.manager.queue_worker');
     /** @var Drupal\Core\Queue\QueueFactory; $queue */
     $queue = \Drupal::service('queue');
@@ -163,10 +147,7 @@ class SocialDrupalContext extends DrupalContext {
 
         if ($worker->numberOfItems() > 0) {
           while ($item = $worker->claimItem()) {
-            // If we don't just delete them, process the item first.
-            if ($just_delete === FALSE) {
-              $queue_worker->processItem($item->data);
-            }
+            $queue_worker->processItem($item->data);
             $worker->deleteItem($item);
           }
         }
