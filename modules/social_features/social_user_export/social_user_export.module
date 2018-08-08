@@ -5,7 +5,6 @@
  * The Social User Export module.
  */
 
-use Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\user\UserInterface;
 use Drupal\views\Views;
@@ -93,7 +92,6 @@ function _social_user_export_get_view(array $query = [], $execute = TRUE) {
  *
  * @param string $field_name
  *   The field name to get the value for.
- *
  * @param \Drupal\profile\Entity\ProfileInterface $user_profile
  *   The profile to get the data for.
  *
@@ -119,7 +117,6 @@ function _social_user_export_profile_get_field_value($field_name, ProfileInterfa
  *
  * @param string $field_name
  *   The field name to get the value for, should be taxonomy term reference.
- *
  * @param \Drupal\profile\Entity\ProfileInterface $user_profile
  *   The profile to get the data for.
  *
@@ -151,15 +148,14 @@ function _social_user_export_profile_get_taxonomy_field_value($field_name, Profi
   }
   return $concatenated_value;
 }
+
 /**
  * Returns the value for the address field and element within address.
  *
  * @param string $field_name
  *   The field name to get the value for.
- *
  * @param string $address_element
  *   The address element to get the value for, e.g. 'country_code'.
- *
  * @param \Drupal\profile\Entity\ProfileInterface $user_profile
  *   The profile to get the data for.
  *

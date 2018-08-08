@@ -2,7 +2,6 @@
 
 namespace Drupal\social_user_export;
 
-use Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException;
 use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Url;
 use Drupal\user\UserInterface;
