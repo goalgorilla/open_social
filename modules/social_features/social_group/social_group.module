@@ -422,6 +422,7 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
   if (in_array($form_id, $membership_add_forms)) {
     $form['entity_id']['widget'][0]['target_id']['#title'] = t('Select members to add');
     $form['entity_id']['widget'][0]['target_id']['#description'] = t('To add multiple members, separate each member with a comma ( , ).');
+    $form['entity_id']['widget'][0]['target_id']['#type'] = 'social_group_entity_autocomplete';
   }
 
   // Check if form is group content create form.
