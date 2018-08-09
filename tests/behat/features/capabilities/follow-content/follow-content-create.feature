@@ -22,7 +22,7 @@ Feature: Create Follow Content
     When I click "Profile of Behat User One"
     And I click "Following"
     Then I should be on "/following"
-    And I should see the heading "Content and posts I follow" in the "Page title block" region
+    And I should see the heading "Content I follow" in the "Page title block" region
     And I should see "Filter" in the ".region--complementary-top #block-following-filter .complementary-title" element
     And I should see "Type" in the ".region--complementary-top #block-following-filter .form-type-select.form-item-type .control-label" element
     And I should see "Apply" in the ".region--complementary-top #block-following-filter .form-actions" element
