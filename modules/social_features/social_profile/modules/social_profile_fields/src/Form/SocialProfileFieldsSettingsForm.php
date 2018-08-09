@@ -8,8 +8,8 @@ use Drupal\Core\Database\Connection;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\field\FieldConfigStorage;
 use Drupal\profile\Entity\ProfileType;
+use Drupal\social_profile_fields\SocialProfileFieldsHelper;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -18,11 +18,11 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class SocialProfileFieldsSettingsForm extends ConfigFormBase implements ContainerInjectionInterface {
 
   /**
-   * Field storage.
+   * Profile fields helper.
    *
-   * @var \Drupal\field\FieldConfigStorage
+   * @var \Drupal\social_profile_fields\SocialProfileFieldsHelper
    */
-  protected $fieldStorage;
+  protected $profileFieldsHelper;
 
   /**
    * The database.
@@ -36,14 +36,14 @@ class SocialProfileFieldsSettingsForm extends ConfigFormBase implements Containe
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The config factory.
-   * @param \Drupal\field\FieldConfigStorage $field_storage
-   *   Fieldstorage for the profile fields.
+   * @param \Drupal\social_profile_fields\SocialProfileFieldsHelper $profileFieldsHelper
+   *   Profile fields helper.
    * @param \Drupal\Core\Database\Connection $database
    *   Database connection for invalidating caches.
    */
-  public function __construct(ConfigFactoryInterface $config_factory, FieldConfigStorage $field_storage, Connection $database) {
+  public function __construct(ConfigFactoryInterface $config_factory, SocialProfileFieldsHelper $profileFieldsHelper, Connection $database) {
     parent::__construct($config_factory);
-    $this->fieldStorage = $field_storage;
+    $this->profileFieldsHelper = $profileFieldsHelper;
     $this->database = $database;
   }
 
@@ -53,7 +53,7 @@ class SocialProfileFieldsSettingsForm extends ConfigFormBase implements Containe
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('config.factory'),
-      $container->get('entity.manager')->getStorage('field_config'),
+      $container->get('social_profile_fields.helper'),
       $container->get('database')
     );
   }
@@ -102,7 +102,7 @@ class SocialProfileFieldsSettingsForm extends ConfigFormBase implements Containe
       ];
 
       /** @var \Drupal\field\Entity\FieldConfig $field_config */
-      foreach ($this->getProfileFields($type) as $field) {
+      foreach ($this->profileFieldsHelper->getProfileFields($type) as $field) {
         // Loop through the fields.
         $id = $field['id'];
 
@@ -146,7 +146,7 @@ class SocialProfileFieldsSettingsForm extends ConfigFormBase implements Containe
       $type = $profile_type->id();
 
       /** @var \Drupal\field\Entity\FieldConfig $field_config */
-      foreach ($this->getProfileFields($type) as $field) {
+      foreach ($this->profileFieldsHelper->getProfileFields($type) as $field) {
         $config->set($field['id'], $form_state->getValue($field['id']));
       }
     }
@@ -168,37 +168,6 @@ class SocialProfileFieldsSettingsForm extends ConfigFormBase implements Containe
       }
     }
     Cache::invalidateTags($cache_tags);
-  }
-
-  /**
-   * Functions fetches profile fields from a profile type.
-   *
-   * @param string $profile_type_id
-   *   The profile bundle.
-   *
-   * @return array
-   *   An array of fields.
-   */
-  protected function getProfileFields($profile_type_id) {
-    $fields = [];
-
-    // Use storage to get only the profile fields of the current bundle type.
-    $profile_fields = $this->fieldStorage->loadByProperties(['entity_type' => 'profile', 'bundle' => $profile_type_id]);
-
-    // Loop through the fields and return the necessary values.
-    foreach ($profile_fields as $profile_field) {
-      // Rewrite the ID a bit, since otherwise config thinks it's an array.
-      $id = str_replace('.', '_', $profile_field->id());
-      // Build the array.
-      $fields[$id] = [
-        'id' => $id,
-        'name' => $profile_field->getName(),
-        'label' => $profile_field->getLabel(),
-      ];
-    }
-
-    // Return the array of fields.
-    return $fields;
   }
 
   /**
