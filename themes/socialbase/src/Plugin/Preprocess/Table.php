@@ -27,6 +27,12 @@ class Table extends BaseTable {
         $variables->header['operations']['attributes']->addClass('text-right');
 
         foreach ($variables->rows as &$row) {
+          /** @var \Drupal\Core\Link $link */
+          $link = $row['cells']['title']['content'];
+          $element = $link->toRenderable();
+          $element['#attributes']['class'][] = 'name';
+          $row['cells']['title']['content'] = $element;
+
           $row['cells']['operations']['attributes']->addClass('text-right');
 
           $row['cells']['operations']['content']['#attributes'] = [
