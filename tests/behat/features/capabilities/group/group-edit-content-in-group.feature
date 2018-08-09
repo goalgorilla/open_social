@@ -1,4 +1,4 @@
-@api @group @DS-4357 @stability @stability-3
+@api @group @DS-4357 @stability @stability-3 @group-edit-content-in-group
 Feature: Move content after creation
   Benefit: Have full control over where I place my content
   Role: As a LU+

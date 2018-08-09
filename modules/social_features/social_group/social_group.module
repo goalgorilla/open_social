@@ -647,7 +647,9 @@ function social_group_field_widget_form_alter(&$element, FormStateInterface $for
       $element['#default_value'] = $default_value[0]['value'];
     }
     else {
-      $element['#default_value'] = 'community';
+      $default_visibility = \Drupal::configFactory()->get('entity_access_by_field.settings')
+        ->get('default_visibility');
+      $element['#default_value'] = $default_visibility;
     }
     $entity = $form_state->getFormObject()->getEntity();
 
@@ -790,6 +792,7 @@ function social_group_menu_local_actions_alter(&$local_actions) {
 function social_group_entity_type_alter(array &$entity_types) {
   /* @var $entity_types \Drupal\Core\Entity\EntityTypeInterface[] */
   $entity_types['group_content']->setListBuilderClass('Drupal\social_group\Controller\SocialGroupContentListBuilder');
+  $entity_types['group']->setListBuilderClass('Drupal\social_group\Controller\SocialGroupListBuilder');
 }
 
 /**
