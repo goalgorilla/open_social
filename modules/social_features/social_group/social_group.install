@@ -371,9 +371,17 @@ function social_group_update_8012() {
 }
 
 /**
- * Set my groups permissions.
+ * Grant permission to access group overview to contentmanager and sitemanager.
  */
 function social_group_update_8013() {
+  user_role_grant_permissions('contentmanager', ['access group overview']);
+  user_role_grant_permissions('sitemanager', ['access group overview']);
+}
+
+/**
+ * Set my groups permissions.
+ */
+function social_group_update_8014() {
   // Make it so that everyone who has the 'access user profiles' permission,
   // now also get these two new permissions.
   $permissions = [
@@ -387,12 +395,4 @@ function social_group_update_8013() {
       user_role_grant_permissions($role->id(), $permissions);
     }
   }
-}
-
-/**
- * Grant permission to access group overview to contentmanager and sitemanager.
- */
-function social_group_update_8014() {
-  user_role_grant_permissions('contentmanager', ['access group overview']);
-  user_role_grant_permissions('sitemanager', ['access group overview']);
 }
