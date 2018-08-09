@@ -96,6 +96,7 @@ class SocialProfileFieldsHelper {
       'user_skills' => 'profile_profile_field_profile_expertise',
       'user_interests' => 'profile_profile_field_profile_interests',
       'user_profile_tag' => 'profile_profile_field_profile_profile_tag',
+      'user_nickname' => 'profile_profile_field_profile_nick_name',
     ];
   }
 
