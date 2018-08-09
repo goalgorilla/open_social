@@ -3,7 +3,6 @@
 namespace Drupal\social_user_export\Plugin\UserExportPlugin;
 
 use Drupal\social_user_export\Plugin\UserExportPluginBase;
-use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\user\UserInterface;
 
 /**
@@ -17,30 +16,18 @@ use Drupal\user\UserInterface;
  */
 class UserStatus extends UserExportPluginBase {
 
-  use StringTranslationTrait;
-
   /**
-   * Returns the header.
-   *
-   * @return \Drupal\Core\StringTranslation\TranslatableMarkup|string
-   *   The header.
+   * {@inheritdoc}
    */
   public function getHeader() {
     return $this->t('Status');
   }
 
   /**
-   * Returns the value.
-   *
-   * @param \Drupal\user\UserInterface $entity
-   *   The User entity to get the value from.
-   *
-   * @return string
-   *   The value.
+   * {@inheritdoc}
    */
   public function getValue(UserInterface $entity) {
-    $status = $entity->get('status')->getValue();
-    return !empty($status[0]['value']) ? $this->t('Active') : $this->t('Blocked');
+    return $entity->isActive() ? $this->t('Active') : $this->t('Blocked');
   }
 
 }

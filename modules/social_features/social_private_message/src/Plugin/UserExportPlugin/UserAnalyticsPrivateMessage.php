@@ -3,7 +3,6 @@
 namespace Drupal\social_private_message\Plugin\UserExportPlugin;
 
 use Drupal\social_user_export\Plugin\UserExportPluginBase;
-use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\user\UserInterface;
 
 /**
@@ -17,26 +16,15 @@ use Drupal\user\UserInterface;
  */
 class UserAnalyticsPrivateMessage extends UserExportPluginBase {
 
-  use StringTranslationTrait;
-
   /**
-   * Returns the header.
-   *
-   * @return \Drupal\Core\StringTranslation\TranslatableMarkup|string
-   *   The header.
+   * {@inheritdoc}
    */
   public function getHeader() {
     return $this->t('Number of Private messages');
   }
 
   /**
-   * Returns the value.
-   *
-   * @param \Drupal\user\UserInterface $entity
-   *   The User entity to get the value from.
-   *
-   * @return string
-   *   The value.
+   * {@inheritdoc}
    */
   public function getValue(UserInterface $entity) {
     $value = '';
@@ -46,7 +34,7 @@ class UserAnalyticsPrivateMessage extends UserExportPluginBase {
       $storage = $this->entityTypeManager->getStorage('private_message');
       if (!empty($storage)) {
         $query = $storage->getQuery();
-        $value = (string) $query->condition('owner', $entity->id())
+        $value = (int) $query->condition('owner', $entity->id())
           ->count()
           ->execute();
       }

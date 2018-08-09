@@ -3,7 +3,6 @@
 namespace Drupal\social_user_export\Plugin\UserExportPlugin;
 
 use Drupal\social_user_export\Plugin\UserExportPluginBase;
-use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\user\UserInterface;
 
 /**
@@ -17,33 +16,22 @@ use Drupal\user\UserInterface;
  */
 class UserAnalyticsCommentsCreated extends UserExportPluginBase {
 
-  use StringTranslationTrait;
-
   /**
-   * Returns the header.
-   *
-   * @return \Drupal\Core\StringTranslation\TranslatableMarkup|string
-   *   The header.
+   * {@inheritdoc}
    */
   public function getHeader() {
     return $this->t('Comments created');
   }
 
   /**
-   * Returns the value.
-   *
-   * @param \Drupal\user\UserInterface $entity
-   *   The User entity to get the value from.
-   *
-   * @return string
-   *   The value.
+   * {@inheritdoc}
    */
   public function getValue(UserInterface $entity) {
     $query = $this->database->select('comment', 'c');
     $query->join('comment_field_data', 'cfd', 'cfd.cid = c.cid');
     $query->condition('cfd.uid', $entity->id());
 
-    return (string) $query
+    return (int) $query
       ->countQuery()
       ->execute()
       ->fetchField();

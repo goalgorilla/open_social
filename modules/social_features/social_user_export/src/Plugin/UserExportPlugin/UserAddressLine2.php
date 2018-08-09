@@ -3,7 +3,6 @@
 namespace Drupal\social_user_export\Plugin\UserExportPlugin;
 
 use Drupal\social_user_export\Plugin\UserExportPluginBase;
-use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\user\UserInterface;
 
 /**
@@ -17,30 +16,18 @@ use Drupal\user\UserInterface;
  */
 class UserAddressLine2 extends UserExportPluginBase {
 
-  use StringTranslationTrait;
-
   /**
-   * Returns the header.
-   *
-   * @return \Drupal\Core\StringTranslation\TranslatableMarkup|string
-   *   The header.
+   * {@inheritdoc}
    */
   public function getHeader() {
     return $this->t('Address line 2');
   }
 
   /**
-   * Returns the value.
-   *
-   * @param \Drupal\user\UserInterface $entity
-   *   The User entity to get the value from.
-   *
-   * @return string
-   *   The value.
+   * {@inheritdoc}
    */
   public function getValue(UserInterface $entity) {
-    $profile = $this->getProfile($entity);
-    return $this->profileGetAddressFieldValue('field_profile_address', 'address_line2', $profile);
+    return $this->profileGetAddressFieldValue('field_profile_address', 'address_line2', $this->getProfile($entity));
   }
 
 }

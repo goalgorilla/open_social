@@ -168,6 +168,9 @@ class SocialProfileFieldsSettingsForm extends ConfigFormBase implements Containe
       }
     }
     Cache::invalidateTags($cache_tags);
+
+    $plugin_manager_user_export_plugin = \Drupal::service('plugin.manager.user_export_plugin');
+    $plugin_manager_user_export_plugin->clearCachedDefinitions();
   }
 
   /**

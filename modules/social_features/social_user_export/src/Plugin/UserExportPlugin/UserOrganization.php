@@ -3,7 +3,6 @@
 namespace Drupal\social_user_export\Plugin\UserExportPlugin;
 
 use Drupal\social_user_export\Plugin\UserExportPluginBase;
-use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\user\UserInterface;
 
 /**
@@ -17,13 +16,8 @@ use Drupal\user\UserInterface;
  */
 class UserOrganization extends UserExportPluginBase {
 
-  use StringTranslationTrait;
-
   /**
-   * Returns the header.
-   *
-   * @return \Drupal\Core\StringTranslation\TranslatableMarkup|string
-   *   The header.
+   * {@inheritdoc}
    */
   public function getHeader() {
     return $this->t('Organization');
@@ -39,8 +33,7 @@ class UserOrganization extends UserExportPluginBase {
    *   The value.
    */
   public function getValue(UserInterface $entity) {
-    $profile = $this->getProfile($entity);
-    return $this->profileGetFieldValue('field_profile_organization', $profile);
+    return $this->profileGetFieldValue('field_profile_organization', $this->getProfile($entity));
   }
 
 }

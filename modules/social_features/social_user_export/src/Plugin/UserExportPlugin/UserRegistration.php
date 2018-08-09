@@ -3,7 +3,6 @@
 namespace Drupal\social_user_export\Plugin\UserExportPlugin;
 
 use Drupal\social_user_export\Plugin\UserExportPluginBase;
-use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\user\UserInterface;
 
 /**
@@ -17,29 +16,18 @@ use Drupal\user\UserInterface;
  */
 class UserRegistration extends UserExportPluginBase {
 
-  use StringTranslationTrait;
-
   /**
-   * Returns the header.
-   *
-   * @return \Drupal\Core\StringTranslation\TranslatableMarkup|string
-   *   The header.
+   * {@inheritdoc}
    */
   public function getHeader() {
     return $this->t('Registration date');
   }
 
   /**
-   * Returns the value.
-   *
-   * @param \Drupal\user\UserInterface $entity
-   *   The User entity to get the value from.
-   *
-   * @return string
-   *   The value.
+   * {@inheritdoc}
    */
   public function getValue(UserInterface $entity) {
-    return $this->dateFormatter->format($entity->getCreatedTime(), 'custom', 'Y/m/d - H:i');
+    return $this->dateFormatter->format($entity->getCreatedTime(), 'short');
   }
 
 }
