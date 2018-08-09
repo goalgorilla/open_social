@@ -24,8 +24,22 @@ class ExportUser extends ContentEntityBase {
    *   Context of the operation.
    */
   public static function exportUserOperation(UserInterface $entity, array &$context) {
-    $moduleHandler = \Drupal::service('module_handler');
 
+    $type = \Drupal::service('plugin.manager.user_export_plugin');
+    $plugin_definitions = $type->getDefinitions();
+
+    // Check if headers exists.
+    if (empty($context['results']['headers'])) {
+      $headers = [];
+      /** @var \Drupal\social_user_export\Plugin\UserExportPluginBase $instance */
+      foreach ($plugin_definitions as $plugin_id => $plugin_definition) {
+        $instance = $type->createInstance($plugin_id);
+        $headers[] = $instance->getHeader();
+      }
+      $context['results']['headers'] = $headers;
+    }
+
+    // Create the file if applicable.
     if (empty($context['results']['file_path'])) {
       $context['results']['file_path'] = self::getFileTemporaryPath();
       $csv = Writer::createFromPath($context['results']['file_path'], 'w');
@@ -33,47 +47,7 @@ class ExportUser extends ContentEntityBase {
       $csv->setEnclosure('"');
       $csv->setEscape('\\');
 
-      // Append header.
-      $headers = [
-        t('User ID'),
-        t('UUID'),
-        t('First name'),
-        t('Last name'),
-        t('Username'),
-        t('Display name'),
-        t('Email'),
-        t('Last login'),
-        t('Last access'),
-        t('Registration date'),
-        t('Status'),
-        t('Country code'),
-        t('Administrative address'),
-        t('Address locality'),
-        t('Postal code'),
-        t('Address line 1'),
-        t('Address line 2'),
-        t('Phone number'),
-        t('Organization'),
-        t('Function'),
-        t('Skills'),
-        t('Interests'),
-        t('Profile tag'),
-        t('Roles'),
-        t('Posts created'),
-        t('Comments created'),
-        t('Topics created'),
-        t('Events enrollments'),
-        t('Events created'),
-        t('Groups created'),
-        t('Number of Likes'),
-      ];
-
-      // Add number of private messages row header if the module is turned on.
-      if ($moduleHandler->moduleExists('social_private_message')) {
-        $headers[] = t('Number of Private Messages');
-      }
-
-      $csv->insertOne($headers);
+      $csv->insertOne($context['results']['headers']);
     }
     else {
       $csv = Writer::createFromPath($context['results']['file_path'], 'a');
@@ -82,74 +56,13 @@ class ExportUser extends ContentEntityBase {
     // Add formatter.
     $encoder = \Drupal::service('csv_serialization.encoder.csv');
     $csv->addFormatter([$encoder, 'formatRow']);
-    $status = $entity->get('status')->getValue();
 
-    // Format last login time.
-    if ($last_login_time = $entity->getLastLoginTime()) {
-      $last_login = \Drupal::service('date.formatter')->format($last_login_time, 'custom', 'Y/m/d - H:i');
+    $row = [];
+    /** @var \Drupal\social_user_export\Plugin\UserExportPluginBase $instance */
+    foreach ($plugin_definitions as $plugin_id => $plugin_definition) {
+      $instance = $type->createInstance($plugin_id);
+      $row[] = $instance->getValue($entity);
     }
-    else {
-      $last_login = t('never');
-    }
-
-    // Format last access time.
-    if ($last_access_time = $entity->getLastAccessedTime()) {
-      $last_access = \Drupal::service('date.formatter')->format($last_access_time, 'custom', 'Y/m/d - H:i');
-    }
-    else {
-      $last_access = t('never');
-    }
-
-    /** @var \Drupal\profile\ProfileStorageInterface $storage */
-    // Check if entity type 'profile' exists.
-    $storage = \Drupal::entityTypeManager()->getStorage('profile');
-    if (!empty($storage)) {
-      $user_profile = $storage->loadByUser($entity, 'profile', TRUE);
-    }
-    else {
-      $user_profile = NULL;
-    }
-
-    // Add row.
-    $row = [
-      $entity->id(),
-      $entity->uuid(),
-      _social_user_export_profile_get_field_value('field_profile_first_name', $user_profile),
-      _social_user_export_profile_get_field_value('field_profile_last_name', $user_profile),
-      $entity->getAccountName(),
-      $entity->getDisplayName(),
-      $entity->getEmail(),
-      $last_login,
-      $last_access,
-      \Drupal::service('date.formatter')->format($entity->getCreatedTime(), 'custom', 'Y/m/d - H:i'),
-      !empty($status[0]['value']) ? t('Active') : t('Blocked'),
-      _social_user_export_profile_get_address('field_profile_address', 'country_code', $user_profile),
-      _social_user_export_profile_get_address('field_profile_address', 'administrative_area', $user_profile),
-      _social_user_export_profile_get_address('field_profile_address', 'locality', $user_profile),
-      _social_user_export_profile_get_address('field_profile_address', 'postal_code', $user_profile),
-      _social_user_export_profile_get_address('field_profile_address', 'address_line1', $user_profile),
-      _social_user_export_profile_get_address('field_profile_address', 'address_line2', $user_profile),
-      _social_user_export_profile_get_field_value('field_profile_phone_number', $user_profile),
-      _social_user_export_profile_get_field_value('field_profile_organization', $user_profile),
-      _social_user_export_profile_get_field_value('field_profile_function', $user_profile),
-      _social_user_export_profile_get_taxonomy_field_value('field_profile_expertise', $user_profile),
-      _social_user_export_profile_get_taxonomy_field_value('field_profile_interests', $user_profile),
-      _social_user_export_profile_get_taxonomy_field_value('field_profile_profile_tag', $user_profile),
-      implode(', ', $entity->getRoles()),
-      social_user_export_posts_count($entity),
-      social_user_export_comments_count($entity),
-      social_user_export_nodes_count($entity, 'topic'),
-      social_user_export_events_enrollments_count($entity),
-      social_user_export_nodes_count($entity, 'event'),
-      social_user_export_groups_count($entity),
-      social_user_export_likes_count($entity),
-    ];
-
-    // Add number of private messages if the module is turned on.
-    if ($moduleHandler->moduleExists('social_private_message')) {
-      $row[] = social_user_export_number_of_private_messages($entity);
-    }
-
     $csv->insertOne($row);
 
     $context['message'] = t('Exporting: @name', [
