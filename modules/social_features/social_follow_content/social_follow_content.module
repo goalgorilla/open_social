@@ -12,8 +12,8 @@ use Drupal\flag\Entity\Flagging;
  * Implements hook_ENTITY_TYPE_insert().
  */
 function social_follow_content_comment_insert(EntityInterface $entity) {
-  if ($entity->getCommentedEntity()->getEntityTypeId() == 'post') {
-    _social_follow_content_action($entity);
+  if ($entity->getCommentedEntity()->getEntityTypeId() === 'post') {
+    _social_follow_content_action_post($entity);
   }
 }
 
@@ -21,43 +21,49 @@ function social_follow_content_comment_insert(EntityInterface $entity) {
  * Implements hook_ENTITY_TYPE_insert().
  */
 function social_follow_content_event_enrollment_insert(EntityInterface $entity) {
-  _social_follow_content_action($entity);
+  _social_follow_content_action_event($entity);
 }
 
 /**
  * Implements hook_ENTITY_TYPE_update().
  */
 function social_follow_content_event_enrollment_update(EntityInterface $entity) {
-  _social_follow_content_action($entity);
+  _social_follow_content_action_event($entity);
 }
 
 /**
- * Automatically follow content or post.
+ * Automatically follow post.
  */
-function _social_follow_content_action(EntityInterface $entity) {
-  $event = $entity->getEntityTypeId() == 'event_enrollment';
+function _social_follow_content_action_post(EntityInterface $entity) {
+  $properties = [
+    'entity_type' => 'post',
+    'entity_id' => $entity->getCommentedEntity()->id(),
+    'flag_id' => 'follow_post',
+    'uid' => \Drupal::currentUser()->id(),
+  ];
 
-  if ($event && !$entity->field_enrollment_status->value) {
+  $flaggings = \Drupal::entityTypeManager()->getStorage('flagging')
+    ->loadByProperties($properties);
+
+  if (empty($flaggings) && $flagging = Flagging::create($properties)) {
+    $flagging->save();
+  }
+}
+
+/**
+ * Automatically follow event.
+ */
+function _social_follow_content_action_event(EntityInterface $entity) {
+  if (!$entity->field_enrollment_status->value) {
     return;
   }
 
-  // Check if user already follow this content.
-  if ($event) {
-    $properties = [
-      'entity_type' => 'node',
-      'entity_id' => $entity->field_event->target_id,
-      'flag_id' => 'follow_content',
-    ];
-  }
-  else {
-    $properties = [
-      'entity_type' => 'post',
-      'entity_id' => $entity->getCommentedEntity()->id(),
-      'flag_id' => 'follow_post',
-    ];
-  }
-
-  $properties['uid'] = \Drupal::currentUser()->id();
+  $properties = [
+    'entity_type' => 'node',
+    'entity_id' => $entity->field_event->target_id,
+    'flag_id' => 'follow_content',
+    'uid' => \Drupal::currentUser()->id(),
+  ];
 
   $flaggings = \Drupal::entityTypeManager()->getStorage('flagging')
     ->loadByProperties($properties);
@@ -65,9 +71,7 @@ function _social_follow_content_action(EntityInterface $entity) {
   if (empty($flaggings) && $flagging = Flagging::create($properties)) {
     $flagging->save();
 
-    if ($event) {
-      $message = t('You have successfully enrolled to this event. Also you are now following the event, which means you will receive notifications when a new comment is placed.');
-      \Drupal::messenger()->addStatus($message);
-    }
+    $message = t('You have successfully enrolled to this event. Also you are now following the event, which means you will receive notifications when a new comment is placed.');
+    \Drupal::messenger()->addStatus($message);
   }
 }
