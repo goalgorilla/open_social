@@ -113,6 +113,7 @@ function _social_group_get_permissions($role) {
     'view node.event.field_content_visibility:group content',
     'view node.topic.field_content_visibility:group content',
     'view node.page.field_content_visibility:group content',
+    'access group overview',
   ]);
 
   // Site manager.
@@ -386,4 +387,12 @@ function social_group_update_8013() {
       user_role_grant_permissions($role->id(), $permissions);
     }
   }
+}
+
+/**
+ * Grant permission to access group overview to contentmanager and sitemanager.
+ */
+function social_group_update_8014() {
+  user_role_grant_permissions('contentmanager', ['access group overview']);
+  user_role_grant_permissions('sitemanager', ['access group overview']);
 }
