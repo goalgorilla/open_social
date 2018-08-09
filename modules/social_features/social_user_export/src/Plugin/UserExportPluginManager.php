@@ -25,7 +25,7 @@ class UserExportPluginManager extends DefaultPluginManager {
   public function __construct(\Traversable $namespaces, CacheBackendInterface $cache_backend, ModuleHandlerInterface $module_handler) {
     parent::__construct('Plugin/UserExportPlugin', $namespaces, $module_handler, 'Drupal\social_user_export\Plugin\UserExportPluginInterface', 'Drupal\social_user_export\Annotation\UserExportPlugin');
 
-    $this->alterInfo('social_user_export_user_export_plugin_info');
+    $this->alterInfo('social_user_export_plugin_info');
     $this->setCacheBackend($cache_backend, 'social_user_export_user_export_plugin_plugins');
   }
 
