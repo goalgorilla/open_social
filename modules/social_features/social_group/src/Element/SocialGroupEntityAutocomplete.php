@@ -75,7 +75,7 @@ class SocialGroupEntityAutocomplete extends EntityAutocomplete {
         "@usernames is already member of the group, you can't add them again",
         "@usernames are already members of the group, you can't add them again",
         ['@usernames' => $usernames]
-      )->__toString();
+      );
 
       // We have to kick in a form set error here, or else the
       // GroupContentCardinalityValidator will kick in and show a faulty
