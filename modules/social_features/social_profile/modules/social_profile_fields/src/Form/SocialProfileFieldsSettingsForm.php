@@ -2,10 +2,11 @@
 
 namespace Drupal\social_profile_fields\Form;
 
-use Drupal\Core\Cache\Cache;
+use Drupal\Core\Cache\CacheTagsInvalidator;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
+use Drupal\Core\Extension\ModuleHandler;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\profile\Entity\ProfileType;
@@ -32,19 +33,39 @@ class SocialProfileFieldsSettingsForm extends ConfigFormBase implements Containe
   protected $database;
 
   /**
+   * Cache tags invalidator.
+   *
+   * @var \Drupal\Core\Cache\CacheTagsInvalidator
+   */
+  protected $cacheTagsInvalidator;
+
+  /**
+   * Module handler.
+   *
+   * @var \Drupal\Core\Extension\ModuleHandler
+   */
+  protected $moduleHandler;
+
+  /**
    * SocialProfileSettingsForm constructor.
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The config factory.
-   * @param \Drupal\social_profile_fields\SocialProfileFieldsHelper $profileFieldsHelper
+   * @param \Drupal\social_profile_fields\SocialProfileFieldsHelper $profile_fields_helper
    *   Profile fields helper.
    * @param \Drupal\Core\Database\Connection $database
    *   Database connection for invalidating caches.
+   * @param \Drupal\Core\Cache\CacheTagsInvalidator $cache_tags_invalidator
+   *   Cache tags invalidator for clearing tags.
+   * @param \Drupal\Core\Extension\ModuleHandler $module_handler
+   *   Module handler for checking if modules exist.
    */
-  public function __construct(ConfigFactoryInterface $config_factory, SocialProfileFieldsHelper $profileFieldsHelper, Connection $database) {
+  public function __construct(ConfigFactoryInterface $config_factory, SocialProfileFieldsHelper $profile_fields_helper, Connection $database, CacheTagsInvalidator $cache_tags_invalidator, ModuleHandler $module_handler) {
     parent::__construct($config_factory);
-    $this->profileFieldsHelper = $profileFieldsHelper;
+    $this->profileFieldsHelper = $profile_fields_helper;
     $this->database = $database;
+    $this->cacheTagsInvalidator = $cache_tags_invalidator;
+    $this->moduleHandler = $module_handler;
   }
 
   /**
@@ -54,7 +75,9 @@ class SocialProfileFieldsSettingsForm extends ConfigFormBase implements Containe
     return new static(
       $container->get('config.factory'),
       $container->get('social_profile_fields.helper'),
-      $container->get('database')
+      $container->get('database'),
+      $container->get('cache_tags.invalidator'),
+      $container->get('module_handler')
     );
   }
 
@@ -167,10 +190,14 @@ class SocialProfileFieldsSettingsForm extends ConfigFormBase implements Containe
         $cache_tags[] = 'profile:' . $id;
       }
     }
-    Cache::invalidateTags($cache_tags);
 
-    $plugin_manager_user_export_plugin = \Drupal::service('plugin.manager.user_export_plugin');
-    $plugin_manager_user_export_plugin->clearCachedDefinitions();
+    $this->cacheTagsInvalidator->invalidateTags($cache_tags);
+
+    // If the user export module is on, clear the cached definitions.
+    if ($this->moduleHandler->moduleExists('social_user_export')) {
+      $user_export_manager = \Drupal::service('plugin.manager.user_export_plugin');
+      $user_export_manager->clearCachedDefinitions();
+    }
   }
 
   /**
