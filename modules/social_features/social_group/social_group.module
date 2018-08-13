@@ -421,6 +421,12 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
     $form['path']['#type'] = 'hidden';
   }
 
+  if (in_array($form_id, $membership_add_forms)) {
+    $form['entity_id']['widget'][0]['target_id']['#title'] = t('Select members to add');
+    $form['entity_id']['widget'][0]['target_id']['#description'] = t('To add multiple members, separate each member with a comma ( , ).');
+    $form['entity_id']['widget'][0]['target_id']['#type'] = 'social_group_entity_autocomplete';
+  }
+
   // Check if form is group content create form.
   if (isset($form['#entity_type']) && $form['#entity_type'] === 'node') {
     $group = _social_group_get_current_group();
@@ -489,7 +495,16 @@ function _social_group_action_form_submit($form, FormStateInterface $form_state)
 
     // Get form that was submitted.
     $complete_form = $form_state->getCompleteForm();
-
+    // For multiple Group Members that are valid we add multiple entities.
+    if ($complete_form['#form_id'] == 'group_content_' . $group->bundle() . '-group_membership_add_form') {
+      // We passed the validation.
+      // Let's create the Group Content for all our members just like
+      // Group does it for creating a Group and adding its creator as member.
+      $values = ['group_roles' => $form_state->getValue('group_roles')];
+      foreach ($form_state->getValue('entity_id_new') as $key => $uid) {
+        $group->addMember(User::load($uid['target_id']), $values);
+      }
+    }
     if (in_array($complete_form['#form_id'], ['group_content_' . $group->bundle() . '-group_membership_group-join_form', 'group_content_' . $group->bundle() . '-group_membership_add_form'])) {
       // Set redirect to group home page.
       $form_state->setRedirect(
