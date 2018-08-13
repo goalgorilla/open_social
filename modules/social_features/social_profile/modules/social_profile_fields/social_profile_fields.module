@@ -11,6 +11,7 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\profile\Entity\ProfileType;
 
 /**
  * Implements hook_entity_field_access().
@@ -114,4 +115,36 @@ function _social_profile_fields_get_setting($key) {
     return TRUE;
   }
   return FALSE;
+}
+
+/**
+ * Remove user export plugins for fields which are disabled.
+ *
+ * @param array $plugins
+ *   An array of all the existing plugin definitions, passed by reference.
+ *
+ * @see \Drupal\social_user_export\UserExportPluginManager
+ */
+function social_profile_fields_social_user_export_plugin_info_alter(array &$plugins) {
+  /** @var \Drupal\profile\Entity\ProfileType $profile_type */
+  foreach (ProfileType::loadMultiple() as $profile_type) {
+    $type = $profile_type->id();
+
+    /** @var \Drupal\field\Entity\FieldConfig $field_config */
+    foreach (\Drupal::service('social_profile_fields.helper')->getProfileFields($type) as $field) {
+      $config = \Drupal::config('social_profile_fields.settings');
+
+      $setting_value = $config->get($field['id']);
+      if (isset($setting_value) && !$setting_value) {
+        $plugin_ids_for_fields = \Drupal::service('social_profile_fields.helper')->getUserExportPluginIdForField($field['id']);
+        if (!empty($plugin_ids_for_fields)) {
+          foreach ($plugin_ids_for_fields as $plugin_id) {
+            if ($plugins[$plugin_id]) {
+              unset($plugins[$plugin_id]);
+            }
+          }
+        }
+      }
+    }
+  }
 }
