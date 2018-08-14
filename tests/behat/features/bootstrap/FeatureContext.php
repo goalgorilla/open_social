@@ -7,6 +7,7 @@ use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
 use Drupal\DrupalExtension\Context\DrupalContext;
 use Behat\MinkExtension\Context\RawMinkContext;
+use Drupal\node\Entity\Node;
 use PHPUnit_Framework_Assert as PHPUnit;
 use Drupal\profile\Entity\Profile;
 use Drupal\group\Entity\Group;
@@ -35,6 +36,12 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
      * @var array
      */
     protected $groups = array();
+    /**
+     * Keep track of all topics that are created so they can easily be removed.
+     *
+     * @var array
+     */
+    protected $nodes = array();
 
     /**
      * @BeforeScenario
@@ -476,6 +483,45 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
     }
 
     /**
+     * Creates topics of a given type provided in the form:
+     * | title    | description     | author   | type        | language
+     * | My title | My description  | username | open_group  | en
+     * | ...      | ...             | ...      | ...         | ...
+     *
+     * @Given topics:
+     */
+    public function createTopics(TableNode $topicsTable) {
+      foreach ($topicsTable->getHash() as $topicsHash) {
+        $topicFields = (object) $topicsHash;
+        try {
+          $topics = $this->topicCreate($topicFields);
+          $this->nodes[$topicFields->title] = $topics;
+        } catch (Exception $e) {
+
+        }
+      }
+    }
+
+    /**
+     * Creates events of a given type provided in the form:
+     * | title    | description     | author   | startdate            | enddate             | language
+     * | My title | My description  | username | 2018-06-01 10:39:08  | 2018-06-01 10:39:08 | en
+     *
+     * @Given events:
+     */
+    public function createEvents(TableNode $eventsTable) {
+      foreach ($eventsTable->getHash() as $eventHash) {
+        $eventFields = (object) $eventHash;
+        try {
+          $events = $this->eventCreate($eventFields);
+          $this->nodes[$eventFields->title] = $events;
+        } catch (Exception $e) {
+
+        }
+      }
+    }
+
+    /**
      * Remove any groups that were created.
      *
      * @AfterScenario
@@ -484,6 +530,21 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
       if (!empty($this->groups)) {
         foreach ($this->groups as $group) {
           $group->delete();
+        }
+      }
+    }
+
+  /**
+   * Remove any nodes that were created.
+   *
+   * @AfterScenario
+   *
+   * @param \Behat\Behat\Hook\Scope\AfterScenarioScope $scope
+   */
+    public function cleanupNodes(AfterScenarioScope $scope) {
+      if (!empty($this->nodes)) {
+        foreach ($this->nodes as $node) {
+          $node->delete();
         }
       }
     }
@@ -501,7 +562,7 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
         $account_uid = $account->id();
       }
       else {
-        throw new \Exception(sprintf("User with username '%s' does not exist.", $username));
+        throw new \Exception(sprintf("User with username '%s' does not exist.", $group->author));
       }
 
       // Let's create some groups.
@@ -516,6 +577,91 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
       $group_object->save();
 
       return $group_object;
+    }
+
+  /**
+   * @param $topic
+   *
+   * @return \Drupal\Core\Entity\EntityInterface|\Drupal\Core\Entity\EntityStorageException|\Exception|static
+   * @throws \Exception
+   */
+  public function topicCreate($topic) {
+
+      // Load user.
+      $account = user_load_by_name($topic->author);
+
+      try {
+        $account_uid = $account->id();
+      } catch (Exception $e) {
+        return $e;
+      }
+
+      $terms = \Drupal::service('entity_type.manager')->getStorage('taxonomy_term')->loadByProperties(['name' => "Discussion"]);
+      $term = current($terms);
+
+      if (!$term instanceof \Drupal\taxonomy\Entity\Term) {
+        throw new \Exception(sprintf("Topic type '%s' does not exist.", $topic->type));
+      }
+
+      // Let's create some topics.
+      $node = Node::create([
+        'langcode' => $topic->language,
+        'uid' => $account_uid,
+        'type' => 'topic',
+        'field_topic_type' => $term->id(),
+        'title' => $topic->title,
+        'body' => [
+          'value' => $topic->description,
+          'format' => 'basic_html',
+        ],
+      ]);
+
+      try {
+        $node->save();
+      } catch (\Drupal\Core\Entity\EntityStorageException $e) {
+        return $e;
+      }
+
+      return $node;
+    }
+
+  /**
+   * @param $event
+   *
+   * @return \Drupal\Core\Entity\EntityInterface|\Drupal\Core\Entity\EntityStorageException|\Exception|static
+   */
+  public function eventCreate($event) {
+
+      // Load user.
+      $account = user_load_by_name($event->author);
+
+      try {
+        $account_uid = $account->id();
+      } catch (Exception $e) {
+        return $e;
+      }
+
+      // Let's create some topics.
+      $node = Node::create([
+        'langcode' => $event->language,
+        'uid' => $account_uid,
+        'type' => 'event',
+        'field_event_date' => $event->startdate,
+        'field_event_date_end' => $event->enddate,
+        'title' => $event->title,
+        'body' => [
+          'value' => $event->description,
+          'format' => 'basic_html',
+        ],
+      ]);
+
+      try {
+        $node->save();
+      } catch (\Drupal\Core\Entity\EntityStorageException $e) {
+        return $e;
+      }
+
+      return $node;
     }
 
     /**

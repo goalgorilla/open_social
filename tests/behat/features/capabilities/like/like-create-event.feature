@@ -9,21 +9,9 @@ Feature: Create event like
      | name     | mail               | status | field_profile_first_name | field_profile_last_name |
      | user_1   | mail_1@example.com | 1      | Albert                   | Einstein                |
      | user_2   | mail_2@example.com | 1      | Isaac                    | Newton                  |
-     And I am logged in as "user_1"
-     And I am on "user"
-     And I click "Events"
-     And I click "Create Event"
-
-    When I fill in the following:
-      | Title | Event for likes |
-      | edit-field-event-date-0-value-date | 2025-01-01 |
-      | edit-field-event-date-end-0-value-date | 2025-01-01 |
-      | Time | 11:00:00 |
-      | Location name | GG HQ |
-     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text."
-     And I press "Save"
-    Then I should see "Event for likes has been created."
-
+   Given events:
+     | title           | description            | author | startdate           | enddate             | language |
+     | Event for likes | Body description text. | user_1 | 2025-01-01 11:00:00 | 2025-01-01 12:00:00 | en       |
    Given I am logged in as "user_2"
      And I open the "event" node with title "Event for likes"
     Then I should see "Event for likes"
