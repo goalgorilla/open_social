@@ -11,7 +11,7 @@ use Drupal\user\UserInterface;
  * @UserExportPlugin(
  *  id = "user_roles",
  *  label = @Translation("Roles"),
- *  weight = -270,
+ *  weight = -260,
  * )
  */
 class UserRoles extends UserExportPluginBase {

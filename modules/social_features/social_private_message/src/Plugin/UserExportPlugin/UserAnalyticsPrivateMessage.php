@@ -11,7 +11,7 @@ use Drupal\user\UserInterface;
  * @UserExportPlugin(
  *  id = "user_private_message",
  *  label = @Translation("Number of Private messages"),
- *  weight = -190,
+ *  weight = -180,
  * )
  */
 class UserAnalyticsPrivateMessage extends UserExportPluginBase {

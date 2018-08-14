@@ -11,7 +11,7 @@ use Drupal\user\UserInterface;
  * @UserExportPlugin(
  *  id = "user_event_enrollments",
  *  label = @Translation("Event enrollments"),
- *  weight = -230,
+ *  weight = -210,
  * )
  */
 class UserAnalyticsEventEnrollments extends UserExportPluginBase {
