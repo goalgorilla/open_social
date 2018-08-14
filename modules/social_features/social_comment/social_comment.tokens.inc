@@ -9,6 +9,7 @@ use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\node\NodeInterface;
 use Drupal\social_post\Entity\PostInterface;
+use Drupal\Core\Render\Markup;
 
 /**
  * Implements hook_token_info().
@@ -130,7 +131,7 @@ function social_comment_tokens($type, $tokens, array $data, array $options, Bubb
                     $entity_link_html = '<a href="' . $link . '">' . $commented_content_type . '</a>';
                   }
 
-                  $replacements[$original] = \Drupal\Core\Render\Markup::create($entity_link_html);
+                  $replacements[$original] = Markup::create($entity_link_html);
                 }
               }
             }

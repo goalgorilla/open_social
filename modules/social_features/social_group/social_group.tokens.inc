@@ -8,6 +8,7 @@
 use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\Url;
 use Drupal\Component\Utility\Unicode;
+use Drupal\Core\Render\Markup;
 
 /**
  * Implements hook_token_info().
@@ -131,7 +132,7 @@ function social_group_tokens($type, $tokens, array $data, array $options, Bubble
                   $entity_link_html = '<a href="' . $content_url->toString() . '">' . $display_name . '</a>';
                 }
 
-                $replacements[$original] = \Drupal\Core\Render\Markup::create($entity_link_html);
+                $replacements[$original] = Markup::create($entity_link_html);
               }
 
             }

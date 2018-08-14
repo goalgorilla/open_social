@@ -8,6 +8,8 @@
 use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\votingapi\Entity\Vote;
+use Drupal\Core\Render\Markup;
+use Drupal\node\Entity\Node;
 
 /**
  * Implements hook_token_info().
@@ -95,12 +97,13 @@ function social_like_tokens($type, $tokens, array $data, array $options, Bubblea
                 if ($content_type === 'comment') {
                   $commented_entity = $entity->getCommentedEntity();
 
+                  $url_options = ['absolute' => TRUE];
+                  /** @var \Drupal\Core\Entity\Entity $commented_entity */
+                  $ref_link = $commented_entity->toUrl('canonical', $url_options)->toString();
+
                   // We should only use the label of entities who have a label.
                   if ($ref_link_label = $commented_entity->label()) {
-                    $url_options = ['absolute' => TRUE];
-                    /** @var \Drupal\Core\Entity\Entity $commented_entity */
-                    $ref_link = $commented_entity->toUrl('canonical', $url_options)->toString();
-                    if ($commented_entity instanceof \Drupal\node\Entity\Node) {
+                    if ($commented_entity instanceof Node) {
                       $commented_content_type = strtolower($commented_entity->type->entity->label());
                     }
                     else {
@@ -115,7 +118,7 @@ function social_like_tokens($type, $tokens, array $data, array $options, Bubblea
                 }
               }
 
-              $replacements[$original] = \Drupal\Core\Render\Markup::create($liked_entity_link_html);
+              $replacements[$original] = Markup::create($liked_entity_link_html);
             }
             break;
 

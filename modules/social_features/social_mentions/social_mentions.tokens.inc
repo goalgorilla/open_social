@@ -8,6 +8,7 @@
 use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\user\Entity\User;
+use Drupal\Core\Render\Markup;
 
 /**
  * Implements hook_token_info().
@@ -150,7 +151,7 @@ function social_mentions_tokens($type, $tokens, array $data, array $options, Bub
               $entity_link_html = '<a href="' . $link . '">' . $content_type_label . '</a>';
             }
 
-            $replacements[$original] = \Drupal\Core\Render\Markup::create($entity_link_html);
+            $replacements[$original] = Markup::create($entity_link_html);
           }
 
           break;
