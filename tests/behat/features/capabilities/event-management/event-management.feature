@@ -11,6 +11,9 @@ Feature: Event Management
       | name            | mail             | field_profile_organization | status |
       | event_organiser_1 | eo_1@example.com | GoalGorilla                | 1      |
       | event_organiser_2 | eo_2@example.com | Drupal                     | 1      |
+    And groups:
+      | title           | description      | author         | type        | language |
+      | Springfield local business collaboration | Description text | event_organiser_1 | open_group  | en       |
     And I am logged in as an "authenticated user"
     And I am on "user"
     And I click "Events"
