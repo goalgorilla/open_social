@@ -87,7 +87,7 @@ function social_like_tokens($type, $tokens, array $data, array $options, Bubblea
 
             if ($name === 'liked_entity_link_html') {
               // We should only use the label of entities who have a label.
-              if ($link_label = $entity->label()) {
+              if ($content_type !== 'comment' && $link_label = $entity->label()) {
                 $liked_entity_link_html = $content_type_label . ' <a href="' . $link . '">' . $link_label . '</a>';
               }
               else {
