@@ -11,7 +11,7 @@ use Drupal\user\UserInterface;
  * @UserExportPlugin(
  *  id = "user_comments_created",
  *  label = @Translation("Comments created"),
- *  weight = -250,
+ *  weight = -240,
  * )
  */
 class UserAnalyticsCommentsCreated extends UserExportPluginBase {

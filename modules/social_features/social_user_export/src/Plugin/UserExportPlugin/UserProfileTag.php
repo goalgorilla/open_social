@@ -11,7 +11,7 @@ use Drupal\user\UserInterface;
  * @UserExportPlugin(
  *  id = "user_profile_tag",
  *  label = @Translation("Profile tag"),
- *  weight = -280,
+ *  weight = -270,
  * )
  */
 class UserProfileTag extends UserExportPluginBase {

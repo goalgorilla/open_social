@@ -11,7 +11,7 @@ use Drupal\user\UserInterface;
  * @UserExportPlugin(
  *  id = "user_likes",
  *  label = @Translation("Number of Likes"),
- *  weight = -200,
+ *  weight = -190,
  * )
  */
 class UserAnalyticsLikes extends UserExportPluginBase {

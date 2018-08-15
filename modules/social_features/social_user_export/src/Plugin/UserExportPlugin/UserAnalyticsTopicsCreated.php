@@ -11,7 +11,7 @@ use Drupal\user\UserInterface;
  * @UserExportPlugin(
  *  id = "user_topics_created",
  *  label = @Translation("Topics created"),
- *  weight = -240,
+ *  weight = -230,
  * )
  */
 class UserAnalyticsTopicsCreated extends UserExportPluginBase {

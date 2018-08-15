@@ -11,7 +11,7 @@ use Drupal\user\UserInterface;
  * @UserExportPlugin(
  *  id = "user_posts_created",
  *  label = @Translation("Posts created"),
- *  weight = -260,
+ *  weight = -250,
  * )
  */
 class UserAnalyticsPostsCreated extends UserExportPluginBase {

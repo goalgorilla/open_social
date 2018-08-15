@@ -11,7 +11,7 @@ use Drupal\user\UserInterface;
  * @UserExportPlugin(
  *  id = "user_groups_created",
  *  label = @Translation("Groups created"),
- *  weight = -210,
+ *  weight = -200,
  * )
  */
 class UserAnalyticsGroupsCreated extends UserExportPluginBase {
