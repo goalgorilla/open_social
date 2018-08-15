@@ -109,11 +109,11 @@ function social_like_tokens($type, $tokens, array $data, array $options, Bubblea
                     else {
                       $commented_content_type = $commented_entity->bundle();
                     }
-                    $liked_entity_link_html .= ' ' . t('in') . ' ' . $commented_content_type . ' <a href="' . $ref_link . '">' . $ref_link_label . '</a>';
+                    $liked_entity_link_html .= ' ' . t('on') . ' ' . $commented_content_type . ' <a href="' . $ref_link . '">' . $ref_link_label . '</a>';
                   }
                   else {
                     $commented_content_type = Unicode::strtolower($commented_entity->getEntityType()->getLabel());
-                    $liked_entity_link_html .= ' ' . t('in a') . ' <a href="' . $ref_link . '">' . $commented_content_type . '</a>';
+                    $liked_entity_link_html .= ' ' . t('on a') . ' <a href="' . $ref_link . '">' . $commented_content_type . '</a>';
                   }
                 }
               }
