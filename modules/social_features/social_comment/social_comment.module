@@ -58,6 +58,7 @@ function social_comment_form_comment_form_alter(&$form, FormStateInterface $form
 
       $form['actions']['submit']['#attributes']['value'] = t('Submit');
       $form['actions']['submit']['#value'] = t('Submit');
+      $form['actions']['submit']['#submit'][] = 'social_comment_edit_form_submit';
       break;
 
     default:
@@ -71,6 +72,21 @@ function social_comment_form_comment_form_alter(&$form, FormStateInterface $form
   }
 
   $form['#attached']['library'][] = 'social_post/keycode-submit';
+}
+
+/**
+ *
+ *
+ * @param $form
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ */
+function social_comment_edit_form_submit($form, FormStateInterface $form_state) {
+  if (isset($form['author']['status']['#default_value']) && $form['author']['status']['#default_value'] === '1') {
+    if ($form_state->getValue('status') === 0) {
+      $messenger = \Drupal::messenger();
+      $messenger->addMessage(t('All the replies placed on an unpublished comment will be hidden automatically.'), 'warning');
+    }
+  }
 }
 
 /**
