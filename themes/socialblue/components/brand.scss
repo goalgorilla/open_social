@@ -352,9 +352,23 @@ blockquote {
 .social-gtranslate-list--desktop > a {
   color: $navbar-default-link-color;
   background-color: $navbar-default-bg;
+  &:after {
+    color: $navbar-default-link-color;
+  }
+  .select-icon {
+    fill: $navbar-default-link-color;
+  }
+  &.active,
   &:focus,
   &:hover {
     color: $navbar-default-link-active-color;
+    fill: $navbar-default-link-active-color;
     background-color: $navbar-default-link-active-bg;
+    &:after {
+      color: $navbar-default-link-active-color;
+    }
+    .select-icon {
+      fill: $navbar-default-link-active-color;
+    }
   }
 }
