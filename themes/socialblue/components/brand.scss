@@ -349,7 +349,12 @@ blockquote {
     }
   }
 }
-
-.social-gtranslate-list--desktop > a:hover, .social-gtranslate-list--desktop > a:focus {
-  color: $brand-primary;
+.social-gtranslate-list--desktop > a {
+  color: $navbar-default-link-color;
+  background-color: $navbar-default-bg;
+  &:focus,
+  &:hover {
+    color: $navbar-default-link-active-color;
+    background-color: $navbar-default-link-active-bg;
+  }
 }
