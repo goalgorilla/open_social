@@ -68,11 +68,11 @@ function social_block_view_search_hero_block_alter(array &$build, BlockPluginInt
 }
 
 /**
- * Implements hook_entity_update().
+ * Implements hook_ENTITY_TYPE_update().
  *
  * Update the profile index when user is updated or delete entry when blocked.
  */
-function social_search_entity_update(EntityInterface $entity) {
+function social_search_user_update(EntityInterface $entity) {
   if ($entity->getEntityTypeId() === 'user') {
     $indexes = [
       'social_all',
