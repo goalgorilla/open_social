@@ -46,8 +46,10 @@ class EventAnEnrollActionForm extends EnrollActionForm {
         '#attributes' => [
           'class' => [
             'btn',
-            'btn-accent brand-bg-accent',
-            'btn-lg btn-raised',
+            'btn-accent',
+            'btn-lg',
+            'btn-raised',
+            'brand-bg-accent',
             'dropdown-toggle',
             'waves-effect',
           ],
@@ -74,8 +76,10 @@ class EventAnEnrollActionForm extends EnrollActionForm {
           '#attributes' => [
             'class' => [
               'btn',
-              'btn-accent brand-bg-accent',
-              'btn-lg btn-raised',
+              'btn-accent',
+              'btn-lg',
+              'btn-raised',
+              'brand-bg-accent',
               'waves-effect',
             ],
           ],
