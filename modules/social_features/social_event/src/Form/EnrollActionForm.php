@@ -19,6 +19,7 @@ use Drupal\social_event\Entity\EventEnrollment;
 use Drupal\user\UserStorageInterface;
 use Drupal\group\Entity\GroupContent;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 
 /**
  * Class EnrollActionForm.
@@ -70,6 +71,13 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
   protected $configFactory;
 
   /**
+   * The module handler.
+   *
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface
+   */
+  protected $moduleHandler;
+
+  /**
    * {@inheritdoc}
    */
   public function getFormId() {
@@ -91,14 +99,17 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
    *   The current user.
    * @param \Drupal\Core\Config\ConfigFactoryInterface $configFactory
    *   The config factory.
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface $moduleHandler
+   *   The module handler.
    */
-  public function __construct(RouteMatchInterface $route_match, EntityStorageInterface $entity_storage, UserStorageInterface $user_storage, EntityTypeManagerInterface $entityTypeManager, AccountProxyInterface $currentUser, ConfigFactoryInterface $configFactory) {
+  public function __construct(RouteMatchInterface $route_match, EntityStorageInterface $entity_storage, UserStorageInterface $user_storage, EntityTypeManagerInterface $entityTypeManager, AccountProxyInterface $currentUser, ConfigFactoryInterface $configFactory, ModuleHandlerInterface $moduleHandler) {
     $this->routeMatch = $route_match;
     $this->entityStorage = $entity_storage;
     $this->userStorage = $user_storage;
     $this->entityTypeManager = $entityTypeManager;
     $this->currentUser = $currentUser;
     $this->configFactory = $configFactory;
+    $this->moduleHandler = $moduleHandler;
   }
 
   /**
@@ -111,7 +122,8 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
       $container->get('entity.manager')->getStorage('user'),
       $container->get('entity_type.manager'),
       $container->get('current_user'),
-      $container->get('config.factory')
+      $container->get('config.factory'),
+      $container->get('module_handler')
     );
   }
 

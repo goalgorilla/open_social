@@ -2,12 +2,14 @@
 
 namespace Drupal\social_event_an_enroll\Form;
 
-use Drupal\social_event\Form\EnrollActionForm;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\social_event\Entity\EventEnrollment;
+use Drupal\Core\Link;
 use Drupal\Component\Utility\Crypt;
+use Drupal\Component\Serialization\Json;
 use Drupal\node\Entity\Node;
+use Drupal\social_event\Form\EnrollActionForm;
+use Drupal\social_event\Entity\EventEnrollment;
 
 /**
  * Class EventAnEnrollForm.
@@ -56,6 +58,32 @@ class EventAnEnrollForm extends EnrollActionForm {
       '#title' => $this->t('Email address'),
       '#description' => $this->t('Enter your email, so we can send you event updates.'),
     ];
+
+    if ($this->moduleHandler->moduleExists('data_policy')) {
+      $form['#attached']['library'][] = 'core/drupal.dialog.ajax';
+
+      $link = Link::createFromRoute($this->t('data policy'), 'data_policy.data_policy', [], [
+        'attributes' => [
+          'class' => ['use-ajax'],
+          'data-dialog-type' => 'modal',
+          'data-dialog-options' => Json::encode([
+            'title' => t('Data policy'),
+            'width' => 700,
+            'height' => 700,
+          ]),
+        ],
+      ]);
+
+      $enforce_consent = !empty($this->configFactory->get('data_policy.data_policy')->get('enforce_consent'));
+
+      $form['data_policy'] = [
+        '#type' => 'checkbox',
+        '#title' => $this->t('I agree with the @url', [
+          '@url' => $link->toString(),
+        ]),
+        '#required' => $enforce_consent && $this->currentUser->isAnonymous(),
+      ];
+    }
 
     $submit_text = $this->t('Enroll in event');
     $enrollment_open = TRUE;
