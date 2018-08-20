@@ -8,7 +8,7 @@ dependencies:
   module:
     - node
     - social_event
-    - user
+    - social_event_an_enroll
 id: manage_enrollments
 label: 'Manage Enrollments'
 module: views
@@ -81,7 +81,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
-          label: 'First name'
+          label: ''
           exclude: true
           alter:
             alter_text: false
@@ -114,7 +114,7 @@ display:
           element_class: ''
           element_label_type: ''
           element_label_class: ''
-          element_label_colon: true
+          element_label_colon: false
           element_wrapper_type: ''
           element_wrapper_class: ''
           element_default_classes: true
@@ -141,6 +141,69 @@ display:
           id: field_last_name
           table: event_enrollment__field_last_name
           field: field_last_name
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: ''
+          exclude: true
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: string
+          settings:
+            link_to_entity: false
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          plugin_id: field
+        nothing:
+          id: nothing
+          table: views
+          field: nothing
           relationship: none
           group_type: group
           admin_label: ''
@@ -184,22 +247,8 @@ display:
           empty: ''
           hide_empty: false
           empty_zero: false
-          hide_alter_empty: true
-          click_sort_column: value
-          type: string
-          settings:
-            link_to_entity: false
-          group_column: value
-          group_columns: {  }
-          group_rows: true
-          delta_limit: 0
-          delta_offset: 0
-          delta_reversed: false
-          delta_first_last: false
-          multi_type: separator
-          separator: ', '
-          field_api_classes: false
-          plugin_id: field
+          hide_alter_empty: false
+          plugin_id: custom
         field_email:
           id: field_email
           table: event_enrollment__field_email
@@ -380,19 +429,16 @@ display:
           plugin_id: node_nid
       display_extenders: {  }
     cache_metadata:
-      max-age: 0
+      max-age: -1
       contexts:
         - 'languages:language_content'
         - 'languages:language_interface'
         - url
         - url.query_args
-        - user.permissions
       tags:
         - 'config:field.storage.event_enrollment.field_email'
         - 'config:field.storage.event_enrollment.field_first_name'
         - 'config:field.storage.event_enrollment.field_last_name'
-        - env
-        - extensions
   page:
     display_plugin: page
     id: page
@@ -411,16 +457,13 @@ display:
         context: '0'
         menu_name: main
     cache_metadata:
-      max-age: 0
+      max-age: -1
       contexts:
         - 'languages:language_content'
         - 'languages:language_interface'
         - url
         - url.query_args
-        - user.permissions
       tags:
         - 'config:field.storage.event_enrollment.field_email'
         - 'config:field.storage.event_enrollment.field_first_name'
         - 'config:field.storage.event_enrollment.field_last_name'
-        - env
-        - extensions
