@@ -95,6 +95,9 @@ function _social_group_get_permissions($role) {
     'create open_group group',
     'create closed_group group',
     'view group stream page',
+    'view groups on my profile',
+    'view groups on other profiles',
+    'create public_group group',
   ]);
 
   $config = \Drupal::config('entity_access_by_field.settings');
@@ -110,6 +113,7 @@ function _social_group_get_permissions($role) {
     'view node.event.field_content_visibility:group content',
     'view node.topic.field_content_visibility:group content',
     'view node.page.field_content_visibility:group content',
+    'access group overview',
   ]);
 
   // Site manager.
@@ -347,7 +351,6 @@ function social_group_update_8010() {
     else {
       user_role_grant_permissions($role->id(), [
         'create public_group group',
-        'view group stream page',
       ]);
     }
   }
@@ -365,4 +368,31 @@ function social_group_update_8011() {
  */
 function social_group_update_8012() {
   module_set_weight('social_group', 2);
+}
+
+/**
+ * Set my groups permissions.
+ */
+function social_group_update_8013() {
+  // Make it so that everyone who has the 'access user profiles' permission,
+  // now also get these two new permissions.
+  $permissions = [
+    'view groups on my profile',
+    'view groups on other profiles',
+  ];
+
+  /** @var \Drupal\user\Entity\Role $role */
+  foreach (Role::loadMultiple() as $role) {
+    if ($role->hasPermission('access user profiles')) {
+      user_role_grant_permissions($role->id(), $permissions);
+    }
+  }
+}
+
+/**
+ * Grant permission to access group overview to contentmanager and sitemanager.
+ */
+function social_group_update_8014() {
+  user_role_grant_permissions('contentmanager', ['access group overview']);
+  user_role_grant_permissions('sitemanager', ['access group overview']);
 }

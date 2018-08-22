@@ -1,4 +1,4 @@
-@api @group @DS-3801 @DS-3776 @DS-3976 @DS-4211 @stability @stability-1
+@api @group @DS-3801 @DS-3776 @DS-3976 @DS-4211 @stability @stability-1 @group-access-roles
 Feature: Group access roles
   Benefit: As a CM+ I want to have full control over groups
   Role: As a CM+
@@ -80,7 +80,7 @@ Feature: Group access roles
   # As a CM+ member of this closed group I want to leave the group
     When I click "Test closed group 3"
     Then I should see the button "Joined"
-    When I click the xth "4" element with the css ".dropdown-toggle"
+    And I click the element with css selector "#hero .dropdown-toggle"
     And I should see the link "Leave group"
     And I click "Leave group"
     And I should see "This action cannot be undone."
@@ -92,9 +92,9 @@ Feature: Group access roles
 
   # Add a user with CM+ role (that has 'manage all groups' permission) on the Manage members tab so he gets the group admin role.
     When I am logged in as "Group User One"
-    When I click "Test closed group 3"
+    And I am on the stream of group "Test closed group 3"
     And I click "Manage members"
-    And I click "Add member"
-    And I fill in "Group User Two" for "Select a member"
+    And I click "Add members"
+    And I fill in "Group User Two" for "Select members to add"
     And I press "Save"
     Then I should see "Group Admin"

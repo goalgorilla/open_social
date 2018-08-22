@@ -1,4 +1,4 @@
-@api @group @DS-3428 @DS-4211 @stability @stability-1
+@api @group @DS-3428 @DS-4211 @stability @stability-1 @group-create-closed
 Feature: Create Closed Group
   Benefit: I want to create a closed group, where only group members can see the content.
   Role: As a LU
@@ -76,8 +76,8 @@ Feature: Create Closed Group
   # Lets add another user on the Manage members tab.
     When I click "Test closed group"
     And I click "Manage members"
-    And I click "Add member"
-    And I fill in "Group User Two" for "Select a member"
+    And I click "Add members"
+    And I fill in "Group User Two" for "Select members to add"
     And I press "Save"
     Then I click "Members"
     And I should see "Group User Two"
@@ -187,7 +187,7 @@ Feature: Create Closed Group
 
   # As a member of this closed group I want to leave the group
     And I should see the button "Joined"
-    When I click the xth "4" element with the css ".dropdown-toggle"
+    And I click the element with css selector "#hero .dropdown-toggle"
     And I should see the link "Leave group"
     And I click "Leave group"
     And I should see "Test closed group 2" in the "Hero block"
