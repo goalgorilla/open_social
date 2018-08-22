@@ -2,12 +2,44 @@
 
 namespace Drupal\social_group\Controller;
 
+use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\group\Entity\Group;
+use Drupal\user\Entity\User;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Returns responses for Social Group routes.
  */
 class SocialGroupController extends ControllerBase {
+
+  /**
+   * The request.
+   *
+   * @var \Symfony\Component\HttpFoundation\RequestStack
+   */
+  protected $requestStack;
+
+  /**
+   * SocialGroupController constructor.
+   *
+   * @param \Symfony\Component\HttpFoundation\RequestStack $requestStack
+   *   The request stack.
+   */
+  public function __construct(RequestStack $requestStack) {
+    $this->requestStack = $requestStack;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('request_stack')
+    );
+  }
 
   /**
    * The _title_callback for the view.group_members.page_group_members route.
@@ -21,15 +53,11 @@ class SocialGroupController extends ControllerBase {
    *   The page title.
    */
   public function groupMembersTitle($group) {
-    if (is_object($group)) {
-      $group_label = $group->label();
+    // If it's not a group then it's a gid.
+    if (!$group instanceof Group) {
+      $group = Group::load($group);
     }
-    else {
-      $storage = \Drupal::entityTypeManager()->getStorage('group');
-      $group_entity = $storage->load($group);
-      $group_label = empty($group_entity) ? 'group' : $group_entity->label();
-    }
-    return $this->t('Members of @name', ['@name' => $group_label]);
+    return $this->t('Members of @name', ['@name' => $group->label()]);
   }
 
   /**
@@ -65,7 +93,7 @@ class SocialGroupController extends ControllerBase {
    *   The page title.
    */
   public function groupAddMemberTitle() {
-    return $this->t('Add a member');
+    return $this->t('Add members');
   }
 
   /**
@@ -76,6 +104,40 @@ class SocialGroupController extends ControllerBase {
    */
   public function groupRemoveContentTitle() {
     return $this->t('Remove a member');
+  }
+
+  /**
+   * Function that checks access on the my topic pages.
+   *
+   * @param \Drupal\Core\Session\AccountInterface $account
+   *   The account we need to check access for.
+   *
+   * @return \Drupal\Core\Access\AccessResult
+   *   If access is allowed.
+   */
+  public function myGroupAccess(AccountInterface $account) {
+    // Fetch user from url.
+    $user = $this->requestStack->getCurrentRequest()->get('user');
+    // If we don't have a user in the request, assume it's my own profile.
+    if (is_null($user)) {
+      // Usecase is the user menu, which is generated on all LU pages.
+      $user = User::load($account->id());
+    }
+
+    // If not a user then just return neutral.
+    if (!$user instanceof User) {
+      $user = User::load($user);
+
+      if (!$user instanceof User) {
+        return AccessResult::neutral();
+      }
+    }
+
+    // Own profile?
+    if ($user->id() === $account->id()) {
+      return AccessResult::allowedIfHasPermission($account, 'view groups on my profile');
+    }
+    return AccessResult::allowedIfHasPermission($account, 'view groups on other profiles');
   }
 
 }

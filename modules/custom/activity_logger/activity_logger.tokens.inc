@@ -9,6 +9,7 @@ use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\Url;
 use Drupal\group\Entity\Group;
 use Drupal\group\Entity\GroupContent;
+use Drupal\node\Entity\Node;
 
 /**
  * Implements hook_token_info().
@@ -64,6 +65,7 @@ function activity_logger_tokens($type, $tokens, array $data, array $options, Bub
     foreach ($tokens as $name => $original) {
       switch ($name) {
 
+        case 'node-title':
         case 'gtitle':
         case 'gurl':
         case 'recipient-user-url':
@@ -80,6 +82,10 @@ function activity_logger_tokens($type, $tokens, array $data, array $options, Bub
               // If comment get the entity to which the comment is attached.
               if ($entity->getEntityTypeId() === 'comment') {
                 $entity = $entity->getCommentedEntity();
+              }
+              // When it is a node.
+              if ($entity->getEntityTypeId() === 'node') {
+                $node = $entity;
               }
 
               // Try to get the group.
@@ -103,6 +109,7 @@ function activity_logger_tokens($type, $tokens, array $data, array $options, Bub
               // Handling for group content entities.
               if ($entity->getEntityTypeId() === 'group_content') {
                 $group = $entity->getGroup();
+                $node = $entity->getEntity();
               }
               // Handling for group entities.
               if ($entity->getEntityTypeId() === 'group') {
@@ -149,6 +156,12 @@ function activity_logger_tokens($type, $tokens, array $data, array $options, Bub
                   ['absolute' => TRUE]
                 );
                 $replacements[$original] = $thread_url->toString();
+              }
+
+              if ($name === 'node-title') {
+                if (isset($node) && $node instanceof Node) {
+                  $replacements[$original] = $node->label();
+                }
               }
 
             }
