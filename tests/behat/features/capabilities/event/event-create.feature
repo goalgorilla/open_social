@@ -34,7 +34,7 @@ Feature: Create Event
     And I should see "79000" in the "Main content"
     And I should see "Lviv" in the "Main content"
     And I should see "Lviv oblast" in the "Main content"
-    And I should see "1 Jan '25 - 11:00"
+    And I should see "1 Jan '25 11:00"
 
     # Quick edit
     Given I click "Edit content"
@@ -46,4 +46,4 @@ Feature: Create Event
     Then I should see "Event This is a test event - edit has been updated"
     And I should see "THIS IS A TEST EVENT - EDIT"
     And I should see "1 Jan '25"
-    And I should not see "1 Jan '25 - 11:00"
+    And I should not see "1 Jan '25 11:00"
