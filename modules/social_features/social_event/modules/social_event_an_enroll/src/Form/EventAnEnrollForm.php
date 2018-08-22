@@ -60,29 +60,33 @@ class EventAnEnrollForm extends EnrollActionForm {
     ];
 
     if ($this->moduleHandler->moduleExists('data_policy')) {
-      $form['#attached']['library'][] = 'core/drupal.dialog.ajax';
+      $data_policy_config = $this->configFactory->get('data_policy.data_policy');
+      // Check if data policy is created.
+      if (!empty($data_policy_config->get('entity_id'))) {
+        $form['#attached']['library'][] = 'core/drupal.dialog.ajax';
 
-      $link = Link::createFromRoute($this->t('data policy'), 'data_policy.data_policy', [], [
-        'attributes' => [
-          'class' => ['use-ajax'],
-          'data-dialog-type' => 'modal',
-          'data-dialog-options' => Json::encode([
-            'title' => t('Data policy'),
-            'width' => 700,
-            'height' => 700,
+        $link = Link::createFromRoute($this->t('data policy'), 'data_policy.data_policy', [], [
+          'attributes' => [
+            'class' => ['use-ajax'],
+            'data-dialog-type' => 'modal',
+            'data-dialog-options' => Json::encode([
+              'title' => t('Data policy'),
+              'width' => 700,
+              'height' => 700,
+            ]),
+          ],
+        ]);
+
+        $enforce_consent = !empty($data_policy_config->get('enforce_consent'));
+
+        $form['data_policy'] = [
+          '#type' => 'checkbox',
+          '#title' => $this->t('I agree with the @url', [
+            '@url' => $link->toString(),
           ]),
-        ],
-      ]);
-
-      $enforce_consent = !empty($this->configFactory->get('data_policy.data_policy')->get('enforce_consent'));
-
-      $form['data_policy'] = [
-        '#type' => 'checkbox',
-        '#title' => $this->t('I agree with the @url', [
-          '@url' => $link->toString(),
-        ]),
-        '#required' => $enforce_consent && $this->currentUser->isAnonymous(),
-      ];
+          '#required' => $enforce_consent,
+        ];
+      }
     }
 
     $submit_text = $this->t('Enroll in event');
