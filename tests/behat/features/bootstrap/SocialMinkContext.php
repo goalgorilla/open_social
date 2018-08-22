@@ -163,7 +163,7 @@ class SocialMinkContext extends MinkContext {
    * @see \Drupal\FunctionalJavascriptTests\JSWebAssert::assertWaitOnAjaxRequest()
    * @see \Drupal\DrupalExtension\Context\MinkContext::iWaitForAjaxToFinish()
    *
-   * @Given I wait for AJAX to finish
+   * This overrides "Given I wait for AJAX to finish"
    */
   public function iWaitForAjaxToFinish() {
     $condition = <<<JS
