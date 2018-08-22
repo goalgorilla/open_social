@@ -51,6 +51,12 @@ class SetGroupsForNodeService {
   public function setGroupsForNode(NodeInterface $node, array $groups_to_remove, array $groups_to_add, array $original_groups = [], $is_new = FALSE) {
     $moved = FALSE;
 
+    // If we don't have to add or remove groups, we don't need to move anything.
+    // the node is just updated for other values.
+    if (empty($groups_to_add) && empty($groups_to_remove)) {
+      return $node;
+    }
+
     // Remove the notifications related to the node if a group is added or
     // moved.
     if ((empty($original_groups) || $original_groups != $groups_to_add)) {

@@ -208,6 +208,28 @@ class ActivityLoggerFactory {
       }
     }
     $query->accessCheck(FALSE);
+
+    // Fix duplicates for create_bundle_group && moved_content_between_groups
+    // create_bundle_group is run on cron, it could be there is already a
+    // message for moving content between groups. So we need to make sure we
+    // check if either create_bundle_group or move_content is already there
+    // before we add another message that content is created in a group.
+    $types = [
+      'moved_content_between_groups',
+      'create_topic_group',
+      'create_event_group',
+    ];
+
+    if (in_array($message_type, $types)) {
+      $query = \Drupal::entityQuery('message');
+      $query->condition('template', $types, 'IN');
+      $query->condition('field_message_related_object.target_id', $related_object['target_id']);
+      $query->condition('field_message_related_object.target_type', $related_object['target_type']);
+      $query->condition('field_message_context', $context);
+      $query->condition('uid', $uid);
+      $query->accessCheck(FALSE);
+    }
+
     $ids = $query->execute();
     if (!empty($ids)) {
       $exists = TRUE;
