@@ -551,6 +551,7 @@ input[type="button"] {
   justify-content: center;
 }
 
+// @TODO: Fix it in future...
 // on mobile we want to "add" and "filter" buttons to be on one row
 // We need to add these selectors here now, because they need to be loaded regardless of other libraries being loaded
 .block-group-add-event-block,
@@ -559,6 +560,9 @@ input[type="button"] {
 .block-topic-add-block,
 .block-group-add-block {
   display: inline-block;
+  @include for-tablet-landscape-down {
+    margin-top: 1rem;
+  }
 
   @include for-tablet-landscape-up {
     display: block;
