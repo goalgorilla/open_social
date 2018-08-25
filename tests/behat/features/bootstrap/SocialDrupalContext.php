@@ -1,6 +1,8 @@
 <?php
 // @codingStandardsIgnoreFile
 
+namespace Drupal\social\Behat;
+
 use Drupal\DrupalExtension\Context\DrupalContext;
 use Behat\Mink\Element\Element;
 use Drupal\big_pipe\Render\Placeholder\BigPipeStrategy;
