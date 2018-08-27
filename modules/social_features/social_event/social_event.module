@@ -354,11 +354,15 @@ function social_event_form_alter(&$form, FormStateInterface $form_state, $form_i
   ];
 
   if (in_array($form_id, $event_forms)) {
-    // @TODO: Add #default_value.
     $form['event_all_day'] = [
       '#type' => 'checkbox',
       '#title' => t('All day'),
     ];
+    // Set default value and fieldgroup for all day checkbox.
+    if ($date = $form['field_event_date']['widget'][0]['value']['#default_value']) {
+      $all_day_value = $date instanceof DrupalDateTime && social_event_date_is_all_day($date);
+      $form['event_all_day']['#default_value'] = $all_day_value;
+    }
     $form['#fieldgroups']['group_date_time']->children[] = 'event_all_day';
     $form['#group_children']['event_all_day'] = 'group_date_time';
     $form['#after_build'][] = 'social_event_date_after_build';
@@ -418,8 +422,15 @@ function social_event_date_all_day_checkbox(&$element, FormStateInterface $form_
   ];
 
   $date = $element['#value']['object'];
-  if ($date instanceof DrupalDateTime && $date->format('H:i', ['timezone' => DateTimeItemInterface::STORAGE_TIMEZONE]) == '00:01') {
+  if ($date instanceof DrupalDateTime && social_event_date_is_all_day($date)) {
     $element['time']['#value'] = '';
     $element['event_all_day']['#value'] = TRUE;
   }
+}
+
+/**
+ * Check if event date is all day.
+ */
+function social_event_date_is_all_day(DrupalDateTime $date) {
+  return $date->format('H:i', ['timezone' => DateTimeItemInterface::STORAGE_TIMEZONE]) == '00:01';
 }
