@@ -27,8 +27,8 @@ class EventAnEnrollOverride implements ConfigFactoryOverrideInterface {
     if (in_array($config_name, $names)) {
       $config = $config_factory->getEditable($config_name);
 
-      $third_party = $config->get('third_party_settings');
-      $third_party['field_group']['group_event_visibility']['children'][] = 'field_event_an_enroll';
+      $children = $config->get('third_party_settings.field_group.group_event_visibility.children');
+      $children[] = 'field_event_an_enroll';
 
       $content = $config->get('content');
       $content['field_event_an_enroll'] = [
@@ -41,8 +41,16 @@ class EventAnEnrollOverride implements ConfigFactoryOverrideInterface {
         'region' => 'content',
       ];
 
-      $overrides[$config_name]['third_party_settings'] = $third_party;
-      $overrides[$config_name]['content'] = $content;
+      $overrides[$config_name] = [
+        'third_party_settings' => [
+          'field_group' => [
+            'group_event_visibility' => [
+              'children' => $children,
+            ],
+          ],
+        ],
+        'content' => $content,
+      ];
     }
 
     return $overrides;
