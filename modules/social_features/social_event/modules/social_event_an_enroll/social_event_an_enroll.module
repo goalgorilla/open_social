@@ -112,8 +112,8 @@ function social_event_an_enroll_preprocess_page_hero_data(array &$variables) {
 function social_event_an_enroll_views_post_render(ViewExecutable $view, &$output, CachePluginBase $cache) {
   if ($view->id() == 'event_enrollments' && $view->current_display == 'event_enrollments') {
     if (isset($output['#rows'])) {
-      $nid = \Drupal::routeMatch()->getRawParameter('node');
-      if ($nid) {
+      if (!empty($view->args[0])) {
+        $nid = $view->args[0];
         $node = Node::load($nid);
         $an_count = social_event_an_enroll_count($nid);
         if (social_event_an_enroll_is_enabled($node) && $an_count && $an_count > 0) {
