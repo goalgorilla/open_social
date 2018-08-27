@@ -124,7 +124,7 @@ class EmailContext implements Context {
         $email_body = $email->getBody();
 
         // Make it a traversable HTML doc.
-        $doc = new DOMDocument();
+        $doc = new \DOMDocument();
         $doc->loadHTML($email_body);
         $xpath = new DOMXPath($doc);
         // Find the post header and email content in the HTML file.
