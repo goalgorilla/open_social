@@ -86,7 +86,7 @@ function social_event_an_enroll_preprocess_page_hero_data(array &$variables) {
     $node = $variables['node'];
 
     if ($node instanceof Node && social_event_an_enroll_is_enabled($node)) {
-      $form = \Drupal::formBuilder()->getForm('Drupal\social_event_an_enroll\Form\EventAnEnrollActionForm');
+      $form = \Drupal::formBuilder()->getForm('Drupal\social_event_an_enroll\Form\EventAnEnrollActionForm', $node);
 
       $variables['event_enrollment'] = [
         'enroll_action_form' => $form,

@@ -25,14 +25,9 @@ class EventAnEnrollActionForm extends EnrollActionForm {
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state) {
-    $nid = $this->routeMatch->getRawParameter('node');
+  public function buildForm(array $form, FormStateInterface $form_state, Node $node = NULL) {
+    $nid = $node->id();
     $token = $this->getRequest()->query->get('token');
-
-    // Load node object.
-    if (!is_null($nid) && !is_object($nid)) {
-      $node = Node::load($nid);
-    }
 
     if (!empty($token) && social_event_an_enroll_token_exists($token, $nid)) {
       $form['event'] = [
@@ -89,14 +84,11 @@ class EventAnEnrollActionForm extends EnrollActionForm {
         $attributes = [
           'class' => [
             'use-ajax',
-            'button',
-            'button--accent',
             'js-form-submit',
             'form-submit',
-            'btn-lg',
             'btn',
-            'js-form-submit',
             'btn-accent',
+            'btn-lg',
           ],
           'data-dialog-type' => 'modal',
           'data-dialog-options' => json_encode([
@@ -121,10 +113,9 @@ class EventAnEnrollActionForm extends EnrollActionForm {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    $current_user = $this->currentUser;
-    $uid = $current_user->id();
+    $uid = $this->currentUser->id();
 
-    $token = \Drupal::request()->query->get('token');
+    $token = $this->getRequest()->query->get('token');
     if (!empty($token)) {
       $nid = $form_state->getValue('event');
       $conditions = [
