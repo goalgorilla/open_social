@@ -195,6 +195,8 @@ function social_event_an_enroll_url($nid, $token) {
 
 /**
  * Implements hook_menu_local_tasks_alter().
+ *
+ * Check and display "Anonymous Enrollments" tab only for events.
  */
 function social_event_an_enroll_menu_local_tasks_alter(&$data, $route_name) {
   $can_show_an_enrollments_link = FALSE;
@@ -235,6 +237,8 @@ function social_event_an_enroll_is_enabled(Node $node) {
 
 /**
  * Implements hook_form_alter().
+ *
+ * Check and display "Allow anonymous enrollments" checkbox for public events.
  */
 function social_event_an_enroll_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   $event_forms = [
@@ -257,10 +261,11 @@ function social_event_an_enroll_form_alter(&$form, FormStateInterface $form_stat
 
 /**
  * Implements hook_ENTIT_YTYPE_update().
+ *
+ * Display warning if visibility was changed for already enabled AN enroll.
  */
 function social_event_an_enroll_node_update(Node $node) {
   if ($node->getType() === 'event') {
-    // Add warning if visibility was changed for already enabled AN enroll.
     $is_event_an_enroll = !empty($node->get('field_event_an_enroll')->value);
     $new_visibility = $node->get('field_content_visibility')->getString();
     $old_visibility = $node->original->get('field_content_visibility')->getString();
