@@ -30,7 +30,7 @@ function social_follow_content_event_enrollment_follow(EntityInterface $entity) 
     // Check if user already follow this content.
     // Only logged in users can follow content.
     $account = \Drupal::currentUser();
-    if (!$account->isLoggedIn()) {
+    if (!$account->isAuthenticated()) {
       return;
     }
 
