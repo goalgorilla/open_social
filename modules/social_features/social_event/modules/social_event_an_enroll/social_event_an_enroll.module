@@ -5,7 +5,6 @@
  * The Social event AN enroll module.
  */
 
-use Drupal\Core\Url;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\views\ViewExecutable;
 use Drupal\views\Plugin\views\cache\CachePluginBase;
@@ -17,15 +16,11 @@ use Drupal\file\Entity\File;
  * Implements hook_mail().
  */
 function social_event_an_enroll_mail($key, &$message, $params) {
-  $social_event_an_enroll_config = \Drupal::config('social_event_an_enroll.settings');
+  $config = \Drupal::config('social_event_an_enroll.settings');
+  $token = \Drupal::token();
 
-  $replace = [
-    $params['event_title'],
-    $params['event_url'],
-  ];
-
-  $subject = social_event_an_enroll_token_replace($replace, $social_event_an_enroll_config->get('event_an_enroll_email_subject'));
-  $body = social_event_an_enroll_token_replace($replace, $social_event_an_enroll_config->get('event_an_enroll_email_body'));
+  $subject = $token->replace($config->get('event_an_enroll_email_subject'), $params);
+  $body = $token->replace($config->get('event_an_enroll_email_body'), $params);
 
   $message['subject'] .= PlainTextOutput::renderFromHtml($subject);
   $message['body'][] = $body;
@@ -33,31 +28,19 @@ function social_event_an_enroll_mail($key, &$message, $params) {
 }
 
 /**
- * Replace token in email.
- */
-function social_event_an_enroll_token_replace($replace, $subject) {
-  return str_replace(['[event name]', '[event url]'], $replace, $subject);
-}
-
-/**
  * Create and send a invitation email on the given user account.
  */
 function social_event_an_enroll_send_mail($params) {
   if (!empty($params['field_event']) && !empty($params['field_email'])) {
-
-    $nid = $params['field_event'];
-    $email = $params['field_email'];
-    $token = $params['field_token'];
-
-    $node = Node::load($nid);
-    $params['event_title'] = $node->getTitle();
-    $params['event_url'] = social_event_an_enroll_url($nid, $token);
+    $node = Node::load($params['field_event']);
+    $params['node'] = $node;
+    $params['token'] = $params['field_token'];
 
     $langcode = \Drupal::languageManager()->getCurrentLanguage()->getId();
     $site_mail = \Drupal::config('system.site')->get('mail');
 
     $mail = \Drupal::service('plugin.manager.mail')
-      ->mail('social_event_an_enroll', 'social_event_an_enroll', $email, $langcode, $params, $site_mail);
+      ->mail('social_event_an_enroll', 'social_event_an_enroll', $params['field_email'], $langcode, $params, $site_mail);
 
     return empty($mail) ? NULL : $mail['result'];
   }
@@ -178,19 +161,6 @@ function social_event_an_enroll_token_exists($token, $nid) {
     ->fetchField();
 
   return !empty($results);
-}
-
-/**
- * Returns url to event with token for anonymous enrollment.
- */
-function social_event_an_enroll_url($nid, $token) {
-  $url = Url::fromRoute('entity.node.canonical',
-    ['node' => $nid],
-    [
-      'query' => ['token' => $token],
-      'absolute' => TRUE,
-    ])->toString();
-  return $url;
 }
 
 /**
