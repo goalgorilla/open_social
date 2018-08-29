@@ -18,6 +18,7 @@ use Drupal\group\Entity\GroupContentType;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupContent;
 use Drupal\group\Entity\GroupType;
+use Drupal\node\NodeInterface;
 use Drupal\social_group\Controller\SocialGroupController;
 use Drupal\social_group\Form\SocialGroupAddForm;
 use Drupal\social_group\SocialGroupHelperService;
@@ -843,6 +844,24 @@ function _social_group_get_member_profile(GroupContent $group_content) {
  *   Returns the group object.
  */
 function _social_group_get_current_group($node = NULL) {
+  $cache = &drupal_static(__FUNCTION__, []);
+
+  // For the same $node input, within the same request the return is always
+  // the same.
+  $nid = NULL;
+  if (is_null($node)) {
+    $nid = -1;
+  }
+  elseif ($node instanceof NodeInterface) {
+    $nid = $node->id();
+  }
+
+  // If we have a cache key and it has a value, we're done early.
+  if (!is_null($nid) && isset($cache[$nid])) {
+    // Translate FALSE (so isset works) back to NULL.
+    return $cache[$nid] ?: NULL;
+  }
+
   $group = \Drupal::routeMatch()->getParameter('group');
 
   if (!is_object($group) && !is_null($group)) {
@@ -864,6 +883,12 @@ function _social_group_get_current_group($node = NULL) {
           ->load($gid_from_entity);
       }
     }
+  }
+
+  // If we have a cache key we store the value.
+  if (!is_null($nid)) {
+    // Translate NULL to FALSE so that isset works.
+    $cache[$nid] = isset($group) ? $group : FALSE;
   }
 
   return $group;
