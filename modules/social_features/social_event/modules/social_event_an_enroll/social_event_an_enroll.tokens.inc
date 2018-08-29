@@ -42,7 +42,7 @@ function social_event_an_enroll_tokens($type, $tokens, array $data, array $optio
           // Returns url to event with token for anonymous enrollment.
           $url_options = [
             'query' => ['token' => $data['token']],
-            'absolute' => TRUE
+            'absolute' => TRUE,
           ];
           $replacements[$original] = $data['node']->toUrl('canonical', $url_options)->toString();
           break;
