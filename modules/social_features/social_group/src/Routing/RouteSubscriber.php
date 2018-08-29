@@ -64,6 +64,12 @@ class RouteSubscriber extends RouteSubscriberBase {
       $defaults['_form'] = '\Drupal\social_group\Form\SocialGroupAddForm';
       $route->setDefaults($defaults);
     }
+
+    if ($route = $collection->get('view.groups.page_user_groups')) {
+      $requirements = $route->getRequirements();
+      $requirements['_custom_access'] = "\Drupal\social_group\Controller\SocialGroupController::myGroupAccess";
+      $route->setRequirements($requirements);
+    }
   }
 
 }
