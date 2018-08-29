@@ -217,7 +217,6 @@ function social_event_an_enroll_form_alter(&$form, FormStateInterface $form_stat
   ];
 
   if (in_array($form_id, $event_forms)) {
-    // @TODO: Fix states when group is selected.
     $form['field_event_an_enroll']['#states'] = [
       'visible' => [
         ':input[name="field_content_visibility"]' => ['value' => 'public'],
