@@ -1,5 +1,6 @@
 services:
   social_comment_upload.override:
     class: \Drupal\social_comment_upload\SocialCommentUploadConfigOverride
+    arguments: ['@config.factory']
     tags:
       - {name: config.factory.override, priority: 5}
