@@ -101,6 +101,7 @@ function social_event_menu_local_tasks_alter(&$data, $route_name) {
     'view.event_enrollments.view_enrollments',
     'entity.node.canonical',
     'view.managers.view_managers',
+    'view.manage_enrollments.page',
   ];
   if (in_array($route_name, $routes_to_check)) {
     $node = \Drupal::service('current_route_match')->getParameter('node');
@@ -123,8 +124,8 @@ function social_event_menu_local_tasks_alter(&$data, $route_name) {
  * Implements hook_ENTITY_TYPE_view_alter().
  */
 function social_event_node_view_alter(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display) {
-  if ($entity->getType() === 'event' && ($display->getMode() === 'teaser' || $display->getMode() === 'small_teaser')) {
-    $current_user = \Drupal::currentUser();
+  $current_user = \Drupal::currentUser();
+  if (!$current_user->isAnonymous() && $entity->getType() === 'event' && ($display->getMode() === 'teaser' || $display->getMode() === 'small_teaser')) {
     $uid = $current_user->id();
     $nid = $entity->id();
 

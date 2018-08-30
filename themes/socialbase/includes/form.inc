@@ -288,7 +288,9 @@ function socialbase_form_alter(&$form, FormStateInterface $form_state, $form_id)
       'data_policy_edit_form',
       'data_policy_data_policy_agreement',
       'data_policy_data_policy_revision_edit',
-    ]);
+      'event_an_enroll_form',
+    ]
+  );
 
   if (in_array($form_id, $default_forms)) {
     $form['#attributes']['class'][] = 'form--default';
@@ -328,6 +330,7 @@ function socialbase_form_alter(&$form, FormStateInterface $form_state, $form_id)
     'user_register_form',
     'user_pass_reset',
     'social_user_password_form',
+    'event_an_enroll_form',
     'data_policy_edit_form',
     'data_policy_data_policy_agreement',
     'data_policy_data_policy_revision_edit',
