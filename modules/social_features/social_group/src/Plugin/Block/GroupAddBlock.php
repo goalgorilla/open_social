@@ -7,6 +7,7 @@ use Drupal\Core\Url;
 use Drupal\Core\Link;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Access\AccessResult;
+use Drupal\group\Entity\GroupType;
 
 /**
  * Provides a 'GroupAddBlock' block.
@@ -28,7 +29,15 @@ class GroupAddBlock extends BlockBase {
     $route_user_id = \Drupal::routeMatch()->getParameter('user');
 
     // Show this block only on current user Groups page.
-    if ($current_user->id() == $route_user_id) {
+    $can_create_groups = FALSE;
+    foreach (GroupType::loadMultiple() as $group_type) {
+      $permissions = 'create ' . $group_type->id() . ' group';
+      if ($account->hasPermission($permissions)) {
+        $can_create_groups = TRUE;
+        break;
+      }
+    }
+    if ($current_user->id() == $route_user_id && $can_create_groups) {
       return AccessResult::allowed();
     }
 

@@ -9,6 +9,8 @@ use Drupal\block\Entity\Block;
 use Drupal\Core\Block\BlockPluginInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Link;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\profile\Entity\ProfileInterface;
 use Drupal\social_user\Plugin\Action\SocialBlockUser;
 use Drupal\user\Plugin\Action\BlockUser;
@@ -36,6 +38,36 @@ function social_user_form_user_register_form_alter(&$form, FormStateInterface $f
   // By default notify the user of the new account.
   if (isset($form['account']['notify']) && $form['account']['notify']['#access'] === TRUE) {
     $form['account']['notify']['#default_value'] = 1;
+  }
+
+  // Treat the account container as a separate fieldset so it is properly themed
+  // by the socialbase theme.
+  if (isset($form['account'])) {
+    $form['account']['#type'] = 'fieldset';
+    $form['account']['#title'] = new TranslatableMarkup('Sign up with <b>email</b>');
+
+    // If we have a help text then we display it to the user.
+    $signup_help = \Drupal::config('social_user.settings')->get('signup_help');
+    if (!empty($signup_help)) {
+      $form['account']['#description'] = $signup_help;
+    }
+
+    $link_options = [];
+
+    // Preserve the destination parameter when a user logs in instead.
+    $request = \Drupal::request();
+    if ($request->query->has('destination')) {
+      $link_options['query'] = [
+        'destination' => $request->query->get('destination'),
+      ];
+    }
+
+    $login_link = Link::createFromRoute(new TranslatableMarkup('Log in'), 'user.login', [], $link_options)->toString();
+
+    $form['account']['login-link'] = [
+      '#markup' => new TranslatableMarkup("Have an account already? @link", ["@link" => $login_link]),
+      '#weight' => 1000,
+    ];
   }
 
   // Add an extra validation option, to check for existing data.
@@ -328,4 +360,83 @@ function social_user_tokens_alter(&$replacements, $context, $bubbleable_metadata
     (array_key_exists('user', $context['data']) && $context['data']['user'] === NULL)) {
     $replacements[$context['tokens']['url:absolute']] = NULL;
   }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ *
+ * Exposes the signup/login help texts to the site administrator.
+ */
+function social_user_form_user_admin_settings_alter(&$form, FormStateInterface $form_state) {
+  $config = \Drupal::config('social_user.settings');
+
+  $fieldset = social_user_ensure_help_text_fieldset($form);
+
+  $form[$fieldset]['signup_help'] = [
+    '#type' => 'textarea',
+    '#title' => new TranslatableMarkup('Sign Up'),
+    '#description' => new TranslatableMarkup("Displayed in the user sign-up card."),
+    "#default_value" => $config->get('signup_help'),
+    '#weight' => 10,
+  ];
+  $form[$fieldset]['login_help'] = [
+    '#type' => 'textarea',
+    '#title' => new TranslatableMarkup('Log In'),
+    '#description' => new TranslatableMarkup("Displayed in the user log in card."),
+    "#default_value" => $config->get('login_help'),
+    '#weight' => 20,
+  ];
+
+  $form['#submit'][] = 'social_user_form_user_admin_settings_submit';
+}
+
+/**
+ * Stores the help texts for the social_user module.
+ */
+function social_user_form_user_admin_settings_submit($form, FormStateInterface $form_state) {
+  $config = \Drupal::configFactory()
+    ->getEditable('social_user.settings');
+  $config->set('signup_help', $form_state->getValue("signup_help"));
+  $config->set('login_help', $form_state->getValue("login_help"));
+  $config->save();
+}
+
+/**
+ * Ensures that the form contains a `user_help_texts` fieldset.
+ *
+ * The fieldset is targetted to be positioned after the
+ * registration_cancellation element of the account settings form. If the
+ * target can't be found then the fieldset is appended to the end. If the
+ * fieldset has already been added then nothing happens.
+ *
+ * @return string
+ *   The key of the fieldset that was added.
+ */
+function social_user_ensure_help_text_fieldset(&$form) {
+  $key = 'user_help_texts';
+
+  if (in_array($key, array_keys($form))) {
+    return $key;
+  }
+
+  $fieldset = [
+    '#type' => 'details',
+    '#open' => TRUE,
+    '#title' => new TranslatableMarkup("Login and Registration help texts"),
+    '#description' => new TranslatableMarkup("These fields allow you to configure various help texts that are shown to users during signup and login"),
+  ];
+
+  // Insert the fieldset after the registration and cancellation settings.
+  $index = array_search("registration_cancellation", array_keys($form));
+  if ($index !== FALSE && $index !== count($form)) {
+    $form = array_slice($form, 0, $index + 1, TRUE) +
+      [$key => $fieldset] +
+      array_slice($form, $index + 1, NULL, TRUE);
+  }
+  else {
+    // Fallback to end of array appending if we can't find our target key.
+    $form[$key] = $fieldset;
+  }
+
+  return $key;
 }
