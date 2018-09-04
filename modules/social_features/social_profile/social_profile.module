@@ -489,14 +489,23 @@ function social_profile_profile_view_alter(array &$build, EntityInterface $entit
         if (!$file->access('view', $current_user)) {
           // Load default data.
           $replacement_data = social_profile_get_default_image();
-          /** @var \Drupal\image\Plugin\Field\FieldType\ImageItem $imgitem */
-          $imgitem = $build['field_profile_image'][0]['#item'];
-          // Time to override the data that going to be rendered.
-          $imgitem->set('target_id', $replacement_data['id']);
-          $imgitem->set('width', $replacement_data['width']);
-          $imgitem->set('height', $replacement_data['height']);
-          // Put replacement data back in the object that's about to be built.
-          $build['field_profile_image'][0]['#item'] = $imgitem;
+          $default_profile = FALSE;
+          // Check if we have default profile image
+          if (!empty($replacement_data['id'])) {
+            $default = \Drupal\file\Entity\File::load($replacement_data['id']);
+            // Potentially the default profile image is in the private file system.
+            // Show default profile image if current user have access to it
+            if ($default->access('view', $current_user)) {
+              /** @var \Drupal\image\Plugin\Field\FieldType\ImageItem $imgitem */
+              $imgitem = $build['field_profile_image'][0]['#item'];
+              // Time to override the data that going to be rendered.
+              $imgitem->set('target_id', $replacement_data['id']);
+              $imgitem->set('width', $replacement_data['width']);
+              $imgitem->set('height', $replacement_data['height']);
+              // Put replacement data back in the object that's about to be built.
+              $build['field_profile_image'][0]['#item'] = $imgitem;              
+            }
+          }
         }
       }
     }
