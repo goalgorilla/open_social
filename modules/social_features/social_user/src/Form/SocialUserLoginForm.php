@@ -83,7 +83,7 @@ class SocialUserLoginForm extends UserLoginForm {
         'destination' => $request->query->get('destination'),
       ];
     }
-    
+
     if (\Drupal::config('user.settings')->get('register') != 'admin_only') {
       $sign_up_link = Link::createFromRoute($this->t('Sign up'), 'user.register', [], $link_options)->toString();
 
