@@ -83,13 +83,15 @@ class SocialUserLoginForm extends UserLoginForm {
         'destination' => $request->query->get('destination'),
       ];
     }
+    
+    if (\Drupal::config('user.settings')->get('register') != 'admin_only') {
+      $sign_up_link = Link::createFromRoute($this->t('Sign up'), 'user.register', [], $link_options)->toString();
 
-    $sign_up_link = Link::createFromRoute($this->t('Sign up'), 'user.register', [], $link_options)->toString();
-
-    $form['username_login']['sign-up-link'] = [
-      '#markup' => $this->t("Don't have an account yet? @link", ["@link" => $sign_up_link]),
-      '#weight' => 1000,
-    ];
+      $form['username_login']['sign-up-link'] = [
+        '#markup' => $this->t("Don't have an account yet? @link", ["@link" => $sign_up_link]),
+        '#weight' => 1000,
+      ];
+    }
 
     $form['actions'] = ['#type' => 'actions'];
     $form['actions']['submit'] = ['#type' => 'submit', '#value' => $this->t('Log in')];
