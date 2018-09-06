@@ -37,7 +37,7 @@ class SocialUserPasswordForm extends UserPasswordForm {
 
     unset($form['name']);
     unset($form['mail']);
-    
+
     if (\Drupal::config('user.settings')->get('register') != 'admin_only') {
       // Link to the login/register pages.
       $sign_up_link = Link::createFromRoute($this->t('Sign up'), 'user.register')->toString();
