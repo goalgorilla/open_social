@@ -198,8 +198,16 @@ class EmailContext implements Context {
    */
   public function iShouldHaveAnEmailWithTitleAndBodyMulti($subject, TableNode $table) {
     $body = [];
-    $hash = $table->getRowsHash();
-    foreach ($hash as $row) {
+    $hash1 = $table->getHash();
+    print_r('getHash: \r\n' . $hash1);
+    $hash2 = $table->getRowsHash();
+    print_r('getRowsHash: \r\n' . $hash2);
+    foreach ($hash2 as $row) {
+      print_r('getRowsHash row: \r\n' . $row);
+      $body[] = $row['content'];
+    }
+    foreach ($hash1 as $row) {
+      print_r('getHash row: \r\n' . $row);
       $body[] = $row['content'];
     }
 
