@@ -181,6 +181,7 @@ class EmailContext implements Context {
    * I read an email.
    *
    * @Then /^(?:|I )should have an email with subject "([^"]*)" and "([^"]*)" in the body$/
+   * @throws Exception
    */
   public function iShouldHaveAnEmailWithTitleAndBody($subject, $body) {
     $found_email = $this->findSubjectAndBody($subject, [$body]);
@@ -197,7 +198,7 @@ class EmailContext implements Context {
    */
   public function iShouldHaveAnEmailWithTitleAndBodyMulti($subject, TableNode $table) {
     $body = [];
-    $hash = $table->getHash();
+    $hash = $table->getRowsHash();
     foreach ($hash as $row) {
       $body[] = $row['content'];
     }
