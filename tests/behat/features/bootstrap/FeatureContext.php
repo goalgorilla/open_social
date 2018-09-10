@@ -294,6 +294,28 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
   }
 
   /**
+   * @When I click the xth :position element with the css :css in the :region( region)
+   */
+  public function iClickTheRegionElementWithTheCSS($position, $css, $region)
+  {
+    $session = $this->getSession();
+    $regionObj = $session->getPage()->find('region', $region);
+    $elements = $regionObj->findAll('css', $css);
+
+    $count = 0;
+
+    foreach($elements as $element) {
+      if ($count == $position) {
+        // Now click the element.
+        $element->click();
+        return;
+      }
+      $count++;
+    }
+    throw new \InvalidArgumentException(sprintf('Element not found with the css: "%s"', $css));
+  }
+
+  /**
    * Click on the element with the provided CSS Selector
    *
    * @When /^I click the element with css selector "([^"]*)"$/
