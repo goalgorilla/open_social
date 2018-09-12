@@ -39,12 +39,36 @@ class EventAnEnrollSettingsForm extends ConfigFormBase {
       '#default_value' => $event_an_enroll_config->get('event_an_enroll'),
     ];
 
+    // Show the additional settings only when AN enroll is enabled.
+    $form['event_an_enroll_default_value'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Allow anonymous users to enrol in new events by default'),
+      '#description' => $this->t('When this setting is enabled by default it will allow anonymous users to enrol in newly created events. The author will still be able to change this if the author has the permission.'),
+      '#default_value' => $event_an_enroll_config->get('event_an_enroll_default_value'),
+      '#states' => [
+        'visible' => [
+          'input[name="event_an_enroll"]' => ['checked' => TRUE],
+        ],
+      ],
+    ];
+
+    $form['event_an_enroll_allow_edit'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Allow author of an event to change if anonymous users can enrol to the event'),
+      '#description' => $this->t('This will give authors the permission to set if anonymous users can enrol to their event.'),
+      '#default_value' => $event_an_enroll_config->get('event_an_enroll_allow_edit'),
+      '#states' => [
+        'visible' => [
+          'input[name="event_an_enroll_default_value"]' => ['checked' => TRUE],
+        ],
+      ],
+    ];
+
     $form['event_an_enroll_email_notify'] = [
       '#type' => 'checkbox',
-      '#title' => $this->t('Notify user after anonymous enrollment'),
+      '#title' => $this->t('Notify user after anonymous enrollment by email'),
       '#default_value' => $event_an_enroll_config->get('event_an_enroll_email_notify'),
       '#states' => [
-        // Hide the additional settings when notification is disabled.
         'visible' => [
           'input[name="event_an_enroll"]' => ['checked' => TRUE],
         ],
@@ -78,9 +102,9 @@ class EventAnEnrollSettingsForm extends ConfigFormBase {
       '#default_value' => $event_an_enroll_config->get('event_an_enroll_email_body'),
       '#rows' => 15,
     ];
-    // Adds the token [event name].
+    // Add explanation about using tokens.
     $form['event_an_enroll_email']['event_an_enroll_email_token'] = [
-      '#markup' => $this->t('To add event name and link use tokens: [event name], [event url]'),
+      '#markup' => $this->t('To add event name and link use tokens: [node:title], [social_event_an_enroll:enrolled_event]'),
     ];
 
     return parent::buildForm($form, $form_state);
@@ -92,6 +116,8 @@ class EventAnEnrollSettingsForm extends ConfigFormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $this->config('social_event_an_enroll.settings')
       ->set('event_an_enroll', $form_state->getValue('event_an_enroll'))
+      ->set('event_an_enroll_default_value', $form_state->getValue('event_an_enroll_default_value'))
+      ->set('event_an_enroll_allow_edit', $form_state->getValue('event_an_enroll_allow_edit'))
       ->set('event_an_enroll_email_notify', $form_state->getValue('event_an_enroll_email_notify'))
       ->set('event_an_enroll_email_subject', $form_state->getValue('event_an_enroll_email_subject'))
       ->set('event_an_enroll_email_body', $form_state->getValue('event_an_enroll_email_body'))
