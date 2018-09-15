@@ -9,6 +9,8 @@ use Drupal\entity_access_by_field\EntityAccessHelper;
 
 /**
  * Unit test of entity_access_by_field hook_node_access implementation.
+ *
+ * @group social
  */
 class EntityAccessTest extends UnitTestCase {
 
