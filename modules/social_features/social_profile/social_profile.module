@@ -489,7 +489,6 @@ function social_profile_profile_view_alter(array &$build, EntityInterface $entit
         if (!$file->access('view', $current_user)) {
           // Load default data.
           $replacement_data = social_profile_get_default_image();
-          $default_profile = FALSE;
           // Check if we have default profile image
           if (!empty($replacement_data['id'])) {
             $default = \Drupal\file\Entity\File::load($replacement_data['id']);
