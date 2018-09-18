@@ -45,12 +45,17 @@ class EmailContext implements Context {
    *
    * @return Finder|null
    *   Returns a Finder if the directory exists.
+   * @throws Exception
    */
   public function getSpooledEmails() {
     $finder = new Finder();
+    $spoolDir = $this->getSpoolDir();
+
+    if(empty($spoolDir)) {
+      throw new \Exception('Could not retrieve the spool directory, or the directory does not exist.');
+    }
 
     try {
-      $spoolDir = $this->getSpoolDir();
       $finder->files()->in($spoolDir);
       return $finder;
     }
@@ -79,7 +84,12 @@ class EmailContext implements Context {
    *   The path where the spooled emails are stored.
    */
   protected function getSpoolDir() {
-    return '/var/www/html/profiles/contrib/social/tests/behat/features/swiftmailer-spool';
+    $path = '/var/www/html/profiles/contrib/social/tests/behat/features/swiftmailer-spool';
+    if (!file_exists($path)) {
+      mkdir($path, 0777, true);
+    }
+
+    return $path;
   }
 
   /**
@@ -107,6 +117,7 @@ class EmailContext implements Context {
    *
    * @return bool
    *   Email was found or not.
+   * @throws Exception
    */
   protected function findSubjectAndBody($subject, $body) {
     $finder = $this->getSpooledEmails();
@@ -140,6 +151,9 @@ class EmailContext implements Context {
           $found_email = TRUE;
         }
       }
+    }
+    else {
+      throw new \Exception('There are no email messages.');
     }
 
     return $found_email;
