@@ -72,12 +72,7 @@ class UserSelection extends UserSelectionBase {
     }
 
     $query = parent::buildEntityQuery(NULL, $match_operator);
-
-    $or = $query->orConditionGroup();
-    $or->condition('uid', $ids, 'IN');
-
-    $query->condition($or);
-    $query->condition('uid', $this->currentUser->id(), '!=');
+    $query->condition('uid', $ids, 'IN');
 
     return $query;
   }

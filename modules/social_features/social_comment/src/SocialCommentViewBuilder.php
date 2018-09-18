@@ -21,7 +21,22 @@ class SocialCommentViewBuilder extends CommentViewBuilder {
 
       // Add indentation div or close open divs as needed.
       if ($build['#comment_threaded']) {
-        $prefix .= $build['#comment_indent'] <= 0 ? str_repeat('</div>', abs($build['#comment_indent'])) : "\n" . '<div class="comments">';
+        if ($build['#comment_indent'] <= 0) {
+          $prefix .= str_repeat('</div>', abs($build['#comment_indent']));
+        }
+
+        // We are in a thread of comments.
+        if ($build['#comment_indent'] > 0) {
+          $div_class = 'comments';
+
+          // If the parent comment is unpublished, hide the thread for users
+          // who may not see unpublished comments.
+          if (!$comment->getParentComment()->isPublished() && !\Drupal::currentUser()->hasPermission('administer comments')) {
+            $div_class .= ' hidden';
+          }
+
+          $prefix .= "\n" . '<div class="' . $div_class . '">';
+        }
       }
 
       // Add anchor for each comment.

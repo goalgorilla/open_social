@@ -5,6 +5,7 @@
  * The primary PHP file for the Social base theme.
  */
 
+use Drupal\comment\Entity\Comment;
 use Drupal\Component\Utility\Html as HtmlUtility;
 use Drupal\Core\Session\AnonymousUserSession;
 use Drupal\bootstrap\Bootstrap;
@@ -83,10 +84,33 @@ function _socialbase_get_visibility_icon($title) {
 function _socialbase_node_get_comment_count(Node $node, $comment_field_name) {
   $count = 0;
 
-  $comment_count = $node->{$comment_field_name}->comment_count;
+  $cids = \Drupal::entityQuery('comment')
+    ->condition('entity_id', $node->id())
+    ->condition('entity_type', 'node')
+    ->sort('cid', 'DESC')
+    ->execute();
 
-  if ($comment_count) {
-    $count = $comment_count;
+  $comments = Comment::loadMultiple($cids);
+
+  foreach ($comments as $comment) {
+    /* @var \Drupal\comment\Entity\Comment $comment */
+    if ($comment->isPublished()) {
+      // Published main comments or published replies on published main comments
+      // are counted for users without 'administer comments' permission.
+      if (!$comment->hasParentComment() || ($comment->hasParentComment() && $comment->getParentComment()->isPublished())) {
+        $count++;
+      }
+      elseif (\Drupal::currentUser()->hasPermission('administer comments')) {
+        // User with 'administer comments' permission can also see the comment
+        // as being unpublished, so let's count it.
+        $count++;
+      }
+    }
+    elseif (\Drupal::currentUser()->hasPermission('administer comments')) {
+      // User with 'administer comments' permission can also see the comment
+      // as being unpublished, so let's count it.
+      $count++;
+    }
   }
 
   return $count;

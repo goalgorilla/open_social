@@ -10,13 +10,17 @@ bundle: comment
 mode: default
 content:
   field_comment_body:
-    weight: 3
+    weight: 0
     settings:
       rows: 5
       placeholder: 'Add a comment'
     third_party_settings: {  }
     type: string_textarea
     region: content
+  author:
+    weight: 1
+    settings: {  }
+    third_party_settings: {  }
+    region: content
 hidden:
   subject: true
-  author: true
