@@ -5,6 +5,8 @@ namespace Drupal\social_post\Form;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Entity\ContentEntityForm;
 use Drupal\Core\Entity\Entity\EntityFormDisplay;
+use Drupal\Core\Entity\EntityRepositoryInterface;
+use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -28,15 +30,10 @@ class PostForm extends ContentEntityForm {
   protected $currentUser;
 
   /**
-   * Constructs a NodeForm object.
-   *
-   * @param \Drupal\Component\Datetime\TimeInterface $time
-   *   The time service.
-   * @param \Drupal\Core\Session\AccountInterface $current_user
-   *   The current user.
+   * Constructs a Form object.
    */
-  public function __construct(TimeInterface $time = NULL, AccountInterface $current_user) {
-    $this->time = $time ?: \Drupal::service('datetime.time');
+  public function __construct(AccountInterface $current_user, EntityRepositoryInterface $entity_repository, EntityTypeBundleInfoInterface $entity_type_bundle_info = NULL, TimeInterface $time = NULL) {
+    parent::__construct($entity_repository, $entity_type_bundle_info, $time);
     $this->currentUser = $current_user;
   }
 
@@ -45,8 +42,10 @@ class PostForm extends ContentEntityForm {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('datetime.time'),
-      $container->get('current_user')
+      $container->get('current_user'),
+      $container->get('entity.repository'),
+      $container->get('entity_type.bundle.info'),
+      $container->get('datetime.time')
     );
   }
 

@@ -16,12 +16,12 @@ Feature: Download Topic
      And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text"
     And I click radio button "Discussion"
     And I attach the file "/files/humans.txt" to "Add a new file"
+    And I wait for AJAX to finish
     And I press "Save"
     And I should see "Topic This is a test topic has been created."
     And I should see "This is a test topic" in the "Hero block"
     And I should see "Discussion" in the "Main content"
     And I should see "Body description text" in the "Main content"
-    And I should not see "Enrollments"
     And I click "humans.txt"
     Given I am logged in as an "authenticated user"
     And I am on the homepage
