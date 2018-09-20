@@ -445,8 +445,8 @@ function social_user_social_user_account_header_account_links_alter(array $accou
     ],
   ];
 
-  foreach (\Drupal::moduleHandler()
-             ->invokeAll('social_user_account_header_links') as $key => $item) {
+  $header_links = \Drupal::moduleHandler()->invokeAll('social_user_account_header_links');
+  foreach ($header_links as $key => $item) {
     $target = $item['after'];
     // If the item we want to place this after doesn't exist or this item
     // already exists then we skip it.
