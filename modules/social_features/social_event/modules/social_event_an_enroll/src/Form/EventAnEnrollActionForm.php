@@ -105,7 +105,7 @@ class EventAnEnrollActionForm extends EnrollActionForm {
         ];
       }
     }
-
+    $form['#cache'] = ['max-age' => 0];
     return $form;
   }
 
