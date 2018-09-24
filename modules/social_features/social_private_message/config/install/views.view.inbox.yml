@@ -5,6 +5,7 @@ dependencies:
   - core.entity_view_mode.private_message_thread.inbox
   module:
   - private_message
+  - social_private_message
 id: inbox
 label: Inbox
 module: views
@@ -125,14 +126,51 @@ display:
           empty_zero: false
           hide_alter_empty: true
           view_mode: default
-      filters: {  }
+      filters:
+        social_private_message_deleted_threads_filter:
+          id: social_private_message_deleted_threads_filter
+          table: private_message_threads
+          field: social_private_message_deleted_threads_filter
+          relationship: none
+          group_type: group
+          admin_label: filter_threads
+          operator: '='
+          value: ''
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          entity_type: private_message_thread
+          plugin_id: social_private_message_deleted_threads
       sorts:
         updated:
           id: updated
           table: private_message_threads
           field: updated
           relationship: none
-          group_type: group
+          group_type: max
           admin_label: ''
           order: DESC
           exposed: false
@@ -159,7 +197,29 @@ display:
             value: 'You do not have any private messages yet. Click on the button on the right to start a new chat.'
             format: basic_html
           plugin_id: text
-      relationships: {  }
+      relationships:
+        private_messages_target_id:
+          id: private_messages_target_id
+          table: private_message_thread__private_messages
+          field: private_messages_target_id
+          relationship: none
+          group_type: group
+          admin_label: 'Private Message'
+          required: false
+          entity_type: private_message_thread
+          entity_field: private_messages
+          plugin_id: standard
+        last_delete_time_target_id:
+          id: last_delete_time_target_id
+          table: private_message_thread__last_delete_time
+          field: last_delete_time_target_id
+          relationship: none
+          group_type: group
+          admin_label: 'Private Message Thread Delete Time'
+          required: false
+          entity_type: private_message_thread
+          entity_field: last_delete_time
+          plugin_id: standard
       arguments:
         members_target_id:
           id: members_target_id
@@ -198,7 +258,10 @@ display:
           entity_field: members
           plugin_id: numeric
       display_extenders: {  }
-      group_by: false
+      group_by: true
+      filter_groups:
+        operator: AND
+        groups: {  }
     cache_metadata:
       max-age: -1
       contexts:
@@ -209,9 +272,9 @@ display:
       tags:
       - 'config:core.entity_view_display.private_message_thread.private_message_thread.default'
       - 'config:core.entity_view_display.private_message_thread.private_message_thread.inbox'
-  page_1:
+  inbox:
     display_plugin: page
-    id: page_1
+    id: inbox
     display_title: Page
     position: 1
     display_options:
