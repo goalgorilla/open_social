@@ -429,3 +429,18 @@ function social_private_message_activity_send_email_notifications_alter(array &$
     $items['message_to_me']['templates'][] = 'create_private_message';
   }
 }
+
+/**
+ * Implements hook_views_data_alter().
+ */
+function social_private_message_views_data_alter(array &$data) {
+  $data['private_message_threads']['social_private_message_deleted_threads_filter'] = [
+    'title' => t('Filter deleted threads'),
+    'filter' => [
+      'title' => t('Filter deleted threads'),
+      'help' => t('Do not show threads a user deleted.'),
+      'field' => 'id',
+      'id' => 'social_private_message_deleted_threads',
+    ],
+  ];
+}
