@@ -7,6 +7,8 @@
 
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Component\Render\FormattableMarkup;
+use Drupal\profile\Entity\Profile;
+use Drupal\user\Entity\User;
 
 /**
  * Implements hook_page_attachments().
@@ -36,27 +38,81 @@ function social_profile_organization_tag_form_alter(array &$form, FormStateInter
 }
 
 /**
- * Implements hook_user_format_name_alter().
+ * Implements hook_preprocess_profile().
  */
-function social_profile_organization_tag_user_format_name_alter(&$name, $account) {
-  $storage = \Drupal::entityTypeManager()->getStorage('profile');
-  if (!empty($storage)) {
-    if ($user_profile = $storage->loadByUser($account, 'profile', TRUE)) {
-      if (!$user_profile->get('field_profile_organization_tag')->isEmpty()) {
-        $organization_tag = $user_profile->get('field_profile_organization_tag');
-        $organization_tag_entities = $organization_tag->referencedEntities();
-        if (count($organization_tag_entities) === 1) {
-          foreach ($organization_tag_entities as $organization) {
-            $value = '@name <span class="profile-organization-tag"><span class="text">@org</span></span>';
-            $arguments = [
-              '@name' => $name,
-              '@org' => $organization->label(),
-            ];
-            $name = new FormattableMarkup($value, $arguments);
-          }
+function social_profile_organization_tag_preprocess_profile(&$variables) {
+  $variables['profile_name_extra'] = social_profile_organization_tag_fetch($variables['profile']);
+}
 
+/**
+ * Implements hook_preprocess_username().
+ */
+function social_profile_organization_tag_preprocess_username(&$variables) {
+  $account = $variables['account'];
+
+  if ($account instanceof User) {
+    $storage = \Drupal::entityTypeManager()->getStorage('profile');
+    if (!empty($storage)) {
+      if ($user_profile = $storage->loadByUser($account, 'profile', TRUE)) {
+        $variables['extra'] = social_profile_organization_tag_fetch($user_profile);
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_preprocess_field().
+ */
+function social_profile_organization_tag_preprocess_field(&$variables) {
+  if ($variables['field_name'] === 'field_activity_output_text') {
+    $x = 1;
+
+  }
+
+}
+
+/**
+ * Implements hook_tokens_alter().
+ */
+function social_profile_organization_tag_tokens_alter(array &$replacements, array $context, \Drupal\Core\Render\BubbleableMetadata $bubbleable_metadata) {
+  if (array_key_exists('display-name', $context['tokens']) && count($replacements) > 0) {
+    $account = $context['data']['user'];
+    if ($account instanceof User) {
+      $storage = \Drupal::entityTypeManager()->getStorage('profile');
+      if (!empty($storage)) {
+        if ($user_profile = $storage->loadByUser($account, 'profile', TRUE)) {
+          $replacements['[message:author:display-name]'] .= " " . social_profile_organization_tag_fetch($user_profile, FALSE);
         }
       }
     }
   }
 }
+
+
+/**
+ * Function that fetches the extra organizational info for a profile.
+ */
+function social_profile_organization_tag_fetch(Profile $profile, $return_html = TRUE) {
+  if ($profile instanceof Profile) {
+    if (!$profile->get('field_profile_organization_tag')->isEmpty()) {
+      $organization_tag = $profile->get('field_profile_organization_tag');
+      $organization_tag_entities = $organization_tag->referencedEntities();
+      if (count($organization_tag_entities) === 1) {
+        /** @var \Drupal\taxonomy\Entity\Term $organization */
+        foreach ($organization_tag_entities as $organization) {
+          $value = t('from @org');
+          if ($return_html === TRUE) {
+            $value = '<span class="profile-organization-tag">&nbsp;<span class="text">@org</span></span>';
+          }
+          $arguments = [
+            '@org' => $organization->label(),
+          ];
+          return new FormattableMarkup($value, $arguments);
+        }
+      }
+    }
+  }
+  return '';
+}
+
+
