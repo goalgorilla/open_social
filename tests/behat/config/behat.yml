@@ -17,6 +17,7 @@ default:
         - SocialDrupalContext
         - SocialMinkContext
         - Drupal\DrupalExtension\Context\BatchContext
+        - Drupal\DrupalExtension\Context\ConfigContext
         - Drupal\DrupalExtension\Context\MessageContext
         - PostContext
         - EmailContext
@@ -43,11 +44,11 @@ default:
           log_out: "Logout"
         region_map:
           'Page title block': '.region--title'
+          'Admin page title block': '.region-header'
           'Hero block': '.region--hero'
           'Hero buttons': '.region--hero .btn-group'
+          'Tabs': '.region--secondary-navigation'
           'Main content': '.region--content'
           'Main content front': '.region--content'
           'Sidebar second': 'aside[role=complementary]'
           'Modal footer': '.modal-footer'
-          'WYSIWYG Image dialog': '.editor-image-dialog .form-actions'
-          'WYSIWYG Embed dialog': '.url-embed-dialog .form-actions'

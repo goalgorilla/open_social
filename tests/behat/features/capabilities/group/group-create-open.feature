@@ -1,4 +1,4 @@
-@api @group @DS-811 @DS-816 @DS-4211 @stability @stability-1
+@api @group @DS-811 @DS-816 @DS-4211 @stability @stability-1 @group-create-open
 Feature: Create Open Group
   Benefit: So I can work together with others in a relative small circle
   Role: As a LU
@@ -36,7 +36,7 @@ Feature: Create Open Group
   # DS-761 As a LU I want to view the hero area of a group
     And I should see "Test open group" in the "Hero block"
     And I should see the button "Joined"
-    And I click the xth "4" element with the css ".dropdown-toggle"
+    And I click the element with css selector "#hero .dropdown-toggle"
     And I should see the link "Leave group"
     And I should see the link "Edit group" in the "Hero block"
     And I should see "Technopark" in the "Hero block"
@@ -73,8 +73,7 @@ Feature: Create Open Group
     And I should see the button "Cancel"
     And I should see the button "Join group"
     And I press "Join group"
-    And I should see "Test open group"
-    And I click "Test open group"
+    And I should see "Test open group" in the "Hero block"
     And I should see the button "Joined"
 
   # DS-643 As a LU I want to see the events of a group
@@ -149,7 +148,7 @@ Feature: Create Open Group
     And I click "Groups"
     And I click "Test open group"
     And I should see the button "Joined"
-    And I click the xth "4" element with the css ".dropdown-toggle"
+    And I click the element with css selector "#hero .dropdown-toggle"
     And I should see the link "Leave group"
     And I click "Leave group"
     And I should see "Test open group" in the "Hero block"

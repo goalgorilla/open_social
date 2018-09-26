@@ -1,4 +1,4 @@
-@api @comment @stability @DS-459 @topic @stability-2
+@api @comment @stability @DS-459 @topic @stability-2 @comment-create
 Feature: Create Comments
   Benefit: Participate in discussions on the platform
   Role: As a LU

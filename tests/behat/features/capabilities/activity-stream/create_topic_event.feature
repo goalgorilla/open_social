@@ -1,4 +1,4 @@
-@api @DS-1255 @DS-4211 @activity_stream @topic @create @stability @stability-3
+@api @DS-1255 @DS-4211 @activity_stream @topic @create @stability @stability-3 @create_topic_event
 Feature: See and get notified when content is created
   Benefit: So I can discover new content on the platform
   Role: As a LU

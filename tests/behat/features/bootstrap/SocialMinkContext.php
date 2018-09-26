@@ -16,8 +16,7 @@ use Behat\Behat\Hook\Scope\AfterStepScope;
 /**
  * Defines application features from the specific context.
  */
-class SocialMinkContext extends MinkContext{
-
+class SocialMinkContext extends MinkContext {
 
   /**
    * @override MinkContext::assertRegionHeading()
@@ -41,6 +40,22 @@ class SocialMinkContext extends MinkContext{
     throw new \Exception(sprintf('The heading "%s" was not found in the "%s" region on the page %s', $heading, $region, $this->getSession()->getCurrentUrl()));
   }
 
+  /**
+   * @override MinkContext::assertCheckBox()
+   */
+  public function assertCheckBox($checkbox) {
+    $this->getSession()->executeScript("
+      var inputs = document.getElementsByTagName('input');
+      for (var i = 0; i < inputs.length; i++) {
+        inputs[i].style.opacity = 1;
+        inputs[i].style.left = 0;
+        inputs[i].style.position = 'relative';
+      }
+    ");
+
+    parent::assertCheckBox($checkbox);
+  }
+
 
   /**
    * @Given /^I make a screenshot$/
@@ -54,8 +69,11 @@ class SocialMinkContext extends MinkContext{
    */
   public function iMakeAScreenshotWithFileName($filename) {
     $screenshot = $this->getSession()->getDriver()->getScreenshot();
-    $file_and_path = '/var/www/travis_artifacts/' . $filename . '.jpg';
-    file_put_contents($file_and_path, $screenshot);
+    $dir = '/var/www/travis_artifacts';
+    if (is_writeable($dir)) {
+      $file_and_path = $dir . '/' . $filename . '.jpg';
+      file_put_contents($file_and_path, $screenshot);
+    }
   }
 
 
@@ -98,4 +116,78 @@ class SocialMinkContext extends MinkContext{
 
     $this->attachFileToField($field, $path);
   }
+
+  /**
+   * @Then I should see checked the box :checkbox
+   */
+  public function iShouldSeeCheckedTheBox($checkbox) {
+    $checkbox = $this->fixStepArgument($checkbox);
+
+    if (!$this->getSession()->getPage()->hasCheckedField($checkbox)) {
+      $field = $this->getSession()->getPage()->findField($checkbox);
+
+      if (null === $field) {
+        throw new \Exception(sprintf('The checkbox "%s" with id|name|label|value was not found', $checkbox));
+      }
+      else {
+        throw new \Exception(sprintf('The checkbox "%s" is not checked', $checkbox));
+      }
+    }
+  }
+
+  /**
+   * @Then I should see unchecked the box :checkbox
+   */
+  public function iShouldSeeUncheckedTheBox($checkbox) {
+    $checkbox = $this->fixStepArgument($checkbox);
+
+    if (!$this->getSession()->getPage()->hasUncheckedField($checkbox)) {
+      $field = $this->getSession()->getPage()->findField($checkbox);
+
+      if (null === $field) {
+        throw new \Exception(sprintf('The checkbox "%s" with id|name|label|value was not found', $checkbox));
+      }
+      else {
+        throw new \Exception(sprintf('The checkbox "%s" is checked', $checkbox));
+      }
+    }
+  }
+  
+  
+  /**
+   * Wait for AJAX to finish.
+   *
+   * Overwrites the default iWaitForAjaxToFinish step to increase the time-out to 
+   * allow tests to pass with longer running ajax requests.
+   *
+   * @see \Drupal\FunctionalJavascriptTests\JSWebAssert::assertWaitOnAjaxRequest()
+   * @see \Drupal\DrupalExtension\Context\MinkContext::iWaitForAjaxToFinish()
+   *
+   * This overrides "Given I wait for AJAX to finish"
+   */
+  public function iWaitForAjaxToFinish() {
+    $condition = <<<JS
+    (function() {
+      function isAjaxing(instance) {
+        return instance && instance.ajaxing === true;
+      }
+      var d7_not_ajaxing = true;
+      if (typeof Drupal !== 'undefined' && typeof Drupal.ajax !== 'undefined' && typeof Drupal.ajax.instances === 'undefined') {
+        for(var i in Drupal.ajax) { if (isAjaxing(Drupal.ajax[i])) { d7_not_ajaxing = false; } }
+      }
+      var d8_not_ajaxing = (typeof Drupal === 'undefined' || typeof Drupal.ajax === 'undefined' || typeof Drupal.ajax.instances === 'undefined' || !Drupal.ajax.instances.some(isAjaxing))
+      return (
+        // Assert no AJAX request is running (via jQuery or Drupal) and no
+        // animation is running.
+        (typeof jQuery === 'undefined' || (jQuery.active === 0 && jQuery(':animated').length === 0)) &&
+        d7_not_ajaxing && d8_not_ajaxing
+      );
+    }());
+JS;
+    $result = $this->getSession()->wait(20000, $condition);
+    if (!$result) {
+      throw new \RuntimeException('Unable to complete AJAX request.');
+    }
+  }
+
 }
