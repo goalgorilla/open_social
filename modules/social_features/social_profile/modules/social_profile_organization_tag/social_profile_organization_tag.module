@@ -86,6 +86,11 @@ function social_profile_organization_tag_tokens_alter(array &$replacements, arra
       }
     }
   }
+
+  if ($context['type'] === 'social_mentions' && array_key_exists('user_name', $context['tokens']) && count($replacements) > 0) {
+    $profile = $context['data']['profile'];
+    $replacements['[social_mentions:user_name]'] .= " " . social_profile_organization_tag_fetch($profile, FALSE);
+  }
 }
 
 
