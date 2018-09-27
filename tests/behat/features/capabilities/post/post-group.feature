@@ -30,6 +30,9 @@ Feature: Create Post on Group
     And I should see "1 member"
     And I should see "Joined"
     And I should see "Test open group" in the "Hero block"
+    And I click the post visibility dropdown
+    Then I should not see "Public"
+    And I should not see "Closed"
 
     When I click "Stream"
     And I fill in "Say something to the group" with "This is a community post in a group."
