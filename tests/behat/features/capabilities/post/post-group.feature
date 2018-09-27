@@ -30,9 +30,6 @@ Feature: Create Post on Group
     And I should see "1 member"
     And I should see "Joined"
     And I should see "Test open group" in the "Hero block"
-    And I click the post visibility dropdown
-    Then I should not see "Public"
-    And I should not see "Closed"
 
     When I click "Stream"
     And I fill in "Say something to the group" with "This is a community post in a group."
@@ -40,6 +37,9 @@ Feature: Create Post on Group
     Then I should see the success message "Your post has been posted."
     And I should see "This is a community post in a group."
     And I should see "Group User One" in the ".media-heading" element
+    And I click the post visibility dropdown
+    Then I should not see "Public"
+    And I should not see "Closed"
 
           # Scenario: See post on profile stream
     When I am on "/user"
