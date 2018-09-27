@@ -404,29 +404,39 @@ function social_group_update_8014() {
  * open_group set public to community.
  * See: https://www.drupal.org/project/social/issues/2992332#comment-12790905
  */
-function social_group_update_8305() {
-  // First grab all the post id's that are affected.
-  $connection = Database::getConnection();
-  $sth = $connection->select('post__field_visibility', 'pv');
-  $sth->fields('pv', array('entity_id'));
-  $sth->join('post_field_data', 'pd', 'pd.id = pv.entity_id');
-  $sth->join('post__field_recipient_group', 'pg', 'pv.entity_id = pg.entity_id');
-  $sth->join('groups', 'g', 'pg.field_recipient_group_target_id = g.id');
-  $sth->condition('pv.field_visibility_value', '1', '=');
-  $sth->condition('g.type', 'open_group', '=');
-  // Timestamp is from the moment the commit landed in 8.x-3.x see:
-  // https://cgit.drupalcode.org/social/commit/?id=3e465bb1ad927712e22469c193b6e9547ba1c081
-  $sth->condition('pd.created', '1534118400', '>');
-  $data = $sth->execute();
-  $results = $data->fetchCol();
+function social_group_update_8301(&$sandbox) {
+  if (!isset($sandbox['progress'])) {
+    $sandbox['progress'] = 0;
+    $sandbox['items'] = [];
+    $sandbox['max'] = 0;
 
-  // Load all the entities with entity_load_multiple.
-  $posts = Post::loadMultiple($results);
-  // Update the post entities, set the visibility and save it so also the
-  // correct caches are cleared.
-  /** @var \Drupal\social_post\Entity\Post $post */
-  foreach ($posts as $post) {
+    // First grab all the post id's that are affected.
+    $connection = Database::getConnection();
+    $sth = $connection->select('post__field_visibility', 'pv');
+    $sth->fields('pv', ['entity_id']);
+    $sth->join('post_field_data', 'pd', 'pd.id = pv.entity_id');
+    $sth->join('post__field_recipient_group', 'pg', 'pv.entity_id = pg.entity_id');
+    $sth->join('groups', 'g', 'pg.field_recipient_group_target_id = g.id');
+    $sth->condition('pv.field_visibility_value', '1', '=');
+    $sth->condition('g.type', 'open_group', '=');
+    // Timestamp is from the moment the commit landed in 8.x-3.x see:
+    // https://cgit.drupalcode.org/social/commit/?id=3e465bb1ad927712e22469c193b6e9547ba1c081
+    $sth->condition('pd.created', '1534118400', '>');
+    $data = $sth->execute();
+
+    $sandbox['items']['post_ids'] = $data->fetchCol();
+    $sandbox['max'] = count($sandbox['items']['post_ids']);
+  }
+
+  if ($sandbox['items']['post_ids']) {
+    $pid = array_shift($sandbox['items']['post_ids']);
+    // Load all the entities with entity_load_multiple.
+    $post = Post::load($pid);
+    /** @var \Drupal\social_post\Entity\Post $post */
     $post->set('field_visibility', '0');
     $post->save();
   }
+
+  $sandbox['progress']++;
+  $sandbox['#finished'] = empty($sandbox['max']) ? 1 : ($sandbox['progress'] / $sandbox['max']);
 }
