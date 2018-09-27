@@ -5,7 +5,6 @@ dependencies:
   - core.entity_view_mode.private_message_thread.inbox
   module:
   - private_message
-  - social_private_message
   - user
 id: inbox
 label: Inbox
@@ -128,44 +127,7 @@ display:
           empty_zero: false
           hide_alter_empty: true
           view_mode: default
-      filters:
-        social_private_message_deleted_threads_filter:
-          id: social_private_message_deleted_threads_filter
-          table: private_message_threads
-          field: social_private_message_deleted_threads_filter
-          relationship: none
-          group_type: group
-          admin_label: filter_threads
-          operator: '='
-          value: ''
-          group: 1
-          exposed: false
-          expose:
-            operator_id: ''
-            label: ''
-            description: ''
-            use_operator: false
-            operator: ''
-            identifier: ''
-            required: false
-            remember: false
-            multiple: false
-            remember_roles:
-              authenticated: authenticated
-          is_grouped: false
-          group_info:
-            label: ''
-            description: ''
-            identifier: ''
-            optional: true
-            widget: select
-            multiple: false
-            remember: false
-            default_group: All
-            default_group_multiple: {  }
-            group_items: {  }
-          entity_type: private_message_thread
-          plugin_id: social_private_message_deleted_threads
+      filters: {  }
       sorts:
         updated:
           id: updated
@@ -173,7 +135,7 @@ display:
           field: updated
           relationship: none
           group_type: max
-          admin_label: ''
+          admin_label: sort_updated
           order: DESC
           exposed: false
           expose:
