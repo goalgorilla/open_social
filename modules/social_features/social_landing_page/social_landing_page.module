@@ -211,15 +211,15 @@ function social_landing_page_preprocess_node(&$variables) {
  * Implements hook_preprocess_HOOK().
  */
 function social_landing_page_preprocess_field(&$variables) {
-    if ($variables['field_name'] == 'field_button_link_an' || $variables['field_name'] == 'field_button_link_lu') {
-        $entity = $variables['element']['#object'];
-        $button_style = $entity->field_button_style->value;
-        foreach ($variables['items'] as $key => $value){
-            if (isset ($variables['items'][$key]['content'])) {
-                $variables['items'][$key]['content']['#options']['attributes']['class'] .= 'btn btn-large ' . $button_style;
-            }
-        }
+  if ($variables['field_name'] == 'field_button_link_an' || $variables['field_name'] == 'field_button_link_lu') {
+    $entity = $variables['element']['#object'];
+    $button_style = $entity->field_button_style->value;
+    foreach ($variables['items'] as $key => $value){
+      if (isset ($variables['items'][$key]['content'])) {
+        $variables['items'][$key]['content']['#options']['attributes']['class'] .= 'btn btn-large ' . $button_style;
+      }
     }
+  }
 }
 
 /**
