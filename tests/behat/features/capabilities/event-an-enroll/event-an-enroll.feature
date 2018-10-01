@@ -65,3 +65,25 @@ Feature: Enroll for an event without an account
     Given I am logged in as an "authenticated user"
     And I open the "event" node with title "AN Event 1"
     Then I should not see "Anonymous enrollment"
+
+  @AN
+  Scenario: Control the site-wide default of AN enrollment
+    Given I enable the module "social_event_an_enroll"
+    And I am viewing an event:
+      | title                    | No anonymous enrollment |
+      | field_event_date         | +3 days                 |
+      | field_event_date_end     | +4 days                 |
+      | field_content_visibility | public                  |
+    When I press "Enroll"
+    Then I should not see "Sign up as guest"
+
+    Given I set the configuration item "social_event_an_enroll.settings" with key "event_an_enroll_default_value" to TRUE
+    And I am viewing an event:
+      | title                    | Event with anonymous enrollment |
+      | field_event_date         | +6 days                         |
+      | field_event_date_end     | +7 days                         |
+      | field_content_visibility | public                          |
+
+    When I press "Enroll"
+    Then I should see "Enroll in Anonymous event Enrollment"
+    And I should see "Sign up as guest"
