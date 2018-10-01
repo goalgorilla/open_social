@@ -42,8 +42,8 @@ class EventAnEnrollSettingsForm extends ConfigFormBase {
     // Show the additional settings only when AN enroll is enabled.
     $form['event_an_enroll_default_value'] = [
       '#type' => 'checkbox',
-      '#title' => $this->t('Allow anonymous users to enrol in new events by default'),
-      '#description' => $this->t('When this setting is enabled by default it will allow anonymous users to enrol in newly created events. The author will still be able to change this if the author has the permission.'),
+      '#title' => $this->t('Allow anonymous users to enroll in new events by default'),
+      '#description' => $this->t('When this setting is enabled by default it will allow anonymous users to enroll in newly created events. The author will still be able to change this if the author has the permission.'),
       '#default_value' => $event_an_enroll_config->get('event_an_enroll_default_value'),
       '#states' => [
         'visible' => [
@@ -54,8 +54,8 @@ class EventAnEnrollSettingsForm extends ConfigFormBase {
 
     $form['event_an_enroll_allow_edit'] = [
       '#type' => 'checkbox',
-      '#title' => $this->t('Allow author of an event to change if anonymous users can enrol to the event'),
-      '#description' => $this->t('This will give authors the permission to set if anonymous users can enrol to their event.'),
+      '#title' => $this->t('Allow author of an event to change if anonymous users can enroll to the event'),
+      '#description' => $this->t('This will give authors the permission to set if anonymous users can enroll to their event.'),
       '#default_value' => $event_an_enroll_config->get('event_an_enroll_allow_edit'),
       '#states' => [
         'visible' => [
