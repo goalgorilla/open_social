@@ -69,6 +69,7 @@ Feature: Enroll for an event without an account
   @AN
   Scenario: Control the site-wide default of AN enrollment
     Given I enable the module "social_event_an_enroll"
+    And I am an anonymous user
     And I am viewing an event:
       | title                    | No anonymous enrollment |
       | field_event_date         | +3 days                 |
