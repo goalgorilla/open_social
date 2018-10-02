@@ -63,6 +63,7 @@ Feature: Move content after creation
     And I empty the queue
     And I click "Edit content"
     And I select group "- None -"
+    And I wait for AJAX to finish
     And I press "Save"
     And I run cron
     Then I should not see "Motorboats" in the "Main content"
