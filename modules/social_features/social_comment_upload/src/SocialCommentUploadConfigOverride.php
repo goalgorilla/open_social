@@ -3,6 +3,7 @@
 namespace Drupal\social_comment_upload;
 
 use Drupal\Core\Cache\CacheableMetadata;
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Config\ConfigFactoryOverrideInterface;
 use Drupal\Core\Config\StorageInterface;
 
@@ -16,24 +17,37 @@ use Drupal\Core\Config\StorageInterface;
 class SocialCommentUploadConfigOverride implements ConfigFactoryOverrideInterface {
 
   /**
+   * The config factory.
+   *
+   * @var \Drupal\Core\Config\ConfigFactoryInterface
+   */
+  protected $configFactory;
+
+  /**
+   * Constructs the configuration override.
+   *
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *   The Drupal configuration factory.
+   */
+  public function __construct(ConfigFactoryInterface $config_factory) {
+    $this->configFactory = $config_factory;
+  }
+
+  /**
    * Returns config overrides.
    */
   public function loadOverrides($names) {
     $overrides = [];
-    $config_factory = \Drupal::service('config.factory');
 
-    // Check the settings first and leave.
-    if ($config_factory->getEditable('social_comment_upload.settings')->get('allow_upload_comments') == FALSE) {
+    // We don't need to add any fields if uploads are disabled.
+    // We use getEditable and getOriginal to avoid override loops.
+    if ($this->configFactory->getEditable('social_comment_upload.settings')->getOriginal('allow_upload_comments', TRUE) == FALSE) {
       return $overrides;
     }
 
     // Add field_group and field_comment_files.
     $config_name = 'core.entity_form_display.comment.comment.default';
     if (in_array($config_name, $names)) {
-      $config = $config_factory->getEditable($config_name);
-
-      $third_party = $config->get('third_party_settings');
-
       $third_party = [
         'field_group' => [
           'group_add_attachment' => [
@@ -55,34 +69,37 @@ class SocialCommentUploadConfigOverride implements ConfigFactoryOverrideInterfac
         ],
       ];
 
-      $content = $config->get('content');
-      $content['field_comment_files'] = [
-        'weight' => 1,
-        'settings' => [
-          'progress_indicator' => 'throbber',
+      $content = [
+        'field_comment_files' => [
+          'weight' => 1,
+          'settings' => [
+            'progress_indicator' => 'throbber',
+          ],
+          'third_party_settings' => [],
+          'type' => 'file_generic',
+          'region' => 'content',
         ],
-        'third_party_settings' => [],
-        'type' => 'file_generic',
-        'region' => 'content',
       ];
 
-      $overrides[$config_name]['third_party_settings'] = $third_party;
-      $overrides[$config_name]['content'] = $content;
+      $overrides[$config_name] = [
+        'third_party_settings' => $third_party,
+        'content' => $content,
+      ];
+
     }
 
     // Add field_comment_files.
     $config_name = 'core.entity_view_display.comment.comment.default';
     if (in_array($config_name, $names)) {
-      $config = $config_factory->getEditable($config_name);
-
-      $content = $config->get('content');
-      $content['field_comment_files'] = [
-        'weight' => 1,
-        'label' => 'hidden',
-        'settings' => [],
-        'third_party_settings' => [],
-        'type' => 'file_default',
-        'region' => 'content',
+      $content = [
+        'field_comment_files' => [
+          'weight' => 1,
+          'label' => 'hidden',
+          'settings' => [],
+          'third_party_settings' => [],
+          'type' => 'file_default',
+          'region' => 'content',
+        ],
       ];
 
       $overrides[$config_name] = [
