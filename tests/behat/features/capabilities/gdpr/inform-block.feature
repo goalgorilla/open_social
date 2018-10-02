@@ -29,10 +29,7 @@ Feature: Inform about personal data colleciton
     And I click the xth "0" element with the css ".ui-button.form-submit"
 
     When I am on "admin/config/system/inform-consent"
-    Then I should see the heading "Data usage explanation" in the "Admin page title block" region
-    And I should see the text "There is no Inform Block yet."
-
-    When I click "Add page"
+    And I click "Add page"
     Then I should be on "admin/config/system/inform-consent/add"
     And I should see checked the box "Enable on this page"
     And I should see "Title" in the ".form-item-label.form-type-textfield label.form-required" element
@@ -52,7 +49,6 @@ Feature: Inform about personal data colleciton
     And I press "Save"
     Then I should be on "admin/config/system/inform-consent"
     And I should see the text "Saved the Inform block title for sign up page Example."
-    And I should not see the text "There is no Inform Block yet."
     And I should see the text "Inform block title for sign up page"
     And I should see the text "/user/register"
     And I should see the text "Yes"
