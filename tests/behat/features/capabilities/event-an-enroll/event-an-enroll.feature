@@ -78,13 +78,25 @@ Feature: Enroll for an event without an account
     When I press "Enroll"
     Then I should not see "Sign up as guest"
 
-    Given I set the configuration item "social_event_an_enroll.settings" with key "event_an_enroll_default_value" to TRUE
-    And I am viewing an event:
-      | title                    | Event with anonymous enrollment |
-      | field_event_date         | +6 days                         |
-      | field_event_date_end     | +7 days                         |
-      | field_content_visibility | public                          |
+    ##
+    ## In this test the vent must be created using the form because we are
+    ## testing the effect of a hook_form_alter
+    ##
+    Given I set the configuration item "social_event_an_enroll.settings" with key "event_an_enroll_default_value" to 1
+    And I am logged in as a user with the "authenticated user" role
+    And I am on "node/add/event"
+    When I fill in the following:
+      | Title                    | Anonymous event enrollment |
+      | edit-field-event-date-0-value-date | 2025-01-01 |
+      | edit-field-event-date-end-0-value-date | 2025-01-02 |
+      | Time          | 11:00:00 |
+      | Location name | GG HQ |
+    And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text."
+    And I click radio button "Public - visible to everyone including people who are not a member"
+    And I press "Save"
 
-    When I press "Enroll"
+    Given I am an anonymous user
+    And I open the "event" node with title "Anonymous event enrollment"
+    When I click "Enroll"
     Then I should see "Enroll in Anonymous event Enrollment"
     And I should see "Sign up as guest"
