@@ -49,7 +49,7 @@
     <div {{ attributes.addClass(classes) }}>
     {% block content %}
       <div class="card__actionbar">
-        <div class="btn btn-lg {{ content.field_button_style|render|striptags|trim }}">
+        <div>
           {% if logged_in %}
             {{ content.field_button_link_lu }}
           {% else %}
