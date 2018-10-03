@@ -27,11 +27,11 @@ class SocialUserNameConstraintTest extends UnitTestCase {
     $definition = $this->getMock('Drupal\Core\TypedData\TypedDataInterface');
 
     if ($expected_definition_result !== NULL) {
-      $manager->expects($this->once())
+      $manager->expects($this->any())
         ->method('create')
         ->willReturn($definition);
 
-      $definition->expects($this->once())
+      $definition->expects($this->any())
         ->method('validate')
         ->willReturn($expected_definition_result);
     }
@@ -51,7 +51,7 @@ class SocialUserNameConstraintTest extends UnitTestCase {
     $context = $this->getMock('Symfony\Component\Validator\Context\ExecutionContextInterface');
 
     if ($expected_violation) {
-      $context->expects($this->once())
+      $context->expects($this->any())
         ->method('addViolation')
         ->with($constraint->usernameIsEmailMessage);
     }
@@ -88,10 +88,10 @@ class SocialUserNameConstraintTest extends UnitTestCase {
     // Case 2: Empty user should be ignored.
     $field_definition = $this->getMock('Drupal\Core\Field\FieldDefinitionInterface');
     $items = $this->getMock('Drupal\Core\Field\FieldItemListInterface');
-    $items->expects($this->once())
+    $items->expects($this->any())
       ->method('getFieldDefinition')
       ->willReturn($field_definition);
-    $items->expects($this->once())
+    $items->expects($this->any())
       ->method('first')
       ->willReturn(NULL);
     $cases[] = [$items, FALSE];
@@ -174,16 +174,16 @@ class SocialUserNameConstraintTest extends UnitTestCase {
    */
   protected function itemsMock($name) {
     $name_field = $this->getMock('Drupal\Core\Field\FieldItemInterface');
-    $name_field->expects($this->once())
+    $name_field->expects($this->any())
       ->method('__get')
       ->willReturn($name);
 
     $field_definition = $this->getMock('Drupal\Core\Field\FieldDefinitionInterface');
     $items = $this->getMock('Drupal\Core\Field\FieldItemListInterface');
-    $items->expects($this->once())
+    $items->expects($this->any())
       ->method('getFieldDefinition')
       ->willReturn($field_definition);
-    $items->expects($this->once())
+    $items->expects($this->any())
       ->method('first')
       ->willReturn($name_field);
     return $items;
