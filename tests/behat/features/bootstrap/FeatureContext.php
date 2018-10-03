@@ -10,7 +10,7 @@ use Behat\MinkExtension\Context\RawMinkContext;
 use Drupal\DrupalExtension\Hook\Scope\EntityScope;
 use Drupal\group\Entity\Group;
 use Drupal\locale\SourceString;
-use PHPUnit_Framework_Assert as PHPUnit;
+use PHPUnit\Framework\Assert as Assert;
 
 /**
  * Defines application features from the specific context.
@@ -467,7 +467,7 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
         }
       }
 
-      PHPUnit::assertGreaterThan(
+      Assert::assertGreaterThan(
         array_search($checkBefore, $items),
         array_search($checkAfter, $items),
         "$textBefore does not proceed $textAfter"
@@ -668,8 +668,8 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
           $public_query->condition('fm.uri', 'public://%', 'LIKE');
           $public_count = count($public_query->execute()->fetchAllAssoc('fid'));
 
-          PHPUnit::assertEquals($private, $private_count, sprintf("Private count was not '%s', instead '%s' private files found.", $private, $private_count));
-          PHPUnit::assertEquals($public, $public_count, sprintf("Public count was not '%s', instead '%s' public files found.", $public, $public_count));
+          Assert::assertEquals($private, $private_count, sprintf("Private count was not '%s', instead '%s' private files found.", $private, $private_count));
+          Assert::assertEquals($public, $public_count, sprintf("Public count was not '%s', instead '%s' public files found.", $public, $public_count));
         }
 
       }
