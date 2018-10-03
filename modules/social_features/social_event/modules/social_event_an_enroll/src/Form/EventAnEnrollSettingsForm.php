@@ -35,7 +35,7 @@ class EventAnEnrollSettingsForm extends ConfigFormBase {
     $form['event_an_enroll'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Enable event enrollment for anonymous users'),
-      '#description' => $this->t('Enabling this feature will give public event organisers the possibility to allow anonymous users to enroll in these public events.'),
+      '#description' => $this->t('Enabling this feature provides event organisers with the possibility to allow anonymous users to enroll in public events.'),
       '#default_value' => $event_an_enroll_config->get('event_an_enroll'),
     ];
 
@@ -43,7 +43,7 @@ class EventAnEnrollSettingsForm extends ConfigFormBase {
     $form['event_an_enroll_default_value'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Allow anonymous users to enroll in new events by default'),
-      '#description' => $this->t('When this setting is enabled by default it will allow anonymous users to enroll in newly created events. The author will still be able to change this if the author has the permission.'),
+      '#description' => $this->t('When this setting is enabled, anonymous users are allowed to enroll in newly created events by default. The event organiser will still be able to change this if they have the permission.'),
       '#default_value' => $event_an_enroll_config->get('event_an_enroll_default_value'),
       '#states' => [
         'visible' => [
@@ -54,8 +54,8 @@ class EventAnEnrollSettingsForm extends ConfigFormBase {
 
     $form['event_an_enroll_allow_edit'] = [
       '#type' => 'checkbox',
-      '#title' => $this->t('Allow author of an event to change if anonymous users can enroll to the event'),
-      '#description' => $this->t('This will give authors the permission to set if anonymous users can enroll to their event.'),
+      '#title' => $this->t('Allow the author of an event to decide whether anonymous users can or cannot enroll in the event'),
+      '#description' => $this->t('This will provide event organisers with the permission to decide whether anonymous users can enroll in their event.'),
       '#default_value' => $event_an_enroll_config->get('event_an_enroll_allow_edit'),
       '#states' => [
         'visible' => [
@@ -66,7 +66,7 @@ class EventAnEnrollSettingsForm extends ConfigFormBase {
 
     $form['event_an_enroll_email_notify'] = [
       '#type' => 'checkbox',
-      '#title' => $this->t('Notify user after anonymous enrollment by email'),
+      '#title' => $this->t('Notify user by email after anonymous enrollment'),
       '#default_value' => $event_an_enroll_config->get('event_an_enroll_email_notify'),
       '#states' => [
         'visible' => [
@@ -104,7 +104,7 @@ class EventAnEnrollSettingsForm extends ConfigFormBase {
     ];
     // Add explanation about using tokens.
     $form['event_an_enroll_email']['event_an_enroll_email_token'] = [
-      '#markup' => $this->t('To add event name and link use tokens: [node:title], [social_event_an_enroll:enrolled_event]'),
+      '#markup' => $this->t('To add the event name and link, use the following tokens: [node:title], [social_event_an_enroll:enrolled_event]'),
     ];
 
     return parent::buildForm($form, $form_state);
