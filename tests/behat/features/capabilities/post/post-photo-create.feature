@@ -24,7 +24,7 @@ Feature: Create Post with Photo
     And I should be on "/stream"
 
         # Scenario: edit the post
-   When I click the xth "5" element with the css ".dropdown-toggle"
+   When I click the xth "1" element with the css ".dropdown-toggle" in the "Main content"
     And I click "Edit"
     And I fill in "Say something to the Community" with "This is a post with a photo edited."
     And I press "Post"

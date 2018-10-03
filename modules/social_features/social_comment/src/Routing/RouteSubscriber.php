@@ -33,6 +33,19 @@ class RouteSubscriber extends RouteSubscriberBase {
       $route->setDefaults($defaults);
     }
 
+    /** @var \Symfony\Component\Routing\Route $route */
+    if ($route = $collection->get('comment.admin')) {
+      $defaults = $route->getDefaults();
+      $defaults['_form'] = '\Drupal\social_comment\Form\SocialCommentAdminOverview';
+      $route->setDefaults($defaults);
+    }
+
+    /** @var \Symfony\Component\Routing\Route $route */
+    if ($route = $collection->get('comment.admin_approval')) {
+      $defaults = $route->getDefaults();
+      $defaults['_form'] = '\Drupal\social_comment\Form\SocialCommentAdminOverview';
+      $route->setDefaults($defaults);
+    }
   }
 
 }

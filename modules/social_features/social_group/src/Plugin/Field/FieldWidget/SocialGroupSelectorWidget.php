@@ -165,7 +165,11 @@ class SocialGroupSelectorWidget extends OptionsSelectWidget implements Container
     // So I have to add this setting to the form in order to use it later on.
     $default_visibility = $this->configFactory->get('entity_access_by_field.settings')
       ->get('default_visibility');
-    $form['field_content_visibility']['standard_default'] = $default_visibility;
+
+    $form['default_visibility'] = [
+      '#type' => 'value',
+      '#value' => $default_visibility,
+    ];
 
     $change_group_node = $this->configFactory->get('social_group.settings')
       ->get('allow_group_selection_in_node');
@@ -220,7 +224,7 @@ class SocialGroupSelectorWidget extends OptionsSelectWidget implements Container
       }
     }
     else {
-      $default_visibility = $form['field_content_visibility']['standard_default'];
+      $default_visibility = $form_state->getValue('default_visibility');
       $entity = $form_state->getFormObject()->getEntity();
 
       $allowed_visibility_options = social_group_get_allowed_visibility_options_per_group_type(NULL, NULL, $entity);
@@ -241,6 +245,8 @@ class SocialGroupSelectorWidget extends OptionsSelectWidget implements Container
         }
         $ajax_response->addCommand(new InvokeCommand('#edit-field-content-visibility-' . $visibility, 'prop', ['disabled', 'disabled']));
       }
+
+      $ajax_response->addCommand(new InvokeCommand('#edit-field-content-visibility-' . $visibility, 'change'));
     }
     $text = t('Changing the group may have impact on the <strong>visibility settings</strong>.');
 

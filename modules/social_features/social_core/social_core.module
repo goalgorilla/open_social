@@ -55,14 +55,8 @@ function template_preprocess_page_hero_data(array &$variables) {
   // Get current user.
   $account = \Drupal::currentUser();
 
-  // Get current node object or node id.
-  $node = \Drupal::routeMatch()->getParameter('node');
-
-  if (!is_object($node) && !is_null($node)) {
-    $node = \Drupal::service('entity_type.manager')
-      ->getStorage('node')
-      ->load($node);
-  }
+  // Get current node object.
+  $node = $variables['node'];
 
   if (is_object($node)) {
     if (empty($variables['event_enrollment'])) {
@@ -476,10 +470,30 @@ function social_core_field_widget_form_alter(&$element, FormStateInterface $form
   $field_definition = $context['items']->getFieldDefinition();
 
   if ($field_definition->getType() == 'path') {
+    // Set the correct title.
+    $element['#title'] = t('URL path settings');
+
     $url = Url::fromRoute('<front>', [], [
       'absolute' => TRUE,
     ]);
-    $element['alias']['#field_prefix'] = '<div class="input-group input-group-expanded"><span class="input-group-addon">' . $url->toString() . '</span>';
+
+    // Protocols we can strip.
+    $protocols = [
+      'https://www.',
+      'http://www.',
+      'https://',
+      'http://',
+      'www.',
+    ];
+
+    // The URL.
+    $truncate_url = $url->toString();
+    // Loop over the protocols and try to replace them in the string.
+    foreach ($protocols as $protocol) {
+      $truncate_url = str_replace($protocol, '', $truncate_url);
+    }
+    // Put the protocoless, truncated URL in the addon.
+    $element['alias']['#field_prefix'] = '<div class="input-group input-group-expanded"><span class="input-group-addon">' . $truncate_url . '</span>';
     $element['alias']['#field_suffix'] = '</div>';
     $element['alias']['#description'] = t('The URL alias allows you to customise the link to this page.');
 

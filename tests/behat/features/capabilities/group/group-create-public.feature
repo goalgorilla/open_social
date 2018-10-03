@@ -15,7 +15,7 @@ Feature: Create Public Group
       | Other    |
     And I am logged in as "GivenUserOne"
     And I am on "user"
-    And I click "Groups"
+    And I click "Groups" in the "Tabs"
     And I click "Add a group"
     Then I click radio button "Public group This is a public group. Users may join without approval and all content added in this group will be visible to all community members and anonymous users." with the id "edit-group-type-public-group"
     And I press "Continue"
@@ -48,14 +48,14 @@ Feature: Create Public Group
     And I should see "Lviv" in the "Hero block"
     And I should see "Lviv oblast" in the "Hero block"
 
-    When I click "About"
+    When I click "About" in the "Tabs"
     Then I should see "Description text" in the "Main content"
 
     And I am logged in as "GivenUserTwo"
     And I am on "all-members"
     And I click "GivenUserOne"
     And I should see "Test public group" in the "Sidebar second"
-    And I click "Groups"
+    And I click "Groups" in the "Tabs"
     And I should see "Test public group" in the "Main content"
     And I should not see the link "Add a group" in the "Main content"
     And I click "Test public group"
@@ -69,7 +69,7 @@ Feature: Create Public Group
     And I should see the button "Join group"
     And I press "Join group"
     And I am on "user"
-    And I click "Groups"
+    And I click "Groups" in the "Tabs"
     And I click "Test public group"
     Then I should see the button "Joined"
 
