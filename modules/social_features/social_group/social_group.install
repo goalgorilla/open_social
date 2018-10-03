@@ -11,6 +11,7 @@ use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\Core\Database\Database;
 use Drupal\user\Entity\Role;
 use Drupal\social_post\Entity\Post;
+use Drupal\node\Entity\Node;
 
 /**
  * Implements hook_update_dependencies().
@@ -399,10 +400,10 @@ function social_group_update_8014() {
 }
 
 /**
- * DATA ALTERATION.
+ * NOTE: Contains possible data alteration!
  *
- * Update all post visibility for public posts placed in a group with group type
- * open_group set public to community.
+ * Change the visibility of all posts placed in an open group, which have
+ * visibility public, to community.
  * See: https://www.drupal.org/project/social/issues/2992332#comment-12790905.
  */
 function social_group_update_8301(&$sandbox) {
@@ -411,7 +412,7 @@ function social_group_update_8301(&$sandbox) {
     $sandbox['items'] = [];
     $sandbox['max'] = 0;
 
-    // First grab all the post id's that are affected.
+    // First grab all the post IDs that need to change.
     $connection = Database::getConnection();
     $sth = $connection->select('post__field_visibility', 'pv');
     $sth->fields('pv', ['entity_id']);
@@ -431,11 +432,56 @@ function social_group_update_8301(&$sandbox) {
 
   if ($sandbox['items']['post_ids']) {
     $pid = array_shift($sandbox['items']['post_ids']);
-    // Load all the entities with entity_load_multiple.
+
+    // Load all the entities and re-save them with the correct visibility.
     $post = Post::load($pid);
     /** @var \Drupal\social_post\Entity\Post $post */
     $post->set('field_visibility', '0');
     $post->save();
+  }
+
+  $sandbox['progress']++;
+  $sandbox['#finished'] = empty($sandbox['max']) ? 1 : ($sandbox['progress'] / $sandbox['max']);
+}
+
+/**
+ * NOTE: Contains possible data alteration!
+ *
+ * Change the visibility of all nodes placed in an open group, which have
+ * visibility public, to community.
+ * See: https://www.drupal.org/project/social/issues/2992332#comment-12790905.
+ */
+function social_group_update_8302(&$sandbox) {
+  if (!isset($sandbox['progress'])) {
+    $sandbox['progress'] = 0;
+    $sandbox['items'] = [];
+    $sandbox['max'] = 0;
+
+    // First grab all the node IDs that need to change.
+    $connection = Database::getConnection();
+    $sth = $connection->select('group_content_field_data', 'gc');
+    $sth->fields('gc', ['entity_id']);
+    $sth->join('node__field_content_visibility', 'nv', 'gc.entity_id = nv.entity_id');
+    $sth->join('node_field_data', 'nd', 'gc.entity_id = nd.nid');
+    $sth->condition('gc.type', 'open_group-group_node-%', 'LIKE');
+    $sth->condition('nv.field_content_visibility_value', 'public', '=');
+    // Timestamp is from the moment the commit landed in 8.x-3.x see:
+    // https://cgit.drupalcode.org/social/commit/?id=3e465bb1ad927712e22469c193b6e9547ba1c081
+    $sth->condition('nd.created', '1534118400', '>');
+    $data = $sth->execute();
+
+    $sandbox['items']['node_ids'] = $data->fetchCol();
+    $sandbox['max'] = count($sandbox['items']['node_ids']);
+  }
+
+  if ($sandbox['items']['node_ids']) {
+    $pid = array_shift($sandbox['items']['node_ids']);
+
+    // Load all the entities and re-save them with the correct visibility.
+    $node = Node::load($pid);
+    /** @var \Drupal\node\Entity\Node $node */
+    $node->set('field_content_visibility', 'community');
+    $node->save();
   }
 
   $sandbox['progress']++;
