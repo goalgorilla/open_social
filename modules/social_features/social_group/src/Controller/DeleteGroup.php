@@ -47,7 +47,7 @@ class DeleteGroup {
         'One item deleted.', '@count items deleted.'
       );
       // Provide some feedback when its a success.
-      drupal_set_message(t("Your group and all of it's topic's, event's and post's have been deleted."));
+      drupal_set_message(t('Your group and all of its topics, events and posts have been deleted.'));
       // TODO: log to the database.
     }
     else {
