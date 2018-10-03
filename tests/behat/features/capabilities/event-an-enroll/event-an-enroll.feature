@@ -85,7 +85,8 @@ Feature: Enroll for an event without an account
     Given I set the configuration item "social_event_an_enroll.settings" with key "event_an_enroll_default_value" to 1
     And I am logged in as a user with the "authenticated user" role
     And I am on "node/add/event"
-    When I fill in the following:
+    When I fill in the custom fields for this "event"
+    And I fill in the following:
       | Title                    | Anonymous event enrollment |
       | edit-field-event-date-0-value-date | 2025-01-01 |
       | edit-field-event-date-end-0-value-date | 2025-01-02 |
