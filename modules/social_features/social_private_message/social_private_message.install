@@ -77,3 +77,18 @@ function _social_private_message_get_permissions($role) {
 function social_private_message_update_8001() {
   module_set_weight('social_private_message', 1);
 }
+
+/**
+ * Remove inbox blocks.
+ */
+function social_private_message_update_8002() {
+  $plugin = 'social_private_message_inbox_block';
+
+  $storage = \Drupal::entityTypeManager()->getStorage('block');
+  $blocks = $storage->loadByProperties(['plugin' => $plugin]);
+
+  /** @var \Drupal\block\Entity\Block $block */
+  foreach ($blocks as $block) {
+    $block->delete();
+  }
+}
