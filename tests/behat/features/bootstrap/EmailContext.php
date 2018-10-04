@@ -1,6 +1,8 @@
 <?php
 // @codingStandardsIgnoreFile
 
+namespace Drupal\social\Behat;
+
 use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\TableNode;
 use Symfony\Component\Filesystem\Filesystem;
@@ -133,9 +135,9 @@ class EmailContext implements Context {
         $email_body = $email->getBody();
 
         // Make it a traversable HTML doc.
-        $doc = new DOMDocument();
+        $doc = new \DOMDocument();
         $doc->loadHTML($email_body);
-        $xpath = new DOMXPath($doc);
+        $xpath = new \DOMXPath($doc);
         // Find the post header and email content in the HTML file.
         $content = $xpath->evaluate('string(//*[contains(@class,"postheader")])');
         $content .= $xpath->evaluate('string(//*[contains(@class,"main")])');
