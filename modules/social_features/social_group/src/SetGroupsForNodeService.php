@@ -103,6 +103,24 @@ class SetGroupsForNodeService {
         $controller = $this->entityTypeManager->getStorage('activity');
         $controller->delete($controller->loadMultiple($ids));
       }
+
+      // Make sure to delete all activity items connected to the moved content
+      // template.
+      if ($moved) {
+        $messages = $this->entityTypeManager->getStorage('message')
+          ->loadByProperties(['template' => 'moved_content_between_groups']);
+
+        // Make sure we have a message template to work with.
+        if ($messages) {
+          $entity_query->condition('field_activity_message.target_id', array_keys($messages), 'IN');
+        }
+
+        // Delete all activity items connected to our query.
+        if (!empty($ids = $entity_query->execute())) {
+          $controller = $this->entityTypeManager->getStorage('activity');
+          $controller->delete($controller->loadMultiple($ids));
+        }
+      }
     }
 
     // Remove all the group content references from the Group as well if we

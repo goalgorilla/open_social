@@ -851,3 +851,16 @@ function social_core_update_8027() {
     $config->save();
   }
 }
+
+/**
+ * Turn off comment user verification setting.
+ */
+function social_core_update_8028() {
+  // Change setting for socialbase.
+  $socialbase_settings = \Drupal::configFactory()->getEditable('socialbase.settings');
+  $socialbase_settings->set('features.comment_user_verification', FALSE)->save();
+
+  // Change setting for socialblue.
+  $socialblue_settings = \Drupal::configFactory()->getEditable('socialblue.settings');
+  $socialblue_settings->set('features.comment_user_verification', FALSE)->save();
+}
