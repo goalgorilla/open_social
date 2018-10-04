@@ -55,23 +55,23 @@ Feature: Enroll for an event without an account
       | Email address | john@doe.com |
     And I press "Enroll in event"
     Then I should see the success message "You have been already enrolled to this event. You have also received a notification via email"
-    # AS CM+ I should see Anonymous enrollments.
+    # AS CM+ I should see Guest enrollments.
     Given I am logged in as a user with the "contentmanager" role
     And I open the "event" node with title "AN Event 1"
-    And I click "Anonymous enrollment"
+    And I click "Guest enrollments"
     Then I should see "John Doe"
     And I should see "john@doe.com"
-    # AS LU I should not see Anonymous enrollments emails
+    # AS LU I should not see Guest enrollments emails
     Given I am logged in as an "authenticated user"
     And I open the "event" node with title "AN Event 1"
-    Then I should not see "Anonymous enrollment"
+    Then I should not see "Guest enrollments"
 
   @AN
   Scenario: Control the site-wide default of AN enrollment
     Given I enable the module "social_event_an_enroll"
     And I am an anonymous user
     And I am viewing an event:
-      | title                    | No anonymous enrollment |
+      | title                    | No guest enrollment |
       | field_event_date         | +3 days                 |
       | field_event_date_end     | +4 days                 |
       | field_content_visibility | public                  |
