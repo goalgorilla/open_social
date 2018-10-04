@@ -89,8 +89,8 @@ function _social_event_an_enroll_fix_blocks() {
  */
 function social_event_an_enroll_update_8001() {
   $config = \Drupal::service('config.factory')->getEditable('social_event_an_enroll.settings');
-  $config->set('event_an_enroll_email_subject', "You are enrolled in the event [event name]");
-  $config->set('event_an_enroll_email_body', "You have been enrolled in the event [event name]. \nYou can cancel your enrollment anytime using this link [event url]");
+  $config->set('event_an_enroll_email_subject', "You are enrolled in the event [node:title]");
+  $config->set('event_an_enroll_email_body', "You have been enrolled in the event [node:title]. You can cancel your enrollment anytime using the following link: [social_event_an_enroll:enrolled_event].");
   $config->save();
 }
 
@@ -100,5 +100,15 @@ function social_event_an_enroll_update_8001() {
 function social_event_an_enroll_update_8002() {
   $config = \Drupal::service('config.factory')->getEditable('social_event_an_enroll.settings');
   $config->set('event_an_enroll', TRUE);
+  $config->save();
+}
+
+/**
+ * Set default value for Event AN Enroll and allow authors to change it.
+ */
+function social_event_an_enroll_update_8003() {
+  $config = \Drupal::service('config.factory')->getEditable('social_event_an_enroll.settings');
+  $config->set('event_an_enroll_default_value', FALSE);
+  $config->set('event_an_enroll_allow_edit', TRUE);
   $config->save();
 }
