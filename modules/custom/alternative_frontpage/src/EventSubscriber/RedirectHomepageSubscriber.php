@@ -11,7 +11,6 @@ use Symfony\Component\HttpKernel\KernelEvents;
 use Drupal\user\UserData;
 use Drupal\Core\Session\AccountProxy;
 use Drupal\Core\Config\ConfigFactory;
-use Drupal\Core\Url;
 
 /**
  * Class RedirectHomepageSubscriber.
@@ -108,8 +107,8 @@ class RedirectHomepageSubscriber implements EventSubscriberInterface {
       if ($frontpage_lu && $this->currentUser->isAuthenticated()) {
         $cache_contexts = new CacheableMetadata();
         $cache_contexts->setCacheContexts(['user.roles:anonymous']);
-        $HTTP_REFERER = $request->server->get('HTTP_REFERER');
-        $parse_url = parse_url($HTTP_REFERER, PHP_URL_QUERY);
+        $http_referer = $request->server->get('HTTP_REFERER');
+        $parse_url = parse_url($http_referer, PHP_URL_QUERY);
         parse_str($parse_url, $query_params);
         if (isset($query_params['destination'])) {
           $response = new CacheableRedirectResponse(parse_url($query_params['destination'], PHP_URL_PATH));
