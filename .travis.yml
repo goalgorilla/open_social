@@ -93,12 +93,12 @@ script:
   - if [ "$TEST_SUITE" = "install_stability_3-4-5" ]; then docker exec -it social_ci_behat sh /var/www/scripts/social/behatstability.sh stability-3 stability-4 stability-5; fi
   - if [ "$TEST_SUITE" = "install_update" ]; then docker exec -it social_ci_behat sh /var/www/scripts/social/behatstability.sh "stability-1&&~DS-1136&&~DS-3605"; fi
   - if [ "$TEST_SUITE" = "accessibility" ]; then docker exec -it social_ci_web bash /var/www/scripts/social/check-accessibility.sh install; fi
-  - if [[ "$BLACKFIRE" = "on" ]]; then
+  - if [ "$BLACKFIRE" = "on" ]; then
       curl -X POST https://blackfire.io/api/v1/build/env/$ENV-UUID/webhook \
       --user "$USERCRED" \
       -d "endpoint=https://travis-ci.org/goalgorilla/open_social" \
-      -d "title=Deploying branch - $BRANCH"
-      -d "external_id=$COMMIT"
+      -d "title=Deploying branch - $BRANCH" \
+      -d "external_id=$COMMIT" \
       -d "external_parent_id=$TRAVIS_TAG"
     fi
   #Let's test to see if we can webhook from travis, PHP SDK will come in next step.
