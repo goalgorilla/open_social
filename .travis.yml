@@ -76,4 +76,4 @@ script:
   - if [ "$TEST_SUITE" = "accessibility" ]; then docker exec -it social_ci_web bash /var/www/scripts/social/check-accessibility.sh install; fi
 
 after_success:
-  - bash scripts/social/trigger_dockerhub.sh
+  - if [ "$TRAVIS_PULL_REQUEST_SLUG" == "goalgorilla/open_social" ]; then bash scripts/social/trigger_dockerhub.sh
