@@ -54,7 +54,7 @@ before_install:
   - if [ "$TEST_SUITE" = "install_update" ]; then composer require goalgorilla/open_social:2.0.0 --prefer-dist; fi
   - if [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ "$TRAVIS_PULL_REQUEST_SLUG" != "goalgorilla/open_social" ]; then composer config repositories.social git https://github.com/$TRAVIS_PULL_REQUEST_SLUG.git; fi
   - if [ "$TEST_SUITE" != "install_update" ]; then composer require goalgorilla/open_social:dev-${BRANCH}#${COMMIT} --prefer-dist; fi
-  - if [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ "$TRAVIS_PULL_REQUEST_SLUG" != "goalgorilla/open_social" ]; then $BLACKFIRE = "off" #it's external blackfire only works internal.
+  #- if [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ "$TRAVIS_PULL_REQUEST_SLUG" != "goalgorilla/open_social" ]; then $BLACKFIRE = "off"
 
   # Install docker and our docker containers.
   - sh scripts/social/ci/install-docker.sh
