@@ -1,0 +1,159 @@
+tests:
+  "AN Home page":
+    path: "/"
+    assertions:
+    - main.wall_time < 1000ms
+    - main.io < 300ms
+    - main.cpu_time < 750ms
+    - metrics.output.network_out < 100KB
+    - main.memory < 50M
+    - main.peak_memory < 75M
+    - metrics.sql.queries.count < 250
+  "AN Login page":
+    path: ".*user/login.*"
+    assertions:
+    - main.wall_time < 1000ms
+    - main.io < 300ms
+    - main.cpu_time < 750ms
+    - metrics.output.network_out < 100KB
+    - main.memory < 50M
+    - main.peak_memory < 75M
+    - metrics.sql.queries.count < 200
+  "LU Homepage":
+    path: ".*stream.*"
+    assertions:
+    - main.wall_time < 4500ms
+    - main.io < 750ms
+    - main.cpu_time < 4250ms
+    - metrics.output.network_out < 100KB
+    - main.memory < 50M
+    - main.peak_memory < 75M
+    - metrics.sql.queries.count < 800
+    - metrics.drupal8.entity_load.content.count <= 100
+  "LU Explore page":
+    path: ".*explore.*"
+    assertions:
+    - main.wall_time < 4500ms
+    - main.io < 750ms
+    - main.cpu_time < 4250ms
+    - metrics.output.network_out < 100KB
+    - main.memory < 50M
+    - main.peak_memory < 75M
+    - metrics.sql.queries.count < 800
+    - metrics.drupal8.entity_load.content.count <= 100
+  "LU Group stream page":
+    path: ".*group/1/stream.*"
+    assertions:
+    - main.wall_time < 1000ms
+    - main.io < 300ms
+    - main.cpu_time < 750ms
+    - metrics.output.network_out < 100KB
+    - main.memory < 50M
+    - main.peak_memory < 75M
+    - metrics.sql.queries.count < 250
+  "LU User profile page":
+    path: ".*user/4/stream.*"
+    assertions:
+    - main.wall_time < 1000ms
+    - main.io < 300ms
+    - main.cpu_time < 750ms
+    - metrics.output.network_out < 100KB
+    - main.memory < 50M
+    - main.peak_memory < 75M
+    - metrics.sql.queries.count < 50
+    - metrics.drupal8.entity_load.content.count <= 15
+  "LU Search results page":
+    path: ".*search/all/test.*"
+    assertions:
+    - main.wall_time < 2000ms
+    - main.io < 400ms
+    - main.cpu_time < 2000ms
+    - metrics.output.network_out < 100KB
+    - main.memory < 50M
+    - main.peak_memory < 75M
+    - metrics.sql.queries.count < 350
+    - metrics.drupal8.entity_load.content.count <= 15
+  "LU Post detail page":
+    path: ".*post/2.*"
+    assertions:
+    - main.wall_time < 1000ms
+    - main.io < 300ms
+    - main.cpu_time < 750ms
+    - metrics.output.network_out < 100KB
+    - main.memory < 50M
+    - main.peak_memory < 75M
+    - metrics.sql.queries.count < 250
+  "LU Topic detail page":
+    path: ".*node/1.*"
+    assertions:
+    - main.wall_time < 1000ms
+    - main.io < 300ms
+    - main.cpu_time < 750ms
+    - metrics.output.network_out < 100KB
+    - main.memory < 50M
+    - main.peak_memory < 75M
+    - metrics.sql.queries.count < 100
+  "Pages should not become slower":
+    path: /.*
+    assertions:
+    - percent(main.wall_time) < 15%
+    - diff(metrics.sql.queries.count) < 25
+
+scenarios:
+  AN Home page:
+  - path: /
+    warmup: true
+    samples: 10
+  AN Login page:
+  - path: /user/login
+    warmup: true
+    samples: 10
+  LU Homepage:
+  - path: /stream
+    method: GET
+    warmup: true
+    samples: 10
+    headers:
+      Authorization: "Basic c2l0ZW1hbmFnZXI6c2l0ZW1hbmFnZXI="
+  LU Explore page:
+  - path: /explore
+    method: GET
+    warmup: true
+    samples: 10
+    headers:
+      Authorization: "Basic c2l0ZW1hbmFnZXI6c2l0ZW1hbmFnZXI="
+  LU Group stream page:
+  - path: /group/1/stream
+    method: GET
+    warmup: true
+    samples: 10
+    headers:
+      Authorization: "Basic c2l0ZW1hbmFnZXI6c2l0ZW1hbmFnZXI="
+  LU User profile page:
+  - path: /user/4/stream
+    method: GET
+    warmup: true
+    samples: 10
+    headers:
+      Authorization: "Basic c2l0ZW1hbmFnZXI6c2l0ZW1hbmFnZXI="
+  LU Search results page:
+  - path: /search/all/test
+    method: GET
+    warmup: true
+    samples: 10
+    headers:
+      Authorization: "Basic c2l0ZW1hbmFnZXI6c2l0ZW1hbmFnZXI="
+  LU Post detail page:
+  - path: /post/2
+    method: GET
+    warmup: true
+    samples: 10
+    headers:
+      Authorization: "Basic c2l0ZW1hbmFnZXI6c2l0ZW1hbmFnZXI="
+  LU Topic detail page:
+  - path: /node/1
+    method: GET
+    warmup: true
+    samples: 10
+    headers:
+      Authorization: "Basic c2l0ZW1hbmFnZXI6c2l0ZW1hbmFnZXI="

@@ -54,6 +54,7 @@ before_install:
   - if [ "$TEST_SUITE" = "install_update" ]; then composer require goalgorilla/open_social:2.0.0 --prefer-dist; fi
   - if [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ "$TRAVIS_PULL_REQUEST_SLUG" != "goalgorilla/open_social" ]; then composer config repositories.social git https://github.com/$TRAVIS_PULL_REQUEST_SLUG.git; fi
   - if [ "$TEST_SUITE" != "install_update" ]; then composer require goalgorilla/open_social:dev-${BRANCH}#${COMMIT} --prefer-dist; fi
+  - if [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ "$TRAVIS_PULL_REQUEST_SLUG" != "goalgorilla/open_social" ]; then $BLACKFIRE = "off" #it's external blackfire only works internal.
 
   # Install docker and our docker containers.
   - sh scripts/social/ci/install-docker.sh
@@ -92,6 +93,15 @@ script:
   - if [ "$TEST_SUITE" = "install_stability_3-4-5" ]; then docker exec -it social_ci_behat sh /var/www/scripts/social/behatstability.sh stability-3 stability-4 stability-5; fi
   - if [ "$TEST_SUITE" = "install_update" ]; then docker exec -it social_ci_behat sh /var/www/scripts/social/behatstability.sh "stability-1&&~DS-1136&&~DS-3605"; fi
   - if [ "$TEST_SUITE" = "accessibility" ]; then docker exec -it social_ci_web bash /var/www/scripts/social/check-accessibility.sh install; fi
+  - if [[ "$BLACKFIRE" = "on" ]]; then
+      curl -X POST https://blackfire.io/api/v1/build/env/$ENV-UUID/webhook \
+      --user "$USERCRED" \
+      -d "endpoint=https://travis-ci.org/goalgorilla/open_social" \
+      -d "title=Deploying branch - $BRANCH"
+      -d "external_id=$COMMIT"
+      -d "external_parent_id=$TRAVIS_TAG"
+    fi
+  #Let's test to see if we can webhook from travis, PHP SDK will come in next step.
 
 after_success:
   - bash scripts/social/trigger_dockerhub.sh
