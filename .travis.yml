@@ -31,6 +31,7 @@ matrix:
   - env: TEST_SUITE=install_stability_3-4-5
   - env: TEST_SUITE=install_update
   - env: TEST_SUITE=drush_make
+  - env: BLACKFIRE=on
 #  - env: TEST_SUITE=accessibility
 
 services:
@@ -58,16 +59,33 @@ before_install:
   - sh scripts/social/ci/install-docker.sh
   - docker-compose -f docker-compose-ci.yml up -d
 
+  # Travis - Blackfire integration.
+  - |
+    if [[ "$BLACKFIRE" = "on" ]]; then
+        openssl aes-256-cbc -K $encrypted_ee21e704a832_key -iv $encrypted_ee21e704a832_iv -in .blackfire.travis.ini.enc -out ~/.blackfire.ini -d
+        curl -L https://blackfire.io/api/v1/releases/agent/linux/amd64 | tar zxpf -
+        chmod 755 agent && ./agent --config=~/.blackfire.ini --socket=unix:///tmp/blackfire.sock &
+    fi
+
 install:
   - if [ "$TEST_SUITE" = "install_stability_1" ] || [ "$TEST_SUITE" = "install_stability_2" ] || [ "$TEST_SUITE" = "install_stability_3-4-5" ]; then docker exec -i social_ci_web bash /var/www/scripts/social/install/install_script.sh; fi
   - if [ "$TEST_SUITE" = "install_update" ]; then bash scripts/social/ci/build-install-update.sh $PR $BRANCH $COMMIT; fi
   - if [ "$TEST_SUITE" = "drush_make" ]; then bash scripts/social/ci/build-social-make.sh; fi
 
+before_script:
+- phpenv config-rm xdebug.ini || true
+- |
+  if [[ "$BLACKFIRE" = "on" ]]; then
+      curl -L https://blackfire.io/api/v1/releases/probe/php/linux/amd64/$(php -r "echo PHP_MAJOR_VERSION . PHP_MINOR_VERSION;")-zts | tar zxpf -
+      echo "extension=$(pwd)/$(ls blackfire-*.so | tr -d '[[:space:]]')" > ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/blackfire.ini
+      echo "blackfire.agent_socket=unix:///tmp/blackfire.sock" >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/blackfire.ini
+  fi
+
 script:
   - set -e
   - if [ "$TEST_SUITE" = "install_stability_1" ]; then docker exec -i social_ci_web bash /var/www/scripts/social/check-coding-standards.sh full; fi
   - if [ "$TEST_SUITE" = "install_stability_1" ]; then docker exec -i social_ci_web_scripts sh /var/www/scripts/social/unit-tests.sh; fi
-  - if [ "$TEST_SUITE" = "install_stability_1" ] ; then docker exec -i social_ci_web bash /var/www/scripts/social/check-feature-state.sh social; fi
+  - if [ "$TEST_SUITE" = "install_stability_1" ]; then docker exec -i social_ci_web bash /var/www/scripts/social/check-feature-state.sh social; fi
   - if [ "$TEST_SUITE" = "install_stability_1" ]; then docker exec -it social_ci_behat sh /var/www/scripts/social/behatstability.sh stability-1; fi
   - if [ "$TEST_SUITE" = "install_stability_2" ]; then docker exec -it social_ci_behat sh /var/www/scripts/social/behatstability.sh notifications; fi
   - if [ "$TEST_SUITE" = "install_stability_2" ]; then docker exec -it social_ci_behat sh /var/www/scripts/social/behatstability.sh stability-2; fi
