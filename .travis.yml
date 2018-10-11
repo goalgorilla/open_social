@@ -62,9 +62,9 @@ before_install:
   # Travis - Blackfire integration.
   - |
     if [[ "$BLACKFIRE" = "on" ]]; then
-        openssl aes-256-cbc -K $encrypted_ee21e704a832_key -iv $encrypted_ee21e704a832_iv -in html/profiles/contrib/social/.blackfire.travis.ini.enc -out ~/.blackfire.ini -d
+        openssl aes-256-cbc -K $encrypted_ee21e704a832_key -iv $encrypted_ee21e704a832_iv -in html/profiles/contrib/social/.blackfire.travis.ini.enc -out html/profiles/contrib/social/.blackfire.ini -d
         curl -L https://blackfire.io/api/v1/releases/agent/linux/amd64 | tar zxpf -
-        chmod 755 agent && ./agent --config=~/.blackfire.ini --socket=unix:///tmp/blackfire.sock &
+        chmod 755 agent && ./agent --config=html/profiles/contrib/social/.blackfire.ini --socket=unix:///tmp/blackfire.sock &
     fi
 
 install:
