@@ -26,12 +26,12 @@ env:
 matrix:
   fast_finish: true
   include:
+  - env: BLACKFIRE=on
   - env: TEST_SUITE=install_stability_1
   - env: TEST_SUITE=install_stability_2
   - env: TEST_SUITE=install_stability_3-4-5
   - env: TEST_SUITE=install_update
   - env: TEST_SUITE=drush_make
-  - env: BLACKFIRE=on
 #  - env: TEST_SUITE=accessibility
 
 services:
@@ -83,6 +83,7 @@ before_script:
 
 script:
   - set -e
+  - if [ "$BLACKFIRE" = "on" ]; then docker exec -i social_ci_web bash php /var/www/html/social/tests/blackfire/consumer.php --commit=$COMMIT --uuid=$ENV_UUID  fi
   - if [ "$TEST_SUITE" = "install_stability_1" ]; then docker exec -i social_ci_web bash /var/www/scripts/social/check-coding-standards.sh full; fi
   - if [ "$TEST_SUITE" = "install_stability_1" ]; then docker exec -i social_ci_web_scripts sh /var/www/scripts/social/unit-tests.sh; fi
   - if [ "$TEST_SUITE" = "install_stability_1" ]; then docker exec -i social_ci_web bash /var/www/scripts/social/check-feature-state.sh social; fi
@@ -92,7 +93,6 @@ script:
   - if [ "$TEST_SUITE" = "install_stability_3-4-5" ]; then docker exec -it social_ci_behat sh /var/www/scripts/social/behatstability.sh stability-3 stability-4 stability-5; fi
   - if [ "$TEST_SUITE" = "install_update" ]; then docker exec -it social_ci_behat sh /var/www/scripts/social/behatstability.sh "stability-1&&~DS-1136&&~DS-3605"; fi
   - if [ "$TEST_SUITE" = "accessibility" ]; then docker exec -it social_ci_web bash /var/www/scripts/social/check-accessibility.sh install; fi
-  - if [ "$BLACKFIRE" = "on" ]; then docker exec -i social_ci_web bash php /var/www/html/social/tests/blackfire/consumer.php --commit=$COMMIT --uuid=$ENV_UUID  fi
 
 after_success:
   - bash scripts/social/trigger_dockerhub.sh
