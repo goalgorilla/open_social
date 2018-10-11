@@ -54,7 +54,6 @@ before_install:
   - if [ "$TEST_SUITE" = "install_update" ]; then composer require goalgorilla/open_social:2.0.0 --prefer-dist; fi
   - if [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ "$TRAVIS_PULL_REQUEST_SLUG" != "goalgorilla/open_social" ]; then composer config repositories.social git https://github.com/$TRAVIS_PULL_REQUEST_SLUG.git; fi
   - if [ "$TEST_SUITE" != "install_update" ]; then composer require goalgorilla/open_social:dev-${BRANCH}#${COMMIT} --prefer-dist; fi
-  #- if [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ "$TRAVIS_PULL_REQUEST_SLUG" != "goalgorilla/open_social" ]; then $BLACKFIRE = "off"
 
   # Install docker and our docker containers.
   - sh scripts/social/ci/install-docker.sh
@@ -63,7 +62,7 @@ before_install:
   # Travis - Blackfire integration.
   - |
     if [[ "$BLACKFIRE" = "on" ]]; then
-        openssl aes-256-cbc -K $encrypted_ee21e704a832_key -iv $encrypted_ee21e704a832_iv -in .blackfire.travis.ini.enc -out ~/.blackfire.ini -d
+        openssl aes-256-cbc -K $encrypted_ee21e704a832_key -iv $encrypted_ee21e704a832_iv -in html/profiles/contrib/social/.blackfire.travis.ini.enc -out ~/.blackfire.ini -d
         curl -L https://blackfire.io/api/v1/releases/agent/linux/amd64 | tar zxpf -
         chmod 755 agent && ./agent --config=~/.blackfire.ini --socket=unix:///tmp/blackfire.sock &
     fi
@@ -94,7 +93,6 @@ script:
   - if [ "$TEST_SUITE" = "install_update" ]; then docker exec -it social_ci_behat sh /var/www/scripts/social/behatstability.sh "stability-1&&~DS-1136&&~DS-3605"; fi
   - if [ "$TEST_SUITE" = "accessibility" ]; then docker exec -it social_ci_web bash /var/www/scripts/social/check-accessibility.sh install; fi
   - if [ "$BLACKFIRE" = "on" ]; then docker exec -i social_ci_web bash php /var/www/html/social/tests/blackfire/consumer.php --commit=$COMMIT --uuid=$ENV_UUID  fi
-  #Let's test to see if we can webhook from travis, PHP SDK will come in next step.
 
 after_success:
   - bash scripts/social/trigger_dockerhub.sh
