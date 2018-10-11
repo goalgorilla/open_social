@@ -1,12 +1,11 @@
 <?php
 
 /**
+ * @file
  * This file is part of the Open Social Blackfire testing.
  */
 
-//require_once __DIR__.'../../../../../../vendor/autoload.php';
-
-use Blackfire\LoopClient;
+// require_once __DIR__.'../../../../../../vendor/autoload.php';.
 use Blackfire\Client;
 use Blackfire\Profile\Configuration;
 
@@ -32,31 +31,30 @@ $build = $blackfire->startBuild(
     ]
 );
 
-// create a scenario (if the $build argument is null, a new build will be created)
+// Create a scenario (if the $build argument is null, a new will be created).
 $scenario = $blackfire->startScenario(
     $build, [
       'title' => 'Test to see if it works.',
     ]
 );
 
-// create a configuration
+// Create a configuration.
 $config = new Configuration();
 $config->setScenario($scenario);
 
-// create as many profiles as you need
+// Create as many profiles as you need.
 $probe = $blackfire->createProbe($config);
 
 // TEST STARTS HERE.
 $request = $blackfire->createRequest('Homepage');
-$header = 'X-Blackfire-Query: '.$request->getToken();
-// TEST ENDS HERE.
+$header = 'X-Blackfire-Query: ' . $request->getToken();
 
 $blackfire->endProbe($probe);
 
-// end the scenario and fetch the report
+// End the scenario and fetch the report.
 $report = $blackfire->closeScenario($scenario);
 
-// end the build
+// End the build.
 $blackfire->closeBuild($build);
 
 // Output the URL if we have any.
