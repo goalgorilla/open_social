@@ -28,7 +28,12 @@ function social_follow_content_event_enrollment_update(EntityInterface $entity) 
 function social_follow_content_event_enrollment_follow(EntityInterface $entity) {
   if ($entity->field_enrollment_status->value) {
     // Check if user already follow this content.
+    // Only logged in users can follow content.
     $account = \Drupal::currentUser();
+    if (!$account->isAuthenticated()) {
+      return;
+    }
+
     $properties = [
       'uid' => $account->id(),
       'entity_type' => 'node',

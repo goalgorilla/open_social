@@ -24,7 +24,8 @@
     },
     "autoload": {
         "psr-4": {
-            "Social\\": "src"
+            "Social\\": "src",
+            "Drupal\\social\\Behat\\": "tests/behat/features/bootstrap"
         }
     },
     "extra": {
@@ -40,7 +41,8 @@
                 "Add relationship to flagged entities when Flagging is base table": "https://www.drupal.org/files/issues/2723703_31.patch"
             },
             "drupal/group": {
-                "Add computed field for Group reference": "https://www.drupal.org/files/issues/add-computed-field-without-FieldItemListComputedInterface-2718195-34.patch"
+                "Add computed field for Group reference": "https://www.drupal.org/files/issues/add-computed-field-without-FieldItemListComputedInterface-2718195-34.patch",
+                "Add permission to view group overview": "https://www.drupal.org/files/issues/group-2943564-2.patch"
             },
             "drupal/image_widget_crop": {
                 "Initial crop fix": "https://www.drupal.org/files/issues/2018-07-05/2865396-36-apply-default-crop.diff"
@@ -85,7 +87,7 @@
         "drupal/devel": "1.2",
         "drupal/dynamic_entity_reference": "1.6",
         "drupal/embed": "1.0",
-        "drupal/entity": "1.0-beta3",
+        "drupal/entity": "1.0-beta4",
         "drupal/entity_reference_revisions": "1.4",
         "drupal/features": "3.7",
         "drupal/field_group": "3.0-beta1",
