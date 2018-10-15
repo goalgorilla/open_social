@@ -87,7 +87,7 @@ function social_event_views_query_alter(ViewExecutable $view, QueryPluginBase $q
  */
 function social_event_block_view_alter(array &$build, BlockPluginInterface $block) {
   // @todo check out why this happens, is this is a views bug?
-  if ($build['#plugin_id'] === 'views_exposed_filter_block:events-events_overview') {
+  if (isset($build['#plugin_id']) && $build['#plugin_id'] === 'views_exposed_filter_block:events-events_overview') {
     $build['#configuration']['label'] = $build['#configuration']['views_label'];
   }
 }

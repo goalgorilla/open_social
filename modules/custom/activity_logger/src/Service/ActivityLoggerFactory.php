@@ -220,7 +220,7 @@ class ActivityLoggerFactory {
       'create_event_group',
     ];
 
-    if (in_array($message_type, $types)) {
+    if (in_array($message_type, $types, TRUE)) {
       $query = \Drupal::entityQuery('message');
       $query->condition('template', $types, 'IN');
       $query->condition('field_message_related_object.target_id', $related_object['target_id']);
@@ -231,7 +231,7 @@ class ActivityLoggerFactory {
     }
 
     $ids = $query->execute();
-    if (!empty($ids)) {
+    if (!empty($ids) && $message_type != 'moved_content_between_groups') {
       $exists = TRUE;
     }
     return $exists;
