@@ -13,14 +13,14 @@ default:
         features: '/var/www/html/profiles/contrib/social/tests/behat/features'
         bootstrap: '/var/www/html/profiles/contrib/social/tests/behat/features/bootstrap'
       contexts:
-        - FeatureContext
-        - SocialDrupalContext
-        - SocialMinkContext
+        - Drupal\social\Behat\FeatureContext
+        - Drupal\social\Behat\SocialDrupalContext
+        - Drupal\social\Behat\SocialMinkContext
         - Drupal\DrupalExtension\Context\BatchContext
         - Drupal\DrupalExtension\Context\ConfigContext
         - Drupal\DrupalExtension\Context\MessageContext
-        - PostContext
-        - EmailContext
+        - Drupal\social\Behat\PostContext
+        - Drupal\social\Behat\EmailContext
   extensions:
       Behat\MinkExtension:
         default_session: 'selenium2'

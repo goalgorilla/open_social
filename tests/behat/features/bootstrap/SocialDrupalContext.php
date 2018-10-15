@@ -1,6 +1,8 @@
 <?php
 // @codingStandardsIgnoreFile
 
+namespace Drupal\social\Behat;
+
 use Drupal\DrupalExtension\Context\DrupalContext;
 use Behat\Mink\Element\Element;
 use Drupal\big_pipe\Render\Placeholder\BigPipeStrategy;
@@ -214,6 +216,19 @@ class SocialDrupalContext extends DrupalContext {
    */
   public function iEnableTheTourSetting() {
     \Drupal::configFactory()->getEditable('social_tour.settings')->set('social_tour_enabled', 1)->save();
+  }
+
+  /**
+   * Allow platforms that re-use the Open Social platform a chance to fill in
+   * custom form fields that are not present in the distribution but may lead to
+   * validation errors (e.g. because a field is required).
+   *
+   * @When /^(?:|I )fill in the custom fields for this "([^"]*)"$/
+   */
+  public function iFillInCustomFieldsForThis($type) {
+    // This method is intentionally left blank. Projects extending Open Social
+    // are encouraged to overwrite this method and call the methods that are
+    // needed to fill in custom required fields for the used type.
   }
 
 }
