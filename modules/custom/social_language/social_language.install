@@ -6,6 +6,7 @@
  */
 
 use Drupal\Core\Serialization\Yaml;
+use Drupal\field\Entity\FieldConfig;
 use Drupal\user\Entity\Role;
 
 /**
@@ -61,25 +62,24 @@ function _social_language_get_permissions($role) {
   return [];
 }
 
-
 /**
  * Set field config for images.
  *
- * @see content_translation_form_language_content_settings_submit().
+ * @see content_translation_form_language_content_settings_submit()
  */
 function _social_language_set_image_configuration_third_party_settings() {
   $column_settings = [
     'file' => 'file',
     'alt' => '0',
-    'title' => '0'
+    'title' => '0',
   ];
 
   $field_config_images = [];
-  $field_config_images[] = \Drupal\field\Entity\FieldConfig::loadByName('node', 'book', 'field_book_image');
-  $field_config_images[] = \Drupal\field\Entity\FieldConfig::loadByName('node', 'event', 'field_event_image');
-  $field_config_images[] = \Drupal\field\Entity\FieldConfig::loadByName('node', 'page', 'field_page_image');
+  $field_config_images[] = FieldConfig::loadByName('node', 'book', 'field_book_image');
+  $field_config_images[] = FieldConfig::loadByName('node', 'event', 'field_event_image');
+  $field_config_images[] = FieldConfig::loadByName('node', 'page', 'field_page_image');
 
-  //$field_config_images[] = \Drupal\field\Entity\FieldConfig::loadByName('block_content', 'block_content', 'field_hero_image');
+  // $field_config_images[] = FieldConfig::loadByName('block_content', 'block_content', 'field_hero_image');
   // TODO: enable these for all the fields. Test that it loads with drush ev. e.g.:
   // drush ev "var_dump(\Drupal\field\Entity\FieldConfig::loadByName('node', 'event', 'field_event_image'));";
   // Check all images in the content translation UI of in the PR.
@@ -169,10 +169,8 @@ function social_language_update_8002() {
 /**
  * Set field config for images.
  *
- * @see content_translation_form_language_content_settings_submit().
+ * @see content_translation_form_language_content_settings_submit()
  */
 function social_language_update_8003() {
   _social_language_set_image_configuration_third_party_settings();
 }
-
-

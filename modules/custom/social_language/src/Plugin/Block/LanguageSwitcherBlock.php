@@ -3,7 +3,6 @@
 namespace Drupal\social_language\Plugin\Block;
 
 use Drupal\language\Plugin\Block\LanguageBlock;
-use Drupal\Core\Language\Language;
 use Drupal\Core\Url;
 
 /**
@@ -21,7 +20,7 @@ class LanguageSwitcherBlock extends LanguageBlock {
    */
   public function build() {
 
-    /** @var Language $defaultLanguage */
+    /** @var \Drupal\Core\Language\Language $defaultLanguage */
     $defaultLanguage = $this->languageManager->getCurrentLanguage();
 
     // Build the menu.
@@ -61,7 +60,7 @@ class LanguageSwitcherBlock extends LanguageBlock {
         'label' => $languagelink['title'] . " (" . $iso . ")",
         'title' => $languagelink['title'] . " (" . $iso . ")",
         'title_classes' => '',
-        'url' =>  $url_string,
+        'url' => $url_string,
       ];
     }
 
