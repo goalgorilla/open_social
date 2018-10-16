@@ -1,6 +1,8 @@
 <?php
 // @codingStandardsIgnoreFile
 
+namespace Drupal\social\Behat;
+
 use Behat\Behat\Context\Context;
 use Behat\Behat\Context\SnippetAcceptingContext;
 use Behat\Behat\Hook\Scope\AfterScenarioScope;
@@ -10,7 +12,7 @@ use Behat\MinkExtension\Context\RawMinkContext;
 use Drupal\DrupalExtension\Hook\Scope\EntityScope;
 use Drupal\group\Entity\Group;
 use Drupal\locale\SourceString;
-use PHPUnit_Framework_Assert as PHPUnit;
+use PHPUnit\Framework\Assert as Assert;
 
 /**
  * Defines application features from the specific context.
@@ -48,7 +50,7 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
 
       /** @var \Behat\Testwork\Environment\Environment $environment */
       $environment = $scope->getEnvironment();
-      $this->minkContext = $environment->getContext('SocialMinkContext');
+      $this->minkContext = $environment->getContext(SocialMinkContext::class);
     }
 
   /**
@@ -235,11 +237,18 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
      */
     public function iSelectGroup($group) {
 
-      $option = $this->getGroupIdFromTitle($group);
+      if ($group === "- None -") {
+        $option = '_none';
+      }
+
+      if ($group !== "- None -") {
+        $option = $this->getGroupIdFromTitle($group);
+      }
 
       if (!$option) {
         throw new \InvalidArgumentException(sprintf('Could not find group for "%s"', $group));
       }
+
       $this->getSession()->getPage()->selectFieldOption('edit-groups', $option);
 
     }
@@ -284,6 +293,47 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
       $count++;
     }
     throw new \InvalidArgumentException(sprintf('Element not found with the css: "%s"', $css));
+  }
+
+  /**
+   * @When I click the xth :position element with the css :css in the :region( region)
+   */
+  public function iClickTheRegionElementWithTheCSS($position, $css, $region)
+  {
+    $session = $this->getSession();
+    $regionObj = $session->getPage()->find('region', $region);
+    $elements = $regionObj->findAll('css', $css);
+
+    $count = 0;
+
+    foreach($elements as $element) {
+      if ($count == $position) {
+        // Now click the element.
+        $element->click();
+        return;
+      }
+      $count++;
+    }
+    throw new \InvalidArgumentException(sprintf('Element not found with the css: "%s"', $css));
+  }
+
+  /**
+   * Click on the element with the provided CSS Selector
+   *
+   * @When /^I click the element with css selector "([^"]*)"$/
+   */
+  public function iClickTheElementWithCSSSelector($cssSelector)
+  {
+    $session = $this->getSession();
+    $element = $session->getPage()->find(
+      'xpath',
+      $session->getSelectorsHandler()->selectorToXpath('css', $cssSelector) // just changed xpath to css
+    );
+    if (null === $element) {
+      throw new \InvalidArgumentException(sprintf('Could not evaluate CSS Selector: "%s"', $cssSelector));
+    }
+
+    $element->click();
   }
 
     /**
@@ -419,7 +469,7 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
         }
       }
 
-      PHPUnit::assertGreaterThan(
+      Assert::assertGreaterThan(
         array_search($checkBefore, $items),
         array_search($checkAfter, $items),
         "$textBefore does not proceed $textAfter"
@@ -620,8 +670,8 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
           $public_query->condition('fm.uri', 'public://%', 'LIKE');
           $public_count = count($public_query->execute()->fetchAllAssoc('fid'));
 
-          PHPUnit::assertEquals($private, $private_count, sprintf("Private count was not '%s', instead '%s' private files found.", $private, $private_count));
-          PHPUnit::assertEquals($public, $public_count, sprintf("Public count was not '%s', instead '%s' public files found.", $public, $public_count));
+          Assert::assertEquals($private, $private_count, sprintf("Private count was not '%s', instead '%s' private files found.", $private, $private_count));
+          Assert::assertEquals($public, $public_count, sprintf("Public count was not '%s', instead '%s' public files found.", $public, $public_count));
         }
 
       }

@@ -91,6 +91,13 @@ function social_profile_form_profile_profile_edit_form_alter(array &$form, FormS
   $user = \Drupal::currentUser();
   $account = \Drupal::routeMatch()->getParameter('user');
 
+  /** @var \Drupal\profile\Entity\Profile $profile */
+  $profile = $form_state->getFormObject()->getEntity();
+
+  if (!$account instanceof User && $profile instanceof Profile) {
+    $account = $profile->getOwner();
+  }
+
   // Check for permission on custom edit profile tags, it's only for CM+ who can
   // actually edit a users profile and add profile tags there.
   if (!$user->hasPermission('edit profile tags')) {
@@ -522,18 +529,14 @@ function social_profile_get_default_image() {
  * Implements hook_user_format_name_alter().
  */
 function social_profile_user_format_name_alter(&$name, $account) {
-
+  /** @var \Drupal\Core\Session\AccountInterface $account */
   $accountname = '';
-  // Let's get the First name Last name.
-  /** @var \Drupal\profile\ProfileStorageInterface $storage */
   $storage = \Drupal::entityTypeManager()->getStorage('profile');
   if (!empty($storage)) {
     // Returns false.
     if ($user_profile = $storage->loadByUser($account, 'profile', TRUE)) {
-      $accountname = trim(t('@first @last', [
-        '@first' => $user_profile->get('field_profile_first_name')->value,
-        '@last' => $user_profile->get('field_profile_last_name')->value,
-      ]));
+      $accountname = $user_profile->get('field_profile_first_name')->value . " " . $user_profile->get('field_profile_last_name')->value;
+      $accountname = trim($accountname);
     }
   }
   $name = ($accountname !== '') ? $accountname : $name;
@@ -545,4 +548,20 @@ function social_profile_user_format_name_alter(&$name, $account) {
 function _social_profile_form_pre_render($element) {
   $element['group_locale_settings']['timezone']['#title'] = NULL;
   return $element;
+}
+
+/**
+ * Implements hook_entity_operation_alter().
+ */
+function social_profile_entity_operation_alter(array &$operations, EntityInterface $entity) {
+  if ($entity->getEntityTypeId() === 'user') {
+    if (isset($operations['edit'])) {
+      $operations['edit']['title'] = t('Edit account');
+      $operations['edit_profile'] = [
+        'title' => t('Edit profile'),
+        'weight' => (isset($operations['edit']['weight'])) ? $operations['edit']['weight']-- : 0,
+        'url' => Url::fromUserInput('/user/' . $entity->id() . '/profile'),
+      ];
+    }
+  }
 }

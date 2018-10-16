@@ -297,3 +297,21 @@ function social_search_update_8109() {
     }
   }
 }
+
+/**
+ * Trigger a search_api re-index.
+ */
+function social_search_update_8110() {
+  $indexes = [
+    'social_all',
+    'social_users',
+  ];
+
+  foreach ($indexes as $index_id) {
+    $index = Index::load($index_id);
+    if ($index->status()) {
+      $index->clear();
+      $index->reindex();
+    }
+  }
+}

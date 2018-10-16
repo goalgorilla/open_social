@@ -12,3 +12,12 @@ social_group.settings:
     _title: 'Group settings'
   requirements:
     _permission: 'set social group settings'
+
+social_group.stream:
+  path: '/group/{group}/stream'
+  defaults:
+    _content: '\Drupal\social_group\Controller\SocialGroupController::groupStream'
+    _title_callback: '\Drupal\social_group\Controller\SocialGroupController::groupStreamTitle'
+    _entity_view: 'group.stream'
+  requirements:
+    _group_permission: 'view group stream page'

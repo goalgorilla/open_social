@@ -9,6 +9,7 @@ use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\node\NodeInterface;
 use Drupal\social_post\Entity\PostInterface;
+use Drupal\Core\Render\Markup;
 
 /**
  * Implements hook_token_info().
@@ -28,6 +29,11 @@ function social_comment_token_info() {
   $social_comment['commented_content_type'] = [
     'name' => t('The commented content type.'),
     'description' => t('The type of the content that was commented on.'),
+  ];
+
+  $social_mentions['commented_entity_link_html'] = [
+    'name' => t('The (html) link to the commented entity.'),
+    'description' => t('The link to the commented entity, can be post or node, will include raw HTML.'),
   ];
 
   return [
@@ -79,6 +85,7 @@ function social_comment_tokens($type, $tokens, array $data, array $options, Bubb
           break;
 
         case 'commented_content_type':
+        case 'commented_entity_link_html':
 
           if (isset($message->field_message_related_object)) {
             $target_type = $message->field_message_related_object->target_type;
@@ -93,28 +100,45 @@ function social_comment_tokens($type, $tokens, array $data, array $options, Bubb
               $entity = $comment->getCommentedEntity();
               if (!empty($entity)) {
                 if ($entity instanceof PostInterface) {
-                  $display_name = Unicode::strtolower($entity->getEntityType()->getLabel());
+                  $commented_content_type = Unicode::strtolower($entity->getEntityType()->getLabel());
                 }
                 elseif (is_callable([$entity, 'getDisplayName'])) {
-                  $display_name = $entity->getDisplayName();
+                  $commented_content_type = $entity->getDisplayName();
                 }
                 else {
                   if ($entity instanceof NodeInterface) {
-                    $display_name = strtolower($entity->type->entity->label());
+                    $commented_content_type = strtolower($entity->type->entity->label());
                   }
                   else {
-                    $display_name = $entity->bundle();
+                    $commented_content_type = $entity->bundle();
                   }
                 }
 
-                if (!empty($display_name)) {
-                  $replacements[$original] = $display_name;
+                if ($name === 'commented_content_type') {
+                  if (!empty($commented_content_type)) {
+                    $replacements[$original] = $commented_content_type;
+                  }
+                }
+                else {
+                  $url_options = ['absolute' => TRUE];
+                  $link = $entity->toUrl('canonical', $url_options)->toString();
+
+                  // We should only use the label of entities who have a label.
+                  if ($link_label = $entity->label()) {
+                    $entity_link_html = $commented_content_type . ' <a href="' . $link . '">' . $link_label . '</a>';
+                  }
+                  else {
+                    $entity_link_html = '<a href="' . $link . '">' . $commented_content_type . '</a>';
+                  }
+
+                  $replacements[$original] = Markup::create($entity_link_html);
                 }
               }
             }
           }
 
           break;
+
       }
     }
   }

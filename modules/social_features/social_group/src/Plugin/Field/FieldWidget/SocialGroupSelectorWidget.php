@@ -5,7 +5,7 @@ namespace Drupal\social_group\Plugin\Field\FieldWidget;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\HtmlCommand;
 use Drupal\Core\Ajax\InvokeCommand;
-use Drupal\Core\Config\ConfigFactory;
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\Core\Extension\ModuleHandler;
@@ -16,6 +16,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\group\Entity\Group;
+use Drupal\group\Plugin\GroupContentEnablerManager;
 use Drupal\user\Entity\User;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -39,17 +40,19 @@ class SocialGroupSelectorWidget extends OptionsSelectWidget implements Container
   protected $configFactory;
   protected $moduleHander;
   protected $currentUser;
+  protected $pluginManager;
 
   /**
    * Creates a SocialGroupSelectorWidget instance.
    *
    * {@inheritdoc}
    */
-  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, array $third_party_settings, ConfigFactory $configFactory, AccountProxyInterface $currentUser, ModuleHandler $moduleHandler) {
+  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, array $third_party_settings, ConfigFactoryInterface $configFactory, AccountProxyInterface $currentUser, ModuleHandler $moduleHandler, GroupContentEnablerManager $pluginManager) {
     parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $third_party_settings);
     $this->configFactory = $configFactory;
     $this->moduleHander = $moduleHandler;
     $this->currentUser = $currentUser;
+    $this->pluginManager = $pluginManager;
   }
 
   /**
@@ -64,7 +67,8 @@ class SocialGroupSelectorWidget extends OptionsSelectWidget implements Container
       $configuration['third_party_settings'],
       $container->get('config.factory'),
       $container->get('current_user'),
-      $container->get('module_handler')
+      $container->get('module_handler'),
+      $container->get('plugin.manager.group_content_enabler')
     );
   }
 
@@ -79,12 +83,46 @@ class SocialGroupSelectorWidget extends OptionsSelectWidget implements Container
    */
   protected function getOptions(FieldableEntityInterface $entity) {
     if (!isset($this->options)) {
+
+      // Must be a node.
+      if ($entity->getEntityTypeId() !== 'node') {
+        // We only handle nodes. When using this widget on other content types,
+        // we simply return the normal options.
+        return parent::getOptions($entity);
+      }
+
+      // Get the bundle fron the node.
+      $entity_type = $entity->bundle();
+
       $account = $entity->getOwner();
       // Limit the settable options for the current user account.
       $options = $this->fieldDefinition
         ->getFieldStorageDefinition()
         ->getOptionsProvider($this->column, $entity)
         ->getSettableOptions($account);
+
+      // Check for each group type if the content type is installed.
+      foreach ($options as $key => $optgroup) {
+        // Groups are in the array below.
+        if (is_array($optgroup)) {
+          // Loop through the groups.
+          foreach ($optgroup as $gid => $title) {
+            // If the group exists.
+            if ($group = Group::load($gid)) {
+              // Load all installed plugins for this group type.
+              $plugin_ids = $this->pluginManager->getInstalledIds($group->getGroupType());
+              // If the bundle is not installed,
+              // then unset the entire optiongroup (=group type).
+              if (!in_array('group_node:' . $entity_type, $plugin_ids)) {
+                unset($options[$key]);
+              }
+            }
+            // We need to check only one of each group type,
+            // so break out the second each.
+            break;
+          }
+        }
+      }
 
       // Remove groups the user does not have create access to.
       if (!$account->hasPermission('manage all groups')) {
@@ -123,6 +161,16 @@ class SocialGroupSelectorWidget extends OptionsSelectWidget implements Container
       'event' => 'change',
     ];
 
+    // Unfortunately validateGroupSelection is cast as a static function
+    // So I have to add this setting to the form in order to use it later on.
+    $default_visibility = $this->configFactory->get('entity_access_by_field.settings')
+      ->get('default_visibility');
+
+    $form['default_visibility'] = [
+      '#type' => 'value',
+      '#value' => $default_visibility,
+    ];
+
     $change_group_node = $this->configFactory->get('social_group.settings')
       ->get('allow_group_selection_in_node');
     /* @var \Drupal\Core\Entity\EntityInterface $entity */
@@ -156,7 +204,7 @@ class SocialGroupSelectorWidget extends OptionsSelectWidget implements Container
    * @return \Drupal\Core\Ajax\AjaxResponse
    *   Response changing values of the visibility field and set status message.
    */
-  public function validateGroupSelection(array $form, FormStateInterface $form_state) {
+  public static function validateGroupSelection(array $form, FormStateInterface $form_state) {
 
     $ajax_response = new AjaxResponse();
 
@@ -176,8 +224,7 @@ class SocialGroupSelectorWidget extends OptionsSelectWidget implements Container
       }
     }
     else {
-      $config = $this->configFactory->get('entity_access_by_field.settings');
-      $default_visibility = $config->get('default_visibility');
+      $default_visibility = $form_state->getValue('default_visibility');
       $entity = $form_state->getFormObject()->getEntity();
 
       $allowed_visibility_options = social_group_get_allowed_visibility_options_per_group_type(NULL, NULL, $entity);
@@ -188,7 +235,9 @@ class SocialGroupSelectorWidget extends OptionsSelectWidget implements Container
       $ajax_response->addCommand(new InvokeCommand('#edit-field-content-visibility-' . $visibility, 'addClass', ['js--animate-enabled-form-control']));
       if ($allowed === TRUE) {
         $ajax_response->addCommand(new InvokeCommand('#edit-field-content-visibility-' . $visibility, 'removeAttr', ['disabled']));
-        $ajax_response->addCommand(new InvokeCommand('#edit-field-content-visibility-' . $visibility, 'prop', ['checked', 'checked']));
+        if (empty($default_visibility) || $visibility === $default_visibility) {
+          $ajax_response->addCommand(new InvokeCommand('#edit-field-content-visibility-' . $visibility, 'prop', ['checked', 'checked']));
+        }
       }
       else {
         if ($selected_visibility && $selected_visibility === $visibility) {
@@ -196,6 +245,8 @@ class SocialGroupSelectorWidget extends OptionsSelectWidget implements Container
         }
         $ajax_response->addCommand(new InvokeCommand('#edit-field-content-visibility-' . $visibility, 'prop', ['disabled', 'disabled']));
       }
+
+      $ajax_response->addCommand(new InvokeCommand('#edit-field-content-visibility-' . $visibility, 'change'));
     }
     $text = t('Changing the group may have impact on the <strong>visibility settings</strong>.');
 

@@ -7,6 +7,7 @@
 
 use Drupal\block\Entity\Block;
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Access\AccessResultNeutral;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
@@ -17,6 +18,7 @@ use Drupal\group\Entity\GroupContentType;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupContent;
 use Drupal\group\Entity\GroupType;
+use Drupal\social_group\Controller\SocialGroupController;
 use Drupal\social_group\Form\SocialGroupAddForm;
 use Drupal\social_group\SocialGroupHelperService;
 use Drupal\views\ViewExecutable;
@@ -35,83 +37,12 @@ use Drupal\Core\Entity\EntityTypeInterface;
 /**
  * Implements hook_form_FORM_ID_alter().
  */
-function social_group_form_group_open_group_add_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-  // Add custom submit handler just for redirect purposes.
-  $form['actions']['submit']['#submit'][] = '_social_group_edit_submit_redirect';
-  // Hide default title from Address field.
-  if (isset($form['field_group_address'])) {
-    $form['field_group_address']['widget'][0]['#title'] = '';
-  }
-}
-
-/**
- * Implements hook_form_FORM_ID_alter().
- */
-function social_group_form_group_open_group_edit_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-  // Add custom submit handler just for redirect purposes.
-  $form['actions']['submit']['#submit'][] = '_social_group_edit_submit_redirect';
-  // Hide default title from Address field.
-  if (isset($form['field_group_address'])) {
-    $form['field_group_address']['widget'][0]['#title'] = '';
-  }
-}
-
-/**
- * Implements hook_form_FORM_ID_alter().
- */
-function social_group_form_group_closed_group_add_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-  // Add custom submit handler just for redirect purposes.
-  $form['actions']['submit']['#submit'][] = '_social_group_edit_submit_redirect';
-  // Hide default title from Address field.
-  if (isset($form['field_group_address'])) {
-    $form['field_group_address']['widget'][0]['#title'] = '';
-  }
-}
-
-/**
- * Implements hook_form_FORM_ID_alter().
- */
-function social_group_form_group_closed_group_edit_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-  // Add custom submit handler just for redirect purposes.
-  $form['actions']['submit']['#submit'][] = '_social_group_edit_submit_redirect';
-  // Hide default title from Address field.
-  if (isset($form['field_group_address'])) {
-    $form['field_group_address']['widget'][0]['#title'] = '';
-  }
-}
-
-/**
- * Implements hook_form_FORM_ID_alter().
- */
-function social_group_form_group_public_group_add_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-  $form['actions']['submit']['#submit'][] = '_social_group_edit_submit_redirect';
-
-  if (isset($form['field_group_address'])) {
-    $form['field_group_address']['widget'][0]['#title'] = '';
-  }
-}
-
-/**
- * Implements hook_form_FORM_ID_alter().
- */
 function social_group_form_group_public_group_edit_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   $group = $form_state->getFormObject()->getEntity();
   $form['group_type'] = SocialGroupAddForm::create(\Drupal::getContainer())->getGroupTypeElement();
   $form['group_type']['#default_value'] = $group->bundle();
   $form['group_type']['#disabled'] = TRUE;
   $form['#group_children']['group_type'] = 'group_content';
-}
-
-/**
- * Implements hook_form_FORM_ID_alter().
- */
-function social_group_form_group_open_group_delete_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-  // Add custom submit handler just for redirect purposes.
-  $form['actions']['submit']['#submit'][] = '_social_group_edit_submit_redirect';
-  // Hide default title from Address field.
-  if (isset($form['field_group_address'])) {
-    $form['field_group_address']['widget'][0]['#title'] = '';
-  }
 }
 
 /**
@@ -131,7 +62,22 @@ function social_group_form_group_closed_group_delete_form_alter(&$form, FormStat
 }
 
 /**
- * Form submit redirect for open and closed groups.
+ * Get group overview route.
+ *
+ * @return array
+ *   An array with route name and parameters and group.
+ */
+function _social_group_get_overview_route(GroupInterface $group) {
+  $route = [
+    'name' => 'view.groups.page_user_groups',
+    'parameters' => ['user' => \Drupal::currentUser()->id()],
+  ];
+  \Drupal::moduleHandler()->alter('social_group_overview_route', $route, $group);
+  return $route;
+}
+
+/**
+ * Form submit redirect for social groups.
  *
  * @param array $form
  *   Group add or group edit form.
@@ -140,10 +86,13 @@ function social_group_form_group_closed_group_delete_form_alter(&$form, FormStat
  */
 function _social_group_edit_submit_redirect(array $form, FormStateInterface $form_state) {
   // Set redirect to the group about page.
-  $form_state->setRedirect(
-    'view.group_information.page_group_about',
-    $form_state->getRedirect()->getRouteParameters()
-  );
+  $route_parameters = $form_state->getRedirect()->getRouteParameters();
+  if (!empty($route_parameters['group'])) {
+    $form_state->setRedirect(
+      'view.group_information.page_group_about',
+      $route_parameters
+    );
+  }
 }
 
 /**
@@ -387,19 +336,36 @@ function social_group_entity_view_alter(array &$build, EntityInterface $entity, 
  * Implements hook_form_alter().
  */
 function social_group_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-  $action_forms = [
-    'group_content_open_group-group_membership_group-join_form',
-    'group_content_open_group-group_membership_group-leave_form',
-    'group_content_open_group-group_membership_add_form',
-    'group_content_open_group-group_membership_delete_form',
-    'group_content_closed_group-group_membership_group-join_form',
-    'group_content_closed_group-group_membership_group-leave_form',
-    'group_content_closed_group-group_membership_add_form',
-    'group_content_closed_group-group_membership_delete_form',
+  $social_group_types = [
+    'open_group',
+    'closed_group',
+    'public_group',
   ];
+  \Drupal::moduleHandler()->alter('social_group_types', $social_group_types);
+
+  $join_forms = [];
+  $leave_forms = [];
+  $membership_add_forms = [];
+  $membership_edit_forms = [];
+  $membership_delete_forms = [];
+  $group_forms = [];
+
+  foreach ($social_group_types as $social_group_type) {
+    $join_forms[] = "group_content_{$social_group_type}-group_membership_group-join_form";
+    $leave_forms[] = "group_content_{$social_group_type}-group_membership_group-leave_form";
+    $membership_add_forms[] = "group_content_{$social_group_type}-group_membership_add_form";
+    $membership_edit_forms[] = "group_content_{$social_group_type}-group_membership_edit_form";
+    $membership_delete_forms[] = "group_content_{$social_group_type}-group_membership_delete_form";
+    $group_forms['edit'][] = "group_{$social_group_type}_edit_form";
+    $group_forms['add'][] = "group_{$social_group_type}_add_form";
+    $group_forms['delete'][] = "group_{$social_group_type}_delete_form";
+  }
+
+  $action_forms = array_merge($join_forms, $leave_forms, $membership_delete_forms, $membership_add_forms);
+  $membership_forms = array_merge($membership_add_forms, $membership_edit_forms);
 
   // Perform alterations on joining / leaving groups.
-  if (in_array($form_id, ['group_content_open_group-group_membership_delete_form', 'group_content_closed_group-group_membership_delete_form'])) {
+  if (in_array($form_id, $membership_delete_forms)) {
     $form['actions']['submit']['#submit'][] = '_social_membership_delete_form_submit';
 
     list($name, $group) = _social_group_get_group_labels();
@@ -417,7 +383,7 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
   }
 
   // Set some helpful text on the group join form now it's there.
-  if (in_array($form_id, ['group_content_closed_group-group_membership_group-join_form', 'group_content_open_group-group_membership_group-join_form'])) {
+  if (in_array($form_id, $join_forms)) {
     $form['help'] = [
       '#type' => 'item',
       '#markup' => t('By submitting this form you will become a member of the group. Please fill out any available fields to complete your membership information.'),
@@ -439,12 +405,6 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
     $form['actions']['submit']['#submit'][] = '_social_group_action_form_submit';
   }
 
-  $membership_forms = [
-    'group_content_open_group-group_membership_edit_form',
-    'group_content_open_group-group_membership_add_form',
-    'group_content_closed_group-group_membership_add_form',
-    'group_content_closed_group-group_membership_edit_form',
-  ];
   if (in_array($form_id, $membership_forms) && Drupal::currentUser()->id() != 1) {
     // Change titles on membership forms.
     $form['entity_id']['widget'][0]['target_id']['#title'] = t('Select a member');
@@ -459,14 +419,12 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
     }
 
     $form['path']['#type'] = 'hidden';
+  }
 
-    if ('group_content_open_group-group_membership_edit_form' == $form_id) {
-      // Remove the user selection autocomplete on editing group membership.
-      $form['entity_id']['#access'] = FALSE;
-
-      // Add redirect to Group Membership page.
-      $form['actions']['submit']['#submit'][] = '_social_group_membership_edit_form_submit';
-    }
+  if (in_array($form_id, $membership_add_forms)) {
+    $form['entity_id']['widget'][0]['target_id']['#title'] = t('Select members to add');
+    $form['entity_id']['widget'][0]['target_id']['#description'] = t('To add multiple members, separate each member with a comma ( , ).');
+    $form['entity_id']['widget'][0]['target_id']['#type'] = 'social_group_entity_autocomplete';
   }
 
   // Check if form is group content create form.
@@ -480,19 +438,18 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
     }
   }
 
-  $group_forms = [
-    'edit' => [
-      'group_open_group_edit_form',
-      'group_closed_group_edit_form',
-    ],
-    'add' => [
-      'group_open_group_add_form',
-      'group_closed_group_add_form',
-    ],
-  ];
-  if (in_array($form_id, $group_forms['add']) || in_array($form_id, $group_forms['edit'])) {
-    $form['path']['#type'] = 'hidden';
-    $form['actions']['submit']['#value'] = t('Save');
+  if (in_array($form_id, $group_forms['add']) || in_array($form_id, $group_forms['edit']) || in_array($form_id, $group_forms['delete'])) {
+    // Add custom submit handler just for redirect purposes.
+    $form['actions']['submit']['#submit'][] = '_social_group_edit_submit_redirect';
+
+    if (in_array($form_id, $group_forms['add']) || in_array($form_id, $group_forms['edit'])) {
+      $form['path']['#type'] = 'hidden';
+      $form['actions']['submit']['#value'] = t('Save');
+      // Hide default title from Address field.
+      if (isset($form['field_group_address'])) {
+        $form['field_group_address']['widget'][0]['#title'] = '';
+      }
+    }
 
     if (in_array($form_id, $group_forms['edit'])) {
       $social_group_form = SocialGroupAddForm::create(\Drupal::getContainer());
@@ -506,37 +463,6 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
       $form['#group_children']['group_type'] = 'group_content';
     }
   }
-
-  switch ($form_id) {
-    case 'group_content_public_group-group_membership_group-join_form':
-    case 'group_content_public_group-group_membership_group-leave_form':
-    case 'group_content_public_group-group_membership_add_form':
-    case 'group_content_public_group-group_membership_edit_form':
-      $form['actions']['cancel'] = [
-        '#type' => 'submit',
-        '#value' => t('Cancel'),
-        '#submit' => ['_social_group_cancel_join_leave_form'],
-        '#limit_validation_errors' => [],
-      ];
-
-      $form['actions']['submit']['#submit'][] = '_social_group_action_form_submit';
-
-      if (isset($form['path'])) {
-        $form['path']['#access'] = FALSE;
-      }
-
-      if (\Drupal::currentUser()->id() !== 1 && isset($form['group_roles']['widget']['#options']['public_group-group_admin'])) {
-        unset($form['group_roles']['widget']['#options']['public_group-group_admin']);
-      }
-      break;
-
-    case 'group_public_group_edit_form':
-    case 'group_public_group_add_form':
-      $form['path']['#type'] = 'hidden';
-      $form['actions']['submit']['#value'] = t('Save');
-      break;
-  }
-
 }
 
 /**
@@ -569,8 +495,17 @@ function _social_group_action_form_submit($form, FormStateInterface $form_state)
 
     // Get form that was submitted.
     $complete_form = $form_state->getCompleteForm();
-
-    if (in_array($complete_form['#form_id'], ['group_content_' . $group->bundle() . '_membership_group-join_form', 'group_content_' . $group->bundle() . '-group_membership_add_form'])) {
+    // For multiple Group Members that are valid we add multiple entities.
+    if ($complete_form['#form_id'] == 'group_content_' . $group->bundle() . '-group_membership_add_form') {
+      // We passed the validation.
+      // Let's create the Group Content for all our members just like
+      // Group does it for creating a Group and adding its creator as member.
+      $values = ['group_roles' => $form_state->getValue('group_roles')];
+      foreach ($form_state->getValue('entity_id_new') as $key => $uid) {
+        $group->addMember(User::load($uid['target_id']), $values);
+      }
+    }
+    if (in_array($complete_form['#form_id'], ['group_content_' . $group->bundle() . '-group_membership_group-join_form', 'group_content_' . $group->bundle() . '-group_membership_add_form'])) {
       // Set redirect to group home page.
       $form_state->setRedirect(
         'entity.group.canonical',
@@ -580,9 +515,10 @@ function _social_group_action_form_submit($form, FormStateInterface $form_state)
     else {
       // Set redirect to the Group overview page
       // when a user saves their profile.
+      $route = _social_group_get_overview_route($group);
       $form_state->setRedirect(
-        'view.groups.page_user_groups',
-        ['user' => \Drupal::currentUser()->id(), []]
+        $route['name'],
+        $route['parameters']
       );
     }
   }
@@ -728,7 +664,9 @@ function social_group_field_widget_form_alter(&$element, FormStateInterface $for
       $element['#default_value'] = $default_value[0]['value'];
     }
     else {
-      $element['#default_value'] = 'community';
+      $default_visibility = \Drupal::configFactory()->get('entity_access_by_field.settings')
+        ->get('default_visibility');
+      $element['#default_value'] = $default_visibility;
     }
     $entity = $form_state->getFormObject()->getEntity();
 
@@ -806,9 +744,9 @@ function social_group_menu_local_tasks_alter(&$data, $route_name) {
     $data['tabs'][0]['group.content']['#link']['title'] = t('Manage members');
   }
 
-  // Change the default 'View' tab title.
-  if (isset($data['tabs'][0]['group.view']['#link'])) {
-    $data['tabs'][0]['group.view']['#link']['title'] = t('Stream');
+  // Remove the default View tab.
+  if (isset($data['tabs'][0]['group.view'])) {
+    unset($data['tabs'][0]['group.view']);
   }
 
   // Remove Edit tab. Edit will always go through Floating Edit Button.
@@ -871,6 +809,7 @@ function social_group_menu_local_actions_alter(&$local_actions) {
 function social_group_entity_type_alter(array &$entity_types) {
   /* @var $entity_types \Drupal\Core\Entity\EntityTypeInterface[] */
   $entity_types['group_content']->setListBuilderClass('Drupal\social_group\Controller\SocialGroupContentListBuilder');
+  $entity_types['group']->setListBuilderClass('Drupal\social_group\Controller\SocialGroupListBuilder');
 }
 
 /**
@@ -1042,6 +981,20 @@ function social_group_block_access(Block $block, $operation, AccountInterface $a
       }
     }
   }
+  // Check if we're alloweed to view the joined groups block.
+  if ($operation === 'view' && $block->getPluginId() === 'views_block:groups-block_user_groups') {
+    // Here we're going to assume by default access is not granted.
+    $groupController = SocialGroupController::create(\Drupal::getContainer());
+    $access = $groupController->myGroupAccess($account);
+    // If the 'myGroupAccess' returns 'AccessResultNeutral', we have to assume
+    // that access must be denied.
+    if ($access instanceof AccessResultNeutral) {
+      // Return forbidden, since access was not explicitly granted.
+      return AccessResult::forbidden();
+    }
+    return $access;
+  }
+
   return AccessResult::neutral();
 }
 
@@ -1134,7 +1087,7 @@ function social_group_field_info_alter(&$info) {
  * Implements hook_entity_base_field_info_alter().
  */
 function social_group_entity_base_field_info_alter(&$fields, EntityTypeInterface $entity_type) {
-  $entity_types = ['node', 'user'];
+  $entity_types = ['node'];
   if (in_array($entity_type->id(), $entity_types)) {
     if (isset($fields['groups'])) {
       /* @var \Drupal\Core\Field\BaseFieldDefinition $fields['groups'] */
@@ -1174,6 +1127,15 @@ function social_group_form_node_form_alter(&$form, FormStateInterface $form_stat
           unset($form['actions']['submit']['#submit'][$submit_key]);
         }
       }
+
+      /* @var \Drupal\node\Entity\Node $node */
+      $node = $form_state->getFormObject()->getEntity();
+      // Store if the node is new or not.
+      $form['is_new'] = [
+        '#type' => 'value',
+        '#value' => $node->isNew(),
+      ];
+
       $form['actions']['submit']['#submit'][] = 'social_group_save_group_from_node';
     }
   }
@@ -1190,6 +1152,10 @@ function social_group_form_node_form_alter(&$form, FormStateInterface $form_stat
 function social_group_save_group_from_node(array $form, FormStateInterface $form_state) {
   /* @var \Drupal\node\Entity\Node $node */
   $node = $form_state->getFormObject()->getEntity();
+
+  // Check if the created node is new or updated.
+  $is_new = NULL !== $form_state->getValue('is_new') ? $form_state->getValue('is_new') : FALSE;
+
   $original_groups = [];
   $groups_to_add = [];
   $groups_to_remove = [];
@@ -1211,7 +1177,7 @@ function social_group_save_group_from_node(array $form, FormStateInterface $form
 
   // Now make sure the relevant GroupContent is removed or added.
   $setGroupsForNodeService = \Drupal::service('social_group.set_groups_for_node_service');
-  $setGroupsForNodeService->setGroupsForNode($node, $groups_to_remove, $groups_to_add, $original_groups);
+  $setGroupsForNodeService->setGroupsForNode($node, $groups_to_remove, $groups_to_add, $original_groups, $is_new);
 }
 
 /**
@@ -1248,7 +1214,13 @@ function social_group_get_allowed_visibility_options_per_group_type($group_type_
       $visibility_options['community'] = FALSE;
       break;
 
-    case NULL:
+    case 'open_group':
+      $visibility_options['public'] = FALSE;
+      $visibility_options['community'] = TRUE;
+      $visibility_options['group'] = FALSE;
+      break;
+
+    default:
       $config = \Drupal::config('entity_access_by_field.settings');
       $visibility_options['public'] = TRUE;
       if ($config->get('disable_public_visibility') === 1 && !$account->hasPermission('override disabled public visibility')) {

@@ -34,8 +34,20 @@ class SocialUserLoginForm extends UserLoginForm {
   public function buildForm(array $form, FormStateInterface $form_state) {
     $config = $this->config('system.site');
 
+    // We create a fieldset for the default username login.
+    $form['username_login'] = [
+      '#type' => 'fieldset',
+      '#title' => $this->t('Log in with <b>username</b> or <b>email</b>'),
+    ];
+
+    // If we have a help text then we display it to the user.
+    $login_help = \Drupal::config('social_user.settings')->get('login_help');
+    if (!empty($login_help)) {
+      $form['username_login']['#description'] = $login_help;
+    }
+
     // Display login form:
-    $form['name_or_mail'] = [
+    $form['username_login']['name_or_mail'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Username or email address'),
       '#size' => 60,
@@ -50,17 +62,33 @@ class SocialUserLoginForm extends UserLoginForm {
       ],
     ];
 
-    $reset_pass_url = Url::fromRoute('user.pass');
-    $reset_pass_link = Link::createFromRoute($this->t('Forgot password?'), $reset_pass_url->getRouteName());
+    $reset_pass_link = Link::createFromRoute($this->t('Forgot password?'), 'user.pass');
     $generated_reset_pass_link = $reset_pass_link->toString();
     $pass_description = $generated_reset_pass_link->getGeneratedLink();
 
-    $form['pass'] = [
+    $form['username_login']['pass'] = [
       '#type' => 'password',
       '#title' => $this->t('Password'),
       '#size' => 60,
       '#description' => $pass_description,
       '#required' => TRUE,
+    ];
+
+    $link_options = [];
+
+    // Preserve the destination parameter when a user logs in instead.
+    $request = \Drupal::request();
+    if ($request->query->has('destination')) {
+      $link_options['query'] = [
+        'destination' => $request->query->get('destination'),
+      ];
+    }
+
+    $sign_up_link = Link::createFromRoute($this->t('Sign up'), 'user.register', [], $link_options)->toString();
+
+    $form['username_login']['sign-up-link'] = [
+      '#markup' => $this->t("Don't have an account yet? @link", ["@link" => $sign_up_link]),
+      '#weight' => 1000,
     ];
 
     $form['actions'] = ['#type' => 'actions'];

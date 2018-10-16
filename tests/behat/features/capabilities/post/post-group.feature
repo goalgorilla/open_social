@@ -1,4 +1,4 @@
-@api @group @DS-677 @DS-642 @DS-4211 @stability @stability-3
+@api @group @DS-677 @DS-642 @DS-4211 @stability @stability-3 @post-group
 Feature: Create Post on Group
   Benefit: In order to share knowledge with people in group
   Role: As a LU
@@ -37,6 +37,9 @@ Feature: Create Post on Group
     Then I should see the success message "Your post has been posted."
     And I should see "This is a community post in a group."
     And I should see "Group User One" in the ".media-heading" element
+    And I click the post visibility dropdown
+    Then I should not see "Public"
+    And I should not see "Closed"
 
           # Scenario: See post on profile stream
     When I am on "/user"

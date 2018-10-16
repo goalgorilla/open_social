@@ -87,6 +87,22 @@ function social_user_update_8005() {
 }
 
 /**
+ * Create the default configuration for the social_user help texts.
+ */
+function social_user_update_8006() {
+  $config = [
+    "langcode" => "en",
+    "signup_help" => "A welcome message with further instructions will be sent to your email address after you successfully enter your email address and a username.",
+    "login_help" => "",
+  ];
+
+  \Drupal::configFactory()
+    ->getEditable('social_user.settings')
+    ->setData($config)
+    ->save();
+}
+
+/**
  * Function to set permissions.
  */
 function _social_user_set_permissions() {

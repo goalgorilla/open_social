@@ -148,7 +148,7 @@ function socialbase_form_social_post_entity_form_alter(&$form, FormStateInterfac
 function socialbase_form_comment_post_comment_form_alter(&$form, FormStateInterface $form_state, $form_id) {
 
   if (isset($form['actions']['submit']['#button_type'])) {
-    $form['actions']['submit']['#button_type'] = 'flat';
+    $form['actions']['submit']['#button_type'] = 'primary';
     $form['actions']['submit']['#comment_button'] = TRUE;
   }
 
@@ -237,58 +237,60 @@ function socialbase_form_alter(&$form, FormStateInterface $form_state, $form_id)
     unset($form['#attributes']['novalidate']);
   }
 
+  $social_group_types = [
+    'open_group',
+    'closed_group',
+    'public_group',
+  ];
+  \Drupal::moduleHandler()->alter('social_group_types', $social_group_types);
+
+  $group_add_card_to_forms = [];
+  $group_confirm_forms = [];
+  $group_default_forms = [];
+
+  foreach ($social_group_types as $social_group_type) {
+    $group_add_card_to_forms[] = "group_content_{$social_group_type}-group_membership_group-join_form";
+    $group_add_card_to_forms[] = "group_content_{$social_group_type}-group_membership_add_form";
+    $group_add_card_to_forms[] = "group_content_{$social_group_type}-group_membership_edit_form";
+    $group_confirm_forms[] = "group_content_{$social_group_type}-group_membership_group-leave_form";
+    $group_confirm_forms[] = "group_content_{$social_group_type}-group_membership_delete_form";
+    $group_confirm_forms[] = "group_{$social_group_type}_delete_form";
+    $group_default_forms[] = "group_{$social_group_type}_add_form";
+    $group_default_forms[] = "group_{$social_group_type}_edit_form";
+  }
+
   // These forms have a container with class form-action at the bottom and
   // we style it in a way that the primary/submit button is aligned right
   // Also we define the style of the buttons based on their function.
-  $default_forms = [
-    'user_form',
-    'user_pass_reset',
-    'social_user_login_form',
-    'user_register_form',
-    'profile_profile_add_form',
-    'profile_profile_edit_form',
-    'social_user_password_form',
-    'user_cancel_form',
-    'social_group_add',
-    'group_open_group_add_form',
-    'group_open_group_edit_form',
-    'group_closed_group_add_form',
-    'group_closed_group_edit_form',
-    'group_public_group_add_form',
-    'group_public_group_edit_form',
-    'node_event_form',
-    'node_topic_form',
-    'group_content_open_group-group_membership_group-join_form',
-    'group_content_open_group-group_membership_group-leave_form',
-    'group_content_open_group-group_membership_add_form',
-    'group_content_open_group-group_membership_edit_form',
-    'group_content_open_group-group_membership_delete_form',
-    'group_content_closed_group-group_membership_group-join_form',
-    'group_content_closed_group-group_membership_group-leave_form',
-    'group_content_closed_group-group_membership_add_form',
-    'group_content_closed_group-group_membership_edit_form',
-    'group_content_closed_group-group_membership_delete_form',
-    'group_content_public_group-group_membership_group-join_form',
-    'group_content_public_group-group_membership_group-leave_form',
-    'group_content_public_group-group_membership_add_form',
-    'group_content_public_group-group_membership_edit_form',
-    'group_content_public_group-group_membership_delete_form',
-    'group_open_group_delete_form',
-    'group_closed_group_delete_form',
-    'group_public_group_delete_form',
-    'comment_comment_delete_form',
-    'comment_post_comment_delete_form',
-    'comment_comment_delete_form',
-    'post_delete_form',
-    'post_photo_delete_form',
-    'node_event_delete_form',
-    'node_topic_delete_form',
-    'profile_profile_delete_form',
-    'private_message_thread_delete_form',
-    'data_policy_edit_form',
-    'data_policy_data_policy_agreement',
-    'data_policy_data_policy_revision_edit',
-  ];
+  $default_forms = array_merge($group_add_card_to_forms,
+    $group_confirm_forms,
+    $group_default_forms, [
+      'user_form',
+      'user_pass_reset',
+      'social_user_login_form',
+      'user_register_form',
+      'profile_profile_add_form',
+      'profile_profile_edit_form',
+      'social_user_password_form',
+      'user_cancel_form',
+      'social_group_add',
+      'node_event_form',
+      'node_topic_form',
+      'comment_comment_delete_form',
+      'comment_post_comment_delete_form',
+      'comment_comment_delete_form',
+      'post_delete_form',
+      'post_photo_delete_form',
+      'node_event_delete_form',
+      'node_topic_delete_form',
+      'profile_profile_delete_form',
+      'private_message_thread_delete_form',
+      'data_policy_edit_form',
+      'data_policy_data_policy_agreement',
+      'data_policy_data_policy_revision_edit',
+      'event_an_enroll_form',
+    ]
+  );
 
   if (in_array($form_id, $default_forms)) {
     $form['#attributes']['class'][] = 'form--default';
@@ -323,21 +325,12 @@ function socialbase_form_alter(&$form, FormStateInterface $form_state, $form_id)
   }
 
   // Here we list all the forms that need to be wrapped in cards.
-  $add_card_to_forms = [
-    'group_content_open_group-group_membership_group-join_form',
-    'group_content_open_group-group_membership_add_form',
-    'group_content_open_group-group_membership_edit_form',
-    'group_content_closed_group-group_membership_group-join_form',
-    'group_content_closed_group-group_membership_add_form',
-    'group_content_closed_group-group_membership_edit_form',
-    'social_user_login_form',
-    'user_register_form',
-    'user_pass_reset',
-    'social_user_password_form',
+  $add_card_to_forms = array_merge($group_add_card_to_forms, [
+    'event_an_enroll_form',
     'data_policy_edit_form',
     'data_policy_data_policy_agreement',
     'data_policy_data_policy_revision_edit',
-  ];
+  ]);
 
   if (\Drupal::routeMatch()->getRouteName() === 'private_message.private_message_create' && $form_id == 'private_message_add_form') {
     $form['#attributes']['class'][] = 'card';
@@ -357,24 +350,18 @@ function socialbase_form_alter(&$form, FormStateInterface $form_state, $form_id)
 
   // List all the confirmation forms here. We need to close the card
   // before showing the actions.
-  $confirm_forms = [
+  $confirm_forms = array_merge($group_confirm_forms, [
     'user_cancel_form',
     'post_delete_form',
     'post_photo_delete_form',
     'node_event_delete_form',
     'node_topic_delete_form',
-    'group_open_group_delete_form',
-    'group_closed_group_delete_form',
     'comment_comment_delete_form',
     'comment_post_comment_delete_form',
-    'group_content_open_group-group_membership_delete_form',
-    'group_content_open_group-group_membership_group-leave_form',
-    'group_content_closed_group-group_membership_delete_form',
-    'group_content_closed_group-group_membership_group-leave_form',
     '_auth_login_notice_form',
     'private_message_thread_delete_form',
     'profile_profile_delete_form',
-  ];
+  ]);
 
   if (in_array($form_id, $confirm_forms)) {
     $form['description']['#prefix'] = '<div class="clearfix">';
@@ -385,6 +372,21 @@ function socialbase_form_alter(&$form, FormStateInterface $form_state, $form_id)
   if ($form_id == 'enroll_action_form') {
     $form['enroll_for_this_event']['#button_type'] = 'accent';
     $form['enroll_for_this_event']['#attributes']['class'][] = 'btn-lg';
+  }
+
+  // Ensure the sign-up or login link is displayed as a nested card section.
+  // Bootstrap already converted the fieldset itself to a card.
+  if ($form_id === 'social_user_login_form') {
+    $form['username_login']['sign-up-link']['#prefix'] = '<div class="card__nested-section">';
+    $form['username_login']['sign-up-link']['#suffix'] = '</div>';
+  }
+  elseif ($form_id === 'user_register_form') {
+    $form['account']['login-link']['#prefix'] = '<div class="card__nested-section">';
+    $form['account']['login-link']['#suffix'] = '</div>';
+  }
+  elseif ($form_id === 'social_user_password_form') {
+    $form['forgot']['sign-up-link']['#prefix'] = '<div class="card__nested-section">';
+    $form['forgot']['sign-up-link']['#suffix'] = '</div>';
   }
 
 }
@@ -419,5 +421,4 @@ function socialbase_form_node_form_alter(&$form, FormStateInterface $form_state,
     $form['actions']['unpublish']['#button_level'] = 'raised';
     $form['actions']['unpublish']['#button_type'] = 'primary';
   }
-
 }
