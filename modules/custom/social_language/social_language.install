@@ -85,7 +85,9 @@ function _social_language_set_image_configuration_third_party_settings() {
   // Check all images in the content translation UI of in the PR.
 
   foreach ($field_config_images as $field_config) {
-    if ($field_config->isTranslatable()) {
+    // If we found the field and it's translatable then add the right
+    // configuration for its components.
+    if (!empty($field_config) && $field_config->isTranslatable()) {
       $field_config->setThirdPartySetting('content_translation', 'translation_sync', $column_settings);
       $field_config->save();
     }
