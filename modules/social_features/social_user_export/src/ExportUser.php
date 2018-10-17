@@ -4,6 +4,7 @@ namespace Drupal\social_user_export;
 
 use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Url;
+use Drupal\csv_serialization\Encoder\CsvEncoder;
 use Drupal\user\UserInterface;
 use League\Csv\Writer;
 use Drupal\Core\Link;
@@ -68,8 +69,7 @@ class ExportUser extends ContentEntityBase {
     }
 
     // Add formatter.
-    $encoder = \Drupal::service('csv_serialization.encoder.csv');
-    $csv->addFormatter([$encoder, 'formatRow']);
+    $csv->addFormatter([new CsvEncoder(), 'formatRow']);
     $roles = $entity->getRoles();
     $status = $entity->get('status')->getValue();
 

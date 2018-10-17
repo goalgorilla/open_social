@@ -60,10 +60,11 @@ class ActivityLoggerFactory {
         'target_id' => $entity->id(),
       ];
 
-      // Create the message.
-      $message = Message::create($new_message);
-
-      $message->save();
+      // Create the message only if it doesn't exist.
+      if (!$this->checkIfMessageExist($new_message['template'], $new_message['field_message_context'], $new_message['field_message_destination'], $new_message['field_message_related_object'], $new_message['uid'])) {
+        $message = Message::create($new_message);
+        $message->save();
+      }
 
     }
   }
@@ -173,6 +174,67 @@ class ActivityLoggerFactory {
         $config_storage->create($field_instance)->save();
       }
     }
+  }
+
+  /**
+   * Checks if a message already exists.
+   *
+   * @param string $message_type
+   *   The message type.
+   * @param string $context
+   *   The context of the message.
+   * @param array $destination
+   *   The array of destinations to check for, include delta as well.
+   * @param array $related_object
+   *   The related object, include target_type and target_id in array.
+   * @param string $uid
+   *   The uid of the message.
+   *
+   * @return int
+   *   Returns true if the message exists.
+   */
+  public function checkIfMessageExist($message_type, $context, array $destination, array $related_object, $uid) {
+    $exists = FALSE;
+
+    $query = \Drupal::entityQuery('message');
+    $query->condition('template', $message_type);
+    $query->condition('field_message_related_object.target_id', $related_object['target_id']);
+    $query->condition('field_message_related_object.target_type', $related_object['target_type']);
+    $query->condition('field_message_context', $context);
+    $query->condition('uid', $uid);
+    if (is_array($destination)) {
+      foreach ($destination as $delta => $dest_value) {
+        $query->condition('field_message_destination.' . $delta . '.value', $dest_value['value']);
+      }
+    }
+    $query->accessCheck(FALSE);
+
+    // Fix duplicates for create_bundle_group && moved_content_between_groups
+    // create_bundle_group is run on cron, it could be there is already a
+    // message for moving content between groups. So we need to make sure we
+    // check if either create_bundle_group or move_content is already there
+    // before we add another message that content is created in a group.
+    $types = [
+      'moved_content_between_groups',
+      'create_topic_group',
+      'create_event_group',
+    ];
+
+    if (in_array($message_type, $types, TRUE)) {
+      $query = \Drupal::entityQuery('message');
+      $query->condition('template', $types, 'IN');
+      $query->condition('field_message_related_object.target_id', $related_object['target_id']);
+      $query->condition('field_message_related_object.target_type', $related_object['target_type']);
+      $query->condition('field_message_context', $context);
+      $query->condition('uid', $uid);
+      $query->accessCheck(FALSE);
+    }
+
+    $ids = $query->execute();
+    if (!empty($ids) && $message_type != 'moved_content_between_groups') {
+      $exists = TRUE;
+    }
+    return $exists;
   }
 
 }
