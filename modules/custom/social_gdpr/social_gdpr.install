@@ -77,3 +77,26 @@ function _social_gdpr_get_permissions($role) {
 
   return [];
 }
+
+/**
+ * Enable additional permissions for sitemanagers:
+ * Ability to edit the GDPR consent block.
+ */
+function social_gdpr_update_8001(&$sandbox) {
+  $roles = Role::loadMultiple();
+
+  $permissions = [
+    'edit inform and consent setting',
+    'overview inform and consent settings',
+    'administer inform and consent settings',
+    'change inform and consent setting status',
+  ];
+
+  /** @var \Drupal\user\Entity\Role $role */
+  foreach ($roles as $role) {
+    if ($role->id() === 'sitemanager') {
+      user_role_grant_permissions($role->id(), $permissions);
+    }
+  }
+}
+
