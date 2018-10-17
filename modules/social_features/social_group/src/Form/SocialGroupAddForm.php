@@ -119,7 +119,7 @@ class SocialGroupAddForm extends FormBase {
     $element = [
       '#type' => 'radios',
       '#title' => $this->t('Group type'),
-      '#description' => $this->t('Can not be changed once a group is created.'),
+      '#description' => $this->t('In order to change the group type, please contact the content or site managers.'),
       '#default_value' => 'open_group',
       '#required' => TRUE,
       '#cache' => [

@@ -41,8 +41,36 @@ function social_group_form_group_public_group_edit_form_alter(&$form, FormStateI
   $group = $form_state->getFormObject()->getEntity();
   $form['group_type'] = SocialGroupAddForm::create(\Drupal::getContainer())->getGroupTypeElement();
   $form['group_type']['#default_value'] = $group->bundle();
-  $form['group_type']['#disabled'] = TRUE;
+  // If user doesn't have permission to change group types disable it.
+  if (!social_group_group_type_permission_check()) {
+    $form['group_type']['#disabled'] = TRUE;
+  }
   $form['#group_children']['group_type'] = 'group_content';
+}
+
+function social_group_group_type_permission_check() {
+  $user = \Drupal::currentUser();
+  // Get the Group object from the route.
+  $group = Drupal::routeMatch()->getParameter('group');
+
+  // Check if we are editing a group. Sure to be sure.
+  if ($group instanceof GroupInterface) {
+
+    // Only for user 1 and users with the edit group types permission we can
+    // edit a group type.
+    if ($user->id() != 1) {
+      if ($user->hasPermission('edit group types')) {
+        return TRUE;
+      }
+    }
+    else {
+      return TRUE;
+    }
+
+    return FALSE;
+  }
+
+  return FALSE;
 }
 
 /**
@@ -336,6 +364,7 @@ function social_group_entity_view_alter(array &$build, EntityInterface $entity, 
  * Implements hook_form_alter().
  */
 function social_group_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+
   $social_group_types = [
     'open_group',
     'closed_group',
@@ -458,7 +487,12 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
       $group = _social_group_get_current_group();
       // Set the default value in the form.
       $group_type_element['#default_value'] = $group->getGroupType()->id();
-      $group_type_element['#disabled'] = TRUE;
+
+      // If user doesn't have permission to change group types disable it.
+      if (!social_group_group_type_permission_check()) {
+        $group_type_element['#disabled'] = TRUE;
+      }
+
       $form['group_type'] = $group_type_element;
       $form['#group_children']['group_type'] = 'group_content';
     }
