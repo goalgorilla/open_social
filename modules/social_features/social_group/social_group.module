@@ -967,6 +967,20 @@ function social_group_preprocess_profile(&$variables) {
  * If the user is not a member, the user has no access to view this block.
  */
 function social_group_block_access(Block $block, $operation, AccountInterface $account) {
+  $block_id = $block->getPluginId();
+
+  // This is a list of the blocks that this function cares about, if we're being
+  // called for a different block we exit early.
+  $managed_blocks = [
+    'views_exposed_filter_block:newest_groups-page_all_groups',
+    'views_block:groups-block_user_groups',
+    'views_block:upcoming_events-upcoming_events_group',
+    'views_block:latest_topics-group_topics_block',
+  ];
+  if (!in_array($block_id, $managed_blocks)) {
+    return AccessResult::neutral();
+  }
+
   if ($block->getPluginId() == 'views_exposed_filter_block:newest_groups-page_all_groups' && $operation == 'view' && $account->isAnonymous()) {
     $group_types = 0;
 
