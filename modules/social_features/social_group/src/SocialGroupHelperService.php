@@ -14,17 +14,26 @@ use Drupal\social_post\Entity\Post;
 class SocialGroupHelperService {
 
   /**
-   * Constructor.
+   * A cache of groups that have been matched to entities.
+   *
+   * @var array
    */
-  public function __construct() {
-
-  }
+  protected $cache;
 
   /**
    * Returns a group id from a entity (post, node).
    */
   public function getGroupFromEntity($entity) {
     $gid = NULL;
+
+    // Comments can have groups based on what the comment is posted on so the
+    // cache type differs from what we later use to fetch the group.
+    $cache_type = $entity['target_type'];
+    $cache_id = $entity['target_id'];
+
+    if (is_array($this->cache[$cache_type]) && isset($this->cache[$cache_type][$cache_id])) {
+      return $this->cache[$cache_type][$cache_id];
+    }
 
     // Special cases for comments.
     // Returns the entity to which the comment is attached.
@@ -57,6 +66,10 @@ class SocialGroupHelperService {
         }
       }
     }
+
+    // Cache the group id for this entity to optimise future calls.
+    $this->cache[$cache_type][$cache_id] = $gid;
+
     return $gid;
   }
 
