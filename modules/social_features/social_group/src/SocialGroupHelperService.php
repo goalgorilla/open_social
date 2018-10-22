@@ -23,7 +23,7 @@ class SocialGroupHelperService {
   /**
    * Returns a group id from a entity (post, node).
    */
-  public static function getGroupFromEntity($entity) {
+  public function getGroupFromEntity($entity) {
     $gid = NULL;
 
     // Special cases for comments.
