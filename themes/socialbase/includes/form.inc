@@ -148,7 +148,7 @@ function socialbase_form_social_post_entity_form_alter(&$form, FormStateInterfac
 function socialbase_form_comment_post_comment_form_alter(&$form, FormStateInterface $form_state, $form_id) {
 
   if (isset($form['actions']['submit']['#button_type'])) {
-    $form['actions']['submit']['#button_type'] = 'flat';
+    $form['actions']['submit']['#button_type'] = 'primary';
     $form['actions']['submit']['#comment_button'] = TRUE;
   }
 
