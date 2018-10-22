@@ -986,11 +986,7 @@ function social_group_block_access(Block $block, $operation, AccountInterface $a
 
     /** @var \Drupal\group\Entity\GroupTypeInterface $group_type */
     foreach (GroupType::loadMultiple() as $group_type) {
-      $permissions = $group_type->getAnonymousRole()->getPermissions();
-
-      if (in_array('view group', $permissions)) {
-        $group_types++;
-      }
+      $group_types += (int) $group_type->getAnonymousRole()->hasPermission('view group');
     }
 
     if ($group_types < 2) {
