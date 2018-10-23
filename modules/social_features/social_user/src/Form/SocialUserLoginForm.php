@@ -77,6 +77,14 @@ class SocialUserLoginForm extends UserLoginForm {
 
     $this->renderer->addCacheableDependency($form, $config);
 
+    // A destination was set, probably on an exception controller.
+    if (!$this->getRequest()->request->has('destination')) {
+      $form_state->setRedirect('<front>');
+    }
+    else {
+      $this->getRequest()->query->set('destination', $this->getRequest()->request->get('destination'));
+    }
+
     return $form;
   }
 
@@ -85,14 +93,6 @@ class SocialUserLoginForm extends UserLoginForm {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $account = $this->userStorage->load($form_state->get('uid'));
-    // A destination was set, probably on an exception controller,.
-    // @TODO: Add validation if route exists.
-    if (!$this->getRequest()->request->has('destination')) {
-      $form_state->setRedirect('<front>');
-    }
-    else {
-      $this->getRequest()->query->set('destination', $this->getRequest()->request->get('destination'));
-    }
 
     user_login_finalize($account);
   }
