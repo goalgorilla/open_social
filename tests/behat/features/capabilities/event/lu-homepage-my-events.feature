@@ -28,15 +28,15 @@ Feature: See my upcoming events
     When I go to the homepage
     Then I should not see "My Behat Event created" in the ".view-display-id-block_my_upcoming_events" element
     And I should see "My Behat Event enrolled" in the ".view-display-id-block_my_upcoming_events" element
-    And I should see "Enrolled" in the ".view-display-id-block_my_upcoming_events" element
+    And I should see "You are enrolled" in the ".view-display-id-block_my_upcoming_events" element
 
     When I am at "user"
     And I click "Events"
     Then I should see "Events for this user"
     And I should see "My Behat Event created"
     And I should see "My Behat Event enrolled"
+    And I should see "You are enrolled"
 
     When I am at "user"
     Then I should see "My Behat Event created"
     And I should see "My Behat Event enrolled"
-    And I should see "enrolled"
