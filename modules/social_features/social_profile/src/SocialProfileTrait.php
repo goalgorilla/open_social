@@ -26,6 +26,9 @@ trait SocialProfileTrait {
   public function getUserIdsFromName($name, $count, $suggestion_format = SOCIAL_PROFILE_SUGGESTIONS_ALL) {
     $connection = \Drupal::database();
 
+    // Nickname.
+    $addNickName = \Drupal::moduleHandler()->moduleExists('social_profile_fields');
+
     $query = $connection->select('users', 'u')->fields('u', ['uid']);
     $query->join('users_field_data', 'uf', 'uf.uid = u.uid');
     $query->condition('uf.status', 1);
@@ -41,11 +44,20 @@ trait SocialProfileTrait {
         $query->join('profile', 'p', 'p.uid = u.uid');
         $query->join('profile__field_profile_first_name', 'fn', 'fn.entity_id = p.profile_id');
         $query->join('profile__field_profile_last_name', 'ln', 'ln.entity_id = p.profile_id');
+        // Add nickname.
+        if ($addNickName === TRUE) {
+          $query->leftJoin('profile__field_profile_nick_name', 'nn', 'nn.entity_id = p.profile_id');
+        }
 
         $or = $query->orConditionGroup();
         $or
           ->condition('fn.field_profile_first_name_value', '%' . $name . '%', 'LIKE')
           ->condition('ln.field_profile_last_name_value', '%' . $name . '%', 'LIKE');
+        // Add Nickname.
+        if ($addNickName === TRUE) {
+          $or->condition('nn.field_profile_nick_name_value', '%' . $name . '%', 'LIKE');
+        }
+
         $query->condition($or);
         break;
 
@@ -53,12 +65,21 @@ trait SocialProfileTrait {
         $query->leftJoin('profile', 'p', 'p.uid = u.uid');
         $query->leftJoin('profile__field_profile_first_name', 'fn', 'fn.entity_id = p.profile_id');
         $query->leftJoin('profile__field_profile_last_name', 'ln', 'ln.entity_id = p.profile_id');
+        // Add nickname.
+        if ($addNickName === TRUE) {
+          $query->leftJoin('profile__field_profile_nick_name', 'nn', 'nn.entity_id = p.profile_id');
+        }
 
         $or = $query->orConditionGroup();
         $or
           ->condition('uf.name', '%' . $name . '%', 'LIKE')
           ->condition('fn.field_profile_first_name_value', '%' . $name . '%', 'LIKE')
           ->condition('ln.field_profile_last_name_value', '%' . $name . '%', 'LIKE');
+        // Add Nickname.
+        if ($addNickName === TRUE) {
+          $or->condition('nn.field_profile_nick_name_value', '%' . $name . '%', 'LIKE');
+        }
+
         $query->condition($or);
         break;
     }

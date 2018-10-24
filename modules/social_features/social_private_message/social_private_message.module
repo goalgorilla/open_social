@@ -13,6 +13,8 @@ use Drupal\Core\Url;
 use Drupal\social_private_message\DeletedUser;
 use Drupal\user\Entity\User;
 use Drupal\user\UserInterface;
+use Drupal\views\Plugin\views\query\QueryPluginBase;
+use Drupal\views\ViewExecutable;
 
 /**
  * Implements hook_element_info_alter().
@@ -427,5 +429,47 @@ function social_private_message_activity_send_email_notifications_alter(array &$
   // to the "Message to Me" section.
   if (isset($email_message_templates['create_private_message'])) {
     $items['message_to_me']['templates'][] = 'create_private_message';
+  }
+}
+
+/**
+ * Implements hook_views_data_alter().
+ */
+function social_private_message_views_data_alter(array &$data) {
+  $data['private_message_threads']['social_private_message_deleted_threads_filter'] = [
+    'title' => t('Filter deleted threads'),
+    'filter' => [
+      'title' => t('Filter deleted threads'),
+      'help' => t('Do not show threads a user deleted.'),
+      'field' => 'id',
+      'id' => 'social_private_message_deleted_threads',
+    ],
+  ];
+}
+
+/**
+ * Implements hook_views_query_alter().
+ */
+function social_private_message_views_query_alter(ViewExecutable $view, QueryPluginBase $query) {
+  if ($view->id() == 'inbox') {
+    // Current user.
+    $current_user_id = \Drupal::currentUser()->id();
+    // Add join definition.
+    $definition = [
+      'table' => 'pm_thread_delete_time',
+      'field' => 'id',
+      'left_table' => 'private_message_thread__last_delete_time',
+      'left_field' => 'last_delete_time_target_id',
+      'operator' => '=',
+      'extra' => 'pm_thread_delete_time.delete_time <= private_messages_private_message_thread__private_messages.created',
+    ];
+    // Create a join stement from plugin.
+    $join = Drupal::service('plugin.manager.views.join')->createInstance('standard', $definition);
+    // Add join to the query.
+    $query->addRelationship('pm_thread_delete_time', $join, 'delete_time');
+    // Add some extra where statements.
+    $query->addWhere(NULL, 'private_message_thread__members.members_target_id', $current_user_id, '=');
+    $query->addWhere(NULL, 'pm_thread_delete_time.owner', $current_user_id, '=');
+
   }
 }
