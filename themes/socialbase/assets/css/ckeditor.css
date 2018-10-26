@@ -44,7 +44,7 @@ pre code {
 
 html {
   font-size: 16px;
-  -webkit-tap-highlight-color: transparent;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
   font-family: sans-serif;
   -ms-text-size-adjust: 100%;
   -webkit-text-size-adjust: 100%;
@@ -151,10 +151,6 @@ h6, .h6 {
 img {
   border-style: none;
   vertical-align: middle;
-}
-
-img,
-svg {
   max-width: 100%;
   height: auto;
 }
@@ -1417,5 +1413,15 @@ body {
   }
   .hidden-for-phone-only {
     display: none;
+  }
+}
+
+@media (max-width: 899px) {
+  .block-group-add-event-block,
+  .block-group-add-topic-block,
+  .block-event-add-block,
+  .block-topic-add-block,
+  .block-group-add-block {
+    margin-top: 1rem;
   }
 }

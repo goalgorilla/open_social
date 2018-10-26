@@ -156,7 +156,7 @@ Feature: Create Closed Group
     And I should see the button "Delete"
     And I press "Delete"
     And I wait for AJAX to finish
-    Then I should see "Your group and all of it's topic's, event's and post's have been deleted."
+    Then I should see "Your group and all of its topics, events and posts have been deleted."
     When I am on "user"
     And I click "Groups"
     Then I should not see "Test closed group"

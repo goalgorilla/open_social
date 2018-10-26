@@ -64,7 +64,7 @@ class TopicAddBlock extends BlockBase implements ContainerFactoryPluginInterface
    */
   protected function blockAccess(AccountInterface $account) {
     $route_user_id = $this->routeMatch->getParameter('user');
-    if ($account->id() == $route_user_id) {
+    if ($account->id() == $route_user_id && $account->hasPermission("create topic content")) {
       return AccessResult::allowed();
     }
     // By default, the block is not visible.

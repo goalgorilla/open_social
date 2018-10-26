@@ -2,17 +2,17 @@ langcode: en
 status: true
 dependencies:
   config:
-    - search_api.index.social_groups
+  - core.entity_view_mode.private_message_thread.inbox
   module:
-    - search_api
-    - user
-id: search_groups
-label: 'Search Groups'
+  - private_message
+  - user
+id: inbox
+label: Inbox
 module: views
 description: ''
 tag: ''
-base_table: search_api_index_social_groups
-base_field: search_api_id
+base_table: private_message_threads
+base_field: id
 core: 8.x
 display:
   default:
@@ -24,16 +24,18 @@ display:
       access:
         type: perm
         options:
-          perm: 'access group search'
+          perm: 'use private messaging system'
       cache:
-        type: none
+        type: tag
         options: {  }
       query:
         type: views_query
         options:
-          bypass_access: false
-          skip_access: false
-          parse_mode: terms
+          disable_sql_rewrite: false
+          distinct: false
+          replica: false
+          query_comment: ''
+          query_tags: {  }
       exposed_form:
         type: basic
         options:
@@ -68,21 +70,18 @@ display:
       style:
         type: default
       row:
-        type: search_api
+        type: 'entity:private_message_thread'
         options:
-          view_modes:
-            'entity:group':
-              closed_group: teaser
-              open_group: teaser
-              public_group: teaser
+          relationship: none
+          view_mode: inbox
       fields:
-        search_api_language:
-          table: search_api_index_social_groups
-          field: search_api_language
-          id: search_api_language
+        rendered_entity:
+          table: private_message_threads
+          field: rendered_entity
+          id: rendered_entity
           entity_type: null
           entity_field: null
-          plugin_id: search_api
+          plugin_id: rendered_entity
           relationship: none
           group_type: group
           admin_label: ''
@@ -127,38 +126,26 @@ display:
           hide_empty: false
           empty_zero: false
           hide_alter_empty: true
-          link_to_item: false
-          multi_type: separator
-          multi_separator: ', '
+          view_mode: default
       filters: {  }
       sorts:
-        search_api_relevance:
-          id: search_api_relevance
-          table: search_api_index_social_groups
-          field: search_api_relevance
+        updated:
+          id: updated
+          table: private_message_threads
+          field: updated
           relationship: none
-          group_type: group
-          admin_label: ''
+          group_type: max
+          admin_label: sort_updated
           order: DESC
           exposed: false
           expose:
             label: ''
-          plugin_id: search_api
-      title: 'Search Groups'
-      header:
-        area:
-          id: area
-          table: views
-          field: area
-          relationship: none
-          group_type: group
-          admin_label: ''
-          empty: true
-          tokenize: true
-          content:
-            value: '<h4>Group results</h4>'
-            format: basic_html
-          plugin_id: text
+          granularity: second
+          entity_type: private_message_thread
+          entity_field: updated
+          plugin_id: date
+      title: Inbox
+      header: {  }
       footer: {  }
       empty:
         area:
@@ -171,30 +158,55 @@ display:
           empty: true
           tokenize: false
           content:
-            value: 'No results found.'
+            value: 'You do not have any private messages yet. Click on the button on the right to start a new chat.'
             format: basic_html
           plugin_id: text
-      relationships: {  }
+      relationships:
+        private_messages_target_id:
+          id: private_messages_target_id
+          table: private_message_thread__private_messages
+          field: private_messages_target_id
+          relationship: none
+          group_type: group
+          admin_label: 'Private Message'
+          required: false
+          entity_type: private_message_thread
+          entity_field: private_messages
+          plugin_id: standard
+        last_delete_time_target_id:
+          id: last_delete_time_target_id
+          table: private_message_thread__last_delete_time
+          field: last_delete_time_target_id
+          relationship: none
+          group_type: group
+          admin_label: 'Private Message Thread Delete Time'
+          required: false
+          entity_type: private_message_thread
+          entity_field: last_delete_time
+          plugin_id: standard
       arguments:
-        search_api_fulltext:
-          id: search_api_fulltext
-          table: search_api_index_social_groups
-          field: search_api_fulltext
+        members_target_id:
+          id: members_target_id
+          table: private_message_thread__members
+          field: members_target_id
           relationship: none
           group_type: group
           admin_label: ''
-          default_action: ignore
+          default_action: default
           exception:
             value: all
             title_enable: false
             title: All
           title_enable: false
           title: ''
-          default_argument_type: fixed
-          default_argument_options:
-            argument: ''
+          default_argument_type: current_user
+          default_argument_options: {  }
           default_argument_skip_url: false
-          summary_options: null
+          summary_options:
+            base_path: ''
+            count: true
+            items_per_page: 25
+            override: false
           summary:
             sort_order: asc
             number_of_records: 0
@@ -206,73 +218,41 @@ display:
           validate_options: {  }
           break_phrase: false
           not: false
-          fields: {  }
-          conjunction: AND
-          plugin_id: search_api_fulltext
+          entity_type: private_message_thread
+          entity_field: members
+          plugin_id: numeric
       display_extenders: {  }
+      group_by: true
+      filter_groups:
+        operator: AND
+        groups: {  }
     cache_metadata:
       max-age: -1
       contexts:
-        - 'languages:language_interface'
-        - url
-        - url.query_args
-        - user.permissions
-      tags: {  }
-  page:
+      - 'languages:language_interface'
+      - url
+      - url.query_args
+      - user
+      - user.permissions
+      tags:
+      - 'config:core.entity_view_display.private_message_thread.private_message_thread.default'
+      - 'config:core.entity_view_display.private_message_thread.private_message_thread.inbox'
+  inbox:
     display_plugin: page
-    id: page
+    id: inbox
     display_title: Page
     position: 1
     display_options:
       display_extenders: {  }
-      path: search/groups/%keys
+      path: user/inbox
     cache_metadata:
       max-age: -1
       contexts:
-        - 'languages:language_interface'
-        - url
-        - url.query_args
-        - user.permissions
-      tags: {  }
-  page_no_value:
-    display_plugin: page
-    id: page_no_value
-    display_title: 'Page (no value)'
-    position: 1
-    display_options:
-      display_extenders: {  }
-      path: search/groups
-      display_description: ''
-      menu:
-        type: tab
-        title: Groups
-        description: ''
-        expanded: false
-        parent: ''
-        weight: 0
-        context: '0'
-        menu_name: main
-      header:
-        area:
-          id: area
-          table: views
-          field: area
-          relationship: none
-          group_type: group
-          admin_label: ''
-          empty: true
-          tokenize: true
-          content:
-            value: '<h4>Group results</h4>'
-            format: basic_html
-          plugin_id: text
-      defaults:
-        header: false
-    cache_metadata:
-      max-age: -1
-      contexts:
-        - 'languages:language_interface'
-        - url
-        - url.query_args
-        - user.permissions
-      tags: {  }
+      - 'languages:language_interface'
+      - url
+      - url.query_args
+      - user
+      - user.permissions
+      tags:
+      - 'config:core.entity_view_display.private_message_thread.private_message_thread.default'
+      - 'config:core.entity_view_display.private_message_thread.private_message_thread.inbox'
