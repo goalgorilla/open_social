@@ -45,7 +45,6 @@ projects[image_widget_crop][version] = 2.1
 projects[image_widget_crop][patch][] = "https://www.drupal.org/files/issues/2018-07-05/2865396-36-apply-default-crop.diff"
 projects[like_and_dislike][type] = module
 projects[like_and_dislike][version] = 1.0-alpha3
-projects[like_and_dislike][patch][] = "https://www.drupal.org/files/issues/2848080-2-preview-fails-on-node.patch"
 projects[link_css][type] = module
 projects[link_css][version] = 1.x-dev
 projects[mailsystem][type] = module
