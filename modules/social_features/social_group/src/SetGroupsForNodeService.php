@@ -51,6 +51,12 @@ class SetGroupsForNodeService {
   public function setGroupsForNode(NodeInterface $node, array $groups_to_remove, array $groups_to_add, array $original_groups = [], $is_new = FALSE) {
     $moved = FALSE;
 
+    // If we don't have to add or remove groups, we don't need to move anything.
+    // the node is just updated for other values.
+    if (empty($groups_to_add) && empty($groups_to_remove)) {
+      return $node;
+    }
+
     // Remove the notifications related to the node if a group is added or
     // moved.
     if ((empty($original_groups) || $original_groups != $groups_to_add)) {
@@ -96,6 +102,24 @@ class SetGroupsForNodeService {
       if (!empty($ids = $entity_query->execute())) {
         $controller = $this->entityTypeManager->getStorage('activity');
         $controller->delete($controller->loadMultiple($ids));
+      }
+
+      // Make sure to delete all activity items connected to the moved content
+      // template.
+      if ($moved) {
+        $messages = $this->entityTypeManager->getStorage('message')
+          ->loadByProperties(['template' => 'moved_content_between_groups']);
+
+        // Make sure we have a message template to work with.
+        if ($messages) {
+          $entity_query->condition('field_activity_message.target_id', array_keys($messages), 'IN');
+        }
+
+        // Delete all activity items connected to our query.
+        if (!empty($ids = $entity_query->execute())) {
+          $controller = $this->entityTypeManager->getStorage('activity');
+          $controller->delete($controller->loadMultiple($ids));
+        }
       }
     }
 
