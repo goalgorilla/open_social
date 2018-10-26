@@ -864,3 +864,14 @@ function social_core_update_8028() {
   $socialblue_settings = \Drupal::configFactory()->getEditable('socialblue.settings');
   $socialblue_settings->set('features.comment_user_verification', FALSE)->save();
 }
+
+/**
+ * Install exif_orientation module.
+ */
+function social_core_update_8301() {
+  $modules = [
+    'exif_orientation',
+  ];
+
+  \Drupal::service('module_installer')->install($modules);
+}
