@@ -19,10 +19,10 @@ class ContentTranslationDefaultsConfigOverride implements ConfigFactoryOverrideI
   public function loadOverrides($names) {
     $overrides = [];
 
-    $settings = \Drupal::configFactory()->getEditable('social_language_content.settings');
+    $settings = \Drupal::configFactory()->getEditable('social_content_translation.settings');
     $translate_book = $settings->getOriginal('social_page', FALSE);
 
-    // If the social_language_content settings object doesn't exist or we are
+    // If the social_content_translation settings object doesn't exist or we are
     // disabled then we perform no overrides.
     if ($translate_book) {
       $this->addTranslationOverrides($names, $overrides);
@@ -31,7 +31,19 @@ class ContentTranslationDefaultsConfigOverride implements ConfigFactoryOverrideI
     return $overrides;
   }
 
-  protected function addTranslationOverrides($names, array &$overrides) {
+  /**
+   * Adds the overrides for this config overrides for field translations.
+   *
+   * By making this a separate method it can easily be overwritten in child
+   * classes without having to duplicate the logic of whether it should be
+   * invoked.
+   *
+   * @param array $names
+   *   The names of the configuration keys for which overwrites are requested.
+   * @param array $overrides
+   *   The array of overrides that should be adjusted.
+   */
+  protected function addTranslationOverrides(array $names, array &$overrides) {
     $field_overrides = [
       'core.base_field_override.node.page.title' => [
         'translatable' => TRUE,
