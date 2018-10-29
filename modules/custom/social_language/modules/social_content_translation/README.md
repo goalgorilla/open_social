@@ -7,17 +7,15 @@ The configurations for the various content types should be kept in their own
 modules with a dependency on this module. This way the translation settings 
 can be kept up to date if fields change.
 
-# Default permissions
+This module contains settings that are read by the configuration override 
+classes for the content types to determine whether they should enable 
+translation of that content type. By using optional configuration for the 
+translatability of entities this is also only enabled together with this module.
 
-How do we handle permissions upon module install? Can we create a(n Open Social)
-module for this that allows you to set default permissions without writing 
-install hooks.
+## Modifying what content is translatable
 
-Possibly:
-- Snapshot permissions before a module install/update
-- Find which permissions were (dynamically added)
-- Grant those permissions to the configured roles 
-
-# TODO
-
-Enable translation for the content types.
+If you need to change which fields for a content type are translatable then you
+should probably use Drupal's content translation module configuration and simply
+disble this module. This module exists to make an alternative UI possible for
+sitemanagers because the content translation UI exposes too much in certain
+scenarios.
