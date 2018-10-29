@@ -13,6 +13,8 @@ use Drupal\Core\Url;
  * keep users within the same language when viewing content (such as posts) in
  * a language other than their current.
  *
+ * It also customises the look to match that of the Open Social menubar.
+ *
  * @Block(
  *  id = "language_switcher_block",
  *  admin_label = @Translation("Language switcher block"),
@@ -24,8 +26,8 @@ class LanguageSwitcherBlock extends LanguageBlock {
    * {@inheritdoc}
    */
   public function build() {
-    /** @var \Drupal\Core\Language\Language $defaultLanguage */
-    $defaultLanguage = $this->languageManager->getCurrentLanguage();
+    /** @var \Drupal\Core\Language\Language $currentLanguage */
+    $currentLanguage = $this->languageManager->getCurrentLanguage();
 
     // Build the menu.
     $links = [
@@ -34,33 +36,36 @@ class LanguageSwitcherBlock extends LanguageBlock {
         'link_attributes' => 'data-toggle=dropdown aria-expanded=true aria-haspopup=true role=button',
         'link_classes' => 'dropdown-toggle clearfix',
         'icon_classes' => 'icon-language',
-        'label' => $defaultLanguage->getId(),
-        'title' => $defaultLanguage->getName() . " (" . $defaultLanguage->getId() . ")",
+        'label' => $currentLanguage->getName(),
+        'title' => $currentLanguage->getName() . " (" . $currentLanguage->getId() . ")",
         'title_classes' => 'navlabel-language pull-left',
         'url' => '#',
       ],
     ];
 
-    // Get the languages.
-    $route_name = \Drupal::routeMatch()->getRouteName();
-    $languagelinks = $this->languageManager->getLanguageSwitchLinks('language_interface', Url::fromRoute($route_name));
-    $current_path = \Drupal::service('path.current')->getPath();
+    // Generate the routes for the current page.
+    $route_name = $this->pathMatcher->isFrontPage() ? '<front>' : '<current>';
+    $type = $this->getDerivativeId();
+    $switchLinks = $this->languageManager->getLanguageSwitchLinks($type, Url::fromRoute($route_name));
 
-    // TODO: use configuration for the prefix instead of assuming ISO.
-    $prefixes = \Drupal::config('language.negotiation')->get('url.prefixes');
+    // Use the default URL generator that does not rewrite the language.
+    $url_generator = \Drupal::service('drupal_core_url_generator');
 
     // Add languages as links.
-    foreach ($languagelinks->links as $iso => $languagelink) {
-      $links['language']['below'][$iso] = [
+    foreach ($switchLinks->links as $langcode => $link) {
+      $link['url']->setOption('language', $this->languageManager->getLanguage($langcode));
+      $link['url']->setUrlGenerator($url_generator);
+
+      $links['language']['below'][$langcode] = [
         'classes' => '',
         'link_attributes' => '',
-        'link_classes' => ($iso === $defaultLanguage) ? 'active' : '',
+        'link_classes' => ($langcode === $currentLanguage->getId()) ? 'active' : '',
         'icon_classes' => '',
         'icon_label' => '',
-        'label' => $languagelink['title'] . " (" . $iso . ")",
-        'title' => $languagelink['title'] . " (" . $iso . ")",
+        'label' => $link['title'] . " (" . $langcode . ")",
+        'title' => $link['title'] . " (" . $langcode . ")",
         'title_classes' => '',
-        'url' => (($prefixes[$iso] === '') ? '' : '/' . $prefixes[$iso]) . $current_path,
+        'url' => $link['url'],
       ];
     }
 
