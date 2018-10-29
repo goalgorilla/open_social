@@ -1,23 +1,27 @@
 <?php
 // @codingStandardsIgnoreFile
 
+namespace Drupal\social\Behat;
+
 use Behat\Behat\Context\Context;
 use Behat\Behat\Context\SnippetAcceptingContext;
-use Behat\Gherkin\Node\PyStringNode;
-use Behat\Gherkin\Node\TableNode;
-use Drupal\DrupalExtension\Context\DrupalContext;
-use Behat\MinkExtension\Context\RawMinkContext;
-use PHPUnit_Framework_Assert as PHPUnit;
-use Drupal\profile\Entity\Profile;
-use Drupal\group\Entity\Group;
-use Drupal\DrupalExtension\Hook\Scope\EntityScope;
 use Behat\Behat\Hook\Scope\AfterScenarioScope;
+use Behat\Behat\Hook\Scope\BeforeScenarioScope;
+use Behat\Gherkin\Node\TableNode;
+use Behat\MinkExtension\Context\RawMinkContext;
+use Drupal\DrupalExtension\Hook\Scope\EntityScope;
+use Drupal\group\Entity\Group;
+use Drupal\locale\SourceString;
+use PHPUnit\Framework\Assert as Assert;
 
 /**
  * Defines application features from the specific context.
  */
 class FeatureContext extends RawMinkContext implements Context, SnippetAcceptingContext
 {
+
+    protected $minkContext;
+
     /**
      * Initializes context.
      *
@@ -38,11 +42,15 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
     /**
      * @BeforeScenario
      *
-     * @param $event
+     * @param \Behat\Behat\Hook\Scope\BeforeScenarioScope $scope
      */
-    public function before($event) {
+    public function before(BeforeScenarioScope $scope) {
       // Let's disable the tour module for all tests by default.
       \Drupal::configFactory()->getEditable('social_tour.settings')->set('social_tour_enabled', 0)->save();
+
+      /** @var \Behat\Testwork\Environment\Environment $environment */
+      $environment = $scope->getEnvironment();
+      $this->minkContext = $environment->getContext(SocialMinkContext::class);
     }
 
   /**
@@ -229,11 +237,18 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
      */
     public function iSelectGroup($group) {
 
-      $option = $this->getGroupIdFromTitle($group);
+      if ($group === "- None -") {
+        $option = '_none';
+      }
+
+      if ($group !== "- None -") {
+        $option = $this->getGroupIdFromTitle($group);
+      }
 
       if (!$option) {
         throw new \InvalidArgumentException(sprintf('Could not find group for "%s"', $group));
       }
+
       $this->getSession()->getPage()->selectFieldOption('edit-groups', $option);
 
     }
@@ -278,6 +293,47 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
       $count++;
     }
     throw new \InvalidArgumentException(sprintf('Element not found with the css: "%s"', $css));
+  }
+
+  /**
+   * @When I click the xth :position element with the css :css in the :region( region)
+   */
+  public function iClickTheRegionElementWithTheCSS($position, $css, $region)
+  {
+    $session = $this->getSession();
+    $regionObj = $session->getPage()->find('region', $region);
+    $elements = $regionObj->findAll('css', $css);
+
+    $count = 0;
+
+    foreach($elements as $element) {
+      if ($count == $position) {
+        // Now click the element.
+        $element->click();
+        return;
+      }
+      $count++;
+    }
+    throw new \InvalidArgumentException(sprintf('Element not found with the css: "%s"', $css));
+  }
+
+  /**
+   * Click on the element with the provided CSS Selector
+   *
+   * @When /^I click the element with css selector "([^"]*)"$/
+   */
+  public function iClickTheElementWithCSSSelector($cssSelector)
+  {
+    $session = $this->getSession();
+    $element = $session->getPage()->find(
+      'xpath',
+      $session->getSelectorsHandler()->selectorToXpath('css', $cssSelector) // just changed xpath to css
+    );
+    if (null === $element) {
+      throw new \InvalidArgumentException(sprintf('Could not evaluate CSS Selector: "%s"', $cssSelector));
+    }
+
+    $element->click();
   }
 
     /**
@@ -413,7 +469,7 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
         }
       }
 
-      PHPUnit::assertGreaterThan(
+      Assert::assertGreaterThan(
         array_search($checkBefore, $items),
         array_search($checkAfter, $items),
         "$textBefore does not proceed $textAfter"
@@ -614,8 +670,8 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
           $public_query->condition('fm.uri', 'public://%', 'LIKE');
           $public_count = count($public_query->execute()->fetchAllAssoc('fid'));
 
-          PHPUnit::assertEquals($private, $private_count, sprintf("Private count was not '%s', instead '%s' private files found.", $private, $private_count));
-          PHPUnit::assertEquals($public, $public_count, sprintf("Public count was not '%s', instead '%s' public files found.", $public, $public_count));
+          Assert::assertEquals($private, $private_count, sprintf("Private count was not '%s', instead '%s' private files found.", $private, $private_count));
+          Assert::assertEquals($public, $public_count, sprintf("Public count was not '%s', instead '%s' public files found.", $public, $public_count));
         }
 
       }
@@ -807,5 +863,131 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
 
       // Now click the element.
       $element->click();
+    }
+
+    /**
+     * Turn off translations import.
+     *
+     * @Given I turn off translations import
+     */
+    public function turnOffTranslationsImport()
+    {
+      // Let's disable translation.path for now.
+      \Drupal::configFactory()->getEditable('locale.settings')->set('translation.import_enabled', FALSE)->save();
+    }
+
+    /**
+     * Translate a string.
+     *
+     * @Given /I translate "(?P<source>[^"]+)" to "(?P<translation>[^"]+)" for "(?P<langcode>[^"]+)"$/
+     */
+    public function iTranslate($source, $translation, $langcode)
+    {
+      $this->addTranslation($source, $translation, $langcode);
+    }
+
+    /**
+     * Helper function to add translation.
+     *
+     * @param $source_string
+     * @param $translated_string
+     * @param $langcode
+     */
+    public function addTranslation($source_string, $translated_string, $langcode) {
+      // Find existing source string.
+      $storage = \Drupal::service('locale.storage');
+      $string = $storage->findString(array('source' => $source_string));
+      if (is_null($string)) {
+        $string = new SourceString();
+        $string->setString($source_string);
+        $string->setStorage($storage);
+        $string->save();
+      }
+
+
+      // Create translation. If one already exists, it will be replaced.
+      $translation = $storage->createTranslation(array(
+        'lid' => $string->lid,
+        'language' => $langcode,
+        'translation' => $translated_string,
+      ))->save();
+      return $translation;
+    }
+
+    /**
+     * Fill multiple autocomplete field.
+     *
+     * @param string $field
+     *   The field identifier.
+     * @param string $text
+     *   The typed text in field.
+     * @param string $item
+     *   The item for drop-down list.
+     * @param bool $next
+     *   (optional) TRUE if it is not first value.
+     */
+    public function fillAutocompleteField($field, $text, $item, $next = FALSE) {
+      $element = $this->getSession()->getPage()->findField($field);
+
+      if (null === $element) {
+        throw new \Exception(sprintf('Field %s not found', $field));
+      }
+
+      if ($next) {
+        $text = $element->getValue() . ', ' . $text;
+      }
+
+      $element->setValue($text);
+      $element->keyDown(' ');
+      sleep(1); // Wait timeout before sending an AJAX request.
+      $this->minkContext->iWaitForAjaxToFinish();
+      $id = $element->getAttribute('id');
+      $index = $this->getSession()->evaluateScript('return jQuery(".ui-autocomplete-input").index(jQuery("#' . $id . '"));');
+      $autocomplete = $this->getSession()->getPage()->find('xpath', '//ul[contains(@class, "ui-autocomplete")][' . ($index + 1) . ']');
+
+      if (null === $autocomplete) {
+        throw new \Exception('Could not find the autocomplete popup box');
+      }
+
+      $popup_element = $autocomplete->find('xpath', "//li[text()='{$item}']");
+
+      // If "li" was not found, try to find "a" inside a "li".
+      if (null === $popup_element) {
+        $popup_element = $autocomplete->find('xpath', "//li/a[text()='{$item}']");
+      }
+
+      // If "li" was not found, try to find "div" inside a "li".
+      if (null === $popup_element) {
+        $popup_element = $autocomplete->find('xpath', "//li/div[text()='{$item}']");
+      }
+
+      if (null === $popup_element) {
+        throw new \Exception(sprintf('Could not find autocomplete item with text %s', $item));
+      }
+
+      if (!empty($popup_element_id = $popup_element->getAttribute('id'))) {
+        $this->getSession()->evaluateScript('jQuery("#' . $popup_element_id . '").click();');
+      }
+      else {
+        $popup_element->click();
+      }
+
+      if ($next) {
+        $this->getSession()->evaluateScript('jQuery("#' . $id . '").val(jQuery("#' . $id . '").val().replace(/\s(\d+\)\,\s)/g, " ($1"));');
+      }
+    }
+
+    /**
+     * @Given I fill in :field with :text and select :item
+     */
+    public function iFillInWithAndSelect($field, $text, $item) {
+      $this->fillAutocompleteField($field, $text, $item);
+    }
+
+    /**
+     * @Given I fill next in :field with :text and select :item
+     */
+    public function iFillNextInWithAndSelect($field, $text, $item) {
+      $this->fillAutocompleteField($field, $text, $item, TRUE);
     }
 }

@@ -18,12 +18,17 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\file\Entity\File;
 use Drupal\image\Entity\ImageStyle;
 
+define('SOCIAL_PROFILE_SUGGESTIONS_USERNAME', 'username');
+define('SOCIAL_PROFILE_SUGGESTIONS_FULL_NAME', 'full_name');
+define('SOCIAL_PROFILE_SUGGESTIONS_ALL', 'all');
+
 /**
  * Implements hook_field_widget_form_alter().
  *
  * Fix theme issues in profile fields.
  */
 function social_profile_field_widget_form_alter(&$element, FormStateInterface $form_state, $context) {
+  /** @var \Drupal\Core\Field\FieldDefinitionInterface $field_definition */
   $field_definition = $context['items']->getFieldDefinition();
   switch ($field_definition->getName()) {
     case 'field_profile_phone_number':
@@ -35,6 +40,12 @@ function social_profile_field_widget_form_alter(&$element, FormStateInterface $f
       // @todo: remove this when script for custom selects will be added.
       $element['country_code']['#attributes']['class'][] = 'browser-default';
       break;
+  }
+  // This replaces all user entity references with our EntityReferenceSelection.
+  if ($field_definition->getType() === 'entity_reference') {
+    if (isset($element['target_id']['#target_type']) && $element['target_id']['#target_type'] === 'user') {
+      $element['target_id']['#selection_handler'] = 'social';
+    }
   }
 }
 
@@ -78,6 +89,14 @@ function social_profile_form_profile_profile_add_form_alter(array &$form, FormSt
  */
 function social_profile_form_profile_profile_edit_form_alter(array &$form, FormStateInterface $form_state, $form_id) {
   $user = \Drupal::currentUser();
+  $account = \Drupal::routeMatch()->getParameter('user');
+
+  /** @var \Drupal\profile\Entity\Profile $profile */
+  $profile = $form_state->getFormObject()->getEntity();
+
+  if (!$account instanceof User && $profile instanceof Profile) {
+    $account = $profile->getOwner();
+  }
 
   // Check for permission on custom edit profile tags, it's only for CM+ who can
   // actually edit a users profile and add profile tags there.
@@ -119,8 +138,6 @@ function social_profile_form_profile_profile_edit_form_alter(array &$form, FormS
       // There are no fields the user can edit here. Set an explanatory message
       // and disable the Save button.
       if ($empty_profile === TRUE) {
-        $account = \Drupal::routeMatch()->getParameter('user');
-
         $form['empty_profile'] = [
           '#type' => 'fieldset',
         ];
@@ -140,6 +157,13 @@ function social_profile_form_profile_profile_edit_form_alter(array &$form, FormS
   // Add custom submit handler just for redirect purposes. We don't want to
   // override the form::save in profile.
   $form['actions']['submit']['#submit'][] = '_social_profile_profile_edit_form_submit';
+
+  // Add cancel button, so user can easily navigate form edit form to profile.
+  $form['actions']['cancel'] = [
+    '#type' => 'link',
+    '#title' => t('Cancel'),
+    '#url' => Url::fromRoute('view.user_information.user_information', ['user' => $account->id()]),
+  ];
 }
 
 /**
@@ -151,16 +175,22 @@ function social_profile_form_profile_profile_edit_form_alter(array &$form, FormS
  *   The form state interface.
  */
 function _social_profile_profile_edit_form_submit(array $form, FormStateInterface $form_state) {
-  // Get username.
-  $user = \Drupal::currentUser();
-  // Invalidate cache tag.
-  Cache::invalidateTags(['user:breadcrumb:' . $user->id()]);
+  /** @var \Drupal\profile\Entity\Profile $profile */
+  $profile = $form_state->getFormObject()->getEntity();
 
-  // Set redirect to the profile overview page when a user saves their profile.
-  $form_state->setRedirect(
-    'view.user_information.user_information',
-    ['user' => \Drupal::currentUser()->id(), []]
-  );
+  // Let's be on the safe side.
+  if ($profile instanceof Profile) {
+    // Get the uid of the profile.
+    $uid = $profile->getOwnerId();
+    // Invalidate cache tag.
+    Cache::invalidateTags(['user:breadcrumb:' . $uid]);
+    // Set redirect to the profile page when a user saves their profile.
+    $form_state->setRedirect(
+      'view.user_information.user_information', [
+        'user' => $uid,
+      ]
+    );
+  }
 }
 
 /**
@@ -268,6 +298,12 @@ function social_profile_preprocess_profile(array &$variables) {
   if (!empty($profile->field_profile_banner_image->entity) && $profile->field_profile_banner_image->access('view')) {
     $variables['profile_hero_styled_image_url'] = ImageStyle::load('social_xx_large')
       ->buildUrl($profile->field_profile_banner_image->entity->getFileUri());
+  }
+
+  // Add the profile image.
+  if (!empty($profile->field_profile_image->entity)) {
+    $variables['profile_image_url'] = ImageStyle::load('social_medium')
+      ->buildUrl($profile->field_profile_image->entity->getFileUri());
   }
 
 }
@@ -430,22 +466,6 @@ function social_profile_form_user_register_form_alter(&$form, FormStateInterface
 }
 
 /**
- * Implements hook_ENTITY_TYPE_view().
- */
-function social_profile_profile_view(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, $view_mode) {
-  // Change the URL in the compact view mode.
-  if ($view_mode === 'compact' && $entity instanceof Profile) {
-    $uid = $entity->getOwnerId();
-    // Get the url from the user profile.
-    $url = Url::fromRoute('entity.user.canonical', [
-      'user' => $uid,
-    ]);
-    // Add it to the build.
-    $build['field_profile_image'][0]['#url'] = $url;
-  }
-}
-
-/**
  * Implements hook_ENTITY_TYPE_view_alter().
  */
 function social_profile_profile_view_alter(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display) {
@@ -509,18 +529,14 @@ function social_profile_get_default_image() {
  * Implements hook_user_format_name_alter().
  */
 function social_profile_user_format_name_alter(&$name, $account) {
-
+  /** @var \Drupal\Core\Session\AccountInterface $account */
   $accountname = '';
-  // Let's get the First name Last name.
-  /** @var \Drupal\profile\ProfileStorageInterface $storage */
   $storage = \Drupal::entityTypeManager()->getStorage('profile');
   if (!empty($storage)) {
     // Returns false.
     if ($user_profile = $storage->loadByUser($account, 'profile', TRUE)) {
-      $accountname = trim(t('@first @last', [
-        '@first' => $user_profile->get('field_profile_first_name')->value,
-        '@last' => $user_profile->get('field_profile_last_name')->value,
-      ]));
+      $accountname = $user_profile->get('field_profile_first_name')->value . " " . $user_profile->get('field_profile_last_name')->value;
+      $accountname = trim($accountname);
     }
   }
   $name = ($accountname !== '') ? $accountname : $name;
@@ -532,4 +548,20 @@ function social_profile_user_format_name_alter(&$name, $account) {
 function _social_profile_form_pre_render($element) {
   $element['group_locale_settings']['timezone']['#title'] = NULL;
   return $element;
+}
+
+/**
+ * Implements hook_entity_operation_alter().
+ */
+function social_profile_entity_operation_alter(array &$operations, EntityInterface $entity) {
+  if ($entity->getEntityTypeId() === 'user') {
+    if (isset($operations['edit'])) {
+      $operations['edit']['title'] = t('Edit account');
+      $operations['edit_profile'] = [
+        'title' => t('Edit profile'),
+        'weight' => (isset($operations['edit']['weight'])) ? $operations['edit']['weight']-- : 0,
+        'url' => Url::fromUserInput('/user/' . $entity->id() . '/profile'),
+      ];
+    }
+  }
 }

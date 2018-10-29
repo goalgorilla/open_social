@@ -295,6 +295,9 @@
       openPhotoSwipe(hashData.pid, galleryElements[hashData.gid - 1], true, true);
     }
   };
-
-  initPhotoSwipeFromDOM('.photoswipe-gallery');
+  Drupal.behaviors.photoSwipe = {
+    attach: function (context, settings) {
+      initPhotoSwipeFromDOM('.photoswipe-gallery');
+    }
+  };
 })(jQuery);

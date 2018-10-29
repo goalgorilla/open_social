@@ -276,3 +276,42 @@ function social_search_update_8108(array &$sandbox) {
   ];
   \Drupal::service('module_installer')->uninstall($modules);
 }
+
+/**
+ * Update social_all and social_users indices.
+ */
+function social_search_update_8109() {
+  // First revert the feature.
+  \Drupal::service('features.manager')->import(['social_search']);
+
+  $indexes = [
+    'social_all',
+    'social_users',
+  ];
+
+  foreach ($indexes as $index_id) {
+    $index = Index::load($index_id);
+    if ($index->status()) {
+      $index->clear();
+      $index->reindex();
+    }
+  }
+}
+
+/**
+ * Trigger a search_api re-index.
+ */
+function social_search_update_8110() {
+  $indexes = [
+    'social_all',
+    'social_users',
+  ];
+
+  foreach ($indexes as $index_id) {
+    $index = Index::load($index_id);
+    if ($index->status()) {
+      $index->clear();
+      $index->reindex();
+    }
+  }
+}

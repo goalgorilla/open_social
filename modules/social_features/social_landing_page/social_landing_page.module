@@ -7,15 +7,20 @@
 
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Template\Attribute;
+use Drupal\file\Entity\File;
 use Drupal\image\Entity\ImageStyle;
 use Drupal\node\NodeInterface;
 use Drupal\node\Entity\Node;
+use Drupal\paragraphs\Entity\Paragraph;
 
 /**
  * Implements hook_form_alter().
  */
 function social_landing_page_form_alter(array &$form, FormStateInterface $form_state, $form_id) {
-  if ('node_landing_page_edit_form' || 'node_landing_page_form' === $form_id) {
+  if (in_array($form_id, [
+    'node_landing_page_edit_form',
+    'node_landing_page_form',
+  ])) {
     $form['#attached']['library'][] = 'social_landing_page/admin';
   }
 }
@@ -98,6 +103,10 @@ function social_landing_page_theme() {
   $theme_templates['field__paragraph__field_featured_items'] = [
     'base hook' => 'field',
   ];
+  // Fields for hero buttons.
+  $theme_templates['field__paragraph__field_hero_buttons'] = [
+    'base hook' => 'field',
+  ];
   // Views.
   $theme_templates['views_view__community_activities'] = [
     'base hook' => 'views_view',
@@ -170,6 +179,14 @@ function social_landing_page_preprocess_node(&$variables) {
   /** @var \Drupal\node\Entity\Node $node */
   $node = $variables['node'];
   if ($node->getType() === 'landing_page') {
+    // If featured we need to do some magic.
+    if ($variables['view_mode'] === 'featured') {
+      $variables['content']['field_landing_page_image'] = [
+        '#type' => 'markup',
+        '#markup' => _social_landing_page_get_hero_image($node),
+      ];
+
+    }
     // Get current user.
     $account = \Drupal::currentUser();
 
@@ -188,4 +205,78 @@ function social_landing_page_preprocess_node(&$variables) {
       }
     }
   }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function social_landing_page_preprocess_field(&$variables) {
+  if ($variables['field_name'] === 'field_button_link_an' || $variables['field_name'] === 'field_button_link_lu') {
+    $entity = $variables['element']['#object'];
+    $button_style = $entity->field_button_style->value;
+    foreach ($variables['items'] as $key => $value) {
+      if (isset($variables['items'][$key]['content'])) {
+        $variables['items'][$key]['content']['#options']['attributes'] = [
+          'class' => 'btn btn-large ' . $button_style,
+        ];
+      }
+    }
+  }
+}
+
+/**
+ * Fetches the first available hero section image from a landing page.
+ *
+ * @param \Drupal\node\Entity\Node $node
+ *   The landing page.
+ *
+ * @return array
+ *   Render array of the image with a link.
+ *
+ * @throws \Drupal\Core\Entity\EntityMalformedException
+ */
+function _social_landing_page_get_hero_image(Node $node) {
+  // Must be a valid node.
+  if (!$node instanceof Node) {
+    return [];
+  }
+
+  // Loop over the landing page sections of the landing page.
+  foreach ($node->get('field_landing_page_section') as $section) {
+    // Get the referenced paragraph.
+    $referenced = $section->getValue();
+    $paragraph_id = $referenced['target_id'];
+    // First paragraph is always of type section.
+    $paragraph_section = Paragraph::load($paragraph_id);
+
+    // Get the related paragraph (the one with the actual content)
+    $section_id = $paragraph_section->get('field_section_paragraph')->target_id;
+    $paragraph_content = Paragraph::load($section_id);
+
+    // Must be of type hero.
+    if ($paragraph_content->getType() === 'hero') {
+      $fid = $paragraph_content->get('field_hero_image')->target_id;
+      $file = File::load($fid);
+      // Check if it's an existing file.
+      if ($file instanceof File) {
+        // Build an image render array.
+        $image = [
+          '#theme' => 'image_style',
+          '#style_name' => 'social_featured',
+          '#uri' => $file->getFileUri(),
+        ];
+        // Build a link render array.
+        $build = [
+          '#title' => render($image),
+          '#type' => 'link',
+          '#url' => $node->toUrl('canonical'),
+        ];
+      }
+      // We immediately return the 1st found hero.
+      return render($build);
+    }
+  }
+
+  return [];
+
 }

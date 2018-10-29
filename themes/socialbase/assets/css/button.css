@@ -13,7 +13,6 @@
   cursor: pointer;
   background-image: none;
   border: 1px solid transparent;
-  white-space: nowrap;
   padding: 6px 12px;
   font-size: 0.875rem;
   line-height: 1.5;
@@ -58,6 +57,10 @@ fieldset[disabled] .btn {
 
 .btn a {
   font-weight: normal;
+}
+
+.btn.btn-full {
+  display: block;
 }
 
 .btn-non-clickable.disabled,
@@ -295,7 +298,7 @@ input[type="button"].btn-block {
   margin-left: 0;
 }
 
-.btn-group > .btn:first-child:not(:last-child):not(.dropdown-toggle) {
+.btn-group > .btn:first-child:not(:last-of-type):not(.dropdown-toggle) {
   border-bottom-right-radius: 0;
   border-top-right-radius: 0;
 }
@@ -426,5 +429,15 @@ input[type="button"].btn-block {
   .block-group-add-block .btn {
     width: 100%;
     margin-bottom: 0.75rem;
+  }
+}
+
+@media (max-width: 899px) {
+  .block-group-add-event-block,
+  .block-group-add-topic-block,
+  .block-event-add-block,
+  .block-topic-add-block,
+  .block-group-add-block {
+    margin-top: 1rem;
   }
 }

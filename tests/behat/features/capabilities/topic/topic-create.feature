@@ -1,4 +1,4 @@
-@api @topic @stability @perfect @critical @DS-341 @stability-2
+@api @topic @stability @perfect @critical @DS-341 @stability-2 @topic-create
 Feature: Create Topic
   Benefit: In order to share knowledge with people
   Role: As a LU
@@ -15,6 +15,7 @@ Feature: Create Topic
      And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text"
     And I click radio button "Discussion"
     And I attach the file "/files/humans.txt" to "Add a new file"
+    And I wait for AJAX to finish
     And I press "Save"
     And I should see "Topic This is a test topic has been created."
     And I should see "This is a test topic" in the "Hero block"
