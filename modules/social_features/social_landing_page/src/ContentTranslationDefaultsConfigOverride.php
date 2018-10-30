@@ -27,26 +27,30 @@ class ContentTranslationDefaultsConfigOverride implements ConfigFactoryOverrideI
     // If the social_content_translation settings object doesn't exist or we are
     // disabled then we perform no overrides.
     if ($translate_book) {
-      $this->addTranslationOverrides($names, $overrides);
+      $translation_overrides = $this->getTranslationOverrides();
+
+      foreach ($translation_overrides as $name => $override) {
+        if (in_array($name, $names)) {
+          $overrides[$name] = $override;
+        }
+      }
     }
 
     return $overrides;
   }
 
   /**
-   * Adds the overrides for this config overrides for translations.
+   * Returns the configuration override for this module's translations.
    *
    * By making this a separate method it can easily be overwritten in child
    * classes without having to duplicate the logic of whether it should be
    * invoked.
    *
-   * @param array $names
-   *   The names of the configuration keys for which overwrites are requested.
-   * @param array $overrides
-   *   The array of overrides that should be adjusted.
+   * @return array
+   *   An array keyed by configuration name with the override as value.
    */
-  protected function addTranslationOverrides(array $names, array &$overrides) {
-    $translation_overrides = [
+  protected function getTranslationOverrides() {
+    return [
       'language.content_settings.node.landing_page' => [
         'third_party_settings' => [
           'content_translation' => [
@@ -106,26 +110,34 @@ class ContentTranslationDefaultsConfigOverride implements ConfigFactoryOverrideI
         'translatable' => TRUE,
       ],
     ];
+  }
 
-    foreach ($translation_overrides as $name => $override) {
-      if (in_array($name, $names)) {
-        $overrides[$name] = $override;
-      }
-    }
+  /**
+   * Returns the configurations that are overridden in this class.
+   *
+   * @return array
+   *   An array of configuration names.
+   */
+  protected function getOverriddenConfigurations() {
+    return array_keys($this->getTranslationOverrides());
   }
 
   /**
    * {@inheritdoc}
    */
   public function getCacheSuffix() {
-    return __CLASS__;
+    return 'social_landing_page.content_translation_defaults_config_override';
   }
 
   /**
    * {@inheritdoc}
    */
   public function getCacheableMetadata($name) {
-    return new CacheableMetadata();
+    $metadata = new CacheableMetadata();
+    if (in_array($name, $this->getOverriddenConfigurations())) {
+      $metadata->addCacheTags(['config:social_content_translation.settings']);
+    }
+    return $metadata;
   }
 
   /**
