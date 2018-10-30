@@ -37,6 +37,18 @@ abstract class ContentTranslationConfigOverrideBase implements ConfigFactoryOver
   abstract protected function getModule();
 
   /**
+   * Returns the display name for this set of configuration overrides.
+   *
+   * This can be used in a user interface to let sitemanagers determine which
+   * parts of Open Social should be translatable. For consistency when
+   * displaying this should always be a plural string.
+   *
+   * @return \Drupal\Core\StringTranslation\TranslatableMarkup|string
+   *   The (translatable) string that can be shown to the user.
+   */
+  abstract protected function getDisplayName();
+
+  /**
    * {@inheritdoc}
    */
   public function loadOverrides($names) {

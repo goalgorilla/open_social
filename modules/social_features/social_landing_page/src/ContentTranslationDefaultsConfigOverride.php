@@ -2,20 +2,40 @@
 
 namespace Drupal\social_landing_page;
 
+use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\social_core\ContentTranslationConfigOverrideBase;
 
 /**
- * Provides content translation defaults for the basic page content type.
+ * Provides content translation defaults for the landing page content type.
  *
  * @package Drupal\social_landing_page
  */
 class ContentTranslationDefaultsConfigOverride extends ContentTranslationConfigOverrideBase {
+  use StringTranslationTrait;
+
+  /**
+   * Creates a ContentTranslationDefaultsConfigOverride instance.
+   *
+   * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
+   *   The string translation service.
+   */
+  public function __construct(TranslationInterface $string_translation) {
+    $this->stringTranslation = $string_translation;
+  }
 
   /**
    * {@inheritdoc}
    */
   protected function getModule() {
     return 'social_landing_page';
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function getDisplayName() {
+    return $this->t('Landing Pages');
   }
 
   /**

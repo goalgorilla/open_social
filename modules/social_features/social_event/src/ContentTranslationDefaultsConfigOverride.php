@@ -2,6 +2,8 @@
 
 namespace Drupal\social_event;
 
+use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\social_core\ContentTranslationConfigOverrideBase;
 
 /**
@@ -10,12 +12,30 @@ use Drupal\social_core\ContentTranslationConfigOverrideBase;
  * @package Drupal\social_event
  */
 class ContentTranslationDefaultsConfigOverride extends ContentTranslationConfigOverrideBase {
+  use StringTranslationTrait;
+
+  /**
+   * Creates a ContentTranslationDefaultsConfigOverride instance.
+   *
+   * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
+   *   The string translation service.
+   */
+  public function __construct(TranslationInterface $string_translation) {
+    $this->stringTranslation = $string_translation;
+  }
 
   /**
    * {@inheritdoc}
    */
   protected function getModule() {
     return 'social_event';
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function getDisplayName() {
+    return $this->t('Events');
   }
 
   /**
