@@ -19,6 +19,8 @@ class ContentTranslationDefaultsConfigOverride implements ConfigFactoryOverrideI
   public function loadOverrides($names) {
     $overrides = [];
 
+    // This setting can't be changed in an override because that would create
+    // and endless loop in trying to apply the override.
     $settings = \Drupal::configFactory()->getEditable('social_content_translation.settings');
     $translate_book = $settings->getOriginal('social_page', FALSE);
 
@@ -32,7 +34,7 @@ class ContentTranslationDefaultsConfigOverride implements ConfigFactoryOverrideI
   }
 
   /**
-   * Adds the overrides for this config overrides for field translations.
+   * Adds the overrides for this config overrides for translations.
    *
    * By making this a separate method it can easily be overwritten in child
    * classes without having to duplicate the logic of whether it should be
@@ -44,7 +46,14 @@ class ContentTranslationDefaultsConfigOverride implements ConfigFactoryOverrideI
    *   The array of overrides that should be adjusted.
    */
   protected function addTranslationOverrides(array $names, array &$overrides) {
-    $field_overrides = [
+    $translation_overrides = [
+      'language.content_settings.node.page' => [
+        'third_party_settings' => [
+          'content_translation' => [
+            'enabled' => TRUE,
+          ],
+        ],
+      ],
       'core.base_field_override.node.page.title' => [
         'translatable' => TRUE,
       ],
@@ -71,7 +80,7 @@ class ContentTranslationDefaultsConfigOverride implements ConfigFactoryOverrideI
       ],
     ];
 
-    foreach ($field_overrides as $name => $override) {
+    foreach ($translation_overrides as $name => $override) {
       if (in_array($name, $names)) {
         $overrides[$name] = $override;
       }
