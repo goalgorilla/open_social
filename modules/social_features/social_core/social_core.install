@@ -853,19 +853,9 @@ function social_core_update_8027() {
 }
 
 /**
- * Install exif_orientation module.
- */
-function social_core_update_8028() {
-  $modules = [
-    'exif_orientation',
-  ];
-  \Drupal::service('module_installer')->install($modules);
-}
-
-/**
  * Turn off comment user verification setting.
  */
-function social_core_update_8029() {
+function social_core_update_8028() {
   // Change setting for socialbase.
   $socialbase_settings = \Drupal::configFactory()->getEditable('socialbase.settings');
   $socialbase_settings->set('features.comment_user_verification', FALSE)->save();
@@ -873,4 +863,14 @@ function social_core_update_8029() {
   // Change setting for socialblue.
   $socialblue_settings = \Drupal::configFactory()->getEditable('socialblue.settings');
   $socialblue_settings->set('features.comment_user_verification', FALSE)->save();
+}
+
+/**
+ * Install exif_orientation module.
+ */
+function social_core_update_8029() {
+  $modules = [
+    'exif_orientation',
+  ];
+  \Drupal::service('module_installer')->install($modules);
 }
