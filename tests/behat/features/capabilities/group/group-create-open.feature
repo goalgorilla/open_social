@@ -151,7 +151,6 @@ Feature: Create Open Group
     And I click the element with css selector "#hero .dropdown-toggle"
     And I should see the link "Leave group"
     And I click "Leave group"
-    And I should see "Test open group" in the "Hero block"
     And I should see "This action cannot be undone."
     And I should see the button "Cancel"
     And I should see the button "Leave group"
