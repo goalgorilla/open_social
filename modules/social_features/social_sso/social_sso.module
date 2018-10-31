@@ -14,8 +14,15 @@ use Drupal\social_auth_extra\UserManagerInterface;
  * Implements hook_social_auth_extra_profile_presave().
  */
 function social_sso_social_auth_extra_profile_presave(UserInterface $account, ProfileInterface $profile, AuthManagerInterface $auth_manager, UserManagerInterface $user_manager) {
-  $profile->get('field_profile_first_name')->setValue($auth_manager->getFirstName());
-  $profile->get('field_profile_last_name')->setValue($auth_manager->getLastName());
+  // If nickname is used prefill it, instead of First and Last name.
+  if (\Drupal::moduleHandler()->moduleExists('social_profile_fields') && _social_profile_fields_get_setting('profile_profile_field_profile_nick_name')) {
+    $nick_name = $auth_manager->getFirstName() . ' ' . $auth_manager->getLastName();
+    $profile->get('field_profile_nick_name')->setValue($nick_name);
+  }
+  else {
+    $profile->get('field_profile_first_name')->setValue($auth_manager->getFirstName());
+    $profile->get('field_profile_last_name')->setValue($auth_manager->getLastName());
+  }
 
   $entity_field_manager = \Drupal::service('entity_field.manager');
   $field_definitions = $entity_field_manager->getFieldDefinitions('profile', 'profile');
