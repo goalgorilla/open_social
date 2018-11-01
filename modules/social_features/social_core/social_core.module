@@ -6,7 +6,6 @@
  */
 
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
 use Drupal\image\Entity\ImageStyle;
 use Drupal\Core\Url;
@@ -72,7 +71,7 @@ function template_preprocess_page_hero_data(array &$variables) {
     }
 
     // Add node edit url for management.
-    if ($node instanceof Node) {
+    if ($node instanceof NodeInterface) {
       // Get the current route name to check if the user is on the
       // edit or delete page.
       $route = \Drupal::routeMatch()->getRouteName();
