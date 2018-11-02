@@ -37,7 +37,7 @@ class SocialGroupQuickjoinSettings extends ConfigFormBase {
 
     $form['help'] = [
       '#type' => 'item',
-      '#markup' => $this->t("Enabling this feature gives site builders the possibility to create group 'quickjoin' links. Furthermore it's possible to skip the confirmation step on a group type basis."),
+      '#markup' => $this->t("Enabling this feature gives site builders the possibility to create group quickjoin links (EG: /group/1/quickjoin). Furthermore it's possible to skip the confirmation step on a group type basis."),
     ];
 
     $form['social_group_quickjoin_enabled'] = [
