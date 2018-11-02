@@ -9,6 +9,7 @@ use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\Url;
 use Drupal\group\Entity\Group;
 use Drupal\group\Entity\GroupContent;
+use Drupal\Core\Language\LanguageInterface;
 
 /**
  * Implements hook_token_info().
@@ -112,7 +113,7 @@ function activity_logger_tokens($type, $tokens, array $data, array $options, Bub
               // If it's a group.. add it in the arguments.
               if (isset($group) && $group instanceof Group) {
                 if ($name === 'gtitle') {
-                  $curr_langcode = \Drupal::languageManager()->getCurrentLanguage(\Drupal\Core\Language\LanguageInterface::TYPE_CONTENT)->getId();
+                  $curr_langcode = \Drupal::languageManager()->getCurrentLanguage(LanguageInterface::TYPE_CONTENT)->getId();
                   $replacements[$original] = $group->getTranslation($curr_langcode)->label();
                 }
                 if ($name === 'gurl') {
