@@ -1,11 +1,14 @@
 <?php
 
-namespace Drupal\social_group_quickjoin_quickjoin\EventSubscriber;
+namespace Drupal\social_group_quickjoin\EventSubscriber;
 
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Routing\CurrentRouteMatch;
 use Drupal\Core\Session\AccountProxy;
+use Drupal\Core\Url;
 use Drupal\group\Entity\Group;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
@@ -31,16 +34,26 @@ class RedirectSubscriber implements EventSubscriberInterface {
   protected $currentUser;
 
   /**
+   * The config factory.
+   *
+   * @var \Drupal\Core\Config\ConfigFactoryInterface
+   */
+  protected $configFactory;
+
+  /**
    * Redirectsubscriber construct.
    *
    * @param \Drupal\Core\Routing\CurrentRouteMatch $route_match
    *   The current route.
    * @param \Drupal\Core\Session\AccountProxy $current_user
    *   The current user.
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *   The configfactory.
    */
-  public function __construct(CurrentRouteMatch $route_match, AccountProxy $current_user) {
+  public function __construct(CurrentRouteMatch $route_match, AccountProxy $current_user, ConfigFactoryInterface $config_factory) {
     $this->currentRoute = $route_match;
     $this->currentUser = $current_user;
+    $this->configFactory = $config_factory;
   }
 
   /**
@@ -65,7 +78,7 @@ class RedirectSubscriber implements EventSubscriberInterface {
     // First check if the current route is the group canonical.
     $routeMatch = $this->currentRoute->getRouteName();
     // Not group canonical, then we leave.
-    if ($routeMatch != 'entity.group.canonical') {
+    if ($routeMatch != 'entity.group.join') {
       return;
     }
 
@@ -76,9 +89,26 @@ class RedirectSubscriber implements EventSubscriberInterface {
       return;
     }
 
-    return;
+    // Fetch the settings.
+    $settings = $this->configFactory->get('social_group_quickjoin.settings');
 
-//    $event->setResponse(new RedirectResponse(Url::fromRoute($route, ['group' => $group->id()])->toString()));
+    // Check if the feature enabled.
+    if ($settings->get('social_group_quickjoin_enabled') == FALSE) {
+      return;
+    }
+
+    // Check if the current group type is enabled.
+    if ($settings->get('social_group_quickjoin_' . $group->getGroupType()->id()) == FALSE) {
+      return;
+    }
+
+    // Create quickjoin URL from route.
+    $url = Url::fromRoute('social_group_quickjoin.quickjoin_group', [
+      'group' => $group->id(),
+    ])->toString();
+
+    // Redirect ot quickjoin.
+    $event->setResponse(new RedirectResponse($url));
   }
 
 }
