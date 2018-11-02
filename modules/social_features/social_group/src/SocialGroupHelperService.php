@@ -14,13 +14,6 @@ use Drupal\social_post\Entity\Post;
 class SocialGroupHelperService {
 
   /**
-   * Constructor.
-   */
-  public function __construct() {
-
-  }
-
-  /**
    * Returns a group id from a entity (post, node).
    */
   public static function getGroupFromEntity($entity) {
@@ -58,6 +51,33 @@ class SocialGroupHelperService {
       }
     }
     return $gid;
+  }
+
+  /**
+   * Returns the default visibility.
+   *
+   * @param $type string
+   *   The Group Type
+   *
+   * @return string
+   *   The default visibility.
+   */
+  public static function getDefaultGroupVisibility($type) {
+    switch ($type) {
+      case 'closed_group':
+        $visibility = 'group';
+        break;
+
+      case 'open_group':
+        $visibility = 'community';
+        break;
+
+      case 'public_group':
+        $visibility = 'public';
+        break;
+    }
+
+    return $visibility;
   }
 
 }

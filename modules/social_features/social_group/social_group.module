@@ -514,16 +514,8 @@ function _social_group_type_edit_submit($form, FormStateInterface $form_state) {
   if ($new_type !== $default_type) {
     $group = _social_group_get_current_group();
 
-    $changed = GroupContentVisibilityUpdate::updateGroupContentVisibility($group, $new_type);
-
-    // Only when we manage to change all of it's group content we update the
-    // group as well.
-    if ($changed) {
-      $group->type = $new_type;
-      $group->save();
-
-      return;
-    }
+    // Update the default visibility of all the content.
+    GroupContentVisibilityUpdate::batchUpdateGroupContentVisibility($group, $new_type);
   }
 }
 
@@ -737,19 +729,7 @@ function social_group_field_widget_form_alter(&$element, FormStateInterface $for
       $group_type = $current_group->getGroupType();
       $group_type_id = $group_type->id();
       if (!$entity->id()) {
-        switch ($group_type_id) {
-          case 'closed_group':
-            $element['#default_value'] = 'group';
-            break;
-
-          case 'open_group':
-            $element['#default_value'] = 'community';
-            break;
-
-          case 'public_group':
-            $element['#default_value'] = 'public';
-            break;
-        }
+        $element['#default_value'] = SocialGroupHelperService::getDefaultGroupVisibility($group_type_id);
       }
     }
     else {
@@ -1300,6 +1280,41 @@ function social_group_get_allowed_visibility_options_per_group_type($group_type_
       }
       $visibility_options['community'] = TRUE;
       $visibility_options['group'] = FALSE;
+      break;
+  }
+  return $visibility_options;
+}
+
+/**
+ * Get the default visibility option for a given group type.
+ *
+ * @param string|null $group_type_id
+ *   The group type.
+ *
+ * @return string
+ *   The default visibility option for the given group type.
+ */
+function social_group_get_default_visibility_options_per_group_type($group_type_id) {
+  $visibility_options = [];
+
+  switch ($group_type_id) {
+    case 'closed_group':
+      $visibility_options = 'group';
+
+      break;
+
+    case 'public_group':
+      $visibility_options = 'group';
+
+      break;
+
+    case 'open_group':
+      $visibility_options = 'group';
+
+      break;
+
+    default:
+
       break;
   }
   return $visibility_options;
