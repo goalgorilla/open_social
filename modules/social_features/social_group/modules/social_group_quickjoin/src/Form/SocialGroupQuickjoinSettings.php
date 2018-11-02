@@ -35,24 +35,37 @@ class SocialGroupQuickjoinSettings extends ConfigFormBase {
   public function buildForm(array $form, FormStateInterface $form_state) {
     $config = $this->config('social_group_quickjoin.settings');
 
+    $form['help'] = [
+      '#type' => 'item',
+      '#markup' => $this->t("Enabling this feature gives site builders the possibility to create group 'quickjoin' links. Furthermore it's possible to skip the confirmation step on a group type basis."),
+    ];
+
     $form['social_group_quickjoin_enabled'] = [
       '#type' => 'checkbox',
-      '#title' => $this->t('Enable quickjoin'),
-      '#description' => $this->t('Set wether quickjoin is enabled.'),
+      '#title' => $this->t("Enable quickjoin"),
+      '#description' => $this->t("Allow users to join groups with a singe click."),
       '#default_value' => $config->get('social_group_quickjoin_enabled'),
     ];
+
+    $form['grouptypes'] = array(
+      '#type' => 'details',
+      '#title' => $this->t('Group types'),
+      '#open' => TRUE,
+    );
 
     /** @var \Drupal\group\Entity\GroupType $group_type */
     foreach ($this->getGroups() as $group_type) {
       // The setting name.
       $setting_name = 'social_group_quickjoin_' . $group_type->id();
 
-      $form[$setting_name] = [
+      $form['grouptypes'][$setting_name] = [
         '#type' => 'checkbox',
-        '#title' => $this->t('Quickjoin enabled for @grouptype', [
+        '#title' => $this->t('Skip confirmation for type @grouptype', [
           '@grouptype' => $group_type->label(),
         ]),
-        '#description' => $this->t('Set wether quickjoin is enabled for this group type or not.'),
+        '#description' => $this->t('Allow users to skip the confirmation step when joining a group of type @grouptype', [
+          '@grouptype' => $group_type->label(),
+        ]),
         '#default_value' => $config->get($setting_name),
         '#states' => array(
           'visible' => array(
