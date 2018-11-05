@@ -151,7 +151,7 @@ class GroupContentVisibilityUpdate {
    * @param array $operations
    *   Contains the unprocessed operations that failed or weren't touched yet.
    */
-  function updateVisibilityFinishedCallback($success, array $results, array $operations) {
+  public function updateVisibilityFinishedCallback($success, array $results, array $operations) {
     if ($success) {
       // Here we could do something meaningful with the results.
       // We just display the number of nodes we processed...
