@@ -47,11 +47,11 @@ class SocialGroupQuickjoinSettings extends ConfigFormBase {
       '#default_value' => $config->get('social_group_quickjoin_enabled'),
     ];
 
-    $form['grouptypes'] = array(
+    $form['grouptypes'] = [
       '#type' => 'details',
       '#title' => $this->t('Group types'),
       '#open' => TRUE,
-    );
+    ];
 
     /** @var \Drupal\group\Entity\GroupType $group_type */
     foreach ($this->getGroups() as $group_type) {
@@ -67,11 +67,11 @@ class SocialGroupQuickjoinSettings extends ConfigFormBase {
           '@grouptype' => $group_type->label(),
         ]),
         '#default_value' => $config->get($setting_name),
-        '#states' => array(
-          'visible' => array(
-            ':input[name="social_group_quickjoin_enabled"]' => array('checked' => TRUE),
-          ),
-        ),
+        '#states' => [
+          'visible' => [
+            ':input[name="social_group_quickjoin_enabled"]' => ['checked' => TRUE],
+          ],
+        ],
       ];
 
     }
@@ -113,7 +113,8 @@ class SocialGroupQuickjoinSettings extends ConfigFormBase {
     $types = [];
     /** @var \Drupal\group\Entity\GroupType $group_type */
     foreach (GroupType::loadMultiple() as $group_type) {
-      // We can only select group types that have the 'join group' permission enabled.
+      // We can only select group types that have the 'join group'
+      // permission enabled.
       if (in_array('join group', $group_type->getOutsiderRole()->getPermissions())) {
         $types[] = $group_type;
       }
