@@ -9,7 +9,6 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\group\GroupMembership;
 use Drupal\social_post\Entity\Post;
 use Drupal\node\Entity\Node;
-use Drupal\group\GroupMembershipLoader;
 
 /**
  * Class GroupContentVisibilityUpdate.
@@ -42,18 +41,18 @@ class GroupContentVisibilityUpdate {
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    *   The module handler.
    */
-  public function __construct(EntityTypeManagerInterface $entity_type_manager, ModuleHandlerInterface $module_handler, GroupMembershipLoader $memberLoader) {
+  public function __construct(EntityTypeManagerInterface $entity_type_manager, ModuleHandlerInterface $module_handler) {
     $this->entityTypeManager = $entity_type_manager;
     $this->moduleHandler = $module_handler;
   }
 
   /**
-   * Update Group content after Group changed
+   * Update Group content after Group changed.
    *
    * @param \Drupal\group\Entity\Group $group
    *   The Group we've updated.
    * @param string $new_type
-   *   The Group's new group type
+   *   The Group's new group type.
    *
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
@@ -63,7 +62,7 @@ class GroupContentVisibilityUpdate {
     $entities = $group->getContentEntities();
 
     $posts = self::getPostsFromGroup($group);
-    foreach ($posts as $pid => $post ) {
+    foreach ($posts as $pid => $post) {
       $entities[] = $post;
     }
     $memberships = $group->getMembers();
@@ -72,26 +71,26 @@ class GroupContentVisibilityUpdate {
     }
 
     $num_operations = count($entities);
-    $operations = array();
+    $operations = [];
 
     // Update Memberships & ContentVisibility.
     // As per documentation each entity has it's own operation.
     for ($i = 0; $i < $num_operations; $i++) {
-      $operations[] = array(
+      $operations[] = [
         '\Drupal\social_group\GroupContentVisibilityUpdate::updateVisibility',
-        array(
+        [
           $entities[$i],
           $new_type,
-        ),
-      );
+        ],
+      ];
     }
 
     // Provide all the operations and the finish callback to our batch.
-    $batch = array(
+    $batch = [
       'title' => t('Updating Group Content...'),
       'operations' => $operations,
       'finished' => '\Drupal\social_group\GroupContentVisibilityUpdate::updateVisibilityFinishedCallback',
-    );
+    ];
 
     batch_set($batch);
 
@@ -101,19 +100,18 @@ class GroupContentVisibilityUpdate {
 
   /**
    * Update visibility for all Group Content based on a new group type.
-   * Memberships will be dealt with separately.
    *
-   * @param \Drupal\node\Entity\Node|\Drupal\social_post\Entity\Post
+   * @param \Drupal\node\Entity\Node|\Drupal\social_post\Entity\Post|\Drupal\group\GroupMembership|\Drupal\group\Entity\GroupContentInterface $entity
    *   The content we are updating.
    * @param string $new_type
    *   The new Group type.
    * @param array $context
-   *   Passed on.
+   *   Passed on by reference.
    *
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
-  public function updateVisibility($entity, $new_type, &$context) {
-    // Find the corresponding visibility for the new_group_type
+  public function updateVisibility($entity, $new_type, array &$context) {
+    // Find the corresponding visibility for the new group_type.
     $default_visibility = SocialGroupHelperService::getDefaultGroupVisibility($new_type);
 
     // Store some results for post-processing in the 'finished' callback.
@@ -140,7 +138,7 @@ class GroupContentVisibilityUpdate {
     $context['results'][] = $entity;
 
     // Optional message displayed under the progressbar.
-    $context['message'] = t('Updating Entity ID "@id"', array('@id' => $entity->id()));
+    $context['message'] = t('Updating Entity ID "@id"', ['@id' => $entity->id()]);
   }
 
   /**
@@ -153,11 +151,11 @@ class GroupContentVisibilityUpdate {
    * @param array $operations
    *   Contains the unprocessed operations that failed or weren't touched yet.
    */
-  function updateVisibilityFinishedCallback($success, $results, $operations) {
+  function updateVisibilityFinishedCallback($success, array $results, array $operations) {
     if ($success) {
       // Here we could do something meaningful with the results.
       // We just display the number of nodes we processed...
-      drupal_set_message(t('@count results processed.', array('@count' => count($results))));
+      drupal_set_message(t('@count results processed.', ['@count' => count($results])));
     }
     else {
       // An error occurred.
@@ -165,10 +163,10 @@ class GroupContentVisibilityUpdate {
       $error_operation = reset($operations);
       drupal_set_message(
         t('An error occurred while processing @operation with arguments : @args',
-          array(
+          [
             '@operation' => $error_operation[0],
             '@args' => print_r($error_operation[0], TRUE),
-          )
+          ]
         ),
         'error'
       );
@@ -178,12 +176,13 @@ class GroupContentVisibilityUpdate {
   /**
    * Load all Posts based on a certain group.
    *
-   * @param $group \Drupal\group\Entity\Group
+   * @param \Drupal\group\Entity\Group $group
    *   The Group where we should check our posts for.
    *
    * @return \Drupal\Core\Entity\EntityInterface[]|\Drupal\social_post\Entity\Post[]
+   *   Returning the Posts that are part of a Group.
    */
-  public static function getPostsFromGroup($group) {
+  public static function getPostsFromGroup(Group $group) {
     $posts = &drupal_static(__FUNCTION__);
     if (!isset($posts)) {
       // Posts aren't marked as group content so we load them separately.
@@ -197,7 +196,7 @@ class GroupContentVisibilityUpdate {
       // Store all the post entity ids.
       $post_ids = array_keys($post_keys);
 
-      $posts = \Drupal\social_post\Entity\Post::loadMultiple($post_ids);
+      $posts = Post::loadMultiple($post_ids);
     }
 
     return $posts;

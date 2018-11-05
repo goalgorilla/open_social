@@ -56,8 +56,8 @@ class SocialGroupHelperService {
   /**
    * Returns the default visibility.
    *
-   * @param $type string
-   *   The Group Type
+   * @param string $type
+   *   The Group Type.
    *
    * @return string
    *   The default visibility.

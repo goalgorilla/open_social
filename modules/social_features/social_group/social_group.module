@@ -49,6 +49,12 @@ function social_group_form_group_public_group_edit_form_alter(&$form, FormStateI
   $form['#group_children']['group_type'] = 'group_content';
 }
 
+/**
+ * Check if a User is able to edit a Group's GroupType.
+ *
+ * @return bool
+ *   TRUE if a user may edit a existings groups group type.
+ */
 function social_group_group_type_permission_check() {
   $user = \Drupal::currentUser();
   // Get the Group object from the route.
@@ -56,7 +62,6 @@ function social_group_group_type_permission_check() {
 
   // Check if we are editing a group. Sure to be sure.
   if ($group instanceof GroupInterface) {
-
     // Only for user 1 and users with the edit group types permission we can
     // edit a group type.
     if ($user->id() != 1) {
@@ -1284,8 +1289,6 @@ function social_group_get_allowed_visibility_options_per_group_type($group_type_
   }
   return $visibility_options;
 }
-
-
 
 /**
  * Implements hook_views_query_alter().
