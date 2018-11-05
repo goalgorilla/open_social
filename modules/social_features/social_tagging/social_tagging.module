@@ -288,14 +288,14 @@ function social_tagging_entity_delete(EntityInterface $entity) {
 /**
  * Build output on node view.
  *
- * @param \Drupal\node\NodeInterface $node
+ * @param \Drupal\Core\Entity\Entity $entity
  *   A node.
  *
  * @return array|string
  *   Hierarchic presentation of the terms.
  */
-function social_tagging_process_tags(NodeInterface $node) {
-  if (!($node instanceof NodeInterface && $node->hasField('social_tagging'))) {
+function social_tagging_process_tags(Entity $entity) {
+  if (!($entity instanceof Entity && $entity->hasField('social_tagging'))) {
     return '';
   }
 
@@ -305,20 +305,26 @@ function social_tagging_process_tags(NodeInterface $node) {
     return '';
   }
 
-  $terms = $node->get('social_tagging')->getValue();
+  $terms = $entity->get('social_tagging')->getValue();
 
   if ($tag_service->allowSplit()) {
     $renderable = [
       '#theme' => 'social_tagging_split',
-      '#taghierarchy' => $tag_service->buildHierarchy($terms),
+      '#taghierarchy' => $tag_service->buildHierarchy($terms, $entity->getEntityTypeId()),
     ];
   }
   else {
     $tarray = [];
 
+    // Determine the route based on the source of the tags.
+    $route = 'view.search_content.page_no_value';
+    if ($entity->getEntityTypeId() == 'group') {
+      $route = 'view.search_groups.page_no_value';
+    }
+
     // Just a simple way to add all tags to the array.
     foreach ($terms as $term) {
-      $url = Url::fromRoute('view.search_content.page_no_value', [
+      $url = Url::fromRoute($route, [
         'tag[]' => $term['target_id'],
       ]);
 

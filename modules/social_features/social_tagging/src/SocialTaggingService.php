@@ -140,11 +140,13 @@ class SocialTaggingService {
    *
    * @param array $terms
    *   An array of items that are selected.
+   * @param string $entity_type
+   *   The entity type these tags are for.
    *
    * @return array
    *   An hierarchy array of items with their parent.
    */
-  public function buildHierarchy(array $terms) {
+  public function buildHierarchy(array $terms, $entity_type) {
 
     $tree = [];
 
@@ -163,14 +165,17 @@ class SocialTaggingService {
       $parent = reset($parents);
       $category = $parent->getName();
 
+      $parameter = 'tag';
       if ($this->allowSplit()) {
         $parameter = social_tagging_to_machine_name($category);
       }
-      else {
-        $parameter = 'tag';
+
+      $route = 'view.search_content.page_no_value';
+      if ($entity_type == 'group') {
+        $route = 'view.search_groups.page_no_value';
       }
 
-      $url = Url::fromRoute('view.search_content.page_no_value', [
+      $url = Url::fromRoute($route, [
         $parameter . '[]' => $current_term->id(),
       ]);
 
