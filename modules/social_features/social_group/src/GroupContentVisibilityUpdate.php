@@ -6,6 +6,7 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\group\Entity\Group;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\group\GroupMembership;
 use Drupal\social_post\Entity\Post;
 use Drupal\node\Entity\Node;
 use Drupal\group\GroupMembershipLoader;
@@ -66,6 +67,9 @@ class GroupContentVisibilityUpdate {
       $entities[] = $post;
     }
     $memberships = $group->getMembers();
+    foreach ($memberships as $member) {
+      $entities[] = $member;
+    }
 
     $num_operations = count($entities);
     $operations = array();
@@ -93,14 +97,6 @@ class GroupContentVisibilityUpdate {
 
     $group->set('type', $new_type);
     $group->save();
-
-    $content = array();
-    foreach ($memberships as $member) {
-      $group_content = $member->getGroupContent();
-      $new_group_type = $new_type . '-group_membership';
-      $group_content->set('type', $new_group_type);
-      $content[] = $group_content->save();
-    }
   }
 
   /**
@@ -125,21 +121,26 @@ class GroupContentVisibilityUpdate {
     // 'finished' function updateVisibilityFinishedCallback().
     if ($entity instanceof Post) {
       $entity->setVisibility($default_visibility);
-      $context['results'][] = $entity->save();
+      $entity->save();
     }
     if ($entity instanceof Node) {
       $entity->set('field_content_visibility', $default_visibility);
-      $context['results'][] = $entity->save();
+      $entity->save();
     }
-//    Skipping members for now.
-//    if ($entity instanceof GroupMembership) {
-//      $membership = $this->memberLoader->load($)
-//    }
+    // For GroupMembers we have to update the GroupContent.
+    if ($entity instanceof GroupMembership) {
+      $new_group_type = $new_type . '-group_membership';
+      $membershipEntity = $entity->getGroupContent();
+      $membershipEntity->set('type', $new_group_type);
+      $membershipEntity->save();
+      $entity = $membershipEntity;
+    }
 
-    $context['results'][] = $entity->save();
+    // Add referenced entity to results. Might want to add it to the result.
+    $context['results'][] = $entity;
 
     // Optional message displayed under the progressbar.
-    $context['message'] = t('Updating Entity ID "@type"', array('@type' => $entity->id()));
+    $context['message'] = t('Updating Entity ID "@id"', array('@id' => $entity->id()));
   }
 
   /**
