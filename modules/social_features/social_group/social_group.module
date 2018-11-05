@@ -1285,40 +1285,7 @@ function social_group_get_allowed_visibility_options_per_group_type($group_type_
   return $visibility_options;
 }
 
-/**
- * Get the default visibility option for a given group type.
- *
- * @param string|null $group_type_id
- *   The group type.
- *
- * @return string
- *   The default visibility option for the given group type.
- */
-function social_group_get_default_visibility_options_per_group_type($group_type_id) {
-  $visibility_options = [];
 
-  switch ($group_type_id) {
-    case 'closed_group':
-      $visibility_options = 'group';
-
-      break;
-
-    case 'public_group':
-      $visibility_options = 'group';
-
-      break;
-
-    case 'open_group':
-      $visibility_options = 'group';
-
-      break;
-
-    default:
-
-      break;
-  }
-  return $visibility_options;
-}
 
 /**
  * Implements hook_views_query_alter().

@@ -77,6 +77,8 @@ class SocialGroupHelperService {
         break;
     }
 
+    \Drupal::moduleHandler()->alter('social_group_default_visibility_alter', $visibility_options, $type);
+
     return $visibility;
   }
 
