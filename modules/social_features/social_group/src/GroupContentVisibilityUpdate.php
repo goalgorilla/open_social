@@ -94,8 +94,12 @@ class GroupContentVisibilityUpdate {
     $group->set('type', $new_type);
     $group->save();
 
+    $content = array();
     foreach ($memberships as $member) {
-      $member->save();
+      $group_content = $member->getGroupContent();
+      $new_group_type = $new_type . '-group_membership';
+      $group_content->set('type', $new_group_type);
+      $content[] = $group_content->save();
     }
   }
 
