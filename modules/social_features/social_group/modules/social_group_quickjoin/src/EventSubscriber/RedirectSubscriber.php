@@ -107,7 +107,7 @@ class RedirectSubscriber implements EventSubscriberInterface {
       'group' => $group->id(),
     ])->toString();
 
-    // Redirect ot quickjoin.
+    // Redirect to quickjoin.
     $event->setResponse(new RedirectResponse($url));
   }
 
