@@ -40,9 +40,10 @@ Feature: Edit group type after creation
       And I should see "1 member"
     When I click "Edit group"
     Then I should see checked the box "Closed group"
-      And I should see "Please note that changing the group type will also change the visibility of group content and the way users can join the group"
 
     Then I click radio button "Public group This is a public group. Users may join without approval and all content added in this group will be visible to all community members and anonymous users." with the id "edit-group-type-public-group"
+      And I wait for AJAX to finish
+    Then I should see "Please note that changing the group type will also change the visibility of group content and the way users can join the group"
       And I press "Save"
     Then I should see "Updating Group Content..."
       And I wait for the batch job to finish
