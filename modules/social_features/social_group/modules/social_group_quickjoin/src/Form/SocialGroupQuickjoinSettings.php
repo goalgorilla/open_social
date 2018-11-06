@@ -51,6 +51,11 @@ class SocialGroupQuickjoinSettings extends ConfigFormBase {
       '#type' => 'details',
       '#title' => $this->t('Group types'),
       '#open' => TRUE,
+      '#states' => [
+        'visible' => [
+          ':input[name="social_group_quickjoin_enabled"]' => ['checked' => TRUE],
+        ],
+      ],
     ];
 
     /** @var \Drupal\group\Entity\GroupType $group_type */
@@ -67,11 +72,6 @@ class SocialGroupQuickjoinSettings extends ConfigFormBase {
           '@grouptype' => $group_type->label(),
         ]),
         '#default_value' => $config->get($setting_name),
-        '#states' => [
-          'visible' => [
-            ':input[name="social_group_quickjoin_enabled"]' => ['checked' => TRUE],
-          ],
-        ],
       ];
 
     }
