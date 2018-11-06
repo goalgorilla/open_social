@@ -50,7 +50,7 @@ Feature: Edit group type after creation
     Then I should see "Nescafe"
       And I should see "1 member"
 
-    When I click "Stream"
+    When I click "Stream" in the "Tabs"
       And I click the post visibility dropdown
     Then I should see "Public"
 
