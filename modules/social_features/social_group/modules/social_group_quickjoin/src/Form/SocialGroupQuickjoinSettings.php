@@ -43,7 +43,7 @@ class SocialGroupQuickjoinSettings extends ConfigFormBase {
     $form['social_group_quickjoin_enabled'] = [
       '#type' => 'checkbox',
       '#title' => $this->t("Enable quickjoin"),
-      '#description' => $this->t("Allow users to join groups with a singe click."),
+      '#description' => $this->t("Allow users to join groups with a single click."),
       '#default_value' => $config->get('social_group_quickjoin_enabled'),
     ];
 
