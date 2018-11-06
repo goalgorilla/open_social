@@ -43,7 +43,8 @@ function socialbase_group_link($node) {
       ]);
     if (!empty($group_content)) {
       $curr_langcode = \Drupal::languageManager()->getCurrentLanguage(LanguageInterface::TYPE_CONTENT)->getId();
-      $group_link = $group->getTranslation($curr_langcode)->link();
+      $group->isTranslatable() ? $group = $group->getTranslation($curr_langcode) : null;
+      $group_link = $group->link();
     }
   }
   return $group_link;

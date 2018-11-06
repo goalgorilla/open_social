@@ -121,7 +121,8 @@ function activity_logger_tokens($type, $tokens, array $data, array $options, Bub
               if (isset($group) && $group instanceof Group) {
                 if ($name === 'gtitle') {
                   $curr_langcode = \Drupal::languageManager()->getCurrentLanguage(LanguageInterface::TYPE_CONTENT)->getId();
-                  $replacements[$original] = $group->getTranslation($curr_langcode)->label();
+                  $group->isTranslatable() ? $group = $group->getTranslation($curr_langcode) : null;
+                  $replacements[$original] = $group->label();
                 }
                 if ($name === 'gurl') {
                   $gurl = Url::fromRoute('entity.group.canonical',
