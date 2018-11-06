@@ -155,7 +155,7 @@ class GroupContentVisibilityUpdate {
     if ($success) {
       // Here we could do something meaningful with the results.
       // We just display the number of nodes we processed...
-      drupal_set_message(t('@count results processed.', ['@count' => count($results])));
+      drupal_set_message(t('@count results processed.', ['@count' => count($results)]));
     }
     else {
       // An error occurred.
