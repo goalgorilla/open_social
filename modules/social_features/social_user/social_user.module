@@ -32,6 +32,23 @@ function social_user_action_info_alter(&$definitions) {
 /**
  * Implements hook_form_FORM_ID_alter().
  *
+ * @see \Drupal\user\UserLoginForm
+ */
+function social_user_form_user_login_form_alter(&$form, FormStateInterface $form_state) {
+  // Ensure fields have weights so other forms can add items.
+  if (isset($form['account'])) {
+    if (isset($form['account']['name_or_mail'])) {
+      $form['account']['name_or_mail']['#weight'] = -100;
+    }
+    if (isset($form['account']['pass'])) {
+      $form['account']['pass']['#weight'] = -50;
+    }
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ *
  * @see \Drupal\user\RegisterForm
  */
 function social_user_form_user_register_form_alter(&$form, FormStateInterface $form_state) {
@@ -50,6 +67,17 @@ function social_user_form_user_register_form_alter(&$form, FormStateInterface $f
     $signup_help = \Drupal::config('social_user.settings')->get('signup_help');
     if (!empty($signup_help)) {
       $form['account']['#description'] = $signup_help;
+    }
+
+    // Ensure fields have weights so other forms can add items.
+    if (isset($form['account']['mail'])) {
+      $form['account']['mail']['#weight'] = -150;
+    }
+    if (isset($form['account']['name'])) {
+      $form['account']['name']['#weight'] = -100;
+    }
+    if (isset($form['account']['pass'])) {
+      $form['account']['pass']['#weight'] = -50;
     }
 
     $link_options = [];
