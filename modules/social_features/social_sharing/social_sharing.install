@@ -1,0 +1,31 @@
+<?php
+
+/**
+ * @file
+ * The Social Sharing install.
+ */
+
+use Drupal\block\Entity\Block;
+use Drupal\Core\Entity\EntityStorageException;
+
+/**
+ * Remove the old Addtoany bocks.
+ */
+function social_sharing_update_8001() {
+  $blocks = [
+    'addtoanybuttons',
+    'addtoanybuttons_2',
+  ];
+
+  foreach ($blocks as $block_id) {
+    $block = Block::load($block_id);
+
+    try {
+      $block->delete();
+    }
+    catch (EntityStorageException $e) {
+      // Add the error to watchdog.
+      \Drupal::messenger()->addMessage($e->getMessage());
+    }
+  }
+}
