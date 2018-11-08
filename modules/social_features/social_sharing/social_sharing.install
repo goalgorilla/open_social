@@ -20,6 +20,9 @@ function social_sharing_install() {
  * Remove the old Addtoany bocks.
  */
 function social_sharing_update_8001() {
+  // Enable shariff.
+  \Drupal::service('module_installer')->install(['shariff']);
+
   // Default shariff settings.
   _social_sharing_shariff_settings();
 
