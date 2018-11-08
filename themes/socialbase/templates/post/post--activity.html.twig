@@ -37,6 +37,7 @@
 
 <div{{ attributes.addClass(classes) }}>
 
+
   {{ content|without('links', 'field_post_comments', 'like_and_dislike', 'field_post_image', 'user_id') }}
 
   {% if content.field_post_image|render %}
