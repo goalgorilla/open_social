@@ -1,0 +1,30 @@
+langcode: en
+status: true
+dependencies:
+  module:
+  - node
+  - shariff
+  theme:
+  - socialbase
+id: shariffsharebuttons_2
+theme: socialbase
+region: complementary_bottom
+weight: 0
+provider: null
+plugin: shariff_block
+settings:
+  id: shariff_block
+  label: 'Share this page'
+  provider: shariff
+  label_display: visible
+  shariff_default_settings: 1
+visibility:
+  node_type:
+    id: node_type
+    bundles:
+      event: event
+      page: page
+      topic: topic
+    negate: false
+    context_mapping:
+      node: '@node.node_route_context:node'
