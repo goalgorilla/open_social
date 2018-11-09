@@ -182,6 +182,16 @@ class Node extends PreprocessBase {
       $variables['likes_count'] = _socialbase_node_get_like_count($variables['node']->getEntityTypeId(), $variables['node']->id());
     }
 
+    // If we have the node view statistics module available we can print the
+    // count for this node.
+    $variables['views_count'] = NULL;
+    // @todo: check for enabled node types.
+    if ($variables['view_mode'] === 'full') {
+      $views_count = _socialbase_node_get_views_count($variables['node']->getEntityTypeId(), $variables['node']->id());
+      $variables['views_count'] = $views_count;
+      $variables['views_label'] = $this->formatPlural($views_count, 'view', 'views');
+    }
+
     // Add styles for nodes in preview.
     if ($node->in_preview) {
       $variables['#attached']['library'][] = 'socialbase/preview';

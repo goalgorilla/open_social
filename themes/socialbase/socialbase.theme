@@ -139,6 +139,24 @@ function _socialbase_node_get_like_count($type, $id) {
 }
 
 /**
+ * Get views count for a node.
+ *
+ * @param int $id
+ *   The node ID.
+ *
+ * @return int
+ *   Amount of views on the node.
+ */
+function _socialbase_node_get_views_count($id) {
+  $count = mt_rand(0, 1);
+
+  // @todo: query the real amount of views for id.
+
+  return $count;
+
+}
+
+/**
  * Implements theme_preprocess_username().
  */
 function socialbase_preprocess_username(&$variables) {
