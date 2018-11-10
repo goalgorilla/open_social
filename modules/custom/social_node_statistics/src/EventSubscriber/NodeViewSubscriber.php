@@ -2,6 +2,7 @@
 
 namespace Drupal\social_node_statistics\EventSubscriber;
 
+use Drupal\Core\Cache\Cache;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Routing\CurrentRouteMatch;
 use Drupal\Core\Session\AccountProxyInterface;
@@ -79,11 +80,9 @@ class NodeViewSubscriber implements EventSubscriberInterface {
       // Check if we're on a node page.
       $node = $this->routeMatcher->getParameter('node');
       if ($node instanceof NodeInterface) {
-        // @todo: get this from settings page.
-        $bundles = ['event', 'topic'];
-
+        $node_types = \Drupal::config('social_node_statistics.settings')->get('node_types');
         // Check if we should log for this node bundle.
-        if (in_array($node->bundle(), $bundles, FALSE)) {
+        if (in_array($node->bundle(), $node_types, FALSE)) {
           // Insert the event in the table.
           $this->database->insert('node_statistics')
             ->fields([
@@ -92,6 +91,10 @@ class NodeViewSubscriber implements EventSubscriberInterface {
               'timestamp' => $event->getResponse()->getDate()->getTimestamp(),
             ])
             ->execute();
+
+          // Clear node render cache.
+          // @todo: add smart timer, etc.
+          Cache::invalidateTags(['node:' . $node->id()]);
         }
       }
     }

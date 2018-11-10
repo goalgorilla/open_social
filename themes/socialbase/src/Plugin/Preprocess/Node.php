@@ -185,9 +185,9 @@ class Node extends PreprocessBase {
     // If we have the node view statistics module available we can print the
     // count for this node.
     $variables['views_count'] = NULL;
-    // @todo: check for enabled node types.
-    if ($variables['view_mode'] === 'full') {
-      $views_count = _socialbase_node_get_views_count($variables['node']->getEntityTypeId(), $variables['node']->id());
+    $enabled_types = \Drupal::config('social_node_statistics.settings')->get('node_types');
+    if ($variables['view_mode'] === 'full' && in_array($variables['node']->getType(), $enabled_types)) {
+      $views_count = _socialbase_node_get_views_count($variables['node']->id());
       $variables['views_count'] = $views_count;
       $variables['views_label'] = $this->formatPlural($views_count, 'view', 'views');
     }

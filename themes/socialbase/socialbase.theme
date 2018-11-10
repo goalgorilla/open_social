@@ -141,19 +141,20 @@ function _socialbase_node_get_like_count($type, $id) {
 /**
  * Get views count for a node.
  *
- * @param int $id
+ * @param int $nid
  *   The node ID.
  *
  * @return int
  *   Amount of views on the node.
  */
-function _socialbase_node_get_views_count($id) {
-  $count = mt_rand(0, 1);
-
-  // @todo: query the real amount of views for id.
+function _socialbase_node_get_views_count($nid) {
+  $count = Drupal::database()->select('node_statistics', 'n')
+    ->condition('n.nid', $nid)
+    ->countQuery()
+    ->execute()
+    ->fetchField();
 
   return $count;
-
 }
 
 /**
