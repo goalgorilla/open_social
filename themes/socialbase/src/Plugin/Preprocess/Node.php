@@ -190,6 +190,7 @@ class Node extends PreprocessBase {
       $views_count = _socialbase_node_get_views_count($variables['node']->id());
       $variables['views_count'] = $views_count;
       $variables['views_label'] = $this->formatPlural($views_count, 'view', 'views');
+      $variables['#cache']['tags'][] = 'node:' . $variables['node']->id() . ':views_count';
     }
 
     // Add styles for nodes in preview.

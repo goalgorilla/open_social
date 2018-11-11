@@ -83,18 +83,38 @@ class NodeViewSubscriber implements EventSubscriberInterface {
         $node_types = \Drupal::config('social_node_statistics.settings')->get('node_types');
         // Check if we should log for this node bundle.
         if (in_array($node->bundle(), $node_types, FALSE)) {
+          $now = $event->getResponse()->getDate()->getTimestamp();
+
           // Insert the event in the table.
           $this->database->insert('node_statistics')
             ->fields([
               'uid' => $this->account->id(),
               'nid' => $node->id(),
-              'timestamp' => $event->getResponse()->getDate()->getTimestamp(),
+              'timestamp' => $now,
             ])
             ->execute();
 
-          // Clear node render cache.
-          // @todo: add smart timer, etc.
-          Cache::invalidateTags(['node:' . $node->id()]);
+          // Get latest timestamp for possible cache invalidation.
+          $latest = $this->database->select('node_statistics', 'n')
+            ->fields('n', ['timestamp'])
+            ->condition('n.nid', $node->id())
+            ->orderBy('n.timestamp', 'DESC')
+            ->range('1', '1')
+            ->execute()
+            ->fetchField();
+
+          // Get count of views for possible cache invalidation.
+          $count = $this->database->select('node_statistics', 'n')
+            ->condition('n.nid', $node->id())
+            ->countQuery()
+            ->execute()
+            ->fetchField();
+
+          // Clear render cache every 15 minutes when at least between 7 and 10
+          // views occurred.
+          if (($now - $latest) >= 900 && $count % mt_rand(7, 10) === 0) {
+            Cache::invalidateTags(['node:' . $node->id() . ':views_count']);
+          }
         }
       }
     }
