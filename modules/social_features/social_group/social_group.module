@@ -66,24 +66,14 @@ function social_group_form_group_public_group_edit_form_alter(&$form, FormStateI
  *   TRUE if a user may edit a existings groups group type.
  */
 function social_group_group_type_permission_check() {
-  $user = \Drupal::currentUser();
   // Get the Group object from the route.
   $group = Drupal::routeMatch()->getParameter('group');
 
   // Check if we are editing a group. Sure to be sure.
   if ($group instanceof GroupInterface) {
-    // Only for user 1 and users with the edit group types permission we can
-    // edit a group type.
-    if ($user->id() != 1) {
-      if ($user->hasPermission('edit group types')) {
-        return TRUE;
-      }
-    }
-    else {
+    if ($user->hasPermission('edit group types')) {
       return TRUE;
     }
-
-    return FALSE;
   }
 
   return FALSE;
