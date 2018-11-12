@@ -15,6 +15,9 @@ use Drupal\user\Entity\User;
 function social_tagging_install() {
   _social_tagging_set_defaults();
 
+  // Update field definitions.
+  _social_tagging_field_defenitions_update();
+
   // Toggle the index content.
   try {
     _social_tagging_index_toggle('social_content');
@@ -45,6 +48,8 @@ function social_tagging_update_8001() {
  * Toggle group index.
  */
 function social_tagging_update_8002() {
+  // Update field definitions.
+  _social_tagging_field_defenitions_update();
   // Toggle the index groups.
   try {
     _social_tagging_index_toggle('social_group');
@@ -108,4 +113,13 @@ function _social_tagging_index_toggle($index_id) {
     // Restore user account.
     $accountSwitcher->switchBack();
   }
+}
+
+/**
+ * Update the field definitions on install, or in an update hook.
+ */
+function _social_tagging_field_defenitions_update() {
+  // Create field storage for the 'Highlight' base field.
+  \Drupal::entityTypeManager()->clearCachedDefinitions();
+  \Drupal::service('entity.definition_update_manager')->applyUpdates();
 }
