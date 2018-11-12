@@ -28,7 +28,7 @@ function social_tagging_install() {
 
   // Toggle the index groups.
   try {
-    _social_tagging_index_toggle('social_group');
+    _social_tagging_index_toggle('social_groups');
   }
   catch (EntityStorageException $e) {
     \Drupal::logger('social_tagging')->info($e->getMessage());
@@ -52,7 +52,7 @@ function social_tagging_update_8002() {
   _social_tagging_field_defenitions_update();
   // Toggle the index groups.
   try {
-    _social_tagging_index_toggle('social_group');
+    _social_tagging_index_toggle('social_groups');
   }
   catch (EntityStorageException $e) {
     \Drupal::logger('social_tagging')->info($e->getMessage());
