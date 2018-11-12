@@ -7,6 +7,7 @@ use Drupal\group\Entity\Group;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\group\GroupMembership;
+use Drupal\Core\Cache\Cache;
 use Drupal\social_post\Entity\Post;
 use Drupal\node\Entity\Node;
 
@@ -133,6 +134,10 @@ class GroupContentVisibilityUpdate {
       $membershipEntity->save();
       $entity = $membershipEntity;
     }
+
+    // Make sure our GroupContent referenced entities also get invalidated.
+    $tags = $entity->getCacheTagsToInvalidate();
+    Cache::invalidateTags($tags);
 
     // Add referenced entity to results. Might want to add it to the result.
     $context['results'][] = $entity;

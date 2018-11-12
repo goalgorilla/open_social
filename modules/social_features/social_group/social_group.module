@@ -66,6 +66,7 @@ function social_group_form_group_public_group_edit_form_alter(&$form, FormStateI
  *   TRUE if a user may edit a existings groups group type.
  */
 function social_group_group_type_permission_check() {
+  $user = \Drupal::currentUser();
   // Get the Group object from the route.
   $group = Drupal::routeMatch()->getParameter('group');
 
@@ -549,6 +550,12 @@ function _social_group_type_edit_submit($form, FormStateInterface $form_state) {
 
     // Update the default visibility of all the content.
     GroupContentVisibilityUpdate::batchUpdateGroupContentVisibility($group, $new_type);
+
+    // Make sure we clear cache tags accordingly.
+    $cache_tags = _social_group_cache_tags($group);
+    foreach ($cache_tags as $cache_tag) {
+      Cache::invalidateTags([$cache_tag]);
+    }
   }
 }
 
