@@ -63,21 +63,26 @@ class SocialGroupHelperService {
    *   The default visibility.
    */
   public static function getDefaultGroupVisibility($type) {
-    switch ($type) {
-      case 'closed_group':
-        $visibility = 'group';
-        break;
+    $visibility = &drupal_static(__FUNCTION__ . $type);
 
-      case 'open_group':
-        $visibility = 'community';
-        break;
+    if (empty($visibility)) {
+      switch ($type) {
+        case 'closed_group':
+          $visibility = 'group';
+          break;
 
-      case 'public_group':
-        $visibility = 'public';
-        break;
+        case 'open_group':
+          $visibility = 'community';
+          break;
+
+        case 'public_group':
+          $visibility = 'public';
+          break;
+      }
+
+      \Drupal::moduleHandler()
+        ->alter('social_group_default_visibility_alter', $visibility_options, $type);
     }
-
-    \Drupal::moduleHandler()->alter('social_group_default_visibility_alter', $visibility_options, $type);
 
     return $visibility;
   }
