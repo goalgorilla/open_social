@@ -165,15 +165,12 @@ class Post extends ContentEntityBase implements PostInterface {
       switch ($this->field_visibility->value) {
 
         case "0":
+        case "2":
           $visibility = 'community';
           break;
 
         case "1":
           $visibility = 'public';
-          break;
-
-        case "2":
-          $visibility = 'community';
           break;
 
         case "3":
