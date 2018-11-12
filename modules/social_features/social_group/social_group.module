@@ -533,7 +533,10 @@ function _social_group_inform_group_type_selection() {
 }
 
 /**
- * Form submit triggered when editting a group.
+ * @param $form
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *
+ * @throws \Drupal\Core\Entity\EntityStorageException
  */
 function _social_group_type_edit_submit($form, FormStateInterface $form_state) {
   // Check if the group_type changed.

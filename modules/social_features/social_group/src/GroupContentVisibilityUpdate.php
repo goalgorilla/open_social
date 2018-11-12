@@ -49,14 +49,14 @@ class GroupContentVisibilityUpdate {
   /**
    * Update Group content after Group changed.
    *
-   * @param \Drupal\group\Entity\Group $group
+   * @param \Drupal\group\Entity\GroupInterface $group
    *   The Group we've updated.
    * @param string $new_type
    *   The Group's new group type.
    *
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
-  public function batchUpdateGroupContentVisibility(Group $group, $new_type) {
+  public static function batchUpdateGroupContentVisibility(Group $group, $new_type) {
     // Set it up as a batch. We need to update visibility.
     // Load all the GroupContentEntities from Post to Memberships to content.
     $entities = $group->getContentEntities();
