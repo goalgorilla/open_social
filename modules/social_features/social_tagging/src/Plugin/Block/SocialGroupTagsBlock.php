@@ -75,9 +75,15 @@ class SocialGroupTagsBlock extends BlockBase implements ContainerFactoryPluginIn
    */
   protected function blockAccess(AccountInterface $account) {
     // If tagging is off, deny access always.
-    if (!$this->tagService->active()) {
+    if (!$this->tagService->active() || !$this->tagService->groupActive()) {
       return AccessResult::forbidden();
     }
+
+    // Don't display on group edit.
+    if ($this->routeMatch->getRouteName() == 'entity.group.edit_form') {
+      return AccessResult::forbidden();
+    }
+
     // Get group from route.
     $group = $this->routeMatch->getParameter('group');
 
