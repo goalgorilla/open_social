@@ -35,6 +35,7 @@ class SocialTaggingService {
    *   Injection of the configFactory.
    *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
   public function __construct(EntityTypeManagerInterface $entityTypeManager, ConfigFactoryInterface $configFactory) {
     $this->termStorage = $entityTypeManager->getStorage('taxonomy_term');
