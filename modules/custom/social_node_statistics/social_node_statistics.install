@@ -5,6 +5,9 @@
  * Install and update hooks for the Social Node Statistics module.
  */
 
+use Drupal\block\Entity\Block;
+use Drupal\Core\Entity\EntityStorageException;
+
 /**
  * Implements hook_schema().
  *
@@ -62,17 +65,15 @@ function social_node_statistics_install() {
 }
 
 /**
- * Creates Social KPI block.
+ * Implements hook_uninstall().
  */
-function _social_node_statistics_create_kpi_block() {
-  $path = drupal_get_path('module', 'social_node_statistics');
-  $block_content_path = "{$path}/content/block_content";
-  $block_path = "{$path}/content/block";
-
-  /** @var \Drupal\kpi_analytics\BlockContentCreator $block_content_creator */
-  $block_content_creator = \Drupal::service('kpi_analytics.block_content_creator');
-  $block_content_creator->setSource($block_content_path, 'social_kpi_lite_node_views');
-  if ($block_content_creator->create()) {
-    $block_content_creator->createBlockInstance($block_path, 'social_kpi_lite_node_views');
+function social_node_statistics_uninstall() {
+  $block = Block::load('social_kpi_lite_node_views');
+  try {
+    $block->delete();
+  }
+  catch (EntityStorageException $e) {
+    // Add the error to watchdog.
+    \Drupal::messenger()->addMessage($e->getMessage());
   }
 }

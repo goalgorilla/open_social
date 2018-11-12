@@ -191,6 +191,7 @@ class Node extends PreprocessBase {
       $variables['views_count'] = $views_count;
       $variables['views_label'] = $this->formatPlural($views_count, 'view', 'views');
       $variables['#cache']['tags'][] = 'node:' . $variables['node']->id() . ':views_count';
+      $variables['#cache']['context'][] = 'url.path';
     }
 
     // Add styles for nodes in preview.
