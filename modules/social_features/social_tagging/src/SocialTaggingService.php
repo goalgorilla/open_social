@@ -53,6 +53,16 @@ class SocialTaggingService {
   }
 
   /**
+   * Returns wether the feature is turned on for groups or not.
+   *
+   * @return bool
+   *   Wether tagging is turnded on or not for groups.
+   */
+  public function groupActive() {
+    return (bool) $this->configFactory->get('social_tagging.settings')->get('tag_type_group');
+  }
+
+  /**
    * Returns if there are any taxonomy items available.
    *
    * @return bool

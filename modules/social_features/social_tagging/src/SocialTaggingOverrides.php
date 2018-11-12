@@ -161,7 +161,7 @@ class SocialTaggingOverrides implements ConfigFactoryOverrideInterface {
       }
     }
 
-    if (in_array($config_name = $config_names[1], $names)) {
+    if (in_array($config_name = $config_names[1], $names) && $tag_service->groupActive() === TRUE) {
       $overrides[$config_name]['dependencies']['config'][] = 'taxonomy.vocabulary.social_tagging';
 
       foreach (['default', 'page', 'page_no_value'] as $display) {
