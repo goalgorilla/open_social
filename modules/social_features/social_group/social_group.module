@@ -523,7 +523,7 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
  */
 function _social_group_inform_group_type_selection() {
   $text = t('Please note that changing the group type will also change the 
-  visibility of group content and the way users can join the group.');
+  visibility of the group content and the way users can join the group.');
   drupal_set_message($text, 'info');
   $alert = ['#type' => 'status_messages'];
   $ajax_response = new AjaxResponse();
