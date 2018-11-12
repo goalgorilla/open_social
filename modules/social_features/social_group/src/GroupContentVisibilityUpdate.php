@@ -138,7 +138,7 @@ class GroupContentVisibilityUpdate {
     $context['results'][] = $entity;
 
     // Optional message displayed under the progressbar.
-    $context['message'] = t('Updating Entity ID "@id"', ['@id' => $entity->id()]);
+    $context['message'] = t('Updating group content (@id)', ['@id' => $entity->id()]);
   }
 
   /**
@@ -155,7 +155,7 @@ class GroupContentVisibilityUpdate {
     if ($success) {
       // Here we could do something meaningful with the results.
       // We just display the number of nodes we processed...
-      drupal_set_message(t('@count results processed.', ['@count' => count($results)]));
+      drupal_set_message(t('Visibility of @count content item(s) updated.', ['@count' => count($results)]));
     }
     else {
       // An error occurred.
