@@ -42,7 +42,9 @@ function social_topic_preprocess_node(array &$variables) {
     if (count($topic_type_entities) === 1) {
       $curr_langcode = \Drupal::languageManager()->getCurrentLanguage(LanguageInterface::TYPE_CONTENT)->getId();
       foreach ($topic_type_entities as $topic) {
-        $topic->isTranslatable() && $topic->hasTranslation($curr_langcode) ? $topic = $topic->getTranslation($curr_langcode) : NULL;
+        if ($topic->isTranslatable() && $topic->hasTranslation($curr_langcode)) {
+          $topic = $topic->getTranslation($curr_langcode);
+        }
         $variables['metadata'] = t('in @topic', ['@topic' => $topic->link()]);
         // Set topic type link.
         $topic_type_url = Url::fromRoute('view.latest_topics.page_latest_topics', ['field_topic_type_target_id' => $topic->id()]);
