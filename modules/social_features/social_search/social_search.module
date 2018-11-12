@@ -43,7 +43,7 @@ function social_search_form_views_exposed_form_alter(&$form, FormStateInterface 
     }
     if ($form['#id'] == 'views-exposed-form-search-groups-page') {
       $options = [
-        '' => '- Any -',
+        '' => t('- Any -'),
       ];
       $group_types = GroupType::loadMultiple();
       /** @var \Drupal\group\Entity\GroupType $group_type */
