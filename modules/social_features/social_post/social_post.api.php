@@ -24,6 +24,7 @@ function hook_social_post_visibility_info_alter($visibility, &$icon, &$title) {
       $icon = 'community';
       $title = t('Community');
       break;
+
     case '6':
       $icon = 'lock';
       $title = t('Closed');
