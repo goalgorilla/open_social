@@ -5,7 +5,6 @@ namespace Drupal\social_node_statistics\Form;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\node\Entity\NodeType;
-use Drupal\user\Entity\User;
 
 /**
  * Configure social profile settings.
