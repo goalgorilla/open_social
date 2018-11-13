@@ -40,7 +40,15 @@
                 {{- content.field_activity_output_text -}}
               {% endif %}
 
-              <div class="post-date">{{ date }}</div>
+              <div class="post-date">
+                  {{ date }}
+                  {% if visibility_icon and visibility_label %}
+                      <svg class="margin-left-s icon-visibility">
+                        <use xlink:href="#icon-{{ visibility_icon }}"></use>
+                      </svg>
+                      <strong>{{ visibility_label }}</strong>
+                  {% endif %}
+              </div>
             </div>
 
           </div>
