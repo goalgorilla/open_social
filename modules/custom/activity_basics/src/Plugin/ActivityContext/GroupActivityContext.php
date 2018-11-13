@@ -28,7 +28,9 @@ class GroupActivityContext extends ActivityContextBase {
       $referenced_entity = $data['related_object']['0'];
 
       // TODO: Replace this with dependency injection.
-      if ($gid = \Drupal::service('social_group.helper_service')->getGroupFromEntity($referenced_entity)) {
+      /** @var \Drupal\social_group\SocialGroupHelperService $group_helper */
+      $group_helper = \Drupal::service('social_group.helper_service');
+      if ($gid = $group_helper->getGroupFromEntity($referenced_entity, FALSE)) {
         $recipients[] = [
           'target_type' => 'group',
           'target_id' => $gid,
