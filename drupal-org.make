@@ -88,4 +88,4 @@ projects[votingapi][type] = module
 projects[votingapi][version] = 3.0-alpha5
 projects[votingapi][patch][] = "https://www.drupal.org/files/issues/2018-03-29/delete-everywhere-2957067-2.patch"
 projects[bootstrap][type] = theme
-projects[bootstrap][version] = 3.13
+projects[bootstrap][version] = 3.14
