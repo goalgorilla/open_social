@@ -50,7 +50,7 @@ class GroupContentVisibilityUpdate {
   /**
    * Update Group content after Group changed.
    *
-   * @param \Drupal\group\Entity\GroupInterface $group
+   * @param \Drupal\group\Entity\Group $group
    *   The Group we've updated.
    * @param string $new_type
    *   The Group's new group type.
