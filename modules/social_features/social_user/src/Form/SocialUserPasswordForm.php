@@ -4,9 +4,8 @@ namespace Drupal\social_user\Form;
 
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
-use Drupal\user\Form\UserPasswordForm;
 use Drupal\Core\Url;
-use Drupal\Core\Link;
+use Drupal\user\Form\UserPasswordForm;
 
 /**
  * Class SocialUserPasswordForm.
