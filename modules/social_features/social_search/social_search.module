@@ -26,6 +26,7 @@ function social_search_form_views_exposed_form_alter(&$form, FormStateInterface 
     'views-exposed-form-search-content-page',
     'views-exposed-form-search-groups-page',
     'views-exposed-form-search-users-page',
+    'views-exposed-form-search-all-page',
   ];
 
   if (in_array($form['#id'], $filter_forms)) {
@@ -69,6 +70,7 @@ function social_search_block_view_views_exposed_filter_block_alter(array &$build
     'search_content-page',
     'search_groups-page',
     'search_users-page',
+    'search_all-page',
   ];
 
   if (in_array($build['#derivative_plugin_id'], $filter_blocks)) {

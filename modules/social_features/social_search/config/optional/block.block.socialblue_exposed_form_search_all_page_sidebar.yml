@@ -1,0 +1,28 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - views.view.search_all
+  module:
+    - system
+    - views
+  theme:
+    - socialblue
+id: socialblue_exposed_form_search_all_page_sidebar
+theme: socialblue
+region: complementary_top
+weight: 0
+provider: null
+plugin: 'views_exposed_filter_block:search_all-page'
+settings:
+  id: 'views_exposed_filter_block:search_all-page'
+  label: ''
+  provider: views
+  label_display: visible
+  views_label: Filter
+visibility:
+  request_path:
+    id: request_path
+    pages: "/search/all\r\n/search/all/*"
+    negate: false
+    context_mapping: {  }

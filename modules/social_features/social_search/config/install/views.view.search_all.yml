@@ -35,7 +35,7 @@ display:
         type: basic
         options:
           submit_button: Apply
-          reset_button: false
+          reset_button: true
           reset_button_label: Reset
           exposed_sorts_label: 'Sort by'
           expose_sort_order: true
@@ -153,7 +153,49 @@ display:
             not: false
             link_to_item: false
             multi_separator: ', '
-      filters: {  }
+      filters:
+        search_api_datasource:
+          id: search_api_datasource
+          table: search_api_index_social_all
+          field: search_api_datasource
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: or
+          value: {  }
+          group: 1
+          exposed: true
+          expose:
+            operator_id: search_api_datasource_op
+            label: Type
+            description: ''
+            use_operator: false
+            operator: search_api_datasource_op
+            identifier: type
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              anonymous: '0'
+              administrator: '0'
+              contentmanager: '0'
+              sitemanager: '0'
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          reduce_duplicates: false
+          plugin_id: search_api_datasource
       sorts:
         search_api_relevance:
           id: search_api_relevance
@@ -250,6 +292,7 @@ display:
     display_options:
       display_extenders: {  }
       path: search/all/%keys
+      exposed_block: true
     cache_metadata:
       max-age: -1
       contexts:
@@ -267,6 +310,7 @@ display:
       display_extenders: {  }
       display_description: ''
       path: search/all
+      exposed_block: true
     cache_metadata:
       max-age: -1
       contexts:
