@@ -190,7 +190,6 @@ Feature: Create Closed Group
     And I click the element with css selector "#hero .dropdown-toggle"
     And I should see the link "Leave group"
     And I click "Leave group"
-    And I should see "Test closed group 2" in the "Hero block"
     And I should see "This action cannot be undone."
     And I should see the button "Cancel"
     And I should see the button "Leave group"
