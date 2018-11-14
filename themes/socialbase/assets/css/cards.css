@@ -11,6 +11,9 @@
           flex-direction: column;
   margin-bottom: 0.75rem;
   background-clip: padding-box;
+  -webkit-box-flex: 1;
+      -ms-flex-positive: 1;
+          flex-grow: 1;
 }
 
 .card__title {
@@ -59,6 +62,13 @@
 .card__body {
   position: relative;
   padding: 1.25rem;
+}
+
+.card__body .twitter-tweet,
+.card__body .fb_iframe_widget,
+.card__body iframe {
+  max-width: 100% !important;
+  width: 100% !important;
 }
 
 .card__nested-section {

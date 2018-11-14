@@ -712,9 +712,50 @@ fieldset[disabled] .btn-flat.focus {
 
 .btn-flat:hover, .btn-flat:focus,
 .open .dropdown-toggle .btn-flat {
-  border-color: transparent;
+  color: inherit;
+  background-color: #ffffff;
+  border-color: #adadad;
+  fill: inherit;
   color: #1a8dbe;
   fill: #1a8dbe;
+}
+
+.btn-flat:hover:focus, .btn-flat:hover.focus, .btn-flat:hover:hover, .btn-flat:hover:active, .btn-flat:hover.active,
+.open > .btn-flat:hover.dropdown-toggle, .btn-flat:focus:focus, .btn-flat:focus.focus, .btn-flat:focus:hover, .btn-flat:focus:active, .btn-flat:focus.active,
+.open > .btn-flat:focus.dropdown-toggle,
+.open .dropdown-toggle .btn-flat:focus,
+.open .dropdown-toggle .btn-flat.focus,
+.open .dropdown-toggle .btn-flat:hover,
+.open .dropdown-toggle .btn-flat:active,
+.open .dropdown-toggle .btn-flat.active,
+.open >
+.open .dropdown-toggle .btn-flat.dropdown-toggle {
+  background-color: #e6e6e6;
+  border-color: #8e8e8e;
+  color: inherit;
+}
+
+.btn-flat:hover.disabled:hover, .btn-flat:hover.disabled:focus, .btn-flat:hover.disabled.focus, .btn-flat:hover[disabled]:hover, .btn-flat:hover[disabled]:focus, .btn-flat:hover[disabled].focus,
+fieldset[disabled] .btn-flat:hover:hover,
+fieldset[disabled] .btn-flat:hover:focus,
+fieldset[disabled] .btn-flat:hover.focus, .btn-flat:focus.disabled:hover, .btn-flat:focus.disabled:focus, .btn-flat:focus.disabled.focus, .btn-flat:focus[disabled]:hover, .btn-flat:focus[disabled]:focus, .btn-flat:focus[disabled].focus,
+fieldset[disabled] .btn-flat:focus:hover,
+fieldset[disabled] .btn-flat:focus:focus,
+fieldset[disabled] .btn-flat:focus.focus,
+.open .dropdown-toggle .btn-flat.disabled:hover,
+.open .dropdown-toggle .btn-flat.disabled:focus,
+.open .dropdown-toggle .btn-flat.disabled.focus,
+.open .dropdown-toggle .btn-flat[disabled]:hover,
+.open .dropdown-toggle .btn-flat[disabled]:focus,
+.open .dropdown-toggle .btn-flat[disabled].focus,
+fieldset[disabled]
+.open .dropdown-toggle .btn-flat:hover,
+fieldset[disabled]
+.open .dropdown-toggle .btn-flat:focus,
+fieldset[disabled]
+.open .dropdown-toggle .btn-flat.focus {
+  background-color: #ffffff;
+  border-color: #adadad;
 }
 
 .btn-flat:hover .icon-inline, .btn-flat:focus .icon-inline,
@@ -875,7 +916,9 @@ fieldset[disabled] .btn--twitter.focus {
 }
 
 .region--complementary .card__title,
-.region--complementary .card__actionbar {
+.region--complementary .card__actionbar,
+.paragraph--block .secondary-col .card__title,
+.paragraph--block .secondary-col .card__actionbar {
   text-align: center;
 }
 
@@ -1087,6 +1130,10 @@ html.js .input-group-addon .glyphicon.glyphicon-spin {
 
 .form-wrapper {
   border-radius: 9px;
+}
+
+.card__block .form-item-data-policy label a {
+  color: #33b5e5;
 }
 
 .nav > li > a:hover,
@@ -1357,11 +1404,13 @@ html.js .input-group-addon .glyphicon.glyphicon-spin {
   background-color: #f5f5f5;
 }
 
+.field--name-field-introduction-text a:not(.btn),
 .body-text a:not(.btn) {
   text-decoration: underline;
   color: #33b5e5;
 }
 
+.field--name-field-introduction-text a:not(.btn):hover,
 .body-text a:not(.btn):hover {
   color: #178ab4;
 }
@@ -1390,6 +1439,10 @@ html.js .input-group-addon .glyphicon.glyphicon-spin {
 .tabs-left .nav-tabs > li.active > a:hover,
 .tabs-left .nav-tabs > li.active > a:focus {
   border-right-color: #29abe2;
+}
+
+.view-birthday .teaser--tile .teaser__image {
+  background-color: #29abe2;
 }
 
 .cover,
@@ -1526,18 +1579,6 @@ fieldset[disabled] .btn-accent.focus {
   fill: #29abe2;
 }
 
-.nav-tabs > li.active > a,
-.nav-tabs > li.active > a:hover,
-.nav-tabs > li.active > a:focus,
-.card__link:focus,
-.card__link:hover,
-.btn-link:hover,
-.btn-flat:hover,
-.btn-link:focus,
-.btn-flat:focus {
-  text-shadow: 0 0 1px rgba(0, 0, 0, 0.2);
-}
-
 .list-item--active,
 .list-item--active:hover,
 .list-item--active:focus,
@@ -1548,6 +1589,8 @@ fieldset[disabled] .btn-accent.focus {
   border-color: #1f80aa;
 }
 
+.field--name-field-introduction-text a:not(.btn),
+.field--name-field-introduction-text a:not(.btn):hover,
 .body-text a:not(.btn),
 .body-text a:not(.btn):hover {
   color: #33b5e5;
@@ -1633,6 +1676,69 @@ blockquote {
 
 .navbar__open-search-block {
   background-color: #333333;
+}
+
+.card__block .form-item-data-policy label a {
+  color: #33b5e5;
+}
+
+.vote-widget--social-vote .vote-vote {
+  background-color: #ffc142;
+}
+
+.social-gtranslate-list--desktop > a {
+  color: #ffffff;
+  background-color: #333333;
+}
+
+.social-gtranslate-list--desktop > a:after {
+  color: #ffffff;
+}
+
+.social-gtranslate-list--desktop > a .select-icon {
+  fill: #ffffff;
+}
+
+.social-gtranslate-list--desktop > a:focus, .social-gtranslate-list--desktop > a:hover {
+  color: #f3f3f3;
+  fill: #f3f3f3;
+  background-color: #1f1f1f;
+}
+
+.social-gtranslate-list--desktop > a:focus:after, .social-gtranslate-list--desktop > a:hover:after {
+  color: #f3f3f3;
+}
+
+.social-gtranslate-list--desktop > a:focus .select-icon, .social-gtranslate-list--desktop > a:hover .select-icon {
+  fill: #f3f3f3;
+}
+
+.social-gtranslate-list--desktop.open > a {
+  color: #f3f3f3;
+  fill: #f3f3f3;
+  background-color: #1f1f1f;
+}
+
+.social-gtranslate-list--desktop.open > a:after {
+  color: #f3f3f3;
+}
+
+.social-gtranslate-list--desktop.open > a .select-icon {
+  fill: #f3f3f3;
+}
+
+.social-gtranslate-list--desktop.open > a:focus, .social-gtranslate-list--desktop.open > a:hover {
+  color: #f3f3f3;
+  fill: #f3f3f3;
+  background-color: #1f1f1f;
+}
+
+.social-gtranslate-list--desktop.open > a:focus:after, .social-gtranslate-list--desktop.open > a:hover:after {
+  color: #f3f3f3;
+}
+
+.social-gtranslate-list--desktop.open > a:focus .select-icon, .social-gtranslate-list--desktop.open > a:hover .select-icon {
+  fill: #f3f3f3;
 }
 
 @media (min-width: 600px) {

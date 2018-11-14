@@ -1,4 +1,4 @@
-@api @notifications @stability @DS-4323
+@api @notifications @stability @DS-4323 @notification-emails
 Feature: Receive email notifications and choose frequency
   Benefit: Email notifications attract users to the platform
   Role: As a LU
@@ -6,12 +6,14 @@ Feature: Receive email notifications and choose frequency
 
   @email-spool
   Scenario: Send direct email notification for an activity
-    Given users:
+    Given I set the configuration item "system.site" with key "name" to "Open Social"
+    And users:
       | name    | mail                   | status | field_profile_first_name | field_profile_last_name |
       | user1   | mail_user1@example.com | 1      | Christopher              | Conway                  |
       | user2   | mail_user2@example.com | 1      | Cathy                    | Willis                  |
     And I am logged in as "user1"
     And I am on the homepage
+    And the cache has been cleared
     And I fill in "Say something to the Community" with "Hello [~user2]!"
     And I press "Post"
     And I wait for the queue to be empty
@@ -23,7 +25,8 @@ Feature: Receive email notifications and choose frequency
 
   @email-spool
   Scenario: User is able to get no emails for activities if he so desires
-    Given users:
+    Given I set the configuration item "system.site" with key "name" to "Open Social"
+    And users:
       | name    | mail                   | status | field_profile_first_name | field_profile_last_name |
       | user1   | mail_user1@example.com | 1      | Christopher              | Conway                  |
       | user2   | mail_user2@example.com | 1      | Cathy                    | Willis                  |
@@ -42,7 +45,8 @@ Feature: Receive email notifications and choose frequency
 
   @email-spool
   Scenario: User is able to set a daily mail for activities if he so desires
-    Given users:
+    Given I set the configuration item "system.site" with key "name" to "Open Social"
+    And users:
       | name    | mail                   | status | field_profile_first_name | field_profile_last_name |
       | user1   | mail_user1@example.com | 1      | Christopher              | Conway                  |
       | user2   | mail_user2@example.com | 1      | Cathy                    | Willis                  |
@@ -75,7 +79,8 @@ Feature: Receive email notifications and choose frequency
 
   @email-spool
   Scenario: User is able to set a weekly mail for activities if he so desires
-    Given users:
+    Given I set the configuration item "system.site" with key "name" to "Open Social"
+    And users:
       | name    | mail                   | status | field_profile_first_name | field_profile_last_name |
       | user1   | mail_user1@example.com | 1      | Christopher              | Conway                  |
       | user2   | mail_user2@example.com | 1      | Cathy                    | Willis                  |

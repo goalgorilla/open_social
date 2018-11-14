@@ -95,7 +95,6 @@ form {
   }
 }
 
-
 .form-inline {
   @include form-inline;
   margin-bottom: $form-group-margin-bottom;
@@ -115,4 +114,23 @@ form {
 
   }
 
+}
+
+.form-item-data-policy {
+  .glyphicon-spin {
+    margin: -2px 0;
+    vertical-align: middle;
+  }
+
+  .card__block & {
+    .form-item--error-message {
+      display: block;
+      max-width: 23rem;
+    }
+    label {
+      a {
+        text-decoration: underline;
+      }
+    }
+  }
 }

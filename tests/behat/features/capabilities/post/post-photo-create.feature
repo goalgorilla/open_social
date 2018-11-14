@@ -1,4 +1,4 @@
-@api @post @ @stability @perfect @critical @DS-1136 @database @stability-3
+@api @post @ @stability @perfect @critical @DS-1136 @database @stability-3 @post-photo-create
 Feature: Create Post with Photo
   Benefit: In order to share knowledge with people
   Role: As a LU
@@ -24,7 +24,7 @@ Feature: Create Post with Photo
     And I should be on "/stream"
 
         # Scenario: edit the post
-   When I click the xth "5" element with the css ".dropdown-toggle"
+   When I click the xth "1" element with the css ".dropdown-toggle" in the "Main content"
     And I click "Edit"
     And I fill in "Say something to the Community" with "This is a post with a photo edited."
     And I press "Post"

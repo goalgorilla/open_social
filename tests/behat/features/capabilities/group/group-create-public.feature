@@ -1,4 +1,4 @@
-@api @group @DS-4211 @ECI-632 @stability @stability-1
+@api @group @DS-4211 @ECI-632 @stability @stability-1 @group-create-public
 Feature: Create Public Group
   Benefit: So I can work together with others in a relative small circle
   Role: As a LU
@@ -15,7 +15,7 @@ Feature: Create Public Group
       | Other    |
     And I am logged in as "GivenUserOne"
     And I am on "user"
-    And I click "Groups"
+    And I click "Groups" in the "Tabs"
     And I click "Add a group"
     Then I click radio button "Public group This is a public group. Users may join without approval and all content added in this group will be visible to all community members and anonymous users." with the id "edit-group-type-public-group"
     And I press "Continue"
@@ -39,7 +39,7 @@ Feature: Create Public Group
 
     And I should see "Test public group" in the "Hero block"
     And I should see the button "Joined"
-    And I click the xth "4" element with the css ".dropdown-toggle"
+    And I click the element with css selector "#hero .dropdown-toggle"
     And I should see the link "Leave group"
     And I should see the link "Edit group" in the "Hero block"
     And I should see "Technopark" in the "Hero block"
@@ -48,14 +48,14 @@ Feature: Create Public Group
     And I should see "Lviv" in the "Hero block"
     And I should see "Lviv oblast" in the "Hero block"
 
-    When I click "About"
+    When I click "About" in the "Tabs"
     Then I should see "Description text" in the "Main content"
 
     And I am logged in as "GivenUserTwo"
     And I am on "all-members"
     And I click "GivenUserOne"
     And I should see "Test public group" in the "Sidebar second"
-    And I click "Groups"
+    And I click "Groups" in the "Tabs"
     And I should see "Test public group" in the "Main content"
     And I should not see the link "Add a group" in the "Main content"
     And I click "Test public group"
@@ -69,7 +69,7 @@ Feature: Create Public Group
     And I should see the button "Join group"
     And I press "Join group"
     And I am on "user"
-    And I click "Groups"
+    And I click "Groups" in the "Tabs"
     And I click "Test public group"
     Then I should see the button "Joined"
 
@@ -116,10 +116,9 @@ Feature: Create Public Group
     And I should see "Test group topic" in the "Main content"
     And I should see "Test public group" in the "Main content"
 
-    And I click the xth "4" element with the css ".dropdown-toggle"
+    And I click the element with css selector "#hero .dropdown-toggle"
     And I should see the link "Leave group"
     And I click "Leave group"
-    And I should see "Test public group" in the "Hero block"
     And I should see "This action cannot be undone."
     And I should see the button "Cancel"
     And I should see the button "Leave group"

@@ -62,6 +62,8 @@ function _social_event_get_permissions($role) {
     'edit own event content',
     'override event published option',
     'view node.event.field_content_visibility:community content',
+    'view events on my profile',
+    'view events on other profiles',
   ]);
 
   // Content manager.
@@ -83,6 +85,7 @@ function _social_event_get_permissions($role) {
   $permissions['sitemanager'] = array_merge($permissions['contentmanager'], [
     'administer visibility settings',
     'administer social_event settings',
+    'view published event enrollment entities',
   ]);
 
   if (isset($permissions[$role])) {
@@ -138,4 +141,23 @@ function social_event_update_8001() {
 function social_event_update_8002() {
   // Give SM the administer social_event settings permission.
   user_role_grant_permissions('sitemanager', ['administer social_event settings']);
+}
+
+/**
+ * Set my events permissions.
+ */
+function social_event_update_8003() {
+  // Make it so that everyone who has the 'access user profiles' permission,
+  // now also get these two new permissions.
+  $permissions = [
+    'view events on my profile',
+    'view events on other profiles',
+  ];
+
+  /** @var \Drupal\user\Entity\Role $role */
+  foreach (Role::loadMultiple() as $role) {
+    if ($role->hasPermission('access user profiles')) {
+      user_role_grant_permissions($role->id(), $permissions);
+    }
+  }
 }

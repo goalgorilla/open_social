@@ -11,6 +11,7 @@ use Drupal\Core\Url;
 use Drupal\Component\Serialization\Json;
 use Drupal\mentions\Entity\MentionsType;
 use Drupal\Core\Asset\AttachedAssetsInterface;
+use Drupal\comment\Plugin\Field\FieldType\CommentItemInterface;
 
 /**
  * Implements hook_form_alter().
@@ -98,7 +99,9 @@ function social_mentions_preprocess_mentions(&$variables) {
  * Implements hook_comment_links_alter().
  */
 function social_mentions_comment_links_alter(array &$links, CommentInterface $entity, array &$context) {
-  if ($entity->hasParentComment()) {
+  $field_name = $entity->getFieldName();
+  $commented_entity = $entity->getCommentedEntity();
+  if ($entity->hasParentComment() && $commented_entity->get($field_name)->status == CommentItemInterface::OPEN) {
     /* @var \Drupal\Core\Session\AccountInterface $account */
     $account = $entity->getOwner();
     $storage = \Drupal::entityTypeManager()->getStorage('profile');
@@ -113,7 +116,7 @@ function social_mentions_comment_links_alter(array &$links, CommentInterface $en
       'profile_id' => '',
     ];
 
-    if ($suggestions_format != SOCIAL_MENTIONS_SUGGESTIONS_USERNAME) {
+    if ($suggestions_format != SOCIAL_PROFILE_SUGGESTIONS_USERNAME) {
       /* @var \Drupal\profile\Entity\ProfileInterface $profile */
       if ($storage && ($profile = $storage->loadByUser($account, 'profile', TRUE))) {
         $item['profile_id'] = $profile->id();
@@ -122,18 +125,25 @@ function social_mentions_comment_links_alter(array &$links, CommentInterface $en
     }
 
     // Disable reply if full name is not set for only username format.
-    if ($suggestions_format == SOCIAL_MENTIONS_SUGGESTIONS_FULL_NAME && $account->getAccountName() == $account->getDisplayName()) {
+    if ($suggestions_format == SOCIAL_PROFILE_SUGGESTIONS_FULL_NAME && $account->getAccountName() == $account->getDisplayName()) {
       return;
     }
 
     $links['comment']['#links']['comment-reply'] = [
       'title' => t('Reply'),
-      'url' => Url::fromUserInput('#' . $entity->getParentComment()->id()),
-      'attributes' => [
+    ];
+
+    // If the comment is not published disable the reply link.
+    if ($entity->isPublished()) {
+      $links['comment']['#links']['comment-reply']['url'] = Url::fromUserInput('#' . $entity->getParentComment()->id());
+      $links['comment']['#links']['comment-reply']['attributes'] = [
         'class' => ['mention-reply'],
         'data-author' => Json::encode($item),
-      ],
-    ];
+      ];
+    }
+    else {
+      $links['comment']['#links']['comment-reply']['url'] = Url::fromRoute('<nolink>');
+    }
   }
 }
 
@@ -166,9 +176,9 @@ function social_mentions_form_mentions_settings_form_alter(&$form, FormStateInte
   ];
 
   $options = [
-    SOCIAL_MENTIONS_SUGGESTIONS_USERNAME => t('Only username'),
-    SOCIAL_MENTIONS_SUGGESTIONS_FULL_NAME => t('Only full name (first and last)'),
-    SOCIAL_MENTIONS_SUGGESTIONS_ALL => t('Both (username and full name)'),
+    SOCIAL_PROFILE_SUGGESTIONS_USERNAME => t('Only username'),
+    SOCIAL_PROFILE_SUGGESTIONS_FULL_NAME => t('Only full name (first and last)'),
+    SOCIAL_PROFILE_SUGGESTIONS_ALL => t('Both (username and full name)'),
   ];
 
   $form['display']['suggestions_format'] = [

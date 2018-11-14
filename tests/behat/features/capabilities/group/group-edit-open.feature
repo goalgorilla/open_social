@@ -1,4 +1,4 @@
-@api @group @stability @DS-956 @DS-4211 @stability-2
+@api @group @stability @DS-956 @DS-4211 @stability-2 @group-edit-open
 Feature: Edit my group as a group manager
   Benefit: So I can update the group based on the changes in the group
   Role: As a GM
@@ -40,7 +40,7 @@ Feature: Edit my group as a group manager
 
   # DS-706 As a Group Manager I want to manage group memberships
     And I click "Manage members"
-    Then I should see the link "Add member"
+    Then I should see the link "Add members"
     And I should see "Member"
     And I should see "Group Manager One"
     And I should see "Organization"
@@ -60,9 +60,9 @@ Feature: Edit my group as a group manager
     And I should see "Member"
 
   # DS-767 As a Group Manager I want to add a user to the group
-    When I click "Add member"
-    Then I should see "Add a member"
-    And I fill in "Select a member" with "Group Member Two"
+    When I click "Add members"
+    Then I should see "Add members"
+    And I fill in "Select members to add" with "Group Member Two"
     And I should see "Group roles"
     And I should see "Group Manager"
     And I should see the button "Cancel"
@@ -74,7 +74,7 @@ Feature: Edit my group as a group manager
     And I show hidden checkboxes
     And I check the box "Group Manager"
     And I press "Save"
-    And I click the xth "5" element with the css ".dropdown-toggle"
+    And I click the element with css selector ".region--content table tr.odd .dropdown-toggle"
     And I click "Remove"
     Then I should see "Remove a member"
     And I should see "Are you sure you want to remove Group Manager One from Test open group?"

@@ -3,6 +3,7 @@
 namespace Drupal\social_user\Form;
 
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Link;
 use Drupal\user\Form\UserPasswordForm;
 use Drupal\Core\Url;
 use Drupal\Core\Link;
@@ -19,6 +20,35 @@ class SocialUserPasswordForm extends UserPasswordForm {
    */
   public function getFormId() {
     return 'social_user_password_form';
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function buildForm(array $form, FormStateInterface $form_state) {
+    $form = parent::buildForm($form, $form_state);
+
+    $form['forgot'] = [
+      '#type' => 'fieldset',
+      '#title' => $this->t('Reset password with <b>username</b> or <b>email</b>'),
+    ];
+
+    // Move name and mail into the fieldset.
+    $form['forgot']['name'] = $form['name'];
+    $form['forgot']['mail'] = $form['mail'];
+
+    unset($form['name']);
+    unset($form['mail']);
+
+    if (\Drupal::config('user.settings')->get('register') != 'admin_only') {
+      // Link to the login/register pages.
+      $sign_up_link = Link::createFromRoute($this->t('Sign up'), 'user.register')->toString();
+
+      $form['forgot']['sign-up-link'] = [
+        '#markup' => $this->t("Don't have an account yet? @link", ["@link" => $sign_up_link]),
+      ];
+    }
+    return $form;
   }
 
   /**

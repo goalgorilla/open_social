@@ -12,7 +12,7 @@ Feature: Set alternative frontpage
       | Frontpage AN   | 1      | public                   | /frontpage-an |
       | Frontpage LU   | 1      | community                | /frontpage-lu |
     # Configure the settings
-    Given I am logged in as an "sitemanager"
+    Given I am logged in as a user with the "administer alternative frontpage settings" permission
     When I am on "admin/config/alternative_frontpage"
     # Error validation
     And I fill in the following:
@@ -40,11 +40,7 @@ Feature: Set alternative frontpage
     Then I should see "Frontpage AN"
 
     # Restore the settings
-    Given I am on "user/login"
-    When I fill in the following:
-      | Username or email address | admin |
-      | Password                  | admin |
-    And I press "Log in"
+    Given I am logged in as a user with the "administer alternative frontpage settings" permission
     Given I am on "admin/config/alternative_frontpage"
     # Error validation
     When I fill in the following:

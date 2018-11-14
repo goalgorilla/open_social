@@ -2,13 +2,62 @@
 
 namespace Drupal\social_post;
 
+use Drupal\Core\Entity\EntityManagerInterface;
+use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\EntityViewBuilder;
+use Drupal\Core\Language\LanguageManagerInterface;
+use Drupal\Core\Theme\Registry;
+use Drupal\group\Entity\Group;
+use Drupal\message\Entity\MessageTemplate;
+use Drupal\social_group\SocialGroupHelperService;
 use Drupal\social_post\Entity\Post;
+use Drupal\user\Entity\User;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Render controller for posts.
  */
 class PostViewBuilder extends EntityViewBuilder {
+
+  /**
+   * The social group helper service.
+   *
+   * @var \Drupal\social_group\SocialGroupHelperService
+   */
+  protected $socialGroupHelperService;
+
+  /**
+   * Constructs a new EntityViewBuilder.
+   *
+   * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
+   *   The entity type definition.
+   * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
+   *   The entity manager service.
+   * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
+   *   The language manager.
+   * @param \Drupal\Core\Theme\Registry $theme_registry
+   *   The theme registry.
+   * @param \Drupal\social_group\SocialGroupHelperService $social_group_helper_service
+   *   The social group helper service.
+   */
+  public function __construct(EntityTypeInterface $entity_type, EntityManagerInterface $entity_manager, LanguageManagerInterface $language_manager, Registry $theme_registry = NULL, SocialGroupHelperService $social_group_helper_service) {
+    parent::__construct($entity_type, $entity_manager, $language_manager, $theme_registry);
+
+    $this->socialGroupHelperService = $social_group_helper_service;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function createInstance(ContainerInterface $container, EntityTypeInterface $entity_type) {
+    return new static(
+      $entity_type,
+      $container->get('entity.manager'),
+      $container->get('language_manager'),
+      $container->get('theme.registry'),
+      $container->get('social_group.helper_service')
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -31,6 +80,79 @@ class PostViewBuilder extends EntityViewBuilder {
         ],
         ],
       ];
+    }
+
+    if ($view_mode != 'full') {
+      return;
+    }
+
+    $query = \Drupal::database()->select('message_field_data', 'm')
+      ->fields('m', ['template']);
+
+    $query->innerJoin('activity__field_activity_message', 't', 'm.mid = t.field_activity_message_target_id');
+
+    $query->innerJoin('activity__field_activity_entity', 'e', 'e.entity_id = t.entity_id');
+    $query->fields('e', ['field_activity_entity_target_id']);
+    $query->condition('e.field_activity_entity_target_type', $entity->getEntityTypeId());
+    $query->condition('e.field_activity_entity_target_id', $entity->id());
+
+    $query->innerJoin('activity__field_activity_destinations', 'd', 'd.entity_id = t.entity_id');
+    $query->condition('field_activity_destinations_value', ['stream_group', 'stream_profile'], 'IN');
+
+    $template_ids = $query->execute()->fetchAllKeyed(1, 0);
+
+    $template_types = ['create_post_group', 'create_post_profile_stream'];
+
+    foreach ($entities as $id => $entity) {
+      $template_id = $template_ids[$entity->id()];
+
+      if (!(in_array($template_id, $template_ids) && in_array($template_id, $template_types))) {
+        continue;
+      }
+
+      $account = $entity->getOwner();
+
+      $replacements = [
+        '[message:author:url:absolute]' => $account->toLink()->getUrl()->toString(),
+        '[message:author:display-name]' => $account->getDisplayName(),
+      ];
+
+      if ($template_id == 'create_post_group') {
+        $group_id = $this->socialGroupHelperService->getGroupFromEntity([
+          'target_type' => $entity->getEntityTypeId(),
+          'target_id' => $entity->id(),
+        ]);
+
+        if (empty($group_id)) {
+          continue;
+        }
+
+        $group = Group::load($group_id);
+
+        $replacements['[message:gurl]'] = $group->toLink()->getUrl()->toString();
+        $replacements['[message:gtitle]'] = $group->label();
+      }
+      else {
+        $query = \Drupal::database()->select('activity__field_activity_recipient_user', 'r')
+          ->fields('r', ['field_activity_recipient_user_target_id']);
+
+        $query->innerJoin('activity__field_activity_entity', 'e', 'e.entity_id = r.entity_id');
+        $query->condition('e.field_activity_entity_target_type', $entity->getEntityTypeId());
+        $query->condition('e.field_activity_entity_target_id', $entity->id());
+
+        $query->innerJoin('activity__field_activity_destinations', 'd', 'd.entity_id = r.entity_id');
+        $query->condition('field_activity_destinations_value', 'stream_profile');
+
+        $account = User::load($query->execute()->fetchField());
+
+        $replacements['[message:recipient-user-url]'] = $account->toLink()->getUrl()->toString();
+        $replacements['[activity:field_activity_recipient_user_display_name]'] = $account->getDisplayName();
+      }
+
+      $outputs = MessageTemplate::load($template_id)->getText();
+      $output = reset($outputs)->__toString();
+
+      $build[$id]['user_id'] = ['#markup' => strtr($output, $replacements)];
     }
   }
 

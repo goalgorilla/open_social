@@ -1,4 +1,4 @@
-@api @private-message @DS-4372 @stability-3
+@api @private-message @DS-4372 @DS-5206 @stability-3 @create-private-message
   Feature: Create Private Message
     Benefit: Sending private messages to other users on the platform.
     Role: LU
@@ -16,7 +16,7 @@
     Then I should see "You do not have any private messages yet. Click on the button on the right to start a new chat."
     And I click "New message"
     Then I should see "Create Private Message"
-    And I select "PM User Two" from "edit-members"
+    And I fill in "Member(s)" with "PM User" and select "PM User Two"
     And I fill in "Message" with "Hi PM User Two, I heard you like pineapple on your pizza..."
     And I press "Send"
     Then I should see the following success messages:
@@ -78,9 +78,8 @@
     Given I am logged in as "PM User Four"
     When I am on "/user/inbox"
     And I click "New message"
-    Then I select "PM User One" from "edit-members"
-    And I additionally select "PM User Two" from "edit-members"
-    And I additionally select "PM User Three" from "edit-members"
+    Then I fill in "Member(s)" with "PM User" and select "PM User One"
+    And I fill next in "Member(s)" with "PM User" and select "PM User Two"
     And I fill in "Message" with "Hi, let's discuss what pizza's we're gonna order!"
     Then I press "Send"
     Then I should see the following success messages:
@@ -101,18 +100,11 @@
     And I fill in "Message" with "OMG YES, I want a pizza hawai with extra ansjovis on top!"
     And I press "Send"
 
-    When I am logged in as "PM User Three"
-    And I am on "/user/inbox"
-    Then I should see "PM User Two: OMG YES, I want a pizza hawai with extra ansjovis on top!"
-    And I click the xth "0" element with the css ".unread-thread"
-    And I fill in "Message" with "Pizza calzone for me please!"
-    And I press "Send"
-
     # Multiple messages in the inbox.
     When I am logged in as "PM User One"
     When I am on "/user/inbox"
     And I click "New message"
-    And I select "PM User Four" from "edit-members"
+    And I fill in "Member(s)" with "PM User" and select "PM User Four"
     And I fill in "Message" with "Be strict on the pizza toppings, user two likes it weird!"
     When I press "Send"
 
@@ -120,4 +112,4 @@
     Given I am logged in as "PM User Four"
     When I am on "/user/inbox"
     Then I should see "Be strict on the pizza toppings, user two likes it weird!"
-    And I should see "PM User Three: Pizza calzone for me please!"
+    And I should see "PM User Two: OMG YES, I want a pizza hawai with extra ansjovis on top!"
