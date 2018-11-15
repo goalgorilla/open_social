@@ -33,6 +33,14 @@ function social_tagging_install() {
   catch (EntityStorageException $e) {
     \Drupal::logger('social_tagging')->info($e->getMessage());
   }
+
+  // Toggle the index all.
+  try {
+    _social_tagging_index_toggle('social_all');
+  }
+  catch (EntityStorageException $e) {
+    \Drupal::logger('social_tagging')->info($e->getMessage());
+  }
 }
 
 /**
@@ -53,6 +61,21 @@ function social_tagging_update_8002() {
   // Toggle the index groups.
   try {
     _social_tagging_index_toggle('social_groups');
+  }
+  catch (EntityStorageException $e) {
+    \Drupal::logger('social_tagging')->info($e->getMessage());
+  }
+}
+
+/**
+ * Toggle all index.
+ */
+function social_tagging_update_8003() {
+  // Update field definitions.
+  _social_tagging_field_defenitions_update();
+  // Toggle the index all.
+  try {
+    _social_tagging_index_toggle('social_all');
   }
   catch (EntityStorageException $e) {
     \Drupal::logger('social_tagging')->info($e->getMessage());
