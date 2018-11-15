@@ -18,9 +18,9 @@ use Drupal\group\Entity\GroupContentType;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupContent;
 use Drupal\group\Entity\GroupType;
+use Drupal\node\NodeInterface;
 use Drupal\social_group\Controller\SocialGroupController;
 use Drupal\social_group\Form\SocialGroupAddForm;
-use Drupal\social_group\SocialGroupHelperService;
 use Drupal\views\ViewExecutable;
 use Drupal\views\Plugin\views\cache\CachePluginBase;
 use Drupal\views\Plugin\views\query\QueryPluginBase;
@@ -844,6 +844,24 @@ function _social_group_get_member_profile(GroupContent $group_content) {
  *   Returns the group object.
  */
 function _social_group_get_current_group($node = NULL) {
+  $cache = &drupal_static(__FUNCTION__, []);
+
+  // For the same $node input, within the same request the return is always
+  // the same.
+  $nid = NULL;
+  if (is_null($node)) {
+    $nid = -1;
+  }
+  elseif ($node instanceof NodeInterface) {
+    $nid = $node->id();
+  }
+
+  // If we have a cache key and it has a value, we're done early.
+  if (!is_null($nid) && isset($cache[$nid])) {
+    // Translate FALSE (so isset works) back to NULL.
+    return $cache[$nid] ?: NULL;
+  }
+
   $group = \Drupal::routeMatch()->getParameter('group');
 
   if (!is_object($group) && !is_null($group)) {
@@ -858,13 +876,19 @@ function _social_group_get_current_group($node = NULL) {
         'target_type' => 'node',
         'target_id' => $node->id(),
       ];
-      $gid_from_entity = SocialGroupHelperService::getGroupFromEntity($node_entity);
+      $gid_from_entity = \Drupal::service('social_group.helper_service')->getGroupFromEntity($node_entity);
       if ($gid_from_entity !== NULL) {
         $group = \Drupal::entityTypeManager()
           ->getStorage('group')
           ->load($gid_from_entity);
       }
     }
+  }
+
+  // If we have a cache key we store the value.
+  if (!is_null($nid)) {
+    // Translate NULL to FALSE so that isset works.
+    $cache[$nid] = isset($group) ? $group : FALSE;
   }
 
   return $group;
@@ -944,16 +968,26 @@ function social_group_preprocess_profile(&$variables) {
  * If the user is not a member, the user has no access to view this block.
  */
 function social_group_block_access(Block $block, $operation, AccountInterface $account) {
+  $block_id = $block->getPluginId();
+
+  // This is a list of the blocks that this function cares about, if we're being
+  // called for a different block we exit early.
+  $managed_blocks = [
+    'views_exposed_filter_block:newest_groups-page_all_groups',
+    'views_block:groups-block_user_groups',
+    'views_block:upcoming_events-upcoming_events_group',
+    'views_block:latest_topics-group_topics_block',
+  ];
+  if (!in_array($block_id, $managed_blocks)) {
+    return AccessResult::neutral();
+  }
+
   if ($block->getPluginId() == 'views_exposed_filter_block:newest_groups-page_all_groups' && $operation == 'view' && $account->isAnonymous()) {
     $group_types = 0;
 
     /** @var \Drupal\group\Entity\GroupTypeInterface $group_type */
     foreach (GroupType::loadMultiple() as $group_type) {
-      $permissions = $group_type->getAnonymousRole()->getPermissions();
-
-      if (in_array('view group', $permissions)) {
-        $group_types++;
-      }
+      $group_types += (int) $group_type->getAnonymousRole()->hasPermission('view group');
     }
 
     if ($group_types < 2) {
