@@ -192,12 +192,13 @@ function social_group_preprocess_group(array &$variables) {
   elseif ($group->hasPermission('join group', $account)) {
     // @todo switch this to get URL from routes correctly.
     $variables['group_operations_url'] = Url::fromUserInput('/group/' . $group->id() . '/join');
-    // If the group type is a closed_group.
-    if ($group_type_id == 'closed_group' && !$group->hasPermission('manage all groups', $account)) {
-      // Users can only be invited.
-      $variables['closed_group'] = TRUE;
-      $variables['cta'] = t('Invitation only');
-    }
+  }
+  // If the group type is a closed_group.
+  elseif ($group_type_id == 'closed_group' && !$group->hasPermission('manage all groups', $account)) {
+    // Users can only be invited.
+    $variables['group_operations_url'] = Url::fromUserInput('/group/' . $group->id() . '/join');
+    $variables['closed_group'] = TRUE;
+    $variables['cta'] = t('Invitation only');
   }
 
   // Add the hero styled image.
