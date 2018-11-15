@@ -8,17 +8,17 @@ Feature: Edit group type after creation
 
     Given users:
       | name  | pass | mail              | status | roles         |
-      | carol | 1234 | carol@example.com | 1      |               |
-      | leroy | 1234 | leroy@example.com | 1      |  sitemanager  |
+      | test_user_1 | 1234 | test_user_1@example.com | 1      |               |
+      | test_user_2 | 1234 | test_user_2@example.com | 1      |  sitemanager  |
     Given groups:
       | title     | description    | author | type         | language |
-      | Nescafe   | Coffee time!!! | leroy  | closed_group | en       |
+      | Nescafe   | Coffee time!!! | test_user_2  | closed_group | en       |
     Given topic content:
       | title         | field_topic_type | status | field_content_visibility |
       | Nescafe Topic | Blog             | 1      | group                    |
 
     # Scenario SM change Group Type with Topic Content in it.
-    When I am logged in as "leroy"
+    When I am logged in as "test_user_2"
       And I am on "/all-topics"
       And I click "Nescafe Topic"
     Then I should see "Nescafe Topic"
@@ -29,11 +29,11 @@ Feature: Edit group type after creation
       And I press "Save"
     Then I should see "Nescafe"
 
-    When I am logged in as "carol"
+    When I am logged in as "test_user_1"
       And I am on "/all-topics"
     Then I should not see "Nescafe Topic"
 
-    When I am logged in as "leroy"
+    When I am logged in as "test_user_2"
       And I am on "/all-groups"
       And I click "Nescafe"
     Then I should see "Closed group"
@@ -54,6 +54,6 @@ Feature: Edit group type after creation
       And I click the post visibility dropdown
     Then I should see "Public"
 
-    When I am logged in as "carol"
+    When I am logged in as "test_user_1"
       And I am on "/all-topics"
     Then I should see "Nescafe Topic"
