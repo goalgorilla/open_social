@@ -8,6 +8,7 @@ use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\group\Entity\Group;
+use Drupal\group\Entity\GroupInterface;
 use Drupal\social_tagging\SocialTaggingService;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -106,7 +107,7 @@ class SocialGroupTagsBlock extends BlockBase implements ContainerFactoryPluginIn
     $cache_tags = parent::getCacheTags();
     $group = $this->routeMatch->getParameter('group');
 
-    if ($group instanceof Group) {
+    if ($group instanceof GroupInterface) {
       $cache_tags[] = 'group:' . $group->id();
     }
 
@@ -121,7 +122,7 @@ class SocialGroupTagsBlock extends BlockBase implements ContainerFactoryPluginIn
 
     $group = $this->routeMatch->getParameter('group');
 
-    if ($group instanceof Group) {
+    if ($group instanceof GroupInterface) {
       $build['content']['#markup'] = social_tagging_process_tags($group);
     }
 
