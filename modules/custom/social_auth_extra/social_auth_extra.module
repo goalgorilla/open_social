@@ -245,6 +245,15 @@ function social_auth_extra_form_user_register_form_submit($form, FormStateInterf
       }
 
       \Drupal::service('plugin.manager.mail')->mail('social_auth_extra', 'email_social_login', $account->getEmail(), $langcode, $params, $site_mail);
+      // Save user consent.
+      if (\Drupal::hasService('data_policy.manager')) {
+        /** @var \Drupal\data_policy\DataPolicyManagerInterface $data_policy_manager */
+        $data_policy_manager = \Drupal::service('data_policy.manager');
+
+        if ($data_policy_manager->isDataPolicy() && !empty($form_state->getValue('data_policy'))) {
+          $data_policy_manager->saveConsent($account->id(), TRUE);
+        }
+      }
     }
     catch (EntityStorageException $e) {
       drupal_set_message($this->t('Creation of user account failed. Please contact site administrator.'), 'error');

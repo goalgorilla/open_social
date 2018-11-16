@@ -1,0 +1,55 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for social_group_quickjoin module.
+ */
+
+use Drupal\Core\Entity\EntityStorageException;
+use Drupal\user\Entity\Role;
+
+/**
+ * Implements hook_install().
+ *
+ * Perform actions related to the installation of social_group_quickjoin.
+ */
+function social_group_quickjoin_install() {
+  // Fetch sitemananger role.
+  $role = Role::load('sitemanager');
+  // Set permission for site manager.
+  if ($role instanceof Role) {
+    // Set permission.
+    $role->grantPermission('set group quickjoin settings');
+    try {
+      $role->trustData()->save();
+    }
+    catch (EntityStorageException $e) {
+      \Drupal::logger('social_group_quickjoin')->critical($e->getMessage());
+    }
+
+  }
+}
+
+/**
+ * Implements hook_uninstall().
+ *
+ * Perform actions related to the de-installation of social_group_quickjoin.
+ */
+function social_group_quickjoin_uninstall() {
+  // Fetch sitemananger role.
+  $role = Role::load('sitemanager');
+  // Set permission for site manager.
+  if ($role instanceof Role) {
+    // Set permission.
+    $role->revokePermission('set group quickjoin settings');
+    try {
+      $role->trustData()->save();
+    }
+    catch (EntityStorageException $e) {
+      \Drupal::logger('social_group_quickjoin')->critical($e->getMessage());
+    }
+  }
+
+  // Also remove the fields and the vocabulary.
+  \Drupal::configFactory()->getEditable('field.field.node.event.field_event_type')->delete();
+}

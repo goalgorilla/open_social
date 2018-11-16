@@ -1,0 +1,13 @@
+social_group_quickjoin.settings:
+  path: '/admin/config/opensocial/group-quickjoin'
+  defaults:
+    _form: 'Drupal\social_group_quickjoin\Form\SocialGroupQuickjoinSettings'
+    _title: 'Group Quickjoin settings'
+  requirements:
+    _permission: 'set group quickjoin settings'
+social_group_quickjoin.quickjoin_group:
+  path: '/group/{group}/quickjoin'
+  defaults:
+    _controller: '\Drupal\social_group_quickjoin\Controller\SocialQuickJoinController::quickJoin'
+  requirements:
+    _user_is_logged_in: 'TRUE'
