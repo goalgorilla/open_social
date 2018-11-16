@@ -769,7 +769,7 @@ function social_group_field_widget_form_alter(&$element, FormStateInterface $for
       $group_type = $current_group->getGroupType();
       $group_type_id = $group_type->id();
       if (!$entity->id()) {
-        $element['#default_value'] = SocialGroupHelperService::getDefaultGroupVisibility($group_type_id);
+        $element['#default_value'] = \Drupal::service('social_group.helper_service')->getDefaultGroupVisibility($group_type_id);
       }
     }
     else {
