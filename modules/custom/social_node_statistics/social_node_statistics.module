@@ -1,0 +1,31 @@
+<?php
+
+/**
+ * @file
+ * Contains social_node_statistics.module.
+ */
+
+/**
+ * Implements hook_modules_installed().
+ */
+function social_node_statistics_modules_installed($modules) {
+  if (in_array('social_kpi_lite', $modules)) {
+    _social_node_statistics_create_kpi_block();
+  }
+}
+
+/**
+ * Creates Social KPI block.
+ */
+function _social_node_statistics_create_kpi_block() {
+  $path = drupal_get_path('module', 'social_node_statistics');
+  $block_content_path = "{$path}/content/block_content";
+  $block_path = "{$path}/content/block";
+
+  /** @var \Drupal\kpi_analytics\BlockContentCreator $block_content_creator */
+  $block_content_creator = \Drupal::service('kpi_analytics.block_content_creator');
+  $block_content_creator->setSource($block_content_path, 'social_kpi_lite_node_views');
+  if ($block_content_creator->create()) {
+    $block_content_creator->createBlockInstance($block_path, 'social_kpi_lite_node_views');
+  }
+}
