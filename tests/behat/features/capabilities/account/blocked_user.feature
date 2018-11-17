@@ -28,4 +28,4 @@ Feature: Notification that account is blocked
       | Password | UseCase123 |
     And I press "Log in"
     Then I should not see the error message "The username User Case has not been activated or is blocked."
-    And I should see "This could happen for one of for the following reasons"
+    And I should see "This may have happened for the following reasons"
