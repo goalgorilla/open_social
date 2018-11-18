@@ -37,7 +37,7 @@ Feature: Edit group type after creation
       And I am on "/all-groups"
       And I click "Nescafe"
     Then I should see "Closed group"
-      And I should see "1 member"
+      And I should see "Nescafe"
     When I click "Edit group"
     Then I should see checked the box "Closed group"
 
@@ -48,7 +48,6 @@ Feature: Edit group type after creation
     Then I should see "Updating Group Content..."
       And I wait for the batch job to finish
     Then I should see "Nescafe"
-      And I should see "1 member"
 
     When I click "Stream" in the "Tabs"
       And I click the post visibility dropdown
