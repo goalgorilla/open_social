@@ -10,6 +10,7 @@ use Drupal\Core\Url;
 use Drupal\group\Entity\Group;
 use Drupal\group\Entity\GroupContent;
 use Drupal\node\Entity\Node;
+use Drupal\Core\Language\LanguageInterface;
 
 /**
  * Implements hook_token_info().
@@ -119,6 +120,10 @@ function activity_logger_tokens($type, $tokens, array $data, array $options, Bub
               // If it's a group.. add it in the arguments.
               if (isset($group) && $group instanceof Group) {
                 if ($name === 'gtitle') {
+                  $curr_langcode = \Drupal::languageManager()->getCurrentLanguage(LanguageInterface::TYPE_CONTENT)->getId();
+                  if ($group->isTranslatable() && $group->hasTranslation($curr_langcode)) {
+                    $group = $group->getTranslation($curr_langcode);
+                  }
                   $replacements[$original] = $group->label();
                 }
                 if ($name === 'gurl') {

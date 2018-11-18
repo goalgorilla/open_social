@@ -10,6 +10,7 @@ use Drupal\Component\Utility\Html as HtmlUtility;
 use Drupal\Core\Session\AnonymousUserSession;
 use Drupal\bootstrap\Bootstrap;
 use Drupal\node\Entity\Node;
+use Drupal\Core\Language\LanguageInterface;
 
 // Include all files from the includes directory.
 $includes_path = dirname(__FILE__) . '/includes/*.inc';
@@ -41,6 +42,10 @@ function socialbase_group_link($node) {
         'type' => $group_type_id . '-group_node-' . $node->getType(),
       ]);
     if (!empty($group_content)) {
+      $curr_langcode = \Drupal::languageManager()->getCurrentLanguage(LanguageInterface::TYPE_CONTENT)->getId();
+      if ($group->isTranslatable() && $group->hasTranslation($curr_langcode)) {
+        $group = $group->getTranslation($curr_langcode);
+      }
       $group_link = $group->link();
     }
   }
