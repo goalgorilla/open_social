@@ -82,6 +82,8 @@ class MentionsSettingsForm extends ConfigFormBase {
       '#type' => 'number',
       '#default_value' => $config->get('suggestions_amount'),
       '#description' => $this->t('How many suggestions do you want to show when mentioning.'),
+      '#min' => 0,
+      '#max' => 100,
     ];
 
     return parent::buildForm($form, $form_state);
