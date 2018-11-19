@@ -59,6 +59,13 @@ class BookAddBlock extends BlockBase implements ContainerFactoryPluginInterface 
 
   /**
    * {@inheritdoc}
+   */
+  public function defaultConfiguration() {
+    return ['label_display' => FALSE];
+  }
+
+  /**
+   * {@inheritdoc}
    *
    * Custom access logic to display the block only on current user Book page.
    */
@@ -91,7 +98,7 @@ class BookAddBlock extends BlockBase implements ContainerFactoryPluginInterface 
     ];
     $url->setOptions($link_options);
 
-    $build['content'] = Link::fromTextAndUrl($this->t('Create Bookpage'), $url)
+    $build['content'] = Link::fromTextAndUrl($this->t('Create book page'), $url)
       ->toRenderable();
 
     return $build;

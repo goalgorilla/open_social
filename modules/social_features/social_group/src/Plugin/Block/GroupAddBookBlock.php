@@ -20,6 +20,13 @@ class GroupAddBookBlock extends BlockBase {
 
   /**
    * {@inheritdoc}
+   */
+  public function defaultConfiguration() {
+    return ['label_display' => FALSE];
+  }
+
+  /**
+   * {@inheritdoc}
    *
    * Custom access logic to display the block.
    */
@@ -66,7 +73,7 @@ class GroupAddBookBlock extends BlockBase {
       ];
       $url->setOptions($link_options);
 
-      $build['content'] = Link::fromTextAndUrl(t('Create Bookpage'), $url)->toRenderable();
+      $build['content'] = Link::fromTextAndUrl(t('Create book page'), $url)->toRenderable();
 
       // Cache.
       $build['#cache']['contexts'][] = 'url.path';
