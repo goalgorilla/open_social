@@ -4,6 +4,7 @@ namespace Drupal\social_user\Form;
 
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
+use Drupal\Core\Url;
 use Drupal\user\Form\UserPasswordForm;
 
 /**
@@ -81,10 +82,13 @@ class SocialUserPasswordForm extends UserPasswordForm {
           ]);
       }
     }
-    drupal_set_message(t('Due to privacy concerns, the policy of this web site is not to disclose the existence of registered email addresses.
-     Hence, if you entered a valid email address or username, a password reset link is now being sent to it.
-     If the email address or username you entered does not exist, you will not get a reset link, and will neither get any confirmation or warning about that here.
-     Contact the site administrator if there are any problems.'));
+    $site_config = $this->config('system.site');
+    $site_mail = $site_config->get('mail');
+    $show_mail = $site_config->get('show_mail_in_messages');
+    $admin_link = ($site_mail && $show_mail) ? Link::fromTextAndUrl(t('site administrator'), Url::fromUri('mailto:' . $site_mail))->toString() : t('site administrator');
+    drupal_set_message(t('Due to privacy concerns, the identity of registered email addresses will not be disclosed. Therefore, a password reset link has been sent to you only if you have entered a valid email address or username.
+<br>If the email address or username you entered does not exist, you will not get a reset link or a confirmation/warning about that here. Please contact the @admin_link if there are any problems.',
+      ['@admin_link' => $admin_link]));
 
     $form_state->setRedirect('user.page');
   }

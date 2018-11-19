@@ -19,23 +19,4 @@
  * @ingroup themeable
  */
 #}
-
-
-<div class="media media-middle">
-  <div class="media-left">
-    {% if content.field_profile_image %}
-      <a href="{{ profile_stream_url }}" class="avatar">
-        {{ content.field_profile_image }}
-      </a>
-    {% endif %}
-  </div>
-
-  <div class="media-body">
-    <h6 class="list-group-item-heading no-margin">
-      <a href="{{ profile_stream_url }}">
-        {{ profile_name }} {{ profile_name_extra }}
-      </a>
-    </h6>
-  </div>
-
-</div>
+{{ profile_name }} {{ profile_name_extra }}

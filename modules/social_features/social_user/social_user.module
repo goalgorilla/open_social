@@ -34,6 +34,23 @@ function social_user_action_info_alter(&$definitions) {
 /**
  * Implements hook_form_FORM_ID_alter().
  *
+ * @see \Drupal\user\UserLoginForm
+ */
+function social_user_form_user_login_form_alter(&$form, FormStateInterface $form_state) {
+  // Ensure fields have weights so other forms can add items.
+  if (isset($form['account'])) {
+    if (isset($form['account']['name_or_mail'])) {
+      $form['account']['name_or_mail']['#weight'] = -100;
+    }
+    if (isset($form['account']['pass'])) {
+      $form['account']['pass']['#weight'] = -50;
+    }
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ *
  * @see \Drupal\user\RegisterForm
  */
 function social_user_form_user_register_form_alter(&$form, FormStateInterface $form_state) {
@@ -52,6 +69,17 @@ function social_user_form_user_register_form_alter(&$form, FormStateInterface $f
     $signup_help = \Drupal::config('social_user.settings')->get('signup_help');
     if (!empty($signup_help)) {
       $form['account']['#description'] = $signup_help;
+    }
+
+    // Ensure fields have weights so other forms can add items.
+    if (isset($form['account']['mail'])) {
+      $form['account']['mail']['#weight'] = -150;
+    }
+    if (isset($form['account']['name'])) {
+      $form['account']['name']['#weight'] = -100;
+    }
+    if (isset($form['account']['pass'])) {
+      $form['account']['pass']['#weight'] = -50;
     }
 
     $link_options = [];
@@ -90,8 +118,12 @@ function social_user_register_validate(&$form, FormStateInterface $form_state) {
     // existing messages, making sure nothing about this is being disclosed.
     $form_state->clearErrors();
     // Set a new more general error.
-    $form_state->setErrorByName('mail', t('Due to privacy concerns, the policy of this web site is not to disclose the existence of registered email addresses or usernames. However, if you entered an email address or username that already exists, you will not be able to continue.
-    Please try again, or request a new password. Contact the site administrator if there are any problems.'));
+    $site_config = \Drupal::config('system.site');
+    $site_mail = $site_config->get('mail');
+    $show_mail = $site_config->get('show_mail_in_messages');
+    $admin_link = ($site_mail && $show_mail) ? Link::fromTextAndUrl(t('site administrator'), Url::fromUri('mailto:' . $site_mail))->toString() : t('site administrator');
+    $form_state->setErrorByName('mail', t("Oops, there was an error with the email address or username you entered. Due to privacy concerns, we can't disclose the existence of already registered email addresses.
+    So, please try again! Contact the @admin_link if there are any problems.", ['@admin_link' => $admin_link]));
   }
 }
 
@@ -553,6 +585,35 @@ function social_user_form_user_admin_settings_submit($form, FormStateInterface $
     ->getEditable('social_user.settings');
   $config->set('signup_help', $form_state->getValue("signup_help"));
   $config->set('login_help', $form_state->getValue("login_help"));
+  $config->save();
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ *
+ * Alter Basic site settings form.
+ */
+function social_user_form_system_site_information_settings_alter(&$form, FormStateInterface $form_state) {
+  $config = \Drupal::config('system.site');
+
+  $form['site_information']['show_mail_in_messages'] = [
+    '#type' => 'checkbox',
+    '#title' => new TranslatableMarkup('Show email address in help messages'),
+    '#description' => new TranslatableMarkup("Show site email address in help messages after failed login, signup or password reset."),
+    "#default_value" => $config->get('show_mail_in_messages'),
+    '#weight' => 10,
+  ];
+
+  $form['#submit'][] = 'social_user_form_system_site_information_settings_submit';
+}
+
+/**
+ * Stores Show email address in help messages variable.
+ */
+function social_user_form_system_site_information_settings_submit($form, FormStateInterface $form_state) {
+  $config = \Drupal::configFactory()
+    ->getEditable('system.site');
+  $config->set('show_mail_in_messages', $form_state->getValue("show_mail_in_messages"));
   $config->save();
 }
 

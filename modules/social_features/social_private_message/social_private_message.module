@@ -243,7 +243,11 @@ function social_private_message_entity_view_alter(array &$build, EntityInterface
             unset($members_with_deleted[$key], $only_exist_members[$key]);
           }
           else {
-            $members_string[] = $member->getDisplayName();
+            $user_profile = \Drupal::entityTypeManager()->getStorage('profile')->loadByUser($member, 'profile');
+            $content = \Drupal::entityTypeManager()
+              ->getViewBuilder('profile')
+              ->view($user_profile, 'name_raw');
+            $members_string[] = $content;
           }
         }
         else {
@@ -259,10 +263,14 @@ function social_private_message_entity_view_alter(array &$build, EntityInterface
         $recipient = end($only_exist_members);
 
         if ($recipient instanceof UserInterface) {
-          $display_name = $recipient->getDisplayName();
+          $user_profile = \Drupal::entityTypeManager()->getStorage('profile')->loadByUser($recipient, 'profile');
+          $display_name = \Drupal::entityTypeManager()->getViewBuilder('profile')->view($user_profile, 'name_raw');
         }
         else {
-          $display_name = t('Deleted user');
+          // Make this an array, since we no longer render in here.
+          $display_name = [
+            '#markup' => t('Deleted user'),
+          ];
           $recipient = User::load(1);
         }
 
@@ -286,14 +294,15 @@ function social_private_message_entity_view_alter(array &$build, EntityInterface
       if ($member_count > 1) {
         $build['members']['#markup'] = '<div class="avatar-icon avatar-group-icon avatar-group-icon--medium"></div>';
         // Add members names.
-        $build['membernames']['#markup'] = implode(', ', $members_string);
+        $build['membernames'] = $members_string;
         $build['membernames']['#prefix'] = '<strong>';
         $build['membernames']['#suffix'] = '</strong>';
       }
+
       else {
         $build['members'] = $profile_picture;
         // Add members name.
-        $build['membernames']['#markup'] = $display_name;
+        $build['membernames'] = $display_name;
         $build['membernames']['#prefix'] = '<strong>';
         $build['membernames']['#suffix'] = '</strong>';
       }
