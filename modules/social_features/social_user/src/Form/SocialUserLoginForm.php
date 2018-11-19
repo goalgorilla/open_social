@@ -84,12 +84,14 @@ class SocialUserLoginForm extends UserLoginForm {
       ];
     }
 
-    $sign_up_link = Link::createFromRoute($this->t('Sign up'), 'user.register', [], $link_options)->toString();
+    if (\Drupal::config('user.settings')->get('register') != 'admin_only') {
+      $sign_up_link = Link::createFromRoute($this->t('Sign up'), 'user.register', [], $link_options)->toString();
 
-    $form['username_login']['sign-up-link'] = [
-      '#markup' => $this->t("Don't have an account yet? @link", ["@link" => $sign_up_link]),
-      '#weight' => 1000,
-    ];
+      $form['username_login']['sign-up-link'] = [
+        '#markup' => $this->t("Don't have an account yet? @link", ["@link" => $sign_up_link]),
+        '#weight' => 1000,
+      ];
+    }
 
     $form['actions'] = ['#type' => 'actions'];
     $form['actions']['submit'] = ['#type' => 'submit', '#value' => $this->t('Log in')];
@@ -246,11 +248,11 @@ class SocialUserLoginForm extends UserLoginForm {
    */
   protected function setGeneralErrorMessage(array &$form, FormStateInterface $form_state) {
     $form_state->setErrorByName('name_or_mail', $this->t('
-        There was an error :( This could happen for one of for the following reasons: <br>
-        - Unrecognized username/email and password combination. <br>
+        Oops, there was an error. This may have happened for the following reasons: <br>
+        - Invalid username/email and password combination. <br>
         - There has been more than one failed login attempt for this account. It is temporarily blocked. <br>
-        - Too many failed login attempts from your IP address. This IP address is temporarily blocked. <br> <br>
-        To solve the issue try other credentials, try again later or <a href=":url">request a new password</a>',
+        - Too many failed login attempts from your computer (IP address). This IP address is temporarily blocked. <br> <br>
+        To solve the issue, try using different login information, try again later, or <a href=":url">request a new password</a>',
       ['%name_or_email' => $form_state->getValue('name_or_mail'), ':url' => $this->url('user.pass')]));
   }
 
