@@ -35,7 +35,7 @@ class GroupAddBookBlock extends BlockBase {
       $group = _social_group_get_current_group();
     }
     else {
-    	$group = null;
+      $group = NULL;
     }
 
     if (is_object($group)) {
@@ -64,7 +64,7 @@ class GroupAddBookBlock extends BlockBase {
       $group = _social_group_get_current_group();
     }
     else {
-    	$group = null;
+      $group = NULL;
     }
 
     if (is_object($group)) {
