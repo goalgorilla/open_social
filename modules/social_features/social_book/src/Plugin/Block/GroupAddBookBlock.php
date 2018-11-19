@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\social_group\Plugin\Block;
+namespace Drupal\social_book\Plugin\Block;
 
 use Drupal\Core\Block\BlockBase;
 use Drupal\Core\Url;
@@ -31,7 +31,12 @@ class GroupAddBookBlock extends BlockBase {
    * Custom access logic to display the block.
    */
   public function blockAccess(AccountInterface $account) {
-    $group = _social_group_get_current_group();
+  	if (\Drupal::moduleHandler()->moduleExists('social_group')) {
+      $group = _social_group_get_current_group();
+    }
+    else {
+    	$group = null;
+    }
 
     if (is_object($group)) {
       if ($group->hasPermission('create group_node:book entity', $account)&& $account->hasPermission("create book content")) {
@@ -55,7 +60,12 @@ class GroupAddBookBlock extends BlockBase {
   public function build() {
     $build = [];
 
-    $group = _social_group_get_current_group();
+  	if (\Drupal::moduleHandler()->moduleExists('social_group')) {
+      $group = _social_group_get_current_group();
+    }
+    else {
+    	$group = null;
+    }
 
     if (is_object($group)) {
       $url = Url::fromUserInput("/group/{$group->id()}/content/create/group_node:book");
