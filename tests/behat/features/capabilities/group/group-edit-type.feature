@@ -13,6 +13,9 @@ Feature: Edit group type after creation
     Given groups:
       | title     | description    | author | type         | language |
       | Nescafe   | Coffee time!!! | test_user_2  | closed_group | en       |
+    Given "topic_types" terms:
+      | name                  |
+      | Blog                  |
     Given topic content:
       | title         | field_topic_type | status | field_content_visibility |
       | Nescafe Topic | Blog             | 1      | group                    |
