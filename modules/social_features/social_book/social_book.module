@@ -5,8 +5,9 @@
  * The Social book module.
  */
 
-use Drupal\node\NodeInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
+use Drupal\node\NodeInterface;
 
 /**
  * Implements hook_node_links_alter().
@@ -43,10 +44,10 @@ function social_book_social_user_account_header_create_links($context) {
     'add_book' => [
       '#type' => 'link',
       '#attributes' => [
-        'title' => $this->t('Create New Book Page'),
+        'title' => new TranslatableMarkup('Create New Book Page'),
       ],
       '#url' => Url::fromRoute('node.add', ['node_type' => 'book']),
-      '#title' => $this->t('New Book Page'),
+      '#title' => new TranslatableMarkup('New Book Page'),
     ],
   ];
 }
