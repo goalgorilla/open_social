@@ -31,7 +31,7 @@ class GroupAddBookBlock extends BlockBase {
    * Custom access logic to display the block.
    */
   public function blockAccess(AccountInterface $account) {
-  	if (\Drupal::moduleHandler()->moduleExists('social_group')) {
+    if (\Drupal::moduleHandler()->moduleExists('social_group')) {
       $group = _social_group_get_current_group();
     }
     else {
@@ -60,7 +60,7 @@ class GroupAddBookBlock extends BlockBase {
   public function build() {
     $build = [];
 
-  	if (\Drupal::moduleHandler()->moduleExists('social_group')) {
+    if (\Drupal::moduleHandler()->moduleExists('social_group')) {
       $group = _social_group_get_current_group();
     }
     else {
