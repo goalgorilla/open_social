@@ -511,11 +511,11 @@ function social_private_message_social_user_account_header_account_links(array $
 
   return [
     'messages_mobile' => [
+      '#type' => 'link',
       '#wrapper_attributes' => [
         'class' => ['mobile'],
       ],
       '#weight' => 200,
-      '#type' => 'link',
       '#attributes' => [
         'title' => new TranslatableMarkup('Inbox'),
       ],
@@ -527,8 +527,7 @@ function social_private_message_social_user_account_header_account_links(array $
           'icon' => (string) $num_account_messages,
         ],
       ],
-      '#url' => Url::fromRoute('social_private_message.inbox'),
-    ],
+    ] + Url::fromRoute('social_private_message.inbox')->toRenderArray(),
   ];
 
 }

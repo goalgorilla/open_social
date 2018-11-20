@@ -182,10 +182,9 @@ function social_topic_social_user_account_header_create_links($context) {
       '#attributes' => [
         'title' => new TranslatableMarkup('Create New Topic'),
       ],
-      '#url' => Url::fromRoute('node.add', ['node_type' => 'topic']),
       '#title' => new TranslatableMarkup('New Topic'),
       '#weight' => 200,
-    ],
+    ] + Url::fromRoute('node.add', ['node_type' => 'topic'])->toRenderArray(),
   ];
 }
 
@@ -206,12 +205,11 @@ function social_topic_social_user_account_header_account_links(array $context) {
       '#attributes' => [
         'title' => new TranslatableMarkup('View my topics'),
       ],
-      '#url' => Url::fromRoute('view.topics.page_profile', [
-        'user' => $context['user']->id(),
-      ]),
       '#title' => new TranslatableMarkup('My topics'),
       '#weight' => 700,
-    ],
+    ] + Url::fromRoute('view.topics.page_profile', [
+      'user' => $context['user']->id(),
+    ])->toRenderArray(),
   ];
 }
 

@@ -436,12 +436,11 @@ function social_user_social_user_account_header_account_links(array $context) {
       '#attributes' => [
         'title' => new TranslatableMarkup("Settings"),
       ],
-      '#url' => Url::fromRoute('entity.user.edit_form', [
-        'user' => $context['user']->id(),
-      ]),
       '#title' => new TranslatableMarkup("Settings"),
       '#weight' => 1200,
-    ],
+    ] + Url::fromRoute('entity.user.edit_form', [
+      'user' => $context['user']->id(),
+    ])->toRenderArray(),
     'divider_logout' => [
       "#wrapper_attributes" => [
         "class" => ["divider"],
@@ -454,10 +453,9 @@ function social_user_social_user_account_header_account_links(array $context) {
       '#attributes' => [
         'title' => new TranslatableMarkup("Logout"),
       ],
-      '#url' => Url::fromRoute('user.logout'),
       '#title' => new TranslatableMarkup("Logout"),
       '#weight' => 1500,
-    ],
+    ] + Url::fromRoute('user.logout')->toRenderArray(),
   ];
 }
 

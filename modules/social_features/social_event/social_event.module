@@ -334,10 +334,9 @@ function social_event_social_user_account_header_create_links($context) {
       '#attributes' => [
         'title' => new TranslatableMarkup('Create New Event'),
       ],
-      '#url' => Url::fromRoute('node.add', ['node_type' => 'event']),
       '#title' => new TranslatableMarkup('New Event'),
       '#weight' => 100,
-    ],
+    ] + Url::fromRoute('node.add', ['node_type' => 'event'])->toRenderArray(),
   ];
 }
 
@@ -358,12 +357,11 @@ function social_event_social_user_account_header_account_links(array $context) {
       '#attributes' => [
         'title' => new TranslatableMarkup('View my events'),
       ],
-      '#url' => Url::fromRoute('view.events.events_overview', [
-        'user' => $context['user']->id(),
-      ]),
       '#title' => new TranslatableMarkup('My events'),
       '#weight' => 600,
-    ],
+    ] + Url::fromRoute('view.events.events_overview', [
+      'user' => $context['user']->id(),
+    ])->toRenderArray(),
   ];
 }
 

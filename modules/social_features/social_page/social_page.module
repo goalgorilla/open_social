@@ -46,9 +46,8 @@ function social_page_social_user_account_header_create_links($context) {
       '#attributes' => [
         'title' => new TranslatableMarkup('Create New Page'),
       ],
-      '#url' => Url::fromRoute('node.add', ['node_type' => 'page']),
       '#title' => new TranslatableMarkup('New Page'),
       '#weight' => 300,
-    ],
+    ] + Url::fromRoute('node.add', ['node_type' => 'page'])->toRenderArray(),
   ];
 }

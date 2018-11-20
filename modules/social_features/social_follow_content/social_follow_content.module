@@ -70,9 +70,8 @@ function social_follow_content_social_user_account_header_account_links(array $c
       '#attributes' => [
         'title' => new TranslatableMarkup("View content I'm following"),
       ],
-      '#url' => Url::fromRoute('view.following.following'),
       '#title' => new TranslatableMarkup('Following'),
       '#weight' => 1000,
-    ],
+    ] + Url::fromRoute('view.following.following')->toRenderArray(),
   ];
 }

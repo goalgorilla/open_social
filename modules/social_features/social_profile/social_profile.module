@@ -585,22 +585,20 @@ function social_profile_social_user_account_header_account_links(array $context)
       '#attributes' => [
         'title' => new TranslatableMarkup('View my profile'),
       ],
-      '#url' => Url::fromRoute('user.page'),
       '#title' => new TranslatableMarkup('My profile'),
       '#weight' => 500,
-    ],
+    ] + Url::fromRoute('user.page')->toRenderArray(),
     'edit_profile' => [
       '#type' => 'link',
       '#attributes' => [
         'title' => new TranslatableMarkup("Edit profile"),
       ],
-      '#url' => Url::fromRoute('entity.profile.type.user_profile_form', [
-        'user' => $context['user']->id(),
-        'profile_type' => 'profile',
-      ]),
       '#title' => new TranslatableMarkup("Edit profile"),
       '#weight' => 1300,
-    ],
+    ] + Url::fromRoute('entity.profile.type.user_profile_form', [
+      'user' => $context['user']->id(),
+      'profile_type' => 'profile',
+    ])->toRenderArray(),
   ];
 }
 

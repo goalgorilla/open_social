@@ -128,8 +128,7 @@ function social_activity_social_user_account_header_account_links(array $context
           'icon' => (string) $num_notifications,
         ],
       ],
-      '#url' => Url::fromRoute('view.activity_stream_notifications.page_1'),
-    ],
+    ] + Url::fromRoute('view.activity_stream_notifications.page_1')->toRenderArray(),
   ];
 }
 
