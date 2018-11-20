@@ -219,7 +219,7 @@ function social_landing_page_preprocess_field(&$variables) {
     foreach ($variables['items'] as $key => $value) {
       if (isset($variables['items'][$key]['content'])) {
         $variables['items'][$key]['content']['#options']['attributes'] = [
-          'class' => 'btn btn-large ' . $button_style,
+          'class' => 'btn btn-lg ' . $button_style,
         ];
       }
     }
