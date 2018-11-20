@@ -233,6 +233,10 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
     // which doesn't sort. Therefore it happens here.
     Element::children($menu_items, TRUE);
 
+    // We remove the '#sorted' key that's added above because
+    // template_preprocess_item_list does not know how to handle it.
+    unset($menu_items['#sorted']);
+
     // The item_list theme function gets the wrapper_attributes before the
     // AccountHeaderElement::preRender is called. Therefor we provide some
     // assisting classes here.
