@@ -63,17 +63,3 @@ function social_node_statistics_install() {
     _social_node_statistics_create_kpi_block();
   }
 }
-
-/**
- * Implements hook_uninstall().
- */
-function social_node_statistics_uninstall() {
-  $block = Block::load('social_kpi_lite_node_views');
-  try {
-    $block->delete();
-  }
-  catch (EntityStorageException $e) {
-    // Add the error to watchdog.
-    \Drupal::messenger()->addMessage($e->getMessage());
-  }
-}
