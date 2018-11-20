@@ -152,6 +152,10 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
         foreach ($groups as $group) {
           $group_type_id = $group->bundle();
 
+          // The join group permission has never really been used since
+          // this commit. This now means that events in a closed group cannot
+          // be joined by outsiders, which makes sense, since they also
+          // couldn't see these events in the first place.
           if (in_array($group_type_id, $group_type_ids) && $group->hasPermission('join group', $current_user)) {
             break;
           }
