@@ -20,6 +20,17 @@ function social_mentions_install() {
 }
 
 /**
+ * Set suggestion amount to the default of 8.
+ */
+function social_mentions_update_8001() {
+  $config = \Drupal::configFactory()->getEditable('mentions.settings');
+
+  $config->set('suggestions_amount', 8);
+
+  $config->save();
+}
+
+/**
  * Function to set permissions.
  */
 function _social_mentions_set_permissions() {
@@ -70,6 +81,8 @@ function _social_mentions_set_default_config() {
   $config->set('supported_entity_types', $allowed_entity_types);
 
   $config->set('suggestions_format', SOCIAL_PROFILE_SUGGESTIONS_ALL);
+
+  $config->set('suggestions_amount', 8);
 
   $config->save();
 }
