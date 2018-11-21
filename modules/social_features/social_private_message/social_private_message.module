@@ -521,7 +521,7 @@ function social_private_message_social_user_account_header_account_links(array $
       ],
       '#title' => [
         '#type' => 'inline_template',
-        '#template' => '{% trans %}Inbox{% endtrans %}<span{{ attributes }}>{{ icon }}</span>',
+        '#template' => '<span>{% trans %}Inbox{% endtrans %}</span><span{{ attributes }}>{{ icon }}</span>',
         '#context' => [
           'attributes' => new Attribute(['class' => $label_classes]),
           'icon' => (string) $num_account_messages,

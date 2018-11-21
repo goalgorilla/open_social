@@ -122,7 +122,7 @@ function social_activity_social_user_account_header_account_links(array $context
       ],
       '#title' => [
         '#type' => 'inline_template',
-        '#template' => '{% trans %}Notification Centre{% endtrans %}<span{{ attributes }}>{{ icon }}</span>',
+        '#template' => '<span>{% trans %}Notification Centre{% endtrans %}</span><span{{ attributes }}>{{ icon }}</span>',
         '#context' => [
           'attributes' => new Attribute(['class' => $label_classes]),
           'icon' => (string) $num_notifications,
