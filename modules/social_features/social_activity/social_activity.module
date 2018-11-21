@@ -27,18 +27,6 @@ function social_activity_social_user_account_header_items(array $context) {
   $account_notifications = \Drupal::service('activity_creator.activity_notifications');
   $num_notifications = count($account_notifications->getNotifications($account, [ACTIVITY_STATUS_RECEIVED]));
 
-  // Todo: Find a way to automate these badge classes
-  // as social_private_message uses them too.
-  $notifications_icon = 'notifications_none';
-
-  if ($num_notifications > 0) {
-    $notifications_icon = 'notifications';
-
-    if ($num_notifications > 99) {
-      $num_notifications = '99+';
-    }
-  }
-
   return [
     'notifications' => [
       '#type' => 'account_header_element',
@@ -47,8 +35,9 @@ function social_activity_social_user_account_header_items(array $context) {
       ],
       '#title' => new TranslatableMarkup('Notification Centre'),
       '#url' => Url::fromRoute('<none>'),
-      '#icon' => $notifications_icon,
-      '#label' => (string) $num_notifications,
+      '#icon' => $num_notifications > 0 ? 'notifications' : 'notifications_none',
+      '#label' => new TranslatableMarkup('Notifications'),
+      '#notification_count' => $num_notifications,
       '#weight' => 800,
       'header' => [
         '#wrapper_attributes' => ['class' => 'dropdown-header'],

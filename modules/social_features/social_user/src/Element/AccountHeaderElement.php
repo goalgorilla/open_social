@@ -43,6 +43,9 @@ class AccountHeaderElement extends RenderElement {
       "#icon" => NULL,
       // A label for the link, used on mobile.
       "#label" => "",
+      // The number of notifications for this menu item.
+      // Will be rendered as a visual indicator if greater than 0.
+      "#notification_count" => NULL,
     ];
   }
 
@@ -96,8 +99,8 @@ class AccountHeaderElement extends RenderElement {
       ];
     }
 
-    // We always add the label but hide it on non-mobile screens if there's an
-    // image or icon.
+    // We always render the label but hide it for non-screenreader users in case
+    // an image or icon is used.
     $label_class = !empty($item['#image']) || !empty($item['#icon']) ? 'sr-only' : NULL;
     $link_text[] = [
       "#type" => "inline_template",
@@ -107,6 +110,22 @@ class AccountHeaderElement extends RenderElement {
         'label' => $item['#label'],
       ],
     ];
+
+    // Allow this menu item to include a notification count.
+    if ($item['#notification_count'] !== NULL) {
+      $count_classes =
+        $item['#notification_count'] > 0 ?
+          ['badge', 'badge-accent', 'badge--pill'] :
+          ['sr-only'];
+      $link_text[] = [
+        "#type" => "inline_template",
+        "#template" => "<span{{ attributes }}>{{ count }}</span>",
+        '#context' => [
+          'attributes' => new Attribute(['class' => $count_classes]),
+          'count' => $item['#notification_count'] > 99 ? "99+" : $item['#notification_count'],
+        ],
+      ];
+    }
 
     $element = [
       "#type" => "unwrapped_container",
