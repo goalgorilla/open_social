@@ -48,7 +48,7 @@ trait SocialProfileTrait {
       case SOCIAL_PROFILE_SUGGESTIONS_ALL:
         $strings = explode(' ', $name);
         if (count($strings) > 1) {
-          $query->where("CONCAT(fn.field_profile_first_name_value, ' ', ln.field_profile_last_name_value) LIKE :full_name", [':full_name' => '%' . $name . '%']);
+          $query->where("CONCAT(TRIM(fn.field_profile_first_name_value), ' ', TRIM(ln.field_profile_last_name_value)) LIKE :full_name", [':full_name' => '%' . $name . '%']);
           $query = $this->sortQuery($query, $name, $suggestion_format);
           $results = $this->endQuery($query, $count);
 
@@ -91,9 +91,9 @@ trait SocialProfileTrait {
 
     $query = $connection->select('users', 'u')->fields('u', ['uid']);
     $query->join('users_field_data', 'uf', 'uf.uid = u.uid');
-    $query->join('profile', 'p', 'p.uid = u.uid');
-    $query->join('profile__field_profile_first_name', 'fn', 'fn.entity_id = p.profile_id');
-    $query->join('profile__field_profile_last_name', 'ln', 'ln.entity_id = p.profile_id');
+    $query->leftJoin('profile', 'p', 'p.uid = u.uid');
+    $query->leftJoin('profile__field_profile_first_name', 'fn', 'fn.entity_id = p.profile_id');
+    $query->leftJoin('profile__field_profile_last_name', 'ln', 'ln.entity_id = p.profile_id');
     if ($this->addNickName() === TRUE) {
       $query->leftJoin('profile__field_profile_nick_name', 'nn', 'nn.entity_id = p.profile_id');
     }
