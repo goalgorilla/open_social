@@ -46,6 +46,19 @@ trait SocialProfileTrait {
 
       case SOCIAL_PROFILE_SUGGESTIONS_FULL_NAME:
       case SOCIAL_PROFILE_SUGGESTIONS_ALL:
+        $strings = explode(' ', $name);
+        if (count($strings) > 1) {
+          $query->where("CONCAT(fn.field_profile_first_name_value, ' ', ln.field_profile_last_name_value) LIKE :full_name", array(':full_name' => '%' . $name . '%'));
+          $query = $this->sortQuery($query, $name, $suggestion_format);
+          $results = $this->endQuery($query, $count);
+
+          if (count($results) > 0) {
+            return $results;
+          }
+          // Fallback to creating a new query if there is no hit on full name.
+          $query = $this->startQuery();
+        }
+
         $or_query = $query->orConditionGroup();
         $or_query
           ->condition('fn.field_profile_first_name_value', '%' . $name . '%', 'LIKE')
