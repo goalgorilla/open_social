@@ -48,7 +48,7 @@ trait SocialProfileTrait {
       case SOCIAL_PROFILE_SUGGESTIONS_ALL:
         $strings = explode(' ', $name);
         if (count($strings) > 1) {
-          $query->where("CONCAT(fn.field_profile_first_name_value, ' ', ln.field_profile_last_name_value) LIKE :full_name", array(':full_name' => '%' . $name . '%'));
+          $query->where("CONCAT(fn.field_profile_first_name_value, ' ', ln.field_profile_last_name_value) LIKE :full_name", [':full_name' => '%' . $name . '%']);
           $query = $this->sortQuery($query, $name, $suggestion_format);
           $results = $this->endQuery($query, $count);
 
