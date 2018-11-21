@@ -37,7 +37,7 @@ trait SocialProfileTrait {
    */
   public function getUserIdsFromName($name, $count, $suggestion_format = SOCIAL_PROFILE_SUGGESTIONS_ALL) {
     $query = $this->startQuery();
-    $name = $query->escapeLike($name);
+    $name = ltrim($query->escapeLike($name));
 
     switch ($suggestion_format) {
       case SOCIAL_PROFILE_SUGGESTIONS_USERNAME:
