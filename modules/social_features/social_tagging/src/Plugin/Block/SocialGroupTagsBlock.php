@@ -80,8 +80,17 @@ class SocialGroupTagsBlock extends BlockBase implements ContainerFactoryPluginIn
       return AccessResult::forbidden();
     }
 
+    // Routes we don't want to display the tag block on.
+    $ignore_routes = [
+      'entity.group.join',
+      'entity.group.leave',
+      'entity.group.edit_form',
+      'entity.group.delete_form',
+      'entity.group_content.collection',
+    ];
+
     // Don't display on group edit.
-    if ($this->routeMatch->getRouteName() == 'entity.group.edit_form') {
+    if (in_array($this->routeMatch->getRouteName(), $ignore_routes)) {
       return AccessResult::forbidden();
     }
 
