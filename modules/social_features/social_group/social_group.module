@@ -739,6 +739,13 @@ function social_group_views_post_render(ViewExecutable $view, &$output, CachePlu
  * Implements hook_menu_local_tasks_alter().
  */
 function social_group_menu_local_tasks_alter(&$data, $route_name) {
+  // Set tab weights to allow space for adding new tabs in any position.
+  $weight = 0;
+  foreach ($data['tabs'][0] as $key => $value) {
+    $weight += 10;
+    $data['tabs'][0][$key]['#weight'] = $weight;
+  }
+
   // Rename Group "Related Entities" tab.
   if (isset($data['tabs'][0]['group.content']['#link'])) {
     $data['tabs'][0]['group.content']['#link']['title'] = t('Manage members');
