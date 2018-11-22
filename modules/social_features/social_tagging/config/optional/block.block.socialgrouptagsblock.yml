@@ -2,27 +2,27 @@ langcode: en
 status: true
 dependencies:
   module:
-    - social_tagging
-    - system
+  - social_tagging
+  - system
   theme:
-    - socialblue
+  - socialblue
   enforced:
     module:
     - social_tagging
-id: socialtagsblock
+id: socialgrouptagsblock
 theme: socialblue
 region: complementary_top
 weight: 0
 provider: null
-plugin: social_tags_block
+plugin: social_group_tags_block
 settings:
-  id: social_tags_block
-  label: Tags
+  id: social_group_tags_block
+  label: 'Group Tags'
   provider: social_tagging
   label_display: visible
 visibility:
   request_path:
     id: request_path
-    pages: '/node/*'
+    pages: '/group/*'
     negate: false
     context_mapping: {  }
