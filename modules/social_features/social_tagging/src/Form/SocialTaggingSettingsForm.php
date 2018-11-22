@@ -89,7 +89,14 @@ class SocialTaggingSettingsForm extends ConfigFormBase implements ContainerInjec
 
     $form['node_type_settings'] = [
       '#type' => 'fieldset',
-      '#title' => $this->t('Node type configuration'),
+      '#title' => $this->t('Type configuration'),
+    ];
+
+    $form['node_type_settings']['tag_type_group'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Group'),
+      '#default_value' => $config->get('tag_type_group'),
+      '#required' => FALSE,
     ];
 
     /** @var \Drupal\node\Entity\NodeType $nodetype */
@@ -119,6 +126,7 @@ class SocialTaggingSettingsForm extends ConfigFormBase implements ContainerInjec
     $config = $this->config('social_tagging.settings');
     $config->set('enable_content_tagging', $form_state->getValue('enable_content_tagging'))->save();
     $config->set('allow_category_split', $form_state->getValue('allow_category_split'))->save();
+    $config->set('tag_type_group', $form_state->getValue('tag_type_group'))->save();
 
     /** @var \Drupal\node\Entity\NodeType $nodetype */
     foreach (NodeType::loadMultiple() as $nodetype) {

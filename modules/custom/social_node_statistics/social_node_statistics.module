@@ -29,3 +29,39 @@ function _social_node_statistics_create_kpi_block() {
     $block_content_creator->createBlockInstance($block_path, 'social_kpi_lite_node_views');
   }
 }
+
+/**
+ * Implements hook_preprocess_node().
+ */
+function social_node_statistics_preprocess_node(&$variables) {
+  // If we have the node view statistics module available we can print the
+  // count for this node.
+  $variables['views_count'] = NULL;
+  $enabled_types = \Drupal::config('social_node_statistics.settings')->get('node_types');
+  if ($variables['view_mode'] === 'full' && in_array($variables['node']->getType(), $enabled_types)) {
+    $views_count = social_node_statistics_node_get_views_count($variables['node']->id());
+    $variables['views_count'] = $views_count;
+    $variables['views_label'] = \Drupal::translation()->formatPlural($views_count, 'view', 'views');
+    $variables['#cache']['tags'][] = 'node:' . $variables['node']->id() . ':views_count';
+    $variables['#cache']['context'][] = 'url.path';
+  }
+}
+
+/**
+ * Get views count for a node.
+ *
+ * @param int $nid
+ *   The node ID.
+ *
+ * @return int
+ *   Amount of views on the node.
+ */
+function social_node_statistics_node_get_views_count($nid) {
+  $count = Drupal::database()->select('node_statistics', 'n')
+    ->condition('n.nid', $nid)
+    ->countQuery()
+    ->execute()
+    ->fetchField();
+
+  return $count;
+}
