@@ -64,5 +64,7 @@
   {% else %}
     {{ messages|first }}
   {% endif %}
+  {# Remove type specific classes. #}
+  {% set attributes = attributes.removeClass(classes) %}
 </div>
 {% endfor %}
