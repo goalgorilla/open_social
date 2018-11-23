@@ -157,27 +157,27 @@ class SocialPrivateMessageService extends PrivateMessageService {
    *
    * @param int $uid
    *   The user id.
-   * @param int $theadid
+   * @param int $thread_id
    *   The thread id.
    *
    * @return int
-   *   The timestamp.
+   *   The timestamp or 0 if nothing was found.
    */
-  public function getLastMessageFromOtherUser($uid, $theadid) {
-    $query = "SELECT MAX(`pm`.`created`) FROM `private_message_thread__private_messages` `pmt`  JOIN `private_messages` `pm` ON `pm`.`id` = `pmt`.`private_messages_target_id` WHERE `pmt`.`entity_id` = :pmt AND `pm`.`owner` <> :uid";
-    $vars = [
-      ':uid' => $uid,
-      ':pmt' => $theadid,
-    ];
-
+  public function getLastMessageFromOtherUser($uid, $thread_id) {
     $timestamp = $this->database->query(
-      $query,
-      $vars
+      'SELECT MAX(pm.created) ' .
+      'FROM {private_message_thread__private_messages} pmt ' .
+      'JOIN {private_messages} pm ON pmt.private_messages_target_id = pm.id ' .
+      'WHERE pmt.entity_id = :thread AND pm.owner <> :uid',
+      [
+        ':thread' => $thread_id,
+        ':uid' => $uid,
+      ]
     )->fetchCol();
 
     // Chop of the head.
     if (is_array($timestamp)) {
-      $timestamp = $timestamp[0];
+      $timestamp = ($timestamp[0] !== NULL) ? $timestamp[0] : 0;
     }
 
     return $timestamp;
