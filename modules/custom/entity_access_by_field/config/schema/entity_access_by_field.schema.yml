@@ -1,5 +1,15 @@
 # Schema for the configuration files of the Entity Access By Field.
 
+entity_access_by_field.settings:
+  type: config_object
+  label: 'Entity Access by Field Settings'
+  mapping:
+    disable_public_visibility:
+      type: boolean
+      label: 'Disable public visibility'
+    default_visibility:
+      type: string
+      label: 'The default visibility for fields'
 field.storage_settings.entity_access_field:
   type: mapping
   label: 'Entity access field settings'
