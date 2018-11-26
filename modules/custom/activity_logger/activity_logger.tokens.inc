@@ -72,7 +72,7 @@ function activity_logger_tokens($type, $tokens, array $data, array $options, Bub
         case 'recipient-user-url':
         case 'pmt-url':
 
-          if (isset($message->field_message_related_object)) {
+          if (isset($message->field_message_related_object) && !empty($message->field_message_related_object->target_type)) {
             $target_type = $message->field_message_related_object->target_type;
             $target_id = $message->field_message_related_object->target_id;
             $entity = \Drupal::entityTypeManager()
