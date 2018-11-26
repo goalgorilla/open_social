@@ -11,6 +11,7 @@ use Drupal\Core\Url;
 use Drupal\Component\Serialization\Json;
 use Drupal\mentions\Entity\MentionsType;
 use Drupal\Core\Asset\AttachedAssetsInterface;
+use Drupal\comment\Plugin\Field\FieldType\CommentItemInterface;
 
 /**
  * Implements hook_form_alter().
@@ -98,7 +99,9 @@ function social_mentions_preprocess_mentions(&$variables) {
  * Implements hook_comment_links_alter().
  */
 function social_mentions_comment_links_alter(array &$links, CommentInterface $entity, array &$context) {
-  if ($entity->hasParentComment()) {
+  $field_name = $entity->getFieldName();
+  $commented_entity = $entity->getCommentedEntity();
+  if ($entity->hasParentComment() && $commented_entity->get($field_name)->status == CommentItemInterface::OPEN) {
     /* @var \Drupal\Core\Session\AccountInterface $account */
     $account = $entity->getOwner();
     $storage = \Drupal::entityTypeManager()->getStorage('profile');
