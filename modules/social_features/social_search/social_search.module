@@ -57,6 +57,11 @@ function social_search_form_views_exposed_form_alter(&$form, FormStateInterface 
         '#options' => $options,
       ];
     }
+    if ($form['#id'] == 'views-exposed-form-search-all-page') {
+      if (isset($form['type']['#options']['entity:profile'])) {
+        $form['type']['#options']['entity:profile'] = t('User');
+      }
+    }
   }
 }
 
