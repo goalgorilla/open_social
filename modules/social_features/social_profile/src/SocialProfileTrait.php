@@ -97,6 +97,7 @@ trait SocialProfileTrait {
     if ($this->addNickName() === TRUE) {
       $query->leftJoin('profile__field_profile_nick_name', 'nn', 'nn.entity_id = p.profile_id');
     }
+    $query->condition('uf.status', 1);
     return $query;
   }
 
