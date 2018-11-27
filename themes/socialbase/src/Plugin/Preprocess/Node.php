@@ -178,20 +178,8 @@ class Node extends PreprocessBase {
     // for this node, we can print the count even for Anonymous.
     $enabled_types = \Drupal::config('like_and_dislike.settings')->get('enabled_types');
     $variables['likes_count'] = NULL;
-    if (in_array($variables['node']->getType(), $enabled_types['node'])) {
-      $variables['likes_count'] = _socialbase_node_get_like_count($variables['node']->getEntityTypeId(), $variables['node']->id());
-    }
-
-    // If we have the node view statistics module available we can print the
-    // count for this node.
-    $variables['views_count'] = NULL;
-    $enabled_types = \Drupal::config('social_node_statistics.settings')->get('node_types');
-    if ($variables['view_mode'] === 'full' && in_array($variables['node']->getType(), $enabled_types)) {
-      $views_count = _socialbase_node_get_views_count($variables['node']->id());
-      $variables['views_count'] = $views_count;
-      $variables['views_label'] = $this->formatPlural($views_count, 'view', 'views');
-      $variables['#cache']['tags'][] = 'node:' . $variables['node']->id() . ':views_count';
-      $variables['#cache']['context'][] = 'url.path';
+    if (in_array($node->getType(), $enabled_types['node'])) {
+      $variables['likes_count'] = _socialbase_node_get_like_count($node->getEntityTypeId(), $node->id());
     }
 
     // Add styles for nodes in preview.
