@@ -136,25 +136,6 @@ function _socialbase_node_get_like_count($type, $id) {
 }
 
 /**
- * Get views count for a node.
- *
- * @param int $nid
- *   The node ID.
- *
- * @return int
- *   Amount of views on the node.
- */
-function _socialbase_node_get_views_count($nid) {
-  $count = Drupal::database()->select('node_statistics', 'n')
-    ->condition('n.nid', $nid)
-    ->countQuery()
-    ->execute()
-    ->fetchField();
-
-  return $count;
-}
-
-/**
  * Implements theme_preprocess_username().
  */
 function socialbase_preprocess_username(&$variables) {

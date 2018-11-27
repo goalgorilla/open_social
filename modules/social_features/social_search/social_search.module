@@ -10,6 +10,7 @@ use Drupal\Component\Plugin\Exception\PluginNotFoundException;
 use Drupal\Core\Block\BlockPluginInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\group\Entity\GroupType;
 use Drupal\profile\Entity\Profile;
 use Drupal\search_api\Entity\Index;
 use Drupal\search_api\Plugin\search_api\datasource\ContentEntity;
@@ -23,6 +24,7 @@ use Drupal\user\Entity\User;
 function social_search_form_views_exposed_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   $filter_forms = [
     'views-exposed-form-search-content-page',
+    'views-exposed-form-search-groups-page',
     'views-exposed-form-search-users-page',
   ];
 
@@ -39,6 +41,21 @@ function social_search_form_views_exposed_form_alter(&$form, FormStateInterface 
         }
       }
     }
+    if ($form['#id'] == 'views-exposed-form-search-groups-page') {
+      $options = [
+        '' => t('- Any -'),
+      ];
+      $group_types = GroupType::loadMultiple();
+      /** @var \Drupal\group\Entity\GroupType $group_type */
+      foreach ($group_types as $group_type) {
+        $options[$group_type->id()] = $group_type->label();
+      }
+
+      $form['type'] = [
+        '#type' => 'select',
+        '#options' => $options,
+      ];
+    }
   }
 }
 
@@ -50,6 +67,7 @@ function social_search_form_views_exposed_form_alter(&$form, FormStateInterface 
 function social_search_block_view_views_exposed_filter_block_alter(array &$build, BlockPluginInterface $block) {
   $filter_blocks = [
     'search_content-page',
+    'search_groups-page',
     'search_users-page',
   ];
 
