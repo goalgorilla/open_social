@@ -69,13 +69,12 @@ function social_group_form_group_public_group_edit_form_alter(&$form, FormStateI
 function social_group_group_type_permission_check() {
   $user = \Drupal::currentUser();
   // Get the Group object from the route.
-  $group = Drupal::routeMatch()->getParameter('group');
+  $group = _social_group_get_current_group();
 
   // Check if we have a default visibility, if we don't it must be a custom
   // group type, we need to have a visibility in order to update group content.
   // please see hook_social_group_default_visibility_alter.
-  if (\Drupal::service('social_group.helper_service')
-      ->getDefaultGroupVisibility($group->getGroupType) === NULL) {
+  if (\Drupal::service('social_group.helper_service')->getDefaultGroupVisibility($group->getGroupType()->id()) === NULL) {
     return FALSE;
   }
 
