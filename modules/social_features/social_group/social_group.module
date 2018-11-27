@@ -45,6 +45,7 @@ function social_group_form_group_public_group_edit_form_alter(&$form, FormStateI
   $form['group_type'] = SocialGroupAddForm::create(\Drupal::getContainer())->getGroupTypeElement();
   $form['group_type']['#default_value'] = $group->bundle();
   // If user doesn't have permission to change group types disable it.
+  // Or if group types can't be edited due to visibility issues.
   if (!social_group_group_type_permission_check()) {
     $form['group_type']['#disabled'] = TRUE;
   }
@@ -70,14 +71,16 @@ function social_group_group_type_permission_check() {
   // Get the Group object from the route.
   $group = Drupal::routeMatch()->getParameter('group');
 
-  // Check if we are editing a group. Sure to be sure.
-  if ($group instanceof GroupInterface) {
-    if ($user->hasPermission('edit group types')) {
-      return TRUE;
-    }
+  // Check if we have a default visibility, if we don't it must be a custom
+  // group type, we need to have a visibility in order to update group content.
+  // please see hook_social_group_default_visibility_alter.
+  if (\Drupal::service('social_group.helper_service')
+      ->getDefaultGroupVisibility($group->getGroupType) === NULL) {
+    return FALSE;
   }
 
-  return FALSE;
+  // Otherwise return true when we are able to edit the current group type.
+  return ($group instanceof GroupInterface && $user->hasPermission('edit group types'));
 }
 
 /**
@@ -497,6 +500,7 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
       $group_type_element['#default_value'] = $group->getGroupType()->id();
 
       // If user doesn't have permission to change group types disable it.
+      // Or if group types can't be edited due to visibility issues.
       if (!social_group_group_type_permission_check()) {
         $group_type_element['#disabled'] = TRUE;
       }

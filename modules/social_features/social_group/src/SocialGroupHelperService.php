@@ -91,7 +91,7 @@ class SocialGroupHelperService {
    * @param string $type
    *   The Group Type.
    *
-   * @return string
+   * @return string|null
    *   The default visibility.
    */
   public static function getDefaultGroupVisibility($type) {
@@ -110,6 +110,9 @@ class SocialGroupHelperService {
         case 'public_group':
           $visibility = 'public';
           break;
+
+        default:
+          $visibility = NULL;
       }
 
       \Drupal::moduleHandler()
