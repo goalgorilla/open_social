@@ -22,11 +22,6 @@ function social_event_an_enroll_token_info() {
     'description' => t('URL of anonymously enrolled event with token to cancel enrollment.'),
   ];
 
-  $social_event_an_enroll['event_organized'] = [
-    'name' => t('URL of the Event I Organize.'),
-    'description' => t('URL of the Event I Organize.'),
-  ];
-
   return [
     'types' => ['social_event_an_enroll' => $type],
     'tokens' => [
@@ -50,10 +45,6 @@ function social_event_an_enroll_tokens($type, $tokens, array $data, array $optio
             'absolute' => TRUE,
           ];
           $replacements[$original] = $data['node']->toUrl('canonical', $url_options)->toString();
-          break;
-
-        case 'event_organized':
-          $replacements[$original] = $data['node']->toUrl('canonical')->toString();
           break;
       }
     }
