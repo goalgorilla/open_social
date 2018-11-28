@@ -188,6 +188,20 @@ function social_activity_update_8003() {
 }
 
 /**
+ * Remove weird dependencies from field_activity_entity.
+ */
+function social_activity_update_8004() {
+  $config = \Drupal::configFactory()->getEditable('field.storage.activity.field_activity_entity');
+
+  $dependencies['module'] = [
+    'activity_creator',
+    'dynamic_entity_reference',
+  ];
+
+  $config->set('dependencies', $dependencies)->save();
+}
+
+/**
  * Get entity view mode settings for Dynamic Entity Reference update.
  *
  * @return array
