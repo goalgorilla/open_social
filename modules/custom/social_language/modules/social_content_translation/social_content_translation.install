@@ -1,0 +1,75 @@
+<?php
+
+/**
+ * @file
+ * Installation tasks for the Social Language Content Translation module.
+ */
+
+/**
+ * Implements hook_install().
+ */
+function social_content_translation_install() {
+  social_content_translation_disable_field_translations();
+}
+
+/**
+ * Disable field translations.
+ *
+ * Disable content translation for all fields in nodes, paragraphs and
+ * taxonomy terms. They are enabled by default when turning on content
+ * translation but we want to control this to only the fields that are in
+ * ContentTranslationDefaultsConfigOverride classes.
+ */
+function social_content_translation_disable_field_translations() {
+  $entity_types = [
+    'node',
+    'paragraph',
+    'taxonomy_term',
+  ];
+
+  /** @var \Drupal\Core\Entity\EntityFieldManagerInterface $field_manager */
+  $field_manager = \Drupal::service('entity_field.manager');
+
+  /** @var \Drupal\Core\Entity\EntityTypeBundleInfoInterface $entity_type_bundle_info */
+  $entity_type_bundle_info = \Drupal::service('entity_type.bundle.info');
+  $all_bundles = $entity_type_bundle_info->getAllBundleInfo();
+
+  // Only disable the listed entity types.
+  $bundles = array_filter($all_bundles, function ($k) use ($entity_types) {
+    return in_array($k, $entity_types);
+  }, ARRAY_FILTER_USE_KEY);
+
+  foreach ($bundles as $entity_type_id => $bundle_info) {
+    $definition = \Drupal::entityTypeManager()->getDefinition($entity_type_id);
+
+    // Fields that must remain translatable for content translation to work
+    // properly.
+    $exceptions = [
+      $definition->getKey('default_langcode'),
+      $definition->getKey('langcode'),
+      $definition->getKey('status'),
+      $definition->getKey('uid'),
+      $definition->getKey('content_translation_source'),
+      $definition->getKey('content_translation_outdated'),
+      $definition->getKey('revision_translation_affected'),
+    ];
+
+    foreach (array_keys($bundle_info) as $bundle) {
+      $fields = $field_manager->getFieldDefinitions($entity_type_id, $bundle);
+      foreach ($fields as $field) {
+        $field_config = $field->getConfig($bundle);
+        // Only disable translatable fields and always allow some exceptions
+        // that are required for content translation to function properly.
+        if ($field_config->isTranslatable() && !in_array($field->getName(), $exceptions)) {
+          $field_config
+            ->setTranslatable(FALSE)
+            ->save();
+        }
+      }
+    }
+  }
+
+  // Ensure entity and menu router information are correctly rebuilt.
+  \Drupal::entityManager()->clearCachedDefinitions();
+  \Drupal::service('router.builder')->setRebuildNeeded();
+}

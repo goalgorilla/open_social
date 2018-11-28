@@ -41,6 +41,11 @@ class Access implements AccessInterface {
    *   The account to check access for.
    * @param string $permission
    *   (optional) The permission.
+   *
+   * @codingStandardsIgnoreStart until https://www.drupal.org/project/coder/issues/3013953 is fixed
+   * @return \Drupal\Core\Access\AccessResult
+   *   Whether to grant or deny access.
+   * @codingStandardsIgnoreEnd
    */
   public function access(RouteMatchInterface $route_match, AccountInterface $account, $permission = NULL) {
     if (count($this->languageManager->getLanguages()) > 1) {
