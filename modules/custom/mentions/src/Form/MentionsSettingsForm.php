@@ -7,7 +7,6 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Entity\ContentEntityTypeInterface;
-use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -15,7 +14,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class MentionsSettingsForm extends ConfigFormBase {
 
-  use StringTranslationTrait;
 
   /**
    * The entity type manager service.
@@ -77,6 +75,15 @@ class MentionsSettingsForm extends ConfigFormBase {
       '#description' => $this->t('Mentions entity will be created only for selected entity types.'),
     ];
 
+    $form['general']['suggestions_amount'] = [
+      '#title' => $this->t('Number of suggestions'),
+      '#type' => 'number',
+      '#default_value' => $config->get('suggestions_amount'),
+      '#description' => $this->t('How many suggestions do you want to show when mentioning.'),
+      '#min' => 0,
+      '#max' => 100,
+    ];
+
     return parent::buildForm($form, $form_state);
   }
 
@@ -88,6 +95,8 @@ class MentionsSettingsForm extends ConfigFormBase {
     $config = $this->config('mentions.settings');
 
     $config->set('supported_entity_types', $form_state->getValue('supported_entity_types'));
+
+    $config->set('suggestions_amount', $form_state->getValue('suggestions_amount'));
 
     $config->save();
 
