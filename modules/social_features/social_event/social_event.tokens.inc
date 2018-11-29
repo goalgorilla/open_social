@@ -25,7 +25,7 @@ function social_event_token_info() {
 
   $social_event['enrolled_user'] = [
     'name' => t('Username of user enrolled to the event.'),
-    'description' => t('Username of user enrolled to the event. Can be AN.'),
+    'description' => t('Username of user enrolled to the Event. Can be an anonymous user.'),
   ];
 
   $social_event['enrolled_event_url'] = [
