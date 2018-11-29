@@ -8,6 +8,7 @@
  */
 
 use Drupal\Core\Render\Element;
+use Drupal\file\Entity\File;
 use Drupal\Core\Link;
 
 /**
@@ -68,6 +69,24 @@ function template_preprocess_activity(array &$variables) {
           $variables['actor'] = Link::fromTextAndUrl($content, $account->toUrl());
         }
       }
+    }
+  }
+
+  // Our author is Anonymous. If that happens for a notification.
+  // Lets provide the author as a default profile image.
+  if ($variables['elements']['#view_mode'] === 'notification' && $account->isAnonymous()) {
+    $default_image = social_profile_get_default_image();
+    if (!empty($default_image['id'])) {
+      $file = File::load($default_image['id']);
+      $uri = $file->getFileUri();
+
+      $variables['actor'] = [
+        '#theme' => 'image_style',
+        '#width' => $default_image['width'],
+        '#height' => $default_image['height'],
+        '#style_name' => 'social_medium',
+        '#uri' => $uri,
+      ];
     }
   }
 
