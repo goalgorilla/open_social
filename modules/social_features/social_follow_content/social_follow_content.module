@@ -5,6 +5,8 @@
  * The Social Follow Content module.
  */
 
+use Drupal\Core\Url;
+use Drupal\Core\Link;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\flag\Entity\Flag;
 use Drupal\flag\Entity\Flagging;
@@ -87,8 +89,22 @@ function social_follow_content_comment_insert(EntityInterface $entity) {
     if (empty($service->getFlagging($flag, $entity))) {
       $service->flag($flag, $entity);
 
-      drupal_set_message(t('You are now automatically following this @type.', [
+      // Get the unfollow link for this content.
+      $url = Url::fromRoute('flag.action_link_unflag', [
+        'flag' => $flag->id(),
+        'entity_id' => $entity->id(),
+      ]);
+      // Set the real CSRF token.
+      $url->setOptions([
+        'query' => [
+          'token' => \Drupal::csrfToken()->get($url->getInternalPath()),
+        ],
+      ]);
+      $flag_link = Link::fromTextAndUrl(t('Unfollow this content'), $url)->toString();
+
+      drupal_set_message(t('You are now automatically following this @type. @unfollow_link.', [
         '@type' => $entity->getType(),
+        '@unfollow_link' => $flag_link,
       ]));
     }
   }
