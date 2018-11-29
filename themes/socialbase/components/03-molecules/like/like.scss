@@ -76,7 +76,7 @@ svg[class^="icon-vote"] {
 }
 
 // Added like
-.voted-like .icon-vote {
+.voted .icon-vote {
   fill: black;
   stroke: black;
 }
@@ -84,13 +84,13 @@ svg[class^="icon-vote"] {
 .vote-like a:active {
 
   // Voted like focus
-  &.voted-like .icon-vote {
+  &.voted .icon-vote {
     fill: black;
     stroke: black;
   }
 
   // Not voted like focus
-  &:not(.voted-like) .icon-vote {
+  &:not(.voted) .icon-vote {
     stroke: black;
     fill: transparent;
   }
@@ -109,7 +109,7 @@ svg[class^="icon-vote"] {
     }
 
     // Voted like hover
-    &.voted-like .icon-vote,
+    &.voted .icon-vote,
     &.disable-status .icon-vote {
       fill: $text-color;
       stroke: $text-color;
