@@ -116,15 +116,44 @@ function getLinkToEventFromEnrollment($object_id, $as_link = FALSE) {
   return NULL;
 }
 
+/**
+ * Get the user display name from an Enrollment also for AN.
+ *
+ * @param int $id
+ *   the Enrollment entity ID.
+ *
+ * @return array|\Drupal\Component\Render\MarkupInterface|mixed|null|string
+ *   Markup for the Username.
+ *
+ * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+ * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+ */
 function getNameFromEnrollment($id) {
   $entity_storage = \Drupal::entityTypeManager()
     ->getStorage('event_enrollment');
   /** @var \Drupal\social_event\Entity\EventEnrollment $entity */
-  $enrollment = $entity_storage->load($object_id);
+  $enrollment = $entity_storage->load($id);
 
-  // User is An.
-  if ($enrollment->getFieldValue('field_first_name', 'value') !== NULL &&
+  // User is AN by default.
+  $enrollment_name = \Drupal::configFactory()->get('user.settings')->get('anonymous');
+
+  // If there is a Uid. Lets load the user and return his display name.
+  if ($enrollment->hasField('field_account') &&
+    $enrollment->getFieldValue('field_account', 'target_id') > 0) {
+    $entity_storage = \Drupal::entityTypeManager()
+      ->getStorage('user');
+    /** @var \Drupal\user\Entity\User $user */
+    $user = $entity_storage->load($enrollment->getFieldValue('field_account', 'target_id'));
+    return $user->getDisplayName();
+  }
+
+  // User is AN but has enrollment settings available, lets see if we can get
+  // the Firstname and lastname to show up in the notification.
+  if ($enrollment !== NULL &&
+    $enrollment->hasField('field_first_name') &&
+    $enrollment->getFieldValue('field_first_name', 'value') !== NULL &&
     $enrollment->getFieldValue('field_last_name', 'value') !== NULL) {
+    // Create the Name from AN Attendees if possible.
     $enrollment_name = $enrollment->getFieldValue('field_first_name', 'value') .
       ' ' . $enrollment->getFieldValue('field_last_name', 'value');
   }
