@@ -55,17 +55,17 @@ svg[class^="icon-vote"] {
   stroke: #4d4d4d;
 }
 
-.voted-like .icon-vote {
+.voted .icon-vote {
   fill: black;
   stroke: black;
 }
 
-.vote-like a:active.voted-like .icon-vote {
+.vote-like a:active.voted .icon-vote {
   fill: black;
   stroke: black;
 }
 
-.vote-like a:active:not(.voted-like) .icon-vote {
+.vote-like a:active:not(.voted) .icon-vote {
   stroke: black;
   fill: transparent;
 }
@@ -128,7 +128,7 @@ svg[class^="icon-vote"] {
     -webkit-transition: 0.3s;
     transition: 0.3s;
   }
-  .vote-like a:hover.voted-like .icon-vote,
+  .vote-like a:hover.voted .icon-vote,
   .vote-like a:hover.disable-status .icon-vote {
     fill: #4d4d4d;
     stroke: #4d4d4d;
