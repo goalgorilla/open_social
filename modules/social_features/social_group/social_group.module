@@ -62,9 +62,9 @@ function social_group_form_group_public_group_edit_form_alter(&$form, FormStateI
   // a visibility.
   foreach ($form['group_type']['#options'] as $type => $label) {
     if (\Drupal::service('social_group.helper_service')->getDefaultGroupVisibility($type) === NULL) {
-      $form['group_type'][$type] = array(
+      $form['group_type'][$type] = [
         '#disabled' => TRUE,
-      );
+      ];
     }
   }
   $form['#group_children']['group_type'] = 'group_content';
@@ -529,9 +529,9 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
       // a visibility.
       foreach ($form['group_type']['#options'] as $type => $label) {
         if (\Drupal::service('social_group.helper_service')->getDefaultGroupVisibility($type) === NULL) {
-          $form['group_type'][$type] = array(
+          $form['group_type'][$type] = [
             '#disabled' => TRUE,
-          );
+          ];
         }
       }
 
