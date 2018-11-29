@@ -46,7 +46,23 @@ class SocialLanguageMetadataBubblingUrlGenerator extends MetadataBubblingUrlGene
       $language = $this->languageManager->getCurrentLanguage();
 
       if ($options['language']->getId() != $language->getId()) {
-        $options['language'] = $language;
+        $reset_language = TRUE;
+        $unmodified_pages = [
+          'content_translation_overview',
+        ];
+        $current_route = \Drupal::routeMatch()->getRouteName();
+        \Drupal::moduleHandler()
+          ->alter('social_language_unmodified_pages', $unmodified_pages);
+        $route_parts = explode('.', $current_route);
+        foreach ($unmodified_pages as $page) {
+          if (in_array($page, $route_parts)) {
+            $reset_language = FALSE;
+            break;
+          }
+        }
+        if ($reset_language) {
+          $options['language'] = $language;
+        }
       }
     }
 
