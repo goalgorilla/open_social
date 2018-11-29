@@ -42,11 +42,11 @@ class OrganizerActivityContext extends ActivityContextBase {
     $original_related_object = $data['related_object'][0];
     if (isset($original_related_object['target_type'])
       && $original_related_object['target_type'] === 'event_enrollment'
-      && $related_entity !== null) {
+      && $related_entity !== NULL) {
       $storage = \Drupal::entityTypeManager()->getStorage($related_entity['target_type']);
       $event = $storage->load($related_entity['target_id']);
 
-      if ($event === null) {
+      if ($event === NULL) {
         return $recipients;
       }
 

@@ -16,11 +16,11 @@
  * @param array $recipients
  *   The recipients receiving a notification.
  * @param \Drupal\node\Entity\Node $event
- *   The Event that was joined
+ *   The Event that was joined.
  *
- * @ingroup social_group_api
+ * @ingroup activity_basics_api
  */
-function hook_activity_recipient_organizer_alter(&$recipients, $event) {
+function hook_activity_recipient_organizer_alter(array &$recipients, \Drupal\node\Entity\Node $event) {
   $organizers = $event->getOwnerId();
 
   // Add the creator of the Event as a recipient.

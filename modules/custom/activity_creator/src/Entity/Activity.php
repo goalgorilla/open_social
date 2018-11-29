@@ -226,11 +226,10 @@ class Activity extends ContentEntityBase implements ActivityInterface {
           ->getStorage($target_type);
         $entity = $entity_storage->load($target_id);
 
-        if (!empty($entity)) {
+        // Lets make the Event node the target for Enrollments.
+        if ($entity !== NULL) {
           /** @var \Drupal\social_event\Entity\EventEnrollment $entity */
           $event_id = $entity->getFieldValue('field_event', 'target_id');
-
-          // Lets make the Event node the target for Enrollments.
           $target_id = $event_id;
           $target_type = 'node';
         }
@@ -239,7 +238,7 @@ class Activity extends ContentEntityBase implements ActivityInterface {
       $entity_storage = \Drupal::entityTypeManager()
         ->getStorage($target_type);
       $entity = $entity_storage->load($target_id);
-      if ($entity !== null) {
+      if ($entity !== NULL) {
         /** @var \Drupal\Core\Url $link */
         $link = $entity->urlInfo('canonical');
       }

@@ -52,9 +52,9 @@ function social_event_tokens($type, $tokens, array $data, array $options, Bubble
         case 'event_iam_organizing':
           $enrollment = $data['message']->getFieldValue('field_message_related_object', 'target_id');
           if (!empty($enrollment)) {
-            $link = getLinkToEventFromEnrollment($enrollment, false);
+            $link = get_link_to_event_from_enrollment($enrollment, FALSE);
 
-            if ($link !== null) {
+            if ($link !== NULL) {
               $replacements[$original] = $link;
             }
           }
@@ -63,9 +63,9 @@ function social_event_tokens($type, $tokens, array $data, array $options, Bubble
         case 'enrolled_event_url':
           $enrollment = $data['message']->getFieldValue('field_message_related_object', 'target_id');
           if (!empty($enrollment)) {
-            $link = getLinkToEventFromEnrollment($enrollment, true);
+            $link = get_link_to_event_from_enrollment($enrollment, TRUE);
 
-            if ($link !== null) {
+            if ($link !== NULL) {
               $replacements[$original] = $link;
             }
           }
@@ -74,7 +74,7 @@ function social_event_tokens($type, $tokens, array $data, array $options, Bubble
         case 'enrolled_user':
           $id = $data['message']->getFieldValue('field_message_related_object', 'target_id');
           if (!empty($id)) {
-            $enrollment_name = getNameFromEnrollment($id);
+            $enrollment_name = get_name_from_enrollment($id);
 
             $replacements[$original] = $enrollment_name;
           }
@@ -89,18 +89,20 @@ function social_event_tokens($type, $tokens, array $data, array $options, Bubble
 /**
  * Render a link to an event as full link with title or just absolute as string.
  *
- * @param int $event_id
+ * @param int $object_id
+ *   The ID of the event enrollment.
  * @param bool $as_link
+ *   True if you want the full link otherwise just a canonical URL string.
  *
- * @return string|NULL
+ * @return string|null
  *   the Url.
  */
-function getLinkToEventFromEnrollment($object_id, $as_link = FALSE) {
+function get_link_to_event_from_enrollment($object_id, $as_link = FALSE) {
   $entity_storage = \Drupal::entityTypeManager()
     ->getStorage('event_enrollment');
   /** @var \Drupal\social_event\Entity\EventEnrollment $entity */
   $entity = $entity_storage->load($object_id);
-  if ($entity !== null) {
+  if ($entity !== NULL) {
     $event_id = $entity->getFieldValue('field_event', 'target_id');
     $storage = \Drupal::entityTypeManager()->getStorage('node');
     /** @var \Drupal\node\Entity\Node $event */
@@ -128,7 +130,7 @@ function getLinkToEventFromEnrollment($object_id, $as_link = FALSE) {
  * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
  * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
  */
-function getNameFromEnrollment($id) {
+function get_name_from_enrollment($id) {
   $entity_storage = \Drupal::entityTypeManager()
     ->getStorage('event_enrollment');
   /** @var \Drupal\social_event\Entity\EventEnrollment $entity */

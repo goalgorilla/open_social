@@ -231,7 +231,7 @@ function social_event_managers_form_node_event_form_alter(&$form, FormStateInter
 /**
  * Implements hook_activity_recipient_organizer_alter().
  */
-function social_event_managers_activity_recipient_organizer_alter(array &$recipients, \Drupal\node\Entity\Node $event) {
+function social_event_managers_activity_recipient_organizer_alter(array &$recipients, Node $event) {
   $organizers = $event->get('field_event_managers')->getValue();
 
   // If there are more organizers we want them to receive a notification too
