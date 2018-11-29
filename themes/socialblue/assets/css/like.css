@@ -1,14 +1,14 @@
-.vote-widget a.voted-like .icon-vote {
+.vote-widget a.voted .icon-vote {
   fill: #d9534f;
   stroke: #d9534f;
 }
 
-.vote-widget a:active.voted-like .icon-vote {
+.vote-widget a:active.voted .icon-vote {
   fill: #4d4d4d;
   stroke: #4d4d4d;
 }
 
-.vote-widget a:active:not(.voted-like) .icon-vote {
+.vote-widget a:active:not(.voted) .icon-vote {
   stroke: #d9534f;
   fill: transparent;
 }
@@ -27,8 +27,8 @@
 
 .view--who-liked .views-field-view-user a:focus, .view--who-liked .views-field-view-user a.focus, .view--who-liked .views-field-view-user a:hover, .view--who-liked .views-field-view-user a:active, .view--who-liked .views-field-view-user a.active,
 .open > .view--who-liked .views-field-view-user a.dropdown-toggle {
-  background-color: transparent;
-  border-color: transparent;
+  background-color: rgba(0, 0, 0, 0);
+  border-color: rgba(0, 0, 0, 0);
   color: #29abe2;
 }
 
@@ -42,12 +42,12 @@ fieldset[disabled] .view--who-liked .views-field-view-user a.focus {
 
 @media (min-width: 600px) {
   .vote-widget a:hover:not(.disable-status) .icon-vote,
-  .vote-widget a:hover:not(.voted-like) .icon-vote {
+  .vote-widget a:hover:not(.voted) .icon-vote {
     stroke: #d9534f;
     fill: transparent;
   }
   .vote-widget a:hover.disable-status .icon-vote,
-  .vote-widget a:hover .voted-like .icon-vote {
+  .vote-widget a:hover .voted .icon-vote {
     stroke: #4d4d4d;
   }
 }
