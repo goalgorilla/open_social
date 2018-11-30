@@ -30,8 +30,8 @@ function social_event_type_form_node_event_edit_form_alter(&$form, FormStateInte
  *   Form array.
  */
 function social_event_type_widget_alter(array &$form) {
-  /** @var \Drupal\Core\Config\ConfigFactory $config */
-  $config = \Drupal::service('config.factory')->getEditable('social_event_type.settings');
+  /** @var \Drupal\Core\Config\ImmutableConfig $config */
+  $config = \Drupal::config('social_event_type.settings');
 
   // Check if the field is set to mandatory.
   if ($config->get('social_event_type_required') == TRUE) {
