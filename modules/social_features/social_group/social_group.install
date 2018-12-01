@@ -116,6 +116,7 @@ function _social_group_get_permissions($role) {
     'view node.topic.field_content_visibility:group content',
     'view node.page.field_content_visibility:group content',
     'access group overview',
+    'edit group types',
   ]);
 
   // Site manager.
@@ -486,4 +487,12 @@ function social_group_update_8302(&$sandbox) {
 
   $sandbox['progress']++;
   $sandbox['#finished'] = empty($sandbox['max']) ? 1 : ($sandbox['progress'] / $sandbox['max']);
+}
+
+/**
+ * Grant permission to edit group types to contentmanager and sitemanager.
+ */
+function social_group_update_8303() {
+  user_role_grant_permissions('contentmanager', ['edit group types']);
+  user_role_grant_permissions('sitemanager', ['edit group types']);
 }
