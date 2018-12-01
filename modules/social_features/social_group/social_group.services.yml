@@ -9,6 +9,9 @@ services:
   social_group.set_groups_for_node_service:
     class: Drupal\social_group\SetGroupsForNodeService
     arguments: ['@entity_type.manager', '@module_handler']
+  social_group.group_content_visibility_update:
+    class: Drupal\social_group\GroupContentVisibilityUpdate
+    arguments: ['@entity_type.manager', '@module_handler']
   social_group.address_format_subscriber:
     class: Drupal\social_group\EventSubscriber\AddressFormatSubscriber
     tags:
