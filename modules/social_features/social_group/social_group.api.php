@@ -23,6 +23,35 @@ function hook_social_group_types_alter(array &$social_group_types) {
 }
 
 /**
+ * Provide a method to alter the default visibility used for a group type.
+ *
+ * @param string $visibility
+ *   The visibility option that is default.
+ * @param string $group_type_id
+ *   The Group type we alter the visibility setting for.
+ *
+ * @ingroup social_group_api
+ */
+function hook_social_group_default_visibility_alter(&$visibility, $group_type_id) {
+  switch ($group_type_id) {
+    case 'custom_public_group':
+      $visibility = 'public';
+
+      break;
+
+    case 'custom_open_group':
+      $visibility = 'community';
+
+      break;
+
+    case 'custom_closed_group':
+      $visibility = 'group';
+
+      break;
+  }
+}
+
+/**
  * Provide a method to alter default group overview route.
  *
  * @param array $route
