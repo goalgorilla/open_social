@@ -87,6 +87,4 @@ projects[views_infinite_scroll][version] = 1.5
 projects[votingapi][type] = module
 projects[votingapi][version] = 3.0-beta1
 projects[bootstrap][type] = theme
-projects[bootstrap][version] = 3.11
-projects[bootstrap][patch][] = "https://www.drupal.org/files/issues/2018-04-10/2868100-9.patch"
-projects[bootstrap][patch][] = "https://www.drupal.org/files/issues/2018-05-10/2969106-4.patch"
+projects[bootstrap][version] = 3.15
