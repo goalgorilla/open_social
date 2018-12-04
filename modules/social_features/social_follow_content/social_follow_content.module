@@ -5,9 +5,10 @@
  * The Social Follow Content module.
  */
 
-use Drupal\Core\Url;
 use Drupal\Core\Link;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\Core\Url;
 use Drupal\flag\Entity\Flag;
 use Drupal\flag\Entity\Flagging;
 use Drupal\flag\FlagInterface;
@@ -59,6 +60,24 @@ function social_follow_content_event_enrollment_follow(EntityInterface $entity) 
       }
     }
   }
+}
+
+/**
+ * Implements hook_social_user_account_header_account_links().
+ *
+ * Adds the "Following" link to the user menu.
+ */
+function social_follow_content_social_user_account_header_account_links(array $context) {
+  return [
+    'my_content' => [
+      '#type' => 'link',
+      '#attributes' => [
+        'title' => new TranslatableMarkup("View content I'm following"),
+      ],
+      '#title' => new TranslatableMarkup('Following'),
+      '#weight' => 1000,
+    ] + Url::fromRoute('view.following.following')->toRenderArray(),
+  ];
 }
 
 /**

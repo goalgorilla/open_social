@@ -5,6 +5,8 @@
  * The Social book module.
  */
 
+use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
 
 /**
@@ -24,4 +26,22 @@ function social_book_menu_local_tasks_alter(&$data, $route_name) {
   if (isset($data['tabs'][0]['entity.node.book_outline_form'])) {
     unset($data['tabs'][0]['entity.node.book_outline_form']);
   }
+}
+
+/**
+ * Implements hook_social_user_account_header_create_links().
+ *
+ * Adds the "Create Book" link to the content creation menu if the user is
+ * allowed to create new books.
+ */
+function social_book_social_user_account_header_create_links($context) {
+  return [
+    'add_book' => [
+      '#type' => 'link',
+      '#attributes' => [
+        'title' => new TranslatableMarkup('Create New Book Page'),
+      ],
+      '#title' => new TranslatableMarkup('New Book Page'),
+    ] + Url::fromRoute('node.add', ['node_type' => 'book'])->toRenderArray(),
+  ];
 }

@@ -8,6 +8,8 @@
 use Drupal\block\Entity\Block;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultNeutral;
+use Drupal\Core\Ajax\AjaxResponse;
+use Drupal\Core\Ajax\HtmlCommand;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
@@ -33,9 +35,8 @@ use Drupal\user\Entity\Role;
 use Drupal\user\Entity\User;
 use Drupal\profile\Entity\Profile;
 use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\social_group\GroupContentVisibilityUpdate;
-use Drupal\Core\Ajax\HtmlCommand;
-use Drupal\Core\Ajax\AjaxResponse;
 
 /**
  * Implements hook_form_FORM_ID_alter().
@@ -1448,4 +1449,79 @@ function social_group_views_query_alter(ViewExecutable $view, QueryPluginBase $q
  */
 function social_group_user_cancel_methods_alter(&$methods) {
   $methods['user_cancel_reassign']['title'] .= ' ' . t('Reassign your groups to the super administrator.');
+}
+
+/**
+ * Implements hook_social_user_account_header_create_links().
+ *
+ * Adds the "Create Group" link to the content creation menu.
+ */
+function social_group_social_user_account_header_create_links($context) {
+  return [
+    'add_group' => [
+      '#type' => 'link',
+      '#attributes' => [
+        'title' => new TranslatableMarkup('Create New Group'),
+      ],
+      '#title' => new TranslatableMarkup('New Group'),
+      '#weight' => 500,
+    ] + Url::fromRoute('entity.group.add_page')->toRenderArray(),
+  ];
+}
+
+/**
+ * Implements hook_social_user_account_header_items().
+ *
+ * Adds the My Groups button to the account header block if it's enabled by a
+ * site manager.
+ */
+function social_group_social_user_account_header_items(array $context) {
+  if (\Drupal::config('social_user.navigation.settings')->get('display_my_groups_icon') !== 1) {
+    return [];
+  }
+
+  // We can't create a "My Groups" link without user.
+  if (empty($context['user'])) {
+    return [];
+  }
+
+  return [
+    'groups' => [
+      '#type' => 'account_header_element',
+      '#wrapper_attributes' => [
+        'class' => ['desktop'],
+      ],
+      '#title' => new TranslatableMarkup('My Groups'),
+      '#url' => Url::fromRoute('view.groups.page_user_groups', [
+        'user' => $context['user']->id(),
+      ]),
+      '#icon' => 'group',
+      '#label' => new TranslatableMarkup('My Groups'),
+    ],
+  ];
+}
+
+/**
+ * Implements hook_social_user_account_header_account_links().
+ *
+ * Adds the "View my groups" link to the user menu.
+ */
+function social_group_social_user_account_header_account_links(array $context) {
+  // We require a user for this link.
+  if (empty($context['user']) || !($context['user'] instanceof AccountInterface)) {
+    return [];
+  }
+
+  return [
+    'my_groups' => [
+      '#type' => 'link',
+      '#attributes' => [
+        'title' => new TranslatableMarkup('View my groups'),
+      ],
+      '#title' => new TranslatableMarkup('My groups'),
+      '#weight' => 800,
+    ] + Url::fromRoute('view.groups.page_user_groups', [
+      'user' => $context['user']->id(),
+    ])->toRenderArray(),
+  ];
 }
