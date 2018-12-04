@@ -75,8 +75,8 @@ class LanguageSwitcherBlock extends LanguageBlock {
         '#title' => $link['title'] . " (" . $langcode . ")",
         '#url' => $link['url'],
         '#attributes' => [
-          'class' => [($langcode === $currentLanguage->getId()) ? 'active' : null],
-        ]
+          'class' => [($langcode === $currentLanguage->getId()) ? 'active' : NULL],
+        ],
       ];
     }
 
