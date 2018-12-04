@@ -11,8 +11,8 @@ Feature: Edit group type after creation
       | test_user_1 | 1234 | test_user_1@example.com | 1      |             |
       | test_user_2 | 1234 | test_user_2@example.com | 1      | sitemanager |
     Given groups:
-      | title     | description    | author       | type         | language | alias          |
-      | Nescafe   | Coffee time!!! | test_user_2  | closed_group | en       | /nescafe-group |
+      | title     | description    | author       | type         | language |
+      | Nescafe   | Coffee time!!! | test_user_2  | closed_group | en       |
     Given "topic_types" terms:
       | name      |
       | Blog      |
@@ -22,8 +22,7 @@ Feature: Edit group type after creation
 
     # Scenario SM change Group Type with Topic Content in it.
     When I am logged in as "test_user_2"
-      And I am on "/all-topics"
-      And I click "Nescafe Topic"
+      And I am on "/nescafe-topic"
     Then I should see "Nescafe Topic"
       And I click "Edit content"
       And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text"
@@ -37,7 +36,7 @@ Feature: Edit group type after creation
     Then I should see "Access Denied"
 
     When I am logged in as "test_user_2"
-      And I am on "/nescafe-group"
+      And I am on the stream of group "Nescafe"
     Then I should see "Closed group"
       And I should see "Nescafe"
     When I click "Edit group"
