@@ -30,16 +30,29 @@ class LanguageSwitcherBlock extends LanguageBlock {
     $currentLanguage = $this->languageManager->getCurrentLanguage();
 
     // Build the menu.
-    $links = [
-      'language' => [
-        'classes' => 'dropdown',
-        'link_attributes' => 'data-toggle=dropdown aria-expanded=true aria-haspopup=true role=button',
-        'link_classes' => 'dropdown-toggle clearfix',
-        'icon_classes' => 'icon-language',
-        'label' => $currentLanguage->getName(),
-        'title' => $currentLanguage->getName() . " (" . $currentLanguage->getId() . ")",
-        'title_classes' => 'navlabel-language pull-left',
-        'url' => '#',
+    $block = [
+      '#attributes' => [
+        'class' => ['navbar-user'],
+      ],
+      'menu_items' => [
+        '#theme' => 'item_list',
+        '#list_type' => 'ul',
+        '#attributes' => [
+          'class' => ['nav', 'navbar-nav'],
+        ],
+        '#items' => [],
+      ],
+    ];
+
+    // Add `'#icon' => 'language',` to this array to replace the text
+    // with an icon.
+    $block['menu_items']['#items']['language'] = [
+      '#type' => 'account_header_element',
+      '#title' => $currentLanguage->getName() . " (" . $currentLanguage->getId() . ")",
+      '#label' => $currentLanguage->getName(),
+      '#url' => Url::fromRoute('<none>'),
+      '#wrapper_attributes' => [
+        'class' => ['dropdown'],
       ],
     ];
 
@@ -56,26 +69,18 @@ class LanguageSwitcherBlock extends LanguageBlock {
       $link['url']->setOption('language', $this->languageManager->getLanguage($langcode));
       $link['url']->setUrlGenerator($url_generator);
 
-      $links['language']['below'][$langcode] = [
-        'classes' => '',
-        'link_attributes' => '',
-        'link_classes' => ($langcode === $currentLanguage->getId()) ? 'active' : '',
-        'icon_classes' => '',
-        'icon_label' => '',
-        'label' => $link['title'] . " (" . $langcode . ")",
-        'title' => $link['title'] . " (" . $langcode . ")",
-        'title_classes' => '',
-        'url' => $link['url'],
+      $block['menu_items']['#items']['language'][$langcode] = [
+        '#type' => 'link',
+        '#label' => $link['title'] . " (" . $langcode . ")",
+        '#title' => $link['title'] . " (" . $langcode . ")",
+        '#url' => $link['url'],
+        '#attributes' => [
+          'class' => [($langcode === $currentLanguage->getId()) ? 'active' : null],
+        ]
       ];
     }
 
-    return [
-      '#theme' => 'account_header_links',
-      '#links' => $links,
-      '#cache' => [
-        'contexts' => ['user', 'url.path', 'languages'],
-      ],
-    ];
+    return $block;
   }
 
 }
