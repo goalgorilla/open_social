@@ -18,7 +18,7 @@ Feature: Search
     And I am on "search/groups"
     When I fill in the following:
       | search_input | My description |
-    And I press "Search"
+    And I press "Search" in the "Hero block" region
     And I should see the heading "Search" in the "Hero block" region
     And I should see "Behat test group title 1" in the "Main content"
     And I should see "Behat test group title 2" in the "Main content"

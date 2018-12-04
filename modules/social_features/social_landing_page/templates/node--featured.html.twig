@@ -127,14 +127,17 @@
           {% endembed %}
         </small>
 
-        <div class="card__link">
-          <a href="{{ url }}" rel="bookmark">{{ 'Read more'|t }}
-            <span class="visually-hidden">{{ 'about'|t }}{{ label }}</span>
-          </a>
-        </div>
-
       {% endblock %}
 
     </div>
+  </div>
+  <div class="card__actionbar">
+    {% block card_link %}
+    <div class="card__link">
+      <a href="{{ url }}" rel="bookmark">{{ 'Read more'|t }}
+        <span class="visually-hidden">{{ 'about'|t }}{{ label }}</span>
+      </a>
+    </div>
+    {% endblock %}
   </div>
 </div>

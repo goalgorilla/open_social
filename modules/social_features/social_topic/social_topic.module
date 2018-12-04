@@ -198,3 +198,10 @@ function social_topic_block_access(Block $block, $operation, AccountInterface $a
   // No opinion.
   return AccessResult::neutral();
 }
+
+/**
+ * Implements hook_social_follow_content_types_alter().
+ */
+function social_topic_social_follow_content_types_alter(array &$types) {
+  $types[] = 'topic';
+}
