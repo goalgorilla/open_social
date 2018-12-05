@@ -99,18 +99,6 @@ class AccountHeaderElement extends RenderElement {
       ];
     }
 
-    // We always render the label but hide it for non-screenreader users in case
-    // an image or icon is used.
-    $label_class = !empty($item['#image']) || !empty($item['#icon']) ? 'sr-only' : NULL;
-    $link_text[] = [
-      "#type" => "inline_template",
-      "#template" => "<span{{ attributes }}>{{ label }}</span>",
-      '#context' => [
-        'attributes' => new Attribute(['class' => [$label_class]]),
-        'label' => $item['#label'],
-      ],
-    ];
-
     // Allow this menu item to include a notification count.
     if ($item['#notification_count'] !== NULL) {
       $count_classes =
@@ -126,6 +114,18 @@ class AccountHeaderElement extends RenderElement {
         ],
       ];
     }
+
+    // We always render the label but hide it for non-screenreader users in case
+    // an image or icon is used.
+    $label_class = !empty($item['#image']) || !empty($item['#icon']) ? 'sr-only' : NULL;
+    $link_text[] = [
+      "#type" => "inline_template",
+      "#template" => "<span{{ attributes }}>{{ label }}</span>",
+      '#context' => [
+        'attributes' => new Attribute(['class' => [$label_class]]),
+        'label' => $item['#label'],
+      ],
+    ];
 
     $element = [
       "#type" => "unwrapped_container",
