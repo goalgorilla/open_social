@@ -1223,17 +1223,24 @@ function social_group_get_all_open_groups() {
  * Get all group memberships for a certain user.
  */
 function social_group_get_all_group_members($uid) {
-  $group_content_types = GroupContentType::loadByEntityTypeId('user');
-  $group_content_types = array_keys($group_content_types);
+  $groups = &drupal_static(__FUNCTION__);
 
-  $query = \Drupal::database()->select('group_content_field_data', 'gcfd');
-  $query->addField('gcfd', 'gid');
-  $query->condition('gcfd.entity_id', $uid);
-  $query->condition('gcfd.type', $group_content_types, 'IN');
-  $query->execute()->fetchAll();
+  // Get the memberships for the user if they aren't known yet.
+  if (!isset($groups[$uid])) {
+    $group_content_types = GroupContentType::loadByEntityTypeId('user');
+    $group_content_types = array_keys($group_content_types);
 
-  $group_ids = $query->execute()->fetchAllAssoc('gid');
-  return array_keys($group_ids);
+    $query = \Drupal::database()->select('group_content_field_data', 'gcfd');
+    $query->addField('gcfd', 'gid');
+    $query->condition('gcfd.entity_id', $uid);
+    $query->condition('gcfd.type', $group_content_types, 'IN');
+    $query->execute()->fetchAll();
+
+    $group_ids = $query->execute()->fetchAllAssoc('gid');
+    $groups[$uid] = array_keys($group_ids);
+  }
+
+  return $groups[$uid];
 }
 
 /**
