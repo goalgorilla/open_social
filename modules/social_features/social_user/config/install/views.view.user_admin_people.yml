@@ -50,7 +50,7 @@ display:
       pager:
         type: full
         options:
-          items_per_page: 5
+          items_per_page: 50
           offset: 0
           id: 0
           total_pages: 0
@@ -206,13 +206,10 @@ display:
             user_block_user_action: user_block_user_action
             user_remove_role_action: user_remove_role_action
             user_add_role_action: user_add_role_action
-            vbo_cancel_user_action: 0
+            vbo_cancel_user_action: vbo_cancel_user_action
             views_bulk_operations_delete_entity: 0
             'entity:save_action:user': 0
           preconfiguration:
-            social_core_send_email:
-              label_override: ''
-              example_preconfig_setting: ''
             social_user_export_user_action:
               label_override: ''
             user_unblock_user_action:
@@ -222,6 +219,8 @@ display:
             user_remove_role_action:
               label_override: ''
             user_add_role_action:
+              label_override: ''
+            vbo_cancel_user_action:
               label_override: ''
           plugin_id: views_bulk_operations_bulk_form
         name:
