@@ -22,7 +22,7 @@ function social_file_private_requirements($phase) {
         'title' => 'Social Private Files',
         'value' => t('Private file system path not set'),
         'severity' => REQUIREMENT_ERROR,
-        'description' => t('Your uploaded files on the Open Social entities are not fully protected because you did not set a Private File Directory. You need to set an existing local file system path for storing private files. It should be writable by Drupal and not accessible over the web. This must be changed in settings.php. More info: https://github.com/goalgorilla/drupal_social/wiki/Private-files'),
+        'description' => t('Your uploaded files on the Open Social entities are not fully protected because you did not set a Private File Directory. You need to set an existing local file system path for storing private files. It should be writable by Drupal and not accessible over the web. This must be changed in settings.php. More info: https://www.drupal.org/docs/8/distributions/open-social/private-files'),
       ];
     }
     else {
@@ -30,7 +30,7 @@ function social_file_private_requirements($phase) {
         'title' => 'Social Private Files',
         'value' => t('Private file system path is set'),
         'severity' => REQUIREMENT_OK,
-        'description' => t('Assuming your private file system path configuration is functional and no other warnings are shown: your uploaded files on the Open Social entities are fully protected. More info: https://github.com/goalgorilla/drupal_social/wiki/Private-files'),
+        'description' => t('Assuming your private file system path configuration is functional and no other warnings are shown: your uploaded files on the Open Social entities are fully protected. More info: https://www.drupal.org/docs/8/distributions/open-social/private-files'),
       ];
     }
 
@@ -60,7 +60,7 @@ function social_file_private_requirements($phase) {
         'title' => 'Social Private Files Unprotected',
         'value' => t('Private file system path not set for some fields'),
         'severity' => REQUIREMENT_ERROR,
-        'description' => t('Some files uploaded on fields are not protected against access by unauthorized users. These fields were found: :fields More info: https://github.com/goalgorilla/drupal_social/wiki/Private-files', [':fields' => implode(',', $unprotected_fields)]),
+        'description' => t('Some files uploaded on fields are not protected against access by unauthorized users. These fields were found: :fields More info: https://www.drupal.org/docs/8/distributions/open-social/private-files', [':fields' => implode(',', $unprotected_fields)]),
       ];
     }
   }
