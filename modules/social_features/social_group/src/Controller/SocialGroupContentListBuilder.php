@@ -4,11 +4,12 @@ namespace Drupal\social_group\Controller;
 
 use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Entity\EntityInterface;
-use Drupal\Core\Entity\EntityListBuilder;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Routing\RedirectDestinationInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\entity\BulkFormEntityListBuilder;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -16,7 +17,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * @ingroup group
  */
-class SocialGroupContentListBuilder extends EntityListBuilder {
+class SocialGroupContentListBuilder extends BulkFormEntityListBuilder {
 
   /**
    * The group to show the content for.
@@ -49,6 +50,8 @@ class SocialGroupContentListBuilder extends EntityListBuilder {
   /**
    * Constructs a new GroupContentListBuilder object.
    *
+   * @param \Drupal\Core\Form\FormBuilderInterface $form_builder
+   *   The form builder.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity type manager.
    * @param \Drupal\Core\Routing\RedirectDestinationInterface $redirect_destination
@@ -60,8 +63,8 @@ class SocialGroupContentListBuilder extends EntityListBuilder {
    * @param \Drupal\Core\Datetime\DateFormatterInterface $date_time
    *   The datetime formatter service.
    */
-  public function __construct(EntityTypeManagerInterface $entity_type_manager, RedirectDestinationInterface $redirect_destination, RouteMatchInterface $route_match, EntityTypeInterface $entity_type, DateFormatterInterface $date_time) {
-    parent::__construct($entity_type, $entity_type_manager->getStorage($entity_type->id()));
+  public function __construct(FormBuilderInterface $form_builder, EntityTypeManagerInterface $entity_type_manager, RedirectDestinationInterface $redirect_destination, RouteMatchInterface $route_match, EntityTypeInterface $entity_type, DateFormatterInterface $date_time) {
+    parent::__construct($entity_type, $entity_type_manager->getStorage($entity_type->id()), $entity_type_manager->getStorage('action'), $form_builder);
     $this->entityTypeManager = $entity_type_manager;
     $this->redirectDestination = $redirect_destination;
     // There should always be a group on the route for group content lists.
@@ -74,6 +77,7 @@ class SocialGroupContentListBuilder extends EntityListBuilder {
    */
   public static function createInstance(ContainerInterface $container, EntityTypeInterface $entity_type) {
     return new static(
+      $container->get('form_builder'),
       $container->get('entity_type.manager'),
       $container->get('redirect.destination'),
       $container->get('current_route_match'),
@@ -138,19 +142,19 @@ class SocialGroupContentListBuilder extends EntityListBuilder {
       if (!empty($profile)) {
         // EntityListBuilder sets the table rows using the #rows property, so we
         // need to add the render array using the 'data' key.
-        $row['member']['data'] = \Drupal::entityTypeManager()
+        $row['member'] = \Drupal::entityTypeManager()
           ->getViewBuilder('profile')
           ->view($profile, 'table');
-        $row['organization']['data'] = $profile->get('field_profile_organization')
+        $row['organization'] = $profile->get('field_profile_organization')
           ->view(['label' => 'hidden']);
-        $row['created'] = $created;
-        $row['group_role'] = $roles;
+        $row['created']['#markup'] = $created;
+        $row['group_role']['#markup'] = $roles;
       }
     }
     else {
-      $row['member'] = $entity->id();
-      $row['organization']['data'] = $entity->toLink()->toRenderable();
-      $row['created'] = $created;
+      $row['member']['#markup'] = $entity->id();
+      $row['organization'] = $entity->toLink()->toRenderable();
+      $row['created']['#markup'] = $created;
     }
     if (isset($row)) {
       return $row + parent::buildRow($entity);
@@ -162,7 +166,7 @@ class SocialGroupContentListBuilder extends EntityListBuilder {
    */
   public function render() {
     $build = parent::render();
-    $build['table']['#empty'] = $this->t('There are no members yet.');
+    $build[$this->entitiesKey]['#empty'] = $this->t('There are no members yet.');
     return $build;
   }
 

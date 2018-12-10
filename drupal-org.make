@@ -25,6 +25,7 @@ projects[embed][type] = module
 projects[embed][version] = 1.0
 projects[entity][type] = module
 projects[entity][version] = 1.0-rc1
+projects[entity][patch][] = "https://www.drupal.org/files/issues/2018-12-05/3018218-4.patch"
 projects[entity_reference_revisions][type] = module
 projects[entity_reference_revisions][version] = 1.6
 projects[exif_orientation][type] = module
