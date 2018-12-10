@@ -119,7 +119,7 @@ class SocialGroupContentListBuilder extends EntityListBuilder {
    */
   public function buildRow(EntityInterface $entity) {
     /** @var \Drupal\group\Entity\GroupInterface $entity */
-    $created = $this->dateTime->format($entity->getCreatedTime(), 'social_medium_extended_date');
+    $created = $this->dateTime->format($entity->getCreatedTime(), 'social_long_date');
 
     // Alter Group Membership table rows.
     if ($entity->getContentPlugin()->getPluginId() == 'group_membership') {
