@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\social_core\Plugin\Action;
+namespace Drupal\social_user\Plugin\Action;
 
 use Drupal\views_bulk_operations\Action\ViewsBulkOperationsActionBase;
 use Drupal\views_bulk_operations\Action\ViewsBulkOperationsPreconfigurationInterface;
@@ -19,13 +19,13 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * An example action covering most of the possible options.
  *
  * @Action(
- *   id = "social_core_send_email",
+ *   id = "social_user_send_email",
  *   label = @Translation("Send email"),
  *   type = "user",
  *   confirm = TRUE,
  * )
  */
-class ViewsBulkOperationSendEmail extends ViewsBulkOperationsActionBase implements ViewsBulkOperationsPreconfigurationInterface, PluginFormInterface {
+class SocialSendEmail extends ViewsBulkOperationsActionBase implements ViewsBulkOperationsPreconfigurationInterface, PluginFormInterface {
 
   /**
    * The token service.

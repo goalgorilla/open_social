@@ -5,6 +5,7 @@ dependencies:
     - field.storage.profile.field_profile_first_name
     - field.storage.profile.field_profile_last_name
   module:
+    - group
     - profile
     - social_user
     - user
@@ -200,8 +201,7 @@ display:
           action_title: Action
           selected_actions:
             comment_delete_action: 0
-            social_core_send_email: social_core_send_email
-            social_user_export_user_action: social_user_export_user_action
+            social_user_send_email: social_user_send_email
             user_unblock_user_action: user_unblock_user_action
             user_block_user_action: user_block_user_action
             user_remove_role_action: user_remove_role_action
@@ -210,8 +210,6 @@ display:
             views_bulk_operations_delete_entity: 0
             'entity:save_action:user': 0
           preconfiguration:
-            social_user_export_user_action:
-              label_override: ''
             user_unblock_user_action:
               label_override: ''
             user_block_user_action:
@@ -1035,6 +1033,57 @@ display:
           entity_type: user
           entity_field: created
           plugin_id: date
+        id:
+          id: id
+          table: groups_field_data
+          field: id
+          relationship: gid
+          group_type: group
+          admin_label: ''
+          operator: '='
+          value:
+            min: ''
+            max: ''
+            value: ''
+          group: 1
+          exposed: true
+          expose:
+            operator_id: id_op
+            label: Group
+            description: ''
+            use_operator: false
+            operator: id_op
+            identifier: group
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              anonymous: '0'
+              administrator: '0'
+              contentmanager: '0'
+              sitemanager: '0'
+            placeholder: ''
+            min_placeholder: ''
+            max_placeholder: ''
+          is_grouped: false
+          group_info:
+            label: ID
+            description: null
+            identifier: id
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items:
+              1: {  }
+              2: {  }
+              3: {  }
+          entity_type: group
+          entity_field: id
+          plugin_id: numeric
       sorts:
         created:
           id: created
@@ -1071,7 +1120,7 @@ display:
       use_ajax: false
       hide_attachment_summary: false
       show_admin_links: true
-      group_by: false
+      group_by: true
       link_url: ''
       link_display: page_1
       css_class: ''
@@ -1090,6 +1139,29 @@ display:
           admin_label: Profile
           required: false
           entity_type: user
+          plugin_id: standard
+        group_content:
+          id: group_content
+          table: users_field_data
+          field: group_content
+          relationship: none
+          group_type: group
+          admin_label: 'User group content'
+          required: false
+          group_content_plugins:
+            group_membership: group_membership
+          entity_type: user
+          plugin_id: group_content_to_entity_reverse
+        gid:
+          id: gid
+          table: group_content_field_data
+          field: gid
+          relationship: group_content
+          group_type: group
+          admin_label: Group
+          required: false
+          entity_type: group_content
+          entity_field: gid
           plugin_id: standard
     cache_metadata:
       contexts:
