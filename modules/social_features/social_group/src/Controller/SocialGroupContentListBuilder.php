@@ -2,6 +2,7 @@
 
 namespace Drupal\social_group\Controller;
 
+use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityListBuilder;
 use Drupal\Core\Entity\EntityTypeInterface;
@@ -39,6 +40,13 @@ class SocialGroupContentListBuilder extends EntityListBuilder {
   protected $redirectDestination;
 
   /**
+   * The DateTime formatter service.
+   *
+   * @var \Drupal\Core\Datetime\DateFormatterInterface
+   */
+  protected $dateTime;
+
+  /**
    * Constructs a new GroupContentListBuilder object.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
@@ -49,13 +57,16 @@ class SocialGroupContentListBuilder extends EntityListBuilder {
    *   The route match.
    * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
    *   The entity type definition.
+   * @param \Drupal\Core\Datetime\DateFormatterInterface $date_time
+   *   The datetime formatter service.
    */
-  public function __construct(EntityTypeManagerInterface $entity_type_manager, RedirectDestinationInterface $redirect_destination, RouteMatchInterface $route_match, EntityTypeInterface $entity_type) {
+  public function __construct(EntityTypeManagerInterface $entity_type_manager, RedirectDestinationInterface $redirect_destination, RouteMatchInterface $route_match, EntityTypeInterface $entity_type, DateFormatterInterface $date_time) {
     parent::__construct($entity_type, $entity_type_manager->getStorage($entity_type->id()));
     $this->entityTypeManager = $entity_type_manager;
     $this->redirectDestination = $redirect_destination;
     // There should always be a group on the route for group content lists.
     $this->group = $route_match->getParameters()->get('group');
+    $this->dateTime = $date_time;
   }
 
   /**
@@ -66,7 +77,8 @@ class SocialGroupContentListBuilder extends EntityListBuilder {
       $container->get('entity_type.manager'),
       $container->get('redirect.destination'),
       $container->get('current_route_match'),
-      $entity_type
+      $entity_type,
+      $container->get('date.formatter')
     );
   }
 
@@ -94,9 +106,10 @@ class SocialGroupContentListBuilder extends EntityListBuilder {
    */
   public function buildHeader() {
     $header = [
-      'member' => $this->t('Member'),
+      'member' => $this->t('Name'),
       'organization' => $this->t('Organization'),
-      'group_role' => $this->t('Role'),
+      'created' => $this->t('Joined date'),
+      'group_role' => $this->t('Roles'),
     ];
     return $header + parent::buildHeader();
   }
@@ -106,6 +119,8 @@ class SocialGroupContentListBuilder extends EntityListBuilder {
    */
   public function buildRow(EntityInterface $entity) {
     /** @var \Drupal\group\Entity\GroupInterface $entity */
+    $created = $this->dateTime->format($entity->getCreatedTime(), 'social_medium_extended_date');
+
     // Alter Group Membership table rows.
     if ($entity->getContentPlugin()->getPluginId() == 'group_membership') {
       // Prepare group roles.
@@ -128,12 +143,14 @@ class SocialGroupContentListBuilder extends EntityListBuilder {
           ->view($profile, 'table');
         $row['organization']['data'] = $profile->get('field_profile_organization')
           ->view(['label' => 'hidden']);
+        $row['created'] = $created;
         $row['group_role'] = $roles;
       }
     }
     else {
       $row['member'] = $entity->id();
       $row['organization']['data'] = $entity->toLink()->toRenderable();
+      $row['created'] = $created;
     }
     if (isset($row)) {
       return $row + parent::buildRow($entity);
