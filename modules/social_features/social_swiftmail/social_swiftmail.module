@@ -7,6 +7,7 @@
 
 use Drupal\Component\Utility\Xss;
 use Drupal\file\Entity\File;
+use Drupal\Core\Render\Markup;
 
 /**
  * Preprocess swift template.
@@ -52,6 +53,21 @@ function social_swiftmail_preprocess_swiftmailer(array &$variables) {
   else {
     $variables['site_name'] = t('Open Social');
     $variables['site_slogan'] = '"' . t('Make your people bloom') . '"';
+  }
+
+  // Add variables header and footer if set.
+  if ($social_swiftmail_config->get('template_header')['value']) {
+    // Sanitizing variables first to filter out Xss.
+    $template_header = Xss::filter($social_swiftmail_config
+      ->get('template_header')['value'], ['a', 'em', 'strong', 'u', 'br']);
+    // Create markup so it will be converted to html in the email.
+    $variables['header'] = Markup::create($template_header);
+  }
+
+  if ($social_swiftmail_config->get('template_footer')['value']) {
+    $template_footer = Xss::filter($social_swiftmail_config
+      ->get('template_footer')['value'], ['a', 'em', 'strong', 'u', 'br']);
+    $variables['footer'] = Markup::create($template_footer);
   }
 
   // Try to add a heading message.
