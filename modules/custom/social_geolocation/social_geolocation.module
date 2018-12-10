@@ -1,0 +1,500 @@
+<?php
+
+/**
+ * @file
+ * The Social Geolocation module.
+ */
+
+use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Block\BlockPluginInterface;
+use Drupal\Core\Database\Query\SelectInterface;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Link;
+use Drupal\Core\Locale\CountryManager;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\block\Entity\Block;
+use Drupal\geolocation\GeolocationCore;
+use Drupal\group\Entity\GroupInterface;
+use Drupal\group\Entity\GroupType;
+use Drupal\node\NodeInterface;
+use Drupal\profile\Entity\ProfileInterface;
+use Drupal\search_api\Query\QueryInterface;
+use Drupal\Core\Entity\FieldableEntityInterface;
+use Drupal\user\Entity\User;
+
+/**
+ * Implements hook_ENTITY_TYPE_presave().
+ */
+function social_geolocation_group_presave(GroupInterface $group) {
+  _social_geolocation_entity_presave($group, 'group');
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_presave().
+ */
+function social_geolocation_node_presave(NodeInterface $node) {
+  if ($node->getType() == 'event') {
+    _social_geolocation_entity_presave($node, 'event');
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_presave().
+ */
+function social_geolocation_profile_presave(ProfileInterface $profile) {
+  _social_geolocation_entity_presave($profile, 'profile');
+}
+
+/**
+ * Set value to geolocation field based on address input.
+ *
+ * @param \Drupal\Core\Entity\FieldableEntityInterface $entity
+ *   The entity that is being saved.
+ * @param string $type
+ *   The type of the entity being saved.
+ */
+function _social_geolocation_entity_presave(FieldableEntityInterface $entity, $type) {
+  $field_address = "field_{$type}_address";
+  $field_geolocation = "field_{$type}_geolocation";
+
+  // We require both an address field to geocode and a geolocation field to
+  // store the result in.
+  if (!$entity->hasField($field_address) || !$entity->hasField($field_geolocation)) {
+    return;
+  }
+
+  $empty_address = $entity->get($field_address)->isEmpty();
+  $empty_geolocation = $entity->get($field_geolocation)->isEmpty();
+  $is_updating = !empty($entity->original);
+
+  // If the entity has no address and no stored geolocation then there's also
+  // nothing to do. Otherwise the geolocation field needs to be updated.
+  if ($empty_address && $empty_geolocation) {
+    return;
+  }
+
+  // If the address hasn't been changed and there's already a geolocation stored
+  // then the geolocation doesn't need to be updated.
+  if (!$empty_geolocation && $is_updating &&
+    $entity->original->get($field_address)->getValue() === $entity->get($field_address)->getValue()) {
+    return;
+  }
+
+  // If we had a geolocation value but no longer have an address then we clear
+  // the geolocation value.
+  if ($empty_address && !$empty_geolocation) {
+    $entity->set($field_geolocation, NULL);
+    return;
+  }
+
+  $new_coordinates = NULL;
+
+  // Format address as a string consumable by the Google API.
+  $address = $entity->get($field_address)->first()->getValue();
+  $address = _social_geolocation_address_to_string($address);
+
+  // Convert formatted string to a set of coordinates for the geolocation field.
+  $location = _social_geolocation_geocode_address($address);
+
+  if (!empty($location)) {
+    $new_coordinates = [
+      'lat' => $location['lat'],
+      'lng' => $location['lng'],
+      'lat_sin' => sin(deg2rad($location['lat'])),
+      'lat_cos' => cos(deg2rad($location['lat'])),
+      'lng_rad' => deg2rad($location['lng']),
+    ];
+  }
+  else {
+    $contact = 'site manager';
+
+    // If the private message module is enabled then we create a link to contact
+    // the site manager by private message.
+    if (\Drupal::moduleHandler()->moduleExists('social_private_message')) {
+      $site_manager = \Drupal::config('social_geolocation.settings')->get('site_manager_contact');
+
+      // We can only link to a site manager if we have one configured and
+      // it's a valid user id.
+      if (!is_null($site_manager) && !is_null(User::load($site_manager))) {
+        $contact = Link::createFromRoute($contact, 'private_message.private_message_create', [], [
+          'query' => ['recipient' => $site_manager],
+        ])->toString();
+      }
+    }
+
+    \Drupal::messenger()->addWarning(
+      t("Unfortunately we can't locate the address you entered. Please update it or contact a @contact if you would like the event to show up in a search by location.", [
+        '@contact' => $contact,
+      ])
+    );
+  }
+
+  $entity->set($field_geolocation, $new_coordinates);
+}
+
+/**
+ * Converts an address field value to a string for the Google Maps API.
+ *
+ * Uses specific entries from an address field to create a Google Maps API
+ * compatible string. This avoids erroneous fields like langcode messing up the
+ * string.
+ *
+ * @param array $address
+ *   The address field value array.
+ *
+ * @return string
+ *   The string that can be sent to the Google Maps API.
+ */
+function _social_geolocation_address_to_string(array $address) {
+  $countries = CountryManager::getStandardList();
+
+  $country = $address['country_code'];
+
+  // If we have a valid country code we translate it to the full country name.
+  // This is needed to ensure geocoding of countries without address works.
+  if (isset($countries[$country])) {
+    $country = $countries[$country];
+  }
+
+  $formatted_address = [
+    $country,
+    str_replace($address['country_code'] . '-', '', $address['administrative_area']),
+    $address['locality'],
+    $address['dependent_locality'],
+    $address['postal_code'],
+    $address['address_line1'],
+  ];
+
+  return implode(', ', array_filter($formatted_address));
+}
+
+/**
+ * Implements hook_block_access().
+ *
+ * Hide proximity filter if Google Maps API key is not set.
+ */
+function social_geolocation_block_access(Block $block, $operation, AccountInterface $account) {
+  $proximity_forms = [
+    'views_exposed_filter_block:search_all-page',
+    'views_exposed_filter_block:search_content-page',
+    'views_exposed_filter_block:search_users-page',
+    'views_exposed_filter_block:search_groups-page',
+  ];
+
+  if ($operation == 'view' && in_array($block->getPluginId(), $proximity_forms)) {
+    $config = \Drupal::config('geolocation.settings');
+    $apikey = $config->get('google_map_api_key');
+
+    return AccessResult::forbiddenIf(empty($apikey))
+      ->addCacheableDependency($block);
+  }
+
+  return AccessResult::neutral();
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ *
+ * Enhance the Views exposed filter blocks forms.
+ */
+function social_geolocation_form_views_exposed_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  $filter_forms = [
+    'views-exposed-form-search-all-page',
+    'views-exposed-form-search-all-page-no-value',
+    'views-exposed-form-search-content-page',
+    'views-exposed-form-search-content-page-no-value',
+    'views-exposed-form-search-users-page',
+    'views-exposed-form-search-users-page-no-value',
+    'views-exposed-form-search-groups-page',
+    'views-exposed-form-search-groups-page-no-value',
+  ];
+
+  if (!in_array($form['#id'], $filter_forms)) {
+    return;
+  }
+
+  $form['actions']['reset']['#access'] = TRUE;
+
+  /** @var \Drupal\geolocation\GeocoderInterface $geocoder_plugin */
+  $geocoder_plugin = \Drupal::service('geolocation.core')->getGeocoderManager()
+    ->getGeocoder('google_geocoding_api');
+
+  if (empty($geocoder_plugin)) {
+    return;
+  }
+
+  $form['proximity'] = [
+    '#type' => 'number',
+    '#title' => t('Distance (in kilometers)'),
+    '#description' => t('Recommended range from 10 to 1000.'),
+    '#min' => 0,
+    '#max' => 10000,
+  ];
+
+  $identifier = 'proximity';
+
+  $form[$identifier . '-lat']['#type'] = 'hidden';
+  $form[$identifier . '-lng']['#type'] = 'hidden';
+
+  $geocoder_plugin->formAttachGeocoder($form, $identifier);
+
+  $form['geolocation_geocoder_google_geocoding_api']['#title'] = t('Location');
+
+  $form = array_merge_recursive($form, [
+    '#attached' => [
+      'library' => [
+        'core/drupal.ajax',
+        'geolocation/geolocation.views.filter.geocoder',
+        'social_geolocation/social_geolocation.location',
+      ],
+      'drupalSettings' => [
+        'geolocation' => [
+          'geocoder' => [
+            'viewsFilterGeocoder' => [
+              $identifier => [
+                'type' => 'proximity',
+              ],
+            ],
+          ],
+        ],
+      ],
+    ],
+  ]);
+
+  switch ($form['#id']) {
+    case 'views-exposed-form-search-users-page':
+      if (!empty($form['profile_tag'])) {
+        $form['profile_tag']['#type'] = 'checkboxes';
+      }
+
+      if (empty($form['profile_tag']['#options'])) {
+        unset($form['profile_tag']);
+      }
+      break;
+
+    case 'views-exposed-form-search-all-page':
+    case 'views-exposed-form-search-all-page-no-value':
+    case 'views-exposed-form-search-groups-page':
+    case 'views-exposed-form-search-groups-page-no-value':
+      unset($form['label']);
+      break;
+  }
+
+  $form['#validate'][] = '_social_geolocation_form_views_exposed_form_validate';
+}
+
+/**
+ * Validate function for search exposed form.
+ */
+function _social_geolocation_form_views_exposed_form_validate(&$form, FormStateInterface $form_state) {
+  // Address is a string filled into the exposed views filter.
+  $address = $form_state->getValue('geolocation_geocoder_google_geocoding_api');
+
+  if (empty($address)) {
+    return;
+  }
+
+  $args = \Drupal::request()->query;
+
+  if (empty($form_state->getValue('proximity'))) {
+    $form['proximity']['#value'] = 20;
+    $args->set('proximity', 20);
+    $form_state->setValue('proximity', 20);
+  }
+
+  $address_geocoded = _social_geolocation_geocode_address($address);
+  if (!empty($address_geocoded)) {
+    // Modify the form to alter the results.
+    $form_state->setValue('proximity-lat', $address_geocoded['lat']);
+    $form_state->setValue('proximity-lng', $address_geocoded['lng']);
+
+    // Modify the page url to fix pagination and sharing.
+    $args->set('proximity-lat', $address_geocoded['lat']);
+    $args->set('proximity-lng', $address_geocoded['lng']);
+  }
+  else {
+    $form_state->setError($form['geolocation_geocoder_google_geocoding_api'], t('Address "@address" not found.', ["@address" => $address]));
+  }
+}
+
+/**
+ * Convert address to geolocation values.
+ *
+ * @param string $address
+ *   The address that can be given to the GoogleGelocationAPI::geocode method.
+ *
+ * @return array
+ *   An array with a status field and lat/lng values if a geolocation was found.
+ */
+function _social_geolocation_geocode_address($address) {
+  // If there's no address to geocode or we have no geocoder service
+  // then there's nothing to do.
+  if (empty($address) || !\Drupal::hasService('geolocation.core')) {
+    return [];
+  }
+
+  /** @var \Drupal\geolocation\Plugin\geolocation\Geocoder\GoogleGeocodingAPI $geocoder */
+  $geocoder = \Drupal::service('geolocation.core')->getGeocoderManager()
+    ->getGeocoder('google_geocoding_api');
+
+  $result = $geocoder->geocode($address);
+
+  if (empty($result)) {
+    return [];
+  }
+
+  return [
+    'lat' => $result['location']['lat'],
+    'lng' => $result['location']['lng'],
+  ];
+}
+
+/**
+ * Implements hook_block_view_BASE_BLOCK_ID_alter().
+ *
+ * Enhance the Views exposed filter blocks.
+ */
+function social_geolocation_block_view_views_exposed_filter_block_alter(array &$build, BlockPluginInterface $block) {
+  $filter_blocks = [
+    'search_all-page',
+    'search_groups-page',
+  ];
+
+  if (in_array($build['#derivative_plugin_id'], $filter_blocks)) {
+    // Disable cache for exposed filter block to get correct current path,
+    // which is used in $form['#action'].
+    $build['#cache'] = [
+      'max-age' => 0,
+    ];
+  }
+}
+
+/**
+ * Implements hook_search_api_db_query_alter().
+ */
+function social_geolocation_search_api_db_query_alter(SelectInterface &$db_query, QueryInterface $query) {
+  $tables = $db_query->getTables();
+  $index = $query->getIndex()->id();
+  $table = 'search_api_db_' . $index;
+
+  if (count($tables) == 1) {
+    $aliases = array_keys($tables);
+    $alias = reset($aliases);
+  }
+  else {
+    $found = FALSE;
+
+    foreach ($tables as $alias => $data) {
+      if ($data['table'] == $table) {
+        $found = TRUE;
+        break;
+      }
+    }
+
+    if (!$found) {
+      return;
+    }
+  }
+
+  $indexes = ['social_all', 'social_groups'];
+
+  if (\Drupal::currentUser()->isAnonymous() && in_array($index, $indexes)) {
+    $group_types = GroupType::loadMultiple();
+    $group_type_ids = [];
+
+    /** @var \Drupal\group\Entity\GroupTypeInterface $group_type */
+    foreach ($group_types as $group_type_id => $group_type) {
+      if ($group_type->getAnonymousRole()->hasPermission('view group')) {
+        $group_type_ids[] = $group_type_id;
+      }
+    }
+
+    if ($index == 'social_all') {
+      $source_field = $alias . '.search_api_datasource';
+      $entity_type = 'entity:group';
+
+      if (!empty($group_type_ids)) {
+        $and = $db_query->andConditionGroup()
+          ->condition($source_field, $entity_type)
+          ->condition("$alias.group_type", $group_type_ids, 'IN');
+
+        $or = $db_query->orConditionGroup()
+          ->condition($source_field, $entity_type, '<>')
+          ->condition($and);
+
+        $db_query->condition($or);
+      }
+      else {
+        $db_query->condition($source_field, $entity_type, '<>');
+      }
+    }
+    else {
+      if (!empty($group_type_ids)) {
+        foreach ($group_type_ids as &$group_type_id) {
+          $group_type_id = str_replace('_', '', $group_type_id);
+        }
+
+        $db_query->condition("$alias.type", $group_type_ids, 'IN');
+      }
+      else {
+        return;
+      }
+    }
+  }
+
+  if (empty($args = \Drupal::request()->query->all())) {
+    return;
+  }
+
+  foreach (['proximity', 'proximity-lat', 'proximity-lng'] as $key) {
+    if (empty($args[$key])) {
+      return;
+    }
+  }
+
+  if (count($tables) == 1 && !is_string($tables[$alias]['table'])) {
+    $new_alias = $alias . '_base';
+    $db_query->join($table, $new_alias, "$alias.item_id = $new_alias.item_id");
+    $alias = $new_alias;
+  }
+
+  $snippet = '';
+
+  $entity_types = [
+    'social_content' => 'node',
+    'social_groups' => 'group',
+    'social_users' => 'profile',
+  ];
+
+  if ($index == 'social_all') {
+    $entity_types = array_values($entity_types);
+  }
+  else {
+    $entity_types = [$entity_types[$index]];
+  }
+
+  foreach ($entity_types as $id => $entity_type) {
+    if ($id) {
+      $snippet .= ') OR (';
+    }
+
+    $snippet .= "( $alias.search_api_datasource = 'entity:$entity_type' ) AND (
+      ( ACOS(LEAST(1,
+        :filter_latcos
+        * $alias.{$entity_type}_lat_cos
+        * COS( :filter_lng - $alias.{$entity_type}_lng_rad  )
+        +
+        :filter_latsin
+        * $alias.{$entity_type}_lat_sin
+      )) * :earth_radius
+    ) < :proximity )";
+  }
+
+  $db_query->where("(( $snippet ))", [
+    ':filter_latcos' => cos(deg2rad($args['proximity-lat'])),
+    ':filter_lng' => deg2rad($args['proximity-lng']),
+    ':filter_latsin' => sin(deg2rad($args['proximity-lat'])),
+    ':earth_radius' => GeolocationCore::EARTH_RADIUS_KM,
+    ':proximity' => $args['proximity'],
+  ]);
+}

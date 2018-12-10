@@ -1,0 +1,70 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the social_geolocation module.
+ */
+
+use Drupal\Core\Link;
+use Drupal\search_api\Entity\Index;
+
+/**
+ * Implements hook_install().
+ */
+function social_geolocation_install() {
+  $geolocation_settings_link = Link::createFromRoute(t('enter a Google Maps API key'), 'geolocation.settings')->toString();
+  \Drupal::messenger()->addWarning(t(
+    'To use the client side parts of the geolocation feature you must @enter_key.',
+    ['@enter_key' => $geolocation_settings_link]
+  ));
+
+  $sandbox = [];
+
+  do {
+    social_geolocation_update_8001($sandbox);
+  } while (!(!isset($sandbox['#finished']) || $sandbox['#finished'] === 1));
+}
+
+/**
+ * Reindex content.
+ */
+function social_geolocation_update_8001(&$sandbox) {
+  if (!isset($sandbox['limit'])) {
+    $sandbox['indexes'] = [
+      'social_all',
+      'social_content',
+      'social_groups',
+      'social_users',
+    ];
+
+    $sandbox['current'] = 0;
+    $sandbox['first'] = TRUE;
+  }
+
+  $index = Index::load($sandbox['indexes'][$sandbox['current']]);
+  $tracker = $index->getTrackerInstance();
+
+  if ($sandbox['first']) {
+    if (!($sandbox['total'] = $tracker->getTotalItemsCount())) {
+      return;
+    }
+
+    $index->clear();
+
+    $sandbox['limit'] = $sandbox['total'] > 50 ? 50 : $sandbox['total'];
+    $sandbox['first'] = FALSE;
+  }
+
+  $index->indexItems($sandbox['limit']);
+
+  $item_progress = $tracker->getIndexedItemsCount() / $sandbox['total'];
+
+  if ($item_progress === 1) {
+    $sandbox['current']++;
+    $sandbox['first'] = TRUE;
+  }
+
+  $index_progress = $sandbox['current'] / count($sandbox['indexes']);
+
+  $sandbox['#finished'] = $item_progress * $index_progress;
+}

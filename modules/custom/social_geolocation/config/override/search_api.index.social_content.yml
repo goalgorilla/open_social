@@ -1,0 +1,28 @@
+dependencies:
+  config:
+    - field.storage.node.field_event_geolocation
+field_settings:
+  node_lat_cos:
+    label: 'Geolocation » Latitude cosine'
+    datasource_id: 'entity:node'
+    property_path: 'field_event_geolocation:lat_cos'
+    type: decimal
+    dependencies:
+      config:
+        - field.storage.node.field_event_geolocation
+  node_lat_sin:
+    label: 'Geolocation » Latitude sine'
+    datasource_id: 'entity:node'
+    property_path: 'field_event_geolocation:lat_sin'
+    type: decimal
+    dependencies:
+      config:
+        - field.storage.node.field_event_geolocation
+  node_lng_rad:
+    label: 'Geolocation » Longitude radian'
+    datasource_id: 'entity:node'
+    property_path: 'field_event_geolocation:lng_rad'
+    type: decimal
+    dependencies:
+      config:
+        - field.storage.node.field_event_geolocation
