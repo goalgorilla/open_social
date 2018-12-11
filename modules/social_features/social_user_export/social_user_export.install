@@ -1,0 +1,18 @@
+<?php
+
+/**
+ * @file
+ * Install and update hooks for the social_user_export module.
+ */
+
+/**
+ * Install views_bulk_operations module.
+ */
+function social_user_export_update_8001() {
+
+  $modules = [
+    'views_bulk_operations',
+  ];
+  \Drupal::service('module_installer')->install($modules);
+
+}
