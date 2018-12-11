@@ -1,0 +1,19 @@
+<?php
+
+namespace Drupal\social_group\Plugin\Action;
+
+use Drupal\views_bulk_operations\Plugin\Action\EntityDeleteAction;
+
+/**
+ * Delete group content entity action without default confirmation form.
+ *
+ * @Action(
+ *   id = "views_bulk_operations_delete_group_content_entity",
+ *   label = @Translation("Delete selected group content entities"),
+ *   type = "group_content",
+ *   confirm = FALSE,
+ * )
+ */
+class GroupContentEntityDeleteAction extends EntityDeleteAction {
+
+}

@@ -12,6 +12,7 @@ dependencies:
     - group
     - profile
     - user
+    - views_bulk_operations
 id: group_manage_members
 label: 'Group Manage Members'
 module: views
@@ -78,6 +79,69 @@ display:
       row:
         type: fields
       fields:
+        views_bulk_operations_bulk_form:
+          id: views_bulk_operations_bulk_form
+          table: views
+          field: views_bulk_operations_bulk_form
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: ''
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          batch: true
+          batch_size: 10
+          form_step: true
+          buttons: true
+          clear_on_exposed: 0
+          action_title: Action
+          selected_actions:
+            comment_delete_action: 0
+            views_bulk_operations_delete_entity: 0
+            views_bulk_operations_delete_group_content_entity: views_bulk_operations_delete_group_content_entity
+            'entity:save_action:group_content': 0
+          preconfiguration:
+            views_bulk_operations_delete_group_content_entity:
+              label_override: 'Remove selected members'
+          plugin_id: views_bulk_operations_bulk_form
         rendered_entity:
           id: rendered_entity
           table: profile
@@ -511,7 +575,7 @@ display:
           plugin_id: group_id
       display_extenders: {  }
     cache_metadata:
-      max-age: -1
+      max-age: 0
       contexts:
         - group_membership.roles.permissions
         - 'languages:language_content'
@@ -542,7 +606,7 @@ display:
       display_extenders: {  }
       path: group/%group/membership
     cache_metadata:
-      max-age: -1
+      max-age: 0
       contexts:
         - group_membership.roles.permissions
         - 'languages:language_content'
