@@ -3,6 +3,7 @@
 namespace Drupal\social_group\Access;
 
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Routing\Access\AccessInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountInterface;
@@ -15,6 +16,23 @@ use Symfony\Component\Routing\Route;
  * $module.group_permissions.yml files.
  */
 class SocialGroupPermissionAccessCheck implements AccessInterface {
+
+  /**
+   * The entity type manager.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  protected $entityTypeManager;
+
+  /**
+   * SocialGroupPermissionAccessCheck constructor.
+   *
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
+   */
+  public function __construct(EntityTypeManagerInterface $entity_type_manager) {
+    $this->entityTypeManager = $entity_type_manager;
+  }
 
   /**
    * Checks access.
@@ -48,8 +66,7 @@ class SocialGroupPermissionAccessCheck implements AccessInterface {
 
     if (!$group instanceof GroupInterface) {
       if (is_numeric($group)) {
-        $group = \Drupal::entityTypeManager()->getStorage('group')
-          ->load($group);
+        $group = $this->entityTypeManager->getStorage('group')->load($group);
 
         if (!$group instanceof GroupInterface) {
           return AccessResult::neutral();
