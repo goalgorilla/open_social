@@ -3,6 +3,7 @@
 namespace Drupal\social_user_export\Plugin\Action;
 
 use Drupal\Core\Messenger\MessengerTrait;
+use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\views_bulk_operations\Action\ViewsBulkOperationsActionBase;
 use Drupal\Core\Session\AccountInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -25,7 +26,7 @@ use Drupal\social_user_export\Plugin\UserExportPluginManager;
  *   confirm = TRUE
  * )
  */
-class ExportUser extends ViewsBulkOperationsActionBase implements PluginFormInterface {
+class ExportUser extends ViewsBulkOperationsActionBase implements ContainerFactoryPluginInterface, PluginFormInterface {
   use MessengerTrait;
 
   /**
