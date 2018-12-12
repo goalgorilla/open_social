@@ -59,6 +59,12 @@ class RouteSubscriber extends RouteSubscriberBase {
       $requirements['_custom_access'] = "\Drupal\social_group\Controller\SocialGroupController::myGroupAccess";
       $route->setRequirements($requirements);
     }
+
+    if ($route = $collection->get('views_bulk_operations.execute_configurable')) {
+      $route->setRequirements([
+        '_permission' => 'administer group',
+      ]);
+    }
   }
 
 }
