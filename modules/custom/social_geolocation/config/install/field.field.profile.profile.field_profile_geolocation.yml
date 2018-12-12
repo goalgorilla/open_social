@@ -5,7 +5,27 @@ dependencies:
     - field.storage.profile.field_profile_geolocation
     - profile.type.profile
   module:
+    - geocoder
+    - geocoder_field
     - geolocation
+    - social_profile
+third_party_settings:
+  geocoder_field:
+    method: source
+    weight: 0
+    geocode_field: field_profile_address
+    reverse_geocode_field: ''
+    hidden: true
+    disabled: false
+    plugins:
+    - googlemaps
+    - openstreetmap
+    dumper: geolocation
+    delta_handling: s_to_m
+    failure:
+      handling: preserve
+      status_message: true
+      log: true
 id: profile.profile.field_profile_geolocation
 field_name: field_profile_geolocation
 entity_type: profile

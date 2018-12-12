@@ -5,7 +5,27 @@ dependencies:
     - field.storage.group.field_group_geolocation
     - group.type.open_group
   module:
+    - geocoder
+    - geocoder_field
     - geolocation
+    - social_group
+third_party_settings:
+  geocoder_field:
+    method: source
+    weight: 0
+    geocode_field: field_group_address
+    reverse_geocode_field: ''
+    hidden: true
+    disabled: false
+    plugins:
+    - googlemaps
+    - openstreetmap
+    dumper: geolocation
+    delta_handling: s_to_m
+    failure:
+      handling: preserve
+      status_message: true
+      log: true
 id: group.open_group.field_group_geolocation
 field_name: field_group_geolocation
 entity_type: group

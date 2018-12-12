@@ -5,7 +5,27 @@ dependencies:
     - field.storage.node.field_event_geolocation
     - node.type.event
   module:
+    - geocoder
+    - geocoder_field
     - geolocation
+    - social_event
+third_party_settings:
+  geocoder_field:
+    method: source
+    weight: 0
+    geocode_field: field_event_address
+    reverse_geocode_field: ''
+    hidden: true
+    disabled: false
+    plugins:
+    - googlemaps
+    - openstreetmap
+    dumper: geolocation
+    delta_handling: s_to_m
+    failure:
+      handling: preserve
+      status_message: true
+      log: true
 id: node.event.field_event_geolocation
 field_name: field_event_geolocation
 entity_type: node

@@ -9,128 +9,12 @@ use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Block\BlockPluginInterface;
 use Drupal\Core\Database\Query\SelectInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Link;
 use Drupal\Core\Locale\CountryManager;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\block\Entity\Block;
 use Drupal\geolocation\GeolocationCore;
-use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupType;
-use Drupal\node\NodeInterface;
-use Drupal\profile\Entity\ProfileInterface;
 use Drupal\search_api\Query\QueryInterface;
-use Drupal\Core\Entity\FieldableEntityInterface;
-use Drupal\user\Entity\User;
-
-/**
- * Implements hook_ENTITY_TYPE_presave().
- */
-function social_geolocation_group_presave(GroupInterface $group) {
-  _social_geolocation_entity_presave($group, 'group');
-}
-
-/**
- * Implements hook_ENTITY_TYPE_presave().
- */
-function social_geolocation_node_presave(NodeInterface $node) {
-  if ($node->getType() == 'event') {
-    _social_geolocation_entity_presave($node, 'event');
-  }
-}
-
-/**
- * Implements hook_ENTITY_TYPE_presave().
- */
-function social_geolocation_profile_presave(ProfileInterface $profile) {
-  _social_geolocation_entity_presave($profile, 'profile');
-}
-
-/**
- * Set value to geolocation field based on address input.
- *
- * @param \Drupal\Core\Entity\FieldableEntityInterface $entity
- *   The entity that is being saved.
- * @param string $type
- *   The type of the entity being saved.
- */
-function _social_geolocation_entity_presave(FieldableEntityInterface $entity, $type) {
-  $field_address = "field_{$type}_address";
-  $field_geolocation = "field_{$type}_geolocation";
-
-  // We require both an address field to geocode and a geolocation field to
-  // store the result in.
-  if (!$entity->hasField($field_address) || !$entity->hasField($field_geolocation)) {
-    return;
-  }
-
-  $empty_address = $entity->get($field_address)->isEmpty();
-  $empty_geolocation = $entity->get($field_geolocation)->isEmpty();
-  $is_updating = !empty($entity->original);
-
-  // If the entity has no address and no stored geolocation then there's also
-  // nothing to do. Otherwise the geolocation field needs to be updated.
-  if ($empty_address && $empty_geolocation) {
-    return;
-  }
-
-  // If the address hasn't been changed and there's already a geolocation stored
-  // then the geolocation doesn't need to be updated.
-  if (!$empty_geolocation && $is_updating &&
-    $entity->original->get($field_address)->getValue() === $entity->get($field_address)->getValue()) {
-    return;
-  }
-
-  // If we had a geolocation value but no longer have an address then we clear
-  // the geolocation value.
-  if ($empty_address && !$empty_geolocation) {
-    $entity->set($field_geolocation, NULL);
-    return;
-  }
-
-  $new_coordinates = NULL;
-
-  // Format address as a string consumable by the Google API.
-  $address = $entity->get($field_address)->first()->getValue();
-  $address = _social_geolocation_address_to_string($address);
-
-  // Convert formatted string to a set of coordinates for the geolocation field.
-  $location = _social_geolocation_geocode_address($address);
-
-  if (!empty($location)) {
-    $new_coordinates = [
-      'lat' => $location['lat'],
-      'lng' => $location['lng'],
-      'lat_sin' => sin(deg2rad($location['lat'])),
-      'lat_cos' => cos(deg2rad($location['lat'])),
-      'lng_rad' => deg2rad($location['lng']),
-    ];
-  }
-  else {
-    $contact = 'site manager';
-
-    // If the private message module is enabled then we create a link to contact
-    // the site manager by private message.
-    if (\Drupal::moduleHandler()->moduleExists('social_private_message')) {
-      $site_manager = \Drupal::config('social_geolocation.settings')->get('site_manager_contact');
-
-      // We can only link to a site manager if we have one configured and
-      // it's a valid user id.
-      if (!is_null($site_manager) && !is_null(User::load($site_manager))) {
-        $contact = Link::createFromRoute($contact, 'private_message.private_message_create', [], [
-          'query' => ['recipient' => $site_manager],
-        ])->toString();
-      }
-    }
-
-    \Drupal::messenger()->addWarning(
-      t("Unfortunately we can't locate the address you entered. Please update it or contact a @contact if you would like the event to show up in a search by location.", [
-        '@contact' => $contact,
-      ])
-    );
-  }
-
-  $entity->set($field_geolocation, $new_coordinates);
-}
 
 /**
  * Converts an address field value to a string for the Google Maps API.
