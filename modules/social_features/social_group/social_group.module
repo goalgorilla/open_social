@@ -1563,7 +1563,12 @@ function social_group_form_views_form_group_manage_members_page_group_manage_mem
  *   Form state interface.
  */
 function _social_group_vbo_submit(array $form, FormStateInterface $form_state) {
-  if ($form_state->getValue('action') !== 'social_group_send_email') {
+  $actions = [
+    'social_group_send_email',
+    'social_change_group_membership_role',
+  ];
+
+  if (!in_array($form_state->getValue('action'), $actions)) {
     return;
   }
 
