@@ -12,12 +12,6 @@ use Drupal\search_api\Entity\Index;
  * Implements hook_install().
  */
 function social_geolocation_install() {
-  $geolocation_settings_link = Link::createFromRoute(t('enter a Google Maps API key'), 'geolocation.settings')->toString();
-  \Drupal::messenger()->addWarning(t(
-    'To use the client side parts of the geolocation feature you must @enter_key.',
-    ['@enter_key' => $geolocation_settings_link]
-  ));
-
   $sandbox = [];
 
   do {
