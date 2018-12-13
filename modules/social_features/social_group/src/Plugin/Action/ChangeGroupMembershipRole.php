@@ -83,6 +83,36 @@ class ChangeGroupMembershipRole extends ViewsBulkOperationsActionBase implements
    * {@inheritdoc}
    */
   public function execute($entity = NULL) {
+    $role = $this->configuration['role'];
+    $is_member = $this->configuration['is_member'];
+    $update = TRUE;
+    $value = [];
+
+    /** @var \Drupal\group\Entity\GroupContentInterface $entity */
+    /** @var \Drupal\Core\Field\EntityReferenceFieldItemListInterface $roles */
+    $roles = &$entity->get('group_roles');
+
+    if ($roles->isEmpty() && $is_member) {
+      $update = FALSE;
+    }
+    elseif (!$roles->isEmpty() && !$is_member) {
+      $value = $roles->getValue();
+
+      foreach ($value as $item) {
+        if ($item['target_id'] === $role) {
+          $update = FALSE;
+          break;
+        }
+      }
+    }
+
+    if ($update) {
+      if (!$is_member) {
+        $value[] = ['target_id' => $role];
+      }
+
+      $entity->set('group_roles', $value)->save();
+    }
   }
 
   /**
@@ -114,12 +144,14 @@ class ChangeGroupMembershipRole extends ViewsBulkOperationsActionBase implements
     $id = $group_type->getMemberRoleId();
     $roles[$id] = $group_type->getMemberRole();
 
+    $form_state->set('member_role', $id);
+
     /** @var \Drupal\group\Entity\GroupRoleInterface $role */
     foreach ($roles as &$role) {
       $role = $role->label();
     }
 
-    $form['roles'] = [
+    $form['role'] = [
       '#type' => 'radios',
       '#title' => $this->t('Group roles'),
       '#options' => $roles,
@@ -131,6 +163,15 @@ class ChangeGroupMembershipRole extends ViewsBulkOperationsActionBase implements
     $form['actions']['submit']['#value'] = $this->t('Save');
 
     return $form;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function submitConfigurationForm(array &$form, FormStateInterface $form_state) {
+    parent::submitConfigurationForm($form, $form_state);
+
+    $this->configuration['is_member'] = $this->configuration['role'] === $form_state->get('member_role');
   }
 
 }
