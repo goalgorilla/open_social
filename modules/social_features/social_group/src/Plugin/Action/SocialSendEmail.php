@@ -20,7 +20,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * Send email to group members.
  *
  * @Action(
- *   id = "social_group_send_email",
+ *   id = "social_group_send_email_action",
  *   label = @Translation("Send email to group members"),
  *   type = "group_content",
  *   confirm = FALSE,

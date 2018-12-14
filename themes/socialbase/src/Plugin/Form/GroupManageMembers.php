@@ -26,10 +26,10 @@ class GroupManageMembers extends FormBase {
     $items = [];
 
     $weights = [
-      'social_group_send_email' => 10,
+      'social_group_send_email_action' => 10,
       'social_group_members_export_member_action' => 20,
-      'views_bulk_operations_delete_group_content_entity' => 30,
-      'social_change_group_membership_role' => 40,
+      'social_group_delete_group_content_action' => 30,
+      'social_group_change_member_role_action' => 40,
     ];
 
     foreach ($actions->childKeys() as $key) {

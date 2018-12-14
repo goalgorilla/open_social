@@ -17,7 +17,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * Change group membership role.
  *
  * @Action(
- *   id = "social_change_group_membership_role",
+ *   id = "social_group_change_member_role_action",
  *   label = @Translation("Change group membership role"),
  *   type = "group_content",
  *   confirm = FALSE,
