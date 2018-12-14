@@ -33,9 +33,9 @@ function activity_logger_help($route_name, RouteMatchInterface $route_match) {
  *   Entity content data.
  */
 function _activity_logger_get_content_entities() {
-  $entitity_type_manager = \Drupal::service('entity_type.manager');
+  $entity_type_manager = \Drupal::service('entity_type.manager');
   $options = [];
-  foreach ($entitity_type_manager->getDefinitions() as $entity_id => $entity_type) {
+  foreach ($entity_type_manager->getDefinitions() as $entity_id => $entity_type) {
     if ($entity_type instanceof ContentEntityTypeInterface
       && $entity_id !== 'activity'
       && $entity_id !== 'message'
@@ -55,7 +55,7 @@ function _activity_logger_get_content_entities() {
  * Implements hook_form_FORM_ID_alter() for message_template_form().
  */
 function activity_logger_form_message_template_form_alter(&$form, FormStateInterface $form_state) {
-  /** @var \Drupal\contact\ContactFormInterface $contact_form */
+  /** @var \Drupal\message\MessageTemplateInterface $message_template */
   $message_template = $form_state->getFormObject()->getEntity();
 
   $wrapper_id = 'edit-activity-entity-condition-ajax-wrapper';

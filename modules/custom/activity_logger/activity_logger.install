@@ -1,0 +1,17 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall hooks for this module.
+ */
+
+/**
+ * Update message template settings based on configuration schema metadata.
+ */
+function activity_logger_update_8401() {
+  /** @var \Drupal\message\MessageTemplateInterface[] $message_templates */
+  $message_templates = \Drupal::entityTypeManager()->getStorage('message_template')->loadMultiple();
+  foreach ($message_templates as $message_template) {
+    $message_template->save();
+  }
+}
