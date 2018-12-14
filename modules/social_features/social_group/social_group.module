@@ -1590,33 +1590,4 @@ function social_group_form_views_form_group_manage_members_page_group_manage_mem
   $actions['#items'] = $items;
 
   $form['actions']['#access'] = FALSE;
-
-  $form['#submit'][] = '_social_group_vbo_submit';
-}
-
-/**
- * Form submit for manage members actions.
- *
- * @param array $form
- *   VBO form.
- * @param \Drupal\Core\Form\FormStateInterface $form_state
- *   Form state interface.
- */
-function _social_group_vbo_submit(array $form, FormStateInterface $form_state) {
-  /** @var \Drupal\views_bulk_operations\Service\ViewsBulkOperationsActionManager $service */
-  $service = \Drupal::service('plugin.manager.views_bulk_operations_action');
-
-  $action = $service->getDefinition($form_state->getValue('action'));
-
-  if (!in_array('Drupal\Core\Plugin\PluginFormInterface', class_implements($action['class']), TRUE) && !method_exists($action['class'], 'buildConfigurationForm')) {
-    return;
-  }
-
-  /** @var \Drupal\Core\Url $url */
-  $url = $form_state->getRedirect();
-
-  $group = \Drupal::routeMatch()->getRawParameter('group');
-  $parameters = ['group' => $group] + $url->getRouteParameters();
-
-  $form_state->setRedirect('social_group.views_bulk_operations.execute_configurable', $parameters, $url->getOptions());
 }

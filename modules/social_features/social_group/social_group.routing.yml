@@ -14,11 +14,3 @@ social_group.stream:
     _entity_view: 'group.stream'
   requirements:
     _group_permission: 'view group stream page'
-
-social_group.views_bulk_operations.execute_configurable:
-  path: '/group/{group}/membership/action/{view_id}/{display_id}'
-  defaults:
-    _form: '\Drupal\views_bulk_operations\Form\ConfigureAction'
-    _title: 'Views Bulk Operations configure step'
-  requirements:
-    _social_group_permission: 'administer members'

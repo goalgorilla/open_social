@@ -1,9 +1,4 @@
 services:
-  social_group.access_check.group.permission:
-    class: 'Drupal\social_group\Access\SocialGroupPermissionAccessCheck'
-    arguments: ['@entity_type.manager']
-    tags:
-      - { name: 'access_check', applies_to: '_social_group_permission' }
   social_group.route_subscriber:
     class: Drupal\social_group\Routing\RouteSubscriber
     tags:
