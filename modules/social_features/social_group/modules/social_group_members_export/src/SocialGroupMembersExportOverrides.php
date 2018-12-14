@@ -31,7 +31,7 @@ class SocialGroupMembersExportOverrides implements ConfigFactoryOverrideInterfac
                   ],
                   'preconfiguration' => [
                     'social_group_members_export_member_action' => [
-                      'label_override' => 'Export selected members',
+                      'label_override' => 'Export',
                     ],
                   ],
                 ],

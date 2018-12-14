@@ -34,7 +34,19 @@ class GroupManageMembers extends FormBase {
 
     foreach ($actions->childKeys() as $key) {
       if (isset($weights[$key])) {
-        $actions->{$key}->setProperty('weight', $weights[$key]);
+        $action = &$actions->{$key};
+        $action->setProperty('weight', $weights[$key]);
+
+        if ($key === 'social_group_change_member_role_action') {
+          $action->setProperty('value', $this->t('%action of selected members', [
+            '%action' => $action->getProperty('value'),
+          ]));
+        }
+        else {
+          $action->setProperty('value', $this->t('%action selected members', [
+            '%action' => $action->getProperty('value'),
+          ]));
+        }
       }
     }
 
