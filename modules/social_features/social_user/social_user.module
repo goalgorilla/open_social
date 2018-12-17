@@ -129,10 +129,6 @@ function _social_user_get_groups() {
  * Validate function for the admin people overview exposed filters.
  */
 function social_user_admin_people_overview_validate(&$form, FormStateInterface $form_state) {
-
-  // Fetch input.
-  $input = $form_state->getValues();
-
   $filters = [
     'created',
     'login',
@@ -140,8 +136,6 @@ function social_user_admin_people_overview_validate(&$form, FormStateInterface $
   foreach ($filters as $filter) {
     $form_state->setValue($filter . '_op', $form_state->getValue([$filter, $filter . '_op']));
   }
-
-
 }
 
 /**
