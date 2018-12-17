@@ -504,7 +504,17 @@ display:
           entity_field: created
           plugin_id: date
       title: 'Group Manage Members'
-      header: {  }
+      header:
+        result:
+          id: result
+          table: views
+          field: result
+          relationship: none
+          group_type: group
+          admin_label: ''
+          empty: false
+          content: '@total members'
+          plugin_id: result
       footer: {  }
       empty:
         area:
