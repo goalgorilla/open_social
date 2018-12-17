@@ -54,6 +54,38 @@ class SocialGroupViewsBulkOperationsBulkForm extends GroupViewsBulkOperationsBul
   /**
    * {@inheritdoc}
    */
+  public function viewsForm(array &$form, FormStateInterface $form_state) {
+    parent::viewsForm($form, $form_state);
+    $wrapper = &$form['header'][$this->options['id']];
+
+    if (isset($wrapper['multipage'])) {
+      $form['#attached']['library'][] = 'social_group/views_bulk_operations.frontUi';
+
+      $count = count($this->tempStoreData['list']);
+
+      if ($count) {
+        $title = $this->formatPlural($count, '<b>@count Member</b> is selected', '<b>@count Members</b> are selected');
+      }
+      else {
+        $title = $this->t('<b>@count Member</b> is selected', [
+          '@count' => $count,
+        ]);
+      }
+
+      $wrapper['multipage']['#title'] = [
+        '#type' => 'html_tag',
+        '#tag' => 'div',
+        '#attributes' => [
+          'class' => ['placeholder'],
+        ],
+        '#value' => $title,
+      ];
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function viewsFormValidate(&$form, FormStateInterface $form_state) {
     if ($this->view->id() === 'group_manage_members' && $this->options['buttons']) {
       $user_input = $form_state->getUserInput();
