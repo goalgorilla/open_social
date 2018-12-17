@@ -4,6 +4,7 @@ namespace Drupal\social_group\Plugin\views\field;
 
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element;
+use Drupal\Core\Url;
 use Drupal\group\Plugin\views\field\GroupViewsBulkOperationsBulkForm;
 
 /**
@@ -134,6 +135,28 @@ class SocialGroupViewsBulkOperationsBulkForm extends GroupViewsBulkOperationsBul
     }
 
     parent::viewsFormValidate($form, $form_state);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function viewsFormSubmit(array &$form, FormStateInterface $form_state) {
+    parent::viewsFormSubmit($form, $form_state);
+
+    if ($form_state->get('step') === 'views_form_views_form' && $this->view->id() === 'group_manage_members') {
+      /** @var \Drupal\Core\Url $url */
+      $url = $form_state->getRedirect();
+
+      if ($url->getRouteName() === 'views_bulk_operations.execute_configurable') {
+        $parameters = $url->getRouteParameters();
+
+        $url = Url::fromRoute('social_group.views_bulk_operations.execute_configurable', [
+          'group' => $parameters['group'],
+        ]);
+
+        $form_state->setRedirectUrl($url);
+      }
+    }
   }
 
 }
