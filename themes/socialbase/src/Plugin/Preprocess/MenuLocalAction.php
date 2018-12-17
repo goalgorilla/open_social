@@ -22,12 +22,11 @@ class MenuLocalAction extends BaseMenuLocalAction {
 
     parent::preprocessElement($element, $variables);
 
-    // Identify the following buttons:
     $route_names = [
-      // `Add member` on the manage members page of a group;
+      // Identify the `Add member` button on the manage members page of a group.
       'view.group_manage_members.page_group_manage_members',
 
-      // `New message` on the private message page.
+      // Identify the `New message` button on the private message page.
       'entity.private_message_thread.canonical',
     ];
 
