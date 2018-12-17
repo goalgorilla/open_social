@@ -87,6 +87,52 @@ index 0000000..de81d9f
 +  };
 +
 +})(jQuery, Drupal);
+diff --git a/src/Access/GroupViewsBulkOperationsAccessTrait.php b/src/Access/GroupViewsBulkOperationsAccessTrait.php
+new file mode 100644
+index 0000000..0eebfaf
+--- /dev/null
++++ b/src/Access/GroupViewsBulkOperationsAccessTrait.php
+@@ -0,0 +1,40 @@
++<?php
++
++namespace Drupal\group\Access;
++
++use Drupal\group\Plugin\views\access\GroupPermission;
++use Drupal\views\DisplayPluginCollection;
++use Drupal\views\ViewExecutable;
++use Drupal\views\Views;
++
++/**
++ * Defines common method for Views Bulk Operations access.
++ */
++trait GroupViewsBulkOperationsAccessTrait {
++
++  /**
++   * Check if View display based on group permission.
++   *
++   * @param \Drupal\views\ViewExecutable $view
++   *   The view.
++   * @param $display_id
++   *   The display ID.
++   *
++   * @return bool
++   *   TRUE if group permission is used.
++   */
++  public function useGroupPermission(ViewExecutable $view, $display_id) {
++    $display_handlers = new DisplayPluginCollection($view, Views::pluginManager('display'));
++
++    if ($display_handlers->has($display_id)) {
++      $plugin = $display_handlers->get($display_id)->getPlugin('access');
++
++      if ($plugin instanceof GroupPermission) {
++        return TRUE;
++      }
++    }
++
++    return FALSE;
++  }
++
++}
 diff --git a/src/Context/GroupRouteContextTrait.php b/src/Context/GroupRouteContextTrait.php
 index 53a6ac9..08983cc 100644
 --- a/src/Context/GroupRouteContextTrait.php
@@ -110,21 +156,25 @@ index 53a6ac9..08983cc 100644
      elseif ($route_match->getRouteName() == 'entity.group.add_form') {
 diff --git a/src/Form/GroupViewsBulkOperationsConfigureAction.php b/src/Form/GroupViewsBulkOperationsConfigureAction.php
 new file mode 100644
-index 0000000..cf1c979
+index 0000000..2dfdf58
 --- /dev/null
 +++ b/src/Form/GroupViewsBulkOperationsConfigureAction.php
-@@ -0,0 +1,32 @@
+@@ -0,0 +1,40 @@
 +<?php
 +
 +namespace Drupal\group\Form;
 +
 +use Drupal\Core\Form\FormStateInterface;
++use Drupal\group\Access\GroupViewsBulkOperationsAccessTrait;
++use Drupal\views\Views;
 +use Drupal\views_bulk_operations\Form\ConfigureAction;
 +
 +/**
 + * Action configuration form.
 + */
 +class GroupViewsBulkOperationsConfigureAction extends ConfigureAction {
++
++  use GroupViewsBulkOperationsAccessTrait;
 +
 +  /**
 +   * {@inheritdoc}
@@ -139,28 +189,32 @@ index 0000000..cf1c979
 +      /** @var \Drupal\Core\Url $url */
 +      $url = $form_state->getRedirect();
 +
-+      $url->setRouteParameter('group', \Drupal::routeMatch()->getRawParameter('group'));
++      $parameters = $url->getRouteParameters();
++      $view = Views::getView($parameters['view_id']);
 +
-+      $form_state->setRedirectUrl($url);
++      if ($view && $this->useGroupPermission($view, $parameters['display_id'])) {
++        $url->setRouteParameter('group', $this->getRouteMatch()->getRawParameter('group'));
++        $form_state->setRedirectUrl($url);
++      }
 +    }
 +  }
 +
 +}
 diff --git a/src/Plugin/views/field/GroupViewsBulkOperationsBulkForm.php b/src/Plugin/views/field/GroupViewsBulkOperationsBulkForm.php
 new file mode 100644
-index 0000000..9b939e7
+index 0000000..99a9e5a
 --- /dev/null
 +++ b/src/Plugin/views/field/GroupViewsBulkOperationsBulkForm.php
-@@ -0,0 +1,146 @@
+@@ -0,0 +1,148 @@
 +<?php
 +
 +namespace Drupal\group\Plugin\views\field;
 +
 +use Drupal\Core\Form\FormStateInterface;
-+use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 +use Drupal\Core\Routing\RouteMatchInterface;
 +use Drupal\Core\Session\AccountInterface;
 +use Drupal\Core\Url;
++use Drupal\group\Access\GroupViewsBulkOperationsAccessTrait;
 +use Drupal\user\PrivateTempStoreFactory;
 +use Drupal\views_bulk_operations\Plugin\views\field\ViewsBulkOperationsBulkForm;
 +use Drupal\views_bulk_operations\Service\ViewsBulkOperationsActionManager;
@@ -173,6 +227,8 @@ index 0000000..9b939e7
 + * Defines the Views Bulk Operations field plugin.
 + */
 +class GroupViewsBulkOperationsBulkForm extends ViewsBulkOperationsBulkForm {
++
++  use GroupViewsBulkOperationsAccessTrait;
 +
 +  /**
 +   * The currently active route match object.
@@ -288,7 +344,7 @@ index 0000000..9b939e7
 +      }
 +    }
 +
-+    if ($valid && isset($current_parameters['group'])) {
++    if ($valid && isset($current_parameters['group']) && $this->useGroupPermission($this->view, $redirect_parameters['display_id'])) {
 +      /** @var \Drupal\group\Entity\GroupInterface $entity */
 +      $entity = $current_parameters['group'];
 +
@@ -300,10 +356,10 @@ index 0000000..9b939e7
 +}
 diff --git a/src/Routing/GroupViewsBulkOperationsRouteSubscriber.php b/src/Routing/GroupViewsBulkOperationsRouteSubscriber.php
 new file mode 100644
-index 0000000..07aaef8
+index 0000000..569d8a9
 --- /dev/null
 +++ b/src/Routing/GroupViewsBulkOperationsRouteSubscriber.php
-@@ -0,0 +1,53 @@
+@@ -0,0 +1,54 @@
 +<?php
 +
 +namespace Drupal\group\Routing;
@@ -348,6 +404,7 @@ index 0000000..07aaef8
 +      foreach ($route_names as $route_name) {
 +        $route = $collection->get($route_name);
 +        $route->setPath($route->getPath() . '/{group}');
++        $route->setDefault('group', NULL);
 +
 +        if ($route_name === 'views_bulk_operations.execute_configurable') {
 +          $route->setDefault('_form', '\Drupal\group\Form\GroupViewsBulkOperationsConfigureAction');
