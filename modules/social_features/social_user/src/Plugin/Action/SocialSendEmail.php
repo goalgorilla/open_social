@@ -4,7 +4,6 @@ namespace Drupal\social_user\Plugin\Action;
 
 use Drupal\views_bulk_operations\Action\ViewsBulkOperationsActionBase;
 use Drupal\views_bulk_operations\Action\ViewsBulkOperationsPreconfigurationInterface;
-use Drupal\Core\Plugin\PluginFormInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Entity\EntityManagerInterface;
@@ -25,7 +24,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *   confirm = TRUE,
  * )
  */
-class SocialSendEmail extends ViewsBulkOperationsActionBase implements ViewsBulkOperationsPreconfigurationInterface, PluginFormInterface {
+class SocialSendEmail extends ViewsBulkOperationsActionBase implements ViewsBulkOperationsPreconfigurationInterface {
 
   /**
    * The token service.
