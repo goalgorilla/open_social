@@ -56,6 +56,11 @@ class SocialGroupViewsBulkOperationsBulkForm extends GroupViewsBulkOperationsBul
    */
   public function viewsForm(array &$form, FormStateInterface $form_state) {
     parent::viewsForm($form, $form_state);
+
+    if ($this->view->id() !== 'group_manage_members') {
+      return;
+    }
+
     $wrapper = &$form['header'][$this->options['id']];
 
     if (isset($wrapper['multipage'])) {
@@ -81,6 +86,33 @@ class SocialGroupViewsBulkOperationsBulkForm extends GroupViewsBulkOperationsBul
         '#value' => $title,
       ];
     }
+
+    $actions = &$wrapper['actions'];
+    $actions['#theme_wrappers'] = ['buttons_group'];
+    $actions['#label'] = $this->t('Actions');
+
+    $items = [];
+
+    $weights = [
+      'social_group_send_email_action' => 10,
+      'social_group_members_export_member_action' => 20,
+      'social_group_delete_group_content_action' => 30,
+      'social_group_change_member_role_action' => 40,
+    ];
+
+    foreach ($weights as $key => $weight) {
+      if (isset($actions[$key])) {
+        $actions[$key]['#weight'] = $weight;
+      }
+    }
+
+    foreach (Element::children($actions, TRUE) as $key) {
+      $items[] = $actions[$key];
+    }
+
+    $actions['#items'] = $items;
+
+    $form['actions']['#access'] = FALSE;
   }
 
   /**
