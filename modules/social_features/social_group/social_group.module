@@ -1567,19 +1567,7 @@ function social_group_form_views_form_group_manage_members_page_group_manage_mem
 
   foreach ($weights as $key => $weight) {
     if (isset($actions[$key])) {
-      $action = &$actions[$key];
-      $action['#weight'] = $weight;
-
-      if ($key === 'social_group_change_member_role_action') {
-        $action['#value'] = t('%action of selected members', [
-          '%action' => $action['#value'],
-        ]);
-      }
-      else {
-        $action['#value'] = t('%action selected members', [
-          '%action' => $action['#value'],
-        ]);
-      }
+      $actions[$key]['#weight'] = $weight;
     }
   }
 
@@ -1590,4 +1578,11 @@ function social_group_form_views_form_group_manage_members_page_group_manage_mem
   $actions['#items'] = $items;
 
   $form['actions']['#access'] = FALSE;
+}
+
+/**
+ * Implements hook_views_plugins_field_alter().
+ */
+function social_group_views_plugins_field_alter(array &$plugins) {
+  $plugins['views_bulk_operations_bulk_form']['class'] = 'Drupal\social_group\Plugin\views\field\SocialGroupViewsBulkOperationsBulkForm';
 }
