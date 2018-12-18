@@ -14,7 +14,7 @@ use Drupal\social_user_export\Plugin\Action\ExportUser;
  *   id = "social_group_members_export_member_action",
  *   label = @Translation("Export the selected members to CSV"),
  *   type = "group_content",
- *   confirm = FALSE
+ *   confirm = TRUE,
  * )
  */
 class ExportMember extends ExportUser {

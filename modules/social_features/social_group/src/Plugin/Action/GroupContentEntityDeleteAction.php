@@ -11,7 +11,7 @@ use Drupal\views_bulk_operations\Plugin\Action\EntityDeleteAction;
  *   id = "social_group_delete_group_content_action",
  *   label = @Translation("Delete selected group content entities"),
  *   type = "group_content",
- *   confirm = FALSE,
+ *   confirm = TRUE,
  * )
  */
 class GroupContentEntityDeleteAction extends EntityDeleteAction {

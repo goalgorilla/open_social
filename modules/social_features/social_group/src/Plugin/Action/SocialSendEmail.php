@@ -23,7 +23,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *   id = "social_group_send_email_action",
  *   label = @Translation("Send email to group members"),
  *   type = "group_content",
- *   confirm = FALSE,
+ *   confirm = TRUE,
  * )
  */
 class SocialSendEmail extends ViewsBulkOperationsActionBase implements ContainerFactoryPluginInterface, PluginFormInterface {
