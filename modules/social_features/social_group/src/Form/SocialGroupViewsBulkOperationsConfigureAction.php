@@ -3,7 +3,7 @@
 namespace Drupal\social_group\Form;
 
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\group\Form\GroupViewsBulkOperationsConfigureAction;
+use Drupal\gvbo\Form\GroupViewsBulkOperationsConfigureAction;
 
 /**
  * Action configuration form.

@@ -5,7 +5,7 @@ namespace Drupal\social_group\Plugin\views\field;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Url;
-use Drupal\group\Plugin\views\field\GroupViewsBulkOperationsBulkForm;
+use Drupal\gvbo\Plugin\views\field\GroupViewsBulkOperationsBulkForm;
 
 /**
  * Defines the Views Bulk Operations field plugin.
