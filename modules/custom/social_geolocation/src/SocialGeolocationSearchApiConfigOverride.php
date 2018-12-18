@@ -123,7 +123,7 @@ class SocialGeolocationSearchApiConfigOverride implements ConfigFactoryOverrideI
 
   public function getSocialAllOverrides() {
     $overrides = <<<YAML
-node_lat:
+field_event_geolocation_lat:
   label: 'Geolocation » Latitude'
   datasource_id: 'entity:node'
   property_path: 'field_event_geolocation:lat'
@@ -131,7 +131,7 @@ node_lat:
   dependencies:
     config:
       - field.storage.node.field_event_geolocation
-node_lng:
+field_event_geolocation_lng:
   label: 'Geolocation » Longitude'
   datasource_id: 'entity:node'
   property_path: 'field_event_geolocation:lng'
@@ -139,7 +139,7 @@ node_lng:
   dependencies:
     config:
       - field.storage.node.field_event_geolocation      
-node_lat_cos:
+field_event_geolocation_lat_cos:
   label: 'Geolocation » Latitude cosine'
   datasource_id: 'entity:node'
   property_path: 'field_event_geolocation:lat_cos'
@@ -147,7 +147,7 @@ node_lat_cos:
   dependencies:
     config:
       - field.storage.node.field_event_geolocation
-node_lat_sin:
+field_event_geolocation_lat_sin:
   label: 'Geolocation » Latitude sine'
   datasource_id: 'entity:node'
   property_path: 'field_event_geolocation:lat_sin'
@@ -155,7 +155,7 @@ node_lat_sin:
   dependencies:
     config:
       - field.storage.node.field_event_geolocation
-node_lng_rad:
+field_event_geolocation_lng_rad:
   label: 'Geolocation » Longitude radian'
   datasource_id: 'entity:node'
   property_path: 'field_event_geolocation:lng_rad'
@@ -168,7 +168,7 @@ group_type:
   datasource_id: 'entity:group'
   property_path: type
   type: string
-group_lat:
+field_group_geolocation_lat:
   label: 'Geolocation » Latitude'
   datasource_id: 'entity:group'
   property_path: 'field_group_geolocation:lat'
@@ -176,7 +176,7 @@ group_lat:
   dependencies:
     config:
       - field.storage.group.field_group_geolocation
-group_lng:
+field_group_geolocation_lng:
   label: 'Geolocation » Longitude'
   datasource_id: 'entity:group'
   property_path: 'field_group_geolocation:lng'
@@ -184,7 +184,7 @@ group_lng:
   dependencies:
     config:
       - field.storage.group.field_group_geolocation
-group_lat_cos:
+field_group_geolocation_lat_cos:
   label: 'Geolocation » Latitude cosine'
   datasource_id: 'entity:group'
   property_path: 'field_group_geolocation:lat_cos'
@@ -192,7 +192,7 @@ group_lat_cos:
   dependencies:
     config:
       - field.storage.group.field_group_geolocation
-group_lat_sin:
+field_group_geolocation_lat_sin:
   label: 'Geolocation » Latitude sine'
   datasource_id: 'entity:group'
   property_path: 'field_group_geolocation:lat_sin'
@@ -200,7 +200,7 @@ group_lat_sin:
   dependencies:
     config:
       - field.storage.group.field_group_geolocation
-group_lng_rad:
+field_group_geolocation_lng_rad:
   label: 'Geolocation » Longitude radian'
   datasource_id: 'entity:group'
   property_path: 'field_group_geolocation:lng_rad'
@@ -208,7 +208,7 @@ group_lng_rad:
   dependencies:
     config:
       - field.storage.group.field_group_geolocation
-profile_lat:
+field_profile_geolocation_lat:
   label: 'Geolocation » Latitude'
   datasource_id: 'entity:profile'
   property_path: 'field_profile_geolocation:lat'
@@ -216,7 +216,7 @@ profile_lat:
   dependencies:
     config:
       - field.storage.profile.field_profile_geolocation
-profile_lng:
+field_profile_geolocation_lng:
   label: 'Geolocation » Longitude'
   datasource_id: 'entity:profile'
   property_path: 'field_profile_geolocation:lng'
@@ -224,7 +224,7 @@ profile_lng:
   dependencies:
     config:
       - field.storage.profile.field_profile_geolocation      
-profile_lat_cos:
+field_profile_geolocation_lat_cos:
   label: 'Geolocation » Latitude cosine'
   datasource_id: 'entity:profile'
   property_path: 'field_profile_geolocation:lat_cos'
@@ -232,7 +232,7 @@ profile_lat_cos:
   dependencies:
     config:
       - field.storage.profile.field_profile_geolocation
-profile_lat_sin:
+field_profile_geolocation_lat_sin:
   label: 'Geolocation » Latitude sine'
   datasource_id: 'entity:profile'
   property_path: 'field_profile_geolocation:lat_sin'
@@ -240,7 +240,7 @@ profile_lat_sin:
   dependencies:
     config:
       - field.storage.profile.field_profile_geolocation
-profile_lng_rad:
+field_profile_geolocation_lng_rad:
   label: 'Geolocation » Longitude radian'
   datasource_id: 'entity:profile'
   property_path: 'field_profile_geolocation:lng_rad'
@@ -255,7 +255,7 @@ YAML;
 
   public function getSocialUserOverrides() {
     $overrides = <<<YAML
-profile_lat:
+field_profile_geolocation_lat:
   label: 'Geolocation » Latitude'
   datasource_id: 'entity:profile'
   property_path: 'field_profile_geolocation:lat'
@@ -263,7 +263,7 @@ profile_lat:
   dependencies:
     config:
       - field.storage.profile.field_profile_geolocation
-profile_lng:
+field_profile_geolocation_lng:
   label: 'Geolocation » Longitude'
   datasource_id: 'entity:profile'
   property_path: 'field_profile_geolocation:lng'
@@ -271,7 +271,7 @@ profile_lng:
   dependencies:
     config:
       - field.storage.profile.field_profile_geolocation
-profile_lat_cos:
+field_profile_geolocation_lat_cos:
   label: 'Geolocation » Latitude cosine'
   datasource_id: 'entity:profile'
   property_path: 'field_profile_geolocation:lat_cos'
@@ -279,7 +279,7 @@ profile_lat_cos:
   dependencies:
     config:
       - field.storage.profile.field_profile_geolocation
-profile_lat_sin:
+field_profile_geolocation_lat_sin:
   label: 'Geolocation » Latitude sine'
   datasource_id: 'entity:profile'
   property_path: 'field_profile_geolocation:lat_sin'
@@ -287,7 +287,7 @@ profile_lat_sin:
   dependencies:
     config:
       - field.storage.profile.field_profile_geolocation
-profile_lng_rad:
+field_profile_geolocation_lng_rad:
   label: 'Geolocation » Longitude radian'
   datasource_id: 'entity:profile'
   property_path: 'field_profile_geolocation:lng_rad'
@@ -302,7 +302,7 @@ YAML;
 
   public function getSocialGroupsOverrides() {
     $overrides = <<<YAML
-group_lat:
+field_group_geolocation_lat:
   label: 'Geolocation » Latitude'
   datasource_id: 'entity:group'
   property_path: 'field_group_geolocation:lat'
@@ -310,7 +310,7 @@ group_lat:
   dependencies:
     config:
       - field.storage.group.field_group_geolocation
-group_lng:
+field_group_geolocation_lng:
   label: 'Geolocation » Longitude'
   datasource_id: 'entity:group'
   property_path: 'field_group_geolocation:lng'
@@ -318,7 +318,7 @@ group_lng:
   dependencies:
     config:
       - field.storage.group.field_group_geolocation
-group_lat_cos:
+field_group_geolocation_lat_cos:
   label: 'Geolocation » Latitude cosine'
   datasource_id: 'entity:group'
   property_path: 'field_group_geolocation:lat_cos'
@@ -326,7 +326,7 @@ group_lat_cos:
   dependencies:
     config:
       - field.storage.group.field_group_geolocation
-group_lat_sin:
+field_group_geolocation_lat_sin:
   label: 'Geolocation » Latitude sine'
   datasource_id: 'entity:group'
   property_path: 'field_group_geolocation:lat_sin'
@@ -334,7 +334,7 @@ group_lat_sin:
   dependencies:
     config:
       - field.storage.group.field_group_geolocation
-group_lng_rad:
+field_group_geolocation_lng_rad:
   label: 'Geolocation » Longitude radian'
   datasource_id: 'entity:group'
   property_path: 'field_group_geolocation:lng_rad'
@@ -349,7 +349,7 @@ YAML;
 
   public function getSocialContentOverrides() {
     $overrides = <<<YAML
-node_lat:
+field_event_geolocation_lat:
   label: 'Geolocation » Latitude'
   datasource_id: 'entity:node'
   property_path: 'field_event_geolocation:lat'
@@ -357,7 +357,7 @@ node_lat:
   dependencies:
     config:
       - field.storage.node.field_event_geolocation
-node_lat_cos:
+field_event_geolocation_lat_cos:
   label: 'Geolocation » Latitude cosine'
   datasource_id: 'entity:node'
   property_path: 'field_event_geolocation:lat_cos'
@@ -365,7 +365,7 @@ node_lat_cos:
   dependencies:
     config:
       - field.storage.node.field_event_geolocation
-node_lat_sin:
+field_event_geolocation_lat_sin:
   label: 'Geolocation » Latitude sine'
   datasource_id: 'entity:node'
   property_path: 'field_event_geolocation:lat_sin'
@@ -373,7 +373,7 @@ node_lat_sin:
   dependencies:
     config:
       - field.storage.node.field_event_geolocation
-node_lng:
+field_event_geolocation_lng:
   label: 'Geolocation » Longitude'
   datasource_id: 'entity:node'
   property_path: 'field_event_geolocation:lng'
@@ -381,7 +381,7 @@ node_lng:
   dependencies:
     config:
       - field.storage.node.field_event_geolocation      
-node_lng_rad:
+field_event_geolocation_lng_rad:
   label: 'Geolocation » Longitude radian'
   datasource_id: 'entity:node'
   property_path: 'field_event_geolocation:lng_rad'
