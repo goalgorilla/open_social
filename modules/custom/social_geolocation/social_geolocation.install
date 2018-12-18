@@ -5,7 +5,7 @@
  * Install, update and uninstall functions for the social_geolocation module.
  */
 
-use Drupal\Core\Link;
+use Drupal\user\Entity\Role;
 use Drupal\search_api\Entity\Index;
 
 /**
@@ -15,7 +15,7 @@ function social_geolocation_install() {
   $sandbox = [];
 
   do {
-    social_geolocation_update_8001($sandbox);
+//    social_geolocation_update_8001($sandbox);
   } while (!(!isset($sandbox['#finished']) || $sandbox['#finished'] === 1));
 }
 
@@ -61,4 +61,44 @@ function social_geolocation_update_8001(&$sandbox) {
   $index_progress = $sandbox['current'] / count($sandbox['indexes']);
 
   $sandbox['#finished'] = $item_progress * $index_progress;
+}
+
+/**
+ * Set defaults for existing customers.
+ */
+function social_geolocation_update_8002(&$sandbox) {
+  $modules = [
+    'geocoder',
+    'geocoder_address',
+    'geocoder_field',
+  ];
+
+  \Drupal::service('module_installer')->install($modules);
+
+  // Enable permissions.
+  _social_geolocation_set_permissions();
+
+  // Enable default value for config. Because this is only run for existing.
+  $this->config('social_geolocation.settings')
+    ->set('geolocation_provider', 'google')
+    ->save();
+}
+
+/**
+ * Function to set default permissions.
+ */
+function _social_geolocation_set_permissions() {
+  $roles = Role::loadMultiple();
+
+  /** @var \Drupal\user\Entity\Role $role */
+  foreach ($roles as $role) {
+    if ($role->id() === 'administrator') {
+      continue;
+    }
+
+    if ($role->id() === 'sitemanager') {
+      user_role_grant_permissions('sitemanager', ['set social geolocation settings']);
+      user_role_grant_permissions('sitemanager', ['filter admin people geolocation']);
+    }
+  }
 }

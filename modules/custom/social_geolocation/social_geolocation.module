@@ -63,6 +63,8 @@ function social_geolocation_block_access(Block $block, $operation, AccountInterf
     'views_exposed_filter_block:search_content-page',
     'views_exposed_filter_block:search_users-page',
     'views_exposed_filter_block:search_groups-page',
+    'views_exposed_filter_block:user_admin_people-page',
+    'views_exposed_filter_block:user_admin_people-page-1',
   ];
 
   if ($operation == 'view' && in_array($block->getPluginId(), $proximity_forms)) {
@@ -91,19 +93,28 @@ function social_geolocation_form_views_exposed_form_alter(&$form, FormStateInter
     'views-exposed-form-search-users-page-no-value',
     'views-exposed-form-search-groups-page',
     'views-exposed-form-search-groups-page-no-value',
+    'views-exposed-form-user-admin-people-page',
+    'views-exposed-form-user-admin-people-page-no-value',
+    'views-exposed-form-user-admin-people-page-1',
+    'views-exposed-form-user-admin-people-page-1-no-value',
   ];
 
   if (!in_array($form['#id'], $filter_forms)) {
     return;
   }
 
+  // Only if the current user has the filter permission for admin/people
+  // we will show him the exposed filter.
+  if (!\Drupal::currentUser()->hasPermission('filter admin people geolocation')
+    && strpos($form['#id'], 'views-exposed-form-user-admin-people-page') !== false)  {
+    return;
+  }
+
   $form['actions']['reset']['#access'] = TRUE;
 
   /** @var \Drupal\geolocation\GeocoderInterface $geocoder_plugin */
-  $geocoder_plugin = \Drupal::service('geolocation.core')->getGeocoderManager()
-    ->getGeocoder('google_geocoding_api');
-
-  if (empty($geocoder_plugin)) {
+  $provider = \Drupal::service('plugin.manager.geocoder.provider')->getPlugins();
+  if (empty($provider)) {
     return;
   }
 
@@ -117,11 +128,14 @@ function social_geolocation_form_views_exposed_form_alter(&$form, FormStateInter
 
   $identifier = 'proximity';
 
+  $geocoder_plugin = \Drupal::service('geolocation.core')->getGeocoderManager()
+    ->getGeocoder('google_geocoding_api');
+  if (!empty($geocoder_plugin)) {
+    $geocoder_plugin->formAttachGeocoder($form, $identifier);
+  }
+
   $form[$identifier . '-lat']['#type'] = 'hidden';
   $form[$identifier . '-lng']['#type'] = 'hidden';
-
-  $geocoder_plugin->formAttachGeocoder($form, $identifier);
-
   $form['geolocation_geocoder_google_geocoding_api']['#title'] = t('Location');
 
   $form = array_merge_recursive($form, [
@@ -162,7 +176,30 @@ function social_geolocation_form_views_exposed_form_alter(&$form, FormStateInter
     case 'views-exposed-form-search-groups-page-no-value':
       unset($form['label']);
       break;
+
+    case 'views-exposed-form-user-admin-people-page-1':
+      $form['field_profile_geolocation_proximity']['#type'] = 'hidden';
+      $form['field_profile_geolocation_proximity-lat']['#type'] = 'hidden';
+      $form['field_profile_geolocation_proximity-lng']['#type'] = 'hidden';
+
+      unset($form['proximity']['#description']);
+      unset($form['geolocation_geocoder_google_geocoding_api']['#description']);
+      break;
   }
+
+  // Format to new GPI look and feel.
+  $form['geolocation_geocoder_google_geocoding_api']['#title'] = t('City');
+  $form['proximity']['#title'] = t('Distance to the city (km)');
+
+  $form['location_details'] = [
+    '#prefix' => '<span class="control-label">' . t('Location details') . '</span>',
+    '#type' => 'fieldset',
+  ];
+
+  $form['location_details']['geolocation_geocoder_google_geocoding_api'] = $form['geolocation_geocoder_google_geocoding_api'];
+  $form['location_details']['proximity'] = $form['proximity'];
+  unset($form['proximity']);
+  unset($form['geolocation_geocoder_google_geocoding_api']);
 
   $form['#validate'][] = '_social_geolocation_form_views_exposed_form_validate';
 }
@@ -192,12 +229,23 @@ function _social_geolocation_form_views_exposed_form_validate(&$form, FormStateI
     $form_state->setValue('proximity-lat', $address_geocoded['lat']);
     $form_state->setValue('proximity-lng', $address_geocoded['lng']);
 
+    // Set values for proximity VIEWS.
+    $form_state->setValue('field_profile_geolocation_proximity', $form_state->getValue('proximity'));
+    $form_state->setValue('field_profile_geolocation_proximity-lat', $address_geocoded['lat']);
+    $form_state->setValue('field_profile_geolocation_proximity-lng', $address_geocoded['lng']);
+
     // Modify the page url to fix pagination and sharing.
     $args->set('proximity-lat', $address_geocoded['lat']);
     $args->set('proximity-lng', $address_geocoded['lng']);
   }
   else {
-    $form_state->setError($form['geolocation_geocoder_google_geocoding_api'], t('Address "@address" not found.', ["@address" => $address]));
+    $element = ['geolocation_geocoder_google_geocoding_api'];
+
+    if ($form['location_details'] !== NULL) {
+      $element = $form['location_details']['geolocation_geocoder_google_geocoding_api'];
+    }
+
+    $form_state->setError($element, t('Address "@address" not found or there is something wrong with the geolocation provider.', ["@address" => $address]));
   }
 }
 
@@ -213,23 +261,24 @@ function _social_geolocation_form_views_exposed_form_validate(&$form, FormStateI
 function _social_geolocation_geocode_address($address) {
   // If there's no address to geocode or we have no geocoder service
   // then there's nothing to do.
-  if (empty($address) || !\Drupal::hasService('geolocation.core')) {
+  if (empty($address) || !\Drupal::hasService('plugin.manager.geocoder.provider')) {
     return [];
   }
 
-  /** @var \Drupal\geolocation\Plugin\geolocation\Geocoder\GoogleGeocodingAPI $geocoder */
-  $geocoder = \Drupal::service('geolocation.core')->getGeocoderManager()
-    ->getGeocoder('google_geocoding_api');
+  /** @var \Drupal\geocoder\ProviderPluginManager $provider */
+  $provider = \Drupal::service('plugin.manager.geocoder.provider')->getPlugins();
+  /** @var \Drupal\geocoder\Geocoder $geocoder */
+  $geocoder = \Drupal::service('geocoder');
 
-  $result = $geocoder->geocode($address);
+  $result = $geocoder->geocode($address, array_keys($provider));
 
-  if (empty($result)) {
+  if (empty($result->first())) {
     return [];
   }
 
   return [
-    'lat' => $result['location']['lat'],
-    'lng' => $result['location']['lng'],
+    'lat' => $result->first()->getLatitude(),
+    'lng' => $result->first()->getLongitude(),
   ];
 }
 
