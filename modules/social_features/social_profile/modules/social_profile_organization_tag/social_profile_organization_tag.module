@@ -97,7 +97,7 @@ function social_profile_organization_tag_fetch(Profile $profile, $return_html = 
         foreach ($organization_tag_entities as $organization) {
           $value = t('from @org');
           if ($return_html === TRUE) {
-            $value = ' <span class="profile-organization-tag">&nbsp;<span class="text">@org</span></span>';
+            $value = '<span class="profile-organization-tag">&nbsp;<span class="text">@org</span></span>';
           }
           $arguments = [
             '@org' => $organization->label(),
