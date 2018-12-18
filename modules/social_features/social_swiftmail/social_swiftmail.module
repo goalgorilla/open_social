@@ -57,17 +57,14 @@ function social_swiftmail_preprocess_swiftmailer(array &$variables) {
 
   // Add variables header and footer if set.
   if ($social_swiftmail_config->get('template_header')['value']) {
-    // Sanitizing variables first to filter out Xss.
-    $template_header = Xss::filter($social_swiftmail_config
-      ->get('template_header')['value'], ['a', 'em', 'strong', 'u', 'br']);
-    // Create markup so it will be converted to html in the email.
-    $variables['header'] = Markup::create($template_header);
-  }
+    $template_header = $social_swiftmail_config->get('template_header');
+    $template_header = [
+      '#type' => 'processed_text',
+      '#text' => $template_header['value'],
+      '#format' => 'mail_html',
+    ];
 
-  if ($social_swiftmail_config->get('template_footer')['value']) {
-    $template_footer = Xss::filter($social_swiftmail_config
-      ->get('template_footer')['value'], ['a', 'em', 'strong', 'u', 'br']);
-    $variables['footer'] = Markup::create($template_footer);
+    $variables['header'] = \Drupal::service('renderer')->renderRoot($template_header);
   }
 
   // Try to add a heading message.
