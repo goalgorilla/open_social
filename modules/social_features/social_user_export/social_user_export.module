@@ -5,85 +5,6 @@
  * The Social User Export module.
  */
 
-use Drupal\Core\Form\FormStateInterface;
-use Drupal\views\Views;
-
-/**
- * Implements hook_form_alter().
- */
-function social_user_export_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-  switch ($form_id) {
-    case 'views_form_user_admin_people_page_1':
-      // Fetch the amount of rows directly from the already executed view.
-      $count = $form['output'][0]['#view']->total_rows;
-      $form_state->set('query', \Drupal::request()->query->all());
-
-      $form['#attached']['library'][] = 'social_user_export/select_all';
-      $form['#attached']['drupalSettings']['socialUserExport'] = [
-        'usersCount' => $count,
-      ];
-
-      $form['select_all'] = [
-        '#type' => 'hidden',
-        '#attributes' => [
-          'id' => 'select-all',
-        ],
-      ];
-      break;
-
-    case 'views_exposed_form':
-      $view = $form_state->get('view');
-
-      if ($view->id() == 'user_admin_people' && $view->current_display = 'page_1') {
-        $form['created']['min']['#type'] = 'date';
-        $form['created']['min']['#title'] = t('Registered from');
-        $form['created']['max']['#type'] = 'date';
-        $form['created']['max']['#title'] = t('Registered to');
-
-        if (isset($form['group']) && ($items = _social_user_export_get_groups())) {
-          $form['group'] = array_merge($form['group'], [
-            '#type' => 'select',
-            '#options' => $items,
-            '#empty_option' => t('- Any -'),
-            '#size' => 1,
-          ]);
-        }
-      }
-      break;
-  }
-}
-
-/**
- * Implements hook_views_data_alter().
- */
-function social_user_export_views_data_alter(array &$data) {
-  $data['users']['user_bulk_form']['field']['id'] = 'social_user_export_bulk_form';
-}
-
-/**
- * Returns the user admin people view.
- *
- * @param array $query
- *   Query parameters for exposed filters.
- * @param bool $execute
- *   If TRUE, views query will be executed.
- *
- * @return \Drupal\views\ViewExecutable
- *   The requested view.
- */
-function _social_user_export_get_view(array $query = [], $execute = TRUE) {
-  $view = Views::getView('user_admin_people');
-  $view->setDisplay('page_1');
-  $view->setExposedInput($query);
-
-  if ($execute) {
-    $view->preExecute();
-    $view->execute();
-  }
-
-  return $view;
-}
-
 /**
  * Implements hook_file_download().
  */
@@ -92,26 +13,9 @@ function social_user_export_file_download($uri) {
   $target = file_uri_target($uri);
   $access = \Drupal::currentUser()->hasPermission('administer users');
 
-  if ($scheme == 'private' && preg_match('/^csv\/export-users-([a-f0-9]{12})\.csv$/i', $target) && $access) {
+  if ($scheme === 'private' && preg_match('/^csv\/export-users-([a-f0-9]{12})\.csv$/i', $target) && $access) {
     return [
       'Content-disposition' => 'attachment; filename="' . basename($target) . '"',
     ];
   }
-}
-
-/**
- * Returns array with titles of all groups.
- */
-function _social_user_export_get_groups() {
-  $data = &drupal_static(__FUNCTION__);
-
-  if (empty($data)) {
-    $data = \Drupal::database()
-      ->select('groups_field_data', 'gfd')
-      ->fields('gfd', ['id', 'label'])
-      ->execute()
-      ->fetchAllKeyed(0, 1);
-  }
-
-  return $data;
 }
