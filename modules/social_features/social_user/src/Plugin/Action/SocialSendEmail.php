@@ -2,6 +2,7 @@
 
 namespace Drupal\social_user\Plugin\Action;
 
+use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\views_bulk_operations\Action\ViewsBulkOperationsActionBase;
 use Drupal\views_bulk_operations\Action\ViewsBulkOperationsPreconfigurationInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -24,7 +25,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *   confirm = TRUE,
  * )
  */
-class SocialSendEmail extends ViewsBulkOperationsActionBase implements ViewsBulkOperationsPreconfigurationInterface {
+class SocialSendEmail extends ViewsBulkOperationsActionBase implements ContainerFactoryPluginInterface, ViewsBulkOperationsPreconfigurationInterface {
 
   /**
    * The token service.
