@@ -56,6 +56,8 @@ class SocialGroupViewsBulkOperationsBulkForm extends GroupViewsBulkOperationsBul
    * {@inheritdoc}
    */
   public function viewsForm(array &$form, FormStateInterface $form_state) {
+    $this->view->setExposedInput(['status' => TRUE]);
+
     parent::viewsForm($form, $form_state);
 
     if ($this->view->id() !== 'group_manage_members') {
