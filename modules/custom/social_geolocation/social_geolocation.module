@@ -106,7 +106,7 @@ function social_geolocation_form_views_exposed_form_alter(&$form, FormStateInter
   // Only if the current user has the filter permission for admin/people
   // we will show him the exposed filter.
   if (!\Drupal::currentUser()->hasPermission('filter admin people geolocation')
-    && strpos($form['#id'], 'views-exposed-form-user-admin-people-page') !== false)  {
+    && strpos($form['#id'], 'views-exposed-form-user-admin-people-page') !== FALSE) {
     return;
   }
 
@@ -197,7 +197,7 @@ function social_geolocation_form_views_exposed_form_alter(&$form, FormStateInter
   ];
 
   // Format admin people.
-  if (strpos($form['#id'], 'views-exposed-form-user-admin-people-page') !== false) {
+  if (strpos($form['#id'], 'views-exposed-form-user-admin-people-page') !== FALSE) {
     unset($form['location_details']['#prefix']);
     $form['location_details']['#title'] = t('Location details');
   }

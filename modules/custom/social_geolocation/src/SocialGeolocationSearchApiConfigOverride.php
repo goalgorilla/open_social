@@ -9,8 +9,7 @@ use Drupal\Core\Config\StorageInterface;
 use Drupal\Core\Serialization\Yaml;
 
 /**
- * Configuration override for search_api social_all social_content social_groups
- * social_users.
+ * Config override sapi social_all social_content social_groups social_users.
  */
 class SocialGeolocationSearchApiConfigOverride implements ConfigFactoryOverrideInterface {
 
