@@ -51,6 +51,14 @@ function social_geolocation_install() {
       $accountSwitcher->switchBack();
     }
   }
+
+  // Enable permissions.
+  _social_geolocation_set_permissions();
+
+  // Enable default value for config.
+  // Make sure for new installations we choose the free OSM version.
+  \Drupal::service('config.factory')->getEditable('social_geolocation.settings')
+    ->set('geolocation_provider', 'openstreetmaps')->save();
 }
 
 /**
@@ -112,10 +120,10 @@ function social_geolocation_update_8002(&$sandbox) {
   // Enable permissions.
   _social_geolocation_set_permissions();
 
-  // Enable default value for config. Because this is only run for existing.
-  $this->config('social_geolocation.settings')
-    ->set('geolocation_provider', 'google')
-    ->save();
+  // In update hook we make sure Google is our default provider. Since existing
+  // customers already had Geolocation enabled and that ships only with Google.
+  \Drupal::service('config.factory')->getEditable('social_geolocation.settings')
+    ->set('geolocation_provider', 'google')->save();
 }
 
 /**
