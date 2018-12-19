@@ -1,0 +1,141 @@
+diff --git a/src/Bootstrap.php b/src/Bootstrap.php
+index d30dfc5..446d360 100644
+--- a/src/Bootstrap.php
++++ b/src/Bootstrap.php
+@@ -537,9 +537,11 @@ class Bootstrap {
+       'variables' => [
+         'alignment' => 'down',
+         'attributes' => [],
++        'default_button' => TRUE,
+         'items' => [],
+         'split' => FALSE,
+         'toggle' => NULL,
++        'toggle_label' => NULL,
+       ],
+     ];
+ 
+diff --git a/src/Plugin/Preprocess/BootstrapDropdown.php b/src/Plugin/Preprocess/BootstrapDropdown.php
+index a9dc0b3..41a0cfb 100644
+--- a/src/Plugin/Preprocess/BootstrapDropdown.php
++++ b/src/Plugin/Preprocess/BootstrapDropdown.php
+@@ -27,6 +27,7 @@ class BootstrapDropdown extends PreprocessBase implements PreprocessInterface {
+ 
+     $toggle = Element::create($variables->toggle);
+     $toggle->setProperty('split', $variables->split);
++    $toggle->setProperty('default_button', $variables->default_button);
+ 
+     // Convert the items into a proper item list.
+     $variables->items = [
+@@ -108,7 +109,7 @@ class BootstrapDropdown extends PreprocessBase implements PreprocessInterface {
+ 
+       // Iterate over all provided "links". The array may be associative, so
+       // this cannot rely on the key to be numeric, it must be tracked manually.
+-      $i = -1;
++      $i = $variables->default_button ? -1 : 0;
+       foreach ($links->children(TRUE) as $key => $child) {
+         $i++;
+ 
+@@ -171,14 +172,22 @@ class BootstrapDropdown extends PreprocessBase implements PreprocessInterface {
+       }
+ 
+       // Create a toggle button, extracting relevant info from primary action.
+-      $toggle = Element::createStandalone([
+-        '#type' => 'button',
+-        '#attributes' => $primary_action->getAttributes()->getArrayCopy(),
+-        '#value' => $primary_action->getProperty('value', $primary_action->getProperty('title', $primary_action->getProperty('text'))),
+-      ]);
+-
+-      // Remove the "hidden" class that was added to the primary action.
+-      $toggle->removeClass('hidden')->removeAttribute('id')->setAttribute('data-dropdown-target', '#' . $primary_action->getAttribute('id'));
++      if ($variables->default_button) {
++        $toggle = Element::createStandalone([
++          '#type' => 'button',
++          '#attributes' => $primary_action->getAttributes()->getArrayCopy(),
++          '#value' => $primary_action->getProperty('value', $primary_action->getProperty('title', $primary_action->getProperty('text'))),
++        ]);
++
++        // Remove the "hidden" class that was added to the primary action.
++        $toggle->removeClass('hidden')->removeAttribute('id')->setAttribute('data-dropdown-target', '#' . $primary_action->getAttribute('id'));
++      }
++      else {
++        $toggle = Element::createStandalone([
++          '#type' => 'button',
++          '#value' => $variables->toggle_label,
++        ]);
++      }
+ 
+       // Make operations smaller.
+       if ($operations) {
+diff --git a/src/Plugin/Preprocess/InputButtonSplit.php b/src/Plugin/Preprocess/InputButtonSplit.php
+new file mode 100644
+index 0000000..20dba20
+--- /dev/null
++++ b/src/Plugin/Preprocess/InputButtonSplit.php
+@@ -0,0 +1,25 @@
++<?php
++
++namespace Drupal\bootstrap\Plugin\Preprocess;
++
++use Drupal\bootstrap\Utility\Element;
++use Drupal\bootstrap\Utility\Variables;
++
++/**
++ * Pre-processes variables for the "input__button__split" theme hook.
++ *
++ * @ingroup plugins_preprocess
++ *
++ * @BootstrapPreprocess("input__button__split")
++ */
++class InputButtonSplit extends InputButton implements PreprocessInterface {
++
++  /**
++   * {@inheritdoc}
++   */
++  public function preprocessElement(Element $element, Variables $variables) {
++    $variables['default_button'] = $element->getProperty('default_button');
++    parent::preprocessElement($element, $variables);
++  }
++
++}
+diff --git a/templates/input/input--button--split.html.twig b/templates/input/input--button--split.html.twig
+index c7d6f01..b92ad5a 100644
+--- a/templates/input/input--button--split.html.twig
++++ b/templates/input/input--button--split.html.twig
+@@ -31,16 +31,18 @@
+     ]
+   %}
+   {% block input %}
+-    {% if icon_only %}
+-      <button{{ attributes.addClass(classes, 'icon-only') }}>
+-        <span class="sr-only">{{ label }}</span>
+-        {{ icon }}
+-      </button>
+-    {% else %}
+-      {% if icon_position == 'after' %}
+-        <button{{ attributes.addClass(classes) }}>{{ label }}{{ icon }}</button>{{ children }}
++    {% if default_button %}
++      {% if icon_only %}
++        <button{{ attributes.addClass(classes, 'icon-only') }}>
++          <span class="sr-only">{{ label }}</span>
++          {{ icon }}
++        </button>
+       {% else %}
+-        <button{{ attributes.addClass(classes) }}>{{ icon }}{{ label }}</button>{{ children }}
++        {% if icon_position == 'after' %}
++          <button{{ attributes.addClass(classes) }}>{{ label }}{{ icon }}</button>{{ children }}
++        {% else %}
++          <button{{ attributes.addClass(classes) }}>{{ icon }}{{ label }}</button>{{ children }}
++        {% endif %}
+       {% endif %}
+     {% endif %}
+     {%
+@@ -50,6 +52,9 @@
+       ]
+     %}
+     <button{{ split_button_attributes.addClass(classes) }} type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
++      {% if not default_button %}
++        {{ label }}
++      {% endif %}
+       <span class="caret"></span>
+       <span class="sr-only">{{ 'Toggle Dropdown'|t }}</span>
+     </button>
