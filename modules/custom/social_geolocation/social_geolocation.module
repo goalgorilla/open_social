@@ -53,32 +53,6 @@ function _social_geolocation_address_to_string(array $address) {
 }
 
 /**
- * Implements hook_block_access().
- *
- * Hide proximity filter if Google Maps API key is not set.
- */
-function social_geolocation_block_access(Block $block, $operation, AccountInterface $account) {
-  $proximity_forms = [
-    'views_exposed_filter_block:search_all-page',
-    'views_exposed_filter_block:search_content-page',
-    'views_exposed_filter_block:search_users-page',
-    'views_exposed_filter_block:search_groups-page',
-    'views_exposed_filter_block:user_admin_people-page',
-    'views_exposed_filter_block:user_admin_people-page-1',
-  ];
-
-  if ($operation == 'view' && in_array($block->getPluginId(), $proximity_forms)) {
-    $config = \Drupal::config('geolocation.settings');
-    $apikey = $config->get('google_map_api_key');
-
-    return AccessResult::forbiddenIf(empty($apikey))
-      ->addCacheableDependency($block);
-  }
-
-  return AccessResult::neutral();
-}
-
-/**
  * Implements hook_form_FORM_ID_alter().
  *
  * Enhance the Views exposed filter blocks forms.
