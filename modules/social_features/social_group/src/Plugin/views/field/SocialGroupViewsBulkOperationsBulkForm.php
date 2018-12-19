@@ -34,15 +34,15 @@ class SocialGroupViewsBulkOperationsBulkForm extends GroupViewsBulkOperationsBul
         case 'social_group_send_email_action':
         case 'social_group_members_export_member_action':
         case 'social_group_delete_group_content_action':
-          $label = $this->t('%action selected members', [
-            '%action' => $real_label,
+          $label = $this->t('<b>@action</b> selected members', [
+            '@action' => $real_label,
           ]);
 
           break;
 
         case 'social_group_change_member_role_action':
-          $label = $this->t('%action of selected members', [
-            '%action' => $real_label,
+          $label = $this->t('<b>@action</b> of selected members', [
+            '@action' => $real_label,
           ]);
 
           break;
@@ -63,6 +63,8 @@ class SocialGroupViewsBulkOperationsBulkForm extends GroupViewsBulkOperationsBul
     }
 
     $wrapper = &$form['header'][$this->options['id']];
+    $wrapper['#attributes']['class'][] = 'card';
+    $wrapper['#attributes']['class'][] = 'card__block';
 
     if (isset($wrapper['multipage'])) {
       $form['#attached']['library'][] = 'social_group/views_bulk_operations.frontUi';
@@ -89,8 +91,10 @@ class SocialGroupViewsBulkOperationsBulkForm extends GroupViewsBulkOperationsBul
     }
 
     $actions = &$wrapper['actions'];
-    $actions['#theme_wrappers'] = ['buttons_group'];
+    $actions['#theme'] = 'links__dropbutton__operations__actions';
     $actions['#label'] = $this->t('Actions');
+
+    unset($actions['#type']);
 
     $items = [];
 
@@ -111,7 +115,7 @@ class SocialGroupViewsBulkOperationsBulkForm extends GroupViewsBulkOperationsBul
       $items[] = $actions[$key];
     }
 
-    $actions['#items'] = $items;
+    $actions['#links'] = $items;
 
     $form['actions']['#access'] = FALSE;
   }
