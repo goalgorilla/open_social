@@ -68,29 +68,27 @@ class SocialGroupViewsBulkOperationsBulkForm extends GroupViewsBulkOperationsBul
     $wrapper['#attributes']['class'][] = 'card';
     $wrapper['#attributes']['class'][] = 'card__block';
 
-    if (isset($wrapper['multipage'])) {
-      $form['#attached']['library'][] = 'social_group/views_bulk_operations.frontUi';
+    $form['#attached']['library'][] = 'social_group/views_bulk_operations.frontUi';
 
-      $count = count($this->tempStoreData['list']);
+    $count = count($this->tempStoreData['list']);
 
-      if ($count) {
-        $title = $this->formatPlural($count, '<b>@count Member</b> is selected', '<b>@count Members</b> are selected');
-      }
-      else {
-        $title = $this->t('<b>@count Member</b> is selected', [
-          '@count' => $count,
-        ]);
-      }
-
-      $wrapper['multipage']['#title'] = [
-        '#type' => 'html_tag',
-        '#tag' => 'div',
-        '#attributes' => [
-          'class' => ['placeholder'],
-        ],
-        '#value' => $title,
-      ];
+    if ($count) {
+      $title = $this->formatPlural($count, '<b>@count Member</b> is selected', '<b>@count Members</b> are selected');
     }
+    else {
+      $title = $this->t('<b>@count Member</b> is selected', [
+        '@count' => $count,
+      ]);
+    }
+
+    $wrapper['multipage']['#title'] = [
+      '#type' => 'html_tag',
+      '#tag' => 'div',
+      '#attributes' => [
+        'class' => ['placeholder'],
+      ],
+      '#value' => $title,
+    ];
 
     $actions = &$wrapper['actions'];
     $actions['#theme'] = 'links__dropbutton__operations__actions';
