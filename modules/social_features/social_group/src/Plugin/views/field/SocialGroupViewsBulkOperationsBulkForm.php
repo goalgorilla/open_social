@@ -90,6 +90,8 @@ class SocialGroupViewsBulkOperationsBulkForm extends GroupViewsBulkOperationsBul
       '#value' => $title,
     ];
 
+    $wrapper['multipage']['list']['#title'] = $this->t('See selected members on other pages');
+
     $actions = &$wrapper['actions'];
     $actions['#theme'] = 'links__dropbutton__operations__actions';
     $actions['#label'] = $this->t('Actions');
