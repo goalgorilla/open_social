@@ -7,12 +7,50 @@
 
 use Drupal\user\Entity\Role;
 use Drupal\search_api\Entity\Index;
+use Drupal\user\Entity\User;
 
 /**
  * Implements hook_install().
  */
 function social_geolocation_install() {
+  $indexes = [
+    'social_users',
+    'social_groups',
+    'social_content',
+    'social_users',
+  ];
 
+  // Disable indexes on install. This is because we first need to install
+  // our dependencies. Otherwise config override will destroy search api.
+  // Also see social_tagging.install.
+  foreach ($indexes as $key => $index) {
+    /* @var Drupal\search_api\Entity\Index $index */
+    $index = Index::load($index);
+    if (!$index instanceof Index) {
+      \Drupal::logger('social_tagging')->info('Invalid search index');
+      return;
+    }
+    \Drupal::logger('social_tagging')->info('Loaded search index');
+
+    // If currently enabled we will first disabled and enable the index.
+    if ($index !== NULL && $index->status()) {
+      \Drupal::logger('social_tagging')->info('Search index exists');
+
+      // Elevate permissions so we can index *all* the items.
+      $accountSwitcher = Drupal::service('account_switcher');
+      $account = User::load(1);
+      $accountSwitcher->switchTo($account);
+
+      // Disable and enable the index so the tagging field is properly added.
+      $index->disable()->save();
+      \Drupal::logger('social_tagging')->info('Search index disabled');
+      $index->enable()->save();
+      \Drupal::logger('social_tagging')->info('Search index enabled');
+
+      // Restore user account.
+      $accountSwitcher->switchBack();
+    }
+  }
 }
 
 /**

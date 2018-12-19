@@ -2,9 +2,10 @@ services:
   social_geolocation.override:
     class: \Drupal\social_geolocation\SocialGeolocationUserAdminPeopleConfigOverride
     tags:
-      - {name: config.factory.override, priority: 10}
+      - {name: config.factory.override, priority: 5}
 
   social_geolocation_search.override:
     class: \Drupal\social_geolocation\SocialGeolocationSearchApiConfigOverride
+    arguments: ['@config.factory']
     tags:
-      - {name: config.factory.override, priority: 11}
+      - {name: config.factory.override, priority: 5}
