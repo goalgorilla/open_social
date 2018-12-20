@@ -94,6 +94,22 @@ function socialbase_preprocess_input(&$variables) {
     ];
   }
 
+  // Render a simple VBO checkbox.
+  if (strpos($variables['element']['#id'], 'edit-views-bulk-operations') !== FALSE
+    && $variables['type'] == 'checkbox') {
+    $variables['element']['#simple_checkbox'] = TRUE;
+    $variables['simple_checkbox'] = TRUE;
+  }
+}
+
+function socialbase_preprocess_form_element(&$variables) {
+  // Render a simple VBO checkbox.
+  if (strpos($variables['element']['#id'], 'edit-views-bulk-operations') !== FALSE
+    && $variables['type'] == 'checkbox') {
+
+    $variables['element']['#title'] = '';
+    $variables['label']['#title'] = '';
+  }
 }
 
 /**
