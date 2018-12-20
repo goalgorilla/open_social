@@ -76,7 +76,7 @@ class SocialGroupViewsBulkOperationsBulkForm extends GroupViewsBulkOperationsBul
       $title = $this->formatPlural($count, '<b>@count Member</b> is selected', '<b>@count Members</b> are selected');
     }
     else {
-      $title = $this->t('<b>@count Member</b> is selected', [
+      $title = $this->t('<b>no members</b> are selected', [
         '@count' => $count,
       ]);
     }

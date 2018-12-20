@@ -39,8 +39,17 @@
           var count = parseInt($placeholder.text());
           count += data.change;
 
+          if (!Number.isInteger(count)) {
+            count = 1;
+          }
+
           if (count > 1) {
             $placeholder.html(Drupal.t('<b>@count Members</b> are selected', {
+              '@count': count
+            }));
+          }
+          else if (count === 0) {
+            $placeholder.html(Drupal.t('<b>no members</b> are selected', {
               '@count': count
             }));
           }
