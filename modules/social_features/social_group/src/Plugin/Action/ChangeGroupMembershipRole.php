@@ -144,6 +144,15 @@ class ChangeGroupMembershipRole extends ViewsBulkOperationsActionBase implements
     $id = $group_type->getMemberRoleId();
     $roles[$id] = $group_type->getMemberRole();
 
+    $markup = $this->formatPlural($this->context['selected_count'],
+      'Choose which group roles to assign to the member you selected',
+      'Choose which group roles to assign to the @count members you selected'
+    );
+
+    $form['description'] = [
+      '#markup' => $markup,
+    ];
+
     $form_state->set('member_role', $id);
 
     /** @var \Drupal\group\Entity\GroupRoleInterface $role */
@@ -160,7 +169,10 @@ class ChangeGroupMembershipRole extends ViewsBulkOperationsActionBase implements
 
     unset($form['list']);
 
-    $form['actions']['submit']['#value'] = $this->t('Save');
+    $form['actions']['submit']['#value'] = $this->t('Change role');
+
+    $form['actions']['submit']['#attributes']['class'] = ['button button--primary js-form-submit form-submit btn js-form-submit btn-raised btn-primary waves-effect waves-btn waves-light'];
+    $form['actions']['cancel']['#attributes']['class'] = ['button button--danger btn btn-flat waves-effect waves-btn'];
 
     return $form;
   }

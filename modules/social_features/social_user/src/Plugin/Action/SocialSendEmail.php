@@ -184,6 +184,8 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
       unset($form['list']);
     }
     $form['actions']['submit']['#value'] = $this->t('Send email');
+    $form['actions']['submit']['#attributes']['class'] = ['button button--primary js-form-submit form-submit btn js-form-submit btn-raised btn-primary waves-effect waves-btn waves-light'];
+    $form['actions']['cancel']['#attributes']['class'] = ['button button--danger btn btn-flat waves-effect waves-btn'];
     return $form;
   }
 

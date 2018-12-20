@@ -17,17 +17,35 @@ class SocialGroupViewsBulkOperationsConfirmAction extends ConfirmAction {
     $form = parent::buildForm($form, $form_state, $view_id, $display_id);
     $form_data = $this->getFormData($view_id, $display_id);
 
+    // Show a descriptive message in the confirm action form.
     if (isset($form_data['action_id'])) {
-      $form['#title'] = $this->formatPlural(
-        $form_data['selected_count'],
-        'Are you sure you wish to perform "%action" action on 1 member?',
-        'Are you sure you wish to perform "%action" action on %count members?',
+      $form['description'] = [
+        '#markup' => $this->formatPlural($form_data['selected_count'],
+        'Are you sure you wish to perform "%action" action on the following member?',
+        'Are you sure you wish to perform "%action" action on the following %count members?',
         [
           '%action' => $form_data['action_label'],
           '%count' => $form_data['selected_count'],
-        ]
-      );
+        ]),
+        '#weight' => -10,
+      ];
+
+      if (strpos($form_data['action_id'], 'mail') !== false) {
+        $form['description'] = [
+          '#markup' => $this->formatPlural($form_data['selected_count'],
+            'Are you sure you want to send your email to the following member?',
+            'Are you sure you want to send your email to to the following %count members?',
+            [
+              '%action' => $form_data['action_label'],
+              '%count' => $form_data['selected_count'],
+            ]),
+          '#weight' => -10,
+        ];
+      }
     }
+
+    $form['actions']['submit']['#attributes']['class'] = ['button button--primary js-form-submit form-submit btn js-form-submit btn-raised btn-primary waves-effect waves-btn waves-light'];
+    $form['actions']['cancel']['#attributes']['class'] = ['button button--danger btn btn-flat waves-effect waves-btn'];
 
     return $form;
   }
