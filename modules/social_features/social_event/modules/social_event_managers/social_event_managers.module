@@ -16,6 +16,7 @@ use Drupal\Core\Url;
 use Drupal\social_event_managers\SocialEventManagersAccessHelper;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\user\Entity\User;
+use Drupal\views\ResultRow;
 
 /**
  * Implements hook_preprocess_block().
@@ -224,6 +225,21 @@ function social_event_managers_form_node_event_form_alter(&$form, FormStateInter
 
       $last_key = $form['field_event_managers']['widget']['#max_delta'];
       $form['field_event_managers']['widget'][$last_key]['target_id']['#default_value'] = $user;
+    }
+  }
+}
+
+/**
+ * Implements hook_social_event_role_alter().
+ */
+function social_event_managers_social_event_role_alter(&$role_name, ResultRow $row) {
+  /** @var \Drupal\Core\Field\EntityReferenceFieldItemListInterface $field */
+  $field = &$row->_relationship_entities['field_event']->field_event_managers;
+
+  foreach ($field->getValue() as $value) {
+    if ($value['target_id'] == $row->users_field_data_profile_uid) {
+      $role_name = t('Event manager');
+      break;
     }
   }
 }

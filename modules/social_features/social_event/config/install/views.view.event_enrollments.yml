@@ -440,7 +440,7 @@ display:
             views_bulk_operations_bulk_form: views_bulk_operations_bulk_form
             rendered_entity: rendered_entity
             field_profile_organization: field_profile_organization
-            nothing: nothing
+            role: role
             created: created
             operations: operations
           info:
@@ -463,7 +463,7 @@ display:
               separator: ''
               empty_column: false
               responsive: ''
-            nothing:
+            role:
               sortable: true
               default_sort_order: asc
               align: ''
@@ -697,18 +697,18 @@ display:
           separator: ', '
           field_api_classes: false
           plugin_id: field
-        nothing:
-          id: nothing
-          table: views
-          field: nothing
-          relationship: none
+        role:
+          id: role
+          table: event_enrollment
+          field: role
+          relationship: reverse__event_enrollment__field_account
           group_type: group
           admin_label: ''
           label: Role
           exclude: false
           alter:
-            alter_text: true
-            text: Enrollee
+            alter_text: false
+            text: ''
             make_link: false
             path: ''
             absolute: false
@@ -744,8 +744,9 @@ display:
           empty: ''
           hide_empty: false
           empty_zero: false
-          hide_alter_empty: false
-          plugin_id: custom
+          hide_alter_empty: true
+          entity_type: event_enrollment
+          plugin_id: event_enrollment_role
         created:
           id: created
           table: event_enrollment_field_data
