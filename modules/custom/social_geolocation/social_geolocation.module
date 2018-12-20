@@ -164,7 +164,7 @@ function social_geolocation_form_views_exposed_form_alter(&$form, FormStateInter
 
   // Render it last.
   $form['location_details'] = [
-    '#prefix' => '<span class="control-label">' . t('Location details') . '</span>',
+    '#field_prefix' => '<span class="control-label">' . t('Location details') . '</span>',
     '#type' => 'fieldset',
     "#weight" => 50,
   ];
@@ -174,6 +174,17 @@ function social_geolocation_form_views_exposed_form_alter(&$form, FormStateInter
     unset($form['location_details']['#prefix']);
     $form['location_details']['#title'] = t('Location details');
     $form['geolocation_geocoder_google_geocoding_api']['#size'] = 30;
+  }
+
+  if (strpos($form['#id'], 'views-exposed-form-search-content-page') !== FALSE ||
+    strpos($form['#id'], 'views-exposed-form-search-content-page-no-value') !== FALSE ) {
+    $form['location_details']['#states'] = [
+      'visible' => [
+        ':input[name=type]' => [
+          'value' => 'event',
+        ],
+      ],
+    ];
   }
 
   $form['geolocation_geocoder_google_geocoding_api']['#placeholder'] = t('City, Country');
