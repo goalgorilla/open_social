@@ -20,7 +20,6 @@ class Role extends FieldPluginBase {
    * {@inheritdoc}
    */
   public function query() {
-    // do nothing -- to override the parent query.
   }
 
   /**

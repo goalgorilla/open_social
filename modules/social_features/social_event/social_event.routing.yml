@@ -14,3 +14,13 @@ social_event.settings:
     _permission: 'administer social_event settings'
   options:
     _admin_route: TRUE
+
+social_event.views_bulk_operations.confirm:
+  path: '/node/{node}/enrollments/confirm-action'
+  defaults:
+    _form: '\Drupal\social_event\Form\EventEnrollmentConfirmActionForm'
+    _title: 'Confirm action'
+    view_id: 'event_enrollments'
+    display_id: 'view_enrollments'
+  requirements:
+    _views_bulk_operation_access: 'TRUE'
