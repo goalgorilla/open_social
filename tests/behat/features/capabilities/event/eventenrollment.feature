@@ -26,8 +26,13 @@ Feature: Enroll for an event
     When I click "All enrollments"
     Then I should see the button "Enrolled"
     And I should see the link "Enrollments"
-    And I should see "View profile"
-    And I should see "View activities"
+    And I should see the button "Remove"
+    And I should see "1 Enrollees"
+    And I should see the link "Enrollee"
+    And I should see the link "Organization"
+    And I should see the link "Role"
+    And I should see the link "Enroll date"
+    And I should see the link "Operation"
 
   @AN
   Scenario: Successfully redirect an AN from an event enrollment action
