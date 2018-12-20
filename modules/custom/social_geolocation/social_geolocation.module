@@ -162,17 +162,21 @@ function social_geolocation_form_views_exposed_form_alter(&$form, FormStateInter
   $form['geolocation_geocoder_google_geocoding_api']['#title'] = t('City');
   $form['proximity']['#title'] = t('Distance to the city (km)');
 
+  // Render it last.
   $form['location_details'] = [
     '#prefix' => '<span class="control-label">' . t('Location details') . '</span>',
     '#type' => 'fieldset',
+    "#weight" => 50,
   ];
 
   // Format admin people.
   if (strpos($form['#id'], 'views-exposed-form-user-admin-people-page') !== FALSE) {
     unset($form['location_details']['#prefix']);
     $form['location_details']['#title'] = t('Location details');
+    $form['geolocation_geocoder_google_geocoding_api']['#size'] = 30;
   }
 
+  $form['geolocation_geocoder_google_geocoding_api']['#placeholder'] = t('City, Country');
   $form['location_details']['geolocation_geocoder_google_geocoding_api'] = $form['geolocation_geocoder_google_geocoding_api'];
   $form['location_details']['proximity'] = $form['proximity'];
   unset($form['proximity']);
