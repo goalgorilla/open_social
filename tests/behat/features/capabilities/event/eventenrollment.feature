@@ -27,6 +27,7 @@ Feature: Enroll for an event
     Then I should see the button "Enrolled"
     And I should see the link "Enrollments"
     And I should see the button "Remove"
+    And I should see the button "Email"
     And I should see "1 Enrollees"
     And I should see the link "Enrollee"
     And I should see the link "Organization"
