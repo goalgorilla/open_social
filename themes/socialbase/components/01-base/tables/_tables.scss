@@ -206,3 +206,45 @@ th {
 .vbo-table .form-no-label.checkbox label {
   display: none;
 }
+
+#vbo-action-form-wrapper .btn-group.dropdown {
+  position: absolute;
+  right: 1rem;
+  padding: 10px 0;
+
+  @include for-phone-only {
+    position: static;
+    width: 100%;
+
+    button {
+      width: 100%;
+    }
+  }
+}
+
+#vbo-action-form-wrapper.card__block {
+  padding: 0;
+
+  .panel-heading {
+    padding: 1.25rem 0 0 1.25rem;
+  }
+
+  .vbo-multipage-selector ul {
+    background-color: rgba(0, 0, 0, 0.05);
+    margin: 0;
+    font-size: 0.875rem;
+  }
+
+  .vbo-multipage-selector ul li,
+  .vbo-multipage-selector h3 {
+    padding-left: 1.25rem;
+    font-weight: 500;
+  }
+
+  .vbo-multipage-selector li:last-child {
+    padding-bottom: 0.5rem;
+  }
+  .vbo-multipage-selector li:first-child {
+    padding-top: 0.5rem;
+  }
+}

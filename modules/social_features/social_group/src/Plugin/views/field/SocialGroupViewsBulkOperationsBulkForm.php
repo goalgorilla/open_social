@@ -119,6 +119,7 @@ class SocialGroupViewsBulkOperationsBulkForm extends GroupViewsBulkOperationsBul
 
     unset($actions['#type']);
 
+    unset($wrapper['multipage']['clear']);
     $items = [];
 
     $weights = [

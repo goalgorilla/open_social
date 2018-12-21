@@ -11,6 +11,17 @@
     attach: function (context, settings) {
       var $primarySelectAll = $('.select-all', '.vbo-view-form');
       $primarySelectAll.addClass('form-no-label checkbox form-checkbox');
+
+      // Make sure we set the Actions button to relative when the wrapper gets
+      // hidden by VBO.
+      $('.views-table-row-vbo-select-all .form-submit').on('click', function () {
+        if ($('#vbo-action-form-wrapper .btn-group.dropdown').css("position") === "absolute") {
+          $('#vbo-action-form-wrapper .btn-group.dropdown').css({position:'relative', padding:'1rem'});
+        }
+        else if ($('#vbo-action-form-wrapper .btn-group.dropdown').css("position") === "relative") {
+          $('#vbo-action-form-wrapper .btn-group.dropdown').css({position:'absolute', padding:'10px 0'});
+        }
+      });
     }
   };
 
