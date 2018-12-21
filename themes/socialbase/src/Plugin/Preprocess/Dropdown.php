@@ -3,7 +3,6 @@
 namespace Drupal\socialbase\Plugin\Preprocess;
 
 use Drupal\bootstrap\Utility\Variables;
-use Drupal\bootstrap\Utility\Unicode;
 use Drupal\bootstrap\Plugin\Preprocess\BootstrapDropdown;
 
 /**
@@ -19,9 +18,16 @@ class Dropdown extends BootstrapDropdown {
    * {@inheritdoc}
    */
   public function preprocess(array &$variables, $hook, array $info) {
+    $operations = !!mb_strpos($variables['theme_hook_original'], 'operations');
+
+    if ($operations && \Drupal::routeMatch()->getRouteName() === 'view.event_manage_enrollments.page_manage_enrollments') {
+      $variables['default_button'] = FALSE;
+      $variables['toggle_label'] = $this->t('Actions');
+    }
+
     parent::preprocess($variables, $hook, $info);
 
-    if (isset($variables['items']['#items']['publish']['element']['#button_type']) && $variables['items']['#items']['publish']['element']['#button_type'] == 'primary') {
+    if (isset($variables['items']['#items']['publish']['element']['#button_type']) && $variables['items']['#items']['publish']['element']['#button_type'] === 'primary') {
       $variables['alignment'] = 'right';
 
       if (isset($variables['toggle'])) {
@@ -31,7 +37,6 @@ class Dropdown extends BootstrapDropdown {
       }
 
     }
-
   }
 
   /**
@@ -40,7 +45,7 @@ class Dropdown extends BootstrapDropdown {
   protected function preprocessLinks(Variables $variables) {
     parent::preprocessLinks($variables);
 
-    $operations = !!Unicode::strpos($variables->theme_hook_original, 'operations');
+    $operations = !!mb_strpos($variables->theme_hook_original, 'operations');
 
     // Make operations button small, not smaller ;).
     // Bootstrap basetheme override.

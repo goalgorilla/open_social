@@ -106,6 +106,10 @@ class Page extends PreprocessBase {
       }
     }
 
+    if (\Drupal::routeMatch()->getRouteName() === 'view.event_manage_enrollments.page_manage_enrollments') {
+      $attributes->removeClass('row', 'layout--with-complementary');
+    }
+
     $variables['content_attributes'] = $attributes;
 
   }
