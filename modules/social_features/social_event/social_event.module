@@ -184,13 +184,6 @@ function social_event_preprocess_node(array &$variables) {
  * Implements hook_views_data_alter().
  */
 function social_event_views_data_alter(array &$data) {
-  $data['event_enrollment']['role'] = [
-    'title' => t('Role'),
-    'help' => t('Provide event enrollment role name.'),
-    'field' => [
-      'id' => 'event_enrollment_role',
-    ],
-  ];
   $data['node']['event_enrolled_or_created_filter'] = [
     'title' => t('Event enrolled or created'),
     'filter' => [

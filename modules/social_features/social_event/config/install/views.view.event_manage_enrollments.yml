@@ -293,15 +293,15 @@ display:
       tags:
         - 'config:core.entity_view_display.profile.profile.autocomplete_item'
         - 'config:core.entity_view_display.profile.profile.compact'
-        - 'config:core.entity_view_display.profile.profile.compact_notification'
         - 'config:core.entity_view_display.profile.profile.compact_teaser'
-        - 'config:core.entity_view_display.profile.profile.default'
         - 'config:core.entity_view_display.profile.profile.hero'
         - 'config:core.entity_view_display.profile.profile.search_index'
-        - 'config:core.entity_view_display.profile.profile.small'
         - 'config:core.entity_view_display.profile.profile.small_teaser'
-        - 'config:core.entity_view_display.profile.profile.table'
         - 'config:core.entity_view_display.profile.profile.teaser'
+        - 'config:core.entity_view_display.profile.profile.compact_notification'
+        - 'config:core.entity_view_display.profile.profile.default'
+        - 'config:core.entity_view_display.profile.profile.small'
+        - 'config:core.entity_view_display.profile.profile.table'
   page_manage_enrollments:
     display_plugin: page
     id: page_manage_enrollments
@@ -595,56 +595,6 @@ display:
           separator: ', '
           field_api_classes: false
           plugin_id: field
-        role:
-          id: role
-          table: event_enrollment
-          field: role
-          relationship: reverse__event_enrollment__field_account
-          group_type: group
-          admin_label: ''
-          label: Role
-          exclude: false
-          alter:
-            alter_text: false
-            text: ''
-            make_link: false
-            path: ''
-            absolute: false
-            external: false
-            replace_spaces: false
-            path_case: none
-            trim_whitespace: false
-            alt: ''
-            rel: ''
-            link_class: ''
-            prefix: ''
-            suffix: ''
-            target: ''
-            nl2br: false
-            max_length: 0
-            word_boundary: true
-            ellipsis: true
-            more_link: false
-            more_link_text: ''
-            more_link_path: ''
-            strip_tags: false
-            trim: false
-            preserve_tags: ''
-            html: false
-          element_type: ''
-          element_class: ''
-          element_label_type: ''
-          element_label_class: ''
-          element_label_colon: true
-          element_wrapper_type: ''
-          element_wrapper_class: ''
-          element_default_classes: true
-          empty: ''
-          hide_empty: false
-          empty_zero: false
-          hide_alter_empty: true
-          entity_type: event_enrollment
-          plugin_id: event_enrollment_role
         created:
           id: created
           table: event_enrollment_field_data
