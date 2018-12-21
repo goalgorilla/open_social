@@ -81,7 +81,13 @@ class SocialGroupViewsBulkOperationsBulkForm extends GroupViewsBulkOperationsBul
         '#title' => $this->t('Select all @count results in this view', [
           '@count' => $this->tempStoreData['total_results'] ? ' ' . $this->tempStoreData['total_results'] : '',
         ]),
-        '#attributes' => ['class' => ['vbo-select-all', 'form-no-label', 'checkbox']],
+        '#attributes' => [
+          'class' => [
+            'vbo-select-all',
+            'form-no-label',
+            'checkbox'
+          ]
+        ],
       ];
     }
 

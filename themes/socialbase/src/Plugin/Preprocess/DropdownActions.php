@@ -5,7 +5,7 @@ namespace Drupal\socialbase\Plugin\Preprocess;
 use Drupal\bootstrap\Utility\Variables;
 
 /**
- * Pre-processes variables for the "bootstrap_dropdown__operations__actions" theme hook.
+ * Pre-processes variables for "bootstrap_dropdown__operations__actions" hook.
  *
  * @ingroup plugins_preprocess
  *

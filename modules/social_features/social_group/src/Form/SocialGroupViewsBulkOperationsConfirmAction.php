@@ -30,7 +30,7 @@ class SocialGroupViewsBulkOperationsConfirmAction extends ConfirmAction {
         '#weight' => -10,
       ];
 
-      if (strpos($form_data['action_id'], 'mail') !== false) {
+      if (strpos($form_data['action_id'], 'mail') !== FALSE) {
         $form['description'] = [
           '#markup' => $this->formatPlural($form_data['selected_count'],
             'Are you sure you want to send your email to the following member?',
