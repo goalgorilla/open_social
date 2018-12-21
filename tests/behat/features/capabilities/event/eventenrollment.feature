@@ -32,7 +32,7 @@ Feature: Enroll for an event
     And I should see the link "Organization"
     And I should see the link "Role"
     And I should see the link "Enroll date"
-    And I should see the link "Operation"
+    And I should see "Operation"
 
   @AN
   Scenario: Successfully redirect an AN from an event enrollment action
