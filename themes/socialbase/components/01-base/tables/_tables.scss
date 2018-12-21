@@ -185,6 +185,22 @@ th {
 // For VBO manage members.
 .right-auto {
   margin-right: auto;
+  @include for-phone-only {
+    margin-left: 0.5rem;
+  }
+}
+
+.view-group-manage-members {
+  @include for-phone-only {
+    padding: 0 10px;
+
+    .form-group-inline--right {
+      display: block;
+    }
+    .card {
+      display: block;
+    }
+  }
 }
 
 .select-all.checkbox {
@@ -207,6 +223,39 @@ th {
   display: none;
 }
 
+.vbo-table .views-table-row-vbo-select-all {
+  .form-submit {
+    color: #4d4d4d;
+    background-color: #fff;
+    border-radius: 10px;
+    fill: #4d4d4d;
+    display: inline-block;
+    margin-bottom: 0;
+    font-weight: normal;
+    text-align: center;
+    vertical-align: middle;
+    -ms-touch-action: manipulation;
+    touch-action: manipulation;
+    cursor: pointer;
+    background-image: none;
+    border: 1px solid #adadad;
+    padding: 6px 12px;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    text-transform: uppercase;
+    -webkit-transition: .3s ease-out;
+    transition: .3s ease-out;
+    outline: 0;
+  }
+  td div {
+    text-align: left;
+  }
+}
+
 #vbo-action-form-wrapper .btn-group.dropdown {
   position: absolute;
   right: 1rem;
@@ -217,6 +266,10 @@ th {
     width: 100%;
 
     button {
+      margin-right: 0.5rem;
+    }
+
+    .dropdown-menu.dropdown-menu-right {
       width: 100%;
     }
   }
