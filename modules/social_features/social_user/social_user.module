@@ -56,6 +56,12 @@ function social_user_form_views_exposed_form_alter(&$form, FormStateInterface $f
   // Make the filters on the admin people overview more user friendly.
   if ($view && $view->id() === 'user_admin_people' && $view->current_display === 'page_1') {
 
+    // Render an empty divider after Group for field sets.
+    $form['divider'] = [
+      '#markup' => '<div class="form--inline form-actions"></div>',
+      '#weight' => 20,
+    ];
+
     $filters = [
       'created',
       'login',
@@ -63,6 +69,7 @@ function social_user_form_views_exposed_form_alter(&$form, FormStateInterface $f
     foreach ($filters as $filter) {
       $form[$filter]['#title'] = $form[$filter]['min']['#title'];
       $form[$filter]['#type'] = 'fieldset';
+      $form[$filter]['#weight'] = 30;
 
       $form[$filter]['min']['#type'] = 'date';
       $form[$filter]['min']['#title'] = t('Date');
