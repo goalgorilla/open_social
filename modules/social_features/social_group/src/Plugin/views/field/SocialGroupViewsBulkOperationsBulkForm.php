@@ -64,6 +64,27 @@ class SocialGroupViewsBulkOperationsBulkForm extends GroupViewsBulkOperationsBul
       return;
     }
 
+    // Get pager data if available.
+    if (!empty($this->view->pager) && method_exists($this->view->pager, 'hasMoreRecords')) {
+      $pagerData = [
+        'current' => $this->view->pager->getCurrentPage(),
+        'more' => $this->view->pager->hasMoreRecords(),
+      ];
+    }
+
+    $display_select_all = isset($pagerData) && ($pagerData['more'] || $pagerData['current'] > 0);
+
+    // Select all results checkbox.
+    if ($display_select_all) {
+      $form['header'][$this->options['id']]['select_all'] = [
+        '#type' => 'checkbox',
+        '#title' => $this->t('Select all @count results in this view', [
+          '@count' => $this->tempStoreData['total_results'] ? ' ' . $this->tempStoreData['total_results'] : '',
+        ]),
+        '#attributes' => ['class' => ['vbo-select-all', 'form-no-label', 'checkbox']],
+      ];
+    }
+
     $wrapper = &$form['header'][$this->options['id']];
     $wrapper['#attributes']['class'][] = 'card';
     $wrapper['#attributes']['class'][] = 'card__block';

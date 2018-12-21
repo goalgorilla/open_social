@@ -7,6 +7,13 @@
 
   'use strict';
 
+  Drupal.behaviors.viewsBulkOperationsFrontUi = {
+    attach: function (context, settings) {
+      var $primarySelectAll = $('.select-all', '.vbo-view-form');
+      $primarySelectAll.addClass('form-no-label checkbox form-checkbox');
+    }
+  };
+
   /**
    * Perform an AJAX request to update selection.
    *
