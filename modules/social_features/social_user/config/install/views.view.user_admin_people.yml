@@ -798,6 +798,44 @@ display:
             field_profile_first_name: field_profile_first_name
             field_profile_last_name: field_profile_last_name
           plugin_id: combine
+        default_langcode:
+          id: default_langcode
+          table: users_field_data
+          field: default_langcode
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: '='
+          value: '1'
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          entity_type: user
+          entity_field: default_langcode
+          plugin_id: boolean
         roles_target_id:
           id: roles_target_id
           table: user__roles
@@ -926,44 +964,57 @@ display:
           plugin_id: boolean
           entity_type: user
           entity_field: status
-        default_langcode:
-          id: default_langcode
-          table: users_field_data
-          field: default_langcode
-          relationship: none
+        id:
+          id: id
+          table: groups_field_data
+          field: id
+          relationship: gid
           group_type: group
           admin_label: ''
           operator: '='
-          value: '1'
+          value:
+            min: ''
+            max: ''
+            value: ''
           group: 1
-          exposed: false
+          exposed: true
           expose:
-            operator_id: ''
-            label: ''
+            operator_id: id_op
+            label: Group
             description: ''
             use_operator: false
-            operator: ''
-            identifier: ''
+            operator: id_op
+            identifier: group
             required: false
             remember: false
             multiple: false
             remember_roles:
               authenticated: authenticated
+              anonymous: '0'
+              administrator: '0'
+              contentmanager: '0'
+              sitemanager: '0'
+            placeholder: ''
+            min_placeholder: ''
+            max_placeholder: ''
           is_grouped: false
           group_info:
-            label: ''
-            description: ''
-            identifier: ''
+            label: ID
+            description: null
+            identifier: id
             optional: true
             widget: select
             multiple: false
             remember: false
             default_group: All
             default_group_multiple: {  }
-            group_items: {  }
-          entity_type: user
-          entity_field: default_langcode
-          plugin_id: boolean
+            group_items:
+              1: {  }
+              2: {  }
+              3: {  }
+          entity_type: group
+          entity_field: id
+          plugin_id: numeric
         uid_raw:
           id: uid_raw
           table: users_field_data
@@ -1024,7 +1075,7 @@ display:
             operator_id: created_op
             label: 'Registration date'
             description: ''
-            use_operator: false
+            use_operator: true
             operator: created_op
             identifier: created
             required: false
@@ -1036,6 +1087,9 @@ display:
               administrator: '0'
               contentmanager: '0'
               sitemanager: '0'
+            placeholder: ''
+            min_placeholder: ''
+            max_placeholder: ''
           is_grouped: false
           group_info:
             label: ''
@@ -1051,27 +1105,28 @@ display:
           entity_type: user
           entity_field: created
           plugin_id: date
-        id:
-          id: id
-          table: groups_field_data
-          field: id
-          relationship: gid
+        login:
+          id: login
+          table: users_field_data
+          field: login
+          relationship: none
           group_type: group
           admin_label: ''
-          operator: '='
+          operator: between
           value:
             min: ''
             max: ''
             value: ''
+            type: date
           group: 1
           exposed: true
           expose:
-            operator_id: id_op
-            label: Group
+            operator_id: login_op
+            label: 'Last login'
             description: ''
-            use_operator: false
-            operator: id_op
-            identifier: group
+            use_operator: true
+            operator: login_op
+            identifier: login
             required: false
             remember: false
             multiple: false
@@ -1086,22 +1141,19 @@ display:
             max_placeholder: ''
           is_grouped: false
           group_info:
-            label: ID
-            description: null
-            identifier: id
+            label: ''
+            description: ''
+            identifier: ''
             optional: true
             widget: select
             multiple: false
             remember: false
             default_group: All
             default_group_multiple: {  }
-            group_items:
-              1: {  }
-              2: {  }
-              3: {  }
-          entity_type: group
-          entity_field: id
-          plugin_id: numeric
+            group_items: {  }
+          entity_type: user
+          entity_field: login
+          plugin_id: date
       sorts:
         created:
           id: created

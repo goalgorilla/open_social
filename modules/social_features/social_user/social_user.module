@@ -55,11 +55,52 @@ function social_user_form_views_exposed_form_alter(&$form, FormStateInterface $f
 
   // Make the filters on the admin people overview more user friendly.
   if ($view && $view->id() === 'user_admin_people' && $view->current_display === 'page_1') {
-    $form['created']['min']['#type'] = 'date';
-    $form['created']['min']['#title'] = t('Registered from');
-    $form['created']['max']['#type'] = 'date';
-    $form['created']['max']['#title'] = t('Registered to');
 
+    // Render an empty divider after Group for field sets.
+    $form['divider'] = [
+      '#markup' => '<div class="form--inline form-actions"></div>',
+      '#weight' => 20,
+    ];
+
+    $filters = [
+      'created',
+      'login',
+    ];
+    foreach ($filters as $filter) {
+      $form[$filter]['#title'] = $form[$filter]['min']['#title'];
+      $form[$filter]['#type'] = 'fieldset';
+      $form[$filter]['#weight'] = 30;
+
+      $form[$filter]['min']['#type'] = 'date';
+      $form[$filter]['min']['#title'] = t('Date');
+      $form[$filter]['min']['#states']['visible'] = [];
+      $form[$filter]['min']['#states']['visible'][0][':input[name="' . $filter . '[' . $filter . '_op]"]'] = [
+        'value' => 'between',
+      ];
+      $form[$filter]['max']['#type'] = 'date';
+      $form[$filter]['max']['#title'] = t('Date');
+      $form[$filter]['max']['#states']['visible'] = [];
+      $form[$filter]['max']['#states']['visible'][0][':input[name="' . $filter . '[' . $filter . '_op]"]'] = [
+        'value' => 'between',
+      ];
+      $form[$filter]['value']['#states']['visible'] = [];
+      $form[$filter]['value']['#states']['visible'][0][':input[name="' . $filter . '[' . $filter . '_op]"]'] = [
+        'value' => '<',
+      ];
+      $form[$filter]['value']['#states']['visible'][1][':input[name="' . $filter . '[' . $filter . '_op]"]'] = [
+        'value' => '>',
+      ];
+      $form[$filter]['value']['#type'] = 'date';
+      $form[$filter]['value']['#title'] = t('Date');
+
+      $form[$filter][$filter . '_op'] = $form[$filter . '_op'];
+      $form[$filter][$filter . '_op']['#weight'] = -5;
+      $form[$filter][$filter . '_op']['#options'] = [];
+      $form[$filter][$filter . '_op']['#options']['between'] = t('Between');
+      $form[$filter][$filter . '_op']['#options']['>'] = t('After');
+      $form[$filter][$filter . '_op']['#options']['<'] = t('Before');
+      unset($form[$filter . '_op']);
+    }
     if (isset($form['group']) && ($items = _social_user_get_groups())) {
       $form['group'] = array_merge($form['group'], [
         '#type' => 'select',
@@ -69,6 +110,9 @@ function social_user_form_views_exposed_form_alter(&$form, FormStateInterface $f
       ]);
     }
   }
+
+  // Add an extra validation option to handle all the form altering.
+  $form['#validate'][] = 'social_user_admin_people_overview_validate';
 }
 
 /**
@@ -86,6 +130,19 @@ function _social_user_get_groups() {
   }
 
   return $data;
+}
+
+/**
+ * Validate function for the admin people overview exposed filters.
+ */
+function social_user_admin_people_overview_validate(&$form, FormStateInterface $form_state) {
+  $filters = [
+    'created',
+    'login',
+  ];
+  foreach ($filters as $filter) {
+    $form_state->setValue($filter . '_op', $form_state->getValue([$filter, $filter . '_op']));
+  }
 }
 
 /**
