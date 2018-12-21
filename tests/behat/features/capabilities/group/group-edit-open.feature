@@ -47,8 +47,8 @@ Feature: Edit my group as a group manager
     And I should see "GoalGorilla"
     And I should see "Role"
     And I should see "Group Manager"
-    And I should see "Operations"
-    And I should see the button "Edit"
+    And I should see "Actions"
+    And I should see the button "Actions"
     When I press the "Toggle Dropdown" button
     Then I should see the link "Remove"
     When I press "Edit"
