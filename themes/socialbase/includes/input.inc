@@ -102,16 +102,6 @@ function socialbase_preprocess_input(&$variables) {
   }
 }
 
-function socialbase_preprocess_form_element(&$variables) {
-  // Render a simple VBO checkbox.
-  if (strpos($variables['element']['#id'], 'edit-views-bulk-operations') !== FALSE
-    && $variables['type'] == 'checkbox') {
-
-    $variables['element']['#title'] = '';
-    $variables['label']['#title'] = '';
-  }
-}
-
 /**
  * Implements hook_preprocess_textarea().
  */
