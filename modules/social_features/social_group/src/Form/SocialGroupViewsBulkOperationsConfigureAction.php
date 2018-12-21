@@ -15,7 +15,7 @@ class SocialGroupViewsBulkOperationsConfigureAction extends GroupViewsBulkOperat
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state, $view_id = 'group_manage_members', $display_id = 'page_group_manage_members') {
-    return parent::buildForm($form, $form_state, $view_id, $display_id);
+    return parent::buildForm($form, $form_state, 'group_manage_members', 'page_group_manage_members');
   }
 
   /**

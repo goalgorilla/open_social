@@ -85,8 +85,8 @@ class SocialGroupViewsBulkOperationsBulkForm extends GroupViewsBulkOperationsBul
           'class' => [
             'vbo-select-all',
             'form-no-label',
-            'checkbox'
-          ]
+            'checkbox',
+          ],
         ],
       ];
     }
