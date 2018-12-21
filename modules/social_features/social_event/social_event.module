@@ -535,14 +535,16 @@ function _social_event_action_batch_finish($success, array $results, array $oper
   }
 
   if ($success) {
-    \Drupal::messenger()->addStatus(t('@number selected enrollees have been removed from the event successfully', [
-      '@number' => $results_count,
-    ]));
+    \Drupal::messenger()->addStatus(\Drupal::translation()->formatPlural($results_count,
+      '1 selected enrollee have been removed from the event successfully',
+      '@count selected enrollees have been removed from the event successfully'
+    ));
   }
   else {
-    \Drupal::messenger()->addWarning(t('@number selected enrollees have not been removed from the event successfully', [
-      '@number' => $results_count,
-    ]));
+    \Drupal::messenger()->addWarning(\Drupal::translation()->formatPlural($results_count,
+      '1 selected enrollee have not been removed from the event successfully',
+      '@count selected enrollees have not been removed from the event successfully'
+    ));
   }
 }
 
