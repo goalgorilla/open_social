@@ -3,8 +3,6 @@ status: true
 dependencies:
   config:
     - core.entity_view_mode.profile.table
-    - field.storage.event_enrollment.field_first_name
-    - field.storage.event_enrollment.field_last_name
     - field.storage.profile.field_profile_organization
   module:
     - node
@@ -85,26 +83,10 @@ display:
           summary: ''
           description: ''
           columns:
-            field_first_name: field_first_name
-            field_last_name: field_last_name
             rendered_entity: rendered_entity
             field_profile_organization: field_profile_organization
             created: created
           info:
-            field_first_name:
-              sortable: false
-              default_sort_order: asc
-              align: ''
-              separator: ''
-              empty_column: false
-              responsive: ''
-            field_last_name:
-              sortable: false
-              default_sort_order: asc
-              align: ''
-              separator: ''
-              empty_column: false
-              responsive: ''
             rendered_entity:
               sortable: true
               default_sort_order: asc
@@ -194,132 +176,6 @@ display:
             social_event_send_email_action:
               label_override: Email
           plugin_id: views_bulk_operations_bulk_form
-        field_first_name:
-          id: field_first_name
-          table: event_enrollment__field_first_name
-          field: field_first_name
-          relationship: none
-          group_type: group
-          admin_label: ''
-          label: 'First name'
-          exclude: true
-          alter:
-            alter_text: false
-            text: ''
-            make_link: false
-            path: ''
-            absolute: false
-            external: false
-            replace_spaces: false
-            path_case: none
-            trim_whitespace: false
-            alt: ''
-            rel: ''
-            link_class: ''
-            prefix: ''
-            suffix: ''
-            target: ''
-            nl2br: false
-            max_length: 0
-            word_boundary: true
-            ellipsis: true
-            more_link: false
-            more_link_text: ''
-            more_link_path: ''
-            strip_tags: false
-            trim: false
-            preserve_tags: ''
-            html: false
-          element_type: ''
-          element_class: ''
-          element_label_type: ''
-          element_label_class: ''
-          element_label_colon: true
-          element_wrapper_type: ''
-          element_wrapper_class: ''
-          element_default_classes: true
-          empty: ''
-          hide_empty: false
-          empty_zero: false
-          hide_alter_empty: true
-          click_sort_column: value
-          type: string
-          settings:
-            link_to_entity: false
-          group_column: value
-          group_columns: {  }
-          group_rows: true
-          delta_limit: 0
-          delta_offset: 0
-          delta_reversed: false
-          delta_first_last: false
-          multi_type: separator
-          separator: ', '
-          field_api_classes: false
-          plugin_id: field
-        field_last_name:
-          id: field_last_name
-          table: event_enrollment__field_last_name
-          field: field_last_name
-          relationship: none
-          group_type: group
-          admin_label: ''
-          label: 'Last name'
-          exclude: true
-          alter:
-            alter_text: false
-            text: ''
-            make_link: false
-            path: ''
-            absolute: false
-            external: false
-            replace_spaces: false
-            path_case: none
-            trim_whitespace: false
-            alt: ''
-            rel: ''
-            link_class: ''
-            prefix: ''
-            suffix: ''
-            target: ''
-            nl2br: false
-            max_length: 0
-            word_boundary: true
-            ellipsis: true
-            more_link: false
-            more_link_text: ''
-            more_link_path: ''
-            strip_tags: false
-            trim: false
-            preserve_tags: ''
-            html: false
-          element_type: ''
-          element_class: ''
-          element_label_type: ''
-          element_label_class: ''
-          element_label_colon: true
-          element_wrapper_type: ''
-          element_wrapper_class: ''
-          element_default_classes: true
-          empty: ''
-          hide_empty: false
-          empty_zero: false
-          hide_alter_empty: true
-          click_sort_column: value
-          type: string
-          settings:
-            link_to_entity: false
-          group_column: value
-          group_columns: {  }
-          group_rows: true
-          delta_limit: 0
-          delta_offset: 0
-          delta_reversed: false
-          delta_first_last: false
-          multi_type: separator
-          separator: ', '
-          field_api_classes: false
-          plugin_id: field
         rendered_entity:
           id: rendered_entity
           table: profile
@@ -364,7 +220,7 @@ display:
           element_wrapper_type: ''
           element_wrapper_class: ''
           element_default_classes: true
-          empty: '{{ field_first_name }} {{ field_last_name }}'
+          empty: '-'
           hide_empty: false
           empty_zero: false
           hide_alter_empty: true
@@ -682,8 +538,6 @@ display:
         - 'config:core.entity_view_display.profile.profile.small_teaser'
         - 'config:core.entity_view_display.profile.profile.table'
         - 'config:core.entity_view_display.profile.profile.teaser'
-        - 'config:field.storage.event_enrollment.field_first_name'
-        - 'config:field.storage.event_enrollment.field_last_name'
         - 'config:field.storage.profile.field_profile_organization'
   page_manage_enrollments:
     display_plugin: page
@@ -722,6 +576,4 @@ display:
         - 'config:core.entity_view_display.profile.profile.small_teaser'
         - 'config:core.entity_view_display.profile.profile.table'
         - 'config:core.entity_view_display.profile.profile.teaser'
-        - 'config:field.storage.event_enrollment.field_first_name'
-        - 'config:field.storage.event_enrollment.field_last_name'
         - 'config:field.storage.profile.field_profile_organization'
