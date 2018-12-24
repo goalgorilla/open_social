@@ -54,15 +54,24 @@ function social_swiftmail_preprocess_swiftmailer(array &$variables) {
     $variables['site_slogan'] = '"' . t('Make your people bloom') . '"';
   }
 
+  $message = &$variables['message'];
+  $user = user_load_by_mail($message['to']);
+
   // Try to add a heading message.
-  if ($user = user_load_by_mail($variables['message']['to'])) {
-    $message = $variables['message'];
+  if ($user || !empty($message['params']['context']['display_name'])) {
     $options = [
       'langcode' => $message['langcode'],
     ];
 
+    if ($user) {
+      $display_name = $user->getDisplayName();
+    }
+    else {
+      $display_name = $message['params']['context']['display_name'];
+    }
+
     $replace = [
-      '%display_name' => $user->getDisplayName(),
+      '%display_name' => $display_name,
     ];
     $variables['heading'] = t('Hi %display_name', $replace, $options);
   }

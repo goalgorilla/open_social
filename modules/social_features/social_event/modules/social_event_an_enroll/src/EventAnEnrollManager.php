@@ -14,11 +14,13 @@ class EventAnEnrollManager {
    *
    * @param \Drupal\social_event\EventEnrollmentInterface $entity
    *   The event enrollment.
+   * @param bool $email
+   *   TRUE if can show E-mail address when first and last names is not set.
    *
    * @return string
    *   Full name or E-mail address.
    */
-  public function getGuestName(EventEnrollmentInterface $entity) {
+  public function getGuestName(EventEnrollmentInterface $entity, $email = TRUE) {
     $parts = [];
 
     if (!$entity->field_first_name->isEmpty()) {
@@ -29,7 +31,7 @@ class EventAnEnrollManager {
       $parts[] = $entity->field_last_name->value;
     }
 
-    if (!$parts) {
+    if (!$parts && $email) {
       $parts[] = $entity->field_email->value;
     }
 

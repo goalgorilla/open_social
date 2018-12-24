@@ -30,6 +30,17 @@ class SocialEventAnEnrollSendEmail extends SocialEventSendEmail {
   public function execute($entity = NULL) {
     $this->entity = $entity;
 
+    if (!$entity->field_account->target_id) {
+      // @TODO: use injection.
+      $display_name = \Drupal::service('social_event_an_enroll.manager')->getGuestName($entity, FALSE);
+
+      if (!$display_name) {
+        $display_name = t('Guest');
+      }
+
+      $this->configuration['display_name'] = $display_name;
+    }
+
     parent::execute($entity);
   }
 
