@@ -98,15 +98,7 @@ class SocialGroupViewsBulkOperationsBulkForm extends GroupViewsBulkOperationsBul
     $form['#attached']['library'][] = 'social_group/views_bulk_operations.frontUi';
 
     $count = count($this->tempStoreData['list']);
-
-    if ($count) {
-      $title = $this->formatPlural($count, '<b>@count Member</b> is selected', '<b>@count Members</b> are selected');
-    }
-    else {
-      $title = $this->t('<b>no members</b> are selected', [
-        '@count' => $count,
-      ]);
-    }
+    $title = $this->formatPlural($count, '<b>@count Member</b> is selected', '<b>@count Members</b> are selected');
 
     $wrapper['multipage']['#title'] = [
       '#type' => 'html_tag',
