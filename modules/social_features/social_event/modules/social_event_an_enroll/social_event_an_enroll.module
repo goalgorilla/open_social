@@ -71,7 +71,7 @@ function social_event_an_enroll_preprocess_views_view_field(&$variables) {
     $entity = &$variables['row']->_entity;
 
     if (!$entity->field_account->target_id) {
-      $output = $entity->field_first_name->value . ' ' . $entity->field_last_name->value;
+      $output = \Drupal::service('social_event_an_enroll.manager')->getGuestName($entity);
       $variables['output'] = ViewsRenderPipelineMarkup::create($output);
     }
   }
@@ -251,6 +251,15 @@ function social_event_an_enroll_form_alter(&$form, FormStateInterface $form_stat
     $form['field_event_an_enroll']['widget']['value']['#disabled'] = $config->get('event_an_enroll_default_value') && !$config->get('event_an_enroll_allow_edit');
     // Hide checkbox if feature is disabled globally.
     $form['field_event_an_enroll']['#access'] = $config->get('event_an_enroll');
+  }
+
+  if (isset($form['views_bulk_operations_bulk_form']) && isset($form['output'][0]['#view'])) {
+    $view = &$form['output'][0]['#view'];
+
+    if ($view instanceof ViewExecutable && $view->id() === 'event_manage_enrollments') {
+      $form['header']['views_bulk_operations_bulk_form']['actions']['social_event_send_email_action']['#access'] = FALSE;
+      unset($form['header']['views_bulk_operations_bulk_form']['actions']['#links']['social_event_send_email_action']);
+    }
   }
 }
 

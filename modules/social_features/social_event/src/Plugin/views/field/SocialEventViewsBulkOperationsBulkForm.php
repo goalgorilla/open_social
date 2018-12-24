@@ -120,7 +120,7 @@ class SocialEventViewsBulkOperationsBulkForm extends ViewsBulkOperationsBulkForm
     }
 
     foreach (Element::children($actions, TRUE) as $key) {
-      $items[] = $actions[$key];
+      $items[$key] = $actions[$key];
     }
 
     $actions['#links'] = $items;
@@ -134,13 +134,20 @@ class SocialEventViewsBulkOperationsBulkForm extends ViewsBulkOperationsBulkForm
   public function viewsFormValidate(&$form, FormStateInterface $form_state) {
     if ($this->view->id() === 'event_manage_enrollments' && $this->options['buttons']) {
       $user_input = $form_state->getUserInput();
+      $actions = &$form['actions'];
 
-      foreach (Element::children($form['actions']) as $action) {
+      foreach (Element::children($actions) as $action_id) {
+        $action = &$actions[$action_id];
+
+        if (isset($action['#access']) && !$action['#access']) {
+          continue;
+        }
+
         /** @var \Drupal\Core\StringTranslation\TranslatableMarkup $label */
-        $label = $form['actions'][$action]['#value'];
+        $label = $action['#value'];
 
         if (strip_tags($label->render()) === $user_input['op']) {
-          $form_state->setTriggeringElement($form['actions'][$action]);
+          $form_state->setTriggeringElement($action);
           break;
         }
       }

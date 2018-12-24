@@ -19,24 +19,23 @@ use Drupal\social_user\Plugin\Action\SocialSendEmail as SocialSendEmailBase;
  *   confirm_form_route_name = "social_event.views_bulk_operations.confirm",
  * )
  */
-class SocialSendEmail extends SocialSendEmailBase {
+class SocialEventSendEmail extends SocialSendEmailBase {
 
   /**
    * {@inheritdoc}
    */
   public function execute($entity = NULL) {
+    $accounts = $entity->field_account->referencedEntities();
+    $account = reset($accounts);
+
+    parent::execute($account);
   }
 
   /**
    * {@inheritdoc}
    */
   public function access($object, AccountInterface $account = NULL, $return_as_object = FALSE) {
-    if ($object instanceof EventEnrollmentInterface) {
-      $access = AccessResult::allowed();
-    }
-    else {
-      $access = AccessResult::forbidden();
-    }
+    $access = AccessResult::allowedIf($object instanceof EventEnrollmentInterface);
 
     return $return_as_object ? $access : $access->isAllowed();
   }
