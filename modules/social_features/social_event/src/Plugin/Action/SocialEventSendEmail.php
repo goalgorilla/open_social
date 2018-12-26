@@ -6,7 +6,7 @@ use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\social_event\EventEnrollmentInterface;
-use Drupal\social_user\Plugin\Action\SocialSendEmail as SocialSendEmailBase;
+use Drupal\social_user\Plugin\Action\SocialSendEmail;
 
 /**
  * Send email to event enrollment users.
@@ -19,7 +19,7 @@ use Drupal\social_user\Plugin\Action\SocialSendEmail as SocialSendEmailBase;
  *   confirm_form_route_name = "social_event.views_bulk_operations.confirm",
  * )
  */
-class SocialEventSendEmail extends SocialSendEmailBase {
+class SocialEventSendEmail extends SocialSendEmail {
 
   /**
    * {@inheritdoc}

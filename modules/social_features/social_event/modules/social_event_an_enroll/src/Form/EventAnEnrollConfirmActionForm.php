@@ -3,6 +3,7 @@
 namespace Drupal\social_event_an_enroll\Form;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\social_event\EventEnrollmentInterface;
 use Drupal\social_event\Form\EventEnrollmentConfirmActionForm;
 use Drupal\social_event_an_enroll\EventAnEnrollManager;
@@ -60,6 +61,19 @@ class EventAnEnrollConfirmActionForm extends EventEnrollmentConfirmActionForm {
       $container->get('entity_type.manager'),
       $container->get('social_event_an_enroll.manager')
     );
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function buildForm(array $form, FormStateInterface $form_state, $view_id = NULL, $display_id = NULL) {
+    $form = parent::buildForm($form, $form_state, $view_id, $display_id);
+
+    if (isset($form['list'])) {
+      asort($form['list']['#items']);
+    }
+
+    return $form;
   }
 
   /**

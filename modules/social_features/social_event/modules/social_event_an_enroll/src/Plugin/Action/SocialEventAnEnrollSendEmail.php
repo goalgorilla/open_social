@@ -2,7 +2,15 @@
 
 namespace Drupal\social_event_an_enroll\Plugin\Action;
 
+use Drupal\Core\Entity\EntityManagerInterface;
+use Drupal\Core\Language\LanguageManagerInterface;
+use Drupal\Core\Mail\MailManagerInterface;
+use Drupal\Core\Utility\Token;
 use Drupal\social_event\Plugin\Action\SocialEventSendEmail;
+use Drupal\social_event_an_enroll\EventAnEnrollManager;
+use Egulias\EmailValidator\EmailValidator;
+use Psr\Log\LoggerInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Send email to event enrollment users.
@@ -18,6 +26,69 @@ use Drupal\social_event\Plugin\Action\SocialEventSendEmail;
 class SocialEventAnEnrollSendEmail extends SocialEventSendEmail {
 
   /**
+   * The event an enroll manager.
+   *
+   * @var \Drupal\social_event_an_enroll\EventAnEnrollManager
+   */
+  protected $socialEventAnEnrollManager;
+
+  /**
+   * Constructs a SocialEventAnEnrollSendEmail object.
+   *
+   * @param array $configuration
+   *   A configuration array containing information about the plugin instance.
+   * @param string $plugin_id
+   *   The plugin ID for the plugin instance.
+   * @param mixed $plugin_definition
+   *   The plugin implementation definition.
+   * @param \Drupal\Core\Utility\Token $token
+   *   The token service.
+   * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
+   *   The entity manager.
+   * @param \Psr\Log\LoggerInterface $logger
+   *   A logger instance.
+   * @param \Drupal\Core\Mail\MailManagerInterface $mail_manager
+   *   The mail manager.
+   * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
+   *   The language manager.
+   * @param \Egulias\EmailValidator\EmailValidator $email_validator
+   *   The email validator.
+   * @param \Drupal\social_event_an_enroll\EventAnEnrollManager $social_event_an_enroll_manager
+   *   The event an enroll manager.
+   */
+  public function __construct(
+    array $configuration,
+    $plugin_id,
+    $plugin_definition,
+    Token $token,
+    EntityManagerInterface $entity_manager,
+    LoggerInterface $logger,
+    MailManagerInterface $mail_manager,
+    LanguageManagerInterface $language_manager,
+    EmailValidator $email_validator,
+    EventAnEnrollManager $social_event_an_enroll_manager
+  ) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $token, $entity_manager, $logger, $mail_manager, $language_manager, $email_validator);
+
+    $this->socialEventAnEnrollManager = $social_event_an_enroll_manager;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    return new static($configuration, $plugin_id, $plugin_definition,
+      $container->get('token'),
+      $container->get('entity.manager'),
+      $container->get('logger.factory')->get('action'),
+      $container->get('plugin.manager.mail'),
+      $container->get('language_manager'),
+      $container->get('email.validator'),
+      $container->get('social_event_an_enroll.manager')
+    );
+  }
+
+  /**
    * The event enrollment.
    *
    * @var \Drupal\social_event\EventEnrollmentInterface
@@ -31,8 +102,7 @@ class SocialEventAnEnrollSendEmail extends SocialEventSendEmail {
     $this->entity = $entity;
 
     if (!$entity->field_account->target_id) {
-      // @TODO: use injection.
-      $display_name = \Drupal::service('social_event_an_enroll.manager')->getGuestName($entity, FALSE);
+      $display_name = $this->socialEventAnEnrollManager->getGuestName($entity, FALSE);
 
       if (!$display_name) {
         $display_name = t('Guest');

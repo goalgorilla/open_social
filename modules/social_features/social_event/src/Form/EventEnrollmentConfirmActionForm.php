@@ -73,8 +73,6 @@ class EventEnrollmentConfirmActionForm extends ConfirmAction {
         $entity = $storage->load($item[0]);
         $form['list']['#items'][$id++] = $this->getAccountName($entity);
       }
-
-      asort($form['list']['#items']);
     }
 
     return $form;
