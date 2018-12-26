@@ -19,3 +19,20 @@ function social_event_enrolments_export_file_download($uri) {
     ];
   }
 }
+
+/**
+ * Implements hook_social_event_action_ACTION_ID_finish().
+ */
+function social_event_enrolments_export_social_event_action_social_event_enrolments_export_enrollments_action_finish($success) {
+  if ($success) {
+    return [
+      'singular' => '1 selected enrollee have been exported successfully',
+      'plural' => '@count selected enrollees have been exported successfully',
+    ];
+  }
+
+  return [
+    'singular' => '1 selected enrollee have not been exported successfully',
+    'plural' => '@count selected enrollees have not been exported successfully',
+  ];
+}

@@ -287,3 +287,10 @@ function social_event_an_enroll_node_update(Node $node) {
 function social_event_an_enroll_views_plugins_field_alter(array &$plugins) {
   $plugins['views_bulk_operations_bulk_form']['class'] = SocialEventAnEnrollViewsBulkOperationsBulkForm::class;
 }
+
+/**
+ * Implements hook_social_event_action_ACTION_ID_finish().
+ */
+function social_event_an_enroll_social_event_action_social_event_an_enroll_send_email_action_finish($success) {
+  social_event_social_event_action_social_event_send_email_action_finish($success);
+}
