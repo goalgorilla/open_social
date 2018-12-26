@@ -2,15 +2,90 @@
 
 namespace Drupal\social_event\Plugin\views\field;
 
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
+use Drupal\user\PrivateTempStoreFactory;
 use Drupal\views_bulk_operations\Plugin\views\field\ViewsBulkOperationsBulkForm;
+use Drupal\views_bulk_operations\Service\ViewsBulkOperationsActionManager;
+use Drupal\views_bulk_operations\Service\ViewsBulkOperationsActionProcessorInterface;
+use Drupal\views_bulk_operations\Service\ViewsBulkOperationsViewDataInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Defines the Views Bulk Operations field plugin.
  */
 class SocialEventViewsBulkOperationsBulkForm extends ViewsBulkOperationsBulkForm {
+
+  /**
+   * The entity type manager.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  protected $entityTypeManager;
+
+  /**
+   * Constructs a new SocialEventViewsBulkOperationsBulkForm object.
+   *
+   * @param array $configuration
+   *   A configuration array containing information about the plugin instance.
+   * @param string $plugin_id
+   *   The plugin ID for the plugin instance.
+   * @param mixed $plugin_definition
+   *   The plugin implementation definition.
+   * @param \Drupal\views_bulk_operations\Service\ViewsbulkOperationsViewDataInterface $viewData
+   *   The VBO View Data provider service.
+   * @param \Drupal\views_bulk_operations\Service\ViewsBulkOperationsActionManager $actionManager
+   *   Extended action manager object.
+   * @param \Drupal\views_bulk_operations\Service\ViewsBulkOperationsActionProcessorInterface $actionProcessor
+   *   Views Bulk Operations action processor.
+   * @param \Drupal\user\PrivateTempStoreFactory $tempStoreFactory
+   *   User private temporary storage factory.
+   * @param \Drupal\Core\Session\AccountInterface $currentUser
+   *   The current user object.
+   * @param \Symfony\Component\HttpFoundation\RequestStack $requestStack
+   *   The request stack.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
+   */
+  public function __construct(
+    array $configuration,
+    $plugin_id,
+    $plugin_definition,
+    ViewsBulkOperationsViewDataInterface $viewData,
+    ViewsBulkOperationsActionManager $actionManager,
+    ViewsBulkOperationsActionProcessorInterface $actionProcessor,
+    PrivateTempStoreFactory $tempStoreFactory,
+    AccountInterface $currentUser,
+    RequestStack $requestStack,
+    EntityTypeManagerInterface $entity_type_manager
+  ) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $viewData, $actionManager, $actionProcessor, $tempStoreFactory, $currentUser, $requestStack);
+
+    $this->entityTypeManager = $entity_type_manager;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    return new static(
+      $configuration,
+      $plugin_id,
+      $plugin_definition,
+      $container->get('views_bulk_operations.data'),
+      $container->get('plugin.manager.views_bulk_operations_action'),
+      $container->get('views_bulk_operations.processor'),
+      $container->get('user.private_tempstore'),
+      $container->get('current_user'),
+      $container->get('request_stack'),
+      $container->get('entity_type.manager')
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -48,6 +123,17 @@ class SocialEventViewsBulkOperationsBulkForm extends ViewsBulkOperationsBulkForm
 
     if ($this->view->id() !== 'event_manage_enrollments') {
       return;
+    }
+
+    $action_options = $this->getBulkOptions();
+
+    if (!empty($this->view->result) && !empty($action_options)) {
+      $list = &$form[$this->options['id']];
+
+      foreach ($this->view->result as $row_index => $row) {
+        $entity = $this->getEntity($row);
+        $list[$row_index]['#title'] = $this->getEntityLabel($entity);
+      }
     }
 
     // Get pager data if available.
@@ -178,6 +264,30 @@ class SocialEventViewsBulkOperationsBulkForm extends ViewsBulkOperationsBulkForm
         $form_state->setRedirectUrl($url);
       }
     }
+  }
+
+  /**
+   * Returns modified entity label.
+   *
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   The entity.
+   *
+   * @return string
+   *   The label text.
+   */
+  public function getEntityLabel(EntityInterface $entity) {
+    $profiles = $this->entityTypeManager->getStorage('profile')
+      ->loadByProperties([
+        'uid' => $entity->field_account->target_id,
+      ]);
+
+    /** @var \Drupal\profile\Entity\ProfileInterface $profile */
+    $profile = reset($profiles);
+
+    /** @var \Drupal\Core\StringTranslation\TranslatableMarkup $label */
+    $label = $profile->label();
+
+    return $label->getArguments()['@name'];
   }
 
 }

@@ -24,6 +24,7 @@ use Drupal\views\ViewExecutable;
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface;
+use Drupal\social_event\Plugin\views\field\SocialEventViewsBulkOperationsBulkForm;
 
 /**
  * Implements hook_form_form_ID_alter().
@@ -614,5 +615,5 @@ function _social_event_views_bulk_operations_bulk_form_submit($form, FormStateIn
  * Implements hook_views_plugins_field_alter().
  */
 function social_event_views_plugins_field_alter(array &$plugins) {
-  $plugins['views_bulk_operations_bulk_form']['class'] = 'Drupal\social_event\Plugin\views\field\SocialEventViewsBulkOperationsBulkForm';
+  $plugins['views_bulk_operations_bulk_form']['class'] = SocialEventViewsBulkOperationsBulkForm::class;
 }

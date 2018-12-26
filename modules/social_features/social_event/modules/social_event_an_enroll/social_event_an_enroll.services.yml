@@ -5,7 +5,3 @@ services:
     class: \Drupal\social_event_an_enroll\EventAnEnrollOverride
     tags:
       - {name: config.factory.override, priority: 5}
-  social_event_an_enroll.route_subscriber:
-    class: Drupal\social_event_an_enroll\Routing\RouteSubscriber
-    tags:
-      - { name: event_subscriber }
