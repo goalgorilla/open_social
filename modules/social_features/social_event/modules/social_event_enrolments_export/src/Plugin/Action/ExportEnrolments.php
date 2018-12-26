@@ -4,7 +4,7 @@ namespace Drupal\social_event_enrolments_export\Plugin\Action;
 
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\profile\Entity\ProfileInterface;
+use Drupal\social_event\EventEnrollmentInterface;
 use Drupal\social_user_export\Plugin\Action\ExportUser;
 
 /**
@@ -13,7 +13,7 @@ use Drupal\social_user_export\Plugin\Action\ExportUser;
  * @Action(
  *   id = "social_event_enrolments_export_enrollments_action",
  *   label = @Translation("Export the selected enrollments to CSV"),
- *   type = "profile",
+ *   type = "event_enrollment",
  *   confirm = TRUE,
  *   confirm_form_route_name = "social_event.views_bulk_operations.confirm",
  * )
@@ -24,9 +24,9 @@ class ExportEnrolments extends ExportUser {
    * {@inheritdoc}
    */
   public function executeMultiple(array $entities) {
-    /** @var \Drupal\profile\Entity\ProfileInterface $entity */
+    /** @var \Drupal\social_event\EventEnrollmentInterface $entity */
     foreach ($entities as &$entity) {
-      $entity = $entity->getOwner();
+      $entity = $this->getAccount($entity);
     }
 
     parent::executeMultiple($entities);
@@ -36,8 +36,8 @@ class ExportEnrolments extends ExportUser {
    * {@inheritdoc}
    */
   public function access($object, AccountInterface $account = NULL, $return_as_object = FALSE) {
-    if ($object instanceof ProfileInterface) {
-      $access = $object->getOwner()->access('view', $account, TRUE);
+    if ($object instanceof EventEnrollmentInterface) {
+      $access = $this->getAccount($object)->access('view', $account, TRUE);
     }
     else {
       $access = AccessResult::forbidden();
@@ -53,6 +53,20 @@ class ExportEnrolments extends ExportUser {
     $hash = md5(microtime(TRUE));
     $filename = 'export-enrollments-' . substr($hash, 20, 12) . '.csv';
     return file_directory_temp() . '/' . $filename;
+  }
+
+  /**
+   * Extract user entity from event enrollment entity.
+   *
+   * @param \Drupal\social_event\EventEnrollmentInterface $entity
+   *   The event enrollment.
+   *
+   * @return \Drupal\user\UserInterface
+   *   The user.
+   */
+  protected function getAccount(EventEnrollmentInterface $entity) {
+    $accounts = $entity->field_account->referencedEntities();
+    return reset($accounts);
   }
 
 }

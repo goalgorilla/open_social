@@ -22,7 +22,7 @@ class SocialEventEnrolmentsExportOverrides implements ConfigFactoryOverrideInter
     if (in_array($config_name, $names)) {
       $overrides[$config_name] = [
         'display' => [
-          'page_manage_enrollments' => [
+          'default' => [
             'display_options' => [
               'fields' => [
                 'views_bulk_operations_bulk_form' => [
