@@ -87,6 +87,7 @@ class EventEnrollmentConfirmActionForm extends ConfirmAction {
    *   The event enrollment.
    *
    * @return string
+   *   The account name.
    */
   public function getAccountName(EventEnrollmentInterface $entity) {
     $profiles = $this->entityTypeManager->getStorage('profile')
