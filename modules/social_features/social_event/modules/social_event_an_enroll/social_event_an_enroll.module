@@ -71,8 +71,11 @@ function social_event_an_enroll_preprocess_views_view_field(&$variables) {
   if ($view->id() === 'event_manage_enrollments' && $variables['field']->field === 'rendered_entity') {
     $entity = &$variables['row']->_entity;
 
-    if (!$entity->field_account->target_id) {
-      $output = \Drupal::service('social_event_an_enroll.manager')->getGuestName($entity);
+    /** @var \Drupal\social_event_an_enroll\EventAnEnrollManager $service */
+    $service = \Drupal::service('social_event_an_enroll.manager');
+
+    if ($service->isGuest($entity)) {
+      $output = $service->getGuestName($entity);
       $variables['output'] = ViewsRenderPipelineMarkup::create($output);
     }
   }
@@ -258,8 +261,10 @@ function social_event_an_enroll_form_alter(&$form, FormStateInterface $form_stat
     $view = &$form['output'][0]['#view'];
 
     if ($view instanceof ViewExecutable && $view->id() === 'event_manage_enrollments') {
-      $form['header']['views_bulk_operations_bulk_form']['actions']['social_event_send_email_action']['#access'] = FALSE;
-      unset($form['header']['views_bulk_operations_bulk_form']['actions']['#links']['social_event_send_email_action']);
+      $actions = &$form['header']['views_bulk_operations_bulk_form']['actions'];
+      $action = 'social_event_send_email_action';
+      $actions[$action]['#access'] = FALSE;
+      unset($actions['#links'][$action]);
     }
   }
 }
@@ -292,5 +297,5 @@ function social_event_an_enroll_views_plugins_field_alter(array &$plugins) {
  * Implements hook_social_event_action_ACTION_ID_finish().
  */
 function social_event_an_enroll_social_event_action_social_event_an_enroll_send_email_action_finish($success) {
-  social_event_social_event_action_social_event_send_email_action_finish($success);
+  return social_event_social_event_action_social_event_send_email_action_finish($success);
 }

@@ -12,7 +12,7 @@ use Drupal\user\PrivateTempStoreFactory;
 use Drupal\views_bulk_operations\Plugin\views\field\ViewsBulkOperationsBulkForm;
 use Drupal\views_bulk_operations\Service\ViewsBulkOperationsActionManager;
 use Drupal\views_bulk_operations\Service\ViewsBulkOperationsActionProcessorInterface;
-use Drupal\views_bulk_operations\Service\ViewsBulkOperationsViewDataInterface;
+use Drupal\views_bulk_operations\Service\ViewsbulkOperationsViewDataInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -56,7 +56,7 @@ class SocialEventViewsBulkOperationsBulkForm extends ViewsBulkOperationsBulkForm
     array $configuration,
     $plugin_id,
     $plugin_definition,
-    ViewsBulkOperationsViewDataInterface $viewData,
+    ViewsbulkOperationsViewDataInterface $viewData,
     ViewsBulkOperationsActionManager $actionManager,
     ViewsBulkOperationsActionProcessorInterface $actionProcessor,
     PrivateTempStoreFactory $tempStoreFactory,

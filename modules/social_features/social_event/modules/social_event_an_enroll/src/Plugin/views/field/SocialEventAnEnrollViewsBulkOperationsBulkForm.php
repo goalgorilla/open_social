@@ -11,7 +11,7 @@ use Drupal\social_event_an_enroll\EventAnEnrollManager;
 use Drupal\user\PrivateTempStoreFactory;
 use Drupal\views_bulk_operations\Service\ViewsBulkOperationsActionManager;
 use Drupal\views_bulk_operations\Service\ViewsBulkOperationsActionProcessorInterface;
-use Drupal\views_bulk_operations\Service\ViewsBulkOperationsViewDataInterface;
+use Drupal\views_bulk_operations\Service\ViewsbulkOperationsViewDataInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -57,7 +57,7 @@ class SocialEventAnEnrollViewsBulkOperationsBulkForm extends SocialEventViewsBul
     array $configuration,
     $plugin_id,
     $plugin_definition,
-    ViewsBulkOperationsViewDataInterface $viewData,
+    ViewsbulkOperationsViewDataInterface $viewData,
     ViewsBulkOperationsActionManager $actionManager,
     ViewsBulkOperationsActionProcessorInterface $actionProcessor,
     PrivateTempStoreFactory $tempStoreFactory,
@@ -94,12 +94,12 @@ class SocialEventAnEnrollViewsBulkOperationsBulkForm extends SocialEventViewsBul
    * {@inheritdoc}
    */
   public function getEntityLabel(EntityInterface $entity) {
-    if ($entity->field_account->target_id) {
-      return parent::getEntityLabel($entity);
+    /** @var \Drupal\social_event\EventEnrollmentInterface $entity */
+    if ($this->socialEventAnEnrollManager->isGuest($entity)) {
+      return $this->socialEventAnEnrollManager->getGuestName($entity);
     }
 
-    /** @var \Drupal\social_event\EventEnrollmentInterface $entity */
-    return $this->socialEventAnEnrollManager->getGuestName($entity);
+    return parent::getEntityLabel($entity);
   }
 
 }

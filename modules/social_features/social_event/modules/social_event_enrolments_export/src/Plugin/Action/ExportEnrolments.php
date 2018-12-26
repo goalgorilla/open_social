@@ -64,7 +64,7 @@ class ExportEnrolments extends ExportUser {
    * @return \Drupal\user\UserInterface
    *   The user.
    */
-  protected function getAccount(EventEnrollmentInterface $entity) {
+  public function getAccount(EventEnrollmentInterface $entity) {
     $accounts = $entity->field_account->referencedEntities();
     return reset($accounts);
   }

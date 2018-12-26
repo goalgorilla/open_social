@@ -26,6 +26,13 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class SocialEventAnEnrollSendEmail extends SocialEventSendEmail {
 
   /**
+   * The event enrollment.
+   *
+   * @var \Drupal\social_event\EventEnrollmentInterface
+   */
+  protected $entity;
+
+  /**
    * The event an enroll manager.
    *
    * @var \Drupal\social_event_an_enroll\EventAnEnrollManager
@@ -89,19 +96,12 @@ class SocialEventAnEnrollSendEmail extends SocialEventSendEmail {
   }
 
   /**
-   * The event enrollment.
-   *
-   * @var \Drupal\social_event\EventEnrollmentInterface
-   */
-  protected $entity;
-
-  /**
    * {@inheritdoc}
    */
   public function execute($entity = NULL) {
     $this->entity = $entity;
 
-    if (!$entity->field_account->target_id) {
+    if ($this->socialEventAnEnrollManager->isGuest($entity)) {
       $display_name = $this->socialEventAnEnrollManager->getGuestName($entity, FALSE);
 
       if (!$display_name) {
@@ -118,11 +118,11 @@ class SocialEventAnEnrollSendEmail extends SocialEventSendEmail {
    * {@inheritdoc}
    */
   public function getEmail($entity) {
-    if ($this->entity->field_account->target_id) {
-      return parent::getEmail($entity);
+    if ($this->socialEventAnEnrollManager->isGuest($entity)) {
+      return $this->entity->field_email->value;
     }
 
-    return $this->entity->field_email->value;
+    return parent::getEmail($entity);
   }
 
 }
