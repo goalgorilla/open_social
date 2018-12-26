@@ -136,7 +136,7 @@ class SocialEventViewsBulkOperationsBulkForm extends ViewsBulkOperationsBulkForm
   public function viewsFormValidate(&$form, FormStateInterface $form_state) {
     if ($this->view->id() === 'event_manage_enrollments' && $this->options['buttons']) {
       $user_input = $form_state->getUserInput();
-      $actions = &$form['actions'];
+      $actions = &$form['header'][$this->options['id']]['actions'];
 
       foreach (Element::children($actions) as $action_id) {
         $action = &$actions[$action_id];
