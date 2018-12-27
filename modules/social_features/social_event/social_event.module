@@ -522,6 +522,10 @@ function social_event_social_follow_content_types_alter(array &$types) {
  * Implements hook_batch_alter().
  */
 function social_event_batch_alter(&$batch) {
+  if (!isset($batch['source_url'])) {
+    return;
+  }
+
   /** @var \Drupal\Core\Url $url */
   $url = &$batch['source_url'];
 
