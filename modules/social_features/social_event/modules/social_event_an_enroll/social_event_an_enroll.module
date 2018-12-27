@@ -6,13 +6,13 @@
  */
 
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Url;
 use Drupal\views\ViewExecutable;
 use Drupal\views\Plugin\views\cache\CachePluginBase;
 use Drupal\Component\Render\PlainTextOutput;
 use Drupal\node\Entity\Node;
 use Drupal\file\Entity\File;
 use Drupal\social_event_an_enroll\Plugin\views\field\SocialEventAnEnrollViewsBulkOperationsBulkForm;
-use Drupal\views\Render\ViewsRenderPipelineMarkup;
 
 /**
  * Implements hook_mail().
@@ -58,6 +58,12 @@ function social_event_an_enroll_theme() {
         'links' => NULL,
       ],
     ],
+    'event_an_enroll_guest' => [
+      'variables' => [
+        'name' => NULL,
+        'url' => NULL,
+      ],
+    ],
   ];
 }
 
@@ -75,8 +81,13 @@ function social_event_an_enroll_preprocess_views_view_field(&$variables) {
     $service = \Drupal::service('social_event_an_enroll.manager');
 
     if ($service->isGuest($entity)) {
-      $output = $service->getGuestName($entity);
-      $variables['output'] = ViewsRenderPipelineMarkup::create($output);
+      $url = Url::fromUserInput('/' . drupal_get_path('module', 'social_event_an_enroll') . '/images/icon.svg');
+
+      $variables['output'] = [
+        '#theme' => 'event_an_enroll_guest',
+        '#name' => $service->getGuestName($entity),
+        '#url' => $url,
+      ];
     }
   }
 }
