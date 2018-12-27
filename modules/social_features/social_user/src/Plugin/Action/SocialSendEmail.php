@@ -140,7 +140,7 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
       $this->logger->notice('Sent email to %recipient', ['%recipient' => $entity->getEmail()]);
     }
 
-    return $this->t('Sent email');
+    return $this->t('Send email');
   }
 
   /**
@@ -171,6 +171,7 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
       '#default_value' => $form_state->getValue('subject'),
       '#maxlength' => '254',
     ];
+
     $form['message'] = [
       '#type' => 'textarea',
       '#title' => t('Message'),

@@ -2,6 +2,7 @@
 
 namespace Drupal\social_group\Plugin\Action;
 
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\group\Entity\GroupContentInterface;
 use Drupal\social_user\Plugin\Action\SocialSendEmail as SocialSendEmailBase;
@@ -37,6 +38,28 @@ class SocialSendEmail extends SocialSendEmailBase {
     }
 
     return TRUE;
+  }
+
+  public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
+    // Add title to the form as well.
+    if ($form['#title'] !== NULL) {
+      $selected_count = $this->context['selected_count'];
+      $subtitle = $this->formatPlural($selected_count,
+        'Configure the email you want to send to the one member you have selected.',
+        'Configure the email you want to send to the @count members you have selected.'
+      );
+
+      $form['subtitle'] = [
+        '#type' => 'html_tag',
+        '#tag' => 'div',
+        '#attributes' => [
+          'class' => ['placeholder'],
+        ],
+        '#value' => $subtitle,
+      ];
+    }
+
+    return parent::buildConfigurationForm($form, $form_state);
   }
 
 }
