@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\social_event\Plugin\Action;
+namespace Drupal\social_event_managers\Plugin\Action;
 
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Form\FormStateInterface;
@@ -12,14 +12,14 @@ use Drupal\social_user\Plugin\Action\SocialSendEmail;
  * Send email to event enrollment users.
  *
  * @Action(
- *   id = "social_event_send_email_action",
+ *   id = "social_event_managers_send_email_action",
  *   label = @Translation("Send email to event enrollment users"),
  *   type = "event_enrollment",
  *   confirm = TRUE,
- *   confirm_form_route_name = "social_event.views_bulk_operations.confirm",
+ *   confirm_form_route_name = "social_event_managers.vbo.confirm",
  * )
  */
-class SocialEventSendEmail extends SocialSendEmail {
+class SocialEventManagersSendEmail extends SocialSendEmail {
 
   /**
    * {@inheritdoc}

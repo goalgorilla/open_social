@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\social_event\Plugin\Action;
+namespace Drupal\social_event_managers\Plugin\Action;
 
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Session\AccountInterface;
@@ -11,11 +11,11 @@ use Drupal\views_bulk_operations\Action\ViewsBulkOperationsActionBase;
  * Delete event enrollment entity action.
  *
  * @Action(
- *   id = "social_event_delete_event_enrollment_action",
+ *   id = "social_event_managers_delete_event_enrollment_action",
  *   label = @Translation("Delete selected event enrollment entities"),
  *   type = "event_enrollment",
  *   confirm = TRUE,
- *   confirm_form_route_name = "social_event.views_bulk_operations.confirm",
+ *   confirm_form_route_name = "social_event_managers.vbo.confirm",
  * )
  */
 class EventEnrollmentEntityDeleteAction extends ViewsBulkOperationsActionBase {

@@ -14,23 +14,3 @@ social_event.settings:
     _permission: 'administer social_event settings'
   options:
     _admin_route: TRUE
-
-social_event.views_bulk_operations.execute_configurable:
-  path: '/node/{node}/manage-all-enrollments/configure-action'
-  defaults:
-    _form: '\Drupal\views_bulk_operations\Form\ConfigureAction'
-    _title: 'Configure action'
-    view_id: 'event_manage_enrollments'
-    display_id: 'page_manage_enrollments'
-  requirements:
-    _views_bulk_operation_access: 'TRUE'
-
-social_event.views_bulk_operations.confirm:
-  path: '/node/{node}/manage-all-enrollments/confirm-action'
-  defaults:
-    _form: '\Drupal\views_bulk_operations\Form\ConfirmAction'
-    _title: 'Confirm action'
-    view_id: 'event_manage_enrollments'
-    display_id: 'page_manage_enrollments'
-  requirements:
-    _views_bulk_operation_access: 'TRUE'

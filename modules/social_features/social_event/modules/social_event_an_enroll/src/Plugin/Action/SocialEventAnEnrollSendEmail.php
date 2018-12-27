@@ -6,8 +6,8 @@ use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Mail\MailManagerInterface;
 use Drupal\Core\Utility\Token;
-use Drupal\social_event\Plugin\Action\SocialEventSendEmail;
 use Drupal\social_event_an_enroll\EventAnEnrollManager;
+use Drupal\social_event_managers\Plugin\Action\SocialEventManagersSendEmail;
 use Egulias\EmailValidator\EmailValidator;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -20,10 +20,10 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *   label = @Translation("Send email to event enrollment users"),
  *   type = "event_enrollment",
  *   confirm = TRUE,
- *   confirm_form_route_name = "social_event.views_bulk_operations.confirm",
+ *   confirm_form_route_name = "social_event_managers.vbo.confirm",
  * )
  */
-class SocialEventAnEnrollSendEmail extends SocialEventSendEmail {
+class SocialEventAnEnrollSendEmail extends SocialEventManagersSendEmail {
 
   /**
    * The event enrollment.

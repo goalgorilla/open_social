@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Hooks provided by the Social Event module.
+ * Hooks provided by the Social Event Organisers module.
  */
 
 /**
@@ -23,7 +23,7 @@
  *
  * @ingroup social_event_api
  */
-function hook_social_event_action_ACTION_ID_finish($success) {
+function hook_social_event_managers_action_ACTION_ID_finish($success) {
   if ($success) {
     return [
       'singular' => 'Your email has been sent to 1 selected enrollee successfully',

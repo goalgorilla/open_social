@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\social_event\Plugin\views\field;
+namespace Drupal\social_event_managers\Plugin\views\field;
 
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -19,7 +19,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 /**
  * Defines the Views Bulk Operations field plugin.
  */
-class SocialEventViewsBulkOperationsBulkForm extends ViewsBulkOperationsBulkForm {
+class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperationsBulkForm {
 
   /**
    * The entity type manager.
@@ -29,7 +29,7 @@ class SocialEventViewsBulkOperationsBulkForm extends ViewsBulkOperationsBulkForm
   protected $entityTypeManager;
 
   /**
-   * Constructs a new SocialEventViewsBulkOperationsBulkForm object.
+   * Constructs a new SocialEventManagersViewsBulkOperationsBulkForm object.
    *
    * @param array $configuration
    *   A configuration array containing information about the plugin instance.
@@ -196,9 +196,9 @@ class SocialEventViewsBulkOperationsBulkForm extends ViewsBulkOperationsBulkForm
     $items = [];
 
     $weights = [
-      'social_event_send_email_action' => 10,
+      'social_event_managers_send_email_action' => 10,
       'social_event_enrolments_export_enrollments_action' => 20,
-      'social_event_delete_event_enrollment_action' => 30,
+      'social_event_managers_delete_event_enrollment_action' => 30,
     ];
 
     foreach ($weights as $key => $weight) {

@@ -57,7 +57,7 @@ class EventAnEnrollOverride implements ConfigFactoryOverrideInterface {
     if (in_array($config_name, $names)) {
       $config = $config_factory->getEditable($config_name);
 
-      $preconfiguration = $config->get('display.default.display_options.fields.views_bulk_operations_bulk_form.preconfiguration.social_event_send_email_action');
+      $preconfiguration = $config->get('display.default.display_options.fields.views_bulk_operations_bulk_form.preconfiguration.social_event_managers_send_email_action');
 
       $overrides[$config_name] = [
         'display' => [

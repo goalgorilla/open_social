@@ -6,8 +6,8 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\social_event\Plugin\views\field\SocialEventViewsBulkOperationsBulkForm;
 use Drupal\social_event_an_enroll\EventAnEnrollManager;
+use Drupal\social_event_managers\Plugin\views\field\SocialEventManagersViewsBulkOperationsBulkForm;
 use Drupal\user\PrivateTempStoreFactory;
 use Drupal\views_bulk_operations\Service\ViewsBulkOperationsActionManager;
 use Drupal\views_bulk_operations\Service\ViewsBulkOperationsActionProcessorInterface;
@@ -18,7 +18,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 /**
  * Defines the Views Bulk Operations field plugin.
  */
-class SocialEventAnEnrollViewsBulkOperationsBulkForm extends SocialEventViewsBulkOperationsBulkForm implements ContainerFactoryPluginInterface {
+class SocialEventAnEnrollViewsBulkOperationsBulkForm extends SocialEventManagersViewsBulkOperationsBulkForm implements ContainerFactoryPluginInterface {
 
   /**
    * The event an enroll manager.
