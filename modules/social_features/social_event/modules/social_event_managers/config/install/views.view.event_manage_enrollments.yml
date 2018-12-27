@@ -8,6 +8,7 @@ dependencies:
     - node
     - options
     - profile
+    - social_event
     - social_event_managers
     - user
     - views_bulk_operations
@@ -27,9 +28,8 @@ display:
     position: 0
     display_options:
       access:
-        type: perm
-        options:
-          perm: 'access user profiles'
+        type: manage_by_organizers_only
+        options: {  }
       cache:
         type: tag
         options: {  }
@@ -568,7 +568,6 @@ display:
         - 'languages:language_interface'
         - url
         - url.query_args
-        - user.permissions
       tags:
         - 'config:core.entity_view_display.profile.profile.autocomplete_item'
         - 'config:core.entity_view_display.profile.profile.compact'
@@ -606,7 +605,6 @@ display:
         - 'languages:language_interface'
         - url
         - url.query_args
-        - user.permissions
       tags:
         - 'config:core.entity_view_display.profile.profile.autocomplete_item'
         - 'config:core.entity_view_display.profile.profile.compact'
