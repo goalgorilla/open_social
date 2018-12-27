@@ -7,23 +7,22 @@ Feature: Edit group type after creation
   Scenario: Successfully add new content with the group selector
 
     Given users:
-      | name  | pass | mail              | status | roles         |
-      | test_user_1 | 1234 | test_user_1@example.com | 1      |               |
-      | test_user_2 | 1234 | test_user_2@example.com | 1      |  sitemanager  |
+      | name        | pass | mail                    | status | roles       |
+      | test_user_1 | 1234 | test_user_1@example.com | 1      |             |
+      | test_user_2 | 1234 | test_user_2@example.com | 1      | sitemanager |
     Given groups:
-      | title     | description    | author | type         | language |
+      | title     | description    | author       | type         | language |
       | Nescafe   | Coffee time!!! | test_user_2  | closed_group | en       |
     Given "topic_types" terms:
-      | name                  |
-      | Blog                  |
+      | name      |
+      | Blog      |
     Given topic content:
-      | title         | field_topic_type | status | field_content_visibility |
-      | Nescafe Topic | Blog             | 1      | group                    |
+      | title         | field_topic_type | status | field_content_visibility | alias          |
+      | Nescafe Topic | Blog             | 1      | group                    | /nescafe-topic |
 
     # Scenario SM change Group Type with Topic Content in it.
     When I am logged in as "test_user_2"
-      And I am on "/all-topics"
-      And I click "Nescafe Topic"
+      And I am on "/nescafe-topic"
     Then I should see "Nescafe Topic"
       And I click "Edit content"
       And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text"
@@ -33,12 +32,11 @@ Feature: Edit group type after creation
     Then I should see "Nescafe"
 
     When I am logged in as "test_user_1"
-      And I am on "/all-topics"
-    Then I should not see "Nescafe Topic"
+      And I am on "/nescafe-topic"
+    Then I should see "Access Denied"
 
     When I am logged in as "test_user_2"
-      And I am on "/all-groups"
-      And I click "Nescafe"
+      And I am on the stream of group "Nescafe"
     Then I should see "Closed group"
       And I should see "Nescafe"
     When I click "Edit group"
@@ -57,5 +55,5 @@ Feature: Edit group type after creation
     Then I should see "Public"
 
     When I am logged in as "test_user_1"
-      And I am on "/all-topics"
+      And I am on "/nescafe-topic"
     Then I should see "Nescafe Topic"
