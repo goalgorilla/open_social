@@ -73,7 +73,9 @@ class EventManagersController extends ControllerBase {
 
       if (!$node instanceof NodeInterface) {
         $node = $this->entityTypeManager->getStorage('node')->load($node);
+      }
 
+      if ($node instanceof NodeInterface) {
         if (!$node->field_event_managers->isEmpty()) {
           foreach ($node->field_event_managers->getValue() as $value) {
             if ($value['target_id'] === $account->id()) {

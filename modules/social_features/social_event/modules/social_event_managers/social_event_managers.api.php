@@ -21,7 +21,7 @@
  *   situation when action finish with one result ("single" array key) and many
  *   results ("plural" array key).
  *
- * @ingroup social_event_api
+ * @ingroup social_event_managers_api
  */
 function hook_social_event_managers_action_ACTION_ID_finish($success) {
   if ($success) {
