@@ -24,12 +24,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class ExportAllEnrolments extends ExportEnrolments {
 
-  /**
-   * The guest plugin definitions.
-   *
-   * @var array
-   */
-  protected $guestPluginDefinitions;
+  protected $entities;
 
   /**
    * The event an enroll manager.
@@ -66,13 +61,19 @@ class ExportAllEnrolments extends ExportEnrolments {
 
     $this->socialEventAnEnrollManager = $social_event_an_enroll_manager;
 
-    $ids = [
-      'display_name',
-    ];
+    $parents = [];
 
-    foreach ($this->pluginDefinitions as $plugin_id => &$plugin_definition) {
-      if ($plugin_definition['provider'] === 'social_user_export' && in_array($plugin_definition['id'], $ids)) {
-        unset($this->pluginDefinitions[$plugin_id]);
+    foreach ($this->pluginDefinitions as $plugin_id => $plugin_definition) {
+      if ($plugin_definition['provider'] === 'social_event_an_enroll_enrolments_export') {
+        $parents += class_parents($plugin_definition['class']);
+      }
+    }
+
+    if ($parents) {
+      foreach ($this->pluginDefinitions as $plugin_id => $plugin_definition) {
+        if ($plugin_definition['provider'] !== 'social_event_an_enroll_enrolments_export' && in_array($plugin_definition['class'], $parents)) {
+          unset($this->pluginDefinitions[$plugin_id]);
+        }
       }
     }
   }
@@ -86,6 +87,15 @@ class ExportAllEnrolments extends ExportEnrolments {
       $container->get('logger.factory')->get('action'),
       $container->get('social_event_an_enroll.manager')
     );
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function executeMultiple(array $entities) {
+    $this->entities = $entities;
+
+    parent::executeMultiple($entities);
   }
 
   /**
@@ -105,6 +115,20 @@ class ExportAllEnrolments extends ExportEnrolments {
     }
 
     return $return_as_object ? $access : $access->isAllowed();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getPluginConfiguration($plugin_id, $entity_id) {
+    $configuration = parent::getPluginConfiguration($plugin_id, $entity_id);
+    $plugin_definition = &$this->pluginDefinitions[$plugin_id];
+
+    if ($plugin_definition['provider'] === 'social_event_an_enroll_enrolments_export') {
+      $configuration['entity'] = $this->entities[$entity_id];
+    }
+
+    return $configuration;
   }
 
 }
