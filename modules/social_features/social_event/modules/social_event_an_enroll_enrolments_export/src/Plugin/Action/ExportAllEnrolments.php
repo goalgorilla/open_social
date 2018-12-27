@@ -19,7 +19,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *   label = @Translation("Export the selected enrollments to CSV"),
  *   type = "event_enrollment",
  *   confirm = TRUE,
- *   confirm_form_route_name = "social_event.views_bulk_operations.confirm",
+ *   confirm_form_route_name = "social_event_managers.vbo.confirm",
  * )
  */
 class ExportAllEnrolments extends ExportEnrolments {
