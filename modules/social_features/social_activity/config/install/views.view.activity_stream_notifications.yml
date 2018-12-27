@@ -327,11 +327,14 @@ display:
     display_options:
       display_extenders: {  }
       style:
-        type: default
+        type: html_list
         options:
           row_class: ''
           default_row_class: false
           uses_fields: false
+          type: ul
+          wrapper_class: item-list
+          class: scrollable-menu
       defaults:
         style: false
         row: false
@@ -362,7 +365,7 @@ display:
       pager:
         type: mini
         options:
-          items_per_page: 30
+          items_per_page: 20
           offset: 0
           id: 0
           total_pages: null

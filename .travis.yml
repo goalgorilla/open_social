@@ -37,6 +37,8 @@ services:
   - docker
 
 before_install:
+  # Set php memory limit to -1 so composer update will not fail
+  - export COMPOSER_MEMORY_LIMIT=-1
   # Kill the install_update, drush_make and accessibility jobs if it is not a PR build.
   - if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TEST_SUITE" = "install_update" ]; then exit 0; fi
   - if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TEST_SUITE" = "drush_make" ]; then exit 0; fi
