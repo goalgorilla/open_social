@@ -2,19 +2,19 @@
 
 namespace Drupal\social_event_an_enroll_enrolments_export\Plugin\UserExportPlugin;
 
-use Drupal\social_user_export\Plugin\UserExportPlugin\UserFirstName;
+use Drupal\social_user_export\Plugin\UserExportPlugin\UserLastName;
 use Drupal\user\UserInterface;
 
 /**
- * Provides a 'EnrolmentUserFirstName' user export row.
+ * Provides a 'EnrolmentUserLastName' user export row.
  *
  * @UserExportPlugin(
- *  id = "enrolment_user_first_name",
- *  label = @Translation("First name"),
- *  weight = -480,
+ *  id = "enrolment_user_last_name",
+ *  label = @Translation("Last name"),
+ *  weight = -470,
  * )
  */
-class EnrolmentUserFirstName extends UserFirstName {
+class EnrolmentUserLastName extends UserLastName {
 
   /**
    * {@inheritdoc}
@@ -23,8 +23,8 @@ class EnrolmentUserFirstName extends UserFirstName {
     if ($entity->isAnonymous()) {
       $entity = &$this->configuration['entity'];
 
-      if (!$entity->field_first_name->isEmpty()) {
-        return $entity->field_first_name->value;
+      if (!$entity->field_last_name->isEmpty()) {
+        return $entity->field_last_name->value;
       }
 
       return '';
