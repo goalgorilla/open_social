@@ -103,7 +103,7 @@ class EventAnEnrollActionForm extends EnrollActionForm {
               'class' => array_merge($btn_classes, [
                 'use-ajax',
                 'js-form-submit',
-                'form-submit'
+                'form-submit',
               ]),
               'data-dialog-type' => 'modal',
               'data-dialog-options' => json_encode([

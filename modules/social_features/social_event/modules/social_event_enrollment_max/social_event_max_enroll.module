@@ -66,9 +66,10 @@ function social_event_max_enroll_form_alter(&$form, FormStateInterface $form_sta
  */
 function social_event_max_enroll_count($nid) {
   $query = \Drupal::database()
-    ->select('event_enrollment__field_account', 'eefa');
-  $query->join('event_enrollment__field_event', 'eefe', 'eefa.entity_id = eefe.entity_id');
+    ->select('event_enrollment__field_enrollment_status', 'eefes');
+  $query->join('event_enrollment__field_event', 'eefe', 'eefes.entity_id = eefe.entity_id');
   $query->condition('eefe.field_event_target_id', $nid);
+  $query->condition('eefes.field_enrollment_status_value', 1);
 
   return (int) $query
     ->countQuery()
