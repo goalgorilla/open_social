@@ -72,9 +72,8 @@ class SocialGroupViewsBulkOperationsBulkForm extends GroupViewsBulkOperationsBul
       ];
     }
 
+    // Render select all results checkbox when there is a pager and more data.
     $display_select_all = isset($pagerData) && ($pagerData['more'] || $pagerData['current'] > 0);
-
-    // Select all results checkbox.
     if ($display_select_all) {
       $form['header'][$this->options['id']]['select_all'] = [
         '#type' => 'checkbox',
@@ -91,12 +90,14 @@ class SocialGroupViewsBulkOperationsBulkForm extends GroupViewsBulkOperationsBul
       ];
     }
 
+    // Render proper classes for the header in VBO form.
     $wrapper = &$form['header'][$this->options['id']];
     $wrapper['#attributes']['class'][] = 'card';
     $wrapper['#attributes']['class'][] = 'card__block';
 
     $form['#attached']['library'][] = 'social_group/views_bulk_operations.frontUi';
 
+    // Render page title.
     $count = count($this->tempStoreData['list']);
     $title = $this->formatPlural($count, '<b>@count Member</b> is selected', '<b>@count Members</b> are selected');
 
@@ -110,6 +111,11 @@ class SocialGroupViewsBulkOperationsBulkForm extends GroupViewsBulkOperationsBul
     ];
 
     $wrapper['multipage']['list']['#title'] = $this->t('See selected members on other pages');
+
+    // we don't show the multipage list if there are no items selected.
+    if (count($wrapper['multipage']['list']['#items']) < 1) {
+      $wrapper['multipage']['list'] = '';
+    }
 
     $actions = &$wrapper['actions'];
     $actions['#theme'] = 'links__dropbutton__operations__actions';
