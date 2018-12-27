@@ -2,7 +2,6 @@
 
 namespace Drupal\social_user_export\Plugin\Action;
 
-use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Messenger\MessengerTrait;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\views_bulk_operations\Action\ViewsBulkOperationsActionBase;
