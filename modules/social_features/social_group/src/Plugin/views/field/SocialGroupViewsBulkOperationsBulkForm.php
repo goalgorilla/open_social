@@ -112,7 +112,7 @@ class SocialGroupViewsBulkOperationsBulkForm extends GroupViewsBulkOperationsBul
 
     $wrapper['multipage']['list']['#title'] = $this->t('See selected members on other pages');
 
-    // we don't show the multipage list if there are no items selected.
+    // We don't show the multipage list if there are no items selected.
     if (count($wrapper['multipage']['list']['#items']) < 1) {
       $wrapper['multipage']['list'] = '';
     }

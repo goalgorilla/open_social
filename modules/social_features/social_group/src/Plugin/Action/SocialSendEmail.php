@@ -40,6 +40,9 @@ class SocialSendEmail extends SocialSendEmailBase {
     return TRUE;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
     // Add title to the form as well.
     if ($form['#title'] !== NULL) {
