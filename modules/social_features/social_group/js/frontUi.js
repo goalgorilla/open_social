@@ -12,14 +12,17 @@
       var $primarySelectAll = $('.select-all', '.vbo-view-form');
       $primarySelectAll.addClass('form-no-label checkbox form-checkbox');
 
-      // Make sure we set the Actions button to relative when the wrapper gets
-      // hidden by VBO.
+      // Click handler on clicking select all across pages.
       $('.views-table-row-vbo-select-all .form-submit').on('click', function () {
-        if ($('#vbo-action-form-wrapper .btn-group.dropdown').css("position") === "absolute") {
-          $('#vbo-action-form-wrapper .btn-group.dropdown').css({position:'relative', padding:'1rem'});
+        // Put in a message for all selected users.
+        if ($('.vbo-select-all').prop('checked') === true) {
+          if ($('.temporary-placeholder.panel-heading').length < 1) {
+            var message = Drupal.t('<b>All members across all pages</b> are selected.');
+            $('#vbo-action-form-wrapper').append('<div class="temporary-placeholder card__block">' + message +  '</span>');
+          }
         }
-        else if ($('#vbo-action-form-wrapper .btn-group.dropdown').css("position") === "relative") {
-          $('#vbo-action-form-wrapper .btn-group.dropdown').css({position:'absolute', padding:'10px 0'});
+        else {
+          $('.temporary-placeholder').remove();
         }
       });
     }
