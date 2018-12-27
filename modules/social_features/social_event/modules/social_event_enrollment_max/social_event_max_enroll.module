@@ -1,0 +1,100 @@
+<?php
+
+/**
+ * @file
+ * The Social Event Max Enroll module.
+ */
+
+use Drupal\views\ViewExecutable;
+use Drupal\views\Plugin\views\cache\CachePluginBase;
+use Drupal\node\Entity\Node;
+use Drupal\Core\Form\FormStateInterface;
+
+/**
+ * Implements hook_views_post_render().
+ *
+ * Alter "Event enrollments" views. Add number of places left .
+ */
+function social_event_max_enroll_views_post_render(ViewExecutable $view, &$output, CachePluginBase $cache) {
+  if ($view->id() == 'event_enrollments' && $view->current_display == 'event_enrollments') {
+    if (isset($output['#rows'])) {
+      if (!empty($view->args[0])) {
+        $nid = $view->args[0];
+        $node = Node::load($nid);
+
+        // Add places left counter to the block title.
+        if (social_event_max_enroll_is_enabled($node)) {
+          // Count how many places left.
+          $left = social_event_max_enroll_left($node);
+
+          if ($left > 0) {
+            $title_suffix = \Drupal::translation()->formatPlural($left, '(1 place left)', '(@count places left)');
+          }
+          else {
+            $title_suffix = t('(0 places left)');
+          }
+
+          $view->header['result']->options['content'] .= ' ' . $title_suffix;
+        }
+
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_form_alter().
+ *
+ * Check and display "Allow anonymous enrollments" checkbox for public events.
+ */
+function social_event_max_enroll_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  $event_forms = [
+    'node_event_form',
+    'node_event_edit_form',
+  ];
+
+  if (in_array($form_id, $event_forms)) {
+    $config = \Drupal::config('social_event.settings');
+    // Hide checkbox if feature is disabled globally.
+    $form['field_event_max_enroll']['#access'] = $config->get('max_enroll');
+    $form['field_event_max_enroll']['widget'][0]['value']['#required'] = $config->get('max_enroll_required');
+  }
+}
+
+/**
+ * Returns number of all enrollments per event.
+ */
+function social_event_max_enroll_count($nid) {
+  $query = \Drupal::database()
+    ->select('event_enrollment__field_account', 'eefa');
+  $query->join('event_enrollment__field_event', 'eefe', 'eefa.entity_id = eefe.entity_id');
+  $query->condition('eefe.field_event_target_id', $nid);
+
+  return (int) $query
+    ->countQuery()
+    ->execute()
+    ->fetchField();
+}
+
+/**
+ * Returns number of left enrollments per event.
+ */
+function social_event_max_enroll_left($node) {
+  // Get max enrollment number.
+  $max = $node->get('field_event_max_enroll')->value;
+  // Take into account AN enrollments.
+  $current = social_event_max_enroll_count($node->id());
+  // Count how many places left.
+  return $max - $current;
+}
+
+/**
+ * Check if anonymous enrollment is allowed for given event.
+ */
+function social_event_max_enroll_is_enabled(Node $node) {
+  $config = \Drupal::config('social_event.settings');
+  $is_global_enabled = $config->get('max_enroll');
+  $is_event = $node->getType() === 'event';
+  $is_event_max_enroll = isset($node->get('field_event_max_enroll')->value);
+  return $is_global_enabled && $is_event && $is_event_max_enroll;
+}

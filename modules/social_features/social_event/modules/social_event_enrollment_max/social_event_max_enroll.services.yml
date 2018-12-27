@@ -1,0 +1,6 @@
+services:
+  social_event_max_enroll.overrider:
+    class: \Drupal\social_event_max_enroll\EventMaxEnrollOverride
+    arguments: ['@config.factory']
+    tags:
+      - {name: config.factory.override, priority: 5}

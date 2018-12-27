@@ -29,6 +29,16 @@ class EventAnEnrollActionForm extends EnrollActionForm {
     $nid = $node->id();
     $token = $this->getRequest()->query->get('token');
 
+    $btn_classes = [
+      'btn',
+      'btn-accent',
+      'btn-lg',
+      'btn-raised',
+      'brand-bg-accent',
+      'dropdown-toggle',
+      'waves-effect',
+    ];
+
     if (!empty($token) && social_event_an_enroll_token_exists($token, $nid)) {
       $form['event'] = [
         '#type' => 'hidden',
@@ -39,15 +49,7 @@ class EventAnEnrollActionForm extends EnrollActionForm {
         '#type' => 'submit',
         '#value' => $this->t('Enrolled'),
         '#attributes' => [
-          'class' => [
-            'btn',
-            'btn-accent',
-            'btn-lg',
-            'btn-raised',
-            'brand-bg-accent',
-            'dropdown-toggle',
-            'waves-effect',
-          ],
+          'class' => array_merge($btn_classes, ['dropdown-toggle']),
           'autocomplete' => 'off',
           'data-toggle' => 'dropdown',
           'aria-haspopup' => 'true',
@@ -69,40 +71,49 @@ class EventAnEnrollActionForm extends EnrollActionForm {
           '#value' => $this->t('Event has passed'),
           '#disabled' => TRUE,
           '#attributes' => [
-            'class' => [
-              'btn',
-              'btn-accent',
-              'btn-lg',
-              'btn-raised',
-              'brand-bg-accent',
-              'waves-effect',
-            ],
+            'class' => $btn_classes,
           ],
         ];
       }
       else {
-        $attributes = [
-          'class' => [
-            'use-ajax',
-            'js-form-submit',
-            'form-submit',
-            'btn',
-            'btn-accent',
-            'btn-lg',
-          ],
-          'data-dialog-type' => 'modal',
-          'data-dialog-options' => json_encode([
-            'title' => t('Enroll in @event Event', ['@event' => $node->getTitle()]),
-            'width' => 'auto',
-          ]),
-        ];
+        // Take into acccount max enrollments.
+        if (\Drupal::moduleHandler()->moduleExists('social_event_max_enroll')) {
+          if (social_event_max_enroll_is_enabled($node)) {
+            // Count how many places left.
+            $left = social_event_max_enroll_left($node);
+            if ($left < 1) {
+              $form['event_enrollment'] = [
+                '#type' => 'submit',
+                '#value' => $this->t('No places left'),
+                '#disabled' => TRUE,
+                '#attributes' => [
+                  'class' => $btn_classes,
+                ],
+              ];
+            }
+          }
+        }
 
-        $form['event_enrollment'] = [
-          '#type' => 'link',
-          '#title' => $this->t('Enroll'),
-          '#url' => Url::fromRoute('social_event_an_enroll.enroll_dialog', ['node' => $nid]),
-          '#attributes' => $attributes,
-        ];
+        if (empty($form['event_enrollment'])) {
+          $form['event_enrollment'] = [
+            '#type' => 'link',
+            '#title' => $this->t('Enroll'),
+            '#url' => Url::fromRoute('social_event_an_enroll.enroll_dialog', ['node' => $nid]),
+            '#attributes' => [
+              'class' => array_merge($btn_classes, [
+                'use-ajax',
+                'js-form-submit',
+                'form-submit'
+              ]),
+              'data-dialog-type' => 'modal',
+              'data-dialog-options' => json_encode([
+                'title' => t('Enroll in @event Event', ['@event' => $node->getTitle()]),
+                'width' => 'auto',
+              ]),
+            ],
+          ];
+        }
+
       }
     }
     $form['#cache'] = ['max-age' => 0];
