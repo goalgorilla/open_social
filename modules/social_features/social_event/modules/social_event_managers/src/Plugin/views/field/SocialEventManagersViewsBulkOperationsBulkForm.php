@@ -193,19 +193,19 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
 
     unset($actions['#type']);
 
-    $items = [];
+    $labels = [];
 
-    $weights = [
-      'social_event_managers_send_email_action' => 10,
-      'social_event_enrolments_export_enrollments_action' => 20,
-      'social_event_managers_delete_event_enrollment_action' => 30,
-    ];
-
-    foreach ($weights as $key => $weight) {
-      if (isset($actions[$key])) {
-        $actions[$key]['#weight'] = $weight;
-      }
+    foreach (Element::children($actions) as $action_id) {
+      $labels[$action_id] = $actions[$action_id]['#value'];
     }
+
+    asort($labels);
+
+    foreach (array_keys($labels) as $weight => $action_id) {
+      $actions[$action_id]['#weight'] = $weight;
+    }
+
+    $items = [];
 
     foreach (Element::children($actions, TRUE) as $key) {
       $items[$key] = $actions[$key];
