@@ -16,4 +16,12 @@ use Drupal\views_bulk_operations\Plugin\Action\EntityDeleteAction;
  */
 class GroupContentEntityDeleteAction extends EntityDeleteAction {
 
+  /**
+   * {@inheritdoc}
+   */
+  public function execute($entity = NULL) {
+    parent::execute($entity);
+    return $this->t('Remove members from a group');
+  }
+
 }

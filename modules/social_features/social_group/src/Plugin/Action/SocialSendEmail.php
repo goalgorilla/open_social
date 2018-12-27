@@ -24,6 +24,7 @@ class SocialSendEmail extends SocialSendEmailBase {
   public function execute($entity = NULL) {
     /** @var \Drupal\group\Entity\GroupContentInterface $entity */
     parent::execute($entity->getEntity());
+    return $this->t('Send mail');
   }
 
   /**

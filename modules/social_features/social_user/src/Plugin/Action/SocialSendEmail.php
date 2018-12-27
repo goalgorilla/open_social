@@ -139,6 +139,8 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
     if ($message['result']) {
       $this->logger->notice('Sent email to %recipient', ['%recipient' => $entity->getEmail()]);
     }
+
+    return $this->t('Sent email');
   }
 
   /**

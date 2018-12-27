@@ -113,6 +113,8 @@ class ChangeGroupMembershipRole extends ViewsBulkOperationsActionBase implements
 
       $entity->set('group_roles', $value)->save();
     }
+
+    return $this->t('Change roles');
   }
 
   /**
