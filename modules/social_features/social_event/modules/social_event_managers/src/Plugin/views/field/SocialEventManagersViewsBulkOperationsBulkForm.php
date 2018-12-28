@@ -165,7 +165,13 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
 
     $form['#attached']['library'][] = 'social_group/views_bulk_operations.frontUi';
 
-    $count = count($this->tempStoreData['list']);
+    if (isset($this->tempStoreData['list'])) {
+      $count = count($this->tempStoreData['list']);
+    }
+    else {
+      $form['output']['#access'] = FALSE;
+      $count = 0;
+    }
 
     if ($count) {
       $title = $this->formatPlural($count, '<b>@count Member</b> is selected', '<b>@count Members</b> are selected');
