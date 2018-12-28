@@ -77,7 +77,7 @@ class EventManagersController extends ControllerBase {
 
       if ($node instanceof NodeInterface && $node->bundle() === 'event' && !$node->field_event_managers->isEmpty()) {
         foreach ($node->field_event_managers->getValue() as $value) {
-          if ($value['target_id'] === $account->id()) {
+          if ($value && $value['target_id'] === $account->id()) {
             return AccessResult::allowed();
           }
         }
