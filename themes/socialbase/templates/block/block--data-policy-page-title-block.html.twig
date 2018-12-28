@@ -34,7 +34,13 @@
 
   <div class="cover-wrap container">
     <div class="cover-small">
-      <h1 class="page-title">{{ 'Data Policy'|t }}</h1>
+      <h1 class="page-title">
+        {% if content['#title'] is not empty %}
+          {{ content['#title'] }}
+        {% else %}
+          {{ 'Data Policy'|t }}
+        {% endif %}
+      </h1>
     </div>
   </div> {# cover-wrap #}
 </div> {# cover #}
