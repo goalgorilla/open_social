@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\social_group\Form;
+namespace Drupal\social_group_gvbo\Form;
 
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
