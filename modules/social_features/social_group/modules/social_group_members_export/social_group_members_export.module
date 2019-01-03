@@ -1,0 +1,21 @@
+<?php
+
+/**
+ * @file
+ * The Social Group Members Export module.
+ */
+
+/**
+ * Implements hook_file_download().
+ */
+function social_group_members_export_file_download($uri) {
+  $scheme = \Drupal::service('file_system')->uriScheme($uri);
+  $target = file_uri_target($uri);
+  $access = \Drupal::currentUser()->hasPermission('administer users');
+
+  if ($scheme === 'private' && preg_match('/^csv\/export-members-([a-f0-9]{12})\.csv$/i', $target) && $access) {
+    return [
+      'Content-disposition' => 'attachment; filename="' . basename($target) . '"',
+    ];
+  }
+}

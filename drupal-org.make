@@ -40,6 +40,7 @@ projects[group][type] = module
 projects[group][version] = 1.0-rc2
 projects[group][patch][] = "https://www.drupal.org/files/issues/add-computed-field-without-FieldItemListComputedInterface-2718195-34.patch"
 projects[group][patch][] = "https://www.drupal.org/files/issues/group-2943564-2.patch"
+projects[group][patch][] = "https://www.drupal.org/files/issues/2018-12-18/vbo-and-group-permission-3020883-5.patch"
 projects[image_effects][type] = module
 projects[image_effects][version] = 1.0
 projects[image_widget_crop][type] = module

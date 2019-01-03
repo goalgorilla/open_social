@@ -22,7 +22,7 @@ class SocialGroupEntityAutocomplete extends EntityAutocomplete {
    * Form element validation handler for entity_autocomplete elements.
    */
   public static function validateEntityAutocomplete(array &$element, FormStateInterface $form_state, array &$complete_form) {
-    $duplicated_values = [];
+    $duplicated_values = $value = [];
 
     // Load the current Group so we can see if there are existing members.
     $group = _social_group_get_current_group();
@@ -84,7 +84,7 @@ class SocialGroupEntityAutocomplete extends EntityAutocomplete {
       return;
     }
 
-    if ($value !== NULL) {
+    if ($value) {
       $form_state->setValue('entity_id_new', $value);
     }
   }

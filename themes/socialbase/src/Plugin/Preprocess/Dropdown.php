@@ -19,8 +19,9 @@ class Dropdown extends BootstrapDropdown {
    */
   public function preprocess(array &$variables, $hook, array $info) {
     $operations = !!mb_strpos($variables['theme_hook_original'], 'operations');
+    $route = \Drupal::routeMatch()->getRouteName();
 
-    if ($operations && \Drupal::routeMatch()->getRouteName() === 'view.event_manage_enrollments.page_manage_enrollments') {
+    if ($operations &&  ($route === 'view.event_manage_enrollments.page_manage_enrollments' || $route === 'view.group_manage_members.page_group_manage_members')) {
       $variables['default_button'] = FALSE;
       $variables['toggle_label'] = $this->t('Actions');
     }
