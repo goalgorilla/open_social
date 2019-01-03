@@ -48,7 +48,11 @@
   {% endif %}
 
   {% block input %}
-    <input{{ attributes.addClass(classes) }} />
+      {% if simple_checkbox %}
+        <input{{ attributes }} />
+      {% else %}
+        <input{{ attributes.addClass(classes) }} />
+      {% endif %}
   {% endblock %}
 
   {% if suffix %}

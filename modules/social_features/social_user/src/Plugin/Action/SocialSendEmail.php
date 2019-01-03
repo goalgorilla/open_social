@@ -139,6 +139,8 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
     if ($message['result']) {
       $this->logger->notice('Sent email to %recipient', ['%recipient' => $entity->getEmail()]);
     }
+
+    return $this->t('Send email');
   }
 
   /**
@@ -169,6 +171,7 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
       '#default_value' => $form_state->getValue('subject'),
       '#maxlength' => '254',
     ];
+
     $form['message'] = [
       '#type' => 'textarea',
       '#title' => t('Message'),
@@ -184,6 +187,8 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
       unset($form['list']);
     }
     $form['actions']['submit']['#value'] = $this->t('Send email');
+    $form['actions']['submit']['#attributes']['class'] = ['button button--primary js-form-submit form-submit btn js-form-submit btn-raised btn-primary waves-effect waves-btn waves-light'];
+    $form['actions']['cancel']['#attributes']['class'] = ['button button--danger btn btn-flat waves-effect waves-btn'];
     return $form;
   }
 

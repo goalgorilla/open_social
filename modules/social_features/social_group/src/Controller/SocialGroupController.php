@@ -44,8 +44,6 @@ class SocialGroupController extends ControllerBase {
   /**
    * The _title_callback for the view.group_members.page_group_members route.
    *
-   * Also for the entity.group_content.collection route.
-   *
    * @param object $group
    *   The group ID.
    *

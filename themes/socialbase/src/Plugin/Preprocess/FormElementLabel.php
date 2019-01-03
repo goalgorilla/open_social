@@ -65,7 +65,6 @@ class FormElementLabel extends BaseFormElementLabel {
       if (in_array($element['#id'], $locale_settings)) {
         $variables->addClass('control-label--wide');
       }
-
     }
 
     parent::preprocessElement($element, $variables);

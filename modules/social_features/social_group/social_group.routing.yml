@@ -1,10 +1,3 @@
-social_group.social_group_controller_redirectGroupMemberships:
-  path: '/group/{group}/membership'
-  defaults:
-    _content: '\Drupal\social_group\Controller\SocialGroupContentListBuilder::render'
-    _title_callback: '\Drupal\social_group\Controller\SocialGroupController::groupMembersTitle'
-  requirements:
-    _group_permission: 'administer members'
 social_group.settings:
   path: '/admin/config/opensocial/social-group'
   defaults:
@@ -21,3 +14,11 @@ social_group.stream:
     _entity_view: 'group.stream'
   requirements:
     _group_permission: 'view group stream page'
+
+social_group.views_bulk_operations.confirm:
+  path: '/group/{group}/membership/confirm-action'
+  defaults:
+    _form: '\Drupal\social_group\Form\SocialGroupViewsBulkOperationsConfirmAction'
+    _title: 'Confirm action'
+  requirements:
+    _social_group_views_bulk_operation_access: 'TRUE'
