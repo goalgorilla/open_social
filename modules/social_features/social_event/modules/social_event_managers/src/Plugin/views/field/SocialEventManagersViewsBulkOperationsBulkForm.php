@@ -17,7 +17,11 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
- * Defines the Views Bulk Operations field plugin.
+ * Defines the Enrollments Views Bulk Operations field plugin.
+ *
+ * @ingroup views_field_handlers
+ *
+ * @ViewsField("social_views_bulk_operations_bulk_form_enrollments")
  */
 class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperationsBulkForm {
 

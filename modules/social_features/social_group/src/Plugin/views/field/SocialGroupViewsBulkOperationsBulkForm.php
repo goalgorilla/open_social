@@ -8,7 +8,11 @@ use Drupal\Core\Url;
 use Drupal\gvbo\Plugin\views\field\GroupViewsBulkOperationsBulkForm;
 
 /**
- * Defines the Views Bulk Operations field plugin.
+ * Defines the Groups Views Bulk Operations field plugin.
+ *
+ * @ingroup views_field_handlers
+ *
+ * @ViewsField("social_views_bulk_operations_bulk_form_group")
  */
 class SocialGroupViewsBulkOperationsBulkForm extends GroupViewsBulkOperationsBulkForm {
 

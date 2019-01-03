@@ -2,17 +2,16 @@ langcode: en
 status: true
 dependencies:
   config:
-    - core.entity_view_mode.profile.table
-    - field.storage.profile.field_profile_organization
-    - node.type.event
+  - core.entity_view_mode.profile.table
+  - field.storage.profile.field_profile_organization
+  - node.type.event
   module:
-    - node
-    - options
-    - profile
-    - social_event
-    - social_event_managers
-    - user
-    - views_bulk_operations
+  - node
+  - options
+  - profile
+  - social_event
+  - social_event_managers
+  - user
 id: event_manage_enrollments
 label: 'Manage All Enrollments'
 module: views
@@ -85,10 +84,17 @@ display:
           summary: ''
           description: ''
           columns:
+            social_views_bulk_operations_bulk_form_enrollments_1: social_views_bulk_operations_bulk_form_enrollments_1
             rendered_entity: rendered_entity
             field_profile_organization: field_profile_organization
             created: created
+            operations_1: operations_1
           info:
+            social_views_bulk_operations_bulk_form_enrollments_1:
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
             rendered_entity:
               sortable: true
               default_sort_order: asc
@@ -110,15 +116,20 @@ display:
               separator: ''
               empty_column: false
               responsive: ''
+            operations_1:
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
           default: '-1'
           empty_table: false
       row:
         type: fields
       fields:
-        views_bulk_operations_bulk_form:
-          id: views_bulk_operations_bulk_form
+        social_views_bulk_operations_bulk_form_enrollments_1:
+          id: social_views_bulk_operations_bulk_form_enrollments_1
           table: views
-          field: views_bulk_operations_bulk_form
+          field: social_views_bulk_operations_bulk_form_enrollments
           relationship: none
           group_type: group
           admin_label: ''
@@ -163,24 +174,24 @@ display:
           hide_empty: false
           empty_zero: false
           hide_alter_empty: true
-          batch: true
-          batch_size: 10
+          batch: 1
+          batch_size: '10'
           form_step: true
-          buttons: true
+          buttons: 1
           clear_on_exposed: 0
           action_title: Action
           selected_actions:
             comment_delete_action: 0
-            social_event_managers_send_email_action: social_event_managers_send_email_action
             social_event_managers_delete_event_enrollment_action: social_event_managers_delete_event_enrollment_action
+            social_event_managers_send_email_action: social_event_managers_send_email_action
             views_bulk_operations_delete_entity: 0
             'entity:save_action:event_enrollment': 0
           preconfiguration:
-            social_event_managers_send_email_action:
-              label_override: Email
             social_event_managers_delete_event_enrollment_action:
               label_override: Remove
-          plugin_id: views_bulk_operations_bulk_form
+            social_event_managers_send_email_action:
+              label_override: Email
+          plugin_id: social_views_bulk_operations_bulk_form_enrollments
         rendered_entity:
           id: rendered_entity
           table: profile
@@ -605,23 +616,23 @@ display:
     cache_metadata:
       max-age: 0
       contexts:
-        - 'languages:language_content'
-        - 'languages:language_interface'
-        - url
-        - url.query_args
+      - 'languages:language_content'
+      - 'languages:language_interface'
+      - url
+      - url.query_args
       tags:
-        - 'config:core.entity_view_display.profile.profile.autocomplete_item'
-        - 'config:core.entity_view_display.profile.profile.compact'
-        - 'config:core.entity_view_display.profile.profile.compact_notification'
-        - 'config:core.entity_view_display.profile.profile.compact_teaser'
-        - 'config:core.entity_view_display.profile.profile.default'
-        - 'config:core.entity_view_display.profile.profile.hero'
-        - 'config:core.entity_view_display.profile.profile.search_index'
-        - 'config:core.entity_view_display.profile.profile.small'
-        - 'config:core.entity_view_display.profile.profile.small_teaser'
-        - 'config:core.entity_view_display.profile.profile.table'
-        - 'config:core.entity_view_display.profile.profile.teaser'
-        - 'config:field.storage.profile.field_profile_organization'
+      - 'config:core.entity_view_display.profile.profile.autocomplete_item'
+      - 'config:core.entity_view_display.profile.profile.compact'
+      - 'config:core.entity_view_display.profile.profile.compact_notification'
+      - 'config:core.entity_view_display.profile.profile.compact_teaser'
+      - 'config:core.entity_view_display.profile.profile.default'
+      - 'config:core.entity_view_display.profile.profile.hero'
+      - 'config:core.entity_view_display.profile.profile.search_index'
+      - 'config:core.entity_view_display.profile.profile.small'
+      - 'config:core.entity_view_display.profile.profile.small_teaser'
+      - 'config:core.entity_view_display.profile.profile.table'
+      - 'config:core.entity_view_display.profile.profile.teaser'
+      - 'config:field.storage.profile.field_profile_organization'
   page_manage_enrollments:
     display_plugin: page
     id: page_manage_enrollments
@@ -642,20 +653,20 @@ display:
     cache_metadata:
       max-age: 0
       contexts:
-        - 'languages:language_content'
-        - 'languages:language_interface'
-        - url
-        - url.query_args
+      - 'languages:language_content'
+      - 'languages:language_interface'
+      - url
+      - url.query_args
       tags:
-        - 'config:core.entity_view_display.profile.profile.autocomplete_item'
-        - 'config:core.entity_view_display.profile.profile.compact'
-        - 'config:core.entity_view_display.profile.profile.compact_notification'
-        - 'config:core.entity_view_display.profile.profile.compact_teaser'
-        - 'config:core.entity_view_display.profile.profile.default'
-        - 'config:core.entity_view_display.profile.profile.hero'
-        - 'config:core.entity_view_display.profile.profile.search_index'
-        - 'config:core.entity_view_display.profile.profile.small'
-        - 'config:core.entity_view_display.profile.profile.small_teaser'
-        - 'config:core.entity_view_display.profile.profile.table'
-        - 'config:core.entity_view_display.profile.profile.teaser'
-        - 'config:field.storage.profile.field_profile_organization'
+      - 'config:core.entity_view_display.profile.profile.autocomplete_item'
+      - 'config:core.entity_view_display.profile.profile.compact'
+      - 'config:core.entity_view_display.profile.profile.compact_notification'
+      - 'config:core.entity_view_display.profile.profile.compact_teaser'
+      - 'config:core.entity_view_display.profile.profile.default'
+      - 'config:core.entity_view_display.profile.profile.hero'
+      - 'config:core.entity_view_display.profile.profile.search_index'
+      - 'config:core.entity_view_display.profile.profile.small'
+      - 'config:core.entity_view_display.profile.profile.small_teaser'
+      - 'config:core.entity_view_display.profile.profile.table'
+      - 'config:core.entity_view_display.profile.profile.teaser'
+      - 'config:field.storage.profile.field_profile_organization'

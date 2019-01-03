@@ -40,6 +40,19 @@ function social_event_managers_preprocess_block(&$variables) {
 }
 
 /**
+ * Implements hook_views_data_alter().
+ */
+function social_event_managers_views_data_alter(array &$data) {
+  $data['views']['social_views_bulk_operations_bulk_form_enrollments'] = [
+    'title' => t('Social Views bulk operations for Enrollments'),
+    'help' => t("Process enrollments returned by the view with Views Bulk Operations' actions."),
+    'field' => [
+      'id' => 'social_views_bulk_operations_bulk_form_enrollments',
+    ],
+  ];
+}
+
+/**
  * Implements hook_block_access().
  */
 function social_event_managers_block_access(Block $block, $operation, AccountInterface $account) {
