@@ -167,24 +167,11 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
     $wrapper['#attributes']['class'][] = 'card';
     $wrapper['#attributes']['class'][] = 'card__block';
 
-    $form['#attached']['library'][] = 'social_group/views_bulk_operations.frontUi';
+    $form['#attached']['library'][] = 'social_event_managers/views_bulk_operations.frontUi';
 
-    if (isset($this->tempStoreData['list'])) {
-      $count = count($this->tempStoreData['list']);
-    }
-    else {
-      $form['output']['#access'] = FALSE;
-      $count = 0;
-    }
-
-    if ($count) {
-      $title = $this->formatPlural($count, '<b>@count Member</b> is selected', '<b>@count Members</b> are selected');
-    }
-    else {
-      $title = $this->t('<b>no members</b> are selected', [
-        '@count' => $count,
-      ]);
-    }
+    // Render page title.
+    $count = count($this->tempStoreData['list']);
+    $title = $this->formatPlural($count, '<b>@count enrollee</b> is selected', '<b>@count enrollees</b> are selected');
 
     $wrapper['multipage']['#title'] = [
       '#type' => 'html_tag',
@@ -195,13 +182,20 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
       '#value' => $title,
     ];
 
-    $wrapper['multipage']['list']['#title'] = $this->t('See selected members on other pages');
+    $wrapper['multipage']['list']['#title'] = $this->t('See selected enrollees on other pages');
+
+    // We don't show the multipage list if there are no items selected.
+    if (count($wrapper['multipage']['list']['#items']) < 1) {
+      $wrapper['multipage']['list'] = '';
+    }
 
     $actions = &$wrapper['actions'];
     $actions['#theme'] = 'links__dropbutton__operations__actions';
     $actions['#label'] = $this->t('Actions');
 
     unset($actions['#type']);
+
+    unset($wrapper['multipage']['clear']);
 
     $labels = [];
 

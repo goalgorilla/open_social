@@ -43,6 +43,7 @@ function social_event_managers_preprocess_block(&$variables) {
  * Implements hook_views_data_alter().
  */
 function social_event_managers_views_data_alter(array &$data) {
+  // Create our own views VBO field for enrollments.
   $data['views']['social_views_bulk_operations_bulk_form_enrollments'] = [
     'title' => t('Social Views bulk operations for Enrollments'),
     'help' => t("Process enrollments returned by the view with Views Bulk Operations' actions."),
