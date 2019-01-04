@@ -109,7 +109,7 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
         $real_label = $this->actions[$id]['label'];
       }
 
-      $label = $this->t('<b>@action</b> selected members', [
+      $label = $this->t('<b>@action</b> selected enrollees', [
         '@action' => $real_label,
       ]);
     }
@@ -254,15 +254,26 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
   public function viewsFormSubmit(array &$form, FormStateInterface $form_state) {
     parent::viewsFormSubmit($form, $form_state);
 
-    if ($form_state->get('step') === 'views_form_views_form' && $this->view->id() === 'group_manage_members') {
+    if ($form_state->get('step') === 'views_form_views_form' && $this->view->id() === 'event_manage_enrollments') {
       /** @var \Drupal\Core\Url $url */
       $url = $form_state->getRedirect();
 
       if ($url->getRouteName() === 'views_bulk_operations.execute_configurable') {
         $parameters = $url->getRouteParameters();
 
-        $url = Url::fromRoute('social_group.views_bulk_operations.execute_configurable', [
-          'group' => $parameters['group'],
+        if (empty($parameters['node'])) {
+          $node = \Drupal::routeMatch()->getParameter('node');
+          if ($node instanceof \Drupal\node\NodeInterface) {
+            // You can get nid and anything else you need from the node object.
+            $parameters['node'] = $node->id();
+          }
+          else if(!is_object($node)) {
+            $parameters['node'] = $node;
+          }
+        }
+
+        $url = Url::fromRoute('social_event_managers.vbo.execute_configurable', [
+          'node' => $parameters['node'],
         ]);
 
         $form_state->setRedirectUrl($url);

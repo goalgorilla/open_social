@@ -410,9 +410,6 @@ function _social_event_managers_views_bulk_operations_bulk_form_submit($form, Fo
   if ($url->getRouteName() === 'views_bulk_operations.execute_configurable') {
     $url = Url::fromRoute('social_event_managers.vbo.execute_configurable', $route_parameters);
   }
-  else {
-    $url->setRouteParameters($route_parameters);
-  }
 
   $form_state->setRedirectUrl($url);
 }

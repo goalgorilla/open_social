@@ -15,7 +15,6 @@ use Drupal\views_bulk_operations\Action\ViewsBulkOperationsActionBase;
  *   label = @Translation("Delete selected event enrollment entities"),
  *   type = "event_enrollment",
  *   confirm = TRUE,
- *   confirm_form_route_name = "social_event_managers.vbo.confirm",
  * )
  */
 class EventEnrollmentEntityDeleteAction extends ViewsBulkOperationsActionBase {

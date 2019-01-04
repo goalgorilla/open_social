@@ -15,8 +15,9 @@ use Drupal\social_user\Plugin\Action\SocialSendEmail;
  *   id = "social_event_managers_send_email_action",
  *   label = @Translation("Send email to event enrollment users"),
  *   type = "event_enrollment",
+ *   view_id = "event_manage_enrollments",
+ *   display_id = "page_manage_enrollments",
  *   confirm = TRUE,
- *   confirm_form_route_name = "social_event_managers.vbo.confirm",
  * )
  */
 class SocialEventManagersSendEmail extends SocialSendEmail {
@@ -29,6 +30,7 @@ class SocialEventManagersSendEmail extends SocialSendEmail {
     $account = reset($accounts);
 
     parent::execute($account);
+    return $this->t('Send mail');
   }
 
   /**
@@ -46,5 +48,31 @@ class SocialEventManagersSendEmail extends SocialSendEmail {
   public function buildPreConfigurationForm(array $form, array $values, FormStateInterface $form_state) {
     return $form;
   }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
+    // Add title to the form as well.
+    if ($form['#title'] !== NULL) {
+      $selected_count = $this->context['selected_count'];
+      $subtitle = $this->formatPlural($selected_count,
+        'Configure the email you want to send to the one enrollee you have selected.',
+        'Configure the email you want to send to the @count enrollees you have selected.'
+      );
+
+      $form['subtitle'] = [
+        '#type' => 'html_tag',
+        '#tag' => 'div',
+        '#attributes' => [
+          'class' => ['placeholder'],
+        ],
+        '#value' => $subtitle,
+      ];
+    }
+
+    return parent::buildConfigurationForm($form, $form_state);
+  }
+
 
 }
