@@ -186,7 +186,7 @@ class SocialGroupViewsBulkOperationsBulkForm extends GroupViewsBulkOperationsBul
       if ($url->getRouteName() === 'views_bulk_operations.execute_configurable') {
         $parameters = $url->getRouteParameters();
 
-        $url = Url::fromRoute('social_group.views_bulk_operations.execute_configurable', [
+        $url = Url::fromRoute('social_group_gvbo.views_bulk_operations.execute_configurable', [
           'group' => $parameters['group'],
         ]);
 
