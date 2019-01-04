@@ -15,3 +15,11 @@ social_event_managers.vbo.execute_configurable:
     display_id: 'page_manage_enrollments'
   requirements:
     _views_bulk_operation_access: 'TRUE'
+
+social_event_managers.add_enrollees:
+  path: '/node/{node}/manage-all-enrollments/add-enrollees'
+  defaults:
+    _form: '\Drupal\social_event_managers\Form\SocialEventManagersAddEnrolleeForm'
+    _title: 'Add enrollees'
+  requirements:
+    _permission: 'manage everything enrollments'
