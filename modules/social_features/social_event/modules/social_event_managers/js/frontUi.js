@@ -60,16 +60,7 @@
           var count = parseInt($placeholder.text());
           count += data.change;
 
-          if (count > 1) {
-            $placeholder.html(Drupal.t('<b>@count enrollees</b> are selected', {
-              '@count': count
-            }));
-          }
-          else {
-            $placeholder.html(Drupal.t('<b>@count enrollee</b> is selected', {
-              '@count': count
-            }));
-          }
+          $placeholder.html(Drupal.formatPlural(count, '<b>@count enrollee</b> is selected','<b>@count enrollees</b> are selected'));
         }
       });
     }
