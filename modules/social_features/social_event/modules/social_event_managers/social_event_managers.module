@@ -65,10 +65,10 @@ function social_event_managers_views_data_alter(array &$data) {
  * @see activity_send_email_form_user_form_alter()
  */
 function social_event_managers_activity_send_email_notifications_alter(array &$items, array $email_message_templates) {
-  // If a activity_on_events_im_organizing template is enabled then we add it in
+  // If a member_added_by_event_organiser template is enabled then we add it in
   // the "Message to Me" section.
   if (isset($email_message_templates['member_added_by_event_organiser'])) {
-    $items['what_manage']['templates'][] = 'member_added_by_event_organiser';
+    $items['message_to_me']['templates'][] = 'member_added_by_event_organiser';
   }
 }
 
