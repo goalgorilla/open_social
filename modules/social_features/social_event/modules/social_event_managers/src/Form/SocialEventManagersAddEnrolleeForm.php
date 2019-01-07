@@ -76,7 +76,7 @@ class SocialEventManagersAddEnrolleeForm extends FormBase {
       // Create a new enrollment for the event.
       foreach ($enroll_uid as $uid => $target_id) {
         $enrollment = EventEnrollment::create([
-          'user_id' => $uid,
+          'user_id' => \Drupal::currentUser()->id(),
           'field_event' => $event,
           'field_enrollment_status' => '1',
           'field_account' => $uid,
