@@ -273,6 +273,7 @@ function social_event_managers_menu_local_tasks_alter(&$data, $route_name) {
   // always and not only on the mentioned routes.
   if (!$can_show_managers_link) {
     unset($data['tabs'][0]['views_view:view.managers.view_managers']);
+    unset($data['tabs'][0]['views_view:view.event_manage_enrollments.page_manage_enrollments']);
   }
 }
 
