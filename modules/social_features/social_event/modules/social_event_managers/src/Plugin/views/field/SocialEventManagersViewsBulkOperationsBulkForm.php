@@ -303,7 +303,7 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
     if (!$profile) {
       $name = '';
       $first_name = $entity->get('field_first_name')->getValue()[0]['value'];
-      $last_name = $entity->get('field_first_name')->getValue()[0]['value'];
+      $last_name = $entity->get('field_last_name')->getValue()[0]['value'];
       if (!empty($first_name)) {
         $name .= $first_name;
         $name .= ' ';
