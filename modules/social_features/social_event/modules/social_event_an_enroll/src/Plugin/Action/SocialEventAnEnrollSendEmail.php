@@ -18,7 +18,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * @Action(
  *   id = "social_event_an_enroll_send_email_action",
- *   label = @Translation("Send email to event enrollment users"),
+ *   label = @Translation("Email"),
  *   type = "event_enrollment",
  *   confirm = TRUE,
  *   confirm_form_route_name = "social_event_managers.vbo.confirm",

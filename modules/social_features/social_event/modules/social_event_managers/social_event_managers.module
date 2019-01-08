@@ -101,7 +101,7 @@ function social_event_managers_form_alter(&$form, FormStateInterface $form_state
       $display_id = $view->current_display;
     }
   }
-  else if (strpos($form_id, 'views_form_event_manage_enrollments_page_manage_enrollments') !== false && isset($form['output'][0]['#view'])) {
+  else if (strpos($form_id, 'views_form_event_manage_enrollments_page_manage_enrollments') !== FALSE && isset($form['output'][0]['#view'])) {
     $view = &$form['output'][0]['#view'];
 
     if ($view instanceof ViewExecutable) {
