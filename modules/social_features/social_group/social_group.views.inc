@@ -24,4 +24,13 @@ function social_group_views_data_alter(array &$data) {
       'no group by' => TRUE,
     ],
   ];
+
+  // Create our own views VBO field for enrollments.
+  $data['views']['social_views_bulk_operations_bulk_form_group'] = [
+    'title' => t('Social Views bulk operations for Group Management'),
+    'help' => t("Process enrollments returned by the view with Views Bulk Operations actions."),
+    'field' => [
+      'id' => 'social_views_bulk_operations_bulk_form_group',
+    ],
+  ];
 }
