@@ -25,7 +25,7 @@ class SocialEventEnrolmentsExportOverrides implements ConfigFactoryOverrideInter
           'default' => [
             'display_options' => [
               'fields' => [
-                'views_bulk_operations_bulk_form' => [
+                'social_views_bulk_operations_bulk_form_enrollments_1' => [
                   'selected_actions' => [
                     'social_event_enrolments_export_enrollments_action' => 'social_event_enrolments_export_enrollments_action',
                   ],
