@@ -337,6 +337,12 @@ function social_event_managers_batch_alter(&$batch) {
     return;
   }
 
+  $actions = [
+    'social_event_enrolments_export_enrollments_action',
+    'social_event_managers_send_email_action',
+    'social_event_managers_delete_event_enrollment_action',
+  ];
+
   /** @var \Drupal\Core\Url $url */
   $url = &$batch['source_url'];
 
@@ -347,8 +353,7 @@ function social_event_managers_batch_alter(&$batch) {
 
     $data = $form_state->get('views_bulk_operations');
     $batch['sets'][0]['results']['action'] = $data['action_id'];
-    if ($data['action_id'] === 'social_event_managers_send_email_action' ||
-      $data['action_id'] === 'social_event_managers_delete_event_enrollment_action') {
+    if (in_array($data['action_id'], $actions)) {
       $batch['sets'][0]['finished'] = '_social_event_managers_action_batch_finish';
     }
   }
