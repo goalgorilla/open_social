@@ -12,7 +12,7 @@ use Drupal\views\ViewExecutable;
  * Implements hook_form_alter().
  */
 function social_event_an_enroll_enrolments_export_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-  if (isset($form['views_bulk_operations_bulk_form']) && isset($form['output'][0]['#view'])) {
+  if ((isset($form['views_bulk_operations_bulk_form']) || strpos($form_id, 'views_form_event_manage_enrollments_page_manage_enrollments')) && isset($form['output'][0]['#view'])) {
     $view = &$form['output'][0]['#view'];
 
     if ($view instanceof ViewExecutable && $view->id() === 'event_manage_enrollments') {

@@ -299,6 +299,22 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
     /** @var \Drupal\profile\Entity\ProfileInterface $profile */
     $profile = reset($profiles);
 
+    // It must be a Guest so we pick the name values we can get.
+    if (!$profile) {
+      $name = '';
+      $first_name = $entity->get('field_first_name')->getValue()[0]['value'];
+      $last_name = $entity->get('field_first_name')->getValue()[0]['value'];
+      if (!empty($first_name)) {
+        $name .= $first_name;
+        $name .= ' ';
+      }
+      if (!empty($last_name)) {
+        $name .= $last_name;
+      }
+
+      return $name;
+    }
+
     /** @var \Drupal\Core\StringTranslation\TranslatableMarkup $label */
     $label = $profile->label();
 

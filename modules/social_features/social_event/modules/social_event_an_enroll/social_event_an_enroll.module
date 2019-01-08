@@ -268,7 +268,7 @@ function social_event_an_enroll_form_alter(&$form, FormStateInterface $form_stat
     $form['field_event_an_enroll']['#access'] = $config->get('event_an_enroll');
   }
 
-  if (isset($form['views_bulk_operations_bulk_form']) && isset($form['output'][0]['#view'])) {
+  if ((isset($form['views_bulk_operations_bulk_form']) || strpos($form_id, 'views_form_event_manage_enrollments_page_manage_enrollments')) && isset($form['output'][0]['#view'])) {
     $view = &$form['output'][0]['#view'];
 
     if ($view instanceof ViewExecutable && $view->id() === 'event_manage_enrollments') {
