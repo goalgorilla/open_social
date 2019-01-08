@@ -23,3 +23,13 @@ social_event_managers.add_enrollees:
     _title: 'Add enrollees'
   requirements:
     _permission: 'manage everything enrollments'
+
+social_event_managers.vbo.confirm:
+  path: '/node/{node}/manage-all-enrollments/confirm-action'
+  defaults:
+    _form: '\Drupal\views_bulk_operations\Form\ConfirmAction'
+    _title: 'Confirm action'
+    view_id: 'event_manage_enrollments'
+    display_id: 'page_manage_enrollments'
+  requirements:
+    _views_bulk_operation_access: 'TRUE'

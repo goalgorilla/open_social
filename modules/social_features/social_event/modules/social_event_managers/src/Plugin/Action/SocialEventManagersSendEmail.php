@@ -18,6 +18,7 @@ use Drupal\social_user\Plugin\Action\SocialSendEmail;
  *   view_id = "event_manage_enrollments",
  *   display_id = "page_manage_enrollments",
  *   confirm = TRUE,
+ *   confirm_form_route_name = "social_event_managers.vbo.confirm",
  * )
  */
 class SocialEventManagersSendEmail extends SocialSendEmail {
