@@ -742,6 +742,7 @@ function social_group_menu_local_tasks_alter(&$data, $route_name) {
   // Rename Group "Related Entities" tab.
   if (isset($data['tabs'][0]['group.content']['#link'])) {
     $data['tabs'][0]['group.content']['#link']['title'] = t('Manage members');
+    $data['tabs'][0]['group.content']['#weight'] = 70;
   }
 
   // Remove the default View tab.
@@ -762,17 +763,19 @@ function social_group_menu_local_tasks_alter(&$data, $route_name) {
     /** @var \Drupal\group\Entity\GroupTypeInterface $group_type */
     $group_type = $group->getGroupType()->id();
     // Check if it's a closed group.
-    if ($group_type == 'closed_group') {
+    if ($group_type === 'closed_group') {
       // And if the user is not user 1.
-      if ($user->id() != 1) {
+      if ($user->id() !== 1) {
         if ($user->hasPermission('manage all groups')) {
           return;
         }
         // If the user is not an member of this group.
-        elseif (!$group->getMember($user)) {
+        if (!$group->getMember($user)) {
           // Disable these local tasks.
           $data['tabs'][0]['group.view'] = [];
-          $data['tabs'][0]['group.content'] = [];
+          if (!$group->hasPermission('administer members', $user)) {
+            $data['tabs'][0]['group.content'] = [];
+          }
           $data['tabs'][0]['social_group.events'] = [];
           $data['tabs'][0]['social_group.topics'] = [];
         }
