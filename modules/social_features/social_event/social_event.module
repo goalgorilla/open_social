@@ -474,7 +474,7 @@ function social_event_date_all_day_checkbox(&$element, FormStateInterface $form_
 
   if (!empty($form_input['op']) && isset($form_input['event_all_day'])) {
     $element['time']['#value'] = '00:01:00';
-    $element['event_all_day']['#value'] = (bool)$form_input['event_all_day'];
+    $element['event_all_day']['#value'] = (bool) $form_input['event_all_day'];
   }
   elseif ($date instanceof DrupalDateTime && social_event_date_is_all_day($date)) {
     $element['time']['#value'] = '00:01:00';
