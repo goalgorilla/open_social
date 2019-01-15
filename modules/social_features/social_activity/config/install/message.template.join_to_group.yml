@@ -12,7 +12,7 @@ third_party_settings:
     activity_action: create_entitiy_action
     activity_context: group_content_in_my_group_activity_context
     activity_destinations:
-      notifications: notifications
+      email: email
     activity_create_direct: 1
     activity_aggregate: 0
     activity_entity_condition: ''
@@ -21,14 +21,21 @@ label: 'Join to group'
 description: 'A person joins to a group where I am a manager'
 text:
   -
-    value: "<p><a href=\"absolute]\">[message:author:display-name]</a> joined to the&nbsp;<a href=\"gurl]\">[message:gtitle]</a> group</p>\r\n"
-    format: basic_html
+    format: full_html
+    value: '<p><a href="[message:author:url:absolute]">[message:author:display-name]</a> joined to the&nbsp;<a href="[message:gurl]">[message:gtitle]</a> group</p>'
   -
-    value: "<p><a href=\"absolute]\">[message:author:display-name]</a> joined to the&nbsp;<a href=\"gurl]\">[message:gtitle]</a> group</p>\r\n"
-    format: basic_html
+    format: full_html
+    value: '<p><a href="[message:author:url:absolute]">[message:author:display-name]</a> joined to the&nbsp;<a href="[message:gurl]">[message:gtitle]</a> group</p>'
+  -
+    format: full_html
+    value: '<p><a href="[message:author:url:absolute]">[message:author:display-name]</a> joined to the&nbsp;<a href="[message:gurl]">[message:gtitle]</a> group</p>'
 settings:
   'token options':
     clear: false
     'token replace': true
   purge_override: false
-  purge_methods: {  }
+  purge:
+    override: false
+    enabled: false
+    quota: null
+    days: null
