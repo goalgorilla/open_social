@@ -1,0 +1,34 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - activity_logger
+third_party_settings:
+  activity_logger:
+    activity_bundle_entities:
+      group_content-closed_group-group_membership: group_content-closed_group-group_membership
+      group_content-open_group-group_membership: group_content-open_group-group_membership
+      group_content-public_group-group_membership: group_content-public_group-group_membership
+    activity_action: create_entitiy_action
+    activity_context: group_content_in_my_group_activity_context
+    activity_destinations:
+      notifications: notifications
+    activity_create_direct: 1
+    activity_aggregate: 0
+    activity_entity_condition: ''
+template: join_to_group
+label: 'Join to group'
+description: 'A person joins to a group where I am a manager'
+text:
+  -
+    value: "<p><a href=\"absolute]\">[message:author:display-name]</a> joined to the&nbsp;<a href=\"gurl]\">[message:gtitle]</a> group</p>\r\n"
+    format: basic_html
+  -
+    value: "<p><a href=\"absolute]\">[message:author:display-name]</a> joined to the&nbsp;<a href=\"gurl]\">[message:gtitle]</a> group</p>\r\n"
+    format: basic_html
+settings:
+  'token options':
+    clear: false
+    'token replace': true
+  purge_override: false
+  purge_methods: {  }
