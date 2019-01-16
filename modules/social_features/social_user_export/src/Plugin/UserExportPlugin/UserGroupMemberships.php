@@ -27,7 +27,7 @@ class UserGroupMemberships extends UserExportPluginBase {
    *
    * @var \Drupal\social_group\SocialGroupHelperService
    */
-  public $group_helper;
+  public $groupHelper;
 
   /**
    * UserExportPluginBase constructor.
@@ -44,11 +44,13 @@ class UserGroupMemberships extends UserExportPluginBase {
    *   The date formatter.
    * @param \Drupal\Core\Database\Connection $database
    *   The database connection.
+   * @param \Drupal\social_group\SocialGroupHelperService $group_helper
+   *   The group helper service.
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager, DateFormatterInterface $date_formatter, Connection $database, SocialGroupHelperService $group_helper) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_type_manager, $date_formatter, $database);
 
-    $this->group_helper = $group_helper;
+    $this->groupHelper = $group_helper;
   }
 
   /**
@@ -89,7 +91,7 @@ class UserGroupMemberships extends UserExportPluginBase {
    * {@inheritdoc}
    */
   public function getValue(UserInterface $entity) {
-    $group_memberships = Group::loadMultiple($this->group_helper->getAllGroupsForUser($entity->id()));
+    $group_memberships = Group::loadMultiple($this->groupHelper->getAllGroupsForUser($entity->id()));
     $groups = [];
     foreach ($group_memberships as $group) {
       $groups[] = "{$group->label()} ({$group->id()})";
