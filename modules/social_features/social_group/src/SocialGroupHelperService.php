@@ -2,7 +2,9 @@
 
 namespace Drupal\social_group;
 
+use Drupal\Core\Database\Connection;
 use Drupal\group\Entity\GroupContent;
+use Drupal\group\Entity\GroupContentType;
 use Drupal\node\Entity\Node;
 use Drupal\social_post\Entity\Post;
 
@@ -19,6 +21,23 @@ class SocialGroupHelperService {
    * @var array
    */
   protected $cache;
+
+  /**
+   * The database connection object.
+   *
+   * @var \Drupal\Core\Database\Connection
+   */
+  protected $database;
+
+  /**
+   * Constructor for SocialGroupHelperService.
+   *
+   * @param \Drupal\Core\Database\Connection $connection
+   *   The database connection.
+   */
+  public function __construct(Connection $connection) {
+    $this->database = $connection;
+  }
 
   /**
    * Returns a group id from a entity (post, node).
@@ -120,6 +139,36 @@ class SocialGroupHelperService {
     }
 
     return $visibility;
+  }
+
+  /**
+   * Get all group memberships for a certain user.
+   *
+   * @param int $uid
+   *   The UID for which we fetch the groups he is member of.
+   *
+   * @return array
+   *   List of group IDs the user is member of.
+   */
+  public function getAllGroupsForUser($uid) {
+    $groups = &drupal_static(__FUNCTION__);
+
+    // Get the memberships for the user if they aren't known yet.
+    if (!isset($groups[$uid])) {
+      $group_content_types = GroupContentType::loadByEntityTypeId('user');
+      $group_content_types = array_keys($group_content_types);
+
+      $query = $this->database->select('group_content_field_data', 'gcfd');
+      $query->addField('gcfd', 'gid');
+      $query->condition('gcfd.entity_id', $uid);
+      $query->condition('gcfd.type', $group_content_types, 'IN');
+      $query->execute()->fetchAll();
+
+      $group_ids = $query->execute()->fetchAllAssoc('gid');
+      $groups[$uid] = array_keys($group_ids);
+    }
+
+    return $groups[$uid];
   }
 
 }
