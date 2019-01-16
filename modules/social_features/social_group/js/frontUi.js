@@ -59,17 +59,13 @@
         success: function (data) {
           var count = parseInt($placeholder.text());
           count += data.change;
-          
-          if (count > 1) {
-            $placeholder.html(Drupal.t('<b>@count Members</b> are selected', {
-              '@count': count
-            }));
-          }
-          else {
-            $placeholder.html(Drupal.t('<b>@count Member</b> is selected', {
-              '@count': count
-            }));
-          }
+
+          $placeholder.html(Drupal.formatPlural(
+            count,
+            '<b>@count Member</b> is selected',
+            '<b>@count Members</b> are selected',
+            { '@count': count }
+          ));
         }
       });
     }
