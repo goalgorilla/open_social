@@ -106,7 +106,7 @@ class SearchHeroForm extends FormBase implements ContainerInjectionInterface {
     }
     $redirect_path = $search_group_page->toString();
 
-    $query = UrlHelper::filterQueryParameters($this->requestStack->getCurrentRequest()->query->all());
+    $query = UrlHelper::filterQueryParameters($this->requestStack->getCurrentRequest()->query->all(), ['page']);
 
     $redirect = Url::fromUserInput($redirect_path, ['query' => $query]);
 

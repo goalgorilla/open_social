@@ -12,3 +12,8 @@ services:
     class: Drupal\social_language\Routing\RouteSubscriber
     tags:
       - { name: event_subscriber }
+  drupal_core_url_generator:
+    class: Drupal\Core\Render\MetadataBubblingUrlGenerator
+    arguments: ['@url_generator.non_bubbling', '@renderer']
+    calls:
+      - [setContext, ['@?router.request_context']]

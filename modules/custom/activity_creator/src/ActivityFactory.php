@@ -305,6 +305,21 @@ class ActivityFactory extends ControllerBase {
         }
       }
     }
+    // We return Event as related object for all Event Enrollments.
+    elseif (isset($related_object['target_type']) && $related_object['target_type'] === 'event_enrollment') {
+      $entity_storage = \Drupal::entityTypeManager()
+        ->getStorage($related_object['target_type']);
+      $entity = $entity_storage->load($related_object['target_id']);
+
+      /** @var \Drupal\social_event\Entity\EventEnrollment $entity */
+      $event_id = $entity->getFieldValue('field_event', 'target_id');
+      if (!empty($event_id)) {
+        $related_object = [
+          'target_type' => 'node',
+          'target_id' => $event_id,
+        ];
+      }
+    }
     return $related_object;
   }
 

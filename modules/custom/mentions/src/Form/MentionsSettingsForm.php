@@ -7,7 +7,6 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Entity\ContentEntityTypeInterface;
-use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -15,7 +14,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class MentionsSettingsForm extends ConfigFormBase {
 
-  use StringTranslationTrait;
 
   /**
    * The entity type manager service.

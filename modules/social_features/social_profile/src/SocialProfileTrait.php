@@ -2,12 +2,24 @@
 
 namespace Drupal\social_profile;
 
+use Drupal\Core\Database\Query\SelectInterface;
+
 /**
  * Trait SocialProfileTrait.
  *
  * @package Drupal\social_profile
  */
 trait SocialProfileTrait {
+
+  /**
+   * Add Nickname.
+   *
+   * @return bool
+   *   Whether or not the nickname needs to be added.
+   */
+  private function addNickname() {
+    return \Drupal::moduleHandler()->moduleExists('social_profile_fields');
+  }
 
   /**
    * Get a list of account IDs whose account names begin with the given string.
@@ -24,16 +36,8 @@ trait SocialProfileTrait {
    *   given string.
    */
   public function getUserIdsFromName($name, $count, $suggestion_format = SOCIAL_PROFILE_SUGGESTIONS_ALL) {
-    $connection = \Drupal::database();
-
-    // Nickname.
-    $addNickName = \Drupal::moduleHandler()->moduleExists('social_profile_fields');
-
-    $query = $connection->select('users', 'u')->fields('u', ['uid']);
-    $query->join('users_field_data', 'uf', 'uf.uid = u.uid');
-    $query->condition('uf.status', 1);
-
-    $name = $connection->escapeLike($name);
+    $query = $this->startQuery();
+    $name = ltrim($query->escapeLike($name));
 
     switch ($suggestion_format) {
       case SOCIAL_PROFILE_SUGGESTIONS_USERNAME:
@@ -41,49 +45,110 @@ trait SocialProfileTrait {
         break;
 
       case SOCIAL_PROFILE_SUGGESTIONS_FULL_NAME:
-        $query->join('profile', 'p', 'p.uid = u.uid');
-        $query->join('profile__field_profile_first_name', 'fn', 'fn.entity_id = p.profile_id');
-        $query->join('profile__field_profile_last_name', 'ln', 'ln.entity_id = p.profile_id');
-        // Add nickname.
-        if ($addNickName === TRUE) {
-          $query->leftJoin('profile__field_profile_nick_name', 'nn', 'nn.entity_id = p.profile_id');
-        }
-
-        $or = $query->orConditionGroup();
-        $or
-          ->condition('fn.field_profile_first_name_value', '%' . $name . '%', 'LIKE')
-          ->condition('ln.field_profile_last_name_value', '%' . $name . '%', 'LIKE');
-        // Add Nickname.
-        if ($addNickName === TRUE) {
-          $or->condition('nn.field_profile_nick_name_value', '%' . $name . '%', 'LIKE');
-        }
-
-        $query->condition($or);
-        break;
-
       case SOCIAL_PROFILE_SUGGESTIONS_ALL:
-        $query->leftJoin('profile', 'p', 'p.uid = u.uid');
-        $query->leftJoin('profile__field_profile_first_name', 'fn', 'fn.entity_id = p.profile_id');
-        $query->leftJoin('profile__field_profile_last_name', 'ln', 'ln.entity_id = p.profile_id');
-        // Add nickname.
-        if ($addNickName === TRUE) {
-          $query->leftJoin('profile__field_profile_nick_name', 'nn', 'nn.entity_id = p.profile_id');
+        $strings = explode(' ', $name);
+        if (count($strings) > 1) {
+          $query->where("CONCAT(TRIM(fn.field_profile_first_name_value), ' ', TRIM(ln.field_profile_last_name_value)) LIKE :full_name", [':full_name' => '%' . $name . '%']);
+          $query = $this->sortQuery($query, $name, $suggestion_format);
+          $results = $this->endQuery($query, $count);
+
+          if (count($results) > 0) {
+            return $results;
+          }
+          // Fallback to creating a new query if there is no hit on full name.
+          $query = $this->startQuery();
         }
 
-        $or = $query->orConditionGroup();
-        $or
-          ->condition('uf.name', '%' . $name . '%', 'LIKE')
+        $or_query = $query->orConditionGroup();
+        $or_query
           ->condition('fn.field_profile_first_name_value', '%' . $name . '%', 'LIKE')
           ->condition('ln.field_profile_last_name_value', '%' . $name . '%', 'LIKE');
-        // Add Nickname.
-        if ($addNickName === TRUE) {
-          $or->condition('nn.field_profile_nick_name_value', '%' . $name . '%', 'LIKE');
+        // Add name only when needed.
+        if ($suggestion_format === SOCIAL_PROFILE_SUGGESTIONS_ALL) {
+          $or_query->condition('uf.name', '%' . $name . '%', 'LIKE');
         }
-
-        $query->condition($or);
+        if ($this->addNickName() === TRUE) {
+          $or_query->condition('nn.field_profile_nick_name_value', '%' . $name . '%', 'LIKE');
+        }
+        $query->condition($or_query);
         break;
     }
 
+    // Now we sort the query.
+    $query = $this->sortQuery($query, $name, $suggestion_format);
+
+    return $this->endQuery($query, $count);
+  }
+
+  /**
+   * Start a Social Profile Mention Query.
+   *
+   * @return \Drupal\Core\Database\Query\SelectInterface
+   *   Returns the query object.
+   */
+  private function startQuery() {
+    $connection = \Drupal::database();
+
+    $query = $connection->select('users', 'u')->fields('u', ['uid']);
+    $query->join('users_field_data', 'uf', 'uf.uid = u.uid');
+    $query->leftJoin('profile', 'p', 'p.uid = u.uid');
+    $query->leftJoin('profile__field_profile_first_name', 'fn', 'fn.entity_id = p.profile_id');
+    $query->leftJoin('profile__field_profile_last_name', 'ln', 'ln.entity_id = p.profile_id');
+    if ($this->addNickName() === TRUE) {
+      $query->leftJoin('profile__field_profile_nick_name', 'nn', 'nn.entity_id = p.profile_id');
+    }
+    $query->condition('uf.status', 1);
+    return $query;
+  }
+
+  /**
+   * Sorts the query.
+   *
+   * Following the rules:
+   * 1. Users whose have first name starting by the given string;
+   * 2. Users whose have last name starting by the given string;
+   * 3. Users whose have nickname starting by the given string;
+   * 4. Users whose have username  starting by the given string;
+   * 5. Users containing the string.
+   *
+   * @param \Drupal\Core\Database\Query\SelectInterface $query
+   *   The select query.
+   * @param string $name
+   *   The string to search for.
+   * @param string $suggestion_format
+   *   (optional) The suggestion format.
+   *
+   * @return \Drupal\Core\Database\Query\SelectInterface
+   *   The select query.
+   */
+  private function sortQuery(SelectInterface $query, $name, $suggestion_format) {
+    if ($suggestion_format !== SOCIAL_PROFILE_SUGGESTIONS_USERNAME) {
+      $query->addExpression("
+    CASE WHEN fn.field_profile_first_name_value LIKE '" . $query->escapeLike($name) . "%' THEN 0
+      WHEN ln.field_profile_last_name_value LIKE '" . $query->escapeLike($name) . "%' THEN 1
+      ELSE 2
+    END
+  ", 'mention_sort');
+      $query->orderBy('mention_sort', 'ASC');
+      $query->orderBy('fn.field_profile_first_name_value', 'ASC');
+      $query->orderBy('ln.field_profile_last_name_value', 'ASC');
+    }
+    if ($this->addNickName() === TRUE) {
+      $query->orderBy('nn.field_profile_nick_name_value', 'ASC');
+    }
+    $query->orderBy('uf.name', 'ASC');
+
+    return $query;
+  }
+
+  /**
+   * End a Social Profile Mention Query.
+   *
+   * @return int[]
+   *   An array of account IDs for accounts whose account names begin with the
+   *   given string.
+   */
+  private function endQuery(SelectInterface $query, $count) {
     $result = $query
       ->range(0, $count)
       ->execute()

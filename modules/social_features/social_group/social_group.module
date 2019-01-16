@@ -8,6 +8,8 @@
 use Drupal\block\Entity\Block;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultNeutral;
+use Drupal\Core\Ajax\AjaxResponse;
+use Drupal\Core\Ajax\HtmlCommand;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
@@ -33,6 +35,8 @@ use Drupal\user\Entity\Role;
 use Drupal\user\Entity\User;
 use Drupal\profile\Entity\Profile;
 use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\social_group\GroupContentVisibilityUpdate;
 
 /**
  * Implements hook_form_FORM_ID_alter().
@@ -41,8 +45,52 @@ function social_group_form_group_public_group_edit_form_alter(&$form, FormStateI
   $group = $form_state->getFormObject()->getEntity();
   $form['group_type'] = SocialGroupAddForm::create(\Drupal::getContainer())->getGroupTypeElement();
   $form['group_type']['#default_value'] = $group->bundle();
-  $form['group_type']['#disabled'] = TRUE;
+  // If user doesn't have permission to change group types disable it.
+  // Or if group types can't be edited due to visibility issues.
+  if (!social_group_group_type_permission_check()) {
+    $form['group_type']['#disabled'] = TRUE;
+  }
+  else {
+    $form['group_type']['#prefix'] = '<div id="group-type-result"></div>';
+    $group_type_element['#ajax'] = [
+      'callback' => '_social_group_inform_group_type_selection',
+      'effect' => 'fade',
+      'event' => 'change',
+    ];
+  }
+
+  // Disable all group types that can't be edited. Because they don't have
+  // a visibility.
+  foreach ($form['group_type']['#options'] as $type => $label) {
+    if (\Drupal::service('social_group.helper_service')->getDefaultGroupVisibility($type) === NULL) {
+      $form['group_type'][$type] = [
+        '#disabled' => TRUE,
+      ];
+    }
+  }
   $form['#group_children']['group_type'] = 'group_content';
+}
+
+/**
+ * Check if a User is able to edit a Group's GroupType.
+ *
+ * @return bool
+ *   TRUE if a user may edit a existings groups group type.
+ */
+function social_group_group_type_permission_check() {
+  $user = \Drupal::currentUser();
+  // Get the Group object from the route.
+  $group = _social_group_get_current_group();
+
+  // Check if we have a default visibility, if we don't it must be a custom
+  // group type, we need to have a visibility in order to update group content.
+  // please see hook_social_group_default_visibility_alter.
+  if (\Drupal::service('social_group.helper_service')->getDefaultGroupVisibility($group->getGroupType()->id()) === NULL) {
+    return FALSE;
+  }
+
+  // Otherwise return true when we are able to edit the current group type.
+  return ($group instanceof GroupInterface && $user->hasPermission('edit group types'));
 }
 
 /**
@@ -337,6 +385,7 @@ function social_group_entity_view_alter(array &$build, EntityInterface $entity, 
  * Implements hook_form_alter().
  */
 function social_group_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+
   $social_group_types = [
     'open_group',
     'closed_group',
@@ -459,9 +508,77 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
       $group = _social_group_get_current_group();
       // Set the default value in the form.
       $group_type_element['#default_value'] = $group->getGroupType()->id();
-      $group_type_element['#disabled'] = TRUE;
+
+      // If user doesn't have permission to change group types disable it.
+      // Or if group types can't be edited due to visibility issues.
+      if (!social_group_group_type_permission_check()) {
+        $group_type_element['#disabled'] = TRUE;
+      }
+      else {
+        $group_type_element['#prefix'] = '<div id="group-type-result"></div>';
+        $group_type_element['#ajax'] = [
+          'callback' => '_social_group_inform_group_type_selection',
+          'effect' => 'fade',
+          'event' => 'change',
+        ];
+      }
+
       $form['group_type'] = $group_type_element;
       $form['#group_children']['group_type'] = 'group_content';
+
+      // Disable all group types that can't be edited. Because they don't have
+      // a visibility.
+      foreach ($form['group_type']['#options'] as $type => $label) {
+        if (\Drupal::service('social_group.helper_service')->getDefaultGroupVisibility($type) === NULL) {
+          $form['group_type'][$type] = [
+            '#disabled' => TRUE,
+          ];
+        }
+      }
+
+      $form['actions']['submit']['#submit'][] = '_social_group_type_edit_submit';
+    }
+  }
+}
+
+/**
+ * Function that gives information to a CM+ when they edit a Group Type.
+ *
+ * @return \Drupal\Core\Ajax\AjaxResponse
+ *   An ajax command containing the informative text.
+ */
+function _social_group_inform_group_type_selection() {
+  $text = t('Please note that changing the group type will also change the 
+  visibility of the group content and the way users can join the group.');
+  drupal_set_message($text, 'info');
+  $alert = ['#type' => 'status_messages'];
+  $ajax_response = new AjaxResponse();
+  $ajax_response->addCommand(new HtmlCommand('#group-type-result', $alert));
+
+  return $ajax_response;
+}
+
+/**
+ * Form submit for removing members from a group so we can clear caches.
+ *
+ * @throws \Drupal\Core\Entity\EntityStorageException
+ */
+function _social_group_type_edit_submit($form, FormStateInterface $form_state) {
+  // Check if the group_type changed.
+  $default_type = $form['group_type']['#default_value'];
+  $new_type = $form_state->getValue('group_type');
+
+  // Update the Group entity and all it's content when the type changed.
+  if ($new_type !== $default_type) {
+    $group = _social_group_get_current_group();
+
+    // Update the default visibility of all the content.
+    GroupContentVisibilityUpdate::batchUpdateGroupContentVisibility($group, $new_type);
+
+    // Make sure we clear cache tags accordingly.
+    $cache_tags = _social_group_cache_tags($group);
+    foreach ($cache_tags as $cache_tag) {
+      Cache::invalidateTags([$cache_tag]);
     }
   }
 }
@@ -676,19 +793,7 @@ function social_group_field_widget_form_alter(&$element, FormStateInterface $for
       $group_type = $current_group->getGroupType();
       $group_type_id = $group_type->id();
       if (!$entity->id()) {
-        switch ($group_type_id) {
-          case 'closed_group':
-            $element['#default_value'] = 'group';
-            break;
-
-          case 'open_group':
-            $element['#default_value'] = 'community';
-            break;
-
-          case 'public_group':
-            $element['#default_value'] = 'public';
-            break;
-        }
+        $element['#default_value'] = \Drupal::service('social_group.helper_service')->getDefaultGroupVisibility($group_type_id);
       }
     }
     else {
@@ -743,6 +848,7 @@ function social_group_menu_local_tasks_alter(&$data, $route_name) {
   // Rename Group "Related Entities" tab.
   if (isset($data['tabs'][0]['group.content']['#link'])) {
     $data['tabs'][0]['group.content']['#link']['title'] = t('Manage members');
+    $data['tabs'][0]['group.content']['#weight'] = 70;
   }
 
   // Remove the default View tab.
@@ -763,17 +869,19 @@ function social_group_menu_local_tasks_alter(&$data, $route_name) {
     /** @var \Drupal\group\Entity\GroupTypeInterface $group_type */
     $group_type = $group->getGroupType()->id();
     // Check if it's a closed group.
-    if ($group_type == 'closed_group') {
+    if ($group_type === 'closed_group') {
       // And if the user is not user 1.
-      if ($user->id() != 1) {
+      if ($user->id() !== 1) {
         if ($user->hasPermission('manage all groups')) {
           return;
         }
         // If the user is not an member of this group.
-        elseif (!$group->getMember($user)) {
+        if (!$group->getMember($user)) {
           // Disable these local tasks.
           $data['tabs'][0]['group.view'] = [];
-          $data['tabs'][0]['group.content'] = [];
+          if (!$group->hasPermission('administer members', $user)) {
+            $data['tabs'][0]['group.content'] = [];
+          }
           $data['tabs'][0]['social_group.events'] = [];
           $data['tabs'][0]['social_group.topics'] = [];
         }
@@ -1342,4 +1450,79 @@ function social_group_views_query_alter(ViewExecutable $view, QueryPluginBase $q
  */
 function social_group_user_cancel_methods_alter(&$methods) {
   $methods['user_cancel_reassign']['title'] .= ' ' . t('Reassign your groups to the super administrator.');
+}
+
+/**
+ * Implements hook_social_user_account_header_create_links().
+ *
+ * Adds the "Create Group" link to the content creation menu.
+ */
+function social_group_social_user_account_header_create_links($context) {
+  return [
+    'add_group' => [
+      '#type' => 'link',
+      '#attributes' => [
+        'title' => new TranslatableMarkup('Create New Group'),
+      ],
+      '#title' => new TranslatableMarkup('New Group'),
+      '#weight' => 500,
+    ] + Url::fromRoute('entity.group.add_page')->toRenderArray(),
+  ];
+}
+
+/**
+ * Implements hook_social_user_account_header_items().
+ *
+ * Adds the My Groups button to the account header block if it's enabled by a
+ * site manager.
+ */
+function social_group_social_user_account_header_items(array $context) {
+  if (\Drupal::config('social_user.navigation.settings')->get('display_my_groups_icon') !== 1) {
+    return [];
+  }
+
+  // We can't create a "My Groups" link without user.
+  if (empty($context['user'])) {
+    return [];
+  }
+
+  return [
+    'groups' => [
+      '#type' => 'account_header_element',
+      '#wrapper_attributes' => [
+        'class' => ['desktop'],
+      ],
+      '#title' => new TranslatableMarkup('My Groups'),
+      '#url' => Url::fromRoute('view.groups.page_user_groups', [
+        'user' => $context['user']->id(),
+      ]),
+      '#icon' => 'group',
+      '#label' => new TranslatableMarkup('My Groups'),
+    ],
+  ];
+}
+
+/**
+ * Implements hook_social_user_account_header_account_links().
+ *
+ * Adds the "View my groups" link to the user menu.
+ */
+function social_group_social_user_account_header_account_links(array $context) {
+  // We require a user for this link.
+  if (empty($context['user']) || !($context['user'] instanceof AccountInterface)) {
+    return [];
+  }
+
+  return [
+    'my_groups' => [
+      '#type' => 'link',
+      '#attributes' => [
+        'title' => new TranslatableMarkup('View my groups'),
+      ],
+      '#title' => new TranslatableMarkup('My groups'),
+      '#weight' => 800,
+    ] + Url::fromRoute('view.groups.page_user_groups', [
+      'user' => $context['user']->id(),
+    ])->toRenderArray(),
+  ];
 }

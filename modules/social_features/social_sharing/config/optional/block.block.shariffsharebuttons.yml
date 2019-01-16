@@ -2,21 +2,22 @@ langcode: en
 status: true
 dependencies:
   module:
-    - addtoany
-    - node
+  - node
+  - shariff
   theme:
-    - socialblue
-id: addtoanybuttons_2
+  - socialblue
+id: shariffsharebuttons
 theme: socialblue
 region: complementary_bottom
-weight: -25
+weight: 0
 provider: null
-plugin: addtoany_block
+plugin: shariff_block
 settings:
-  id: addtoany_block
+  id: shariff_block
   label: 'Share this page'
-  provider: addtoany
+  provider: shariff
   label_display: visible
+  shariff_default_settings: 1
 visibility:
   node_type:
     id: node_type

@@ -5,13 +5,13 @@
  * The social user module alterations.
  */
 
-use Drupal\block\Entity\Block;
 use Drupal\Core\Block\BlockPluginInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
-use Drupal\Core\Url;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\Core\Url;
 use Drupal\profile\Entity\ProfileInterface;
 use Drupal\social_user\Plugin\Action\SocialBlockUser;
 use Drupal\user\Plugin\Action\BlockUser;
@@ -291,34 +291,30 @@ function social_user_form_user_cancel_form_alter(&$form, FormStateInterface $for
  */
 function social_user_theme() {
   return [
-    'account_header_links' => [
-      'variables' => [
-        'links' => NULL,
-      ],
+    'unwrapped_container' => [
+      'render element' => 'element',
     ],
   ];
 }
 
 /**
- * Prepares variables for the account header links.
+ * Prepares variables for unwrapped container templates.
  *
- * Default template: account-header-links.html.twig.
+ * Default template: unwrapped-container.html.twig.
  *
  * @param array $variables
  *   An associative array containing:
- *    - links.
+ *   - element: An associative array containing the properties of the element.
+ *     Properties used: #id, #attributes, #children.
+ *
+ * @see \template_preprocess_container()
  */
-function template_preprocess_account_header_links(array &$variables) {
-  // Add the search content block to account_header_links.
-  $block = Block::load('search_content_block_header');
-  if (!empty($block)) {
-    $block_output = \Drupal::entityManager()
-      ->getViewBuilder('block')
-      ->view($block);
-
-    $variables['links']['search_block'] = $block_output;
-  }
-
+function template_preprocess_unwrapped_container(array &$variables) {
+  // The UnwrappedContaienr element exists to provide a different template from
+  // the container which is used by the AccountHeaderElement which is why we the
+  // original container implementation works fine for us. The div is then simply
+  // not added in the template.
+  template_preprocess_container($variables);
 }
 
 /**
@@ -392,6 +388,134 @@ function social_user_tokens_alter(&$replacements, $context, $bubbleable_metadata
   if ((isset($context['tokens']['url:absolute']) && empty($replacements[$context['tokens']['url:absolute']])) &&
     (array_key_exists('user', $context['data']) && $context['data']['user'] === NULL)) {
     $replacements[$context['tokens']['url:absolute']] = NULL;
+  }
+}
+
+/**
+ * Implements hook_social_user_account_header_account_links().
+ *
+ * Adds the "View my profile" and "Edit profile" link to the user menu.
+ */
+function social_user_social_user_account_header_account_links(array $context) {
+  // We require a user for these links.
+  if (empty($context['user']) || !($context['user'] instanceof AccountInterface)) {
+    return [];
+  }
+
+  return [
+    'my_account' => [
+      '#type' => 'link',
+      '#attributes' => [
+        'title' => new TranslatableMarkup("Settings"),
+      ],
+      '#title' => new TranslatableMarkup("Settings"),
+      '#weight' => 1200,
+    ] + Url::fromRoute('entity.user.edit_form', [
+      'user' => $context['user']->id(),
+    ])->toRenderArray(),
+    'divider_logout' => [
+      "#wrapper_attributes" => [
+        "class" => ["divider"],
+        "role" => "separator",
+      ],
+      '#weight' => 1400,
+    ],
+    'logout' => [
+      '#type' => 'link',
+      '#attributes' => [
+        'title' => new TranslatableMarkup("Logout"),
+      ],
+      '#title' => new TranslatableMarkup("Logout"),
+      '#weight' => 1500,
+    ] + Url::fromRoute('user.logout')->toRenderArray(),
+  ];
+}
+
+/**
+ * Implements hook_social_user_account_header_account_links_alter().
+ *
+ * Provides a glue layer between the new system and the deprecated hook
+ * social_user_account_header_links to provide backwards compatibility.
+ *
+ * This should be removed once social_user_account_header_links is also removed.
+ */
+function social_user_social_user_account_header_account_links_alter(array &$account_links, array $context) {
+  $divider = [
+    "#wrapper_attributes" => [
+      "class" => ["divider"],
+      "role" => "separator",
+    ],
+  ];
+
+  $header_links = \Drupal::moduleHandler()->invokeAll('social_user_account_header_links');
+  foreach ($header_links as $key => $item) {
+    $target = $item['after'];
+    // If the item we want to place this after doesn't exist or this item
+    // already exists then we skip it.
+    if (!isset($account_links[$target]) || isset($account_links[$key])) {
+      continue;
+    }
+
+    // We try to find a weight for our target.
+    $weight = isset($account_links[$target]['#weight']) ? $account_links[$target]['#weight'] : NULL;
+
+    // If our target has no weight we reverse the links array to find an item
+    // that does have weight or the end of the array. After which we move back
+    // through the array to give everything weights. This allows us to add our
+    // element with a weight and avoid complex re-insertion logic while
+    // preserving the order of existing items.
+    if (is_null($weight)) {
+      $order = array_keys($account_links);
+
+      // Pull $i out of the loop to preserve it.
+      $i = $order[$target];
+
+      for (; $i >= 0; --$i) {
+        if (isset($account_links[$order[$i]]['#weight'])) {
+          $weight = $account_links[$order[$i]]['#weight'];
+          // Increment $i so we don't overwrite the current element's weight.
+          $i++;
+          break;
+        }
+      }
+
+      // If we haven't found a weight we start at the top with 0.
+      if (is_null($weight)) {
+        $weight = 0;
+      }
+
+      // Move back up the stack assigning weights.
+      for (; $i <= $order[$target]; $i++) {
+        // Increment weight to ensure it's bigger than the previous value. We
+        // increment by a larger value to allow room for other insertions.
+        $weight += 10;
+        $account_links[$order[$i]]['#weight'] = $weight;
+      }
+    }
+
+    // If this item requests a divider before itself we add it here.
+    if (isset($item['divider']) && $item['divider'] === 'before') {
+      $account_links[$key . '_divider'] = $divider;
+      $account_links[$key . '_divider']['#weight'] = ++$weight;
+    }
+
+    // The old implementation of the hook only allowed to add a simple link
+    // so we create one here.
+    $account_links[$key] = [
+      '#type' => 'link',
+      '#attributes' => [
+        'title' => $item['title'],
+      ],
+      '#url' => $item['url'],
+      '#title' => $item['title'],
+      '#weight' => ++$weight,
+    ];
+
+    // If this item requests a divider after itself we add it here.
+    if (isset($item['divider']) && $item['divider'] === 'after') {
+      $account_links[$key . '_divider'] = $divider;
+      $account_links[$key . '_divider']['#weight'] = ++$weight;
+    }
   }
 }
 

@@ -27,8 +27,8 @@
 'btn-sm',
 'btn-follow',
 'flag',
-'flag-' ~ flag.id(),
-'flag-' ~ flag.id() ~ '-' ~ flaggable.id(),
+'flag-' ~ flag.id()|clean_class,
+'js-flag-' ~ flag.id()|clean_class ~ '-' ~ flaggable.id(),
 action_class
 ] %}
 {% set attributes = attributes.addClass(classes) %}

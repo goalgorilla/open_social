@@ -26,12 +26,10 @@ function socialbase_group_link($node) {
 
   // Exclude nodes without ids (Preview).
   if (!empty($node->id()) && !empty($group)) {
-    $group_type_id = $group->getGroupType()->id();
     $group_content = \Drupal::entityTypeManager()
       ->getStorage('group_content')
       ->loadByProperties([
         'entity_id' => $node->id(),
-        'type' => $group_type_id . '-group_node-' . $node->getType(),
       ]);
     if (!empty($group_content)) {
       $curr_langcode = \Drupal::languageManager()->getCurrentLanguage(LanguageInterface::TYPE_CONTENT)->getId();
@@ -133,25 +131,6 @@ function _socialbase_node_get_like_count($type, $id) {
 
   return $count;
 
-}
-
-/**
- * Get views count for a node.
- *
- * @param int $nid
- *   The node ID.
- *
- * @return int
- *   Amount of views on the node.
- */
-function _socialbase_node_get_views_count($nid) {
-  $count = Drupal::database()->select('node_statistics', 'n')
-    ->condition('n.nid', $nid)
-    ->countQuery()
-    ->execute()
-    ->fetchField();
-
-  return $count;
 }
 
 /**
