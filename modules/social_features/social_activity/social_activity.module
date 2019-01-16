@@ -23,6 +23,21 @@ function social_activity_social_user_account_header_items(array $context) {
   $account = $context['user'];
 
   $notifications_view = views_embed_view('activity_stream_notifications', 'block_1');
+  // Mark all notifications as seen.
+  $notifications_view['#attached'] = [
+    'library' => [
+      'activity_creator/activity_creator.notifications',
+    ],
+  ];
+
+  // Make sure we check if attached is part of the render array.
+  if (!isset($notifications_view['#attached'])) {
+    $notifications_view['#attached'] = [];
+  }
+  if (!isset($notifications_view['#attached']['library'])) {
+    $notifications_view['#attached']['library'] = [];
+  }
+  $notifications_view['#attached']['library'][] = 'activity_creator/activity_creator.notifications';
 
   $account_notifications = \Drupal::service('activity_creator.activity_notifications');
   $num_notifications = count($account_notifications->getNotifications($account, [ACTIVITY_STATUS_RECEIVED]));
