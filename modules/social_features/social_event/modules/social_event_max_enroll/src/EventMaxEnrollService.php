@@ -43,10 +43,10 @@ class EventMaxEnrollService {
   /**
    * Returns number of all enrollments per event.
    */
-  public function getEnrollmentsNumber($nid) {
+  public function getEnrollmentsNumber(Node $node) {
     $query = $this->database->select('event_enrollment__field_enrollment_status', 'eefes');
     $query->join('event_enrollment__field_event', 'eefe', 'eefes.entity_id = eefe.entity_id');
-    $query->condition('eefe.field_event_target_id', $nid);
+    $query->condition('eefe.field_event_target_id', $node->id());
     $query->condition('eefes.field_enrollment_status_value', 1);
 
     return (int) $query
@@ -62,7 +62,7 @@ class EventMaxEnrollService {
     // Get max enrollment number.
     $max = $node->get('field_event_max_enroll_num')->value;
     // Take into account AN enrollments.
-    $current = $this->getEnrollmentsNumber($node->id());
+    $current = $this->getEnrollmentsNumber($node);
     // Count how many places left.
     return (int) $max - $current;
   }

@@ -76,19 +76,23 @@ class EventAnEnrollActionForm extends EnrollActionForm {
         ];
       }
       else {
-        // Take into acccount max enrollments.
-        if ($this->moduleHandler->moduleExists('social_event_max_enroll') && $this->eventMaxEnrollService->isEnabled($node)) {
-          // Count how many places left.
-          $left = $this->eventMaxEnrollService->getEnrollmentsLeft($node);
-          if ($left < 1) {
-            $form['event_enrollment'] = [
-              '#type' => 'submit',
-              '#value' => $this->t('No places left'),
-              '#disabled' => TRUE,
-              '#attributes' => [
-                'class' => $btn_classes,
-              ],
-            ];
+        // Take into account max enrollments.
+        if ($this->moduleHandler->moduleExists('social_event_max_enroll')) {
+          // We can't use dependency injection, because service is optional.
+          $event_max_enroll_service = \Drupal::service('social_event_max_enroll.service');
+          if ($event_max_enroll_service->isEnabled($node)) {
+            // Count how many places left.
+            $left = $this->eventMaxEnrollService->getEnrollmentsLeft($node);
+            if ($left < 1) {
+              $form['event_enrollment'] = [
+                '#type' => 'submit',
+                '#value' => $this->t('No places left'),
+                '#disabled' => TRUE,
+                '#attributes' => [
+                  'class' => $btn_classes,
+                ],
+              ];
+            }
           }
         }
 

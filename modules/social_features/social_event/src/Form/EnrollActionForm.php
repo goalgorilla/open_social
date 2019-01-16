@@ -79,13 +79,6 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
   protected $moduleHandler;
 
   /**
-   * The Event Max Enroll Service.
-   *
-   * @var \Drupal\social_event_max_enroll\EventMaxEnrollService
-   */
-  protected $eventMaxEnrollService;
-
-  /**
    * {@inheritdoc}
    */
   public function getFormId() {
@@ -109,10 +102,8 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
    *   The config factory.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $moduleHandler
    *   The module handler.
-   * @param \Drupal\social_event_max_enroll\EventMaxEnrollService $eventMaxEnrollService
-   *   The Event Max Enroll Service.
    */
-  public function __construct(RouteMatchInterface $route_match, EntityStorageInterface $entity_storage, UserStorageInterface $user_storage, EntityTypeManagerInterface $entityTypeManager, AccountProxyInterface $currentUser, ConfigFactoryInterface $configFactory, ModuleHandlerInterface $moduleHandler, EventMaxEnrollService $eventMaxEnrollService) {
+  public function __construct(RouteMatchInterface $route_match, EntityStorageInterface $entity_storage, UserStorageInterface $user_storage, EntityTypeManagerInterface $entityTypeManager, AccountProxyInterface $currentUser, ConfigFactoryInterface $configFactory, ModuleHandlerInterface $moduleHandler) {
     $this->routeMatch = $route_match;
     $this->entityStorage = $entity_storage;
     $this->userStorage = $user_storage;
@@ -120,7 +111,6 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
     $this->currentUser = $currentUser;
     $this->configFactory = $configFactory;
     $this->moduleHandler = $moduleHandler;
-    $this->eventMaxEnrollService = $eventMaxEnrollService;
   }
 
   /**
@@ -134,8 +124,7 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
       $container->get('entity_type.manager'),
       $container->get('current_user'),
       $container->get('config.factory'),
-      $container->get('module_handler'),
-      $container->get('social_event_max_enroll.service')
+      $container->get('module_handler')
     );
   }
 
@@ -188,12 +177,16 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
     $to_enroll_status = '1';
     $enrollment_open = TRUE;
     // Take into account max enrollments.
-    if ($this->moduleHandler->moduleExists('social_event_max_enroll') && $this->eventMaxEnrollService->isEnabled($node)) {
-      // Count how many places left.
-      $left = $this->eventMaxEnrollService->getEnrollmentsLeft($node);
-      if ($left < 1) {
-        $submit_text = $this->t('No places left');
-        $enrollment_open = FALSE;
+    if ($this->moduleHandler->moduleExists('social_event_max_enroll')) {
+      // We can't use dependency injection, because service is optional.
+      $event_max_enroll_service = \Drupal::service('social_event_max_enroll.service');
+      if ($event_max_enroll_service->isEnabled($node)) {
+        // Count how many places left.
+        $left = $this->eventMaxEnrollService->getEnrollmentsLeft($node);
+        if ($left < 1) {
+          $submit_text = $this->t('No places left');
+          $enrollment_open = FALSE;
+        }
       }
     }
 
