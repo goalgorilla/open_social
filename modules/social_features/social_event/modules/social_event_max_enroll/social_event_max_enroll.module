@@ -29,7 +29,7 @@ function social_event_max_enroll_views_post_render(ViewExecutable $view, &$outpu
         $title_suffix = \Drupal::translation()->formatPlural($left, '(1 place left)', '(@count places left)');
       }
       else {
-        $title_suffix = t('(0 places left)');
+        $title_suffix = t('(No places left)');
       }
 
       $view->header['result']->options['content'] .= ' ' . $title_suffix;

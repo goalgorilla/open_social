@@ -51,7 +51,7 @@ class EventSettingsForm extends ConfigFormBase {
 
     $form['max_enroll'] = [
       '#type' => 'checkbox',
-      '#title' => $this->t('Enable maximum event enrollments'),
+      '#title' => $this->t('Enable maximum number of event enrollments'),
       '#description' => $this->t('Enabling this feature provides event organisers with the possibility to set a limit for event enrollments.'),
       '#default_value' => $event_config->get('max_enroll'),
     ];
