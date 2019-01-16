@@ -1202,19 +1202,43 @@ function social_group_get_all_open_groups() {
 
 /**
  * Get all group memberships for a certain user.
+ *
+ * @param int $uid
+ *   The UID for which we fetch the groups he is member of.
+ *
+ * @return array
+ *   List of group IDs the user is member of.
+ *
+ * @deprecated in Open Social 4.2 and will be removed in one of the next major
+ *   updates.
+ *   This function is moved to the service social_group.helper_service, use
+ *   getAllGroupsForUser() instead.
+ *
+ * @see https://www.drupal.org/node/3026220
  */
 function social_group_get_all_group_members($uid) {
-  $group_content_types = GroupContentType::loadByEntityTypeId('user');
-  $group_content_types = array_keys($group_content_types);
+  @trigger_error('social_group_get_all_group_members() is deprecated in Open Social 4.2 and will be removed in
+  one of the next major updates. This function is moved to the service social_group.helper_service, use
+  getAllGroupsForUser() instead. See https://www.drupal.org/node/3026220.', E_USER_DEPRECATED);
 
-  $query = \Drupal::database()->select('group_content_field_data', 'gcfd');
-  $query->addField('gcfd', 'gid');
-  $query->condition('gcfd.entity_id', $uid);
-  $query->condition('gcfd.type', $group_content_types, 'IN');
-  $query->execute()->fetchAll();
+  $groups = &drupal_static(__FUNCTION__);
 
-  $group_ids = $query->execute()->fetchAllAssoc('gid');
-  return array_keys($group_ids);
+  // Get the memberships for the user if they aren't known yet.
+  if (!isset($groups[$uid])) {
+    $group_content_types = GroupContentType::loadByEntityTypeId('user');
+    $group_content_types = array_keys($group_content_types);
+
+    $query = \Drupal::database()->select('group_content_field_data', 'gcfd');
+    $query->addField('gcfd', 'gid');
+    $query->condition('gcfd.entity_id', $uid);
+    $query->condition('gcfd.type', $group_content_types, 'IN');
+    $query->execute()->fetchAll();
+
+    $group_ids = $query->execute()->fetchAllAssoc('gid');
+    $groups[$uid] = array_keys($group_ids);
+  }
+
+  return $groups[$uid];
 }
 
 /**
