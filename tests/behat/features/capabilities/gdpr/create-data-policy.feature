@@ -19,7 +19,7 @@ Feature: Create data policy and view new policy
     Given I am logged in as "behatsitemanager"
     And I am on "admin/config/people/data-policy"
     Then I should be on "data-policy/revisions"
-    And I should see the heading "Data Policy" in the "Hero block" region
+    And I should see the heading "Revisions" in the "Hero block" region
     And I should see the link "Details" in the "Tabs" region
     And I should see the link "Revisions" in the "Tabs" region
     And I should see the text "Revision"

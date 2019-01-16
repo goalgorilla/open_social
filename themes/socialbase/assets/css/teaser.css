@@ -17,7 +17,6 @@
 
 .teaser__teaser-type {
   top: 0;
-  pointer-events: none;
   width: 30px;
   height: 30px;
   padding: 6px;
@@ -26,10 +25,29 @@
   margin-bottom: -10px;
 }
 
+.no-image .teaser__teaser-type {
+  background: none;
+  width: 100%;
+  height: 100%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
 .teaser__teaser-type-icon {
   width: 18px;
   height: 18px;
   display: table;
+}
+
+.no-image .teaser__teaser-type-icon {
+  width: 90px;
+  height: 90px;
+  margin: 0 auto;
+  fill: #4d4d4d;
 }
 
 .teaser__title {

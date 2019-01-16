@@ -183,11 +183,13 @@ function social_landing_page_preprocess_node(&$variables) {
   if ($node->getType() === 'landing_page') {
     // If featured we need to do some magic.
     if ($variables['view_mode'] === 'featured') {
-      $variables['content']['field_landing_page_image'] = [
-        '#type' => 'markup',
-        '#markup' => _social_landing_page_get_hero_image($node),
-      ];
-
+      $hero_image = _social_landing_page_get_hero_image($node);
+      if (!empty($hero_image)) {
+        $variables['content']['field_landing_page_image'] = [
+          '#type' => 'markup',
+          '#markup' => $hero_image,
+        ];
+      }
     }
     // Get current user.
     $account = \Drupal::currentUser();
@@ -256,7 +258,7 @@ function _social_landing_page_get_hero_image(Node $node) {
     $paragraph_content = Paragraph::load($section_id);
 
     // Must be of type hero.
-    if ($paragraph_content->getType() === 'hero') {
+    if ($paragraph_content && $paragraph_content->getType() === 'hero') {
       $fid = $paragraph_content->get('field_hero_image')->target_id;
       $file = File::load($fid);
       // Check if it's an existing file.

@@ -31,8 +31,11 @@ class PostListBuilder extends EntityListBuilder {
   public function buildRow(EntityInterface $entity) {
     /* @var $entity \Drupal\social_post\Entity\Post */
     $row['id'] = $entity->id();
-    $post_value = $entity->get('field_post')->value;
-    $row['post'] = text_summary($post_value, NULL, 120);
+    $row['post'] = '';
+    if ($entity->hasField('field_post')) {
+      $post_value = $entity->get('field_post')->value;
+      $row['post'] = text_summary($post_value, NULL, 120);
+    }
     $row['author'] = $entity->getOwner()->toLink();
     $row['created'] = \Drupal::service('date.formatter')->format($entity->getCreatedTime(), 'small');
     return $row + parent::buildRow($entity);
