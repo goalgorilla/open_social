@@ -39,13 +39,13 @@
         <div class="cover-wrap">
             {% endif %}
 
-            {{ title_prefix }}
-
-            {% if title %}
-                <h1{{ title_attributes.addClass(section_class) }}>{{ title }}</h1>
-            {% endif %}
-
-            {{ title_suffix }}
+            <header class="page-title">
+                <p>{{ title_prefix }}</p>
+                {% if title %}
+                    <h1{{ title_attributes }}>{{ title }}</h1>
+                {% endif %}
+                <p>{{ title_suffix }}</p>
+            </header>
 
             {% if event_enrollment %}
                 <div class="hero-footer">

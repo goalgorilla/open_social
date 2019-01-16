@@ -70,3 +70,22 @@ function social_event_max_enroll_form_alter(&$form, FormStateInterface $form_sta
     }
   }
 }
+
+/**
+ * Override variables for the social page hero data.
+ */
+function social_event_max_enroll_preprocess_page_hero_data(array &$variables) {
+  $event_max_enroll_service = \Drupal::service('social_event_max_enroll.service');
+  $node = $variables['node'];
+
+  // Add places left counter to the hero block.
+  if ($event_max_enroll_service->isEnabled($node)) {
+    $total = $event_max_enroll_service->getEnrollmentsNumber($node);
+    $left = $event_max_enroll_service->getEnrollmentsLeft($node);
+
+    $variables['title_suffix'] = t('@total people have enrolled (@left places left)', [
+      '@total' => $total,
+      '@left' => $left,
+    ]);
+  }
+}
