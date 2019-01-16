@@ -13,31 +13,26 @@ use Drupal\Core\Form\FormStateInterface;
 /**
  * Implements hook_views_post_render().
  *
- * Alter "Event enrollments" views. Add number of places left .
+ * Alter "Event enrollments" views. Add number of places left.
  */
 function social_event_max_enroll_views_post_render(ViewExecutable $view, &$output, CachePluginBase $cache) {
-  if ($view->id() == 'event_enrollments' && $view->current_display == 'event_enrollments') {
-    if (isset($output['#rows'])) {
-      if (!empty($view->args[0])) {
-        $nid = $view->args[0];
-        $node = Node::load($nid);
+  if ($view->id() === 'event_enrollments' && $view->current_display === 'event_enrollments' && isset($output['#rows']) && !empty($view->args[0])) {
+    $nid = $view->args[0];
+    $node = Node::load($nid);
 
-        // Add places left counter to the block title.
-        if (social_event_max_enroll_is_enabled($node)) {
-          // Count how many places left.
-          $left = social_event_max_enroll_left($node);
+    // Add places left counter to the block title.
+    if (social_event_max_enroll_is_enabled($node)) {
+      // Count how many places left.
+      $left = social_event_max_enroll_left($node);
 
-          if ($left > 0) {
-            $title_suffix = \Drupal::translation()->formatPlural($left, '(1 place left)', '(@count places left)');
-          }
-          else {
-            $title_suffix = t('(0 places left)');
-          }
-
-          $view->header['result']->options['content'] .= ' ' . $title_suffix;
-        }
-
+      if ($left > 0) {
+        $title_suffix = \Drupal::translation()->formatPlural($left, '(1 place left)', '(@count places left)');
       }
+      else {
+        $title_suffix = t('(0 places left)');
+      }
+
+      $view->header['result']->options['content'] .= ' ' . $title_suffix;
     }
   }
 }
@@ -91,6 +86,8 @@ function social_event_max_enroll_left($node) {
 
 /**
  * Check if anonymous enrollment is allowed for given event.
+ *
+ * Returns TRUE if feature is enabled and node is event and max enroll is set.
  */
 function social_event_max_enroll_is_enabled(Node $node) {
   $config = \Drupal::config('social_event.settings');

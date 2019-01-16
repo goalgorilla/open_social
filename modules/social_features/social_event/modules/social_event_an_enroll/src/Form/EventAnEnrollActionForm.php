@@ -77,20 +77,18 @@ class EventAnEnrollActionForm extends EnrollActionForm {
       }
       else {
         // Take into acccount max enrollments.
-        if (\Drupal::moduleHandler()->moduleExists('social_event_max_enroll')) {
-          if (social_event_max_enroll_is_enabled($node)) {
-            // Count how many places left.
-            $left = social_event_max_enroll_left($node);
-            if ($left < 1) {
-              $form['event_enrollment'] = [
-                '#type' => 'submit',
-                '#value' => $this->t('No places left'),
-                '#disabled' => TRUE,
-                '#attributes' => [
-                  'class' => $btn_classes,
-                ],
-              ];
-            }
+        if ($this->moduleHandler->moduleExists('social_event_max_enroll') && social_event_max_enroll_is_enabled($node)) {
+          // Count how many places left.
+          $left = social_event_max_enroll_left($node);
+          if ($left < 1) {
+            $form['event_enrollment'] = [
+              '#type' => 'submit',
+              '#value' => $this->t('No places left'),
+              '#disabled' => TRUE,
+              '#attributes' => [
+                'class' => $btn_classes,
+              ],
+            ];
           }
         }
 
@@ -107,7 +105,7 @@ class EventAnEnrollActionForm extends EnrollActionForm {
               ]),
               'data-dialog-type' => 'modal',
               'data-dialog-options' => json_encode([
-                'title' => t('Enroll in @event Event', ['@event' => $node->getTitle()]),
+                'title' => $this->t('Enroll in @event Event', ['@event' => $node->getTitle()]),
                 'width' => 'auto',
               ]),
             ],

@@ -176,14 +176,12 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
     $to_enroll_status = '1';
     $enrollment_open = TRUE;
     // Take into account max enrollments.
-    if (\Drupal::moduleHandler()->moduleExists('social_event_max_enroll')) {
-      if (social_event_max_enroll_is_enabled($node)) {
-        // Count how many places left.
-        $left = social_event_max_enroll_left($node);
-        if ($left < 1) {
-          $submit_text = $this->t('No places left');
-          $enrollment_open = FALSE;
-        }
+    if ($this->moduleHandler->moduleExists('social_event_max_enroll') && social_event_max_enroll_is_enabled($node)) {
+      // Count how many places left.
+      $left = social_event_max_enroll_left($node);
+      if ($left < 1) {
+        $submit_text = $this->t('No places left');
+        $enrollment_open = FALSE;
       }
     }
 
