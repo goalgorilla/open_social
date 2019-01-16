@@ -24,19 +24,23 @@ class GroupContentInMyGroupActivityContext extends ActivityContextBase {
     if (!empty($data['related_object'])) {
       $referenced_entity = ActivityFactory::getActivityRelatedEntity($data);
 
+      /** @var \Drupal\group\Entity\GroupContentInterface $group_content */
+      $group_content = $this->entityTypeManager->getStorage('group_content')
+        ->load($referenced_entity['target_id']);
+
       /** @var \Drupal\group\Entity\GroupInterface $group */
-      $group = $this->entityTypeManager->getStorage('group_content')
-        ->load($referenced_entity['target_id'])
-        ->getGroup();
+      $group = $group_content->getGroup();
 
       $memberships = $group->getMembers($group->bundle() . '-group_manager');
 
       /** @var \Drupal\group\GroupMembership $membership */
       foreach ($memberships as $membership) {
-        $recipients[] = [
-          'target_type' => 'user',
-          'target_id' => $membership->getUser()->id(),
-        ];
+        if ($membership->getUser()->id() != $group_content->getEntity()->id()) {
+          $recipients[] = [
+            'target_type' => 'user',
+            'target_id' => $membership->getUser()->id(),
+          ];
+        }
       }
     }
 
