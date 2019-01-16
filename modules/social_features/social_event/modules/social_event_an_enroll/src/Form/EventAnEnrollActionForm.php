@@ -77,9 +77,9 @@ class EventAnEnrollActionForm extends EnrollActionForm {
       }
       else {
         // Take into acccount max enrollments.
-        if ($this->moduleHandler->moduleExists('social_event_max_enroll') && social_event_max_enroll_is_enabled($node)) {
+        if ($this->moduleHandler->moduleExists('social_event_max_enroll') && $this->eventMaxEnrollService->isEnabled($node)) {
           // Count how many places left.
-          $left = social_event_max_enroll_left($node);
+          $left = $this->eventMaxEnrollService->getEnrollmentsLeft($node);
           if ($left < 1) {
             $form['event_enrollment'] = [
               '#type' => 'submit',

@@ -4,3 +4,6 @@ services:
     arguments: ['@config.factory']
     tags:
       - {name: config.factory.override, priority: 5}
+  social_event_max_enroll.service:
+    class: Drupal\social_event_max_enroll\EventMaxEnrollService
+    arguments: ['@database', '@config.factory']
