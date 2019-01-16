@@ -49,10 +49,24 @@ function social_event_max_enroll_form_alter(&$form, FormStateInterface $form_sta
   ];
 
   if (in_array($form_id, $event_forms)) {
-    $config = \Drupal::config('social_event.settings');
+    $config = \Drupal::config('social_event_max_enroll.settings');
     // Hide checkbox if feature is disabled globally.
     $form['field_event_max_enroll']['#access'] = $config->get('max_enroll');
-    $form['field_event_max_enroll']['widget'][0]['value']['#required'] = $config->get('max_enroll_required');
+    $form['field_event_max_enroll_num']['#access'] = $config->get('max_enroll');
+
+    // Show the checkbox only when max enroll is enabled.
+    if ($config->get('max_enroll_required')) {
+      $form['field_event_max_enroll']['widget']['value']['#default_value'] = TRUE;
+      $form['field_event_max_enroll']['widget']['value']['#required'] = TRUE;
+      $form['field_event_max_enroll_num']['widget'][0]['value']['#required'] = TRUE;
+    }
+    else {
+      $form['field_event_max_enroll_num']['#states'] = [
+        'visible' => [
+          ':input[name="field_event_max_enroll[value]"]' => ['checked' => TRUE],
+        ],
+      ];
+    }
   }
 }
 
@@ -77,7 +91,7 @@ function social_event_max_enroll_count($nid) {
  */
 function social_event_max_enroll_left($node) {
   // Get max enrollment number.
-  $max = $node->get('field_event_max_enroll')->value;
+  $max = $node->get('field_event_max_enroll_num')->value;
   // Take into account AN enrollments.
   $current = social_event_max_enroll_count($node->id());
   // Count how many places left.
@@ -90,9 +104,9 @@ function social_event_max_enroll_left($node) {
  * Returns TRUE if feature is enabled and node is event and max enroll is set.
  */
 function social_event_max_enroll_is_enabled(Node $node) {
-  $config = \Drupal::config('social_event.settings');
+  $config = \Drupal::config('social_event_max_enroll.settings');
   $is_global_enabled = $config->get('max_enroll');
   $is_event = $node->getType() === 'event';
-  $is_event_max_enroll = isset($node->get('field_event_max_enroll')->value);
+  $is_event_max_enroll = isset($node->get('field_event_max_enroll_num')->value);
   return $is_global_enabled && $is_event && $is_event_max_enroll;
 }

@@ -49,6 +49,7 @@ class EventMaxEnrollOverride implements ConfigFactoryOverrideInterface {
       $field_group_settings['group_enroll_options'] = [
         'children' => [
           'field_event_max_enroll',
+          'field_event_max_enroll_num',
         ],
         'parent_name' => '',
         'weight' => 9,
@@ -71,6 +72,16 @@ class EventMaxEnrollOverride implements ConfigFactoryOverrideInterface {
         ],
         'third_party_settings' => [],
         'type' => 'number',
+        'region' => 'content',
+      ];
+
+      $content['field_event_max_enroll_num'] = [
+        'weight' => 101,
+        'settings' => [
+          'display_label' => TRUE,
+        ],
+        'third_party_settings' => [],
+        'type' => 'boolean_checkbox',
         'region' => 'content',
       ];
 
