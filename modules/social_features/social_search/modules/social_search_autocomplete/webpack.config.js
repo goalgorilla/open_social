@@ -1,7 +1,7 @@
 const path = require('path');
 
 module.exports = {
-  entry: './js/src/index.js',
+  entry: './js/src/index.jsx',
   output: {
     filename: 'index.js',
     path: path.resolve(__dirname, 'js/dist'),
@@ -17,5 +17,8 @@ module.exports = {
         }
       }
     ]
+  },
+  resolve: {
+    extensions: ['.wasm', '.mjs', '.js', '.json', '.jsx'],
   }
 };
