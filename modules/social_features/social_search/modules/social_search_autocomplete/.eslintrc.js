@@ -1,4 +1,5 @@
 module.exports = {
   // Automatically configure and run Prettier.
-  "extends": ["plugin:prettier/recommended"],
+  // Also use the jest best practices.
+  "extends": ["plugin:prettier/recommended", "plugin:jest/recommended"],
 };
