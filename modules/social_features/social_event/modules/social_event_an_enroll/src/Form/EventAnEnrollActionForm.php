@@ -19,7 +19,7 @@ class EventAnEnrollActionForm extends EnrollActionForm {
    * {@inheritdoc}
    */
   public function getFormId() {
-    return 'event_an_enroll_cancel_form';
+    return 'event_an_enroll_action_form';
   }
 
   /**
@@ -28,16 +28,6 @@ class EventAnEnrollActionForm extends EnrollActionForm {
   public function buildForm(array $form, FormStateInterface $form_state, Node $node = NULL) {
     $nid = $node->id();
     $token = $this->getRequest()->query->get('token');
-
-    $btn_classes = [
-      'btn',
-      'btn-accent',
-      'btn-lg',
-      'btn-raised',
-      'brand-bg-accent',
-      'dropdown-toggle',
-      'waves-effect',
-    ];
 
     if (!empty($token) && social_event_an_enroll_token_exists($token, $nid)) {
       $form['event'] = [
@@ -49,7 +39,15 @@ class EventAnEnrollActionForm extends EnrollActionForm {
         '#type' => 'submit',
         '#value' => $this->t('Enrolled'),
         '#attributes' => [
-          'class' => array_merge($btn_classes, ['dropdown-toggle']),
+          'class' => [
+            'btn',
+            'btn-accent',
+            'btn-lg',
+            'btn-raised',
+            'brand-bg-accent',
+            'dropdown-toggle',
+            'waves-effect',
+          ],
           'autocomplete' => 'off',
           'data-toggle' => 'dropdown',
           'aria-haspopup' => 'true',
@@ -71,51 +69,40 @@ class EventAnEnrollActionForm extends EnrollActionForm {
           '#value' => $this->t('Event has passed'),
           '#disabled' => TRUE,
           '#attributes' => [
-            'class' => $btn_classes,
+            'class' => [
+              'btn',
+              'btn-accent',
+              'btn-lg',
+              'btn-raised',
+              'brand-bg-accent',
+              'waves-effect',
+            ],
           ],
         ];
       }
       else {
-        // Take into account max enrollments.
-        if ($this->moduleHandler->moduleExists('social_event_max_enroll')) {
-          // We can't use dependency injection, because service is optional.
-          $event_max_enroll_service = \Drupal::service('social_event_max_enroll.service');
-          if ($event_max_enroll_service->isEnabled($node)) {
-            // Count how many places left.
-            $left = $this->eventMaxEnrollService->getEnrollmentsLeft($node);
-            if ($left < 1) {
-              $form['event_enrollment'] = [
-                '#type' => 'submit',
-                '#value' => $this->t('No places left'),
-                '#disabled' => TRUE,
-                '#attributes' => [
-                  'class' => $btn_classes,
-                ],
-              ];
-            }
-          }
-        }
+        $attributes = [
+          'class' => [
+            'use-ajax',
+            'js-form-submit',
+            'form-submit',
+            'btn',
+            'btn-accent',
+            'btn-lg',
+          ],
+          'data-dialog-type' => 'modal',
+          'data-dialog-options' => json_encode([
+            'title' => t('Enroll in @event Event', ['@event' => $node->getTitle()]),
+            'width' => 'auto',
+          ]),
+        ];
 
-        if (empty($form['event_enrollment'])) {
-          $form['event_enrollment'] = [
-            '#type' => 'link',
-            '#title' => $this->t('Enroll'),
-            '#url' => Url::fromRoute('social_event_an_enroll.enroll_dialog', ['node' => $nid]),
-            '#attributes' => [
-              'class' => array_merge($btn_classes, [
-                'use-ajax',
-                'js-form-submit',
-                'form-submit',
-              ]),
-              'data-dialog-type' => 'modal',
-              'data-dialog-options' => json_encode([
-                'title' => $this->t('Enroll in @event Event', ['@event' => $node->getTitle()]),
-                'width' => 'auto',
-              ]),
-            ],
-          ];
-        }
-
+        $form['event_enrollment'] = [
+          '#type' => 'link',
+          '#title' => $this->t('Enroll'),
+          '#url' => Url::fromRoute('social_event_an_enroll.enroll_dialog', ['node' => $nid]),
+          '#attributes' => $attributes,
+        ];
       }
     }
     $form['#cache'] = ['max-age' => 0];

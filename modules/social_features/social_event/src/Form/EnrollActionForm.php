@@ -20,7 +20,6 @@ use Drupal\user\UserStorageInterface;
 use Drupal\group\Entity\GroupContent;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
-use Drupal\social_event_max_enroll\EventMaxEnrollService;
 
 /**
  * Class EnrollActionForm.
@@ -176,19 +175,6 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
     $submit_text = $this->t('Enroll');
     $to_enroll_status = '1';
     $enrollment_open = TRUE;
-    // Take into account max enrollments.
-    if ($this->moduleHandler->moduleExists('social_event_max_enroll')) {
-      // We can't use dependency injection, because service is optional.
-      $event_max_enroll_service = \Drupal::service('social_event_max_enroll.service');
-      if ($event_max_enroll_service->isEnabled($node)) {
-        // Count how many places left.
-        $left = $this->eventMaxEnrollService->getEnrollmentsLeft($node);
-        if ($left < 1) {
-          $submit_text = $this->t('No places left');
-          $enrollment_open = FALSE;
-        }
-      }
-    }
 
     // Add the enrollment closed label.
     if ($this->eventHasBeenFinished($node)) {
@@ -207,7 +193,6 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
         $current_enrollment_status = $enrollment->field_enrollment_status->value;
         if ($current_enrollment_status === '1') {
           $submit_text = $this->t('Enrolled');
-          $enrollment_open = TRUE;
           $to_enroll_status = '0';
         }
       }

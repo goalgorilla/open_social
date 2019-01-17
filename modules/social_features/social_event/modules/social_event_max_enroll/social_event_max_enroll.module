@@ -25,14 +25,7 @@ function social_event_max_enroll_views_post_render(ViewExecutable $view, &$outpu
     if ($event_max_enroll_service->isEnabled($node)) {
       // Count how many places left.
       $left = $event_max_enroll_service->getEnrollmentsLeft($node);
-
-      if ($left > 0) {
-        $title_suffix = \Drupal::translation()->formatPlural($left, '(1 place left)', '(@count places left)');
-      }
-      else {
-        $title_suffix = t('(No places left)');
-      }
-
+      $title_suffix = \Drupal::translation()->formatPlural($left, '(1 place left)', '(@count places left)');
       $view->header['result']->options['content'] .= ' ' . $title_suffix;
     }
   }
@@ -69,6 +62,44 @@ function social_event_max_enroll_form_alter(&$form, FormStateInterface $form_sta
       ];
     }
   }
+
+  $event_enroll_forms = [
+    'enroll_action_form',
+    'event_an_enroll_action_form',
+  ];
+
+  if (in_array($form_id, $event_enroll_forms)) {
+    // We can't use dependency injection, because service is optional.
+    $event_max_enroll_service = \Drupal::service('social_event_max_enroll.service');
+    $node = \Drupal::routeMatch()->getParameter('node');
+    if ($node instanceof Node && $event_max_enroll_service->isEnabled($node)) {
+      // Count how many places left.
+      $left = $event_max_enroll_service->getEnrollmentsLeft($node);
+      if ($left < 1) {
+        if ($form_id === 'enroll_action_form') {
+          $form['enroll_for_this_event']['#value'] = t('No places left');
+          $form['enroll_for_this_event']['#disabled'] = TRUE;
+        }
+        if ($form_id === 'event_an_enroll_action_form') {
+          $form['event_enrollment'] = [
+            '#type' => 'submit',
+            '#value' => t('No places left'),
+            '#disabled' => TRUE,
+            '#attributes' => [
+              'class' => [
+                'btn',
+                'btn-accent',
+                'btn-lg',
+                'btn-raised',
+                'brand-bg-accent',
+                'waves-effect',
+              ],
+            ],
+          ];
+        }
+      }
+    }
+  }
 }
 
 /**
@@ -82,10 +113,11 @@ function social_event_max_enroll_preprocess_page_hero_data(array &$variables) {
   if ($event_max_enroll_service->isEnabled($node)) {
     $total = $event_max_enroll_service->getEnrollmentsNumber($node);
     $left = $event_max_enroll_service->getEnrollmentsLeft($node);
+    $variables['title_suffix'] = \Drupal::translation()
+      ->formatPlural($left, '@total people have enrolled (1 place left)',
+        '@total people have enrolled (@count places left)',
+        ['@total' => $total]
+      );
 
-    $variables['title_suffix'] = t('@total people have enrolled (@left places left)', [
-      '@total' => $total,
-      '@left' => $left,
-    ]);
   }
 }

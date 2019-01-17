@@ -33,13 +33,14 @@ class EventSettingsForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    $event_config = $this->configFactory->getEditable('social_event.settings');
+    $group_type_ids = $this->configFactory->getEditable('social_event.settings')
+      ->get('enroll');
 
     $form['enroll'] = [
       '#type' => 'checkboxes',
       '#title' => $this->t('Enroll user which is not group member'),
       '#description' => $this->t('Enroll button should be visible for users that are not in the group and automatic enroll people to groups when they enroll to events that are part of the group.'),
-      '#default_value' => $event_config->get('enroll'),
+      '#default_value' => $group_type_ids,
       '#states' => [
         'visible' => [
           ':input[name="enroll"]' => [

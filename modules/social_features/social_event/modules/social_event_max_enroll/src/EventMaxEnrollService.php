@@ -75,8 +75,9 @@ class EventMaxEnrollService {
   public function isEnabled(Node $node) {
     $is_global_enabled = $this->configFactory->get('social_event_max_enroll.settings')->get('max_enroll');
     $is_event = $node->getType() === 'event';
-    $is_event_max_enroll = isset($node->get('field_event_max_enroll_num')->value);
-    return (bool) $is_global_enabled && $is_event && $is_event_max_enroll;
+    $is_event_max_enroll = !empty($node->get('field_event_max_enroll')->value);
+    $is_event_max_enroll_num = isset($node->get('field_event_max_enroll_num')->value);
+    return (bool) $is_global_enabled && $is_event && $is_event_max_enroll && $is_event_max_enroll_num;
   }
 
 }
