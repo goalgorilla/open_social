@@ -44,7 +44,7 @@ pre code {
 
 html {
   font-size: 16px;
-  -webkit-tap-highlight-color: transparent;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
   font-family: sans-serif;
   -ms-text-size-adjust: 100%;
   -webkit-text-size-adjust: 100%;
@@ -445,6 +445,98 @@ th {
 
 .table-responsive .table-bordered {
   border: 0;
+}
+
+.right-auto {
+  margin-right: auto;
+}
+
+.select-all.checkbox {
+  display: table-cell;
+}
+
+.vbo-table .form-type-checkbox {
+  padding-top: 1rem;
+}
+
+.vbo-table.table td {
+  vertical-align: inherit;
+}
+
+.vbo-table .btn-group--operations {
+  -webkit-box-pack: left;
+      -ms-flex-pack: left;
+          justify-content: left;
+}
+
+.vbo-table .form-no-label.checkbox label {
+  display: none;
+}
+
+.vbo-table .views-table-row-vbo-select-all .form-submit {
+  color: #4d4d4d;
+  background-color: #fff;
+  border-radius: 10px;
+  fill: #4d4d4d;
+  display: inline-block;
+  margin-bottom: 0;
+  font-weight: normal;
+  text-align: center;
+  vertical-align: middle;
+  -ms-touch-action: manipulation;
+  touch-action: manipulation;
+  cursor: pointer;
+  background-image: none;
+  border: 1px solid #adadad;
+  padding: 6px 12px;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  text-transform: uppercase;
+  -webkit-transition: .3s ease-out;
+  transition: .3s ease-out;
+  outline: 0;
+}
+
+.vbo-table .views-table-row-vbo-select-all td div {
+  text-align: left;
+}
+
+#vbo-action-form-wrapper .btn-group.dropdown {
+  position: absolute;
+  right: 1rem;
+  padding: 10px 0;
+}
+
+#vbo-action-form-wrapper.card__block {
+  padding: 0;
+}
+
+#vbo-action-form-wrapper.card__block .panel-heading {
+  padding: 1.25rem 0 1.25rem 1.25rem;
+}
+
+#vbo-action-form-wrapper.card__block .vbo-multipage-selector ul {
+  background-color: rgba(0, 0, 0, 0.05);
+  margin: 0;
+  font-size: 0.875rem;
+}
+
+#vbo-action-form-wrapper.card__block .vbo-multipage-selector ul li,
+#vbo-action-form-wrapper.card__block .vbo-multipage-selector h3 {
+  padding-left: 1.25rem;
+  font-weight: 500;
+}
+
+#vbo-action-form-wrapper.card__block .vbo-multipage-selector li:last-child {
+  padding-bottom: 0.5rem;
+}
+
+#vbo-action-form-wrapper.card__block .vbo-multipage-selector li:first-child {
+  padding-top: 0.5rem;
 }
 
 b,
@@ -1412,6 +1504,31 @@ body {
     -ms-overflow-style: -ms-autohiding-scrollbar;
     padding-bottom: 100px;
     margin-bottom: -100px;
+  }
+  .right-auto {
+    margin-left: 0.5rem;
+  }
+  .view-group-manage-members {
+    padding: 0 10px;
+  }
+  .view-group-manage-members .form-group-inline--right {
+    display: block;
+  }
+  .view-group-manage-members .card {
+    display: block;
+  }
+  .vbo-table .views-table-row-vbo-select-all .form-submit {
+    font-size: 0.7rem;
+  }
+  #vbo-action-form-wrapper .btn-group.dropdown {
+    position: static;
+    width: 100%;
+  }
+  #vbo-action-form-wrapper .btn-group.dropdown button {
+    margin-right: 0.5rem;
+  }
+  #vbo-action-form-wrapper .btn-group.dropdown .dropdown-menu.dropdown-menu-right {
+    width: 100%;
   }
   .hidden-for-phone-only {
     display: none;

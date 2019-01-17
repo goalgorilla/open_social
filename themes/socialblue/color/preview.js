@@ -47,6 +47,10 @@
       $primaryBtn.css('border-color', primaryInput);
       $primaryBtn.css('backgroundColor', primaryInput);
 
+      // Markers for maps.
+      $colorPreview.find('.marker-cluster-small').css({'backgroundColor': primaryInput, 'opacity': 0.6});
+      $colorPreview.find('.marker-cluster-small div').css({'backgroundColor': primaryInput, 'opacity': 0.8});
+      $colorPreview.find('.marker-cluster div').css({'color': $colorPalette.find('input[name="palette[navbar-text]"]').val(), 'font-weight': 'bold'});
 
       // Brand secondary color.
       var secondaryInput = $colorPalette.find('input[name="palette[brand-secondary]"]').val();

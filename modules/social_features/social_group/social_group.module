@@ -896,6 +896,9 @@ function social_group_menu_local_tasks_alter(&$data, $route_name) {
 function social_group_local_tasks_alter(&$local_tasks) {
   // Remove local delete task from group page.
   unset($local_tasks['group.delete_form']);
+
+  $local_tasks['group.content']['route_name'] = 'view.group_manage_members.page_group_manage_members';
+  $local_tasks['group.content']['weight'] = 70;
 }
 
 /**
@@ -917,7 +920,6 @@ function social_group_menu_local_actions_alter(&$local_actions) {
  */
 function social_group_entity_type_alter(array &$entity_types) {
   /* @var $entity_types \Drupal\Core\Entity\EntityTypeInterface[] */
-  $entity_types['group_content']->setListBuilderClass('Drupal\social_group\Controller\SocialGroupContentListBuilder');
   $entity_types['group']->setListBuilderClass('Drupal\social_group\Controller\SocialGroupListBuilder');
 }
 
@@ -1066,6 +1068,23 @@ function social_group_preprocess_profile(&$variables) {
         ],
       ];
     }
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function social_group_preprocess_views_view(&$variables) {
+  /** @var \Drupal\views\ViewExecutable $view */
+  $view = &$variables['view'];
+
+  if ($view->id() === 'group_manage_members') {
+    $entity = \Drupal::entityTypeManager()->getStorage('block')
+      ->load('socialblue_local_actions');
+
+    $variables['header']['actions'] = \Drupal::entityTypeManager()
+      ->getViewBuilder('block')
+      ->view($entity);
   }
 }
 
@@ -1549,4 +1568,30 @@ function social_group_social_user_account_header_account_links(array $context) {
       'user' => $context['user']->id(),
     ])->toRenderArray(),
   ];
+}
+
+/**
+ * Implements hook_entity_operation_alter().
+ */
+function social_group_entity_operation_alter(array &$operations, EntityInterface $entity) {
+  if ($entity->getEntityTypeId() === 'group_content') {
+    $titles = [
+      'edit' => t('Edit'),
+      'delete' => t('Remove'),
+      'view' => t('View'),
+    ];
+
+    foreach ($operations as $key => &$operation) {
+      if (isset($titles[$key])) {
+        $operation['title'] = $titles[$key];
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_views_plugins_field_alter().
+ */
+function social_group_views_plugins_field_alter(array &$plugins) {
+  $plugins['views_bulk_operations_bulk_form']['class'] = 'Drupal\social_group\Plugin\views\field\SocialGroupViewsBulkOperationsBulkForm';
 }

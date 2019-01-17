@@ -12,8 +12,7 @@ use Drupal\swiftmailer\Plugin\Mail\SwiftMailer;
  * @Mail(
  *   id = "social_swiftmailer",
  *   label = @Translation("Social Swift Mailer"),
- *   description = @Translation("Forces the given body text to be interpreted as
- *   HTML.")
+ *   description = @Translation("Forces the given body text to be HTML.")
  * )
  */
 class SocialSwiftMailer extends SwiftMailer {

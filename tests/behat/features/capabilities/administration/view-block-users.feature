@@ -8,5 +8,5 @@ Feature: View and block users as site manager
     Given I am logged in as an "sitemanager"
     And I am on "admin/people"
     And I should see "Name or email contains"
-    And I should see "Block the selected user(s)"
-    And I should see "Cancel the selected user account(s)"
+    And I should see "Block the selected users"
+    And I should see "Cancel the selected user accounts"
