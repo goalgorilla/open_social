@@ -69,7 +69,7 @@ function social_profile_organization_tag_tokens_alter(array &$replacements, arra
     $account = $context['data']['user'];
     if ($account instanceof User) {
       $storage = \Drupal::entityTypeManager()->getStorage('profile');
-      if (!empty($storage)) {
+      if ($storage !== NULL && isset($replacements['[message:author:display-name]'])) {
         if ($user_profile = $storage->loadByUser($account, 'profile', TRUE)) {
           $replacements['[message:author:display-name]'] .= rtrim(" " . social_profile_organization_tag_fetch($user_profile, FALSE));
         }
