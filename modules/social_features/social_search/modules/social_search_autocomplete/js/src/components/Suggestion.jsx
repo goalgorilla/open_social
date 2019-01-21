@@ -2,6 +2,18 @@ import React from "react";
 import PropTypes from "prop-types";
 
 /**
+ * Escapes a string for use as literal RegExp value.
+ *
+ * @param {string} string
+ *   The user string to escape.
+ * @return {string}
+ *   The string with all special characters escaped.
+ */
+function escapeRegExp(string) {
+  return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // $& means the whole matched string
+}
+
+/**
  * Returns the target string with <b> tags around the highlight word.
  *
  * @param {string} highlight
@@ -16,7 +28,7 @@ function highlightText(highlight, target) {
 
   // Create a capturing regular expression for splitting. This ensures that when
   // we iterate we don't lose the search string.
-  const search = new RegExp(`(${highlight})`, "gi");
+  const search = new RegExp(`(${escapeRegExp(highlight)})`, "gi");
   const parts = target.split(search);
 
   // Assemble the string again, highlighting our search term.
@@ -44,7 +56,10 @@ function Suggestion(props) {
   // eslint-disable-next-line
   for (const i in tags) {
     markupTags.push(
-      <span key={i} className="search-suggestion__tag badge badge-default badge--pill">
+      <span
+        key={i}
+        className="search-suggestion__tag badge badge-default badge--pill"
+      >
         {tags[i]}
       </span>
     );

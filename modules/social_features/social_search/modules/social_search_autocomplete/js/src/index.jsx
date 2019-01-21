@@ -130,7 +130,7 @@ function fetchSuggestions(text, callback) {
    * @type {Drupal~behavior}
    */
   Drupal.behaviors.initSocialSearchAutocomplete = {
-    attach(context) {
+    attach(context, settings) {
       // TODO: Only load React if it's not yet loaded.
       // TODO: Ideally only load when search is visible.
 
@@ -151,7 +151,11 @@ function fetchSuggestions(text, callback) {
         // Our React render function for this search suggestion box.
         const rerender = (query, suggestions) => {
           ReactDOM.render(
-            <SearchSuggestions query={query} suggestions={suggestions} />,
+            <SearchSuggestions
+              searchBase={settings.socialSearchAutocomplete.searchPath}
+              query={query}
+              suggestions={suggestions}
+            />,
             element
           );
         };

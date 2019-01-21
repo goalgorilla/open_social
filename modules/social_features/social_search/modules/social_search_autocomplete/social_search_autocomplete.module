@@ -7,6 +7,7 @@
 
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Url;
 
 /**
  * Implements hook_form_FORM_ID_alter().
@@ -29,6 +30,11 @@ function social_search_autocomplete_form_search_content_form_alter(&$form, FormS
       '#weight' => '20',
       '#attached' => [
         'library' => ['social_search_autocomplete/search_autocomplete'],
+        'drupalSettings' => [
+          'socialSearchAutocomplete' => [
+            'searchPath' => Url::fromRoute('view.search_all.page_no_value')->toString(),
+          ],
+        ],
       ],
     ];
 

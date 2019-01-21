@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import Suggestion from "./Suggestion";
 
 function SearchSuggestions(props) {
-  const { query, suggestions } = props;
+  const { searchBase, query, suggestions } = props;
 
   if (!query.length || !suggestions.length) {
     return null;
@@ -16,19 +16,22 @@ function SearchSuggestions(props) {
     results.push(<Suggestion key={i} query={query} {...suggestions[i]} />);
   }
 
+  const searchUrl = `${searchBase}/${encodeURIComponent(query)}`;
+
   return (
     <React.Fragment>
-      <div className={"search-suggestions"}>
-        {results}
-      </div>
-      <div className={"search-suggestions__all"}>
-        <a className="btn btn-default btn-raised">See all results</a>
+      <div className="search-suggestions">{results}</div>
+      <div className="search-suggestions__all">
+        <a href={searchUrl} className="btn btn-default btn-raised">
+          See all results
+        </a>
       </div>
     </React.Fragment>
   );
 }
 
 SearchSuggestions.propTypes = {
+  searchBase: PropTypes.string.isRequired,
   query: PropTypes.string,
   suggestions: PropTypes.arrayOf(
     PropTypes.shape({
