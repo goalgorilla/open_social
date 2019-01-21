@@ -103,6 +103,18 @@ function social_user_update_8006() {
 }
 
 /**
+ * Install views_bulk_operations module.
+ */
+function social_user_update_8007() {
+
+  $modules = [
+    'views_bulk_operations',
+  ];
+  \Drupal::service('module_installer')->install($modules);
+
+}
+
+/**
  * Function to set permissions.
  */
 function _social_user_set_permissions() {
