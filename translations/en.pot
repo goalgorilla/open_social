@@ -643,6 +643,7 @@
 #  modules/social_features/social_user_export/src/Plugin/UserExportPlugin/UserAnalyticsCommentsCreated.php: n/a
 #  modules/social_features/social_user_export/src/Plugin/UserExportPlugin/UserAnalyticsEventEnrollments.php: n/a
 #  modules/social_features/social_user_export/src/Plugin/UserExportPlugin/UserAnalyticsEventsCreated.php: n/a
+#  modules/social_features/social_user_export/src/Plugin/UserExportPlugin/UserAnalyticsGroupMemberships.php: n/a
 #  modules/social_features/social_user_export/src/Plugin/UserExportPlugin/UserAnalyticsGroupsCreated.php: n/a
 #  modules/social_features/social_user_export/src/Plugin/UserExportPlugin/UserAnalyticsLikes.php: n/a
 #  modules/social_features/social_user_export/src/Plugin/UserExportPlugin/UserAnalyticsPostsCreated.php: n/a
@@ -650,6 +651,7 @@
 #  modules/social_features/social_user_export/src/Plugin/UserExportPlugin/UserDisplayName.php: n/a
 #  modules/social_features/social_user_export/src/Plugin/UserExportPlugin/UserFunction.php: n/a
 #  modules/social_features/social_profile/config/install/field.field.profile.profile.field_profile_function.yml: n/a
+#  modules/social_features/social_user_export/src/Plugin/UserExportPlugin/UserGroupMemberships.php: n/a
 #  modules/social_features/social_user_export/src/Plugin/UserExportPlugin/UserInterests.php: n/a
 #  modules/social_features/social_profile/config/install/field.field.profile.profile.field_profile_interests.yml: n/a
 #  modules/social_features/social_profile/config/install/taxonomy.vocabulary.interests.yml: n/a
@@ -1088,7 +1090,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Open Social\n"
-"POT-Creation-Date: 2019-01-21 12:17+0000\n"
+"POT-Creation-Date: 2019-01-21 22:10+0000\n"
 "PO-Revision-Date: YYYY-mm-DD HH:MM+ZZZZ\n"
 "Last-Translator: NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <EMAIL@ADDRESS>\n"
@@ -1348,8 +1350,8 @@ msgstr ""
 
 #: modules/social_features/social_mentions/config/install/message.template.create_mention_post_stream.yml:0
 msgid ""
-"<p><a href=\"\">[message:author:display-name]</a> mentioned <a href="
-"\"\">[social_mentions:mentioned_user]</a> in a post</p>\n"
+"<p><a href=\"\">[message:author:display-name]</a> mentioned <a href=\"\">"
+"[social_mentions:mentioned_user]</a> in a post</p>\n"
 msgstr ""
 
 #: modules/social_features/social_mentions/config/install/message.template.create_mention_comment_stream.yml:0
@@ -1369,8 +1371,8 @@ msgstr ""
 msgid ""
 "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
 "a> and @count others commented on [social_comment:parent_entity_author]'s "
-"[social_comment:commented_content_type] in <a href=\"[message:"
-"gurl]\">[message:gtitle]</a></p>"
+"[social_comment:commented_content_type] in <a href=\"[message:gurl]\">"
+"[message:gtitle]</a></p>"
 msgstr ""
 
 #: modules/social_features/social_activity/config/install/message.template.create_comment_community_node.yml:0
@@ -1383,8 +1385,8 @@ msgstr ""
 #: modules/social_features/social_activity/config/install/message.template.create_comment_group_post.yml:0
 msgid ""
 "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
-"a> and @count others commented on a post in <a href=\"[message:"
-"gurl]\">[message:gtitle]</a></p>"
+"a> and @count others commented on a post in <a href=\"[message:gurl]\">"
+"[message:gtitle]</a></p>"
 msgstr ""
 
 #: modules/social_features/social_activity/config/install/message.template.create_comment_community_post.yml:0
@@ -1451,8 +1453,8 @@ msgstr ""
 #: modules/social_features/social_activity/config/install/message.template.moved_content_between_groups.yml:0
 msgid ""
 "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
-"a> created [social_group:content_type] in <a href=\"[message:"
-"gurl]\">[message:gtitle]</a></p>"
+"a> created [social_group:content_type] in <a href=\"[message:gurl]\">"
+"[message:gtitle]</a></p>"
 msgstr ""
 
 #: modules/social_features/social_activity/config/install/message.template.create_content_in_joined_group.yml:0;0;0
@@ -1570,9 +1572,9 @@ msgstr ""
 
 #: modules/social_features/social_event/config/optional/message.template.activity_on_events_im_organizing.yml:0;0;0
 msgid ""
-"<p><a href=\"[social_event:enrolled_event_url]\">[social_event:"
-"enrolled_user]</a> has enrolled to the event [social_event:"
-"event_iam_organizing] you are organizing</p>"
+"<p><a href=\"[social_event:enrolled_event_url]\">[social_event:enrolled_user]"
+"</a> has enrolled to the event [social_event:event_iam_organizing] you are "
+"organizing</p>"
 msgstr ""
 
 #: modules/social_features/social_core/src/Controller/SocialCoreController.php:20
@@ -2860,7 +2862,7 @@ msgstr ""
 msgid "Blog"
 msgstr ""
 
-#: modules/custom/social_auth_extra/social_auth_extra.module:369
+#: modules/custom/social_auth_extra/social_auth_extra.module:378
 #: modules/social_features/social_event/modules/social_event_an_enroll/src/Form/EventAnEnrollSettingsForm.php:101
 #: modules/social_features/social_book/config/install/field.field.node.book.body.yml:0
 #: modules/social_features/social_event/config/install/field.field.node.event.body.yml:0
@@ -3341,7 +3343,7 @@ msgstr ""
 msgid "Copy the Consumer Secret here"
 msgstr ""
 
-#: modules/custom/social_auth_extra/social_auth_extra.module:263
+#: modules/custom/social_auth_extra/social_auth_extra.module:272
 msgid "Could not create new user. Exception: @message"
 msgstr ""
 
@@ -3435,7 +3437,7 @@ msgstr ""
 msgid "Create New Event"
 msgstr ""
 
-#: modules/social_features/social_group/social_group.module:1484
+#: modules/social_features/social_group/social_group.module:1508
 msgid "Create New Group"
 msgstr ""
 
@@ -3656,7 +3658,7 @@ msgstr ""
 msgid "Creates a call to action link in a block"
 msgstr ""
 
-#: modules/custom/social_auth_extra/social_auth_extra.module:259
+#: modules/custom/social_auth_extra/social_auth_extra.module:268
 msgid "Creation of user account failed. Please contact site administrator."
 msgstr ""
 
@@ -4043,11 +4045,11 @@ msgstr ""
 msgid "Display the mentioned user in a post"
 msgstr ""
 
-#: modules/custom/social_auth_extra/social_auth_extra.module:393
+#: modules/custom/social_auth_extra/social_auth_extra.module:402
 msgid "Displayed in the social user log in card."
 msgstr ""
 
-#: modules/custom/social_auth_extra/social_auth_extra.module:386
+#: modules/custom/social_auth_extra/social_auth_extra.module:395
 msgid "Displayed in the social user sign-up card."
 msgstr ""
 
@@ -4154,7 +4156,7 @@ msgstr ""
 #: modules/social_features/social_comment/src/Form/SocialCommentAdminOverview.php:213
 #: modules/social_features/social_event/social_event.links.task.yml:0
 #: modules/social_features/social_event/modules/social_event_type/social_event_type.links.task.yml:0
-#: modules/social_features/social_group/social_group.module:1555
+#: modules/social_features/social_group/social_group.module:1579
 #: modules/social_features/social_post/social_post.links.task.yml:0
 #: modules/social_features/social_post/src/PostViewBuilder.php:211
 msgid "Edit"
@@ -5018,7 +5020,7 @@ msgstr ""
 
 #: modules/custom/group_core_comments/group_core_comments.info.yml:0
 #: modules/custom/social_demo/src/Plugin/DemoContent/Group.php:7
-#: modules/social_features/social_group/social_group.module:1256
+#: modules/social_features/social_group/social_group.module:1280
 #: modules/social_features/social_tagging/src/Form/SocialTaggingSettingsForm.php:97
 #: modules/social_features/social_post/config/install/core.entity_form_mode.post.group.yml:0
 #: modules/social_features/social_user/config/install/views.view.user_admin_people.yml:0;0
@@ -5122,7 +5124,7 @@ msgstr ""
 msgid "Group add topic block"
 msgstr ""
 
-#: modules/social_features/social_group/social_group.module:1283
+#: modules/social_features/social_group/social_group.module:1307
 msgid "Group and visibility"
 msgstr ""
 
@@ -5155,6 +5157,14 @@ msgstr ""
 
 #: modules/social_features/social_post/social_post.module:148
 msgid "Group members"
+msgstr ""
+
+#: modules/social_features/social_user_export/src/Plugin/UserExportPlugin/UserAnalyticsGroupMemberships.php:86;13
+msgid "Group memberships"
+msgstr ""
+
+#: modules/social_features/social_user_export/src/Plugin/UserExportPlugin/UserGroupMemberships.php:87;14
+msgid "Group memberships (specified)"
 msgstr ""
 
 #: modules/social_features/social_group/social_group.module:461
@@ -5614,7 +5624,7 @@ msgstr ""
 #: modules/custom/mentions/config/schema/mentions.schema.yml:0
 #: modules/custom/mentions/src/MentionsViewsData.php:138
 #: modules/custom/mentions/src/Form/MentionsTypeForm.php:224
-#: modules/custom/social_auth_extra/social_auth_extra.module:314
+#: modules/custom/social_auth_extra/social_auth_extra.module:323
 #: modules/social_features/social_landing_page/config/install/field.field.paragraph.block.field_block_link.yml:0
 #: modules/social_features/social_landing_page/config/install/field.field.paragraph.featured.field_featured_link.yml:0
 msgid "Link"
@@ -6018,7 +6028,7 @@ msgid ""
 "this content, please contact a site manager."
 msgstr ""
 
-#: modules/social_features/social_group/social_group.module:1514;1519
+#: modules/social_features/social_group/social_group.module:1538;1543
 msgid "My Groups"
 msgstr ""
 
@@ -6026,7 +6036,7 @@ msgstr ""
 msgid "My events"
 msgstr ""
 
-#: modules/social_features/social_group/social_group.module:1541
+#: modules/social_features/social_group/social_group.module:1565
 msgid "My groups"
 msgstr ""
 
@@ -6094,7 +6104,7 @@ msgstr ""
 msgid "New Event"
 msgstr ""
 
-#: modules/social_features/social_group/social_group.module:1486
+#: modules/social_features/social_group/social_group.module:1510
 msgid "New Group"
 msgstr ""
 
@@ -7232,7 +7242,7 @@ msgstr ""
 msgid "Read more<span class=\"visually-hidden\"> about @title</span>"
 msgstr ""
 
-#: modules/social_features/social_group/social_group.module:1471
+#: modules/social_features/social_group/social_group.module:1495
 msgid "Reassign your groups to the super administrator."
 msgstr ""
 
@@ -7337,7 +7347,7 @@ msgstr ""
 msgid "Related object"
 msgstr ""
 
-#: modules/social_features/social_group/social_group.module:428;1556
+#: modules/social_features/social_group/social_group.module:428;1580
 msgid "Remove"
 msgstr ""
 
@@ -8346,11 +8356,11 @@ msgstr ""
 msgid "Social Like"
 msgstr ""
 
-#: modules/custom/social_auth_extra/social_auth_extra.module:392
+#: modules/custom/social_auth_extra/social_auth_extra.module:401
 msgid "Social Log In"
 msgstr ""
 
-#: modules/custom/social_auth_extra/social_auth_extra.module:282
+#: modules/custom/social_auth_extra/social_auth_extra.module:291
 msgid "Social Log in Connections"
 msgstr ""
 
@@ -8423,7 +8433,7 @@ msgstr ""
 msgid "Social Sharing"
 msgstr ""
 
-#: modules/custom/social_auth_extra/social_auth_extra.module:385
+#: modules/custom/social_auth_extra/social_auth_extra.module:394
 msgid "Social Sign Up"
 msgstr ""
 
@@ -8666,7 +8676,7 @@ msgid ""
 "atoms.html#kssref-atoms-button-style\">styleguide</a>."
 msgstr ""
 
-#: modules/custom/social_auth_extra/social_auth_extra.module:362
+#: modules/custom/social_auth_extra/social_auth_extra.module:371
 #: modules/social_features/social_event/modules/social_event_an_enroll/src/Form/EventAnEnrollSettingsForm.php:94
 #: modules/social_features/social_user/src/Plugin/Action/SocialSendEmail.php:169
 msgid "Subject"
@@ -8772,6 +8782,13 @@ msgstr ""
 
 #: modules/custom/dropdown/src/Plugin/Field/FieldType/Dropdown.php:38
 msgid "Text value"
+msgstr ""
+
+#: modules/custom/social_auth_extra/social_auth_extra.module:233
+msgid ""
+"Thank you for applying for an account. Your account is currently pending "
+"approval by the site administrator.<br />In the meantime, a welcome message "
+"with further instructions has been sent to your email address."
 msgstr ""
 
 #: modules/social_features/social_comment/social_comment.tokens.inc:35
@@ -9279,7 +9296,7 @@ msgstr ""
 msgid "This message was deleted together with the user’s account."
 msgstr ""
 
-#: modules/custom/social_auth_extra/social_auth_extra.module:354
+#: modules/custom/social_auth_extra/social_auth_extra.module:363
 msgid ""
 "This message will be sent to users when users will be registered with a "
 "social network account."
@@ -9552,7 +9569,7 @@ msgstr ""
 msgid "Uninstalled %module_name module."
 msgstr ""
 
-#: modules/custom/social_auth_extra/social_auth_extra.module:304
+#: modules/custom/social_auth_extra/social_auth_extra.module:313
 #: modules/custom/social_auth_extra/src/Form/AuthUnlinkForm.php:28
 msgid "Unlink"
 msgstr ""
@@ -9821,7 +9838,7 @@ msgstr ""
 #: modules/custom/social_font/social_font.links.task.yml:0
 #: modules/social_features/social_comment/src/Form/SocialCommentAdminOverview.php:209
 #: modules/social_features/social_event/social_event.links.task.yml:0
-#: modules/social_features/social_group/social_group.module:1557
+#: modules/social_features/social_group/social_group.module:1581
 #: modules/social_features/social_post/social_post.links.task.yml:0
 msgid "View"
 msgstr ""
@@ -9883,7 +9900,7 @@ msgstr ""
 msgid "View my events"
 msgstr ""
 
-#: modules/social_features/social_group/social_group.module:1539
+#: modules/social_features/social_group/social_group.module:1563
 msgid "View my groups"
 msgstr ""
 
@@ -10008,7 +10025,7 @@ msgstr ""
 msgid "Weekly"
 msgstr ""
 
-#: modules/custom/social_auth_extra/social_auth_extra.module:353
+#: modules/custom/social_auth_extra/social_auth_extra.module:362
 msgid "Welcome (registration with social network)"
 msgstr ""
 
@@ -10276,7 +10293,7 @@ msgstr ""
 msgid "Your account is blocked. Contact the site administrator."
 msgstr ""
 
-#: modules/custom/social_auth_extra/social_auth_extra.module:230
+#: modules/custom/social_auth_extra/social_auth_extra.module:238
 msgid ""
 "Your account is created. We have sent an email with your account details. "
 "You can now start exploring @community_name."
