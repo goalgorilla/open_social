@@ -22,3 +22,11 @@ function social_devel_help($route_name, RouteMatchInterface $route_match) {
     default:
   }
 }
+
+/**
+ * Implements hook_default_route_group_tabs_alter().
+ */
+function social_devel_default_route_group_tabs_alter(&$tabs) {
+  // Unset the 'Devel' option as default group tab.
+  unset($tabs['devel.entities:group.devel_tab']);
+}

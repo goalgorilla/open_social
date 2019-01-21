@@ -1550,3 +1550,11 @@ function social_group_social_user_account_header_account_links(array $context) {
     ])->toRenderArray(),
   ];
 }
+
+/**
+ * Implements hook_default_route_group_tabs_alter().
+ */
+function social_group_default_route_group_tabs_alter(&$tabs) {
+  // Unset some tabs created by group.
+  unset($tabs['group.view'], $tabs['group.edit_form'], $tabs['group.content']);
+}
