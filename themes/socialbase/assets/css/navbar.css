@@ -330,6 +330,8 @@
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
+    -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
   }
   .search-take-over .form-text {
     font-size: 1.625em;
@@ -342,6 +344,9 @@
     border-bottom: 2px solid;
     font-weight: 500;
     max-width: none;
+    -webkit-box-flex: 1;
+        -ms-flex: 1 1 80%;
+            flex: 1 1 80%;
   }
   .search-take-over .form-submit {
     width: 60px;
@@ -357,6 +362,13 @@
     font-size: 0;
     text-indent: -9999px;
     cursor: pointer;
+    -webkit-box-flex: 0;
+        -ms-flex: 0 0 60px;
+            flex: 0 0 60px;
+  }
+  .search-take-over .social-search-suggestions {
+    -ms-flex-preferred-size: 100%;
+        flex-basis: 100%;
   }
   .btn--close-search-take-over {
     background-color: transparent;
