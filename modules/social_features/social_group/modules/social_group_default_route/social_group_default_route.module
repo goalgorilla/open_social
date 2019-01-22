@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * Default route for groups.
@@ -23,7 +24,6 @@ function social_group_default_route_form_alter(&$form, FormStateInterface $form_
   // Fetch the tabs.
   $group_tabs = _social_group_default_route_group_tabs();
 
-
   // Check if this group type is supported.
   if (in_array($form_id, $forms, TRUE)) {
 
@@ -43,7 +43,7 @@ function social_group_default_route_form_alter(&$form, FormStateInterface $form_
     ];
 
     // Load the other tabs.
-    foreach($group_tabs as $group_tab) {
+    foreach ($group_tabs as $group_tab) {
       $route = $group_tab->getRouteName();
       /** @var \Drupal\Core\Menu\LocalTaskDefault $group_tab */
       $options[$route] = $group_tab->getTitle();
@@ -85,10 +85,10 @@ function social_group_default_route_entity_base_field_info(EntityTypeInterface $
       ->setDescription(t('The route (tab) a member lands on when going to a group.'))
       ->setRequired(FALSE)
       ->setTranslatable(FALSE)
-      ->setSettings(array(
+      ->setSettings([
         'default_value' => '',
         'max_length' => 255,
-      ));
+      ]);
 
     // Add a default_route field.
     $fields['default_route_an'] = BaseFieldDefinition::create('string')
@@ -96,10 +96,10 @@ function social_group_default_route_entity_base_field_info(EntityTypeInterface $
       ->setDescription(t('The route (tab) a non-member lands on when going to a group.'))
       ->setRequired(FALSE)
       ->setTranslatable(FALSE)
-      ->setSettings(array(
+      ->setSettings([
         'default_value' => '',
         'max_length' => 255,
-      ));
+      ]);
   }
 
   return $fields;
