@@ -6,68 +6,51 @@ import React from "react";
 import ReactDOM from "react-dom";
 import SearchSuggestions from "./components/SearchSuggestions";
 
-/**
- *
- * @param {string} text
- *   The text that suggestions should be fetched for.
- * @param {Function} callback
- *   The callback function that takes a search string and an array of suggestions.
- */
-function fetchSuggestions(text, callback) {
-  const suggestions = [
-    {
-      type: "Topic",
-      label: "What is Open Social?",
-      url: "http://social.localhost/node/1"
-    },
-    {
-      type: "Member",
-      label: "Ben Florez",
-      url: "http://social.localhost/user/2"
-    },
-    {
-      type: "Topic",
-      label: "Welcome to the platform!",
-      url: "http://social.localhost/node/1"
-    },
-    {
-      type: "Event",
-      label: "Celebrate Open Social's pre-birthday",
-      url: "http://social.localhost/node/1",
-      tags: ["You are enrolled"]
-    },
-    {
-      type: "Discussion",
-      label: "This should be good!",
-      url: "http://social.localhost/node/1"
-    },
-    {
-      type: "Topic",
-      label: "This platform will grow big",
-      url: "http://social.localhost/node/1"
-    },
-    {
-      type: "Event",
-      label: "Celebrate Open Social's 3rd birthday",
-      url: "http://social.localhost/node/1"
-    }
-  ];
-
-  if (!text.length) {
-    callback(text, []);
-  } else {
-    setTimeout(() => {
-      callback(
-        text,
-        suggestions.filter(
-          v => v.label.toLowerCase().indexOf(text.toLowerCase()) !== -1
-        )
-      );
-    }, 500);
-  }
-}
-
 (($, Drupal) => {
+  /**
+   * Returns a function that can be used to fetch suggestions from the given url.
+   *
+   * @param {string} baseUrl
+   *   The base url for the Drupal website, ending in /.
+   * @param {string} apiUrl
+   *   The url to use for fetching suggestions.
+   * @return {Function}
+   *   The function to call with search text and callbacks.
+   */
+  function createSuggestionFetcher(baseUrl, apiUrl) {
+    /**
+     *
+     * @param {string} text
+     *   The text that suggestions should be fetched for.
+     * @param {Function} callback
+     *   The callback function that takes a search string and an array of suggestions.
+     */
+    return (text, callback) => {
+      if (!text.length) {
+        callback(text, []);
+      } else {
+        $.ajax({
+          url: `${apiUrl}/${encodeURIComponent(text)}`,
+          method: "GET",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/hal+json"
+          },
+          success(data) {
+            // Convert the content paths to absolute paths.
+            const suggestions = data.map(s => ({
+              type: s.type,
+              label: s.label,
+              url: baseUrl + s.path
+            }));
+
+            callback(text, suggestions);
+          }
+        });
+      }
+    };
+  }
+
   /**
    * Returns a function to overwrite the previously scheduled callback.
    *
@@ -120,6 +103,11 @@ function fetchSuggestions(text, callback) {
     return $searchField.first();
   }
 
+  // window.location.origin is not supported in IE so we use this instead.
+  const wlOrigin = `${window.location.protocol}//${window.location.hostname}${
+    window.location.port ? `:${window.location.port}` : ""
+  }`;
+
   /**
    * Initialises the React rendering for the search suggestions.
    *
@@ -139,6 +127,11 @@ function fetchSuggestions(text, callback) {
       if (!$searchSuggests.length) {
         return;
       }
+
+      const fetchSuggestions = createSuggestionFetcher(
+        wlOrigin + settings.socialSearchAutocomplete.basePath,
+        settings.socialSearchAutocomplete.searchApiUrl
+      );
 
       $searchSuggests.each((index, element) => {
         // Resolve the search field for this suggestions box.

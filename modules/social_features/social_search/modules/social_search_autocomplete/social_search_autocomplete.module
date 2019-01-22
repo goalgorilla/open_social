@@ -20,6 +20,10 @@ function social_search_autocomplete_form_search_content_form_alter(&$form, FormS
       $form['search_input_content']['#id'] = Html::getUniqueId('search_input_content');
     }
 
+    $search_api_url = Url::fromRoute('view.search_all_autocomplete.rest_export_1', ['keys' => '%keys'])->toString();
+    // Replace our escaped argument so it's not bothering our script.
+    $search_api_url = str_replace('/%25keys', '', $search_api_url);
+
     $form['search_suggestions'] = [
       '#type' => 'html_tag',
       '#tag' => 'div',
@@ -32,7 +36,11 @@ function social_search_autocomplete_form_search_content_form_alter(&$form, FormS
         'library' => ['social_search_autocomplete/search_autocomplete'],
         'drupalSettings' => [
           'socialSearchAutocomplete' => [
+            // Use fromUserInput here because an installation in a subfolder may
+            // return '/subfolder/' instead of '/'.
+            'basePath' => Url::fromUserInput('/')->toString(),
             'searchPath' => Url::fromRoute('view.search_all.page_no_value')->toString(),
+            'searchApiUrl' => $search_api_url,
           ],
         ],
       ],
