@@ -20,5 +20,10 @@ module.exports = {
   },
   resolve: {
     extensions: ['.wasm', '.mjs', '.js', '.json', '.jsx'],
+  },
+  externals: {
+    // We load React and React DOM through the social_react module.
+    "react": "React",
+    "react-dom": "ReactDOM",
   }
 };
