@@ -66,7 +66,7 @@ function Suggestion(props) {
   }
 
   return (
-    <a className="search-suggestion" href={url}>
+    <a className="search-suggestion" href={url} tabIndex="0">
       <div className="search-suggestion__type">{type}</div>
       <div className="search-suggestion__body">
         <div className="search-suggestion__label">{highlightedLabel}</div>

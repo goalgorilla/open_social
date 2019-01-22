@@ -67,8 +67,7 @@ function fetchSuggestions(text, callback) {
   }
 }
 
-// eslint-ignore-next-line
-(function($, Drupal) {
+(($, Drupal) => {
   /**
    * Returns a function to overwrite the previously scheduled callback.
    *
@@ -160,14 +159,82 @@ function fetchSuggestions(text, callback) {
           );
         };
 
+        // Store the input value to detect actual changes.
+        let lastValue = null;
+
+        // Store the form group for this searchField. This is used to find the
+        // search results for keyboard navigation.
+        const $formGroup = $searchField.parent();
+
         $searchField.on("keyup", e => {
           const searchText = e.target.value;
 
-          // On keyup, wait a moment before fetching new suggestions so we
-          // don't fetch on each keystroke.
-          scheduleUpdate(() => {
-            fetchSuggestions(searchText, rerender);
-          }, 200);
+          if (searchText !== lastValue) {
+            // When there is a change, wait a short moment for more changes.
+            scheduleUpdate(() => {
+              fetchSuggestions(searchText, rerender);
+            }, 200);
+
+            lastValue = searchText;
+          }
+
+          // Handle up arrow for keyboard navigation.
+          if (e.keyCode === 38) {
+            // Focus the last available search suggestion, if any.
+            $formGroup
+              .find(".search-suggestions .search-suggestion")
+              .get(-1)
+              .focus();
+          }
+          // Handle down arrow for keyboard navigation.
+          else if (e.keyCode === 40) {
+            $formGroup
+              .find(".search-suggestions .search-suggestion")
+              .get(0)
+              .focus();
+          }
+        });
+
+        // Implement keyboard navigation. This could possible be better handled
+        // within React itself but then we'd also want to control the search
+        // input element so we're leaving that for a later date.
+        $formGroup.find(".social-search-suggestions").on("keyup", e => {
+          // Handle up arrow for keyboard navigation.
+          if (e.keyCode === 38) {
+            let $target = $(e.target).prev();
+
+            // Move to the search index if we go beyond the top result.
+            if (!$target.length) {
+              if (
+                $(e.target)
+                  .parent()
+                  .is(".search-suggestions__all")
+              ) {
+                $target = $(".search-suggestions .search-suggestion").last();
+              } else {
+                $target = $searchField;
+              }
+            }
+
+            $target.focus();
+          } else if (e.keyCode === 40) {
+            let $target = $(e.target).next();
+
+            // Wrap around to all search results button or search field.
+            if (!$target.length) {
+              if (
+                $(e.target)
+                  .parent()
+                  .is(".search-suggestions__all")
+              ) {
+                $target = $searchField;
+              } else {
+                $target = $(".search-suggestions__all a").first();
+              }
+            }
+
+            $target.focus();
+          }
         });
 
         // Render our suggestions for the first time.
