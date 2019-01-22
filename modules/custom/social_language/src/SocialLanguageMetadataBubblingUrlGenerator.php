@@ -46,7 +46,7 @@ class SocialLanguageMetadataBubblingUrlGenerator extends MetadataBubblingUrlGene
       $language = $this->languageManager->getCurrentLanguage();
 
       if ($options['language']->getId() != $language->getId()) {
-        $reset_language = TRUE;
+        $reset_language = FALSE;
         $unmodified_pages = [
           'content_translation_overview',
         ];
@@ -56,7 +56,7 @@ class SocialLanguageMetadataBubblingUrlGenerator extends MetadataBubblingUrlGene
         $route_parts = explode('.', $current_route);
         foreach ($unmodified_pages as $page) {
           if (in_array($page, $route_parts)) {
-            $reset_language = FALSE;
+            $reset_language = TRUE;
             break;
           }
         }
