@@ -38,7 +38,7 @@ class DeleteGroup {
   /**
    * Callback when the batch for group and content deletion is done.
    */
-  public function deleteGroupAndContentFinishedCallback($success, $results, $operations) {
+  public static function deleteGroupAndContentFinishedCallback($success, $results, $operations) {
     // The 'success' parameter means no fatal PHP errors were detected. All
     // other error management should be handled using 'results'.
     if ($success) {

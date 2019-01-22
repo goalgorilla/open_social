@@ -7,16 +7,22 @@ Feature: See newest topics in the community
   Scenario: Successfully show my upcoming events as a LU
 #    TODO: Test visibility settings (Public, Community)
 
-    Given I am on the homepage
+    Given "topic_types" terms:
+      | name          |
+      | Blog          |
+      | News          |
+      | Discussion    |
+
+    Given I am on "/stream"
     Then I should not see "Behat Topic 1"
     And I should not see "Behat Topic 2"
 
-    Given topic content:
+    Given "topic" content:
       | title         | field_topic_type | status | field_content_visibility |
       | Behat Topic 1 | Blog             | 1      | public                   |
       | Behat Topic 2 | News             | 1      | public                   |
 
-    Given I am on the homepage
+    Given I am on "/stream"
 
     Then I should see "All topics"
     And I should see "Behat Topic 1"
@@ -28,6 +34,7 @@ Feature: See newest topics in the community
     And I should see "All topics"
 
     Given I am logged in as an "authenticated user"
+    And I am on "/stream"
     Then I should see "Behat Topic 1"
     And I should see "Behat Topic 2"
 

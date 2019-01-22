@@ -47,7 +47,7 @@ function activity_creator_tokens($type, $tokens, array $data, array $options, Bu
 
           // Get the targeted user, and his display name.
           if ($name === 'field_activity_recipient_user_display_name') {
-            if (isset($message->field_message_related_object)) {
+            if (isset($message->field_message_related_object) && !empty($message->field_message_related_object->target_type)) {
               $target_type = $message->field_message_related_object->target_type;
               $target_id = $message->field_message_related_object->target_id;
               $entity = \Drupal::entityTypeManager()

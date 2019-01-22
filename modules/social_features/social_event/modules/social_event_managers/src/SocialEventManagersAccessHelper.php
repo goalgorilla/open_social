@@ -24,7 +24,7 @@ class SocialEventManagersAccessHelper {
           $event_managers = $node->get('field_event_managers')->getValue();
 
           foreach ($event_managers as $event_manager) {
-            if ($account->id() == $event_manager['target_id']) {
+            if (isset($event_manager['target_id']) && $account->id() == $event_manager['target_id']) {
               return 2;
             }
           }
@@ -41,7 +41,7 @@ class SocialEventManagersAccessHelper {
    * Gets the Entity access for the given node.
    */
   public static function getEntityAccessResult(NodeInterface $node, $op, AccountInterface $account) {
-    $access = SocialEventManagersAccessHelper::nodeAccessCheck($node, $op, $account);
+    $access = self::nodeAccessCheck($node, $op, $account);
 
     switch ($access) {
       case 2:

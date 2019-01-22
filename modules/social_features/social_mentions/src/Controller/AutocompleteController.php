@@ -84,7 +84,8 @@ class AutocompleteController extends ControllerBase {
     $name = $request->get('term');
     $config = $this->configFactory->get('mentions.settings');
     $suggestion_format = $config->get('suggestions_format');
-    $result = $this->getUserIdsFromName($name, 8, $suggestion_format);
+    $suggestion_amount = $config->get('suggestions_amount');
+    $result = $this->getUserIdsFromName($name, $suggestion_amount, $suggestion_format);
     $response = [];
     $accounts = User::loadMultiple($result);
     $storage = $this->entityTypeManager->getStorage('profile');
