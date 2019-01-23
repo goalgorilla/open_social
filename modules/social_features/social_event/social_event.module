@@ -429,13 +429,17 @@ function social_event_date_after_build($form, &$form_state) {
  */
 function social_event_date_validate(&$element, FormStateInterface $form_state, &$complete_form) {
   $input = NestedArray::getValue($form_state->getValues(), $element['#parents']);
+  $form_input = $form_state->getUserInput();
+
   // Skip default validation for required time when date is required.
-  if (!empty($input['date']) && (empty($input['time']))) {
+  if (!empty($input['date']) && (empty($input['time']) || !empty($form_input['event_all_day']))) {
     $input['time'] = '00:01:00';
     $storage_format = DrupalDateTime::FORMAT;
     $datetime = trim($input['date'] . ' ' . $input['time']);
     $storage_timezone = new DateTimeZone(DateTimeItemInterface::STORAGE_TIMEZONE);
-    $input['object'] = DrupalDateTime::createFromFormat($storage_format, $datetime, $storage_timezone);
+    $system_timezone = date_default_timezone_get();
+    $zone = !empty($system_timezone) ? new DateTimeZone($system_timezone) : $storage_timezone;
+    $input['object'] = DrupalDateTime::createFromFormat($storage_format, $datetime, $zone);
     if ($input['object'] instanceof DrupalDateTime) {
       $form_state->setValueForElement($element, $input);
     }
@@ -463,13 +467,17 @@ function social_event_date_all_day_checkbox(&$element, FormStateInterface $form_
     ],
   ];
   $element['time']['#states'] = [
-    'disabled' => $state,
     'invisible' => $state,
   ];
-
+  $form_input = $form_state->getUserInput();
   $date = $element['#value']['object'];
-  if ($date instanceof DrupalDateTime && social_event_date_is_all_day($date)) {
-    $element['time']['#value'] = '';
+
+  if (!empty($form_input['op']) && isset($form_input['event_all_day'])) {
+    $element['time']['#value'] = '00:01:00';
+    $element['event_all_day']['#value'] = (bool) $form_input['event_all_day'];
+  }
+  elseif ($date instanceof DrupalDateTime && social_event_date_is_all_day($date)) {
+    $element['time']['#value'] = '00:01:00';
     $element['event_all_day']['#value'] = TRUE;
   }
 }
@@ -478,7 +486,8 @@ function social_event_date_all_day_checkbox(&$element, FormStateInterface $form_
  * Check if event date is all day.
  */
 function social_event_date_is_all_day(DrupalDateTime $date) {
-  return $date->format('H:i', ['timezone' => DateTimeItemInterface::STORAGE_TIMEZONE]) == '00:01';
+  $zone = !empty($date->getTimezone()) ? $date->getTimezone()->getName() : DateTimeItemInterface::STORAGE_TIMEZONE;
+  return $date->format('H:i', ['timezone' => $zone]) == '00:01';
 }
 
 /**
