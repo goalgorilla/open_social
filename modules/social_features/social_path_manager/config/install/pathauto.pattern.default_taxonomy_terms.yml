@@ -1,0 +1,25 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - ctools
+    - taxonomy
+id: default_taxonomy_terms
+label: 'default taxonomy terms'
+type: 'canonical_entities:taxonomy_term'
+pattern: '[term:vocabulary]/[term:name]'
+selection_criteria:
+  e39e20d3-4804-43e0-b6d1-df07dc15181f:
+    id: 'entity_bundle:taxonomy_term'
+    bundles:
+      expertise: expertise
+      interests: interests
+      profile_tag: profile_tag
+      topic_types: topic_types
+    negate: false
+    context_mapping:
+      taxonomy_term: taxonomy_term
+    uuid: e39e20d3-4804-43e0-b6d1-df07dc15181f
+selection_logic: and
+weight: -5
+relationships: {  }

@@ -1,0 +1,24 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - ctools
+    - group
+id: default_group_types
+label: 'default group types'
+type: 'canonical_entities:group'
+pattern: 'group/[group:title]'
+selection_criteria:
+  b3e2769d-f75c-46f6-b232-744797199525:
+    id: 'entity_bundle:group'
+    bundles:
+      closed_group: closed_group
+      open_group: open_group
+      public_group: public_group
+    negate: false
+    context_mapping:
+      group: group
+    uuid: b3e2769d-f75c-46f6-b232-744797199525
+selection_logic: and
+weight: -5
+relationships: {  }
