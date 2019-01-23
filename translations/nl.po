@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: node-gettext\n"
-"POT-Creation-Date: 2019-01-21 22:10+0000\n"
+"POT-Creation-Date: 2019-01-23 22:10+0000\n"
 "PO-Revision-Date: 2019-01-21 16:43+0000\n"
 "Last-Translator: Bram ten Hove <bram.ten.hove@goalgorilla.com>\n"
 "Language-Team: Dutch <https://translate.getopensocial.com/projects/open-"
@@ -99,6 +99,7 @@ msgstr ""
 #: modules/social_features/social_landing_page/config/install/views.view.featured_profile_reference.yml:0
 #: modules/social_features/social_like/config/install/views.view.who_liked_this_entity.yml:0
 #: modules/social_features/social_post/config/install/views.view.recipient_group_reference.yml:0
+#: modules/social_features/social_private_message/config/install/views.view.inbox.yml:0
 #: modules/social_features/social_profile/config/install/views.view.newest_users.yml:0;0
 #: modules/social_features/social_search/config/install/views.view.search_all.yml:0
 #: modules/social_features/social_search/config/install/views.view.search_content.yml:0
@@ -1398,6 +1399,7 @@ msgstr "Aggregeer activiteit"
 #: modules/social_features/social_group/config/install/views.view.group_topics.yml:0
 #: modules/social_features/social_group/config/install/views.view.groups.yml:0
 #: modules/social_features/social_like/config/install/views.view.who_liked_this_entity.yml:0;0
+#: modules/social_features/social_private_message/config/install/views.view.inbox.yml:0
 #: modules/social_features/social_profile/config/install/views.view.user_information.yml:0
 #: modules/social_features/social_search/config/install/views.view.search_all.yml:0
 #: modules/social_features/social_search/config/install/views.view.search_content.yml:0
@@ -1703,6 +1705,7 @@ msgstr ""
 #: modules/social_features/social_landing_page/config/install/views.view.featured_profile_reference.yml:0
 #: modules/social_features/social_like/config/install/views.view.who_liked_this_entity.yml:0
 #: modules/social_features/social_post/config/install/views.view.recipient_group_reference.yml:0
+#: modules/social_features/social_private_message/config/install/views.view.inbox.yml:0
 #: modules/social_features/social_profile/config/install/views.view.newest_users.yml:0
 #: modules/social_features/social_profile/config/install/views.view.user_information.yml:0
 #: modules/social_features/social_search/config/install/views.view.search_all.yml:0
@@ -1783,6 +1786,7 @@ msgstr[1] ""
 #: modules/social_features/social_landing_page/config/install/views.view.featured_profile_reference.yml:0
 #: modules/social_features/social_like/config/install/views.view.who_liked_this_entity.yml:0
 #: modules/social_features/social_post/config/install/views.view.recipient_group_reference.yml:0
+#: modules/social_features/social_private_message/config/install/views.view.inbox.yml:0
 #: modules/social_features/social_profile/config/install/views.view.newest_users.yml:0
 #: modules/social_features/social_profile/config/install/views.view.user_information.yml:0
 #: modules/social_features/social_search/config/install/views.view.search_all.yml:0
@@ -2188,10 +2192,12 @@ msgstr ""
 
 #: modules/social_features/social_activity/social_activity.install:46
 #: modules/social_features/social_post/social_post.module:133;143;153
+#: modules/social_features/social_post/config/install/field.storage.post.field_visibility.yml:0;0
 msgid "Community"
 msgstr "Community"
 
 #: modules/custom/entity_access_by_field/src/Form/EntityVisibilityForm.php:51
+#: modules/social_features/social_event/config/install/field.storage.node.field_content_visibility.yml:0
 msgid "Community - visible only to logged in members"
 msgstr "Community - alleen zichtbaar voor ingelogde leden"
 
@@ -3004,6 +3010,7 @@ msgstr ""
 #: modules/social_features/social_landing_page/config/install/views.view.featured_profile_reference.yml:0
 #: modules/social_features/social_like/config/install/views.view.who_liked_this_entity.yml:0
 #: modules/social_features/social_post/config/install/views.view.recipient_group_reference.yml:0
+#: modules/social_features/social_private_message/config/install/views.view.inbox.yml:0
 #: modules/social_features/social_profile/config/install/views.view.newest_users.yml:0
 #: modules/social_features/social_profile/config/install/views.view.user_information.yml:0
 #: modules/social_features/social_search/config/install/views.view.search_all.yml:0
@@ -3691,6 +3698,7 @@ msgid "Event time"
 msgstr "Evenement tijd"
 
 #: modules/custom/social_demo/src/Plugin/DemoContent/EventType.php:8
+#: modules/social_features/social_event/modules/social_event_type/config/install/field.field.node.event.field_event_type.yml:0
 msgid "Event type"
 msgstr "Evenement type"
 
@@ -3698,6 +3706,11 @@ msgstr "Evenement type"
 #: modules/social_features/social_event/modules/social_event_type/social_event_type.routing.yml:0
 msgid "Event type settings"
 msgstr "Evenementtype instellingen"
+
+#: modules/social_features/social_event/modules/social_event_type/config/install/taxonomy.vocabulary.event_types.yml:0;0
+#, fuzzy
+msgid "Event types"
+msgstr "Evenement type"
 
 #: modules/social_features/social_event/modules/social_event_type/src/Form/SocialEventTypeSettings.php:39
 msgid "Event types required"
@@ -4284,8 +4297,14 @@ msgid "Group managers"
 msgstr "Groepsmanagers"
 
 #: modules/social_features/social_post/social_post.module:148
+#: modules/social_features/social_post/config/install/field.storage.post.field_visibility.yml:0
 msgid "Group members"
 msgstr "Leden"
+
+#: modules/social_features/social_event/config/install/field.storage.node.field_content_visibility.yml:0
+#, fuzzy
+msgid "Group members - visible only to group members"
+msgstr "Community - alleen zichtbaar voor ingelogde leden"
 
 #: modules/social_features/social_user_export/src/Plugin/UserExportPlugin/UserAnalyticsGroupMemberships.php:86;13
 #, fuzzy
@@ -4491,6 +4510,7 @@ msgstr ""
 
 #: modules/social_features/social_private_message/social_private_message.module:471;474;513;1
 #: modules/social_features/social_private_message/social_private_message.routing.yml:0
+#: modules/social_features/social_private_message/config/install/views.view.inbox.yml:0;0
 msgid "Inbox"
 msgstr "Postvak IN"
 
@@ -4602,6 +4622,7 @@ msgstr ""
 #: modules/social_features/social_landing_page/config/install/views.view.featured_profile_reference.yml:0
 #: modules/social_features/social_like/config/install/views.view.who_liked_this_entity.yml:0
 #: modules/social_features/social_post/config/install/views.view.recipient_group_reference.yml:0
+#: modules/social_features/social_private_message/config/install/views.view.inbox.yml:0
 #: modules/social_features/social_profile/config/install/views.view.newest_users.yml:0;0
 #: modules/social_features/social_search/config/install/views.view.search_all.yml:0
 #: modules/social_features/social_search/config/install/views.view.search_content.yml:0
@@ -4700,6 +4721,7 @@ msgstr "Laatste pagina"
 #: modules/social_features/social_follow_content/config/install/views.view.following.yml:0
 #: modules/social_features/social_group/config/install/views.view.group_manage_members.yml:0
 #: modules/social_features/social_group/config/install/views.view.newest_groups.yml:0
+#: modules/social_features/social_private_message/config/install/views.view.inbox.yml:0
 #: modules/social_features/social_profile/config/install/views.view.newest_users.yml:0
 #: modules/social_features/social_search/config/install/views.view.search_all.yml:0
 #: modules/social_features/social_search/config/install/views.view.search_content.yml:0
@@ -4961,6 +4983,7 @@ msgstr ""
 #: modules/social_features/social_landing_page/config/install/views.view.featured_profile_reference.yml:0
 #: modules/social_features/social_like/config/install/views.view.who_liked_this_entity.yml:0
 #: modules/social_features/social_post/config/install/views.view.recipient_group_reference.yml:0
+#: modules/social_features/social_private_message/config/install/views.view.inbox.yml:0
 #: modules/social_features/social_profile/config/install/views.view.newest_users.yml:0
 #: modules/social_features/social_profile/config/install/views.view.user_information.yml:0
 #: modules/social_features/social_search/config/install/views.view.search_all.yml:0
@@ -5327,6 +5350,7 @@ msgid "Next ›"
 msgstr "Volgende ›"
 
 #: modules/social_features/social_profile/modules/social_profile_fields/src/Plugin/UserExportPlugin/UserNickName.php:23;8
+#: modules/social_features/social_profile/modules/social_profile_fields/config/install/field.field.profile.profile.field_profile_nick_name.yml:0
 msgid "Nickname"
 msgstr "Nickname"
 
@@ -5529,6 +5553,7 @@ msgstr ""
 #: modules/social_features/social_landing_page/config/install/views.view.featured_profile_reference.yml:0
 #: modules/social_features/social_like/config/install/views.view.who_liked_this_entity.yml:0
 #: modules/social_features/social_post/config/install/views.view.recipient_group_reference.yml:0
+#: modules/social_features/social_private_message/config/install/views.view.inbox.yml:0
 #: modules/social_features/social_profile/config/install/views.view.newest_users.yml:0;0
 #: modules/social_features/social_search/config/install/views.view.search_all.yml:0
 #: modules/social_features/social_search/config/install/views.view.search_content.yml:0
@@ -5756,6 +5781,7 @@ msgstr "Eigenaaractiviteiten-context"
 #: modules/social_features/social_group/config/install/views.view.group_manage_members.yml:0
 #: modules/social_features/social_group/config/install/views.view.group_members.yml:0
 #: modules/social_features/social_group/config/install/views.view.group_topics.yml:0
+#: modules/social_features/social_private_message/config/install/views.view.inbox.yml:0
 #: modules/social_features/social_profile/config/install/views.view.user_information.yml:0
 #: modules/social_features/social_search/config/install/views.view.search_all.yml:0
 #: modules/social_features/social_search/config/install/views.view.search_content.yml:0
@@ -5851,6 +5877,11 @@ msgstr "Telefoonnummer"
 msgid "Phone number"
 msgstr "Telefoonnummer"
 
+#: modules/social_features/social_post/modules/social_post_photo/config/install/social_post.post_type.photo.yml:0
+#, fuzzy
+msgid "Photo"
+msgstr "foto"
+
 #: modules/social_features/social_tagging/social_tagging.module:62
 msgid "Placement"
 msgstr "Plaatsing"
@@ -5873,8 +5904,9 @@ msgid "Please @log_in so that you can enroll to the event."
 msgstr "@log_in om u aan te melden voor dit evenement."
 
 #: modules/social_features/social_group/social_group.module:551
+#, fuzzy
 msgid ""
-"Please note that changing the group type will also change the \n"
+"Please note that changing the group type will also change the\n"
 "  visibility of the group content and the way users can join the group."
 msgstr ""
 "Let op dat het veranderen van het type groep ook de zichtbaarheid\n"
@@ -6051,11 +6083,22 @@ msgstr ""
 msgid "Privacy settings on display of @form_name"
 msgstr "Privacy instellingen zichtbaar op @form_name"
 
+#: modules/social_features/social_private_message/config/install/views.view.inbox.yml:0
+#, fuzzy
+msgid "Private Message"
+msgstr "Privébericht"
+
+#: modules/social_features/social_private_message/config/install/views.view.inbox.yml:0
+#, fuzzy
+msgid "Private Message Thread Delete Time"
+msgstr "Privébericht gespreks url"
+
 #: modules/custom/activity_logger/activity_logger.tokens.inc:39
 msgid "Private Message Thread url"
 msgstr "Privébericht gespreks url"
 
 #: modules/social_features/social_private_message/src/Plugin/Block/PmAddBlock.php:11
+#: modules/social_features/social_private_message/config/install/block.block.pm_add_block.yml:0
 #: modules/social_features/social_private_message/config/optional/block.block.socialblue_pm_add_block.yml:0
 msgid "Private Message add block"
 msgstr ""
@@ -6318,10 +6361,12 @@ msgid "Provides user profiles."
 msgstr ""
 
 #: modules/social_features/social_post/social_post.module:138
+#: modules/social_features/social_post/config/install/field.storage.post.field_visibility.yml:0
 msgid "Public"
 msgstr "Openbaar"
 
 #: modules/custom/entity_access_by_field/src/Form/EntityVisibilityForm.php:50
+#: modules/social_features/social_event/config/install/field.storage.node.field_content_visibility.yml:0
 msgid "Public - visible to everyone including people who are not a member"
 msgstr ""
 "Openbaar - zichtbaar voor iedereen, inclusief personen die geen lid zijn"
@@ -6583,6 +6628,7 @@ msgstr "Reageer op reactie"
 #: modules/social_features/social_landing_page/config/install/views.view.featured_profile_reference.yml:0
 #: modules/social_features/social_like/config/install/views.view.who_liked_this_entity.yml:0
 #: modules/social_features/social_post/config/install/views.view.recipient_group_reference.yml:0
+#: modules/social_features/social_private_message/config/install/views.view.inbox.yml:0
 #: modules/social_features/social_profile/config/install/views.view.newest_users.yml:0
 #: modules/social_features/social_profile/config/install/views.view.user_information.yml:0
 #: modules/social_features/social_search/config/install/views.view.search_all.yml:0
@@ -7763,6 +7809,7 @@ msgstr "Oplopend sorteren"
 #: modules/social_features/social_landing_page/config/install/views.view.featured_profile_reference.yml:0
 #: modules/social_features/social_like/config/install/views.view.who_liked_this_entity.yml:0
 #: modules/social_features/social_post/config/install/views.view.recipient_group_reference.yml:0
+#: modules/social_features/social_private_message/config/install/views.view.inbox.yml:0
 #: modules/social_features/social_profile/config/install/views.view.newest_users.yml:0
 #: modules/social_features/social_profile/config/install/views.view.user_information.yml:0
 #: modules/social_features/social_search/config/install/views.view.search_all.yml:0
@@ -9199,6 +9246,19 @@ msgstr "Zichtbaarheid van @count content item(s) bijgewerkt."
 msgid "Visibility settings"
 msgstr "Zichtbaarheidsinstellingen"
 
+#: modules/social_features/social_post/config/install/field.storage.post.field_visibility.yml:0
+#, fuzzy
+msgid "Visible only to group members"
+msgstr "E-mail versturen aan groepsladen"
+
+#: modules/social_features/social_post/config/install/field.storage.post.field_visibility.yml:0;0
+msgid "Visible only to members who are logged in"
+msgstr ""
+
+#: modules/social_features/social_post/config/install/field.storage.post.field_visibility.yml:0
+msgid "Visible to all visitors of the site"
+msgstr ""
+
 #: modules/social_features/social_like/src/Plugin/ActivityContext/VoteActivityContext.php:8
 msgid "Vote activity context"
 msgstr ""
@@ -9396,6 +9456,12 @@ msgstr ""
 
 #: modules/social_features/social_activity/config/install/views.view.activity_stream_notifications.yml:0
 msgid "You do not have any notifications."
+msgstr ""
+
+#: modules/social_features/social_private_message/config/install/views.view.inbox.yml:0
+msgid ""
+"You do not have any private messages yet. Click on the button on the right "
+"to start a new message."
 msgstr ""
 
 #: modules/social_features/social_group/modules/social_group_quickjoin/src/Controller/SocialQuickJoinController.php:105
@@ -9956,6 +10022,11 @@ msgstr ""
 msgid "sort_flag_created"
 msgstr ""
 
+#: modules/social_features/social_private_message/config/install/views.view.inbox.yml:0
+#, fuzzy
+msgid "sort_updated"
+msgstr "Bijgewerkt"
+
 #: modules/custom/template_suggestions_extra/template_suggestions_extra.info.yml:0
 msgid "template_suggestions_extra"
 msgstr ""
@@ -10011,6 +10082,7 @@ msgstr ""
 #: modules/social_features/social_follow_content/config/install/views.view.following.yml:0
 #: modules/social_features/social_group/config/install/views.view.group_manage_members.yml:0
 #: modules/social_features/social_group/config/install/views.view.newest_groups.yml:0
+#: modules/social_features/social_private_message/config/install/views.view.inbox.yml:0
 #: modules/social_features/social_profile/config/install/views.view.newest_users.yml:0
 #: modules/social_features/social_search/config/install/views.view.search_all.yml:0
 #: modules/social_features/social_search/config/install/views.view.search_content.yml:0
@@ -10053,6 +10125,7 @@ msgstr ""
 #: modules/social_features/social_landing_page/config/install/views.view.featured_group_reference.yml:0
 #: modules/social_features/social_landing_page/config/install/views.view.featured_profile_reference.yml:0
 #: modules/social_features/social_post/config/install/views.view.recipient_group_reference.yml:0
+#: modules/social_features/social_private_message/config/install/views.view.inbox.yml:0
 #: modules/social_features/social_profile/config/install/views.view.newest_users.yml:0;0
 #: modules/social_features/social_search/config/install/views.view.search_groups.yml:0
 #: modules/social_features/social_search/config/install/views.view.search_users.yml:0
@@ -10075,6 +10148,7 @@ msgstr ""
 #: modules/social_features/social_landing_page/config/install/views.view.featured_group_reference.yml:0
 #: modules/social_features/social_landing_page/config/install/views.view.featured_profile_reference.yml:0
 #: modules/social_features/social_post/config/install/views.view.recipient_group_reference.yml:0
+#: modules/social_features/social_private_message/config/install/views.view.inbox.yml:0
 #: modules/social_features/social_profile/config/install/views.view.newest_users.yml:0;0
 #: modules/social_features/social_search/config/install/views.view.search_groups.yml:0
 #: modules/social_features/social_search/config/install/views.view.search_users.yml:0
