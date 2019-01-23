@@ -1,0 +1,158 @@
+<?php
+
+/**
+ * @file
+ * Default route for groups.
+ */
+
+use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\Field\BaseFieldDefinition;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\group\Entity\GroupType;
+
+/**
+ * Implements hook_form_alter().
+ */
+function social_group_default_route_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+
+  $forms = [];
+  foreach (_social_group_default_route_group_types() as $type) {
+    $forms[] = 'group_' . $type . '_edit_form';
+    $forms[] = 'group_' . $type . '_add_form';
+  }
+
+  // Fetch the tabs.
+  $group_tabs = _social_group_default_route_group_tabs();
+
+  // Check if this group type is supported.
+  if (in_array($form_id, $forms, TRUE)) {
+
+    // Get the form entity.
+    /** @var \Drupal\group\Entity\Group $group */
+    $group = $form_state->getFormObject()->getEntity();
+
+    // Add a (hidden) card for the tabs.
+    $form['tab_settings'] = [
+      '#type' => 'fieldset',
+      '#title' => t('Tab Management'),
+    ];
+
+    // Define options for default route.
+    $options = [
+      '' => t('- Default -'),
+    ];
+
+    // Load the other tabs.
+    foreach ($group_tabs as $group_tab) {
+      $route = $group_tab->getRouteName();
+      /** @var \Drupal\Core\Menu\LocalTaskDefault $group_tab */
+      $options[$route] = $group_tab->getTitle();
+    }
+
+    $default_route = $group ? $group->getFieldValue('default_route', 'value') : '';
+    $default_route_an = $group ? $group->getFieldValue('default_route_an', 'value') : '';
+
+    // The default route field.
+    $form['tab_settings']['default_route'] = [
+      '#type' => 'select',
+      '#title' => t('Group members landing tab'),
+      '#default_value' => $default_route,
+      '#options' => $options,
+    ];
+
+    // The default route field.
+    $form['tab_settings']['default_route_an'] = [
+      '#type' => 'select',
+      '#title' => t('Non members landing tab'),
+      '#default_value' => $default_route_an,
+      '#options' => $options,
+    ];
+  }
+}
+
+/**
+ * Implements hook_entity_base_field_info().
+ */
+function social_group_default_route_entity_base_field_info(EntityTypeInterface $entity_type) {
+  $fields = [];
+
+  // Check if we're dealing with the group entity.
+  if ($entity_type->id() === 'group') {
+
+    // Add a default_route field.
+    $fields['default_route'] = BaseFieldDefinition::create('string')
+      ->setLabel(t('Landing tab for members'))
+      ->setDescription(t('The route (tab) a member lands on when going to a group.'))
+      ->setRequired(FALSE)
+      ->setTranslatable(FALSE)
+      ->setSettings([
+        'default_value' => '',
+        'max_length' => 255,
+      ]);
+
+    // Add a default_route field.
+    $fields['default_route_an'] = BaseFieldDefinition::create('string')
+      ->setLabel(t('Landing tab for non-members'))
+      ->setDescription(t('The route (tab) a non-member lands on when going to a group.'))
+      ->setRequired(FALSE)
+      ->setTranslatable(FALSE)
+      ->setSettings([
+        'default_value' => '',
+        'max_length' => 255,
+      ]);
+  }
+
+  return $fields;
+}
+
+/**
+ * Fetch all available group types.
+ *
+ * @return array
+ *   The group types.
+ */
+function _social_group_default_route_group_types() {
+  $types = &drupal_static(__FUNCTION__);
+
+  if (!isset($types)) {
+    $types = [];
+    /** @var \Drupal\group\Entity\GroupType $group_type */
+    foreach (GroupType::loadMultiple() as $group_type) {
+      // Add to the array.
+      $types[] = $group_type->id();
+    }
+    // Allow other modules to change the group types.
+    \Drupal::moduleHandler()->alter('social_group_default_route_types', $types);
+  }
+
+  return $types;
+}
+
+/**
+ * Fetch all available group tabs.
+ *
+ * @return array
+ *   The group tabs.
+ */
+function _social_group_default_route_group_tabs() {
+  $tabs = &drupal_static(__FUNCTION__);
+
+  if (!isset($tabs)) {
+    /** @var \Drupal\Core\Menu\LocalTaskManager $taskManager */
+    $taskManager = Drupal::service('plugin.manager.menu.local_task');
+    $tabs = [];
+
+    $group_tabs = $taskManager->getLocalTasksForRoute('entity.group.canonical');
+    $group_tabs = $group_tabs[0];
+
+    // Loop over the available tabs on a group.
+    foreach ($group_tabs as $route => $localtask) {
+      // Add to the array.
+      $tabs[$route] = $localtask;
+    }
+    // Allow other modules to change the group types.
+    \Drupal::moduleHandler()->alter('social_group_default_route_tabs', $tabs);
+  }
+
+  return $tabs;
+}
