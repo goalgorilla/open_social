@@ -94,4 +94,4 @@ projects[votingapi][type] = module
 projects[votingapi][version] = 3.0-beta1
 projects[bootstrap][type] = theme
 projects[bootstrap][version] = 3.15
-projects[bootstrap][] = "https://www.drupal.org/files/issues/2018-12-19/dropdown-without-default-button-3021413-2.patch"
+projects[bootstrap][patch][] = "https://www.drupal.org/files/issues/2018-12-19/dropdown-without-default-button-3021413-2.patch"
