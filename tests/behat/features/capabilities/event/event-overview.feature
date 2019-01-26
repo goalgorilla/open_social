@@ -13,7 +13,7 @@ Feature: Overview
     When I am logged in as "User One"
     And I am on "/user"
     And I click "Events"
-    And I should see "FILTER" in the "Sidebar second"
+    And I should see "Filter" in the "Sidebar second"
     And I should see "Upcoming events"
     And I should see "Events that have started or are finished"
     And I should see text matching "Publish status"
@@ -21,7 +21,7 @@ Feature: Overview
     # Scenario: Successfully see the topic overview of another user
     Given I am on the profile of "User Two"
     When I click "Events"
-    Then I should see "FILTER" in the "Sidebar second"
+    Then I should see "Filter" in the "Sidebar second"
     And I should not see text matching "Publish status"
 
     #@TODO make a scenario for filters to work.
