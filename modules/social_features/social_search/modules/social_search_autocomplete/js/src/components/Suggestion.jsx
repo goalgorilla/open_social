@@ -83,11 +83,11 @@ Suggestion.propTypes = {
   type: PropTypes.string.isRequired,
   label: PropTypes.string.isRequired,
   url: PropTypes.string.isRequired,
-  tags: PropTypes.arrayOf(PropTypes.string)
+  tags: PropTypes.arrayOf(PropTypes.string),
 };
 
 Suggestion.defaultProps = {
-  tags: []
+  tags: [],
 };
 
 export default Suggestion;

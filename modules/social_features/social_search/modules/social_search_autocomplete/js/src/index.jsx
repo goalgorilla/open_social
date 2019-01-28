@@ -34,18 +34,18 @@ import SearchSuggestions from "./components/SearchSuggestions";
           method: "GET",
           headers: {
             Accept: "application/json",
-            "Content-Type": "application/hal+json"
+            "Content-Type": "application/hal+json",
           },
           success(data) {
             // Convert the content paths to absolute paths.
             const suggestions = data.map(s => ({
               type: s.type,
               label: s.label,
-              url: baseUrl + s.path
+              url: baseUrl + s.path,
             }));
 
             callback(text, suggestions);
-          }
+          },
         });
       }
     };
@@ -233,6 +233,6 @@ import SearchSuggestions from "./components/SearchSuggestions";
         // Render our suggestions for the first time.
         rerender("", []);
       });
-    }
+    },
   };
 })(jQuery, Drupal);

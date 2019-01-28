@@ -38,14 +38,14 @@ SearchSuggestions.propTypes = {
       type: PropTypes.string.isRequired,
       label: PropTypes.string.isRequired,
       url: PropTypes.string.isRequired,
-      tags: PropTypes.arrayOf(PropTypes.string)
+      tags: PropTypes.arrayOf(PropTypes.string),
     })
-  )
+  ),
 };
 
 SearchSuggestions.defaultProps = {
   query: "",
-  suggestions: []
+  suggestions: [],
 };
 
 export default SearchSuggestions;

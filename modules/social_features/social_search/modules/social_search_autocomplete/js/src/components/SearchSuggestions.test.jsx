@@ -7,19 +7,19 @@ describe("SearchSuggestions", () => {
     {
       type: "Topic",
       label: "Open Social is great for customisable communities",
-      url: "http://example.com/node/1"
+      url: "http://example.com/node/1",
     },
     {
       type: "Event",
       label: "Open Social launching party",
       url: "http://example.com/node/2",
-      tags: ["You are enrolled to this event"]
+      tags: ["You are enrolled to this event"],
     },
     {
       type: "Event",
       label: "GoalGorilla anniversary",
-      url: "http://example.com/node/3"
-    }
+      url: "http://example.com/node/3",
+    },
   ];
 
   it("renders nothing when no query is provided", () => {
