@@ -1,0 +1,25 @@
+uuid: 4f33d4b0-0a57-45ef-8591-4b44ea7a223f
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.flagging.report_post.field_report_reason
+    - flag.flag.report_post
+  module:
+    - text
+_core:
+  default_config_hash: AGI7wYMG__DpECzqNSk0XAbNczh8gOuEBaLd3cOMO8s
+id: flagging.report_post.default
+targetEntityType: flagging
+bundle: report_post
+mode: default
+content:
+  field_report_reason:
+    weight: 0
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+    type: text_textarea
+    region: content
+hidden: {  }

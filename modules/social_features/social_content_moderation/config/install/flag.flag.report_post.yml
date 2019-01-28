@@ -1,0 +1,38 @@
+uuid: c0123f9c-1a54-49ae-88bf-432710ec95b1
+langcode: en
+status: true
+dependencies:
+  module:
+    - social_post
+id: report_post
+label: 'Report inappropriate post'
+bundles: {  }
+entity_type: post
+global: false
+weight: 0
+flag_short: 'Report as inappropriate'
+flag_long: ''
+flag_message: 'Your report is submitted.'
+unflag_short: 'Remove report'
+unflag_long: ''
+unflag_message: 'Your report is removed.'
+unflag_denied_text: Reported
+flag_type: 'entity:post'
+link_type: field_entry
+flagTypeConfig:
+  show_in_links:
+    activity: activity
+    activity_comment: activity_comment
+  show_as_field: true
+  show_on_form: false
+  show_contextual_link: false
+  extra_permissions:
+    owner: '0'
+linkTypeConfig:
+  flag_confirmation: 'Report as inappropriate'
+  unflag_confirmation: 'Remove report'
+  flag_create_button: Report
+  flag_delete_button: 'Remove report'
+  form_behavior: modal
+  edit_flagging: 'Edit report details'
+  flag_update_button: 'Update report'
