@@ -5,6 +5,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import SearchSuggestions from "./components/SearchSuggestions";
+import Spinner from './components/Spinner';
 
 (($, Drupal) => {
   /**
@@ -165,6 +166,8 @@ import SearchSuggestions from "./components/SearchSuggestions";
           if (searchText !== lastValue) {
             // When there is a change, wait a short moment for more changes.
             scheduleUpdate(() => {
+              // Render our spinner. It will get overwritten by our results.
+              ReactDOM.render(<Spinner />, element);
               fetchSuggestions(searchText, rerender);
             }, 200);
 
