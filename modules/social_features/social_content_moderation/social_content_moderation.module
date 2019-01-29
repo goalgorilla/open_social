@@ -1,0 +1,23 @@
+<?php
+
+/**
+ * @file
+ * The Social event module.
+ */
+
+use Drupal\Core\Form\FormStateInterface;
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function social_content_moderation_form_flagging_report_post_add_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  if (!empty($form) && 'flagging_report_post_add_form' === $form_id) {
+    $form['field_other_reason'] = [
+      '#states' => [
+        'visible' => [
+          ':input[name="field_reason"]' => ['value' => 'taxonomy_term-7'],
+        ],
+      ],
+    ];
+  }
+}
