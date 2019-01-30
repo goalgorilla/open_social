@@ -35,6 +35,14 @@ function social_content_moderation_form_alter(&$form, FormStateInterface $form_s
   }
 }
 
+/**
+ * Gets all the 'report_' flag types.
+ *
+ * This makes it more flexible so when new flags are
+ * added, it automatically gets them as well.
+ *
+ * @return array
+ */
 function getFlagTypes() {
   $all_flags = \Drupal\flag\Entity\Flag::loadMultiple();
   $report_flags = [];
@@ -56,7 +64,7 @@ function getFlagTypes() {
  * and then finds if we have an term called 'Other'. We then return
  * this term id.
  *
- * @return null
+ * @return null|string
  */
 function getOtherReason() {
   $reason_tid = NULL;
