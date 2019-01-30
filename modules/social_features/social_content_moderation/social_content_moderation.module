@@ -10,14 +10,29 @@ use Drupal\Core\Form\FormStateInterface;
 /**
  * Implements hook_form_FORM_ID_alter().
  */
-function social_content_moderation_form_flagging_report_post_add_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-  if (!empty($form) && 'flagging_report_post_add_form' === $form_id) {
-    $form['field_other_reason'] = [
-      '#states' => [
-        'visible' => [
-          ':input[name="field_reason"]' => ['value' => 'taxonomy_term-7'],
-        ],
+function social_content_moderation_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  // All the form_id's we should act on.
+  // TODO: get the content type to make this more dynamic?
+  // e.g. 'flagging_report_' . $contentType . 'add_form';
+  // This way it should be more flexible with future/custom
+  // content types.
+  $report_forms = [
+    'flagging_report_post_add_form',
+    'flagging_report_content_add_form',
+    'flagging_report_comment_add_form',
+  ];
+
+  if (!empty($form) && in_array($form_id, $report_forms, FALSE)) {
+    // Hide the 'Other' reason input until the 'Other'
+    // radio option has been selected.
+    $form['field_other_reason']['#states'] = [
+      'visible' => [
+        ':input[name="field_reason"]' => ['value' => 'taxonomy_term-7'],
       ],
     ];
+  }
+
+  if ($form) {
+    $x = TRUE;
   }
 }
