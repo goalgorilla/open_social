@@ -449,7 +449,7 @@
 
       MentionsCKEditor.prototype.getValue = function() {
         var container, j, len, markup, mention, ref, reg;
-        container = CKEDITOR.instances[this.element.attr("id")].getData();
+        container = this.editor.getData();
         ref = this.cache.mentions;
         for (j = 0, len = ref.length; j < len; j++) {
           mention = ref[j];
