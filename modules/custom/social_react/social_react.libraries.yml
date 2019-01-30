@@ -6,11 +6,8 @@ react:
     url: https://github.com/facebook/react/blob/master/LICENSE
     gpl-compatible: true
   js:
-    https://unpkg.com/react@16.7/umd/react.production.min.js:
-      type: external
+    /libraries/react/umd/react.production.min.js:
       minified: true
-      attributes:
-        crossorigin: {}
 
 react_dom:
   remote: https://github.com/facebook/react
@@ -20,8 +17,7 @@ react_dom:
     url: https://github.com/facebook/react/blob/master/LICENSE
     gpl-compatible: true
   js:
-    https://unpkg.com/react-dom@16.7/umd/react-dom.production.min.js:
-      type: external
+    /libraries/react-dom/umd/react-dom.production.min.js:
       minified: true
-      attributes:
-        crossorigin: {}
+  dependencies:
+    - social_react/react
