@@ -24,11 +24,13 @@ function escapeRegExp(string) {
  *   An array to make up the string that will properly be interpreted by React.
  */
 function highlightText(highlight, target) {
-  const loweredHighlight = highlight.toLowerCase();
+  // Convert the highlight string to a RegExp value that is properly escaped and
+  // can be used to match all words.
+  const highlightWords = escapeRegExp(highlight.trim()).replace(/\s/, '|');
 
   // Create a capturing regular expression for splitting. This ensures that when
   // we iterate we don't lose the search string.
-  const search = new RegExp(`(${escapeRegExp(highlight)})`, "gi");
+  const search = new RegExp(`(${highlightWords})`, "gi");
   const parts = target.split(search);
 
   // Assemble the string again, highlighting our search term.
@@ -36,7 +38,7 @@ function highlightText(highlight, target) {
 
   // eslint-disable-next-line
   for (const i in parts) {
-    if (parts[i].toLowerCase() === loweredHighlight) {
+    if (search.test(parts[i])) {
       text.push(<b key={i}>{parts[i]}</b>);
     } else {
       text.push(parts[i]);
