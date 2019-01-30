@@ -19,6 +19,8 @@ import Spinner from './components/Spinner';
    *   The function to call with search text and callbacks.
    */
   function createSuggestionFetcher(baseUrl, apiUrl) {
+    let previousRequest = null;
+
     /**
      *
      * @param {string} text
@@ -27,12 +29,21 @@ import Spinner from './components/Spinner';
      *   The callback function that takes a search string and an array of suggestions.
      */
     return (text, callback) => {
+      // If there was a previous, uncompleted request then we abort it so we
+      // prevent the flashing of changing search results. Any finished request
+      // can be ignored as it has already been processed.
+      if (previousRequest !== null) {
+        if (previousRequest.readyState !== 4) {
+          previousRequest.abort();
+        }
+        previousRequest = null;
+      }
+
       if (!text.length) {
         callback(text, []);
       } else {
-        $.ajax({
+        previousRequest = $.get({
           url: `${apiUrl}/${encodeURIComponent(text)}`,
-          method: "GET",
           headers: {
             Accept: "application/json",
             "Content-Type": "application/hal+json",
