@@ -23,16 +23,51 @@ function social_content_moderation_form_alter(&$form, FormStateInterface $form_s
   ];
 
   if (!empty($form) && in_array($form_id, $report_forms, FALSE)) {
-    // Hide the 'Other' reason input until the 'Other'
-    // radio option has been selected.
-    $form['field_other_reason']['#states'] = [
-      'visible' => [
-        ':input[name="field_reason"]' => ['value' => 'taxonomy_term-7'],
-      ],
-    ];
+    // Get the term id.
+    $tid = getOtherReason();
+    // Only show the other reason input field if 'Other' is selected.
+    if (NULL !== $tid) {
+      $form['field_other_reason']['#states'] = [
+        'visible' => [
+          ':input[name="field_reason"]' => ['value' => 'taxonomy_term-' . $tid],
+        ],
+      ];
+    }
+  }
+}
+
+/**
+ * Get the 'Other' reason.
+ *
+ * This loads all the terms from the vocabulary 'report_reasons'
+ * and then finds if we have an term called 'Other'. We then return
+ * this term id.
+ *
+ * @return null
+ */
+function getOtherReason() {
+  $reason_tid = NULL;
+  // Try to load the default taxonomy terms
+  // from the vocabulary 'report_reasons'.
+  try {
+    $taxonomy_terms = \Drupal::entityTypeManager()->getStorage('taxonomy_term');
+    /* @var \Drupal\taxonomy\TermStorage $taxonomy_terms */
+    $reasons = $taxonomy_terms->loadTree('report_reasons');
+  } catch (\Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException $e) {
+    // TODO: Handle exception.
+  } catch (\Drupal\Component\Plugin\Exception\PluginNotFoundException $e) {
+    // TODO: Handle exception.
   }
 
-  if ($form) {
-    $x = TRUE;
+  // Search for the 'Other' reason term and
+  // get the term id, which we use as key.
+  if (!empty($reasons)) {
+    foreach ($reasons as $reason) {
+      if (strtolower($reason->name) === 'other') {
+        $reason_tid = $reason->tid;
+      }
+    }
   }
+
+  return $reason_tid;
 }
