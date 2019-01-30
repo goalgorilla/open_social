@@ -23,7 +23,7 @@ function social_path_manager_form_alter(&$form, FormStateInterface $form_state, 
     $group_forms['add'][] = "group_{$social_group_type}_add_form";
   }
 
-  if (in_array($form_id, $group_forms['add']) || in_array($form_id, $group_forms['edit'])) {
+  if (in_array($form_id, $group_forms['add'], TRUE) || in_array($form_id, $group_forms['edit'], TRUE)) {
     $form['path']['#type'] = 'fieldset';
   }
 }
@@ -51,6 +51,13 @@ function social_path_manager_entity_insert(EntityInterface $entity) {
  */
 function social_path_manager_entity_update(EntityInterface $entity) {
   _social_path_manager_update_alias($entity, 'update');
+}
+
+/**
+ * Implements hook_entity_delete().
+ */
+function social_path_manager_entity_delete(EntityInterface $entity) {
+  _social_path_manager_update_alias($entity, 'delete');
 }
 
 /**
@@ -93,6 +100,7 @@ function _social_path_manager_group_tabs() {
 
     // Loop over the available tabs on a group.
     foreach ($group_tabs as $key => $localtask) {
+      /** @var \Drupal\Core\Url $localtask */
       $tabs[$key] = $localtask->getRouteName();
     }
     // Allow other modules to change the group tabs.
@@ -107,7 +115,7 @@ function _social_path_manager_group_tabs() {
 function social_path_manager_social_path_manager_group_tabs_alter(array &$tabs) {
   foreach ($tabs as $key => $route) {
     // Only allow tabs that are part of the group.
-    if ($key == 'social_group.stream' || strpos($key, 'social_group') === FALSE) {
+    if ($key === 'social_group.stream' || strpos($key, 'social_group') === FALSE) {
       unset($tabs[$key]);
     }
   }
@@ -130,10 +138,7 @@ function _social_path_manager_get_path_suffix($group_id, $route) {
   // Get the last part of the url.
   $url = explode('/', $url->getInternalPath());
 
-  // Add the route and url to the array.
-  $suffix = end($url);
-
-  return $suffix;
+  return end($url);
 }
 
 /**
@@ -146,22 +151,30 @@ function _social_path_manager_get_path_suffix($group_id, $route) {
  */
 function _social_path_manager_update_alias(EntityInterface $entity, $op) {
   if ($entity->getEntityTypeId() === 'group') {
-    // New alias.
-    $path = \Drupal::service('pathauto.generator')
-      ->updateEntityAlias($entity, 'update');
+    switch ($op) {
+      case 'update':
+      case 'insert':
+        // New alias.
+        $path = \Drupal::service('pathauto.generator')
+          ->updateEntityAlias($entity, 'update');
 
-    // Check if the alias changed.
-    // If yes, then change all the other views.
-    if (!empty($path)) {
-      foreach (_social_path_manager_group_tabs() as $route) {
-        $suffix = _social_path_manager_get_path_suffix($entity->id(), $route);
-        // Insert the alias for the other views.
-        \Drupal::service('path.alias_storage')
-          ->save('/group/' . $entity->id() . '/' . $suffix, $path['alias'] . '/' . $suffix, 'en');
-      }
-      /** @var \Drupal\Core\Cache\CacheTagsInvalidator $cti */
-      $cti = \Drupal::service('cache_tags.invalidator');
-      $cti->invalidateTags(['group:' . $entity->id()]);
+        // Check if the alias changed.
+        // If yes, then change all the other views.
+        if (!empty($path)) {
+          foreach (_social_path_manager_group_tabs() as $route) {
+            $suffix = _social_path_manager_get_path_suffix($entity->id(), $route);
+            // Insert the alias for the other views.
+            \Drupal::service('path.alias_storage')
+              ->save('/group/' . $entity->id() . '/' . $suffix, $path['alias'] . '/' . $suffix, 'en');
+          }
+          /** @var \Drupal\Core\Cache\CacheTagsInvalidator $cti */
+          $cti = \Drupal::service('cache_tags.invalidator');
+          $cti->invalidateTags(['group:' . $entity->id()]);
+        }
+        break;
+
+      case 'delete':
+        break;
     }
   }
 }
