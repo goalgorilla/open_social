@@ -5,6 +5,8 @@ namespace Drupal\social_content_report\EventSubscriber;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityStorageException;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Messenger\MessengerInterface;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Drupal\flag\Event\FlagEvents;
 use Drupal\flag\Event\FlaggingEvent;
@@ -13,6 +15,8 @@ use Drupal\flag\Event\FlaggingEvent;
  * Class FlagSubscriber.
  */
 class FlagSubscriber implements EventSubscriberInterface {
+
+  use StringTranslationTrait;
 
   /**
    * Whether to unpublish the entity immediately on reporting or not.
@@ -29,16 +33,26 @@ class FlagSubscriber implements EventSubscriberInterface {
   protected $entityTypeManager;
 
   /**
+   * The Messenger service.
+   *
+   * @var \Drupal\Core\Messenger\MessengerInterface
+   */
+  protected $messenger;
+
+  /**
    * Creates a DiffFormatter to render diffs in a table.
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The config factory.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity manager.
+   * @param \Drupal\Core\Messenger\MessengerInterface $messenger
+   *   The messenger service.
    */
-  public function __construct(ConfigFactoryInterface $config_factory, EntityTypeManagerInterface $entity_type_manager) {
+  public function __construct(ConfigFactoryInterface $config_factory, EntityTypeManagerInterface $entity_type_manager, MessengerInterface $messenger) {
     $this->unpublishImmediately = $config_factory->get('social_content_report.settings')->get('unpublish_immediately');
     $this->entityTypeManager = $entity_type_manager;
+    $this->messenger = $messenger;
   }
 
   /**
@@ -77,6 +91,9 @@ class FlagSubscriber implements EventSubscriberInterface {
         // @todo Log this exception.
       }
     }
+
+    // In any case log that the report was submitted.
+    $this->messenger->addMessage($this->t('Your report is submitted.'));
 
   }
 

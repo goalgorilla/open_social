@@ -5,6 +5,7 @@
  * The Social Content Report module file.
  */
 
+use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
@@ -12,7 +13,8 @@ use Drupal\Core\Form\FormStateInterface;
  */
 function social_content_report_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   // Get all 'report_' flags.
-  $report_types = getFlagTypes();
+  $report_types = \Drupal::service('social_content_report.content_report_service')->getReportFlagTypes();
+
   // Add each report type form.
   $report_forms = [];
   foreach ($report_types as $report_type) {
@@ -36,25 +38,20 @@ function social_content_report_form_alter(&$form, FormStateInterface $form_state
 }
 
 /**
- * Gets all the 'report_' flag types.
+ * Implements hook_entity_bundle_field_info_alter().
  *
- * This makes it more flexible so when new flags are
- * added, it automatically gets them as well.
- *
- * @return array
+ * Add our custom validation to ensure the reason text field is filled if the
+ * "Other" option was chosen.
  */
-function getFlagTypes() {
-  $all_flags = \Drupal\flag\Entity\Flag::loadMultiple();
-  $report_flags = [];
-  if (!empty($all_flags)) {
-    foreach ($all_flags as $flag) {
-      if (strpos($flag->id, 'report_') === 0) {
-        $report_flags[] = $flag->id;
-      }
-    }
+function social_content_report_entity_bundle_field_info_alter(&$fields, EntityTypeInterface $entity_type, $bundle) {
+  // Check if the field is present, we're looking at our report flagging
+  // entities and the reason is configured to be mandatory.
+  if (isset($fields['field_other_reason']) && $entity_type->id() === 'flagging'
+    && strpos($bundle, 'report_') === 0
+    && \Drupal::config('social_content_report.settings')->get('mandatory_reason')) {
+    // Add the constraint to the field.
+    $fields['field_other_reason']->addConstraint('ReasonNotEmpty', []);
   }
-
-  return $report_flags;
 }
 
 /**
