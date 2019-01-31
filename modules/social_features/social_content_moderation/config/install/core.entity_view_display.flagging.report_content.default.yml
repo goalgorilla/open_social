@@ -3,20 +3,31 @@ langcode: en
 status: true
 dependencies:
   config:
-    - field.field.flagging.report_content.field_report_reason
+    - field.field.flagging.report_content.field_other_reason
+    - field.field.flagging.report_content.field_reason
     - flag.flag.report_content
   module:
-    - text
+    - dynamic_entity_reference
+_core:
+  default_config_hash: PicU_u_ZvH7DUWIAjpYQPdH51JVPdXnf93ydorUv0zI
 id: flagging.report_content.default
 targetEntityType: flagging
 bundle: report_content
 mode: default
 content:
-  field_report_reason:
-    weight: 0
+  field_other_reason:
+    weight: 1
     label: above
     settings: {  }
     third_party_settings: {  }
-    type: text_default
+    type: basic_string
+    region: content
+  field_reason:
+    weight: 0
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    type: dynamic_entity_reference_label
     region: content
 hidden: {  }

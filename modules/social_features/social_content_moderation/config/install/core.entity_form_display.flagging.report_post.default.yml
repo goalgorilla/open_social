@@ -3,21 +3,30 @@ langcode: en
 status: true
 dependencies:
   config:
-    - field.field.flagging.report_post.field_report_reason
+    - field.field.flagging.report_post.field_other_reason
+    - field.field.flagging.report_post.field_reason
     - flag.flag.report_post
   module:
-    - text
+    - dynamic_entity_reference
+_core:
+  default_config_hash: AGI7wYMG__DpECzqNSk0XAbNczh8gOuEBaLd3cOMO8s
 id: flagging.report_post.default
 targetEntityType: flagging
 bundle: report_post
 mode: default
 content:
-  field_report_reason:
-    weight: 0
+  field_other_reason:
+    weight: 1
     settings:
       rows: 5
       placeholder: ''
     third_party_settings: {  }
-    type: text_textarea
+    type: string_textarea
+    region: content
+  field_reason:
+    weight: 0
+    settings: {  }
+    third_party_settings: {  }
+    type: dynamic_entity_reference_options_buttons
     region: content
 hidden: {  }
