@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\social_content_moderation\Form;
+namespace Drupal\social_content_report\Form;
 
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
@@ -8,16 +8,16 @@ use Drupal\Core\Form\FormStateInterface;
 /**
  * Class EventSettingsForm.
  *
- * @package Drupal\social_content_moderation\Form
+ * @package Drupal\social_content_report\Form
  */
-class ContentModerationSettingsForm extends ConfigFormBase {
+class ContentReportSettingsForm extends ConfigFormBase {
 
   /**
    * {@inheritdoc}
    */
   protected function getEditableConfigNames() {
     return [
-      'social_content_moderation.settings',
+      'social_content_report.settings',
     ];
   }
 
@@ -25,14 +25,14 @@ class ContentModerationSettingsForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function getFormId() {
-    return 'social_content_moderation_settings_form';
+    return 'social_content_report_settings_form';
   }
 
   /**
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    $config = $this->config('social_content_moderation.settings');
+    $config = $this->config('social_content_report.settings');
 
     // Make reason at reporting mandatory.
     $form['mandatory_reason'] = array(
@@ -59,7 +59,7 @@ class ContentModerationSettingsForm extends ConfigFormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     parent::submitForm($form, $form_state);
 
-    $this->configFactory->getEditable('social_content_moderation.settings')
+    $this->configFactory->getEditable('social_content_report.settings')
       ->set('mandatory_reason', $form_state->get('mandatory_reason'))
       ->set('unpublish_immediately', $form_state->get('unpublish_immediately'))
       ->save();

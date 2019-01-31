@@ -1,6 +1,0 @@
-services:
-  social_content_moderation.flag_subscriber:
-    class: Drupal\social_content_moderation\EventSubscriber\FlagSubscriber
-    arguments: ['@config.factory', '@entity_type.manager']
-    tags:
-      - { name: event_subscriber }

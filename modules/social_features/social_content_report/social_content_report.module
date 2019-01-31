@@ -2,7 +2,7 @@
 
 /**
  * @file
- * The Social Content Moderation module file.
+ * The Social Content Report module file.
  */
 
 use Drupal\Core\Form\FormStateInterface;
@@ -10,7 +10,7 @@ use Drupal\Core\Form\FormStateInterface;
 /**
  * Implements hook_form_alter().
  */
-function social_content_moderation_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+function social_content_report_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   // Get all 'report_' flags.
   $report_types = getFlagTypes();
   // Add each report type form.

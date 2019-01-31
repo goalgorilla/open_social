@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\social_content_moderation\EventSubscriber;
+namespace Drupal\social_content_report\EventSubscriber;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityStorageException;
@@ -37,7 +37,7 @@ class FlagSubscriber implements EventSubscriberInterface {
    *   The entity manager.
    */
   public function __construct(ConfigFactoryInterface $config_factory, EntityTypeManagerInterface $entity_type_manager) {
-    $this->unpublishImmediately = $config_factory->get('social_content_moderation.settings')->get('unpublish_immediately');
+    $this->unpublishImmediately = $config_factory->get('social_content_report.settings')->get('unpublish_immediately');
     $this->entityTypeManager = $entity_type_manager;
   }
 
