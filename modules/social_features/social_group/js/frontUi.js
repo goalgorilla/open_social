@@ -60,7 +60,12 @@
           var count = parseInt($placeholder.text());
           count += data.change;
 
-          $placeholder.html(Drupal.formatPlural(count, '<b>@count Member</b> is selected', '<b>@count Members</b> are selected'));
+          $placeholder.html(Drupal.formatPlural(
+            count,
+            '<b>@count Member</b> is selected',
+            '<b>@count Members</b> are selected',
+            { '@count': count }
+          ));
         }
       });
     }
