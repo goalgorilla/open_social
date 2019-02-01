@@ -2,12 +2,17 @@
 
 namespace Drupal\social_content_report;
 
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\Core\Url;
 use Drupal\flag\Entity\Flag;
 
 /**
  * Provides a content report service.
  */
 class ContentReportService {
+
+  use StringTranslationTrait;
 
   /**
    * Gets all the 'report_' flag types.
@@ -31,6 +36,33 @@ class ContentReportService {
     }
 
     return $report_flags;
+  }
+
+  /**
+   * Returns a modal link to the reporting form to use in a #links array.
+   *
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   The entity to create the report for.
+   * @param string $flag
+   *   The flag ID.
+   *
+   * @return array
+   *   A renderable array to be used in a #links array.
+   */
+  public function getModalLink(EntityInterface $entity, $flag) {
+    return [
+      'title' => $this->t('Report'),
+      'url' => Url::fromRoute('flag.field_entry',
+        [
+          'flag' => $flag,
+          'entity_id' => $entity->id(),
+        ],
+        ['query' => ['destination' => Url::fromRoute('<current>')->toString()]]),
+      'attributes' => [
+        'data-dialog-type' => 'modal',
+        'class' => ['use-ajax'],
+      ],
+    ];
   }
 
 }
