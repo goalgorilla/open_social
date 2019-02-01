@@ -5,7 +5,6 @@
  * The Social Content Report module file.
  */
 
-use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
@@ -22,70 +21,44 @@ function social_content_report_form_alter(&$form, FormStateInterface $form_state
     $report_forms[] = 'flagging_' . $report_type . '_edit_form';
   }
 
-  if (!empty($form) && in_array($form_id, $report_forms, FALSE)) {
-    // Get the term id.
-    $tid = getOtherReason();
-    // Only alter the form if we have a term id.
-    if (NULL !== $tid) {
-      // Only show the other reason input field if 'Other' is selected.
-      $form['field_other_reason']['#states'] = [
-        'visible' => [
-          ':input[name="field_reason"]' => ['value' => 'taxonomy_term-' . $tid],
-        ],
-      ];
-    }
-  }
-}
+  if (in_array($form_id, $report_forms, FALSE)) {
+    $terms = \Drupal::service('config.factory')->get('social_content_report.settings')
+      ->get('reasons_with_text');
 
-/**
- * Implements hook_entity_bundle_field_info_alter().
- *
- * Add our custom validation to ensure the reason text field is filled if the
- * "Other" option was chosen.
- */
-function social_content_report_entity_bundle_field_info_alter(&$fields, EntityTypeInterface $entity_type, $bundle) {
-  // Check if the field is present, we're looking at our report flagging
-  // entities and the reason is configured to be mandatory.
-  if (isset($fields['field_other_reason']) && $entity_type->id() === 'flagging'
-    && strpos($bundle, 'report_') === 0
-    && \Drupal::config('social_content_report.settings')->get('mandatory_reason')) {
-    // Add the constraint to the field.
-    $fields['field_other_reason']->addConstraint('ReasonNotEmpty', []);
-  }
-}
-
-/**
- * Get the 'Other' reason.
- *
- * This loads all the terms from the vocabulary 'report_reasons'
- * and then finds if we have an term called 'Other'. We then return
- * this term id.
- *
- * @return null|string
- */
-function getOtherReason() {
-  $reason_tid = NULL;
-  // Try to load the default taxonomy terms
-  // from the vocabulary 'report_reasons'.
-  try {
-    $taxonomy_terms = \Drupal::entityTypeManager()->getStorage('taxonomy_term');
-    /* @var \Drupal\taxonomy\TermStorage $taxonomy_terms */
-    $reasons = $taxonomy_terms->loadTree('report_reasons');
-  } catch (\Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException $e) {
-    // TODO: Handle exception.
-  } catch (\Drupal\Component\Plugin\Exception\PluginNotFoundException $e) {
-    // TODO: Handle exception.
-  }
-
-  // Search for the 'Other' reason term and
-  // get the term id, which we use as key.
-  if (!empty($reasons)) {
-    foreach ($reasons as $reason) {
-      if (strtolower($reason->name) === 'other') {
-        $reason_tid = $reason->tid;
+    foreach ($terms as $term_id => $enabled) {
+      if ($enabled) {
+        // Only show the reason input field if it is enabled for the reason.
+        $form['field_other_reason']['#states']['visible'][] = [
+          ':input[name="field_reason"]' => [
+            'value' => $term_id,
+          ],
+        ];
       }
     }
-  }
 
-  return $reason_tid;
+    // Add some validation if the reason field is mandatory.
+    if (\Drupal::config('social_content_report.settings')->get('mandatory_reason')) {
+      $form['#validate'][] = 'social_content_report_mandatory_reason_validate';
+    }
+  }
+}
+
+/**
+ * Validation so the reason description field has content when it is mandatory.
+ *
+ * @param array $form
+ *   The form.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   Form State with the submitted values.
+ */
+function social_content_report_mandatory_reason_validate(array $form, FormStateInterface $form_state) {
+  $terms = \Drupal::service('config.factory')->get('social_content_report.settings')
+    ->get('reasons_with_text');
+
+  foreach ($terms as $term_id => $enabled) {
+    if ($enabled && (int) $form_state->getValue('field_reason')[0]['target_id'] === $term_id
+    && empty($form_state->getValue('field_other_reason')[0]['value'])) {
+      $form_state->setErrorByName('field_other_reason', t('A description of your report is mandatory.'));
+    }
+  }
 }

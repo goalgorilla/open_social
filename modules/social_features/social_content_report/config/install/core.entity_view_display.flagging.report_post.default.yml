@@ -1,4 +1,4 @@
-uuid: 37fdaf87-b4ce-400a-ab9f-41bcf434555b
+uuid: 0500da4e-7580-4f78-a87b-bb1ce9f615a2
 langcode: en
 status: true
 dependencies:
@@ -6,28 +6,27 @@ dependencies:
     - field.field.flagging.report_post.field_other_reason
     - field.field.flagging.report_post.field_reason
     - flag.flag.report_post
-  module:
-    - dynamic_entity_reference
-_core:
-  default_config_hash: RnG1KX0ChyGS5CeleEEBf2yQYWHj05mgN_CIJnUNwlE
+  enforced:
+    module:
+      - social_content_report
 id: flagging.report_post.default
 targetEntityType: flagging
 bundle: report_post
 mode: default
 content:
   field_other_reason:
+    type: basic_string
     weight: 1
+    region: content
     label: above
     settings: {  }
     third_party_settings: {  }
-    type: basic_string
-    region: content
   field_reason:
     weight: 0
     label: above
     settings:
       link: true
     third_party_settings: {  }
-    type: dynamic_entity_reference_label
+    type: entity_reference_label
     region: content
 hidden: {  }

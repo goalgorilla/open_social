@@ -1,20 +1,20 @@
-uuid: 67226e11-35b9-498e-9d99-4a4eb4fdfcc8
+uuid: bbe4ae52-fe96-411f-8c52-34f9c60bb2cb
 langcode: en
 status: true
 dependencies:
   module:
-    - dynamic_entity_reference
     - flag
     - taxonomy
+  enforced:
+    module:
+      - social_content_report
 id: flagging.field_reason
 field_name: field_reason
 entity_type: flagging
-type: dynamic_entity_reference
+type: entity_reference
 settings:
-  exclude_entity_types: false
-  entity_type_ids:
-    taxonomy_term: taxonomy_term
-module: dynamic_entity_reference
+  target_type: taxonomy_term
+module: core
 locked: false
 cardinality: 1
 translatable: true

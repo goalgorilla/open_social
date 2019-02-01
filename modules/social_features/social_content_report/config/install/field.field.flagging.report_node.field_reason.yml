@@ -1,22 +1,22 @@
-uuid: 5c8eadb1-a8c1-4063-b8a5-30506f283cc6
+uuid: 8f0ec2ee-e7c5-41ef-a50e-8f9c5b7ccc7b
 langcode: en
 status: true
 dependencies:
   config:
     - field.storage.flagging.field_reason
-    - flag.flag.report_comment
+    - flag.flag.report_node
     - taxonomy.vocabulary.report_reasons
   enforced:
     module:
       - social_content_report
-id: flagging.report_comment.field_reason
+id: flagging.report_node.field_reason
 field_name: field_reason
 entity_type: flagging
-bundle: report_comment
+bundle: report_node
 label: Reason
 description: ''
 required: true
-translatable: false
+translatable: true
 default_value: {  }
 default_value_callback: ''
 settings:

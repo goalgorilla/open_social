@@ -4,14 +4,15 @@ status: false
 dependencies:
   config:
     - flag.flag.report_comment
-    - flag.flag.report_content
+    - flag.flag.report_node
     - flag.flag.report_post
     - system.menu.admin
+  enforced:
+    module:
+      - social_content_report
   module:
     - flag
     - user
-_core:
-  default_config_hash: mwgTW5C1svsTjqRbYnUigUdO_EW2DsS0B-tyR1hGQUA
 id: report_overview
 label: 'Report overview'
 module: views
@@ -262,7 +263,7 @@ display:
           operator: in
           value:
             report_comment: report_comment
-            report_content: report_content
+            report_node: report_node
             report_post: report_post
           group: 1
           exposed: false

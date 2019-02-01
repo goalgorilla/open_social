@@ -4,11 +4,14 @@ status: true
 dependencies:
   config:
     - field.storage.flagging.field_other_reason
-    - flag.flag.report_content
-id: flagging.report_content.field_other_reason
+    - flag.flag.report_node
+  enforced:
+    module:
+      - social_content_report
+id: flagging.report_node.field_other_reason
 field_name: field_other_reason
 entity_type: flagging
-bundle: report_content
+bundle: report_node
 label: 'Other Reason'
 description: 'Please describe in detail what you find inappropriate about this content. Your report will only be visible for the content moderation team.'
 required: false
