@@ -5,6 +5,7 @@ namespace Drupal\social_content_report\EventSubscriber;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityStorageException;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Logger\LoggerChannelTrait;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -16,7 +17,7 @@ use Drupal\flag\Event\FlaggingEvent;
  */
 class FlagSubscriber implements EventSubscriberInterface {
 
-  use StringTranslationTrait;
+  use StringTranslationTrait, LoggerChannelTrait;
 
   /**
    * Whether to unpublish the entity immediately on reporting or not.
@@ -88,7 +89,11 @@ class FlagSubscriber implements EventSubscriberInterface {
         $entity->save();
       }
       catch (EntityStorageException $exception) {
-        // @todo Log this exception.
+        $this->getLogger('social_content_report')
+          ->error(t('@entity_type @entity_id could not be unpublished after a user reported it.', [
+            '@entity_type' => $flagging->getFlaggable()->getEntityTypeId(),
+            '@entity_id' => $flagging->getFlaggable()->id(),
+          ]));
       }
     }
 

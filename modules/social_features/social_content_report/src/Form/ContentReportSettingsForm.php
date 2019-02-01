@@ -2,8 +2,11 @@
 
 namespace Drupal\social_content_report\Form;
 
+use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Class EventSettingsForm.
@@ -11,6 +14,36 @@ use Drupal\Core\Form\FormStateInterface;
  * @package Drupal\social_content_report\Form
  */
 class ContentReportSettingsForm extends ConfigFormBase {
+
+  /**
+   * Entity type manager.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  protected $entityTypeManager;
+
+  /**
+   * Class constructor.
+   *
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *   The config factory.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   Entity type manager.
+   */
+  public function __construct(ConfigFactoryInterface $config_factory, EntityTypeManagerInterface $entity_type_manager) {
+    parent::__construct($config_factory);
+    $this->entityTypeManager = $entity_type_manager;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('config.factory'),
+      $container->get('entity_type.manager')
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -43,8 +76,7 @@ class ContentReportSettingsForm extends ConfigFormBase {
     ];
 
     // A list of reason terms to display the reason textfield for.
-    // @todo Add dependency injection.
-    $terms = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadTree('report_reasons');
+    $terms = $this->entityTypeManager->getStorage('taxonomy_term')->loadTree('report_reasons');
     foreach ($terms as $term) {
       $reason_terms[$term->tid] = $term->name;
     }
