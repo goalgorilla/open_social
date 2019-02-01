@@ -49,7 +49,6 @@ Feature: Manage event enrollment
     And I am on "mybehatevent"
     And I click "Manage enrollments"
     Then I should see the text "1 Enrollees"
-    And I break
     And I should see the link "Enrollee"
     And I should see the link "Organization"
     And I should see the link "Enroll date"
