@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\social_group\Form;
+namespace Drupal\social_group_gvbo\Form;
 
 use Drupal\views_bulk_operations\Form\ConfirmAction;
 use Drupal\Core\Form\FormStateInterface;
