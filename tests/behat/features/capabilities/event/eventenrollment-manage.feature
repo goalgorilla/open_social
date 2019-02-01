@@ -18,24 +18,26 @@ Feature: Manage event enrollment
       | field_event_date_end     | +9 days        |
       | status                   | 1              |
       | field_content_visibility | community      |
+      | alias                    | /mybehatevent  |
     Then I should not see the link "Manage enrollments"
 
     When I enable the module "social_event_managers"
+      And I am on "mybehatevent"
     Then I should not see the link "Manage enrollments"
 
     When I am logged in as "event_organiser"
     And I wait for "3" seconds
-    And I click "My Behat Event"
+    And I am on "mybehatevent"
     Then I should not see the link "Manage enrollments"
 
     When I am logged in as "event_creator"
-    And I click "My Behat Event"
+    And I am on "mybehatevent"
     And I click "Edit content"
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text."
     And I fill in "Event organisers" with "event" and select "event_organiser"
     And I press "Save"
     And I am logged in as "event_organiser"
-    And I click "My Behat Event"
+    And I am on "mybehatevent"
     Then I should see the link "Manage enrollments"
 
     When I click "Manage enrollments"
@@ -43,10 +45,10 @@ Feature: Manage event enrollment
     And I should see the text "No one has enrolled for this event"
 
     When I am logged in as "event_enrollee"
-    And I click "My Behat Event"
+    And I am on "mybehatevent"
     And I press "Enroll"
     And I am logged in as "event_organiser"
-    And I click "My Behat Event"
+    And I am on "mybehatevent"
     And I click "Manage enrollments"
     Then I should see the text "1 Enrollees"
     And I should see the text "no members are selected"
