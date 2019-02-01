@@ -6,6 +6,7 @@
 
 use Drupal\Core\Entity\EntityStorageException;
 use Drupal\taxonomy\Entity\Term;
+use Drupal\user\Entity\Role;
 
 /**
  * Implements hook_install().
@@ -46,4 +47,58 @@ function social_content_report_install() {
   \Drupal::service('config.factory')->getEditable('social_content_report.settings')
     ->set('reasons_with_text', $default_values)
     ->save();
+
+  // Set permissions.
+  _social_content_report_set_permissions();
+}
+
+/**
+ * Function to set permissions.
+ */
+function _social_content_report_set_permissions() {
+  $roles = Role::loadMultiple();
+
+  /** @var \Drupal\user\Entity\Role $role */
+  foreach ($roles as $role) {
+    if ($role->id() === 'administrator') {
+      continue;
+    }
+
+    $permissions = _social_content_report_get_permissions($role->id());
+    if (!empty($permissions)) {
+      user_role_grant_permissions($role->id(), $permissions);
+    }
+  }
+}
+
+/**
+ * Build permissions.
+ *
+ * @param string $role
+ *   The role.
+ *
+ * @return array
+ *   Returns an array containing the permissions.
+ */
+function _social_content_report_get_permissions($role) {
+  // Anonymous.
+  $permissions['anonymous'] = [];
+
+  // Authenticated.
+  $permissions['authenticated'] = array_merge($permissions['anonymous'], [
+    'flag report_comment',
+    'flag report_node',
+    'flag report_post',
+  ]);
+
+  // Content manager.
+  $permissions['contentmanager'] = array_merge($permissions['authenticated'], []);
+
+  // Site manager.
+  $permissions['sitemanager'] = array_merge($permissions['contentmanager'], []);
+
+  if (isset($permissions[$role])) {
+    return $permissions[$role];
+  }
+  return [];
 }
