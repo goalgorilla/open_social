@@ -7,22 +7,19 @@ Feature: Manage event enrollment
   @LU
   Scenario: Successfully manage enrollment
     Given users:
-      | name            | pass            | mail                        | status |
-      | event_creator   | event_creator   | event_creator@example.com   | 1      |
-      | event_organiser | event_organiser | event_organiser@example.com | 1      |
-      | event_enrollee  | event_enrollee  | event_enrollee@example.com  | 1      |
+      | name            | pass            | mail                        | status | roles        |
+      | event_creator   | event_creator   | event_creator@example.com   | 1      | sitemanager  |
+      | event_organiser | event_organiser | event_organiser@example.com | 1      |              |
+      | event_enrollee  | event_enrollee  | event_enrollee@example.com  | 1      |              |
     When I am logged in as "event_creator"
-    And I am viewing my event:
-      | title                    | My Behat Event |
-      | field_event_date         | +8 days        |
-      | field_event_date_end     | +9 days        |
-      | status                   | 1              |
-      | field_content_visibility | community      |
-      | alias                    | /mybehatevent  |
+    Given event content:
+      | title           | field_event_date | field_event_date_end | status | field_content_visibility | alias         |
+      | My Behat Event  | +8 days          | +9 days              | 1      | community                | /mybehatevent |
+    And I am on "mybehatevent"
     Then I should not see the link "Manage enrollments"
 
     When I enable the module "social_event_managers"
-      And I am on "mybehatevent"
+    And I am on "mybehatevent"
     Then I should not see the link "Manage enrollments"
 
     When I am logged in as "event_organiser"
@@ -36,6 +33,7 @@ Feature: Manage event enrollment
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text."
     And I fill in "Event organisers" with "event" and select "event_organiser"
     And I press "Save"
+    And I break
     And I am logged in as "event_organiser"
     And I am on "mybehatevent"
     Then I should see the link "Manage enrollments"
@@ -51,11 +49,9 @@ Feature: Manage event enrollment
     And I am on "mybehatevent"
     And I click "Manage enrollments"
     Then I should see the text "1 Enrollees"
-    And I should see the text "no members are selected"
-    And I should see the text "See selected members on other pages"
+    And I break
     And I should see the link "Enrollee"
     And I should see the link "Organization"
     And I should see the link "Enroll date"
-    And I should see the text "Operation"
     And I should see the text "Operation"
     And I should see the link "event_enrollee"
