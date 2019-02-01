@@ -33,7 +33,6 @@ Feature: Manage event enrollment
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text."
     And I fill in "Event organisers" with "event" and select "event_organiser"
     And I press "Save"
-    And I break
     And I am logged in as "event_organiser"
     And I am on "mybehatevent"
     Then I should see the link "Manage enrollments"
