@@ -9,6 +9,7 @@ use Drupal\Core\Render\RendererInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Url;
 use Drupal\social_event\Entity\EventEnrollment;
+use Drupal\node\NodeInterface;
 
 /**
  * Class SocialEventTypeSettings.
@@ -83,7 +84,7 @@ class SocialEventManagersAddEnrolleeForm extends FormBase {
         ]);
         $enrollment->save();
 
-        $count ++;
+        $count++;
       }
 
       // Add nice messages.
@@ -118,21 +119,21 @@ class SocialEventManagersAddEnrolleeForm extends FormBase {
   public function buildForm(array $form, FormStateInterface $form_state) {
     $form['#attributes']['class'][] = 'card card__block form--default form-wrapper form-group';
 
-    $form['name'] = array(
+    $form['name'] = [
       '#type' => 'social_enrollment_entity_autocomplete',
       '#target_type' => 'user',
       '#tags' => TRUE,
       '#description' => $this->t('To add multiple members, separate each member with a comma ( , ).'),
       '#title' => $this->t('Select members to add'),
-    );
+    ];
 
     if (empty($nid)) {
       $node = \Drupal::routeMatch()->getParameter('node');
-      if ($node instanceof \Drupal\node\NodeInterface) {
+      if ($node instanceof NodeInterface) {
         // You can get nid and anything else you need from the node object.
         $nid = $node->id();
       }
-      else if(!is_object($node)) {
+      elseif (!is_object($node)) {
         $nid = $node;
       }
     }

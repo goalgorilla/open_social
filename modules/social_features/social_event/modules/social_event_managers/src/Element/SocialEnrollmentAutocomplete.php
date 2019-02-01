@@ -6,7 +6,7 @@ use Drupal\Core\Entity\EntityReferenceSelection\SelectionWithAutocreateInterface
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\social_core\Entity\Element\EntityAutocomplete;
 use Drupal\Component\Utility\Tags;
-use Drupal\user\Entity\User;
+use Drupal\node\NodeInterface;
 
 /**
  * Provides an Enroll member autocomplete form element.
@@ -29,11 +29,11 @@ class SocialEnrollmentAutocomplete extends EntityAutocomplete {
 
     if (empty($nid)) {
       $node = \Drupal::routeMatch()->getParameter('node');
-      if ($node instanceof \Drupal\node\NodeInterface) {
+      if ($node instanceof NodeInterface) {
         // You can get nid and anything else you need from the node object.
         $nid = $node->id();
       }
-      else if(!is_object($node)) {
+      elseif (!is_object($node)) {
         $nid = $node;
       }
     }

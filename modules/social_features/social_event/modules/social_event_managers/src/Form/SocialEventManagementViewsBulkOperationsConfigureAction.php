@@ -16,4 +16,5 @@ class SocialEventManagementViewsBulkOperationsConfigureAction extends ConfigureA
   public function buildForm(array $form, FormStateInterface $form_state, $view_id = 'event_manage_enrollments', $display_id = 'page_manage_enrollments') {
     return parent::buildForm($form, $form_state, 'event_manage_enrollments', 'page_manage_enrollments');
   }
+
 }

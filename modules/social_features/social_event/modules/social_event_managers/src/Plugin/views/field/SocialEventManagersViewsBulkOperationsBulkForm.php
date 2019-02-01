@@ -15,6 +15,7 @@ use Drupal\views_bulk_operations\Service\ViewsBulkOperationsActionProcessorInter
 use Drupal\views_bulk_operations\Service\ViewsbulkOperationsViewDataInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Drupal\node\NodeInterface;
 
 /**
  * Defines the Enrollments Views Bulk Operations field plugin.
@@ -263,11 +264,11 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
 
         if (empty($parameters['node'])) {
           $node = \Drupal::routeMatch()->getParameter('node');
-          if ($node instanceof \Drupal\node\NodeInterface) {
+          if ($node instanceof NodeInterface) {
             // You can get nid and anything else you need from the node object.
             $parameters['node'] = $node->id();
           }
-          else if(!is_object($node)) {
+          elseif (!is_object($node)) {
             $parameters['node'] = $node;
           }
         }

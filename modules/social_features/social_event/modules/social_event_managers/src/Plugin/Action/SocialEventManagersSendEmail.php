@@ -75,5 +75,4 @@ class SocialEventManagersSendEmail extends SocialSendEmail {
     return parent::buildConfigurationForm($form, $form_state);
   }
 
-
 }

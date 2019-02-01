@@ -15,7 +15,6 @@ use Drupal\Core\Url;
 use Drupal\block\Entity\Block;
 use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
-use Drupal\social_event_managers\Plugin\views\field\SocialEventManagersViewsBulkOperationsBulkForm;
 use Drupal\social_event_managers\SocialEventManagersAccessHelper;
 use Drupal\user\Entity\User;
 use Drupal\views\ViewExecutable;
@@ -101,7 +100,7 @@ function social_event_managers_form_alter(&$form, FormStateInterface $form_state
       $display_id = $view->current_display;
     }
   }
-  else if (strpos($form_id, 'views_form_event_manage_enrollments_page_manage_enrollments') !== FALSE && isset($form['output'][0]['#view'])) {
+  elseif (strpos($form_id, 'views_form_event_manage_enrollments_page_manage_enrollments') !== FALSE && isset($form['output'][0]['#view'])) {
     $view = &$form['output'][0]['#view'];
 
     if ($view instanceof ViewExecutable) {
@@ -109,7 +108,7 @@ function social_event_managers_form_alter(&$form, FormStateInterface $form_state
       $display_id = $view->current_display;
     }
   }
-  else if ($form_id === 'views_bulk_operations_configure_action') {
+  elseif ($form_id === 'views_bulk_operations_configure_action') {
     $data = $form_state->get('views_bulk_operations');
     $view_id = $data['view_id'];
     $display_id = $data['display_id'];
