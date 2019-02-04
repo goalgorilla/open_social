@@ -55,6 +55,21 @@ class OwnerActivityContext extends ActivityContextBase {
       }
     }
 
+    if (isset($original_related_object['target_type']) && $original_related_object['target_type'] == 'event_enrollment') {
+      $storage = \Drupal::entityTypeManager()
+        ->getStorage($original_related_object['target_type']);
+      $original_related_entity = $storage->load($original_related_object['target_id']);
+
+      if (!empty($original_related_entity) && $original_related_entity->getAccount() !== NULL) {
+        $recipients[] = [
+          'target_type' => 'user',
+          'target_id' => $original_related_entity->getAccount(),
+        ];
+
+        return $recipients;
+      }
+    }
+
     $recipients[] = [
       'target_type' => 'user',
       'target_id' => $entity->getOwnerId(),
