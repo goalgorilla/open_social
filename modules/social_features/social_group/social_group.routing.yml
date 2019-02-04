@@ -14,11 +14,3 @@ social_group.stream:
     _entity_view: 'group.stream'
   requirements:
     _group_permission: 'view group stream page'
-
-social_group.views_bulk_operations.confirm:
-  path: '/group/{group}/membership/confirm-action'
-  defaults:
-    _form: '\Drupal\social_group\Form\SocialGroupViewsBulkOperationsConfirmAction'
-    _title: 'Confirm action'
-  requirements:
-    _social_group_views_bulk_operation_access: 'TRUE'

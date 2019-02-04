@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\social_group\Form;
+namespace Drupal\social_event_managers\Form;
 
 use Drupal\views_bulk_operations\Form\ConfirmAction;
 use Drupal\Core\Form\FormStateInterface;
@@ -8,12 +8,12 @@ use Drupal\Core\Form\FormStateInterface;
 /**
  * Default action execution confirmation form.
  */
-class SocialGroupViewsBulkOperationsConfirmAction extends ConfirmAction {
+class SocialEventManagersViewsBulkOperationsConfirmAction extends ConfirmAction {
 
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state, $view_id = 'group_manage_members', $display_id = 'page_group_manage_members') {
+  public function buildForm(array $form, FormStateInterface $form_state, $view_id = 'event_manage_enrollments', $display_id = 'page_manage_enrollments') {
     $form = parent::buildForm($form, $form_state, $view_id, $display_id);
     $form_data = $this->getFormData($view_id, $display_id);
 
@@ -21,8 +21,8 @@ class SocialGroupViewsBulkOperationsConfirmAction extends ConfirmAction {
     if (isset($form_data['action_id'])) {
       $form['description'] = [
         '#markup' => $this->formatPlural($form_data['selected_count'],
-        'Are you sure you wish to perform "%action" action on the following member?',
-        'Are you sure you wish to perform "%action" action on the following %count members?',
+        'Are you sure you want to "%action" the following enrollee?',
+        'Are you sure you want to "%action" the following %count enrollees?',
         [
           '%action' => $form_data['action_label'],
           '%count' => $form_data['selected_count'],
@@ -33,8 +33,8 @@ class SocialGroupViewsBulkOperationsConfirmAction extends ConfirmAction {
       if (strpos($form_data['action_id'], 'mail') !== FALSE) {
         $form['description'] = [
           '#markup' => $this->formatPlural($form_data['selected_count'],
-            'Are you sure you want to send your email to the following member?',
-            'Are you sure you want to send your email to to the following %count members?',
+            'Are you sure you want to send your email to the following enrollee?',
+            'Are you sure you want to send your email to to the following %count enrollees?',
             [
               '%action' => $form_data['action_label'],
               '%count' => $form_data['selected_count'],
