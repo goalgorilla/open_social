@@ -75,6 +75,7 @@ function social_content_report_post_links_alter(array &$links, PostInterface $en
 
   if ($link) {
     $links['post']['#links']['report'] = $link;
+    $links['#cache']['contexts'][] = 'user';
   }
 }
 
@@ -86,6 +87,7 @@ function social_content_report_comment_links_alter(array &$links, CommentInterfa
 
   if ($link) {
     $links['comment']['#links']['report'] = $link;
+    $links['#cache']['contexts'][] = 'user';
   }
 }
 
@@ -94,9 +96,13 @@ function social_content_report_comment_links_alter(array &$links, CommentInterfa
  * Implements hook_node_links_alter().
  */
 function social_content_report_node_links_alter(array &$links, NodeInterface $entity, array &$context) {
-  $link = \Drupal::service('social_content_report.content_report_service')->getModalLink($entity, 'report_node');
+  // @todo: Add check for full node display.
+  if ($context['view_mode'] === 'full') {
+    $link = \Drupal::service('social_content_report.content_report_service')->getModalLink($entity, 'report_node');
 
-  if ($link) {
-    $links['node']['#links']['report'] = $link;
+    if ($link) {
+      $links['node']['#links']['report'] = $link;
+      $links['#cache']['contexts'][] = 'user';
+    }
   }
 }
