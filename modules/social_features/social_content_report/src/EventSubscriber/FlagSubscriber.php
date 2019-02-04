@@ -100,6 +100,7 @@ class FlagSubscriber implements EventSubscriberInterface {
     // In any case log that the report was submitted.
     $this->messenger->addMessage($this->t('Your report is submitted.'));
 
+    // @todo: clear cache for the reported entity.
   }
 
 }

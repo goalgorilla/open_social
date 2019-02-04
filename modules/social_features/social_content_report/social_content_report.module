@@ -71,14 +71,22 @@ function social_content_report_mandatory_reason_validate(array $form, FormStateI
  * Implements hook_post_links_alter().
  */
 function social_content_report_post_links_alter(array &$links, PostInterface $entity, array &$context) {
-  $links['post']['#links']['report'] = \Drupal::service('social_content_report.content_report_service')->getModalLink($entity, 'report_post');
+  $link = \Drupal::service('social_content_report.content_report_service')->getModalLink($entity, 'report_post');
+
+  if ($link) {
+    $links['post']['#links']['report'] = $link;
+  }
 }
 
 /**
  * Implements hook_comment_links_alter().
  */
 function social_content_report_comment_links_alter(array &$links, CommentInterface $entity, array &$context) {
-  $links['comment']['#links']['report'] = \Drupal::service('social_content_report.content_report_service')->getModalLink($entity, 'report_comment');
+  $link = \Drupal::service('social_content_report.content_report_service')->getModalLink($entity, 'report_comment');
+
+  if ($link) {
+    $links['comment']['#links']['report'] = $link;
+  }
 }
 
 
@@ -86,5 +94,9 @@ function social_content_report_comment_links_alter(array &$links, CommentInterfa
  * Implements hook_node_links_alter().
  */
 function social_content_report_node_links_alter(array &$links, NodeInterface $entity, array &$context) {
-  $links['node']['#links']['report'] = \Drupal::service('social_content_report.content_report_service')->getModalLink($entity, 'report_node');
+  $link = \Drupal::service('social_content_report.content_report_service')->getModalLink($entity, 'report_node');
+
+  if ($link) {
+    $links['node']['#links']['report'] = $link;
+  }
 }
