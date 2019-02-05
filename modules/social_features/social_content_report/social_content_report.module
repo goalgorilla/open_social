@@ -80,19 +80,17 @@ function social_content_report_post_links_alter(array &$links, PostInterface $en
 
   if ($link) {
     $links['post']['#links']['report'] = $link;
-    $links['#cache']['contexts'][] = 'user';
   }
 }
 
 /**
  * Implements hook_comment_links_alter().
- */core.entity_form_display.flagging.report_post.default.yml
+ */
 function social_content_report_comment_links_alter(array &$links, CommentInterface $entity, array &$context) {
   $link = \Drupal::service('social_content_report.content_report_service')->getModalLink($entity, 'report_comment');
 
   if ($link) {
     $links['comment']['#links']['report'] = $link;
-    $links['#cache']['contexts'][] = 'user';
   }
 }
 
@@ -111,7 +109,6 @@ function social_content_report_node_links_alter(array &$links, NodeInterface $en
         ],
         '#attributes' => ['class' => ['links', 'inline']],
       ];
-      $links['#cache']['contexts'][] = 'user';
     }
   }
 }

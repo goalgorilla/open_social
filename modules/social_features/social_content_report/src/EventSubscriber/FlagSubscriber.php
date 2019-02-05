@@ -2,6 +2,7 @@
 
 namespace Drupal\social_content_report\EventSubscriber;
 
+use Drupal\Core\Cache\CacheTagsInvalidatorInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityStorageException;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -41,6 +42,13 @@ class FlagSubscriber implements EventSubscriberInterface {
   protected $messenger;
 
   /**
+   * The Cache tags invalidator service.
+   *
+   * @var \Drupal\Core\Cache\CacheTagsInvalidatorInterface
+   */
+  protected $cacheInvalidator;
+
+  /**
    * Creates a DiffFormatter to render diffs in a table.
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
@@ -49,11 +57,14 @@ class FlagSubscriber implements EventSubscriberInterface {
    *   The entity manager.
    * @param \Drupal\Core\Messenger\MessengerInterface $messenger
    *   The messenger service.
+   * @param \Drupal\Core\Cache\CacheTagsInvalidatorInterface $cache_invalidator
+   *   The cache tags invalidator service.
    */
-  public function __construct(ConfigFactoryInterface $config_factory, EntityTypeManagerInterface $entity_type_manager, MessengerInterface $messenger) {
+  public function __construct(ConfigFactoryInterface $config_factory, EntityTypeManagerInterface $entity_type_manager, MessengerInterface $messenger, CacheTagsInvalidatorInterface $cache_invalidator) {
     $this->unpublishImmediately = $config_factory->get('social_content_report.settings')->get('unpublish_immediately');
     $this->entityTypeManager = $entity_type_manager;
     $this->messenger = $messenger;
+    $this->cacheInvalidator = $cache_invalidator;
   }
 
   /**
@@ -75,24 +86,28 @@ class FlagSubscriber implements EventSubscriberInterface {
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
   public function onFlag(FlaggingEvent $event) {
+    $flagging = $flagging = $event->getFlagging();
+    $entity_type = $flagging->getFlaggable()->getEntityTypeId();
+    $entity_id = $flagging->getFlaggable()->id();
+    $invalidated = FALSE;
+
     // Do nothing unless we need to unpublish the entity immediately.
     // @todo Consider changing the strpos() to a custom hook.
-    if ($this->unpublishImmediately && strpos($event->getFlagging()->getFlagId(), 'report_') === 0) {
-      $flagging = $event->getFlagging();
-
+    if ($this->unpublishImmediately && strpos($flagging->getFlagId(), 'report_') === 0) {
       // Retrieve the entity.
-      $entity = $this->entityTypeManager->getStorage($flagging->getFlaggable()->getEntityTypeId())
-        ->load($flagging->getFlaggable()->id());
+      $entity = $this->entityTypeManager->getStorage($entity_type)
+        ->load($entity_id);
 
       try {
         $entity->setPublished(FALSE);
         $entity->save();
+        $invalidated = TRUE;
       }
       catch (EntityStorageException $exception) {
         $this->getLogger('social_content_report')
           ->error(t('@entity_type @entity_id could not be unpublished after a user reported it.', [
-            '@entity_type' => $flagging->getFlaggable()->getEntityTypeId(),
-            '@entity_id' => $flagging->getFlaggable()->id(),
+            '@entity_type' => $entity_type,
+            '@entity_id' => $entity_id,
           ]));
       }
     }
@@ -100,7 +115,10 @@ class FlagSubscriber implements EventSubscriberInterface {
     // In any case log that the report was submitted.
     $this->messenger->addMessage($this->t('Your report is submitted.'));
 
-    // @todo: clear cache for the reported entity.
+    // Clear cache tags for entity to remove the Report link.
+    if (!$invalidated) {
+      $this->cacheInvalidator->invalidateTags([$entity_type . ':' . $entity_id]);
+    }
   }
 
 }
