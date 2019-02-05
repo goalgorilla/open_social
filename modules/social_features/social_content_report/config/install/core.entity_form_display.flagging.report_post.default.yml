@@ -5,6 +5,7 @@ dependencies:
   config:
     - field.field.flagging.report_post.field_other_reason
     - field.field.flagging.report_post.field_reason
+    - field.field.flagging.report_post.field_status
     - flag.flag.report_post
   enforced:
     module:
@@ -28,4 +29,10 @@ content:
     third_party_settings: {  }
     type: options_buttons
     region: content
+  field_status:
+    type: options_buttons
+    weight: 2
+    region: content
+    settings: {  }
+    third_party_settings: {  }
 hidden: {  }

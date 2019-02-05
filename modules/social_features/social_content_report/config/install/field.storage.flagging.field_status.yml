@@ -1,19 +1,17 @@
-uuid: bbe4ae52-fe96-411f-8c52-34f9c60bb2cb
+uuid: a4477ec5-1296-4da7-9ba6-688ca874fe6d
 langcode: en
 status: true
 dependencies:
+  module:
+    - flag
   enforced:
     module:
       - social_content_report
-  module:
-    - flag
-    - taxonomy
-id: flagging.field_reason
-field_name: field_reason
+id: flagging.field_status
+field_name: field_status
 entity_type: flagging
-type: entity_reference
-settings:
-  target_type: taxonomy_term
+type: boolean
+settings: {  }
 module: core
 locked: false
 cardinality: 1

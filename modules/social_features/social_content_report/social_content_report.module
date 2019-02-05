@@ -40,6 +40,11 @@ function social_content_report_form_alter(&$form, FormStateInterface $form_state
       }
     }
 
+    // Disable the status field if user does not have access to it.
+    if (!\Drupal::currentUser()->hasPermission('close inappropriate reports')) {
+      $form['field_status']['#access'] = FALSE;
+    }
+
     // Add some validation if the reason field is mandatory.
     if (\Drupal::config('social_content_report.settings')->get('mandatory_reason')) {
       $form['#validate'][] = 'social_content_report_mandatory_reason_validate';

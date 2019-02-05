@@ -5,6 +5,7 @@ dependencies:
   config:
     - field.field.flagging.report_node.field_other_reason
     - field.field.flagging.report_node.field_reason
+    - field.field.flagging.report_node.field_status
     - flag.flag.report_node
   enforced:
     module:
@@ -28,4 +29,5 @@ content:
     third_party_settings: {  }
     type: options_buttons
     region: content
-hidden: {  }
+hidden:
+  field_status: true

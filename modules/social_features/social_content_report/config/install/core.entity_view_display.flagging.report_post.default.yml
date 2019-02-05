@@ -5,6 +5,7 @@ dependencies:
   config:
     - field.field.flagging.report_post.field_other_reason
     - field.field.flagging.report_post.field_reason
+    - field.field.flagging.report_post.field_status
     - flag.flag.report_post
   enforced:
     module:
@@ -28,5 +29,15 @@ content:
       link: true
     third_party_settings: {  }
     type: entity_reference_label
+    region: content
+  field_status:
+    weight: 2
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    type: boolean
     region: content
 hidden: {  }
