@@ -106,3 +106,12 @@ function social_content_report_node_links_alter(array &$links, NodeInterface $en
     }
   }
 }
+
+/**
+ * Implements hook_activity_send_email_notifications_alter().
+ */
+function social_content_report_activity_send_email_notifications_alter(array &$items, array $email_message_templates) {
+  if (isset($email_message_templates['content_reported']) && \Drupal::currentUser()->hasPermission('view inappropriate reports')) {
+    $items['message_to_me']['templates'][] = 'content_reported';
+  }
+}
