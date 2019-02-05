@@ -7,6 +7,7 @@
 
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
+use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 
 /**
  * Implements template_preprocess_form().
@@ -215,7 +216,7 @@ function socialbase_form_user_form_alter(&$form) {
 }
 
 /**
- * Implements hook_form_FORM_ID_alter().
+ * Implements hook_form_alter().
  */
 function socialbase_form_alter(&$form, FormStateInterface $form_state, $form_id) {
 
@@ -247,6 +248,7 @@ function socialbase_form_alter(&$form, FormStateInterface $form_state, $form_id)
   $group_add_card_to_forms = [];
   $group_confirm_forms = [];
   $group_default_forms = [];
+  $content_reporting_forms = [];
 
   foreach ($social_group_types as $social_group_type) {
     $group_add_card_to_forms[] = "group_content_{$social_group_type}-group_membership_group-join_form";
@@ -259,12 +261,28 @@ function socialbase_form_alter(&$form, FormStateInterface $form_state, $form_id)
     $group_default_forms[] = "group_{$social_group_type}_edit_form";
   }
 
+  // Add card classes to all the social_content_reporting forms if enabled.
+  try {
+    // Get all 'report_' flags.
+    $report_types = \Drupal::service('social_content_report.content_report_service')->getReportFlagTypes();
+    foreach ($report_types as $report_type) {
+      $content_reporting_forms[] = 'flagging_' . $report_type . '_add_form';
+      $content_reporting_forms[] = 'flagging_' . $report_type . '_edit_form';
+    }
+  }
+  // If the service doesn't exist then we don't need to do anything.
+  catch (ServiceNotFoundException $e) {
+  }
+
   // These forms have a container with class form-action at the bottom and
   // we style it in a way that the primary/submit button is aligned right
   // Also we define the style of the buttons based on their function.
-  $default_forms = array_merge($group_add_card_to_forms,
+  $default_forms = array_merge(
+    $group_add_card_to_forms,
     $group_confirm_forms,
-    $group_default_forms, [
+    $group_default_forms,
+    $content_reporting_forms,
+    [
       'user_form',
       'user_pass_reset',
       'social_user_login_form',
@@ -325,14 +343,29 @@ function socialbase_form_alter(&$form, FormStateInterface $form_state, $form_id)
   }
 
   // Here we list all the forms that need to be wrapped in cards.
-  $add_card_to_forms = array_merge($group_add_card_to_forms, [
-    'event_an_enroll_form',
-    'data_policy_edit_form',
-    'data_policy_data_policy_agreement',
-    'data_policy_data_policy_revision_edit',
-    'views_bulk_operations_configure_action',
-    'views_bulk_operations_confirm_action',
-  ]);
+  $add_card_to_forms = array_merge(
+    $group_add_card_to_forms,
+    [
+      'event_an_enroll_form',
+      'data_policy_edit_form',
+      'data_policy_data_policy_agreement',
+      'data_policy_data_policy_revision_edit',
+      'views_bulk_operations_configure_action',
+      'views_bulk_operations_confirm_action',
+    ]
+  );
+
+  if (in_array($form_id, $add_card_to_forms)) {
+    $form['#attributes']['class'][] = 'card';
+    $form['actions']['#prefix'] = '</div></div>';
+  }
+
+  // The content reporting form also needs a card display except when rendered
+  // in a dialog.
+  if (in_array($form_id, $content_reporting_forms) && !\Drupal::request()->isXmlHttpRequest()) {
+    $form['#attributes']['class'][] = 'card';
+    $form['actions']['#prefix'] = '</div></div>';
+  }
 
   if (\Drupal::routeMatch()->getRouteName() === 'private_message.private_message_create' && $form_id == 'private_message_add_form') {
     $form['#attributes']['class'][] = 'card';
@@ -343,11 +376,6 @@ function socialbase_form_alter(&$form, FormStateInterface $form_state, $form_id)
       $form['actions']['submit']['#button_type'] = 'primary';
       $form['actions']['submit']['#button_level'] = 'raised';
     }
-  }
-
-  if (in_array($form_id, $add_card_to_forms)) {
-    $form['#attributes']['class'][] = 'card';
-    $form['actions']['#prefix'] = '</div></div>';
   }
 
   // List all the confirmation forms here. We need to close the card
@@ -390,7 +418,6 @@ function socialbase_form_alter(&$form, FormStateInterface $form_state, $form_id)
     $form['forgot']['sign-up-link']['#prefix'] = '<div class="card__nested-section">';
     $form['forgot']['sign-up-link']['#suffix'] = '</div>';
   }
-
 }
 
 /**

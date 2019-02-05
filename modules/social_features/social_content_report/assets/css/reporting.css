@@ -4,6 +4,12 @@
   padding-right: .5em;
 }
 
-.content-reporting-dialog .control-label {
+.content-reporting-dialog .fieldgroup > .control-label,
+.form--content-reporting .fieldgroup > .control-label {
   font-weight: 400;
+}
+
+/* Remove spacing between Reason and Reason other field */
+:not(.ui-dialog) .form--content-reporting .form-group {
+  margin-bottom: 0;
 }

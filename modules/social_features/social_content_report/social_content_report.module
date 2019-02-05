@@ -42,6 +42,7 @@ function social_content_report_form_alter(&$form, FormStateInterface $form_state
       }
     }
 
+    $form['#attributes']['class'][] = 'form--content-reporting';
     $form['#attached']['library'][] = 'social_content_report/reporting';
 
     // Add some validation if the reason field is mandatory.
