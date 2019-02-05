@@ -7,3 +7,10 @@ social_content_report.settings:
     _permission: 'administer social_content_report settings'
   options:
     _admin_route: TRUE
+
+social_content_report.close_report:
+  path: '/content-report/{flagging}/close'
+  defaults:
+    _controller: '\Drupal\social_content_report\Controller\ReportController::close'
+  requirements:
+    _permission: 'close inappropriate reports'

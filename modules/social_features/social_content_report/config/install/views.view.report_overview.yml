@@ -16,8 +16,11 @@ dependencies:
     - comment
     - flag
     - node
+    - social_content_report
     - social_post
     - user
+_core:
+  default_config_hash: Wxho-UIxB8b_EKoMFdnsRJ2BOfCFovPbwqZQKszdkT0
 id: report_overview
 label: 'Report overview'
 module: views
@@ -391,15 +394,15 @@ display:
           entity_type: flagging
           entity_field: created
           plugin_id: field
-        entity_type:
-          id: entity_type
+        entity_bundle_type:
+          id: entity_bundle_type
           table: flagging
-          field: entity_type
+          field: entity_bundle_type
           relationship: none
           group_type: group
           admin_label: ''
-          label: ''
-          exclude: true
+          label: 'Content Type'
+          exclude: false
           alter:
             alter_text: false
             text: ''
@@ -431,7 +434,7 @@ display:
           element_class: ''
           element_label_type: ''
           element_label_class: ''
-          element_label_colon: false
+          element_label_colon: true
           element_wrapper_type: ''
           element_wrapper_class: ''
           element_default_classes: true
@@ -439,23 +442,8 @@ display:
           hide_empty: false
           empty_zero: false
           hide_alter_empty: true
-          click_sort_column: value
-          type: string
-          settings:
-            link_to_entity: false
-          group_column: value
-          group_columns: {  }
-          group_rows: true
-          delta_limit: 0
-          delta_offset: 0
-          delta_reversed: false
-          delta_first_last: false
-          multi_type: separator
-          separator: ', '
-          field_api_classes: false
           entity_type: flagging
-          entity_field: entity_type
-          plugin_id: field
+          plugin_id: flagging_entity_bundle_type
         user_id:
           id: user_id
           table: post_field_data
@@ -1123,7 +1111,7 @@ display:
           hide_empty: false
           empty_zero: false
           hide_alter_empty: true
-          text: View
+          text: 'View Comment'
           output_url_as_text: false
           absolute: false
           entity_type: comment
@@ -1176,7 +1164,7 @@ display:
           hide_empty: false
           empty_zero: false
           hide_alter_empty: true
-          text: View
+          text: 'View Post'
           output_url_as_text: false
           absolute: false
           entity_type: post
@@ -1229,7 +1217,7 @@ display:
           hide_empty: false
           empty_zero: false
           hide_alter_empty: true
-          text: View
+          text: 'View Content'
           output_url_as_text: false
           absolute: false
           entity_type: node
@@ -1282,7 +1270,7 @@ display:
           hide_empty: false
           empty_zero: false
           hide_alter_empty: true
-          text: Edit
+          text: 'Edit Comment'
           output_url_as_text: false
           absolute: false
           entity_type: comment
@@ -1335,7 +1323,7 @@ display:
           hide_empty: false
           empty_zero: false
           hide_alter_empty: true
-          text: Edit
+          text: 'Edit Post'
           output_url_as_text: false
           absolute: false
           entity_type: post
@@ -1388,11 +1376,62 @@ display:
           hide_empty: false
           empty_zero: false
           hide_alter_empty: true
-          text: Edit
+          text: 'Edit Content'
           output_url_as_text: false
           absolute: false
           entity_type: node
           plugin_id: entity_link_edit
+        close_report:
+          id: close_report
+          table: flagging
+          field: close_report
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: ''
+          exclude: true
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          text: 'Close Report'
+          entity_type: flagging
+          plugin_id: flagging_link_close
         dropbutton:
           id: dropbutton
           table: views
@@ -1448,9 +1487,10 @@ display:
             edit_comment: edit_comment
             edit_post: edit_post
             edit_node: edit_node
+            close_report: close_report
             uid: '0'
             created: '0'
-            entity_type: '0'
+            entity_bundle_type: '0'
             user_id: '0'
             changed: '0'
             uid_1: '0'
@@ -1630,7 +1670,7 @@ display:
         type: normal
         title: Reports
         description: ''
-        expanded: false
+        expanded: true
         parent: system.admin_content
         weight: 0
         context: '0'
