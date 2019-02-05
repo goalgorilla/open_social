@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: node-gettext\n"
-"POT-Creation-Date: 2019-02-04 22:09+0000\n"
+"POT-Creation-Date: 2019-02-05 22:09+0000\n"
 "PO-Revision-Date: 2019-01-29 20:03+0000\n"
 "Last-Translator: Evelien Schut <evelienschut@goalgorilla.com>\n"
 "Language-Team: Dutch <https://translate.getopensocial.com/projects/open-"
@@ -74,6 +74,7 @@ msgstr "(Aankomende) community evenementen"
 #: modules/social_features/social_like/config/install/views.view.who_liked_this_entity.yml:0
 #: modules/social_features/social_post/config/install/views.view.recipient_group_reference.yml:0
 #: modules/social_features/social_search/config/install/views.view.search_all.yml:0
+#: modules/social_features/social_search/modules/social_search_autocomplete/config/install/views.view.search_all_autocomplete.yml:0;0;0;0;0;0;0;0;0
 #: modules/social_features/social_topic/config/install/views.view.latest_topics.yml:0
 #: modules/social_features/social_topic/config/install/views.view.topics.yml:0
 #: modules/social_features/social_user/config/install/views.view.user_admin_people.yml:0;0;0
@@ -130,6 +131,12 @@ msgstr "- Beperkte toegang -"
 #: modules/custom/download_count/src/Plugin/Field/FieldFormatter/FieldDownloadCount.php:86
 msgid "0 downloads"
 msgstr "0 downloads"
+
+#: modules/social_features/social_search/modules/social_search_autocomplete/config/install/views.view.search_all_autocomplete.yml:0;0;0
+msgid "1"
+msgid_plural "@count"
+msgstr[0] ""
+msgstr[1] ""
 
 #: modules/custom/social_node_statistics/src/Form/NodeStatisticsSettingsForm.php:61
 msgid "1 day"
@@ -1342,6 +1349,10 @@ msgstr ""
 msgid "Adds ability to export users to a CSV."
 msgstr ""
 
+#: modules/social_features/social_search/modules/social_search_autocomplete/social_search_autocomplete.info.yml:0
+msgid "Adds autocomplete suggestions to the site search."
+msgstr ""
+
 #: modules/social_features/social_group/config/install/group.content_type.closed_group-group_membership.yml:0
 #: modules/social_features/social_group/config/install/group.content_type.open_group-group_membership.yml:0
 #: modules/social_features/social_group/config/install/group.content_type.public_group-group_membership.yml:0
@@ -1470,6 +1481,7 @@ msgstr "Aggregeer activiteit"
 #: modules/social_features/social_search/config/install/views.view.search_content.yml:0
 #: modules/social_features/social_search/config/install/views.view.search_groups.yml:0
 #: modules/social_features/social_search/config/install/views.view.search_users.yml:0
+#: modules/social_features/social_search/modules/social_search_autocomplete/config/install/views.view.search_all_autocomplete.yml:0
 #: modules/social_features/social_topic/config/install/views.view.latest_topics.yml:0
 #: modules/social_features/social_topic/config/install/views.view.topics.yml:0;0
 msgid "All"
@@ -1776,6 +1788,7 @@ msgstr ""
 #: modules/social_features/social_profile/config/install/views.view.user_information.yml:0
 #: modules/social_features/social_search/config/install/views.view.search_all.yml:0
 #: modules/social_features/social_search/config/install/views.view.search_groups.yml:0
+#: modules/social_features/social_search/modules/social_search_autocomplete/config/install/views.view.search_all_autocomplete.yml:0
 #: modules/social_features/social_topic/config/install/views.view.latest_topics.yml:0
 msgid "Apply"
 msgstr "Toepassen"
@@ -1876,6 +1889,7 @@ msgstr[1] ""
 #: modules/social_features/social_search/config/install/views.view.search_content.yml:0
 #: modules/social_features/social_search/config/install/views.view.search_groups.yml:0
 #: modules/social_features/social_search/config/install/views.view.search_users.yml:0
+#: modules/social_features/social_search/modules/social_search_autocomplete/config/install/views.view.search_all_autocomplete.yml:0
 #: modules/social_features/social_topic/config/install/views.view.latest_topics.yml:0
 #: modules/social_features/social_user/config/install/views.view.user_admin_people.yml:0
 msgid "Asc"
@@ -2094,11 +2108,11 @@ msgstr ""
 msgid "CM can tag a user, giving options on filtering / searching users."
 msgstr ""
 
-#: social.profile:144
+#: social.profile:145
 msgid "Cache page for anonymous users (highly recommended)"
 msgstr "Cache pagina voor anonieme gebruikers (sterk aanbevolen)"
 
-#: social.profile:145
+#: social.profile:146
 msgid "Cache pages for any user (highly recommended)"
 msgstr "Cache pagina's voor iedere gebruiker (sterk aanbevolen)"
 
@@ -3117,6 +3131,7 @@ msgstr ""
 #: modules/social_features/social_search/config/install/views.view.search_content.yml:0
 #: modules/social_features/social_search/config/install/views.view.search_groups.yml:0
 #: modules/social_features/social_search/config/install/views.view.search_users.yml:0
+#: modules/social_features/social_search/modules/social_search_autocomplete/config/install/views.view.search_all_autocomplete.yml:0
 #: modules/social_features/social_topic/config/install/views.view.latest_topics.yml:0
 #: modules/social_features/social_user/config/install/views.view.user_admin_people.yml:0
 msgid "Desc"
@@ -3472,7 +3487,7 @@ msgstr ""
 msgid "Enable activity access control."
 msgstr "Schakel toegangsbeheer voor activiteiten in."
 
-#: social.profile:151
+#: social.profile:152
 msgid "Enable additional features"
 msgstr "Zet extra functies aan"
 
@@ -3689,6 +3704,16 @@ msgstr ""
 msgid "Entity ID"
 msgstr "Entiteit-ID"
 
+#: modules/social_features/social_search/modules/social_search_autocomplete/config/install/views.view.search_all_autocomplete.yml:0
+#, fuzzy
+msgid "Entity Label"
+msgstr "Entiteitstype"
+
+#: modules/social_features/social_search/modules/social_search_autocomplete/config/install/views.view.search_all_autocomplete.yml:0
+#, fuzzy
+msgid "Entity Path"
+msgstr "Entiteitstype"
+
 #: modules/social_features/social_landing_page/config/install/views.view.featured_content_reference.yml:0
 #: modules/social_features/social_landing_page/config/install/views.view.featured_group_reference.yml:0
 #: modules/social_features/social_landing_page/config/install/views.view.featured_profile_reference.yml:0
@@ -3698,6 +3723,7 @@ msgstr ""
 
 #: modules/custom/mentions/config/schema/mentions.schema.yml:0
 #: modules/custom/mentions/src/Form/MentionsTypeForm.php:167
+#: modules/social_features/social_search/modules/social_search_autocomplete/config/install/views.view.search_all_autocomplete.yml:0
 msgid "Entity Type"
 msgstr ""
 
@@ -4224,11 +4250,11 @@ msgstr "Functie"
 msgid "General configuration"
 msgstr "Algemene instellingen"
 
-#: social.profile:164
+#: social.profile:166
 msgid "Generate demo content and users"
 msgstr "Genereer demo inhoud en gebruikers"
 
-#: social.profile:432
+#: social.profile:434
 msgid "Generated %num %demo_description."
 msgstr "Genereerde %num %demo_description."
 
@@ -4338,6 +4364,11 @@ msgstr "Groepsleden"
 msgid "Group Overview functionality."
 msgstr ""
 
+#: modules/social_features/social_search/modules/social_search_autocomplete/config/install/views.view.search_all_autocomplete.yml:0
+#, fuzzy
+msgid "Group Path"
+msgstr "Groep type"
+
 #: modules/social_features/social_group/modules/social_group_quickjoin/social_group_quickjoin.links.menu.yml:0
 #: modules/social_features/social_group/modules/social_group_quickjoin/social_group_quickjoin.routing.yml:0
 msgid "Group Quickjoin settings"
@@ -4446,8 +4477,14 @@ msgstr "Groepsrollen"
 msgid "Group settings"
 msgstr "Groep-instellingen"
 
+#: modules/social_features/social_search/modules/social_search_autocomplete/config/install/views.view.search_all_autocomplete.yml:0
+#, fuzzy
+msgid "Group title"
+msgstr "Groepen titel"
+
 #: modules/social_features/social_group/src/Form/SocialGroupAddForm.php:122
 #: modules/social_features/social_group/config/install/views.view.newest_groups.yml:0
+#: modules/social_features/social_search/modules/social_search_autocomplete/config/install/views.view.search_all_autocomplete.yml:0
 msgid "Group type"
 msgstr "Groep type"
 
@@ -4618,7 +4655,7 @@ msgstr "Afbeelding"
 msgid "Immediately"
 msgstr "Onmiddellijk"
 
-#: social.profile:323
+#: social.profile:325
 msgid "Import optional configuration"
 msgstr "Optionele configuratie importeren"
 
@@ -4639,7 +4676,7 @@ msgstr ""
 msgid "Inbox"
 msgstr "Postvak IN"
 
-#: social.profile:321
+#: social.profile:323
 msgid "Index search"
 msgstr "Zoekindex"
 
@@ -4656,7 +4693,7 @@ msgstr "Informatie"
 msgid "Informative message"
 msgstr ""
 
-#: social.profile:143
+#: social.profile:144
 msgid "Inline Form Errors"
 msgstr "Inline formulier fouten"
 
@@ -4665,11 +4702,11 @@ msgstr "Inline formulier fouten"
 msgid "Input Settings"
 msgstr ""
 
-#: social.profile:396
+#: social.profile:398
 msgid "Install %module_name module."
 msgstr "Installeer %module_name-module."
 
-#: social.profile:20;252
+#: social.profile:20;254
 msgid "Install Open Social modules"
 msgstr "Installeer Open Social modules"
 
@@ -5136,6 +5173,7 @@ msgstr ""
 #: modules/social_features/social_search/config/install/views.view.search_content.yml:0
 #: modules/social_features/social_search/config/install/views.view.search_groups.yml:0
 #: modules/social_features/social_search/config/install/views.view.search_users.yml:0
+#: modules/social_features/social_search/modules/social_search_autocomplete/config/install/views.view.search_all_autocomplete.yml:0
 #: modules/social_features/social_topic/config/install/views.view.latest_topics.yml:0
 #: modules/social_features/social_topic/config/install/views.view.topics.yml:0
 #: modules/social_features/social_user/config/install/views.view.user_admin_people.yml:0
@@ -5570,6 +5608,11 @@ msgstr "Geen aankomende evenementen in deze groep"
 msgid "No upcoming events you have enrolled for"
 msgstr "Geen aankomende evenementen waarvoor je bent ingeschreven"
 
+#: modules/social_features/social_search/modules/social_search_autocomplete/config/install/views.view.search_all_autocomplete.yml:0
+#, fuzzy
+msgid "Node Path"
+msgstr "Node-titel"
+
 #: modules/custom/social_node_statistics/social_node_statistics.routing.yml:0
 msgid "Node Statistics"
 msgstr "Content Statistics"
@@ -5579,7 +5622,13 @@ msgid "Node Statistics settings"
 msgstr "Content statistieken instellingen"
 
 #: modules/custom/activity_logger/activity_logger.tokens.inc:26
+#: modules/social_features/social_search/modules/social_search_autocomplete/config/install/views.view.search_all_autocomplete.yml:0
 msgid "Node title"
+msgstr "Node-titel"
+
+#: modules/social_features/social_search/modules/social_search_autocomplete/config/install/views.view.search_all_autocomplete.yml:0
+#, fuzzy
+msgid "Node type"
 msgstr "Node-titel"
 
 #: modules/custom/social_node_statistics/config/schema/social_node_statistics.schema.yml:0
@@ -5920,6 +5969,10 @@ msgstr ""
 #: modules/custom/activity_basics/src/Plugin/ActivityContext/OwnerActivityContext.php:8
 msgid "Owner activity context"
 msgstr "Eigenaaractiviteiten-context"
+
+#: modules/social_features/social_search/modules/social_search_autocomplete/config/install/views.view.search_all_autocomplete.yml:0
+msgid "Owner: User"
+msgstr ""
 
 #: modules/social_features/social_activity/config/install/views.view.activity_stream.yml:0
 #: modules/social_features/social_activity/config/install/views.view.activity_stream_notifications.yml:0
@@ -6451,6 +6504,11 @@ msgstr ""
 msgid "Provides User related configuration."
 msgstr ""
 
+#: modules/social_features/social_search/modules/social_search_autocomplete/config/install/views.view.search_all_autocomplete.yml:0
+msgid ""
+"Provides a REST endpoint for the Search API to be used for autocomplete."
+msgstr ""
+
 #: modules/social_features/social_event/modules/social_event_an_enroll/social_event_an_enroll.info.yml:0
 msgid ""
 "Provides ability to enroll to an event without having to create an account."
@@ -6519,6 +6577,16 @@ msgstr ""
 msgid "Provides site editor components."
 msgstr ""
 
+#: modules/custom/social_react/social_react.info.yml:0
+msgid ""
+"Provides the React library for use by other modules. This module should not "
+"be enabled on its own.\n"
+"Other modules that require React should not load React themselves but "
+"instead depend on this module. The libraries in those modules should depend "
+"on the React library contained in this module to ensure React is properly "
+"loaded."
+msgstr ""
+
 #: modules/social_features/social_profile/social_profile.info.yml:0
 msgid "Provides user profiles."
 msgstr ""
@@ -6578,6 +6646,10 @@ msgstr "Publicatiestatus"
 msgid "Purple Rain"
 msgstr "Paarse regen"
 
+#: modules/social_features/social_search/modules/social_search_autocomplete/config/install/views.view.search_all_autocomplete.yml:0
+msgid "REST export"
+msgstr ""
+
 #: themes/socialblue/color/color.inc:73
 msgid "Raspberry blue"
 msgstr "Frambozenblauw"
@@ -6603,7 +6675,7 @@ msgstr "Lees meer<span class=\"visually-hidden\"> over @title</span>"
 msgid "Reassign your groups to the super administrator."
 msgstr "Ken groepen toe aan de hoofdbeheerder."
 
-#: social.profile:320
+#: social.profile:322
 msgid "Rebuild router."
 msgstr "Herbouw router."
 
@@ -6800,6 +6872,7 @@ msgstr "Reageer op reactie"
 #: modules/social_features/social_search/config/install/views.view.search_content.yml:0
 #: modules/social_features/social_search/config/install/views.view.search_groups.yml:0
 #: modules/social_features/social_search/config/install/views.view.search_users.yml:0
+#: modules/social_features/social_search/modules/social_search_autocomplete/config/install/views.view.search_all_autocomplete.yml:0
 #: modules/social_features/social_topic/config/install/views.view.latest_topics.yml:0
 #: modules/social_features/social_topic/config/install/views.view.topics.yml:0
 #: modules/social_features/social_user/config/install/views.view.user_admin_people.yml:0
@@ -6841,7 +6914,7 @@ msgstr "Rol"
 msgid "Roles"
 msgstr "Rollen"
 
-#: social.profile:322
+#: social.profile:324
 msgid "Run cron."
 msgstr "Cron uitvoeren."
 
@@ -6905,7 +6978,11 @@ msgstr "Zoeken"
 msgid "Search All"
 msgstr ""
 
-#: modules/social_features/social_search/src/Form/SearchContentForm.php:66
+#: modules/social_features/social_search/modules/social_search_autocomplete/config/install/views.view.search_all_autocomplete.yml:0
+msgid "Search All autocomplete"
+msgstr ""
+
+#: modules/social_features/social_search/src/Form/SearchContentForm.php:69
 #: modules/social_features/social_search/config/install/views.view.search_content.yml:0
 msgid "Search Content"
 msgstr ""
@@ -6993,6 +7070,11 @@ msgstr "Secties"
 
 #: modules/social_features/social_event/modules/social_event_managers/config/install/views.view.managers.yml:0
 msgid "See all organisers"
+msgstr "Bekijk alle organisatoren"
+
+#: modules/social_features/social_search/modules/social_search_autocomplete/config/install/views.view.search_all_autocomplete.yml:0
+#, fuzzy
+msgid "See all results"
 msgstr "Bekijk alle organisatoren"
 
 #: modules/social_features/social_event/modules/social_event_managers/src/Plugin/views/field/SocialEventManagersViewsBulkOperationsBulkForm.php:186
@@ -7161,7 +7243,7 @@ msgid ""
 "display is invalidated."
 msgstr ""
 
-#: social.profile:319
+#: social.profile:321
 msgid "Set weight of profile."
 msgstr "Profielgewicht instellen."
 
@@ -7466,6 +7548,12 @@ msgstr "Sneeuwwit"
 #: modules/social_features/social_user_export/social_user_export.info.yml:0
 msgid "Social"
 msgstr "Sociaal"
+
+#: modules/custom/social_react/social_react.info.yml:0
+#: modules/social_features/social_search/modules/social_search_autocomplete/social_search_autocomplete.info.yml:0
+#, fuzzy
+msgid "Social (Experimental)"
+msgstr "Social (experimenteel)"
 
 #: modules/custom/social_language/modules/social_content_translation/social_content_translation.info.yml:0
 #: modules/social_features/social_embed/social_embed.info.yml:0
@@ -7824,12 +7912,21 @@ msgstr ""
 msgid "Social Profile Settings"
 msgstr ""
 
+#: modules/custom/social_react/social_react.info.yml:0
+#, fuzzy
+msgid "Social React"
+msgstr "Sociaal"
+
 #: modules/social_features/social_sso/social_sso.info.yml:0
 msgid "Social SSO"
 msgstr ""
 
 #: modules/social_features/social_search/social_search.info.yml:0
 msgid "Social Search"
+msgstr ""
+
+#: modules/social_features/social_search/modules/social_search_autocomplete/social_search_autocomplete.info.yml:0
+msgid "Social Search Autocomplete"
 msgstr ""
 
 #: modules/social_features/social_sharing/social_sharing.info.yml:0
@@ -8015,6 +8112,7 @@ msgstr "Oplopend sorteren"
 #: modules/social_features/social_search/config/install/views.view.search_content.yml:0
 #: modules/social_features/social_search/config/install/views.view.search_groups.yml:0
 #: modules/social_features/social_search/config/install/views.view.search_users.yml:0
+#: modules/social_features/social_search/modules/social_search_autocomplete/config/install/views.view.search_all_autocomplete.yml:0
 #: modules/social_features/social_topic/config/install/views.view.latest_topics.yml:0
 #: modules/social_features/social_topic/config/install/views.view.topics.yml:0
 #: modules/social_features/social_user/config/install/views.view.user_admin_people.yml:0
@@ -8111,6 +8209,10 @@ msgstr ""
 #: modules/custom/mentions/src/Form/MentionsTypeForm.php:158
 msgid "Suffix"
 msgstr "Achtervoegsel"
+
+#: social.profile:142
+msgid "Suggested results in the search overlay"
+msgstr ""
 
 #: modules/social_features/social_mentions/social_mentions.module:188
 msgid "Suggestions format"
@@ -8379,7 +8481,7 @@ msgstr ""
 msgid "The image could not be saved, the directory @directory is not valid."
 msgstr ""
 
-#: social.profile:253
+#: social.profile:255
 msgid "The installation has encountered an error."
 msgstr "Er is een fout opgetreden tijdens de installatie."
 
@@ -9001,7 +9103,7 @@ msgstr ""
 msgid "Unfollow this content"
 msgstr "Volgt deze inhoud niet meer"
 
-#: social.profile:408
+#: social.profile:410
 msgid "Uninstalled %module_name module."
 msgstr "Module %module_name gedeïnstalleerd."
 
@@ -9126,7 +9228,7 @@ msgid ""
 "a new event or group"
 msgstr ""
 
-#: social.profile:142
+#: social.profile:143
 msgid "Use the private file system for uploaded files (highly recommended)"
 msgstr "Gebruik afgeschermde bestanden (sterk aangeraden)"
 
@@ -9160,6 +9262,7 @@ msgstr ""
 #: modules/social_features/social_landing_page/config/install/views.view.featured_profile_reference.yml:0
 #: modules/social_features/social_profile/config/install/views.view.newest_users.yml:0
 #: modules/social_features/social_profile/config/install/views.view.user_information.yml:0
+#: modules/social_features/social_search/modules/social_search_autocomplete/config/install/views.view.search_all_autocomplete.yml:0
 msgid "User"
 msgstr "Gebruiker"
 
@@ -9179,6 +9282,11 @@ msgstr ""
 #: modules/social_features/social_user_export/src/Plugin/UserExportPlugin/UserId.php:23;8
 msgid "User ID"
 msgstr "Gebruikers-ID"
+
+#: modules/social_features/social_search/modules/social_search_autocomplete/config/install/views.view.search_all_autocomplete.yml:0
+#, fuzzy
+msgid "User Path"
+msgstr "Gebruikersnaam"
 
 #: modules/custom/social_demo/src/Plugin/DemoContent/UserTerms.php:7
 msgid "User Terms"
@@ -9231,8 +9339,14 @@ msgid "User menu"
 msgstr "Gebruikersmenu"
 
 #: modules/social_features/social_mentions/social_mentions.tokens.inc:29
+#: modules/social_features/social_search/modules/social_search_autocomplete/config/install/views.view.search_all_autocomplete.yml:0
 msgid "User name"
 msgstr "Gebruikersnaam"
+
+#: modules/social_features/social_search/modules/social_search_autocomplete/config/install/views.view.search_all_autocomplete.yml:0
+#, fuzzy
+msgid "User type"
+msgstr "Gebruikersmenu"
 
 #: modules/social_features/social_user/src/Form/SocialUserFloodForm.php:67
 msgid "User window"
@@ -9575,7 +9689,7 @@ msgstr ""
 msgid "Whoops... something went wrong!"
 msgstr ""
 
-#: social.profile:165
+#: social.profile:167
 msgid "Will generate files, users, groups, events, topics, comments and posts."
 msgstr "Zal files, users, groups, events, topics, comments en posts genereren."
 
@@ -9862,7 +9976,7 @@ msgstr ""
 msgid "comment"
 msgstr "reactie"
 
-#: social.profile:299
+#: social.profile:301
 #: modules/social_features/social_landing_page/src/Plugin/Block/ActivityOverviewBlock.php:258
 #: themes/socialbase/templates/node/node--full.html.twig:156
 msgid "comments"
@@ -9912,11 +10026,11 @@ msgstr ""
 msgid "event"
 msgstr ""
 
-#: social.profile:297
+#: social.profile:299
 msgid "event enrollments"
 msgstr "Aanmeldingen"
 
-#: social.profile:296
+#: social.profile:298
 #: modules/social_features/social_core/social_core.module:229
 #: modules/social_features/social_landing_page/src/Plugin/Block/ActivityOverviewBlock.php:88
 msgid "events"
@@ -9971,7 +10085,7 @@ msgstr ""
 msgid "field_topic_type_expose_filter"
 msgstr ""
 
-#: social.profile:292
+#: social.profile:294
 msgid "files"
 msgstr "bestanden"
 
@@ -9989,6 +10103,11 @@ msgstr "van @org"
 
 #: themes/socialbase/src/Plugin/Preprocess/Node.php:127
 msgid "group"
+msgstr "groep"
+
+#: modules/social_features/social_search/modules/social_search_autocomplete/config/install/views.view.search_all_autocomplete.yml:0
+#, fuzzy
+msgid "group/"
 msgstr "groep"
 
 #: modules/social_features/social_event/config/install/views.view.upcoming_events.yml:0
@@ -10017,7 +10136,7 @@ msgstr ""
 msgid "group_node:topic"
 msgstr ""
 
-#: social.profile:294
+#: social.profile:296
 #: modules/social_features/social_landing_page/src/Plugin/Block/ActivityOverviewBlock.php:156
 msgid "groups"
 msgstr "groepen"
@@ -10091,7 +10210,7 @@ msgctxt "PHP date format"
 msgid "j M Y"
 msgstr ""
 
-#: social.profile:300
+#: social.profile:302
 msgid "likes"
 msgstr ""
 
@@ -10107,6 +10226,10 @@ msgstr ""
 #: modules/social_features/social_user_export/src/Plugin/UserExportPlugin/UserLastLogin.php:34
 msgid "never"
 msgstr "nooit"
+
+#: modules/social_features/social_search/modules/social_search_autocomplete/config/install/views.view.search_all_autocomplete.yml:0
+msgid "node/"
+msgstr ""
 
 #: modules/social_features/social_like/social_like.tokens.inc:116
 msgid "on a"
@@ -10130,7 +10253,7 @@ msgstr "foto"
 msgid "post"
 msgstr ""
 
-#: social.profile:298
+#: social.profile:300
 #: modules/social_features/social_landing_page/src/Plugin/Block/ActivityOverviewBlock.php:224
 msgid "posts"
 msgstr "berichten"
@@ -10246,7 +10369,7 @@ msgstr ""
 msgid "topic"
 msgstr ""
 
-#: social.profile:295
+#: social.profile:297
 #: modules/social_features/social_landing_page/src/Plugin/Block/ActivityOverviewBlock.php:122
 msgid "topics"
 msgstr "onderwerpen"
@@ -10263,7 +10386,12 @@ msgstr "niet gepubliceerd"
 msgid "user form"
 msgstr ""
 
-#: social.profile:293
+#: modules/social_features/social_search/modules/social_search_autocomplete/config/install/views.view.search_all_autocomplete.yml:0
+#, fuzzy
+msgid "user/"
+msgstr "gebruikers"
+
+#: social.profile:295
 #: modules/social_features/social_landing_page/src/Plugin/Block/ActivityOverviewBlock.php:190
 msgid "users"
 msgstr "gebruikers"
@@ -10277,6 +10405,18 @@ msgstr[1] "weergeven"
 
 #: modules/custom/download_count/download_count.permissions.yml:0
 msgid "view download counts"
+msgstr ""
+
+#: modules/social_features/social_search/modules/social_search_autocomplete/config/install/views.view.search_all_autocomplete.yml:0
+msgid "{{ nid }}{{ uid }}{{ id }}"
+msgstr ""
+
+#: modules/social_features/social_search/modules/social_search_autocomplete/config/install/views.view.search_all_autocomplete.yml:0
+msgid "{{ title }}{{ label }}{{ name }}"
+msgstr ""
+
+#: modules/social_features/social_search/modules/social_search_autocomplete/config/install/views.view.search_all_autocomplete.yml:0
+msgid "{{ type }}{{ type_1 }}{{ type_2 }}"
 msgstr ""
 
 #: modules/social_features/social_core/config/install/views.view.content.yml:0
