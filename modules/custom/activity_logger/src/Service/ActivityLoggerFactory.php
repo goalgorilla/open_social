@@ -39,7 +39,15 @@ class ActivityLoggerFactory {
 
       // Set the values.
       $new_message['template'] = $message_type;
-      $new_message['created'] = $entity->getCreatedTime();
+
+      // The flagging entity does not implement getCreatedTime().
+      if ($entity->getEntityTypeId() === 'flagging') {
+        $new_message['created'] = $entity->get('created')->value;
+      }
+      else {
+        $new_message['created'] = $entity->getCreatedTime();
+      }
+
       $new_message['uid'] = $entity->getOwner()->id();
 
       $additional_fields = [
