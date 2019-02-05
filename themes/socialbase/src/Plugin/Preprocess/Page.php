@@ -106,7 +106,9 @@ class Page extends PreprocessBase {
       }
     }
 
-    if (\Drupal::routeMatch()->getRouteName() === 'view.group_manage_members.page_group_manage_members') {
+    $route = \Drupal::routeMatch()->getRouteName();
+
+    if ($route === 'view.event_manage_enrollments.page_manage_enrollments' || $route === 'view.group_manage_members.page_group_manage_members') {
       $attributes->removeClass('row', 'layout--with-complementary');
     }
 
