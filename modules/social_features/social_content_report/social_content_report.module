@@ -96,7 +96,6 @@ function social_content_report_comment_links_alter(array &$links, CommentInterfa
  * Implements hook_node_links_alter().
  */
 function social_content_report_node_links_alter(array &$links, NodeInterface $entity, array &$context) {
-  // @todo: Add check for full node display.
   if ($context['view_mode'] === 'full') {
     $link = \Drupal::service('social_content_report.content_report_service')->getModalLink($entity, 'report_node');
 

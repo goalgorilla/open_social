@@ -93,7 +93,6 @@ class ContentReportService {
     }
 
     // Return the modal link.
-    // @todo: Add cache context for user.
     return [
       'title' => $this->t('Report'),
       'url' => Url::fromRoute('flag.field_entry',
