@@ -3,6 +3,7 @@
 namespace Drupal\social_user\Plugin\Action;
 
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\user\UserInterface;
 use Drupal\views_bulk_operations\Action\ViewsBulkOperationsActionBase;
 use Drupal\views_bulk_operations\Action\ViewsBulkOperationsPreconfigurationInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -133,14 +134,29 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
       $langcode = $this->languageManager->getDefaultLanguage()->getId();
     }
     $params = ['context' => $this->configuration];
+    $email = $this->getEmail($entity);
 
-    $message = $this->mailManager->mail('system', 'action_send_email', $entity->getEmail(), $langcode, $params);
+    $message = $this->mailManager->mail('system', 'action_send_email', $email, $langcode, $params);
     // Error logging is handled by \Drupal\Core\Mail\MailManager::mail().
     if ($message['result']) {
-      $this->logger->notice('Sent email to %recipient', ['%recipient' => $entity->getEmail()]);
+      $this->logger->notice('Sent email to %recipient', ['%recipient' => $email]);
     }
 
     return $this->t('Send email');
+  }
+
+  /**
+   * Returns the email address of this account.
+   *
+   * @param \Drupal\user\UserInterface $account
+   *   The user object.
+   *
+   * @return string|null
+   *   The email address, or NULL if the account is anonymous or the user does
+   *   not have an email address.
+   */
+  public function getEmail(UserInterface $account) {
+    return $account->getEmail();
   }
 
   /**
@@ -157,7 +173,7 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
    *
    * @param array $form
    *   Form array.
-   * @param Drupal\Core\Form\FormStateInterface $form_state
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The form state object.
    *
    * @return array

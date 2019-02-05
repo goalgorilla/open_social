@@ -6,6 +6,7 @@
  */
 
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Url;
 use Drupal\views\ViewExecutable;
 use Drupal\views\Plugin\views\cache\CachePluginBase;
 use Drupal\Component\Render\PlainTextOutput;
@@ -56,7 +57,38 @@ function social_event_an_enroll_theme() {
         'links' => NULL,
       ],
     ],
+    'event_an_enroll_guest' => [
+      'variables' => [
+        'name' => NULL,
+        'url' => NULL,
+      ],
+    ],
   ];
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function social_event_an_enroll_preprocess_views_view_field(&$variables) {
+  /** @var \Drupal\views\ViewExecutable $view */
+  $view = &$variables['view'];
+
+  if ($view->id() === 'event_manage_enrollments' && $variables['field']->field === 'rendered_entity') {
+    $entity = &$variables['row']->_entity;
+
+    /** @var \Drupal\social_event_an_enroll\EventAnEnrollManager $service */
+    $service = \Drupal::service('social_event_an_enroll.manager');
+
+    if ($service->isGuest($entity)) {
+      $url = Url::fromUserInput('/' . drupal_get_path('module', 'social_event_an_enroll') . '/images/icon.svg');
+
+      $variables['output'] = [
+        '#theme' => 'event_an_enroll_guest',
+        '#name' => $service->getGuestName($entity),
+        '#url' => $url,
+      ];
+    }
+  }
 }
 
 /**
@@ -175,6 +207,7 @@ function social_event_an_enroll_menu_local_tasks_alter(&$data, $route_name) {
     'entity.node.canonical',
     'view.managers.view_managers',
     'view.manage_enrollments.page',
+    'view.event_manage_enrollments.page_manage_enrollments',
   ];
   if (in_array($route_name, $routes_to_check)) {
     $node = \Drupal::service('current_route_match')->getParameter('node');
@@ -233,6 +266,19 @@ function social_event_an_enroll_form_alter(&$form, FormStateInterface $form_stat
     // Hide checkbox if feature is disabled globally.
     $form['field_event_an_enroll']['#access'] = $config->get('event_an_enroll');
   }
+
+  if ((isset($form['views_bulk_operations_bulk_form']) || strpos($form_id, 'views_form_event_manage_enrollments_page_manage_enrollments') !== FALSE) && isset($form['output'][0]['#view'])) {
+    $view = &$form['output'][0]['#view'];
+
+    // Unset the action to send emails to LU members which is replaced by
+    // config override.
+    if ($view instanceof ViewExecutable && $view->id() === 'event_manage_enrollments') {
+      $actions = &$form['header']['social_views_bulk_operations_bulk_form_enrollments_1']['actions'];
+      $action = 'social_event_managers_send_email_action';
+      $actions[$action]['#access'] = FALSE;
+      unset($actions['#links'][$action]);
+    }
+  }
 }
 
 /**
@@ -250,4 +296,11 @@ function social_event_an_enroll_node_update(Node $node) {
       drupal_set_message(t('Enrollment without account can only be enabled when the visibility of the event is Public.'), 'warning');
     }
   }
+}
+
+/**
+ * Implements hook_social_event_action_ACTION_ID_finish().
+ */
+function social_event_an_enroll_social_event_managers_action_social_event_an_enroll_send_email_action_finish($success) {
+  return social_event_managers_social_event_managers_action_social_event_managers_send_email_action_finish($success);
 }

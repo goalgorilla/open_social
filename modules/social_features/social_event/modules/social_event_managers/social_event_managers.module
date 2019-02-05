@@ -5,17 +5,19 @@
  * Contains social_event_managers.module.
  */
 
+use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultAllowed;
 use Drupal\Core\Access\AccessResultForbidden;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Messenger\MessengerInterface;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Url;
+use Drupal\block\Entity\Block;
 use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
-use Drupal\block\Entity\Block;
-use Drupal\Core\Session\AccountInterface;
-use Drupal\Core\Access\AccessResult;
-use Drupal\Core\Url;
 use Drupal\social_event_managers\SocialEventManagersAccessHelper;
-use Drupal\Core\Form\FormStateInterface;
 use Drupal\user\Entity\User;
+use Drupal\views\ViewExecutable;
 
 /**
  * Implements hook_preprocess_block().
@@ -37,6 +39,39 @@ function social_event_managers_preprocess_block(&$variables) {
 }
 
 /**
+ * Implements hook_views_data_alter().
+ */
+function social_event_managers_views_data_alter(array &$data) {
+  // Create our own views VBO field for enrollments.
+  $data['views']['social_views_bulk_operations_bulk_form_enrollments'] = [
+    'title' => t('Social Views bulk operations for Enrollments'),
+    'help' => t("Process enrollments returned by the view with Views Bulk Operations' actions."),
+    'field' => [
+      'id' => 'social_views_bulk_operations_bulk_form_enrollments',
+    ],
+  ];
+}
+
+/**
+ * Add notification settings display on user Profile for the EO notification.
+ *
+ * @param array &$items
+ *   An array of groups that contain a title and an array of templates that are
+ *   contained in this settings group.
+ * @param array $email_message_templates
+ *   Message templates enabled for sending by email.
+ *
+ * @see activity_send_email_form_user_form_alter()
+ */
+function social_event_managers_activity_send_email_notifications_alter(array &$items, array $email_message_templates) {
+  // If a member_added_by_event_organiser template is enabled then we add it in
+  // the "Message to Me" section.
+  if (isset($email_message_templates['member_added_by_event_organiser'])) {
+    $items['message_to_me']['templates'][] = 'member_added_by_event_organiser';
+  }
+}
+
+/**
  * Implements hook_block_access().
  */
 function social_event_managers_block_access(Block $block, $operation, AccountInterface $account) {
@@ -49,6 +84,48 @@ function social_event_managers_block_access(Block $block, $operation, AccountInt
   }
   // No opinion for other situations really.
   return AccessResult::neutral();
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function social_event_managers_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  // Make sure we pass along the ccorrect view id, display id and node
+  // parameter to our custom views bulk forms and redirects.
+  if (isset($form['views_bulk_operations_bulk_form']) && isset($form['output'][0]['#view'])) {
+    $view = &$form['output'][0]['#view'];
+
+    if ($view instanceof ViewExecutable) {
+      $view_id = $view->id();
+      $display_id = $view->current_display;
+    }
+  }
+  elseif (strpos($form_id, 'views_form_event_manage_enrollments_page_manage_enrollments') !== FALSE && isset($form['output'][0]['#view'])) {
+    $view = &$form['output'][0]['#view'];
+
+    if ($view instanceof ViewExecutable) {
+      $view_id = $view->id();
+      $display_id = $view->current_display;
+    }
+  }
+  elseif ($form_id === 'views_bulk_operations_configure_action') {
+    $data = $form_state->get('views_bulk_operations');
+    $view_id = $data['view_id'];
+    $display_id = $data['display_id'];
+  }
+
+  if (isset($view_id) && $view_id === 'event_manage_enrollments' && $display_id === 'page_manage_enrollments') {
+    $form_state->set('node', \Drupal::routeMatch()->getRawParameter('node'));
+
+    if ($form_id === 'views_bulk_operations_configure_action') {
+      $callbacks = &$form['actions']['submit']['#submit'];
+    }
+    else {
+      $callbacks = &$form['#submit'];
+    }
+
+    $callbacks[] = '_social_event_managers_views_bulk_operations_bulk_form_submit';
+  }
 }
 
 /**
@@ -189,6 +266,7 @@ function social_event_managers_menu_local_tasks_alter(&$data, $route_name) {
     'entity.node.canonical',
     'view.managers.view_managers',
     'view.manage_enrollments.page',
+    'view.event_manage_enrollments.page_manage_enrollments',
   ];
   if (in_array($route_name, $routes_to_check)) {
     $node = \Drupal::service('current_route_match')->getParameter('node');
@@ -204,6 +282,7 @@ function social_event_managers_menu_local_tasks_alter(&$data, $route_name) {
   // always and not only on the mentioned routes.
   if (!$can_show_managers_link) {
     unset($data['tabs'][0]['views_view:view.managers.view_managers']);
+    unset($data['tabs'][0]['views_view:view.event_manage_enrollments.page_manage_enrollments']);
   }
 }
 
@@ -246,5 +325,151 @@ function social_event_managers_activity_recipient_organizer_alter(array &$recipi
         ];
       }
     }
+  }
+}
+
+/**
+ * Implements hook_batch_alter().
+ */
+function social_event_managers_batch_alter(&$batch) {
+  if (!isset($batch['source_url'])) {
+    return;
+  }
+
+  $actions = [
+    'social_event_enrolments_export_enrollments_action',
+    'social_event_managers_send_email_action',
+    'social_event_managers_delete_event_enrollment_action',
+    'social_event_an_enroll_enrolments_export_action',
+    'social_event_an_enroll_send_email_action',
+  ];
+
+  /** @var \Drupal\Core\Url $url */
+  $url = &$batch['source_url'];
+
+  if ($url->getRouteName() === 'social_event_managers.vbo.confirm' ||
+    $url->getRouteName() === 'views_bulk_operations.confirm') {
+    /** @var \Drupal\Core\Form\FormStateInterface $form_state */
+    $form_state = &$batch['form_state'];
+
+    $data = $form_state->get('views_bulk_operations');
+    $batch['sets'][0]['results']['action'] = $data['action_id'];
+    if (in_array($data['action_id'], $actions)) {
+      $batch['sets'][0]['finished'] = '_social_event_managers_action_batch_finish';
+    }
+  }
+}
+
+/**
+ * Action batch finished callback.
+ *
+ * @param bool $success
+ *   Was the process successfull?
+ * @param array $results
+ *   Batch process results array.
+ * @param array $operations
+ *   Performed operations array.
+ */
+function _social_event_managers_action_batch_finish($success, array $results, array $operations) {
+  $operations = array_count_values($results['operations']);
+  $results_count = 0;
+
+  foreach ($operations as $count) {
+    $results_count += $count;
+  }
+
+  $hook = 'social_event_managers_action_' . $results['action'] . '_finish';
+
+  foreach (\Drupal::moduleHandler()->getImplementations($hook) as $module) {
+    $function = $module . '_' . $hook;
+    $messages = $function($success);
+
+    if (is_array($messages)) {
+      $fields = 0;
+
+      foreach ($messages as $type => $message) {
+        if (($type === 'singular' || $type === 'plural') && !empty($message) && is_string($message)) {
+          $fields++;
+        }
+      }
+
+      if ($fields === 2) {
+        $message = \Drupal::translation()->formatPlural($results_count, $messages['singular'], $messages['plural']);
+        $type = $success ? MessengerInterface::TYPE_STATUS : MessengerInterface::TYPE_WARNING;
+        \Drupal::messenger()->addMessage($message, $type);
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_social_event_action_ACTION_ID_finish().
+ */
+function social_event_managers_social_event_managers_action_social_event_managers_send_email_action_finish($success) {
+  if ($success) {
+    return [
+      'singular' => 'Your email has been sent to 1 selected enrollee successfully',
+      'plural' => 'Your email has been sent to @count selected enrollees successfully',
+    ];
+  }
+
+  return [
+    'singular' => 'Your email has not been sent to 1 selected enrollee successfully',
+    'plural' => 'Your email has not been sent to @count selected enrollees successfully',
+  ];
+}
+
+/**
+ * Implements hook_social_event_action_ACTION_ID_finish().
+ */
+function social_event_managers_social_event_managers_action_social_event_managers_delete_event_enrollment_action_finish($success) {
+  if ($success) {
+    return [
+      'singular' => '1 selected enrollee has been removed from the event successfully',
+      'plural' => '@count selected enrollees have been removed from the event successfully',
+    ];
+  }
+
+  return [
+    'singular' => '1 selected enrollee has not been removed from the event successfully',
+    'plural' => '@count selected enrollees have not been removed from the event successfully',
+  ];
+}
+
+/**
+ * Add node ID to the route of action confirmation step.
+ */
+function _social_event_managers_views_bulk_operations_bulk_form_submit($form, FormStateInterface $form_state) {
+  /** @var \Drupal\Core\Url $url */
+  $url = $form_state->getRedirect();
+
+  $route_parameters = [
+    'node' => $form_state->get('node'),
+  ];
+
+  if ($url->getRouteName() === 'views_bulk_operations.execute_configurable') {
+    $url = Url::fromRoute('social_event_managers.vbo.execute_configurable', $route_parameters);
+  }
+  if ($url->getRouteName() === 'social_event_managers.vbo.confirm') {
+    $url = Url::fromRoute('social_event_managers.vbo.confirm', $route_parameters);
+  }
+
+  $form_state->setRedirectUrl($url);
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function social_event_managers_preprocess_views_view(&$variables) {
+  /** @var \Drupal\views\ViewExecutable $view */
+  $view = &$variables['view'];
+
+  if ($view->id() === 'event_manage_enrollments') {
+    $block = \Drupal::entityTypeManager()->getStorage('block')
+      ->load('socialblue_local_actions');
+
+    $variables['header']['actions'] = \Drupal::entityTypeManager()
+      ->getViewBuilder('block')
+      ->view($block);
   }
 }

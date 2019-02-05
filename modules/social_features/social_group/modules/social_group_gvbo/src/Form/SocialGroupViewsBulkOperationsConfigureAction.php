@@ -33,7 +33,7 @@ class SocialGroupViewsBulkOperationsConfigureAction extends GroupViewsBulkOperat
       if ($url->getRouteName() === 'views_bulk_operations.confirm') {
         $parameters = $url->getRouteParameters();
 
-        $url = Url::fromRoute('social_group.views_bulk_operations.confirm', [
+        $url = Url::fromRoute('social_group_gvbo.views_bulk_operations.confirm', [
           'group' => $parameters['group'],
         ]);
 

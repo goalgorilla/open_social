@@ -1,0 +1,6 @@
+services:
+  social_group_gvbo.views_bulk_operations.access:
+    class: Drupal\social_group_gvbo\Access\SocialGroupViewsBulkOperationsAccess
+    arguments: ['@user.private_tempstore']
+    tags:
+    - { name: access_check, applies_to: _social_group_views_bulk_operation_access }
