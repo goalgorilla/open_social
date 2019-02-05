@@ -14,6 +14,7 @@ use Drupal\block\Entity\Block;
  * Perform actions related to the installation of social_event_an_enroll.
  */
 function social_event_an_enroll_install() {
+  module_set_weight('social_event_an_enroll', 10);
   _social_event_an_enroll_set_permissions();
   _social_event_an_enroll_fix_blocks();
 }

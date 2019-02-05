@@ -2,7 +2,7 @@ name: 'Social Event'
 description: 'Provides Event content type and related configuration. '
 type: module
 core: 8.x
-configure: 'social_event.settings'
+configure: social_event.settings
 dependencies:
   - address:address
   - drupal:block
@@ -11,10 +11,7 @@ dependencies:
   - social:entity_access_by_field
   - drupal:field
   - drupal:file
-  - group:group
-  - social:group_core_comments
   - drupal:image
-  - image_widget_crop:image_widget_crop
   - drupal:menu_ui
   - drupal:node
   - drupal:options
@@ -27,5 +24,13 @@ dependencies:
   - drupal:text
   - drupal:user
   - drupal:views
+  - entity_access_by_field:entity_access_by_field
   - field_group:field_group
+  - group:group
+  - group_core_comments:group_core_comments
+  - image_widget_crop:image_widget_crop
+  - profile:profile
+  - social_comment:social_comment
+  - social_core:social_core
+  - social_profile:social_profile
 package: Social
