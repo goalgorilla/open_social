@@ -42,11 +42,6 @@ function social_content_report_form_alter(&$form, FormStateInterface $form_state
       }
     }
 
-    // Disable the status field if user does not have access to it.
-    if (!\Drupal::currentUser()->hasPermission('close inappropriate reports')) {
-      $form['field_status']['#access'] = FALSE;
-    }
-
     $form['#attributes']['class'][] = 'form--content-reporting';
     $form['#attached']['library'][] = 'social_content_report/reporting';
 
@@ -91,7 +86,7 @@ function social_content_report_post_links_alter(array &$links, PostInterface $en
 
 /**
  * Implements hook_comment_links_alter().
- */
+ */core.entity_form_display.flagging.report_post.default.yml
 function social_content_report_comment_links_alter(array &$links, CommentInterface $entity, array &$context) {
   $link = \Drupal::service('social_content_report.content_report_service')->getModalLink($entity, 'report_comment');
 
