@@ -109,7 +109,13 @@ function social_content_report_node_links_alter(array &$links, NodeInterface $en
     $link = \Drupal::service('social_content_report.content_report_service')->getModalLink($entity, 'report_node');
 
     if ($link) {
-      $links['node']['#links']['report'] = $link;
+      $links['moderation'] = [
+        '#theme' => 'links__node__moderation',
+        '#links' => [
+          'report' => $link,
+        ],
+        '#attributes' => ['class' => ['links', 'inline']],
+      ];
       $links['#cache']['contexts'][] = 'user';
     }
   }
