@@ -2,6 +2,7 @@
 
 namespace Drupal\social_content_report;
 
+use Drupal\Component\Serialization\Json;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
@@ -103,7 +104,11 @@ class ContentReportService {
         ['query' => ['destination' => Url::fromRoute('<current>')->toString()]]),
       'attributes' => [
         'data-dialog-type' => 'modal',
-        'class' => ['use-ajax'],
+        'data-dialog-options' => JSON::encode([
+          'width' => 400,
+          'dialogClass' => 'content-reporting-dialog',
+        ]),
+        'class' => ['use-ajax', 'content-reporting-link'],
       ],
     ];
   }
