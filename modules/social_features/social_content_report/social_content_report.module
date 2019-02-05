@@ -7,7 +7,6 @@
 
 use Drupal\comment\CommentInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
 use Drupal\social_post\Entity\PostInterface;
 
@@ -29,6 +28,9 @@ function social_content_report_form_alter(&$form, FormStateInterface $form_state
     $terms = \Drupal::service('config.factory')->get('social_content_report.settings')
       ->get('reasons_with_text');
 
+    // Only show the "Other reason" title to screenreaders.
+    $form['field_other_reason']['widget'][0]['value']['#title_display'] = 'invisible';
+
     foreach ($terms as $term_id => $enabled) {
       if ($enabled) {
         // Only show the reason input field if it is enabled for the reason.
@@ -39,6 +41,8 @@ function social_content_report_form_alter(&$form, FormStateInterface $form_state
         ];
       }
     }
+
+    $form['#attached']['library'][] = 'social_content_report/reporting';
 
     // Add some validation if the reason field is mandatory.
     if (\Drupal::config('social_content_report.settings')->get('mandatory_reason')) {
@@ -90,7 +94,6 @@ function social_content_report_comment_links_alter(array &$links, CommentInterfa
     $links['#cache']['contexts'][] = 'user';
   }
 }
-
 
 /**
  * Implements hook_node_links_alter().
