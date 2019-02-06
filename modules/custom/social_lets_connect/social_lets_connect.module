@@ -1,0 +1,13 @@
+<?php
+
+/**
+ * @file
+ * Contains social_lets_connect.module.
+ */
+
+/*
+* Implements hook_toolbar_alter()
+*/
+function social_lets_connect_toolbar_alter(&$items) {
+  $items['administration']['#attached']['library'][] = 'social_lets_connect/toolbar';
+}
