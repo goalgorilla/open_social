@@ -71,45 +71,48 @@ class AddMembersToGroup extends ViewsBulkOperationsActionBase implements Contain
    * {@inheritdoc}
    */
   public function execute($entity = NULL) {
-    $role = $this->configuration['role'];
-    $is_member = $this->configuration['is_member'];
-    $update = TRUE;
-    $value = [];
 
-    /** @var \Drupal\group\Entity\GroupTypeInterface $group_type */
-    $group_type = $this->storage->load($id)->getGroupType();
+  $x = 1;
 
-    $roles = $group_type->getRoles(FALSE);
-    $id = $group_type->getMemberRoleId();
-    $roles[$id] = $group_type->getMemberRole();
+//    $role = $this->configuration['role'];
+//    $is_member = $this->configuration['is_member'];
+//    $update = TRUE;
+//    $value = [];
+//
+//    /** @var \Drupal\group\Entity\GroupTypeInterface $group_type */
+//    $group_type = $this->storage->load($id)->getGroupType();
+//
+//    $roles = $group_type->getRoles(FALSE);
+//    $id = $group_type->getMemberRoleId();
+//    $roles[$id] = $group_type->getMemberRole();
+//
+//    /** @var \Drupal\group\Entity\GroupContentInterface $entity */
+//    /** @var \Drupal\Core\Field\EntityReferenceFieldItemListInterface $roles */
+//    $roles = &$entity->get('group_roles');
+//
+//    if ($roles->isEmpty() && $is_member) {
+//      $update = FALSE;
+//    }
+//    elseif (!$roles->isEmpty() && !$is_member) {
+//      $value = $roles->getValue();
+//
+//      foreach ($value as $item) {
+//        if ($item['target_id'] === $role) {
+//          $update = FALSE;
+//          break;
+//        }
+//      }
+//    }
+//
+//    if ($update) {
+//      if (!$is_member) {
+//        $value[] = ['target_id' => $role];
+//      }
+//
+//      $entity->set('group_roles', $value)->save();
+//    }
 
-    /** @var \Drupal\group\Entity\GroupContentInterface $entity */
-    /** @var \Drupal\Core\Field\EntityReferenceFieldItemListInterface $roles */
-    $roles = &$entity->get('group_roles');
-
-    if ($roles->isEmpty() && $is_member) {
-      $update = FALSE;
-    }
-    elseif (!$roles->isEmpty() && !$is_member) {
-      $value = $roles->getValue();
-
-      foreach ($value as $item) {
-        if ($item['target_id'] === $role) {
-          $update = FALSE;
-          break;
-        }
-      }
-    }
-
-    if ($update) {
-      if (!$is_member) {
-        $value[] = ['target_id' => $role];
-      }
-
-      $entity->set('group_roles', $value)->save();
-    }
-
-    return $this->t('Change roles');
+    return $this->t('Add to Group');
   }
 
   /**
@@ -142,9 +145,22 @@ class AddMembersToGroup extends ViewsBulkOperationsActionBase implements Contain
       $options[$group_type->label()][$group->id()] = $group->label();
     }
 
+    $markup = $this->formatPlural($this->context['selected_count'],
+      'Please select the group you want to add the member you have selected to',
+      'Please select the group you want to add the @count members you have selected to'
+    );
+
+    $form['description'] = [
+      '#markup' => $markup,
+    ];
+
+
+    // Empty the options so we don't have a massive list of users.
+    unset($form['list']);
+
     $form['groups'] = [
       '#type' => 'select',
-      '#title' => $this->t('Groups'),
+      '#title' => $this->t('Group'),
       '#options' => $options,
     ];
 
