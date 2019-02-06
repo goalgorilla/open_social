@@ -61,7 +61,7 @@ class FlagSubscriber implements EventSubscriberInterface {
    *   The cache tags invalidator service.
    */
   public function __construct(ConfigFactoryInterface $config_factory, EntityTypeManagerInterface $entity_type_manager, MessengerInterface $messenger, CacheTagsInvalidatorInterface $cache_invalidator) {
-    $this->unpublishImmediately = $config_factory->get('social_content_report.settings')->get('unpublish_immediately');
+    $this->unpublishImmediately = $config_factory->get('social_content_report.settings')->get('unpublish_threshold');
     $this->entityTypeManager = $entity_type_manager;
     $this->messenger = $messenger;
     $this->cacheInvalidator = $cache_invalidator;

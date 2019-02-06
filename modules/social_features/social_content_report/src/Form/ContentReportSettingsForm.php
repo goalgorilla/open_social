@@ -68,11 +68,11 @@ class ContentReportSettingsForm extends ConfigFormBase {
     $config = $this->configFactory->get('social_content_report.settings');
 
     // Allow immediate unpublishing.
-    $form['unpublish_immediately'] = [
+    $form['unpublish_threshold'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Unpublished immediately'),
       '#description' => $this->t('Whether the content is immediately unpublished if a user reports it as inappropriate.'),
-      '#default_value' => $config->get('unpublish_immediately'),
+      '#default_value' => $config->get('unpublish_threshold'),
     ];
 
     // A list of reason terms to display the reason textfield for.
@@ -107,7 +107,7 @@ class ContentReportSettingsForm extends ConfigFormBase {
     parent::submitForm($form, $form_state);
 
     $this->config('social_content_report.settings')
-      ->set('unpublish_immediately', $form_state->getValue('unpublish_immediately'))
+      ->set('unpublish_threshold', $form_state->getValue('unpublish_threshold'))
       ->set('reasons_with_text', $form_state->getValue('reasons_with_text'))
       ->set('mandatory_reason', $form_state->getValue('mandatory_reason'))
       ->save();
