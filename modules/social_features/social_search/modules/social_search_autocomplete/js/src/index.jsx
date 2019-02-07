@@ -9,6 +9,20 @@ import Spinner from './components/Spinner';
 
 (($, Drupal) => {
   /**
+   * Utility function to decode HTML entities in a string.
+   *
+   * @param str
+   *   The string to decode.
+   * @return {string}
+   *   The decoded string.
+   */
+  function decodeHtmlEntity(str) {
+    return str.replace(/&#(\d+);/g, function(match, dec) {
+      return String.fromCharCode(dec);
+    }).replace(/&amp;/g, '&');
+  }
+
+  /**
    * Returns a function that can be used to fetch suggestions from the given url.
    *
    * @param {string} baseUrl
@@ -51,8 +65,12 @@ import Spinner from './components/Spinner';
           success(data) {
             // Convert the content paths to absolute paths.
             const suggestions = data.map(s => ({
-              type: s.type,
-              label: s.label,
+              // HTML entities are decoded because they are escaped by the REST
+              // endpoint in Drupal. The resulting output is also escaped by
+              // React before rendering.
+              // @see https://www.drupal.org/project/drupal/issues/2928793
+              type: decodeHtmlEntity(s.type),
+              label: decodeHtmlEntity(s.label),
               url: baseUrl + s.path,
             }));
 
