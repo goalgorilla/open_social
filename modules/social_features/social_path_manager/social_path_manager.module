@@ -72,7 +72,7 @@ function social_path_manager_batch_alter(&$batch) {
   /** @var \Drupal\Core\Url $url */
   $url = &$batch['source_url'];
 
-  // Check if the batch is a pathauto bulk.
+  // Bulk generate aliases include group tabs.
   if ($url->getRouteName() === 'pathauto.bulk.update.form') {
     $options = $batch['form_state']->getValue('update');
     $action = $batch['form_state']->getValue('action');
@@ -81,7 +81,7 @@ function social_path_manager_batch_alter(&$batch) {
     if ($options['canonical_entities:group'] === 'canonical_entities:group') {
       // Set additional batch to create group aliases for group tabs.
       $batch['operations'][] = [
-        '_social_path_manager_create_group_tab_aliases',
+        '_social_path_manager_update_group_tab_aliases',
         ['canonical_entities:group', $action]
       ];
       batch_set($batch);
@@ -92,7 +92,7 @@ function social_path_manager_batch_alter(&$batch) {
 /**
  * Common batch processing callback for all operations.
  */
-function _social_path_manager_create_group_tab_aliases($id, $action, &$context) {
+function _social_path_manager_update_group_tab_aliases($id, $action, &$context) {
   if (!isset($context['sandbox']['progress'])) {
     $context['sandbox']['progress'] = 0;
     $context['sandbox']['grouptab_aliases_created'] = 0;
@@ -114,7 +114,7 @@ function _social_path_manager_create_group_tab_aliases($id, $action, &$context) 
 
   if ( $context['sandbox']['#finished'] === 1) {
     \Drupal::service('messenger')->addMessage(\Drupal::translation()
-      ->formatPlural($context['sandbox']['grouptab_aliases_created'], 'Generated group tab aliases for 1 group.', 'Generated group tab aliases for @count groups.'));
+      ->formatPlural($context['sandbox']['grouptab_aliases_created'], 'Generated 1 group tab aliases.', 'Generated @count group tab aliases.'));
   }
 }
 
@@ -211,6 +211,7 @@ function _social_path_manager_get_path_suffix($group_id, $route) {
 function _social_path_manager_update_alias(EntityInterface $entity, $op, $bulk = FALSE) {
   if ($entity->getEntityTypeId() === 'group') {
     switch ($op) {
+      case 'all':
       case 'update':
       case 'create':
         // If it's a bulk generate then get the alias by path.
@@ -235,14 +236,14 @@ function _social_path_manager_update_alias(EntityInterface $entity, $op, $bulk =
             $is_alias = \Drupal::service('path.alias_storage')->aliasExists($grouptab_alias, 'und');
 
             // Create a new alias when it does not exist.
-            if ($op == 'create' && $is_alias === FALSE) {
+            if ($op === 'create' && $is_alias === FALSE) {
               // Insert the alias for the other views.
               \Drupal::service('path.alias_storage')
                 ->save('/group/' . $entity->id() . '/' . $suffix, $path['alias'] . '/' . $suffix, 'und');
             }
 
             // Update alias by deleting the old one and creating a new one.
-            if ($op == 'update') {
+            if ($op === 'update' || $op === 'all') {
               \Drupal::service('pathauto.alias_storage_helper')
                 ->deleteBySourcePrefix('/group/' . $entity->id() . '/' . $suffix);
 
