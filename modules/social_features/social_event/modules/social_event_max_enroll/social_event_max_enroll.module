@@ -13,19 +13,19 @@ use Drupal\Core\Form\FormStateInterface;
 /**
  * Implements hook_views_post_render().
  *
- * Alter "Event enrollments" views. Add number of places left.
+ * Alter "Event enrollments" views. Add number of spots left.
  */
 function social_event_max_enroll_views_post_render(ViewExecutable $view, &$output, CachePluginBase $cache) {
-  if ($view->id() === 'event_enrollments' && $view->current_display === 'event_enrollments' && isset($output['#rows']) && !empty($view->args[0])) {
+  if ($view->current_display === 'event_enrollments' && $view->id() === 'event_enrollments' && isset($output['#rows']) && !empty($view->args[0])) {
     $nid = $view->args[0];
     $node = Node::load($nid);
     $event_max_enroll_service = \Drupal::service('social_event_max_enroll.service');
 
-    // Add places left counter to the block title.
+    // Add spots left counter to the block title.
     if ($event_max_enroll_service->isEnabled($node)) {
-      // Count how many places left.
+      // Count how many spots left.
       $left = $event_max_enroll_service->getEnrollmentsLeft($node);
-      $title_suffix = \Drupal::translation()->formatPlural($left, '(1 place left)', '(@count places left)');
+      $title_suffix = \Drupal::translation()->formatPlural($left, '(1 spot left)', '(@count spots left)');
       $view->header['result']->options['content'] .= ' ' . $title_suffix;
     }
   }
@@ -73,17 +73,17 @@ function social_event_max_enroll_form_alter(&$form, FormStateInterface $form_sta
     $event_max_enroll_service = \Drupal::service('social_event_max_enroll.service');
     $node = \Drupal::routeMatch()->getParameter('node');
     if ($node instanceof Node && $event_max_enroll_service->isEnabled($node)) {
-      // Count how many places left.
+      // Count how many spots are left.
       $left = $event_max_enroll_service->getEnrollmentsLeft($node);
       if ($left < 1) {
         if ($form_id === 'enroll_action_form') {
-          $form['enroll_for_this_event']['#value'] = t('No places left');
+          $form['enroll_for_this_event']['#value'] = t('No spots left');
           $form['enroll_for_this_event']['#disabled'] = TRUE;
         }
         if ($form_id === 'event_an_enroll_action_form') {
           $form['event_enrollment'] = [
             '#type' => 'submit',
-            '#value' => t('No places left'),
+            '#value' => t('No spots left'),
             '#disabled' => TRUE,
             '#attributes' => [
               'class' => [
@@ -109,15 +109,22 @@ function social_event_max_enroll_preprocess_page_hero_data(array &$variables) {
   $event_max_enroll_service = \Drupal::service('social_event_max_enroll.service');
   $node = $variables['node'];
 
-  // Add places left counter to the hero block.
+  // Add spots left counter to the hero block.
   if ($event_max_enroll_service->isEnabled($node)) {
     $total = $event_max_enroll_service->getEnrollmentsNumber($node);
     $left = $event_max_enroll_service->getEnrollmentsLeft($node);
-    $variables['title_suffix'] = \Drupal::translation()
-      ->formatPlural($left, '@total people have enrolled (1 place left)',
-        '@total people have enrolled (@count places left)',
-        ['@total' => $total]
-      );
 
+    // Get the string for how many spots are left.
+    $spots_left = \Drupal::translation()->formatPlural($left, '(1 spot left)', '(@count spots left)');
+
+    // Display the
+    $variables['title_suffix'] = \Drupal::translation()
+      ->formatPlural($total, '@total person has enrolled @spots_left',
+        '@total people have enrolled @spots_left',
+        [
+          '@total' => $total,
+          '@spots_left' => $spots_left,
+        ]
+      );
   }
 }
