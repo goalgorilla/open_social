@@ -5,25 +5,25 @@
  * The Social event module.
  */
 
-use Drupal\block\Entity\Block;
+use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultNeutral;
 use Drupal\Core\Block\BlockPluginInterface;
+use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
+use Drupal\block\Entity\Block;
+use Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface;
 use Drupal\group\Entity\GroupContent;
 use Drupal\group\GroupMembershipLoaderInterface;
 use Drupal\node\Entity\Node;
 use Drupal\social_event\Controller\SocialEventController;
 use Drupal\views\Plugin\views\query\QueryPluginBase;
 use Drupal\views\ViewExecutable;
-use Drupal\Component\Utility\NestedArray;
-use Drupal\Core\Datetime\DrupalDateTime;
-use Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface;
 
 /**
  * Implements hook_form_form_ID_alter().
@@ -104,6 +104,7 @@ function social_event_menu_local_tasks_alter(&$data, $route_name) {
     'entity.node.canonical',
     'view.managers.view_managers',
     'view.manage_enrollments.page',
+    'view.event_manage_enrollments.page_manage_enrollments',
   ];
   if (in_array($route_name, $routes_to_check)) {
     $node = \Drupal::service('current_route_match')->getParameter('node');
@@ -115,7 +116,7 @@ function social_event_menu_local_tasks_alter(&$data, $route_name) {
     }
 
   }
-  // PLace this here, since hiding it should happen always
+  // Place this here, since hiding it should happen always
   // and not only on the mentioned routes.
   if (!$can_show_enrollments_link) {
     unset($data['tabs'][0]['views_view:view.event_enrollments.view_enrollments']);

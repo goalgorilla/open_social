@@ -25,7 +25,8 @@ class MenuLocalAction extends BaseMenuLocalAction {
     $route_names = [
       // Identify the `Add member` button on the manage members page of a group.
       'view.group_manage_members.page_group_manage_members',
-
+      // Identify the `Add enrollee` button on the manage enrollments page.
+      'view.event_manage_enrollments.page_manage_enrollments',
       // Identify the `New message` button on the private message page.
       'entity.private_message_thread.canonical',
     ];
