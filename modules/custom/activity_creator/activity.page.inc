@@ -77,7 +77,7 @@ function template_preprocess_activity(array &$variables) {
         $content = \Drupal::entityTypeManager()
           ->getViewBuilder('profile')
           ->view($user_profile, 'compact_notification');
-        if ($full_url == '') {
+        if ($full_url === '') {
           $variables['actor'] = $content;
         }
         else {
@@ -85,24 +85,25 @@ function template_preprocess_activity(array &$variables) {
         }
       }
     }
-  }
 
-  // Our author is Anonymous. If that happens for a notification.
-  // Lets provide the author as a default profile image.
-  if ($variables['elements']['#view_mode'] === 'notification' && $account->isAnonymous()) {
-    $default_image = social_profile_get_default_image();
-    if (!empty($default_image['id'])) {
-      $file = File::load($default_image['id']);
-      $uri = $file->getFileUri();
+    // Our author is Anonymous. If that happens for a notification.
+    // Lets provide the author as a default profile image.
+    if ($variables['elements']['#view_mode'] === 'notification' && $account->isAnonymous()) {
+      $default_image = social_profile_get_default_image();
+      if (!empty($default_image['id'])) {
+        $file = File::load($default_image['id']);
+        $uri = $file->getFileUri();
 
-      $variables['actor'] = [
-        '#theme' => 'image_style',
-        '#width' => $default_image['width'],
-        '#height' => $default_image['height'],
-        '#style_name' => 'social_medium',
-        '#uri' => $uri,
-      ];
+        $variables['actor'] = [
+          '#theme' => 'image_style',
+          '#width' => $default_image['width'],
+          '#height' => $default_image['height'],
+          '#style_name' => 'social_medium',
+          '#uri' => $uri,
+        ];
+      }
     }
+
   }
 
   $variables['full_url'] = $full_url;

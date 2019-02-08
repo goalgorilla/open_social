@@ -154,6 +154,8 @@ function social_auth_extra_form_user_register_form_submit($form, FormStateInterf
       'name' => $form_state->getValue('name'),
       'mail' => $form_state->getValue('mail'),
       'init' => $form_state->getValue('mail'),
+      'status' => $form_state->getValue('status'),
+      'preferred_langcode' => $form_state->getValue('preferred_langcode'),
     ]);
 
     try {
@@ -226,25 +228,32 @@ function social_auth_extra_form_user_register_form_submit($form, FormStateInterf
         $form_state->getFormObject()->setEntity($account);
       }
 
-      user_login_finalize($account);
-      drupal_set_message(t('Your account is created. We have sent an email with your account details. You can now start exploring @community_name.', [
-        '@community_name' => \Drupal::config('system.site')->get('name'),
-      ]));
+      if ($account->get('status')->value === 0) {
+        _user_mail_notify('register_pending_approval', $account);
+        drupal_set_message(t('Thank you for applying for an account. Your account is currently pending approval by the site administrator.<br />In the meantime, a welcome message with further instructions has been sent to your email address.'));
+        $form_state->setRedirect('<front>');
+      }
+      else {
+        user_login_finalize($account);
+        drupal_set_message(t('Your account is created. We have sent an email with your account details. You can now start exploring @community_name.', [
+          '@community_name' => \Drupal::config('system.site')->get('name'),
+        ]));
 
-      // Send email notification.
-      $params['account'] = $account;
-      $langcode = $account->getPreferredLangcode();
-      $site_mail = \Drupal::config('system.site')->get('mail_notification');
+        // Send email notification.
+        $params['account'] = $account;
+        $langcode = $account->getPreferredLangcode();
+        $site_mail = \Drupal::config('system.site')->get('mail_notification');
+        if (empty($site_mail)) {
+          $site_mail = \Drupal::config('system.site')->get('mail');
+        }
 
-      if (empty($site_mail)) {
-        $site_mail = \Drupal::config('system.site')->get('mail');
+        if (empty($site_mail)) {
+          $site_mail = ini_get('sendmail_from');
+        }
+
+        \Drupal::service('plugin.manager.mail')->mail('social_auth_extra', 'email_social_login', $account->getEmail(), $langcode, $params, $site_mail);
       }
 
-      if (empty($site_mail)) {
-        $site_mail = ini_get('sendmail_from');
-      }
-
-      \Drupal::service('plugin.manager.mail')->mail('social_auth_extra', 'email_social_login', $account->getEmail(), $langcode, $params, $site_mail);
       // Save user consent.
       if (\Drupal::hasService('data_policy.manager')) {
         /** @var \Drupal\data_policy\DataPolicyManagerInterface $data_policy_manager */
@@ -256,7 +265,7 @@ function social_auth_extra_form_user_register_form_submit($form, FormStateInterf
       }
     }
     catch (EntityStorageException $e) {
-      drupal_set_message($this->t('Creation of user account failed. Please contact site administrator.'), 'error');
+      drupal_set_message(t('Creation of user account failed. Please contact site administrator.'), 'error');
       $logger_factory = \Drupal::service('logger.fatory');
       $logger_factory
         ->get($id)
