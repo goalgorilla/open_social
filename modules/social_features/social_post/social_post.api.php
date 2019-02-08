@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Hooks provided by the Social Group module.
+ * Hooks provided by the Social Post module.
  */
 
 /**

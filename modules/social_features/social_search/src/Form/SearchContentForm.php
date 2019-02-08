@@ -58,12 +58,16 @@ class SearchContentForm extends FormBase implements ContainerInjectionInterface 
 
     $form['search_input_content'] = [
       '#type' => 'textfield',
+      '#weight' => '0',
     ];
 
-    $form['actions'] = ['#type' => 'actions'];
-    $form['actions']['submit'] = [
-      '#type' => 'submit',
-      '#value' => $this->t('Search Content'),
+    $form['actions'] = [
+      '#type' => 'actions',
+      '#weight' => '10',
+      'submit' => [
+        '#type' => 'submit',
+        '#value' => $this->t('Search Content'),
+      ],
     ];
 
     return $form;
