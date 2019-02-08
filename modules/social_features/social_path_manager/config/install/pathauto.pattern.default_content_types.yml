@@ -6,19 +6,8 @@ dependencies:
 id: default_content_types
 label: 'default content types'
 type: 'canonical_entities:node'
-pattern: '[node:content-type]/[node:title]'
-selection_criteria:
-  43a8de1d-3663-4af1-8c80-33153c546f40:
-    id: node_type
-    bundles:
-      event: event
-      landing_page: landing_page
-      page: page
-      topic: topic
-    negate: false
-    context_mapping:
-      node: node
-    uuid: 43a8de1d-3663-4af1-8c80-33153c546f40
+pattern: '[node:group:url:path]/[node:content-type]/[node:title]'
+selection_criteria: {  }
 selection_logic: and
 weight: -8
 relationships: {  }
