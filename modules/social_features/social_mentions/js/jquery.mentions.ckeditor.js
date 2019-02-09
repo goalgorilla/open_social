@@ -448,15 +448,16 @@
       };
 
       MentionsCKEditor.prototype.getValue = function() {
-        var $container, j, len, markup, mention, ref;
-        $container = $(this.editor.document.$.body.cloneNode(true));
+        var container, j, len, markup, mention, ref, reg;
+        container = this.editor.getData();
         ref = this.cache.mentions;
         for (j = 0, len = ref.length; j < len; j++) {
           mention = ref[j];
           markup = this.mentions.settings.markup(mention.item);
-          $("mention#" + mention.item._id, $container).before(markup).remove();
+          reg = new RegExp("<mention id=\"" + mention.item._id + "\">[^>]+>");
+          container = container.replace(reg, markup);
         }
-        return $container.html();
+        return container;
       };
 
       MentionsCKEditor.prototype.setValue = function(value) {

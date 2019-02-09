@@ -156,24 +156,24 @@ class GroupContentVisibilityUpdate {
    * @param array $operations
    *   Contains the unprocessed operations that failed or weren't touched yet.
    */
-  public function updateVisibilityFinishedCallback($success, array $results, array $operations) {
+  public static function updateVisibilityFinishedCallback($success, array $results, array $operations) {
+    $messenger = \Drupal::messenger();
     if ($success) {
       // Here we could do something meaningful with the results.
       // We just display the number of nodes we processed...
-      drupal_set_message(t('Visibility of @count content item(s) updated.', ['@count' => count($results)]));
+      $messenger->addStatus(t('Visibility of @count content item(s) updated.', ['@count' => count($results)]));
     }
     else {
       // An error occurred.
       // $operations contains the operations that remained unprocessed.
       $error_operation = reset($operations);
-      drupal_set_message(
+      $messenger->addError(
         t('An error occurred while processing @operation with arguments : @args',
           [
             '@operation' => $error_operation[0],
             '@args' => print_r($error_operation[0], TRUE),
           ]
-        ),
-        'error'
+        )
       );
     }
   }
