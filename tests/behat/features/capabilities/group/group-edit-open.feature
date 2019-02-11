@@ -109,6 +109,6 @@ Feature: Edit my group as a group manager
     And I click "Edit group"
     And I click "Delete"
     And I should see "This action cannot be undone."
-    And I should see the link "Cancel"
+    And I should see the button "Cancel"
     And I should see the button "Delete"
     And I press "Delete"

@@ -95,22 +95,6 @@ function social_group_group_type_permission_check() {
 }
 
 /**
- * Implements hook_form_FORM_ID_alter().
- */
-function social_group_form_group_closed_group_delete_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-  // Add custom submit handler to delete all content of the group.
-  $group = _social_group_get_current_group();
-  $form['description']['#markup'] = t('Are you sure you want to delete your group "@group" along with all of the posts, events and topics inside this group?', ['@group' => $group->label()]);
-  $form['actions']['cancel'] = [
-    '#type' => 'submit',
-    '#value' => t('Cancel'),
-    '#submit' => ['_social_group_cancel_join_leave_form'],
-    '#limit_validation_errors' => [],
-  ];
-  array_unshift($form['actions']['submit']['#submit'], '_social_group_delete_closed_group');
-}
-
-/**
  * Get group overview route.
  *
  * @return array
@@ -538,6 +522,19 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
       }
 
       $form['actions']['submit']['#submit'][] = '_social_group_type_edit_submit';
+    }
+
+    if (in_array($form_id, $group_forms['delete'])) {
+      // Add custom submit handler to delete all content of the group.
+      $group = _social_group_get_current_group();
+      $form['description']['#markup'] = t('Are you sure you want to delete your group "@group" along with all of the posts, events and topics inside this group? This action cannot be undone.', ['@group' => $group->label()]);
+      $form['actions']['cancel'] = [
+        '#type' => 'submit',
+        '#value' => t('Cancel'),
+        '#submit' => ['_social_group_cancel_join_leave_form'],
+        '#limit_validation_errors' => [],
+      ];
+      array_unshift($form['actions']['submit']['#submit'], '_social_group_delete_group');
     }
   }
 }
@@ -1164,11 +1161,9 @@ function social_group_block_access(Block $block, $operation, AccountInterface $a
 /**
  * Delete the group and all of its content.
  */
-function _social_group_delete_closed_group() {
+function _social_group_delete_group() {
   // Get the group.
-  $group = _social_group_get_current_group();
-  // Make sure its a group of type closed_group.
-  if ($group && $group->getGroupType()->id() == 'closed_group') {
+  if ($group = _social_group_get_current_group()) {
     $group_content_types = GroupContentType::loadByEntityTypeId('node');
     $group_content_types = array_keys($group_content_types);
 
