@@ -97,6 +97,7 @@ function _social_topic_get_permissions($role) {
   // Site manager.
   $permissions['sitemanager'] = array_merge($permissions['contentmanager'], [
     'administer visibility settings',
+    'administer social_topic settings',
   ]);
 
   if (isset($permissions[$role])) {
@@ -154,4 +155,12 @@ function social_topic_update_8002() {
       user_role_grant_permissions($role->id(), $permissions);
     }
   }
+}
+
+/**
+ * Set permissions to administer social_topic settings.
+ */
+function social_topic_update_8003() {
+  // Give SM the administer social_topic settings permission.
+  user_role_grant_permissions('sitemanager', ['administer social_topic settings']);
 }
