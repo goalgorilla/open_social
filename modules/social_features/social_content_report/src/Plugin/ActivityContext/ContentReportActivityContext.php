@@ -75,12 +75,14 @@ class ContentReportActivityContext extends ActivityContextBase {
    * Returns the role with the required permission.
    *
    * @return array
+   *   A list of Role IDs.
    */
   protected function getRolesWithPermission() {
     $roles_with_perm = [];
     $roles = Role::loadMultiple();
 
-    // Check for each role which one has permission to "view inappropriate reports".
+    // Check for each role which one has permission to "view inappropriate
+    // reports".
     foreach ($roles as $role) {
       /* @var \Drupal\user\RoleInterface $role */
       if ($role->hasPermission('view inappropriate reports')) {

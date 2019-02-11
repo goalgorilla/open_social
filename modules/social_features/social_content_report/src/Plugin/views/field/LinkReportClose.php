@@ -19,7 +19,7 @@ class LinkReportClose extends LinkBase {
    * {@inheritdoc}
    */
   protected function getUrlInfo(ResultRow $row) {
-    /** @var \Drupal\flag\FlaggingInterface $flagging*/
+    /** @var \Drupal\flag\FlaggingInterface $flagging */
     $flagging = $this
       ->getEntity($row);
     return Url::fromRoute('social_content_report.close_report', [

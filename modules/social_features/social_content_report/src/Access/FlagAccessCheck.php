@@ -7,6 +7,9 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Access\AccessResult;
 use Drupal\flag\FlagInterface;
 
+/**
+ * Class FlagAccessCheck.
+ */
 class FlagAccessCheck implements AccessInterface {
 
   /**
@@ -16,7 +19,7 @@ class FlagAccessCheck implements AccessInterface {
    *   Run access checks for this account.
    * @param \Drupal\flag\FlagInterface $flag
    *   The flag type.
-   * @param integer $entity_id
+   * @param int $entity_id
    *   The entity ID which is being reported.
    *
    * @return \Drupal\Core\Access\AccessResult
@@ -33,7 +36,8 @@ class FlagAccessCheck implements AccessInterface {
       $entity = \Drupal::service('entity_type.manager')->getStorage($flag->getFlaggableEntityTypeId())->load($entity_id);
       $flagged = $flag->isFlagged($entity, $account);
 
-      // If the user already flagged the content they aren't allowed to do it again.
+      // If the user already flagged the content they aren't allowed to do it
+      // again.
       if ($flagged) {
         return AccessResult::forbidden();
       }

@@ -91,33 +91,35 @@ class FlagSubscriber implements EventSubscriberInterface {
     $entity_id = $flagging->getFlaggable()->id();
     $invalidated = FALSE;
 
-    // Do nothing unless we need to unpublish the entity immediately.
     // @todo Consider changing the strpos() to a custom hook.
-    if ($this->unpublishImmediately && strpos($flagging->getFlagId(), 'report_') === 0) {
-      // Retrieve the entity.
-      $entity = $this->entityTypeManager->getStorage($entity_type)
-        ->load($entity_id);
+    if (strpos($flagging->getFlagId(), 'report_') === 0) {
+      // Do nothing unless we need to unpublish the entity immediately.
+      if ($this->unpublishImmediately) {
+        // Retrieve the entity.
+        $entity = $this->entityTypeManager->getStorage($entity_type)
+          ->load($entity_id);
 
-      try {
-        $entity->setPublished(FALSE);
-        $entity->save();
-        $invalidated = TRUE;
+        try {
+          $entity->setPublished(FALSE);
+          $entity->save();
+          $invalidated = TRUE;
+        }
+        catch (EntityStorageException $exception) {
+          $this->getLogger('social_content_report')
+            ->error(t('@entity_type @entity_id could not be unpublished after a user reported it.', [
+              '@entity_type' => $entity_type,
+              '@entity_id' => $entity_id,
+            ]));
+        }
       }
-      catch (EntityStorageException $exception) {
-        $this->getLogger('social_content_report')
-          ->error(t('@entity_type @entity_id could not be unpublished after a user reported it.', [
-            '@entity_type' => $entity_type,
-            '@entity_id' => $entity_id,
-          ]));
+
+      // In any case log that the report was submitted.
+      $this->messenger->addMessage($this->t('Your report is submitted.'));
+
+      // Clear cache tags for entity to remove the Report link.
+      if (!$invalidated) {
+        $this->cacheInvalidator->invalidateTags([$entity_type . ':' . $entity_id]);
       }
-    }
-
-    // In any case log that the report was submitted.
-    $this->messenger->addMessage($this->t('Your report is submitted.'));
-
-    // Clear cache tags for entity to remove the Report link.
-    if (!$invalidated) {
-      $this->cacheInvalidator->invalidateTags([$entity_type . ':' . $entity_id]);
     }
   }
 

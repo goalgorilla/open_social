@@ -15,15 +15,15 @@ use Drupal\views\ResultRow;
 class ReportContentType extends FieldPluginBase {
 
   /**
-   * @{inheritdoc}
+   * {@inheritdoc}
    */
   public function query() {}
 
   /**
-   * @{inheritdoc}
+   * {@inheritdoc}
    */
   public function render(ResultRow $row) {
-    /** @var \Drupal\flag\FlaggingInterface $flagging*/
+    /** @var \Drupal\flag\FlaggingInterface $flagging */
     $flagging = $this
       ->getEntity($row);
 

@@ -43,7 +43,7 @@ function hook_social_post_visibility_info_alter($visibility, &$icon, &$title) {
  *   Various aspects of the context in which the post links are going to be
  *   displayed, with the following keys:
  *   - 'view_mode': the view mode in which the post is being viewed
- *   - 'langcode': the language in which the post is being viewed
+ *   - 'langcode': the language in which the post is being viewed.
  *
  * @see \Drupal\social_post\PostViewBuilder::renderLinks()
  * @see \Drupal\social_post\PostViewBuilder::buildLinks()
