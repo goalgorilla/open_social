@@ -243,14 +243,14 @@ function social_topic_widget_alter(array &$form) {
   $config = \Drupal::config('social_topic.settings');
 
   // Check if the field is set to mandatory.
-  if ($config->get('social_topic_type_required') == TRUE) {
+  if ($config->get('social_topic_type_required') === TRUE) {
     $form['field_topic_type']['widget']['#required'] = TRUE;
   }
 
   // Set the node type label for none.
   if (isset($form['field_topic_type']['widget']['#options']['_none'])) {
     // If the field was set to mandatory, remove the _none option.
-    if ($config->get('social_topic_type_required') == TRUE) {
+    if ($config->get('social_topic_type_required') === TRUE) {
       unset($form['field_topic_type']['widget']['#options']['_none']);
     }
   }
