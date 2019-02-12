@@ -76,8 +76,9 @@ class ContentReportService {
    * @param string $flag_id
    *   The flag ID.
    *
-   * @return array
-   *   A renderable array to be used in a #links array.
+   * @return array|bool
+   *   A renderable array to be used in a #links array or FALSE if the user has
+   *   no access.
    */
   public function getModalLink(EntityInterface $entity, $flag_id) {
     // Check if users may flag this entity.
@@ -88,12 +89,20 @@ class ContentReportService {
     $flag = $this->flagService->getFlagById($flag_id);
     $flagging = $this->flagService->getFlagging($flag, $entity, $this->currentUser);
 
-    // If the user already flagged this, then we can skip rendering a link.
+    // If the user already flagged this, we return a disabled link to nowhere.
     if ($flagging) {
-      return FALSE;
+      return [
+        'title' => $this->t('You have reported this'),
+        'url' => Url::fromRoute('<none>'),
+        'attributes' => [
+          'class' => [
+            'disabled', 'btn', 'btn-link',
+          ],
+        ],
+      ];
     }
 
-    // Return the modal link.
+    // Return the modal link if the user did not yet flag this content.
     return [
       'title' => $this->t('Report'),
       'url' => Url::fromRoute('flag.field_entry',
