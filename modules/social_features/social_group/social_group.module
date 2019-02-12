@@ -742,6 +742,7 @@ function social_group_menu_local_tasks_alter(&$data, $route_name) {
   // Rename Group "Related Entities" tab.
   if (isset($data['tabs'][0]['group.content']['#link'])) {
     $data['tabs'][0]['group.content']['#link']['title'] = t('Manage members');
+    $data['tabs'][0]['group.content']['#weight'] = 70;
   }
 
   // Remove the default View tab.
