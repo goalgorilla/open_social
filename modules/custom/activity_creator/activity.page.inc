@@ -53,7 +53,22 @@ function template_preprocess_activity(array &$variables) {
   // 'compact_notification' view mode on the User entity. Note that the
   // 'compact_notification' view mode might not be configured, so remember to
   // always check the theme setting first.
-  $account = $activity->getOwner();
+  $entities = $activity->field_activity_entity->referencedEntities();
+
+  /** @var \Drupal\Core\Entity\EntityInterface $entity */
+  $entity = reset($entities);
+
+  if ($entity->getEntityTypeId() === 'group_content') {
+    /** @var \Drupal\group\Entity\GroupContentInterface $entity */
+    if ($entity->getGroupContentType()->getContentPluginId() === 'group_membership' && $entity->getEntity()->id() != $activity->getOwnerId()) {
+      $account = $entity->getEntity();
+    }
+  }
+
+  if (!isset($account)) {
+    $account = $activity->getOwner();
+  }
+
   if ($account) {
     $storage = \Drupal::entityTypeManager()->getStorage('profile');
     if (!empty($storage)) {
