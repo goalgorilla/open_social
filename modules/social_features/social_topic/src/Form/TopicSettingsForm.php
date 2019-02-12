@@ -34,13 +34,6 @@ class TopicSettingsForm extends ConfigFormBase {
   public function buildForm(array $form, FormStateInterface $form_state) {
     $config = $this->config('social_topic.settings');
 
-    $form['social_topic_type_required'] = [
-      '#type' => 'checkbox',
-      '#title' => $this->t('Topic types required'),
-      '#description' => $this->t('Set wether topic types field is required or not.'),
-      '#default_value' => $config->get('social_topic_type_required'),
-    ];
-
     $form['social_topic_type_select_changer'] = [
       '#type' => 'number',
       '#title' => $this->t('Change input widget'),
@@ -61,7 +54,6 @@ class TopicSettingsForm extends ConfigFormBase {
     parent::submitForm($form, $form_state);
 
     $this->config('social_topic.settings')
-      ->set('social_topic_type_required', $form_state->getValue('social_topic_type_required'))
       ->set('social_topic_type_select_changer', $form_state->getValue('social_topic_type_select_changer'))
       ->save();
   }
