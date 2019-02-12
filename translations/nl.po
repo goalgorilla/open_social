@@ -1,11 +1,11 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: node-gettext\n"
-"POT-Creation-Date: 2019-02-07 22:09+0000\n"
+"POT-Creation-Date: 2019-02-12 22:09+0000\n"
 "PO-Revision-Date: 2019-02-11 14:15+0000\n"
 "Last-Translator: Evelien Schut <evelienschut@goalgorilla.com>\n"
-"Language-Team: Dutch <https://translate.getopensocial.com/projects/"
-"open-social/distribution/nl/>\n"
+"Language-Team: Dutch <https://translate.getopensocial.com/projects/open-"
+"social/distribution/nl/>\n"
 "Language: nl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -629,6 +629,17 @@ msgstr ""
 "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
 "a> reageerde op een opmerking waar jij in bent genoemd </p>"
 
+#: modules/social_features/social_activity/config/install/message.template.join_to_group.yml:0;0;0
+#, fuzzy
+msgid ""
+"<p><a href=\"[message:recipient-user:url:absolute]\">[message:recipient-user:"
+"display-name]</a> joined the <a href=\"[message:gurl]\">[message:gtitle]</a> "
+"group</p>"
+msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
+"a> heeft een bericht geplaatst in <a href=\"[message:gurl]\">[message:gtitle]"
+"</a></p>"
+
 #: modules/social_features/social_event/config/optional/message.template.activity_on_events_im_organizing.yml:0;0;0
 msgid ""
 "<p><a href=\"[social_event:enrolled_event_url]\">[social_event:enrolled_user]"
@@ -841,6 +852,10 @@ msgid "A person created a post, event or topic in a group I joined"
 msgstr ""
 "Iemand plaatste een bericht, evenement of onderwerp in een groep waar ik lid "
 "van ben."
+
+#: modules/social_features/social_activity/config/install/message.template.join_to_group.yml:0
+msgid "A person joins a group I am managing"
+msgstr ""
 
 #: modules/social_features/social_like/config/install/message.template.create_like_node_or_post.yml:0
 msgid "A person likes a post, topic, comment or event created by me"
@@ -1750,7 +1765,7 @@ msgstr ""
 msgid "An error occurred and processing did not complete."
 msgstr "Er is een fout opgetreden en de bewerking is niet voltooid."
 
-#: modules/social_features/social_group/src/GroupContentVisibilityUpdate.php:170
+#: modules/social_features/social_group/src/GroupContentVisibilityUpdate.php:171
 msgid "An error occurred while processing @operation with arguments : @args"
 msgstr ""
 "Er is een fout opgetreden bij het verwerken van @operation met argumenten: "
@@ -1843,15 +1858,16 @@ msgstr[1] "Bent u zeker %name te verwijderen?"
 msgid "Are you sure you want to delete %name?"
 msgstr "Bent u zeker %name te verwijderen?"
 
-#: modules/social_features/social_group/social_group.module:103
+#: modules/social_features/social_group/social_group.module:530
+#, fuzzy
 msgid ""
 "Are you sure you want to delete your group \"@group\" along with all of the "
-"posts, events and topics inside this group?"
+"posts, events and topics inside this group? This action cannot be undone."
 msgstr ""
 "Weet je zeker dat je jouw groep \"@group\" samen met alle berichten, "
 "evenementen en onderwerpen in de groep wilt verwijderen?"
 
-#: modules/social_features/social_group/social_group.module:430
+#: modules/social_features/social_group/social_group.module:414
 msgid "Are you sure you want to remove %name from %group?"
 msgstr "Weet je zeker dat je %name wilt verwijderen uit %group?"
 
@@ -2105,7 +2121,7 @@ msgstr ""
 msgid "Buttons"
 msgstr ""
 
-#: modules/social_features/social_group/social_group.module:440
+#: modules/social_features/social_group/social_group.module:424
 msgid ""
 "By submitting this form you will become a member of the group. Please fill "
 "out any available fields to complete your membership information."
@@ -2138,7 +2154,7 @@ msgid "Can not send e-mail for %entity"
 msgstr "Kan geen e-mail versturen voor %entity"
 
 #: modules/social_features/social_event/modules/social_event_managers/src/Form/SocialEventManagersAddEnrolleeForm.php:143
-#: modules/social_features/social_group/social_group.module:106;451
+#: modules/social_features/social_group/social_group.module:435;533
 #: modules/social_features/social_profile/social_profile.module:166
 msgid "Cancel"
 msgstr "Annuleren"
@@ -2656,7 +2672,7 @@ msgstr "Inhoud aanmaken"
 msgid "Create New Event"
 msgstr "Evenement aanmaken"
 
-#: modules/social_features/social_group/social_group.module:1509
+#: modules/social_features/social_group/social_group.module:1504
 msgid "Create New Group"
 msgstr "Nieuwe groep aanmaken"
 
@@ -3115,7 +3131,7 @@ msgstr "Verwijderde gebruiker"
 msgid "Deleting @type's"
 msgstr "@type's verwijderen"
 
-#: modules/social_features/social_group/social_group.module:1199
+#: modules/social_features/social_group/social_group.module:1194
 msgid "Deleting the group and all the content within the group..."
 msgstr "De groep en alle inhoud in de groep verwijderen..."
 
@@ -3402,7 +3418,7 @@ msgstr "E-mailadres"
 #: modules/social_features/social_comment/src/Form/SocialCommentAdminOverview.php:213
 #: modules/social_features/social_event/social_event.links.task.yml:0
 #: modules/social_features/social_event/modules/social_event_type/social_event_type.links.task.yml:0
-#: modules/social_features/social_group/social_group.module:1580
+#: modules/social_features/social_group/social_group.module:1575
 #: modules/social_features/social_post/social_post.links.task.yml:0
 #: modules/social_features/social_post/src/PostViewBuilder.php:211
 msgid "Edit"
@@ -4330,7 +4346,7 @@ msgstr "Google+ App instellingen"
 
 #: modules/custom/group_core_comments/group_core_comments.info.yml:0
 #: modules/custom/social_demo/src/Plugin/DemoContent/Group.php:7
-#: modules/social_features/social_group/social_group.module:1281
+#: modules/social_features/social_group/social_group.module:1276
 #: modules/social_features/social_tagging/src/Form/SocialTaggingSettingsForm.php:97
 #: modules/social_features/social_post/config/install/core.entity_form_mode.post.group.yml:0
 #: modules/social_features/social_user/config/install/views.view.user_admin_people.yml:0;0
@@ -4439,7 +4455,7 @@ msgstr ""
 msgid "Group add topic block"
 msgstr ""
 
-#: modules/social_features/social_group/social_group.module:1308
+#: modules/social_features/social_group/social_group.module:1303
 msgid "Group and visibility"
 msgstr "Groep en zichtbaarheid"
 
@@ -4452,6 +4468,11 @@ msgstr ""
 msgid "Group content User"
 msgstr ""
 
+#: modules/custom/activity_basics/src/Plugin/ActivityContext/GroupContentInMyGroupActivityContext.php:12
+#, fuzzy
+msgid "Group content in my group activity context"
+msgstr "Inhoud van 'mijn groepsactiviteiten'-context"
+
 #: modules/custom/social_tour/config/install/tour.tour.social_group.yml:0
 msgid "Group functionality."
 msgstr ""
@@ -4462,7 +4483,7 @@ msgstr ""
 msgid "Group hero block"
 msgstr ""
 
-#: modules/social_features/social_group/social_group.module:1067
+#: modules/social_features/social_group/social_group.module:1064
 msgid "Group manager"
 msgstr "Groepsbeheerder"
 
@@ -4489,7 +4510,7 @@ msgstr "Leden"
 msgid "Group memberships (specified)"
 msgstr "Leden"
 
-#: modules/social_features/social_group/social_group.module:462
+#: modules/social_features/social_group/social_group.module:446
 #: modules/social_features/social_group/src/Plugin/Action/ChangeGroupMembershipRole.php:167
 msgid "Group roles"
 msgstr "Groepsrollen"
@@ -4772,7 +4793,7 @@ msgstr ""
 msgid "Invalid search index"
 msgstr "Ongeldige zoekindex"
 
-#: modules/social_features/social_group/social_group.module:250
+#: modules/social_features/social_group/social_group.module:234
 msgid "Invitation only"
 msgstr "Enkel op uitnodiging"
 
@@ -4833,8 +4854,15 @@ msgstr ""
 msgid "Join"
 msgstr "Lid worden"
 
+#: modules/social_features/social_activity/config/install/message.template.join_to_group.yml:0
+#, fuzzy
+msgid "Join to group"
+msgstr "in de groep"
+
 #: themes/socialbase/templates/group/group--hero.html.twig:71
 #: themes/socialbase/templates/group/group--teaser.html.twig:91
+#, fuzzy
+msgctxt "Is a member"
 msgid "Joined"
 msgstr "Lid geworden"
 
@@ -5155,7 +5183,7 @@ msgstr "Alle aanmeldingen beheren"
 msgid "Manage form and displays settings of posts"
 msgstr ""
 
-#: modules/social_features/social_group/social_group.module:851
+#: modules/social_features/social_group/social_group.module:848
 msgid "Manage members"
 msgstr "Leden beheren"
 
@@ -5390,7 +5418,7 @@ msgstr ""
 "De functie 'verplaatsen van inhoud naar een andere groep' is uitgeschakeld. "
 "Neem contact op met een site manager om deze inhoud te verplaatsen."
 
-#: modules/social_features/social_group/social_group.module:1539;1544
+#: modules/social_features/social_group/social_group.module:1534;1539
 msgid "My Groups"
 msgstr "Mijn groepen"
 
@@ -5398,7 +5426,7 @@ msgstr "Mijn groepen"
 msgid "My events"
 msgstr "Mijn evenementen"
 
-#: modules/social_features/social_group/social_group.module:1566
+#: modules/social_features/social_group/social_group.module:1561
 msgid "My groups"
 msgstr "Mijn groepen"
 
@@ -5466,7 +5494,7 @@ msgstr "Nieuwe inhoud"
 msgid "New Event"
 msgstr "Nieuw evenement"
 
-#: modules/social_features/social_group/social_group.module:1511
+#: modules/social_features/social_group/social_group.module:1506
 msgid "New Group"
 msgstr "Neuwe groep"
 
@@ -5688,7 +5716,7 @@ msgstr "Notificatiecentrum"
 msgid "Notification archive"
 msgstr "Notificatie archief"
 
-#: modules/custom/activity_send/modules/activity_send_email/activity_send_email.module:275
+#: modules/custom/activity_send/modules/activity_send_email/activity_send_email.module:276
 msgid "Notification from %site_name"
 msgstr "Melding van %site_name"
 
@@ -6132,7 +6160,7 @@ msgstr "@log_in of @create_account_link om u aan te melden voor dit evenement."
 msgid "Please @log_in so that you can enroll to the event."
 msgstr "@log_in om u aan te melden voor dit evenement."
 
-#: modules/social_features/social_group/social_group.module:552
+#: modules/social_features/social_group/social_group.module:549
 #, fuzzy
 msgid ""
 "Please note that changing the group type will also change the\n"
@@ -6263,7 +6291,7 @@ msgstr ""
 msgid "Prefix"
 msgstr "Voorvoegsel"
 
-#: modules/social_features/social_group/social_group.module:1200
+#: modules/social_features/social_group/social_group.module:1195
 msgid ""
 "Preparing to delete the group and all it's topic's, event's and post's..."
 msgstr ""
@@ -6695,7 +6723,7 @@ msgstr "Lees meer"
 msgid "Read more<span class=\"visually-hidden\"> about @title</span>"
 msgstr "Lees meer<span class=\"visually-hidden\"> over @title</span>"
 
-#: modules/social_features/social_group/social_group.module:1496
+#: modules/social_features/social_group/social_group.module:1491
 msgid "Reassign your groups to the super administrator."
 msgstr "Ken groepen toe aan de hoofdbeheerder."
 
@@ -6726,6 +6754,7 @@ msgstr ""
 msgid "Recipient group"
 msgstr ""
 
+#: modules/custom/activity_logger/activity_logger.tokens.inc:44
 #: modules/custom/activity_creator/config/install/field.field.activity.activity.field_activity_recipient_user.yml:0
 #: modules/social_features/social_activity/config/install/field.field.activity.activity.field_activity_recipient_user.yml:0
 msgid "Recipient user"
@@ -6735,7 +6764,7 @@ msgstr ""
 msgid "Recipient user entity display name"
 msgstr ""
 
-#: modules/custom/activity_logger/activity_logger.tokens.inc:44
+#: modules/custom/activity_logger/activity_logger.tokens.inc:50
 msgid "Recipient user url"
 msgstr ""
 
@@ -6803,11 +6832,11 @@ msgstr ""
 msgid "Related object"
 msgstr ""
 
-#: modules/social_features/social_group/social_group.module:429;1581
+#: modules/social_features/social_group/social_group.module:413;1576
 msgid "Remove"
 msgstr "Verwijderen"
 
-#: modules/social_features/social_group/social_group.module:425
+#: modules/social_features/social_group/social_group.module:409
 msgid "Remove %name from %group"
 msgstr "Verwijder %name uit %group"
 
@@ -6943,7 +6972,7 @@ msgid "Run cron."
 msgstr "Cron uitvoeren."
 
 #: modules/social_features/social_event/modules/social_event_managers/src/Form/SocialEventManagersAddEnrolleeForm.php:151
-#: modules/social_features/social_group/social_group.module:498
+#: modules/social_features/social_group/social_group.module:482
 msgid "Save"
 msgstr "Opslaan"
 
@@ -7130,7 +7159,7 @@ msgstr ""
 msgid "Select a entity condition for this message."
 msgstr ""
 
-#: modules/social_features/social_group/social_group.module:461
+#: modules/social_features/social_group/social_group.module:445
 msgid "Select a member"
 msgstr "Selecteer een lid"
 
@@ -7165,7 +7194,7 @@ msgid ""
 msgstr ""
 
 #: modules/social_features/social_event/modules/social_event_managers/src/Form/SocialEventManagersAddEnrolleeForm.php:127
-#: modules/social_features/social_group/social_group.module:476
+#: modules/social_features/social_group/social_group.module:460
 msgid "Select members to add"
 msgstr "Selecteer leden om toe te voegen"
 
@@ -8635,8 +8664,12 @@ msgstr ""
 msgid "The recipient user entity display name."
 msgstr ""
 
-#: modules/custom/activity_logger/activity_logger.tokens.inc:45
+#: modules/custom/activity_logger/activity_logger.tokens.inc:51
 msgid "The recipient user url."
+msgstr ""
+
+#: modules/custom/activity_logger/activity_logger.tokens.inc:45
+msgid "The recipient user."
 msgstr ""
 
 #: modules/custom/activity_logger/activity_logger.tokens.inc:32
@@ -8917,7 +8950,7 @@ msgid "Title of entity containing mention"
 msgstr ""
 
 #: modules/social_features/social_event/modules/social_event_managers/src/Form/SocialEventManagersAddEnrolleeForm.php:126
-#: modules/social_features/social_group/social_group.module:477
+#: modules/social_features/social_group/social_group.module:461
 msgid "To add multiple members, separate each member with a comma ( , )."
 msgstr ""
 "Om meerdere leden toe te voegen dien je elk lid met een komma ( , ) te "
@@ -9433,7 +9466,7 @@ msgstr "Waarde"
 #: modules/custom/social_font/social_font.links.task.yml:0
 #: modules/social_features/social_comment/src/Form/SocialCommentAdminOverview.php:209
 #: modules/social_features/social_event/social_event.links.task.yml:0
-#: modules/social_features/social_group/social_group.module:1582
+#: modules/social_features/social_group/social_group.module:1577
 #: modules/social_features/social_post/social_post.links.task.yml:0
 msgid "View"
 msgstr "Weergeven"
@@ -9495,7 +9528,7 @@ msgstr "Weergavemodus"
 msgid "View my events"
 msgstr "Mijn evenementen weergeven"
 
-#: modules/social_features/social_group/social_group.module:1564
+#: modules/social_features/social_group/social_group.module:1559
 msgid "View my groups"
 msgstr "Mijn groepen weergeven"
 
@@ -9595,7 +9628,7 @@ msgstr ""
 msgid "Visibility"
 msgstr "Zichtbaarheid"
 
-#: modules/social_features/social_group/src/GroupContentVisibilityUpdate.php:163
+#: modules/social_features/social_group/src/GroupContentVisibilityUpdate.php:164
 msgid "Visibility of @count content item(s) updated."
 msgstr "Zichtbaarheid van @count content item(s) bijgewerkt."
 
@@ -9660,7 +9693,7 @@ msgstr ""
 msgid "Welcome!"
 msgstr ""
 
-#: modules/custom/activity_send/modules/activity_send_email/activity_send_email.module:152
+#: modules/custom/activity_send/modules/activity_send_email/activity_send_email.module:153
 msgid "What I follow"
 msgstr "Wat ik volg"
 
@@ -10141,7 +10174,7 @@ msgstr ""
 msgid "for this user"
 msgstr "voor deze gebruiker"
 
-#: modules/social_features/social_profile/modules/social_profile_organization_tag/social_profile_organization_tag.module:98
+#: modules/social_features/social_profile/modules/social_profile_organization_tag/social_profile_organization_tag.module:99
 msgid "from @org"
 msgstr "van @org"
 
