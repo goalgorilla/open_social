@@ -6,7 +6,6 @@ use Drupal\Core\Controller\TitleResolverInterface;
 use Drupal\Core\Entity\EntityRepositoryInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
-use Symfony\Cmf\Component\Routing\RouteObjectInterface;
 use Drupal\node\Entity\Node;
 use Drupal\Core\Block\Plugin\Block\PageTitleBlock;
 use Drupal\Core\Url;
@@ -141,41 +140,9 @@ class SocialPageTitleBlock extends PageTitleBlock implements ContainerFactoryPlu
       $in_path = str_replace($paths_to_exclude, '', $current_path) != $current_path;
 
       if (!$in_path) {
-
-        $title = $node->getTitle();
-
         return [
           '#theme' => 'page_hero_data',
-          '#title' => $title,
-          '#node' => $node,
           '#hero_node' => node_view($node, 'hero'),
-          '#section_class' => 'page-title',
-        ];
-
-      }
-      else {
-
-        return [
-          '#type' => 'page_title',
-          '#title' => $this->title,
-        ];
-
-      }
-
-    }
-    else {
-
-      if ($route = $request->attributes->get(RouteObjectInterface::ROUTE_OBJECT)) {
-        $title = $this->titleResolver->getTitle($request, $route);
-        return [
-          '#type' => 'page_title',
-          '#title' => $title,
-        ];
-      }
-      else {
-        return [
-          '#type' => 'page_title',
-          '#title' => '',
         ];
       }
 

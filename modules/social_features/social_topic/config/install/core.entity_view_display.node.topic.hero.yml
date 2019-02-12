@@ -1,0 +1,71 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.hero
+    - field.field.node.topic.body
+    - field.field.node.topic.field_content_visibility
+    - field.field.node.topic.field_files
+    - field.field.node.topic.field_topic_comments
+    - field.field.node.topic.field_topic_image
+    - field.field.node.topic.field_topic_type
+    - image.style.social_xx_large
+    - node.type.topic
+  module:
+    - file
+    - image
+    - text
+    - user
+id: node.topic.hero
+targetEntityType: node
+bundle: topic
+mode: hero
+content:
+  body:
+    label: hidden
+    type: text_default
+    weight: 2
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  field_files:
+    weight: 5
+    label: above
+    settings:
+      use_description_as_link_text: true
+    third_party_settings: {  }
+    region: content
+    type: file_default
+  field_topic_image:
+    type: image
+    weight: 7
+    region: content
+    label: hidden
+    settings:
+      image_style: social_xx_large
+      image_link: ''
+    third_party_settings: {  }
+  flag_follow_content:
+    weight: 6
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  like_and_dislike:
+    weight: 4
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  shariff_field:
+    weight: 8
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+hidden:
+  field_content_visibility: true
+  field_topic_comments: true
+  field_topic_type: true
+  groups: true
+  groups_type_closed_group: true
+  groups_type_open_group: true
+  groups_type_public_group: true
+  links: true
