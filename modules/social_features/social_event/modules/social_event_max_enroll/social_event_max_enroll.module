@@ -117,7 +117,8 @@ function social_event_max_enroll_preprocess_page_hero_data(array &$variables) {
     // Get the string for how many spots are left.
     $spots_left = \Drupal::translation()->formatPlural($left, '(1 spot left)', '(@count spots left)');
 
-    // Display the
+    // Combine and display the amount people who enrolled and the spots left
+    // strings.
     $variables['title_suffix'] = \Drupal::translation()
       ->formatPlural($total, '@total person has enrolled @spots_left',
         '@total people have enrolled @spots_left',
