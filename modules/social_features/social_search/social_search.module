@@ -40,15 +40,6 @@ function social_search_form_views_exposed_form_alter(&$form, FormStateInterface 
           $element['#selection_settings']['hide_id'] = TRUE;
         }
       }
-
-      $form['profile_tag']['#options'] = [];
-
-      $terms = \Drupal::entityTypeManager()->getStorage('taxonomy_term')
-        ->loadTree('profile_tag');
-
-      foreach ($terms as $term) {
-        $form['profile_tag']['#options'][$term->tid] = $term->name;
-      }
     }
     if ($form['#id'] == 'views-exposed-form-search-groups-page') {
       $options = [
