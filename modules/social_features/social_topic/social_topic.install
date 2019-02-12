@@ -34,6 +34,11 @@ function social_topic_install() {
     ]);
     $term->save();
   }
+
+  // Set default topic type settings.
+  $config = \Drupal::configFactory()->getEditable('social_topic.settings');
+  $config->set('social_topic_type_select_changer', 5);
+  $config->save();
 }
 
 /**
@@ -158,9 +163,14 @@ function social_topic_update_8002() {
 }
 
 /**
- * Set permissions to administer social_topic settings.
+ * Set social_topic settings.
  */
 function social_topic_update_8003() {
   // Give SM the administer social_topic settings permission.
   user_role_grant_permissions('sitemanager', ['administer social_topic settings']);
+
+  // Set default topic type settings.
+  $config = \Drupal::configFactory()->getEditable('social_topic.settings');
+  $config->set('social_topic_type_select_changer', 5);
+  $config->save();
 }
