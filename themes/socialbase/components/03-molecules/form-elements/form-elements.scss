@@ -134,6 +134,21 @@ label {
   display: none;
 }
 
+// Nested checkboxes are indented to show that they belong together.
+.form-group.checkboxes--nested {
+  outline: red;
+
+  & > .form-checkboxes,
+  & > .form-group {
+    margin-left: 25px;
+    margin-bottom: .5em;
+  }
+
+  .checkboxes__label {
+    margin-bottom: 0;
+  }
+}
+
 // Indication on labels for required fields
 span.form-required {
   margin: 0 3px;

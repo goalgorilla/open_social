@@ -102,7 +102,10 @@ function social_profile_form_profile_profile_edit_form_alter(array &$form, FormS
   }
   // We hide the label and form field when there are no options. This is the
   // case by default. Since we provide an empty vocabulary.
-  if (empty($form['field_profile_profile_tag']['widget']['#options'])) {
+  // We also check for a fieldset, used by our special widget which doesn't use
+  // #options.
+  if (empty($form['field_profile_profile_tag']['widget']['#options'])
+    && $form['field_profile_profile_tag']['widget']['#type'] !== 'container') {
     unset($form['field_profile_profile_tag']);
   }
 
