@@ -29,13 +29,12 @@ Feature: Create Event
     Then I should see "This is a test event has been created."
     And I should see "THIS IS A TEST EVENT"
     And I should see "Technopark"
+    And I should see "Body description text"
     And I should see "Fedkovycha 60a"
     And I should see "79000"
     And I should see "Lviv"
     And I should see "Lviv oblast"
     And I should see "1 January 2025 11:00"
-    And I should see "Body description text" in the "Main content"
-
     # Quick edit
     Given I click "Edit content"
     When I fill in the following:
@@ -46,4 +45,4 @@ Feature: Create Event
     Then I should see "Event This is a test event - edit has been updated"
     And I should see "THIS IS A TEST EVENT - EDIT"
     And I should see "1 January 2025"
-    And I should not see "1 January 2025 11:000"
+    And I should not see "1 January 2025 11:00"
