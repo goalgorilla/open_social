@@ -141,27 +141,43 @@ class SocialPageTitleBlock extends PageTitleBlock implements ContainerFactoryPlu
       $in_path = str_replace($paths_to_exclude, '', $current_path) != $current_path;
 
       if (!$in_path) {
+
+        $title = $node->getTitle();
+
         return [
           '#theme' => 'page_hero_data',
+          '#title' => $title,
+          '#node' => $node,
           '#hero_node' => node_view($node, 'hero'),
+        ];
+
+      }
+      else {
+
+        return [
+          '#type' => 'page_title',
+          '#title' => $this->title,
+        ];
+
+      }
+
+    }
+    else {
+
+      if ($route = $request->attributes->get(RouteObjectInterface::ROUTE_OBJECT)) {
+        $title = $this->titleResolver->getTitle($request, $route);
+        return [
+          '#type' => 'page_title',
+          '#title' => $title,
         ];
       }
       else {
         return [
           '#type' => 'page_title',
-          '#title' => $this->title,
+          '#title' => '',
         ];
       }
-    }
-    else {
-      $title = '';
-      if ($route = $request->attributes->get(RouteObjectInterface::ROUTE_OBJECT)) {
-        $title = $this->titleResolver->getTitle($request, $route);
-      }
-      return [
-        '#type' => 'page_title',
-        '#title' => $title,
-      ];
+
     }
   }
 
