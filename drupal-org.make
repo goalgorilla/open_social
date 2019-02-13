@@ -47,6 +47,7 @@ projects[file_mdm][type] = module
 projects[file_mdm][version] = 1.1
 projects[image_widget_crop][type] = module
 projects[image_widget_crop][version] = 2.2
+projects[image_widget_crop][patch][] = "https://www.drupal.org/files/issues/2019-02-13/3032584-verticaltabs-theme-override-removal-2.patch"
 projects[like_and_dislike][type] = module
 projects[like_and_dislike][version] = 1.0-alpha2
 projects[like_and_dislike][patch][] = "https://www.drupal.org/files/issues/2848080-2-preview-fails-on-node.patch"
