@@ -6,6 +6,7 @@ use Drupal\Core\Controller\TitleResolverInterface;
 use Drupal\Core\Entity\EntityRepositoryInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
+use Symfony\Cmf\Component\Routing\RouteObjectInterface;
 use Drupal\node\Entity\Node;
 use Drupal\Core\Block\Plugin\Block\PageTitleBlock;
 use Drupal\Core\Url;
@@ -145,7 +146,22 @@ class SocialPageTitleBlock extends PageTitleBlock implements ContainerFactoryPlu
           '#hero_node' => node_view($node, 'hero'),
         ];
       }
-
+      else {
+        return [
+          '#type' => 'page_title',
+          '#title' => $this->title,
+        ];
+      }
+    }
+    else {
+      $title = '';
+      if ($route = $request->attributes->get(RouteObjectInterface::ROUTE_OBJECT)) {
+        $title = $this->titleResolver->getTitle($request, $route);
+      }
+      return [
+        '#type' => 'page_title',
+        '#title' => $title,
+      ];
     }
   }
 

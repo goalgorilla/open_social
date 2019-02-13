@@ -20,7 +20,7 @@ Feature: Download Topic
     And I press "Save"
     And I should see "Topic This is a test topic has been created."
     And I should see "This is a test topic" in the "Hero block"
-    And I should see "Discussion" in the "Main content"
+    And I should see "Discussion"
     And I should see "Body description text" in the "Main content"
     And I click "humans.txt"
     Given I am logged in as an "authenticated user"
