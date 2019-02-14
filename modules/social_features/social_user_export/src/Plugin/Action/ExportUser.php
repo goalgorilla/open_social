@@ -116,11 +116,12 @@ class ExportUser extends ViewsBulkOperationsActionBase implements ContainerFacto
     $csv->addFormatter([new CsvEncoder(), 'formatRow']);
 
     // Now add the entities to export.
-    foreach ($entities as $entity) {
+    foreach ($entities as $entity_id => $entity) {
       $row = [];
       /** @var \Drupal\social_user_export\Plugin\UserExportPluginBase $instance */
       foreach ($this->pluginDefinitions as $plugin_id => $plugin_definition) {
-        $instance = $this->userExportPlugin->createInstance($plugin_id);
+        $configuration = $this->getPluginConfiguration($plugin_id, $entity_id);
+        $instance = $this->userExportPlugin->createInstance($plugin_id, $configuration);
         $row[] = $instance->getValue($entity);
       }
       $csv->insertOne($row);
@@ -179,6 +180,21 @@ class ExportUser extends ViewsBulkOperationsActionBase implements ContainerFacto
     $hash = md5(microtime(TRUE));
     $filename = 'export-users-' . substr($hash, 20, 12) . '.csv';
     return file_directory_temp() . '/' . $filename;
+  }
+
+  /**
+   * Gets export plugin's configuration.
+   *
+   * @param int $plugin_id
+   *   The plugin ID.
+   * @param int $entity_id
+   *   The position of an entity in the entities list.
+   *
+   * @return array
+   *   An array of export plugin's configuration.
+   */
+  public function getPluginConfiguration($plugin_id, $entity_id) {
+    return [];
   }
 
 }

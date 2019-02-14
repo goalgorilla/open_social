@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\social_group\Access;
+namespace Drupal\social_group_gvbo\Access;
 
 use Drupal\Core\Routing\RouteMatch;
 use Drupal\Core\Session\AccountInterface;

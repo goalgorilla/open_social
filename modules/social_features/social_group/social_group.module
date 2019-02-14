@@ -37,6 +37,7 @@ use Drupal\profile\Entity\Profile;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\social_group\GroupContentVisibilityUpdate;
+use Drupal\Core\Messenger\MessengerInterface;
 
 /**
  * Implements hook_form_FORM_ID_alter().
@@ -91,22 +92,6 @@ function social_group_group_type_permission_check() {
 
   // Otherwise return true when we are able to edit the current group type.
   return ($group instanceof GroupInterface && $user->hasPermission('edit group types'));
-}
-
-/**
- * Implements hook_form_FORM_ID_alter().
- */
-function social_group_form_group_closed_group_delete_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-  // Add custom submit handler to delete all content of the group.
-  $group = _social_group_get_current_group();
-  $form['description']['#markup'] = t('Are you sure you want to delete your group "@group" along with all of the posts, events and topics inside this group?', ['@group' => $group->label()]);
-  $form['actions']['cancel'] = [
-    '#type' => 'submit',
-    '#value' => t('Cancel'),
-    '#submit' => ['_social_group_cancel_join_leave_form'],
-    '#limit_validation_errors' => [],
-  ];
-  array_unshift($form['actions']['submit']['#submit'], '_social_group_delete_closed_group');
 }
 
 /**
@@ -537,6 +522,19 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
       }
 
       $form['actions']['submit']['#submit'][] = '_social_group_type_edit_submit';
+    }
+
+    if (in_array($form_id, $group_forms['delete'])) {
+      // Add custom submit handler to delete all content of the group.
+      $group = _social_group_get_current_group();
+      $form['description']['#markup'] = t('Are you sure you want to delete your group "@group" along with all of the posts, events and topics inside this group? This action cannot be undone.', ['@group' => $group->label()]);
+      $form['actions']['cancel'] = [
+        '#type' => 'submit',
+        '#value' => t('Cancel'),
+        '#submit' => ['_social_group_cancel_join_leave_form'],
+        '#limit_validation_errors' => [],
+      ];
+      array_unshift($form['actions']['submit']['#submit'], '_social_group_delete_group');
     }
   }
 }
@@ -1163,11 +1161,9 @@ function social_group_block_access(Block $block, $operation, AccountInterface $a
 /**
  * Delete the group and all of its content.
  */
-function _social_group_delete_closed_group() {
+function _social_group_delete_group() {
   // Get the group.
-  $group = _social_group_get_current_group();
-  // Make sure its a group of type closed_group.
-  if ($group && $group->getGroupType()->id() == 'closed_group') {
+  if ($group = _social_group_get_current_group()) {
     $group_content_types = GroupContentType::loadByEntityTypeId('node');
     $group_content_types = array_keys($group_content_types);
 
@@ -1602,4 +1598,145 @@ function social_group_views_plugins_field_alter(array &$plugins) {
 function social_group_social_group_default_route_tabs_alter(&$tabs) {
   // Unset some tabs created by group.
   unset($tabs['group.view'], $tabs['group.edit_form'], $tabs['group.content']);
+}
+
+/**
+ * Implements hook_batch_alter().
+ */
+function social_group_batch_alter(&$batch) {
+  if (!isset($batch['source_url'])) {
+    return;
+  }
+
+  $actions = [
+    'social_group_members_export_member_action',
+    'social_group_change_member_role_action',
+    'social_group_delete_group_content_action',
+    'social_group_send_email_action',
+  ];
+
+  /** @var \Drupal\Core\Url $url */
+  $url = &$batch['source_url'];
+
+  if ($url->getRouteName() === 'social_group_gvbo.views_bulk_operations.confirm' ||
+    $url->getRouteName() === 'views_bulk_operations.confirm') {
+    /** @var \Drupal\Core\Form\FormStateInterface $form_state */
+    $form_state = &$batch['form_state'];
+
+    $data = $form_state->get('views_bulk_operations');
+    $batch['sets'][0]['results']['action'] = $data['action_id'];
+    if (in_array($data['action_id'], $actions)) {
+      $batch['sets'][0]['finished'] = '_social_group_action_batch_finish';
+    }
+  }
+}
+
+/**
+ * Action batch finished callback.
+ *
+ * @param bool $success
+ *   Was the process successfull?
+ * @param array $results
+ *   Batch process results array.
+ * @param array $operations
+ *   Performed operations array.
+ */
+function _social_group_action_batch_finish($success, array $results, array $operations) {
+  $operations = array_count_values($results['operations']);
+  $results_count = 0;
+
+  foreach ($operations as $count) {
+    $results_count += $count;
+  }
+
+  $hook = 'social_group_action_' . $results['action'] . '_finish';
+
+  foreach (\Drupal::moduleHandler()->getImplementations($hook) as $module) {
+    $function = $module . '_' . $hook;
+    $messages = $function($success);
+
+    if (is_array($messages)) {
+      $fields = 0;
+
+      foreach ($messages as $type => $message) {
+        if (($type === 'singular' || $type === 'plural') && !empty($message) && is_string($message)) {
+          $fields++;
+        }
+      }
+
+      if ($fields === 2) {
+        $message = \Drupal::translation()->formatPlural($results_count, $messages['singular'], $messages['plural']);
+        $type = $success ? MessengerInterface::TYPE_STATUS : MessengerInterface::TYPE_WARNING;
+        \Drupal::messenger()->addMessage($message, $type);
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_social_event_action_ACTION_ID_finish().
+ */
+function social_group_social_group_action_social_group_members_export_member_action_finish($success) {
+  if ($success) {
+    return [
+      'singular' => '1 selected member has been exported successfully',
+      'plural' => '@count selected members have been exported successfully',
+    ];
+  }
+
+  return [
+    'singular' => '1 selected member has not been exported',
+    'plural' => '@count selected members have not been exported',
+  ];
+}
+
+/**
+ * Implements hook_social_event_action_ACTION_ID_finish().
+ */
+function social_group_social_group_action_social_group_delete_group_content_action_finish($success) {
+  if ($success) {
+    return [
+      'singular' => '1 selected member has been removed successfully',
+      'plural' => '@count selected members have been removed successfully',
+    ];
+  }
+
+  return [
+    'singular' => '1 selected member has not been removed successfully',
+    'plural' => '@count selected members have been removed successfully',
+  ];
+}
+
+/**
+ * Implements hook_social_event_action_ACTION_ID_finish().
+ */
+function social_group_social_group_action_social_group_change_member_role_action_finish($success) {
+  if ($success) {
+    return [
+      'singular' => 'The role of 1 selected member has been changed successfully',
+      'plural' => 'The role of @count selected members have been changed successfully',
+    ];
+  }
+
+  return [
+    'singular' => 'The role of 1 selected member has not been changed successfully',
+    'plural' => 'The role of @count selected members have not been changed successfully',
+  ];
+}
+
+/**
+ * Implements hook_social_event_action_ACTION_ID_finish().
+ */
+function social_group_social_group_action_social_group_send_email_action_finish($success) {
+  if ($success) {
+    return [
+      'singular' => 'Your email has been sent to 1 selected member successfully',
+      'plural' => 'Your email has been sent to @count selected members successfully',
+    ];
+  }
+
+  return [
+    'singular' => 'Your email has not been sent to 1 selected member successfully',
+    'plural' => 'Your email has not been sent to @count selected members successfully',
+  ];
 }
