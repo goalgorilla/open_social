@@ -137,7 +137,6 @@ class AddMembersToGroup extends ViewsBulkOperationsActionBase implements Contain
       '#markup' => $markup,
     ];
 
-
     // Empty the options so we don't have a massive list of users.
     unset($form['list']);
 
