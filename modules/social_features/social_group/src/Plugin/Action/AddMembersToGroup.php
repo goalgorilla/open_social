@@ -82,11 +82,11 @@ class AddMembersToGroup extends ViewsBulkOperationsActionBase implements Contain
       if (!$is_member) {
         $group->addMember($entity);
 
-        return $this->t('Amount of users added to Group');
+        return $this->t('Amount of users added to group');
       }
 
       // Return this when user is already a member.
-      return $this->t('Amount of users added already a member');
+      return $this->t('Amount of existing members');
     }
 
     // Fail safe if something went wrong.
