@@ -9,9 +9,9 @@ use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Plugin\PluginFormInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\group\Entity\Group;
-use Drupal\group\Entity\GroupContentInterface;
 use Drupal\views_bulk_operations\Action\ViewsBulkOperationsActionBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\user\Entity\User;
 
 /**
  * Change group membership role.
@@ -71,56 +71,39 @@ class AddMembersToGroup extends ViewsBulkOperationsActionBase implements Contain
    * {@inheritdoc}
    */
   public function execute($entity = NULL) {
+    // Load the Group.
+    $group = Group::load($this->configuration['groups']);
 
-  $x = 1;
+    if (NULL !== $group) {
+      // Check if user already is a member.
+      $is_member = $group->getMember($entity);
 
-//    $role = $this->configuration['role'];
-//    $is_member = $this->configuration['is_member'];
-//    $update = TRUE;
-//    $value = [];
-//
-//    /** @var \Drupal\group\Entity\GroupTypeInterface $group_type */
-//    $group_type = $this->storage->load($id)->getGroupType();
-//
-//    $roles = $group_type->getRoles(FALSE);
-//    $id = $group_type->getMemberRoleId();
-//    $roles[$id] = $group_type->getMemberRole();
-//
-//    /** @var \Drupal\group\Entity\GroupContentInterface $entity */
-//    /** @var \Drupal\Core\Field\EntityReferenceFieldItemListInterface $roles */
-//    $roles = &$entity->get('group_roles');
-//
-//    if ($roles->isEmpty() && $is_member) {
-//      $update = FALSE;
-//    }
-//    elseif (!$roles->isEmpty() && !$is_member) {
-//      $value = $roles->getValue();
-//
-//      foreach ($value as $item) {
-//        if ($item['target_id'] === $role) {
-//          $update = FALSE;
-//          break;
-//        }
-//      }
-//    }
-//
-//    if ($update) {
-//      if (!$is_member) {
-//        $value[] = ['target_id' => $role];
-//      }
-//
-//      $entity->set('group_roles', $value)->save();
-//    }
+      // If that is not the case we can add it to the group.
+      if (!$is_member) {
+        $group->addMember($entity);
 
-    return $this->t('Add to Group');
+        return $this->t('Amount of users added to Group');
+      }
+
+      // Return this when user is already a member.
+      return $this->t('Amount of users added already a member');
+    }
+
+    // Fail safe if something went wrong.
+    return $this->t('Amount of users added not added');
   }
 
   /**
    * {@inheritdoc}
    */
   public function access($object, AccountInterface $account = NULL, $return_as_object = FALSE) {
-    if ($object instanceof GroupContentInterface && $object->getContentPlugin()->getPluginId() === 'group_membership') {
-      $access = $object->access('update', $account, TRUE);
+    // There is no permission to check if a user is able to be "added" to a
+    // group. Joining doesn't cover it since we also want people to be able
+    // to be added to a Secret/Closed group.
+    // @Todo when Invite people to a group or Add members to a group permission
+    // lands add it.
+    if ($object instanceof User) {
+      $access = AccessResult::allowed();
     }
     else {
       $access = AccessResult::forbidden();
