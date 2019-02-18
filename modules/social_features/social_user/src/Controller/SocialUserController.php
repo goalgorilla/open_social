@@ -25,13 +25,15 @@ class SocialUserController extends ControllerBase {
   }
 
   /**
-   * StreamUserPage.
+   * Callback function of the stream page of a user.
    *
-   * @return RedirectResponse
-   *   Return Redirect to the user account stream.
+   * @return array
+   *   A renderable array.
    */
-  public function streamUserPage(UserInterface $user) {
-    return $this->redirect('social_user.stream', ['user' => $user->id()]);
+  public function streamUserPage() {
+    return [
+      '#markup' => '',
+    ];
   }
 
   /**
