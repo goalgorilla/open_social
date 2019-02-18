@@ -6,6 +6,14 @@ social_user.page_redirect:
   requirements:
     _user_is_logged_in: 'TRUE'
 
+social_user.stream:
+  path: '/user/{user}/stream'
+  defaults:
+    _controller: '\Drupal\social_user\Controller\SocialUserController::streamUserPage'
+    _title: 'Account'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+
 social_user.user_flood_settings:
   path: '/admin/config/people/accounts/flood'
   defaults:

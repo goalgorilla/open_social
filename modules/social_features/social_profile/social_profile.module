@@ -587,7 +587,9 @@ function social_profile_social_user_account_header_account_links(array $context)
       ],
       '#title' => new TranslatableMarkup('My profile'),
       '#weight' => 500,
-    ] + Url::fromRoute('user.page')->toRenderArray(),
+    ] + Url::fromRoute('social_user.stream', [
+        'user' => $context['user']->id(),
+      ])->toRenderArray(),
     'edit_profile' => [
       '#type' => 'link',
       '#attributes' => [
