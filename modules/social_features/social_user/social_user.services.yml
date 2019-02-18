@@ -1,6 +1,7 @@
 services:
   social_user.route_subscriber:
     class: Drupal\social_user\Routing\RouteSubscriber
+    arguments: ['@config.factory']
     tags:
       - { name: event_subscriber }
   social_user.username_constraint:

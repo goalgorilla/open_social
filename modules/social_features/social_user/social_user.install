@@ -21,6 +21,10 @@ function social_user_install() {
   $config = \Drupal::getContainer()->get('config.factory')->getEditable('social_user.navigation.settings');
   $config->set('display_social_private_message_icon', 1)->save();
   $config->set('display_my_groups_icon', 1)->save();
+
+  // Create the default configuration for the social_user default landing page.
+  $config = \Drupal::getContainer()->get('config.factory')->getEditable('social_user.settings');
+  $config->set('social_user_profile_landingpage', 'stream')->save();
 }
 
 /**
@@ -100,6 +104,15 @@ function social_user_update_8006() {
     ->getEditable('social_user.settings')
     ->setData($config)
     ->save();
+}
+
+/**
+ * Create the default configuration for the social_user default landing page.
+ */
+function social_user_update_8007() {
+  // Create the default configuration for the social_user default landing page.
+  $config = \Drupal::getContainer()->get('config.factory')->getEditable('social_user.settings');
+  $config->set('social_user_profile_landingpage', 'stream')->save();
 }
 
 /**

@@ -21,3 +21,13 @@ social_user.navigation_settings:
     _title: 'Navigation Settings'
   requirements:
     _permission: 'administer navigation settings'
+
+social_user.settings:
+  path: '/admin/config/opensocial/user'
+  defaults:
+    _form: '\Drupal\social_user\Form\SocialUserSettingsForm'
+    _title: 'User settings'
+  requirements:
+    _permission: 'administer social_user settings'
+  options:
+    _admin_route: TRUE
