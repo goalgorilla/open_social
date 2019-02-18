@@ -75,7 +75,7 @@ function social_verify_custom_requirements(array &$install_state) {
     $requirements['addressing_library'] = [
       'title' => t('Address module requirements)'),
       'value' => t('Not installed'),
-      'description' => t('The Address module requires the commerceguys/addressing library. <a href=":link" target="_blank">For more information check our readme</a>', [':link' => 'https://github.com/goalgorilla/drupal_social/blob/master/readme.md#install-from-project-page-on-drupalorg']),
+      'description' => t('The Address module requires the commerceguys/addressing library. <a href=":link" target="_blank">For more information check our readme</a>', [':link' => 'https://www.drupal.org/docs/8/distributions/open-social/installing-and-updating']),
       'severity' => REQUIREMENT_ERROR,
     ];
   }

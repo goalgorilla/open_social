@@ -94,22 +94,6 @@ function social_group_group_type_permission_check() {
 }
 
 /**
- * Implements hook_form_FORM_ID_alter().
- */
-function social_group_form_group_closed_group_delete_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-  // Add custom submit handler to delete all content of the group.
-  $group = _social_group_get_current_group();
-  $form['description']['#markup'] = t('Are you sure you want to delete your group "@group" along with all of the posts, events and topics inside this group?', ['@group' => $group->label()]);
-  $form['actions']['cancel'] = [
-    '#type' => 'submit',
-    '#value' => t('Cancel'),
-    '#submit' => ['_social_group_cancel_join_leave_form'],
-    '#limit_validation_errors' => [],
-  ];
-  array_unshift($form['actions']['submit']['#submit'], '_social_group_delete_closed_group');
-}
-
-/**
  * Get group overview route.
  *
  * @return array
@@ -538,6 +522,19 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
 
       $form['actions']['submit']['#submit'][] = '_social_group_type_edit_submit';
     }
+
+    if (in_array($form_id, $group_forms['delete'])) {
+      // Add custom submit handler to delete all content of the group.
+      $group = _social_group_get_current_group();
+      $form['description']['#markup'] = t('Are you sure you want to delete your group "@group" along with all of the posts, events and topics inside this group? This action cannot be undone.', ['@group' => $group->label()]);
+      $form['actions']['cancel'] = [
+        '#type' => 'submit',
+        '#value' => t('Cancel'),
+        '#submit' => ['_social_group_cancel_join_leave_form'],
+        '#limit_validation_errors' => [],
+      ];
+      array_unshift($form['actions']['submit']['#submit'], '_social_group_delete_group');
+    }
   }
 }
 
@@ -548,7 +545,7 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
  *   An ajax command containing the informative text.
  */
 function _social_group_inform_group_type_selection() {
-  $text = t('Please note that changing the group type will also change the 
+  $text = t('Please note that changing the group type will also change the
   visibility of the group content and the way users can join the group.');
   drupal_set_message($text, 'info');
   $alert = ['#type' => 'status_messages'];
@@ -848,6 +845,7 @@ function social_group_menu_local_tasks_alter(&$data, $route_name) {
   // Rename Group "Related Entities" tab.
   if (isset($data['tabs'][0]['group.content']['#link'])) {
     $data['tabs'][0]['group.content']['#link']['title'] = t('Manage members');
+    $data['tabs'][0]['group.content']['#weight'] = 70;
   }
 
   // Remove the default View tab.
@@ -1143,11 +1141,9 @@ function social_group_block_access(Block $block, $operation, AccountInterface $a
 /**
  * Delete the group and all of its content.
  */
-function _social_group_delete_closed_group() {
+function _social_group_delete_group() {
   // Get the group.
-  $group = _social_group_get_current_group();
-  // Make sure its a group of type closed_group.
-  if ($group && $group->getGroupType()->id() == 'closed_group') {
+  if ($group = _social_group_get_current_group()) {
     $group_content_types = GroupContentType::loadByEntityTypeId('node');
     $group_content_types = array_keys($group_content_types);
 
@@ -1201,19 +1197,43 @@ function social_group_get_all_open_groups() {
 
 /**
  * Get all group memberships for a certain user.
+ *
+ * @param int $uid
+ *   The UID for which we fetch the groups he is member of.
+ *
+ * @return array
+ *   List of group IDs the user is member of.
+ *
+ * @deprecated in Open Social 4.2 and will be removed in one of the next major
+ *   updates.
+ *   This function is moved to the service social_group.helper_service, use
+ *   getAllGroupsForUser() instead.
+ *
+ * @see https://www.drupal.org/node/3026220
  */
 function social_group_get_all_group_members($uid) {
-  $group_content_types = GroupContentType::loadByEntityTypeId('user');
-  $group_content_types = array_keys($group_content_types);
+  @trigger_error('social_group_get_all_group_members() is deprecated in Open Social 4.2 and will be removed in
+  one of the next major updates. This function is moved to the service social_group.helper_service, use
+  getAllGroupsForUser() instead. See https://www.drupal.org/node/3026220.', E_USER_DEPRECATED);
 
-  $query = \Drupal::database()->select('group_content_field_data', 'gcfd');
-  $query->addField('gcfd', 'gid');
-  $query->condition('gcfd.entity_id', $uid);
-  $query->condition('gcfd.type', $group_content_types, 'IN');
-  $query->execute()->fetchAll();
+  $groups = &drupal_static(__FUNCTION__);
 
-  $group_ids = $query->execute()->fetchAllAssoc('gid');
-  return array_keys($group_ids);
+  // Get the memberships for the user if they aren't known yet.
+  if (!isset($groups[$uid])) {
+    $group_content_types = GroupContentType::loadByEntityTypeId('user');
+    $group_content_types = array_keys($group_content_types);
+
+    $query = \Drupal::database()->select('group_content_field_data', 'gcfd');
+    $query->addField('gcfd', 'gid');
+    $query->condition('gcfd.entity_id', $uid);
+    $query->condition('gcfd.type', $group_content_types, 'IN');
+    $query->execute()->fetchAll();
+
+    $group_ids = $query->execute()->fetchAllAssoc('gid');
+    $groups[$uid] = array_keys($group_ids);
+  }
+
+  return $groups[$uid];
 }
 
 /**
