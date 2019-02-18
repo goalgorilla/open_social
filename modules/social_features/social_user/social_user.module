@@ -626,3 +626,15 @@ function social_user_ensure_help_text_fieldset(&$form) {
 
   return $key;
 }
+
+/**
+ * Implements hook_toolbar_alter().
+ *
+ * Replaces the standard lazy loader for rendering user links.
+ */
+function social_user_toolbar_alter(&$items) {
+  $items['user']['tray']['user_links'] = [
+    '#lazy_builder' => ['social_user.toolbar_link_builder:renderToolbarLinks', []],
+    '#create_placeholder' => TRUE,
+  ];
+}
