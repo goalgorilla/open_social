@@ -128,7 +128,14 @@ class SocialGroupTagsBlock extends BlockBase implements ContainerFactoryPluginIn
    * {@inheritdoc}
    */
   public function getCacheContexts() {
-    return Cache::mergeContexts(parent::getCacheContexts(), ['group']);
+    $contexts = parent::getCacheContexts();
+    $group = $this->routeMatch->getParameter('group');
+
+    if ($group instanceof GroupInterface) {
+      $contexts = Cache::mergeContexts($contexts, ['group']);
+    }
+
+    return $contexts;
   }
 
   /**
