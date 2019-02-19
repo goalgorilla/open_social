@@ -5,12 +5,12 @@ namespace Drupal\social_user;
 use Drupal\Core\Entity\EntityTypeManager;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\Url;
-use Drupal\User\ToolbarLinkBuilder as UserToolbarLinkBuilder;
+use Drupal\User\ToolbarLinkBuilder;
 
 /**
- * ToolbarLinkBuilder fills out the placeholders generated in user_toolbar().
+ * SocialUserToolbarLinkBuilder fills out the placeholders generated in user_toolbar().
  */
-class ToolbarLinkBuilder extends UserToolbarLinkBuilder {
+class SocialUserToolbarLinkBuilder extends ToolbarLinkBuilder {
 
   /**
    * Drupal\Core\Entity\EntityTypeManager definition.

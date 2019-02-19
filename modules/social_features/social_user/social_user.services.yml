@@ -12,5 +12,5 @@ services:
     tags:
       - { name: context_provider }
   social_user.toolbar_link_builder:
-    class: Drupal\social_user\ToolbarLinkBuilder
+    class: Drupal\social_user\SocialUserToolbarLinkBuilder
     arguments: ['@current_user', '@entity_type.manager']
