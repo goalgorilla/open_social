@@ -7,6 +7,7 @@
  * Page callback for Activity entities.
  */
 
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Render\Element;
 use Drupal\file\Entity\File;
 use Drupal\Core\Link;
@@ -54,9 +55,9 @@ function template_preprocess_activity(array &$variables) {
     /** @var \Drupal\Core\Entity\EntityInterface $entity */
     $entity = reset($entities);
 
-    if ($entity && $entity->getEntityTypeId() === 'group_content') {
+    if ($entity instanceof EntityInterface && $entity->getEntityTypeId() === 'group_content') {
       /** @var \Drupal\group\Entity\GroupContentInterface $entity */
-      if ($entity->getGroupContentType()->getContentPluginId() === 'group_membership' && $entity->getEntity()->id() != $activity->getOwnerId()) {
+      if ($entity->getGroupContentType()->getContentPluginId() === 'group_membership' && $entity->getEntity()->id() !== $activity->getOwnerId()) {
         $account = $entity->getEntity();
       }
     }
