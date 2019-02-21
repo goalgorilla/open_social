@@ -24,7 +24,7 @@ function social_user_install() {
 
   // Create the default configuration for the social_user default landing page.
   $config = \Drupal::getContainer()->get('config.factory')->getEditable('social_user.settings');
-  $config->set('social_user_profile_landingpage', 'stream')->save();
+  $config->set('social_user_profile_landingpage', 'entity.user.canonical')->save();
 }
 
 /**
@@ -112,7 +112,7 @@ function social_user_update_8006() {
 function social_user_update_8007() {
   // Create the default configuration for the social_user default landing page.
   $config = \Drupal::getContainer()->get('config.factory')->getEditable('social_user.settings');
-  $config->set('social_user_profile_landingpage', 'stream')->save();
+  $config->set('social_user_profile_landingpage', 'entity.user.canonical')->save();
 }
 
 /**
