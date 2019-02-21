@@ -91,6 +91,9 @@ function social_landing_page_theme() {
   $theme_templates['paragraph__hero__default'] = [
     'base hook' => 'paragraph',
   ];
+  $theme_templates['paragraph__hero_small__default'] = [
+    'base hook' => 'paragraph',
+  ];
   $theme_templates['paragraph__introduction__default'] = [
     'base hook' => 'paragraph',
   ];
@@ -107,6 +110,9 @@ function social_landing_page_theme() {
   ];
   // Fields for hero buttons.
   $theme_templates['field__paragraph__field_hero_buttons'] = [
+    'base hook' => 'field',
+  ];
+  $theme_templates['field__paragraph__field_hero_small_buttons'] = [
     'base hook' => 'field',
   ];
   // Views.
@@ -168,6 +174,16 @@ function social_landing_page_preprocess_paragraph(&$variables) {
       $image_field = "field_{$bundle}_image";
       if ($entity->hasField($image_field) && !empty($entity->{$image_field}->entity)) {
         $variables['hero_styled_image_url'] = ImageStyle::load($image_style)
+          ->buildUrl($entity->{$image_field}->entity->getFileUri());
+      }
+      break;
+
+    case 'hero_small':
+      // Add the hero styled image.
+      $image_style = 'social_landing_hero_small';
+      $image_field = "field_{$bundle}_image";
+      if ($entity->hasField($image_field) && !empty($entity->{$image_field}->entity)) {
+        $variables['hero_small_styled_image_url'] = ImageStyle::load($image_style)
           ->buildUrl($entity->{$image_field}->entity->getFileUri());
       }
       break;
