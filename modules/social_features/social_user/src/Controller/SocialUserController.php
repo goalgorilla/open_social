@@ -25,18 +25,6 @@ class SocialUserController extends ControllerBase {
   }
 
   /**
-   * Callback function of the stream page of a user.
-   *
-   * @return array
-   *   A renderable array.
-   */
-  public function streamUserPage() {
-    return [
-      '#markup' => '',
-    ];
-  }
-
-  /**
    * The _title_callback for the users profile stream title.
    *
    * @return string

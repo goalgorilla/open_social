@@ -12,3 +12,8 @@ services:
     arguments: ['@current_route_match', '@entity.manager']
     tags:
       - { name: context_provider }
+  social_user.redirect_subscriber:
+    class: Drupal\social_user\EventSubscriber\RedirectSubscriber
+    arguments: ['@current_route_match', '@current_user', '@config.factory']
+    tags:
+      - { name: event_subscriber }

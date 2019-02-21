@@ -39,8 +39,8 @@ class SocialUserSettingsForm extends ConfigFormBase {
       '#title' => t('Choose a default landing page'),
       '#description' => t('When visiting a profile the user will end up at this page first'),
       '#options' => [
-        'stream' => t('Stream'),
-        'information' => t('Information'),
+        'entity.user.canonical' => t('Stream'),
+        'view.user_information.user_information' => t('Information'),
       ],
       '#default_value' => $config->get('social_user_profile_landingpage'),
     ];

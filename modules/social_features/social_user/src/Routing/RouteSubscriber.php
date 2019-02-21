@@ -2,7 +2,6 @@
 
 namespace Drupal\social_user\Routing;
 
-use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Routing\RouteSubscriberBase;
 use Symfony\Component\Routing\RouteCollection;
 
@@ -13,18 +12,6 @@ use Symfony\Component\Routing\RouteCollection;
  * Listens to the dynamic route events.
  */
 class RouteSubscriber extends RouteSubscriberBase {
-
-  protected $configFactory;
-
-  /**
-   * RouteSubscriber constructor.
-   *
-   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
-   *   The config object.
-   */
-  public function __construct(ConfigFactoryInterface $config_factory) {
-    $this->SocialUserSettings = $config_factory->get('social_user.settings');
-  }
 
   /**
    * {@inheritdoc}
@@ -48,8 +35,7 @@ class RouteSubscriber extends RouteSubscriberBase {
     }
     // Route the user view page to user/{uid}/timeline.
     if ($route = $collection->get('entity.user.canonical')) {
-      $profile_landingpage = $this->SocialUserSettings->get('social_user_profile_landingpage');
-      $route->setPath('/user/{user}/' . $profile_landingpage);
+      $route->setPath('/user/{user}/stream');
       $defaults = $route->getDefaults();
       $defaults['_title_callback'] = '\Drupal\social_user\Controller\SocialUserController::setUserStreamTitle';
       $route->setDefaults($defaults);
