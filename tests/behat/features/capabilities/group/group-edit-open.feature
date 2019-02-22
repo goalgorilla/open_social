@@ -111,6 +111,3 @@ Feature: Edit my group as a group manager
     And I should see "This action cannot be undone."
     And I should see the button "Cancel"
     And I should see the button "Delete"
-    And I press "Delete"
-    And I wait for the batch job to finish
-    Then I should see "Your group and all of its topics, events and posts have been deleted."
