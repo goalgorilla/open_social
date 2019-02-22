@@ -117,5 +117,4 @@ Feature: Edit my group as a group manager
     And I should see the button "Delete"
     And I press "Delete"
     And I wait for the batch job to finish
-    And I break
     Then I should see "Your group and all of its topics, events and posts have been deleted."
