@@ -23,7 +23,13 @@ function social_core_theme() {
   return [
     'page_hero_data' => [
       'variables' => [
+        'title' => NULL,
         'hero_node' => NULL,
+        'node' => NULL,
+        'node_type' => NULL,
+        'section_class' => NULL,
+        'event_enrollment' => NULL,
+        'hero_styled_image_url' => NULL,
       ],
     ],
   ];
@@ -57,10 +63,7 @@ function social_core_preprocess_node(&$variables) {
       // Get the current route name to check if the user is on the
       // edit or delete page.
       $route = \Drupal::routeMatch()->getRouteName();
-      if (!in_array($route, [
-        'entity.node.edit_form',
-        'entity.node.delete_form',
-      ])) {
+      if (!in_array($route, ['entity.node.edit_form', 'entity.node.delete_form'])) {
         if ($node->access('update', $account)) {
           $variables['node_edit_url'] = $node->toUrl('edit-form')->toString();
         }
