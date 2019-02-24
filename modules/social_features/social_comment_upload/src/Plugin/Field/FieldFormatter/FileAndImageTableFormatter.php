@@ -6,10 +6,10 @@ use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\image\Plugin\Field\FieldFormatter\ImageFormatter;
 
 /**
- * Plugin implementation of the 'file_default' formatter.
+ * Plugin implementation of the 'file_image_default' formatter.
  *
  * @FieldFormatter(
- *   id = "file_image_table",
+ *   id = "file_image_default",
  *   label = @Translation("File and Image in a table"),
  *   field_types = {
  *     "file"

@@ -76,7 +76,7 @@ class SocialCommentUploadConfigOverride implements ConfigFactoryOverrideInterfac
             'progress_indicator' => 'throbber',
           ],
           'third_party_settings' => [],
-          'type' => 'file_image_table',
+          'type' => 'file_image_default',
           'region' => 'content',
         ],
       ];
@@ -97,7 +97,7 @@ class SocialCommentUploadConfigOverride implements ConfigFactoryOverrideInterfac
           'label' => 'hidden',
           'settings' => [],
           'third_party_settings' => [],
-          'type' => 'file_image_table',
+          'type' => 'file_image_default',
           'region' => 'content',
         ],
       ];
