@@ -40,19 +40,19 @@
 {# Fields in the event teaser need to render without a div, because it is a child element of a tag that cannot have a div such as an anchor or paragraph #}
 {{ attach_library('socialbase/photoswipe.image') }}
 
-<div class="photoswipe-gallery" itemscope itemtype="http://schema.org/ImageGallery">
+<div class="photoswipe-gallery-custom" itemscope itemtype="http://schema.org/ImageGallery">
   {% for item in items %}
     {% if item.content['#item'].is_image %}
-      {#<div{{ attributes.addClass(classes, 'field--item') }}>#}
-        <a href="{{ file_url(item.content['#item'].entity.uri.value) }}"
+      <div{{ attributes.addClass('field--item--image') }}>
+        <a class="photoswipe-item" href="{{ file_url(item.content['#item'].entity.uri.value) }}"
          data-med="{{ file_url(item.content['#item'].entity.uri.value) }}"
            data-med-size="{{ item.content['#item'].width }}x{{ item.content['#item'].height }}"
            data-size="{{ item.content['#item'].width }}x{{ item.content['#item'].height }}">
           {{ item.content }}
         </a>
-      {#</div>#}
+      </div>
     {% else %}
-      <div{{ attributes.addClass(classes, 'field--item') }}>{{ item.content }}</div>
+      <div class="field--item--file">{{ item.content }}</div>
     {% endif %}
   {% endfor %}
 </div>

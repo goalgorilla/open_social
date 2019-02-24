@@ -22,4 +22,65 @@
     }
   };
 
+  Drupal.behaviors.socialCommentUploadPhotoGalleryCustom = {
+    attach: function(context, setting) {
+
+      var $pswp = $('.pswp')[0];
+      var image = [];
+
+      $('.photoswipe-gallery-custom').each( function() {
+        var $pic     = $(this),
+          getItems = function() {
+            var items = [];
+            $pic.find('a.photoswipe-item').each(function() {
+              var $href   = $(this).attr('href'),
+                $size   = $(this).data('size').split('x'),
+                $width  = $size[0],
+                $height = $size[1];
+
+              var item = {
+                src : $href,
+                w   : $width,
+                h   : $height
+              };
+
+              items.push(item);
+            });
+            return items;
+          };
+
+        var items = getItems();
+
+        $.each(items, function(index, value) {
+          image[index]     = new Image();
+          image[index].src = value['src'];
+        });
+
+        $pic.on('click', 'a.photoswipe-item', function(event) {
+          event.preventDefault();
+
+          console.log("do it");
+
+          var $index = $(this).index();
+          var options = {
+            index: $index,
+            bgOpacity: 0.7,
+            showHideOpacity: true,
+            mainClass : 'pswp--minimal--dark',
+            barsSize : {top: 0, bottom: 0},
+            captionEl : false,
+            fullscreenEl : false,
+            shareEl : false,
+            bgOpacity : 0.85,
+            tapToClose : true,
+            tapToToggleControls : false
+          };
+
+          var lightBox = new PhotoSwipe($pswp, PhotoSwipeUI_Default, items, options);
+          lightBox.init();
+        });
+      });
+    }
+  };
+
 })(jQuery);
