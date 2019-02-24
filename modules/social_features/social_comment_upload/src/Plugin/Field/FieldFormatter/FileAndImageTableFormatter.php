@@ -46,6 +46,12 @@ class FileAndImageTableFormatter extends ImageFormatter {
           unset($item->_attributes);
         }
       }
+      else {
+        $image = $this->getImage($file);
+        $elements[$delta]['#item']->height = $image->getHeight();
+        $elements[$delta]['#item']->width = $image->getWidth();
+        $elements[$delta]['#item']->is_image = TRUE;
+      }
     }
 
     return $elements;
@@ -61,11 +67,29 @@ class FileAndImageTableFormatter extends ImageFormatter {
    *   TRUE when it's an image and not a file
    */
   private function isImage($file) {
-    // Make sure we deal with a file.
-    $image_factory = \Drupal::service('image.factory');
-    $image = $image_factory->get($file->getFileUri());
+    $image = $this->getImage($file);
+
+    if ($image === NULL) {
+      return FALSE;
+    }
 
     return $image->isValid();
+  }
+
+  /**
+   * Grab the Image if we are dealing with one.
+   *
+   * @param \Drupal\file\FileInterface $file
+   *   A file entity. This function may resize the file affecting its size.
+   *
+   * @return \Drupal\Core\Image\ImageInterface
+   *   An Image object.
+   */
+  private function getImage($file) {
+    // Make sure we deal with a file.
+    $image_factory = \Drupal::service('image.factory');
+
+    return $image_factory->get($file->getFileUri());
   }
 
 }
