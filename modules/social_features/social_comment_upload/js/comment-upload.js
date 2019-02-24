@@ -59,8 +59,6 @@
         $pic.on('click', 'a.photoswipe-item', function(event) {
           event.preventDefault();
 
-          console.log("do it");
-
           var $index = $(this).index();
           var options = {
             index: $index,
