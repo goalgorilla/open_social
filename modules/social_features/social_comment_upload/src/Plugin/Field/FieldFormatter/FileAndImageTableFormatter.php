@@ -4,6 +4,7 @@ namespace Drupal\social_comment_upload\Plugin\Field\FieldFormatter;
 
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\image\Plugin\Field\FieldFormatter\ImageFormatter;
+use Drupal\file\FileInterface;
 
 /**
  * Plugin implementation of the 'file_image_default' formatter.
@@ -47,6 +48,8 @@ class FileAndImageTableFormatter extends ImageFormatter {
         }
       }
       else {
+        // If it's an image we need to add the image width and height
+        // so Photoswipe knows what to render.
         $image = $this->getImage($file);
         $elements[$delta]['#item']->height = $image->getHeight();
         $elements[$delta]['#item']->width = $image->getWidth();
@@ -66,7 +69,7 @@ class FileAndImageTableFormatter extends ImageFormatter {
    * @return bool
    *   TRUE when it's an image and not a file
    */
-  private function isImage($file) {
+  private function isImage(FileInterface $file) {
     $image = $this->getImage($file);
 
     if ($image === NULL) {
@@ -85,7 +88,7 @@ class FileAndImageTableFormatter extends ImageFormatter {
    * @return \Drupal\Core\Image\ImageInterface
    *   An Image object.
    */
-  private function getImage($file) {
+  private function getImage(FileInterface $file) {
     // Make sure we deal with a file.
     $image_factory = \Drupal::service('image.factory');
 
