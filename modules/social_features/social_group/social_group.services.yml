@@ -24,3 +24,7 @@ services:
     class: \Drupal\social_group\SocialGroupSelectorWidgetConfigOverride
     tags:
       - {name: config.factory.override, priority: 10}
+  social_group.admin_people_override:
+    class: \Drupal\social_group\SocialGroupAdminPeopleConfigOverride
+    tags:
+    - {name: config.factory.override, priority: 10}
