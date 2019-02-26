@@ -82,7 +82,7 @@ function social_path_manager_batch_alter(&$batch) {
       // Set additional batch to create group aliases for group tabs.
       $batch['operations'][] = [
         '_social_path_manager_update_group_tab_aliases',
-        ['canonical_entities:group', $action]
+        ['canonical_entities:group', $action],
       ];
       batch_set($batch);
     }
@@ -110,9 +110,9 @@ function _social_path_manager_update_group_tab_aliases($id, $action, &$context) 
     $context['sandbox']['grouptab_aliases_created']++;
   }
 
-  $context['sandbox']['#finished'] = empty( $context['sandbox']['group_count']) ? 1 : ( $context['sandbox']['progress'] /  $context['sandbox']['group_count']);
+  $context['sandbox']['#finished'] = empty($context['sandbox']['group_count']) ? 1 : ($context['sandbox']['progress'] / $context['sandbox']['group_count']);
 
-  if ( $context['sandbox']['#finished'] === 1) {
+  if ($context['sandbox']['#finished'] === 1) {
     \Drupal::service('messenger')->addMessage(\Drupal::translation()
       ->formatPlural($context['sandbox']['grouptab_aliases_created'], 'Generated 1 group tab aliases.', 'Generated @count group tab aliases.'));
   }
@@ -207,6 +207,7 @@ function _social_path_manager_get_path_suffix($group_id, $route) {
  * @param string $op
  *   The operation that is being performed.
  * @param bool $bulk
+ *   Parameter to tell if the operation is coming from a bulk or not.
  */
 function _social_path_manager_update_alias(EntityInterface $entity, $op, $bulk = FALSE) {
   if ($entity->getEntityTypeId() === 'group') {
@@ -217,7 +218,8 @@ function _social_path_manager_update_alias(EntityInterface $entity, $op, $bulk =
         // If it's a bulk generate then get the alias by path.
         if ($bulk === TRUE) {
           $path['alias'] = \Drupal::service('path.alias_manager')->getAliasByPath('/group/' . $entity->id() . '/stream');
-        } else {
+        }
+        else {
           // New alias.
           $path = \Drupal::service('pathauto.generator')
             ->updateEntityAlias($entity, 'update');
