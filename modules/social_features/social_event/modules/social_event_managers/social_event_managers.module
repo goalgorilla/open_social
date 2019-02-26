@@ -284,6 +284,15 @@ function social_event_managers_menu_local_tasks_alter(&$data, $route_name) {
     unset($data['tabs'][0]['views_view:view.managers.view_managers']);
     unset($data['tabs'][0]['views_view:view.event_manage_enrollments.page_manage_enrollments']);
   }
+
+  // Should we minimze the amount of tabs? If so we remove Enrollees as we
+  // show it in the management tab.
+  if (social_event_managers_minimize_tabs()) {
+    unset($data['tabs'][0]['views_view:view.event_enrollments.view_enrollments']);
+    if (!social_event_managers_manager_or_organizer()) {
+      $data['tabs'][0]['views_view:view.event_manage_enrollments.page_manage_enrollments']['#link']['title'] = t('Enrollments');
+    }
+  }
 }
 
 /**
@@ -464,7 +473,15 @@ function social_event_managers_preprocess_views_view(&$variables) {
   /** @var \Drupal\views\ViewExecutable $view */
   $view = &$variables['view'];
 
+  // Remove header & VBO actions from the Enrollment Management tab if the user
+  // is not a manager or organiser.
   if ($view->id() === 'event_manage_enrollments') {
+    if (!social_event_managers_manager_or_organizer()) {
+      unset($variables['rows']['social_views_bulk_operations_bulk_form_enrollments_1']);
+      unset($variables['rows']['header']);
+      unset($variables['rows']['actions']);
+    }
+
     $block = \Drupal::entityTypeManager()->getStorage('block')
       ->load('socialblue_local_actions');
 
@@ -473,3 +490,78 @@ function social_event_managers_preprocess_views_view(&$variables) {
       ->view($block);
   }
 }
+
+/**
+ * Implements hook_views_pre_view().
+ */
+function social_event_managers_views_pre_view(ViewExecutable $view, $display_id, array &$args) {
+  // Remove fields from the Enrollment Management tab if the user is not a
+  // manager or organiser.
+  if ($view->id() === 'event_manage_enrollments') {
+    if (!social_event_managers_manager_or_organizer()) {
+      $fields = $view->display_handler->getOption('fields');
+      $fields['operations_1']['exclude'] = TRUE;
+      $fields['social_views_bulk_operations_bulk_form_enrollments_1']['exlude'] = TRUE;
+      $view->display_handler->overrideOption('fields', $fields);
+    }
+  }
+}
+
+/**
+ * Check if the user is allowed to manage Enrollments
+ *
+ * @param \Drupal\node\NodeInterface|NULL $node
+ *   The node the current user could be organizer of.
+ *
+ * @return bool
+ *   If the user is actually a manager or organizer.
+ */
+function social_event_managers_manager_or_organizer(NodeInterface $node = NULL) {
+  $account = \Drupal::currentUser();
+
+  // Allow if user has the manage everything permission.
+  if ($account->hasPermission('manage everything enrollments')) {
+    return TRUE;
+  }
+
+  if ($node === NULL) {
+    /** @var \Drupal\node\NodeInterface $node */
+    $node = \Drupal::routeMatch()->getParameter('node');
+
+    // Or if it's an organizer for the node.
+    if (!$node instanceof NodeInterface) {
+      $node = \Drupal::entityTypeManager()->getStorage('node')->load($node);
+    }
+  }
+
+  if ($node instanceof NodeInterface && $node->bundle() === 'event' && !$node->field_event_managers->isEmpty()) {
+    foreach ($node->field_event_managers->getValue() as $value) {
+      if ($value && $value['target_id'] === $account->id()) {
+        return TRUE;
+      }
+    }
+  }
+
+  return FALSE;
+}
+
+/**
+ * Returns if we should minimize tabs for event management and enrollees.
+ *
+ * @return bool
+ *   TRUE if we need to minimize tabs.
+ */
+function social_event_managers_minimize_tabs() {
+  $config = \Drupal::configFactory()
+    ->getEditable('social_event_managers.settings');
+
+  // If we minimize the amount of tabs we can allow LU that can see this
+  // event to see the tab as well.
+  // Set author of event as event organiser automatically.
+  if ($config->get('minimize_tabs')) {
+    return TRUE;
+  }
+
+  return FALSE;
+}
+
