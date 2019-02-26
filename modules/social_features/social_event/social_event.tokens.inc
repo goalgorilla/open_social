@@ -113,6 +113,7 @@ function get_link_to_event_from_enrollment($object_id, $as_link = FALSE) {
       if ($as_link) {
         return $event->toUrl('canonical')->toString();
       }
+
       return Link::fromTextAndUrl($event->getTitle(), $event->toUrl('canonical'))->toString();
     }
   }
