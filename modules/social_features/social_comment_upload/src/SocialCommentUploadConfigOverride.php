@@ -104,7 +104,7 @@ class SocialCommentUploadConfigOverride implements ConfigFactoryOverrideInterfac
           'region' => 'content',
         ],
       ];
-          
+
       $overrides[$config_name] = [
         'content' => $content,
       ];
