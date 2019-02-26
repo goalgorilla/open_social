@@ -108,11 +108,15 @@ function get_link_to_event_from_enrollment($object_id, $as_link = FALSE) {
     /** @var \Drupal\node\Entity\Node $event */
     $event = $storage->load($event_id);
 
-    if ($as_link) {
-      return $event->toUrl('canonical')->toString();
+    // Check if the event still exists.
+    if ($event !== NULL) {
+      if ($as_link) {
+        return $event->toUrl('canonical')->toString();
+      }
+
+      return Link::fromTextAndUrl($event->getTitle(), $event->toUrl('canonical'))->toString();
     }
 
-    return Link::fromTextAndUrl($event->getTitle(), $event->toUrl('canonical'))->toString();
   }
 
   return NULL;
