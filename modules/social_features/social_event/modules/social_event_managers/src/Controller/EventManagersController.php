@@ -83,7 +83,6 @@ class EventManagersController extends ControllerBase {
         }
       }
 
-
       // If we minimize the amount of tabs we can allow LU that can see this
       // event to see the tab as well.
       // Set author of event as event organiser automatically.
