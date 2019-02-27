@@ -87,15 +87,15 @@ function social_event_manager_or_organizer(NodeInterface $node = NULL) {
     $node = \Drupal::routeMatch()->getParameter('node');
 
     // Or if it's an organizer for the node.
-    if (!$node instanceof NodeInterface) {
+    if (!$node instanceof NodeInterface && !$node instanceof Node) {
       $node = \Drupal::entityTypeManager()->getStorage('node')->load($node);
     }
-  }
 
-  if ($node instanceof NodeInterface && $node->bundle() === 'event' && !$node->field_event_managers->isEmpty()) {
-    foreach ($node->field_event_managers->getValue() as $value) {
-      if ($value && $value['target_id'] === $account->id()) {
-        return TRUE;
+    if ($node->bundle() === 'event' && !$node->field_event_managers->isEmpty()) {
+      foreach ($node->field_event_managers->getValue() as $value) {
+        if ($value && $value['target_id'] === $account->id()) {
+          return TRUE;
+        }
       }
     }
   }
