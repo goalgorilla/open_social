@@ -506,7 +506,7 @@ function social_event_managers_views_pre_view(ViewExecutable $view, $display_id,
     if (!social_event_manager_or_organizer()) {
       $fields = $view->display_handler->getOption('fields');
       $fields['operations_1']['exclude'] = TRUE;
-      $fields['social_views_bulk_operations_bulk_form_enrollments_1']['exlude'] = TRUE;
+      $fields['social_views_bulk_operations_bulk_form_enrollments_1']['exclude'] = TRUE;
       $view->display_handler->overrideOption('fields', $fields);
     }
   }
