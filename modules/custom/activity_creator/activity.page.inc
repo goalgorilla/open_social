@@ -7,6 +7,7 @@
  * Page callback for Activity entities.
  */
 
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Render\Element;
 use Drupal\file\Entity\File;
 use Drupal\Core\Link;
@@ -49,11 +50,27 @@ function template_preprocess_activity(array &$variables) {
   }
   $variables['#cache']['max-age'] = $created_time_ago->getMaxAge();
 
+  $entities = $activity->field_activity_entity->referencedEntities();
+  if (!empty($entities)) {
+    /** @var \Drupal\Core\Entity\EntityInterface $entity */
+    $entity = reset($entities);
+
+    if ($entity instanceof EntityInterface && $entity->getEntityTypeId() === 'group_content') {
+      /** @var \Drupal\group\Entity\GroupContentInterface $entity */
+      if ($entity->getGroupContentType()->getContentPluginId() === 'group_membership' && $entity->getEntity()->id() !== $activity->getOwnerId()) {
+        $account = $entity->getEntity();
+      }
+    }
+  }
+
+  if (!isset($account)) {
+    $account = $activity->getOwner();
+  }
+
   // To change user picture settings (e.g. image style), edit the
   // 'compact_notification' view mode on the User entity. Note that the
   // 'compact_notification' view mode might not be configured, so remember to
   // always check the theme setting first.
-  $account = $activity->getOwner();
   if ($account) {
     $storage = \Drupal::entityTypeManager()->getStorage('profile');
     if (!empty($storage)) {

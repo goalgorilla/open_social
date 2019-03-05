@@ -103,16 +103,3 @@ Feature: Edit my group as a group manager
     And I click "Topics"
     And I click "Test group topic"
     And I should not see the link "Edit group"
-
-  # DS-705 As a Group Manager I want to delete my own group
-    And I logout
-    And I am logged in as "Group Manager One"
-    And I am on "user"
-    And I click "Groups"
-    And I click "Test open group"
-    And I click "Edit group"
-    And I click "Delete"
-    And I should see "This action cannot be undone."
-    And I should see the link "Cancel"
-    And I should see the button "Delete"
-    And I press "Delete"
