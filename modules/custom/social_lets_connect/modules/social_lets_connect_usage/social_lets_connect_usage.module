@@ -1,0 +1,32 @@
+<?php
+/**
+ * @file
+ *
+ * Module file for social_lets_connect_usage.
+ */
+
+/**
+ * Cron for sharing usage data.
+ */
+function social_lets_connect_usage_cron() {
+
+  // TODO check last send and times send from state.
+  $last_send = 0;
+  $times_send = 0;
+
+  /** @var \Drupal\social_lets_connect_usage\Plugin\ShareUsageDataPluginManager $plugin_manager */
+  $plugin_manager = \Drupal::service('plugin.manager.share_usage_data_plugin');
+  $plugin_definitions = $plugin_manager->getDefinitions();
+
+  foreach ($plugin_definitions as $plugin_id => $plugin_definition) {
+    $instance = $plugin_manager->createInstance($plugin_id);
+    if ($instance->enabled()) {
+      $data = [];
+      $data['plugin_definition'] = $plugin_definition;
+      $data['last_send'] = $last_send;
+      $data['times_send'] = $times_send;
+      $queue = \Drupal::queue('retrieve_usage_data');
+      $queue->createItem($data);
+    }
+  }
+}
