@@ -26,4 +26,10 @@
     {% endembed %}
   {% endif %}
 
+  {% if content.body %}
+    {% embed "node--teaser__body.html.twig" %}
+      {% block field_body %} {{ content.body }} {% endblock %}
+    {% endembed %}
+  {% endif %}
+
 {% endblock %}
