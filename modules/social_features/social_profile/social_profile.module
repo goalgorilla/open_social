@@ -88,24 +88,22 @@ function social_profile_form_profile_profile_add_form_alter(array &$form, FormSt
  * Implements hook_form_FORM_ID_alter().
  */
 function social_profile_form_profile_profile_edit_form_alter(array &$form, FormStateInterface $form_state, $form_id) {
-  $user = \Drupal::currentUser();
-  $account = \Drupal::routeMatch()->getParameter('user');
+  $viewing_user = \Drupal::currentUser();
 
   /** @var \Drupal\profile\Entity\Profile $profile */
   $profile = $form_state->getFormObject()->getEntity();
 
-  if (!$account instanceof User && $profile instanceof Profile) {
-    $account = $profile->getOwner();
-  }
-
   // Check for permission on custom edit profile tags, it's only for CM+ who can
   // actually edit a users profile and add profile tags there.
-  if (!$user->hasPermission('edit profile tags')) {
+  if (!$viewing_user->hasPermission('edit profile tags')) {
     $form['field_profile_profile_tag']['#access'] = FALSE;
   }
   // We hide the label and form field when there are no options. This is the
   // case by default. Since we provide an empty vocabulary.
-  if (empty($form['field_profile_profile_tag']['widget']['#options'])) {
+  // We also check for a fieldset, used by our special widget which doesn't use
+  // #options.
+  if (empty($form['field_profile_profile_tag']['widget']['#options'])
+    && $form['field_profile_profile_tag']['widget']['#type'] !== 'container') {
     unset($form['field_profile_profile_tag']);
   }
 
@@ -141,13 +139,30 @@ function social_profile_form_profile_profile_edit_form_alter(array &$form, FormS
         $form['empty_profile'] = [
           '#type' => 'fieldset',
         ];
-        $form['empty_profile']['notice'] = [
-          '#type' => 'html_tag',
-          '#tag' => 'p',
-          '#value' => t('There is no profile information you can change here. Change your @settings.', [
-            '@settings' => Link::createFromRoute(t('account settings here'), 'entity.user.edit_form', ['user' => $account->id()])->toString(),
-          ]),
-        ];
+        // If a user is viewing their own profile, suggest they change settings.
+        if ($viewing_user->id() === $profile->getOwnerId()) {
+          $settings_link = Link::createFromRoute(
+            t('account settings here'),
+            'entity.user.edit_form',
+            ['user' => $profile->getOwnerId()]
+          )->toString();
+          $form['empty_profile']['notice'] = [
+            '#type' => 'html_tag',
+            '#tag' => 'p',
+            '#value' => t(
+              'There is no profile information you can change here. Change your @settings.',
+              ['@settings' => $settings_link]
+            ),
+          ];
+        }
+        // For other users there's nothing left to do.
+        else {
+          $form['empty_profile']['notice'] = [
+            '#type' => 'html_tag',
+            '#tag' => 'p',
+            '#value' => t('There is no profile information you can change here.'),
+          ];
+        }
 
         $form['actions']['submit']['#disabled'] = TRUE;
       }
@@ -162,7 +177,7 @@ function social_profile_form_profile_profile_edit_form_alter(array &$form, FormS
   $form['actions']['cancel'] = [
     '#type' => 'link',
     '#title' => t('Cancel'),
-    '#url' => Url::fromRoute('view.user_information.user_information', ['user' => $account->id()]),
+    '#url' => Url::fromRoute('view.user_information.user_information', ['user' => $profile->getOwnerId()]),
   ];
 }
 
@@ -213,10 +228,61 @@ function social_profile_form_views_exposed_form_alter(&$form, FormStateInterface
   if ($form['#id'] == 'views-exposed-form-search-users-page') {
     if (!empty($form['profile_tag'])) {
       $form['profile_tag']['#type'] = 'checkboxes';
+      // If the view is configured to preserve hierarchy we need to do a bit
+      // more to make checkboxes work.
+      if (is_object($form['profile_tag']['#options'][0])) {
+        $options = [];
+        // The #options array is an array of stdClass objects with an array in
+        // the option key that has the tid as key and label as value.
+        foreach ($form['profile_tag']['#options'] as $option) {
+          $options[key($option->option)] = reset($option->option);
+        }
+        // Set the options array to the format expected for checkboxes.
+        $form['profile_tag']['#options'] = $options;
+      }
     }
     if (empty($form['profile_tag']['#options'])) {
       unset($form['profile_tag']);
     }
+  }
+}
+
+/**
+ * Implements hook_preprocess_fieldset().
+ */
+function social_profile_preprocess_fieldset(&$variables) {
+  // Style our checkboxes as nested checkboxes.
+  if ($variables['element']['#name'] === 'profile_tag') {
+    $variables['attributes']['class'][] = 'checkboxes--nested';
+  }
+}
+
+/**
+ * Implements hook_preprocess_input().
+ */
+function social_profile_preprocess_input(&$variables) {
+  // Edit the profile tag displays to show the hierarchy to users.
+  // Only do this if it starts with a - to indicate it's a child.
+  if (
+    !empty($variables['element']['#parents'])
+    && $variables['element']['#parents'][0] === 'profile_tag'
+    && substr($variables['element']['#title'], 0, 1) === '-'
+  ) {
+    $variables['element']['#attributes']['class'][] = 'checkboxes--nested__child';
+  }
+}
+
+/**
+ * Implements hook_preprocess_form_element_label().
+ */
+function social_profile_preprocess_form_element_label(&$variables) {
+  // Edit the profile tag displays to show the hierarchy to users.
+  // Only do this if it starts with a - to indicate it's a child.
+  if (
+    substr($variables['element']['#id'], 0, 17) === 'edit-profile-tag-'
+    && substr($variables['element']['#title'], 0, 1) === '-'
+  ) {
+    $variables['title']['#markup'] = substr($variables['title']['#markup'], 1);
   }
 }
 

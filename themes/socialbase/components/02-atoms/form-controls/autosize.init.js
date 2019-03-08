@@ -4,9 +4,14 @@
     attach: function (context, settings) {
 
       // Attach autosize listener.
-      autosize($('.form-control--autogrow'));
+      $(".form-control--autogrow", context).once("textareaAutogrow").each(function () {
+        autosize.destroy($('.form-control--autogrow'));
+        autosize($('.form-control--autogrow'));
+        autosize.update($('.form-control--autogrow'));
+      });
+
     }
-  }
+  };
 
   Drupal.behaviors.textareaFocus = {
     attach: function (context, settings) {
@@ -17,6 +22,6 @@
         $(this).parents('.main-container').toggleClass('open-keyboard');
       });
     }
-  }
+  };
 
 })(jQuery);
