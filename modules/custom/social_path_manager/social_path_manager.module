@@ -9,6 +9,7 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 use Drupal\group\Entity\Group;
+use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupType;
 
 /**
@@ -182,16 +183,16 @@ function social_path_manager_social_path_manager_group_tabs_alter(array &$tabs) 
 /**
  * Get the url suffix for a giving route of a group.
  *
- * @param int $group_id
- *   The ID of the group being updated.
+ * @param \Drupal\group\Entity\GroupInterface $group
+ *   The group being updated.
  * @param string $route
  *   The route of the tab being updated.
  *
  * @return string
  *   The url suffix of the tab.
  */
-function _social_path_manager_get_path_suffix($group_id, $route) {
-  $url = Url::fromRoute($route, ['group' => $group_id]);
+function _social_path_manager_get_path_suffix(GroupInterface $group, $route) {
+  $url = Url::fromRoute($route, ['group' => $group->id()]);
 
   // Get the last part of the url.
   $url = explode('/', $url->getInternalPath());
@@ -202,12 +203,13 @@ function _social_path_manager_get_path_suffix($group_id, $route) {
 /**
  * Create the aliases for the views of the group.
  *
- * @param \Drupal\Core\Entity\EntityInterface|object $entity
+ * @param \Drupal\Core\Entity\EntityInterface $entity
  *   The entity that is the parent for the alias.
  * @param string $op
  *   The operation that is being performed.
  * @param bool $bulk
  *   Parameter to tell if the operation is coming from a bulk or not.
+ * @throws \Exception
  */
 function _social_path_manager_update_alias(EntityInterface $entity, $op, $bulk = FALSE) {
   if ($entity->getEntityTypeId() === 'group') {
@@ -215,9 +217,12 @@ function _social_path_manager_update_alias(EntityInterface $entity, $op, $bulk =
       case 'all':
       case 'update':
       case 'create':
+        /** @var \Drupal\Core\Path\AliasManager $pam */
+        $pam = \Drupal::service('path.alias_manager');
+
         // If it's a bulk generate then get the alias by path.
         if ($bulk === TRUE) {
-          $path['alias'] = \Drupal::service('path.alias_manager')->getAliasByPath('/group/' . $entity->id() . '/stream');
+          $path['alias'] = $pam->getAliasByPath('/group/' . $entity->id() . '/stream');
         }
         else {
           // New alias.
@@ -229,19 +234,21 @@ function _social_path_manager_update_alias(EntityInterface $entity, $op, $bulk =
         // If yes, then change all the other views.
         if (!empty($path)) {
           foreach (_social_path_manager_group_tabs() as $route) {
-            $suffix = _social_path_manager_get_path_suffix($entity->id(), $route);
+            $suffix = _social_path_manager_get_path_suffix($entity, $route);
 
             // Get alias of the group tab.
-            $grouptab_alias = \Drupal::service('path.alias_manager')->getAliasByPath('/group/' . $entity->id() . '/' . $suffix);
+            $grouptab_alias = $pam->getAliasByPath('/group/' . $entity->id() . '/' . $suffix);
+
+            /** @var \Drupal\Core\Path\AliasStorage $pas */
+            $pas = \Drupal::service('path.alias_storage');
 
             // Check of the alias is an alias or path.
-            $is_alias = \Drupal::service('path.alias_storage')->aliasExists($grouptab_alias, 'und');
+            $is_alias = $pas->aliasExists($grouptab_alias, 'und');
 
             // Create a new alias when it does not exist.
             if ($op === 'create' && $is_alias === FALSE) {
               // Insert the alias for the other views.
-              \Drupal::service('path.alias_storage')
-                ->save('/group/' . $entity->id() . '/' . $suffix, $path['alias'] . '/' . $suffix, 'und');
+              $pas->save('/group/' . $entity->id() . '/' . $suffix, $path['alias'] . '/' . $suffix, 'und');
             }
 
             // Update alias by deleting the old one and creating a new one.
@@ -249,24 +256,19 @@ function _social_path_manager_update_alias(EntityInterface $entity, $op, $bulk =
               \Drupal::service('pathauto.alias_storage_helper')
                 ->deleteBySourcePrefix('/group/' . $entity->id() . '/' . $suffix);
 
-              \Drupal::service('path.alias_storage')
-                ->save('/group/' . $entity->id() . '/' . $suffix, $path['alias'] . '/' . $suffix, 'und');
+              $pas->save('/group/' . $entity->id() . '/' . $suffix, $path['alias'] . '/' . $suffix, 'und');
             }
           }
-          /** @var \Drupal\Core\Cache\CacheTagsInvalidator $cti */
-          $cti = \Drupal::service('cache_tags.invalidator');
-          $cti->invalidateTags(['group:' . $entity->id()]);
+
+          // Clear cache of the group tag.
+          \Drupal::service('cache_tags.invalidator')->invalidateTags(['group:' . $entity->id()]);
         }
         break;
 
       case 'delete':
-        // Delete all the group tabs aliases if the group gets deleted.
-        foreach (_social_path_manager_group_tabs() as $route) {
-          $suffix = _social_path_manager_get_path_suffix($entity->id(), $route);
-
-          \Drupal::service('pathauto.alias_storage_helper')
-            ->deleteBySourcePrefix('/group/' . $entity->id() . '/' . $suffix);
-        }
+        // Delete all the aliases of the deleted group.
+        $storage_helper = \Drupal::service('pathauto.alias_storage_helper');
+        $storage_helper->deleteBySourcePrefix('/group/' . $entity->id());
         break;
     }
   }
