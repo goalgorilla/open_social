@@ -67,6 +67,7 @@ class RedirectSubscriber implements EventSubscriberInterface {
 
     // First check if the current route is the group canonical.
     $routeMatch = $this->currentRoute->getRouteName();
+
     // Not group canonical, then we leave.
     if ($routeMatch !== 'entity.group.canonical') {
       return;
@@ -80,21 +81,31 @@ class RedirectSubscriber implements EventSubscriberInterface {
     }
 
     // Set the already default redirect route.
-    $defaultRedirectRoute = 'social_group.stream';
+    $defaultRoute = 'social_group.stream';
+    $defaultClosedRoute = 'view.group_information.page_group_about';
 
     // Check if this group has a custom route set.
     $route = $group->getFieldValue('default_route', 'value');
 
-    // Current user must be a member.
+    // Check if current user is a member.
     if ($group->getMember(User::load($this->currentUser->id())) === FALSE) {
       $route = $group->getFieldValue('default_route_an', 'value');
+      // If you're not a member and the group type is closed.
+      if ($route === NULL) {
+        $route = ($group->getGroupType()->id() === 'closed_group') ? $defaultClosedRoute : $defaultRoute;
+      }
+    }
+
+    // Still no route here? Then we use the normal default.
+    if ($route === NULL) {
+      $route = $defaultRoute;
     }
 
     // Determine the URL we want to redirect to.
     $url = Url::fromRoute($route, ['group' => $group->id()]);
 
     // If it's not set, set to canonical, or the current user has no access.
-    if (!isset($route) || ($route === $routeMatch) || ($route === $defaultRedirectRoute) || $url->access($this->currentUser) === FALSE) {
+    if (!isset($route) || ($route === $routeMatch) || $url->access($this->currentUser) === FALSE) {
       // This basically means that the normal flow remains intact.
       return;
     }
