@@ -61,6 +61,15 @@ function social_like_update_8005() {
 }
 
 /**
+ * Re-set like_and_dislike.settings to false.
+ */
+function social_like_update_8006() {
+  \Drupal::configFactory()->getEditable('like_and_dislike.settings')
+    ->set('hide_vote_widget', FALSE)
+    ->save();
+}
+
+/**
  * Function to set permissions.
  */
 function _social_like_set_permissions() {
