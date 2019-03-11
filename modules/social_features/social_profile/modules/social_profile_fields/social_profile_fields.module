@@ -48,9 +48,15 @@ function social_profile_fields_entity_field_access($operation, FieldDefinitionIn
  */
 function social_profile_fields_user_format_name_alter(&$name, $account) {
   // Can we use the fields?
-  $use_first_name = _social_profile_fields_get_setting('profile_profile_field_profile_first_name');
-  $use_last_name = _social_profile_fields_get_setting('profile_profile_field_profile_last_name');
-  $use_nick_name = _social_profile_fields_get_setting('profile_profile_field_profile_nick_name');
+  if (\Drupal::currentUser()->hasPermission('social profile fields always show full name')) {
+    $use_first_name = $use_last_name = TRUE;
+    $use_nick_name = FALSE;
+  }
+  else {
+    $use_first_name = _social_profile_fields_get_setting('profile_profile_field_profile_first_name');
+    $use_last_name = _social_profile_fields_get_setting('profile_profile_field_profile_last_name');
+    $use_nick_name = _social_profile_fields_get_setting('profile_profile_field_profile_nick_name');
+  }
 
   $accountname = '';
   // Let's get the Nickname, First name Last name.
