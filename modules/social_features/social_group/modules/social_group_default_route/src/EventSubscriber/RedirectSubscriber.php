@@ -15,7 +15,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
 /**
  * Class RedirectSubscriber.
  *
- * @package Drupal\social_group\EventSubscriber
+ * @package Drupal\social_group_default_route\EventSubscriber
  */
 class RedirectSubscriber implements EventSubscriberInterface {
 
