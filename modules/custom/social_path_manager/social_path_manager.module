@@ -70,7 +70,7 @@ function social_path_manager_batch_alter(&$batch) {
     return;
   }
 
-  /** @var \Drupal\Core\Url $url */
+  /** @var Drupal\Core\Url $url */
   $url = &$batch['source_url'];
 
   // Bulk generate aliases include group tabs.
@@ -107,7 +107,9 @@ function _social_path_manager_update_group_tab_aliases($id, $action, &$context) 
   for ($target = $context['sandbox']['progress'] + 5; $context['sandbox']['progress'] < $target && $context['sandbox']['progress'] < $context['sandbox']['group_count']; $context['sandbox']['progress']++) {
     $gip = $context['sandbox']['gips'][$context['sandbox']['progress']];
     $group = Group::load($gip);
-    _social_path_manager_update_alias($group, $action, TRUE);
+    if ($group instanceof GroupInterface) {
+      _social_path_manager_update_alias($group, $action, TRUE);
+    }
     $context['sandbox']['grouptab_aliases_created']++;
   }
 
@@ -209,7 +211,6 @@ function _social_path_manager_get_path_suffix(GroupInterface $group, $route) {
  *   The operation that is being performed.
  * @param bool $bulk
  *   Parameter to tell if the operation is coming from a bulk or not.
- * @throws \Exception
  */
 function _social_path_manager_update_alias(EntityInterface $entity, $op, $bulk = FALSE) {
   if ($entity->getEntityTypeId() === 'group') {
@@ -248,7 +249,12 @@ function _social_path_manager_update_alias(EntityInterface $entity, $op, $bulk =
             // Create a new alias when it does not exist.
             if ($op === 'create' && $is_alias === FALSE) {
               // Insert the alias for the other views.
-              $pas->save('/group/' . $entity->id() . '/' . $suffix, $path['alias'] . '/' . $suffix, 'und');
+              try {
+                $pas->save('/group/' . $entity->id() . '/' . $suffix, $path['alias'] . '/' . $suffix, 'und');
+              }
+              catch (Exception $e) {
+                \Drupal::logger('social_path_manager')->error($e->getMessage());
+              }
             }
 
             // Update alias by deleting the old one and creating a new one.
@@ -256,7 +262,12 @@ function _social_path_manager_update_alias(EntityInterface $entity, $op, $bulk =
               \Drupal::service('pathauto.alias_storage_helper')
                 ->deleteBySourcePrefix('/group/' . $entity->id() . '/' . $suffix);
 
-              $pas->save('/group/' . $entity->id() . '/' . $suffix, $path['alias'] . '/' . $suffix, 'und');
+              try {
+                $pas->save('/group/' . $entity->id() . '/' . $suffix, $path['alias'] . '/' . $suffix, 'und');
+              }
+              catch (Exception $e) {
+                \Drupal::logger('social_path_manager')->error($e->getMessage());
+              }
             }
           }
 
