@@ -147,6 +147,15 @@ class SocialProfileFieldsSettingsForm extends ConfigFormBase implements Containe
       }
     }
 
+    $form['limit_search_n_mention'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Limit search and mention'),
+      '#description' => $this->t('When this setting is enabled then only users with the %name permission will be allowed to find members in search or mentions when using their full name.', [
+        '%name' => $this->t('Always show Full Name'),
+      ]),
+      '#default_value' => $config->get('limit_search_n_mention'),
+    ];
+
     $form['actions']['social_profile_fields_confirm_flush'] = [
       '#type' => 'submit',
       '#submit' => ['::submitFlush'],
@@ -173,7 +182,10 @@ class SocialProfileFieldsSettingsForm extends ConfigFormBase implements Containe
         $config->set($field['id'], $form_state->getValue($field['id']));
       }
     }
-    $config->save();
+
+    $config
+      ->set('limit_search_n_mention', $form_state->getValue('limit_search_n_mention'))
+      ->save();
 
     parent::submitForm($form, $form_state);
 
