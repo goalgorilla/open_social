@@ -481,6 +481,7 @@
 #  modules/social_features/social_event/modules/social_event_type/social_event_type.permissions.yml: n/a
 #  modules/social_features/social_event/modules/social_event_type/src/SocialEventTypeConfigOverride.php: n/a
 #  modules/social_features/social_event/modules/social_event_type/src/Form/SocialEventTypeSettings.php: n/a
+#  modules/social_features/social_topic/src/Form/TopicSettingsForm.php: n/a
 #  modules/social_features/social_event/src/Form/EventEnrollmentForm.php: n/a
 #  modules/social_features/social_event/src/Form/EventSettingsForm.php: n/a
 #  modules/social_features/social_event/src/Plugin/Block/EnrollActionBlock.php: n/a
@@ -657,6 +658,8 @@
 #  modules/social_features/social_tagging/src/Plugin/Block/SocialTagsBlock.php: n/a
 #  modules/social_features/social_topic/social_topic.install: n/a
 #  modules/social_features/social_topic/src/Controller/SocialTopicController.php: n/a
+#  modules/social_features/social_topic/social_topic.links.menu.yml: n/a
+#  modules/social_features/social_topic/social_topic.routing.yml: n/a
 #  modules/social_features/social_topic/social_topic.permissions.yml: n/a
 #  modules/social_features/social_topic/config/optional/block.block.socialblue_topic_add_block.yml: n/a
 #  modules/social_features/social_topic/config/optional/block.block.topic_add_block.yml: n/a
@@ -1134,7 +1137,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Open Social\n"
-"POT-Creation-Date: 2019-02-26 07:49+0000\n"
+"POT-Creation-Date: 2019-03-07 22:13+0000\n"
 "PO-Revision-Date: YYYY-mm-DD HH:MM+ZZZZ\n"
 "Last-Translator: NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <EMAIL@ADDRESS>\n"
@@ -1760,7 +1763,7 @@ msgstr ""
 msgid "@profile_name @profile_name_extra has not shared profile information."
 msgstr ""
 
-#: modules/custom/activity_creator/activity.page.inc:40
+#: modules/custom/activity_creator/activity.page.inc:41
 #: themes/socialbase/includes/form.inc:62
 msgid "@time ago"
 msgstr ""
@@ -2414,6 +2417,10 @@ msgstr ""
 msgid "Administer Post entities"
 msgstr ""
 
+#: modules/social_features/social_topic/social_topic.permissions.yml:0
+msgid "Administer Topic Settings"
+msgstr ""
+
 #: modules/custom/alternative_frontpage/alternative_frontpage.permissions.yml:0
 msgid "Administer alternative frontpage settings"
 msgstr ""
@@ -2577,7 +2584,7 @@ msgid ""
 "demo content."
 msgstr ""
 
-#: modules/social_features/social_topic/social_topic.install:123
+#: modules/social_features/social_topic/social_topic.install:129
 #: modules/social_features/social_topic/src/Controller/SocialTopicController.php:74
 #: modules/social_features/social_topic/config/install/views.view.latest_topics.yml:0;0;0
 #: modules/social_features/social_topic/config/install/views.view.topics.yml:0
@@ -2597,6 +2604,11 @@ msgstr ""
 #: modules/social_features/social_event/social_event.permissions.yml:0
 msgid ""
 "Allow access to the event settings form to configure general event options."
+msgstr ""
+
+#: modules/social_features/social_topic/social_topic.permissions.yml:0
+msgid ""
+"Allow access to the topic settings form to configure general topic options."
 msgstr ""
 
 #: modules/social_features/social_event/modules/social_event_an_enroll/src/Form/EventAnEnrollSettingsForm.php:45
@@ -3073,7 +3085,7 @@ msgstr ""
 msgid "Book traversal links for"
 msgstr ""
 
-#: themes/socialblue/theme-settings.php:45
+#: themes/socialblue/theme-settings.php:46
 msgid "Border radius"
 msgstr ""
 
@@ -3100,7 +3112,7 @@ msgstr ""
 msgid "Button"
 msgstr ""
 
-#: themes/socialblue/theme-settings.php:76
+#: themes/socialblue/theme-settings.php:77
 msgid "Button border radius (px)"
 msgstr ""
 
@@ -3149,7 +3161,7 @@ msgstr ""
 msgid "Cancel enrollment"
 msgstr ""
 
-#: themes/socialblue/theme-settings.php:62
+#: themes/socialblue/theme-settings.php:63
 msgid "Card border radius (px)"
 msgstr ""
 
@@ -3166,6 +3178,7 @@ msgid "Change group membership role"
 msgstr ""
 
 #: modules/social_features/social_event/modules/social_event_type/src/Form/SocialEventTypeSettings.php:46
+#: modules/social_features/social_topic/src/Form/TopicSettingsForm.php:39
 msgid "Change input widget"
 msgstr ""
 
@@ -4000,15 +4013,15 @@ msgstr ""
 msgid "Define Consumer Key and Consumer Secret on module settings."
 msgstr ""
 
-#: themes/socialblue/theme-settings.php:78
+#: themes/socialblue/theme-settings.php:79
 msgid "Define the roundness of buttons corners."
 msgstr ""
 
-#: themes/socialblue/theme-settings.php:64
+#: themes/socialblue/theme-settings.php:65
 msgid "Define the roundness of cards corners."
 msgstr ""
 
-#: themes/socialblue/theme-settings.php:71
+#: themes/socialblue/theme-settings.php:72
 msgid ""
 "Define the roundness of the corners of form-controls, like <code>input</"
 "code>, <code>textarea</code> and <code>select</code>"
@@ -4367,7 +4380,7 @@ msgid ""
 msgstr ""
 
 #: themes/socialbase/templates/profile/profile--profile--default.html.twig:84
-#: themes/socialblue/theme-settings.php:84
+#: themes/socialblue/theme-settings.php:85
 msgid "E-mail"
 msgstr ""
 
@@ -5117,7 +5130,7 @@ msgid "Following content activity context"
 msgstr ""
 
 #: modules/custom/social_font/src/Entity/Font.php:12
-#: themes/socialblue/theme-settings.php:115
+#: themes/socialblue/theme-settings.php:118
 msgid "Font"
 msgstr ""
 
@@ -5135,7 +5148,7 @@ msgstr ""
 
 #: modules/custom/social_font/social_font.links.menu.yml:0
 #: modules/custom/social_font/social_font.routing.yml:0
-#: themes/socialblue/theme-settings.php:54
+#: themes/socialblue/theme-settings.php:55
 msgid "Fonts"
 msgstr ""
 
@@ -5180,7 +5193,7 @@ msgstr ""
 msgid "Forgot password?"
 msgstr ""
 
-#: themes/socialblue/theme-settings.php:69
+#: themes/socialblue/theme-settings.php:70
 msgid "Form control border radius (px)"
 msgstr ""
 
@@ -6021,7 +6034,7 @@ msgstr ""
 msgid "Login attempt failed from %ip."
 msgstr ""
 
-#: themes/socialblue/theme-settings.php:92
+#: themes/socialblue/theme-settings.php:93
 msgid "Logo for e-mails"
 msgstr ""
 
@@ -6192,7 +6205,7 @@ msgstr ""
 msgid "Members of {{ arguments.gid }}"
 msgstr ""
 
-#: modules/social_features/social_like/social_like.module:88
+#: modules/social_features/social_like/social_like.module:91
 msgid "Members who liked this @content"
 msgstr ""
 
@@ -6815,7 +6828,7 @@ msgstr ""
 msgid "Open or download file"
 msgstr ""
 
-#: themes/socialblue/theme-settings.php:36
+#: themes/socialblue/theme-settings.php:37
 msgid "Opensocial settings"
 msgstr ""
 
@@ -9402,7 +9415,7 @@ msgstr ""
 msgid "The file @filename could not downloaded."
 msgstr ""
 
-#: themes/socialblue/theme-settings.php:118
+#: themes/socialblue/theme-settings.php:121
 msgid "The font family to use."
 msgstr ""
 
@@ -9881,6 +9894,11 @@ msgstr ""
 msgid "Topic add block"
 msgstr ""
 
+#: modules/social_features/social_topic/social_topic.links.menu.yml:0;0
+#: modules/social_features/social_topic/social_topic.routing.yml:0
+msgid "Topic settings"
+msgstr ""
+
 #: modules/social_features/social_topic/config/install/taxonomy.vocabulary.topic_types.yml:0;0
 msgid "Topic types"
 msgstr ""
@@ -10122,7 +10140,7 @@ msgstr ""
 msgid "Updating group content (@id)"
 msgstr ""
 
-#: themes/socialblue/theme-settings.php:93
+#: themes/socialblue/theme-settings.php:94
 msgid ""
 "Upload a logo which is shown in e-mail sent by the platform. This overrides "
 "the default logo that is also used in e-mails when no logo is provided here."
@@ -10583,6 +10601,13 @@ msgstr ""
 #: modules/social_features/social_event/modules/social_event_type/src/Form/SocialEventTypeSettings.php:47
 msgid ""
 "When the amount of available event types reach this amount, on the event "
+"edit and create page, the radio widget will be changed to a select widget "
+"for better usability."
+msgstr ""
+
+#: modules/social_features/social_topic/src/Form/TopicSettingsForm.php:40
+msgid ""
+"When the amount of available topic types reach this amount, on the topic "
 "edit and create page, the radio widget will be changed to a select widget "
 "for better usability."
 msgstr ""
