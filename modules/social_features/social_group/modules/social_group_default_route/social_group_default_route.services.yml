@@ -4,3 +4,7 @@ services:
     arguments: ['@current_route_match', '@current_user']
     tags:
       - { name: event_subscriber }
+  social_group_default_route.route_subscriber:
+    class: Drupal\social_group_default_route\RouteSubscriber\RouteSubscriber
+    tags:
+      - { name: event_subscriber }
