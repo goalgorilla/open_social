@@ -148,15 +148,15 @@ class SocialEmbedConfigOverride implements ConfigFactoryOverrideInterface {
 
     // If the button already exists we change nothing.
     if (!$button_exists) {
-      $row_array_keys = array_keys($settings['toolbar']['rows']);
-      $last_row_key = end($row_array_keys);
+      $last_row_key = end(array_keys($settings['toolbar']['rows']));
+      $last_item_key = end(array_keys($settings['toolbar']['rows'][$last_row_key]));
 
-      // Add the button as a new group to the bottom row.
+      // Add the button as a new group to the bottom row as the last item.
       $group = [
         'name' => 'Embed',
         'items' => ['social_embed'],
       ];
-      $overrides[$config_name]['settings']['toolbar']['rows'][$last_row_key][] = $group;
+      $overrides[$config_name]['settings']['toolbar']['rows'][$last_row_key][$last_item_key + 1] = $group;
     }
   }
 
