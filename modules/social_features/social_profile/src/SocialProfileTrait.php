@@ -151,7 +151,7 @@ trait SocialProfileTrait {
    * @param \Drupal\Core\Database\Query\SelectInterface $query
    *   The select query.
    * @param string $name
-   *   The string to search for.
+   *   The sanitized string to search for.
    * @param string $suggestion_format
    *   (optional) The suggestion format.
    *
@@ -170,16 +170,16 @@ trait SocialProfileTrait {
       ELSE 2
     END
   ", 'mention_sort');
-      $query->orderBy('mention_sort', 'ASC');
-      $query->orderBy('fn.field_profile_first_name_value', 'ASC');
-      $query->orderBy('ln.field_profile_last_name_value', 'ASC');
+      $query->orderBy('mention_sort');
+      $query->orderBy('fn.field_profile_first_name_value');
+      $query->orderBy('ln.field_profile_last_name_value');
     }
 
     if ($this->addNickName() === TRUE) {
-      $query->orderBy('nn.field_profile_nick_name_value', 'ASC');
+      $query->orderBy('nn.field_profile_nick_name_value');
     }
 
-    $query->orderBy('uf.name', 'ASC');
+    $query->orderBy('uf.name');
 
     return $query;
   }
