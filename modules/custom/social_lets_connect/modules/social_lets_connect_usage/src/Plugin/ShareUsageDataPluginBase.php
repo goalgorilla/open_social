@@ -24,13 +24,6 @@ abstract class ShareUsageDataPluginBase extends PluginBase implements ShareUsage
   public $entityTypeManager;
 
   /**
-   * The date formatter.
-   *
-   * @var \Drupal\Core\Datetime\DateFormatterInterface
-   */
-  public $dateFormatter;
-
-  /**
    * The config.
    *
    * @var \Drupal\Core\Config\ConfigFactory
