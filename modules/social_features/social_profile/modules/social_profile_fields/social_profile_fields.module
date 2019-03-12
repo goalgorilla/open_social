@@ -47,40 +47,55 @@ function social_profile_fields_entity_field_access($operation, FieldDefinitionIn
  *
  * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
  */
-function social_profile_fields_user_format_name_alter(&$name, $account) {
-  // Can we use the fields?
-  if (\Drupal::currentUser()->hasPermission('social profile fields always show full name')) {
-    $use_first_name = $use_last_name = TRUE;
-    $use_nick_name = FALSE;
-  }
-  else {
-    $use_first_name = _social_profile_fields_get_setting('profile_profile_field_profile_first_name');
-    $use_last_name = _social_profile_fields_get_setting('profile_profile_field_profile_last_name');
-    $use_nick_name = _social_profile_fields_get_setting('profile_profile_field_profile_nick_name');
-  }
-
-  $accountname = '';
-  // Let's get the Nickname, First name Last name.
+function social_profile_fields_user_format_name_alter(&$name, AccountInterface $account) {
   /** @var \Drupal\profile\ProfileStorageInterface $storage */
   $storage = \Drupal::entityTypeManager()->getStorage('profile');
-  if (!empty($storage)) {
-    // Returns false.
-    if ($user_profile = $storage->loadByUser($account, 'profile', TRUE)) {
-      // First try to set it from the nick_name.
-      $accountname = $use_nick_name ? $user_profile->get('field_profile_nick_name')->value : '';
-      // If that fails, fallback to old behaviour with first/last name.
-      if ($accountname == '') {
-        $first_name = $use_first_name ? $user_profile->get('field_profile_first_name')->value : '';
-        $last_name = $use_last_name ? $user_profile->get('field_profile_last_name')->value : '';
 
-        $accountname = $first_name . ' ' . $last_name;
-        $accountname = trim($accountname);
+  if (!$user_profile = $storage->loadByUser($account, 'profile', TRUE)) {
+    return;
+  }
+
+  $name_types = [];
+
+  // Add a nickname as the first version of the new name.
+  if (_social_profile_fields_get_setting('profile_profile_field_profile_nick_name')) {
+    $name_types[] = $user_profile->field_profile_nick_name->value;
+  }
+
+  // Can we use the fields?
+  $use_first_name = _social_profile_fields_get_setting('profile_profile_field_profile_first_name');
+  $use_last_name = _social_profile_fields_get_setting('profile_profile_field_profile_last_name');
+
+  $first_name = $use_first_name ? $user_profile->field_profile_first_name->value : '';
+  $last_name = $use_last_name ? $user_profile->field_profile_last_name->value : '';
+
+  // Add the full name as the second version of the new name.
+  if ($first_name || $last_name) {
+    $name_types[] = trim($first_name . ' ' . $last_name);
+  }
+
+  $update = FALSE;
+
+  if ($name_types) {
+    if (\Drupal::currentUser()->hasPermission('social profile fields always show full name')) {
+      // Change the order of types to establish a higher weight for the full
+      // title than the nickname.
+      $name_types = array_reverse($name_types);
+    }
+
+    // Choose the first non-empty new name from the set.
+    foreach ($name_types as $name_type) {
+      if ($name_type) {
+        $name = $name_type;
+        $update = TRUE;
+        break;
       }
-
     }
   }
-  // If all fails, we now fall back to the drupal username.
-  $name = ($accountname !== '') ? $accountname : $account->getUsername();
+
+  if (!$update) {
+    $name = $account->getAccountName();
+  }
 }
 
 /**
