@@ -54,25 +54,30 @@ trait SocialProfileTrait {
    */
   public function getUserIdsFromName($name, $count, $suggestion_format = SOCIAL_PROFILE_SUGGESTIONS_ALL) {
     $query = $this->startQuery();
-    $name = ltrim($query->escapeLike($name));
+    $name = '%' . ltrim($query->escapeLike($name)) . '%';
 
     switch ($suggestion_format) {
       case SOCIAL_PROFILE_SUGGESTIONS_USERNAME:
-        $query->condition('uf.name', '%' . $name . '%', 'LIKE');
+        $query->condition('uf.name', $name, 'LIKE');
         break;
 
       case SOCIAL_PROFILE_SUGGESTIONS_FULL_NAME:
       case SOCIAL_PROFILE_SUGGESTIONS_ALL:
         if ($this->useFullName()) {
           $strings = explode(' ', $name);
+
           if (count($strings) > 1) {
-            $query->where("CONCAT(TRIM(fn.field_profile_first_name_value), ' ', TRIM(ln.field_profile_last_name_value)) LIKE :full_name", [':full_name' => '%' . $name . '%']);
+            $query->where("CONCAT(TRIM(fn.field_profile_first_name_value), ' ', TRIM(ln.field_profile_last_name_value)) LIKE :full_name", [
+              ':full_name' => $name,
+            ]);
+
             $query = $this->sortQuery($query, $name, $suggestion_format);
             $results = $this->endQuery($query, $count);
 
             if (count($results) > 0) {
               return $results;
             }
+
             // Fallback to creating a new query if there is no hit on full name.
             $query = $this->startQuery();
           }
@@ -82,17 +87,17 @@ trait SocialProfileTrait {
 
         if ($this->useFullName()) {
           $or_query
-            ->condition('fn.field_profile_first_name_value', '%' . $name . '%', 'LIKE')
-            ->condition('ln.field_profile_last_name_value', '%' . $name . '%', 'LIKE');
+            ->condition('fn.field_profile_first_name_value', $name, 'LIKE')
+            ->condition('ln.field_profile_last_name_value', $name, 'LIKE');
         }
 
         // Add name only when needed.
         if ($suggestion_format === SOCIAL_PROFILE_SUGGESTIONS_ALL) {
-          $or_query->condition('uf.name', '%' . $name . '%', 'LIKE');
+          $or_query->condition('uf.name', $name, 'LIKE');
         }
 
         if ($this->addNickName() === TRUE) {
-          $or_query->condition('nn.field_profile_nick_name_value', '%' . $name . '%', 'LIKE');
+          $or_query->condition('nn.field_profile_nick_name_value', $name, 'LIKE');
         }
 
         $query->condition($or_query);
@@ -155,6 +160,10 @@ trait SocialProfileTrait {
    */
   private function sortQuery(SelectInterface $query, $name, $suggestion_format) {
     if ($suggestion_format !== SOCIAL_PROFILE_SUGGESTIONS_USERNAME && $this->useFullName()) {
+      // Delete percent symbol on the beginning of the phrase for search from
+      // the start of field values.
+      $name = substr($name, 1);
+
       $query->addExpression("
     CASE WHEN fn.field_profile_first_name_value LIKE '$name' THEN 0
       WHEN ln.field_profile_last_name_value LIKE '$name' THEN 1
