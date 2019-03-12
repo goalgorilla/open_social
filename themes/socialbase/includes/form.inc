@@ -406,6 +406,13 @@ function socialbase_form_node_form_alter(&$form, FormStateInterface $form_state,
     $form['actions']['delete']['#attributes']['class'][] = 'btn btn-flat';
   }
 
+  // Unlock is not an input element, so we must apply extra classes
+  // to anchor directly.
+  if (isset($form['actions']['unlock'])) {
+    $form['actions']['unlock']['#attributes']['class'][] = 'btn';
+    $form['actions']['unlock']['#attributes']['class'][] = 'btn-flat';
+  }
+
   if (isset($form['actions']['preview'])) {
     $form['actions']['preview']['#button_type'] = 'flat';
   }
