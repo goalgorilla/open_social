@@ -12,6 +12,7 @@ use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\profile\Entity\ProfileType;
+use Drupal\search_api\Query\QueryInterface;
 
 /**
  * Implements hook_entity_field_access().
@@ -151,6 +152,57 @@ function social_profile_fields_social_user_export_plugin_info_alter(array &$plug
           }
         }
       }
+    }
+  }
+}
+
+/**
+ * Implements hook_search_api_query_alter().
+ */
+function social_profile_fields_search_api_query_alter(QueryInterface &$query) {
+  $ids = [
+    'social_all',
+    'social_users',
+  ];
+
+  if (!in_array($query->getIndex()->id(), $ids)) {
+    return;
+  }
+
+  $config = \Drupal::config('social_profile_fields.settings');
+  $account = \Drupal::currentUser();
+
+  if (!($config->get('limit_search_n_mention') && !$account->hasPermission('social profile fields always show full name'))) {
+    return;
+  }
+
+  /** @var \Drupal\Core\Database\Query\SelectInterface $profiles_query */
+  $profiles_query = \Drupal::database()->select('profile', 'p')
+    ->fields('p', ['uid'])
+    ->condition('p.status', 1);
+
+  $profiles_query->innerJoin('profile__field_profile_first_name', 'f', 'f.entity_id = p.profile_id');
+  $profiles_query->innerJoin('profile__field_profile_last_name', 'l', 'l.entity_id = p.profile_id');
+
+  $phrase = '%' . $profiles_query->escapeLike($query->getOriginalKeys()) . '%';
+
+  $profiles_query->condition(
+    $profiles_query->orConditionGroup()
+      ->condition('field_profile_first_name_value', $phrase, 'LIKE')
+      ->condition('field_profile_last_name_value', $phrase, 'LIKE')
+  );
+
+  $ids = $profiles_query->execute()->fetchCol();
+
+  if (!$ids) {
+    return;
+  }
+
+  /** @var \Drupal\search_api\Item\FieldInterface $field */
+  foreach ($query->getIndex()->getFields() as $field_id => $field) {
+    if ($field->getDatasourceId() === 'entity:profile' && $field->getPropertyPath() === 'uid') {
+      $query->addCondition($field_id, $ids, 'NOT IN');
+      break;
     }
   }
 }
