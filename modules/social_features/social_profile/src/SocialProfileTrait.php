@@ -31,7 +31,7 @@ trait SocialProfileTrait {
    *   TRUE if a user can use the full name for the search.
    */
   private function useFullName() {
-    if ($this->addNickname() && \Drupal::config('social_profile_fields.settings')->get('limit_search_n_mention')) {
+    if ($this->addNickname() && \Drupal::config('social_profile_fields.settings')->get('limit_search_and_mention')) {
       return \Drupal::currentUser()->hasPermission('social profile fields always show full name');
     }
 

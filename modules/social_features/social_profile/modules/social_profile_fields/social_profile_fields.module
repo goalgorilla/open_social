@@ -172,7 +172,7 @@ function social_profile_fields_search_api_query_alter(QueryInterface &$query) {
   $config = \Drupal::config('social_profile_fields.settings');
   $account = \Drupal::currentUser();
 
-  if (!($config->get('limit_search_n_mention') && !$account->hasPermission('social profile fields always show full name'))) {
+  if (!($config->get('limit_search_and_mention') && !$account->hasPermission('social profile fields always show full name'))) {
     return;
   }
 
