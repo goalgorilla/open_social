@@ -59,8 +59,8 @@ class RetrieveUsageData extends QueueWorkerBase implements ContainerFactoryPlugi
     $instance = $this->usageDataPluginManager->createInstance($data['plugin_definition']['id']);
     $value = $instance->getValue();
 
-    // Save it in the state, keyvalue or create a new queue item to send the data immediately.
-    print_r($value);
+    // TODO Save it in the state, keyvalue or create a new queue item.
+    return $value;
   }
 
 }
