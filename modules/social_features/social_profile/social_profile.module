@@ -227,8 +227,8 @@ function social_profile_local_tasks_alter(&$local_tasks) {
  * Implements hook_form_FORM_ID_alter().
  */
 function social_profile_form_views_exposed_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-  if ($form['#id'] == 'views-exposed-form-search-users-page') {
-    if (!empty($form['profile_tag'])) {
+  if ($form['#id'] === 'views-exposed-form-search-users-page') {
+    if (!empty($form['profile_tag']['#options'])) {
       $form['profile_tag']['#type'] = 'checkboxes';
       // If the view is configured to preserve hierarchy we need to do a bit
       // more to make checkboxes work.
@@ -243,7 +243,7 @@ function social_profile_form_views_exposed_form_alter(&$form, FormStateInterface
         $form['profile_tag']['#options'] = $options;
       }
     }
-    if (empty($form['profile_tag']['#options'])) {
+    else {
       unset($form['profile_tag']);
     }
   }
