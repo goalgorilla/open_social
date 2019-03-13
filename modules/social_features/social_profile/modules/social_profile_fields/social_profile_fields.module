@@ -12,6 +12,7 @@ use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\profile\Entity\ProfileType;
+use Drupal\search_api\Query\ConditionGroup;
 use Drupal\search_api\Query\QueryInterface;
 
 /**
@@ -177,6 +178,10 @@ function social_profile_fields_social_user_export_plugin_info_alter(array &$plug
  * Ensures that when the setting is enabled to hide first name/last name and the
  * current user does not have the permission to bypass this setting that the
  * search queries are altered to ignore the first name/last name.
+ *
+ * Users will not be able to find themselves by first name if they do not have
+ * the correct permissions. This is intentional because it means that they can
+ * test how other users can find them.
  */
 function social_profile_fields_search_api_query_alter(QueryInterface &$query) {
   $ids = [
@@ -195,33 +200,24 @@ function social_profile_fields_search_api_query_alter(QueryInterface &$query) {
     return;
   }
 
-  /** @var \Drupal\Core\Database\Query\SelectInterface $profiles_query */
-  $profiles_query = \Drupal::database()->select('profile', 'p')
-    ->fields('p', ['uid'])
-    ->condition('p.status', 1);
+  $search_term = $query->getOriginalKeys();
 
-  $profiles_query->innerJoin('profile__field_profile_first_name', 'f', 'f.entity_id = p.profile_id');
-  $profiles_query->innerJoin('profile__field_profile_last_name', 'l', 'l.entity_id = p.profile_id');
+  // There is no match for the first and last name.
+  $no_name_match = (new ConditionGroup("AND", ["social_profile_privacy_full_name_protection"]))
+    ->addCondition("field_profile_first_name", $search_term, "<>")
+    ->addCondition('field_profile_last_name', $search_term, "<>");
 
-  $phrase = '%' . $profiles_query->escapeLike($query->getOriginalKeys()) . '%';
+  // Results are matched only when they do not match the first name and last
+  // name, or they also match the username.
+  $full_name_restricted = (new ConditionGroup("OR", ["social_profile_privacy_full_name_protection"]))
+    ->addConditionGroup($no_name_match)
+    ->addCondition("name", $search_term);
 
-  $profiles_query->condition(
-    $profiles_query->orConditionGroup()
-      ->condition('field_profile_first_name_value', $phrase, 'LIKE')
-      ->condition('field_profile_last_name_value', $phrase, 'LIKE')
-  );
-
-  $ids = $profiles_query->execute()->fetchCol();
-
-  if (!$ids) {
-    return;
+  // If the social_profile_fields module is enabled then they can also match
+  // the nickname.
+  if (\Drupal::moduleHandler()->moduleExists('social_profile_fields')) {
+    $full_name_restricted->addCondition("field_profile_nick_name", $search_term);
   }
 
-  /** @var \Drupal\search_api\Item\FieldInterface $field */
-  foreach ($query->getIndex()->getFields() as $field_id => $field) {
-    if ($field->getDatasourceId() === 'entity:profile' && $field->getPropertyPath() === 'uid') {
-      $query->addCondition($field_id, $ids, 'NOT IN');
-      break;
-    }
-  }
+  $query->addConditionGroup($full_name_restricted);
 }
