@@ -173,6 +173,10 @@ function social_profile_fields_social_user_export_plugin_info_alter(array &$plug
 
 /**
  * Implements hook_search_api_query_alter().
+ *
+ * Ensures that when the setting is enabled to hide first name/last name and the
+ * current user does not have the permission to bypass this setting that the
+ * search queries are altered to ignore the first name/last name.
  */
 function social_profile_fields_search_api_query_alter(QueryInterface &$query) {
   $ids = [
