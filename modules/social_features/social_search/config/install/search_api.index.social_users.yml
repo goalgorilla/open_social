@@ -5,6 +5,8 @@ dependencies:
     - field.storage.profile.field_profile_expertise
     - field.storage.profile.field_profile_interests
     - field.storage.profile.field_profile_profile_tag
+    - field.storage.profile.field_profile_first_name
+    - field.storage.profile.field_profile_last_name
     - search_api.server.social_database
     - core.entity_view_mode.profile.search_index
   module:
@@ -73,6 +75,22 @@ field_settings:
     dependencies:
       module:
         - user
+  field_profile_first_name:
+    label: 'First name'
+    datasource_id: 'entity:profile'
+    property_path: field_profile_first_name
+    type: text
+    dependencies:
+      config:
+        - field.storage.profile.field_profile_first_name
+  field_profile_last_name:
+    label: 'Last name'
+    datasource_id: 'entity:profile'
+    property_path: field_profile_last_name
+    type: text
+    dependencies:
+      config:
+        - field.storage.profile.field_profile_last_name
 datasource_settings:
   'entity:profile':
     plugin_id: 'entity:profile'
