@@ -136,7 +136,7 @@ class SocialProfileFieldsSettingsForm extends ConfigFormBase implements Containe
         }
 
         // No setting is TRUE.
-        $default_value = (is_null($config->get($id)) ? TRUE : $config->get($id));
+        $default_value = is_null($config->get($id)) ? TRUE : $config->get($id);
 
         $form[$type][$id] = [
           '#type' => 'checkbox',
@@ -173,6 +173,8 @@ class SocialProfileFieldsSettingsForm extends ConfigFormBase implements Containe
         $config->set($field['id'], $form_state->getValue($field['id']));
       }
     }
+
+    $config->save();
 
     parent::submitForm($form, $form_state);
 
