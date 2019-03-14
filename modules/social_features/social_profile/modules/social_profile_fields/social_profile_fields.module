@@ -59,7 +59,7 @@ function social_profile_fields_social_user_name_display_suggestions(AccountInter
     return $suggestions;
   }
 
-  if (_social_profile_fields_get_setting('profile_profile_field_profile_nick_name')) {
+  if (_social_profile_fields_get_setting('profile_profile_field_profile_nick_name') && !$user_profile->field_profile_nick_name->isEmpty()) {
     // Add the nickname with a low weight so it's shown before the full name.
     $suggestions['nickname'] = [
       'weight' => -100,
