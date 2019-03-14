@@ -517,9 +517,16 @@ function social_profile_privacy_search_api_query_alter(QueryInterface &$query) {
 function social_profile_privacy_social_user_name_display_suggestions_alter(array &$suggestions, AccountInterface $account) {
   $config = \Drupal::config('social_profile_privacy.settings');
 
-  // If full name display is limited and the current user is not allowed to view
-  // full names then we remove it from the suggestions.
-  if ($config->get('limit_search_and_mention') && !\Drupal::currentUser()->hasPermission('social profile privacy always show full name')) {
-    unset($suggestions['full_name']);
+  // When full name display limiting is enabled and a full_name is available.
+  if ($config->get('limit_search_and_mention') && isset($suggestions['full_name'])) {
+    // We ensure that users with the correct permission always see the full
+    // name and something like a nickname.
+    if (\Drupal::currentUser()->hasPermission('social profile privacy always show full name')) {
+      $suggestions['full_name']['weight'] = -PHP_INT_MAX;
+    }
+    // We ensure no-one else gets to see the full name.
+    else {
+      unset($suggestions['full_name']);
+    }
   }
 }
