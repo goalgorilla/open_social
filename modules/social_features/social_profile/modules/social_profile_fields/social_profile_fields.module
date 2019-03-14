@@ -42,59 +42,33 @@ function social_profile_fields_entity_field_access($operation, FieldDefinitionIn
 }
 
 /**
- * Implements hook_user_format_name_alter().
+ * Implements hook_social_user_name_display_suggestions().
+ *
+ * Adds the nickname as a possible display name.
  *
  * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+ * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
  */
-function social_profile_fields_user_format_name_alter(&$name, AccountInterface $account) {
+function social_profile_fields_social_user_name_display_suggestions(AccountInterface $account) {
+  $suggestions = [];
+
   /** @var \Drupal\profile\ProfileStorageInterface $storage */
   $storage = \Drupal::entityTypeManager()->getStorage('profile');
 
   if (!$user_profile = $storage->loadByUser($account, 'profile', TRUE)) {
-    return;
+    return $suggestions;
   }
 
-  $name_types = [];
 
-  // Add a nickname as the first version of the new name.
   if (_social_profile_fields_get_setting('profile_profile_field_profile_nick_name')) {
-    $name_types[] = $user_profile->field_profile_nick_name->value;
+    // Add the nickname with a low weight so it's shown before the full name.
+    $suggestions['nickname'] = [
+      'weight' => -100,
+      'name' => $user_profile->field_profile_nick_name->value,
+    ];
   }
 
-  // Can we use the fields?
-  $use_first_name = _social_profile_fields_get_setting('profile_profile_field_profile_first_name');
-  $use_last_name = _social_profile_fields_get_setting('profile_profile_field_profile_last_name');
-
-  $first_name = $use_first_name ? $user_profile->field_profile_first_name->value : '';
-  $last_name = $use_last_name ? $user_profile->field_profile_last_name->value : '';
-
-  // Add the full name as the second version of the new name.
-  if ($first_name || $last_name) {
-    $name_types[] = trim($first_name . ' ' . $last_name);
-  }
-
-  $update = FALSE;
-
-  if ($name_types) {
-    if (\Drupal::currentUser()->hasPermission('social profile privacy always show full name')) {
-      // Change the order of types to establish a higher weight for the full
-      // title than the nickname.
-      $name_types = array_reverse($name_types);
-    }
-
-    // Choose the first non-empty new name from the set.
-    foreach ($name_types as $name_type) {
-      if ($name_type) {
-        $name = $name_type;
-        $update = TRUE;
-        break;
-      }
-    }
-  }
-
-  if (!$update) {
-    $name = $account->getAccountName();
-  }
+  return $suggestions;
 }
 
 /**
