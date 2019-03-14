@@ -11,6 +11,8 @@ use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Access\AccessResult;
+use Drupal\search_api\Query\ConditionGroup;
+use Drupal\search_api\Query\QueryInterface;
 
 /**
  * Implements hook_form_FORM_ID_alter().
@@ -22,6 +24,18 @@ function social_profile_privacy_form_social_profile_admin_settings_form_alter(&$
     '#prefix' => '<div id="privacy-settings">',
     '#suffix' => '</div>',
   ];
+
+  // Add setting to hide Full Name for users without the `social profile privacy
+  // always show full name` module.
+  $form['privacy']['limit_search_and_mention'] = [
+    '#type' => 'checkbox',
+    '#title' => $this->t('Limit search and mention'),
+    '#description' => $this->t('When this setting is enabled then only users with the %name permission will be allowed to find members in search or mentions when using their full name.', [
+      '%name' => $this->t('Always show Full Name'),
+    ]),
+    '#default_value' => $config->get('limit_search_and_mention'),
+  ];
+
 
   $settings_forms = social_profile_privacy_get_settings_forms();
   foreach ($settings_forms as $settings_form_id => $settings_form_config) {
@@ -95,9 +109,11 @@ function social_profile_privacy_form_social_profile_admin_settings_form_alter(&$
  * To save configuration of fields groups available to hiding.
  */
 function social_profile_privacy_admin_settings_form_submit($form, FormStateInterface $form_state) {
-  $settings_forms = social_profile_privacy_get_settings_forms();
+  $data = [
+    'limit_search_and_mention' => $form_state->getValue('limit_search_and_mention'),
+  ];
 
-  $data = [];
+  $settings_forms = social_profile_privacy_get_settings_forms();
   foreach ($settings_forms as $settings_form_id => $settings_form) {
     $data[$settings_form_id] = $form_state->getValue($settings_form_id);
 
@@ -438,4 +454,54 @@ function social_profile_privacy_form_field_group_options() {
     unset($field_groups['group_profile_names_image']);
   }
   return $field_groups;
+}
+
+/**
+ * Implements hook_search_api_query_alter().
+ *
+ * Ensures that when the setting is enabled to hide first name/last name and the
+ * current user does not have the permission to bypass this setting that the
+ * search queries are altered to ignore the first name/last name.
+ *
+ * Users will not be able to find themselves by first name if they do not have
+ * the correct permissions. This is intentional because it means that they can
+ * test how other users can find them.
+ */
+function social_profile_privacy_search_api_query_alter(QueryInterface &$query) {
+  $ids = [
+    'social_all',
+    'social_users',
+  ];
+
+  if (!in_array($query->getIndex()->id(), $ids)) {
+    return;
+  }
+
+  $config = \Drupal::config('social_profile_privacy.settings');
+  $account = \Drupal::currentUser();
+
+  if (!($config->get('limit_search_and_mention') && !$account->hasPermission('social profile privacy always show full name'))) {
+    return;
+  }
+
+  $search_term = $query->getOriginalKeys();
+
+  // There is no match for the first and last name.
+  $no_name_match = (new ConditionGroup("AND", ["social_profile_privacy_full_name_protection"]))
+    ->addCondition("field_profile_first_name", $search_term, "<>")
+    ->addCondition('field_profile_last_name', $search_term, "<>");
+
+  // Results are matched only when they do not match the first name and last
+  // name, or they also match the username.
+  $full_name_restricted = (new ConditionGroup("OR", ["social_profile_privacy_full_name_protection"]))
+    ->addConditionGroup($no_name_match)
+    ->addCondition("name", $search_term);
+
+  // If the social_profile_fields module is enabled then they can also match
+  // the nickname.
+  if (\Drupal::moduleHandler()->moduleExists('social_profile_fields')) {
+    $full_name_restricted->addCondition("field_profile_nick_name", $search_term);
+  }
+
+  $query->addConditionGroup($full_name_restricted);
 }
