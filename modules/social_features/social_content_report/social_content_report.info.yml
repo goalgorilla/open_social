@@ -3,15 +3,16 @@ description: 'Provides the ability to report inappropriate content.'
 type: module
 core: 8.x
 package: Social
+configure: social_content_report.settings
 dependencies:
-  - activity_logger
-  - comment
+  - activity_logger:activity_logger
+  - drupal:comment
+  - drupal:field
+  - drupal:node
+  - drupal:taxonomy
+  - drupal:user
+  - drupal:views
   - dynamic_entity_reference
-  - field
-  - flag
-  - message
-  - node
-  - social_post
-  - taxonomy
-  - user
-  - views
+  - flag:flag
+  - message:message
+  - social_post:social_post
