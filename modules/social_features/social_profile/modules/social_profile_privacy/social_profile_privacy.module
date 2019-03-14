@@ -29,14 +29,13 @@ function social_profile_privacy_form_social_profile_admin_settings_form_alter(&$
   // always show full name` module.
   $form['privacy']['limit_search_and_mention'] = [
     '#type' => 'checkbox',
-    '#title' => $this->t('Limit search and mention'),
-    '#description' => $this->t("Enabling this setting causes users' full name to be hidden on the platform. Users with the '%display_name' permission will still see the full name whenever available. Only users with the '%search_name' permission will find users using their full name through search or mentions.", [
-      '%display_name' => $this->t('View full name when restricted'),
-      '%search_name' => $this->t('View full name when restricted'),
+    '#title' => t('Limit search and mention'),
+    '#description' => t("Enabling this setting causes users' full name to be hidden on the platform. Users with the '%display_name' permission will still see the full name whenever available. Only users with the '%search_name' permission will find users using their full name through search or mentions.", [
+      '%display_name' => t('View full name when restricted'),
+      '%search_name' => t('View full name when restricted'),
     ]),
     '#default_value' => $config->get('limit_search_and_mention'),
   ];
-
 
   $settings_forms = social_profile_privacy_get_settings_forms();
   foreach ($settings_forms as $settings_form_id => $settings_form_config) {
@@ -488,20 +487,20 @@ function social_profile_privacy_search_api_query_alter(QueryInterface &$query) {
   $search_term = $query->getOriginalKeys();
 
   // There is no match for the first and last name.
-  $no_name_match = (new ConditionGroup("AND", ["social_profile_privacy_full_name_protection"]))
-    ->addCondition("field_profile_first_name", $search_term, "<>")
-    ->addCondition('field_profile_last_name', $search_term, "<>");
+  $no_name_match = (new ConditionGroup('AND', ['social_profile_privacy_full_name_protection']))
+    ->addCondition('field_profile_first_name', $search_term, '<>')
+    ->addCondition('field_profile_last_name', $search_term, '<>');
 
   // Results are matched only when they do not match the first name and last
   // name, or they also match the username.
-  $full_name_restricted = (new ConditionGroup("OR", ["social_profile_privacy_full_name_protection"]))
+  $full_name_restricted = (new ConditionGroup('OR', ['social_profile_privacy_full_name_protection']))
     ->addConditionGroup($no_name_match)
-    ->addCondition("name", $search_term);
+    ->addCondition('name', $search_term);
 
   // If the social_profile_fields module is enabled then they can also match
   // the nickname.
   if (\Drupal::moduleHandler()->moduleExists('social_profile_fields')) {
-    $full_name_restricted->addCondition("field_profile_nick_name", $search_term);
+    $full_name_restricted->addCondition('field_profile_nick_name', $search_term);
   }
 
   $query->addConditionGroup($full_name_restricted);

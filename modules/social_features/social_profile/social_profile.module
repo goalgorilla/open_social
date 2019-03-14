@@ -254,7 +254,7 @@ function social_profile_form_views_exposed_form_alter(&$form, FormStateInterface
  */
 function social_profile_preprocess_fieldset(&$variables) {
   // Style our checkboxes as nested checkboxes.
-  if ($variables['element']['#name'] === 'profile_tag') {
+  if (isset($variables['element']['#name']) && $variables['element']['#name'] === 'profile_tag') {
     $variables['attributes']['class'][] = 'checkboxes--nested';
   }
 }
