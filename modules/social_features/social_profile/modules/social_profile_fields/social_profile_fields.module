@@ -12,8 +12,6 @@ use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\profile\Entity\ProfileType;
-use Drupal\search_api\Query\ConditionGroup;
-use Drupal\search_api\Query\QueryInterface;
 
 /**
  * Implements hook_entity_field_access().
@@ -78,7 +76,7 @@ function social_profile_fields_user_format_name_alter(&$name, AccountInterface $
   $update = FALSE;
 
   if ($name_types) {
-    if (\Drupal::currentUser()->hasPermission('social profile fields always show full name')) {
+    if (\Drupal::currentUser()->hasPermission('social profile privacy always show full name')) {
       // Change the order of types to establish a higher weight for the full
       // title than the nickname.
       $name_types = array_reverse($name_types);
@@ -170,54 +168,4 @@ function social_profile_fields_social_user_export_plugin_info_alter(array &$plug
       }
     }
   }
-}
-
-/**
- * Implements hook_search_api_query_alter().
- *
- * Ensures that when the setting is enabled to hide first name/last name and the
- * current user does not have the permission to bypass this setting that the
- * search queries are altered to ignore the first name/last name.
- *
- * Users will not be able to find themselves by first name if they do not have
- * the correct permissions. This is intentional because it means that they can
- * test how other users can find them.
- */
-function social_profile_fields_search_api_query_alter(QueryInterface &$query) {
-  $ids = [
-    'social_all',
-    'social_users',
-  ];
-
-  if (!in_array($query->getIndex()->id(), $ids)) {
-    return;
-  }
-
-  $config = \Drupal::config('social_profile_fields.settings');
-  $account = \Drupal::currentUser();
-
-  if (!($config->get('limit_search_and_mention') && !$account->hasPermission('social profile fields always show full name'))) {
-    return;
-  }
-
-  $search_term = $query->getOriginalKeys();
-
-  // There is no match for the first and last name.
-  $no_name_match = (new ConditionGroup("AND", ["social_profile_privacy_full_name_protection"]))
-    ->addCondition("field_profile_first_name", $search_term, "<>")
-    ->addCondition('field_profile_last_name', $search_term, "<>");
-
-  // Results are matched only when they do not match the first name and last
-  // name, or they also match the username.
-  $full_name_restricted = (new ConditionGroup("OR", ["social_profile_privacy_full_name_protection"]))
-    ->addConditionGroup($no_name_match)
-    ->addCondition("name", $search_term);
-
-  // If the social_profile_fields module is enabled then they can also match
-  // the nickname.
-  if (\Drupal::moduleHandler()->moduleExists('social_profile_fields')) {
-    $full_name_restricted->addCondition("field_profile_nick_name", $search_term);
-  }
-
-  $query->addConditionGroup($full_name_restricted);
 }
