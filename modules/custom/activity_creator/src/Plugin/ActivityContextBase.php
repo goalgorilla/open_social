@@ -26,7 +26,7 @@ abstract class ActivityContextBase extends PluginBase implements ActivityContext
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  private $entityTypeManager;
+  protected $entityTypeManager;
 
   /**
    * {@inheritdoc}

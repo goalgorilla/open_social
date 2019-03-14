@@ -1216,6 +1216,16 @@ function social_group_get_all_open_groups() {
 }
 
 /**
+ * Get all open groups.
+ */
+function social_group_get_all_groups() {
+  $query = Drupal::service('entity.query')
+    ->get('group')
+    ->sort('type');
+  return $query->execute();
+}
+
+/**
  * Get all group memberships for a certain user.
  *
  * @param int $uid

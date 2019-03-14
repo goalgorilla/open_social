@@ -10,6 +10,7 @@ use Drupal\Component\Render\FormattableMarkup;
 use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\profile\Entity\Profile;
 use Drupal\user\Entity\User;
+use Drupal\user\UserInterface;
 
 /**
  * Implements hook_page_attachments().
@@ -65,13 +66,13 @@ function social_profile_organization_tag_preprocess_username(&$variables) {
  * Implements hook_tokens_alter().
  */
 function social_profile_organization_tag_tokens_alter(array &$replacements, array $context, BubbleableMetadata $bubbleable_metadata) {
-  if (array_key_exists('display-name', $context['tokens']) && count($replacements) > 0) {
-    $account = $context['data']['user'];
-    if ($account instanceof User) {
+  if (isset($replacements['[message:author:display-name]'])) {
+    $account = &$context['data']['user'];
+    if ($account instanceof UserInterface) {
       $storage = \Drupal::entityTypeManager()->getStorage('profile');
       if ($storage !== NULL && isset($replacements['[message:author:display-name]'])) {
         if ($user_profile = $storage->loadByUser($account, 'profile', TRUE)) {
-          $replacements['[message:author:display-name]'] .= rtrim(" " . social_profile_organization_tag_fetch($user_profile, FALSE));
+          $replacements['[message:author:display-name]'] .= rtrim(' ' . social_profile_organization_tag_fetch($user_profile, FALSE));
         }
       }
     }
