@@ -60,14 +60,11 @@ class SocialProfileFieldsOverride implements ConfigFactoryOverrideInterface {
 
     foreach ($config_names as $config_name) {
       if (in_array($config_name, $names)) {
-        $config = $config_factory->getEditable($config_name);
-
-        $dependencies = $config->get('dependencies.config');
-        $dependencies[] = 'field.storage.profile.field_profile_nick_name';
-
         $overrides[$config_name] = [
           'dependencies' => [
-            'config' => $dependencies,
+            'config' => [
+              'field.storage.profile.field_profile_nick_name',
+            ],
           ],
           'field_settings' => [
             'field_profile_nick_name' => [
@@ -79,6 +76,23 @@ class SocialProfileFieldsOverride implements ConfigFactoryOverrideInterface {
                 'config' => [
                   'field.storage.profile.field_profile_nick_name',
                 ],
+              ],
+            ],
+          ],
+          'processor_settings' => [
+            'ignorecase' => [
+              'fields' => [
+                'field_profile_nick_name',
+              ],
+            ],
+            'tokenizer' => [
+              'fields' => [
+                'field_profile_nick_name',
+              ],
+            ],
+            'transliteration' => [
+              'fields' => [
+                'field_profile_nick_name',
               ],
             ],
           ],
