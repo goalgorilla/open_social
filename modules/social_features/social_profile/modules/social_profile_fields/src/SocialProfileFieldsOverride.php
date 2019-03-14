@@ -60,16 +60,29 @@ class SocialProfileFieldsOverride implements ConfigFactoryOverrideInterface {
 
     foreach ($config_names as $config_name) {
       if (in_array($config_name, $names)) {
-        $field_settings['field_profile_nick_name'] = [
-          'label' => 'Nickname',
-          'datasource_id' => 'entity:profile',
-          'property_path' => 'field_profile_nick_name',
-          'type' => 'text',
+        $config = $config_factory->getEditable($config_name);
+
+        $dependencies = $config->get('dependencies.config');
+        $dependencies[] = 'field.storage.profile.field_profile_nick_name';
+
+        $overrides[$config_name] = [
           'dependencies' => [
-            'config' => 'field.storage.profile.field_profile_nick_name',
+            'config' => $dependencies,
+          ],
+          'field_settings' => [
+            'field_profile_nick_name' => [
+              'label' => 'Nickname',
+              'datasource_id' => 'entity:profile',
+              'property_path' => 'field_profile_nick_name',
+              'type' => 'text',
+              'dependencies' => [
+                'config' => [
+                  'field.storage.profile.field_profile_nick_name',
+                ],
+              ],
+            ],
           ],
         ];
-        $overrides[$config_name]['field_settings'] = $field_settings;
       }
     }
 

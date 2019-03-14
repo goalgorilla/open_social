@@ -217,12 +217,14 @@ function hook_social_user_name_display_suggestions(AccountInterface $account) {
         'name' => 'Jane Almighty',
       ];
       break;
+
     case 0:
       // Change the name of anonymous users.
       $suggestions['anonymous_alter'] = [
-        // Default to weight => 0
+        // Default to weight => 0.
         'name' => 'Guest',
       ];
+      break;
   }
 
   return $suggestions;
