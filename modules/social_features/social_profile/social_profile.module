@@ -593,21 +593,31 @@ function social_profile_get_default_image() {
   return $data;
 }
 
+
 /**
- * Implements hook_user_format_name_alter().
+ * Implements hook_social_user_name_display_suggestions().
+ *
+ * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+ * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
  */
-function social_profile_user_format_name_alter(&$name, $account) {
-  /** @var \Drupal\Core\Session\AccountInterface $account */
-  $accountname = '';
+function social_profile_social_user_name_display_suggestions(AccountInterface $account) {
+  $suggestions = [];
+
+  /** @var \Drupal\profile\ProfileStorageInterface $storage */
   $storage = \Drupal::entityTypeManager()->getStorage('profile');
-  if (!empty($storage)) {
-    // Returns false.
-    if ($user_profile = $storage->loadByUser($account, 'profile', TRUE)) {
-      $accountname = $user_profile->get('field_profile_first_name')->value . " " . $user_profile->get('field_profile_last_name')->value;
-      $accountname = trim($accountname);
+
+  if ($user_profile = $storage->loadByUser($account, 'profile', TRUE)) {
+    $accountname = trim($user_profile->get('field_profile_first_name')->value . " " . $user_profile->get('field_profile_last_name')->value);
+
+    if (strlen($accountname) > 0) {
+      // Add the full name with a default weight.
+      $suggestions['full_name'] = [
+        'name' => trim($accountname),
+      ];
     }
   }
-  $name = ($accountname !== '') ? $accountname : $name;
+
+  return $suggestions;
 }
 
 /**

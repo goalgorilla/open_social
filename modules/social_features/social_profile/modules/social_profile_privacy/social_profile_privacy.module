@@ -480,7 +480,7 @@ function social_profile_privacy_search_api_query_alter(QueryInterface &$query) {
   $config = \Drupal::config('social_profile_privacy.settings');
   $account = \Drupal::currentUser();
 
-  if (!($config->get('limit_search_and_mention') && !$account->hasPermission('social profile privacy always show full name'))) {
+  if (!$config->get('limit_search_and_mention') || $account->hasPermission('social profile privacy always show full name')) {
     return;
   }
 
@@ -504,4 +504,21 @@ function social_profile_privacy_search_api_query_alter(QueryInterface &$query) {
   }
 
   $query->addConditionGroup($full_name_restricted);
+}
+
+/**
+ * Implements hook_social_user_name_display_suggestions_alter().
+ *
+ * Removes the full_name from the display suggestions if this module is
+ * configured to limit the display and the current user is not allowed to see
+ * it.
+ */
+function social_profile_privacy_social_user_name_display_suggestions_alter(array &$suggestions, AccountInterface $account) {
+  $config = \Drupal::config('social_profile_privacy.settings');
+
+  // If full name display is limited and the current user is not allowed to view
+  // full names then we remove it from the suggestions.
+  if ($config->get('limit_search_and_mention') && !\Drupal::currentUser()->hasPermission('social profile privacy always show full name')) {
+    unset($suggestions['full_name']);
+  }
 }
