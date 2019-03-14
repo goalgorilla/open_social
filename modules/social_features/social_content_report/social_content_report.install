@@ -25,7 +25,7 @@ function social_content_report_install() {
   // Create the above terms on module install.
   foreach ($terms as $name => $weight) {
     try {
-      /** @var \Drupal\taxonomy\Entity\Term $term */
+      /** @var \Drupal\taxonomy\TermInterface $term */
       $term = Term::create([
         'name' => $name,
         'weight' => $weight,
@@ -34,9 +34,8 @@ function social_content_report_install() {
       $term->save();
 
       // Just the "Other" term should have a reason text field by default.
-      $default_values[$term->id()] = 0;
-      if ($name === 'Other') {
-        $default_values[$term->id()] = $term->id();
+      if ($weight) {
+        $default_values[] = $term->id();
       }
     }
     catch (EntityStorageException $exception) {
@@ -45,7 +44,7 @@ function social_content_report_install() {
   }
 
   // Store the default selected term(s) in the config.
-  \Drupal::service('config.factory')->getEditable('social_content_report.settings')
+  \Drupal::configFactory()->getEditable('social_content_report.settings')
     ->set('reasons_with_text', $default_values)
     ->save();
 

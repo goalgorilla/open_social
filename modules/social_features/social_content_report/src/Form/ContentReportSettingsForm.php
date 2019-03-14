@@ -106,9 +106,17 @@ class ContentReportSettingsForm extends ConfigFormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     parent::submitForm($form, $form_state);
 
+    $term_ids = [];
+
+    foreach ($form_state->getValue('reasons_with_text') as $term_id) {
+      if ($term_id) {
+        $term_ids[] = $term_id;
+      }
+    }
+
     $this->config('social_content_report.settings')
       ->set('unpublish_threshold', $form_state->getValue('unpublish_threshold'))
-      ->set('reasons_with_text', $form_state->getValue('reasons_with_text'))
+      ->set('reasons_with_text', $term_ids)
       ->set('mandatory_reason', $form_state->getValue('mandatory_reason'))
       ->save();
   }

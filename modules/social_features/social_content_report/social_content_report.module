@@ -25,28 +25,26 @@ function social_content_report_form_alter(&$form, FormStateInterface $form_state
   }
 
   if (in_array($form_id, $report_forms, FALSE)) {
-    $terms = \Drupal::service('config.factory')->get('social_content_report.settings')
-      ->get('reasons_with_text');
+    $config = \Drupal::config('social_content_report.settings');
+    $terms = $config->get('reasons_with_text');
 
     // Only show the "Other reason" title to screenreaders.
     $form['field_other_reason']['widget'][0]['value']['#title_display'] = 'invisible';
 
-    foreach ($terms as $term_id => $enabled) {
-      if ($enabled) {
-        // Only show the reason input field if it is enabled for the reason.
-        $form['field_other_reason']['#states']['visible'][] = [
-          ':input[name="field_reason"]' => [
-            'value' => $term_id,
-          ],
-        ];
-      }
+    // Only show the reason input field if it is enabled for the reason.
+    foreach ($terms as $term_id) {
+      $form['field_other_reason']['#states']['visible'][] = [
+        ':input[name="field_reason"]' => [
+          'value' => $term_id,
+        ],
+      ];
     }
 
     $form['#attributes']['class'][] = 'form--content-reporting';
     $form['#attached']['library'][] = 'social_content_report/reporting';
 
     // Add some validation if the reason field is mandatory.
-    if (\Drupal::config('social_content_report.settings')->get('mandatory_reason')) {
+    if ($config->get('mandatory_reason')) {
       $form['#validate'][] = 'social_content_report_mandatory_reason_validate';
     }
   }
@@ -61,14 +59,10 @@ function social_content_report_form_alter(&$form, FormStateInterface $form_state
  *   Form State with the submitted values.
  */
 function social_content_report_mandatory_reason_validate(array $form, FormStateInterface $form_state) {
-  $terms = \Drupal::service('config.factory')->get('social_content_report.settings')
-    ->get('reasons_with_text');
+  $terms = \Drupal::config('social_content_report.settings')->get('reasons_with_text');
 
-  foreach ($terms as $term_id => $enabled) {
-    if ($enabled && (int) $form_state->getValue('field_reason')[0]['target_id'] === $term_id
-    && empty($form_state->getValue('field_other_reason')[0]['value'])) {
-      $form_state->setErrorByName('field_other_reason', t('A description of your report is mandatory.'));
-    }
+  if (in_array($form_state->getValue('field_reason')[0]['target_id'], $terms) && empty($form_state->getValue('field_other_reason')[0]['value'])) {
+    $form_state->setErrorByName('field_other_reason', t('A description of your report is mandatory.'));
   }
 }
 
