@@ -6,7 +6,6 @@
  */
 
 use Drupal\Core\Render\BubbleableMetadata;
-use Drupal\flag\Entity\Flagging;
 
 /**
  * Implements hook_token_info().
@@ -37,17 +36,23 @@ function social_content_report_tokens($type, $tokens, array $data, array $option
   $replacements = [];
 
   if ($type === 'social_content_report' && !empty($data['message'])) {
+    /** @var \Drupal\message\Entity\Message $message */
+    $message = $data['message'];
+
+    $storage = \Drupal::entityTypeManager()->getStorage('flagging');
+
     foreach ($tokens as $name => $original) {
       // Set the URL for the reported content.
-      if ($name === 'content_url') {
+      if ($name === 'content_url' && $message->getFieldValue('field_message_related_object', 'target_type') === 'flagging') {
         // Load the flag.
-        $flagging_id = $data['message']->getFieldValue('field_message_related_object', 'target_id');
-        $flagging = Flagging::load($flagging_id);
+        $flagging_id = $message->getFieldValue('field_message_related_object', 'target_id');
+
+        /** @var \Drupal\flag\FlaggingInterface $flagging */
+        $flagging = $storage->load($flagging_id);
 
         // Load the flagged entity.
-        $entity_storage = \Drupal::entityTypeManager()
-          ->getStorage($flagging->getFlaggable()->getEntityTypeId());
-        $entity = $entity_storage->load($flagging->getFlaggable()->id());
+        /** @var \Drupal\Core\Entity\EntityInterface $entity */
+        $entity = $flagging->getFlaggable();
 
         // Set the URL for the entity.
         $replacements[$original] = $entity->toUrl()->setAbsolute()->toString();
