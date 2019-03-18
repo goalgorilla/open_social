@@ -1,0 +1,121 @@
+<div class="card">
+  <div class="card__body">
+    <h3>{% trans %}Information{% endtrans %}</h3>
+
+    {% if content.field_profile_self_introduction|render %}
+      <div class="user-info__item">
+        <h5>{% trans %}Self introduction{% endtrans %}</h5>
+        <div class="user-info__wrapper">
+          {{ content.field_profile_self_introduction }}
+        </div>
+      </div>
+    {% endif %}
+
+    {% if content.field_profile_phone_number|render %}
+      <div class="list-item list-item--withlabel user-info__item">
+          <div class="list-item__label">{% trans %}Phone{% endtrans %}</div>
+          <div class="list-item__text">{{ content.field_profile_phone_number }}</div>
+      </div>
+    {% endif %}
+
+    {% if user_mail %}
+      <div class="list-item list-item--withlabel user-info__item">
+          <div class="list-item__label">{% trans %}E-mail{% endtrans %}</div>
+          <div class="list-item__text">{{ user_mail }}</a></div>
+      </div>
+    {% endif %}
+
+    {% if content.field_profile_challenge_area['#items'] %}
+      <div class="user-info__item">
+        <h5>{% trans %}Challenge area{% endtrans %}</h5>
+        <div class="user-info__wrapper">
+          {% for item in content.field_profile_challenge_area['#items'] %}
+            <div class="badge badge--pill badge--large badge-default">{{ item.entity.label }}</div>
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+
+    {% if content.field_profile_constituency['#items'] %}
+      <div class="user-info__item">
+        <h5>{% trans %}Сonstituency{% endtrans %}</h5>
+        <div class="user-info__wrapper">
+          {% for item in content.field_profile_constituency['#items'] %}
+            <div class="badge badge--pill badge--large badge-default">{{ item.entity.label }}</div>
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+
+    {% if content.field_profile_country_region['#items'] %}
+      <div class="user-info__item">
+        <h5>{% trans %}Country & Region{% endtrans %}</h5>
+        <div class="user-info__wrapper">
+          {% for item in content.field_profile_country_region['#items'] %}
+            <div class="badge badge--pill badge--large badge-default">{{ item.entity.label }}</div>
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+
+    {% if content.field_profile_organisation['#items'] %}
+      <div class="user-info__item">
+        <h5>{% trans %}Organisation{% endtrans %}</h5>
+        <div class="user-info__wrapper">
+          {% for item in content.field_profile_organisation['#items'] %}
+            <div class="badge badge--pill badge--large badge-default">{{ item.entity.label }}</div>
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+
+    {% if content.field_profile_languages['#items'] %}
+      <div class="user-info__item">
+        <h5>{% trans %}Languages{% endtrans %}</h5>
+        <div class="user-info__wrapper">
+          {% for item in content.field_profile_languages['#items'] %}
+            <div class="badge badge--pill badge--large badge-default">{{ item.entity.label }}</div>
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+
+    {% if content.field_profile_expertise['#items'] %}
+      <div class="user-info__item">
+        <h5>{% trans %}Expertise{% endtrans %}</h5>
+        <div class="user-info__wrapper">
+          {% for item in content.field_profile_expertise['#items'] %}
+            <div class="badge badge--pill badge--large badge-default">{{ item.entity.label }}</div>
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+
+    {% if content.field_profile_interests['#items'] %}
+      <div class="user-info__item">
+        <h5>{% trans %}Interests{% endtrans %}</h5>
+        <div class="user-info__wrapper">
+          {% for item in content.field_profile_interests['#items'] %}
+            <div class="badge badge--pill badge--large badge-default">{{ item.entity.label }}</div>
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+
+    {% if content.field_profile_profile_tag['#items'] %}
+      <div class="user-info__item">
+        <h5>{% trans %}Profile tags{% endtrans %}</h5>
+        <div class="user-info__wrapper">
+          {% for item in content.field_profile_profile_tag['#items'] %}
+            <div class="badge badge--pill badge--large badge-default">{{ item.entity.label }}</div>
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+
+    {% if (content|render is empty and user_mail is empty)%}
+        {% trans %}{{ profile_name }} {{ profile_name_extra }} has not shared profile information.{% endtrans %}
+    {% endif %}
+
+  </div>
+</div>

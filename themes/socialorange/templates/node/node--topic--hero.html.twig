@@ -1,0 +1,184 @@
+{{ attach_library('socialbase/hero')}}
+
+{% set classes = [
+  'hero__banner',
+  'hero__banner-static',
+  no_image ? 'no-image'
+] %}
+
+<div{{ attributes.addClass(classes) }}>
+
+  <div class="container">
+
+    <div class="cover-wrap">
+
+      {% if node_edit_url %}
+        <div class="hero-action-button">
+          <a href="{{ node_edit_url }}" title="{% trans %}Edit content{% endtrans %}"
+             class="btn btn-raised btn-default btn-floating">
+            <svg class="icon-gray icon-medium">
+              <use xlink:href="#icon-edit"></use>
+            </svg>
+          </a>
+        </div>
+      {% endif %}
+
+      <div class="hero__tag">
+        {{ node_type }}
+        {% if node_tag %}
+          &nbsp; &nbsp; ▶ &nbsp; &nbsp;
+          {{ node_tag }}
+        {% endif %}
+      </div>
+
+      {{ title_prefix }}
+        <h2{{ title_attributes }} class="teaser__title">
+          <a href="{{ url }}" rel="bookmark">{{ label }}
+            {% if resource_library %}
+              <span class="organization-tag"></span>
+            {% endif %}</a>
+        </h2>
+      {{ title_suffix }}
+      {% if display_submitted %}
+        {% block metainfo %}
+          <header class="metainfo">
+
+            {% if not original_authors and not original_date %}
+              <div class="metainfo__avatar">
+                {{ author_picture }}
+              </div>
+            {% endif %}
+
+            <div class="metainfo__content">
+              {% if original_authors or original_date %}
+                {% if original_authors %}
+                  {% for item in original_authors %}
+                    {% if loop.last %}
+                      <span>{{ item }}</span>
+                    {% else %}
+                      <span>{{ item }}</span>,
+                    {% endif %}
+                  {% endfor %}
+                {% else %}
+                  {{ author }}
+                {% endif %}
+
+                {% if original_date %}
+                  <span class="metainfo__published-date">&bullet; {{ original_date }} </span>
+                {% else %}
+                  <span class="metainfo__published-date">&bullet; {{ created_date_formatted }} </span>
+                {% endif %}
+              {% else %}
+                {{ author }}
+              {% endif %}
+
+              {% if original_languages %}
+                &bullet;
+                {% for item in original_languages %}
+                  {% if loop.last %}
+                    <span>{{ item }}</span>
+                  {% else %}
+                    <span>{{ item }}</span>,
+                  {% endif %}
+                {% endfor %}
+              {% endif %}
+
+              <div>
+                {% if group_link %}
+                  {% trans %} in group {% endtrans %}
+                  {{ group_link }}
+                  &bullet;
+                {% endif %}
+
+                {% if visibility_icon and visibility_label %}
+                  <div class="badge badge--large" title="{% trans %}The visibility of this content is set to {% endtrans %} {{ visibility_label }}">
+                    <span class="badge__container">
+                      <svg class="badge__icon">
+                        <use xlink:href="#icon-{{ visibility_icon }}"></use>
+                      </svg>
+                      <span class="badge__label">&nbsp;</span>
+                      <span class="badge__label badge__label--description">{{ visibility_label }}</span>
+                    </span>
+                  </div>
+                {% endif %}
+              </div>
+
+              {% if original_authors or original_date %}
+                <div class="metainfo__uploader-wrapp">
+                  <span class="metainfo__uploader">{% trans %} Uploaded by {% endtrans %}&nbsp;{{ author }}</span>
+                  <span class="metainfo__published-date">&bullet; {{ created_date_formatted }} </span>
+                </div>
+              {% endif %}
+            </div>
+
+
+            {% if resource_suggest %}
+              <div class="hero-footer__cta">
+                <div class="btn-group">
+                  {{ resource_suggest }}
+                </div>
+              </div>
+            {% endif %}
+          </header>
+        {% endblock %}
+      {% endif %}
+
+      <div class="hero-image">
+        {% block card_image %}
+          {{ content.field_topic_image }}
+          {{ content.field_page_image }}
+          {{ content.field_book_image }}
+          {{ content.field_discussion_image }}
+          {{ content.field_image }}
+        {% endblock %}
+      </div>
+
+      <div class="hero-footer">
+
+        <div class="hero-footer__list">
+
+          {% block metaengage %}
+            <div class="meta-engage">
+
+              {% if comment_field_status is not empty %}
+                <a href="#section-comments" class="badge badge--large"
+                   title="{% trans %}Total amount of comments{% endtrans %}">
+              <span class="badge__container">
+                <svg class="badge__icon">
+                  <use xlink:href="#icon-comment_thicker"></use>
+                </svg>
+                <span class="badge__label">
+                  {{ comment_count }}
+                </span>
+                <span class="badge__label badge__label--description">
+                  {% if comment_count == 1 %}
+                    {% trans %}comment{% endtrans %}
+                  {% else %}
+                    {% trans %}comments{% endtrans %}
+                  {% endif %}
+                </span>
+              </span>
+                </a>
+              {% endif %}
+
+              {{ content.like_and_dislike }}
+
+              {% if content.flag_follow_content|render is not empty and logged_in %}
+                <div class="meta-follow">
+                  {{ content.flag_follow_content }}
+                </div>
+              {% endif %}
+
+            </div>
+          {% endblock %}
+
+        </div>
+
+        {{ content.shariff_field }}
+
+      </div>
+    </div>
+
+  </div>
+
+</div>

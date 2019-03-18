@@ -1,0 +1,31 @@
+{#
+/**
+* @file
+* Theme override for a link to a file for nodes.
+*
+* Available variables:
+* - attributes: The HTML attributes for the containing element.
+* - link: A link to the file.
+* - node_icon: An icon.
+*
+* @ingroup templates
+*
+* @see \Drupal\bootstrap\Plugin\Preprocess\FileLink::preprocessVariables
+*/
+#}
+{{ attach_library('socialbase/file') }}
+{% spaceless %}
+
+  <li class="card-file">
+    <a class="card-file__link" href="{{ link.url.uri }}" title="{{ 'Open or download file'|t }}" target="_blank">
+      <span class="card-file__title">{{ link.text|replace({'_': ' '}) }}</span>
+      <span class="card-file__type">
+        <span class="card-file__size">{{ file_size }}</span>
+        <svg class="icon-vote">
+          <use xlink:href="#icon-upload"></use>
+        </svg>
+      </span>
+    </a>
+  </li>
+
+{% endspaceless %}

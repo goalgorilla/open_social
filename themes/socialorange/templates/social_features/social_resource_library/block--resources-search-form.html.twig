@@ -1,0 +1,59 @@
+{% set classes = [
+  'block-' ~ configuration.provider|clean_class,
+  'block-' ~ plugin_id|clean_class,
+] %}
+
+{% set title_classes = [
+  card ? 'card__title' : 'block-title',
+] %}
+
+{{ attach_library('socialbase/select2')}}
+
+{% if not bare %}
+
+<section{{ attributes.addClass(classes) }}>
+
+  {{ title_prefix }}
+  {% if label %}
+    <h2 {{ title_attributes.addClass(title_classes) }}>{{ label }}</h2>
+  {% endif %}
+  {{ title_suffix }}
+
+  {% endif %}
+
+  {% block content %}
+    <div class="search-filter--wrapper">
+      <div class="collapse-block js-collapse-block">
+        {{ content|without('suffix', 'reset') }}
+
+        {% if content.suffix.topic_type %}
+          {{ content.suffix.topic_type }}
+        {% endif %}
+        {% if content.suffix.topic_type_no_value %}
+          {{ content.suffix.topic_type_no_value }}
+        {% endif %}
+        {% if content.suffix.challenge_area %}
+          {{ content.suffix.challenge_area }}
+        {% endif %}
+        {% if content.suffix.challenge_area_no_value %}
+          {{ content.suffix.challenge_area_no_value }}
+        {% endif %}
+
+        {% if content.suffix|without('challenge_area', 'challenge_area_no_value', 'topic_type', 'topic_type_no_value')|render %}
+          {{ content.suffix|without('challenge_area', 'challenge_area_no_value', 'topic_type', 'topic_type_no_value') }}
+        {% endif %}
+      </div>
+      <div class="collapse-wrapper">
+        <div class="btn-wrapper">
+          <a href="#" class="toggle-filter js-toggle-filter-open">{{ 'See more filters'|t }}</a>
+          <a href="#" class="toggle-filter js-toggle-filter-close">{{ 'See less filters'|t }}</a>
+        </div>
+        {{ content.reset }}
+      </div>
+    </div>
+  {% endblock %}
+
+  {% if not bare %}
+</section>
+
+{% endif %}

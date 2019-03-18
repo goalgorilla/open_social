@@ -1,0 +1,137 @@
+name: Social Orange
+description: Social Orange theme for Open Social installations.
+screenshot: screenshot.png
+type: theme
+
+base theme: socialbase
+
+core: 8.x
+
+libraries:
+  - socialorange/brand
+  - socialorange/site-footer
+  - socialorange/paragraph-feature
+  - socialorange/paragraph-block
+  - socialorange/paragraph-quote
+  - socialorange/resource-search
+  - socialorange/select2
+  - socialorange/organization-tag
+
+libraries-extend:
+  socialbase/base:
+    - socialorange/base
+  socialbase/alert:
+    - socialorange/alert
+  socialbase/badge:
+    - socialorange/badge
+  socialbase/button:
+    - socialorange/button
+  socialbase/cards:
+    - socialorange/cards
+  socialbase/form-controls:
+    - socialorange/form-controls
+  socialbase/list:
+    - socialorange/list
+  socialbase/spinner:
+    - socialorange/spinner
+  # Extend molecules
+  socialbase/block--informblock:
+    - socialorange/block--informblock
+  socialbase/breadcrumb:
+    - socialorange/breadcrumb
+  socialbase/dropdown:
+    - socialorange/dropdown
+  socialbase/file:
+    - socialorange/file
+  socialbase/form-elements:
+    - socialorange/form-elements
+  socialbase/form--input-groups:
+    - socialorange/form--input-groups
+  socialbase/like:
+    - socialorange/like
+  # attach the datepicker stylesheet to all date fields
+  core/drupal.date:
+    - socialorange/form--datepicker
+  # extend the core datepicker with a stylesheet
+  core/jquery.ui.datepicker:
+    - socialorange/form--timepicker
+  socialbase/form--password:
+    - socialorange/form--password
+  socialbase/pagination:
+    - socialorange/pagination
+  socialbase/popover:
+    - socialorange/popover
+  socialbase/nav-book:
+    - socialorange/nav-book
+  socialbase/nav-tabs:
+    - socialorange/nav-tabs
+  socialbase/navbar:
+    - socialorange/navbar
+  socialbase/select2:
+    - socialorange/select2
+  socialbase/teaser:
+    - socialorange/teaser
+  socialbase/tour:
+    - socialorange/tour
+  # Extend Organisms
+  socialbase/comment:
+    - socialorange/comment
+  socialbase/hero:
+    - socialorange/hero
+  socialbase/message:
+    - socialorange/message
+  socialbase/meta:
+    - socialorange/meta
+  socialbase/modal:
+    - socialorange/modal
+  socialbase/offcanvas:
+    - socialorange/offcanvas
+  socialbase/stream:
+    - socialorange/stream
+  socialbase/layout:
+    - socialorange/layout
+  socialbase/page-node:
+    - socialorange/page-node
+  socialbase/form-post-create:
+    - socialorange/form-post-create
+
+ckeditor_stylesheets:
+  - assets/css/ckeditor.css
+
+# This section is used by the contrib module, Component Libraries. It allows you
+# to reference .twig files in your components/ directory.
+component-libraries:
+  base:
+    paths:
+      - components/01-base
+  atoms:
+    paths:
+      - components/02-atoms
+  molecules:
+    paths:
+      - components/03-molecules
+  organisms:
+    paths:
+      - components/04-organisms
+  templates:
+    paths:
+      - components/05-templates
+  pages:
+    paths:
+      - components/06-pages
+
+regions:
+  hidden: Hidden
+  header: Header
+  breadcrumb: Breadcrumb
+  hero: Hero
+  secondary_navigation: Secondary navigation
+  content_top: Content top
+  title: Page title
+  content: Content
+  complementary_top: Complementary top
+  complementary_bottom: Complementary bottom
+  content_bottom: Content bottom
+  sidebar_first: Sidebar First
+  sidebar_second: Sidebar Second
+  footer: Footer

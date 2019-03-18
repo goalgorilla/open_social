@@ -1,0 +1,31 @@
+{#
+/**
+ * @file post.html.twig
+ * Default theme implementation to present Post data.
+ *
+ * This template is used when viewing Post pages.
+ *
+ *
+ * Available variables:
+ * - content: A list of content items. Use 'content' to print all content, or
+ * - attributes: HTML attributes for the container element.
+ *
+ * @see template_preprocess_post()
+ *
+ * @ingroup themeable
+ */
+#}
+<div class="card">
+  <div class="card__block">
+    {% for content in taghierarchy %}
+      <div class="group-about__item">
+        <p>{{ content.title }}</p>
+        <div class="group-about__wrapper">
+          {% for tag in content.tags %}
+            <a class="badge badge-default badge--large badge--pill" href="{{ tag.url }}">{{ tag.name }}</a>
+          {% endfor %}
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</div>

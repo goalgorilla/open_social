@@ -1,0 +1,45 @@
+{#
+/**
+* @file
+* Theme override for a link to a file for forms (default).
+*
+* Available variables:
+* - attributes: The HTML attributes for the containing element.
+* - link: A link to the file.
+* - node_icon: An icon.
+*
+* @ingroup templates
+*
+* @see \Drupal\bootstrap\Plugin\Preprocess\FileLink::preprocessVariables
+*/
+#}
+{{ attach_library('socialbase/file') }}
+{% spaceless %}
+  <span{{ attributes }}>
+
+  {% if icon_only %}
+    <span class="file-icon">
+        <svg class="icon-vote">
+          <use xlink:href="#icon-upload"></use>
+        </svg>
+    </span>
+    <span class="sr-only">
+      <span class="file-link">{{ link }}</span>
+      <span class="file-size">{{ file_size }}</span>
+    </span>
+  {% else %}
+
+      <span class="file-icon">
+        <svg class="icon-vote">
+          <use xlink:href="#icon-upload"></use>
+        </svg>
+      </span>
+      <span class="file-link">{{ link }}</span>
+      <span class="file-size">{{ file_size }}</span>
+
+  {% endif %}
+
+  </span>
+
+
+{% endspaceless %}

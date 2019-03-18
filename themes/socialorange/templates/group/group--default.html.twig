@@ -1,0 +1,8 @@
+{% if content.field_group_description|render %}
+  <div{{ attributes.addClass('card') }}>
+    <div{{ content_attributes.addClass('card__body body-text') }}>
+      <div class="field--label">{% trans %} Introduction {% endtrans %}</div>
+      <div class="field--text">{{ content.field_group_description }}</div>
+    </div>
+  </div>
+{% endif %}

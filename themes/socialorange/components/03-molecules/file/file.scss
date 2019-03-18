@@ -1,0 +1,74 @@
+@import 'settings';
+
+.node-file {
+  border-radius: $border-radius-extrasmall;
+}
+
+.file {
+  display: flex;
+  align-items: center;
+  border: none;
+  background: transparent;
+
+  > .tabledrag-changed {
+    &, &:last-child {
+      border: 1px solid darken($alert-warning-border, 5%);
+    }
+    background: $alert-warning-bg;
+    border-radius: 0;
+    color: $alert-warning-text;
+  }
+
+  .file-icon {
+    svg {
+      width: 16px;
+      height: 16px;
+    }
+  }
+}
+
+.card-file {
+  flex-basis: 100%;
+  margin-right: 0;
+}
+
+.card-file__link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 50px;
+  font-weight: 300;
+
+  @include for-tablet-portrait-up {
+    padding: 13px 25px 13px 20px;
+  }
+
+  > * {
+    font-size: .75rem;
+
+    @include for-tablet-portrait-up {
+      font-size: 1rem;
+    }
+  }
+}
+
+.card-file__type {
+  position: static;
+  width: auto;
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  margin-top: 0;
+
+  svg {
+    width: 16px;
+    height: 16px;
+    margin-left: 15px;
+
+    @include for-tablet-portrait-up {
+      width: 18px;
+      height: 18px;
+      margin-left: 25px;
+    }
+  }
+}

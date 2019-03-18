@@ -1,0 +1,37 @@
+{{ attach_library('socialbase/page-node') }}
+
+{% set classes = [
+  'card',
+  node.isPromoted() ? 'node--promoted',
+  not node.isPublished() ? 'node--unpublished',
+] %}
+
+<article{{ attributes.addClass(classes) }}>
+
+  <div{{ content_attributes.addClass('card__body') }}>
+
+    {% if not node.isPublished() %}
+      <div class="node--unpublished__label">{% trans %} unpublished {% endtrans %}</div>
+    {% endif %}
+
+    {% if node.isSticky() or comment_field_status is not empty or logged_in %}
+      {% block metaengage %}
+        <div class="meta-engage">
+          {% if node.isSticky() %}
+            <span class="badge badge-accent badge--large">{% trans %}Featured{% endtrans %}</span>
+          {% endif %}
+        </div>
+      {% endblock %}
+    {% endif %}
+
+    {% block nodefull_body %}
+      {{ content|without('flag_follow_content', 'like_and_dislike') }}
+    {% endblock %}
+
+  </div>
+
+</article>
+
+{% block nodefull_below_content %}
+  {{ below_content }}
+{% endblock %}

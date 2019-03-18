@@ -1,0 +1,52 @@
+{{ attach_library('socialbase/teaser') }}
+<div class="card teaser">
+  <a href="{{ profile_stream_url }}" class="teaser__image">
+    {% if content.field_profile_image %}
+      {{ content.field_profile_image }}
+    {% endif %}
+  </a>
+  <div class="teaser__body">
+    <div class="teaser__content">
+      <h4 class="teaser__title">
+        <a href="{{ profile_stream_url }}">
+          {{ profile_name }} {{ profile_name_extra }}
+        </a>
+      </h4>
+      {% if content.field_profile_function|render or content.field_profile_organization|render %}
+        <div class="teaser__content-line">
+          <span class="teaser__content-text">
+            {% if content.field_profile_organization|render %}
+              {{ '@function at @organization'|t({'@function': content.field_profile_function|render, '@organization': content.field_profile_organization|render}) }}
+            {% else %}
+              {{ content.field_profile_function }}
+            {% endif %}
+          </span>
+        </div>
+      {% endif %}
+
+      {% if content.field_profile_profile_tag['#items'] or badges %}
+        <div style="margin-left: 30px; margin-top: 5px;">
+          {% for badge in badges %}
+            {% set badge_classes = badge.classes|merge(['badge']) %}
+            <div{{ attributes.addClass(badge_classes) }}>{{ badge.label }}</div>
+          {% endfor %}
+          {% for item in content.field_profile_profile_tag['#items'] %}
+            <div class="badge badge-default">{{ item.entity.label }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+    </div>
+
+    <div class="card__actionbar">
+      <div class="teaser__tag">
+        {% trans %}Member{% endtrans %}
+      </div>
+      <div class="card__link">
+        <a href="{{ profile_info_url }}" class="btn btn-default waves-effect waves-btn">
+          {% trans %}View profile{% endtrans %}
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
