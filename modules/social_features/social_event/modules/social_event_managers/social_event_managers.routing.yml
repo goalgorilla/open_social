@@ -6,16 +6,6 @@ social_event_managers.settings:
   requirements:
     _permission: 'set social event managers settings'
 
-social_event_managers.vbo.execute_configurable:
-  path: '/node/{node}/manage-all-enrollments/configure-action'
-  defaults:
-    _form: '\Drupal\social_event_managers\Form\SocialEventManagementViewsBulkOperationsConfigureAction'
-    _title: 'Configure action'
-    view_id: 'event_manage_enrollments'
-    display_id: 'page_manage_enrollments'
-  requirements:
-    _views_bulk_operation_access: 'TRUE'
-
 social_event_managers.add_enrollees:
   path: '/node/{node}/manage-all-enrollments/add-enrollees'
   defaults:
@@ -24,12 +14,6 @@ social_event_managers.add_enrollees:
   requirements:
     _permission: 'manage everything enrollments'
 
-social_event_managers.vbo.confirm:
-  path: '/node/{node}/manage-all-enrollments/confirm-action'
-  defaults:
-    _form: '\Drupal\social_event_managers\Form\SocialEventManagersViewsBulkOperationsConfirmAction'
-    _title: 'Confirm action'
-    view_id: 'event_manage_enrollments'
-    display_id: 'page_manage_enrollments'
-  requirements:
-    _views_bulk_operation_access: 'TRUE'
+# Routes which require views_bulk_operations.
+route_callbacks:
+  - 'social_event_managers.route_subscriber:routes'

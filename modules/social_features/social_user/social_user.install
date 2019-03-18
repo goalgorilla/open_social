@@ -112,6 +112,8 @@ function social_user_update_8007() {
   ];
   \Drupal::service('module_installer')->install($modules);
 
+  // Rebuild the router for social_event_managers.route_subscriber.
+  \Drupal::service('router.builder')->rebuild();
 }
 
 /**

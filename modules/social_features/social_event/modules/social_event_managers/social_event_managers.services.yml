@@ -3,3 +3,8 @@ services:
     class: \Drupal\social_event_managers\SocialEventManagersConfigOverride
     tags:
       - {name: config.factory.override, priority: 5}
+
+  social_event_managers.route_subscriber:
+    class: Drupal\social_event_managers\EventSubscriber\RouteSubscriber
+    tags:
+      - { name: 'event_subscriber' }
