@@ -117,6 +117,7 @@ Feature: Create Public Group
     And I should see "Test group topic" in the "Main content"
     And I should see "Test public group" in the "Main content"
 
+    When I click "Stream" in the "Tabs"
     And I press "Joined"
     And I should see the link "Leave group"
     And I click "Leave group"
