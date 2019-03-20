@@ -4,6 +4,7 @@ namespace Drupal\social_content_report\Access;
 
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Routing\Access\AccessInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Access\AccessResult;
@@ -23,13 +24,26 @@ class FlagAccessCheck implements AccessInterface, ContainerInjectionInterface {
   protected $entityTypeManager;
 
   /**
+   * The module handler.
+   *
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface
+   */
+  protected $moduleHandler;
+
+  /**
    * FlagAccessCheck constructor.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity type manager.
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
+   *   The module handler.
    */
-  public function __construct(EntityTypeManagerInterface $entity_type_manager) {
+  public function __construct(
+    EntityTypeManagerInterface $entity_type_manager,
+    ModuleHandlerInterface $module_handler
+  ) {
     $this->entityTypeManager = $entity_type_manager;
+    $this->moduleHandler = $module_handler;
   }
 
   /**
@@ -37,7 +51,8 @@ class FlagAccessCheck implements AccessInterface, ContainerInjectionInterface {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('entity_type.manager')
+      $container->get('entity_type.manager'),
+      $container->get('module_handler')
     );
   }
 
@@ -55,7 +70,11 @@ class FlagAccessCheck implements AccessInterface, ContainerInjectionInterface {
    *   Allowed if user may use the flag and hasn't reported it yet.
    */
   public function access(AccountInterface $account, FlagInterface $flag, $entity_id) {
-    if (strpos($flag->id(), 'report_') === 0) {
+    $ids = $this->moduleHandler->invokeAll('social_content_report_flags');
+
+    $this->moduleHandler->alter('social_content_report_flags', $ids);
+
+    if (in_array($flag->id(), $ids)) {
       // Make sure user is allowed to use the flag.
       if (!$account->hasPermission('flag ' . $flag->id())) {
         return AccessResult::forbidden();
