@@ -16,11 +16,13 @@
 {{ attach_library('socialbase/file') }}
 {% spaceless %}
 
-  <div class="card">
-      <span class="file-link small">{{ link }}</span>
-      <span class="file-size small">{{ file_size }}</span>
-      <span class="file-icon">
-        <img class="node-file__icon" src="/{{ path_to_socialbase }}/assets/images/mime-icons/icon_1_{{ node_icon }}_x16.png" srcset="/{{ path_to_socialbase }}/assets/images/mime-icons/icon_1_{{ node_icon }}_x32.png 2x" alt="{{ node_icon }}" />
+  <div class="file-tile">
+      <span class="file-link">{{ link }}</span>
+      <span class="file-metadata">
+        <span class="file-size">{{ file_size }}</span>
+        <span class="file-icon">
+          <img class="node-file__icon" src="/{{ path_to_socialbase }}/assets/images/mime-icons/icon_1_{{ node_icon }}_x16.png" srcset="/{{ path_to_socialbase }}/assets/images/mime-icons/icon_1_{{ node_icon }}_x32.png 2x" alt="{{ node_icon }}" />
+        </span>
       </span>
   </div>
 
