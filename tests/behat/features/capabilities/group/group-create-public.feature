@@ -39,7 +39,7 @@ Feature: Create Public Group
 
     And I should see "Test public group" in the "Hero block"
     And I should see the button "Joined"
-    And I click the element with css selector "#hero .dropdown-toggle"
+    And I press "Joined"
     And I should see the link "Leave group"
     And I should see the link "Edit group" in the "Hero block"
     And I should see "Technopark" in the "Hero block"
@@ -62,7 +62,8 @@ Feature: Create Public Group
     And I click "Members"
     And I should see "GivenUserOne"
 
-    And I should see the link "Join" in the "Hero block"
+    When I click "Stream" in the "Tabs"
+    And I should see the link "Join"
     And I click "Join"
     And I should see "Join group Test public group"
     And I should see the button "Cancel"
@@ -116,7 +117,7 @@ Feature: Create Public Group
     And I should see "Test group topic" in the "Main content"
     And I should see "Test public group" in the "Main content"
 
-    And I click the element with css selector "#hero .dropdown-toggle"
+    And I press "Joined"
     And I should see the link "Leave group"
     And I click "Leave group"
     And I should see "This action cannot be undone."

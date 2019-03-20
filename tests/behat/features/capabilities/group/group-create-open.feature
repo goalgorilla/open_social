@@ -36,7 +36,7 @@ Feature: Create Open Group
   # DS-761 As a LU I want to view the hero area of a group
     And I should see "Test open group" in the "Hero block"
     And I should see the button "Joined"
-    And I click the element with css selector "#hero .dropdown-toggle"
+    And I press "Joined"
     And I should see the link "Leave group"
     And I should see the link "Edit group" in the "Hero block"
     And I should see "Technopark" in the "Hero block"
@@ -67,7 +67,8 @@ Feature: Create Open Group
     And I should see "Group User One"
 
   # DS-647 As a LU I want to join a group
-    And I should see the link "Join" in the "Hero block"
+    When I click "Stream" in the "Tabs"
+    And I should see the link "Join"
     And I click "Join"
     And I should see "Join group Test open group"
     And I should see the button "Cancel"
@@ -148,14 +149,14 @@ Feature: Create Open Group
     And I click "Groups"
     And I click "Test open group"
     And I should see the button "Joined"
-    And I click the element with css selector "#hero .dropdown-toggle"
+    And I press "Joined"
     And I should see the link "Leave group"
     And I click "Leave group"
     And I should see "This action cannot be undone."
     And I should see the button "Cancel"
     And I should see the button "Leave group"
     And I press "Leave group"
-    And I should see "Group User Two" in the "Hero block"
+    And I should see "Group User Two"
     And I should see "Groups"
     And I should not see "Test open group"
 
