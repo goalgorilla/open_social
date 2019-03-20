@@ -59,7 +59,11 @@
         $pic.on('click', 'a.photoswipe-item', function(event) {
           event.preventDefault();
 
-          var $index = $(this).index();
+          // Get the index of our parent which is part of the grid.
+          // Filter out any non-images because they aren't in the carousel.
+          var $index = $pic
+            .find(".field--item:not(.field--item--file)")
+            .index($(this).parent());
           var options = {
             index: $index,
             bgOpacity: 0.7,
