@@ -2,15 +2,44 @@
 
 namespace Drupal\social_content_report\Access;
 
+use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Routing\Access\AccessInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Access\AccessResult;
 use Drupal\flag\FlagInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Class FlagAccessCheck.
  */
-class FlagAccessCheck implements AccessInterface {
+class FlagAccessCheck implements AccessInterface, ContainerInjectionInterface {
+
+  /**
+   * The entity type manager.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  protected $entityTypeManager;
+
+  /**
+   * FlagAccessCheck constructor.
+   *
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
+   */
+  public function __construct(EntityTypeManagerInterface $entity_type_manager) {
+    $this->entityTypeManager = $entity_type_manager;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('entity_type.manager')
+    );
+  }
 
   /**
    * Checks if user is allowed to flag.
@@ -32,8 +61,7 @@ class FlagAccessCheck implements AccessInterface {
         return AccessResult::forbidden();
       }
 
-      // @todo Implement Dependency Injection.
-      $entity = \Drupal::service('entity_type.manager')->getStorage($flag->getFlaggableEntityTypeId())->load($entity_id);
+      $entity = $this->entityTypeManager->getStorage($flag->getFlaggableEntityTypeId())->load($entity_id);
       $flagged = $flag->isFlagged($entity, $account);
 
       // If the user already flagged the content they aren't allowed to do it
