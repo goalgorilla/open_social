@@ -125,7 +125,7 @@ Feature: Create Public Group
     And I should see the button "Cancel"
     And I should see the button "Leave group"
     And I press "Leave group"
-    And I should see "GivenUserTwo" in the "Hero block"
+    And I should see "GivenUserTwo"
     And I should see "Groups"
     And I should not see "Test public group"
 
