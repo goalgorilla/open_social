@@ -32,15 +32,9 @@
         {% if content.suffix.topic_type_no_value %}
           {{ content.suffix.topic_type_no_value }}
         {% endif %}
-        {% if content.suffix.challenge_area %}
-          {{ content.suffix.challenge_area }}
-        {% endif %}
-        {% if content.suffix.challenge_area_no_value %}
-          {{ content.suffix.challenge_area_no_value }}
-        {% endif %}
 
-        {% if content.suffix|without('challenge_area', 'challenge_area_no_value', 'topic_type', 'topic_type_no_value')|render %}
-          {{ content.suffix|without('challenge_area', 'challenge_area_no_value', 'topic_type', 'topic_type_no_value') }}
+        {% if content.suffix|without('topic_type', 'topic_type_no_value')|render %}
+          {{ content.suffix|without('topic_type', 'topic_type_no_value') }}
         {% endif %}
       </div>
       <div class="collapse-wrapper">
