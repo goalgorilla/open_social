@@ -392,11 +392,12 @@ function _social_profile_get_contact_url(User $account) {
       $members = [$current_user, $account];
       $thread_id = \Drupal::service('private_message.mapper')->getThreadIdForMembers($members);
       if ($thread_id) {
-        return Url::fromRoute('entity.private_message_thread.canonical', ['private_message_thread' => $thread_id], ['attributes' => ['class' => ['private_message_link']]]);
+        $url = Url::fromRoute('entity.private_message_thread.canonical', ['private_message_thread' => $thread_id], ['attributes' => ['class' => ['private_message_link']]]);
+        if ($url->access($current_user)) {
+          return $url;
+        }
       }
-      else {
-        return Url::fromRoute('private_message.private_message_create', [], ['query' => ['recipient' => $account->id()]]);
-      }
+      return Url::fromRoute('private_message.private_message_create', [], ['query' => ['recipient' => $account->id()]]);
     }
   }
   return Url::fromUserInput('/user/' . $account->id() . '/information');
