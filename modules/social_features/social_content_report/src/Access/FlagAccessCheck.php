@@ -72,6 +72,13 @@ class FlagAccessCheck implements AccessInterface, ContainerInjectionInterface {
   public function access(AccountInterface $account, FlagInterface $flag, $entity_id) {
     $ids = $this->moduleHandler->invokeAll('social_content_report_flags');
 
+    // Allow using reports for three predefined entity types.
+    $ids = array_merge($ids, [
+      'report_comment',
+      'report_node',
+      'report_post',
+    ]);
+
     $this->moduleHandler->alter('social_content_report_flags', $ids);
 
     if (in_array($flag->id(), $ids)) {
