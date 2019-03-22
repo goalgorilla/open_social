@@ -13,7 +13,6 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Url;
-use Drupal\Core\Entity\Entity;
 use Drupal\taxonomy\Entity\Term;
 
 /**
@@ -365,6 +364,13 @@ function social_tagging_form_views_exposed_form_alter(&$form, FormStateInterface
     'views-exposed-form-search-content-page',
     'views-exposed-form-search-groups-page-no-value',
     'views-exposed-form-search-groups-page',
+    'views-exposed-form-latest-topics-page-latest-topics',
+    'views-exposed-form-upcoming-events-page-community-events',
+    'views-exposed-form-topics-page-profile',
+    'views-exposed-form-events-events-overview',
+    'views-exposed-form-group-topics-page-group-topics',
+    'views-exposed-form-group-events-page-group-events',
+    'views-exposed-form-newest-groups-page-all-groups',
   ];
 
   // Must be either one of these form_ids.
@@ -378,20 +384,37 @@ function social_tagging_form_views_exposed_form_alter(&$form, FormStateInterface
   if (!($tag_service->active() && $tag_service->hasContent())) {
     return;
   }
-
   if ($tag_service->allowSplit()) {
     foreach ($tag_service->getCategories() as $tid => $label) {
       $label = social_tagging_to_machine_name($label);
 
       if (isset($form[$label])) {
-        $form[$label]['#options'] = $tag_service->getChildren($tid);
+        $form[$label]['#options'][''] = t('- Any -');
+        $form[$label]['#options'] += $tag_service->getChildren($tid);
+        $form[$label]['#type'] = 'select';
+        $form[$label]['#size'] = NULL;
+
+        /** @var \Symfony\Component\HttpFoundation\ParameterBag $query */
+        $query = \Drupal::request()->query;
+        if ($query->has($label)) {
+          $form[$label]['#value'] = $query->get($label);
+        }
+
       }
     }
   }
   // Only remove all top level items.
   else {
     // Remove main items and just insert child options.
-    $form['tag']['#options'] = [];
+    $form['tag']['#options'][''] = t('- Any -');
+    $form['tag']['#type'] = 'select';
+    $form['tag']['#size'] = NULL;
+
+    /** @var \Symfony\Component\HttpFoundation\ParameterBag $query */
+    $query = \Drupal::request()->query;
+    if ($query->has('tag')) {
+      $form['tag']['#value'] = $query->get('tag');
+    }
 
     foreach ($tag_service->getCategories() as $tid => $label) {
       if (!empty($options = $tag_service->getChildren($tid))) {

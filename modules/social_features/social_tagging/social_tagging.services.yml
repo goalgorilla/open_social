@@ -4,5 +4,6 @@ services:
     arguments: ['@entity_type.manager', '@config.factory']
   social_tagging.overrider:
     class: \Drupal\social_tagging\SocialTaggingOverrides
+    arguments: ['@social_tagging.tag_service', '@config.factory']
     tags:
       - {name: config.factory.override, priority: 5}
