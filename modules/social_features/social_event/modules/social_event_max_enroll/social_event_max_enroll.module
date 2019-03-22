@@ -42,6 +42,7 @@ function social_event_max_enroll_form_alter(&$form, FormStateInterface $form_sta
     'node_event_edit_form',
   ];
 
+  // Alter the Node Event forms.
   if (in_array($form_id, $event_forms)) {
     $config = \Drupal::config('social_event_max_enroll.settings');
     // Hide checkbox if feature is disabled globally.
@@ -68,6 +69,7 @@ function social_event_max_enroll_form_alter(&$form, FormStateInterface $form_sta
     'event_an_enroll_action_form',
   ];
 
+  // Alter the Event Enrollments forms.
   if (in_array($form_id, $event_enroll_forms)) {
     // We can't use dependency injection, because service is optional.
     $event_max_enroll_service = \Drupal::service('social_event_max_enroll.service');
@@ -80,7 +82,8 @@ function social_event_max_enroll_form_alter(&$form, FormStateInterface $form_sta
           $form['enroll_for_this_event']['#value'] = t('No spots left');
           $form['enroll_for_this_event']['#disabled'] = TRUE;
         }
-        if ($form_id === 'event_an_enroll_action_form') {
+
+        if ($form_id === 'event_an_enroll_action_form' && !isset($form['enroll_for_this_event'])) {
           $form['event_enrollment'] = [
             '#type' => 'submit',
             '#value' => t('No spots left'),
