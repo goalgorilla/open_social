@@ -75,8 +75,9 @@ class EventMaxEnrollService {
     $max = $node->get('field_event_max_enroll_num')->value;
     // Take into account AN enrollments.
     $current = $this->getEnrollmentsNumber($node);
-    // Count how many spots are left.
-    return (int) $max - $current;
+
+    // Count how many spots are left, but never display less than 0.
+    return ($max - $current) >= 0 ? ($max - $current) : 0;
   }
 
   /**
