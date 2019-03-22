@@ -54,17 +54,32 @@ class SocialProfileFieldsOverride implements ConfigFactoryOverrideInterface {
 
     // Add field_group and field_comment_files.
     $config_names = [
-      'search_api.index.social_all',
-      'search_api.index.social_users',
+      'search_api.index.social_all' => '',
+      'search_api.index.social_users' => '.settings',
     ];
 
-    foreach ($config_names as $config_name) {
+    foreach ($config_names as $config_name => $suffix) {
       if (in_array($config_name, $names)) {
+        $config = $config_factory->getEditable($config_name);
+        $processor_settings = [];
+
+        foreach (['ignorecase', 'tokenizer', 'transliteration'] as $processor) {
+          $fields = $config->get('processor_settings.' . $processor . $suffix . '.fields');
+          $fields[] = 'field_profile_nick_name';
+
+          if ($suffix) {
+            $processor_settings[$processor]['settings']['fields'] = $fields;
+          }
+          else {
+            $processor_settings[$processor]['fields'] = $fields;
+          }
+        }
+
         $overrides[$config_name] = [
           'dependencies' => [
-            'config' => [
+            'config' => array_merge([
               'field.storage.profile.field_profile_nick_name',
-            ],
+            ], $config->get('dependencies.config')),
           ],
           'field_settings' => [
             'field_profile_nick_name' => [
@@ -79,23 +94,7 @@ class SocialProfileFieldsOverride implements ConfigFactoryOverrideInterface {
               ],
             ],
           ],
-          'processor_settings' => [
-            'ignorecase' => [
-              'fields' => [
-                'field_profile_nick_name',
-              ],
-            ],
-            'tokenizer' => [
-              'fields' => [
-                'field_profile_nick_name',
-              ],
-            ],
-            'transliteration' => [
-              'fields' => [
-                'field_profile_nick_name',
-              ],
-            ],
-          ],
+          'processor_settings' => $processor_settings,
         ];
       }
     }
