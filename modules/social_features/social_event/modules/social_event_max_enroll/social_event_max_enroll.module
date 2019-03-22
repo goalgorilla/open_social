@@ -52,6 +52,7 @@ function social_event_max_enroll_form_alter(&$form, FormStateInterface $form_sta
     // Show the checkbox only when max enroll is enabled.
     if ($config->get('max_enroll_required')) {
       $form['field_event_max_enroll']['widget']['value']['#default_value'] = TRUE;
+      $form['field_event_max_enroll']['widget']['value']['#disabled'] = TRUE;
       $form['field_event_max_enroll']['widget']['value']['#required'] = TRUE;
       $form['field_event_max_enroll_num']['widget'][0]['value']['#required'] = TRUE;
     }
