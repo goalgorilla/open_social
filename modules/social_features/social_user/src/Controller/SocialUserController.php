@@ -15,16 +15,6 @@ use Drupal\Core\Session\AccountInterface;
 class SocialUserController extends ControllerBase {
 
   /**
-   * OtherUserPage.
-   *
-   * @return RedirectResponse
-   *   Return Redirect to the user account.
-   */
-  public function otherUserPage(UserInterface $user) {
-    return $this->redirect('entity.user.canonical', ['user' => $user->id()]);
-  }
-
-  /**
    * The _title_callback for the users profile stream title.
    *
    * @return string

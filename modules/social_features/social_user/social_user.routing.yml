@@ -1,11 +1,3 @@
-social_user.page_redirect:
-  path: '/user/{user}'
-  defaults:
-    _controller: '\Drupal\social_user\Controller\SocialUserController::otherUserPage'
-    _title: 'Account'
-  requirements:
-    _user_is_logged_in: 'TRUE'
-
 social_user.user_flood_settings:
   path: '/admin/config/people/accounts/flood'
   defaults:
@@ -31,3 +23,17 @@ social_user.settings:
     _permission: 'administer social_user settings'
   options:
     _admin_route: TRUE
+
+social_user.user_home:
+  path: '/user/{user}/home'
+  defaults:
+    _entity_view: 'user.stream'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+
+social_user.stream:
+  path: '/user/{user}/stream'
+  defaults:
+    _entity_view: 'user.stream'
+  requirements:
+    _user_is_logged_in: 'TRUE'

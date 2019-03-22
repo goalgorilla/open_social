@@ -89,14 +89,20 @@ class RedirectSubscriber implements EventSubscriberInterface {
       return;
     }
 
+    // Set the already default redirect route.
+    $defaultRoute = 'social_user.stream';
+
     // Fetch the settings.
     $settings = $this->configFactory->get('social_user.settings');
 
-    // Set the already default redirect route.
-    $route = 'entity.user.canonical';
     // Check there is a custom route set.
     if ($this->currentUser->id() !== $user->id()) {
       $route = $settings->get('social_user_profile_landingpage');
+    }
+
+    // Still no route here? Then we use the normal default.
+    if (!isset($route)) {
+      $route = $defaultRoute;
     }
 
     // Determine the URL we want to redirect to.
