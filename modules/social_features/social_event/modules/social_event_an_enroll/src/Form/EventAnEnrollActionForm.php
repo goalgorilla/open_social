@@ -92,7 +92,7 @@ class EventAnEnrollActionForm extends EnrollActionForm {
           ],
           'data-dialog-type' => 'modal',
           'data-dialog-options' => json_encode([
-            'title' => t('Enroll in @event Event', ['@event' => $node->getTitle()]),
+            'title' => t('Enroll in') . ' ' . strip_tags($node->getTitle()),
             'width' => 'auto',
           ]),
         ];
