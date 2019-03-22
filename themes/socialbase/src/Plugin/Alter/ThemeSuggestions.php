@@ -100,7 +100,8 @@ class ThemeSuggestions extends BaseThemeSuggestions {
 
       case 'file_link':
         // For the new Social Comment we need a different theme hook suggestion.
-        if (social_comment_upload_is_enabled()) {
+        if (\Drupal::config('social_comment_upload.settings')
+          ->get('allow_upload_comments')) {
           $file = $variables['file'];
 
           // For comments in activities we show the amount of attachments.
