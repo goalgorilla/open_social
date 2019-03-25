@@ -48,7 +48,7 @@ display:
           sort_asc_label: Asc
           sort_desc_label: Desc
       pager:
-        type: mini
+        type: full
         options:
           items_per_page: 10
           offset: 0
@@ -57,6 +57,8 @@ display:
           tags:
             previous: ‹‹
             next: ››
+            first: '« First'
+            last: 'Last »'
           expose:
             items_per_page: false
             items_per_page_label: 'Items per page'
@@ -65,6 +67,7 @@ display:
             items_per_page_options_all_label: '- All -'
             offset: false
             offset_label: Offset
+          quantity: 9
       style:
         type: default
       row:
@@ -150,46 +153,6 @@ display:
           entity_field: type
           plugin_id: bundle
           group: 1
-        type_1:
-          id: type_1
-          table: group_content_field_data
-          field: type
-          relationship: none
-          group_type: group
-          admin_label: ''
-          operator: in
-          value:
-            closed_group-group_membership: closed_group-group_membership
-          group: 1
-          exposed: false
-          expose:
-            operator_id: ''
-            label: ''
-            description: ''
-            use_operator: false
-            operator: ''
-            identifier: ''
-            required: false
-            remember: false
-            multiple: false
-            remember_roles:
-              authenticated: authenticated
-            reduce: false
-          is_grouped: false
-          group_info:
-            label: ''
-            description: ''
-            identifier: ''
-            optional: true
-            widget: select
-            multiple: false
-            remember: false
-            default_group: All
-            default_group_multiple: {  }
-            group_items: {  }
-          entity_type: group_content
-          entity_field: type
-          plugin_id: bundle
       sorts:
         created:
           id: created
@@ -198,6 +161,13 @@ display:
           entity_type: group_content
           entity_field: created
           plugin_id: date
+        label:
+          id: label
+          table: group_content_field_data
+          field: label
+          entity_type: group_content
+          entity_field: label
+          plugin_id: standard
       title: 'Group Members'
       header: {  }
       footer: {  }
@@ -337,6 +307,30 @@ display:
     display_options:
       display_extenders: {  }
       path: group/%group/members
+      sorts:
+        created:
+          id: created
+          table: group_content_field_data
+          field: created
+          entity_type: group_content
+          entity_field: created
+          plugin_id: date
+        label:
+          id: label
+          table: group_content_field_data
+          field: label
+          relationship: none
+          group_type: group
+          admin_label: sort_title
+          order: ASC
+          exposed: false
+          expose:
+            label: ''
+          entity_type: group_content
+          entity_field: label
+          plugin_id: standard
+      defaults:
+        sorts: false
     cache_metadata:
       max-age: -1
       contexts:

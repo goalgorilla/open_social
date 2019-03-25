@@ -481,6 +481,7 @@
 #  modules/social_features/social_event/modules/social_event_type/social_event_type.permissions.yml: n/a
 #  modules/social_features/social_event/modules/social_event_type/src/SocialEventTypeConfigOverride.php: n/a
 #  modules/social_features/social_event/modules/social_event_type/src/Form/SocialEventTypeSettings.php: n/a
+#  modules/social_features/social_topic/src/Form/TopicSettingsForm.php: n/a
 #  modules/social_features/social_event/src/Form/EventEnrollmentForm.php: n/a
 #  modules/social_features/social_event/src/Form/EventSettingsForm.php: n/a
 #  modules/social_features/social_event/src/Plugin/Block/EnrollActionBlock.php: n/a
@@ -657,6 +658,8 @@
 #  modules/social_features/social_tagging/src/Plugin/Block/SocialTagsBlock.php: n/a
 #  modules/social_features/social_topic/social_topic.install: n/a
 #  modules/social_features/social_topic/src/Controller/SocialTopicController.php: n/a
+#  modules/social_features/social_topic/social_topic.links.menu.yml: n/a
+#  modules/social_features/social_topic/social_topic.routing.yml: n/a
 #  modules/social_features/social_topic/social_topic.permissions.yml: n/a
 #  modules/social_features/social_topic/config/optional/block.block.socialblue_topic_add_block.yml: n/a
 #  modules/social_features/social_topic/config/optional/block.block.topic_add_block.yml: n/a
@@ -1134,7 +1137,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Open Social\n"
-"POT-Creation-Date: 2019-02-26 07:49+0000\n"
+"POT-Creation-Date: 2019-03-21 22:14+0000\n"
 "PO-Revision-Date: YYYY-mm-DD HH:MM+ZZZZ\n"
 "Last-Translator: NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <EMAIL@ADDRESS>\n"
@@ -1760,7 +1763,7 @@ msgstr ""
 msgid "@profile_name @profile_name_extra has not shared profile information."
 msgstr ""
 
-#: modules/custom/activity_creator/activity.page.inc:40
+#: modules/custom/activity_creator/activity.page.inc:41
 #: themes/socialbase/includes/form.inc:62
 msgid "@time ago"
 msgstr ""
@@ -2133,11 +2136,11 @@ msgstr ""
 msgid "Activity comment"
 msgstr ""
 
-#: modules/custom/activity_creator/activity_creator.module:159;161
+#: modules/custom/activity_creator/activity_creator.module:160;162
 msgid "Activity group argument"
 msgstr ""
 
-#: modules/custom/activity_creator/activity_creator.module:162
+#: modules/custom/activity_creator/activity_creator.module:163
 msgid "Activity group context argument."
 msgstr ""
 
@@ -2149,15 +2152,15 @@ msgstr ""
 msgid "Activity overview"
 msgstr ""
 
-#: modules/custom/activity_creator/activity_creator.module:142;144
+#: modules/custom/activity_creator/activity_creator.module:143;145
 msgid "Activity post visibility access"
 msgstr ""
 
-#: modules/custom/activity_creator/activity_creator.module:151;153
+#: modules/custom/activity_creator/activity_creator.module:152;154
 msgid "Activity profile argument"
 msgstr ""
 
-#: modules/custom/activity_creator/activity_creator.module:154
+#: modules/custom/activity_creator/activity_creator.module:155
 msgid "Activity profile context argument."
 msgstr ""
 
@@ -2198,7 +2201,7 @@ msgstr ""
 msgid "Activity tokens"
 msgstr ""
 
-#: modules/custom/activity_creator/activity_creator.module:133;135
+#: modules/custom/activity_creator/activity_creator.module:134;136
 msgid "Activity visibility access"
 msgstr ""
 
@@ -2414,6 +2417,10 @@ msgstr ""
 msgid "Administer Post entities"
 msgstr ""
 
+#: modules/social_features/social_topic/social_topic.permissions.yml:0
+msgid "Administer Topic Settings"
+msgstr ""
+
 #: modules/custom/alternative_frontpage/alternative_frontpage.permissions.yml:0
 msgid "Administer alternative frontpage settings"
 msgstr ""
@@ -2577,7 +2584,7 @@ msgid ""
 "demo content."
 msgstr ""
 
-#: modules/social_features/social_topic/social_topic.install:123
+#: modules/social_features/social_topic/social_topic.install:129
 #: modules/social_features/social_topic/src/Controller/SocialTopicController.php:74
 #: modules/social_features/social_topic/config/install/views.view.latest_topics.yml:0;0;0
 #: modules/social_features/social_topic/config/install/views.view.topics.yml:0
@@ -2597,6 +2604,11 @@ msgstr ""
 #: modules/social_features/social_event/social_event.permissions.yml:0
 msgid ""
 "Allow access to the event settings form to configure general event options."
+msgstr ""
+
+#: modules/social_features/social_topic/social_topic.permissions.yml:0
+msgid ""
+"Allow access to the topic settings form to configure general topic options."
 msgstr ""
 
 #: modules/social_features/social_event/modules/social_event_an_enroll/src/Form/EventAnEnrollSettingsForm.php:45
@@ -3073,7 +3085,7 @@ msgstr ""
 msgid "Book traversal links for"
 msgstr ""
 
-#: themes/socialblue/theme-settings.php:45
+#: themes/socialblue/theme-settings.php:46
 msgid "Border radius"
 msgstr ""
 
@@ -3100,7 +3112,7 @@ msgstr ""
 msgid "Button"
 msgstr ""
 
-#: themes/socialblue/theme-settings.php:76
+#: themes/socialblue/theme-settings.php:77
 msgid "Button border radius (px)"
 msgstr ""
 
@@ -3149,7 +3161,7 @@ msgstr ""
 msgid "Cancel enrollment"
 msgstr ""
 
-#: themes/socialblue/theme-settings.php:62
+#: themes/socialblue/theme-settings.php:63
 msgid "Card border radius (px)"
 msgstr ""
 
@@ -3166,6 +3178,7 @@ msgid "Change group membership role"
 msgstr ""
 
 #: modules/social_features/social_event/modules/social_event_type/src/Form/SocialEventTypeSettings.php:46
+#: modules/social_features/social_topic/src/Form/TopicSettingsForm.php:39
 msgid "Change input widget"
 msgstr ""
 
@@ -4000,15 +4013,15 @@ msgstr ""
 msgid "Define Consumer Key and Consumer Secret on module settings."
 msgstr ""
 
-#: themes/socialblue/theme-settings.php:78
+#: themes/socialblue/theme-settings.php:79
 msgid "Define the roundness of buttons corners."
 msgstr ""
 
-#: themes/socialblue/theme-settings.php:64
+#: themes/socialblue/theme-settings.php:65
 msgid "Define the roundness of cards corners."
 msgstr ""
 
-#: themes/socialblue/theme-settings.php:71
+#: themes/socialblue/theme-settings.php:72
 msgid ""
 "Define the roundness of the corners of form-controls, like <code>input</"
 "code>, <code>textarea</code> and <code>select</code>"
@@ -4367,7 +4380,7 @@ msgid ""
 msgstr ""
 
 #: themes/socialbase/templates/profile/profile--profile--default.html.twig:84
-#: themes/socialblue/theme-settings.php:84
+#: themes/socialblue/theme-settings.php:85
 msgid "E-mail"
 msgstr ""
 
@@ -4477,11 +4490,11 @@ msgstr ""
 msgid "Email notifications"
 msgstr ""
 
-#: modules/custom/activity_creator/activity_creator.module:145
+#: modules/custom/activity_creator/activity_creator.module:146
 msgid "Enable activity access control for related post entities."
 msgstr ""
 
-#: modules/custom/activity_creator/activity_creator.module:136
+#: modules/custom/activity_creator/activity_creator.module:137
 msgid "Enable activity access control."
 msgstr ""
 
@@ -4582,7 +4595,7 @@ msgid "Enroll date"
 msgstr ""
 
 #: modules/social_features/social_event/modules/social_event_an_enroll/src/Form/EventAnEnrollActionForm.php:95
-msgid "Enroll in @event Event"
+msgid "Enroll in"
 msgstr ""
 
 #: modules/social_features/social_event/modules/social_event_an_enroll/src/Controller/EventAnEnrollController.php:120
@@ -5117,7 +5130,7 @@ msgid "Following content activity context"
 msgstr ""
 
 #: modules/custom/social_font/src/Entity/Font.php:12
-#: themes/socialblue/theme-settings.php:115
+#: themes/socialblue/theme-settings.php:118
 msgid "Font"
 msgstr ""
 
@@ -5135,7 +5148,7 @@ msgstr ""
 
 #: modules/custom/social_font/social_font.links.menu.yml:0
 #: modules/custom/social_font/social_font.routing.yml:0
-#: themes/socialblue/theme-settings.php:54
+#: themes/socialblue/theme-settings.php:55
 msgid "Fonts"
 msgstr ""
 
@@ -5180,7 +5193,7 @@ msgstr ""
 msgid "Forgot password?"
 msgstr ""
 
-#: themes/socialblue/theme-settings.php:69
+#: themes/socialblue/theme-settings.php:70
 msgid "Form control border radius (px)"
 msgstr ""
 
@@ -5238,19 +5251,19 @@ msgstr ""
 msgid "Go to first page"
 msgstr ""
 
-#: themes/socialbase/templates/system/pager.html.twig:91
+#: themes/socialbase/templates/system/pager.html.twig:94
 msgid "Go to last page"
 msgstr ""
 
 #: themes/socialbase/templates/node/book/book-navigation.html.twig:52
-#: themes/socialbase/templates/system/pager.html.twig:81
+#: themes/socialbase/templates/system/pager.html.twig:83
 #: themes/socialbase/templates/views/views-infinite-scroll-pager.html.twig:20
 #: themes/socialbase/templates/views/views-mini-pager.html.twig:33
 msgid "Go to next page"
 msgstr ""
 
 #: themes/socialbase/templates/node/book/book-navigation.html.twig:44
-#: themes/socialbase/templates/system/pager.html.twig:54
+#: themes/socialbase/templates/system/pager.html.twig:55
 #: themes/socialbase/templates/views/views-mini-pager.html.twig:21
 msgid "Go to previous page"
 msgstr ""
@@ -5843,7 +5856,7 @@ msgstr ""
 msgid "Last name"
 msgstr ""
 
-#: themes/socialbase/templates/system/pager.html.twig:92
+#: themes/socialbase/templates/system/pager.html.twig:95
 msgid "Last page"
 msgstr ""
 
@@ -5855,6 +5868,7 @@ msgstr ""
 #: modules/social_features/social_event/modules/social_event_managers/config/install/views.view.managers.yml:0
 #: modules/social_features/social_follow_content/config/install/views.view.following.yml:0
 #: modules/social_features/social_group/config/install/views.view.group_manage_members.yml:0
+#: modules/social_features/social_group/config/install/views.view.group_members.yml:0
 #: modules/social_features/social_group/config/install/views.view.newest_groups.yml:0
 #: modules/social_features/social_private_message/config/install/views.view.inbox.yml:0
 #: modules/social_features/social_profile/config/install/views.view.newest_users.yml:0
@@ -6021,7 +6035,7 @@ msgstr ""
 msgid "Login attempt failed from %ip."
 msgstr ""
 
-#: themes/socialblue/theme-settings.php:92
+#: themes/socialblue/theme-settings.php:93
 msgid "Logo for e-mails"
 msgstr ""
 
@@ -6192,7 +6206,7 @@ msgstr ""
 msgid "Members of {{ arguments.gid }}"
 msgstr ""
 
-#: modules/social_features/social_like/social_like.module:88
+#: modules/social_features/social_like/social_like.module:91
 msgid "Members who liked this @content"
 msgstr ""
 
@@ -6478,7 +6492,7 @@ msgstr ""
 msgid "News"
 msgstr ""
 
-#: themes/socialbase/templates/system/pager.html.twig:82
+#: themes/socialbase/templates/system/pager.html.twig:84
 msgid "Next page"
 msgstr ""
 
@@ -6815,7 +6829,7 @@ msgstr ""
 msgid "Open or download file"
 msgstr ""
 
-#: themes/socialblue/theme-settings.php:36
+#: themes/socialblue/theme-settings.php:37
 msgid "Opensocial settings"
 msgstr ""
 
@@ -7203,7 +7217,7 @@ msgstr ""
 msgid "Preview"
 msgstr ""
 
-#: themes/socialbase/templates/system/pager.html.twig:55
+#: themes/socialbase/templates/system/pager.html.twig:56
 msgid "Previous page"
 msgstr ""
 
@@ -9402,7 +9416,7 @@ msgstr ""
 msgid "The file @filename could not downloaded."
 msgstr ""
 
-#: themes/socialblue/theme-settings.php:118
+#: themes/socialblue/theme-settings.php:121
 msgid "The font family to use."
 msgstr ""
 
@@ -9881,6 +9895,11 @@ msgstr ""
 msgid "Topic add block"
 msgstr ""
 
+#: modules/social_features/social_topic/social_topic.links.menu.yml:0;0
+#: modules/social_features/social_topic/social_topic.routing.yml:0
+msgid "Topic settings"
+msgstr ""
+
 #: modules/social_features/social_topic/config/install/taxonomy.vocabulary.topic_types.yml:0;0
 msgid "Topic types"
 msgstr ""
@@ -10122,7 +10141,7 @@ msgstr ""
 msgid "Updating group content (@id)"
 msgstr ""
 
-#: themes/socialblue/theme-settings.php:93
+#: themes/socialblue/theme-settings.php:94
 msgid ""
 "Upload a logo which is shown in e-mail sent by the platform. This overrides "
 "the default logo that is also used in e-mails when no logo is provided here."
@@ -10583,6 +10602,13 @@ msgstr ""
 #: modules/social_features/social_event/modules/social_event_type/src/Form/SocialEventTypeSettings.php:47
 msgid ""
 "When the amount of available event types reach this amount, on the event "
+"edit and create page, the radio widget will be changed to a select widget "
+"for better usability."
+msgstr ""
+
+#: modules/social_features/social_topic/src/Form/TopicSettingsForm.php:40
+msgid ""
+"When the amount of available topic types reach this amount, on the topic "
 "edit and create page, the radio widget will be changed to a select widget "
 "for better usability."
 msgstr ""
@@ -11254,6 +11280,10 @@ msgstr ""
 msgid "sort_flag_created"
 msgstr ""
 
+#: modules/social_features/social_group/config/install/views.view.group_members.yml:0
+msgid "sort_title"
+msgstr ""
+
 #: modules/social_features/social_private_message/config/install/views.view.inbox.yml:0
 msgid "sort_updated"
 msgstr ""
@@ -11328,6 +11358,7 @@ msgstr ""
 #: modules/social_features/social_event/modules/social_event_managers/config/install/views.view.managers.yml:0
 #: modules/social_features/social_follow_content/config/install/views.view.following.yml:0
 #: modules/social_features/social_group/config/install/views.view.group_manage_members.yml:0
+#: modules/social_features/social_group/config/install/views.view.group_members.yml:0
 #: modules/social_features/social_group/config/install/views.view.newest_groups.yml:0
 #: modules/social_features/social_private_message/config/install/views.view.inbox.yml:0
 #: modules/social_features/social_profile/config/install/views.view.newest_users.yml:0
