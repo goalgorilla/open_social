@@ -1,7 +1,11 @@
 services:
   social_content_report.flag_subscriber:
     class: Drupal\social_content_report\EventSubscriber\FlagSubscriber
-    arguments: ['@config.factory', '@entity_type.manager', '@messenger', '@cache_tags.invalidator']
+    arguments:
+      - '@config.factory'
+      - '@messenger'
+      - '@cache_tags.invalidator'
+      - '@social_content_report.content_report_service'
     tags:
       - { name: event_subscriber }
   social_content_report.content_report_service:
