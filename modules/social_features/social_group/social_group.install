@@ -26,6 +26,10 @@ function social_group_update_dependencies() {
   $dependencies['social_group'][8011] = [
     'gnode' => 8005,
   ];
+  // Prevent errors when missing VBO module.
+  $dependencies['profile'][8002] = [
+    'social_group' => 8501,
+  ];
   return $dependencies;
 }
 
