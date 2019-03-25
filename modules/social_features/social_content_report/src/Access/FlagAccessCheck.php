@@ -4,11 +4,11 @@ namespace Drupal\social_content_report\Access;
 
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Routing\Access\AccessInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Access\AccessResult;
 use Drupal\flag\FlagInterface;
+use Drupal\social_content_report\ContentReportServiceInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -24,26 +24,26 @@ class FlagAccessCheck implements AccessInterface, ContainerInjectionInterface {
   protected $entityTypeManager;
 
   /**
-   * The module handler.
+   * The content report service.
    *
-   * @var \Drupal\Core\Extension\ModuleHandlerInterface
+   * @var \Drupal\social_content_report\ContentReportServiceInterface
    */
-  protected $moduleHandler;
+  protected $socialContentReport;
 
   /**
    * FlagAccessCheck constructor.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity type manager.
-   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
-   *   The module handler.
+   * @param \Drupal\social_content_report\ContentReportServiceInterface $social_content_report
+   *   The content report service.
    */
   public function __construct(
     EntityTypeManagerInterface $entity_type_manager,
-    ModuleHandlerInterface $module_handler
+    ContentReportServiceInterface $social_content_report
   ) {
     $this->entityTypeManager = $entity_type_manager;
-    $this->moduleHandler = $module_handler;
+    $this->socialContentReport = $social_content_report;
   }
 
   /**
@@ -52,7 +52,7 @@ class FlagAccessCheck implements AccessInterface, ContainerInjectionInterface {
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('entity_type.manager'),
-      $container->get('module_handler')
+      $container->get('social_content_report.content_report_service')
     );
   }
 
@@ -70,35 +70,22 @@ class FlagAccessCheck implements AccessInterface, ContainerInjectionInterface {
    *   Allowed if user may use the flag and hasn't reported it yet.
    */
   public function access(AccountInterface $account, FlagInterface $flag, $entity_id) {
-    $ids = $this->moduleHandler->invokeAll('social_content_report_flags');
-
-    // Allow using reports for three predefined entity types.
-    $ids = array_merge($ids, [
-      'report_comment',
-      'report_node',
-      'report_post',
-    ]);
-
-    $this->moduleHandler->alter('social_content_report_flags', $ids);
-
-    if (in_array($flag->id(), $ids)) {
+    if (in_array($flag->id(), $this->socialContentReport->getReportFlagTypes())) {
       // Make sure user is allowed to use the flag.
       if (!$account->hasPermission('flag ' . $flag->id())) {
         return AccessResult::forbidden();
       }
 
-      $entity = $this->entityTypeManager->getStorage($flag->getFlaggableEntityTypeId())->load($entity_id);
+      $entity = $this->entityTypeManager->getStorage($flag->getFlaggableEntityTypeId())
+        ->load($entity_id);
+
       $flagged = $flag->isFlagged($entity, $account);
 
       // If the user already flagged the content they aren't allowed to do it
       // again.
-      if ($flagged) {
-        return AccessResult::forbidden();
-      }
-      else {
-        return AccessResult::allowed();
-      }
+      return $flagged ? AccessResult::forbidden() : AccessResult::allowed();
     }
+
     return AccessResult::neutral();
   }
 

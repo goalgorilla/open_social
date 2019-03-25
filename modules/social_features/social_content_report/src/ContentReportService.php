@@ -4,16 +4,16 @@ namespace Drupal\social_content_report;
 
 use Drupal\Component\Serialization\Json;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Url;
-use Drupal\flag\Entity\Flag;
 use Drupal\flag\FlagServiceInterface;
 
 /**
  * Provides a content report service.
  */
-class ContentReportService {
+class ContentReportService implements ContentReportServiceInterface {
 
   use StringTranslationTrait;
 
@@ -32,58 +32,57 @@ class ContentReportService {
   protected $currentUser;
 
   /**
+   * The module handler.
+   *
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface
+   */
+  protected $moduleHandler;
+
+  /**
    * Constructor for ContentReportService.
    *
    * @param \Drupal\flag\FlagServiceInterface $flag_service
    *   Flag service.
    * @param \Drupal\Core\Session\AccountProxyInterface $current_user
    *   Current user.
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
+   *   The module handler.
    */
-  public function __construct(FlagServiceInterface $flag_service, AccountProxyInterface $current_user) {
+  public function __construct(
+    FlagServiceInterface $flag_service,
+    AccountProxyInterface $current_user,
+    ModuleHandlerInterface $module_handler
+  ) {
     $this->flagService = $flag_service;
     $this->currentUser = $current_user;
+    $this->moduleHandler = $module_handler;
   }
 
   /**
-   * Gets all the 'report_' flag types.
-   *
-   * This makes it more flexible so when new flags are
-   * added, it automatically gets them as well.
-   *
-   * @return array
-   *   List of flag type IDs that are used for reporting.
+   * {@inheritdoc}
    */
   public function getReportFlagTypes(): array {
-    $all_flags = Flag::loadMultiple();
-    $report_flags = [];
-    if (!empty($all_flags)) {
-      // Check if this is a report flag.
-      foreach ($all_flags as $flag) {
-        if (strpos($flag->id, 'report_') === 0) {
-          $report_flags[] = $flag->id;
-        }
-      }
-    }
+    $report_flags = $this->moduleHandler->invokeAll('social_content_report_flags');
+
+    // Allow using reports for three predefined entity types.
+    $report_flags = array_merge($report_flags, [
+      'report_comment',
+      'report_node',
+      'report_post',
+    ]);
+
+    $this->moduleHandler->alter('social_content_report_flags', $report_flags);
 
     return $report_flags;
   }
 
   /**
-   * Returns a modal link to the reporting form to use in a #links array.
-   *
-   * @param \Drupal\Core\Entity\EntityInterface $entity
-   *   The entity to create the report for.
-   * @param string $flag_id
-   *   The flag ID.
-   *
-   * @return array|bool
-   *   A renderable array to be used in a #links array or FALSE if the user has
-   *   no access.
+   * {@inheritdoc}
    */
-  public function getModalLink(EntityInterface $entity, $flag_id) {
+  public function getModalLink(EntityInterface $entity, $flag_id): ?array {
     // Check if users may flag this entity.
     if (!$this->currentUser->hasPermission('flag ' . $flag_id)) {
-      return FALSE;
+      return NULL;
     }
 
     $flag = $this->flagService->getFlagById($flag_id);
@@ -110,7 +109,12 @@ class ContentReportService {
           'flag' => $flag_id,
           'entity_id' => $entity->id(),
         ],
-        ['query' => ['destination' => Url::fromRoute('<current>')->toString()]]),
+        [
+          'query' => [
+            'destination' => Url::fromRoute('<current>')->toString(),
+          ],
+        ]
+      ),
       'attributes' => [
         'data-dialog-type' => 'modal',
         'data-dialog-options' => JSON::encode([
