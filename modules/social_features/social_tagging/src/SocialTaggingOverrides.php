@@ -244,7 +244,6 @@ class SocialTaggingOverrides implements ConfigFactoryOverrideInterface {
           $group++;
         }
 
-
         $relationship = ($config_name === 'views.view.group_topics' || $config_name === 'views.view.group_events') ? 'gc__node' : 'none';
         $table = ($config_name === 'views.view.newest_groups') ? 'group__social_tagging' : 'node__social_tagging';
 
