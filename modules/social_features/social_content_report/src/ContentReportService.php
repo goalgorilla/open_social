@@ -53,7 +53,7 @@ class ContentReportService {
    * @return array
    *   List of flag type IDs that are used for reporting.
    */
-  public function getReportFlagTypes() {
+  public function getReportFlagTypes(): array {
     $all_flags = Flag::loadMultiple();
     $report_flags = [];
     if (!empty($all_flags)) {
