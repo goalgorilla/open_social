@@ -1,0 +1,68 @@
+<?php
+
+/**
+ * @file
+ * Install and update functions for the social_profile_organization_tag module.
+ */
+
+use Drupal\user\Entity\Role;
+
+/**
+ * Implements hook_install().
+ */
+function social_profile_organization_tag_install() {
+  // Set some default permissions.
+  _social_profile_organization_tag_set_permissions();
+  // Set the weight of this module to 1 so it is loaded after
+  // the social_profile module.
+  module_set_weight('social_profile_organization_tag', 1);
+}
+
+/**
+ * Function to set permissions.
+ */
+function _social_profile_organization_tag_set_permissions() {
+  $roles = Role::loadMultiple();
+
+  /** @var \Drupal\user\Entity\Role $role */
+  foreach ($roles as $role) {
+    if ($role->id() === 'administrator') {
+      continue;
+    }
+
+    $permissions = _social_profile_organization_tag_get_permissions($role->id());
+    user_role_grant_permissions($role->id(), $permissions);
+  }
+}
+
+/**
+ * Return the permissions per role.
+ *
+ * @param string $role
+ *   The role to get the permissions for.
+ *
+ * @return array
+ *   A list of permissions.
+ */
+function _social_profile_organization_tag_get_permissions($role) {
+  // Anonymous.
+  $permissions['anonymous'] = [];
+
+  // Authenticated.
+  $permissions['authenticated'] = array_merge($permissions['anonymous'], []);
+
+  // Content manager.
+  $permissions['contentmanager'] = array_merge($permissions['authenticated'], [
+    'delete terms in profile_organization_tag',
+    'edit terms in profile_tag',
+    'edit profile organization tags',
+  ]);
+
+  // Site manager.
+  $permissions['sitemanager'] = array_merge($permissions['contentmanager'], []);
+
+  if (isset($permissions[$role])) {
+    return $permissions[$role];
+  }
+  return [];
+}

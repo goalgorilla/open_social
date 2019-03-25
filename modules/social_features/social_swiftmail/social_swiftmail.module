@@ -88,11 +88,9 @@ function social_swiftmail_mail_alter(&$message) {
  * Function the fetches the logo.
  */
 function social_swiftmail_get_logo($theme_id) {
-  // Determine host.
-  $request = \Drupal::request();
-  $host = $request->getSchemeAndHttpHost();
+  global $base_url;
   // Default we use the logo image.
-  $logo = $host . theme_get_setting('logo.url', $theme_id);
+  $logo = $base_url . theme_get_setting('logo.url', $theme_id);
 
   // It could be overridden here.
   $email_logo = theme_get_setting('email_logo', $theme_id);

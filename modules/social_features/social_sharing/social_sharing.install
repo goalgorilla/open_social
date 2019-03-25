@@ -1,0 +1,56 @@
+<?php
+
+/**
+ * @file
+ * The Social Sharing install.
+ */
+
+use Drupal\block\Entity\Block;
+use Drupal\Core\Entity\EntityStorageException;
+
+/**
+ * Install social_sharing.
+ */
+function social_sharing_install() {
+  // Default shariff settings.
+  _social_sharing_shariff_settings();
+}
+
+/**
+ * Remove the old Addtoany bocks.
+ */
+function social_sharing_update_8001() {
+  // Enable shariff.
+  \Drupal::service('module_installer')->install(['shariff']);
+
+  // Default shariff settings.
+  _social_sharing_shariff_settings();
+
+  $blocks = [
+    'addtoanybuttons',
+    'addtoanybuttons_2',
+  ];
+
+  foreach ($blocks as $block_id) {
+    $block = Block::load($block_id);
+
+    try {
+      $block->delete();
+    }
+    catch (EntityStorageException $e) {
+      // Add the error to watchdog.
+      \Drupal::messenger()->addMessage($e->getMessage());
+    }
+  }
+}
+
+/**
+ * Remove the old Addtoany bocks.
+ */
+function _social_sharing_shariff_settings() {
+  // Get the current array of enabled services.
+  $services = \Drupal::configFactory()->getEditable('shariff.settings')->get('shariff_services');
+  // Add 'add this'.
+  $services['addthis'] = 'addthis';
+  \Drupal::configFactory()->getEditable('shariff.settings')->set('shariff_services', $services)->save();
+}

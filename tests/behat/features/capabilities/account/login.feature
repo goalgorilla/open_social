@@ -32,4 +32,4 @@ Feature: Login
       | error messages |
       | Unrecognized username or password |
       | There have been more than 5 failed login attempts for this account. It is temporarily blocked |
-    And I should see the error message "This could happen for one of for the following reasons:"
+    And I should see the error message "This may have happened for the following reasons:"

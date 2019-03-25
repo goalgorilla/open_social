@@ -221,9 +221,24 @@ class Activity extends ContentEntityBase implements ActivityInterface {
           $target_id = $group_content->getEntity()->id();
         }
       }
+      elseif ($target_type === 'event_enrollment') {
+        $entity_storage = \Drupal::entityTypeManager()
+          ->getStorage($target_type);
+        $entity = $entity_storage->load($target_id);
 
-      $entity = entity_load($target_type, $target_id);
-      if (!empty($entity)) {
+        // Lets make the Event node the target for Enrollments.
+        if ($entity !== NULL) {
+          /** @var \Drupal\social_event\Entity\EventEnrollment $entity */
+          $event_id = $entity->getFieldValue('field_event', 'target_id');
+          $target_id = $event_id;
+          $target_type = 'node';
+        }
+      }
+
+      $entity_storage = \Drupal::entityTypeManager()
+        ->getStorage($target_type);
+      $entity = $entity_storage->load($target_id);
+      if ($entity !== NULL) {
         /** @var \Drupal\Core\Url $link */
         $link = $entity->urlInfo('canonical');
       }

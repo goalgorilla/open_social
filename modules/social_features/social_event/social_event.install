@@ -85,6 +85,7 @@ function _social_event_get_permissions($role) {
   $permissions['sitemanager'] = array_merge($permissions['contentmanager'], [
     'administer visibility settings',
     'administer social_event settings',
+    'view published event enrollment entities',
   ]);
 
   if (isset($permissions[$role])) {

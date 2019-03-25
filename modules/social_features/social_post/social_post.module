@@ -114,6 +114,54 @@ function _social_post_comment_post_comment_form_submit(array $form, FormStateInt
 }
 
 /**
+ * Function that returns the Icon or Title data for post visibility details.
+ *
+ * @param string $visibility
+ *   The current field_visibility value for the post.
+ * @param string $return_value
+ *   Icon or Title depending on what we should return.
+ */
+function social_post_get_visibility_details($visibility, $return_value = 'icon') {
+
+  $return = &drupal_static(__FUNCTION__ . $visibility . $return_value);
+
+  if (!isset($return)) {
+    // Set the materialize icon.
+    switch ($visibility) {
+      case '0':
+        $icon = 'community';
+        $title = t('Community');
+        break;
+
+      case '1':
+        $icon = 'public';
+        $title = t('Public');
+        break;
+
+      case '2':
+        $icon = 'community';
+        $title = t('Community');
+        break;
+
+      case '3':
+        $icon = 'lock';
+        $title = t('Group members');
+        break;
+
+      default:
+        $icon = 'community';
+        $title = t('Community');
+    }
+  }
+
+  \Drupal::moduleHandler()->alter('social_post_visibility_info_alter', $visibility, $icon, $title);
+
+  $return = ($return_value === 'icon') ? $icon : $title;
+
+  return $return;
+}
+
+/**
  * Implements hook_views_data_alter().
  */
 function social_post_views_data_alter(array &$data) {
@@ -158,6 +206,19 @@ function social_post_theme() {
     ],
   ];
   return $items;
+}
+
+/**
+ * Implements hook_preprocess_activity().
+ */
+function social_post_preprocess_activity(&$variables) {
+  // Add visibility icon and label to activity posts.
+  if (!empty($variables['elements']['field_activity_entity'][0]['#post'])) {
+    $post = $variables['elements']['field_activity_entity'][0]['#post'];
+
+    $variables['visibility_icon'] = social_post_get_visibility_details($post->get('field_visibility')->value, 'icon');
+    $variables['visibility_label'] = social_post_get_visibility_details($post->get('field_visibility')->value, 'label');
+  }
 }
 
 /**

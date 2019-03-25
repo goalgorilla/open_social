@@ -1,0 +1,6 @@
+services:
+  social_group_quickjoin.redirect_subscriber:
+    class: Drupal\social_group_quickjoin\EventSubscriber\RedirectSubscriber
+    arguments: ['@current_route_match', '@current_user', '@config.factory']
+    tags:
+      - { name: event_subscriber }

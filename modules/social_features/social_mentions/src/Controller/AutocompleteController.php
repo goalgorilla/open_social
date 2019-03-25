@@ -105,7 +105,7 @@ class AutocompleteController extends ControllerBase {
         $build = $view_builder->view($profile, 'autocomplete_item');
         $item['html_item'] = render($build);
         $item['profile_id'] = $profile->id();
-        $item['value'] = $account->getDisplayName();
+        $item['value'] = strip_tags($account->getDisplayName());
       }
 
       $response[] = $item;

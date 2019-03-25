@@ -5,18 +5,20 @@
  * The Social profile module.
  */
 
-use Drupal\user\Entity\User;
-use Drupal\Core\Url;
-use Drupal\Core\Link;
-use Drupal\Core\Form\FormStateInterface;
-use Drupal\profile\Entity\Profile;
-use Drupal\profile\Entity\ProfileType;
-use Drupal\user\UserInterface;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Link;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\Core\Url;
 use Drupal\file\Entity\File;
 use Drupal\image\Entity\ImageStyle;
+use Drupal\profile\Entity\Profile;
+use Drupal\profile\Entity\ProfileType;
+use Drupal\user\Entity\User;
+use Drupal\user\UserInterface;
 
 define('SOCIAL_PROFILE_SUGGESTIONS_USERNAME', 'username');
 define('SOCIAL_PROFILE_SUGGESTIONS_FULL_NAME', 'full_name');
@@ -630,4 +632,69 @@ function social_profile_entity_operation_alter(array &$operations, EntityInterfa
       ];
     }
   }
+}
+
+/**
+ * Implements hook_social_user_account_header_account_links().
+ *
+ * Adds the "View my profile" and "Edit profile" link to the user menu.
+ */
+function social_profile_social_user_account_header_account_links(array $context) {
+  // We require a user for these links.
+  if (empty($context['user']) || !($context['user'] instanceof AccountInterface)) {
+    return [];
+  }
+
+  return [
+    'my_profile' => [
+      '#type' => 'link',
+      '#attributes' => [
+        'title' => new TranslatableMarkup('View my profile'),
+      ],
+      '#title' => new TranslatableMarkup('My profile'),
+      '#weight' => 500,
+    ] + Url::fromRoute('user.page')->toRenderArray(),
+    'edit_profile' => [
+      '#type' => 'link',
+      '#attributes' => [
+        'title' => new TranslatableMarkup("Edit profile"),
+      ],
+      '#title' => new TranslatableMarkup("Edit profile"),
+      '#weight' => 1300,
+    ] + Url::fromRoute('entity.profile.type.user_profile_form', [
+      'user' => $context['user']->id(),
+      'profile_type' => 'profile',
+    ])->toRenderArray(),
+  ];
+}
+
+/**
+ * Implements hook_social_user_account_header_items_alter().
+ *
+ * Replaces the default user icon with the user's profile image if available.
+ */
+function social_profile_social_user_account_header_items_alter(array &$menu_items, array $context) {
+  // If we don't have an account_box there's nothing to do.
+  if (empty($menu_items['account_box'])) {
+    return;
+  }
+
+  // A user is required to find the profile image.
+  if (empty($context['user']) || !($context['user'] instanceof AccountInterface)) {
+    return;
+  }
+
+  $storage = \Drupal::entityTypeManager()->getStorage('profile');
+  $profile = $storage->loadByUser($context['user'], 'profile');
+
+  // If the user does not have a profile then there's no profile image.
+  if (empty($profile)) {
+    return;
+  }
+
+  // Provide a render array as image which will overrule the user icon.
+  $menu_items['account_box']['#image'] = \Drupal::entityTypeManager()
+    ->getViewBuilder('profile')
+    ->view($profile, 'small');;
+
 }

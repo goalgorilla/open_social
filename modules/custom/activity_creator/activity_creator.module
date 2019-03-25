@@ -7,9 +7,9 @@
 
 use Drupal\message\Entity\Message;
 use Drupal\Core\Cache\Cache;
+use Drupal\Core\Config\Entity\ConfigEntityInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
-use Drupal\Core\Url;
 use Drupal\activity_creator\Entity\Activity;
 
 /**
@@ -223,18 +223,6 @@ function activity_creator_entity_view(array &$build, EntityInterface $entity, En
 }
 
 /**
- * Implements hook_preprocess_views_view_unformatted().
- */
-function activity_creator_preprocess_views_view_unformatted(&$variables) {
-  $view = $variables['view'];
-  $view_name = $view->storage->id();
-  if ($view_name == 'activity_stream_notifications') {
-    $notification_url = Url::fromRoute('view.activity_stream_notifications.page_1');
-    $variables['notification_url'] = $notification_url;
-  }
-}
-
-/**
  * Implements hook_entity_update().
  *
  * Clear cache tags for related activities.
@@ -268,6 +256,15 @@ function _activity_creator_activity_for_entity_updater($action, EntityInterface 
   if ($entity !== NULL) {
     $entity_type = $entity->getEntityTypeId();
     $entity_id = $entity->id();
+
+    // We never create activities for configuration entities but accessing
+    // entity queries during configuration changes may cause errors.
+    if ($entity instanceof ConfigEntityInterface) {
+      return;
+    }
+
+    // TODO: The if statement below can be refactored after the code that was
+    // added above but we didn't have time for that yet.
     if ($entity_type !== 'activity') {
 
       $entity_query = \Drupal::entityQuery('activity');

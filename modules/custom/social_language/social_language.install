@@ -5,6 +5,7 @@
  * Install, update and uninstall functions for the social_language module.
  */
 
+use Drupal\Core\Serialization\Yaml;
 use Drupal\user\Entity\Role;
 
 /**
@@ -48,13 +49,68 @@ function _social_language_get_permissions($role) {
     'create content translations',
     'delete content translations',
     'update content translations',
-    'translate menu_link_content',
-    'translate account settings',
-    'translate system information',
+    'translate any entity',
   ];
 
-  if (isset($permissions[$role])) {
-    return $permissions[$role];
+  return isset($permissions[$role]) ? $permissions[$role] : [];
+}
+
+/**
+ * Enable topic type and profile tag taxonomy translation.
+ */
+function social_language_update_8001() {
+  // Install the configuration added as part of this update.
+  $profile_tag_yml = <<<YAML
+langcode: en
+status: true
+dependencies:
+  config:
+    - taxonomy.vocabulary.profile_tag
+  module:
+    - content_translation
+third_party_settings:
+  content_translation:
+    enabled: true
+id: taxonomy_term.profile_tag
+target_entity_type_id: taxonomy_term
+target_bundle: profile_tag
+default_langcode: site_default
+language_alterable: true
+YAML;
+
+  $topic_types_yml = <<<YAML
+langcode: en
+status: true
+dependencies:
+  config:
+    - taxonomy.vocabulary.topic_types
+  module:
+    - content_translation
+third_party_settings:
+  content_translation:
+    enabled: true
+id: taxonomy_term.topic_types
+target_entity_type_id: taxonomy_term
+target_bundle: topic_types
+default_langcode: site_default
+language_alterable: true
+YAML;
+
+  $new_config = [
+    'language.content_settings.taxonomy_term.profile_tag' => $profile_tag_yml,
+    'language.content_settings.taxonomy_term.topic_types' => $topic_types_yml,
+  ];
+
+  $config_factory = \Drupal::configFactory();
+
+  foreach ($new_config as $name => $yml) {
+    $data = Yaml::decode($yml);
+    $config_factory->getEditable($name)->setData($data)->save(TRUE);
   }
-  return [];
+
+  // Grant the new permissions for the sitemanager.
+  user_role_grant_permissions('sitemanager', [
+    'translate profile_tag taxonomy_term',
+    'translate topic_types taxonomy_term',
+  ]);
 }

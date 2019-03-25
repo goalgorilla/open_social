@@ -9,13 +9,15 @@ use Drupal\block\Entity\Block;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultNeutral;
 use Drupal\Core\Block\BlockPluginInterface;
-use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Session\AccountInterface;
-use Drupal\node\Entity\Node;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\Core\Url;
 use Drupal\group\Entity\GroupContent;
 use Drupal\group\GroupMembershipLoaderInterface;
+use Drupal\node\Entity\Node;
 use Drupal\social_event\Controller\SocialEventController;
 use Drupal\views\Plugin\views\query\QueryPluginBase;
 use Drupal\views\ViewExecutable;
@@ -321,6 +323,49 @@ function _social_event_format_date($event, $view_mode) {
 }
 
 /**
+ * Implements hook_social_user_account_header_create_links().
+ *
+ * Adds the "Create Event" link to the content creation menu.
+ */
+function social_event_social_user_account_header_create_links($context) {
+  return [
+    'add_event' => [
+      '#type' => 'link',
+      '#attributes' => [
+        'title' => new TranslatableMarkup('Create New Event'),
+      ],
+      '#title' => new TranslatableMarkup('New Event'),
+      '#weight' => 100,
+    ] + Url::fromRoute('node.add', ['node_type' => 'event'])->toRenderArray(),
+  ];
+}
+
+/**
+ * Implements hook_social_user_account_header_account_links().
+ *
+ * Adds the "View my events" link to the user menu.
+ */
+function social_event_social_user_account_header_account_links(array $context) {
+  // We require a user for this link.
+  if (empty($context['user']) || !($context['user'] instanceof AccountInterface)) {
+    return [];
+  }
+
+  return [
+    'my_events' => [
+      '#type' => 'link',
+      '#attributes' => [
+        'title' => new TranslatableMarkup('View my events'),
+      ],
+      '#title' => new TranslatableMarkup('My events'),
+      '#weight' => 600,
+    ] + Url::fromRoute('view.events.events_overview', [
+      'user' => $context['user']->id(),
+    ])->toRenderArray(),
+  ];
+}
+
+/**
  * Custom permission check, to see if people have access to users' events.
  *
  * Implements hook_block_access().
@@ -443,4 +488,31 @@ function social_event_date_all_day_checkbox(&$element, FormStateInterface $form_
 function social_event_date_is_all_day(DrupalDateTime $date) {
   $zone = !empty($date->getTimezone()) ? $date->getTimezone()->getName() : DateTimeItemInterface::STORAGE_TIMEZONE;
   return $date->format('H:i', ['timezone' => $zone]) == '00:01';
+
+}
+
+/**
+ * Add notification settings display on user Profile for the EO notification.
+ *
+ * @param array &$items
+ *   An array of groups that contain a title and an array of templates that are
+ *   contained in this settings group.
+ * @param array $email_message_templates
+ *   Message templates enabled for sending by email.
+ *
+ * @see activity_send_email_form_user_form_alter()
+ */
+function social_event_activity_send_email_notifications_alter(array &$items, array $email_message_templates) {
+  // If a activity_on_events_im_organizing template is enabled then we add it in
+  // the "Message to Me" section.
+  if (isset($email_message_templates['activity_on_events_im_organizing'])) {
+    $items['what_manage']['templates'][] = 'activity_on_events_im_organizing';
+  }
+}
+
+/**
+ * Implements hook_social_follow_content_types_alter().
+ */
+function social_event_social_follow_content_types_alter(array &$types) {
+  $types[] = 'event';
 }

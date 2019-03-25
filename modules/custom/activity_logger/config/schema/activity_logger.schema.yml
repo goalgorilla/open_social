@@ -1,0 +1,32 @@
+message.template.*.third_party.activity_logger:
+  type: activity_logger.third_party_settings
+
+activity_logger.third_party_settings:
+  type: mapping
+  label: 'Message template activity settings'
+  mapping:
+    activity_bundle_entities:
+      type: sequence
+      label: 'The entities that are affected for this message'
+      sequence:
+        type: string
+    activity_action:
+      type: string
+      label: 'The activity actions for this message'
+    activity_context:
+      type: string
+      label: 'The activity context for this message'
+    activity_destinations:
+      type: sequence
+      label: 'The activity destinations for this message'
+      sequence:
+        type: string
+    activity_create_direct:
+      type: boolean
+      label: 'Create activity items direct instead of in Queue'
+    activity_aggregate:
+      type: boolean
+      label: 'Aggregate activity'
+    activity_entity_condition:
+      type: string
+      label: 'The entity condition for this message'

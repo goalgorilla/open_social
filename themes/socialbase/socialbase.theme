@@ -8,7 +8,6 @@
 use Drupal\comment\Entity\Comment;
 use Drupal\Component\Utility\Html as HtmlUtility;
 use Drupal\Core\Session\AnonymousUserSession;
-use Drupal\bootstrap\Bootstrap;
 use Drupal\node\Entity\Node;
 use Drupal\Core\Language\LanguageInterface;
 
@@ -16,13 +15,6 @@ use Drupal\Core\Language\LanguageInterface;
 $includes_path = dirname(__FILE__) . '/includes/*.inc';
 foreach (glob($includes_path) as $filename) {
   require_once dirname(__FILE__) . '/includes/' . basename($filename);
-}
-
-/**
- * Implements hook_theme_suggestions_alter().
- */
-function socialbase_theme_suggestions_alter(&$data, &$context1 = NULL, &$context2 = NULL) {
-  Bootstrap::alter(__FUNCTION__, $data, $context1, $context2);
 }
 
 /**
@@ -34,12 +26,10 @@ function socialbase_group_link($node) {
 
   // Exclude nodes without ids (Preview).
   if (!empty($node->id()) && !empty($group)) {
-    $group_type_id = $group->getGroupType()->id();
     $group_content = \Drupal::entityTypeManager()
       ->getStorage('group_content')
       ->loadByProperties([
         'entity_id' => $node->id(),
-        'type' => $group_type_id . '-group_node-' . $node->getType(),
       ]);
     if (!empty($group_content)) {
       $curr_langcode = \Drupal::languageManager()->getCurrentLanguage(LanguageInterface::TYPE_CONTENT)->getId();
