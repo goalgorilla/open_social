@@ -91,7 +91,7 @@ class ContentReportService implements ContentReportServiceInterface {
     // If the user already flagged this, we return a disabled link to nowhere.
     if ($flagging) {
       return [
-        'title' => $this->t('You have reported this'),
+        'title' => $this->t('Reported'),
         'url' => Url::fromRoute('<none>'),
         'attributes' => [
           'class' => [
