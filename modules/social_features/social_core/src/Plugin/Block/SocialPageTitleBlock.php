@@ -141,7 +141,6 @@ class SocialPageTitleBlock extends PageTitleBlock implements ContainerFactoryPlu
       $in_path = str_replace($paths_to_exclude, '', $current_path) != $current_path;
 
       if (!$in_path) {
-
         $title = $node->getTitle();
 
         return [
@@ -150,35 +149,27 @@ class SocialPageTitleBlock extends PageTitleBlock implements ContainerFactoryPlu
           '#node' => $node,
           '#section_class' => 'page-title',
         ];
+      } else {
+        $title = $this->title;
 
+        if(!is_null($title) && $title != '') {
+          return [
+            '#type' => 'page_title',
+            '#title' => $this->title,
+          ];
+        }
       }
-      else {
-
-        return [
-          '#type' => 'page_title',
-          '#title' => $this->title,
-        ];
-
-      }
-
-    }
-    else {
-
+    } else {
       if ($route = $request->attributes->get(RouteObjectInterface::ROUTE_OBJECT)) {
         $title = $this->titleResolver->getTitle($request, $route);
-        return [
-          '#type' => 'page_title',
-          '#title' => $title,
-        ];
-      }
-      else {
-        return [
-          '#type' => 'page_title',
-          '#title' => '',
-        ];
-      }
 
+        if(!is_null($title) && $title != '') {
+          return [
+            '#type' => 'page_title',
+            '#title' => $title,
+          ];
+        }
+      }
     }
   }
-
 }
