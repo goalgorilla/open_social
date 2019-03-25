@@ -79,7 +79,7 @@ class ContentReportService implements ContentReportServiceInterface {
   /**
    * {@inheritdoc}
    */
-  public function getModalLink(EntityInterface $entity, $flag_id): ?array {
+  public function getModalLink(EntityInterface $entity, $flag_id, $is_button = FALSE): ?array {
     // Check if users may flag this entity.
     if (!$this->currentUser->hasPermission('flag ' . $flag_id)) {
       return NULL;
@@ -90,15 +90,28 @@ class ContentReportService implements ContentReportServiceInterface {
 
     // If the user already flagged this, we return a disabled link to nowhere.
     if ($flagging) {
-      return [
+      $element = [
         'title' => $this->t('Reported'),
-        'url' => Url::fromRoute('<none>'),
         'attributes' => [
           'class' => [
-            'disabled', 'btn', 'btn-link',
+            'disabled',
           ],
         ],
       ];
+
+      if ($is_button) {
+        $element += [
+          'url' => Url::fromRoute('<none>'),
+          'attributes' => [
+            'class' => [
+              'btn',
+              'btn-link',
+            ],
+          ],
+        ];
+      }
+
+      return $element;
     }
 
     // Return the modal link if the user did not yet flag this content.

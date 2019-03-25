@@ -20,6 +20,21 @@ class Links extends PreprocessBase {
   public function preprocessVariables(Variables $variables) {
     unset($variables['links']['comment-add']);
     unset($variables['links']['comment-comments']);
+
+    foreach ($variables['links'] as &$link) {
+      if (isset($link['text_attributes'])) {
+        /** @var \Drupal\Core\Template\Attribute $text_attributes */
+        $text_attributes = $link['text_attributes'];
+
+        if ($link['disabled'] = $text_attributes->hasClass('disabled')) {
+          /** @var \Drupal\Core\Template\Attribute $attributes */
+          $attributes = $link['attributes'];
+
+          $attributes->addClass('disabled');
+          $text_attributes->removeClass('disabled');
+        }
+      }
+    }
   }
 
 }

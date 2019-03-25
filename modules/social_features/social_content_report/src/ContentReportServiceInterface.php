@@ -29,11 +29,13 @@ interface ContentReportServiceInterface {
    *   The entity to create the report for.
    * @param string $flag_id
    *   The flag ID.
+   * @param bool $is_button
+   *   TRUE if need to show it like button.
    *
    * @return array|null
    *   A renderable array to be used in a #links array or FALSE if the user has
    *   no access.
    */
-  public function getModalLink(EntityInterface $entity, $flag_id): ?array;
+  public function getModalLink(EntityInterface $entity, $flag_id, $is_button = FALSE): ?array;
 
 }
