@@ -15,7 +15,6 @@ class RouteSubscriber extends RouteSubscriberBase {
    * {@inheritdoc}
    */
   protected function alterRoutes(RouteCollection $collection) {
-    // Always deny access to '/user/logout'.
     // Note that the second parameter of setRequirement() is a string.
     if ($route = $collection->get('flag.field_entry')) {
       $route->setRequirement('_custom_access', FlagAccessCheck::class . '::access');
