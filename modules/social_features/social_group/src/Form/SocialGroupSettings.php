@@ -2,6 +2,7 @@
 
 namespace Drupal\social_group\Form;
 
+use Drupal\Core\Cache\Cache;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\crop\Entity\CropType;
@@ -78,6 +79,8 @@ class SocialGroupSettings extends ConfigFormBase {
       ->set('allow_hero_selection', $form_state->getValue('allow_hero_selection'))
       ->set('default_hero', $form_state->getValue('default_hero'))
       ->save();
+
+    Cache::invalidateTags(['group_view']);
   }
 
   /**
