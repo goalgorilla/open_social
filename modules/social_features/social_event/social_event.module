@@ -488,7 +488,6 @@ function social_event_date_all_day_checkbox(&$element, FormStateInterface $form_
 function social_event_date_is_all_day(DrupalDateTime $date) {
   $zone = !empty($date->getTimezone()) ? $date->getTimezone()->getName() : DateTimeItemInterface::STORAGE_TIMEZONE;
   return $date->format('H:i', ['timezone' => $zone]) == '00:01';
-
 }
 
 /**
