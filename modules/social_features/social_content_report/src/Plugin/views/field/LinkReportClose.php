@@ -20,8 +20,8 @@ class LinkReportClose extends LinkBase {
    */
   protected function getUrlInfo(ResultRow $row) {
     /** @var \Drupal\flag\FlaggingInterface $flagging */
-    $flagging = $this
-      ->getEntity($row);
+    $flagging = $this->getEntity($row);
+
     return Url::fromRoute('social_content_report.close_report', [
       'flagging' => $flagging->id(),
     ]);
@@ -31,8 +31,7 @@ class LinkReportClose extends LinkBase {
    * {@inheritdoc}
    */
   protected function getDefaultLabel() {
-    return $this
-      ->t('Close');
+    return $this->t('Close');
   }
 
 }

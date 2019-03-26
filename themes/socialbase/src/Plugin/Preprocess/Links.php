@@ -21,6 +21,7 @@ class Links extends PreprocessBase {
     unset($variables['links']['comment-add']);
     unset($variables['links']['comment-comments']);
 
+    // Move CSS class to "li" tag for marking a no-link item as disabled.
     foreach ($variables['links'] as &$link) {
       if (isset($link['text_attributes'])) {
         /** @var \Drupal\Core\Template\Attribute $text_attributes */

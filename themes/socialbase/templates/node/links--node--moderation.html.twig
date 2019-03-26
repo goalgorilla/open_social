@@ -46,6 +46,8 @@
             {{ item.link }}
           {%- elseif item.text_attributes -%}
             <span{{ item.text_attributes }}>{{ item.text }}</span>
+          {%- elseif item.disabled -%}
+            <span>{{ item.text }}</span>
           {%- else -%}
             {{ item.text }}
           {%- endif -%}
