@@ -7,6 +7,7 @@
 
 use Drupal\message\Entity\Message;
 use Drupal\Core\Cache\Cache;
+use Drupal\Core\Config\Entity\ConfigEntityInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\activity_creator\Entity\Activity;
@@ -255,6 +256,15 @@ function _activity_creator_activity_for_entity_updater($action, EntityInterface 
   if ($entity !== NULL) {
     $entity_type = $entity->getEntityTypeId();
     $entity_id = $entity->id();
+
+    // We never create activities for configuration entities but accessing
+    // entity queries during configuration changes may cause errors.
+    if ($entity instanceof ConfigEntityInterface) {
+      return;
+    }
+
+    // TODO: The if statement below can be refactored after the code that was
+    // added above but we didn't have time for that yet.
     if ($entity_type !== 'activity') {
 
       $entity_query = \Drupal::entityQuery('activity');

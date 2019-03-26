@@ -201,6 +201,7 @@ function social_install_profile_modules(array &$install_state) {
     'social_core' => 'social_core',
     'social_user' => 'social_user',
     'social_group' => 'social_group',
+    'social_group_gvbo' => 'social_group_gvbo',
     'social_event' => 'social_event',
     'social_topic' => 'social_topic',
     'social_profile' => 'social_profile',
