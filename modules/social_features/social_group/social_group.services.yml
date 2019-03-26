@@ -28,3 +28,6 @@ services:
     class: \Drupal\social_group\SocialGroupAdminPeopleConfigOverride
     tags:
     - {name: config.factory.override, priority: 10}
+  social_group.hero_image:
+    class: Drupal\social_group\SocialGroupHero
+    arguments: ['@config.factory']
