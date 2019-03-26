@@ -23,7 +23,7 @@ class Html extends PreprocessBase {
     if ($variables['root_path'] == 'node') {
       $current_path = \Drupal::service('path.current')->getPath();
       $path_pieces = explode("/", $current_path);
-      $path_target = ['add'];
+      $path_target = ['add','edit'];
       if (count(array_intersect($path_pieces, $path_target)) > 0) {
         $variables['node_edit'] = TRUE;
       }
