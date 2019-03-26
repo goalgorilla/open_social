@@ -149,21 +149,23 @@ class SocialPageTitleBlock extends PageTitleBlock implements ContainerFactoryPlu
           '#node' => $node,
           '#section_class' => 'page-title',
         ];
-      } else {
+      }
+      else {
         $title = $this->title;
 
-        if(!is_null($title) && $title != '') {
+        if (!is_null($title) && $title != '') {
           return [
             '#type' => 'page_title',
             '#title' => $this->title,
           ];
         }
       }
-    } else {
+    }
+    else {
       if ($route = $request->attributes->get(RouteObjectInterface::ROUTE_OBJECT)) {
         $title = $this->titleResolver->getTitle($request, $route);
 
-        if(!is_null($title) && $title != '') {
+        if (!is_null($title) && $title != '') {
           return [
             '#type' => 'page_title',
             '#title' => $title,
@@ -171,5 +173,7 @@ class SocialPageTitleBlock extends PageTitleBlock implements ContainerFactoryPlu
         }
       }
     }
+
   }
+
 }
