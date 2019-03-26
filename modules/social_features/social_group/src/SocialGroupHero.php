@@ -18,6 +18,8 @@ class SocialGroupHero {
    */
   protected $configFactory;
 
+  protected $isSmall = FALSE;
+
   /**
    * Constructor.
    *
@@ -61,6 +63,16 @@ class SocialGroupHero {
   }
 
   /**
+   * Small or not.
+   *
+   * @return bool
+   *   Is this considered small.
+   */
+  public function isSmall() :bool {
+    return $this->isSmall;
+  }
+
+  /**
    * Function that converts crop type to image style.
    *
    * @param string $cropType
@@ -74,6 +86,12 @@ class SocialGroupHero {
       'hero' => 'social_xx_large',
       'hero_small' => 'social_hero_small',
     ];
+
+    switch ($cropType) {
+      case 'hero_small':
+        $this->isSmall = TRUE;
+      default:
+    }
 
     return $values[$cropType] ?? 'social_xx_large';
   }

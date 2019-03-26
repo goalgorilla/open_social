@@ -239,6 +239,10 @@ function social_group_preprocess_group(array &$variables) {
   if (!empty($group->field_group_image->entity)) {
     $variables['group_hero_styled_image_url'] = ImageStyle::load($image_style)
       ->buildUrl($group->field_group_image->entity->getFileUri());
+    // Check if this style is considered small.
+    if (Drupal::getContainer()->get('social_group.hero_image')->isSmall()) {
+      $variables['group_hero_small'] = TRUE;
+    }
   }
 
   // Add group edit url for management.
