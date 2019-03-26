@@ -16,7 +16,7 @@
  * @return array
  *   The flag entity IDs.
  *
- * @see \Drupal\social_content_report\Access::access()
+ * @see \Drupal\social_content_report\ContentReportService::getReportFlagTypes()
  */
 function hook_social_content_report_flags() {
   return [
@@ -27,12 +27,12 @@ function hook_social_content_report_flags() {
 }
 
 /**
- * Allows a module to alter the create content links.
+ * Allows a module to alter the report types.
  *
  * @param array $entity_ids
  *   The flag entity IDs.
  *
- * @see \Drupal\social_content_report\Access::access()
+ * @see \Drupal\social_content_report\ContentReportService::getReportFlagTypes()
  */
 function hook_social_content_report_flags_alter(array &$entity_ids) {
   $id = array_search('report_comment', $entity_ids);
