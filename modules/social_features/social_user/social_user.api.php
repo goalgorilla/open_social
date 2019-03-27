@@ -200,7 +200,7 @@ function hook_social_user_account_header_links() {
  *   optional 'weight' field can be added to the suggestion to control the
  *   priority of the suggestion. 'weight' defaults to 0 if not specified.
  */
-function hook_social_user_name_display_suggestions(AccountInterface $account) {
+function hook_social_user_name_display_suggestions(AccountInterface $account) : array {
   $suggestions = [];
 
   // Add a fallback to display when no other suggestions are available.

@@ -599,7 +599,7 @@ function social_profile_get_default_image() {
  * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
  * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
  */
-function social_profile_social_user_name_display_suggestions(AccountInterface $account) {
+function social_profile_social_user_name_display_suggestions(AccountInterface $account) : array {
   $suggestions = [];
 
   /** @var \Drupal\profile\ProfileStorageInterface $storage */

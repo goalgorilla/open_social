@@ -49,7 +49,7 @@ function social_profile_fields_entity_field_access($operation, FieldDefinitionIn
  * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
  * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
  */
-function social_profile_fields_social_user_name_display_suggestions(AccountInterface $account) {
+function social_profile_fields_social_user_name_display_suggestions(AccountInterface $account) : array {
   $suggestions = [];
 
   /** @var \Drupal\profile\ProfileStorageInterface $storage */
