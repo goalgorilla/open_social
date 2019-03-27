@@ -75,18 +75,11 @@ class SendUsageData extends QueueWorkerBase implements ContainerFactoryPluginInt
    *   $send_data['usage_data'] = array $usage_data;
    */
   public function processItem($data) {
-
     $config = $this->config->get('social_lets_connect_usage.settings');
     $usage_data_url = $config->get('url');
-    $options = [
-      'json' => $data,
-      'headers' => [
-        'Content-Type' => 'application/json',
-      ],
-    ];
 
     try {
-      $response = $this->client->request('POST', $usage_data_url, $options);
+      $response = $this->client->post($usage_data_url, ['json' => $data]);
     }
     catch (RequestException $e) {
       return FALSE;
