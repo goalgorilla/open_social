@@ -51,33 +51,21 @@ class SocialProfileFieldsOverride implements ConfigFactoryOverrideInterface {
 
     // Add field_group and field_comment_files.
     $config_names = [
-      'search_api.index.social_all' => '',
-      'search_api.index.social_users' => '.settings',
+      'search_api.index.social_all',
+      'search_api.index.social_users',
     ];
 
-    foreach ($config_names as $config_name => $suffix) {
+    foreach ($config_names as $config_name) {
       if (in_array($config_name, $names)) {
         $config = $config_factory->getEditable($config_name);
-        $processor_settings = [];
 
-        foreach (['ignorecase', 'tokenizer', 'transliteration'] as $processor) {
-          $fields = $config->get('processor_settings.' . $processor . $suffix . '.fields');
-          $fields[] = 'field_profile_nick_name';
+        // Add our field as config dependency.
+        $config_dependencies = $config->get('dependencies.config');
+        $config_dependencies_next_index = count($config_dependencies);
+        $overrides[$config_name]['dependencies']['config'][$config_dependencies_next_index] = 'field.storage.profile.field_profile_nick_name';
 
-          if ($suffix) {
-            $processor_settings[$processor]['settings']['fields'] = $fields;
-          }
-          else {
-            $processor_settings[$processor]['fields'] = $fields;
-          }
-        }
-
+        // Add our field itself to the index.
         $overrides[$config_name] = [
-          'dependencies' => [
-            'config' => array_merge([
-              'field.storage.profile.field_profile_nick_name',
-            ], $config->get('dependencies.config')),
-          ],
           'field_settings' => [
             'field_profile_nick_name' => [
               'label' => 'Nickname',
@@ -91,8 +79,20 @@ class SocialProfileFieldsOverride implements ConfigFactoryOverrideInterface {
               ],
             ],
           ],
-          'processor_settings' => $processor_settings,
         ];
+
+        // Configure the relevant processors for our field.
+        $processor_settings = $config->get('processor_settings');
+        $enabled_processors = array_intersect(
+          // We want to configure the following processors if they're enabled.
+          ['ignorecase', 'tokenizer', 'transliteration'],
+          array_keys($processor_settings)
+        );
+
+        foreach ($enabled_processors as $processor) {
+          $next_index = count($processor_settings[$processor]['fields']);
+          $overrides[$config_name]['processor_settings'][$processor]['fields'][$next_index] = 'field_profile_nick_name';
+        }
       }
     }
 
