@@ -77,7 +77,7 @@ class AlternativeFrontpageSettings extends ConfigFormBase {
     $form['frontpage_for_authenticated_user'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Frontpage for authenticated users'),
-      '#description' => $this->t('Enter the frontpage for authenticated users. When the value is left empty it will use the anonymous homepage for authenticated users as well. Enter the path starting with a forward slash.'),
+      '#description' => $this->t('Enter the frontpage for authenticated users. When the value is left empty it will use the anonymous homepage for authenticated users as well. Enter the path starting with a forward slash. Default: /stream.'),
       '#maxlength' => 64,
       '#size' => 64,
       '#default_value' => $config->get('frontpage_for_authenticated_user'),

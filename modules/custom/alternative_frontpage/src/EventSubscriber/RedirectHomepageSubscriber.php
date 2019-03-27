@@ -107,15 +107,8 @@ class RedirectHomepageSubscriber implements EventSubscriberInterface {
       if ($frontpage_lu && $this->currentUser->isAuthenticated()) {
         $cache_contexts = new CacheableMetadata();
         $cache_contexts->setCacheContexts(['user.roles:anonymous']);
-        $http_referer = $request->server->get('HTTP_REFERER');
-        $parse_url = parse_url($http_referer, PHP_URL_QUERY);
-        parse_str($parse_url, $query_params);
-        if (isset($query_params['destination'])) {
-          $response = new CacheableRedirectResponse(parse_url($query_params['destination'], PHP_URL_PATH));
-        }
-        else {
-          $response = new CacheableRedirectResponse($frontpage_lu);
-        }
+
+        $response = new CacheableRedirectResponse($frontpage_lu);
         $response->addCacheableDependency($cache_contexts);
         $event->setResponse($response);
       }
