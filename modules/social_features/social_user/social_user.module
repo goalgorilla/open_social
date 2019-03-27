@@ -235,7 +235,6 @@ function social_user_form_user_form_alter(&$form, FormStateInterface $form_state
   // See AccountForm.php this is where user_pass_reset gets set. Only when user
   // uses a one time login link it's true.
   if ($form_state->get('user_pass_reset')) {
-    $form['#attached']['library'][] = 'social_user/user_form_protection';
     // We prepend it because a user first has to be saved :) and the profile
     // user save needs to fire first!
     $form['actions']['submit']['#submit'][] = '_social_user_pass_reset_submit';
