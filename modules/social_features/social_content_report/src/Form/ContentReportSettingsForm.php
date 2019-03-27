@@ -85,7 +85,7 @@ class ContentReportSettingsForm extends ConfigFormBase {
       '#type' => 'checkboxes',
       '#options' => $reason_terms,
       '#title' => $this->t('Terms with additional reason text'),
-      '#description' => $this->t('Select the terms that will show an additional field where users can describe their.'),
+      '#description' => $this->t('Select the terms that will show an additional field where users can describe their reasons.'),
       '#default_value' => $config->get('reasons_with_text'),
     ];
 
