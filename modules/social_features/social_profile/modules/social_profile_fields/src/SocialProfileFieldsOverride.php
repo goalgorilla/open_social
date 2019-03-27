@@ -42,13 +42,10 @@ class SocialProfileFieldsOverride implements ConfigFactoryOverrideInterface {
       // If there is a profile names and image field_group we move the field.
       $third_party = $config->get('third_party_settings');
       if (isset($third_party['field_group']['group_profile_names_image'])) {
-        $third_party['field_group']['group_profile_names_image']['children'][] = 'field_profile_nick_name';
-
-        // We use the entire children array because a deep merge on a numerical
-        // key array doesn't work.
-        $children = $third_party['field_group']['group_profile_names_image']['children'];
-        $children[] = 'field_profile_nick_name';
-        $overrides[$config_name]['third_party_settings']['field_group']['group_profile_names_image']['children'] = $children;
+        // Append to the numeric array by using an index not in the range of
+        // 0..(size-1). This limits our override to what's absolutely necessary.
+        $next_index = count($third_party['field_group']['group_profile_names_image']['children']);
+        $overrides[$config_name]['third_party_settings']['field_group']['group_profile_names_image']['children'][$next_index] = 'field_profile_nick_name';
       }
     }
 
