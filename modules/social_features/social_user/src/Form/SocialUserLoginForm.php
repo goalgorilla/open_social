@@ -93,7 +93,6 @@ class SocialUserLoginForm extends UserLoginForm {
     else {
       $this->getRequest()->query->set('destination', parse_url(urldecode(str_replace('destination=', '', $this->getRequest()->server->get('REDIRECT_QUERY_STRING'))), PHP_URL_PATH));
     }
-
     user_login_finalize($account);
   }
 
