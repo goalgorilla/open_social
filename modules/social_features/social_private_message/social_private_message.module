@@ -9,6 +9,8 @@ use Drupal\Core\Asset\AttachedAssetsInterface;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\Core\Template\Attribute;
 use Drupal\Core\Url;
 use Drupal\social_private_message\DeletedUser;
 use Drupal\user\Entity\User;
@@ -241,7 +243,11 @@ function social_private_message_entity_view_alter(array &$build, EntityInterface
             unset($members_with_deleted[$key], $only_exist_members[$key]);
           }
           else {
-            $members_string[] = $member->getDisplayName();
+            $user_profile = \Drupal::entityTypeManager()->getStorage('profile')->loadByUser($member, 'profile');
+            $content = \Drupal::entityTypeManager()
+              ->getViewBuilder('profile')
+              ->view($user_profile, 'name_raw');
+            $members_string[] = $content;
           }
         }
         else {
@@ -257,10 +263,14 @@ function social_private_message_entity_view_alter(array &$build, EntityInterface
         $recipient = end($only_exist_members);
 
         if ($recipient instanceof UserInterface) {
-          $display_name = $recipient->getDisplayName();
+          $user_profile = \Drupal::entityTypeManager()->getStorage('profile')->loadByUser($recipient, 'profile');
+          $display_name = \Drupal::entityTypeManager()->getViewBuilder('profile')->view($user_profile, 'name_raw');
         }
         else {
-          $display_name = t('Deleted user');
+          // Make this an array, since we no longer render in here.
+          $display_name = [
+            '#markup' => t('Deleted user'),
+          ];
           $recipient = User::load(1);
         }
 
@@ -284,14 +294,15 @@ function social_private_message_entity_view_alter(array &$build, EntityInterface
       if ($member_count > 1) {
         $build['members']['#markup'] = '<div class="avatar-icon avatar-group-icon avatar-group-icon--medium"></div>';
         // Add members names.
-        $build['membernames']['#markup'] = implode(', ', $members_string);
+        $build['membernames'] = $members_string;
         $build['membernames']['#prefix'] = '<strong>';
         $build['membernames']['#suffix'] = '</strong>';
       }
+
       else {
         $build['members'] = $profile_picture;
         // Add members name.
-        $build['membernames']['#markup'] = $display_name;
+        $build['membernames'] = $display_name;
         $build['membernames']['#prefix'] = '<strong>';
         $build['membernames']['#suffix'] = '</strong>';
       }
@@ -433,6 +444,116 @@ function social_private_message_activity_send_email_notifications_alter(array &$
 }
 
 /**
+ * Implements hook_social_user_account_header_items().
+ *
+ * Adds the Private Message button and indicator to the account header block if
+ * it's enabled by the site manager.
+ */
+function social_private_message_social_user_account_header_items(array $context) {
+  if (\Drupal::config('social_user.navigation.settings')->get('display_social_private_message_icon') !== 1) {
+    return [];
+  }
+
+  // We require a logged in user for this button.
+  if (empty($context['user']) || !$context['user']->isAuthenticated()) {
+    return [];
+  }
+
+  // Fetch the amount of unread items.
+  $num_account_messages = \Drupal::service('social_private_message.service')->updateUnreadCount();
+
+  return [
+    'messages' => [
+      '#type' => 'account_header_element',
+      '#wrapper_attributes' => [
+        'class' => ['desktop'],
+      ],
+      '#title' => new TranslatableMarkup('Inbox'),
+      '#url' => Url::fromRoute('social_private_message.inbox'),
+      '#icon' => $num_account_messages > 0 ? 'mail' : 'mail_outline',
+      '#label' => new TranslatableMarkup('Inbox'),
+      '#notification_count' => $num_account_messages,
+    ],
+  ];
+}
+
+/**
+ * Implements hook_social_user_account_header_account_links().
+ *
+ * Adds the mobile indicator for private messages under the profile icon menu.
+ */
+function social_private_message_social_user_account_header_account_links(array $context) {
+  if (\Drupal::config('social_user.navigation.settings')->get('display_social_private_message_icon') !== 1) {
+    return [];
+  }
+
+  // We require a logged in user for this indicator.
+  if (empty($context['user']) || !$context['user']->isAuthenticated()) {
+    return [];
+  }
+
+  // Fetch the amount of unread items.
+  $num_account_messages = \Drupal::service('social_private_message.service')->updateUnreadCount();
+
+  // Default icon values.
+  $label_classes = 'hidden';
+  // Override icons when there are unread items.
+  if ($num_account_messages > 0) {
+    $label_classes = 'badge badge-accent badge--pill';
+  }
+
+  return [
+    'messages_mobile' => [
+      '#type' => 'link',
+      '#wrapper_attributes' => [
+        'class' => ['mobile'],
+      ],
+      '#weight' => 200,
+      '#attributes' => [
+        'title' => new TranslatableMarkup('Inbox'),
+      ],
+      '#title' => [
+        '#type' => 'inline_template',
+        '#template' => '<span>{% trans %}Inbox{% endtrans %}</span><span{{ attributes }}>{{ icon }}</span>',
+        '#context' => [
+          'attributes' => new Attribute(['class' => $label_classes]),
+          'icon' => (string) $num_account_messages,
+        ],
+      ],
+    ] + Url::fromRoute('social_private_message.inbox')->toRenderArray(),
+  ];
+
+}
+
+/**
+ * Implements hook_social_user_account_header_items().
+ *
+ * Adds an indicator to the user account menu on mobile.
+ */
+function social_private_message_social_user_account_header_items_alter(array &$menu_links, array $context) {
+  if (\Drupal::config('social_user.navigation.settings')->get('display_social_private_message_icon') !== 1) {
+    return;
+  }
+
+  // We require a logged in user for this indicator.
+  if (empty($context['user']) || !$context['user']->isAuthenticated()) {
+    return;
+  }
+
+  // If the account_box link was removed we have nothing to do.
+  if (!isset($menu_links['account_box'])) {
+    return;
+  }
+
+  // Fetch the amount of unread items.
+  $num_account_messages = \Drupal::service('social_private_message.service')->updateUnreadCount();
+
+  if ($num_account_messages > 0) {
+    $menu_links['account_box']['#wrapper_attributes']['class'][] = 'has-alert';
+  }
+}
+
+/**
  * Implements hook_views_data_alter().
  */
 function social_private_message_views_data_alter(array &$data) {
@@ -470,6 +591,5 @@ function social_private_message_views_query_alter(ViewExecutable $view, QueryPlu
     // Add some extra where statements.
     $query->addWhere(NULL, 'private_message_thread__members.members_target_id', $current_user_id, '=');
     $query->addWhere(NULL, 'pm_thread_delete_time.owner', $current_user_id, '=');
-
   }
 }

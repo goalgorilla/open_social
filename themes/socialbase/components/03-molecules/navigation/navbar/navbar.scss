@@ -91,6 +91,24 @@
 
 }
 
+// Move the language switcher left of the user menu.
+@include for-tablet-landscape-up {
+  .block-social-language {
+    order: 4;
+    margin-left: auto;
+
+    a.dropdown-toggle {
+      height: 50px;
+    }
+
+    // Disable spacing between user menu and social language block.
+    ~ .navbar-user {
+      margin-left: 0;
+    }
+  }
+
+}
+
 .navbar-header {
   order: 0;
 }

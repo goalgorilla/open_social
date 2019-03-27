@@ -32,11 +32,15 @@ class VoteActivityContext extends ActivityContextBase {
           $entity_storage = \Drupal::entityTypeManager()->getStorage($vote->getVotedEntityType());
           /** @var \Drupal\Core\Entity\Entity $entity */
           $entity = $entity_storage->load($vote->getVotedEntityId());
+          $uid = $entity->getOwnerId();
 
-          $recipients[] = [
-            'target_type' => 'user',
-            'target_id' => $entity->getOwnerId(),
-          ];
+          // Don't send notifications to myself.
+          if ($uid !== $data['actor']) {
+            $recipients[] = [
+              'target_type' => 'user',
+              'target_id' => $uid,
+            ];
+          }
         }
       }
     }

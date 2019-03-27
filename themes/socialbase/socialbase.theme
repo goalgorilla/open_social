@@ -5,22 +5,16 @@
  * The primary PHP file for the Social base theme.
  */
 
+use Drupal\comment\Entity\Comment;
 use Drupal\Component\Utility\Html as HtmlUtility;
 use Drupal\Core\Session\AnonymousUserSession;
-use Drupal\bootstrap\Bootstrap;
 use Drupal\node\Entity\Node;
+use Drupal\Core\Language\LanguageInterface;
 
 // Include all files from the includes directory.
 $includes_path = dirname(__FILE__) . '/includes/*.inc';
 foreach (glob($includes_path) as $filename) {
   require_once dirname(__FILE__) . '/includes/' . basename($filename);
-}
-
-/**
- * Implements hook_theme_suggestions_alter().
- */
-function socialbase_theme_suggestions_alter(&$data, &$context1 = NULL, &$context2 = NULL) {
-  Bootstrap::alter(__FUNCTION__, $data, $context1, $context2);
 }
 
 /**
@@ -32,14 +26,16 @@ function socialbase_group_link($node) {
 
   // Exclude nodes without ids (Preview).
   if (!empty($node->id()) && !empty($group)) {
-    $group_type_id = $group->getGroupType()->id();
     $group_content = \Drupal::entityTypeManager()
       ->getStorage('group_content')
       ->loadByProperties([
         'entity_id' => $node->id(),
-        'type' => $group_type_id . '-group_node-' . $node->getType(),
       ]);
     if (!empty($group_content)) {
+      $curr_langcode = \Drupal::languageManager()->getCurrentLanguage(LanguageInterface::TYPE_CONTENT)->getId();
+      if ($group->isTranslatable() && $group->hasTranslation($curr_langcode)) {
+        $group = $group->getTranslation($curr_langcode);
+      }
       $group_link = $group->link();
     }
   }
@@ -83,10 +79,33 @@ function _socialbase_get_visibility_icon($title) {
 function _socialbase_node_get_comment_count(Node $node, $comment_field_name) {
   $count = 0;
 
-  $comment_count = $node->{$comment_field_name}->comment_count;
+  $cids = \Drupal::entityQuery('comment')
+    ->condition('entity_id', $node->id())
+    ->condition('entity_type', 'node')
+    ->sort('cid', 'DESC')
+    ->execute();
 
-  if ($comment_count) {
-    $count = $comment_count;
+  $comments = Comment::loadMultiple($cids);
+
+  foreach ($comments as $comment) {
+    /* @var \Drupal\comment\Entity\Comment $comment */
+    if ($comment->isPublished()) {
+      // Published main comments or published replies on published main comments
+      // are counted for users without 'administer comments' permission.
+      if (!$comment->hasParentComment() || ($comment->hasParentComment() && $comment->getParentComment()->isPublished())) {
+        $count++;
+      }
+      elseif (\Drupal::currentUser()->hasPermission('administer comments')) {
+        // User with 'administer comments' permission can also see the comment
+        // as being unpublished, so let's count it.
+        $count++;
+      }
+    }
+    elseif (\Drupal::currentUser()->hasPermission('administer comments')) {
+      // User with 'administer comments' permission can also see the comment
+      // as being unpublished, so let's count it.
+      $count++;
+    }
   }
 
   return $count;

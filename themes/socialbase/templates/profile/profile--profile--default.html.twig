@@ -101,16 +101,16 @@
       {{ content.field_profile_self_introduction }}
     {% endif %}
 
-    {% if content.field_profile_interests['#items'] %}
-      <h5>{% trans %}Your interests{% endtrans %}</h5>
-      {% for item in content.field_profile_interests['#items'] %}
+    {% if content.field_profile_expertise['#items'] %}
+      <h5>{% trans %}Your expertise{% endtrans %}</h5>
+      {% for item in content.field_profile_expertise['#items'] %}
         <div class="badge badge--pill badge--large badge-default">{{ item.entity.label }}</div>
       {% endfor %}
     {% endif %}
 
-    {% if content.field_profile_expertise['#items'] %}
-      <h5>{% trans %}Your expertise{% endtrans %}</h5>
-      {% for item in content.field_profile_expertise['#items'] %}
+    {% if content.field_profile_interests['#items'] %}
+      <h5>{% trans %}Your interests{% endtrans %}</h5>
+      {% for item in content.field_profile_interests['#items'] %}
         <div class="badge badge--pill badge--large badge-default">{{ item.entity.label }}</div>
       {% endfor %}
     {% endif %}
@@ -123,7 +123,7 @@
     {% endif %}
 
     {% if (content|render is empty and user_mail is empty)%}
-        {% trans %}{{ profile_name }} has not shared profile information.{% endtrans %}
+        {% trans %}{{ profile_name }} {{ profile_name_extra }} has not shared profile information.{% endtrans %}
     {% endif %}
 
   </div>

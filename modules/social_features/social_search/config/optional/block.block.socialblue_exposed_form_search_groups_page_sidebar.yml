@@ -1,0 +1,28 @@
+langcode: en
+status: true
+dependencies:
+  config:
+  - views.view.search_groups
+  module:
+  - system
+  - views
+  theme:
+  - socialblue
+id: socialblue_exposed_form_search_groups_page_sidebar
+theme: socialblue
+region: complementary_top
+weight: 0
+provider: null
+plugin: 'views_exposed_filter_block:search_groups-page'
+settings:
+  id: 'views_exposed_filter_block:search_groups-page'
+  label: ''
+  provider: views
+  label_display: visible
+  views_label: Filter
+visibility:
+  request_path:
+    id: request_path
+    pages: "/search/groups\r\n/search/groups/*"
+    negate: false
+    context_mapping: {  }

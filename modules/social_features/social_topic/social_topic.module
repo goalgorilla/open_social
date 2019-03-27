@@ -5,12 +5,19 @@
  * The Social topic module.
  */
 
+use Drupal\block\Entity\Block;
+use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Access\AccessResultNeutral;
 use Drupal\Core\Block\BlockPluginInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Url;
 use Drupal\Core\Link;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\Core\Url;
+use Drupal\social_topic\Controller\SocialTopicController;
 use Drupal\views\Plugin\views\query\QueryPluginBase;
 use Drupal\views\ViewExecutable;
+use Drupal\Core\Language\LanguageInterface;
 
 /**
  * Prepares variables for node templates.
@@ -34,7 +41,11 @@ function social_topic_preprocess_node(array &$variables) {
     $topic_type = $node->get('field_topic_type');
     $topic_type_entities = $topic_type->referencedEntities();
     if (count($topic_type_entities) === 1) {
+      $curr_langcode = \Drupal::languageManager()->getCurrentLanguage(LanguageInterface::TYPE_CONTENT)->getId();
       foreach ($topic_type_entities as $topic) {
+        if ($topic->isTranslatable() && $topic->hasTranslation($curr_langcode)) {
+          $topic = $topic->getTranslation($curr_langcode);
+        }
         $variables['metadata'] = t('in @topic', ['@topic' => $topic->link()]);
         // Set topic type link.
         $topic_type_url = Url::fromRoute('view.latest_topics.page_latest_topics', ['field_topic_type_target_id' => $topic->id()]);
@@ -162,4 +173,109 @@ function social_topic_views_query_alter(ViewExecutable $view, QueryPluginBase $q
       ];
     }
   }
+}
+
+/**
+ * Implements hook_social_user_account_header_create_links().
+ *
+ * Adds the "Create Topic" link to the content creation menu.
+ */
+function social_topic_social_user_account_header_create_links($context) {
+  return [
+    'add_topic' => [
+      '#type' => 'link',
+      '#attributes' => [
+        'title' => new TranslatableMarkup('Create New Topic'),
+      ],
+      '#title' => new TranslatableMarkup('New Topic'),
+      '#weight' => 200,
+    ] + Url::fromRoute('node.add', ['node_type' => 'topic'])->toRenderArray(),
+  ];
+}
+
+/**
+ * Implements hook_social_user_account_header_account_links().
+ *
+ * Adds the "View my topics" link to the user menu.
+ */
+function social_topic_social_user_account_header_account_links(array $context) {
+  // We require a user for this link.
+  if (empty($context['user']) || !($context['user'] instanceof AccountInterface)) {
+    return [];
+  }
+
+  return [
+    'my_topics' => [
+      '#type' => 'link',
+      '#attributes' => [
+        'title' => new TranslatableMarkup('View my topics'),
+      ],
+      '#title' => new TranslatableMarkup('My topics'),
+      '#weight' => 700,
+    ] + Url::fromRoute('view.topics.page_profile', [
+      'user' => $context['user']->id(),
+    ])->toRenderArray(),
+  ];
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function social_topic_form_node_topic_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  social_topic_widget_alter($form);
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function social_topic_form_node_topic_edit_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  social_topic_widget_alter($form);
+}
+
+/**
+ * Function that does some magic to the event type field.
+ *
+ * @param array $form
+ *   Form array.
+ */
+function social_topic_widget_alter(array &$form) {
+  /** @var \Drupal\Core\Config\ImmutableConfig $config */
+  $config = \Drupal::config('social_topic.settings');
+
+  // Change the widget if more than X.
+  if (count($form['field_topic_type']['widget']['#options']) >= $config->get('social_topic_type_select_changer')) {
+    $form['field_topic_type']['widget']['#type'] = 'select';
+  }
+}
+
+/**
+ * Custom permission check, to see if people have access to users' topics.
+ *
+ * Implements hook_block_access().
+ */
+function social_topic_block_access(Block $block, $operation, AccountInterface $account) {
+
+  if ($operation === 'view' && ($block->getPluginId() === 'views_exposed_filter_block:topics-page_profile' || $block->getPluginId() === 'views_block:topics-block_user_topics')) {
+    // Here we're going to assume by default access is not granted.
+    $topicController = SocialTopicController::create(\Drupal::getContainer());
+    $access = $topicController->myTopicAccess($account);
+    // If the 'myTopicAccess' returns 'AccessResultNeutral', we have to assume
+    // that access must be denied.
+    if ($access instanceof AccessResultNeutral) {
+      // Return forbidden, since access was not explicitly granted.
+      return AccessResult::forbidden();
+    }
+
+    return $access;
+  }
+
+  // No opinion.
+  return AccessResult::neutral();
+}
+
+/**
+ * Implements hook_social_follow_content_types_alter().
+ */
+function social_topic_social_follow_content_types_alter(array &$types) {
+  $types[] = 'topic';
 }

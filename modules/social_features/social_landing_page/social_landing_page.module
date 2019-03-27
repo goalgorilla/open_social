@@ -12,6 +12,8 @@ use Drupal\image\Entity\ImageStyle;
 use Drupal\node\NodeInterface;
 use Drupal\node\Entity\Node;
 use Drupal\paragraphs\Entity\Paragraph;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\Core\Url;
 
 /**
  * Implements hook_form_alter().
@@ -181,11 +183,13 @@ function social_landing_page_preprocess_node(&$variables) {
   if ($node->getType() === 'landing_page') {
     // If featured we need to do some magic.
     if ($variables['view_mode'] === 'featured') {
-      $variables['content']['field_landing_page_image'] = [
-        '#type' => 'markup',
-        '#markup' => _social_landing_page_get_hero_image($node),
-      ];
-
+      $hero_image = _social_landing_page_get_hero_image($node);
+      if (!empty($hero_image)) {
+        $variables['content']['field_landing_page_image'] = [
+          '#type' => 'markup',
+          '#markup' => $hero_image,
+        ];
+      }
     }
     // Get current user.
     $account = \Drupal::currentUser();
@@ -217,7 +221,7 @@ function social_landing_page_preprocess_field(&$variables) {
     foreach ($variables['items'] as $key => $value) {
       if (isset($variables['items'][$key]['content'])) {
         $variables['items'][$key]['content']['#options']['attributes'] = [
-          'class' => 'btn btn-large ' . $button_style,
+          'class' => 'btn btn-lg ' . $button_style,
         ];
       }
     }
@@ -254,7 +258,7 @@ function _social_landing_page_get_hero_image(Node $node) {
     $paragraph_content = Paragraph::load($section_id);
 
     // Must be of type hero.
-    if ($paragraph_content->getType() === 'hero') {
+    if ($paragraph_content && $paragraph_content->getType() === 'hero') {
       $fid = $paragraph_content->get('field_hero_image')->target_id;
       $file = File::load($fid);
       // Check if it's an existing file.
@@ -278,5 +282,22 @@ function _social_landing_page_get_hero_image(Node $node) {
   }
 
   return [];
+}
 
+/**
+ * Implements hook_social_user_account_header_create_links().
+ *
+ * Adds the "Create Landing Page" link to the content creation menu.
+ */
+function social_landing_page_social_user_account_header_create_links($context) {
+  return [
+    'add_landing_page' => [
+      '#type' => 'link',
+      '#attributes' => [
+        'title' => new TranslatableMarkup('Create New Landing Page'),
+      ],
+      '#title' => new TranslatableMarkup('New Landing Page'),
+      '#weight' => 400,
+    ] + Url::fromRoute('node.add', ['node_type' => 'landing_page'])->toRenderArray(),
+  ];
 }

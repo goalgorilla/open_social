@@ -72,6 +72,22 @@ function social_gdpr_form_data_policy_data_policy_agreement_alter(&$form, FormSt
 }
 
 /**
+ * Implements hook_form_FORM_ID_alter().
+ *
+ * Move the GDPR checkbox into the account fieldset if it's available.
+ */
+function social_gdpr_form_user_register_form_alter(&$form, FormStateInterface $form_state) {
+  if (isset($form['data_policy'], $form['account'])) {
+    $form['account']['data_policy'] = $form['data_policy'];
+    unset($form['data_policy']);
+
+    // Provide it with a weight so it'll sit at the bottom relative to the other
+    // user registration form fields.
+    $form['account']['data_policy']['#weight'] = 100;
+  }
+}
+
+/**
  * Implements hook_social_user_account_header_links().
  */
 function social_gdpr_social_user_account_header_links() {

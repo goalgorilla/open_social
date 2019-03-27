@@ -1,0 +1,33 @@
+social_event_an_enroll.settings:
+  path: '/admin/config/opensocial/event-an-enroll'
+  defaults:
+    _title: 'Anonymous event enrollment settings'
+    _form: '\Drupal\social_event_an_enroll\Form\EventAnEnrollSettingsForm'
+  requirements:
+    _permission: 'administer social_event settings'
+
+social_event_an_enroll.enroll_dialog:
+  path: '/node/{node}/enroll-dialog'
+  defaults:
+    _controller: '\Drupal\social_event_an_enroll\Controller\EventAnEnrollController::enrollDialog'
+    _title_callback: '\Drupal\social_event_an_enroll\Controller\EventAnEnrollController::enrollTitle'
+  options:
+    parameters:
+      node:
+        type: entity:node
+  requirements:
+    _user_is_logged_in: 'FALSE'
+    _custom_access: '\Drupal\social_event_an_enroll\Controller\EventAnEnrollController::enrollAccess'
+
+social_event_an_enroll.enroll_form:
+  path: '/node/{node}/enroll'
+  defaults:
+    _form: '\Drupal\social_event_an_enroll\Form\EventAnEnrollForm'
+    _title_callback: '\Drupal\social_event_an_enroll\Controller\EventAnEnrollController::enrollTitle'
+  requirements:
+    _user_is_logged_in: 'FALSE'
+    _custom_access: '\Drupal\social_event_an_enroll\Controller\EventAnEnrollController::enrollAccess'
+  options:
+    parameters:
+      node:
+        type: entity:node

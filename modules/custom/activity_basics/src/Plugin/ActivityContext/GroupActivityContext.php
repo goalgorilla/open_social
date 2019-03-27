@@ -4,7 +4,6 @@ namespace Drupal\activity_basics\Plugin\ActivityContext;
 
 use Drupal\activity_creator\Plugin\ActivityContextBase;
 use Drupal\group\Entity\GroupContent;
-use Drupal\social_group\SocialGroupHelperService;
 
 /**
  * Provides a 'GroupActivityContext' activity context.
@@ -28,7 +27,10 @@ class GroupActivityContext extends ActivityContextBase {
 
       $referenced_entity = $data['related_object']['0'];
 
-      if ($gid = SocialGroupHelperService::getGroupFromEntity($referenced_entity)) {
+      // TODO: Replace this with dependency injection.
+      /** @var \Drupal\social_group\SocialGroupHelperService $group_helper */
+      $group_helper = \Drupal::service('social_group.helper_service');
+      if ($gid = $group_helper->getGroupFromEntity($referenced_entity, FALSE)) {
         $recipients[] = [
           'target_type' => 'group',
           'target_id' => $gid,

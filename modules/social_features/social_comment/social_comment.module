@@ -11,6 +11,7 @@ use Drupal\Core\Link;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\comment\CommentInterface;
+use Drupal\Core\Url;
 use Drupal\group\Entity\GroupContent;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 
@@ -31,6 +32,7 @@ function social_comment_form_comment_form_alter(&$form, FormStateInterface $form
   if (!empty($form['field_comment_body']['widget'][0]['value']['#title_display'])) {
     $form['field_comment_body']['widget'][0]['value']['#title_display'] = 'invisible';
   }
+
   // Validate replies to comments deeper than 1.
   $form['#validate'][] = 'social_comment_form_reply_validate';
 
@@ -39,6 +41,10 @@ function social_comment_form_comment_form_alter(&$form, FormStateInterface $form
   switch ($route_name) {
     // Comment reply form.
     case 'comment.reply':
+      // Check if we should remove the author fields and make the status field
+      // consistent.
+      social_comment_remove_author_field($form, FALSE);
+
       $form['actions']['submit']['#attributes']['value'] = t('Reply');
       $form['actions']['submit']['#value'] = t('Reply');
       $form['field_comment_body']['widget'][0]['#placeholder'] = t('Add a reply');
@@ -46,8 +52,13 @@ function social_comment_form_comment_form_alter(&$form, FormStateInterface $form
 
     // Comment edit form.
     case 'entity.comment.edit_form':
+      // Check if we should remove the author fields and make the status field
+      // consistent.
+      social_comment_remove_author_field($form);
+
       $form['actions']['submit']['#attributes']['value'] = t('Submit');
       $form['actions']['submit']['#value'] = t('Submit');
+      $form['actions']['submit']['#submit'][] = 'social_comment_edit_form_submit';
       break;
 
     default:
@@ -61,6 +72,60 @@ function social_comment_form_comment_form_alter(&$form, FormStateInterface $form
   }
 
   $form['#attached']['library'][] = 'social_post/keycode-submit';
+}
+
+/**
+ * Generates a message when comment with children is getting unpublished.
+ *
+ * @param array $form
+ *   The form array.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   The form state interface of the form.
+ */
+function social_comment_edit_form_submit(array $form, FormStateInterface $form_state) {
+  if (isset($form['author']['status']['#default_value']) && $form['author']['status']['#default_value'] === '1') {
+    if ($form_state->getValue('status') === 0) {
+      // Load the comment and verify if it has any children.
+      /** @var \Drupal\comment\CommentStorage $entity_storage */
+      $entity_storage = \Drupal::entityTypeManager()->getStorage('comment');
+      $cid = $form_state->getValue('cid');
+      $comment = $entity_storage->load($cid);
+      $children = $entity_storage->getChildCids([$cid => $comment]);
+      if (!empty($children)) {
+        $messenger = \Drupal::messenger();
+        $messenger->addMessage(t('All the replies placed on an unpublished comment will be hidden automatically.'), 'warning');
+      }
+    }
+  }
+}
+
+/**
+ * Removes the author fields and replaces the status field for comment forms.
+ *
+ * @param array $form
+ *   The form that needs to be processed.
+ * @param bool $add_status
+ *   Add the status field, by default TRUE.
+ */
+function social_comment_remove_author_field(array &$form, $add_status = TRUE) {
+  // Check if we need to hide the author fields for comments.
+  $remove_author_fields = \Drupal::config('social_comment.comment_settings')->get('remove_author_field');
+  if ($remove_author_fields) {
+    // Remove access to author fields.
+    unset($form['author']['#title']);
+    $form['author']['uid']['#access'] = FALSE;
+    $form['author']['name']['#access'] = FALSE;
+    $form['author']['mail']['#access'] = FALSE;
+    $form['author']['homepage']['#access'] = FALSE;
+    $form['author']['date']['#access'] = FALSE;
+
+    // Make the status field consistent with other status fields.
+    if ($add_status) {
+      $form['author']['status']['#type'] = 'checkbox';
+      $form['author']['status']['#title'] = t('Published');
+      $form['author']['status']['#access'] = \Drupal::currentUser()->hasPermission('administer comments');
+    }
+  }
 }
 
 /**
@@ -96,30 +161,38 @@ function social_comment_form_reply_validate($form, FormStateInterface $form_stat
 function social_comment_comment_links_alter(array &$links, CommentInterface $entity, array &$context) {
   $bundle = $entity->bundle();
   $commented_entity = $entity->getCommentedEntity();
-  $account = \Drupal::currentUser();
-  switch ($bundle) {
-    default:
-      if (!empty($entity->getParentComment()) || \Drupal::routeMatch()->getRouteName() === 'comment.reply') {
-        unset($links['comment']['#links']['comment-reply']);
-      }
-      else {
-        $group_contents = GroupContent::loadByEntity($commented_entity);
-        // Only react if it is actually posted inside a group.
-        if (!empty($group_contents)) {
-          foreach ($group_contents as $group_content) {
-            $group = $group_content->getGroup();
-            // Remove comments from output if user don't have access.
-            if (!$group->hasPermission('post comments', $account)) {
-              unset($links['comment']['#links']['comment-reply']);
-            }
+
+  if (!$entity->isPublished()) {
+    // If the comment is not published disable the reply link.
+    $links['comment']['#links']['comment-reply']['url'] = Url::fromRoute('<nolink>');
+  }
+
+  if ($bundle === 'post_comment') {
+    // For post comments remove the reply button.
+    unset($links['comment']['#links']['comment-reply']);
+  }
+  else {
+    // If it is not a post comment do some extra checks.
+    if (!empty($entity->getParentComment()) || \Drupal::routeMatch()->getRouteName() === 'comment.reply') {
+      // If this is already on the second level, remove the reply button.
+      unset($links['comment']['#links']['comment-reply']);
+    }
+    else {
+      $group_contents = GroupContent::loadByEntity($commented_entity);
+      // Only react if it is actually posted inside a group.
+      if (!empty($group_contents)) {
+        $account = \Drupal::currentUser();
+
+        foreach ($group_contents as $group_content) {
+          $group = $group_content->getGroup();
+
+          // Remove comments from output if user don't have access.
+          if (!$group->hasPermission('post comments', $account)) {
+            unset($links['comment']['#links']['comment-reply']);
           }
         }
       }
-      break;
-
-    case "post_comment":
-      unset($links['comment']['#links']['comment-reply']);
-      break;
+    }
   }
 }
 
@@ -127,6 +200,7 @@ function social_comment_comment_links_alter(array &$links, CommentInterface $ent
  * Implements hook_preprocess_comment().
  */
 function social_comment_preprocess_comment(&$variables) {
+  /* @var \Drupal\comment\Entity\Comment $comment */
   $comment = $variables['elements']['#comment'];
   // Display comment created date in format 'time ago'.
   $created_time_ago = \Drupal::service('date.formatter')
@@ -213,7 +287,7 @@ function social_comment_comment_view(array &$build, EntityInterface $entity, Ent
           ],
         ];
         $commented_entity_url = $commented_entity->toUrl('canonical', $link_options);
-        $build['comment_link'] = Link::fromTextAndUrl(t('Comment'), $commented_entity_url)->toRenderable();
+        $build['comment_link'] = Link::fromTextAndUrl(t('Comment', [], ['context' => 'Comment Button']), $commented_entity_url)->toRenderable();
       }
 
       $comment_count = $commented_entity->{$comment_field_name}->comment_count;

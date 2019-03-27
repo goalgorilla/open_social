@@ -5,8 +5,10 @@
  * Builds placeholder replacement tokens for Social Mentions module.
  */
 
+use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\user\Entity\User;
+use Drupal\Core\Render\Markup;
 
 /**
  * Implements hook_token_info().
@@ -26,6 +28,11 @@ function social_mentions_token_info() {
   $social_mentions['user_name'] = [
     'name' => t('User name'),
     'description' => t('First and last name or username, depends on settings.'),
+  ];
+
+  $social_mentions['commented_entity_link_html'] = [
+    'name' => t('The (html) link to the commented entity.'),
+    'description' => t('The link to the commented entity, can be post or node, will include raw HTML.'),
   ];
 
   return [
@@ -91,6 +98,60 @@ function social_mentions_tokens($type, $tokens, array $data, array $options, Bub
                 $replacements[$original] = $user;
               }
             }
+          }
+
+          break;
+
+        case 'commented_entity_link_html':
+
+          if (isset($message->field_message_related_object)) {
+            $target_type = $message->field_message_related_object->target_type;
+            $target_id = $message->field_message_related_object->target_id;
+            /** @var \Drupal\mentions\Entity\Mentions $mention */
+            $mention = \Drupal::entityTypeManager()
+              ->getStorage($target_type)
+              ->load($target_id);
+
+            if ($mentioned_entity = $mention->getMentionedEntity()) {
+              if ($mentioned_entity->getEntityTypeId() === 'comment') {
+                $entity = $mentioned_entity->getCommentedEntity();
+              }
+              else {
+                $entity = $mentioned_entity;
+              }
+            }
+          }
+
+          if (isset($entity)) {
+            switch ($entity->getEntityTypeId()) {
+              case 'node':
+                // Then get the bundle name.
+                $content_type_label = Unicode::strtolower(\Drupal::entityTypeManager()
+                  ->getStorage('node_type')
+                  ->load($entity->bundle())
+                  ->label());
+                break;
+
+              case 'post':
+              case 'photo':
+              case 'comment':
+                $content_type_label = Unicode::strtolower($entity->getEntityType()->getLabel());
+                break;
+
+            }
+
+            $url_options = ['absolute' => TRUE];
+            $link = $entity->toUrl('canonical', $url_options)->toString();
+
+            // We should only use the label of entities who have a label.
+            if ($link_label = $entity->label()) {
+              $entity_link_html = $content_type_label . ' <a href="' . $link . '">' . $link_label . '</a>';
+            }
+            else {
+              $entity_link_html = '<a href="' . $link . '">' . $content_type_label . '</a>';
+            }
+
+            $replacements[$original] = Markup::create($entity_link_html);
           }
 
           break;

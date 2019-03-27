@@ -160,6 +160,55 @@ class Post extends ContentEntityBase implements PostInterface {
   /**
    * {@inheritdoc}
    */
+  public function getVisibility() {
+    if ($this->hasField('field_visibility')) {
+      switch ($this->field_visibility->value) {
+
+        case "0":
+        case "2":
+          $visibility = 'community';
+          break;
+
+        case "1":
+          $visibility = 'public';
+          break;
+
+        case "3":
+          $visibility = 'group';
+          break;
+      }
+    }
+
+    return $visibility;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setVisibility($visibility) {
+    if ($this->hasField('field_visibility')) {
+      switch ($visibility) {
+
+        case 'community':
+          $this->set('field_visibility', 0);
+          break;
+
+        case 'public':
+          $this->set('field_visibility', 1);
+          break;
+
+        case "group":
+          $this->set('field_visibility', 3);
+          break;
+      }
+    }
+
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getCacheContexts() {
     $defaults = parent::getCacheContexts();
 

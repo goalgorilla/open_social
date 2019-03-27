@@ -33,7 +33,7 @@ function social_core_requirements($phase) {
         'title' => 'Social Private Files',
         'value' => t('All your uploaded files on the Open Social entities are potentially reachable by unauthorized users'),
         'severity' => REQUIREMENT_WARNING,
-        'description' => t('It is strongly recommended to enable social_file_private module to make sure your file and image uploads on Open Social entities can not be accessed by unauthorized users. More info: https://github.com/goalgorilla/drupal_social/wiki/Private-files'),
+        'description' => t('It is strongly recommended to enable social_file_private module to make sure your file and image uploads on Open Social entities can not be accessed by unauthorized users. More info: https://www.drupal.org/docs/8/distributions/open-social/private-files'),
       ];
     }
   }
@@ -604,10 +604,10 @@ function social_core_update_8019() {
       'social_file_private',
     ];
     \Drupal::service('module_installer')->install($modules);
-    drupal_set_message(t('Installed the social_file_private module. Make sure to read: https://github.com/goalgorilla/drupal_social/wiki/Private-files'));
+    drupal_set_message(t('Installed the social_file_private module. Make sure to read: https://www.drupal.org/docs/8/distributions/open-social/private-files'));
   }
   else {
-    drupal_set_message(t('Skipped installing the social_file_private module because your Private file system is not set. This could have some security implications. More info: https://github.com/goalgorilla/drupal_social/wiki/Private-files'), 'warning');
+    drupal_set_message(t('Skipped installing the social_file_private module because your Private file system is not set. This could have some security implications. More info: https://www.drupal.org/docs/8/distributions/open-social/private-files'), 'warning');
   }
 }
 
@@ -863,4 +863,15 @@ function social_core_update_8028() {
   // Change setting for socialblue.
   $socialblue_settings = \Drupal::configFactory()->getEditable('socialblue.settings');
   $socialblue_settings->set('features.comment_user_verification', FALSE)->save();
+}
+
+/**
+ * Install exif_orientation module.
+ */
+function social_core_update_8301() {
+  $modules = [
+    'exif_orientation',
+  ];
+
+  \Drupal::service('module_installer')->install($modules);
 }

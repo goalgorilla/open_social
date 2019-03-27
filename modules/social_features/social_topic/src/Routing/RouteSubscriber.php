@@ -25,6 +25,12 @@ class RouteSubscriber extends RouteSubscriberBase {
       $route->setDefaults($defaults);
     }
 
+    if ($route = $collection->get('view.topics.page_profile')) {
+      $requirements = $route->getRequirements();
+      $requirements['_custom_access'] = "\Drupal\social_topic\Controller\SocialTopicController::myTopicAccess";
+      $route->setRequirements($requirements);
+    }
+
   }
 
 }

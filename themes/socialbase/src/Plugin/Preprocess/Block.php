@@ -129,10 +129,8 @@ class Block extends PreprocessBase {
     }
 
     // Add search_block to main menu.
-    if ($variables['elements']['#id'] == 'mainnavigation' || $variables['elements']['#id'] == $prefix . '_mainnavigation') {
-      $block_id = \Drupal::moduleHandler()
-        ->moduleExists('social_geolocation') ? 'geolocation_search_content_block_header' : 'search_content_block_header';
-      $block = BlockEntity::load($block_id);
+    if (\Drupal::moduleHandler()->moduleExists('social_search') && ($variables['elements']['#id'] == 'mainnavigation' || $variables['elements']['#id'] == $prefix . '_mainnavigation')) {
+      $block = BlockEntity::load('search_content_block_header');
 
       if (!empty($block)) {
         $block_output = \Drupal::entityManager()

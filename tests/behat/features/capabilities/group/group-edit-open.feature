@@ -40,7 +40,7 @@ Feature: Edit my group as a group manager
 
   # DS-706 As a Group Manager I want to manage group memberships
     And I click "Manage members"
-    Then I should see the link "Add member"
+    Then I should see the link "Add members"
     And I should see "Member"
     And I should see "Group Manager One"
     And I should see "Organization"
@@ -60,9 +60,9 @@ Feature: Edit my group as a group manager
     And I should see "Member"
 
   # DS-767 As a Group Manager I want to add a user to the group
-    When I click "Add member"
-    Then I should see "Add a member"
-    And I fill in "Select a member" with "Group Member Two"
+    When I click "Add members"
+    Then I should see "Add members"
+    And I fill in "Select members to add" with "Group Member Two"
     And I should see "Group roles"
     And I should see "Group Manager"
     And I should see the button "Cancel"
@@ -103,16 +103,3 @@ Feature: Edit my group as a group manager
     And I click "Topics"
     And I click "Test group topic"
     And I should not see the link "Edit group"
-
-  # DS-705 As a Group Manager I want to delete my own group
-    And I logout
-    And I am logged in as "Group Manager One"
-    And I am on "user"
-    And I click "Groups"
-    And I click "Test open group"
-    And I click "Edit group"
-    And I click "Delete"
-    And I should see "This action cannot be undone."
-    And I should see the link "Cancel"
-    And I should see the button "Delete"
-    And I press "Delete"

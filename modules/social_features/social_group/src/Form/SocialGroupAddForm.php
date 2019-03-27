@@ -116,16 +116,23 @@ class SocialGroupAddForm extends FormBase {
    *   Returns an array containing the group type element and descriptions.
    */
   public function getGroupTypeElement() {
+    $user = \Drupal::currentUser();
     $element = [
       '#type' => 'radios',
       '#title' => $this->t('Group type'),
-      '#description' => $this->t('Can not be changed once a group is created.'),
       '#default_value' => 'open_group',
       '#required' => TRUE,
       '#cache' => [
-        'tags' => $this->entityTypeManager->getDefinition('group_type')->getListCacheTags(),
+        'tags' => $this->entityTypeManager->getDefinition('group_type')
+          ->getListCacheTags(),
       ],
     ];
+
+    // Add help text if the user can't edit group types.
+    if (!$user->hasPermission('edit group types')) {
+      $element['#description'] = $this->t('In order to change the group type, 
+        please contact the content or site managers.');
+    }
 
     $group_types_options = [];
     $group_types_descriptions = [];

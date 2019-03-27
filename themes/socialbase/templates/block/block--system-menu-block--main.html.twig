@@ -33,12 +33,13 @@
  * @ingroup templates
  */
 #}
+
 <div id="main-navigation" class="collapse navbar-collapse">
   <div class="navbar-search">{{ content.links.search_block }}</div>
-    {% block content %}
-      {{ content }}
-    {% endblock %}
-
+  {% block content %}
+    {{ content }}
+  {% endblock %}
+  {% if content.links.search_block is defined %}
     <div class="navbar__open-search-control">
       <button class="navbar__open-search-block" rel="search" title="{{ 'Click to open search box'|t }}">
       </button>
@@ -46,5 +47,6 @@
         <use xlink:href="#icon-search"></use>
       </svg>
     </div>
+  {% endif %}
 </div>
 

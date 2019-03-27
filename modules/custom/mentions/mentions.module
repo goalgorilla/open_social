@@ -129,9 +129,13 @@ function mentions_crud_update($type, $mentions, $id, $author) {
     ->execute();
   foreach ($mention_ids as $mention) {
     $entity = $mentions_storage->load($mention);
-    $old_user = $entity->get('uid')->getValue()[0]['value'];
-    $old_users[] = $old_user;
-    $old_mids[$old_user] = $mention;
+
+    // Make sure the uid value is available.
+    if (isset($entity->get('uid')->getValue()[0]['value'])) {
+      $old_user = $entity->get('uid')->getValue()[0]['value'];
+      $old_users[] = $old_user;
+      $old_mids[$old_user] = $mention;
+    }
   }
 
   // Build array of new mentions.

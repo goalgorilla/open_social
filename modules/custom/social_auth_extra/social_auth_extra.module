@@ -6,6 +6,7 @@
  */
 
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
 use Drupal\social_api\Plugin\NetworkBase;
 use Drupal\Component\Render\PlainTextOutput;
@@ -17,16 +18,6 @@ use Drupal\bootstrap\Utility\Unicode;
 function social_auth_extra_form_user_register_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   if ($social_buttons = _social_auth_extra_get_buttons('register')) {
     $form += $social_buttons;
-
-    $form['account']['title'] = [
-      '#type' => 'html_tag',
-      '#tag' => 'label',
-      '#attributes' => [
-        'class' => ['form-wrapper__label'],
-      ],
-      '#weight' => -100,
-      '#value' => t('Or sign up with email'),
-    ];
   }
 
   $request = \Drupal::request();
@@ -80,16 +71,6 @@ function social_auth_extra_form_user_register_form_alter(&$form, FormStateInterf
 function social_auth_extra_form_social_user_login_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   if ($social_buttons = _social_auth_extra_get_buttons('login')) {
     $form += $social_buttons;
-
-    $form['title'] = [
-      '#type' => 'html_tag',
-      '#tag' => 'label',
-      '#attributes' => [
-        'class' => ['form-wrapper__label'],
-      ],
-      '#weight' => -10,
-      '#value' => t('Or log in with username or email'),
-    ];
   }
 }
 
@@ -104,13 +85,29 @@ function _social_auth_extra_get_buttons($type = 'login') {
   $provider = \Drupal::request()->get('provider');
 
   if (!empty($networks)) {
+    $sign_up = new TranslatableMarkup('Sign up');
+    $login = new TranslatableMarkup('Log in');
+
     $form['social_auth_extra'] = [
       '#type' => 'fieldset',
-      '#title' => t('%action with', [
-        '%action' => $type == 'register' ? t('Sign up') : t('Log in'),
+      '#attributes' => [
+        'class' => ['social-auth-buttons'],
+      ],
+      '#title' => new TranslatableMarkup('@action with <b>Social Accounts</b>', [
+        '@action' => $type === 'register' ? $sign_up : $login,
       ]),
       '#weight' => -100,
+      '#attached' => [
+        'library' => ['socialbase/form--social-auth-buttons'],
+      ],
     ];
+
+    // If there's a help text for social signup/login we display it to the user.
+    $help_key = $type === 'login' ? 'social_login_help' : 'social_signup_help';
+    $help_text = \Drupal::config('social_auth_extra.settings')->get($help_key);
+    if (!empty($help_text)) {
+      $form['social_auth_extra']['#description'] = $help_text;
+    }
 
     foreach ($networks as $key => $network) {
       $instance = $network_manager->createInstance($network['id']);
@@ -157,6 +154,8 @@ function social_auth_extra_form_user_register_form_submit($form, FormStateInterf
       'name' => $form_state->getValue('name'),
       'mail' => $form_state->getValue('mail'),
       'init' => $form_state->getValue('mail'),
+      'status' => $form_state->getValue('status'),
+      'preferred_langcode' => $form_state->getValue('preferred_langcode'),
     ]);
 
     try {
@@ -229,28 +228,44 @@ function social_auth_extra_form_user_register_form_submit($form, FormStateInterf
         $form_state->getFormObject()->setEntity($account);
       }
 
-      user_login_finalize($account);
-      drupal_set_message(t('Your account is created. We have sent an email with your account details. You can now start exploring @community_name.', [
-        '@community_name' => \Drupal::config('system.site')->get('name'),
-      ]));
+      if ($account->get('status')->value === 0) {
+        _user_mail_notify('register_pending_approval', $account);
+        drupal_set_message(t('Thank you for applying for an account. Your account is currently pending approval by the site administrator.<br />In the meantime, a welcome message with further instructions has been sent to your email address.'));
+        $form_state->setRedirect('<front>');
+      }
+      else {
+        user_login_finalize($account);
+        drupal_set_message(t('Your account is created. We have sent an email with your account details. You can now start exploring @community_name.', [
+          '@community_name' => \Drupal::config('system.site')->get('name'),
+        ]));
 
-      // Send email notification.
-      $params['account'] = $account;
-      $langcode = $account->getPreferredLangcode();
-      $site_mail = \Drupal::config('system.site')->get('mail_notification');
+        // Send email notification.
+        $params['account'] = $account;
+        $langcode = $account->getPreferredLangcode();
+        $site_mail = \Drupal::config('system.site')->get('mail_notification');
+        if (empty($site_mail)) {
+          $site_mail = \Drupal::config('system.site')->get('mail');
+        }
 
-      if (empty($site_mail)) {
-        $site_mail = \Drupal::config('system.site')->get('mail');
+        if (empty($site_mail)) {
+          $site_mail = ini_get('sendmail_from');
+        }
+
+        \Drupal::service('plugin.manager.mail')->mail('social_auth_extra', 'email_social_login', $account->getEmail(), $langcode, $params, $site_mail);
       }
 
-      if (empty($site_mail)) {
-        $site_mail = ini_get('sendmail_from');
-      }
+      // Save user consent.
+      if (\Drupal::hasService('data_policy.manager')) {
+        /** @var \Drupal\data_policy\DataPolicyManagerInterface $data_policy_manager */
+        $data_policy_manager = \Drupal::service('data_policy.manager');
 
-      \Drupal::service('plugin.manager.mail')->mail('social_auth_extra', 'email_social_login', $account->getEmail(), $langcode, $params, $site_mail);
+        if ($data_policy_manager->isDataPolicy() && !empty($form_state->getValue('data_policy'))) {
+          $data_policy_manager->saveConsent($account->id(), TRUE);
+        }
+      }
     }
     catch (EntityStorageException $e) {
-      drupal_set_message($this->t('Creation of user account failed. Please contact site administrator.'), 'error');
+      drupal_set_message(t('Creation of user account failed. Please contact site administrator.'), 'error');
       $logger_factory = \Drupal::service('logger.fatory');
       $logger_factory
         ->get($id)
@@ -330,6 +345,16 @@ function social_auth_extra_form_user_form_alter(&$form, FormStateInterface $form
  * Implements hook_form_FORM_ID_alter() for user_admin_settings().
  */
 function social_auth_extra_form_user_admin_settings_alter(&$form, FormStateInterface $form_state, $form_id) {
+  _social_auth_extra_email_config_form($form, $form_state);
+  _social_auth_extra_help_text_config_form($form, $form_state);
+
+  $form['#submit'][] = 'social_auth_extra_form_user_admin_settings_submit';
+}
+
+/**
+ * Adds form fields for the social login notification emails.
+ */
+function _social_auth_extra_email_config_form(&$form, FormStateInterface $form_state) {
   $config = \Drupal::config('social_auth_extra.mail');
 
   $form['email_social_login'] = [
@@ -354,16 +379,58 @@ function social_auth_extra_form_user_admin_settings_alter(&$form, FormStateInter
     '#rows' => 8,
     '#default_value' => $config->get('email_social_login.body'),
   ];
+}
 
-  $form['#submit'][] = 'social_auth_extra_form_user_admin_settings_submit';
+/**
+ * Adds the form fields to configure the social signup/login user help texts.
+ */
+function _social_auth_extra_help_text_config_form(&$form, FormStateInterface $form_state) {
+  $config = \Drupal::config('social_auth_extra.settings');
+
+  $fieldset = social_user_ensure_help_text_fieldset($form);
+
+  $form[$fieldset]['social_signup_help'] = [
+    '#type' => 'textarea',
+    '#title' => new TranslatableMarkup('Social Sign Up'),
+    '#description' => new TranslatableMarkup("Displayed in the social user sign-up card."),
+    "#default_value" => $config->get('social_signup_help'),
+    '#weight' => 100,
+  ];
+  $form[$fieldset]['social_login_help'] = [
+    '#type' => 'textarea',
+    '#title' => new TranslatableMarkup('Social Log In'),
+    '#description' => new TranslatableMarkup("Displayed in the social user log in card."),
+    "#default_value" => $config->get('social_login_help'),
+    '#weight' => 110,
+  ];
 }
 
 /**
  * Custom submit function for user_admin_settings().
  */
 function social_auth_extra_form_user_admin_settings_submit($form, FormStateInterface $form_state) {
-  $config = \Drupal::service('config.factory')->getEditable('social_auth_extra.mail');
+  _social_auth_extra_email_config_submit($form, $form_state);
+  _social_auth_extra_help_text_config_submit($form, $form_state);
+}
+
+/**
+ * Stores the configuration for the social_auth_extra registration emails.
+ */
+function _social_auth_extra_email_config_submit($form, FormStateInterface $form_state) {
+  $config = \Drupal::service('config.factory')
+    ->getEditable('social_auth_extra.mail');
   $config->set('email_social_login', $form_state->getValue('email_social_login'));
+  $config->save();
+}
+
+/**
+ * Stores the help texts for the social_auth_extra module.
+ */
+function _social_auth_extra_help_text_config_submit($form, FormStateInterface $form_state) {
+  $config = \Drupal::configFactory()
+    ->getEditable('social_auth_extra.settings');
+  $config->set('social_signup_help', $form_state->getValue("social_signup_help"));
+  $config->set('social_login_help', $form_state->getValue("social_login_help"));
   $config->save();
 }
 

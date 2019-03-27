@@ -76,8 +76,8 @@ Feature: Create Closed Group
   # Lets add another user on the Manage members tab.
     When I click "Test closed group"
     And I click "Manage members"
-    And I click "Add member"
-    And I fill in "Group User Two" for "Select a member"
+    And I click "Add members"
+    And I fill in "Group User Two" for "Select members to add"
     And I press "Save"
     Then I click "Members"
     And I should see "Group User Two"
@@ -190,7 +190,6 @@ Feature: Create Closed Group
     And I click the element with css selector "#hero .dropdown-toggle"
     And I should see the link "Leave group"
     And I click "Leave group"
-    And I should see "Test closed group 2" in the "Hero block"
     And I should see "This action cannot be undone."
     And I should see the button "Cancel"
     And I should see the button "Leave group"

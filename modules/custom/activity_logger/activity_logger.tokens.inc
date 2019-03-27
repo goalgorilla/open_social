@@ -9,6 +9,8 @@ use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\Url;
 use Drupal\group\Entity\Group;
 use Drupal\group\Entity\GroupContent;
+use Drupal\node\Entity\Node;
+use Drupal\Core\Language\LanguageInterface;
 
 /**
  * Implements hook_token_info().
@@ -38,6 +40,12 @@ function activity_logger_token_info() {
     'description' => t("The URL of the private message thread group url."),
   ];
 
+  $message['recipient-user'] = [
+    'name' => t('Recipient user'),
+    'description' => t('The recipient user.'),
+    'type' => 'user',
+  ];
+
   $message['recipient-user-url'] = [
     'name' => t("Recipient user url"),
     'description' => t("The recipient user url."),
@@ -61,15 +69,19 @@ function activity_logger_tokens($type, $tokens, array $data, array $options, Bub
     /** @var \Drupal\message\Entity\Message $message */
     $message = $data['message'];
 
+    $token_service = \Drupal::token();
+
     foreach ($tokens as $name => $original) {
       switch ($name) {
 
+        case 'node-title':
         case 'gtitle':
         case 'gurl':
+        case 'recipient-user':
         case 'recipient-user-url':
         case 'pmt-url':
 
-          if (isset($message->field_message_related_object)) {
+          if (isset($message->field_message_related_object) && !empty($message->field_message_related_object->target_type)) {
             $target_type = $message->field_message_related_object->target_type;
             $target_id = $message->field_message_related_object->target_id;
             $entity = \Drupal::entityTypeManager()
@@ -80,6 +92,10 @@ function activity_logger_tokens($type, $tokens, array $data, array $options, Bub
               // If comment get the entity to which the comment is attached.
               if ($entity->getEntityTypeId() === 'comment') {
                 $entity = $entity->getCommentedEntity();
+              }
+              // When it is a node.
+              if ($entity->getEntityTypeId() === 'node') {
+                $node = $entity;
               }
 
               // Try to get the group.
@@ -103,6 +119,17 @@ function activity_logger_tokens($type, $tokens, array $data, array $options, Bub
               // Handling for group content entities.
               if ($entity->getEntityTypeId() === 'group_content') {
                 $group = $entity->getGroup();
+                $group_content_entity = $entity->getEntity();
+
+                switch ($group_content_entity->getEntityTypeId()) {
+                  case 'node':
+                    $node = &$group_content_entity;
+                    break;
+
+                  case 'user':
+                    $recipient_user = &$group_content_entity;
+                    break;
+                }
               }
               // Handling for group entities.
               if ($entity->getEntityTypeId() === 'group') {
@@ -112,6 +139,10 @@ function activity_logger_tokens($type, $tokens, array $data, array $options, Bub
               // If it's a group.. add it in the arguments.
               if (isset($group) && $group instanceof Group) {
                 if ($name === 'gtitle') {
+                  $curr_langcode = \Drupal::languageManager()->getCurrentLanguage(LanguageInterface::TYPE_CONTENT)->getId();
+                  if ($group->isTranslatable() && $group->hasTranslation($curr_langcode)) {
+                    $group = $group->getTranslation($curr_langcode);
+                  }
                   $replacements[$original] = $group->label();
                 }
                 if ($name === 'gurl') {
@@ -123,7 +154,19 @@ function activity_logger_tokens($type, $tokens, array $data, array $options, Bub
                 }
               }
 
-              if ($name === 'recipient-user-url') {
+              if ($name === 'recipient-user') {
+                if (!empty($recipient_user)) {
+                  $account = &$recipient_user;
+                }
+                else {
+                  $account = \Drupal::entityTypeManager()->getStorage('user')
+                    ->load(0);
+                }
+
+                /** @var \Drupal\user\UserInterface $account */
+                $replacements[$original] = $account->getDisplayName();
+              }
+              elseif ($name === 'recipient-user-url') {
                 if (!empty($recipient_user)) {
                   $target_stream_url = Url::fromRoute('entity.user.canonical',
                     ['user' => $recipient_user->id()],
@@ -151,10 +194,22 @@ function activity_logger_tokens($type, $tokens, array $data, array $options, Bub
                 $replacements[$original] = $thread_url->toString();
               }
 
+              if ($name === 'node-title') {
+                if (isset($node) && $node instanceof Node) {
+                  $replacements[$original] = $node->label();
+                }
+              }
+
             }
           }
           break;
       }
+    }
+
+    $recipient_user_tokens = $token_service->findWithPrefix($tokens, 'recipient-user');
+
+    if ($recipient_user_tokens && !empty($recipient_user)) {
+      $replacements += $token_service->generate('user', $recipient_user_tokens, ['user' => $recipient_user], $options, $bubbleable_metadata);
     }
   }
 

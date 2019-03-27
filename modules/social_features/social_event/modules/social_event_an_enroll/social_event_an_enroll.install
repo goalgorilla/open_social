@@ -1,0 +1,114 @@
+<?php
+
+/**
+ * @file
+ * Install, update functions for the social_event_an_enroll module.
+ */
+
+use Drupal\user\Entity\Role;
+use Drupal\block\Entity\Block;
+
+/**
+ * Implements hook_install().
+ *
+ * Perform actions related to the installation of social_event_an_enroll.
+ */
+function social_event_an_enroll_install() {
+  _social_event_an_enroll_set_permissions();
+  _social_event_an_enroll_fix_blocks();
+}
+
+/**
+ * Function to set permissions.
+ */
+function _social_event_an_enroll_set_permissions() {
+  $roles = Role::loadMultiple();
+
+  /** @var \Drupal\user\Entity\Role $role */
+  foreach ($roles as $role) {
+    if ($role->id() === 'administrator') {
+      continue;
+    }
+
+    $permissions = _social_event_an_enroll_get_permissions($role->id());
+    user_role_grant_permissions($role->id(), $permissions);
+  }
+}
+
+/**
+ * Build the permissions.
+ *
+ * @param string $role
+ *   The role.
+ *
+ * @return array
+ *   Returns an array containing the permissions.
+ */
+function _social_event_an_enroll_get_permissions($role) {
+  // Anonymous.
+  $permissions['anonymous'] = [];
+
+  // Authenticated.
+  $permissions['authenticated'] = array_merge($permissions['anonymous'], []);
+
+  // Content manager.
+  $permissions['contentmanager'] = array_merge($permissions['authenticated'], [
+    'manage all enrollments',
+  ]);
+
+  // Site manager.
+  $permissions['sitemanager'] = array_merge($permissions['contentmanager'], []);
+
+  return isset($permissions[$role]) ? $permissions[$role] : [];
+}
+
+/**
+ * Fix blocks visibility.
+ */
+function _social_event_an_enroll_fix_blocks() {
+  $current_theme = \Drupal::configFactory()
+    ->get('system.theme')
+    ->get('default');
+
+  $block_id = "{$current_theme}_pagetitleblock_2";
+  $block = Block::load($block_id);
+  if (isset($block)) {
+    $visibility = $block->get('visibility');
+    if ($visibility['request_path']['negate'] == FALSE) {
+      $pages = $visibility['request_path']['pages'];
+      $pages .= "\r\n*/manage-enrollments";
+      $visibility['request_path']['pages'] = $pages;
+      $block->set('visibility', $visibility);
+      $block->save();
+    }
+  }
+}
+
+/**
+ * Fix text of AU Enrollment Confirmation Email.
+ */
+function social_event_an_enroll_update_8001() {
+  $config = \Drupal::service('config.factory')->getEditable('social_event_an_enroll.settings');
+  $config->set('event_an_enroll_email_subject', "You are enrolled in the event [node:title]");
+  $config->set('event_an_enroll_email_body', "You have been enrolled in the event [node:title]. You can cancel your enrollment anytime using the following link: [social_event_an_enroll:enrolled_event].");
+  $config->save();
+}
+
+/**
+ * Enable Event AN Enroll globally by default.
+ */
+function social_event_an_enroll_update_8002() {
+  $config = \Drupal::service('config.factory')->getEditable('social_event_an_enroll.settings');
+  $config->set('event_an_enroll', TRUE);
+  $config->save();
+}
+
+/**
+ * Set default value for Event AN Enroll and allow authors to change it.
+ */
+function social_event_an_enroll_update_8003() {
+  $config = \Drupal::service('config.factory')->getEditable('social_event_an_enroll.settings');
+  $config->set('event_an_enroll_default_value', FALSE);
+  $config->set('event_an_enroll_allow_edit', TRUE);
+  $config->save();
+}

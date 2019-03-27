@@ -19,6 +19,7 @@ use Drupal\social_event\Entity\EventEnrollment;
 use Drupal\user\UserStorageInterface;
 use Drupal\group\Entity\GroupContent;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 
 /**
  * Class EnrollActionForm.
@@ -70,6 +71,13 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
   protected $configFactory;
 
   /**
+   * The module handler.
+   *
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface
+   */
+  protected $moduleHandler;
+
+  /**
    * {@inheritdoc}
    */
   public function getFormId() {
@@ -91,14 +99,17 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
    *   The current user.
    * @param \Drupal\Core\Config\ConfigFactoryInterface $configFactory
    *   The config factory.
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface $moduleHandler
+   *   The module handler.
    */
-  public function __construct(RouteMatchInterface $route_match, EntityStorageInterface $entity_storage, UserStorageInterface $user_storage, EntityTypeManagerInterface $entityTypeManager, AccountProxyInterface $currentUser, ConfigFactoryInterface $configFactory) {
+  public function __construct(RouteMatchInterface $route_match, EntityStorageInterface $entity_storage, UserStorageInterface $user_storage, EntityTypeManagerInterface $entityTypeManager, AccountProxyInterface $currentUser, ConfigFactoryInterface $configFactory, ModuleHandlerInterface $moduleHandler) {
     $this->routeMatch = $route_match;
     $this->entityStorage = $entity_storage;
     $this->userStorage = $user_storage;
     $this->entityTypeManager = $entityTypeManager;
     $this->currentUser = $currentUser;
     $this->configFactory = $configFactory;
+    $this->moduleHandler = $moduleHandler;
   }
 
   /**
@@ -111,7 +122,8 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
       $container->get('entity.manager')->getStorage('user'),
       $container->get('entity_type.manager'),
       $container->get('current_user'),
-      $container->get('config.factory')
+      $container->get('config.factory'),
+      $container->get('module_handler')
     );
   }
 
@@ -140,6 +152,10 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
         foreach ($groups as $group) {
           $group_type_id = $group->bundle();
 
+          // The join group permission has never really been used since
+          // this commit. This now means that events in a closed group cannot
+          // be joined by outsiders, which makes sense, since they also
+          // couldn't see these events in the first place.
           if (in_array($group_type_id, $group_type_ids) && $group->hasPermission('join group', $current_user)) {
             break;
           }
@@ -157,6 +173,7 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
     ];
 
     $submit_text = $this->t('Enroll');
+    $to_enroll_status = '1';
     $enrollment_open = TRUE;
 
     // Add the enrollment closed label.
@@ -165,20 +182,19 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
       $enrollment_open = FALSE;
     }
 
-    $conditions = [
-      'field_account' => $uid,
-      'field_event' => $nid,
-    ];
+    if (!$current_user->isAnonymous()) {
+      $conditions = [
+        'field_account' => $uid,
+        'field_event' => $nid,
+      ];
 
-    $to_enroll_status = '1';
-
-    $enrollments = $this->entityStorage->loadByProperties($conditions);
-
-    if ($enrollment = array_pop($enrollments)) {
-      $current_enrollment_status = $enrollment->field_enrollment_status->value;
-      if ($current_enrollment_status === '1') {
-        $submit_text = $this->t('Enrolled');
-        $to_enroll_status = '0';
+      $enrollments = $this->entityStorage->loadByProperties($conditions);
+      if ($enrollment = array_pop($enrollments)) {
+        $current_enrollment_status = $enrollment->field_enrollment_status->value;
+        if ($current_enrollment_status === '1') {
+          $submit_text = $this->t('Enrolled');
+          $to_enroll_status = '0';
+        }
       }
     }
 
@@ -264,7 +280,7 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
     $nid = $form_state->getValue('event');
 
     // Redirect anonymous use to login page before enrolling to an event.
-    if ($uid === 0) {
+    if ($current_user->isAnonymous()) {
       $node_url = Url::fromRoute('entity.node.canonical', ['node' => $nid])
         ->toString();
       $form_state->setRedirect('user.login',

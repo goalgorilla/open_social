@@ -6,8 +6,6 @@
  */
 
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\node\Entity\Node;
-use Drupal\node\Entity\NodeType;
 use Drupal\node\NodeInterface;
 use Drupal\image\Entity\ImageStyle;
 use Drupal\Core\Url;
@@ -55,14 +53,8 @@ function template_preprocess_page_hero_data(array &$variables) {
   // Get current user.
   $account = \Drupal::currentUser();
 
-  // Get current node object or node id.
-  $node = \Drupal::routeMatch()->getParameter('node');
-
-  if (!is_object($node) && !is_null($node)) {
-    $node = \Drupal::service('entity_type.manager')
-      ->getStorage('node')
-      ->load($node);
-  }
+  // Get current node object.
+  $node = $variables['node'];
 
   if (is_object($node)) {
     if (empty($variables['event_enrollment'])) {
@@ -79,7 +71,7 @@ function template_preprocess_page_hero_data(array &$variables) {
     }
 
     // Add node edit url for management.
-    if ($node instanceof Node) {
+    if ($node instanceof NodeInterface) {
       // Get the current route name to check if the user is on the
       // edit or delete page.
       $route = \Drupal::routeMatch()->getRouteName();
@@ -344,19 +336,11 @@ function social_core_menu_local_tasks_alter(&$data, $route_name) {
     }
   }
 
-  $node = \Drupal::service('current_route_match')->getParameter('node');
-
-  if (!is_null($node) && !is_object($node)) {
-    $node = Node::load($node);
+  // Remove node Edit tab. Edit will always go through Floating Edit Button.
+  if (isset($data['tabs'][0]['entity.node.edit_form'])) {
+    unset($data['tabs'][0]['entity.node.edit_form']);
   }
 
-  // Check for all active node types.
-  if ($node instanceof Node && array_key_exists($node->getType(), NodeType::loadMultiple())) {
-    // Remove Edit tab. Edit will always go through Floating Edit Button.
-    if (isset($data['tabs'][0]['entity.node.edit_form'])) {
-      unset($data['tabs'][0]['entity.node.edit_form']);
-    }
-  }
   // Change the default 'View' tab title.
   if (isset($data['tabs'][0]['entity.node.canonical']['#link'])) {
     $data['tabs'][0]['entity.node.canonical']['#link']['title'] = t('Details');

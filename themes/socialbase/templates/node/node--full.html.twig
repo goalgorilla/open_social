@@ -161,7 +161,7 @@
           {% endif %}
 
           {% if likes_count is not empty %}
-            <div class="badge badge-default badge--large badge--pill">
+            <div class="badge badge-default badge--large badge--pill" title="{% trans %}Total amount of likes{% endtrans %}">
               <span class="badge__container">
                 <svg class="badge__icon">
                   <use xlink:href="#icon-like"></use>
@@ -185,6 +185,20 @@
                 <span class="badge__label">&nbsp;</span>
                 <span class="badge__label badge__label--description">{{ visibility_label }}</span>
               </span>
+            </div>
+          {% endif %}
+
+          {% if views_count is not empty and views_label %}
+            <div class="badge badge-default badge--large badge--pill" title="{% trans %}Total amount of views{% endtrans %}">
+            <span class="badge__container">
+              <svg class="badge__icon">
+                <use xlink:href="#icon-views"></use>
+              </svg>
+              <span class="badge__label">
+                {{ views_count }}
+              </span>
+              <span class="badge__label badge__label--description">{{ views_label }}</span>
+            </span>
             </div>
           {% endif %}
 

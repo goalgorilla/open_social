@@ -20,10 +20,10 @@
  */
 #}
 <div class="avatar">
-  <a href="{{ profile_stream_url }}" title="{{ profile_name }}">
+  <a href="{{ profile_stream_url }}" title="{{ profile_name|striptags }}">
 
     {% if profile_image_url %}
-      <img src="{{ profile_image_url }}" class="img-responsive" alt="{{ profile_name }}">
+      <img src="{{ profile_image_url }}" class="img-responsive" alt="{{ profile_name|striptags }}">
     {% else %}
       {# if default_image #}
       {{ content.field_profile_image }}

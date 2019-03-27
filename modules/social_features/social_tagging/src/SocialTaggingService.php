@@ -35,6 +35,7 @@ class SocialTaggingService {
    *   Injection of the configFactory.
    *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
   public function __construct(EntityTypeManagerInterface $entityTypeManager, ConfigFactoryInterface $configFactory) {
     $this->termStorage = $entityTypeManager->getStorage('taxonomy_term');
@@ -49,6 +50,16 @@ class SocialTaggingService {
    */
   public function active() {
     return (bool) $this->configFactory->get('social_tagging.settings')->get('enable_content_tagging');
+  }
+
+  /**
+   * Returns wether the feature is turned on for groups or not.
+   *
+   * @return bool
+   *   Wether tagging is turnded on or not for groups.
+   */
+  public function groupActive() {
+    return (bool) $this->configFactory->get('social_tagging.settings')->get('tag_type_group');
   }
 
   /**
@@ -140,11 +151,13 @@ class SocialTaggingService {
    *
    * @param array $terms
    *   An array of items that are selected.
+   * @param string $entity_type
+   *   The entity type these tags are for.
    *
    * @return array
    *   An hierarchy array of items with their parent.
    */
-  public function buildHierarchy(array $terms) {
+  public function buildHierarchy(array $terms, $entity_type) {
 
     $tree = [];
 
@@ -163,14 +176,17 @@ class SocialTaggingService {
       $parent = reset($parents);
       $category = $parent->getName();
 
+      $parameter = 'tag';
       if ($this->allowSplit()) {
         $parameter = social_tagging_to_machine_name($category);
       }
-      else {
-        $parameter = 'tag';
+
+      $route = 'view.search_content.page_no_value';
+      if ($entity_type == 'group') {
+        $route = 'view.search_groups.page_no_value';
       }
 
-      $url = Url::fromRoute('view.search_content.page_no_value', [
+      $url = Url::fromRoute($route, [
         $parameter . '[]' => $current_term->id(),
       ]);
 

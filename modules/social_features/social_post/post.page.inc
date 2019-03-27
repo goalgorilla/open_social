@@ -57,6 +57,9 @@ function template_preprocess_post(array &$variables) {
     $variables['modified'] = TRUE;
   }
 
-  $variables['published'] = $post->isPublished();
+  // Visibility icon and label for template use.
+  $variables['visibility_icon'] = social_post_get_visibility_details($post->get('field_visibility')->value, 'icon');
+  $variables['visibility_label'] = social_post_get_visibility_details($post->get('field_visibility')->value, 'label');
 
+  $variables['published'] = $post->isPublished();
 }

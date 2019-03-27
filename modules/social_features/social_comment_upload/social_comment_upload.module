@@ -15,19 +15,19 @@ use Drupal\file\Entity\File;
  * Alter the weight of the actions, so the upload is last.
  */
 function social_comment_upload_form_comment_comment_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  // If we don't have a file upload field there's nothing to change.
+  if (!isset($form['field_comment_files'])) {
+    return;
+  }
 
-  $settings = \Drupal::config('social_comment_upload.settings')->get('allow_upload_comments');
-
-  if (\Drupal::config('social_comment_upload.settings')->get('allow_upload_comments') == TRUE) {
-    if (isset($form['field_comment_files'])) {
-      $form['field_comment_files']['widget']['#file_upload_title'] = '';
-      $form['#attached']['library'][] = 'social_comment_upload/comment_upload';
-      $form['#after_build'][] = 'social_comment_upload_form_comment_comment_form_after_build';
-      // Workaround for fixing behat tests,
-      // which is caused by alter in social_comment module.
-      $form['field_comment_files']['#weight'] = 9;
-      $form['actions']['#weight'] = 8;
-    }
+  if (social_comment_upload_is_enabled()) {
+    $form['field_comment_files']['widget']['#file_upload_title'] = '';
+    $form['#attached']['library'][] = 'social_comment_upload/comment_upload';
+    $form['#after_build'][] = 'social_comment_upload_form_comment_comment_form_after_build';
+    // Workaround for fixing behat tests,
+    // which is caused by alter in social_comment module.
+    $form['field_comment_files']['#weight'] = 9;
+    $form['actions']['#weight'] = 8;
   }
   else {
     // Turn it off.
@@ -51,7 +51,7 @@ function social_comment_upload_form_comment_comment_form_after_build($form, Form
  * Implements hook_preprocess_HOOK().
  */
 function social_comment_upload_preprocess_file_widget_multiple(&$variables) {
-  if (\Drupal::config('social_comment_upload.settings')->get('allow_upload_comments') == TRUE) {
+  if (social_comment_upload_is_enabled()) {
     $element = $variables['element'];
 
     if ($element['#field_name'] == 'field_comment_files') {
@@ -104,4 +104,15 @@ function _social_comment_upload_delete_comment_files(EntityInterface $entity) {
       $file->delete();
     }
   }
+}
+
+/**
+ * A shortcut function for the allow_upload_comments setting.
+ *
+ * @return bool
+ *   Whether attachment uploading for comments is enabled.
+ */
+function social_comment_upload_is_enabled() {
+  return \Drupal::config('social_comment_upload.settings')
+    ->get('allow_upload_comments');
 }

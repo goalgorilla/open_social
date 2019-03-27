@@ -67,7 +67,15 @@
  */
 #}
 {{ attach_library('socialbase/comment')}}
-<article{{ attributes.addClass('js-comment comment') }}>
+{%
+  set classes = [
+    'comment',
+    'js-comment',
+    status ? 'comment-' ~ status,
+  ]
+%}
+
+<article{{ attributes.addClass(classes) }}>
   <div class="comment__avatar"> {{ author_picture }} </div>
 
   <div class="comment__content">
@@ -75,6 +83,9 @@
     <div class="comment__author"> {{ author }}
       <span class="comment__metadata">&bullet; {{ submitted }} </span>
       <mark class="badge badge-default badge--pill hidden" data-comment-timestamp="{{ new_indicator_timestamp }}"></mark>
+      {% if (status == 'unpublished') %}
+        <span class="badge badge-default badge--pill">{{ status }}</span>
+      {% endif %}
     </div>
     {% endblock %}
     <div class="comment__text iframe-container"> {{ content }} </div>

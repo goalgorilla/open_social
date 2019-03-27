@@ -13,6 +13,7 @@ Feature: Receive email notifications and choose frequency
       | user2   | mail_user2@example.com | 1      | Cathy                    | Willis                  |
     And I am logged in as "user1"
     And I am on the homepage
+    And the cache has been cleared
     And I fill in "Say something to the Community" with "Hello [~user2]!"
     And I press "Post"
     And I wait for the queue to be empty

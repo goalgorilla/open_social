@@ -1,6 +1,8 @@
 <?php
 // @codingStandardsIgnoreFile
 
+namespace Drupal\social\Behat;
+
 use Drupal\DrupalExtension\Context\RawDrupalContext;
 use Behat\Behat\Context\Context;
 use Behat\Behat\Context\SnippetAcceptingContext;

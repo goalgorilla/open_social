@@ -148,7 +148,7 @@ function socialbase_form_social_post_entity_form_alter(&$form, FormStateInterfac
 function socialbase_form_comment_post_comment_form_alter(&$form, FormStateInterface $form_state, $form_id) {
 
   if (isset($form['actions']['submit']['#button_type'])) {
-    $form['actions']['submit']['#button_type'] = 'flat';
+    $form['actions']['submit']['#button_type'] = 'primary';
     $form['actions']['submit']['#comment_button'] = TRUE;
   }
 
@@ -288,7 +288,9 @@ function socialbase_form_alter(&$form, FormStateInterface $form_state, $form_id)
       'data_policy_edit_form',
       'data_policy_data_policy_agreement',
       'data_policy_data_policy_revision_edit',
-    ]);
+      'event_an_enroll_form',
+    ]
+  );
 
   if (in_array($form_id, $default_forms)) {
     $form['#attributes']['class'][] = 'form--default';
@@ -324,10 +326,7 @@ function socialbase_form_alter(&$form, FormStateInterface $form_state, $form_id)
 
   // Here we list all the forms that need to be wrapped in cards.
   $add_card_to_forms = array_merge($group_add_card_to_forms, [
-    'social_user_login_form',
-    'user_register_form',
-    'user_pass_reset',
-    'social_user_password_form',
+    'event_an_enroll_form',
     'data_policy_edit_form',
     'data_policy_data_policy_agreement',
     'data_policy_data_policy_revision_edit',
@@ -375,6 +374,21 @@ function socialbase_form_alter(&$form, FormStateInterface $form_state, $form_id)
     $form['enroll_for_this_event']['#attributes']['class'][] = 'btn-lg';
   }
 
+  // Ensure the sign-up or login link is displayed as a nested card section.
+  // Bootstrap already converted the fieldset itself to a card.
+  if ($form_id === 'social_user_login_form') {
+    $form['username_login']['sign-up-link']['#prefix'] = '<div class="card__nested-section">';
+    $form['username_login']['sign-up-link']['#suffix'] = '</div>';
+  }
+  elseif ($form_id === 'user_register_form') {
+    $form['account']['login-link']['#prefix'] = '<div class="card__nested-section">';
+    $form['account']['login-link']['#suffix'] = '</div>';
+  }
+  elseif ($form_id === 'social_user_password_form') {
+    $form['forgot']['sign-up-link']['#prefix'] = '<div class="card__nested-section">';
+    $form['forgot']['sign-up-link']['#suffix'] = '</div>';
+  }
+
 }
 
 /**
@@ -392,6 +406,13 @@ function socialbase_form_node_form_alter(&$form, FormStateInterface $form_state,
     $form['actions']['delete']['#attributes']['class'][] = 'btn btn-flat';
   }
 
+  // Unlock is not an input element, so we must apply extra classes
+  // to anchor directly.
+  if (isset($form['actions']['unlock'])) {
+    $form['actions']['unlock']['#attributes']['class'][] = 'btn';
+    $form['actions']['unlock']['#attributes']['class'][] = 'btn-flat';
+  }
+
   if (isset($form['actions']['preview'])) {
     $form['actions']['preview']['#button_type'] = 'flat';
   }
@@ -407,5 +428,4 @@ function socialbase_form_node_form_alter(&$form, FormStateInterface $form_state,
     $form['actions']['unpublish']['#button_level'] = 'raised';
     $form['actions']['unpublish']['#button_type'] = 'primary';
   }
-
 }

@@ -245,6 +245,8 @@ class SocialGroupSelectorWidget extends OptionsSelectWidget implements Container
         }
         $ajax_response->addCommand(new InvokeCommand('#edit-field-content-visibility-' . $visibility, 'prop', ['disabled', 'disabled']));
       }
+
+      $ajax_response->addCommand(new InvokeCommand('#edit-field-content-visibility-' . $visibility, 'change'));
     }
     $text = t('Changing the group may have impact on the <strong>visibility settings</strong>.');
 

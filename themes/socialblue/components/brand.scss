@@ -25,6 +25,10 @@
   border-right-color: $brand-primary;
 }
 
+.view-birthday .teaser--tile .teaser__image {
+  background-color: $brand-primary;
+}
+
 .cover,
 .read-indicator,
 .select2-container--social .select2-results__option--highlighted[aria-selected],
@@ -71,6 +75,7 @@
   background-color: $brand-secondary;
 }
 
+.eu-cookie-compliance-secondary-button,
 .btn-primary {
   background-color: $brand-primary;
   border-color: $brand-primary;
@@ -348,4 +353,62 @@ blockquote {
       }
     }
   }
+}
+
+.vote-widget--social-vote .vote-vote {
+  background-color: $brand-accent;
+}
+
+.social-gtranslate-list--desktop {
+  > a {
+    color: $navbar-default-link-color;
+    background-color: $navbar-default-bg;
+    &:after {
+      color: $navbar-default-link-color;
+    }
+    .select-icon {
+      fill: $navbar-default-link-color;
+    }
+    &:focus,
+    &:hover {
+      color: $navbar-default-link-active-color;
+      fill: $navbar-default-link-active-color;
+      background-color: $navbar-default-link-active-bg;
+      &:after {
+        color: $navbar-default-link-active-color;
+      }
+      .select-icon {
+        fill: $navbar-default-link-active-color;
+      }
+    }
+  }
+  &.open {
+    > a {
+      color: $navbar-default-link-active-color;
+      fill: $navbar-default-link-active-color;
+      background-color: $navbar-default-link-active-bg;
+      &:after {
+        color: $navbar-default-link-active-color;
+      }
+      .select-icon {
+        fill: $navbar-default-link-active-color;
+      }
+      &:focus,
+      &:hover {
+        color: $navbar-default-link-active-color;
+        fill: $navbar-default-link-active-color;
+        background-color: $navbar-default-link-active-bg;
+        &:after {
+          color: $navbar-default-link-active-color;
+        }
+        .select-icon {
+          fill: $navbar-default-link-active-color;
+        }
+      }
+    }
+  }
+}
+
+#sliding-popup {
+  background-color: $brand-secondary !important;
 }

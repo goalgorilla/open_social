@@ -1,6 +1,8 @@
 <?php
 // @codingStandardsIgnoreFile
 
+namespace Drupal\social\Behat;
+
 use Behat\Behat\Context\Context;
 use Behat\Behat\Context\SnippetAcceptingContext;
 use Behat\Behat\Hook\Scope\AfterScenarioScope;
@@ -48,7 +50,7 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
 
       /** @var \Behat\Testwork\Environment\Environment $environment */
       $environment = $scope->getEnvironment();
-      $this->minkContext = $environment->getContext('SocialMinkContext');
+      $this->minkContext = $environment->getContext(SocialMinkContext::class);
     }
 
   /**

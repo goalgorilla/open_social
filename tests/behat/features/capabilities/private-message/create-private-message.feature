@@ -13,7 +13,7 @@
       | PM User Two   | pm_user_2@example.com | 1      |
     When I am logged in as "PM User One"
     And I am on "/user/inbox"
-    Then I should see "You do not have any private messages yet. Click on the button on the right to start a new chat."
+    Then I should see "You do not have any private messages yet. Click on the button on the right to start a new message."
     And I click "New message"
     Then I should see "Create Private Message"
     And I fill in "Member(s)" with "PM User" and select "PM User Two"
@@ -64,7 +64,7 @@
     And I press "Delete thread"
     Then I should see the following success messages:
       | Your message has been deleted. |
-    And I should see "You do not have any private messages yet. Click on the button on the right to start a new chat."
+    And I should see "You do not have any private messages yet. Click on the button on the right to start a new message."
 
   # Create thread with multiple users.
   Scenario: Create thread with multiple users.

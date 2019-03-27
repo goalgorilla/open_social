@@ -34,6 +34,11 @@ function social_topic_install() {
     ]);
     $term->save();
   }
+
+  // Set default topic type settings.
+  $config = \Drupal::configFactory()->getEditable('social_topic.settings');
+  $config->set('social_topic_type_select_changer', 8);
+  $config->save();
 }
 
 /**
@@ -75,6 +80,8 @@ function _social_topic_get_permissions($role) {
     'edit own topic content',
     'override topic published option',
     'view node.topic.field_content_visibility:community content',
+    'view topics on my profile',
+    'view topics on other profiles',
   ]);
 
   // Content manager.
@@ -95,6 +102,7 @@ function _social_topic_get_permissions($role) {
   // Site manager.
   $permissions['sitemanager'] = array_merge($permissions['contentmanager'], [
     'administer visibility settings',
+    'administer social_topic settings',
   ]);
 
   if (isset($permissions[$role])) {
@@ -133,4 +141,36 @@ function _social_topic_create_menu_links() {
  */
 function social_topic_update_8001() {
 
+}
+
+/**
+ * Set my topics permissions.
+ */
+function social_topic_update_8002() {
+  // Make it so that everyone who has the 'access user profiles' permission,
+  // now also get these two new permissions.
+  $permissions = [
+    'view topics on my profile',
+    'view topics on other profiles',
+  ];
+
+  /** @var \Drupal\user\Entity\Role $role */
+  foreach (Role::loadMultiple() as $role) {
+    if ($role->hasPermission('access user profiles')) {
+      user_role_grant_permissions($role->id(), $permissions);
+    }
+  }
+}
+
+/**
+ * Set social_topic settings.
+ */
+function social_topic_update_8003() {
+  // Give SM the administer social_topic settings permission.
+  user_role_grant_permissions('sitemanager', ['administer social_topic settings']);
+
+  // Set default topic type settings.
+  $config = \Drupal::configFactory()->getEditable('social_topic.settings');
+  $config->set('social_topic_type_select_changer', 8);
+  $config->save();
 }
