@@ -9,7 +9,9 @@ dependencies:
     - search_api
     - serialization
     - user
-    - social_search_autocomplete
+  enforced:
+    module:
+      - social_search_autocomplete
 id: search_all_autocomplete
 label: 'Search All autocomplete'
 module: views
@@ -219,13 +221,13 @@ display:
                 display_method: label
           entity_type: node
           plugin_id: search_api_field
-        type_2:
-          id: type_2
-          table: search_api_datasource_social_all_entity_profile
-          field: type
-          relationship: none
+        uid_1:
+          id: uid_1
+          table: search_api_entity_user
+          field: uid
+          relationship: uid
           group_type: group
-          admin_label: 'User type'
+          admin_label: 'User type (rewritten User ID)'
           label: ''
           exclude: true
           alter:
@@ -267,11 +269,12 @@ display:
           hide_empty: false
           empty_zero: false
           hide_alter_empty: true
-          click_sort_column: target_id
-          type: entity_reference_label
+          click_sort_column: value
+          type: number_integer
           settings:
-            link: false
-          group_column: target_id
+            thousand_separator: ''
+            prefix_suffix: true
+          group_column: value
           group_columns: {  }
           group_rows: true
           delta_limit: 0
@@ -282,16 +285,24 @@ display:
           separator: ', '
           field_api_classes: false
           field_rendering: false
-          fallback_handler: search_api_entity
+          fallback_handler: search_api_numeric
           fallback_options:
+            set_precision: false
+            precision: 0
+            decimal: .
+            separator: ','
+            format_plural: false
+            format_plural_string: !!binary MQNAY291bnQ=
+            prefix: ''
+            suffix: ''
             link_to_item: false
             use_highlighting: false
             multi_type: separator
             multi_separator: ', '
-            display_methods:
-              profile_type:
-                display_method: label
-          entity_type: profile
+            format_plural_values:
+              - '1'
+              - '@count'
+          entity_type: user
           plugin_id: search_api_field
         nothing:
           id: nothing
@@ -304,7 +315,7 @@ display:
           exclude: false
           alter:
             alter_text: true
-            text: '{{ type }}{{ type_1 }}{{ type_2 }}'
+            text: '{{ type }}{{ type_1 }}{{ uid_1 }}'
             make_link: false
             path: ''
             absolute: false
