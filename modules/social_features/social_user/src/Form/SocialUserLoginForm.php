@@ -87,11 +87,11 @@ class SocialUserLoginForm extends UserLoginForm {
     $account = $this->userStorage->load($form_state->get('uid'));
     // A destination was set, probably on an exception controller,.
     // @TODO: Add validation if route exists.
-    if (!$this->getRequest()->request->has('destination')) {
+    if (!$this->getRequest()->server->has('REDIRECT_QUERY_STRING')) {
       $form_state->setRedirect('<front>');
     }
     else {
-      $this->getRequest()->query->set('destination', $this->getRequest()->request->get('destination'));
+      $this->getRequest()->query->set('destination', parse_url(urldecode(str_replace('destination=', '', $this->getRequest()->server->get('REDIRECT_QUERY_STRING'))), PHP_URL_PATH));
     }
 
     user_login_finalize($account);
