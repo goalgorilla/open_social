@@ -71,6 +71,88 @@ function social_profile_fields_social_user_name_display_suggestions(AccountInter
 }
 
 /**
+ * Implements hook_social_user_name_display_suggestions_alter().
+ *
+ * If the first name or last name (or both) is not enabled then we alter the
+ * display of the full_name suggestion.
+ *
+ * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+ * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+ */
+function social_profile_fields_social_user_name_display_suggestions_alter(array &$suggestions, AccountInterface $account) {
+  social_profile_fields_censor_full_name_suggestion($suggestions, $account);
+}
+
+/**
+ * Implements hook_social_user_name_display_suggestions_alter().
+ *
+ * Ensures that the full name suggestion doesn't contain disabled fields.
+ *
+ * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+ * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+ */
+function social_profile_fields_censor_full_name_suggestion(array &$suggestions, AccountInterface $account) {
+  // If there's no full name for us to censor then we're done.
+  if (empty($suggestions['full_name'])) {
+    return;
+  }
+
+  $use_first_name = _social_profile_fields_get_setting('profile_profile_field_profile_first_name');
+  $use_last_name = _social_profile_fields_get_setting('profile_profile_field_profile_last_name');
+
+  // If both fields are enabled then there is nothing for us to censor.
+  if ($use_first_name && $use_last_name) {
+    return;
+  }
+
+  // The field that is enabled must be loaded and checked to be non-empty.
+  /** @var \Drupal\profile\ProfileStorageInterface $storage */
+  $storage = \Drupal::entityTypeManager()->getStorage('profile');
+  $user_profile = $storage->loadByUser($account, 'profile', TRUE);
+
+  // If we don't have a user profile then someone else has probably found data
+  // from elsewhere and we have no fields to use.
+  if (!$user_profile) {
+    return;
+  }
+
+  // If both fields are disabled then we can unset the suggestion and be done.
+  // We do this only if there's a profile because otherwise we may throw away
+  // someone else's full_name pulled from elsewhere.
+  if (!$use_first_name && !$use_last_name) {
+    unset($suggestions['full_name']);
+    return;
+  }
+
+  // We know that only one field is active.
+  // So check just the first name.
+  if ($use_first_name) {
+    $first_name = $user_profile->get('field_profile_first_name')->value;
+    // If the only field we're allowed to use is empty then we remove the
+    // suggestion altogether and fall back to something else.
+    if (empty($first_name)) {
+      unset($suggestions['full_name']);
+    }
+    // Otherwise we use it.
+    else {
+      $suggestions['full_name']['name'] = $first_name;
+    }
+  }
+  else {
+    $last_name = $user_profile->get('field_profile_last_name')->value;
+    // If the only field we're allowed to use is empty then we remove the
+    // suggestion altogether and fall back to something else.
+    if (empty($last_name)) {
+      unset($suggestions['full_name']);
+    }
+    // Otherwise we use it.
+    else {
+      $suggestions['full_name']['name'] = $last_name;
+    }
+  }
+}
+
+/**
  * Implements hook_ENTITY_TYPE_view_alter().
  */
 function social_profile_fields_profile_view_alter(array &$build, EntityInterface $entity, EntityViewDisplay $display) {
