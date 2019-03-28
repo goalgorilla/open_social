@@ -3,7 +3,6 @@
 namespace Drupal\social_group;
 
 use Drupal\Core\Config\ConfigFactory;
-use Drupal\group\Entity\GroupInterface;
 
 /**
  * Class SocialGroupHero.
@@ -33,33 +32,23 @@ class SocialGroupHero {
   /**
    * Function that determines the group hero imagestyle.
    *
-   * @param \Drupal\group\Entity\GroupInterface $group
-   *   The group.
-   *
    * @return string
    *   Of the image / crop style.
    */
-  public function getGroupHeroCropType(GroupInterface $group) :string {
+  public function getGroupHeroCropType() :string {
     $settings = $this->configFactory->get('social_group.settings');
-    // Check if this is a group and check if hero selection is allowed.
-    if (!$group instanceof GroupInterface) {
-      return $settings->get('default_hero') ?? 'hero';
-    }
     // Return the selected style, or the default one.
-    return $group->get('field_group_image_style')->value ?? 'hero';
+    return $settings->get('default_hero') ?? 'hero';
   }
 
   /**
    * Function that determines the group hero croptype.
    *
-   * @param \Drupal\group\Entity\GroupInterface $group
-   *   The group.
-   *
    * @return string
    *   The crop style.
    */
-  public function getGroupHeroImageStyle(GroupInterface $group) :string {
-    return $this->cropToStyle($this->getGroupHeroCropType($group));
+  public function getGroupHeroImageStyle() :string {
+    return $this->cropToStyle($this->getGroupHeroCropType());
   }
 
   /**
