@@ -1,0 +1,15 @@
+<?php
+
+/**
+ * @file
+ * Provides basic Blazy integration for lazy loading and multi-serving images.
+ */
+
+/**
+ * Implements hook_library_info_alter().
+ */
+function social_lazy_loading_library_info_alter(&$libraries, $extension) {
+  if ($extension === 'blazy' && function_exists('libraries_get_path')) {
+    $libraries['blazy']['js'] = ['/' . libraries_get_path('blazy') . '/blazy.min.js' => ['weight' => -4]];
+  }
+}
