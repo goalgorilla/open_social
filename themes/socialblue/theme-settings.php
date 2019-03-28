@@ -121,6 +121,24 @@ function socialblue_form_system_theme_settings_alter(&$form, FormStateInterface 
         '#description' => t("The font family to use."),
       ];
 
+      $form['os_style_settings'] = [
+        '#type' => 'details',
+        '#group' => 'open_social_settings',
+        '#title' => t('Style'),
+        '#weight' => 40,
+        '#collapsible' => TRUE,
+        '#collapsed' => TRUE,
+      ];
+
+      $form['os_style_settings']['style'] = [
+        '#type' => 'select',
+        '#title' => t('Style'),
+        '#options' => [
+          '' => t('Default'),
+          'sky' => t('Sky (New)'),
+        ],
+        '#default_value' => $config->get('style'),
+      ];
     }
 
   }
