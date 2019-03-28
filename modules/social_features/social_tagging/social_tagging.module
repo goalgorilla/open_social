@@ -389,6 +389,7 @@ function social_tagging_form_views_exposed_form_alter(&$form, FormStateInterface
       $label = social_tagging_to_machine_name($label);
 
       if (isset($form[$label])) {
+        $form[$label]['#options'] = [];
         $form[$label]['#options'][''] = t('- Any -');
         $form[$label]['#options'] += $tag_service->getChildren($tid);
         $form[$label]['#type'] = 'select';
@@ -406,6 +407,7 @@ function social_tagging_form_views_exposed_form_alter(&$form, FormStateInterface
   // Only remove all top level items.
   else {
     // Remove main items and just insert child options.
+    $form['tag']['#options'] = [];
     $form['tag']['#options'][''] = t('- Any -');
     $form['tag']['#type'] = 'select';
     $form['tag']['#size'] = NULL;
