@@ -27,6 +27,9 @@ class Html extends HtmlBase {
       $variables['colors'][$key] = $value;
     }
 
+    // Get all SVG Icons.
+    $variables['svg_icons_blue__sky'] = file_get_contents(drupal_get_path('theme', 'socialblue') . '/assets/icons/icons.svg');
+
   }
 
 }
