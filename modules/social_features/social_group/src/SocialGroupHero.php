@@ -42,7 +42,7 @@ class SocialGroupHero {
   public function getGroupHeroCropType(GroupInterface $group) :string {
     $settings = $this->configFactory->get('social_group.settings');
     // Check if this is a group and check if hero selection is allowed.
-    if (!$group instanceof GroupInterface || $settings->get('allow_hero_selection') !== FALSE) {
+    if (!$group instanceof GroupInterface) {
       return $settings->get('default_hero') ?? 'hero';
     }
     // Return the selected style, or the default one.
@@ -69,6 +69,9 @@ class SocialGroupHero {
    *   Is this considered small.
    */
   public function isSmall() :bool {
+    // Invoke cropToStyle, to get info about the size.
+    $this->cropToStyle($this->configFactory->get('social_group.settings')->get('default_hero'));
+    // Return info about the size.
     return $this->isSmall;
   }
 

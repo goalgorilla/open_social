@@ -43,25 +43,11 @@ class SocialGroupSettings extends ConfigFormBase {
       '#default_value' => $config->get('allow_group_selection_in_node'),
     ];
 
-    $form['allow_hero_selection'] = [
-      '#type' => 'checkbox',
-      '#title' => $this->t('Allow logged-in users to choose a different hero size on each group.'),
-      '#description' => $this->t('When checked, logged-in users can choose on each group they manage which hero size will be used.'),
-      '#default_value' => $config->get('allow_hero_selection'),
-    ];
-
     $form['default_hero'] = [
       '#type' => 'select',
       '#title' => $this->t('The default hero image.'),
       '#description' => $this->t('The default hero size used on this platform. Only applicable when logged-in users cannot choose a different hero size on each group.'),
       '#default_value' => $config->get('default_hero'),
-      '#states' => [
-        'visible' => [
-          ':input[name="allow_hero_selection"]' => [
-            'checked' => FALSE,
-          ],
-        ],
-      ],
       '#options' => $this->getCropTypes(),
     ];
 
@@ -76,7 +62,6 @@ class SocialGroupSettings extends ConfigFormBase {
 
     $this->config('social_group.settings')
       ->set('allow_group_selection_in_node', $form_state->getValue('allow_group_selection_in_node'))
-      ->set('allow_hero_selection', $form_state->getValue('allow_hero_selection'))
       ->set('default_hero', $form_state->getValue('default_hero'))
       ->save();
 
