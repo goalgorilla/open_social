@@ -16,21 +16,23 @@ class ThemeSuggestions extends BaseThemeSuggestions {
   /**
    * {@inheritdoc}
    */
-  public function alter(&$suggestions, &$context1 = NULL, &$hook = NULL) {
-    parent::alter($suggestions, $context1, $hook);
-
-    $variables = $this->variables;
+  public function alter(&$suggestions, &$context = NULL, &$hook = NULL) {
+    parent::alter($suggestions, $context, $hook);
 
     $style = theme_get_setting('style');
 
     if (!empty($style)) {
+      $variables = $this->variables;
+      $style_suggestions = [];
+      $style_suggestions[] = $variables['theme_hook_original'] . '__' . $style;
+
       if (!empty($suggestions)) {
         foreach ($suggestions as $suggestion) {
-          $suggestions[] = $suggestion . '__' . $style;
+          $style_suggestions[] = $suggestion . '__' . $style;
         }
       }
 
-      $suggestions[] = $variables['theme_hook_original'] . '__' . $style;
+      $suggestions = array_merge($suggestions, $style_suggestions);
     }
 
   }
