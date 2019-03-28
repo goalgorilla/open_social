@@ -167,6 +167,28 @@ function improved_theme_settings_page_attachments(array &$page) {
         ';
       }
 
+      // Default values.
+      $hero_gradient_opacity_start = 0.1;
+      $hero_gradient_opacity_end = 0.7;
+
+      $hero_gradient_opacity = improved_theme_settings_get_setting('hero_gradient_opacity', $system_theme_settings);
+      if (isset($hero_gradient_opacity)) {
+        // Convert to values that the gradient can work with.
+        $hero_gradient_opacity_end = $hero_gradient_opacity / 100;
+
+        // If our opacity has been set to 0, also change the start value to 0.
+        if ($hero_gradient_opacity == 0) {
+          $hero_gradient_opacity_start = 0;
+        }
+      }
+
+      $style_to_add .= '
+        .hero__bgimage-overlay {
+          background: -webkit-gradient(linear, left top, left bottom, from(rgba(0, 0, 0,' . $hero_gradient_opacity_start . ')), to(rgba(34, 34, 34,' . $hero_gradient_opacity_end . '))) !important;
+          background: linear-gradient(rgba(0, 0, 0, ' . $hero_gradient_opacity_start . ') 0%, rgba(34, 34, 34, ' . $hero_gradient_opacity_end . ') 100%) !important;
+        }
+      ';
+
       if (!empty($style_to_add)) {
         $page['#attached']['html_head'][] = [
           [
