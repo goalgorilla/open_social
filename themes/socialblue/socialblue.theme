@@ -4,3 +4,14 @@
  * @file
  * The primary PHP file for the Social Blue theme.
  */
+
+/**
+ * Implements THEME_preprocess().
+ */
+function socialblue_preprocess(&$variables, $hook, $info) {
+  // Add style variable to be able to attach new libraries and change templates.
+  $style = theme_get_setting('style');
+  if (!empty($style)) {
+    $variables['style'] = $style;
+  }
+}
