@@ -21,6 +21,10 @@ function social_user_install() {
   $config = \Drupal::getContainer()->get('config.factory')->getEditable('social_user.navigation.settings');
   $config->set('display_social_private_message_icon', 1)->save();
   $config->set('display_my_groups_icon', 1)->save();
+
+  // Create the default configuration for the social_user default landing page.
+  $config = \Drupal::getContainer()->get('config.factory')->getEditable('social_user.settings');
+  $config->set('social_user_profile_landingpage', 'entity.user.canonical')->save();
 }
 
 /**
@@ -113,6 +117,15 @@ function social_user_update_8007() {
   \Drupal::service('module_installer')->install($modules);
   // Rebuild the router for social_event_managers.route_subscriber.
   \Drupal::service('router.builder')->rebuild();
+}
+
+/**
+ * Create the default configuration for the social_user default landing page.
+ */
+function social_user_update_8008() {
+  // Create the default configuration for the social_user default landing page.
+  $config = \Drupal::getContainer()->get('config.factory')->getEditable('social_user.settings');
+  $config->set('social_user_profile_landingpage', 'entity.user.canonical')->save();
 }
 
 /**

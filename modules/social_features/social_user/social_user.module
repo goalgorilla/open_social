@@ -447,8 +447,8 @@ function _social_user_search_content_pre_render(array $build) {
  */
 function social_user_menu_local_tasks_alter(&$data, $route_name) {
   // Change the default 'View' tab title.
-  if (isset($data['tabs'][0]['entity.user.canonical']['#link'])) {
-    $data['tabs'][0]['entity.user.canonical']['#link']['title'] = t('Stream');
+  if (isset($data['tabs'][0]['entity.user.canonical'])) {
+    unset($data['tabs'][0]['entity.user.canonical']);
   }
 
   // Remove Edit tab. Edit will always go through Floating Edit Button.
