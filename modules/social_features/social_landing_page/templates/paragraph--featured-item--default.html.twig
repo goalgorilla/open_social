@@ -1,0 +1,48 @@
+{{ attach_library('socialbase/teaser') }}
+
+{% set classes = [
+  'paragraph',
+  'paragraph--type--' ~ paragraph.bundle|clean_class,
+  view_mode ? 'paragraph--view-mode--' ~ view_mode|clean_class,
+  not paragraph.isPublished() ? 'paragraph--unpublished'
+] %}
+
+{% block paragraph %}
+  <div{{ attributes.addClass(classes) }}>
+
+    {% if (content.field_featured_item_description|render is not empty) %}
+      <div class="teaser__info" data-toggle="popover" data-container="body" data-html="true"
+           data-placement="bottom" data-content='{{ content.field_featured_item_description|render|striptags|trim }}'>
+        <svg x="0px" y="0px" width="510px" height="510px" viewBox="0 0 510 510"
+             style="enable-background:new 0 0 510 510;" xml:space="preserve">
+          <g>
+            <g id="info-outline">
+              <path d="M229.5,382.5h51v-153h-51V382.5z M255,0C114.75,0,0,114.75,0,255s114.75,255,255,255s255-114.75,255-255S395.25,0,255,0z
+                 M255,459c-112.2,0-204-91.8-204-204S142.8,51,255,51s204,91.8,204,204S367.2,459,255,459z M229.5,178.5h51v-51h-51V178.5z"/>
+            </g>
+          </g>
+        </svg>
+      </div>
+    {% endif %}
+    <div class="teaser__image">
+      <div class="img_wrapper">
+        {{ content.field_featured_item_image }}
+      </div>
+    </div>
+
+    <div class="teaser__body">
+
+      {% if (content.field_featured_item_title|render is not empty) %}
+        <h2 class="teaser__title">{{ content.field_featured_item_title }}</h2>
+      {% endif %}
+
+      {% if (content.field_featured_item_link|render is not empty) %}
+        <footer class="card__actionbar">
+          <div class="card__link btn btn-default">
+            {{ content.field_featured_item_link }}
+          </div>
+        </footer>
+      {% endif %}
+    </div>
+  </div>
+{% endblock paragraph %}
