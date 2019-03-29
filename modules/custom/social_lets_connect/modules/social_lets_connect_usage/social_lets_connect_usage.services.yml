@@ -1,0 +1,5 @@
+services:
+  plugin.manager.share_usage_data_plugin:
+    class: Drupal\social_lets_connect_usage\Plugin\ShareUsageDataPluginManager
+    parent: default_plugin_manager
+    arguments: ['@container.namespaces', '@cache.discovery', '@module_handler']
