@@ -171,7 +171,8 @@ function improved_theme_settings_page_attachments(array &$page) {
       $hero_gradient_opacity_start = 0.1;
       $hero_gradient_opacity_end = 0.7;
 
-      $hero_gradient_opacity = improved_theme_settings_get_setting('hero_gradient_opacity', $system_theme_settings);
+      // Alwasys cast as an integer.
+      $hero_gradient_opacity = (integer) improved_theme_settings_get_setting('hero_gradient_opacity', $system_theme_settings);
       if (isset($hero_gradient_opacity)) {
         // Convert to values that the gradient can work with.
         $hero_gradient_opacity_end = $hero_gradient_opacity / 100;

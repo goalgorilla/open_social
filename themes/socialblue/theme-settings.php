@@ -116,6 +116,8 @@ function socialblue_form_system_theme_settings_alter(&$form, FormStateInterface 
         '#title' => t('Hero gradient'),
         '#default_value' => $config->get('hero_gradient_opacity'),
         '#description' => t('Define the percentage of darkness of the hero gradient from 0 to 100.'),
+        '#min' => 0,
+        '#max' => 100,
       ];
 
       // Font tab.
