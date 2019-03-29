@@ -93,30 +93,18 @@ function social_path_manager_batch_alter(&$batch) {
 /**
  * Common batch processing callback for all operations.
  */
-function _social_path_manager_update_group_tab_aliases($id, $action, &$context) {
-  if (!isset($context['sandbox']['progress'])) {
-    $context['sandbox']['progress'] = 0;
-    $context['sandbox']['grouptab_aliases_created'] = 0;
-    $group_ids = \Drupal::entityQuery('group')
-      ->execute();
-    $context['sandbox']['gips'] = array_keys($group_ids);
-    $context['sandbox']['group_count'] = count($group_ids);
-  }
+function _social_path_manager_update_group_tab_aliases($id, $action) {
+  $group_ids = array_keys(\Drupal::entityQuery('group')->execute());
+  $created = 0;
 
-  // Try to do 5 each cycle. Never do more than are available.
-  for ($target = $context['sandbox']['progress'] + 5; $context['sandbox']['progress'] < $target && $context['sandbox']['progress'] < $context['sandbox']['group_count']; $context['sandbox']['progress']++) {
-    $gip = $context['sandbox']['gips'][$context['sandbox']['progress']];
-    $group = Group::load($gip);
+  foreach ($group_ids as $group_id) {
+    $group = Group::load($group_id);
     _social_path_manager_update_alias($group, $action, TRUE);
-    $context['sandbox']['grouptab_aliases_created']++;
+    $created++;
   }
 
-  $context['sandbox']['#finished'] = empty($context['sandbox']['group_count']) ? 1 : ($context['sandbox']['progress'] / $context['sandbox']['group_count']);
-
-  if ($context['sandbox']['#finished'] === 1) {
-    \Drupal::service('messenger')->addMessage(\Drupal::translation()
-      ->formatPlural($context['sandbox']['grouptab_aliases_created'], 'Generated 1 group tab aliases.', 'Generated @count group tab aliases.'));
-  }
+  \Drupal::service('messenger')->addMessage(\Drupal::translation()
+    ->formatPlural($created, 'Generated 1 group tab aliases.', 'Generated @count group tab aliases.'));
 }
 
 /**
@@ -209,6 +197,7 @@ function _social_path_manager_get_path_suffix(GroupInterface $group, $route) {
  *   The operation that is being performed.
  * @param bool $bulk
  *   Parameter to tell if the operation is coming from a bulk or not.
+ *
  * @throws \Exception
  */
 function _social_path_manager_update_alias(EntityInterface $entity, $op, $bulk = FALSE) {
