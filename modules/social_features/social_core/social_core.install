@@ -887,7 +887,7 @@ function social_core_update_8501() {
   \Drupal::service('module_installer')->install($modules);
 
   // Let's disable sharing data by default.
-  $config = \Drupal::config('social_lets_connect_usage.settings');
+  $config = \Drupal::configFactory()->getEditable('social_lets_connect_usage.settings');
   $config->set('usage_data_enabled', 0);
   $config->save();
 
