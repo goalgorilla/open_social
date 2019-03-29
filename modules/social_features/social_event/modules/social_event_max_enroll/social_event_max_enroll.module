@@ -49,6 +49,13 @@ function social_event_max_enroll_form_alter(&$form, FormStateInterface $form_sta
     $form['field_event_max_enroll']['#access'] = $config->get('max_enroll');
     $form['field_event_max_enroll_num']['#access'] = $config->get('max_enroll');
 
+    // Hide checkbox if event enrollment is disabled for event.
+    $form['field_event_max_enroll']['#states'] = [
+      'visible' => [
+        ':input[name="field_event_enroll[value]"]' => ['checked' => TRUE],
+      ],
+    ];
+
     // Show the checkbox only when max enroll is enabled.
     if ($config->get('max_enroll_required')) {
       $form['field_event_max_enroll']['widget']['value']['#default_value'] = TRUE;

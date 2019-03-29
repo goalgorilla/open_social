@@ -100,8 +100,9 @@ class EventMaxEnrollService {
     // Get enrollment configuration for this event.
     $is_event_max_enroll = !empty($node->get('field_event_max_enroll')->value);
     $is_event_max_enroll_num = isset($node->get('field_event_max_enroll_num')->value);
+    $is_event_enroll = social_event_enroll_is_enabled($node);
 
-    return (bool) $is_global_enabled && $is_event && $is_event_max_enroll && $is_event_max_enroll_num;
+    return (bool) $is_global_enabled && $is_event && $is_event_max_enroll && $is_event_max_enroll_num && $is_event_enroll;
   }
 
 }

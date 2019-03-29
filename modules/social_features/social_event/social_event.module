@@ -111,8 +111,8 @@ function social_event_menu_local_tasks_alter(&$data, $route_name) {
     if (!is_null($node) && (!$node instanceof Node)) {
       $node = Node::load($node);
     }
-    if (($node instanceof Node) && $node->getType() === 'event') {
-      $can_show_enrollments_link = TRUE;
+    if ($node instanceof Node) {
+      $can_show_enrollments_link = social_event_enroll_is_enabled($node);
     }
 
   }
@@ -387,6 +387,17 @@ function social_event_block_access(Block $block, $operation, AccountInterface $a
     return $access;
   }
 
+  if ($operation === 'view' && ($block->getPluginId() === 'views_block:event_enrollments-event_enrollments')) {
+    $nid = \Drupal::routeMatch()->getRawParameter('node');
+    if (!empty($nid) && $node = Node::load($nid)) {
+      // Check if event enrollment were disabled explicitly.
+      if (!social_event_enroll_is_enabled($node)) {
+        // Return forbidden, since access was not explicitly granted.
+        return AccessResult::forbidden();
+      }
+    }
+  }
+
   // No opinion.
   return AccessResult::neutral();
 }
@@ -414,6 +425,33 @@ function social_event_form_alter(&$form, FormStateInterface $form_state, $form_i
     $form['#group_children']['event_all_day'] = 'group_date_time';
     $form['#after_build'][] = 'social_event_date_after_build';
   }
+
+  // Set allow event enrollment checked by default for existing events.
+  if ($form_id === 'node_event_edit_form') {
+    $node = $form_state->getFormObject()->getEntity();
+    if ($node instanceof Node && !isset($node->get('field_event_enroll')->value)) {
+      $form['field_event_enroll']['widget']['value']['#default_value'] = TRUE;
+    }
+  }
+
+  // Hide Enroll button if enrollment is disabled for this event.
+  if ($form_id === 'enroll_action_form') {
+    $nid = \Drupal::routeMatch()->getRawParameter('node');
+    if (!empty($nid) && $node = Node::load($nid)) {
+      $form['enroll_for_this_event']['#access'] = social_event_enroll_is_enabled($node);
+    }
+  }
+
+}
+
+/**
+ * Check if enrollment is allowed for given event.
+ */
+function social_event_enroll_is_enabled(Node $node) {
+  $is_event = $node->getType() === 'event';
+  $was_not_changed = !isset($node->get('field_event_enroll')->value);
+  $is_enabled = !empty($node->get('field_event_enroll')->value);
+  return $is_event && ($was_not_changed || $is_enabled);
 }
 
 /**
