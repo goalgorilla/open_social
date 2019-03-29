@@ -55,11 +55,11 @@ function social_swiftmail_preprocess_swiftmailer(array &$variables) {
   }
 
   // Add variables header and footer if set.
-  if ($social_swiftmail_config->get('template_header')['value']) {
+  if ($social_swiftmail_config->get('template_header')) {
     $template_header = $social_swiftmail_config->get('template_header');
     $template_header = [
       '#type' => 'processed_text',
-      '#text' => $template_header['value'],
+      '#text' => $template_header,
       '#format' => 'mail_html',
     ];
 
