@@ -122,7 +122,7 @@ function _social_group_default_route_group_types() {
       $types[] = $group_type->id();
     }
     // Allow other modules to change the group types.
-    \Drupal::moduleHandler()->alter('social_group_default_route_types', $types);
+    Drupal::moduleHandler()->alter('social_group_default_route_types', $types);
   }
 
   return $types;
@@ -151,7 +151,7 @@ function _social_group_default_route_group_tabs() {
       $tabs[$route] = $localtask;
     }
     // Allow other modules to change the group types.
-    \Drupal::moduleHandler()->alter('social_group_default_route_tabs', $tabs);
+    Drupal::moduleHandler()->alter('social_group_default_route_tabs', $tabs);
   }
 
   return $tabs;
