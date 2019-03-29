@@ -86,12 +86,9 @@ class EventManagersController extends ControllerBase {
       // If we minimize the amount of tabs we can allow LU that can see this
       // event to see the tab as well.
       // Set author of event as event organiser automatically.
-      if (social_event_managers_minimize_tabs()) {
-        if ($node->access('view', $account) && !$account->isAnonymous()) {
-          return AccessResult::allowed();
-        }
+      if ($node->access('view', $account) && !$account->isAnonymous()) {
+        return AccessResult::allowed();
       }
-
     }
 
     return AccessResult::forbidden();

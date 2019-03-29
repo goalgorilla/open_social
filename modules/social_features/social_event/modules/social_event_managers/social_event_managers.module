@@ -287,16 +287,16 @@ function social_event_managers_menu_local_tasks_alter(&$data, $route_name) {
 
   // Should we minimze the amount of tabs? If so we remove Enrollees as we
   // show it in the management tab.
-  if (social_event_managers_minimize_tabs()) {
+  if (!empty($data['tabs'][0]['views_view:view.event_enrollments.view_enrollments'])) {
     unset($data['tabs'][0]['views_view:view.event_enrollments.view_enrollments']);
-    // For Guest Enrollments alone we hide them as well and place them in the
-    // manage tab.
-    if (!empty($data['tabs'][0]['views_view:view.manage_enrollments.page'])) {
-      unset($data['tabs'][0]['views_view:view.manage_enrollments.page']);
-    }
-    if (!social_event_manager_or_organizer()) {
-      $data['tabs'][0]['views_view:view.event_manage_enrollments.page_manage_enrollments']['#link']['title'] = t('Enrollments');
-    }
+  }
+  // For Guest Enrollments alone we hide them as well and place them in the
+  // manage tab.
+  if (!empty($data['tabs'][0]['views_view:view.manage_enrollments.page'])) {
+    unset($data['tabs'][0]['views_view:view.manage_enrollments.page']);
+  }
+  if (!social_event_manager_or_organizer()) {
+    $data['tabs'][0]['views_view:view.event_manage_enrollments.page_manage_enrollments']['#link']['title'] = t('Enrollments');
   }
 }
 
@@ -510,24 +510,4 @@ function social_event_managers_views_pre_view(ViewExecutable $view, $display_id,
       $view->display_handler->overrideOption('fields', $fields);
     }
   }
-}
-
-/**
- * Returns if we should minimize tabs for event management and enrollees.
- *
- * @return bool
- *   TRUE if we need to minimize tabs.
- */
-function social_event_managers_minimize_tabs() {
-  $config = \Drupal::configFactory()
-    ->getEditable('social_event_managers.settings');
-
-  // If we minimize the amount of tabs we can allow LU that can see this
-  // event to see the tab as well.
-  // Set author of event as event organiser automatically.
-  if ($config->get('minimize_tabs')) {
-    return TRUE;
-  }
-
-  return FALSE;
 }

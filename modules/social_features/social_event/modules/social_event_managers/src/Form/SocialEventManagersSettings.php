@@ -41,13 +41,6 @@ class SocialEventManagersSettings extends ConfigFormBase {
       '#default_value' => $config->get('author_as_manager'),
     ];
 
-    $form['minimize_tabs'] = [
-      '#type' => 'checkbox',
-      '#title' => $this->t('Minimize tabs'),
-      '#description' => $this->t('Minimize the amount of tabs on Events for Enrollees & Management.'),
-      '#default_value' => $config->get('minimize_tabs'),
-    ];
-
     return parent::buildForm($form, $form_state);
   }
 
@@ -59,7 +52,6 @@ class SocialEventManagersSettings extends ConfigFormBase {
 
     $this->config('social_event_managers.settings')
       ->set('author_as_manager', $form_state->getValue('author_as_manager'))
-      ->set('minimize_tabs', $form_state->getValue('minimize_tabs'))
       ->save();
   }
 
