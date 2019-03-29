@@ -70,20 +70,23 @@ function social_like_invalidate_cache(EntityInterface $entity) {
  */
 function social_like_preprocess_like_and_dislike_icons(&$variables) {
   $bundle = $variables['entity_type'];
-  if ($variables['entity_type'] === 'node') {
-    $bundle = \Drupal::entityTypeManager()->getStorage($variables['entity_type'])->load($variables['entity_id'])->bundle();
-  }
+  if ($entity = \Drupal::entityTypeManager()->getStorage($variables['entity_type'])->load($variables['entity_id'])) {
+    $bundle = $entity->bundle();
 
-  if ($variables['entity_type'] === 'comment') {
-    /** @var \Drupal\comment\Entity\Comment $entity */
-    $entity = \Drupal::entityTypeManager()->getStorage($variables['entity_type'])->load($variables['entity_id']);
+    $entity_type = $entity->getEntityType();
+    $entity_type_bundle_info = \Drupal::service('entity_type.bundle.info');
+    $entity_bundles = $entity_type_bundle_info->getBundleInfo($entity_type->id());
 
-    // If the comment is unpublished disable voting.
-    if (!$entity->isPublished()) {
+    if (array_key_exists($bundle, $entity_bundles)) {
+      $bundle = $entity_bundles[$bundle]['label'];
+    }
+
+    // If the entity is unpublished and of type comment disable voting.
+    if (!$entity->isPublished() && $entity->getEntityTypeId() === 'comment') {
       $variables['like_attributes']->addClass('disable-status');
       $variables['dislike_attributes']->addClass('disable-status');
     }
-  }
 
+  }
   $variables['modal_title'] = t('Members who liked this @content', ['@content' => $bundle]);
 }
