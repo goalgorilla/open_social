@@ -1,0 +1,29 @@
+{#
+/**
+* @file
+* Theme override for a link to a file for nodes.
+*
+* Available variables:
+* - attributes: The HTML attributes for the containing element.
+* - link: A link to the file.
+* - node_icon: An icon.
+*
+* @ingroup templates
+*
+* @see \Drupal\bootstrap\Plugin\Preprocess\FileLink::preprocessVariables
+*/
+#}
+{{ attach_library('socialbase/file') }}
+{% spaceless %}
+
+  <div class="file-tile">
+      <span class="file-link">{{ link }}</span>
+      <span class="file-metadata">
+        <span class="file-size">{{ file_size }}</span>
+        <span class="file-icon">
+          <img class="node-file__icon" src="/{{ path_to_socialbase }}/assets/images/mime-icons/icon_1_{{ node_icon }}_x16.png" srcset="/{{ path_to_socialbase }}/assets/images/mime-icons/icon_1_{{ node_icon }}_x32.png 2x" alt="{{ node_icon }}" />
+        </span>
+      </span>
+  </div>
+
+{% endspaceless %}
