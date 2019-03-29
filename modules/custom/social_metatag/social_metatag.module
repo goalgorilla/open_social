@@ -1,0 +1,65 @@
+<?php
+
+/**
+ * @file
+ * The Social metatag module.
+ */
+
+use Drupal\node\Entity\Node;
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Provides a ability to integrate alternative routes with metatags.
+ *
+ * Return an entity when the given route/route parameters matches a certain
+ * entity. All meta tags will be rendered on that page.
+ *
+ * @param \Drupal\Core\Routing\RouteMatchInterface $route_match
+ *   The route match.
+ *
+ * @return \Drupal\Core\Entity\EntityInterface|null
+ *   Return an entity, if the route should use metatags.
+ */
+function social_metatag_metatag_route_entity(RouteMatchInterface $route_match) {
+  // Metatag_views will override all the views Metatags with defaults.
+  // if it's not enabled we can continue provide Group & Events to the tabs
+  // which are basically views metatags but now coming from Entity defaults.
+  if (\Drupal::moduleHandler()->moduleExists('metatag_views')) {
+    return NULL;
+  }
+
+  // Arrays to check on per entity.
+  $group_routes = [
+    'view.group_events.page_group_events',
+    'view.group_information.page_group_about',
+    'view.group_topics.page_group_topics',
+    'view.group_members.page_group_members',
+  ];
+  $event_routes = [
+    'view.event_enrollments.view_enrollments',
+    'view.managers.view_managers',
+    'view.manage_enrollments.page',
+    'view.event_manage_enrollments.page_manage_enrollments',
+  ];
+
+  // Grab the current route for matching.
+  $current_route = $route_match->getRouteName();
+
+  $node = $route_match->getParameter('node');
+  if ((!$node instanceof Node) && $node !== NULL) {
+    $node = Node::load($node);
+  }
+
+  // Make sure for Events we add metatag data to all the tabs.
+  if (($node instanceof Node) && $node->getType() === 'event' && in_array($current_route, $event_routes, FALSE)) {
+    return $node;
+  }
+
+  // Make sure for Groups we add metatag data to all the tabs.
+  $group = _social_group_get_current_group();
+  if ($group !== NULL && in_array($current_route, $group_routes, FALSE)) {
+    return $group;
+  }
+
+  return NULL;
+}

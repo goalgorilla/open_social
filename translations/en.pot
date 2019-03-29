@@ -26,6 +26,7 @@
 #  modules/custom/social_devel/social_devel.info.yml: n/a
 #  modules/custom/social_gdpr/social_gdpr.info.yml: n/a
 #  modules/custom/social_language/social_language.info.yml: n/a
+#  modules/custom/social_metatag/social_metatag.info.yml: n/a
 #  modules/custom/social_node_statistics/social_node_statistics.info.yml: n/a
 #  modules/custom/social_tour/social_tour.info.yml: n/a
 #  modules/social_features/social_activity/social_activity.info.yml: n/a
@@ -207,6 +208,7 @@
 #  modules/custom/social_demo/src/Plugin/DemoContent/Group.php: n/a
 #  modules/social_features/social_group/src/Plugin/Action/AddMembersToGroup.php: n/a
 #  modules/social_features/social_tagging/src/Form/SocialTaggingSettingsForm.php: n/a
+#  modules/custom/social_metatag/config/install/metatag.metatag_defaults.group.yml: n/a
 #  modules/social_features/social_post/config/install/core.entity_form_mode.post.group.yml: n/a
 #  modules/custom/group_core_comments/group_core_comments.permissions.yml: n/a
 #  modules/custom/group_core_comments/src/Plugin/Field/FieldFormatter/CommentGroupContentFormatter.php: n/a
@@ -347,11 +349,13 @@
 #  modules/custom/social_language/social_language.module: n/a
 #  modules/custom/social_language/social_language.permissions.yml: n/a
 #  modules/custom/social_language/modules/social_content_translation/social_content_translation.info.yml: n/a
+#  modules/custom/social_react/social_react.info.yml: n/a
 #  modules/social_features/social_embed/social_embed.info.yml: n/a
 #  modules/social_features/social_private_message/social_private_message.info.yml: n/a
 #  modules/social_features/social_profile/modules/social_profile_fields/social_profile_fields.info.yml: n/a
 #  modules/social_features/social_profile/modules/social_profile_organization_tag/social_profile_organization_tag.info.yml: n/a
 #  modules/social_features/social_profile/modules/social_profile_privacy/social_profile_privacy.info.yml: n/a
+#  modules/social_features/social_search/modules/social_search_autocomplete/social_search_autocomplete.info.yml: n/a
 #  modules/custom/social_language/src/SocialLanguageModalRenderer.php: n/a
 #  themes/socialbase/components/02-atoms/alert/alert.twig: n/a
 #  themes/socialbase/templates/form/datetime-wrapper.html.twig: n/a
@@ -371,8 +375,6 @@
 #  modules/custom/social_node_statistics/social_node_statistics.routing.yml: n/a
 #  modules/custom/social_node_statistics/config/schema/social_node_statistics.schema.yml: n/a
 #  modules/custom/social_node_statistics/src/Form/NodeStatisticsSettingsForm.php: n/a
-#  modules/custom/social_react/social_react.info.yml: n/a
-#  modules/social_features/social_search/modules/social_search_autocomplete/social_search_autocomplete.info.yml: n/a
 #  modules/custom/social_tour/social_tour.module: n/a
 #  modules/custom/social_tour/social_tour.links.menu.yml: n/a
 #  modules/custom/social_tour/social_tour.routing.yml: n/a
@@ -460,7 +462,6 @@
 #  modules/social_features/social_event/modules/social_event_managers/social_event_managers.routing.yml: n/a
 #  modules/social_features/social_event/modules/social_event_managers/social_event_managers.links.menu.yml: n/a
 #  modules/social_features/social_event/modules/social_event_managers/social_event_managers.permissions.yml: n/a
-#  modules/social_features/social_group/modules/social_group_gvbo/social_group_gvbo.routing.yml: n/a
 #  modules/social_features/social_event/modules/social_event_managers/js/frontUi.js: n/a
 #  modules/social_features/social_group/js/frontUi.js: n/a
 #  modules/social_features/social_event/modules/social_event_managers/src/Plugin/views/field/SocialEventManagersViewsBulkOperationsBulkForm.php: n/a
@@ -510,6 +511,7 @@
 #  modules/social_features/social_topic/config/install/views.view.topics.yml: n/a
 #  modules/social_features/social_search/social_search.permissions.yml: n/a
 #  modules/social_features/social_group/config/schema/social_group.schema.yml: n/a
+#  modules/social_features/social_group/modules/social_group_gvbo/social_group_gvbo.routing.yml: n/a
 #  modules/social_features/social_group/modules/social_group_gvbo/src/Form/SocialGroupViewsBulkOperationsConfirmAction.php: n/a
 #  modules/social_features/social_group/modules/social_group_members_export/src/Plugin/Action/ExportMember.php: n/a
 #  modules/social_features/social_group/modules/social_group_quickjoin/social_group_quickjoin.links.menu.yml: n/a
@@ -667,7 +669,6 @@
 #  modules/social_features/social_user/social_user.links.task.yml: n/a
 #  modules/social_features/social_user/social_user.permissions.yml: n/a
 #  modules/social_features/social_event/config/install/field.field.event_enrollment.event_enrollment.field_account.yml: n/a
-#  modules/social_features/social_user/js/user-form-protection.js: n/a
 #  modules/social_features/social_user/src/ContextProvider/UserRouteContext.php: n/a
 #  modules/social_features/social_user/src/Form/SocialUserFloodForm.php: n/a
 #  modules/social_features/social_user/src/Form/SocialUserNavigationSettingsForm.php: n/a
@@ -838,6 +839,11 @@
 #  modules/social_features/social_activity/config/install/field.field.activity.activity.field_activity_recipient_group.yml: n/a
 #  modules/custom/social_gdpr/config/optional/block.block.data_policy_page_title_block.yml: n/a
 #  modules/custom/social_gdpr/config/optional/block.block.socialblue_data_policy_page_title_block.yml: n/a
+#  modules/custom/social_metatag/config/install/metatag.metatag_defaults.group_content__closed_group-group_node-event.yml: n/a
+#  modules/custom/social_metatag/config/install/metatag.metatag_defaults.group_content__closed_group-group_node-topic.yml: n/a
+#  modules/custom/social_metatag/config/install/metatag.metatag_defaults.node__event.yml: n/a
+#  modules/custom/social_metatag/config/install/metatag.metatag_defaults.node__page.yml: n/a
+#  modules/custom/social_metatag/config/install/metatag.metatag_defaults.node__topic.yml: n/a
 #  modules/custom/social_tour/config/install/tour.tour.node_view.yml: n/a
 #  modules/custom/social_tour/config/install/tour.tour.social_event_overview.yml: n/a
 #  modules/custom/social_tour/config/install/tour.tour.social_explore.yml: n/a
@@ -1137,7 +1143,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Open Social\n"
-"POT-Creation-Date: 2019-03-11 22:11+0000\n"
+"POT-Creation-Date: 2019-03-28 22:13+0000\n"
 "PO-Revision-Date: YYYY-mm-DD HH:MM+ZZZZ\n"
 "Last-Translator: NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <EMAIL@ADDRESS>\n"
@@ -1254,7 +1260,7 @@ msgstr ""
 msgid "0 downloads"
 msgstr ""
 
-#: modules/social_features/social_search/modules/social_search_autocomplete/config/install/views.view.search_all_autocomplete.yml:0;0;0
+#: modules/social_features/social_search/modules/social_search_autocomplete/config/install/views.view.search_all_autocomplete.yml:0;0;0;0
 msgid "1"
 msgid_plural "@count"
 msgstr[0] ""
@@ -2136,11 +2142,11 @@ msgstr ""
 msgid "Activity comment"
 msgstr ""
 
-#: modules/custom/activity_creator/activity_creator.module:159;161
+#: modules/custom/activity_creator/activity_creator.module:160;162
 msgid "Activity group argument"
 msgstr ""
 
-#: modules/custom/activity_creator/activity_creator.module:162
+#: modules/custom/activity_creator/activity_creator.module:163
 msgid "Activity group context argument."
 msgstr ""
 
@@ -2152,15 +2158,15 @@ msgstr ""
 msgid "Activity overview"
 msgstr ""
 
-#: modules/custom/activity_creator/activity_creator.module:142;144
+#: modules/custom/activity_creator/activity_creator.module:143;145
 msgid "Activity post visibility access"
 msgstr ""
 
-#: modules/custom/activity_creator/activity_creator.module:151;153
+#: modules/custom/activity_creator/activity_creator.module:152;154
 msgid "Activity profile argument"
 msgstr ""
 
-#: modules/custom/activity_creator/activity_creator.module:154
+#: modules/custom/activity_creator/activity_creator.module:155
 msgid "Activity profile context argument."
 msgstr ""
 
@@ -2201,7 +2207,7 @@ msgstr ""
 msgid "Activity tokens"
 msgstr ""
 
-#: modules/custom/activity_creator/activity_creator.module:133;135
+#: modules/custom/activity_creator/activity_creator.module:134;136
 msgid "Activity visibility access"
 msgstr ""
 
@@ -2547,7 +2553,7 @@ msgstr ""
 msgid "All events"
 msgstr ""
 
-#: modules/social_features/social_group/social_group.install:148
+#: modules/social_features/social_group/social_group.install:152
 #: modules/social_features/social_group/config/install/views.view.groups.yml:0
 #: modules/social_features/social_group/config/install/views.view.newest_groups.yml:0;0
 msgid "All groups"
@@ -3388,7 +3394,6 @@ msgstr ""
 msgid "Configure Font entities"
 msgstr ""
 
-#: modules/social_features/social_event/modules/social_event_managers/social_event_managers.routing.yml:0
 #: modules/social_features/social_group/modules/social_group_gvbo/social_group_gvbo.routing.yml:0
 msgid "Configure action"
 msgstr ""
@@ -3428,7 +3433,6 @@ msgid ""
 "Configure via the <a href='/admin/structure/mentions'>Mention types</a> page."
 msgstr ""
 
-#: modules/social_features/social_event/modules/social_event_managers/social_event_managers.routing.yml:0
 #: modules/social_features/social_group/modules/social_group_gvbo/social_group_gvbo.routing.yml:0
 msgid "Confirm action"
 msgstr ""
@@ -3497,6 +3501,15 @@ msgstr ""
 #: modules/social_features/social_follow_content/config/install/views.view.following.yml:0
 #: modules/social_features/social_search/config/install/views.view.search_content.yml:0
 msgid "Content type"
+msgstr ""
+
+#: modules/custom/social_metatag/config/install/metatag.metatag_defaults.node__page.yml:0
+msgid "Content: Basic page"
+msgstr ""
+
+#: modules/custom/social_metatag/config/install/metatag.metatag_defaults.node__event.yml:0
+#: modules/custom/social_metatag/config/install/metatag.metatag_defaults.node__topic.yml:0
+msgid "Content: Event"
 msgstr ""
 
 #: modules/social_features/social_activity/config/install/field.field.message.create_comment_author_node_post.field_message_context.yml:0
@@ -4095,7 +4108,7 @@ msgstr ""
 msgid "Delete thread"
 msgstr ""
 
-#: modules/social_features/social_user/social_user.module:371
+#: modules/social_features/social_user/social_user.module:370
 msgid "Delete your account and anonymize all other content."
 msgstr ""
 
@@ -4287,11 +4300,11 @@ msgstr ""
 msgid "Displayed in the social user sign-up card."
 msgstr ""
 
-#: modules/social_features/social_user/social_user.module:640
+#: modules/social_features/social_user/social_user.module:639
 msgid "Displayed in the user log in card."
 msgstr ""
 
-#: modules/social_features/social_user/social_user.module:633
+#: modules/social_features/social_user/social_user.module:632
 msgid "Displayed in the user sign-up card."
 msgstr ""
 
@@ -4490,11 +4503,11 @@ msgstr ""
 msgid "Email notifications"
 msgstr ""
 
-#: modules/custom/activity_creator/activity_creator.module:145
+#: modules/custom/activity_creator/activity_creator.module:146
 msgid "Enable activity access control for related post entities."
 msgstr ""
 
-#: modules/custom/activity_creator/activity_creator.module:136
+#: modules/custom/activity_creator/activity_creator.module:137
 msgid "Enable activity access control."
 msgstr ""
 
@@ -5231,7 +5244,7 @@ msgstr ""
 msgid "Generate demo content and users"
 msgstr ""
 
-#: social.profile:436
+#: social.profile:437
 msgid "Generated %num %demo_description."
 msgstr ""
 
@@ -5251,19 +5264,19 @@ msgstr ""
 msgid "Go to first page"
 msgstr ""
 
-#: themes/socialbase/templates/system/pager.html.twig:91
+#: themes/socialbase/templates/system/pager.html.twig:94
 msgid "Go to last page"
 msgstr ""
 
 #: themes/socialbase/templates/node/book/book-navigation.html.twig:52
-#: themes/socialbase/templates/system/pager.html.twig:81
+#: themes/socialbase/templates/system/pager.html.twig:83
 #: themes/socialbase/templates/views/views-infinite-scroll-pager.html.twig:20
 #: themes/socialbase/templates/views/views-mini-pager.html.twig:33
 msgid "Go to next page"
 msgstr ""
 
 #: themes/socialbase/templates/node/book/book-navigation.html.twig:44
-#: themes/socialbase/templates/system/pager.html.twig:54
+#: themes/socialbase/templates/system/pager.html.twig:55
 #: themes/socialbase/templates/views/views-mini-pager.html.twig:21
 msgid "Go to previous page"
 msgstr ""
@@ -5287,6 +5300,7 @@ msgstr ""
 #: modules/social_features/social_group/social_group.module:1286
 #: modules/social_features/social_group/src/Plugin/Action/AddMembersToGroup.php:145
 #: modules/social_features/social_tagging/src/Form/SocialTaggingSettingsForm.php:97
+#: modules/custom/social_metatag/config/install/metatag.metatag_defaults.group.yml:0
 #: modules/social_features/social_post/config/install/core.entity_form_mode.post.group.yml:0
 #: modules/social_features/social_user/config/install/views.view.user_admin_people.yml:0;0
 msgid "Group"
@@ -5408,6 +5422,14 @@ msgstr ""
 
 #: modules/custom/activity_basics/src/Plugin/ActivityContext/GroupContentInMyGroupActivityContext.php:12
 msgid "Group content in my group activity context"
+msgstr ""
+
+#: modules/custom/social_metatag/config/install/metatag.metatag_defaults.group_content__closed_group-group_node-event.yml:0
+msgid "Group content: event"
+msgstr ""
+
+#: modules/custom/social_metatag/config/install/metatag.metatag_defaults.group_content__closed_group-group_node-topic.yml:0
+msgid "Group content: topic"
 msgstr ""
 
 #: modules/custom/social_tour/config/install/tour.tour.social_group.yml:0
@@ -5632,7 +5654,11 @@ msgstr ""
 msgid "Immediately"
 msgstr ""
 
-#: social.profile:327
+#: modules/custom/social_metatag/social_metatag.info.yml:0
+msgid "Implement defaults for the Metatag module"
+msgstr ""
+
+#: social.profile:328
 msgid "Import optional configuration"
 msgstr ""
 
@@ -5652,7 +5678,7 @@ msgstr ""
 msgid "Inbox"
 msgstr ""
 
-#: social.profile:325
+#: social.profile:326
 msgid "Index search"
 msgstr ""
 
@@ -5678,11 +5704,11 @@ msgstr ""
 msgid "Input Settings"
 msgstr ""
 
-#: social.profile:400
+#: social.profile:401
 msgid "Install %module_name module."
 msgstr ""
 
-#: social.profile:20;256
+#: social.profile:20;257
 msgid "Install Open Social modules"
 msgstr ""
 
@@ -5856,7 +5882,7 @@ msgstr ""
 msgid "Last name"
 msgstr ""
 
-#: themes/socialbase/templates/system/pager.html.twig:92
+#: themes/socialbase/templates/system/pager.html.twig:95
 msgid "Last page"
 msgstr ""
 
@@ -5868,6 +5894,7 @@ msgstr ""
 #: modules/social_features/social_event/modules/social_event_managers/config/install/views.view.managers.yml:0
 #: modules/social_features/social_follow_content/config/install/views.view.following.yml:0
 #: modules/social_features/social_group/config/install/views.view.group_manage_members.yml:0
+#: modules/social_features/social_group/config/install/views.view.group_members.yml:0
 #: modules/social_features/social_group/config/install/views.view.newest_groups.yml:0
 #: modules/social_features/social_private_message/config/install/views.view.inbox.yml:0
 #: modules/social_features/social_profile/config/install/views.view.newest_users.yml:0
@@ -5991,7 +6018,7 @@ msgstr ""
 msgid "Location name"
 msgstr ""
 
-#: modules/social_features/social_user/social_user.module:639
+#: modules/social_features/social_user/social_user.module:638
 msgid "Log In"
 msgstr ""
 
@@ -6022,7 +6049,7 @@ msgstr ""
 msgid "Login"
 msgstr ""
 
-#: modules/social_features/social_user/social_user.module:709
+#: modules/social_features/social_user/social_user.module:708
 msgid "Login and Registration help texts"
 msgstr ""
 
@@ -6038,7 +6065,7 @@ msgstr ""
 msgid "Logo for e-mails"
 msgstr ""
 
-#: modules/social_features/social_user/social_user.module:524;526
+#: modules/social_features/social_user/social_user.module:523;525
 msgid "Logout"
 msgstr ""
 
@@ -6491,7 +6518,7 @@ msgstr ""
 msgid "News"
 msgstr ""
 
-#: themes/socialbase/templates/system/pager.html.twig:82
+#: themes/socialbase/templates/system/pager.html.twig:84
 msgid "Next page"
 msgstr ""
 
@@ -7216,7 +7243,7 @@ msgstr ""
 msgid "Preview"
 msgstr ""
 
-#: themes/socialbase/templates/system/pager.html.twig:55
+#: themes/socialbase/templates/system/pager.html.twig:56
 msgid "Previous page"
 msgstr ""
 
@@ -7640,7 +7667,7 @@ msgstr ""
 msgid "Reassign your groups to the super administrator."
 msgstr ""
 
-#: social.profile:324
+#: social.profile:325
 msgid "Rebuild router."
 msgstr ""
 
@@ -7878,7 +7905,7 @@ msgstr ""
 msgid "Roles"
 msgstr ""
 
-#: social.profile:326
+#: social.profile:327
 msgid "Run cron."
 msgstr ""
 
@@ -8210,7 +8237,7 @@ msgid ""
 "display is invalidated."
 msgstr ""
 
-#: social.profile:323
+#: social.profile:324
 msgid "Set weight of profile."
 msgstr ""
 
@@ -8234,7 +8261,7 @@ msgstr ""
 #: modules/custom/social_font/social_font.links.task.yml:0
 #: modules/social_features/social_event/social_event.links.task.yml:0
 #: modules/social_features/social_group/src/Form/SocialGroupAddForm.php:94
-#: modules/social_features/social_user/social_user.module:507;509
+#: modules/social_features/social_user/social_user.module:506;508
 msgid "Settings"
 msgstr ""
 
@@ -8313,7 +8340,7 @@ msgstr ""
 msgid "Show email"
 msgstr ""
 
-#: modules/social_features/social_user/social_user.module:669
+#: modules/social_features/social_user/social_user.module:668
 msgid "Show email address in help messages"
 msgstr ""
 
@@ -8329,7 +8356,7 @@ msgstr ""
 msgid "Show on my profile"
 msgstr ""
 
-#: modules/social_features/social_user/social_user.module:670
+#: modules/social_features/social_user/social_user.module:669
 msgid ""
 "Show site email address in help messages after failed login, signup or "
 "password reset."
@@ -8343,7 +8370,7 @@ msgstr ""
 msgid "Show upcoming events (my, community and overview)"
 msgstr ""
 
-#: modules/social_features/social_user/social_user.module:632
+#: modules/social_features/social_user/social_user.module:631
 msgid "Sign Up"
 msgstr ""
 
@@ -8472,6 +8499,7 @@ msgstr ""
 #: modules/custom/social_devel/social_devel.info.yml:0
 #: modules/custom/social_gdpr/social_gdpr.info.yml:0
 #: modules/custom/social_language/social_language.info.yml:0
+#: modules/custom/social_metatag/social_metatag.info.yml:0
 #: modules/custom/social_node_statistics/social_node_statistics.info.yml:0
 #: modules/custom/social_tour/social_tour.info.yml:0
 #: modules/social_features/social_activity/social_activity.info.yml:0
@@ -8510,17 +8538,14 @@ msgstr ""
 msgid "Social"
 msgstr ""
 
-#: modules/custom/social_react/social_react.info.yml:0
-#: modules/social_features/social_search/modules/social_search_autocomplete/social_search_autocomplete.info.yml:0
-msgid "Social (Experimental)"
-msgstr ""
-
 #: modules/custom/social_language/modules/social_content_translation/social_content_translation.info.yml:0
+#: modules/custom/social_react/social_react.info.yml:0
 #: modules/social_features/social_embed/social_embed.info.yml:0
 #: modules/social_features/social_private_message/social_private_message.info.yml:0
 #: modules/social_features/social_profile/modules/social_profile_fields/social_profile_fields.info.yml:0
 #: modules/social_features/social_profile/modules/social_profile_organization_tag/social_profile_organization_tag.info.yml:0
 #: modules/social_features/social_profile/modules/social_profile_privacy/social_profile_privacy.info.yml:0
+#: modules/social_features/social_search/modules/social_search_autocomplete/social_search_autocomplete.info.yml:0
 msgid "Social (experimental)"
 msgstr ""
 
@@ -8824,6 +8849,10 @@ msgstr ""
 msgid "Social Mentions"
 msgstr ""
 
+#: modules/custom/social_metatag/social_metatag.info.yml:0
+msgid "Social Metatag"
+msgstr ""
+
 #: modules/custom/social_node_statistics/social_node_statistics.info.yml:0
 msgid "Social Node Statistics"
 msgstr ""
@@ -9114,7 +9143,7 @@ msgid "Status messages"
 msgstr ""
 
 #: modules/social_features/social_group/social_group.links.task.yml:0
-#: modules/social_features/social_user/social_user.module:452
+#: modules/social_features/social_user/social_user.module:451
 #: modules/social_features/social_activity/config/install/views.view.activity_stream.yml:0
 #: modules/social_features/social_group/config/install/core.entity_view_mode.group.stream.yml:0
 msgid "Stream"
@@ -9438,7 +9467,7 @@ msgstr ""
 msgid "The image could not be saved, the directory @directory is not valid."
 msgstr ""
 
-#: social.profile:257
+#: social.profile:258
 msgid "The installation has encountered an error."
 msgstr ""
 
@@ -9714,7 +9743,7 @@ msgstr ""
 msgid "There was an unexpected error."
 msgstr ""
 
-#: modules/social_features/social_user/social_user.module:710
+#: modules/social_features/social_user/social_user.module:709
 msgid ""
 "These fields allow you to configure various help texts that are shown to "
 "users during signup and login"
@@ -10053,7 +10082,7 @@ msgstr ""
 msgid "Unfollow this content"
 msgstr ""
 
-#: social.profile:412
+#: social.profile:413
 msgid "Uninstalled %module_name module."
 msgstr ""
 
@@ -10292,7 +10321,7 @@ msgid "User name"
 msgstr ""
 
 #: modules/social_features/social_search/modules/social_search_autocomplete/config/install/views.view.search_all_autocomplete.yml:0
-msgid "User type"
+msgid "User type (rewritten User ID)"
 msgstr ""
 
 #: modules/social_features/social_user/src/Form/SocialUserFloodForm.php:67
@@ -10772,10 +10801,6 @@ msgstr ""
 msgid "You need to first create a Google App at <a href=\"@url\">@url</a>"
 msgstr ""
 
-#: modules/social_features/social_user/js/user-form-protection.js:0
-msgid "You need to set your password."
-msgstr ""
-
 #: modules/custom/social_tour/src/SocialTourController.php:130
 msgid "You will not see tips like this anymore."
 msgstr ""
@@ -10860,6 +10885,97 @@ msgid ""
 "social/private-files"
 msgstr ""
 
+#: modules/custom/social_metatag/config/install/metatag.metatag_defaults.group_content__closed_group-group_node-event.yml:0;0
+#: modules/custom/social_metatag/config/install/metatag.metatag_defaults.group_content__closed_group-group_node-topic.yml:0;0
+#: modules/custom/social_metatag/config/install/metatag.metatag_defaults.node__event.yml:0;0
+#: modules/custom/social_metatag/config/install/metatag.metatag_defaults.node__page.yml:0;0
+#: modules/custom/social_metatag/config/install/metatag.metatag_defaults.node__topic.yml:0;0
+msgid "[current-page:title]"
+msgstr ""
+
+#: modules/custom/social_metatag/config/install/metatag.metatag_defaults.group.yml:0
+msgid "[group:field_group_address:address_line1]"
+msgstr ""
+
+#: modules/custom/social_metatag/config/install/metatag.metatag_defaults.group.yml:0
+msgid "[group:field_group_address:country_name]"
+msgstr ""
+
+#: modules/custom/social_metatag/config/install/metatag.metatag_defaults.group.yml:0
+msgid "[group:field_group_address:locality]"
+msgstr ""
+
+#: modules/custom/social_metatag/config/install/metatag.metatag_defaults.group.yml:0
+msgid "[group:field_group_address:postal_code]"
+msgstr ""
+
+#: modules/custom/social_metatag/config/install/metatag.metatag_defaults.group.yml:0;0
+msgid "[group:field_group_description]"
+msgstr ""
+
+#: modules/custom/social_metatag/config/install/metatag.metatag_defaults.group.yml:0
+msgid "[group:field_group_image:entity:url]"
+msgstr ""
+
+#: modules/custom/social_metatag/config/install/metatag.metatag_defaults.group.yml:0;0
+msgid "[group:title]"
+msgstr ""
+
+#: modules/custom/social_metatag/config/install/metatag.metatag_defaults.group.yml:0
+msgid "[group:url]"
+msgstr ""
+
+#: modules/custom/social_metatag/config/install/metatag.metatag_defaults.group_content__closed_group-group_node-event.yml:0
+#: modules/custom/social_metatag/config/install/metatag.metatag_defaults.group_content__closed_group-group_node-topic.yml:0
+#: modules/custom/social_metatag/config/install/metatag.metatag_defaults.node__event.yml:0
+#: modules/custom/social_metatag/config/install/metatag.metatag_defaults.node__page.yml:0
+#: modules/custom/social_metatag/config/install/metatag.metatag_defaults.node__topic.yml:0
+msgid "[node:body]"
+msgstr ""
+
+#: modules/custom/social_metatag/config/install/metatag.metatag_defaults.group_content__closed_group-group_node-event.yml:0
+#: modules/custom/social_metatag/config/install/metatag.metatag_defaults.node__event.yml:0
+msgid "[node:field_event_address:country_name]"
+msgstr ""
+
+#: modules/custom/social_metatag/config/install/metatag.metatag_defaults.group_content__closed_group-group_node-event.yml:0
+#: modules/custom/social_metatag/config/install/metatag.metatag_defaults.node__event.yml:0
+msgid "[node:field_event_address:locality]"
+msgstr ""
+
+#: modules/custom/social_metatag/config/install/metatag.metatag_defaults.group_content__closed_group-group_node-event.yml:0
+#: modules/custom/social_metatag/config/install/metatag.metatag_defaults.node__event.yml:0
+msgid "[node:field_event_address:postal_code]"
+msgstr ""
+
+#: modules/custom/social_metatag/config/install/metatag.metatag_defaults.group_content__closed_group-group_node-event.yml:0
+#: modules/custom/social_metatag/config/install/metatag.metatag_defaults.node__event.yml:0
+msgid "[node:field_event_addressaddress_line1]"
+msgstr ""
+
+#: modules/custom/social_metatag/config/install/metatag.metatag_defaults.group_content__closed_group-group_node-event.yml:0
+#: modules/custom/social_metatag/config/install/metatag.metatag_defaults.node__event.yml:0
+msgid "[node:field_event_image:entity:url]"
+msgstr ""
+
+#: modules/custom/social_metatag/config/install/metatag.metatag_defaults.node__page.yml:0
+msgid "[node:field_page_image:entity:url]"
+msgstr ""
+
+#: modules/custom/social_metatag/config/install/metatag.metatag_defaults.group_content__closed_group-group_node-topic.yml:0
+#: modules/custom/social_metatag/config/install/metatag.metatag_defaults.node__topic.yml:0
+msgid "[node:field_topic_image:entity:url]"
+msgstr ""
+
+#: modules/custom/social_metatag/config/install/metatag.metatag_defaults.group.yml:0
+#: modules/custom/social_metatag/config/install/metatag.metatag_defaults.group_content__closed_group-group_node-event.yml:0
+#: modules/custom/social_metatag/config/install/metatag.metatag_defaults.group_content__closed_group-group_node-topic.yml:0
+#: modules/custom/social_metatag/config/install/metatag.metatag_defaults.node__event.yml:0
+#: modules/custom/social_metatag/config/install/metatag.metatag_defaults.node__page.yml:0
+#: modules/custom/social_metatag/config/install/metatag.metatag_defaults.node__topic.yml:0
+msgid "[site:name]"
+msgstr ""
+
 #: modules/social_features/social_group/social_group.tokens.inc:112
 msgid "a @content_type"
 msgstr ""
@@ -10906,7 +11022,7 @@ msgstr ""
 msgid "comment"
 msgstr ""
 
-#: social.profile:303
+#: social.profile:304
 #: modules/social_features/social_landing_page/src/Plugin/Block/ActivityOverviewBlock.php:258
 #: themes/socialbase/templates/node/node--full.html.twig:156
 msgid "comments"
@@ -10956,11 +11072,11 @@ msgstr ""
 msgid "event"
 msgstr ""
 
-#: social.profile:301
+#: social.profile:302
 msgid "event enrollments"
 msgstr ""
 
-#: social.profile:300
+#: social.profile:301
 #: modules/social_features/social_core/social_core.module:229
 #: modules/social_features/social_landing_page/src/Plugin/Block/ActivityOverviewBlock.php:88
 msgid "events"
@@ -11015,7 +11131,7 @@ msgstr ""
 msgid "field_topic_type_expose_filter"
 msgstr ""
 
-#: social.profile:296
+#: social.profile:297
 msgid "files"
 msgstr ""
 
@@ -11065,7 +11181,7 @@ msgstr ""
 msgid "group_node:topic"
 msgstr ""
 
-#: social.profile:298
+#: social.profile:299
 #: modules/social_features/social_landing_page/src/Plugin/Block/ActivityOverviewBlock.php:156
 msgid "groups"
 msgstr ""
@@ -11139,7 +11255,7 @@ msgctxt "PHP date format"
 msgid "j M Y"
 msgstr ""
 
-#: social.profile:304
+#: social.profile:305
 msgid "likes"
 msgstr ""
 
@@ -11182,7 +11298,7 @@ msgstr ""
 msgid "post"
 msgstr ""
 
-#: social.profile:302
+#: social.profile:303
 #: modules/social_features/social_landing_page/src/Plugin/Block/ActivityOverviewBlock.php:224
 msgid "posts"
 msgstr ""
@@ -11279,6 +11395,10 @@ msgstr ""
 msgid "sort_flag_created"
 msgstr ""
 
+#: modules/social_features/social_group/config/install/views.view.group_members.yml:0
+msgid "sort_title"
+msgstr ""
+
 #: modules/social_features/social_private_message/config/install/views.view.inbox.yml:0
 msgid "sort_updated"
 msgstr ""
@@ -11297,7 +11417,7 @@ msgstr ""
 msgid "topic"
 msgstr ""
 
-#: social.profile:299
+#: social.profile:300
 #: modules/social_features/social_landing_page/src/Plugin/Block/ActivityOverviewBlock.php:122
 msgid "topics"
 msgstr ""
@@ -11318,7 +11438,7 @@ msgstr ""
 msgid "user/"
 msgstr ""
 
-#: social.profile:297
+#: social.profile:298
 #: modules/social_features/social_landing_page/src/Plugin/Block/ActivityOverviewBlock.php:190
 msgid "users"
 msgstr ""
@@ -11342,7 +11462,7 @@ msgid "{{ title }}{{ label }}{{ name }}"
 msgstr ""
 
 #: modules/social_features/social_search/modules/social_search_autocomplete/config/install/views.view.search_all_autocomplete.yml:0
-msgid "{{ type }}{{ type_1 }}{{ type_2 }}"
+msgid "{{ type }}{{ type_1 }}{{ uid_1 }}"
 msgstr ""
 
 #: modules/social_features/social_core/config/install/views.view.content.yml:0
@@ -11353,6 +11473,7 @@ msgstr ""
 #: modules/social_features/social_event/modules/social_event_managers/config/install/views.view.managers.yml:0
 #: modules/social_features/social_follow_content/config/install/views.view.following.yml:0
 #: modules/social_features/social_group/config/install/views.view.group_manage_members.yml:0
+#: modules/social_features/social_group/config/install/views.view.group_members.yml:0
 #: modules/social_features/social_group/config/install/views.view.newest_groups.yml:0
 #: modules/social_features/social_private_message/config/install/views.view.inbox.yml:0
 #: modules/social_features/social_profile/config/install/views.view.newest_users.yml:0
