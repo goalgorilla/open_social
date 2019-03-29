@@ -12,7 +12,6 @@
  * @param array $types
  *   An array of all available group types.
  */
-
 function hook_social_group_default_route_types_alter(array $types) {
   // Enable functionality for secret groups.
   $types[] = 'secret_group';
