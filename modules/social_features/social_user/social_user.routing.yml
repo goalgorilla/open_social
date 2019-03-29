@@ -1,3 +1,11 @@
+social_user.page_redirect:
+  path: '/user/{user}'
+  defaults:
+    _controller: '\Drupal\social_user\Controller\SocialUserController::otherUserPage'
+    _title: 'Account'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+
 social_user.user_flood_settings:
   path: '/admin/config/people/accounts/flood'
   defaults:
