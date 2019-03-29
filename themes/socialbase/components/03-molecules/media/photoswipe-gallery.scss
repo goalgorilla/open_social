@@ -1,0 +1,51 @@
+@import "settings";
+
+.photoswipe-gallery-custom {
+  display: flex;
+  flex-wrap: wrap;
+
+  .field--item {
+    flex: 0 0 125px;
+    height: 125px;
+    margin: 0 .75rem .75rem 0;
+    font-size: $font-size-xs;
+  }
+
+  // File tiles are in a card
+  .file-tile {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: .75rem;
+    border: 1px solid $gray-light-1;
+    background: #fff;
+  }
+
+  .file-link {
+    overflow: hidden;
+    margin-bottom: .5rem;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+
+    a {
+      display: block;
+      height: 100%;
+
+    }
+  }
+
+  .file-metadata {
+    flex: 0 0 auto;
+    display: flex;
+    justify-content: space-between;
+  }
+}
+
+@include for-tablet-portrait-up {
+  .photoswipe-gallery-custom {
+    .field--item {
+      flex-basis: 140px;
+      height: 140px;
+    }
+  }
+}

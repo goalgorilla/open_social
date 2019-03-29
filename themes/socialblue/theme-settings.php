@@ -6,6 +6,7 @@
  */
 
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\file\Entity\File;
 use Drupal\social_font\Entity\Font;
 
 /**
@@ -98,6 +99,26 @@ function socialblue_form_system_theme_settings_alter(&$form, FormStateInterface 
           'file_validate_extensions' => ['gif png jpg jpeg'],
         ],
       ];
+      // Ensure we save the file permanently.
+      $form['#submit'][] = 'socialblue_save_email_logo';
+
+      $form['os_hero_settings'] = [
+        '#type' => 'details',
+        '#group' => 'open_social_settings',
+        '#title' => t('Hero'),
+        '#weight' => 30,
+        '#collapsible' => TRUE,
+        '#collapsed' => TRUE,
+      ];
+
+      $form['os_hero_settings']['hero_gradient_opacity'] = [
+        '#type' => 'range',
+        '#title' => t('Hero gradient'),
+        '#default_value' => $config->get('hero_gradient_opacity'),
+        '#description' => t('Define the percentage of darkness of the hero gradient from 0 to 100.'),
+        '#min' => 0,
+        '#max' => 100,
+      ];
 
       // Font tab.
       $fonts = [];
@@ -122,4 +143,26 @@ function socialblue_form_system_theme_settings_alter(&$form, FormStateInterface 
 
   }
 
+}
+
+/**
+ * Marks the e-mail logo file as permanent.
+ *
+ * This ensures the image is not cleaned up by Drupal's temporary file cleaning.
+ *
+ * @param array $form
+ *   The submitted form structure.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   The state of the submitted form.
+ *
+ * @throws \Drupal\Core\Entity\EntityStorageException
+ */
+function socialblue_save_email_logo(array $form, FormStateInterface $form_state) {
+  $email_logo = $form_state->getValue('email_logo');
+  // If an e-mail logo was uploaded then we mark the uploaded file as permanent.
+  if (!empty($email_logo)) {
+    $file = File::load($email_logo[0]);
+    $file->setPermanent();
+    $file->save();
+  }
 }

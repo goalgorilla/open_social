@@ -875,3 +875,20 @@ function social_core_update_8301() {
 
   \Drupal::service('module_installer')->install($modules);
 }
+
+/**
+ * Install social_lets_connect_usage module.
+ */
+function social_core_update_8501() {
+  // Let's enable the sharing usage data module.
+  $modules = [
+    'social_lets_connect_usage',
+  ];
+  \Drupal::service('module_installer')->install($modules);
+
+  // Let's disable sharing data by default.
+  $config = \Drupal::configFactory()->getEditable('social_lets_connect_usage.settings');
+  $config->set('usage_data_enabled', 0);
+  $config->save();
+
+}

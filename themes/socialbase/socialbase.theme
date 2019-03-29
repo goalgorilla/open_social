@@ -18,6 +18,17 @@ foreach (glob($includes_path) as $filename) {
 }
 
 /**
+ * Implements hook_library_info_alter().
+ */
+function socialbase_library_info_alter(&$libraries, $extension) {
+  // When the social_comment_upload module is enabled we want to load the
+  // photoswipe styling with the comment styling.
+  if ($extension === 'socialbase' && isset($libraries['comment']) && \Drupal::moduleHandler()->moduleExists('social_comment_upload')) {
+    $libraries['comment']['dependencies'][] = 'socialbase/photoswipe-gallery';
+  }
+}
+
+/**
  * Prepare group link when an event or topic belongs to one group.
  */
 function socialbase_group_link($node) {

@@ -145,6 +145,7 @@ function social_form_install_configure_form_alter(&$form, FormStateInterface $fo
     'page_cache' => t('Cache page for anonymous users (highly recommended)'),
     'dynamic_page_cache' => t('Cache pages for any user (highly recommended)'),
     'social_lets_connect_contact' => t('Adds Open Social Links to the main menu.'),
+    'social_lets_connect_usage' => t('Shares usage data to the Open Social team.'),
   ];
 
   // Checkboxes to enable Optional modules.
@@ -159,6 +160,7 @@ function social_form_install_configure_form_alter(&$form, FormStateInterface $fo
       'social_file_private',
       'social_search_autocomplete',
       'social_lets_connect_contact',
+      'social_lets_connect_usage',
     ],
   ];
 
@@ -199,6 +201,7 @@ function social_install_profile_modules(array &$install_state) {
     'social_core' => 'social_core',
     'social_user' => 'social_user',
     'social_group' => 'social_group',
+    'social_group_gvbo' => 'social_group_gvbo',
     'social_event' => 'social_event',
     'social_topic' => 'social_topic',
     'social_profile' => 'social_profile',
