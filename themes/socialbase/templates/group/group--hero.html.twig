@@ -32,15 +32,7 @@
   set cover_wrap_classes = group_hero_small ? 'cover-wrap small' : 'cover-wrap'
 %}
 
-{%
-  set hero_image = group_hero_styled_image_url
-%}
-
-{% if group_hero_alternative_image is defined %}
-  {% set hero_image = group_hero_alternative_image %}
-{% endif %}
-
-<div{{ attributes.addClass(cover_classes) }} {% if hero_image %} style="background-image: url('{{ hero_image }}');" {% endif %}>
+<div{{ attributes.addClass(cover_classes) }} {% if group_hero_styled_image_url %} style="background-image: url('{{ group_hero_styled_image_url }}');" {% endif %}>
   <div class="hero__bgimage-overlay"></div>
   {% if group_edit_url %}
     <div class="hero-action-button">

@@ -247,7 +247,7 @@ function social_group_preprocess_group(array &$variables) {
       $overridden_image_style = Drupal::getContainer()->get('social_group.hero_image')->getGroupHeroImageStyle();
 
       if ($overridden_image_style !== $original_image_style) {
-        $variables['group_hero_alternative_image'] = ImageStyle::load($overridden_image_style)
+        $variables['group_hero_styled_image_url'] = ImageStyle::load($overridden_image_style)
           ->buildUrl($group->get('field_group_image')->entity->getFileUri());
       }
     }
