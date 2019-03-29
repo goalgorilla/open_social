@@ -209,10 +209,13 @@ function improved_theme_settings_page_attachments(array &$page) {
 /**
  * Function that returns a valid integer or FALSE.
  *
- * @param $setting
- * @param $themename
+ * @param string $setting
+ *   The setting to retrieve.
+ * @param string $themename
+ *   The theme to retrieve the setting from.
  *
  * @return bool|string
+ *   The value of the settings.
  */
 function improved_theme_settings_get_setting($setting, $themename) {
   // Fetch setting from the theme.
