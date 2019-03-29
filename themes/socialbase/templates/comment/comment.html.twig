@@ -89,6 +89,8 @@
     </div>
     {% endblock %}
     <div class="comment__text iframe-container"> {{ content }} </div>
+    {% if comment_attachments_count %}
+      <div class="btn-link"> {{ comment_attachments_count }} </div>
+    {% endif %}
   </div>
-
 </article>

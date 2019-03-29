@@ -95,7 +95,7 @@ function socialbase_preprocess_input(&$variables) {
   }
 
   // Render a simple VBO checkbox.
-  if ($variables['element']['#id'] !== NULL && (strpos($variables['element']['#id'], 'edit-views-bulk-operations') !== FALSE || strpos($variables['element']['#id'], 'edit-social-views-bulk-operations') !== FALSE)
+  if (isset($variables['element']['#id']) && $variables['element']['#id'] !== NULL && (strpos($variables['element']['#id'], 'edit-views-bulk-operations') !== FALSE || strpos($variables['element']['#id'], 'edit-social-views-bulk-operations') !== FALSE)
     && $variables['type'] == 'checkbox') {
     $variables['element']['#simple_checkbox'] = TRUE;
     $variables['simple_checkbox'] = TRUE;
