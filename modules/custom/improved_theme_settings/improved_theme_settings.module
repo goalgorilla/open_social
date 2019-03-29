@@ -177,7 +177,7 @@ function improved_theme_settings_page_attachments(array &$page) {
         $hero_gradient_opacity_end = $hero_gradient_opacity / 100;
 
         // If our opacity has been set to 0, also change the start value to 0.
-        if ($hero_gradient_opacity == 0) {
+        if ($hero_gradient_opacity === 0) {
           $hero_gradient_opacity_start = 0;
         }
       }
@@ -208,12 +208,17 @@ function improved_theme_settings_page_attachments(array &$page) {
 
 /**
  * Function that returns a valid integer or FALSE.
+ *
+ * @param $setting
+ * @param $themename
+ *
+ * @return bool|string
  */
 function improved_theme_settings_get_setting($setting, $themename) {
   // Fetch setting from the theme.
   $themevar = Xss::filter(theme_get_setting($setting, $themename));
   // In this case '' is something different than 0.
-  if ($themevar !== trim(intval($themevar))) {
+  if ($themevar !== trim((int) $themevar)) {
     return FALSE;
   }
   return $themevar;
