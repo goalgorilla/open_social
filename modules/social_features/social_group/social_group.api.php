@@ -52,17 +52,35 @@ function hook_social_group_default_visibility_alter(&$visibility, $group_type_id
 }
 
 /**
+ * Provide a method to alter the allowed visibility used for a group type.
+ *
+ * @param array $visibilities
+ *   The visibilities list.
+ * @param string $group_type_id
+ *   The Group type we alter the visibility setting for.
+ *
+ * @see social_group_get_allowed_visibility_options_per_group_type()
+ *
+ * @ingroup social_group_api
+ */
+function hook_social_group_allowed_visibilities_alter(array &$visibilities, $group_type_id) {
+  if ($group_type_id === 'custom_public_group') {
+    $visibilities['community'] = TRUE;
+  }
+}
+
+/**
  * Provide a method to alter default group overview route.
  *
  * @param array $route
  *   An array with route name and parameters.
- * @param GroupInterface $group
+ * @param \Drupal\group\Entity\GroupInterface $group
  *   Current group entity.
  *
  * @ingroup social_group_api
  */
-function hook_social_group_overview_route_alter(array &$route, GroupInterface $group) {
-  if ($group->bundle() == 'challenge') {
+function hook_social_group_overview_route_alter(array &$route, \Drupal\group\Entity\GroupInterface $group) {
+  if ($group->bundle() === 'challenge') {
     $route = [
       'name' => 'view.challenges_user.page',
       'parameters' => ['user' => \Drupal::currentUser()->id()],
@@ -79,7 +97,9 @@ function hook_social_group_overview_route_alter(array &$route, GroupInterface $g
  * @ingroup social_group_api
  */
 function hook_social_group_move(\Drupal\node\NodeInterface $node) {
-  drupal_set_message(t('@title is moved.', ['@title' => $node->getTitle()]));
+  \Drupal::messenger()->addStatus(t('@title is moved.', [
+    '@title' => $node->getTitle(),
+  ]));
 }
 
 /**
