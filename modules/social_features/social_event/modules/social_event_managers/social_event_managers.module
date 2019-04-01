@@ -275,9 +275,24 @@ function social_event_managers_menu_local_tasks_alter(&$data, $route_name) {
     }
     if (($node instanceof Node) && $node->getType() === 'event') {
       $can_show_managers_link = TRUE;
+
+      // Should we minimise the amount of tabs? If so we remove enrollees as we
+      // show it in the management tab.
+      if (!empty($data['tabs'][0]['views_view:view.event_enrollments.view_enrollments'])) {
+        unset($data['tabs'][0]['views_view:view.event_enrollments.view_enrollments']);
+      }
+      // For Guest Enrollments alone we hide them as well and place them in the
+      // manage tab.
+      if (!empty($data['tabs'][0]['views_view:view.manage_enrollments.page'])) {
+        unset($data['tabs'][0]['views_view:view.manage_enrollments.page']);
+      }
+      if (!social_event_manager_or_organizer()) {
+        $data['tabs'][0]['views_view:view.event_manage_enrollments.page_manage_enrollments']['#link']['title'] = t('Enrollments');
+      }
     }
 
   }
+
   // PLace this here, since hiding it should happen
   // always and not only on the mentioned routes.
   if (!$can_show_managers_link) {
@@ -285,19 +300,6 @@ function social_event_managers_menu_local_tasks_alter(&$data, $route_name) {
     unset($data['tabs'][0]['views_view:view.event_manage_enrollments.page_manage_enrollments']);
   }
 
-  // Should we minimze the amount of tabs? If so we remove Enrollees as we
-  // show it in the management tab.
-  if (!empty($data['tabs'][0]['views_view:view.event_enrollments.view_enrollments'])) {
-    unset($data['tabs'][0]['views_view:view.event_enrollments.view_enrollments']);
-  }
-  // For Guest Enrollments alone we hide them as well and place them in the
-  // manage tab.
-  if (!empty($data['tabs'][0]['views_view:view.manage_enrollments.page'])) {
-    unset($data['tabs'][0]['views_view:view.manage_enrollments.page']);
-  }
-  if (!social_event_manager_or_organizer()) {
-    $data['tabs'][0]['views_view:view.event_manage_enrollments.page_manage_enrollments']['#link']['title'] = t('Enrollments');
-  }
 }
 
 /**
