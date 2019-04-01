@@ -126,6 +126,15 @@ function social_user_update_8008() {
   // Create the default configuration for the social_user default landing page.
   $config = \Drupal::getContainer()->get('config.factory')->getEditable('social_user.settings');
   $config->set('social_user_profile_landingpage', 'entity.user.canonical')->save();
+
+  // Add permissions for the role.
+  $rid = 'sitemanager';
+
+  $role = Role::load($rid);
+  if ($role) {
+    $permissions = ['administer social_user settings'];
+    user_role_grant_permissions($rid, $permissions);
+  }
 }
 
 /**
@@ -174,6 +183,7 @@ function _social_user_get_permissions($role) {
     'view users',
     'block users',
     'administer navigation settings',
+    'administer social_user settings',
   ]);
 
   if (isset($permissions[$role])) {
