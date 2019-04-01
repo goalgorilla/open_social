@@ -27,13 +27,13 @@ class ReportContentType extends FieldPluginBase {
     $flagging = $this
       ->getEntity($row);
 
-    if ($flagging->getFlaggable()->getEntityTypeId() === 'node') {
-      /** @var \Drupal\node\NodeInterface $node */
-      $node = $flagging->getFlaggable();
-      return ucfirst($node->bundle());
+    $reported_entity = $flagging->getFlaggable();
+    if ($reported_entity->getEntityTypeId() === 'node') {
+      /** @var \Drupal\node\NodeInterface $reported_entity */
+      return node_get_type_label($reported_entity);
     }
     else {
-      return $flagging->getFlaggable()->getEntityType()->getLabel();
+      return $reported_entity->getEntityType()->getLabel();
     }
   }
 
