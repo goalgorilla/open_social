@@ -131,6 +131,26 @@ class SocialDrupalContext extends DrupalContext {
   }
 
   /**
+   * @Given Search indexes are up to date
+   */
+  public function updateSearchIndexes() {
+    /** @var \Drupal\search_api\Entity\SearchApiConfigEntityStorage $index_storage */
+    $index_storage = \Drupal::service("entity_type.manager")->getStorage('search_api_index');
+
+    $indexes = $index_storage->loadMultiple();
+    if (!$indexes) {
+      return;
+    }
+
+    // Loop over all interfaces and let the Search API index any non-indexed
+    // items.
+    foreach ($indexes as $index) {
+      /** @var \Drupal\search_api\IndexInterface $index */
+      $index->indexItems();
+    }
+  }
+
+  /**
    * @When I empty the queue
    */
   public function iEmptyTheQueue() {
