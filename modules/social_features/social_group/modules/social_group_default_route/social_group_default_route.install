@@ -1,0 +1,18 @@
+<?php
+
+/**
+ * @file
+ * Installation file for social_group_default_route module.
+ */
+
+/**
+ * Implements hook_install().
+ */
+function social_group_default_route_install() {
+  $extension_config = \Drupal::configFactory()->getEditable('core.extension');
+  $group_weight = $extension_config->get('module.social_group');
+  // One more plz.
+  $this_module = $group_weight + 1;
+  // Set the weight of this module.
+  module_set_weight('social_group_default_route', $this_module);
+}
