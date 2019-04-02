@@ -530,7 +530,7 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
 
       // Disable all group types that can't be edited. Because they don't have
       // a visibility.
-      foreach ($form['group_type']['#options'] as $type => $label) {
+      foreach (array_keys($form['group_type']['#options']) as $type) {
         if (\Drupal::service('social_group.helper_service')->getDefaultGroupVisibility($type) === NULL) {
           $form['group_type'][$type] = [
             '#disabled' => TRUE,
