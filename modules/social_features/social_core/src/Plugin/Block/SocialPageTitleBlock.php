@@ -153,7 +153,7 @@ class SocialPageTitleBlock extends PageTitleBlock implements ContainerFactoryPlu
       else {
         $title = $this->title;
 
-        if (!is_null($title) && $title != '') {
+        if (!empty($title)) {
           return [
             '#type' => 'page_title',
             '#title' => $this->title,
@@ -165,7 +165,7 @@ class SocialPageTitleBlock extends PageTitleBlock implements ContainerFactoryPlu
       if ($route = $request->attributes->get(RouteObjectInterface::ROUTE_OBJECT)) {
         $title = $this->titleResolver->getTitle($request, $route);
 
-        if (!is_null($title) && $title != '') {
+        if (!empty($title)) {
           return [
             '#type' => 'page_title',
             '#title' => $title,
@@ -173,7 +173,5 @@ class SocialPageTitleBlock extends PageTitleBlock implements ContainerFactoryPlu
         }
       }
     }
-
   }
-
 }
