@@ -174,4 +174,5 @@ class SocialPageTitleBlock extends PageTitleBlock implements ContainerFactoryPlu
       }
     }
   }
+
 }
