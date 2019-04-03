@@ -49,6 +49,104 @@ function social_user_form_user_login_form_alter(&$form, FormStateInterface $form
 
 /**
  * Implements hook_form_FORM_ID_alter().
+ */
+function social_user_form_views_exposed_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  $view = $form_state->get('view');
+
+  // Make the filters on the admin people overview more user friendly.
+  if ($view && $view->id() === 'user_admin_people' && $view->current_display === 'page_1') {
+
+    // Render an empty divider after Group for field sets.
+    $form['divider'] = [
+      '#markup' => '<div class="form--inline form-actions"></div>',
+      '#weight' => 20,
+    ];
+
+    $filters = [
+      'created',
+      'login',
+    ];
+    foreach ($filters as $filter) {
+      $form[$filter]['#title'] = $form[$filter]['min']['#title'];
+      $form[$filter]['#type'] = 'fieldset';
+      $form[$filter]['#weight'] = 30;
+
+      $form[$filter]['min']['#type'] = 'date';
+      $form[$filter]['min']['#title'] = t('Date');
+      $form[$filter]['min']['#states']['visible'] = [];
+      $form[$filter]['min']['#states']['visible'][0][':input[name="' . $filter . '[' . $filter . '_op]"]'] = [
+        'value' => 'between',
+      ];
+      $form[$filter]['max']['#type'] = 'date';
+      $form[$filter]['max']['#title'] = t('Date');
+      $form[$filter]['max']['#states']['visible'] = [];
+      $form[$filter]['max']['#states']['visible'][0][':input[name="' . $filter . '[' . $filter . '_op]"]'] = [
+        'value' => 'between',
+      ];
+      $form[$filter]['value']['#states']['visible'] = [];
+      $form[$filter]['value']['#states']['visible'][0][':input[name="' . $filter . '[' . $filter . '_op]"]'] = [
+        'value' => '<',
+      ];
+      $form[$filter]['value']['#states']['visible'][1][':input[name="' . $filter . '[' . $filter . '_op]"]'] = [
+        'value' => '>',
+      ];
+      $form[$filter]['value']['#type'] = 'date';
+      $form[$filter]['value']['#title'] = t('Date');
+
+      $form[$filter][$filter . '_op'] = $form[$filter . '_op'];
+      $form[$filter][$filter . '_op']['#weight'] = -5;
+      $form[$filter][$filter . '_op']['#options'] = [];
+      $form[$filter][$filter . '_op']['#options']['between'] = t('Between');
+      $form[$filter][$filter . '_op']['#options']['>'] = t('After');
+      $form[$filter][$filter . '_op']['#options']['<'] = t('Before');
+      unset($form[$filter . '_op']);
+    }
+    if (isset($form['group']) && ($items = _social_user_get_groups())) {
+      $form['group'] = array_merge($form['group'], [
+        '#type' => 'select',
+        '#options' => $items,
+        '#empty_option' => t('- Any -'),
+        '#size' => 1,
+      ]);
+    }
+  }
+
+  // Add an extra validation option to handle all the form altering.
+  $form['#validate'][] = 'social_user_admin_people_overview_validate';
+}
+
+/**
+ * Returns array with titles of all groups.
+ */
+function _social_user_get_groups() {
+  $data = &drupal_static(__FUNCTION__);
+
+  if (empty($data)) {
+    $data = \Drupal::database()
+      ->select('groups_field_data', 'gfd')
+      ->fields('gfd', ['id', 'label'])
+      ->execute()
+      ->fetchAllKeyed(0, 1);
+  }
+
+  return $data;
+}
+
+/**
+ * Validate function for the admin people overview exposed filters.
+ */
+function social_user_admin_people_overview_validate(&$form, FormStateInterface $form_state) {
+  $filters = [
+    'created',
+    'login',
+  ];
+  foreach ($filters as $filter) {
+    $form_state->setValue($filter . '_op', $form_state->getValue([$filter, $filter . '_op']));
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
  *
  * @see \Drupal\user\RegisterForm
  */
@@ -137,7 +235,6 @@ function social_user_form_user_form_alter(&$form, FormStateInterface $form_state
   // See AccountForm.php this is where user_pass_reset gets set. Only when user
   // uses a one time login link it's true.
   if ($form_state->get('user_pass_reset')) {
-    $form['#attached']['library'][] = 'social_user/user_form_protection';
     // We prepend it because a user first has to be saved :) and the profile
     // user save needs to fire first!
     $form['actions']['submit']['#submit'][] = '_social_user_pass_reset_submit';

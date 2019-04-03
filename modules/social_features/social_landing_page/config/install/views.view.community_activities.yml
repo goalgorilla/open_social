@@ -46,10 +46,23 @@ display:
           sort_asc_label: Asc
           sort_desc_label: Desc
       pager:
-        type: some
+        type: mini
         options:
           items_per_page: 5
           offset: 0
+          id: 0
+          total_pages: null
+          tags:
+            previous: ‹‹
+            next: ››
+          expose:
+            items_per_page: false
+            items_per_page_label: 'Items per page'
+            items_per_page_options: '5, 10, 25, 50'
+            items_per_page_options_all: false
+            items_per_page_options_all_label: '- All -'
+            offset: false
+            offset_label: Offset
       style:
         type: default
       row:
@@ -220,11 +233,12 @@ display:
     cache_metadata:
       max-age: -1
       contexts:
-        - 'languages:language_interface'
+      - 'languages:language_interface'
+      - url.query_args
       tags:
-        - 'config:core.entity_view_display.activity.activity.default'
-        - 'config:core.entity_view_display.activity.activity.notification'
-        - 'config:core.entity_view_display.activity.activity.notification_archive'
+      - 'config:core.entity_view_display.activity.activity.default'
+      - 'config:core.entity_view_display.activity.activity.notification'
+      - 'config:core.entity_view_display.activity.activity.notification_archive'
   block_stream_landing:
     display_plugin: block
     id: block_stream_landing
@@ -236,7 +250,8 @@ display:
     cache_metadata:
       max-age: -1
       contexts:
-        - 'languages:language_interface'
+      - 'languages:language_interface'
+      - url.query_args
       tags:
         - 'config:core.entity_view_display.activity.activity.default'
         - 'config:core.entity_view_display.activity.activity.notification'

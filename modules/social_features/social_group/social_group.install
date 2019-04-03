@@ -26,6 +26,10 @@ function social_group_update_dependencies() {
   $dependencies['social_group'][8011] = [
     'gnode' => 8005,
   ];
+  // Prevent errors when missing VBO module.
+  $dependencies['profile'][8002] = [
+    'social_group' => 8501,
+  ];
   return $dependencies;
 }
 
@@ -495,4 +499,22 @@ function social_group_update_8302(&$sandbox) {
 function social_group_update_8303() {
   user_role_grant_permissions('contentmanager', ['edit group types']);
   user_role_grant_permissions('sitemanager', ['edit group types']);
+}
+
+/**
+ * Install gvbo module.
+ */
+function social_group_update_8501() {
+  $modules = ['gvbo', 'social_group_gvbo'];
+  \Drupal::service('module_installer')->install($modules);
+}
+
+/**
+ * Set some extra configuration.
+ */
+function social_group_update_8502() {
+  $config = \Drupal::configFactory()->getEditable('social_group.settings');
+  $config->set('allow_hero_selection', FALSE);
+  $config->set('default_hero', 'hero');
+  $config->save();
 }

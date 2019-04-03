@@ -1,0 +1,15 @@
+social_group_gvbo.views_bulk_operations.execute_configurable:
+  path: '/group/{group}/membership/configure-action'
+  defaults:
+    _form: '\Drupal\social_group_gvbo\Form\SocialGroupViewsBulkOperationsConfigureAction'
+    _title: 'Configure action'
+  requirements:
+    _social_group_views_bulk_operation_access: 'TRUE'
+
+social_group_gvbo.views_bulk_operations.confirm:
+  path: '/group/{group}/membership/confirm-action'
+  defaults:
+    _form: '\Drupal\social_group_gvbo\Form\SocialGroupViewsBulkOperationsConfirmAction'
+    _title: 'Confirm action'
+  requirements:
+    _social_group_views_bulk_operation_access: 'TRUE'

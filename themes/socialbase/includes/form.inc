@@ -330,6 +330,8 @@ function socialbase_form_alter(&$form, FormStateInterface $form_state, $form_id)
     'data_policy_edit_form',
     'data_policy_data_policy_agreement',
     'data_policy_data_policy_revision_edit',
+    'views_bulk_operations_configure_action',
+    'views_bulk_operations_confirm_action',
   ]);
 
   if (\Drupal::routeMatch()->getRouteName() === 'private_message.private_message_create' && $form_id == 'private_message_add_form') {

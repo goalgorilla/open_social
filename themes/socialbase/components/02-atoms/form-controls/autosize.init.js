@@ -9,6 +9,7 @@
         autosize($('.form-control--autogrow'));
         autosize.update($('.form-control--autogrow'));
       });
+
     }
   }
 

@@ -5,3 +5,14 @@ social_event_managers.settings:
     _title: 'Event organiser settings'
   requirements:
     _permission: 'set social event managers settings'
+
+social_event_managers.add_enrollees:
+  path: '/node/{node}/manage-all-enrollments/add-enrollees'
+  defaults:
+    _form: '\Drupal\social_event_managers\Form\SocialEventManagersAddEnrolleeForm'
+    _title: 'Add enrollees'
+  requirements:
+    _permission: 'manage everything enrollments'
+
+route_callbacks:
+  - 'social_event_managers.route_subscriber:routes'

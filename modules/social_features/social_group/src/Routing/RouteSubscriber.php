@@ -16,7 +16,7 @@ class RouteSubscriber extends RouteSubscriberBase {
   /**
    * {@inheritdoc}
    */
-  protected function alterRoutes(RouteCollection $collection) {
+  protected function alterRoutes(RouteCollection $collection) :void {
     // Route the group view page to group/{group}/timeline.
     if ($route = $collection->get('entity.group.canonical')) {
       $route->setPath('/group/{group}/stream');
@@ -24,17 +24,6 @@ class RouteSubscriber extends RouteSubscriberBase {
       $defaults['_entity_view'] = 'group.stream';
       $defaults['_title_callback'] = '\Drupal\social_group\Controller\SocialGroupController::groupStreamTitle';
       $route->setDefaults($defaults);
-    }
-
-    // Route the group members page to the group/{group}/membership.
-    if ($route = $collection->get('entity.group_content.collection')) {
-      // Override default title for Group Membership page.
-      $defaults = $route->getDefaults();
-      $defaults['_title_callback'] = '\Drupal\social_group\Controller\SocialGroupController::groupMembersTitle';
-      $route->setDefaults($defaults);
-      // Override default path for Group Membership page.
-      $route->setPath('/group/{group}/membership');
-      $route->setRequirements(['_group_permission' => 'administer members']);
     }
 
     // Override default title for Group Members page.

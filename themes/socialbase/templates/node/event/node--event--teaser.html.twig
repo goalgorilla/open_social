@@ -7,10 +7,12 @@
     {%- block field_value %} {{ event_date }} {%- endblock -%}
   {% endembed %}
 
-  {% embed "node--teaser__field.html.twig" %}
-    {%- block field_icon -%} location {%- endblock -%}
-    {%- block field_value -%} {{ content.field_event_location }} {%- endblock -%}
-  {% endembed %}
+  {% if content.field_event_location|render is not empty %}
+    {% embed "node--teaser__field.html.twig" %}
+      {%- block field_icon -%} location {%- endblock -%}
+      {%- block field_value -%} {{ content.field_event_location }} {%- endblock -%}
+    {% endembed %}
+  {% endif %}
 
   {% if event_type %}
     {% embed "node--teaser__field.html.twig" %}

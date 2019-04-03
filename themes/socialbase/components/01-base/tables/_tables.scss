@@ -32,7 +32,8 @@ th {
 
 // Baseline styles
 
-.table {
+.table,
+.path-node .body-text table {
   width: 100%;
   max-width: 100%;
   margin-bottom: $spacer;
@@ -179,4 +180,127 @@ th {
     border: 0;
   }
 
+}
+
+// For VBO manage members.
+.right-auto {
+  margin-right: auto;
+  @include for-phone-only {
+    margin-left: 0.5rem;
+  }
+}
+
+.view-group-manage-members {
+  @include for-phone-only {
+    padding: 0 10px;
+
+    .form-group-inline--right {
+      display: block;
+    }
+    .card {
+      display: block;
+    }
+  }
+}
+
+.select-all.checkbox {
+  display: table-cell;
+}
+
+.vbo-table .form-type-checkbox {
+  padding-top: 1rem;
+}
+
+.vbo-table.table td {
+  vertical-align: inherit;
+}
+
+.vbo-table .btn-group--operations {
+  justify-content: left;
+}
+
+.vbo-table .form-no-label.checkbox label {
+  display: none;
+}
+
+.vbo-table .views-table-row-vbo-select-all {
+  .form-submit {
+    color: #4d4d4d;
+    background-color: #fff;
+    border-radius: 10px;
+    fill: #4d4d4d;
+    display: inline-block;
+    margin-bottom: 0;
+    font-weight: normal;
+    text-align: center;
+    vertical-align: middle;
+    -ms-touch-action: manipulation;
+    touch-action: manipulation;
+    cursor: pointer;
+    background-image: none;
+    border: 1px solid #adadad;
+    padding: 6px 12px;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    text-transform: uppercase;
+    -webkit-transition: .3s ease-out;
+    transition: .3s ease-out;
+    outline: 0;
+    @include for-phone-only {
+      font-size: 0.7rem;
+    }
+  }
+  td div {
+    text-align: left;
+  }
+}
+
+#vbo-action-form-wrapper .btn-group.dropdown {
+  position: absolute;
+  right: 1rem;
+  padding: 10px 0;
+
+  @include for-phone-only {
+    position: static;
+    width: 100%;
+
+    button {
+      margin-right: 0.5rem;
+    }
+
+    .dropdown-menu.dropdown-menu-right {
+      width: 100%;
+    }
+  }
+}
+
+#vbo-action-form-wrapper.card__block {
+  padding: 0;
+
+  .panel-heading {
+    padding: 1.25rem 0 1.25rem 1.25rem;
+  }
+
+  .vbo-multipage-selector ul {
+    background-color: rgba(0, 0, 0, 0.05);
+    margin: 0;
+    font-size: 0.875rem;
+  }
+
+  .vbo-multipage-selector ul li,
+  .vbo-multipage-selector h3 {
+    padding-left: 1.25rem;
+    font-weight: 500;
+  }
+
+  .vbo-multipage-selector li:last-child {
+    padding-bottom: 0.5rem;
+  }
+  .vbo-multipage-selector li:first-child {
+    padding-top: 0.5rem;
+  }
 }

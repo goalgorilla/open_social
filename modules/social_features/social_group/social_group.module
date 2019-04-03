@@ -37,6 +37,7 @@ use Drupal\profile\Entity\Profile;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\social_group\GroupContentVisibilityUpdate;
+use Drupal\Core\Messenger\MessengerInterface;
 
 /**
  * Implements hook_form_FORM_ID_alter().
@@ -234,9 +235,26 @@ function social_group_preprocess_group(array &$variables) {
   }
 
   // Add the hero styled image.
-  if (!empty($group->field_group_image->entity)) {
-    $variables['group_hero_styled_image_url'] = ImageStyle::load('social_xx_large')
-      ->buildUrl($group->field_group_image->entity->getFileUri());
+  if (!empty($group->get('field_group_image')->entity)) {
+    // Fetch image style from field info.
+    $original_image_style = $variables['content']['field_group_image'][0]['#image_style'] ?? '';
+    $image_style = ImageStyle::load($original_image_style);
+
+    if ($image_style instanceof ImageStyle) {
+
+      $variables['group_hero_styled_image_url'] = $image_style->buildUrl($group->get('field_group_image')->entity->getFileUri());
+      // Check if this style is considered small.
+      $overridden_image_style = Drupal::getContainer()->get('social_group.hero_image')->getGroupHeroImageStyle();
+
+      if ($overridden_image_style !== $original_image_style) {
+        $variables['group_hero_styled_image_url'] = ImageStyle::load($overridden_image_style)
+          ->buildUrl($group->get('field_group_image')->entity->getFileUri());
+      }
+    }
+  }
+  // This should be determined regardless if there's an image or not.
+  if (Drupal::getContainer()->get('social_group.hero_image')->isSmall()) {
+    $variables['group_hero_small'] = TRUE;
   }
 
   // Add group edit url for management.
@@ -893,6 +911,9 @@ function social_group_menu_local_tasks_alter(&$data, $route_name) {
 function social_group_local_tasks_alter(&$local_tasks) {
   // Remove local delete task from group page.
   unset($local_tasks['group.delete_form']);
+
+  $local_tasks['group.content']['route_name'] = 'view.group_manage_members.page_group_manage_members';
+  $local_tasks['group.content']['weight'] = 70;
 }
 
 /**
@@ -914,7 +935,6 @@ function social_group_menu_local_actions_alter(&$local_actions) {
  */
 function social_group_entity_type_alter(array &$entity_types) {
   /* @var $entity_types \Drupal\Core\Entity\EntityTypeInterface[] */
-  $entity_types['group_content']->setListBuilderClass('Drupal\social_group\Controller\SocialGroupContentListBuilder');
   $entity_types['group']->setListBuilderClass('Drupal\social_group\Controller\SocialGroupListBuilder');
 }
 
@@ -1067,6 +1087,23 @@ function social_group_preprocess_profile(&$variables) {
 }
 
 /**
+ * Implements hook_preprocess_HOOK().
+ */
+function social_group_preprocess_views_view(&$variables) {
+  /** @var \Drupal\views\ViewExecutable $view */
+  $view = &$variables['view'];
+
+  if ($view->id() === 'group_manage_members') {
+    $entity = \Drupal::entityTypeManager()->getStorage('block')
+      ->load('socialblue_local_actions');
+
+    $variables['header']['actions'] = \Drupal::entityTypeManager()
+      ->getViewBuilder('block')
+      ->view($entity);
+  }
+}
+
+/**
  * Implements hook_block_access().
  *
  * Check if the user is viewing a closed_group, check if the user is a member.
@@ -1192,6 +1229,16 @@ function social_group_get_all_open_groups() {
   $query = Drupal::service('entity.query')
     ->get('group')
     ->condition('type', 'open_group');
+  return $query->execute();
+}
+
+/**
+ * Get all open groups.
+ */
+function social_group_get_all_groups() {
+  $query = Drupal::service('entity.query')
+    ->get('group')
+    ->sort('type');
   return $query->execute();
 }
 
@@ -1543,5 +1590,180 @@ function social_group_social_user_account_header_account_links(array $context) {
     ] + Url::fromRoute('view.groups.page_user_groups', [
       'user' => $context['user']->id(),
     ])->toRenderArray(),
+  ];
+}
+
+/**
+ * Implements hook_entity_operation_alter().
+ */
+function social_group_entity_operation_alter(array &$operations, EntityInterface $entity) {
+  if ($entity->getEntityTypeId() === 'group_content') {
+    $titles = [
+      'edit' => t('Edit'),
+      'delete' => t('Remove'),
+      'view' => t('View'),
+    ];
+
+    foreach ($operations as $key => &$operation) {
+      if (isset($titles[$key])) {
+        $operation['title'] = $titles[$key];
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_views_plugins_field_alter().
+ */
+function social_group_views_plugins_field_alter(array &$plugins) {
+  $plugins['views_bulk_operations_bulk_form']['class'] = 'Drupal\social_group\Plugin\views\field\SocialGroupViewsBulkOperationsBulkForm';
+}
+
+/**
+ * Implements hook_default_route_group_tabs_alter().
+ */
+function social_group_social_group_default_route_tabs_alter(&$tabs) {
+  // Unset some tabs created by group.
+  unset($tabs['group.view'], $tabs['group.edit_form'], $tabs['group.content']);
+}
+
+/**
+ * Implements hook_batch_alter().
+ */
+function social_group_batch_alter(&$batch) {
+  if (!isset($batch['source_url'])) {
+    return;
+  }
+
+  $actions = [
+    'social_group_members_export_member_action',
+    'social_group_change_member_role_action',
+    'social_group_delete_group_content_action',
+    'social_group_send_email_action',
+  ];
+
+  /** @var \Drupal\Core\Url $url */
+  $url = &$batch['source_url'];
+
+  if ($url->getRouteName() === 'social_group_gvbo.views_bulk_operations.confirm' ||
+    $url->getRouteName() === 'views_bulk_operations.confirm') {
+    /** @var \Drupal\Core\Form\FormStateInterface $form_state */
+    $form_state = &$batch['form_state'];
+
+    $data = $form_state->get('views_bulk_operations');
+    $batch['sets'][0]['results']['action'] = $data['action_id'];
+    if (in_array($data['action_id'], $actions)) {
+      $batch['sets'][0]['finished'] = '_social_group_action_batch_finish';
+    }
+  }
+}
+
+/**
+ * Action batch finished callback.
+ *
+ * @param bool $success
+ *   Was the process successfull?
+ * @param array $results
+ *   Batch process results array.
+ * @param array $operations
+ *   Performed operations array.
+ */
+function _social_group_action_batch_finish($success, array $results, array $operations) {
+  $operations = array_count_values($results['operations']);
+  $results_count = 0;
+
+  foreach ($operations as $count) {
+    $results_count += $count;
+  }
+
+  $hook = 'social_group_action_' . $results['action'] . '_finish';
+
+  foreach (\Drupal::moduleHandler()->getImplementations($hook) as $module) {
+    $function = $module . '_' . $hook;
+    $messages = $function($success);
+
+    if (is_array($messages)) {
+      $fields = 0;
+
+      foreach ($messages as $type => $message) {
+        if (($type === 'singular' || $type === 'plural') && !empty($message) && is_string($message)) {
+          $fields++;
+        }
+      }
+
+      if ($fields === 2) {
+        $message = \Drupal::translation()->formatPlural($results_count, $messages['singular'], $messages['plural']);
+        $type = $success ? MessengerInterface::TYPE_STATUS : MessengerInterface::TYPE_WARNING;
+        \Drupal::messenger()->addMessage($message, $type);
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_social_event_action_ACTION_ID_finish().
+ */
+function social_group_social_group_action_social_group_members_export_member_action_finish($success) {
+  if ($success) {
+    return [
+      'singular' => '1 selected member has been exported successfully',
+      'plural' => '@count selected members have been exported successfully',
+    ];
+  }
+
+  return [
+    'singular' => '1 selected member has not been exported',
+    'plural' => '@count selected members have not been exported',
+  ];
+}
+
+/**
+ * Implements hook_social_event_action_ACTION_ID_finish().
+ */
+function social_group_social_group_action_social_group_delete_group_content_action_finish($success) {
+  if ($success) {
+    return [
+      'singular' => '1 selected member has been removed successfully',
+      'plural' => '@count selected members have been removed successfully',
+    ];
+  }
+
+  return [
+    'singular' => '1 selected member has not been removed successfully',
+    'plural' => '@count selected members have been removed successfully',
+  ];
+}
+
+/**
+ * Implements hook_social_event_action_ACTION_ID_finish().
+ */
+function social_group_social_group_action_social_group_change_member_role_action_finish($success) {
+  if ($success) {
+    return [
+      'singular' => 'The role of 1 selected member has been changed successfully',
+      'plural' => 'The role of @count selected members have been changed successfully',
+    ];
+  }
+
+  return [
+    'singular' => 'The role of 1 selected member has not been changed successfully',
+    'plural' => 'The role of @count selected members have not been changed successfully',
+  ];
+}
+
+/**
+ * Implements hook_social_event_action_ACTION_ID_finish().
+ */
+function social_group_social_group_action_social_group_send_email_action_finish($success) {
+  if ($success) {
+    return [
+      'singular' => 'Your email has been sent to 1 selected member successfully',
+      'plural' => 'Your email has been sent to @count selected members successfully',
+    ];
+  }
+
+  return [
+    'singular' => 'Your email has not been sent to 1 selected member successfully',
+    'plural' => 'Your email has not been sent to @count selected members successfully',
   ];
 }
