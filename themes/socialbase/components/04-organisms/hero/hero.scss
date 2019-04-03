@@ -55,6 +55,12 @@
     min-height: 410px;
   }
 
+  &.small {
+    @include for-tablet-portrait-up {
+      min-height: 206px;
+    }
+  }
+
   // this excludes the social_landing page hero section
   > .hero-footer {
     @include for-tablet-portrait-up {

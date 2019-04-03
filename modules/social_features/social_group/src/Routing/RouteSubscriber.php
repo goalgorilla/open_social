@@ -16,7 +16,7 @@ class RouteSubscriber extends RouteSubscriberBase {
   /**
    * {@inheritdoc}
    */
-  protected function alterRoutes(RouteCollection $collection) {
+  protected function alterRoutes(RouteCollection $collection) :void {
     // Route the group view page to group/{group}/timeline.
     if ($route = $collection->get('entity.group.canonical')) {
       $route->setPath('/group/{group}/stream');
