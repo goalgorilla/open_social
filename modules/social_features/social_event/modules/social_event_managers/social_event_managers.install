@@ -19,6 +19,7 @@ function social_event_managers_install() {
   if ($role instanceof Role) {
     // Set permission.
     $role->grantPermission('set social event managers settings');
+    $role->grantPermission('manage everything enrollments');
     $role->trustData()->save();
   }
 
@@ -33,4 +34,18 @@ function social_event_managers_install() {
  */
 function social_event_managers_update_8001() {
   social_event_managers_install();
+}
+
+/**
+ * Add manage enrollments permission to Site manager.
+ */
+function social_event_managers_update_8002() {
+  // Fetch site manager role.
+  $role = Role::load('sitemanager');
+  // Set permission for site manager.
+  if ($role instanceof Role) {
+    // Set permission.
+    $role->grantPermission('manage everything enrollments');
+    $role->trustData()->save();
+  }
 }
