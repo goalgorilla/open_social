@@ -76,13 +76,13 @@ script:
   - if [ "$TEST_SUITE" = "install_stability_1" ]; then docker exec -i social_ci_web bash /var/www/scripts/social/check-coding-standards.sh full; fi
   - if [ "$TEST_SUITE" = "install_stability_1" ]; then docker exec -i social_ci_web_scripts sh /var/www/scripts/social/unit-tests.sh; fi
   - if [ "$TEST_SUITE" = "install_stability_1" ] ; then docker exec -i social_ci_web bash /var/www/scripts/social/check-feature-state.sh social; fi
-  - if [ "$TEST_SUITE" = "install_stability_1" ]; then docker exec -it social_ci_behat sh /var/www/scripts/social/behatstability.sh stability-1 --stop-on-failure; fi
-  - if [ "$TEST_SUITE" = "install_stability_2" ]; then docker exec -it social_ci_behat sh /var/www/scripts/social/behatstability.sh notifications --stop-on-failure; fi
-  - if [ "$TEST_SUITE" = "install_stability_2" ]; then docker exec -it social_ci_behat sh /var/www/scripts/social/behatstability.sh stability-2 --stop-on-failure; fi
-  - if [ "$TEST_SUITE" = "install_stability_3" ]; then docker exec -it social_ci_behat sh /var/www/scripts/social/behatstability.sh stability-3 --stop-on-failure; fi
-  - if [ "$TEST_SUITE" = "install_stability_4" ]; then docker exec -it social_ci_behat sh /var/www/scripts/social/behatstability.sh stability-4 --stop-on-failure; fi
-  - if [ "$TEST_SUITE" = "install_stability_5" ]; then docker exec -it social_ci_behat sh /var/www/scripts/social/behatstability.sh stability-5 --stop-on-failure; fi
-  - if [ "$TEST_SUITE" = "install_update" ]; then docker exec -it social_ci_behat sh /var/www/scripts/social/behatstability.sh "stability-1&&~DS-1136&&~DS-3605" --stop-on-failure; fi
+  - if [ "$TEST_SUITE" = "install_stability_1" ]; then docker exec -it social_ci_behat sh /var/www/scripts/social/behatstability.sh stability-1 --stop-on-failure --strict; fi
+  - if [ "$TEST_SUITE" = "install_stability_2" ]; then docker exec -it social_ci_behat sh /var/www/scripts/social/behatstability.sh notifications --stop-on-failure --strict; fi
+  - if [ "$TEST_SUITE" = "install_stability_2" ]; then docker exec -it social_ci_behat sh /var/www/scripts/social/behatstability.sh stability-2 --stop-on-failure --strict; fi
+  - if [ "$TEST_SUITE" = "install_stability_3" ]; then docker exec -it social_ci_behat sh /var/www/scripts/social/behatstability.sh stability-3 --stop-on-failure --strict; fi
+  - if [ "$TEST_SUITE" = "install_stability_4" ]; then docker exec -it social_ci_behat sh /var/www/scripts/social/behatstability.sh stability-4 --stop-on-failure --strict; fi
+  - if [ "$TEST_SUITE" = "install_stability_5" ]; then docker exec -it social_ci_behat sh /var/www/scripts/social/behatstability.sh stability-5 --stop-on-failure --strict; fi
+  - if [ "$TEST_SUITE" = "install_update" ]; then docker exec -it social_ci_behat sh /var/www/scripts/social/behatstability.sh "stability-1&&~DS-1136&&~DS-3605" --stop-on-failure --strict; fi
   - if [ "$TEST_SUITE" = "accessibility" ]; then docker exec -it social_ci_web bash /var/www/scripts/social/check-accessibility.sh install; fi
 
 after_success:
