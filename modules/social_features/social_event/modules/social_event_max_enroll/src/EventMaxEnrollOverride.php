@@ -6,6 +6,7 @@ use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Config\ConfigFactoryOverrideInterface;
 use Drupal\Core\Config\StorageInterface;
+use Drupal\social_event_an_enroll\EventAnEnrollOverride;
 
 /**
  * Class EventMaxEnrollOverride.
@@ -24,13 +25,26 @@ class EventMaxEnrollOverride implements ConfigFactoryOverrideInterface {
   protected $configFactory;
 
   /**
+   * The Social Event AN Enroll config overrider.
+   *
+   * @var \Drupal\social_event_an_enroll\EventAnEnrollOverride|null
+   */
+  protected $socialEventAnEnrollOverrider;
+
+  /**
    * Constructs the configuration override.
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The Drupal configuration factory.
+   * @param \Drupal\social_event_an_enroll\EventAnEnrollOverride|null $social_event_an_enroll_overrider
+   *   The Social Event AN Enroll config overrider.
    */
-  public function __construct(ConfigFactoryInterface $config_factory) {
+  public function __construct(
+    ConfigFactoryInterface $config_factory,
+    EventAnEnrollOverride $social_event_an_enroll_overrider = NULL
+  ) {
     $this->configFactory = $config_factory;
+    $this->socialEventAnEnrollOverrider = $social_event_an_enroll_overrider;
   }
 
   /**
@@ -42,15 +56,25 @@ class EventMaxEnrollOverride implements ConfigFactoryOverrideInterface {
     // Add field_event_max_enroll to event form.
     $config_name = 'core.entity_form_display.node.event.default';
     if (in_array($config_name, $names)) {
-      $config = $this->configFactory->getEditable($config_name);
+      if ($this->socialEventAnEnrollOverrider instanceof ConfigFactoryOverrideInterface) {
+        $parent_overrides = $this->socialEventAnEnrollOverrider->loadOverrides([
+          $config_name,
+        ]);
+
+        $children = $parent_overrides[$config_name]['third_party_settings']['field_group']['group_enrollment']['children'];
+        $content = $parent_overrides[$config_name]['content'];
+      }
+      else {
+        $config = $this->configFactory->getEditable($config_name);
+        $children = $config->get('third_party_settings.field_group.group_enrollment.children');
+        $content = $config->get('content');
+      }
 
       // Add a field group.
-      $children = $config->get('third_party_settings.field_group.group_enrollment.children');
       $children[] = 'field_event_max_enroll';
       $children[] = 'field_event_max_enroll_num';
 
       // Add the field to the content.
-      $content = $config->get('content');
       $content['field_event_max_enroll'] = [
         'weight' => 100,
         'settings' => [
@@ -81,7 +105,6 @@ class EventMaxEnrollOverride implements ConfigFactoryOverrideInterface {
         ],
         'content' => $content,
       ];
-
     }
 
     return $overrides;
