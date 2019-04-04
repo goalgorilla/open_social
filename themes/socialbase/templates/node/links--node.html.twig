@@ -36,12 +36,16 @@
 
   {%- for key, item in links -%}
     {%- if item.link -%}
-    <div class="card__link">
-      {{ item.link }}
-    </div>
+      {% if style == 'sky' %}
+        <div class="card__link btn btn-default">
+      {% else %}
+        <div class="card__link">
+      {% endif %}
+        {{ item.link }}
+      </div>
     {%- elseif item.text_attributes -%}
       <span{{ item.text_attributes }}>{{ item.text }}</span>
-      {%- else -%}
+    {%- else -%}
       {{ item.text }}
     {%- endif -%}
 

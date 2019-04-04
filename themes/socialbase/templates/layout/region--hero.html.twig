@@ -1,8 +1,8 @@
 {%
   set classes = [
-    'region--' ~ region|clean_class,
-    'container',
-  ]
+  'region--' ~ region|clean_class,
+  style == 'sky' ? '' : 'container',
+]
 %}
 {% if content %}
   <div{{ attributes.addClass(classes).setAttribute('id', 'hero') }}>

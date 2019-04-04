@@ -27,19 +27,23 @@
 #}
 {{ attach_library('socialbase/comment')}}
 
+{% if style == 'sky' %}
+  {{ attach_library('socialblue/comment--sky')}}
+{% endif %}
+
 {# extra condition to make sure the card is not shown when there are no comments and comments are closed #}
 {% if comments or comment_form %}
 
-  <section{{ attributes.setAttribute('id', 'section-comments') }}>
+  {% if style == 'sky' %}
 
-    {% if not label_hidden %}
-      {{ title_prefix }}
-      <h4{{ title_attributes.addClass('section-title') }}>{{ label }}</h4>
-      {{ title_suffix }}
-    {% endif %}
+    <section{{ attributes.setAttribute('id', 'section-comments') }} class="card">
 
-    <div class="card">
-      <div class="card__block">
+      <div class="card__block cart__comment">
+        {% if not label_hidden %}
+          {{ title_prefix }}
+          <h4{{ title_attributes.addClass('section-title') }}>{{ label }}</h4>
+          {{ title_suffix }}
+        {% endif %}
 
         {{ comments }}
 
@@ -48,8 +52,31 @@
         {% endif %}
 
       </div>
-    </div>
+    </section>
 
-  </section>
+  {% else %}
+
+    <section{{ attributes.setAttribute('id', 'section-comments') }}>
+
+      {% if not label_hidden %}
+        {{ title_prefix }}
+        <h4{{ title_attributes.addClass('section-title') }}>{{ label }}</h4>
+        {{ title_suffix }}
+      {% endif %}
+
+      <div class="card">
+        <div class="card__block">
+
+          {{ comments }}
+
+          {% if comment_form %}
+            {{ comment_form }}
+          {% endif %}
+
+        </div>
+      </div>
+
+    </section>
+  {% endif %}
 
 {% endif %}

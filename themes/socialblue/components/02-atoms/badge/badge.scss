@@ -22,10 +22,33 @@
 .badge {
   border-radius: $badge-border-radius;
   color: $badge-color;
+
+  .socialblue--sky & {
+    border-radius: $border-radius-extra;
+    white-space: inherit;
+    text-align: left;
+    color: inherit;
+
+    @include for-desktop-up {
+      margin-right: 12px;
+    }
+  }
 }
 
 .badge__icon {
   fill: $default-color;
+
+  .socialblue--sky & {
+
+    path {
+      stroke: $default-color;
+      fill: $default-color;
+    }
+
+    &.badge__user-orange {
+      height: 11px;
+    }
+  }
 }
 
 .badge--pill {
@@ -46,6 +69,11 @@
 
 .badge-accent {
   @include badge-variant($badge-accent-bg, $default-color);
+
+  .socialblue--sky & {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
 }
 
 .badge-success {

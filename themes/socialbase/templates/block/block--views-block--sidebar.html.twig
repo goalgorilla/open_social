@@ -42,9 +42,13 @@
   {{ content }}
   <footer class="card__actionbar">
     {% if view_all_path %}
-    <a href="{{ view_all_path }}" class="btn btn-flat">
-      {{ button_text }}
-    </a>
-    {% endif %}
+    {% if style == 'sky' %}
+    <a href="{{ view_all_path }}" class="card__link">
+      {% else %}
+      <a href="{{ view_all_path }}" class="btn btn-flat">
+        {% endif %}
+        {{ button_text }}
+      </a>
+      {% endif %}
   </footer>
 </section>
