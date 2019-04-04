@@ -82,12 +82,13 @@ class SocialEmbedConfigOverride implements ConfigFactoryOverrideInterface {
     $config_name = 'filter.format.' . $text_format;
     /* @var \Drupal\Core\Config\Config $config */
     $config = $this->configFactory->getEditable($config_name);
-
-    $dependencies = $config->get('dependencies.module');
-    $dependencies[] = 'url_embed';
-
     $filters = $config->get('filters');
-    $filters['url_embed'] = [
+
+    $overrides = [];
+    $overrides[$config_name]['dependencies']['module'] = $config->get('dependencies.module');
+    $overrides[$config_name]['dependencies']['module'][] = 'url_embed';
+
+    $overrides[$config_name]['filters']['url_embed'] = [
       'id' => 'url_embed',
       'provider' => 'url_embed',
       'status' => TRUE,
@@ -96,26 +97,20 @@ class SocialEmbedConfigOverride implements ConfigFactoryOverrideInterface {
     ];
 
     if ($convert_url) {
-      $filters['social_embed_convert_url'] = [
+      $overrides[$config_name]['filters']['social_embed_convert_url'] = [
         'id' => 'social_embed_convert_url',
         'provider' => 'social_embed',
         'status' => TRUE,
-        'weight' => (isset($filters['filter_url']['weight']) ? $filters['filter_url']['weight'] - 1 : $filters['url_embed']['weight'] - 1),
+        'weight' => (isset($filters['filter_url']['weight']) ? $filters['filter_url']['weight'] - 1 : 99),
         'settings' => [
           'url_prefix' => '',
         ],
       ];
+
       if (isset($filters['filter_html'])) {
-        $filters['filter_html']['settings']['allowed_html'] .= ' <drupal-url data-*>';
+        $overrides[$config_name]['filters']['filter_html']['settings']['allowed_html'] = $filters['filter_html']['settings']['allowed_html'] . ' <drupal-url data-*>';
       }
     }
-
-    $overrides[$config_name] = [
-      'dependencies' => [
-        'module' => $dependencies,
-      ],
-      'filters' => $filters,
-    ];
   }
 
   /**
@@ -132,10 +127,12 @@ class SocialEmbedConfigOverride implements ConfigFactoryOverrideInterface {
     $config = $this->configFactory->getEditable($config_name);
     $settings = $config->get('settings');
 
-    if (!($settings && isset($settings['toolbar']['rows']) && is_array($settings['toolbar']['rows']))) {
+    // Ensure we have an existing row that the button can be added to.
+    if (empty($settings) || !isset($settings['toolbar']['rows']) || !is_array($settings['toolbar']['rows'])) {
       return;
     }
 
+    $overrides = [];
     $button_exists = FALSE;
 
     foreach ($settings['toolbar']['rows'] as $row) {
@@ -143,25 +140,28 @@ class SocialEmbedConfigOverride implements ConfigFactoryOverrideInterface {
         foreach ($group['items'] as $button) {
           if ($button === 'social_embed') {
             $button_exists = TRUE;
-            break;
+            break 3;
           }
         }
       }
     }
 
+    // If the button already exists we change nothing.
     if (!$button_exists) {
       $row_array_keys = array_keys($settings['toolbar']['rows']);
       $last_row_key = end($row_array_keys);
+      // Ensure we add our button at the end of the row.
+      // We use count to avoid issues when keys are non-numeric (even though
+      // that shouldn't happen). This will break if the keys are non-consecutive
+      // (which should also never happen).
+      $group_key = count($settings['toolbar']['rows'][$last_row_key]) + 1;
 
-      $group = [];
-      $group['name'] = 'Embed';
-      $group['items'] = [];
-      $group['items'][] = 'social_embed';
-      $settings['toolbar']['rows'][$last_row_key][] = $group;
-
-      $overrides[$config_name] = [
-        'settings' => $settings,
+      // Add the button as a new group to the bottom row as the last item.
+      $group = [
+        'name' => 'Embed',
+        'items' => ['social_embed'],
       ];
+      $overrides[$config_name]['settings']['toolbar']['rows'][$last_row_key][$group_key] = $group;
     }
   }
 
