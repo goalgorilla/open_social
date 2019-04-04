@@ -7,3 +7,4 @@ projects[drupal][patch][] = "https://www.drupal.org/files/issues/2018-10-26/2528
 projects[drupal][patch][] = "https://www.drupal.org/files/issues/2018-10-01/2599228-SQL_error_on_content_creation-78_0.patch"
 projects[drupal][patch][] = "https://www.drupal.org/files/issues/get-commented-entity-2580551.52.patch"
 projects[drupal][patch][] = "https://www.drupal.org/files/issues/2018-10-17/drupal-3007424-2-Multiple-usages-of-FieldPluginBase-getEntity.patch"
+projects[drupal][patch][] = "https://www.drupal.org/files/issues/2019-04-04/3045349-27.patch"
