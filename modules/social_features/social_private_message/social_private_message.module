@@ -455,7 +455,7 @@ function social_private_message_social_user_account_header_items(array $context)
   }
 
   // We require a logged in user for this button.
-  if (empty($context['user']) || !$context['user']->isAuthenticated()) {
+  if (empty($context['user']) || !$context['user']->isAuthenticated() || !$context['user']->hasPermission('use private messaging system') ) {
     return [];
   }
 
