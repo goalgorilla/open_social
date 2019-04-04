@@ -48,7 +48,13 @@ class ActivityLoggerFactory {
         $new_message['created'] = $entity->getCreatedTime();
       }
 
-      $new_message['uid'] = $entity->getOwner()->id();
+      // Get the owner or default to anonymous.
+      if (method_exists($entity, 'getOwner') && $entity->getOwner() !== NULL) {
+        $new_message['uid'] = $entity->getOwner()->id();
+      }
+      else {
+        $new_message['uid'] = 0;
+      }
 
       $additional_fields = [
         ['name' => 'field_message_context', 'type' => 'list_string'],
