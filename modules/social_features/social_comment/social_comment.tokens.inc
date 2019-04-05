@@ -47,6 +47,11 @@ function social_comment_token_info() {
     'description' => t('The type of the content that was commented on.'),
   ];
 
+  $social_mentions['commented_entity_link_html'] = [
+    'name' => t('The (html) link to the commented entity.'),
+    'description' => t('The link to the commented entity, can be post or node, will include raw HTML.'),
+  ];
+
   $social_comment['comment_author'] = [
     'name' => t('The author of the comment.'),
     'description' => t('The author of the comment.'),
