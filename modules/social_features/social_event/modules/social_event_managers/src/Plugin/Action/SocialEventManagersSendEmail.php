@@ -5,6 +5,7 @@ namespace Drupal\social_event_managers\Plugin\Action;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\node\NodeInterface;
 use Drupal\social_event\EventEnrollmentInterface;
 use Drupal\social_user\Plugin\Action\SocialSendEmail;
 
@@ -40,9 +41,15 @@ class SocialEventManagersSendEmail extends SocialSendEmail {
   public function access($object, AccountInterface $account = NULL, $return_as_object = FALSE) {
     $access = AccessResult::allowedIf($object instanceof EventEnrollmentInterface);
 
-    // Also Event organizers can do this.
-    if (social_event_manager_or_organizer()) {
-      $access = TRUE;
+    if ($object instanceof EventEnrollmentInterface) {
+      $access = $object->access('delete', $account, TRUE);
+
+      $event_id = $object->getFieldValue('field_event', 'target_id');
+      $node = \Drupal::entityTypeManager()->getStorage('node')->load($event_id);
+      // Also Event organizers can do this.
+      if ($node instanceof NodeInterface && social_event_manager_or_organizer($node)) {
+        $access = AccessResult::allowedIf($object instanceof EventEnrollmentInterface);
+      }
     }
 
     return $return_as_object ? $access : $access->isAllowed();
