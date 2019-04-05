@@ -90,7 +90,7 @@ class EventMaxEnrollService implements EventMaxEnrollServiceInterface {
       // Check if feature is enabled.
       if ($config->get('max_enroll')) {
         // Get enrollment configuration for this event.
-        $is_event_max_enroll = !$node->field_event_max_enroll->isEmpty();
+        $is_event_max_enroll = !$node->field_event_max_enroll->isEmpty() && $node->field_event_max_enroll->value;
         $is_event_max_enroll_num = !$node->field_event_max_enroll_num->isEmpty();
 
         return $is_event_max_enroll && $is_event_max_enroll_num;
