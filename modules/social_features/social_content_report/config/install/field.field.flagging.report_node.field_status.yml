@@ -1,0 +1,25 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.flagging.field_status
+    - flag.flag.report_node
+  enforced:
+    module:
+      - social_content_report
+id: flagging.report_node.field_status
+field_name: field_status
+entity_type: flagging
+bundle: report_node
+label: Status
+description: ''
+required: true
+translatable: false
+default_value:
+  -
+    value: 1
+default_value_callback: ''
+settings:
+  on_label: Active
+  off_label: Closed
+field_type: boolean
