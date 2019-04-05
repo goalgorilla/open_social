@@ -15,6 +15,8 @@ use Drupal\Core\Url;
 use Drupal\block\Entity\Block;
 use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\social_event\EventEnrollmentInterface;
 use Drupal\social_event_managers\SocialEventManagersAccessHelper;
 use Drupal\user\Entity\User;
 use Drupal\views\ViewExecutable;
@@ -89,9 +91,13 @@ function social_event_managers_block_access(Block $block, $operation, AccountInt
 /**
  * Implements hook_entity_access().
  */
-function social_event_managers_entity_access(\Drupal\Core\Entity\EntityInterface $entity, $operation, \Drupal\Core\Session\AccountInterface $account) {
-  if (social_event_manager_or_organizer()) {
-    return AccessResult::allowed();
+function social_event_managers_entity_access(EntityInterface $entity, $operation, AccountInterface $account) {
+  // Event Manager & Organizers can view/delete/edit enrollments for events
+  // they are organizing.
+  if ($entity instanceof EventEnrollmentInterface) {
+    if (social_event_manager_or_organizer()) {
+      return AccessResult::allowedIf($entity instanceof EventEnrollmentInterface);
+    }
   }
 }
 
