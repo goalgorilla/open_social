@@ -68,13 +68,13 @@ function social_event_form_views_exposed_form_alter(&$form, FormStateInterface $
 /**
  * Check if the user is allowed to manage Enrollments.
  *
- * @param \Drupal\node\NodeInterface|null $node
+ * @param \Drupal\node\Entity\Node|null $node
  *   The node the current user could be organizer of.
  *
  * @return bool
  *   If the user is actually a manager or organizer.
  */
-function social_event_manager_or_organizer(NodeInterface $node = NULL) {
+function social_event_manager_or_organizer(Node $node = NULL) {
   $account = \Drupal::currentUser();
 
   // Allow if user has the manage everything permission.
@@ -91,11 +91,19 @@ function social_event_manager_or_organizer(NodeInterface $node = NULL) {
       $node = \Drupal::entityTypeManager()->getStorage('node')->load($node);
     }
 
-    if ($node !== NULL && $node->bundle() === 'event' && !$node->field_event_managers->isEmpty()) {
-      foreach ($node->field_event_managers->getValue() as $value) {
-        if ($value && $value['target_id'] === $account->id()) {
-          return TRUE;
-        }
+    // If we are altering / deleting an Event Enrollment check if user
+    // is manager or organizer from the referenced node.
+    if (!empty(\Drupal::routeMatch()->getParameter('event_enrollment'))) {
+      /** @var \Drupal\social_event\Entity\EventEnrollment $event_enrollment */
+      $event_enrollment = \Drupal::routeMatch()->getParameter('event_enrollment');
+      $event_id = $event_enrollment->getFieldValue('field_event', 'target_id');
+      $node = \Drupal::entityTypeManager()->getStorage('node')->load($event_id);
+    }
+  }
+  if ($node !== NULL && $node->bundle() === 'event' && !$node->field_event_managers->isEmpty()) {
+    foreach ($node->field_event_managers->getValue() as $value) {
+      if ($value && $value['target_id'] === $account->id()) {
+        return TRUE;
       }
     }
   }
