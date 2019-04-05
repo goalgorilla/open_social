@@ -27,11 +27,9 @@
             $(selector + ' .count').text(response[iconType + 's']);
           });
 
-          // Display a message whether the vote was registered or an error
-          // happened.
-          // @todo - this will work only for case when theme has messages in
-          // highlighted region.
-          $('.region.region-highlighted').html("<div class='messages__wrapper layout-container'><div class='messages messages--" + response.message_type + " role='contentinfo'>" + response.message + "</div></div>");
+          // Updates the likes and dislikes count.
+          var likeText = Drupal.formatPlural(response.likes, "@count like", "@count likes");
+          $('#like-container-' + entity_type + '-' + entity_id).nextAll('.vote__count').find('a').html(likeText).attr('data-dialog-options', '{"title":"' + likeText + '", "width":"auto"}');
         }
       });
     };
