@@ -20,7 +20,7 @@ interface EventMaxEnrollServiceInterface {
    * @return int
    *   The enrollments count.
    */
-  public function getEnrollmentsNumber(NodeInterface $node)
+  public function getEnrollmentsNumber(NodeInterface $node);
 
   /**
    * Get number of enrollments still possible per event.
@@ -31,7 +31,7 @@ interface EventMaxEnrollServiceInterface {
    * @return int
    *   How many spots are left.
    */
-  public function getEnrollmentsLeft(NodeInterface $node)
+  public function getEnrollmentsLeft(NodeInterface $node);
 
   /**
    * Check if anonymous enrollment is allowed for given event.
@@ -43,6 +43,6 @@ interface EventMaxEnrollServiceInterface {
    *   Returns TRUE if feature is enabled, the node is an event and max enroll
    *   is configured.
    */
-  public function isEnabled(NodeInterface $node)
+  public function isEnabled(NodeInterface $node);
 
 }
