@@ -5,10 +5,10 @@
  * The Social Event Max Enroll module.
  */
 
-use Drupal\views\ViewExecutable;
-use Drupal\views\Plugin\views\cache\CachePluginBase;
-use Drupal\node\Entity\Node;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\node\NodeInterface;
+use Drupal\views\Plugin\views\cache\CachePluginBase;
+use Drupal\views\ViewExecutable;
 
 /**
  * Implements hook_views_post_render().
@@ -18,7 +18,7 @@ use Drupal\Core\Form\FormStateInterface;
 function social_event_max_enroll_views_post_render(ViewExecutable $view, &$output, CachePluginBase $cache) {
   if ($view->current_display === 'event_enrollments' && $view->id() === 'event_enrollments' && isset($output['#rows']) && !empty($view->args[0])) {
     $nid = $view->args[0];
-    $node = Node::load($nid);
+    $node = \Drupal::entityTypeManager()->getStorage('node')->load($nid);
     $event_max_enroll_service = \Drupal::service('social_event_max_enroll.service');
 
     // Add spots left counter to the block title.
@@ -37,79 +37,75 @@ function social_event_max_enroll_views_post_render(ViewExecutable $view, &$outpu
  * Check and display "Allow anonymous enrollments" checkbox for public events.
  */
 function social_event_max_enroll_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-  $event_forms = [
-    'node_event_form',
-    'node_event_edit_form',
-  ];
+  switch ($form_id) {
+    // Alter the Node Event forms.
+    case 'node_event_form':
+    case 'node_event_edit_form':
+      $config = \Drupal::config('social_event_max_enroll.settings');
+      // Hide checkbox if feature is disabled globally.
+      $form['field_event_max_enroll']['#access'] = $config->get('max_enroll');
+      $form['field_event_max_enroll_num']['#access'] = $config->get('max_enroll');
 
-  // Alter the Node Event forms.
-  if (in_array($form_id, $event_forms)) {
-    $config = \Drupal::config('social_event_max_enroll.settings');
-    // Hide checkbox if feature is disabled globally.
-    $form['field_event_max_enroll']['#access'] = $config->get('max_enroll');
-    $form['field_event_max_enroll_num']['#access'] = $config->get('max_enroll');
-
-    // Hide checkbox if event enrollment is disabled for event.
-    $form['field_event_max_enroll']['#states'] = [
-      'visible' => [
-        ':input[name="field_event_enroll[value]"]' => ['checked' => TRUE],
-      ],
-    ];
-
-    // Show the checkbox only when max enroll is enabled.
-    if ($config->get('max_enroll_required')) {
-      $form['field_event_max_enroll']['widget']['value']['#default_value'] = TRUE;
-      $form['field_event_max_enroll']['widget']['value']['#disabled'] = TRUE;
-      $form['field_event_max_enroll']['widget']['value']['#required'] = TRUE;
-      $form['field_event_max_enroll_num']['widget'][0]['value']['#required'] = TRUE;
-    }
-    else {
-      $form['field_event_max_enroll_num']['#states'] = [
+      // Hide checkbox if event enrollment is disabled for event.
+      $form['field_event_max_enroll']['#states'] = [
         'visible' => [
-          ':input[name="field_event_max_enroll[value]"]' => ['checked' => TRUE],
+          ':input[name="field_event_enroll[value]"]' => ['checked' => TRUE],
         ],
       ];
-    }
-  }
 
-  $event_enroll_forms = [
-    'enroll_action_form',
-    'event_an_enroll_action_form',
-  ];
+      // Show the checkbox only when max enroll is enabled.
+      if ($config->get('max_enroll_required')) {
+        $form['field_event_max_enroll']['widget']['value']['#default_value'] = TRUE;
+        $form['field_event_max_enroll']['widget']['value']['#disabled'] = TRUE;
+        $form['field_event_max_enroll']['widget']['value']['#required'] = TRUE;
+        $form['field_event_max_enroll_num']['widget'][0]['value']['#required'] = TRUE;
+      }
+      else {
+        $form['field_event_max_enroll_num']['#states'] = [
+          'visible' => [
+            ':input[name="field_event_max_enroll[value]"]' => ['checked' => TRUE],
+          ],
+        ];
+      }
+      break;
 
-  // Alter the Event Enrollments forms.
-  if (in_array($form_id, $event_enroll_forms)) {
-    // We can't use dependency injection, because service is optional.
-    $event_max_enroll_service = \Drupal::service('social_event_max_enroll.service');
-    $node = \Drupal::routeMatch()->getParameter('node');
-    if ($node instanceof Node && $event_max_enroll_service->isEnabled($node)) {
-      // Count how many spots are left.
-      $left = $event_max_enroll_service->getEnrollmentsLeft($node);
-      if ($left < 1) {
-        if ($form_id === 'enroll_action_form') {
-          $form['enroll_for_this_event']['#value'] = t('No spots left');
-          $form['enroll_for_this_event']['#disabled'] = TRUE;
-        }
+    // Alter the Event Enrollments forms.
+    case 'enroll_action_form':
+    case 'event_an_enroll_action_form':
+      // We can't use dependency injection, because service is optional.
+      $event_max_enroll_service = \Drupal::service('social_event_max_enroll.service');
+      $node = \Drupal::routeMatch()->getParameter('node');
 
-        if ($form_id === 'event_an_enroll_action_form' && !isset($form['enroll_for_this_event'])) {
-          $form['event_enrollment'] = [
-            '#type' => 'submit',
-            '#value' => t('No spots left'),
-            '#disabled' => TRUE,
-            '#attributes' => [
-              'class' => [
-                'btn',
-                'btn-accent',
-                'btn-lg',
-                'btn-raised',
-                'brand-bg-accent',
-                'waves-effect',
+      if ($node instanceof NodeInterface && $event_max_enroll_service->isEnabled($node)) {
+        // Count how many spots are left.
+        $left = $event_max_enroll_service->getEnrollmentsLeft($node);
+
+        if ($left < 1) {
+          if ($form_id === 'enroll_action_form') {
+            $form['enroll_for_this_event']['#value'] = t('No spots left');
+            $form['enroll_for_this_event']['#disabled'] = TRUE;
+          }
+
+          if ($form_id === 'event_an_enroll_action_form' && !isset($form['enroll_for_this_event'])) {
+            $form['event_enrollment'] = [
+              '#type' => 'submit',
+              '#value' => t('No spots left'),
+              '#disabled' => TRUE,
+              '#attributes' => [
+                'class' => [
+                  'btn',
+                  'btn-accent',
+                  'btn-lg',
+                  'btn-raised',
+                  'brand-bg-accent',
+                  'waves-effect',
+                ],
               ],
-            ],
-          ];
+            ];
+          }
         }
       }
-    }
+      break;
   }
 }
 
