@@ -115,6 +115,8 @@
 
           </div>
 
+          {{ content.links.moderation }}
+
         </header>
       {% endblock %}
     {% endif %}
@@ -207,7 +209,7 @@
     {% endif %}
 
     {% block nodefull_body %}
-      {{ content|without('flag_follow_content') }}
+      {{ content|without('flag_follow_content', 'links') }}
     {% endblock %}
 
 
