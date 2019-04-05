@@ -40,6 +40,11 @@ class SocialEventManagersSendEmail extends SocialSendEmail {
   public function access($object, AccountInterface $account = NULL, $return_as_object = FALSE) {
     $access = AccessResult::allowedIf($object instanceof EventEnrollmentInterface);
 
+    // Also Event organizers can do this.
+    if (social_event_manager_or_organizer()) {
+      $access = TRUE;
+    }
+
     return $return_as_object ? $access : $access->isAllowed();
   }
 

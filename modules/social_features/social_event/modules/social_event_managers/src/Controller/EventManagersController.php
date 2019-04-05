@@ -5,7 +5,7 @@ namespace Drupal\social_event_managers\Controller;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Routing\RouteMatch;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\node\NodeInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -18,13 +18,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class EventManagersController extends ControllerBase {
 
   /**
-   * The route match.
-   *
-   * @var \Drupal\Core\Routing\RouteMatchInterface
-   */
-  protected $routeMatch;
-
-  /**
    * The entity type manager.
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
@@ -34,13 +27,10 @@ class EventManagersController extends ControllerBase {
   /**
    * SocialTopicController constructor.
    *
-   * @param \Drupal\Core\Routing\RouteMatchInterface $routeMatch
-   *   The route match object.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
    *   The entity type manager.
    */
-  public function __construct(RouteMatchInterface $routeMatch, EntityTypeManagerInterface $entityTypeManager) {
-    $this->routeMatch = $routeMatch;
+  public function __construct(EntityTypeManagerInterface $entityTypeManager) {
     $this->entityTypeManager = $entityTypeManager;
   }
 
@@ -49,7 +39,6 @@ class EventManagersController extends ControllerBase {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('current_route_match'),
       $container->get('entity_type.manager')
     );
   }
@@ -59,17 +48,24 @@ class EventManagersController extends ControllerBase {
    *
    * @param \Drupal\Core\Session\AccountInterface $account
    *   Run access checks for this account.
+   * @param \Drupal\Core\Routing\RouteMatch $route_match
+   *   Current route.
    *
    * @return \Drupal\Core\Access\AccessResult
    *   Check standard and custom permissions.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   *   Thrown if the entity type doesn't exist.
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   *   Thrown if the storage handler couldn't be loaded.
    */
-  public function access(AccountInterface $account) {
+  public function access(AccountInterface $account, RouteMatch $route_match) {
     if ($account->hasPermission('manage everything enrollments')) {
       return AccessResult::allowed();
     }
     else {
       /** @var \Drupal\node\NodeInterface $node */
-      $node = $this->routeMatch->getParameter('node');
+      $node = $route_match->getParameter('node');
 
       if (!$node instanceof NodeInterface) {
         $node = $this->entityTypeManager->getStorage('node')->load($node);
@@ -82,13 +78,12 @@ class EventManagersController extends ControllerBase {
           }
         }
       }
+    }
 
-      // If we minimize the amount of tabs we can allow LU that can see this
-      // event to see the tab as well.
-      // Set author of event as event organiser automatically.
-      if ($node->access('view', $account) && !$account->isAnonymous()) {
-        return AccessResult::allowed();
-      }
+    // If we minimize the amount of tabs we can allow LU that can see this
+    // event to see the tab as well.
+    if ($node->access('view', $account) && !$account->isAnonymous()) {
+      return AccessResult::allowed();
     }
 
     return AccessResult::forbidden();

@@ -32,11 +32,14 @@ class EventEnrollmentEntityDeleteAction extends ViewsBulkOperationsActionBase {
    * {@inheritdoc}
    */
   public function access($object, AccountInterface $account = NULL, $return_as_object = FALSE) {
+    $access = AccessResult::forbidden();
+
     if ($object instanceof EventEnrollmentInterface) {
       $access = $object->access('delete', $account, TRUE);
     }
-    else {
-      $access = AccessResult::forbidden();
+    // Also Event organizers can do this.
+    if (social_event_manager_or_organizer()) {
+      $access = TRUE;
     }
 
     return $return_as_object ? $access : $access->isAllowed();

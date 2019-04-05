@@ -60,7 +60,7 @@ class RouteSubscriber extends RouteSubscriberBase {
       $collection->add('social_event_managers.vbo.execute_configurable', $route);
 
       $route = new Route(
-        '/node/{node}/manage-all-enrollments/add-enrollees',
+        '/node/{node}/manage-all-enrollments/confirm-action',
         [
           '_form' => '\Drupal\social_event_managers\Form\SocialEventManagersViewsBulkOperationsConfirmAction',
           '_title' => 'Confirm action',
