@@ -1,3 +1,4 @@
+uuid: 7e91f49d-7977-46d8-af17-976ca0eebcf1
 langcode: en
 status: true
 dependencies:
@@ -12,22 +13,22 @@ third_party_settings:
     activity_destinations:
       notifications: notifications
       email: email
-    activity_create_direct: 1
-    activity_aggregate: 0
+    activity_create_direct: true
+    activity_aggregate: false
     activity_entity_condition: comment_reply
 template: create_comment_reply
 label: 'Create reply on my comment'
 description: 'A person replied on my comments'
 text:
   -
+    value: "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</a> replied on your <a href=\"[message:field_message_related_object:entity:url:absolute]\">comment</a> in [social_comment:commented_entity_link_html]</p>\r\n"
     format: full_html
-    value: "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</a> replied on your <a href=\"[message:field_message_related_object:entity:url:absolute]\">comment</a> in [social_comment:commented_entity_link_html]</p>\n"
   -
+    value: "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</a> replied on your <a href=\"[message:field_message_related_object:entity:url:absolute]\">comment</a> in [social_comment:commented_entity_link_html]</p>\r\n"
     format: full_html
-    value: "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</a> replied on your <a href=\"[message:field_message_related_object:entity:url:absolute]\">comment</a> in [social_comment:commented_entity_link_html]</p>\n"
   -
+    value: "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</a> replied on your <a href=\"[message:field_message_related_object:entity:url:absolute]\">comment</a> in [social_comment:commented_entity_link_html]</p>\r\n<div class=\"comments\">\r\n<div class=\"comment\"><em>[social_comment:parent_comment_author]</em> <small>• [social_comment:parent_comment_date]</small>\r\n<p>[social_comment:parent_comment_text]</p>\r\n</div>\r\n<div class=\"comment reply\"><em>[social_comment:comment_author]</em> <small>• [social_comment:comment_date]</small>\r\n<p>[social_comment:comment_text]</p>\r\n</div>\r\n</div>\r\n<table class=\"btn-wrapp\">\r\n\t<tbody>\r\n\t\t<tr>\r\n\t\t\t<td style=\"text-align: center\"><a class=\"btn-link btn-link-bg btn-link-one\" href=\"[social_comment:comment_reply_link_html]\">Reply this comment </a></td>\r\n\t\t</tr>\r\n\t</tbody>\r\n</table>\r\n"
     format: full_html
-    value: '<p><a href="[message:author:url:absolute]">[message:author:display-name]</a> replied on your <a href="[message:field_message_related_object:entity:url:absolute]">comment</a> in [social_comment:commented_entity_link_html]</p>'
 settings:
   'token options':
     clear: false
