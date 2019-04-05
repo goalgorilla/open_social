@@ -8,6 +8,7 @@ use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Entity\EntityChangedTrait;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\activity_creator\ActivityInterface;
+use Drupal\flag\Entity\Flagging;
 use Drupal\user\UserInterface;
 
 /**
@@ -233,6 +234,11 @@ class Activity extends ContentEntityBase implements ActivityInterface {
           $target_id = $event_id;
           $target_type = 'node';
         }
+      }
+      elseif ($target_type === 'flagging') {
+        $flagging = Flagging::load($target_id);
+        $target_type = $flagging->getFlaggableType();
+        $target_id = $flagging->getFlaggableId();
       }
 
       $entity_storage = \Drupal::entityTypeManager()

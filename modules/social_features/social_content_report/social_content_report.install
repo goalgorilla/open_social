@@ -1,0 +1,109 @@
+<?php
+
+/**
+ * @file
+ * Install hooks for Social Content Report.
+ */
+
+use Drupal\Core\Entity\EntityStorageException;
+use Drupal\taxonomy\Entity\Term;
+use Drupal\user\Entity\Role;
+
+/**
+ * Implements hook_install().
+ */
+function social_content_report_install() {
+  // The terms to create with their weight.
+  $terms = [
+    'Abuse' => 0,
+    'Spam' => 0,
+    'Other' => 1,
+  ];
+
+  $default_values = [];
+
+  // Create the above terms on module install.
+  foreach ($terms as $name => $weight) {
+    try {
+      /** @var \Drupal\taxonomy\TermInterface $term */
+      $term = Term::create([
+        'name' => $name,
+        'weight' => $weight,
+        'vid' => 'report_reasons',
+      ]);
+      $term->save();
+
+      // Just the "Other" term should have a reason text field by default.
+      if ($weight) {
+        $default_values[] = $term->id();
+      }
+    }
+    catch (EntityStorageException $exception) {
+      \Drupal::logger('social_content_report')->error(t('The term "@term" could not be created.', ['@term' => $name]));
+    }
+  }
+
+  // Store the default selected term(s) in the config.
+  \Drupal::configFactory()->getEditable('social_content_report.settings')
+    ->set('reasons_with_text', $default_values)
+    ->save();
+
+  // Set permissions.
+  _social_content_report_set_permissions();
+}
+
+/**
+ * Function to set permissions.
+ */
+function _social_content_report_set_permissions() {
+  $roles = Role::loadMultiple();
+
+  /** @var \Drupal\user\Entity\Role $role */
+  foreach ($roles as $role) {
+    if ($role->id() === 'administrator') {
+      continue;
+    }
+
+    $permissions = _social_content_report_get_permissions($role->id());
+    if (!empty($permissions)) {
+      user_role_grant_permissions($role->id(), $permissions);
+    }
+  }
+}
+
+/**
+ * Build permissions.
+ *
+ * @param string $role
+ *   The role.
+ *
+ * @return array
+ *   Returns an array containing the permissions.
+ */
+function _social_content_report_get_permissions($role) {
+  // Anonymous.
+  $permissions['anonymous'] = [];
+
+  // Authenticated.
+  $permissions['authenticated'] = array_merge($permissions['anonymous'], [
+    'flag report_comment',
+    'flag report_node',
+    'flag report_post',
+  ]);
+
+  // Content manager.
+  $permissions['contentmanager'] = array_merge($permissions['authenticated'], [
+    'view inappropriate reports',
+    'close inappropriate reports',
+  ]);
+
+  // Site manager.
+  $permissions['sitemanager'] = array_merge($permissions['contentmanager'], [
+    'administer social_content_report settings',
+  ]);
+
+  if (isset($permissions[$role])) {
+    return $permissions[$role];
+  }
+  return [];
+}
