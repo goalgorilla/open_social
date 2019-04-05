@@ -32,7 +32,7 @@ class RouteSubscriber extends RouteSubscriberBase {
   /**
    * {@inheritdoc}
    */
-  protected function alterRoutes(RouteCollection $collection) :void {
+  protected function alterRoutes(RouteCollection $collection) {
   }
 
   /**

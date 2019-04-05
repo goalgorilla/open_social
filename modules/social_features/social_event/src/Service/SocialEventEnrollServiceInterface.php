@@ -20,6 +20,6 @@ interface SocialEventEnrollServiceInterface {
    * @return bool
    *   TRUE if enrollment is allowed.
    */
-  public function isEnabled(NodeInterface $node): bool;
+  public function isEnabled(NodeInterface $node)
 
 }

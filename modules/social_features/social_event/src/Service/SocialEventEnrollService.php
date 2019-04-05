@@ -14,7 +14,7 @@ class SocialEventEnrollService implements SocialEventEnrollServiceInterface {
   /**
    * {@inheritdoc}
    */
-  public function isEnabled(NodeInterface $node): bool {
+  public function isEnabled(NodeInterface $node) {
     if ($node->bundle() === 'event') {
       $was_not_changed = $node->field_event_enroll->isEmpty();
       $is_enabled = $node->field_event_enroll->value;
