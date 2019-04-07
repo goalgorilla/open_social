@@ -12,12 +12,12 @@ dependencies:
     - core.entity_view_mode.node.search_index
     - core.entity_view_mode.profile.search_index
   module:
-    - node
-    - group
-    - profile
     - user
     - search_api
     - social_search
+    - node
+    - group
+    - profile
 id: social_all
 name: 'Social all'
 description: 'All content index created for the Social distribution.'
@@ -31,14 +31,14 @@ field_settings:
       roles:
         anonymous: anonymous
       view_mode:
-        'entity:group':
-          closed_group: teaser
-          open_group: teaser
         'entity:node':
           book: search_index
           event: search_index
           page: search_index
           topic: search_index
+        'entity:group':
+          closed_group: teaser
+          open_group: teaser
         'entity:profile':
           profile: search_index
   node_grants:
@@ -53,9 +53,6 @@ field_settings:
     datasource_id: 'entity:node'
     property_path: type
     type: string
-    dependencies:
-      module:
-        - node
   status:
     label: 'Publishing status'
     datasource_id: 'entity:node'
@@ -63,18 +60,11 @@ field_settings:
     type: boolean
     indexed_locked: true
     type_locked: true
-    dependencies:
-      module:
-        - node
   title:
     label: Title
     datasource_id: 'entity:node'
     property_path: title
     type: string
-    boost: !!float 8
-    dependencies:
-      module:
-        - node
   uid:
     label: 'Authored by'
     datasource_id: 'entity:node'
@@ -82,42 +72,26 @@ field_settings:
     type: integer
     indexed_locked: true
     type_locked: true
-    dependencies:
-      module:
-        - node
   created:
     label: 'Authored on'
     datasource_id: 'entity:node'
     property_path: created
     type: date
-    dependencies:
-      module:
-        - node
   label:
     label: Title
     datasource_id: 'entity:group'
     property_path: label
     type: string
-    boost: !!float 8
-    dependencies:
-      module:
-        - group
   uid_1:
     label: 'Group creator'
     datasource_id: 'entity:group'
     property_path: uid
     type: integer
-    dependencies:
-      module:
-        - group
   created_1:
     label: 'Created on'
     datasource_id: 'entity:group'
     property_path: created
     type: date
-    dependencies:
-      module:
-        - group
   field_group_description:
     label: Description
     datasource_id: 'entity:group'
@@ -158,7 +132,11 @@ field_settings:
     dependencies:
       config:
         - field.storage.profile.field_profile_profile_tag
-
+  uid_2:
+    label: Owner
+    datasource_id: 'entity:profile'
+    property_path: uid
+    type: integer
   name:
     label: 'Owner » User » Name'
     datasource_id: 'entity:profile'
@@ -167,17 +145,7 @@ field_settings:
     boost: !!float 2
     dependencies:
       module:
-        - profile
         - user
-        - user
-  uid_2:
-    label: Owner
-    datasource_id: 'entity:profile'
-    property_path: uid
-    type: integer
-    dependencies:
-      module:
-        - profile
   user_status:
     label: 'Owner » User » User status'
     datasource_id: 'entity:profile'
@@ -185,8 +153,6 @@ field_settings:
     type: boolean
     dependencies:
       module:
-        - profile
-        - user
         - user
 datasource_settings:
   'entity:node':
@@ -253,8 +219,8 @@ processor_settings:
   stopwords:
     all_fields: false
     fields:
-      - field_group_description
       - rendered_item
+      - field_group_description
     stopwords:
       - a
       - an
@@ -297,8 +263,8 @@ processor_settings:
   tokenizer:
     all_fields: false
     fields:
-      - field_group_description
       - rendered_item
+      - field_group_description
     spaces: ''
     overlap_cjk: 1
     minimum_word_size: '3'

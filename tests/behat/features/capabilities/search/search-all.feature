@@ -20,8 +20,8 @@ Feature: Search
       | Tjakka topic      | Description   |
     When I am logged in as an "authenticated user"
     And I am on "search/all/tjakka"
-    Then I should see "Tjakka user"
+    Then I should see "Tjakka group"
+    And I should see "Tjakka grouptwo"
     And I should see "Tjakka event"
-    And I should see "tjakka topic"
-    And I should see "Tjakka group"
-    And I should see "Tjakka grouptwo"    
+    And I should see "Tjakka topic"
+    And I should see "tjakka user"
