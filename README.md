@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/goalgorilla/open_social.svg?branch=8.x-4.x)](https://travis-ci.org/goalgorilla/open_social)
+
 # Open Social
 The install profile for the
 <a target="_blank" href="http://www.drupal.org/project/social">Open Social
