@@ -65,7 +65,7 @@ before_install:
   - echo "TRAVIS_BRANCH=$TRAVIS_BRANCH, PR=$PR, BRANCH=$BRANCH, COMMIT=$COMMIT, TRAVIS_SLUG=$TRAVIS_SLUG, TRAVIS_PR_SLUG=$TRAVIS_PR_SLUG"
   - if [ "$TEST_SUITE" == "install_update" ]; then composer require goalgorilla/open_social:3.0.0 --prefer-dist; fi
   - if [ "$TRAVIS_REPO_SLUG" != "goalgorilla/open_social" ]; then composer config repositories.social git https://github.com/$TRAVIS_REPO_SLUG.git; fi
-  - if [ "$TEST_SUITE" != "install_update" ] && [ "$TRAVIS_REPO_SLUG" == "goalgorilla/open_social" ]; then composer require goalgorilla/open_social:dev-${BRANCH}#${COMMIT} --prefer-dist; fi
+  - if [ "$TEST_SUITE" != "install_update" ] && [ "$TRAVIS_REPO_SLUG" == "goalgorilla/open_social" ]; then composer require goalgorilla/open_social:dev-${BRANCH} --prefer-dist; fi
   - if [ "$TEST_SUITE" != "install_update" ] && [ "$TRAVIS_REPO_SLUG" != "goalgorilla/open_social" ]; then composer require goalgorilla/open_social:dev-${BRANCH} --prefer-dist; fi
 
   # Install docker and our docker containers.
