@@ -88,27 +88,34 @@ function social_event_max_enroll_form_alter(&$form, FormStateInterface $form_sta
         $left = $event_max_enroll_service->getEnrollmentsLeft($node);
 
         if ($left < 1) {
-          if ($form_id === 'enroll_action_form') {
-            $form['enroll_for_this_event']['#value'] = t('No spots left');
-            $form['enroll_for_this_event']['#disabled'] = TRUE;
-          }
+          $enrollments = \Drupal::entityTypeManager()->getStorage('event_enrollment')
+            ->loadByProperties([
+              'field_event' => $node->id(),
+              'user_id' => \Drupal::currentUser()->id(),
+            ]);
 
-          if ($form_id === 'event_an_enroll_action_form' && !isset($form['enroll_for_this_event'])) {
-            $form['event_enrollment'] = [
-              '#type' => 'submit',
-              '#value' => t('No spots left'),
-              '#disabled' => TRUE,
-              '#attributes' => [
-                'class' => [
-                  'btn',
-                  'btn-accent',
-                  'btn-lg',
-                  'btn-raised',
-                  'brand-bg-accent',
-                  'waves-effect',
+          if (!$enrollments) {
+            if ($form_id === 'enroll_action_form') {
+              $form['enroll_for_this_event']['#value'] = t('No spots left');
+              $form['enroll_for_this_event']['#disabled'] = TRUE;
+            }
+            elseif ($form_id === 'event_an_enroll_action_form' && !isset($form['enroll_for_this_event'])) {
+              $form['event_enrollment'] = [
+                '#type' => 'submit',
+                '#value' => t('No spots left'),
+                '#disabled' => TRUE,
+                '#attributes' => [
+                  'class' => [
+                    'btn',
+                    'btn-accent',
+                    'btn-lg',
+                    'btn-raised',
+                    'brand-bg-accent',
+                    'waves-effect',
+                  ],
                 ],
-              ],
-            ];
+              ];
+            }
           }
         }
       }
