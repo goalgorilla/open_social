@@ -1,4 +1,4 @@
-@api @gdpr @user-consent @DS-5586 @stability @stability-4
+@api @gdpr @user-consent @DS-5586 @stability @stability-gdpr
 Feature: Give user consent
   Benefit: So I can decide what to do with users personal data
   Role: As a SM

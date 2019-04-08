@@ -1,4 +1,4 @@
-@api @gdpr @inform-block @DS-5586 @stability @stability-4
+@api @gdpr @inform-block @DS-5586 @stability @stability-gdpr
 Feature: Inform about personal data colleciton
   Benefit: So I can make an informed decision.
   Role: As a LU
