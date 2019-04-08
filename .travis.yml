@@ -5,12 +5,6 @@ cache:
   directories:
     - $HOME/.composer/cache/files
 
-addons:
-  artifacts:
-   # ...
-   paths:
-     - $(git ls-files -o | grep travis_artifacts | tr "\n" ":")
-
 language: php
 
 php:
