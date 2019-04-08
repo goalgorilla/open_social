@@ -26,5 +26,8 @@ Feature: Limitation event enrollments
     And I click "Edit content"
     Then I should see unchecked the box "Set a limit to number of participants"
     And I should see "Set a limit to number of participants" in the "#enrollment" element
-    And I should see "Maximum number of enrollees" in the "#enrollment" element
+    And I should not see "Maximum number of enrollees" in the "#enrollment" element
+    And I should not see "Set a limit for event enrollments. Users are not able to enroll once the maximum number of enrollees is reached." in the "#enrollment" element
+    When I check the box "Set a limit to number of participants"
+    Then I should see "Maximum number of enrollees" in the "#enrollment" element
     And I should see "Set a limit for event enrollments. Users are not able to enroll once the maximum number of enrollees is reached." in the "#enrollment" element

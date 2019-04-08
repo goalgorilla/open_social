@@ -69,6 +69,11 @@ function social_event_max_enroll_form_alter(&$form, FormStateInterface $form_sta
         $form['field_event_max_enroll']['widget']['value']['#required'] = TRUE;
         $form['field_event_max_enroll_num']['widget'][0]['value']['#required'] = TRUE;
       }
+      else {
+        $form['field_event_max_enroll_num']['#states']['visible'][] = [
+          ':input[name="field_event_max_enroll[value]"]' => ['checked' => TRUE],
+        ];
+      }
       break;
 
     // Alter the Event Enrollments forms.
