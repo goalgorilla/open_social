@@ -17,6 +17,32 @@ use Behat\Gherkin\Node\TableNode;
 class SocialDrupalContext extends DrupalContext {
 
   /**
+   * @var array
+   *  The modules that have been enabled in the current scenario.
+   */
+  protected $enabled_modules;
+
+  /**
+   * Clears enabled modules variable.
+   *
+   * @BeforeScenario
+   */
+  public function clearEnabledModules() {
+    $this->enabled_modules = [];
+  }
+
+  /**
+   * Uninstalls the modules that were enabled in this scenario.
+   *
+   * @AfterScenario
+   */
+  public function uninstallEnabledModules() {
+    /** @var \Drupal\Core\Extension\ModuleInstallerInterface $moduleInstaller */
+    $moduleInstaller = \Drupal::service('module_installer');
+    $moduleInstaller->uninstall($this->enabled_modules);
+  }
+
+  /**
    * Prepares Big Pipe NOJS cookie if needed.
    *
    * Add support for Bigpipe in Behat tests.
@@ -207,6 +233,7 @@ class SocialDrupalContext extends DrupalContext {
   public function iEnableTheModule($module_name) {
     $modules = [$module_name];
     \Drupal::service('module_installer')->install($modules);
+    $this->enabled_modules[] = $module_name;
   }
 
   /**
