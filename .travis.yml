@@ -30,7 +30,6 @@ matrix:
   - env: TEST_SUITE=install_stability_2
   - env: TEST_SUITE=install_stability_3
   - env: TEST_SUITE=install_stability_4
-  - env: TEST_SUITE=install_stability_gdpr
   - env: TEST_SUITE=install_update
   - env: TEST_SUITE=drush_make
 #  - env: TEST_SUITE=accessibility
@@ -66,13 +65,18 @@ before_install:
   - if [ "$TEST_SUITE" == "install_update" ]; then composer require goalgorilla/open_social:3.0.0 --prefer-dist; fi
   - if [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ "$TRAVIS_PULL_REQUEST_SLUG" != "goalgorilla/open_social" ]; then composer config repositories.social git https://github.com/$TRAVIS_PULL_REQUEST_SLUG.git; fi
   - if [ "$TEST_SUITE" != "install_update" ] && [ "$TRAVIS_PULL_REQUEST_SLUG" == "goalgorilla/open_social" ]; then composer require goalgorilla/open_social:dev-${BRANCH}#${COMMIT} --prefer-dist; fi
+  - if [ "$TEST_SUITE" != "install_update" ] && [ "$TRAVIS_PULL_REQUEST_SLUG" != "goalgorilla/open_social" ]; then composer require goalgorilla/open_social:dev-${BRANCH}#${COMMIT} --prefer-dist; fi
+
+
+  - if [ "$TEST_SUITE" != "install_update" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_PULL_REQUEST_SLUG" == "goalgorilla/open_social" ]; then composer require goalgorilla/open_social:dev-${BRANCH}#${COMMIT} --prefer-dist; fi
+  - if [ "$TEST_SUITE" != "install_update" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_PULL_REQUEST_SLUG" == "goalgorilla/open_social" ]; then composer require goalgorilla/open_social:dev-${BRANCH}#${COMMIT} --prefer-dist; fi
 
   # Install docker and our docker containers.
   - sh scripts/social/ci/install-docker.sh
   - docker-compose -f docker-compose-ci.yml up -d
 
 install:
-  - if [ "$TEST_SUITE" = "install_stability_1" ] || [ "$TEST_SUITE" = "install_stability_2" ] || [ "$TEST_SUITE" = "install_stability_3" ] || [ "$TEST_SUITE" = "install_stability_4" ] || [ "$TEST_SUITE" = "install_stability_gdpr" ]; then docker exec -i social_ci_web bash /var/www/scripts/social/install/install_script.sh; fi
+  - if [ "$TEST_SUITE" = "install_stability_1" ] || [ "$TEST_SUITE" = "install_stability_2" ] || [ "$TEST_SUITE" = "install_stability_3" ] || [ "$TEST_SUITE" = "install_stability_4" ]; then docker exec -i social_ci_web bash /var/www/scripts/social/install/install_script.sh; fi
   - if [ "$TEST_SUITE" = "install_update" ]; then bash scripts/social/ci/build-install-update.sh $PR $BRANCH $COMMIT; fi
   - if [ "$TEST_SUITE" = "drush_make" ]; then bash scripts/social/ci/build-social-make.sh; fi
 
