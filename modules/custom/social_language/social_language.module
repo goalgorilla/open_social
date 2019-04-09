@@ -26,3 +26,12 @@ function social_language_form_user_form_alter(&$form, FormStateInterface $form_s
     $form['language']['#access'] = FALSE;
   }
 }
+
+/**
+ * Implements hook_default_route_group_tabs_alter().
+ */
+function social_language_social_group_default_route_tabs_alter(&$tabs) {
+  // Unset some tabs created by group.
+  unset($tabs['content_translation.local_tasks:entity.group.content_translation_overview']);
+}
+
