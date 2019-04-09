@@ -58,13 +58,12 @@ Feature: Enroll for an event without an account
     # AS CM+ I should see Guest enrollments.
     Given I am logged in as a user with the "contentmanager" role
     And I open the "event" node with title "AN Event 1"
-    And I click "Guest enrollments"
+    And I click "Manage enrollments"
     Then I should see "John Doe"
-    And I should see "john@doe.com"
     # AS LU I should not see Guest enrollments emails
     Given I am logged in as an "authenticated user"
     And I open the "event" node with title "AN Event 1"
-    Then I should not see "Guest enrollments"
+    Then I should not see "Manage enrollments"
 
   @AN
   Scenario: Control the site-wide default of AN enrollment
