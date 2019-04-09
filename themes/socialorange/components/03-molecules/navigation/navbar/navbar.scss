@@ -80,7 +80,7 @@
   background-color: $navbar-default-bg;
 
   @include for-tablet-landscape-up {
-    min-height: 50px;
+    min-height: 100px;
   }
 
   .navbar-nav {
@@ -322,6 +322,11 @@
 
   @include for-tablet-landscape-up {
     border-radius: $border-radius-extrasmall $border-radius-extrasmall 0 0;
+
+    .path-search & {
+      border-radius: 0;
+      margin-top: -44px;
+    }
   }
 
   .navbar-nav {
@@ -442,9 +447,8 @@
             padding: 0 25px;
 
             a {
-              display: block;
-              padding-top: 12px;
-              padding-bottom: 11px;
+              padding-top: 14px;
+              padding-bottom: 13px;
             }
           }
 
@@ -501,11 +505,19 @@
 // -------------------------
 .navbar-brand {
   padding: 0;
-  max-width: 370px;
   height: 50px;
+
+  @include for-tablet-landscape-up {
+    height: 100px;
+    max-width: 370px;
+  }
 
   > img {
     height: 50px;
+
+    @include for-tablet-landscape-up {
+      height: 100px;
+    }
   }
 }
 
@@ -553,7 +565,8 @@
   align-items: center;
   flex: 0 0 40%;
   max-width: 40%;
-  height: 50px;
+  min-height: 50px;
+  max-height: 50px;
   padding-left: 31px;
   background: #f3f3f3;
 
@@ -676,3 +689,4 @@
     }
   }
 }
+

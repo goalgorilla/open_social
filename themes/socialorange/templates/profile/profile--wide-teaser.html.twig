@@ -1,0 +1,61 @@
+{{ attach_library('socialbase/teaser') }}
+<div class="card teaser teaser--wide teaser--wide-profile">
+  <a href="{{ profile_stream_url }}" class="teaser__image">
+    {% if content.field_profile_image %}
+      <span class="teaser__image-wrapper">
+        {{ content.field_profile_image }}
+      </span>
+    {% endif %}
+  </a>
+  <div class="teaser__icon">
+    <svg class="teaser__content-type-icon">
+      <use xlink:href="#icon-user"></use>
+    </svg>
+  </div>
+  <div class="teaser__body">
+    <div class="teaser__content">
+      <h4 class="teaser__title">
+        <a href="{{ profile_stream_url }}">
+          {{ profile_name }} {{ profile_name_extra }}
+        </a>
+      </h4>
+      {% if content.field_profile_function|render or content.field_profile_organization|render %}
+        <div class="teaser__content-line">
+          <span class="teaser__content-text">
+            {% if content.field_profile_organization|render %}
+              {{ '@function at @organization'|t({'@function': content.field_profile_function|render, '@organization': content.field_profile_organization|render}) }}
+            {% else %}
+              {{ content.field_profile_function }}
+            {% endif %}
+          </span>
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="card__actionbar">
+      <div class="card__actionbar-side">
+        {#<div class="teaser__tag">#}
+          {#{% trans %}Member{% endtrans %}#}
+        {#</div>#}
+
+        {% if content.field_profile_address|render %}
+          <div class="teaser__content-line">
+            <svg class="teaser__content-type-icon">
+              <use xlink:href="#icon-location"></use>
+            </svg>
+            <span class="teaser__content-text">
+            {{ content.field_profile_address }}
+          </span>
+          </div>
+        {% endif %}
+      </div>
+      <div class="card__actionbar-side right-side">
+        <div class="card__link">
+          <a href="{{ profile_info_url }}" class="btn btn-default waves-effect waves-btn">
+            {% trans %}Read more{% endtrans %}
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

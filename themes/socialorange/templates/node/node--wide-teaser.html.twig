@@ -2,13 +2,9 @@
 {{ attach_library('socialbase/page-node') }}
 
 {% set classes = [
+  'card',
   'teaser',
-  view_mode == 'teaser' ? 'card',
-  view_mode == 'activity' ? 'teaser--stream',
-  view_mode == 'activity_comment' ? 'teaser--stream',
-  node.isPromoted() ? 'promoted',
-  node.isSticky() ? 'sticky',
-  not node.isPublished() ? 'teaser--unpublished',
+  'teaser--wide',
 ] %}
 
 <div{{ attributes.addClass(classes) }}>
@@ -19,8 +15,21 @@
   {% endif %}
 
   <div class='teaser__image'>
+
+    {% if no_image %}
+      {% block card_teaser_type %}
+        <a href="{{ url }}">
+          <div class="teaser__teaser-type">
+            <svg class="teaser__teaser-type-icon">
+              <use xlink:href="#icon-{{- node.bundle|clean_class -}}"></use>
+            </svg>
+          </div>
+        </a>
+      {% endblock %}
+    {% endif %}
+
     {% block card_image %}
-      {{ content.field_event_image }}
+      {{ content.field_topic_image }}
     {% endblock %}
   </div>
   <div class="teaser__icon">
@@ -36,25 +45,53 @@
 
       {% block card_body %}
 
-        {% if event_date %}
-          {% embed "node--teaser__field.html.twig" %}
-            {%- block field_icon -%} event {%- endblock -%}
-            {%- block field_value %} {{ event_date }} {%- endblock -%}
-          {% endembed %}
-        {% endif %}
+        <div class="teaser__content-line">
+          <div class="teaser__published">
+              <div class="teaser__published-author">
+                {% if original_authors %}
+                  {% for item in original_authors %}
+                    <span>{{ item }}</span>
+                  {% endfor %}
+                {% else %}
+                  {{ author_name }}
+                {% endif %}
+              </div>
 
-        {% if content.field_event_location %}
-          {% embed "node--teaser__field.html.twig" %}
-            {%- block field_icon -%} location {%- endblock -%}
-            {%- block field_value -%} {{ content.field_event_location }} {%- endblock -%}
-          {% endembed %}
-        {% endif %}
-
+            <div class="teaser__published-date">
+              <span> &nbsp; &bullet; &nbsp; </span>
+              {% if original_date %}
+                {{ original_date }}
+              {% else %}
+                {{ date }}
+              {% endif %}
+            </div>
+          </div>
+        </div>
       {% endblock %}
     </div>
 
     <div class="card__actionbar">
-      {{ content.links }}
+      <div class="card__actionbar-side">
+        <div class="teaser__tag">
+          {{ content_type }}
+        </div>
+
+        <div class="teaser__published-lang">
+          {% if original_languages %}
+            {% for item in original_languages %}
+              {% if loop.last %}
+                <span>{{ item }}</span>
+              {% else %}
+                <span>{{ item }}</span>&nbsp;|&nbsp;
+              {% endif %}
+            {% endfor %}
+          {% endif %}
+        </div>
+
+      </div>
+      <div class="card__actionbar-side right-side">
+        {{ content.links }}
+      </div>
     </div>
 
   </div>

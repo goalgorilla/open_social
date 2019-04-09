@@ -6,6 +6,7 @@ use Drupal\socialbase\Plugin\Preprocess\Node as NodeBase;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\Core\Link;
 use Drupal\Core\Url;
+use Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface;
 
 /**
  * Pre-processes variables for the "node" theme hook.
@@ -39,6 +40,24 @@ class Node extends NodeBase {
         $content_type = $this->t('Event');
         $url = Url::fromRoute('view.upcoming_events.page_community_events');
         $node_type = Link::fromTextAndUrl($content_type, $url);
+
+        // This will get the users timezone, which is either set by the user
+        // or defaults back to the sites timezone if the user didn't select any.
+        $timezone = drupal_get_user_timezone();
+        // Timezone that dates should be stored in.
+        $utc_timezone = DateTimeItemInterface::STORAGE_TIMEZONE;
+        // Get start date.
+        if ($start_date_field = $node->field_event_date) {
+          if (!empty($start_date_field->value)) {
+            $start_datetime = new \DateTime($start_date_field->value, new \DateTimeZone($utc_timezone));
+            $start_datetime->setTimezone(new \DateTimeZone($timezone));
+            $start_datetime = $start_datetime->getTimestamp();
+            $date_formatter = \Drupal::service('date.formatter');
+            $variables['start_month'] = $date_formatter->format($start_datetime, 'custom', 'F');
+            $variables['start_day'] = $date_formatter->format($start_datetime, 'custom', 'j');
+          }
+        }
+
         break;
 
       default:

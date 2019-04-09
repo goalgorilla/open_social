@@ -25,6 +25,61 @@
       </div>
     {% endif %}
 
+    {% if content.field_profile_challenge_area['#items'] %}
+      <div class="user-info__item">
+        <h5>{% trans %}Challenge area{% endtrans %}</h5>
+        <div class="user-info__wrapper">
+          {% for item in content.field_profile_challenge_area['#items'] %}
+            <div class="badge badge--pill badge--large badge-default">{{ item.entity.label }}</div>
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+
+    {% if content.field_profile_constituency['#items'] %}
+      <div class="user-info__item">
+        <h5>{% trans %}Сonstituency{% endtrans %}</h5>
+        <div class="user-info__wrapper">
+          {% for item in content.field_profile_constituency['#items'] %}
+            <div class="badge badge--pill badge--large badge-default">{{ item.entity.label }}</div>
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+
+    {% if content.field_profile_country_region['#items'] %}
+      <div class="user-info__item">
+        <h5>{% trans %}Country & Region{% endtrans %}</h5>
+        <div class="user-info__wrapper">
+          {% for item in content.field_profile_country_region['#items'] %}
+            <div class="badge badge--pill badge--large badge-default">{{ item.entity.label }}</div>
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+
+    {% if content.field_profile_organisation['#items'] %}
+      <div class="user-info__item">
+        <h5>{% trans %}Organisation{% endtrans %}</h5>
+        <div class="user-info__wrapper">
+          {% for item in content.field_profile_organisation['#items'] %}
+            <div class="badge badge--pill badge--large badge-default">{{ item.entity.label }}</div>
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+
+    {% if content.field_profile_languages['#items'] %}
+      <div class="user-info__item">
+        <h5>{% trans %}Languages{% endtrans %}</h5>
+        <div class="user-info__wrapper">
+          {% for item in content.field_profile_languages['#items'] %}
+            <div class="badge badge--pill badge--large badge-default">{{ item.entity.label }}</div>
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+
     {% if content.field_profile_expertise['#items'] %}
       <div class="user-info__item">
         <h5>{% trans %}Expertise{% endtrans %}</h5>

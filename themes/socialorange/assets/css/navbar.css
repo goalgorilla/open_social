@@ -223,7 +223,6 @@
 
 .navbar-brand {
   padding: 0;
-  max-width: 370px;
   height: 50px;
 }
 
@@ -252,7 +251,8 @@
   -ms-flex: 0 0 40%;
       flex: 0 0 40%;
   max-width: 40%;
-  height: 50px;
+  min-height: 50px;
+  max-height: 50px;
   padding-left: 31px;
   background: #f3f3f3;
 }
@@ -354,7 +354,7 @@
   }
 
   .navbar-default {
-    min-height: 50px;
+    min-height: 100px;
   }
 
   .search-take-over .form-text {
@@ -368,6 +368,11 @@
 
   .navbar-secondary {
     border-radius: 5px 5px 0 0;
+  }
+
+  .path-search .navbar-secondary {
+    border-radius: 0;
+    margin-top: -44px;
   }
 
   .layout--with-complementary .navbar-secondary .navbar-scrollable {
@@ -401,9 +406,8 @@
   }
 
   .layout--with-complementary .navbar-secondary .navbar-scrollable .navbar-nav .visible-list a {
-    display: block;
-    padding-top: 12px;
-    padding-bottom: 11px;
+    padding-top: 14px;
+    padding-bottom: 13px;
   }
 
   .layout--with-complementary .navbar-secondary .navbar-scrollable .navbar-nav .hidden-list {
@@ -432,6 +436,15 @@
 
   .layout--with-complementary .navbar-secondary .navbar-scrollable .navbar-nav .hidden-list li a:hover {
     color: orange;
+  }
+
+  .navbar-brand {
+    height: 100px;
+    max-width: 370px;
+  }
+
+  .navbar-brand > img {
+    height: 100px;
   }
 
   .navbar-fixed-top .navbar-nav {

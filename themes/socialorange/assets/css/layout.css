@@ -134,40 +134,44 @@ body {
   display: none;
 }
 
-body.path-group .layout--with-complementary, body.details .layout--with-complementary, body.path-user .layout--with-complementary {
+body.path-group:not(.group-type-challenge) .layout--with-complementary, body.details .layout--with-complementary, body.path-user .layout--with-complementary {
   -ms-flex-direction: column;
       flex-direction: column;
 }
 
-body.path-group .layout--with-complementary .navbar-secondary, body.details .layout--with-complementary .navbar-secondary, body.path-user .layout--with-complementary .navbar-secondary {
+body.path-group:not(.group-type-challenge) .layout--with-complementary .navbar-secondary, body.details .layout--with-complementary .navbar-secondary, body.path-user .layout--with-complementary .navbar-secondary {
   -ms-flex: 0 0 100%;
       flex: 0 0 100%;
   max-width: 100%;
 }
 
-body.path-group .layout--with-complementary.sidebar-left .region--complementary, body.details .layout--with-complementary.sidebar-left .region--complementary, body.path-user .layout--with-complementary.sidebar-left .region--complementary {
+body.path-group:not(.group-type-challenge) .layout--with-complementary.sidebar-left .region--complementary, body.details .layout--with-complementary.sidebar-left .region--complementary, body.path-user .layout--with-complementary.sidebar-left .region--complementary {
   -ms-flex-order: 1;
       order: 1;
 }
 
-body.path-group .layout--with-complementary.sidebar-left .region--secondary-navigation, body.details .layout--with-complementary.sidebar-left .region--secondary-navigation, body.path-user .layout--with-complementary.sidebar-left .region--secondary-navigation {
+body.path-group:not(.group-type-challenge) .layout--with-complementary.sidebar-left .region--secondary-navigation, body.details .layout--with-complementary.sidebar-left .region--secondary-navigation, body.path-user .layout--with-complementary.sidebar-left .region--secondary-navigation {
   display: -ms-flexbox;
   display: flex;
   -ms-flex-pack: end;
       justify-content: flex-end;
 }
 
-body.path-group .region--secondary-navigation, body.details .region--secondary-navigation, body.path-user .region--secondary-navigation {
+body.path-group:not(.group-type-challenge) .region--secondary-navigation, body.details .region--secondary-navigation, body.path-user .region--secondary-navigation {
   z-index: 3;
 }
 
-body.path-group .region--complementary_wrapper, body.details .region--complementary_wrapper, body.path-user .region--complementary_wrapper {
+body.path-group:not(.group-type-challenge).mode-search .region--complementary_wrapper, body.details.mode-search .region--complementary_wrapper, body.path-user.mode-search .region--complementary_wrapper {
+  z-index: 1;
+}
+
+body.path-group:not(.group-type-challenge) .region--complementary_wrapper, body.details .region--complementary_wrapper, body.path-user .region--complementary_wrapper {
   position: relative;
   z-index: 1000;
 }
 
-body.path-group .content--side_wrapper .region--content,
-body.path-group .region--complementary_wrapper, body.details .content--side_wrapper .region--content,
+body.path-group:not(.group-type-challenge) .content--side_wrapper .region--content,
+body.path-group:not(.group-type-challenge) .region--complementary_wrapper, body.details .content--side_wrapper .region--content,
 body.details .region--complementary_wrapper, body.path-user .content--side_wrapper .region--content,
 body.path-user .region--complementary_wrapper {
   border-radius: 2px;
@@ -175,12 +179,12 @@ body.path-user .region--complementary_wrapper {
   box-shadow: 0 2px 4px #4a4a4a;
 }
 
-body.path-group .region--complementary-top + .region--complementary-bottom, body.details .region--complementary-top + .region--complementary-bottom, body.path-user .region--complementary-top + .region--complementary-bottom {
+body.path-group:not(.group-type-challenge) .region--complementary-top + .region--complementary-bottom, body.details .region--complementary-top + .region--complementary-bottom, body.path-user .region--complementary-top + .region--complementary-bottom {
   margin-top: 0;
 }
 
-body.path-group .region--complementary-bottom,
-body.path-group .region--complementary-top, body.details .region--complementary-bottom,
+body.path-group:not(.group-type-challenge) .region--complementary-bottom,
+body.path-group:not(.group-type-challenge) .region--complementary-top, body.details .region--complementary-bottom,
 body.details .region--complementary-top, body.path-user .region--complementary-bottom,
 body.path-user .region--complementary-top {
   padding-bottom: 0;
@@ -258,7 +262,7 @@ body.path-user .region--complementary-top {
     margin-top: 0;
   }
 
-  body.path-group .layout--with-complementary .navbar-secondary, body.details .layout--with-complementary .navbar-secondary, body.path-user .layout--with-complementary .navbar-secondary {
+  body.path-group:not(.group-type-challenge) .layout--with-complementary .navbar-secondary, body.details .layout--with-complementary .navbar-secondary, body.path-user .layout--with-complementary .navbar-secondary {
     -ms-flex: 0 0 66.66667%;
     flex: 0 0 66.66667%;
     max-width: 66.66667%;
@@ -266,17 +270,17 @@ body.path-user .region--complementary-top {
     order: 2;
   }
 
-  body.path-group .layout--with-complementary .region--secondary-navigation, body.details .layout--with-complementary .region--secondary-navigation, body.path-user .layout--with-complementary .region--secondary-navigation {
+  body.path-group:not(.group-type-challenge) .layout--with-complementary .region--secondary-navigation, body.details .layout--with-complementary .region--secondary-navigation, body.path-user .layout--with-complementary .region--secondary-navigation {
     padding-left: 1rem;
     padding-right: 2rem;
   }
 
-  body.path-group .layout--with-complementary.sidebar-left .region--secondary-navigation, body.details .layout--with-complementary.sidebar-left .region--secondary-navigation, body.path-user .layout--with-complementary.sidebar-left .region--secondary-navigation {
+  body.path-group:not(.group-type-challenge) .layout--with-complementary.sidebar-left .region--secondary-navigation, body.details .layout--with-complementary.sidebar-left .region--secondary-navigation, body.path-user .layout--with-complementary.sidebar-left .region--secondary-navigation {
     padding-left: 2rem;
     padding-right: 1rem;
   }
 
-  body.path-group .region--complementary_wrapper, body.details .region--complementary_wrapper, body.path-user .region--complementary_wrapper {
+  body.path-group:not(.group-type-challenge) .region--complementary_wrapper, body.details .region--complementary_wrapper, body.path-user .region--complementary_wrapper {
     top: -64px;
   }
 }
@@ -319,12 +323,12 @@ body.path-user .region--complementary-top {
     padding-right: 0;
   }
 
-  body.path-group .layout--with-complementary .region--secondary-navigation, body.details .layout--with-complementary .region--secondary-navigation, body.path-user .layout--with-complementary .region--secondary-navigation {
+  body.path-group:not(.group-type-challenge) .layout--with-complementary .region--secondary-navigation, body.details .layout--with-complementary .region--secondary-navigation, body.path-user .layout--with-complementary .region--secondary-navigation {
     padding-right: 20px;
     padding-left: 0;
   }
 
-  body.path-group .layout--with-complementary.sidebar-left .region--secondary-navigation, body.details .layout--with-complementary.sidebar-left .region--secondary-navigation, body.path-user .layout--with-complementary.sidebar-left .region--secondary-navigation {
+  body.path-group:not(.group-type-challenge) .layout--with-complementary.sidebar-left .region--secondary-navigation, body.details .layout--with-complementary.sidebar-left .region--secondary-navigation, body.path-user .layout--with-complementary.sidebar-left .region--secondary-navigation {
     padding-left: 20px;
     padding-right: 0;
   }
@@ -332,8 +336,8 @@ body.path-user .region--complementary-top {
 
 @media (max-width: 899px) {
 
-  body.path-group .region--complementary-bottom,
-  body.path-group .region--complementary-top, body.details .region--complementary-bottom,
+  body.path-group:not(.group-type-challenge) .region--complementary-bottom,
+  body.path-group:not(.group-type-challenge) .region--complementary-top, body.details .region--complementary-bottom,
   body.details .region--complementary-top, body.path-user .region--complementary-bottom,
   body.path-user .region--complementary-top {
     top: 0;

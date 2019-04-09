@@ -23,6 +23,49 @@
   text-transform: uppercase;
 }
 
+.card-file {
+  -ms-flex-preferred-size: 100%;
+      flex-basis: 100%;
+  margin-right: 0;
+}
+
+.card-file .icon-vote {
+  stroke: transparent;
+}
+
+.card-file__link {
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-align: center;
+      align-items: center;
+  -ms-flex-pack: justify;
+      justify-content: space-between;
+  height: 50px;
+  font-weight: 300;
+}
+
+.card-file__link > * {
+  font-size: .75rem;
+}
+
+.card-file__type {
+  position: static;
+  width: auto;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-align: center;
+      align-items: center;
+  -ms-flex-wrap: nowrap;
+      flex-wrap: nowrap;
+  margin-top: 0;
+}
+
+.card-file__type svg {
+  width: 16px;
+  height: 16px;
+  margin-left: 15px;
+}
+
 .card__counter {
   padding-bottom: 1.25rem;
 }
@@ -125,13 +168,40 @@
   border-bottom-right-radius: 2px;
 }
 
-.block-social-tagging .card__block > p {
+.block-social-tagging .card__block .group-about__item .tags-group + .tags-group,
+.block-gpedc-tagging .card__block .group-about__item .tags-group + .tags-group {
+  margin-top: 15px;
+}
+
+.block-social-tagging .card__block .group-about__item > p,
+.block-gpedc-tagging .card__block .group-about__item > p {
   color: #989b97;
   font-size: .875rem;
   margin-bottom: 15px;
 }
 
-.block-social-tagging .card__block .badge {
+.block-social-tagging .card__block .badge,
+.block-gpedc-tagging .card__block .badge {
+  margin-bottom: 15px;
+  border: 2px solid #e6e6e6;
+}
+
+.block-social-tagging .card__block .badge.parent-tag.tag-with-children:not(.child-tag),
+.block-gpedc-tagging .card__block .badge.parent-tag.tag-with-children:not(.child-tag) {
+  background: transparent;
+}
+
+.block-social-tagging .card__block .badge.parent-tag.tag-with-children:not(.child-tag):hover, .block-social-tagging .card__block .badge.parent-tag.tag-with-children:not(.child-tag):focus, .block-social-tagging .card__block .badge.parent-tag.tag-with-children:not(.child-tag):active,
+.block-gpedc-tagging .card__block .badge.parent-tag.tag-with-children:not(.child-tag):hover,
+.block-gpedc-tagging .card__block .badge.parent-tag.tag-with-children:not(.child-tag):focus,
+.block-gpedc-tagging .card__block .badge.parent-tag.tag-with-children:not(.child-tag):active {
+  background-color: rgba(205, 205, 205, 0.15);
+}
+
+.region--complementary-top .block-social-tagging .card__block .group-about__item,
+.region--complementary-top .block-gpedc-tagging .card__block .group-about__item,
+.region--complementary-bottom .block-social-tagging .card__block .group-about__item,
+.region--complementary-bottom .block-gpedc-tagging .card__block .group-about__item {
   margin-bottom: 15px;
 }
 
@@ -343,77 +413,6 @@ a.card__link {
   margin-bottom: 1.25rem;
 }
 
-.teaser__published-lang {
-  text-transform: uppercase;
-}
-
-.card.teaser:not(.teaser--tile) {
-  margin-bottom: 1.5rem;
-}
-
-.card.teaser:not(.teaser--tile) .card__actionbar {
-  display: -ms-flexbox;
-  display: flex;
-  -ms-flex-align: center;
-      align-items: center;
-  -ms-flex-pack: justify;
-      justify-content: space-between;
-}
-
-.card.teaser:not(.teaser--tile) .card__actionbar:before, .card.teaser:not(.teaser--tile) .card__actionbar:after {
-  display: none;
-}
-
-.card.teaser:not(.teaser--tile) .card__actionbar-side {
-  display: -ms-flexbox;
-  display: flex;
-  -ms-flex-wrap: wrap;
-      flex-wrap: wrap;
-  -ms-flex-align: center;
-      align-items: center;
-}
-
-.card.teaser:not(.teaser--tile) .card__actionbar-side > .card__link {
-  margin-left: 12px;
-}
-
-.card.teaser:not(.teaser--tile) .card__actionbar-side.right-side {
-  -ms-flex-pack: end;
-      justify-content: flex-end;
-}
-
-.card.teaser:not(.teaser--tile) svg use[href='#icon-account_circle'] {
-  display: none;
-}
-
-.card.teaser:not(.teaser--tile) .teaser__tag {
-  margin-right: 6px;
-  margin-bottom: 0;
-}
-
-.card.teaser:not(.teaser--tile) .teaser__published-date {
-  -ms-flex-positive: 0;
-      flex-grow: 0;
-}
-
-.card.teaser:not(.teaser--tile) .teaser__published-author {
-  margin-right: 4px;
-}
-
-.card.teaser:not(.teaser--tile) .teaser__published-author a {
-  font-weight: 300;
-}
-
-.card.teaser:not(.teaser--tile) .card__link,
-.card.teaser:not(.teaser--tile) .card__link a {
-  text-transform: uppercase;
-}
-
-.card.teaser:not(.teaser--tile) .topic__content-line .teaser__published {
-  -ms-flex-wrap: wrap;
-      flex-wrap: wrap;
-}
-
 .card.card__column {
   -ms-flex-direction: row;
       flex-direction: row;
@@ -549,181 +548,11 @@ a.card__link {
   display: inline-block;
 }
 
-body.path-group .region--complementary-bottom .local-actions,
-body.path-group .region--complementary-bottom [class*='block-group-add'],
-body.path-group .region--complementary-top .local-actions,
-body.path-group .region--complementary-top [class*='block-group-add'],
-body.details .region--complementary-bottom .local-actions,
-body.details .region--complementary-bottom [class*='block-group-add'],
-body.details .region--complementary-top .local-actions,
-body.details .region--complementary-top [class*='block-group-add'],
-body.path-user .region--complementary-bottom .local-actions,
-body.path-user .region--complementary-bottom [class*='block-group-add'],
-body.path-user .region--complementary-top .local-actions,
-body.path-user .region--complementary-top [class*='block-group-add'] {
-  padding: 1.25rem 2.25rem .25rem;
+.card.block-group-statistic-block, .card.block-profile-statistic-block {
+  padding: 15px 1.25rem 0;
 }
 
-body.path-group .region--complementary-bottom .local-actions .btn,
-body.path-group .region--complementary-top .local-actions .btn,
-body.details .region--complementary-bottom .local-actions .btn,
-body.details .region--complementary-top .local-actions .btn,
-body.path-user .region--complementary-bottom .local-actions .btn,
-body.path-user .region--complementary-top .local-actions .btn {
-  width: 100%;
-}
-
-body.path-group .region--complementary-bottom .card,
-body.path-group .region--complementary-bottom .off-canvas-xs-only,
-body.path-group .region--complementary-top .card,
-body.path-group .region--complementary-top .off-canvas-xs-only,
-body.details .region--complementary-bottom .card,
-body.details .region--complementary-bottom .off-canvas-xs-only,
-body.details .region--complementary-top .card,
-body.details .region--complementary-top .off-canvas-xs-only,
-body.path-user .region--complementary-bottom .card,
-body.path-user .region--complementary-bottom .off-canvas-xs-only,
-body.path-user .region--complementary-top .card,
-body.path-user .region--complementary-top .off-canvas-xs-only {
-  border-radius: 0 !important;
-  box-shadow: none;
-  padding-bottom: 1.5rem;
-  margin-bottom: 0;
-  background: transparent;
-}
-
-body.path-group .region--complementary-bottom .card:after,
-body.path-group .region--complementary-bottom .off-canvas-xs-only:after,
-body.path-group .region--complementary-top .card:after,
-body.path-group .region--complementary-top .off-canvas-xs-only:after,
-body.details .region--complementary-bottom .card:after,
-body.details .region--complementary-bottom .off-canvas-xs-only:after,
-body.details .region--complementary-top .card:after,
-body.details .region--complementary-top .off-canvas-xs-only:after,
-body.path-user .region--complementary-bottom .card:after,
-body.path-user .region--complementary-bottom .off-canvas-xs-only:after,
-body.path-user .region--complementary-top .card:after,
-body.path-user .region--complementary-top .off-canvas-xs-only:after {
-  content: '';
-  position: absolute;
-  height: 2px;
-  bottom: 0;
-  left: 20px;
-  right: 20px;
-  margin: 0 auto;
-  background: #fafafa;
-}
-
-body.path-group .region--complementary-bottom .card:nth-last-child(1):after,
-body.path-group .region--complementary-bottom .off-canvas-xs-only:nth-last-child(1):after,
-body.path-group .region--complementary-top .card:nth-last-child(1):after,
-body.path-group .region--complementary-top .off-canvas-xs-only:nth-last-child(1):after,
-body.details .region--complementary-bottom .card:nth-last-child(1):after,
-body.details .region--complementary-bottom .off-canvas-xs-only:nth-last-child(1):after,
-body.details .region--complementary-top .card:nth-last-child(1):after,
-body.details .region--complementary-top .off-canvas-xs-only:nth-last-child(1):after,
-body.path-user .region--complementary-bottom .card:nth-last-child(1):after,
-body.path-user .region--complementary-bottom .off-canvas-xs-only:nth-last-child(1):after,
-body.path-user .region--complementary-top .card:nth-last-child(1):after,
-body.path-user .region--complementary-top .off-canvas-xs-only:nth-last-child(1):after {
-  display: none;
-}
-
-body.path-group .region--complementary-bottom .card.block-social-tagging,
-body.path-group .region--complementary-bottom .off-canvas-xs-only.block-social-tagging,
-body.path-group .region--complementary-top .card.block-social-tagging,
-body.path-group .region--complementary-top .off-canvas-xs-only.block-social-tagging,
-body.details .region--complementary-bottom .card.block-social-tagging,
-body.details .region--complementary-bottom .off-canvas-xs-only.block-social-tagging,
-body.details .region--complementary-top .card.block-social-tagging,
-body.details .region--complementary-top .off-canvas-xs-only.block-social-tagging,
-body.path-user .region--complementary-bottom .card.block-social-tagging,
-body.path-user .region--complementary-bottom .off-canvas-xs-only.block-social-tagging,
-body.path-user .region--complementary-top .card.block-social-tagging,
-body.path-user .region--complementary-top .off-canvas-xs-only.block-social-tagging {
-  padding-bottom: 0;
-}
-
-body.path-group .region--complementary-bottom .card.block-social-tagging .card__block,
-body.path-group .region--complementary-bottom .off-canvas-xs-only.block-social-tagging .card__block,
-body.path-group .region--complementary-top .card.block-social-tagging .card__block,
-body.path-group .region--complementary-top .off-canvas-xs-only.block-social-tagging .card__block,
-body.details .region--complementary-bottom .card.block-social-tagging .card__block,
-body.details .region--complementary-bottom .off-canvas-xs-only.block-social-tagging .card__block,
-body.details .region--complementary-top .card.block-social-tagging .card__block,
-body.details .region--complementary-top .off-canvas-xs-only.block-social-tagging .card__block,
-body.path-user .region--complementary-bottom .card.block-social-tagging .card__block,
-body.path-user .region--complementary-bottom .off-canvas-xs-only.block-social-tagging .card__block,
-body.path-user .region--complementary-top .card.block-social-tagging .card__block,
-body.path-user .region--complementary-top .off-canvas-xs-only.block-social-tagging .card__block {
-  padding-bottom: 1.25rem;
-}
-
-body.path-group .region--complementary-bottom .card.block-discussion-add-block,
-body.path-group .region--complementary-bottom .off-canvas-xs-only.block-discussion-add-block,
-body.path-group .region--complementary-top .card.block-discussion-add-block,
-body.path-group .region--complementary-top .off-canvas-xs-only.block-discussion-add-block,
-body.details .region--complementary-bottom .card.block-discussion-add-block,
-body.details .region--complementary-bottom .off-canvas-xs-only.block-discussion-add-block,
-body.details .region--complementary-top .card.block-discussion-add-block,
-body.details .region--complementary-top .off-canvas-xs-only.block-discussion-add-block,
-body.path-user .region--complementary-bottom .card.block-discussion-add-block,
-body.path-user .region--complementary-bottom .off-canvas-xs-only.block-discussion-add-block,
-body.path-user .region--complementary-top .card.block-discussion-add-block,
-body.path-user .region--complementary-top .off-canvas-xs-only.block-discussion-add-block {
-  padding: 1.25rem 2.25rem .25rem;
-}
-
-body.path-group .region--complementary-bottom .card.block-group-statistic-block, body.path-group .region--complementary-bottom .card.block-profile-statistic-block,
-body.path-group .region--complementary-bottom .off-canvas-xs-only.block-group-statistic-block,
-body.path-group .region--complementary-bottom .off-canvas-xs-only.block-profile-statistic-block,
-body.path-group .region--complementary-top .card.block-group-statistic-block,
-body.path-group .region--complementary-top .card.block-profile-statistic-block,
-body.path-group .region--complementary-top .off-canvas-xs-only.block-group-statistic-block,
-body.path-group .region--complementary-top .off-canvas-xs-only.block-profile-statistic-block,
-body.details .region--complementary-bottom .card.block-group-statistic-block,
-body.details .region--complementary-bottom .card.block-profile-statistic-block,
-body.details .region--complementary-bottom .off-canvas-xs-only.block-group-statistic-block,
-body.details .region--complementary-bottom .off-canvas-xs-only.block-profile-statistic-block,
-body.details .region--complementary-top .card.block-group-statistic-block,
-body.details .region--complementary-top .card.block-profile-statistic-block,
-body.details .region--complementary-top .off-canvas-xs-only.block-group-statistic-block,
-body.details .region--complementary-top .off-canvas-xs-only.block-profile-statistic-block,
-body.path-user .region--complementary-bottom .card.block-group-statistic-block,
-body.path-user .region--complementary-bottom .card.block-profile-statistic-block,
-body.path-user .region--complementary-bottom .off-canvas-xs-only.block-group-statistic-block,
-body.path-user .region--complementary-bottom .off-canvas-xs-only.block-profile-statistic-block,
-body.path-user .region--complementary-top .card.block-group-statistic-block,
-body.path-user .region--complementary-top .card.block-profile-statistic-block,
-body.path-user .region--complementary-top .off-canvas-xs-only.block-group-statistic-block,
-body.path-user .region--complementary-top .off-canvas-xs-only.block-profile-statistic-block {
-  background: #fafafa;
-  padding: 2.5rem 2.25rem 1.5rem;
-}
-
-body.path-group .region--complementary-bottom .card.block-group-statistic-block .hero-footer__cta, body.path-group .region--complementary-bottom .card.block-profile-statistic-block .hero-footer__cta,
-body.path-group .region--complementary-bottom .off-canvas-xs-only.block-group-statistic-block .hero-footer__cta,
-body.path-group .region--complementary-bottom .off-canvas-xs-only.block-profile-statistic-block .hero-footer__cta,
-body.path-group .region--complementary-top .card.block-group-statistic-block .hero-footer__cta,
-body.path-group .region--complementary-top .card.block-profile-statistic-block .hero-footer__cta,
-body.path-group .region--complementary-top .off-canvas-xs-only.block-group-statistic-block .hero-footer__cta,
-body.path-group .region--complementary-top .off-canvas-xs-only.block-profile-statistic-block .hero-footer__cta,
-body.details .region--complementary-bottom .card.block-group-statistic-block .hero-footer__cta,
-body.details .region--complementary-bottom .card.block-profile-statistic-block .hero-footer__cta,
-body.details .region--complementary-bottom .off-canvas-xs-only.block-group-statistic-block .hero-footer__cta,
-body.details .region--complementary-bottom .off-canvas-xs-only.block-profile-statistic-block .hero-footer__cta,
-body.details .region--complementary-top .card.block-group-statistic-block .hero-footer__cta,
-body.details .region--complementary-top .card.block-profile-statistic-block .hero-footer__cta,
-body.details .region--complementary-top .off-canvas-xs-only.block-group-statistic-block .hero-footer__cta,
-body.details .region--complementary-top .off-canvas-xs-only.block-profile-statistic-block .hero-footer__cta,
-body.path-user .region--complementary-bottom .card.block-group-statistic-block .hero-footer__cta,
-body.path-user .region--complementary-bottom .card.block-profile-statistic-block .hero-footer__cta,
-body.path-user .region--complementary-bottom .off-canvas-xs-only.block-group-statistic-block .hero-footer__cta,
-body.path-user .region--complementary-bottom .off-canvas-xs-only.block-profile-statistic-block .hero-footer__cta,
-body.path-user .region--complementary-top .card.block-group-statistic-block .hero-footer__cta,
-body.path-user .region--complementary-top .card.block-profile-statistic-block .hero-footer__cta,
-body.path-user .region--complementary-top .off-canvas-xs-only.block-group-statistic-block .hero-footer__cta,
-body.path-user .region--complementary-top .off-canvas-xs-only.block-profile-statistic-block .hero-footer__cta {
+.card.block-group-statistic-block .hero-footer__cta, .card.block-profile-statistic-block .hero-footer__cta {
   position: static;
   -ms-flex: 0 0 100%;
       flex: 0 0 100%;
@@ -734,271 +563,637 @@ body.path-user .region--complementary-top .off-canvas-xs-only.block-profile-stat
   padding-bottom: 2.5rem;
 }
 
-body.path-group .region--complementary-bottom .card.block-group-statistic-block .hero-footer__cta *:not(.caret), body.path-group .region--complementary-bottom .card.block-profile-statistic-block .hero-footer__cta *:not(.caret),
-body.path-group .region--complementary-bottom .off-canvas-xs-only.block-group-statistic-block .hero-footer__cta *:not(.caret),
-body.path-group .region--complementary-bottom .off-canvas-xs-only.block-profile-statistic-block .hero-footer__cta *:not(.caret),
-body.path-group .region--complementary-top .card.block-group-statistic-block .hero-footer__cta *:not(.caret),
-body.path-group .region--complementary-top .card.block-profile-statistic-block .hero-footer__cta *:not(.caret),
-body.path-group .region--complementary-top .off-canvas-xs-only.block-group-statistic-block .hero-footer__cta *:not(.caret),
-body.path-group .region--complementary-top .off-canvas-xs-only.block-profile-statistic-block .hero-footer__cta *:not(.caret),
-body.details .region--complementary-bottom .card.block-group-statistic-block .hero-footer__cta *:not(.caret),
-body.details .region--complementary-bottom .card.block-profile-statistic-block .hero-footer__cta *:not(.caret),
-body.details .region--complementary-bottom .off-canvas-xs-only.block-group-statistic-block .hero-footer__cta *:not(.caret),
-body.details .region--complementary-bottom .off-canvas-xs-only.block-profile-statistic-block .hero-footer__cta *:not(.caret),
-body.details .region--complementary-top .card.block-group-statistic-block .hero-footer__cta *:not(.caret),
-body.details .region--complementary-top .card.block-profile-statistic-block .hero-footer__cta *:not(.caret),
-body.details .region--complementary-top .off-canvas-xs-only.block-group-statistic-block .hero-footer__cta *:not(.caret),
-body.details .region--complementary-top .off-canvas-xs-only.block-profile-statistic-block .hero-footer__cta *:not(.caret),
-body.path-user .region--complementary-bottom .card.block-group-statistic-block .hero-footer__cta *:not(.caret),
-body.path-user .region--complementary-bottom .card.block-profile-statistic-block .hero-footer__cta *:not(.caret),
-body.path-user .region--complementary-bottom .off-canvas-xs-only.block-group-statistic-block .hero-footer__cta *:not(.caret),
-body.path-user .region--complementary-bottom .off-canvas-xs-only.block-profile-statistic-block .hero-footer__cta *:not(.caret),
-body.path-user .region--complementary-top .card.block-group-statistic-block .hero-footer__cta *:not(.caret),
-body.path-user .region--complementary-top .card.block-profile-statistic-block .hero-footer__cta *:not(.caret),
-body.path-user .region--complementary-top .off-canvas-xs-only.block-group-statistic-block .hero-footer__cta *:not(.caret),
-body.path-user .region--complementary-top .off-canvas-xs-only.block-profile-statistic-block .hero-footer__cta *:not(.caret) {
+.card.block-group-statistic-block .hero-footer__cta *:not(.caret), .card.block-profile-statistic-block .hero-footer__cta *:not(.caret) {
   width: 100%;
 }
 
-body.path-group .region--complementary-bottom .card.block-group-statistic-block .hero-footer__cta .btn, body.path-group .region--complementary-bottom .card.block-profile-statistic-block .hero-footer__cta .btn,
-body.path-group .region--complementary-bottom .off-canvas-xs-only.block-group-statistic-block .hero-footer__cta .btn,
-body.path-group .region--complementary-bottom .off-canvas-xs-only.block-profile-statistic-block .hero-footer__cta .btn,
-body.path-group .region--complementary-top .card.block-group-statistic-block .hero-footer__cta .btn,
-body.path-group .region--complementary-top .card.block-profile-statistic-block .hero-footer__cta .btn,
-body.path-group .region--complementary-top .off-canvas-xs-only.block-group-statistic-block .hero-footer__cta .btn,
-body.path-group .region--complementary-top .off-canvas-xs-only.block-profile-statistic-block .hero-footer__cta .btn,
-body.details .region--complementary-bottom .card.block-group-statistic-block .hero-footer__cta .btn,
-body.details .region--complementary-bottom .card.block-profile-statistic-block .hero-footer__cta .btn,
-body.details .region--complementary-bottom .off-canvas-xs-only.block-group-statistic-block .hero-footer__cta .btn,
-body.details .region--complementary-bottom .off-canvas-xs-only.block-profile-statistic-block .hero-footer__cta .btn,
-body.details .region--complementary-top .card.block-group-statistic-block .hero-footer__cta .btn,
-body.details .region--complementary-top .card.block-profile-statistic-block .hero-footer__cta .btn,
-body.details .region--complementary-top .off-canvas-xs-only.block-group-statistic-block .hero-footer__cta .btn,
-body.details .region--complementary-top .off-canvas-xs-only.block-profile-statistic-block .hero-footer__cta .btn,
-body.path-user .region--complementary-bottom .card.block-group-statistic-block .hero-footer__cta .btn,
-body.path-user .region--complementary-bottom .card.block-profile-statistic-block .hero-footer__cta .btn,
-body.path-user .region--complementary-bottom .off-canvas-xs-only.block-group-statistic-block .hero-footer__cta .btn,
-body.path-user .region--complementary-bottom .off-canvas-xs-only.block-profile-statistic-block .hero-footer__cta .btn,
-body.path-user .region--complementary-top .card.block-group-statistic-block .hero-footer__cta .btn,
-body.path-user .region--complementary-top .card.block-profile-statistic-block .hero-footer__cta .btn,
-body.path-user .region--complementary-top .off-canvas-xs-only.block-group-statistic-block .hero-footer__cta .btn,
-body.path-user .region--complementary-top .off-canvas-xs-only.block-profile-statistic-block .hero-footer__cta .btn {
+.card.block-group-statistic-block .hero-footer__cta .btn, .card.block-profile-statistic-block .hero-footer__cta .btn {
   text-transform: uppercase;
   border-radius: 5px !important;
 }
 
-body.path-group .region--complementary-bottom .card.block-group-statistic-block .hero-footer__cta .btn.btn-default, body.path-group .region--complementary-bottom .card.block-profile-statistic-block .hero-footer__cta .btn.btn-default,
-body.path-group .region--complementary-bottom .off-canvas-xs-only.block-group-statistic-block .hero-footer__cta .btn.btn-default,
-body.path-group .region--complementary-bottom .off-canvas-xs-only.block-profile-statistic-block .hero-footer__cta .btn.btn-default,
-body.path-group .region--complementary-top .card.block-group-statistic-block .hero-footer__cta .btn.btn-default,
-body.path-group .region--complementary-top .card.block-profile-statistic-block .hero-footer__cta .btn.btn-default,
-body.path-group .region--complementary-top .off-canvas-xs-only.block-group-statistic-block .hero-footer__cta .btn.btn-default,
-body.path-group .region--complementary-top .off-canvas-xs-only.block-profile-statistic-block .hero-footer__cta .btn.btn-default,
-body.details .region--complementary-bottom .card.block-group-statistic-block .hero-footer__cta .btn.btn-default,
-body.details .region--complementary-bottom .card.block-profile-statistic-block .hero-footer__cta .btn.btn-default,
-body.details .region--complementary-bottom .off-canvas-xs-only.block-group-statistic-block .hero-footer__cta .btn.btn-default,
-body.details .region--complementary-bottom .off-canvas-xs-only.block-profile-statistic-block .hero-footer__cta .btn.btn-default,
-body.details .region--complementary-top .card.block-group-statistic-block .hero-footer__cta .btn.btn-default,
-body.details .region--complementary-top .card.block-profile-statistic-block .hero-footer__cta .btn.btn-default,
-body.details .region--complementary-top .off-canvas-xs-only.block-group-statistic-block .hero-footer__cta .btn.btn-default,
-body.details .region--complementary-top .off-canvas-xs-only.block-profile-statistic-block .hero-footer__cta .btn.btn-default,
-body.path-user .region--complementary-bottom .card.block-group-statistic-block .hero-footer__cta .btn.btn-default,
-body.path-user .region--complementary-bottom .card.block-profile-statistic-block .hero-footer__cta .btn.btn-default,
-body.path-user .region--complementary-bottom .off-canvas-xs-only.block-group-statistic-block .hero-footer__cta .btn.btn-default,
-body.path-user .region--complementary-bottom .off-canvas-xs-only.block-profile-statistic-block .hero-footer__cta .btn.btn-default,
-body.path-user .region--complementary-top .card.block-group-statistic-block .hero-footer__cta .btn.btn-default,
-body.path-user .region--complementary-top .card.block-profile-statistic-block .hero-footer__cta .btn.btn-default,
-body.path-user .region--complementary-top .off-canvas-xs-only.block-group-statistic-block .hero-footer__cta .btn.btn-default,
-body.path-user .region--complementary-top .off-canvas-xs-only.block-profile-statistic-block .hero-footer__cta .btn.btn-default {
+.card.block-group-statistic-block .hero-footer__cta .btn.btn-default, .card.block-profile-statistic-block .hero-footer__cta .btn.btn-default {
   background: transparent;
 }
 
-body.path-group .region--complementary-bottom .card.block-profile-statistic-block,
-body.path-group .region--complementary-bottom .off-canvas-xs-only.block-profile-statistic-block,
-body.path-group .region--complementary-top .card.block-profile-statistic-block,
-body.path-group .region--complementary-top .off-canvas-xs-only.block-profile-statistic-block,
+body.path-group:not(.group-type-challenge) .region--complementary-bottom .local-actions,
+body.path-group:not(.group-type-challenge) .region--complementary-bottom [class*='block-group-add'],
+body.path-group:not(.group-type-challenge) .region--complementary-bottom [class*='add-block'],
+body.path-group:not(.group-type-challenge) .region--complementary-top .local-actions,
+body.path-group:not(.group-type-challenge) .region--complementary-top [class*='block-group-add'],
+body.path-group:not(.group-type-challenge) .region--complementary-top [class*='add-block'],
+body.details .region--complementary-bottom .local-actions,
+body.details .region--complementary-bottom [class*='block-group-add'],
+body.details .region--complementary-bottom [class*='add-block'],
+body.details .region--complementary-top .local-actions,
+body.details .region--complementary-top [class*='block-group-add'],
+body.details .region--complementary-top [class*='add-block'],
+body.path-user .region--complementary-bottom .local-actions,
+body.path-user .region--complementary-bottom [class*='block-group-add'],
+body.path-user .region--complementary-bottom [class*='add-block'],
+body.path-user .region--complementary-top .local-actions,
+body.path-user .region--complementary-top [class*='block-group-add'],
+body.path-user .region--complementary-top [class*='add-block'] {
+  position: relative;
+  padding: 1.25rem 2.25rem;
+}
+
+body.path-group:not(.group-type-challenge) .region--complementary-bottom .local-actions .btn,
+body.path-group:not(.group-type-challenge) .region--complementary-bottom [class*='block-group-add'] .btn,
+body.path-group:not(.group-type-challenge) .region--complementary-bottom [class*='add-block'] .btn,
+body.path-group:not(.group-type-challenge) .region--complementary-top .local-actions .btn,
+body.path-group:not(.group-type-challenge) .region--complementary-top [class*='block-group-add'] .btn,
+body.path-group:not(.group-type-challenge) .region--complementary-top [class*='add-block'] .btn,
+body.details .region--complementary-bottom .local-actions .btn,
+body.details .region--complementary-bottom [class*='block-group-add'] .btn,
+body.details .region--complementary-bottom [class*='add-block'] .btn,
+body.details .region--complementary-top .local-actions .btn,
+body.details .region--complementary-top [class*='block-group-add'] .btn,
+body.details .region--complementary-top [class*='add-block'] .btn,
+body.path-user .region--complementary-bottom .local-actions .btn,
+body.path-user .region--complementary-bottom [class*='block-group-add'] .btn,
+body.path-user .region--complementary-bottom [class*='add-block'] .btn,
+body.path-user .region--complementary-top .local-actions .btn,
+body.path-user .region--complementary-top [class*='block-group-add'] .btn,
+body.path-user .region--complementary-top [class*='add-block'] .btn {
+  margin-bottom: 0;
+}
+
+body.path-group:not(.group-type-challenge) .region--complementary-bottom .local-actions .btn,
+body.path-group:not(.group-type-challenge) .region--complementary-top .local-actions .btn,
+body.details .region--complementary-bottom .local-actions .btn,
+body.details .region--complementary-top .local-actions .btn,
+body.path-user .region--complementary-bottom .local-actions .btn,
+body.path-user .region--complementary-top .local-actions .btn {
+  width: 100%;
+}
+
+body.path-group:not(.group-type-challenge) .region--complementary-bottom .card,
+body.path-group:not(.group-type-challenge) .region--complementary-bottom .off-canvas-xs-only,
+body.path-group:not(.group-type-challenge) .region--complementary-bottom [class*='block-group-add'],
+body.path-group:not(.group-type-challenge) .region--complementary-bottom [class*='add-block'],
+body.path-group:not(.group-type-challenge) .region--complementary-top .card,
+body.path-group:not(.group-type-challenge) .region--complementary-top .off-canvas-xs-only,
+body.path-group:not(.group-type-challenge) .region--complementary-top [class*='block-group-add'],
+body.path-group:not(.group-type-challenge) .region--complementary-top [class*='add-block'],
+body.details .region--complementary-bottom .card,
+body.details .region--complementary-bottom .off-canvas-xs-only,
+body.details .region--complementary-bottom [class*='block-group-add'],
+body.details .region--complementary-bottom [class*='add-block'],
+body.details .region--complementary-top .card,
+body.details .region--complementary-top .off-canvas-xs-only,
+body.details .region--complementary-top [class*='block-group-add'],
+body.details .region--complementary-top [class*='add-block'],
+body.path-user .region--complementary-bottom .card,
+body.path-user .region--complementary-bottom .off-canvas-xs-only,
+body.path-user .region--complementary-bottom [class*='block-group-add'],
+body.path-user .region--complementary-bottom [class*='add-block'],
+body.path-user .region--complementary-top .card,
+body.path-user .region--complementary-top .off-canvas-xs-only,
+body.path-user .region--complementary-top [class*='block-group-add'],
+body.path-user .region--complementary-top [class*='add-block'] {
+  border-radius: 0 !important;
+  box-shadow: none;
+  padding-bottom: 1.5rem;
+  margin-bottom: 0;
+  background: transparent;
+}
+
+body.path-group:not(.group-type-challenge) .region--complementary-bottom .card:after,
+body.path-group:not(.group-type-challenge) .region--complementary-bottom .off-canvas-xs-only:after,
+body.path-group:not(.group-type-challenge) .region--complementary-bottom [class*='block-group-add']:after,
+body.path-group:not(.group-type-challenge) .region--complementary-bottom [class*='add-block']:after,
+body.path-group:not(.group-type-challenge) .region--complementary-top .card:after,
+body.path-group:not(.group-type-challenge) .region--complementary-top .off-canvas-xs-only:after,
+body.path-group:not(.group-type-challenge) .region--complementary-top [class*='block-group-add']:after,
+body.path-group:not(.group-type-challenge) .region--complementary-top [class*='add-block']:after,
+body.details .region--complementary-bottom .card:after,
+body.details .region--complementary-bottom .off-canvas-xs-only:after,
+body.details .region--complementary-bottom [class*='block-group-add']:after,
+body.details .region--complementary-bottom [class*='add-block']:after,
+body.details .region--complementary-top .card:after,
+body.details .region--complementary-top .off-canvas-xs-only:after,
+body.details .region--complementary-top [class*='block-group-add']:after,
+body.details .region--complementary-top [class*='add-block']:after,
+body.path-user .region--complementary-bottom .card:after,
+body.path-user .region--complementary-bottom .off-canvas-xs-only:after,
+body.path-user .region--complementary-bottom [class*='block-group-add']:after,
+body.path-user .region--complementary-bottom [class*='add-block']:after,
+body.path-user .region--complementary-top .card:after,
+body.path-user .region--complementary-top .off-canvas-xs-only:after,
+body.path-user .region--complementary-top [class*='block-group-add']:after,
+body.path-user .region--complementary-top [class*='add-block']:after {
+  content: '';
+  position: absolute;
+  height: 2px;
+  bottom: 0;
+  left: 20px;
+  right: 20px;
+  margin: 0 auto;
+  background: #fafafa;
+}
+
+body.path-group:not(.group-type-challenge) .region--complementary-bottom .card:nth-last-child(1):after,
+body.path-group:not(.group-type-challenge) .region--complementary-bottom .off-canvas-xs-only:nth-last-child(1):after,
+body.path-group:not(.group-type-challenge) .region--complementary-bottom [class*='block-group-add']:nth-last-child(1):after,
+body.path-group:not(.group-type-challenge) .region--complementary-bottom [class*='add-block']:nth-last-child(1):after,
+body.path-group:not(.group-type-challenge) .region--complementary-top .card:nth-last-child(1):after,
+body.path-group:not(.group-type-challenge) .region--complementary-top .off-canvas-xs-only:nth-last-child(1):after,
+body.path-group:not(.group-type-challenge) .region--complementary-top [class*='block-group-add']:nth-last-child(1):after,
+body.path-group:not(.group-type-challenge) .region--complementary-top [class*='add-block']:nth-last-child(1):after,
+body.details .region--complementary-bottom .card:nth-last-child(1):after,
+body.details .region--complementary-bottom .off-canvas-xs-only:nth-last-child(1):after,
+body.details .region--complementary-bottom [class*='block-group-add']:nth-last-child(1):after,
+body.details .region--complementary-bottom [class*='add-block']:nth-last-child(1):after,
+body.details .region--complementary-top .card:nth-last-child(1):after,
+body.details .region--complementary-top .off-canvas-xs-only:nth-last-child(1):after,
+body.details .region--complementary-top [class*='block-group-add']:nth-last-child(1):after,
+body.details .region--complementary-top [class*='add-block']:nth-last-child(1):after,
+body.path-user .region--complementary-bottom .card:nth-last-child(1):after,
+body.path-user .region--complementary-bottom .off-canvas-xs-only:nth-last-child(1):after,
+body.path-user .region--complementary-bottom [class*='block-group-add']:nth-last-child(1):after,
+body.path-user .region--complementary-bottom [class*='add-block']:nth-last-child(1):after,
+body.path-user .region--complementary-top .card:nth-last-child(1):after,
+body.path-user .region--complementary-top .off-canvas-xs-only:nth-last-child(1):after,
+body.path-user .region--complementary-top [class*='block-group-add']:nth-last-child(1):after,
+body.path-user .region--complementary-top [class*='add-block']:nth-last-child(1):after {
+  display: none;
+}
+
+body.path-group:not(.group-type-challenge) .region--complementary-bottom .card.block-social-tagging,
+body.path-group:not(.group-type-challenge) .region--complementary-bottom .off-canvas-xs-only.block-social-tagging,
+body.path-group:not(.group-type-challenge) .region--complementary-bottom [class*='block-group-add'].block-social-tagging,
+body.path-group:not(.group-type-challenge) .region--complementary-bottom [class*='add-block'].block-social-tagging,
+body.path-group:not(.group-type-challenge) .region--complementary-top .card.block-social-tagging,
+body.path-group:not(.group-type-challenge) .region--complementary-top .off-canvas-xs-only.block-social-tagging,
+body.path-group:not(.group-type-challenge) .region--complementary-top [class*='block-group-add'].block-social-tagging,
+body.path-group:not(.group-type-challenge) .region--complementary-top [class*='add-block'].block-social-tagging,
+body.details .region--complementary-bottom .card.block-social-tagging,
+body.details .region--complementary-bottom .off-canvas-xs-only.block-social-tagging,
+body.details .region--complementary-bottom [class*='block-group-add'].block-social-tagging,
+body.details .region--complementary-bottom [class*='add-block'].block-social-tagging,
+body.details .region--complementary-top .card.block-social-tagging,
+body.details .region--complementary-top .off-canvas-xs-only.block-social-tagging,
+body.details .region--complementary-top [class*='block-group-add'].block-social-tagging,
+body.details .region--complementary-top [class*='add-block'].block-social-tagging,
+body.path-user .region--complementary-bottom .card.block-social-tagging,
+body.path-user .region--complementary-bottom .off-canvas-xs-only.block-social-tagging,
+body.path-user .region--complementary-bottom [class*='block-group-add'].block-social-tagging,
+body.path-user .region--complementary-bottom [class*='add-block'].block-social-tagging,
+body.path-user .region--complementary-top .card.block-social-tagging,
+body.path-user .region--complementary-top .off-canvas-xs-only.block-social-tagging,
+body.path-user .region--complementary-top [class*='block-group-add'].block-social-tagging,
+body.path-user .region--complementary-top [class*='add-block'].block-social-tagging {
+  padding-bottom: 0;
+}
+
+body.path-group:not(.group-type-challenge) .region--complementary-bottom .card.block-social-tagging .card__block,
+body.path-group:not(.group-type-challenge) .region--complementary-bottom .off-canvas-xs-only.block-social-tagging .card__block,
+body.path-group:not(.group-type-challenge) .region--complementary-bottom [class*='block-group-add'].block-social-tagging .card__block,
+body.path-group:not(.group-type-challenge) .region--complementary-bottom [class*='add-block'].block-social-tagging .card__block,
+body.path-group:not(.group-type-challenge) .region--complementary-top .card.block-social-tagging .card__block,
+body.path-group:not(.group-type-challenge) .region--complementary-top .off-canvas-xs-only.block-social-tagging .card__block,
+body.path-group:not(.group-type-challenge) .region--complementary-top [class*='block-group-add'].block-social-tagging .card__block,
+body.path-group:not(.group-type-challenge) .region--complementary-top [class*='add-block'].block-social-tagging .card__block,
+body.details .region--complementary-bottom .card.block-social-tagging .card__block,
+body.details .region--complementary-bottom .off-canvas-xs-only.block-social-tagging .card__block,
+body.details .region--complementary-bottom [class*='block-group-add'].block-social-tagging .card__block,
+body.details .region--complementary-bottom [class*='add-block'].block-social-tagging .card__block,
+body.details .region--complementary-top .card.block-social-tagging .card__block,
+body.details .region--complementary-top .off-canvas-xs-only.block-social-tagging .card__block,
+body.details .region--complementary-top [class*='block-group-add'].block-social-tagging .card__block,
+body.details .region--complementary-top [class*='add-block'].block-social-tagging .card__block,
+body.path-user .region--complementary-bottom .card.block-social-tagging .card__block,
+body.path-user .region--complementary-bottom .off-canvas-xs-only.block-social-tagging .card__block,
+body.path-user .region--complementary-bottom [class*='block-group-add'].block-social-tagging .card__block,
+body.path-user .region--complementary-bottom [class*='add-block'].block-social-tagging .card__block,
+body.path-user .region--complementary-top .card.block-social-tagging .card__block,
+body.path-user .region--complementary-top .off-canvas-xs-only.block-social-tagging .card__block,
+body.path-user .region--complementary-top [class*='block-group-add'].block-social-tagging .card__block,
+body.path-user .region--complementary-top [class*='add-block'].block-social-tagging .card__block {
+  padding-bottom: 1.25rem;
+}
+
+body.path-group:not(.group-type-challenge) .region--complementary-bottom .card.block-discussion-add-block,
+body.path-group:not(.group-type-challenge) .region--complementary-bottom .off-canvas-xs-only.block-discussion-add-block,
+body.path-group:not(.group-type-challenge) .region--complementary-bottom [class*='block-group-add'].block-discussion-add-block,
+body.path-group:not(.group-type-challenge) .region--complementary-bottom [class*='add-block'].block-discussion-add-block,
+body.path-group:not(.group-type-challenge) .region--complementary-top .card.block-discussion-add-block,
+body.path-group:not(.group-type-challenge) .region--complementary-top .off-canvas-xs-only.block-discussion-add-block,
+body.path-group:not(.group-type-challenge) .region--complementary-top [class*='block-group-add'].block-discussion-add-block,
+body.path-group:not(.group-type-challenge) .region--complementary-top [class*='add-block'].block-discussion-add-block,
+body.details .region--complementary-bottom .card.block-discussion-add-block,
+body.details .region--complementary-bottom .off-canvas-xs-only.block-discussion-add-block,
+body.details .region--complementary-bottom [class*='block-group-add'].block-discussion-add-block,
+body.details .region--complementary-bottom [class*='add-block'].block-discussion-add-block,
+body.details .region--complementary-top .card.block-discussion-add-block,
+body.details .region--complementary-top .off-canvas-xs-only.block-discussion-add-block,
+body.details .region--complementary-top [class*='block-group-add'].block-discussion-add-block,
+body.details .region--complementary-top [class*='add-block'].block-discussion-add-block,
+body.path-user .region--complementary-bottom .card.block-discussion-add-block,
+body.path-user .region--complementary-bottom .off-canvas-xs-only.block-discussion-add-block,
+body.path-user .region--complementary-bottom [class*='block-group-add'].block-discussion-add-block,
+body.path-user .region--complementary-bottom [class*='add-block'].block-discussion-add-block,
+body.path-user .region--complementary-top .card.block-discussion-add-block,
+body.path-user .region--complementary-top .off-canvas-xs-only.block-discussion-add-block,
+body.path-user .region--complementary-top [class*='block-group-add'].block-discussion-add-block,
+body.path-user .region--complementary-top [class*='add-block'].block-discussion-add-block {
+  padding: 1.25rem 2.25rem .25rem;
+}
+
+body.path-group:not(.group-type-challenge) .region--complementary-bottom .card.block-group-statistic-block, body.path-group:not(.group-type-challenge) .region--complementary-bottom .card.block-profile-statistic-block,
+body.path-group:not(.group-type-challenge) .region--complementary-bottom .off-canvas-xs-only.block-group-statistic-block,
+body.path-group:not(.group-type-challenge) .region--complementary-bottom .off-canvas-xs-only.block-profile-statistic-block,
+body.path-group:not(.group-type-challenge) .region--complementary-bottom [class*='block-group-add'].block-group-statistic-block,
+body.path-group:not(.group-type-challenge) .region--complementary-bottom [class*='block-group-add'].block-profile-statistic-block,
+body.path-group:not(.group-type-challenge) .region--complementary-bottom [class*='add-block'].block-group-statistic-block,
+body.path-group:not(.group-type-challenge) .region--complementary-bottom [class*='add-block'].block-profile-statistic-block,
+body.path-group:not(.group-type-challenge) .region--complementary-top .card.block-group-statistic-block,
+body.path-group:not(.group-type-challenge) .region--complementary-top .card.block-profile-statistic-block,
+body.path-group:not(.group-type-challenge) .region--complementary-top .off-canvas-xs-only.block-group-statistic-block,
+body.path-group:not(.group-type-challenge) .region--complementary-top .off-canvas-xs-only.block-profile-statistic-block,
+body.path-group:not(.group-type-challenge) .region--complementary-top [class*='block-group-add'].block-group-statistic-block,
+body.path-group:not(.group-type-challenge) .region--complementary-top [class*='block-group-add'].block-profile-statistic-block,
+body.path-group:not(.group-type-challenge) .region--complementary-top [class*='add-block'].block-group-statistic-block,
+body.path-group:not(.group-type-challenge) .region--complementary-top [class*='add-block'].block-profile-statistic-block,
+body.details .region--complementary-bottom .card.block-group-statistic-block,
+body.details .region--complementary-bottom .card.block-profile-statistic-block,
+body.details .region--complementary-bottom .off-canvas-xs-only.block-group-statistic-block,
+body.details .region--complementary-bottom .off-canvas-xs-only.block-profile-statistic-block,
+body.details .region--complementary-bottom [class*='block-group-add'].block-group-statistic-block,
+body.details .region--complementary-bottom [class*='block-group-add'].block-profile-statistic-block,
+body.details .region--complementary-bottom [class*='add-block'].block-group-statistic-block,
+body.details .region--complementary-bottom [class*='add-block'].block-profile-statistic-block,
+body.details .region--complementary-top .card.block-group-statistic-block,
+body.details .region--complementary-top .card.block-profile-statistic-block,
+body.details .region--complementary-top .off-canvas-xs-only.block-group-statistic-block,
+body.details .region--complementary-top .off-canvas-xs-only.block-profile-statistic-block,
+body.details .region--complementary-top [class*='block-group-add'].block-group-statistic-block,
+body.details .region--complementary-top [class*='block-group-add'].block-profile-statistic-block,
+body.details .region--complementary-top [class*='add-block'].block-group-statistic-block,
+body.details .region--complementary-top [class*='add-block'].block-profile-statistic-block,
+body.path-user .region--complementary-bottom .card.block-group-statistic-block,
+body.path-user .region--complementary-bottom .card.block-profile-statistic-block,
+body.path-user .region--complementary-bottom .off-canvas-xs-only.block-group-statistic-block,
+body.path-user .region--complementary-bottom .off-canvas-xs-only.block-profile-statistic-block,
+body.path-user .region--complementary-bottom [class*='block-group-add'].block-group-statistic-block,
+body.path-user .region--complementary-bottom [class*='block-group-add'].block-profile-statistic-block,
+body.path-user .region--complementary-bottom [class*='add-block'].block-group-statistic-block,
+body.path-user .region--complementary-bottom [class*='add-block'].block-profile-statistic-block,
+body.path-user .region--complementary-top .card.block-group-statistic-block,
+body.path-user .region--complementary-top .card.block-profile-statistic-block,
+body.path-user .region--complementary-top .off-canvas-xs-only.block-group-statistic-block,
+body.path-user .region--complementary-top .off-canvas-xs-only.block-profile-statistic-block,
+body.path-user .region--complementary-top [class*='block-group-add'].block-group-statistic-block,
+body.path-user .region--complementary-top [class*='block-group-add'].block-profile-statistic-block,
+body.path-user .region--complementary-top [class*='add-block'].block-group-statistic-block,
+body.path-user .region--complementary-top [class*='add-block'].block-profile-statistic-block {
+  background: #fafafa;
+  padding: 2.5rem 2.25rem 1.5rem;
+}
+
+body.path-group:not(.group-type-challenge) .region--complementary-bottom .card.block-profile-statistic-block,
+body.path-group:not(.group-type-challenge) .region--complementary-bottom .off-canvas-xs-only.block-profile-statistic-block,
+body.path-group:not(.group-type-challenge) .region--complementary-bottom [class*='block-group-add'].block-profile-statistic-block,
+body.path-group:not(.group-type-challenge) .region--complementary-bottom [class*='add-block'].block-profile-statistic-block,
+body.path-group:not(.group-type-challenge) .region--complementary-top .card.block-profile-statistic-block,
+body.path-group:not(.group-type-challenge) .region--complementary-top .off-canvas-xs-only.block-profile-statistic-block,
+body.path-group:not(.group-type-challenge) .region--complementary-top [class*='block-group-add'].block-profile-statistic-block,
+body.path-group:not(.group-type-challenge) .region--complementary-top [class*='add-block'].block-profile-statistic-block,
 body.details .region--complementary-bottom .card.block-profile-statistic-block,
 body.details .region--complementary-bottom .off-canvas-xs-only.block-profile-statistic-block,
+body.details .region--complementary-bottom [class*='block-group-add'].block-profile-statistic-block,
+body.details .region--complementary-bottom [class*='add-block'].block-profile-statistic-block,
 body.details .region--complementary-top .card.block-profile-statistic-block,
 body.details .region--complementary-top .off-canvas-xs-only.block-profile-statistic-block,
+body.details .region--complementary-top [class*='block-group-add'].block-profile-statistic-block,
+body.details .region--complementary-top [class*='add-block'].block-profile-statistic-block,
 body.path-user .region--complementary-bottom .card.block-profile-statistic-block,
 body.path-user .region--complementary-bottom .off-canvas-xs-only.block-profile-statistic-block,
+body.path-user .region--complementary-bottom [class*='block-group-add'].block-profile-statistic-block,
+body.path-user .region--complementary-bottom [class*='add-block'].block-profile-statistic-block,
 body.path-user .region--complementary-top .card.block-profile-statistic-block,
-body.path-user .region--complementary-top .off-canvas-xs-only.block-profile-statistic-block {
+body.path-user .region--complementary-top .off-canvas-xs-only.block-profile-statistic-block,
+body.path-user .region--complementary-top [class*='block-group-add'].block-profile-statistic-block,
+body.path-user .region--complementary-top [class*='add-block'].block-profile-statistic-block {
   padding-top: 0;
 }
 
-body.path-group .region--complementary-bottom .card.block-profile-statistic-block .card__info-user .hero-avatar,
-body.path-group .region--complementary-bottom .off-canvas-xs-only.block-profile-statistic-block .card__info-user .hero-avatar,
-body.path-group .region--complementary-top .card.block-profile-statistic-block .card__info-user .hero-avatar,
-body.path-group .region--complementary-top .off-canvas-xs-only.block-profile-statistic-block .card__info-user .hero-avatar,
+body.path-group:not(.group-type-challenge) .region--complementary-bottom .card.block-profile-statistic-block .card__info-user .hero-avatar,
+body.path-group:not(.group-type-challenge) .region--complementary-bottom .off-canvas-xs-only.block-profile-statistic-block .card__info-user .hero-avatar,
+body.path-group:not(.group-type-challenge) .region--complementary-bottom [class*='block-group-add'].block-profile-statistic-block .card__info-user .hero-avatar,
+body.path-group:not(.group-type-challenge) .region--complementary-bottom [class*='add-block'].block-profile-statistic-block .card__info-user .hero-avatar,
+body.path-group:not(.group-type-challenge) .region--complementary-top .card.block-profile-statistic-block .card__info-user .hero-avatar,
+body.path-group:not(.group-type-challenge) .region--complementary-top .off-canvas-xs-only.block-profile-statistic-block .card__info-user .hero-avatar,
+body.path-group:not(.group-type-challenge) .region--complementary-top [class*='block-group-add'].block-profile-statistic-block .card__info-user .hero-avatar,
+body.path-group:not(.group-type-challenge) .region--complementary-top [class*='add-block'].block-profile-statistic-block .card__info-user .hero-avatar,
 body.details .region--complementary-bottom .card.block-profile-statistic-block .card__info-user .hero-avatar,
 body.details .region--complementary-bottom .off-canvas-xs-only.block-profile-statistic-block .card__info-user .hero-avatar,
+body.details .region--complementary-bottom [class*='block-group-add'].block-profile-statistic-block .card__info-user .hero-avatar,
+body.details .region--complementary-bottom [class*='add-block'].block-profile-statistic-block .card__info-user .hero-avatar,
 body.details .region--complementary-top .card.block-profile-statistic-block .card__info-user .hero-avatar,
 body.details .region--complementary-top .off-canvas-xs-only.block-profile-statistic-block .card__info-user .hero-avatar,
+body.details .region--complementary-top [class*='block-group-add'].block-profile-statistic-block .card__info-user .hero-avatar,
+body.details .region--complementary-top [class*='add-block'].block-profile-statistic-block .card__info-user .hero-avatar,
 body.path-user .region--complementary-bottom .card.block-profile-statistic-block .card__info-user .hero-avatar,
 body.path-user .region--complementary-bottom .off-canvas-xs-only.block-profile-statistic-block .card__info-user .hero-avatar,
+body.path-user .region--complementary-bottom [class*='block-group-add'].block-profile-statistic-block .card__info-user .hero-avatar,
+body.path-user .region--complementary-bottom [class*='add-block'].block-profile-statistic-block .card__info-user .hero-avatar,
 body.path-user .region--complementary-top .card.block-profile-statistic-block .card__info-user .hero-avatar,
-body.path-user .region--complementary-top .off-canvas-xs-only.block-profile-statistic-block .card__info-user .hero-avatar {
+body.path-user .region--complementary-top .off-canvas-xs-only.block-profile-statistic-block .card__info-user .hero-avatar,
+body.path-user .region--complementary-top [class*='block-group-add'].block-profile-statistic-block .card__info-user .hero-avatar,
+body.path-user .region--complementary-top [class*='add-block'].block-profile-statistic-block .card__info-user .hero-avatar {
   border-color: #fafafa;
 }
 
-body.path-group .region--complementary-bottom .card .card__title,
-body.path-group .region--complementary-bottom .card .offcanvas-head,
-body.path-group .region--complementary-bottom .off-canvas-xs-only .card__title,
-body.path-group .region--complementary-bottom .off-canvas-xs-only .offcanvas-head,
-body.path-group .region--complementary-top .card .card__title,
-body.path-group .region--complementary-top .card .offcanvas-head,
-body.path-group .region--complementary-top .off-canvas-xs-only .card__title,
-body.path-group .region--complementary-top .off-canvas-xs-only .offcanvas-head,
+body.path-group:not(.group-type-challenge) .region--complementary-bottom .card .card__title,
+body.path-group:not(.group-type-challenge) .region--complementary-bottom .card .offcanvas-head,
+body.path-group:not(.group-type-challenge) .region--complementary-bottom .off-canvas-xs-only .card__title,
+body.path-group:not(.group-type-challenge) .region--complementary-bottom .off-canvas-xs-only .offcanvas-head,
+body.path-group:not(.group-type-challenge) .region--complementary-bottom [class*='block-group-add'] .card__title,
+body.path-group:not(.group-type-challenge) .region--complementary-bottom [class*='block-group-add'] .offcanvas-head,
+body.path-group:not(.group-type-challenge) .region--complementary-bottom [class*='add-block'] .card__title,
+body.path-group:not(.group-type-challenge) .region--complementary-bottom [class*='add-block'] .offcanvas-head,
+body.path-group:not(.group-type-challenge) .region--complementary-top .card .card__title,
+body.path-group:not(.group-type-challenge) .region--complementary-top .card .offcanvas-head,
+body.path-group:not(.group-type-challenge) .region--complementary-top .off-canvas-xs-only .card__title,
+body.path-group:not(.group-type-challenge) .region--complementary-top .off-canvas-xs-only .offcanvas-head,
+body.path-group:not(.group-type-challenge) .region--complementary-top [class*='block-group-add'] .card__title,
+body.path-group:not(.group-type-challenge) .region--complementary-top [class*='block-group-add'] .offcanvas-head,
+body.path-group:not(.group-type-challenge) .region--complementary-top [class*='add-block'] .card__title,
+body.path-group:not(.group-type-challenge) .region--complementary-top [class*='add-block'] .offcanvas-head,
 body.details .region--complementary-bottom .card .card__title,
 body.details .region--complementary-bottom .card .offcanvas-head,
 body.details .region--complementary-bottom .off-canvas-xs-only .card__title,
 body.details .region--complementary-bottom .off-canvas-xs-only .offcanvas-head,
+body.details .region--complementary-bottom [class*='block-group-add'] .card__title,
+body.details .region--complementary-bottom [class*='block-group-add'] .offcanvas-head,
+body.details .region--complementary-bottom [class*='add-block'] .card__title,
+body.details .region--complementary-bottom [class*='add-block'] .offcanvas-head,
 body.details .region--complementary-top .card .card__title,
 body.details .region--complementary-top .card .offcanvas-head,
 body.details .region--complementary-top .off-canvas-xs-only .card__title,
 body.details .region--complementary-top .off-canvas-xs-only .offcanvas-head,
+body.details .region--complementary-top [class*='block-group-add'] .card__title,
+body.details .region--complementary-top [class*='block-group-add'] .offcanvas-head,
+body.details .region--complementary-top [class*='add-block'] .card__title,
+body.details .region--complementary-top [class*='add-block'] .offcanvas-head,
 body.path-user .region--complementary-bottom .card .card__title,
 body.path-user .region--complementary-bottom .card .offcanvas-head,
 body.path-user .region--complementary-bottom .off-canvas-xs-only .card__title,
 body.path-user .region--complementary-bottom .off-canvas-xs-only .offcanvas-head,
+body.path-user .region--complementary-bottom [class*='block-group-add'] .card__title,
+body.path-user .region--complementary-bottom [class*='block-group-add'] .offcanvas-head,
+body.path-user .region--complementary-bottom [class*='add-block'] .card__title,
+body.path-user .region--complementary-bottom [class*='add-block'] .offcanvas-head,
 body.path-user .region--complementary-top .card .card__title,
 body.path-user .region--complementary-top .card .offcanvas-head,
 body.path-user .region--complementary-top .off-canvas-xs-only .card__title,
-body.path-user .region--complementary-top .off-canvas-xs-only .offcanvas-head {
+body.path-user .region--complementary-top .off-canvas-xs-only .offcanvas-head,
+body.path-user .region--complementary-top [class*='block-group-add'] .card__title,
+body.path-user .region--complementary-top [class*='block-group-add'] .offcanvas-head,
+body.path-user .region--complementary-top [class*='add-block'] .card__title,
+body.path-user .region--complementary-top [class*='add-block'] .offcanvas-head {
   padding-top: 1.5rem;
   font-size: .875rem;
   line-height: 20px;
 }
 
-body.path-group .region--complementary-bottom .card .card__block,
-body.path-group .region--complementary-bottom .card .offcanvas-body,
-body.path-group .region--complementary-bottom .off-canvas-xs-only .card__block,
-body.path-group .region--complementary-bottom .off-canvas-xs-only .offcanvas-body,
-body.path-group .region--complementary-top .card .card__block,
-body.path-group .region--complementary-top .card .offcanvas-body,
-body.path-group .region--complementary-top .off-canvas-xs-only .card__block,
-body.path-group .region--complementary-top .off-canvas-xs-only .offcanvas-body,
+body.path-group:not(.group-type-challenge) .region--complementary-bottom .card .card__block,
+body.path-group:not(.group-type-challenge) .region--complementary-bottom .card .offcanvas-body,
+body.path-group:not(.group-type-challenge) .region--complementary-bottom .off-canvas-xs-only .card__block,
+body.path-group:not(.group-type-challenge) .region--complementary-bottom .off-canvas-xs-only .offcanvas-body,
+body.path-group:not(.group-type-challenge) .region--complementary-bottom [class*='block-group-add'] .card__block,
+body.path-group:not(.group-type-challenge) .region--complementary-bottom [class*='block-group-add'] .offcanvas-body,
+body.path-group:not(.group-type-challenge) .region--complementary-bottom [class*='add-block'] .card__block,
+body.path-group:not(.group-type-challenge) .region--complementary-bottom [class*='add-block'] .offcanvas-body,
+body.path-group:not(.group-type-challenge) .region--complementary-top .card .card__block,
+body.path-group:not(.group-type-challenge) .region--complementary-top .card .offcanvas-body,
+body.path-group:not(.group-type-challenge) .region--complementary-top .off-canvas-xs-only .card__block,
+body.path-group:not(.group-type-challenge) .region--complementary-top .off-canvas-xs-only .offcanvas-body,
+body.path-group:not(.group-type-challenge) .region--complementary-top [class*='block-group-add'] .card__block,
+body.path-group:not(.group-type-challenge) .region--complementary-top [class*='block-group-add'] .offcanvas-body,
+body.path-group:not(.group-type-challenge) .region--complementary-top [class*='add-block'] .card__block,
+body.path-group:not(.group-type-challenge) .region--complementary-top [class*='add-block'] .offcanvas-body,
 body.details .region--complementary-bottom .card .card__block,
 body.details .region--complementary-bottom .card .offcanvas-body,
 body.details .region--complementary-bottom .off-canvas-xs-only .card__block,
 body.details .region--complementary-bottom .off-canvas-xs-only .offcanvas-body,
+body.details .region--complementary-bottom [class*='block-group-add'] .card__block,
+body.details .region--complementary-bottom [class*='block-group-add'] .offcanvas-body,
+body.details .region--complementary-bottom [class*='add-block'] .card__block,
+body.details .region--complementary-bottom [class*='add-block'] .offcanvas-body,
 body.details .region--complementary-top .card .card__block,
 body.details .region--complementary-top .card .offcanvas-body,
 body.details .region--complementary-top .off-canvas-xs-only .card__block,
 body.details .region--complementary-top .off-canvas-xs-only .offcanvas-body,
+body.details .region--complementary-top [class*='block-group-add'] .card__block,
+body.details .region--complementary-top [class*='block-group-add'] .offcanvas-body,
+body.details .region--complementary-top [class*='add-block'] .card__block,
+body.details .region--complementary-top [class*='add-block'] .offcanvas-body,
 body.path-user .region--complementary-bottom .card .card__block,
 body.path-user .region--complementary-bottom .card .offcanvas-body,
 body.path-user .region--complementary-bottom .off-canvas-xs-only .card__block,
 body.path-user .region--complementary-bottom .off-canvas-xs-only .offcanvas-body,
+body.path-user .region--complementary-bottom [class*='block-group-add'] .card__block,
+body.path-user .region--complementary-bottom [class*='block-group-add'] .offcanvas-body,
+body.path-user .region--complementary-bottom [class*='add-block'] .card__block,
+body.path-user .region--complementary-bottom [class*='add-block'] .offcanvas-body,
 body.path-user .region--complementary-top .card .card__block,
 body.path-user .region--complementary-top .card .offcanvas-body,
 body.path-user .region--complementary-top .off-canvas-xs-only .card__block,
-body.path-user .region--complementary-top .off-canvas-xs-only .offcanvas-body {
+body.path-user .region--complementary-top .off-canvas-xs-only .offcanvas-body,
+body.path-user .region--complementary-top [class*='block-group-add'] .card__block,
+body.path-user .region--complementary-top [class*='block-group-add'] .offcanvas-body,
+body.path-user .region--complementary-top [class*='add-block'] .card__block,
+body.path-user .region--complementary-top [class*='add-block'] .offcanvas-body {
   padding-top: 1.25rem;
   padding-bottom: 2.5rem;
 }
 
-.card--list body.path-group .region--complementary-bottom .card .card__block, .card--list
-body.path-group .region--complementary-bottom .card .offcanvas-body, .card--list
-body.path-group .region--complementary-bottom .off-canvas-xs-only .card__block, .card--list
-body.path-group .region--complementary-bottom .off-canvas-xs-only .offcanvas-body, .card--list
-body.path-group .region--complementary-top .card .card__block, .card--list
-body.path-group .region--complementary-top .card .offcanvas-body, .card--list
-body.path-group .region--complementary-top .off-canvas-xs-only .card__block, .card--list
-body.path-group .region--complementary-top .off-canvas-xs-only .offcanvas-body, .card--list
+.card--list body.path-group:not(.group-type-challenge) .region--complementary-bottom .card .card__block, .card--list
+body.path-group:not(.group-type-challenge) .region--complementary-bottom .card .offcanvas-body, .card--list
+body.path-group:not(.group-type-challenge) .region--complementary-bottom .off-canvas-xs-only .card__block, .card--list
+body.path-group:not(.group-type-challenge) .region--complementary-bottom .off-canvas-xs-only .offcanvas-body, .card--list
+body.path-group:not(.group-type-challenge) .region--complementary-bottom [class*='block-group-add'] .card__block, .card--list
+body.path-group:not(.group-type-challenge) .region--complementary-bottom [class*='block-group-add'] .offcanvas-body, .card--list
+body.path-group:not(.group-type-challenge) .region--complementary-bottom [class*='add-block'] .card__block, .card--list
+body.path-group:not(.group-type-challenge) .region--complementary-bottom [class*='add-block'] .offcanvas-body, .card--list
+body.path-group:not(.group-type-challenge) .region--complementary-top .card .card__block, .card--list
+body.path-group:not(.group-type-challenge) .region--complementary-top .card .offcanvas-body, .card--list
+body.path-group:not(.group-type-challenge) .region--complementary-top .off-canvas-xs-only .card__block, .card--list
+body.path-group:not(.group-type-challenge) .region--complementary-top .off-canvas-xs-only .offcanvas-body, .card--list
+body.path-group:not(.group-type-challenge) .region--complementary-top [class*='block-group-add'] .card__block, .card--list
+body.path-group:not(.group-type-challenge) .region--complementary-top [class*='block-group-add'] .offcanvas-body, .card--list
+body.path-group:not(.group-type-challenge) .region--complementary-top [class*='add-block'] .card__block, .card--list
+body.path-group:not(.group-type-challenge) .region--complementary-top [class*='add-block'] .offcanvas-body, .card--list
 body.details .region--complementary-bottom .card .card__block, .card--list
 body.details .region--complementary-bottom .card .offcanvas-body, .card--list
 body.details .region--complementary-bottom .off-canvas-xs-only .card__block, .card--list
 body.details .region--complementary-bottom .off-canvas-xs-only .offcanvas-body, .card--list
+body.details .region--complementary-bottom [class*='block-group-add'] .card__block, .card--list
+body.details .region--complementary-bottom [class*='block-group-add'] .offcanvas-body, .card--list
+body.details .region--complementary-bottom [class*='add-block'] .card__block, .card--list
+body.details .region--complementary-bottom [class*='add-block'] .offcanvas-body, .card--list
 body.details .region--complementary-top .card .card__block, .card--list
 body.details .region--complementary-top .card .offcanvas-body, .card--list
 body.details .region--complementary-top .off-canvas-xs-only .card__block, .card--list
 body.details .region--complementary-top .off-canvas-xs-only .offcanvas-body, .card--list
+body.details .region--complementary-top [class*='block-group-add'] .card__block, .card--list
+body.details .region--complementary-top [class*='block-group-add'] .offcanvas-body, .card--list
+body.details .region--complementary-top [class*='add-block'] .card__block, .card--list
+body.details .region--complementary-top [class*='add-block'] .offcanvas-body, .card--list
 body.path-user .region--complementary-bottom .card .card__block, .card--list
 body.path-user .region--complementary-bottom .card .offcanvas-body, .card--list
 body.path-user .region--complementary-bottom .off-canvas-xs-only .card__block, .card--list
 body.path-user .region--complementary-bottom .off-canvas-xs-only .offcanvas-body, .card--list
+body.path-user .region--complementary-bottom [class*='block-group-add'] .card__block, .card--list
+body.path-user .region--complementary-bottom [class*='block-group-add'] .offcanvas-body, .card--list
+body.path-user .region--complementary-bottom [class*='add-block'] .card__block, .card--list
+body.path-user .region--complementary-bottom [class*='add-block'] .offcanvas-body, .card--list
 body.path-user .region--complementary-top .card .card__block, .card--list
 body.path-user .region--complementary-top .card .offcanvas-body, .card--list
 body.path-user .region--complementary-top .off-canvas-xs-only .card__block, .card--list
-body.path-user .region--complementary-top .off-canvas-xs-only .offcanvas-body {
+body.path-user .region--complementary-top .off-canvas-xs-only .offcanvas-body, .card--list
+body.path-user .region--complementary-top [class*='block-group-add'] .card__block, .card--list
+body.path-user .region--complementary-top [class*='block-group-add'] .offcanvas-body, .card--list
+body.path-user .region--complementary-top [class*='add-block'] .card__block, .card--list
+body.path-user .region--complementary-top [class*='add-block'] .offcanvas-body {
   padding-bottom: 0;
 }
 
-body.path-group .region--complementary-bottom .card.card--list .card__block--list,
-body.path-group .region--complementary-bottom .off-canvas-xs-only.card--list .card__block--list,
-body.path-group .region--complementary-top .card.card--list .card__block--list,
-body.path-group .region--complementary-top .off-canvas-xs-only.card--list .card__block--list,
+body.path-group:not(.group-type-challenge) .region--complementary-bottom .card.card--list .card__block--list,
+body.path-group:not(.group-type-challenge) .region--complementary-bottom .off-canvas-xs-only.card--list .card__block--list,
+body.path-group:not(.group-type-challenge) .region--complementary-bottom [class*='block-group-add'].card--list .card__block--list,
+body.path-group:not(.group-type-challenge) .region--complementary-bottom [class*='add-block'].card--list .card__block--list,
+body.path-group:not(.group-type-challenge) .region--complementary-top .card.card--list .card__block--list,
+body.path-group:not(.group-type-challenge) .region--complementary-top .off-canvas-xs-only.card--list .card__block--list,
+body.path-group:not(.group-type-challenge) .region--complementary-top [class*='block-group-add'].card--list .card__block--list,
+body.path-group:not(.group-type-challenge) .region--complementary-top [class*='add-block'].card--list .card__block--list,
 body.details .region--complementary-bottom .card.card--list .card__block--list,
 body.details .region--complementary-bottom .off-canvas-xs-only.card--list .card__block--list,
+body.details .region--complementary-bottom [class*='block-group-add'].card--list .card__block--list,
+body.details .region--complementary-bottom [class*='add-block'].card--list .card__block--list,
 body.details .region--complementary-top .card.card--list .card__block--list,
 body.details .region--complementary-top .off-canvas-xs-only.card--list .card__block--list,
+body.details .region--complementary-top [class*='block-group-add'].card--list .card__block--list,
+body.details .region--complementary-top [class*='add-block'].card--list .card__block--list,
 body.path-user .region--complementary-bottom .card.card--list .card__block--list,
 body.path-user .region--complementary-bottom .off-canvas-xs-only.card--list .card__block--list,
+body.path-user .region--complementary-bottom [class*='block-group-add'].card--list .card__block--list,
+body.path-user .region--complementary-bottom [class*='add-block'].card--list .card__block--list,
 body.path-user .region--complementary-top .card.card--list .card__block--list,
-body.path-user .region--complementary-top .off-canvas-xs-only.card--list .card__block--list {
+body.path-user .region--complementary-top .off-canvas-xs-only.card--list .card__block--list,
+body.path-user .region--complementary-top [class*='block-group-add'].card--list .card__block--list,
+body.path-user .region--complementary-top [class*='add-block'].card--list .card__block--list {
   padding-bottom: 0;
 }
 
-body.path-group .region--complementary-bottom .card.card--list .card__block--list:last-child,
-body.path-group .region--complementary-bottom .off-canvas-xs-only.card--list .card__block--list:last-child,
-body.path-group .region--complementary-top .card.card--list .card__block--list:last-child,
-body.path-group .region--complementary-top .off-canvas-xs-only.card--list .card__block--list:last-child,
+body.path-group:not(.group-type-challenge) .region--complementary-bottom .card.card--list .card__block--list:last-child,
+body.path-group:not(.group-type-challenge) .region--complementary-bottom .off-canvas-xs-only.card--list .card__block--list:last-child,
+body.path-group:not(.group-type-challenge) .region--complementary-bottom [class*='block-group-add'].card--list .card__block--list:last-child,
+body.path-group:not(.group-type-challenge) .region--complementary-bottom [class*='add-block'].card--list .card__block--list:last-child,
+body.path-group:not(.group-type-challenge) .region--complementary-top .card.card--list .card__block--list:last-child,
+body.path-group:not(.group-type-challenge) .region--complementary-top .off-canvas-xs-only.card--list .card__block--list:last-child,
+body.path-group:not(.group-type-challenge) .region--complementary-top [class*='block-group-add'].card--list .card__block--list:last-child,
+body.path-group:not(.group-type-challenge) .region--complementary-top [class*='add-block'].card--list .card__block--list:last-child,
 body.details .region--complementary-bottom .card.card--list .card__block--list:last-child,
 body.details .region--complementary-bottom .off-canvas-xs-only.card--list .card__block--list:last-child,
+body.details .region--complementary-bottom [class*='block-group-add'].card--list .card__block--list:last-child,
+body.details .region--complementary-bottom [class*='add-block'].card--list .card__block--list:last-child,
 body.details .region--complementary-top .card.card--list .card__block--list:last-child,
 body.details .region--complementary-top .off-canvas-xs-only.card--list .card__block--list:last-child,
+body.details .region--complementary-top [class*='block-group-add'].card--list .card__block--list:last-child,
+body.details .region--complementary-top [class*='add-block'].card--list .card__block--list:last-child,
 body.path-user .region--complementary-bottom .card.card--list .card__block--list:last-child,
 body.path-user .region--complementary-bottom .off-canvas-xs-only.card--list .card__block--list:last-child,
+body.path-user .region--complementary-bottom [class*='block-group-add'].card--list .card__block--list:last-child,
+body.path-user .region--complementary-bottom [class*='add-block'].card--list .card__block--list:last-child,
 body.path-user .region--complementary-top .card.card--list .card__block--list:last-child,
-body.path-user .region--complementary-top .off-canvas-xs-only.card--list .card__block--list:last-child {
+body.path-user .region--complementary-top .off-canvas-xs-only.card--list .card__block--list:last-child,
+body.path-user .region--complementary-top [class*='block-group-add'].card--list .card__block--list:last-child,
+body.path-user .region--complementary-top [class*='add-block'].card--list .card__block--list:last-child {
   padding-bottom: 2.5rem;
 }
 
-body.path-group .region--complementary-bottom .card .offcanvas-body,
-body.path-group .region--complementary-bottom .off-canvas-xs-only .offcanvas-body,
-body.path-group .region--complementary-top .card .offcanvas-body,
-body.path-group .region--complementary-top .off-canvas-xs-only .offcanvas-body,
+body.path-group:not(.group-type-challenge) .region--complementary-bottom .card .offcanvas-body,
+body.path-group:not(.group-type-challenge) .region--complementary-bottom .off-canvas-xs-only .offcanvas-body,
+body.path-group:not(.group-type-challenge) .region--complementary-bottom [class*='block-group-add'] .offcanvas-body,
+body.path-group:not(.group-type-challenge) .region--complementary-bottom [class*='add-block'] .offcanvas-body,
+body.path-group:not(.group-type-challenge) .region--complementary-top .card .offcanvas-body,
+body.path-group:not(.group-type-challenge) .region--complementary-top .off-canvas-xs-only .offcanvas-body,
+body.path-group:not(.group-type-challenge) .region--complementary-top [class*='block-group-add'] .offcanvas-body,
+body.path-group:not(.group-type-challenge) .region--complementary-top [class*='add-block'] .offcanvas-body,
 body.details .region--complementary-bottom .card .offcanvas-body,
 body.details .region--complementary-bottom .off-canvas-xs-only .offcanvas-body,
+body.details .region--complementary-bottom [class*='block-group-add'] .offcanvas-body,
+body.details .region--complementary-bottom [class*='add-block'] .offcanvas-body,
 body.details .region--complementary-top .card .offcanvas-body,
 body.details .region--complementary-top .off-canvas-xs-only .offcanvas-body,
+body.details .region--complementary-top [class*='block-group-add'] .offcanvas-body,
+body.details .region--complementary-top [class*='add-block'] .offcanvas-body,
 body.path-user .region--complementary-bottom .card .offcanvas-body,
 body.path-user .region--complementary-bottom .off-canvas-xs-only .offcanvas-body,
+body.path-user .region--complementary-bottom [class*='block-group-add'] .offcanvas-body,
+body.path-user .region--complementary-bottom [class*='add-block'] .offcanvas-body,
 body.path-user .region--complementary-top .card .offcanvas-body,
-body.path-user .region--complementary-top .off-canvas-xs-only .offcanvas-body {
+body.path-user .region--complementary-top .off-canvas-xs-only .offcanvas-body,
+body.path-user .region--complementary-top [class*='block-group-add'] .offcanvas-body,
+body.path-user .region--complementary-top [class*='add-block'] .offcanvas-body {
   padding-bottom: 0;
 }
 
-body.path-group .region--complementary-bottom .card .card__actionbar,
-body.path-group .region--complementary-bottom .off-canvas-xs-only .card__actionbar,
-body.path-group .region--complementary-top .card .card__actionbar,
-body.path-group .region--complementary-top .off-canvas-xs-only .card__actionbar,
+body.path-group:not(.group-type-challenge) .region--complementary-bottom .card .card__actionbar,
+body.path-group:not(.group-type-challenge) .region--complementary-bottom .off-canvas-xs-only .card__actionbar,
+body.path-group:not(.group-type-challenge) .region--complementary-bottom [class*='block-group-add'] .card__actionbar,
+body.path-group:not(.group-type-challenge) .region--complementary-bottom [class*='add-block'] .card__actionbar,
+body.path-group:not(.group-type-challenge) .region--complementary-top .card .card__actionbar,
+body.path-group:not(.group-type-challenge) .region--complementary-top .off-canvas-xs-only .card__actionbar,
+body.path-group:not(.group-type-challenge) .region--complementary-top [class*='block-group-add'] .card__actionbar,
+body.path-group:not(.group-type-challenge) .region--complementary-top [class*='add-block'] .card__actionbar,
 body.details .region--complementary-bottom .card .card__actionbar,
 body.details .region--complementary-bottom .off-canvas-xs-only .card__actionbar,
+body.details .region--complementary-bottom [class*='block-group-add'] .card__actionbar,
+body.details .region--complementary-bottom [class*='add-block'] .card__actionbar,
 body.details .region--complementary-top .card .card__actionbar,
 body.details .region--complementary-top .off-canvas-xs-only .card__actionbar,
+body.details .region--complementary-top [class*='block-group-add'] .card__actionbar,
+body.details .region--complementary-top [class*='add-block'] .card__actionbar,
 body.path-user .region--complementary-bottom .card .card__actionbar,
 body.path-user .region--complementary-bottom .off-canvas-xs-only .card__actionbar,
+body.path-user .region--complementary-bottom [class*='block-group-add'] .card__actionbar,
+body.path-user .region--complementary-bottom [class*='add-block'] .card__actionbar,
 body.path-user .region--complementary-top .card .card__actionbar,
-body.path-user .region--complementary-top .off-canvas-xs-only .card__actionbar {
+body.path-user .region--complementary-top .off-canvas-xs-only .card__actionbar,
+body.path-user .region--complementary-top [class*='block-group-add'] .card__actionbar,
+body.path-user .region--complementary-top [class*='add-block'] .card__actionbar {
   padding: 0;
 }
 
-body.path-group .region--complementary-bottom .card .card__actionbar .card__link,
-body.path-group .region--complementary-bottom .off-canvas-xs-only .card__actionbar .card__link,
-body.path-group .region--complementary-top .card .card__actionbar .card__link,
-body.path-group .region--complementary-top .off-canvas-xs-only .card__actionbar .card__link,
+body.path-group:not(.group-type-challenge) .region--complementary-bottom .card .card__actionbar .card__link,
+body.path-group:not(.group-type-challenge) .region--complementary-bottom .off-canvas-xs-only .card__actionbar .card__link,
+body.path-group:not(.group-type-challenge) .region--complementary-bottom [class*='block-group-add'] .card__actionbar .card__link,
+body.path-group:not(.group-type-challenge) .region--complementary-bottom [class*='add-block'] .card__actionbar .card__link,
+body.path-group:not(.group-type-challenge) .region--complementary-top .card .card__actionbar .card__link,
+body.path-group:not(.group-type-challenge) .region--complementary-top .off-canvas-xs-only .card__actionbar .card__link,
+body.path-group:not(.group-type-challenge) .region--complementary-top [class*='block-group-add'] .card__actionbar .card__link,
+body.path-group:not(.group-type-challenge) .region--complementary-top [class*='add-block'] .card__actionbar .card__link,
 body.details .region--complementary-bottom .card .card__actionbar .card__link,
 body.details .region--complementary-bottom .off-canvas-xs-only .card__actionbar .card__link,
+body.details .region--complementary-bottom [class*='block-group-add'] .card__actionbar .card__link,
+body.details .region--complementary-bottom [class*='add-block'] .card__actionbar .card__link,
 body.details .region--complementary-top .card .card__actionbar .card__link,
 body.details .region--complementary-top .off-canvas-xs-only .card__actionbar .card__link,
+body.details .region--complementary-top [class*='block-group-add'] .card__actionbar .card__link,
+body.details .region--complementary-top [class*='add-block'] .card__actionbar .card__link,
 body.path-user .region--complementary-bottom .card .card__actionbar .card__link,
 body.path-user .region--complementary-bottom .off-canvas-xs-only .card__actionbar .card__link,
+body.path-user .region--complementary-bottom [class*='block-group-add'] .card__actionbar .card__link,
+body.path-user .region--complementary-bottom [class*='add-block'] .card__actionbar .card__link,
 body.path-user .region--complementary-top .card .card__actionbar .card__link,
-body.path-user .region--complementary-top .off-canvas-xs-only .card__actionbar .card__link {
+body.path-user .region--complementary-top .off-canvas-xs-only .card__actionbar .card__link,
+body.path-user .region--complementary-top [class*='block-group-add'] .card__actionbar .card__link,
+body.path-user .region--complementary-top [class*='add-block'] .card__actionbar .card__link {
   position: relative;
   float: none;
   margin-left: 0;
@@ -1006,29 +1201,53 @@ body.path-user .region--complementary-top .off-canvas-xs-only .card__actionbar .
   text-transform: uppercase;
 }
 
-body.path-group .region--complementary-bottom .card .card__actionbar .card__link:before, body.path-group .region--complementary-bottom .card .card__actionbar .card__link:after,
-body.path-group .region--complementary-bottom .off-canvas-xs-only .card__actionbar .card__link:before,
-body.path-group .region--complementary-bottom .off-canvas-xs-only .card__actionbar .card__link:after,
-body.path-group .region--complementary-top .card .card__actionbar .card__link:before,
-body.path-group .region--complementary-top .card .card__actionbar .card__link:after,
-body.path-group .region--complementary-top .off-canvas-xs-only .card__actionbar .card__link:before,
-body.path-group .region--complementary-top .off-canvas-xs-only .card__actionbar .card__link:after,
+body.path-group:not(.group-type-challenge) .region--complementary-bottom .card .card__actionbar .card__link:before, body.path-group:not(.group-type-challenge) .region--complementary-bottom .card .card__actionbar .card__link:after,
+body.path-group:not(.group-type-challenge) .region--complementary-bottom .off-canvas-xs-only .card__actionbar .card__link:before,
+body.path-group:not(.group-type-challenge) .region--complementary-bottom .off-canvas-xs-only .card__actionbar .card__link:after,
+body.path-group:not(.group-type-challenge) .region--complementary-bottom [class*='block-group-add'] .card__actionbar .card__link:before,
+body.path-group:not(.group-type-challenge) .region--complementary-bottom [class*='block-group-add'] .card__actionbar .card__link:after,
+body.path-group:not(.group-type-challenge) .region--complementary-bottom [class*='add-block'] .card__actionbar .card__link:before,
+body.path-group:not(.group-type-challenge) .region--complementary-bottom [class*='add-block'] .card__actionbar .card__link:after,
+body.path-group:not(.group-type-challenge) .region--complementary-top .card .card__actionbar .card__link:before,
+body.path-group:not(.group-type-challenge) .region--complementary-top .card .card__actionbar .card__link:after,
+body.path-group:not(.group-type-challenge) .region--complementary-top .off-canvas-xs-only .card__actionbar .card__link:before,
+body.path-group:not(.group-type-challenge) .region--complementary-top .off-canvas-xs-only .card__actionbar .card__link:after,
+body.path-group:not(.group-type-challenge) .region--complementary-top [class*='block-group-add'] .card__actionbar .card__link:before,
+body.path-group:not(.group-type-challenge) .region--complementary-top [class*='block-group-add'] .card__actionbar .card__link:after,
+body.path-group:not(.group-type-challenge) .region--complementary-top [class*='add-block'] .card__actionbar .card__link:before,
+body.path-group:not(.group-type-challenge) .region--complementary-top [class*='add-block'] .card__actionbar .card__link:after,
 body.details .region--complementary-bottom .card .card__actionbar .card__link:before,
 body.details .region--complementary-bottom .card .card__actionbar .card__link:after,
 body.details .region--complementary-bottom .off-canvas-xs-only .card__actionbar .card__link:before,
 body.details .region--complementary-bottom .off-canvas-xs-only .card__actionbar .card__link:after,
+body.details .region--complementary-bottom [class*='block-group-add'] .card__actionbar .card__link:before,
+body.details .region--complementary-bottom [class*='block-group-add'] .card__actionbar .card__link:after,
+body.details .region--complementary-bottom [class*='add-block'] .card__actionbar .card__link:before,
+body.details .region--complementary-bottom [class*='add-block'] .card__actionbar .card__link:after,
 body.details .region--complementary-top .card .card__actionbar .card__link:before,
 body.details .region--complementary-top .card .card__actionbar .card__link:after,
 body.details .region--complementary-top .off-canvas-xs-only .card__actionbar .card__link:before,
 body.details .region--complementary-top .off-canvas-xs-only .card__actionbar .card__link:after,
+body.details .region--complementary-top [class*='block-group-add'] .card__actionbar .card__link:before,
+body.details .region--complementary-top [class*='block-group-add'] .card__actionbar .card__link:after,
+body.details .region--complementary-top [class*='add-block'] .card__actionbar .card__link:before,
+body.details .region--complementary-top [class*='add-block'] .card__actionbar .card__link:after,
 body.path-user .region--complementary-bottom .card .card__actionbar .card__link:before,
 body.path-user .region--complementary-bottom .card .card__actionbar .card__link:after,
 body.path-user .region--complementary-bottom .off-canvas-xs-only .card__actionbar .card__link:before,
 body.path-user .region--complementary-bottom .off-canvas-xs-only .card__actionbar .card__link:after,
+body.path-user .region--complementary-bottom [class*='block-group-add'] .card__actionbar .card__link:before,
+body.path-user .region--complementary-bottom [class*='block-group-add'] .card__actionbar .card__link:after,
+body.path-user .region--complementary-bottom [class*='add-block'] .card__actionbar .card__link:before,
+body.path-user .region--complementary-bottom [class*='add-block'] .card__actionbar .card__link:after,
 body.path-user .region--complementary-top .card .card__actionbar .card__link:before,
 body.path-user .region--complementary-top .card .card__actionbar .card__link:after,
 body.path-user .region--complementary-top .off-canvas-xs-only .card__actionbar .card__link:before,
-body.path-user .region--complementary-top .off-canvas-xs-only .card__actionbar .card__link:after {
+body.path-user .region--complementary-top .off-canvas-xs-only .card__actionbar .card__link:after,
+body.path-user .region--complementary-top [class*='block-group-add'] .card__actionbar .card__link:before,
+body.path-user .region--complementary-top [class*='block-group-add'] .card__actionbar .card__link:after,
+body.path-user .region--complementary-top [class*='add-block'] .card__actionbar .card__link:before,
+body.path-user .region--complementary-top [class*='add-block'] .card__actionbar .card__link:after {
   content: '';
   position: absolute;
   top: 50%;
@@ -1036,36 +1255,60 @@ body.path-user .region--complementary-top .off-canvas-xs-only .card__actionbar .
   transform: translateY(-50%);
 }
 
-body.path-group .region--complementary-bottom .card .card__actionbar .card__link:before,
-body.path-group .region--complementary-bottom .off-canvas-xs-only .card__actionbar .card__link:before,
-body.path-group .region--complementary-top .card .card__actionbar .card__link:before,
-body.path-group .region--complementary-top .off-canvas-xs-only .card__actionbar .card__link:before,
+body.path-group:not(.group-type-challenge) .region--complementary-bottom .card .card__actionbar .card__link:before,
+body.path-group:not(.group-type-challenge) .region--complementary-bottom .off-canvas-xs-only .card__actionbar .card__link:before,
+body.path-group:not(.group-type-challenge) .region--complementary-bottom [class*='block-group-add'] .card__actionbar .card__link:before,
+body.path-group:not(.group-type-challenge) .region--complementary-bottom [class*='add-block'] .card__actionbar .card__link:before,
+body.path-group:not(.group-type-challenge) .region--complementary-top .card .card__actionbar .card__link:before,
+body.path-group:not(.group-type-challenge) .region--complementary-top .off-canvas-xs-only .card__actionbar .card__link:before,
+body.path-group:not(.group-type-challenge) .region--complementary-top [class*='block-group-add'] .card__actionbar .card__link:before,
+body.path-group:not(.group-type-challenge) .region--complementary-top [class*='add-block'] .card__actionbar .card__link:before,
 body.details .region--complementary-bottom .card .card__actionbar .card__link:before,
 body.details .region--complementary-bottom .off-canvas-xs-only .card__actionbar .card__link:before,
+body.details .region--complementary-bottom [class*='block-group-add'] .card__actionbar .card__link:before,
+body.details .region--complementary-bottom [class*='add-block'] .card__actionbar .card__link:before,
 body.details .region--complementary-top .card .card__actionbar .card__link:before,
 body.details .region--complementary-top .off-canvas-xs-only .card__actionbar .card__link:before,
+body.details .region--complementary-top [class*='block-group-add'] .card__actionbar .card__link:before,
+body.details .region--complementary-top [class*='add-block'] .card__actionbar .card__link:before,
 body.path-user .region--complementary-bottom .card .card__actionbar .card__link:before,
 body.path-user .region--complementary-bottom .off-canvas-xs-only .card__actionbar .card__link:before,
+body.path-user .region--complementary-bottom [class*='block-group-add'] .card__actionbar .card__link:before,
+body.path-user .region--complementary-bottom [class*='add-block'] .card__actionbar .card__link:before,
 body.path-user .region--complementary-top .card .card__actionbar .card__link:before,
-body.path-user .region--complementary-top .off-canvas-xs-only .card__actionbar .card__link:before {
+body.path-user .region--complementary-top .off-canvas-xs-only .card__actionbar .card__link:before,
+body.path-user .region--complementary-top [class*='block-group-add'] .card__actionbar .card__link:before,
+body.path-user .region--complementary-top [class*='add-block'] .card__actionbar .card__link:before {
   width: 18px;
   height: 18px;
   border-radius: 50%;
   z-index: 1;
 }
 
-body.path-group .region--complementary-bottom .card .card__actionbar .card__link:after,
-body.path-group .region--complementary-bottom .off-canvas-xs-only .card__actionbar .card__link:after,
-body.path-group .region--complementary-top .card .card__actionbar .card__link:after,
-body.path-group .region--complementary-top .off-canvas-xs-only .card__actionbar .card__link:after,
+body.path-group:not(.group-type-challenge) .region--complementary-bottom .card .card__actionbar .card__link:after,
+body.path-group:not(.group-type-challenge) .region--complementary-bottom .off-canvas-xs-only .card__actionbar .card__link:after,
+body.path-group:not(.group-type-challenge) .region--complementary-bottom [class*='block-group-add'] .card__actionbar .card__link:after,
+body.path-group:not(.group-type-challenge) .region--complementary-bottom [class*='add-block'] .card__actionbar .card__link:after,
+body.path-group:not(.group-type-challenge) .region--complementary-top .card .card__actionbar .card__link:after,
+body.path-group:not(.group-type-challenge) .region--complementary-top .off-canvas-xs-only .card__actionbar .card__link:after,
+body.path-group:not(.group-type-challenge) .region--complementary-top [class*='block-group-add'] .card__actionbar .card__link:after,
+body.path-group:not(.group-type-challenge) .region--complementary-top [class*='add-block'] .card__actionbar .card__link:after,
 body.details .region--complementary-bottom .card .card__actionbar .card__link:after,
 body.details .region--complementary-bottom .off-canvas-xs-only .card__actionbar .card__link:after,
+body.details .region--complementary-bottom [class*='block-group-add'] .card__actionbar .card__link:after,
+body.details .region--complementary-bottom [class*='add-block'] .card__actionbar .card__link:after,
 body.details .region--complementary-top .card .card__actionbar .card__link:after,
 body.details .region--complementary-top .off-canvas-xs-only .card__actionbar .card__link:after,
+body.details .region--complementary-top [class*='block-group-add'] .card__actionbar .card__link:after,
+body.details .region--complementary-top [class*='add-block'] .card__actionbar .card__link:after,
 body.path-user .region--complementary-bottom .card .card__actionbar .card__link:after,
 body.path-user .region--complementary-bottom .off-canvas-xs-only .card__actionbar .card__link:after,
+body.path-user .region--complementary-bottom [class*='block-group-add'] .card__actionbar .card__link:after,
+body.path-user .region--complementary-bottom [class*='add-block'] .card__actionbar .card__link:after,
 body.path-user .region--complementary-top .card .card__actionbar .card__link:after,
-body.path-user .region--complementary-top .off-canvas-xs-only .card__actionbar .card__link:after {
+body.path-user .region--complementary-top .off-canvas-xs-only .card__actionbar .card__link:after,
+body.path-user .region--complementary-top [class*='block-group-add'] .card__actionbar .card__link:after,
+body.path-user .region--complementary-top [class*='add-block'] .card__actionbar .card__link:after {
   content: '';
   display: block;
   right: 5px;
@@ -1077,8 +1320,8 @@ body.path-user .region--complementary-top .off-canvas-xs-only .card__actionbar .
   z-index: 2;
 }
 
-body.path-group .content--side_wrapper-card .region--content > .card,
-body.path-group .content--side_wrapper-card .region--content .card,
+body.path-group:not(.group-type-challenge) .content--side_wrapper-card .region--content > .card,
+body.path-group:not(.group-type-challenge) .content--side_wrapper-card .region--content .card,
 body.details .content--side_wrapper-card .region--content > .card,
 body.details .content--side_wrapper-card .region--content .card,
 body.path-user .content--side_wrapper-card .region--content > .card,
@@ -1091,10 +1334,10 @@ body.path-user .content--side_wrapper-card .region--content .card {
       align-items: flex-start;
 }
 
-body.path-group .content--side_wrapper-card .region--content > .card .card__body,
-body.path-group .content--side_wrapper-card .region--content > .card .card__block,
-body.path-group .content--side_wrapper-card .region--content .card .card__body,
-body.path-group .content--side_wrapper-card .region--content .card .card__block,
+body.path-group:not(.group-type-challenge) .content--side_wrapper-card .region--content > .card .card__body,
+body.path-group:not(.group-type-challenge) .content--side_wrapper-card .region--content > .card .card__block,
+body.path-group:not(.group-type-challenge) .content--side_wrapper-card .region--content .card .card__body,
+body.path-group:not(.group-type-challenge) .content--side_wrapper-card .region--content .card .card__block,
 body.details .content--side_wrapper-card .region--content > .card .card__body,
 body.details .content--side_wrapper-card .region--content > .card .card__block,
 body.details .content--side_wrapper-card .region--content .card .card__body,
@@ -1104,20 +1347,21 @@ body.path-user .content--side_wrapper-card .region--content > .card .card__block
 body.path-user .content--side_wrapper-card .region--content .card .card__body,
 body.path-user .content--side_wrapper-card .region--content .card .card__block {
   padding: 0;
+  width: 100%;
 }
 
-body.path-group .content--side_wrapper-card .region--content > .card .card__body .view--group-managers,
-body.path-group .content--side_wrapper-card .region--content > .card .card__body .card__block,
-body.path-group .content--side_wrapper-card .region--content > .card .card__body .card__text,
-body.path-group .content--side_wrapper-card .region--content > .card .card__block .view--group-managers,
-body.path-group .content--side_wrapper-card .region--content > .card .card__block .card__block,
-body.path-group .content--side_wrapper-card .region--content > .card .card__block .card__text,
-body.path-group .content--side_wrapper-card .region--content .card .card__body .view--group-managers,
-body.path-group .content--side_wrapper-card .region--content .card .card__body .card__block,
-body.path-group .content--side_wrapper-card .region--content .card .card__body .card__text,
-body.path-group .content--side_wrapper-card .region--content .card .card__block .view--group-managers,
-body.path-group .content--side_wrapper-card .region--content .card .card__block .card__block,
-body.path-group .content--side_wrapper-card .region--content .card .card__block .card__text,
+body.path-group:not(.group-type-challenge) .content--side_wrapper-card .region--content > .card .card__body .view--group-managers,
+body.path-group:not(.group-type-challenge) .content--side_wrapper-card .region--content > .card .card__body .card__block,
+body.path-group:not(.group-type-challenge) .content--side_wrapper-card .region--content > .card .card__body .card__text,
+body.path-group:not(.group-type-challenge) .content--side_wrapper-card .region--content > .card .card__block .view--group-managers,
+body.path-group:not(.group-type-challenge) .content--side_wrapper-card .region--content > .card .card__block .card__block,
+body.path-group:not(.group-type-challenge) .content--side_wrapper-card .region--content > .card .card__block .card__text,
+body.path-group:not(.group-type-challenge) .content--side_wrapper-card .region--content .card .card__body .view--group-managers,
+body.path-group:not(.group-type-challenge) .content--side_wrapper-card .region--content .card .card__body .card__block,
+body.path-group:not(.group-type-challenge) .content--side_wrapper-card .region--content .card .card__body .card__text,
+body.path-group:not(.group-type-challenge) .content--side_wrapper-card .region--content .card .card__block .view--group-managers,
+body.path-group:not(.group-type-challenge) .content--side_wrapper-card .region--content .card .card__block .card__block,
+body.path-group:not(.group-type-challenge) .content--side_wrapper-card .region--content .card .card__block .card__text,
 body.details .content--side_wrapper-card .region--content > .card .card__body .view--group-managers,
 body.details .content--side_wrapper-card .region--content > .card .card__body .card__block,
 body.details .content--side_wrapper-card .region--content > .card .card__body .card__text,
@@ -1212,19 +1456,19 @@ body.path-user .content--side_wrapper-card .region--content .card .card__block .
   margin-bottom: 0;
 }
 
-.group-about.content--side_wrapper-card .region--content {
+.path-group:not(.group-type-challenge) .group-about.content--side_wrapper-card .region--content {
   padding-bottom: 1.5rem;
 }
 
-.group-about.content--side_wrapper-card .region--content .block-gpedc-tagging .card {
+.path-group:not(.group-type-challenge) .group-about.content--side_wrapper-card .region--content .block-gpedc-tagging .card {
   padding-top: 0;
 }
 
-.group-about.content--side_wrapper-card .region--content > section {
+.path-group:not(.group-type-challenge) .group-about.content--side_wrapper-card .region--content > section {
   position: relative;
 }
 
-.group-about.content--side_wrapper-card .region--content > section:after {
+.path-group:not(.group-type-challenge) .group-about.content--side_wrapper-card .region--content > section:after {
   content: '';
   position: absolute;
   height: 2px;
@@ -1235,31 +1479,31 @@ body.path-user .content--side_wrapper-card .region--content .card .card__block .
   background: #fafafa;
 }
 
-.group-about.content--side_wrapper-card .region--content > section:last-child:after {
+.path-group:not(.group-type-challenge) .group-about.content--side_wrapper-card .region--content > section:last-child:after {
   display: none;
 }
 
-.group-about.content--side_wrapper-card .region--content .view--group-managers .list-item__avatar--medium {
+.path-group:not(.group-type-challenge) .group-about.content--side_wrapper-card .region--content .view--group-managers .list-item__avatar--medium {
   margin-top: 0;
   margin-right: 14px;
 }
 
-.group-about.content--side_wrapper-card .region--content .view--group-managers .card__block {
+.path-group:not(.group-type-challenge) .group-about.content--side_wrapper-card .region--content .view--group-managers .card__block {
   -ms-flex: 0 0 100%;
       flex: 0 0 100%;
   max-width: 100%;
 }
 
-.group-about.content--side_wrapper-card .region--content .view--group-managers .list-item__text {
+.path-group:not(.group-type-challenge) .group-about.content--side_wrapper-card .region--content .view--group-managers .list-item__text {
   margin-top: 4px;
   font-size: .875rem;
 }
 
-.group-about.content--side_wrapper-card .region--content .view--group-managers .list-item__text a {
+.path-group:not(.group-type-challenge) .group-about.content--side_wrapper-card .region--content .view--group-managers .list-item__text a {
   font-weight: 300;
 }
 
-.group-about .block-views-blockgroup-managers-block-list-managers {
+.path-group:not(.group-type-challenge) .group-about .block-views-blockgroup-managers-block-list-managers {
   display: -ms-flexbox;
   display: flex;
   -ms-flex-direction: column;
@@ -1268,7 +1512,7 @@ body.path-user .content--side_wrapper-card .region--content .card .card__block .
   position: relative;
 }
 
-.group-about .block-views-blockgroup-managers-block-list-managers:after {
+.path-group:not(.group-type-challenge) .group-about .block-views-blockgroup-managers-block-list-managers:after {
   content: '';
   position: absolute;
   height: 2px;
@@ -1279,7 +1523,7 @@ body.path-user .content--side_wrapper-card .region--content .card .card__block .
   background: #fafafa;
 }
 
-.group-about .block-views-blockgroup-managers-block-list-managers > .card__title {
+.path-group:not(.group-type-challenge) .group-about .block-views-blockgroup-managers-block-list-managers > .card__title {
   -ms-flex-preferred-size: auto;
       flex-basis: auto;
   padding: 0 15px 0 0;
@@ -1291,12 +1535,12 @@ body.path-user .content--side_wrapper-card .region--content .card .card__block .
   text-transform: none;
 }
 
-.group-about .block-views-blockgroup-managers-block-list-managers > .card__title.align-center {
+.path-group:not(.group-type-challenge) .group-about .block-views-blockgroup-managers-block-list-managers > .card__title.align-center {
   -ms-flex-item-align: start;
       align-self: flex-start;
 }
 
-.group-about .block-views-blockgroup-managers-block-list-managers > .card__block {
+.path-group:not(.group-type-challenge) .group-about .block-views-blockgroup-managers-block-list-managers > .card__block {
   -ms-flex-positive: 1;
       flex-grow: 1;
   -ms-flex-preferred-size: 0;
@@ -1304,11 +1548,11 @@ body.path-user .content--side_wrapper-card .region--content .card .card__block .
   max-width: 100%;
 }
 
-.group-about .block-views-blockgroup-managers-block-list-managers > .card__block p:last-child {
+.path-group:not(.group-type-challenge) .group-about .block-views-blockgroup-managers-block-list-managers > .card__block p:last-child {
   margin-bottom: 0;
 }
 
-.group-about .view-group-information .card .card__body {
+.path-group:not(.group-type-challenge) .group-about .view-group-information .card .card__body {
   display: -ms-flexbox;
   display: flex;
   -ms-flex-direction: column;
@@ -1316,7 +1560,7 @@ body.path-user .content--side_wrapper-card .region--content .card .card__block .
   padding: 1.875rem 0;
 }
 
-.group-about .view-group-information .card .card__body > .field--label {
+.path-group:not(.group-type-challenge) .group-about .view-group-information .card .card__body > .field--label {
   -ms-flex-preferred-size: auto;
       flex-basis: auto;
   padding: 0 15px 0 0;
@@ -1328,12 +1572,12 @@ body.path-user .content--side_wrapper-card .region--content .card .card__block .
   text-transform: none;
 }
 
-.group-about .view-group-information .card .card__body > .field--label.align-center {
+.path-group:not(.group-type-challenge) .group-about .view-group-information .card .card__body > .field--label.align-center {
   -ms-flex-item-align: start;
       align-self: flex-start;
 }
 
-.group-about .view-group-information .card .card__body > .field--text {
+.path-group:not(.group-type-challenge) .group-about .view-group-information .card .card__body > .field--text {
   -ms-flex-positive: 1;
       flex-grow: 1;
   -ms-flex-preferred-size: 0;
@@ -1341,11 +1585,11 @@ body.path-user .content--side_wrapper-card .region--content .card .card__block .
   max-width: 100%;
 }
 
-.group-about .view-group-information .card .card__body > .field--text p:last-child {
+.path-group:not(.group-type-challenge) .group-about .view-group-information .card .card__body > .field--text p:last-child {
   margin-bottom: 0;
 }
 
-.group-about .group-about__item {
+.path-group:not(.group-type-challenge) .group-about .group-about__item {
   display: -ms-flexbox;
   display: flex;
   -ms-flex-direction: column;
@@ -1354,7 +1598,7 @@ body.path-user .content--side_wrapper-card .region--content .card .card__block .
   position: relative;
 }
 
-.group-about .group-about__item:after {
+.path-group:not(.group-type-challenge) .group-about .group-about__item:after {
   content: '';
   position: absolute;
   height: 2px;
@@ -1365,11 +1609,11 @@ body.path-user .content--side_wrapper-card .region--content .card .card__block .
   background: #fafafa;
 }
 
-.group-about .group-about__item:last-child:after {
+.path-group:not(.group-type-challenge) .group-about .group-about__item:last-child:after {
   display: none;
 }
 
-.group-about .group-about__item > p {
+.path-group:not(.group-type-challenge) .group-about .group-about__item > p {
   -ms-flex-preferred-size: auto;
       flex-basis: auto;
   padding: 0 15px 0 0;
@@ -1381,12 +1625,12 @@ body.path-user .content--side_wrapper-card .region--content .card .card__block .
   text-transform: none;
 }
 
-.group-about .group-about__item > p.align-center {
+.path-group:not(.group-type-challenge) .group-about .group-about__item > p.align-center {
   -ms-flex-item-align: start;
       align-self: flex-start;
 }
 
-.group-about .group-about__item .group-about__wrapper {
+.path-group:not(.group-type-challenge) .group-about .group-about__item .group-about__wrapper {
   -ms-flex-positive: 1;
       flex-grow: 1;
   -ms-flex-preferred-size: 0;
@@ -1394,11 +1638,25 @@ body.path-user .content--side_wrapper-card .region--content .card .card__block .
   max-width: 100%;
 }
 
-.group-about .group-about__item .group-about__wrapper p:last-child {
+.path-group:not(.group-type-challenge) .group-about .group-about__item .group-about__wrapper p:last-child {
   margin-bottom: 0;
 }
 
 @media (min-width: 600px) {
+
+  .card-file__link {
+    padding: 13px 25px 13px 20px;
+  }
+
+  .card-file__link > * {
+    font-size: 1rem;
+  }
+
+  .card-file__type svg {
+    width: 18px;
+    height: 18px;
+    margin-left: 25px;
+  }
 
   .paragraph--featured .card__link > .field,
   .paragraph--block .card__link > .field {
@@ -1481,11 +1739,13 @@ body.path-user .content--side_wrapper-card .region--content .card .card__block .
     padding: 1.5rem 2.5rem 2.5rem;
   }
 
-  .block-social-tagging .card__block > p:not(:first-child) {
+  .block-social-tagging .card__block .group-about__item > p:not(:first-child),
+  .block-gpedc-tagging .card__block .group-about__item > p:not(:first-child) {
     margin-top: 15px;
   }
 
-  .block-social-tagging .card__block .badge {
+  .block-social-tagging .card__block .badge,
+  .block-gpedc-tagging .card__block .badge {
     margin-right: 20px;
   }
 
@@ -1543,7 +1803,11 @@ body.path-user .content--side_wrapper-card .region--content .card .card__block .
     margin-bottom: -15px;
   }
 
-  body.path-group .region--complementary-top .card.block-social-tagging:after,
+  .card.block-group-statistic-block, .card.block-profile-statistic-block {
+    padding-top: 35px;
+  }
+
+  body.path-group:not(.group-type-challenge) .region--complementary-top .card.block-social-tagging:after,
   body.details .region--complementary-top .card.block-social-tagging:after,
   body.path-user .region--complementary-top .card.block-social-tagging:after {
     content: '' !important;
@@ -1557,24 +1821,36 @@ body.path-user .content--side_wrapper-card .region--content .card .card__block .
     background: #fafafa;
   }
 
-  body.path-group .region--complementary-bottom .card:after,
-  body.path-group .region--complementary-bottom .off-canvas-xs-only:after,
-  body.path-group .region--complementary-top .card:after,
-  body.path-group .region--complementary-top .off-canvas-xs-only:after,
+  body.path-group:not(.group-type-challenge) .region--complementary-bottom .card:after,
+  body.path-group:not(.group-type-challenge) .region--complementary-bottom .off-canvas-xs-only:after,
+  body.path-group:not(.group-type-challenge) .region--complementary-bottom [class*='block-group-add']:after,
+  body.path-group:not(.group-type-challenge) .region--complementary-bottom [class*='add-block']:after,
+  body.path-group:not(.group-type-challenge) .region--complementary-top .card:after,
+  body.path-group:not(.group-type-challenge) .region--complementary-top .off-canvas-xs-only:after,
+  body.path-group:not(.group-type-challenge) .region--complementary-top [class*='block-group-add']:after,
+  body.path-group:not(.group-type-challenge) .region--complementary-top [class*='add-block']:after,
   body.details .region--complementary-bottom .card:after,
   body.details .region--complementary-bottom .off-canvas-xs-only:after,
+  body.details .region--complementary-bottom [class*='block-group-add']:after,
+  body.details .region--complementary-bottom [class*='add-block']:after,
   body.details .region--complementary-top .card:after,
   body.details .region--complementary-top .off-canvas-xs-only:after,
+  body.details .region--complementary-top [class*='block-group-add']:after,
+  body.details .region--complementary-top [class*='add-block']:after,
   body.path-user .region--complementary-bottom .card:after,
   body.path-user .region--complementary-bottom .off-canvas-xs-only:after,
+  body.path-user .region--complementary-bottom [class*='block-group-add']:after,
+  body.path-user .region--complementary-bottom [class*='add-block']:after,
   body.path-user .region--complementary-top .card:after,
-  body.path-user .region--complementary-top .off-canvas-xs-only:after {
+  body.path-user .region--complementary-top .off-canvas-xs-only:after,
+  body.path-user .region--complementary-top [class*='block-group-add']:after,
+  body.path-user .region--complementary-top [class*='add-block']:after {
     left: 2.5rem;
     right: 2.5rem;
   }
 
-  body.path-group .content--side_wrapper-card .region--content > .card,
-  body.path-group .content--side_wrapper-card .region--content .card,
+  body.path-group:not(.group-type-challenge) .content--side_wrapper-card .region--content > .card,
+  body.path-group:not(.group-type-challenge) .content--side_wrapper-card .region--content .card,
   body.details .content--side_wrapper-card .region--content > .card,
   body.details .content--side_wrapper-card .region--content .card,
   body.path-user .content--side_wrapper-card .region--content > .card,
@@ -1600,52 +1876,56 @@ body.path-user .content--side_wrapper-card .region--content .card .card__block .
     max-width: 140px;
   }
 
-  .group-about.content--side_wrapper-card .region--content > section:after {
+  .path-group:not(.group-type-challenge) .group-about.content--side_wrapper-card .region--content > section:after {
     left: 3.5rem;
     right: 3.5rem;
   }
 
-  .group-about .block-views-blockgroup-managers-block-list-managers {
+  .path-group:not(.group-type-challenge) .group-about .block-views-blockgroup-managers-block-list-managers {
     -ms-flex-direction: row;
     flex-direction: row;
   }
 
-  .group-about .block-views-blockgroup-managers-block-list-managers:after {
+  .path-group:not(.group-type-challenge) .group-about .block-views-blockgroup-managers-block-list-managers:after {
     left: 3.5rem;
     right: 3.5rem;
   }
 
-  .group-about .block-views-blockgroup-managers-block-list-managers > .card__title {
+  .path-group:not(.group-type-challenge) .group-about .block-views-blockgroup-managers-block-list-managers > .card__title {
     -ms-flex: 0 0 140px;
     flex: 0 0 140px;
     max-width: 140px;
   }
 
-  .group-about .view-group-information .card .card__body {
+  .path-group:not(.group-type-challenge) .group-about .view-group-information .card .card__body {
     -ms-flex-direction: row;
     flex-direction: row;
   }
 
-  .group-about .view-group-information .card .card__body > .field--label {
+  .path-group:not(.group-type-challenge) .group-about .view-group-information .card .card__body > .field--label {
     -ms-flex: 0 0 140px;
     flex: 0 0 140px;
     max-width: 140px;
   }
 
-  .group-about .group-about__item {
+  .path-group:not(.group-type-challenge) .group-about .group-about__item {
     -ms-flex-direction: row;
     flex-direction: row;
   }
 
-  .group-about .group-about__item:after {
+  .path-group:not(.group-type-challenge) .group-about .group-about__item:after {
     left: 0;
     right: 0;
   }
 
-  .group-about .group-about__item > p {
+  .path-group:not(.group-type-challenge) .group-about .group-about__item > p {
     -ms-flex: 0 0 140px;
     flex: 0 0 140px;
     max-width: 140px;
+  }
+
+  .path-group:not(.group-type-challenge) .group-about .group-about__item > p {
+    margin-top: 3px;
   }
 }
 
@@ -1655,14 +1935,6 @@ body.path-user .content--side_wrapper-card .region--content .card .card__block .
     -ms-flex: 1 0 calc(20% - 3.5% - 20px);
     flex: 1 0 calc(20% - 3.5% - 20px);
   }
-
-  .card.teaser:not(.teaser--tile) .card__actionbar-side > .card__link {
-    margin-left: 24px;
-  }
-
-  .card.teaser:not(.teaser--tile) .teaser__tag {
-    margin-right: 15px;
-  }
 }
 
 @media (max-width: 899px) {
@@ -1671,42 +1943,8 @@ body.path-user .content--side_wrapper-card .region--content .card .card__block .
     padding-top: 100px;
   }
 
-  .card.teaser:not(.teaser--tile) .card__actionbar {
-    -ms-flex-wrap: wrap;
-    flex-wrap: wrap;
-  }
-
-  .card.teaser:not(.teaser--tile) .card__actionbar-side.right-side {
-    -ms-flex: 0 0 100%;
-    flex: 0 0 100%;
-    max-width: 100%;
-    padding-top: 10px;
-  }
-
   .user-information.content--side_wrapper-card .region--content .view-id-user_information .card {
     padding-left: 1.25rem;
     padding-right: 1.25rem;
-  }
-}
-
-@media (max-width: 599px) {
-
-  .card.teaser:not(.teaser--tile) .card__actionbar-side.right-side {
-    -ms-flex-direction: column;
-    flex-direction: column;
-    -ms-flex-align: end;
-    align-items: flex-end;
-  }
-
-  .card.teaser:not(.teaser--tile) .card__actionbar-side.right-side > .card__link {
-    margin-bottom: 10px;
-  }
-
-  .card.teaser:not(.teaser--tile) .card__actionbar-side.right-side > .card__link:nth-last-child(1) {
-    margin-bottom: 0;
-  }
-
-  .card.teaser:not(.teaser--tile) .card__link {
-    margin-left: 12px;
   }
 }

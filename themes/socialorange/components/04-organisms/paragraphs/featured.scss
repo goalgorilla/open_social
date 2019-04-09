@@ -1,7 +1,12 @@
+@import "settings";
+
 .paragraph--featured {
   .paragraph--section & {
+    padding: 0 2em;
+
     @media(min-width: 1200px) {
-      padding: 50px 0;
+      padding-top: 50px;
+      padding-bottom: 50px;
       margin-left: calc(-100vw / 2 + #{1160px} / 2);
       margin-right: calc(-100vw / 2 + #{1160px} / 2);
     }
@@ -20,4 +25,42 @@
 
 }
 
+.paragraph--type--featured-items {
+  .title {
+    margin-top: 25px;
+    font-size: 24px;
+    line-height: 2;
+  }
+}
 
+// Section title
+//.section-title,
+.paragraph--featured .title,
+.paragraph--type--featured-items .title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  padding: 20px 0;
+  text-transform: uppercase;
+
+  @include for-tablet-landscape-up {
+    font-size: 2.25rem;
+    padding: 40px 0;
+  }
+
+  > * {
+    position: relative;
+    display: inline-block;
+    line-height: 1.2;
+
+    &::after {
+      display: none;
+      content: '';
+      position: absolute;
+      top: 100%;
+      margin-top: 13px;
+      left: 0;
+      width: 100%;
+      height: 10px;
+    }
+  }
+}
