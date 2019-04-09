@@ -23,8 +23,19 @@
         <div class="group-about__item">
           <p>{{ content.title }}</p>
           <div class="group-about__wrapper">
-            {% for tag in content.tags %}
-              <a class="badge badge-default badge--large badge--pill" href="{{ tag.url }}">{{ tag.name }}</a>
+            {% for group in content.group %}
+              <div class="tags-group">
+                {% for tag in group.tags %}
+                  {% set classes = [
+                    'badge badge-default badge--large badge--pill',
+                    tag.is_parent ? 'parent-tag',
+                    tag.with_children ? 'tag-with-children',
+                    tag.is_child ? 'child-tag'
+                  ] %}
+                  <a {{ attributes.setAttribute('class', classes) }}
+                    href="{{ tag.url }}">{{ tag.name }}</a>
+                {% endfor %}
+              </div>
             {% endfor %}
           </div>
         </div>

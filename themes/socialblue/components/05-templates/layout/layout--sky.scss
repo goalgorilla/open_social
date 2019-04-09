@@ -176,7 +176,7 @@
 }
 
 body.socialblue--sky {
-  &.path-group,
+  &.path-group:not(.group-type-challenge),
   &.details,
   &.path-user {
     .layout--with-complementary {
@@ -229,6 +229,12 @@ body.socialblue--sky {
 
     .region--secondary-navigation {
       z-index: 3;
+    }
+
+    &.mode-search {
+      .region--complementary_wrapper {
+        z-index: 1;
+      }
     }
 
     .region--complementary_wrapper {

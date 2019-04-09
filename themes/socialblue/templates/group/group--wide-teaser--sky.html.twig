@@ -25,8 +25,8 @@
             <use xlink:href="#icon-location"></use>
           </svg>
           <span class="teaser__content-text">
-              {{ content.field_group_location }}
-            {% if content.field_group_location|render is not empty and content.field_group_address|render is not empty %} &bullet;{% endif %}
+            {{ content.field_group_location }}
+            {% if content.field_group_location|render is not empty and content.field_group_address|render is not empty %},{% endif %}
             {{ content.field_group_address }}
             </span>
         </div>
@@ -34,22 +34,28 @@
     </div>
 
     <div class="card__actionbar">
-      <div class="teaser__tag">
-        {{ group_type }}
-      </div>
+      <div class="card__actionbar-side">
+        <div class="teaser__tag">
+          {{ group_type }}
+        </div>
 
-      <div class="teaser__content-line">
-        <svg class="teaser__content-type-icon">
-          <use xlink:href="#icon-group"></use>
-        </svg>
-        <span class="teaser__content-text">
-          {{ group_members }}
+        <div class="badge teaser__badge" title="Total amount of members">
+        <span class="badge__container">
+          <svg class="badge__icon">
+            <use xlink:href="#icon-user"></use>
+          </svg>
+          <span class="badge__label">
+            {{ group_members }}
+          </span>
         </span>
+        </div>
       </div>
 
-      <a href="{{ url }}" class="card__link btn btn-default" title="{{ label }}">
-        {% trans %}Read more{% endtrans %}
-      </a>
+      <div class="card__actionbar-side right-side">
+        <a href="{{ url }}" class="card__link btn btn-default" title="{{ label }}">
+          {% trans %}Read more{% endtrans %}
+        </a>
+      </div>
     </div>
 
   </div>

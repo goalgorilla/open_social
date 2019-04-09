@@ -91,27 +91,27 @@
       flex-basis: 100%;
 }
 
-body.socialblue--sky.path-group .layout--with-complementary, body.socialblue--sky.details .layout--with-complementary, body.socialblue--sky.path-user .layout--with-complementary {
+body.socialblue--sky.path-group:not(.group-type-challenge) .layout--with-complementary, body.socialblue--sky.details .layout--with-complementary, body.socialblue--sky.path-user .layout--with-complementary {
   -webkit-box-orient: vertical;
   -webkit-box-direction: normal;
       -ms-flex-direction: column;
           flex-direction: column;
 }
 
-body.socialblue--sky.path-group .layout--with-complementary .navbar-secondary, body.socialblue--sky.details .layout--with-complementary .navbar-secondary, body.socialblue--sky.path-user .layout--with-complementary .navbar-secondary {
+body.socialblue--sky.path-group:not(.group-type-challenge) .layout--with-complementary .navbar-secondary, body.socialblue--sky.details .layout--with-complementary .navbar-secondary, body.socialblue--sky.path-user .layout--with-complementary .navbar-secondary {
   -webkit-box-flex: 0;
       -ms-flex: 0 0 100%;
           flex: 0 0 100%;
   max-width: 100%;
 }
 
-body.socialblue--sky.path-group .layout--with-complementary.sidebar-left .region--complementary, body.socialblue--sky.details .layout--with-complementary.sidebar-left .region--complementary, body.socialblue--sky.path-user .layout--with-complementary.sidebar-left .region--complementary {
+body.socialblue--sky.path-group:not(.group-type-challenge) .layout--with-complementary.sidebar-left .region--complementary, body.socialblue--sky.details .layout--with-complementary.sidebar-left .region--complementary, body.socialblue--sky.path-user .layout--with-complementary.sidebar-left .region--complementary {
   -webkit-box-ordinal-group: 2;
       -ms-flex-order: 1;
           order: 1;
 }
 
-body.socialblue--sky.path-group .layout--with-complementary.sidebar-left .region--secondary-navigation, body.socialblue--sky.details .layout--with-complementary.sidebar-left .region--secondary-navigation, body.socialblue--sky.path-user .layout--with-complementary.sidebar-left .region--secondary-navigation {
+body.socialblue--sky.path-group:not(.group-type-challenge) .layout--with-complementary.sidebar-left .region--secondary-navigation, body.socialblue--sky.details .layout--with-complementary.sidebar-left .region--secondary-navigation, body.socialblue--sky.path-user .layout--with-complementary.sidebar-left .region--secondary-navigation {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -120,17 +120,21 @@ body.socialblue--sky.path-group .layout--with-complementary.sidebar-left .region
           justify-content: flex-end;
 }
 
-body.socialblue--sky.path-group .region--secondary-navigation, body.socialblue--sky.details .region--secondary-navigation, body.socialblue--sky.path-user .region--secondary-navigation {
+body.socialblue--sky.path-group:not(.group-type-challenge) .region--secondary-navigation, body.socialblue--sky.details .region--secondary-navigation, body.socialblue--sky.path-user .region--secondary-navigation {
   z-index: 3;
 }
 
-body.socialblue--sky.path-group .region--complementary_wrapper, body.socialblue--sky.details .region--complementary_wrapper, body.socialblue--sky.path-user .region--complementary_wrapper {
+body.socialblue--sky.path-group:not(.group-type-challenge).mode-search .region--complementary_wrapper, body.socialblue--sky.details.mode-search .region--complementary_wrapper, body.socialblue--sky.path-user.mode-search .region--complementary_wrapper {
+  z-index: 1;
+}
+
+body.socialblue--sky.path-group:not(.group-type-challenge) .region--complementary_wrapper, body.socialblue--sky.details .region--complementary_wrapper, body.socialblue--sky.path-user .region--complementary_wrapper {
   position: relative;
   z-index: 1000;
 }
 
-body.socialblue--sky.path-group .content--side_wrapper .region--content,
-body.socialblue--sky.path-group .region--complementary_wrapper, body.socialblue--sky.details .content--side_wrapper .region--content,
+body.socialblue--sky.path-group:not(.group-type-challenge) .content--side_wrapper .region--content,
+body.socialblue--sky.path-group:not(.group-type-challenge) .region--complementary_wrapper, body.socialblue--sky.details .content--side_wrapper .region--content,
 body.socialblue--sky.details .region--complementary_wrapper, body.socialblue--sky.path-user .content--side_wrapper .region--content,
 body.socialblue--sky.path-user .region--complementary_wrapper {
   border-radius: 2px;
@@ -139,12 +143,12 @@ body.socialblue--sky.path-user .region--complementary_wrapper {
           box-shadow: 0 2px 4px #4a4a4a;
 }
 
-body.socialblue--sky.path-group .region--complementary-top + .region--complementary-bottom, body.socialblue--sky.details .region--complementary-top + .region--complementary-bottom, body.socialblue--sky.path-user .region--complementary-top + .region--complementary-bottom {
+body.socialblue--sky.path-group:not(.group-type-challenge) .region--complementary-top + .region--complementary-bottom, body.socialblue--sky.details .region--complementary-top + .region--complementary-bottom, body.socialblue--sky.path-user .region--complementary-top + .region--complementary-bottom {
   margin-top: 0;
 }
 
-body.socialblue--sky.path-group .region--complementary-bottom,
-body.socialblue--sky.path-group .region--complementary-top, body.socialblue--sky.details .region--complementary-bottom,
+body.socialblue--sky.path-group:not(.group-type-challenge) .region--complementary-bottom,
+body.socialblue--sky.path-group:not(.group-type-challenge) .region--complementary-top, body.socialblue--sky.details .region--complementary-bottom,
 body.socialblue--sky.details .region--complementary-top, body.socialblue--sky.path-user .region--complementary-bottom,
 body.socialblue--sky.path-user .region--complementary-top {
   padding-bottom: 0;
@@ -198,7 +202,7 @@ body.socialblue--sky.path-user .region--complementary-top {
             flex: 0 0 33.33333%;
     max-width: 33.33333%;
   }
-  body.socialblue--sky.path-group .layout--with-complementary .navbar-secondary, body.socialblue--sky.details .layout--with-complementary .navbar-secondary, body.socialblue--sky.path-user .layout--with-complementary .navbar-secondary {
+  body.socialblue--sky.path-group:not(.group-type-challenge) .layout--with-complementary .navbar-secondary, body.socialblue--sky.details .layout--with-complementary .navbar-secondary, body.socialblue--sky.path-user .layout--with-complementary .navbar-secondary {
     -webkit-box-flex: 0;
         -ms-flex: 0 0 66.66667%;
             flex: 0 0 66.66667%;
@@ -207,15 +211,15 @@ body.socialblue--sky.path-user .region--complementary-top {
         -ms-flex-order: 2;
             order: 2;
   }
-  body.socialblue--sky.path-group .layout--with-complementary .region--secondary-navigation, body.socialblue--sky.details .layout--with-complementary .region--secondary-navigation, body.socialblue--sky.path-user .layout--with-complementary .region--secondary-navigation {
+  body.socialblue--sky.path-group:not(.group-type-challenge) .layout--with-complementary .region--secondary-navigation, body.socialblue--sky.details .layout--with-complementary .region--secondary-navigation, body.socialblue--sky.path-user .layout--with-complementary .region--secondary-navigation {
     padding-left: 1rem;
     padding-right: 2rem;
   }
-  body.socialblue--sky.path-group .layout--with-complementary.sidebar-left .region--secondary-navigation, body.socialblue--sky.details .layout--with-complementary.sidebar-left .region--secondary-navigation, body.socialblue--sky.path-user .layout--with-complementary.sidebar-left .region--secondary-navigation {
+  body.socialblue--sky.path-group:not(.group-type-challenge) .layout--with-complementary.sidebar-left .region--secondary-navigation, body.socialblue--sky.details .layout--with-complementary.sidebar-left .region--secondary-navigation, body.socialblue--sky.path-user .layout--with-complementary.sidebar-left .region--secondary-navigation {
     padding-left: 2rem;
     padding-right: 1rem;
   }
-  body.socialblue--sky.path-group .region--complementary_wrapper, body.socialblue--sky.details .region--complementary_wrapper, body.socialblue--sky.path-user .region--complementary_wrapper {
+  body.socialblue--sky.path-group:not(.group-type-challenge) .region--complementary_wrapper, body.socialblue--sky.details .region--complementary_wrapper, body.socialblue--sky.path-user .region--complementary_wrapper {
     top: -64px;
   }
 }
@@ -242,19 +246,19 @@ body.socialblue--sky.path-user .region--complementary-top {
   .socialblue--sky .layout--with-three-columns .content--side {
     padding-left: 0;
   }
-  body.socialblue--sky.path-group .layout--with-complementary .region--secondary-navigation, body.socialblue--sky.details .layout--with-complementary .region--secondary-navigation, body.socialblue--sky.path-user .layout--with-complementary .region--secondary-navigation {
+  body.socialblue--sky.path-group:not(.group-type-challenge) .layout--with-complementary .region--secondary-navigation, body.socialblue--sky.details .layout--with-complementary .region--secondary-navigation, body.socialblue--sky.path-user .layout--with-complementary .region--secondary-navigation {
     padding-right: 20px;
     padding-left: 0;
   }
-  body.socialblue--sky.path-group .layout--with-complementary.sidebar-left .region--secondary-navigation, body.socialblue--sky.details .layout--with-complementary.sidebar-left .region--secondary-navigation, body.socialblue--sky.path-user .layout--with-complementary.sidebar-left .region--secondary-navigation {
+  body.socialblue--sky.path-group:not(.group-type-challenge) .layout--with-complementary.sidebar-left .region--secondary-navigation, body.socialblue--sky.details .layout--with-complementary.sidebar-left .region--secondary-navigation, body.socialblue--sky.path-user .layout--with-complementary.sidebar-left .region--secondary-navigation {
     padding-left: 20px;
     padding-right: 0;
   }
 }
 
 @media (max-width: 899px) {
-  body.socialblue--sky.path-group .region--complementary-bottom,
-  body.socialblue--sky.path-group .region--complementary-top, body.socialblue--sky.details .region--complementary-bottom,
+  body.socialblue--sky.path-group:not(.group-type-challenge) .region--complementary-bottom,
+  body.socialblue--sky.path-group:not(.group-type-challenge) .region--complementary-top, body.socialblue--sky.details .region--complementary-bottom,
   body.socialblue--sky.details .region--complementary-top, body.socialblue--sky.path-user .region--complementary-bottom,
   body.socialblue--sky.path-user .region--complementary-top {
     top: 0;

@@ -120,6 +120,56 @@
     }
   }
 
+  .card-file {
+     flex-basis: 100%;
+     margin-right: 0;
+
+     .icon-vote {
+       stroke: transparent;
+     }
+   }
+
+  .card-file__link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 50px;
+    font-weight: 300;
+
+    @include for-tablet-portrait-up {
+      padding: 13px 25px 13px 20px;
+    }
+
+    > * {
+      font-size: .75rem;
+
+      @include for-tablet-portrait-up {
+        font-size: 1rem;
+      }
+    }
+  }
+
+  .card-file__type {
+    position: static;
+    width: auto;
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+    margin-top: 0;
+
+    svg {
+      width: 16px;
+      height: 16px;
+      margin-left: 15px;
+
+      @include for-tablet-portrait-up {
+        width: 18px;
+        height: 18px;
+        margin-left: 25px;
+      }
+    }
+  }
+
   .card__counter {
     padding-bottom: 1.25rem;
 
@@ -216,33 +266,66 @@
         padding: 1.5rem 2.5rem 2.5rem;
       }
     }
+  }
 
-    .block-social-tagging & {
-      > p {
-        color: $gray-light;
-        font-size: .875rem;
-        margin-bottom: 15px;
+  .block-social-tagging {
+    .card__block {
+      .group-about__item {
+        .tags-group {
 
-        &:not(:first-child) {
-          @include for-tablet-landscape-up {
+          + .tags-group {
             margin-top: 15px;
           }
         }
-      }
 
-      .badge {
-        margin-bottom: 15px;
+        > p {
+          color: $gray-light;
+          font-size: .875rem;
+          margin-bottom: 15px;
 
-        @include for-tablet-landscape-up {
-          margin-right: 20px;
+          &:not(:first-child) {
+            @include for-tablet-landscape-up {
+              margin-top: 15px;
+            }
+          }
+        }
+
+        .badge {
+          margin-bottom: 15px;
+          border: 2px solid $badge-default-bg;
+
+          &.parent-tag.tag-with-children:not(.child-tag) {
+            background: transparent;
+
+            &:hover,
+            &:focus,
+            &:active {
+              background-color: rgba(#cdcdcd, .15);
+            }
+          }
+
+          @include for-tablet-landscape-up {
+            margin-right: 20px;
+          }
         }
       }
     }
   }
 
-  .card__link {
-    .paragraph--featured &,
-    .paragraph--block & {
+  .region--complementary-top,
+  .region--complementary-bottom {
+    .block-social-tagging {
+      .card__block {
+        .group-about__item {
+          margin-bottom: 15px;
+        }
+      }
+    }
+  }
+
+  .paragraph--featured,
+  .paragraph--block {
+    .card__link {
       > .field {
         display: flex;
         align-items: flex-end;
@@ -298,7 +381,6 @@
       }
     }
   }
-
 
   .card__featured-items {
     margin-bottom: 2.5rem;
@@ -688,6 +770,39 @@
     }
   }
 
+  .card {
+    &.block-group-statistic-block,
+    &.block-profile-statistic-block {
+      padding: 15px 1.25rem 0;
+
+      @include for-tablet-landscape-up {
+        padding-top: 35px;
+      }
+
+      .hero-footer__cta {
+        position: static;
+        flex: 0 0 100%;
+        max-width: 100%;
+        justify-content: center;
+        padding-left: 0;
+        padding-bottom: 2.5rem;
+
+        *:not(.caret) {
+          width: 100%;
+        }
+
+        .btn {
+          text-transform: uppercase;
+          border-radius: $border-radius-extrasmall !important;
+
+          &.btn-default {
+            background: transparent;
+          }
+        }
+      }
+    }
+  }
+
   //Move to separate file
   // User information card.
   .user-information {
@@ -732,7 +847,7 @@
 
   // Move to separate file
   // Group about card.
-  .group-about {
+  .path-group:not(.group-type-challenge) .group-about {
     &.content--side_wrapper-card .region--content {
       padding-bottom: 1.5rem;
 
@@ -807,6 +922,10 @@
 
       > p {
         @include title;
+
+        @include for-tablet-landscape-up {
+          margin-top: 3px;
+        }
       }
 
       .group-about__wrapper {
@@ -844,8 +963,14 @@ body.socialblue--sky {
     .region--complementary-bottom,
     .region--complementary-top {
       .local-actions,
-      [class*='block-group-add'] {
-        padding: 1.25rem 2.25rem .25rem;
+      [class*='block-group-add'],
+      [class*='add-block'] {
+        position: relative;
+        padding: 1.25rem 2.25rem;
+
+        .btn {
+          margin-bottom: 0;
+        }
       }
 
       .local-actions .btn {
@@ -853,7 +978,9 @@ body.socialblue--sky {
       }
 
       .card,
-      .off-canvas-xs-only {
+      .off-canvas-xs-only,
+      [class*='block-group-add'],
+      [class*='add-block'] {
         border-radius: 0 !important;
         box-shadow: none;
         padding-bottom: 1.5rem;
@@ -995,6 +1122,7 @@ body.socialblue--sky {
           .card__body,
           .card__block {
             padding: 0;
+            width: 100%;
 
             .view--group-managers,
             .card__block,
