@@ -16,7 +16,7 @@ function social_search_autocomplete_post_update_user_search_suggestions_type() {
   // huge with quite a few changes and this update hook will only run for sites
   // that used the pre-release version of this module.
   $config_file = drupal_get_path('module', 'social_search_autocomplete') . '/config/install/views.view.search_all_autocomplete.yml';
-  $config = Yaml::parse($config_file);
+  $config = Yaml::parseFile($config_file);
 
   \Drupal::configFactory()
     ->getEditable('views.view.search_all_autocomplete')

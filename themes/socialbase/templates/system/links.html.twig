@@ -40,7 +40,7 @@
       <h2{{ heading.attributes }}>{{ heading.text }}</h2>
     {%- endif -%}
   {%- endif -%}
-  {%- if links.edit -%}
+  {%- if links.edit or links.report -%}
     <div class="comment__actions pull-right">
       <button type="button" data-toggle="dropdown" aria-expanded="false" aria-haspopup="true" class="btn btn-icon-toggle dropdown-toggle">
         <svg class="btn-icon icon-gray">
@@ -59,13 +59,15 @@
               {{ item.link }}
             {%- elseif item.text_attributes -%}
               <span{{ item.text_attributes }}>{{ item.text }}</span>
+            {%- elseif item.disabled -%}
+              <span>{{ item.text }}</span>
             {%- else -%}
               {{ item.text }}
             {%- endif -%}
           </li>
         {%- endfor -%}
       </ul>
-  {%- if links.edit -%}
+  {%- if links.edit or links.report -%}
     </div>
   {%- endif %}
 {%- endif %}

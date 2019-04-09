@@ -94,22 +94,25 @@
 
   // Links within the dropdown menu
 
-  li > a {
-    padding: 8px 10px;
-    display: block;
-    clear: both;
-    line-height: $line-height-base;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    color: $gray;
+  li {
+    > a,
+    > span {
+      padding: 8px 10px;
+      display: block;
+      clear: both;
+      line-height: $line-height-base;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      color: $gray;
 
-    &:hover {
-      background-color: $gray-lightest;
-    }
+      &:hover {
+        background-color: $gray-lightest;
+      }
 
-    @include for-tablet-portrait-up {
-      padding: 4px 10px 4px 15px;
+      @include for-tablet-portrait-up {
+        padding: 4px 10px 4px 15px;
+      }
     }
 
   }
@@ -138,15 +141,17 @@
 //
 // Gray out text and ensure the hover/focus state remains gray
 
-.dropdown-menu > .disabled > a {
-
-  // Nuke hover/focus effects
-  &:hover,
-  &:focus {
-    text-decoration: none;
-    background-color: transparent;
-    background-image: none; // Remove CSS gradient
-    cursor: $cursor-disabled;
+.dropdown-menu > .disabled {
+  > a,
+  > span {
+    // Nuke hover/focus effects
+    &:hover,
+    &:focus {
+      text-decoration: none;
+      background-color: transparent;
+      background-image: none; // Remove CSS gradient
+      cursor: $cursor-disabled;
+    }
   }
 }
 
