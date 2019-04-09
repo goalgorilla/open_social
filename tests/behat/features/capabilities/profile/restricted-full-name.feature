@@ -101,3 +101,13 @@ Feature: I want to restrict full name visibility when nickname is used
     # TODO: This should happen automatically see: https://github.com/goalgorilla/open_social/pull/1306
     And I disable the module "social_profile_fields"
     And I disable the module "social_profile_privacy"
+
+  Scenario: Searching by username still works when name is restricted
+    Given I restrict real name usage
+    And Search indexes are up to date
+    And I am logged in as an "authenticated user"
+
+    When I search users for "user"
+    Then I should see "Open User"
+    And I should see "Hide my name"
+    And I should see "Completely Anonymous"
