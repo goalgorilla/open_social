@@ -149,6 +149,7 @@ class SocialPageTitleBlock extends PageTitleBlock implements ContainerFactoryPlu
           '#title' => $title,
           '#node' => $node,
           '#section_class' => 'page-title',
+          '#hero_node' => node_view($node, 'hero'),
         ];
 
       }

@@ -90,10 +90,6 @@ class Node extends PreprocessBase {
       $variables['display_submitted'] = TRUE;
     }
 
-    if ($variables['view_mode'] === 'hero') {
-      unset($variables['label']);
-    }
-
     // Date formats.
     $date = $variables['node']->getCreatedTime();
     if ($variables['view_mode'] === 'small_teaser') {

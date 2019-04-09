@@ -43,7 +43,8 @@
         <li class="pager__item pager__item--first">
           <a href="{{ items.first.href }}" title="{{ 'Go to first page'|t }}" rel="prev"{{ items.first.attributes }}>
             <span class="visually-hidden">{{ 'First page'|t }}</span>
-            <span aria-hidden="true">{{ items.first.text|default('first'|t) }}</span>
+            {%  set default_first = 'first' | t %}
+            <span aria-hidden="true">{{ items.first.text|default(default_first) }}</span>
           </a>
         </li>
       {% endif %}
@@ -53,7 +54,8 @@
         <li class="pager__item pager__item--previous">
           <a href="{{ items.previous.href }}" title="{{ 'Go to previous page'|t }}" rel="prev"{{ items.previous.attributes }}>
             <span class="visually-hidden">{{ 'Previous page'|t }}</span>
-            <span aria-hidden="true">{{ items.previous.text|default('previous'|t) }}</span>
+            {%  set default_previous = 'previous' | t %}
+            <span aria-hidden="true">{{ items.first.text|default(default_previous) }}</span>
           </a>
         </li>
       {% endif %}
@@ -80,7 +82,8 @@
         <li class="pager__item pager__item--next">
           <a href="{{ items.next.href }}" title="{{ 'Go to next page'|t }}" rel="next"{{ items.next.attributes }}>
             <span class="visually-hidden">{{ 'Next page'|t }}</span>
-            <span aria-hidden="true">{{ items.next.text|default('next'|t) }}</span>
+            {%  set default_next = 'next' | t %}
+            <span aria-hidden="true">{{ items.first.text|default(default_next) }}</span>
           </a>
         </li>
       {% endif %}
@@ -90,7 +93,8 @@
       <li class="pager__item pager__item--last">
         <a href="{{ items.last.href }}" title="{{ 'Go to last page'|t }}" rel="last"{{ items.last.attributes }}>
           <span class="visually-hidden">{{ 'Last page'|t }}</span>
-          <span aria-hidden="true">{{ items.last.text|default('last'|t) }}</span>
+          {%  set default_last = 'last' | t %}
+          <span aria-hidden="true">{{ items.first.text|default(default_last) }}</span>
         </a>
       </li>
       {% endif %}

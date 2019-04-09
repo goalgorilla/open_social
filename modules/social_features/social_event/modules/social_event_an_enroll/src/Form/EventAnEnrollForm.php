@@ -143,8 +143,9 @@ class EventAnEnrollForm extends EnrollActionForm {
 
         // Invalidate cache for our enrollment cache tag in
         // social_event_node_view_alter().
-        $cache_tag = 'enrollment:' . $nid . '-' . $uid;
-        Cache::invalidateTags([$cache_tag]);
+        $cache_tags[] = 'enrollment:' . $nid . '-' . $uid;
+        $cache_tags[] = 'node:' . $nid;
+        Cache::invalidateTags($cache_tags);
 
         drupal_set_message($this->t('You have successfully enrolled to this event. You have also received a notification via email.'));
       }
