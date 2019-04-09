@@ -12,6 +12,7 @@
 
           if (navSecondary.width() > navScroll.width()) {
             var total = 0;
+
             for(var i = 0; i < items.length; ++i) {
               total += $(items[i]).width();
 

@@ -25,17 +25,21 @@
         </div>
       {% endif %}
 
-      <div class="hero-image">
-        {{ content.field_event_image }}
-      </div>
+      {% if content.field_event_image %}
+        <div class="hero-image">
+          {{ content.field_event_image }}
+        </div>
+      {% endif %}
 
-      <div class="hero__tag">
-        {{ node_type }}
-        {% if node_tag %}
-          &nbsp; &nbsp; ▶ &nbsp; &nbsp;
-          {{ node_tag }}
-        {% endif %}
-      </div>
+      {% if node_type or node_tag %}
+        <div class="hero__tag">
+          {{ node_type }}
+          {% if node_tag %}
+            &nbsp; &nbsp; ▶ &nbsp; &nbsp;
+            {{ node_tag }}
+          {% endif %}
+        </div>
+      {% endif %}
 
       {{ title_prefix }}
       {% if label %}
