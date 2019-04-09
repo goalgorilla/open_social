@@ -6,6 +6,7 @@
  */
 
 use Drupal\user\Entity\Role;
+use Drupal\user\RoleInterface;
 
 /**
  * Implements hook_install().
@@ -130,7 +131,7 @@ function social_user_update_8008() {
   // Add permissions for sitemanager to administer social user settings.
   $role = Role::load('sitemanager');
 
-  if ($role instanceof \Drupal\user\RoleInterface) {
+  if ($role instanceof RoleInterface) {
     user_role_grant_permissions($role->id(), ['administer social_user settings']);
   }
 }
