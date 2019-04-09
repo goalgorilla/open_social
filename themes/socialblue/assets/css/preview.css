@@ -485,11 +485,19 @@ body {
   color: #fff;
 }
 
-.socialblue--sky .badge {
+.socialblue--sky .main-container .badge {
   border-radius: 2px;
   white-space: inherit;
   text-align: left;
-  color: inherit;
+}
+
+.socialblue--sky .main-container .teaser__badge {
+  color: #4d4d4d;
+  background: transparent;
+}
+
+.socialblue--sky .main-container .teaser__badge:hover, .socialblue--sky .main-container .teaser__badge:active, .socialblue--sky .main-container .teaser__badge:focus {
+  background: transparent;
 }
 
 .badge__icon {
@@ -553,7 +561,7 @@ body {
   background-color: #ffb00f;
 }
 
-.socialblue--sky .badge-accent {
+.socialblue--sky .main-container .badge-accent {
   padding-left: 15px;
   padding-right: 15px;
 }
@@ -619,7 +627,7 @@ a .badge-default:hover {
 }
 
 .socialblue--sky .btn:not(.btn-icon-toggle) {
-  border-radius: 10px;
+  border-radius: 5px;
   padding-left: 15px;
   padding-right: 15px;
   border-width: 1px;
@@ -631,8 +639,8 @@ a .badge-default:hover {
   padding: 7px;
 }
 
-.card__link .btn-default,
-.card__link.btn-default {
+.socialblue--sky .card__link .btn-default,
+.socialblue--sky .card__link.btn-default {
   border-width: 2px;
 }
 
@@ -1445,6 +1453,51 @@ html.js .input-group-addon .glyphicon.glyphicon-spin {
   border-bottom-left-radius: 10px;
 }
 
+.socialblue--sky .stream::before {
+  background: #d5d6d2;
+}
+
+.socialblue--sky .stream-icon {
+  width: 12px;
+  height: 12px;
+  top: 37px;
+  left: 2px;
+  background: #adadad;
+  -webkit-box-shadow: 1px 2px 6px rgba(0, 0, 0, 0.3);
+          box-shadow: 1px 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.socialblue--sky .stream-icon-new {
+  background: #1f80aa;
+}
+
+.socialblue--sky .card--stream {
+  -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.17);
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.17);
+}
+
+.socialblue--sky .teaser--stream {
+  background: transparent;
+}
+
+.socialblue--sky .teaser--stream .teaser__published-author {
+  -webkit-box-flex: 0;
+      -ms-flex-positive: 0;
+          flex-grow: 0;
+  margin-right: 10px;
+}
+
+.socialblue--sky .teaser--stream .teaser__published-author a {
+  font-weight: 300;
+}
+
+.socialblue--sky .teaser--stream .teaser__published-date {
+  margin-right: 10px;
+  -webkit-box-flex: 1;
+      -ms-flex-positive: 1;
+          flex-grow: 1;
+}
+
 .site-footer {
   background-color: #1f80aa;
   color: white;
@@ -2110,7 +2163,7 @@ blockquote {
 }
 
 @media (min-width: 1200px) {
-  .socialblue--sky .badge {
+  .socialblue--sky .main-container .badge {
     margin-right: 12px;
   }
 }

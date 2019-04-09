@@ -1,4 +1,5 @@
 {{ attach_library('socialbase/hero') }}
+{{ attach_library('socialblue/hero--sky') }}
 
 {% set cover_classes = [
   'cover hero__group',
@@ -18,9 +19,11 @@
   {% endif %}
   <div class="cover-wrap">
     <header class="page-title">
-      <div class="teaser__tag">
-        {{ group_type }}
-      </div>
+      {% if group_type %}
+        <div class="teaser__tag">
+          {{ group_type }}
+        </div>
+      {% endif %}
       <h1>{{ content.label }}</h1>
     </header>
     <footer class="hero-footer">

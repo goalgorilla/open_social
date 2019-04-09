@@ -22,15 +22,27 @@
 .badge {
   border-radius: $badge-border-radius;
   color: $badge-color;
+}
 
-  .socialblue--sky & {
+.socialblue--sky .main-container {
+  .badge {
     border-radius: $border-radius-extra;
     white-space: inherit;
     text-align: left;
-    color: inherit;
 
     @include for-desktop-up {
       margin-right: 12px;
+    }
+  }
+
+  .teaser__badge {
+    color: $default-color;
+    background: transparent;
+
+    &:hover,
+    &:active,
+    &:focus {
+      background: transparent;
     }
   }
 }
@@ -69,8 +81,10 @@
 
 .badge-accent {
   @include badge-variant($badge-accent-bg, $default-color);
+}
 
-  .socialblue--sky & {
+.socialblue--sky .main-container {
+  .badge-accent {
     padding-left: 15px;
     padding-right: 15px;
   }

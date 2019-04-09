@@ -212,7 +212,9 @@
 
   .card__block {
     @include for-tablet-landscape-up {
-      padding: 1.5rem 2.5rem 2.5rem;
+      &:not(.card__block--list) {
+        padding: 1.5rem 2.5rem 2.5rem;
+      }
     }
 
     .block-social-tagging & {
