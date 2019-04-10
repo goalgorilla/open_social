@@ -17,7 +17,7 @@ class SocialGroupSettings extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  protected function getEditableConfigNames() :array {
+  protected function getEditableConfigNames() {
     return [
       'social_group.settings',
     ];
@@ -26,14 +26,14 @@ class SocialGroupSettings extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function getFormId() :string {
+  public function getFormId() {
     return 'social_group_form';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state) :array {
+  public function buildForm(array $form, FormStateInterface $form_state) {
     $config = $this->config('social_group.settings');
 
     $form['allow_group_selection_in_node'] = [
@@ -57,7 +57,7 @@ class SocialGroupSettings extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) :void {
+  public function submitForm(array &$form, FormStateInterface $form_state) {
     parent::submitForm($form, $form_state);
 
     $this->config('social_group.settings')
@@ -74,7 +74,7 @@ class SocialGroupSettings extends ConfigFormBase {
    * @return array
    *   The croptypes.
    */
-  protected function getCropTypes() :array {
+  protected function getCropTypes() {
     $croptypes = [
       'hero',
       'hero_small',
