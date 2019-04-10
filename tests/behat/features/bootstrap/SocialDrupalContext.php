@@ -264,14 +264,24 @@ class SocialDrupalContext extends DrupalContext {
   /**
    * I restrict real name usage
    *
-   * @When /^(?:|I )restrict real name usage/
+   * @When /^(?:|I )(un)?restrict real name usage/
    */
-  public function iRestrictRealNameUsage() {
+  public function iRestrictRealNameUsage($restrict = TRUE) {
     if (!\Drupal::service('module_handler')->moduleExists("social_profile_privacy")) {
       throw new \Exception("Could not restrict real name usage because the Social Profile Privacy module is disabled.");
     }
 
-    \Drupal::configFactory()->getEditable('social_profile_privacy.settings')->set("limit_search_and_mention", TRUE)->save();
+    // Convert our negative match to a boolean.
+    if ($restrict === "un") {
+      $restrict = FALSE;
+    }
+
+    // TODO: Remove debug.
+    if ($restrict !== FALSE && $restrict !== TRUE) {
+      throw  new \Exception("Restrict has unknown value " . print_r($restrict, true));
+    }
+
+    \Drupal::configFactory()->getEditable('social_profile_privacy.settings')->set("limit_search_and_mention", $restrict)->save();
   }
 
   /**

@@ -14,31 +14,6 @@ Feature: I want to restrict full name visibility when nickname is used
       | user_2 | user_2@example.localhost | 1      | Secretive                | User                    | Hide my name            |
       | user_3 | user_3@example.localhost | 1      |                          |                         | Completely Anonymous    |
 
-  Scenario: Nickname replaces full name when filled in
-    Given Search indexes are up to date
-    And I am logged in as an "authenticated user"
-
-    # Profile displays the correct name.
-    When I go to the profile of "user_1"
-    Then I should see "Open User"
-
-    When I go to the profile of "user_2"
-    Then I should see "Hide my name"
-    And I should not see "Secretive User"
-
-    # Search shows Nickname but allows searching for real name
-    When I search users for "Open"
-    Then I should see "Open User"
-
-    When I search users for "Secretive"
-    Then I should see "Hide my name"
-
-    # TODO: Add test for mentioning using Javascript?
-
-    # TODO: This should happen automatically see: https://github.com/goalgorilla/open_social/pull/1306
-    And I disable the module "social_profile_fields"
-    And I disable the module "social_profile_privacy"
-
   Scenario: Extra protection for real names
     Given I restrict real name usage
     And Search indexes are up to date
@@ -111,3 +86,35 @@ Feature: I want to restrict full name visibility when nickname is used
     Then I should see "Open User"
     And I should see "Hide my name"
     And I should see "Completely Anonymous"
+
+    # TODO: This should happen automatically see: https://github.com/goalgorilla/open_social/pull/1306
+    And I disable the module "social_profile_fields"
+    And I disable the module "social_profile_privacy"
+
+  # This scenarios intentionally comes last since it's the Open Social default
+  # and least likely to break. This reduces test times.
+  Scenario: Nickname replaces full name when filled in
+    Given I unrestrict real name usage
+    And Search indexes are up to date
+    And I am logged in as an "authenticated user"
+
+    # Profile displays the correct name.
+    When I go to the profile of "user_1"
+    Then I should see "Open User"
+
+    When I go to the profile of "user_2"
+    Then I should see "Hide my name"
+    And I should not see "Secretive User"
+
+    # Search shows Nickname but allows searching for real name
+    When I search users for "Open"
+    Then I should see "Open User"
+
+    When I search users for "Secretive"
+    Then I should see "Hide my name"
+
+    # TODO: Add test for mentioning using Javascript?
+
+    # TODO: This should happen automatically see: https://github.com/goalgorilla/open_social/pull/1306
+    And I disable the module "social_profile_fields"
+    And I disable the module "social_profile_privacy"
