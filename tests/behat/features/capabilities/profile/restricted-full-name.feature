@@ -77,6 +77,25 @@ Feature: I want to restrict full name visibility when nickname is used
     And I disable the module "social_profile_fields"
     And I disable the module "social_profile_privacy"
 
+  # This test ensures that searching by username works. It's included so that
+  # when the next scenario (searching for username when names are restricted)
+  # fails, we can be sure the cause is in the name restricting.
+  # If this scenario fails then the next one will fail as well but something
+  # else is broken.
+  Scenario: Searching by username works when name is unrestricted
+    Given I unrestrict real name usage
+    And Search indexes are up to date
+    And I am logged in as an "authenticated user"
+
+    When I search users for "user"
+    Then I should see "Open User"
+    And I should see "Hide my name"
+    And I should see "Completely Anonymous"
+
+    # TODO: This should happen automatically see: https://github.com/goalgorilla/open_social/pull/1306
+    And I disable the module "social_profile_fields"
+    And I disable the module "social_profile_privacy"
+
   Scenario: Searching by username still works when name is restricted
     Given I restrict real name usage
     And Search indexes are up to date
@@ -113,8 +132,8 @@ Feature: I want to restrict full name visibility when nickname is used
     When I search users for "Secretive"
     Then I should see "Hide my name"
 
-    # TODO: Add test for mentioning using Javascript?
-
     # TODO: This should happen automatically see: https://github.com/goalgorilla/open_social/pull/1306
     And I disable the module "social_profile_fields"
     And I disable the module "social_profile_privacy"
+
+  # TODO: Add test for mentioning using Javascript?
