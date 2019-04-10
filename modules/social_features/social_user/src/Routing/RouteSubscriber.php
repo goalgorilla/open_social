@@ -16,7 +16,7 @@ class RouteSubscriber extends RouteSubscriberBase {
   /**
    * {@inheritdoc}
    */
-  protected function alterRoutes(RouteCollection $collection) :void {
+  protected function alterRoutes(RouteCollection $collection) {
     // Set route for the login to point to the SocialUserLoginForm.
     if ($route = $collection->get('user.login')) {
       $route->setDefaults([
