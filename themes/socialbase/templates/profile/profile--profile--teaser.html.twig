@@ -21,7 +21,7 @@
 #}
 {{ attach_library('socialbase/teaser')}}
 <div class="card teaser">
-  <a href="{{ profile_stream_url }}" class="teaser__image">
+  <a href="{{ profile_home }}" class="teaser__image">
     {% if content.field_profile_image %}
         {{ content.field_profile_image }}
     {% endif %}
@@ -29,7 +29,7 @@
   <div class="teaser__body">
     <div class="teaser__content">
       <h4 class="teaser__title">
-       <a href="{{ profile_stream_url }}">
+       <a href="{{ profile_home }}">
          {{ profile_name }} {{ profile_name_extra }}
         </a>
       </h4>
