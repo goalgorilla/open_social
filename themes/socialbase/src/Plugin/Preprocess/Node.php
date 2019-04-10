@@ -211,7 +211,7 @@ class Node extends PreprocessBase {
     }
 
     // A landing page has a different way of determining this.
-    if ($node->getType() !== 'landing_page') {
+    if ($node->getType() === 'landing_page') {
       $variables['no_image'] = FALSE;
       $image = _social_landing_page_get_hero_image($node);
       if (empty($image)) {
