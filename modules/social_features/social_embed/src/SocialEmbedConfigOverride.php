@@ -132,7 +132,6 @@ class SocialEmbedConfigOverride implements ConfigFactoryOverrideInterface {
       return;
     }
 
-    $overrides = [];
     $button_exists = FALSE;
 
     foreach ($settings['toolbar']['rows'] as $row) {
