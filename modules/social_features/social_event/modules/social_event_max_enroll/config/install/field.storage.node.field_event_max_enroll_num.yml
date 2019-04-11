@@ -5,12 +5,14 @@ dependencies:
     - node
   enforced:
     module:
-      - social_event_an_enroll
-id: node.field_event_an_enroll
-field_name: field_event_an_enroll
+      - social_event_max_enroll
+id: node.field_event_max_enroll_num
+field_name: field_event_max_enroll_num
 entity_type: node
-type: boolean
-settings: {  }
+type: integer
+settings:
+  unsigned: false
+  size: normal
 module: core
 locked: false
 cardinality: 1
