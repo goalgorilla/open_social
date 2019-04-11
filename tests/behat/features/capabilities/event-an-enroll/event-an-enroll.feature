@@ -16,9 +16,9 @@ Feature: Enroll for an event without an account
     When I click "Enroll"
     And I wait for AJAX to finish
     And I should see the link "Log in"
-    And I should see the link "Sign up"
-    And I should see the link "Sign up as guest"
-    When I click "Sign up as guest"
+    And I should see the link "Create an account"
+    And I should see the link "Enroll as guest"
+    When I click "Enroll as guest"
     Then I should see "AN Event 1" in the "Hero block"
     And I should not see the link "Enroll" in the "Hero block"
     And I fill in the following:
@@ -38,7 +38,7 @@ Feature: Enroll for an event without an account
     # Duplicate Enrollment.
     When I click "Enroll"
     And I wait for AJAX to finish
-    When I click "Sign up as guest"
+    When I click "Enroll as guest"
     And I fill in the following:
       | First name    | John  |
       | Last name     | Doe   |
@@ -48,7 +48,7 @@ Feature: Enroll for an event without an account
     Given I open the "event" node with title "AN Event 1"
     When I click "Enroll"
     And I wait for AJAX to finish
-    When I click "Sign up as guest"
+    When I click "Enroll as guest"
     And I fill in the following:
       | First name    | John  |
       | Last name     | Doe   |
@@ -76,7 +76,7 @@ Feature: Enroll for an event without an account
       | field_event_date_end     | +4 days                 |
       | field_content_visibility | public                  |
     When I press "Enroll"
-    Then I should not see "Sign up as guest"
+    Then I should not see "Enroll as guest"
 
     ##
     ## In this test the vent must be created using the form because we are
@@ -100,4 +100,4 @@ Feature: Enroll for an event without an account
     And I open the "event" node with title "Anonymous event enrollment"
     When I click "Enroll"
     Then I should see "Enroll in Anonymous event Enrollment"
-    And I should see "Sign up as guest"
+    And I should see "Enroll as guest"
