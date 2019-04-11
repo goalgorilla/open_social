@@ -42,6 +42,7 @@ class SocialFilePrivateFieldsConfigOverride implements ConfigFactoryOverrideInte
       'field.storage.profile.field_profile_image',
       'field.storage.profile.field_profile_banner_image',
       'field.storage.paragraph.field_hero_image',
+      'field.storage.paragraph.field_hero_small_image',
     ];
     return $config_names;
   }

@@ -99,6 +99,22 @@ class ThemeSuggestions extends BaseThemeSuggestions {
         break;
 
       case 'file_link':
+        // For the new Social Comment we need a different theme hook suggestion.
+        if (\Drupal::config('social_comment_upload.settings')
+          ->get('allow_upload_comments')) {
+          $file = $variables['file'];
+
+          // For comments in activities we show the amount of attachments.
+          if ($file->_referringItem !== NULL) {
+            /* @var $item \Drupal\file\Plugin\Field\FieldType\FileItem  */
+            $item = $file->_referringItem;
+            $name = $item->getFieldDefinition()->getName();
+            // For field comment files we add a new suggestion.
+            if ($name === 'field_comment_files') {
+              $suggestions[] = 'file_link__comment';
+            }
+          }
+        }
 
         // Get the route name for file links.
         $route_name = \Drupal::routeMatch()->getRouteName();
@@ -111,6 +127,7 @@ class ThemeSuggestions extends BaseThemeSuggestions {
           $node = \Drupal::routeMatch()->getParameter('node');
           // We do not know the name of the file fields. These can be custom.
           $field_definitions = $node->getFieldDefinitions();
+
           // Loop over all fields and target only file fields.
           foreach ($field_definitions as $field_name => $field_definition) {
             /** @var \Drupal\Core\Field\FieldDefinitionInterface $field_definition */

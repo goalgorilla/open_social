@@ -156,8 +156,11 @@ class EventAnEnrollForm extends EnrollActionForm {
         ['query' => ['token' => $values['field_token']]]
       );
 
-      // Send email.
-      social_event_an_enroll_send_mail($values);
+      // Send email if the setting is enabled.
+      $event_an_enroll_config = $this->config('social_event_an_enroll.settings');
+      if ($event_an_enroll_config->get('event_an_enroll_email_notify')) {
+        social_event_an_enroll_send_mail($values);
+      }
     }
   }
 

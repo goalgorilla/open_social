@@ -1,0 +1,62 @@
+
+{% if bare %}
+  {% for item in items %}
+    {% if entity_type == "node" and field_name == "body" and part_of_teaser %}
+        {{ item.content|render|striptags }}
+    {% else %}
+      {{ item.content }}
+    {% endif %}
+  {% endfor %}
+
+{% else %}
+
+  {%
+    set classes = [
+      'field',
+      'field--name-' ~ field_name|clean_class,
+      'field--type-' ~ field_type|clean_class,
+      'field--label-' ~ label_display,
+    ]
+  %}
+  {%
+    set title_classes = [
+      'field--label',
+      label_display == 'visually_hidden' ? 'sr-only',
+    ]
+  %}
+
+
+  {% if label_hidden %}
+    {% if multiple %}
+      <div{{ attributes.addClass(classes, 'field--items') }}>
+        {% for item in items %}
+          {% if(item.content|render|striptags|trim) %}
+            <div{{ item.attributes.addClass('field--item') }}>{{ item.content }}</div>
+          {% endif %}
+        {% endfor %}
+      </div>
+    {% else %}
+      {% for item in items %}
+          {% if(item.content|render|striptags|trim) %}
+            <div{{ attributes.addClass(classes, 'field--item') }}>{{ item.content }}</div>
+          {% endif %}
+      {% endfor %}
+    {% endif %}
+  {% else %}
+    <div{{ attributes.addClass(classes) }}>
+      <div{{ title_attributes.addClass(title_classes) }}>{{ label }}</div>
+      {% if multiple %}
+        <div class="field__items">
+      {% endif %}
+      {% for item in items %}
+          {% if(item.content|render|striptags|trim) %}
+            <div{{ item.attributes.addClass('field--item') }}>{{ item.content }}</div>
+          {% endif %}
+      {% endfor %}
+      {% if multiple %}
+        </div>
+      {% endif %}
+    </div>
+  {% endif %}
+
+{% endif %}

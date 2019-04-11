@@ -1,0 +1,126 @@
+.paragraph--type--featured-items {
+  .paragraph--section & {
+    padding: 30px 1em;
+    @media(min-width: 900px) {
+      padding: 50px 1em;
+    }
+    @media(min-width: 1200px) {
+      padding: 50px 0;
+      margin-left: calc(-100vw / 2 + #{1200px} / 2);
+      margin-right: calc(-100vw / 2 + #{1200px} / 2);
+    }
+  }
+
+  .title {
+    margin-top: 25px;
+    font-size: 24px;
+    line-height: 2;
+    color: #4A4A4A;
+  }
+
+  .field--name-field-featured-items-items {
+    min-height: 230px;
+
+    @media (min-width: 600px) {
+      display: flex;
+      flex-flow: row wrap;
+      justify-content: flex-start;
+      margin: 0 -1%;
+    }
+
+    > .field--item {
+      margin-left: 1%;
+      margin-right: 1%;
+
+      @media (min-width: 600px) {
+        flex: 1 0 calc(50% - 2% - 20px);
+      }
+
+      @media (min-width: 900px) {
+        flex: 1 0 calc(33.33333% - 2% - 20px);
+      }
+
+      @media (min-width: 1200px) {
+        flex: 1 0 calc(20% - 2% - 20px);
+      }
+    }
+  }
+}
+
+.card__featured-items {
+  margin-bottom: 2.5rem;
+
+  > div {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .teaser__info {
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    top: 16px;
+    right: 15px;
+    z-index: 1;
+    cursor: pointer;
+
+    svg {
+      width: 20px;
+      height: 20px;
+    }
+  }
+
+  .teaser__image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    height: 104px;
+    flex: 0 0 104px;
+    padding: 16px 0 8px;
+
+    img {
+      width: auto;
+      height: 80px;
+    }
+  }
+
+  .teaser__body {
+    justify-content: space-between;
+    padding: 0 15px 20px;
+  }
+
+  .teaser__title {
+    font-size: 18px;
+    line-height: 30px;
+    font-weight: 700;
+    min-height: 80px;
+    max-height: inherit;
+    text-align: center;
+    margin-bottom: 15px;
+  }
+
+  .card__text {
+    display: none;
+  }
+
+  .card__link {
+    width: 100%;
+
+    .btn-default,
+    &.btn-default {
+      border-width: 2px;
+    }
+
+    a {
+      font-weight: 700;
+    }
+  }
+
+  .card__actionbar {
+    margin-top: 0;
+    padding: 0;
+  }
+}
