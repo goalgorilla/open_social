@@ -19,7 +19,7 @@ class EventAnEnrollActionForm extends EnrollActionForm {
    * {@inheritdoc}
    */
   public function getFormId() {
-    return 'event_an_enroll_cancel_form';
+    return 'event_an_enroll_action_form';
   }
 
   /**

@@ -1,0 +1,117 @@
+<?php
+
+/**
+ * @file
+ * The Social Content Report module file.
+ */
+
+use Drupal\comment\CommentInterface;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\node\NodeInterface;
+use Drupal\social_post\Entity\PostInterface;
+
+/**
+ * Implements hook_form_alter().
+ */
+function social_content_report_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  // Get all 'report_' flags.
+  $report_types = \Drupal::service('social_content_report.content_report_service')->getReportFlagTypes();
+
+  // Add each report type form.
+  $report_forms = [];
+  foreach ($report_types as $report_type) {
+    $report_forms[] = 'flagging_' . $report_type . '_add_form';
+    $report_forms[] = 'flagging_' . $report_type . '_edit_form';
+  }
+
+  if (in_array($form_id, $report_forms, FALSE)) {
+    $config = \Drupal::config('social_content_report.settings');
+    $terms = $config->get('reasons_with_text');
+
+    // Only show the "Other reason" title to screenreaders.
+    $form['field_other_reason']['widget'][0]['value']['#title_display'] = 'invisible';
+
+    // Only show the reason input field if it is enabled for the reason.
+    foreach ($terms as $term_id) {
+      $form['field_other_reason']['#states']['visible'][] = [
+        ':input[name="field_reason"]' => [
+          'value' => $term_id,
+        ],
+      ];
+    }
+
+    $form['#attributes']['class'][] = 'form--content-reporting';
+    $form['#attached']['library'][] = 'social_content_report/reporting';
+
+    // Add some validation if the reason field is mandatory.
+    if ($config->get('mandatory_reason')) {
+      $form['#validate'][] = 'social_content_report_mandatory_reason_validate';
+    }
+  }
+}
+
+/**
+ * Validation so the reason description field has content when it is mandatory.
+ *
+ * @param array $form
+ *   The form.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   Form State with the submitted values.
+ */
+function social_content_report_mandatory_reason_validate(array $form, FormStateInterface $form_state) {
+  $terms = \Drupal::config('social_content_report.settings')->get('reasons_with_text');
+
+  if (in_array($form_state->getValue('field_reason')[0]['target_id'], $terms) && empty($form_state->getValue('field_other_reason')[0]['value'])) {
+    $form_state->setErrorByName('field_other_reason', t('A description of your report is mandatory.'));
+  }
+}
+
+/**
+ * Implements hook_post_links_alter().
+ */
+function social_content_report_post_links_alter(array &$links, PostInterface $entity, array &$context) {
+  $link = \Drupal::service('social_content_report.content_report_service')->getModalLink($entity, 'report_post');
+
+  if ($link) {
+    $links['post']['#links']['report'] = $link;
+  }
+}
+
+/**
+ * Implements hook_comment_links_alter().
+ */
+function social_content_report_comment_links_alter(array &$links, CommentInterface $entity, array &$context) {
+  $link = \Drupal::service('social_content_report.content_report_service')->getModalLink($entity, 'report_comment');
+
+  if ($link) {
+    $links['comment']['#links']['report'] = $link;
+  }
+}
+
+/**
+ * Implements hook_node_links_alter().
+ */
+function social_content_report_node_links_alter(array &$links, NodeInterface $entity, array &$context) {
+  if ($context['view_mode'] === 'full') {
+    $link = \Drupal::service('social_content_report.content_report_service')->getModalLink($entity, 'report_node', TRUE);
+
+    if ($link) {
+      $links['moderation'] = [
+        '#theme' => 'links__node__moderation',
+        '#links' => [
+          'report' => $link,
+        ],
+        '#attributes' => ['class' => ['links', 'inline']],
+      ];
+    }
+  }
+}
+
+/**
+ * Implements hook_activity_send_email_notifications_alter().
+ */
+function social_content_report_activity_send_email_notifications_alter(array &$items, array $email_message_templates) {
+  if (isset($email_message_templates['content_reported']) && \Drupal::currentUser()->hasPermission('view inappropriate reports')) {
+    $items['message_to_me']['templates'][] = 'content_reported';
+  }
+}

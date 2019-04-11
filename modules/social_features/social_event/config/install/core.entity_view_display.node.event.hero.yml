@@ -9,6 +9,7 @@ dependencies:
     - field.field.node.event.field_event_comments
     - field.field.node.event.field_event_date
     - field.field.node.event.field_event_date_end
+    - field.field.node.event.field_event_enroll
     - field.field.node.event.field_event_image
     - field.field.node.event.field_event_location
     - field.field.node.event.field_files
@@ -26,14 +27,14 @@ mode: hero
 content:
   field_event_address:
     type: address_plain
-    weight: 5
+    weight: 3
     label: hidden
     settings: {  }
     third_party_settings: {  }
     region: content
   field_event_date:
     type: datetime_default
-    weight: 2
+    weight: 0
     label: hidden
     settings:
       timezone_override: ''
@@ -42,7 +43,7 @@ content:
     region: content
   field_event_date_end:
     type: datetime_default
-    weight: 3
+    weight: 1
     label: hidden
     settings:
       timezone_override: ''
@@ -60,7 +61,7 @@ content:
     third_party_settings: {  }
   field_event_location:
     type: string
-    weight: 4
+    weight: 2
     label: hidden
     settings:
       link_to_entity: false
@@ -85,6 +86,7 @@ hidden:
   body: true
   field_content_visibility: true
   field_event_comments: true
+  field_event_enroll: true
   field_files: true
   links: true
   groups: true

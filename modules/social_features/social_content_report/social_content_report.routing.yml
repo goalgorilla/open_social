@@ -1,0 +1,16 @@
+social_content_report.settings:
+  path: '/admin/config/opensocial/content-reporting'
+  defaults:
+    _form: '\Drupal\social_content_report\Form\ContentReportSettingsForm'
+    _title: 'Content Reporting settings'
+  requirements:
+    _permission: 'administer social_content_report settings'
+  options:
+    _admin_route: TRUE
+
+social_content_report.close_report:
+  path: '/content-report/{flagging}/close'
+  defaults:
+    _controller: '\Drupal\social_content_report\Controller\ReportController::close'
+  requirements:
+    _permission: 'close inappropriate reports'

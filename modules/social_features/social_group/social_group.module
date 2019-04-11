@@ -235,9 +235,26 @@ function social_group_preprocess_group(array &$variables) {
   }
 
   // Add the hero styled image.
-  if (!empty($group->field_group_image->entity)) {
-    $variables['group_hero_styled_image_url'] = ImageStyle::load('social_xx_large')
-      ->buildUrl($group->field_group_image->entity->getFileUri());
+  if (!empty($group->get('field_group_image')->entity)) {
+    // Fetch image style from field info.
+    $original_image_style = $variables['content']['field_group_image'][0]['#image_style'] ?? '';
+    $image_style = ImageStyle::load($original_image_style);
+
+    if ($image_style instanceof ImageStyle) {
+
+      $variables['group_hero_styled_image_url'] = $image_style->buildUrl($group->get('field_group_image')->entity->getFileUri());
+      // Check if this style is considered small.
+      $overridden_image_style = Drupal::getContainer()->get('social_group.hero_image')->getGroupHeroImageStyle();
+
+      if ($overridden_image_style !== $original_image_style) {
+        $variables['group_hero_styled_image_url'] = ImageStyle::load($overridden_image_style)
+          ->buildUrl($group->get('field_group_image')->entity->getFileUri());
+      }
+    }
+  }
+  // This should be determined regardless if there's an image or not.
+  if (Drupal::getContainer()->get('social_group.hero_image')->isSmall()) {
+    $variables['group_hero_small'] = TRUE;
   }
 
   // Add group edit url for management.
@@ -1600,6 +1617,14 @@ function social_group_entity_operation_alter(array &$operations, EntityInterface
  */
 function social_group_views_plugins_field_alter(array &$plugins) {
   $plugins['views_bulk_operations_bulk_form']['class'] = 'Drupal\social_group\Plugin\views\field\SocialGroupViewsBulkOperationsBulkForm';
+}
+
+/**
+ * Implements hook_default_route_group_tabs_alter().
+ */
+function social_group_social_group_default_route_tabs_alter(&$tabs) {
+  // Unset some tabs created by group.
+  unset($tabs['group.view'], $tabs['group.edit_form'], $tabs['group.content']);
 }
 
 /**

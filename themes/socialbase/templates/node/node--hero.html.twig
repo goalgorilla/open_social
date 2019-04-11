@@ -65,16 +65,15 @@
  * @ingroup themeable
  */
 #}
-
 {{ attach_library('socialbase/hero') }}
 
 {% if hero_styled_image_url %}
-  <div style="background-image: url('{{ hero_styled_image_url }}')" class="cover cover-img cover-img-gradient">
-{% else %}
+<div style="background-image: url('{{ hero_styled_image_url }}')" class="cover cover-img cover-img-gradient">
+  {% else %}
   <div class="cover">
-{% endif %}
+    {% endif %}
     <div class="hero__bgimage-overlay"></div>
-
+    {% if node %}
     {% if node_edit_url %}
       <div class="hero-action-button">
         <a href="{{ node_edit_url }}" title="{% trans %}Edit content{% endtrans %}"
@@ -85,14 +84,16 @@
         </a>
       </div>
     {% endif %}
-
     <div class="cover-wrap">
-
-      {{ title_prefix }}
-      {% if label %}
-        <h1{{ title_attributes.addClass(section_class) }}>{{ label }}</h1>
       {% endif %}
-      {{ title_suffix }}
+
+      <header class="page-title">
+        <p>{{ title_prefix }}</p>
+        {% if title %}
+          <h1{{ title_attributes }}>{{ title }}</h1>
+        {% endif %}
+        <p>{{ title_suffix }}</p>
+      </header>
 
       {% if event_enrollment %}
         <div class="hero-footer">
@@ -105,6 +106,8 @@
         </div>
       {% endif %}
 
+      {% if node %}
     </div>
+    {% endif %}
 
   </div>

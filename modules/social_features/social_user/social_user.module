@@ -235,7 +235,6 @@ function social_user_form_user_form_alter(&$form, FormStateInterface $form_state
   // See AccountForm.php this is where user_pass_reset gets set. Only when user
   // uses a one time login link it's true.
   if ($form_state->get('user_pass_reset')) {
-    $form['#attached']['library'][] = 'social_user/user_form_protection';
     // We prepend it because a user first has to be saved :) and the profile
     // user save needs to fire first!
     $form['actions']['submit']['#submit'][] = '_social_user_pass_reset_submit';
@@ -448,8 +447,8 @@ function _social_user_search_content_pre_render(array $build) {
  */
 function social_user_menu_local_tasks_alter(&$data, $route_name) {
   // Change the default 'View' tab title.
-  if (isset($data['tabs'][0]['entity.user.canonical']['#link'])) {
-    $data['tabs'][0]['entity.user.canonical']['#link']['title'] = t('Stream');
+  if (isset($data['tabs'][0]['entity.user.canonical'])) {
+    unset($data['tabs'][0]['entity.user.canonical']);
   }
 
   // Remove Edit tab. Edit will always go through Floating Edit Button.

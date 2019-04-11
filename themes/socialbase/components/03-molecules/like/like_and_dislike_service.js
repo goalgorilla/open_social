@@ -20,12 +20,8 @@
           $('#dislike-container-' + entity_type + '-' + entity_id + ' a').get(0).className = response.operation.dislike;
 
           // Updates the likes and dislikes count.
-          if (response.likes == '1') {
-            var countText = Drupal.t(' like');
-          } else {
-            var countText = Drupal.t(' likes');
-          }
-          $('#like-container-' + entity_type + '-' + entity_id).nextAll('.vote__count').find('a').html(response.likes + countText).attr('data-dialog-options', '{"title":"' + response.likes + countText + '", "width":"auto"}');
+          var likeText = Drupal.formatPlural(response.likes, "@count like", "@count likes");
+          $('#like-container-' + entity_type + '-' + entity_id).nextAll('.vote__count').find('a').html(likeText).attr('data-dialog-options', '{"title":"' + likeText + '", "width":"auto"}');
         }
       });
     };

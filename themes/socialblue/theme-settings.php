@@ -102,6 +102,24 @@ function socialblue_form_system_theme_settings_alter(&$form, FormStateInterface 
       // Ensure we save the file permanently.
       $form['#submit'][] = 'socialblue_save_email_logo';
 
+      $form['os_hero_settings'] = [
+        '#type' => 'details',
+        '#group' => 'open_social_settings',
+        '#title' => t('Hero'),
+        '#weight' => 30,
+        '#collapsible' => TRUE,
+        '#collapsed' => TRUE,
+      ];
+
+      $form['os_hero_settings']['hero_gradient_opacity'] = [
+        '#type' => 'range',
+        '#title' => t('Hero gradient'),
+        '#default_value' => $config->get('hero_gradient_opacity'),
+        '#description' => t('Define the percentage of darkness of the hero gradient from 0 to 100.'),
+        '#min' => 0,
+        '#max' => 100,
+      ];
+
       // Font tab.
       $fonts = [];
       if (\Drupal::service('module_handler')->moduleExists('social_font')) {
