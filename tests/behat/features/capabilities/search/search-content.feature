@@ -13,6 +13,7 @@ Feature: Search
       | title             | body          |
       | Topic one         | Description   |
       | Topic two         | Description   |
+    And I run cron  
     And I am logged in as an "authenticated user"
     #@TODO: Change "search/content" to the homepage when search block will be in the header
     And I am on "search/content"
