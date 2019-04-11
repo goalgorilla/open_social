@@ -82,6 +82,10 @@ class SocialUserLoginForm extends UserLoginForm {
       $link_options['query'] = [
         'destination' => $request->query->get('destination'),
       ];
+      $form['username_login']['destination'] = [
+        '#type' => 'hidden',
+        '#value' => $link_options['query'],
+      ];
     }
 
     if (\Drupal::config('user.settings')->get('register') != 'admin_only') {
@@ -117,11 +121,11 @@ class SocialUserLoginForm extends UserLoginForm {
     $account = $this->userStorage->load($form_state->get('uid'));
     // A destination was set, probably on an exception controller,.
     // @TODO: Add validation if route exists.
-    if (!$this->getRequest()->server->has('REDIRECT_QUERY_STRING')) {
+    if (!isset($form['username_login']['destination']['#value']['destination'])) {
       $form_state->setRedirect('<front>');
     }
     else {
-      $this->getRequest()->query->set('destination', parse_url(urldecode(str_replace('destination=', '', $this->getRequest()->server->get('REDIRECT_QUERY_STRING'))), PHP_URL_PATH));
+      $this->getRequest()->query->set('destination', $form['username_login']['destination']['#value']['destination']);
     }
     user_login_finalize($account);
   }
