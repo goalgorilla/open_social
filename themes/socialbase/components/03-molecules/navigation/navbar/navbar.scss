@@ -439,13 +439,13 @@
     line-height: 38px;
     cursor: pointer;
     font-size: 0;
-    text-indent: -9999px;
-    background-image: url('../images/icons/icon-search.svg');
-    background-repeat: no-repeat;
-    background-position: center center;
-    background-color: #fff;
-    background-size: 30px auto;
+    background-color: transparent;
     padding: 0;
+
+    svg {
+      width: 30px;
+      height: 30px;
+    }
   }
 
 }
@@ -491,19 +491,22 @@
     }
 
     .form-submit {
+      display: flex;
+      align-items: center;
+      justify-content: center;
       width: 60px;
       height: 60px;
       min-width: 60px;
-      background-image: url('../images/icons/icon-search-white.svg');
-      background-repeat: no-repeat;
-      background-position: center center;
-      background-size: 50px auto;
       background-color: transparent;
       margin-left: 20px;
       padding: 0;
       font-size: 0;
-      text-indent: -9999px;
       cursor: pointer;
+
+      svg {
+        width: 50px;
+        height: 50px;
+      }
     }
 
   }
