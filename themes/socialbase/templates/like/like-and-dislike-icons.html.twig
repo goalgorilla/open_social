@@ -21,11 +21,7 @@
     <div class="vote-like type-{{ entity_type }}" id="like-container-{{ entity_type }}-{{ entity_id }}">
       <a {{ like_attributes }} >
         <svg class="icon-vote">
-          {% if style == 'sky' %}
-            <use xlink:href="#icon-to_like"></use>
-          {% else %}
-            <use xlink:href="#icon-like"></use>
-          {% endif %}
+          <use xlink:href="#icon-like"></use>
         </svg>
       </a>
     </div>

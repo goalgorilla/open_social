@@ -127,6 +127,24 @@
     }
   }
 
+  @include for-tablet-landscape-up {
+
+    .search-take-over .form-text {
+
+      &::placeholder {
+        color: $navbar-default-link-color;
+      }
+
+      &:-ms-input-placeholder {
+        color: $navbar-default-link-color;
+      }
+
+      &::-ms-input-placeholder {
+        color: $navbar-default-link-color;
+      }
+    }
+  }
+
   .teaser.teaser--tile .teaser__published-type,
   .teaser.teaser--tile .teaser__published-type a,
   .site-footer nav[aria-labelledby*='footer-menu'] > ul a {
