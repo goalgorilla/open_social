@@ -21,3 +21,27 @@ social_user.navigation_settings:
     _title: 'Navigation Settings'
   requirements:
     _permission: 'administer navigation settings'
+
+social_user.settings:
+  path: '/admin/config/opensocial/user'
+  defaults:
+    _form: '\Drupal\social_user\Form\SocialUserSettingsForm'
+    _title: 'User settings'
+  requirements:
+    _permission: 'administer social_user settings'
+  options:
+    _admin_route: TRUE
+
+social_user.user_home:
+  path: '/user/{user}/home'
+  defaults:
+    _entity_view: 'user.stream'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+
+social_user.stream:
+  path: '/user/{user}/stream'
+  defaults:
+    _entity_view: 'user.stream'
+  requirements:
+    _user_is_logged_in: 'TRUE'

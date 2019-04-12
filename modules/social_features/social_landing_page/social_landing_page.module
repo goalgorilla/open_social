@@ -263,7 +263,7 @@ function social_landing_page_preprocess_field(&$variables) {
  */
 function _social_landing_page_get_hero_image(Node $node) {
   // Must be a valid node.
-  if (!$node instanceof Node) {
+  if (!$node instanceof Node || $node->getType() !== 'landing_page') {
     return [];
   }
 
