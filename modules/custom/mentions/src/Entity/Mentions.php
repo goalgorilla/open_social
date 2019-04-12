@@ -6,6 +6,7 @@ use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\mentions\MentionsInterface;
+use Drupal\user\UserInterface;
 
 /**
  * Mentions Class.
@@ -103,6 +104,22 @@ class Mentions extends ContentEntityBase implements MentionsInterface {
    */
   public function getOwnerId() {
     return $this->get('auid')->target_id;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setOwnerId($uid) {
+    $this->set('auid', $uid);
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setOwner(UserInterface $account) {
+    $this->set('auid', $account->id());
+    return $this;
   }
 
   /**

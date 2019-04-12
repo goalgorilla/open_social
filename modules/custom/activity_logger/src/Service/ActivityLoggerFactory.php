@@ -4,6 +4,7 @@ namespace Drupal\activity_logger\Service;
 
 use Drupal\Core\Entity\Entity;
 use Drupal\message\Entity\Message;
+use Drupal\user\EntityOwnerInterface;
 
 /**
  * Class ActivityLoggerFactory.
@@ -49,7 +50,7 @@ class ActivityLoggerFactory {
       }
 
       // Get the owner or default to anonymous.
-      if (method_exists($entity, 'getOwner') && $entity->getOwner() !== NULL) {
+      if ($entity instanceof EntityOwnerInterface && $entity->getOwner() !== NULL) {
         $new_message['uid'] = $entity->getOwner()->id();
       }
       else {
