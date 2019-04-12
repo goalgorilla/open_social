@@ -55,7 +55,7 @@
           <a href="{{ items.previous.href }}" title="{{ 'Go to previous page'|t }}" rel="prev"{{ items.previous.attributes }}>
             <span class="visually-hidden">{{ 'Previous page'|t }}</span>
             {%  set default_previous = 'previous' | t %}
-            <span aria-hidden="true">{{ items.first.text|default(default_previous) }}</span>
+            <span aria-hidden="true">{{ items.previous.text|default(default_previous) }}</span>
           </a>
         </li>
       {% endif %}
@@ -83,7 +83,7 @@
           <a href="{{ items.next.href }}" title="{{ 'Go to next page'|t }}" rel="next"{{ items.next.attributes }}>
             <span class="visually-hidden">{{ 'Next page'|t }}</span>
             {%  set default_next = 'next' | t %}
-            <span aria-hidden="true">{{ items.first.text|default(default_next) }}</span>
+            <span aria-hidden="true">{{ items.next.text|default(default_next) }}</span>
           </a>
         </li>
       {% endif %}
@@ -94,7 +94,7 @@
         <a href="{{ items.last.href }}" title="{{ 'Go to last page'|t }}" rel="last"{{ items.last.attributes }}>
           <span class="visually-hidden">{{ 'Last page'|t }}</span>
           {%  set default_last = 'last' | t %}
-          <span aria-hidden="true">{{ items.first.text|default(default_last) }}</span>
+          <span aria-hidden="true">{{ items.last.text|default(default_last) }}</span>
         </a>
       </li>
       {% endif %}
