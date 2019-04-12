@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: node-gettext\n"
-"POT-Creation-Date: 2019-04-11 10:52+0000\n"
+"POT-Creation-Date: 2019-04-12 03:59+0000\n"
 "PO-Revision-Date: 2019-04-03 00:25+0000\n"
 "Last-Translator: Evelien Schut <evelienschut@goalgorilla.com>\n"
 "Language-Team: German <https://translate.getopensocial.com/projects/open-"
@@ -32,6 +32,12 @@ msgstr ""
 #: themes/socialbase/includes/form.inc:105
 msgid "%time ago"
 msgstr "vor %time"
+
+#: modules/social_features/social_event/modules/social_event_max_enroll/social_event_max_enroll.module:28;139
+msgid "(1 spot left)"
+msgid_plural "(@count spots left)"
+msgstr[0] ""
+msgstr[1] ""
 
 #: modules/social_features/social_event/config/install/views.view.upcoming_events.yml:0
 msgid "(Upcoming) Community events"
@@ -730,6 +736,12 @@ msgstr ""
 #: modules/social_features/social_event/config/install/views.view.event_enrollments.yml:0
 msgid "@total people have enrolled"
 msgstr "@total haben sich angemeldet"
+
+#: modules/social_features/social_event/modules/social_event_max_enroll/social_event_max_enroll.module:144
+msgid "@total person has enrolled @spots_left"
+msgid_plural "@total people have enrolled @spots_left"
+msgstr[0] ""
+msgstr[1] ""
 
 #: modules/social_features/social_event/modules/social_event_managers/src/Element/SocialEnrollmentAutocomplete.php:86
 msgid "@usernames is already enrolled, you can't add them again"
@@ -1547,7 +1559,7 @@ msgstr "Alle Kommentare"
 msgid "All content index created for the Social distribution."
 msgstr ""
 
-#: modules/social_features/social_event/social_event.module:406
+#: modules/social_features/social_event/social_event.module:420
 msgid "All day"
 msgstr "Ganzer Tag"
 
@@ -1657,6 +1669,10 @@ msgstr ""
 msgid "Allow logged-in users to change or remove a group when editing content."
 msgstr ""
 
+#: modules/social_features/social_event/modules/social_event_max_enroll/social_event_max_enroll.info.yml:0
+msgid "Allow setting the maximum participant number for events."
+msgstr ""
+
 #: modules/social_features/social_event/modules/social_event_an_enroll/src/Form/EventAnEnrollSettingsForm.php:57
 msgid ""
 "Allow the author of an event to decide whether anonymous users can or cannot "
@@ -1725,6 +1741,10 @@ msgstr ""
 
 #: modules/social_features/social_content_report/social_content_report.permissions.yml:0
 msgid "Allow users to close reports."
+msgstr ""
+
+#: modules/social_features/social_event/config/install/field.field.node.event.field_event_enroll.yml:0
+msgid "Allow users to enroll in event"
 msgstr ""
 
 #: modules/social_features/social_group/modules/social_group_quickjoin/src/Form/SocialGroupQuickjoinSettings.php:46
@@ -2776,7 +2796,7 @@ msgstr ""
 msgid "Create New Content"
 msgstr "Neuen Inhalt erstellen"
 
-#: modules/social_features/social_event/social_event.module:336
+#: modules/social_features/social_event/social_event.module:337
 msgid "Create New Event"
 msgstr "Neue Veranstaltung erstellen"
 
@@ -2813,6 +2833,10 @@ msgstr ""
 #: modules/custom/activity_logger/config/schema/activity_logger.schema.yml:0
 msgid "Create activity items direct instead of in Queue"
 msgstr "Aktivitäten direkt senden, statt in die Warteschlange einzustellen"
+
+#: modules/social_features/social_event/modules/social_event_an_enroll/templates/event-an-enroll-dialog.html.twig:6;6
+msgid "Create an account"
+msgstr ""
 
 #: modules/social_features/social_book/src/Plugin/Block/BookAddBlock.php:101
 #: modules/social_features/social_book/src/Plugin/Block/GroupAddBookBlock.php:86
@@ -3663,8 +3687,12 @@ msgstr "Zusätzliche Funktionen aktivieren"
 msgid "Enable event enrollment for anonymous users"
 msgstr "Aktiviere Veranstaltungs Anmeldungen für anonyme Benutzer"
 
-#: modules/social_features/social_event/social_event.module:191
+#: modules/social_features/social_event/social_event.module:192
 msgid "Enable events for on the user profiles."
+msgstr ""
+
+#: modules/social_features/social_event/modules/social_event_max_enroll/src/Form/EventMaxEnrollSettingsForm.php:37
+msgid "Enable maximum number of event enrollments"
 msgstr ""
 
 #: modules/social_features/social_post/social_post.module:172
@@ -3723,6 +3751,12 @@ msgstr ""
 "Aktivierung dieses Feature ermöglicht Veranstaltungs Organisatoren die "
 "Veranstaltungs Anmeldungen für anonyme Benutzer zu erlauben"
 
+#: modules/social_features/social_event/modules/social_event_max_enroll/src/Form/EventMaxEnrollSettingsForm.php:38
+msgid ""
+"Enabling this feature provides event organisers with the possibility to set "
+"a limit for event enrollments."
+msgstr ""
+
 #: modules/social_features/social_event/config/install/field.field.node.event.field_event_date_end.yml:0
 msgid "End"
 msgstr ""
@@ -3742,6 +3776,10 @@ msgstr "Anmelden"
 #: modules/social_features/social_event/src/Plugin/Block/EnrollActionBlock.php:14
 msgid "Enroll action block"
 msgstr "Block: Anmelden für Veranstaltungen"
+
+#: modules/social_features/social_event/modules/social_event_an_enroll/templates/event-an-enroll-dialog.html.twig:11;11
+msgid "Enroll as guest"
+msgstr ""
 
 #: modules/social_features/social_event/src/Form/EventSettingsForm.php:42
 msgid ""
@@ -3785,7 +3823,7 @@ msgstr ""
 msgid "Enroll without account"
 msgstr "Anmelden ohne Account"
 
-#: modules/social_features/social_event/social_event.module:159
+#: modules/social_features/social_event/social_event.module:160
 #: modules/social_features/social_event/modules/social_event_an_enroll/src/Form/EventAnEnrollActionForm.php:40
 #: modules/social_features/social_event/src/Form/EnrollActionForm.php:195
 #: themes/socialbase/templates/node/node--teaser.html.twig:177
@@ -3802,7 +3840,7 @@ msgstr "Anmelden"
 msgid "Enrollment status"
 msgstr "Anmeldungsstatus"
 
-#: modules/social_features/social_event/modules/social_event_an_enroll/social_event_an_enroll.module:296
+#: modules/social_features/social_event/modules/social_event_an_enroll/social_event_an_enroll.module:298
 msgid ""
 "Enrollment without account can only be enabled when the visibility of the "
 "event is Public."
@@ -3923,6 +3961,10 @@ msgstr ""
 msgid "Event"
 msgstr ""
 
+#: modules/social_features/social_event/modules/social_event_max_enroll/social_event_max_enroll.info.yml:0
+msgid "Event Max Enroll"
+msgstr ""
+
 #: modules/social_features/social_event/modules/social_event_managers/config/optional/block.block.views_block__managers_event_managers.yml:0;0
 msgid "Event Organisers"
 msgstr ""
@@ -3941,7 +3983,7 @@ msgstr ""
 msgid "Event date"
 msgstr "Veranstaltungsdatum"
 
-#: modules/social_features/social_event/social_event.module:188;190
+#: modules/social_features/social_event/social_event.module:189;191
 msgid "Event enrolled or created"
 msgstr "Veranstaltung angemeldet oder erstellt"
 
@@ -3991,7 +4033,7 @@ msgstr ""
 msgid "Event settings"
 msgstr "Einstellungen für Veranstaltungen"
 
-#: modules/social_features/social_event/social_event.module:197
+#: modules/social_features/social_event/social_event.module:198
 msgid "Event sorting (passed and upcoming)"
 msgstr ""
 
@@ -4374,7 +4416,7 @@ msgstr ""
 "in seiner Frequenz verändern. E-Mail-Benachrichtigungen werden nur "
 "verschickt, wenn man nicht angemeldet ist."
 
-#: modules/social_features/social_event/social_event.module:198
+#: modules/social_features/social_event/social_event.module:199
 msgid ""
 "For upcoming events sort ASC by start date and for passed events change "
 "order to DESC."
@@ -5453,6 +5495,22 @@ msgstr ""
 msgid "Max age of views count caching"
 msgstr ""
 
+#: modules/social_features/social_event/modules/social_event_max_enroll/social_event_max_enroll.links.menu.yml:0
+msgid "Maximum Event Enrollment"
+msgstr ""
+
+#: modules/social_features/social_event/modules/social_event_max_enroll/social_event_max_enroll.routing.yml:0
+msgid "Maximum Event Enrollment settings"
+msgstr ""
+
+#: modules/social_features/social_event/modules/social_event_max_enroll/src/Form/EventMaxEnrollSettingsForm.php:44
+msgid "Maximum event enrollments field is required"
+msgstr ""
+
+#: modules/social_features/social_event/modules/social_event_max_enroll/config/install/field.field.node.event.field_event_max_enroll_num.yml:0
+msgid "Maximum number of enrollees"
+msgstr ""
+
 #: modules/custom/download_count/src/Form/DownloadCountSettingsForm.php:55
 msgid ""
 "Maximum number of times to count the file download per time window. Enter 0 "
@@ -5652,7 +5710,7 @@ msgstr ""
 msgid "My Groups"
 msgstr "Meine Gruppen"
 
-#: modules/social_features/social_event/social_event.module:361
+#: modules/social_features/social_event/social_event.module:362
 msgid "My events"
 msgstr "Meine Veranstaltungen"
 
@@ -5720,7 +5778,7 @@ msgstr ""
 msgid "New Content"
 msgstr ""
 
-#: modules/social_features/social_event/social_event.module:338
+#: modules/social_features/social_event/social_event.module:339
 msgid "New Event"
 msgstr ""
 
@@ -5871,6 +5929,10 @@ msgstr ""
 msgid "No results found."
 msgstr "Keine Ergebnisse gefunden"
 
+#: modules/social_features/social_event/modules/social_event_max_enroll/social_event_max_enroll.module:99;105
+msgid "No spots left"
+msgstr ""
+
 #: modules/social_features/social_topic/config/install/views.view.latest_topics.yml:0
 msgid "No topics found"
 msgstr "Keine Inhalte gefunden"
@@ -6007,6 +6069,8 @@ msgstr ""
 #: themes/socialbase/templates/form/form-element-label--switch.html.twig:29
 #: modules/social_features/social_book/config/install/core.base_field_override.node.book.promote.yml:0
 #: modules/social_features/social_event/config/install/core.base_field_override.node.event.promote.yml:0
+#: modules/social_features/social_event/config/install/field.field.node.event.field_event_enroll.yml:0
+#: modules/social_features/social_event/modules/social_event_max_enroll/config/install/field.field.node.event.field_event_max_enroll.yml:0
 #: modules/social_features/social_landing_page/config/install/core.base_field_override.node.landing_page.promote.yml:0
 #: modules/social_features/social_page/config/install/core.base_field_override.node.page.promote.yml:0
 #: modules/social_features/social_profile/config/install/field.field.profile.profile.field_profile_show_email.yml:0
@@ -6068,6 +6132,8 @@ msgstr "Datum - Älteste zuerst"
 #: themes/socialbase/templates/form/form-element-label--switch.html.twig:32
 #: modules/social_features/social_book/config/install/core.base_field_override.node.book.promote.yml:0
 #: modules/social_features/social_event/config/install/core.base_field_override.node.event.promote.yml:0
+#: modules/social_features/social_event/config/install/field.field.node.event.field_event_enroll.yml:0
+#: modules/social_features/social_event/modules/social_event_max_enroll/config/install/field.field.node.event.field_event_max_enroll.yml:0
 #: modules/social_features/social_landing_page/config/install/core.base_field_override.node.landing_page.promote.yml:0
 #: modules/social_features/social_page/config/install/core.base_field_override.node.page.promote.yml:0
 #: modules/social_features/social_profile/config/install/field.field.profile.profile.field_profile_show_email.yml:0
@@ -6968,7 +7034,7 @@ msgid "Publish the selected comments"
 msgstr "Ausgewählte Kommentare veröffentlichen"
 
 #: modules/social_features/social_comment/social_comment.module:125
-#: modules/social_features/social_event/social_event.module:37
+#: modules/social_features/social_event/social_event.module:38
 #: modules/social_features/social_post/src/Entity/Post.php:266
 #: modules/social_features/social_topic/social_topic.module:75;105
 #: modules/social_features/social_core/config/install/views.view.content.yml:0;0
@@ -7675,6 +7741,16 @@ msgstr "JavaScript für gesamte Website festlegen"
 msgid "Set Social Group settings"
 msgstr ""
 
+#: modules/social_features/social_event/modules/social_event_max_enroll/config/install/field.field.node.event.field_event_max_enroll_num.yml:0
+msgid ""
+"Set a limit for event enrollments. Users are not able to enroll once the "
+"maximum number of enrollees is reached."
+msgstr ""
+
+#: modules/social_features/social_event/modules/social_event_max_enroll/config/install/field.field.node.event.field_event_max_enroll.yml:0
+msgid "Set a limit to number of participants"
+msgstr ""
+
 #: modules/custom/alternative_frontpage/alternative_frontpage.links.menu.yml:0
 msgid "Set an alternative frontpage for authenticated users."
 msgstr ""
@@ -7727,6 +7803,10 @@ msgstr "Einstellungen für das Mentions-Modul."
 #: modules/social_features/social_event/modules/social_event_an_enroll/social_event_an_enroll.links.menu.yml:0
 msgid "Settings for Social Event AN Enroll module."
 msgstr "Einstellungen für da Social Event AN Enroll module"
+
+#: modules/social_features/social_event/modules/social_event_max_enroll/social_event_max_enroll.links.menu.yml:0
+msgid "Settings for Social Event Max Enroll module."
+msgstr ""
 
 #: modules/social_features/social_group/social_group.links.menu.yml:0
 msgid "Settings for Social Groups."
@@ -7849,16 +7929,11 @@ msgstr "Registrieren"
 
 #: modules/custom/social_auth_extra/social_auth_extra.module:88
 #: modules/social_features/social_core/social_core.install:218
-#: modules/social_features/social_event/modules/social_event_an_enroll/templates/event-an-enroll-dialog.html.twig:6;6
 #: modules/social_features/social_user/social_user.links.menu.yml:0
 #: modules/social_features/social_user/src/Form/SocialUserLoginForm.php:88
 #: modules/social_features/social_user/src/Form/SocialUserPasswordForm.php:44
 msgid "Sign up"
 msgstr "Registrieren"
-
-#: modules/social_features/social_event/modules/social_event_an_enroll/templates/event-an-enroll-dialog.html.twig:11;11
-msgid "Sign up as guest"
-msgstr "Registrieren als Gast"
 
 #: modules/social_features/social_user/social_user.module:163
 msgid "Sign up with <b>email</b>"
@@ -7994,6 +8069,7 @@ msgstr "Schneeweiß"
 #: modules/social_features/social_event/modules/social_event_an_enroll_enrolments_export/social_event_an_enroll_enrolments_export.info.yml:0
 #: modules/social_features/social_event/modules/social_event_enrolments_export/social_event_enrolments_export.info.yml:0
 #: modules/social_features/social_event/modules/social_event_managers/social_event_managers.info.yml:0
+#: modules/social_features/social_event/modules/social_event_max_enroll/social_event_max_enroll.info.yml:0
 #: modules/social_features/social_event/modules/social_event_type/social_event_type.info.yml:0
 #: modules/social_features/social_follow_content/social_follow_content.info.yml:0
 #: modules/social_features/social_group/social_group.info.yml:0
@@ -8228,6 +8304,10 @@ msgstr "Einstellungen für da Social Event AN Enroll module"
 #, fuzzy
 msgid "Social Event Enrolments Export"
 msgstr "Anmeldungen zur Veranstaltung"
+
+#: modules/social_features/social_event/modules/social_event_max_enroll/config/schema/social_event_max_enroll.schema.yml:0
+msgid "Social Event Max Enroll settings"
+msgstr ""
 
 #: modules/social_features/social_event/modules/social_event_managers/social_event_managers.info.yml:0;0
 msgid "Social Event Organisers"
@@ -9762,7 +9842,7 @@ msgstr ""
 msgid "Unpublish the selected comments"
 msgstr "Veröffentlichung der ausgewählten Kommentare zurücknehmen"
 
-#: modules/social_features/social_event/social_event.module:36
+#: modules/social_features/social_event/social_event.module:37
 #: modules/social_features/social_topic/social_topic.module:74;104
 #: modules/social_features/social_core/config/install/views.view.content.yml:0;0
 msgid "Unpublished"
@@ -10123,7 +10203,7 @@ msgstr ""
 msgid "View mode"
 msgstr "Ansichtsmodus"
 
-#: modules/social_features/social_event/social_event.module:359
+#: modules/social_features/social_event/social_event.module:360
 msgid "View my events"
 msgstr "Meine Veranstaltungen anzeigen"
 
@@ -10378,6 +10458,14 @@ msgstr ""
 msgid ""
 "Whether the content is immediately unpublished if a user reports it as "
 "inappropriate."
+msgstr ""
+
+#: modules/social_features/social_event/modules/social_event_max_enroll/config/schema/social_event_max_enroll.schema.yml:0
+msgid "Whether the maximum event enrollments field is required"
+msgstr ""
+
+#: modules/social_features/social_event/modules/social_event_max_enroll/config/schema/social_event_max_enroll.schema.yml:0
+msgid "Whether the maximum number of event enrollments feature is enabled"
 msgstr ""
 
 #: modules/social_features/social_profile/config/schema/social_profile.schema.yml:0
@@ -11343,6 +11431,9 @@ msgstr ""
 
 #~ msgid "Enroll in @event Event"
 #~ msgstr "Anmelden für die @event Veranstaltung"
+
+#~ msgid "Sign up as guest"
+#~ msgstr "Registrieren als Gast"
 
 #, fuzzy
 #~ msgid "Social (Experimental)"
