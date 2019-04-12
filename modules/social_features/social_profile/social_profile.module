@@ -331,6 +331,7 @@ function social_profile_preprocess_profile(array &$variables) {
   $variables['profile_name'] = $user->getDisplayName();
   $variables['profile_contact_url'] = _social_profile_get_contact_url($user);
   $variables['profile_stream_url'] = Url::fromUserInput('/user/' . $profile->getOwnerId() . '/stream');
+  $variables['profile_home'] = Url::fromRoute('entity.user.canonical', ['user' => $user->id()]);
 
   // Set a condition for the label to show in the teaser
   // The actual label text should be changeable in the template.

@@ -21,6 +21,7 @@ use Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface;
 use Drupal\group\Entity\GroupContent;
 use Drupal\group\GroupMembershipLoaderInterface;
 use Drupal\node\Entity\Node;
+use Drupal\node\NodeInterface;
 use Drupal\social_event\Controller\SocialEventController;
 use Drupal\views\Plugin\views\query\QueryPluginBase;
 use Drupal\views\ViewExecutable;
@@ -63,6 +64,52 @@ function social_event_form_views_exposed_form_alter(&$form, FormStateInterface $
     // Make sure we redirect to the current group page.
     $form['#action'] = '/group/' . $group_id . '/events';
   }
+}
+
+/**
+ * Check if the user is allowed to manage Enrollments.
+ *
+ * @param \Drupal\node\Entity\Node|null $node
+ *   The node the current user could be organizer of.
+ *
+ * @return bool
+ *   If the user is actually a manager or organizer.
+ */
+function social_event_manager_or_organizer(Node $node = NULL) {
+  $account = \Drupal::currentUser();
+
+  // Allow if user has the manage everything permission.
+  if ($account->hasPermission('manage everything enrollments')) {
+    return TRUE;
+  }
+
+  if ($node === NULL) {
+    /** @var \Drupal\node\NodeInterface $node */
+    $node = \Drupal::routeMatch()->getParameter('node');
+
+    // Or if it's an organizer for the node.
+    if (!$node instanceof NodeInterface && !$node instanceof Node) {
+      $node = \Drupal::entityTypeManager()->getStorage('node')->load($node);
+    }
+
+    // If we are altering / deleting an Event Enrollment check if user
+    // is manager or organizer from the referenced node.
+    if (!empty(\Drupal::routeMatch()->getParameter('event_enrollment'))) {
+      /** @var \Drupal\social_event\Entity\EventEnrollment $event_enrollment */
+      $event_enrollment = \Drupal::routeMatch()->getParameter('event_enrollment');
+      $event_id = $event_enrollment->getFieldValue('field_event', 'target_id');
+      $node = \Drupal::entityTypeManager()->getStorage('node')->load($event_id);
+    }
+  }
+  if ($node !== NULL && $node->bundle() === 'event' && !$node->field_event_managers->isEmpty()) {
+    foreach ($node->field_event_managers->getValue() as $value) {
+      if ($value && $value['target_id'] === $account->id()) {
+        return TRUE;
+      }
+    }
+  }
+
+  return FALSE;
 }
 
 /**
@@ -111,8 +158,8 @@ function social_event_menu_local_tasks_alter(&$data, $route_name) {
     if (!is_null($node) && (!$node instanceof Node)) {
       $node = Node::load($node);
     }
-    if (($node instanceof Node) && $node->getType() === 'event') {
-      $can_show_enrollments_link = TRUE;
+    if ($node instanceof Node) {
+      $can_show_enrollments_link = \Drupal::service('social_event.enroll')->isEnabled($node);
     }
 
   }
@@ -387,6 +434,17 @@ function social_event_block_access(Block $block, $operation, AccountInterface $a
     return $access;
   }
 
+  if ($operation === 'view' && ($block->getPluginId() === 'views_block:event_enrollments-event_enrollments')) {
+    $nid = \Drupal::routeMatch()->getRawParameter('node');
+    if (!empty($nid) && $node = Node::load($nid)) {
+      // Check if event enrollment were disabled explicitly.
+      if (!\Drupal::service('social_event.enroll')->isEnabled($node)) {
+        // Return forbidden, since access was not explicitly granted.
+        return AccessResult::forbidden();
+      }
+    }
+  }
+
   // No opinion.
   return AccessResult::neutral();
 }
@@ -395,24 +453,42 @@ function social_event_block_access(Block $block, $operation, AccountInterface $a
  * Implements hook_form_alter().
  */
 function social_event_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-  $event_forms = [
-    'node_event_form',
-    'node_event_edit_form',
-  ];
+  switch ($form_id) {
+    case 'node_event_edit_form':
+      // Set allow event enrollment checked by default for existing events.
+      if ($form_state->getFormObject()->getEntity()->field_event_enroll->isEmpty()) {
+        $form['field_event_enroll']['widget']['value']['#default_value'] = TRUE;
+      }
 
-  if (in_array($form_id, $event_forms)) {
-    $form['event_all_day'] = [
-      '#type' => 'checkbox',
-      '#title' => t('All day'),
-    ];
-    // Set default value and fieldgroup for all day checkbox.
-    if ($date = $form['field_event_date']['widget'][0]['value']['#default_value']) {
-      $all_day_value = $date instanceof DrupalDateTime && social_event_date_is_all_day($date);
-      $form['event_all_day']['#default_value'] = $all_day_value;
-    }
-    $form['#fieldgroups']['group_date_time']->children[] = 'event_all_day';
-    $form['#group_children']['event_all_day'] = 'group_date_time';
-    $form['#after_build'][] = 'social_event_date_after_build';
+    case 'node_event_form':
+      $form['event_all_day'] = [
+        '#type' => 'checkbox',
+        '#title' => t('All day'),
+      ];
+
+      // Set default value and fieldgroup for all day checkbox.
+      if ($date = $form['field_event_date']['widget'][0]['value']['#default_value']) {
+        $all_day_value = $date instanceof DrupalDateTime && social_event_date_is_all_day($date);
+        $form['event_all_day']['#default_value'] = $all_day_value;
+      }
+
+      $form['#fieldgroups']['group_date_time']->children[] = 'event_all_day';
+      $form['#group_children']['event_all_day'] = 'group_date_time';
+      $form['#after_build'][] = 'social_event_date_after_build';
+      break;
+
+    // Hide Enroll button if enrollment is disabled for this event.
+    case 'enroll_action_form':
+      $node = \Drupal::routeMatch()->getParameter('node');
+
+      if (!$node instanceof NodeInterface) {
+        $node = \Drupal::entityTypeManager()->getStorage('node')->load($node);
+      }
+
+      if ($node instanceof NodeInterface) {
+        $form['enroll_for_this_event']['#access'] = \Drupal::service('social_event.enroll')->isEnabled($node);
+      }
+      break;
   }
 }
 

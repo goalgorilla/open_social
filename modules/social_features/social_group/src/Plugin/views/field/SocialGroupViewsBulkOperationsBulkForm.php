@@ -118,7 +118,7 @@ class SocialGroupViewsBulkOperationsBulkForm extends GroupViewsBulkOperationsBul
 
     // We don't show the multipage list if there are no items selected.
     if (count($wrapper['multipage']['list']['#items']) < 1) {
-      $wrapper['multipage']['list'] = '';
+      unset($wrapper['multipage']['list']);
     }
 
     $actions = &$wrapper['actions'];

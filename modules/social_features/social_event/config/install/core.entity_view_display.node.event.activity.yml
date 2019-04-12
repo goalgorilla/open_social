@@ -9,6 +9,7 @@ dependencies:
     - field.field.node.event.field_event_comments
     - field.field.node.event.field_event_date
     - field.field.node.event.field_event_date_end
+    - field.field.node.event.field_event_enroll
     - field.field.node.event.field_event_image
     - field.field.node.event.field_event_location
     - field.field.node.event.field_files
@@ -79,6 +80,14 @@ content:
   flag_follow_content:
     weight: 10
     region: content
+  groups_type_public_group:
+    label: above
+    weight: -5
+    region: content
+    settings:
+      link: true
+    third_party_settings: {  }
+    type: entity_reference_label
   links:
     weight: 5
     settings: {  }
@@ -87,6 +96,7 @@ content:
 hidden:
   body: true
   field_content_visibility: true
+  field_event_enroll: true
   field_files: true
   like_and_dislike: true
   groups: true
