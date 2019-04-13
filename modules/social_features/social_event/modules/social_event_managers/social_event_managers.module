@@ -92,9 +92,13 @@ function social_event_managers_block_access(Block $block, $operation, AccountInt
  * Implements hook_link_alter().
  */
 function social_event_managers_link_alter(&$variables) {
+  /** @var \Drupal\Core\Url $url */
+  $url = $variables['url'];
+
   // Let's make sure we reroute the view more link.
-  if (strpos($variables['text'], 'all enrollments') !== false && $variables['url']->getRouteName() === 'view.event_enrollments.view_enrollments') {
-    $params = $variables['url']->getRouteParameters();
+  if (!$url->isExternal() && $url->getRouteName() === 'view.event_enrollments.view_enrollments'
+    && stripos(strtolower($variables['text']), 'all enrollments') !== FALSE) {
+    $params = $url->getRouteParameters();
     $variables['url'] = Url::fromRoute('view.event_manage_enrollments.page_manage_enrollments', $params);
   }
 }
