@@ -84,7 +84,8 @@ field_settings:
     label: Title
     datasource_id: 'entity:group'
     property_path: label
-    type: string
+    type: text
+    boost: !!float 8
     dependencies:
       module:
         - group
@@ -119,9 +120,9 @@ field_settings:
           open_group: teaser
           public_group: ''
         'entity:node':
-          event: full
-          page: full
-          topic: teaser
+          event: search_index
+          page: search_index
+          topic: search_index
         'entity:profile':
           profile: search_index
   status:
@@ -138,7 +139,8 @@ field_settings:
     label: Title
     datasource_id: 'entity:node'
     property_path: title
-    type: string
+    type: text
+    boost: !!float 8
     dependencies:
       module:
         - node
