@@ -18,7 +18,7 @@ Feature: Search
     And "topic" content:
       | title             | body          |
       | Tjakka topic      | Description   |
-    And I run cron
+    And Search indexes are up to date
     When I am logged in as an "authenticated user"
     And I am on "search/all/tjakka"
     Then I should see "Tjakka group"

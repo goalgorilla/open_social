@@ -65,13 +65,6 @@ field_settings:
 datasource_settings:
   'entity:node':
     plugin_id: 'entity:node'
-    settings:
-      bundles:
-        default: true
-        selected: {  }
-      languages:
-        default: true
-        selected: {  }
     bundles:
       default: true
       selected: {  }
@@ -81,36 +74,22 @@ datasource_settings:
 processor_settings:
   add_url:
     plugin_id: add_url
-    settings:
-      weights:
-        preprocess_index: -30
+    weights:
+      preprocess_index: -30
   aggregated_field:
     plugin_id: aggregated_field
-    settings:
-      weights:
-        add_properties: 20
+    weights:
+      add_properties: 20
   content_access:
     plugin_id: content_access
-    settings:
-      weights:
-        preprocess_index: -10
-        preprocess_query: -10
+    weights:
+      preprocess_index: -10
+      preprocess_query: -10
   html_filter:
     plugin_id: html_filter
-    settings:
-      fields:
-        - rendered_item
-      title: true
-      alt: true
-      tags:
-        h1: 5
-        h2: 3
-        h3: 2
-        strong: 2
-        b: 2
-      weights:
-        preprocess_index: -10
-        preprocess_query: -10
+    all_fields: false
+    fields:
+      - rendered_item
     title: true
     alt: true
     tags:
@@ -121,68 +100,29 @@ processor_settings:
       b: 2
       em: 1
       u: 1
-    all_fields: false
+    weights:
+      preprocess_index: -10
+      preprocess_query: -10
   ignorecase:
     plugin_id: ignorecase
-    settings:
-      fields:
-        - title
-        - rendered_item
-      weights:
-        preprocess_index: -10
-        preprocess_query: -10
     all_fields: false
+    fields:
+      - title
+      - rendered_item
+    weights:
+      preprocess_index: -10
+      preprocess_query: -10
   rendered_item:
     plugin_id: rendered_item
-    settings:
-      weights:
-        add_properties: 0
-        pre_index_save: -10
+    weights:
+      add_properties: 0
+      pre_index_save: -10
   stopwords:
     plugin_id: stopwords
-    settings:
-      fields:
-        - title
-        - rendered_item
-      stopwords:
-        - a
-        - an
-        - and
-        - are
-        - as
-        - at
-        - be
-        - but
-        - by
-        - for
-        - if
-        - in
-        - into
-        - is
-        - it
-        - 'no'
-        - not
-        - of
-        - 'on'
-        - or
-        - s
-        - such
-        - t
-        - that
-        - the
-        - their
-        - then
-        - there
-        - these
-        - they
-        - this
-        - to
-        - was
-        - will
-        - with
-      weights:
-        preprocess_index: -5
-        preprocess_query: -2
+    all_fields: false
+    fields:
+      - title
+      - rendered_item
     stopwords:
       - a
       - an
@@ -219,37 +159,32 @@ processor_settings:
       - was
       - will
       - with
-    all_fields: false
+    weights:
+      preprocess_index: -5
+      preprocess_query: -2
   tokenizer:
     plugin_id: tokenizer
-    settings:
-      fields:
-        - title
-        - rendered_item
-      spaces: ''
-      overlap_cjk: 1
-      minimum_word_size: '3'
-      weights:
-        preprocess_index: -6
-        preprocess_query: -6
+    all_fields: false
+    fields:
+      - title
+      - rendered_item
     spaces: ''
     overlap_cjk: 1
     minimum_word_size: '3'
-    all_fields: false
+    weights:
+      preprocess_index: -6
+      preprocess_query: -6
   transliteration:
     plugin_id: transliteration
-    settings:
-      fields:
-        - title
-        - rendered_item
-      weights:
-        preprocess_index: -10
-        preprocess_query: -10
     all_fields: false
+    fields:
+      - title
+      - rendered_item
+    weights:
+      preprocess_index: -10
+      preprocess_query: -10
 tracker_settings:
   default:
-    plugin_id: default
-    settings: {  }
     indexing_order: fifo
 options:
   index_directly: false

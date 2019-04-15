@@ -14,6 +14,8 @@ dependencies:
     - field.storage.profile.field_profile_expertise
     - field.storage.profile.field_profile_interests
     - field.storage.profile.field_profile_profile_tag
+    - field.storage.profile.field_profile_first_name
+    - field.storage.profile.field_profile_last_name
     - search_api.server.social_database
     - core.entity_view_mode.group.teaser
     - core.entity_view_mode.node.search_index
@@ -187,6 +189,22 @@ field_settings:
         - profile
         - user
         - user
+  field_profile_first_name:
+    label: 'First name'
+    datasource_id: 'entity:profile'
+    property_path: field_profile_first_name
+    type: text
+    dependencies:
+      config:
+        - field.storage.profile.field_profile_first_name
+  field_profile_last_name:
+    label: 'Last name'
+    datasource_id: 'entity:profile'
+    property_path: field_profile_last_name
+    type: text
+    dependencies:
+      config:
+        - field.storage.profile.field_profile_last_name
 datasource_settings:
   'entity:group':
     bundles:
@@ -243,6 +261,8 @@ processor_settings:
     fields:
       - field_group_description
       - field_group_location
+      - field_profile_first_name
+      - field_profile_last_name
       - label
       - name
       - rendered_item
@@ -303,6 +323,8 @@ processor_settings:
     all_fields: false
     fields:
       - field_group_description
+      - field_profile_first_name
+      - field_profile_last_name
       - rendered_item
     spaces: ''
     overlap_cjk: 1
@@ -315,6 +337,8 @@ processor_settings:
     fields:
       - field_group_description
       - field_group_location
+      - field_profile_first_name
+      - field_profile_last_name
       - label
       - name
       - rendered_item

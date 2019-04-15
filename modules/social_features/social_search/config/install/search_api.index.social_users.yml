@@ -5,6 +5,8 @@ dependencies:
     - field.storage.profile.field_profile_expertise
     - field.storage.profile.field_profile_interests
     - field.storage.profile.field_profile_profile_tag
+    - field.storage.profile.field_profile_first_name
+    - field.storage.profile.field_profile_last_name
     - search_api.server.social_database
     - core.entity_view_mode.profile.search_index
   module:
@@ -73,44 +75,43 @@ field_settings:
     dependencies:
       module:
         - user
+  field_profile_first_name:
+    label: 'First name'
+    datasource_id: 'entity:profile'
+    property_path: field_profile_first_name
+    type: text
+    dependencies:
+      config:
+        - field.storage.profile.field_profile_first_name
+  field_profile_last_name:
+    label: 'Last name'
+    datasource_id: 'entity:profile'
+    property_path: field_profile_last_name
+    type: text
+    dependencies:
+      config:
+        - field.storage.profile.field_profile_last_name
 datasource_settings:
   'entity:profile':
     plugin_id: 'entity:profile'
-    settings:
-      bundles:
-        default: true
-        selected: {  }
     bundles:
       default: true
       selected: {  }
 processor_settings:
   add_url:
     plugin_id: add_url
-    settings:
-      weights:
-        preprocess_index: -30
+    weights:
+      preprocess_index: -30
   aggregated_field:
     plugin_id: aggregated_field
-    settings:
-      weights:
-        add_properties: 20
+    weights:
+      add_properties: 20
   html_filter:
     plugin_id: html_filter
-    settings:
-      fields:
-        - rendered_item
-        - name
-      title: true
-      alt: true
-      tags:
-        h1: 5
-        h2: 3
-        h3: 2
-        strong: 2
-        b: 2
-      weights:
-        preprocess_index: -10
-        preprocess_query: -10
+    all_fields: false
+    fields:
+      - rendered_item
+      - name
     title: true
     alt: true
     tags:
@@ -121,68 +122,31 @@ processor_settings:
       b: 2
       em: 1
       u: 1
-    all_fields: false
+    weights:
+      preprocess_index: -10
+      preprocess_query: -10
   ignorecase:
     plugin_id: ignorecase
-    settings:
-      fields:
-        - rendered_item
-        - name
-      weights:
-        preprocess_index: -10
-        preprocess_query: -10
     all_fields: false
+    fields:
+      - rendered_item
+      - name
+      - field_profile_first_name
+      - field_profile_last_name
+    weights:
+      preprocess_index: -10
+      preprocess_query: -10
   rendered_item:
     plugin_id: rendered_item
-    settings:
-      weights:
-        add_properties: 0
-        pre_index_save: -10
+    weights:
+      add_properties: 0
+      pre_index_save: -10
   stopwords:
     plugin_id: stopwords
-    settings:
-      fields:
-        - rendered_item
-        - name
-      stopwords:
-        - a
-        - an
-        - and
-        - are
-        - as
-        - at
-        - be
-        - but
-        - by
-        - for
-        - if
-        - in
-        - into
-        - is
-        - it
-        - 'no'
-        - not
-        - of
-        - 'on'
-        - or
-        - s
-        - such
-        - t
-        - that
-        - the
-        - their
-        - then
-        - there
-        - these
-        - they
-        - this
-        - to
-        - was
-        - will
-        - with
-      weights:
-        preprocess_index: -5
-        preprocess_query: -2
+    all_fields: false
+    fields:
+      - rendered_item
+      - name
     stopwords:
       - a
       - an
@@ -219,33 +183,34 @@ processor_settings:
       - was
       - will
       - with
-    all_fields: false
+    weights:
+      preprocess_index: -5
+      preprocess_query: -2
   tokenizer:
     plugin_id: tokenizer
-    settings:
-      fields:
-        - rendered_item
-        - name
-      spaces: ''
-      overlap_cjk: 1
-      minimum_word_size: '3'
-      weights:
-        preprocess_index: -6
-        preprocess_query: -6
+    all_fields: false
+    fields:
+      - rendered_item
+      - name
+      - field_profile_first_name
+      - field_profile_last_name
     spaces: ''
     overlap_cjk: 1
     minimum_word_size: '3'
-    all_fields: false
+    weights:
+      preprocess_index: -6
+      preprocess_query: -6
   transliteration:
     plugin_id: transliteration
-    settings:
-      fields:
-        - rendered_item
-        - name
-      weights:
-        preprocess_index: -10
-        preprocess_query: -10
     all_fields: false
+    fields:
+      - rendered_item
+      - name
+      - field_profile_first_name
+      - field_profile_last_name
+    weights:
+      preprocess_index: -10
+      preprocess_query: -10
   super_user:
     weights:
       preprocess_query: 30
@@ -254,8 +219,6 @@ processor_settings:
       preprocess_query: -30
 tracker_settings:
   default:
-    plugin_id: default
-    settings: {  }
     indexing_order: fifo
 options:
   index_directly: false
