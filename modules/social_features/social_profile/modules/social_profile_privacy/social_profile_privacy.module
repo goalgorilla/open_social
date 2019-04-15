@@ -505,6 +505,11 @@ function social_profile_privacy_search_api_query_alter(QueryInterface &$query) {
     $search_term = strtolower($search_term);
   }
 
+  // If no search string was filled out, don't add the subquery.
+  if (empty($search_term)) {
+    return;
+  }
+
   // When a user has no nickname, there can be a match for a (part of the) name.
   $matched_name = (new ConditionGroup("AND", ['social_profile_privacy_full_name_protection']))
     ->addCondition('field_profile_nick_name', NULL, '=')
