@@ -131,6 +131,26 @@ class SocialDrupalContext extends DrupalContext {
   }
 
   /**
+   * @Given Search indexes are up to date
+   */
+  public function updateSearchIndexes() {
+    /** @var \Drupal\search_api\Entity\SearchApiConfigEntityStorage $index_storage */
+    $index_storage = \Drupal::service("entity_type.manager")->getStorage('search_api_index');
+
+    $indexes = $index_storage->loadMultiple();
+    if (!$indexes) {
+      return;
+    }
+
+    // Loop over all interfaces and let the Search API index any non-indexed
+    // items.
+    foreach ($indexes as $index) {
+      /** @var \Drupal\search_api\IndexInterface $index */
+      $index->indexItems();
+    }
+  }
+
+  /**
    * @When I empty the queue
    */
   public function iEmptyTheQueue() {
@@ -210,12 +230,67 @@ class SocialDrupalContext extends DrupalContext {
   }
 
   /**
+   * I disable the module :module_name.
+   *
+   * @When /^(?:|I )disable the module "([^"]*)"/
+   */
+  public function iDisableTheModule($module_name) {
+    $modules = [$module_name];
+    \Drupal::service('module_installer')->uninstall($modules);
+  }
+
+  /**
    * I enable the tour setting.
    *
    * @When I enable the tour setting
    */
   public function iEnableTheTourSetting() {
     \Drupal::configFactory()->getEditable('social_tour.settings')->set('social_tour_enabled', 1)->save();
+  }
+
+  /**
+   * I enable the nickname field on profiles
+   *
+   * @When /^(?:|I )enable the nickname field on profiles/
+   */
+  public function iEnableNicknameField() {
+    if (!\Drupal::service('module_handler')->moduleExists("social_profile_fields")) {
+      throw new \Exception("Could not enable nickname field for profile because the Social Profile Fields module is disabled.");
+    }
+
+    \Drupal::configFactory()->getEditable('social_profile_fields.settings')->set("profile_profile_field_profile_nick_name", TRUE)->save();
+  }
+
+  /**
+   * I restrict real name usage
+   *
+   * @When /^(?:|I )(un)?restrict real name usage/
+   */
+  public function iRestrictRealNameUsage($restrict = TRUE) {
+    if (!\Drupal::service('module_handler')->moduleExists("social_profile_privacy")) {
+      throw new \Exception("Could not restrict real name usage because the Social Profile Privacy module is disabled.");
+    }
+
+    // Convert our negative match to a boolean.
+    if ($restrict === "un") {
+      $restrict = FALSE;
+    }
+
+    // TODO: Remove debug.
+    if ($restrict !== FALSE && $restrict !== TRUE) {
+      throw  new \Exception("Restrict has unknown value " . print_r($restrict, true));
+    }
+
+    \Drupal::configFactory()->getEditable('social_profile_privacy.settings')->set("limit_search_and_mention", $restrict)->save();
+  }
+
+  /**
+   * I search :index for :term
+   *
+   * @When /^(?:|I )search (all|users|groups|content) for "([^"]*)"/
+   */
+  public function iSearchIndexForTerm($index, $term) {
+    $this->getSession()->visit($this->locatePath('/search/' . $index . '/' . urlencode($term)));
   }
 
   /**

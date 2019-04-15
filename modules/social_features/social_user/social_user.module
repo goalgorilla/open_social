@@ -723,3 +723,38 @@ function social_user_ensure_help_text_fieldset(&$form) {
 
   return $key;
 }
+
+/**
+ * Implements hook_user_format_name_alter().
+ *
+ * Gathers the suggestions for a user display name from other module and
+ * displays the one with the lowest weight (highest priority).
+ */
+function social_user_user_format_name_alter(&$name, AccountInterface $account) {
+  // We always add the username as fallback suggestion.
+  $suggestions = [
+    'username' => [
+      'name' => $account->getAccountName(),
+      'weight' => PHP_INT_MAX,
+    ],
+  ];
+
+  $suggestions += \Drupal::moduleHandler()->invokeAll('social_user_name_display_suggestions', [$account]);
+  \Drupal::moduleHandler()->alter('social_user_name_display_suggestions', $suggestions, $account);
+
+  // We could use -PHP_INT_MAX but someone being clever might shoot themselves.
+  $lowest_weight = NULL;
+
+  // If our array ends up being empty then we just stick to Drupal's default.
+  foreach ($suggestions as $suggestion) {
+    // Allow weight to be omitted and default to 0.
+    $suggestion['weight'] = $suggestion['weight'] ?? 0;
+
+    // If the suggestion's weight is equal to a previous entry then we use the
+    // item that appears first in the array.
+    if ($lowest_weight === NULL || $suggestion['weight'] < $lowest_weight) {
+      $name = $suggestion['name'];
+      $lowest_weight = $suggestion['weight'];
+    }
+  }
+}

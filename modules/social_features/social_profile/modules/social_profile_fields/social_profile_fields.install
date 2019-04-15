@@ -15,6 +15,7 @@ function social_profile_fields_install() {
   // Set some default permissions.
   _social_profile_fields_set_permissions();
   _social_profile_fields_update_search_index();
+  _social_profile_fields_update_search_index('social_all');
 }
 
 /**
@@ -22,6 +23,13 @@ function social_profile_fields_install() {
  */
 function social_profile_fields_update_8001() {
   _social_profile_fields_update_search_index();
+}
+
+/**
+ * Disable and enable the main search index, so the nickname field is added.
+ */
+function social_profile_fields_update_8002() {
+  _social_profile_fields_update_search_index('social_all');
 }
 
 /**
@@ -33,26 +41,31 @@ function _social_profile_fields_set_permissions() {
 
 /**
  * Disable and enable the search index, so the nickname field is added.
+ *
+ * @param string $index_id
+ *   The search index ID.
  */
-function _social_profile_fields_update_search_index() {
-  /* @var Drupal\search_api\Entity\Index $index */
-  $index = Index::load('social_users');
-  \Drupal::logger('social_profile_fields')->info('Loaded search index');
+function _social_profile_fields_update_search_index($index_id = 'social_users') {
+  /* @var \Drupal\search_api\IndexInterface $index */
+  $index = Index::load($index_id);
+
+  $logger = \Drupal::logger('social_profile_fields');
+  $logger->info('Loaded search index');
 
   // If currently enabled we will first disabled and enable the index.
   if ($index !== NULL && $index->status()) {
-    \Drupal::logger('social_profile_fields')->info('Search index exists');
+    $logger->info('Search index exists');
 
     // Elevate permissions so we can index *all* the items.
-    $accountSwitcher = Drupal::service('account_switcher');
+    $accountSwitcher = \Drupal::service('account_switcher');
     $account = User::load(1);
     $accountSwitcher->switchTo($account);
 
     // Disable and enable the index so the tagging field is properly added.
     $index->disable()->save();
-    \Drupal::logger('social_profile_fields')->info('Search index disabled');
+    $logger->info('Search index disabled');
     $index->enable()->save();
-    \Drupal::logger('social_profile_fields')->info('Search index enabled');
+    $logger->info('Search index enabled');
 
     // Restore user account.
     $accountSwitcher->switchBack();

@@ -7,6 +7,8 @@ dependencies:
     - field.storage.profile.field_profile_expertise
     - field.storage.profile.field_profile_interests
     - field.storage.profile.field_profile_profile_tag
+    - field.storage.profile.field_profile_first_name
+    - field.storage.profile.field_profile_last_name
     - search_api.server.social_database
     - core.entity_view_mode.group.teaser
     - core.entity_view_mode.node.search_index
@@ -154,6 +156,22 @@ field_settings:
     dependencies:
       module:
         - user
+  field_profile_first_name:
+    label: 'First name'
+    datasource_id: 'entity:profile'
+    property_path: field_profile_first_name
+    type: text
+    dependencies:
+      config:
+        - field.storage.profile.field_profile_first_name
+  field_profile_last_name:
+    label: 'Last name'
+    datasource_id: 'entity:profile'
+    property_path: field_profile_last_name
+    type: text
+    dependencies:
+      config:
+        - field.storage.profile.field_profile_last_name
 datasource_settings:
   'entity:node':
     bundles:
@@ -212,6 +230,8 @@ processor_settings:
       - field_group_description
       - field_group_location
       - name
+      - field_profile_first_name
+      - field_profile_last_name
     weights:
       preprocess_index: -20
       preprocess_query: -20
@@ -265,6 +285,8 @@ processor_settings:
     fields:
       - rendered_item
       - field_group_description
+      - field_profile_first_name
+      - field_profile_last_name
     spaces: ''
     overlap_cjk: 1
     minimum_word_size: '3'
@@ -281,6 +303,8 @@ processor_settings:
       - field_group_description
       - field_group_location
       - name
+      - field_profile_first_name
+      - field_profile_last_name
     weights:
       preprocess_index: -20
       preprocess_query: -20
@@ -294,6 +318,6 @@ tracker_settings:
   default:
     indexing_order: fifo
 options:
-  index_directly: true
+  index_directly: false
   cron_limit: 50
 server: social_database
