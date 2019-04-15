@@ -93,7 +93,7 @@
 
     {% if view_mode == 'teaser' or no_image %}
       {% block card_teaser_type %}
-        <a href="{{ url }}">
+        <a href="{{ url }}" title="{{- label|render|striptags|trim -}}">
           <div class="teaser__teaser-type">
             <svg class="teaser__teaser-type-icon">
               <use xlink:href="#icon-{{- node.bundle|clean_class -}}"></use>
