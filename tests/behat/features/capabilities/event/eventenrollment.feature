@@ -25,9 +25,6 @@ Feature: Enroll for an event
 
     When I click "All enrollments"
     Then I should see the button "Enrolled"
-    And I should see the link "Enrollments"
-    And I should see "View profile"
-    And I should see "View activities"
 
   @AN
   Scenario: Successfully redirect an AN from an event enrollment action
