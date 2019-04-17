@@ -56,7 +56,7 @@ before_install:
   # Installing hirak/prestissimo allows composer to parallelise downloads which speeds up the composer install.
   - composer global require hirak/prestissimo
   - echo "TRAVIS_BRANCH=$TRAVIS_BRANCH, PR=$PR, BRANCH=$BRANCH, COMMIT=$COMMIT"
-  - if [ "$TEST_SUITE" = "install_update" ]; then composer require goalgorilla/open_social:2.0.0 --prefer-dist; fi
+  - if [ "$TEST_SUITE" = "install_update" ]; then composer require goalgorilla/open_social:4.0.0 --prefer-dist; fi
   - if [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ "$TRAVIS_PULL_REQUEST_SLUG" != "goalgorilla/open_social" ]; then composer config repositories.social git https://github.com/$TRAVIS_PULL_REQUEST_SLUG.git; fi
   - if [ "$TEST_SUITE" != "install_update" ]; then composer require goalgorilla/open_social:dev-${BRANCH}#${COMMIT} --prefer-dist; fi
 
