@@ -5,6 +5,9 @@
  * Hooks provided by the Social Group module.
  */
 
+use Drupal\group\Entity\GroupInterface;
+use Drupal\node\NodeInterface;
+
 /**
  * @addtogroup hooks
  * @{
@@ -57,7 +60,7 @@ function hook_social_group_default_visibility_alter(&$visibility, $group_type_id
  * @param array $visibilities
  *   The visibilities list.
  * @param string $group_type_id
- *   The Group type we alter the visibility setting for.
+ *   The group type we alter the visibility setting for.
  *
  * @see social_group_get_allowed_visibility_options_per_group_type()
  *
@@ -79,7 +82,7 @@ function hook_social_group_allowed_visibilities_alter(array &$visibilities, $gro
  *
  * @ingroup social_group_api
  */
-function hook_social_group_overview_route_alter(array &$route, \Drupal\group\Entity\GroupInterface $group) {
+function hook_social_group_overview_route_alter(array &$route, GroupInterface $group) {
   if ($group->bundle() === 'challenge') {
     $route = [
       'name' => 'view.challenges_user.page',
@@ -96,7 +99,7 @@ function hook_social_group_overview_route_alter(array &$route, \Drupal\group\Ent
  *
  * @ingroup social_group_api
  */
-function hook_social_group_move(\Drupal\node\NodeInterface $node) {
+function hook_social_group_move(NodeInterface $node) {
   \Drupal::messenger()->addStatus(t('@title is moved.', [
     '@title' => $node->getTitle(),
   ]));
