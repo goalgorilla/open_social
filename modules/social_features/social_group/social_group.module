@@ -203,13 +203,13 @@ function social_group_preprocess_group(array &$variables) {
   $variables['joined'] = FALSE;
   $variables['closed_group'] = FALSE;
   $variables['cta'] = '';
-  $variables['closed_group_lock'] = FALSE;
+  $variables['closed_group_lock'] = $variables['secret_group_shield'] = FALSE;
 
   $account = \Drupal::currentUser();
 
   $group_type_id = $group->getGroupType()->id();
 
-  if ($group_type_id == 'closed_group') {
+  if ($group_type_id === 'closed_group') {
     $variables['closed_group_lock'] = TRUE;
   }
 
