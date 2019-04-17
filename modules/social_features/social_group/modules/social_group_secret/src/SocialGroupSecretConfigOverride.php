@@ -163,6 +163,25 @@ class SocialGroupSecretConfigOverride implements ConfigFactoryOverrideInterface 
       }
     }
 
+    $config_name = 'views.view.newest_groups';
+
+    if (in_array($config_name, $names)) {
+      $config = $this->configFactory->getEditable($config_name);
+
+      $contexts = $config->get('display.block_newest_groups.cache_metadata.contexts');
+      $contexts[count($contexts)] = 'user';
+
+      $overrides[$config_name] = [
+        'display' => [
+          'block_newest_groups' => [
+            'cache_metadata' => [
+              'contexts' => $contexts,
+            ],
+          ],
+        ],
+      ];
+    }
+
     return $overrides;
   }
 
