@@ -57,6 +57,8 @@ class SearchContentForm extends FormBase implements ContainerInjectionInterface 
   public function buildForm(array $form, FormStateInterface $form_state) {
 
     $form['search_input_content'] = [
+      '#title' => $this->t('Search Content'),
+      '#title_display' => 'invisible',
       '#type' => 'textfield',
     ];
 

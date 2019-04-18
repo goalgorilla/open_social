@@ -69,6 +69,8 @@ class SearchHeroForm extends FormBase implements ContainerInjectionInterface {
   public function buildForm(array $form, FormStateInterface $form_state) {
 
     $form['search_input'] = [
+      '#title' => $this->t('Search'),
+      '#title_display' => 'invisible',
       '#type' => 'textfield',
     ];
 
