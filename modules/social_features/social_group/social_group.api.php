@@ -55,7 +55,7 @@ function hook_social_group_default_visibility_alter(&$visibility, $group_type_id
 }
 
 /**
- * Provide a method to alter the allowed visibility used for a group type.
+ * Provide a method to alter the allowed content visibility for a group type.
  *
  * @param array $visibilities
  *   The visibilities list.
