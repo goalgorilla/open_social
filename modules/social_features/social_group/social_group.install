@@ -518,3 +518,14 @@ function social_group_update_8502() {
   $config->set('default_hero', 'hero');
   $config->save();
 }
+
+/**
+ * Install views_bulk_operation module.
+ */
+function social_group_update_8503() {
+  $modules = [
+    'views_bulk_operations',
+  ];
+
+  \Drupal::service('module_installer')->install($modules);
+}
