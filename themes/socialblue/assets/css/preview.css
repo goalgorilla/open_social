@@ -697,8 +697,8 @@ fieldset[disabled] .btn-accent.focus {
 
 .btn-flat:focus, .btn-flat.focus, .btn-flat:hover, .btn-flat:active, .btn-flat.active,
 .open > .btn-flat.dropdown-toggle {
-  background-color: transparent;
-  border-color: transparent;
+  background-color: rgba(0, 0, 0, 0);
+  border-color: rgba(0, 0, 0, 0);
   color: #29abe2;
 }
 
@@ -778,8 +778,8 @@ fieldset[disabled]
 
 .btn-link:focus, .btn-link.focus, .btn-link:hover, .btn-link:active, .btn-link.active,
 .open > .btn-link.dropdown-toggle {
-  background-color: transparent;
-  border-color: transparent;
+  background-color: rgba(0, 0, 0, 0);
+  border-color: rgba(0, 0, 0, 0);
   color: #29abe2;
 }
 
@@ -918,8 +918,6 @@ fieldset[disabled] .btn--twitter.focus {
   font-weight: 500;
 }
 
-.secondary-col .card__title,
-.secondary-col .card__actionbar,
 .region--complementary .card__title,
 .region--complementary .card__actionbar,
 .paragraph--block .secondary-col .card__title,
@@ -1491,23 +1489,44 @@ html.js .input-group-addon .glyphicon.glyphicon-spin {
   background-color: #1f80aa;
 }
 
+.eu-cookie-compliance-secondary-button,
 .btn-primary {
   background-color: #29abe2;
   border-color: #29abe2;
 }
 
-.btn-primary:focus, .btn-primary.focus, .btn-primary:hover, .btn-primary:active, .btn-primary.active,
-.open > .btn-primary.dropdown-toggle, .btn-primary.dropdown-toggle:hover {
+.eu-cookie-compliance-secondary-button:focus, .eu-cookie-compliance-secondary-button.focus, .eu-cookie-compliance-secondary-button:hover, .eu-cookie-compliance-secondary-button:active, .eu-cookie-compliance-secondary-button.active,
+.open > .eu-cookie-compliance-secondary-button.dropdown-toggle, .eu-cookie-compliance-secondary-button.dropdown-toggle:hover,
+.btn-primary:focus,
+.btn-primary.focus,
+.btn-primary:hover,
+.btn-primary:active,
+.btn-primary.active,
+.open >
+.btn-primary.dropdown-toggle,
+.btn-primary.dropdown-toggle:hover {
   background-color: #29abe2;
   border-color: #29abe2;
   background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(0, 0, 0, 0.2)), to(rgba(0, 0, 0, 0.2)));
   background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.2) 100%);
 }
 
-.btn-primary.disabled:hover, .btn-primary.disabled:focus, .btn-primary.disabled.focus, .btn-primary[disabled]:hover, .btn-primary[disabled]:focus, .btn-primary[disabled].focus,
-fieldset[disabled] .btn-primary:hover,
-fieldset[disabled] .btn-primary:focus,
-fieldset[disabled] .btn-primary.focus {
+.eu-cookie-compliance-secondary-button.disabled:hover, .eu-cookie-compliance-secondary-button.disabled:focus, .eu-cookie-compliance-secondary-button.disabled.focus, .eu-cookie-compliance-secondary-button[disabled]:hover, .eu-cookie-compliance-secondary-button[disabled]:focus, .eu-cookie-compliance-secondary-button[disabled].focus,
+fieldset[disabled] .eu-cookie-compliance-secondary-button:hover,
+fieldset[disabled] .eu-cookie-compliance-secondary-button:focus,
+fieldset[disabled] .eu-cookie-compliance-secondary-button.focus,
+.btn-primary.disabled:hover,
+.btn-primary.disabled:focus,
+.btn-primary.disabled.focus,
+.btn-primary[disabled]:hover,
+.btn-primary[disabled]:focus,
+.btn-primary[disabled].focus,
+fieldset[disabled]
+.btn-primary:hover,
+fieldset[disabled]
+.btn-primary:focus,
+fieldset[disabled]
+.btn-primary.focus {
   background-color: #29abe2;
   border-color: #29abe2;
   background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(0, 0, 0, 0.2)), to(rgba(0, 0, 0, 0.2)));
@@ -1675,6 +1694,15 @@ blockquote {
   background-color: #1f1f1f;
 }
 
+body:not(.js) .navbar-default .dropdown:focus > a, body:not(.js) .navbar-default .dropdown:hover > a {
+  color: #f3f3f3;
+  background-color: #1f1f1f;
+}
+
+body:not(.js) .navbar-default .dropdown:focus > a .navbar-nav__icon, body:not(.js) .navbar-default .dropdown:hover > a .navbar-nav__icon {
+  fill: #f3f3f3;
+}
+
 .navbar-nav__icon {
   fill: #ffffff;
 }
@@ -1744,6 +1772,10 @@ blockquote {
 
 .social-gtranslate-list--desktop.open > a:focus .select-icon, .social-gtranslate-list--desktop.open > a:hover .select-icon {
   fill: #f3f3f3;
+}
+
+#sliding-popup {
+  background-color: #1f80aa !important;
 }
 
 @media (min-width: 600px) {

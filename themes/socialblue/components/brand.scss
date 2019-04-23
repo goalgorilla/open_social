@@ -293,6 +293,24 @@ blockquote {
   }
 }
 
+body:not(.js) .navbar-default {
+  .dropdown {
+
+    &:focus,
+    &:hover {
+
+      > a {
+        color: $navbar-default-link-active-color;
+        background-color: $navbar-default-link-active-bg;
+
+        .navbar-nav__icon {
+          fill: $navbar-default-link-active-color;
+        }
+      }
+    }
+  }
+}
+
 .dropdown {
   &.has-alert {
     > a {
