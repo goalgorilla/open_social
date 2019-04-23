@@ -9,6 +9,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\profile\Entity\ProfileInterface;
+use Drupal\taxonomy\TermInterface;
 use Drupal\user\UserInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -214,19 +215,12 @@ abstract class UserExportPluginBase extends PluginBase implements UserExportPlug
       return '';
     }
 
-    /** @var \Drupal\Core\Field\EntityReferenceFieldItemListInterface $field */
-    $field = $user_profile->get($field_name);
-
-    if ($field->isEmpty()) {
-      return '';
-    }
-
-    $names = [];
-
-    /** @var \Drupal\taxonomy\TermInterface $taxonomy_term */
-    foreach ($field->referencedEntities() as $taxonomy_term) {
-      $names[] = $taxonomy_term->getName();
-    }
+    $names = array_map(
+      function (TermInterface $taxonomy_term) {
+        return $taxonomy_term->getName();
+      },
+      $user_profile->get($field_name)->referencedEntities()
+    );
 
     return implode(', ', $names);
   }
