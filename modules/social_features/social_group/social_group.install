@@ -526,6 +526,10 @@ function social_group_update_8503() {
   $modules = [
     'views_bulk_operations',
   ];
-
   \Drupal::service('module_installer')->install($modules);
+
+  // Install default configuration from social_group module so we can reimport
+  // views from the configuration set.
+  \Drupal::service('config.installer')->installDefaultConfig('module', 'social_group');
+
 }
