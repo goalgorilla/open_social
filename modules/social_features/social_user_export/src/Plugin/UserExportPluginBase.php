@@ -9,7 +9,6 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\profile\Entity\ProfileInterface;
-use Drupal\taxonomy\TermInterface;
 use Drupal\user\UserInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -215,33 +214,21 @@ abstract class UserExportPluginBase extends PluginBase implements UserExportPlug
       return '';
     }
 
-    $concatenated_value = '';
+    /** @var \Drupal\Core\Field\EntityReferenceFieldItemListInterface $field */
+    $field = $user_profile->get($field_name);
 
-    try {
-      $values = $user_profile->get($field_name)->getValue();
-
-      if (is_array($values) && !empty($values)) {
-        $taxonomy_terms = [];
-        $storage = $this->entityTypeManager->getStorage('taxonomy_term');
-
-        foreach ($values as $x => $value) {
-          if (isset($value['target_id'])) {
-            $taxonomy_term = $storage->load($value['target_id']);
-
-            if ($taxonomy_term instanceof TermInterface) {
-              $taxonomy_terms[] = $taxonomy_term->getName();
-            }
-          }
-        }
-
-        $concatenated_value = implode(', ', $taxonomy_terms);
-      }
-    }
-    catch (\Exception $e) {
-      $concatenated_value = '';
+    if ($field->isEmpty()) {
+      return '';
     }
 
-    return $concatenated_value;
+    $names = [];
+
+    /** @var \Drupal\taxonomy\TermInterface $taxonomy_term */
+    foreach ($field->referencedEntities() as $taxonomy_term) {
+      $names[] = $taxonomy_term->getName();
+    }
+
+    return implode(', ', $names);
   }
 
 }
