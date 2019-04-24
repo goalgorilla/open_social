@@ -96,6 +96,9 @@ function social_user_form_user_register_form_alter(&$form, FormStateInterface $f
     $form['account']['login-link'] = [
       '#markup' => new TranslatableMarkup("Have an account already? @link", ["@link" => $login_link]),
       '#weight' => 1000,
+      '#cache' => [
+        'contexts' => ['url.query_args'],
+      ],
     ];
   }
 
