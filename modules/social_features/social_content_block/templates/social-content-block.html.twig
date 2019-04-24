@@ -1,0 +1,18 @@
+{#
+/**
+ * @file
+ * Custom theme implementation to display a custom content block.
+ */
+#}
+<h4 class="card__title">
+    {{ title }}
+    <div class="card__subtitle">
+        {{ subtitle }}
+    </div>
+</h4>
+{{ topics }}
+<footer class="card__actionbar">
+    {% if link %}
+        {{ link }}
+    {% endif %}
+</footer>
