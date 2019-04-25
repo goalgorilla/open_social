@@ -122,6 +122,10 @@
       {% endfor %}
     {% endif %}
 
+    {{  content|without('field_profile_phone_number', 'user_mail', 'field_profile_address',
+                        'field_profile_self_introduction', 'field_profile_interests', 'field_profile_expertise',
+                        'field_profile_profile_tag') }}
+
     {% if (content|render is empty and user_mail is empty)%}
         {% trans %}{{ profile_name }} has not shared profile information.{% endtrans %}
     {% endif %}
