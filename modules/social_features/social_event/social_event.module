@@ -460,7 +460,8 @@ function social_event_form_alter(&$form, FormStateInterface $form_state, $form_i
   switch ($form_id) {
     case 'node_event_edit_form':
       // Set allow event enrollment checked by default for existing events.
-      if ($form_state->getFormObject()->getEntity()->field_event_enroll->isEmpty()) {
+      $entity = $form_state->getFormObject()->getEntity();
+      if ($entity->hasField('field_event_enroll') && $entity->field_event_enroll->isEmpty()) {
         $form['field_event_enroll']['widget']['value']['#default_value'] = TRUE;
       }
 
