@@ -96,7 +96,11 @@ function social_event_managers_link_alter(&$variables) {
   $url = $variables['url'];
 
   // Let's make sure we reroute the view more link.
-  if (!$url->isExternal() && $url->getRouteName() === 'view.event_enrollments.view_enrollments'
+  if (!$url->isExternal()) {
+    return;
+  }
+
+  if ($url->isRouted() && $url->getRouteName() === 'view.event_enrollments.view_enrollments'
     && stripos(strtolower($variables['text']), 'all enrollments') !== FALSE) {
     $params = $url->getRouteParameters();
     $variables['url'] = Url::fromRoute('view.event_manage_enrollments.page_manage_enrollments', $params);
