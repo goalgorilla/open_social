@@ -8,12 +8,23 @@
 /**
  * Provide a method to alter the query to get content.
  *
- * @param array $query
+ * @param \Drupal\Core\Database\Driver\mysql\Select $query
  *   Query to alter the results.
+ * @param BlockContent $blockContent
+ *   Current block content.
  *
  * @ingroup social_content_block_api
  */
-function hook_social_content_block_query_alter(array &$query) {
-  $query->innerJoin('node__field_topic_type', 'tt', 'tt.entity_id = n.nid');
-  $query->condition('tt.field_topic_type_target_id', '1', 'IN');
+function hook_social_content_block_query_alter(\Drupal\Core\Database\Driver\mysql\Select $query, BlockContent $blockContent) {
+  // Get topic type tags.
+  $topic_types_list = $blockContent->get('field_topic_type')->getValue();
+  $topic_types = array_map(function ($topic_type) {
+    return $topic_type['target_id'];
+  }, $topic_types_list);
+
+  // Add topic type tags.
+  if (!empty($topic_types)) {
+    $query->innerJoin('node__field_topic_type', 'tt', 'tt.entity_id = n.nid');
+    $query->condition('tt.field_topic_type_target_id', $topic_types, 'IN');
+  }
 }

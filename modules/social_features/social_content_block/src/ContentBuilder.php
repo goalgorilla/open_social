@@ -92,7 +92,7 @@ class ContentBuilder implements ContentBuilderInterface {
     }
 
     // Allow other modules to change the query to add additions.
-    \Drupal::moduleHandler()->alter('social_content_block_query', $query);
+    \Drupal::moduleHandler()->alter('social_content_block_query', $query, $blockContent);
 
     // Add sorting.
     $query->orderBy($sorting);

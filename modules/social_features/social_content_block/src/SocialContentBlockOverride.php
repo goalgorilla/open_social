@@ -59,8 +59,10 @@ class SocialContentBlockOverride implements ConfigFactoryOverrideInterface {
       }
 
       // Add the blocks to the landing page.
-      foreach ($plugin_ids as $plugin_id) {
-        $settings[$plugin_id] = $plugin_id;
+      if (isset($plugin_ids)) {
+        foreach ($plugin_ids as $plugin_id) {
+          $settings[$plugin_id] = $plugin_id;
+        }
       }
 
       $overrides[$config_name]['settings']['plugin_ids'] = $settings;
