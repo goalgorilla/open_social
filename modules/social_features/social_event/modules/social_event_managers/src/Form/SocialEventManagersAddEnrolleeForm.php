@@ -121,6 +121,7 @@ class SocialEventManagersAddEnrolleeForm extends FormBase {
 
     $form['name'] = [
       '#type' => 'social_enrollment_entity_autocomplete',
+      '#selection_handler' => 'social',
       '#target_type' => 'user',
       '#tags' => TRUE,
       '#description' => $this->t('To add multiple members, separate each member with a comma ( , ).'),
