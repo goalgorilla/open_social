@@ -71,15 +71,19 @@ function social_event_form_views_exposed_form_alter(&$form, FormStateInterface $
  *
  * @param \Drupal\node\Entity\Node|null $node
  *   The node the current user could be organizer of.
+ * @param boolean $skipTrustedRoles
+ *   Should we skip CM/SM with the manage everything enrollments
  *
  * @return bool
  *   If the user is actually a manager or organizer.
  */
-function social_event_manager_or_organizer(Node $node = NULL) {
+function social_event_manager_or_organizer(Node $node = NULL, $skipTrustedRoles = FALSE) {
   $account = \Drupal::currentUser();
 
   // Allow if user has the manage everything permission.
-  if ($account->hasPermission('manage everything enrollments')) {
+  // We can skip this to make sure we truly only check organizer & managers, used
+  // for context in notifications.
+  if ($skipTrustedRoles === FALSE && $account->hasPermission('manage everything enrollments')) {
     return TRUE;
   }
 
