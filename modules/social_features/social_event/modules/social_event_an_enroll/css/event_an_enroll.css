@@ -1,15 +1,14 @@
 .event_an_enroll.row {
   margin-bottom: 5px; }
-  @media (min-width: 600px) {
-    .event_an_enroll.row {
-      min-width: 500px; } }
   .event_an_enroll.row .col-md {
-    width: 100%; }
-    @media (min-width: 600px) {
-      .event_an_enroll.row .col-md {
-        width: 50%; } }
+    flex: 100%; }
   .event_an_enroll.row h5 {
     margin-bottom: 1.5rem; }
+  @media (min-width: 600px) {
+    .event_an_enroll.row {
+      min-width: 500px; }
+      .event_an_enroll.row .col-md {
+        flex: auto; } }
 
 .avatar {
   position: relative; }
@@ -24,5 +23,3 @@
     color: #fff;
     border-radius: 50%;
     font-size: 90%; }
-
-/*# sourceMappingURL=event_an_enroll.css.map */
