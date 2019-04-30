@@ -1,18 +1,20 @@
 .event_an_enroll.row {
   margin-bottom: 5px;
-  @media (min-width: 600px) {
-    min-width: 500px;
-  }
 
   .col-md {
-    width: 100%;
-    @media (min-width: 600px) {
-      width: 50%;
-    }
+    flex: 100%;
   }
 
   h5 {
     margin-bottom: 1.5rem;
+  }
+
+  @media (min-width: 600px) {
+    min-width: 500px;
+
+    .col-md {
+      flex: auto;
+    }
   }
 }
 
