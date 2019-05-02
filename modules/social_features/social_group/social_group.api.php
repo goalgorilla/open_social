@@ -26,12 +26,12 @@ function hook_social_group_types_alter(array &$social_group_types) {
 }
 
 /**
- * Provide a method to alter the default visibility used for a group type.
+ * Provide a method to alter the default content visibility for a group type.
  *
  * @param string $visibility
  *   The visibility option that is default.
  * @param string $group_type_id
- *   The Group type we alter the visibility setting for.
+ *   The group type we alter the visibility setting for.
  *
  * @ingroup social_group_api
  */
