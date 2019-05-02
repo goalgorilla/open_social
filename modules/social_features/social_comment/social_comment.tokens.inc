@@ -127,7 +127,12 @@ function social_comment_tokens($type, $tokens, array $data, array $options, Bubb
                   }
 
                   if ($name === 'parent_comment_text') {
-                    $replacements[$original] = $parent_comment->field_comment_body->value;
+                    if (isset($parent_comment->field_comment_body) && !empty($parent_comment->field_comment_body->value)) {
+                      $replacements[$original] = _social_comment_get_summary($parent_comment->field_comment_body->value);
+                    }
+                    else {
+                      $replacements[$original] = '';
+                    }
                   }
                 }
 
@@ -147,7 +152,12 @@ function social_comment_tokens($type, $tokens, array $data, array $options, Bubb
                 }
 
                 if ($name === 'comment_text') {
-                  $replacements[$original] = _social_comment_get_half_text($comment);
+                  if (isset($comment->field_comment_body) && !empty($comment->field_comment_body->value)) {
+                    $replacements[$original] = _social_comment_get_summary($comment->field_comment_body->value);
+                  }
+                  else {
+                    $replacements[$original] = '';
+                  }
                 }
 
                 if ($name === 'comment_reply_link_html') {
@@ -228,14 +238,14 @@ function social_comment_tokens($type, $tokens, array $data, array $options, Bubb
 }
 
 /**
- * Get half of the comment body().
+ * Get first 280 characters of text.
  */
-function _social_comment_get_half_text($comment) {
-  $half_text = '';
-  if (isset($comment->field_comment_body) && !empty($comment->field_comment_body->value)) {
-    $text = $comment->field_comment_body->value;
-    $middle = strrpos(substr($text, 0, floor(strlen($text) / 2)), ' ') + 1;
-    $half_text = substr($text, 0, $middle) . '...';
+function _social_comment_get_summary($text) {
+  $summary = strip_tags($text);
+  $max_length = 280;
+  if (strlen($summary) > $max_length) {
+    $summary = substr($summary, 0, $max_length) . '...';
   }
-  return $half_text;
+
+  return $summary;
 }
