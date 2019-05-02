@@ -94,14 +94,11 @@ class SocialGroupSecretConfigOverride implements ConfigFactoryOverrideInterface 
 
     foreach ($config_names as $config_name) {
       if (in_array($config_name, $names)) {
-        $config = $this->configFactory->getEditable($config_name);
-
-        $dependencies = $config->get('dependencies.config');
-        $dependencies[count($dependencies)] = 'group.content_type.secret_group-group_membership';
-
         $overrides[$config_name] = [
           'dependencies' => [
-            'config' => $dependencies,
+            'config' => [
+              'secret_group-group_membership' => 'group.content_type.secret_group-group_membership',
+            ],
           ],
           'display' => [
             'default' => [
@@ -127,15 +124,12 @@ class SocialGroupSecretConfigOverride implements ConfigFactoryOverrideInterface 
 
     foreach ($config_names as $config_name => $content_type) {
       if (in_array($config_name, $names)) {
-        $config = $this->configFactory->getEditable($config_name);
-
-        $dependencies = $config->get('dependencies.config');
-        $dependencies[count($dependencies)] = 'group.content_type.' . $content_type;
-        $dependencies[count($dependencies)] = 'group.type';
-
         $overrides[$config_name] = [
           'dependencies' => [
-            'config' => $dependencies,
+            'config' => [
+              'group-content-type' => 'group.content_type.' . $content_type,
+              'group-type' => 'group.type',
+            ],
           ],
           'display' => [
             'default' => [
@@ -166,16 +160,13 @@ class SocialGroupSecretConfigOverride implements ConfigFactoryOverrideInterface 
     $config_name = 'views.view.newest_groups';
 
     if (in_array($config_name, $names)) {
-      $config = $this->configFactory->getEditable($config_name);
-
-      $contexts = $config->get('display.block_newest_groups.cache_metadata.contexts');
-      $contexts[count($contexts)] = 'user';
-
       $overrides[$config_name] = [
         'display' => [
           'block_newest_groups' => [
             'cache_metadata' => [
-              'contexts' => $contexts,
+              'contexts' => [
+                'user' => 'user',
+              ],
             ],
           ],
         ],
