@@ -1597,6 +1597,53 @@ function social_group_social_user_account_header_account_links(array $context) {
 }
 
 /**
+ * Determine whether a user can see groups of a given type as an outsider.
+ *
+ * @param string $type
+ *   The group type to check.
+ * @param \Drupal\Core\Session\AccountInterface $account
+ *   The user to check for.
+ *
+ * @return bool
+ *   Whether the user is allowed to view groups of the given type.
+ */
+function social_group_can_view_groups_of_type(string $type, AccountInterface $account) : bool {
+  $group_type = GroupType::load($type);
+
+  // If the group type doesn't exist then the user can't see the group type.
+  if ($group_type === FALSE) {
+    return FALSE;
+  }
+
+  // Anonymous users have a special role.
+  if ($account->isAnonymous()) {
+    /** @var \Drupal\group\Entity\GroupRoleInterface $role */
+    return $group_type->getAnonymousRole()->hasPermission('view group');
+  }
+
+  // The service that keeps platform roles in sync with group roles for
+  // outsiders.
+  /** @var \Drupal\group\GroupRoleSynchronizerInterface $group_role_synchroniser */
+  $group_role_synchroniser = \Drupal::service('group_role.synchronizer');
+  /** @var \Drupal\group\Entity\GroupRoleInterface[] $group_roles */
+  $group_roles = $group_type->getRoles();
+
+  $user_roles = $account->getRoles(TRUE);
+
+  // Check each role this user has whether its group counterpart has the correct
+  // permission.
+  foreach ($user_roles as $role) {
+    $group_role = $group_role_synchroniser->getGroupRoleId($type, $role);
+    if ($group_roles[$group_role]->hasPermission('view group')) {
+      return TRUE;
+    }
+  }
+
+  // The user has no role that can view the group type.
+  return FALSE;
+}
+
+/**
  * Implements hook_entity_operation_alter().
  */
 function social_group_entity_operation_alter(array &$operations, EntityInterface $entity) {
