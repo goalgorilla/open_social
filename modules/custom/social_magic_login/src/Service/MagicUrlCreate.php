@@ -13,8 +13,7 @@ class MagicUrlCreate {
 
   protected $entityTypeManager;
 
-  public function __construct(EntityTypeManagerInterface $entityTypeManager) {
-    $this->entityTypeManager = $entityTypeManager;
+  public function __construct() {
   }
 
   /**
