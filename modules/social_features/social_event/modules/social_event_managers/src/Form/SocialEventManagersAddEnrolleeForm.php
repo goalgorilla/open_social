@@ -119,15 +119,6 @@ class SocialEventManagersAddEnrolleeForm extends FormBase {
   public function buildForm(array $form, FormStateInterface $form_state) {
     $form['#attributes']['class'][] = 'card card__block form--default form-wrapper form-group';
 
-    $form['name'] = [
-      '#type' => 'social_enrollment_entity_autocomplete',
-      '#selection_handler' => 'social',
-      '#target_type' => 'user',
-      '#tags' => TRUE,
-      '#description' => $this->t('To add multiple members, separate each member with a comma ( , ).'),
-      '#title' => $this->t('Select members to add'),
-    ];
-
     if (empty($nid)) {
       $node = \Drupal::routeMatch()->getParameter('node');
       if ($node instanceof NodeInterface) {
@@ -138,6 +129,27 @@ class SocialEventManagersAddEnrolleeForm extends FormBase {
         $nid = $node;
       }
     }
+
+    // Load the current Event enrollments so we can check duplicates.
+    $storage = \Drupal::entityTypeManager()->getStorage('event_enrollment');
+    $enrollments = $storage->loadByProperties(['field_event' => $nid]);
+
+    $enrollmentIds = [];
+    foreach ($enrollments as $enrollment) {
+      $enrollmentIds[] = $enrollment->getAccount();
+    }
+
+    $form['name'] = [
+      '#type' => 'social_enrollment_entity_autocomplete',
+      '#selection_handler' => 'social',
+      '#selection_settings' => [
+        'skip_entity' => $enrollmentIds,
+      ],
+      '#target_type' => 'user',
+      '#tags' => TRUE,
+      '#description' => $this->t('To add multiple members, separate each member with a comma ( , ).'),
+      '#title' => $this->t('Select members to add'),
+    ];
 
     $form['actions']['cancel'] = [
       '#type' => 'link',
