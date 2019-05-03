@@ -30,7 +30,7 @@ function social_profile_privacy_form_social_profile_admin_settings_form_alter(&$
   $form['privacy']['limit_search_and_mention'] = [
     '#type' => 'checkbox',
     '#title' => t('Limit search and mention'),
-    '#description' => t("Enabling this setting causes users' full name to be hidden on the platform. Users with the '%display_name' permission will still see the full name whenever available. Only users with the '%search_name' permission will find users using their full name through search or mentions.", [
+    '#description' => t("Enabling this setting causes users' full name to be hidden on the platform when the user has filled in their nickname. This setting won't hide the full name of users who didn't fill in a nickname. Users with the '%display_name' permission will still see the full name whenever available. Only users with the '%search_name' permission will find users using their full name through search or mentions.", [
       '%display_name' => t('View full name when restricted'),
       '%search_name' => t('View full name when restricted'),
     ]),
