@@ -1,0 +1,6 @@
+social_magic_login.login:
+  path: '/magic_login/{uid}/{hash}'
+  defaults:
+    _controller: '\Drupal\social_magic_login\Controller\MagicLoginController::login'
+  requirements:
+    _permission: 'use magic login link'
