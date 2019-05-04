@@ -38,6 +38,7 @@ use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\social_group\GroupContentVisibilityUpdate;
 use Drupal\Core\Messenger\MessengerInterface;
+use Drupal\field\Entity\FieldConfig;
 
 /**
  * Implements hook_form_FORM_ID_alter().
@@ -235,23 +236,32 @@ function social_group_preprocess_group(array &$variables) {
   }
 
   // Add the hero styled image.
+  $group_image = '';
   if (!empty($group->get('field_group_image')->entity)) {
-    // Fetch image style from field info.
-    $original_image_style = $variables['content']['field_group_image'][0]['#image_style'] ?? '';
-    $image_style = ImageStyle::load($original_image_style);
-
-    if ($image_style instanceof ImageStyle) {
-
-      $variables['group_hero_styled_image_url'] = $image_style->buildUrl($group->get('field_group_image')->entity->getFileUri());
-      // Check if this style is considered small.
-      $overridden_image_style = Drupal::getContainer()->get('social_group.hero_image')->getGroupHeroImageStyle();
-
-      if ($overridden_image_style !== $original_image_style) {
-        $variables['group_hero_styled_image_url'] = ImageStyle::load($overridden_image_style)
-          ->buildUrl($group->get('field_group_image')->entity->getFileUri());
-      }
+    $group_image = $group->get('field_group_image')->entity;
+  }
+  else {
+    // Provide default image from field configuration.
+    $field_info = FieldConfig::loadByName($group->getEntityTypeId(), $group->bundle(), 'field_group_image');
+    if (!empty($field_info->getSetting('default_image')['uuid'])) {
+      $group_image = Drupal::service('entity.repository')->loadEntityByUuid('file', $field_info->getSetting('default_image')['uuid']);
     }
   }
+  // Fetch image style from field info.
+  $original_image_style = $variables['content']['field_group_image'][0]['#image_style'] ?? '';
+  $image_style = ImageStyle::load($original_image_style);
+
+  if ($image_style instanceof ImageStyle && !empty($group_image)) {
+    $variables['group_hero_styled_image_url'] = $image_style->buildUrl($group_image->getFileUri());
+    // Check if this style is considered small.
+    $overridden_image_style = Drupal::getContainer()->get('social_group.hero_image')->getGroupHeroImageStyle();
+
+    if ($overridden_image_style !== $original_image_style) {
+      $variables['group_hero_styled_image_url'] = ImageStyle::load($overridden_image_style)
+        ->buildUrl($group_image->getFileUri());
+    }
+  }
+
   // This should be determined regardless if there's an image or not.
   if (Drupal::getContainer()->get('social_group.hero_image')->isSmall()) {
     $variables['group_hero_small'] = TRUE;
