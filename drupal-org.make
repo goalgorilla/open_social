@@ -58,6 +58,7 @@ projects[mailsystem][type] = module
 projects[mailsystem][version] = 4.1
 projects[message][type] = module
 projects[message][version] = 1.0-rc2
+projects[message][patch][] = "https://www.drupal.org/files/issues/2018-09-16/undefined-index-value-3000026-2.patch"
 projects[metatag][type] = module
 projects[metatag][version] = 1.8
 projects[override_node_options][type] = module
