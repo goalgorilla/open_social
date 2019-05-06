@@ -22,7 +22,7 @@ class MagicUrlCreate {
    *   - destination: A redirect destination.
    *    If destination is NULL it's not added.
    *
-   * @return \Drupal\Core\GeneratedUrl|string
+   * @return \Drupal\Core\Url
    */
   public function create(UserInterface $account, array $options) {
     // Get url options and prerequisites.
@@ -39,16 +39,14 @@ class MagicUrlCreate {
     }
 
     // Create url from route with the destination if it's set.
-    $url = Url::fromRoute('social_magic_login.login',
+    return Url::fromRoute('social_magic_login.login',
       [
-        'user' => $account->id(),
+        'uid' => $account->id(),
         'timestamp' => $timestamp,
         'hashed_pass' => user_pass_rehash($account, $timestamp)
       ],
       $url_options
     );
-
-    return $url->toUriString();
   }
 
 }
