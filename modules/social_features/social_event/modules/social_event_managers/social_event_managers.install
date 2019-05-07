@@ -22,6 +22,22 @@ function social_event_managers_install() {
     $role->trustData()->save();
   }
 
+  // Add enrollments permissions to CM and SM.
+  $roles = [
+    'sitemanager',
+    'contentmanager',
+  ];
+
+  foreach ($roles as $rolename) {
+    $role = Role::load($rolename);
+    // Set permission for site manager.
+    if ($role instanceof Role) {
+      // Set permission.
+      $role->grantPermission('manage everything enrollments');
+      $role->trustData()->save();
+    }
+  }
+
   // Set default event managers settings.
   $config = \Drupal::configFactory()->getEditable('social_event_managers.settings');
   $config->set('author_as_manager', FALSE);
@@ -33,4 +49,24 @@ function social_event_managers_install() {
  */
 function social_event_managers_update_8001() {
   social_event_managers_install();
+}
+
+/**
+ * Add manage enrollments permission to SM and CM.
+ */
+function social_event_managers_update_8003() {
+  $roles = [
+    'sitemanager',
+    'contentmanager',
+  ];
+
+  foreach ($roles as $rolename) {
+    $role = Role::load($rolename);
+    // Set permission for site manager.
+    if ($role instanceof Role) {
+      // Set permission.
+      $role->grantPermission('manage everything enrollments');
+      $role->trustData()->save();
+    }
+  }
 }

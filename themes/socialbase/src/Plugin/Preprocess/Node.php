@@ -21,6 +21,7 @@ class Node extends PreprocessBase {
    * {@inheritdoc}
    */
   protected function preprocessElement(Element $element, Variables $variables) {
+    /** @var \Drupal\node\Entity\Node $node */
     $node = $variables['node'];
     $account = $node->getOwner();
     $variables['content_type'] = $node->bundle();
@@ -221,6 +222,15 @@ class Node extends PreprocessBase {
         )
       );
       unset($variables['content']['links']['#lazy_builder']);
+    }
+
+    // A landing page has a different way of determining this.
+    if ($node->getType() === 'landing_page') {
+      $variables['no_image'] = FALSE;
+      $image = _social_landing_page_get_hero_image($node);
+      if (empty($image)) {
+        $variables['no_image'] = TRUE;
+      }
     }
 
   }

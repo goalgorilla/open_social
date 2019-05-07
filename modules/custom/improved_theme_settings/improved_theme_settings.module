@@ -172,13 +172,13 @@ function improved_theme_settings_page_attachments(array &$page) {
       $hero_gradient_opacity_end = 0.7;
 
       // Alwasys cast as an integer.
-      $hero_gradient_opacity = (integer) improved_theme_settings_get_setting('hero_gradient_opacity', $system_theme_settings);
-      if (isset($hero_gradient_opacity)) {
+      $hero_gradient_opacity = improved_theme_settings_get_setting('hero_gradient_opacity', $system_theme_settings);
+      if ($hero_gradient_opacity !== FALSE) {
         // Convert to values that the gradient can work with.
-        $hero_gradient_opacity_end = $hero_gradient_opacity / 100;
+        $hero_gradient_opacity_end = (int) $hero_gradient_opacity / 100;
 
         // If our opacity has been set to 0, also change the start value to 0.
-        if ($hero_gradient_opacity === 0) {
+        if ($hero_gradient_opacity_end === 0) {
           $hero_gradient_opacity_start = 0;
         }
       }
