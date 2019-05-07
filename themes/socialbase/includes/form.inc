@@ -108,7 +108,7 @@ function socialbase_preprocess_form(&$variables) {
 
       // To change user picture settings (e.g. image style), edit the 'compact'
       // view mode on the User entity. Note that the 'compact' view mode might
-      // not be configured, so remember to always check the theme setting first.
+      // not be configured, so remember to always check the themetheme setting first.
       $account = $post->getOwner();
       if ($account) {
         $author_name = $account->getDisplayName();
@@ -431,8 +431,19 @@ function socialbase_form_node_form_alter(&$form, FormStateInterface $form_state,
 
   // Delete is not an input element, so we must apply extra classes
   // to anchor directly.
+  $button_size = theme_get_setting('button_size');
   if (isset($form['actions']['delete'])) {
     $form['actions']['delete']['#attributes']['class'][] = 'btn btn-flat';
+
+    if($button_size == 'btn-xs') {
+      $form['actions']['delete']['#attributes']['class'][] = 'btn-xs';
+    }
+    elseif ($button_size == 'btn-sm') {
+      $form['actions']['delete']['#attributes']['class'][] = 'btn-sm';
+    }
+    elseif ($button_size == 'btn-lg') {
+      $form['actions']['delete']['#attributes']['class'][] = 'btn-lg';
+    }
   }
 
   // Unlock is not an input element, so we must apply extra classes
