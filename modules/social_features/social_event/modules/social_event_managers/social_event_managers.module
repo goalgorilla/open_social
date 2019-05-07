@@ -370,7 +370,7 @@ function social_event_managers_activity_recipient_organizer_alter(array &$recipi
   // so we add them to the array of recipients.
   if (!empty($organizers)) {
     foreach ($organizers as $organizer) {
-      // We don't want the Organizer to receive activity_on_events_im_organizing.
+      // We don't want Organizers to receive activity_on_events_im_organizing.
       // He will already receive it as part of a different context.
       if (!empty($receiver) && $organizer['target_id'] === $receiver) {
         continue;
