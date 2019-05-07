@@ -67,7 +67,7 @@ class OrganizerActivityContext extends ActivityContextBase {
     // If there are any others we should add. Make them also part of the
     // recipients array.
     \Drupal::moduleHandler()
-      ->alter('activity_recipient_organizer', $recipients, $event);
+      ->alter('activity_recipient_organizer', $recipients, $event, $original_related_object);
 
     return $recipients;
   }
