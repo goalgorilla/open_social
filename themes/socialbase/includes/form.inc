@@ -108,7 +108,7 @@ function socialbase_preprocess_form(&$variables) {
 
       // To change user picture settings (e.g. image style), edit the 'compact'
       // view mode on the User entity. Note that the 'compact' view mode might
-      // not be configured, so remember to always check the themetheme setting first.
+      // not be configured, so remember to always check the theme setting first.
       $account = $post->getOwner();
       if ($account) {
         $author_name = $account->getDisplayName();
