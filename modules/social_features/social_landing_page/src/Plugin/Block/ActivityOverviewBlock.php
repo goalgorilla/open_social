@@ -4,6 +4,7 @@ namespace Drupal\social_landing_page\Plugin\Block;
 
 use Drupal\Core\Block\BlockBase;
 use Drupal\Core\Database\Connection;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -25,16 +26,25 @@ class ActivityOverviewBlock extends BlockBase implements ContainerFactoryPluginI
   protected $connection;
 
   /**
+   * The module handler service.
+   *
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface
+   */
+  protected $moduleHandler;
+
+  /**
    * {@inheritdoc}
    */
   public function __construct(
     array $configuration,
     $plugin_id,
     $plugin_definition,
-    Connection $connection
+    Connection $connection,
+    ModuleHandlerInterface $module_handler
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->connection = $connection;
+    $this->moduleHandler = $module_handler;
   }
 
   /**
@@ -45,7 +55,8 @@ class ActivityOverviewBlock extends BlockBase implements ContainerFactoryPluginI
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('database')
+      $container->get('database'),
+      $container->get('module_handler')
     );
   }
 
@@ -53,7 +64,7 @@ class ActivityOverviewBlock extends BlockBase implements ContainerFactoryPluginI
    * {@inheritdoc}
    */
   public function build() {
-    return [
+    $build = [
       [
         '#type' => 'container',
         '#attributes' => [
@@ -274,6 +285,10 @@ class ActivityOverviewBlock extends BlockBase implements ContainerFactoryPluginI
       ],
     ];
 
+    $this->moduleHandler
+      ->alter('social_landing_page_activity_overview', $build);
+
+    return $build;
   }
 
   /**
