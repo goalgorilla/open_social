@@ -7,7 +7,6 @@
 
 use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\Url;
-use Drupal\Component\Utility\Unicode;
 
 /**
  * Implements hook_token_info().
@@ -32,7 +31,7 @@ function social_activity_tokens($type, $tokens, array $data, array $options, Bub
   $replacements = [];
 
   if (in_array($type, ['message']) && !empty($data['message'])) {
-    /** @var \Drupal\message\Entity\Message $message */
+    /** @var \Drupal\message\MessageInterface $message */
     $message = $data['message'];
 
     foreach ($tokens as $name => $original) {
@@ -50,13 +49,13 @@ function social_activity_tokens($type, $tokens, array $data, array $options, Bub
               ->getStorage($target_type)
               ->load($target_id);
 
-            if ($target_type == 'post') {
+            if ($target_type === 'post') {
               $name = $entity->getOwner()->getDisplayName();
 
               $date_formatter = \Drupal::service('date.formatter');
               $date_format = 'social_long_date';
               $date = $date_formatter->format($entity->getCreatedTime(), $date_format);
-              if (isset($entity->field_post) && !empty($entity->field_post->value)) {
+              if ($entity->hasField('field_post') && !$entity->field_post->isEmpty()) {
                 $summary = _social_comment_get_summary($entity->field_post->value);
               }
 
@@ -73,21 +72,19 @@ function social_activity_tokens($type, $tokens, array $data, array $options, Bub
                 '#link' => $post_link,
               ];
 
-              $replacements[$original] = \Drupal::service('renderer')->render($info);
+              $replacements[$original] = \Drupal::service('renderer')->renderRoot($info);
             }
-            elseif ($target_type == 'group_content') {
-              /** @var \Drupal\group\Entity\GroupContent $entity */
+            elseif ($target_type === 'group_content') {
+              /** @var \Drupal\group\Entity\GroupContentInterface $entity */
               $group_content_type = $entity->getGroupContentType();
               if (!empty($group_content_type)) {
-                $display_name = Unicode::strtolower($group_content_type->label());
+                $display_name = mb_strtolower($group_content_type->label());
               }
 
-              /* @var \Drupal\node\Entity\Node $node */
-              $node = \Drupal::entityTypeManager()
-                ->getStorage('node')
-                ->load($entity->entity_id->target_id);
+              /* @var \Drupal\node\NodeInterface $node */
+              $node = $entity->getEntity();
 
-              if ($node->getType() == 'topic' || $node->getType() == 'event') {
+              if (in_array($node->getType(), ['topic', 'event'])) {
                 $link = Url::fromRoute('entity.node.canonical',
                   ['node' => $node->id()],
                   ['absolute' => TRUE]

@@ -11,6 +11,7 @@ use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
 use Drupal\social_post\Entity\PostInterface;
 use Drupal\Core\Render\Markup;
+use Drupal\views\Plugin\views\field\FieldPluginBase;
 
 /**
  * Implements hook_token_info().
@@ -127,7 +128,7 @@ function social_comment_tokens($type, $tokens, array $data, array $options, Bubb
                   }
 
                   if ($name === 'parent_comment_text') {
-                    if (isset($parent_comment->field_comment_body) && !empty($parent_comment->field_comment_body->value)) {
+                    if ($parent_comment->hasField('field_comment_body') && !$parent_comment->field_comment_body->isEmpty()) {
                       $replacements[$original] = _social_comment_get_summary($parent_comment->field_comment_body->value);
                     }
                     else {
@@ -152,7 +153,7 @@ function social_comment_tokens($type, $tokens, array $data, array $options, Bubb
                 }
 
                 if ($name === 'comment_text') {
-                  if (isset($comment->field_comment_body) && !empty($comment->field_comment_body->value)) {
+                  if ($comment->hasField('field_comment_body') && !$comment->field_comment_body->isEmpty()) {
                     $replacements[$original] = _social_comment_get_summary($comment->field_comment_body->value);
                   }
                   else {
@@ -239,12 +240,22 @@ function social_comment_tokens($type, $tokens, array $data, array $options, Bubb
 
 /**
  * Get first 280 characters of text.
+ *
+ * @param string $text
+ *   The text to check for.
+ *
+ * @return string
+ *   The processed text.
  */
 function _social_comment_get_summary($text) {
   $summary = strip_tags($text);
   $max_length = 280;
-  if (strlen($summary) > $max_length) {
-    $summary = substr($summary, 0, $max_length) . '...';
+  if (mb_strlen($summary) > $max_length) {
+    $summary = FieldPluginBase::trimText([
+      'max_length' => $max_length,
+      'word_boundary' => TRUE,
+      'ellipsis' => TRUE,
+    ], $summary);
   }
 
   return $summary;
