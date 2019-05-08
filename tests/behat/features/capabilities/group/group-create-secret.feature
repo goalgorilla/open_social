@@ -55,7 +55,6 @@ Feature: Create Secret Group
 
   # Create a topic inside the secret group
     When I click "Topics"
-    And I break
     And I should see the link "Create Topic" in the "Sidebar second"
     And I click "Create Topic"
     When I fill in the following:
@@ -111,6 +110,8 @@ Feature: Create Secret Group
     And I open and check the access of content in group "Test secret group" and I expect access "denied"
     And I am on "/all-groups"
     Then I should not see "Test secret group"
+    When I am on the stream of group "Test secret group"
+    Then I should see "The requested page could not be found."
 
   # As a non-member, I should not be able to see topics from a secret group across the platform
     When I am on "stream"
@@ -136,6 +137,33 @@ Feature: Create Secret Group
     When I am on "/all-topics"
     Then I should see "Test secret group topic"
     And I logout
+
+    # As a outsider with role Authenticated user I should not be able to find the group in search.
+    Given I am logged in as an "authenticated user"
+    And Search indexes are up to date
+    And I am on "search/groups"
+    When I fill in "search_input" with "Test secret group"
+    And I press "Search" in the "Hero block" region
+    And I should see the heading "Search" in the "Hero block" region
+    And I should not see "Test secret group" in the "Main content"
+
+    # As a member of this secret group I should be able to find the group in search.
+    Given I am logged in as "Group User Two"
+    And Search indexes are up to date
+    And I am on "search/groups"
+    When I fill in "search_input" with "Test secret group"
+    And I press "Search" in the "Hero block" region
+    And I should see the heading "Search" in the "Hero block" region
+    And I should see "Test secret group" in the "Main content"
+
+    # As a outsider with the role CM+ I should be able to  find the group in search.
+    Given I am logged in as a user with the "sitemanager" role
+    And Search indexes are up to date
+    And I am on "search/groups"
+    When I fill in "search_input" with "Test secret group"
+    And I press "Search" in the "Hero block" region
+    And I should see the heading "Search" in the "Hero block" region
+    And I should see "Test secret group" in the "Main content"
 
   # As a member of this secret group I want to leave the group
     Given I am logged in as "Group User Two"
