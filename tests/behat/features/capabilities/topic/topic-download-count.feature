@@ -26,5 +26,5 @@ Feature: Download Topic
     Given I am logged in as an "authenticated user"
     And I am on the homepage
     And I click "This is a test topic"
-    And I should see "humans"
+    And I should see text matching "humans(| \d+).txt"
     And I should see "1 download"
