@@ -43,7 +43,7 @@ class MagicUrlCreate {
       [
         'uid' => $account->id(),
         'timestamp' => $timestamp,
-        'hashed_pass' => user_pass_rehash($account, $timestamp)
+        'hash' => user_pass_rehash($account, $timestamp)
       ],
       $url_options
     );

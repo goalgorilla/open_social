@@ -3,4 +3,6 @@ social_magic_login.login:
   defaults:
     _controller: '\Drupal\social_magic_login\Controller\MagicLoginController::login'
   requirements:
-    _permission: 'use magic login link'
+    _access: 'TRUE'
+  options:
+    _maintenance_access: TRUE

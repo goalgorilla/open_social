@@ -7,6 +7,7 @@ use Drupal\Core\Controller\ControllerBase;
 use Drupal\user\UserStorageInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 /**
@@ -33,6 +34,7 @@ class MagicLoginController extends ControllerBase {
    *
    * @param \Drupal\user\UserStorageInterface $user_storage
    *   The user storage.
+   * @param \Psr\Log\LoggerInterface $logger
    */
   public function __construct(UserStorageInterface $user_storage, LoggerInterface $logger) {
     $this->userStorage = $user_storage;
@@ -53,10 +55,26 @@ class MagicLoginController extends ControllerBase {
    * Login.
    *
    * @see \Drupal\user\Controller\UserController::resetPassLogin
+   *
+   * @param \Symfony\Component\HttpFoundation\Request $request
+   *   The request.
+   * @param int $uid
+   *   User ID of the user requesting reset.
+   * @param int $timestamp
+   *   The current timestamp.
+   * @param string $hash
+   *   Login link hash.
+   *
+   * @return \Symfony\Component\HttpFoundation\RedirectResponse
+   *   The redirect response.
+   *
+   * @return string|\Symfony\Component\HttpFoundation\RedirectResponse
    */
-  public function login($uid, $timestamp, $hash) {
+  public function login(Request $request, $uid, $timestamp, $hash) {
     // The current user is not logged in, so check the parameters.
     $current = \Drupal::time()->getRequestTime();
+    // Get the destination for the redirect result.
+    $destination = $request->query->get('destination');
 
     /** @var \Drupal\user\UserInterface $user */
     $user = $this->userStorage->load($uid);
@@ -71,20 +89,46 @@ class MagicLoginController extends ControllerBase {
     // No time out for first time login.
     if ($current - $timestamp > $timeout && $user->getLastLoginTime()) {
       $this->messenger()->addError($this->t('You have tried to use a magic login link that has expired.'));
-      return $this->redirect('user.pass');
+
+      return $this->redirect('user.login', [], ['query' => ['destination' => $destination]]);
     }
 
+    // Check validity of the link.
     if (($timestamp <= $current)
       && ($timestamp >= $user->getLastLoginTime())
-      && $user->isAuthenticated()
-      && Crypt::hashEquals($hash, user_pass_rehash($user, $timestamp))) {
-      user_login_finalize($user);
-      $this->logger->notice('User %name used one-time login link at time %timestamp.', ['%name' => $user->getDisplayName(), '%timestamp' => $timestamp]);
-      $this->messenger()->addStatus($this->t('You have just used your one-time login link. It is no longer necessary to use this link to log in.'));
+      && $user->isAuthenticated()){
+      // When the user hasn't set a password, redirect the user to
+      // the set passwords page.
+      if (NULL === $user->getPassword()) {
+        $this->messenger()->addStatus($this->t('You need to set your passwords in order to log in.'));
+        $this->logger->notice('User %name used magic login link at time %timestamp but needs to set a password.', ['%name' => $user->getDisplayName(), '%timestamp' => $timestamp]);
+        user_login_finalize($user);
+
+        $token = Crypt::randomBytesBase64(55);
+        $_SESSION['pass_reset_' . $user->id()] = $token;
+        return $this->redirect(
+          'entity.user.edit_form',
+          ['user' => $user->id()],
+          [
+            'query' => ['pass-reset-token' => $token],
+            'absolute' => TRUE,
+          ]
+        );
+      }
+
+      // The user already had a password, check the hash.
+      if (Crypt::hashEquals($hash, user_pass_rehash($user, $timestamp))) {
+        // @todo: redirect to destination and set messages.
+
+        user_login_finalize($user);
+        $this->logger->notice('User %name used one-time login link at time %timestamp.', ['%name' => $user->getDisplayName(), '%timestamp' => $timestamp]);
+        $this->messenger()->addStatus($this->t('You have just used your one-time login link. It is no longer necessary to use this link to log in.'));
+        return $this->redirect($destination);
+      }
     }
 
-    return [
-      '#markup' => $uid . ' - ' . $timestamp . ' - ' . $hash,
-    ];
+    // Fallback redirect when none of the above is passing.
+    // Redirect to user login page.
+    return $this->redirect('user.login', [], ['query' => ['destination' => $destination]]);
   }
 }
