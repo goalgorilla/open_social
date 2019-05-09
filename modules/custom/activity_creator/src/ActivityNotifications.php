@@ -62,13 +62,12 @@ class ActivityNotifications extends ControllerBase {
     // Retrieve all the activities referring this entity for this account.
     $ids = $this->getNotificationIds($account, [ACTIVITY_STATUS_RECEIVED]);
 
-    foreach ($ids as $activity_id) {
-      $activity = Activity::load($activity_id);
+    $activities = Activity::loadMultiple($ids);
+    foreach ($activities as $activity) {
       $this->changeStatusOfActivity($activity, ACTIVITY_STATUS_SEEN);
     }
 
-    $remaining_notifications = 0;
-    return $remaining_notifications;
+    return 0;
   }
 
   /**
@@ -84,8 +83,8 @@ class ActivityNotifications extends ControllerBase {
     // Retrieve all the activities referring this entity for this account.
     $ids = $this->getNotificationIds($account, [ACTIVITY_STATUS_RECEIVED, ACTIVITY_STATUS_SEEN], $entity);
 
-    foreach ($ids as $activity_id) {
-      $activity = Activity::load($activity_id);
+    $activities = Activity::loadMultiple($ids);
+    foreach ($activities as $activity) {
       $this->changeStatusOfActivity($activity, ACTIVITY_STATUS_READ);
     }
 
@@ -104,8 +103,8 @@ class ActivityNotifications extends ControllerBase {
     // Retrieve all the activities referring this entity for this account.
     $ids = $this->getNotificationIds($account, [ACTIVITY_STATUS_RECEIVED, ACTIVITY_STATUS_SEEN], $entity);
 
-    foreach ($ids as $activity_id) {
-      $activity = Activity::load($activity_id);
+    $activities = Activity::loadMultiple($ids);
+    foreach ($activities as $activity) {
       $this->changeStatusOfActivity($activity, ACTIVITY_STATUS_READ);
     }
 
