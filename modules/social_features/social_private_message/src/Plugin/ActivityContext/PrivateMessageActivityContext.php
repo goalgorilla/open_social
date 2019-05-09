@@ -4,6 +4,7 @@ namespace Drupal\social_private_message\Plugin\ActivityContext;
 
 use Drupal\activity_creator\Plugin\ActivityContextBase;
 use Drupal\private_message\Entity\PrivateMessage;
+use Drupal\private_message\Entity\PrivateMessageThreadInterface;
 use Drupal\user\Entity\User;
 
 /**
@@ -36,21 +37,24 @@ class PrivateMessageActivityContext extends ActivityContextBase {
             $pmService = \Drupal::service('private_message.service');
             // Get the thread of this message.
             $thread = $pmService->getThreadFromMessage($private_message);
-            // Get all members of this thread.
-            /** @var \Drupal\private_message\Entity\PrivateMessageThreadInterface $members */
-            $members = $thread->getMembers();
-            // Loop over all PMT participants.
-            foreach ($members as $member) {
-              if ($member instanceof User) {
-                // Filter out the author of this message.
-                if ($member->id() == $data['actor']) {
-                  continue;
+
+            if ($thread instanceof PrivateMessageThreadInterface) {
+              // Get all members of this thread.
+              /** @var \Drupal\private_message\Entity\PrivateMessageThreadInterface $members */
+              $members = $thread->getMembers();
+              // Loop over all PMT participants.
+              foreach ($members as $member) {
+                if ($member instanceof User) {
+                  // Filter out the author of this message.
+                  if ($member->id() == $data['actor']) {
+                    continue;
+                  }
+                  // Create the recipients array.
+                  $recipients[] = [
+                    'target_type' => 'user',
+                    'target_id' => $member->id(),
+                  ];
                 }
-                // Create the recipients array.
-                $recipients[] = [
-                  'target_type' => 'user',
-                  'target_id' => $member->id(),
-                ];
               }
             }
           }
