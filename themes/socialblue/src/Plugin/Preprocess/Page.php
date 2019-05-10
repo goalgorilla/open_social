@@ -32,6 +32,10 @@ class Page extends PageBase {
     if ($route_match->getParameter('user') && $route_match->getRouteName() !== 'entity.profile.type.user_profile_form') {
       $variables['content_attributes']->addClass('sidebar-left');
     }
+    // Display blocks on the left side of group pages.
+    if ($route_match->getParameter('group') && $route_match->getRouteName() !== 'entity.group.edit_form') {
+      $variables['content_attributes']->addClass('sidebar-left');
+    }
 
   }
 

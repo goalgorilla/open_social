@@ -6,7 +6,7 @@
     </li>
     <li>
       <span class="card__counter-quantity">{{ group_topics }}</span>
-      <span class="card__counter-text">{% trans %}resource{% plural group_topics %}resources{% endtrans %}</span>
+      <span class="card__counter-text">{% trans %}topic{% plural group_topics %}topics{% endtrans %}</span>
     </li>
     <li>
       <span class="card__counter-quantity">{{ group_members }}</span>
@@ -23,9 +23,9 @@
           <li><a href="{{ group_operations_url }}">{% trans %}Leave group{% endtrans %}</a></li>
         </ul>
       {% elseif closed_group %}
-        <a href="{{ group_operations_url }}" class="btn btn-primary disabled" title="{{ cta }}">{{ cta }}</a>
+        <a href="{{ group_operations_url }}" class="btn btn-accent disabled" title="{{ cta }}">{{ cta }}</a>
       {% else %}
-        <a href="{{ group_operations_url }}" class="btn btn-primary" title="{% trans %}Join{% endtrans %}">{% trans %}Join{% endtrans %}</a>
+        <a href="{{ group_operations_url }}" class="btn btn-accent" title="{% trans %}Join{% endtrans %}">{% trans %}Join{% endtrans %}</a>
       {% endif %}
     </div>
   </div>
@@ -38,4 +38,3 @@
     </a>
   </footer>
 {% endif %}
-

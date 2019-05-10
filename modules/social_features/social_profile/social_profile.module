@@ -378,7 +378,7 @@ function social_profile_preprocess_profile(array &$variables) {
       ->buildUrl($profile->field_profile_image->entity->getFileUri());
   }
 
-  // Prepare variables for profile statistic.
+  // Prepare variables for statistic block.
   $storage = \Drupal::entityTypeManager()->getStorage('node');
   $variables['profile_topics'] = count($storage->loadByProperties([
     'uid' => $user->id(),

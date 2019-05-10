@@ -21,7 +21,7 @@
     </li>
     <li>
       <span class="card__counter-quantity">{{ profile_topics }}</span>
-      <span class="card__counter-text">{% trans %}resource{% plural profile_topics %}resources{% endtrans %}</span>
+      <span class="card__counter-text">{% trans %}topic{% plural profile_topics %}topics{% endtrans %}</span>
     </li>
     <li>
       <span class="card__counter-quantity">{{ profile_groups }}</span>
@@ -32,7 +32,7 @@
 
 {% if profile_contact_label == 'private_message' %}
   <div class="hero-footer__cta">
-    <a href="{{ profile_contact_url }}" class="btn btn-primary">
+    <a href="{{ profile_contact_url }}" class="btn btn-accent">
       {% trans %} Private message {% endtrans %}
     </a>
   </div>
