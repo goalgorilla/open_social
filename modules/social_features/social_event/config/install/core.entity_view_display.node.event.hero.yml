@@ -13,10 +13,12 @@ dependencies:
     - field.field.node.event.field_event_image
     - field.field.node.event.field_event_location
     - field.field.node.event.field_files
+    - image.style.social_xx_large
     - node.type.event
   module:
     - address
     - datetime
+    - image
     - user
 id: node.event.hero
 targetEntityType: node
@@ -48,6 +50,15 @@ content:
       format_type: medium
     third_party_settings: {  }
     region: content
+  field_event_image:
+    type: image
+    weight: 7
+    region: content
+    label: hidden
+    settings:
+      image_style: social_xx_large
+      image_link: ''
+    third_party_settings: {  }
   field_event_location:
     type: string
     weight: 2
@@ -57,25 +68,28 @@ content:
     third_party_settings: {  }
     region: content
   flag_follow_content:
-    weight: 10
+    weight: 6
     region: content
-  groups_type_public_group:
-    label: above
-    weight: -5
-    region: content
-    settings:
-      link: true
+    settings: {  }
     third_party_settings: {  }
-    type: entity_reference_label
+  like_and_dislike:
+    weight: 9
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  shariff_field:
+    weight: 8
+    region: content
+    settings: {  }
+    third_party_settings: {  }
 hidden:
   body: true
   field_content_visibility: true
   field_event_comments: true
   field_event_enroll: true
-  field_event_image: true
   field_files: true
+  links: true
   groups: true
   groups_type_closed_group: true
   groups_type_open_group: true
-  like_and_dislike: true
-  links: true
+  groups_type_public_group: true

@@ -4,6 +4,18 @@
   border: 1px solid $input-border;
   border-radius: $input-border-radius; // Note: This has no effect on <select>s in some browsers, due to the limited stylability of <select>s in CSS.
 
+  .socialblue--sky & {
+    height: 35px;
+
+    &--autogrow {
+      height: 35px;
+    }
+
+    &[name='search_input'] {
+      height: 38px;
+    }
+  }
+
   // Customize the `:focus` state to imitate native WebKit styles.
   &:focus {
     border-color: $input-border-focus;

@@ -1,0 +1,270 @@
+@import "settings";
+
+.socialblue--sky {
+
+  .container {
+
+    @include for-tablet-landscape-up {
+      max-width: 1160px;
+    }
+  }
+
+  .region--hero {
+    max-width: 100%;
+    margin-top: 0;
+  }
+
+  .content--wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    flex: 0 0 100%;
+    max-width: 100%;
+
+    .content--side {
+      flex: 0 0 100%;
+      max-width: 100%;
+    }
+
+    &.left-aside {
+
+      @include for-tablet-landscape-up {
+        .region--complementary {
+          order: 1;
+        }
+
+        .content--side {
+          order: 2;
+        }
+      }
+    }
+  }
+
+  .region--hero .cover-wrap {
+    @extend .container;
+    margin-right: auto;
+    margin-left: auto;
+  }
+
+  .region--secondary-navigation {
+    max-width: inherit;
+    width: 100%;
+    margin: -44px 0 0;
+    position: relative;
+    z-index: 2;
+    padding-left: 0;
+    padding-right: 0;
+
+    @include for-tablet-landscape-up {
+      max-width: 100%;
+    }
+  }
+
+  .region--content {
+    @include for-tablet-landscape-up {
+      margin-top: 20px;
+    }
+  }
+
+  .layout--with-complementary {
+    flex-direction: column;
+
+    .content--wrapper {
+      flex: 0 0 auto;
+      max-width: none;
+
+      @include for-desktop-up {
+        margin: 0 -20px;
+      }
+    }
+
+    .content--side {
+      flex: 0 0 100%;
+      max-width: 100%;
+
+      @include for-tablet-landscape-up {
+        flex: 0 0 (100%/1.5);
+        max-width: (100%/1.5);
+        order: 2;
+      }
+    }
+
+    .region--content {
+      padding-left: 1rem;
+      padding-right: 1rem;
+
+      @include for-desktop-up {
+        padding-left: 20px;
+        padding-right: 20px;
+      }
+    }
+
+    .content--side_wrapper {
+      padding-left: 1rem;
+      padding-right: 1rem;
+
+      @include for-desktop-up {
+        padding-left: 20px;
+        padding-right: 20px;
+      }
+
+      .region--content {
+        padding: 0;
+      }
+    }
+  }
+
+  .region--complementary {
+    position: relative;
+    margin-top: 1rem;
+
+    @include for-tablet-landscape-up {
+      margin-top: 20px;
+      order: 3;
+    }
+
+    @include for-desktop-up {
+      padding-right: 20px;
+      padding-left: 20px;
+    }
+  }
+
+  .layout--with-two-columns {
+
+    .content--side {
+      flex-basis: 100%;
+      padding-left: 1em;
+      padding-right: 1em;
+
+      @include for-tablet-landscape-up {
+        flex: 0 0 50%;
+        max-width: 50%;
+      }
+    }
+
+    @include for-desktop-up {
+
+      .content--side {
+        padding-left: 0;
+      }
+
+    }
+
+  }
+
+  .layout--with-three-columns {
+    .content--side {
+      padding-left: 1em;
+      padding-right: 1em;
+      flex-basis: 100%;
+
+      @include for-tablet-landscape-up {
+        flex: 0 0 (100%/3);
+        max-width: (100%/3);
+      }
+
+    }
+
+    @include for-desktop-up {
+      .content--side {
+        padding-left: 0;
+      }
+
+    }
+
+  }
+
+}
+
+body.socialblue--sky {
+  &.path-group:not(.group-type-challenge),
+  &.details,
+  &.path-user {
+    .layout--with-complementary {
+      flex-direction: column;
+
+      .navbar-secondary {
+        flex: 0 0 100%;
+        max-width: 100%;
+
+        @include for-tablet-landscape-up {
+          flex: 0 0 (100%/1.5);
+          max-width: (100%/1.5);
+          order: 2;
+        }
+      }
+
+      .region--secondary-navigation {
+        @include for-tablet-landscape-up {
+          padding-left: 1rem;
+          padding-right: 2rem;
+        }
+
+        @include for-desktop-up {
+          padding-right: 20px;
+          padding-left: 0;
+        }
+      }
+
+      &.sidebar-left {
+        .region--complementary {
+          order: 1;
+        }
+
+        .region--secondary-navigation {
+          display: flex;
+          justify-content: flex-end;
+
+          @include for-tablet-landscape-up {
+            padding-left: 2rem;
+            padding-right: 1rem;
+          }
+
+          @include for-desktop-up {
+            padding-left: 20px;
+            padding-right: 0;
+          }
+        }
+      }
+    }
+
+    .region--secondary-navigation {
+      z-index: 3;
+    }
+
+    &.mode-search {
+      .region--complementary_wrapper {
+        z-index: 1;
+      }
+    }
+
+    .region--complementary_wrapper {
+      position: relative;
+      z-index: 1000;
+
+      @include for-tablet-landscape-up {
+        top: -64px;
+      }
+    }
+
+    .content--side_wrapper .region--content,
+    .region--complementary_wrapper {
+      border-radius: 2px;
+      background: #fff;
+      box-shadow: 0 2px 4px #4a4a4a;
+    }
+
+    .region--complementary-top + .region--complementary-bottom {
+      margin-top: 0;
+    }
+
+    .region--complementary-bottom,
+    .region--complementary-top {
+      padding-bottom: 0;
+      border-radius: 0;
+
+      @include for-tablet-landscape-down {
+        top: 0;
+      }
+    }
+  }
+}

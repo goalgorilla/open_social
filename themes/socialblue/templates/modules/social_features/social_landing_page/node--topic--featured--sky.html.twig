@@ -1,0 +1,56 @@
+{{ attach_library('socialblue/organization-tag--sky')}}
+
+{% extends 'node--featured.html.twig' %}
+
+  {% block card_hero_image %}
+    <div class="img_wrapper">
+      {% if content.field_topic_image|render %}
+        {{ content.field_topic_image }}
+      {% else %}
+        <hr class="no-feature-image">
+      {% endif %}
+    </div>
+  {% endblock %}
+
+  {% block card_title %}
+    {{ title_prefix }}
+    {% if not page %}
+      <h4{{ title_attributes }} class="teaser__title">
+        <a href="{{ url }}" rel="bookmark">{{ label }}
+          {% if resource_library %}
+            <span class="organization-tag"></span>
+          {% endif %}</a>
+      </h4>
+    {% endif %}
+    {{ title_suffix }}
+  {% endblock %}
+
+  {% block card_body %}
+    <small class="text-muted">
+      <div class="teaser__content-line">
+        <div class="teaser__content-text">
+          <div class="teaser__published">
+            <div class="teaser__published-author">
+              {% if original_authors %}
+                {% for item in original_authors %}
+                  <span>{{ item }}</span>
+                {% endfor %}
+              {% else %}
+                {{ author_name }}
+              {% endif %}
+            </div>
+
+            <div class="teaser__published-date">
+              <span> &nbsp; &bullet; &nbsp; </span>
+              {% if original_date %}
+                {{ original_date }}
+              {% else %}
+                {{ date }}
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </small>
+
+  {% endblock %}

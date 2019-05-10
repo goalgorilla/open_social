@@ -1,7 +1,7 @@
 {#
 /**
  * @file
- * Theme override to display a node.
+ * Theme override for page titles.
  *
  * Available variables:
  * - node: The node entity with limited access to object properties and methods.
@@ -46,31 +46,41 @@
  *   displayed in front of the main title tag that appears in the template.
  * - title_suffix: Additional output populated by modules, intended to be
  *   displayed after the main title tag that appears in the template.
- * - view_mode: View mode; for example, "teaser" or "full".
- * - teaser: Flag for the teaser state. Will be true if view_mode is 'teaser'.
- * - page: Flag for the full page state. Will be true if view_mode is 'full'.
- * - readmore: Flag for more state. Will be true if the teaser content of the
- *   node cannot hold the main body content.
- * - logged_in: Flag for authenticated user status. Will be true when the
- *   current user is a logged-in member.
- * - is_admin: Flag for admin user status. Will be true when the current user
- *   is an administrator.
- *
- * @see template_preprocess_node()
- *
- * @todo Remove the id attribute (or make it a class), because if that gets
- *   rendered twice on a page this is invalid CSS for example: two lists
- *   in different view modes.
+
+ * - node_edit_url
+ * - hero_styled_image_url
+ * - event_enrollment
  */
 #}
-<div{{ content_attributes }}>
+{{ attach_library('socialbase/hero') }}
+{{ attach_library('socialblue/hero--sky') }}
 
-  {% if event_date %}
-      {{ event_date }}
-  {% endif %}
+{% if hero_styled_image_url %}
+  <div style="background-image: url('{{ hero_styled_image_url }}')" class="cover cover-img cover-img-gradient hero__banner">
+{% else %}
+  <div class="cover">
+{% endif %}
+    <div class="hero__bgimage-overlay"></div>
 
-  {# Location or address field must be filled in before showing the @ character #}
-  {% if content.field_event_location.0 is defined or content.field_event_address.0 is defined %}
-      <span>@ {{ content.field_event_location }} {{ content.field_event_address }}</span>
-  {% endif %}
-</div>
+    {% if node_edit_url %}
+      <div class="hero-action-button">
+        <a href="{{ node_edit_url }}" title="{% trans %}Edit content{% endtrans %}"
+           class="btn btn-raised btn-default btn-floating">
+          <svg class="icon-gray icon-medium">
+            <use xlink:href="#icon-edit"></use>
+          </svg>
+        </a>
+      </div>
+    {% endif %}
+
+    <div class="cover-wrap">
+
+      {{ title_prefix }}
+      {% if label %}
+        <h1{{ title_attributes.addClass(section_class) }}>{{ label }}</h1>
+      {% endif %}
+      {{ title_suffix }}
+
+    </div>
+
+  </div>

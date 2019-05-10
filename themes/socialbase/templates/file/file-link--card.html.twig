@@ -20,8 +20,21 @@
     <a class="card-file__link" href="{{ link.url.uri }}" title="{{ 'Open or download file'|t }}" target="_blank">
       <span class="card-file__title">{{ link.text|replace({'_': ' '}) }}</span>
       <span class="card-file__type">
-        <img class="card-file__icon" src="/{{ path_to_socialbase }}/assets/images/mime-icons/icon_1_{{ node_icon }}_x16.png" srcset="/{{ path_to_socialbase }}/assets/images/mime-icons/icon_1_{{ node_icon }}_x32.png 2x" alt="{{ node_icon }}" />
-        <span class="card-file__size">{{ file_size }}</span>
+
+        {% if style == 'sky' %}
+
+          <span class="card-file__size">{{ file_size }}</span>
+          <svg class="icon-vote">
+            <use xlink:href="#icon-upload"></use>
+          </svg>
+
+        {% else %}
+
+          <img class="card-file__icon" src="/{{ path_to_socialbase }}/assets/images/mime-icons/icon_1_{{ node_icon }}_x16.png" srcset="/{{ path_to_socialbase }}/assets/images/mime-icons/icon_1_{{ node_icon }}_x32.png 2x" alt="{{ node_icon }}" />
+          <span class="card-file__size">{{ file_size }}</span>
+
+        {% endif %}
+
       </span>
     </a>
   </li>

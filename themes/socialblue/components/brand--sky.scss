@@ -1,0 +1,342 @@
+@import 'settings';
+
+.socialblue--sky {
+
+  .badge-secondary {
+    background-color: $brand-secondary;
+  }
+
+  .card__link,
+  .card__link .btn-default,
+  .card__link.btn-default {
+    border-color: $brand-primary;
+  }
+
+  .hero__tag,
+  .card__link .btn-default,
+  .card__link.btn-default,
+  .card__link .btn-default:hover,
+  .card__link.btn-default:focus,
+  .card__link .btn-default:hover,
+  .card__link.btn-default:focus,
+  .teaser__tag {
+    color: $brand-primary;
+    fill: $brand-primary;
+
+    &:hover,
+    &:focus,
+    &.focus {
+      color: $brand-accent;
+      fill: $brand-accent;
+    }
+  }
+
+  .comment__reply-btn:hover,
+  .comment__reply-btn:focus {
+    color: $brand-secondary;
+    fill: $brand-secondary;
+  }
+
+  .navbar-secondary {
+    background-color: $brand-primary;
+
+    .navbar-nav {
+      li.active a {
+        color: #fff;
+      }
+    }
+  }
+
+  .social-gtranslate-list--mobile {
+    background: $navbar-default-bg;
+  }
+
+  .navbar-default {
+    background-color: $brand-primary;
+  }
+  
+  .navbar__open-search-block {
+    background-color: $brand-primary;
+  }
+
+  #sliding-popup {
+    background-color: $brand-secondary !important;
+  }
+
+  .main-container:not(.is-navbar-secondary) {
+    .hero__full {
+      &:after {
+        background: $brand-primary;
+      }
+
+      &.hero__banner-footer-bottom {
+        .cover-wrap {
+          &:after {
+            background: $brand-primary;
+          }
+        }
+      }
+    }
+  }
+
+  .site-footer {
+    &:before {
+      background: $brand-primary;
+    }
+  }
+
+  .cart__comment {
+    .section-title {
+      svg path {
+        fill: $brand-primary;
+      }
+    }
+  }
+
+  .card__featured-items .teaser__info {
+    svg {
+      color: $brand-primary;
+      fill: $brand-primary;
+
+      &:hover,
+      &:focus,
+      &:active {
+        color: $brand-accent;
+        fill: $brand-accent;
+      }
+    }
+  }
+
+  .resources-search-form .search-icon.inputHasFocus {
+    border-color: $brand-primary;
+    box-shadow: 0 2px 0 0 $brand-primary;
+  }
+
+  .search-filter--wrapper {
+    .toggle-filter,
+    .collapse-wrapper .btn {
+      color: $brand-primary;
+      fill: $brand-primary;
+
+      &:focus,
+      &:active,
+      &:hover {
+        color: $brand-accent;
+        fill: $brand-accent;
+      }
+    }
+  }
+
+  @include for-tablet-landscape-up {
+
+    .search-take-over .form-text {
+
+      &::placeholder {
+        color: $navbar-default-link-color;
+      }
+
+      &:-ms-input-placeholder {
+        color: $navbar-default-link-color;
+      }
+
+      &::-ms-input-placeholder {
+        color: $navbar-default-link-color;
+      }
+    }
+  }
+
+  .teaser.teaser--tile .teaser__published-type,
+  .teaser.teaser--tile .teaser__published-type a,
+  .site-footer nav[aria-labelledby*='footer-menu'] > ul a {
+    color: $brand-primary;
+
+    &:hover,
+    &:active,
+    &:focus {
+      color: $brand-accent;
+    }
+  }
+
+  .teaser.teaser--tile .teaser__published-type {
+
+    &:hover,
+    &:active,
+    &:focus {
+      color: $brand-primary;
+    }
+  }
+
+  .hero__banner {
+    .hero-footer__cta {
+      .btn:not(.button--accent):not(.btn-accent) {
+        color: $brand-primary;
+        border-color: $brand-primary;
+        background: transparent;
+
+        &:hover,
+        &:active,
+        &:focus {
+          background: $brand-secondary;
+          color: inherit;
+          border-color: $brand-secondary;
+        }
+      }
+
+      .btn-accent {
+        color: #4d4d4d;
+      }
+
+      .dropdown-menu a {
+        color: $brand-primary;
+      }
+    }
+
+    .shariff .shariff-button a {
+      background: $brand-primary;
+
+      &:focus,
+      &:active,
+      &:hover {
+        background: $brand-accent;
+      }
+    }
+
+    .cover-wrap > .badge-secondary {
+      .orange-theme & {
+        color: $brand-accent;
+        background: transparent;
+      }
+    }
+  }
+
+  .teaser.teaser--profile .teaser__image,
+  .teaser.teaser--wide-profile .teaser__image,
+  .site-footer .block-social-media-links > ul a {
+    background: $brand-primary;
+  }
+
+  .card.card__column {
+    .card__title {
+      color: $brand-primary;
+    }
+
+    .card__header {
+      background: $brand-primary;
+    }
+  }
+
+  .vote-widget {
+    a:hover  {
+      &:not(.disable-status),
+      &:not(.voted-like) {
+        .icon-vote {
+          path {
+            stroke: $brand-primary;
+          }
+        }
+      }
+    }
+
+    a {
+      &:hover,
+      &:active,
+      &:focus {
+        .icon-vote {
+          path {
+            stroke: $brand-primary;
+          }
+        }
+      }
+
+      &.voted-like {
+        .icon-vote {
+          path {
+            stroke: $brand-primary;
+            fill: $brand-primary;
+          }
+        }
+
+        &:hover,
+        &:active,
+        &:focus {
+          .icon-vote {
+            path {
+              fill: transparent;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .card__link {
+    .paragraph--featured &,
+    .paragraph--block & {
+      .field--item a {
+        &:before {
+          background: $brand-primary;
+        }
+
+        &:hover,
+        &:active,
+        &:focus {
+          color: $brand-accent;
+
+          &:before {
+            background: $brand-accent;
+          }
+        }
+      }
+    }
+  }
+
+  body.path-group,
+  body.details,
+  body.path-user {
+    .region--complementary-bottom,
+    .region--complementary-top {
+      > .card .card__actionbar .card__link {
+        &:before {
+          background: $brand-primary;
+        }
+
+        &:hover,
+        &:active,
+        &:focus {
+          color: $brand-accent;
+
+          &:before {
+            background: $brand-accent;
+          }
+        }
+      }
+
+      .card.block-profile-statistic-block {
+        .hero-footer__cta .btn.btn-default {
+          border: 2px solid $brand-primary;
+          color: $brand-primary;
+
+          &:hover,
+          &:focus,
+          &:active {
+            background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.2) 100%);
+          }
+        }
+      }
+    }
+  }
+
+  .hero__group {
+    .teaser__tag {
+      background: $brand-primary;
+    }
+  }
+
+  .layout--with-complementary .navbar-secondary .navbar-scrollable .navbar-nav .hidden-list li a {
+    &:hover,
+    &:focus,
+    &:active {
+      color: $brand-primary;
+    }
+  }
+}

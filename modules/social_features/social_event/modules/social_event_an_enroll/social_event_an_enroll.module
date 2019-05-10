@@ -94,13 +94,13 @@ function social_event_an_enroll_preprocess_views_view_field(&$variables) {
 /**
  * Override variables for the social page hero data.
  */
-function social_event_an_enroll_preprocess_page_hero_data(array &$variables) {
+function social_event_an_enroll_preprocess_node(array &$variables) {
   $account = \Drupal::currentUser();
   if ($account->isAnonymous() && !empty($variables['event_enrollment'])) {
 
     $node = $variables['node'];
 
-    if ($node instanceof Node && social_event_an_enroll_is_enabled($node)) {
+    if ($variables['view_mode'] === 'hero' && social_event_an_enroll_is_enabled($node)) {
       $form = \Drupal::formBuilder()->getForm('Drupal\social_event_an_enroll\Form\EventAnEnrollActionForm', $node);
 
       $variables['event_enrollment'] = [

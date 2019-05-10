@@ -20,6 +20,11 @@
  */
 #}
 {{ attach_library('socialbase/teaser') }}
+
+{% if style == 'sky' %}
+  {{ attach_library('socialblue/teaser--sky') }}
+{% endif %}
+
 <div class="card__block card__block--list">
   <div class="card__text list-item">
 
@@ -31,9 +36,12 @@
       <a href="{{ profile_home }}" title="{{ 'View Profile'|t }}">{{ profile_name }}</a>
 
       {% if content.field_profile_function|render and content.field_profile_organization|render %} <br /> {% endif %}
+
       {{content.field_profile_function}}
 
-      {% if content.field_profile_function|render and content.field_profile_organization|render %} &bullet; {% endif %}
+      {% if not style == 'sky' %}
+        {% if content.field_profile_function|render and content.field_profile_organization|render %} &bullet; {% endif %}
+      {% endif %}
 
       {{ content.field_profile_organization }}
 

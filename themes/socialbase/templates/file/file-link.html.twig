@@ -18,14 +18,44 @@
   <span{{ attributes }}>
 
   {% if icon_only %}
-    <span class="file-icon"><img class="node-file__icon" src="/{{ path_to_socialbase }}/assets/images/mime-icons/icon_1_{{ node_icon }}_x16.png" srcset="/{{ path_to_socialbase }}/assets/images/mime-icons/icon_1_{{ node_icon }}_x32.png 2x" alt="{{ node_icon }}" /></span>
+    <span class="file-icon">
+
+      {% if style == 'sky' %}
+
+        <svg class="icon-vote">
+          <use xlink:href="#icon-upload"></use>
+        </svg>
+
+      {% else %}
+
+        <img class="node-file__icon" src="/{{ path_to_socialbase }}/assets/images/mime-icons/icon_1_{{ node_icon }}_x16.png" srcset="/{{ path_to_socialbase }}/assets/images/mime-icons/icon_1_{{ node_icon }}_x32.png 2x" alt="{{ node_icon }}" />
+
+      {% endif %}
+
+    </span>
     <span class="sr-only">
       <span class="file-link">{{ link }}</span>
       <span class="file-size">{{ file_size }}</span>
     </span>
   {% else %}
 
-      <span class="file-icon"><img class="node-file__icon" src="/{{ path_to_socialbase }}/assets/images/mime-icons/icon_1_{{ node_icon }}_x16.png" srcset="/{{ path_to_socialbase }}/assets/images/mime-icons/icon_1_{{ node_icon }}_x32.png 2x" alt="{{ node_icon }}" /></span><span class="file-link">{{ link }}</span><span class="file-size">{{ file_size }}</span>
+    <span class="file-icon">
+
+        {% if style == 'sky' %}
+
+          <svg class="icon-vote">
+            <use xlink:href="#icon-upload"></use>
+          </svg>
+
+        {% else %}
+
+          <img class="node-file__icon" src="/{{ path_to_socialbase }}/assets/images/mime-icons/icon_1_{{ node_icon }}_x16.png" srcset="/{{ path_to_socialbase }}/assets/images/mime-icons/icon_1_{{ node_icon }}_x32.png 2x" alt="{{ node_icon }}" />
+
+        {% endif %}
+
+      </span>
+    <span class="file-link">{{ link }}</span>
+    <span class="file-size">{{ file_size }}</span>
 
   {% endif %}
 

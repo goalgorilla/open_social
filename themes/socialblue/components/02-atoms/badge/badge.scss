@@ -24,8 +24,43 @@
   color: $badge-color;
 }
 
+.socialblue--sky .main-container {
+  .badge {
+    border-radius: $border-radius-extra;
+    white-space: inherit;
+    text-align: left;
+
+    @include for-desktop-up {
+      margin-right: 12px;
+    }
+  }
+
+  .teaser__badge {
+    color: $default-color;
+    background: transparent;
+
+    &:hover,
+    &:active,
+    &:focus {
+      background: transparent;
+    }
+  }
+}
+
 .badge__icon {
   fill: $default-color;
+
+  .socialblue--sky & {
+
+    path {
+      stroke: $default-color;
+      fill: $default-color;
+    }
+
+    &.badge__user-orange {
+      height: 11px;
+    }
+  }
 }
 
 .badge--pill {
@@ -46,6 +81,13 @@
 
 .badge-accent {
   @include badge-variant($badge-accent-bg, $default-color);
+}
+
+.socialblue--sky .main-container {
+  .badge-accent {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
 }
 
 .badge-success {

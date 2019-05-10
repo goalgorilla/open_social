@@ -1,0 +1,61 @@
+{% extends "node--full.html.twig" %}
+
+{% block metainfo %}
+  <header class="metainfo">
+
+    <div class="metainfo__avatar">
+      {{ author_picture }}
+    </div>
+
+    <div class="metainfo__content">
+
+      {{ author }}
+      <span class="metainfo__published-date">&bullet; {{ created_date_formatted }} </span>
+      <div>
+        {% if group_link %}
+          {% trans %} in group {% endtrans %}
+          {{ group_link }}
+        {% endif %}
+      </div>
+
+    </div>
+
+    {{ content.links.moderation }}
+
+  </header>
+{% endblock %}
+
+{% block metaengage %}
+  <div class="meta-engage">
+    {% if node.isSticky() %}
+      <span class="badge badge-accent badge--large">{% trans %}Featured{% endtrans %}</span>
+    {% endif %}
+  </div>
+{% endblock %}
+
+{% block nodefull_body %}
+  {{ content|without('flag_follow_content', 'like_and_dislike') }}
+{% endblock %}
+
+{% block nodefull_below_content %}
+
+  {% if comment_count > 2 and comments_status and user.hasPermission("post comments") %}
+    {{ attach_library('social_discussion/comment_shortcut') }}
+
+    <div class="comment-nav">
+
+      <a href="#comment-form" class="btn btn-secondary btn-raised scroll-to-comment-btn"
+         title="{{ 'Scroll to comment form '|t }}">{% trans %}Add new comment{% endtrans %}</a>
+
+      <a href="#content" class="btn btn-secondary btn-raised scroll-to-top-btn" title="{{ 'Scroll to top '|t }}">
+        <svg class="icon-medium">
+          <use xlink:href="#icon-expand-less"></use>
+        </svg>
+      </a>
+
+    </div>
+  {% endif %}
+
+  {{ below_content }}
+
+{% endblock %}
