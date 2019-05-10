@@ -5,6 +5,8 @@
  * The Social User Export module.
  */
 
+use Drupal\file\Entity\File;
+
 /**
  * Implements hook_file_download().
  */
@@ -18,7 +20,7 @@ function social_user_export_file_download($uri) {
   $fid = $query->execute();
 
   /* @var \Drupal\file\FileInterface $file */
-  $file = \Drupal\file\Entity\File::load(reset($fid));
+  $file = File::load(reset($fid));
 
   $access = FALSE;
 
