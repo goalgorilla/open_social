@@ -160,7 +160,7 @@ function social_tour_page_bottom(array &$page_bottom) {
       // social-profile  needs to made available on your own profile only.
       // So it must be removed from the array, but not marked as seen before,
       // when you visit the profile of others.
-      if ($id === 'social-profile' && isset($page_bottom['tour'][$id])) {
+      if ($id === 'social_profile' && isset($page_bottom['tour'][$id])) {
         /** @var \Drupal\user\Entity\User $profile */
         $profile = $route_match->getParameter('user');
         if ($profile->id() != \Drupal::currentUser()->id()) {
