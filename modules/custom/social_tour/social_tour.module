@@ -105,20 +105,15 @@ function social_tour_page_attachments(array &$page) {
   }
 
   // Load all of the items and match on route name.
-  $route_match = \Drupal::routeMatch();
-  $route_name = $route_match->getRouteName();
+  $route_name = \Drupal::routeMatch()->getRouteName();
 
-  // Check if we have a tour at the current route for the current user.
-  $results = \Drupal::entityQuery('tour')
-    ->condition('routes.*.route_name', $route_name)
-    ->execute();
+  $tags = \Drupal::service('social_tour.onboarding')->getCacheTags($route_name);
 
   // If we have a tour available, and there is at least one tour tip we attach
   // our JS library that makes sure the tour pops up immediately.
-  if (!empty($results) && $tours = Tour::loadMultiple(array_keys($results))) {
-    if (!empty($tours)) {
-      $page['#attached']['library'][] = 'social_tour/social_tour';
-    }
+  if ($tags) {
+    $page['#attached']['library'][] = 'social_tour/social_tour';
+    $page['#cache']['tags'] = $tags;
   }
 }
 
