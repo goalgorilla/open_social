@@ -228,6 +228,9 @@ function social_event_preprocess_node(array &$variables) {
   $node = $variables['node'];
   if ($node->getType() === 'event') {
     $variables['event_date'] = _social_event_format_date($node, $view_mode);
+    if ($node->hasField('field_event_creator') && $node->field_event_creator->value === '1') {
+      $variables['event_creator'] = TRUE;
+    }
   }
 }
 

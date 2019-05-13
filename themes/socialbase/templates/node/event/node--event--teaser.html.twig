@@ -34,4 +34,11 @@
     {% endembed %}
   {% endif %}
 
+  {% if event_creator %}
+    {% embed "node--teaser__field.html.twig" %}
+      {%- block field_icon -%} account_circle {%- endblock -%}
+      {%- block field_value %} {{ author_name }} {%- endblock -%}
+    {% endembed %}
+  {% endif %}
+
 {% endblock %}
