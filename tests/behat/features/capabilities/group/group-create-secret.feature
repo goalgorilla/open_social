@@ -1,4 +1,4 @@
-@api @group @DS-3428 @DS-4211 @stability @stability-1 @group-create-secret
+@api @group @stability @stability-1 @group-create-secret
 Feature: Create Secret Group
   Benefit: I want to create a secret group, where only group members can see the content.
   Role: As a LU
@@ -7,15 +7,15 @@ Feature: Create Secret Group
   Scenario: Successfully create secret group
     Given users:
       | name             | mail                     | status | roles       |
-      | Group User One   | group_user_1@example.com | 1      | sitemanager |
-      | Group User Two   | group_user_2@example.com | 1      |             |
+      |  SecretGroup User One   | group_user_1@example.com | 1      | sitemanager |
+      |  SecretGroup User Two   | group_user_2@example.com | 1      |             |
     And I enable the module "social_group_secret"
     And I am logged in as an "authenticated user"
     And I am on "user"
     And I click "Groups"
     And I click "Add a group"
     Then I should not see "Secret group"
-    Given I am logged in as "Group User One"
+    Given I am logged in as "SecretGroup User One"
     And I am on "user"
     And I click "Groups"
     And I click "Add group"
@@ -83,14 +83,14 @@ Feature: Create Secret Group
     When I click "Test secret group"
     And I click "Manage members"
     And I click "Add members"
-    And I fill in "Group User Two" for "Select members to add"
+    And I fill in "SecretGroup User Two" for "Select members to add"
     And I press "Save"
     Then I click "Members"
-    And I should see "Group User Two"
+    And I should see "SecretGroup User Two"
     And I logout
 
   # Now login as user two.
-    Given I am logged in as "Group User Two"
+    Given I am logged in as "SecretGroup User Two"
     And I am on "/all-groups"
     Then I should see "Test secret group"
     When I click "Test secret group"
@@ -105,8 +105,8 @@ Feature: Create Secret Group
   # As a non-member of the secret group, I should not see anything.
     Given users:
       | name           | mail                      | status |
-      | Platform User  | platform_user@example.com | 1      |
-    And I am logged in as "Platform User"
+      | Site User  | platform_user@example.com | 1      |
+    And I am logged in as "Site User"
     And I open and check the access of content in group "Test secret group" and I expect access "denied"
     And I am on "/all-groups"
     Then I should not see "Test secret group"
@@ -148,7 +148,7 @@ Feature: Create Secret Group
     And I should not see "Test secret group" in the "Main content"
 
     # As a member of this secret group I should be able to find the group in search.
-    Given I am logged in as "Group User Two"
+    Given I am logged in as "SecretGroup User Two"
     And Search indexes are up to date
     And I am on "search/groups"
     When I fill in "search_input" with "Test secret group"
@@ -166,7 +166,7 @@ Feature: Create Secret Group
     And I should see "Test secret group" in the "Main content"
 
   # As a member of this secret group I want to leave the group
-    Given I am logged in as "Group User Two"
+    Given I am logged in as "SecretGroup User Two"
     And I am on "/all-groups"
     Then I should see "Test secret group"
     When I click "Test secret group"
