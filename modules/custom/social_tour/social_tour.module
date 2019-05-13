@@ -7,38 +7,37 @@
 
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\tour\Entity\Tour;
-use Drupal\user\Entity\User;
+use Drupal\user\UserInterface;
 
 /**
  * Implements hook_form_FORM_ID_alter().
  */
-function social_tour_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-  if ($form_id == 'user_form') {
-    $user = \Drupal::routeMatch()->getParameter('user');
-    if ($user instanceof User) {
-      // @TODO: We've currently decided to turn off the possibility for a LU to re-enable the tips.
-      if (FALSE) {
-        // Only do this when onboarding is disabled.
-        // if (\Drupal::service('user.data')->get('social_tour',
-        // \Drupal::currentUser()->id(), 'onboarding_disabled')) {
-        // Add the card.
-        $form['social_tour'] = [
-          '#type' => 'fieldset',
-          '#title' => t('Other settings'),
-          '#tree' => TRUE,
-        ];
-        // Add the field.
-        $form['social_tour']['social_tour_onboarding'] = [
-          '#type' => 'checkbox',
-          '#title' => t('Show tips on how to use the community'),
-          '#defaukt_value' => FALSE,
-          '#attributes' => [
-            'data-switch' => TRUE,
-          ],
-        ];
-        // Add a submit action.
-        $form['actions']['submit']['#submit'][] = '_social_tour_form_user_form_submit';
-      }
+function social_tour_form_user_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  $user = \Drupal::routeMatch()->getParameter('user');
+
+  if ($user instanceof UserInterface) {
+    // @TODO: We've currently decided to turn off the possibility for a LU to re-enable the tips.
+    if (FALSE) {
+      // Only do this when onboarding is disabled.
+      // if (\Drupal::service('user.data')->get('social_tour',
+      // \Drupal::currentUser()->id(), 'onboarding_disabled')) {
+      // Add the card.
+      $form['social_tour'] = [
+        '#type' => 'fieldset',
+        '#title' => t('Other settings'),
+        '#tree' => TRUE,
+      ];
+      // Add the field.
+      $form['social_tour']['social_tour_onboarding'] = [
+        '#type' => 'checkbox',
+        '#title' => t('Show tips on how to use the community'),
+        '#defaukt_value' => FALSE,
+        '#attributes' => [
+          'data-switch' => TRUE,
+        ],
+      ];
+      // Add a submit action.
+      $form['actions']['submit']['#submit'][] = '_social_tour_form_user_form_submit';
     }
   }
 }
@@ -73,7 +72,7 @@ function social_tour_preprocess_container(&$variables) {
   // is 1, we can unset it. We don't want to show 1 of 1 count.
   if (!empty($variables['attributes']['class'])) {
     foreach ($variables['attributes']['class'] as $class_name) {
-      if ($class_name == 'tour-progress') {
+      if ($class_name === 'tour-progress') {
         $child_arguments = $variables['children']->getArguments();
         // So we found arguments for tour_progress. This is an array consisting
         // of [ '@tour_item' => integer 1, '@total' => integer 1 ]. If we have
@@ -123,7 +122,7 @@ function social_tour_page_attachments(array &$page) {
  * Making sure here that the social_tour is executed after the tour.
  */
 function social_tour_module_implements_alter(&$implementations, $hook) {
-  if ($hook == 'page_bottom') {
+  if ($hook === 'page_bottom') {
     // Move social_tour_page_bottom() to the end of the list.
     $st = $implementations['social_tour'];
     unset($implementations['social_tour']);
@@ -163,10 +162,9 @@ function social_tour_page_bottom(array &$page_bottom) {
       if ($id === 'social_profile' && isset($page_bottom['tour'][$id])) {
         /** @var \Drupal\user\Entity\User $profile */
         $profile = $route_match->getParameter('user');
-        if ($profile->id() != \Drupal::currentUser()->id()) {
+        if ($profile->id() !== \Drupal::currentUser()->id()) {
           // If it's not your own profile, we don't show this tour.
-          unset($tours[$id]);
-          unset($page_bottom['tour'][$id]);
+          unset($tours[$id], $page_bottom['tour'][$id]);
           continue;
         }
       }
@@ -175,12 +173,11 @@ function social_tour_page_bottom(array &$page_bottom) {
       // have to render it anymore. because that means the user has already
       // seen it, either they finished the tour or they skipped the tour.
       // But in any way we don't want the user to see the tour twice.
-      if (\Drupal::currentUser()->id() !== 0) {
+      if (\Drupal::currentUser()->isAuthenticated()) {
         // For logged in users of any role we add it to the user data.
         // For each tour that is rendered we set the tour id to TRUE.
         $seen_before = \Drupal::service('user.data')
-          ->get('social_tour', \Drupal::currentUser()
-            ->id(), $id);
+          ->get('social_tour', \Drupal::currentUser()->id(), $id);
       }
       else {
         // For Anonymous we put it in a session. Probably they won't even see
@@ -199,12 +196,11 @@ function social_tour_page_bottom(array &$page_bottom) {
       // Ah so we rendered the tour in the bottom of the page, we can also set
       // it to the user data so the user doesn't see it anymore.
       foreach ($tours as $id => $tour) {
-        if (\Drupal::currentUser()->id() !== 0) {
+        if (\Drupal::currentUser()->isAuthenticated()) {
           // For logged in users of any role we add it to the user data.
           // For each tour that is rendered we set the tour id to TRUE.
           \Drupal::service('user.data')
-            ->set('social_tour', \Drupal::currentUser()
-              ->id(), $id, TRUE);
+            ->set('social_tour', \Drupal::currentUser()->id(), $id, TRUE);
         }
         else {
           // For Anonymous we put it in a session. Probably they won't even see

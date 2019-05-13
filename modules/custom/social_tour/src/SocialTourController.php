@@ -4,13 +4,13 @@ namespace Drupal\social_tour;
 
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Path\PathValidatorInterface;
 use Drupal\Core\Routing\RedirectDestinationInterface;
 use Drupal\Core\Session\AccountProxyInterface;
-use Drupal\user\Entity\User;
-use Drupal\Core\Controller\ControllerBase;
 use Drupal\user\UserDataInterface;
+use Drupal\user\UserInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
@@ -46,6 +46,19 @@ class SocialTourController extends ControllerBase {
 
   /**
    * SocialTourController constructor.
+   *
+   * @param \Drupal\user\UserDataInterface $user_data
+   *   The user data.
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *   The configuration factory.
+   * @param \Drupal\Core\Session\AccountProxyInterface $current_user
+   *   The current user service.
+   * @param \Drupal\Core\Path\PathValidatorInterface $path_validator
+   *   The path validator.
+   * @param \Drupal\Core\Routing\RedirectDestinationInterface $redirect_destination
+   *   The redirect destination helper.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
    */
   public function __construct(
     UserDataInterface $user_data,
@@ -86,7 +99,7 @@ class SocialTourController extends ControllerBase {
    */
   public function onboardingEnabled() {
     // Check if tour is enabled by SM setting.
-    if ($this->configFactory->get('social_tour_enabled') == FALSE) {
+    if (!$this->configFactory->get('social_tour_enabled')) {
       return FALSE;
     }
 
@@ -96,9 +109,10 @@ class SocialTourController extends ControllerBase {
     }
 
     // Check if current disabled it.
-    if ($this->userData->get('social_tour', $this->currentUser->id(), 'onboarding_disabled') == TRUE) {
+    if ($this->userData->get('social_tour', $this->currentUser->id(), 'onboarding_disabled')) {
       return FALSE;
     }
+
     return TRUE;
   }
 
@@ -112,12 +126,12 @@ class SocialTourController extends ControllerBase {
 
     // No user given, then current user.
     $id = $this->currentUser->id();
-    if ($account instanceof User) {
+    if ($account instanceof UserInterface) {
       $id = $account->id();
     }
 
     $new_value = TRUE;
-    if ($this->userData->get('social_tour', $id, 'onboarding_disabled') == TRUE) {
+    if ($this->userData->get('social_tour', $id, 'onboarding_disabled')) {
       $new_value = FALSE;
     }
 
@@ -149,7 +163,7 @@ class SocialTourController extends ControllerBase {
     Cache::invalidateTags($this->getCacheTags($route_name));
 
     // Set a message that they can be turned on again.
-    drupal_set_message($this->t('You will not see tips like this anymore.'));
+    $this->messenger()->addStatus($this->t('You will not see tips like this anymore.'));
 
     // Return to previous page.
     return $this->redirect($route_name);
