@@ -6,6 +6,7 @@ use Drupal\Core\Cache\CacheTagsInvalidator;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandler;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
@@ -47,6 +48,13 @@ class SocialProfileFieldsSettingsForm extends ConfigFormBase implements Containe
   protected $moduleHandler;
 
   /**
+   * Entity type manager.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  protected $entityTypeManager;
+
+  /**
    * SocialProfileSettingsForm constructor.
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
@@ -59,13 +67,16 @@ class SocialProfileFieldsSettingsForm extends ConfigFormBase implements Containe
    *   Cache tags invalidator for clearing tags.
    * @param \Drupal\Core\Extension\ModuleHandler $module_handler
    *   Module handler for checking if modules exist.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface
+   *   Entity type manager for clearing cached definitions.
    */
-  public function __construct(ConfigFactoryInterface $config_factory, SocialProfileFieldsHelper $profile_fields_helper, Connection $database, CacheTagsInvalidator $cache_tags_invalidator, ModuleHandler $module_handler) {
+  public function __construct(ConfigFactoryInterface $config_factory, SocialProfileFieldsHelper $profile_fields_helper, Connection $database, CacheTagsInvalidator $cache_tags_invalidator, ModuleHandler $module_handler, EntityTypeManagerInterface $entity_type_manager) {
     parent::__construct($config_factory);
     $this->profileFieldsHelper = $profile_fields_helper;
     $this->database = $database;
     $this->cacheTagsInvalidator = $cache_tags_invalidator;
     $this->moduleHandler = $module_handler;
+    $this->entityTypeManager = $entity_type_manager;
   }
 
   /**
@@ -77,7 +88,8 @@ class SocialProfileFieldsSettingsForm extends ConfigFormBase implements Containe
       $container->get('social_profile_fields.helper'),
       $container->get('database'),
       $container->get('cache_tags.invalidator'),
-      $container->get('module_handler')
+      $container->get('module_handler'),
+      $container->get('entity_type.manager')
     );
   }
 
@@ -147,6 +159,13 @@ class SocialProfileFieldsSettingsForm extends ConfigFormBase implements Containe
       }
     }
 
+    $form['nickname_unique_validation'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Unique nicknames'),
+      '#description' => $this->t('If you check this, validation is applied that verifies the users nickname is unique whenever they save their profile.'),
+      '#default_value' => $config->get('nickname_unique_validation'),
+    ];
+
     $form['actions']['social_profile_fields_confirm_flush'] = [
       '#type' => 'submit',
       '#submit' => ['::submitFlush'],
@@ -174,6 +193,7 @@ class SocialProfileFieldsSettingsForm extends ConfigFormBase implements Containe
       }
     }
 
+    $config->set('nickname_unique_validation', $form_state->getValue('nickname_unique_validation'));
     $config->save();
 
     parent::submitForm($form, $form_state);
@@ -193,6 +213,11 @@ class SocialProfileFieldsSettingsForm extends ConfigFormBase implements Containe
     }
 
     $this->cacheTagsInvalidator->invalidateTags($cache_tags);
+
+    // Clear the entity type manager cached definitions as the nick name unique
+    // validation might now need to be applied.
+    // @see social_profile_fields_entity_bundle_field_info_alter().
+    $this->entityTypeManager->clearCachedDefinitions();
 
     // If the user export module is on, clear the cached definitions.
     if ($this->moduleHandler->moduleExists('social_user_export')) {
