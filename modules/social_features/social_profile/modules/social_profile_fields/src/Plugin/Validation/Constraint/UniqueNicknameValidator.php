@@ -2,13 +2,42 @@
 
 namespace Drupal\social_profile_fields\Plugin\Validation\Constraint;
 
+use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
+use Drupal\profile\ProfileStorageInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
 /**
  * Validates the UniqueInteger constraint.
  */
-class UniqueNicknameValidator extends ConstraintValidator {
+class UniqueNicknameValidator extends ConstraintValidator implements ContainerInjectionInterface {
+
+  /**
+   * Profile storage.
+   *
+   * @var \Drupal\profile\ProfileStorageInterface
+   */
+  protected $profileStorage;
+
+  /**
+   * UniqueNicknameValidator constructor.
+   *
+   * @param \Drupal\profile\ProfileStorageInterface $profile_storage
+   *   Profile storage.
+   */
+  public function __construct(ProfileStorageInterface $profile_storage) {
+    $this->profileStorage = $profile_storage;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('entity.manager')->getStorage('profile')
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -23,7 +52,7 @@ class UniqueNicknameValidator extends ConstraintValidator {
   }
 
   /**
-   * Is nickname unique?
+   * Checks if a nickname is unique.
    *
    * @param string $value
    *   The provided nickname.
@@ -34,15 +63,14 @@ class UniqueNicknameValidator extends ConstraintValidator {
    */
   private function isUnique($value) {
     // Get all profiles with the provided nickname.
-    $storage = \Drupal::entityTypeManager()->getStorage('profile');
-    $profiles = $storage->loadByProperties(['field_profile_nick_name' => $value]);
+    $profiles = $this->profileStorage->loadByProperties(['field_profile_nick_name' => $value]);
 
     // Remove current profile from profiles.
     foreach ($profiles as $key => $profile) {
-      // Get current profile.
-      $currentProfile = NULL;
+      // Get the profile we're performing actions on.
+      $current_profile = _social_profile_get_profile_from_route();
 
-      if ($profile->id() === $currentProfile->get('profile_id')->value) {
+      if ($profile->id() === $current_profile->get('profile_id')->value) {
         unset($profiles[$key]);
       }
     }

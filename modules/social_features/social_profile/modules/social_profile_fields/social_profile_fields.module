@@ -231,7 +231,7 @@ function social_profile_fields_social_user_export_plugin_info_alter(array &$plug
  */
 function social_profile_fields_entity_bundle_field_info_alter(&$fields, EntityTypeInterface $entity_type, $bundle) {
   // Add the unique nickname constraint.
-  if ($bundle === 'my_bundle' && isset($fields['field_profile_nick_name'])) {
+  if ($bundle === 'profile' && isset($fields['field_profile_nick_name']) && $entity_type->id() === 'profile') {
     $fields['field_profile_nick_name']->addConstraint('UniqueNickname', []);
   }
 }

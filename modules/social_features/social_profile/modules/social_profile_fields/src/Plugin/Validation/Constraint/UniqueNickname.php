@@ -16,6 +16,6 @@ use Symfony\Component\Validator\Constraint;
 class UniqueNickname extends Constraint {
 
   // The message that will be shown if the value is not unique.
-  public $notUnique = '%value is already taken. Please pick another one.';
+  public $notUnique = '%value is already taken.';
 
 }
