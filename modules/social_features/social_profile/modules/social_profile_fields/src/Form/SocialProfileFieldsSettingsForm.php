@@ -67,7 +67,7 @@ class SocialProfileFieldsSettingsForm extends ConfigFormBase implements Containe
    *   Cache tags invalidator for clearing tags.
    * @param \Drupal\Core\Extension\ModuleHandler $module_handler
    *   Module handler for checking if modules exist.
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   Entity type manager for clearing cached definitions.
    */
   public function __construct(ConfigFactoryInterface $config_factory, SocialProfileFieldsHelper $profile_fields_helper, Connection $database, CacheTagsInvalidator $cache_tags_invalidator, ModuleHandler $module_handler, EntityTypeManagerInterface $entity_type_manager) {
