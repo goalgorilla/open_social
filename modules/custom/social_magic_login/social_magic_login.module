@@ -38,16 +38,17 @@ function social_magic_login_tokens($type, $tokens, array $data, array $options, 
 
     foreach ($tokens as $token => $original) {
       switch ($token) {
-        case 'magic-login-token':
+        case 'auto-login-token':
 
+          // Must be internal url.
           $group_url = $group->toUrl('canonical', [
             'absolute' => FALSE,
           ])->toString();
           if (!empty($group_url)) {
-            $url_options['destination'] = $group_url;
+            $destination = $group_url;
           }
 
-          $url = social_magic_login_url_create($user, $url_options);
+          $url = social_magic_login_url_create($user, $destination, $url_options);
 
           $replacements[$original] = $url->toString();
 
@@ -60,14 +61,11 @@ function social_magic_login_tokens($type, $tokens, array $data, array $options, 
 }
 
 /**
- * Wrapper method for \Drupal\social_magic_login\Service\MagicUrlCreate::create.
+ * Wrapper method for Service MagicUrlCreate.
  *
- * @param \Drupal\user\UserInterface $account
- * @param array $options
- *
- * @return \Drupal\Core\Url
+ * @see \Drupal\social_magic_login\Service\MagicUrlCreate::create
  */
-function social_magic_login_url_create(UserInterface $account, array $options) {
+function social_magic_login_url_create(UserInterface $account, $destination, array $options) {
   $magic_url_service = \Drupal::service('social_magic_login.create_url');
-  return $magic_url_service->create($account, $options);
+  return $magic_url_service->create($account, $destination, $options);
 }
