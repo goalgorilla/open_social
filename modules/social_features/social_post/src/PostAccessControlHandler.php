@@ -68,18 +68,18 @@ class PostAccessControlHandler extends EntityAccessControlHandler {
               // Check if the post has been posted in a group.
               $group_id = $entity->field_recipient_group->target_id;
 
-              if (!is_null($group_id)) {
-                /* @var \Drupal\group\Entity\Group; $group */
+              if ($group_id !== NULL) {
+                /* @var \Drupal\group\Entity\Group $group */
                 $group = entity_load('group', $group_id);
               }
 
-              if (!empty($group)) {
+              if ($group !== NULL) {
                 if ($group->hasPermission('access posts in group', $account) && $this->checkDefaultAccess($entity, $operation, $account)) {
-                  return AccessResult::allowed();
+                  if ($group->getMember($account)) {
+                    return AccessResult::allowed()->cachePerUser()->addCacheableDependency($entity);
+                  }
                 }
-                else {
-                  return AccessResult::forbidden();
-                }
+                return AccessResult::forbidden();
               }
               return AccessResult::forbidden();
 

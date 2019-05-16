@@ -1,0 +1,18 @@
+<?php
+
+/**
+ * @file
+ * The Social Group Flexible Group module.
+ */
+
+/**
+ * Provide a method to alter array of group types used in open social.
+ *
+ * @param array $social_group_types
+ *   List of group types used in open social.
+ *
+ * @ingroup social_group_api
+ */
+function social_group_flexible_group_social_group_types_alter(array &$social_group_types) {
+  $social_group_types[] = 'flexible_group';
+}

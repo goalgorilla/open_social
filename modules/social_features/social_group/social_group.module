@@ -235,7 +235,7 @@ function social_group_preprocess_group(array &$variables) {
   }
 
   // Add the hero styled image.
-  if (!empty($group->get('field_group_image')->entity)) {
+  if ($group->hasField('field_group_image') && !empty($group->get('field_group_image')->entity)) {
     // Fetch image style from field info.
     $original_image_style = $variables['content']['field_group_image'][0]['#image_style'] ?? '';
     $image_style = ImageStyle::load($original_image_style);
@@ -1427,6 +1427,13 @@ function social_group_get_allowed_visibility_options_per_group_type($group_type_
       $visibility_options['public'] = FALSE;
       $visibility_options['community'] = TRUE;
       $visibility_options['group'] = FALSE;
+      break;
+
+    case 'flexible_group':
+      // TODO Retrieve values from the group itself.
+      $visibility_options['public'] = TRUE;
+      $visibility_options['community'] = TRUE;
+      $visibility_options['group'] = TRUE;
       break;
 
     default:
