@@ -1,5 +1,5 @@
 social_magic_login.login:
-  path: '/magic/{uid}/{timestamp}/{hash}/login'
+  path: '/auto-login/{uid}/{timestamp}/{hash}/{destination}'
   defaults:
     _controller: '\Drupal\social_magic_login\Controller\MagicLoginController::login'
   requirements:

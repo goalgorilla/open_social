@@ -7,7 +7,6 @@ use Drupal\Core\Controller\ControllerBase;
 use Drupal\user\UserStorageInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 /**
@@ -23,7 +22,7 @@ class MagicLoginController extends ControllerBase {
   protected $userStorage;
 
   /**
-   * The logger instance.
+   * The logger service.
    *
    * @var \Psr\Log\LoggerInterface
    */
@@ -35,6 +34,7 @@ class MagicLoginController extends ControllerBase {
    * @param \Drupal\user\UserStorageInterface $user_storage
    *   The user storage.
    * @param \Psr\Log\LoggerInterface $logger
+   *   The logger service.
    */
   public function __construct(UserStorageInterface $user_storage, LoggerInterface $logger) {
     $this->userStorage = $user_storage;
@@ -54,27 +54,25 @@ class MagicLoginController extends ControllerBase {
   /**
    * Login.
    *
-   * @see \Drupal\user\Controller\UserController::resetPassLogin
-   *
-   * @param \Symfony\Component\HttpFoundation\Request $request
-   *   The request.
    * @param int $uid
    *   User ID of the user requesting reset.
    * @param int $timestamp
    *   The current timestamp.
    * @param string $hash
    *   Login link hash.
+   * @param string $destination
+   *   The final destination the user needs to end up as an encoded string.
    *
    * @return \Symfony\Component\HttpFoundation\RedirectResponse
    *   The redirect response.
    *
-   * @return string|\Symfony\Component\HttpFoundation\RedirectResponse
+   * @see \Drupal\user\Controller\UserController::resetPassLogin
    */
-  public function login(Request $request, $uid, $timestamp, $hash) {
+  public function login($uid, $timestamp, $hash, $destination) {
     // The current user is not logged in, so check the parameters.
     $current = \Drupal::time()->getRequestTime();
     // Get the destination for the redirect result.
-    $destination = $request->query->get('destination');
+    $destination = base64_encode($destination);
 
     /** @var \Drupal\user\UserInterface $user */
     $user = $this->userStorage->load($uid);
@@ -96,7 +94,7 @@ class MagicLoginController extends ControllerBase {
     // Check validity of the link.
     if (($timestamp <= $current)
       && ($timestamp >= $user->getLastLoginTime())
-      && $user->isAuthenticated()){
+      && $user->isAuthenticated()) {
       // When the user hasn't set a password, redirect the user to
       // the set passwords page.
       if (NULL === $user->getPassword()) {
@@ -131,4 +129,5 @@ class MagicLoginController extends ControllerBase {
     // Redirect to user login page.
     return $this->redirect('user.login', [], ['query' => ['destination' => $destination]]);
   }
+
 }

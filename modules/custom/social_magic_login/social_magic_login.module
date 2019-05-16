@@ -15,9 +15,9 @@ function social_magic_login_token_info() {
 
   // Magic login token.
   // @todo: Add :? as a filter to an entity type?
-  $info['tokens']['user']['magic-login-token'] = [
-    'name' => t('Magic Login url'),
-    'description' => t('This is a login link for a user.'),
+  $info['tokens']['user']['auto-login-token'] = [
+    'name' => t('Automatic Login url'),
+    'description' => t('This creates an url that logs in a user automatically and sends the user to a designated destination.'),
   ];
 
   return $info;
