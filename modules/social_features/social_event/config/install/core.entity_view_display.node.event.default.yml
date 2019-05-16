@@ -7,6 +7,7 @@ dependencies:
     - field.field.node.event.field_content_visibility
     - field.field.node.event.field_event_address
     - field.field.node.event.field_event_comments
+    - field.field.node.event.field_event_creator
     - field.field.node.event.field_event_date
     - field.field.node.event.field_event_date_end
     - field.field.node.event.field_event_enroll
@@ -28,19 +29,19 @@ content:
   body:
     label: hidden
     type: text_default
-    weight: 2
+    weight: 3
     settings: {  }
     third_party_settings: {  }
     region: content
   field_event_address:
     type: address_plain
-    weight: 1
+    weight: 2
     label: hidden
     settings: {  }
     third_party_settings: {  }
     region: content
   field_event_comments:
-    weight: 3
+    weight: 4
     label: above
     settings:
       pager_id: 0
@@ -50,44 +51,46 @@ content:
     region: content
   field_event_location:
     type: string
-    weight: 0
+    weight: 1
     label: hidden
     settings:
       link_to_entity: false
     third_party_settings: {  }
     region: content
   field_files:
-    weight: 4
+    weight: 5
     label: above
-    settings: {  }
+    settings:
+      use_description_as_link_text: true
     third_party_settings: {  }
     type: file_default
     region: content
   flag_follow_content:
-    weight: 5
+    weight: 6
+    region: content
     settings: {  }
     third_party_settings: {  }
-    region: content
   groups_type_public_group:
     label: above
-    weight: -5
+    weight: 0
     region: content
     settings:
       link: true
     third_party_settings: {  }
     type: entity_reference_label
   like_and_dislike:
-    weight: 6
+    weight: 7
+    region: content
     settings: {  }
     third_party_settings: {  }
-    region: content
   links:
-    weight: 7
+    weight: 8
     region: content
     settings: {  }
     third_party_settings: {  }
 hidden:
   field_content_visibility: true
+  field_event_creator: true
   field_event_date: true
   field_event_date_end: true
   field_event_enroll: true

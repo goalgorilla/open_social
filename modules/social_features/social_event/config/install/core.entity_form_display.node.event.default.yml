@@ -6,6 +6,7 @@ dependencies:
     - field.field.node.event.field_content_visibility
     - field.field.node.event.field_event_address
     - field.field.node.event.field_event_comments
+    - field.field.node.event.field_event_creator
     - field.field.node.event.field_event_date
     - field.field.node.event.field_event_date_end
     - field.field.node.event.field_event_enroll
@@ -22,6 +23,7 @@ dependencies:
     - file
     - image_widget_crop
     - path
+    - social_group
     - text
 third_party_settings:
   field_group:
@@ -38,12 +40,13 @@ third_party_settings:
         classes: ''
         id: ''
         required_fields: true
+      region: content
     group_date_time:
       children:
         - field_event_date
         - field_event_date_end
       parent_name: ''
-      weight: 4
+      weight: 6
       label: 'Date & time'
       format_type: fieldset
       format_settings:
@@ -51,12 +54,13 @@ third_party_settings:
         classes: ''
         id: ''
         required_fields: true
+      region: content
     group_location:
       children:
         - field_event_location
         - field_event_address
       parent_name: ''
-      weight: 5
+      weight: 7
       label: Location
       format_type: fieldset
       format_settings:
@@ -64,11 +68,12 @@ third_party_settings:
         classes: ''
         id: ''
         required_fields: true
+      region: content
     group_description:
       children:
         - body
       parent_name: ''
-      weight: 7
+      weight: 9
       label: Description
       format_type: fieldset
       format_settings:
@@ -76,6 +81,7 @@ third_party_settings:
         classes: ''
         id: ''
         required_fields: true
+      region: content
     group_event_visibility:
       children:
         - groups
@@ -89,11 +95,12 @@ third_party_settings:
         required_fields: true
         id: visibility
         classes: 'card '
+      region: content
     group_attachments:
       children:
         - field_files
       parent_name: ''
-      weight: 8
+      weight: 10
       label: Attachments
       format_type: fieldset
       format_settings:
@@ -101,6 +108,7 @@ third_party_settings:
         required_fields: true
         id: attachments
         classes: card
+      region: content
     group_enrollment:
       children:
         - field_event_enroll
@@ -113,6 +121,20 @@ third_party_settings:
         required_fields: true
         id: enrollment
         classes: card
+      region: content
+    group_event_creator_option:
+      children:
+        - field_event_creator
+      parent_name: ''
+      weight: 4
+      format_type: fieldset
+      format_settings:
+        id: event-creator
+        classes: card
+        description: ''
+        required_fields: true
+      label: 'Event creator option'
+      region: content
 id: node.event.default
 targetEntityType: node
 bundle: event
@@ -129,7 +151,7 @@ content:
     region: content
   created:
     type: datetime_timestamp
-    weight: 4
+    weight: 5
     settings: {  }
     third_party_settings: {  }
     region: content
@@ -141,16 +163,22 @@ content:
     region: content
   field_event_address:
     weight: 14
-    settings:
-      default_country: site_default
+    settings: {  }
     third_party_settings: {  }
     type: address_default
     region: content
   field_event_comments:
-    weight: 11
+    weight: 13
     settings: {  }
     third_party_settings: {  }
     type: comment_default
+    region: content
+  field_event_creator:
+    weight: 13
+    settings:
+      display_label: true
+    third_party_settings: {  }
+    type: boolean_checkbox
     region: content
   field_event_date:
     weight: 10
@@ -183,6 +211,7 @@ content:
         - teaser
       progress_indicator: throbber
       warn_multiple_usages: true
+      crop_types_required: {  }
     third_party_settings: {  }
     type: image_widget_crop
     region: content
@@ -201,9 +230,15 @@ content:
     third_party_settings: {  }
     type: file_generic
     region: content
+  groups:
+    type: social_group_selector_widget
+    settings: {  }
+    weight: 16
+    region: content
+    third_party_settings: {  }
   path:
     type: path
-    weight: 10
+    weight: 12
     settings: {  }
     third_party_settings: {  }
     region: content
@@ -211,7 +246,7 @@ content:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 6
+    weight: 8
     third_party_settings: {  }
     region: content
   status:
@@ -219,13 +254,13 @@ content:
     settings:
       display_label: true
     type: boolean_checkbox
-    weight: 120
+    weight: 14
     third_party_settings: {  }
   sticky:
     type: boolean_checkbox
     settings:
       display_label: true
-    weight: 9
+    weight: 11
     third_party_settings: {  }
     region: content
   title:
