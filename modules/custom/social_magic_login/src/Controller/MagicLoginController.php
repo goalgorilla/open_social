@@ -72,7 +72,7 @@ class MagicLoginController extends ControllerBase {
     // The current user is not logged in, so check the parameters.
     $current = \Drupal::time()->getRequestTime();
     // Get the destination for the redirect result.
-    $destination = base64_encode($destination);
+    $destination = base64_decode($destination);
 
     /** @var \Drupal\user\UserInterface $user */
     $user = $this->userStorage->load($uid);
