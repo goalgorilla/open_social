@@ -7,6 +7,7 @@ use Drupal\Core\Controller\ControllerBase;
 use Drupal\user\UserStorageInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 /**
@@ -69,14 +70,20 @@ class MagicLoginController extends ControllerBase {
    * @see \Drupal\user\Controller\UserController::resetPassLogin
    */
   public function login($uid, $timestamp, $hash, $destination) {
-    // The current user is not logged in, so check the parameters.
-    $current = \Drupal::time()->getRequestTime();
+    // Get the current user and check if this user is authenticated and same as
+    // the user for the login link.
+    $current_user = $this->currentUser();
+    if ($current_user->isAuthenticated() && $current_user->id() != $uid) {
+      user_logout();
+      throw new AccessDeniedHttpException();
+    }
     // Get the destination for the redirect result.
     $destination = base64_decode($destination);
 
+    // The current user is not logged in, so check the parameters.
+    $currentTime = \Drupal::time()->getRequestTime();
     /** @var \Drupal\user\UserInterface $user */
     $user = $this->userStorage->load($uid);
-
     // Verify that the user exists and is active.
     if (NULL === $user || !$user->isActive()) {
       throw new AccessDeniedHttpException();
@@ -85,16 +92,14 @@ class MagicLoginController extends ControllerBase {
     // Time out, in seconds, until login URL expires.
     $timeout = $this->config('user.settings')->get('password_reset_timeout');
     // No time out for first time login.
-    if ($current - $timestamp > $timeout && $user->getLastLoginTime()) {
+    if ($currentTime - $timestamp > $timeout && $user->getLastLoginTime()) {
       $this->messenger()->addError($this->t('You have tried to use a magic login link that has expired.'));
 
       return $this->redirect('user.login', [], ['query' => ['destination' => $destination]]);
     }
 
     // Check validity of the link.
-    if (($timestamp <= $current)
-      && ($timestamp >= $user->getLastLoginTime())
-      && $user->isAuthenticated()) {
+    if (($timestamp <= $currentTime) && ($timestamp >= $user->getLastLoginTime()) && $user->isAuthenticated()) {
       // When the user hasn't set a password, redirect the user to
       // the set passwords page.
       if (NULL === $user->getPassword()) {
@@ -116,12 +121,11 @@ class MagicLoginController extends ControllerBase {
 
       // The user already had a password, check the hash.
       if (Crypt::hashEquals($hash, user_pass_rehash($user, $timestamp))) {
-        // @todo: redirect to destination and set messages.
-
         user_login_finalize($user);
         $this->logger->notice('User %name used one-time login link at time %timestamp.', ['%name' => $user->getDisplayName(), '%timestamp' => $timestamp]);
         $this->messenger()->addStatus($this->t('You have just used your one-time login link. It is no longer necessary to use this link to log in.'));
-        return $this->redirect($destination);
+
+        return new RedirectResponse($destination);
       }
     }
 
