@@ -49,7 +49,7 @@ class MagicUrlCreate {
     }
 
     // Check if path isn't external.
-    if (!$this->pathValidator->isValid($destination)) {
+    if (!$this->pathValidator->getUrlIfValidWithoutAccessCheck($destination)) {
       return NULL;
     }
 
