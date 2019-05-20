@@ -113,7 +113,10 @@ class MagicLoginController extends ControllerBase {
           'entity.user.edit_form',
           ['user' => $user->id()],
           [
-            'query' => ['pass-reset-token' => $token],
+            'query' => [
+              'pass-reset-token' => $token,
+              'destination' => $destination,
+            ],
             'absolute' => TRUE,
           ]
         );
