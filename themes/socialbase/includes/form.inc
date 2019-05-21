@@ -458,3 +458,13 @@ function socialbase_form_node_form_alter(&$form, FormStateInterface $form_state,
     $form['actions']['unpublish']['#button_type'] = 'primary';
   }
 }
+
+/**
+ * Implements hook_form_search_content_form_alter().
+ */
+function socialbase_form_search_content_form_alter(&$form) {
+  $form['actions']['submit']['#icon'] = [
+    '#type' => "inline_template",
+    '#template' => '<svg class="icon--search"><use xlink:href="#icon-search"></use></svg>',
+  ];
+}
