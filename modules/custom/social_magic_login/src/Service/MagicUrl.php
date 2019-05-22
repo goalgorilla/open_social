@@ -7,9 +7,9 @@ use Drupal\Core\Url;
 use Drupal\user\UserInterface;
 
 /**
- * Class MagicLoginCreate.
+ * Service to generate one-time login links (a.k.a 'magic' #lama's).
  */
-class MagicUrlCreate {
+class MagicUrl implements MagicUrlInterface {
 
   /**
    * The path validator service.
@@ -29,21 +29,9 @@ class MagicUrlCreate {
   }
 
   /**
-   * Create a magic login link.
-   *
-   * @param \Drupal\user\UserInterface $account
-   *   An object containing the user account.
-   * @param string $destination
-   *   The uri of the final destination.
-   * @param array $options
-   *   (optional) A keyed array of settings. Supported options are:
-   *   - langcode: A language code to be used when generating locale-sensitive
-   *    URLs. If langcode is NULL the users preferred language is used.
-   *
-   * @return \Drupal\Core\Url
-   *   An url based on the magic login route.
+   * {@inheritdoc}
    */
-  public function create(UserInterface $account, $destination, array $options) {
+  public function create(UserInterface $account, string $destination, array $options) : ?Url {
     if (!isset($account, $destination)) {
       return NULL;
     }
