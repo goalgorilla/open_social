@@ -5,6 +5,7 @@
  * The Social Magic Login module.
  */
 
+use Drupal\Core\Url;
 use Drupal\user\UserInterface;
 
 /**
@@ -33,7 +34,6 @@ function social_magic_login_token_info() {
  * @throws \Drupal\Core\Entity\EntityMalformedException
  */
 function social_magic_login_tokens($type, $tokens, array $data, array $options, \Drupal\Core\Render\BubbleableMetadata $bubbleable_metadata) {
-  $token_service = \Drupal::token();
   $url_options = ['absolute' => TRUE];
   $replacements = [];
 
@@ -64,9 +64,9 @@ function social_magic_login_tokens($type, $tokens, array $data, array $options, 
 /**
  * Wrapper method for Service MagicUrlCreate.
  *
- * @see \Drupal\social_magic_login\Service\MagicUrlCreate::create
+ * @see \Drupal\social_magic_login\Service\MagicUrl::create
  */
-function social_magic_login_url_create(UserInterface $account, $destination, array $options) {
+function social_magic_login_url_create(UserInterface $account, string $destination, array $options) : ?Url {
   $magic_url_service = \Drupal::service('social_magic_login.create_url');
   return $magic_url_service->create($account, $destination, $options);
 }
