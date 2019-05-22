@@ -4,6 +4,7 @@ namespace Drupal\social_magic_login\Controller;
 
 use Drupal\Component\Utility\Crypt;
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\Url;
 use Drupal\user\UserStorageInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -70,11 +71,24 @@ class MagicLoginController extends ControllerBase {
    * @see \Drupal\user\Controller\UserController::resetPassLogin
    */
   public function login($uid, $timestamp, $hash, $destination) {
+    /** @var \Drupal\user\UserInterface $user */
+    $user = $this->userStorage->load($uid);
+    // Verify that the user exists and is active.
+    if ($user === NULL || !$user->isActive()) {
+      throw new AccessDeniedHttpException();
+    }
+
     // Get the current user and check if this user is authenticated and same as
     // the user for the login link.
     $current_user = $this->currentUser();
     if ($current_user->isAuthenticated() && $current_user->id() != $uid) {
-      user_logout();
+      $this->messenger()
+        ->addWarning($this->t('Another user (%other_user) is already logged into the site on this computer, but you tried to use a one-time link for user %resetting_user. Please <a href=":logout">log out</a> and try using the link again.',
+          [
+            '%other_user' => $current_user->getAccountName(),
+            '%resetting_user' => $user->getAccountName(),
+            ':logout' => Url::fromRoute('user.logout'),
+          ]));
       throw new AccessDeniedHttpException();
     }
     // Get the destination for the redirect result.
@@ -82,12 +96,6 @@ class MagicLoginController extends ControllerBase {
 
     // The current user is not logged in, so check the parameters.
     $currentTime = \Drupal::time()->getRequestTime();
-    /** @var \Drupal\user\UserInterface $user */
-    $user = $this->userStorage->load($uid);
-    // Verify that the user exists and is active.
-    if (NULL === $user || !$user->isActive()) {
-      throw new AccessDeniedHttpException();
-    }
 
     // Time out, in seconds, until login URL expires.
     $timeout = $this->config('user.settings')->get('password_reset_timeout');
