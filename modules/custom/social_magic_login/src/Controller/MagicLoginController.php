@@ -74,7 +74,7 @@ class MagicLoginController extends ControllerBase {
     /** @var \Drupal\user\UserInterface $user */
     $user = $this->userStorage->load($uid);
     // Verify that the user exists and is active.
-    if ($user === NULL || !$user->isActive()) {
+    if ($user === NULL || !$user->isActive() || $user->isAnonymous()) {
       throw new AccessDeniedHttpException();
     }
 
@@ -99,50 +99,49 @@ class MagicLoginController extends ControllerBase {
 
     // Time out, in seconds, until login URL expires.
     $timeout = $this->config('user.settings')->get('password_reset_timeout');
-    // No time out for first time login.
-    if ($currentTime - $timestamp > $timeout && $user->getLastLoginTime()) {
-      $this->messenger()->addError($this->t('You have tried to use a magic login link that has expired.'));
+    // If the user has logged in before then the link may have timed out.
+    // Also check that we don't have an invalid link.
+    if (
+      ($user->getLastLoginTime() && $currentTime - $timestamp > $timeout) ||
+      ($timestamp > $currentTime || $timestamp < $user->getLastLoginTime())
+    ) {
+      $this->messenger()->addError($this->t('You have tried to use a one-time link that has expired.'));
 
       return $this->redirect('user.login', [], ['query' => ['destination' => $destination]]);
     }
 
-    // Check validity of the link.
-    if (($timestamp <= $currentTime) && ($timestamp >= $user->getLastLoginTime()) && $user->isAuthenticated()) {
-      // When the user hasn't set a password, redirect the user to
-      // the set passwords page.
-      if (NULL === $user->getPassword()) {
-        $this->messenger()->addStatus($this->t('You need to set your passwords in order to log in.'));
-        $this->logger->notice('User %name used magic login link at time %timestamp but needs to set a password.', ['%name' => $user->getDisplayName(), '%timestamp' => $timestamp]);
-        user_login_finalize($user);
+    // When the user hasn't set a password, redirect the user to
+    // the set passwords page.
+    if (NULL === $user->getPassword()) {
+      $this->messenger()->addStatus($this->t('You need to set your passwords in order to log in.'));
+      $this->logger->notice('User %name used magic login link at time %timestamp but needs to set a password.', ['%name' => $user->getDisplayName(), '%timestamp' => $timestamp]);
+      user_login_finalize($user);
 
-        $token = Crypt::randomBytesBase64(55);
-        $_SESSION['pass_reset_' . $user->id()] = $token;
-        return $this->redirect(
-          'entity.user.edit_form',
-          ['user' => $user->id()],
-          [
-            'query' => [
-              'pass-reset-token' => $token,
-              'destination' => $destination,
-            ],
-            'absolute' => TRUE,
-          ]
-        );
-      }
-
-      // The user already had a password, check the hash.
-      if (Crypt::hashEquals($hash, user_pass_rehash($user, $timestamp))) {
-        user_login_finalize($user);
-        $this->logger->notice('User %name used one-time login link at time %timestamp.', ['%name' => $user->getDisplayName(), '%timestamp' => $timestamp]);
-        $this->messenger()->addStatus($this->t('You have just used your one-time login link. It is no longer necessary to use this link to log in.'));
-
-        return new RedirectResponse($destination);
-      }
+      // This mirrors the UserController::resetPassLogin redirect which
+      // allows a user to set a password without the current password check.
+      $token = Crypt::randomBytesBase64(55);
+      $_SESSION['pass_reset_' . $user->id()] = $token;
+      return $this->redirect(
+        'entity.user.edit_form',
+        ['user' => $user->id()],
+        [
+          'query' => [
+            'pass-reset-token' => $token,
+            'destination' => $destination,
+          ],
+          'absolute' => TRUE,
+        ]
+      );
     }
 
-    // Fallback redirect when none of the above is passing.
-    // Redirect to user login page.
-    return $this->redirect('user.login', [], ['query' => ['destination' => $destination]]);
+    // The user already had a password, check the hash.
+    if (Crypt::hashEquals($hash, user_pass_rehash($user, $timestamp))) {
+      user_login_finalize($user);
+      $this->logger->notice('User %name used one-time login link at time %timestamp.', ['%name' => $user->getDisplayName(), '%timestamp' => $timestamp]);
+      $this->messenger()->addStatus($this->t('You have just used your one-time login link. It is no longer necessary to use this link to log in.'));
+
+      return new RedirectResponse($destination);
+    }
   }
 
 }
