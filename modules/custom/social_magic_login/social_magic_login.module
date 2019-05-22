@@ -20,14 +20,6 @@ function social_magic_login_token_info() {
   $tokens['auto-login']['group-destination'] = [
     'name' => t('Group destination'),
   ];
-  $tokens['auto-login']['view-destination'] = [
-    'name' => t('View destination'),
-    'type' => 'view',
-  ];
-  $tokens['auto-login']['url-destination'] = [
-    'name' => t('Url destination'),
-    'type' => 'url',
-  ];
 
   return [
     'types' => $types,
@@ -63,13 +55,6 @@ function social_magic_login_tokens($type, $tokens, array $data, array $options, 
 
         $replacements[$original] = $url->toString();
       }
-    }
-
-    if ($auto_login_tokens = $token_service->findWithPrefix($tokens, 'view-destination')) {
-      /** @var \Drupal\views\ViewEntityInterface $view */
-      $view = &$data['view'];
-      $generated = $token_service->generate('view', $auto_login_tokens, ['view' => $view], $options, $bubbleable_metadata);
-      $replacements += social_magic_login_url_create($account, $generated, $url_options);
     }
   }
 
