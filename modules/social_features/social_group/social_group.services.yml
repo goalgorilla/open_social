@@ -26,5 +26,9 @@ services:
       - {name: config.factory.override, priority: 10}
   social_group.admin_people_override:
     class: \Drupal\social_group\SocialGroupAdminPeopleConfigOverride
+    arguments: ['@module_handler']
     tags:
     - {name: config.factory.override, priority: 10}
+  social_group.hero_image:
+    class: Drupal\social_group\SocialGroupHero
+    arguments: ['@config.factory']

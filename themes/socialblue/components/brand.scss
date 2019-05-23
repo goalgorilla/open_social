@@ -171,6 +171,13 @@
 
 }
 
+
+.card__link,
+.card__link .btn-default,
+.card__link.btn-default {
+  border-color: $brand-primary;
+}
+
 .btn-flat,
 .btn-link,
 .btn-link:hover,
@@ -343,7 +350,8 @@ blockquote {
 
   }
 
-  .btn--close-search-take-over svg {
+  .btn--close-search-take-over svg,
+  .search-take-over svg {
     fill: $navbar-default-link-color;
   }
 
@@ -441,6 +449,20 @@ blockquote {
     color: $navbar-default-link-color;
     &:after {
       color: $navbar-default-link-color;
+    }
+  }
+}
+
+.card__featured-items .teaser__info {
+  svg {
+    color: $brand-primary;
+    fill: $brand-primary;
+
+    &:hover,
+    &:focus,
+    &:active {
+      color: $brand-accent;
+      fill: $brand-accent;
     }
   }
 }

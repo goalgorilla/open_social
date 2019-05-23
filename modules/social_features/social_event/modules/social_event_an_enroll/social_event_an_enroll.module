@@ -130,7 +130,7 @@ function social_event_an_enroll_views_post_render(ViewExecutable $view, &$output
       if (!empty($view->args[0])) {
         $nid = $view->args[0];
         $node = Node::load($nid);
-        $an_count = social_event_an_enroll_count($nid);
+        $an_count = \Drupal::service('social_event_an_enroll.service')->enrollmentCount($nid);
         if (social_event_an_enroll_is_enabled($node) && $an_count && $an_count > 0) {
           // Fix counter in block title.
           $view->total_rows += $an_count;
@@ -159,40 +159,6 @@ function social_event_an_enroll_views_post_render(ViewExecutable $view, &$output
       }
     }
   }
-}
-
-/**
- * Returns number of anonymous enrollments.
- */
-function social_event_an_enroll_count($nid) {
-  $query = \Drupal::database()
-    ->select('event_enrollment__field_account', 'eefa');
-  $query->join('event_enrollment__field_event', 'eefe', 'eefa.entity_id = eefe.entity_id');
-  $query->condition('eefa.field_account_target_id', 0);
-  $query->condition('eefe.field_event_target_id', $nid);
-
-  return (int) $query
-    ->countQuery()
-    ->execute()
-    ->fetchField();
-}
-
-/**
- * Returns number of anonymous enrollments.
- */
-function social_event_an_enroll_token_exists($token, $nid) {
-  $query = \Drupal::database()
-    ->select('event_enrollment__field_token', 'eeft');
-  $query->join('event_enrollment__field_event', 'eefe', 'eeft.entity_id = eefe.entity_id');
-  $query->condition('eeft.field_token_value', $token);
-  $query->condition('eefe.field_event_target_id', $nid);
-
-  $results = $query
-    ->countQuery()
-    ->execute()
-    ->fetchField();
-
-  return !empty($results);
 }
 
 /**
@@ -235,7 +201,8 @@ function social_event_an_enroll_is_enabled(Node $node) {
   $is_event = $node->getType() === 'event';
   $is_public = $node->get('field_content_visibility')->getString() === 'public';
   $is_event_an_enroll = !empty($node->get('field_event_an_enroll')->value);
-  return $is_global_enabled && $is_event && $is_public && $is_event_an_enroll;
+  $is_event_enroll = \Drupal::service('social_event.enroll')->isEnabled($node);
+  return $is_global_enabled && $is_event && $is_public && $is_event_an_enroll && $is_event_enroll;
 }
 
 /**
@@ -255,6 +222,7 @@ function social_event_an_enroll_form_alter(&$form, FormStateInterface $form_stat
     $form['field_event_an_enroll']['#states'] = [
       'visible' => [
         ':input[name="field_content_visibility"]' => ['value' => 'public'],
+        ':input[name="field_event_enroll[value]"]' => ['checked' => TRUE],
       ],
     ];
     // Set default value on event creation form.

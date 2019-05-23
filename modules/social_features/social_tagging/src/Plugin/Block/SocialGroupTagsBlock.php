@@ -88,6 +88,7 @@ class SocialGroupTagsBlock extends BlockBase implements ContainerFactoryPluginIn
       'entity.group.edit_form',
       'entity.group.delete_form',
       'entity.group_content.collection',
+      'view.group_manage_members.page_group_manage_members',
     ];
 
     // Don't display on group edit.

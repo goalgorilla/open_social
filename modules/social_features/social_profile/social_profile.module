@@ -104,8 +104,9 @@ function social_profile_form_profile_profile_edit_form_alter(array &$form, FormS
   // case by default. Since we provide an empty vocabulary.
   // We also check for a fieldset, used by our special widget which doesn't use
   // #options.
-  if (empty($form['field_profile_profile_tag']['widget']['#options'])
-    && $form['field_profile_profile_tag']['widget']['#type'] !== 'container') {
+  if (!empty($form['field_profile_profile_tag']['widget']) &&
+    (empty($form['field_profile_profile_tag']['widget']['#options'])
+      && $form['field_profile_profile_tag']['widget']['#type'] !== 'container')) {
     unset($form['field_profile_profile_tag']);
   }
 
@@ -227,8 +228,8 @@ function social_profile_local_tasks_alter(&$local_tasks) {
  * Implements hook_form_FORM_ID_alter().
  */
 function social_profile_form_views_exposed_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-  if ($form['#id'] == 'views-exposed-form-search-users-page') {
-    if (!empty($form['profile_tag'])) {
+  if ($form['#id'] === 'views-exposed-form-search-users-page') {
+    if (!empty($form['profile_tag']['#options'])) {
       $form['profile_tag']['#type'] = 'checkboxes';
       // If the view is configured to preserve hierarchy we need to do a bit
       // more to make checkboxes work.
@@ -243,7 +244,7 @@ function social_profile_form_views_exposed_form_alter(&$form, FormStateInterface
         $form['profile_tag']['#options'] = $options;
       }
     }
-    if (empty($form['profile_tag']['#options'])) {
+    else {
       unset($form['profile_tag']);
     }
   }
@@ -330,6 +331,7 @@ function social_profile_preprocess_profile(array &$variables) {
   $variables['profile_name'] = $user->getDisplayName();
   $variables['profile_contact_url'] = _social_profile_get_contact_url($user);
   $variables['profile_stream_url'] = Url::fromUserInput('/user/' . $profile->getOwnerId() . '/stream');
+  $variables['profile_home'] = Url::fromRoute('entity.user.canonical', ['user' => $user->id()]);
 
   // Set a condition for the label to show in the teaser
   // The actual label text should be changeable in the template.
@@ -392,11 +394,12 @@ function _social_profile_get_contact_url(User $account) {
       $members = [$current_user, $account];
       $thread_id = \Drupal::service('private_message.mapper')->getThreadIdForMembers($members);
       if ($thread_id) {
-        return Url::fromRoute('entity.private_message_thread.canonical', ['private_message_thread' => $thread_id], ['attributes' => ['class' => ['private_message_link']]]);
+        $url = Url::fromRoute('entity.private_message_thread.canonical', ['private_message_thread' => $thread_id], ['attributes' => ['class' => ['private_message_link']]]);
+        if ($url->access($current_user)) {
+          return $url;
+        }
       }
-      else {
-        return Url::fromRoute('private_message.private_message_create', [], ['query' => ['recipient' => $account->id()]]);
-      }
+      return Url::fromRoute('private_message.private_message_create', [], ['query' => ['recipient' => $account->id()]]);
     }
   }
   return Url::fromUserInput('/user/' . $account->id() . '/information');
@@ -594,20 +597,29 @@ function social_profile_get_default_image() {
 }
 
 /**
- * Implements hook_user_format_name_alter().
+ * Implements hook_social_user_name_display_suggestions().
+ *
+ * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+ * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
  */
-function social_profile_user_format_name_alter(&$name, $account) {
-  /** @var \Drupal\Core\Session\AccountInterface $account */
-  $accountname = '';
+function social_profile_social_user_name_display_suggestions(AccountInterface $account) : array {
+  $suggestions = [];
+
+  /** @var \Drupal\profile\ProfileStorageInterface $storage */
   $storage = \Drupal::entityTypeManager()->getStorage('profile');
-  if (!empty($storage)) {
-    // Returns false.
-    if ($user_profile = $storage->loadByUser($account, 'profile', TRUE)) {
-      $accountname = $user_profile->get('field_profile_first_name')->value . " " . $user_profile->get('field_profile_last_name')->value;
-      $accountname = trim($accountname);
+
+  if ($user_profile = $storage->loadByUser($account, 'profile', TRUE)) {
+    $accountname = trim($user_profile->get('field_profile_first_name')->value . " " . $user_profile->get('field_profile_last_name')->value);
+
+    if (strlen($accountname) > 0) {
+      // Add the full name with a default weight.
+      $suggestions['full_name'] = [
+        'name' => trim($accountname),
+      ];
     }
   }
-  $name = ($accountname !== '') ? $accountname : $name;
+
+  return $suggestions;
 }
 
 /**

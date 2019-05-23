@@ -32,7 +32,7 @@ class RouteSubscriber extends RouteSubscriberBase {
   /**
    * {@inheritdoc}
    */
-  protected function alterRoutes(RouteCollection $collection) :void {
+  protected function alterRoutes(RouteCollection $collection) {
   }
 
   /**
@@ -41,12 +41,12 @@ class RouteSubscriber extends RouteSubscriberBase {
    * @return \Symfony\Component\Routing\RouteCollection
    *   A route collection.
    */
-  public function routes() :RouteCollection {
+  public function routes() {
     $collection = new RouteCollection();
 
     if ($this->moduleHandler->moduleExists('views_bulk_operations')) {
       $route = new Route(
-        '/node/{node}/manage-all-enrollments/configure-action',
+        '/node/{node}/all-enrollments/configure-action',
         [
           '_form' => '\Drupal\social_event_managers\Form\SocialEventManagementViewsBulkOperationsConfigureAction',
           '_title' => 'Configure action',
@@ -60,7 +60,7 @@ class RouteSubscriber extends RouteSubscriberBase {
       $collection->add('social_event_managers.vbo.execute_configurable', $route);
 
       $route = new Route(
-        '/node/{node}/manage-all-enrollments/add-enrollees',
+        '/node/{node}/all-enrollments/confirm-action',
         [
           '_form' => '\Drupal\social_event_managers\Form\SocialEventManagersViewsBulkOperationsConfirmAction',
           '_title' => 'Confirm action',

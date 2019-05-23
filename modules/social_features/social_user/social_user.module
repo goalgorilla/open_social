@@ -194,6 +194,9 @@ function social_user_form_user_register_form_alter(&$form, FormStateInterface $f
     $form['account']['login-link'] = [
       '#markup' => new TranslatableMarkup("Have an account already? @link", ["@link" => $login_link]),
       '#weight' => 1000,
+      '#cache' => [
+        'contexts' => ['url.query_args'],
+      ],
     ];
   }
 
@@ -447,8 +450,8 @@ function _social_user_search_content_pre_render(array $build) {
  */
 function social_user_menu_local_tasks_alter(&$data, $route_name) {
   // Change the default 'View' tab title.
-  if (isset($data['tabs'][0]['entity.user.canonical']['#link'])) {
-    $data['tabs'][0]['entity.user.canonical']['#link']['title'] = t('Stream');
+  if (isset($data['tabs'][0]['entity.user.canonical'])) {
+    unset($data['tabs'][0]['entity.user.canonical']);
   }
 
   // Remove Edit tab. Edit will always go through Floating Edit Button.
@@ -722,4 +725,39 @@ function social_user_ensure_help_text_fieldset(&$form) {
   }
 
   return $key;
+}
+
+/**
+ * Implements hook_user_format_name_alter().
+ *
+ * Gathers the suggestions for a user display name from other module and
+ * displays the one with the lowest weight (highest priority).
+ */
+function social_user_user_format_name_alter(&$name, AccountInterface $account) {
+  // We always add the username as fallback suggestion.
+  $suggestions = [
+    'username' => [
+      'name' => $account->getAccountName(),
+      'weight' => PHP_INT_MAX,
+    ],
+  ];
+
+  $suggestions += \Drupal::moduleHandler()->invokeAll('social_user_name_display_suggestions', [$account]);
+  \Drupal::moduleHandler()->alter('social_user_name_display_suggestions', $suggestions, $account);
+
+  // We could use -PHP_INT_MAX but someone being clever might shoot themselves.
+  $lowest_weight = NULL;
+
+  // If our array ends up being empty then we just stick to Drupal's default.
+  foreach ($suggestions as $suggestion) {
+    // Allow weight to be omitted and default to 0.
+    $suggestion['weight'] = $suggestion['weight'] ?? 0;
+
+    // If the suggestion's weight is equal to a previous entry then we use the
+    // item that appears first in the array.
+    if ($lowest_weight === NULL || $suggestion['weight'] < $lowest_weight) {
+      $name = $suggestion['name'];
+      $lowest_weight = $suggestion['weight'];
+    }
+  }
 }
