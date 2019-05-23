@@ -24,9 +24,14 @@ class GroupAddFlexibilityForm {
    *   The current state of the form.
    */
   public static function addFlexibilityOptions(array &$form, FormStateInterface $form_state) {
-    $form['flexible_group_visibility_options'] = [
+    $form['group_settings']['flexible_settings'] = [
+      '#type' => 'fieldset',
+    ];
+
+    $form['group_settings']['flexible_settings']['flexible_group_visibility_options'] = [
       '#type' => 'checkboxes',
       '#title' => t('Available content visibility'),
+      '#description_display' => 'before',
       '#description' => t('Choose the possible visibility settings for the group content.'),
       '#options' => self::contentVisibilityOptions(),
       '#states' => [
@@ -36,8 +41,9 @@ class GroupAddFlexibilityForm {
       ],
     ];
 
-    $form['flexible_group_join_methods'] = [
+    $form['group_settings']['flexible_settings']['flexible_group_join_methods'] = [
       '#type' => 'checkboxes',
+      '#description_display' => 'before',
       '#title' => t('Method to join'),
       '#description' => t('Choose how people can join this group.'),
       '#options' => self::methodsToJoin(),
@@ -56,7 +62,11 @@ class GroupAddFlexibilityForm {
    *   Array containing checkbox options.
    */
   public static function contentVisibilityOptions() {
-    return ['1' => 'test 1'];
+    return [
+      'public' => t('Public'),
+      'community' => t('Community'),
+      'group_member' => t('Member Only'),
+    ];
   }
 
   /**
@@ -66,7 +76,10 @@ class GroupAddFlexibilityForm {
    *   Array containing checkbox options.
    */
   public static function methodsToJoin() {
-    return ['2' => 'test 2'];
+    return [
+      'directly' => t('Join Directly'),
+      'added' => t('Be added'),
+    ];
   }
 
 }
