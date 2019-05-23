@@ -91,7 +91,7 @@ class SocialLazyLoadingTextFormatOverride implements ConfigFactoryOverrideInterf
         'id' => 'lazy_filter',
         'provider' => 'lazy',
         'status' => TRUE,
-        'weight' => 999,
+        'weight' => 99,
         'settings' => [],
       ];
     }
