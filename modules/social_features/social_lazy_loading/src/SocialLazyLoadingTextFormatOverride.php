@@ -64,7 +64,7 @@ class SocialLazyLoadingTextFormatOverride implements ConfigFactoryOverrideInterf
       }
     }
 
-    // Set hero title block for book content type.
+    // Set lazy loading settings.
     if (in_array('lazy.settings', $names, FALSE)) {
       $overrides['lazy.settings']['alter_tag'] = [
         'img' => 'img',
