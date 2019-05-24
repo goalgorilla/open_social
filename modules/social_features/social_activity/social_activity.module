@@ -5,6 +5,7 @@
  * The Social activity module.
  */
 
+use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Template\Attribute;
 use Drupal\Core\Url;
@@ -39,8 +40,8 @@ function social_activity_social_user_account_header_items(array $context) {
   }
   $notifications_view['#attached']['library'][] = 'activity_creator/activity_creator.notifications';
 
-  $account_notifications = \Drupal::service('activity_creator.activity_notifications');
-  $num_notifications = count($account_notifications->getNotifications($account, [ACTIVITY_STATUS_RECEIVED]));
+  // Get the total amount of notifications for the user.
+  $num_notifications = social_activity_social_account_notifications_counter($account);
 
   return [
     'notifications' => [
@@ -101,8 +102,8 @@ function social_activity_social_user_account_header_account_links(array $context
     return [];
   }
 
-  $account_notifications = \Drupal::service('activity_creator.activity_notifications');
-  $num_notifications = count($account_notifications->getNotifications($context['user'], [ACTIVITY_STATUS_RECEIVED]));
+  // Get the total amount of notifications for the user.
+  $num_notifications = social_activity_social_account_notifications_counter($context['user']);
 
   $label_classes = 'hidden';
 
@@ -152,8 +153,8 @@ function social_activity_social_user_account_header_items_alter(array &$menu_lin
     return;
   }
 
-  $account_notifications = \Drupal::service('activity_creator.activity_notifications');
-  $num_notifications = count($account_notifications->getNotifications($context['user'], [ACTIVITY_STATUS_RECEIVED]));
+  // Get the total amount of notifications for the user.
+  $num_notifications = social_activity_social_account_notifications_counter($context['user']);
 
   if ($num_notifications > 0) {
     $menu_links['account_box']['#wrapper_attributes']['class'][] = 'has-alert';
@@ -180,4 +181,22 @@ function social_activity_theme($existing, $type, $theme, $path) {
       ],
     ],
   ];
+}
+
+/**
+ * Wrapper method for the Service ActivityNotifications to get the number of unread notifications.
+ *
+ * @param \Drupal\Core\Session\AccountInterface $account
+ *   Account object to get notifications for.
+ * @param array $status
+ *   Filter by status.
+ *
+ * @return int|void
+ *
+ * @see \Drupal\activity_creator\ActivityNotifications
+ */
+function social_activity_social_account_notifications_counter(AccountInterface $account, array $status = [ACTIVITY_STATUS_RECEIVED]) {
+  $account_notifications = \Drupal::service('activity_creator.activity_notifications');
+
+  return count($account_notifications->getNotifications($account, $status)) ?? 0;
 }
