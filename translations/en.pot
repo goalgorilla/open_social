@@ -10,7 +10,6 @@
 #  modules/custom/social_auth_twitter/social_auth_twitter.install: n/a
 #  modules/social_features/social_landing_page/src/Plugin/Block/ActivityOverviewBlock.php: n/a
 #  modules/social_features/social_core/social_core.module: n/a
-#  themes/socialbase/templates/node/node--full.html.twig: n/a
 #  social.info.yml: n/a
 #  modules/custom/activity_logger/activity_logger.info.yml: n/a
 #  modules/custom/activity_send/activity_send.info.yml: n/a
@@ -604,6 +603,7 @@
 #  modules/social_features/social_landing_page/templates/node--featured.html.twig: n/a
 #  modules/social_features/social_landing_page/templates/profile--featured.html.twig: n/a
 #  themes/socialbase/src/Plugin/Preprocess/Node.php: n/a
+#  themes/socialbase/templates/node/node--full.html.twig: n/a
 #  themes/socialbase/templates/post/post--activity.html.twig: n/a
 #  themes/socialbase/templates/post/post.html.twig: n/a
 #  modules/social_features/social_like/social_like.tokens.inc: n/a
@@ -1220,7 +1220,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Open Social\n"
-"POT-Creation-Date: 2019-04-15 22:14+0000\n"
+"POT-Creation-Date: 2019-05-22 22:13+0000\n"
 "PO-Revision-Date: YYYY-mm-DD HH:MM+ZZZZ\n"
 "Last-Translator: NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <EMAIL@ADDRESS>\n"
@@ -1229,7 +1229,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: modules/social_features/social_user/src/Form/SocialUserLoginForm.php:250
+#: modules/social_features/social_user/src/Form/SocialUserLoginForm.php:253
 msgid ""
 "\n"
 "        Oops, there was an error. This may have happened for the following "
@@ -1249,7 +1249,7 @@ msgstr ""
 msgid "%time ago"
 msgstr ""
 
-#: modules/social_features/social_event/modules/social_event_max_enroll/social_event_max_enroll.module:28;139
+#: modules/social_features/social_event/modules/social_event_max_enroll/social_event_max_enroll.module:28;152
 msgid "(1 spot left)"
 msgid_plural "(@count spots left)"
 msgstr[0] ""
@@ -1461,10 +1461,6 @@ msgstr[1] ""
 #: modules/social_features/social_event/modules/social_event_managers/js/frontUi.js:0
 #: modules/social_features/social_group/js/frontUi.js:0
 msgid "<b>All members across all pages</b> are selected."
-msgstr ""
-
-#: modules/social_features/social_follow_content/config/install/views.view.following.yml:0
-msgid "<div class=\"btn btn-sm\"> {{ link_flag }} </div>"
 msgstr ""
 
 #: modules/social_features/social_book/config/install/node.type.book.yml:0
@@ -1872,7 +1868,7 @@ msgstr ""
 msgid "@network login failed. Token is not valid."
 msgstr ""
 
-#: themes/socialbase/templates/profile/profile--profile--default.html.twig:126
+#: themes/socialbase/templates/profile/profile--profile--default.html.twig:130
 msgid "@profile_name @profile_name_extra has not shared profile information."
 msgstr ""
 
@@ -1893,7 +1889,7 @@ msgstr ""
 msgid "@total people have enrolled"
 msgstr ""
 
-#: modules/social_features/social_event/modules/social_event_max_enroll/social_event_max_enroll.module:144
+#: modules/social_features/social_event/modules/social_event_max_enroll/social_event_max_enroll.module:157
 msgid "@total person has enrolled @spots_left"
 msgid_plural "@total people have enrolled @spots_left"
 msgstr[0] ""
@@ -2689,7 +2685,7 @@ msgid "All"
 msgstr ""
 
 #: modules/social_features/social_core/social_core.module:217;231;263;305
-#: modules/social_features/social_event/modules/social_event_managers/social_event_managers.module:37
+#: modules/social_features/social_event/modules/social_event_managers/social_event_managers.module:38
 msgid "All @label"
 msgstr ""
 
@@ -2701,7 +2697,7 @@ msgstr ""
 msgid "All content index created for the Social distribution."
 msgstr ""
 
-#: modules/social_features/social_event/social_event.module:466
+#: modules/social_features/social_event/social_event.module:471
 msgid "All day"
 msgstr ""
 
@@ -3351,7 +3347,7 @@ msgstr ""
 msgid "Can not send e-mail for %entity"
 msgstr ""
 
-#: modules/social_features/social_event/modules/social_event_managers/src/Form/SocialEventManagersAddEnrolleeForm.php:143
+#: modules/social_features/social_event/modules/social_event_managers/src/Form/SocialEventManagersAddEnrolleeForm.php:161
 #: modules/social_features/social_group/social_group.module:452;550
 #: modules/social_features/social_profile/social_profile.module:182
 msgid "Cancel"
@@ -3737,8 +3733,11 @@ msgid "Content: Basic page"
 msgstr ""
 
 #: modules/custom/social_metatag/config/install/metatag.metatag_defaults.node__event.yml:0
-#: modules/custom/social_metatag/config/install/metatag.metatag_defaults.node__topic.yml:0
 msgid "Content: Event"
+msgstr ""
+
+#: modules/custom/social_metatag/config/install/metatag.metatag_defaults.node__topic.yml:0
+msgid "Content: Topic"
 msgstr ""
 
 #: modules/social_features/social_activity/config/install/field.field.message.create_comment_author_node_post.field_message_context.yml:0
@@ -3901,7 +3900,7 @@ msgstr ""
 msgid "Create New Content"
 msgstr ""
 
-#: modules/social_features/social_event/social_event.module:383
+#: modules/social_features/social_event/social_event.module:387
 msgid "Create New Event"
 msgstr ""
 
@@ -4346,7 +4345,7 @@ msgstr ""
 msgid "Delete thread"
 msgstr ""
 
-#: modules/social_features/social_user/social_user.module:370
+#: modules/social_features/social_user/social_user.module:373
 msgid "Delete your account and anonymize all other content."
 msgstr ""
 
@@ -4542,11 +4541,11 @@ msgstr ""
 msgid "Displayed in the social user sign-up card."
 msgstr ""
 
-#: modules/social_features/social_user/social_user.module:639
+#: modules/social_features/social_user/social_user.module:642
 msgid "Displayed in the user log in card."
 msgstr ""
 
-#: modules/social_features/social_user/social_user.module:632
+#: modules/social_features/social_user/social_user.module:635
 msgid "Displayed in the user sign-up card."
 msgstr ""
 
@@ -4780,7 +4779,7 @@ msgstr ""
 msgid "Enable event enrollment for anonymous users"
 msgstr ""
 
-#: modules/social_features/social_event/social_event.module:238
+#: modules/social_features/social_event/social_event.module:242
 msgid "Enable events for on the user profiles."
 msgstr ""
 
@@ -4849,10 +4848,12 @@ msgstr ""
 
 #: modules/social_features/social_profile/modules/social_profile_privacy/social_profile_privacy.module:33
 msgid ""
-"Enabling this setting causes users' full name to be hidden on the platform. "
-"Users with the '%display_name' permission will still see the full name "
-"whenever available. Only users with the '%search_name' permission will find "
-"users using their full name through search or mentions."
+"Enabling this setting causes users' full name to be hidden on the platform "
+"when the user has filled in their nickname. This setting won't hide the full "
+"name of users who didn't fill in a nickname. Users with the '%display_name' "
+"permission will still see the full name whenever available. Only users with "
+"the '%search_name' permission will find users using their full name through "
+"search or mentions."
 msgstr ""
 
 #: modules/social_features/social_event/config/install/field.field.node.event.field_event_date_end.yml:0
@@ -4918,7 +4919,7 @@ msgstr ""
 msgid "Enroll without account"
 msgstr ""
 
-#: modules/social_features/social_event/social_event.module:206
+#: modules/social_features/social_event/social_event.module:210
 #: modules/social_features/social_event/modules/social_event_an_enroll/src/Form/EventAnEnrollActionForm.php:40
 #: modules/social_features/social_event/src/Form/EnrollActionForm.php:195
 #: themes/socialbase/templates/node/node--teaser.html.twig:177
@@ -4934,13 +4935,13 @@ msgstr ""
 msgid "Enrollment status"
 msgstr ""
 
-#: modules/social_features/social_event/modules/social_event_an_enroll/social_event_an_enroll.module:298
+#: modules/social_features/social_event/modules/social_event_an_enroll/social_event_an_enroll.module:264
 msgid ""
 "Enrollment without account can only be enabled when the visibility of the "
 "event is Public."
 msgstr ""
 
-#: modules/social_features/social_event/modules/social_event_managers/social_event_managers.module:320
+#: modules/social_features/social_event/modules/social_event_managers/social_event_managers.module:321
 #: modules/social_features/social_event/config/install/views.view.event_enrollments.yml:0;0;0
 msgid "Enrollments"
 msgstr ""
@@ -5068,7 +5069,7 @@ msgstr ""
 msgid "Event date"
 msgstr ""
 
-#: modules/social_features/social_event/social_event.module:235;237
+#: modules/social_features/social_event/social_event.module:239;241
 msgid "Event enrolled or created"
 msgstr ""
 
@@ -5118,7 +5119,7 @@ msgstr ""
 msgid "Event settings"
 msgstr ""
 
-#: modules/social_features/social_event/social_event.module:244
+#: modules/social_features/social_event/social_event.module:248
 msgid "Event sorting (passed and upcoming)"
 msgstr ""
 
@@ -5497,7 +5498,7 @@ msgid ""
 "sent when you are not active in the platform."
 msgstr ""
 
-#: modules/social_features/social_event/social_event.module:245
+#: modules/social_features/social_event/social_event.module:249
 msgid ""
 "For upcoming events sort ASC by start date and for passed events change "
 "order to DESC."
@@ -6385,7 +6386,7 @@ msgstr ""
 msgid "Location name"
 msgstr ""
 
-#: modules/social_features/social_user/social_user.module:638
+#: modules/social_features/social_user/social_user.module:641
 msgid "Log In"
 msgstr ""
 
@@ -6394,7 +6395,7 @@ msgstr ""
 #: modules/custom/social_auth_twitter/src/Form/TwitterAuthLoginNoticeForm.php:34
 #: modules/social_features/social_event/modules/social_event_an_enroll/templates/event-an-enroll-dialog.html.twig:7
 #: modules/social_features/social_user/social_user.module:192
-#: modules/social_features/social_user/src/Form/SocialUserLoginForm.php:97
+#: modules/social_features/social_user/src/Form/SocialUserLoginForm.php:100
 #: modules/social_features/social_user/src/Routing/RouteSubscriber.php:24
 msgid "Log in"
 msgstr ""
@@ -6416,15 +6417,15 @@ msgstr ""
 msgid "Login"
 msgstr ""
 
-#: modules/social_features/social_user/social_user.module:708
+#: modules/social_features/social_user/social_user.module:711
 msgid "Login and Registration help texts"
 msgstr ""
 
-#: modules/social_features/social_user/src/Form/SocialUserLoginForm.php:230
+#: modules/social_features/social_user/src/Form/SocialUserLoginForm.php:233
 msgid "Login attempt failed for %user."
 msgstr ""
 
-#: modules/social_features/social_user/src/Form/SocialUserLoginForm.php:235
+#: modules/social_features/social_user/src/Form/SocialUserLoginForm.php:238
 msgid "Login attempt failed from %ip."
 msgstr ""
 
@@ -6432,7 +6433,7 @@ msgstr ""
 msgid "Logo for e-mails"
 msgstr ""
 
-#: modules/social_features/social_user/social_user.module:523;525
+#: modules/social_features/social_user/social_user.module:526;528
 msgid "Logout"
 msgstr ""
 
@@ -6779,7 +6780,7 @@ msgstr ""
 msgid "My Groups"
 msgstr ""
 
-#: modules/social_features/social_event/social_event.module:408
+#: modules/social_features/social_event/social_event.module:412
 msgid "My events"
 msgstr ""
 
@@ -6847,7 +6848,7 @@ msgstr ""
 msgid "New Content"
 msgstr ""
 
-#: modules/social_features/social_event/social_event.module:385
+#: modules/social_features/social_event/social_event.module:389
 msgid "New Event"
 msgstr ""
 
@@ -6998,7 +6999,7 @@ msgstr ""
 msgid "No results found."
 msgstr ""
 
-#: modules/social_features/social_event/modules/social_event_max_enroll/social_event_max_enroll.module:99;105
+#: modules/social_features/social_event/modules/social_event_max_enroll/social_event_max_enroll.module:112;118
 msgid "No spots left"
 msgstr ""
 
@@ -7228,7 +7229,7 @@ msgstr ""
 msgid "Only username"
 msgstr ""
 
-#: modules/social_features/social_user/social_user.module:222
+#: modules/social_features/social_user/social_user.module:225
 msgid ""
 "Oops, there was an error with the email address or username you entered. Due "
 "to privacy concerns, we can't disclose the existence of already registered "
@@ -7776,7 +7777,7 @@ msgstr ""
 msgid "Private message"
 msgstr ""
 
-#: modules/social_features/social_private_message/src/Plugin/ActivityContext/PrivateMessageActivityContext.php:9
+#: modules/social_features/social_private_message/src/Plugin/ActivityContext/PrivateMessageActivityContext.php:10
 msgid "Private message activity context"
 msgstr ""
 
@@ -7805,7 +7806,7 @@ msgid ""
 "Process enrollments returned by the view with Views Bulk Operations actions."
 msgstr ""
 
-#: modules/social_features/social_event/modules/social_event_managers/social_event_managers.module:50
+#: modules/social_features/social_event/modules/social_event_managers/social_event_managers.module:51
 msgid ""
 "Process enrollments returned by the view with Views Bulk Operations' actions."
 msgstr ""
@@ -8446,7 +8447,7 @@ msgstr ""
 msgid "Run cron."
 msgstr ""
 
-#: modules/social_features/social_event/modules/social_event_managers/src/Form/SocialEventManagersAddEnrolleeForm.php:151
+#: modules/social_features/social_event/modules/social_event_managers/src/Form/SocialEventManagersAddEnrolleeForm.php:169
 #: modules/social_features/social_group/social_group.module:499
 msgid "Save"
 msgstr ""
@@ -8495,7 +8496,7 @@ msgstr ""
 
 #: modules/social_features/social_search/social_search.module:89
 #: modules/social_features/social_search/src/SocialSearchBreadcrumbBuilder.php:53
-#: modules/social_features/social_search/src/Form/SearchHeroForm.php:82
+#: modules/social_features/social_search/src/Form/SearchHeroForm.php:73;84
 #: modules/social_features/social_search/config/install/views.view.search_all.yml:0
 #: modules/social_features/social_search/config/optional/block.block.search_block_hero.yml:0
 #: modules/social_features/social_search/config/optional/block.block.socialblue_search_block_hero.yml:0
@@ -8510,7 +8511,7 @@ msgstr ""
 msgid "Search All autocomplete"
 msgstr ""
 
-#: modules/social_features/social_search/src/Form/SearchContentForm.php:69
+#: modules/social_features/social_search/src/Form/SearchContentForm.php:61;71
 #: modules/social_features/social_search/config/install/views.view.search_content.yml:0
 msgid "Search Content"
 msgstr ""
@@ -8666,7 +8667,7 @@ msgid ""
 "performance implications!"
 msgstr ""
 
-#: modules/social_features/social_event/modules/social_event_managers/src/Form/SocialEventManagersAddEnrolleeForm.php:127
+#: modules/social_features/social_event/modules/social_event_managers/src/Form/SocialEventManagersAddEnrolleeForm.php:156
 #: modules/social_features/social_group/social_group.module:477
 msgid "Select members to add"
 msgstr ""
@@ -8822,7 +8823,7 @@ msgstr ""
 #: modules/custom/social_font/social_font.links.task.yml:0
 #: modules/social_features/social_event/social_event.links.task.yml:0
 #: modules/social_features/social_group/src/Form/SocialGroupAddForm.php:94
-#: modules/social_features/social_user/social_user.module:506;508
+#: modules/social_features/social_user/social_user.module:509;511
 msgid "Settings"
 msgstr ""
 
@@ -8923,7 +8924,7 @@ msgstr ""
 msgid "Show email"
 msgstr ""
 
-#: modules/social_features/social_user/social_user.module:668
+#: modules/social_features/social_user/social_user.module:671
 msgid "Show email address in help messages"
 msgstr ""
 
@@ -8939,7 +8940,7 @@ msgstr ""
 msgid "Show on my profile"
 msgstr ""
 
-#: modules/social_features/social_user/social_user.module:669
+#: modules/social_features/social_user/social_user.module:672
 msgid ""
 "Show site email address in help messages after failed login, signup or "
 "password reset."
@@ -8953,7 +8954,7 @@ msgstr ""
 msgid "Show upcoming events (my, community and overview)"
 msgstr ""
 
-#: modules/social_features/social_user/social_user.module:631
+#: modules/social_features/social_user/social_user.module:634
 msgid "Sign Up"
 msgstr ""
 
@@ -9599,7 +9600,7 @@ msgstr ""
 msgid "Social Users"
 msgstr ""
 
-#: modules/social_features/social_event/modules/social_event_managers/social_event_managers.module:49
+#: modules/social_features/social_event/modules/social_event_managers/social_event_managers.module:50
 msgid "Social Views bulk operations for Enrollments"
 msgstr ""
 
@@ -10354,7 +10355,7 @@ msgstr ""
 msgid "The user that is mentioned"
 msgstr ""
 
-#: modules/social_features/social_user/src/Form/SocialUserLoginForm.php:141
+#: modules/social_features/social_user/src/Form/SocialUserLoginForm.php:144
 msgid "The username %name has not been activated or is blocked."
 msgstr ""
 
@@ -10368,7 +10369,7 @@ msgid ""
 "displayed values and edit forms."
 msgstr ""
 
-#: themes/socialbase/templates/node/node--full.html.twig:182
+#: themes/socialbase/templates/node/node--full.html.twig:186
 #: themes/socialbase/templates/node/node--teaser.html.twig:168
 msgid "The visibility of this content is set to"
 msgstr ""
@@ -10407,7 +10408,7 @@ msgstr ""
 msgid "There was an unexpected error."
 msgstr ""
 
-#: modules/social_features/social_user/social_user.module:709
+#: modules/social_features/social_user/social_user.module:712
 msgid ""
 "These fields allow you to configure various help texts that are shown to "
 "users during signup and login"
@@ -10529,7 +10530,7 @@ msgstr ""
 msgid "Title of entity containing mention"
 msgstr ""
 
-#: modules/social_features/social_event/modules/social_event_managers/src/Form/SocialEventManagersAddEnrolleeForm.php:126
+#: modules/social_features/social_event/modules/social_event_managers/src/Form/SocialEventManagersAddEnrolleeForm.php:155
 #: modules/social_features/social_group/social_group.module:478
 msgid "To add multiple members, separate each member with a comma ( , )."
 msgstr ""
@@ -10638,7 +10639,7 @@ msgstr ""
 msgid "Total amount of likes"
 msgstr ""
 
-#: themes/socialbase/templates/node/node--full.html.twig:194
+#: themes/socialbase/templates/node/node--full.html.twig:198
 msgid "Total amount of views"
 msgstr ""
 
@@ -11176,7 +11177,7 @@ msgstr ""
 msgid "View mode"
 msgstr ""
 
-#: modules/social_features/social_event/social_event.module:406
+#: modules/social_features/social_event/social_event.module:410
 msgid "View my events"
 msgstr ""
 
@@ -11816,13 +11817,14 @@ msgstr ""
 msgid "closed_group"
 msgstr ""
 
-#: themes/socialbase/templates/node/node--full.html.twig:156
+#: themes/socialbase/templates/node/node--full.html.twig:155
 msgid "comment"
-msgstr ""
+msgid_plural "comments"
+msgstr[0] ""
+msgstr[1] ""
 
 #: social.profile:306
 #: modules/social_features/social_landing_page/src/Plugin/Block/ActivityOverviewBlock.php:258
-#: themes/socialbase/templates/node/node--full.html.twig:158
 msgid "comments"
 msgstr ""
 
@@ -12053,6 +12055,12 @@ msgctxt "PHP date format"
 msgid "j M Y"
 msgstr ""
 
+#: themes/socialbase/templates/node/node--full.html.twig:175
+msgid "like"
+msgid_plural "likes"
+msgstr[0] ""
+msgstr[1] ""
+
 #: social.profile:307
 msgid "likes"
 msgstr ""
@@ -12135,7 +12143,7 @@ msgstr ""
 msgid "show some more"
 msgstr ""
 
-#: modules/social_features/social_user/social_user.module:221;221
+#: modules/social_features/social_user/social_user.module:224;224
 #: modules/social_features/social_user/src/Form/SocialUserPasswordForm.php:88;88
 msgid "site administrator"
 msgstr ""
@@ -12264,6 +12272,10 @@ msgid ""
 "{{ changed }}\r\n"
 "{{ changed_1 }}\r\n"
 "{{ changed_2 }}"
+msgstr ""
+
+#: modules/social_features/social_follow_content/config/install/views.view.following.yml:0
+msgid "{{ link_flag }}"
 msgstr ""
 
 #: modules/social_features/social_search/modules/social_search_autocomplete/config/install/views.view.search_all_autocomplete.yml:0
