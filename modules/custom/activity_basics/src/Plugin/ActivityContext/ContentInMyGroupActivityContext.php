@@ -31,6 +31,14 @@ class ContentInMyGroupActivityContext extends ActivityContextBase {
 
       if (isset($referenced_entity['target_type']) && $referenced_entity['target_type'] == 'post') {
         $post = Post::load($referenced_entity['target_id']);
+
+        // It could happen that a notification has been queued but the content
+        // has since been deleted. In that case we can find no additional
+        // recipients.
+        if (!$post) {
+          return $recipients;
+        }
+
         $gid = $post->get('field_recipient_group')->getValue();
         $owner_id = $post->getOwnerId();
       }
