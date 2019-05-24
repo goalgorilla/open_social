@@ -31,11 +31,16 @@ function social_activity_social_user_account_header_items(array $context) {
         'class' => ['desktop', 'notification-bell'],
       ],
       '#title' => new TranslatableMarkup('Notification Centre'),
-      '#url' => Url::fromRoute('<none>'),
+      '#url' => Url::fromRoute('social_activity.stream.notifications'),
       '#icon' => $num_notifications > 0 ? 'notifications' : 'notifications_none',
       '#label' => new TranslatableMarkup('Notifications'),
       '#notification_count' => $num_notifications,
       '#weight' => 800,
+      '#attached' => [
+        'library' => [
+          'core/drupal.ajax',
+        ],
+      ],
       'header' => [
         '#wrapper_attributes' => ['class' => 'dropdown-header'],
         '#markup' => new TranslatableMarkup('Notification Centre'),
@@ -44,7 +49,10 @@ function social_activity_social_user_account_header_items(array $context) {
         '#wrapper_attributes' => ['class' => 'divider'],
         '#markup' => '',
       ],
-      'notifications' => social_activity_notification_stream_view(),
+      'notifications' => [
+        '#wrapper_attributes' => ['class' => 'js-notification-center-wrapper'],
+        '#markup' =>  new TranslatableMarkup('Your notifications'),
+      ],
       'footer-divider' => [
         '#wrapper_attributes' => ['class' => 'divider'],
         '#markup' => '',
