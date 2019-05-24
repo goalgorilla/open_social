@@ -21,27 +21,8 @@ function social_activity_social_user_account_header_items(array $context) {
     return [];
   }
 
-  $account = $context['user'];
-
-  $notifications_view = views_embed_view('activity_stream_notifications', 'block_1');
-  // Mark all notifications as seen.
-  $notifications_view['#attached'] = [
-    'library' => [
-      'activity_creator/activity_creator.notifications',
-    ],
-  ];
-
-  // Make sure we check if attached is part of the render array.
-  if (!isset($notifications_view['#attached'])) {
-    $notifications_view['#attached'] = [];
-  }
-  if (!isset($notifications_view['#attached']['library'])) {
-    $notifications_view['#attached']['library'] = [];
-  }
-  $notifications_view['#attached']['library'][] = 'activity_creator/activity_creator.notifications';
-
   // Get the total amount of notifications for the user.
-  $num_notifications = social_activity_social_account_notifications_counter($account);
+  $num_notifications = social_activity_social_account_notifications_counter($context['user']);
 
   return [
     'notifications' => [
@@ -63,7 +44,7 @@ function social_activity_social_user_account_header_items(array $context) {
         '#wrapper_attributes' => ['class' => 'divider'],
         '#markup' => '',
       ],
-      'notifications' => $notifications_view,
+      'notifications' => social_activity_notification_stream_view(),
       'footer-divider' => [
         '#wrapper_attributes' => ['class' => 'divider'],
         '#markup' => '',
@@ -180,6 +161,33 @@ function social_activity_theme($existing, $type, $theme, $path) {
       ],
     ],
   ];
+}
+
+/**
+ * Get the notification stream embedded view.
+ *
+ * @return array|null
+ *   The render array of the embedded view.
+ */
+function social_activity_notification_stream_view() {
+  $view = views_embed_view('activity_stream_notifications', 'block_1');
+  // Mark all notifications as seen.
+  $view['#attached'] = [
+    'library' => [
+      'activity_creator/activity_creator.notifications',
+    ],
+  ];
+
+  // Make sure we check if attached is part of the render array.
+  if (!isset($view['#attached'])) {
+    $view['#attached'] = [];
+  }
+  if (!isset($view['#attached']['library'])) {
+    $view['#attached']['library'] = [];
+  }
+  $view['#attached']['library'][] = 'activity_creator/activity_creator.notifications';
+
+  return $view;
 }
 
 /**
