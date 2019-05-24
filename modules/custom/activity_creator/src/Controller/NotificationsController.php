@@ -65,6 +65,11 @@ class NotificationsController extends ControllerBase {
    *
    * @return \Drupal\Core\Ajax\AjaxResponse
    *   Returns a render array list of notifications.
+   *
+   * @todo: Decide if we need to reload the view when button bashing. Could be
+   *   beneficial as it's reloading the notifications sort of realtime.
+   * @todo: Fix hide/show.
+   * @todo: Mark as seen and also update the notification bell.
    */
   public function getNotificationListCallback(): AjaxResponse {
     // The data to display, will be the view.
