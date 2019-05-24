@@ -104,12 +104,12 @@ function social_activity_social_user_account_header_account_links(array $context
 
   // Get the total amount of notifications for the user.
   $num_notifications = social_activity_social_account_notifications_counter($context['user']);
-
+  // Depending on the amount of notifications, set a class for the indicator.
   $label_classes = 'hidden';
-
   if ($num_notifications > 0) {
     $label_classes = 'badge badge-accent badge--pill';
-
+    // When there are more than 99 notifications, display this and not
+    // the exact amount.
     if ($num_notifications > 99) {
       $num_notifications = '99+';
     }
@@ -155,7 +155,6 @@ function social_activity_social_user_account_header_items_alter(array &$menu_lin
 
   // Get the total amount of notifications for the user.
   $num_notifications = social_activity_social_account_notifications_counter($context['user']);
-
   if ($num_notifications > 0) {
     $menu_links['account_box']['#wrapper_attributes']['class'][] = 'has-alert';
   }
@@ -192,6 +191,7 @@ function social_activity_theme($existing, $type, $theme, $path) {
  *   Filter by status.
  *
  * @return int|void
+ *   Returns the amount of notifications.
  *
  * @see \Drupal\activity_creator\ActivityNotifications
  */
