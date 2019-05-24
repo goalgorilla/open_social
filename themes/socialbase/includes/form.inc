@@ -7,6 +7,7 @@
 
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
+use Drupal\user\UserInterface;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 
 /**
@@ -39,16 +40,8 @@ function socialbase_preprocess_form(&$variables) {
   if ($element['#form_id'] === 'comment_comment_form' || $element['#form_id'] === 'comment_post_comment_form' || $element['#form_id'] === 'private_message_add_form') {
     $current_user = \Drupal::currentUser();
     if ($current_user) {
-      $storage = \Drupal::entityTypeManager()->getStorage('profile');
-      if (!empty($storage)) {
-        $user_profile = $storage->loadByUser($current_user, 'profile');
-        if ($user_profile) {
-          $content = \Drupal::entityTypeManager()
-            ->getViewBuilder('profile')
-            ->view($user_profile, 'compact');
-          $variables['current_user_picture'] = $content;
-        }
-      }
+      $variables['current_user_picture'] = \Drupal::service('social_profile.render_service')
+        ->renderUserProfile($current_user, 'compact');
     }
 
     // Comment edit form.
@@ -66,18 +59,9 @@ function socialbase_preprocess_form(&$variables) {
 
         // Display author information.
         $account = $comment->getOwner();
-        if ($account) {
-          // Author profile picture.
-          $storage = \Drupal::entityTypeManager()->getStorage('profile');
-          if (!empty($storage)) {
-            $user_profile = $storage->loadByUser($account, 'profile');
-            if ($user_profile) {
-              $content = \Drupal::entityTypeManager()
-                ->getViewBuilder('profile')
-                ->view($user_profile, 'compact');
-              $variables['author_picture'] = $content;
-            }
-          }
+        if ($account instanceof UserInterface) {
+          $variables['author_picture'] = \Drupal::service('social_profile.render_service')
+            ->renderUserProfile($account, 'compact');
 
           // Author name.
           $username = [
@@ -110,20 +94,12 @@ function socialbase_preprocess_form(&$variables) {
       // view mode on the User entity. Note that the 'compact' view mode might
       // not be configured, so remember to always check the theme setting first.
       $account = $post->getOwner();
-      if ($account) {
+      if ($account instanceof UserInterface) {
         $author_name = $account->getDisplayName();
         $variables['author_name']['#markup'] = $author_name;
 
-        $storage = \Drupal::entityTypeManager()->getStorage('profile');
-        if (!empty($storage)) {
-          $user_profile = $storage->loadByUser($account, 'profile');
-          if ($user_profile) {
-            $content = \Drupal::entityTypeManager()
-              ->getViewBuilder('profile')
-              ->view($user_profile, 'compact');
-            $variables['author_picture'] = $content;
-          }
-        }
+        $variables['author_picture'] = \Drupal::service('social_profile.render_service')
+          ->renderUserProfile($account, 'compact');
       }
     }
   }

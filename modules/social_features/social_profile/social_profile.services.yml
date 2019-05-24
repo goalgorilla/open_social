@@ -3,3 +3,8 @@ services:
     class: Drupal\social_profile\EventSubscriber\ProfileLabelSubscriber
     tags:
       - { name: event_subscriber }
+
+  social_profile.render_service:
+    class: Drupal\social_profile\SocialProfileRenderService
+    arguments:
+      - '@entity_type.manager'
