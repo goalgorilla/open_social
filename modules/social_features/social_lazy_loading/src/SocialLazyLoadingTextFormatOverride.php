@@ -87,19 +87,18 @@ class SocialLazyLoadingTextFormatOverride implements ConfigFactoryOverrideInterf
    */
   protected function addFilterOverride($text_format, $convert_url, array &$overrides) {
     $config_name = 'filter.format.' . $text_format;
-    /* @var \Drupal\Core\Config\Config $config */
-    $config = $this->configFactory->getEditable($config_name);
 
     if ($convert_url) {
-      $overrides = [];
-      $overrides[$config_name]['dependencies']['module'] = $config->get('dependencies.module');
+      $config = $this->configFactory->getEditable($config_name);
+      $dependencies = $config->getOriginal('dependencies.module');
+      $overrides[$config_name]['dependencies']['module'] = $dependencies;
       $overrides[$config_name]['dependencies']['module'][] = 'lazy';
 
       $overrides[$config_name]['filters']['lazy_filter'] = [
         'id' => 'lazy_filter',
         'provider' => 'lazy',
         'status' => TRUE,
-        'weight' => 99,
+        'weight' => 999,
         'settings' => [],
       ];
     }
