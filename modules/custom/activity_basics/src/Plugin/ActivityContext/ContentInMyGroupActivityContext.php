@@ -37,6 +37,14 @@ class ContentInMyGroupActivityContext extends ActivityContextBase {
       else {
         /* @var \Drupal\group\Entity\GroupContent $group_content_entity */
         $group_content_entity = \Drupal::entityTypeManager()->getStorage('group_content')->load($referenced_entity['target_id']);
+
+        // It could happen that a notification has been queued but the content
+        // has since been deleted. In that case we can find no additional
+        // recipients.
+        if (!$group_content_entity) {
+          return $recipients;
+        }
+
         /* @var \Drupal\node\Entity\Node $node */
         $node = $group_content_entity->getEntity();
         if ($node instanceof Node) {
