@@ -74,12 +74,15 @@ abstract class ActivityContextBase extends PluginBase implements ActivityContext
     $recipients = [];
 
     $post = Post::load($referenced_entity['target_id']);
-    $recipient_user = $post->get('field_recipient_user')->getValue();
-    if (!empty($recipient_user)) {
-      $recipients[] = [
-        'target_type' => 'user',
-        'target_id' => $recipient_user['0']['target_id'],
-      ];
+
+    if (!empty($post)) {
+      $recipient_user = $post->get('field_recipient_user')->getValue();
+      if (!empty($recipient_user)) {
+        $recipients[] = [
+          'target_type' => 'user',
+          'target_id' => $recipient_user['0']['target_id'],
+        ];
+      }
     }
 
     return $recipients;
