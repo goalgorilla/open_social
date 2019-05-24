@@ -142,16 +142,18 @@ function get_name_from_enrollment($id) {
   // User is AN by default.
   $enrollment_name = \Drupal::configFactory()->get('user.settings')->get('anonymous');
 
-  // If there is a Uid. Lets load the user and return his display name.
-  if ($enrollment->hasField('field_account') &&
-    $enrollment->getFieldValue('field_account', 'target_id') > 0) {
-    $entity_storage = \Drupal::entityTypeManager()
-      ->getStorage('user');
-    /** @var \Drupal\user\Entity\User $user */
-    $user = $entity_storage->load($enrollment->getFieldValue('field_account', 'target_id'));
-    return $user->getDisplayName();
+  if (!empty($enrollment)) {
+    // If there is a Uid. Lets load the user and return his display name.
+    if ($enrollment->hasField('field_account') &&
+      $enrollment->getFieldValue('field_account', 'target_id') > 0) {
+      $entity_storage = \Drupal::entityTypeManager()
+        ->getStorage('user');
+      /** @var \Drupal\user\Entity\User $user */
+      $user = $entity_storage->load($enrollment->getFieldValue('field_account', 'target_id'));
+      return $user->getDisplayName();
+    }
   }
-
+  
   // User is AN but has enrollment settings available, lets see if we can get
   // the Firstname and lastname to show up in the notification.
   if ($enrollment !== NULL &&
