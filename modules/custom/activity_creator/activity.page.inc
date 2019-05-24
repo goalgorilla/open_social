@@ -72,20 +72,14 @@ function template_preprocess_activity(array &$variables) {
   // 'compact_notification' view mode might not be configured, so remember to
   // always check the theme setting first.
   if ($account) {
-    $storage = \Drupal::entityTypeManager()->getStorage('profile');
-    if (!empty($storage)) {
-      $user_profile = $storage->loadByUser($account, 'profile');
-      if ($user_profile) {
-        $content = \Drupal::entityTypeManager()
-          ->getViewBuilder('profile')
-          ->view($user_profile, 'compact_notification');
-        if ($full_url === '') {
-          $variables['actor'] = $content;
-        }
-        else {
-          $variables['actor'] = Link::fromTextAndUrl($content, $account->toUrl());
-        }
-      }
+    $content = \Drupal::service('social_profile.render_service')
+      ->renderUserProfile($account, 'compact_notification');
+
+    if ($full_url === '') {
+      $variables['actor'] = $content;
+    }
+    else {
+      $variables['actor'] = Link::fromTextAndUrl($content, $account->toUrl());
     }
 
     // Our author is Anonymous. If that happens for a notification.

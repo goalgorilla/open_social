@@ -40,16 +40,8 @@ function template_preprocess_post(array &$variables) {
   // not be configured, so remember to always check the theme setting first.
   $account = $post->getOwner();
   if ($account) {
-    $storage = \Drupal::entityTypeManager()->getStorage('profile');
-    if (!empty($storage)) {
-      $user_profile = $storage->loadByUser($account, 'profile');
-      if ($user_profile) {
-        $content = \Drupal::entityTypeManager()
-          ->getViewBuilder('profile')
-          ->view($user_profile, 'compact');
-        $variables['author_picture'] = $content;
-      }
-    }
+    $variables['author_picture'] = \Drupal::service('social_profile.render_service')
+      ->renderUserProfile($account, 'compact');
   }
 
   // Show a post has been edited.

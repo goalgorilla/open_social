@@ -25,17 +25,9 @@ function social_post_form_post_form_alter(&$form, FormStateInterface $form_state
     $account = User::load(Drupal::currentUser()->id());
     // Load compact notification view mode of the attached profile.
     if ($account) {
-      $storage = \Drupal::entityTypeManager()->getStorage('profile');
-      if (!empty($storage)) {
-        $user_profile = $storage->loadByUser($account, 'profile');
-        if ($user_profile) {
-          $content = \Drupal::entityTypeManager()
-            ->getViewBuilder('profile')
-            ->view($user_profile, 'compact_notification');
-          // Add to a new field, so twig can render it.
-          $form['current_user_image'] = $content;
-        }
-      }
+      // Add to a new field, so twig can render it.
+      $form['current_user_image'] = \Drupal::service('social_profile.render_service')
+        ->renderUserProfile($account, 'compact_notification');
     }
   }
 
