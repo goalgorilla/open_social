@@ -39,6 +39,7 @@ function socialbase_preprocess_form(&$variables) {
 
   if ($element['#form_id'] === 'comment_comment_form' || $element['#form_id'] === 'comment_post_comment_form' || $element['#form_id'] === 'private_message_add_form') {
     $current_user = \Drupal::currentUser();
+    // @TODO: Needs to be UserInterface before we drag it through the service.
     if ($current_user) {
       $variables['current_user_picture'] = \Drupal::service('social_profile.render_service')
         ->renderUserProfile($current_user, 'compact');

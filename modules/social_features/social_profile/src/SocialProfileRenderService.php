@@ -3,7 +3,9 @@
 namespace Drupal\social_profile;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\profile\Entity\ProfileInterface;
+use Drupal\user\Entity\User;
 use Drupal\user\UserInterface;
 
 /**
@@ -19,6 +21,13 @@ class SocialProfileRenderService {
    * @var \Drupal\Core\Entity\EntityStorageInterface
    */
   protected $profileStorage;
+
+  /**
+   * Cached profiles.
+   *
+   * @var \Drupal\user\UserInterface[]|\Drupal\Core\Session\AccountInterface[]
+   */
+  protected $userProfileCache = [];
 
   /**
    * The Profile View Builder.
@@ -44,7 +53,7 @@ class SocialProfileRenderService {
   /**
    * Renders the profile of a user
    *
-   * @param UserInterface $account
+   * @param \Drupal\user\UserInterface|\Drupal\Core\Session\AccountInterface $account
    *   The user account for which we render the profile.
    * @param $view_mode
    *   The view mode in which the profile gets rendered.
@@ -52,38 +61,38 @@ class SocialProfileRenderService {
    * @return array
    *   A render array for the profile.
    */
-  public function renderUserProfile(UserInterface $account, $view_mode) {
-    $profiles = &drupal_static(__FUNCTION__);
+  public function renderUserProfile($account, $view_mode) {
+    // Build cache ID.
+    $cid = $account->id() . ':' . $view_mode;
 
     // Check if we already have rendered something previously.
-    if (!empty($profile[$account->id()]['view_mode'])) {
-      return $profile[$account->id()]['view_mode'];
+    if (!empty($this->userProfileCache[$cid])) {
+      return $this->userProfileCache[$cid];
     }
 
-    // Try to load a cached users profile.
-    if ($profile[$account->id()]['profile'] instanceof ProfileInterface) {
-      $profile = $profile[$account->id()]['profile'];
+    // When we get an AccountInterface, we load the UserInterface.
+    if ($account instanceof AccountInterface) {
+      $account = User::load($account->id());
+    }
+
+    // Load the profile, we don't have anything cached at this moment.
+    $profile = $this->profileStorage->loadByUser($account, 'profile');
+
+    // Check if we have a valid profile.
+    if (!empty($profile) && $profile instanceof ProfileInterface) {
+      // Cache the loaded profile in the static variable.
+      $user_profile = $profile;
     }
     else {
-      // Load the profile, we don't have anything cached at this moment..
-      $profile = $this->profileStorage->loadByUser($account, 'profile');
-
-      // Check if we have a valid profile.
-      if ($profile instanceof ProfileInterface) {
-        // Cache the loaded profile in the static variable.
-        $profile[$account->id()]['profile'] = $profile;
-      }
-      else {
-        // Return early, we have no valid profile to work with.
-        return [];
-      }
+      // Return early, we have no valid profile to work with.
+      return [];
     }
 
     // Render the profile in the required view mode.
-    $profile_render = $this->profileViewBuilder->view($profile, $view_mode);
+    $profile_render = $this->profileViewBuilder->view($user_profile, $view_mode);
 
     // Cache this in the static variable.
-    $profiles[$account->id()]['view_mode'] = $profile_render;
+    $this->userProfileCache[$cid] = $profile_render;
 
     // Return the render array.
     return $profile_render;

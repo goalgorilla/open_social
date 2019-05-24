@@ -269,9 +269,8 @@ function social_private_message_entity_view_alter(array &$build, EntityInterface
           }
           else {
             $user_profile = \Drupal::entityTypeManager()->getStorage('profile')->loadByUser($member, 'profile');
-            $content = \Drupal::entityTypeManager()
-              ->getViewBuilder('profile')
-              ->view($user_profile, 'name_raw');
+            $content = \Drupal::service('social_profile.render_service')
+              ->renderUserProfile($user_profile, 'name_raw');
             $members_string[] = $content;
           }
         }
@@ -289,7 +288,8 @@ function social_private_message_entity_view_alter(array &$build, EntityInterface
 
         if ($recipient instanceof UserInterface) {
           $user_profile = \Drupal::entityTypeManager()->getStorage('profile')->loadByUser($recipient, 'profile');
-          $display_name = \Drupal::entityTypeManager()->getViewBuilder('profile')->view($user_profile, 'name_raw');
+          $display_name = \Drupal::service('social_profile.render_service')
+            ->renderUserProfile($user_profile, 'name_raw');
         }
         else {
           // Make this an array, since we no longer render in here.

@@ -22,7 +22,7 @@ function social_post_form_post_form_alter(&$form, FormStateInterface $form_state
 
   if ($form_state->getFormObject()->getEntity()->isNew()) {
     // Load current user.
-    $account = User::load(Drupal::currentUser()->id());
+    $account = Drupal::currentUser();
     // Load compact notification view mode of the attached profile.
     if ($account) {
       // Add to a new field, so twig can render it.

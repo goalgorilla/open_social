@@ -696,17 +696,8 @@ function social_profile_social_user_account_header_items_alter(array &$menu_item
     return;
   }
 
-  $storage = \Drupal::entityTypeManager()->getStorage('profile');
-  $profile = $storage->loadByUser($context['user'], 'profile');
-
-  // If the user does not have a profile then there's no profile image.
-  if (empty($profile)) {
-    return;
-  }
-
   // Provide a render array as image which will overrule the user icon.
-  $menu_items['account_box']['#image'] = \Drupal::entityTypeManager()
-    ->getViewBuilder('profile')
-    ->view($profile, 'small');;
+  $menu_items['account_box']['#image'] = \Drupal::service('social_profile.render_service')
+    ->renderUserProfile($context['user'], 'small');
 
 }
