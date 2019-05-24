@@ -31,7 +31,7 @@ function social_activity_social_user_account_header_items(array $context) {
         'class' => ['desktop', 'notification-bell'],
       ],
       '#title' => new TranslatableMarkup('Notification Centre'),
-      '#url' => Url::fromRoute('social_activity.stream.notifications'),
+      '#url' => Url::fromRoute('activity_creator.stream.notifications'),
       '#icon' => $num_notifications > 0 ? 'notifications' : 'notifications_none',
       '#label' => new TranslatableMarkup('Notifications'),
       '#notification_count' => $num_notifications,
@@ -39,6 +39,7 @@ function social_activity_social_user_account_header_items(array $context) {
       '#attached' => [
         'library' => [
           'core/drupal.ajax',
+          'activity_creator/activity_creator.notifications',
         ],
       ],
       'header' => [

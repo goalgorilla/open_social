@@ -6,3 +6,10 @@ activity_creator.notifications_controller_readNotificationCallback:
   requirements:
     _user_is_logged_in: 'TRUE'
 #    TODO js: 'nojs|ajax'
+
+activity_creator.stream.notifications:
+  path: '/activities/streams/notifications'
+  defaults:
+    _controller: '\Drupal\activity_creator\Controller\NotificationsController::getNotificationListCallback'
+  requirements:
+    _permission: 'access content'
