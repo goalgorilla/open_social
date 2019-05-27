@@ -817,7 +817,7 @@ function social_group_field_widget_form_alter(&$element, FormStateInterface $for
       $element['group']['#disabled'] = TRUE;
     }
 
-    $visibility_options = social_group_get_allowed_visibility_options_per_group_type($group_type_id, NULL, $entity);
+    $visibility_options = social_group_get_allowed_visibility_options_per_group_type($group_type_id, NULL, $entity, $current_group);
 
     foreach ($visibility_options as $visibility => $allowed) {
       $element[$visibility]['#disabled'] = !$allowed;
@@ -1400,7 +1400,7 @@ function social_group_save_group_from_node(array $form, FormStateInterface $form
  * @return array
  *   An array of visibility options for the given group type.
  */
-function social_group_get_allowed_visibility_options_per_group_type($group_type_id, AccountInterface $account = NULL, $entity = NULL) {
+function social_group_get_allowed_visibility_options_per_group_type($group_type_id, AccountInterface $account = NULL, $entity = NULL, $group = NULL) {
 
   // Get the logged in user.
   if ($account === NULL) {
@@ -1430,10 +1430,15 @@ function social_group_get_allowed_visibility_options_per_group_type($group_type_
       break;
 
     case 'flexible_group':
-      // TODO Retrieve values from the group itself.
-      $visibility_options['public'] = TRUE;
-      $visibility_options['community'] = TRUE;
-      $visibility_options['group'] = TRUE;
+      if (empty($group)) {
+        $group = _social_group_get_current_group();
+      }
+      // Try to retrieve allowed options from Group directly.
+      $allowed_options = $group->get('field_group_allowed_visibility')->getValue();
+      foreach ($allowed_options as $option) {
+        $value = $option['value'];
+        $visibility_options[$value] = TRUE;
+      }
       break;
 
     default:
