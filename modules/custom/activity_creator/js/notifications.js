@@ -18,11 +18,11 @@
       var $notificationCount = $('.notification-bell .badge');
 
       // We won't proceed if the notification count is 0 or the dropdown is
-      // open.
+      // already open.
       // @todo: Refactor to use data-* attributes and `jQuery.data()` to store
       //   the unread notification count. This should be less expensive than
       //   reading the DOM
-      if (!$notificationCount.text() || $notificationCount.text() === '0' || $(this).hasClass('open')) {
+      if (!$notificationCount.first().text() || $notificationCount.first().text() === '0' || $(this).hasClass('open')) {
         return;
       }
 
