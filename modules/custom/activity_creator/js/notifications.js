@@ -20,8 +20,9 @@
       // We won't proceed if the notification count is 0 or the dropdown is
       // open.
       // @todo: Refactor to use data-* attributes and `jQuery.data()` to store
-      //   the unread notification count.
-      if (!$notificationCount.html() || $notificationCount.html() === '0' || $(this).hasClass('open')) {
+      //   the unread notification count. This should be less expensive than
+      //   reading the DOM
+      if (!$notificationCount.text() || $notificationCount.text() === '0' || $(this).hasClass('open')) {
         return;
       }
 
@@ -32,9 +33,7 @@
         data: { },
         success: function (result) {
           // Update the notification bell.
-          var $remainingNotifications = result['remaining_notifications'];
-
-          $notificationCount.html($remainingNotifications);
+          $notificationCount.text(result['remaining_notifications']);
         }
       });
     }
