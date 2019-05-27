@@ -11,11 +11,11 @@
     attach: function (context, settings) {
 
       $('.notification-bell', context).once('notificationUpdate').click(function(e) {
-        var notification_count = $('.notification-bell .badge');
+        var $notificationCount = $('.notification-bell .badge');
 
         // We won't proceed if the notification count is 0 or the dropdown is
         // open.
-        if (!notification_count.html() || notification_count.html() === "0" || $(this).hasClass('open')) {
+        if (!$notificationCount.html() || $notificationCount.html() === "0" || $(this).hasClass('open')) {
           return;
         }
 
@@ -28,7 +28,7 @@
             // Update the notification bell.
             var remaining_notifications = result['remaining_notifications'];
 
-            notification_count.html(remaining_notifications);
+            $notificationCount.html(remaining_notifications);
             $('.notification-bell.mobile .badge').html(remaining_notifications);
           }
         });
@@ -37,3 +37,4 @@
     }
   };
 })(jQuery);
+https://github.com/goalgorilla/open_social/pull/1405#discussion_r287411473
