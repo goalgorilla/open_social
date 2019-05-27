@@ -10,6 +10,8 @@
   Drupal.behaviors.notificationUpdate = {
     attach: function (context, settings) {
 
+      // @todo: Refactor to use data-* attributes and `jQuery.data()` to store
+      //   the unread notification count.
       $('.notification-bell', context).once('notificationUpdate').click(function (e) {
         var $notificationCount = $('.notification-bell .badge');
 
@@ -29,7 +31,6 @@
             var $remainingNotifications = result['remaining_notifications'];
 
             $notificationCount.html($remainingNotifications);
-            $('.notification-bell.mobile .badge').html($remainingNotifications);
           }
         });
       });
