@@ -5,6 +5,7 @@
  * The Social Magic Login module.
  */
 
+use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\Url;
 use Drupal\user\UserInterface;
 
@@ -33,7 +34,7 @@ function social_magic_login_token_info() {
  *
  * @throws \Drupal\Core\Entity\EntityMalformedException
  */
-function social_magic_login_tokens($type, $tokens, array $data, array $options, \Drupal\Core\Render\BubbleableMetadata $bubbleable_metadata) {
+function social_magic_login_tokens($type, $tokens, array $data, array $options, BubbleableMetadata $bubbleable_metadata) {
   $url_options = ['absolute' => TRUE];
   $replacements = [];
 
