@@ -153,7 +153,7 @@ function get_name_from_enrollment($id) {
       return $user->getDisplayName();
     }
   }
-  
+
   // User is AN but has enrollment settings available, lets see if we can get
   // the Firstname and lastname to show up in the notification.
   if ($enrollment !== NULL &&
