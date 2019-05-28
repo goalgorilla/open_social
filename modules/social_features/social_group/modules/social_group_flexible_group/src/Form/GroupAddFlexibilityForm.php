@@ -13,8 +13,9 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 class GroupAddFlexibilityForm {
 
   use StringTranslationTrait;
+
   /**
-   * Add the options for the FlexibilityForm
+   * Add the options for the FlexibilityForm.
    *
    * Only if the group_type is set to flexible_group.
    *
@@ -27,21 +28,20 @@ class GroupAddFlexibilityForm {
     $form['group_settings']['flexible_settings'] = [
       '#type' => 'fieldset',
     ];
-
-    $form['group_settings']['flexible_settings']['flexible_group_visibility_options'] = [
+    $form['group_settings']['flexible_settings']['field_group_allowed_visibility'] = [
       '#type' => 'checkboxes',
       '#title' => t('Available content visibility'),
       '#description_display' => 'before',
-      '#description' => t('Choose the possible visibility settings for the group content.'),
+      '#description' => t('Choose the allowed visibility settings for the group content.'),
       '#options' => self::contentVisibilityOptions(),
       '#states' => [
         'visible' => [
-          ':input[name="group_type"]' => ['value' => 'flexible_group']
+          ':input[name="group_type"]' => ['value' => 'flexible_group'],
         ],
       ],
     ];
 
-    $form['group_settings']['flexible_settings']['flexible_group_join_methods'] = [
+    $form['group_settings']['flexible_settings']['field_group_allowed_join_method'] = [
       '#type' => 'checkboxes',
       '#description_display' => 'before',
       '#title' => t('Method to join'),
@@ -49,7 +49,7 @@ class GroupAddFlexibilityForm {
       '#options' => self::methodsToJoin(),
       '#states' => [
         'visible' => [
-          ':input[name="group_type"]' => ['value' => 'flexible_group']
+          ':input[name="group_type"]' => ['value' => 'flexible_group'],
         ],
       ],
     ];
