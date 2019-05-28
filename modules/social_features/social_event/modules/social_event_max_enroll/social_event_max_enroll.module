@@ -88,13 +88,26 @@ function social_event_max_enroll_form_alter(&$form, FormStateInterface $form_sta
         $left = $event_max_enroll_service->getEnrollmentsLeft($node);
 
         if ($left < 1) {
-          $enrollments = \Drupal::entityTypeManager()->getStorage('event_enrollment')
-            ->loadByProperties([
-              'field_event' => $node->id(),
-              'user_id' => \Drupal::currentUser()->id(),
-            ]);
+          $enrollments = FALSE;
+          // Only load enrollments for authenticated users.
+          if (\Drupal::currentUser()->isAuthenticated()) {
+            $enrollments = \Drupal::entityTypeManager()->getStorage('event_enrollment')
+              ->loadByProperties([
+                'field_event' => $node->id(),
+                'user_id' => \Drupal::currentUser()->id(),
+              ]);
+          }
 
-          if (!$enrollments) {
+          $an_enrollments = FALSE;
+          // If Social Event AN Enroll module is enabled, check if the current
+          // visitor is enrolled to the event.
+          if (\Drupal::service('module_handler')->moduleExists('social_event_an_enroll') && \Drupal::service('social_event_an_enroll.service')->isEnrolled()) {
+            $an_enrollments = TRUE;
+          }
+
+          // If this user or visitor is not enrolled to the event, show that
+          // there are no more spots left.
+          if (!$enrollments && !$an_enrollments) {
             if ($form_id === 'enroll_action_form') {
               $form['enroll_for_this_event']['#value'] = t('No spots left');
               $form['enroll_for_this_event']['#disabled'] = TRUE;
