@@ -3,6 +3,7 @@ status: true
 dependencies:
   config:
     - field.field.group.flexible_group.field_group_address
+    - field.field.group.flexible_group.field_group_allowed_join_method
     - field.field.group.flexible_group.field_group_allowed_visibility
     - field.field.group.flexible_group.field_group_description
     - field.field.group.flexible_group.field_group_image
@@ -23,7 +24,7 @@ third_party_settings:
         - field_group_description
         - field_group_image
       parent_name: ''
-      weight: 0
+      weight: 1
       label: Content
       format_type: fieldset
       format_settings:
@@ -37,7 +38,7 @@ third_party_settings:
         - field_group_location
         - field_group_address
       parent_name: ''
-      weight: 1
+      weight: 2
       label: Location
       format_type: fieldset
       format_settings:
@@ -49,8 +50,9 @@ third_party_settings:
     group_settings:
       children:
         - field_group_allowed_visibility
+        - field_group_allowed_join_method
       parent_name: ''
-      weight: 2
+      weight: 0
       format_type: fieldset
       format_settings:
         id: ''
@@ -69,6 +71,12 @@ content:
     settings: {  }
     third_party_settings: {  }
     type: address_default
+    region: content
+  field_group_allowed_join_method:
+    weight: 5
+    settings: {  }
+    third_party_settings: {  }
+    type: options_buttons
     region: content
   field_group_allowed_visibility:
     weight: 4

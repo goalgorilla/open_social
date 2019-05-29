@@ -3,6 +3,7 @@ status: true
 dependencies:
   config:
     - field.field.group.flexible_group.field_group_address
+    - field.field.group.flexible_group.field_group_allowed_join_method
     - field.field.group.flexible_group.field_group_allowed_visibility
     - field.field.group.flexible_group.field_group_description
     - field.field.group.flexible_group.field_group_image
@@ -15,6 +16,13 @@ targetEntityType: group
 bundle: flexible_group
 mode: default
 content:
+  field_group_allowed_join_method:
+    weight: 2
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    type: list_default
+    region: content
   field_group_allowed_visibility:
     weight: 1
     label: above
