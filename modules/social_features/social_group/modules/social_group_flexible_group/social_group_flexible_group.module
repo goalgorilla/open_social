@@ -6,9 +6,6 @@
  */
 
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\social_group_flexible_group\Form\GroupAddFlexibilityForm;
-use Drupal\Core\TempStore\PrivateTempStore;
-use Drupal\Core\TempStore\TempStoreException;
 
 /**
  * Provide a method to alter array of group types used in open social.
@@ -29,64 +26,9 @@ function social_group_flexible_group_form_social_group_add_alter(&$form, FormSta
   // Rearrange all the options so flexible is last
   // we will need the space for the configuration.
   $type_options = $form['group_settings']['group_type']['#options'];
-
-  // Seems to be the most performant.
   if (!empty($type_options['flexible_group'])) {
     $flexible = $type_options['flexible_group'];
     unset($form['group_settings']['group_type']['#options']['flexible_group']);
     $form['group_settings']['group_type']['#options']['flexible_group'] = $flexible;
-
-    // Now we can add the configuration.
-    GroupAddFlexibilityForm::addFlexibilityOptions($form, $form_state);
-    $form['#submit'][] = '_social_group_flexible_group_form_submit';
-  }
-}
-
-/**
- * Form submit for flexible group settings.
- *
- * @param array $form
- *   Group add or group edit form.
- * @param \Drupal\Core\Form\FormStateInterface $form_state
- *   Form state interface.
- */
-function _social_group_flexible_group_form_submit(array $form, FormStateInterface $form_state) {
-  $type = $form_state->getValue('group_type');
-  if ($type === 'flexible_group') {
-    /** @var PrivateTempStore $tmpStorage */
-    $temp_store = \Drupal::service('user.private_tempstore')->get('social_group_flexible_group');
-    try {
-      $temp_store->set('field_group_allowed_visibility', $form_state->getValue('field_group_allowed_visibility'));
-    }
-    catch (TempStoreException $exception) {
-    }
-  }
-}
-
-/**
- * Implements hook_form_FORM_ID_alter().
- */
-function social_group_flexible_group_form_group_flexible_group_add_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
-  /** @var PrivateTempStore $tmpStorage */
-  $tmpStorage = \Drupal::service('user.private_tempstore')->get('social_group_flexible_group');
-  if ($tmpStorage !== NULL) {
-    $allowed_visibility = $tmpStorage->get('field_group_allowed_visibility');
-    if ($allowed_visibility !== NULL) {
-      $default_value = [];
-      foreach ($allowed_visibility as $key => $value) {
-        if ($value !== '0') {
-          $default_value[] = $value;
-        }
-      }
-      $form['field_group_allowed_visibility']['widget']['#default_value'] = $default_value;
-
-      // Remove value in temporary storage.
-      try {
-        $tmpStorage->delete('field_group_allowed_visibility');
-      }
-      catch (TempStoreException $exception) {
-        // Something went wrong with removing, we can ignore.
-      }
-    }
   }
 }
