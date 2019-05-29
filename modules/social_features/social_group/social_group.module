@@ -526,7 +526,7 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
       }
 
       $form['group_type'] = $group_type_element;
-      $form['#group_children']['group_type'] = 'group_content';
+      $form['#group_children']['group_type'] = 'group_settings';
 
       // Disable all group types that can't be edited. Because they don't have
       // a visibility.
