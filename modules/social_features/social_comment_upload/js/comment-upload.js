@@ -6,14 +6,14 @@
     attach: function(context, setting) {
       $('.comment-attachments').once('socialCommentUpload').each(function () {
         var $content = $('> div', this).filter(function () {
-              return !$(this).hasClass('panel-heading');
-            }),
-            $header = $('> summary', this),
-            display = true,
-            handle = function () {
-              display = !display;
-              $content.toggle(display);
-            };
+            return !$(this).hasClass('panel-heading');
+          }),
+          $header = $('> summary', this),
+          display = true,
+          handle = function () {
+            display = !display;
+            $content.toggle(display);
+          };
 
         $header
           .on('click', handle)
@@ -28,7 +28,7 @@
       var $pswp = $('.pswp')[0];
       var image = [];
 
-      $('.photoswipe-gallery-custom').each( function() {
+      $('.photoswipe-gallery-custom').once('AttachGalleryToPhotoswipeElement').each( function() {
         var $pic     = $(this),
           getItems = function() {
             var items = [];
@@ -56,7 +56,7 @@
           image[index].src = value['src'];
         });
 
-        $pic.on('click', 'a.photoswipe-item', function(event) {
+        $pic.once('ClickItemFromGallery').on('click', 'a.photoswipe-item', function(event) {
           event.preventDefault();
 
           // Get the index of our parent which is part of the grid.

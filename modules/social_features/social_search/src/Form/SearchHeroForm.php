@@ -70,6 +70,8 @@ class SearchHeroForm extends FormBase implements ContainerInjectionInterface {
 
     $form['search_input'] = [
       '#type' => 'textfield',
+      '#title' => $this->t('Search'),
+      '#title_display' => 'invisible',
     ];
 
     // Pre-fill search input on the search group page.
