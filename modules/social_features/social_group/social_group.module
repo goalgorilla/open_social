@@ -1490,6 +1490,10 @@ function social_group_views_query_alter(ViewExecutable $view, QueryPluginBase $q
 
   $hiddens = $condition['operator'] == 'not in';
 
+  // Define the variable as array otherwise it can be interpreted as string
+  // And breaking the code below.
+  $condition['value'] = [];
+
   /** @var \Drupal\group\Entity\GroupTypeInterface $group_type */
   foreach (GroupType::loadMultiple() as $group_type) {
     $new = !in_array($group_type->id(), $condition['value']);
