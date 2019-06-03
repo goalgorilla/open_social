@@ -47,6 +47,7 @@ projects[group][patch][] = "https://www.drupal.org/files/issues/add-computed-fie
 projects[group][patch][] = "https://www.drupal.org/files/issues/group-2943564-2.patch"
 projects[group][patch][] = "https://www.drupal.org/files/issues/2018-12-18/vbo-and-group-permission-3020883-5.patch"
 projects[group][patch][] = "https://www.drupal.org/files/issues/2018-12-19/group-2774827-41-gnode-tokens.patch"
+projects[group][patch][] = "https://www.drupal.org/files/issues/2018-11-01/3010896-02.patch"
 projects[image_effects][type] = module
 projects[image_effects][version] = 2.3
 projects[image_widget_crop][type] = module
