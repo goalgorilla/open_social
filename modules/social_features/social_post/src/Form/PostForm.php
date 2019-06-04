@@ -182,7 +182,7 @@ class PostForm extends ContentEntityForm {
       }
       else {
         $group_type_id = $current_group->getGroupType()->id();
-        $allowed_options = social_group_get_allowed_visibility_options_per_group_type($group_type_id);
+        $allowed_options = social_group_get_allowed_visibility_options_per_group_type($group_type_id, NULL, $this->entity, $current_group);
 
         if ($allowed_options['community'] !== TRUE) {
           unset($form['field_visibility']['widget'][0]['#options'][0]);

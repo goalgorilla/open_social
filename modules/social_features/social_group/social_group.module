@@ -1433,11 +1433,13 @@ function social_group_get_allowed_visibility_options_per_group_type($group_type_
       if (empty($group)) {
         $group = _social_group_get_current_group();
       }
-      // Try to retrieve allowed options from Group directly.
-      $allowed_options = $group->get('field_group_allowed_visibility')->getValue();
-      foreach ($allowed_options as $option) {
-        $value = $option['value'];
-        $visibility_options[$value] = TRUE;
+      if ($group !== NULL) {
+        // Try to retrieve allowed options from Group directly.
+        $allowed_options = $group->get('field_group_allowed_visibility')->getValue();
+        foreach ($allowed_options as $option) {
+          $value = $option['value'];
+          $visibility_options[$value] = TRUE;
+        }
       }
       break;
 
