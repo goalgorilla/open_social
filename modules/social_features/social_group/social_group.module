@@ -33,7 +33,6 @@ use Drupal\image\Entity\ImageStyle;
 use Drupal\Core\Block\BlockPluginInterface;
 use Drupal\user\Entity\Role;
 use Drupal\user\Entity\User;
-use Drupal\profile\Entity\Profile;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\social_group\GroupContentVisibilityUpdate;
@@ -203,13 +202,13 @@ function social_group_preprocess_group(array &$variables) {
   $variables['joined'] = FALSE;
   $variables['closed_group'] = FALSE;
   $variables['cta'] = '';
-  $variables['closed_group_lock'] = FALSE;
+  $variables['closed_group_lock'] = $variables['secret_group_shield'] = FALSE;
 
   $account = \Drupal::currentUser();
 
   $group_type_id = $group->getGroupType()->id();
 
-  if ($group_type_id == 'closed_group') {
+  if ($group_type_id === 'closed_group') {
     $variables['closed_group_lock'] = TRUE;
   }
 
@@ -218,18 +217,16 @@ function social_group_preprocess_group(array &$variables) {
   if ($group->getMember($account)) {
     $variables['joined'] = TRUE;
     if ($group->hasPermission('leave group', $account)) {
-      // @todo switch this to get URL from routes correctly.
-      $variables['group_operations_url'] = Url::fromUserInput('/group/' . $group->id() . '/leave');
+      $variables['group_operations_url'] = Url::fromRoute('entity.group.leave', ['group' => $group->id()]);
     }
   }
   elseif ($group->hasPermission('join group', $account)) {
-    // @todo switch this to get URL from routes correctly.
-    $variables['group_operations_url'] = Url::fromUserInput('/group/' . $group->id() . '/join');
+    $variables['group_operations_url'] = Url::fromRoute('entity.group.join', ['group' => $group->id()]);
   }
   // If the group type is a closed_group.
   elseif ($group_type_id == 'closed_group' && !$group->hasPermission('manage all groups', $account)) {
     // Users can only be invited.
-    $variables['group_operations_url'] = Url::fromUserInput('/group/' . $group->id() . '/join');
+    $variables['group_operations_url'] = Url::fromRoute('entity.group.join', ['group' => $group->id()]);
     $variables['closed_group'] = TRUE;
     $variables['cta'] = t('Invitation only');
   }
@@ -269,24 +266,9 @@ function social_group_preprocess_group(array &$variables) {
       }
     }
   }
+
   // Count number of group members.
-  $members = $group->getMembers();
-  $profile_storage = \Drupal::entityTypeManager()->getStorage('profile');
-
-  $members_count = 0;
-  if ($members && $profile_storage) {
-    foreach ($members as $member) {
-      $member_account = $member->getUser();
-      if ($member_account instanceof User) {
-        $member_profile = $profile_storage->loadByUser($member_account, 'profile');
-        if ($member_profile instanceof Profile) {
-          $members_count++;
-        }
-      }
-    }
-  }
-  $variables['group_members'] = $members_count;
-
+  $variables['group_members'] = count($group->getMembers());
 }
 
 /**
@@ -530,7 +512,7 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
 
       // Disable all group types that can't be edited. Because they don't have
       // a visibility.
-      foreach ($form['group_type']['#options'] as $type => $label) {
+      foreach (array_keys($form['group_type']['#options']) as $type) {
         if (\Drupal::service('social_group.helper_service')->getDefaultGroupVisibility($type) === NULL) {
           $form['group_type'][$type] = [
             '#disabled' => TRUE,
@@ -1449,6 +1431,9 @@ function social_group_get_allowed_visibility_options_per_group_type($group_type_
       $visibility_options['group'] = FALSE;
       break;
   }
+
+  \Drupal::moduleHandler()->alter('social_group_allowed_visibilities', $visibility_options, $group_type_id);
+
   return $visibility_options;
 }
 
@@ -1486,6 +1471,10 @@ function social_group_views_query_alter(ViewExecutable $view, QueryPluginBase $q
   }
 
   $hiddens = $condition['operator'] == 'not in';
+
+  // Define the variable as array otherwise it can be interpreted as string
+  // And breaking the code below.
+  $condition['value'] = [];
 
   /** @var \Drupal\group\Entity\GroupTypeInterface $group_type */
   foreach (GroupType::loadMultiple() as $group_type) {
@@ -1591,6 +1580,53 @@ function social_group_social_user_account_header_account_links(array $context) {
       'user' => $context['user']->id(),
     ])->toRenderArray(),
   ];
+}
+
+/**
+ * Determine whether a user can see groups of a given type as an outsider.
+ *
+ * @param string $type
+ *   The group type to check.
+ * @param \Drupal\Core\Session\AccountInterface $account
+ *   The user to check for.
+ *
+ * @return bool
+ *   Whether the user is allowed to view groups of the given type.
+ */
+function social_group_can_view_groups_of_type(string $type, AccountInterface $account) : bool {
+  $group_type = GroupType::load($type);
+
+  // If the group type doesn't exist then the user can't see the group type.
+  if ($group_type === FALSE) {
+    return FALSE;
+  }
+
+  // Anonymous users have a special role.
+  if ($account->isAnonymous()) {
+    /** @var \Drupal\group\Entity\GroupRoleInterface $role */
+    return $group_type->getAnonymousRole()->hasPermission('view group');
+  }
+
+  // The service that keeps platform roles in sync with group roles for
+  // outsiders.
+  /** @var \Drupal\group\GroupRoleSynchronizerInterface $group_role_synchroniser */
+  $group_role_synchroniser = \Drupal::service('group_role.synchronizer');
+  /** @var \Drupal\group\Entity\GroupRoleInterface[] $group_roles */
+  $group_roles = $group_type->getRoles();
+
+  $user_roles = $account->getRoles(TRUE);
+
+  // Check each role this user has whether its group counterpart has the correct
+  // permission.
+  foreach ($user_roles as $role) {
+    $group_role = $group_role_synchroniser->getGroupRoleId($type, $role);
+    if ($group_roles[$group_role]->hasPermission('view group')) {
+      return TRUE;
+    }
+  }
+
+  // The user has no role that can view the group type.
+  return FALSE;
 }
 
 /**
