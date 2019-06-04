@@ -102,7 +102,7 @@ class SocialGroupViewsBulkOperationsBulkForm extends GroupViewsBulkOperationsBul
     $form['#attached']['library'][] = 'social_group/views_bulk_operations.frontUi';
 
     // Render page title.
-    $count = count($this->tempStoreData['list']);
+    $count = isset($this->tempStoreData['list']) ? count($this->tempStoreData['list']) : 0;
     $title = $this->formatPlural($count, '<b>@count Member</b> is selected', '<b>@count Members</b> are selected');
 
     $wrapper['multipage']['#title'] = [
@@ -117,7 +117,7 @@ class SocialGroupViewsBulkOperationsBulkForm extends GroupViewsBulkOperationsBul
     $wrapper['multipage']['list']['#title'] = $this->t('See selected members on other pages');
 
     // We don't show the multipage list if there are no items selected.
-    if (count($wrapper['multipage']['list']['#items']) < 1) {
+    if (isset($wrapper['multipage']['list']['#items']) && count($wrapper['multipage']['list']['#items']) < 1) {
       unset($wrapper['multipage']['list']);
     }
 
