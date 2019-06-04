@@ -1434,6 +1434,9 @@ function social_group_get_allowed_visibility_options_per_group_type($group_type_
         $group = _social_group_get_current_group();
       }
       if ($group !== NULL) {
+        $visibility_options['public'] = FALSE;
+        $visibility_options['community'] = FALSE;
+        $visibility_options['group'] = FALSE;
         // Try to retrieve allowed options from Group directly.
         $allowed_options = $group->get('field_group_allowed_visibility')->getValue();
         foreach ($allowed_options as $option) {
