@@ -96,7 +96,7 @@ function social_comment_tokens($type, $tokens, array $data, array $options, Bubb
               ->load($target_id);
 
             if (!empty($comment) && $comment->getEntityTypeId() == 'comment') {
-              /** @var \Drupal\Core\Entity\Entity $entity */
+              /** @var \Drupal\Core\Entity\EntityBase $entity */
               $entity = $comment->getCommentedEntity();
               if (!empty($entity)) {
                 if ($entity instanceof PostInterface) {
