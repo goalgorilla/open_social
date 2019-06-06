@@ -79,6 +79,7 @@ projects[profile][type] = module
 projects[profile][version] = 1.0-rc4
 projects[r4032login][type] = module
 projects[r4032login][version] = 1.1
+projects[r4032login][patch][] = "https://www.drupal.org/files/issues/2018-11-01/3010747-3-perform-access-check-as-an-user.patch"
 projects[redirect][type] = module
 projects[redirect][version] = 1.3
 projects[search_api][type] = module
