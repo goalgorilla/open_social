@@ -5,7 +5,11 @@
  * The Social Magic Login module.
  */
 
+use Drupal\Component\Utility\Crypt;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Render\BubbleableMetadata;
+use Drupal\Core\Routing\RedirectDestinationInterface;
+use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\Url;
 use Drupal\user\UserInterface;
 
@@ -60,6 +64,49 @@ function social_magic_login_tokens($type, $tokens, array $data, array $options, 
   }
 
   return $replacements;
+}
+
+/**
+ * Implements hook_data_policy_destination_alter().
+ */
+function social_magic_login_data_policy_destination_alter(AccountProxyInterface $current_user, RedirectDestinationInterface $destination) {
+  $final_destination = '';
+  // Get the destination for the redirect result.
+  $param_destination = \Drupal::routeMatch()->getParameter('destination');
+  if (isset($param_destination)) {
+    $final_destination = base64_decode($param_destination);
+  }
+
+  // Check if the user has a password, if this is the case, don't do anything.
+  // When the user doesn't have a password, we should redirect the user
+  // to user.edit.form. and make sure that form gets the right destination
+  // from $destination.
+  if (!$current_user->isAnonymous()) {
+    /** @var EntityTypeManagerInterface $user_storage */
+    $user_storage = \Drupal::service('entity_type.manager')->getStorage('user');
+    /** @var \Drupal\user\UserInterface $account */
+    $account = $user_storage->load($current_user->id());
+    if (NULL === $account->getPassword()) {
+      // This mirrors the UserController::resetPassLogin redirect which
+      // allows a user to set a password without the current password check.
+      $token = Crypt::randomBytesBase64(55);
+      $_SESSION['pass_reset_' . $account->id()] = $token;
+      $url = Url::fromRoute('entity.user.edit_form',
+        ['user' => $account->id()],
+        [
+          'query' => [
+            'pass-reset-token' => $token,
+            'destination' => $final_destination,
+          ]
+        ]
+      );
+      $url->setAbsolute(FALSE);
+      // Set the new destination.
+      $destination->set($url->toString());
+    }
+  }
+
+  return $destination;
 }
 
 /**
