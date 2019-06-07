@@ -81,7 +81,7 @@ class MagicLoginController extends ControllerBase {
     // Get the current user and check if this user is authenticated and same as
     // the user for the login link.
     $current_user = $this->currentUser();
-    if ($current_user->isAuthenticated() && $current_user->id() != $uid) {
+    if ($current_user->isAuthenticated() && $current_user->id() !== $uid) {
       $this->messenger()
         ->addWarning($this->t('Another user (%other_user) is already logged into the site on this computer, but you tried to use a one-time link for user %resetting_user. Please <a href=":logout">log out</a> and try using the link again.',
           [
