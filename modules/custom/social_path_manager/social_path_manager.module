@@ -252,8 +252,9 @@ function _social_path_manager_update_alias(EntityInterface $entity, $op, $bulk =
             }
           }
 
-          // Clear cache of the group tag and route_match.
-          \Drupal::service('cache_tags.invalidator')->invalidateTags(['group:' . $entity->id(), 'route_match']);
+          // Clear cache of the group tag and rebuild routes.
+          \Drupal::service('cache_tags.invalidator')->invalidateTags(['group:' . $entity->id()]);
+          \Drupal::service('router.builder')->rebuild();
         }
         break;
 
