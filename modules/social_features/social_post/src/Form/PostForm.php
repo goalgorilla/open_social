@@ -215,7 +215,7 @@ class PostForm extends ContentEntityForm {
 
     // When a post is being edited we configure the visibility to be shown as a
     // read-only value.
-    if ($this->operation == 'edit') {
+    if ($this->operation === 'edit') {
       /** @var \Drupal\social_post\Entity\Post $post */
       $post = $this->entity;
       $form['#post_id'] = $post->id();
