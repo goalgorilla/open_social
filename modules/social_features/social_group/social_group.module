@@ -12,6 +12,7 @@ use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\HtmlCommand;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Field\FieldFilteredMarkup;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\group\Entity\Group;
 use Drupal\Core\Form\FormStateInterface;
@@ -38,6 +39,31 @@ use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\social_group\GroupContentVisibilityUpdate;
 use Drupal\Core\Messenger\MessengerInterface;
+
+/**
+ * Implements hook_theme().
+ */
+function social_group_theme() {
+  return [
+    'group_settings_help' => [
+      'variables' => ['group_type' => NULL, 'join_method' => NULL, 'allowed_visibility' => NULL],
+    ],
+  ];
+}
+
+/**
+ * Prepares variables for group settings help text templates.
+ *
+ * Default template: group-settings-help.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - group_type: The group type.
+ *   - join_method: The join methods.
+ *   - allowed_visibility: The allowed visibilities.
+ */
+function template_preprocess_group_settings_help(&$variables) {
+}
 
 /**
  * Implements hook_form_FORM_ID_alter().
@@ -200,18 +226,28 @@ function _social_group_get_group_labels() {
 function social_group_preprocess_group(array &$variables) {
   /** @var \Drupal\group\Entity\GroupInterface $group */
   $group = $variables['group'];
+  $variables['title'] = $group->label();
   $variables['joined'] = FALSE;
   $variables['closed_group'] = FALSE;
   $variables['cta'] = '';
   $variables['closed_group_lock'] = $variables['secret_group_shield'] = FALSE;
 
-  $account = \Drupal::currentUser();
-
   $group_type_id = $group->getGroupType()->id();
-
-  if ($group_type_id === 'closed_group') {
+  if (!array_key_exists('direct', _social_group_get_join_methods($group))) {
     $variables['closed_group_lock'] = TRUE;
   }
+  $variables['group_type_id'] = $group_type_id;
+  $variables['group_type'] = $group->getGroupType()->label();
+
+  $group_settings_help = [
+    '#theme' => 'group_settings_help',
+    '#group_type' => $group->getGroupType()->label(),
+    '#join_method' => _social_group_get_join_methods($group),
+    '#allowed_visibility' => _social_group_get_allowed_visibility($group),
+  ];
+  $variables['group_settings_help'] = \Drupal::service('renderer')->renderPlain($group_settings_help);
+
+  $account = \Drupal::currentUser();
 
   // Set joined to true for teaser when current logged in
   // user is member of the group.
@@ -306,6 +342,119 @@ function social_group_preprocess_group__hero(array &$variables) {
       ],
     ])->toString();
   }
+
+  $group_settings_help = [
+    '#theme' => 'group_settings_help',
+    '#group_type' => $group->getGroupType()->label(),
+    '#join_method' => _social_group_get_join_methods($group),
+    '#allowed_visibility' => _social_group_get_allowed_visibility($group),
+  ];
+  $variables['group_settings_help'] = \Drupal::service('renderer')->renderPlain($group_settings_help);
+}
+
+/**
+ * Get the join methods of a group.
+ *
+ * @param GroupInterface $group
+ *
+ * @return array
+ *   Returns join methods of a group.
+ */
+function _social_group_get_join_methods(GroupInterface $group) {
+  $group_type = $group->getGroupType();
+  $group_type_id = $group_type->id();
+  $join_methods = [];
+
+  // Get join method based on group type. TODO get it programmatically.
+  switch ($group_type_id) {
+    case 'secret_group':
+    case 'closed_group':
+      $join_methods = [
+        'added' => t('Be added by group managers'),
+      ];
+      break;
+
+    case 'public_group':
+    case 'open_group':
+      $join_methods = [
+        'direct' => t('Free to join'),
+        'added' => t('Be added by group managers'),
+      ];
+      break;
+
+    case 'flexible_group':
+      // Try to retrieve join methods from Group directly.
+      $allowed_options = $group->get('field_group_allowed_join_method')
+        ->getValue();
+      foreach ($allowed_options as $option) {
+        $value = $option['value'];
+        if ($value === 'direct') {
+          $join_methods['direct'] = t('Free to join');
+        }
+        if ($value === 'added') {
+          $join_methods['added'] = t('Be added by group managers');
+        }
+      }
+      break;
+  }
+
+  return $join_methods;
+}
+
+/**
+ * Get the allowed visibility of a group.
+ *
+ * @param GroupInterface $group
+ *
+ * @return array
+ *   Returns allowed visibility of a group.
+ */
+function _social_group_get_allowed_visibility(GroupInterface $group) {
+  $group_type = $group->getGroupType();
+  $group_type_id = $group_type->id();
+  $allowed_visibility = [];
+
+  // Get allowed visibility based on group type. TODO get it programmatically.
+  switch ($group_type_id) {
+    case 'secret_group':
+    case 'closed_group':
+      $allowed_visibility = [
+        'group' => t('Group members'),
+      ];
+      break;
+
+    case 'open_group':
+      $allowed_visibility = [
+        'community' => t('Community'),
+      ];
+      break;
+
+    case 'public_group':
+      $allowed_visibility = [
+        'public' => t('Public'),
+      ];
+      break;
+
+    case 'flexible_group':
+      // Try to retrieve allowed visibility from Group directly.
+      $allowed_options = $group->get('field_group_allowed_visibility')
+        ->getValue();
+      foreach ($allowed_options as $option) {
+        $value = $option['value'];
+        if ($value === 'public') {
+          $allowed_visibility['public'] = t('Public');
+        }
+        if ($value === 'community') {
+          $allowed_visibility['community'] = t('Community');
+        }
+        if ($value === 'group') {
+          $allowed_visibility['group'] = t('Group members');
+        }
+      }
+      break;
+  }
+
+  return $allowed_visibility;
 }
 
 /**
