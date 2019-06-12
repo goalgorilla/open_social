@@ -7,6 +7,7 @@ use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Routing\Access\AccessInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\group\Entity\GroupTypeInterface;
 use Symfony\Component\Routing\Route;
 
 /**
@@ -44,17 +45,20 @@ class FlexibleGroupMemberAccessCheck implements AccessInterface {
       return AccessResult::neutral();
     }
 
+    $type = $group->getGroupType();
     // Don't interfere if the group isn't a flexible group.
-    $group = $parameters->get('group');
-    if ($group instanceof GroupInterface && $group->getGroupType() !== 'flexible_group') {
+    if (!$type instanceof GroupTypeInterface && $type->id() !== 'flexible_group') {
       return AccessResult::neutral();
     }
 
+    // So we have a flexible group, now lets make our access happen.
     $x = 1;
+
+    return AccessResult::neutral();
 
     // Only allow access if the user is a member of the group and _flexible_group_member
     // is set to TRUE or the other way around and the settings are allowing it.
-    return AccessResult::allowedIf($group->getMember($account) xor !$member_only);
+//    return AccessResult::allowedIf($group->getMember($account) xor !$member_only);
   }
 
 }

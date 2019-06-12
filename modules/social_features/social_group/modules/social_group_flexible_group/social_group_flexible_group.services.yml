@@ -1,9 +1,9 @@
 services:
-  flexible_group_access.group.member:
-    class: 'Drupal\social_group_flexible_group\Access\FlexibleGroupMemberAccessCheck'
-    tags:
-      - { name: 'access_check', applies_to: '_group_member' }
+#  flexible_group_access.group.member:
+#    class: 'Drupal\social_group_flexible_group\Access\FlexibleGroupMemberAccessCheck'
+#    tags:
+#      - { name: 'access_check', applies_to: '_group_member' }
   flexible_group_access.group.permission:
-    class: 'Drupal\social_group_flexible_group\Access\FlexibleGroupPermissionAccessCheck'
+    class: 'Drupal\social_group_flexible_group\Access\FlexibleGroupJoinPermissionAccessCheck'
     tags:
       - { name: 'access_check', applies_to: '_group_permission' }
