@@ -1,0 +1,73 @@
+<?php
+
+/**
+ * @file
+ * The Social Magic Login module.
+ */
+
+use Drupal\Core\Render\BubbleableMetadata;
+use Drupal\Core\Url;
+use Drupal\user\UserInterface;
+
+/**
+ * Implements hook_token_info().
+ */
+function social_magic_login_token_info() {
+  $types['auto-login'] = [
+    'name' => t('Automatic login'),
+    'description' => t('Login tokens related to individual user accounts for easy access.'),
+    'needs-data' => 'user',
+  ];
+
+  $tokens['auto-login']['group-destination'] = [
+    'name' => t('Group destination'),
+  ];
+
+  return [
+    'types' => $types,
+    'tokens' => $tokens,
+  ];
+}
+
+/**
+ * Implements hook_tokens().
+ *
+ * @throws \Drupal\Core\Entity\EntityMalformedException
+ */
+function social_magic_login_tokens($type, $tokens, array $data, array $options, BubbleableMetadata $bubbleable_metadata) {
+  $url_options = ['absolute' => TRUE];
+  $replacements = [];
+
+  if ($type === 'auto-login' && !empty($data['user'])) {
+    /** @var \Drupal\user\UserInterface $account */
+    $account = $data['user'];
+
+    foreach ($tokens as $token => $original) {
+      // This is the default variation on the chained tokens handled below.
+      if ('group-destination' === $token) {
+        /** @var \Drupal\group\Entity\GroupInterface $group */
+        $group = &$data['group'];
+
+        $destination = $group->toUrl('canonical', [
+          'absolute' => FALSE,
+        ])->toString();
+
+        $url = social_magic_login_url_create($account, $destination, $url_options);
+
+        $replacements[$original] = $url->toString();
+      }
+    }
+  }
+
+  return $replacements;
+}
+
+/**
+ * Wrapper method for Service MagicUrlCreate.
+ *
+ * @see \Drupal\social_magic_login\Service\MagicUrl::create
+ */
+function social_magic_login_url_create(UserInterface $account, string $destination, array $options) : ?Url {
+  $magic_url_service = \Drupal::service('social_magic_login.create_url');
+  return $magic_url_service->create($account, $destination, $options);
+}
