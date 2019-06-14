@@ -61,53 +61,35 @@ class FlexibleGroupJoinPermissionAccessCheck implements AccessInterface {
 //      'field_group_allowed_visibility',
 //    ];
     // List of permissions affected by the join method.
-    $permissions = [
+    $permissions_list = [
       'join group',
       'view group_membership content',
       'administer members',
       'view group',
+      'view group stream page',
     ];
 
-    // @TODO implement hook so we can add or remove permissions from this list.
-    // Check all permissions that could be affected.
-    foreach ($permissions as $affected_permission) {
-      if ($permission !== $affected_permission) {
-        // Not one of our permissions so we don't really care.
-        // Allow to conjunct the permissions with OR ('+') or AND (',').
-        return AccessResult::neutral();
-      }
-    }
-
-    // Lets grab all possible join methods.
-    $join_methods = $group->get('field_group_allowed_join_method')->getValue();
-
-    // This permission is affected, deny access to all users if there is no
-    // join method set.
-    if ($join_methods === NULL) {
-      return AccessResult::forbidden()->addCacheableDependency($group);
+    // Not one of our permissions being checked so we don't care.
+    if (!in_array($permission, $permissions_list, FALSE)) {
+      return AccessResult::neutral();
     }
 
     // AN Users aren't allowed anything.
     if (!$account->isAuthenticated()) {
-      return AccessResult::forbidden()->addCacheableDependency($group);
+      return AccessResult::forbidden();
     }
 
-    $direct_as_option = in_array('direct', array_column($join_methods, 'value'), FALSE);
-//    $added_option = in_array('added', array_column($join_methods, 'value'), FALSE);
-
     // Outsider LU are only allowed when Direct is an option.
-    if (!$direct_as_option && $account->isAuthenticated()) {
-      $allowed = $this->calculateOutsiderPermission($permission, $group, $account);
-
-      if (!$allowed) {
-        return AccessResult::forbidden()->addCacheableDependency($group);
-      }
+    $allowed = $this->calculateJoinPermission($permission, $group, $account);
+    if (!$allowed) {
+      return AccessResult::forbidden()->addCacheableDependency($group);
     }
 
     // We allow it but lets add the group as dependency to the cache
     // now because field value might be editted and cache should
     // clear accordingly.
-    return AccessResult::allowed()->addCacheableDependency($group);
+    return GroupAccessResult::allowedIfHasGroupPermission($group, $account, $permission)
+      ->addCacheableDependency($group);
   }
 
   /**
@@ -123,23 +105,18 @@ class FlexibleGroupJoinPermissionAccessCheck implements AccessInterface {
    * @return bool
    *   FALSE if its not allowed.
    */
-  private function calculateOutsiderPermission($permission, Group $group, AccountInterface $account) {
-    // User has administrative permissions so we can allow it.
-    // Mostly SM+.
-    if (($permission === 'administer members' || $permission === 'view group_membership content')
-        && $account->hasPermission('administer members')) {
-      return TRUE;
-    }
-    // User is already a member lets not give them access to join again.
-    if ($permission === 'join group' && !$group->getMember($account)) {
-      return TRUE;
+  private function calculateJoinPermission($permission, Group $group, AccountInterface $account) {
+    // Lets grab all possible join methods.
+    $join_methods = $group->get('field_group_allowed_join_method')->getValue();
+    $direct_option = in_array('direct', array_column($join_methods, 'value'), FALSE);
+    $added_option = in_array('added', array_column($join_methods, 'value'), FALSE);
+
+    // There is no direct join method so it's not allowed to go to /join.
+    if ($permission === 'join group' && !$direct_option) {
+      return FALSE;
     }
 
-    if ($permission === 'view group') {
-      return TRUE;
-    }
-
-    return FALSE;
+    return TRUE;
   }
 
 }
