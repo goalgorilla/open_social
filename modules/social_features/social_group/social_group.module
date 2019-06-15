@@ -261,6 +261,13 @@ function social_group_preprocess_group(array &$variables) {
   elseif ($group->hasPermission('join group', $account)) {
     // @todo switch this to get URL from routes correctly.
     $variables['group_operations_url'] = Url::fromUserInput('/group/' . $group->id() . '/join');
+    if ($group_type_id === 'flexible_group') {
+      $join_methods = $group->get('field_group_allowed_join_method')->getValue();
+      $direct_option = in_array('direct', array_column($join_methods, 'value'), FALSE);
+      if (!$direct_option) {
+        $variables['group_operations_url'] = '';
+      }
+    }
   }
   // If the group type is a closed_group.
   elseif ($group_type_id == 'closed_group' && !$group->hasPermission('manage all groups', $account)) {
