@@ -22,7 +22,6 @@ class Route extends RouteSubscriberBase {
       'view.group_manage_members.page_group_manage_members' => 'join direct',
       'view.group_members.page_group_members' => 'join direct',
       'entity.group_content.add_form' => 'join added',
-      'entity.group.canonical' => 'join direct',
     ];
 
     foreach ($join_routes as $name => $argument) {
