@@ -61,7 +61,7 @@ class FlexibleGroupJoinPermissionAccessCheck implements AccessInterface {
     }
 
     // Outsider LU are only allowed when Direct is an option.
-    $allowed = $this->calculateJoinPermission($permission, $group, $account);
+    $allowed = $this->calculateJoinPermission($permission, $group, $account, $route_match);
     if (!$allowed) {
       return AccessResult::forbidden()->addCacheableDependency($group);
     }
@@ -85,13 +85,22 @@ class FlexibleGroupJoinPermissionAccessCheck implements AccessInterface {
    * @return bool
    *   FALSE if its not allowed.
    */
-  private function calculateJoinPermission($permission, Group $group, AccountInterface $account) {
+  private function calculateJoinPermission($permission, Group $group, AccountInterface $account, RouteMatchInterface $route_match) {
     $direct_option = social_group_flexible_group_can_join_directly($group);
     $added_option = social_group_flexible_group_can_be_added($group);
 
     // Users with this permission are always able to do so.
     if ($account->hasPermission('manage all groups')) {
       return TRUE;
+    }
+
+    // For the Members tabs we need to ensure AN LU and Group member.
+    if ($route_match->getRouteName() === 'view.group_manage_members.page_group_manage_members' ||
+      $route_match->getRouteName() === 'view.group_members.page_group_members') {
+      // LU Can only see members tabs when joining directly is enabled.
+      if (!$direct_option && $account->isAuthenticated() && !$group->getMember($account)) {
+        return FALSE;
+      }
     }
 
     // There is no direct join method so it's not allowed to go to /join.

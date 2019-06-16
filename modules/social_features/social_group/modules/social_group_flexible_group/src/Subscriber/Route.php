@@ -20,6 +20,7 @@ class Route extends RouteSubscriberBase {
     // is it on content visibility or join method.
     $join_routes = [
       'view.group_manage_members.page_group_manage_members' => 'join direct',
+      'view.group_members.page_group_members' => 'join direct',
       'entity.group_content.add_form' => 'join added',
       'entity.group.canonical' => 'join direct',
     ];
