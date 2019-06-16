@@ -106,13 +106,15 @@ class FlexibleGroupJoinPermissionAccessCheck implements AccessInterface {
    *   FALSE if its not allowed.
    */
   private function calculateJoinPermission($permission, Group $group, AccountInterface $account) {
-    // Lets grab all possible join methods.
-    $join_methods = $group->get('field_group_allowed_join_method')->getValue();
-    $direct_option = in_array('direct', array_column($join_methods, 'value'), FALSE);
-    $added_option = in_array('added', array_column($join_methods, 'value'), FALSE);
+    $direct_option = social_group_flexible_group_can_join_directly($group);
 
     // There is no direct join method so it's not allowed to go to /join.
     if ($permission === 'join group' && !$direct_option) {
+      return FALSE;
+    }
+
+    // Access to the group information || group stream page.
+    if (($permission === 'view group' || $permission === 'view group stream page') && !$direct_option) {
       return FALSE;
     }
 
