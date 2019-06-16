@@ -89,6 +89,8 @@ class FlexibleGroupJoinPermissionAccessCheck implements AccessInterface {
     $direct_option = social_group_flexible_group_can_join_directly($group);
     $added_option = social_group_flexible_group_can_be_added($group);
 
+    $x = 1;
+
     // Users with this permission are always able to do so.
     if ($account->hasPermission('manage all groups')) {
       return TRUE;
@@ -104,7 +106,7 @@ class FlexibleGroupJoinPermissionAccessCheck implements AccessInterface {
     }
 
     // There is no direct join method so it's not allowed to go to /join.
-    if ($permission === 'join direct' && !$direct_option) {
+    if ($permission === 'join direct' && !$direct_option && !$group->getMember($account)) {
       return FALSE;
     }
 
