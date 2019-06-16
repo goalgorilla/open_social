@@ -13,7 +13,7 @@ use Symfony\Component\Routing\Route;
 /**
  * Determines access to routes based flexible_group membership and settings.
  */
-class FlexibleGroupMemberAccessCheck implements AccessInterface {
+class FlexibleGroupContentAccessCheck implements AccessInterface {
 
   /**
    * Checks access.
@@ -29,9 +29,12 @@ class FlexibleGroupMemberAccessCheck implements AccessInterface {
    *   The access result.
    */
   public function access(Route $route, RouteMatchInterface $route_match, AccountInterface $account) {
-    $member_only = $route->getRequirement('_group_member') === 'TRUE';
+    $permission = $route->getRequirement('_flexible_group_content_visibility');
 
-    $x = 4;
+    // Don't interfere if no permission was specified.
+    if ($permission === NULL) {
+      return AccessResult::neutral();
+    }
 
     // Don't interfere if no group was specified.
     $parameters = $route_match->getParameters();
@@ -47,18 +50,30 @@ class FlexibleGroupMemberAccessCheck implements AccessInterface {
 
     $type = $group->getGroupType();
     // Don't interfere if the group isn't a flexible group.
-    if (!$type instanceof GroupTypeInterface && $type->id() !== 'flexible_group') {
+    if ($type instanceof GroupTypeInterface && $type->id() !== 'flexible_group') {
       return AccessResult::neutral();
     }
 
-    // So we have a flexible group, now lets make our access happen.
-    $x = 1;
+    // AN Users aren't allowed anything if Public isn't an option.
+    if (!$account->isAuthenticated() && !social_group_flexible_group_public_enabled($group)) {
+      return AccessResult::forbidden();
+    }
 
-    return AccessResult::neutral();
+    // If User is a member we can also rely on Group to take permissions.
+    if ($group->getMember($account) !== FALSE) {
+      return AccessResult::allowed()->addCacheableDependency($group);
+    }
 
-    // Only allow access if the user is a member of the group and _flexible_group_member
-    // is set to TRUE or the other way around and the settings are allowing it.
-//    return AccessResult::allowedIf($group->getMember($account) xor !$member_only);
+    // It's a non member but Community isn't enabled.
+    // No access for you.
+    if ($account->isAuthenticated() && !social_group_flexible_group_community_enabled($group)) {
+      return AccessResult::forbidden()->addCacheableDependency($group);
+    }
+
+    // We allow it but lets add the group as dependency to the cache
+    // now because field value might be edited and cache should
+    // clear accordingly.
+    return AccessResult::allowed()->addCacheableDependency($group);
   }
 
 }

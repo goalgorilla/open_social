@@ -74,6 +74,63 @@ function social_group_flexible_group_can_be_added(Group $group) {
 }
 
 /**
+ * Check if public is enabled as visibility options.
+ *
+ * @param \Drupal\group\Entity\Group $group
+ *   The group we are checking.
+ *
+ * @return bool
+ *   TRUE when users can join.
+ */
+function social_group_flexible_group_public_enabled(Group $group) {
+  $visibility_options = $group->get('field_group_allowed_visibility')->getValue();
+
+  if (!in_array('public', array_column($visibility_options, 'value'), FALSE)) {
+    return FALSE;
+  }
+
+  return TRUE;
+}
+
+/**
+ * Check if community is enabled as visibility options.
+ *
+ * @param \Drupal\group\Entity\Group $group
+ *   The group we are checking.
+ *
+ * @return bool
+ *   TRUE when users can join.
+ */
+function social_group_flexible_group_community_enabled(Group $group) {
+  $visibility_options = $group->get('field_group_allowed_visibility')->getValue();
+
+  if (!in_array('community', array_column($visibility_options, 'value'), FALSE)) {
+    return FALSE;
+  }
+
+  return TRUE;
+}
+
+/**
+ * Check if members is enabled as visibility options.
+ *
+ * @param \Drupal\group\Entity\Group $group
+ *   The group we are checking.
+ *
+ * @return bool
+ *   TRUE when users can join.
+ */
+function social_group_flexible_group_members_enabled(Group $group) {
+  $visibility_options = $group->get('field_group_allowed_visibility')->getValue();
+
+  if (!in_array('group', array_column($visibility_options, 'value'), FALSE)) {
+    return FALSE;
+  }
+
+  return TRUE;
+}
+
+/**
  * Implements hook_menu_local_actions_alter().
  */
 function social_group_flexible_group_menu_local_actions_alter(&$local_actions) {

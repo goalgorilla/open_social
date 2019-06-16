@@ -1,5 +1,14 @@
 services:
   social_group_flexible_group_access.group.permission:
+    class: 'Drupal\social_group_flexible_group\Access\FlexibleGroupContentAccessCheck'
+    tags:
+      - { name: 'access_check', applies_to: '_flexible_group_content_visibility', priority: -99 }
+  social_group_flexible_group_access.flexible_group.permission:
     class: 'Drupal\social_group_flexible_group\Access\FlexibleGroupJoinPermissionAccessCheck'
     tags:
-      - { name: 'access_check', applies_to: '_group_permission', priority: 199 }
+      - { name: 'access_check', applies_to: '_flexible_group_join_permission', priority: -99 }
+
+  social_group_flexible_group_access.route_subscriber:
+    class: Drupal\social_group_flexible_group\Subscriber\Route
+    tags:
+      - { name: event_subscriber }
