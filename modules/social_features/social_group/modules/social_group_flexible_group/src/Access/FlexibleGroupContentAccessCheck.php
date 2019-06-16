@@ -64,6 +64,11 @@ class FlexibleGroupContentAccessCheck implements AccessInterface {
       return AccessResult::allowed()->addCacheableDependency($group);
     }
 
+    // A user with this access can definitely do everything.
+    if ($account->hasPermission('manage all groups')) {
+      return AccessResult::allowed();
+    }
+
     // It's a non member but Community isn't enabled.
     // No access for you.
     if ($account->isAuthenticated() && !social_group_flexible_group_community_enabled($group)) {
