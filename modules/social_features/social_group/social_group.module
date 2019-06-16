@@ -12,7 +12,6 @@ use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\HtmlCommand;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
-use Drupal\Core\Field\FieldFilteredMarkup;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\group\Entity\Group;
 use Drupal\Core\Form\FormStateInterface;
@@ -46,7 +45,11 @@ use Drupal\Core\Messenger\MessengerInterface;
 function social_group_theme() {
   return [
     'group_settings_help' => [
-      'variables' => ['group_type' => NULL, 'join_method' => NULL, 'allowed_visibility' => NULL],
+      'variables' => [
+        'group_type' => NULL,
+        'join_method' => NULL,
+        'allowed_visibility' => NULL
+      ],
     ],
   ];
 }
@@ -62,7 +65,7 @@ function social_group_theme() {
  *   - join_method: The join methods.
  *   - allowed_visibility: The allowed visibilities.
  */
-function template_preprocess_group_settings_help(&$variables) {
+function template_preprocess_group_settings_help(array &$variables) {
 }
 
 /**
@@ -362,7 +365,8 @@ function social_group_preprocess_group__hero(array &$variables) {
 /**
  * Get the join methods of a group.
  *
- * @param GroupInterface $group
+ * @param \Drupal\group\Entity\GroupInterface $group
+ *   the Group interface.
  *
  * @return array
  *   Returns join methods of a group.
@@ -411,7 +415,8 @@ function _social_group_get_join_methods(GroupInterface $group) {
 /**
  * Get the allowed visibility of a group.
  *
- * @param GroupInterface $group
+ * @param Drupal\group\Entity\GroupInterface $group
+ *   the Group interface.
  *
  * @return array
  *   Returns allowed visibility of a group.
