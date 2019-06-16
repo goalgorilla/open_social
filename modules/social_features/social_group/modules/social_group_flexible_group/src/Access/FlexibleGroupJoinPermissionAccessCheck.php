@@ -90,7 +90,7 @@ class FlexibleGroupJoinPermissionAccessCheck implements AccessInterface {
     $added_option = social_group_flexible_group_can_be_added($group);
 
     // Users with this permission are always able to do so.
-    if ($account->hasPermission('administer groups')) {
+    if ($account->hasPermission('manage all groups')) {
       return TRUE;
     }
 
