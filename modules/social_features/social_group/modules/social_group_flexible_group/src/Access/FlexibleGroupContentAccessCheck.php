@@ -2,6 +2,7 @@
 
 namespace Drupal\social_group_flexible_group\Access;
 
+use Drupal\group\Access\GroupAccessResult;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Routing\Access\AccessInterface;
@@ -30,6 +31,7 @@ class FlexibleGroupContentAccessCheck implements AccessInterface {
    */
   public function access(Route $route, RouteMatchInterface $route_match, AccountInterface $account) {
     $permission = $route->getRequirement('_flexible_group_content_visibility');
+    $group_permission = $route->getRequirement('_group_permission');
 
     // Don't interfere if no permission was specified.
     if ($permission === NULL) {
@@ -48,10 +50,18 @@ class FlexibleGroupContentAccessCheck implements AccessInterface {
       return AccessResult::neutral();
     }
 
+    // A user with this access can definitely do everything.
+    if ($account->hasPermission('manage all groups')) {
+      return AccessResult::allowed();
+    }
+
     $type = $group->getGroupType();
     // Don't interfere if the group isn't a flexible group.
     if ($type instanceof GroupTypeInterface && $type->id() !== 'flexible_group') {
-      return AccessResult::neutral();
+      if (!empty($group_permission)) {
+        GroupAccessResult::allowedIfHasGroupPermissions($group, $account, [$group_permission]);
+      }
+      return AccessResult::allowedIf(TRUE);
     }
 
     // AN Users aren't allowed anything if Public isn't an option.
@@ -64,14 +74,11 @@ class FlexibleGroupContentAccessCheck implements AccessInterface {
       return AccessResult::allowed()->addCacheableDependency($group);
     }
 
-    // A user with this access can definitely do everything.
-    if ($account->hasPermission('manage all groups')) {
-      return AccessResult::allowed();
-    }
-
     // It's a non member but Community isn't enabled.
-    // No access for you.
-    if ($account->isAuthenticated() && !social_group_flexible_group_community_enabled($group)) {
+    // No access for you only for the about page.
+    if ($account->isAuthenticated() && !social_group_flexible_group_community_enabled($group)
+      && $route_match->getRouteName() !== 'view.group_information.page_group_about'
+      && $route_match->getRouteName() !== 'entity.group.canonical') {
       return AccessResult::forbidden()->addCacheableDependency($group);
     }
 

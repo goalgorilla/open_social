@@ -18,3 +18,8 @@ services:
     arguments: ['@config.factory']
     tags:
       - { name: config.factory.override, priority: 10 }
+
+  social_group_flexible_group.redirect_subscriber:
+    class: Drupal\social_group_flexible_group\EventSubscriber\RedirectSubscriber
+    tags:
+      - { name: event_subscriber }

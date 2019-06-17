@@ -2,6 +2,7 @@
 
 namespace Drupal\social_group_flexible_group\Access;
 
+use Drupal\group\Access\GroupAccessResult;
 use Drupal\group\Entity\Group;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\Core\Access\AccessResult;
@@ -31,6 +32,7 @@ class FlexibleGroupJoinPermissionAccessCheck implements AccessInterface {
    */
   public function access(Route $route, RouteMatchInterface $route_match, AccountInterface $account) {
     $permission = $route->getRequirement('_flexible_group_join_permission');
+    $group_permission = $route->getRequirement('_group_permission');
 
     // Don't interfere if no permission was specified.
     if ($permission === NULL) {
@@ -49,10 +51,18 @@ class FlexibleGroupJoinPermissionAccessCheck implements AccessInterface {
       return AccessResult::neutral();
     }
 
+    // A user with this access can definitely do everything.
+    if ($account->hasPermission('manage all groups')) {
+      return AccessResult::allowed();
+    }
+
     $type = $group->getGroupType();
     // Don't interfere if the group isn't a flexible group.
     if ($type instanceof GroupTypeInterface && $type->id() !== 'flexible_group') {
-      return AccessResult::neutral();
+      if (!empty($group_permission)) {
+        GroupAccessResult::allowedIfHasGroupPermissions($group, $account, [$group_permission])->addCacheableDependency($group);
+      }
+      return AccessResult::allowedIf(TRUE);
     }
 
     // AN Users aren't allowed anything.
@@ -69,7 +79,7 @@ class FlexibleGroupJoinPermissionAccessCheck implements AccessInterface {
     // We allow it but lets add the group as dependency to the cache
     // now because field value might be editted and cache should
     // clear accordingly.
-    return AccessResult::allowed()->addCacheableDependency($group);
+    return AccessResult::allowedIfHasPermission($account, $group_permission)->addCacheableDependency($group);
   }
 
   /**
@@ -81,6 +91,8 @@ class FlexibleGroupJoinPermissionAccessCheck implements AccessInterface {
    *   The Group we are on.
    * @param \Drupal\Core\Session\AccountInterface $account
    *   The account to check access for.
+   * @param \Drupal\Core\Routing\RouteMatchInterface $route_match
+   *   The parametrized route.
    *
    * @return bool
    *   FALSE if its not allowed.
@@ -88,8 +100,6 @@ class FlexibleGroupJoinPermissionAccessCheck implements AccessInterface {
   private function calculateJoinPermission($permission, Group $group, AccountInterface $account, RouteMatchInterface $route_match) {
     $direct_option = social_group_flexible_group_can_join_directly($group);
     $added_option = social_group_flexible_group_can_be_added($group);
-
-    $x = 1;
 
     // Users with this permission are always able to do so.
     if ($account->hasPermission('manage all groups')) {
