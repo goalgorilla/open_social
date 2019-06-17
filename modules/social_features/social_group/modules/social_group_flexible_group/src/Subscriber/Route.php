@@ -26,23 +26,34 @@ class Route extends RouteSubscriberBase {
 
     foreach ($join_routes as $name => $argument) {
       if ($route = $collection->get($name)) {
-        $route->setRequirement('_flexible_group_join_permission', $argument);
+        $current = $route->getRequirements();
+        $requirements = array_merge($current, ['_flexible_group_join_permission' => $argument]);
+        $route->addRequirements($requirements);
       }
     }
 
     // Based on content visibility some routes need access.
     // The argument is there for a minimum content visibility.
     $content_routes = [
-      'entity.group.canonical' => 'public',
-      'view.group_information.page_group_about' => 'public',
-      'social_group.stream' => 'public',
-      'view.group_events.page_group_events' => 'public',
-      'view.group_topics.page_group_topics' => 'public',
+      'entity.group.canonical',
+      'view.group_information.page_group_about',
+      'view.group_members.page_group_members',
+      'social_group.stream',
+      'view.group_events.page_group_events',
+      'view.group_topics.page_group_topics',
     ];
 
-    foreach ($content_routes as $name => $argument) {
+    // Invoke implementations of
+    // hook_social_group_flexible_group_content_routes_alter().
+    // This to ensure extensions can also add their content tabs.
+    \Drupal::moduleHandler()
+      ->alter('social_group_flexible_group_content_routes', $content_routes);
+
+    foreach ($content_routes as $name) {
       if ($route = $collection->get($name)) {
-        $route->setRequirement('_flexible_group_content_visibility', $argument);
+        $current = $route->getRequirements();
+        $requirements = array_merge($current, ['_flexible_group_content_visibility' => 'public']);
+        $route->addRequirements($requirements);
       }
     }
   }
