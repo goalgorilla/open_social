@@ -6,8 +6,13 @@
  */
 
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\group\Entity\Group;
 use Drupal\group\Entity\GroupInterface;
+use Drupal\views\Plugin\views\query\QueryPluginBase;
+use Drupal\views\Plugin\views\row\EntityRow;
+use Drupal\views\ViewExecutable;
+use Drupal\views\Views;
 
 /**
  * Provide a method to alter array of group types used in open social.
@@ -146,5 +151,87 @@ function social_group_flexible_group_menu_local_actions_alter(&$local_actions) {
     && $group->getGroupType()->id() === 'flexible_group'
   ) {
     unset($local_actions['social_group.add_member']);
+  }
+}
+
+/**
+ * Determine whether a user can see flexible groups as outsider.
+ *
+ * @param \Drupal\group\Entity\Group $group
+ *   The group we are checking.
+ * @param \Drupal\Core\Session\AccountInterface $account
+ *   The user to check for.
+ *
+ * @return bool
+ *   Whether the user is allowed to view this flexible groups.
+ */
+function social_group_flexible_group_can_view_flexible_groups(Group $group, AccountInterface $account) : bool {
+  // Users who can manage all can manage everything.
+  if ($account->hasPermission('manage all groups')) {
+    return TRUE;
+  }
+
+  // If User is a member he can see it.
+  if ($group->getMember($account) !== FALSE) {
+    return TRUE;
+  }
+
+  // Outsiders can only see groups that have
+  // public / community enabled as visibility.
+  if ($account->isAuthenticated()
+    && !social_group_flexible_group_community_enabled($group)
+    && !social_group_flexible_group_public_enabled($group)) {
+    return FALSE;
+  }
+
+  return TRUE;
+}
+
+/**
+ * Implements hook_views_query_alter().
+ *
+ * Hide flexible groups everywhere when the current user cant see it.
+ */
+function social_group_flexible_group_views_query_alter(ViewExecutable $view, QueryPluginBase $query) {
+  if (empty($view->rowPlugin) || !($view->rowPlugin instanceof EntityRow) || $view->rowPlugin->getEntityTypeId() !== 'group') {
+    return;
+  }
+
+  $account = \Drupal::currentUser();
+
+  // Don't check, they can see it all.
+  if ($account->hasPermission('manage all groups')) {
+    return;
+  }
+
+  // Let's build our join with the allowed visibility data.
+  $configuration = [
+    'type'       => 'LEFT',
+    'table'      => 'group__field_group_allowed_visibility',
+    'field'      => 'entity_id',
+    'left_table' => 'groups_field_data',
+    'left_field' => 'id',
+    'operator'   => '=',
+  ];
+
+  $alias = 'groups_field_data_allowed_visibility';
+
+  /** @var \Drupal\views\Plugin\views\query\Sql $query */
+  $join = Views::pluginManager('join')->createInstance('standard', $configuration);
+  $rel = $query->addRelationship($alias, $join, 'groups_field_data');
+  $query->addTable('group__field_group_allowed_visibility', $rel, $join, $alias);
+
+  /** @var \Drupal\views\Plugin\views\query\Sql $query */
+  $group = count($query->where);
+
+  // Make sure we add one new group with a where clause.
+  while (isset($query->where[$group])) {
+    $group++;
+  }
+
+  // AN users can only see flexible groups that are public.
+  if ($account->isAnonymous()) {
+    $query->addWhere($group, 'field_group_allowed_visibility_value', 'public', '=');
+    return;
   }
 }
