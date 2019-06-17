@@ -33,7 +33,6 @@ use Drupal\image\Entity\ImageStyle;
 use Drupal\Core\Block\BlockPluginInterface;
 use Drupal\user\Entity\Role;
 use Drupal\user\Entity\User;
-use Drupal\profile\Entity\Profile;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\social_group\GroupContentVisibilityUpdate;
@@ -257,13 +256,12 @@ function social_group_preprocess_group(array &$variables) {
   if ($group->getMember($account)) {
     $variables['joined'] = TRUE;
     if ($group->hasPermission('leave group', $account)) {
-      // @todo switch this to get URL from routes correctly.
-      $variables['group_operations_url'] = Url::fromUserInput('/group/' . $group->id() . '/leave');
+      $variables['group_operations_url'] = Url::fromRoute('entity.group.leave', ['group' => $group->id()]);
     }
   }
   elseif ($group->hasPermission('join group', $account)) {
     // @todo switch this to get URL from routes correctly.
-    $variables['group_operations_url'] = Url::fromUserInput('/group/' . $group->id() . '/join');
+    $variables['group_operations_url'] = Url::fromRoute('entity.group.join', ['group' => $group->id()]);
     if ($group_type_id === 'flexible_group') {
       $join_methods = $group->get('field_group_allowed_join_method')->getValue();
       $direct_option = in_array('direct', array_column($join_methods, 'value'), FALSE);
@@ -275,7 +273,7 @@ function social_group_preprocess_group(array &$variables) {
   // If the group type is a closed_group.
   elseif ($group_type_id == 'closed_group' && !$group->hasPermission('manage all groups', $account)) {
     // Users can only be invited.
-    $variables['group_operations_url'] = Url::fromUserInput('/group/' . $group->id() . '/join');
+    $variables['group_operations_url'] = Url::fromRoute('entity.group.join', ['group' => $group->id()]);
     $variables['closed_group'] = TRUE;
     $variables['cta'] = t('Invitation only');
   }
@@ -315,24 +313,9 @@ function social_group_preprocess_group(array &$variables) {
       }
     }
   }
+
   // Count number of group members.
-  $members = $group->getMembers();
-  $profile_storage = \Drupal::entityTypeManager()->getStorage('profile');
-
-  $members_count = 0;
-  if ($members && $profile_storage) {
-    foreach ($members as $member) {
-      $member_account = $member->getUser();
-      if ($member_account instanceof User) {
-        $member_profile = $profile_storage->loadByUser($member_account, 'profile');
-        if ($member_profile instanceof Profile) {
-          $members_count++;
-        }
-      }
-    }
-  }
-  $variables['group_members'] = $members_count;
-
+  $variables['group_members'] = count($group->getMembers());
 }
 
 /**
