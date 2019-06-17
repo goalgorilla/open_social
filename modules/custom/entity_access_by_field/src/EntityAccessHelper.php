@@ -63,13 +63,15 @@ class EntityAccessHelper {
                     return 0;
                   }
                   if (!$account->hasPermission('view ' . $permission_label . ' content')) {
-                    // Lets verify if we are truly part of the group for flexible groups.
+                    // Lets verify if we are a member for flexible groups.
                     $groups = GroupContent::loadByEntity($node);
-                    $group = reset($groups)->getGroup();
-                    if ($group instanceof Group
-                      && !$group->getMember($account)
-                      && $group->getGroupType()->id() === 'flexible_group') {
-                      return 1;
+                    if (!empty($groups)) {
+                      $group = reset($groups)->getGroup();
+                      if ($group instanceof Group
+                        && !$group->getMember($account)
+                        && $group->getGroupType()->id() === 'flexible_group') {
+                        return 1;
+                      }
                     }
                     return 0;
                   }
