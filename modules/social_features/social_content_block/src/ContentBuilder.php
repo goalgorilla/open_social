@@ -3,7 +3,7 @@
 namespace Drupal\social_content_block;
 
 use Drupal\block_content\Entity\BlockContent;
-use Drupal\Core\Entity\EntityTypeManager;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Url;
 
@@ -15,17 +15,17 @@ use Drupal\Core\Url;
 class ContentBuilder implements ContentBuilderInterface {
 
   /**
-   * Drupal\Core\Entity\EntityTypeManager definition.
+   * The entity type manager.
    *
-   * @var \Drupal\Core\Entity\EntityTypeManager
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
   protected $entityTypeManager;
 
   /**
    * Constructor.
    *
-   * @param \Drupal\Core\Entity\EntityTypeManager $entity_type_manager
-   *   Entity type manager.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
    */
   public function __construct(EntityTypeManager $entity_type_manager) {
     $this->entityTypeManager = $entity_type_manager;
@@ -34,7 +34,7 @@ class ContentBuilder implements ContentBuilderInterface {
   /**
    * Function to get all the topics based on the filters.
    *
-   * @param \Drupal\block_content\Entity\BlockContent $blockContent
+   * @param \Drupal\block_content\Entity\BlockContent $block_content
    *   The block content where we get the settings from.
    *
    * @return array|string
@@ -43,27 +43,25 @@ class ContentBuilder implements ContentBuilderInterface {
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  protected function getTopics(BlockContent $blockContent) {
+  protected function getTopics(BlockContent $block_content) {
     // Get topic type tags.
-    $topic_types_list = $blockContent->get('field_topic_type')->getValue();
+    $topic_types_list = $block_content->get('field_topic_type')->getValue();
     $topic_types = array_map(function ($topic_type) {
       return $topic_type['target_id'];
     }, $topic_types_list);
 
     // Get group tags.
-    $group_tag_list = $blockContent->get('field_group')->getValue();
+    $group_tag_list = $block_content->get('field_group')->getValue();
     $group_tags = array_map(function ($group_tag) {
       return $group_tag['target_id'];
     }, $group_tag_list);
 
     // Get social tags.
-    $social_tag_list = $blockContent->get('field_content_tags')->getValue();
+    $social_tag_list = $block_content->get('field_content_tags')->getValue();
     $social_tags = array_map(function ($social_tag) {
       return $social_tag['target_id'];
     }, $social_tag_list);
 
-    $range = $blockContent->getFieldValue('field_item_amount', 'value');
-    $sorting = $blockContent->getFieldValue('field_sorting', 'value');
 
     // Use database select because we need joins
     // which are not possible with entityQuery.
@@ -95,28 +93,22 @@ class ContentBuilder implements ContentBuilderInterface {
     \Drupal::moduleHandler()->alter('social_content_block_query', $query, $blockContent);
 
     // Add sorting.
-    $query->orderBy($sorting);
+    $query->orderBy('n.' . $block_content->getFieldValue('field_sorting', 'value'));
 
     // Add range.
-    $query->range(0, $range);
+    $query->range(0, $block_content->getFieldValue('field_item_amount', 'value'));
 
     // Execute the query to get the results.
     $entities = $query->execute()->fetchAllKeyed(0, 0);
 
-    if ($entities !== NULL) {
+    if ($entities) {
       // Load all the topics so we can give them back.
-      $entities = \Drupal::entityTypeManager()
-        ->getStorage('node')
+      $entities = $this->entityTypeManager->getStorage('node')
         ->loadMultiple($entities);
 
-      $topics = [];
-      foreach ($entities as $entity) {
-        /* @var \Drupal\Core\Entity\EntityViewBuilderInterface $viewBuilder */
-        $viewBuilder = $this->entityTypeManager->getViewBuilder($entity->getEntityTypeId());
-        $topics[] = $viewBuilder->view($entity, 'small_teaser');
-      }
 
-      return $topics;
+      return $this->entityTypeManager->getViewBuilder('node')
+        ->viewMultiple($entities, 'small_teaser');
     }
 
     return '';
@@ -125,17 +117,17 @@ class ContentBuilder implements ContentBuilderInterface {
   /**
    * Function to generate the read more link.
    *
-   * @param \Drupal\block_content\Entity\BlockContent $blockContent
+   * @param \Drupal\block_content\Entity\BlockContent $block_content
    *   The block content where we get the settings from.
    *
    * @return \Drupal\Core\GeneratedLink|string
    *   The read more link.
    */
-  protected function getLink(BlockContent $blockContent) {
-    $uri = $blockContent->get('field_link')->getValue();
+  protected function getLink(BlockContent $block_content) {
+    $field = $block_content->field_link;
 
-    if (!empty($uri)) {
-      $url = Url::fromUri($uri[0]['uri']);
+    if (!$field->isEmpty()) {
+      $url = Url::fromUri($field->uri);
       $link_options = [
         'attributes' => [
           'class' => [
@@ -147,7 +139,7 @@ class ContentBuilder implements ContentBuilderInterface {
       $url->setOptions($link_options);
 
       if ($url instanceof Url) {
-        return Link::fromTextAndUrl($uri[0]['title'], $url)->toString();
+        return Link::fromTextAndUrl($field->title, $url)->toString();
       }
     }
 
@@ -162,9 +154,10 @@ class ContentBuilder implements ContentBuilderInterface {
       return [];
     }
 
-    $block_content = BlockContent::load($entity_id);
+    $block_content = $this->entityTypeManager->getStorage('block_content')
+      ->load($entity_id);
 
-    if (!$block_content instanceof BlockContent && $block_content->bundle() !== 'custom_content_list') {
+    if (!$block_content instanceof BlockContentInterface || $block_content->bundle() !== 'custom_content_list') {
       return [];
     }
 

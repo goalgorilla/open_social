@@ -28,7 +28,7 @@ class SocialContentBlockOverride implements ConfigFactoryOverrideInterface {
    * Constructs the configuration override.
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
-   *   The Drupal configuration factory.
+   *   The configuration factory.
    */
   public function __construct(ConfigFactoryInterface $config_factory) {
     $this->configFactory = $config_factory;

@@ -10,14 +10,14 @@
  *
  * @param \Drupal\Core\Database\Driver\mysql\Select $query
  *   Query to alter the results.
- * @param BlockContent $blockContent
+ * @param \Drupal\block_content\BlockContentInterface $block_content
  *   Current block content.
  *
  * @ingroup social_content_block_api
  */
-function hook_social_content_block_query_alter(\Drupal\Core\Database\Driver\mysql\Select $query, BlockContent $blockContent) {
+function hook_social_content_block_query_alter(\Drupal\Core\Database\Driver\mysql\Select $query, \Drupal\block_content\BlockContentInterface $block_content) {
   // Get topic type tags.
-  $topic_types_list = $blockContent->get('field_topic_type')->getValue();
+  $topic_types_list = $block_content->get('field_topic_type')->getValue();
   $topic_types = array_map(function ($topic_type) {
     return $topic_type['target_id'];
   }, $topic_types_list);

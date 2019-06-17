@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains social_content_block.module..
+ * The Social Content Block module.
  */
 
 use Drupal\Core\Block\BlockPluginInterface;
@@ -44,12 +44,11 @@ function social_content_block_block_view_block_content_alter(&$build, BlockPlugi
  */
 function _social_content_block_is_custom_content_block(BlockPluginInterface $block) {
   if ($block->getBaseId() === 'block_content') {
-    $uuid = preg_replace('/^block_content:/', '', $block->getPluginId());
-    // Load the block entity.
-    $block_entities = \Drupal::entityTypeManager()
-      ->getStorage('block_content')
-      ->loadByProperties(['uuid' => $uuid]);
-    if (($block_entity = array_pop($block_entities)) && $block_entity->bundle() === 'custom_content_list') {
+    $uuid = $block->getDerivativeId();
+    /** @var \Drupal\block_content\BlockContentInterface $block_entity */
+    $block_entities = \Drupal::service('entity.repository')
+      ->loadEntityByUuid('block_content', $uuid);
+    if ($block_entity->bundle() === 'custom_content_list') {
       return $block_entity;
     }
   }
@@ -82,8 +81,6 @@ function custom_content_block_form_submit($form, FormStateInterface $form_state)
 function social_content_block_theme($existing, $type, $theme, $path) {
   return [
     'social_content_block' => [
-      'template' => 'social-content-block',
-      'path' => $path . '/templates',
       'variables' => [
         'title' => NULL,
         'subtitle' => NULL,

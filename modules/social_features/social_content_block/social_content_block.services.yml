@@ -1,9 +1,9 @@
 services:
   social_content_block.override:
-    class: \Drupal\social_content_block\SocialContentBlockOverride
+    class: Drupal\social_content_block\SocialContentBlockOverride
     arguments: ['@config.factory']
     tags:
       - {name: config.factory.override, priority: 5}
   social_content_block.content_builder:
     class: Drupal\social_content_block\ContentBuilder
-    arguments: ["@entity_type.manager"]
+    arguments: ['@entity_type.manager']
