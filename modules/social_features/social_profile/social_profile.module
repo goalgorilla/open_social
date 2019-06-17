@@ -282,7 +282,8 @@ function social_profile_preprocess_form_element_label(&$variables) {
   // Edit the profile tag displays to show the hierarchy to users.
   // Only do this if it starts with a - to indicate it's a child.
   if (
-    substr($variables['element']['#id'], 0, 17) === 'edit-profile-tag-'
+    isset($variables['element']['#id'])
+    && substr($variables['element']['#id'], 0, 17) === 'edit-profile-tag-'
     && substr($variables['element']['#title'], 0, 1) === '-'
   ) {
     $variables['title']['#markup'] = substr($variables['title']['#markup'], 1);
