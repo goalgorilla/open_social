@@ -12,6 +12,11 @@ interface ContentBuilderInterface {
   /**
    * Lazy builder callback for displaying a content blocks.
    *
+   * @param string $entity_type_id
+   *   Entity type id.
+   * @param int $entity_id
+   *   Entity ID.
+   *
    * @return array
    *   A render array for the action link, empty if the user does not have
    *   access.

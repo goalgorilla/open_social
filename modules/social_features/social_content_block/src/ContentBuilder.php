@@ -152,9 +152,7 @@ class ContentBuilder implements ContentBuilderInterface {
       ];
       $url->setOptions($link_options);
 
-      if ($url instanceof Url) {
-        return Link::fromTextAndUrl($field->title, $url)->toString();
-      }
+      return Link::fromTextAndUrl($field->title, $url)->toString();
     }
 
     return '';
