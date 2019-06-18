@@ -132,15 +132,8 @@ class SocialPageTitleBlock extends PageTitleBlock implements ContainerFactoryPlu
         $node->setTitle($translation->getTitle());
       }
 
-      $paths_to_exclude = [
-        'edit',
-        'add',
-        'delete',
-      ];
-
-      $in_path = str_replace($paths_to_exclude, '', $current_path) != $current_path;
-
-      if (!$in_path) {
+      $name = $this->routeMatch->getRouteName();
+      if (!in_array($name, ['entity.node.edit_form', 'entity.node.delete_form', 'entity.node.add_form'])) {
 
         $title = $node->getTitle();
 
