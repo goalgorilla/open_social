@@ -6,7 +6,7 @@ use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Cache\CacheTagsInvalidatorInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Database\Connection;
-use Drupal\Core\Entity\Entity;
+use Drupal\Core\Entity\EntityBase;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\private_message\Mapper\PrivateMessageMapperInterface;
@@ -39,20 +39,20 @@ class SocialPrivateMessageService extends PrivateMessageService {
   /**
    * Update the last time the thread was checked by the user.
    *
-   * @param \Drupal\Core\Entity\Entity $entity
+   * @param \Drupal\Core\Entity\EntityBase $entity
    *   The thread entity.
    */
-  public function updateLastThreadCheckTime(Entity $entity) {
+  public function updateLastThreadCheckTime(EntityBase $entity) {
     $this->userData->set('private_message', $this->currentUser->id(), 'private_message_thread:' . $entity->id(), $this->time->getRequestTime());
   }
 
   /**
    * Remove the thread info from the user_data.
    *
-   * @param \Drupal\Core\Entity\Entity $entity
+   * @param \Drupal\Core\Entity\EntityBase $entity
    *   The thread entity.
    */
-  public function deleteUserDataThreadInfo(Entity $entity) {
+  public function deleteUserDataThreadInfo(EntityBase $entity) {
     $this->userData->delete('private_message', $this->currentUser->id(), 'private_message_thread:' . $entity->id());
   }
 
