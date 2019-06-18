@@ -38,19 +38,6 @@
       flex-basis: 0;
       max-width: 100%;
 
-      @include for-tablet-landscape-down {
-        justify-content: space-between;
-      }
-
-      > *:not(.navbar-header) {
-        flex: 1 0 50%;
-
-        @include for-tablet-landscape-down {
-          flex: 0 0 auto;
-          max-width: inherit;
-        }
-      }
-
       .navbar-header {
         @include for-tablet-landscape-up {
           display: none;
@@ -150,6 +137,16 @@
         border: none;
         color: #fff;
 
+        &:after {
+          content: '';
+          position: absolute;
+          height: 3px;
+          bottom: 0;
+          right: 20px;
+          left: 20px;
+          background: #fff;
+        }
+
         li:not(.active) a:hover,
         li:not(.active) a:focus {
           opacity: 1;
@@ -237,8 +234,8 @@
 
             a {
               display: block;
-              padding-top: 12px;
-              padding-bottom: 11px;
+              padding-top: 14px;
+              padding-bottom: 13px;
             }
           }
 
@@ -262,6 +259,10 @@
                 width: 100%;
                 padding: .5rem 2rem;
                 color: #9b9b9b;
+
+                &:hover {
+                  color: orange;
+                }
               }
             }
           }
