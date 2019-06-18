@@ -2,8 +2,11 @@
 
 namespace Drupal\social_content_block;
 
+use Drupal\block_content\BlockContentInterface;
 use Drupal\block_content\Entity\BlockContent;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\Core\Database\Connection;
 use Drupal\Core\Link;
 use Drupal\Core\Url;
 
@@ -22,13 +25,26 @@ class ContentBuilder implements ContentBuilderInterface {
   protected $entityTypeManager;
 
   /**
-   * Constructor.
+   * The module handler service.
    *
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
-   *   The entity type manager.
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface
    */
-  public function __construct(EntityTypeManager $entity_type_manager) {
+  protected $moduleHandler;
+
+  /**
+   * The module handler service.
+   *
+   * @var \Drupal\Core\Database\Connection
+   */
+  protected $connection;
+
+  /**
+   * {@inheritdoc}
+   */
+  public function __construct(EntityTypeManagerInterface $entity_type_manager, Connection $connection, ModuleHandlerInterface $module_handler) {
     $this->entityTypeManager = $entity_type_manager;
+    $this->connection = $connection;
+    $this->moduleHandler = $module_handler;
   }
 
   /**
@@ -62,15 +78,12 @@ class ContentBuilder implements ContentBuilderInterface {
       return $social_tag['target_id'];
     }, $social_tag_list);
 
-
     // Use database select because we need joins
     // which are not possible with entityQuery.
-    $query = \Drupal::database()->select('node', 'n')
-      ->fields('n', ['nid']);
-
-    // Add field data.
-    $query->condition('n.type', 'topic');
-    $query->innerJoin('node_field_data', 'd', 'd.nid = n.nid');
+    /** @var \Drupal\Core\Database\Query\SelectInterface $query */
+    $query = $this->connection->select('node_field_data', 'n')
+      ->fields('n', ['nid'])
+      ->condition('n.type', 'topic');
 
     // Add topic type tags.
     if (!empty($topic_types)) {
@@ -90,7 +103,7 @@ class ContentBuilder implements ContentBuilderInterface {
     }
 
     // Allow other modules to change the query to add additions.
-    \Drupal::moduleHandler()->alter('social_content_block_query', $query, $blockContent);
+    $this->moduleHandler->alter('social_content_block_query', $query, $block_content);
 
     // Add sorting.
     $query->orderBy('n.' . $block_content->getFieldValue('field_sorting', 'value'));
@@ -106,12 +119,13 @@ class ContentBuilder implements ContentBuilderInterface {
       $entities = $this->entityTypeManager->getStorage('node')
         ->loadMultiple($entities);
 
-
       return $this->entityTypeManager->getViewBuilder('node')
         ->viewMultiple($entities, 'small_teaser');
     }
 
-    return '';
+    return [
+      '#markup' => '<div class="card__block">' . t('No matching content found') . '</div>',
+    ];
   }
 
   /**

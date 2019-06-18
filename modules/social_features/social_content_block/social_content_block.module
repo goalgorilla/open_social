@@ -46,7 +46,7 @@ function _social_content_block_is_custom_content_block(BlockPluginInterface $blo
   if ($block->getBaseId() === 'block_content') {
     $uuid = $block->getDerivativeId();
     /** @var \Drupal\block_content\BlockContentInterface $block_entity */
-    $block_entities = \Drupal::service('entity.repository')
+    $block_entity = \Drupal::service('entity.repository')
       ->loadEntityByUuid('block_content', $uuid);
     if ($block_entity->bundle() === 'custom_content_list') {
       return $block_entity;
