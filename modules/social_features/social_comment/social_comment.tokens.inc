@@ -5,12 +5,13 @@
  * Builds placeholder replacement tokens for Social Comment module.
  */
 
-use Drupal\Component\Utility\Unicode;
+use Drupal\comment\CommentInterface;
 use Drupal\Core\Render\BubbleableMetadata;
+use Drupal\Core\Render\Markup;
 use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
 use Drupal\social_post\Entity\PostInterface;
-use Drupal\Core\Render\Markup;
+use Drupal\views\Plugin\views\field\FieldPluginBase;
 
 /**
  * Implements hook_token_info().
@@ -86,7 +87,7 @@ function social_comment_token_info() {
 function social_comment_tokens($type, $tokens, array $data, array $options, BubbleableMetadata $bubbleable_metadata) {
   $replacements = [];
 
-  if ($type == 'social_comment' && !empty($data['message'])) {
+  if ($type === 'social_comment' && !empty($data['message'])) {
     /** @var \Drupal\message\Entity\Message $message */
     $message = $data['message'];
 
@@ -105,13 +106,12 @@ function social_comment_tokens($type, $tokens, array $data, array $options, Bubb
           if (isset($message->field_message_related_object)) {
             $target_type = $message->field_message_related_object->target_type;
             $target_id = $message->field_message_related_object->target_id;
-            $comment = \Drupal::entityTypeManager()
-              ->getStorage($target_type)
+
+            $comment = \Drupal::entityTypeManager()->getStorage($target_type)
               ->load($target_id);
 
-            // Or special handling for post entities. \Drupal::logger('commented_content_type')->notice(var_dump($comment));
-            if (!empty($comment)) {
-              if ($comment->getEntityTypeId() == 'comment') {
+            if ($comment instanceof CommentInterface) {
+              if ($comment->getEntityTypeId() === 'comment') {
                 $date_formatter = \Drupal::service('date.formatter');
                 $date_format = 'social_long_date';
 
@@ -127,7 +127,12 @@ function social_comment_tokens($type, $tokens, array $data, array $options, Bubb
                   }
 
                   if ($name === 'parent_comment_text') {
-                    $replacements[$original] = $parent_comment->field_comment_body->value;
+                    if ($parent_comment->hasField('field_comment_body') && !$parent_comment->field_comment_body->isEmpty()) {
+                      $replacements[$original] = _social_comment_get_summary($parent_comment->field_comment_body->value);
+                    }
+                    else {
+                      $replacements[$original] = '';
+                    }
                   }
                 }
 
@@ -147,7 +152,12 @@ function social_comment_tokens($type, $tokens, array $data, array $options, Bubb
                 }
 
                 if ($name === 'comment_text') {
-                  $replacements[$original] = _social_comment_get_half_text($comment);
+                  if ($comment->hasField('field_comment_body') && !$comment->field_comment_body->isEmpty()) {
+                    $replacements[$original] = _social_comment_get_summary($comment->field_comment_body->value);
+                  }
+                  else {
+                    $replacements[$original] = '';
+                  }
                 }
 
                 if ($name === 'comment_reply_link_html') {
@@ -171,17 +181,16 @@ function social_comment_tokens($type, $tokens, array $data, array $options, Bubb
           if (isset($message->field_message_related_object)) {
             $target_type = $message->field_message_related_object->target_type;
             $target_id = $message->field_message_related_object->target_id;
-            /** @var \Drupal\comment\Entity\Comment $comment */
-            $comment = \Drupal::entityTypeManager()
-              ->getStorage($target_type)
+
+            $comment = \Drupal::entityTypeManager()->getStorage($target_type)
               ->load($target_id);
 
-            if (!empty($comment) && $comment->getEntityTypeId() == 'comment') {
-              /** @var \Drupal\Core\Entity\EntityBase $entity */
+            if ($comment instanceof CommentInterface) {
+              /** @var \Drupal\Core\Entity\Entity $entity */
               $entity = $comment->getCommentedEntity();
               if (!empty($entity)) {
                 if ($entity instanceof PostInterface) {
-                  $commented_content_type = Unicode::strtolower($entity->getEntityType()->getLabel());
+                  $commented_content_type = mb_strtolower($entity->getEntityType()->getLabel());
                 }
                 elseif (is_callable([$entity, 'getDisplayName'])) {
                   $commented_content_type = $entity->getDisplayName();
@@ -228,14 +237,25 @@ function social_comment_tokens($type, $tokens, array $data, array $options, Bubb
 }
 
 /**
- * Get half of the comment body().
+ * Get first 280 characters of text.
+ *
+ * @param string $text
+ *   The text to check for.
+ *
+ * @return string
+ *   The processed text.
  */
-function _social_comment_get_half_text($comment) {
-  $half_text = '';
-  if (isset($comment->field_comment_body) && !empty($comment->field_comment_body->value)) {
-    $text = $comment->field_comment_body->value;
-    $middle = strrpos(substr($text, 0, floor(strlen($text) / 2)), ' ') + 1;
-    $half_text = substr($text, 0, $middle) . '...';
+function _social_comment_get_summary($text) {
+  $summary = strip_tags($text);
+  $max_length = 280;
+
+  if (mb_strlen($summary) > $max_length) {
+    $summary = FieldPluginBase::trimText([
+      'max_length' => $max_length,
+      'word_boundary' => TRUE,
+      'ellipsis' => TRUE,
+    ], $summary);
   }
-  return $half_text;
+
+  return $summary;
 }
