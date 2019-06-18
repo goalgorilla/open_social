@@ -74,6 +74,7 @@ function social_group_form_group_public_group_edit_form_alter(&$form, FormStateI
   $group = $form_state->getFormObject()->getEntity();
   $form['group_type'] = SocialGroupAddForm::create(\Drupal::getContainer())->getGroupTypeElement();
   $form['group_type']['#default_value'] = $group->bundle();
+
   // If user doesn't have permission to change group types disable it.
   // Or if group types can't be edited due to visibility issues.
   if (!social_group_group_type_permission_check()) {
@@ -119,7 +120,7 @@ function social_group_group_type_permission_check() {
   }
 
   // Otherwise return true when we are able to edit the current group type.
-  return ($group instanceof GroupInterface && $user->hasPermission('edit group types'));
+  return TRUE;
 }
 
 /**

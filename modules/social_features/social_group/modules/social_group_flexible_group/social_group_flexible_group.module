@@ -5,10 +5,12 @@
  * The Social Group Flexible Group module.
  */
 
+use Drupal\Core\Cache\Cache;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\group\Entity\Group;
 use Drupal\group\Entity\GroupInterface;
+use Drupal\social_group_flexible_group\FlexibleGroupContentVisibilityUpdate;
 use Drupal\views\Plugin\views\query\QueryPluginBase;
 use Drupal\views\Plugin\views\row\EntityRow;
 use Drupal\views\ViewExecutable;
@@ -24,6 +26,63 @@ use Drupal\views\Views;
  */
 function social_group_flexible_group_social_group_types_alter(array &$social_group_types) {
   $social_group_types[] = 'flexible_group';
+}
+
+/**
+ * Implements hook_form_FORM_ID_form_alter().
+ */
+function social_group_flexible_group_form_group_flexible_group_edit_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  // Lets remove group type from flexible group.
+  // Editting is useless since the options are all in there.
+  if ($form['group_type']['#disabled']) {
+    unset($form['group_type']);
+  }
+  $form['field_group_allowed_visibility']['#prefix'] =
+    t('Altering the visibility options could result in changes in access for content within this group.');
+
+  $form['actions']['submit']['#submit'][] = '_social_flexible_group_edit_submit';
+}
+
+/**
+ * Custom form submit handler for editing a flexible group.
+ *
+ * @param array $form
+ *   The form array.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   Form state.
+ *
+ * @throws \Drupal\Core\Entity\EntityStorageException
+ */
+function _social_flexible_group_edit_submit($form, FormStateInterface $form_state) {
+  // Check if the visibility changed.
+  $default_visibility = $form['field_group_allowed_visibility']['widget']['#default_value'];
+  $new_visibility = $form_state->getValue('field_group_allowed_visibility');
+
+  $changed_visibility = [];
+  // If there was a visibility that we don't have anymore after editting
+  // all the content that was inside the group with this visibility
+  // will get the lowest visibility that is still checked.
+  foreach ($default_visibility as $key => $option) {
+    if (array_search($option, array_column($new_visibility, 'value')) === FALSE) {
+      $changed_visibility[] = $option;
+    }
+  }
+
+  // So there is now a visibility setting we don't support anymore
+  // after editing. Make sure we update all the content that has this
+  // to the next best optin.
+  if (!empty($changed_visibility)) {
+    $group = _social_group_get_current_group();
+
+    // Update the default visibility of all the content.
+    FlexibleGroupContentVisibilityUpdate::batchUpdateGroupContentVisibility($group, $changed_visibility, $new_visibility);
+
+    // Make sure we clear cache tags accordingly.
+    $cache_tags = _social_group_cache_tags($group);
+    foreach ($cache_tags as $cache_tag) {
+      Cache::invalidateTags([$cache_tag]);
+    }
+  }
 }
 
 /**
