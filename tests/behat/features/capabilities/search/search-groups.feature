@@ -13,6 +13,7 @@ Feature: Search
       | Behat test group title 1 | My Behat description   | Group search One | open_group  | en       |
       | Behat test group title 2 | My Behat description 2 | Group search One | open_group  | en       |
       | Behat test group title 3 | No Behat descr         | Group search One | open_group  | en       |
+    And Search indexes are up to date
     And I am logged in as an "authenticated user"
     #@TODO: Change "search/content" to the homepage when search block will be in the header
     And I am on "search/groups"

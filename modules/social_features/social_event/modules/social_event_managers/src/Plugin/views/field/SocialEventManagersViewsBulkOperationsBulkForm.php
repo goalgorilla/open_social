@@ -171,7 +171,7 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
     $form['#attached']['library'][] = 'social_event_managers/views_bulk_operations.frontUi';
 
     // Render page title.
-    $count = count($this->tempStoreData['list']);
+    $count = isset($this->tempStoreData['list']) ? count($this->tempStoreData['list']) : 0;
     $title = $this->formatPlural($count, '<b>@count enrollee</b> is selected', '<b>@count enrollees</b> are selected');
 
     $wrapper['multipage']['#title'] = [
@@ -186,8 +186,9 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
     $wrapper['multipage']['list']['#title'] = $this->t('See selected enrollees on other pages');
 
     // We don't show the multipage list if there are no items selected.
-    if (count($wrapper['multipage']['list']['#items']) < 1) {
-      $wrapper['multipage']['list'] = '';
+    $items = isset($wrapper['multipage']['list']['#items']) ? count($wrapper['multipage']['list']['#items']) : 0;
+    if ($items < 1) {
+      unset($wrapper['multipage']['list']);
     }
 
     $actions = &$wrapper['actions'];

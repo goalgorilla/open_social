@@ -63,7 +63,7 @@ class RedirectSubscriber implements EventSubscriberInterface {
    * @param \Symfony\Component\HttpKernel\Event\GetResponseEvent $event
    *   The event.
    */
-  public function groupLandingPage(GetResponseEvent $event) :void {
+  public function groupLandingPage(GetResponseEvent $event) {
 
     // First check if the current route is the group canonical.
     $routeMatch = $this->currentRoute->getRouteName();

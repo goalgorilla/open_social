@@ -30,7 +30,7 @@ class VoteActivityContext extends ActivityContextBase {
         $vote = $vote_storage->load($related_object['target_id']);
         if ($vote instanceof Vote) {
           $entity_storage = \Drupal::entityTypeManager()->getStorage($vote->getVotedEntityType());
-          /** @var \Drupal\Core\Entity\Entity $entity */
+          /** @var \Drupal\Core\Entity\EntityBase $entity */
           $entity = $entity_storage->load($vote->getVotedEntityId());
           $uid = $entity->getOwnerId();
 

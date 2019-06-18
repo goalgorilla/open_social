@@ -35,7 +35,7 @@ class RouteSubscriber extends RouteSubscriberBase {
     }
     // Route the user view page to user/{uid}/timeline.
     if ($route = $collection->get('entity.user.canonical')) {
-      $route->setPath('/user/{user}/stream');
+      $route->setPath('/user/{user}/home');
       $defaults = $route->getDefaults();
       $defaults['_title_callback'] = '\Drupal\social_user\Controller\SocialUserController::setUserStreamTitle';
       $route->setDefaults($defaults);
