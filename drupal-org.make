@@ -44,7 +44,6 @@ projects[flag][patch][] = "https://www.drupal.org/files/issues/2723703_31.patch"
 projects[group][type] = module
 projects[group][version] = 1.0-rc3
 projects[group][patch][] = "https://www.drupal.org/files/issues/add-computed-field-without-FieldItemListComputedInterface-2718195-34.patch"
-projects[group][patch][] = "https://www.drupal.org/files/issues/group-2943564-2.patch"
 projects[group][patch][] = "https://www.drupal.org/files/issues/2018-12-18/vbo-and-group-permission-3020883-5.patch"
 projects[group][patch][] = "https://www.drupal.org/files/issues/2018-12-19/group-2774827-41-gnode-tokens.patch"
 projects[group][patch][] = "https://www.drupal.org/files/issues/2018-11-01/3010896-02.patch"
