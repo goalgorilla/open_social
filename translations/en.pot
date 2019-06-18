@@ -122,6 +122,7 @@
 #  modules/social_features/social_event/src/EventEnrollmentListBuilder.php: n/a
 #  modules/social_features/social_event/src/Entity/EventEnrollment.php: n/a
 #  modules/social_features/social_group/src/Controller/SocialGroupListBuilder.php: n/a
+#  modules/social_features/social_event/modules/social_event_an_enroll/config/install/views.view.manage_enrollments.yml: n/a
 #  modules/custom/activity_creator/src/Entity/Activity.php: n/a
 #  modules/social_features/social_post/config/schema/post.schema.yml: n/a
 #  modules/social_features/social_post/config/schema/post_type.schema.yml: n/a
@@ -497,9 +498,11 @@
 #  modules/social_features/social_event/modules/social_event_an_enroll/src/Form/EventAnEnrollForm.php: n/a
 #  modules/social_features/social_event/modules/social_event_an_enroll_enrolments_export/src/Plugin/UserExportPlugin/EnrolmentUserFirstName.php: n/a
 #  modules/social_features/social_user_export/src/Plugin/UserExportPlugin/UserFirstName.php: n/a
+#  modules/social_features/social_event/modules/social_event_an_enroll/config/install/field.field.event_enrollment.event_enrollment.field_first_name.yml: n/a
 #  modules/social_features/social_profile/config/install/field.field.profile.profile.field_profile_first_name.yml: n/a
 #  modules/social_features/social_event/modules/social_event_an_enroll_enrolments_export/src/Plugin/UserExportPlugin/EnrolmentUserLastName.php: n/a
 #  modules/social_features/social_user_export/src/Plugin/UserExportPlugin/UserLastName.php: n/a
+#  modules/social_features/social_event/modules/social_event_an_enroll/config/install/field.field.event_enrollment.event_enrollment.field_last_name.yml: n/a
 #  modules/social_features/social_profile/config/install/field.field.profile.profile.field_profile_last_name.yml: n/a
 #  modules/social_features/social_event/modules/social_event_an_enroll/config/install/field.field.event_enrollment.event_enrollment.field_email.yml: n/a
 #  modules/social_features/social_event/modules/social_event_an_enroll/src/Plugin/views/access/ManageEnrollmentAccess.php: n/a
@@ -824,6 +827,7 @@
 #  modules/social_features/social_book/config/install/core.base_field_override.node.book.promote.yml: n/a
 #  modules/social_features/social_event/config/install/core.base_field_override.node.event.promote.yml: n/a
 #  modules/social_features/social_event/config/install/field.field.node.event.field_event_enroll.yml: n/a
+#  modules/social_features/social_event/modules/social_event_an_enroll/config/install/field.field.node.event.field_event_an_enroll.yml: n/a
 #  modules/social_features/social_event/modules/social_event_max_enroll/config/install/field.field.node.event.field_event_max_enroll.yml: n/a
 #  modules/social_features/social_landing_page/config/install/core.base_field_override.node.landing_page.promote.yml: n/a
 #  modules/social_features/social_page/config/install/core.base_field_override.node.page.promote.yml: n/a
@@ -1106,6 +1110,7 @@
 #  modules/social_features/social_group/config/install/field.field.group.public_group.field_group_location.yml: n/a
 #  modules/social_features/social_group/modules/social_group_secret/config/install/field.field.group.secret_group.field_group_location.yml: n/a
 #  modules/social_features/social_event/config/optional/message.template.activity_on_events_im_organizing.yml: n/a
+#  modules/social_features/social_event/modules/social_event_an_enroll/config/install/field.field.event_enrollment.event_enrollment.field_token.yml: n/a
 #  modules/social_features/social_event/modules/social_event_managers/config/install/field.field.node.event.field_event_managers.yml: n/a
 #  modules/social_features/social_profile/config/install/profile.type.profile.yml: n/a
 #  modules/social_features/social_event/modules/social_event_managers/config/optional/block.block.views_block__managers_event_managers.yml: n/a
@@ -1242,7 +1247,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Open Social\n"
-"POT-Creation-Date: 2019-05-31 22:16+0000\n"
+"POT-Creation-Date: 2019-06-04 22:16+0000\n"
 "PO-Revision-Date: YYYY-mm-DD HH:MM+ZZZZ\n"
 "Last-Translator: NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <EMAIL@ADDRESS>\n"
@@ -1285,6 +1290,7 @@ msgstr ""
 #: modules/social_features/social_core/config/install/views.view.content.yml:0
 #: modules/social_features/social_event/config/install/views.view.events.yml:0
 #: modules/social_features/social_event/config/install/views.view.upcoming_events.yml:0
+#: modules/social_features/social_event/modules/social_event_an_enroll/config/install/views.view.manage_enrollments.yml:0;0;0
 #: modules/social_features/social_event/modules/social_event_managers/config/install/views.view.event_manage_enrollments.yml:0;0
 #: modules/social_features/social_follow_content/config/install/views.view.following.yml:0;0
 #: modules/social_features/social_group/config/install/views.view.group_events.yml:0
@@ -1315,6 +1321,7 @@ msgstr ""
 #: modules/social_features/social_event/config/install/views.view.event_enrollments.yml:0;0
 #: modules/social_features/social_event/config/install/views.view.events.yml:0
 #: modules/social_features/social_event/config/install/views.view.upcoming_events.yml:0
+#: modules/social_features/social_event/modules/social_event_an_enroll/config/install/views.view.manage_enrollments.yml:0
 #: modules/social_features/social_event/modules/social_event_managers/config/install/views.view.event_manage_enrollments.yml:0
 #: modules/social_features/social_event/modules/social_event_managers/config/install/views.view.managers.yml:0;0
 #: modules/social_features/social_follow_content/config/install/views.view.following.yml:0
@@ -1777,6 +1784,10 @@ msgid ""
 "<p><a href=\"[social_event:enrolled_event_url]\">[social_event:enrolled_user]"
 "</a> has enrolled to the event [social_event:event_iam_organizing] you are "
 "organizing</p>"
+msgstr ""
+
+#: modules/social_features/social_event/modules/social_event_an_enroll/config/install/views.view.manage_enrollments.yml:0
+msgid "<p>@total people have enrolled anonymously</p>"
 msgstr ""
 
 #: modules/social_features/social_core/src/Controller/SocialCoreController.php:20
@@ -2702,6 +2713,7 @@ msgstr ""
 #: modules/social_features/social_activity/config/install/views.view.activity_stream_profile.yml:0
 #: modules/social_features/social_event/config/install/views.view.event_enrollments.yml:0;0
 #: modules/social_features/social_event/config/install/views.view.upcoming_events.yml:0;0
+#: modules/social_features/social_event/modules/social_event_an_enroll/config/install/views.view.manage_enrollments.yml:0
 #: modules/social_features/social_event/modules/social_event_managers/config/install/views.view.event_manage_enrollments.yml:0
 #: modules/social_features/social_event/modules/social_event_managers/config/install/views.view.managers.yml:0;0
 #: modules/social_features/social_follow_content/config/install/views.view.following.yml:0
@@ -2912,6 +2924,10 @@ msgstr ""
 msgid "Allow users to enroll in event"
 msgstr ""
 
+#: modules/social_features/social_event/modules/social_event_an_enroll/config/install/field.field.node.event.field_event_an_enroll.yml:0
+msgid "Allow users to enroll to this event without creating an account"
+msgstr ""
+
 #: modules/social_features/social_group/modules/social_group_quickjoin/src/Form/SocialGroupQuickjoinSettings.php:46
 msgid "Allow users to join groups with a single click."
 msgstr ""
@@ -2981,13 +2997,13 @@ msgstr ""
 msgid "Allows users to skip confirmation when joining a group."
 msgstr ""
 
+#: modules/custom/alternative_frontpage/alternative_frontpage.info.yml:0
+msgid "Alternative Frontpage"
+msgstr ""
+
 #: modules/custom/alternative_frontpage/alternative_frontpage.links.menu.yml:0
 #: modules/custom/alternative_frontpage/alternative_frontpage.routing.yml:0
 msgid "Alternative Frontpage Settings"
-msgstr ""
-
-#: modules/custom/alternative_frontpage/alternative_frontpage.info.yml:0
-msgid "Alternative frontpage"
 msgstr ""
 
 #: modules/social_features/social_core/src/Plugin/Field/FieldFormatter/CommentNodeFormatter.php:177
@@ -3048,6 +3064,7 @@ msgstr ""
 #: modules/social_features/social_activity/config/install/views.view.activity_stream_profile.yml:0
 #: modules/social_features/social_content_report/config/install/views.view.report_overview.yml:0
 #: modules/social_features/social_event/config/install/views.view.event_enrollments.yml:0
+#: modules/social_features/social_event/modules/social_event_an_enroll/config/install/views.view.manage_enrollments.yml:0
 #: modules/social_features/social_event/modules/social_event_managers/config/install/views.view.event_manage_enrollments.yml:0
 #: modules/social_features/social_event/modules/social_event_managers/config/install/views.view.managers.yml:0
 #: modules/social_features/social_follow_content/config/install/views.view.following.yml:0
@@ -3108,13 +3125,13 @@ msgstr[1] ""
 msgid "Are you sure you want to delete %name?"
 msgstr ""
 
-#: modules/social_features/social_group/social_group.module:547
+#: modules/social_features/social_group/social_group.module:529
 msgid ""
 "Are you sure you want to delete your group \"@group\" along with all of the "
 "posts, events and topics inside this group? This action cannot be undone."
 msgstr ""
 
-#: modules/social_features/social_group/social_group.module:431
+#: modules/social_features/social_group/social_group.module:413
 msgid "Are you sure you want to remove %name from %group?"
 msgstr ""
 
@@ -3141,6 +3158,7 @@ msgstr[1] ""
 #: modules/social_features/social_core/config/install/views.view.content.yml:0
 #: modules/social_features/social_event/config/install/views.view.event_enrollments.yml:0
 #: modules/social_features/social_event/config/install/views.view.upcoming_events.yml:0
+#: modules/social_features/social_event/modules/social_event_an_enroll/config/install/views.view.manage_enrollments.yml:0
 #: modules/social_features/social_event/modules/social_event_managers/config/install/views.view.event_manage_enrollments.yml:0
 #: modules/social_features/social_event/modules/social_event_managers/config/install/views.view.managers.yml:0
 #: modules/social_features/social_follow_content/config/install/views.view.following.yml:0
@@ -3370,7 +3388,7 @@ msgstr ""
 msgid "Buttons"
 msgstr ""
 
-#: modules/social_features/social_group/social_group.module:441
+#: modules/social_features/social_group/social_group.module:423
 msgid ""
 "By submitting this form you will become a member of the group. Please fill "
 "out any available fields to complete your membership information."
@@ -3401,7 +3419,7 @@ msgid "Can not send e-mail for %entity"
 msgstr ""
 
 #: modules/social_features/social_event/modules/social_event_managers/src/Form/SocialEventManagersAddEnrolleeForm.php:161
-#: modules/social_features/social_group/social_group.module:452;550
+#: modules/social_features/social_group/social_group.module:434;532
 #: modules/social_features/social_profile/social_profile.module:182
 msgid "Cancel"
 msgstr ""
@@ -3958,7 +3976,7 @@ msgstr ""
 msgid "Create New Event"
 msgstr ""
 
-#: modules/social_features/social_group/social_group.module:1538
+#: modules/social_features/social_group/social_group.module:1520
 msgid "Create New Group"
 msgstr ""
 
@@ -4420,7 +4438,7 @@ msgstr ""
 msgid "Deleting @type's"
 msgstr ""
 
-#: modules/social_features/social_group/social_group.module:1211
+#: modules/social_features/social_group/social_group.module:1193
 msgid "Deleting the group and all the content within the group..."
 msgstr ""
 
@@ -4436,6 +4454,7 @@ msgstr ""
 #: modules/social_features/social_core/config/install/views.view.content.yml:0
 #: modules/social_features/social_event/config/install/views.view.event_enrollments.yml:0
 #: modules/social_features/social_event/config/install/views.view.upcoming_events.yml:0
+#: modules/social_features/social_event/modules/social_event_an_enroll/config/install/views.view.manage_enrollments.yml:0
 #: modules/social_features/social_event/modules/social_event_managers/config/install/views.view.event_manage_enrollments.yml:0
 #: modules/social_features/social_event/modules/social_event_managers/config/install/views.view.managers.yml:0
 #: modules/social_features/social_follow_content/config/install/views.view.following.yml:0
@@ -4704,7 +4723,7 @@ msgstr ""
 #: modules/social_features/social_comment/src/Form/SocialCommentAdminOverview.php:213
 #: modules/social_features/social_event/social_event.links.task.yml:0
 #: modules/social_features/social_event/modules/social_event_type/social_event_type.links.task.yml:0
-#: modules/social_features/social_group/social_group.module:1656
+#: modules/social_features/social_group/social_group.module:1638
 #: modules/social_features/social_post/social_post.links.task.yml:0
 #: modules/social_features/social_post/src/PostViewBuilder.php:211
 msgid "Edit"
@@ -4803,6 +4822,7 @@ msgstr ""
 #: modules/social_features/social_event/modules/social_event_an_enroll/src/Plugin/Action/SocialEventAnEnrollSendEmail.php:16
 #: modules/social_features/social_event/modules/social_event_an_enroll_enrolments_export/src/Plugin/UserExportPlugin/EnrolmentUserEmail.php:8
 #: modules/social_features/social_user_export/src/Plugin/UserExportPlugin/UserEmail.php:23;8
+#: modules/social_features/social_event/modules/social_event_an_enroll/config/install/views.view.manage_enrollments.yml:0
 msgid "Email"
 msgstr ""
 
@@ -5101,10 +5121,6 @@ msgstr ""
 #: modules/social_features/social_event/config/install/field.field.event_enrollment.event_enrollment.field_event.yml:0
 #: modules/social_features/social_event/config/install/node.type.event.yml:0
 msgid "Event"
-msgstr ""
-
-#: modules/social_features/social_event/modules/social_event_max_enroll/social_event_max_enroll.info.yml:0
-msgid "Event Max Enroll"
 msgstr ""
 
 #: modules/social_features/social_event/modules/social_event_managers/config/optional/block.block.views_block__managers_event_managers.yml:0;0
@@ -5439,6 +5455,7 @@ msgstr ""
 #: modules/social_features/social_event/modules/social_event_an_enroll/src/Form/EventAnEnrollForm.php:47
 #: modules/social_features/social_event/modules/social_event_an_enroll_enrolments_export/src/Plugin/UserExportPlugin/EnrolmentUserFirstName.php:8
 #: modules/social_features/social_user_export/src/Plugin/UserExportPlugin/UserFirstName.php:23;8
+#: modules/social_features/social_event/modules/social_event_an_enroll/config/install/field.field.event_enrollment.event_enrollment.field_first_name.yml:0
 #: modules/social_features/social_profile/config/install/field.field.profile.profile.field_profile_first_name.yml:0
 #: modules/social_features/social_user/config/install/views.view.user_admin_people.yml:0
 msgid "First name"
@@ -5671,7 +5688,7 @@ msgstr ""
 
 #: modules/custom/group_core_comments/group_core_comments.info.yml:0
 #: modules/custom/social_demo/src/Plugin/DemoContent/Group.php:7
-#: modules/social_features/social_group/social_group.module:1303
+#: modules/social_features/social_group/social_group.module:1285
 #: modules/social_features/social_group/src/Plugin/Action/AddMembersToGroup.php:145
 #: modules/social_features/social_tagging/src/Form/SocialTaggingSettingsForm.php:97
 #: modules/custom/social_metatag/config/install/metatag.metatag_defaults.group.yml:0
@@ -5784,7 +5801,7 @@ msgstr ""
 msgid "Group add topic block"
 msgstr ""
 
-#: modules/social_features/social_group/social_group.module:1330
+#: modules/social_features/social_group/social_group.module:1312
 msgid "Group and visibility"
 msgstr ""
 
@@ -5823,7 +5840,7 @@ msgstr ""
 msgid "Group hero block"
 msgstr ""
 
-#: modules/social_features/social_group/social_group.module:1081
+#: modules/social_features/social_group/social_group.module:1063
 msgid "Group manager"
 msgstr ""
 
@@ -5852,7 +5869,7 @@ msgstr ""
 msgid "Group memberships (specified)"
 msgstr ""
 
-#: modules/social_features/social_group/social_group.module:463
+#: modules/social_features/social_group/social_group.module:445
 #: modules/social_features/social_group/src/Plugin/Action/ChangeGroupMembershipRole.php:167
 msgid "Group roles"
 msgstr ""
@@ -5899,6 +5916,10 @@ msgstr ""
 #: modules/social_features/social_event/modules/social_event_an_enroll/src/Plugin/Action/SocialEventAnEnrollSendEmail.php:109
 #: modules/social_features/social_event/modules/social_event_an_enroll_enrolments_export/src/Plugin/UserExportPlugin/EnrolmentUserDisplayName.php:85
 msgid "Guest"
+msgstr ""
+
+#: modules/social_features/social_event/modules/social_event_an_enroll/config/install/views.view.manage_enrollments.yml:0
+msgid "Guest enrollments"
 msgstr ""
 
 #: modules/social_features/social_core/config/install/core.date_format.social_time.yml:0
@@ -6162,7 +6183,7 @@ msgstr ""
 msgid "Invalid search index"
 msgstr ""
 
-#: modules/social_features/social_group/social_group.module:234
+#: modules/social_features/social_group/social_group.module:231
 msgid "Invitation only"
 msgstr ""
 
@@ -6191,6 +6212,7 @@ msgstr ""
 #: modules/social_features/social_event/config/install/views.view.event_enrollments.yml:0;0
 #: modules/social_features/social_event/config/install/views.view.events.yml:0
 #: modules/social_features/social_event/config/install/views.view.upcoming_events.yml:0
+#: modules/social_features/social_event/modules/social_event_an_enroll/config/install/views.view.manage_enrollments.yml:0
 #: modules/social_features/social_event/modules/social_event_managers/config/install/views.view.event_manage_enrollments.yml:0
 #: modules/social_features/social_event/modules/social_event_managers/config/install/views.view.managers.yml:0;0
 #: modules/social_features/social_follow_content/config/install/views.view.following.yml:0
@@ -6302,6 +6324,7 @@ msgstr ""
 #: modules/social_features/social_event/modules/social_event_an_enroll/src/Form/EventAnEnrollForm.php:52
 #: modules/social_features/social_event/modules/social_event_an_enroll_enrolments_export/src/Plugin/UserExportPlugin/EnrolmentUserLastName.php:8
 #: modules/social_features/social_user_export/src/Plugin/UserExportPlugin/UserLastName.php:23;8
+#: modules/social_features/social_event/modules/social_event_an_enroll/config/install/field.field.event_enrollment.event_enrollment.field_last_name.yml:0
 #: modules/social_features/social_profile/config/install/field.field.profile.profile.field_profile_last_name.yml:0
 #: modules/social_features/social_user/config/install/views.view.user_admin_people.yml:0
 msgid "Last name"
@@ -6316,6 +6339,7 @@ msgstr ""
 #: modules/social_features/social_event/config/install/views.view.event_enrollments.yml:0
 #: modules/social_features/social_event/config/install/views.view.events.yml:0
 #: modules/social_features/social_event/config/install/views.view.upcoming_events.yml:0
+#: modules/social_features/social_event/modules/social_event_an_enroll/config/install/views.view.manage_enrollments.yml:0
 #: modules/social_features/social_event/modules/social_event_managers/config/install/views.view.event_manage_enrollments.yml:0
 #: modules/social_features/social_event/modules/social_event_managers/config/install/views.view.managers.yml:0
 #: modules/social_features/social_follow_content/config/install/views.view.following.yml:0
@@ -6551,6 +6575,10 @@ msgstr ""
 msgid "Manage All Enrollments"
 msgstr ""
 
+#: modules/social_features/social_event/modules/social_event_an_enroll/config/install/views.view.manage_enrollments.yml:0;0
+msgid "Manage Enrollments"
+msgstr ""
+
 #: modules/social_features/social_event/modules/social_event_managers/social_event_managers.permissions.yml:0
 msgid "Manage Everything Enrollments"
 msgstr ""
@@ -6579,7 +6607,7 @@ msgstr ""
 msgid "Manage form and displays settings of posts"
 msgstr ""
 
-#: modules/social_features/social_group/social_group.module:865
+#: modules/social_features/social_group/social_group.module:847
 msgid "Manage members"
 msgstr ""
 
@@ -6600,6 +6628,7 @@ msgstr ""
 #: modules/social_features/social_event/config/install/views.view.event_enrollments.yml:0
 #: modules/social_features/social_event/config/install/views.view.events.yml:0
 #: modules/social_features/social_event/config/install/views.view.upcoming_events.yml:0
+#: modules/social_features/social_event/modules/social_event_an_enroll/config/install/views.view.manage_enrollments.yml:0
 #: modules/social_features/social_event/modules/social_event_managers/config/install/views.view.event_manage_enrollments.yml:0
 #: modules/social_features/social_event/modules/social_event_managers/config/install/views.view.managers.yml:0
 #: modules/social_features/social_follow_content/config/install/views.view.following.yml:0
@@ -6849,7 +6878,7 @@ msgid ""
 "this content, please contact a site manager."
 msgstr ""
 
-#: modules/social_features/social_group/social_group.module:1568;1573
+#: modules/social_features/social_group/social_group.module:1550;1555
 msgid "My Groups"
 msgstr ""
 
@@ -6857,7 +6886,7 @@ msgstr ""
 msgid "My events"
 msgstr ""
 
-#: modules/social_features/social_group/social_group.module:1595
+#: modules/social_features/social_group/social_group.module:1577
 msgid "My groups"
 msgstr ""
 
@@ -6885,6 +6914,7 @@ msgstr ""
 #: modules/social_features/social_event/src/EventEnrollmentListBuilder.php:23
 #: modules/social_features/social_event/src/Entity/EventEnrollment.php:194
 #: modules/social_features/social_group/src/Controller/SocialGroupListBuilder.php:70
+#: modules/social_features/social_event/modules/social_event_an_enroll/config/install/views.view.manage_enrollments.yml:0
 msgid "Name"
 msgstr ""
 
@@ -6925,7 +6955,7 @@ msgstr ""
 msgid "New Event"
 msgstr ""
 
-#: modules/social_features/social_group/social_group.module:1540
+#: modules/social_features/social_group/social_group.module:1522
 msgid "New Group"
 msgstr ""
 
@@ -7055,6 +7085,10 @@ msgstr ""
 #: modules/social_features/social_event/config/install/views.view.event_enrollments.yml:0
 #: modules/social_features/social_event/modules/social_event_managers/config/install/views.view.event_manage_enrollments.yml:0
 msgid "No one has enrolled for this event"
+msgstr ""
+
+#: modules/social_features/social_event/modules/social_event_an_enroll/config/install/views.view.manage_enrollments.yml:0
+msgid "No one has enrolled for this event as anonymous user"
 msgstr ""
 
 #: modules/social_features/social_user/config/install/views.view.user_admin_people.yml:0
@@ -7207,6 +7241,7 @@ msgstr ""
 #: modules/social_features/social_book/config/install/core.base_field_override.node.book.promote.yml:0
 #: modules/social_features/social_event/config/install/core.base_field_override.node.event.promote.yml:0
 #: modules/social_features/social_event/config/install/field.field.node.event.field_event_enroll.yml:0
+#: modules/social_features/social_event/modules/social_event_an_enroll/config/install/field.field.node.event.field_event_an_enroll.yml:0
 #: modules/social_features/social_event/modules/social_event_max_enroll/config/install/field.field.node.event.field_event_max_enroll.yml:0
 #: modules/social_features/social_landing_page/config/install/core.base_field_override.node.landing_page.promote.yml:0
 #: modules/social_features/social_page/config/install/core.base_field_override.node.page.promote.yml:0
@@ -7231,6 +7266,7 @@ msgstr ""
 #: modules/social_features/social_event/config/install/views.view.event_enrollments.yml:0;0
 #: modules/social_features/social_event/config/install/views.view.events.yml:0
 #: modules/social_features/social_event/config/install/views.view.upcoming_events.yml:0
+#: modules/social_features/social_event/modules/social_event_an_enroll/config/install/views.view.manage_enrollments.yml:0
 #: modules/social_features/social_event/modules/social_event_managers/config/install/views.view.event_manage_enrollments.yml:0
 #: modules/social_features/social_event/modules/social_event_managers/config/install/views.view.managers.yml:0;0
 #: modules/social_features/social_follow_content/config/install/views.view.following.yml:0
@@ -7270,6 +7306,7 @@ msgstr ""
 #: modules/social_features/social_book/config/install/core.base_field_override.node.book.promote.yml:0
 #: modules/social_features/social_event/config/install/core.base_field_override.node.event.promote.yml:0
 #: modules/social_features/social_event/config/install/field.field.node.event.field_event_enroll.yml:0
+#: modules/social_features/social_event/modules/social_event_an_enroll/config/install/field.field.node.event.field_event_an_enroll.yml:0
 #: modules/social_features/social_event/modules/social_event_max_enroll/config/install/field.field.node.event.field_event_max_enroll.yml:0
 #: modules/social_features/social_landing_page/config/install/core.base_field_override.node.landing_page.promote.yml:0
 #: modules/social_features/social_page/config/install/core.base_field_override.node.page.promote.yml:0
@@ -7497,6 +7534,7 @@ msgstr ""
 #: modules/social_features/social_activity/config/install/views.view.activity_stream_notifications.yml:0
 #: modules/social_features/social_core/config/install/views.view.content.yml:0
 #: modules/social_features/social_event/config/install/views.view.event_enrollments.yml:0
+#: modules/social_features/social_event/modules/social_event_an_enroll/config/install/views.view.manage_enrollments.yml:0
 #: modules/social_features/social_event/modules/social_event_managers/config/install/views.view.event_manage_enrollments.yml:0
 #: modules/social_features/social_event/modules/social_event_managers/config/install/views.view.managers.yml:0
 #: modules/social_features/social_follow_content/config/install/views.view.following.yml:0
@@ -7630,7 +7668,7 @@ msgid ""
 "Your report will only be visible to the content moderation team."
 msgstr ""
 
-#: modules/social_features/social_group/social_group.module:566
+#: modules/social_features/social_group/social_group.module:548
 msgid ""
 "Please note that changing the group type will also change the\n"
 "  visibility of the group content and the way users can join the group."
@@ -7767,7 +7805,7 @@ msgstr ""
 msgid "Prefix"
 msgstr ""
 
-#: modules/social_features/social_group/social_group.module:1212
+#: modules/social_features/social_group/social_group.module:1194
 msgid ""
 "Preparing to delete the group and all it's topic's, event's and post's..."
 msgstr ""
@@ -8215,7 +8253,7 @@ msgstr ""
 msgid "Reason term for which an additional textfield is displayed."
 msgstr ""
 
-#: modules/social_features/social_group/social_group.module:1525
+#: modules/social_features/social_group/social_group.module:1507
 msgid "Reassign your groups to the super administrator."
 msgstr ""
 
@@ -8330,11 +8368,11 @@ msgstr ""
 msgid "Related object"
 msgstr ""
 
-#: modules/social_features/social_group/social_group.module:430;1657
+#: modules/social_features/social_group/social_group.module:412;1639
 msgid "Remove"
 msgstr ""
 
-#: modules/social_features/social_group/social_group.module:426
+#: modules/social_features/social_group/social_group.module:408
 msgid "Remove %name from %group"
 msgstr ""
 
@@ -8455,6 +8493,7 @@ msgstr ""
 #: modules/social_features/social_event/config/install/views.view.event_enrollments.yml:0
 #: modules/social_features/social_event/config/install/views.view.events.yml:0
 #: modules/social_features/social_event/config/install/views.view.upcoming_events.yml:0
+#: modules/social_features/social_event/modules/social_event_an_enroll/config/install/views.view.manage_enrollments.yml:0
 #: modules/social_features/social_event/modules/social_event_managers/config/install/views.view.event_manage_enrollments.yml:0
 #: modules/social_features/social_event/modules/social_event_managers/config/install/views.view.managers.yml:0
 #: modules/social_features/social_follow_content/config/install/views.view.following.yml:0
@@ -8527,7 +8566,7 @@ msgid "Run cron."
 msgstr ""
 
 #: modules/social_features/social_event/modules/social_event_managers/src/Form/SocialEventManagersAddEnrolleeForm.php:169
-#: modules/social_features/social_group/social_group.module:499
+#: modules/social_features/social_group/social_group.module:481
 msgid "Save"
 msgstr ""
 
@@ -8721,7 +8760,7 @@ msgstr ""
 msgid "Select a entity condition for this message."
 msgstr ""
 
-#: modules/social_features/social_group/social_group.module:462
+#: modules/social_features/social_group/social_group.module:444
 msgid "Select a member"
 msgstr ""
 
@@ -8756,7 +8795,7 @@ msgid ""
 msgstr ""
 
 #: modules/social_features/social_event/modules/social_event_managers/src/Form/SocialEventManagersAddEnrolleeForm.php:156
-#: modules/social_features/social_group/social_group.module:477
+#: modules/social_features/social_group/social_group.module:459
 msgid "Select members to add"
 msgstr ""
 
@@ -9411,16 +9450,23 @@ msgid "Social Event"
 msgstr ""
 
 #: modules/social_features/social_event/modules/social_event_an_enroll/social_event_an_enroll.tokens.inc:16
-#: modules/social_features/social_event/modules/social_event_an_enroll/social_event_an_enroll.info.yml:0
 msgid "Social Event AN Enroll"
 msgstr ""
 
+#: modules/social_features/social_event/modules/social_event_an_enroll/social_event_an_enroll.info.yml:0
+msgid "Social Event Anonymous Enrolments"
+msgstr ""
+
 #: modules/social_features/social_event/modules/social_event_an_enroll_enrolments_export/social_event_an_enroll_enrolments_export.info.yml:0
-msgid "Social Event An Enroll Enrolments Export"
+msgid "Social Event Anonymous Enrolments Export"
 msgstr ""
 
 #: modules/social_features/social_event/modules/social_event_enrolments_export/social_event_enrolments_export.info.yml:0
 msgid "Social Event Enrolments Export"
+msgstr ""
+
+#: modules/social_features/social_event/modules/social_event_max_enroll/social_event_max_enroll.info.yml:0
+msgid "Social Event Max Enroll"
 msgstr ""
 
 #: modules/social_features/social_event/modules/social_event_max_enroll/config/schema/social_event_max_enroll.schema.yml:0
@@ -9789,6 +9835,7 @@ msgstr ""
 #: modules/social_features/social_event/config/install/views.view.event_enrollments.yml:0
 #: modules/social_features/social_event/config/install/views.view.events.yml:0
 #: modules/social_features/social_event/config/install/views.view.upcoming_events.yml:0
+#: modules/social_features/social_event/modules/social_event_an_enroll/config/install/views.view.manage_enrollments.yml:0
 #: modules/social_features/social_event/modules/social_event_managers/config/install/views.view.event_manage_enrollments.yml:0
 #: modules/social_features/social_event/modules/social_event_managers/config/install/views.view.managers.yml:0
 #: modules/social_features/social_follow_content/config/install/views.view.following.yml:0
@@ -10636,7 +10683,7 @@ msgid "Title of entity containing mention"
 msgstr ""
 
 #: modules/social_features/social_event/modules/social_event_managers/src/Form/SocialEventManagersAddEnrolleeForm.php:155
-#: modules/social_features/social_group/social_group.module:478
+#: modules/social_features/social_group/social_group.module:460
 msgid "To add multiple members, separate each member with a comma ( , )."
 msgstr ""
 
@@ -10659,6 +10706,10 @@ msgstr ""
 
 #: themes/socialbase/templates/block/block--system-branding-block.html.twig:36
 msgid "Toggle navigation"
+msgstr ""
+
+#: modules/social_features/social_event/modules/social_event_an_enroll/config/install/field.field.event_enrollment.event_enrollment.field_token.yml:0
+msgid "Token"
 msgstr ""
 
 #: modules/social_features/social_content_report/social_content_report.tokens.inc:23
@@ -11217,7 +11268,7 @@ msgstr ""
 #: modules/custom/social_font/social_font.links.task.yml:0
 #: modules/social_features/social_comment/src/Form/SocialCommentAdminOverview.php:209
 #: modules/social_features/social_event/social_event.links.task.yml:0
-#: modules/social_features/social_group/social_group.module:1658
+#: modules/social_features/social_group/social_group.module:1640
 #: modules/social_features/social_post/social_post.links.task.yml:0
 msgid "View"
 msgstr ""
@@ -11296,7 +11347,7 @@ msgstr ""
 msgid "View my events"
 msgstr ""
 
-#: modules/social_features/social_group/social_group.module:1593
+#: modules/social_features/social_group/social_group.module:1575
 msgid "View my groups"
 msgstr ""
 
@@ -12019,6 +12070,7 @@ msgid "field_event"
 msgstr ""
 
 #: modules/social_features/social_event/config/install/views.view.event_enrollments.yml:0
+#: modules/social_features/social_event/modules/social_event_an_enroll/config/install/views.view.manage_enrollments.yml:0
 #: modules/social_features/social_event/modules/social_event_managers/config/install/views.view.event_manage_enrollments.yml:0
 msgid "field_event: Content"
 msgstr ""
@@ -12369,6 +12421,10 @@ msgid ""
 "{{ changed_2 }}"
 msgstr ""
 
+#: modules/social_features/social_event/modules/social_event_an_enroll/config/install/views.view.manage_enrollments.yml:0
+msgid "{{ field_first_name }} {{ field_last_name }}"
+msgstr ""
+
 #: modules/social_features/social_follow_content/config/install/views.view.following.yml:0
 msgid "{{ link_flag }}"
 msgstr ""
@@ -12397,6 +12453,7 @@ msgstr ""
 #: modules/social_features/social_event/config/install/views.view.event_enrollments.yml:0
 #: modules/social_features/social_event/config/install/views.view.events.yml:0
 #: modules/social_features/social_event/config/install/views.view.upcoming_events.yml:0
+#: modules/social_features/social_event/modules/social_event_an_enroll/config/install/views.view.manage_enrollments.yml:0
 #: modules/social_features/social_event/modules/social_event_managers/config/install/views.view.event_manage_enrollments.yml:0
 #: modules/social_features/social_event/modules/social_event_managers/config/install/views.view.managers.yml:0
 #: modules/social_features/social_follow_content/config/install/views.view.following.yml:0
@@ -12437,6 +12494,7 @@ msgstr ""
 #: modules/social_features/social_activity/config/install/views.view.activity_stream_profile.yml:0
 #: modules/social_features/social_content_report/config/install/views.view.report_overview.yml:0
 #: modules/social_features/social_event/config/install/views.view.event_enrollments.yml:0
+#: modules/social_features/social_event/modules/social_event_an_enroll/config/install/views.view.manage_enrollments.yml:0
 #: modules/social_features/social_event/modules/social_event_managers/config/install/views.view.managers.yml:0
 #: modules/social_features/social_follow_content/config/install/views.view.following.yml:0
 #: modules/social_features/social_group/config/install/views.view.group_events.yml:0
@@ -12462,6 +12520,7 @@ msgstr ""
 #: modules/social_features/social_activity/config/install/views.view.activity_stream_profile.yml:0
 #: modules/social_features/social_content_report/config/install/views.view.report_overview.yml:0
 #: modules/social_features/social_event/config/install/views.view.event_enrollments.yml:0
+#: modules/social_features/social_event/modules/social_event_an_enroll/config/install/views.view.manage_enrollments.yml:0
 #: modules/social_features/social_event/modules/social_event_managers/config/install/views.view.managers.yml:0
 #: modules/social_features/social_follow_content/config/install/views.view.following.yml:0
 #: modules/social_features/social_group/config/install/views.view.group_events.yml:0
