@@ -121,7 +121,7 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
    * {@inheritdoc}
    */
   public function execute($entity = NULL) {
-    /** @var \Drupal\Core\Entity\Entity $entity */
+    /** @var \Drupal\Core\Entity\EntityBase $entity */
     if (!$entity->getEntityTypeId() === 'user') {
       $this->logger->notice('Can not send e-mail for %entity', ['%entity' => $entity->getEntityTypeId() . ':' . $entity->id()]);
       return;
