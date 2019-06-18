@@ -31,11 +31,10 @@
   max-width: 100%;
 }
 
-.socialblue--sky .container--navbar .navbar--right > * {
-  -webkit-box-flex: 0;
-      -ms-flex: 0 0 50%;
-          flex: 0 0 50%;
-  max-width: 50%;
+.socialblue--sky .container--navbar .navbar--right > *:not(.navbar-header) {
+  -webkit-box-flex: 1;
+      -ms-flex: 1 0 50%;
+          flex: 1 0 50%;
 }
 
 .socialblue--sky .navbar-default {
@@ -91,16 +90,6 @@
   opacity: 1;
   border: none;
   color: #fff;
-}
-
-.socialblue--sky .navbar-secondary .navbar-nav li.active a:after {
-  content: '';
-  position: absolute;
-  height: 3px;
-  bottom: 0;
-  right: 20px;
-  left: 20px;
-  background: #fff;
 }
 
 .socialblue--sky .navbar-secondary .navbar-nav li.active a li:not(.active) a:hover,
@@ -309,8 +298,8 @@
   }
   .socialblue--sky .layout--with-complementary .navbar-scrollable .navbar-nav .visible-list a {
     display: block;
-    padding-top: 14px;
-    padding-bottom: 13px;
+    padding-top: 12px;
+    padding-bottom: 11px;
   }
   .socialblue--sky .layout--with-complementary .navbar-scrollable .navbar-nav .hidden-list {
     display: none;
@@ -333,9 +322,6 @@
     width: 100%;
     padding: .5rem 2rem;
     color: #9b9b9b;
-  }
-  .socialblue--sky .layout--with-complementary .navbar-scrollable .navbar-nav .hidden-list li a:hover {
-    color: orange;
   }
   .socialblue--sky .navbar-fixed-top .navbar-nav {
     padding-left: 17px;
@@ -385,7 +371,7 @@
         -ms-flex-pack: justify;
             justify-content: space-between;
   }
-  .socialblue--sky .container--navbar .navbar--right > * {
+  .socialblue--sky .container--navbar .navbar--right > *:not(.navbar-header) {
     -webkit-box-flex: 0;
         -ms-flex: 0 0 auto;
             flex: 0 0 auto;

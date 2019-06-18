@@ -9,6 +9,9 @@
 <article{{ attributes.addClass(classes) }}>
 
   <div{{ content_attributes.addClass('card__body') }}>
+    <div class="metainfo card_metainfo">
+      {{ content.links.moderation }}
+    </div>
 
     {% if not node.isPublished() %}
       <div class="node--unpublished__label">{% trans %} unpublished {% endtrans %}</div>
@@ -25,7 +28,7 @@
     {% endif %}
 
     {% block nodefull_body %}
-      {{ content|without('flag_follow_content', 'like_and_dislike') }}
+      {{ content|without('flag_follow_content', 'like_and_dislike', 'links') }}
     {% endblock %}
 
   </div>

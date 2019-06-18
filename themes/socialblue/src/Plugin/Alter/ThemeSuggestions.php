@@ -28,11 +28,12 @@ class ThemeSuggestions extends BaseThemeSuggestions {
 
       if (!empty($suggestions)) {
         foreach ($suggestions as $suggestion) {
+          $style_suggestions[] = $suggestion;
           $style_suggestions[] = $suggestion . '__' . $style;
         }
       }
 
-      $suggestions = array_merge($suggestions, $style_suggestions);
+      $suggestions = $style_suggestions;
     }
 
   }

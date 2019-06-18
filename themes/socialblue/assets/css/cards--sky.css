@@ -1,5 +1,4 @@
 .socialblue--sky .card {
-  border-radius: 2px !important;
   -webkit-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
           box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
@@ -20,6 +19,14 @@
   text-transform: uppercase;
 }
 
+.socialblue--sky .field--item--file {
+  width: 100%;
+  height: auto;
+  -webkit-box-flex: 1;
+      -ms-flex: auto;
+          flex: auto;
+}
+
 .socialblue--sky .card-file {
   -ms-flex-preferred-size: 100%;
       flex-basis: 100%;
@@ -28,6 +35,14 @@
 
 .socialblue--sky .card-file .icon-vote {
   stroke: transparent;
+}
+
+.socialblue--sky .card-file .card-file__title {
+  max-width: 75%;
+}
+
+.socialblue--sky .card-file .card-file__title .file-link a {
+  font-weight: 300;
 }
 
 .socialblue--sky .card-file__link {
@@ -367,10 +382,6 @@
 
 .socialblue--sky .teaser__published-lang {
   text-transform: uppercase;
-}
-
-.socialblue--sky .card.teaser:not(.teaser--tile) {
-  margin-bottom: 1.5rem;
 }
 
 .socialblue--sky .card.teaser:not(.teaser--tile) .card__actionbar {
@@ -886,6 +897,18 @@
 
 .socialblue--sky .path-group:not(.group-type-challenge) .group-about .group-about__item .group-about__wrapper p:last-child {
   margin-bottom: 0;
+}
+
+.socialblue--sky .card_metainfo {
+  margin: 0;
+}
+
+.socialblue--sky .cart__comment .section-title {
+  border-bottom: 1px solid #d5d6d2;
+}
+
+.socialblue--sky .block-views-blockchallenge-ideas-block {
+  padding: 0 1.25rem 1.25rem;
 }
 
 body.socialblue--sky.path-group .region--complementary-bottom .local-actions,
@@ -1537,29 +1560,29 @@ body.socialblue--sky.path-user .region--complementary-top [class*='add-block'] .
   padding-bottom: 0;
 }
 
-body.socialblue--sky.path-group .region--complementary-bottom .card.card--list .card__block--list,
-body.socialblue--sky.path-group .region--complementary-bottom .off-canvas-xs-only.card--list .card__block--list,
-body.socialblue--sky.path-group .region--complementary-bottom [class*='block-group-add'].card--list .card__block--list,
-body.socialblue--sky.path-group .region--complementary-bottom [class*='add-block'].card--list .card__block--list,
-body.socialblue--sky.path-group .region--complementary-top .card.card--list .card__block--list,
-body.socialblue--sky.path-group .region--complementary-top .off-canvas-xs-only.card--list .card__block--list,
-body.socialblue--sky.path-group .region--complementary-top [class*='block-group-add'].card--list .card__block--list,
-body.socialblue--sky.path-group .region--complementary-top [class*='add-block'].card--list .card__block--list, body.socialblue--sky.details .region--complementary-bottom .card.card--list .card__block--list,
-body.socialblue--sky.details .region--complementary-bottom .off-canvas-xs-only.card--list .card__block--list,
-body.socialblue--sky.details .region--complementary-bottom [class*='block-group-add'].card--list .card__block--list,
-body.socialblue--sky.details .region--complementary-bottom [class*='add-block'].card--list .card__block--list,
-body.socialblue--sky.details .region--complementary-top .card.card--list .card__block--list,
-body.socialblue--sky.details .region--complementary-top .off-canvas-xs-only.card--list .card__block--list,
-body.socialblue--sky.details .region--complementary-top [class*='block-group-add'].card--list .card__block--list,
-body.socialblue--sky.details .region--complementary-top [class*='add-block'].card--list .card__block--list, body.socialblue--sky.path-user .region--complementary-bottom .card.card--list .card__block--list,
-body.socialblue--sky.path-user .region--complementary-bottom .off-canvas-xs-only.card--list .card__block--list,
-body.socialblue--sky.path-user .region--complementary-bottom [class*='block-group-add'].card--list .card__block--list,
-body.socialblue--sky.path-user .region--complementary-bottom [class*='add-block'].card--list .card__block--list,
-body.socialblue--sky.path-user .region--complementary-top .card.card--list .card__block--list,
-body.socialblue--sky.path-user .region--complementary-top .off-canvas-xs-only.card--list .card__block--list,
-body.socialblue--sky.path-user .region--complementary-top [class*='block-group-add'].card--list .card__block--list,
-body.socialblue--sky.path-user .region--complementary-top [class*='add-block'].card--list .card__block--list {
-  padding-bottom: 0;
+body.socialblue--sky.path-group .region--complementary-bottom .card.card--list .card__block--list + .card__block--list,
+body.socialblue--sky.path-group .region--complementary-bottom .off-canvas-xs-only.card--list .card__block--list + .card__block--list,
+body.socialblue--sky.path-group .region--complementary-bottom [class*='block-group-add'].card--list .card__block--list + .card__block--list,
+body.socialblue--sky.path-group .region--complementary-bottom [class*='add-block'].card--list .card__block--list + .card__block--list,
+body.socialblue--sky.path-group .region--complementary-top .card.card--list .card__block--list + .card__block--list,
+body.socialblue--sky.path-group .region--complementary-top .off-canvas-xs-only.card--list .card__block--list + .card__block--list,
+body.socialblue--sky.path-group .region--complementary-top [class*='block-group-add'].card--list .card__block--list + .card__block--list,
+body.socialblue--sky.path-group .region--complementary-top [class*='add-block'].card--list .card__block--list + .card__block--list, body.socialblue--sky.details .region--complementary-bottom .card.card--list .card__block--list + .card__block--list,
+body.socialblue--sky.details .region--complementary-bottom .off-canvas-xs-only.card--list .card__block--list + .card__block--list,
+body.socialblue--sky.details .region--complementary-bottom [class*='block-group-add'].card--list .card__block--list + .card__block--list,
+body.socialblue--sky.details .region--complementary-bottom [class*='add-block'].card--list .card__block--list + .card__block--list,
+body.socialblue--sky.details .region--complementary-top .card.card--list .card__block--list + .card__block--list,
+body.socialblue--sky.details .region--complementary-top .off-canvas-xs-only.card--list .card__block--list + .card__block--list,
+body.socialblue--sky.details .region--complementary-top [class*='block-group-add'].card--list .card__block--list + .card__block--list,
+body.socialblue--sky.details .region--complementary-top [class*='add-block'].card--list .card__block--list + .card__block--list, body.socialblue--sky.path-user .region--complementary-bottom .card.card--list .card__block--list + .card__block--list,
+body.socialblue--sky.path-user .region--complementary-bottom .off-canvas-xs-only.card--list .card__block--list + .card__block--list,
+body.socialblue--sky.path-user .region--complementary-bottom [class*='block-group-add'].card--list .card__block--list + .card__block--list,
+body.socialblue--sky.path-user .region--complementary-bottom [class*='add-block'].card--list .card__block--list + .card__block--list,
+body.socialblue--sky.path-user .region--complementary-top .card.card--list .card__block--list + .card__block--list,
+body.socialblue--sky.path-user .region--complementary-top .off-canvas-xs-only.card--list .card__block--list + .card__block--list,
+body.socialblue--sky.path-user .region--complementary-top [class*='block-group-add'].card--list .card__block--list + .card__block--list,
+body.socialblue--sky.path-user .region--complementary-top [class*='add-block'].card--list .card__block--list + .card__block--list {
+  padding-top: 0;
 }
 
 body.socialblue--sky.path-group .region--complementary-bottom .card.card--list .card__block--list:last-child,
@@ -1779,10 +1802,10 @@ body.socialblue--sky.path-user .region--complementary-top [class*='add-block'] .
   z-index: 2;
 }
 
-body.socialblue--sky.path-group .content--side_wrapper-card .region--content > .card,
-body.socialblue--sky.path-group .content--side_wrapper-card .region--content .card, body.socialblue--sky.details .content--side_wrapper-card .region--content > .card,
-body.socialblue--sky.details .content--side_wrapper-card .region--content .card, body.socialblue--sky.path-user .content--side_wrapper-card .region--content > .card,
-body.socialblue--sky.path-user .content--side_wrapper-card .region--content .card {
+body.socialblue--sky.path-group .content--side_wrapper-card .region--content > .card:not(.teaser--idea--featured),
+body.socialblue--sky.path-group .content--side_wrapper-card .region--content .card:not(.teaser--idea--featured), body.socialblue--sky.details .content--side_wrapper-card .region--content > .card:not(.teaser--idea--featured),
+body.socialblue--sky.details .content--side_wrapper-card .region--content .card:not(.teaser--idea--featured), body.socialblue--sky.path-user .content--side_wrapper-card .region--content > .card:not(.teaser--idea--featured),
+body.socialblue--sky.path-user .content--side_wrapper-card .region--content .card:not(.teaser--idea--featured) {
   border-radius: 0 !important;
   -webkit-box-shadow: none;
           box-shadow: none;
@@ -1793,55 +1816,63 @@ body.socialblue--sky.path-user .content--side_wrapper-card .region--content .car
           align-items: flex-start;
 }
 
-body.socialblue--sky.path-group .content--side_wrapper-card .region--content > .card .card__body,
-body.socialblue--sky.path-group .content--side_wrapper-card .region--content > .card .card__block,
-body.socialblue--sky.path-group .content--side_wrapper-card .region--content .card .card__body,
-body.socialblue--sky.path-group .content--side_wrapper-card .region--content .card .card__block, body.socialblue--sky.details .content--side_wrapper-card .region--content > .card .card__body,
-body.socialblue--sky.details .content--side_wrapper-card .region--content > .card .card__block,
-body.socialblue--sky.details .content--side_wrapper-card .region--content .card .card__body,
-body.socialblue--sky.details .content--side_wrapper-card .region--content .card .card__block, body.socialblue--sky.path-user .content--side_wrapper-card .region--content > .card .card__body,
-body.socialblue--sky.path-user .content--side_wrapper-card .region--content > .card .card__block,
-body.socialblue--sky.path-user .content--side_wrapper-card .region--content .card .card__body,
-body.socialblue--sky.path-user .content--side_wrapper-card .region--content .card .card__block {
+body.socialblue--sky.path-group .content--side_wrapper-card .region--content > .card:not(.teaser--idea--featured) .card__body,
+body.socialblue--sky.path-group .content--side_wrapper-card .region--content > .card:not(.teaser--idea--featured) .card__block,
+body.socialblue--sky.path-group .content--side_wrapper-card .region--content .card:not(.teaser--idea--featured) .card__body,
+body.socialblue--sky.path-group .content--side_wrapper-card .region--content .card:not(.teaser--idea--featured) .card__block, body.socialblue--sky.details .content--side_wrapper-card .region--content > .card:not(.teaser--idea--featured) .card__body,
+body.socialblue--sky.details .content--side_wrapper-card .region--content > .card:not(.teaser--idea--featured) .card__block,
+body.socialblue--sky.details .content--side_wrapper-card .region--content .card:not(.teaser--idea--featured) .card__body,
+body.socialblue--sky.details .content--side_wrapper-card .region--content .card:not(.teaser--idea--featured) .card__block, body.socialblue--sky.path-user .content--side_wrapper-card .region--content > .card:not(.teaser--idea--featured) .card__body,
+body.socialblue--sky.path-user .content--side_wrapper-card .region--content > .card:not(.teaser--idea--featured) .card__block,
+body.socialblue--sky.path-user .content--side_wrapper-card .region--content .card:not(.teaser--idea--featured) .card__body,
+body.socialblue--sky.path-user .content--side_wrapper-card .region--content .card:not(.teaser--idea--featured) .card__block {
   padding: 0;
   width: 100%;
 }
 
-body.socialblue--sky.path-group .content--side_wrapper-card .region--content > .card .card__body .view--group-managers,
-body.socialblue--sky.path-group .content--side_wrapper-card .region--content > .card .card__body .card__block,
-body.socialblue--sky.path-group .content--side_wrapper-card .region--content > .card .card__body .card__text,
-body.socialblue--sky.path-group .content--side_wrapper-card .region--content > .card .card__block .view--group-managers,
-body.socialblue--sky.path-group .content--side_wrapper-card .region--content > .card .card__block .card__block,
-body.socialblue--sky.path-group .content--side_wrapper-card .region--content > .card .card__block .card__text,
-body.socialblue--sky.path-group .content--side_wrapper-card .region--content .card .card__body .view--group-managers,
-body.socialblue--sky.path-group .content--side_wrapper-card .region--content .card .card__body .card__block,
-body.socialblue--sky.path-group .content--side_wrapper-card .region--content .card .card__body .card__text,
-body.socialblue--sky.path-group .content--side_wrapper-card .region--content .card .card__block .view--group-managers,
-body.socialblue--sky.path-group .content--side_wrapper-card .region--content .card .card__block .card__block,
-body.socialblue--sky.path-group .content--side_wrapper-card .region--content .card .card__block .card__text, body.socialblue--sky.details .content--side_wrapper-card .region--content > .card .card__body .view--group-managers,
-body.socialblue--sky.details .content--side_wrapper-card .region--content > .card .card__body .card__block,
-body.socialblue--sky.details .content--side_wrapper-card .region--content > .card .card__body .card__text,
-body.socialblue--sky.details .content--side_wrapper-card .region--content > .card .card__block .view--group-managers,
-body.socialblue--sky.details .content--side_wrapper-card .region--content > .card .card__block .card__block,
-body.socialblue--sky.details .content--side_wrapper-card .region--content > .card .card__block .card__text,
-body.socialblue--sky.details .content--side_wrapper-card .region--content .card .card__body .view--group-managers,
-body.socialblue--sky.details .content--side_wrapper-card .region--content .card .card__body .card__block,
-body.socialblue--sky.details .content--side_wrapper-card .region--content .card .card__body .card__text,
-body.socialblue--sky.details .content--side_wrapper-card .region--content .card .card__block .view--group-managers,
-body.socialblue--sky.details .content--side_wrapper-card .region--content .card .card__block .card__block,
-body.socialblue--sky.details .content--side_wrapper-card .region--content .card .card__block .card__text, body.socialblue--sky.path-user .content--side_wrapper-card .region--content > .card .card__body .view--group-managers,
-body.socialblue--sky.path-user .content--side_wrapper-card .region--content > .card .card__body .card__block,
-body.socialblue--sky.path-user .content--side_wrapper-card .region--content > .card .card__body .card__text,
-body.socialblue--sky.path-user .content--side_wrapper-card .region--content > .card .card__block .view--group-managers,
-body.socialblue--sky.path-user .content--side_wrapper-card .region--content > .card .card__block .card__block,
-body.socialblue--sky.path-user .content--side_wrapper-card .region--content > .card .card__block .card__text,
-body.socialblue--sky.path-user .content--side_wrapper-card .region--content .card .card__body .view--group-managers,
-body.socialblue--sky.path-user .content--side_wrapper-card .region--content .card .card__body .card__block,
-body.socialblue--sky.path-user .content--side_wrapper-card .region--content .card .card__body .card__text,
-body.socialblue--sky.path-user .content--side_wrapper-card .region--content .card .card__block .view--group-managers,
-body.socialblue--sky.path-user .content--side_wrapper-card .region--content .card .card__block .card__block,
-body.socialblue--sky.path-user .content--side_wrapper-card .region--content .card .card__block .card__text {
+body.socialblue--sky.path-group .content--side_wrapper-card .region--content > .card:not(.teaser--idea--featured) .card__body .view--group-managers,
+body.socialblue--sky.path-group .content--side_wrapper-card .region--content > .card:not(.teaser--idea--featured) .card__body .card__block,
+body.socialblue--sky.path-group .content--side_wrapper-card .region--content > .card:not(.teaser--idea--featured) .card__body .card__text,
+body.socialblue--sky.path-group .content--side_wrapper-card .region--content > .card:not(.teaser--idea--featured) .card__block .view--group-managers,
+body.socialblue--sky.path-group .content--side_wrapper-card .region--content > .card:not(.teaser--idea--featured) .card__block .card__block,
+body.socialblue--sky.path-group .content--side_wrapper-card .region--content > .card:not(.teaser--idea--featured) .card__block .card__text,
+body.socialblue--sky.path-group .content--side_wrapper-card .region--content .card:not(.teaser--idea--featured) .card__body .view--group-managers,
+body.socialblue--sky.path-group .content--side_wrapper-card .region--content .card:not(.teaser--idea--featured) .card__body .card__block,
+body.socialblue--sky.path-group .content--side_wrapper-card .region--content .card:not(.teaser--idea--featured) .card__body .card__text,
+body.socialblue--sky.path-group .content--side_wrapper-card .region--content .card:not(.teaser--idea--featured) .card__block .view--group-managers,
+body.socialblue--sky.path-group .content--side_wrapper-card .region--content .card:not(.teaser--idea--featured) .card__block .card__block,
+body.socialblue--sky.path-group .content--side_wrapper-card .region--content .card:not(.teaser--idea--featured) .card__block .card__text, body.socialblue--sky.details .content--side_wrapper-card .region--content > .card:not(.teaser--idea--featured) .card__body .view--group-managers,
+body.socialblue--sky.details .content--side_wrapper-card .region--content > .card:not(.teaser--idea--featured) .card__body .card__block,
+body.socialblue--sky.details .content--side_wrapper-card .region--content > .card:not(.teaser--idea--featured) .card__body .card__text,
+body.socialblue--sky.details .content--side_wrapper-card .region--content > .card:not(.teaser--idea--featured) .card__block .view--group-managers,
+body.socialblue--sky.details .content--side_wrapper-card .region--content > .card:not(.teaser--idea--featured) .card__block .card__block,
+body.socialblue--sky.details .content--side_wrapper-card .region--content > .card:not(.teaser--idea--featured) .card__block .card__text,
+body.socialblue--sky.details .content--side_wrapper-card .region--content .card:not(.teaser--idea--featured) .card__body .view--group-managers,
+body.socialblue--sky.details .content--side_wrapper-card .region--content .card:not(.teaser--idea--featured) .card__body .card__block,
+body.socialblue--sky.details .content--side_wrapper-card .region--content .card:not(.teaser--idea--featured) .card__body .card__text,
+body.socialblue--sky.details .content--side_wrapper-card .region--content .card:not(.teaser--idea--featured) .card__block .view--group-managers,
+body.socialblue--sky.details .content--side_wrapper-card .region--content .card:not(.teaser--idea--featured) .card__block .card__block,
+body.socialblue--sky.details .content--side_wrapper-card .region--content .card:not(.teaser--idea--featured) .card__block .card__text, body.socialblue--sky.path-user .content--side_wrapper-card .region--content > .card:not(.teaser--idea--featured) .card__body .view--group-managers,
+body.socialblue--sky.path-user .content--side_wrapper-card .region--content > .card:not(.teaser--idea--featured) .card__body .card__block,
+body.socialblue--sky.path-user .content--side_wrapper-card .region--content > .card:not(.teaser--idea--featured) .card__body .card__text,
+body.socialblue--sky.path-user .content--side_wrapper-card .region--content > .card:not(.teaser--idea--featured) .card__block .view--group-managers,
+body.socialblue--sky.path-user .content--side_wrapper-card .region--content > .card:not(.teaser--idea--featured) .card__block .card__block,
+body.socialblue--sky.path-user .content--side_wrapper-card .region--content > .card:not(.teaser--idea--featured) .card__block .card__text,
+body.socialblue--sky.path-user .content--side_wrapper-card .region--content .card:not(.teaser--idea--featured) .card__body .view--group-managers,
+body.socialblue--sky.path-user .content--side_wrapper-card .region--content .card:not(.teaser--idea--featured) .card__body .card__block,
+body.socialblue--sky.path-user .content--side_wrapper-card .region--content .card:not(.teaser--idea--featured) .card__body .card__text,
+body.socialblue--sky.path-user .content--side_wrapper-card .region--content .card:not(.teaser--idea--featured) .card__block .view--group-managers,
+body.socialblue--sky.path-user .content--side_wrapper-card .region--content .card:not(.teaser--idea--featured) .card__block .card__block,
+body.socialblue--sky.path-user .content--side_wrapper-card .region--content .card:not(.teaser--idea--featured) .card__block .card__text {
   padding: 0;
+}
+
+body.socialblue--sky.path-group .content--side_wrapper-card .region--content > .card.teaser--idea--featured,
+body.socialblue--sky.path-group .content--side_wrapper-card .region--content .card.teaser--idea--featured, body.socialblue--sky.details .content--side_wrapper-card .region--content > .card.teaser--idea--featured,
+body.socialblue--sky.details .content--side_wrapper-card .region--content .card.teaser--idea--featured, body.socialblue--sky.path-user .content--side_wrapper-card .region--content > .card.teaser--idea--featured,
+body.socialblue--sky.path-user .content--side_wrapper-card .region--content .card.teaser--idea--featured {
+  -webkit-box-shadow: none;
+          box-shadow: none;
 }
 
 @media (min-width: 600px) {
@@ -1916,11 +1947,18 @@ body.socialblue--sky.path-user .content--side_wrapper-card .region--content .car
     padding-left: 45px;
     padding-right: 45px;
   }
+  .socialblue--sky .cart__comment {
+    padding-left: 3.75rem;
+    padding-right: 3.75rem;
+  }
+  .socialblue--sky .cart__comment .section-title {
+    padding-left: 0;
+  }
 }
 
 @media (min-width: 900px) {
   .socialblue--sky .card {
-    margin-bottom: 2.5rem;
+    margin-bottom: 1.25rem;
   }
   .socialblue--sky .card__title {
     padding-top: 35px;
@@ -1928,9 +1966,6 @@ body.socialblue--sky.path-user .content--side_wrapper-card .region--content .car
   .socialblue--sky .card__info-user--name {
     font-size: 2.25rem;
     font-weight: 700;
-  }
-  .socialblue--sky .card__block:not(.card__block--list) {
-    padding: 1.5rem 2.5rem 2.5rem;
   }
   .socialblue--sky .block-social-tagging .card__block .group-about__item > p:not(:first-child) {
     margin-top: 15px;
@@ -2084,10 +2119,10 @@ body.socialblue--sky.path-user .content--side_wrapper-card .region--content .car
     left: 2.5rem;
     right: 2.5rem;
   }
-  body.socialblue--sky.path-group .content--side_wrapper-card .region--content > .card,
-  body.socialblue--sky.path-group .content--side_wrapper-card .region--content .card, body.socialblue--sky.details .content--side_wrapper-card .region--content > .card,
-  body.socialblue--sky.details .content--side_wrapper-card .region--content .card, body.socialblue--sky.path-user .content--side_wrapper-card .region--content > .card,
-  body.socialblue--sky.path-user .content--side_wrapper-card .region--content .card {
+  body.socialblue--sky.path-group .content--side_wrapper-card .region--content > .card:not(.teaser--idea--featured),
+  body.socialblue--sky.path-group .content--side_wrapper-card .region--content .card:not(.teaser--idea--featured), body.socialblue--sky.details .content--side_wrapper-card .region--content > .card:not(.teaser--idea--featured),
+  body.socialblue--sky.details .content--side_wrapper-card .region--content .card:not(.teaser--idea--featured), body.socialblue--sky.path-user .content--side_wrapper-card .region--content > .card:not(.teaser--idea--featured),
+  body.socialblue--sky.path-user .content--side_wrapper-card .region--content .card:not(.teaser--idea--featured) {
     padding-left: 3.75rem;
     padding-right: 3.75rem;
   }

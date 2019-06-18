@@ -135,6 +135,12 @@
     }
   }
 
+  main:not(.is-navbar-secondary) .hero__banner-static {
+    @include for-tablet-portrait-up {
+      padding-bottom: 0;
+    }
+  }
+
   // Hero static
   .hero__banner-static {
     background: #fff;
@@ -142,10 +148,6 @@
 
     @include for-tablet-portrait-up {
       padding-bottom: 25px;
-
-      main:not(.is-navbar-secondary) & {
-        padding-bottom: 0;
-      }
     }
 
     .teaser__title {
@@ -204,6 +206,8 @@
 
     .cover-wrap {
       min-height: inherit;
+      padding-top: 0;
+      padding-bottom: 0;
     }
 
     .hero__tag {

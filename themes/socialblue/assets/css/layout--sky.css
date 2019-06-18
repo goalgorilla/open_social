@@ -1,3 +1,7 @@
+.socialblue--sky .region--title {
+  margin-top: 0;
+}
+
 .socialblue--sky .region--hero {
   max-width: 100%;
   margin-top: 0;
@@ -155,6 +159,22 @@ body.socialblue--sky.path-user .region--complementary-top {
   border-radius: 0;
 }
 
+@media (min-width: 600px) {
+  .socialblue--sky .region--hero .cover-wrap {
+    padding-top: 75px;
+    padding-bottom: 75px;
+  }
+  .socialblue--sky .region--hero .cover-wrap > .hero-footer {
+    bottom: 50px;
+    -webkit-box-pack: justify;
+        -ms-flex-pack: justify;
+            justify-content: space-between;
+  }
+  .socialblue--sky .region--hero .cover-wrap .hero-footer__text {
+    margin-left: 0;
+  }
+}
+
 @media (min-width: 900px) {
   .socialblue--sky .container, .socialblue--sky .region--hero .cover-wrap {
     max-width: 1160px;
@@ -253,6 +273,12 @@ body.socialblue--sky.path-user .region--complementary-top {
   body.socialblue--sky.path-group:not(.group-type-challenge) .layout--with-complementary.sidebar-left .region--secondary-navigation, body.socialblue--sky.details .layout--with-complementary.sidebar-left .region--secondary-navigation, body.socialblue--sky.path-user .layout--with-complementary.sidebar-left .region--secondary-navigation {
     padding-left: 20px;
     padding-right: 0;
+  }
+}
+
+@media (max-width: 599px) {
+  .socialblue--sky .region--secondary-navigation {
+    margin-top: 0;
   }
 }
 

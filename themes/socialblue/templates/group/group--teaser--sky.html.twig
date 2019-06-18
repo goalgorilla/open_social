@@ -37,9 +37,11 @@
 
     <div class="card__actionbar">
       <div class="card__actionbar-side">
-        <div class="teaser__tag">
-          {{ group_type }}
-        </div>
+        {% if group_type %}
+          <div class="teaser__tag">
+            {{ group_type }}
+          </div>
+        {% endif %}
 
         <div class="teaser__content-line">
           <div class="badge teaser__badge">

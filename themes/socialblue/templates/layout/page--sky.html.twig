@@ -2,10 +2,10 @@
   {{ page.header }}
 {% endif %}
 
-{% if not page.secondary_navigation %}
-  <main id="content" class="main-container" role="main">
-{% else %}
+{% if page.secondary_navigation %}
   <main id="content" class="main-container is-navbar-secondary" role="main">
+{% else %}
+  <main id="content" class="main-container" role="main">
 {% endif %}
 
   {#{% if page.breadcrumb %}#}
@@ -29,7 +29,7 @@
       {% endif %}
 
       {% if page.secondary_navigation %}
-        {{ page.secondary_navigation }}
+        {{- page.secondary_navigation|raw -}}
       {% endif %}
       <div class="content--wrapper">
         {% if page.complementary_top or page.complementary_bottom %}

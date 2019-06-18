@@ -93,11 +93,10 @@
 .socialblue--sky {
 
   .card {
-    border-radius: $border-radius-extra !important;
     box-shadow: 0 2px 4px rgba(0, 0, 0, .5);
 
     @include for-tablet-landscape-up {
-      margin-bottom: 2.5rem;
+      margin-bottom: 1.25rem
     }
 
     &.block-social-tagging {
@@ -120,6 +119,15 @@
     }
   }
 
+  .field--item--file {
+    width: 100%;
+    height: auto;
+    flex: auto;
+
+    .card-file {
+    }
+  }
+
   .card-file {
      flex-basis: 100%;
      margin-right: 0;
@@ -127,7 +135,15 @@
      .icon-vote {
        stroke: transparent;
      }
-   }
+
+    .card-file__title {
+      max-width: 75%;
+
+      .file-link a {
+        font-weight: 300;
+      }
+    }
+  }
 
   .card-file__link {
     display: flex;
@@ -256,14 +272,6 @@
       &-address {
         color: #989b97;
         font-weight: 700;
-      }
-    }
-  }
-
-  .card__block {
-    @include for-tablet-landscape-up {
-      &:not(.card__block--list) {
-        padding: 1.5rem 2.5rem 2.5rem;
       }
     }
   }
@@ -503,7 +511,6 @@
 
   // Move to teaser
   .card.teaser:not(.teaser--tile) {
-    margin-bottom: 1.5rem;
 
     .card__actionbar {
       display: flex;
@@ -933,6 +940,31 @@
       }
     }
   }
+
+  .card_metainfo {
+    margin: 0;
+  }
+
+  //Card comment.
+  .cart__comment {
+    @include for-tablet-portrait-up {
+      padding-left: 3.75rem;
+      padding-right: 3.75rem;
+    }
+
+    .section-title {
+      border-bottom: 1px solid #d5d6d2;
+
+      @include for-tablet-portrait-up {
+        padding-left: 0;
+      }
+    }
+  }
+
+  // Block Idea with new social sky card.
+  .block-views-blockchallenge-ideas-block {
+    padding: 0 1.25rem 1.25rem;
+  }
 }
 
 
@@ -1076,7 +1108,10 @@ body.socialblue--sky {
 
         &.card--list {
           .card__block--list {
-            padding-bottom: 0;
+
+            + .card__block--list {
+              padding-top: 0;
+            }
 
             &:last-child {
               padding-bottom: 2.5rem;
@@ -1106,8 +1141,8 @@ body.socialblue--sky {
 
     .content--side_wrapper-card {
       .region--content {
-        > .card,
-        .card {
+        > .card:not(.teaser--idea--featured),
+        .card:not(.teaser--idea--featured) {
           border-radius: 0 !important;
           box-shadow: none;
           padding: 1.5rem 1.25rem;
@@ -1130,6 +1165,11 @@ body.socialblue--sky {
               padding: 0;
             }
           }
+        }
+
+        > .card.teaser--idea--featured,
+        .card.teaser--idea--featured {
+          box-shadow: none;
         }
       }
     }
