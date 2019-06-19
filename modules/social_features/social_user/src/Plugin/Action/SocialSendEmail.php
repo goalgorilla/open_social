@@ -3,18 +3,18 @@
 namespace Drupal\social_user\Plugin\Action;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Language\LanguageManagerInterface;
+use Drupal\Core\Mail\MailManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Utility\Token;
 use Drupal\user\UserInterface;
 use Drupal\views_bulk_operations\Action\ViewsBulkOperationsActionBase;
 use Drupal\views_bulk_operations\Action\ViewsBulkOperationsPreconfigurationInterface;
-use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Session\AccountInterface;
-use Drupal\Core\Entity\EntityManagerInterface;
-use Drupal\Core\Language\LanguageManagerInterface;
-use Drupal\Core\Mail\MailManagerInterface;
-use Drupal\Core\Utility\Token;
-use Psr\Log\LoggerInterface;
 use Egulias\EmailValidator\EmailValidator;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -89,8 +89,8 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
    *   The plugin implementation definition.
    * @param \Drupal\Core\Utility\Token $token
    *   The token service.
-   * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
-   *   The entity manager.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
    * @param \Psr\Log\LoggerInterface $logger
    *   A logger instance.
    * @param \Drupal\Core\Mail\MailManagerInterface $mail_manager
@@ -102,11 +102,11 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The configuration factory.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, Token $token, EntityManagerInterface $entity_manager, LoggerInterface $logger, MailManagerInterface $mail_manager, LanguageManagerInterface $language_manager, EmailValidator $email_validator, ConfigFactoryInterface $config_factory) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, Token $token, EntityTypeManagerInterface $entity_type_manager, LoggerInterface $logger, MailManagerInterface $mail_manager, LanguageManagerInterface $language_manager, EmailValidator $email_validator, ConfigFactoryInterface $config_factory) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
     $this->token = $token;
-    $this->storage = $entity_manager->getStorage('user');
+    $this->storage = $entity_type_manager->getStorage('user');
     $this->logger = $logger;
     $this->mailManager = $mail_manager;
     $this->languageManager = $language_manager;
@@ -120,7 +120,7 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
     return new static($configuration, $plugin_id, $plugin_definition,
       $container->get('token'),
-      $container->get('entity.manager'),
+      $container->get('entity_type.manager'),
       $container->get('logger.factory')->get('action'),
       $container->get('plugin.manager.mail'),
       $container->get('language_manager'),
@@ -133,11 +133,15 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
    * {@inheritdoc}
    */
   public function execute($entity = NULL) {
-    /** @var \Drupal\Core\Entity\EntityBase $entity */
+    /** @var \Drupal\Core\Entity\EntityInterface $entity */
     if (!$entity->getEntityTypeId() === 'user') {
-      $this->logger->notice('Can not send e-mail for %entity', ['%entity' => $entity->getEntityTypeId() . ':' . $entity->id()]);
+      $this->logger->notice('Can not send e-mail for %entity', [
+        '%entity' => $entity->getEntityTypeId() . ':' . $entity->id(),
+      ]);
+
       return;
     }
+
     /** @var \Drupal\user\Entity\User $entity */
     if ($entity) {
       $langcode = $entity->getPreferredLangcode();
@@ -145,13 +149,17 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
     else {
       $langcode = $this->languageManager->getDefaultLanguage()->getId();
     }
+
     $params = ['context' => $this->configuration];
     $email = $this->getEmail($entity);
 
     $message = $this->mailManager->mail('system', 'action_send_email', $email, $langcode, $params);
+
     // Error logging is handled by \Drupal\Core\Mail\MailManager::mail().
     if ($message['result']) {
-      $this->logger->notice('Sent email to %recipient', ['%recipient' => $email]);
+      $this->logger->notice('Sent email to %recipient', [
+        '%recipient' => $email,
+      ]);
     }
 
     return $this->t('Send email');
@@ -207,7 +215,7 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
 
     $form['subject'] = [
       '#type' => 'textfield',
-      '#title' => t('Subject'),
+      '#title' => $this->t('Subject'),
       '#required' => TRUE,
       '#default_value' => $form_state->getValue('subject'),
       '#maxlength' => '254',
@@ -215,21 +223,40 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
 
     $form['message'] = [
       '#type' => 'textarea',
-      '#title' => t('Message'),
+      '#title' => $this->t('Message'),
       '#required' => TRUE,
       '#default_value' => $form_state->getValue('message'),
       '#cols' => '80',
       '#rows' => '20',
     ];
 
-    $selected_count = $this->context['selected_count'];
-    $form['#title'] = $this->t('Send an email to :selected_count members', [':selected_count' => $selected_count]);
+    $form['#title'] = $this->t('Send an email to :selected_count members', [
+      ':selected_count' => $this->context['selected_count'],
+    ]);
+
     if (isset($form['list'])) {
       unset($form['list']);
     }
+
     $form['actions']['submit']['#value'] = $this->t('Send email');
-    $form['actions']['submit']['#attributes']['class'] = ['button button--primary js-form-submit form-submit btn js-form-submit btn-raised btn-primary waves-effect waves-btn waves-light'];
-    $form['actions']['cancel']['#attributes']['class'] = ['button button--danger btn btn-flat waves-effect waves-btn'];
+
+    $classes = ['button', 'btn', 'waves-effect', 'waves-btn'];
+
+    $form['actions']['submit']['#attributes']['class'] = [
+      'button--primary',
+      'js-form-submit',
+      'form-submit',
+      'js-form-submit',
+      'btn-raised',
+      'btn-primary',
+      'waves-light',
+    ] + $classes;
+
+    $form['actions']['cancel']['#attributes']['class'] = [
+      'button--danger',
+      'btn-flat',
+    ] + $classes;
+
     return $form;
   }
 
