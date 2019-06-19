@@ -28,6 +28,13 @@ function social_path_manager_form_alter(&$form, FormStateInterface $form_state, 
   if (in_array($form_id, $group_forms['add'], TRUE) || in_array($form_id, $group_forms['edit'], TRUE)) {
     $form['path']['#type'] = 'fieldset';
   }
+
+  // Hide the URL alias for user register form.
+  if ($form_id === 'user_register_form') {
+    if (!empty($form['path'])) {
+      unset($form['path']);
+    }
+  }
 }
 
 /**
