@@ -2,6 +2,7 @@
 
 namespace Drupal\social_user\Plugin\Action;
 
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\user\UserInterface;
 use Drupal\views_bulk_operations\Action\ViewsBulkOperationsActionBase;
@@ -71,6 +72,13 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
   protected $emailValidator;
 
   /**
+   * The configuration factory.
+   *
+   * @var \Drupal\Core\Config\ConfigFactoryInterface
+   */
+  protected $configFactory;
+
+  /**
    * Constructs a ViewsBulkOperationSendEmail object.
    *
    * @param array $configuration
@@ -91,8 +99,10 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
    *   The language manager.
    * @param \Egulias\EmailValidator\EmailValidator $email_validator
    *   The email validator.
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *   The configuration factory.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, Token $token, EntityManagerInterface $entity_manager, LoggerInterface $logger, MailManagerInterface $mail_manager, LanguageManagerInterface $language_manager, EmailValidator $email_validator) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, Token $token, EntityManagerInterface $entity_manager, LoggerInterface $logger, MailManagerInterface $mail_manager, LanguageManagerInterface $language_manager, EmailValidator $email_validator, ConfigFactoryInterface $config_factory) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
     $this->token = $token;
@@ -101,6 +111,7 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
     $this->mailManager = $mail_manager;
     $this->languageManager = $language_manager;
     $this->emailValidator = $email_validator;
+    $this->configFactory = $config_factory;
   }
 
   /**
@@ -113,7 +124,8 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
       $container->get('logger.factory')->get('action'),
       $container->get('plugin.manager.mail'),
       $container->get('language_manager'),
-      $container->get('email.validator')
+      $container->get('email.validator'),
+      $container->get('config.factory')
     );
   }
 
@@ -180,6 +192,19 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
    *   The configuration form.
    */
   public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
+    if (!$from = $form_state->getValue('from')) {
+      if (!$from = $this->configFactory->get('system.site')->get('mail')) {
+        $from = ini_get('sendmail_from');
+      }
+    }
+
+    $form['from'] = [
+      '#type' => 'email',
+      '#title' => $this->t('From'),
+      '#default_value' => $from,
+      '#required' => TRUE,
+    ];
+
     $form['subject'] = [
       '#type' => 'textfield',
       '#title' => t('Subject'),

@@ -761,3 +761,12 @@ function social_user_user_format_name_alter(&$name, AccountInterface $account) {
     }
   }
 }
+
+/**
+ * Implements hook_mail_alter().
+ */
+function social_user_mail_alter(&$message) {
+  if ($message['key'] === 'action_send_email') {
+    $message['from'] = $message['params']['context']['from'];
+  }
+}
