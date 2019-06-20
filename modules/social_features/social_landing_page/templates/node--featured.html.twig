@@ -135,6 +135,17 @@
     </div>
   </div>
   <div class="card__actionbar">
+    {% if visibility_icon and visibility_label %}
+      <div class="badge teaser__badge no-padding" title="{% trans %}The visibility of this content is set to {% endtrans %} {{ visibility_label }}">
+        <span class="badge__container">
+          <svg class="badge__icon">
+            <use xlink:href="#icon-{{ visibility_icon }}"></use>
+          </svg>
+          <span class="badge__label text-gray">{{ visibility_label|capitalize }}</span>
+        </span>
+      </div>
+    {% endif %}
+
     {% block card_link %}
     <div class="card__link">
       <a href="{{ url }}" rel="bookmark">{{ 'Read more'|t }}
