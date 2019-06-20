@@ -349,12 +349,12 @@ function _social_event_format_date($event, $view_mode) {
   if (!empty($start_datetime)) {
     $start_date = $date_formatter->format($start_datetime, $date_format);
     // Default time should not be displayed.
-    $start_time = $start_date_field->date->format('i') === '01' ? '' : $date_formatter->format($start_datetime, $time_format);
+    $start_time = $date_formatter->format($start_datetime, 'custom', 'i') === '01' ? '' : $date_formatter->format($start_datetime, $time_format);
 
     if (!empty($end_datetime)) {
       $end_date = $date_formatter->format($end_datetime, $date_format);
       // Default time should not be displayed.
-      $end_time = $end_date_field->date->format('i') === '01' ? '' : $date_formatter->format($end_datetime, $time_format);
+      $end_time = $date_formatter->format($end_datetime, 'custom', 'i') === '01' ? '' : $date_formatter->format($end_datetime, $time_format);
     }
 
     // Date are the same or there are no end date.
