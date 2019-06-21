@@ -21,6 +21,7 @@ use Drupal\social_event_managers\SocialEventManagersAccessHelper;
 use Drupal\user\Entity\User;
 use Drupal\views\ViewExecutable;
 use Drupal\social_event\Entity\EventEnrollment;
+use Drupal\views_bulk_operations\ViewsBulkOperationsBatch;
 
 /**
  * Implements hook_preprocess_block().
@@ -430,6 +431,16 @@ function social_event_managers_batch_alter(&$batch) {
  *   Performed operations array.
  */
 function _social_event_managers_action_batch_finish($success, array $results, array $operations) {
+  // When we do a bulk action on all the items in a view, across multiple pages,
+  // the saveList function needs to be called. So after pre-populating the list
+  // the actual action is performed on the entities.
+  if (!empty($results['view_id']) && !empty($results['display_id'])) {
+    ViewsBulkOperationsBatch::saveList(TRUE, $results, $operations);
+  }
+
+  // @todo: make sure the code below also works for when you select all across
+  // all pages. It already works for when you select anything other than that.
+
   $operations = array_count_values($results['operations']);
   $results_count = 0;
 
