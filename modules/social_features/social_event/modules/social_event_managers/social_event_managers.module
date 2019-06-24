@@ -408,13 +408,43 @@ function social_event_managers_batch_alter(&$batch) {
   $url = &$batch['source_url'];
 
   if ($url->getRouteName() === 'social_event_managers.vbo.confirm' ||
-    $url->getRouteName() === 'views_bulk_operations.confirm') {
+    $url->getRouteName() === 'views_bulk_operations.confirm' ||
+    $url->getRouteName() === 'views_bulk_operations.execute_batch') {
+    // @todo: Put the code from 414 to 443 in a separate function where it finds
+    // the Action ID.
     /** @var \Drupal\Core\Form\FormStateInterface $form_state */
     $form_state = &$batch['form_state'];
 
-    $data = $form_state->get('views_bulk_operations');
-    $batch['sets'][0]['results']['action'] = $data['action_id'];
-    if (in_array($data['action_id'], $actions)) {
+    $action_id = '';
+    if ($form_state instanceof FormStateInterface) {
+      $data = $form_state->get('views_bulk_operations');
+      $action_id = $data['action_id'];
+    }
+    else {
+      foreach ($batch['sets'][0]['operations'] as $operations) {
+        if (empty($operations) || !is_array($operations)) {
+          break;
+        }
+        foreach ($operations as $operation) {
+          if (empty($operation) || !is_array($operation)) {
+            break;
+          }
+          foreach ($operation as $items) {
+            if (empty($items) || !is_array($items)) {
+              break;
+            }
+
+            if (!empty($items['action_id'])) {
+              $action_id = $items['action_id'];
+              break;
+            }
+          }
+        }
+      }
+    }
+
+    $batch['sets'][0]['results']['action'] = $action_id;
+    if (in_array($action_id, $actions)) {
       $batch['sets'][0]['finished'] = '_social_event_managers_action_batch_finish';
     }
   }
@@ -436,10 +466,8 @@ function _social_event_managers_action_batch_finish($success, array $results, ar
   // the actual action is performed on the entities.
   if (!empty($results['view_id']) && !empty($results['display_id'])) {
     ViewsBulkOperationsBatch::saveList(TRUE, $results, $operations);
+    return;
   }
-
-  // @todo: make sure the code below also works for when you select all across
-  // all pages. It already works for when you select anything other than that.
 
   $operations = array_count_values($results['operations']);
   $results_count = 0;
