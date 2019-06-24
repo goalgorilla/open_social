@@ -38,7 +38,7 @@ class EntityAutocompleteMatcher extends EntityAutocompleteMatcherBase {
           // We can just add this to our render arrays from now on.
           // '#selection_settings' => [ 'skip_entity' => ['7', '8', '9'] ].
           if (!empty($selection_settings['skip_entity']) && in_array($entity_id, $selection_settings['skip_entity'], FALSE)) {
-              continue;
+            continue;
           }
 
           $key = !empty($selection_settings['hide_id']) ? $label : "$label ($entity_id)";
