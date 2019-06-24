@@ -2,6 +2,12 @@
 
 .socialblue--sky {
 
+  .block-profile-hero-block .cover-wrap {
+    @include for-phone-only {
+      min-height: 150px;
+    }
+  }
+
   .cover-wrap {
     @include for-tablet-portrait-up {
       min-height: 320px;
@@ -13,8 +19,12 @@
   }
 
   .hero-footer {
-    flex-wrap: wrap;
     padding-bottom: 4em;
+  }
+
+  .hero-footer,
+  .hero-footer__header {
+    flex-wrap: wrap;
   }
 
   .hero__banner {
@@ -150,8 +160,12 @@
       padding-bottom: 25px;
     }
 
+    @include for-phone-only {
+      padding-top: 30px;
+    }
+
     .teaser__title {
-      margin: 0 0 25px;
+      margin: 0 0 1rem;
 
       @include for-tablet-landscape-up {
         font-size: 2.25rem;
@@ -174,6 +188,10 @@
 
     .metainfo {
       align-items: center;
+
+      @include for-phone-only {
+        margin-bottom: 0;
+      }
     }
 
     .metainfo__content {
@@ -230,7 +248,7 @@
     }
 
     .hero-footer {
-      padding-top: 1.25rem;
+      padding-top: 1rem;
       padding-bottom: 1.25rem;
       flex-direction: column;
 
@@ -298,6 +316,13 @@
         padding-top: 0;
       }
 
+      .btn-group,
+      .btn {
+        @include for-phone-only {
+          width: 100%;
+        }
+      }
+
       .btn {
         border-width: 2px;
         font-size: .875rem;
@@ -325,6 +350,10 @@
 
       .hero-image {
         margin-bottom: 45px;
+
+        @include for-phone-only {
+          margin-bottom: 1.25rem;
+        }
       }
 
       .hero-footer {
@@ -334,6 +363,10 @@
           @include for-tablet-landscape-up {
             flex: 0 0 100%;
             max-width: 100%;
+          }
+
+          @include for-phone-only {
+            margin-bottom: 1rem;
           }
         }
       }
@@ -350,6 +383,11 @@
           padding-right: 30px;
           padding-left: 30px;
         }
+
+        @include for-phone-only {
+          padding-top: 1rem;
+          padding-bottom: 1rem;
+        }
       }
 
       .hero-footer__text {
@@ -361,12 +399,22 @@
       }
 
       .article__special-fields {
-        padding: 0 0 25px;
+        padding: 0;
         border: 0;
         letter-spacing: .4px;
 
         @include for-tablet-portrait-up {
           padding-bottom: 0;
+        }
+
+        @include for-phone-only {
+          > * {
+            margin-bottom: 10px;
+
+            &:last-child {
+              margin-bottom: 0;
+            }
+          }
         }
       }
 

@@ -1010,7 +1010,7 @@ body.socialblue--sky {
       }
 
       .card,
-      .off-canvas-xs-only,
+      .off-canvas-xs-only:not(#block-filter),
       [class*='block-group-add'],
       [class*='add-block'] {
         border-radius: 0 !important;
@@ -1018,6 +1018,14 @@ body.socialblue--sky {
         padding-bottom: 1.5rem;
         margin-bottom: 0;
         background: transparent;
+
+        @include for-phone-only {
+          width: 100%;
+
+          a {
+            width: 100%;
+          }
+        }
 
         &:after {
           content: '';

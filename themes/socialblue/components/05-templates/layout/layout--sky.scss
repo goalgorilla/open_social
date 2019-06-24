@@ -230,6 +230,10 @@ body.socialblue--sky {
       &.sidebar-left {
         .region--complementary {
           order: 1;
+
+          @include for-phone-only {
+            order: 0;
+          }
         }
 
         .region--secondary-navigation {
