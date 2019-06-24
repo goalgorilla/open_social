@@ -79,7 +79,7 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
   protected $configFactory;
 
   /**
-   * Constructs a ViewsBulkOperationSendEmail object.
+   * Constructs a SocialSendEmail object.
    *
    * @param array $configuration
    *   A configuration array containing information about the plugin instance.
@@ -102,7 +102,18 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The configuration factory.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, Token $token, EntityTypeManagerInterface $entity_type_manager, LoggerInterface $logger, MailManagerInterface $mail_manager, LanguageManagerInterface $language_manager, EmailValidator $email_validator, ConfigFactoryInterface $config_factory) {
+  public function __construct(
+    array $configuration,
+    $plugin_id,
+    $plugin_definition,
+    Token $token,
+    EntityTypeManagerInterface $entity_type_manager,
+    LoggerInterface $logger,
+    MailManagerInterface $mail_manager,
+    LanguageManagerInterface $language_manager,
+    EmailValidator $email_validator,
+    ConfigFactoryInterface $config_factory
+  ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
     $this->token = $token;
