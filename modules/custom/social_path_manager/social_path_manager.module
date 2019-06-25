@@ -211,7 +211,10 @@ function _social_path_manager_update_alias(EntityInterface $entity, $op, $bulk =
 
         // If it's a bulk generate then get the alias by path.
         if ($bulk === TRUE) {
-          $path['alias'] = $pam->getAliasByPath('/group/' . $entity->id() . '/stream');
+          $url = Url::fromRoute('entity.group.canonical', ['group' => $entity->id()]);
+          $url = $url->getInternalPath();
+
+          $path['alias'] = $pam->getAliasByPath('/' . $url);
         }
         else {
           // New alias.
@@ -249,8 +252,9 @@ function _social_path_manager_update_alias(EntityInterface $entity, $op, $bulk =
             }
           }
 
-          // Clear cache of the group tag.
+          // Clear cache of the group tag and rebuild routes.
           \Drupal::service('cache_tags.invalidator')->invalidateTags(['group:' . $entity->id()]);
+          \Drupal::service('router.builder')->rebuild();
         }
         break;
 
