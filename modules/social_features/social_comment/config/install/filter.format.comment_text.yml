@@ -1,0 +1,34 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - mentions
+name: 'Comment text'
+format: comment_text
+weight: 20
+filters:
+  filter_html:
+    id: filter_html
+    provider: filter
+    status: true
+    weight: -10
+    settings:
+      allowed_html: '<a href hreflang> <em> <strong> <blockquote cite> <ul type> <ol start type> <li> <dl> <dt> <dd> <u> <i> <p> <br> <img src alt data-entity-type data-entity-uuid>'
+      filter_html_help: true
+      filter_html_nofollow: false
+  filter_url:
+    id: filter_url
+    provider: filter
+    status: true
+    weight: 0
+    settings:
+      filter_url_length: 72
+  filter_mentions:
+    id: filter_mentions
+    provider: mentions
+    status: true
+    weight: -10
+    settings:
+      mentions_filter:
+        ProfileMention: ProfileMention
+        UserMention: UserMention

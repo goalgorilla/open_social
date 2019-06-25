@@ -16,6 +16,13 @@ function social_comment_install() {
 
   // Set some default permissions.
   _social_comment_set_permissions();
+
+  // Set default settings.
+  \Drupal::configFactory()->getEditable('social_comment.comment_settings')
+    ->set('redirect_comment_to_entity', TRUE)
+    ->set('remove_author_field', TRUE)
+    ->set('wysiwyg', TRUE)
+    ->save();
 }
 
 /**
@@ -56,6 +63,7 @@ function _social_comment_get_permissions($role) {
     'edit own comments',
     'delete own comments',
     'administer own comments',
+    'use text format comment_html',
   ]);
 
   // Content manager.
@@ -64,7 +72,9 @@ function _social_comment_get_permissions($role) {
   ]);
 
   // Site manager.
-  $permissions['sitemanager'] = array_merge($permissions['contentmanager'], []);
+  $permissions['sitemanager'] = array_merge($permissions['contentmanager'], [
+    'administer social_comment settings',
+  ]);
 
   if (isset($permissions[$role])) {
     return $permissions[$role];
@@ -98,4 +108,13 @@ function social_comment_update_8002() {
   // hook was not added at that point so this must be rectified now.
   user_role_grant_permissions('contentmanager', ['administer comments']);
   user_role_grant_permissions('sitemanager', ['administer comments']);
+}
+
+/**
+ * Enable 'administer social_comment settings' permission for sitemanagers.
+ */
+function social_comment_update_8601() {
+  // These permissions were added to default installs in PR 959 but an update
+  // hook was not added at that point so this must be rectified now.
+  user_role_grant_permissions('sitemanager', ['administer social_comment settings']);
 }

@@ -1,0 +1,34 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - filter.format.comment_text
+  module:
+    - ckeditor
+format: comment_text
+editor: ckeditor
+settings:
+  toolbar:
+    rows:
+      -
+        -
+          name: Formatting
+          items:
+            - Bold
+            - Italic
+            - Underline
+        -
+          name: Links
+          items:
+            - DrupalLink
+            - DrupalUnlink
+        -
+          name: Lists
+          items:
+            - BulletedList
+            - NumberedList
+  plugins:
+    stylescombo:
+      styles: ''
+    language:
+      language_list: un

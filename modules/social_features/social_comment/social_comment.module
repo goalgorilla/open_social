@@ -335,3 +335,66 @@ function social_comment_field_info_alter(&$info) {
     $info['comment']['list_class'] = '\Drupal\social_comment\SocialCommentFieldItemList';
   }
 }
+
+/**
+ * Implements hook_element_info_alter().
+ */
+function social_comment_element_info_alter(array &$info) {
+  if (isset($info['text_format']) && isset($info['text_format']['#process'])) {
+    $info['text_format']['#process'][] = 'social_comment_filter_process_format';
+  }
+}
+
+/**
+ * Process callback for form elements that have a text format selector attached.
+ *
+ * This callback runs after filter_process_format() and performs additional
+ * modifications to the form element.
+ *
+ * @see \Drupal\filter\Element\TextFormat::processFormat()
+ */
+function social_comment_filter_process_format(array &$element, FormStateInterface $form_state, array $complete_form) {
+  $comment_text_format = 'comment_text';
+
+  $enabled_form_ids = [
+    'comment_post_comment_form',
+    'comment_comment_form',
+  ];
+
+  // Change text format for comment form.
+  if (in_array($complete_form['#form_id'], $enabled_form_ids, TRUE)) {
+
+    // Check if we need to enable WYSIWYG on comment forms.
+    $wysiwyg = \Drupal::config('social_comment.comment_settings')->get('remove_author_field');
+    if ($wysiwyg) {
+
+      $comment = $form_state->getFormObject()->getEntity();
+      $comment_type = $comment->getEntityTypeId();
+      $permission = 'use text format ' . $comment_text_format;
+      $account = \Drupal::currentUser();
+      if ($comment_type === 'comment' && $account->hasPermission($permission)) {
+        // Remove simple text format from comments.
+        if (isset($element['format']['format']['#options']['simple_text'])) {
+          unset($element['format']['format']['#options']['simple_text']);
+        }
+        // Add comment text format to comments.
+        $element['#format'] = $comment_text_format;
+        $element['format']['format']['#value'] = $comment_text_format;
+        $element['format']['format']['#default_value'] = $comment_text_format;
+        $element['format']['format']['#options'][$comment_text_format] = $comment_text_format;
+      }
+    }
+  }
+  // If the form is not comment form, remove the text format comment_text.
+  elseif (isset($element['format']['format']['#options'][$comment_text_format])) {
+    unset($element['format']['format']['#options'][$comment_text_format]);
+  }
+  return $element;
+}
+
+/**
+ * Implements hook_social_embed_formats_alter().
+ */
+function social_comment_social_embed_formats_alter(array &$formats) {
+  $formats['comment_text'] = TRUE;
+}
