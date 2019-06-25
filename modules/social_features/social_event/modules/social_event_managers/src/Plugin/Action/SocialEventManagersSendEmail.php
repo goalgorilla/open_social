@@ -12,7 +12,6 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Utility\Token;
 use Drupal\node\NodeInterface;
 use Drupal\social_event\EventEnrollmentInterface;
-use Drupal\social_event_an_enroll\EventAnEnrollManager;
 use Drupal\social_user\Plugin\Action\SocialSendEmail;
 use Egulias\EmailValidator\EmailValidator;
 use Psr\Log\LoggerInterface;
