@@ -34,7 +34,7 @@ class CommentPostFormatter extends CommentDefaultFormatter {
   public static function defaultSettings() {
     return [
       'num_comments' => 2,
-      'order' => 'DESC',
+      'order' => 'ASC',
     ];
   }
 
@@ -67,7 +67,7 @@ class CommentPostFormatter extends CommentDefaultFormatter {
       // should display if the user is an administrator.
       $elements['#cache']['contexts'][] = 'user.permissions';
       if ($this->currentUser->hasPermission('access comments') || $this->currentUser->hasPermission('administer comments')) {
-        $output['comments'] = [];
+        $output['comments'] = ['#weight' => 0];
 
         if ($comment_count || $this->currentUser->hasPermission('administer comments')) {
           $mode = $comment_settings['default_mode'];
@@ -133,11 +133,13 @@ class CommentPostFormatter extends CommentDefaultFormatter {
             ],
             ],
             '#create_placeholder' => TRUE,
+            '#weight' => 10,
           ];
         }
       }
 
       $elements[] = $output + [
+        '#sorted' => true,
         '#comment_type' => $this->getFieldSetting('comment_type'),
         '#comment_display_mode' => $this->getFieldSetting('default_mode'),
         'comments' => [],
@@ -201,6 +203,7 @@ class CommentPostFormatter extends CommentDefaultFormatter {
       ->addMetaData('base_table', 'comment')
       ->addMetaData('entity', $entity)
       ->addMetaData('field_name', $field_name);
+
 
     $comments_order = $this->getSetting('order');
 
