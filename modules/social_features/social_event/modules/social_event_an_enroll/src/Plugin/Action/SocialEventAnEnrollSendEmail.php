@@ -2,7 +2,6 @@
 
 namespace Drupal\social_event_an_enroll\Plugin\Action;
 
-use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Mail\MailManagerInterface;
@@ -62,8 +61,6 @@ class SocialEventAnEnrollSendEmail extends SocialEventManagersSendEmail {
    *   The language manager.
    * @param \Egulias\EmailValidator\EmailValidator $email_validator
    *   The email validator.
-   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
-   *   The configuration factory.
    * @param \Drupal\social_event_an_enroll\EventAnEnrollManager $social_event_an_enroll_manager
    *   The event an enroll manager.
    */
@@ -77,10 +74,9 @@ class SocialEventAnEnrollSendEmail extends SocialEventManagersSendEmail {
     MailManagerInterface $mail_manager,
     LanguageManagerInterface $language_manager,
     EmailValidator $email_validator,
-    ConfigFactoryInterface $config_factory,
     EventAnEnrollManager $social_event_an_enroll_manager
   ) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition, $token, $entity_type_manager, $logger, $mail_manager, $language_manager, $email_validator, $config_factory);
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $token, $entity_type_manager, $logger, $mail_manager, $language_manager, $email_validator);
 
     $this->socialEventAnEnrollManager = $social_event_an_enroll_manager;
   }
@@ -96,7 +92,6 @@ class SocialEventAnEnrollSendEmail extends SocialEventManagersSendEmail {
       $container->get('plugin.manager.mail'),
       $container->get('language_manager'),
       $container->get('email.validator'),
-      $container->get('config.factory'),
       $container->get('social_event_an_enroll.manager')
     );
   }

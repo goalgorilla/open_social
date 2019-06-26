@@ -2,7 +2,6 @@
 
 namespace Drupal\social_user\Plugin\Action;
 
-use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
@@ -99,8 +98,6 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
    *   The language manager.
    * @param \Egulias\EmailValidator\EmailValidator $email_validator
    *   The email validator.
-   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
-   *   The configuration factory.
    */
   public function __construct(
     array $configuration,
@@ -111,8 +108,7 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
     LoggerInterface $logger,
     MailManagerInterface $mail_manager,
     LanguageManagerInterface $language_manager,
-    EmailValidator $email_validator,
-    ConfigFactoryInterface $config_factory
+    EmailValidator $email_validator
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
@@ -122,7 +118,6 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
     $this->mailManager = $mail_manager;
     $this->languageManager = $language_manager;
     $this->emailValidator = $email_validator;
-    $this->configFactory = $config_factory;
   }
 
   /**
@@ -135,8 +130,7 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
       $container->get('logger.factory')->get('action'),
       $container->get('plugin.manager.mail'),
       $container->get('language_manager'),
-      $container->get('email.validator'),
-      $container->get('config.factory')
+      $container->get('email.validator')
     );
   }
 
@@ -164,7 +158,7 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
     $params = ['context' => $this->configuration];
     $email = $this->getEmail($entity);
 
-    $message = $this->mailManager->mail('system', 'action_send_email', $email, $langcode, $params);
+    $message = $this->mailManager->mail('system', 'action_send_email', $email, $langcode, $params, $this->configuration['reply']);
 
     // Error logging is handled by \Drupal\Core\Mail\MailManager::mail().
     if ($message['result']) {
@@ -211,17 +205,9 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
    *   The configuration form.
    */
   public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
-    if (!$from = $form_state->getValue('from')) {
-      if (!$from = $this->configFactory->get('system.site')->get('mail')) {
-        $from = ini_get('sendmail_from');
-      }
-    }
-
-    $form['from'] = [
+    $form['reply'] = [
       '#type' => 'email',
-      '#title' => $this->t('From'),
-      '#default_value' => $from,
-      '#required' => TRUE,
+      '#title' => $this->t('Reply-to'),
     ];
 
     $form['subject'] = [

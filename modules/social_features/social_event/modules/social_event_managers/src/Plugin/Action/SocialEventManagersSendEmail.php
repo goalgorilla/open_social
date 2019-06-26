@@ -3,7 +3,6 @@
 namespace Drupal\social_event_managers\Plugin\Action;
 
 use Drupal\Core\Access\AccessResult;
-use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
@@ -50,10 +49,9 @@ class SocialEventManagersSendEmail extends SocialSendEmail {
     LoggerInterface $logger,
     MailManagerInterface $mail_manager,
     LanguageManagerInterface $language_manager,
-    EmailValidator $email_validator,
-    ConfigFactoryInterface $config_factory
+    EmailValidator $email_validator
   ) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition, $token, $entity_type_manager, $logger, $mail_manager, $language_manager, $email_validator, $config_factory);
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $token, $entity_type_manager, $logger, $mail_manager, $language_manager, $email_validator);
 
     $this->entityTypeManager = $entity_type_manager;
   }

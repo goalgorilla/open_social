@@ -23,11 +23,6 @@ function social_swiftmail_install() {
   $mailsystem_settings->set('defaults.formatter', 'social_swiftmailer')->save();
   $mailsystem_settings->set('modules.swiftmailer.none.sender', 'social_swiftmailer')->save();
   $mailsystem_settings->set('modules.swiftmailer.none.formatter', 'social_swiftmailer')->save();
-
-  // Set module weight higher as the weight of the "Social User" module because
-  // the E-mail header should be changed only after updating the sender message
-  // field.
-  module_set_weight('social_swiftmail', 1);
 }
 
 /**
@@ -37,11 +32,4 @@ function social_swiftmail_update_8001(&$sandbox) {
   // Alter mailsystem settings.
   $mailsystem_settings = \Drupal::configFactory()->getEditable('mailsystem.settings');
   $mailsystem_settings->set('theme', 'default')->save();
-}
-
-/**
- * Set module weight.
- */
-function social_swiftmail_update_8002() {
-  module_set_weight('social_swiftmail', 1);
 }
