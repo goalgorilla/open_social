@@ -2,14 +2,8 @@
 
 namespace Drupal\social_post\Plugin\Field\FieldFormatter;
 
-use Drupal\comment\Plugin\Field\FieldType\CommentItemInterface;
-use Drupal\comment\Plugin\Field\FieldFormatter\CommentDefaultFormatter;
-use Drupal\Core\Field\FieldItemListInterface;
-use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Entity\EntityInterface;
-use Drupal\comment\CommentManagerInterface;
 use Drupal\comment\CommentInterface;
-use Drupal\Core\Link;
 
 /**
  * Provides a post comment activity formatter.
@@ -47,7 +41,6 @@ class CommentPostActivityFormatter extends CommentPostFormatter {
       ->addMetaData('base_table', 'comment')
       ->addMetaData('entity', $entity)
       ->addMetaData('field_name', $field_name);
-
 
     if (!$this->currentUser->hasPermission('administer comments')) {
       $query->condition('c.status', CommentInterface::PUBLISHED);

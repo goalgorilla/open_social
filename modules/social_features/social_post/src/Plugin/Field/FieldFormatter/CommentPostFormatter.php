@@ -202,7 +202,6 @@ class CommentPostFormatter extends CommentDefaultFormatter {
       ->addMetaData('entity', $entity)
       ->addMetaData('field_name', $field_name);
 
-
     $comments_order = $this->getSetting('order');
 
     if (!$this->currentUser->hasPermission('administer comments')) {
