@@ -67,7 +67,7 @@ class CommentPostFormatter extends CommentDefaultFormatter {
       // should display if the user is an administrator.
       $elements['#cache']['contexts'][] = 'user.permissions';
       if ($this->currentUser->hasPermission('access comments') || $this->currentUser->hasPermission('administer comments')) {
-        $output['comments'] = ['#weight' => 0];
+        $output['comments'] = [];
 
         if ($comment_count || $this->currentUser->hasPermission('administer comments')) {
           $mode = $comment_settings['default_mode'];
@@ -133,13 +133,11 @@ class CommentPostFormatter extends CommentDefaultFormatter {
             ],
             ],
             '#create_placeholder' => TRUE,
-            '#weight' => 10,
           ];
         }
       }
 
       $elements[] = $output + [
-        '#sorted' => true,
         '#comment_type' => $this->getFieldSetting('comment_type'),
         '#comment_display_mode' => $this->getFieldSetting('default_mode'),
         'comments' => [],

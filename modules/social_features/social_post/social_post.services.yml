@@ -3,7 +3,3 @@ services:
     class: Drupal\social_post\Routing\RouteSubscriber
     tags:
       - { name: event_subscriber }
-  social_post.override:
-    class: \Drupal\social_post\SocialPostConfigOverride
-    tags:
-      - {name: config.factory.override, priority: 5}

@@ -27,21 +27,6 @@ class SocialPostPhotoConfigOverride implements ConfigFactoryOverrideInterface {
     $overrides = [];
     $config_factory = \Drupal::service('config.factory');
 
-    // Override comments order.
-    $config_names = [
-      'core.entity_view_display.post.photo.default',
-      'core.entity_view_display.post.photo.activity',
-    ];
-
-    foreach ($config_names as $config_name) {
-      if (in_array($config_name, $names)) {
-        $config = $config_factory->getEditable($config_name);
-        $comments_order = $config->get('content.field_post_comments.settings.order');
-        $overrides[$config_name]["content"]["field_post_comments"]["settings"]["order"] = $comments_order;
-      }
-    }
-
-
     // Temporary override to allow only 1 photo.
     $config_name = 'field.storage.post.field_post_image';
     if (in_array($config_name, $names)) {
