@@ -337,6 +337,20 @@ function social_comment_field_info_alter(&$info) {
 }
 
 /**
+ * Change the CKEditor settings.
+ *
+ * Implements hook_editor_js_settings_alter().
+ */
+function social_comment_editor_js_settings_alter(array &$settings) {
+  foreach (array_keys($settings['editor']['formats']) as $text_format_id) {
+    if ($settings['editor']['formats'][$text_format_id]['editor'] === 'ckeditor' && $text_format_id === 'comment_text') {
+      $settings['editor']['formats'][$text_format_id]['editorSettings']['autoGrow_minHeight'] = '30';
+      $settings['editor']['formats'][$text_format_id]['editorSettings']['removePlugins'] = 'elementspath';
+    }
+  }
+}
+
+/**
  * Implements hook_element_info_alter().
  */
 function social_comment_element_info_alter(array &$info) {

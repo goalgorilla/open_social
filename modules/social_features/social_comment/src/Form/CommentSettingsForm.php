@@ -52,7 +52,6 @@ class CommentSettingsForm extends ConfigFormBase {
       '#default_value' => $config->get('wysiwyg'),
     ];
 
-
     return parent::buildForm($form, $form_state);
   }
 
