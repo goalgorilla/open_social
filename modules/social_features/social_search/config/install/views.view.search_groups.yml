@@ -2,10 +2,10 @@ langcode: en
 status: true
 dependencies:
   config:
-  - search_api.index.social_groups
+    - search_api.index.social_groups
   module:
-  - search_api
-  - user
+    - search_api
+    - user
 id: search_groups
 label: 'Search Groups'
 module: views
@@ -190,6 +190,18 @@ display:
           expose:
             label: ''
           plugin_id: search_api
+        created:
+          id: created
+          table: search_api_index_social_groups
+          field: created
+          relationship: none
+          group_type: group
+          admin_label: ''
+          order: DESC
+          exposed: false
+          expose:
+            label: ''
+          plugin_id: search_api
       title: 'Search Groups'
       header:
         area:
@@ -259,10 +271,10 @@ display:
     cache_metadata:
       max-age: -1
       contexts:
-      - 'languages:language_interface'
-      - url
-      - url.query_args
-      - user.permissions
+        - 'languages:language_interface'
+        - url
+        - url.query_args
+        - user.permissions
       tags: {  }
   page:
     display_plugin: page
@@ -276,10 +288,10 @@ display:
     cache_metadata:
       max-age: -1
       contexts:
-      - 'languages:language_interface'
-      - url
-      - url.query_args
-      - user.permissions
+        - 'languages:language_interface'
+        - url
+        - url.query_args
+        - user.permissions
       tags: {  }
   page_no_value:
     display_plugin: page
@@ -319,8 +331,8 @@ display:
     cache_metadata:
       max-age: -1
       contexts:
-      - 'languages:language_interface'
-      - url
-      - url.query_args
-      - user.permissions
+        - 'languages:language_interface'
+        - url
+        - url.query_args
+        - user.permissions
       tags: {  }
