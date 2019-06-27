@@ -131,7 +131,7 @@ class ContentBuilder implements ContentBuilderInterface {
     }
 
     return [
-      '#markup' => '<div class="card__block">' . t('No matching content found') . '</div>',
+      '#markup' => '<div class="card__block">' . $this->t('No matching content found') . '</div>',
     ];
   }
 
@@ -141,7 +141,7 @@ class ContentBuilder implements ContentBuilderInterface {
    * @param \Drupal\block_content\Entity\BlockContent $block_content
    *   The block content where we get the settings from.
    *
-   * @return \Drupal\Core\GeneratedLink|string
+   * @return string
    *   The read more link.
    */
   protected function getLink(BlockContent $block_content) {
