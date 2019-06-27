@@ -379,7 +379,7 @@ function social_comment_filter_process_format(array &$element, FormStateInterfac
   if (in_array($complete_form['#form_id'], $enabled_form_ids, TRUE)) {
 
     // Check if we need to enable WYSIWYG on comment forms.
-    $wysiwyg = \Drupal::config('social_comment.comment_settings')->get('remove_author_field');
+    $wysiwyg = \Drupal::config('social_comment.comment_settings')->get('wysiwyg');
     if ($wysiwyg) {
 
       $comment = $form_state->getFormObject()->getEntity();
