@@ -66,7 +66,6 @@ class SocialContentBlockOverride implements ConfigFactoryOverrideInterface {
       }
 
       $overrides[$config_name]['settings']['plugin_ids'] = $settings;
-
     }
 
     return $overrides;
