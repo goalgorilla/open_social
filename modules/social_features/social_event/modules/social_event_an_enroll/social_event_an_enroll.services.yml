@@ -5,3 +5,9 @@ services:
     class: \Drupal\social_event_an_enroll\EventAnEnrollOverride
     tags:
       - {name: config.factory.override, priority: 5}
+  social_event_an_enroll.service:
+    class: Drupal\social_event_an_enroll\EventAnEnrollService
+    arguments:
+      - '@current_user'
+      - '@current_route_match'
+      - '@database'

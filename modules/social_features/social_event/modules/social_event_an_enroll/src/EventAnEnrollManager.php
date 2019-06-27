@@ -3,11 +3,14 @@
 namespace Drupal\social_event_an_enroll;
 
 use Drupal\social_event\EventEnrollmentInterface;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 /**
  * Class EventAnEnrollManager.
  */
 class EventAnEnrollManager {
+
+  use StringTranslationTrait;
 
   /**
    * Returns guest name.
@@ -22,6 +25,12 @@ class EventAnEnrollManager {
    */
   public function getGuestName(EventEnrollmentInterface $entity, $email = TRUE) {
     $parts = [];
+
+    // If user doesn't have access to see the first/last/email value.
+    // Lets return guest.
+    if (!social_event_manager_or_organizer()) {
+      return $this->t('Guest');
+    }
 
     if (!$entity->field_first_name->isEmpty()) {
       $parts[] = $entity->field_first_name->value;

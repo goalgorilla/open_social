@@ -29,7 +29,7 @@ class EventAnEnrollActionForm extends EnrollActionForm {
     $nid = $node->id();
     $token = $this->getRequest()->query->get('token');
 
-    if (!empty($token) && social_event_an_enroll_token_exists($token, $nid)) {
+    if (!empty($token) && \Drupal::service('social_event_an_enroll.service')->tokenExists($token, $nid)) {
       $form['event'] = [
         '#type' => 'hidden',
         '#value' => $nid,
