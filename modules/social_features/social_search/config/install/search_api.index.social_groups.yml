@@ -2,9 +2,9 @@ langcode: en
 status: true
 dependencies:
   module:
+    - group
     - user
     - search_api
-    - group
   config:
     - field.storage.group.field_group_description
     - search_api.server.social_database
@@ -14,6 +14,41 @@ name: 'Social Groups'
 description: 'Default group index created for the Social distribution.'
 read_only: false
 field_settings:
+  created:
+    label: 'Created on'
+    datasource_id: 'entity:group'
+    property_path: created
+    type: date
+    dependencies:
+      module:
+        - group
+  field_group_description:
+    label: Description
+    datasource_id: 'entity:group'
+    property_path: field_group_description
+    type: text
+    dependencies:
+      config:
+        - field.storage.group.field_group_description
+  label:
+    label: Title
+    datasource_id: 'entity:group'
+    property_path: label
+    type: text
+    boost: !!float 21
+    dependencies:
+      module:
+        - group
+  name:
+    label: 'Group creator » User » Name'
+    datasource_id: 'entity:group'
+    property_path: 'uid:entity:name'
+    type: string
+    dependencies:
+      module:
+        - group
+        - user
+        - user
   rendered_item:
     label: 'Rendered HTML output'
     property_path: rendered_item
@@ -30,28 +65,9 @@ field_settings:
     datasource_id: 'entity:group'
     property_path: type
     type: string
-  label:
-    label: Title
-    datasource_id: 'entity:group'
-    property_path: label
-    type: text
-    boost: !!float 8
-  name:
-    label: 'Group creator » User » Name'
-    datasource_id: 'entity:group'
-    property_path: 'uid:entity:name'
-    type: string
     dependencies:
       module:
-        - user
-  field_group_description:
-    label: Description
-    datasource_id: 'entity:group'
-    property_path: field_group_description
-    type: text
-    dependencies:
-      config:
-        - field.storage.group.field_group_description
+        - group
 datasource_settings:
   'entity:group':
     plugin_id: 'entity:group'
@@ -79,25 +95,13 @@ processor_settings:
     title: true
     alt: true
     tags:
+      b: 2
+      em: 1
       h1: 5
       h2: 3
       h3: 2
       strong: 2
-      b: 2
-      em: 1
       u: 1
-    weights:
-      preprocess_index: -10
-      preprocess_query: -10
-  ignorecase:
-    plugin_id: ignorecase
-    all_fields: false
-    fields:
-      - type
-      - label
-      - name
-      - field_group_description
-      - rendered_item
     weights:
       preprocess_index: -10
       preprocess_query: -10
@@ -105,10 +109,10 @@ processor_settings:
     plugin_id: ignore_character
     all_fields: false
     fields:
-      - type
+      - field_group_description
       - label
       - name
-      - field_group_description
+      - type
     ignorable: '[''¿¡!?,.:;]'
     strip:
       character_sets:
@@ -119,6 +123,26 @@ processor_settings:
         Pi: Pi
         Po: Po
         Ps: Ps
+    weights:
+      preprocess_index: -10
+      preprocess_query: -10
+    ignorable_classes:
+      - Pc
+      - Pd
+      - Pe
+      - Pf
+      - Pi
+      - Po
+      - Ps
+  ignorecase:
+    plugin_id: ignorecase
+    all_fields: false
+    fields:
+      - field_group_description
+      - label
+      - name
+      - rendered_item
+      - type
     weights:
       preprocess_index: -10
       preprocess_query: -10
@@ -188,8 +212,8 @@ processor_settings:
     plugin_id: transliteration
     all_fields: false
     fields:
-      - label
       - field_group_description
+      - label
       - rendered_item
     weights:
       preprocess_index: -10
