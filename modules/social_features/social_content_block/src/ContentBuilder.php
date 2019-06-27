@@ -39,7 +39,14 @@ class ContentBuilder implements ContentBuilderInterface {
   protected $connection;
 
   /**
-   * {@inheritdoc}
+   * ContentBuilder constructor.
+   *
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
+   * @param \Drupal\Core\Database\Connection $connection
+   *   Database Service Object.
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
+   *   The module handler to invoke the alter hook with.
    */
   public function __construct(EntityTypeManagerInterface $entity_type_manager, Connection $connection, ModuleHandlerInterface $module_handler) {
     $this->entityTypeManager = $entity_type_manager;
