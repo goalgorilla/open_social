@@ -37,7 +37,7 @@ class EntityAutocompleteMatcher extends EntityAutocompleteMatcherBase {
           // Skip certain entity_id's that are already a member or a enrollee.
           // We can just add this to our render arrays from now on.
           // '#selection_settings' => [ 'skip_entity' => ['7', '8', '9'] ].
-          if (in_array($entity_id, $selection_settings['skip_entity'], FALSE)) {
+          if (!empty($selection_settings['skip_entity']) && in_array($entity_id, $selection_settings['skip_entity'], FALSE)) {
             continue;
           }
 
