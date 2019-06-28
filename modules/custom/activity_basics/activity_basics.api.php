@@ -17,11 +17,17 @@
  *   The recipients receiving a notification.
  * @param \Drupal\node\Entity\Node $event
  *   The Event that was joined.
+ * @param array $data
+ *   The data concerning the activity needed for context.
  *
  * @ingroup activity_basics_api
  */
-function hook_activity_recipient_organizer_alter(array &$recipients, \Drupal\node\Entity\Node $event) {
+function hook_activity_recipient_organizer_alter(array &$recipients, \Drupal\node\Entity\Node $event, array $data) {
   $organizers = $event->getOwnerId();
+
+  if ($data['target_type'] !== 'event_enrollment') {
+    return;
+  }
 
   // Add the creator of the Event as a recipient.
   $recipients[] = [

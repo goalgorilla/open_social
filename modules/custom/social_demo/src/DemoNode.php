@@ -2,7 +2,7 @@
 
 namespace Drupal\social_demo;
 
-use Drupal\Core\Entity\Entity;
+use Drupal\Core\Entity\EntityBase;
 use Drupal\flag\Entity\Flagging;
 use Drupal\user\UserStorageInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
@@ -191,12 +191,12 @@ abstract class DemoNode extends DemoContent {
   /**
    * The function that checks and creates a follow on an entity.
    *
-   * @param \Drupal\Core\Entity\Entity $entity
+   * @param \Drupal\Core\Entity\EntityBase $entity
    *   The related entity.
    * @param array $uuids
    *   The array containing uuids.
    */
-  public function createFollow(Entity $entity, array $uuids) {
+  public function createFollow(EntityBase $entity, array $uuids) {
 
     foreach ($uuids as $uuid) {
       // Load the user(s) by the given uuid(s).
