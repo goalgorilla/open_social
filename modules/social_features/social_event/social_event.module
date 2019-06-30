@@ -349,12 +349,12 @@ function _social_event_format_date($event, $view_mode) {
   if (!empty($start_datetime)) {
     $start_date = $date_formatter->format($start_datetime, $date_format);
     // Default time should not be displayed.
-    $start_time = $date_formatter->format($start_datetime, $time_format, '', $utc_timezone) === '00:01' ? '' : $date_formatter->format($start_datetime, $time_format);
+    $start_time = $date_formatter->format($start_datetime, 'custom', 'i') === '01' ? '' : $date_formatter->format($start_datetime, $time_format);
 
     if (!empty($end_datetime)) {
       $end_date = $date_formatter->format($end_datetime, $date_format);
       // Default time should not be displayed.
-      $end_time = $date_formatter->format($end_datetime, $time_format, '', $utc_timezone) === '00:01' ? '' : $date_formatter->format($end_datetime, $time_format);
+      $end_time = $date_formatter->format($end_datetime, 'custom', 'i') === '01' ? '' : $date_formatter->format($end_datetime, $time_format);
     }
 
     // Date are the same or there are no end date.
@@ -568,8 +568,7 @@ function social_event_date_all_day_checkbox(&$element, FormStateInterface $form_
  * Check if event date is all day.
  */
 function social_event_date_is_all_day(DrupalDateTime $date) {
-  $zone = !empty($date->getTimezone()) ? $date->getTimezone()->getName() : DateTimeItemInterface::STORAGE_TIMEZONE;
-  return $date->format('H:i', ['timezone' => $zone]) == '00:01';
+  return $date->format('i') === '01';
 }
 
 /**
