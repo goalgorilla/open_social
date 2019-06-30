@@ -138,4 +138,14 @@ class SocialGroupController extends ControllerBase {
     return AccessResult::allowedIfHasPermission($account, 'view groups on other profiles');
   }
 
+  /**
+   * OtherGroupPage.
+   *
+   * @return RedirectResponse
+   *   Return Redirect to the group account.
+   */
+  public function otherGroupPage($group) {
+    return $this->redirect('entity.group.canonical', ['group' => $group]);
+  }
+
 }
