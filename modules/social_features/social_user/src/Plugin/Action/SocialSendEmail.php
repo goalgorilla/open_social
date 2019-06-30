@@ -208,7 +208,7 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
     $form['reply'] = [
       '#type' => 'email',
       '#title' => $this->t('Reply-to'),
-      '#description' => $this->t('A Reply-To address is the email address that receives messages sent from those who select Reply in their email clients.')
+      '#description' => $this->t('A Reply-To address is the email address that receives messages sent from those who select Reply in their email clients.'),
     ];
 
     $form['subject'] = [
