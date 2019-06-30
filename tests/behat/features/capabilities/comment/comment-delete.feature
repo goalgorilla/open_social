@@ -11,7 +11,7 @@ Feature: Delete Comment
          | Add a comment | This is my comment |
     And I press "Comment"
     Then I should see "This is my comment" in the "Main content"
-    When I click the element with css selector ".comment__actions .dropdown-toggle"
+    When I click the element with css selector ".comment .comment__actions .dropdown-toggle"
     And I should see the link "Delete"
     When I click "Delete"
     And I should see "Any replies to this comment will be lost."

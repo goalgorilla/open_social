@@ -29,6 +29,14 @@ class OrganizerActivityContext extends ActivityContextBase {
       }
     }
 
+    // Remove the actor (user performing action) from recipients list.
+    if (!empty($data['actor'])) {
+      $key = array_search($data['actor'], array_column($recipients, 'target_id'), FALSE);
+      if ($key !== FALSE) {
+        unset($recipients[$key]);
+      }
+    }
+
     return $recipients;
   }
 
@@ -38,7 +46,7 @@ class OrganizerActivityContext extends ActivityContextBase {
   public function getRecipientOrganizerFromEntity(array $related_entity, array $data) {
     $recipients = [];
 
-    // Don't return recipients if user comments on own content.
+    // Don't return recipients if user enrolls to own Event.
     $original_related_object = $data['related_object'][0];
     if (isset($original_related_object['target_type'])
       && $original_related_object['target_type'] === 'event_enrollment'
@@ -59,7 +67,7 @@ class OrganizerActivityContext extends ActivityContextBase {
     // If there are any others we should add. Make them also part of the
     // recipients array.
     \Drupal::moduleHandler()
-      ->alter('activity_recipient_organizer', $recipients, $event);
+      ->alter('activity_recipient_organizer', $recipients, $event, $original_related_object);
 
     return $recipients;
   }

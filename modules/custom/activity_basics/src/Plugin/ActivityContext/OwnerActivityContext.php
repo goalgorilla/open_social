@@ -30,6 +30,14 @@ class OwnerActivityContext extends ActivityContextBase {
       }
     }
 
+    // Remove the actor (user performing action) from recipients list.
+    if (!empty($data['actor'])) {
+      $key = array_search($data['actor'], array_column($recipients, 'target_id'), FALSE);
+      if ($key !== FALSE) {
+        unset($recipients[$key]);
+      }
+    }
+
     return $recipients;
   }
 

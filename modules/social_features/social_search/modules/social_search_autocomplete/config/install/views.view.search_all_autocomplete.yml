@@ -1,17 +1,16 @@
-uuid: daedb574-ae7e-4848-a689-cb742124bee9
 langcode: en
 status: true
 dependencies:
   config:
     - search_api.index.social_all
+  enforced:
+    module:
+      - social_search_autocomplete
   module:
     - rest
     - search_api
     - serialization
     - user
-  enforced:
-    module:
-      - social_search_autocomplete
 id: search_all_autocomplete
 label: 'Search All autocomplete'
 module: views
@@ -916,6 +915,18 @@ display:
           id: search_api_relevance
           table: search_api_index_social_all
           field: search_api_relevance
+          relationship: none
+          group_type: group
+          admin_label: ''
+          order: DESC
+          exposed: false
+          expose:
+            label: ''
+          plugin_id: search_api
+        created:
+          id: created
+          table: search_api_index_social_all
+          field: created
           relationship: none
           group_type: group
           admin_label: ''

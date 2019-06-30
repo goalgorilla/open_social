@@ -115,6 +115,8 @@
 
           </div>
 
+          {{ content.links.moderation }}
+
         </header>
       {% endblock %}
     {% endif %}
@@ -150,11 +152,11 @@
                   {{ comment_count }}
                 </span>
                 <span class="badge__label badge__label--description">
-                  {% if comment_count == 1 %}
-                    {% trans %}comment{% endtrans %}
-                  {% else %}
-                    {% trans %}comments{% endtrans %}
-                  {% endif %}
+                  {% trans %}
+                      comment
+                  {% plural comment_count %}
+                      comments
+                  {% endtrans %}
                 </span>
               </span>
             </a>
@@ -170,7 +172,11 @@
                   {{ likes_count }}
                 </span>
                 <span class="badge__label badge__label--description">
-                  likes
+                  {% trans %}
+                      like
+                  {% plural likes_count %}
+                      likes
+                  {% endtrans %}
                 </span>
               </span>
             </div>
@@ -207,7 +213,7 @@
     {% endif %}
 
     {% block nodefull_body %}
-      {{ content|without('flag_follow_content') }}
+      {{ content|without('flag_follow_content', 'links') }}
     {% endblock %}
 
 

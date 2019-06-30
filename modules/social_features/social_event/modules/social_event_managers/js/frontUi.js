@@ -9,20 +9,20 @@
 
   Drupal.behaviors.viewsBulkOperationsFrontUi = {
     attach: function (context, settings) {
-      var $primarySelectAll = $('.select-all', '.vbo-view-form');
+      var $primarySelectAll = $('.vbo-view-form .select-all', context);
       $primarySelectAll.addClass('form-no-label checkbox form-checkbox');
 
       // Click handler on clicking select all across pages.
-      $('.views-table-row-vbo-select-all .form-submit').on('click', function () {
+      $('.views-table-row-vbo-select-all .form-submit', context).on('click', function () {
         // Put in a message for all selected users.
         if ($('.vbo-select-all').prop('checked') === true) {
           if ($('.temporary-placeholder.panel-heading').length < 1) {
             var message = Drupal.t('<b>All members across all pages</b> are selected.');
-            $('#vbo-action-form-wrapper').append('<div class="temporary-placeholder card__block">' + message +  '</span>');
+            $('#edit-multipage', context).after('<div class="temporary-placeholder card__block">' + message +  '</span>');
           }
         }
         else {
-          $('.temporary-placeholder').remove();
+          $('.temporary-placeholder', context).remove();
         }
       });
     }

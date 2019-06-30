@@ -2,7 +2,7 @@
 
 namespace Drupal\social_event_an_enroll\Plugin\Action;
 
-use Drupal\Core\Entity\EntityManagerInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Mail\MailManagerInterface;
 use Drupal\Core\Utility\Token;
@@ -51,8 +51,8 @@ class SocialEventAnEnrollSendEmail extends SocialEventManagersSendEmail {
    *   The plugin implementation definition.
    * @param \Drupal\Core\Utility\Token $token
    *   The token service.
-   * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
-   *   The entity manager.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
    * @param \Psr\Log\LoggerInterface $logger
    *   A logger instance.
    * @param \Drupal\Core\Mail\MailManagerInterface $mail_manager
@@ -69,14 +69,14 @@ class SocialEventAnEnrollSendEmail extends SocialEventManagersSendEmail {
     $plugin_id,
     $plugin_definition,
     Token $token,
-    EntityManagerInterface $entity_manager,
+    EntityTypeManagerInterface $entity_type_manager,
     LoggerInterface $logger,
     MailManagerInterface $mail_manager,
     LanguageManagerInterface $language_manager,
     EmailValidator $email_validator,
     EventAnEnrollManager $social_event_an_enroll_manager
   ) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition, $token, $entity_manager, $logger, $mail_manager, $language_manager, $email_validator);
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $token, $entity_type_manager, $logger, $mail_manager, $language_manager, $email_validator);
 
     $this->socialEventAnEnrollManager = $social_event_an_enroll_manager;
   }
@@ -87,7 +87,7 @@ class SocialEventAnEnrollSendEmail extends SocialEventManagersSendEmail {
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
     return new static($configuration, $plugin_id, $plugin_definition,
       $container->get('token'),
-      $container->get('entity.manager'),
+      $container->get('entity_type.manager'),
       $container->get('logger.factory')->get('action'),
       $container->get('plugin.manager.mail'),
       $container->get('language_manager'),
@@ -106,7 +106,7 @@ class SocialEventAnEnrollSendEmail extends SocialEventManagersSendEmail {
       $display_name = $this->socialEventAnEnrollManager->getGuestName($entity, FALSE);
 
       if (!$display_name) {
-        $display_name = t('Guest');
+        $display_name = $this->t('Guest');
       }
 
       $this->configuration['display_name'] = $display_name;

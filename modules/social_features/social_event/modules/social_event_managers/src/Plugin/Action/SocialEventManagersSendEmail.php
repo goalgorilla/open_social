@@ -3,10 +3,17 @@
 namespace Drupal\social_event_managers\Plugin\Action;
 
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Language\LanguageManagerInterface;
+use Drupal\Core\Mail\MailManagerInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Utility\Token;
+use Drupal\node\NodeInterface;
 use Drupal\social_event\EventEnrollmentInterface;
 use Drupal\social_user\Plugin\Action\SocialSendEmail;
+use Egulias\EmailValidator\EmailValidator;
+use Psr\Log\LoggerInterface;
 
 /**
  * Send email to event enrollment users.
@@ -24,13 +31,37 @@ use Drupal\social_user\Plugin\Action\SocialSendEmail;
 class SocialEventManagersSendEmail extends SocialSendEmail {
 
   /**
+   * The entity type manager.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  protected $entityTypeManager;
+
+  /**
+   * {@inheritdoc}
+   */
+  public function __construct(
+    array $configuration,
+    $plugin_id,
+    $plugin_definition,
+    Token $token,
+    EntityTypeManagerInterface $entity_type_manager,
+    LoggerInterface $logger,
+    MailManagerInterface $mail_manager,
+    LanguageManagerInterface $language_manager,
+    EmailValidator $email_validator
+  ) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $token, $entity_type_manager, $logger, $mail_manager, $language_manager, $email_validator);
+
+    $this->entityTypeManager = $entity_type_manager;
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function execute($entity = NULL) {
-    $accounts = $entity->field_account->referencedEntities();
-    $account = reset($accounts);
+    parent::execute($entity->field_account->entity);
 
-    parent::execute($account);
     return $this->t('Send mail');
   }
 
@@ -39,6 +70,18 @@ class SocialEventManagersSendEmail extends SocialSendEmail {
    */
   public function access($object, AccountInterface $account = NULL, $return_as_object = FALSE) {
     $access = AccessResult::allowedIf($object instanceof EventEnrollmentInterface);
+
+    if ($object instanceof EventEnrollmentInterface) {
+      $access = $object->access('delete', $account, TRUE);
+
+      $event_id = $object->getFieldValue('field_event', 'target_id');
+      $node = $this->entityTypeManager->getStorage('node')->load($event_id);
+
+      // Also Event organizers can do this.
+      if ($node instanceof NodeInterface && social_event_manager_or_organizer($node)) {
+        $access = AccessResult::allowedIf($object instanceof EventEnrollmentInterface);
+      }
+    }
 
     return $return_as_object ? $access : $access->isAllowed();
   }

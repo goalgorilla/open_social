@@ -9,6 +9,7 @@ dependencies:
     - field.field.node.event.field_event_comments
     - field.field.node.event.field_event_date
     - field.field.node.event.field_event_date_end
+    - field.field.node.event.field_event_enroll
     - field.field.node.event.field_event_image
     - field.field.node.event.field_event_location
     - field.field.node.event.field_files
@@ -67,18 +68,31 @@ content:
     settings: {  }
     third_party_settings: {  }
     region: content
+  groups_type_public_group:
+    label: above
+    weight: -5
+    region: content
+    settings:
+      link: true
+    third_party_settings: {  }
+    type: entity_reference_label
   like_and_dislike:
     weight: 6
     settings: {  }
     third_party_settings: {  }
     region: content
+  links:
+    weight: 7
+    region: content
+    settings: {  }
+    third_party_settings: {  }
 hidden:
   field_content_visibility: true
   field_event_date: true
   field_event_date_end: true
+  field_event_enroll: true
   field_event_image: true
-  links: true
-  private_message_link: true
   groups: true
   groups_type_closed_group: true
   groups_type_open_group: true
+  private_message_link: true

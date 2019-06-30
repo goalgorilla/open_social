@@ -150,6 +150,31 @@ function social_private_message_thread_delete_redirect(array $form, FormStateInt
   // Force redirect to the inbox.
   $url = Url::fromRoute('social_private_message.inbox');
   $form_state->setRedirectUrl($url);
+
+  // Unset cache tags for user profiles.
+  $build_info = $form_state->getBuildInfo();
+  if (isset($build_info['callback_object'])) {
+    /** @var \Drupal\private_message\Form\PrivateMessageThreadDeleteForm $pm_thread_form */
+    $pm_thread_form = $build_info['callback_object'];
+    $pm_thread = $pm_thread_form->getEntity();
+
+    /** @var \Drupal\private_message\Entity\PrivateMessageThread $pm_thread */
+    if ($pm_thread) {
+      $members = $pm_thread->getMembers();
+
+      $cache_tags = [];
+      foreach ($members as $member) {
+        /** @var \Drupal\user\Entity\User $member */
+        if ($member) {
+          foreach ($member->getCacheTagsToInvalidate() as $cache_tag) {
+            $cache_tags[] = $cache_tag;
+          }
+        }
+      }
+      \Drupal::service('cache_tags.invalidator')->invalidateTags($cache_tags);
+    }
+  }
+
 }
 
 /**

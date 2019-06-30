@@ -1,0 +1,165 @@
+<?php
+
+/**
+ * @file
+ * The Social Event Max Enroll module.
+ */
+
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\node\NodeInterface;
+use Drupal\views\Plugin\views\cache\CachePluginBase;
+use Drupal\views\ViewExecutable;
+
+/**
+ * Implements hook_views_post_render().
+ *
+ * Alter "Event enrollments" views. Add number of spots left.
+ */
+function social_event_max_enroll_views_post_render(ViewExecutable $view, &$output, CachePluginBase $cache) {
+  if ($view->current_display === 'event_enrollments' && $view->id() === 'event_enrollments' && isset($output['#rows']) && !empty($view->args[0])) {
+    $nid = $view->args[0];
+    $node = \Drupal::entityTypeManager()->getStorage('node')->load($nid);
+    $event_max_enroll_service = \Drupal::service('social_event_max_enroll.service');
+
+    // Add spots left counter to the block title.
+    if ($event_max_enroll_service->isEnabled($node)) {
+      // Count how many spots left.
+      $left = $event_max_enroll_service->getEnrollmentsLeft($node);
+      $title_suffix = \Drupal::translation()->formatPlural($left, '(1 spot left)', '(@count spots left)');
+      $view->header['result']->options['content'] .= ' ' . $title_suffix;
+    }
+  }
+}
+
+/**
+ * Implements hook_form_alter().
+ *
+ * Check and display "Allow anonymous enrollments" checkbox for public events.
+ */
+function social_event_max_enroll_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  switch ($form_id) {
+    // Alter the Node Event forms.
+    case 'node_event_form':
+    case 'node_event_edit_form':
+      $config = \Drupal::config('social_event_max_enroll.settings');
+      // Hide checkbox if feature is disabled globally.
+      $form['field_event_max_enroll']['#access'] = $config->get('max_enroll');
+      $form['field_event_max_enroll_num']['#access'] = $config->get('max_enroll');
+
+      // Hide checkbox if event enrollment is disabled for event.
+      $state = [
+        ':input[name="field_event_enroll[value]"]' => ['checked' => TRUE],
+      ];
+
+      $fields = [
+        'field_event_max_enroll',
+        'field_event_max_enroll_num',
+      ];
+
+      foreach ($fields as $field) {
+        $form[$field]['#states'] = [
+          'visible' => $state,
+        ];
+      }
+
+      // Show the checkbox only when max enroll is enabled.
+      if ($config->get('max_enroll_required')) {
+        $form['field_event_max_enroll']['widget']['value']['#default_value'] = TRUE;
+        $form['field_event_max_enroll']['widget']['value']['#disabled'] = TRUE;
+        $form['field_event_max_enroll']['widget']['value']['#required'] = TRUE;
+        $form['field_event_max_enroll_num']['widget'][0]['value']['#required'] = TRUE;
+      }
+      else {
+        $form['field_event_max_enroll_num']['#states']['visible'][] = [
+          ':input[name="field_event_max_enroll[value]"]' => ['checked' => TRUE],
+        ];
+      }
+      break;
+
+    // Alter the Event Enrollments forms.
+    case 'enroll_action_form':
+    case 'event_an_enroll_action_form':
+      // We can't use dependency injection, because service is optional.
+      $event_max_enroll_service = \Drupal::service('social_event_max_enroll.service');
+      $node = \Drupal::routeMatch()->getParameter('node');
+
+      if ($node instanceof NodeInterface && $event_max_enroll_service->isEnabled($node)) {
+        // Count how many spots are left.
+        $left = $event_max_enroll_service->getEnrollmentsLeft($node);
+
+        if ($left < 1) {
+          $enrollments = FALSE;
+          // Only load enrollments for authenticated users.
+          if (\Drupal::currentUser()->isAuthenticated()) {
+            $enrollments = \Drupal::entityTypeManager()->getStorage('event_enrollment')
+              ->loadByProperties([
+                'field_event' => $node->id(),
+                'user_id' => \Drupal::currentUser()->id(),
+              ]);
+          }
+
+          $an_enrollments = FALSE;
+          // If Social Event AN Enroll module is enabled, check if the current
+          // visitor is enrolled to the event.
+          if (\Drupal::service('module_handler')->moduleExists('social_event_an_enroll') && \Drupal::service('social_event_an_enroll.service')->isEnrolled()) {
+            $an_enrollments = TRUE;
+          }
+
+          // If this user or visitor is not enrolled to the event, show that
+          // there are no more spots left.
+          if (!$enrollments && !$an_enrollments) {
+            if ($form_id === 'enroll_action_form') {
+              $form['enroll_for_this_event']['#value'] = t('No spots left');
+              $form['enroll_for_this_event']['#disabled'] = TRUE;
+            }
+            elseif ($form_id === 'event_an_enroll_action_form' && !isset($form['enroll_for_this_event'])) {
+              $form['event_enrollment'] = [
+                '#type' => 'submit',
+                '#value' => t('No spots left'),
+                '#disabled' => TRUE,
+                '#attributes' => [
+                  'class' => [
+                    'btn',
+                    'btn-accent',
+                    'btn-lg',
+                    'btn-raised',
+                    'brand-bg-accent',
+                    'waves-effect',
+                  ],
+                ],
+              ];
+            }
+          }
+        }
+      }
+      break;
+  }
+}
+
+/**
+ * Override variables for the social page hero data.
+ */
+function social_event_max_enroll_preprocess_page_hero_data(array &$variables) {
+  $event_max_enroll_service = \Drupal::service('social_event_max_enroll.service');
+  $node = $variables['node'];
+
+  // Add spots left counter to the hero block.
+  if ($event_max_enroll_service->isEnabled($node)) {
+    $total = $event_max_enroll_service->getEnrollmentsNumber($node);
+    $left = $event_max_enroll_service->getEnrollmentsLeft($node);
+
+    // Get the string for how many spots are left.
+    $spots_left = \Drupal::translation()->formatPlural($left, '(1 spot left)', '(@count spots left)');
+
+    // Combine and display the amount people who enrolled and the spots left
+    // strings.
+    $variables['title_suffix'] = \Drupal::translation()
+      ->formatPlural($total, '@total person has enrolled @spots_left',
+        '@total people have enrolled @spots_left',
+        [
+          '@total' => $total,
+          '@spots_left' => $spots_left,
+        ]
+      );
+  }
+}

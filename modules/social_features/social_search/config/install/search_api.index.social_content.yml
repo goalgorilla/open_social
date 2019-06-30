@@ -1,23 +1,32 @@
 langcode: en
 status: true
 dependencies:
+  module:
+    - node
+    - search_api
   config:
     - search_api.server.social_database
     - core.entity_view_mode.node.search_index
-  module:
-    - search_api
-    - node
 id: social_content
 name: 'Social Content'
 description: 'Default content index created for the Social distribution.'
 read_only: false
 field_settings:
-  title:
-    label: Title
+  created:
+    label: 'Authored on'
     datasource_id: 'entity:node'
-    property_path: title
-    type: text
-    boost: !!float 8
+    property_path: created
+    type: date
+    dependencies:
+      module:
+        - node
+  node_grants:
+    label: 'Node access information'
+    property_path: search_api_node_grants
+    type: string
+    indexed_locked: true
+    type_locked: true
+    hidden: true
   rendered_item:
     label: 'Rendered HTML output'
     property_path: rendered_item
@@ -31,11 +40,6 @@ field_settings:
           event: search_index
           page: search_index
           topic: search_index
-  type:
-    label: Type
-    datasource_id: 'entity:node'
-    property_path: type
-    type: string
   status:
     label: 'Publishing status'
     datasource_id: 'entity:node'
@@ -43,6 +47,27 @@ field_settings:
     type: boolean
     indexed_locked: true
     type_locked: true
+    dependencies:
+      module:
+        - node
+  title:
+    label: Title
+    datasource_id: 'entity:node'
+    property_path: title
+    type: text
+    boost: !!float 21
+    dependencies:
+      module:
+        - node
+  type:
+    label: Type
+    datasource_id: 'entity:node'
+    property_path: type
+    type: text
+    boost: !!float 13
+    dependencies:
+      module:
+        - node
   uid:
     label: 'Authored by'
     datasource_id: 'entity:node'
@@ -50,28 +75,12 @@ field_settings:
     type: integer
     indexed_locked: true
     type_locked: true
-  node_grants:
-    label: 'Node access information'
-    property_path: search_api_node_grants
-    type: string
-    indexed_locked: true
-    type_locked: true
-    hidden: true
-  created:
-    label: 'Authored on'
-    datasource_id: 'entity:node'
-    property_path: created
-    type: date
+    dependencies:
+      module:
+        - node
 datasource_settings:
   'entity:node':
     plugin_id: 'entity:node'
-    settings:
-      bundles:
-        default: true
-        selected: {  }
-      languages:
-        default: true
-        selected: {  }
     bundles:
       default: true
       selected: {  }
@@ -81,108 +90,55 @@ datasource_settings:
 processor_settings:
   add_url:
     plugin_id: add_url
-    settings:
-      weights:
-        preprocess_index: -30
+    weights:
+      preprocess_index: -30
   aggregated_field:
     plugin_id: aggregated_field
-    settings:
-      weights:
-        add_properties: 20
+    weights:
+      add_properties: 20
   content_access:
     plugin_id: content_access
-    settings:
-      weights:
-        preprocess_index: -10
-        preprocess_query: -10
+    weights:
+      preprocess_index: -10
+      preprocess_query: -10
   html_filter:
     plugin_id: html_filter
-    settings:
-      fields:
-        - rendered_item
-      title: true
-      alt: true
-      tags:
-        h1: 5
-        h2: 3
-        h3: 2
-        strong: 2
-        b: 2
-      weights:
-        preprocess_index: -10
-        preprocess_query: -10
+    all_fields: false
+    fields:
+      - rendered_item
     title: true
     alt: true
     tags:
+      b: 2
+      em: 1
       h1: 5
       h2: 3
       h3: 2
       strong: 2
-      b: 2
-      em: 1
       u: 1
-    all_fields: false
+    weights:
+      preprocess_index: -10
+      preprocess_query: -10
   ignorecase:
     plugin_id: ignorecase
-    settings:
-      fields:
-        - title
-        - rendered_item
-      weights:
-        preprocess_index: -10
-        preprocess_query: -10
     all_fields: false
+    fields:
+      - rendered_item
+      - title
+    weights:
+      preprocess_index: -10
+      preprocess_query: -10
   rendered_item:
     plugin_id: rendered_item
-    settings:
-      weights:
-        add_properties: 0
-        pre_index_save: -10
+    weights:
+      add_properties: 0
+      pre_index_save: -10
   stopwords:
     plugin_id: stopwords
-    settings:
-      fields:
-        - title
-        - rendered_item
-      stopwords:
-        - a
-        - an
-        - and
-        - are
-        - as
-        - at
-        - be
-        - but
-        - by
-        - for
-        - if
-        - in
-        - into
-        - is
-        - it
-        - 'no'
-        - not
-        - of
-        - 'on'
-        - or
-        - s
-        - such
-        - t
-        - that
-        - the
-        - their
-        - then
-        - there
-        - these
-        - they
-        - this
-        - to
-        - was
-        - will
-        - with
-      weights:
-        preprocess_index: -5
-        preprocess_query: -2
+    all_fields: false
+    fields:
+      - rendered_item
+      - title
     stopwords:
       - a
       - an
@@ -219,39 +175,34 @@ processor_settings:
       - was
       - will
       - with
-    all_fields: false
+    weights:
+      preprocess_index: -5
+      preprocess_query: -2
   tokenizer:
     plugin_id: tokenizer
-    settings:
-      fields:
-        - title
-        - rendered_item
-      spaces: ''
-      overlap_cjk: 1
-      minimum_word_size: '3'
-      weights:
-        preprocess_index: -6
-        preprocess_query: -6
+    all_fields: false
+    fields:
+      - rendered_item
+      - title
     spaces: ''
     overlap_cjk: 1
     minimum_word_size: '3'
-    all_fields: false
+    weights:
+      preprocess_index: -6
+      preprocess_query: -6
   transliteration:
     plugin_id: transliteration
-    settings:
-      fields:
-        - title
-        - rendered_item
-      weights:
-        preprocess_index: -10
-        preprocess_query: -10
     all_fields: false
+    fields:
+      - rendered_item
+      - title
+    weights:
+      preprocess_index: -10
+      preprocess_query: -10
 tracker_settings:
   default:
-    plugin_id: default
-    settings: {  }
     indexing_order: fifo
 options:
-  index_directly: true
+  index_directly: false
   cron_limit: 50
 server: social_database
