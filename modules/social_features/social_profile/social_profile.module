@@ -349,7 +349,7 @@ function social_profile_preprocess_profile(array &$variables) {
     $profile_show_email = $profile->field_profile_show_email->value;
   }
   if ($global_show_email
-    || !$global_show_email && !empty($profile_show_email)
+    || (!$global_show_email && !empty($profile_show_email))
     || $current_user->hasPermission('view profile email')
   ) {
     // Derived from MailToFormatter.php.
@@ -391,7 +391,7 @@ function social_profile_preprocess_profile(array &$variables) {
 function _social_profile_get_contact_url(User $account) {
   if (\Drupal::moduleHandler()->moduleExists('social_private_message')) {
     $current_user = \Drupal::currentUser();
-    if ($current_user->hasPermission('use private messaging system') && $current_user->id() != $account->id()) {
+    if ($current_user->hasPermission('use private messaging system') && $account->hasPermission('use private messaging system') && $current_user->id() != $account->id()) {
       $members = [$current_user, $account];
       $thread_id = \Drupal::service('private_message.mapper')->getThreadIdForMembers($members);
       if ($thread_id) {
