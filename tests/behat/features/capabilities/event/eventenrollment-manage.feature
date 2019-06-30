@@ -21,6 +21,7 @@ Feature: Manage event enrollment
     And I am on "mybehatevent"
     Then I should not see the link "Manage enrollments"
 
+    Given I enable the module "social_event_managers"
     When I am logged in as "event_creator"
     And I am on "mybehatevent"
     And I click "Edit content"
