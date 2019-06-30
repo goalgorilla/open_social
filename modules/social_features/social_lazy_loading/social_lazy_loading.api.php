@@ -11,7 +11,7 @@
  */
 
 /**
- * Provide a method to alter the array of text formats with lazy loading enabled.
+ * Provide a method to alter the array of text formats with lazy loading.
  *
  * @param array $formats
  *   List of text formats where a key is filter name and if a value is TRUE then
