@@ -46,7 +46,11 @@ class PageTitle extends PreprocessBase {
     }
 
     // Check if it is the edit/add/delete.
-    if (in_array($route_name, ['entity.node.edit_form', 'entity.node.delete_form', 'entity.node.add_form'])) {
+    if (in_array($route_name, [
+      'entity.node.edit_form',
+      'entity.node.delete_form',
+      'entity.node.add_form',
+    ])) {
       $variables['edit'] = TRUE;
     }
 

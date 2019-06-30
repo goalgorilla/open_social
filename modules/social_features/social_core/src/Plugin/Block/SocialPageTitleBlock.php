@@ -133,7 +133,11 @@ class SocialPageTitleBlock extends PageTitleBlock implements ContainerFactoryPlu
       }
 
       $name = $this->routeMatch->getRouteName();
-      if (!in_array($name, ['entity.node.edit_form', 'entity.node.delete_form', 'entity.node.add_form'])) {
+      if (!in_array($name, [
+        'entity.node.edit_form',
+        'entity.node.delete_form',
+        'entity.node.add_form',
+      ])) {
 
         $title = $node->getTitle();
 
