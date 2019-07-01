@@ -8,12 +8,16 @@
 
   Drupal.color = {
     logoChanged: false,
+    bannerChanged: false,
     callback: function (context, settings, $form) {
       // Change the logo to be the real one.
       if (!this.logoChanged) {
         $('.color-preview .navbar-brand img').attr('src', drupalSettings.color.logo);
         this.logoChanged = true;
       }
+
+      console.log(drupalSettings.color.logo);
+
       // Remove the logo if the setting is toggled off.
       if (drupalSettings.color.logo === null) {
         $('div').remove('.navbar-brand');
@@ -68,32 +72,30 @@
       var colorPreviewLever = $('.color-preview-hero .switch .lever');
       var colorPreviewCover = $('.color-preview-hero .cover');
 
-      if (localStorage.getItem('lever-on') &&
-        localStorage.getItem('set-settings-theme')) {
-          colorPreviewLever.addClass('lever-on');
-          colorPreviewCover.addClass('cover-img')
-            .addClass('cover-img-gradient');
-      }
+      // if (localStorage.getItem('lever-on') &&
+      //   localStorage.getItem('set-settings-theme')) {
+      //     colorPreviewLever.addClass('lever-on');
+      //     colorPreviewCover.addClass('cover-img cover-img-gradient');
+      // }
 
       $colorPreview.find('.color-preview-hero .switch').once()
-        .click(function() {
+        .on('click', function() {
           colorPreviewLever.toggleClass('lever-on');
-          colorPreviewCover.toggleClass('cover-img')
-            .toggleClass('cover-img-gradient');
+          colorPreviewCover.toggleClass('cover-img cover-img-gradient');
 
-          if (colorPreviewLever.hasClass('lever-on')) {
-            localStorage.setItem('lever-on', '1');
-          }
-          else {
-            localStorage.removeItem('lever-on');
-          }
+          // if (colorPreviewLever.hasClass('lever-on')) {
+          //   localStorage.setItem('lever-on', '1');
+          // }
+          // else {
+          //   localStorage.removeItem('lever-on');
+          // }
         }
       );
 
-      var settingThSub = $('.system-theme-settings .form-actions .form-submit');
-      settingThSub.on('click', function () {
-        localStorage.setItem('set-settings-theme', '1');
-      });
+      // var settingThSub = $('.system-theme-settings .form-actions .form-submit');
+      // settingThSub.on('click', function () {
+      //   localStorage.setItem('set-settings-theme', '1');
+      // });
 
     }
   };
