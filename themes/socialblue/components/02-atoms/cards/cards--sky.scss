@@ -1010,7 +1010,7 @@ body.socialblue--sky {
       }
 
       .card,
-      .off-canvas-xs-only:not(#block-filter),
+      .off-canvas-xs-only,
       [class*='block-group-add'],
       [class*='add-block'] {
         border-radius: 0 !important;
@@ -1098,10 +1098,16 @@ body.socialblue--sky {
         }
 
         .card__title,
-        .offcanvas-head {
+        .offcanvas-head,
+        .complementary-title {
           padding-top: 1.5rem;
           font-size: .875rem;
           line-height: 20px;
+        }
+
+        .complementary-title {
+          padding-top: 0;
+          font-weight: 700;
         }
 
         .card__block,

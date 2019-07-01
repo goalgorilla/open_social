@@ -6,19 +6,27 @@
     background-color: $brand-secondary;
   }
 
-  .card__link,
+  .card__link {
+    color: $brand-primary;
+
+    &:hover,
+    &:focus,
+    &:active {
+      color: $brand-accent;
+    }
+  }
+
   .card__link .btn-default,
-  .card__link.btn-default {
+  .card__link.btn-default,
+  .card__link .btn-default:hover,
+  .card__link .btn-default:hover,
+  .card__link.btn-default:focus {
+    color: $brand-primary;
+    fill: $brand-primary;
     border-color: $brand-primary;
   }
 
   .hero__tag,
-  .card__link .btn-default,
-  .card__link.btn-default,
-  .card__link .btn-default:hover,
-  .card__link.btn-default:focus,
-  .card__link .btn-default:hover,
-  .card__link.btn-default:focus,
   .teaser__tag {
     color: $brand-primary;
     fill: $brand-primary;
@@ -322,7 +330,7 @@
           &:hover,
           &:focus,
           &:active {
-            background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.2) 100%);
+            background-color: #e6e6e6;
           }
         }
       }
