@@ -37,6 +37,41 @@
       justify-content: flex-end;
       position: relative;
       margin-bottom: 1rem;
+
+      &.hidden {
+        display: block !important;
+        height: 0;
+        margin-bottom: 0 !important;
+
+        .form-file {
+          display: none;
+        }
+
+        .form-submit {
+          position: absolute;
+          z-index: 10;
+
+          @include for-phone-only {
+            width: 29px;
+            height: 29px;
+            top: 3px;
+            right: 3px;
+
+            .ajax-throbber {
+              top: 4px;
+              left: 4px;
+            }
+          }
+
+          @include for-tablet-portrait-up {
+            position: relative;
+            top: -2px;
+            left: 150px;
+            right: auto;
+          }
+        }
+
+      }
     }
 
     @include for-tablet-portrait-up {

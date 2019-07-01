@@ -57,17 +57,20 @@ html.js {
 
 .form-managed-file {
   position: relative;
-  display: inline-block;
+
+  .form-submit[data-drupal-selector*='upload-button'] {
+    font-size: 0;
+    color: transparent;
+  }
 
   .js-hide.form-submit[disabled] {
-    position: absolute;
-    display: block !important;
+    position: relative;
+    display: inline-block !important;
     width: 40px;
     height: 40px;
-    top: -1px;
+    top: 0;
     right: 0;
     padding: 0;
-    font-size: 0;
 
     .ajax-throbber {
       position: absolute;
