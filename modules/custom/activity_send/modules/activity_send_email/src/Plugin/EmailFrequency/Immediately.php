@@ -68,6 +68,14 @@ class Immediately extends EmailFrequencyBase {
       ['langcode' => $langcode]),
     ];
 
+    // Get Footer settings.
+    $social_swiftmail_config = \Drupal::config('social_swiftmail.settings');
+    if ($social_swiftmail_config && $social_swiftmail_config->get('template_footer')) {
+      $footer_text = $social_swiftmail_config->get('template_footer');
+      // Construct the render array.
+      $notification['#notification_footer'] = $footer_text;
+    }
+
     $params['body'] = \Drupal::service('renderer')->renderRoot($notification);
 
     // Send the email.

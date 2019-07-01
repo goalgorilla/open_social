@@ -54,6 +54,18 @@ function social_swiftmail_preprocess_swiftmailer(array &$variables) {
     $variables['site_slogan'] = '"' . t('Make your people bloom') . '"';
   }
 
+  // Add variables header and footer if set.
+  if ($social_swiftmail_config->get('template_header')) {
+    $template_header = $social_swiftmail_config->get('template_header');
+    $template_header = [
+      '#type' => 'processed_text',
+      '#text' => $template_header,
+      '#format' => 'mail_html',
+    ];
+
+    $variables['header'] = \Drupal::service('renderer')->renderRoot($template_header);
+  }
+
   $message = &$variables['message'];
   $user = user_load_by_mail($message['to']);
 
