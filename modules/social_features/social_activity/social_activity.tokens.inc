@@ -74,7 +74,7 @@ function social_activity_tokens($type, $tokens, array $data, array $options, Bub
                 '#link' => $post_link,
               ];
 
-              $replacements[$original] = \Drupal::service('renderer')->renderRoot($info);
+              $replacements[$original] = \Drupal::service('renderer')->renderPlain($info);
             }
             elseif ($target_type === 'group_content') {
               /** @var \Drupal\group\Entity\GroupContentInterface $entity */
