@@ -8,7 +8,8 @@
     'use strict';
 
     /**
-     * Attaches the tour's toolbar tab behavior on document load, heavily relies on tour.js
+     * Attaches the tour's toolbar tab behavior on document load, heavily relies
+     * on tour.js.
      *
      * @type {Drupal~behavior}
      *
@@ -27,10 +28,10 @@
                 model
                     // Allow other scripts to respond to tour events.
                     .on('change:isActive', function (model, isActive) {
-                        $(document).trigger((isActive) ? 'drupalTourStarted' : 'drupalTourStopped');
+                        $(document).trigger(isActive ? 'drupalTourStarted' : 'drupalTourStopped');
                     })
-                    // Initialization: check whether a tour is available on the current
-                    // page.
+                    // Initialization: check whether a tour is available on the
+                    // current page.
                     .set('tour', $(context).find('ol#tour'));
 
                 // Start the tour immediately if it's available.
@@ -39,10 +40,17 @@
 
                     // Alter the tour button templates.
                     $('.tip-module-social-tour').each(function(){
-                        $(this).find('.button.button--primary').removeClass('button').addClass('btn').removeClass('button--primary').addClass('btn-primary').addClass('waves-effect');;
-                    })
+                        $(this)
+                            .find('.button.button--primary')
+                            .removeClass('button')
+                            .addClass('btn')
+                            .removeClass('button--primary')
+                            .addClass('btn-primary')
+                            .addClass('waves-effect');
+                    });
 
-                    // For our social tour, we only want to show the next button if there is more than 1 tool tip.
+                    // For our social tour, we only want to show the next button
+                    //  if there is more than 1 tool tip.
                     if ($(context).find('.joyride-tip-guide.tip-module-social-tour').length <= 1) {
                         $('.joyride-tip-guide.tip-module-social-tour .joyride-content-wrapper a.joyride-next-tip').hide();
                     }
@@ -55,18 +63,19 @@
                 }
             });
 
-            // If we click somewhere in our document window, if it's not the jQuery modal container.
-            // Or one of it's descendants. We hide the modal background and the tour tip.
+            // If we click somewhere in our document window, if it's not the
+            // jQuery modal container. Or one of it's descendants. We hide the
+            // modal background and the tour tip.
             $(document).click(function(e) {
-                var container = $(".joyride-tip-guide.tip-module-social-tour");
+                var container = $('.joyride-tip-guide.tip-module-social-tour');
 
                 if (!container.is(e.target) && container.has(e.target).length === 0) {
-                    $(".joyride-tip-guide.tip-module-social-tour").fadeOut("fast");
-                    if ($(".joyride-modal-bg").length > 0) {
-                        $(".joyride-modal-bg").remove();
+                    $('.joyride-tip-guide.tip-module-social-tour').fadeOut("fast");
+                    if ($('.joyride-modal-bg').length > 0) {
+                        $('.joyride-modal-bg').remove();
                     }
                 }
-            })
+            });
         }
     };
 
