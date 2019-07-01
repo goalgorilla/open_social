@@ -2,7 +2,7 @@
   {{ page.header }}
 {% endif %}
 
-{% if page.secondary_navigation %}
+{% if page.secondary_navigation|render|striptags|trim %}
   <main id="content" class="main-container is-navbar-secondary" role="main">
 {% else %}
   <main id="content" class="main-container" role="main">
