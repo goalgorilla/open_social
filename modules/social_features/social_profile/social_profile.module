@@ -370,7 +370,8 @@ function social_profile_preprocess_profile(array &$variables) {
       ->buildUrl($profile->field_profile_banner_image->entity->getFileUri());
   }
   else {
-    if ($file_uuid = $profile->field_profile_banner_image->getSetting('default_image')['uuid']) {
+    $file_uuid = $profile->field_profile_banner_image->getSetting('default_image')['uuid'];
+    if (!empty($file_uuid)) {
       $banner_image = \Drupal::service('entity.repository')->loadEntityByUuid('file', $file_uuid)->getFileUri();
       if ($banner_image) {
         $variables['profile_hero_styled_image_url'] = ImageStyle::load('social_xx_large')->buildUrl($banner_image);
