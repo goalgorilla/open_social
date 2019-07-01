@@ -9,6 +9,7 @@ projects[admin_toolbar][type] = module
 projects[admin_toolbar][version] = 1.26
 projects[block_field][type] = module
 projects[block_field][version] = 1.0-alpha8
+projects[block_field][patch][] = "https://www.drupal.org/files/issues/2018-06-11/block_field-add-proper-alter-hooks-for-field-rendering-2978883-2.patch"
 projects[config_update][type] = module
 projects[config_update][version] = 1.6
 projects[crop][type] = module
