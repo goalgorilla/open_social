@@ -16,8 +16,6 @@
         this.logoChanged = true;
       }
 
-      console.log(drupalSettings.color.logo);
-
       // Remove the logo if the setting is toggled off.
       if (drupalSettings.color.logo === null) {
         $('div').remove('.navbar-brand');
