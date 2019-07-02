@@ -6,7 +6,6 @@
  */
 
 use Drupal\Component\Utility\Crypt;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\Routing\RedirectDestinationInterface;
 use Drupal\Core\Session\AccountProxyInterface;
@@ -82,7 +81,7 @@ function social_magic_login_data_policy_destination_alter(AccountProxyInterface 
   // to user.edit.form. and make sure that form gets the right destination
   // from $destination.
   if (!$current_user->isAnonymous()) {
-    /** @var EntityTypeManagerInterface $user_storage */
+    /** @var \Drupal\Core\Entity\EntityTypeManagerInterface $user_storage */
     $user_storage = \Drupal::service('entity_type.manager')->getStorage('user');
     /** @var \Drupal\user\UserInterface $account */
     $account = $user_storage->load($current_user->id());
@@ -97,7 +96,7 @@ function social_magic_login_data_policy_destination_alter(AccountProxyInterface 
           'query' => [
             'pass-reset-token' => $token,
             'destination' => $final_destination,
-          ]
+          ],
         ]
       );
       $url->setAbsolute(FALSE);
