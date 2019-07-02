@@ -70,31 +70,24 @@
       var colorPreviewLever = $('.color-preview-hero .switch .lever');
       var colorPreviewCover = $('.color-preview-hero .cover');
 
-      // if (localStorage.getItem('lever-on') &&
-      //   localStorage.getItem('set-settings-theme')) {
-      //     colorPreviewLever.addClass('lever-on');
-      //     colorPreviewCover.addClass('cover-img cover-img-gradient');
-      // }
+      if (localStorage.getItem('lever-on')) {
+          colorPreviewLever.addClass('lever-on');
+          colorPreviewCover.addClass('cover-img cover-img-gradient');
+      }
 
       $colorPreview.find('.color-preview-hero .switch').once()
         .on('click', function() {
           colorPreviewLever.toggleClass('lever-on');
           colorPreviewCover.toggleClass('cover-img cover-img-gradient');
 
-          // if (colorPreviewLever.hasClass('lever-on')) {
-          //   localStorage.setItem('lever-on', '1');
-          // }
-          // else {
-          //   localStorage.removeItem('lever-on');
-          // }
+          if (colorPreviewLever.hasClass('lever-on')) {
+            localStorage.setItem('lever-on', '1');
+          }
+          else {
+            localStorage.removeItem('lever-on');
+          }
         }
-      );
-
-      // var settingThSub = $('.system-theme-settings .form-actions .form-submit');
-      // settingThSub.on('click', function () {
-      //   localStorage.setItem('set-settings-theme', '1');
-      // });
-
+      );і
     }
   };
 })(jQuery, Drupal, drupalSettings);
