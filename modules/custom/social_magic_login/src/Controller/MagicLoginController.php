@@ -5,6 +5,7 @@ namespace Drupal\social_magic_login\Controller;
 use Drupal\Component\Utility\Crypt;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Url;
+use Drupal\data_policy\DataPolicyConsentManager;
 use Drupal\user\UserStorageInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -31,16 +32,26 @@ class MagicLoginController extends ControllerBase {
   protected $logger;
 
   /**
+   * The Data Policy Consensus Manger service.
+   *
+   * @var \Drupal\data_policy\DataPolicyConsentManager
+   */
+  protected $dataPolicyManager;
+
+  /**
    * MagicLoginController constructor.
    *
    * @param \Drupal\user\UserStorageInterface $user_storage
    *   The user storage.
    * @param \Psr\Log\LoggerInterface $logger
    *   The logger service.
+   * @param \Drupal\data_policy\DataPolicyConsentManager $dataPolicyConsentManager
+   *   The Data Policy consensus manager.
    */
-  public function __construct(UserStorageInterface $user_storage, LoggerInterface $logger) {
+  public function __construct(UserStorageInterface $user_storage, LoggerInterface $logger, DataPolicyConsentManager $dataPolicyConsentManager) {
     $this->userStorage = $user_storage;
     $this->logger = $logger;
+    $this->dataPolicyManager = $dataPolicyConsentManager;
   }
 
   /**
@@ -49,7 +60,8 @@ class MagicLoginController extends ControllerBase {
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('entity.manager')->getStorage('user'),
-      $container->get('logger.factory')->get('user')
+      $container->get('logger.factory')->get('user'),
+      $container->get('data_policy.manager')
     );
   }
 
@@ -113,7 +125,11 @@ class MagicLoginController extends ControllerBase {
     // When the user hasn't set a password, redirect the user to
     // the set passwords page.
     if (NULL === $user->getPassword()) {
-      $this->messenger()->addStatus($this->t('You need to set your passwords in order to log in.'));
+      $message_set_password = $this->t('You need to set your passwords in order to log in.');
+      if ($this->dataPolicyConsensus() === FALSE) {
+        $message_set_password = $this->t('Before you can log in and set your password, you need to agree to the data policy.');
+      }
+      $this->messenger()->addStatus($message_set_password);
       $this->logger->notice('User %name used magic login link at time %timestamp but needs to set a password.', ['%name' => $user->getDisplayName(), '%timestamp' => $timestamp]);
       user_login_finalize($user);
 
@@ -142,6 +158,16 @@ class MagicLoginController extends ControllerBase {
 
       return new RedirectResponse($destination);
     }
+  }
+
+  /**
+   * Check if user gave consent on a current version of data policy.
+   *
+   * @return bool
+   *   TRUE if consent is needed.
+   */
+  protected function dataPolicyConsensus(): bool {
+    return $this->dataPolicyManager->needConsent();
   }
 
 }
