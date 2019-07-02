@@ -99,7 +99,7 @@ function social_activity_tokens($type, $tokens, array $data, array $options, Bub
                   '#type' => $display_name,
                 ];
 
-                $replacements[$original] = \Drupal::service('renderer')->render($info);
+                $replacements[$original] = \Drupal::service('renderer')->renderPlain($info);
               }
             }
           }
