@@ -435,13 +435,13 @@ function socialbase_form_node_form_alter(&$form, FormStateInterface $form_state,
   if (isset($form['actions']['delete'])) {
     $form['actions']['delete']['#attributes']['class'][] = 'btn btn-flat';
 
-    if($button_size == 'btn-xs') {
+    if ($button_size === 'btn-xs') {
       $form['actions']['delete']['#attributes']['class'][] = 'btn-xs';
     }
-    elseif ($button_size == 'btn-sm') {
+    elseif ($button_size === 'btn-sm') {
       $form['actions']['delete']['#attributes']['class'][] = 'btn-sm';
     }
-    elseif ($button_size == 'btn-lg') {
+    elseif ($button_size === 'btn-lg') {
       $form['actions']['delete']['#attributes']['class'][] = 'btn-lg';
     }
   }
