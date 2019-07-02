@@ -1,0 +1,92 @@
+<?php
+
+/**
+ * @file
+ * The Social Content Block module.
+ */
+
+use Drupal\Core\Block\BlockPluginInterface;
+use Drupal\Core\Form\FormStateInterface;
+
+/**
+ * Implements hook_preprocess_block().
+ */
+function social_content_block_preprocess_block(&$variables) {
+  if ($variables['base_plugin_id'] === 'block_content' &&
+    isset($variables['content']['#block_content']) &&
+    $variables['content']['#block_content']->bundle() === 'custom_content_list'
+  ) {
+    $variables['content']['social_content_block'] = $variables['elements']['social_content_block'];
+    $variables['card'] = TRUE;
+  }
+}
+
+/**
+ * Implements hook_block_view_BASE_BLOCK_ID_alter().
+ */
+function social_content_block_block_view_block_content_alter(&$build, BlockPluginInterface $block) {
+  if ($block_entity = _social_content_block_is_custom_content_block($block)) {
+    $build['social_content_block'] = [
+      '#lazy_builder' => [
+        'social_content_block.content_builder:build',
+        [
+          $block_entity->getEntityTypeId(),
+          $block_entity->id(),
+        ],
+      ],
+      '#create_placeholder' => TRUE,
+    ];
+  }
+}
+
+/**
+ * Checks if a block is a Custom content block.
+ */
+function _social_content_block_is_custom_content_block(BlockPluginInterface $block) {
+  if ($block->getBaseId() === 'block_content') {
+    $uuid = $block->getDerivativeId();
+    /** @var \Drupal\block_content\BlockContentInterface $block_entity */
+    $block_entity = \Drupal::service('entity.repository')
+      ->loadEntityByUuid('block_content', $uuid);
+    if ($block_entity->bundle() === 'custom_content_list') {
+      return $block_entity;
+    }
+  }
+  return FALSE;
+}
+
+/**
+ * Implements hook_form_BASE_FORM_ID_alter().
+ */
+function social_content_block_form_block_content_custom_content_list_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  // Add submit handler to clear cache.
+  foreach (array_keys($form['actions']) as $action) {
+    if ($action !== 'preview' && isset($form['actions'][$action]['#type']) && $form['actions'][$action]['#type'] === 'submit') {
+      $form['actions'][$action]['#submit'][] = 'custom_content_block_form_submit';
+    }
+  }
+}
+
+/**
+ * Custom submit handler.
+ */
+function custom_content_block_form_submit($form, FormStateInterface $form_state) {
+  // Clear plugin cache.
+  \Drupal::service('plugin.cache_clearer')->clearCachedDefinitions();
+}
+
+/**
+ * Implements hook_theme().
+ */
+function social_content_block_theme($existing, $type, $theme, $path) {
+  return [
+    'social_content_block' => [
+      'variables' => [
+        'title' => NULL,
+        'subtitle' => NULL,
+        'topics' => [],
+        'link' => NULL,
+      ],
+    ],
+  ];
+}

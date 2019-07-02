@@ -33,24 +33,16 @@
     {{ title_suffix }}
 {% endif %}
 
-{% if comment_form %}
-
-  {% if more_link %}
-    <div class="margin-bottom-xl">
-  {% endif %}
-
-  {{ comment_form }}
-
-  {% if more_link %}
+{% if logged_in and more_link %}
+    <div class="text-center">
+        {{ more_link }}
     </div>
-  {% endif %}
-
 {% endif %}
 
 {{ comments }}
 
-{% if logged_in and more_link %}
-  <div class="margin-top-l text-center">
-    {{ more_link }}
-  </div>
+{% if comment_form %}
+
+    {{ comment_form }}
+
 {% endif %}

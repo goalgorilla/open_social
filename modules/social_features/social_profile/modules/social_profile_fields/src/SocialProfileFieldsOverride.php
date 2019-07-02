@@ -90,6 +90,10 @@ class SocialProfileFieldsOverride implements ConfigFactoryOverrideInterface {
         );
 
         foreach ($enabled_processors as $processor) {
+          // Check if the fields are in this particular array.
+          if (!isset($processor_settings[$processor]['fields'])) {
+            continue;
+          }
           $next_index = count($processor_settings[$processor]['fields']);
           $overrides[$config_name]['processor_settings'][$processor]['fields'][$next_index] = 'field_profile_nick_name';
         }
