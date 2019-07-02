@@ -118,8 +118,8 @@ class MagicLoginController extends ControllerBase {
     // When the user hasn't set a password, redirect the user to
     // the set passwords page.
     if (NULL === $user->getPassword()) {
-      $message_set_password = $this->t('You need to set your passwords in order to log in.');
-      if ($this->dataPolicyConsensus() === FALSE) {
+      $message_set_password = $this->t('You need to set your password in order to log in.');
+      if ($this->dataPolicyConsensus() === TRUE) {
         // Set a different text when the user still needs to comply to
         // the data policy.
         $message_set_password = $this->t('Before you can log in and set your password, you need to agree to the data policy.');
