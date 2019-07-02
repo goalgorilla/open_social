@@ -118,15 +118,16 @@ class MagicLoginController extends ControllerBase {
     // When the user hasn't set a password, redirect the user to
     // the set passwords page.
     if (NULL === $user->getPassword()) {
+      user_login_finalize($user);
+
       $message_set_password = $this->t('You need to set your password in order to log in.');
-      if ($this->dataPolicyConsensus() === TRUE) {
+      if ($this->dataPolicyConsensus() === FALSE) {
         // Set a different text when the user still needs to comply to
         // the data policy.
         $message_set_password = $this->t('Before you can log in and set your password, you need to agree to the data policy.');
       }
       $this->messenger()->addStatus($message_set_password);
       $this->logger->notice('User %name used magic login link at time %timestamp but needs to set a password.', ['%name' => $user->getDisplayName(), '%timestamp' => $timestamp]);
-      user_login_finalize($user);
 
       // This mirrors the UserController::resetPassLogin redirect which
       // allows a user to set a password without the current password check.
@@ -167,10 +168,10 @@ class MagicLoginController extends ControllerBase {
       // When it's enabled, load the data policy manager service and check
       // if consent is (still) needed.
       $data_policy_manage = \Drupal::service('data_policy.manager');
-      return $data_policy_manage->needConsent();
+      return $data_policy_manage->hasGivenConsent();
     }
 
-    return FALSE;
+    return TRUE;
   }
 
 }
