@@ -16,7 +16,9 @@ function social_tour_install() {
   // Set some default permissions.
   _social_tour_set_permissions();
   // Enable the module's on/off setting by default.
-  \Drupal::configFactory()->getEditable('social_tour.settings')->set('social_tour_enabled', 1)->save();
+  \Drupal::configFactory()->getEditable('social_tour.settings')
+    ->set('social_tour_enabled', 1)
+    ->save();
 }
 
 /**
@@ -26,15 +28,15 @@ function social_tour_install() {
  */
 function social_tour_uninstall() {
   $configs = [
-    'tour.tour.social-event-overview',
-    'tour.tour.social-explore',
-    'tour.tour.social-group',
-    'tour.tour.social-group-overview',
-    'tour.tour.social-home',
-    'tour.tour.social-node-view',
-    'tour.tour.social-profile',
-    'tour.tour.social-topic-overview',
-    'tour.tour.social-user',
+    'tour.tour.social_event_overview',
+    'tour.tour.social_explore',
+    'tour.tour.social_group',
+    'tour.tour.social_group_overview',
+    'tour.tour.social_home',
+    'tour.tour.social_node_view',
+    'tour.tour.social_profile',
+    'tour.tour.social_topic_overview',
+    'tour.tour.social_user',
   ];
 
   foreach ($configs as $config) {
@@ -61,7 +63,7 @@ function _social_tour_set_permissions() {
   foreach ($roles as $role) {
     $permissions = _social_tour_get_permissions($role->id());
 
-    if (!is_null($permissions)) {
+    if ($permissions) {
       user_role_grant_permissions($role->id(), $permissions);
     }
   }
@@ -98,5 +100,6 @@ function _social_tour_get_permissions($role) {
   if (isset($permissions[$role])) {
     return $permissions[$role];
   }
+
   return [];
 }
