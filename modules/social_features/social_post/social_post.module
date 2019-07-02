@@ -252,7 +252,7 @@ function social_post_theme_suggestions_post(array $variables) {
  */
 function social_post_preprocess_field(array &$variables) {
   $element = $variables['element'];
-  if ($element['#formatter'] == 'comment_post') {
+  if ($element['#formatter'] === 'comment_post' || $element['#formatter'] === 'comment_post_activity') {
     // Create separate variables for the more_link.
     $variables['more_link'] = $element[0]['more_link'];
   }
