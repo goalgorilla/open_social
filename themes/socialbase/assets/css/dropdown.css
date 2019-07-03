@@ -203,6 +203,27 @@
   margin-bottom: 0;
 }
 
+html:not(.js) .dropdown:focus .dropdown-menu,
+html:not(.js) .dropdown:hover .dropdown-menu,
+html:not(.js) .comment__actions:hover .dropdown-menu,
+html:not(.js) .comment__actions:hover .dropdown-menu,
+html:not(.js) .dropdown-menu:hover {
+  display: block;
+}
+
+html:not(.js) .dropdown {
+  cursor: pointer;
+}
+
+html:not(.js) .dropdown:focus {
+  outline: none;
+}
+
+html:not(.js) .dropdown .dropdown-toggle {
+  pointer-events: none;
+  z-index: -1;
+}
+
 @media (min-width: 600px) {
   .dropdown-menu .divider.mobile {
     display: none;
