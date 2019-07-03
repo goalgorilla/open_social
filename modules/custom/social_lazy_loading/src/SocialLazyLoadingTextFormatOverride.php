@@ -54,6 +54,7 @@ class SocialLazyLoadingTextFormatOverride implements ConfigFactoryOverrideInterf
       'plain_text' => TRUE,
       'simple_text' => TRUE,
       'restricted_html' => TRUE,
+      'mail_html' => TRUE,
     ];
 
     $this->moduleHandler->alter('social_lazy_loading_formats', $formats);
