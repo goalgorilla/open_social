@@ -45,3 +45,45 @@ html.js {
     display: none !important;
   }
 }
+
+// For position progress bar.
+.form-type-managed-file {
+
+  label {
+    display: block;
+  }
+
+}
+
+.form-managed-file {
+  position: relative;
+
+  .form-submit[data-drupal-selector*='upload-button'] {
+    font-size: 0;
+    color: transparent;
+  }
+
+  .js-hide.form-submit[disabled] {
+    position: relative;
+    display: inline-block !important;
+    width: 40px;
+    height: 40px;
+    top: 0;
+    right: 0;
+    padding: 0;
+
+    .ajax-throbber {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+
+
+      &:before {
+        top: 0;
+      }
+
+    }
+
+  }
+
+}
