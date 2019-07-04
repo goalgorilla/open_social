@@ -121,6 +121,7 @@
 
 .navbar-toggle {
   position: relative;
+  display: inline-block;
   background-color: transparent;
   background-image: none;
   border: 0;
@@ -129,6 +130,7 @@
   padding: 8px 10px;
   height: 50px;
   min-width: 50px;
+  line-height: 32px;
 }
 
 .navbar-toggle:focus {
@@ -171,6 +173,7 @@
 }
 
 .navbar__open-search-block {
+  display: block;
   border: 0;
   border-radius: 100%;
   width: 50px;
@@ -539,6 +542,12 @@
   .region--content-top .search-take-over,
   .btn--close-search-take-over {
     display: none;
+  }
+  html:not(.js) .navbar-header:focus + .navbar-collapse, html:not(.js) .navbar-header:hover + .navbar-collapse {
+    display: block;
+  }
+  html:not(.js) .navbar-collapse:focus, html:not(.js) .navbar-collapse:hover {
+    display: block;
   }
 }
 
