@@ -75,9 +75,13 @@ class PostAccessControlHandler extends EntityAccessControlHandler {
 
               if ($group !== NULL) {
                 if ($group->hasPermission('access posts in group', $account) && $this->checkDefaultAccess($entity, $operation, $account)) {
-                  if ($group->getMember($account)) {
-                    return AccessResult::allowed()->cachePerUser()->addCacheableDependency($entity);
+                  if ($group->getGroupType()->id() === 'flexible_group') {
+                    //  @TODO Check if CM in flexible group has access this way.
+                    if ($group->getMember($account)) {
+                      return AccessResult::allowed()->cachePerUser()->addCacheableDependency($entity);
+                    }
                   }
+                  return AccessResult::allowed();
                 }
                 return AccessResult::forbidden();
               }
