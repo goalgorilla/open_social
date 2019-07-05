@@ -114,8 +114,9 @@ class PostAccessControlHandler extends EntityAccessControlHandler implements Ent
                     // User has access if outsider with permission or is member.
                     $group_role_storage = $this->entityTypeManager->getStorage('group_role');
                     $group_roles = $group_role_storage->loadByUserAndGroup($account, $group);
+                    /** @var \Drupal\group\Entity\GroupRoleInterface $group_role */
                     foreach ($group_roles as $group_role) {
-                      if ($group_role->audience === 'outsider' && $group_role->hasPermission($permission)) {
+                      if ($group_role->isOutsider() && $group_role->hasPermission($permission)) {
                         return AccessResult::allowed()->cachePerUser()->addCacheableDependency($entity);
                       }
                     }
