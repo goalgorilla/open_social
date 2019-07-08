@@ -68,46 +68,48 @@
 
 {{ attach_library('socialbase/hero') }}
 
-{% if hero_styled_image_url %}
-<div style="background-image: url('{{ hero_styled_image_url }}')" class="cover cover-img cover-img-gradient">
-  {% else %}
-  <div class="cover">
-    {% endif %}
-    <div class="hero__bgimage-overlay"></div>
-    {% if node %}
-    {% if node_edit_url %}
-      <div class="hero-action-button">
-        <a href="{{ node_edit_url }}" title="{% trans %}Edit content{% endtrans %}" class="btn btn-raised btn-default btn-floating">
-          <svg class="icon-gray icon-medium">
-            <use xlink:href="#icon-edit"></use>
-          </svg>
-        </a>
-      </div>
-    {% endif %}
-    <div class="cover-wrap">
+{%
+  set cover_classes = [
+  'cover',
+  group_hero_styled_image_url ? 'cover-img cover-img-gradient',
+]
+%}
+
+{%
+  set cover_wrap_classes = group_hero_small ? 'cover-wrap small' : 'cover-wrap'
+%}
+
+<div{{ attributes.addClass(cover_classes) }} {% if hero_styled_image_url %} style="background-image: url('{{ hero_styled_image_url }}');" {% endif %}>
+  <div class="hero__bgimage-overlay"></div>
+  {% if node_edit_url %}
+    <div class="hero-action-button">
+      <a href="{{ node_edit_url }}" title="{% trans %}Edit content{% endtrans %}"
+         class="btn btn-raised btn-default btn-floating">
+        <svg class="icon-gray icon-medium">
+          <use xlink:href="#icon-edit"></use>
+        </svg>
+      </a>
+    </div>
+  {% endif %}
+
+  <div class="cover-wrap">
+    <header class="page-title">
+      <p>{{ title_prefix }}</p>
+      {% if label %}
+        <h1{{ title_attributes }}>{{ label }}</h1>
       {% endif %}
+      <p>{{ title_suffix }}</p>
+    </header>
 
-      <header class="page-title">
-        <p>{{ title_prefix }}</p>
-        {% if label %}
-          <h1{{ title_attributes }}>{{ label }}</h1>
-        {% endif %}
-        <p>{{ title_suffix }}</p>
-      </header>
-
-      {% if event_enrollment %}
-        <div class="hero-footer">
-          <div class="hero-footer__text"></div>
-          <div class="hero-footer__cta">
-            <div class="btn-group">
-              {{ event_enrollment }}
-            </div>
+    {% if event_enrollment %}
+      <div class="hero-footer">
+        <div class="hero-footer__text"></div>
+        <div class="hero-footer__cta">
+          <div class="btn-group">
+            {{ event_enrollment }}
           </div>
         </div>
-      {% endif %}
-
-      {% if node %}
-    </div>
+      </div>
     {% endif %}
-
   </div>
+</div>
