@@ -2,6 +2,7 @@ langcode: en
 status: true
 dependencies:
   module:
+    - ctools
     - social_core
     - system
   theme:
@@ -41,3 +42,12 @@ visibility:
       negate: false
       context_mapping:
         group: '@group.group_route_context:group'
+  'entity_bundle:node':
+    id: 'entity_bundle:node'
+    bundles:
+      event: event
+      page: page
+      topic: topic
+    negate: true
+    context_mapping:
+      node: '@node.node_route_context:node'
