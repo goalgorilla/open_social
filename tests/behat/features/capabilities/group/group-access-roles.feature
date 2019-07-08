@@ -14,7 +14,7 @@ Feature: Group access roles
     And I am on "user"
     And I click "Groups"
     And I click "Add a group"
-    Then I click radio button "Closed group This is a closed group. Users can only join by invitation and all content added in this group will be hidden for non members." with the id "edit-group-type-closed-group"
+    Then I click radio button "Closed group This is a closed group. Users can only join by invitation and the content in the group is hidden from non members." with the id "edit-group-type-closed-group"
     And I press "Continue"
     When I fill in "Title" with "Test closed group 3"
     And I fill in the "edit-field-group-description-0-value" WYSIWYG editor with "Description text"

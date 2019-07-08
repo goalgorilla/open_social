@@ -28,6 +28,16 @@ function social_path_manager_form_alter(&$form, FormStateInterface $form_state, 
   if (in_array($form_id, $group_forms['add'], TRUE) || in_array($form_id, $group_forms['edit'], TRUE)) {
     $form['path']['#type'] = 'fieldset';
   }
+
+  $user_forms = [
+    'user_register_form',
+    'user_form',
+  ];
+
+  // Hide the URL alias for user forms, doesn't do anything.
+  if (!empty($form['path']) && in_array($form_id, $user_forms, TRUE)) {
+    unset($form['path']);
+  }
 }
 
 /**
@@ -211,7 +221,10 @@ function _social_path_manager_update_alias(EntityInterface $entity, $op, $bulk =
 
         // If it's a bulk generate then get the alias by path.
         if ($bulk === TRUE) {
-          $path['alias'] = $pam->getAliasByPath('/group/' . $entity->id() . '/stream');
+          $url = Url::fromRoute('entity.group.canonical', ['group' => $entity->id()]);
+          $url = $url->getInternalPath();
+
+          $path['alias'] = $pam->getAliasByPath('/' . $url);
         }
         else {
           // New alias.
@@ -249,8 +262,9 @@ function _social_path_manager_update_alias(EntityInterface $entity, $op, $bulk =
             }
           }
 
-          // Clear cache of the group tag.
+          // Clear cache of the group tag and rebuild routes.
           \Drupal::service('cache_tags.invalidator')->invalidateTags(['group:' . $entity->id()]);
+          \Drupal::service('router.builder')->rebuild();
         }
         break;
 

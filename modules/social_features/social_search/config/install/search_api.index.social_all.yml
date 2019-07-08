@@ -12,10 +12,10 @@ dependencies:
     - field.storage.group.field_group_description
     - field.storage.group.field_group_location
     - field.storage.profile.field_profile_expertise
-    - field.storage.profile.field_profile_interests
-    - field.storage.profile.field_profile_profile_tag
     - field.storage.profile.field_profile_first_name
+    - field.storage.profile.field_profile_interests
     - field.storage.profile.field_profile_last_name
+    - field.storage.profile.field_profile_profile_tag
     - search_api.server.social_database
     - core.entity_view_mode.group.teaser
     - core.entity_view_mode.node.search_index
@@ -65,6 +65,15 @@ field_settings:
     dependencies:
       config:
         - field.storage.profile.field_profile_expertise
+  field_profile_first_name:
+    label: 'First name'
+    datasource_id: 'entity:profile'
+    property_path: field_profile_first_name
+    type: text
+    boost: !!float 2
+    dependencies:
+      config:
+        - field.storage.profile.field_profile_first_name
   field_profile_interests:
     label: Interests
     datasource_id: 'entity:profile'
@@ -73,6 +82,15 @@ field_settings:
     dependencies:
       config:
         - field.storage.profile.field_profile_interests
+  field_profile_last_name:
+    label: 'Last name'
+    datasource_id: 'entity:profile'
+    property_path: field_profile_last_name
+    type: text
+    boost: !!float 2
+    dependencies:
+      config:
+        - field.storage.profile.field_profile_last_name
   field_profile_profile_tag:
     label: 'Profile tag'
     datasource_id: 'entity:profile'
@@ -86,7 +104,7 @@ field_settings:
     datasource_id: 'entity:group'
     property_path: label
     type: text
-    boost: !!float 8
+    boost: !!float 21
     dependencies:
       module:
         - group
@@ -99,6 +117,7 @@ field_settings:
     dependencies:
       module:
         - profile
+        - user
         - user
   node_grants:
     label: 'Node access information'
@@ -140,7 +159,7 @@ field_settings:
     datasource_id: 'entity:node'
     property_path: title
     type: text
-    boost: !!float 8
+    boost: !!float 21
     dependencies:
       module:
         - node
@@ -149,6 +168,15 @@ field_settings:
     datasource_id: 'entity:node'
     property_path: type
     type: string
+    dependencies:
+      module:
+        - node
+  type_1:
+    label: 'Content type'
+    datasource_id: 'entity:node'
+    property_path: type
+    type: text
+    boost: !!float 13
     dependencies:
       module:
         - node
@@ -187,22 +215,7 @@ field_settings:
       module:
         - profile
         - user
-  field_profile_first_name:
-    label: 'First name'
-    datasource_id: 'entity:profile'
-    property_path: field_profile_first_name
-    type: text
-    dependencies:
-      config:
-        - field.storage.profile.field_profile_first_name
-  field_profile_last_name:
-    label: 'Last name'
-    datasource_id: 'entity:profile'
-    property_path: field_profile_last_name
-    type: text
-    dependencies:
-      config:
-        - field.storage.profile.field_profile_last_name
+        - user
 datasource_settings:
   'entity:group':
     bundles:

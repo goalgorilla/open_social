@@ -282,7 +282,8 @@ function social_profile_preprocess_form_element_label(&$variables) {
   // Edit the profile tag displays to show the hierarchy to users.
   // Only do this if it starts with a - to indicate it's a child.
   if (
-    substr($variables['element']['#id'], 0, 17) === 'edit-profile-tag-'
+    isset($variables['element']['#id'])
+    && substr($variables['element']['#id'], 0, 17) === 'edit-profile-tag-'
     && substr($variables['element']['#title'], 0, 1) === '-'
   ) {
     $variables['title']['#markup'] = substr($variables['title']['#markup'], 1);
@@ -337,7 +338,7 @@ function social_profile_preprocess_profile(array &$variables) {
   // The actual label text should be changeable in the template.
   // Disable for the LU's own profile.
   $variables['profile_contact_label'] = 'profile_info';
-  if (\Drupal::moduleHandler()->moduleExists('social_private_message') && $current_user->id() != $profile->getOwnerId()) {
+  if (\Drupal::moduleHandler()->moduleExists('social_private_message') && $current_user->id() != $profile->getOwnerId() && $current_user->hasPermission('use private messaging system') && User::load($profile->getOwnerId())->hasPermission('use private messaging system')) {
     $variables['profile_contact_label'] = 'private_message';
     $variables['#cache']['contexts'][] = 'user';
   }
@@ -348,7 +349,7 @@ function social_profile_preprocess_profile(array &$variables) {
     $profile_show_email = $profile->field_profile_show_email->value;
   }
   if ($global_show_email
-    || !$global_show_email && !empty($profile_show_email)
+    || (!$global_show_email && !empty($profile_show_email))
     || $current_user->hasPermission('view profile email')
   ) {
     // Derived from MailToFormatter.php.
@@ -390,7 +391,7 @@ function social_profile_preprocess_profile(array &$variables) {
 function _social_profile_get_contact_url(User $account) {
   if (\Drupal::moduleHandler()->moduleExists('social_private_message')) {
     $current_user = \Drupal::currentUser();
-    if ($current_user->hasPermission('use private messaging system') && $current_user->id() != $account->id()) {
+    if ($current_user->hasPermission('use private messaging system') && $account->hasPermission('use private messaging system') && $current_user->id() != $account->id()) {
       $members = [$current_user, $account];
       $thread_id = \Drupal::service('private_message.mapper')->getThreadIdForMembers($members);
       if ($thread_id) {
