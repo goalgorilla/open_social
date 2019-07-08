@@ -167,8 +167,8 @@ class MagicLoginController extends ControllerBase {
     if ($this->moduleHandler->moduleExists('data_policy')) {
       // When it's enabled, load the data policy manager service and check
       // if consent is (still) needed.
-      $data_policy_manage = \Drupal::service('data_policy.manager');
-      return $data_policy_manage->hasGivenConsent();
+      $data_policy_manager = \Drupal::service('data_policy.manager');
+      return $data_policy_manager->hasGivenConsent();
     }
 
     return TRUE;
