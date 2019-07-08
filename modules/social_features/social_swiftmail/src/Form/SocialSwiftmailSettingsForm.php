@@ -15,7 +15,7 @@ class SocialSwiftmailSettingsForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  protected function getEditableConfigNames(): array {
+  protected function getEditableConfigNames() {
     return [
       'social_swiftmail.settings',
     ];
@@ -24,14 +24,14 @@ class SocialSwiftmailSettingsForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function getFormId(): string {
+  public function getFormId() {
     return 'social_swiftmail_form';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state): array {
+  public function buildForm(array $form, FormStateInterface $form_state) {
     $config = $this->config('social_swiftmail.settings');
 
     $form['remove_open_social_branding'] = [
@@ -67,7 +67,7 @@ class SocialSwiftmailSettingsForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state): void {
+  public function submitForm(array &$form, FormStateInterface $form_state) {
     parent::submitForm($form, $form_state);
 
     // Save config.
