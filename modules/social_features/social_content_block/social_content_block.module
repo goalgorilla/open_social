@@ -59,6 +59,22 @@ function _social_content_block_is_custom_content_block(BlockPluginInterface $blo
  * Implements hook_form_BASE_FORM_ID_alter().
  */
 function social_content_block_form_block_content_custom_content_list_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  // Add description to explain what filters do.
+  $form['field_topic_type'] += [
+    '#prefix' => t('To make the list of topics more specific you can additionally configure more filters such as topic types, content tags and groups.'),
+  ];
+
+  // Add descriptions per field.
+  $form['field_topic_type'] += [
+    '#suffix' => t('Autocomplete field with items from taxonomy list topic types.'),
+  ];
+  $form['field_content_tags'] += [
+    '#suffix' => t('Autocomplete field with items from taxonomy list content tags.'),
+  ];
+  $form['field_group'] += [
+    '#suffix' => t('Autocomplete field with group names.'),
+  ];
+
   // Add submit handler to clear cache.
   foreach (array_keys($form['actions']) as $action) {
     if ($action !== 'preview' && isset($form['actions'][$action]['#type']) && $form['actions'][$action]['#type'] === 'submit') {
