@@ -4,6 +4,7 @@ namespace Drupal\social_follow_content\Plugin\ActivityContext;
 
 use Drupal\activity_creator\Plugin\ActivityContextBase;
 use Drupal\activity_creator\ActivityFactory;
+use Drupal\user\UserInterface;
 
 /**
  * Provides a 'FollowContentActivityContext' activity context plugin.
@@ -53,14 +54,20 @@ class FollowContentActivityContext extends ActivityContextBase {
     $original_related_entity = $storage->load($original_related_object['target_id']);
 
     foreach ($flaggings as $flagging) {
+      /* @var $flagging \Drupal\flag\FlaggingInterface */
       $recipient = $flagging->getOwner();
-      if ($recipient->id() != $original_related_entity->getOwnerId()) {
-        if ($original_related_entity->access('view', $recipient)) {
-          $recipients[] = [
-            'target_type' => 'user',
-            'target_id' => $recipient->id(),
-          ];
-        }
+
+      // It could happen that a notification has been queued but the content or
+      // account has since been deleted. In that case we can find no recipient.
+      if (!$recipient instanceof UserInterface) {
+        break;
+      }
+
+      if ($recipient->id() !== $original_related_entity->getOwnerId() && $original_related_entity->access('view', $recipient)) {
+        $recipients[] = [
+          'target_type' => 'user',
+          'target_id' => $recipient->id(),
+        ];
       }
     }
 
