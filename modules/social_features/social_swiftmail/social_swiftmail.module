@@ -54,14 +54,28 @@ function social_swiftmail_preprocess_swiftmailer(array &$variables) {
     $variables['site_slogan'] = '"' . t('Make your people bloom') . '"';
   }
 
-  // Add variables header if set.
+  // Check if a custom e-mail header is set and apply the configuration
+  // to the render array.
   if (($header_config = $social_swiftmail_config->get('template_header'))
     && (!empty($header_config['value']) && !empty($header_config['format']))) {
-    $variables['header'] = \Drupal::service('renderer')->renderRoot([
+    $header_markup = [
       '#type' => 'processed_text',
       '#text' => $header_config['value'],
       '#format' => $header_config['format'],
-    ]);
+    ];
+    $variables['header'] = \Drupal::service('renderer')->renderRoot($header_markup);
+  }
+
+  // Check if a custom e-mail footer is set and apply the configuration
+  // to the render array.
+  if (($footer_config = $social_swiftmail_config->get('template_footer'))
+    && (!empty($footer_config['value']) && !empty($footer_config['format']))) {
+    $footer_markup = [
+      '#type' => 'processed_text',
+      '#text' => $footer_config['value'],
+      '#format' => $footer_config['format'],
+    ];
+    $variables['footer'] = \Drupal::service('renderer')->renderRoot($footer_markup);
   }
 
   $message = &$variables['message'];
