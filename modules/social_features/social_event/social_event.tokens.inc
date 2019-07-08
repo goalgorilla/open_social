@@ -7,6 +7,7 @@
 
 use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\Link;
+use Drupal\social_event\EventEnrollmentInterface;
 
 /**
  * Implements hook_token_info().
@@ -142,7 +143,7 @@ function get_name_from_enrollment($id) {
   // User is AN by default.
   $enrollment_name = \Drupal::configFactory()->get('user.settings')->get('anonymous');
 
-  if (!empty($enrollment)) {
+  if (!$enrollment instanceof EventEnrollmentInterface) {
     // If there is a Uid. Lets load the user and return his display name.
     if ($enrollment->hasField('field_account') &&
       $enrollment->getFieldValue('field_account', 'target_id') > 0) {

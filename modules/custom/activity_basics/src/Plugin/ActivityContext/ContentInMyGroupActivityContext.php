@@ -5,8 +5,11 @@ namespace Drupal\activity_basics\Plugin\ActivityContext;
 use Drupal\activity_creator\Plugin\ActivityContextBase;
 use Drupal\group\Entity\Group;
 use Drupal\activity_creator\ActivityFactory;
+use Drupal\group\Entity\GroupContentInterface;
+use Drupal\group\Entity\GroupInterface;
 use Drupal\node\Entity\Node;
 use Drupal\social_post\Entity\Post;
+use Drupal\social_post\Entity\PostInterface;
 
 /**
  * Provides a 'ContentInMyGroupActivityContext' acitivy context.
@@ -35,7 +38,7 @@ class ContentInMyGroupActivityContext extends ActivityContextBase {
         // It could happen that a notification has been queued but the content
         // has since been deleted. In that case we can find no additional
         // recipients.
-        if (!$post) {
+        if (!$post instanceof PostInterface) {
           return $recipients;
         }
 
@@ -43,13 +46,13 @@ class ContentInMyGroupActivityContext extends ActivityContextBase {
         $owner_id = $post->getOwnerId();
       }
       else {
-        /* @var \Drupal\group\Entity\GroupContent $group_content_entity */
+        /* @var \Drupal\group\Entity\GroupContentInterface $group_content_entity */
         $group_content_entity = \Drupal::entityTypeManager()->getStorage('group_content')->load($referenced_entity['target_id']);
 
         // It could happen that a notification has been queued but the content
         // has since been deleted. In that case we can find no additional
         // recipients.
-        if (!$group_content_entity) {
+        if (!$group_content_entity instanceof GroupContentInterface) {
           return $recipients;
         }
 
@@ -72,7 +75,7 @@ class ContentInMyGroupActivityContext extends ActivityContextBase {
         // It could happen that a notification has been queued but the content
         // has since been deleted. In that case we can find no additional
         // recipients.
-        if (!$group) {
+        if (!$group instanceof GroupInterface) {
           return $recipients;
         }
 
