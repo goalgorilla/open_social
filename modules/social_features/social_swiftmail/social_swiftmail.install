@@ -23,6 +23,13 @@ function social_swiftmail_install() {
   $mailsystem_settings->set('defaults.formatter', 'social_swiftmailer')->save();
   $mailsystem_settings->set('modules.swiftmailer.none.sender', 'social_swiftmailer')->save();
   $mailsystem_settings->set('modules.swiftmailer.none.formatter', 'social_swiftmailer')->save();
+
+
+  // Give SM the correct swiftmail permission.
+  user_role_grant_permissions('sitemanager', [
+    'use text format mail_html',
+    'administer social swiftmail',
+  ]);
 }
 
 /**
@@ -32,4 +39,15 @@ function social_swiftmail_update_8001(&$sandbox) {
   // Alter mailsystem settings.
   $mailsystem_settings = \Drupal::configFactory()->getEditable('mailsystem.settings');
   $mailsystem_settings->set('theme', 'default')->save();
+}
+
+/**
+ * Set swiftmail permissions for sitemanagers settings.
+ */
+function social_swiftmail_update_8002() {
+  // Give SM the correct permission.
+  user_role_grant_permissions('sitemanager', [
+    'use text format mail_html',
+    'administer social swiftmail',
+  ]);
 }
