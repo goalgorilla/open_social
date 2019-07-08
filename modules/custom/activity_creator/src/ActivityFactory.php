@@ -311,13 +311,15 @@ class ActivityFactory extends ControllerBase {
         ->getStorage($related_object['target_type']);
       $entity = $entity_storage->load($related_object['target_id']);
 
-      /** @var \Drupal\social_event\Entity\EventEnrollment $entity */
-      $event_id = $entity->getFieldValue('field_event', 'target_id');
-      if (!empty($event_id)) {
-        $related_object = [
-          'target_type' => 'node',
-          'target_id' => $event_id,
-        ];
+      if (!empty($entity)) {
+        /** @var \Drupal\social_event\Entity\EventEnrollment $entity */
+        $event_id = $entity->getFieldValue('field_event', 'target_id');
+        if (!empty($event_id)) {
+          $related_object = [
+            'target_type' => 'node',
+            'target_id' => $event_id,
+          ];
+        }
       }
     }
     return $related_object;
