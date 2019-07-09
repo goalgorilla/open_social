@@ -16,7 +16,6 @@
           }
 
           $icon.toggleClass('icon-expand_more', 'icon-expand-less');
-          // return false;
         });
       });
     }
