@@ -118,10 +118,23 @@ function activity_send_email_form_user_form_alter(&$form, FormStateInterface $fo
 
   $form['email_notifications'] = [
     '#type' => 'fieldset',
-    '#title' => t('Email notifications'),
+    '#title' => [
+      'text' => [
+        '#markup' => t('Email notifications'),
+      ],
+      'icon' => [
+        '#markup' => '<svg class="icon icon-expand_more"><use xlink:href="#icon-expand_more" /></svg>',
+        '#allowed_tags' => ['svg', 'use'],
+      ],
+    ],
     '#tree' => TRUE,
+    '#collapsible' => TRUE,
+    '#collapsed' => TRUE,
     '#attributes' => [
-      'class' => ['form-horizontal'],
+      'class' => [
+        'form-horizontal',
+        'form-email-notification',
+      ],
     ],
   ];
 
@@ -182,15 +195,22 @@ function activity_send_email_form_user_form_alter(&$form, FormStateInterface $fo
 
   foreach ($items as $item_id => $item) {
     $form['email_notifications'][$item_id] = [
-      '#type' => 'details',
+      '#type' => 'fieldset',
       '#title' => [
-        '#type' => 'html_tag',
-        '#tag' => 'h5',
-        '#value' => $item['title'],
+        'text' => [
+          '#markup' => $item['title'],
+        ],
+        'icon' => [
+          '#markup' => '<svg class="icon icon-expand_more"><use xlink:href="#icon-expand_more" /></svg>',
+          '#allowed_tags' => ['svg', 'use'],
+        ],
       ],
       '#attributes' => [
         'class' => ['form-fieldset'],
       ],
+      '#collapsible' => TRUE,
+      '#collapsed' => TRUE,
+      '#open' => TRUE,
     ];
 
     foreach ($item['templates'] as $template) {
@@ -205,6 +225,9 @@ function activity_send_email_form_user_form_alter(&$form, FormStateInterface $fo
 
   // Submit function to save send email settings.
   $form['actions']['submit']['#submit'][] = '_activity_send_email_form_user_form_submit';
+
+  // Attach library.
+  $form['#attached']['library'][] = 'activity_send_email/admin';
 }
 
 /**
