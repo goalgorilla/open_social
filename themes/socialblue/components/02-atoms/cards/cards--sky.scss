@@ -965,6 +965,10 @@
   .block-views-blockchallenge-ideas-block {
     padding: 0 1.25rem 1.25rem;
   }
+
+  .card--list .card__block--list:not(:last-child) {
+    padding-top: 1.25rem;
+  }
 }
 
 
@@ -1120,8 +1124,20 @@ body.socialblue--sky {
           }
         }
 
-        &.card--list {
+        &.card--list ,
+        .card--list {
+
+          .card__block {
+            padding-bottom: 0;
+
+            &:last-child {
+              padding-bottom: 2.5rem;
+            }
+          }
+
           .card__block--list {
+            padding-top: 1.25rem;
+            padding-bottom: 0;
 
             + .card__block--list {
               padding-top: 0;
