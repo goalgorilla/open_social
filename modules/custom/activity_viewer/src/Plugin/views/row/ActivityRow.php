@@ -3,6 +3,7 @@
 namespace Drupal\activity_viewer\Plugin\views\row;
 
 use Drupal\views\Plugin\views\row\EntityRow;
+use Drupal\user\Entity\User;
 
 /**
  * Plugin which performs a activity_view on the resulting object.
@@ -30,8 +31,32 @@ class ActivityRow extends EntityRow {
 
       foreach ($result as $row) {
         $render_result = [];
-        $render_result[] = $row;
         $entity = $row->_entity;
+        $target_type = $entity->get('field_activity_entity')->getValue()[0]["target_type"];
+
+        if ($target_type === "comment") {
+          $comment_id = $entity->get('field_activity_entity')->getValue()[0]["target_id"];
+          $query = \Drupal::database()->select('comment_field_data', 'c');
+          $query->addField('c', 'entity_id');
+          $query->condition('c.cid', $comment_id);
+          $post_id = $query->execute()->fetchField();
+
+          $query = \Drupal::database()->select('post_field_data', 'p');
+          $query->fields('p');
+          $query->condition('p.id', $post_id);
+          $post = $query->execute()->fetchAll();
+
+          $current_user_id = \Drupal::currentUser()->id();
+          $current_user = User::load($current_user_id);
+
+          if ($post->status =! "0" || $post->user_id === $current_user_id || $current_user->hasRole('administrator') ) {
+            $render_result[] = $row;
+          }
+
+        }
+        else {
+          $render_result[] = $row;
+        }
 
         foreach ($entity->field_activity_destinations as $destination) {
           /* @var $plugin \Drupal\activity_creator\Plugin\ActivityDestinationBase */
