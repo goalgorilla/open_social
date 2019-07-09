@@ -42,6 +42,38 @@ function social_topic_install() {
 }
 
 /**
+ * Implements hook_uninstall().
+ */
+function social_topic_uninstall() {
+  /** @var \Drupal\menu_link_content\MenuLinkContentStorageInterface $storage */
+  $storage = \Drupal::entityTypeManager()->getStorage('menu_link_content');
+
+  /** @var \Drupal\menu_link_content\MenuLinkContentInterface[] $menu_links */
+  $menu_links = $storage->loadByProperties([
+    'title' => 'Explore',
+    'expanded' => TRUE,
+    'menu_name' => 'main',
+  ]);
+
+  if ($menu_links) {
+    $menu_link = reset($menu_links);
+
+    $menu_links = $storage->loadByProperties([
+      'link.uri' => 'internal:/all-topics',
+      'menu_name' => 'main',
+      'expanded' => FALSE,
+      'parent' => $menu_link->getPluginId(),
+    ]);
+
+    if ($menu_links) {
+      $menu_link = reset($menu_links);
+
+      $menu_link->delete();
+    }
+  }
+}
+
+/**
  * Function to set permissions.
  */
 function _social_topic_set_permissions() {
