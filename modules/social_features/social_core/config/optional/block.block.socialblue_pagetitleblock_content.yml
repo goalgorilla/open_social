@@ -23,3 +23,21 @@ visibility:
     pages: "/search/*\r\n*/stream\r\n*/events\r\n*/topics\r\n*/groups\r\n*/information\r\n*/members\r\n*/membership\r\n*/about\r\n/data-policy\r\n/data-policy/*"
     negate: true
     context_mapping: {  }
+    'entity_bundle:node':
+      id: 'entity_bundle:node'
+      bundles:
+        event: event
+        page: page
+        topic: topic
+      negate: true
+      context_mapping:
+        node: '@node.node_route_context:node'
+    group_type:
+      id: group_type
+      group_types:
+        closed_group: closed_group
+        open_group: open_group
+        public_group: public_group
+      negate: false
+      context_mapping:
+        group: '@group.group_route_context:group'
