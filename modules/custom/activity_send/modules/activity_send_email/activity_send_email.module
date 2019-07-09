@@ -107,7 +107,7 @@ function activity_send_email_theme() {
 /**
  * Implements hook_form_FORM_ID_alter() for user_form().
  */
-function activity_send_email_form_user_form_alter(&$form, FormStateInterface $form_state) {
+function activity_send_email_form_user_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   $account = $form_state->getFormObject()->getEntity();
 
   // Only expose these settings to existing users so it's not shown on the

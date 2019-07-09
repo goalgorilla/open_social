@@ -1,0 +1,93 @@
+.user-form {
+
+  .form-email-notification {
+
+    .icon {
+      width: 24px;
+      height: 24px;
+    }
+
+    .card__title {
+      padding: 0;
+
+      a {
+        padding: 1rem 1.25rem;
+        position: relative;
+        display: block;
+      }
+
+      .icon {
+        position: absolute;
+        top: 50%;
+        right: 15px;
+        transform: translateY(-50%);
+      }
+
+    }
+
+    [id*='edit-email-notifications--content'] {
+      padding-top: 1rem;
+      padding-bottom: 1.5rem;
+
+      > .form-fieldset {
+        box-shadow: none;
+        border-radius: 0;
+        margin-bottom: 1rem;
+
+        &:last-child {
+          margin-bottom: 0;
+
+          .card__title {
+            border-bottom: none;
+          }
+
+        }
+
+        .card__title {
+          border-bottom-color: #f3f3f3;
+
+          a {
+            padding: 0 0 1rem;
+          }
+
+          svg {
+            top: -3px;
+            right: -5px;
+            transform: none;
+          }
+        }
+
+        .card__block {
+          padding: 1.5rem;
+          margin-bottom: .5rem;
+          background-color: #f3f3f3;
+
+          .form-item {
+            margin-bottom: 1.25rem;
+
+            &:last-child {
+              margin-bottom: 0;
+            }
+          }
+
+        }
+
+      }
+
+    }
+
+    [data-drupal-selector='edit-email-notifications-description'] {
+      margin-bottom: 1.5rem;
+    }
+
+    &.form-horizontal .control-label--wide {
+
+      @media(min-width: 1200px) {
+        flex-basis: 70%;
+      }
+
+    }
+
+  }
+
+}
