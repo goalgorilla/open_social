@@ -71,6 +71,32 @@ function social_topic_uninstall() {
       $menu_link->delete();
     }
   }
+
+  $bundles = [
+    'node' => [
+      'field' => 'type',
+      'name' => 'topic',
+    ],
+    'taxonomy_term' => [
+      'field' => 'vid',
+      'name' => 'topic_types',
+    ],
+  ];
+
+  foreach ($bundles as $entity_type => $bundle) {
+    $storage = \Drupal::entityTypeManager()->getStorage($entity_type);
+
+    $entity_ids = $storage
+      ->getQuery()
+      ->accessCheck(FALSE)
+      ->condition($bundle['field'], $bundle['name'])
+      ->execute();
+
+    foreach ($entity_ids as $entity_id) {
+      $entity = $storage->load($entity_id);
+      $entity->delete();
+    }
+  }
 }
 
 /**
