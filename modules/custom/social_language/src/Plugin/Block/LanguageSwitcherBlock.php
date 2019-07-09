@@ -2,6 +2,8 @@
 
 namespace Drupal\social_language\Plugin\Block;
 
+use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\language\Plugin\Block\LanguageBlock;
 use Drupal\Core\Url;
 
@@ -21,6 +23,27 @@ use Drupal\Core\Url;
  * )
  */
 class LanguageSwitcherBlock extends LanguageBlock {
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function blockAccess(AccountInterface $account) {
+    $access = parent::blockAccess($account);
+    return $access->andIf(AccessResult::allowedIf(count($this->getLanguageSwitchLinks()) > 1));
+  }
+
+  /**
+   * Create language switch links for the current page for our block.
+   *
+   * @return array
+   *   A keyed array of links ready to be themed.
+   */
+  protected function getLanguageSwitchLinks() {
+    // Generate the routes for the current page.
+    $route_name = $this->pathMatcher->isFrontPage() ? '<front>' : '<current>';
+    $type = $this->getDerivativeId();
+    return $this->languageManager->getLanguageSwitchLinks($type, Url::fromRoute($route_name));
+  }
 
   /**
    * {@inheritdoc}
