@@ -51,15 +51,17 @@
     <footer class="hero-footer">
   {% endif %}
 
-    <div class="hero-footer__text">
-      {% if content.field_profile_function|render %}
-        <strong>{{ content.field_profile_function }}</strong>
-      {% endif %}
-      {% if (content.field_profile_function|render and content.field_profile_organization|render) %}
-      &nbsp;-&nbsp;
-      {% endif %}
-        {{ content.field_profile_organization }}
-    </div>
+    {% if (content.field_profile_function|render and content.field_profile_organization|render) %}
+      <div class="hero-footer__text">
+        {% if content.field_profile_function|render %}
+          <strong>{{ content.field_profile_function }}</strong>
+        {% endif %}
+        {% if (content.field_profile_function|render and content.field_profile_organization|render) %}
+        &nbsp;-&nbsp;
+        {% endif %}
+          {{ content.field_profile_organization }}
+      </div>
+    {% endif %}
 
     {% if profile_contact_label == 'private_message' %}
       <div class="hero-footer__cta">
