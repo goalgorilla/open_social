@@ -5,11 +5,9 @@ namespace Drupal\social_event_managers\Access;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultAllowed;
 use Drupal\Core\Access\AccessResultForbidden;
-use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Routing\Access\AccessInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\group\Entity\GroupTypeInterface;
 use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
 use Drupal\social_event_managers\SocialEventManagersAccessHelper;
@@ -19,6 +17,7 @@ use Symfony\Component\Routing\Route;
  * Determines access to routes based on manage everything enrollments.
  */
 class AddEnrolleeAccessCheck implements AccessInterface {
+
   /**
    * Checks access.
    *
@@ -80,4 +79,5 @@ class AddEnrolleeAccessCheck implements AccessInterface {
     // clear accordingly.
     return AccessResult::neutral();
   }
+  
 }
