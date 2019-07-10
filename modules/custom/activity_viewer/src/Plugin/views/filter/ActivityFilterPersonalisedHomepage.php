@@ -39,6 +39,7 @@ class ActivityFilterPersonalisedHomepage extends FilterPluginBase {
    */
   public function query() {
     $account = $this->view->getUser();
+    $roles = $account->getRoles();
     $group_memberships = social_group_get_all_group_members($account->id());
 
     // Add tables and joins.
@@ -159,6 +160,10 @@ class ActivityFilterPersonalisedHomepage extends FilterPluginBase {
 
     $post_status = db_or();
     $post_status->condition('post.status', 1, '=');
+
+    if (in_array("contentmanager", $roles) || in_array("administrator", $roles)){
+      $post_status->condition('post.status', 0, '=');
+    }
     $post_status->condition('activity__field_activity_entity.field_activity_entity_target_type', 'post', '!=');
     $and_wrapper->condition($post_status);
 

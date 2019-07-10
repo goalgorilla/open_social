@@ -27,7 +27,7 @@
   ]
 %}
 
-{% if published %}
+{% if published or user.hasPermission('administer nodes') %}
   {{ content.links }}
 {% endif %}
 
