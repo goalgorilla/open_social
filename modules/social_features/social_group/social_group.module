@@ -38,6 +38,7 @@ use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\social_group\GroupContentVisibilityUpdate;
 use Drupal\Core\Messenger\MessengerInterface;
+use Drupal\views_bulk_operations\ViewsBulkOperationsBatch;
 
 /**
  * Implements hook_form_FORM_ID_alter().
@@ -1646,16 +1647,61 @@ function social_group_batch_alter(&$batch) {
   $url = &$batch['source_url'];
 
   if ($url->getRouteName() === 'social_group_gvbo.views_bulk_operations.confirm' ||
-    $url->getRouteName() === 'views_bulk_operations.confirm') {
-    /** @var \Drupal\Core\Form\FormStateInterface $form_state */
-    $form_state = &$batch['form_state'];
+    $url->getRouteName() === 'views_bulk_operations.confirm' ||
+    $url->getRouteName() === 'views_bulk_operations.execute_batch' ||
+    $url->getRouteName() === 'social_group_gvbo.views_bulk_operations.execute_configurable') {
 
-    $data = $form_state->get('views_bulk_operations');
-    $batch['sets'][0]['results']['action'] = $data['action_id'];
-    if (in_array($data['action_id'], $actions)) {
+    // Get the action ID.
+    $action_id = _social_group_get_action_id($batch);
+
+    $batch['sets'][0]['results']['action'] = $action_id;
+    if (in_array($action_id, $actions, TRUE)) {
       $batch['sets'][0]['finished'] = '_social_group_action_batch_finish';
     }
   }
+}
+
+/**
+ * Function to get the action id of a batch.
+ *
+ * @param array $batch
+ *   The batch array.
+ *
+ * @return string
+ *   Returns the batch action id.
+ */
+function _social_group_get_action_id(array &$batch) {
+  /** @var \Drupal\Core\Form\FormStateInterface $form_state */
+  $form_state = &$batch['form_state'];
+
+  $action_id = '';
+  if ($form_state instanceof FormStateInterface) {
+    $data = $form_state->get('views_bulk_operations');
+    $action_id = $data['action_id'];
+  }
+  else {
+    foreach ($batch['sets'][0]['operations'] as $operations) {
+      if (empty($operations) || !is_array($operations)) {
+        break;
+      }
+      foreach ($operations as $operation) {
+        if (empty($operation) || !is_array($operation)) {
+          break;
+        }
+        foreach ($operation as $items) {
+          if (empty($items) || !is_array($items)) {
+            break;
+          }
+
+          if (!empty($items['action_id'])) {
+            $action_id = $items['action_id'];
+            break;
+          }
+        }
+      }
+    }
+  }
+  return $action_id;
 }
 
 /**
@@ -1669,6 +1715,14 @@ function social_group_batch_alter(&$batch) {
  *   Performed operations array.
  */
 function _social_group_action_batch_finish($success, array $results, array $operations) {
+  // When we do a bulk action on all the items in a view, across multiple pages,
+  // the saveList function needs to be called. So after pre-populating the list
+  // the actual action is performed on the entities.
+  if (!empty($results['view_id']) && !empty($results['display_id'])) {
+    ViewsBulkOperationsBatch::saveList(TRUE, $results, $operations);
+    return;
+  }
+
   $operations = array_count_values($results['operations']);
   $results_count = 0;
 
