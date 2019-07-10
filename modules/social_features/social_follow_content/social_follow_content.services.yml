@@ -1,0 +1,6 @@
+services:
+  social_follow_content.override:
+    class: Drupal\social_follow_content\SocialFollowContentConfigOverride
+    arguments: ['@config.factory', '@module_handler']
+    tags:
+      - { name: config.factory.override, priority: 5 }
