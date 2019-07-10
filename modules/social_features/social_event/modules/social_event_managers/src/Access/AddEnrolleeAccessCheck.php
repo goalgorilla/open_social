@@ -79,5 +79,5 @@ class AddEnrolleeAccessCheck implements AccessInterface {
     // clear accordingly.
     return AccessResult::neutral();
   }
-  
+
 }
