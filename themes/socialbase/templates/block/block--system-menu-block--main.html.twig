@@ -41,8 +41,9 @@
   {% endblock %}
   {% if content.links.search_block is defined %}
     <div class="navbar__open-search-control">
-      <button class="navbar__open-search-block" rel="search" title="{{ 'Click to open search box'|t }}">
-      </button>
+      <a href="{{ '/search/all' }}" class="navbar__open-search-block invisible" rel="search" title="{{ 'Click to open search box'|t }}">
+        {{ 'Search'|t }}
+      </a>
       <svg class="navbar-nav__icon navbar-nav__icon--search">
         <use xlink:href="#icon-search"></use>
       </svg>

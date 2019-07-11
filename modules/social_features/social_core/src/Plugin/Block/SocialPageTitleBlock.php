@@ -78,16 +78,16 @@ class SocialPageTitleBlock extends PageTitleBlock implements ContainerFactoryPlu
    *   The entity repository.
    * @param \Drupal\Core\Controller\TitleResolverInterface $title_resolver
    *   The title resolver.
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity type manager.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, RouteMatchInterface $route_match, RequestStack $request_stack, EntityRepositoryInterface $entity_repository, TitleResolverInterface $title_resolver, EntityTypeManagerInterface $entityTypeManager) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, RouteMatchInterface $route_match, RequestStack $request_stack, EntityRepositoryInterface $entity_repository, TitleResolverInterface $title_resolver, EntityTypeManagerInterface $entity_type_manager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->routeMatch = $route_match;
     $this->requestStack = $request_stack;
     $this->entityRepository = $entity_repository;
     $this->titleResolver = $title_resolver;
-    $this->entityTypeManager = $entityTypeManager;
+    $this->entityTypeManager = $entity_type_manager;
   }
 
   /**
@@ -144,15 +144,12 @@ class SocialPageTitleBlock extends PageTitleBlock implements ContainerFactoryPlu
         $node->setTitle($translation->getTitle());
       }
 
-      $paths_to_exclude = [
-        'edit',
-        'add',
-        'delete',
-      ];
-
-      $in_path = str_replace($paths_to_exclude, '', $current_path) != $current_path;
-
-      if (!$in_path) {
+      $name = $this->routeMatch->getRouteName();
+      if (!in_array($name, [
+        'entity.node.edit_form',
+        'entity.node.delete_form',
+        'entity.node.add_form',
+      ])) {
 
         $title = $node->getTitle();
 
