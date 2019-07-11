@@ -218,6 +218,18 @@ function social_post_preprocess_activity(&$variables) {
 
     $variables['visibility_icon'] = social_post_get_visibility_details($post->get('field_visibility')->value, 'icon');
     $variables['visibility_label'] = social_post_get_visibility_details($post->get('field_visibility')->value, 'label');
+
+  }
+}
+
+/**
+ * Implements hook_preprocess_post__activity().
+ */
+function social_post_preprocess_post__activity(&$variables) {
+  $account = \Drupal::currentUser();
+
+  if(!$variables["published"] && !$account->hasPermission('edit any post entities')) {
+    unset($variables["content"]["links"]);
   }
 }
 

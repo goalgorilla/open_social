@@ -39,7 +39,6 @@ class ActivityPostVisibilityAccess extends FilterPluginBase {
    */
   public function query() {
     $account = $this->view->getUser();
-    $roles = $account->getRoles();
 
     $open_groups = social_group_get_all_open_groups();
     $group_memberships = social_group_get_all_group_members($account->id());
@@ -154,7 +153,7 @@ class ActivityPostVisibilityAccess extends FilterPluginBase {
     $post_status = db_or();
     $post_status->condition('post.status', 1, '=');
 
-    if (in_array("contentmanager", $roles) || in_array("administrator", $roles)){
+    if ($account->hasPermission('view unpublished post entities')){
       $post_status->condition('post.status', 0, '=');
     }
     $post_status->condition('activity__field_activity_entity.field_activity_entity_target_type', 'post', '!=');
