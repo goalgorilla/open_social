@@ -6,16 +6,22 @@
 
       $context.find('.form-email-notification .card__title > a').each(function () {
         $(this).on('click', function () {
-          var $icon = $(this).find(' svg');
+          var $this = $(this);
+          var $icon = $this.find('.icon');
+          var $iconUse = $icon.find('use');
 
-          if ($icon.hasClass('icon-expand_more')) {
-            $icon.html('<use xlink:href="#icon-expand-less" />');
-          }
-          else {
-            $icon.html('<use xlink:href="#icon-expand_more" />');
-          }
-
-          $icon.toggleClass('icon-expand_more', 'icon-expand-less');
+          setTimeout(function () {
+            if ($this.hasClass('collapsed')) {
+              $icon.removeClass('icon-expand_less')
+                .addClass('icon-expand_more');
+              $iconUse.attr('href', '#icon-expand_more');
+            }
+            else {
+              $icon.removeClass('icon-expand_more')
+                .addClass('icon-expand_less');
+              $iconUse.attr('href', '#icon-expand-less');
+            }
+          }, 150);
         });
       });
     }
