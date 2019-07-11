@@ -63,7 +63,7 @@ Feature: Group access roles
     And I click "Test closed group 3"
 
   # DS-647 As a LU I want to join a group
-    Then I should see the link "Join" in the "Hero block"
+    Then I should see the link "Join"
     And I click "Join"
     And I should see "Join group Test closed group 3"
     And I should see the button "Cancel"
@@ -80,7 +80,7 @@ Feature: Group access roles
   # As a CM+ member of this closed group I want to leave the group
     When I click "Test closed group 3"
     Then I should see the button "Joined"
-    And I click the element with css selector "#hero .dropdown-toggle"
+    And I press "Joined"
     And I should see the link "Leave group"
     And I click "Leave group"
     And I should see "This action cannot be undone."
