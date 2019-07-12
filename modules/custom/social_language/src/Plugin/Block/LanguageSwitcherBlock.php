@@ -29,7 +29,13 @@ class LanguageSwitcherBlock extends LanguageBlock {
    */
   protected function blockAccess(AccountInterface $account) {
     $access = parent::blockAccess($account);
-    return $access->andIf(AccessResult::allowedIf(count($this->getLanguageSwitchLinks()) > 1));
+
+    $allowSwitch = FALSE;
+    if (($languageSwitch = $this->getLanguageSwitchLinks()) !== FALSE) {
+      $allowSwitch = (count($languageSwitch) > 1);
+    }
+
+    return $access->andIf(AccessResult::allowedIf($allowSwitch));
   }
 
   /**
