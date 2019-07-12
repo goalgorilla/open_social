@@ -220,6 +220,13 @@ function social_post_preprocess_activity(&$variables) {
     $variables['visibility_label'] = social_post_get_visibility_details($post->get('field_visibility')->value, 'label');
 
   }
+
+  $activity = $variables['elements']['#activity'];
+  $post = $activity->getRelatedEntity();
+  if (!empty($post) && $post->getEntityTypeId() === "post") {
+    $variables['post'] = true;
+    $variables['published'] = $post->isPublished();
+  }
 }
 
 /**

@@ -21,7 +21,7 @@
 {%
   set classes = [
   'media',
-  not published ? 'post-unpublished',
+  post and not published ? 'post-unpublished',
 ]
 %}
 
@@ -57,7 +57,7 @@
                   </svg>
                   <strong>{{ visibility_label }}</strong>
                 {% endif %}
-                {% if not published %}
+                {% if post and not published %}
                   <span class="badge badge-default badge--pill">
                     {% trans %} unpublished {% endtrans %}
                   </span>
