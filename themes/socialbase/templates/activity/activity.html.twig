@@ -16,6 +16,15 @@
  */
 #}
 
+{{ attach_library('socialbase/stream') }}
+
+{%
+  set classes = [
+  'media',
+  not published ? 'post-unpublished',
+]
+%}
+
 <li {{ attributes.addClass('stream-item') }}>
 
   <i class="stream-icon"></i>
@@ -26,7 +35,7 @@
 
       <div class="media-wrapper">
 
-        <div class="media">
+        <div {{ attributes.addClass(classes) }}>
 
           <div class="media-left avatar">
             {% if actor %}
@@ -41,13 +50,19 @@
               {% endif %}
 
               <div class="post-date">
-                  {{ date }}
-                  {% if visibility_icon and visibility_label %}
-                      <svg class="margin-left-s icon-visibility">
-                        <use xlink:href="#icon-{{ visibility_icon }}"></use>
-                      </svg>
-                      <strong>{{ visibility_label }}</strong>
-                  {% endif %}
+                {{ date }}
+                {% if visibility_icon and visibility_label %}
+                  <svg class="margin-left-s icon-visibility">
+                    <use xlink:href="#icon-{{ visibility_icon }}"></use>
+                  </svg>
+                  <strong>{{ visibility_label }}</strong>
+                {% endif %}
+                {% if not published %}
+                  <span class="badge badge-default badge--pill">
+                    {% trans %} unpublished {% endtrans %}
+                  </span>
+                {% endif %}
+
               </div>
             </div>
 
