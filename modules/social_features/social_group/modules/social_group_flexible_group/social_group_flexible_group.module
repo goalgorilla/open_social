@@ -15,6 +15,7 @@ use Drupal\views\Plugin\views\query\QueryPluginBase;
 use Drupal\views\Plugin\views\row\EntityRow;
 use Drupal\views\ViewExecutable;
 use Drupal\views\Views;
+use Drupal\Core\Database\Query\AlterableInterface;
 
 /**
  * Provide a method to alter array of group types used in open social.
@@ -288,9 +289,20 @@ function social_group_flexible_group_views_query_alter(ViewExecutable $view, Que
     $group++;
   }
 
+  // We need to add our group by using a query tag.
+  // Otherwise views doesn't accept it.
+  $query->addTag('flexible_group_by');
+
   // AN users can only see flexible groups that are public.
   if ($account->isAnonymous()) {
     $query->addWhere($group, 'field_group_allowed_visibility_value', 'public', '=');
     return;
   }
+}
+
+/**
+ * Implements hook_query_TAG_alter().
+ */
+function social_group_flexible_group_query_flexible_group_by_alter(AlterableInterface $query) {
+  $query->distinct();
 }
