@@ -79,7 +79,7 @@ class FlexibleGroupJoinPermissionAccessCheck implements AccessInterface {
     // We allow it but lets add the group as dependency to the cache
     // now because field value might be editted and cache should
     // clear accordingly.
-    return AccessResult::allowedIfHasPermission($account, $group_permission)->addCacheableDependency($group);
+    return GroupAccessResult::allowedIfHasGroupPermissions($group, $account, [$group_permission])->addCacheableDependency($group);
   }
 
   /**
