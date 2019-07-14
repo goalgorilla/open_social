@@ -24,7 +24,6 @@ function social_swiftmail_install() {
   $mailsystem_settings->set('modules.swiftmailer.none.sender', 'social_swiftmailer')->save();
   $mailsystem_settings->set('modules.swiftmailer.none.formatter', 'social_swiftmailer')->save();
 
-
   // Give SM the correct swiftmail permission.
   user_role_grant_permissions('sitemanager', [
     'use text format mail_html',

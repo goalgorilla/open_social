@@ -53,6 +53,9 @@ class SocialSwiftmailSettingsForm extends ConfigFormBase {
       '#type' => 'text_format',
       '#default_value' => $template_header['value'] ?: '',
       '#format' => $template_header['format'] ?: 'mail_html',
+      '#allowed_formats' => [
+        'mail_html',
+      ],
       '#description' => $this->t('Enter information you want to show in the email notifications header'),
     ];
 
@@ -62,6 +65,9 @@ class SocialSwiftmailSettingsForm extends ConfigFormBase {
       '#type' => 'text_format',
       '#default_value' => $template_footer['value'] ?: '',
       '#format' => $template_footer['format'] ?: 'mail_html',
+      '#allowed_formats' => [
+        'mail_html',
+      ],
       '#description' => $this->t('Enter information you want to show in the email notifications footer'),
     ];
 
