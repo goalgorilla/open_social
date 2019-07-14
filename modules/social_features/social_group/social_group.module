@@ -267,7 +267,9 @@ function social_group_preprocess_group(array &$variables) {
       $join_methods = $group->get('field_group_allowed_join_method')->getValue();
       $direct_option = in_array('direct', array_column($join_methods, 'value'), FALSE);
       if (!$direct_option) {
-        $variables['group_operations_url'] = '';
+        $variables['group_operations_url'] = Url::fromRoute('entity.group.join', ['group' => $group->id()]);
+        $variables['closed_group'] = TRUE;
+        $variables['cta'] = t('Invitation only');
       }
     }
   }
