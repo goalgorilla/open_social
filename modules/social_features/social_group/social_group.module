@@ -464,7 +464,9 @@ function _social_group_get_allowed_visibility(GroupInterface $group) {
 function social_group_group_insert(GroupInterface $group) {
   // @Todo remove this when https://www.drupal.org/node/2702743 lands and make
   // sure the settings will be implemented accordingly.
-  if ($group->getGroupType()->id() == 'open_group' || $group->getGroupType()->id() == 'closed_group') {
+  if ($group->getGroupType()->id() === 'open_group' ||
+    $group->getGroupType()->id() === 'closed_group' ||
+    $group->getGroupType()->id() === 'flexible_group') {
     // Get the group owner.
     $account = $group->getOwner();
     // Get membership.
@@ -728,21 +730,23 @@ function _social_group_inform_group_type_selection() {
  */
 function _social_group_type_edit_submit($form, FormStateInterface $form_state) {
   // Check if the group_type changed.
-  $default_type = $form['group_type']['#default_value'];
-  $new_type = $form_state->getValue('group_type');
+  // Can be empty for flexible groups.
+  $group = _social_group_get_current_group();
+  if (!empty($form['group_type'])) {
+    $default_type = $form['group_type']['#default_value'];
+    $new_type = $form_state->getValue('group_type');
 
-  // Update the Group entity and all it's content when the type changed.
-  if ($new_type !== $default_type) {
-    $group = _social_group_get_current_group();
-
-    // Update the default visibility of all the content.
-    GroupContentVisibilityUpdate::batchUpdateGroupContentVisibility($group, $new_type);
-
-    // Make sure we clear cache tags accordingly.
-    $cache_tags = _social_group_cache_tags($group);
-    foreach ($cache_tags as $cache_tag) {
-      Cache::invalidateTags([$cache_tag]);
+    // Update the Group entity and all it's content when the type changed.
+    if ($new_type !== $default_type) {
+      // Update the default visibility of all the content.
+      GroupContentVisibilityUpdate::batchUpdateGroupContentVisibility($group, $new_type);
     }
+  }
+
+  // Make sure we clear cache tags accordingly.
+  $cache_tags = _social_group_cache_tags($group);
+  foreach ($cache_tags as $cache_tag) {
+    Cache::invalidateTags([$cache_tag]);
   }
 }
 
