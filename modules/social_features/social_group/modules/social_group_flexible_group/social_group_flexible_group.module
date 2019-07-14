@@ -336,7 +336,7 @@ function social_group_flexible_group_block_access(Block $block, $operation, Acco
     if ($operation === 'view' &&
       social_group_flexible_group_can_join_directly($group) &&
       $block->getPluginId() === 'views_block:group_managers-block_list_managers') {
-        return AccessResult::forbidden();
+      return AccessResult::forbidden();
     }
 
     // All users with permissions can see the rest.
