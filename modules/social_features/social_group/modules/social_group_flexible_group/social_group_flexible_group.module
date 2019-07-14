@@ -208,9 +208,9 @@ function social_group_flexible_group_menu_local_actions_alter(&$local_actions) {
   // membership overview if we can't add members directly.
   // SM+ can still add members though.
   if ($group instanceof GroupInterface
+    && $group->getGroupType()->id() === 'flexible_group'
     && !social_group_flexible_group_can_be_added($group)
     && !$user->hasPermission('manage all groups')
-    && $group->getGroupType()->id() === 'flexible_group'
   ) {
     unset($local_actions['social_group.add_member']);
   }
