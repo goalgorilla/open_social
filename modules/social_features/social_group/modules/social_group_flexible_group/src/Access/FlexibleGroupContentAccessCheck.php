@@ -78,7 +78,8 @@ class FlexibleGroupContentAccessCheck implements AccessInterface {
     // No access for you only for the about page.
     if ($account->isAuthenticated() && !social_group_flexible_group_community_enabled($group)
       && $route_match->getRouteName() !== 'view.group_information.page_group_about'
-      && $route_match->getRouteName() !== 'entity.group.canonical') {
+      && $route_match->getRouteName() !== 'entity.group.canonical'
+      && $route_match->getRouteName() !== 'view.group_members.page_group_members') {
       return AccessResult::forbidden()->addCacheableDependency($group);
     }
 
