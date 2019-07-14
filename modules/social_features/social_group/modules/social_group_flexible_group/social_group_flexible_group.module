@@ -295,7 +295,7 @@ function social_group_flexible_group_views_query_alter(ViewExecutable $view, Que
 
   // AN users can only see flexible groups that are public.
   if ($account->isAnonymous()) {
-    $query->addWhere($group, 'field_group_allowed_visibility_value', 'public', '=');
+    $query->addWhere($group, 'field_group_allowed_visibility_value', ['public'], 'IN');
     return;
   }
 }
