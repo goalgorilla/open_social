@@ -47,6 +47,7 @@
 
         body {
             background-color: #f6f6f6;
+            color: #4a4a4a;
             font-family: sans-serif;
             -webkit-font-smoothing: antialiased;
             font-size: 14px;
@@ -111,13 +112,12 @@
 
         .main {
             background: #fff;
-            border-radius: {{ border_radius }}px;
             width: 100%;
             box-shadow: 0 -1px 0 #e0e0e0, 0 0 2px rgba(0,0,0,0.12), 0 2px 4px rgba(0,0,0,0.24); }
 
         .wrapper {
             box-sizing: border-box;
-            padding: 50px; }
+            padding: 50px 35px 15px; }
 
         .footer {
             clear: both;
@@ -178,8 +178,19 @@
 
         a {
             color: {{ primary }};
-            font-weight: bold;
-            text-decoration: none; }
+            text-decoration: none;
+            font-weight: 700; }
+
+        .first-paragraph {
+            font-size: 16px;
+            margin-bottom: 20px; }
+
+        .bottom-space {
+            margin-bottom: 40px; }
+
+        .notification {
+            font-size: 18px;
+            margin-bottom: 20px; }
 
         /* -------------------------------------
             BUTTONS
@@ -217,6 +228,81 @@
             background-color: #784288;
             border-color: #784288;
             color: #ffffff; }
+
+        .btn-wrapp {
+            margin-bottom: 30px; }
+
+        .btn-wrapp td {
+            padding: 0 10px; }
+
+        .btn-wrapp td:nth-child(odd) {
+            padding-left: 0; }
+
+        .btn-wrapp td:nth-child(even) {
+            padding-right: 0; }
+
+        .btn-link {
+            display: block;
+            position: relative;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            border: 1px solid {{ primary }};
+            color: {{ primary }};
+            padding: 9px 25px 7px;
+            text-align: center; }
+
+        .btn-link-one {
+            display: inline-block;
+            min-width: 230px; }
+
+        .btn-link img {
+            position: absolute;
+            top: 10px;
+            left: 11px; }
+
+        .btn-link-bg {
+            background-color: {{ primary }};
+            color: #ffffff; }
+
+        /* -------------------------------------
+            COMMENTS, POST, MESSAGE STYLES
+        ------------------------------------- */
+        .comments {
+            padding: 5px 0 0;
+            border-radius: 5px;
+            border: 2px solid #e0e0e0;
+            margin-bottom: 20px; }
+
+        .comment {
+            padding: 15px 20px 0;
+            border-radius: 5px; }
+
+        .reply {
+            padding-bottom: 20px;
+            margin: 20px 15px;
+            background: #f3f3f3; }
+
+        .post {
+            padding: 15px 20px 20px; }
+
+        .message {
+            padding: 5px 20px; }
+
+        .author-msg {
+            margin-bottom: 10px; }
+
+        .post p,
+        .comment p {
+            margin: 10px 0; }
+
+        .post-answer {
+            background-color: #f3f3f3; }
+
+        .middle-block {
+            padding: 45px 0 0;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #e0e0e0;
+            border-top: 2px solid #e0e0e0; }
 
         /* -------------------------------------
             OTHER STYLES THAT MIGHT BE USEFUL
