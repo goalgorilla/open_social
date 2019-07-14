@@ -321,6 +321,7 @@ function social_group_flexible_group_block_access(Block $block, $operation, Acco
     'views_block:groups-block_user_groups',
     'views_block:upcoming_events-upcoming_events_group',
     'views_block:latest_topics-group_topics_block',
+    'views_block:group_managers-block_list_managers',
   ];
   // We don't care for other blocks.
   if (!in_array($block_id, $managed_blocks, FALSE)) {
@@ -330,9 +331,19 @@ function social_group_flexible_group_block_access(Block $block, $operation, Acco
   $group = _social_group_get_current_group();
   // We don't care about other group types in here.
   if ($group && $group->getGroupType()->id() === 'flexible_group') {
+    // Only when users cant join directly, add the managers block
+    // so they know who to contact.
+    if ($operation === 'view' &&
+      social_group_flexible_group_can_join_directly($group) &&
+      $block->getPluginId() === 'views_block:group_managers-block_list_managers') {
+        return AccessResult::forbidden();
+    }
+
+    // All users with permissions can see the rest.
     if ($account->hasPermission('manage all groups')) {
       return AccessResult::neutral();
     }
+
     if (!$group->getMember($account) &&
       !social_group_flexible_group_community_enabled($group) &&
       !social_group_flexible_group_public_enabled($group)) {
