@@ -5,6 +5,8 @@
  * The Social Group Flexible Group module.
  */
 
+use Drupal\block\Entity\Block;
+use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountInterface;
@@ -305,4 +307,49 @@ function social_group_flexible_group_views_query_alter(ViewExecutable $view, Que
  */
 function social_group_flexible_group_query_flexible_group_by_alter(AlterableInterface $query) {
   $query->distinct();
+}
+
+/**
+ * Implements hook_block_access().
+ */
+function social_group_flexible_group_block_access(Block $block, $operation, AccountInterface $account) {
+  // This is a list of the blocks that this function cares about, if we're being
+  // called for a different block we exit early.
+  $block_id = $block->getPluginId();
+  $managed_blocks = [
+    'views_exposed_filter_block:newest_groups-page_all_groups',
+    'views_block:groups-block_user_groups',
+    'views_block:upcoming_events-upcoming_events_group',
+    'views_block:latest_topics-group_topics_block',
+  ];
+  // We don't care for other blocks.
+  if (!in_array($block_id, $managed_blocks, FALSE)) {
+    return AccessResult::neutral();
+  }
+
+  $group = _social_group_get_current_group();
+  // We don't care about other group types in here.
+  if ($group && $group->getGroupType()->id() === 'flexible_group') {
+    if ($account->hasPermission('manage all groups')) {
+      return AccessResult::neutral();
+    }
+    if (!$group->getMember($account) &&
+      !social_group_flexible_group_community_enabled($group) &&
+      !social_group_flexible_group_public_enabled($group)) {
+      // If it is flexible and the current user is not an member of this group,
+      // and content visibility is not public and also not community
+      // hide it.
+      $forbidden_blocks = [
+        'views_block:upcoming_events-upcoming_events_group',
+        'views_block:latest_topics-group_topics_block',
+      ];
+      foreach ($forbidden_blocks as $forbidden_block) {
+        if ($operation === 'view' && $block->getPluginId() === $forbidden_block) {
+          return AccessResult::forbidden();
+        }
+      }
+    }
+  }
+
+  return AccessResult::neutral();
 }
