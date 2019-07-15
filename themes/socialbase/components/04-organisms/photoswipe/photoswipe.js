@@ -299,24 +299,6 @@
   Drupal.behaviors.photoSwipe = {
     attach: function (context, settings) {
       initPhotoSwipeFromDOM('.photoswipe-gallery');
-
-      //Behaviours navigation if PhotoSwipe open/close.
-      var $body = $('body');
-      var photoSwipeItem = '.photoswipe-item, .photoswipe-gallery';
-
-      // Add class from body if PhotoSwipe is active.
-      $(photoSwipeItem).on('click', function () {
-        $body.addClass('is-pswp--open');
-      });
-
-      // Remove class from body if PhotoSwipe is open.
-      $(document).on('click scroll', function (e) {
-        if ($(e.target).closest(photoSwipeItem).length) return;
-        if ($body.hasClass('is-pswp--open')) {
-          $body.removeClass('is-pswp--open');
-        }
-        e.stopPropagation();
-      });
     }
   };
 })(jQuery);
