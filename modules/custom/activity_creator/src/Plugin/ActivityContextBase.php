@@ -6,6 +6,7 @@ use Drupal\Component\Plugin\PluginBase;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\Query\Sql\QueryFactory;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\social_post\Entity\PostInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\social_post\Entity\Post;
 
@@ -74,12 +75,15 @@ abstract class ActivityContextBase extends PluginBase implements ActivityContext
     $recipients = [];
 
     $post = Post::load($referenced_entity['target_id']);
-    $recipient_user = $post->get('field_recipient_user')->getValue();
-    if (!empty($recipient_user)) {
-      $recipients[] = [
-        'target_type' => 'user',
-        'target_id' => $recipient_user['0']['target_id'],
-      ];
+
+    if ($post instanceof PostInterface) {
+      $recipient_user = $post->get('field_recipient_user')->getValue();
+      if (!empty($recipient_user)) {
+        $recipients[] = [
+          'target_type' => 'user',
+          'target_id' => $recipient_user['0']['target_id'],
+        ];
+      }
     }
 
     return $recipients;

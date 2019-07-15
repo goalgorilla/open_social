@@ -6,8 +6,22 @@ social_swiftmail.settings:
       type: boolean
       label: 'Open Social Branding will be replaced by site name (and slogan if available).'
     template_header:
-      type: string
-      label: 'Notification email header'
+      type: mapping
+      label: 'Template header'
+      mapping:
+        value:
+          type: text
+          label: 'Header markup'
+        format:
+          type: string
+          label: 'Text format'
     template_footer:
-      type: string
-      label: 'Notification email footer'
+      type: mapping
+      label: 'Template footer'
+      mapping:
+        value:
+          type: text
+          label: 'Footer markup'
+        format:
+          type: string
+          label: 'Text format'
