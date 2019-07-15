@@ -194,10 +194,10 @@ class Activity extends ContentEntityBase implements ActivityInterface {
   }
 
   /**
-   * Get related entity url.
+   * Get related entity.
    *
-   * @return \Drupal\Core\Url|string
-   *   Returns empty string or URL object of related entity canonical url.
+   * @return \Drupal\Core\Entity
+   *   Returns NULL or Entity object.
    */
   public function getRelatedEntity() {
 
@@ -205,14 +205,11 @@ class Activity extends ContentEntityBase implements ActivityInterface {
     if (!empty($related_object)) {
       $target_type = $related_object['0']['target_type'];
       $target_id = $related_object['0']['target_id'];
-      $entity_storage = \Drupal::entityTypeManager()
-        ->getStorage($target_type);
+      $entity_storage = $this->entityTypeManager()->getStorage($target_type);
       $entity = $entity_storage->load($target_id);
       return $entity;
     }
-    else {
-      return null;
-    }
+    return NULL;
 
   }
 

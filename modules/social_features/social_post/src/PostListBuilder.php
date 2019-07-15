@@ -40,7 +40,7 @@ class PostListBuilder extends EntityListBuilder {
     }
     $row['author'] = $entity->getOwner()->toLink();
     $row['created'] = \Drupal::service('date.formatter')->format($entity->getCreatedTime(), 'small');
-    $row['status'] = $entity->isPublished() ? "published" : "unpublished";
+    $row['status'] = $entity->isPublished() ? t("published") : t("unpublished");
 
     return $row + parent::buildRow($entity);
   }

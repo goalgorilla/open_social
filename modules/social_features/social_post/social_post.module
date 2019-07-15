@@ -224,7 +224,7 @@ function social_post_preprocess_activity(&$variables) {
   $activity = $variables['elements']['#activity'];
   $post = $activity->getRelatedEntity();
   if (!empty($post) && $post->getEntityTypeId() === "post") {
-    $variables['post'] = true;
+    $variables['post'] = TRUE;
     $variables['published'] = $post->isPublished();
   }
 }
@@ -235,7 +235,7 @@ function social_post_preprocess_activity(&$variables) {
 function social_post_preprocess_post__activity(&$variables) {
   $account = \Drupal::currentUser();
 
-  if(!$variables["published"] && !$account->hasPermission('edit any post entities')) {
+  if (!$variables["published"] && !$account->hasPermission('edit any post entities')) {
     unset($variables["content"]["links"]);
   }
 }
