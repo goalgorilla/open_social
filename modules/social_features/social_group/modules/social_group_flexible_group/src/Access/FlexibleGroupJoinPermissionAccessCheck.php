@@ -54,17 +54,24 @@ class FlexibleGroupJoinPermissionAccessCheck implements AccessInterface {
       }
     }
 
+    $type = $group->getGroupType();
+    // Don't interfere if the group isn't a flexible group.
+    if ($type instanceof GroupTypeInterface && $type->id() !== 'flexible_group') {
+      if (!empty($group_permission)) {
+        return GroupAccessResult::allowedIfHasGroupPermissions($group, $account, [$group_permission]);
+      }
+
+      // We need this fallback for SM/CM.
+      // Neutral will break because the manage tab doesn't work with group permission but
+      // with general permissions.
+      $condition1 = $account->hasPermission('manage all groups');
+      $condition2 = $group->hasPermission('administer members', $account);
+      return AccessResult::allowedIf($condition1 || $condition2)->addCacheableDependency($group);
+    }
+
     // A user with this access can definitely do everything.
     if ($account->hasPermission('manage all groups')) {
       return AccessResult::allowed()->addCacheableDependency($group);
-    }
-
-    $type = $group->getGroupType();
-    // Don't interfere if the group isn't a flexible group.
-    if (!empty($group_permission) &&
-      $type instanceof GroupTypeInterface &&
-      $type->id() !== 'flexible_group') {
-      GroupAccessResult::allowedIfHasGroupPermissions($group, $account, [$group_permission])->addCacheableDependency($group);
     }
 
     // AN Users aren't allowed anything.

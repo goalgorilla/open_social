@@ -50,18 +50,23 @@ class FlexibleGroupContentAccessCheck implements AccessInterface {
       return AccessResult::neutral();
     }
 
-    // A user with this access can definitely do everything.
-    if ($account->hasPermission('manage all groups')) {
-      return AccessResult::allowed();
-    }
-
     $type = $group->getGroupType();
     // Don't interfere if the group isn't a flexible group.
     if ($type instanceof GroupTypeInterface && $type->id() !== 'flexible_group') {
       if (!empty($group_permission)) {
-        GroupAccessResult::allowedIfHasGroupPermissions($group, $account, [$group_permission]);
+        return GroupAccessResult::allowedIfHasGroupPermissions($group, $account, [$group_permission]);
       }
-      return AccessResult::allowedIf(TRUE);
+
+      $condition1 = $account->hasPermission('manage all groups');
+      $condition2 = $group->hasPermission('administer members', $account);
+      $condition3 = $group->getMember($account);
+
+      return AccessResult::allowedIf($condition1 || $condition2 || $condition3);
+    }
+
+    // A user with this access can definitely do everything.
+    if ($account->hasPermission('manage all groups')) {
+      return AccessResult::allowed();
     }
 
     // AN Users aren't allowed anything if Public isn't an option.
