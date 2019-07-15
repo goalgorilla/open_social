@@ -48,26 +48,28 @@ class FlexibleGroupJoinPermissionAccessCheck implements AccessInterface {
     // Don't interfere if the group isn't a real group.
     $group = $parameters->get('group');
     if (!$group instanceof GroupInterface) {
-      return AccessResult::neutral();
+      $group = _social_group_get_current_group();
+      if (!$group instanceof GroupInterface) {
+        return AccessResult::neutral();
+      }
     }
 
     // A user with this access can definitely do everything.
     if ($account->hasPermission('manage all groups')) {
-      return AccessResult::allowed();
+      return AccessResult::allowed()->addCacheableDependency($group);
     }
 
     $type = $group->getGroupType();
     // Don't interfere if the group isn't a flexible group.
-    if ($type instanceof GroupTypeInterface && $type->id() !== 'flexible_group') {
-      if (!empty($group_permission)) {
-        GroupAccessResult::allowedIfHasGroupPermissions($group, $account, [$group_permission])->addCacheableDependency($group);
-      }
-      return AccessResult::allowedIf(TRUE);
+    if (!empty($group_permission) &&
+      $type instanceof GroupTypeInterface &&
+      $type->id() !== 'flexible_group') {
+      GroupAccessResult::allowedIfHasGroupPermissions($group, $account, [$group_permission])->addCacheableDependency($group);
     }
 
     // AN Users aren't allowed anything.
     if (!$account->isAuthenticated()) {
-      return AccessResult::forbidden();
+      return AccessResult::forbidden()->addCacheableDependency($group);
     }
 
     // Outsider LU are only allowed when Direct is an option.
@@ -79,7 +81,11 @@ class FlexibleGroupJoinPermissionAccessCheck implements AccessInterface {
     // We allow it but lets add the group as dependency to the cache
     // now because field value might be editted and cache should
     // clear accordingly.
-    return GroupAccessResult::allowedIfHasGroupPermissions($group, $account, [$group_permission])->addCacheableDependency($group);
+    if (!empty($group_permission)) {
+      return GroupAccessResult::allowedIfHasGroupPermissions($group, $account, [$group_permission])->addCacheableDependency($group);
+    }
+
+    return AccessResult::allowed()->addCacheableDependency($group);
   }
 
   /**
@@ -106,12 +112,14 @@ class FlexibleGroupJoinPermissionAccessCheck implements AccessInterface {
       return TRUE;
     }
 
-    // For the Members tabs we need to ensure AN LU and Group member.
-    if ($route_match->getRouteName() === 'view.group_manage_members.page_group_manage_members') {
-      // LU Can only see members tabs when joining directly is enabled.
-      if (!$direct_option && $account->isAuthenticated() && !$group->getMember($account)) {
-        return FALSE;
-      }
+    // LU Can only see members tabs for joining directly
+    // or when he is a GM/GA.
+    if (!$direct_option &&
+      $route_match->getRouteName() === 'view.group_manage_members.page_group_manage_members' &&
+      $account->isAuthenticated() &&
+      !$group->getMember($account) &&
+      !$group->hasPermission('administer members', $account)) {
+      return FALSE;
     }
 
     // There is no direct join method so it's not allowed to go to /join.
