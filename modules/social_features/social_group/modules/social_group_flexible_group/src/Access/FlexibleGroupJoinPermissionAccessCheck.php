@@ -62,8 +62,8 @@ class FlexibleGroupJoinPermissionAccessCheck implements AccessInterface {
       }
 
       // We need this fallback for SM/CM.
-      // Neutral will break because the manage tab doesn't work with group permission but
-      // with general permissions.
+      // Neutral will break because the manage tab doesn't work with
+      // group permission but with general permissions.
       $condition1 = $account->hasPermission('manage all groups');
       $condition2 = $group->hasPermission('administer members', $account);
       return AccessResult::allowedIf($condition1 || $condition2)->addCacheableDependency($group);
