@@ -24,7 +24,6 @@ class GroupSettingsHelp extends PreprocessBase implements PreprocessInterface {
    * {@inheritdoc}
    */
   public function preprocessVariables(Variables $variables) {
-
     $build = [];
     $unique_id = Html::getUniqueId('group-settings-help');
     $icon = Bootstrap::glyphicon('info-sign');
@@ -44,11 +43,6 @@ class GroupSettingsHelp extends PreprocessBase implements PreprocessInterface {
     $build['settings'] = [
       '#type' => 'container',
       '#theme_wrappers' => ['container__group_settings_help'],
-      '#attributes' => [
-        'id' => $unique_id,
-        'class' => ['hidden', 'help-block'],
-        'aria-hidden' => 'true',
-      ],
     ];
     $build['settings']['join_method'] = [
       '#theme' => 'item_list__group_settings_help',
@@ -61,6 +55,9 @@ class GroupSettingsHelp extends PreprocessBase implements PreprocessInterface {
       '#title' => $this->t('Content visibility'),
     ];
     $variables['popover'] = $build;
+    $variables['popover_id'] = $unique_id;
+    $variables['popover_toggle'] = $build['toggle'];
+    $variables['popover_info'] = $build['settings'];
   }
 
 }

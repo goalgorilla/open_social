@@ -10,5 +10,8 @@
  */
 #}
 {% if popover %}
-  {{ popover }}
+  {{ popover_toggle }}
+  <div class="hidden help-block" id="{{ popover_id }}">
+    {{ popover_info }}
+  </div>
 {% endif %}
