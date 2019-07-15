@@ -9,3 +9,8 @@ services:
     arguments: ['@module_handler']
     tags:
       - { name: 'event_subscriber' }
+
+  social_event_managers.add_enrollee.permission:
+    class: 'Drupal\social_event_managers\Access\AddEnrolleeAccessCheck'
+    tags:
+      - { name: 'access_check', applies_to: '_enrollee_permission', priority: 249 }

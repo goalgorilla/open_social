@@ -43,7 +43,7 @@ class MagicUrl implements MagicUrlInterface {
 
     // Get url options and prerequisites.
     $timestamp = \Drupal::time()->getRequestTime();
-    $lang_code = isset($options['langcode']) ? $options['langcode'] : $account->getPreferredLangcode();
+    $lang_code = $options['langcode'] ?? $account->getPreferredLangcode();
     $url_options = [
       'absolute' => TRUE,
       'language' => \Drupal::languageManager()->getLanguage($lang_code),

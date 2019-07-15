@@ -5,6 +5,8 @@
  * The Social Group Flexible Group module.
  */
 
+use Drupal\block\Entity\Block;
+use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountInterface;
@@ -15,6 +17,7 @@ use Drupal\views\Plugin\views\query\QueryPluginBase;
 use Drupal\views\Plugin\views\row\EntityRow;
 use Drupal\views\ViewExecutable;
 use Drupal\views\Views;
+use Drupal\Core\Database\Query\AlterableInterface;
 
 /**
  * Provide a method to alter array of group types used in open social.
@@ -205,9 +208,9 @@ function social_group_flexible_group_menu_local_actions_alter(&$local_actions) {
   // membership overview if we can't add members directly.
   // SM+ can still add members though.
   if ($group instanceof GroupInterface
+    && $group->getGroupType()->id() === 'flexible_group'
     && !social_group_flexible_group_can_be_added($group)
     && !$user->hasPermission('manage all groups')
-    && $group->getGroupType()->id() === 'flexible_group'
   ) {
     unset($local_actions['social_group.add_member']);
   }
@@ -288,9 +291,76 @@ function social_group_flexible_group_views_query_alter(ViewExecutable $view, Que
     $group++;
   }
 
+  // We need to add our group by using a query tag.
+  // Otherwise views doesn't accept it.
+  $query->addTag('flexible_group_by');
+
   // AN users can only see flexible groups that are public.
   if ($account->isAnonymous()) {
-    $query->addWhere($group, 'field_group_allowed_visibility_value', 'public', '=');
+    $query->addWhere($group, 'field_group_allowed_visibility_value', ['public'], 'IN');
     return;
   }
+}
+
+/**
+ * Implements hook_query_TAG_alter().
+ */
+function social_group_flexible_group_query_flexible_group_by_alter(AlterableInterface $query) {
+  $query->distinct();
+}
+
+/**
+ * Implements hook_block_access().
+ */
+function social_group_flexible_group_block_access(Block $block, $operation, AccountInterface $account) {
+  // This is a list of the blocks that this function cares about, if we're being
+  // called for a different block we exit early.
+  $block_id = $block->getPluginId();
+  $managed_blocks = [
+    'views_exposed_filter_block:newest_groups-page_all_groups',
+    'views_block:groups-block_user_groups',
+    'views_block:upcoming_events-upcoming_events_group',
+    'views_block:latest_topics-group_topics_block',
+    'views_block:group_managers-block_list_managers',
+  ];
+  // We don't care for other blocks.
+  if (!in_array($block_id, $managed_blocks, FALSE)) {
+    return AccessResult::neutral();
+  }
+
+  $group = _social_group_get_current_group();
+  // We don't care about other group types in here.
+  if ($group && $group->getGroupType()->id() === 'flexible_group') {
+    // Only when users cant join directly, add the managers block
+    // so they know who to contact.
+    if ($operation === 'view' &&
+      social_group_flexible_group_can_join_directly($group) &&
+      $block->getPluginId() === 'views_block:group_managers-block_list_managers') {
+      return AccessResult::forbidden();
+    }
+
+    // All users with permissions can see the rest.
+    if ($account->hasPermission('manage all groups')) {
+      return AccessResult::neutral();
+    }
+
+    if (!$group->getMember($account) &&
+      !social_group_flexible_group_community_enabled($group) &&
+      !social_group_flexible_group_public_enabled($group)) {
+      // If it is flexible and the current user is not an member of this group,
+      // and content visibility is not public and also not community
+      // hide it.
+      $forbidden_blocks = [
+        'views_block:upcoming_events-upcoming_events_group',
+        'views_block:latest_topics-group_topics_block',
+      ];
+      foreach ($forbidden_blocks as $forbidden_block) {
+        if ($operation === 'view' && $block->getPluginId() === $forbidden_block) {
+          return AccessResult::forbidden();
+        }
+      }
+    }
+  }
+
+  return AccessResult::neutral();
 }

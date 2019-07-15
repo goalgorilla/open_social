@@ -173,6 +173,76 @@ class SocialGroupFlexibleGroupConfigOverride implements ConfigFactoryOverrideInt
       ];
     }
 
+    $config_name = 'block.block.views_block__group_managers_block_list_managers';
+
+    if (in_array($config_name, $names, FALSE)) {
+      $overrides[$config_name] = [
+        'visibility' => [
+          'group_type' => [
+            'group_types' => [
+              'flexible_group' => 'flexible_group',
+            ],
+          ],
+        ],
+      ];
+    }
+
+    $config_name = 'views.view.group_managers';
+
+    if (in_array($config_name, $names, FALSE)) {
+      $overrides[$config_name] = [
+        'display' => [
+          'default' => [
+            'display_options' => [
+              'filters' => [
+                'group_roles_target_id_3' => [
+                  'id' => 'group_roles_target_id_3',
+                  'table' => 'group_content__group_roles',
+                  'field' => 'group_roles_target_id',
+                  'relationship' => 'group_content',
+                  'group_type' => 'group',
+                  'admin_label' => '',
+                  'operator' => '=',
+                  'value' => 'flexible_group-group_manager',
+                  'group' => 1,
+                  'exposed' => FALSE,
+                  'expose' => [
+                    'operator_id' => '',
+                    'label' => '',
+                    'description' => '',
+                    'use_operator' => FALSE,
+                    'operator' => '',
+                    'identifier' => '',
+                    'required' => FALSE,
+                    'remember' => FALSE,
+                    'multiple' => FALSE,
+                    'remember_roles' => [
+                      'authenticated' => 'authenticated',
+                    ],
+                    'placeholder' => '',
+                  ],
+                  'is_grouped' => FALSE,
+                  'group_info' => [
+                    'label' => '',
+                    'description' => '',
+                    'identifier' => '',
+                    'optional' => TRUE,
+                    'widget' => 'select',
+                    'multiple' => FALSE,
+                    'remember' => FALSE,
+                    'default_group' => 'All',
+                    'default_group_multiple' => [],
+                    'group_items' => [],
+                  ],
+                  'plugin_id' => 'string',
+                ],
+              ],
+            ],
+          ],
+        ],
+      ];
+    }
+
     return $overrides;
   }
 

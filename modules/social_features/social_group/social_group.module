@@ -37,6 +37,7 @@ use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\social_group\GroupContentVisibilityUpdate;
 use Drupal\Core\Messenger\MessengerInterface;
+use Drupal\views_bulk_operations\ViewsBulkOperationsBatch;
 
 /**
  * Implements hook_theme().
@@ -267,7 +268,9 @@ function social_group_preprocess_group(array &$variables) {
       $join_methods = $group->get('field_group_allowed_join_method')->getValue();
       $direct_option = in_array('direct', array_column($join_methods, 'value'), FALSE);
       if (!$direct_option) {
-        $variables['group_operations_url'] = '';
+        $variables['group_operations_url'] = Url::fromRoute('entity.group.join', ['group' => $group->id()]);
+        $variables['closed_group'] = TRUE;
+        $variables['cta'] = t('Invitation only');
       }
     }
   }
@@ -462,7 +465,9 @@ function _social_group_get_allowed_visibility(GroupInterface $group) {
 function social_group_group_insert(GroupInterface $group) {
   // @Todo remove this when https://www.drupal.org/node/2702743 lands and make
   // sure the settings will be implemented accordingly.
-  if ($group->getGroupType()->id() == 'open_group' || $group->getGroupType()->id() == 'closed_group') {
+  if ($group->getGroupType()->id() === 'open_group' ||
+    $group->getGroupType()->id() === 'closed_group' ||
+    $group->getGroupType()->id() === 'flexible_group') {
     // Get the group owner.
     $account = $group->getOwner();
     // Get membership.
@@ -726,21 +731,23 @@ function _social_group_inform_group_type_selection() {
  */
 function _social_group_type_edit_submit($form, FormStateInterface $form_state) {
   // Check if the group_type changed.
-  $default_type = $form['group_type']['#default_value'];
-  $new_type = $form_state->getValue('group_type');
+  // Can be empty for flexible groups.
+  $group = _social_group_get_current_group();
+  if (!empty($form['group_type'])) {
+    $default_type = $form['group_type']['#default_value'];
+    $new_type = $form_state->getValue('group_type');
 
-  // Update the Group entity and all it's content when the type changed.
-  if ($new_type !== $default_type) {
-    $group = _social_group_get_current_group();
-
-    // Update the default visibility of all the content.
-    GroupContentVisibilityUpdate::batchUpdateGroupContentVisibility($group, $new_type);
-
-    // Make sure we clear cache tags accordingly.
-    $cache_tags = _social_group_cache_tags($group);
-    foreach ($cache_tags as $cache_tag) {
-      Cache::invalidateTags([$cache_tag]);
+    // Update the Group entity and all it's content when the type changed.
+    if ($new_type !== $default_type) {
+      // Update the default visibility of all the content.
+      GroupContentVisibilityUpdate::batchUpdateGroupContentVisibility($group, $new_type);
     }
+  }
+
+  // Make sure we clear cache tags accordingly.
+  $cache_tags = _social_group_cache_tags($group);
+  foreach ($cache_tags as $cache_tag) {
+    Cache::invalidateTags([$cache_tag]);
   }
 }
 
@@ -1863,16 +1870,61 @@ function social_group_batch_alter(&$batch) {
   $url = &$batch['source_url'];
 
   if ($url->getRouteName() === 'social_group_gvbo.views_bulk_operations.confirm' ||
-    $url->getRouteName() === 'views_bulk_operations.confirm') {
-    /** @var \Drupal\Core\Form\FormStateInterface $form_state */
-    $form_state = &$batch['form_state'];
+    $url->getRouteName() === 'views_bulk_operations.confirm' ||
+    $url->getRouteName() === 'views_bulk_operations.execute_batch' ||
+    $url->getRouteName() === 'social_group_gvbo.views_bulk_operations.execute_configurable') {
 
-    $data = $form_state->get('views_bulk_operations');
-    $batch['sets'][0]['results']['action'] = $data['action_id'];
-    if (in_array($data['action_id'], $actions)) {
+    // Get the action ID.
+    $action_id = _social_group_get_action_id($batch);
+
+    $batch['sets'][0]['results']['action'] = $action_id;
+    if (in_array($action_id, $actions, TRUE)) {
       $batch['sets'][0]['finished'] = '_social_group_action_batch_finish';
     }
   }
+}
+
+/**
+ * Function to get the action id of a batch.
+ *
+ * @param array $batch
+ *   The batch array.
+ *
+ * @return string
+ *   Returns the batch action id.
+ */
+function _social_group_get_action_id(array &$batch) {
+  /** @var \Drupal\Core\Form\FormStateInterface $form_state */
+  $form_state = &$batch['form_state'];
+
+  $action_id = '';
+  if ($form_state instanceof FormStateInterface) {
+    $data = $form_state->get('views_bulk_operations');
+    $action_id = $data['action_id'];
+  }
+  else {
+    foreach ($batch['sets'][0]['operations'] as $operations) {
+      if (empty($operations) || !is_array($operations)) {
+        break;
+      }
+      foreach ($operations as $operation) {
+        if (empty($operation) || !is_array($operation)) {
+          break;
+        }
+        foreach ($operation as $items) {
+          if (empty($items) || !is_array($items)) {
+            break;
+          }
+
+          if (!empty($items['action_id'])) {
+            $action_id = $items['action_id'];
+            break;
+          }
+        }
+      }
+    }
+  }
+  return $action_id;
 }
 
 /**
@@ -1886,6 +1938,14 @@ function social_group_batch_alter(&$batch) {
  *   Performed operations array.
  */
 function _social_group_action_batch_finish($success, array $results, array $operations) {
+  // When we do a bulk action on all the items in a view, across multiple pages,
+  // the saveList function needs to be called. So after pre-populating the list
+  // the actual action is performed on the entities.
+  if (!empty($results['view_id']) && !empty($results['display_id'])) {
+    ViewsBulkOperationsBatch::saveList(TRUE, $results, $operations);
+    return;
+  }
+
   $operations = array_count_values($results['operations']);
   $results_count = 0;
 

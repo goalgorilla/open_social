@@ -2,11 +2,9 @@
 
 <ul>
     {% for notification in notifications %}
-        <li>{{ notification|striptags('<a><strong>')|raw }}</li>
+        <li>{{ notification|striptags('<p><a><strong><small><em><div><table><tbody><tr><td>')|raw }}</li>
     {% endfor %}
 </ul>
-
-{{ notification_footer }}
 
 <p>&nbsp;</p>
 

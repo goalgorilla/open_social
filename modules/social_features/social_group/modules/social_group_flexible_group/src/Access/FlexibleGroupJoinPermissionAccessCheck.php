@@ -79,7 +79,7 @@ class FlexibleGroupJoinPermissionAccessCheck implements AccessInterface {
     // We allow it but lets add the group as dependency to the cache
     // now because field value might be editted and cache should
     // clear accordingly.
-    return AccessResult::allowedIfHasPermission($account, $group_permission)->addCacheableDependency($group);
+    return GroupAccessResult::allowedIfHasGroupPermissions($group, $account, [$group_permission])->addCacheableDependency($group);
   }
 
   /**
@@ -107,8 +107,7 @@ class FlexibleGroupJoinPermissionAccessCheck implements AccessInterface {
     }
 
     // For the Members tabs we need to ensure AN LU and Group member.
-    if ($route_match->getRouteName() === 'view.group_manage_members.page_group_manage_members' ||
-      $route_match->getRouteName() === 'view.group_members.page_group_members') {
+    if ($route_match->getRouteName() === 'view.group_manage_members.page_group_manage_members') {
       // LU Can only see members tabs when joining directly is enabled.
       if (!$direct_option && $account->isAuthenticated() && !$group->getMember($account)) {
         return FALSE;
