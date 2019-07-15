@@ -45,10 +45,11 @@ class RedirectSubscriber implements EventSubscriberInterface {
       'entity.group.join',
       'view.group_events.page_group_events',
       'view.group_topics.page_group_topics',
+      'social_group.stream',
     ];
 
-    // If a group is set, and the type is closed_group.
-    if ($group && $group->getGroupType()->id() == 'flexible_group') {
+    // If a group is set, and the type is flexible_group.
+    if ($group && $group->getGroupType()->id() === 'flexible_group') {
       if ($user->hasPermission('manage all groups')) {
         return;
       }
