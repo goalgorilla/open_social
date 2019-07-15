@@ -892,3 +892,14 @@ function social_core_update_8501() {
   $config->save();
 
 }
+
+/**
+ * Install ctools module.
+ */
+function social_core_update_8601() {
+  $modules = [
+    'ctools',
+  ];
+
+  \Drupal::service('module_installer')->install($modules);
+}
