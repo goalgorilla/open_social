@@ -110,9 +110,9 @@ Feature: Create Closed Group
     Then I should not see "Test closed group topic"
     Then I should not see "Test closed group event"
     And I should not see "This is a closed group post."
-    And I should not see "Stream"
-    And I should not see "Events"
-    And I should not see "Topics"
+    And I should not see "Stream" in the "Tabs"
+    And I should not see "Events" in the "Tabs"
+    And I should not see "Topics" in the "Tabs"
     And I should not see "all upcoming events"
     And I should not see "all topics"
 
@@ -187,7 +187,7 @@ Feature: Create Closed Group
 
   # As a member of this closed group I want to leave the group
     And I should see the button "Joined"
-    And I click the element with css selector "#hero .dropdown-toggle"
+    And I press "Joined"
     And I should see the link "Leave group"
     And I click "Leave group"
     And I should see "This action cannot be undone."

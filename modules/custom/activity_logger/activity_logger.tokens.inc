@@ -5,6 +5,7 @@
  * Builds placeholder replacement tokens for message-related data.
  */
 
+use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\Url;
 use Drupal\group\Entity\Group;
@@ -65,7 +66,7 @@ function activity_logger_token_info() {
 function activity_logger_tokens($type, $tokens, array $data, array $options, BubbleableMetadata $bubbleable_metadata) {
   $replacements = [];
 
-  if ($type == 'message' && !empty($data['message'])) {
+  if ($type === 'message' && !empty($data['message'])) {
     /** @var \Drupal\message\Entity\Message $message */
     $message = $data['message'];
 
@@ -92,7 +93,14 @@ function activity_logger_tokens($type, $tokens, array $data, array $options, Bub
               // If comment get the entity to which the comment is attached.
               if ($entity->getEntityTypeId() === 'comment') {
                 $entity = $entity->getCommentedEntity();
+
+                // It could happen that a notification has been queued but by
+                // now the "commented entity" has been deleted.
+                if (!$entity instanceof FieldableEntityInterface) {
+                  break;
+                }
               }
+
               // When it is a node.
               if ($entity->getEntityTypeId() === 'node') {
                 $node = $entity;

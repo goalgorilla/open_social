@@ -18,14 +18,14 @@ Feature: Follow Content
     And I should see "Topic This is a follow topic has been created."
     And I should see "This is a follow topic" in the "Hero block"
     And I should see "Body description text" in the "Main content"
-    And I should see the link "Follow content" in the "Main content"
-    And I should not see the link "Unfollow content" in the "Main content"
+    And I should see the link "Follow content"
+    And I should not see the link "Unfollow content"
     And I click "Follow content"
     And I wait for AJAX to finish
-    And I should see the link "Unfollow content" in the "Main content"
-    And I should not see the link "Follow content" in the "Main content"
+    And I should see the link "Unfollow content"
+    And I should not see the link "Follow content"
     And I click "Unfollow content"
     And I wait for AJAX to finish
-    And I should see the link "Follow content" in the "Main content"
-    And I should not see the link "Unfollow content" in the "Main content"
+    And I should see the link "Follow content"
+    And I should not see the link "Unfollow content"
 
