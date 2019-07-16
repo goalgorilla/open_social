@@ -33,7 +33,7 @@ Feature: Edit group type after creation
 
     When I am logged in as "test_user_1"
       And I am on "/nescafe-topic"
-    Then I should see "Access Denied"
+    Then I should see "You are not authorized"
 
     When I am logged in as "test_user_2"
       And I am on the stream of group "Nescafe"
