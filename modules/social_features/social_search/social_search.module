@@ -81,6 +81,31 @@ function social_search_block_view_views_exposed_filter_block_alter(array &$build
 }
 
 /**
+ * Implements hook_views_data_alter().
+ */
+function social_search_views_data_alter(array &$data) {
+  // Custom Event Date filters see SocialDate.php.
+  $data['node']['social_date_filter'] = [
+    'title' => t('Date Filter by Open Social'),
+    'filter' => [
+      'title' => t('Date Filter by Open Social'),
+      'help' => t('Filters for date used in Open Social'),
+      'id' => 'social_date_filter',
+      'field' => 'field_event_date_value',
+    ],
+  ];
+}
+
+/**
+ * Implements hook_search_api_views_handler_mapping_alter().
+ */
+function social_search_search_api_views_handler_mapping_alter(array &$mapping) {
+  // Override the Search API views filter connected to date with
+  // SocialDate.php (Extends current one limits options).
+  $mapping['date']['filter']['id'] = 'social_date_filter';
+}
+
+/**
  * Implements hook_block_view_BASE_BLOCK_ID_alter().
  *
  * Make the label/title translatable.
