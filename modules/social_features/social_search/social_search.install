@@ -315,3 +315,14 @@ function social_search_update_8110() {
     }
   }
 }
+
+/**
+ * Trigger a search_api re-index.
+ */
+function social_search_update_8601() {
+  $index = Index::load('social_content');
+  if ($index->status()) {
+    $index->clear();
+    $index->reindex();
+  }
+}
