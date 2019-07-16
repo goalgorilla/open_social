@@ -831,6 +831,8 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
      * @param $expected_access
      *  0 = NO access
      *  1 = YES access
+     *
+     * @throws \Exception
      */
     public function openEntityAndExpectAccess($entity_type, $entity_id, $expected_access) {
       $entity = entity_load($entity_type, $entity_id);
@@ -841,12 +843,38 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
       $this->visitPath($page);
 
       if ($expected_access == 0) {
-        $this->assertSession()->pageTextContains('Access denied');
+        // TODO:: Rewrite this function to check http codes instead of text.
+        $this->pageTextContainsOr('Access denied', 'Not authorized');
       }
       else {
         $this->assertSession()->pageTextNotContains('Access denied');
       }
     }
+
+  /**
+   * Checks that current page contains text.
+   *
+   * @param string $text1
+   * @param string $text2
+   *
+   * @throws \Exception
+   */
+  public function pageTextContainsOr($text1, $text2)
+  {
+    $actual = $this->getSession()->getPage()->getText();
+    $regex1 = '/'.preg_quote($text1, '/').'/ui';
+    $actual_string1 = preg_replace('/\s+/u', ' ', $actual);
+
+    $regex2 = '/'.preg_quote($text2, '/').'/ui';
+    $actual_string2 = preg_replace('/\s+/u', ' ', $actual);
+
+    $message = sprintf('The text was not found anywhere in the text of the current page.');
+    if ((bool) preg_match($regex1, $actual_string1) || (bool) preg_match($regex2, $actual_string2)) {
+      return;
+    }
+
+    throw new \Exception($message);
+  }
 
     /**
      * @When I close the open tip
