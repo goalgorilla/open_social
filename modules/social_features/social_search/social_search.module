@@ -56,6 +56,22 @@ function social_search_form_views_exposed_form_alter(&$form, FormStateInterface 
         '#options' => $options,
       ];
     }
+    if ($form['#id'] == 'views-exposed-form-search-content-page') {
+      $x = 1;
+      if (!empty($form['field_event_date']) && !empty($form['field_event_date_op'])) {
+        $form['settings']['#states'] = [
+          'visible' => [
+            ':input[name=type]' => [
+              'value' => 'event',
+            ],
+          ],
+        ];
+
+        $form['settings']['field_event_date_op'] = $form['field_event_date_op'];
+        $form['settings']['field_event_date'] = $form['field_event_date'];
+        unset($form['field_event_date'], $form['field_event_date_op']);
+      }
+    }
   }
 }
 

@@ -48,7 +48,7 @@ class SocialDate extends DateTimeDate {
     if (!empty($form['field_event_date_op'])) {
       $form['settings'] = [
         '#type' => 'details',
-        '#title' => $this->t('Start date'),
+        '#title' => $this->t('Date of Event'),
         '#attributes' => [
           'class' => [
             'filter',
@@ -58,8 +58,19 @@ class SocialDate extends DateTimeDate {
 
       // Unset field title, the settings one already has it.
       $form['field_event_date_op']['#title'] = '';
-      $form['settings']['field_event_date_op'] = $form['field_event_date_op'];
-      unset($form['field_event_date_op']);
+
+      // No more textfields!
+      if (!empty($form['value'])) {
+        if (!empty($form['value']['value'])) {
+          $form['value']['value']['#type'] = 'date';
+        }
+        if (!empty($form['value']['min'])) {
+          $form['value']['min']['#type'] = 'date';
+        }
+        if (!empty($form['value']['max'])) {
+          $form['value']['max']['#type'] = 'date';
+        }
+      }
     }
   }
 }
