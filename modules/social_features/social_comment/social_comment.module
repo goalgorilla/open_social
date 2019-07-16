@@ -236,17 +236,24 @@ function social_comment_preprocess_comment(&$variables) {
  *
  * Allow users to delete their own comments.
  */
-function social_comment_comment_access(EntityInterface $entity, $operation, AccountInterface $account) {
+function social_comment_comment_access(CommentInterface $comment, $operation, AccountInterface $account) {
   if ($operation == 'delete') {
     if ($account->hasPermission('administer comments', $account)) {
       return AccessResult::allowed()->cachePerPermissions();
     }
     else {
-      return AccessResult::allowedIf($account->hasPermission('delete own comments', $account) && ($account->id() == $entity->getOwnerId()))
+      return AccessResult::allowedIf($account->hasPermission('delete own comments', $account) && ($account->id() == $comment->getOwnerId()))
         ->cachePerPermissions()
         ->cachePerUser()
-        ->addCacheableDependency($entity);
+        ->addCacheableDependency($comment);
     }
+  }
+  if ($operation === 'view' && !$comment->isPublished()) {
+    $access = AccessResult::allowedIf($account->hasPermission('view own unpublished comments', $account) && ($account->id() === $comment->getOwnerId()))
+      ->cachePerPermissions()
+      ->cachePerUser()
+      ->addCacheableDependency($comment);
+    return $access;
   }
 }
 

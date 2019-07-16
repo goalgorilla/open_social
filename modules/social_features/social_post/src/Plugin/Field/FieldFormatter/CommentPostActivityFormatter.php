@@ -43,6 +43,9 @@ class CommentPostActivityFormatter extends CommentPostFormatter {
       ->addMetaData('field_name', $field_name);
 
     if (!$this->currentUser->hasPermission('administer comments')) {
+      if ($this->currentUser->hasPermission('view own unpublished comments')) {
+        // TODO Write exception here.
+      }
       $query->condition('c.status', CommentInterface::PUBLISHED);
     }
 

@@ -56,6 +56,7 @@ function _social_comment_get_permissions($role) {
     'edit own comments',
     'delete own comments',
     'administer own comments',
+    'view own unpublished comments'
   ]);
 
   // Content manager.
@@ -98,4 +99,11 @@ function social_comment_update_8002() {
   // hook was not added at that point so this must be rectified now.
   user_role_grant_permissions('contentmanager', ['administer comments']);
   user_role_grant_permissions('sitemanager', ['administer comments']);
+}
+
+/**
+ * Enable 'view own unpublished comments' permission for authenticated.
+ */
+function social_comment_update_8601() {
+  user_role_grant_permissions('authenticated', ['view own unpublished comments']);
 }

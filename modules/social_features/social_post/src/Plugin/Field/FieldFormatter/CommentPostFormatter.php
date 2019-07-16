@@ -205,6 +205,10 @@ class CommentPostFormatter extends CommentDefaultFormatter {
     $comments_order = $this->getSetting('order');
 
     if (!$this->currentUser->hasPermission('administer comments')) {
+      if ($this->currentUser->hasPermission('view own unpublished comments')) {
+        // TODO Write exception here.
+
+      }
       $query->condition('c.status', CommentInterface::PUBLISHED);
     }
     if ($mode == CommentManagerInterface::COMMENT_MODE_FLAT) {
