@@ -5,6 +5,7 @@ dependencies:
     - search_api.index.social_content
   module:
     - search_api
+    - social_search
     - user
 id: search_content
 label: 'Search Content'
@@ -172,6 +173,77 @@ display:
             group_items: {  }
           reduce_duplicates: false
           plugin_id: search_api_options
+        field_event_date:
+          id: field_event_date
+          table: search_api_index_social_content
+          field: field_event_date
+          relationship: none
+          group_type: group
+          admin_label: 'Date exposed'
+          operator: '<'
+          value:
+            min: ''
+            max: ''
+            value: ''
+            type: date
+          group: 1
+          exposed: true
+          expose:
+            operator_id: field_event_date_op
+            label: Start
+            description: ''
+            use_operator: true
+            operator: field_event_date_op
+            identifier: field_event_date
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              anonymous: '0'
+              administrator: '0'
+              contentmanager: '0'
+              sitemanager: '0'
+            placeholder: ''
+            min_placeholder: ''
+            max_placeholder: ''
+          is_grouped: false
+          group_info:
+            label: Start
+            description: ''
+            identifier: field_event_date
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items:
+              1:
+                title: Between
+                operator: between
+                value:
+                  type: offset
+                  value: ''
+                  min: now
+                  max: 'now +1 day'
+              2:
+                title: Before
+                operator: '<'
+                value:
+                  type: date
+                  value: now
+                  min: ''
+                  max: ''
+              3:
+                title: After
+                operator: '>'
+                value:
+                  type: date
+                  value: now
+                  min: ''
+                  max: ''
+          plugin_id: search_api_date
       sorts:
         search_api_relevance:
           id: search_api_relevance

@@ -5,6 +5,8 @@ dependencies:
     - node
     - search_api
   config:
+    - field.storage.node.field_event_date
+    - field.storage.node.field_event_date_end
     - search_api.server.social_database
     - core.entity_view_mode.node.search_index
 id: social_content
@@ -20,6 +22,22 @@ field_settings:
     dependencies:
       module:
         - node
+  field_event_date:
+    label: Start
+    datasource_id: 'entity:node'
+    property_path: field_event_date
+    type: date
+    dependencies:
+      config:
+        - field.storage.node.field_event_date
+  field_event_date_end:
+    label: End
+    datasource_id: 'entity:node'
+    property_path: field_event_date_end
+    type: date
+    dependencies:
+      config:
+        - field.storage.node.field_event_date_end
   node_grants:
     label: 'Node access information'
     property_path: search_api_node_grants
