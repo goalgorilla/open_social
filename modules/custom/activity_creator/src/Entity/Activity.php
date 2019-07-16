@@ -194,6 +194,26 @@ class Activity extends ContentEntityBase implements ActivityInterface {
   }
 
   /**
+   * Get related entity.
+   *
+   * @return \Drupal\Core\Entity
+   *   Returns NULL or Entity object.
+   */
+  public function getRelatedEntity() {
+
+    $related_object = $this->get('field_activity_entity')->getValue();
+    if (!empty($related_object)) {
+      $target_type = $related_object['0']['target_type'];
+      $target_id = $related_object['0']['target_id'];
+      $entity_storage = $this->entityTypeManager()->getStorage($target_type);
+      $entity = $entity_storage->load($target_id);
+      return $entity;
+    }
+    return NULL;
+
+  }
+
+  /**
    * Get related entity url.
    *
    * @return \Drupal\Core\Url|string
