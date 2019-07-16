@@ -32,30 +32,33 @@ class ActivityRow extends EntityRow {
       foreach ($result as $row) {
         $render_result = [];
         $entity = $row->_entity;
-        $target_type = $entity->get('field_activity_entity')->getValue()[0]["target_type"];
+        $target_type = $entity->get('field_activity_entity')->target_type;
 
-        if ($target_type === "comment") {
-          $comment_id = $entity->get('field_activity_entity')->getValue()[0]["target_id"];
-          $query = \Drupal::database()->select('comment_field_data', 'c');
-          $query->addField('c', 'entity_id');
-          $query->condition('c.cid', $comment_id);
-          $post_id = $query->execute()->fetchField();
+        if (!empty($target_type) && $target_type === "comment") {
+          $comment_id = $entity->get('field_activity_entity')->target_id;
+          $comment_storage = \Drupal::entityTypeManager()->getStorage('comment');
+          $comment = $comment_storage->load($comment_id);
+          $parent_id = $comment->get('entity_id')->target_id;
+          $parent_type = $comment->get('entity_type')->value;
 
-          $query = \Drupal::database()->select('post_field_data', 'p');
-          $query->fields('p');
-          $query->condition('p.id', $post_id);
-          $post = $query->execute()->fetchAll();
+          if (!empty($parent_id) && !empty($parent_type) && $parent_type === "post") {
+            $parent_storage = \Drupal::entityTypeManager()->getStorage($parent_type);
+            $parent_entity = $parent_storage->load($parent_id);
+            $current_user_id = \Drupal::currentUser()->id();
+            $current_user = User::load($current_user_id);
 
-          $current_user_id = \Drupal::currentUser()->id();
-          $current_user = User::load($current_user_id);
+            $parent_status = $parent_entity->get('status')->value;
+            $parent_user_id = $parent_entity->get('user_id')->value;
+            $current_user_is_admin = $current_user->hasPermission('view unpublished post entities');
 
-          if ($post->status =! "0" || $post->user_id === $current_user_id || $current_user->hasRole('administrator') ) {
-            $render_result[] = $row;
+            if ((!empty($parent_status) && $parent_status !== "0")
+              || $current_user_is_admin ) {
+              $render_result[] = $row;
+            }
           }
-
         }
         else {
-          $render_result[] = $row;
+           $render_result[] = $row;
         }
 
         foreach ($entity->field_activity_destinations as $destination) {
