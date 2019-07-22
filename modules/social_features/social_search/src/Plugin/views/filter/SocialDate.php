@@ -14,6 +14,9 @@ use Drupal\search_api\Plugin\views\filter\SearchApiDate as DateTimeDate;
  */
 class SocialDate extends DateTimeDate {
 
+  /**
+   * {@inheritdoc}
+   */
   public function operators() {
     $operators = parent::operators();
 
@@ -58,7 +61,7 @@ class SocialDate extends DateTimeDate {
 
       // Unset field title, the settings one already has it.
       $form['field_event_date_op']['#title'] = '';
-      
+
       // No more textfields!
       if (!empty($form['value'])) {
         if (!empty($form['value']['value'])) {
@@ -74,4 +77,5 @@ class SocialDate extends DateTimeDate {
       }
     }
   }
+  
 }
