@@ -8,6 +8,7 @@ dependencies:
     - taxonomy.vocabulary.profile_tag
   module:
     - search_api
+    - social_search
     - user
 id: search_users
 label: 'Search Users'
@@ -223,34 +224,40 @@ display:
           hierarchy: false
           error_message: true
           plugin_id: search_api_term
-        field_profile_profile_tag:
-          id: field_profile_profile_tag
+        created:
+          id: created
           table: search_api_index_social_users
-          field: field_profile_profile_tag
+          field: created
           relationship: none
           group_type: group
-          admin_label: ''
-          operator: or
-          value: {  }
+          admin_label: 'Registration Date'
+          operator: '<'
+          value:
+            min: ''
+            max: ''
+            value: ''
+            type: date
           group: 1
           exposed: true
           expose:
-            operator_id: field_profile_profile_tag_op
-            label: 'Profile tag'
+            operator_id: created_op
+            label: 'Registration Date'
             description: ''
-            use_operator: false
-            operator: field_profile_profile_tag_op
-            identifier: profile_tag
+            use_operator: true
+            operator: created_op
+            identifier: created
             required: false
             remember: false
-            multiple: true
+            multiple: false
             remember_roles:
               authenticated: authenticated
               anonymous: '0'
               administrator: '0'
               contentmanager: '0'
               sitemanager: '0'
-            reduce: false
+            placeholder: ''
+            min_placeholder: ''
+            max_placeholder: ''
           is_grouped: false
           group_info:
             label: ''
@@ -263,13 +270,7 @@ display:
             default_group: All
             default_group_multiple: {  }
             group_items: {  }
-          reduce_duplicates: false
-          type: select
-          limit: true
-          vid: profile_tag
-          hierarchy: true
-          error_message: false
-          plugin_id: search_api_term
+          plugin_id: social_date_filter
       sorts:
         search_api_relevance:
           id: search_api_relevance

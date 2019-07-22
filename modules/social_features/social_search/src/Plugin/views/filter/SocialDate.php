@@ -47,35 +47,45 @@ class SocialDate extends DateTimeDate {
    */
   protected function valueForm(&$form, FormStateInterface $form_state) {
     parent::valueForm($form, $form_state);
+
+    // Key is form field name, value is title name.
+    $form_keys = [
+      'field_event_date_op' => 'Date of Event',
+      'created_op' => 'Registration Date',
+    ];
+
     // Update form values for the options.
-    if (!empty($form['field_event_date_op'])) {
-      $form['settings'] = [
-        '#type' => 'details',
-        '#title' => $this->t('Date of Event'),
-        '#attributes' => [
-          'class' => [
-            'filter',
+    foreach ($form_keys as $key => $title) {
+      if (!empty($form[$key])) {
+        $form['settings'] = [
+          '#type' => 'details',
+          '#title' => $this->t($title),
+          '#attributes' => [
+            'class' => [
+              'filter',
+            ],
           ],
-        ],
-      ];
+        ];
 
-      // Unset field title, the settings one already has it.
-      $form['field_event_date_op']['#title'] = '';
+        // Unset field title, the settings one already has it.
+        $form[$key]['#title'] = '';
 
-      // No more textfields!
-      if (!empty($form['value'])) {
-        if (!empty($form['value']['value'])) {
-          $form['value']['value']['#type'] = 'date';
-        }
-        if (!empty($form['value']['min'])) {
-          $form['value']['min']['#type'] = 'date';
-          $form['value']['min']['#title'] = '';
-        }
-        if (!empty($form['value']['max'])) {
-          $form['value']['max']['#type'] = 'date';
+        // No more textfields!
+        if (!empty($form['value'])) {
+          if (!empty($form['value']['value'])) {
+            $form['value']['value']['#type'] = 'date';
+          }
+          if (!empty($form['value']['min'])) {
+            $form['value']['min']['#type'] = 'date';
+            $form['value']['min']['#title'] = '';
+          }
+          if (!empty($form['value']['max'])) {
+            $form['value']['max']['#type'] = 'date';
+          }
         }
       }
     }
+
   }
-  
+
 }

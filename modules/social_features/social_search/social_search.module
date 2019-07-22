@@ -40,6 +40,12 @@ function social_search_form_views_exposed_form_alter(&$form, FormStateInterface 
           $element['#selection_settings']['hide_id'] = TRUE;
         }
       }
+
+      if (!empty($form['created']) && !empty($form['created_op'])) {
+        $form['settings']['created_op'] = $form['created_op'];
+        $form['settings']['created'] = $form['created'];
+        unset($form['created_op'], $form['created']);
+      }
     }
     if ($form['#id'] == 'views-exposed-form-search-groups-page') {
       $options = [
@@ -107,6 +113,16 @@ function social_search_views_data_alter(array &$data) {
       'help' => t('Filters for date used in Open Social'),
       'id' => 'social_date_filter',
       'field' => 'field_event_date_value',
+    ],
+  ];
+
+  $data['node']['social_created_filter'] = [
+    'title' => t('Created Date Filter by Open Social'),
+    'filter' => [
+      'title' => t('Date Filter by Open Social'),
+      'help' => t('Filters for date used in Open Social'),
+      'id' => 'social_date_filter',
+      'field' => 'created',
     ],
   ];
 }
