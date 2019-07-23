@@ -8,7 +8,6 @@ dependencies:
     - taxonomy.vocabulary.profile_tag
   module:
     - search_api
-    - social_search
     - user
 id: search_users
 label: 'Search Users'
@@ -224,40 +223,34 @@ display:
           hierarchy: false
           error_message: true
           plugin_id: search_api_term
-        created:
-          id: created
+        field_profile_profile_tag:
+          id: field_profile_profile_tag
           table: search_api_index_social_users
-          field: created
+          field: field_profile_profile_tag
           relationship: none
           group_type: group
-          admin_label: 'Registration Date'
-          operator: '<'
-          value:
-            min: ''
-            max: ''
-            value: ''
-            type: date
+          admin_label: ''
+          operator: or
+          value: {  }
           group: 1
           exposed: true
           expose:
-            operator_id: created_op
-            label: 'Registration Date'
+            operator_id: field_profile_profile_tag_op
+            label: 'Profile tag'
             description: ''
-            use_operator: true
-            operator: created_op
-            identifier: created
+            use_operator: false
+            operator: field_profile_profile_tag_op
+            identifier: profile_tag
             required: false
             remember: false
-            multiple: false
+            multiple: true
             remember_roles:
               authenticated: authenticated
               anonymous: '0'
               administrator: '0'
               contentmanager: '0'
               sitemanager: '0'
-            placeholder: ''
-            min_placeholder: ''
-            max_placeholder: ''
+            reduce: false
           is_grouped: false
           group_info:
             label: ''
@@ -270,7 +263,13 @@ display:
             default_group: All
             default_group_multiple: {  }
             group_items: {  }
-          plugin_id: social_date_filter
+          reduce_duplicates: false
+          type: select
+          limit: true
+          vid: profile_tag
+          hierarchy: true
+          error_message: false
+          plugin_id: search_api_term
       sorts:
         search_api_relevance:
           id: search_api_relevance
