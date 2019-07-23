@@ -12,6 +12,7 @@ use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\HtmlCommand;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Link;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\group\Entity\Group;
 use Drupal\Core\Form\FormStateInterface;
@@ -1699,8 +1700,43 @@ function social_group_user_cancel_methods_alter(&$methods) {
  * Implements hook_social_user_account_header_create_links().
  *
  * Adds the "Create Group" link to the content creation menu.
+ * When the user can only create groups of one type, the user skips the
+ * group type selection page.
  */
 function social_group_social_user_account_header_create_links($context) {
+  // We can't create a "Add Groups" link without a user to determine permission.
+  if (empty($context['user'])) {
+    return [];
+  }
+
+  /** @var \Drupal\Core\Session\AccountInterface $user */
+  $account = $context['user'];
+  $user_can_create_groups = [];
+  // Get all available group types.
+  foreach (GroupType::loadMultiple() as $group_type) {
+    // When the user has permission to create a group of the current type, add
+    // this to the create group array.
+    if ($account->hasPermission('create ' . $group_type->id() . ' group')) {
+      $user_can_create_groups[$group_type->id()] = $group_type;
+    }
+
+    if (count($user_can_create_groups) > 1) {
+      break;
+    }
+  }
+
+  // Create url to create a group.
+  $route_add_group = Url::fromRoute('entity.group.add_page');
+  if (count($user_can_create_groups) === 1) {
+    // When there is only one group allowed, add create the url to create a
+    // group of this type.
+    /** @var \Drupal\group\Entity\Group $allowed_group_type */
+    $allowed_group_type = reset($user_can_create_groups);
+    $route_add_group = Url::fromRoute('entity.group.add_form', [
+      'group_type' => $allowed_group_type->id(),
+    ]);
+  }
+
   return [
     'add_group' => [
       '#type' => 'link',
@@ -1709,7 +1745,7 @@ function social_group_social_user_account_header_create_links($context) {
       ],
       '#title' => new TranslatableMarkup('New Group'),
       '#weight' => 500,
-    ] + Url::fromRoute('entity.group.add_page')->toRenderArray(),
+    ] + $route_add_group->toRenderArray(),
   ];
 }
 
