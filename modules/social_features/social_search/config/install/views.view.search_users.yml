@@ -8,6 +8,7 @@ dependencies:
     - taxonomy.vocabulary.profile_tag
   module:
     - search_api
+    - social_search
     - user
 id: search_users
 label: 'Search Users'
@@ -270,6 +271,53 @@ display:
           hierarchy: true
           error_message: false
           plugin_id: search_api_term
+        created:
+          id: created
+          table: search_api_index_social_users
+          field: created
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: '<'
+          value:
+            min: ''
+            max: ''
+            value: ''
+            type: date
+          group: 1
+          exposed: true
+          expose:
+            operator_id: created_op
+            label: 'Registration Date'
+            description: ''
+            use_operator: true
+            operator: created_op
+            identifier: created
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              anonymous: '0'
+              administrator: '0'
+              contentmanager: '0'
+              sitemanager: '0'
+            placeholder: ''
+            min_placeholder: ''
+            max_placeholder: ''
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          plugin_id: search_api_date
       sorts:
         search_api_relevance:
           id: search_api_relevance
