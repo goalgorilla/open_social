@@ -41,11 +41,12 @@
   {% endblock %}
   {% if content.links.search_block is defined %}
     <div class="navbar__open-search-control">
-      <button class="navbar__open-search-block" rel="search" title="{{ 'Click to open search box'|t }}">
-      </button>
-      <svg class="navbar-nav__icon navbar-nav__icon--search">
-        <use xlink:href="#icon-search"></use>
-      </svg>
+      <a href="{{ '/search/all' }}" class="navbar__open-search-block" rel="search" title="{{ 'Click to open search box'|t }}">
+        <span class="invisible">{{ 'Search'|t }}</span>
+        <svg class="navbar-nav__icon navbar-nav__icon--search">
+          <use xlink:href="#icon-search"></use>
+        </svg>
+      </a>
     </div>
   {% endif %}
 </div>

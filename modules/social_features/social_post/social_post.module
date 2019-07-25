@@ -218,6 +218,25 @@ function social_post_preprocess_activity(&$variables) {
 
     $variables['visibility_icon'] = social_post_get_visibility_details($post->get('field_visibility')->value, 'icon');
     $variables['visibility_label'] = social_post_get_visibility_details($post->get('field_visibility')->value, 'label');
+
+  }
+
+  $activity = $variables['elements']['#activity'];
+  $post = $activity->getRelatedEntity();
+  if (!empty($post) && $post->getEntityTypeId() === "post") {
+    $variables['post'] = TRUE;
+    $variables['published'] = $post->isPublished();
+  }
+}
+
+/**
+ * Implements hook_preprocess_post__activity().
+ */
+function social_post_preprocess_post__activity(&$variables) {
+  $account = \Drupal::currentUser();
+
+  if (!$variables["published"] && !$account->hasPermission('edit any post entities')) {
+    unset($variables["content"]["links"]);
   }
 }
 
@@ -252,7 +271,7 @@ function social_post_theme_suggestions_post(array $variables) {
  */
 function social_post_preprocess_field(array &$variables) {
   $element = $variables['element'];
-  if ($element['#formatter'] == 'comment_post') {
+  if ($element['#formatter'] === 'comment_post' || $element['#formatter'] === 'comment_post_activity') {
     // Create separate variables for the more_link.
     $variables['more_link'] = $element[0]['more_link'];
   }

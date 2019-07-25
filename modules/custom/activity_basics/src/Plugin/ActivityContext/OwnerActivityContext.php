@@ -51,6 +51,13 @@ class OwnerActivityContext extends ActivityContextBase {
       ->getStorage($related_entity['target_type']);
     $entity = $entity_storage->load($related_entity['target_id']);
 
+    // It could happen that a notification has been queued but the content
+    // has since been deleted. In that case we can find no additional
+    // recipients.
+    if (!$entity) {
+      return $recipients;
+    }
+
     // Don't return recipients if user comments on own content.
     $original_related_object = $data['related_object'][0];
     if (isset($original_related_object['target_type']) && $original_related_object['target_type'] == 'comment') {

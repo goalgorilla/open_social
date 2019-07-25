@@ -7,3 +7,4 @@ projects[drupal][patch][] = "https://www.drupal.org/files/issues/2018-10-26/2528
 projects[drupal][patch][] = "https://www.drupal.org/files/issues/2018-12-28/2580551-72.patch"
 projects[drupal][patch][] = "https://www.drupal.org/files/issues/drupal-994360-74-states-checkboxes-checked.patch"
 projects[drupal][patch][] = "https://www.drupal.org/files/issues/2019-05-06/drupal-Multiple-usages-of-FieldPluginBase-getEntity-3007424-15.patch"
+projects[drupal][patch][] = "https://www.drupal.org/files/issues/2018-05-24/2974925-default-rid-config-causes-illegal-error.patch"

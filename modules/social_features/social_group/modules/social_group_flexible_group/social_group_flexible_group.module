@@ -1,0 +1,366 @@
+<?php
+
+/**
+ * @file
+ * The Social Group Flexible Group module.
+ */
+
+use Drupal\block\Entity\Block;
+use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Cache\Cache;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\group\Entity\Group;
+use Drupal\group\Entity\GroupInterface;
+use Drupal\social_group_flexible_group\FlexibleGroupContentVisibilityUpdate;
+use Drupal\views\Plugin\views\query\QueryPluginBase;
+use Drupal\views\Plugin\views\row\EntityRow;
+use Drupal\views\ViewExecutable;
+use Drupal\views\Views;
+use Drupal\Core\Database\Query\AlterableInterface;
+
+/**
+ * Provide a method to alter array of group types used in open social.
+ *
+ * @param array $social_group_types
+ *   List of group types used in open social.
+ *
+ * @ingroup social_group_api
+ */
+function social_group_flexible_group_social_group_types_alter(array &$social_group_types) {
+  $social_group_types[] = 'flexible_group';
+}
+
+/**
+ * Implements hook_form_FORM_ID_form_alter().
+ */
+function social_group_flexible_group_form_group_flexible_group_edit_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  // Lets remove group type from flexible group.
+  // Editting is useless since the options are all in there.
+  if ($form['group_type']['#disabled']) {
+    unset($form['group_type']);
+  }
+  $form['field_group_allowed_visibility']['#prefix'] =
+    t('Altering the visibility options could result in changes in access for content within this group.');
+
+  $form['actions']['submit']['#submit'][] = '_social_flexible_group_edit_submit';
+}
+
+/**
+ * Custom form submit handler for editing a flexible group.
+ *
+ * @param array $form
+ *   The form array.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   Form state.
+ *
+ * @throws \Drupal\Core\Entity\EntityStorageException
+ */
+function _social_flexible_group_edit_submit(array $form, FormStateInterface $form_state) {
+  // Check if the visibility changed.
+  $default_visibility = $form['field_group_allowed_visibility']['widget']['#default_value'];
+  $new_visibility = $form_state->getValue('field_group_allowed_visibility');
+
+  $changed_visibility = [];
+  // If there was a visibility that we don't have anymore after editting
+  // all the content that was inside the group with this visibility
+  // will get the lowest visibility that is still checked.
+  foreach ($default_visibility as $key => $option) {
+    if (array_search($option, array_column($new_visibility, 'value')) === FALSE) {
+      $changed_visibility[] = $option;
+    }
+  }
+
+  // So there is now a visibility setting we don't support anymore
+  // after editing. Make sure we update all the content that has this
+  // to the next best optin.
+  if (!empty($changed_visibility)) {
+    $group = _social_group_get_current_group();
+
+    // Update the default visibility of all the content.
+    FlexibleGroupContentVisibilityUpdate::batchUpdateGroupContentVisibility($group, $changed_visibility, $new_visibility);
+
+    // Make sure we clear cache tags accordingly.
+    $cache_tags = _social_group_cache_tags($group);
+    foreach ($cache_tags as $cache_tag) {
+      Cache::invalidateTags([$cache_tag]);
+    }
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function social_group_flexible_group_form_social_group_add_alter(&$form, FormStateInterface $form_state, $form_id) {
+  // Rearrange all the options so flexible is last
+  // we will need the space for the configuration.
+  $type_options = $form['group_settings']['group_type']['#options'];
+  if (!empty($type_options['flexible_group'])) {
+    $flexible = $type_options['flexible_group'];
+    unset($form['group_settings']['group_type']['#options']['flexible_group']);
+    $form['group_settings']['group_type']['#options']['flexible_group'] = $flexible;
+  }
+}
+
+/**
+ * Check if a user can join the group directly.
+ *
+ * @param \Drupal\group\Entity\Group $group
+ *   The group we are checking.
+ *
+ * @return bool
+ *   TRUE when users can join.
+ */
+function social_group_flexible_group_can_join_directly(Group $group) {
+  $join_methods = $group->get('field_group_allowed_join_method')->getValue();
+
+  if (!in_array('direct', array_column($join_methods, 'value'), FALSE)) {
+    return FALSE;
+  }
+
+  return TRUE;
+}
+
+/**
+ * Check if a user can be added to a group.
+ *
+ * @param \Drupal\group\Entity\Group $group
+ *   The group we are checking.
+ *
+ * @return bool
+ *   TRUE when users can join.
+ */
+function social_group_flexible_group_can_be_added(Group $group) {
+  $join_methods = $group->get('field_group_allowed_join_method')->getValue();
+
+  if (!in_array('added', array_column($join_methods, 'value'), FALSE)) {
+    return FALSE;
+  }
+
+  return TRUE;
+}
+
+/**
+ * Check if public is enabled as visibility options.
+ *
+ * @param \Drupal\group\Entity\Group $group
+ *   The group we are checking.
+ *
+ * @return bool
+ *   TRUE when users can join.
+ */
+function social_group_flexible_group_public_enabled(Group $group) {
+  $visibility_options = $group->get('field_group_allowed_visibility')->getValue();
+
+  if (!in_array('public', array_column($visibility_options, 'value'), FALSE)) {
+    return FALSE;
+  }
+
+  return TRUE;
+}
+
+/**
+ * Check if community is enabled as visibility options.
+ *
+ * @param \Drupal\group\Entity\Group $group
+ *   The group we are checking.
+ *
+ * @return bool
+ *   TRUE when users can join.
+ */
+function social_group_flexible_group_community_enabled(Group $group) {
+  $visibility_options = $group->get('field_group_allowed_visibility')->getValue();
+
+  if (!in_array('community', array_column($visibility_options, 'value'), FALSE)) {
+    return FALSE;
+  }
+
+  return TRUE;
+}
+
+/**
+ * Check if members is enabled as visibility options.
+ *
+ * @param \Drupal\group\Entity\Group $group
+ *   The group we are checking.
+ *
+ * @return bool
+ *   TRUE when users can join.
+ */
+function social_group_flexible_group_members_enabled(Group $group) {
+  $visibility_options = $group->get('field_group_allowed_visibility')->getValue();
+
+  if (!in_array('group', array_column($visibility_options, 'value'), FALSE)) {
+    return FALSE;
+  }
+
+  return TRUE;
+}
+
+/**
+ * Implements hook_menu_local_actions_alter().
+ */
+function social_group_flexible_group_menu_local_actions_alter(&$local_actions) {
+  $group = _social_group_get_current_group();
+  $user = \Drupal::currentUser();
+
+  // Remove the social_group add member action on the
+  // membership overview if we can't add members directly.
+  // SM+ can still add members though.
+  if ($group instanceof GroupInterface
+    && $group->getGroupType()->id() === 'flexible_group'
+    && !social_group_flexible_group_can_be_added($group)
+    && !$user->hasPermission('manage all groups')
+  ) {
+    unset($local_actions['social_group.add_member']);
+  }
+}
+
+/**
+ * Determine whether a user can see flexible groups as outsider.
+ *
+ * @param \Drupal\group\Entity\Group $group
+ *   The group we are checking.
+ * @param \Drupal\Core\Session\AccountInterface $account
+ *   The user to check for.
+ *
+ * @return bool
+ *   Whether the user is allowed to view this flexible groups.
+ */
+function social_group_flexible_group_can_view_flexible_groups(Group $group, AccountInterface $account) : bool {
+  // Users who can manage all can manage everything.
+  if ($account->hasPermission('manage all groups')) {
+    return TRUE;
+  }
+
+  // If User is a member he can see it.
+  if ($group->getMember($account) !== FALSE) {
+    return TRUE;
+  }
+
+  // Outsiders can only see groups that have
+  // public / community enabled as visibility.
+  if ($account->isAuthenticated()
+    && !social_group_flexible_group_community_enabled($group)
+    && !social_group_flexible_group_public_enabled($group)) {
+    return FALSE;
+  }
+
+  return TRUE;
+}
+
+/**
+ * Implements hook_views_query_alter().
+ *
+ * Hide flexible groups everywhere when the current user cant see it.
+ */
+function social_group_flexible_group_views_query_alter(ViewExecutable $view, QueryPluginBase $query) {
+  if (empty($view->rowPlugin) || !($view->rowPlugin instanceof EntityRow) || $view->rowPlugin->getEntityTypeId() !== 'group') {
+    return;
+  }
+
+  $account = \Drupal::currentUser();
+
+  // Don't check, they can see it all.
+  if ($account->hasPermission('manage all groups')) {
+    return;
+  }
+
+  // Let's build our join with the allowed visibility data.
+  $configuration = [
+    'type'       => 'LEFT',
+    'table'      => 'group__field_group_allowed_visibility',
+    'field'      => 'entity_id',
+    'left_table' => 'groups_field_data',
+    'left_field' => 'id',
+    'operator'   => '=',
+  ];
+
+  $alias = 'groups_field_data_allowed_visibility';
+
+  /** @var \Drupal\views\Plugin\views\query\Sql $query */
+  $join = Views::pluginManager('join')->createInstance('standard', $configuration);
+  $rel = $query->addRelationship($alias, $join, 'groups_field_data');
+  $query->addTable('group__field_group_allowed_visibility', $rel, $join, $alias);
+
+  /** @var \Drupal\views\Plugin\views\query\Sql $query */
+  $group = count($query->where);
+
+  // Make sure we add one new group with a where clause.
+  while (isset($query->where[$group])) {
+    $group++;
+  }
+
+  // We need to add our group by using a query tag.
+  // Otherwise views doesn't accept it.
+  $query->addTag('flexible_group_by');
+
+  // AN users can only see flexible groups that are public.
+  if ($account->isAnonymous()) {
+    $query->addWhere($group, 'field_group_allowed_visibility_value', ['public'], 'IN');
+    return;
+  }
+}
+
+/**
+ * Implements hook_query_TAG_alter().
+ */
+function social_group_flexible_group_query_flexible_group_by_alter(AlterableInterface $query) {
+  $query->distinct();
+}
+
+/**
+ * Implements hook_block_access().
+ */
+function social_group_flexible_group_block_access(Block $block, $operation, AccountInterface $account) {
+  // This is a list of the blocks that this function cares about, if we're being
+  // called for a different block we exit early.
+  $block_id = $block->getPluginId();
+  $managed_blocks = [
+    'views_exposed_filter_block:newest_groups-page_all_groups',
+    'views_block:groups-block_user_groups',
+    'views_block:upcoming_events-upcoming_events_group',
+    'views_block:latest_topics-group_topics_block',
+    'views_block:group_managers-block_list_managers',
+  ];
+  // We don't care for other blocks.
+  if (!in_array($block_id, $managed_blocks, FALSE)) {
+    return AccessResult::neutral();
+  }
+
+  $group = _social_group_get_current_group();
+  // We don't care about other group types in here.
+  if ($group && $group->getGroupType()->id() === 'flexible_group') {
+    // Only when users cant join directly, add the managers block
+    // so they know who to contact.
+    if ($operation === 'view' &&
+      social_group_flexible_group_can_join_directly($group) &&
+      $block->getPluginId() === 'views_block:group_managers-block_list_managers') {
+      return AccessResult::forbidden();
+    }
+
+    // All users with permissions can see the rest.
+    if ($account->hasPermission('manage all groups')) {
+      return AccessResult::neutral();
+    }
+
+    if (!$group->getMember($account) &&
+      !social_group_flexible_group_community_enabled($group) &&
+      !social_group_flexible_group_public_enabled($group)) {
+      // If it is flexible and the current user is not an member of this group,
+      // and content visibility is not public and also not community
+      // hide it.
+      $forbidden_blocks = [
+        'views_block:upcoming_events-upcoming_events_group',
+        'views_block:latest_topics-group_topics_block',
+      ];
+      foreach ($forbidden_blocks as $forbidden_block) {
+        if ($operation === 'view' && $block->getPluginId() === $forbidden_block) {
+          return AccessResult::forbidden();
+        }
+      }
+    }
+  }
+
+  return AccessResult::neutral();
+}
