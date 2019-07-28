@@ -37,6 +37,7 @@ class SocialDate extends DateTimeDate {
       if (!empty($operatorfromurl)) {
         $this->operator = $operatorfromurl;
         $input['created_op'] = $operatorfromurl;
+        $this->view->exposed_raw_input = $this->view->getExposedInput();
       }
     }
 
