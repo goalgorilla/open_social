@@ -17,6 +17,45 @@ class SocialDate extends DateTimeDate {
   /**
    * {@inheritdoc}
    */
+  public function acceptExposedInput($input) {
+    if (empty($this->options['exposed'])) {
+      return TRUE;
+    }
+
+    // Don't filter if value(s) are empty.
+    if (!empty($this->options['expose']['use_operator']) && !empty($this->options['expose']['operator_id'])) {
+      $operator = $input[$this->options['expose']['operator_id']];
+    }
+    else {
+      $operator = $this->operator;
+    }
+
+    // Fallback for exposed operator.
+    if ($operator === NULL && $this->realField === 'created') {
+      // Check if we have it in the query.
+      $operatorfromurl = \Drupal::request()->query->get('created_op');
+      if (!empty($operatorfromurl)) {
+        $this->operator = $operatorfromurl;
+        $input['created_op'] = $operatorfromurl;
+      }
+    }
+
+    $return = parent::acceptExposedInput($input);
+
+    if (!$return) {
+      // Override for the "(not) empty" operators.
+      $operators = $this->operators();
+      if ($operators[$this->operator]['values'] === 0) {
+        return TRUE;
+      }
+    }
+
+    return $return;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function operators() {
     $operators = parent::operators();
 
