@@ -90,8 +90,8 @@ class SocialDate extends DateTimeDate {
 
     // Key is form field name, value is title name.
     $form_keys = [
-      'field_event_date_op' => 'Date of Event',
-      'created_op' => 'Registration Date',
+      'field_event_date_op' => $this->t('Date of Event'),
+      'created_op' => $this->t('Registration Date'),
     ];
 
     // Update form values for the options.
@@ -99,7 +99,7 @@ class SocialDate extends DateTimeDate {
       if (!empty($form[$key])) {
         $form['settings'] = [
           '#type' => 'details',
-          '#title' => $this->t($title),
+          '#title' => $title,
           '#attributes' => [
             'class' => [
               'filter',
