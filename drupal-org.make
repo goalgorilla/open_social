@@ -58,6 +58,7 @@ projects[image_widget_crop][patch][] = "https://www.drupal.org/files/issues/2019
 projects[lazy][type] = module
 projects[lazy][version] = 2.0
 projects[lazy][patch][] = "https://www.drupal.org/files/issues/2019-05-23/3056630-2.patch"
+projects[lazy][patch][] = "https://www.drupal.org/files/issues/2019-07-30/3071331-lazy-cron-empty-path-2.patch"
 projects[like_and_dislike][type] = module
 projects[like_and_dislike][version] = 1.0-alpha2
 projects[like_and_dislike][patch][] = "https://www.drupal.org/files/issues/2848080-2-preview-fails-on-node.patch"
