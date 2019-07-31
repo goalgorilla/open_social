@@ -1,0 +1,51 @@
+social_group_request.request_membership:
+  path: '/group/{group}/request-membership'
+  defaults:
+    _controller: 'Drupal\social_group_request\Controller\GroupRequestController::requestMembership'
+  requirements:
+    _group_permission: 'request group membership'
+    _group_member: 'FALSE'
+  options:
+    parameters:
+      group:
+        type: 'entity:group'
+
+social_group_request.cancel_request:
+  path: '/group/{group}/cancel-request'
+  defaults:
+    _controller: 'Drupal\social_group_request\Controller\GroupRequestController::cancelRequest'
+  requirements:
+    _group_permission: 'request group membership'
+    _group_member: 'FALSE'
+  options:
+    parameters:
+      group:
+        type: 'entity:group'
+
+social_group_request.group_request_membership_approve:
+  path: '/group/{group}/content/{group_content}/approve-membership'
+  defaults:
+    _title: 'Approve membership request'
+    _controller: 'Drupal\social_group_request\Controller\GroupRequestController::approveRequest'
+  requirements:
+    _group_permission: 'administer members'
+  options:
+    parameters:
+      group:
+        type: 'entity:group'
+      group_content:
+        type: 'entity:group_content'
+
+social_group_request.group_request_membership_reject:
+  path: '/group/{group}/content/{group_content}/reject-membership'
+  defaults:
+    _title: 'Reject membership request'
+    _form: 'Drupal\social_group_request\Form\GroupRequestMembershipRejectForm'
+  requirements:
+    _group_permission: 'administer members'
+  options:
+    parameters:
+      group:
+        type: 'entity:group'
+      group_content:
+        type: 'entity:group_content'

@@ -1,0 +1,95 @@
+<?php
+
+/**
+ * @file
+ * Primary module hooks for social_group_request module.
+ */
+
+use Drupal\Core\Url;
+use Drupal\group\Entity\GroupContent;
+use Drupal\social_group_request\Plugin\GroupContentEnabler\GroupMembershipRequest;
+use Drupal\group\Entity\GroupContentInterface;
+
+/**
+ * Updates status of Pending membership requests when Group membership is created.
+ *
+ * Implements hook_ENTITY_TYPE_insert().
+ */
+function social_group_request_group_content_insert(GroupContentInterface $group_content) {
+  $type = $group_content->getContentPlugin()->getPluginId();
+  $membership_request_enabled = $group_content->getGroup()->getGroupType()->hasContentPlugin('group_membership_request');
+
+  // If new membership is created, check related membership request exists. if so - mark request as accepted.
+  if ($type == 'group_membership' && $membership_request_enabled) {
+    $approver = \Drupal::currentUser();
+    $storage = \Drupal::entityTypeManager()->getStorage('group_content');
+    $filters = [
+      'entity_id' => $group_content->get('entity_id')->getString(),
+      'grequest_status' => GroupMembershipRequest::REQUEST_PENDING,
+    ];
+    $requests = $storage->loadByGroup($group_content->getGroup(), 'group_membership_request', $filters);
+
+    foreach ($requests as $request) {
+      /** @var $request GroupContentInterface */
+      $request
+        ->set('grequest_status', GroupMembershipRequest::REQUEST_ACCEPTED)
+        // Who created request will become an 'approver' for Membership request.
+        ->set('grequest_updated_by', $approver->id())
+        ->save();
+    }
+  }
+}
+
+/**
+ * Implements hook_preprocess_group().
+ */
+function social_group_request_preprocess_group__hero(&$variables) {
+  /** @var \Drupal\group\Entity\GroupInterface $group */
+  $group = $variables['group'];
+  $account = \Drupal::currentUser();
+
+  $group_type_id = $group->getGroupType()->id();
+  if (!$group_type_id == 'closed_group') {
+    return;
+  }
+
+  if (
+    !$group->hasPermission('request group membership', $account) ||
+    !$group->hasField('field_group_allow_request')
+  ) {
+    $variables['allow_request'] = FALSE;
+    return;
+  }
+
+  $allow_request = $group->get('field_group_allow_request');
+  if ($allow_request->isEmpty() || $allow_request->value == 0) {
+    $variables['allow_request'] = FALSE;
+    return;
+  }
+
+  if ($group->getMember($account)) {
+    return;
+  }
+
+  $variables['allow_request'] = TRUE;
+  $variables['group_operations_url'] = Url::fromUserInput('/group/' . $group->id() . '/request-membership');
+
+  $contentTypeConfigId = $group
+    ->getGroupType()
+    ->getContentPlugin('group_membership_request')
+    ->getContentTypeConfigId();
+
+  $request = \Drupal::entityTypeManager()->getStorage('group_content')->loadByProperties([
+    'type' => $contentTypeConfigId,
+    'gid' => $group->id(),
+    'entity_id' => $account->id(),
+    'grequest_status' => GroupMembershipRequest::REQUEST_PENDING,
+  ]);
+
+  if (!empty($request)) {
+    $variables['requested'] = TRUE;
+    $variables['group_operations_url'] = Url::fromUserInput('/group/' . $group->id() . '/cancel-request');
+  }
+
+  $variables['#cache']['tags'][] = 'request-membership';
+}
