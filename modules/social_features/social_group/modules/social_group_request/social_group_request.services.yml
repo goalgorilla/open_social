@@ -1,0 +1,8 @@
+services:
+
+  # Defines service for overriding configs
+  social_group_request.overrider:
+    class: Drupal\social_group_request\SocialGroupRequestConfigOverride
+    arguments: ['@config.factory']
+    tags:
+      - {name: config.factory.override, priority: 5}
