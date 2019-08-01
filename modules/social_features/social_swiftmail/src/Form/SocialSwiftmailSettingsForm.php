@@ -46,18 +46,28 @@ class SocialSwiftmailSettingsForm extends ConfigFormBase {
       '#title' => $this->t('Template configuration'),
       '#open' => FALSE,
     ];
+
+    $template_header = $config->get('template_header');
     $form['template']['template_header'] = [
       '#title' => $this->t('Template header'),
       '#type' => 'text_format',
-      '#format' => 'mail_html',
-      '#default_value' => $config->get('template_header') ?: '',
+      '#default_value' => $template_header['value'] ?: '',
+      '#format' => $template_header['format'] ?: 'mail_html',
+      '#allowed_formats' => [
+        'mail_html',
+      ],
       '#description' => $this->t('Enter information you want to show in the email notifications header'),
     ];
+
+    $template_footer = $config->get('template_footer');
     $form['template']['template_footer'] = [
       '#title' => $this->t('Template footer'),
       '#type' => 'text_format',
-      '#format' => 'mail_html',
-      '#default_value' => $config->get('template_footer') ?: '',
+      '#default_value' => $template_footer['value'] ?: '',
+      '#format' => $template_footer['format'] ?: 'mail_html',
+      '#allowed_formats' => [
+        'mail_html',
+      ],
       '#description' => $this->t('Enter information you want to show in the email notifications footer'),
     ];
 
@@ -73,8 +83,11 @@ class SocialSwiftmailSettingsForm extends ConfigFormBase {
     // Save config.
     $config = $this->config('social_swiftmail.settings');
     $config->set('remove_open_social_branding', $form_state->getValue('remove_open_social_branding'));
-    $config->set('template_header', $form_state->getValue('template_header')['value']);
-    $config->set('template_footer', $form_state->getValue('template_footer')['value']);
+
+    // Get the template header and footer settings.
+    $config->set('template_header', $form_state->getValue('template_header'));
+    $config->set('template_footer', $form_state->getValue('template_footer'));
+
     $config->save();
   }
 

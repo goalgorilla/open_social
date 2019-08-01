@@ -1,0 +1,10 @@
+social_comment.unpublish:
+  path: '/comment/{comment}/unpublish'
+  defaults:
+    _title: 'Unpublish Comment'
+    _controller: '\Drupal\social_comment\Controller\SocialCommentController::commentUnpublish'
+    entity_type: 'comment'
+  requirements:
+    _permission: 'administer comments'
+    _csrf_token: 'TRUE'
+    comment: \d+
