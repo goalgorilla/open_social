@@ -1,0 +1,33 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.group_content.group_content_type_c8bae2527294c.grequest_status
+    - field.field.group_content.group_content_type_c8bae2527294c.grequest_updated_by
+    - group.content_type.group_content_type_c8bae2527294c
+id: group_content.group_content_type_c8bae2527294c.default
+targetEntityType: group_content
+bundle: group_content_type_c8bae2527294c
+mode: default
+content:
+  grequest_status:
+    type: number_integer
+    weight: -4
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    region: content
+  grequest_updated_by:
+    label: above
+    type: entity_reference_label
+    settings:
+      link: true
+    weight: -3
+    third_party_settings: {  }
+    region: content
+hidden:
+  entity_id: true
+  langcode: true
+  uid: true
