@@ -6,7 +6,6 @@ use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Config\ConfigFactoryOverrideInterface;
 use Drupal\Core\Config\StorageInterface;
-use Drupal\Core\Extension\ModuleHandlerInterface;
 
 /**
  * Class SocialLazyLoadingTextFormatOverride.
@@ -39,20 +38,20 @@ class SocialLazyLoadingImageDisplayOverride implements ConfigFactoryOverrideInte
     $overrides = [];
 
     $config_fields = [
-      // Event
+      // Event.
       'core.entity_view_display.node.event.teaser' => 'field_event_image',
       'core.entity_view_display.node.event.hero' => 'field_event_image',
       'core.entity_view_display.node.event.activity' => 'field_event_image',
       'core.entity_view_display.node.event.activity_comment' => 'field_event_image',
-      // Topic
+      // Topic.
       'core.entity_view_display.node.topic.teaser' => 'field_topic_image',
       'core.entity_view_display.node.topic.activity' => 'field_topic_image',
       'core.entity_view_display.node.topic.activity_comment' => 'field_topic_image',
-      // Page
+      // Page.
       'core.entity_view_display.node.page.teaser' => 'field_page_image',
       'core.entity_view_display.node.page.activity' => 'field_page_image',
       'core.entity_view_display.node.page.activity_comment' => 'field_page_image',
-      // Groups
+      // Groups.
       'core.entity_view_display.group.open_group.teaser' => 'field_group_image',
       'core.entity_view_display.group.open_group.hero' => 'field_group_image',
       'core.entity_view_display.group.secret_group.teaser' => 'field_group_image',
@@ -63,16 +62,15 @@ class SocialLazyLoadingImageDisplayOverride implements ConfigFactoryOverrideInte
       'core.entity_view_display.group.public_group.hero' => 'field_group_image',
       'core.entity_view_display.group.closed_group.teaser' => 'field_group_image',
       'core.entity_view_display.group.closed_group.hero' => 'field_group_image',
-      // Posts
+      // Posts.
       'core.entity_view_display.post.photo.activity' => 'field_post_image',
       'core.entity_view_display.post.photo.activity_comment' => 'field_post_image',
       'core.entity_view_display.post.photo.default' => 'field_post_image',
-      // Comments dont have image fields.
-      // Books
+      // Books.
       'core.entity_view_display.node.book.teaser' => 'field_book_image',
       'core.entity_view_display.node.book.activity' => 'field_book_image',
       'core.entity_view_display.node.book.activity_comment' => 'field_book_image',
-      // Profile
+      // Profile.
       'core.entity_view_display.profile.profile.compact' => 'field_profile_image',
       'core.entity_view_display.profile.profile.compact_notification' => 'field_profile_image',
       'core.entity_view_display.profile.profile.compact_teaser' => 'field_profile_image',
