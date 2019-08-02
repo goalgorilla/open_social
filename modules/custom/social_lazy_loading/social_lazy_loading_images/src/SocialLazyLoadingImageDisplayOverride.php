@@ -136,7 +136,7 @@ class SocialLazyLoadingImageDisplayOverride implements ConfigFactoryOverrideInte
    * {@inheritdoc}
    */
   public function getCacheSuffix() {
-    return 'SocialLazyLoadingTextFormatOverride';
+    return 'SocialLazyLoadingImageDisplayOverride';
   }
 
 }
