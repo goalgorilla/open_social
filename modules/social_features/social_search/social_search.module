@@ -33,12 +33,19 @@ function social_search_form_views_exposed_form_alter(&$form, FormStateInterface 
     $form['#action'] = \Drupal::service('path.current')->getPath();
     // Always enable the reset button.
     $form['actions']['reset']['#access'] = TRUE;
+    $form['#attached']['library'][] = 'social_search/search_filters';
 
     if ($form['#id'] == 'views-exposed-form-search-users-page') {
       foreach ($form as &$element) {
         if (is_array($element) && isset($element['#type']) && $element['#type'] == 'entity_autocomplete') {
           $element['#selection_settings']['hide_id'] = TRUE;
         }
+      }
+
+      if (!empty($form['created']) && !empty($form['created_op'])) {
+        $form['settings']['created_op'] = $form['created_op'];
+        $form['settings']['created'] = $form['created'];
+        unset($form['created_op'], $form['created']);
       }
     }
     if ($form['#id'] == 'views-exposed-form-search-groups-page') {
@@ -55,6 +62,34 @@ function social_search_form_views_exposed_form_alter(&$form, FormStateInterface 
         '#type' => 'select',
         '#options' => $options,
       ];
+    }
+    if ($form['#id'] == 'views-exposed-form-search-content-page') {
+      if (!empty($form['type'])) {
+        $form['type']['#weight'] = '-100';
+      }
+
+      if (!empty($form['field_event_date']) && !empty($form['field_event_date_op'])) {
+        if (!empty($form['settings'])) {
+          $form['settings']['#states'] = [
+            'visible' => [
+              ':input[name=type]' => [
+                'value' => 'event',
+              ],
+            ],
+          ];
+          $form['settings']['#weight'] = '-99';
+          $form['settings']['#attributes']['class'] = ['indent_filter'];
+        }
+
+        $form['settings']['field_event_date_op'] = $form['field_event_date_op'];
+        $form['settings']['field_event_date'] = $form['field_event_date'];
+        unset($form['field_event_date'], $form['field_event_date_op']);
+      }
+
+      if (!empty($form['location_details'])) {
+        $form['location_details']['#weight'] = '-98';
+        $form['location_details']['#attributes']['class'] = ['indent_filter'];
+      }
     }
   }
 }
@@ -78,6 +113,41 @@ function social_search_block_view_views_exposed_filter_block_alter(array &$build
       'max-age' => 0,
     ];
   }
+}
+
+/**
+ * Implements hook_views_data_alter().
+ */
+function social_search_views_data_alter(array &$data) {
+  // Custom Event Date filters see SocialDate.php.
+  $data['node']['social_date_filter'] = [
+    'title' => t('Date Filter by Open Social'),
+    'filter' => [
+      'title' => t('Date Filter by Open Social'),
+      'help' => t('Filters for date used in Open Social'),
+      'id' => 'social_date_filter',
+      'field' => 'field_event_date_value',
+    ],
+  ];
+
+  $data['node']['social_created_filter'] = [
+    'title' => t('Created Date Filter by Open Social'),
+    'filter' => [
+      'title' => t('Date Filter by Open Social'),
+      'help' => t('Filters for date used in Open Social'),
+      'id' => 'social_date_filter',
+      'field' => 'created',
+    ],
+  ];
+}
+
+/**
+ * Implements hook_search_api_views_handler_mapping_alter().
+ */
+function social_search_search_api_views_handler_mapping_alter(array &$mapping) {
+  // Override the Search API views filter connected to date with
+  // SocialDate.php (Extends current one limits options).
+  $mapping['date']['filter']['id'] = 'social_date_filter';
 }
 
 /**
