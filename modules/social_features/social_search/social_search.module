@@ -90,6 +90,16 @@ function social_search_form_views_exposed_form_alter(&$form, FormStateInterface 
         $form['location_details']['#weight'] = '-98';
         $form['location_details']['#attributes']['class'] = ['indent_filter'];
       }
+
+      // Make changes to the sorting options.
+      if (isset($form['sort_bef_combine'])) {
+        // It is not possible to unset the label in BEF.
+        unset($form['sort_bef_combine']['#title']);
+        // Always unset the relevance ASC sorting option as nobody needs it.
+        if (isset($form['sort_bef_combine']['#options']['search_api_relevance ASC'])) {
+          unset($form['sort_bef_combine']['#options']['search_api_relevance ASC']);
+        }
+      }
     }
   }
 }
