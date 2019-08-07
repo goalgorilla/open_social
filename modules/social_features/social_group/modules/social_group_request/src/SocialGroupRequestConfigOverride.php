@@ -61,6 +61,40 @@ class SocialGroupRequestConfigOverride implements ConfigFactoryOverrideInterface
       }
     }
 
+    $config_name = 'core.entity_form_display.group.closed_group.default';
+    if (in_array($config_name, $names)) {
+      $config = $this->configFactory->getEditable($config_name);
+      $dependencies_config = $config->get('dependencies.config');
+      $dependencies_config[] = 'field.field.group.closed_group.field_group_allow_request';
+
+      $group_content_children = $config->get('third_party_settings.field_group.group_content.children');
+      $group_content_children[] = 'field_group_allow_request';
+
+      $overrides[$config_name] = [
+        'dependencies' => [
+          'config' => $dependencies_config,
+        ],
+        'third_party_settings' => [
+          'field_group' => [
+            'group_content' => [
+              'children' => $group_content_children,
+            ],
+          ],
+        ],
+        'content' => [
+          'field_group_allow_request' => [
+            'weight' => 1,
+            'settings' => [
+              'display_label' => TRUE,
+            ],
+            'third_party_settings' => [],
+            'type' => 'boolean_checkbox',
+            'region' => 'content',
+          ],
+        ],
+      ];
+    }
+
     return $overrides;
   }
 
