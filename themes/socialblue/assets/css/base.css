@@ -48,7 +48,8 @@ kbd {
   color: #fff;
   background-color: #333;
   border-radius: 3px;
-  box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.25);
+  -webkit-box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.25);
+          box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.25);
 }
 
 pre {
@@ -56,6 +57,16 @@ pre {
   background-color: #f5f5f5;
   border: 1px solid #ccc;
   border-radius: 10px;
+}
+
+h1, h2, h3, h4, h5, h6,
+.h1, .h2, .h3, .h4, .h5, .h6 {
+  font-weight: 700;
+}
+
+.section-title {
+  padding-top: 3rem;
+  padding-bottom: .5rem;
 }
 
 blockquote {
@@ -262,14 +273,14 @@ a.brand-secondary:focus {
 .brand-accent {
   background-color: #ffc142;
   border-color: #ffc142;
-  color: #4d4d4d;
+  color: #4a4a4a;
 }
 
 a.brand-accent:hover,
 a.brand-accent:focus {
   background-color: #ffb00f;
   border-color: #ffb00f;
-  color: #4d4d4d;
+  color: #4a4a4a;
 }
 
 .brand-user {
@@ -288,14 +299,14 @@ a.brand-user:focus {
 .default-light {
   background-color: #e6e6e6;
   border-color: #e6e6e6;
-  color: #4d4d4d;
+  color: #4a4a4a;
 }
 
 a.default-light:hover,
 a.default-light:focus {
   background-color: #cdcdcd;
   border-color: #cdcdcd;
-  color: #4d4d4d;
+  color: #4a4a4a;
 }
 
 body {
@@ -303,7 +314,7 @@ body {
   font-weight: 300;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  color: #4d4d4d;
+  color: #4a4a4a;
   background-color: #f3f3f3;
 }
 
@@ -475,6 +486,10 @@ body {
 
 .table .views-field-link-flag > .btn {
   min-width: 150px;
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+  background-color: #f6f6f6;
 }
 
 .img-avatar,

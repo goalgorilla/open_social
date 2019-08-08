@@ -1,0 +1,61 @@
+.socialblue--sky.path-forum .layout--with-complementary {
+
+  @media (min-width: 900px) {
+    .content--side {
+      flex: 0 0 100%;
+      max-width: 100%;
+    }
+  }
+}
+
+.table-forum {
+  margin-bottom: 1.75rem;
+
+  thead,
+  tbody {
+    td,
+    th {
+      &:first-child {
+
+        @media (min-width: 900px) {
+          padding-left: 2.5rem;
+        }
+      }
+
+      &:last-child {
+
+        @media (min-width: 900px) {
+          padding-right: 2.5rem;
+        }
+      }
+    }
+  }
+
+  thead {
+    th {
+      padding: 1.5rem 30px 1rem;
+      font-size: 14px;
+      font-weight: 700;
+    }
+  }
+
+  tbody {
+    td {
+      padding-right: 30px;
+      padding-left: 30px;
+
+      > * {
+        margin-bottom: 1rem;
+
+        &[title='No new posts'],
+        &:last-child {
+          margin-bottom: 0;
+        }
+      }
+
+      a {
+        font-weight: 700;
+      }
+    }
+  }
+}

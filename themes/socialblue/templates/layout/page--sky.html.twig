@@ -28,20 +28,22 @@
         {{ page.title }}
       {% endif %}
 
-      {% if page.secondary_navigation %}
+      {% if page.secondary_navigation|render|striptags|trim %}
         {{- page.secondary_navigation|raw -}}
       {% endif %}
       <div class="content--wrapper">
-        {% if page.complementary_top or page.complementary_bottom %}
+        {% if page.complementary_top|render|striptags|trim or page.complementary_bottom|render|striptags|trim %}
           <aside class="region--complementary" role="complementary">
-            <div class="region--complementary_wrapper">
-              {% if page.complementary_top %}
-                {{ page.complementary_top }}
-              {% endif %}
-              {% if page.complementary_bottom %}
-                {{ page.complementary_bottom }}
-              {% endif %}
-            </div>
+            {% if page.complementary_top|render|striptags|trim or page.complementary_bottom|render|striptags|trim %}
+              <div class="region--complementary_wrapper">
+                {% if page.complementary_top %}
+                  {{ page.complementary_top }}
+                {% endif %}
+                {% if page.complementary_bottom %}
+                  {{ page.complementary_bottom }}
+                {% endif %}
+              </div>
+            {% endif %}
           </aside>
         {% endif %}
 
