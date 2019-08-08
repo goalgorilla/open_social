@@ -37,7 +37,7 @@ function social_group_request_token_info() {
 function social_group_request_tokens($type, $tokens, array $data, array $options, BubbleableMetadata $bubbleable_metadata) {
   $replacements = [];
 
-  if ($type == 'social_group_request' && !empty($data['message'])) {
+  if ($type === 'social_group_request' && !empty($data['message'])) {
     /** @var \Drupal\message\Entity\Message $message */
     $message = $data['message'];
 
@@ -55,12 +55,10 @@ function social_group_request_tokens($type, $tokens, array $data, array $options
               ->load($target_id);
 
             if (!empty($comment)) {
-              if ($comment->getEntityTypeId() == 'comment') {
+              if ($comment->getEntityTypeId() === 'comment') {
                 if (!empty($comment->getCommentedEntity())) {
                   $entity = $comment->getCommentedEntity();
-                  if (!empty($entity)) {
-                    $replacements[$original] = Url::fromRoute('view.group_pending_members.pending_members', ['group' => $entity->id()])->toString();
-                  }
+                  $replacements[$original] = Url::fromRoute('view.group_pending_members.pending_members', ['group' => $entity->id()])->toString();
                 }
               }
             }

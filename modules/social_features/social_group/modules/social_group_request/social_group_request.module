@@ -7,7 +7,7 @@
 
 use Drupal\Core\Cache\RefinableCacheableDependencyInterface;
 use Drupal\Core\Url;
-use Drupal\group\Entity\Group;
+use Drupal\group\Entity\GroupInterface;
 use Drupal\social_group_request\Plugin\GroupContentEnabler\GroupMembershipRequest;
 use Drupal\group\Entity\GroupContentInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -20,8 +20,8 @@ function social_group_request_group_content_insert(GroupContentInterface $group_
   $membership_request_enabled = $group_content->getGroup()->getGroupType()->hasContentPlugin('group_membership_request');
 
   // If new membership is created, check related membership request exists.
-  if ($type == 'group_membership' && $membership_request_enabled) {
-    $approver = \Drupal::currentUser();
+  if ($type === 'group_membership' && $membership_request_enabled) {
+    $approver = \Drupal::currentUser()->id();
     $storage = \Drupal::entityTypeManager()->getStorage('group_content');
     $filters = [
       'entity_id' => $group_content->get('entity_id')->getString(),
@@ -33,7 +33,7 @@ function social_group_request_group_content_insert(GroupContentInterface $group_
     foreach ($requests as $request) {
       $request
         ->set('grequest_status', GroupMembershipRequest::REQUEST_ACCEPTED)
-        ->set('grequest_updated_by', $approver->id())
+        ->set('grequest_updated_by', $approver)
         ->save();
 
       _activity_basics_entity_action($request, 'change_status_group_membership_request_entity_action');
@@ -50,7 +50,7 @@ function social_group_request_preprocess_group__hero(&$variables) {
   $account = \Drupal::currentUser();
 
   $group_type_id = $group->getGroupType()->id();
-  if (!$group_type_id == 'closed_group') {
+  if ($group_type_id !== 'closed_group') {
     return;
   }
 
@@ -73,7 +73,7 @@ function social_group_request_preprocess_group__hero(&$variables) {
   }
 
   $variables['allow_request'] = TRUE;
-  $variables['group_operations_url'] = Url::fromUserInput('/group/' . $group->id() . '/request-membership');
+  $variables['group_operations_url'] = Url::fromRoute('social_group_request.request_membership', ['group' => $group->id()]);
 
   $contentTypeConfigId = $group
     ->getGroupType()
@@ -89,7 +89,7 @@ function social_group_request_preprocess_group__hero(&$variables) {
 
   if (!empty($request)) {
     $variables['requested'] = TRUE;
-    $variables['group_operations_url'] = Url::fromUserInput('/group/' . $group->id() . '/cancel-request');
+    $variables['group_operations_url'] = Url::fromRoute('social_group_request.cancel_request', ['group' => $group->id()]);
   }
 
   $variables['#cache']['tags'][] = 'request-membership:' . $group->id();
@@ -100,11 +100,11 @@ function social_group_request_preprocess_group__hero(&$variables) {
  */
 function social_group_request_menu_local_tasks_alter(&$data, $route_name, RefinableCacheableDependencyInterface &$cacheability) {
   // Get the Group object from the route.
-  $group = Drupal::routeMatch()->getParameter('group');
+  $group = \Drupal::routeMatch()->getParameter('group');
 
   // Must be a group, otherwise we don't do anything.
-  if ($group instanceof Group && isset($data['tabs'][0]['social_group.pending_members'])) {
-    $pending_members_tab = &$data['tabs'][0]['social_group.pending_members'];
+  if ($group instanceof GroupInterface && isset($data['tabs'][0]['social_group_request.pending_members'])) {
+    $pending_members_tab = &$data['tabs'][0]['social_group_request.pending_members'];
 
     if ($group->getGroupType()->id() === 'closed_group') {
       $contentTypeConfigId = $group

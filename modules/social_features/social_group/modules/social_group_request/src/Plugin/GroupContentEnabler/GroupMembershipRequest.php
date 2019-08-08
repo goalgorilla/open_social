@@ -2,6 +2,8 @@
 
 namespace Drupal\social_group_request\Plugin\GroupContentEnabler;
 
+use Drupal\Core\Config\ConfigInstallerInterface;
+use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\group\Access\GroupAccessResult;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupContentInterface;
@@ -12,6 +14,7 @@ use Drupal\Core\Url;
 use Drupal\Core\Entity\Entity\EntityViewDisplay;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Provides a content enabler for users.
@@ -26,7 +29,7 @@ use Drupal\Core\Session\AccountInterface;
  *   reference_description = @Translation("The name of the user you want to make a member"),
  * )
  */
-class GroupMembershipRequest extends GroupContentEnablerBase {
+class GroupMembershipRequest extends GroupContentEnablerBase implements ContainerFactoryPluginInterface {
 
   /**
    * Invitation created and waiting for user's response.
@@ -44,13 +47,48 @@ class GroupMembershipRequest extends GroupContentEnablerBase {
   const REQUEST_REJECTED = 2;
 
   /**
+   * User account.
+   *
+   * @var \Drupal\Core\Session\AccountInterface
+   */
+  protected $account;
+
+  /**
+   * Config installer.
+   *
+   * @var \Drupal\Core\Config\ConfigInstallerInterface
+   */
+  protected $configInstaller;
+
+  /**
+   * Constructor of GroupMembershipRequest class.
+   */
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, AccountInterface $account, ConfigInstallerInterface $config_installer) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition);
+    $this->account = $account;
+    $this->configInstaller = $config_installer;
+  }
+
+  /**
+   * Creates an instance of the plugin.
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    return new static(
+      $configuration,
+      $plugin_id,
+      $plugin_definition,
+      $container->get('current_user'),
+      $container->get('config.installer')
+    );
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function getGroupOperations(GroupInterface $group) {
-    $account = \Drupal::currentUser();
     $operations = [];
 
-    if (!$group->getMember($account) && $group->hasPermission('request group membership', $account)) {
+    if (!$group->getMember($this->account) && $group->hasPermission('request group membership', $this->account)) {
       $operations['group-request-membership'] = [
         'title' => $this->t('Request group membership'),
         'url' => new Url(
@@ -142,7 +180,7 @@ class GroupMembershipRequest extends GroupContentEnablerBase {
    * {@inheritdoc}
    */
   public function postInstall() {
-    if (!\Drupal::isConfigSyncing()) {
+    if (!$this->configInstaller->isSyncing()) {
       $group_content_type_id = $this->getContentTypeConfigId();
 
       // Add Status field.

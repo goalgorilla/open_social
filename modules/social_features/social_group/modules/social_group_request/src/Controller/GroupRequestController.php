@@ -6,7 +6,7 @@ use Drupal\Core\Cache\CacheTagsInvalidator;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityFormBuilderInterface;
 use Drupal\Core\Messenger\MessengerInterface;
-use Drupal\group\Entity\GroupContent;
+use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\group\Entity\GroupContentInterface;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\social_group_request\Plugin\GroupContentEnabler\GroupMembershipRequest;
@@ -41,10 +41,11 @@ class GroupRequestController extends ControllerBase {
   /**
    * The controller constructor.
    */
-  public function __construct(EntityFormBuilderInterface $entity_form_builder, MessengerInterface $messenger, CacheTagsInvalidator $cache_tags_invalidator) {
+  public function __construct(EntityFormBuilderInterface $entity_form_builder, MessengerInterface $messenger, CacheTagsInvalidator $cache_tags_invalidator, TranslationInterface $string_translation) {
     $this->entityFormBuilder = $entity_form_builder;
     $this->messenger = $messenger;
     $this->cacheTagsInvalidator = $cache_tags_invalidator;
+    $this->stringTranslation = $string_translation;
   }
 
   /**
@@ -54,7 +55,8 @@ class GroupRequestController extends ControllerBase {
     return new static(
       $container->get('entity.form_builder'),
       $container->get('messenger'),
-      $container->get('cache_tags.invalidator')
+      $container->get('cache_tags.invalidator'),
+      $container->get('string_translation')
     );
   }
 
@@ -80,7 +82,7 @@ class GroupRequestController extends ControllerBase {
     $plugin = $group->getGroupType()->getContentPlugin('group_membership');
 
     // Pre-populate a group membership from Membership request.
-    $group_content = GroupContent::create([
+    $group_content = $this->entityTypeManager()->getStorage('group_content')->create([
       'type' => $plugin->getContentTypeConfigId(),
       'gid' => $group->id(),
       'entity_id' => $group_content->get('entity_id')->getString(),
@@ -100,7 +102,7 @@ class GroupRequestController extends ControllerBase {
       ->getContentPlugin('group_membership_request')
       ->getContentTypeConfigId();
 
-    $group_content = GroupContent::create([
+    $group_content = $this->entityTypeManager()->getStorage('group_content')->create([
       'type' => $contentTypeConfigId,
       'gid' => $group->id(),
       'entity_id' => $this->currentUser()->id(),
@@ -112,7 +114,7 @@ class GroupRequestController extends ControllerBase {
       $this->messenger()->addMessage($this->t("Your request is waiting for Group Administrator's approval"));
     }
     else {
-      $this->messenger()->addMessage($this->t("Error creating request"), self::TYPE_ERROR);
+      $this->messenger()->addError($this->t('Error creating request'));
     }
 
     $this->cacheTagsInvalidator->invalidateTags(['request-membership:' . $group->id()]);
@@ -140,7 +142,7 @@ class GroupRequestController extends ControllerBase {
       $request->delete();
     }
 
-    $this->messenger()->addMessage($this->t("Cancel request of membership has been done successfully."));
+    $this->messenger()->addMessage($this->t('Cancel request of membership has been done successfully.'));
 
     $this->cacheTagsInvalidator->invalidateTags(['request-membership:' . $group->id()]);
 
