@@ -37,7 +37,7 @@ class ApprovedRequestJoinGroupActivityContext extends ActivityContextBase {
       ) {
         $recipients[] = [
           'target_type' => 'user',
-          'target_id' => $group_content->get('entity_id')->getString(),
+          'target_id' => $group_content->entity_id->target_id,
         ];
       }
     }

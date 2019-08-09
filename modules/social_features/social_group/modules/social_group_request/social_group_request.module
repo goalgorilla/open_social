@@ -24,7 +24,7 @@ function social_group_request_group_content_insert(GroupContentInterface $group_
     $approver = \Drupal::currentUser()->id();
     $storage = \Drupal::entityTypeManager()->getStorage('group_content');
     $filters = [
-      'entity_id' => $group_content->get('entity_id')->getString(),
+      'entity_id' => $group_content->getEntity()->id(),
       'grequest_status' => GroupMembershipRequest::REQUEST_PENDING,
     ];
     $requests = $storage->loadByGroup($group_content->getGroup(), 'group_membership_request', $filters);
@@ -160,7 +160,7 @@ function social_group_request_form_alter(array &$form, FormStateInterface $form_
       $form['group_roles']['widget']['#title'] = t('Group role');
     }
 
-    $user_name = $form['entity_id']['widget'][0]['target_id']['#default_value']->get('name')->value;
+    $user_name = $form['entity_id']['widget'][0]['target_id']['#default_value']->getDisplayName();
     $form['question'] = [
       '#type' => 'html_tag',
       '#tag' => 'p',
@@ -200,26 +200,26 @@ function social_group_request_preprocess_activity(array &$variables) {
 
   if (!$activity->get('field_activity_message')->isEmpty()) {
     /** @var \Drupal\message\Entity\Message $message */
-    $message = $activity->get('field_activity_message')->entity;
+    $message = $activity->field_activity_message->entity;
 
     if (!$message->get('template')->isEmpty()) {
-      $message_template = $message->get('template')->first()->getValue()['target_id'];
+      $message_template = $message->template->target_id;
 
       if ($message_template === 'request_to_join_a_group') {
-        $activityEntity = $activity->get('field_activity_entity')->entity;
+        $activity_entity = $activity->field_activity_entity->entity;
 
-        if ($activityEntity instanceof GroupContentInterface) {
-          $gid = $activity->get('field_activity_entity')->entity->get('gid')->first()->getValue()['target_id'];
+        if ($activity_entity instanceof GroupContentInterface) {
+          $gid = $activity_entity->gid->target_id;
 
           $variables['full_url'] = Url::fromRoute('view.group_pending_members.pending_members', ['group' => $gid]);
         }
       }
 
       if ($message_template === 'approve_request_join_group') {
-        $activityEntity = $activity->get('field_activity_entity')->entity;
+        $activity_entity = $activity->field_activity_entity->entity;
 
-        if ($activityEntity instanceof GroupContentInterface) {
-          $gid = $activity->get('field_activity_entity')->entity->get('gid')->first()->getValue()['target_id'];
+        if ($activity_entity instanceof GroupContentInterface) {
+          $gid = $activity_entity->gid->target_id;
 
           $variables['full_url'] = Url::fromRoute('social_group.stream', ['group' => $gid]);
         }

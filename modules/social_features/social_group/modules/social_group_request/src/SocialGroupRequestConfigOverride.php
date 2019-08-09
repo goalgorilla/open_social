@@ -21,6 +21,9 @@ class SocialGroupRequestConfigOverride implements ConfigFactoryOverrideInterface
 
   /**
    * Constructs the configuration override.
+   *
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *   Config factory.
    */
   public function __construct(ConfigFactoryInterface $config_factory) {
     $this->configFactory = $config_factory;
@@ -102,7 +105,7 @@ class SocialGroupRequestConfigOverride implements ConfigFactoryOverrideInterface
    * {@inheritdoc}
    */
   public function getCacheSuffix() {
-    return 'social_group_request_config_override';
+    return 'SocialGroupRequestConfigOverride';
   }
 
   /**

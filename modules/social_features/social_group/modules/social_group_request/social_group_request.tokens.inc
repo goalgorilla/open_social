@@ -38,7 +38,7 @@ function social_group_request_tokens($type, $tokens, array $data, array $options
   $replacements = [];
 
   if ($type === 'social_group_request' && !empty($data['message'])) {
-    /** @var \Drupal\message\Entity\Message $message */
+    /** @var \Drupal\message\MessageInterface $message */
     $message = $data['message'];
 
     foreach ($tokens as $name => $original) {
@@ -56,9 +56,8 @@ function social_group_request_tokens($type, $tokens, array $data, array $options
 
             if (!empty($comment)) {
               if ($comment->getEntityTypeId() === 'comment') {
-                if (!empty($comment->getCommentedEntity())) {
-                  $entity = $comment->getCommentedEntity();
-                  $replacements[$original] = Url::fromRoute('view.group_pending_members.pending_members', ['group' => $entity->id()])->toString();
+                if ($entity_id = $comment->getCommentedEntityId()) {
+                  $replacements[$original] = Url::fromRoute('view.group_pending_members.pending_members', ['group' => $entity_id])->toString();
                 }
               }
             }

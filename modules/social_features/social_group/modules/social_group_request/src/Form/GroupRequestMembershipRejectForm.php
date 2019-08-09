@@ -47,6 +47,11 @@ class GroupRequestMembershipRejectForm extends FormBase {
 
   /**
    * Class constructor.
+   *
+   * @param \Drupal\Core\Routing\RedirectDestinationInterface $redirect_destination
+   *   Redirect destination.
+   * @param \Drupal\Core\Cache\CacheTagsInvalidatorInterface $cache_tags_invalidator
+   *   Cache tags invalidator.
    */
   public function __construct(RedirectDestinationInterface $redirect_destination, CacheTagsInvalidatorInterface $cache_tags_invalidator) {
     $this->redirectDestination = $redirect_destination;
@@ -86,7 +91,7 @@ class GroupRequestMembershipRejectForm extends FormBase {
 
     $form['#attributes']['class'][] = 'form--default';
 
-    $user_name = $group_content->get('entity_id')->entity->get('name')->value;
+    $user_name = $group_content->entity_id->entity->getDisplayName();
     $form['question'] = [
       '#type' => 'html_tag',
       '#tag' => 'p',
