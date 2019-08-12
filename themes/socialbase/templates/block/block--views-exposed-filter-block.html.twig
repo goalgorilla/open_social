@@ -53,18 +53,11 @@
       <svg class="btn-icon">
         <use xlink:href="#icon-filter_list"></use>
       </svg>
-      {% trans %}Filter{% endtrans %}
+      {{ label }}
     </a>
   </div>
   <div id="block-filter" class="off-canvas off-canvas-right off-canvas-xs-only">
     <div class="offcanvas-head">
-
-    {% if content.sort_bef_combine %}
-      <header{{ title_attributes.addClass('complementary-title') }}>
-        {% trans %}Sort{% endtrans %}
-      </header>
-      {{ content.sort_bef_combine }}
-    {% endif %}
 
     {{ title_prefix }}
     {% if label %}
@@ -85,7 +78,7 @@
     <div class="offcanvas-body">
 
       {% block content %}
-        {{ content|without('sort_bef_combine') }}
+        {{ content }}
       {% endblock %}
 
     </div>

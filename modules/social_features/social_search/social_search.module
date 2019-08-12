@@ -125,14 +125,30 @@ function social_search_alter_content_exposed_filter_block(&$form, FormStateInter
     $form['location_details']['#attributes']['class'] = ['indent_filter'];
   }
 
-  // Make changes to the sorting options.
+  // When combined sorting and filtering is used we make some changes to
+  // accommodate theming.
   if (isset($form['sort_bef_combine'])) {
-    // It is not possible to unset the label in BEF.
-    unset($form['sort_bef_combine']['#title']);
-    // Always unset the relevance ASC sorting option as nobody needs it.
+    // Ensure the sort option shows up at the top.
+    $form['sort_bef_combine']['#weight'] = -9999;
+
+    // From a UX perspective it doesn't make sense to show the least relevant
+    // results first so we remove this sorting option.
     if (isset($form['sort_bef_combine']['#options']['search_api_relevance ASC'])) {
       unset($form['sort_bef_combine']['#options']['search_api_relevance ASC']);
     }
+
+    // We attach custom CSS so that we can properly translate the filter title.
+    // This selector should match the value in sort_filter.css of this module.
+    // Use a useless variable to trick phpcs from giving us invalid warnings.
+    $translated_filter = t('Filter');
+    $form['social_search_translated_filter_string'] = [
+      '#type' => 'html_tag',
+      '#tag' => 'style',
+      '#attributes' => [
+        'type' => 'text/css',
+      ],
+      '#value' => "#block-filter .form-item-sort-bef-combine:after { content: '${translated_filter}'; }",
+    ];
   }
 }
 
