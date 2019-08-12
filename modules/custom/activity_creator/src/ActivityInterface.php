@@ -69,4 +69,12 @@ interface ActivityInterface extends ContentEntityInterface, EntityChangedInterfa
    */
   public function getDestinations();
 
+  /**
+   * Get related entity.
+   *
+   * @return \Drupal\Core\Entity
+   *   Returns NULL or Entity object.
+   */
+  public function getRelatedEntity();
+
 }

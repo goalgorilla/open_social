@@ -6,6 +6,7 @@ use Drupal\Core\Cache\CacheTagsInvalidatorInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Routing\RedirectDestinationInterface;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Drupal\social_group_request\Plugin\GroupContentEnabler\GroupMembershipRequest;
 use Drupal\group\Entity\GroupContentInterface;
@@ -46,16 +47,26 @@ class GroupRequestMembershipRejectForm extends FormBase {
   protected $cacheTagsInvalidator;
 
   /**
-   * Class constructor.
+   * The current user.
+   *
+   * @var \Drupal\Core\Session\AccountInterface
+   */
+  protected $currentUser;
+
+  /**
+   * GroupRequestMembershipRejectForm constructor.
    *
    * @param \Drupal\Core\Routing\RedirectDestinationInterface $redirect_destination
-   *   Redirect destination.
+   *   The redirect destination.
    * @param \Drupal\Core\Cache\CacheTagsInvalidatorInterface $cache_tags_invalidator
-   *   Cache tags invalidator.
+   *   The cache tags invalidator.
+   * @param \Drupal\Core\Session\AccountInterface $current_user
+   *   The current user.
    */
-  public function __construct(RedirectDestinationInterface $redirect_destination, CacheTagsInvalidatorInterface $cache_tags_invalidator) {
+  public function __construct(RedirectDestinationInterface $redirect_destination, CacheTagsInvalidatorInterface $cache_tags_invalidator, AccountInterface $current_user) {
     $this->redirectDestination = $redirect_destination;
     $this->cacheTagsInvalidator = $cache_tags_invalidator;
+    $this->currentUser = $current_user;
   }
 
   /**
@@ -64,7 +75,8 @@ class GroupRequestMembershipRejectForm extends FormBase {
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('redirect.destination'),
-      $container->get('cache_tags.invalidator')
+      $container->get('cache_tags.invalidator'),
+      $container->get('current_user')
     );
   }
 
@@ -91,11 +103,12 @@ class GroupRequestMembershipRejectForm extends FormBase {
 
     $form['#attributes']['class'][] = 'form--default';
 
-    $user_name = $group_content->entity_id->entity->getDisplayName();
     $form['question'] = [
       '#type' => 'html_tag',
       '#tag' => 'p',
-      '#value' => $this->t('Are you sure to reject the membership request for the @name?', ['@name' => $user_name]),
+      '#value' => $this->t('Are you sure to reject the membership request for the @name?', [
+        '@name' => $group_content->getEntity()->getDisplayName(),
+      ]),
       '#weight' => 1,
       '#prefix' => '<div class="card"><div class="card__block">',
       '#suffix' => '</div></div>',
@@ -134,7 +147,7 @@ class GroupRequestMembershipRejectForm extends FormBase {
     $this->groupContent
       ->set('grequest_status', GroupMembershipRequest::REQUEST_REJECTED)
       // Who created request will become an 'approver' for Membership request.
-      ->set('grequest_updated_by', $this->currentUser()->id());
+      ->set('grequest_updated_by', $this->currentUser->id());
     $result = $this->groupContent->save();
 
     if ($result) {

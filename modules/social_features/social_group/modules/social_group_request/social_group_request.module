@@ -49,8 +49,7 @@ function social_group_request_preprocess_group__hero(&$variables) {
   $group = $variables['group'];
   $account = \Drupal::currentUser();
 
-  $group_type_id = $group->getGroupType()->id();
-  if ($group_type_id !== 'closed_group') {
+  if ($group->getGroupType()->id() !== 'closed_group') {
     return;
   }
 
@@ -80,14 +79,15 @@ function social_group_request_preprocess_group__hero(&$variables) {
     ->getContentPlugin('group_membership_request')
     ->getContentTypeConfigId();
 
-  $request = \Drupal::entityTypeManager()->getStorage('group_content')->loadByProperties([
-    'type' => $contentTypeConfigId,
-    'gid' => $group->id(),
-    'entity_id' => $account->id(),
-    'grequest_status' => GroupMembershipRequest::REQUEST_PENDING,
-  ]);
+  $request = \Drupal::entityQuery('group_content')
+    ->condition('type', $contentTypeConfigId)
+    ->condition('gid', $group->id())
+    ->condition('entity_id', $account->id())
+    ->condition('grequest_status', GroupMembershipRequest::REQUEST_PENDING)
+    ->count()
+    ->execute();
 
-  if (!empty($request)) {
+  if ($request >= 0) {
     $variables['requested'] = TRUE;
     $variables['group_operations_url'] = Url::fromRoute('social_group_request.cancel_request', ['group' => $group->id()]);
   }
@@ -195,33 +195,33 @@ function social_group_request_fixed_tabs_alter(array &$fixed_tabs) {
  * Implements hook_preprocess_activity().
  */
 function social_group_request_preprocess_activity(array &$variables) {
-  /** @var \Drupal\activity_creator\Entity\Activity $activity */
+  /** @var \Drupal\activity_creator\ActivityInterface $activity */
   $activity = $variables['elements']['#activity'];
 
   if (!$activity->get('field_activity_message')->isEmpty()) {
-    /** @var \Drupal\message\Entity\Message $message */
+    /** @var \Drupal\message\MessageInterface $message */
     $message = $activity->field_activity_message->entity;
 
     if (!$message->get('template')->isEmpty()) {
       $message_template = $message->template->target_id;
 
       if ($message_template === 'request_to_join_a_group') {
-        $activity_entity = $activity->field_activity_entity->entity;
+        $activity_entity = $activity->getRelatedEntity();
 
         if ($activity_entity instanceof GroupContentInterface) {
-          $gid = $activity_entity->gid->target_id;
-
-          $variables['full_url'] = Url::fromRoute('view.group_pending_members.pending_members', ['group' => $gid]);
+          $variables['full_url'] = Url::fromRoute('view.group_pending_members.pending_members', [
+            'group' => $activity_entity->getGroup()->id(),
+          ]);
         }
       }
 
       if ($message_template === 'approve_request_join_group') {
-        $activity_entity = $activity->field_activity_entity->entity;
+        $activity_entity = $activity->getRelatedEntity();
 
         if ($activity_entity instanceof GroupContentInterface) {
-          $gid = $activity_entity->gid->target_id;
-
-          $variables['full_url'] = Url::fromRoute('social_group.stream', ['group' => $gid]);
+          $variables['full_url'] = Url::fromRoute('social_group.stream', [
+            'group' => $activity_entity->getGroup()->id(),
+          ]);
         }
       }
     }

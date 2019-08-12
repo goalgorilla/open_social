@@ -5,7 +5,9 @@ namespace Drupal\social_group_request\Controller;
 use Drupal\Core\Cache\CacheTagsInvalidator;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityFormBuilderInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Messenger\MessengerInterface;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\group\Entity\GroupContentInterface;
 use Drupal\group\Entity\GroupInterface;
@@ -18,20 +20,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class GroupRequestController extends ControllerBase {
 
   /**
-   * The entity form builder service.
-   *
-   * @var \Drupal\Core\Entity\EntityFormBuilderInterface
-   */
-  protected $entityFormBuilder;
-
-  /**
-   * The messenger.
-   *
-   * @var \Drupal\Core\Messenger\MessengerInterface
-   */
-  protected $messenger;
-
-  /**
    * The cache tags invalidator.
    *
    * @var \Drupal\Core\Cache\CacheTagsInvalidator
@@ -39,13 +27,22 @@ class GroupRequestController extends ControllerBase {
   protected $cacheTagsInvalidator;
 
   /**
-   * The controller constructor.
+   * GroupRequestController constructor.
    */
-  public function __construct(EntityFormBuilderInterface $entity_form_builder, MessengerInterface $messenger, CacheTagsInvalidator $cache_tags_invalidator, TranslationInterface $string_translation) {
+  public function __construct(
+    EntityFormBuilderInterface $entity_form_builder,
+    MessengerInterface $messenger,
+    CacheTagsInvalidator $cache_tags_invalidator,
+    TranslationInterface $string_translation,
+    EntityTypeManagerInterface $entity_type_manager,
+    AccountInterface $current_user
+  ) {
     $this->entityFormBuilder = $entity_form_builder;
     $this->messenger = $messenger;
     $this->cacheTagsInvalidator = $cache_tags_invalidator;
     $this->stringTranslation = $string_translation;
+    $this->entityTypeManager = $entity_type_manager;
+    $this->currentUser = $current_user;
   }
 
   /**
@@ -56,7 +53,9 @@ class GroupRequestController extends ControllerBase {
       $container->get('entity.form_builder'),
       $container->get('messenger'),
       $container->get('cache_tags.invalidator'),
-      $container->get('string_translation')
+      $container->get('string_translation'),
+      $container->get('entity_type.manager'),
+      $container->get('current_user')
     );
   }
 
@@ -85,7 +84,7 @@ class GroupRequestController extends ControllerBase {
     $group_content = $this->entityTypeManager()->getStorage('group_content')->create([
       'type' => $plugin->getContentTypeConfigId(),
       'gid' => $group->id(),
-      'entity_id' => $group_content->get('entity_id')->getString(),
+      'entity_id' => $group_content->getEntity()->id(),
     ]);
 
     $this->cacheTagsInvalidator->invalidateTags(['request-membership:' . $group->id()]);
@@ -97,13 +96,13 @@ class GroupRequestController extends ControllerBase {
    * Callback to request membership.
    */
   public function requestMembership(GroupInterface $group) {
-    $contentTypeConfigId = $group
+    $content_type_config_id = $group
       ->getGroupType()
       ->getContentPlugin('group_membership_request')
       ->getContentTypeConfigId();
 
     $group_content = $this->entityTypeManager()->getStorage('group_content')->create([
-      'type' => $contentTypeConfigId,
+      'type' => $content_type_config_id,
       'gid' => $group->id(),
       'entity_id' => $this->currentUser()->id(),
       'grequest_status' => GroupMembershipRequest::REQUEST_PENDING,
@@ -126,13 +125,13 @@ class GroupRequestController extends ControllerBase {
    * Callback to cancel the request of membership.
    */
   public function cancelRequest(GroupInterface $group) {
-    $contentTypeConfigId = $group
+    $content_type_config_id = $group
       ->getGroupType()
       ->getContentPlugin('group_membership_request')
       ->getContentTypeConfigId();
 
     $requests = $this->entityTypeManager()->getStorage('group_content')->loadByProperties([
-      'type' => $contentTypeConfigId,
+      'type' => $content_type_config_id,
       'gid' => $group->id(),
       'entity_id' => $this->currentUser()->id(),
       'grequest_status' => GroupMembershipRequest::REQUEST_PENDING,

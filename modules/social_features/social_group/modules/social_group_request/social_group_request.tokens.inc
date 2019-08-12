@@ -55,7 +55,7 @@ function social_group_request_tokens($type, $tokens, array $data, array $options
               ->load($target_id);
 
             if (!empty($comment)) {
-              if ($comment->getEntityTypeId() === 'comment') {
+              if ($target_type === 'comment') {
                 if ($entity_id = $comment->getCommentedEntityId()) {
                   $replacements[$original] = Url::fromRoute('view.group_pending_members.pending_members', ['group' => $entity_id])->toString();
                 }

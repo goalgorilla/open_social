@@ -4,6 +4,7 @@ namespace Drupal\social_group_request\Plugin\GroupContentEnabler;
 
 use Drupal\Core\Config\ConfigInstallerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\group\Access\GroupAccessResult;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupContentInterface;
@@ -47,11 +48,11 @@ class GroupMembershipRequest extends GroupContentEnablerBase implements Containe
   const REQUEST_REJECTED = 2;
 
   /**
-   * User account.
+   * Current user.
    *
    * @var \Drupal\Core\Session\AccountInterface
    */
-  protected $account;
+  protected $currentUser;
 
   /**
    * Config installer.
@@ -61,12 +62,33 @@ class GroupMembershipRequest extends GroupContentEnablerBase implements Containe
   protected $configInstaller;
 
   /**
-   * Constructor of GroupMembershipRequest class.
+   * GroupMembershipRequest constructor.
+   *
+   * @param array $configuration
+   *   A configuration array containing information about the plugin instance.
+   * @param string $plugin_id
+   *   The plugin_id for the plugin instance.
+   * @param mixed $plugin_definition
+   *   The plugin implementation definition.
+   * @param \Drupal\Core\Session\AccountInterface $current_user
+   *   The current user.
+   * @param \Drupal\Core\Config\ConfigInstallerInterface $config_installer
+   *   The config installer.
+   * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
+   *   The string translation.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, AccountInterface $account, ConfigInstallerInterface $config_installer) {
+  public function __construct(
+    array $configuration,
+    $plugin_id,
+    $plugin_definition,
+    AccountInterface $current_user,
+    ConfigInstallerInterface $config_installer,
+    TranslationInterface $string_translation
+  ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
-    $this->account = $account;
+    $this->currentUser = $current_user;
     $this->configInstaller = $config_installer;
+    $this->stringTranslation = $string_translation;
   }
 
   /**
@@ -78,7 +100,8 @@ class GroupMembershipRequest extends GroupContentEnablerBase implements Containe
       $plugin_id,
       $plugin_definition,
       $container->get('current_user'),
-      $container->get('config.installer')
+      $container->get('config.installer'),
+      $container->get('string_translation')
     );
   }
 
@@ -88,7 +111,7 @@ class GroupMembershipRequest extends GroupContentEnablerBase implements Containe
   public function getGroupOperations(GroupInterface $group) {
     $operations = [];
 
-    if (!$group->getMember($this->account) && $group->hasPermission('request group membership', $this->account)) {
+    if (!$group->getMember($this->currentUser) && $group->hasPermission('request group membership', $this->currentUser)) {
       $operations['group-request-membership'] = [
         'title' => $this->t('Request group membership'),
         'url' => new Url(
