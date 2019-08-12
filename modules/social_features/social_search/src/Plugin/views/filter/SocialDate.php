@@ -31,6 +31,7 @@ class SocialDate extends DateTimeDate {
     }
 
     // Fallback for exposed operator.
+    $operatorfromurl = NULL;
     if ($operator === NULL && $this->realField === 'created') {
       // Check if we have it in the query.
       $operatorfromurl = \Drupal::request()->query->get('created_op');
@@ -39,6 +40,10 @@ class SocialDate extends DateTimeDate {
         $input['created_op'] = $operatorfromurl;
         $this->view->exposed_raw_input = $this->view->getExposedInput();
       }
+    }
+
+    if ($operator === NULL && $operatorfromurl === NULL) {
+      return FALSE;
     }
 
     $return = parent::acceptExposedInput($input);
