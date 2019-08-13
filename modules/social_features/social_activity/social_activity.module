@@ -31,17 +31,10 @@ function social_activity_social_user_account_header_items(array $context) {
         'class' => ['desktop', 'notification-bell'],
       ],
       '#title' => new TranslatableMarkup('Notification Centre'),
-      '#url' => Url::fromRoute('activity_creator.stream.notifications'),
       '#icon' => $num_notifications > 0 ? 'notifications' : 'notifications_none',
       '#label' => new TranslatableMarkup('Notifications'),
       '#notification_count' => $num_notifications,
       '#weight' => 800,
-      '#attached' => [
-        'library' => [
-          'core/drupal.ajax',
-          'activity_creator/activity_creator.notifications',
-        ],
-      ],
       'header' => [
         '#wrapper_attributes' => ['class' => 'dropdown-header'],
         '#markup' => new TranslatableMarkup('Notification Centre'),
@@ -50,9 +43,29 @@ function social_activity_social_user_account_header_items(array $context) {
         '#wrapper_attributes' => ['class' => 'divider'],
         '#markup' => '',
       ],
+      // Element to contain the link for ajaxified view for notifications.
+      'load_link' => [
+        '#type' => 'link',
+        '#url' => Url::fromRoute('activity_creator.stream.notifications'),
+        '#attributes' => ['class' => 'use-ajax'],
+      ],
       'notifications' => [
         '#wrapper_attributes' => ['class' => 'js-notification-center-wrapper'],
-        '#markup' =>  new TranslatableMarkup('Your notifications'),
+        // Added ajax throbber spinner markup.
+        '#markup' => '<div className="spinner">
+      <div className="bounce1"></div>
+      <div className="bounce2"></div>
+      <div className="bounce3"></div>
+    </div>',
+        '#attached' => [
+          'library' => [
+            'core/drupal.ajax',
+            'activity_creator/activity_creator.notifications',
+          ],
+        ],
+        '#cache' => [
+          'max-age' => 0,
+        ],
       ],
       'footer-divider' => [
         '#wrapper_attributes' => ['class' => 'divider'],
@@ -173,34 +186,7 @@ function social_activity_theme($existing, $type, $theme, $path) {
 }
 
 /**
- * Get the notification stream embedded view.
- *
- * @return array|null
- *   The render array of the embedded view.
- */
-function social_activity_notification_stream_view() {
-  $view = views_embed_view('activity_stream_notifications', 'block_1');
-  // Mark all notifications as seen.
-  $view['#attached'] = [
-    'library' => [
-      'activity_creator/activity_creator.notifications',
-    ],
-  ];
-
-  // Make sure we check if attached is part of the render array.
-  if (!isset($view['#attached'])) {
-    $view['#attached'] = [];
-  }
-  if (!isset($view['#attached']['library'])) {
-    $view['#attached']['library'] = [];
-  }
-  $view['#attached']['library'][] = 'activity_creator/activity_creator.notifications';
-
-  return $view;
-}
-
-/**
- * Wrapper method for the Service ActivityNotifications to get the number of unread notifications.
+ * Wrapper method to get the number of unread notifications.
  *
  * @param \Drupal\Core\Session\AccountInterface $account
  *   Account object to get notifications for.

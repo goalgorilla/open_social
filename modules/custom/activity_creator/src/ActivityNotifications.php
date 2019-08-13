@@ -56,6 +56,8 @@ class ActivityNotifications extends ControllerBase {
    *
    * @return int
    *   Number of remaining notifications.
+   *
+   * @throws \Drupal\Core\Entity\EntityStorageException
    */
   public function markAllNotificationsAsSeen(AccountInterface $account) {
 
@@ -97,6 +99,8 @@ class ActivityNotifications extends ControllerBase {
    *   Account object.
    * @param \Drupal\Core\Entity\EntityBase $entity
    *   Entity object.
+   *
+   * @throws \Drupal\Core\Entity\EntityStorageException
    */
   public function markEntityAsRead(AccountInterface $account, EntityBase $entity) {
 
@@ -116,10 +120,12 @@ class ActivityNotifications extends ControllerBase {
    * @param \Drupal\activity_creator\Entity\Activity $activity
    *   Activity object.
    * @param int $status
-   *   See: activity_creator_field_activity_status_allowed_values().
+   *   See: activity_creator_field_activity_status_allowed_values()
    *
-   * @return \Drupal\activity_creator\Entity\Activity
+   * @return int
    *   Returns activity object.
+   *
+   * @throws \Drupal\Core\Entity\EntityStorageException
    */
   public function changeStatusOfActivity(Activity $activity, $status = ACTIVITY_STATUS_RECEIVED) {
     $activity->set('field_activity_status', $status);

@@ -76,7 +76,7 @@ class AccountHeaderElement extends RenderElement {
         "aria-expanded" => "true",
         "aria-haspopup" => "true",
         "role" => "button",
-        "class" => "dropdown-toggle clearfix use-ajax",
+        "class" => "dropdown-toggle clearfix",
       ];
     }
 
