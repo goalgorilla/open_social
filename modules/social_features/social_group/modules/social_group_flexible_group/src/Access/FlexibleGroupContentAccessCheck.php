@@ -35,19 +35,19 @@ class FlexibleGroupContentAccessCheck implements AccessInterface {
 
     // Don't interfere if no permission was specified.
     if ($permission === NULL) {
-      return AccessResult::neutral();
+      return AccessResult::allowed();
     }
 
     // Don't interfere if no group was specified.
     $parameters = $route_match->getParameters();
     if (!$parameters->has('group')) {
-      return AccessResult::neutral();
+      return AccessResult::allowed();
     }
 
     // Don't interfere if the group isn't a real group.
     $group = $parameters->get('group');
     if (!$group instanceof GroupInterface) {
-      return AccessResult::neutral();
+      return AccessResult::allowed();
     }
 
     $type = $group->getGroupType();
