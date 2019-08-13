@@ -27,7 +27,7 @@ class PageTitle extends PreprocessBase {
     $route_name = \Drupal::routeMatch()->getRouteName();
 
     if ($route_name === 'entity.profile.type.user_profile_form') {
-      if($variables['title'] instanceof TranslatableMarkup) {
+      if ($variables['title'] instanceof TranslatableMarkup) {
         $profile_type = $variables['title']->getArguments();
       }
 
