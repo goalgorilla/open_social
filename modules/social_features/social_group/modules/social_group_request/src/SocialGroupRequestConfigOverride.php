@@ -35,28 +35,17 @@ class SocialGroupRequestConfigOverride implements ConfigFactoryOverrideInterface
   public function loadOverrides($names) {
     $overrides = [];
 
-    $blocks = [
-      'socialblue_local_actions',
-      'socialblue_groupheroblock',
-    ];
-
     foreach ($names as $name) {
       if (strpos($name, 'block.block.') === 0) {
         $config = $this->configFactory->getEditable($name);
 
-        if (in_array($config->get('settings.id'), $blocks)) {
+        if ($config->get('settings.id') == 'group_hero_block') {
           $visibility_paths = $config->get('visibility.request_path.pages');
 
-          $dependencies_module = $config->get('dependencies.module');
-          $dependencies_module[] = 'social_group_request';
-
           $overrides[$name] = [
-            'dependencies' => [
-              'module' => $dependencies_module,
-            ],
             'visibility' => [
               'request_path' => [
-                'pages' => $visibility_paths . '\r\n/group/*/members-pending',
+                'pages' => $visibility_paths . "\r\n/group/*/members-pending",
               ],
             ],
           ];
@@ -95,6 +84,17 @@ class SocialGroupRequestConfigOverride implements ConfigFactoryOverrideInterface
             'region' => 'content',
           ],
         ],
+      ];
+    }
+
+    $config_name = 'group.role.closed_group-outsider';
+    if (in_array($config_name, $names)) {
+      $config = $this->configFactory->getEditable($config_name);
+      $permissions = $config->get('permissions');
+      $permissions[] = 'request group membership';
+
+      $overrides[$config_name] = [
+        'permissions' => $permissions,
       ];
     }
 

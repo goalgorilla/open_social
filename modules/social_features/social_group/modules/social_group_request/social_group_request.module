@@ -87,7 +87,7 @@ function social_group_request_preprocess_group__hero(&$variables) {
     ->count()
     ->execute();
 
-  if ($request >= 0) {
+  if ($request > 0) {
     $variables['requested'] = TRUE;
     $variables['group_operations_url'] = Url::fromRoute('social_group_request.cancel_request', ['group' => $group->id()]);
   }
