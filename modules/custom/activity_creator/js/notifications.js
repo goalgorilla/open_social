@@ -16,8 +16,7 @@
 
     _updateNotificationCount: function () {
 
-      // We won't proceed if the notification count is 0 or the dropdown is
-      // already open.
+      // We won't proceed if the dropdown is already open.
       if ($(this).hasClass('open')) {
         return;
       }
