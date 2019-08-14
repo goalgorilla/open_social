@@ -60,7 +60,6 @@ class NotificationsController extends ControllerBase {
    */
   public function readNotificationCallback(): AjaxResponse {
     // Create AJAX Response object.
-    // @todo: Implement a Ajax command instead and call via addCommand().
     $response = new AjaxResponse();
     $data = [
       'remaining_notifications' => $this->activities->markAllNotificationsAsSeen($this->user),
