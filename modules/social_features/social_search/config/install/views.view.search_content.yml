@@ -4,6 +4,7 @@ dependencies:
   config:
     - search_api.index.social_content
   module:
+    - better_exposed_filters
     - search_api
     - social_search
     - user
@@ -36,15 +37,47 @@ display:
           skip_access: false
           parse_mode: terms
       exposed_form:
-        type: basic
+        type: bef
         options:
-          submit_button: Filter
+          submit_button: Apply
           reset_button: true
           reset_button_label: Reset
-          exposed_sorts_label: 'Sort by'
+          exposed_sorts_label: Sort
           expose_sort_order: true
-          sort_asc_label: Asc
-          sort_desc_label: Desc
+          sort_asc_label: (ascending)
+          sort_desc_label: (descending)
+          input_required: false
+          text_input_required: 'Select any filter and click on Apply to see results'
+          bef:
+            general:
+              allow_secondary: false
+              secondary_label: 'Advanced options'
+              autosubmit: false
+              autosubmit_exclude_textfield: false
+              autosubmit_hide: false
+            sort:
+              bef_format: default
+              advanced:
+                collapsible: false
+                collapsible_label: Sort
+                combine: true
+                combine_rewrite: "Relevance (ascending)|Least relevant first\r\nRelevance (descending)|Most relevant first\r\nCreated date (ascending)|Least recent first\r\nCreated date (descending)|Most recent first\r\nTitle (ascending)|A - Z\r\nTitle (descending)|Z - A"
+                reset: false
+                reset_label: ''
+                is_secondary: false
+            type:
+              bef_format: default
+              more_options:
+                bef_select_all_none: false
+                bef_collapsible: false
+                is_secondary: false
+                rewrite:
+                  filter_rewrite_values: ''
+            field_event_date:
+              bef_format: default
+              more_options:
+                is_secondary: false
+          text_input_required_format: basic_html
       pager:
         type: full
         options:
@@ -253,9 +286,9 @@ display:
           group_type: group
           admin_label: ''
           order: DESC
-          exposed: false
+          exposed: true
           expose:
-            label: ''
+            label: Relevance
           plugin_id: search_api
         created:
           id: created
@@ -265,9 +298,21 @@ display:
           group_type: group
           admin_label: ''
           order: DESC
-          exposed: false
+          exposed: true
           expose:
-            label: ''
+            label: 'Created date'
+          plugin_id: search_api
+        title:
+          id: title
+          table: search_api_index_social_content
+          field: title
+          relationship: none
+          group_type: group
+          admin_label: ''
+          order: ASC
+          exposed: true
+          expose:
+            label: Title
           plugin_id: search_api
       title: 'Search content'
       header:
@@ -346,6 +391,8 @@ display:
         - 'languages:language_interface'
         - url
         - url.query_args
+        - 'url.query_args:sort_by'
+        - 'url.query_args:sort_order'
         - user.permissions
       tags: {  }
   page:
@@ -379,6 +426,8 @@ display:
         - 'languages:language_interface'
         - url
         - url.query_args
+        - 'url.query_args:sort_by'
+        - 'url.query_args:sort_order'
         - user.permissions
       tags: {  }
   page_no_value:
@@ -410,5 +459,7 @@ display:
         - 'languages:language_interface'
         - url
         - url.query_args
+        - 'url.query_args:sort_by'
+        - 'url.query_args:sort_order'
         - user.permissions
       tags: {  }

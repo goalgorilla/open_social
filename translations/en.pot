@@ -26,6 +26,7 @@
 #  modules/custom/social_gdpr/social_gdpr.info.yml: n/a
 #  modules/custom/social_language/social_language.info.yml: n/a
 #  modules/custom/social_lazy_loading/social_lazy_loading.info.yml: n/a
+#  modules/custom/social_lazy_loading/social_lazy_loading_images/social_lazy_loading_images.info.yml: n/a
 #  modules/custom/social_metatag/social_metatag.info.yml: n/a
 #  modules/custom/social_node_statistics/social_node_statistics.info.yml: n/a
 #  modules/custom/social_tour/social_tour.info.yml: n/a
@@ -728,11 +729,13 @@
 #  modules/social_features/social_like/config/install/views.view.who_liked_this_entity.yml: n/a
 #  modules/social_features/social_search/config/install/views.view.search_content.yml: n/a
 #  modules/social_features/social_search/config/install/views.view.search_users.yml: n/a
+#  modules/social_features/social_search/config/schema/social_search.views.schema.yml: n/a
 #  modules/social_features/social_search/src/Form/SearchContentForm.php: n/a
 #  modules/social_features/social_search/src/Plugin/Block/SearchContentBlock.php: n/a
 #  modules/social_features/social_search/src/Plugin/Block/SearchHeroBlock.php: n/a
 #  modules/social_features/social_search/src/Plugin/search_api/processor/BlockedUsers.php: n/a
 #  modules/social_features/social_search/src/Plugin/search_api/processor/SuperUser.php: n/a
+#  modules/social_features/social_search/src/Plugin/views/filter/SocialDate.php: n/a
 #  modules/social_features/social_swiftmail/social_swiftmail.links.menu.yml: n/a
 #  modules/social_features/social_swiftmail/social_swiftmail.permissions.yml: n/a
 #  modules/social_features/social_swiftmail/social_swiftmail.routing.yml: n/a
@@ -1122,6 +1125,7 @@
 #  modules/social_features/social_core/config/optional/block.block.socialblue_pagetitleblock.yml: n/a
 #  modules/social_features/social_core/config/optional/block.block.socialbase_pagetitleblock_2.yml: n/a
 #  modules/social_features/social_core/config/optional/block.block.socialblue_pagetitleblock_2.yml: n/a
+#  modules/social_features/social_editor/config/install/editor.editor.full_html.yml: n/a
 #  modules/social_features/social_editor/config/install/filter.format.basic_html.yml: n/a
 #  modules/social_features/social_editor/config/install/filter.format.full_html.yml: n/a
 #  modules/social_features/social_editor/config/install/filter.format.mail_html.yml: n/a
@@ -1288,7 +1292,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Open Social\n"
-"POT-Creation-Date: 2019-07-31 22:17+0000\n"
+"POT-Creation-Date: 2019-08-07 22:17+0000\n"
 "PO-Revision-Date: YYYY-mm-DD HH:MM+ZZZZ\n"
 "Last-Translator: NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <EMAIL@ADDRESS>\n"
@@ -1390,7 +1394,7 @@ msgstr ""
 msgid "- All -"
 msgstr ""
 
-#: modules/social_features/social_search/social_search.module:46
+#: modules/social_features/social_search/social_search.module:53
 #: modules/social_features/social_tagging/social_tagging.module:393;411
 #: modules/social_features/social_user/social_user.module:108
 msgid "- Any -"
@@ -2861,7 +2865,9 @@ msgstr ""
 msgid "Administrator"
 msgstr ""
 
+#: modules/social_features/social_search/src/Plugin/views/filter/SocialDate.php:64
 #: modules/social_features/social_user/social_user.module:100
+#: modules/social_features/social_search/config/install/views.view.search_content.yml:0
 msgid "After"
 msgstr ""
 
@@ -3481,7 +3487,9 @@ msgid ""
 "through the search, until you flush the data."
 msgstr ""
 
+#: modules/social_features/social_search/src/Plugin/views/filter/SocialDate.php:63
 #: modules/social_features/social_user/social_user.module:101
+#: modules/social_features/social_search/config/install/views.view.search_content.yml:0
 msgid "Before"
 msgstr ""
 
@@ -3491,7 +3499,9 @@ msgid ""
 "policy."
 msgstr ""
 
+#: modules/social_features/social_search/src/Plugin/views/filter/SocialDate.php:65
 #: modules/social_features/social_user/social_user.module:99
+#: modules/social_features/social_search/config/install/views.view.search_content.yml:0
 msgid "Between"
 msgstr ""
 
@@ -4400,6 +4410,10 @@ msgstr ""
 msgid "Created"
 msgstr ""
 
+#: modules/social_features/social_search/social_search.module:134
+msgid "Created Date Filter by Open Social"
+msgstr ""
+
 #: modules/social_features/social_profile/social_profile.install:299
 msgid "Created profiles for @count users"
 msgstr ""
@@ -4495,6 +4509,18 @@ msgstr ""
 #: modules/custom/mentions/src/MentionsViewsData.php:110;111
 #: modules/social_features/social_user/social_user.module:75;81;94
 msgid "Date"
+msgstr ""
+
+#: modules/social_features/social_search/social_search.module:124;126;136
+msgid "Date Filter by Open Social"
+msgstr ""
+
+#: modules/social_features/social_search/config/install/views.view.search_content.yml:0
+msgid "Date exposed"
+msgstr ""
+
+#: modules/social_features/social_search/src/Plugin/views/filter/SocialDate.php:93
+msgid "Date of Event"
 msgstr ""
 
 #: modules/social_features/social_core/config/install/core.date_format.day_month.yml:0
@@ -5676,6 +5702,10 @@ msgstr ""
 
 #: modules/custom/mentions/mentions.info.yml:0
 msgid "Filters"
+msgstr ""
+
+#: modules/social_features/social_search/social_search.module:127;137
+msgid "Filters for date used in Open Social"
 msgstr ""
 
 #: modules/social_features/social_core/config/install/views.view.content.yml:0
@@ -7148,6 +7178,10 @@ msgstr ""
 
 #: modules/custom/social_lazy_loading/social_lazy_loading.info.yml:0
 msgid "Module for lazy loading content using the blazy library."
+msgstr ""
+
+#: modules/custom/social_lazy_loading/social_lazy_loading_images/social_lazy_loading_images.info.yml:0
+msgid "Module for lazy loading images using the blazy library."
 msgstr ""
 
 #: modules/custom/social_path_manager/social_path_manager.info.yml:0
@@ -8651,6 +8685,11 @@ msgstr ""
 msgid "Register"
 msgstr ""
 
+#: modules/social_features/social_search/src/Plugin/views/filter/SocialDate.php:94
+#: modules/social_features/social_search/config/install/views.view.search_users.yml:0
+msgid "Registration Date"
+msgstr ""
+
 #: modules/social_features/social_event/modules/social_event_an_enroll_enrolments_export/src/Plugin/UserExportPlugin/EnrolmentUserRegistration.php:8
 #: modules/social_features/social_user_export/src/Plugin/UserExportPlugin/UserRegistration.php:23;8
 #: modules/social_features/social_user/config/install/views.view.user_admin_people.yml:0
@@ -8932,7 +8971,7 @@ msgstr ""
 msgid "Say something to the group"
 msgstr ""
 
-#: modules/social_features/social_search/social_search.module:89
+#: modules/social_features/social_search/social_search.module:159
 #: modules/social_features/social_search/src/SocialSearchBreadcrumbBuilder.php:53
 #: modules/social_features/social_search/src/Form/SearchHeroForm.php:73;84
 #: themes/socialbase/templates/block/block--system-menu-block--main.html.twig:45
@@ -8940,6 +8979,10 @@ msgstr ""
 #: modules/social_features/social_search/config/optional/block.block.search_block_hero.yml:0
 #: modules/social_features/social_search/config/optional/block.block.socialblue_search_block_hero.yml:0
 msgid "Search"
+msgstr ""
+
+#: modules/social_features/social_search/config/schema/social_search.views.schema.yml:0
+msgid "Search API date"
 msgstr ""
 
 #: modules/social_features/social_search/config/install/views.view.search_all.yml:0
@@ -9529,6 +9572,7 @@ msgstr ""
 #: modules/custom/social_gdpr/social_gdpr.info.yml:0
 #: modules/custom/social_language/social_language.info.yml:0
 #: modules/custom/social_lazy_loading/social_lazy_loading.info.yml:0
+#: modules/custom/social_lazy_loading/social_lazy_loading_images/social_lazy_loading_images.info.yml:0
 #: modules/custom/social_metatag/social_metatag.info.yml:0
 #: modules/custom/social_node_statistics/social_node_statistics.info.yml:0
 #: modules/custom/social_tour/social_tour.info.yml:0
@@ -9892,6 +9936,10 @@ msgstr ""
 msgid "Social Lazy Loading"
 msgstr ""
 
+#: modules/custom/social_lazy_loading/social_lazy_loading_images/social_lazy_loading_images.info.yml:0
+msgid "Social Lazy Loading Image"
+msgstr ""
+
 #: modules/custom/social_lets_connect/social_lets_connect.info.yml:0;0
 #: modules/custom/social_lets_connect/modules/social_lets_connect_contact/social_lets_connect_contact.info.yml:0
 #: modules/custom/social_lets_connect/modules/social_lets_connect_usage/social_lets_connect_usage.info.yml:0
@@ -10215,6 +10263,7 @@ msgid "Sort descending"
 msgstr ""
 
 #: modules/social_features/social_event/config/install/field.field.node.event.field_event_date.yml:0
+#: modules/social_features/social_search/config/install/views.view.search_content.yml:0;0
 msgid "Start"
 msgstr ""
 
@@ -12368,6 +12417,16 @@ msgstr ""
 
 #: modules/social_features/social_group/social_group.tokens.inc:112
 msgid "a @content_type"
+msgstr ""
+
+#: modules/social_features/social_editor/config/install/editor.editor.full_html.yml:0
+msgid ""
+"a.btn.btn-default|Default link\r\n"
+"a.btn.btn-primary|Primary link\r\n"
+"a.btn.btn-accent|Accent link\r\n"
+"span.badge.badge-primary|Primary badge\r\n"
+"span.badge.badge-secondary|Secondary badge\r\n"
+"span.badge.badge--pill.badge-default|Pill badge"
 msgstr ""
 
 #: modules/social_features/social_landing_page/templates/group--featured.html.twig:51
