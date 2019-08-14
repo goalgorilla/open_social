@@ -18,9 +18,6 @@
 
       // We won't proceed if the notification count is 0 or the dropdown is
       // already open.
-      // @todo: Refactor to use data-* attributes and `jQuery.data()` to store
-      //   the unread notification count. This should be less expensive than
-      //   reading the DOM
       if ($(this).hasClass('open')) {
         return;
       }

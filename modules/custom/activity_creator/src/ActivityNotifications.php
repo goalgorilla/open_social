@@ -122,8 +122,9 @@ class ActivityNotifications extends ControllerBase {
    * @param int $status
    *   See: activity_creator_field_activity_status_allowed_values()
    *
-   * @return int
-   *   Returns activity object.
+   * @return bool|int
+   *   SAVED_NEW or SAVED_UPDATED is returned depending on the operation
+   *   performed.
    *
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
