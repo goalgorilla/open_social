@@ -45,7 +45,7 @@ function activity_creator_tokens($type, $tokens, array $data, array $options, Bu
 
         case 'field_activity_recipient_user_display_name':
 
-          // Get the targeted user and it's display name.
+          // Get the targeted user and its display name.
           if ($name === 'field_activity_recipient_user_display_name') {
             if (isset($message->field_message_related_object) && !empty($message->field_message_related_object->target_type)) {
               $target_type = $message->field_message_related_object->target_type;
