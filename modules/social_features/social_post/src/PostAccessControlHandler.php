@@ -3,23 +3,57 @@
 namespace Drupal\social_post;
 
 use Drupal\Core\Entity\EntityAccessControlHandler;
+use Drupal\Core\Entity\EntityHandlerInterface;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\Entity\EntityTypeManager;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Access\AccessResult;
 use Drupal\group\Entity\GroupInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Access controller for the Post entity.
  *
  * @see \Drupal\social_post\Entity\Post.
  */
-class PostAccessControlHandler extends EntityAccessControlHandler {
+class PostAccessControlHandler extends EntityAccessControlHandler implements EntityHandlerInterface {
+
+  /**
+   * The entity type manager.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManager
+   */
+  protected $entityTypeManager;
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function createInstance(ContainerInterface $container, EntityTypeInterface $entity_type) {
+    return new static(
+      $entity_type,
+      $container->get('entity_type.manager')
+    );
+  }
+
+  /**
+   * PostAccessControlHandler constructor.
+   *
+   * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
+   *   The entity type interface.
+   * @param \Drupal\Core\Entity\EntityTypeManager $entityTypeManager
+   *   The entity type manager.
+   */
+  public function __construct(EntityTypeInterface $entity_type, EntityTypeManager $entityTypeManager) {
+    parent::__construct($entity_type);
+    $this->entityTypeManager = $entityTypeManager;
+  }
 
   /**
    * {@inheritdoc}
    */
   protected function checkAccess(EntityInterface $entity, $operation, AccountInterface $account) {
-    /** @var \Drupal\social_post\PostInterface $entity */
+    /** @var \Drupal\social_post\Entity\PostInterface $entity */
 
     switch ($operation) {
       case 'view':
@@ -68,18 +102,31 @@ class PostAccessControlHandler extends EntityAccessControlHandler {
               // Check if the post has been posted in a group.
               $group_id = $entity->field_recipient_group->target_id;
 
-              if (!is_null($group_id)) {
-                /* @var \Drupal\group\Entity\Group; $group */
+              if ($group_id !== NULL) {
+                /* @var \Drupal\group\Entity\Group $group */
                 $group = entity_load('group', $group_id);
               }
 
-              if (!empty($group)) {
-                if ($group->hasPermission('access posts in group', $account) && $this->checkDefaultAccess($entity, $operation, $account)) {
+              if ($group !== NULL) {
+                $permission = 'access posts in group';
+                if ($group->hasPermission($permission, $account) && $this->checkDefaultAccess($entity, $operation, $account)) {
+                  if ($group->getGroupType()->id() === 'flexible_group') {
+                    // User has access if outsider with permission or is member.
+                    $group_role_storage = $this->entityTypeManager->getStorage('group_role');
+                    $group_roles = $group_role_storage->loadByUserAndGroup($account, $group);
+                    /** @var \Drupal\group\Entity\GroupRoleInterface $group_role */
+                    foreach ($group_roles as $group_role) {
+                      if ($group_role->isOutsider() && $group_role->hasPermission($permission)) {
+                        return AccessResult::allowed()->cachePerUser()->addCacheableDependency($entity);
+                      }
+                    }
+                    if ($group->getMember($account)) {
+                      return AccessResult::allowed()->cachePerUser()->addCacheableDependency($entity);
+                    }
+                  }
                   return AccessResult::allowed();
                 }
-                else {
-                  return AccessResult::forbidden();
-                }
+                return AccessResult::forbidden();
               }
               return AccessResult::forbidden();
 

@@ -40,7 +40,6 @@ Feature: Like post stream
     And I press "Post"
     Then I should see the success message "Your post has been posted."
     And I should see "This is a public post."
-    Then I should be on "/stream"
 
     Given I am an anonymous user
     And I am on the homepage

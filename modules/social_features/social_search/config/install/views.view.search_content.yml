@@ -4,7 +4,9 @@ dependencies:
   config:
     - search_api.index.social_content
   module:
+    - better_exposed_filters
     - search_api
+    - social_search
     - user
 id: search_content
 label: 'Search Content'
@@ -35,15 +37,47 @@ display:
           skip_access: false
           parse_mode: terms
       exposed_form:
-        type: basic
+        type: bef
         options:
-          submit_button: Filter
+          submit_button: Apply
           reset_button: true
           reset_button_label: Reset
-          exposed_sorts_label: 'Sort by'
+          exposed_sorts_label: Sort
           expose_sort_order: true
-          sort_asc_label: Asc
-          sort_desc_label: Desc
+          sort_asc_label: (ascending)
+          sort_desc_label: (descending)
+          input_required: false
+          text_input_required: 'Select any filter and click on Apply to see results'
+          bef:
+            general:
+              allow_secondary: false
+              secondary_label: 'Advanced options'
+              autosubmit: false
+              autosubmit_exclude_textfield: false
+              autosubmit_hide: false
+            sort:
+              bef_format: default
+              advanced:
+                collapsible: false
+                collapsible_label: Sort
+                combine: true
+                combine_rewrite: "Relevance (ascending)|Least relevant first\r\nRelevance (descending)|Most relevant first\r\nCreated date (ascending)|Least recent first\r\nCreated date (descending)|Most recent first\r\nTitle (ascending)|A - Z\r\nTitle (descending)|Z - A"
+                reset: false
+                reset_label: ''
+                is_secondary: false
+            type:
+              bef_format: default
+              more_options:
+                bef_select_all_none: false
+                bef_collapsible: false
+                is_secondary: false
+                rewrite:
+                  filter_rewrite_values: ''
+            field_event_date:
+              bef_format: default
+              more_options:
+                is_secondary: false
+          text_input_required_format: basic_html
       pager:
         type: full
         options:
@@ -172,6 +206,77 @@ display:
             group_items: {  }
           reduce_duplicates: false
           plugin_id: search_api_options
+        field_event_date:
+          id: field_event_date
+          table: search_api_index_social_content
+          field: field_event_date
+          relationship: none
+          group_type: group
+          admin_label: 'Date exposed'
+          operator: '<'
+          value:
+            min: ''
+            max: ''
+            value: ''
+            type: date
+          group: 1
+          exposed: true
+          expose:
+            operator_id: field_event_date_op
+            label: Start
+            description: ''
+            use_operator: true
+            operator: field_event_date_op
+            identifier: field_event_date
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              anonymous: '0'
+              administrator: '0'
+              contentmanager: '0'
+              sitemanager: '0'
+            placeholder: ''
+            min_placeholder: ''
+            max_placeholder: ''
+          is_grouped: false
+          group_info:
+            label: Start
+            description: ''
+            identifier: field_event_date
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items:
+              1:
+                title: Between
+                operator: between
+                value:
+                  type: offset
+                  value: ''
+                  min: now
+                  max: 'now +1 day'
+              2:
+                title: Before
+                operator: '<'
+                value:
+                  type: date
+                  value: now
+                  min: ''
+                  max: ''
+              3:
+                title: After
+                operator: '>'
+                value:
+                  type: date
+                  value: now
+                  min: ''
+                  max: ''
+          plugin_id: search_api_date
       sorts:
         search_api_relevance:
           id: search_api_relevance
@@ -181,9 +286,9 @@ display:
           group_type: group
           admin_label: ''
           order: DESC
-          exposed: false
+          exposed: true
           expose:
-            label: ''
+            label: Relevance
           plugin_id: search_api
         created:
           id: created
@@ -193,9 +298,21 @@ display:
           group_type: group
           admin_label: ''
           order: DESC
-          exposed: false
+          exposed: true
           expose:
-            label: ''
+            label: 'Created date'
+          plugin_id: search_api
+        title:
+          id: title
+          table: search_api_index_social_content
+          field: title
+          relationship: none
+          group_type: group
+          admin_label: ''
+          order: ASC
+          exposed: true
+          expose:
+            label: Title
           plugin_id: search_api
       title: 'Search content'
       header:
@@ -274,6 +391,8 @@ display:
         - 'languages:language_interface'
         - url
         - url.query_args
+        - 'url.query_args:sort_by'
+        - 'url.query_args:sort_order'
         - user.permissions
       tags: {  }
   page:
@@ -307,6 +426,8 @@ display:
         - 'languages:language_interface'
         - url
         - url.query_args
+        - 'url.query_args:sort_by'
+        - 'url.query_args:sort_order'
         - user.permissions
       tags: {  }
   page_no_value:
@@ -338,5 +459,7 @@ display:
         - 'languages:language_interface'
         - url
         - url.query_args
+        - 'url.query_args:sort_by'
+        - 'url.query_args:sort_order'
         - user.permissions
       tags: {  }
