@@ -98,7 +98,7 @@ function social_like_tokens($type, $tokens, array $data, array $options, Bubblea
                   $commented_entity = $entity->getCommentedEntity();
 
                   $url_options = ['absolute' => TRUE];
-                  /** @var \Drupal\Core\Entity\Entity $commented_entity */
+                  /** @var \Drupal\Core\Entity\EntityBase $commented_entity */
                   $ref_link = $commented_entity->toUrl('canonical', $url_options)->toString();
 
                   // We should only use the label of entities who have a label.

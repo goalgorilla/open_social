@@ -1,7 +1,7 @@
 {#
 /**
  * @file
- * Theme override to display a node.
+ * Default theme implementation to display a node.
  *
  * Available variables:
  * - node: The node entity with limited access to object properties and methods.
@@ -61,16 +61,55 @@
  * @todo Remove the id attribute (or make it a class), because if that gets
  *   rendered twice on a page this is invalid CSS for example: two lists
  *   in different view modes.
+ *
+ * @ingroup themeable
  */
 #}
-<div{{ content_attributes }}>
 
-  {% if event_date %}
-      {{ event_date }}
+{{ attach_library('socialbase/hero') }}
+
+{%
+  set cover_classes = [
+  'cover',
+  group_hero_styled_image_url ? 'cover-img cover-img-gradient',
+]
+%}
+
+{%
+  set cover_wrap_classes = group_hero_small ? 'cover-wrap small' : 'cover-wrap'
+%}
+
+<div{{ attributes.addClass(cover_classes) }} {% if hero_styled_image_url %} style="background-image: url('{{ hero_styled_image_url }}');" {% endif %}>
+  <div class="hero__bgimage-overlay"></div>
+  {% if node_edit_url %}
+    <div class="hero-action-button">
+      <a href="{{ node_edit_url }}" title="{% trans %}Edit content{% endtrans %}"
+         class="btn btn-raised btn-default btn-floating">
+        <svg class="icon-gray icon-medium">
+          <use xlink:href="#icon-edit"></use>
+        </svg>
+      </a>
+    </div>
   {% endif %}
 
-  {# Location or address field must be filled in before showing the @ character #}
-  {% if content.field_event_location.0 is defined or content.field_event_address.0 is defined %}
-      <span>@ {{ content.field_event_location }} {{ content.field_event_address }}</span>
-  {% endif %}
+  <div class="cover-wrap">
+    <header class="page-title">
+      <p>{{ title_prefix }}</p>
+      {% if label %}
+        <h1{{ title_attributes }}>{{ label }}</h1>
+      {% endif %}
+      <p>{{ title_suffix }}</p>
+    </header>
+
+    {% if event_enrollment %}
+      <div class="hero-footer">
+        <div class="hero-footer__text"></div>
+        <div class="hero-footer__cta">
+          <div class="btn-group">
+            {{ event_enrollment }}
+          </div>
+        </div>
+      </div>
+    {% endif %}
+  </div>
 </div>

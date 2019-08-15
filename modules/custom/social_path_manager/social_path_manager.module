@@ -28,6 +28,16 @@ function social_path_manager_form_alter(&$form, FormStateInterface $form_state, 
   if (in_array($form_id, $group_forms['add'], TRUE) || in_array($form_id, $group_forms['edit'], TRUE)) {
     $form['path']['#type'] = 'fieldset';
   }
+
+  $user_forms = [
+    'user_register_form',
+    'user_form',
+  ];
+
+  // Hide the URL alias for user forms, doesn't do anything.
+  if (!empty($form['path']) && in_array($form_id, $user_forms, TRUE)) {
+    unset($form['path']);
+  }
 }
 
 /**
@@ -211,7 +221,10 @@ function _social_path_manager_update_alias(EntityInterface $entity, $op, $bulk =
 
         // If it's a bulk generate then get the alias by path.
         if ($bulk === TRUE) {
-          $path['alias'] = $pam->getAliasByPath('/group/' . $entity->id() . '/stream');
+          $url = Url::fromRoute('entity.group.canonical', ['group' => $entity->id()]);
+          $url = $url->getInternalPath();
+
+          $path['alias'] = $pam->getAliasByPath('/' . $url);
         }
         else {
           // New alias.
@@ -249,8 +262,9 @@ function _social_path_manager_update_alias(EntityInterface $entity, $op, $bulk =
             }
           }
 
-          // Clear cache of the group tag.
+          // Clear cache of the group tag and rebuild routes.
           \Drupal::service('cache_tags.invalidator')->invalidateTags(['group:' . $entity->id()]);
+          \Drupal::service('router.builder')->rebuild();
         }
         break;
 
@@ -259,6 +273,41 @@ function _social_path_manager_update_alias(EntityInterface $entity, $op, $bulk =
         $storage_helper = \Drupal::service('pathauto.alias_storage_helper');
         $storage_helper->deleteBySourcePrefix('/group/' . $entity->id());
         break;
+    }
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function social_path_manager_preprocess_block(&$variables) {
+  /** @var \Drupal\node\Entity\Node $node */
+  $node = \Drupal::routeMatch()->getParameter('node');
+
+  // Due to PR #1427 there are now two heroes shown on pages
+  // with a certain url alias. Due to the refactor in socialpagetitleblock.
+  if ($node !== NULL) {
+    if (!empty($variables['elements']['#plugin_id']) &&
+      $variables['elements']['#plugin_id'] === 'social_page_title_block' &&
+      $variables['elements']['#id'] === 'socialblue_pagetitleblock_content') {
+      $current_url = Url::fromRoute('<current>');
+      $current_path = $current_url->toString();
+
+      $paths_to_exclude = [
+        'edit',
+        'add',
+        'delete',
+      ];
+
+      $in_path = str_replace($paths_to_exclude, '', $current_path) !== $current_path;
+
+      // We make sure there are no two heroes shown only page titles.
+      if ($in_path) {
+        $variables['content']['#type'] = 'page_title';
+        if (!empty($variables['content']['#hero_node'])) {
+          unset($variables['content']['#hero_node']);
+        }
+      }
     }
   }
 }

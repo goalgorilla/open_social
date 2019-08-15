@@ -1,0 +1,119 @@
+<?php
+
+/**
+ * @file
+ * The Social Magic Login module.
+ */
+
+use Drupal\Component\Utility\Crypt;
+use Drupal\Core\Render\BubbleableMetadata;
+use Drupal\Core\Routing\RedirectDestinationInterface;
+use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\Core\Url;
+use Drupal\user\UserInterface;
+
+/**
+ * Implements hook_token_info().
+ */
+function social_magic_login_token_info() {
+  $types['auto-login'] = [
+    'name' => t('Automatic login'),
+    'description' => t('Login tokens related to individual user accounts for easy access.'),
+    'needs-data' => 'user',
+  ];
+
+  $tokens['auto-login']['group-destination'] = [
+    'name' => t('Group destination'),
+  ];
+
+  return [
+    'types' => $types,
+    'tokens' => $tokens,
+  ];
+}
+
+/**
+ * Implements hook_tokens().
+ *
+ * @throws \Drupal\Core\Entity\EntityMalformedException
+ */
+function social_magic_login_tokens($type, $tokens, array $data, array $options, BubbleableMetadata $bubbleable_metadata) {
+  $url_options = ['absolute' => TRUE];
+  $replacements = [];
+
+  if ($type === 'auto-login' && !empty($data['user'])) {
+    /** @var \Drupal\user\UserInterface $account */
+    $account = $data['user'];
+
+    foreach ($tokens as $token => $original) {
+      // This is the default variation on the chained tokens handled below.
+      if ('group-destination' === $token) {
+        /** @var \Drupal\group\Entity\GroupInterface $group */
+        $group = &$data['group'];
+
+        $destination = $group->toUrl('canonical', [
+          'absolute' => FALSE,
+        ])->toString();
+
+        $url = social_magic_login_url_create($account, $destination, $url_options);
+
+        $replacements[$original] = $url->toString();
+      }
+    }
+  }
+
+  return $replacements;
+}
+
+/**
+ * Implements hook_data_policy_destination_alter().
+ */
+function social_magic_login_data_policy_destination_alter(AccountProxyInterface $current_user, RedirectDestinationInterface $destination) {
+  $final_destination = '';
+  // Get the destination for the redirect result.
+  $param_destination = \Drupal::routeMatch()->getParameter('destination');
+  if (isset($param_destination)) {
+    $final_destination = base64_decode($param_destination);
+  }
+
+  // Check if the user has a password, if this is the case, don't do anything.
+  // When the user doesn't have a password, we should redirect the user
+  // to user.edit.form. and make sure that form gets the right destination
+  // from $destination.
+  if (!$current_user->isAnonymous()) {
+    /** @var \Drupal\Core\Entity\EntityTypeManagerInterface $user_storage */
+    $user_storage = \Drupal::service('entity_type.manager')->getStorage('user');
+    /** @var \Drupal\user\UserInterface $account */
+    $account = $user_storage->load($current_user->id());
+    if (NULL === $account->getPassword()) {
+      // This mirrors the UserController::resetPassLogin redirect which
+      // allows a user to set a password without the current password check.
+      $token = Crypt::randomBytesBase64(55);
+      $_SESSION['pass_reset_' . $account->id()] = $token;
+      $url = Url::fromRoute('entity.user.edit_form',
+        ['user' => $account->id()],
+        [
+          'query' => [
+            'pass-reset-token' => $token,
+            'destination' => $final_destination,
+          ],
+        ]
+      );
+      $url->setAbsolute(FALSE);
+      // Set the new destination.
+      $destination->set($url->toString());
+    }
+  }
+
+  return $destination;
+}
+
+/**
+ * Wrapper method for Service MagicUrlCreate.
+ *
+ * @see \Drupal\social_magic_login\Service\MagicUrl::create
+ */
+function social_magic_login_url_create(UserInterface $account, string $destination, array $options) : ?Url {
+  $magic_url_service = \Drupal::service('social_magic_login.create_url');
+  return $magic_url_service->create($account, $destination, $options);
+}

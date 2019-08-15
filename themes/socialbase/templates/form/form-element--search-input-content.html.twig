@@ -46,4 +46,8 @@
  */
 #}
 
+{% if label_display in ['before', 'invisible'] %}
+  {{ label }}
+{% endif %}
+
 {{ children }}

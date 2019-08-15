@@ -24,7 +24,10 @@ class PmAddBlock extends BlockBase {
    * Custom access logic to display the block.
    */
   public function blockAccess(AccountInterface $account) {
-    return AccessResult::allowed();
+    if ($account->hasPermission('use private messaging system')) {
+      return AccessResult::allowed();
+    }
+    return AccessResult::forbidden();
   }
 
   /**
