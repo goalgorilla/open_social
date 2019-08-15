@@ -4,10 +4,11 @@
 
   Drupal.behaviors.initSelect2 = {
     attach: function (context, settings) {
-      $('select[multiple]').once('select2').each(function (i, e) {
+      $('select[multiple]', context).once('select2').each(function (i, e) {
         var options = {
           theme: 'social',
-          placeholder: Drupal.t('Select an option')
+          placeholder: Drupal.t('Select an option'),
+          width: '100%',
         };
 
         if (!isNaN(parseInt($(e).attr('maxlength'), 10))) {

@@ -84,8 +84,8 @@ class SocialEmbedConfigOverride implements ConfigFactoryOverrideInterface {
     $config = $this->configFactory->getEditable($config_name);
     $filters = $config->get('filters');
 
-    $overrides = [];
-    $overrides[$config_name]['dependencies']['module'] = $config->get('dependencies.module');
+    $dependencies = $config->getOriginal('dependencies.module');
+    $overrides[$config_name]['dependencies']['module'] = $dependencies;
     $overrides[$config_name]['dependencies']['module'][] = 'url_embed';
 
     $overrides[$config_name]['filters']['url_embed'] = [

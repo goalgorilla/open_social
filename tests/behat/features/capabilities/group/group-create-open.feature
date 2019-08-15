@@ -36,7 +36,7 @@ Feature: Create Open Group
   # DS-761 As a LU I want to view the hero area of a group
     And I should see "Test open group" in the "Hero block"
     And I should see the button "Joined"
-    And I click the element with css selector "#hero .dropdown-toggle"
+    And I press "Joined"
     And I should see the link "Leave group"
     And I should see the link "Edit group" in the "Hero block"
     And I should see "Technopark" in the "Hero block"
@@ -67,7 +67,8 @@ Feature: Create Open Group
     And I should see "Group User One"
 
   # DS-647 As a LU I want to join a group
-    And I should see the link "Join" in the "Hero block"
+    When I click "Stream" in the "Tabs"
+    And I should see the link "Join"
     And I click "Join"
     And I should see "Join group Test open group"
     And I should see the button "Cancel"
@@ -94,7 +95,7 @@ Feature: Create Open Group
     And I should see "Body description text" in the "Main content"
     And I should see the button "Enroll"
   # DS-639 As a LU I want to see which group the content belongs to, on the detail page
-    And I should see the link "Test open group" in the "Main content"
+    And I should see the link "Test open group"
     And I click "Test open group"
   # TODO: And I should see "Upcoming Events" in the "Sidebar second"
   # And I should see "Test group event" in the "Sidebar second"
@@ -116,7 +117,7 @@ Feature: Create Open Group
     And I should see "Test group topic"
     And I should see "Body description text" in the "Main content"
    # DS-639 As a LU I want to see which group the content belongs to, on the detail page
-    And I should see the link "Test open group" in the "Main content"
+    And I should see the link "Test open group"
     And I click "Test open group"
   # TODO: And I should see "Latest Topics" in the "Sidebar second"
   # And I should see "Test group topic" in the "Sidebar second"
@@ -148,14 +149,14 @@ Feature: Create Open Group
     And I click "Groups"
     And I click "Test open group"
     And I should see the button "Joined"
-    And I click the element with css selector "#hero .dropdown-toggle"
+    And I press "Joined"
     And I should see the link "Leave group"
     And I click "Leave group"
     And I should see "This action cannot be undone."
     And I should see the button "Cancel"
     And I should see the button "Leave group"
     And I press "Leave group"
-    And I should see "Group User Two" in the "Hero block"
+    And I should see "Group User Two"
     And I should see "Groups"
     And I should not see "Test open group"
 

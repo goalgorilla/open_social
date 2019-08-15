@@ -52,3 +52,36 @@ html.js .input-group-addon .glyphicon.glyphicon-spin {
 html.js .ajax-new-content:empty {
   display: none !important;
 }
+
+.form-type-managed-file label {
+  display: block;
+}
+
+.form-managed-file {
+  position: relative;
+}
+
+.form-managed-file .form-submit[data-drupal-selector*='upload-button'] {
+  font-size: 0;
+  color: transparent;
+}
+
+.form-managed-file .js-hide.form-submit[disabled] {
+  position: relative;
+  display: inline-block !important;
+  width: 40px;
+  height: 40px;
+  top: 0;
+  right: 0;
+  padding: 0;
+}
+
+.form-managed-file .js-hide.form-submit[disabled] .ajax-throbber {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+}
+
+.form-managed-file .js-hide.form-submit[disabled] .ajax-throbber:before {
+  top: 0;
+}

@@ -47,6 +47,10 @@
     <span class="form-required">*</span>
   {%- endif -%}
 
+  {% if description.content %}
+    <div{{ description.attributes.addClass('help-block') }}>{{ description.content }}</div>
+  {% endif %}
+
   <div class="fieldset-wrapper">
     {% if prefix %}
       <span class="field-prefix">{{ prefix }}</span>
@@ -64,8 +68,8 @@
     </div>
   {% endif %}
 
-  {% if description.content %}
-    <div{{ description.attributes.addClass('help-block') }}>{{ description.content }}</div>
-  {% endif %}
+{#  {% if description_display !== 'before' and description.content %}#}
+{#    <div{{ description.attributes.addClass('help-block') }}>{{ description.content }}</div>#}
+{#  {% endif %}#}
 
 </fieldset>

@@ -121,6 +121,7 @@
 
 .navbar-toggle {
   position: relative;
+  display: inline-block;
   background-color: transparent;
   background-image: none;
   border: 0;
@@ -129,6 +130,7 @@
   padding: 8px 10px;
   height: 50px;
   min-width: 50px;
+  line-height: 32px;
 }
 
 .navbar-toggle:focus {
@@ -171,6 +173,7 @@
 }
 
 .navbar__open-search-block {
+  display: block;
   border: 0;
   border-radius: 100%;
   width: 50px;
@@ -219,13 +222,13 @@
   line-height: 38px;
   cursor: pointer;
   font-size: 0;
-  text-indent: -9999px;
-  background-image: url("../images/icons/icon-search.svg");
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-color: #fff;
-  background-size: 30px auto;
   padding: 0;
+  background-color: transparent;
+}
+
+.navbar-search .form-submit svg {
+  width: 30px;
+  height: 30px;
 }
 
 .navbar-secondary {
@@ -351,13 +354,18 @@
     min-width: 0;
   }
   .search-take-over .form-submit {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
     width: 60px;
     height: 60px;
     min-width: 60px;
-    background-image: url("../images/icons/icon-search-white.svg");
-    background-repeat: no-repeat;
-    background-position: center center;
-    background-size: 50px auto;
     background-color: transparent;
     margin-left: 20px;
     padding: 0;
@@ -367,6 +375,10 @@
     -webkit-box-flex: 0;
         -ms-flex: 0 0 60px;
             flex: 0 0 60px;
+  }
+  .search-take-over .form-submit svg {
+    width: 50px;
+    height: 50px;
   }
   .search-take-over .social-search-suggestions {
     -ms-flex-preferred-size: 100%;
@@ -530,6 +542,12 @@
   .region--content-top .search-take-over,
   .btn--close-search-take-over {
     display: none;
+  }
+  html:not(.js) .navbar-header:focus + .navbar-collapse, html:not(.js) .navbar-header:hover + .navbar-collapse {
+    display: block;
+  }
+  html:not(.js) .navbar-collapse:focus, html:not(.js) .navbar-collapse:hover {
+    display: block;
   }
 }
 

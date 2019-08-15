@@ -51,9 +51,9 @@ display:
           reset_button: true
           reset_button_label: Reset
           exposed_sorts_label: 'Sort by'
-          expose_sort_order: false
-          sort_asc_label: Asc
-          sort_desc_label: Desc
+          expose_sort_order: true
+          sort_asc_label: ascending
+          sort_desc_label: descending
       pager:
         type: mini
         options:
@@ -321,9 +321,9 @@ display:
           group_type: group
           admin_label: sort_created
           order: DESC
-          exposed: false
+          exposed: true
           expose:
-            label: ''
+            label: 'Sort by publish date'
           granularity: second
           entity_type: node
           entity_field: created
@@ -416,6 +416,8 @@ display:
         - 'languages:language_interface'
         - url
         - url.query_args
+        - 'url.query_args:sort_by'
+        - 'url.query_args:sort_order'
         - user
         - 'user.node_grants:view'
       tags: {  }
@@ -436,6 +438,8 @@ display:
         - 'languages:language_interface'
         - url
         - url.query_args
+        - 'url.query_args:sort_by'
+        - 'url.query_args:sort_order'
         - user
         - 'user.node_grants:view'
       tags: {  }

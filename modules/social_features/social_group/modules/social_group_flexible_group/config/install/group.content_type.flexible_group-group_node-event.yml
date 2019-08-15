@@ -1,0 +1,19 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - group.type.flexible_group
+    - node.type.event
+  module:
+    - gnode
+    - node
+    - social_group_flexible_group
+id: flexible_group-group_node-event
+label: event
+description: 'Adds <em class="placeholder">Event</em> content to groups using private content settings.'
+group_type: flexible_group
+content_plugin: 'group_node:event'
+plugin_config:
+  group_cardinality: 1
+  entity_cardinality: 1
+  use_creation_wizard: false

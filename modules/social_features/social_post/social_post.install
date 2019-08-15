@@ -75,6 +75,7 @@ function _social_post_get_permissions($role) {
     'delete any post entities',
     'edit any post entities',
     'view unpublished post entities',
+    'administer post entities',
   ]);
 
   // Site manager.
@@ -84,4 +85,12 @@ function _social_post_get_permissions($role) {
     return $permissions[$role];
   }
   return [];
+}
+
+/**
+ * Grant permission to administer post entities to CM and SM.
+ */
+function social_post_update_8601() {
+  user_role_grant_permissions('contentmanager', ['administer post entities']);
+  user_role_grant_permissions('sitemanager', ['administer post entities']);
 }
