@@ -165,9 +165,6 @@ class PostForm extends ContentEntityForm {
     // group type (if it's a group post) or it's simply limited to the community
     // for user posts.
     else {
-      $form['field_visibility']['widget'][0]['#default_value'] = "0";
-      unset($form['field_visibility']['widget'][0]['#options'][2]);
-
       $current_group = NULL;
       if ($this->operation === 'edit' && $this->entity->hasField('field_recipient_group') && !$this->entity->get('field_recipient_group')->isEmpty()) {
         $current_group = $this->entity->get('field_recipient_group')->first()->get('entity')->getTarget()->getValue();
@@ -182,10 +179,22 @@ class PostForm extends ContentEntityForm {
       }
       else {
         $group_type_id = $current_group->getGroupType()->id();
-        $allowed_options = social_group_get_allowed_visibility_options_per_group_type($group_type_id);
+        $allowed_options = social_group_get_allowed_visibility_options_per_group_type($group_type_id, NULL, $this->entity, $current_group);
 
-        if ($allowed_options['community'] !== TRUE) {
+        if ($group_type_id !== 'flexible_group') {
+          $form['field_visibility']['widget'][0]['#default_value'] = "0";
+          unset($form['field_visibility']['widget'][0]['#options'][2]);
+
+          if ($allowed_options['community'] !== TRUE) {
+            unset($form['field_visibility']['widget'][0]['#options'][0]);
+          }
+        }
+        else {
           unset($form['field_visibility']['widget'][0]['#options'][0]);
+
+          if ($allowed_options['community'] !== TRUE) {
+            unset($form['field_visibility']['widget'][0]['#options'][2]);
+          }
         }
 
         if ($allowed_options['public'] !== TRUE) {
@@ -206,7 +215,7 @@ class PostForm extends ContentEntityForm {
 
     // When a post is being edited we configure the visibility to be shown as a
     // read-only value.
-    if ($this->operation == 'edit') {
+    if ($this->operation === 'edit') {
       /** @var \Drupal\social_post\Entity\Post $post */
       $post = $this->entity;
       $form['#post_id'] = $post->id();
