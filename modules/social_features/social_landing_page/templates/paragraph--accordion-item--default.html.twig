@@ -43,13 +43,28 @@
     'paragraph',
     'paragraph--type--' ~ paragraph.bundle|clean_class,
     view_mode ? 'paragraph--view-mode--' ~ view_mode|clean_class,
-    not paragraph.isPublished() ? 'paragraph--unpublished'
+    not paragraph.isPublished() ? 'paragraph--unpublished',
+    'card__accordion--item'
   ]
 %}
 {% block paragraph %}
   <div{{ attributes.addClass(classes) }}>
     {% block content %}
-      {{ content }}
+
+      <div class="card">
+        <div class="card__title-accord">
+          {{ content.field_accord_item_title }}
+        </div>
+
+        <div class="card__text-accord">
+          <div class="card__text-accord--wrapper">
+            {{ content.field_accord_item_description }}
+          </div>
+        </div>
+      </div>
+
+      {{ content|without('field_accord_item_title', 'field_accord_item_description') }}
+
     {% endblock %}
   </div>
 {% endblock paragraph %}

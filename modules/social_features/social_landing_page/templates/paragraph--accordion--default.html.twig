@@ -38,6 +38,9 @@
  * @ingroup themeable
  */
 #}
+
+{{ attach_library('social_landing_page/accordion')}}
+
 {%
   set classes = [
     'paragraph',
@@ -49,7 +52,14 @@
 {% block paragraph %}
   <div{{ attributes.addClass(classes) }}>
     {% block content %}
-      {{ content }}
+
+    <h1 class="card__title">{{ content.field_accord_title }}</h1>
+    <div class="card__text">
+      {{ content.field_accord_description }}
+    </div>
+
+    {{ content|without('field_accord_title', 'field_accord_description') }}
+
     {% endblock %}
   </div>
 {% endblock paragraph %}
