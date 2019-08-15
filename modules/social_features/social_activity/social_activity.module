@@ -159,3 +159,25 @@ function social_activity_social_user_account_header_items_alter(array &$menu_lin
     $menu_links['account_box']['#wrapper_attributes']['class'][] = 'has-alert';
   }
 }
+
+/**
+ * Implements hook_theme().
+ */
+function social_activity_theme($existing, $type, $theme, $path) {
+  return [
+    'message_post_teaser' => [
+      'variables' => [
+        'link' => '',
+        'name' => '',
+        'date' => '',
+        'summary' => '',
+      ],
+    ],
+    'message_node_teaser' => [
+      'variables' => [
+        'link' => '',
+        'type' => '',
+      ],
+    ],
+  ];
+}
