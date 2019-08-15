@@ -17,12 +17,21 @@
 #}
 
 {{ attach_library('socialbase/comment') }}
+{{ attach_library('socialbase/post') }}
 {{ attach_library('socialbase/page-node')}}
+
+{%
+  set classes = [
+  'media',
+  not published ? 'post-unpublished',
+]
+%}
+
 <div class="card">
   <div class="card__block">
 
     <div class="media-wrapper">
-      <div class="media">
+      <div {{ attributes.addClass(classes) }}>
         <div class="media-left avatar">
           {% if author_picture %}
             {{ author_picture }}
@@ -34,26 +43,26 @@
               {{ content.user_id }}
             {% endif %}
             <div class="post-date">
-                {{ date }}
-                {% if visibility_icon and visibility_label %}
-                    <svg class="margin-left-s icon-visibility">
-                        <use xlink:href="#icon-{{ visibility_icon }}"></use>
-                    </svg>
-                    <strong>{{ visibility_label }}</strong>
-                {% endif %}
+              {{ date }}
+              {% if visibility_icon and visibility_label %}
+                <svg class="margin-left-s icon-visibility">
+                  <use xlink:href="#icon-{{ visibility_icon }}"></use>
+                </svg>
+                <strong>{{ visibility_label }}</strong>
+              {% endif %}
+              {% if not published %}
+                <span class="badge badge-default badge--pill">
+                  {% trans %} unpublished {% endtrans %}
+                </span>
+              {% endif %}
             </div>
           </div>
         </div>
       </div>
-
-      {% if published %}
-        {{ content.links }}
+      {% if content.links %}
+          {{ content.links }}
       {% endif %}
-  </div>
-    {% if not published %}
-    <div class="node--unpublished__label">{% trans %} unpublished {% endtrans %}</div>
-    {% endif %}
-
+    </div>
     <div class="margin-top-s iframe-container">
 
       {{ content|without('links', 'field_post_comments', 'like_and_dislike', 'field_post_image', 'user_id') }}

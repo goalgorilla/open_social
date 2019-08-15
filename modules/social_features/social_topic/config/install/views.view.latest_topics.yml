@@ -318,9 +318,9 @@ display:
           entity_field: gid
           plugin_id: numeric
       access:
-        type: group_permission
+        type: perm
         options:
-          group_permission: 'view group_node:topic content'
+          perm: 'access content'
       title: 'Newest topics'
       use_more: true
       use_more_always: true
@@ -328,12 +328,12 @@ display:
     cache_metadata:
       max-age: -1
       contexts:
-        - group_membership.roles.permissions
         - 'languages:language_content'
         - 'languages:language_interface'
         - route
         - url
         - 'user.node_grants:view'
+        - user.permissions
       tags: {  }
   page_latest_topics:
     display_plugin: page
