@@ -3,6 +3,7 @@
 namespace Drupal\socialbase\Plugin\Preprocess;
 
 use Drupal\bootstrap\Plugin\Preprocess\PreprocessBase;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
 
 /**
@@ -26,7 +27,10 @@ class PageTitle extends PreprocessBase {
     $route_name = \Drupal::routeMatch()->getRouteName();
 
     if ($route_name === 'entity.profile.type.user_profile_form') {
-      $profile_type = $variables['title']->getArguments();
+      if ($variables['title'] instanceof TranslatableMarkup) {
+        $profile_type = $variables['title']->getArguments();
+      }
+
       if (!empty($profile_type['@label'])) {
         $variables['title'] = t('Edit @label', ['@label' => $profile_type['@label']]);
       }
@@ -46,15 +50,11 @@ class PageTitle extends PreprocessBase {
     }
 
     // Check if it is the edit/add/delete.
-    $paths_to_exclude = [
-      'edit',
-      'add',
-      'delete',
-    ];
-
-    $in_path = str_replace($paths_to_exclude, '', $current_path) !== $current_path;
-
-    if ($in_path) {
+    if (in_array($route_name, [
+      'entity.node.edit_form',
+      'entity.node.delete_form',
+      'entity.node.add_form',
+    ])) {
       $variables['edit'] = TRUE;
     }
 

@@ -6,6 +6,7 @@ use Drupal\Tests\UnitTestCase;
 use Drupal\social_user\Plugin\Validation\Constraint\SocialUserNameConstraint;
 use Drupal\social_user\Plugin\Validation\Constraint\SocialUserNameConstraintValidator;
 use Egulias\EmailValidator\EmailValidator;
+use Egulias\EmailValidator\Validation\RFCValidation;
 
 /**
  * @coversDefaultClass \Drupal\social_user\Plugin\Validation\Constraint\SocialUserNameConstraintValidator
@@ -66,7 +67,8 @@ class SocialUserNameConstraintTest extends UnitTestCase {
     // Validate Symfony.
     if ($name !== NULL) {
       $validator = new EmailValidator();
-      $is_valid_email = $validator->isValid($name);
+      $rfcValidation = new RFCValidation();
+      $is_valid_email = $validator->isValid($name, $rfcValidation);
       if ($expected_violation) {
         $this->assertTrue($is_valid_email, "Exepected a valid email, found no invalid email");
       }
@@ -127,8 +129,6 @@ class SocialUserNameConstraintTest extends UnitTestCase {
     // Because we use the same validation for the Emails it will not
     // Affect the email login system.
     $valid_names_but_valid_emails = [
-      '"very.(),:;<>[]\".VERY.\"very@\\ \"very\".unusual"@strange.example.com',
-      '"()<>[]:,;@\\\"!#$%&\'*+-/=?^_`{}| ~.a"@example.org',
       'Abc.example.com (no @ character)',
     ];
     $email_violations = 1;

@@ -45,15 +45,29 @@
   {% endif %}
   <div class="{{ cover_wrap_classes }}">
     <header class="page-title">
-      <h1>{{ content.label }}</h1>
-      <p>
-        {% if closed_group_lock %}
-          <span>{% trans %}Closed group{% endtrans %}</span> &bullet;
+      <h1>
+          {% if closed_group_lock %}
+              <svg class="icon-white icon-medium">
+                  <use xlink:href="#icon-lock"></use>
+              </svg>
+          {% elseif secret_group_shield %}
+              <svg class="icon-white icon-medium">
+                  <use xlink:href="#icon-shield"></use>
+              </svg>
+          {% endif %}
+          <span>{{ title }}</span></h1>
+        {% if group_type %}
+          <span>{{ group_type }}</span>
         {% endif %}
+          {% if group_settings_help %}
+            <span>
+              {{ group_settings_help }}
+            </span>
+          {% endif %}
+        &bullet;
         <span>
           {% trans %}1 member {% plural group_members %} @count members{% endtrans %}
         </span>
-      </p>
     </header>
     <footer class="hero-footer">
       <div class="hero-footer__text">

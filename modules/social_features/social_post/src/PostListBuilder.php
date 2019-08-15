@@ -22,6 +22,8 @@ class PostListBuilder extends EntityListBuilder {
     $header['post'] = $this->t('Post');
     $header['author'] = $this->t('Author');
     $header['created'] = $this->t('Created');
+    $header['status'] = $this->t('Status');
+
     return $header + parent::buildHeader();
   }
 
@@ -38,6 +40,8 @@ class PostListBuilder extends EntityListBuilder {
     }
     $row['author'] = $entity->getOwner()->toLink();
     $row['created'] = \Drupal::service('date.formatter')->format($entity->getCreatedTime(), 'small');
+    $row['status'] = $entity->isPublished() ? t("published") : t("unpublished");
+
     return $row + parent::buildRow($entity);
   }
 

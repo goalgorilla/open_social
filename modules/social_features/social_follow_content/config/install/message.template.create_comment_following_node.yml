@@ -12,21 +12,21 @@ third_party_settings:
     activity_destinations:
       notifications: notifications
       email: email
-    activity_create_direct: 0
-    activity_aggregate: 0
+    activity_create_direct: false
+    activity_aggregate: false
     activity_entity_condition: comment_all
 template: create_comment_following_node
 label: 'Create comment on following node'
 description: 'A person commented on content I am following'
 text:
   -
-    value: "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</a> commented on [social_comment:parent_entity_author]'s [social_comment:commented_content_type] <a href=\"[message:field_message_related_object:entity:url:absolute]\">[message:node-title]</a> you are following</p>\n"
+    value: "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</a> commented on [social_comment:parent_entity_author]'s [social_comment:commented_content_type] <a href=\"[message:field_message_related_object:entity:url:absolute]\">[message:node-title]</a> you are following</p>\r\n"
     format: full_html
   -
-    value: "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</a> commented on [social_comment:parent_entity_author]'s [social_comment:commented_content_type] <a href=\"[message:field_message_related_object:entity:url:absolute]\">[message:node-title]</a> you are following</p>\n"
+    value: "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</a> commented on [social_comment:parent_entity_author]'s [social_comment:commented_content_type] <a href=\"[message:field_message_related_object:entity:url:absolute]\">[message:node-title]</a> you are following</p>\r\n"
     format: full_html
   -
-    value: "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</a> commented on [social_comment:parent_entity_author]'s [social_comment:commented_content_type] <a href=\"[message:field_message_related_object:entity:url:absolute]\">[message:node-title]</a> you are following</p>\n"
+    value: "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</a> commented on [social_comment:parent_entity_author]'s [social_comment:commented_content_type] <a href=\"[message:field_message_related_object:entity:url:absolute]\">[message:node-title]</a> you are following</p>\r\n\r\n<div class=\"comments\">\r\n<div class=\"post\"><em>[social_comment:comment_author]</em> <small>• [social_comment:comment_date]</small>\r\n<p>[social_comment:comment_text]</p>\r\n</div>\r\n</div>\r\n<table class=\"btn-wrapp\">\r\n\t<tbody>\r\n\t\t<tr>\r\n\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-one\" href=\"[social_comment:comment_reply_link_html]\">Reply to this comment </a></td>\r\n\t\t</tr>\r\n\t</tbody>\r\n</table>"
     format: full_html
 settings:
   'token options':
