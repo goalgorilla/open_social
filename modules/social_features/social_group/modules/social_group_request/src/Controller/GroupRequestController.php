@@ -2,7 +2,7 @@
 
 namespace Drupal\social_group_request\Controller;
 
-use Drupal\Core\Cache\CacheTagsInvalidator;
+use Drupal\Core\Cache\CacheTagsInvalidatorInterface;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityFormBuilderInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -22,25 +22,38 @@ class GroupRequestController extends ControllerBase {
   /**
    * The cache tags invalidator.
    *
-   * @var \Drupal\Core\Cache\CacheTagsInvalidator
+   * @var \Drupal\Core\Cache\CacheTagsInvalidatorInterface
    */
   protected $cacheTagsInvalidator;
 
   /**
    * GroupRequestController constructor.
+   *
+   * @param \Drupal\Core\Entity\EntityFormBuilderInterface $entity_form_builder
+   *   The entity form builder.
+   * @param \Drupal\Core\Messenger\MessengerInterface $messenger
+   *   The messenger.
+   * @param \Drupal\Core\Cache\CacheTagsInvalidatorInterface $cache_tags_invalidator
+   *   The cache tags invalidator.
+   * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
+   *   The string translation.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
+   * @param \Drupal\Core\Session\AccountInterface $current_user
+   *   The current user.
    */
   public function __construct(
     EntityFormBuilderInterface $entity_form_builder,
     MessengerInterface $messenger,
-    CacheTagsInvalidator $cache_tags_invalidator,
+    CacheTagsInvalidatorInterface $cache_tags_invalidator,
     TranslationInterface $string_translation,
     EntityTypeManagerInterface $entity_type_manager,
     AccountInterface $current_user
   ) {
     $this->entityFormBuilder = $entity_form_builder;
-    $this->messenger = $messenger;
+    $this->setMessenger($messenger);
     $this->cacheTagsInvalidator = $cache_tags_invalidator;
-    $this->stringTranslation = $string_translation;
+    $this->setStringTranslation($string_translation);
     $this->entityTypeManager = $entity_type_manager;
     $this->currentUser = $current_user;
   }

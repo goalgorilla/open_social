@@ -7,6 +7,7 @@ use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Routing\RedirectDestinationInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
 use Drupal\social_group_request\Plugin\GroupContentEnabler\GroupMembershipRequest;
 use Drupal\group\Entity\GroupContentInterface;
@@ -62,11 +63,19 @@ class GroupRequestMembershipRejectForm extends FormBase {
    *   The cache tags invalidator.
    * @param \Drupal\Core\Session\AccountInterface $current_user
    *   The current user.
+   * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
+   *   The string translation.
    */
-  public function __construct(RedirectDestinationInterface $redirect_destination, CacheTagsInvalidatorInterface $cache_tags_invalidator, AccountInterface $current_user) {
+  public function __construct(
+    RedirectDestinationInterface $redirect_destination,
+    CacheTagsInvalidatorInterface $cache_tags_invalidator,
+    AccountInterface $current_user,
+    TranslationInterface $string_translation
+  ) {
     $this->redirectDestination = $redirect_destination;
     $this->cacheTagsInvalidator = $cache_tags_invalidator;
     $this->currentUser = $current_user;
+    $this->setStringTranslation($string_translation);
   }
 
   /**
@@ -76,7 +85,8 @@ class GroupRequestMembershipRejectForm extends FormBase {
     return new static(
       $container->get('redirect.destination'),
       $container->get('cache_tags.invalidator'),
-      $container->get('current_user')
+      $container->get('current_user'),
+      $container->get('string_translation')
     );
   }
 

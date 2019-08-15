@@ -99,8 +99,7 @@ function social_group_request_preprocess_group__hero(&$variables) {
  * Implements hook_menu_local_tasks_alter().
  */
 function social_group_request_menu_local_tasks_alter(&$data, $route_name, RefinableCacheableDependencyInterface &$cacheability) {
-  // Get the Group object from the route.
-  $group = \Drupal::routeMatch()->getParameter('group');
+  $group = _social_group_get_current_group();
 
   // Must be a group, otherwise we don't do anything.
   if ($group instanceof GroupInterface && isset($data['tabs'][0]['social_group_request.pending_members'])) {
@@ -112,13 +111,14 @@ function social_group_request_menu_local_tasks_alter(&$data, $route_name, Refina
         ->getContentPlugin('group_membership_request')
         ->getContentTypeConfigId();
 
-      $requests = \Drupal::entityTypeManager()->getStorage('group_content')->loadByProperties([
-        'type' => $contentTypeConfigId,
-        'gid' => $group->id(),
-        'grequest_status' => GroupMembershipRequest::REQUEST_PENDING,
-      ]);
+      $requests = \Drupal::entityQuery('group_content')
+        ->condition('type', $contentTypeConfigId)
+        ->condition('gid', $group->id())
+        ->condition('grequest_status', GroupMembershipRequest::REQUEST_PENDING)
+        ->count()
+        ->execute();
 
-      $pending_members_tab['#link']['title'] = sprintf('%s (%s)', $pending_members_tab['#link']['title'], count($requests));
+      $pending_members_tab['#link']['title'] = sprintf('%s (%s)', $pending_members_tab['#link']['title'], $requests);
 
       $cacheability->addCacheTags(['request-membership:' . $group->id()]);
     }
@@ -225,5 +225,33 @@ function social_group_request_preprocess_activity(array &$variables) {
         }
       }
     }
+  }
+}
+
+/**
+ * Implements hook_preprocess_page_title().
+ */
+function social_group_request_preprocess_page_title(&$variables) {
+  if (\Drupal::routeMatch()->getRouteName() === 'view.group_pending_members.pending_members') {
+    $group = _social_group_get_current_group();
+
+    if ($group instanceof GroupInterface && $group->getGroupType()->id() === 'closed_group') {
+      $contentTypeConfigId = $group
+        ->getGroupType()
+        ->getContentPlugin('group_membership_request')
+        ->getContentTypeConfigId();
+
+      $requests = \Drupal::entityQuery('group_content')
+        ->condition('type', $contentTypeConfigId)
+        ->condition('gid', $group->id())
+        ->condition('grequest_status', GroupMembershipRequest::REQUEST_PENDING)
+        ->count()
+        ->execute();
+
+      $variables['title'] = t('Requests (@count)', ['@count' => $requests]);
+
+      $variables['#cache']['tags'][] = 'request-membership:' . $group->id();
+    }
+
   }
 }

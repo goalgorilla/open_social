@@ -88,7 +88,7 @@ class GroupMembershipRequest extends GroupContentEnablerBase implements Containe
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->currentUser = $current_user;
     $this->configInstaller = $config_installer;
-    $this->stringTranslation = $string_translation;
+    $this->setStringTranslation($string_translation);
   }
 
   /**

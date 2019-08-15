@@ -50,15 +50,15 @@ function social_group_request_tokens($type, $tokens, array $data, array $options
           if (isset($message->field_message_related_object)) {
             $target_type = $message->field_message_related_object->target_type;
             $target_id = $message->field_message_related_object->target_id;
-            $comment = \Drupal::entityTypeManager()
-              ->getStorage($target_type)
-              ->load($target_id);
 
-            if (!empty($comment)) {
-              if ($target_type === 'comment') {
-                if ($entity_id = $comment->getCommentedEntityId()) {
-                  $replacements[$original] = Url::fromRoute('view.group_pending_members.pending_members', ['group' => $entity_id])->toString();
-                }
+            if (isset($target_type) && !empty($target_type) && $target_type === 'group_content') {
+              /** @var \Drupal\group\Entity\GroupContentInterface $group_content */
+              $group_content = \Drupal::entityTypeManager()
+                ->getStorage($target_type)
+                ->load($target_id);
+
+              if (!empty($group_content)) {
+                $replacements[$original] = Url::fromRoute('view.group_pending_members.pending_members', ['group' => $group_content->getGroup()->id()])->toString();
               }
             }
           }
