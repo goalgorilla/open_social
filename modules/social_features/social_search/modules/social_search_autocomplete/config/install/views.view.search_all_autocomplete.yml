@@ -3,14 +3,14 @@ status: true
 dependencies:
   config:
     - search_api.index.social_all
+  enforced:
+    module:
+      - social_search_autocomplete
   module:
     - rest
     - search_api
     - serialization
     - user
-  enforced:
-    module:
-      - social_search_autocomplete
 id: search_all_autocomplete
 label: 'Search All autocomplete'
 module: views
@@ -289,7 +289,7 @@ display:
             set_precision: false
             precision: 0
             decimal: .
-            separator: ','
+            separator: ''
             format_plural: false
             format_plural_string: !!binary MQNAY291bnQ=
             prefix: ''
@@ -680,7 +680,7 @@ display:
             set_precision: false
             precision: 0
             decimal: .
-            separator: ','
+            separator: ''
             format_plural: false
             format_plural_string: !!binary MQNAY291bnQ=
             prefix: node/
@@ -763,7 +763,7 @@ display:
             set_precision: false
             precision: 0
             decimal: .
-            separator: ','
+            separator: ''
             format_plural: false
             format_plural_string: !!binary MQNAY291bnQ=
             prefix: user/
@@ -846,7 +846,7 @@ display:
             set_precision: false
             precision: 0
             decimal: .
-            separator: ','
+            separator: ''
             format_plural: false
             format_plural_string: !!binary MQNAY291bnQ=
             prefix: group/
@@ -915,6 +915,18 @@ display:
           id: search_api_relevance
           table: search_api_index_social_all
           field: search_api_relevance
+          relationship: none
+          group_type: group
+          admin_label: ''
+          order: DESC
+          exposed: false
+          expose:
+            label: ''
+          plugin_id: search_api
+        created:
+          id: created
+          table: search_api_index_social_all
+          field: created
           relationship: none
           group_type: group
           admin_label: ''

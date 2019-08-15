@@ -45,12 +45,12 @@ display:
         type: basic
         options:
           submit_button: Apply
-          reset_button: false
+          reset_button: true
           reset_button_label: Reset
           exposed_sorts_label: 'Sort by'
           expose_sort_order: true
-          sort_asc_label: Asc
-          sort_desc_label: Desc
+          sort_asc_label: ascending
+          sort_desc_label: descending
       pager:
         type: some
         options:
@@ -318,9 +318,9 @@ display:
           entity_field: gid
           plugin_id: numeric
       access:
-        type: group_permission
+        type: perm
         options:
-          group_permission: 'view group_node:topic content'
+          perm: 'access content'
       title: 'Newest topics'
       use_more: true
       use_more_always: true
@@ -328,12 +328,12 @@ display:
     cache_metadata:
       max-age: -1
       contexts:
-        - group_membership.roles.permissions
         - 'languages:language_content'
         - 'languages:language_interface'
         - route
         - url
         - 'user.node_grants:view'
+        - user.permissions
       tags: {  }
   page_latest_topics:
     display_plugin: page
@@ -352,6 +352,7 @@ display:
         pager: false
         filters: false
         filter_groups: false
+        sorts: false
       row:
         type: 'entity:node'
         options:
@@ -486,6 +487,22 @@ display:
         groups:
           1: AND
       exposed_block: true
+      sorts:
+        created:
+          id: created
+          table: node_field_data
+          field: created
+          relationship: none
+          group_type: group
+          admin_label: ''
+          order: DESC
+          exposed: true
+          expose:
+            label: 'Sort by publish date'
+          granularity: second
+          entity_type: node
+          entity_field: created
+          plugin_id: date
     cache_metadata:
       max-age: -1
       contexts:
@@ -493,6 +510,8 @@ display:
         - 'languages:language_interface'
         - url
         - url.query_args
+        - 'url.query_args:sort_by'
+        - 'url.query_args:sort_order'
         - user
         - 'user.node_grants:view'
         - user.permissions

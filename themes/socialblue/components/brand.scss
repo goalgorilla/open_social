@@ -300,6 +300,24 @@ blockquote {
   }
 }
 
+html:not(.js) .navbar-default {
+  .dropdown {
+
+    &:focus,
+    &:hover {
+
+      > a {
+        color: $navbar-default-link-active-color;
+        background-color: $navbar-default-link-active-bg;
+
+        .navbar-nav__icon {
+          fill: $navbar-default-link-active-color;
+        }
+      }
+    }
+  }
+}
+
 .dropdown {
   &.has-alert {
     > a {
@@ -446,9 +464,9 @@ blockquote {
 
 .leaflet-popup-content .card__text {
   > a {
-    color: $navbar-default-link-color;
+    color: $link-color;
     &:after {
-      color: $navbar-default-link-color;
+      color: $link-color;
     }
   }
 }

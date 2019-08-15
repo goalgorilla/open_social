@@ -107,7 +107,7 @@ function social_tagging_form_alter(&$form, FormStateInterface $form_state, $form
   if (isset($form['social_tagging'])) {
     // Load tag config..
     $tag_settings = \Drupal::getContainer()->get('config.factory')->getEditable('social_tagging.settings');
-    /** @var \Drupal\Core\Entity\Entity $form_entity */
+    /** @var \Drupal\Core\Entity\EntityBase $form_entity */
     $form_entity = $form_state->getFormObject()->getEntity();
     // Switch for the entity_type.
     switch ($form_entity->getEntityTypeId()) {
