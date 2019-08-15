@@ -29,7 +29,7 @@ Feature: Move content after creation
     And I wait for AJAX to finish
     Then I should see "Changing the group may have impact on the visibility settings."
     And I press "Save"
-    And I should see "Kayaking" in the "Main content"
+    And I should see "Kayaking"
     And I wait for "2" seconds
 
     # Edit topic
@@ -66,8 +66,8 @@ Feature: Move content after creation
     And I wait for AJAX to finish
     And I press "Save"
     And I run cron
-    Then I should not see "Motorboats" in the "Main content"
-    And I should not see "Kayaking" in the "Main content"
+    Then I should not see "Motorboats"
+    And I should not see "Kayaking"
 
     When I am logged in as "harry"
     And I am on the stream of group "Motorboats"

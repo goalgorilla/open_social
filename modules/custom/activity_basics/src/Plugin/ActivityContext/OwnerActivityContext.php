@@ -30,6 +30,14 @@ class OwnerActivityContext extends ActivityContextBase {
       }
     }
 
+    // Remove the actor (user performing action) from recipients list.
+    if (!empty($data['actor'])) {
+      $key = array_search($data['actor'], array_column($recipients, 'target_id'), FALSE);
+      if ($key !== FALSE) {
+        unset($recipients[$key]);
+      }
+    }
+
     return $recipients;
   }
 
@@ -42,6 +50,13 @@ class OwnerActivityContext extends ActivityContextBase {
     $entity_storage = \Drupal::entityTypeManager()
       ->getStorage($related_entity['target_type']);
     $entity = $entity_storage->load($related_entity['target_id']);
+
+    // It could happen that a notification has been queued but the content
+    // has since been deleted. In that case we can find no additional
+    // recipients.
+    if (!$entity) {
+      return $recipients;
+    }
 
     // Don't return recipients if user comments on own content.
     $original_related_object = $data['related_object'][0];

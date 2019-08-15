@@ -68,15 +68,15 @@ display:
         type: search_api
         options:
           view_modes:
-            'entity:node':
-              event: teaser
-              page: teaser
-              topic: teaser
-              book: teaser
             'entity:group':
               closed_group: teaser
               open_group: teaser
               public_group: teaser
+            'entity:node':
+              book: teaser
+              event: teaser
+              page: teaser
+              topic: teaser
             'entity:profile':
               profile: teaser
       fields:
@@ -159,6 +159,18 @@ display:
           id: search_api_relevance
           table: search_api_index_social_all
           field: search_api_relevance
+          relationship: none
+          group_type: group
+          admin_label: ''
+          order: DESC
+          exposed: false
+          expose:
+            label: ''
+          plugin_id: search_api
+        created:
+          id: created
+          table: search_api_index_social_all
+          field: created
           relationship: none
           group_type: group
           admin_label: ''

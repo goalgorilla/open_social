@@ -6,3 +6,9 @@ social_group.add_member:
   title: 'Add members'
   appears_on:
     - 'view.group_manage_members.page_group_manage_members'
+  cache_contexts:
+    - 'group'
+    - 'user.permissions'
+    - 'group.type'
+    - 'user.roles'
+  cache_max_age: 0
