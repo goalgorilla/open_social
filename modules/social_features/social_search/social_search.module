@@ -28,69 +28,127 @@ function social_search_form_views_exposed_form_alter(&$form, FormStateInterface 
     'views-exposed-form-search-users-page',
   ];
 
-  if (in_array($form['#id'], $filter_forms)) {
+  if (in_array($form['#id'], $filter_forms, TRUE)) {
     // Set current path as form action, in order to keep search input.
     $form['#action'] = \Drupal::service('path.current')->getPath();
     // Always enable the reset button.
     $form['actions']['reset']['#access'] = TRUE;
     $form['#attached']['library'][] = 'social_search/search_filters';
 
-    if ($form['#id'] == 'views-exposed-form-search-users-page') {
-      foreach ($form as &$element) {
-        if (is_array($element) && isset($element['#type']) && $element['#type'] == 'entity_autocomplete') {
-          $element['#selection_settings']['hide_id'] = TRUE;
-        }
-      }
+    switch ($form['#id']) {
+      case 'views-exposed-form-search-users-page':
+        social_search_alter_users_exposed_filter_block($form, $form_state, $form_id);
+        break;
 
-      if (!empty($form['created']) && !empty($form['created_op'])) {
-        $form['settings']['created_op'] = $form['created_op'];
-        $form['settings']['created'] = $form['created'];
-        unset($form['created_op'], $form['created']);
-      }
+      case 'views-exposed-form-search-groups-page':
+        social_search_alter_groups_exposed_filter_block($form, $form_state, $form_id);
+        break;
+
+      case 'views-exposed-form-search-content-page':
+        social_search_alter_content_exposed_filter_block($form, $form_state, $form_id);
+        break;
+
     }
-    if ($form['#id'] == 'views-exposed-form-search-groups-page') {
-      $options = [
-        '' => t('- Any -'),
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ *
+ * Makes changes for the filter block on the user search page.
+ */
+function social_search_alter_users_exposed_filter_block(&$form, FormStateInterface $form_state, $form_id) {
+  foreach ($form as &$element) {
+    if (is_array($element) && isset($element['#type']) && $element['#type'] === 'entity_autocomplete') {
+      $element['#selection_settings']['hide_id'] = TRUE;
+    }
+  }
+
+  if (!empty($form['created']) && !empty($form['created_op'])) {
+    $form['settings']['created_op'] = $form['created_op'];
+    $form['settings']['created'] = $form['created'];
+    unset($form['created_op'], $form['created']);
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ *
+ * Makes changes for the filter block on the groups search page.
+ */
+function social_search_alter_groups_exposed_filter_block(&$form, FormStateInterface $form_state, $form_id) {
+  $options = [
+    '' => t('- Any -'),
+  ];
+  $group_types = GroupType::loadMultiple();
+  /** @var \Drupal\group\Entity\GroupType $group_type */
+  foreach ($group_types as $group_type) {
+    $options[$group_type->id()] = $group_type->label();
+  }
+
+  $form['type'] = [
+    '#type' => 'select',
+    '#options' => $options,
+  ];
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ *
+ * Makes changes for the filter block on the content search page.
+ */
+function social_search_alter_content_exposed_filter_block(&$form, FormStateInterface $form_state, $form_id) {
+  if (!empty($form['type'])) {
+    $form['type']['#weight'] = '-100';
+  }
+
+  if (!empty($form['field_event_date']) && !empty($form['field_event_date_op'])) {
+    if (!empty($form['settings'])) {
+      $form['settings']['#states'] = [
+        'visible' => [
+          ':input[name=type]' => [
+            'value' => 'event',
+          ],
+        ],
       ];
-      $group_types = GroupType::loadMultiple();
-      /** @var \Drupal\group\Entity\GroupType $group_type */
-      foreach ($group_types as $group_type) {
-        $options[$group_type->id()] = $group_type->label();
-      }
-
-      $form['type'] = [
-        '#type' => 'select',
-        '#options' => $options,
-      ];
+      $form['settings']['#weight'] = '-99';
+      $form['settings']['#attributes']['class'] = ['indent_filter'];
     }
-    if ($form['#id'] == 'views-exposed-form-search-content-page') {
-      if (!empty($form['type'])) {
-        $form['type']['#weight'] = '-100';
-      }
 
-      if (!empty($form['field_event_date']) && !empty($form['field_event_date_op'])) {
-        if (!empty($form['settings'])) {
-          $form['settings']['#states'] = [
-            'visible' => [
-              ':input[name=type]' => [
-                'value' => 'event',
-              ],
-            ],
-          ];
-          $form['settings']['#weight'] = '-99';
-          $form['settings']['#attributes']['class'] = ['indent_filter'];
-        }
+    $form['settings']['field_event_date_op'] = $form['field_event_date_op'];
+    $form['settings']['field_event_date'] = $form['field_event_date'];
+    unset($form['field_event_date'], $form['field_event_date_op']);
+  }
 
-        $form['settings']['field_event_date_op'] = $form['field_event_date_op'];
-        $form['settings']['field_event_date'] = $form['field_event_date'];
-        unset($form['field_event_date'], $form['field_event_date_op']);
-      }
+  if (!empty($form['location_details'])) {
+    $form['location_details']['#weight'] = '-98';
+    $form['location_details']['#attributes']['class'] = ['indent_filter'];
+  }
 
-      if (!empty($form['location_details'])) {
-        $form['location_details']['#weight'] = '-98';
-        $form['location_details']['#attributes']['class'] = ['indent_filter'];
-      }
+  // When combined sorting and filtering is used we make some changes to
+  // accommodate theming.
+  if (isset($form['sort_bef_combine'])) {
+    // Ensure the sort option shows up at the top.
+    $form['sort_bef_combine']['#weight'] = -9999;
+
+    // From a UX perspective it doesn't make sense to show the least relevant
+    // results first so we remove this sorting option.
+    if (isset($form['sort_bef_combine']['#options']['search_api_relevance ASC'])) {
+      unset($form['sort_bef_combine']['#options']['search_api_relevance ASC']);
     }
+
+    // We attach custom CSS so that we can properly translate the filter title.
+    // This selector should match the value in sort_filter.css of this module.
+    // Use a useless variable to trick phpcs from giving us invalid warnings.
+    $translated_filter = t('Filter');
+    $form['social_search_translated_filter_string'] = [
+      '#type' => 'html_tag',
+      '#tag' => 'style',
+      '#attributes' => [
+        'type' => 'text/css',
+      ],
+      '#value' => "#block-filter .form-item-sort-bef-combine:after { content: '${translated_filter}'; }",
+    ];
   }
 }
 

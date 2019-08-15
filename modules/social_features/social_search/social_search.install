@@ -326,3 +326,13 @@ function social_search_update_8601() {
     $index->reindex();
   }
 }
+
+/**
+ * Install Better Exposed Filter module.
+ */
+function social_search_update_8701() {
+  $modules = [
+    'better_exposed_filters',
+  ];
+  \Drupal::service('module_installer')->install($modules);
+}
