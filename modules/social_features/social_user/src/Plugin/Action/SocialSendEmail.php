@@ -71,13 +71,6 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
   protected $emailValidator;
 
   /**
-   * The configuration factory.
-   *
-   * @var \Drupal\Core\Config\ConfigFactoryInterface
-   */
-  protected $configFactory;
-
-  /**
    * Constructs a SocialSendEmail object.
    *
    * @param array $configuration
@@ -147,7 +140,7 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
       return;
     }
 
-    /** @var \Drupal\user\Entity\User $entity */
+    /** @var \Drupal\user\UserInterface $entity */
     if ($entity) {
       $langcode = $entity->getPreferredLangcode();
     }
@@ -220,12 +213,15 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
     ];
 
     $form['message'] = [
-      '#type' => 'textarea',
+      '#type' => 'text_format',
       '#title' => $this->t('Message'),
       '#required' => TRUE,
       '#default_value' => $form_state->getValue('message'),
       '#cols' => '80',
       '#rows' => '20',
+      '#allowed_formats' => [
+        'mail_html',
+      ],
     ];
 
     $form['#title'] = $this->t('Send an email to :selected_count members', [
@@ -256,6 +252,15 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
     ] + $classes;
 
     return $form;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function submitConfigurationForm(array &$form, FormStateInterface $form_state) {
+    parent::submitConfigurationForm($form, $form_state);
+
+    $this->configuration['message'] = $this->configuration['message']['value'];
   }
 
   /**
