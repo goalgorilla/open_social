@@ -899,5 +899,13 @@ function social_core_update_8501() {
  */
 function social_core_update_8601() {
   // Set some default permissions.
-  _social_core_set_permissions();
+  $role_ids = \Drupal::entityQuery('role')->condition('id', [
+    'authenticated',
+    'contentmanager',
+    'sitemanager',
+  ], 'IN')->execute();
+
+  foreach ($role_ids as $role_id) {
+    user_role_grant_permissions($role_id, ['use text format mail_html']);
+  }
 }
