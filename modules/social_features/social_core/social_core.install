@@ -899,7 +899,7 @@ function social_core_update_8501() {
  */
 function social_core_update_8601() {
   // Set some default permissions.
-  $role_ids = \Drupal::entityQuery('role')->condition('id', [
+  $role_ids = \Drupal::entityQuery('user_role')->condition('id', [
     'authenticated',
     'contentmanager',
     'sitemanager',
