@@ -1,0 +1,136 @@
+<?php
+
+/**
+ * @file
+ * The Social registration fields module file.
+ */
+
+use Drupal\Core\Entity\Entity\EntityFormDisplay;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Render\Element;
+use Drupal\profile\Entity\Profile;
+use Drupal\profile\Entity\ProfileType;
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function social_registration_fields_form_user_register_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  $language = \Drupal::languageManager()->getDefaultLanguage()->getId();
+  $profile_type = ProfileType::load('profile');
+
+  $property = ['profiles', $profile_type->id()];
+  $profile = $form_state->get($property);
+
+  if (empty($profile)) {
+    $profile = Profile::create([
+      'type' => $profile_type->id(),
+      'langcode' => $profile_type->language() ? $profile_type->language() : $language,
+    ]);
+
+    // Attach profile entity form.
+    $form_state->set($property, $profile);
+  }
+
+  $max_weight = 0;
+  foreach ($form['account'] as $field_key => $account_field) {
+    if (
+      is_array($account_field) &&
+      isset($account_field['#weight']) &&
+      !empty($account_field['#weight']) &&
+      $field_key !== 'captcha' &&
+      $field_key !== 'data_policy'
+    ) {
+
+      if ($account_field['#weight'] > $max_weight) {
+        $max_weight = $account_field['#weight'];
+      }
+    }
+  }
+
+  $form_state->set('form_display_' . $profile_type->id(), EntityFormDisplay::collectRenderDisplay($profile, 'default'));
+  $form['account']['entity_' . $profile_type->id()] = [
+    '#type' => 'details',
+    '#tree' => TRUE,
+    '#parents' => ['entity_' . $profile_type->id()],
+    '#weight' => $max_weight + 0.5,
+    '#open' => TRUE,
+  ];
+  $form_state
+    ->get('form_display_' . $profile_type->id())
+    ->buildForm($profile, $form['account']['entity_' . $profile_type->id()], $form_state);
+
+  $reg_fields_settings = \Drupal::config('social_registration_fields.settings')->get();
+  if (!isset($reg_fields_settings) || empty($reg_fields_settings) || !is_array($reg_fields_settings)) {
+    unset($form['account']['entity_' . $profile_type->id()]);
+  }
+
+  // Do not display profile fields if they are not in the settings array.
+  foreach ($form['account']['entity_' . $profile_type->id()] as $form_item_key => $form_item) {
+    if (!isset($reg_fields_settings[$form_item_key]) && substr($form_item_key, 0, 5) === 'field') {
+      unset($form['account']['entity_' . $profile_type->id()][$form_item_key]);
+    }
+  }
+
+  foreach ($reg_fields_settings as $reg_field_key => $reg_field_settings) {
+    if (isset($form['account']['entity_' . $profile_type->id()][$reg_field_key])) {
+      if (!$reg_field_settings['show_on_signup']) {
+        unset($form['account']['entity_' . $profile_type->id()][$reg_field_key]);
+      }
+      elseif ($reg_field_settings['mandatory']) {
+        social_registration_make_field_required($form['account']['entity_' . $profile_type->id()][$reg_field_key]);
+      }
+    }
+  }
+
+  $form['#validate'][] = 'social_registration_form_user_register_form_validate';
+  $form['actions']['submit']['#submit'][] = 'social_registration_fields_form_user_register_form_submit';
+}
+
+/**
+ * Recursively set the required attribute of a form field.
+ */
+function social_registration_make_field_required(&$elements) {
+  foreach (Element::children($elements) as $key) {
+    // Recurse through all children elements.
+    social_registration_make_field_required($elements[$key]);
+  }
+
+  $elements['#required'] = TRUE;
+}
+
+/**
+ * Extra form submission handler for the user registration form.
+ */
+function social_registration_fields_form_user_register_form_submit($form, FormStateInterface $form_state) {
+  /** @var \Drupal\Core\Session\AccountInterface $account */
+  $account = $form_state->getFormObject()->getEntity();
+
+  if ($account->id()) {
+    $storage = \Drupal::entityTypeManager()->getStorage('profile');
+    $profiles = $storage->loadByProperties(['uid' => $account->id()]);
+
+    if (!empty($profiles)) {
+      foreach ($profiles as $entity) {
+        $form_display = $form_state->get('form_display_' . $entity->bundle());
+        $form_display->extractFormValues($entity, $form['account']['entity_' . $entity->bundle()], $form_state);
+        $entity->save();
+      }
+    }
+  }
+
+  $account->save();
+}
+
+/**
+ * Extra form validation handler for the user registration form.
+ */
+function social_registration_form_user_register_form_validate(array &$form, FormStateInterface $form_state) {
+  $profiles = $form_state->get('profiles');
+  if (!empty($profiles)) {
+    foreach ($profiles as $bundle => $entity) {
+      $form_display = $form_state->get('form_display_' . $bundle);
+      $form_display->extractFormValues($entity, $form['account']['entity_' . $bundle], $form_state);
+      $form_display->validateFormValues($entity, $form['account']['entity_' . $bundle], $form_state);
+    }
+  }
+}
