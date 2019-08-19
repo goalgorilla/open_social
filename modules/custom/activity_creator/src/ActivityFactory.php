@@ -282,12 +282,14 @@ class ActivityFactory extends ControllerBase {
       $comment_storage = \Drupal::entityTypeManager()->getStorage('comment');
       // @TODO: Check if comment published?
       $comment = $comment_storage->load($related_object['target_id']);
-      $parent_comment = $comment->getParentComment();
-      if (!empty($parent_comment)) {
-        $related_object = [
-          'target_type' => $parent_comment->getEntityTypeId(),
-          'target_id' => $parent_comment->id(),
-        ];
+      if ($comment) {
+        $parent_comment = $comment->getParentComment();
+        if (!empty($parent_comment)) {
+          $related_object = [
+            'target_type' => $parent_comment->getEntityTypeId(),
+            'target_id' => $parent_comment->id(),
+          ];
+        }
       }
     }
     // We return commented entity as related object for all other comments.
