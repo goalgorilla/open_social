@@ -8,7 +8,6 @@
 
   Drupal.color = {
     logoChanged: false,
-    bannerChanged: false,
     callback: function (context, settings, $form) {
       // Change the logo to be the real one.
       if (!this.logoChanged) {
@@ -87,7 +86,7 @@
             localStorage.removeItem('lever-on');
           }
         }
-      );і
+      );
     }
   };
 })(jQuery, Drupal, drupalSettings);
