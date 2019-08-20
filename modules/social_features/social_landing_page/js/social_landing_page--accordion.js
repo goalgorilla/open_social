@@ -13,14 +13,22 @@
           var $currentTitle = $(this);
 
           $accordText.slideUp();
+          $accordItem.find('.card__title-accord').find('svg use')
+            .attr('xlink:href', '#icon-expand_more');
+
           if ($currentTitle.hasClass('is-active')) {
+            $currentTitle.find('svg use')
+              .attr('xlink:href', '#icon-expand_more');
             $currentTitle.removeClass('is-active');
             $currentTitle.next().slideUp();
+
           }
           else {
             $accordItem.find('.card__title-accord').removeClass('is-active');
             $currentTitle.addClass('is-active');
             $currentTitle.next().slideDown();
+            $currentTitle.find('svg use')
+              .attr('xlink:href', '#icon-expand-less');
           }
         });
       });
