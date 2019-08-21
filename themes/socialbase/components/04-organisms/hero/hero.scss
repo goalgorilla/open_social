@@ -170,6 +170,12 @@
     }
   }
 
+  .hero-footer__text + .hero-footer__cta {
+    @include for-tablet-landscape-up {
+      bottom: auto;
+    }
+  }
+
   .hero-footer__cta {
     display: flex;
     justify-content: flex-end;
@@ -180,6 +186,7 @@
       padding: 0;
       position: absolute;
       right: 0;
+      bottom: 1rem;
       flex: 0 0 auto;
       max-width: unset;
 
