@@ -354,11 +354,9 @@ class ActivityFactory extends ControllerBase {
    */
   protected function getFieldRecipientGroup($data) {
     $value = NULL;
-    if (isset($data['recipient'])) {
-      if ($data['recipient']['target_type'] === 'group') {
-        // Should be in an array for the field.
-        $value = [$data['recipient']];
-      }
+    if (isset($data['recipient']['target_type']) && $data['recipient']['target_type'] === 'group') {
+      // Should be in an array for the field.
+      $value = [$data['recipient']];
     }
     return $value;
   }
@@ -370,7 +368,7 @@ class ActivityFactory extends ControllerBase {
     $value = NULL;
     $user_recipients = [];
     if (isset($data['recipient']) && is_array($data['recipient'])) {
-
+      // Get activities by type and check when there are users entities.
       $activity_by_type = array_column($data['recipient'], 'target_type');
       foreach ($activity_by_type as $recipients_key => $target_type) {
         if ($target_type === 'user') {
