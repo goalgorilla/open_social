@@ -39,6 +39,7 @@
   line-height: 19px;
   color: #9b9b9b;
   text-transform: none;
+  @content;
 
   &.align-center {
     align-self: flex-start;
@@ -811,7 +812,7 @@
   }
 
   //Move to separate file
-  // User information card.
+  // User information/group about cards.
   .user-information {
     &.content--side_wrapper-card .region--content {
       padding-bottom: 4rem;
@@ -848,6 +849,122 @@
       .list-item__text,
       .user-info__wrapper {
         @include content;
+      }
+    }
+  }
+
+  .group-about {
+    .block-views-blockgroup-managers-block-list-managers {
+      @include flex-wrap;
+      @include bottom-line(0, 0, 0, 0);
+
+      .card__title {
+        @include title {
+          color: #9b9b9b;
+          font-size: 14px;
+          line-height: 19px;
+          font-weight: 300;
+        }
+      }
+
+      .card__block {
+        @include content;
+        margin-bottom: 1.25rem;
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+
+        .list-item__avatar {
+          overflow: hidden;
+        }
+
+        .card__text {
+          align-items: center;
+        }
+      }
+
+      .view--group-managers {
+        flex-direction: column;
+      }
+    }
+
+    .view-group-information {
+      @include bottom-line(0, 0, 0, 0);
+
+      .body-text {
+        @include flex-wrap;
+
+        .field--label {
+          @include title;
+        }
+
+        .field--text {
+          @include content;
+        }
+      }
+    }
+
+    .block-views-blockcourse-course-sections-block {
+      @include bottom-line(0, 0, 0, 0);
+
+      .view-display-id-course_sections_block {
+        @include flex-wrap;
+
+        .view-header {
+          @include title {
+            text-align: left;
+          }
+        }
+
+        .card__block {
+          .teaser--course {
+            @include bottom-line(0, 0, 0, 0);
+            padding: 0 0 1.75rem;
+            margin-bottom: 1.75rem;
+            border: none;
+
+            &:last-child {
+              margin-bottom: 0;
+
+
+              &:after {
+                display: none;
+              }
+            }
+          }
+
+          .section__title,
+          .exist-parts {
+            display: inline;
+            color: #4a4a4a;
+            font-size: 14px;
+            font-weight: 400;
+            margin: 0;
+          }
+
+          .exist-parts {
+
+            &:before {
+              content: '|';
+              display: inline-block;
+              margin: 0 3px;
+            }
+          }
+
+          p {
+            margin: 1rem 0 0;
+            color: #4a4a4a;
+          }
+        }
+      }
+    }
+  }
+
+  &.path-group {
+    .region--complementary-top {
+      .block-course-add-section {
+        padding: 1.25rem 2.25rem;
       }
     }
   }
