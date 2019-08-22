@@ -1,0 +1,44 @@
+{{ attach_library('socialbase/hero') }}
+{{ attach_library('socialblue/hero--sky') }}
+
+{% set cover_classes = [
+  'cover hero__group',
+  group_hero_styled_image_url ? 'cover-img cover-img-gradient',
+] %}
+
+<div{{ attributes.addClass(cover_classes) }} {% if group_hero_styled_image_url %} style="background-image: url('{{ group_hero_styled_image_url }}');" {% endif %}>
+  <div class="hero__bgimage-overlay"></div>
+
+  {% if group_edit_url %}
+    <div class="hero-action-button">
+      <a href="{{ group_edit_url }}" title="{% trans %}Edit group{% endtrans %}" class="btn btn-default btn-floating">
+        <svg class="icon-gray icon-medium">
+          <use xlink:href="#icon-edit"></use>
+        </svg>
+      </a>
+    </div>
+  {% endif %}
+
+  <div class="cover-wrap">
+
+    <header class="page-title">
+      <div class="teaser__tag">
+        {% trans %}Course{% endtrans %}
+      </div>
+      <h1 class="page-title"> {{ content.label }}</h1>
+    </header>
+
+    <div class="hero-footer">
+      <div class="hero-footer__text">
+        {% if content.field_course_opening_date|render %}
+          {% if content.field_course_opening_status.0['#markup'] == 'Closed' %}
+            <span class="badge-default badge--large badge">
+                {% trans %}Starts at{% endtrans %} {{ content.field_course_opening_date }}
+                </span>
+          {% endif %}
+        {% endif %}
+      </div>
+    </div>
+
+  </div> {# cover-wrap #}
+</div> {# cover #}

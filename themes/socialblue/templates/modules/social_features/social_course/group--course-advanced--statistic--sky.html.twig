@@ -1,0 +1,44 @@
+<div class="teaser__content-text">{{ finished_sections }} / {{ course_sections }} {% trans %}sections completed{% endtrans %}</div>
+<div class="card__counter">
+  <ul>
+    <li>
+      <span class="card__counter-quantity">{{ group_events }}</span>
+      <span class="card__counter-text">{% trans %}event{% plural group_events %}events{% endtrans %}</span>
+    </li>
+    <li>
+      <span class="card__counter-quantity">{{ group_topics }}</span>
+      <span class="card__counter-text">{% trans %}topic{% plural group_topics %}topics{% endtrans %}</span>
+    </li>
+    <li>
+      <span class="card__counter-quantity">{{ group_members }}</span>
+      <span class="card__counter-text">{% trans %}member{% plural group_members %}members{% endtrans %}</span>
+    </li>
+  </ul>
+</div>
+{% if group_operations_url %}
+  <div class="hero-footer__cta">
+    <div class="btn-group">
+      {% if joined %}
+        <button type="button" autocomplete="off" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-accent btn-lg btn-raised dropdown-toggle brand-bg-accent">{% trans %}Enrolled{% endtrans %}<span class="caret"></span></button>
+        <ul class="dropdown-menu dropdown-menu-right">
+          <li><a href="{{ group_operations_url }}">{% trans %}Cancel enrollment{% endtrans %}</a></li>
+        </ul>
+      {% else %}
+        <a href="{{ group_operations_url }}" class="btn btn-accent btn-lg btn-raised dropdown-toggle brand-bg-accent" title="Join">{% trans %}Enroll{% endtrans %}</a>
+      {% endif %}
+    </div>
+  </div>
+{% else %}
+  <div class="hero-footer__cta">
+    <div class="btn-group">
+      <div class="btn btn-accent btn-lg btn-raised is-disabled dropdown-toggle brand-bg-accent" disabled="disabled"  title="Enrollment is closed">{% trans %}Enrollment is closed{% endtrans %}</div>
+    </div>
+  </div>
+{% endif %}
+{% if group_stream_url %}
+  <footer class="card__actionbar">
+    <a href="{{ group_stream_url }}" class="card__link">
+      {% trans %}See course stream{% endtrans %}
+    </a>
+  </footer>
+{% endif %}
