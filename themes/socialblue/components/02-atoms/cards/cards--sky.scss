@@ -808,6 +808,36 @@
           }
         }
       }
+
+      .teaser__content-text {
+        position: relative;
+        min-height: 44px;
+        margin: -2.5rem -2.25rem 1.75rem;
+        padding: 11px 3.5rem;
+        background: #f80;
+        font-weight: 700;
+        color: #fff;
+        text-align: center;
+
+        &--icon {
+          position: absolute;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 18px;
+          height: 18px;
+          top: 50%;
+          right: 2.25rem;
+          background: #fff;
+          border-radius: 50%;
+          transform: translateY(-50%);
+
+          svg {
+            fill: #f80;
+            transform: rotate(-90deg);
+          }
+        }
+      }
     }
   }
 
@@ -934,22 +964,62 @@
             }
           }
 
-          .section__title,
+          .section__status {
+            .badge {
+              min-width: 116px;
+              padding: 3px 12px;
+              border-radius: 5px;
+              border: 1px solid #9b9b9b;
+
+              &.badge-warning {
+                border-color: #ff9300;
+                background: #ff9300;
+              }
+
+              &.badge-success {
+                border-color: #5cb85c;
+                background: #5cb85c;
+              }
+
+              &.badge-warning,
+              &.badge-success {
+                .badge__label {
+                  color: #fff;
+                }
+              }
+            }
+
+            .badge__label {
+              color: #4a4a4a;
+            }
+
+            .badge__icon--course {
+              display: inline-block;
+              width: 18px;
+              height: 18px;
+              margin-right: 8px;
+              fill: #fff;
+            }
+          }
+
+          .section__title {
+            max-width: 100%;
+            margin: 1rem 0 0;
+            font-size: 1.25rem;
+            line-height: 26px;
+            color: #000;
+
+            a:hover {
+              text-decoration: underline;
+            }
+          }
+
           .exist-parts {
             display: inline;
             color: #4a4a4a;
             font-size: 14px;
             font-weight: 400;
             margin: 0;
-          }
-
-          .exist-parts {
-
-            &:before {
-              content: '|';
-              display: inline-block;
-              margin: 0 3px;
-            }
           }
 
           p {
