@@ -27,29 +27,31 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase {
   public function processItem($data) {
     // First make sure it's an actual Activity entity.
     if (!empty($data['entity_id']) && $activity = Activity::load($data['entity_id'])) {
+      // Get Message Template id.
+      $message = Message::load($activity->field_activity_message->target_id);
+      $message_template_id = $message->getTemplate()->id();
+
       // Get target account.
-      $target_account = EmailActivityDestination::getSendTargetUser($activity);
+      $target_accounts = EmailActivityDestination::getSendTargetUsers($activity);
+      foreach ($target_accounts as $target_account) {
+        if ($target_account instanceof User) {
 
-      if ($target_account instanceof User) {
-        // Get Message Template id.
-        $message = Message::load($activity->field_activity_message->target_id);
-        $message_template_id = $message->getTemplate()->id();
+          // Retrieve the users email settings.
+          $user_email_settings = EmailActivityDestination::getSendEmailUserSettings($target_account);
 
-        // Retrieve the users email settings.
-        $user_email_settings = EmailActivityDestination::getSendEmailUserSettings($target_account);
+          // Determine email frequency to use, defaults to immediately.
+          // @todo make these frequency constants?
+          $frequency = 'immediately';
+          if (!empty($user_email_settings[$message_template_id])) {
+            $frequency = $user_email_settings[$message_template_id];
+          }
 
-        // Determine email frequency to use, defaults to immediately.
-        // @todo make these frequency constants?
-        $frequency = 'immediately';
-        if (!empty($user_email_settings[$message_template_id])) {
-          $frequency = $user_email_settings[$message_template_id];
+          // Send item to EmailFrequency instance.
+          // @todo use dependency injection for this.
+          $emailfrequencymanager = \Drupal::service('plugin.manager.emailfrequency');
+          $instance = $emailfrequencymanager->createInstance($frequency);
+          $instance->processItem($activity, $message, $target_account);
         }
-
-        // Send item to EmailFrequency instance.
-        // @todo use dependency injection for this.
-        $emailfrequencymanager = \Drupal::service('plugin.manager.emailfrequency');
-        $instance = $emailfrequencymanager->createInstance($frequency);
-        $instance->processItem($activity, $message, $target_account);
       }
     }
   }
