@@ -67,12 +67,12 @@
   padding-right: 1rem;
 }
 
-.socialblue--sky .layout--with-complementary .content--side_wrapper {
+.socialblue--sky .layout--with-complementary .content--side {
   padding-left: 1rem;
   padding-right: 1rem;
 }
 
-.socialblue--sky .layout--with-complementary .content--side_wrapper .region--content {
+.socialblue--sky .layout--with-complementary .content--side .region--content {
   padding: 0;
 }
 
@@ -245,20 +245,17 @@ body.socialblue--sky.path-user .region--complementary-top {
 }
 
 @media (min-width: 1200px) {
-  .socialblue--sky .layout--with-complementary .content--wrapper {
-    margin: 0 -20px;
-  }
   .socialblue--sky .layout--with-complementary .region--content {
     padding-left: 20px;
     padding-right: 20px;
   }
-  .socialblue--sky .layout--with-complementary .content--side_wrapper {
+  .socialblue--sky .layout--with-complementary .content--side {
     padding-left: 20px;
-    padding-right: 20px;
+    padding-right: 0;
   }
   .socialblue--sky .region--complementary {
     padding-right: 20px;
-    padding-left: 20px;
+    padding-left: 0;
   }
   .socialblue--sky .layout--with-two-columns .content--side {
     padding-left: 0;
@@ -270,8 +267,12 @@ body.socialblue--sky.path-user .region--complementary-top {
     padding-right: 20px;
     padding-left: 0;
   }
-  body.socialblue--sky.path-group:not(.group-type-challenge) .layout--with-complementary.sidebar-left .region--secondary-navigation, body.socialblue--sky.details .layout--with-complementary.sidebar-left .region--secondary-navigation, body.socialblue--sky.path-user .layout--with-complementary.sidebar-left .region--secondary-navigation {
+  body.socialblue--sky.path-group:not(.group-type-challenge) .layout--with-complementary.sidebar-left .region--complementary .region--complementary, body.socialblue--sky.details .layout--with-complementary.sidebar-left .region--complementary .region--complementary, body.socialblue--sky.path-user .layout--with-complementary.sidebar-left .region--complementary .region--complementary {
     padding-left: 0;
+    padding-right: 20px;
+  }
+  body.socialblue--sky.path-group:not(.group-type-challenge) .layout--with-complementary.sidebar-left .region--secondary-navigation, body.socialblue--sky.details .layout--with-complementary.sidebar-left .region--secondary-navigation, body.socialblue--sky.path-user .layout--with-complementary.sidebar-left .region--secondary-navigation {
+    padding-left: 30px;
     padding-right: 0;
   }
 }

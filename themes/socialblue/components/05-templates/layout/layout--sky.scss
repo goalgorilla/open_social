@@ -93,10 +93,6 @@
     .content--wrapper {
       flex: 0 0 auto;
       max-width: inherit;
-
-      @include for-desktop-up {
-        margin: 0 -20px;
-      }
     }
 
     .content--side {
@@ -120,13 +116,13 @@
       }
     }
 
-    .content--side_wrapper {
+    .content--side {
       padding-left: 1rem;
       padding-right: 1rem;
 
       @include for-desktop-up {
         padding-left: 20px;
-        padding-right: 20px;
+        padding-right: 0;
       }
 
       .region--content {
@@ -146,7 +142,7 @@
 
     @include for-desktop-up {
       padding-right: 20px;
-      padding-left: 20px;
+      padding-left: 0;
     }
   }
 
@@ -234,6 +230,13 @@ body.socialblue--sky {
           @include for-phone-only {
             order: 0;
           }
+
+          .region--complementary {
+            @include for-desktop-up {
+               padding-left: 0;
+               padding-right: 20px;
+            }
+          }
         }
 
         .region--secondary-navigation {
@@ -246,7 +249,7 @@ body.socialblue--sky {
           }
 
           @include for-desktop-up {
-            padding-left: 0;
+            padding-left: 30px;
             padding-right: 0;
           }
         }
