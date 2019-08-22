@@ -123,8 +123,6 @@ function activity_creator_message_insert(Message $entity) {
           $activity_creator_data['recipient'] = $user_recipients;
           $activity_factory->createActivities($activity_creator_data);
         }
-
-
       }
       else {
         $activity_creator_data = [
