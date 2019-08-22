@@ -368,10 +368,18 @@ class ActivityFactory extends ControllerBase {
    */
   protected function getFieldRecipientUser($data) {
     $value = NULL;
+    $user_recipients = [];
     if (isset($data['recipient']) && is_array($data['recipient'])) {
-      if ($data['recipient']['target_type'] === 'user') {
-        // Should be in an array for the field.
-        $value = [$data['recipient']];
+
+      $activity_by_type = array_column($data['recipient'], 'target_type');
+      foreach ($activity_by_type as $recipients_key => $target_type) {
+        if ($target_type === 'user') {
+          $user_recipients[] = $data['recipient'][$recipients_key];
+        }
+      }
+
+      if (!empty($user_recipients)) {
+        $value = $user_recipients;
       }
     }
     return $value;
