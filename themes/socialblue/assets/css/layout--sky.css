@@ -62,6 +62,12 @@
   max-width: 100%;
 }
 
+.socialblue--sky .layout--with-complementary.sidebar-left .region--complementary {
+  -webkit-box-ordinal-group: 2;
+      -ms-flex-order: 1;
+          order: 1;
+}
+
 .socialblue--sky .layout--with-complementary .content--side {
   padding-left: 1rem;
   padding-right: 1rem;
@@ -164,7 +170,7 @@ body.socialblue--sky.page-node-type-course-article .region--complementary_wrappe
   padding-bottom: 0;
 }
 
-body.socialblue--sky.page-node-type-course-article .region--complementary_wrapper .region--complementary-top .block-course-material-navigation .complementary-title > a {
+.block-course-material-navigation .complementary-title > a {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -175,7 +181,7 @@ body.socialblue--sky.page-node-type-course-article .region--complementary_wrappe
   font-weight: 700;
 }
 
-body.socialblue--sky.page-node-type-course-article .region--complementary_wrapper .region--complementary-top .block-course-material-navigation .complementary-title > a .icon {
+.block-course-material-navigation .complementary-title > a .icon {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -191,7 +197,7 @@ body.socialblue--sky.page-node-type-course-article .region--complementary_wrappe
   border-radius: 50%;
 }
 
-body.socialblue--sky.page-node-type-course-article .region--complementary_wrapper .region--complementary-top .block-course-material-navigation .complementary-title > a svg {
+.block-course-material-navigation .complementary-title > a svg {
   width: 18px;
   height: 18px;
   fill: #fff;
@@ -325,6 +331,11 @@ body.socialblue--sky.page-node-type-course-article .region--complementary_wrappe
 @media (max-width: 599px) {
   .socialblue--sky .region--secondary-navigation {
     margin-top: 0;
+  }
+  .socialblue--sky .layout--with-complementary.sidebar-left .region--complementary {
+    -webkit-box-ordinal-group: 1;
+        -ms-flex-order: 0;
+            order: 0;
   }
   body.socialblue--sky.path-group:not(.group-type-challenge) .layout--with-complementary.sidebar-left .region--complementary, body.socialblue--sky.details .layout--with-complementary.sidebar-left .region--complementary, body.socialblue--sky.path-user .layout--with-complementary.sidebar-left .region--complementary, body.socialblue--sky.page-node-type-course-article .layout--with-complementary.sidebar-left .region--complementary {
     -webkit-box-ordinal-group: 1;

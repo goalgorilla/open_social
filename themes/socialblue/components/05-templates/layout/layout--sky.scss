@@ -115,10 +115,15 @@
       }
 
       .region--complementary {
+        order: 1;
 
         @include for-desktop-up {
           padding-right: 20px;
           padding-left: 0;
+        }
+
+        @include for-phone-only {
+          order: 0;
         }
       }
     }
@@ -323,33 +328,33 @@ body.socialblue--sky {
             }
           }
         }
+      }
+    }
+  }
+}
 
-        .block-course-material-navigation {
-          .complementary-title {
-            > a {
-              display: flex;
-              align-items: center;
-              padding: 1rem 1.25rem;
-              font-weight: 700;
+.block-course-material-navigation {
+  .complementary-title {
+    > a {
+      display: flex;
+      align-items: center;
+      padding: 1rem 1.25rem;
+      font-weight: 700;
 
-              .icon {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                width: 18px;
-                height: 18px;
-                margin-right: 10px;
-                border-radius: 50%;
-              }
+      .icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 18px;
+        height: 18px;
+        margin-right: 10px;
+        border-radius: 50%;
+      }
 
-              svg {
-                width: 18px;
-                height: 18px;
-                fill: #fff;
-              }
-            }
-          }
-        }
+      svg {
+        width: 18px;
+        height: 18px;
+        fill: #fff;
       }
     }
   }
