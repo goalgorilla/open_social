@@ -1164,7 +1164,8 @@
 body.socialblue--sky {
   &.path-group,
   &.details,
-  &.path-user {
+  &.path-user,
+  &.page-node-type-course-article {
     .region--complementary-top {
       .card.block-social-tagging {
         @include for-tablet-landscape-up {
@@ -1388,6 +1389,18 @@ body.socialblue--sky {
         .card.teaser--idea--featured {
           box-shadow: none;
         }
+      }
+    }
+  }
+}
+
+body.socialblue--sky {
+  &.page-node-type-course-article {
+    .region--content {
+      .card.brand-border-radius {
+        border-radius: 0 !important;
+        box-shadow: none;
+        margin-bottom: 0;
       }
     }
   }
