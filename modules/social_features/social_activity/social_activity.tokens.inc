@@ -5,8 +5,10 @@
  * Builds placeholder replacement tokens for Social Activity module.
  */
 
+use Drupal\Core\Database\Database;
 use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\Url;
+use Drupal\user\Entity\User;
 
 /**
  * Implements hook_token_info().
@@ -66,6 +68,28 @@ function social_activity_tokens($type, $tokens, array $data, array $options, Bub
                   ['post' => $entity->id()],
                   ['absolute' => TRUE]
                 )->toString();
+
+                $string_parts = preg_split("/(\[\~\d+\])/", $summary, -1, PREG_SPLIT_DELIM_CAPTURE  | PREG_SPLIT_NO_EMPTY);
+
+                $summary = "";
+                foreach ($string_parts as $string_part) {
+                  if (strpos($string_part, '[~') !== false
+                    && strpos($string_part, ']') !== false) {
+                    $profile_id = substr($string_part, 2, -1);
+                    $query = Database::getConnection()->select('profile', 'p');
+                    $query->fields('p', ['uid']);
+                    $query->condition('profile_id', $profile_id);
+                    $user_id = $query->execute()->fetchField();
+                    if (!empty($user_id)) {
+                      $user = User::load($user_id);
+                      $mention = $user->getDisplayName();
+                      $summary.=$mention;
+                    }
+                  }
+                  else {
+                    $summary.=$string_part;
+                  }
+                }
 
                 $info = [
                   '#theme' => 'message_post_teaser',
