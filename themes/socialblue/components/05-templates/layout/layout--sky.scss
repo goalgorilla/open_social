@@ -305,17 +305,48 @@ body.socialblue--sky {
 body.socialblue--sky {
   &.page-node-type-course-article {
     .region--complementary_wrapper {
+      border-radius: 10px !important;
+
       @include for-tablet-landscape-up {
         top: 0;
       }
 
-      .region--complementary-top .block-course-section-navigation {
-        .card__block {
-          padding-bottom: 0;
+      .region--complementary-top  {
+        .block-course-section-navigation {
+          .card__block {
+            padding-bottom: 0;
 
-          > .list-item {
-            &:last-child {
-              padding-bottom: 0;
+            > .list-item {
+              &:last-child {
+                padding-bottom: 0;
+              }
+            }
+          }
+        }
+
+        .block-course-material-navigation {
+          .complementary-title {
+            > a {
+              display: flex;
+              align-items: center;
+              padding: 1rem 1.25rem;
+              font-weight: 700;
+
+              .icon {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 18px;
+                height: 18px;
+                margin-right: 10px;
+                border-radius: 50%;
+              }
+
+              svg {
+                width: 18px;
+                height: 18px;
+                fill: #fff;
+              }
             }
           }
         }
