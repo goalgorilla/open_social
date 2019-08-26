@@ -2,16 +2,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: node-gettext\n"
 "POT-Creation-Date: 2019-08-19 10:52+0000\n"
-"PO-Revision-Date: 2019-08-06 20:15+0000\n"
+"PO-Revision-Date: 2019-08-23 20:03+0000\n"
 "Last-Translator: Anna Kopytova <anna.kopytova@greenpeace.org>\n"
-"Language-Team: Russian <https://translate.getopensocial.com/projects/open-"
-"social/distribution/ru/>\n"
+"Language-Team: Russian <https://translate.getopensocial.com/projects/"
+"open-social/distribution/ru/>\n"
 "Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<="
+"4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 "X-Generator: Weblate 3.5.1\n"
 
 #: modules/social_features/social_user/src/Form/SocialUserLoginForm.php:253
@@ -237,15 +237,15 @@ msgstr ""
 
 #: modules/social_features/social_group/src/Plugin/views/field/SocialGroupViewsBulkOperationsBulkForm.php:48
 msgid "<b>@action</b> of selected members"
-msgstr ""
+msgstr "<b>@action</b> выбраных участников"
 
 #: modules/social_features/social_event/modules/social_event_managers/src/Plugin/views/field/SocialEventManagersViewsBulkOperationsBulkForm.php:113
 msgid "<b>@action</b> selected enrollees"
-msgstr ""
+msgstr "<b>@action</b> выбранные участники"
 
 #: modules/social_features/social_group/src/Plugin/views/field/SocialGroupViewsBulkOperationsBulkForm.php:41
 msgid "<b>@action</b> selected members"
-msgstr ""
+msgstr "<b>@action</b> выбранные участники"
 
 #: modules/social_features/social_group/js/frontUi.js:0
 #: modules/social_features/social_group/src/Plugin/views/field/SocialGroupViewsBulkOperationsBulkForm.php:106
@@ -339,6 +339,8 @@ msgid ""
 "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
 "a> added you to the event [social_event:event_iam_organizing]</p>"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-"
+"name]</a> добавил(а) вас к событию [social_event:event_iam_organizing]</p>"
 
 #: modules/social_features/social_activity/config/install/message.template.create_comment_group_node.yml:0
 msgid ""
@@ -347,6 +349,10 @@ msgid ""
 "[social_comment:commented_content_type] in <a href=\"[message:gurl]\">"
 "[message:gtitle]</a></p>"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-"
+"name]</a> и @count других прокомментировали "
+"[social_comment:parent_entity_author] [social_comment:commented_content_type]"
+" в <a href=\"[message:gurl]\">[message:gtitle]</a></p>"
 
 #: modules/social_features/social_activity/config/install/message.template.create_comment_community_node.yml:0
 msgid ""
@@ -354,6 +360,10 @@ msgid ""
 "a> and @count others commented on [social_comment:parent_entity_author]'s "
 "[social_comment:commented_content_type]</p>\n"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-"
+"name]</a> и @count других прокомментировали "
+"[social_comment:parent_entity_author] "
+"[social_comment:commented_content_type]</p>\n"
 
 #: modules/social_features/social_activity/config/install/message.template.create_comment_group_post.yml:0
 msgid ""
@@ -361,12 +371,17 @@ msgid ""
 "a> and @count others commented on a post in <a href=\"[message:gurl]\">"
 "[message:gtitle]</a></p>"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-"
+"name]</a> и @count других прокомментировали пост в <a href=\"[message:gurl]\""
+">[message:gtitle]</a></p>"
 
 #: modules/social_features/social_activity/config/install/message.template.create_comment_community_post.yml:0
 msgid ""
 "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
 "a> and @count others commented on a post</p>"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-"
+"name]</a> и @count других прокомментировали пост</p>"
 
 #: modules/social_features/social_follow_content/config/install/message.template.create_comment_following_node.yml:0;0
 msgid ""
@@ -375,6 +390,11 @@ msgid ""
 "commented_content_type] <a href=\"[message:field_message_related_object:"
 "entity:url:absolute]\">[message:node-title]</a> you are following</p>\r\n"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-"
+"name]</a> прокомментировали [social_comment:parent_entity_author] "
+"[social_comment:commented_content_type] <a href=\""
+"[message:field_message_related_object:entity:url:absolute]\">[message:node-"
+"title]</a> на который(ое) вы подписаны</p>\n"
 
 #: modules/social_features/social_follow_content/config/install/message.template.create_comment_following_node.yml:0
 msgid ""
@@ -399,6 +419,27 @@ msgid ""
 "\t</tbody>\r\n"
 "</table>"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-"
+"name]</a> прокомментировали [social_comment:parent_entity_author] "
+"[social_comment:commented_content_type] <a href=\""
+"[message:field_message_related_object:entity:url:absolute]\">[message:node-"
+"title]</a> на который(ое) вы подписаны</p>\n"
+"\n"
+"<div class=\"comments\">\n"
+"<div class=\"post\"><em>[social_comment:comment_author]</em> <small>• "
+"[social_comment:comment_date]</small>\n"
+"<p>[social_comment:comment_text]</p>\n"
+"</div>\n"
+"</div>\n"
+"<table class=\"btn-wrapp\">\n"
+"\t<tbody>\n"
+"\t\t<tr>\n"
+"\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-"
+"one\" href=\"[social_comment:comment_reply_link_html]\">Ответить на "
+"комментирий </a></td>\n"
+"\t\t</tr>\n"
+"\t</tbody>\n"
+"</table>"
 
 #: modules/social_features/social_activity/config/install/message.template.create_comment_group_node.yml:0
 msgid ""
@@ -407,6 +448,10 @@ msgid ""
 "commented_content_type] in <a href=\"[message:gurl]\">[message:gtitle]</a></"
 "p>\n"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-"
+"name]</a> прокомментировал(а) [social_comment:parent_entity_author] "
+"[social_comment:commented_content_type] в <a href=\"[message:gurl]\""
+">[message:gtitle]</a></p>\n"
 
 #: modules/social_features/social_activity/config/install/message.template.create_comment_community_node.yml:0
 msgid ""
@@ -414,12 +459,18 @@ msgid ""
 "a> commented on [social_comment:parent_entity_author]'s [social_comment:"
 "commented_content_type]</p>\n"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-"
+"name]</a> прокомментировал(а) [social_comment:parent_entity_author] "
+"[social_comment:commented_content_type]</p>\n"
 
 #: modules/social_features/social_activity/config/install/message.template.create_comment_group_post.yml:0
 msgid ""
 "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
 "a> commented on a post in <a href=\"[message:gurl]\">[message:gtitle]</a></p>"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-"
+"name]</a> прокомментировал(а) пост в <a href=\"[message:gurl]\""
+">[message:gtitle]</a></p>"
 
 #: modules/social_features/social_activity/config/install/message.template.create_comment_post_profile.yml:0;0
 msgid ""
@@ -427,6 +478,9 @@ msgid ""
 "a> commented on a post on your <a href=\"[message:recipient-user-"
 "url]\">profile</a></p>\r\n"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-"
+"name]</a> прокомментировал(а) пост в вашем <a href=\"[message:recipient-user-"
+"url]\">профиле</a></p>\n"
 
 #: modules/social_features/social_activity/config/install/message.template.create_comment_post_profile.yml:0
 msgid ""
@@ -449,18 +503,41 @@ msgid ""
 "\t</tbody>\r\n"
 "</table>"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-"
+"name]</a> прокомментировал(а) пост в вашем<a href=\"[message:recipient-user-"
+"url]\">профиле</a></p>\n"
+"<div class=\"comments\">\n"
+"<div class=\"post\"><em>[social_comment:comment_author]</em> <small>• "
+"[social_comment:comment_date]</small>\n"
+"<p>[social_comment:comment_text]</p>\n"
+"</div>\n"
+"</div>\n"
+"<table class=\"btn-wrapp\">\n"
+"\t<tbody>\n"
+"\t\t<tr>\n"
+"\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-"
+"one\" href=\"[social_comment:comment_reply_link_html]\">Ответить на этот "
+"комментарий </a></td>\n"
+"\t\t</tr>\n"
+"\t</tbody>\n"
+"</table>"
 
 #: modules/social_features/social_activity/config/install/message.template.create_comment_community_post.yml:0
 msgid ""
 "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
 "a> commented on a post</p>"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-"
+"name]</a> прокомментировал(а) пост</p>"
 
 #: modules/social_features/social_activity/config/install/message.template.create_comment_author_node_post.yml:0;0
 msgid ""
 "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
 "a> commented on your [social_comment:commented_entity_link_html]</p>\r\n"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-"
+"name]</a> прокомментировал(а) вашу "
+"[social_comment:commented_entity_link_html]</p>\n"
 
 #: modules/social_features/social_activity/config/install/message.template.create_comment_author_node_post.yml:0
 msgid ""
@@ -482,6 +559,24 @@ msgid ""
 "\t</tbody>\r\n"
 "</table>"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-"
+"name]</a> прокомментировал(а) ваш пост "
+"[social_comment:commented_entity_link_html]</p>\n"
+"<div class=\"comments\">\n"
+"<div class=\"post\"><em>[social_comment:comment_author]</em> <small>• "
+"[social_comment:comment_date]</small>\n"
+"<p>[social_comment:comment_text]</p>\n"
+"</div>\n"
+"</div>\n"
+"<table class=\"btn-wrapp\">\n"
+"\t<tbody>\n"
+"\t\t<tr>\n"
+"\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-"
+"one\" href=\"[social_comment:comment_reply_link_html]\">Ответить на "
+"мероприятие</a></td>\n"
+"\t\t</tr>\n"
+"\t</tbody>\n"
+"</table>"
 
 #: modules/social_features/social_activity/config/install/message.template.moved_content_between_groups.yml:0
 msgid ""
@@ -489,6 +584,9 @@ msgid ""
 "a> created [social_group:content_type] in <a href=\"[message:gurl]\">"
 "[message:gtitle]</a></p>"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-"
+"name]</a> создал(а) [social_group:content_type] в <a href=\"[message:gurl]\""
+">[message:gtitle]</a></p>"
 
 #: modules/social_features/social_activity/config/install/message.template.create_content_in_joined_group.yml:0;0
 msgid ""
@@ -496,6 +594,9 @@ msgid ""
 "a> created [social_group:created_entity_link_html] in the <a href=\"[message:"
 "gurl]\">[message:gtitle]</a> group</p>"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-"
+"name]</a> создал(а) [social_group:created_entity_link_html] в <a href=\""
+"[message:gurl]\">[message:gtitle]</a> группе</p>"
 
 #: modules/social_features/social_activity/config/install/message.template.create_content_in_joined_group.yml:0
 msgid ""
@@ -503,36 +604,51 @@ msgid ""
 "a> created [social_group:created_entity_link_html] in the <a href=\"[message:"
 "gurl]\">[message:gtitle]</a> group</p><p>[message:additional_information]</p>"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-"
+"name]</a> создал(а) [social_group:created_entity_link_html] в <a href=\""
+"[message:gurl]\">[message:gtitle]</a> "
+"группе</p><p>[message:additional_information]</p>"
 
 #: modules/social_features/social_activity/config/install/message.template.create_topic_group.yml:0
 msgid ""
 "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
 "a> created a topic in <a href=\"[message:gurl]\">[message:gtitle]</a></p>"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-"
+"name]</a> создать тему в <a href=\"[message:gurl]\">[message:gtitle]</a></p>"
 
 #: modules/social_features/social_activity/config/install/message.template.create_topic_community.yml:0
 msgid ""
 "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
 "a> created a topic</p>"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-"
+"name]</a> Создал(а) тему</p>"
 
 #: modules/social_features/social_activity/config/install/message.template.create_event_group.yml:0
 msgid ""
 "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
 "a> created an event in <a href=\"[message:gurl]\">[message:gtitle]</a></p>"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-"
+"name]</a> создал(а) событие в <a href=\"[message:gurl]\""
+">[message:gtitle]</a></p>"
 
 #: modules/social_features/social_activity/config/install/message.template.create_event_community.yml:0
 msgid ""
 "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
 "a> created an event</p>"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-"
+"name]</a> создал(а) событие</p>"
 
 #: modules/social_features/social_like/config/install/message.template.create_like_node_or_post.yml:0;0;0
 msgid ""
 "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
 "a> likes your [social_like:liked_entity_link_html]</p>"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-"
+"name]</a> лайкнул(а) ваш [social_like:liked_entity_link_html]</p>"
 
 #: modules/social_features/social_mentions/config/install/message.template.create_mention_comment.yml:0;0;0
 msgid ""
@@ -541,6 +657,10 @@ msgid ""
 "url:absolute]\">comment</a> on [social_mentions:commented_entity_link_html]</"
 "p>"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-"
+"name]</a> упомянул(а) вас в <a href=\""
+"[message:field_message_related_object:entity:url:absolute]\">комментарии</a> "
+"в [social_mentions:commented_entity_link_html]</p>"
 
 #: modules/social_features/social_mentions/config/install/message.template.create_mention_post.yml:0
 msgid ""
@@ -548,24 +668,35 @@ msgid ""
 "a> mentioned you in a <a href=\"[message:field_message_related_object:entity:"
 "url:absolute]\">post</a></p>"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-"
+"name]</a> упомянул(а) вас в<a href=\""
+"[message:field_message_related_object:entity:url:absolute]\">посте</a></p>"
 
 #: modules/social_features/social_mentions/config/install/message.template.create_mention_post.yml:0;0
 msgid ""
 "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
 "a> mentioned you in a post</p>"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-"
+"name]</a> упомянул(а) вас в посте</p>"
 
 #: modules/social_features/social_activity/config/install/message.template.create_post_group.yml:0
 msgid ""
 "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
 "a> posted in <a href=\"[message:gurl]\">[message:gtitle]</a></p>"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-"
+"name]</a> опубликовал(а) в <a href=\"[message:gurl]\""
+">[message:gtitle]</a></p>"
 
 #: modules/social_features/social_activity/config/install/message.template.create_post_profile_stream.yml:0
 msgid ""
 "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
 "a> posted on your <a href=\"[message:recipient-user-url]\">profile</a></p>"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-"
+"name]</a> опубликовал(а) в <a href=\"[message:recipient-user-url]\""
+">профиле</a></p>"
 
 #: modules/social_features/social_activity/config/install/message.template.create_post_profile.yml:0
 msgid ""
@@ -573,6 +704,9 @@ msgid ""
 "a> posted on your <a href=\"[message:recipient-user-url]\">profile</a></p><p>"
 "[message:additional_information]</p>"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-"
+"name]</a> опубликовал(а) в вашем<a href=\"[message:recipient-user-url]\""
+">профиле</a></p><p>[message:additional_information]</p>"
 
 #: modules/social_features/social_activity/config/install/message.template.create_post_profile.yml:0;0
 #: modules/social_features/social_activity/config/install/message.template.create_post_profile_stream.yml:0
@@ -580,12 +714,16 @@ msgid ""
 "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
 "a> posted on your profile</p>\n"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-"
+"name]</a> опубликовал(а) в вашем профиле</p>\n"
 
 #: modules/social_features/social_activity/config/install/message.template.create_post_community.yml:0
 msgid ""
 "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
 "a> posted</p>"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-"
+"name]</a> опубликовал(а)</p>"
 
 #: modules/social_features/social_activity/config/install/message.template.create_comment_reply.yml:0;0
 msgid ""
@@ -594,6 +732,10 @@ msgid ""
 "url:absolute]\">comment</a> in [social_comment:commented_entity_link_html]</"
 "p>\r\n"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-"
+"name]</a> ответил(а) на ваш<a href=\""
+"[message:field_message_related_object:entity:url:absolute]\">комментарий</a> "
+"в [social_comment:commented_entity_link_html]</p>\n"
 
 #: modules/social_features/social_activity/config/install/message.template.create_comment_reply.yml:0
 msgid ""
@@ -621,6 +763,29 @@ msgid ""
 "\t</tbody>\r\n"
 "</table>\r\n"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-"
+"name]</a> ответил(а) на ваш<a href=\""
+"[message:field_message_related_object:entity:url:absolute]\">комментарий</a> "
+"в [social_comment:commented_entity_link_html]</p>\n"
+"<div class=\"comments\">\n"
+"<div class=\"comment\"><em>[social_comment:parent_comment_author]</em> "
+"<small>• [social_comment:parent_comment_date]</small>\n"
+"<p>[social_comment:parent_comment_text]</p>\n"
+"</div>\n"
+"<div class=\"comment reply\"><em>[social_comment:comment_author]</em> "
+"<small>• [social_comment:comment_date]</small>\n"
+"<p>[social_comment:comment_text]</p>\n"
+"</div>\n"
+"</div>\n"
+"<table class=\"btn-wrapp\">\n"
+"\t<tbody>\n"
+"\t\t<tr>\n"
+"\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-"
+"one\" href=\"[social_comment:comment_reply_link_html]\">Ответить на этот "
+"комментарий </a></td>\n"
+"\t\t</tr>\n"
+"\t</tbody>\n"
+"</table>\n"
 
 #: modules/social_features/social_mentions/config/install/message.template.create_comment_reply_mention.yml:0
 msgid ""
@@ -628,12 +793,18 @@ msgid ""
 "a> replied to a <a href=\"[message:field_message_related_object:entity:url:"
 "absolute]\">comment</a> where you are mentioned</p>"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-"
+"name]</a> ответил(а) на  <a href=\""
+"[message:field_message_related_object:entity:url:absolute]\">комментарий</a> "
+"где вы были отмечены </p>"
 
 #: modules/social_features/social_mentions/config/install/message.template.create_comment_reply_mention.yml:0;0
 msgid ""
 "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
 "a> replied to a comment where you are mentioned</p>"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-"
+"name]</a> ответил(а) на комментарий где вы отмечены</p>"
 
 #: modules/social_features/social_content_report/config/install/message.template.content_reported.yml:0;0;0
 msgid ""
@@ -641,6 +812,9 @@ msgid ""
 "a> reported <a href=\"[social_content_report:content_url]\">content</a> as "
 "inappropriate</p>\n"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-"
+"name]</a> пожаловался(ась) на <a href=\"[social_content_report:content_url]\""
+">контент</a> как на неприемлемый</p>\n"
 
 #: modules/social_features/social_activity/config/install/message.template.join_to_group.yml:0;0;0
 msgid ""
@@ -648,6 +822,9 @@ msgid ""
 "display-name]</a> joined the <a href=\"[message:gurl]\">[message:gtitle]</a> "
 "group</p>"
 msgstr ""
+"<p><a href=\"[message:recipient-user:url:absolute]\">[message:recipient-user"
+":display-name]</a> присоединился(ась) к <a href=\"[message:gurl]\""
+">[message:gtitle]</a> группе</p>"
 
 #: modules/social_features/social_event/config/optional/message.template.activity_on_events_im_organizing.yml:0;0;0
 msgid ""
@@ -655,10 +832,13 @@ msgid ""
 "</a> has enrolled to the event [social_event:event_iam_organizing] you are "
 "organizing</p>"
 msgstr ""
+"<p><a href=\"[social_event:enrolled_event_url]\""
+">[social_event:enrolled_user]</a> присоединился(ась) к событию "
+"[social_event:event_iam_organizing] которое вы организуете</p>"
 
 #: modules/social_features/social_event/modules/social_event_an_enroll/config/install/views.view.manage_enrollments.yml:0
 msgid "<p>@total people have enrolled anonymously</p>"
-msgstr ""
+msgstr "<p>@total человек присоединилось анонимно</p>"
 
 #: modules/social_features/social_core/src/Controller/SocialCoreController.php:20
 msgid ""
@@ -676,6 +856,8 @@ msgid ""
 "<p>You have received a <a href=\"[message:pmt-url]\">message</a> from <a "
 "href=\"[message:author:url:absolute]\">[message:author:display-name]</a></p>"
 msgstr ""
+"<p>Вы получили <a href=\"[message:pmt-url]\">сообщение</a> от <a href=\""
+"[message:author:url:absolute]\">[message:author:display-name]</a></p>"
 
 #: modules/social_features/social_profile/modules/social_profile_fields/src/Form/SocialProfileFieldsFlushForm.php:131
 msgid ""
@@ -870,11 +1052,11 @@ msgstr ""
 
 #: modules/social_features/social_activity/config/install/message.template.create_comment_post_profile.yml:0
 msgid "A person commented on a post on my profile"
-msgstr ""
+msgstr "Кто-то прокомментировал публикацию на моей странице"
 
 #: modules/social_features/social_follow_content/config/install/message.template.create_comment_following_node.yml:0
 msgid "A person commented on content I am following"
-msgstr ""
+msgstr "Кто-то прокомментировал контент, за которым я слежу"
 
 #: modules/social_features/social_activity/config/install/message.template.create_comment_author_node_post.yml:0
 msgid "A person commented on content created or organised by me"
@@ -882,7 +1064,7 @@ msgstr ""
 
 #: modules/social_features/social_activity/config/install/message.template.create_post_profile.yml:0
 msgid "A person created a post on my profile"
-msgstr ""
+msgstr "Кто-то создал публикацию на моей странице"
 
 #: modules/social_features/social_activity/config/install/message.template.create_post_profile_stream.yml:0
 msgid "A person created a post on my profile and I see it on the stream"
@@ -891,30 +1073,33 @@ msgstr ""
 #: modules/social_features/social_activity/config/install/message.template.create_content_in_joined_group.yml:0
 msgid "A person created a post, event or topic in a group I joined"
 msgstr ""
+"Кто-то создал публикацию, событие или тему в группе, в которую я вступил(а)"
 
 #: modules/social_features/social_activity/config/install/message.template.join_to_group.yml:0
 msgid "A person joins a group I am managing"
-msgstr ""
+msgstr "Кто-то присоединился к группе, которой я руковожу"
 
 #: modules/social_features/social_like/config/install/message.template.create_like_node_or_post.yml:0
 msgid "A person likes a post, topic, comment or event created by me"
 msgstr ""
+"Кому-то понравилась публикация, тема, комментарий или событие, которые я "
+"создал(а)"
 
 #: modules/social_features/social_mentions/config/install/message.template.create_mention_comment.yml:0
 msgid "A person mentioned me in a comment"
-msgstr ""
+msgstr "Кто-то упомянул меня в комментарии"
 
 #: modules/social_features/social_mentions/config/install/message.template.create_mention_comment_stream.yml:0
 msgid "A person mentioned me in a comment (stream: profile)"
-msgstr ""
+msgstr "Кто-то упомянул меня в комментарии (stream: профиль)"
 
 #: modules/social_features/social_mentions/config/install/message.template.create_mention_post.yml:0
 msgid "A person mentioned me in a post"
-msgstr ""
+msgstr "Кто-то упомянул меня в публикации"
 
 #: modules/social_features/social_mentions/config/install/message.template.create_mention_post_stream.yml:0
 msgid "A person mentioned me in a post (stream: profile)"
-msgstr ""
+msgstr "Кто-то упомянул меня в публикации (stream: профиль)"
 
 #: modules/social_features/social_activity/config/install/message.template.moved_content_between_groups.yml:0
 msgid "A person moved event or topic to other group"
@@ -922,11 +1107,11 @@ msgstr ""
 
 #: modules/social_features/social_activity/config/install/message.template.create_comment_reply.yml:0
 msgid "A person replied on my comments"
-msgstr ""
+msgstr "Кто-то ответил на мои комментарии"
 
 #: modules/social_features/social_mentions/config/install/message.template.create_comment_reply_mention.yml:0
 msgid "A person replied to a comment where I am mentioned"
-msgstr ""
+msgstr "Кто-то ответил на комментарий, в котором я упомянут(а)"
 
 #: modules/social_features/social_landing_page/config/install/field.field.paragraph.block.field_block_reference_secondary.yml:0
 msgid ""
@@ -1000,7 +1185,7 @@ msgstr ""
 
 #: modules/social_features/social_private_message/config/install/message.template.create_private_message.yml:0
 msgid "A user sends a private message to me"
-msgstr ""
+msgstr "Пользователь послал мне личное сообщение"
 
 #: modules/social_features/social_profile/config/install/taxonomy.vocabulary.expertise.yml:0
 msgid "A users expertises"
@@ -1205,7 +1390,7 @@ msgstr ""
 #: modules/social_features/social_core/config/install/core.entity_view_mode.node.activity_comment.yml:0
 #: modules/social_features/social_post/config/install/core.entity_view_mode.post.activity_comment.yml:0
 msgid "Activity comment"
-msgstr ""
+msgstr "Комментарий деятельности"
 
 #: modules/custom/activity_creator/activity_creator.module:160;162
 msgid "Activity group argument"
@@ -1217,7 +1402,7 @@ msgstr ""
 
 #: modules/social_features/social_event/config/optional/message.template.activity_on_events_im_organizing.yml:0;0
 msgid "Activity on events I am organizing"
-msgstr ""
+msgstr "Активность в событиях, которые я организую"
 
 #: modules/social_features/social_landing_page/src/Plugin/Block/ActivityOverviewBlock.php:10
 msgid "Activity overview"
@@ -1309,7 +1494,7 @@ msgstr ""
 #: modules/social_features/social_comment/social_comment.module:69
 #: modules/social_features/social_comment/config/install/core.entity_form_display.comment.comment.default.yml:0
 msgid "Add a comment"
-msgstr ""
+msgstr "Добавить комментарий"
 
 #: modules/social_features/social_group/src/Plugin/Block/GroupAddBlock.php:69
 msgid "Add a group"
@@ -1673,27 +1858,27 @@ msgstr ""
 #: modules/social_features/social_event/social_event.install:112
 #: modules/social_features/social_event/config/install/views.view.upcoming_events.yml:0
 msgid "All events"
-msgstr ""
+msgstr "Все события"
 
 #: modules/social_features/social_group/social_group.install:152
 #: modules/social_features/social_group/config/install/views.view.groups.yml:0
 #: modules/social_features/social_group/config/install/views.view.newest_groups.yml:0;0
 msgid "All groups"
-msgstr ""
+msgstr "Все группы"
 
 #: modules/social_features/social_group/config/install/views.view.group_members.yml:0
 #: modules/social_features/social_profile/config/install/views.view.newest_users.yml:0;0
 msgid "All members"
-msgstr ""
+msgstr "Все участники"
 
 #: modules/social_features/social_event/config/install/views.view.upcoming_events.yml:0
 msgid "All my upcoming events"
-msgstr ""
+msgstr "Все мои предстоящие события"
 
 #: modules/social_features/social_activity/social_activity.module:1
 #: modules/social_features/social_activity/config/install/views.view.activity_stream_notifications.yml:0
 msgid "All notifications"
-msgstr ""
+msgstr "Все уведомления"
 
 #: modules/social_features/social_topic/social_topic.module:103
 msgid "All statuses"
@@ -2122,7 +2307,7 @@ msgstr "По возрастанию"
 
 #: modules/social_features/social_event/modules/social_event_managers/config/install/field.field.node.event.field_event_managers.yml:0
 msgid "Assign event organisers to this event."
-msgstr ""
+msgstr "Назначить организаторов этого события"
 
 #: modules/custom/social_file_private/social_file_private.install:33
 msgid ""
@@ -2180,7 +2365,7 @@ msgstr ""
 
 #: modules/social_features/social_profile/config/install/field.field.profile.profile.field_profile_banner_image.yml:0
 msgid "Banner Image"
-msgstr ""
+msgstr "Картинка баннера"
 
 #: themes/socialbase/socialbase.info.yml:0
 msgid ""
@@ -2364,6 +2549,8 @@ msgid ""
 "By submitting this form you will become a member of the group. Please fill "
 "out any available fields to complete your membership information."
 msgstr ""
+"После отправки этой формы вы присоединитесь к группе. Пожалуйста, заполните "
+"все доступные поля."
 
 #: modules/social_features/social_profile/modules/social_profile_organization_tag/config/install/taxonomy.vocabulary.profile_organization_tag.yml:0
 msgid "CM can tag a user and indicate that user is part of an organization."
@@ -2419,7 +2606,7 @@ msgstr ""
 #: modules/social_features/social_event/modules/social_event_type/src/Form/SocialEventTypeSettings.php:46
 #: modules/social_features/social_topic/src/Form/TopicSettingsForm.php:39
 msgid "Change input widget"
-msgstr ""
+msgstr "Изменить виджет ввода"
 
 #: modules/social_features/social_group/src/Plugin/Action/ChangeGroupMembershipRole.php:174
 msgid "Change role"
@@ -2596,7 +2783,7 @@ msgstr "Сообщество"
 #: modules/custom/entity_access_by_field/src/Form/EntityVisibilityForm.php:51
 #: modules/social_features/social_event/config/install/field.storage.node.field_content_visibility.yml:0
 msgid "Community - visible only to logged in members"
-msgstr ""
+msgstr "Сообщество - видно только зарегистрированным пользователям"
 
 #: modules/custom/social_lets_connect/modules/social_lets_connect_usage/src/Form/LetsConnectUsageSettingsForm.php:44
 msgid "Community URL"
@@ -2744,7 +2931,7 @@ msgstr "Содержимое"
 
 #: modules/social_features/social_follow_content/config/install/views.view.following.yml:0;0
 msgid "Content I follow"
-msgstr ""
+msgstr "Контент, за которым я слежу"
 
 #: modules/social_features/social_content_report/social_content_report.links.menu.yml:0
 msgid "Content Reporting"
@@ -2773,7 +2960,7 @@ msgstr ""
 #: modules/social_features/social_group/modules/social_group_flexible_group/config/install/group.role.flexible_group-83776d798.yml:0
 #: modules/social_features/social_group/modules/social_group_secret/config/install/group.role.secret_group-83776d798.yml:0
 msgid "Content manager"
-msgstr ""
+msgstr "Контент-менеджер"
 
 #: modules/social_features/social_content_report/src/Plugin/ActivityContext/ContentReportActivityContext.php:8
 msgid "Content report activity context"
@@ -2975,11 +3162,11 @@ msgstr "Создать Новую Группу"
 
 #: modules/social_features/social_landing_page/social_landing_page.module:319
 msgid "Create New Landing Page"
-msgstr ""
+msgstr "Создать Новую Целевую Страницу"
 
 #: modules/social_features/social_page/social_page.module:47
 msgid "Create New Page"
-msgstr ""
+msgstr "Создать Новую Страницу"
 
 #: modules/social_features/social_topic/social_topic.module:188
 msgid "Create New Topic"
@@ -3135,7 +3322,7 @@ msgstr ""
 
 #: modules/social_features/social_private_message/config/install/message.template.create_private_message.yml:0
 msgid "Create private message"
-msgstr ""
+msgstr "Создать личное сообщение"
 
 #: modules/social_features/social_mentions/config/install/message.template.create_comment_reply_mention.yml:0
 msgid "Create reply on comment with mentions"
@@ -3225,7 +3412,7 @@ msgstr ""
 #: modules/social_features/social_page/config/install/field.field.node.page.field_page_image.yml:0
 #: modules/social_features/social_topic/config/install/field.field.node.topic.field_topic_image.yml:0
 msgid "Crop your image to select which part of your image to show on display."
-msgstr ""
+msgstr "Обрезать изображение, чтобы выбрать, какая часть будет отображена."
 
 #: modules/social_features/social_follow_content/config/install/views.view.following.yml:0
 msgid "Current User"
@@ -3314,7 +3501,7 @@ msgstr ""
 
 #: modules/social_features/social_profile/config/install/field.field.profile.profile.field_profile_image.yml:0;0
 msgid "Default profile image"
-msgstr ""
+msgstr "Изображение профиля по умолчанию"
 
 #: modules/social_features/social_landing_page/config/install/field.storage.paragraph.field_button_style.yml:0
 msgid "Default style"
@@ -3430,7 +3617,7 @@ msgstr "Удалить отмеченные комментарии"
 
 #: modules/social_features/social_private_message/social_private_message.module:387
 msgid "Delete thread"
-msgstr ""
+msgstr "Удалить ветку"
 
 #: modules/social_features/social_user/social_user.module:373
 msgid "Delete your account and anonymize all other content."
@@ -4072,7 +4259,7 @@ msgstr ""
 
 #: modules/social_features/social_user/src/Form/SocialUserLoginForm.php:55
 msgid "Enter your @s username or email."
-msgstr ""
+msgstr "Ввести ваше @s имя пользователя или адрес электронной почты."
 
 #: modules/social_features/social_event/modules/social_event_an_enroll/src/Form/EventAnEnrollForm.php:59
 #: modules/social_features/social_event/modules/social_event_an_enroll/config/install/field.field.event_enrollment.event_enrollment.field_email.yml:0
@@ -4155,7 +4342,7 @@ msgstr "Событие"
 
 #: modules/social_features/social_event/modules/social_event_managers/config/optional/block.block.views_block__managers_event_managers.yml:0;0
 msgid "Event Organisers"
-msgstr ""
+msgstr "Организаторы События"
 
 #: modules/custom/social_tour/config/install/tour.tour.social_event_overview.yml:0
 msgid "Event Overview functionality."
@@ -4214,12 +4401,12 @@ msgstr ""
 #: modules/social_features/social_event/modules/social_event_managers/config/install/field.field.node.event.field_event_managers.yml:0
 #: modules/social_features/social_event/modules/social_event_managers/config/install/views.view.managers.yml:0
 msgid "Event organisers"
-msgstr ""
+msgstr "Организаторы События"
 
 #: modules/social_features/social_event/social_event.links.menu.yml:0;0
 #: modules/social_features/social_event/social_event.routing.yml:0
 msgid "Event settings"
-msgstr ""
+msgstr "Настройки события"
 
 #: modules/social_features/social_event/social_event.module:248
 msgid "Event sorting (passed and upcoming)"
@@ -4229,7 +4416,7 @@ msgstr ""
 #: modules/social_features/social_event/config/install/views.view.upcoming_events.yml:0
 #: modules/social_features/social_group/config/install/views.view.group_events.yml:0
 msgid "Event status"
-msgstr ""
+msgstr "Статус события"
 
 #: modules/social_features/social_event/config/install/views.view.events.yml:0
 msgid "Event time"
@@ -4283,7 +4470,7 @@ msgstr ""
 #: modules/social_features/social_event/config/install/views.view.upcoming_events.yml:0
 #: modules/social_features/social_group/config/install/views.view.group_events.yml:0
 msgid "Events that have started or are finished"
-msgstr ""
+msgstr "События, которые уже начались или прошли"
 
 #: modules/custom/download_count/src/Form/DownloadCountSettingsForm.php:34;39
 msgid "Excluded file extensions"
@@ -4293,7 +4480,7 @@ msgstr ""
 #: modules/social_features/social_profile/config/install/taxonomy.vocabulary.expertise.yml:0
 #: modules/social_features/social_search/config/install/views.view.search_users.yml:0
 msgid "Expertise"
-msgstr ""
+msgstr "Знания"
 
 #: modules/social_features/social_core/social_core.install:246
 #: modules/social_features/social_activity/config/install/views.view.activity_stream.yml:0
@@ -4302,7 +4489,7 @@ msgstr "Изучить"
 
 #: modules/social_features/social_activity/config/install/views.view.activity_stream.yml:0
 msgid "Explore Stream"
-msgstr ""
+msgstr "Изучить ветку"
 
 #: modules/custom/social_tour/config/install/tour.tour.social_explore.yml:0
 msgid "Explore functionality."
@@ -4552,7 +4739,7 @@ msgstr ""
 
 #: modules/social_features/social_follow_content/config/install/flag.flag.follow_content.yml:0;0
 msgid "Follow content"
-msgstr ""
+msgstr "Подписаться на контент"
 
 #: modules/custom/social_tour/config/install/tour.tour.social_node_view.yml:0
 msgid "Follow functionality."
@@ -4613,6 +4800,9 @@ msgid ""
 "immediately or in a daily or weekly digest. Email notifications will only be "
 "sent when you are not active in the platform."
 msgstr ""
+"Каждое из e-mail уведомлений из списка ниже вы можете отключить, получать "
+"сразу или получать ежедневно или еженедельно. Уведомления будут высланы на "
+"почту, только когда вы не активны на платформе."
 
 #: modules/social_features/social_event/social_event.module:249
 msgid ""
@@ -4751,7 +4941,7 @@ msgstr "Группа"
 #: modules/social_features/social_group/modules/social_group_flexible_group/config/install/group.role.flexible_group-group_admin.yml:0
 #: modules/social_features/social_group/modules/social_group_secret/config/install/group.role.secret_group-group_admin.yml:0
 msgid "Group Admin"
-msgstr ""
+msgstr "Админ группы"
 
 #: modules/social_features/social_group/social_group.views.inc:16
 msgid "Group Content"
@@ -4771,7 +4961,7 @@ msgstr ""
 #: modules/social_features/social_group/modules/social_group_flexible_group/config/install/field.field.group.flexible_group.field_group_image.yml:0
 #: modules/social_features/social_group/modules/social_group_secret/config/install/field.field.group.secret_group.field_group_image.yml:0
 msgid "Group Image"
-msgstr ""
+msgstr "Картинка группы"
 
 #: modules/social_features/social_group/config/install/views.view.group_information.yml:0
 msgid "Group Information"
@@ -4787,7 +4977,7 @@ msgstr ""
 #: modules/social_features/social_group/modules/social_group_flexible_group/config/install/group.role.flexible_group-group_manager.yml:0
 #: modules/social_features/social_group/modules/social_group_secret/config/install/group.role.secret_group-group_manager.yml:0
 msgid "Group Manager"
-msgstr ""
+msgstr "Менеджер группы"
 
 #: modules/social_features/social_group/config/install/views.view.group_managers.yml:0
 msgid "Group Managers"
@@ -4816,7 +5006,7 @@ msgstr ""
 
 #: modules/social_features/social_activity/config/install/views.view.activity_stream_group.yml:0
 msgid "Group Stream"
-msgstr ""
+msgstr "Групповая Ветка"
 
 #: modules/social_features/social_tagging/config/optional/block.block.socialgrouptagsblock.yml:0
 msgid "Group Tags"
@@ -4858,7 +5048,7 @@ msgstr ""
 
 #: modules/social_features/social_group/social_group.module:1483
 msgid "Group and visibility"
-msgstr ""
+msgstr "Группа и видимость"
 
 #: modules/social_features/social_group/config/install/views.view.group_events.yml:0
 #: modules/social_features/social_group/config/install/views.view.group_topics.yml:0
@@ -5035,7 +5225,7 @@ msgstr ""
 #: modules/social_features/social_landing_page/config/install/paragraphs.paragraphs_type.hero.yml:0
 #: modules/social_features/social_profile/config/install/core.entity_view_mode.profile.hero.yml:0
 msgid "Hero"
-msgstr ""
+msgstr "Герой"
 
 #: modules/social_features/social_core/config/install/crop.type.hero_an.yml:0
 msgid "Hero AN"
@@ -5325,11 +5515,11 @@ msgstr ""
 #: themes/socialbase/templates/group/group--teaser.html.twig:104
 msgctxt "Is a member"
 msgid "Joined"
-msgstr ""
+msgstr "Уже тут"
 
 #: modules/social_features/social_group/config/install/views.view.group_manage_members.yml:0
 msgid "Joined date"
-msgstr ""
+msgstr "дата подписки"
 
 #: modules/social_features/social_post/src/Form/PostTypeForm.php:24
 msgid "Label"
@@ -5554,7 +5744,7 @@ msgstr "Название местоположения"
 
 #: modules/social_features/social_user/social_user.module:641
 msgid "Log In"
-msgstr ""
+msgstr "Зарегистрироваться"
 
 #: modules/custom/social_auth_extra/social_auth_extra.module:89
 #: modules/custom/social_auth_extra/src/Form/AuthLoginNoticeForm.php:41
@@ -5915,7 +6105,7 @@ msgstr ""
 
 #: modules/custom/activity_send/modules/activity_send_email/activity_send_email.module:134
 msgid "Message to me"
-msgstr ""
+msgstr "Сообщение для меня"
 
 #: themes/socialbase/src/Plugin/Preprocess/GroupSettingsHelp.php:50
 msgid "Method to join"
@@ -5991,7 +6181,7 @@ msgstr ""
 
 #: modules/social_features/social_event/config/install/views.view.upcoming_events.yml:0
 msgid "My upcoming events"
-msgstr ""
+msgstr "Мои предстоящие события"
 
 #: modules/social_features/social_event/config/install/views.view.upcoming_events.yml:0;0
 msgid "My upcoming events block"
@@ -6036,7 +6226,7 @@ msgstr ""
 
 #: modules/social_features/social_book/social_book.module:44
 msgid "New Book Page"
-msgstr ""
+msgstr "Новая Страница Книги"
 
 #: modules/social_features/social_user/src/Plugin/Block/AccountHeaderBlock.php:142
 msgid "New Content"
@@ -6044,23 +6234,23 @@ msgstr "Новое содержимое"
 
 #: modules/social_features/social_event/social_event.module:389
 msgid "New Event"
-msgstr ""
+msgstr "Новое Событие"
 
 #: modules/social_features/social_group/social_group.module:1710
 msgid "New Group"
-msgstr ""
+msgstr "Новая Группа"
 
 #: modules/social_features/social_landing_page/social_landing_page.module:321
 msgid "New Landing Page"
-msgstr ""
+msgstr "Новая Целевая Страница"
 
 #: modules/social_features/social_page/social_page.module:49
 msgid "New Page"
-msgstr ""
+msgstr "Новая Страница"
 
 #: modules/social_features/social_topic/social_topic.module:190
 msgid "New Topic"
-msgstr ""
+msgstr "Новая Тема"
 
 #: modules/social_features/social_private_message/src/Plugin/Block/PmAddBlock.php:52
 msgid "New message"
@@ -6072,7 +6262,7 @@ msgstr ""
 
 #: modules/social_features/social_group/config/install/views.view.group_members.yml:0
 msgid "Newest Members"
-msgstr ""
+msgstr "Самые новые участники"
 
 #: modules/social_features/social_post/src/Plugin/Field/FieldFormatter/CommentPostFormatter.php:166
 msgid "Newest first"
@@ -6081,11 +6271,11 @@ msgstr "Новые сначала"
 #: modules/social_features/social_landing_page/src/Plugin/Field/FieldWidget/BlockFieldWidget.php:46
 #: modules/social_features/social_group/config/install/views.view.newest_groups.yml:0;0
 msgid "Newest groups"
-msgstr ""
+msgstr "Новейшие группы"
 
 #: modules/social_features/social_group/config/install/views.view.newest_groups.yml:0;0
 msgid "Newest groups block"
-msgstr ""
+msgstr "Блок новейших групп"
 
 #: modules/social_features/social_group/config/install/views.view.newest_groups.yml:0
 msgid "Newest groups page"
@@ -6093,11 +6283,11 @@ msgstr ""
 
 #: modules/social_features/social_profile/config/install/views.view.newest_users.yml:0;0
 msgid "Newest members"
-msgstr ""
+msgstr "Самые новые участники"
 
 #: modules/social_features/social_topic/config/install/views.view.latest_topics.yml:0;0
 msgid "Newest topics"
-msgstr ""
+msgstr "Новейшие обсуждения"
 
 #: modules/social_features/social_landing_page/src/Plugin/Field/FieldWidget/BlockFieldWidget.php:47
 #: modules/social_features/social_profile/config/install/views.view.newest_users.yml:0
@@ -6151,7 +6341,7 @@ msgstr "Нет доступных материалов."
 
 #: modules/social_features/social_event/config/install/views.view.upcoming_events.yml:0
 msgid "No events found"
-msgstr ""
+msgstr "Событий не найдено"
 
 #: modules/social_features/social_event/config/install/views.view.events.yml:0
 msgid "No events found for this user"
@@ -6167,7 +6357,7 @@ msgstr "У этого пользователя нет групп"
 
 #: modules/social_features/social_like/config/install/views.view.who_liked_this_entity.yml:0
 msgid "No likes yet"
-msgstr ""
+msgstr "Пока лайков нет"
 
 #: modules/social_features/social_content_block/src/ContentBuilder.php:134
 msgid "No matching content found"
@@ -6180,7 +6370,7 @@ msgstr ""
 #: modules/social_features/social_event/config/install/views.view.event_enrollments.yml:0
 #: modules/social_features/social_event/modules/social_event_managers/config/install/views.view.event_manage_enrollments.yml:0
 msgid "No one has enrolled for this event"
-msgstr "Никто не участвует в этом событии"
+msgstr "Пока никто не присоединился"
 
 #: modules/social_features/social_event/modules/social_event_an_enroll/config/install/views.view.manage_enrollments.yml:0
 msgid "No one has enrolled for this event as anonymous user"
@@ -6207,7 +6397,7 @@ msgstr ""
 
 #: modules/social_features/social_topic/config/install/views.view.latest_topics.yml:0
 msgid "No topics found"
-msgstr ""
+msgstr "Обсуждений не найдено"
 
 #: modules/social_features/social_topic/config/install/views.view.topics.yml:0
 msgid "No topics found for this user"
@@ -6216,15 +6406,15 @@ msgstr ""
 #: modules/social_features/social_group/config/install/views.view.group_topics.yml:0
 #: modules/social_features/social_topic/config/install/views.view.latest_topics.yml:0
 msgid "No topics in this group"
-msgstr ""
+msgstr "Нет контента в этой группе"
 
 #: modules/social_features/social_event/config/install/views.view.upcoming_events.yml:0
 msgid "No upcoming events in this group"
-msgstr ""
+msgstr "Нет предстоящих событий в этой группе"
 
 #: modules/social_features/social_event/config/install/views.view.upcoming_events.yml:0
 msgid "No upcoming events you have enrolled for"
-msgstr ""
+msgstr "Нет предстоящих событий, на которые вы были бы зарегистрированы"
 
 #: modules/social_features/social_search/modules/social_search_autocomplete/config/install/views.view.search_all_autocomplete.yml:0
 msgid "Node Path"
@@ -6946,7 +7136,7 @@ msgstr "Главные вкладки"
 #: modules/social_features/social_profile/social_profile.module:457
 #: modules/social_features/social_profile/src/Form/SocialProfileSettingsForm.php:70
 msgid "Privacy settings"
-msgstr ""
+msgstr "настройки приватности"
 
 #: modules/social_features/social_profile/social_profile.links.menu.yml:0
 msgid "Privacy settings for Social Profile module."
@@ -7106,7 +7296,7 @@ msgstr ""
 #: modules/social_features/social_profile/config/install/taxonomy.vocabulary.profile_tag.yml:0
 #: modules/social_features/social_search/config/install/views.view.search_users.yml:0
 msgid "Profile tag"
-msgstr ""
+msgstr "Тег профиля"
 
 #: themes/socialbase/templates/profile/profile--profile--default.html.twig:119
 msgid "Profile tags"
@@ -7281,7 +7471,7 @@ msgstr "Общедоступный"
 #: modules/custom/entity_access_by_field/src/Form/EntityVisibilityForm.php:50
 #: modules/social_features/social_event/config/install/field.storage.node.field_content_visibility.yml:0
 msgid "Public - visible to everyone including people who are not a member"
-msgstr ""
+msgstr "Публичный - видно всем, включая людей, не являющихся участниками"
 
 #: modules/social_features/social_group/config/install/group.type.public_group.yml:0
 msgid "Public group"
@@ -7377,11 +7567,11 @@ msgstr ""
 
 #: modules/social_features/social_topic/config/install/views.view.topics.yml:0;0
 msgid "Recently created topics"
-msgstr ""
+msgstr "Недавно созданные обсуждения"
 
 #: modules/social_features/social_group/config/install/views.view.groups.yml:0
 msgid "Recently joined groups"
-msgstr ""
+msgstr "Группы, к которым я недавно присоединился(лась)"
 
 #: modules/social_features/social_post/config/install/field.field.post.post.field_recipient_group.yml:0
 #: modules/social_features/social_post/modules/social_post_photo/config/install/field.field.post.photo.field_recipient_group.yml:0
@@ -7737,20 +7927,20 @@ msgstr ""
 #: modules/social_features/social_post/modules/social_post_photo/js/post-widget.js:0
 #: modules/social_features/social_post/modules/social_post_photo/config/install/core.entity_form_display.post.photo.default.yml:0
 msgid "Say something about this photo"
-msgstr ""
+msgstr "Сказать что-то об этой фотографии"
 
 #: modules/social_features/social_post/modules/social_post_photo/config/install/core.entity_form_display.post.photo.group.yml:0
 #: modules/social_features/social_post/modules/social_post_photo/config/install/core.entity_form_display.post.photo.profile.yml:0
 msgid "Say something about this photo "
-msgstr ""
+msgstr "Скажите что-то об этой фотографии "
 
 #: modules/social_features/social_post/social_post.module:62
 msgid "Say something to the Community"
-msgstr ""
+msgstr "Сказать что-нибудь сообществу"
 
 #: modules/social_features/social_post/social_post.module:51;52
 msgid "Say something to the group"
-msgstr ""
+msgstr "Сказать что-нибудь в группе"
 
 #: modules/social_features/social_search/social_search.module:217
 #: modules/social_features/social_search/src/SocialSearchBreadcrumbBuilder.php:53
@@ -7855,19 +8045,19 @@ msgstr "Раздел"
 
 #: themes/socialblue/color/color.inc:19
 msgid "Section navbar background"
-msgstr ""
+msgstr "Фон навигационной панели раздела"
 
 #: themes/socialblue/color/color.inc:20
 msgid "Section navbar text"
-msgstr ""
+msgstr "Текст навигационной панели раздела"
 
 #: modules/social_features/social_landing_page/config/install/field.field.paragraph.featured.field_featured_title.yml:0
 msgid "Section title"
-msgstr ""
+msgstr "Название раздела"
 
 #: modules/social_features/social_landing_page/config/install/field.field.node.landing_page.field_landing_page_section.yml:0
 msgid "Sections"
-msgstr ""
+msgstr "Разделы"
 
 #: modules/social_features/social_event/modules/social_event_managers/config/install/views.view.managers.yml:0
 msgid "See all organisers"
@@ -7946,7 +8136,7 @@ msgstr ""
 #: modules/social_features/social_event/modules/social_event_managers/src/Form/SocialEventManagersAddEnrolleeForm.php:156
 #: modules/social_features/social_group/social_group.module:628
 msgid "Select members to add"
-msgstr ""
+msgstr "Выбрать участников, чтобы добавить"
 
 #: modules/social_features/social_comment/src/Form/SocialCommentAdminOverview.php:251
 msgid "Select one or more comments to perform the update on."
@@ -7985,12 +8175,12 @@ msgstr ""
 
 #: modules/social_features/social_user_export/src/Plugin/UserExportPlugin/UserSelfIntroduction.php:8
 msgid "Self Introduction"
-msgstr ""
+msgstr "Самопрезентация"
 
 #: modules/social_features/social_user_export/src/Plugin/UserExportPlugin/UserSelfIntroduction.php:23
 #: modules/social_features/social_profile/config/install/field.field.profile.profile.field_profile_self_introduction.yml:0
 msgid "Self introduction"
-msgstr ""
+msgstr "Самопрезентация"
 
 #: modules/social_features/social_private_message/social_private_message.module:87;122
 msgid "Send"
@@ -8037,7 +8227,7 @@ msgstr "Отправка почты для получателя %recipient"
 #: modules/social_features/social_profile/config/install/field.field.profile.profile.field_profile_interests.yml:0
 #: modules/social_features/social_search/config/install/views.view.search_users.yml:0;0
 msgid "Separate multiple values by a comma."
-msgstr ""
+msgstr "Разделить несколько вводных запятой."
 
 #: modules/custom/social_lets_connect/modules/social_lets_connect_contact/social_lets_connect_contact.links.menu.yml:0
 msgid "Services"
@@ -8228,7 +8418,7 @@ msgstr ""
 
 #: modules/social_features/social_user/social_user.module:634
 msgid "Sign Up"
-msgstr ""
+msgstr "Зарегистрироваться"
 
 #: modules/custom/social_auth_extra/social_auth_extra.module:88
 #: modules/social_features/social_core/social_core.install:218
@@ -8236,15 +8426,15 @@ msgstr ""
 #: modules/social_features/social_user/src/Form/SocialUserLoginForm.php:88
 #: modules/social_features/social_user/src/Form/SocialUserPasswordForm.php:44
 msgid "Sign up"
-msgstr "Подписка"
+msgstr "Регистрация"
 
 #: modules/social_features/social_user/social_user.module:163
 msgid "Sign up with <b>email</b>"
-msgstr ""
+msgstr "Войти через <b>email</b>"
 
 #: modules/social_features/social_user/src/Plugin/Block/AccountHeaderBlock.php:177
 msgid "Signed in as"
-msgstr ""
+msgstr "Вошел как"
 
 #: modules/social_features/social_user/config/schema/social_user.schema.yml:0
 msgid "Signup Help Text"
@@ -8265,7 +8455,7 @@ msgstr "Брендинг сайта"
 #: modules/social_features/social_group/modules/social_group_flexible_group/config/install/group.role.flexible_group-ba5854c29.yml:0
 #: modules/social_features/social_group/modules/social_group_secret/config/install/group.role.secret_group-ba5854c29.yml:0
 msgid "Site manager"
-msgstr ""
+msgstr "Менеджер сайта"
 
 #: modules/custom/sitewide_js/sitewide_js.info.yml:0
 msgid "Sitewide JS"
@@ -8323,7 +8513,7 @@ msgstr ""
 
 #: modules/social_features/social_profile/config/install/core.entity_view_mode.profile.small_teaser.yml:0
 msgid "Small Teaser"
-msgstr ""
+msgstr "Короткий отрывок"
 
 #: modules/social_features/social_core/config/install/crop.type.hero_small.yml:0
 msgid "Small hero"
@@ -8336,7 +8526,7 @@ msgstr ""
 #: modules/social_features/social_core/config/install/core.entity_view_mode.node.small_teaser.yml:0
 #: modules/social_features/social_group/config/install/core.entity_view_mode.group.small_teaser.yml:0
 msgid "Small teaser"
-msgstr ""
+msgstr "Короткий отрывок"
 
 #: themes/socialblue/color/color.inc:58
 msgid "Snow White"
@@ -9049,7 +9239,7 @@ msgstr "Сортировать по"
 #: modules/social_features/social_topic/config/install/views.view.latest_topics.yml:0
 #: modules/social_features/social_topic/config/install/views.view.topics.yml:0;0
 msgid "Sort by publish date"
-msgstr ""
+msgstr "Сортировать по дате публикации"
 
 #: themes/socialbase/templates/system/tablesort-indicator.html.twig:26
 msgid "Sort descending"
@@ -9525,6 +9715,8 @@ msgid ""
 "The member(s) of the private message thread. Add multiple members by "
 "seperating them with a comma."
 msgstr ""
+"Участник(и) ветки личных сообщений. Добавьте несколько участников, разделяя "
+"их запятой."
 
 #: modules/custom/social_demo/social_demo.drush.inc:21;34;47;63
 msgid "The module name that provides content data."
@@ -9754,7 +9946,7 @@ msgstr ""
 #: themes/socialbase/templates/node/node--full.html.twig:186
 #: themes/socialbase/templates/node/node--teaser.html.twig:168
 msgid "The visibility of this content is set to"
-msgstr ""
+msgstr "Видимость этого контента установлена на"
 
 #: modules/social_features/social_group/src/Controller/SocialGroupListBuilder.php:136
 msgid "There are no groups yet."
@@ -9832,6 +10024,9 @@ msgid ""
 "added in this group will be visible to all community members and anonymous "
 "users."
 msgstr ""
+"Это публичная группа. Пользователи могут присоединиться без одобрения, и "
+"весь контент в этой группе будет доступен всем членам сообщества и анонимным "
+"пользователям."
 
 #: modules/social_features/social_group/modules/social_group_secret/config/install/group.type.secret_group.yml:0
 msgid ""
@@ -9844,6 +10039,9 @@ msgid ""
 "This is an open group. Users may join without approval and all content added "
 "in this group will be visible to all community members."
 msgstr ""
+"Это открытая группа. Зарегистрированные пользователи могут присоединиться "
+"без одобрения, и весь контент в этой группе будет доступен всем членам "
+"сообщества."
 
 #: modules/custom/social_tour/config/install/tour.tour.social_home.yml:0
 msgid ""
@@ -9889,6 +10087,8 @@ msgid ""
 "This setting is currently being controlled by a platform wide setting and "
 "cannot be changed. Please contact a sitemanager if you have questions."
 msgstr ""
+"Это настройка контролируется общими настройками платформы и не подлежит "
+"изменению. Пожалуйста, обратитесь к сайт-менеджеру, если у вас есть вопросы."
 
 #: modules/social_features/social_event/modules/social_event_an_enroll/src/Form/EventAnEnrollSettingsForm.php:58
 msgid ""
@@ -9924,7 +10124,7 @@ msgstr ""
 #: modules/social_features/social_event/modules/social_event_managers/src/Form/SocialEventManagersAddEnrolleeForm.php:155
 #: modules/social_features/social_group/social_group.module:629
 msgid "To add multiple members, separate each member with a comma ( , )."
-msgstr ""
+msgstr "Чтобы добавить несколько участников, разделите их запятой ( , )."
 
 #: modules/social_features/social_event/modules/social_event_an_enroll/src/Form/EventAnEnrollSettingsForm.php:107
 msgid ""
@@ -10177,7 +10377,7 @@ msgstr "Отписаться от контента"
 
 #: modules/social_features/social_follow_content/social_follow_content.module:122
 msgid "Unfollow this content"
-msgstr ""
+msgstr "Отписаться от этого контента"
 
 #: social.profile:415
 msgid "Uninstalled %module_name module."
@@ -10729,15 +10929,15 @@ msgstr "Настройки видимости"
 
 #: modules/social_features/social_post/config/install/field.storage.post.field_visibility.yml:0
 msgid "Visible only to group members"
-msgstr ""
+msgstr "Видно только участникам группы"
 
 #: modules/social_features/social_post/config/install/field.storage.post.field_visibility.yml:0;0
 msgid "Visible only to members who are logged in"
-msgstr ""
+msgstr "Видно только вошедшим пользователям"
 
 #: modules/social_features/social_post/config/install/field.storage.post.field_visibility.yml:0
 msgid "Visible to all visitors of the site"
-msgstr ""
+msgstr "Видно всем посетителям сайта"
 
 #: modules/social_features/social_like/src/Plugin/ActivityContext/VoteActivityContext.php:8
 msgid "Vote activity context"
@@ -10788,7 +10988,7 @@ msgstr ""
 
 #: modules/custom/activity_send/modules/activity_send_email/activity_send_email.module:153
 msgid "What I follow"
-msgstr ""
+msgstr "За чем я слежу"
 
 #: modules/custom/activity_send/modules/activity_send_email/activity_send_email.module:146
 msgid "What I manage"
@@ -10968,6 +11168,8 @@ msgid ""
 "You do not have any private messages yet. Click on the button on the right "
 "to start a new message."
 msgstr ""
+"У вас пока нет личных сообщений. Нажмите на кнопку справа, чтобы начать "
+"новый диалог."
 
 #: modules/social_features/social_group/modules/social_group_quickjoin/src/Controller/SocialQuickJoinController.php:105
 msgid "You don't have access to join this group."
@@ -11093,7 +11295,7 @@ msgstr ""
 
 #: themes/socialbase/templates/profile/profile--profile--default.html.twig:105
 msgid "Your expertise"
-msgstr ""
+msgstr "Ваши знания"
 
 #: modules/social_features/social_group/src/Controller/DeleteGroup.php:50
 msgid "Your group and all of its topics, events and posts have been deleted."
@@ -11101,7 +11303,7 @@ msgstr ""
 
 #: themes/socialbase/templates/profile/profile--profile--default.html.twig:112
 msgid "Your interests"
-msgstr ""
+msgstr "Ваши интересы"
 
 #: modules/social_features/social_private_message/social_private_message.module:190
 msgid "Your message has been created."
@@ -11297,7 +11499,7 @@ msgstr "комментарии"
 
 #: themes/socialbase/src/Plugin/Preprocess/Node.php:114
 msgid "community"
-msgstr ""
+msgstr "сообщество"
 
 #: modules/social_features/social_post/src/Form/PostTypeDeleteForm.php:42
 msgid "content @type: deleted @label."
@@ -11450,11 +11652,11 @@ msgstr ""
 #: social.profile:301
 #: modules/social_features/social_landing_page/src/Plugin/Block/ActivityOverviewBlock.php:156
 msgid "groups"
-msgstr ""
+msgstr "группы"
 
 #: modules/social_features/social_topic/config/install/views.view.topics.yml:0
 msgid "has the publish status of"
-msgstr ""
+msgstr "имеет опубликованный статус"
 
 #: modules/social_features/social_activity/config/install/views.view.activity_stream.yml:0
 msgid "header_postblock"
@@ -11479,11 +11681,11 @@ msgstr ""
 
 #: modules/social_features/social_core/social_core.module:212;226;233;240
 msgid "in the community"
-msgstr ""
+msgstr "в сообществе"
 
 #: modules/social_features/social_core/social_core.module:281;290;300
 msgid "in the group"
-msgstr ""
+msgstr "в этой группе"
 
 #: modules/custom/mentions/src/Entity/Mentions.php:55;56
 msgid "internal uuid"
@@ -11493,7 +11695,7 @@ msgstr ""
 #: modules/social_features/social_topic/config/install/views.view.latest_topics.yml:0
 #: modules/social_features/social_topic/config/install/views.view.topics.yml:0
 msgid "is the type of"
-msgstr ""
+msgstr "это тип"
 
 #: modules/social_features/social_core/config/install/core.date_format.social_long_date.yml:0
 msgctxt "PHP date format"
@@ -11694,12 +11896,12 @@ msgstr "текстовые форматы"
 #: modules/social_features/social_group/modules/social_group_flexible_group/config/install/group.content_type.flexible_group-group_node-topic.yml:0
 #: modules/social_features/social_group/modules/social_group_secret/config/install/group.content_type.secret_group-group_node-topic.yml:0
 msgid "topic"
-msgstr ""
+msgstr "Обсуждение"
 
 #: social.profile:302
 #: modules/social_features/social_landing_page/src/Plugin/Block/ActivityOverviewBlock.php:122
 msgid "topics"
-msgstr ""
+msgstr "Темы"
 
 #: modules/social_features/social_landing_page/templates/node--landing-page.html.twig:93
 #: modules/social_features/social_post/src/PostListBuilder.php:43
