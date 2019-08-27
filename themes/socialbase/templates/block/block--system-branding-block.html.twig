@@ -22,19 +22,11 @@
   ]
 %}
 
-{% if style == 'sky' %}
-  {#<div class="block-site"><span><a target="_blank" href="//getopensocial.com">getopensocial.com</a></span></div>#}
-{% endif %}
-
 <div {{ attributes.addClass(classes) }}>
 
   {% if site_logo %}
     <a class="navbar-brand" href="{{ path('<front>') }}" title="{% trans %} Home {% endtrans %}" rel="home">
-      {% if style == 'sky' %}
-        <img src="{{ base_path }}/{{ active_theme_path() }}/logo--sky.svg" alt="{{ site_name }}"/>
-      {% else %}
-        <img src="{{ site_logo }}" alt="{{ site_name }}" />
-      {% endif %}
+      <img src="{{ site_logo }}" alt="{{ site_name }}" />
     </a>
   {% endif %}
 

@@ -26,7 +26,7 @@
     padding-top: 43px;
     padding-bottom: 25px;
     color: inherit;
-    background-color: #f3f3f3 !important;
+    background-color: #fff !important;
 
     &:before {
       content: '';
@@ -37,16 +37,12 @@
       left: 0;
     }
 
-    .container.row {
-      padding: 0 1rem;
-      flex-direction: column;
-
-      @include for-tablet-portrait-up {
-        flex-direction: row;
-      }
+    section {
+      padding: 10px 14px;
 
       @include for-tablet-landscape-up {
-        align-items: center;
+        padding-top: 13px;
+        padding-bottom: 13px;
       }
     }
 
@@ -54,25 +50,14 @@
     .block-social-media-links {
       flex: 0 0 100%;
       max-width: 100%;
-      margin-bottom: 25px;
-
-      @include for-tablet-portrait-up {
-        flex: none;
-        margin-bottom: 15px;
-      }
     }
 
     nav {
       &[aria-labelledby*='footer-menu'] {
         > ul {
-          margin-bottom: -15px;
           display: flex;
           align-items: center;
           flex-direction: column;
-
-          @include for-tablet-portrait-up {
-            align-items: flex-start;
-          }
 
           @include for-tablet-landscape-up {
             flex-direction: row;
@@ -81,7 +66,6 @@
           li {
             display: flex;
             align-items: center;
-            margin-bottom: 10px;
 
             + li {
               @include for-tablet-landscape-up {
@@ -96,7 +80,6 @@
           }
 
           a {
-            padding: 0;
             font-weight: 700;
             margin-right: 12px;
           }
@@ -110,14 +93,11 @@
       text-align: center;
       font-size: .875rem;
 
-      @include for-tablet-portrait-up {
-        font-size: 1rem;
-        text-align: left;
-      }
-
       @include for-tablet-landscape-up {
+        font-size: 1rem;
         padding-top: 0;
         margin-left: 0;
+        text-align: left;
       }
 
       p {

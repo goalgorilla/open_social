@@ -14,8 +14,8 @@
   .paragraph--featured {
     @media(min-width: 1200px) {
       padding: 50px 0;
-      margin-left: calc(-100vw / 2 + #{1160px} / 2);
-      margin-right: calc(-100vw / 2 + #{1160px} / 2);
+      margin-left: calc(-100vw / 2 + 1160px / 2);
+      margin-right: calc(-100vw / 2 + 1160px / 2);
     }
 
     .teaser footer.card__actionbar {
@@ -52,27 +52,9 @@
   font-size: 1.5rem;
   font-weight: 700;
   padding: 20px 0;
-  text-transform: uppercase;
 
   @include for-tablet-landscape-up {
     font-size: 2.25rem;
     padding: 40px 0;
-  }
-
-  > * {
-    position: relative;
-    display: inline-block;
-    line-height: 1.2;
-
-    &::after {
-      display: none;
-      content: '';
-      position: absolute;
-      top: 100%;
-      margin-top: 13px;
-      left: 0;
-      width: 100%;
-      height: 10px;
-    }
   }
 }

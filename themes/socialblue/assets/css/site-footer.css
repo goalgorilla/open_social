@@ -23,7 +23,7 @@
   padding-top: 43px;
   padding-bottom: 25px;
   color: inherit;
-  background-color: #f3f3f3 !important;
+  background-color: #fff !important;
 }
 
 .socialblue--sky .site-footer:before {
@@ -35,12 +35,8 @@
   left: 0;
 }
 
-.socialblue--sky .site-footer .container.row {
-  padding: 0 1rem;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-      -ms-flex-direction: column;
-          flex-direction: column;
+.socialblue--sky .site-footer section {
+  padding: 10px 14px;
 }
 
 .socialblue--sky .site-footer nav,
@@ -49,11 +45,9 @@
       -ms-flex: 0 0 100%;
           flex: 0 0 100%;
   max-width: 100%;
-  margin-bottom: 25px;
 }
 
 .socialblue--sky .site-footer nav[aria-labelledby*='footer-menu'] > ul {
-  margin-bottom: -15px;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -73,11 +67,9 @@
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
-  margin-bottom: 10px;
 }
 
 .socialblue--sky .site-footer nav[aria-labelledby*='footer-menu'] > ul a {
-  padding: 0;
   font-weight: 700;
   margin-right: 12px;
 }
@@ -167,28 +159,6 @@
 }
 
 @media (min-width: 600px) {
-  .socialblue--sky .site-footer .container.row {
-    -webkit-box-orient: horizontal;
-    -webkit-box-direction: normal;
-        -ms-flex-direction: row;
-            flex-direction: row;
-  }
-  .socialblue--sky .site-footer nav,
-  .socialblue--sky .site-footer .block-social-media-links {
-    -webkit-box-flex: 0;
-        -ms-flex: none;
-            flex: none;
-    margin-bottom: 15px;
-  }
-  .socialblue--sky .site-footer nav[aria-labelledby*='footer-menu'] > ul {
-    -webkit-box-align: start;
-        -ms-flex-align: start;
-            align-items: flex-start;
-  }
-  .socialblue--sky .site-footer .block-copyright-block {
-    font-size: 1rem;
-    text-align: left;
-  }
   .socialblue--sky .site-footer .block-social-media-links {
     -webkit-box-pack: end;
         -ms-flex-pack: end;
@@ -207,10 +177,9 @@
 }
 
 @media (min-width: 900px) {
-  .socialblue--sky .site-footer .container.row {
-    -webkit-box-align: center;
-        -ms-flex-align: center;
-            align-items: center;
+  .socialblue--sky .site-footer section {
+    padding-top: 13px;
+    padding-bottom: 13px;
   }
   .socialblue--sky .site-footer nav[aria-labelledby*='footer-menu'] > ul {
     -webkit-box-orient: horizontal;
@@ -225,8 +194,10 @@
     margin-right: 12px;
   }
   .socialblue--sky .site-footer .block-copyright-block {
+    font-size: 1rem;
     padding-top: 0;
     margin-left: 0;
+    text-align: left;
   }
   .socialblue--sky .site-footer .footer-content {
     -webkit-box-align: center;

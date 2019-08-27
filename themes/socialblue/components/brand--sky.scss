@@ -285,5 +285,21 @@
       color: $brand-primary;
     }
   }
+
+  .site-footer {
+    &:before {
+      background: $brand-primary;
+    }
+
+    nav[aria-labelledby*='footer-menu'] > ul a {
+      color: $brand-primary;
+
+      &:hover,
+      &:active,
+      &:focus {
+        color: $brand-accent;
+      }
+    }
+  }
 }
 
