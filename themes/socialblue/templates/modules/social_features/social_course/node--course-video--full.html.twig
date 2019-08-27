@@ -1,0 +1,33 @@
+{{ attach_library('socialbase/page-node')}}
+{{ attach_library('social_course/social_course')}}
+
+{%
+set classes = [
+'card',
+'brand-border-radius',
+node.isPromoted() ? 'node--promoted',
+not node.isPublished() ? 'node--unpublished',
+]
+%}
+
+<article{{ attributes.addClass(classes) }}>
+
+  {% if label %}
+    <h3 class="section-title section-title-node">
+      {{ label }}
+    </h3>
+  {% endif %}
+
+  <div{{ content_attributes.addClass('card__body') }}>
+
+    {% if not node.isPublished() %}
+      <div class="node--unpublished__label">{% trans %} unpublished {% endtrans %}</div>
+    {% endif %}
+
+    {% block nodefull_body %}
+      {{ content }}
+    {% endblock %}
+
+  </div>
+
+</article>

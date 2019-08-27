@@ -1,0 +1,38 @@
+{% set classes = [
+  'block-' ~ configuration.provider|clean_class,
+  'block-' ~ plugin_id|clean_class,
+  card ? 'card brand-border-radius' : '',
+] %}
+
+{% set title_classes = [
+  card ? 'card__title' : 'block-title',
+] %}
+
+
+{% if not bare %}
+<section{{ attributes.addClass(classes) }}>
+
+  <header{{ title_attributes.addClass('complementary-title') }}>
+    <a href="{{ course_url }}">
+      <span class="icon">
+        <svg class="icon-small icon-nav-group">
+          <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#icon-navigate_before"></use>
+        </svg>
+      </span>
+      {% trans %}Course information{% endtrans %}
+    </a>
+
+    <h4 class="card__title">{% trans %}In this section{% endtrans %}</h4>
+  </header>
+
+  {% endif %}
+
+  {% block content %}
+    <div class="card__block card__block--list">
+      {{ content }}
+    </div>
+  {% endblock %}
+
+  {% if not bare %}
+</section>
+{% endif %}

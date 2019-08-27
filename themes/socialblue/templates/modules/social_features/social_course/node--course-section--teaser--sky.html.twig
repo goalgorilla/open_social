@@ -1,0 +1,100 @@
+{{ attach_library('socialbase/teaser')}}
+
+{%
+  set classes = [
+    'teaser--course',
+    not allowed_start and section_status == 'not-started' ? 'not-allowed',
+    view_mode == 'teaser' ? 'section-teaser',
+    node.isPromoted() ? 'promoted',
+    node.isSticky() ? 'sticky',
+    not node.isPublished() ? 'teaser--unpublished',
+  ]
+%}
+
+<article {{ attributes.addClass(classes) }}>
+  <div class="card__header">
+      <div class='section__status'>
+
+        {% if section_status == "not-started" and allowed_start  %}
+          <span class="badge badge-start teaser__badge badge--section-not-started">
+              {% trans %}Not started{% endtrans %}
+            </span>
+
+        {% elseif section_status == "in-progress" %}
+          <span class="badge teaser__badge badge-warning">
+              <span class="badge__container">
+                <svg class="badge__icon--course" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"/>
+                  <path d="M0 0h24v24H0z" fill="none"/>
+                  <path d="M12.5 7H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+                </svg>
+                <span class="badge__label">{% trans %}In progress{% endtrans %} </span>
+              </span>
+            </span>
+
+        {% elseif section_status == "finished" %}
+          <span class="badge teaser__badge badge-success">
+              <span class="badge__container">
+                <svg class="badge__icon--course" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M0 0h24v24H0z" fill="none"/>
+                  <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                </svg>
+                <span class="badge__label">{% trans %}Finished{% endtrans %} </span>
+              </span>
+            </span>
+        {% endif %}
+
+      </div>
+
+      {% if node_edit_url %}
+        <div class="hero-action-button">
+          <a href="{{ node_edit_url }}" title="{% trans %}Edit content{% endtrans %}" class="waves-effect waves-light btn btn-raised btn-default btn-floating">
+            <svg class="icon-gray icon-medium">
+              <use xlink:href="#icon-edit"></use>
+            </svg>
+          </a>
+        </div>
+      {% endif %}
+
+      <header class='section__header'>
+
+        {% if node.isPublished() is empty %}
+          <span class="badge badge-danger teaser__badge badge--section-unpublished">
+              <span class="badge__container">
+                <svg class="badge__icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                    <g stroke="#636466" stroke-width="2.4">
+                      <path d="M4.4,4.4 L18.8,18.8" id="Line" stroke-linecap="square"></path>
+                      <circle id="Oval" cx="12" cy="12" r="10.8"></circle>
+                    </g>
+                  </g>
+                </svg>
+              <span class="badge__label">{% trans %}Unpublished{% endtrans %}</span>
+            </span>
+          </span>
+        {% endif %}
+
+      </header>
+
+      <span class="exist-parts"> {{ parts_finished }} / {{ parts_count }} {% trans %}completed{% endtrans %}</span>
+  </div>
+
+  {{ title_prefix }}
+  {% if not page %}
+    <h4{{ title_attributes }} class="section__title">
+      {% if section_status == "not-started" and allowed_start %}
+        <a href="{{ url('social_course.start_section', {'group': parent_group.id(), 'node': node.id()}) }}" rel="bookmark">{{ label }}</a>
+      {% elseif section_status == "in-progress" or section_status == "finished" %}
+        <a href="{{ url('entity.node.canonical', {'node': section_current}) }}" rel="bookmark">{{ label }}</a>
+      {% else %}
+        {{ label }}
+      {% endif %}
+    </h4>
+  {% endif %}
+  {{ title_suffix }}
+
+  <div class="card__description">
+    {{ content.field_course_section_description }}
+  </div>
+
+</article>
