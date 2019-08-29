@@ -94,8 +94,6 @@
 .socialblue--sky {
 
   .card {
-    box-shadow: 0 2px 4px rgba(0, 0, 0, .5);
-
     @include for-tablet-landscape-up {
       margin-bottom: 1.25rem
     }
@@ -107,6 +105,28 @@
         margin-bottom: 0;
         border-radius: 0 !important;
         box-shadow: none;
+      }
+    }
+  }
+
+  .card__block {
+    padding: 1.5rem 2rem;
+
+    + .card__block {
+      padding-top: 0;
+    }
+
+    .card__nested-section {
+      margin: 0 -2rem -1.5rem;
+      padding-top: 1.5rem;
+
+      .comment {
+        align-items: center;
+        margin-top: 0;
+
+        .comment__avatar {
+          height: 44px;
+        }
       }
     }
   }
@@ -124,9 +144,6 @@
     width: 100%;
     height: auto;
     flex: auto;
-
-    .card-file {
-    }
   }
 
   .card-file {

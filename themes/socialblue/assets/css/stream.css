@@ -33,14 +33,12 @@
   background: #1f80aa;
 }
 
-.socialblue--sky .card--stream {
-  -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.17);
-          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.17);
-}
-
 .socialblue--sky .teaser--stream {
   border-top: 1px solid #d5d6d2;
   background: transparent;
+  margin-top: 1.25rem;
+  margin-left: -2rem;
+  margin-right: -2rem;
 }
 
 .socialblue--sky .teaser--stream .teaser__published-author {
@@ -59,4 +57,30 @@
   -webkit-box-flex: 1;
       -ms-flex-positive: 1;
           flex-grow: 1;
+}
+
+.socialblue--sky .teaser--stream:last-child {
+  margin-bottom: -1.5rem;
+}
+
+.socialblue--sky .teaser--stream .card__actionbar {
+  padding-bottom: 1rem;
+}
+
+@media (min-width: 600px) {
+  .socialblue--sky .teaser--stream .teaser__image {
+    -webkit-box-flex: 0;
+        -ms-flex: 0 0 219px;
+            flex: 0 0 219px;
+    height: 219px;
+  }
+}
+
+@media (min-width: 900px) {
+  .socialblue--sky .teaser--stream .teaser__image {
+    -webkit-box-flex: 0;
+        -ms-flex: 0 0 179px;
+            flex: 0 0 179px;
+    height: 179px;
+  }
 }

@@ -42,13 +42,12 @@
     background: $brand-secondary;
   }
 
-  .card--stream {
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.17);
-  }
-
   .teaser--stream {
     border-top: 1px solid #d5d6d2;
     background: transparent;
+    margin-top: 1.25rem;
+    margin-left: -2rem;
+    margin-right: -2rem;
 
     .teaser__published-author {
       flex-grow: 0;
@@ -61,6 +60,27 @@
       + .teaser__published-date {
         margin-right: 10px;
         flex-grow: 1;
+      }
+    }
+
+    &:last-child {
+      margin-bottom: -1.5rem;
+    }
+
+    .card__actionbar {
+      padding-bottom: 1rem;
+    }
+
+    .teaser__image {
+      @include for-tablet-portrait-up {
+        flex: 0 0 219px;
+        height: 219px;
+      }
+
+
+      @include for-tablet-landscape-up {
+        flex: 0 0 179px;
+        height: 179px;
       }
     }
   }

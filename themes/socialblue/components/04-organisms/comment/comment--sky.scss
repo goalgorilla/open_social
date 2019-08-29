@@ -1,71 +1,74 @@
 @import "settings";
 
-.comments {
-  background: $gray-lightest;
-  border-radius: $border-radius-extra;
+.socialblue--sky {
 
-  @include for-tablet-landscape-up {
-    margin-left: 50px;
-  }
-}
+  .comments {
+    background: $gray-lightest;
+    border-radius: $border-radius-extra;
 
-.comment {
-  margin-top: 2rem;
-
-  .comment__reply-btn {
-    padding-left: 0;
-  }
-
-  .comment-attachments {
-    position: relative;
-
-    .btn-link {
-      margin-left: 0;
-      padding: 0;
+    @include for-tablet-landscape-up {
+      margin-left: 50px;
     }
   }
 
-  .page-node-type-discussion & {
-    .form-group-inline {
-      justify-content: flex-end;
-    }
+  .comment {
+    margin-top: 2rem;
 
-    .media-body {
-      flex: 0 0 100%;
-      margin-bottom: 1rem;
-    }
-
-    .form-actions {
-      .btn {
-        margin-left: 0;
-      }
+    .comment__reply-btn {
+      padding-left: 0;
     }
 
     .comment-attachments {
-      .btn-link {
-        position: relative;
-        top: -32px;
+      position: relative;
 
-        & + * {
-          margin-top: -22px;
+      .btn-link {
+        margin-left: 0;
+        padding: 0;
+      }
+    }
+
+    .page-node-type-discussion & {
+      .form-group-inline {
+        justify-content: flex-end;
+      }
+
+      .media-body {
+        flex: 0 0 100%;
+        margin-bottom: 1rem;
+      }
+
+      .form-actions {
+        .btn {
+          margin-left: 0;
+        }
+      }
+
+      .comment-attachments {
+        .btn-link {
+          position: relative;
+          top: -32px;
+
+          & + * {
+            margin-top: -22px;
+          }
         }
       }
     }
   }
-}
 
-.comment-form {
-  textarea {
-    &.form-control {
-      height: 35px;
+  .comment-form {
+    textarea {
+      &.form-control {
+        height: 35px;
+      }
     }
   }
-}
 
-.comment__text {
-  margin-bottom: 1rem;
+  .comment__text {
+    margin-bottom: 1rem;
 
-  p:last-of-type {
-    margin-bottom: .75rem;
+    p:last-of-type {
+      margin-bottom: .75rem;
+    }
   }
 }

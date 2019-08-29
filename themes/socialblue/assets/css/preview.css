@@ -1499,14 +1499,12 @@ html.js .input-group-addon .glyphicon.glyphicon-spin {
   background: #1f80aa;
 }
 
-.socialblue--sky .card--stream {
-  -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.17);
-          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.17);
-}
-
 .socialblue--sky .teaser--stream {
   border-top: 1px solid #d5d6d2;
   background: transparent;
+  margin-top: 1.25rem;
+  margin-left: -2rem;
+  margin-right: -2rem;
 }
 
 .socialblue--sky .teaser--stream .teaser__published-author {
@@ -1525,6 +1523,14 @@ html.js .input-group-addon .glyphicon.glyphicon-spin {
   -webkit-box-flex: 1;
       -ms-flex-positive: 1;
           flex-grow: 1;
+}
+
+.socialblue--sky .teaser--stream:last-child {
+  margin-bottom: -1.5rem;
+}
+
+.socialblue--sky .teaser--stream .card__actionbar {
+  padding-bottom: 1rem;
 }
 
 .site-footer {
@@ -1918,7 +1924,7 @@ blockquote {
 
 .navbar-secondary {
   color: #f9f9f9;
-  background-color: #1f7ea7;
+  background-color: #1f80aa;
 }
 
 .navbar-secondary .navbar-nav a {
@@ -2365,6 +2371,12 @@ body.socialblue--sky .block-course-material-navigation .complementary-title > a 
   .hero-avatar {
     border-width: 3px;
   }
+  .socialblue--sky .teaser--stream .teaser__image {
+    -webkit-box-flex: 0;
+        -ms-flex: 0 0 219px;
+            flex: 0 0 219px;
+    height: 219px;
+  }
   .socialblue--sky .site-footer .block-social-media-links {
     -webkit-box-pack: end;
         -ms-flex-pack: end;
@@ -2393,6 +2405,12 @@ body.socialblue--sky .block-course-material-navigation .complementary-title > a 
   }
   .nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus {
     border-bottom: 2px solid #29abe2;
+  }
+  .socialblue--sky .teaser--stream .teaser__image {
+    -webkit-box-flex: 0;
+        -ms-flex: 0 0 179px;
+            flex: 0 0 179px;
+    height: 179px;
   }
   .socialblue--sky .site-footer section {
     padding-top: 13px;
