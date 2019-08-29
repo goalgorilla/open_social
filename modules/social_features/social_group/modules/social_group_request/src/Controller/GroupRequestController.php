@@ -76,14 +76,14 @@ class GroupRequestController extends ControllerBase {
    * Return the title for approve request confirmation page.
    */
   public function getTitleApproveRequest(GroupInterface $group, GroupContentInterface $group_content) {
-    return $this->t('Approve membership request to group @group_title', ['@group_title' => $group->label()]);
+    return $this->t('Approve membership request for the group @group_title', ['@group_title' => $group->label()]);
   }
 
   /**
    * Return the title for reject request confirmation page.
    */
   public function getTitleRejectRequest(GroupInterface $group, GroupContentInterface $group_content) {
-    return $this->t('Reject membership request to group @group_title', ['@group_title' => $group->label()]);
+    return $this->t('Reject membership request for the group @group_title', ['@group_title' => $group->label()]);
   }
 
   /**
@@ -123,10 +123,10 @@ class GroupRequestController extends ControllerBase {
     $result = $group_content->save();
 
     if ($result) {
-      $this->messenger()->addMessage($this->t("Your request is waiting for Group Administrator's approval"));
+      $this->messenger()->addMessage($this->t('Your request is waiting for approval'));
     }
     else {
-      $this->messenger()->addError($this->t('Error creating request'));
+      $this->messenger()->addError($this->t('Error when creating a request to join'));
     }
 
     $this->cacheTagsInvalidator->invalidateTags(['request-membership:' . $group->id()]);
@@ -154,7 +154,7 @@ class GroupRequestController extends ControllerBase {
       $request->delete();
     }
 
-    $this->messenger()->addMessage($this->t('Cancel request of membership has been done successfully.'));
+    $this->messenger()->addMessage($this->t('Membership has been successfully denied.'));
 
     $this->cacheTagsInvalidator->invalidateTags(['request-membership:' . $group->id()]);
 

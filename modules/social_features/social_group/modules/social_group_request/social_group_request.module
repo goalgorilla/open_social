@@ -164,7 +164,7 @@ function social_group_request_form_alter(array &$form, FormStateInterface $form_
     $form['question'] = [
       '#type' => 'html_tag',
       '#tag' => 'p',
-      '#value' => t('Are you sure to approve the membership request for the @name?', ['@name' => $user_name]),
+      '#value' => t('Are you sure you want to approve the membership request for @name?', ['@name' => $user_name]),
       '#weight' => 1,
     ];
 

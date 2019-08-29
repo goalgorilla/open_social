@@ -116,7 +116,7 @@ class GroupRequestMembershipRejectForm extends FormBase {
     $form['question'] = [
       '#type' => 'html_tag',
       '#tag' => 'p',
-      '#value' => $this->t('Are you sure to reject the membership request for the @name?', [
+      '#value' => $this->t('Are you sure you want to reject the membership request for @name?', [
         '@name' => $group_content->getEntity()->getDisplayName(),
       ]),
       '#weight' => 1,
@@ -161,7 +161,7 @@ class GroupRequestMembershipRejectForm extends FormBase {
     $result = $this->groupContent->save();
 
     if ($result) {
-      $this->messenger()->addStatus($this->t('Membership Request rejected'));
+      $this->messenger()->addStatus($this->t('Membership request rejected'));
     }
     else {
       $this->messenger()->addError($this->t('Error updating Request'));
