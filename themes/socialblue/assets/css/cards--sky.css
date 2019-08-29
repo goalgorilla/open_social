@@ -18,7 +18,9 @@
 }
 
 .socialblue--sky .card__block .card__nested-section {
-  margin: 0 -2rem -1.5rem;
+  margin-left: -2rem;
+  margin-right: -2rem;
+  margin-bottom: -1.5rem;
   padding-top: 1.5rem;
 }
 
@@ -33,9 +35,51 @@
   height: 44px;
 }
 
+.socialblue--sky .card--list {
+  padding-bottom: .75rem;
+}
+
 .socialblue--sky .card__title {
   font-weight: 700;
   text-transform: uppercase;
+}
+
+.socialblue--sky .card__link-arrow {
+  position: relative;
+  float: none;
+  margin-left: 0;
+  padding-right: 30px;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.socialblue--sky .card__link-arrow:before, .socialblue--sky .card__link-arrow:after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: 0;
+  -webkit-transform: translateY(-50%);
+          transform: translateY(-50%);
+}
+
+.socialblue--sky .card__link-arrow:before {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  z-index: 1;
+}
+
+.socialblue--sky .card__link-arrow:after {
+  content: '';
+  display: block;
+  right: 5px;
+  margin-top: -1px;
+  padding: 2px;
+  border: solid #fff;
+  border-width: 0 2px 2px 0;
+  -webkit-transform: rotate(-45deg) translateY(-50%);
+          transform: rotate(-45deg) translateY(-50%);
+  z-index: 2;
 }
 
 .socialblue--sky .field--item--file {
@@ -2518,183 +2562,6 @@ body.socialblue--sky.page-node-type-course-article .region--complementary-top .o
 body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='block-group-add'] .card__actionbar,
 body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='add-block'] .card__actionbar {
   padding: 0;
-}
-
-body.socialblue--sky.path-group .region--complementary-bottom .card .card__actionbar .card__link,
-body.socialblue--sky.path-group .region--complementary-bottom .off-canvas-xs-only .card__actionbar .card__link,
-body.socialblue--sky.path-group .region--complementary-bottom [class*='block-group-add'] .card__actionbar .card__link,
-body.socialblue--sky.path-group .region--complementary-bottom [class*='add-block'] .card__actionbar .card__link,
-body.socialblue--sky.path-group .region--complementary-top .card .card__actionbar .card__link,
-body.socialblue--sky.path-group .region--complementary-top .off-canvas-xs-only .card__actionbar .card__link,
-body.socialblue--sky.path-group .region--complementary-top [class*='block-group-add'] .card__actionbar .card__link,
-body.socialblue--sky.path-group .region--complementary-top [class*='add-block'] .card__actionbar .card__link, body.socialblue--sky.details .region--complementary-bottom .card .card__actionbar .card__link,
-body.socialblue--sky.details .region--complementary-bottom .off-canvas-xs-only .card__actionbar .card__link,
-body.socialblue--sky.details .region--complementary-bottom [class*='block-group-add'] .card__actionbar .card__link,
-body.socialblue--sky.details .region--complementary-bottom [class*='add-block'] .card__actionbar .card__link,
-body.socialblue--sky.details .region--complementary-top .card .card__actionbar .card__link,
-body.socialblue--sky.details .region--complementary-top .off-canvas-xs-only .card__actionbar .card__link,
-body.socialblue--sky.details .region--complementary-top [class*='block-group-add'] .card__actionbar .card__link,
-body.socialblue--sky.details .region--complementary-top [class*='add-block'] .card__actionbar .card__link, body.socialblue--sky.path-user .region--complementary-bottom .card .card__actionbar .card__link,
-body.socialblue--sky.path-user .region--complementary-bottom .off-canvas-xs-only .card__actionbar .card__link,
-body.socialblue--sky.path-user .region--complementary-bottom [class*='block-group-add'] .card__actionbar .card__link,
-body.socialblue--sky.path-user .region--complementary-bottom [class*='add-block'] .card__actionbar .card__link,
-body.socialblue--sky.path-user .region--complementary-top .card .card__actionbar .card__link,
-body.socialblue--sky.path-user .region--complementary-top .off-canvas-xs-only .card__actionbar .card__link,
-body.socialblue--sky.path-user .region--complementary-top [class*='block-group-add'] .card__actionbar .card__link,
-body.socialblue--sky.path-user .region--complementary-top [class*='add-block'] .card__actionbar .card__link, body.socialblue--sky.page-node-type-course-article .region--complementary-bottom .card .card__actionbar .card__link,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom .off-canvas-xs-only .card__actionbar .card__link,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='block-group-add'] .card__actionbar .card__link,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='add-block'] .card__actionbar .card__link,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top .card .card__actionbar .card__link,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top .off-canvas-xs-only .card__actionbar .card__link,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='block-group-add'] .card__actionbar .card__link,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='add-block'] .card__actionbar .card__link {
-  position: relative;
-  float: none;
-  margin-left: 0;
-  padding-right: 30px;
-  text-transform: uppercase;
-}
-
-body.socialblue--sky.path-group .region--complementary-bottom .card .card__actionbar .card__link:before, body.socialblue--sky.path-group .region--complementary-bottom .card .card__actionbar .card__link:after,
-body.socialblue--sky.path-group .region--complementary-bottom .off-canvas-xs-only .card__actionbar .card__link:before,
-body.socialblue--sky.path-group .region--complementary-bottom .off-canvas-xs-only .card__actionbar .card__link:after,
-body.socialblue--sky.path-group .region--complementary-bottom [class*='block-group-add'] .card__actionbar .card__link:before,
-body.socialblue--sky.path-group .region--complementary-bottom [class*='block-group-add'] .card__actionbar .card__link:after,
-body.socialblue--sky.path-group .region--complementary-bottom [class*='add-block'] .card__actionbar .card__link:before,
-body.socialblue--sky.path-group .region--complementary-bottom [class*='add-block'] .card__actionbar .card__link:after,
-body.socialblue--sky.path-group .region--complementary-top .card .card__actionbar .card__link:before,
-body.socialblue--sky.path-group .region--complementary-top .card .card__actionbar .card__link:after,
-body.socialblue--sky.path-group .region--complementary-top .off-canvas-xs-only .card__actionbar .card__link:before,
-body.socialblue--sky.path-group .region--complementary-top .off-canvas-xs-only .card__actionbar .card__link:after,
-body.socialblue--sky.path-group .region--complementary-top [class*='block-group-add'] .card__actionbar .card__link:before,
-body.socialblue--sky.path-group .region--complementary-top [class*='block-group-add'] .card__actionbar .card__link:after,
-body.socialblue--sky.path-group .region--complementary-top [class*='add-block'] .card__actionbar .card__link:before,
-body.socialblue--sky.path-group .region--complementary-top [class*='add-block'] .card__actionbar .card__link:after, body.socialblue--sky.details .region--complementary-bottom .card .card__actionbar .card__link:before, body.socialblue--sky.details .region--complementary-bottom .card .card__actionbar .card__link:after,
-body.socialblue--sky.details .region--complementary-bottom .off-canvas-xs-only .card__actionbar .card__link:before,
-body.socialblue--sky.details .region--complementary-bottom .off-canvas-xs-only .card__actionbar .card__link:after,
-body.socialblue--sky.details .region--complementary-bottom [class*='block-group-add'] .card__actionbar .card__link:before,
-body.socialblue--sky.details .region--complementary-bottom [class*='block-group-add'] .card__actionbar .card__link:after,
-body.socialblue--sky.details .region--complementary-bottom [class*='add-block'] .card__actionbar .card__link:before,
-body.socialblue--sky.details .region--complementary-bottom [class*='add-block'] .card__actionbar .card__link:after,
-body.socialblue--sky.details .region--complementary-top .card .card__actionbar .card__link:before,
-body.socialblue--sky.details .region--complementary-top .card .card__actionbar .card__link:after,
-body.socialblue--sky.details .region--complementary-top .off-canvas-xs-only .card__actionbar .card__link:before,
-body.socialblue--sky.details .region--complementary-top .off-canvas-xs-only .card__actionbar .card__link:after,
-body.socialblue--sky.details .region--complementary-top [class*='block-group-add'] .card__actionbar .card__link:before,
-body.socialblue--sky.details .region--complementary-top [class*='block-group-add'] .card__actionbar .card__link:after,
-body.socialblue--sky.details .region--complementary-top [class*='add-block'] .card__actionbar .card__link:before,
-body.socialblue--sky.details .region--complementary-top [class*='add-block'] .card__actionbar .card__link:after, body.socialblue--sky.path-user .region--complementary-bottom .card .card__actionbar .card__link:before, body.socialblue--sky.path-user .region--complementary-bottom .card .card__actionbar .card__link:after,
-body.socialblue--sky.path-user .region--complementary-bottom .off-canvas-xs-only .card__actionbar .card__link:before,
-body.socialblue--sky.path-user .region--complementary-bottom .off-canvas-xs-only .card__actionbar .card__link:after,
-body.socialblue--sky.path-user .region--complementary-bottom [class*='block-group-add'] .card__actionbar .card__link:before,
-body.socialblue--sky.path-user .region--complementary-bottom [class*='block-group-add'] .card__actionbar .card__link:after,
-body.socialblue--sky.path-user .region--complementary-bottom [class*='add-block'] .card__actionbar .card__link:before,
-body.socialblue--sky.path-user .region--complementary-bottom [class*='add-block'] .card__actionbar .card__link:after,
-body.socialblue--sky.path-user .region--complementary-top .card .card__actionbar .card__link:before,
-body.socialblue--sky.path-user .region--complementary-top .card .card__actionbar .card__link:after,
-body.socialblue--sky.path-user .region--complementary-top .off-canvas-xs-only .card__actionbar .card__link:before,
-body.socialblue--sky.path-user .region--complementary-top .off-canvas-xs-only .card__actionbar .card__link:after,
-body.socialblue--sky.path-user .region--complementary-top [class*='block-group-add'] .card__actionbar .card__link:before,
-body.socialblue--sky.path-user .region--complementary-top [class*='block-group-add'] .card__actionbar .card__link:after,
-body.socialblue--sky.path-user .region--complementary-top [class*='add-block'] .card__actionbar .card__link:before,
-body.socialblue--sky.path-user .region--complementary-top [class*='add-block'] .card__actionbar .card__link:after, body.socialblue--sky.page-node-type-course-article .region--complementary-bottom .card .card__actionbar .card__link:before, body.socialblue--sky.page-node-type-course-article .region--complementary-bottom .card .card__actionbar .card__link:after,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom .off-canvas-xs-only .card__actionbar .card__link:before,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom .off-canvas-xs-only .card__actionbar .card__link:after,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='block-group-add'] .card__actionbar .card__link:before,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='block-group-add'] .card__actionbar .card__link:after,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='add-block'] .card__actionbar .card__link:before,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='add-block'] .card__actionbar .card__link:after,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top .card .card__actionbar .card__link:before,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top .card .card__actionbar .card__link:after,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top .off-canvas-xs-only .card__actionbar .card__link:before,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top .off-canvas-xs-only .card__actionbar .card__link:after,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='block-group-add'] .card__actionbar .card__link:before,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='block-group-add'] .card__actionbar .card__link:after,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='add-block'] .card__actionbar .card__link:before,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='add-block'] .card__actionbar .card__link:after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  right: 0;
-  -webkit-transform: translateY(-50%);
-          transform: translateY(-50%);
-}
-
-body.socialblue--sky.path-group .region--complementary-bottom .card .card__actionbar .card__link:before,
-body.socialblue--sky.path-group .region--complementary-bottom .off-canvas-xs-only .card__actionbar .card__link:before,
-body.socialblue--sky.path-group .region--complementary-bottom [class*='block-group-add'] .card__actionbar .card__link:before,
-body.socialblue--sky.path-group .region--complementary-bottom [class*='add-block'] .card__actionbar .card__link:before,
-body.socialblue--sky.path-group .region--complementary-top .card .card__actionbar .card__link:before,
-body.socialblue--sky.path-group .region--complementary-top .off-canvas-xs-only .card__actionbar .card__link:before,
-body.socialblue--sky.path-group .region--complementary-top [class*='block-group-add'] .card__actionbar .card__link:before,
-body.socialblue--sky.path-group .region--complementary-top [class*='add-block'] .card__actionbar .card__link:before, body.socialblue--sky.details .region--complementary-bottom .card .card__actionbar .card__link:before,
-body.socialblue--sky.details .region--complementary-bottom .off-canvas-xs-only .card__actionbar .card__link:before,
-body.socialblue--sky.details .region--complementary-bottom [class*='block-group-add'] .card__actionbar .card__link:before,
-body.socialblue--sky.details .region--complementary-bottom [class*='add-block'] .card__actionbar .card__link:before,
-body.socialblue--sky.details .region--complementary-top .card .card__actionbar .card__link:before,
-body.socialblue--sky.details .region--complementary-top .off-canvas-xs-only .card__actionbar .card__link:before,
-body.socialblue--sky.details .region--complementary-top [class*='block-group-add'] .card__actionbar .card__link:before,
-body.socialblue--sky.details .region--complementary-top [class*='add-block'] .card__actionbar .card__link:before, body.socialblue--sky.path-user .region--complementary-bottom .card .card__actionbar .card__link:before,
-body.socialblue--sky.path-user .region--complementary-bottom .off-canvas-xs-only .card__actionbar .card__link:before,
-body.socialblue--sky.path-user .region--complementary-bottom [class*='block-group-add'] .card__actionbar .card__link:before,
-body.socialblue--sky.path-user .region--complementary-bottom [class*='add-block'] .card__actionbar .card__link:before,
-body.socialblue--sky.path-user .region--complementary-top .card .card__actionbar .card__link:before,
-body.socialblue--sky.path-user .region--complementary-top .off-canvas-xs-only .card__actionbar .card__link:before,
-body.socialblue--sky.path-user .region--complementary-top [class*='block-group-add'] .card__actionbar .card__link:before,
-body.socialblue--sky.path-user .region--complementary-top [class*='add-block'] .card__actionbar .card__link:before, body.socialblue--sky.page-node-type-course-article .region--complementary-bottom .card .card__actionbar .card__link:before,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom .off-canvas-xs-only .card__actionbar .card__link:before,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='block-group-add'] .card__actionbar .card__link:before,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='add-block'] .card__actionbar .card__link:before,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top .card .card__actionbar .card__link:before,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top .off-canvas-xs-only .card__actionbar .card__link:before,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='block-group-add'] .card__actionbar .card__link:before,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='add-block'] .card__actionbar .card__link:before {
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  z-index: 1;
-}
-
-body.socialblue--sky.path-group .region--complementary-bottom .card .card__actionbar .card__link:after,
-body.socialblue--sky.path-group .region--complementary-bottom .off-canvas-xs-only .card__actionbar .card__link:after,
-body.socialblue--sky.path-group .region--complementary-bottom [class*='block-group-add'] .card__actionbar .card__link:after,
-body.socialblue--sky.path-group .region--complementary-bottom [class*='add-block'] .card__actionbar .card__link:after,
-body.socialblue--sky.path-group .region--complementary-top .card .card__actionbar .card__link:after,
-body.socialblue--sky.path-group .region--complementary-top .off-canvas-xs-only .card__actionbar .card__link:after,
-body.socialblue--sky.path-group .region--complementary-top [class*='block-group-add'] .card__actionbar .card__link:after,
-body.socialblue--sky.path-group .region--complementary-top [class*='add-block'] .card__actionbar .card__link:after, body.socialblue--sky.details .region--complementary-bottom .card .card__actionbar .card__link:after,
-body.socialblue--sky.details .region--complementary-bottom .off-canvas-xs-only .card__actionbar .card__link:after,
-body.socialblue--sky.details .region--complementary-bottom [class*='block-group-add'] .card__actionbar .card__link:after,
-body.socialblue--sky.details .region--complementary-bottom [class*='add-block'] .card__actionbar .card__link:after,
-body.socialblue--sky.details .region--complementary-top .card .card__actionbar .card__link:after,
-body.socialblue--sky.details .region--complementary-top .off-canvas-xs-only .card__actionbar .card__link:after,
-body.socialblue--sky.details .region--complementary-top [class*='block-group-add'] .card__actionbar .card__link:after,
-body.socialblue--sky.details .region--complementary-top [class*='add-block'] .card__actionbar .card__link:after, body.socialblue--sky.path-user .region--complementary-bottom .card .card__actionbar .card__link:after,
-body.socialblue--sky.path-user .region--complementary-bottom .off-canvas-xs-only .card__actionbar .card__link:after,
-body.socialblue--sky.path-user .region--complementary-bottom [class*='block-group-add'] .card__actionbar .card__link:after,
-body.socialblue--sky.path-user .region--complementary-bottom [class*='add-block'] .card__actionbar .card__link:after,
-body.socialblue--sky.path-user .region--complementary-top .card .card__actionbar .card__link:after,
-body.socialblue--sky.path-user .region--complementary-top .off-canvas-xs-only .card__actionbar .card__link:after,
-body.socialblue--sky.path-user .region--complementary-top [class*='block-group-add'] .card__actionbar .card__link:after,
-body.socialblue--sky.path-user .region--complementary-top [class*='add-block'] .card__actionbar .card__link:after, body.socialblue--sky.page-node-type-course-article .region--complementary-bottom .card .card__actionbar .card__link:after,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom .off-canvas-xs-only .card__actionbar .card__link:after,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='block-group-add'] .card__actionbar .card__link:after,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='add-block'] .card__actionbar .card__link:after,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top .card .card__actionbar .card__link:after,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top .off-canvas-xs-only .card__actionbar .card__link:after,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='block-group-add'] .card__actionbar .card__link:after,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='add-block'] .card__actionbar .card__link:after {
-  content: '';
-  display: block;
-  right: 5px;
-  margin-top: -1px;
-  padding: 2px;
-  border: solid #fff;
-  border-width: 0 2px 2px 0;
-  -webkit-transform: rotate(-45deg) translateY(-50%);
-          transform: rotate(-45deg) translateY(-50%);
-  z-index: 2;
 }
 
 body.socialblue--sky.path-group .content--side_wrapper-card .region--content > .card:not(.teaser--idea--featured),

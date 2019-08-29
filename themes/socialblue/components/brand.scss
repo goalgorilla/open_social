@@ -729,27 +729,28 @@ body.socialblue--sky .block-course-material-navigation .complementary-title > a 
     }
   }
 
+
+  .card__link-arrow {
+    &:before {
+      background: $brand-primary;
+    }
+
+    &:hover,
+    &:active,
+    &:focus {
+      color: $brand-accent;
+
+      &:before {
+        background: $brand-accent;
+      }
+    }
+  }
+
   &.path-group,
   &.details,
   &.path-user {
     .region--complementary-bottom,
     .region--complementary-top {
-      > .card .card__actionbar .card__link {
-        &:before {
-          background: $brand-primary;
-        }
-
-        &:hover,
-        &:active,
-        &:focus {
-          color: $brand-accent;
-
-          &:before {
-            background: $brand-accent;
-          }
-        }
-      }
-
       .card.block-profile-statistic-block {
         .hero-footer__cta .btn.btn-default {
           border: 2px solid $brand-primary;

@@ -43,11 +43,16 @@
   }
 
   .teaser--stream {
-    border-top: 1px solid #d5d6d2;
+    border-top: 1px solid #e6e6e6;
+    border-bottom: 1px solid #e6e6e6;
     background: transparent;
     margin-top: 1.25rem;
     margin-left: -2rem;
     margin-right: -2rem;
+
+    @include for-tablet-landscape-up {
+      height: 180px;
+    }
 
     .teaser__published-author {
       flex-grow: 0;

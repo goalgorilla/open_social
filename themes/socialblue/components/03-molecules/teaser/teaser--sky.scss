@@ -6,8 +6,17 @@
     max-height: 2.3em;
   }
 
-  .teaser__published-date {
-    flex-grow: 1;
+  .teaser__image {
+    @include for-tablet-portrait-up {
+      flex: 0 0 220px;
+      height: 220px;
+    }
+
+
+    @include for-tablet-landscape-up {
+      flex: 0 0 180px;
+      height: 180px;
+    }
   }
 
   .teaser__published-author {
@@ -164,6 +173,10 @@
 
     @include for-tablet-landscape-up {
       height: 180px;
+    }
+
+    .card__link.btn {
+      min-width: 115px;
     }
   }
 

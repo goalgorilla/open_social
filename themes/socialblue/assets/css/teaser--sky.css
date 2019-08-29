@@ -2,12 +2,6 @@
   max-height: 2.3em;
 }
 
-.socialblue--sky .teaser__published-date {
-  -webkit-box-flex: 1;
-      -ms-flex-positive: 1;
-          flex-grow: 1;
-}
-
 .socialblue--sky .teaser__published-author {
   -webkit-box-flex: 0;
       -ms-flex-positive: 0;
@@ -174,6 +168,10 @@
   margin-bottom: 0;
 }
 
+.socialblue--sky .teaser .card__link.btn {
+  min-width: 115px;
+}
+
 .socialblue--sky .field--name-field-featured-items .teaser--tile {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -263,7 +261,22 @@
   margin: 0 auto;
 }
 
+@media (min-width: 600px) {
+  .socialblue--sky .teaser__image {
+    -webkit-box-flex: 0;
+        -ms-flex: 0 0 220px;
+            flex: 0 0 220px;
+    height: 220px;
+  }
+}
+
 @media (min-width: 900px) {
+  .socialblue--sky .teaser__image {
+    -webkit-box-flex: 0;
+        -ms-flex: 0 0 180px;
+            flex: 0 0 180px;
+    height: 180px;
+  }
   .socialblue--sky .teaser {
     height: 180px;
   }
