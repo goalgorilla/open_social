@@ -134,6 +134,8 @@
   -webkit-box-pack: end;
       -ms-flex-pack: end;
           justify-content: flex-end;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
 }
 
 .socialblue--sky .teaser.teaser--tile .card__actionbar:before, .socialblue--sky .teaser.teaser--tile .card__actionbar:after, .socialblue--sky .teaser.teaser--stream .card__actionbar:before, .socialblue--sky .teaser.teaser--stream .card__actionbar:after {
@@ -152,6 +154,8 @@
           flex-grow: 1;
   -ms-flex-preferred-size: 0;
       flex-basis: 0;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
   max-width: 100%;
 }
 
@@ -170,6 +174,22 @@
 
 .socialblue--sky .teaser .card__link.btn {
   min-width: 115px;
+}
+
+.socialblue--sky .teaser .badge__label--description {
+  display: none;
+}
+
+.socialblue--sky .teaser .badge__container + .badge__container {
+  padding-left: 12px;
+}
+
+.socialblue--sky .teaser .badge__container .badge__label {
+  padding-left: 0;
+}
+
+.socialblue--sky .teaser .badge__container .badge__icon {
+  margin-right: 6px;
 }
 
 .socialblue--sky .field--name-field-featured-items .teaser--tile {
@@ -271,15 +291,6 @@
 }
 
 @media (min-width: 900px) {
-  .socialblue--sky .teaser__image {
-    -webkit-box-flex: 0;
-        -ms-flex: 0 0 180px;
-            flex: 0 0 180px;
-    height: 180px;
-  }
-  .socialblue--sky .teaser {
-    height: 180px;
-  }
   .socialblue--sky .field--name-field-featured-items .teaser--tile {
     -webkit-box-flex: 0;
         -ms-flex: 0 0 31%;

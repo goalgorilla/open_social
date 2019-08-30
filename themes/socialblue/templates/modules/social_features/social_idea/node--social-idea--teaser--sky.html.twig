@@ -1,0 +1,210 @@
+{#
+/**
+ * @file
+ * Default theme implementation to display a node.
+ *
+ * Available variables:
+ * - node: The node entity with limited access to object properties and methods.
+     Only "getter" methods (method names starting with "get", "has", or "is")
+     and a few common methods such as "id" and "label" are available. Calling
+     other methods (such as node.delete) will result in an exception.
+ * - label: The title of the node.
+ * - content: All node items. Use {{ content }} to print them all,
+ *   or print a subset such as {{ content.field_example }}. Use
+ *   {{ content|without('field_example') }} to temporarily suppress the printing
+ *   of a given child element.
+ * - author_picture: The node author user entity, rendered using the "compact"
+ *   view mode.
+ * - metadata: Metadata for this node.
+ * - date: Themed creation date field.
+ * - author_name: Themed author name field.
+ * - url: Direct URL of the current node.
+ * - display_submitted: Whether submission information should be displayed.
+ * - attributes: HTML attributes for the containing element.
+ *   The attributes.class element may contain one or more of the following
+ *   classes:
+ *   - node: The current template type (also known as a "theming hook").
+ *   - node--type-[type]: The current node type. For example, if the node is an
+ *     "Article" it would result in "node--type-article". Note that the machine
+ *     name will often be in a short form of the human readable label.
+ *   - node--view-mode-[view_mode]: The View Mode of the node; for example, a
+ *     teaser would result in: "node--view-mode-teaser", and
+ *     full: "node--view-mode-full".
+ *   The following are controlled through the node publishing options.
+ *   - node--promoted: Appears on nodes promoted to the front page.
+ *   - node--sticky: Appears on nodes ordered above other non-sticky nodes in
+ *     teaser listings.
+ *   - node--unpublished: Appears on unpublished nodes visible only to site
+ *     admins.
+ * - title_attributes: Same as attributes, except applied to the main title
+ *   tag that appears in the template.
+ * - content_attributes: Same as attributes, except applied to the main
+ *   content tag that appears in the template.
+ * - author_attributes: Same as attributes, except applied to the author of
+ *   the node tag that appears in the template.
+ * - title_prefix: Additional output populated by modules, intended to be
+ *   displayed in front of the main title tag that appears in the template.
+ * - title_suffix: Additional output populated by modules, intended to be
+ *   displayed after the main title tag that appears in the template.
+ * - view_mode: View mode; for example, "teaser" or "full".
+ * - teaser: Flag for the teaser state. Will be true if view_mode is 'teaser'.
+ * - page: Flag for the full page state. Will be true if view_mode is 'full'.
+ * - readmore: Flag for more state. Will be true if the teaser content of the
+ *   node cannot hold the main body content.
+ * - logged_in: Flag for authenticated user status. Will be true when the
+ *   current user is a logged-in member.
+ * - is_admin: Flag for admin user status. Will be true when the current user
+ *   is an administrator.
+ *
+ * @see template_preprocess_node()
+ *
+ * @todo Remove the id attribute (or make it a class), because if that gets
+ *   rendered twice on a page this is invalid CSS for example: two lists
+ *   in different view modes.
+ *
+ * @ingroup themeable
+ */
+#}
+
+{{ attach_library('socialbase/teaser')}}
+{{ attach_library('socialblue/teaser--sky')}}
+{{ attach_library('social_idea/social_idea')}}
+
+{%
+  set classes = [
+  'teaser teaser--idea',
+  view_mode == 'teaser' ? 'card',
+  view_mode == 'activity' ? 'teaser--stream',
+  view_mode == 'activity_comment' ? 'teaser--stream',
+  node.isPromoted() ? 'promoted',
+  node.isSticky() ? 'sticky',
+  not node.isPublished() ? 'teaser--unpublished',
+  no_image ? 'no-image'
+]
+%}
+
+<div{{ attributes.addClass(classes) }}>
+
+  <div class='teaser__image'>
+
+    {% if view_mode == 'teaser' or no_image %}
+      {% block card_teaser_type %}
+        <div class="teaser__teaser-type">
+          <svg class="teaser__teaser-type-icon" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="12" height="17" viewBox="0 0 12 17">
+            <defs>
+              <polygon id="challange_icon-a" points="0 0 20 0 20 20 0 20"/>
+            </defs>
+            <g fill-rule="evenodd" transform="translate(-4 -2)">
+              <mask id="challange_icon-b" fill="#fff">
+                <use xlink:href="#challange_icon-a"/>
+              </mask>
+              <path fill-rule="nonzero" d="M7.42857143,18.15 C7.42857143,18.6175 7.81428571,19 8.28571429,19 L11.7142857,19 C12.1857143,19 12.5714286,18.6175 12.5714286,18.15 L12.5714286,17.3 L7.42857143,17.3 L7.42857143,18.15 Z M10,2 C6.69142857,2 4,4.669 4,7.95 C4,9.973 5.02,11.7495 6.57142857,12.829 L6.57142857,14.75 C6.57142857,15.2175 6.95714286,15.6 7.42857143,15.6 L12.5714286,15.6 C13.0428571,15.6 13.4285714,15.2175 13.4285714,14.75 L13.4285714,12.829 C14.98,11.7495 16,9.973 16,7.95 C16,4.669 13.3085714,2 10,2 Z M12.4428571,11.435 L11.7142857,11.945 L11.7142857,13.9 L8.28571429,13.9 L8.28571429,11.945 L7.55714286,11.435 C6.4,10.636 5.71428571,9.3355 5.71428571,7.95 C5.71428571,5.604 7.63428571,3.7 10,3.7 C12.3657143,3.7 14.2857143,5.604 14.2857143,7.95 C14.2857143,9.3355 13.6,10.636 12.4428571,11.435 Z" mask="url(#challange_icon-b)"/>
+            </g>
+          </svg>
+        </div>
+      {% endblock %}
+    {% endif %}
+
+    {# allows for new content types to just use the plain field_image name #}
+    {% block card_image %}
+      {{ content.field_social_idea_image }}
+    {% endblock %}
+
+    {% if idea_phase_name %}
+      <div class="badge teaser__badge badge--large badge--pill {{ idea_phase_class }}">
+        {{ idea_phase_name }}
+      </div>
+    {% endif %}
+
+  </div>
+
+  <div class='teaser__body'>
+    <div class="teaser__content">
+      {{ title_prefix }}
+      {% if not page %}
+        <h4{{ title_attributes }} class="teaser__title">
+          <a href="{{ url }}" rel="bookmark">{{ label }}</a>
+        </h4>
+      {% endif %}
+      {{ title_suffix }}
+
+      {% block card_body %}
+        <div class="teaser__content-line">
+          {% block field_body %} {{ content.field_social_idea_summary }} {% endblock %}
+        </div>
+
+        {% if content.group_name %}
+          {% embed "node--teaser__field.html.twig" %}
+            {%- block field_icon -%} group {%- endblock -%}
+            {%- block field_value -%} {{ content.group_name }} {%- endblock -%}
+          {% endembed %}
+        {% endif %}
+
+      {% endblock %}
+    </div>
+
+    <div class="card__actionbar">
+
+      <div class="card__actionbar-side">
+        {% embed "node--teaser__field.html.twig" %}
+          {%- block field_icon -%} account_circle {%- endblock -%}
+          {%- block field_value %}
+            <div class="teaser__published">
+              <div class="teaser__published-author">{{ author_name }}
+                {% if coauthors %}
+                  + {{ coauthors }} {% trans %}co-author{% plural coauthors %}co-authors{% endtrans %}
+                {% endif %}
+              </div>
+            </div>
+          {%- endblock -%}
+        {% endembed %}
+        <span class="badge__container">
+        {% if votes_count is not empty %}
+          <svg class="badge__icon" viewBox="0 0 90 89" version="1.1" xmlns="http://www.w3.org/2000/svg">
+            <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+              <g id="Only-for-display" fill-rule="nonzero" fill="#4d4d4d">
+                  <polygon id="Shape" transform="translate(46.000000, 44.931818) rotate(180.000000) translate(-46.000000, -44.931818) " points="91 41.7062937 65.2857143 41.7062937 65.2857143 3 26.7142857 3 26.7142857 41.7062937 1 41.7062937 46 86.8636364"></polygon>
+              </g>
+            </g>
+          </svg>
+          <span class="badge__label vote__count">
+                {{ votes_count }}
+              </span>
+          <span class="badge__label vote__label badge__label--description">
+                 {% trans %}vote{% plural votes_count %}votes{% endtrans %}
+              </span>
+        {% endif %}
+          </span>
+
+        {% if comment_field_status is not empty %}
+          <span class="badge__container">
+            <svg class="badge__icon">
+              <use xlink:href="#icon-comment"></use>
+            </svg>
+            <span class="badge__label">
+              {{ comment_count }}
+            </span>
+            <span class="badge__label badge__label--description">
+              {% trans %}comment{% plural comment_count %}comments{% endtrans %}
+            </span>
+            </span>
+        {% endif %}
+      </div>
+
+      {% if content.social_vote and logged_in %}
+        <div class="metainfo__vote">
+          {{ content.social_vote }}
+        </div>
+      {% else %}
+        {{ content.links }}
+      {% endif %}
+
+    </div>
+
+  </div>
+
+</div>
+
+{% if view_mode == 'activity' and content.field_book_comments %}
+  {{ content.field_book_comments }}
+{% endif %}

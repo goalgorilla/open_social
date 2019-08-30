@@ -136,11 +136,13 @@
         }
       }
 
-      li.active a {
+      li.active a,
+      li a:hover {
         position: relative;
         opacity: 1;
         border: none;
         color: #fff;
+        background: transparent;
 
         &:after {
           content: '';
@@ -151,10 +153,16 @@
           left: 20px;
           background: #fff;
         }
+      }
 
-        li:not(.active) a:hover,
-        li:not(.active) a:focus {
-          opacity: 1;
+      li:not(.active) a:hover,
+      li:not(.active) a:focus {
+        opacity: 1;
+      }
+
+      li a:hover {
+        &:after {
+          display: none;
         }
       }
     }
@@ -239,8 +247,8 @@
 
             a {
               display: block;
-              padding-top: 14px;
-              padding-bottom: 13px;
+              padding-top: 12px;
+              padding-bottom: 11px;
             }
           }
 

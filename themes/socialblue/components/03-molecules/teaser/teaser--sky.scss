@@ -11,12 +11,6 @@
       flex: 0 0 220px;
       height: 220px;
     }
-
-
-    @include for-tablet-landscape-up {
-      flex: 0 0 180px;
-      height: 180px;
-    }
   }
 
   .teaser__published-author {
@@ -137,6 +131,7 @@
         display: flex;
         align-items: center;
         justify-content: flex-end;
+        flex-wrap: wrap;
 
         &:before,
         &:after {
@@ -148,6 +143,7 @@
           align-items: center;
           flex-grow: 1;
           flex-basis: 0;
+          flex-wrap: wrap;
           max-width: 100%;
 
           &:empty {
@@ -171,12 +167,27 @@
       }
     }
 
-    @include for-tablet-landscape-up {
-      height: 180px;
-    }
-
     .card__link.btn {
       min-width: 115px;
+    }
+
+    .badge__label--description {
+      display: none;
+    }
+
+    .badge__container {
+
+      + .badge__container {
+        padding-left: 12px;
+      }
+
+      .badge__label {
+        padding-left: 0;
+      }
+
+      .badge__icon {
+        margin-right: 6px;
+      }
     }
   }
 

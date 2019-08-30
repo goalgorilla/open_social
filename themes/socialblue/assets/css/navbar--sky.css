@@ -83,14 +83,17 @@
   padding-bottom: 10px;
 }
 
-.socialblue--sky .navbar-secondary .navbar-nav li.active a {
+.socialblue--sky .navbar-secondary .navbar-nav li.active a,
+.socialblue--sky .navbar-secondary .navbar-nav li a:hover {
   position: relative;
   opacity: 1;
   border: none;
   color: #fff;
+  background: transparent;
 }
 
-.socialblue--sky .navbar-secondary .navbar-nav li.active a:after {
+.socialblue--sky .navbar-secondary .navbar-nav li.active a:after,
+.socialblue--sky .navbar-secondary .navbar-nav li a:hover:after {
   content: '';
   position: absolute;
   height: 3px;
@@ -100,9 +103,13 @@
   background: #fff;
 }
 
-.socialblue--sky .navbar-secondary .navbar-nav li.active a li:not(.active) a:hover,
-.socialblue--sky .navbar-secondary .navbar-nav li.active a li:not(.active) a:focus {
+.socialblue--sky .navbar-secondary .navbar-nav li:not(.active) a:hover,
+.socialblue--sky .navbar-secondary .navbar-nav li:not(.active) a:focus {
   opacity: 1;
+}
+
+.socialblue--sky .navbar-secondary .navbar-nav li a:hover:after {
+  display: none;
 }
 
 .socialblue--sky .layout--with-complementary .navbar-scrollable {
@@ -200,8 +207,8 @@
   }
   .socialblue--sky .layout--with-complementary .navbar-scrollable .navbar-nav .visible-list a {
     display: block;
-    padding-top: 14px;
-    padding-bottom: 13px;
+    padding-top: 12px;
+    padding-bottom: 11px;
   }
   .socialblue--sky .layout--with-complementary .navbar-scrollable .navbar-nav .hidden-list {
     display: none;
