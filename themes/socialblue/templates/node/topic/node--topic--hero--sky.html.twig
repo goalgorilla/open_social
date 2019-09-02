@@ -1,6 +1,6 @@
-{{ attach_library('socialbase/hero')}}
-{{ attach_library('socialblue/hero--sky')}}
-{{ attach_library('socialblue/organization-tag--sky')}}
+{{ attach_library('socialbase/hero') }}
+{{ attach_library('socialblue/hero--sky') }}
+{{ attach_library('socialblue/organization-tag--sky') }}
 
 {% set classes = [
   'hero__banner',
@@ -26,7 +26,7 @@
       {% endif %}
 
       <div class="hero__tag">
-        {{ node_type }}
+        {{ node.type.entity.label }}
         {% if node_tag %}
           &nbsp; &nbsp; ▶ &nbsp; &nbsp;
           {{ node_tag }}
@@ -34,12 +34,12 @@
       </div>
 
       {{ title_prefix }}
-        <h2{{ title_attributes }} class="teaser__title">
-          <a href="{{ url }}" rel="bookmark">{{ label }}
-            {% if resource_library %}
-              <span class="organization-tag"></span>
-            {% endif %}</a>
-        </h2>
+      <h2{{ title_attributes }} class="teaser__title">
+        <a href="{{ url }}" rel="bookmark">{{ label }}
+          {% if resource_library %}
+            <span class="organization-tag"></span>
+          {% endif %}</a>
+      </h2>
       {{ title_suffix }}
       {% if display_submitted %}
         {% block metainfo %}
@@ -52,39 +52,8 @@
             {% endif %}
 
             <div class="metainfo__content">
-              {% if original_authors or original_date %}
-                {% if original_authors %}
-                  {% for item in original_authors %}
-                    {% if loop.last %}
-                      <span>{{ item }}</span>
-                    {% else %}
-                      <span>{{ item }}</span>,
-                    {% endif %}
-                  {% endfor %}
-                {% else %}
-                  {{ author }}
-                {% endif %}
-
-                {% if original_date %}
-                  <span class="metainfo__published-date">&bullet; {{ original_date }} </span>
-                {% else %}
-                  <span class="metainfo__published-date">&bullet; {{ created_date_formatted }} </span>
-                {% endif %}
-              {% else %}
-                {{ author }}
-                <span class="metainfo__published-date">&bullet; {{ created_date_formatted }} </span>
-              {% endif %}
-
-              {% if original_languages %}
-                &bullet;
-                {% for item in original_languages %}
-                  {% if loop.last %}
-                    <span>{{ item }}</span>
-                  {% else %}
-                    <span>{{ item }}</span>,
-                  {% endif %}
-                {% endfor %}
-              {% endif %}
+              {{ author }}
+              <span class="metainfo__published-date">&bullet; {{ created_date_formatted }} </span>
 
               <div>
                 {% if group_link %}
@@ -94,7 +63,8 @@
                 {% endif %}
 
                 {% if visibility_icon and visibility_label %}
-                  <div class="badge badge--large" title="{% trans %}The visibility of this content is set to {% endtrans %} {{ visibility_label }}">
+                  <div class="badge badge--large"
+                       title="{% trans %}The visibility of this content is set to {% endtrans %} {{ visibility_label }}">
                     <span class="badge__container">
                       <svg class="badge__icon">
                         <use xlink:href="#icon-{{ visibility_icon }}"></use>
@@ -105,23 +75,7 @@
                   </div>
                 {% endif %}
               </div>
-
-              {% if original_authors or original_date %}
-                <div class="metainfo__uploader-wrapp">
-                  <span class="metainfo__uploader">{% trans %} Uploaded by {% endtrans %}&nbsp;{{ author }}</span>
-                  <span class="metainfo__published-date">&bullet; {{ created_date_formatted }} </span>
-                </div>
-              {% endif %}
             </div>
-
-
-            {% if resource_suggest %}
-              <div class="hero-footer__cta">
-                <div class="btn-group">
-                  {{ resource_suggest }}
-                </div>
-              </div>
-            {% endif %}
           </header>
         {% endblock %}
       {% endif %}
@@ -131,7 +85,6 @@
           {{ content.field_topic_image }}
           {{ content.field_page_image }}
           {{ content.field_book_image }}
-          {{ content.field_discussion_image }}
           {{ content.field_image }}
         {% endblock %}
       </div>
