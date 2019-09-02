@@ -2,7 +2,7 @@
   {{ page.header }}
 {% endif %}
 
-{% if page.secondary_navigation %}
+{% if page.secondary_navigation and display_secondary_navigation %}
   <main id="content" class="main-container is-navbar-secondary" role="main">
 {% else %}
   <main id="content" class="main-container" role="main">
@@ -28,12 +28,13 @@
         {{ page.title }}
       {% endif %}
 
-      {% if page.secondary_navigation %}
+      {% if page.secondary_navigation and display_secondary_navigation %}
         {{- page.secondary_navigation -}}
       {% endif %}
       <div class="content--wrapper">
-        {% if display_complementary %}
+        {% if page.complementary_top or page.complementary_bottom %}
           <aside class="region--complementary" role="complementary">
+            {% if page.complementary_top or page.complementary_bottom %}
             <div class="region--complementary_wrapper">
               {% if page.complementary_top %}
                 {{ page.complementary_top }}
@@ -42,6 +43,7 @@
                 {{ page.complementary_bottom }}
               {% endif %}
             </div>
+            {% endif %}
           </aside>
         {% endif %}
 

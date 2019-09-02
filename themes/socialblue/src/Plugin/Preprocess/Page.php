@@ -21,14 +21,22 @@ class Page extends PageBase {
   public function preprocess(array &$variables, $hook, array $info) {
     parent::preprocess($variables, $hook, $info);
 
+    // In most cases secondary_navigation is hidden.
+    $variables['display_secondary_navigation'] = FALSE;
+
     // Display blocks on the left side of profile pages.
     $route_match = \Drupal::routeMatch();
     if ($route_match->getParameter('user') && $route_match->getRouteName() !== 'entity.profile.type.user_profile_form') {
       $variables['content_attributes']->addClass('sidebar-left');
+      $variables['display_secondary_navigation'] = TRUE;
     }
     // Display blocks on the left side of group pages.
     if ($route_match->getParameter('group') && $route_match->getRouteName() !== 'entity.group.edit_form') {
       $variables['content_attributes']->addClass('sidebar-left');
+      $variables['display_secondary_navigation'] = TRUE;
+    }
+    if ($route_match->getParameter('node')) {
+      $variables['display_secondary_navigation'] = TRUE;
     }
 
     // @TODO: Move this code to course module.
