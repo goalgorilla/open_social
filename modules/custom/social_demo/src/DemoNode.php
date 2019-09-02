@@ -60,8 +60,11 @@ abstract class DemoNode extends DemoContent {
   /**
    * {@inheritdoc}
    */
-  public function createContent() {
+  public function createContent($generate = FALSE, $max = NULL) {
     $data = $this->fetchData();
+    if ($generate === TRUE) {
+      $data = $this->scrambleData($data, $max);
+    }
 
     foreach ($data as $uuid => $item) {
       // Must have uuid and same key value.
@@ -225,6 +228,26 @@ abstract class DemoNode extends DemoContent {
       }
     }
 
+  }
+  /**
+   * Scramble it.
+   *
+   * @param array $data
+   */
+  public function scrambleData(array $data, $max = NULL) {
+    $new_data = [];
+    for ($i=0; $i < $max; $i++) {
+      // Get a random item from the array.
+      $old_uuid = array_rand($data);
+      $item = $data[$old_uuid];
+      $uuid = 'ScrambledDemo_' . time() . '_' . $i;
+      $item['uuid'] = $uuid;
+      $item['title'] = $uuid;
+      $item['body'] = $uuid;
+      $item['created'] = '-' . random_int(1, 2*365) . ' day|' . random_int(0,23) . ':' . random_int(0,59);
+      $new_data[$uuid] = $item;
+    }
+    return $new_data;
   }
 
 }

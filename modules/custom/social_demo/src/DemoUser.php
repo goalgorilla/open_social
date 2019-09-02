@@ -69,8 +69,11 @@ abstract class DemoUser extends DemoContent {
   /**
    * {@inheritdoc}
    */
-  public function createContent() {
+  public function createContent($generate = FALSE, $max = NULL) {
     $data = $this->fetchData();
+    if ($generate === TRUE) {
+      $data = $this->scrambleData($data, $max);
+    }
 
     foreach ($data as $uuid => $item) {
       // Must have uuid and same key value.
@@ -208,6 +211,30 @@ abstract class DemoUser extends DemoContent {
     $profile->field_profile_address = $item['address'];
     $profile->field_profile_expertise = $item['expertise'];
     $profile->field_profile_interests = $item['interests'];
+  }
+
+  /**
+   * Scramble it.
+   *
+   * @param array $data
+   */
+  public function scrambleData(array $data, $max = NULL) {
+    $new_data = [];
+    for ($i=0; $i < $max; $i++) {
+      // Get a random item from the array.
+      $old_uuid = array_rand($data);
+      $item = $data[$old_uuid];
+      $uuid = 'ScrambledDemo_' . time() . '_' . $i;
+      $item['uuid'] = $uuid;
+      $item['name'] = $uuid;
+      $item['first_name'] = 'First';
+      $item['last_name'] = 'Last Name';
+      $item['self_introduction'] = $uuid;
+      $item['mail'] = $uuid . '@example.com';
+      $item['created'] = '-' . random_int(1, 2*365) . ' day|' . random_int(0,23) . ':' . random_int(0,59);
+      $new_data[$uuid] = $item;
+    }
+    return $new_data;
   }
 
 }

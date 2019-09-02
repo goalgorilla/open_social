@@ -36,8 +36,11 @@ abstract class DemoTaxonomyTerm extends DemoContent {
   /**
    * {@inheritdoc}
    */
-  public function createContent() {
+  public function createContent($generate = FALSE, $max = NULL) {
     $data = $this->fetchData();
+    if ($generate === TRUE) {
+      $data = $this->scrambleData($data, $max);
+    }
 
     foreach ($data as $uuid => $item) {
       // Must have uuid and same key value.
