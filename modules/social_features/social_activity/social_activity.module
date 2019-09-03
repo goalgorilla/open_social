@@ -45,6 +45,7 @@ function social_activity_social_user_account_header_items(array $context) {
       ],
       // Element to contain the link for ajaxified view for notifications.
       'load_link' => [
+        '#title' => '',
         '#type' => 'link',
         '#url' => Url::fromRoute('activity_creator.stream.notifications'),
         '#attributes' => ['class' => 'use-ajax'],
