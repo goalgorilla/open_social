@@ -179,23 +179,22 @@ function social_comment_comment_links_alter(array &$links, CommentInterface $ent
     // For post comments remove the reply button.
     unset($links['comment']['#links']['comment-reply']);
   }
+  // If it is not a post comment do some extra checks.
+  elseif ($entity->getParentComment() !== NULL || \Drupal::routeMatch()->getRouteName() === 'comment.reply') {
+    // If this is already on the second level, remove the reply button.
+    unset($links['comment']['#links']['comment-reply']);
+  }
   else {
-    // If it is not a post comment do some extra checks.
-    if (!empty($entity->getParentComment()) || \Drupal::routeMatch()->getRouteName() === 'comment.reply') {
-      // If this is already on the second level, remove the reply button.
-      unset($links['comment']['#links']['comment-reply']);
-    }
-    else {
-      $group_contents = GroupContent::loadByEntity($commented_entity);
-      // Only react if it is actually posted inside a group.
-      if (!empty($group_contents)) {
-        foreach ($group_contents as $group_content) {
-          $group = $group_content->getGroup();
+    $group_contents = GroupContent::loadByEntity($commented_entity);
+    // Only react if it is actually posted inside a group.
+    if (!empty($group_contents)) {
+      foreach ($group_contents as $group_content) {
+        $group = $group_content->getGroup();
 
-          // Remove comments from output if user don't have access.
-          if (!$group->hasPermission('post comments', $account)) {
-            unset($links['comment']['#links']['comment-reply']);
-          }
+        // Remove comments from output if user don't have access.
+        if (!$group->hasPermission('post comments', $account)) {
+          unset($links['comment']['#links']['comment-reply']);
+          break;
         }
       }
     }
