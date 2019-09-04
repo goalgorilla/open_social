@@ -1874,13 +1874,6 @@ function social_group_entity_operation_alter(array &$operations, EntityInterface
 }
 
 /**
- * Implements hook_views_plugins_field_alter().
- */
-function social_group_views_plugins_field_alter(array &$plugins) {
-  $plugins['views_bulk_operations_bulk_form']['class'] = 'Drupal\social_group\Plugin\views\field\SocialGroupViewsBulkOperationsBulkForm';
-}
-
-/**
  * Implements hook_default_route_group_tabs_alter().
  */
 function social_group_social_group_default_route_tabs_alter(&$tabs) {
