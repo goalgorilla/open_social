@@ -150,41 +150,39 @@
     </div>
 
     <div class="card__actionbar">
-      <div class="card__actionbar-side">
-        <div class="teaser__tag">
-          {{ content_type }}
-        </div>
-
-        {% if comment_count > 0 %}
-          <a href="{{ url }}#section-comments" class="badge teaser__badge" title="{% trans %}Total amount of comments{% endtrans %}">
-              <span class="badge__container">
-                <svg class="badge__icon">
-                  <use xlink:href="#icon-comment"></use>
-                </svg>
-                <span class="badge__label">{{ comment_count }}</span>
-              </span>
-          </a>
-        {% endif %}
-
-        {% if likes_count is not empty %}
-          <div class="badge teaser__badge" title="{% trans %}Total amount of likes{% endtrans %}">
-            <span class="badge__container">
-              <svg class="badge__icon">
-                <use xlink:href="#icon-like"></use>
-              </svg>
-              <span class="badge__label">
-                {{ likes_count }}
-              </span>
-            </span>
-          </div>
-        {% endif %}
-
-        {% if content.enrolled %}
-          <span class="badge badge-secondary teaser__badge">
-              {%- trans -%} You have enrolled {%- endtrans -%}
-            </span>
-        {% endif %}
+      <div class="teaser__tag">
+        {{ content_type }}
       </div>
+
+      {% if comment_count > 0 %}
+        <a href="{{ url }}#section-comments" class="badge teaser__badge" title="{% trans %}Total amount of comments{% endtrans %}">
+          <span class="badge__container">
+            <svg class="badge__icon">
+              <use xlink:href="#icon-comment"></use>
+            </svg>
+            <span class="badge__label">{{ comment_count }}</span>
+          </span>
+        </a>
+      {% endif %}
+
+      {% if likes_count is not empty %}
+        <div class="badge teaser__badge" title="{% trans %}Total amount of likes{% endtrans %}">
+          <span class="badge__container">
+            <svg class="badge__icon">
+              <use xlink:href="#icon-like"></use>
+            </svg>
+            <span class="badge__label">
+              {{ likes_count }}
+            </span>
+          </span>
+        </div>
+      {% endif %}
+
+      {% if content.enrolled %}
+        <span class="badge badge-secondary teaser__badge">
+            {%- trans -%} You have enrolled {%- endtrans -%}
+          </span>
+      {% endif %}
 
       {{ content.links }}
     </div>

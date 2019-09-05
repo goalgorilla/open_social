@@ -128,27 +128,9 @@
     &.teaser--tile,
     &.teaser--stream {
       .card__actionbar {
-        display: flex;
-        align-items: center;
-        justify-content: flex-end;
-        flex-wrap: wrap;
-
-        &:before,
-        &:after {
-          display: none;
-        }
-
-        &-side {
-          display: flex;
-          align-items: center;
-          flex-grow: 1;
-          flex-basis: 0;
-          flex-wrap: wrap;
-          max-width: 100%;
-
-          &:empty {
-            display: none;
-          }
+        > * {
+          display: inline-block;
+          vertical-align: middle;
         }
       }
     }
@@ -167,6 +149,15 @@
       }
     }
 
+    &:not(.teaser--idea) {
+      .badge__container {
+
+        + .badge__container {
+          padding-left: 12px;
+        }
+      }
+    }
+
     .card__link.btn {
       min-width: 115px;
     }
@@ -176,11 +167,6 @@
     }
 
     .badge__container {
-
-      + .badge__container {
-        padding-left: 12px;
-      }
-
       .badge__label {
         padding-left: 0;
       }

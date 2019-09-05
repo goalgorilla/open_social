@@ -546,55 +546,38 @@
   }
 
   // Move to teaser
-  .card.teaser:not(.teaser--tile) {
+  .card.teaser:not(.teaser--tile):not(.teaser--idea) {
 
     .card__actionbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
 
-      &:before,
-      &:after {
-        display: none;
+      > * {
+        display: inline-block;
+        vertical-align: middle;
+
+        &:not(.card__link) {
+          padding-top: 6px;
+          padding-bottom: 6px;
+        }
       }
 
       @include for-tablet-landscape-down {
         flex-wrap: wrap;
       }
 
-      &-side {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
+      > .card__link {
+        margin-left: 12px;
 
-        > .card__link {
-          margin-left: 12px;
-
-          @include for-desktop-up {
-            margin-left: 24px;
-          }
+        @include for-desktop-up {
+          margin-left: 24px;
         }
+      }
 
-        &.right-side {
-          justify-content: flex-end;
+      @include for-phone-only {
+        > .card__link {
+          margin-bottom: 10px;
 
-          @include for-tablet-landscape-down {
-            flex: 0 0 100%;
-            max-width: 100%;
-            padding-top: 10px;
-          }
-
-          @include for-phone-only {
-            flex-direction: column;
-            align-items: flex-end;
-
-            > .card__link {
-              margin-bottom: 10px;
-
-              &:nth-last-child(1) {
-                margin-bottom: 0;
-              }
-            }
+          &:nth-last-child(1) {
+            margin-bottom: 0;
           }
         }
       }

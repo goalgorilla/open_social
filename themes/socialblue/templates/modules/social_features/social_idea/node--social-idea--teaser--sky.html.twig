@@ -145,51 +145,49 @@
 
     <div class="card__actionbar">
 
-      <div class="card__actionbar-side">
-        {% embed "node--teaser__field.html.twig" %}
-          {%- block field_icon -%} account_circle {%- endblock -%}
-          {%- block field_value %}
-            <div class="teaser__published">
-              <div class="teaser__published-author">{{ author_name }}
-                {% if coauthors %}
-                  + {{ coauthors }} {% trans %}co-author{% plural coauthors %}co-authors{% endtrans %}
-                {% endif %}
-              </div>
+      {% embed "node--teaser__field.html.twig" %}
+        {%- block field_icon -%} account_circle {%- endblock -%}
+        {%- block field_value %}
+          <div class="teaser__published">
+            <div class="teaser__published-author">{{ author_name }}
+              {% if coauthors %}
+                + {{ coauthors }} {% trans %}co-author{% plural coauthors %}co-authors{% endtrans %}
+              {% endif %}
             </div>
-          {%- endblock -%}
-        {% endembed %}
-        <span class="badge__container">
-        {% if votes_count is not empty %}
-          <svg class="badge__icon" viewBox="0 0 90 89" version="1.1" xmlns="http://www.w3.org/2000/svg">
-            <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-              <g id="Only-for-display" fill-rule="nonzero" fill="#4d4d4d">
-                  <polygon id="Shape" transform="translate(46.000000, 44.931818) rotate(180.000000) translate(-46.000000, -44.931818) " points="91 41.7062937 65.2857143 41.7062937 65.2857143 3 26.7142857 3 26.7142857 41.7062937 1 41.7062937 46 86.8636364"></polygon>
-              </g>
+          </div>
+        {%- endblock -%}
+      {% endembed %}
+      <span class="badge__container">
+      {% if votes_count is not empty %}
+        <svg class="badge__icon" viewBox="0 0 90 89" version="1.1" xmlns="http://www.w3.org/2000/svg">
+          <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+            <g id="Only-for-display" fill-rule="nonzero" fill="#4d4d4d">
+                <polygon id="Shape" transform="translate(46.000000, 44.931818) rotate(180.000000) translate(-46.000000, -44.931818) " points="91 41.7062937 65.2857143 41.7062937 65.2857143 3 26.7142857 3 26.7142857 41.7062937 1 41.7062937 46 86.8636364"></polygon>
             </g>
-          </svg>
-          <span class="badge__label vote__count">
-                {{ votes_count }}
-              </span>
-          <span class="badge__label vote__label badge__label--description">
-                 {% trans %}vote{% plural votes_count %}votes{% endtrans %}
-              </span>
+          </g>
+        </svg>
+        <span class="badge__label vote__count">
+              {{ votes_count }}
+            </span>
+        <span class="badge__label vote__label badge__label--description">
+               {% trans %}vote{% plural votes_count %}votes{% endtrans %}
+            </span>
         {% endif %}
-          </span>
 
         {% if comment_field_status is not empty %}
-          <span class="badge__container">
-            <svg class="badge__icon">
-              <use xlink:href="#icon-comment"></use>
-            </svg>
-            <span class="badge__label">
-              {{ comment_count }}
-            </span>
-            <span class="badge__label badge__label--description">
-              {% trans %}comment{% plural comment_count %}comments{% endtrans %}
-            </span>
-            </span>
+          <span class="badge__container badge--pill">
+          <svg class="badge__icon">
+            <use xlink:href="#icon-comment"></use>
+          </svg>
+          <span class="badge__label">
+            {{ comment_count }}
+          </span>
+          <span class="badge__label badge__label--description">
+            {% trans %}comment{% plural comment_count %}comments{% endtrans %}
+          </span>
+          </span>
         {% endif %}
-      </div>
+        </span>
 
       {% if content.social_vote and logged_in %}
         <div class="metainfo__vote">

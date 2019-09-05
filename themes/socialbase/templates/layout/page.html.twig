@@ -37,18 +37,26 @@
   {{ page.header }}
 {% endif %}
 
-<main id="content" class="main-container" role="main">
+{% if page.secondary_navigation %}
+  <main id="content" class="main-container is-navbar-secondary" role="main">
+{% else %}
+  <main id="content" class="main-container" role="main">
+{% endif %}
 
-  {% if page.breadcrumb %}
-    {{ page.breadcrumb }}
+  {% if not style == 'sky' %}
+    {% if page.breadcrumb %}
+      {{ page.breadcrumb }}
+    {% endif %}
   {% endif %}
 
   {% if page.hero %}
     {{ page.hero }}
   {% endif %}
 
-  {% if page.secondary_navigation %}
-    {{ page.secondary_navigation }}
+  {% if not style == 'sky' %}
+    {% if page.secondary_navigation %}
+      {{ page.secondary_navigation }}
+    {% endif %}
   {% endif %}
 
   {% if page.content_top %}
@@ -63,14 +71,22 @@
         {{ page.title }}
       {% endif %}
 
-      {% if page.complementary_top or page.complementary_bottom %}
+      {% if style == 'sky' %}
+        {% if page.secondary_navigation %}
+          {{ page.secondary_navigation }}
+        {% endif %}
+      {% endif %}
+
+      {% if display_complementary %}
         <aside class="region--complementary" role="complementary">
-          {% if page.complementary_top %}
-            {{ page.complementary_top }}
-          {% endif %}
-          {% if page.complementary_bottom %}
-            {{ page.complementary_bottom }}
-          {% endif %}
+          <div class="region--complementary_wrapper">
+            {% if page.complementary_top %}
+              {{ page.complementary_top }}
+            {% endif %}
+            {% if page.complementary_bottom %}
+              {{ page.complementary_bottom }}
+            {% endif %}
+          </div>
         </aside>
       {% endif %}
 

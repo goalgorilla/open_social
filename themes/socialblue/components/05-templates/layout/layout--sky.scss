@@ -11,31 +11,6 @@
     margin-top: 0;
   }
 
-  .content--wrapper {
-    display: flex;
-    flex-wrap: wrap;
-    flex: 0 0 100%;
-    max-width: 100%;
-
-    .content--side {
-      flex: 0 0 100%;
-      max-width: 100%;
-    }
-
-    &.left-aside {
-
-      @include for-tablet-landscape-up {
-        .region--complementary {
-          order: 1;
-        }
-
-        .content--side {
-          order: 2;
-        }
-      }
-    }
-  }
-
   .region--hero .cover-wrap {
     max-width: 1200px;
     margin-right: auto;
@@ -81,26 +56,9 @@
   }
 
   .layout--with-complementary {
-    flex-direction: column;
-
-    .content--wrapper {
-      flex: 0 0 auto;
-      max-width: 100%;
-    }
-
-    .content--side {
-      flex: 0 0 100%;
-      max-width: 100%;
-
-      @include for-tablet-landscape-up {
-        flex: 0 0 (100%/1.5);
-        max-width: (100%/1.5);
-        order: 2;
-      }
-    }
 
     &.sidebar-left {
-      .content--side {
+      .region--content {
         @include for-desktop-up {
           padding-left: 20px;
           padding-right: 0;
@@ -121,10 +79,7 @@
       }
     }
 
-    .content--side {
-      padding-left: 1rem;
-      padding-right: 1rem;
-
+    .region--content {
       @include for-desktop-up {
         padding-left: 0;
         padding-right: 20px;
@@ -146,52 +101,6 @@
       padding-left: 20px;
     }
   }
-
-  .layout--with-two-columns {
-
-    .content--side {
-      flex-basis: 100%;
-      padding-left: 1em;
-      padding-right: 1em;
-
-      @include for-tablet-landscape-up {
-        flex: 0 0 50%;
-        max-width: 50%;
-      }
-    }
-
-    @include for-desktop-up {
-
-      .content--side {
-        padding-left: 0;
-      }
-
-    }
-
-  }
-
-  .layout--with-three-columns {
-    .content--side {
-      padding-left: 1em;
-      padding-right: 1em;
-      flex-basis: 100%;
-
-      @include for-tablet-landscape-up {
-        flex: 0 0 (100%/3);
-        max-width: (100%/3);
-      }
-
-    }
-
-    @include for-desktop-up {
-      .content--side {
-        padding-left: 0;
-      }
-
-    }
-
-  }
-
 }
 
 body.socialblue--sky {
@@ -200,7 +109,6 @@ body.socialblue--sky {
   &.path-user,
   &.page-node-type-course-article {
     .layout--with-complementary {
-      flex-direction: column;
 
       .navbar-secondary {
         flex: 0 0 100%;
@@ -282,11 +190,11 @@ body.socialblue--sky {
       border-radius: 2px;
       background: #fff;
       box-shadow: 0 2px 4px #4a4a4a;
-      padding-bottom: 1rem;
     }
 
     .region--complementary-top + .region--complementary-bottom {
       margin-top: 0;
+      padding-bottom: 1rem;
     }
 
     .region--complementary-bottom,

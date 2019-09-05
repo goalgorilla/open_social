@@ -36,38 +36,34 @@
     </div>
 
     <div class="card__actionbar">
-      <div class="card__actionbar-side">
-        {% if group_type %}
-          <div class="teaser__tag">
-            {{ group_type }}
-          </div>
-        {% endif %}
+      {% if group_type %}
+        <div class="teaser__tag">
+          {{ group_type }}
+        </div>
+      {% endif %}
 
-        <div class="teaser__content-line">
-          <div class="badge teaser__badge">
-            <div class="badge__container">
-              <svg class="badge__icon badge__user-orange">
-                <use xlink:href="#icon-user"></use>
-              </svg>
-              <span class="badge__label">
-                {{ group_members }}
-              </span>
-            </div>
+      <div class="teaser__content-line">
+        <div class="badge teaser__badge">
+          <div class="badge__container">
+            <svg class="badge__icon badge__user-orange">
+              <use xlink:href="#icon-user"></use>
+            </svg>
+            <span class="badge__label">
+              {{ group_members }}
+            </span>
           </div>
         </div>
-
-        {% if joined %}
-          <span class="badge teaser__badge badge-secondary">
-            {% trans %}You have joined{% endtrans %}
-          </span>
-        {% endif %}
       </div>
 
-      <div class="card__actionbar-side right-side">
-        <a href="{{ url }}" class="card__link btn btn-default" title="{{ label }}">
-          {% trans %}Read more{% endtrans %}
-        </a>
-      </div>
+      {% if joined %}
+        <span class="badge teaser__badge badge-secondary">
+          {% trans %}You have joined{% endtrans %}
+        </span>
+      {% endif %}
+
+      <a href="{{ url }}" class="card__link btn btn-default" title="{{ label }}">
+        {% trans %}Read more{% endtrans %}
+      </a>
     </div>
 
   </div>

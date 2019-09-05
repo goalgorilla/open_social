@@ -125,29 +125,25 @@
     </div>
 
     <div class="card__actionbar">
-      <div class="card__actionbar-side">
-        <div class="badge teaser__badge" title="{% trans %}The visibility of this content is set to public{% endtrans %}">
-          <svg class="badge__icon">
-            <use xlink:href="#icon-public"></use>
-          </svg>
-        </div>
-        {% if challenge_phase_status %}
-          <span class="badge teaser__badge badge-active">
-            {{ challenge_phase_status }}
-          </span>
-        {% endif %}
-        {% if joined %}
-          <span class="badge teaser__badge badge-secondary">
-            {% trans %}Joined{% endtrans %}
-          </span>
-        {% endif %}
+      <div class="badge teaser__badge" title="{% trans %}The visibility of this content is set to public{% endtrans %}">
+        <svg class="badge__icon">
+          <use xlink:href="#icon-public"></use>
+        </svg>
       </div>
+      {% if challenge_phase_status %}
+        <span class="badge teaser__badge badge-active">
+          {{ challenge_phase_status }}
+        </span>
+      {% endif %}
+      {% if joined %}
+        <span class="badge teaser__badge badge-secondary">
+          {% trans %}Joined{% endtrans %}
+        </span>
+      {% endif %}
 
-      <div class="card__actionbar-side right-side">
-        <a href="{{ url }}" class="card__link btn btn-default" title="{{ label }}">
-          {% trans %}Read more{% endtrans %}
-        </a>
-      </div>
+      <a href="{{ url }}" class="card__link btn btn-default" title="{{ label }}">
+        {% trans %}Read more{% endtrans %}
+      </a>
     </div>
 
   </div>

@@ -124,43 +124,9 @@
   margin-bottom: 0;
 }
 
-.socialblue--sky .teaser.teaser--tile .card__actionbar, .socialblue--sky .teaser.teaser--stream .card__actionbar {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
-  -webkit-box-pack: end;
-      -ms-flex-pack: end;
-          justify-content: flex-end;
-  -ms-flex-wrap: wrap;
-      flex-wrap: wrap;
-}
-
-.socialblue--sky .teaser.teaser--tile .card__actionbar:before, .socialblue--sky .teaser.teaser--tile .card__actionbar:after, .socialblue--sky .teaser.teaser--stream .card__actionbar:before, .socialblue--sky .teaser.teaser--stream .card__actionbar:after {
-  display: none;
-}
-
-.socialblue--sky .teaser.teaser--tile .card__actionbar-side, .socialblue--sky .teaser.teaser--stream .card__actionbar-side {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
-  -webkit-box-flex: 1;
-      -ms-flex-positive: 1;
-          flex-grow: 1;
-  -ms-flex-preferred-size: 0;
-      flex-basis: 0;
-  -ms-flex-wrap: wrap;
-      flex-wrap: wrap;
-  max-width: 100%;
-}
-
-.socialblue--sky .teaser.teaser--tile .card__actionbar-side:empty, .socialblue--sky .teaser.teaser--stream .card__actionbar-side:empty {
-  display: none;
+.socialblue--sky .teaser.teaser--tile .card__actionbar > *, .socialblue--sky .teaser.teaser--stream .card__actionbar > * {
+  display: inline-block;
+  vertical-align: middle;
 }
 
 .socialblue--sky .teaser.teaser--stream .teaser__tag {
@@ -172,16 +138,16 @@
   margin-bottom: 0;
 }
 
+.socialblue--sky .teaser:not(.teaser--idea) .badge__container + .badge__container {
+  padding-left: 12px;
+}
+
 .socialblue--sky .teaser .card__link.btn {
   min-width: 115px;
 }
 
 .socialblue--sky .teaser .badge__label--description {
   display: none;
-}
-
-.socialblue--sky .teaser .badge__container + .badge__container {
-  padding-left: 12px;
 }
 
 .socialblue--sky .teaser .badge__container .badge__label {
