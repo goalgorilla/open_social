@@ -1,0 +1,13 @@
+{%
+  set classes = [
+  'region--' ~ region|clean_class,
+]
+%}
+
+{% if content %}
+  <div{{ attributes.addClass(classes) }}>
+    <div class="content--side_wrapper-card">
+      {{ content }}
+    </div>
+  </div>
+{% endif %}

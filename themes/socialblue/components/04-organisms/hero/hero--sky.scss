@@ -1,5 +1,15 @@
 @import "settings";
 
+// Hero banner with full width.
+@mixin full-with-inside-container {
+  width: 100vw;
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+}
+
 .socialblue--sky {
 
   .block-profile-hero-block .cover-wrap {
@@ -145,9 +155,25 @@
     }
   }
 
-  main:not(.is-navbar-secondary) .hero__banner-static {
-    @include for-tablet-portrait-up {
-      padding-bottom: 0;
+  main:not(.is-navbar-secondary) {
+    .hero__banner-static {
+      @include for-tablet-portrait-up {
+        padding-bottom: 0;
+      }
+
+      .hero-footer {
+        padding-bottom: 20px;
+      }
+    }
+
+    .hero__full {
+      .hero-footer__bottom {
+        @include for-tablet-landscape-up {
+          padding-bottom: 20px;
+        }
+
+        padding-bottom: 20px;
+      }
     }
   }
 
@@ -431,16 +457,6 @@
         }
       }
     }
-  }
-
-  // Hero banner with full width.
-  @mixin full-with-inside-container {
-    width: 100vw;
-    position: relative;
-    left: 50%;
-    right: 50%;
-    margin-left: -50vw;
-    margin-right: -50vw;
   }
 
   .hero__full,

@@ -47,11 +47,18 @@
     border-bottom: 1px solid #e6e6e6;
     background: transparent;
     margin-top: 1.25rem;
-    margin-left: -2rem;
-    margin-right: -2rem;
+    margin-left: -1.875rem;
+    margin-right: -1.875rem;
 
     @include for-tablet-landscape-up {
       height: 180px;
+    }
+
+    .teaser__title {
+      max-height: 3rem;
+      font-size: 1.125rem;
+      line-height: 26px;
+      margin-bottom: 10px;
     }
 
     .teaser__published-author {
@@ -69,10 +76,11 @@
     }
 
     &:last-child {
-      margin-bottom: -1.5rem;
+      margin-bottom: -1.25rem;
     }
 
     .card__actionbar {
+      padding-top: 0;
       padding-bottom: 1rem;
     }
 
@@ -86,6 +94,45 @@
       @include for-tablet-landscape-up {
         flex: 0 0 179px;
         height: 179px;
+      }
+    }
+
+    .teaser__tag {
+      margin-right: 6px;
+      margin-bottom: 0;
+
+      @include for-desktop-up {
+        margin-right: 15px;
+      }
+    }
+
+    &.teaser--idea {
+      .card__actionbar {
+        .badge__container,
+        .teaser__content-line {
+          > * {
+            display: inline-block;
+            vertical-align: middle;
+
+            &.teaser__content-type-icon {
+              margin-top: 0;
+              margin-right: 4px;
+            }
+
+            &.badge__label--description {
+              display: none;
+            }
+          }
+
+          .badge__label {
+            font-size: 12px;
+            font-weight: 100;
+          }
+        }
+
+        .teaser__content-line {
+          margin-right: .6rem;
+        }
       }
     }
   }

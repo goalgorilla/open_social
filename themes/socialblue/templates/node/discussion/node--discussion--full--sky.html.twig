@@ -26,11 +26,11 @@
 {% endblock %}
 
 {% block metaengage %}
-  <div class="meta-engage">
-    {% if node.isSticky() %}
+  {% if node.isSticky() %}
+    <div class="meta-engage">
       <span class="badge badge-accent badge--large">{% trans %}Featured{% endtrans %}</span>
-    {% endif %}
-  </div>
+    </div>
+  {% endif %}
 {% endblock %}
 
 {% block nodefull_body %}

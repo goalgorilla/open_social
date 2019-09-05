@@ -110,17 +110,17 @@
   }
 
   .card__block {
-    padding: 1.5rem 2rem;
+    padding: 1.25rem 1.875rem;
 
     + .card__block {
       padding-top: 0;
     }
 
     .card__nested-section {
-      margin-left: -2rem;
-      margin-right: -2rem;
-      margin-bottom: -1.5rem;
-      padding-top: 1.5rem;
+      margin-left: -1.875rem;
+      margin-right: -1.875rem;
+      margin-bottom: -1.25rem;
+      padding-top: 1.25rem;
 
       .comment {
         align-items: center;
@@ -862,46 +862,11 @@
   //Move to separate file
   // User information/group about cards.
   .user-information {
-    &.content--side_wrapper-card .region--content {
-      padding-bottom: 4rem;
-
-      .view-id-user_information .card {
-        @include for-tablet-landscape-down {
-          padding-left: 1.25rem;
-          padding-right: 1.25rem;
-        }
-      }
-    }
-
-    .view-id-user_information .card {
-      h3 {
-        text-transform: uppercase;
-        margin-bottom: 1rem;
-        font-weight: 700;
-      }
-
-      .user-info__item {
-        @include flex-wrap;
-        @include bottom-line(0, 0, 0, 0);
-
-        &:last-child:after {
-          display: none;
-        }
-      }
-
-      .list-item__label,
-      h5 {
-        @include title;
-      }
-
-      .list-item__text,
-      .user-info__wrapper {
-        @include content;
-      }
-    }
   }
 
-  .group-about {
+  .content-merged {
+
+    //Group About.
     .block-views-blockgroup-managers-block-list-managers {
       @include flex-wrap;
       @include bottom-line(0, 0, 0, 0);
@@ -942,6 +907,7 @@
 
       .body-text {
         @include flex-wrap;
+        flex-wrap: wrap;
 
         .field--label {
           @include title;
@@ -949,6 +915,11 @@
 
         .field--text {
           @include content;
+        }
+
+        > p {
+          flex: 0 0 100%;
+          max-width: 100%;
         }
       }
     }
@@ -1047,6 +1018,45 @@
         }
       }
     }
+
+    //User information
+    .region--content .content--side_wrapper-card {
+      padding-bottom: 4rem;
+
+      .view-id-user_information .card {
+        @include for-tablet-landscape-down {
+          padding-left: 1.25rem;
+          padding-right: 1.25rem;
+        }
+      }
+    }
+
+    .view-id-user_information .card {
+      h3 {
+        text-transform: uppercase;
+        margin-bottom: 1rem;
+        font-weight: 700;
+      }
+
+      .user-info__item {
+        @include flex-wrap;
+        @include bottom-line(0, 0, 0, 0);
+
+        &:last-child:after {
+          display: none;
+        }
+      }
+
+      .list-item__label,
+      h5 {
+        @include title;
+      }
+
+      .list-item__text,
+      .user-info__wrapper {
+        @include content;
+      }
+    }
   }
 
   &.path-group {
@@ -1059,8 +1069,8 @@
 
   // Move to separate file
   // Group about card.
-  .path-group:not(.group-type-challenge) .group-about {
-    &.content--side_wrapper-card .region--content {
+  .path-group:not(.group-type-challenge) .content-merged {
+    .region--content .content--side_wrapper-card {
       padding-bottom: 1.5rem;
 
       .block-gpedc-tagging .card {
@@ -1365,8 +1375,8 @@ body.socialblue--sky {
       }
     }
 
-    .content--side_wrapper-card {
-      .region--content {
+    .content-merged .region--content {
+      .content--side_wrapper-card {
         > .card:not(.teaser--idea--featured),
         .card:not(.teaser--idea--featured) {
           border-radius: 0 !important;

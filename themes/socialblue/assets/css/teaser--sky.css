@@ -124,18 +124,38 @@
   margin-bottom: 0;
 }
 
+.socialblue--sky .teaser.teaser--tile .card__actionbar, .socialblue--sky .teaser.teaser--stream .card__actionbar {
+  font-size: 0;
+}
+
+.socialblue--sky .teaser.teaser--tile .card__actionbar:before, .socialblue--sky .teaser.teaser--stream .card__actionbar:before {
+  content: '';
+  display: inline-block;
+  vertical-align: middle;
+  font-size: 0;
+  width: .1%;
+  margin-left: -.1%;
+  height: 100%;
+}
+
 .socialblue--sky .teaser.teaser--tile .card__actionbar > *, .socialblue--sky .teaser.teaser--stream .card__actionbar > * {
   display: inline-block;
   vertical-align: middle;
+  font-size: 12px;
 }
 
-.socialblue--sky .teaser.teaser--stream .teaser__tag {
-  margin-right: 6px;
-  margin-bottom: 0;
+.socialblue--sky .teaser.teaser--tile .card__actionbar .card__link,
+.socialblue--sky .teaser.teaser--tile .card__actionbar .card__link a,
+.socialblue--sky .teaser.teaser--tile .card__actionbar .teaser__tag, .socialblue--sky .teaser.teaser--stream .card__actionbar .card__link,
+.socialblue--sky .teaser.teaser--stream .card__actionbar .card__link a,
+.socialblue--sky .teaser.teaser--stream .card__actionbar .teaser__tag {
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
 }
 
-.socialblue--sky .teaser.teaser--stream .teaser__tag {
-  margin-bottom: 0;
+.socialblue--sky .teaser.teaser--tile .card__actionbar .teaser__badge, .socialblue--sky .teaser.teaser--stream .card__actionbar .teaser__badge {
+  padding-left: 0;
 }
 
 .socialblue--sky .teaser:not(.teaser--idea) .badge__container + .badge__container {
@@ -155,13 +175,7 @@
 }
 
 .socialblue--sky .teaser .badge__container .badge__icon {
-  margin-right: 6px;
-}
-
-.socialblue--sky .field--name-field-featured-items .teaser--tile {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
+  margin-right: 4px;
 }
 
 .socialblue--sky .teaser.teaser--profile {
@@ -247,6 +261,12 @@
   margin: 0 auto;
 }
 
+.socialblue--sky .field--name-field-featured-items .teaser--tile {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+}
+
 @media (min-width: 600px) {
   .socialblue--sky .teaser__image {
     -webkit-box-flex: 0;
@@ -282,11 +302,5 @@
   }
   .socialblue--sky .field--name-field-featured-items.four-items .teaser--tile:nth-child(4n+1) {
     margin-left: 0;
-  }
-}
-
-@media (min-width: 1200px) {
-  .socialblue--sky .teaser.teaser--stream .teaser__tag {
-    margin-right: 15px;
   }
 }

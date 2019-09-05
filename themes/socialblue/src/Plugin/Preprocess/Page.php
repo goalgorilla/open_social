@@ -29,11 +29,20 @@ class Page extends PageBase {
     if ($route_match->getParameter('user') && $route_match->getRouteName() !== 'entity.profile.type.user_profile_form') {
       $variables['content_attributes']->addClass('sidebar-left');
       $variables['display_secondary_navigation'] = TRUE;
+
+      if ($route_match->getRouteName() == 'view.user_information.user_information') {
+        $variables['content_attributes']->addClass('content-merged');
+      }
     }
+    
     // Display blocks on the left side of group pages.
     if ($route_match->getParameter('group') && $route_match->getRouteName() !== 'entity.group.edit_form') {
       $variables['content_attributes']->addClass('sidebar-left');
       $variables['display_secondary_navigation'] = TRUE;
+
+      if ($route_match->getRouteName() == 'view.group_information.page_group_about') {
+        $variables['content_attributes']->addClass('content-merged');
+      }
     }
     if ($route_match->getParameter('node')) {
       $variables['display_secondary_navigation'] = TRUE;
@@ -49,7 +58,7 @@ class Page extends PageBase {
         }
         $course_types = social_course_get_material_types();
         if (in_array($node->getType(), $course_types)) {
-          $variables['content_attributes']->addClass('sidebar-left');
+          $variables['content_attributes']->addClass(['sidebar-left', 'content-merged']);
         }
       }
     }
