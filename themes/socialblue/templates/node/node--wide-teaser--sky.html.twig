@@ -34,7 +34,11 @@
     {% endif %}
 
     {% block card_image %}
+      {{ content.field_event_image }}
       {{ content.field_topic_image }}
+      {{ content.field_page_image }}
+      {{ content.field_book_image }}
+      {{ content.field_image }}
     {% endblock %}
   </div>
   <div class="teaser__icon">
@@ -49,26 +53,15 @@
       </h4>
 
       {% block card_body %}
-
         <div class="teaser__content-line">
           <div class="teaser__published">
             <div class="teaser__published-author">
-              {% if original_authors %}
-                {% for item in original_authors %}
-                  <span>{{ item }}</span>
-                {% endfor %}
-              {% else %}
-                {{ author_name }}
-              {% endif %}
+              {{ author_name }}
             </div>
 
             <div class="teaser__published-date">
               <span> &nbsp; &bullet; &nbsp; </span>
-              {% if original_date %}
-                {{ original_date }}
-              {% else %}
-                {{ date }}
-              {% endif %}
+              {{ date }}
             </div>
           </div>
         </div>
@@ -78,19 +71,7 @@
     <div class="card__actionbar">
       <div class="card__actionbar-side">
         <div class="teaser__tag">
-          {{ content_type }}
-        </div>
-
-        <div class="teaser__published-lang">
-          {% if original_languages %}
-            {% for item in original_languages %}
-              {% if loop.last %}
-                <span>{{ item }}</span>
-              {% else %}
-                <span>{{ item }}</span>&nbsp;|&nbsp;
-              {% endif %}
-            {% endfor %}
-          {% endif %}
+          {{ node.type.entity.label }}
         </div>
 
       </div>

@@ -58,35 +58,8 @@
             </div>
 
             <div class="metainfo__content">
-              {% if original_authors or original_date %}
-                {% if original_authors %}
-                  {% for item in original_authors %}
-                    {% if loop.last %}
-                      <span>{{ item }}</span>
-                    {% else %}
-                      <span>{{ item }}</span>,
-                    {% endif %}
-                  {% endfor %}
-                {% endif %}
-
-                {% if original_date %}
-                  <span class="metainfo__published-date">&bullet; {{ original_date }} </span>
-                {% endif %}
-              {% else %}
-                {{ author }}
-                <span class="metainfo__published-date">&bullet; {{ created_date_formatted }} </span>
-              {% endif %}
-
-              {% if original_languages %}
-                &bullet;
-                {% for item in original_languages %}
-                  {% if loop.last %}
-                    <span>{{ item }}</span>
-                  {% else %}
-                    <span>{{ item }}</span>,
-                  {% endif %}
-                {% endfor %}
-              {% endif %}
+              {{ author }}
+              <span class="metainfo__published-date">&bullet; {{ created_date_formatted }} </span>
 
               <div>
                 {% if group_link %}
@@ -108,12 +81,6 @@
                 {% endif %}
               </div>
 
-              {% if original_authors or original_date %}
-                <div>
-                  <span class="metainfo__uploader">{% trans %} Uploaded by {% endtrans %}&nbsp;{{ author }}</span>
-                  <span class="metainfo__published-date">&bullet; {{ created_date_formatted }} </span>
-                </div>
-              {% endif %}
             </div>
 
           </header>
