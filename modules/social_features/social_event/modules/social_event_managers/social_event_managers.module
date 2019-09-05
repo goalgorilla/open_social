@@ -188,27 +188,25 @@ function social_event_managers_form_node_event_edit_form_alter(&$form, FormState
  * Implements hook_node_access_records().
  */
 function social_event_managers_node_access_records(NodeInterface $node) {
-
   $grants = [];
-
   // Only for events.
-  if ($node->getType() === 'event') {
+  if (($node->getType() === 'event') && $event_managers_ids = array_column($node->get('field_event_managers')
+    ->getValue(), 'target_id')) {
     // Event organizers should be granted access.
-    foreach ($node->get('field_event_managers')->getValue() as $eventmanager) {
-      // Load the event managers account.
-      if ($account = User::load($eventmanager['target_id'])) {
-        // Event organizers must have access
-        // to view the record in the first place.
-        if ($node->access('view', $account)) {
-          // Add grant.
-          $grants[] = [
-            'realm' => 'social_event_managers:' . $node->id(),
-            'gid' => $eventmanager['target_id'],
-            'grant_view' => 1,
-            'grant_update' => 1,
-            'grant_delete' => 0,
-          ];
-        }
+    // Load the event managers accounts.
+    $users = User::loadMultiple($event_managers_ids);
+    foreach ($users as $event_manager) {
+      // Event organizers must have access
+      // to view the record in the first place.
+      if ($node->access('view', $event_manager)) {
+        // Add grant.
+        $grants[] = [
+          'realm' => 'social_event_managers:' . $node->id(),
+          'gid' => $event_manager->id(),
+          'grant_view' => 1,
+          'grant_update' => 1,
+          'grant_delete' => 0,
+        ];
       }
     }
   }
@@ -372,7 +370,7 @@ function social_event_managers_activity_recipient_organizer_alter(array &$recipi
   if (!empty($organizers)) {
     foreach ($organizers as $organizer) {
       // We don't want Organizers to receive activity_on_events_im_organizing.
-      // He will already receive it as part of a different context.
+      // It will already receive it as part of a different context.
       if (!empty($receiver) && $organizer['target_id'] === $receiver) {
         continue;
       }
