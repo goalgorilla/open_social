@@ -2,13 +2,21 @@
 
 namespace Drupal\download_count\Plugin\Field\FieldFormatter;
 
+use Drupal\Core\Cache\CacheBackendInterface;
+use Drupal\Core\Database\Connection;
+use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
+use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\Core\StringTranslation\TranslationManager;
+use Drupal\Core\Theme\ThemeManagerInterface;
 use Drupal\file\Plugin\Field\FieldFormatter\GenericFileFormatter;
-use Drupal\Core\Database\Database;
 use Drupal\Core\Link;
 use Drupal\Core\Url;
 use Drupal\Core\Template\Attribute;
 use Drupal\Component\Utility\Html;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\Serializer\Serializer;
 
 /**
  * The FieldDownloadCount class.
@@ -19,7 +27,96 @@ use Drupal\Component\Utility\Html;
  *  field_types = {"file"}
  * )
  */
-class FieldDownloadCount extends GenericFileFormatter {
+class FieldDownloadCount extends GenericFileFormatter implements ContainerFactoryPluginInterface {
+
+  /**
+   * Serialization services.
+   *
+   * @var \Symfony\Component\Serializer\Serializer
+   */
+  protected $serializer;
+
+  /**
+   * Database services.
+   *
+   * @var \Drupal\Core\Database\Database
+   */
+  protected $database;
+
+  /**
+   * Cache services.
+   *
+   * @var \Drupal\Core\Cache\CacheBackendInterface
+   */
+  protected $cache;
+
+  /**
+   * The user services.
+   *
+   * @var \Drupal\Core\Session\AccountProxyInterface
+   */
+  protected $user;
+
+  /**
+   * The theme manager services.
+   *
+   * @var \Drupal\Core\Theme\ThemeManagerInterface
+   */
+  protected $theme;
+
+  /**
+   * The translation manager.
+   *
+   * @var \Drupal\Core\StringTranslation\TranslationManager
+   */
+  protected $translation;
+
+  /**
+   * {@inheritdoc}
+   */
+  public function __construct(
+    $plugin_id,
+    $plugin_definition,
+    FieldDefinitionInterface $field_definition,
+    array $settings,
+    $label,
+    $view_mode,
+    array $third_party_settings,
+    Serializer $serializer,
+    Connection $connection,
+    CacheBackendInterface $cacheBackend,
+    AccountProxyInterface $accountProxy,
+  ThemeManagerInterface $theme,
+  TranslationManager $translation) {
+    parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $label, $view_mode, $third_party_settings);
+    $this->serializer = $serializer;
+    $this->database = $connection;
+    $this->cache = $cacheBackend;
+    $this->user = $accountProxy;
+    $this->theme = $theme;
+    $this->translation = $translation;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    return new static(
+      $plugin_id,
+      $plugin_definition,
+      $configuration['field_definition'],
+      $configuration['settings'],
+      $configuration['label'],
+      $configuration['view_mode'],
+      $configuration['third_party_settings'],
+      $container->get('serializer'),
+      $container->get('database'),
+      $container->get('cache.default'),
+      $container->get('current_user'),
+      $container->get('theme.manager'),
+      $container->get('string_translation')
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -28,20 +125,46 @@ class FieldDownloadCount extends GenericFileFormatter {
     $element = [];
     $entity = $items->getEntity();
     $entity_type = $entity->getEntityTypeId();
-    $access = \Drupal::currentUser()->hasPermission('view download counts');
+    $access = $this->user->hasPermission('view download counts');
 
     foreach ($this->getEntitiesToView($items, $langcode) as $delta => $file) {
       $item = $file->_referringItem;
 
       if ($access) {
-        $download = Database::getConnection()
-          ->query('SELECT COUNT(fid) from {download_count} where fid = :fid AND type = :type AND id = :id', [
-            ':fid' => $file->id(),
-            ':type' => $entity_type,
-            ':id' => $entity->id(),
-          ])
-          ->fetchField();
-        $file->download = $download;
+        // Try to fetch the count from cache.
+        $cache_data = $this->cache->get('download_count');
+
+        // Decode the cache json data.
+        $cache_download_count_array = $cache_data ? $this->serializer->decode($cache_data->data, 'json') : NULL;
+
+        // Get the count from cached array.
+        if ($cache_download_count_array && array_key_exists($file->id(), $cache_download_count_array)) {
+          $download_count = $cache_download_count_array[$file->id()];
+        }
+        else {
+          // If there is no data in cache, we find it via a query.
+          $download_count = $this->database->select('download_count', 'du')
+            ->fields('fu', ['fid'])
+            ->condition('type', $entity_type)
+            ->condition('id', $entity->id())
+            ->countQuery()
+            ->execute()
+            ->fetchField();
+
+          // Update the array.
+          $cache_download_counts[$file->id()] = $download_count;
+          // And then we set the data in cache again after encoding.
+          // This cache should automatically expire after an hour.
+          $this->cache->set('download_count', $this->serializer->encode($cache_download_counts, 'json'), time() + 3600);
+        }
+
+        if ($download_count > 0) {
+          $count_string = $this->translation
+            ->formatPlural($download_count, '1 download', '@count downloads');
+        }
+        else {
+          $count_string = $this->t('0 downloads');
+        }
       }
 
       $link_url = file_create_url($file->getFileUri());
@@ -78,15 +201,7 @@ class FieldDownloadCount extends GenericFileFormatter {
       $link = Link::fromTextAndUrl($link_text, Url::fromUri($link_url, $options))
         ->toString();
 
-      if (isset($file->download) && $file->download > 0) {
-        $count = \Drupal::translation()
-          ->formatPlural($file->download, '1 download', '@count downloads');
-      }
-      else {
-        $count = $this->t('0 downloads');
-      }
-
-      $theme = \Drupal::theme()->getActiveTheme();
+      $theme = $this->theme->getActiveTheme();
 
       // Check if socialbase is one of the base themes.
       // Then get the path to socialbase theme and provide a variable
@@ -149,7 +264,7 @@ class FieldDownloadCount extends GenericFileFormatter {
         '#link_url' => $link_url,
         '#link_text' => $link_text,
         '#classes' => $attributes['class'],
-        '#count' => $count,
+        '#count' => $count_string,
         '#file_size' => format_size($file_size),
         '#path_to_socialbase' => $path_to_socialbase,
         '#node_icon' => $node_icon,
