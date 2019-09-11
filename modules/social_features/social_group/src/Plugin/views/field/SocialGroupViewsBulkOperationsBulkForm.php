@@ -130,41 +130,45 @@ class SocialGroupViewsBulkOperationsBulkForm extends GroupViewsBulkOperationsBul
     unset($wrapper['multipage']['clear']);
     $items = [];
 
-    $weights = [
-      'social_group_send_email_action' => 10,
-      'social_group_members_export_member_action' => 20,
-      'social_group_delete_group_content_action' => 30,
-      'social_group_change_member_role_action' => 40,
-    ];
-
-    foreach ($weights as $key => $weight) {
-      if (isset($actions[$key])) {
-        $actions[$key]['#weight'] = $weight;
+    foreach ($wrapper['action']['#options'] as $key => $value) {
+      if (!empty($key)) {
+        $items[] = [
+          '#type' => 'submit',
+          '#value' => $value,
+        ];
       }
     }
-
-    foreach (Element::children($actions, TRUE) as $key) {
-      $items[] = $actions[$key];
-    }
-
+    // Add our links to the dropdown buttondrop type.
     $actions['#links'] = $items;
-
-    $form['actions']['#access'] = FALSE;
+    // Remove access to the Views select list so it doesnt render.
+    $form['header']['social_views_bulk_operations_bulk_form_group']['action']['#access'] = FALSE;
   }
 
   /**
    * {@inheritdoc}
    */
   public function viewsFormValidate(&$form, FormStateInterface $form_state) {
-    if ($this->view->id() === 'group_manage_members' && $this->options['buttons']) {
+    if ($this->view->id() === 'group_manage_members') {
       $user_input = $form_state->getUserInput();
+      $available_options = $this->getBulkOptions();
+      // Grab all the actions that are available.
+      foreach (Element::children($this->actions) as $action) {
+        // If the option is not in our selected options, next.
+        if (empty($available_options[$action])) {
+          continue;
+        }
 
-      foreach (Element::children($form['actions']) as $action) {
         /** @var \Drupal\Core\StringTranslation\TranslatableMarkup $label */
-        $label = $form['actions'][$action]['#value'];
+        $label = $available_options[$action];
 
+        // Match the Users action from our custom dropdown.
+        // Find the action from the VBO selection.
+        // And set that as the chosen action in the form_state.
         if (strip_tags($label->render()) === $user_input['op']) {
-          $form_state->setTriggeringElement($form['actions'][$action]);
+          $user_input['action'] = $action;
+          $form_state->setUserInput($user_input);
+          $form_state->setValue('action', $action);
+          $form_state->setTriggeringElement($this->actions[$action]);
           break;
         }
       }
