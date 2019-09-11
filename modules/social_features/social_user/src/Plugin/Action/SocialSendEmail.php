@@ -71,6 +71,13 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
   protected $emailValidator;
 
   /**
+   * TRUE if the current user can use the "Mail HTML" text format.
+   *
+   * @var bool
+   */
+  protected $allowTextFormat;
+
+  /**
    * Constructs a SocialSendEmail object.
    *
    * @param array $configuration
@@ -91,6 +98,8 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
    *   The language manager.
    * @param \Egulias\EmailValidator\EmailValidator $email_validator
    *   The email validator.
+   * @param bool $allow_text_format
+   *   TRUE if the current user can use the "Mail HTML" text format.
    */
   public function __construct(
     array $configuration,
@@ -101,7 +110,8 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
     LoggerInterface $logger,
     MailManagerInterface $mail_manager,
     LanguageManagerInterface $language_manager,
-    EmailValidator $email_validator
+    EmailValidator $email_validator,
+    $allow_text_format
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
@@ -111,6 +121,7 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
     $this->mailManager = $mail_manager;
     $this->languageManager = $language_manager;
     $this->emailValidator = $email_validator;
+    $this->allowTextFormat = $allow_text_format;
   }
 
   /**
@@ -123,7 +134,8 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
       $container->get('logger.factory')->get('action'),
       $container->get('plugin.manager.mail'),
       $container->get('language_manager'),
-      $container->get('email.validator')
+      $container->get('email.validator'),
+      $container->get('current_user')->hasPermission('use text format mail_html')
     );
   }
 
@@ -213,16 +225,21 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
     ];
 
     $form['message'] = [
-      '#type' => 'text_format',
+      '#type' => 'textarea',
       '#title' => $this->t('Message'),
       '#required' => TRUE,
       '#default_value' => $form_state->getValue('message'),
       '#cols' => '80',
       '#rows' => '20',
-      '#allowed_formats' => [
-        'mail_html',
-      ],
     ];
+
+    if ($this->allowTextFormat) {
+      $form['message']['#type'] = 'text_format';
+
+      $form['message']['#allowed_formats'] = [
+        'mail_html',
+      ];
+    }
 
     $form['#title'] = $this->t('Send an email to :selected_count members', [
       ':selected_count' => $this->context['selected_count'],
@@ -260,7 +277,9 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
   public function submitConfigurationForm(array &$form, FormStateInterface $form_state) {
     parent::submitConfigurationForm($form, $form_state);
 
-    $this->configuration['message'] = $this->configuration['message']['value'];
+    if ($this->allowTextFormat) {
+      $this->configuration['message'] = $this->configuration['message']['value'];
+    }
   }
 
   /**
