@@ -140,7 +140,8 @@ class SocialGroupViewsBulkOperationsBulkForm extends GroupViewsBulkOperationsBul
     }
     // Add our links to the dropdown buttondrop type.
     $actions['#links'] = $items;
-    // Remove access to the Views select list so it doesnt render.
+    // Remove the Views select list and submit button.
+    $form['actions']['#access'] = FALSE;
     $form['header']['social_views_bulk_operations_bulk_form_group']['action']['#access'] = FALSE;
   }
 
