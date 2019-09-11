@@ -49,57 +49,59 @@ function social_activity_tokens($type, $tokens, array $data, array $options, Bub
             $entity = \Drupal::entityTypeManager()->getStorage($target_type)
               ->load($target_id);
 
-            if ($target_type === 'post') {
-              /** @var \Drupal\social_post\Entity\PostInterface $entity */
-              $name = $entity->getOwner()->getDisplayName();
+            if ($entity) {
+              if ($target_type === 'post') {
+                /** @var \Drupal\social_post\Entity\PostInterface $entity */
+                $name = $entity->getOwner()->getDisplayName();
 
-              $date_formatter = \Drupal::service('date.formatter');
-              $date_format = 'social_long_date';
-              $date = $date_formatter->format($entity->getCreatedTime(), $date_format);
+                $date_formatter = \Drupal::service('date.formatter');
+                $date_format = 'social_long_date';
+                $date = $date_formatter->format($entity->getCreatedTime(), $date_format);
 
-              if ($entity->hasField('field_post') && !$entity->field_post->isEmpty()) {
-                $summary = _social_comment_get_summary($entity->field_post->value);
-              }
+                if ($entity->hasField('field_post') && !$entity->field_post->isEmpty()) {
+                  $summary = _social_comment_get_summary($entity->field_post->value);
+                }
 
-              $post_link = Url::fromRoute('entity.post.canonical',
-                ['post' => $entity->id()],
-                ['absolute' => TRUE]
-              )->toString();
-
-              $info = [
-                '#theme' => 'message_post_teaser',
-                '#name' => $name,
-                '#date' => $date,
-                '#summary' => $summary,
-                '#link' => $post_link,
-              ];
-
-              $replacements[$original] = \Drupal::service('renderer')->renderPlain($info);
-            }
-            elseif ($target_type === 'group_content') {
-              /** @var \Drupal\group\Entity\GroupContentInterface $entity */
-              $group_content_type = $entity->getGroupContentType();
-
-              if (!empty($group_content_type)) {
-                $display_name = mb_strtolower($group_content_type->label());
-              }
-
-              /* @var \Drupal\node\NodeInterface $node */
-              $node = $entity->getEntity();
-
-              if (in_array($node->getType(), ['topic', 'event'])) {
-                $link = Url::fromRoute('entity.node.canonical',
-                  ['node' => $node->id()],
+                $post_link = Url::fromRoute('entity.post.canonical',
+                  ['post' => $entity->id()],
                   ['absolute' => TRUE]
                 )->toString();
 
                 $info = [
-                  '#theme' => 'message_node_teaser',
-                  '#link' => $link,
-                  '#type' => $display_name,
+                  '#theme' => 'message_post_teaser',
+                  '#name' => $name,
+                  '#date' => $date,
+                  '#summary' => $summary,
+                  '#link' => $post_link,
                 ];
 
                 $replacements[$original] = \Drupal::service('renderer')->renderPlain($info);
+              }
+              elseif ($target_type === 'group_content') {
+                /** @var \Drupal\group\Entity\GroupContentInterface $entity */
+                $group_content_type = $entity->getGroupContentType();
+
+                if ($group_content_type !== NULL) {
+                  $display_name = mb_strtolower($group_content_type->label());
+                }
+
+                /* @var \Drupal\node\NodeInterface $node */
+                $node = $entity->getEntity();
+
+                if (in_array($node->getType(), ['topic', 'event'])) {
+                  $link = Url::fromRoute('entity.node.canonical',
+                    ['node' => $node->id()],
+                    ['absolute' => TRUE]
+                  )->toString();
+
+                  $info = [
+                    '#theme' => 'message_node_teaser',
+                    '#link' => $link,
+                    '#type' => $display_name,
+                  ];
+
+                  $replacements[$original] = \Drupal::service('renderer')->renderPlain($info);
+                }
               }
             }
           }
