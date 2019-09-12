@@ -19,16 +19,16 @@ class DeleteGroup {
    */
   public static function deleteGroupAndContent($nids, $posts, &$context) {
     $results = [];
-    // Load each node and delete it.
-    foreach ($nids as $nid) {
-      $node = Node::load($nid);
+    // Load all nodes and delete them.
+    $nodes = Node::loadMultiple($nids);
+    foreach ($nodes as $node) {
       $message = t('Delete @type "@title"', ['@type' => $node->getType(), '@title' => $node->getTitle()]);
       $results[] = $node->delete();
     }
     // Load each post and delete it.
-    foreach ($posts as $post_id) {
-      $post = Post::load($post_id);
-      $message = t("Deleting @type\'s", ['@type' => $post->bundle()]);
+    $posts = Post::loadMultiple($posts);
+    foreach ($posts as $post) {
+      $message = t("Deleting @type's", ['@type' => $post->bundle()]);
       $results[] = $post->delete();
     }
     $context['message'] = $message;
