@@ -14,6 +14,7 @@
         $('.color-preview .navbar-brand img').attr('src', drupalSettings.color.logo);
         this.logoChanged = true;
       }
+
       // Remove the logo if the setting is toggled off.
       if (drupalSettings.color.logo === null) {
         $('div').remove('.navbar-brand');
@@ -64,12 +65,28 @@
       $colorPreview.find('.body-text a:not(.btn)').css('color', $colorPalette.find('input[name="palette[brand-link]"]').val());
 
       // Hero toggle background.
-      $colorPreview.find('.color-preview-hero .switch').once().click(function() {
-        $('.color-preview-hero .switch .lever').toggleClass("lever-on");
-        $('.color-preview-hero .cover').toggleClass("cover-img")
-          .toggleClass("cover-img-gradient");
-      });
+      var localStorage =  window.localStorage;
+      var colorPreviewLever = $('.color-preview-hero .switch .lever');
+      var colorPreviewCover = $('.color-preview-hero .cover');
 
+      if (localStorage.getItem('lever-on')) {
+          colorPreviewLever.addClass('lever-on');
+          colorPreviewCover.addClass('cover-img cover-img-gradient');
+      }
+
+      $colorPreview.find('.color-preview-hero .switch').once()
+        .on('click', function() {
+          colorPreviewLever.toggleClass('lever-on');
+          colorPreviewCover.toggleClass('cover-img cover-img-gradient');
+
+          if (colorPreviewLever.hasClass('lever-on')) {
+            localStorage.setItem('lever-on', '1');
+          }
+          else {
+            localStorage.removeItem('lever-on');
+          }
+        }
+      );
     }
   };
 })(jQuery, Drupal, drupalSettings);

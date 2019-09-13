@@ -84,7 +84,7 @@
       <span class="comment__metadata">&bullet; {{ submitted }} </span>
       <mark class="badge badge-default badge--pill hidden" data-comment-timestamp="{{ new_indicator_timestamp }}"></mark>
       {% if (status == 'unpublished') %}
-        <span class="badge badge-default badge--pill">{{ status }}</span>
+        <span class="badge badge-default badge--pill">{{ status|trans }}</span>
       {% endif %}
     </div>
     {% endblock %}
