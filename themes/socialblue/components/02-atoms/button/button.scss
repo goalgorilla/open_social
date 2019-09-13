@@ -110,6 +110,32 @@
       font-weight: normal;
     }
   }
+
+  .block-group-add-event-block,
+  .block-group-add-topic-block,
+  .block-event-add-block,
+  .block-topic-add-block,
+  .block-group-add-block,
+  .block-discussion-add-block,
+  .block-group-add-discussion-block {
+    width: 100%;
+    margin: 0 auto;
+    text-align: center;
+    padding: 1rem 1.875rem;
+
+    @include for-tablet-portrait-up {
+      padding: 1.25rem 2.25rem;
+    }
+
+    .btn {
+      width: 100%;
+      margin-bottom: 0;
+
+      @include for-phone-only {
+        width: 220px;
+      }
+    }
+  }
 }
 
 .btn-default {

@@ -23,10 +23,39 @@
   padding-right: 0;
 }
 
+.socialblue--sky .layout--with-complementary.sidebar-left .region--content {
+  -webkit-box-ordinal-group: 4;
+      -ms-flex-order: 3;
+          order: 3;
+}
+
 .socialblue--sky .layout--with-complementary.sidebar-left .region--complementary {
+  margin-top: 0;
+  padding: 0;
+  -webkit-box-ordinal-group: 1;
+      -ms-flex-order: 0;
+          order: 0;
+}
+
+.socialblue--sky .layout--with-complementary.sidebar-left .navbar-secondary {
+  -webkit-box-flex: 0;
+      -ms-flex: 0 0 100%;
+          flex: 0 0 100%;
+  max-width: 100%;
+}
+
+.socialblue--sky .layout--with-complementary.sidebar-left .region--secondary-navigation {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: end;
+      -ms-flex-pack: end;
+          justify-content: flex-end;
+  z-index: 3;
   -webkit-box-ordinal-group: 2;
       -ms-flex-order: 1;
           order: 1;
+  margin-top: 0;
 }
 
 .socialblue--sky .region--complementary {
@@ -34,75 +63,36 @@
   margin-top: 1rem;
 }
 
-body.socialblue--sky.path-group:not(.group-type-challenge) .layout--with-complementary .navbar-secondary, body.socialblue--sky.details .layout--with-complementary .navbar-secondary, body.socialblue--sky.path-user .layout--with-complementary .navbar-secondary, body.socialblue--sky.page-node-type-course-article .layout--with-complementary .navbar-secondary {
-  -webkit-box-flex: 0;
-      -ms-flex: 0 0 100%;
-          flex: 0 0 100%;
-  max-width: 100%;
-}
-
-body.socialblue--sky.path-group:not(.group-type-challenge) .layout--with-complementary.sidebar-left .region--complementary, body.socialblue--sky.details .layout--with-complementary.sidebar-left .region--complementary, body.socialblue--sky.path-user .layout--with-complementary.sidebar-left .region--complementary, body.socialblue--sky.page-node-type-course-article .layout--with-complementary.sidebar-left .region--complementary {
-  -webkit-box-ordinal-group: 1;
-      -ms-flex-order: 0;
-          order: 0;
-}
-
-body.socialblue--sky.path-group:not(.group-type-challenge) .layout--with-complementary.sidebar-left .region--secondary-navigation, body.socialblue--sky.details .layout--with-complementary.sidebar-left .region--secondary-navigation, body.socialblue--sky.path-user .layout--with-complementary.sidebar-left .region--secondary-navigation, body.socialblue--sky.page-node-type-course-article .layout--with-complementary.sidebar-left .region--secondary-navigation {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-pack: end;
-      -ms-flex-pack: end;
-          justify-content: flex-end;
-}
-
-body.socialblue--sky.path-group:not(.group-type-challenge) .region--secondary-navigation, body.socialblue--sky.details .region--secondary-navigation, body.socialblue--sky.path-user .region--secondary-navigation, body.socialblue--sky.page-node-type-course-article .region--secondary-navigation {
-  z-index: 3;
-}
-
-body.socialblue--sky.path-group:not(.group-type-challenge).mode-search .region--complementary_wrapper, body.socialblue--sky.details.mode-search .region--complementary_wrapper, body.socialblue--sky.path-user.mode-search .region--complementary_wrapper, body.socialblue--sky.page-node-type-course-article.mode-search .region--complementary_wrapper {
-  z-index: 1;
-}
-
-body.socialblue--sky.path-group:not(.group-type-challenge) .region--complementary_wrapper, body.socialblue--sky.details .region--complementary_wrapper, body.socialblue--sky.path-user .region--complementary_wrapper, body.socialblue--sky.page-node-type-course-article .region--complementary_wrapper {
+body.socialblue--sky .region--complementary_wrapper {
   position: relative;
+  margin-bottom: 0;
   z-index: 1000;
 }
 
-body.socialblue--sky.path-group:not(.group-type-challenge) .content--side_wrapper .region--content,
-body.socialblue--sky.path-group:not(.group-type-challenge) .region--complementary_wrapper, body.socialblue--sky.details .content--side_wrapper .region--content,
-body.socialblue--sky.details .region--complementary_wrapper, body.socialblue--sky.path-user .content--side_wrapper .region--content,
-body.socialblue--sky.path-user .region--complementary_wrapper, body.socialblue--sky.page-node-type-course-article .content--side_wrapper .region--content,
-body.socialblue--sky.page-node-type-course-article .region--complementary_wrapper {
-  border-radius: 2px;
-  background: #fff;
-  -webkit-box-shadow: 0 2px 4px #4a4a4a;
-          box-shadow: 0 2px 4px #4a4a4a;
+body.socialblue--sky.mode-search .region--complementary_wrapper {
+  z-index: 1;
 }
 
-body.socialblue--sky.path-group:not(.group-type-challenge) .region--complementary-top + .region--complementary-bottom, body.socialblue--sky.details .region--complementary-top + .region--complementary-bottom, body.socialblue--sky.path-user .region--complementary-top + .region--complementary-bottom, body.socialblue--sky.page-node-type-course-article .region--complementary-top + .region--complementary-bottom {
+body.socialblue--sky .region--complementary-top + .region--complementary-bottom {
   margin-top: 0;
   padding-bottom: 1rem;
 }
 
-body.socialblue--sky.path-group:not(.group-type-challenge) .region--complementary-bottom,
-body.socialblue--sky.path-group:not(.group-type-challenge) .region--complementary-top, body.socialblue--sky.details .region--complementary-bottom,
-body.socialblue--sky.details .region--complementary-top, body.socialblue--sky.path-user .region--complementary-bottom,
-body.socialblue--sky.path-user .region--complementary-top, body.socialblue--sky.page-node-type-course-article .region--complementary-bottom,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top {
+body.socialblue--sky .region--complementary-bottom,
+body.socialblue--sky .region--complementary-top {
   padding-bottom: 0;
   border-radius: 0;
 }
 
-body.socialblue--sky.page-node-type-course-article .region--complementary_wrapper {
+body.socialblue--sky.page-node-type-course-article .sidebar-left .region--complementary_wrapper {
   border-radius: 10px !important;
 }
 
-body.socialblue--sky.page-node-type-course-article .region--complementary_wrapper .region--complementary-top .block-course-section-navigation .card__block {
+body.socialblue--sky.page-node-type-course-article .sidebar-left .region--complementary_wrapper .region--complementary-top .block-course-section-navigation .card__block {
   padding-bottom: 0;
 }
 
-body.socialblue--sky.page-node-type-course-article .region--complementary_wrapper .region--complementary-top .block-course-section-navigation .card__block > .list-item:last-child {
+body.socialblue--sky.page-node-type-course-article .sidebar-left .region--complementary_wrapper .region--complementary-top .block-course-section-navigation .card__block > .list-item:last-child {
   padding-bottom: 0;
 }
 
@@ -153,6 +143,10 @@ body.socialblue--sky.page-node-type-course-article .region--complementary_wrappe
   .socialblue--sky .region--hero .cover-wrap .hero-footer__text {
     margin-left: 0;
   }
+  .socialblue--sky .layout--with-complementary.sidebar-left .region--complementary-top > *[class*='statistic-block']:first-child:not(:last-child) {
+    border-bottom-right-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;
+  }
 }
 
 @media (min-width: 900px) {
@@ -162,13 +156,17 @@ body.socialblue--sky.page-node-type-course-article .region--complementary_wrappe
   .socialblue--sky .region--content {
     margin-top: 20px;
   }
-  .socialblue--sky .region--complementary {
-    margin-top: 20px;
-    -webkit-box-ordinal-group: 4;
-        -ms-flex-order: 3;
-            order: 3;
+  .socialblue--sky .layout--with-complementary.sidebar-left .region--complementary {
+    padding-left: 1rem;
+    padding-right: 1rem;
+    -webkit-box-ordinal-group: 2;
+        -ms-flex-order: 1;
+            order: 1;
   }
-  body.socialblue--sky.path-group:not(.group-type-challenge) .layout--with-complementary .navbar-secondary, body.socialblue--sky.details .layout--with-complementary .navbar-secondary, body.socialblue--sky.path-user .layout--with-complementary .navbar-secondary, body.socialblue--sky.page-node-type-course-article .layout--with-complementary .navbar-secondary {
+  .socialblue--sky .layout--with-complementary.sidebar-left .region--complementary_wrapper {
+    top: -43px;
+  }
+  .socialblue--sky .layout--with-complementary.sidebar-left .navbar-secondary {
     -webkit-box-flex: 0;
         -ms-flex: 0 0 66.66667%;
             flex: 0 0 66.66667%;
@@ -177,23 +175,21 @@ body.socialblue--sky.page-node-type-course-article .region--complementary_wrappe
         -ms-flex-order: 2;
             order: 2;
   }
-  body.socialblue--sky.path-group:not(.group-type-challenge) .layout--with-complementary .region--secondary-navigation, body.socialblue--sky.details .layout--with-complementary .region--secondary-navigation, body.socialblue--sky.path-user .layout--with-complementary .region--secondary-navigation, body.socialblue--sky.page-node-type-course-article .layout--with-complementary .region--secondary-navigation {
-    padding-left: 1rem;
-    padding-right: 2rem;
-  }
-  body.socialblue--sky.path-group:not(.group-type-challenge) .layout--with-complementary.sidebar-left .region--complementary, body.socialblue--sky.details .layout--with-complementary.sidebar-left .region--complementary, body.socialblue--sky.path-user .layout--with-complementary.sidebar-left .region--complementary, body.socialblue--sky.page-node-type-course-article .layout--with-complementary.sidebar-left .region--complementary {
+  .socialblue--sky .layout--with-complementary.sidebar-left .region--secondary-navigation {
+    padding-left: 2rem;
+    padding-right: 1rem;
+    margin-top: -44px;
     -webkit-box-ordinal-group: 1;
         -ms-flex-order: 0;
             order: 0;
   }
-  body.socialblue--sky.path-group:not(.group-type-challenge) .layout--with-complementary.sidebar-left .region--secondary-navigation, body.socialblue--sky.details .layout--with-complementary.sidebar-left .region--secondary-navigation, body.socialblue--sky.path-user .layout--with-complementary.sidebar-left .region--secondary-navigation, body.socialblue--sky.page-node-type-course-article .layout--with-complementary.sidebar-left .region--secondary-navigation {
-    padding-left: 2rem;
-    padding-right: 1rem;
+  .socialblue--sky .region--complementary {
+    margin-top: 20px;
+    -webkit-box-ordinal-group: 4;
+        -ms-flex-order: 3;
+            order: 3;
   }
-  body.socialblue--sky.path-group:not(.group-type-challenge) .region--complementary_wrapper, body.socialblue--sky.details .region--complementary_wrapper, body.socialblue--sky.path-user .region--complementary_wrapper, body.socialblue--sky.page-node-type-course-article .region--complementary_wrapper {
-    top: -64px;
-  }
-  body.socialblue--sky.page-node-type-course-article .region--complementary_wrapper {
+  body.socialblue--sky.page-node-type-course-article .sidebar-left .region--complementary_wrapper {
     top: 0;
   }
 }
@@ -207,6 +203,10 @@ body.socialblue--sky.page-node-type-course-article .region--complementary_wrappe
     padding-right: 20px;
     padding-left: 0;
   }
+  .socialblue--sky .layout--with-complementary.sidebar-left .region--secondary-navigation {
+    padding-left: 30px;
+    padding-right: 0;
+  }
   .socialblue--sky .layout--with-complementary .region--content {
     padding-left: 0;
     padding-right: 20px;
@@ -215,37 +215,16 @@ body.socialblue--sky.page-node-type-course-article .region--complementary_wrappe
     padding-right: 0;
     padding-left: 20px;
   }
-  body.socialblue--sky.path-group:not(.group-type-challenge) .layout--with-complementary .region--secondary-navigation, body.socialblue--sky.details .layout--with-complementary .region--secondary-navigation, body.socialblue--sky.path-user .layout--with-complementary .region--secondary-navigation, body.socialblue--sky.page-node-type-course-article .layout--with-complementary .region--secondary-navigation {
-    padding-right: 30px;
-    padding-left: 0;
-  }
-  body.socialblue--sky.path-group:not(.group-type-challenge) .layout--with-complementary.sidebar-left .region--complementary .region--complementary, body.socialblue--sky.details .layout--with-complementary.sidebar-left .region--complementary .region--complementary, body.socialblue--sky.path-user .layout--with-complementary.sidebar-left .region--complementary .region--complementary, body.socialblue--sky.page-node-type-course-article .layout--with-complementary.sidebar-left .region--complementary .region--complementary {
-    padding-left: 0;
-    padding-right: 20px;
-  }
-  body.socialblue--sky.path-group:not(.group-type-challenge) .layout--with-complementary.sidebar-left .region--secondary-navigation, body.socialblue--sky.details .layout--with-complementary.sidebar-left .region--secondary-navigation, body.socialblue--sky.path-user .layout--with-complementary.sidebar-left .region--secondary-navigation, body.socialblue--sky.page-node-type-course-article .layout--with-complementary.sidebar-left .region--secondary-navigation {
-    padding-left: 30px;
-    padding-right: 0;
-  }
 }
 
 @media (max-width: 599px) {
   .socialblue--sky .region--secondary-navigation {
     margin-top: 0;
   }
-  .socialblue--sky .layout--with-complementary.sidebar-left .region--complementary {
-    -webkit-box-ordinal-group: 1;
-        -ms-flex-order: 0;
-            order: 0;
-  }
 }
 
 @media (max-width: 899px) {
-  body.socialblue--sky.path-group:not(.group-type-challenge) .region--complementary-bottom,
-  body.socialblue--sky.path-group:not(.group-type-challenge) .region--complementary-top, body.socialblue--sky.details .region--complementary-bottom,
-  body.socialblue--sky.details .region--complementary-top, body.socialblue--sky.path-user .region--complementary-bottom,
-  body.socialblue--sky.path-user .region--complementary-top, body.socialblue--sky.page-node-type-course-article .region--complementary-bottom,
-  body.socialblue--sky.page-node-type-course-article .region--complementary-top {
-    top: 0;
+  body.socialblue--sky .region--complementary_wrapper {
+    border-radius: 0 !important;
   }
 }

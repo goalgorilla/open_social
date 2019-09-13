@@ -13,8 +13,54 @@
 .socialblue--sky {
 
   .block-profile-hero-block .cover-wrap {
+    @include for-tablet-landscape-down {
+      min-height: 160px;
+      padding: 0;
+    }
+
     @include for-phone-only {
-      min-height: 150px;
+      min-height: 80px;
+    }
+  }
+
+  .block-group-hero-block {
+    .cover {
+      @include for-tablet-landscape-down {
+        padding: 0 1.875rem;
+        text-align: left;
+      }
+    }
+
+    .page-title {
+      @include for-tablet-landscape-down {
+        width: 100%;
+        max-width: 100%;
+        text-align: left;
+        padding: 0;
+      }
+    }
+
+    .cover-wrap {
+      @include for-tablet-landscape-down {
+        padding-top: 45px;
+        padding-bottom: 1rem;
+        min-height: auto;
+      }
+
+      .hero-footer__text {
+        @include for-tablet-landscape-down {
+          flex: 0 0 100%;
+          max-width: 100%;
+          margin: 0;
+          padding: 0;
+        }
+      }
+    }
+
+    .hero-footer {
+      @include for-phone-only {
+        text-align: left;
+      }
     }
   }
 
@@ -659,18 +705,22 @@
   .hero__group {
     .page-title {
       @include for-tablet-landscape-up {
-        padding-left: 2.5rem;
+        padding-left: 2.25rem;
         margin-left: 0;
         padding-bottom: 0;
         text-align: left;
       }
 
       h1 {
+        font-size: 22px;
         font-weight: 700;
+        line-height: 32px;
         text-shadow: none;
+        margin: 0;
 
         @include for-tablet-landscape-up {
           font-size: 36px;
+          line-height: 1.4;
         }
       }
     }
@@ -678,9 +728,17 @@
       display: inline-block;
       width: auto;
       padding: 4px 11px;
+      margin-bottom: .875rem;
+      font-size: 14px;
       color: #fff;
       border-radius: $border-radius-extra;
       text-shadow: none;
+
+      @include for-tablet-landscape-down {
+        padding-left: 7px;
+        padding-right: 7px;
+        font-size: 11px;
+      }
 
       &:hover {
         color: #fff;
@@ -698,7 +756,7 @@
 
     .hero-footer__text {
       @include for-tablet-landscape-up {
-        padding-left: 2.5rem;
+        padding-left: 2.25rem;
         margin-left: 0;
         flex: 0 0 auto;
         max-width: inherit;

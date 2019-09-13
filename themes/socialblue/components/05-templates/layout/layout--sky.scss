@@ -59,6 +59,8 @@
 
     &.sidebar-left {
       .region--content {
+        order: 3;
+
         @include for-desktop-up {
           padding-left: 20px;
           padding-right: 0;
@@ -66,15 +68,68 @@
       }
 
       .region--complementary {
-        order: 1;
+        margin-top: 0;
+        padding: 0;
+        order: 0;
+
+        @include for-tablet-landscape-up {
+          padding-left: 1rem;
+          padding-right: 1rem;
+          order: 1;
+        }
 
         @include for-desktop-up {
           padding-right: 20px;
           padding-left: 0;
         }
+      }
 
-        @include for-phone-only {
+      .region--complementary_wrapper {
+
+        @include for-tablet-landscape-up {
+          top: -43px;
+        }
+      }
+
+      .navbar-secondary {
+        flex: 0 0 100%;
+        max-width: 100%;
+
+        @include for-tablet-landscape-up {
+          flex: 0 0 (100%/1.5);
+          max-width: (100%/1.5);
+          order: 2;
+        }
+      }
+
+      .region--secondary-navigation {
+        display: flex;
+        justify-content: flex-end;
+        z-index: 3;
+        order: 1;
+        margin-top: 0;
+
+        @include for-tablet-landscape-up {
+          padding-left: 2rem;
+          padding-right: 1rem;
+          margin-top: -44px;
           order: 0;
+        }
+
+        @include for-desktop-up {
+          padding-left: 30px;
+          padding-right: 0;
+        }
+      }
+
+      .region--complementary-top {
+        > * {
+          &[class*='statistic-block']:first-child:not(:last-child) {
+            @include for-tablet-portrait-up {
+              border-bottom-right-radius: 0 !important;
+              border-bottom-left-radius: 0 !important;
+            }
+          }
         }
       }
     }
@@ -104,113 +159,36 @@
 }
 
 body.socialblue--sky {
-  &.path-group:not(.group-type-challenge),
-  &.details,
-  &.path-user,
-  &.page-node-type-course-article {
-    .layout--with-complementary {
+  .region--complementary_wrapper {
+    position: relative;
+    margin-bottom: 0;
+    z-index: 1000;
 
-      .navbar-secondary {
-        flex: 0 0 100%;
-        max-width: 100%;
-
-        @include for-tablet-landscape-up {
-          flex: 0 0 (100%/1.5);
-          max-width: (100%/1.5);
-          order: 2;
-        }
-      }
-
-      .region--secondary-navigation {
-        @include for-tablet-landscape-up {
-          padding-left: 1rem;
-          padding-right: 2rem;
-        }
-
-        @include for-desktop-up {
-          padding-right: 30px;
-          padding-left: 0;
-        }
-      }
-
-      &.sidebar-left {
-        .region--complementary {
-          order: 0;
-
-          @include for-tablet-landscape-up {
-            order: 1;
-          }
-
-          .region--complementary {
-            @include for-desktop-up {
-               padding-left: 0;
-               padding-right: 20px;
-            }
-          }
-        }
-
-        .region--secondary-navigation {
-          display: flex;
-          justify-content: flex-end;
-
-          @include for-tablet-landscape-up {
-            padding-left: 2rem;
-            padding-right: 1rem;
-          }
-
-          @include for-desktop-up {
-            padding-left: 30px;
-            padding-right: 0;
-          }
-        }
-      }
+    @include for-tablet-landscape-down {
+      border-radius: 0 !important;
     }
+  }
 
-    .region--secondary-navigation {
-      z-index: 3;
-    }
-
-    &.mode-search {
-      .region--complementary_wrapper {
-        z-index: 1;
-      }
-    }
-
+  &.mode-search {
     .region--complementary_wrapper {
-      position: relative;
-      z-index: 1000;
-
-      @include for-tablet-landscape-up {
-        top: -64px;
-      }
+      z-index: 1;
     }
+  }
 
-    .content--side_wrapper .region--content,
-    .region--complementary_wrapper {
-      border-radius: 2px;
-      background: #fff;
-      box-shadow: 0 2px 4px #4a4a4a;
-    }
+  .region--complementary-top + .region--complementary-bottom {
+    margin-top: 0;
+    padding-bottom: 1rem;
+  }
 
-    .region--complementary-top + .region--complementary-bottom {
-      margin-top: 0;
-      padding-bottom: 1rem;
-    }
-
-    .region--complementary-bottom,
-    .region--complementary-top {
-      padding-bottom: 0;
-      border-radius: 0;
-
-      @include for-tablet-landscape-down {
-        top: 0;
-      }
-    }
+  .region--complementary-bottom,
+  .region--complementary-top {
+    padding-bottom: 0;
+    border-radius: 0;
   }
 }
 
 body.socialblue--sky {
-  &.page-node-type-course-article {
+  &.page-node-type-course-article .sidebar-left {
     .region--complementary_wrapper {
       border-radius: 10px !important;
 

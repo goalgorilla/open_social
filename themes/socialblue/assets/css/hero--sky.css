@@ -465,14 +465,19 @@ main:not(.is-navbar-secondary) .socialblue--sky .hero__full .hero-footer__bottom
 }
 
 .socialblue--sky .hero__group .page-title h1 {
+  font-size: 22px;
   font-weight: 700;
+  line-height: 32px;
   text-shadow: none;
+  margin: 0;
 }
 
 .socialblue--sky .hero__group .teaser__tag {
   display: inline-block;
   width: auto;
   padding: 4px 11px;
+  margin-bottom: .875rem;
+  font-size: 14px;
   color: #fff;
   border-radius: 2px;
   text-shadow: none;
@@ -686,16 +691,17 @@ main:not(.is-navbar-secondary) .socialblue--sky .hero__full .hero-footer__bottom
     min-width: 200px;
   }
   .socialblue--sky .hero__group .page-title {
-    padding-left: 2.5rem;
+    padding-left: 2.25rem;
     margin-left: 0;
     padding-bottom: 0;
     text-align: left;
   }
   .socialblue--sky .hero__group .page-title h1 {
     font-size: 36px;
+    line-height: 1.4;
   }
   .socialblue--sky .hero__group .hero-footer__text {
-    padding-left: 2.5rem;
+    padding-left: 2.25rem;
     margin-left: 0;
     -webkit-box-flex: 0;
         -ms-flex: 0 0 auto;
@@ -704,9 +710,47 @@ main:not(.is-navbar-secondary) .socialblue--sky .hero__full .hero-footer__bottom
   }
 }
 
+@media (max-width: 899px) {
+  .socialblue--sky .block-profile-hero-block .cover-wrap {
+    min-height: 160px;
+    padding: 0;
+  }
+  .socialblue--sky .block-group-hero-block .cover {
+    padding: 0 1.875rem;
+    text-align: left;
+  }
+  .socialblue--sky .block-group-hero-block .page-title {
+    width: 100%;
+    max-width: 100%;
+    text-align: left;
+    padding: 0;
+  }
+  .socialblue--sky .block-group-hero-block .cover-wrap {
+    padding-top: 45px;
+    padding-bottom: 1rem;
+    min-height: auto;
+  }
+  .socialblue--sky .block-group-hero-block .cover-wrap .hero-footer__text {
+    -webkit-box-flex: 0;
+        -ms-flex: 0 0 100%;
+            flex: 0 0 100%;
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+  .socialblue--sky .hero__group .teaser__tag {
+    padding-left: 7px;
+    padding-right: 7px;
+    font-size: 11px;
+  }
+}
+
 @media (max-width: 599px) {
   .socialblue--sky .block-profile-hero-block .cover-wrap {
-    min-height: 150px;
+    min-height: 80px;
+  }
+  .socialblue--sky .block-group-hero-block .hero-footer {
+    text-align: left;
   }
   .socialblue--sky .hero__banner .hero-footer .vote-widget {
     width: auto;

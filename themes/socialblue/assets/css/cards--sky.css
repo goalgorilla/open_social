@@ -48,6 +48,7 @@
   position: relative;
   float: none;
   margin-left: 0;
+  padding-left: 30px;
   padding-right: 30px;
   text-transform: uppercase;
   font-weight: 700;
@@ -219,6 +220,8 @@
 
 .socialblue--sky .card__info-user--name {
   margin: 0 0 10px;
+  font-size: 1.375rem;
+  line-height: 24px;
 }
 
 .socialblue--sky .card__info-user--about {
@@ -226,14 +229,18 @@
   line-height: 24px;
 }
 
-.socialblue--sky .card__info-user--about-job {
-  font-size: 18px;
-  margin-bottom: 10px;
+.socialblue--sky .card__info-user--about-job, .socialblue--sky .card__info-user--about-organization {
+  font-size: .875rem;
+  margin-bottom: 5px;
 }
 
 .socialblue--sky .card__info-user--about-address {
   color: #989b97;
   font-weight: 700;
+}
+
+.socialblue--sky .card__info-user--about-address p {
+  margin-bottom: 0;
 }
 
 .socialblue--sky .block-social-tagging .card__block .group-about__item .tags-group + .tags-group {
@@ -640,48 +647,46 @@
   display: inline-block;
 }
 
-.socialblue--sky .card.block-group-statistic-block, .socialblue--sky .card.block-profile-statistic-block {
-  padding: 15px 1.25rem 0;
+.socialblue--sky .card[class*='statistic-block'] {
+  top: -1px;
+  padding: 1rem 1.875rem;
+  margin-bottom: 0;
+  background: #fafafa;
+  -webkit-box-shadow: none;
+          box-shadow: none;
+  overflow: hidden;
 }
 
-.socialblue--sky .card.block-group-statistic-block .hero-footer__cta, .socialblue--sky .card.block-profile-statistic-block .hero-footer__cta {
+.socialblue--sky .card[class*='statistic-block'] .hero-footer__cta {
   position: static;
-  -webkit-box-flex: 0;
-      -ms-flex: 0 0 100%;
-          flex: 0 0 100%;
-  max-width: 100%;
-  -webkit-box-pack: center;
-      -ms-flex-pack: center;
-          justify-content: center;
-  padding-left: 0;
-  padding-bottom: 2.5rem;
+  padding: 0 0 1.25rem;
 }
 
-.socialblue--sky .card.block-group-statistic-block .hero-footer__cta *:not(.caret), .socialblue--sky .card.block-profile-statistic-block .hero-footer__cta *:not(.caret) {
+.socialblue--sky .card[class*='statistic-block'] .hero-footer__cta *:not(.caret) {
   width: 100%;
+  margin: 0 auto;
 }
 
-.socialblue--sky .card.block-group-statistic-block .hero-footer__cta .btn, .socialblue--sky .card.block-profile-statistic-block .hero-footer__cta .btn {
+.socialblue--sky .card[class*='statistic-block'] .hero-footer__cta .btn {
   text-transform: uppercase;
-  border-radius: 5px !important;
 }
 
-.socialblue--sky .card.block-group-statistic-block .hero-footer__cta .btn.btn-default, .socialblue--sky .card.block-profile-statistic-block .hero-footer__cta .btn.btn-default {
+.socialblue--sky .card[class*='statistic-block'] .hero-footer__cta .btn.btn-default {
   background: transparent;
 }
 
-.socialblue--sky .card.block-group-statistic-block .teaser__content-text, .socialblue--sky .card.block-profile-statistic-block .teaser__content-text {
+.socialblue--sky .card[class*='statistic-block'] .teaser__content-text {
   position: relative;
   min-height: 44px;
   margin: -2.5rem -2.25rem 1.75rem;
-  padding: 11px 3.5rem;
+  padding: 10px 3.5rem;
   background: #f80;
   font-weight: 700;
   color: #fff;
   text-align: center;
 }
 
-.socialblue--sky .card.block-group-statistic-block .teaser__content-text--icon, .socialblue--sky .card.block-profile-statistic-block .teaser__content-text--icon {
+.socialblue--sky .card[class*='statistic-block'] .teaser__content-text--icon {
   position: absolute;
   display: -webkit-box;
   display: -ms-flexbox;
@@ -702,10 +707,32 @@
           transform: translateY(-50%);
 }
 
-.socialblue--sky .card.block-group-statistic-block .teaser__content-text--icon svg, .socialblue--sky .card.block-profile-statistic-block .teaser__content-text--icon svg {
+.socialblue--sky .card[class*='statistic-block'] .teaser__content-text--icon svg {
   fill: #f80;
   -webkit-transform: rotate(-90deg);
           transform: rotate(-90deg);
+}
+
+.socialblue--sky .card[class*='statistic-block'] .card__actionbar {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.socialblue--sky .card[class*='statistic-block'] > *:last-child {
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.socialblue--sky .card[class*='statistic-block'].block-profile-statistic-block {
+  padding-top: 0;
+}
+
+.socialblue--sky .card[class*='statistic-block'].block-profile-statistic-block .card__info-user .hero-avatar {
+  border-color: #fafafa;
+}
+
+.socialblue--sky.path-user .card[class*='statistic-block'] {
+  overflow: visible;
 }
 
 .socialblue--sky .content-merged .block-views-blockgroup-managers-block-list-managers {
@@ -1051,6 +1078,47 @@
   margin-bottom: 0;
 }
 
+.socialblue--sky .content-merged .region--content .content--side_wrapper-card > .card:not(.teaser--idea--featured),
+.socialblue--sky .content-merged .region--content .content--side_wrapper-card .card:not(.teaser--idea--featured) {
+  border-radius: 0 !important;
+  -webkit-box-shadow: none;
+          box-shadow: none;
+  padding: 1.5rem 1.25rem;
+  margin-bottom: 0;
+  -webkit-box-align: start;
+      -ms-flex-align: start;
+          align-items: flex-start;
+}
+
+.socialblue--sky .content-merged .region--content .content--side_wrapper-card > .card:not(.teaser--idea--featured) .card__body,
+.socialblue--sky .content-merged .region--content .content--side_wrapper-card > .card:not(.teaser--idea--featured) .card__block,
+.socialblue--sky .content-merged .region--content .content--side_wrapper-card .card:not(.teaser--idea--featured) .card__body,
+.socialblue--sky .content-merged .region--content .content--side_wrapper-card .card:not(.teaser--idea--featured) .card__block {
+  padding: 0;
+  width: 100%;
+}
+
+.socialblue--sky .content-merged .region--content .content--side_wrapper-card > .card:not(.teaser--idea--featured) .card__body .view--group-managers,
+.socialblue--sky .content-merged .region--content .content--side_wrapper-card > .card:not(.teaser--idea--featured) .card__body .card__block,
+.socialblue--sky .content-merged .region--content .content--side_wrapper-card > .card:not(.teaser--idea--featured) .card__body .card__text,
+.socialblue--sky .content-merged .region--content .content--side_wrapper-card > .card:not(.teaser--idea--featured) .card__block .view--group-managers,
+.socialblue--sky .content-merged .region--content .content--side_wrapper-card > .card:not(.teaser--idea--featured) .card__block .card__block,
+.socialblue--sky .content-merged .region--content .content--side_wrapper-card > .card:not(.teaser--idea--featured) .card__block .card__text,
+.socialblue--sky .content-merged .region--content .content--side_wrapper-card .card:not(.teaser--idea--featured) .card__body .view--group-managers,
+.socialblue--sky .content-merged .region--content .content--side_wrapper-card .card:not(.teaser--idea--featured) .card__body .card__block,
+.socialblue--sky .content-merged .region--content .content--side_wrapper-card .card:not(.teaser--idea--featured) .card__body .card__text,
+.socialblue--sky .content-merged .region--content .content--side_wrapper-card .card:not(.teaser--idea--featured) .card__block .view--group-managers,
+.socialblue--sky .content-merged .region--content .content--side_wrapper-card .card:not(.teaser--idea--featured) .card__block .card__block,
+.socialblue--sky .content-merged .region--content .content--side_wrapper-card .card:not(.teaser--idea--featured) .card__block .card__text {
+  padding: 0;
+}
+
+.socialblue--sky .content-merged .region--content .content--side_wrapper-card > .card.teaser--idea--featured,
+.socialblue--sky .content-merged .region--content .content--side_wrapper-card .card.teaser--idea--featured {
+  -webkit-box-shadow: none;
+          box-shadow: none;
+}
+
 .socialblue--sky.path-group .region--complementary-top .block-course-add-section {
   padding: 1.25rem 2.25rem;
 }
@@ -1270,93 +1338,25 @@
   padding-top: 1.25rem;
 }
 
-body.socialblue--sky.path-group .region--complementary-bottom .local-actions,
-body.socialblue--sky.path-group .region--complementary-bottom [class*='block-group-add'],
-body.socialblue--sky.path-group .region--complementary-bottom [class*='add-block'],
-body.socialblue--sky.path-group .region--complementary-top .local-actions,
-body.socialblue--sky.path-group .region--complementary-top [class*='block-group-add'],
-body.socialblue--sky.path-group .region--complementary-top [class*='add-block'], body.socialblue--sky.details .region--complementary-bottom .local-actions,
-body.socialblue--sky.details .region--complementary-bottom [class*='block-group-add'],
-body.socialblue--sky.details .region--complementary-bottom [class*='add-block'],
-body.socialblue--sky.details .region--complementary-top .local-actions,
-body.socialblue--sky.details .region--complementary-top [class*='block-group-add'],
-body.socialblue--sky.details .region--complementary-top [class*='add-block'], body.socialblue--sky.path-user .region--complementary-bottom .local-actions,
-body.socialblue--sky.path-user .region--complementary-bottom [class*='block-group-add'],
-body.socialblue--sky.path-user .region--complementary-bottom [class*='add-block'],
-body.socialblue--sky.path-user .region--complementary-top .local-actions,
-body.socialblue--sky.path-user .region--complementary-top [class*='block-group-add'],
-body.socialblue--sky.path-user .region--complementary-top [class*='add-block'], body.socialblue--sky.page-node-type-course-article .region--complementary-bottom .local-actions,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='block-group-add'],
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='add-block'],
-body.socialblue--sky.page-node-type-course-article .region--complementary-top .local-actions,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='block-group-add'],
-body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='add-block'] {
+body.socialblue--sky .sidebar-left .region--complementary-bottom .local-actions,
+body.socialblue--sky .sidebar-left .region--complementary-top .local-actions {
   position: relative;
   padding: 1.25rem 2.25rem;
 }
 
-body.socialblue--sky.path-group .region--complementary-bottom .local-actions .btn,
-body.socialblue--sky.path-group .region--complementary-bottom [class*='block-group-add'] .btn,
-body.socialblue--sky.path-group .region--complementary-bottom [class*='add-block'] .btn,
-body.socialblue--sky.path-group .region--complementary-top .local-actions .btn,
-body.socialblue--sky.path-group .region--complementary-top [class*='block-group-add'] .btn,
-body.socialblue--sky.path-group .region--complementary-top [class*='add-block'] .btn, body.socialblue--sky.details .region--complementary-bottom .local-actions .btn,
-body.socialblue--sky.details .region--complementary-bottom [class*='block-group-add'] .btn,
-body.socialblue--sky.details .region--complementary-bottom [class*='add-block'] .btn,
-body.socialblue--sky.details .region--complementary-top .local-actions .btn,
-body.socialblue--sky.details .region--complementary-top [class*='block-group-add'] .btn,
-body.socialblue--sky.details .region--complementary-top [class*='add-block'] .btn, body.socialblue--sky.path-user .region--complementary-bottom .local-actions .btn,
-body.socialblue--sky.path-user .region--complementary-bottom [class*='block-group-add'] .btn,
-body.socialblue--sky.path-user .region--complementary-bottom [class*='add-block'] .btn,
-body.socialblue--sky.path-user .region--complementary-top .local-actions .btn,
-body.socialblue--sky.path-user .region--complementary-top [class*='block-group-add'] .btn,
-body.socialblue--sky.path-user .region--complementary-top [class*='add-block'] .btn, body.socialblue--sky.page-node-type-course-article .region--complementary-bottom .local-actions .btn,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='block-group-add'] .btn,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='add-block'] .btn,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top .local-actions .btn,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='block-group-add'] .btn,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='add-block'] .btn {
+body.socialblue--sky .sidebar-left .region--complementary-bottom .local-actions .btn,
+body.socialblue--sky .sidebar-left .region--complementary-top .local-actions .btn {
   margin-bottom: 0;
 }
 
-body.socialblue--sky.path-group .region--complementary-bottom .local-actions .btn,
-body.socialblue--sky.path-group .region--complementary-top .local-actions .btn, body.socialblue--sky.details .region--complementary-bottom .local-actions .btn,
-body.socialblue--sky.details .region--complementary-top .local-actions .btn, body.socialblue--sky.path-user .region--complementary-bottom .local-actions .btn,
-body.socialblue--sky.path-user .region--complementary-top .local-actions .btn, body.socialblue--sky.page-node-type-course-article .region--complementary-bottom .local-actions .btn,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top .local-actions .btn {
+body.socialblue--sky .sidebar-left .region--complementary-bottom .local-actions .btn,
+body.socialblue--sky .sidebar-left .region--complementary-top .local-actions .btn {
   width: 100%;
 }
 
-body.socialblue--sky.path-group .region--complementary-bottom .card,
-body.socialblue--sky.path-group .region--complementary-bottom .off-canvas-xs-only,
-body.socialblue--sky.path-group .region--complementary-bottom [class*='block-group-add'],
-body.socialblue--sky.path-group .region--complementary-bottom [class*='add-block'],
-body.socialblue--sky.path-group .region--complementary-top .card,
-body.socialblue--sky.path-group .region--complementary-top .off-canvas-xs-only,
-body.socialblue--sky.path-group .region--complementary-top [class*='block-group-add'],
-body.socialblue--sky.path-group .region--complementary-top [class*='add-block'], body.socialblue--sky.details .region--complementary-bottom .card,
-body.socialblue--sky.details .region--complementary-bottom .off-canvas-xs-only,
-body.socialblue--sky.details .region--complementary-bottom [class*='block-group-add'],
-body.socialblue--sky.details .region--complementary-bottom [class*='add-block'],
-body.socialblue--sky.details .region--complementary-top .card,
-body.socialblue--sky.details .region--complementary-top .off-canvas-xs-only,
-body.socialblue--sky.details .region--complementary-top [class*='block-group-add'],
-body.socialblue--sky.details .region--complementary-top [class*='add-block'], body.socialblue--sky.path-user .region--complementary-bottom .card,
-body.socialblue--sky.path-user .region--complementary-bottom .off-canvas-xs-only,
-body.socialblue--sky.path-user .region--complementary-bottom [class*='block-group-add'],
-body.socialblue--sky.path-user .region--complementary-bottom [class*='add-block'],
-body.socialblue--sky.path-user .region--complementary-top .card,
-body.socialblue--sky.path-user .region--complementary-top .off-canvas-xs-only,
-body.socialblue--sky.path-user .region--complementary-top [class*='block-group-add'],
-body.socialblue--sky.path-user .region--complementary-top [class*='add-block'], body.socialblue--sky.page-node-type-course-article .region--complementary-bottom .card,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom .off-canvas-xs-only,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='block-group-add'],
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='add-block'],
-body.socialblue--sky.page-node-type-course-article .region--complementary-top .card,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top .off-canvas-xs-only,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='block-group-add'],
-body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='add-block'] {
-  border-radius: 0 !important;
+body.socialblue--sky .sidebar-left .region--complementary-bottom > *:not([class*='statistic-block']),
+body.socialblue--sky .sidebar-left .region--complementary-top > *:not([class*='statistic-block']) {
+  position: relative;
   -webkit-box-shadow: none;
           box-shadow: none;
   padding-bottom: 1.5rem;
@@ -1364,35 +1364,8 @@ body.socialblue--sky.page-node-type-course-article .region--complementary-top [c
   background: transparent;
 }
 
-body.socialblue--sky.path-group .region--complementary-bottom .card:after,
-body.socialblue--sky.path-group .region--complementary-bottom .off-canvas-xs-only:after,
-body.socialblue--sky.path-group .region--complementary-bottom [class*='block-group-add']:after,
-body.socialblue--sky.path-group .region--complementary-bottom [class*='add-block']:after,
-body.socialblue--sky.path-group .region--complementary-top .card:after,
-body.socialblue--sky.path-group .region--complementary-top .off-canvas-xs-only:after,
-body.socialblue--sky.path-group .region--complementary-top [class*='block-group-add']:after,
-body.socialblue--sky.path-group .region--complementary-top [class*='add-block']:after, body.socialblue--sky.details .region--complementary-bottom .card:after,
-body.socialblue--sky.details .region--complementary-bottom .off-canvas-xs-only:after,
-body.socialblue--sky.details .region--complementary-bottom [class*='block-group-add']:after,
-body.socialblue--sky.details .region--complementary-bottom [class*='add-block']:after,
-body.socialblue--sky.details .region--complementary-top .card:after,
-body.socialblue--sky.details .region--complementary-top .off-canvas-xs-only:after,
-body.socialblue--sky.details .region--complementary-top [class*='block-group-add']:after,
-body.socialblue--sky.details .region--complementary-top [class*='add-block']:after, body.socialblue--sky.path-user .region--complementary-bottom .card:after,
-body.socialblue--sky.path-user .region--complementary-bottom .off-canvas-xs-only:after,
-body.socialblue--sky.path-user .region--complementary-bottom [class*='block-group-add']:after,
-body.socialblue--sky.path-user .region--complementary-bottom [class*='add-block']:after,
-body.socialblue--sky.path-user .region--complementary-top .card:after,
-body.socialblue--sky.path-user .region--complementary-top .off-canvas-xs-only:after,
-body.socialblue--sky.path-user .region--complementary-top [class*='block-group-add']:after,
-body.socialblue--sky.path-user .region--complementary-top [class*='add-block']:after, body.socialblue--sky.page-node-type-course-article .region--complementary-bottom .card:after,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom .off-canvas-xs-only:after,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='block-group-add']:after,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='add-block']:after,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top .card:after,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top .off-canvas-xs-only:after,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='block-group-add']:after,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='add-block']:after {
+body.socialblue--sky .sidebar-left .region--complementary-bottom > *:not([class*='statistic-block']):after,
+body.socialblue--sky .sidebar-left .region--complementary-top > *:not([class*='statistic-block']):after {
   content: '';
   position: absolute;
   height: 2px;
@@ -1403,1239 +1376,103 @@ body.socialblue--sky.page-node-type-course-article .region--complementary-top [c
   background: #fafafa;
 }
 
-body.socialblue--sky.path-group .region--complementary-bottom .card:nth-last-child(1):after,
-body.socialblue--sky.path-group .region--complementary-bottom .off-canvas-xs-only:nth-last-child(1):after,
-body.socialblue--sky.path-group .region--complementary-bottom [class*='block-group-add']:nth-last-child(1):after,
-body.socialblue--sky.path-group .region--complementary-bottom [class*='add-block']:nth-last-child(1):after,
-body.socialblue--sky.path-group .region--complementary-top .card:nth-last-child(1):after,
-body.socialblue--sky.path-group .region--complementary-top .off-canvas-xs-only:nth-last-child(1):after,
-body.socialblue--sky.path-group .region--complementary-top [class*='block-group-add']:nth-last-child(1):after,
-body.socialblue--sky.path-group .region--complementary-top [class*='add-block']:nth-last-child(1):after, body.socialblue--sky.details .region--complementary-bottom .card:nth-last-child(1):after,
-body.socialblue--sky.details .region--complementary-bottom .off-canvas-xs-only:nth-last-child(1):after,
-body.socialblue--sky.details .region--complementary-bottom [class*='block-group-add']:nth-last-child(1):after,
-body.socialblue--sky.details .region--complementary-bottom [class*='add-block']:nth-last-child(1):after,
-body.socialblue--sky.details .region--complementary-top .card:nth-last-child(1):after,
-body.socialblue--sky.details .region--complementary-top .off-canvas-xs-only:nth-last-child(1):after,
-body.socialblue--sky.details .region--complementary-top [class*='block-group-add']:nth-last-child(1):after,
-body.socialblue--sky.details .region--complementary-top [class*='add-block']:nth-last-child(1):after, body.socialblue--sky.path-user .region--complementary-bottom .card:nth-last-child(1):after,
-body.socialblue--sky.path-user .region--complementary-bottom .off-canvas-xs-only:nth-last-child(1):after,
-body.socialblue--sky.path-user .region--complementary-bottom [class*='block-group-add']:nth-last-child(1):after,
-body.socialblue--sky.path-user .region--complementary-bottom [class*='add-block']:nth-last-child(1):after,
-body.socialblue--sky.path-user .region--complementary-top .card:nth-last-child(1):after,
-body.socialblue--sky.path-user .region--complementary-top .off-canvas-xs-only:nth-last-child(1):after,
-body.socialblue--sky.path-user .region--complementary-top [class*='block-group-add']:nth-last-child(1):after,
-body.socialblue--sky.path-user .region--complementary-top [class*='add-block']:nth-last-child(1):after, body.socialblue--sky.page-node-type-course-article .region--complementary-bottom .card:nth-last-child(1):after,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom .off-canvas-xs-only:nth-last-child(1):after,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='block-group-add']:nth-last-child(1):after,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='add-block']:nth-last-child(1):after,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top .card:nth-last-child(1):after,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top .off-canvas-xs-only:nth-last-child(1):after,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='block-group-add']:nth-last-child(1):after,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='add-block']:nth-last-child(1):after {
+body.socialblue--sky .sidebar-left .region--complementary-bottom > *:not([class*='statistic-block']):nth-last-child(1):after,
+body.socialblue--sky .sidebar-left .region--complementary-top > *:not([class*='statistic-block']):nth-last-child(1):after {
   display: none;
 }
 
-body.socialblue--sky.path-group .region--complementary-bottom .card.block-social-tagging,
-body.socialblue--sky.path-group .region--complementary-bottom .off-canvas-xs-only.block-social-tagging,
-body.socialblue--sky.path-group .region--complementary-bottom [class*='block-group-add'].block-social-tagging,
-body.socialblue--sky.path-group .region--complementary-bottom [class*='add-block'].block-social-tagging,
-body.socialblue--sky.path-group .region--complementary-top .card.block-social-tagging,
-body.socialblue--sky.path-group .region--complementary-top .off-canvas-xs-only.block-social-tagging,
-body.socialblue--sky.path-group .region--complementary-top [class*='block-group-add'].block-social-tagging,
-body.socialblue--sky.path-group .region--complementary-top [class*='add-block'].block-social-tagging, body.socialblue--sky.details .region--complementary-bottom .card.block-social-tagging,
-body.socialblue--sky.details .region--complementary-bottom .off-canvas-xs-only.block-social-tagging,
-body.socialblue--sky.details .region--complementary-bottom [class*='block-group-add'].block-social-tagging,
-body.socialblue--sky.details .region--complementary-bottom [class*='add-block'].block-social-tagging,
-body.socialblue--sky.details .region--complementary-top .card.block-social-tagging,
-body.socialblue--sky.details .region--complementary-top .off-canvas-xs-only.block-social-tagging,
-body.socialblue--sky.details .region--complementary-top [class*='block-group-add'].block-social-tagging,
-body.socialblue--sky.details .region--complementary-top [class*='add-block'].block-social-tagging, body.socialblue--sky.path-user .region--complementary-bottom .card.block-social-tagging,
-body.socialblue--sky.path-user .region--complementary-bottom .off-canvas-xs-only.block-social-tagging,
-body.socialblue--sky.path-user .region--complementary-bottom [class*='block-group-add'].block-social-tagging,
-body.socialblue--sky.path-user .region--complementary-bottom [class*='add-block'].block-social-tagging,
-body.socialblue--sky.path-user .region--complementary-top .card.block-social-tagging,
-body.socialblue--sky.path-user .region--complementary-top .off-canvas-xs-only.block-social-tagging,
-body.socialblue--sky.path-user .region--complementary-top [class*='block-group-add'].block-social-tagging,
-body.socialblue--sky.path-user .region--complementary-top [class*='add-block'].block-social-tagging, body.socialblue--sky.page-node-type-course-article .region--complementary-bottom .card.block-social-tagging,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom .off-canvas-xs-only.block-social-tagging,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='block-group-add'].block-social-tagging,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='add-block'].block-social-tagging,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top .card.block-social-tagging,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top .off-canvas-xs-only.block-social-tagging,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='block-group-add'].block-social-tagging,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='add-block'].block-social-tagging {
+body.socialblue--sky .sidebar-left .region--complementary-bottom > *:not([class*='statistic-block']).block-social-tagging,
+body.socialblue--sky .sidebar-left .region--complementary-top > *:not([class*='statistic-block']).block-social-tagging {
   padding-bottom: 0;
 }
 
-body.socialblue--sky.path-group .region--complementary-bottom .card.block-social-tagging .card__block,
-body.socialblue--sky.path-group .region--complementary-bottom .off-canvas-xs-only.block-social-tagging .card__block,
-body.socialblue--sky.path-group .region--complementary-bottom [class*='block-group-add'].block-social-tagging .card__block,
-body.socialblue--sky.path-group .region--complementary-bottom [class*='add-block'].block-social-tagging .card__block,
-body.socialblue--sky.path-group .region--complementary-top .card.block-social-tagging .card__block,
-body.socialblue--sky.path-group .region--complementary-top .off-canvas-xs-only.block-social-tagging .card__block,
-body.socialblue--sky.path-group .region--complementary-top [class*='block-group-add'].block-social-tagging .card__block,
-body.socialblue--sky.path-group .region--complementary-top [class*='add-block'].block-social-tagging .card__block, body.socialblue--sky.details .region--complementary-bottom .card.block-social-tagging .card__block,
-body.socialblue--sky.details .region--complementary-bottom .off-canvas-xs-only.block-social-tagging .card__block,
-body.socialblue--sky.details .region--complementary-bottom [class*='block-group-add'].block-social-tagging .card__block,
-body.socialblue--sky.details .region--complementary-bottom [class*='add-block'].block-social-tagging .card__block,
-body.socialblue--sky.details .region--complementary-top .card.block-social-tagging .card__block,
-body.socialblue--sky.details .region--complementary-top .off-canvas-xs-only.block-social-tagging .card__block,
-body.socialblue--sky.details .region--complementary-top [class*='block-group-add'].block-social-tagging .card__block,
-body.socialblue--sky.details .region--complementary-top [class*='add-block'].block-social-tagging .card__block, body.socialblue--sky.path-user .region--complementary-bottom .card.block-social-tagging .card__block,
-body.socialblue--sky.path-user .region--complementary-bottom .off-canvas-xs-only.block-social-tagging .card__block,
-body.socialblue--sky.path-user .region--complementary-bottom [class*='block-group-add'].block-social-tagging .card__block,
-body.socialblue--sky.path-user .region--complementary-bottom [class*='add-block'].block-social-tagging .card__block,
-body.socialblue--sky.path-user .region--complementary-top .card.block-social-tagging .card__block,
-body.socialblue--sky.path-user .region--complementary-top .off-canvas-xs-only.block-social-tagging .card__block,
-body.socialblue--sky.path-user .region--complementary-top [class*='block-group-add'].block-social-tagging .card__block,
-body.socialblue--sky.path-user .region--complementary-top [class*='add-block'].block-social-tagging .card__block, body.socialblue--sky.page-node-type-course-article .region--complementary-bottom .card.block-social-tagging .card__block,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom .off-canvas-xs-only.block-social-tagging .card__block,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='block-group-add'].block-social-tagging .card__block,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='add-block'].block-social-tagging .card__block,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top .card.block-social-tagging .card__block,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top .off-canvas-xs-only.block-social-tagging .card__block,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='block-group-add'].block-social-tagging .card__block,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='add-block'].block-social-tagging .card__block {
+body.socialblue--sky .sidebar-left .region--complementary-bottom > *:not([class*='statistic-block']).block-social-tagging .card__block,
+body.socialblue--sky .sidebar-left .region--complementary-top > *:not([class*='statistic-block']).block-social-tagging .card__block {
   padding-bottom: 1.25rem;
 }
 
-body.socialblue--sky.path-group .region--complementary-bottom .card.block-discussion-add-block,
-body.socialblue--sky.path-group .region--complementary-bottom .off-canvas-xs-only.block-discussion-add-block,
-body.socialblue--sky.path-group .region--complementary-bottom [class*='block-group-add'].block-discussion-add-block,
-body.socialblue--sky.path-group .region--complementary-bottom [class*='add-block'].block-discussion-add-block,
-body.socialblue--sky.path-group .region--complementary-top .card.block-discussion-add-block,
-body.socialblue--sky.path-group .region--complementary-top .off-canvas-xs-only.block-discussion-add-block,
-body.socialblue--sky.path-group .region--complementary-top [class*='block-group-add'].block-discussion-add-block,
-body.socialblue--sky.path-group .region--complementary-top [class*='add-block'].block-discussion-add-block, body.socialblue--sky.details .region--complementary-bottom .card.block-discussion-add-block,
-body.socialblue--sky.details .region--complementary-bottom .off-canvas-xs-only.block-discussion-add-block,
-body.socialblue--sky.details .region--complementary-bottom [class*='block-group-add'].block-discussion-add-block,
-body.socialblue--sky.details .region--complementary-bottom [class*='add-block'].block-discussion-add-block,
-body.socialblue--sky.details .region--complementary-top .card.block-discussion-add-block,
-body.socialblue--sky.details .region--complementary-top .off-canvas-xs-only.block-discussion-add-block,
-body.socialblue--sky.details .region--complementary-top [class*='block-group-add'].block-discussion-add-block,
-body.socialblue--sky.details .region--complementary-top [class*='add-block'].block-discussion-add-block, body.socialblue--sky.path-user .region--complementary-bottom .card.block-discussion-add-block,
-body.socialblue--sky.path-user .region--complementary-bottom .off-canvas-xs-only.block-discussion-add-block,
-body.socialblue--sky.path-user .region--complementary-bottom [class*='block-group-add'].block-discussion-add-block,
-body.socialblue--sky.path-user .region--complementary-bottom [class*='add-block'].block-discussion-add-block,
-body.socialblue--sky.path-user .region--complementary-top .card.block-discussion-add-block,
-body.socialblue--sky.path-user .region--complementary-top .off-canvas-xs-only.block-discussion-add-block,
-body.socialblue--sky.path-user .region--complementary-top [class*='block-group-add'].block-discussion-add-block,
-body.socialblue--sky.path-user .region--complementary-top [class*='add-block'].block-discussion-add-block, body.socialblue--sky.page-node-type-course-article .region--complementary-bottom .card.block-discussion-add-block,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom .off-canvas-xs-only.block-discussion-add-block,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='block-group-add'].block-discussion-add-block,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='add-block'].block-discussion-add-block,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top .card.block-discussion-add-block,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top .off-canvas-xs-only.block-discussion-add-block,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='block-group-add'].block-discussion-add-block,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='add-block'].block-discussion-add-block {
-  padding: 1.25rem 2.25rem .25rem;
-}
-
-body.socialblue--sky.path-group .region--complementary-bottom .card.block-group-statistic-block, body.socialblue--sky.path-group .region--complementary-bottom .card.block-profile-statistic-block,
-body.socialblue--sky.path-group .region--complementary-bottom .off-canvas-xs-only.block-group-statistic-block,
-body.socialblue--sky.path-group .region--complementary-bottom .off-canvas-xs-only.block-profile-statistic-block,
-body.socialblue--sky.path-group .region--complementary-bottom [class*='block-group-add'].block-group-statistic-block,
-body.socialblue--sky.path-group .region--complementary-bottom [class*='block-group-add'].block-profile-statistic-block,
-body.socialblue--sky.path-group .region--complementary-bottom [class*='add-block'].block-group-statistic-block,
-body.socialblue--sky.path-group .region--complementary-bottom [class*='add-block'].block-profile-statistic-block,
-body.socialblue--sky.path-group .region--complementary-top .card.block-group-statistic-block,
-body.socialblue--sky.path-group .region--complementary-top .card.block-profile-statistic-block,
-body.socialblue--sky.path-group .region--complementary-top .off-canvas-xs-only.block-group-statistic-block,
-body.socialblue--sky.path-group .region--complementary-top .off-canvas-xs-only.block-profile-statistic-block,
-body.socialblue--sky.path-group .region--complementary-top [class*='block-group-add'].block-group-statistic-block,
-body.socialblue--sky.path-group .region--complementary-top [class*='block-group-add'].block-profile-statistic-block,
-body.socialblue--sky.path-group .region--complementary-top [class*='add-block'].block-group-statistic-block,
-body.socialblue--sky.path-group .region--complementary-top [class*='add-block'].block-profile-statistic-block, body.socialblue--sky.details .region--complementary-bottom .card.block-group-statistic-block, body.socialblue--sky.details .region--complementary-bottom .card.block-profile-statistic-block,
-body.socialblue--sky.details .region--complementary-bottom .off-canvas-xs-only.block-group-statistic-block,
-body.socialblue--sky.details .region--complementary-bottom .off-canvas-xs-only.block-profile-statistic-block,
-body.socialblue--sky.details .region--complementary-bottom [class*='block-group-add'].block-group-statistic-block,
-body.socialblue--sky.details .region--complementary-bottom [class*='block-group-add'].block-profile-statistic-block,
-body.socialblue--sky.details .region--complementary-bottom [class*='add-block'].block-group-statistic-block,
-body.socialblue--sky.details .region--complementary-bottom [class*='add-block'].block-profile-statistic-block,
-body.socialblue--sky.details .region--complementary-top .card.block-group-statistic-block,
-body.socialblue--sky.details .region--complementary-top .card.block-profile-statistic-block,
-body.socialblue--sky.details .region--complementary-top .off-canvas-xs-only.block-group-statistic-block,
-body.socialblue--sky.details .region--complementary-top .off-canvas-xs-only.block-profile-statistic-block,
-body.socialblue--sky.details .region--complementary-top [class*='block-group-add'].block-group-statistic-block,
-body.socialblue--sky.details .region--complementary-top [class*='block-group-add'].block-profile-statistic-block,
-body.socialblue--sky.details .region--complementary-top [class*='add-block'].block-group-statistic-block,
-body.socialblue--sky.details .region--complementary-top [class*='add-block'].block-profile-statistic-block, body.socialblue--sky.path-user .region--complementary-bottom .card.block-group-statistic-block, body.socialblue--sky.path-user .region--complementary-bottom .card.block-profile-statistic-block,
-body.socialblue--sky.path-user .region--complementary-bottom .off-canvas-xs-only.block-group-statistic-block,
-body.socialblue--sky.path-user .region--complementary-bottom .off-canvas-xs-only.block-profile-statistic-block,
-body.socialblue--sky.path-user .region--complementary-bottom [class*='block-group-add'].block-group-statistic-block,
-body.socialblue--sky.path-user .region--complementary-bottom [class*='block-group-add'].block-profile-statistic-block,
-body.socialblue--sky.path-user .region--complementary-bottom [class*='add-block'].block-group-statistic-block,
-body.socialblue--sky.path-user .region--complementary-bottom [class*='add-block'].block-profile-statistic-block,
-body.socialblue--sky.path-user .region--complementary-top .card.block-group-statistic-block,
-body.socialblue--sky.path-user .region--complementary-top .card.block-profile-statistic-block,
-body.socialblue--sky.path-user .region--complementary-top .off-canvas-xs-only.block-group-statistic-block,
-body.socialblue--sky.path-user .region--complementary-top .off-canvas-xs-only.block-profile-statistic-block,
-body.socialblue--sky.path-user .region--complementary-top [class*='block-group-add'].block-group-statistic-block,
-body.socialblue--sky.path-user .region--complementary-top [class*='block-group-add'].block-profile-statistic-block,
-body.socialblue--sky.path-user .region--complementary-top [class*='add-block'].block-group-statistic-block,
-body.socialblue--sky.path-user .region--complementary-top [class*='add-block'].block-profile-statistic-block, body.socialblue--sky.page-node-type-course-article .region--complementary-bottom .card.block-group-statistic-block, body.socialblue--sky.page-node-type-course-article .region--complementary-bottom .card.block-profile-statistic-block,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom .off-canvas-xs-only.block-group-statistic-block,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom .off-canvas-xs-only.block-profile-statistic-block,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='block-group-add'].block-group-statistic-block,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='block-group-add'].block-profile-statistic-block,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='add-block'].block-group-statistic-block,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='add-block'].block-profile-statistic-block,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top .card.block-group-statistic-block,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top .card.block-profile-statistic-block,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top .off-canvas-xs-only.block-group-statistic-block,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top .off-canvas-xs-only.block-profile-statistic-block,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='block-group-add'].block-group-statistic-block,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='block-group-add'].block-profile-statistic-block,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='add-block'].block-group-statistic-block,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='add-block'].block-profile-statistic-block {
-  background: #fafafa;
-  padding: 2.5rem 2.25rem 1.5rem;
-}
-
-body.socialblue--sky.path-group .region--complementary-bottom .card.block-group-statistic-block .hero-footer__cta, body.socialblue--sky.path-group .region--complementary-bottom .card.block-profile-statistic-block .hero-footer__cta,
-body.socialblue--sky.path-group .region--complementary-bottom .off-canvas-xs-only.block-group-statistic-block .hero-footer__cta,
-body.socialblue--sky.path-group .region--complementary-bottom .off-canvas-xs-only.block-profile-statistic-block .hero-footer__cta,
-body.socialblue--sky.path-group .region--complementary-bottom [class*='block-group-add'].block-group-statistic-block .hero-footer__cta,
-body.socialblue--sky.path-group .region--complementary-bottom [class*='block-group-add'].block-profile-statistic-block .hero-footer__cta,
-body.socialblue--sky.path-group .region--complementary-bottom [class*='add-block'].block-group-statistic-block .hero-footer__cta,
-body.socialblue--sky.path-group .region--complementary-bottom [class*='add-block'].block-profile-statistic-block .hero-footer__cta,
-body.socialblue--sky.path-group .region--complementary-top .card.block-group-statistic-block .hero-footer__cta,
-body.socialblue--sky.path-group .region--complementary-top .card.block-profile-statistic-block .hero-footer__cta,
-body.socialblue--sky.path-group .region--complementary-top .off-canvas-xs-only.block-group-statistic-block .hero-footer__cta,
-body.socialblue--sky.path-group .region--complementary-top .off-canvas-xs-only.block-profile-statistic-block .hero-footer__cta,
-body.socialblue--sky.path-group .region--complementary-top [class*='block-group-add'].block-group-statistic-block .hero-footer__cta,
-body.socialblue--sky.path-group .region--complementary-top [class*='block-group-add'].block-profile-statistic-block .hero-footer__cta,
-body.socialblue--sky.path-group .region--complementary-top [class*='add-block'].block-group-statistic-block .hero-footer__cta,
-body.socialblue--sky.path-group .region--complementary-top [class*='add-block'].block-profile-statistic-block .hero-footer__cta, body.socialblue--sky.details .region--complementary-bottom .card.block-group-statistic-block .hero-footer__cta, body.socialblue--sky.details .region--complementary-bottom .card.block-profile-statistic-block .hero-footer__cta,
-body.socialblue--sky.details .region--complementary-bottom .off-canvas-xs-only.block-group-statistic-block .hero-footer__cta,
-body.socialblue--sky.details .region--complementary-bottom .off-canvas-xs-only.block-profile-statistic-block .hero-footer__cta,
-body.socialblue--sky.details .region--complementary-bottom [class*='block-group-add'].block-group-statistic-block .hero-footer__cta,
-body.socialblue--sky.details .region--complementary-bottom [class*='block-group-add'].block-profile-statistic-block .hero-footer__cta,
-body.socialblue--sky.details .region--complementary-bottom [class*='add-block'].block-group-statistic-block .hero-footer__cta,
-body.socialblue--sky.details .region--complementary-bottom [class*='add-block'].block-profile-statistic-block .hero-footer__cta,
-body.socialblue--sky.details .region--complementary-top .card.block-group-statistic-block .hero-footer__cta,
-body.socialblue--sky.details .region--complementary-top .card.block-profile-statistic-block .hero-footer__cta,
-body.socialblue--sky.details .region--complementary-top .off-canvas-xs-only.block-group-statistic-block .hero-footer__cta,
-body.socialblue--sky.details .region--complementary-top .off-canvas-xs-only.block-profile-statistic-block .hero-footer__cta,
-body.socialblue--sky.details .region--complementary-top [class*='block-group-add'].block-group-statistic-block .hero-footer__cta,
-body.socialblue--sky.details .region--complementary-top [class*='block-group-add'].block-profile-statistic-block .hero-footer__cta,
-body.socialblue--sky.details .region--complementary-top [class*='add-block'].block-group-statistic-block .hero-footer__cta,
-body.socialblue--sky.details .region--complementary-top [class*='add-block'].block-profile-statistic-block .hero-footer__cta, body.socialblue--sky.path-user .region--complementary-bottom .card.block-group-statistic-block .hero-footer__cta, body.socialblue--sky.path-user .region--complementary-bottom .card.block-profile-statistic-block .hero-footer__cta,
-body.socialblue--sky.path-user .region--complementary-bottom .off-canvas-xs-only.block-group-statistic-block .hero-footer__cta,
-body.socialblue--sky.path-user .region--complementary-bottom .off-canvas-xs-only.block-profile-statistic-block .hero-footer__cta,
-body.socialblue--sky.path-user .region--complementary-bottom [class*='block-group-add'].block-group-statistic-block .hero-footer__cta,
-body.socialblue--sky.path-user .region--complementary-bottom [class*='block-group-add'].block-profile-statistic-block .hero-footer__cta,
-body.socialblue--sky.path-user .region--complementary-bottom [class*='add-block'].block-group-statistic-block .hero-footer__cta,
-body.socialblue--sky.path-user .region--complementary-bottom [class*='add-block'].block-profile-statistic-block .hero-footer__cta,
-body.socialblue--sky.path-user .region--complementary-top .card.block-group-statistic-block .hero-footer__cta,
-body.socialblue--sky.path-user .region--complementary-top .card.block-profile-statistic-block .hero-footer__cta,
-body.socialblue--sky.path-user .region--complementary-top .off-canvas-xs-only.block-group-statistic-block .hero-footer__cta,
-body.socialblue--sky.path-user .region--complementary-top .off-canvas-xs-only.block-profile-statistic-block .hero-footer__cta,
-body.socialblue--sky.path-user .region--complementary-top [class*='block-group-add'].block-group-statistic-block .hero-footer__cta,
-body.socialblue--sky.path-user .region--complementary-top [class*='block-group-add'].block-profile-statistic-block .hero-footer__cta,
-body.socialblue--sky.path-user .region--complementary-top [class*='add-block'].block-group-statistic-block .hero-footer__cta,
-body.socialblue--sky.path-user .region--complementary-top [class*='add-block'].block-profile-statistic-block .hero-footer__cta, body.socialblue--sky.page-node-type-course-article .region--complementary-bottom .card.block-group-statistic-block .hero-footer__cta, body.socialblue--sky.page-node-type-course-article .region--complementary-bottom .card.block-profile-statistic-block .hero-footer__cta,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom .off-canvas-xs-only.block-group-statistic-block .hero-footer__cta,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom .off-canvas-xs-only.block-profile-statistic-block .hero-footer__cta,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='block-group-add'].block-group-statistic-block .hero-footer__cta,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='block-group-add'].block-profile-statistic-block .hero-footer__cta,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='add-block'].block-group-statistic-block .hero-footer__cta,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='add-block'].block-profile-statistic-block .hero-footer__cta,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top .card.block-group-statistic-block .hero-footer__cta,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top .card.block-profile-statistic-block .hero-footer__cta,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top .off-canvas-xs-only.block-group-statistic-block .hero-footer__cta,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top .off-canvas-xs-only.block-profile-statistic-block .hero-footer__cta,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='block-group-add'].block-group-statistic-block .hero-footer__cta,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='block-group-add'].block-profile-statistic-block .hero-footer__cta,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='add-block'].block-group-statistic-block .hero-footer__cta,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='add-block'].block-profile-statistic-block .hero-footer__cta {
-  position: static;
-  -webkit-box-flex: 0;
-      -ms-flex: 0 0 100%;
-          flex: 0 0 100%;
-  max-width: 100%;
-  -webkit-box-pack: center;
-      -ms-flex-pack: center;
-          justify-content: center;
-  padding-left: 0;
-  padding-bottom: 2.5rem;
-}
-
-body.socialblue--sky.path-group .region--complementary-bottom .card.block-group-statistic-block .hero-footer__cta *:not(.caret), body.socialblue--sky.path-group .region--complementary-bottom .card.block-profile-statistic-block .hero-footer__cta *:not(.caret),
-body.socialblue--sky.path-group .region--complementary-bottom .off-canvas-xs-only.block-group-statistic-block .hero-footer__cta *:not(.caret),
-body.socialblue--sky.path-group .region--complementary-bottom .off-canvas-xs-only.block-profile-statistic-block .hero-footer__cta *:not(.caret),
-body.socialblue--sky.path-group .region--complementary-bottom [class*='block-group-add'].block-group-statistic-block .hero-footer__cta *:not(.caret),
-body.socialblue--sky.path-group .region--complementary-bottom [class*='block-group-add'].block-profile-statistic-block .hero-footer__cta *:not(.caret),
-body.socialblue--sky.path-group .region--complementary-bottom [class*='add-block'].block-group-statistic-block .hero-footer__cta *:not(.caret),
-body.socialblue--sky.path-group .region--complementary-bottom [class*='add-block'].block-profile-statistic-block .hero-footer__cta *:not(.caret),
-body.socialblue--sky.path-group .region--complementary-top .card.block-group-statistic-block .hero-footer__cta *:not(.caret),
-body.socialblue--sky.path-group .region--complementary-top .card.block-profile-statistic-block .hero-footer__cta *:not(.caret),
-body.socialblue--sky.path-group .region--complementary-top .off-canvas-xs-only.block-group-statistic-block .hero-footer__cta *:not(.caret),
-body.socialblue--sky.path-group .region--complementary-top .off-canvas-xs-only.block-profile-statistic-block .hero-footer__cta *:not(.caret),
-body.socialblue--sky.path-group .region--complementary-top [class*='block-group-add'].block-group-statistic-block .hero-footer__cta *:not(.caret),
-body.socialblue--sky.path-group .region--complementary-top [class*='block-group-add'].block-profile-statistic-block .hero-footer__cta *:not(.caret),
-body.socialblue--sky.path-group .region--complementary-top [class*='add-block'].block-group-statistic-block .hero-footer__cta *:not(.caret),
-body.socialblue--sky.path-group .region--complementary-top [class*='add-block'].block-profile-statistic-block .hero-footer__cta *:not(.caret), body.socialblue--sky.details .region--complementary-bottom .card.block-group-statistic-block .hero-footer__cta *:not(.caret), body.socialblue--sky.details .region--complementary-bottom .card.block-profile-statistic-block .hero-footer__cta *:not(.caret),
-body.socialblue--sky.details .region--complementary-bottom .off-canvas-xs-only.block-group-statistic-block .hero-footer__cta *:not(.caret),
-body.socialblue--sky.details .region--complementary-bottom .off-canvas-xs-only.block-profile-statistic-block .hero-footer__cta *:not(.caret),
-body.socialblue--sky.details .region--complementary-bottom [class*='block-group-add'].block-group-statistic-block .hero-footer__cta *:not(.caret),
-body.socialblue--sky.details .region--complementary-bottom [class*='block-group-add'].block-profile-statistic-block .hero-footer__cta *:not(.caret),
-body.socialblue--sky.details .region--complementary-bottom [class*='add-block'].block-group-statistic-block .hero-footer__cta *:not(.caret),
-body.socialblue--sky.details .region--complementary-bottom [class*='add-block'].block-profile-statistic-block .hero-footer__cta *:not(.caret),
-body.socialblue--sky.details .region--complementary-top .card.block-group-statistic-block .hero-footer__cta *:not(.caret),
-body.socialblue--sky.details .region--complementary-top .card.block-profile-statistic-block .hero-footer__cta *:not(.caret),
-body.socialblue--sky.details .region--complementary-top .off-canvas-xs-only.block-group-statistic-block .hero-footer__cta *:not(.caret),
-body.socialblue--sky.details .region--complementary-top .off-canvas-xs-only.block-profile-statistic-block .hero-footer__cta *:not(.caret),
-body.socialblue--sky.details .region--complementary-top [class*='block-group-add'].block-group-statistic-block .hero-footer__cta *:not(.caret),
-body.socialblue--sky.details .region--complementary-top [class*='block-group-add'].block-profile-statistic-block .hero-footer__cta *:not(.caret),
-body.socialblue--sky.details .region--complementary-top [class*='add-block'].block-group-statistic-block .hero-footer__cta *:not(.caret),
-body.socialblue--sky.details .region--complementary-top [class*='add-block'].block-profile-statistic-block .hero-footer__cta *:not(.caret), body.socialblue--sky.path-user .region--complementary-bottom .card.block-group-statistic-block .hero-footer__cta *:not(.caret), body.socialblue--sky.path-user .region--complementary-bottom .card.block-profile-statistic-block .hero-footer__cta *:not(.caret),
-body.socialblue--sky.path-user .region--complementary-bottom .off-canvas-xs-only.block-group-statistic-block .hero-footer__cta *:not(.caret),
-body.socialblue--sky.path-user .region--complementary-bottom .off-canvas-xs-only.block-profile-statistic-block .hero-footer__cta *:not(.caret),
-body.socialblue--sky.path-user .region--complementary-bottom [class*='block-group-add'].block-group-statistic-block .hero-footer__cta *:not(.caret),
-body.socialblue--sky.path-user .region--complementary-bottom [class*='block-group-add'].block-profile-statistic-block .hero-footer__cta *:not(.caret),
-body.socialblue--sky.path-user .region--complementary-bottom [class*='add-block'].block-group-statistic-block .hero-footer__cta *:not(.caret),
-body.socialblue--sky.path-user .region--complementary-bottom [class*='add-block'].block-profile-statistic-block .hero-footer__cta *:not(.caret),
-body.socialblue--sky.path-user .region--complementary-top .card.block-group-statistic-block .hero-footer__cta *:not(.caret),
-body.socialblue--sky.path-user .region--complementary-top .card.block-profile-statistic-block .hero-footer__cta *:not(.caret),
-body.socialblue--sky.path-user .region--complementary-top .off-canvas-xs-only.block-group-statistic-block .hero-footer__cta *:not(.caret),
-body.socialblue--sky.path-user .region--complementary-top .off-canvas-xs-only.block-profile-statistic-block .hero-footer__cta *:not(.caret),
-body.socialblue--sky.path-user .region--complementary-top [class*='block-group-add'].block-group-statistic-block .hero-footer__cta *:not(.caret),
-body.socialblue--sky.path-user .region--complementary-top [class*='block-group-add'].block-profile-statistic-block .hero-footer__cta *:not(.caret),
-body.socialblue--sky.path-user .region--complementary-top [class*='add-block'].block-group-statistic-block .hero-footer__cta *:not(.caret),
-body.socialblue--sky.path-user .region--complementary-top [class*='add-block'].block-profile-statistic-block .hero-footer__cta *:not(.caret), body.socialblue--sky.page-node-type-course-article .region--complementary-bottom .card.block-group-statistic-block .hero-footer__cta *:not(.caret), body.socialblue--sky.page-node-type-course-article .region--complementary-bottom .card.block-profile-statistic-block .hero-footer__cta *:not(.caret),
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom .off-canvas-xs-only.block-group-statistic-block .hero-footer__cta *:not(.caret),
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom .off-canvas-xs-only.block-profile-statistic-block .hero-footer__cta *:not(.caret),
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='block-group-add'].block-group-statistic-block .hero-footer__cta *:not(.caret),
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='block-group-add'].block-profile-statistic-block .hero-footer__cta *:not(.caret),
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='add-block'].block-group-statistic-block .hero-footer__cta *:not(.caret),
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='add-block'].block-profile-statistic-block .hero-footer__cta *:not(.caret),
-body.socialblue--sky.page-node-type-course-article .region--complementary-top .card.block-group-statistic-block .hero-footer__cta *:not(.caret),
-body.socialblue--sky.page-node-type-course-article .region--complementary-top .card.block-profile-statistic-block .hero-footer__cta *:not(.caret),
-body.socialblue--sky.page-node-type-course-article .region--complementary-top .off-canvas-xs-only.block-group-statistic-block .hero-footer__cta *:not(.caret),
-body.socialblue--sky.page-node-type-course-article .region--complementary-top .off-canvas-xs-only.block-profile-statistic-block .hero-footer__cta *:not(.caret),
-body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='block-group-add'].block-group-statistic-block .hero-footer__cta *:not(.caret),
-body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='block-group-add'].block-profile-statistic-block .hero-footer__cta *:not(.caret),
-body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='add-block'].block-group-statistic-block .hero-footer__cta *:not(.caret),
-body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='add-block'].block-profile-statistic-block .hero-footer__cta *:not(.caret) {
-  width: 100%;
-}
-
-body.socialblue--sky.path-group .region--complementary-bottom .card.block-group-statistic-block .hero-footer__cta .btn, body.socialblue--sky.path-group .region--complementary-bottom .card.block-profile-statistic-block .hero-footer__cta .btn,
-body.socialblue--sky.path-group .region--complementary-bottom .off-canvas-xs-only.block-group-statistic-block .hero-footer__cta .btn,
-body.socialblue--sky.path-group .region--complementary-bottom .off-canvas-xs-only.block-profile-statistic-block .hero-footer__cta .btn,
-body.socialblue--sky.path-group .region--complementary-bottom [class*='block-group-add'].block-group-statistic-block .hero-footer__cta .btn,
-body.socialblue--sky.path-group .region--complementary-bottom [class*='block-group-add'].block-profile-statistic-block .hero-footer__cta .btn,
-body.socialblue--sky.path-group .region--complementary-bottom [class*='add-block'].block-group-statistic-block .hero-footer__cta .btn,
-body.socialblue--sky.path-group .region--complementary-bottom [class*='add-block'].block-profile-statistic-block .hero-footer__cta .btn,
-body.socialblue--sky.path-group .region--complementary-top .card.block-group-statistic-block .hero-footer__cta .btn,
-body.socialblue--sky.path-group .region--complementary-top .card.block-profile-statistic-block .hero-footer__cta .btn,
-body.socialblue--sky.path-group .region--complementary-top .off-canvas-xs-only.block-group-statistic-block .hero-footer__cta .btn,
-body.socialblue--sky.path-group .region--complementary-top .off-canvas-xs-only.block-profile-statistic-block .hero-footer__cta .btn,
-body.socialblue--sky.path-group .region--complementary-top [class*='block-group-add'].block-group-statistic-block .hero-footer__cta .btn,
-body.socialblue--sky.path-group .region--complementary-top [class*='block-group-add'].block-profile-statistic-block .hero-footer__cta .btn,
-body.socialblue--sky.path-group .region--complementary-top [class*='add-block'].block-group-statistic-block .hero-footer__cta .btn,
-body.socialblue--sky.path-group .region--complementary-top [class*='add-block'].block-profile-statistic-block .hero-footer__cta .btn, body.socialblue--sky.details .region--complementary-bottom .card.block-group-statistic-block .hero-footer__cta .btn, body.socialblue--sky.details .region--complementary-bottom .card.block-profile-statistic-block .hero-footer__cta .btn,
-body.socialblue--sky.details .region--complementary-bottom .off-canvas-xs-only.block-group-statistic-block .hero-footer__cta .btn,
-body.socialblue--sky.details .region--complementary-bottom .off-canvas-xs-only.block-profile-statistic-block .hero-footer__cta .btn,
-body.socialblue--sky.details .region--complementary-bottom [class*='block-group-add'].block-group-statistic-block .hero-footer__cta .btn,
-body.socialblue--sky.details .region--complementary-bottom [class*='block-group-add'].block-profile-statistic-block .hero-footer__cta .btn,
-body.socialblue--sky.details .region--complementary-bottom [class*='add-block'].block-group-statistic-block .hero-footer__cta .btn,
-body.socialblue--sky.details .region--complementary-bottom [class*='add-block'].block-profile-statistic-block .hero-footer__cta .btn,
-body.socialblue--sky.details .region--complementary-top .card.block-group-statistic-block .hero-footer__cta .btn,
-body.socialblue--sky.details .region--complementary-top .card.block-profile-statistic-block .hero-footer__cta .btn,
-body.socialblue--sky.details .region--complementary-top .off-canvas-xs-only.block-group-statistic-block .hero-footer__cta .btn,
-body.socialblue--sky.details .region--complementary-top .off-canvas-xs-only.block-profile-statistic-block .hero-footer__cta .btn,
-body.socialblue--sky.details .region--complementary-top [class*='block-group-add'].block-group-statistic-block .hero-footer__cta .btn,
-body.socialblue--sky.details .region--complementary-top [class*='block-group-add'].block-profile-statistic-block .hero-footer__cta .btn,
-body.socialblue--sky.details .region--complementary-top [class*='add-block'].block-group-statistic-block .hero-footer__cta .btn,
-body.socialblue--sky.details .region--complementary-top [class*='add-block'].block-profile-statistic-block .hero-footer__cta .btn, body.socialblue--sky.path-user .region--complementary-bottom .card.block-group-statistic-block .hero-footer__cta .btn, body.socialblue--sky.path-user .region--complementary-bottom .card.block-profile-statistic-block .hero-footer__cta .btn,
-body.socialblue--sky.path-user .region--complementary-bottom .off-canvas-xs-only.block-group-statistic-block .hero-footer__cta .btn,
-body.socialblue--sky.path-user .region--complementary-bottom .off-canvas-xs-only.block-profile-statistic-block .hero-footer__cta .btn,
-body.socialblue--sky.path-user .region--complementary-bottom [class*='block-group-add'].block-group-statistic-block .hero-footer__cta .btn,
-body.socialblue--sky.path-user .region--complementary-bottom [class*='block-group-add'].block-profile-statistic-block .hero-footer__cta .btn,
-body.socialblue--sky.path-user .region--complementary-bottom [class*='add-block'].block-group-statistic-block .hero-footer__cta .btn,
-body.socialblue--sky.path-user .region--complementary-bottom [class*='add-block'].block-profile-statistic-block .hero-footer__cta .btn,
-body.socialblue--sky.path-user .region--complementary-top .card.block-group-statistic-block .hero-footer__cta .btn,
-body.socialblue--sky.path-user .region--complementary-top .card.block-profile-statistic-block .hero-footer__cta .btn,
-body.socialblue--sky.path-user .region--complementary-top .off-canvas-xs-only.block-group-statistic-block .hero-footer__cta .btn,
-body.socialblue--sky.path-user .region--complementary-top .off-canvas-xs-only.block-profile-statistic-block .hero-footer__cta .btn,
-body.socialblue--sky.path-user .region--complementary-top [class*='block-group-add'].block-group-statistic-block .hero-footer__cta .btn,
-body.socialblue--sky.path-user .region--complementary-top [class*='block-group-add'].block-profile-statistic-block .hero-footer__cta .btn,
-body.socialblue--sky.path-user .region--complementary-top [class*='add-block'].block-group-statistic-block .hero-footer__cta .btn,
-body.socialblue--sky.path-user .region--complementary-top [class*='add-block'].block-profile-statistic-block .hero-footer__cta .btn, body.socialblue--sky.page-node-type-course-article .region--complementary-bottom .card.block-group-statistic-block .hero-footer__cta .btn, body.socialblue--sky.page-node-type-course-article .region--complementary-bottom .card.block-profile-statistic-block .hero-footer__cta .btn,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom .off-canvas-xs-only.block-group-statistic-block .hero-footer__cta .btn,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom .off-canvas-xs-only.block-profile-statistic-block .hero-footer__cta .btn,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='block-group-add'].block-group-statistic-block .hero-footer__cta .btn,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='block-group-add'].block-profile-statistic-block .hero-footer__cta .btn,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='add-block'].block-group-statistic-block .hero-footer__cta .btn,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='add-block'].block-profile-statistic-block .hero-footer__cta .btn,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top .card.block-group-statistic-block .hero-footer__cta .btn,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top .card.block-profile-statistic-block .hero-footer__cta .btn,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top .off-canvas-xs-only.block-group-statistic-block .hero-footer__cta .btn,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top .off-canvas-xs-only.block-profile-statistic-block .hero-footer__cta .btn,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='block-group-add'].block-group-statistic-block .hero-footer__cta .btn,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='block-group-add'].block-profile-statistic-block .hero-footer__cta .btn,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='add-block'].block-group-statistic-block .hero-footer__cta .btn,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='add-block'].block-profile-statistic-block .hero-footer__cta .btn {
-  text-transform: uppercase;
-  border-radius: 5px !important;
-}
-
-body.socialblue--sky.path-group .region--complementary-bottom .card.block-group-statistic-block .hero-footer__cta .btn.btn-default, body.socialblue--sky.path-group .region--complementary-bottom .card.block-profile-statistic-block .hero-footer__cta .btn.btn-default,
-body.socialblue--sky.path-group .region--complementary-bottom .off-canvas-xs-only.block-group-statistic-block .hero-footer__cta .btn.btn-default,
-body.socialblue--sky.path-group .region--complementary-bottom .off-canvas-xs-only.block-profile-statistic-block .hero-footer__cta .btn.btn-default,
-body.socialblue--sky.path-group .region--complementary-bottom [class*='block-group-add'].block-group-statistic-block .hero-footer__cta .btn.btn-default,
-body.socialblue--sky.path-group .region--complementary-bottom [class*='block-group-add'].block-profile-statistic-block .hero-footer__cta .btn.btn-default,
-body.socialblue--sky.path-group .region--complementary-bottom [class*='add-block'].block-group-statistic-block .hero-footer__cta .btn.btn-default,
-body.socialblue--sky.path-group .region--complementary-bottom [class*='add-block'].block-profile-statistic-block .hero-footer__cta .btn.btn-default,
-body.socialblue--sky.path-group .region--complementary-top .card.block-group-statistic-block .hero-footer__cta .btn.btn-default,
-body.socialblue--sky.path-group .region--complementary-top .card.block-profile-statistic-block .hero-footer__cta .btn.btn-default,
-body.socialblue--sky.path-group .region--complementary-top .off-canvas-xs-only.block-group-statistic-block .hero-footer__cta .btn.btn-default,
-body.socialblue--sky.path-group .region--complementary-top .off-canvas-xs-only.block-profile-statistic-block .hero-footer__cta .btn.btn-default,
-body.socialblue--sky.path-group .region--complementary-top [class*='block-group-add'].block-group-statistic-block .hero-footer__cta .btn.btn-default,
-body.socialblue--sky.path-group .region--complementary-top [class*='block-group-add'].block-profile-statistic-block .hero-footer__cta .btn.btn-default,
-body.socialblue--sky.path-group .region--complementary-top [class*='add-block'].block-group-statistic-block .hero-footer__cta .btn.btn-default,
-body.socialblue--sky.path-group .region--complementary-top [class*='add-block'].block-profile-statistic-block .hero-footer__cta .btn.btn-default, body.socialblue--sky.details .region--complementary-bottom .card.block-group-statistic-block .hero-footer__cta .btn.btn-default, body.socialblue--sky.details .region--complementary-bottom .card.block-profile-statistic-block .hero-footer__cta .btn.btn-default,
-body.socialblue--sky.details .region--complementary-bottom .off-canvas-xs-only.block-group-statistic-block .hero-footer__cta .btn.btn-default,
-body.socialblue--sky.details .region--complementary-bottom .off-canvas-xs-only.block-profile-statistic-block .hero-footer__cta .btn.btn-default,
-body.socialblue--sky.details .region--complementary-bottom [class*='block-group-add'].block-group-statistic-block .hero-footer__cta .btn.btn-default,
-body.socialblue--sky.details .region--complementary-bottom [class*='block-group-add'].block-profile-statistic-block .hero-footer__cta .btn.btn-default,
-body.socialblue--sky.details .region--complementary-bottom [class*='add-block'].block-group-statistic-block .hero-footer__cta .btn.btn-default,
-body.socialblue--sky.details .region--complementary-bottom [class*='add-block'].block-profile-statistic-block .hero-footer__cta .btn.btn-default,
-body.socialblue--sky.details .region--complementary-top .card.block-group-statistic-block .hero-footer__cta .btn.btn-default,
-body.socialblue--sky.details .region--complementary-top .card.block-profile-statistic-block .hero-footer__cta .btn.btn-default,
-body.socialblue--sky.details .region--complementary-top .off-canvas-xs-only.block-group-statistic-block .hero-footer__cta .btn.btn-default,
-body.socialblue--sky.details .region--complementary-top .off-canvas-xs-only.block-profile-statistic-block .hero-footer__cta .btn.btn-default,
-body.socialblue--sky.details .region--complementary-top [class*='block-group-add'].block-group-statistic-block .hero-footer__cta .btn.btn-default,
-body.socialblue--sky.details .region--complementary-top [class*='block-group-add'].block-profile-statistic-block .hero-footer__cta .btn.btn-default,
-body.socialblue--sky.details .region--complementary-top [class*='add-block'].block-group-statistic-block .hero-footer__cta .btn.btn-default,
-body.socialblue--sky.details .region--complementary-top [class*='add-block'].block-profile-statistic-block .hero-footer__cta .btn.btn-default, body.socialblue--sky.path-user .region--complementary-bottom .card.block-group-statistic-block .hero-footer__cta .btn.btn-default, body.socialblue--sky.path-user .region--complementary-bottom .card.block-profile-statistic-block .hero-footer__cta .btn.btn-default,
-body.socialblue--sky.path-user .region--complementary-bottom .off-canvas-xs-only.block-group-statistic-block .hero-footer__cta .btn.btn-default,
-body.socialblue--sky.path-user .region--complementary-bottom .off-canvas-xs-only.block-profile-statistic-block .hero-footer__cta .btn.btn-default,
-body.socialblue--sky.path-user .region--complementary-bottom [class*='block-group-add'].block-group-statistic-block .hero-footer__cta .btn.btn-default,
-body.socialblue--sky.path-user .region--complementary-bottom [class*='block-group-add'].block-profile-statistic-block .hero-footer__cta .btn.btn-default,
-body.socialblue--sky.path-user .region--complementary-bottom [class*='add-block'].block-group-statistic-block .hero-footer__cta .btn.btn-default,
-body.socialblue--sky.path-user .region--complementary-bottom [class*='add-block'].block-profile-statistic-block .hero-footer__cta .btn.btn-default,
-body.socialblue--sky.path-user .region--complementary-top .card.block-group-statistic-block .hero-footer__cta .btn.btn-default,
-body.socialblue--sky.path-user .region--complementary-top .card.block-profile-statistic-block .hero-footer__cta .btn.btn-default,
-body.socialblue--sky.path-user .region--complementary-top .off-canvas-xs-only.block-group-statistic-block .hero-footer__cta .btn.btn-default,
-body.socialblue--sky.path-user .region--complementary-top .off-canvas-xs-only.block-profile-statistic-block .hero-footer__cta .btn.btn-default,
-body.socialblue--sky.path-user .region--complementary-top [class*='block-group-add'].block-group-statistic-block .hero-footer__cta .btn.btn-default,
-body.socialblue--sky.path-user .region--complementary-top [class*='block-group-add'].block-profile-statistic-block .hero-footer__cta .btn.btn-default,
-body.socialblue--sky.path-user .region--complementary-top [class*='add-block'].block-group-statistic-block .hero-footer__cta .btn.btn-default,
-body.socialblue--sky.path-user .region--complementary-top [class*='add-block'].block-profile-statistic-block .hero-footer__cta .btn.btn-default, body.socialblue--sky.page-node-type-course-article .region--complementary-bottom .card.block-group-statistic-block .hero-footer__cta .btn.btn-default, body.socialblue--sky.page-node-type-course-article .region--complementary-bottom .card.block-profile-statistic-block .hero-footer__cta .btn.btn-default,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom .off-canvas-xs-only.block-group-statistic-block .hero-footer__cta .btn.btn-default,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom .off-canvas-xs-only.block-profile-statistic-block .hero-footer__cta .btn.btn-default,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='block-group-add'].block-group-statistic-block .hero-footer__cta .btn.btn-default,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='block-group-add'].block-profile-statistic-block .hero-footer__cta .btn.btn-default,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='add-block'].block-group-statistic-block .hero-footer__cta .btn.btn-default,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='add-block'].block-profile-statistic-block .hero-footer__cta .btn.btn-default,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top .card.block-group-statistic-block .hero-footer__cta .btn.btn-default,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top .card.block-profile-statistic-block .hero-footer__cta .btn.btn-default,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top .off-canvas-xs-only.block-group-statistic-block .hero-footer__cta .btn.btn-default,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top .off-canvas-xs-only.block-profile-statistic-block .hero-footer__cta .btn.btn-default,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='block-group-add'].block-group-statistic-block .hero-footer__cta .btn.btn-default,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='block-group-add'].block-profile-statistic-block .hero-footer__cta .btn.btn-default,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='add-block'].block-group-statistic-block .hero-footer__cta .btn.btn-default,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='add-block'].block-profile-statistic-block .hero-footer__cta .btn.btn-default {
-  background: transparent;
-}
-
-body.socialblue--sky.path-group .region--complementary-bottom .card.block-profile-statistic-block,
-body.socialblue--sky.path-group .region--complementary-bottom .off-canvas-xs-only.block-profile-statistic-block,
-body.socialblue--sky.path-group .region--complementary-bottom [class*='block-group-add'].block-profile-statistic-block,
-body.socialblue--sky.path-group .region--complementary-bottom [class*='add-block'].block-profile-statistic-block,
-body.socialblue--sky.path-group .region--complementary-top .card.block-profile-statistic-block,
-body.socialblue--sky.path-group .region--complementary-top .off-canvas-xs-only.block-profile-statistic-block,
-body.socialblue--sky.path-group .region--complementary-top [class*='block-group-add'].block-profile-statistic-block,
-body.socialblue--sky.path-group .region--complementary-top [class*='add-block'].block-profile-statistic-block, body.socialblue--sky.details .region--complementary-bottom .card.block-profile-statistic-block,
-body.socialblue--sky.details .region--complementary-bottom .off-canvas-xs-only.block-profile-statistic-block,
-body.socialblue--sky.details .region--complementary-bottom [class*='block-group-add'].block-profile-statistic-block,
-body.socialblue--sky.details .region--complementary-bottom [class*='add-block'].block-profile-statistic-block,
-body.socialblue--sky.details .region--complementary-top .card.block-profile-statistic-block,
-body.socialblue--sky.details .region--complementary-top .off-canvas-xs-only.block-profile-statistic-block,
-body.socialblue--sky.details .region--complementary-top [class*='block-group-add'].block-profile-statistic-block,
-body.socialblue--sky.details .region--complementary-top [class*='add-block'].block-profile-statistic-block, body.socialblue--sky.path-user .region--complementary-bottom .card.block-profile-statistic-block,
-body.socialblue--sky.path-user .region--complementary-bottom .off-canvas-xs-only.block-profile-statistic-block,
-body.socialblue--sky.path-user .region--complementary-bottom [class*='block-group-add'].block-profile-statistic-block,
-body.socialblue--sky.path-user .region--complementary-bottom [class*='add-block'].block-profile-statistic-block,
-body.socialblue--sky.path-user .region--complementary-top .card.block-profile-statistic-block,
-body.socialblue--sky.path-user .region--complementary-top .off-canvas-xs-only.block-profile-statistic-block,
-body.socialblue--sky.path-user .region--complementary-top [class*='block-group-add'].block-profile-statistic-block,
-body.socialblue--sky.path-user .region--complementary-top [class*='add-block'].block-profile-statistic-block, body.socialblue--sky.page-node-type-course-article .region--complementary-bottom .card.block-profile-statistic-block,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom .off-canvas-xs-only.block-profile-statistic-block,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='block-group-add'].block-profile-statistic-block,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='add-block'].block-profile-statistic-block,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top .card.block-profile-statistic-block,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top .off-canvas-xs-only.block-profile-statistic-block,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='block-group-add'].block-profile-statistic-block,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='add-block'].block-profile-statistic-block {
-  padding-top: 0;
-}
-
-body.socialblue--sky.path-group .region--complementary-bottom .card.block-profile-statistic-block .card__info-user .hero-avatar,
-body.socialblue--sky.path-group .region--complementary-bottom .off-canvas-xs-only.block-profile-statistic-block .card__info-user .hero-avatar,
-body.socialblue--sky.path-group .region--complementary-bottom [class*='block-group-add'].block-profile-statistic-block .card__info-user .hero-avatar,
-body.socialblue--sky.path-group .region--complementary-bottom [class*='add-block'].block-profile-statistic-block .card__info-user .hero-avatar,
-body.socialblue--sky.path-group .region--complementary-top .card.block-profile-statistic-block .card__info-user .hero-avatar,
-body.socialblue--sky.path-group .region--complementary-top .off-canvas-xs-only.block-profile-statistic-block .card__info-user .hero-avatar,
-body.socialblue--sky.path-group .region--complementary-top [class*='block-group-add'].block-profile-statistic-block .card__info-user .hero-avatar,
-body.socialblue--sky.path-group .region--complementary-top [class*='add-block'].block-profile-statistic-block .card__info-user .hero-avatar, body.socialblue--sky.details .region--complementary-bottom .card.block-profile-statistic-block .card__info-user .hero-avatar,
-body.socialblue--sky.details .region--complementary-bottom .off-canvas-xs-only.block-profile-statistic-block .card__info-user .hero-avatar,
-body.socialblue--sky.details .region--complementary-bottom [class*='block-group-add'].block-profile-statistic-block .card__info-user .hero-avatar,
-body.socialblue--sky.details .region--complementary-bottom [class*='add-block'].block-profile-statistic-block .card__info-user .hero-avatar,
-body.socialblue--sky.details .region--complementary-top .card.block-profile-statistic-block .card__info-user .hero-avatar,
-body.socialblue--sky.details .region--complementary-top .off-canvas-xs-only.block-profile-statistic-block .card__info-user .hero-avatar,
-body.socialblue--sky.details .region--complementary-top [class*='block-group-add'].block-profile-statistic-block .card__info-user .hero-avatar,
-body.socialblue--sky.details .region--complementary-top [class*='add-block'].block-profile-statistic-block .card__info-user .hero-avatar, body.socialblue--sky.path-user .region--complementary-bottom .card.block-profile-statistic-block .card__info-user .hero-avatar,
-body.socialblue--sky.path-user .region--complementary-bottom .off-canvas-xs-only.block-profile-statistic-block .card__info-user .hero-avatar,
-body.socialblue--sky.path-user .region--complementary-bottom [class*='block-group-add'].block-profile-statistic-block .card__info-user .hero-avatar,
-body.socialblue--sky.path-user .region--complementary-bottom [class*='add-block'].block-profile-statistic-block .card__info-user .hero-avatar,
-body.socialblue--sky.path-user .region--complementary-top .card.block-profile-statistic-block .card__info-user .hero-avatar,
-body.socialblue--sky.path-user .region--complementary-top .off-canvas-xs-only.block-profile-statistic-block .card__info-user .hero-avatar,
-body.socialblue--sky.path-user .region--complementary-top [class*='block-group-add'].block-profile-statistic-block .card__info-user .hero-avatar,
-body.socialblue--sky.path-user .region--complementary-top [class*='add-block'].block-profile-statistic-block .card__info-user .hero-avatar, body.socialblue--sky.page-node-type-course-article .region--complementary-bottom .card.block-profile-statistic-block .card__info-user .hero-avatar,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom .off-canvas-xs-only.block-profile-statistic-block .card__info-user .hero-avatar,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='block-group-add'].block-profile-statistic-block .card__info-user .hero-avatar,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='add-block'].block-profile-statistic-block .card__info-user .hero-avatar,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top .card.block-profile-statistic-block .card__info-user .hero-avatar,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top .off-canvas-xs-only.block-profile-statistic-block .card__info-user .hero-avatar,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='block-group-add'].block-profile-statistic-block .card__info-user .hero-avatar,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='add-block'].block-profile-statistic-block .card__info-user .hero-avatar {
-  border-color: #fafafa;
-}
-
-body.socialblue--sky.path-group .region--complementary-bottom .card .card__title,
-body.socialblue--sky.path-group .region--complementary-bottom .card .offcanvas-head,
-body.socialblue--sky.path-group .region--complementary-bottom .card .complementary-title,
-body.socialblue--sky.path-group .region--complementary-bottom .off-canvas-xs-only .card__title,
-body.socialblue--sky.path-group .region--complementary-bottom .off-canvas-xs-only .offcanvas-head,
-body.socialblue--sky.path-group .region--complementary-bottom .off-canvas-xs-only .complementary-title,
-body.socialblue--sky.path-group .region--complementary-bottom [class*='block-group-add'] .card__title,
-body.socialblue--sky.path-group .region--complementary-bottom [class*='block-group-add'] .offcanvas-head,
-body.socialblue--sky.path-group .region--complementary-bottom [class*='block-group-add'] .complementary-title,
-body.socialblue--sky.path-group .region--complementary-bottom [class*='add-block'] .card__title,
-body.socialblue--sky.path-group .region--complementary-bottom [class*='add-block'] .offcanvas-head,
-body.socialblue--sky.path-group .region--complementary-bottom [class*='add-block'] .complementary-title,
-body.socialblue--sky.path-group .region--complementary-top .card .card__title,
-body.socialblue--sky.path-group .region--complementary-top .card .offcanvas-head,
-body.socialblue--sky.path-group .region--complementary-top .card .complementary-title,
-body.socialblue--sky.path-group .region--complementary-top .off-canvas-xs-only .card__title,
-body.socialblue--sky.path-group .region--complementary-top .off-canvas-xs-only .offcanvas-head,
-body.socialblue--sky.path-group .region--complementary-top .off-canvas-xs-only .complementary-title,
-body.socialblue--sky.path-group .region--complementary-top [class*='block-group-add'] .card__title,
-body.socialblue--sky.path-group .region--complementary-top [class*='block-group-add'] .offcanvas-head,
-body.socialblue--sky.path-group .region--complementary-top [class*='block-group-add'] .complementary-title,
-body.socialblue--sky.path-group .region--complementary-top [class*='add-block'] .card__title,
-body.socialblue--sky.path-group .region--complementary-top [class*='add-block'] .offcanvas-head,
-body.socialblue--sky.path-group .region--complementary-top [class*='add-block'] .complementary-title, body.socialblue--sky.details .region--complementary-bottom .card .card__title,
-body.socialblue--sky.details .region--complementary-bottom .card .offcanvas-head,
-body.socialblue--sky.details .region--complementary-bottom .card .complementary-title,
-body.socialblue--sky.details .region--complementary-bottom .off-canvas-xs-only .card__title,
-body.socialblue--sky.details .region--complementary-bottom .off-canvas-xs-only .offcanvas-head,
-body.socialblue--sky.details .region--complementary-bottom .off-canvas-xs-only .complementary-title,
-body.socialblue--sky.details .region--complementary-bottom [class*='block-group-add'] .card__title,
-body.socialblue--sky.details .region--complementary-bottom [class*='block-group-add'] .offcanvas-head,
-body.socialblue--sky.details .region--complementary-bottom [class*='block-group-add'] .complementary-title,
-body.socialblue--sky.details .region--complementary-bottom [class*='add-block'] .card__title,
-body.socialblue--sky.details .region--complementary-bottom [class*='add-block'] .offcanvas-head,
-body.socialblue--sky.details .region--complementary-bottom [class*='add-block'] .complementary-title,
-body.socialblue--sky.details .region--complementary-top .card .card__title,
-body.socialblue--sky.details .region--complementary-top .card .offcanvas-head,
-body.socialblue--sky.details .region--complementary-top .card .complementary-title,
-body.socialblue--sky.details .region--complementary-top .off-canvas-xs-only .card__title,
-body.socialblue--sky.details .region--complementary-top .off-canvas-xs-only .offcanvas-head,
-body.socialblue--sky.details .region--complementary-top .off-canvas-xs-only .complementary-title,
-body.socialblue--sky.details .region--complementary-top [class*='block-group-add'] .card__title,
-body.socialblue--sky.details .region--complementary-top [class*='block-group-add'] .offcanvas-head,
-body.socialblue--sky.details .region--complementary-top [class*='block-group-add'] .complementary-title,
-body.socialblue--sky.details .region--complementary-top [class*='add-block'] .card__title,
-body.socialblue--sky.details .region--complementary-top [class*='add-block'] .offcanvas-head,
-body.socialblue--sky.details .region--complementary-top [class*='add-block'] .complementary-title, body.socialblue--sky.path-user .region--complementary-bottom .card .card__title,
-body.socialblue--sky.path-user .region--complementary-bottom .card .offcanvas-head,
-body.socialblue--sky.path-user .region--complementary-bottom .card .complementary-title,
-body.socialblue--sky.path-user .region--complementary-bottom .off-canvas-xs-only .card__title,
-body.socialblue--sky.path-user .region--complementary-bottom .off-canvas-xs-only .offcanvas-head,
-body.socialblue--sky.path-user .region--complementary-bottom .off-canvas-xs-only .complementary-title,
-body.socialblue--sky.path-user .region--complementary-bottom [class*='block-group-add'] .card__title,
-body.socialblue--sky.path-user .region--complementary-bottom [class*='block-group-add'] .offcanvas-head,
-body.socialblue--sky.path-user .region--complementary-bottom [class*='block-group-add'] .complementary-title,
-body.socialblue--sky.path-user .region--complementary-bottom [class*='add-block'] .card__title,
-body.socialblue--sky.path-user .region--complementary-bottom [class*='add-block'] .offcanvas-head,
-body.socialblue--sky.path-user .region--complementary-bottom [class*='add-block'] .complementary-title,
-body.socialblue--sky.path-user .region--complementary-top .card .card__title,
-body.socialblue--sky.path-user .region--complementary-top .card .offcanvas-head,
-body.socialblue--sky.path-user .region--complementary-top .card .complementary-title,
-body.socialblue--sky.path-user .region--complementary-top .off-canvas-xs-only .card__title,
-body.socialblue--sky.path-user .region--complementary-top .off-canvas-xs-only .offcanvas-head,
-body.socialblue--sky.path-user .region--complementary-top .off-canvas-xs-only .complementary-title,
-body.socialblue--sky.path-user .region--complementary-top [class*='block-group-add'] .card__title,
-body.socialblue--sky.path-user .region--complementary-top [class*='block-group-add'] .offcanvas-head,
-body.socialblue--sky.path-user .region--complementary-top [class*='block-group-add'] .complementary-title,
-body.socialblue--sky.path-user .region--complementary-top [class*='add-block'] .card__title,
-body.socialblue--sky.path-user .region--complementary-top [class*='add-block'] .offcanvas-head,
-body.socialblue--sky.path-user .region--complementary-top [class*='add-block'] .complementary-title, body.socialblue--sky.page-node-type-course-article .region--complementary-bottom .card .card__title,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom .card .offcanvas-head,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom .card .complementary-title,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom .off-canvas-xs-only .card__title,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom .off-canvas-xs-only .offcanvas-head,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom .off-canvas-xs-only .complementary-title,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='block-group-add'] .card__title,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='block-group-add'] .offcanvas-head,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='block-group-add'] .complementary-title,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='add-block'] .card__title,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='add-block'] .offcanvas-head,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='add-block'] .complementary-title,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top .card .card__title,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top .card .offcanvas-head,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top .card .complementary-title,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top .off-canvas-xs-only .card__title,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top .off-canvas-xs-only .offcanvas-head,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top .off-canvas-xs-only .complementary-title,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='block-group-add'] .card__title,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='block-group-add'] .offcanvas-head,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='block-group-add'] .complementary-title,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='add-block'] .card__title,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='add-block'] .offcanvas-head,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='add-block'] .complementary-title {
+body.socialblue--sky .sidebar-left .region--complementary-bottom > *:not([class*='statistic-block']) .card__title,
+body.socialblue--sky .sidebar-left .region--complementary-bottom > *:not([class*='statistic-block']) .offcanvas-head,
+body.socialblue--sky .sidebar-left .region--complementary-bottom > *:not([class*='statistic-block']) .complementary-title,
+body.socialblue--sky .sidebar-left .region--complementary-top > *:not([class*='statistic-block']) .card__title,
+body.socialblue--sky .sidebar-left .region--complementary-top > *:not([class*='statistic-block']) .offcanvas-head,
+body.socialblue--sky .sidebar-left .region--complementary-top > *:not([class*='statistic-block']) .complementary-title {
   padding-top: 1.5rem;
   font-size: .875rem;
   line-height: 20px;
 }
 
-body.socialblue--sky.path-group .region--complementary-bottom .card .complementary-title,
-body.socialblue--sky.path-group .region--complementary-bottom .off-canvas-xs-only .complementary-title,
-body.socialblue--sky.path-group .region--complementary-bottom [class*='block-group-add'] .complementary-title,
-body.socialblue--sky.path-group .region--complementary-bottom [class*='add-block'] .complementary-title,
-body.socialblue--sky.path-group .region--complementary-top .card .complementary-title,
-body.socialblue--sky.path-group .region--complementary-top .off-canvas-xs-only .complementary-title,
-body.socialblue--sky.path-group .region--complementary-top [class*='block-group-add'] .complementary-title,
-body.socialblue--sky.path-group .region--complementary-top [class*='add-block'] .complementary-title, body.socialblue--sky.details .region--complementary-bottom .card .complementary-title,
-body.socialblue--sky.details .region--complementary-bottom .off-canvas-xs-only .complementary-title,
-body.socialblue--sky.details .region--complementary-bottom [class*='block-group-add'] .complementary-title,
-body.socialblue--sky.details .region--complementary-bottom [class*='add-block'] .complementary-title,
-body.socialblue--sky.details .region--complementary-top .card .complementary-title,
-body.socialblue--sky.details .region--complementary-top .off-canvas-xs-only .complementary-title,
-body.socialblue--sky.details .region--complementary-top [class*='block-group-add'] .complementary-title,
-body.socialblue--sky.details .region--complementary-top [class*='add-block'] .complementary-title, body.socialblue--sky.path-user .region--complementary-bottom .card .complementary-title,
-body.socialblue--sky.path-user .region--complementary-bottom .off-canvas-xs-only .complementary-title,
-body.socialblue--sky.path-user .region--complementary-bottom [class*='block-group-add'] .complementary-title,
-body.socialblue--sky.path-user .region--complementary-bottom [class*='add-block'] .complementary-title,
-body.socialblue--sky.path-user .region--complementary-top .card .complementary-title,
-body.socialblue--sky.path-user .region--complementary-top .off-canvas-xs-only .complementary-title,
-body.socialblue--sky.path-user .region--complementary-top [class*='block-group-add'] .complementary-title,
-body.socialblue--sky.path-user .region--complementary-top [class*='add-block'] .complementary-title, body.socialblue--sky.page-node-type-course-article .region--complementary-bottom .card .complementary-title,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom .off-canvas-xs-only .complementary-title,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='block-group-add'] .complementary-title,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='add-block'] .complementary-title,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top .card .complementary-title,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top .off-canvas-xs-only .complementary-title,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='block-group-add'] .complementary-title,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='add-block'] .complementary-title {
+body.socialblue--sky .sidebar-left .region--complementary-bottom > *:not([class*='statistic-block']) .complementary-title,
+body.socialblue--sky .sidebar-left .region--complementary-top > *:not([class*='statistic-block']) .complementary-title {
   padding-top: 0;
   font-weight: 700;
 }
 
-body.socialblue--sky.path-group .region--complementary-bottom .card .card__block,
-body.socialblue--sky.path-group .region--complementary-bottom .card .offcanvas-body,
-body.socialblue--sky.path-group .region--complementary-bottom .off-canvas-xs-only .card__block,
-body.socialblue--sky.path-group .region--complementary-bottom .off-canvas-xs-only .offcanvas-body,
-body.socialblue--sky.path-group .region--complementary-bottom [class*='block-group-add'] .card__block,
-body.socialblue--sky.path-group .region--complementary-bottom [class*='block-group-add'] .offcanvas-body,
-body.socialblue--sky.path-group .region--complementary-bottom [class*='add-block'] .card__block,
-body.socialblue--sky.path-group .region--complementary-bottom [class*='add-block'] .offcanvas-body,
-body.socialblue--sky.path-group .region--complementary-top .card .card__block,
-body.socialblue--sky.path-group .region--complementary-top .card .offcanvas-body,
-body.socialblue--sky.path-group .region--complementary-top .off-canvas-xs-only .card__block,
-body.socialblue--sky.path-group .region--complementary-top .off-canvas-xs-only .offcanvas-body,
-body.socialblue--sky.path-group .region--complementary-top [class*='block-group-add'] .card__block,
-body.socialblue--sky.path-group .region--complementary-top [class*='block-group-add'] .offcanvas-body,
-body.socialblue--sky.path-group .region--complementary-top [class*='add-block'] .card__block,
-body.socialblue--sky.path-group .region--complementary-top [class*='add-block'] .offcanvas-body, body.socialblue--sky.details .region--complementary-bottom .card .card__block,
-body.socialblue--sky.details .region--complementary-bottom .card .offcanvas-body,
-body.socialblue--sky.details .region--complementary-bottom .off-canvas-xs-only .card__block,
-body.socialblue--sky.details .region--complementary-bottom .off-canvas-xs-only .offcanvas-body,
-body.socialblue--sky.details .region--complementary-bottom [class*='block-group-add'] .card__block,
-body.socialblue--sky.details .region--complementary-bottom [class*='block-group-add'] .offcanvas-body,
-body.socialblue--sky.details .region--complementary-bottom [class*='add-block'] .card__block,
-body.socialblue--sky.details .region--complementary-bottom [class*='add-block'] .offcanvas-body,
-body.socialblue--sky.details .region--complementary-top .card .card__block,
-body.socialblue--sky.details .region--complementary-top .card .offcanvas-body,
-body.socialblue--sky.details .region--complementary-top .off-canvas-xs-only .card__block,
-body.socialblue--sky.details .region--complementary-top .off-canvas-xs-only .offcanvas-body,
-body.socialblue--sky.details .region--complementary-top [class*='block-group-add'] .card__block,
-body.socialblue--sky.details .region--complementary-top [class*='block-group-add'] .offcanvas-body,
-body.socialblue--sky.details .region--complementary-top [class*='add-block'] .card__block,
-body.socialblue--sky.details .region--complementary-top [class*='add-block'] .offcanvas-body, body.socialblue--sky.path-user .region--complementary-bottom .card .card__block,
-body.socialblue--sky.path-user .region--complementary-bottom .card .offcanvas-body,
-body.socialblue--sky.path-user .region--complementary-bottom .off-canvas-xs-only .card__block,
-body.socialblue--sky.path-user .region--complementary-bottom .off-canvas-xs-only .offcanvas-body,
-body.socialblue--sky.path-user .region--complementary-bottom [class*='block-group-add'] .card__block,
-body.socialblue--sky.path-user .region--complementary-bottom [class*='block-group-add'] .offcanvas-body,
-body.socialblue--sky.path-user .region--complementary-bottom [class*='add-block'] .card__block,
-body.socialblue--sky.path-user .region--complementary-bottom [class*='add-block'] .offcanvas-body,
-body.socialblue--sky.path-user .region--complementary-top .card .card__block,
-body.socialblue--sky.path-user .region--complementary-top .card .offcanvas-body,
-body.socialblue--sky.path-user .region--complementary-top .off-canvas-xs-only .card__block,
-body.socialblue--sky.path-user .region--complementary-top .off-canvas-xs-only .offcanvas-body,
-body.socialblue--sky.path-user .region--complementary-top [class*='block-group-add'] .card__block,
-body.socialblue--sky.path-user .region--complementary-top [class*='block-group-add'] .offcanvas-body,
-body.socialblue--sky.path-user .region--complementary-top [class*='add-block'] .card__block,
-body.socialblue--sky.path-user .region--complementary-top [class*='add-block'] .offcanvas-body, body.socialblue--sky.page-node-type-course-article .region--complementary-bottom .card .card__block,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom .card .offcanvas-body,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom .off-canvas-xs-only .card__block,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom .off-canvas-xs-only .offcanvas-body,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='block-group-add'] .card__block,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='block-group-add'] .offcanvas-body,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='add-block'] .card__block,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='add-block'] .offcanvas-body,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top .card .card__block,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top .card .offcanvas-body,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top .off-canvas-xs-only .card__block,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top .off-canvas-xs-only .offcanvas-body,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='block-group-add'] .card__block,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='block-group-add'] .offcanvas-body,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='add-block'] .card__block,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='add-block'] .offcanvas-body {
+body.socialblue--sky .sidebar-left .region--complementary-bottom > *:not([class*='statistic-block']) .card__block,
+body.socialblue--sky .sidebar-left .region--complementary-bottom > *:not([class*='statistic-block']) .offcanvas-body,
+body.socialblue--sky .sidebar-left .region--complementary-top > *:not([class*='statistic-block']) .card__block,
+body.socialblue--sky .sidebar-left .region--complementary-top > *:not([class*='statistic-block']) .offcanvas-body {
   padding-top: 1.25rem;
   padding-bottom: 2.5rem;
 }
 
-.card--list body.socialblue--sky.path-group .region--complementary-bottom .card .card__block, .card--list
-body.socialblue--sky.path-group .region--complementary-bottom .card .offcanvas-body, .card--list
-body.socialblue--sky.path-group .region--complementary-bottom .off-canvas-xs-only .card__block, .card--list
-body.socialblue--sky.path-group .region--complementary-bottom .off-canvas-xs-only .offcanvas-body, .card--list
-body.socialblue--sky.path-group .region--complementary-bottom [class*='block-group-add'] .card__block, .card--list
-body.socialblue--sky.path-group .region--complementary-bottom [class*='block-group-add'] .offcanvas-body, .card--list
-body.socialblue--sky.path-group .region--complementary-bottom [class*='add-block'] .card__block, .card--list
-body.socialblue--sky.path-group .region--complementary-bottom [class*='add-block'] .offcanvas-body, .card--list
-body.socialblue--sky.path-group .region--complementary-top .card .card__block, .card--list
-body.socialblue--sky.path-group .region--complementary-top .card .offcanvas-body, .card--list
-body.socialblue--sky.path-group .region--complementary-top .off-canvas-xs-only .card__block, .card--list
-body.socialblue--sky.path-group .region--complementary-top .off-canvas-xs-only .offcanvas-body, .card--list
-body.socialblue--sky.path-group .region--complementary-top [class*='block-group-add'] .card__block, .card--list
-body.socialblue--sky.path-group .region--complementary-top [class*='block-group-add'] .offcanvas-body, .card--list
-body.socialblue--sky.path-group .region--complementary-top [class*='add-block'] .card__block, .card--list
-body.socialblue--sky.path-group .region--complementary-top [class*='add-block'] .offcanvas-body, .card--list body.socialblue--sky.details .region--complementary-bottom .card .card__block, .card--list
-body.socialblue--sky.details .region--complementary-bottom .card .offcanvas-body, .card--list
-body.socialblue--sky.details .region--complementary-bottom .off-canvas-xs-only .card__block, .card--list
-body.socialblue--sky.details .region--complementary-bottom .off-canvas-xs-only .offcanvas-body, .card--list
-body.socialblue--sky.details .region--complementary-bottom [class*='block-group-add'] .card__block, .card--list
-body.socialblue--sky.details .region--complementary-bottom [class*='block-group-add'] .offcanvas-body, .card--list
-body.socialblue--sky.details .region--complementary-bottom [class*='add-block'] .card__block, .card--list
-body.socialblue--sky.details .region--complementary-bottom [class*='add-block'] .offcanvas-body, .card--list
-body.socialblue--sky.details .region--complementary-top .card .card__block, .card--list
-body.socialblue--sky.details .region--complementary-top .card .offcanvas-body, .card--list
-body.socialblue--sky.details .region--complementary-top .off-canvas-xs-only .card__block, .card--list
-body.socialblue--sky.details .region--complementary-top .off-canvas-xs-only .offcanvas-body, .card--list
-body.socialblue--sky.details .region--complementary-top [class*='block-group-add'] .card__block, .card--list
-body.socialblue--sky.details .region--complementary-top [class*='block-group-add'] .offcanvas-body, .card--list
-body.socialblue--sky.details .region--complementary-top [class*='add-block'] .card__block, .card--list
-body.socialblue--sky.details .region--complementary-top [class*='add-block'] .offcanvas-body, .card--list body.socialblue--sky.path-user .region--complementary-bottom .card .card__block, .card--list
-body.socialblue--sky.path-user .region--complementary-bottom .card .offcanvas-body, .card--list
-body.socialblue--sky.path-user .region--complementary-bottom .off-canvas-xs-only .card__block, .card--list
-body.socialblue--sky.path-user .region--complementary-bottom .off-canvas-xs-only .offcanvas-body, .card--list
-body.socialblue--sky.path-user .region--complementary-bottom [class*='block-group-add'] .card__block, .card--list
-body.socialblue--sky.path-user .region--complementary-bottom [class*='block-group-add'] .offcanvas-body, .card--list
-body.socialblue--sky.path-user .region--complementary-bottom [class*='add-block'] .card__block, .card--list
-body.socialblue--sky.path-user .region--complementary-bottom [class*='add-block'] .offcanvas-body, .card--list
-body.socialblue--sky.path-user .region--complementary-top .card .card__block, .card--list
-body.socialblue--sky.path-user .region--complementary-top .card .offcanvas-body, .card--list
-body.socialblue--sky.path-user .region--complementary-top .off-canvas-xs-only .card__block, .card--list
-body.socialblue--sky.path-user .region--complementary-top .off-canvas-xs-only .offcanvas-body, .card--list
-body.socialblue--sky.path-user .region--complementary-top [class*='block-group-add'] .card__block, .card--list
-body.socialblue--sky.path-user .region--complementary-top [class*='block-group-add'] .offcanvas-body, .card--list
-body.socialblue--sky.path-user .region--complementary-top [class*='add-block'] .card__block, .card--list
-body.socialblue--sky.path-user .region--complementary-top [class*='add-block'] .offcanvas-body, .card--list body.socialblue--sky.page-node-type-course-article .region--complementary-bottom .card .card__block, .card--list
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom .card .offcanvas-body, .card--list
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom .off-canvas-xs-only .card__block, .card--list
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom .off-canvas-xs-only .offcanvas-body, .card--list
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='block-group-add'] .card__block, .card--list
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='block-group-add'] .offcanvas-body, .card--list
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='add-block'] .card__block, .card--list
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='add-block'] .offcanvas-body, .card--list
-body.socialblue--sky.page-node-type-course-article .region--complementary-top .card .card__block, .card--list
-body.socialblue--sky.page-node-type-course-article .region--complementary-top .card .offcanvas-body, .card--list
-body.socialblue--sky.page-node-type-course-article .region--complementary-top .off-canvas-xs-only .card__block, .card--list
-body.socialblue--sky.page-node-type-course-article .region--complementary-top .off-canvas-xs-only .offcanvas-body, .card--list
-body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='block-group-add'] .card__block, .card--list
-body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='block-group-add'] .offcanvas-body, .card--list
-body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='add-block'] .card__block, .card--list
-body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='add-block'] .offcanvas-body {
+.card--list body.socialblue--sky .sidebar-left .region--complementary-bottom > *:not([class*='statistic-block']) .card__block, .card--list
+body.socialblue--sky .sidebar-left .region--complementary-bottom > *:not([class*='statistic-block']) .offcanvas-body, .card--list
+body.socialblue--sky .sidebar-left .region--complementary-top > *:not([class*='statistic-block']) .card__block, .card--list
+body.socialblue--sky .sidebar-left .region--complementary-top > *:not([class*='statistic-block']) .offcanvas-body {
   padding-bottom: 0;
 }
 
-body.socialblue--sky.path-group .region--complementary-bottom .card.card--list .card__block,
-body.socialblue--sky.path-group .region--complementary-bottom .card .card--list .card__block,
-body.socialblue--sky.path-group .region--complementary-bottom .off-canvas-xs-only.card--list .card__block,
-body.socialblue--sky.path-group .region--complementary-bottom .off-canvas-xs-only .card--list .card__block,
-body.socialblue--sky.path-group .region--complementary-bottom [class*='block-group-add'].card--list .card__block,
-body.socialblue--sky.path-group .region--complementary-bottom [class*='block-group-add'] .card--list .card__block,
-body.socialblue--sky.path-group .region--complementary-bottom [class*='add-block'].card--list .card__block,
-body.socialblue--sky.path-group .region--complementary-bottom [class*='add-block'] .card--list .card__block,
-body.socialblue--sky.path-group .region--complementary-top .card.card--list .card__block,
-body.socialblue--sky.path-group .region--complementary-top .card .card--list .card__block,
-body.socialblue--sky.path-group .region--complementary-top .off-canvas-xs-only.card--list .card__block,
-body.socialblue--sky.path-group .region--complementary-top .off-canvas-xs-only .card--list .card__block,
-body.socialblue--sky.path-group .region--complementary-top [class*='block-group-add'].card--list .card__block,
-body.socialblue--sky.path-group .region--complementary-top [class*='block-group-add'] .card--list .card__block,
-body.socialblue--sky.path-group .region--complementary-top [class*='add-block'].card--list .card__block,
-body.socialblue--sky.path-group .region--complementary-top [class*='add-block'] .card--list .card__block, body.socialblue--sky.details .region--complementary-bottom .card.card--list .card__block,
-body.socialblue--sky.details .region--complementary-bottom .card .card--list .card__block,
-body.socialblue--sky.details .region--complementary-bottom .off-canvas-xs-only.card--list .card__block,
-body.socialblue--sky.details .region--complementary-bottom .off-canvas-xs-only .card--list .card__block,
-body.socialblue--sky.details .region--complementary-bottom [class*='block-group-add'].card--list .card__block,
-body.socialblue--sky.details .region--complementary-bottom [class*='block-group-add'] .card--list .card__block,
-body.socialblue--sky.details .region--complementary-bottom [class*='add-block'].card--list .card__block,
-body.socialblue--sky.details .region--complementary-bottom [class*='add-block'] .card--list .card__block,
-body.socialblue--sky.details .region--complementary-top .card.card--list .card__block,
-body.socialblue--sky.details .region--complementary-top .card .card--list .card__block,
-body.socialblue--sky.details .region--complementary-top .off-canvas-xs-only.card--list .card__block,
-body.socialblue--sky.details .region--complementary-top .off-canvas-xs-only .card--list .card__block,
-body.socialblue--sky.details .region--complementary-top [class*='block-group-add'].card--list .card__block,
-body.socialblue--sky.details .region--complementary-top [class*='block-group-add'] .card--list .card__block,
-body.socialblue--sky.details .region--complementary-top [class*='add-block'].card--list .card__block,
-body.socialblue--sky.details .region--complementary-top [class*='add-block'] .card--list .card__block, body.socialblue--sky.path-user .region--complementary-bottom .card.card--list .card__block,
-body.socialblue--sky.path-user .region--complementary-bottom .card .card--list .card__block,
-body.socialblue--sky.path-user .region--complementary-bottom .off-canvas-xs-only.card--list .card__block,
-body.socialblue--sky.path-user .region--complementary-bottom .off-canvas-xs-only .card--list .card__block,
-body.socialblue--sky.path-user .region--complementary-bottom [class*='block-group-add'].card--list .card__block,
-body.socialblue--sky.path-user .region--complementary-bottom [class*='block-group-add'] .card--list .card__block,
-body.socialblue--sky.path-user .region--complementary-bottom [class*='add-block'].card--list .card__block,
-body.socialblue--sky.path-user .region--complementary-bottom [class*='add-block'] .card--list .card__block,
-body.socialblue--sky.path-user .region--complementary-top .card.card--list .card__block,
-body.socialblue--sky.path-user .region--complementary-top .card .card--list .card__block,
-body.socialblue--sky.path-user .region--complementary-top .off-canvas-xs-only.card--list .card__block,
-body.socialblue--sky.path-user .region--complementary-top .off-canvas-xs-only .card--list .card__block,
-body.socialblue--sky.path-user .region--complementary-top [class*='block-group-add'].card--list .card__block,
-body.socialblue--sky.path-user .region--complementary-top [class*='block-group-add'] .card--list .card__block,
-body.socialblue--sky.path-user .region--complementary-top [class*='add-block'].card--list .card__block,
-body.socialblue--sky.path-user .region--complementary-top [class*='add-block'] .card--list .card__block, body.socialblue--sky.page-node-type-course-article .region--complementary-bottom .card.card--list .card__block,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom .card .card--list .card__block,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom .off-canvas-xs-only.card--list .card__block,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom .off-canvas-xs-only .card--list .card__block,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='block-group-add'].card--list .card__block,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='block-group-add'] .card--list .card__block,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='add-block'].card--list .card__block,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='add-block'] .card--list .card__block,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top .card.card--list .card__block,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top .card .card--list .card__block,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top .off-canvas-xs-only.card--list .card__block,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top .off-canvas-xs-only .card--list .card__block,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='block-group-add'].card--list .card__block,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='block-group-add'] .card--list .card__block,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='add-block'].card--list .card__block,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='add-block'] .card--list .card__block {
+body.socialblue--sky .sidebar-left .region--complementary-bottom > *:not([class*='statistic-block']).card--list .card__block,
+body.socialblue--sky .sidebar-left .region--complementary-bottom > *:not([class*='statistic-block']) .card--list .card__block,
+body.socialblue--sky .sidebar-left .region--complementary-top > *:not([class*='statistic-block']).card--list .card__block,
+body.socialblue--sky .sidebar-left .region--complementary-top > *:not([class*='statistic-block']) .card--list .card__block {
   padding-bottom: 0;
 }
 
-body.socialblue--sky.path-group .region--complementary-bottom .card.card--list .card__block:last-child,
-body.socialblue--sky.path-group .region--complementary-bottom .card .card--list .card__block:last-child,
-body.socialblue--sky.path-group .region--complementary-bottom .off-canvas-xs-only.card--list .card__block:last-child,
-body.socialblue--sky.path-group .region--complementary-bottom .off-canvas-xs-only .card--list .card__block:last-child,
-body.socialblue--sky.path-group .region--complementary-bottom [class*='block-group-add'].card--list .card__block:last-child,
-body.socialblue--sky.path-group .region--complementary-bottom [class*='block-group-add'] .card--list .card__block:last-child,
-body.socialblue--sky.path-group .region--complementary-bottom [class*='add-block'].card--list .card__block:last-child,
-body.socialblue--sky.path-group .region--complementary-bottom [class*='add-block'] .card--list .card__block:last-child,
-body.socialblue--sky.path-group .region--complementary-top .card.card--list .card__block:last-child,
-body.socialblue--sky.path-group .region--complementary-top .card .card--list .card__block:last-child,
-body.socialblue--sky.path-group .region--complementary-top .off-canvas-xs-only.card--list .card__block:last-child,
-body.socialblue--sky.path-group .region--complementary-top .off-canvas-xs-only .card--list .card__block:last-child,
-body.socialblue--sky.path-group .region--complementary-top [class*='block-group-add'].card--list .card__block:last-child,
-body.socialblue--sky.path-group .region--complementary-top [class*='block-group-add'] .card--list .card__block:last-child,
-body.socialblue--sky.path-group .region--complementary-top [class*='add-block'].card--list .card__block:last-child,
-body.socialblue--sky.path-group .region--complementary-top [class*='add-block'] .card--list .card__block:last-child, body.socialblue--sky.details .region--complementary-bottom .card.card--list .card__block:last-child,
-body.socialblue--sky.details .region--complementary-bottom .card .card--list .card__block:last-child,
-body.socialblue--sky.details .region--complementary-bottom .off-canvas-xs-only.card--list .card__block:last-child,
-body.socialblue--sky.details .region--complementary-bottom .off-canvas-xs-only .card--list .card__block:last-child,
-body.socialblue--sky.details .region--complementary-bottom [class*='block-group-add'].card--list .card__block:last-child,
-body.socialblue--sky.details .region--complementary-bottom [class*='block-group-add'] .card--list .card__block:last-child,
-body.socialblue--sky.details .region--complementary-bottom [class*='add-block'].card--list .card__block:last-child,
-body.socialblue--sky.details .region--complementary-bottom [class*='add-block'] .card--list .card__block:last-child,
-body.socialblue--sky.details .region--complementary-top .card.card--list .card__block:last-child,
-body.socialblue--sky.details .region--complementary-top .card .card--list .card__block:last-child,
-body.socialblue--sky.details .region--complementary-top .off-canvas-xs-only.card--list .card__block:last-child,
-body.socialblue--sky.details .region--complementary-top .off-canvas-xs-only .card--list .card__block:last-child,
-body.socialblue--sky.details .region--complementary-top [class*='block-group-add'].card--list .card__block:last-child,
-body.socialblue--sky.details .region--complementary-top [class*='block-group-add'] .card--list .card__block:last-child,
-body.socialblue--sky.details .region--complementary-top [class*='add-block'].card--list .card__block:last-child,
-body.socialblue--sky.details .region--complementary-top [class*='add-block'] .card--list .card__block:last-child, body.socialblue--sky.path-user .region--complementary-bottom .card.card--list .card__block:last-child,
-body.socialblue--sky.path-user .region--complementary-bottom .card .card--list .card__block:last-child,
-body.socialblue--sky.path-user .region--complementary-bottom .off-canvas-xs-only.card--list .card__block:last-child,
-body.socialblue--sky.path-user .region--complementary-bottom .off-canvas-xs-only .card--list .card__block:last-child,
-body.socialblue--sky.path-user .region--complementary-bottom [class*='block-group-add'].card--list .card__block:last-child,
-body.socialblue--sky.path-user .region--complementary-bottom [class*='block-group-add'] .card--list .card__block:last-child,
-body.socialblue--sky.path-user .region--complementary-bottom [class*='add-block'].card--list .card__block:last-child,
-body.socialblue--sky.path-user .region--complementary-bottom [class*='add-block'] .card--list .card__block:last-child,
-body.socialblue--sky.path-user .region--complementary-top .card.card--list .card__block:last-child,
-body.socialblue--sky.path-user .region--complementary-top .card .card--list .card__block:last-child,
-body.socialblue--sky.path-user .region--complementary-top .off-canvas-xs-only.card--list .card__block:last-child,
-body.socialblue--sky.path-user .region--complementary-top .off-canvas-xs-only .card--list .card__block:last-child,
-body.socialblue--sky.path-user .region--complementary-top [class*='block-group-add'].card--list .card__block:last-child,
-body.socialblue--sky.path-user .region--complementary-top [class*='block-group-add'] .card--list .card__block:last-child,
-body.socialblue--sky.path-user .region--complementary-top [class*='add-block'].card--list .card__block:last-child,
-body.socialblue--sky.path-user .region--complementary-top [class*='add-block'] .card--list .card__block:last-child, body.socialblue--sky.page-node-type-course-article .region--complementary-bottom .card.card--list .card__block:last-child,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom .card .card--list .card__block:last-child,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom .off-canvas-xs-only.card--list .card__block:last-child,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom .off-canvas-xs-only .card--list .card__block:last-child,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='block-group-add'].card--list .card__block:last-child,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='block-group-add'] .card--list .card__block:last-child,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='add-block'].card--list .card__block:last-child,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='add-block'] .card--list .card__block:last-child,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top .card.card--list .card__block:last-child,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top .card .card--list .card__block:last-child,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top .off-canvas-xs-only.card--list .card__block:last-child,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top .off-canvas-xs-only .card--list .card__block:last-child,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='block-group-add'].card--list .card__block:last-child,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='block-group-add'] .card--list .card__block:last-child,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='add-block'].card--list .card__block:last-child,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='add-block'] .card--list .card__block:last-child {
+body.socialblue--sky .sidebar-left .region--complementary-bottom > *:not([class*='statistic-block']).card--list .card__block:last-child,
+body.socialblue--sky .sidebar-left .region--complementary-bottom > *:not([class*='statistic-block']) .card--list .card__block:last-child,
+body.socialblue--sky .sidebar-left .region--complementary-top > *:not([class*='statistic-block']).card--list .card__block:last-child,
+body.socialblue--sky .sidebar-left .region--complementary-top > *:not([class*='statistic-block']) .card--list .card__block:last-child {
   padding-bottom: 2.5rem;
 }
 
-body.socialblue--sky.path-group .region--complementary-bottom .card.card--list .card__block--list,
-body.socialblue--sky.path-group .region--complementary-bottom .card .card--list .card__block--list,
-body.socialblue--sky.path-group .region--complementary-bottom .off-canvas-xs-only.card--list .card__block--list,
-body.socialblue--sky.path-group .region--complementary-bottom .off-canvas-xs-only .card--list .card__block--list,
-body.socialblue--sky.path-group .region--complementary-bottom [class*='block-group-add'].card--list .card__block--list,
-body.socialblue--sky.path-group .region--complementary-bottom [class*='block-group-add'] .card--list .card__block--list,
-body.socialblue--sky.path-group .region--complementary-bottom [class*='add-block'].card--list .card__block--list,
-body.socialblue--sky.path-group .region--complementary-bottom [class*='add-block'] .card--list .card__block--list,
-body.socialblue--sky.path-group .region--complementary-top .card.card--list .card__block--list,
-body.socialblue--sky.path-group .region--complementary-top .card .card--list .card__block--list,
-body.socialblue--sky.path-group .region--complementary-top .off-canvas-xs-only.card--list .card__block--list,
-body.socialblue--sky.path-group .region--complementary-top .off-canvas-xs-only .card--list .card__block--list,
-body.socialblue--sky.path-group .region--complementary-top [class*='block-group-add'].card--list .card__block--list,
-body.socialblue--sky.path-group .region--complementary-top [class*='block-group-add'] .card--list .card__block--list,
-body.socialblue--sky.path-group .region--complementary-top [class*='add-block'].card--list .card__block--list,
-body.socialblue--sky.path-group .region--complementary-top [class*='add-block'] .card--list .card__block--list, body.socialblue--sky.details .region--complementary-bottom .card.card--list .card__block--list,
-body.socialblue--sky.details .region--complementary-bottom .card .card--list .card__block--list,
-body.socialblue--sky.details .region--complementary-bottom .off-canvas-xs-only.card--list .card__block--list,
-body.socialblue--sky.details .region--complementary-bottom .off-canvas-xs-only .card--list .card__block--list,
-body.socialblue--sky.details .region--complementary-bottom [class*='block-group-add'].card--list .card__block--list,
-body.socialblue--sky.details .region--complementary-bottom [class*='block-group-add'] .card--list .card__block--list,
-body.socialblue--sky.details .region--complementary-bottom [class*='add-block'].card--list .card__block--list,
-body.socialblue--sky.details .region--complementary-bottom [class*='add-block'] .card--list .card__block--list,
-body.socialblue--sky.details .region--complementary-top .card.card--list .card__block--list,
-body.socialblue--sky.details .region--complementary-top .card .card--list .card__block--list,
-body.socialblue--sky.details .region--complementary-top .off-canvas-xs-only.card--list .card__block--list,
-body.socialblue--sky.details .region--complementary-top .off-canvas-xs-only .card--list .card__block--list,
-body.socialblue--sky.details .region--complementary-top [class*='block-group-add'].card--list .card__block--list,
-body.socialblue--sky.details .region--complementary-top [class*='block-group-add'] .card--list .card__block--list,
-body.socialblue--sky.details .region--complementary-top [class*='add-block'].card--list .card__block--list,
-body.socialblue--sky.details .region--complementary-top [class*='add-block'] .card--list .card__block--list, body.socialblue--sky.path-user .region--complementary-bottom .card.card--list .card__block--list,
-body.socialblue--sky.path-user .region--complementary-bottom .card .card--list .card__block--list,
-body.socialblue--sky.path-user .region--complementary-bottom .off-canvas-xs-only.card--list .card__block--list,
-body.socialblue--sky.path-user .region--complementary-bottom .off-canvas-xs-only .card--list .card__block--list,
-body.socialblue--sky.path-user .region--complementary-bottom [class*='block-group-add'].card--list .card__block--list,
-body.socialblue--sky.path-user .region--complementary-bottom [class*='block-group-add'] .card--list .card__block--list,
-body.socialblue--sky.path-user .region--complementary-bottom [class*='add-block'].card--list .card__block--list,
-body.socialblue--sky.path-user .region--complementary-bottom [class*='add-block'] .card--list .card__block--list,
-body.socialblue--sky.path-user .region--complementary-top .card.card--list .card__block--list,
-body.socialblue--sky.path-user .region--complementary-top .card .card--list .card__block--list,
-body.socialblue--sky.path-user .region--complementary-top .off-canvas-xs-only.card--list .card__block--list,
-body.socialblue--sky.path-user .region--complementary-top .off-canvas-xs-only .card--list .card__block--list,
-body.socialblue--sky.path-user .region--complementary-top [class*='block-group-add'].card--list .card__block--list,
-body.socialblue--sky.path-user .region--complementary-top [class*='block-group-add'] .card--list .card__block--list,
-body.socialblue--sky.path-user .region--complementary-top [class*='add-block'].card--list .card__block--list,
-body.socialblue--sky.path-user .region--complementary-top [class*='add-block'] .card--list .card__block--list, body.socialblue--sky.page-node-type-course-article .region--complementary-bottom .card.card--list .card__block--list,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom .card .card--list .card__block--list,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom .off-canvas-xs-only.card--list .card__block--list,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom .off-canvas-xs-only .card--list .card__block--list,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='block-group-add'].card--list .card__block--list,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='block-group-add'] .card--list .card__block--list,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='add-block'].card--list .card__block--list,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='add-block'] .card--list .card__block--list,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top .card.card--list .card__block--list,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top .card .card--list .card__block--list,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top .off-canvas-xs-only.card--list .card__block--list,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top .off-canvas-xs-only .card--list .card__block--list,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='block-group-add'].card--list .card__block--list,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='block-group-add'] .card--list .card__block--list,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='add-block'].card--list .card__block--list,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='add-block'] .card--list .card__block--list {
+body.socialblue--sky .sidebar-left .region--complementary-bottom > *:not([class*='statistic-block']).card--list .card__block--list,
+body.socialblue--sky .sidebar-left .region--complementary-bottom > *:not([class*='statistic-block']) .card--list .card__block--list,
+body.socialblue--sky .sidebar-left .region--complementary-top > *:not([class*='statistic-block']).card--list .card__block--list,
+body.socialblue--sky .sidebar-left .region--complementary-top > *:not([class*='statistic-block']) .card--list .card__block--list {
   padding-top: 1.25rem;
   padding-bottom: 0;
 }
 
-body.socialblue--sky.path-group .region--complementary-bottom .card.card--list .card__block--list + .card__block--list,
-body.socialblue--sky.path-group .region--complementary-bottom .card .card--list .card__block--list + .card__block--list,
-body.socialblue--sky.path-group .region--complementary-bottom .off-canvas-xs-only.card--list .card__block--list + .card__block--list,
-body.socialblue--sky.path-group .region--complementary-bottom .off-canvas-xs-only .card--list .card__block--list + .card__block--list,
-body.socialblue--sky.path-group .region--complementary-bottom [class*='block-group-add'].card--list .card__block--list + .card__block--list,
-body.socialblue--sky.path-group .region--complementary-bottom [class*='block-group-add'] .card--list .card__block--list + .card__block--list,
-body.socialblue--sky.path-group .region--complementary-bottom [class*='add-block'].card--list .card__block--list + .card__block--list,
-body.socialblue--sky.path-group .region--complementary-bottom [class*='add-block'] .card--list .card__block--list + .card__block--list,
-body.socialblue--sky.path-group .region--complementary-top .card.card--list .card__block--list + .card__block--list,
-body.socialblue--sky.path-group .region--complementary-top .card .card--list .card__block--list + .card__block--list,
-body.socialblue--sky.path-group .region--complementary-top .off-canvas-xs-only.card--list .card__block--list + .card__block--list,
-body.socialblue--sky.path-group .region--complementary-top .off-canvas-xs-only .card--list .card__block--list + .card__block--list,
-body.socialblue--sky.path-group .region--complementary-top [class*='block-group-add'].card--list .card__block--list + .card__block--list,
-body.socialblue--sky.path-group .region--complementary-top [class*='block-group-add'] .card--list .card__block--list + .card__block--list,
-body.socialblue--sky.path-group .region--complementary-top [class*='add-block'].card--list .card__block--list + .card__block--list,
-body.socialblue--sky.path-group .region--complementary-top [class*='add-block'] .card--list .card__block--list + .card__block--list, body.socialblue--sky.details .region--complementary-bottom .card.card--list .card__block--list + .card__block--list,
-body.socialblue--sky.details .region--complementary-bottom .card .card--list .card__block--list + .card__block--list,
-body.socialblue--sky.details .region--complementary-bottom .off-canvas-xs-only.card--list .card__block--list + .card__block--list,
-body.socialblue--sky.details .region--complementary-bottom .off-canvas-xs-only .card--list .card__block--list + .card__block--list,
-body.socialblue--sky.details .region--complementary-bottom [class*='block-group-add'].card--list .card__block--list + .card__block--list,
-body.socialblue--sky.details .region--complementary-bottom [class*='block-group-add'] .card--list .card__block--list + .card__block--list,
-body.socialblue--sky.details .region--complementary-bottom [class*='add-block'].card--list .card__block--list + .card__block--list,
-body.socialblue--sky.details .region--complementary-bottom [class*='add-block'] .card--list .card__block--list + .card__block--list,
-body.socialblue--sky.details .region--complementary-top .card.card--list .card__block--list + .card__block--list,
-body.socialblue--sky.details .region--complementary-top .card .card--list .card__block--list + .card__block--list,
-body.socialblue--sky.details .region--complementary-top .off-canvas-xs-only.card--list .card__block--list + .card__block--list,
-body.socialblue--sky.details .region--complementary-top .off-canvas-xs-only .card--list .card__block--list + .card__block--list,
-body.socialblue--sky.details .region--complementary-top [class*='block-group-add'].card--list .card__block--list + .card__block--list,
-body.socialblue--sky.details .region--complementary-top [class*='block-group-add'] .card--list .card__block--list + .card__block--list,
-body.socialblue--sky.details .region--complementary-top [class*='add-block'].card--list .card__block--list + .card__block--list,
-body.socialblue--sky.details .region--complementary-top [class*='add-block'] .card--list .card__block--list + .card__block--list, body.socialblue--sky.path-user .region--complementary-bottom .card.card--list .card__block--list + .card__block--list,
-body.socialblue--sky.path-user .region--complementary-bottom .card .card--list .card__block--list + .card__block--list,
-body.socialblue--sky.path-user .region--complementary-bottom .off-canvas-xs-only.card--list .card__block--list + .card__block--list,
-body.socialblue--sky.path-user .region--complementary-bottom .off-canvas-xs-only .card--list .card__block--list + .card__block--list,
-body.socialblue--sky.path-user .region--complementary-bottom [class*='block-group-add'].card--list .card__block--list + .card__block--list,
-body.socialblue--sky.path-user .region--complementary-bottom [class*='block-group-add'] .card--list .card__block--list + .card__block--list,
-body.socialblue--sky.path-user .region--complementary-bottom [class*='add-block'].card--list .card__block--list + .card__block--list,
-body.socialblue--sky.path-user .region--complementary-bottom [class*='add-block'] .card--list .card__block--list + .card__block--list,
-body.socialblue--sky.path-user .region--complementary-top .card.card--list .card__block--list + .card__block--list,
-body.socialblue--sky.path-user .region--complementary-top .card .card--list .card__block--list + .card__block--list,
-body.socialblue--sky.path-user .region--complementary-top .off-canvas-xs-only.card--list .card__block--list + .card__block--list,
-body.socialblue--sky.path-user .region--complementary-top .off-canvas-xs-only .card--list .card__block--list + .card__block--list,
-body.socialblue--sky.path-user .region--complementary-top [class*='block-group-add'].card--list .card__block--list + .card__block--list,
-body.socialblue--sky.path-user .region--complementary-top [class*='block-group-add'] .card--list .card__block--list + .card__block--list,
-body.socialblue--sky.path-user .region--complementary-top [class*='add-block'].card--list .card__block--list + .card__block--list,
-body.socialblue--sky.path-user .region--complementary-top [class*='add-block'] .card--list .card__block--list + .card__block--list, body.socialblue--sky.page-node-type-course-article .region--complementary-bottom .card.card--list .card__block--list + .card__block--list,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom .card .card--list .card__block--list + .card__block--list,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom .off-canvas-xs-only.card--list .card__block--list + .card__block--list,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom .off-canvas-xs-only .card--list .card__block--list + .card__block--list,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='block-group-add'].card--list .card__block--list + .card__block--list,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='block-group-add'] .card--list .card__block--list + .card__block--list,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='add-block'].card--list .card__block--list + .card__block--list,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='add-block'] .card--list .card__block--list + .card__block--list,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top .card.card--list .card__block--list + .card__block--list,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top .card .card--list .card__block--list + .card__block--list,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top .off-canvas-xs-only.card--list .card__block--list + .card__block--list,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top .off-canvas-xs-only .card--list .card__block--list + .card__block--list,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='block-group-add'].card--list .card__block--list + .card__block--list,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='block-group-add'] .card--list .card__block--list + .card__block--list,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='add-block'].card--list .card__block--list + .card__block--list,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='add-block'] .card--list .card__block--list + .card__block--list {
+body.socialblue--sky .sidebar-left .region--complementary-bottom > *:not([class*='statistic-block']).card--list .card__block--list + .card__block--list,
+body.socialblue--sky .sidebar-left .region--complementary-bottom > *:not([class*='statistic-block']) .card--list .card__block--list + .card__block--list,
+body.socialblue--sky .sidebar-left .region--complementary-top > *:not([class*='statistic-block']).card--list .card__block--list + .card__block--list,
+body.socialblue--sky .sidebar-left .region--complementary-top > *:not([class*='statistic-block']) .card--list .card__block--list + .card__block--list {
   padding-top: 0;
 }
 
-body.socialblue--sky.path-group .region--complementary-bottom .card.card--list .card__block--list:last-child,
-body.socialblue--sky.path-group .region--complementary-bottom .card .card--list .card__block--list:last-child,
-body.socialblue--sky.path-group .region--complementary-bottom .off-canvas-xs-only.card--list .card__block--list:last-child,
-body.socialblue--sky.path-group .region--complementary-bottom .off-canvas-xs-only .card--list .card__block--list:last-child,
-body.socialblue--sky.path-group .region--complementary-bottom [class*='block-group-add'].card--list .card__block--list:last-child,
-body.socialblue--sky.path-group .region--complementary-bottom [class*='block-group-add'] .card--list .card__block--list:last-child,
-body.socialblue--sky.path-group .region--complementary-bottom [class*='add-block'].card--list .card__block--list:last-child,
-body.socialblue--sky.path-group .region--complementary-bottom [class*='add-block'] .card--list .card__block--list:last-child,
-body.socialblue--sky.path-group .region--complementary-top .card.card--list .card__block--list:last-child,
-body.socialblue--sky.path-group .region--complementary-top .card .card--list .card__block--list:last-child,
-body.socialblue--sky.path-group .region--complementary-top .off-canvas-xs-only.card--list .card__block--list:last-child,
-body.socialblue--sky.path-group .region--complementary-top .off-canvas-xs-only .card--list .card__block--list:last-child,
-body.socialblue--sky.path-group .region--complementary-top [class*='block-group-add'].card--list .card__block--list:last-child,
-body.socialblue--sky.path-group .region--complementary-top [class*='block-group-add'] .card--list .card__block--list:last-child,
-body.socialblue--sky.path-group .region--complementary-top [class*='add-block'].card--list .card__block--list:last-child,
-body.socialblue--sky.path-group .region--complementary-top [class*='add-block'] .card--list .card__block--list:last-child, body.socialblue--sky.details .region--complementary-bottom .card.card--list .card__block--list:last-child,
-body.socialblue--sky.details .region--complementary-bottom .card .card--list .card__block--list:last-child,
-body.socialblue--sky.details .region--complementary-bottom .off-canvas-xs-only.card--list .card__block--list:last-child,
-body.socialblue--sky.details .region--complementary-bottom .off-canvas-xs-only .card--list .card__block--list:last-child,
-body.socialblue--sky.details .region--complementary-bottom [class*='block-group-add'].card--list .card__block--list:last-child,
-body.socialblue--sky.details .region--complementary-bottom [class*='block-group-add'] .card--list .card__block--list:last-child,
-body.socialblue--sky.details .region--complementary-bottom [class*='add-block'].card--list .card__block--list:last-child,
-body.socialblue--sky.details .region--complementary-bottom [class*='add-block'] .card--list .card__block--list:last-child,
-body.socialblue--sky.details .region--complementary-top .card.card--list .card__block--list:last-child,
-body.socialblue--sky.details .region--complementary-top .card .card--list .card__block--list:last-child,
-body.socialblue--sky.details .region--complementary-top .off-canvas-xs-only.card--list .card__block--list:last-child,
-body.socialblue--sky.details .region--complementary-top .off-canvas-xs-only .card--list .card__block--list:last-child,
-body.socialblue--sky.details .region--complementary-top [class*='block-group-add'].card--list .card__block--list:last-child,
-body.socialblue--sky.details .region--complementary-top [class*='block-group-add'] .card--list .card__block--list:last-child,
-body.socialblue--sky.details .region--complementary-top [class*='add-block'].card--list .card__block--list:last-child,
-body.socialblue--sky.details .region--complementary-top [class*='add-block'] .card--list .card__block--list:last-child, body.socialblue--sky.path-user .region--complementary-bottom .card.card--list .card__block--list:last-child,
-body.socialblue--sky.path-user .region--complementary-bottom .card .card--list .card__block--list:last-child,
-body.socialblue--sky.path-user .region--complementary-bottom .off-canvas-xs-only.card--list .card__block--list:last-child,
-body.socialblue--sky.path-user .region--complementary-bottom .off-canvas-xs-only .card--list .card__block--list:last-child,
-body.socialblue--sky.path-user .region--complementary-bottom [class*='block-group-add'].card--list .card__block--list:last-child,
-body.socialblue--sky.path-user .region--complementary-bottom [class*='block-group-add'] .card--list .card__block--list:last-child,
-body.socialblue--sky.path-user .region--complementary-bottom [class*='add-block'].card--list .card__block--list:last-child,
-body.socialblue--sky.path-user .region--complementary-bottom [class*='add-block'] .card--list .card__block--list:last-child,
-body.socialblue--sky.path-user .region--complementary-top .card.card--list .card__block--list:last-child,
-body.socialblue--sky.path-user .region--complementary-top .card .card--list .card__block--list:last-child,
-body.socialblue--sky.path-user .region--complementary-top .off-canvas-xs-only.card--list .card__block--list:last-child,
-body.socialblue--sky.path-user .region--complementary-top .off-canvas-xs-only .card--list .card__block--list:last-child,
-body.socialblue--sky.path-user .region--complementary-top [class*='block-group-add'].card--list .card__block--list:last-child,
-body.socialblue--sky.path-user .region--complementary-top [class*='block-group-add'] .card--list .card__block--list:last-child,
-body.socialblue--sky.path-user .region--complementary-top [class*='add-block'].card--list .card__block--list:last-child,
-body.socialblue--sky.path-user .region--complementary-top [class*='add-block'] .card--list .card__block--list:last-child, body.socialblue--sky.page-node-type-course-article .region--complementary-bottom .card.card--list .card__block--list:last-child,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom .card .card--list .card__block--list:last-child,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom .off-canvas-xs-only.card--list .card__block--list:last-child,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom .off-canvas-xs-only .card--list .card__block--list:last-child,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='block-group-add'].card--list .card__block--list:last-child,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='block-group-add'] .card--list .card__block--list:last-child,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='add-block'].card--list .card__block--list:last-child,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='add-block'] .card--list .card__block--list:last-child,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top .card.card--list .card__block--list:last-child,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top .card .card--list .card__block--list:last-child,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top .off-canvas-xs-only.card--list .card__block--list:last-child,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top .off-canvas-xs-only .card--list .card__block--list:last-child,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='block-group-add'].card--list .card__block--list:last-child,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='block-group-add'] .card--list .card__block--list:last-child,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='add-block'].card--list .card__block--list:last-child,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='add-block'] .card--list .card__block--list:last-child {
+body.socialblue--sky .sidebar-left .region--complementary-bottom > *:not([class*='statistic-block']).card--list .card__block--list:last-child,
+body.socialblue--sky .sidebar-left .region--complementary-bottom > *:not([class*='statistic-block']) .card--list .card__block--list:last-child,
+body.socialblue--sky .sidebar-left .region--complementary-top > *:not([class*='statistic-block']).card--list .card__block--list:last-child,
+body.socialblue--sky .sidebar-left .region--complementary-top > *:not([class*='statistic-block']) .card--list .card__block--list:last-child {
   padding-bottom: 2.5rem;
 }
 
-body.socialblue--sky.path-group .region--complementary-bottom .card .offcanvas-body,
-body.socialblue--sky.path-group .region--complementary-bottom .off-canvas-xs-only .offcanvas-body,
-body.socialblue--sky.path-group .region--complementary-bottom [class*='block-group-add'] .offcanvas-body,
-body.socialblue--sky.path-group .region--complementary-bottom [class*='add-block'] .offcanvas-body,
-body.socialblue--sky.path-group .region--complementary-top .card .offcanvas-body,
-body.socialblue--sky.path-group .region--complementary-top .off-canvas-xs-only .offcanvas-body,
-body.socialblue--sky.path-group .region--complementary-top [class*='block-group-add'] .offcanvas-body,
-body.socialblue--sky.path-group .region--complementary-top [class*='add-block'] .offcanvas-body, body.socialblue--sky.details .region--complementary-bottom .card .offcanvas-body,
-body.socialblue--sky.details .region--complementary-bottom .off-canvas-xs-only .offcanvas-body,
-body.socialblue--sky.details .region--complementary-bottom [class*='block-group-add'] .offcanvas-body,
-body.socialblue--sky.details .region--complementary-bottom [class*='add-block'] .offcanvas-body,
-body.socialblue--sky.details .region--complementary-top .card .offcanvas-body,
-body.socialblue--sky.details .region--complementary-top .off-canvas-xs-only .offcanvas-body,
-body.socialblue--sky.details .region--complementary-top [class*='block-group-add'] .offcanvas-body,
-body.socialblue--sky.details .region--complementary-top [class*='add-block'] .offcanvas-body, body.socialblue--sky.path-user .region--complementary-bottom .card .offcanvas-body,
-body.socialblue--sky.path-user .region--complementary-bottom .off-canvas-xs-only .offcanvas-body,
-body.socialblue--sky.path-user .region--complementary-bottom [class*='block-group-add'] .offcanvas-body,
-body.socialblue--sky.path-user .region--complementary-bottom [class*='add-block'] .offcanvas-body,
-body.socialblue--sky.path-user .region--complementary-top .card .offcanvas-body,
-body.socialblue--sky.path-user .region--complementary-top .off-canvas-xs-only .offcanvas-body,
-body.socialblue--sky.path-user .region--complementary-top [class*='block-group-add'] .offcanvas-body,
-body.socialblue--sky.path-user .region--complementary-top [class*='add-block'] .offcanvas-body, body.socialblue--sky.page-node-type-course-article .region--complementary-bottom .card .offcanvas-body,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom .off-canvas-xs-only .offcanvas-body,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='block-group-add'] .offcanvas-body,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='add-block'] .offcanvas-body,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top .card .offcanvas-body,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top .off-canvas-xs-only .offcanvas-body,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='block-group-add'] .offcanvas-body,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='add-block'] .offcanvas-body {
+body.socialblue--sky .sidebar-left .region--complementary-bottom > *:not([class*='statistic-block']) .offcanvas-body,
+body.socialblue--sky .sidebar-left .region--complementary-top > *:not([class*='statistic-block']) .offcanvas-body {
   padding-bottom: 0;
 }
 
-body.socialblue--sky.path-group .region--complementary-bottom .card .card__actionbar,
-body.socialblue--sky.path-group .region--complementary-bottom .off-canvas-xs-only .card__actionbar,
-body.socialblue--sky.path-group .region--complementary-bottom [class*='block-group-add'] .card__actionbar,
-body.socialblue--sky.path-group .region--complementary-bottom [class*='add-block'] .card__actionbar,
-body.socialblue--sky.path-group .region--complementary-top .card .card__actionbar,
-body.socialblue--sky.path-group .region--complementary-top .off-canvas-xs-only .card__actionbar,
-body.socialblue--sky.path-group .region--complementary-top [class*='block-group-add'] .card__actionbar,
-body.socialblue--sky.path-group .region--complementary-top [class*='add-block'] .card__actionbar, body.socialblue--sky.details .region--complementary-bottom .card .card__actionbar,
-body.socialblue--sky.details .region--complementary-bottom .off-canvas-xs-only .card__actionbar,
-body.socialblue--sky.details .region--complementary-bottom [class*='block-group-add'] .card__actionbar,
-body.socialblue--sky.details .region--complementary-bottom [class*='add-block'] .card__actionbar,
-body.socialblue--sky.details .region--complementary-top .card .card__actionbar,
-body.socialblue--sky.details .region--complementary-top .off-canvas-xs-only .card__actionbar,
-body.socialblue--sky.details .region--complementary-top [class*='block-group-add'] .card__actionbar,
-body.socialblue--sky.details .region--complementary-top [class*='add-block'] .card__actionbar, body.socialblue--sky.path-user .region--complementary-bottom .card .card__actionbar,
-body.socialblue--sky.path-user .region--complementary-bottom .off-canvas-xs-only .card__actionbar,
-body.socialblue--sky.path-user .region--complementary-bottom [class*='block-group-add'] .card__actionbar,
-body.socialblue--sky.path-user .region--complementary-bottom [class*='add-block'] .card__actionbar,
-body.socialblue--sky.path-user .region--complementary-top .card .card__actionbar,
-body.socialblue--sky.path-user .region--complementary-top .off-canvas-xs-only .card__actionbar,
-body.socialblue--sky.path-user .region--complementary-top [class*='block-group-add'] .card__actionbar,
-body.socialblue--sky.path-user .region--complementary-top [class*='add-block'] .card__actionbar, body.socialblue--sky.page-node-type-course-article .region--complementary-bottom .card .card__actionbar,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom .off-canvas-xs-only .card__actionbar,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='block-group-add'] .card__actionbar,
-body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='add-block'] .card__actionbar,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top .card .card__actionbar,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top .off-canvas-xs-only .card__actionbar,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='block-group-add'] .card__actionbar,
-body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='add-block'] .card__actionbar {
+body.socialblue--sky .sidebar-left .region--complementary-bottom > *:not([class*='statistic-block']) .card__actionbar,
+body.socialblue--sky .sidebar-left .region--complementary-top > *:not([class*='statistic-block']) .card__actionbar {
   padding: 0;
 }
 
-body.socialblue--sky.path-group .content-merged .region--content .content--side_wrapper-card > .card:not(.teaser--idea--featured),
-body.socialblue--sky.path-group .content-merged .region--content .content--side_wrapper-card .card:not(.teaser--idea--featured), body.socialblue--sky.details .content-merged .region--content .content--side_wrapper-card > .card:not(.teaser--idea--featured),
-body.socialblue--sky.details .content-merged .region--content .content--side_wrapper-card .card:not(.teaser--idea--featured), body.socialblue--sky.path-user .content-merged .region--content .content--side_wrapper-card > .card:not(.teaser--idea--featured),
-body.socialblue--sky.path-user .content-merged .region--content .content--side_wrapper-card .card:not(.teaser--idea--featured), body.socialblue--sky.page-node-type-course-article .content-merged .region--content .content--side_wrapper-card > .card:not(.teaser--idea--featured),
-body.socialblue--sky.page-node-type-course-article .content-merged .region--content .content--side_wrapper-card .card:not(.teaser--idea--featured) {
-  border-radius: 0 !important;
-  -webkit-box-shadow: none;
-          box-shadow: none;
-  padding: 1.5rem 1.25rem;
-  margin-bottom: 0;
-  -webkit-box-align: start;
-      -ms-flex-align: start;
-          align-items: flex-start;
-}
-
-body.socialblue--sky.path-group .content-merged .region--content .content--side_wrapper-card > .card:not(.teaser--idea--featured) .card__body,
-body.socialblue--sky.path-group .content-merged .region--content .content--side_wrapper-card > .card:not(.teaser--idea--featured) .card__block,
-body.socialblue--sky.path-group .content-merged .region--content .content--side_wrapper-card .card:not(.teaser--idea--featured) .card__body,
-body.socialblue--sky.path-group .content-merged .region--content .content--side_wrapper-card .card:not(.teaser--idea--featured) .card__block, body.socialblue--sky.details .content-merged .region--content .content--side_wrapper-card > .card:not(.teaser--idea--featured) .card__body,
-body.socialblue--sky.details .content-merged .region--content .content--side_wrapper-card > .card:not(.teaser--idea--featured) .card__block,
-body.socialblue--sky.details .content-merged .region--content .content--side_wrapper-card .card:not(.teaser--idea--featured) .card__body,
-body.socialblue--sky.details .content-merged .region--content .content--side_wrapper-card .card:not(.teaser--idea--featured) .card__block, body.socialblue--sky.path-user .content-merged .region--content .content--side_wrapper-card > .card:not(.teaser--idea--featured) .card__body,
-body.socialblue--sky.path-user .content-merged .region--content .content--side_wrapper-card > .card:not(.teaser--idea--featured) .card__block,
-body.socialblue--sky.path-user .content-merged .region--content .content--side_wrapper-card .card:not(.teaser--idea--featured) .card__body,
-body.socialblue--sky.path-user .content-merged .region--content .content--side_wrapper-card .card:not(.teaser--idea--featured) .card__block, body.socialblue--sky.page-node-type-course-article .content-merged .region--content .content--side_wrapper-card > .card:not(.teaser--idea--featured) .card__body,
-body.socialblue--sky.page-node-type-course-article .content-merged .region--content .content--side_wrapper-card > .card:not(.teaser--idea--featured) .card__block,
-body.socialblue--sky.page-node-type-course-article .content-merged .region--content .content--side_wrapper-card .card:not(.teaser--idea--featured) .card__body,
-body.socialblue--sky.page-node-type-course-article .content-merged .region--content .content--side_wrapper-card .card:not(.teaser--idea--featured) .card__block {
-  padding: 0;
-  width: 100%;
-}
-
-body.socialblue--sky.path-group .content-merged .region--content .content--side_wrapper-card > .card:not(.teaser--idea--featured) .card__body .view--group-managers,
-body.socialblue--sky.path-group .content-merged .region--content .content--side_wrapper-card > .card:not(.teaser--idea--featured) .card__body .card__block,
-body.socialblue--sky.path-group .content-merged .region--content .content--side_wrapper-card > .card:not(.teaser--idea--featured) .card__body .card__text,
-body.socialblue--sky.path-group .content-merged .region--content .content--side_wrapper-card > .card:not(.teaser--idea--featured) .card__block .view--group-managers,
-body.socialblue--sky.path-group .content-merged .region--content .content--side_wrapper-card > .card:not(.teaser--idea--featured) .card__block .card__block,
-body.socialblue--sky.path-group .content-merged .region--content .content--side_wrapper-card > .card:not(.teaser--idea--featured) .card__block .card__text,
-body.socialblue--sky.path-group .content-merged .region--content .content--side_wrapper-card .card:not(.teaser--idea--featured) .card__body .view--group-managers,
-body.socialblue--sky.path-group .content-merged .region--content .content--side_wrapper-card .card:not(.teaser--idea--featured) .card__body .card__block,
-body.socialblue--sky.path-group .content-merged .region--content .content--side_wrapper-card .card:not(.teaser--idea--featured) .card__body .card__text,
-body.socialblue--sky.path-group .content-merged .region--content .content--side_wrapper-card .card:not(.teaser--idea--featured) .card__block .view--group-managers,
-body.socialblue--sky.path-group .content-merged .region--content .content--side_wrapper-card .card:not(.teaser--idea--featured) .card__block .card__block,
-body.socialblue--sky.path-group .content-merged .region--content .content--side_wrapper-card .card:not(.teaser--idea--featured) .card__block .card__text, body.socialblue--sky.details .content-merged .region--content .content--side_wrapper-card > .card:not(.teaser--idea--featured) .card__body .view--group-managers,
-body.socialblue--sky.details .content-merged .region--content .content--side_wrapper-card > .card:not(.teaser--idea--featured) .card__body .card__block,
-body.socialblue--sky.details .content-merged .region--content .content--side_wrapper-card > .card:not(.teaser--idea--featured) .card__body .card__text,
-body.socialblue--sky.details .content-merged .region--content .content--side_wrapper-card > .card:not(.teaser--idea--featured) .card__block .view--group-managers,
-body.socialblue--sky.details .content-merged .region--content .content--side_wrapper-card > .card:not(.teaser--idea--featured) .card__block .card__block,
-body.socialblue--sky.details .content-merged .region--content .content--side_wrapper-card > .card:not(.teaser--idea--featured) .card__block .card__text,
-body.socialblue--sky.details .content-merged .region--content .content--side_wrapper-card .card:not(.teaser--idea--featured) .card__body .view--group-managers,
-body.socialblue--sky.details .content-merged .region--content .content--side_wrapper-card .card:not(.teaser--idea--featured) .card__body .card__block,
-body.socialblue--sky.details .content-merged .region--content .content--side_wrapper-card .card:not(.teaser--idea--featured) .card__body .card__text,
-body.socialblue--sky.details .content-merged .region--content .content--side_wrapper-card .card:not(.teaser--idea--featured) .card__block .view--group-managers,
-body.socialblue--sky.details .content-merged .region--content .content--side_wrapper-card .card:not(.teaser--idea--featured) .card__block .card__block,
-body.socialblue--sky.details .content-merged .region--content .content--side_wrapper-card .card:not(.teaser--idea--featured) .card__block .card__text, body.socialblue--sky.path-user .content-merged .region--content .content--side_wrapper-card > .card:not(.teaser--idea--featured) .card__body .view--group-managers,
-body.socialblue--sky.path-user .content-merged .region--content .content--side_wrapper-card > .card:not(.teaser--idea--featured) .card__body .card__block,
-body.socialblue--sky.path-user .content-merged .region--content .content--side_wrapper-card > .card:not(.teaser--idea--featured) .card__body .card__text,
-body.socialblue--sky.path-user .content-merged .region--content .content--side_wrapper-card > .card:not(.teaser--idea--featured) .card__block .view--group-managers,
-body.socialblue--sky.path-user .content-merged .region--content .content--side_wrapper-card > .card:not(.teaser--idea--featured) .card__block .card__block,
-body.socialblue--sky.path-user .content-merged .region--content .content--side_wrapper-card > .card:not(.teaser--idea--featured) .card__block .card__text,
-body.socialblue--sky.path-user .content-merged .region--content .content--side_wrapper-card .card:not(.teaser--idea--featured) .card__body .view--group-managers,
-body.socialblue--sky.path-user .content-merged .region--content .content--side_wrapper-card .card:not(.teaser--idea--featured) .card__body .card__block,
-body.socialblue--sky.path-user .content-merged .region--content .content--side_wrapper-card .card:not(.teaser--idea--featured) .card__body .card__text,
-body.socialblue--sky.path-user .content-merged .region--content .content--side_wrapper-card .card:not(.teaser--idea--featured) .card__block .view--group-managers,
-body.socialblue--sky.path-user .content-merged .region--content .content--side_wrapper-card .card:not(.teaser--idea--featured) .card__block .card__block,
-body.socialblue--sky.path-user .content-merged .region--content .content--side_wrapper-card .card:not(.teaser--idea--featured) .card__block .card__text, body.socialblue--sky.page-node-type-course-article .content-merged .region--content .content--side_wrapper-card > .card:not(.teaser--idea--featured) .card__body .view--group-managers,
-body.socialblue--sky.page-node-type-course-article .content-merged .region--content .content--side_wrapper-card > .card:not(.teaser--idea--featured) .card__body .card__block,
-body.socialblue--sky.page-node-type-course-article .content-merged .region--content .content--side_wrapper-card > .card:not(.teaser--idea--featured) .card__body .card__text,
-body.socialblue--sky.page-node-type-course-article .content-merged .region--content .content--side_wrapper-card > .card:not(.teaser--idea--featured) .card__block .view--group-managers,
-body.socialblue--sky.page-node-type-course-article .content-merged .region--content .content--side_wrapper-card > .card:not(.teaser--idea--featured) .card__block .card__block,
-body.socialblue--sky.page-node-type-course-article .content-merged .region--content .content--side_wrapper-card > .card:not(.teaser--idea--featured) .card__block .card__text,
-body.socialblue--sky.page-node-type-course-article .content-merged .region--content .content--side_wrapper-card .card:not(.teaser--idea--featured) .card__body .view--group-managers,
-body.socialblue--sky.page-node-type-course-article .content-merged .region--content .content--side_wrapper-card .card:not(.teaser--idea--featured) .card__body .card__block,
-body.socialblue--sky.page-node-type-course-article .content-merged .region--content .content--side_wrapper-card .card:not(.teaser--idea--featured) .card__body .card__text,
-body.socialblue--sky.page-node-type-course-article .content-merged .region--content .content--side_wrapper-card .card:not(.teaser--idea--featured) .card__block .view--group-managers,
-body.socialblue--sky.page-node-type-course-article .content-merged .region--content .content--side_wrapper-card .card:not(.teaser--idea--featured) .card__block .card__block,
-body.socialblue--sky.page-node-type-course-article .content-merged .region--content .content--side_wrapper-card .card:not(.teaser--idea--featured) .card__block .card__text {
-  padding: 0;
-}
-
-body.socialblue--sky.path-group .content-merged .region--content .content--side_wrapper-card > .card.teaser--idea--featured,
-body.socialblue--sky.path-group .content-merged .region--content .content--side_wrapper-card .card.teaser--idea--featured, body.socialblue--sky.details .content-merged .region--content .content--side_wrapper-card > .card.teaser--idea--featured,
-body.socialblue--sky.details .content-merged .region--content .content--side_wrapper-card .card.teaser--idea--featured, body.socialblue--sky.path-user .content-merged .region--content .content--side_wrapper-card > .card.teaser--idea--featured,
-body.socialblue--sky.path-user .content-merged .region--content .content--side_wrapper-card .card.teaser--idea--featured, body.socialblue--sky.page-node-type-course-article .content-merged .region--content .content--side_wrapper-card > .card.teaser--idea--featured,
-body.socialblue--sky.page-node-type-course-article .content-merged .region--content .content--side_wrapper-card .card.teaser--idea--featured {
+body.socialblue--sky .sidebar-left .region--complementary-bottom .card:not([class*='statistic-block']),
+body.socialblue--sky .sidebar-left .region--complementary-bottom .off-canvas-xs-only,
+body.socialblue--sky .sidebar-left .region--complementary-top .card:not([class*='statistic-block']),
+body.socialblue--sky .sidebar-left .region--complementary-top .off-canvas-xs-only {
   -webkit-box-shadow: none;
           box-shadow: none;
 }
@@ -2651,6 +1488,15 @@ body.socialblue--sky.page-node-type-course-article .content-merged .region--cont
     width: 18px;
     height: 18px;
     margin-left: 25px;
+  }
+  .socialblue--sky .card__info-user--name {
+    font-size: 2.25rem;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+  .socialblue--sky .card__info-user--about-job, .socialblue--sky .card__info-user--about-organization {
+    font-size: 1.125rem;
+    margin-bottom: 10px;
   }
   .socialblue--sky .paragraph--featured .card__link > .field,
   .socialblue--sky .paragraph--block .card__link > .field {
@@ -2712,6 +1558,18 @@ body.socialblue--sky.page-node-type-course-article .content-merged .region--cont
     padding-left: 45px;
     padding-right: 45px;
   }
+  .socialblue--sky .card[class*='statistic-block'] {
+    padding: 2.5rem 2.25rem 1.5rem;
+  }
+  .socialblue--sky .card[class*='statistic-block'] .hero-footer__cta {
+    -webkit-box-flex: 0;
+        -ms-flex: 0 0 100%;
+            flex: 0 0 100%;
+    max-width: 100%;
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
+  }
   .socialblue--sky .cart__comment {
     padding-left: 3.75rem;
     padding-right: 3.75rem;
@@ -2727,10 +1585,6 @@ body.socialblue--sky.page-node-type-course-article .content-merged .region--cont
   }
   .socialblue--sky .card__title {
     padding-top: 35px;
-  }
-  .socialblue--sky .card__info-user--name {
-    font-size: 2.25rem;
-    font-weight: 700;
   }
   .socialblue--sky .block-social-tagging .card__block .group-about__item > p:not(:first-child) {
     margin-top: 15px;
@@ -2776,9 +1630,6 @@ body.socialblue--sky.page-node-type-course-article .content-merged .region--cont
   .paragraph--block .socialblue--sky .card__actionbar {
     padding-top: 0;
     margin-bottom: -15px;
-  }
-  .socialblue--sky .card.block-group-statistic-block, .socialblue--sky .card.block-profile-statistic-block {
-    padding-top: 35px;
   }
   .socialblue--sky .content-merged .block-views-blockgroup-managers-block-list-managers {
     -webkit-box-orient: horizontal;
@@ -2849,6 +1700,11 @@ body.socialblue--sky.page-node-type-course-article .content-merged .region--cont
             flex: 0 0 140px;
     max-width: 140px;
   }
+  .socialblue--sky .content-merged .region--content .content--side_wrapper-card > .card:not(.teaser--idea--featured),
+  .socialblue--sky .content-merged .region--content .content--side_wrapper-card .card:not(.teaser--idea--featured) {
+    padding-left: 3.75rem;
+    padding-right: 3.75rem;
+  }
   .socialblue--sky .path-group:not(.group-type-challenge) .content-merged .region--content .content--side_wrapper-card > section:after {
     left: 3.5rem;
     right: 3.5rem;
@@ -2900,7 +1756,7 @@ body.socialblue--sky.page-node-type-course-article .content-merged .region--cont
   .socialblue--sky .path-group:not(.group-type-challenge) .content-merged .group-about__item > p {
     margin-top: 3px;
   }
-  body.socialblue--sky.path-group .region--complementary-top .card.block-social-tagging:after, body.socialblue--sky.details .region--complementary-top .card.block-social-tagging:after, body.socialblue--sky.path-user .region--complementary-top .card.block-social-tagging:after, body.socialblue--sky.page-node-type-course-article .region--complementary-top .card.block-social-tagging:after {
+  body.socialblue--sky .sidebar-left .region--complementary-top .card.block-social-tagging:after {
     content: '' !important;
     display: block !important;
     position: absolute;
@@ -2911,45 +1767,10 @@ body.socialblue--sky.page-node-type-course-article .content-merged .region--cont
     margin: 0 auto;
     background: #fafafa;
   }
-  body.socialblue--sky.path-group .region--complementary-bottom .card:after,
-  body.socialblue--sky.path-group .region--complementary-bottom .off-canvas-xs-only:after,
-  body.socialblue--sky.path-group .region--complementary-bottom [class*='block-group-add']:after,
-  body.socialblue--sky.path-group .region--complementary-bottom [class*='add-block']:after,
-  body.socialblue--sky.path-group .region--complementary-top .card:after,
-  body.socialblue--sky.path-group .region--complementary-top .off-canvas-xs-only:after,
-  body.socialblue--sky.path-group .region--complementary-top [class*='block-group-add']:after,
-  body.socialblue--sky.path-group .region--complementary-top [class*='add-block']:after, body.socialblue--sky.details .region--complementary-bottom .card:after,
-  body.socialblue--sky.details .region--complementary-bottom .off-canvas-xs-only:after,
-  body.socialblue--sky.details .region--complementary-bottom [class*='block-group-add']:after,
-  body.socialblue--sky.details .region--complementary-bottom [class*='add-block']:after,
-  body.socialblue--sky.details .region--complementary-top .card:after,
-  body.socialblue--sky.details .region--complementary-top .off-canvas-xs-only:after,
-  body.socialblue--sky.details .region--complementary-top [class*='block-group-add']:after,
-  body.socialblue--sky.details .region--complementary-top [class*='add-block']:after, body.socialblue--sky.path-user .region--complementary-bottom .card:after,
-  body.socialblue--sky.path-user .region--complementary-bottom .off-canvas-xs-only:after,
-  body.socialblue--sky.path-user .region--complementary-bottom [class*='block-group-add']:after,
-  body.socialblue--sky.path-user .region--complementary-bottom [class*='add-block']:after,
-  body.socialblue--sky.path-user .region--complementary-top .card:after,
-  body.socialblue--sky.path-user .region--complementary-top .off-canvas-xs-only:after,
-  body.socialblue--sky.path-user .region--complementary-top [class*='block-group-add']:after,
-  body.socialblue--sky.path-user .region--complementary-top [class*='add-block']:after, body.socialblue--sky.page-node-type-course-article .region--complementary-bottom .card:after,
-  body.socialblue--sky.page-node-type-course-article .region--complementary-bottom .off-canvas-xs-only:after,
-  body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='block-group-add']:after,
-  body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='add-block']:after,
-  body.socialblue--sky.page-node-type-course-article .region--complementary-top .card:after,
-  body.socialblue--sky.page-node-type-course-article .region--complementary-top .off-canvas-xs-only:after,
-  body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='block-group-add']:after,
-  body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='add-block']:after {
+  body.socialblue--sky .sidebar-left .region--complementary-bottom > *:not([class*='statistic-block']):after,
+  body.socialblue--sky .sidebar-left .region--complementary-top > *:not([class*='statistic-block']):after {
     left: 2.5rem;
     right: 2.5rem;
-  }
-  body.socialblue--sky.path-group .content-merged .region--content .content--side_wrapper-card > .card:not(.teaser--idea--featured),
-  body.socialblue--sky.path-group .content-merged .region--content .content--side_wrapper-card .card:not(.teaser--idea--featured), body.socialblue--sky.details .content-merged .region--content .content--side_wrapper-card > .card:not(.teaser--idea--featured),
-  body.socialblue--sky.details .content-merged .region--content .content--side_wrapper-card .card:not(.teaser--idea--featured), body.socialblue--sky.path-user .content-merged .region--content .content--side_wrapper-card > .card:not(.teaser--idea--featured),
-  body.socialblue--sky.path-user .content-merged .region--content .content--side_wrapper-card .card:not(.teaser--idea--featured), body.socialblue--sky.page-node-type-course-article .content-merged .region--content .content--side_wrapper-card > .card:not(.teaser--idea--featured),
-  body.socialblue--sky.page-node-type-course-article .content-merged .region--content .content--side_wrapper-card .card:not(.teaser--idea--featured) {
-    padding-left: 3.75rem;
-    padding-right: 3.75rem;
   }
 }
 
@@ -2967,21 +1788,36 @@ body.socialblue--sky.page-node-type-course-article .content-merged .region--cont
   }
 }
 
-@media (max-width: 899px) {
-  .socialblue--sky .card__info-user {
-    padding-top: 100px;
-  }
-  .socialblue--sky .card.teaser:not(.teaser--tile):not(.teaser--idea) .card__actionbar {
-    -ms-flex-wrap: wrap;
-        flex-wrap: wrap;
-  }
-  .socialblue--sky .content-merged .region--content .content--side_wrapper-card .view-id-user_information .card {
-    padding-left: 1.25rem;
-    padding-right: 1.25rem;
-  }
-}
-
 @media (max-width: 599px) {
+  .socialblue--sky .card__counter {
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 1.25rem 1rem;
+  }
+  .socialblue--sky .card__counter-quantity {
+    font-size: 1.5rem;
+    line-height: 1.2;
+    margin-bottom: 5px;
+  }
+  .socialblue--sky .card__counter-text {
+    font-size: 11px;
+  }
+  .socialblue--sky .card__info-user {
+    width: 220px;
+    margin: 0  auto .75rem;
+    padding-bottom: .75rem;
+  }
+  .socialblue--sky .card__info-user .hero-avatar {
+    width: 100px;
+    height: 100px;
+    border-width: 5px;
+    margin: -50px 0 10px;
+  }
+  .socialblue--sky .card__info-user--about-address {
+    font-size: .875rem;
+    color: #b5b8b3;
+    text-transform: uppercase;
+  }
   .socialblue--sky .card.teaser:not(.teaser--tile):not(.teaser--idea) .card__actionbar > .card__link {
     margin-bottom: 10px;
   }
@@ -2991,66 +1827,40 @@ body.socialblue--sky.page-node-type-course-article .content-merged .region--cont
   .socialblue--sky .card.teaser:not(.teaser--tile):not(.teaser--idea) .card__link {
     margin-left: 12px;
   }
-  body.socialblue--sky.path-group .region--complementary-bottom .card,
-  body.socialblue--sky.path-group .region--complementary-bottom .off-canvas-xs-only,
-  body.socialblue--sky.path-group .region--complementary-bottom [class*='block-group-add'],
-  body.socialblue--sky.path-group .region--complementary-bottom [class*='add-block'],
-  body.socialblue--sky.path-group .region--complementary-top .card,
-  body.socialblue--sky.path-group .region--complementary-top .off-canvas-xs-only,
-  body.socialblue--sky.path-group .region--complementary-top [class*='block-group-add'],
-  body.socialblue--sky.path-group .region--complementary-top [class*='add-block'], body.socialblue--sky.details .region--complementary-bottom .card,
-  body.socialblue--sky.details .region--complementary-bottom .off-canvas-xs-only,
-  body.socialblue--sky.details .region--complementary-bottom [class*='block-group-add'],
-  body.socialblue--sky.details .region--complementary-bottom [class*='add-block'],
-  body.socialblue--sky.details .region--complementary-top .card,
-  body.socialblue--sky.details .region--complementary-top .off-canvas-xs-only,
-  body.socialblue--sky.details .region--complementary-top [class*='block-group-add'],
-  body.socialblue--sky.details .region--complementary-top [class*='add-block'], body.socialblue--sky.path-user .region--complementary-bottom .card,
-  body.socialblue--sky.path-user .region--complementary-bottom .off-canvas-xs-only,
-  body.socialblue--sky.path-user .region--complementary-bottom [class*='block-group-add'],
-  body.socialblue--sky.path-user .region--complementary-bottom [class*='add-block'],
-  body.socialblue--sky.path-user .region--complementary-top .card,
-  body.socialblue--sky.path-user .region--complementary-top .off-canvas-xs-only,
-  body.socialblue--sky.path-user .region--complementary-top [class*='block-group-add'],
-  body.socialblue--sky.path-user .region--complementary-top [class*='add-block'], body.socialblue--sky.page-node-type-course-article .region--complementary-bottom .card,
-  body.socialblue--sky.page-node-type-course-article .region--complementary-bottom .off-canvas-xs-only,
-  body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='block-group-add'],
-  body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='add-block'],
-  body.socialblue--sky.page-node-type-course-article .region--complementary-top .card,
-  body.socialblue--sky.page-node-type-course-article .region--complementary-top .off-canvas-xs-only,
-  body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='block-group-add'],
-  body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='add-block'] {
+  body.socialblue--sky .sidebar-left .region--complementary-bottom > *:not([class*='statistic-block']),
+  body.socialblue--sky .sidebar-left .region--complementary-top > *:not([class*='statistic-block']) {
     width: 100%;
   }
-  body.socialblue--sky.path-group .region--complementary-bottom .card a,
-  body.socialblue--sky.path-group .region--complementary-bottom .off-canvas-xs-only a,
-  body.socialblue--sky.path-group .region--complementary-bottom [class*='block-group-add'] a,
-  body.socialblue--sky.path-group .region--complementary-bottom [class*='add-block'] a,
-  body.socialblue--sky.path-group .region--complementary-top .card a,
-  body.socialblue--sky.path-group .region--complementary-top .off-canvas-xs-only a,
-  body.socialblue--sky.path-group .region--complementary-top [class*='block-group-add'] a,
-  body.socialblue--sky.path-group .region--complementary-top [class*='add-block'] a, body.socialblue--sky.details .region--complementary-bottom .card a,
-  body.socialblue--sky.details .region--complementary-bottom .off-canvas-xs-only a,
-  body.socialblue--sky.details .region--complementary-bottom [class*='block-group-add'] a,
-  body.socialblue--sky.details .region--complementary-bottom [class*='add-block'] a,
-  body.socialblue--sky.details .region--complementary-top .card a,
-  body.socialblue--sky.details .region--complementary-top .off-canvas-xs-only a,
-  body.socialblue--sky.details .region--complementary-top [class*='block-group-add'] a,
-  body.socialblue--sky.details .region--complementary-top [class*='add-block'] a, body.socialblue--sky.path-user .region--complementary-bottom .card a,
-  body.socialblue--sky.path-user .region--complementary-bottom .off-canvas-xs-only a,
-  body.socialblue--sky.path-user .region--complementary-bottom [class*='block-group-add'] a,
-  body.socialblue--sky.path-user .region--complementary-bottom [class*='add-block'] a,
-  body.socialblue--sky.path-user .region--complementary-top .card a,
-  body.socialblue--sky.path-user .region--complementary-top .off-canvas-xs-only a,
-  body.socialblue--sky.path-user .region--complementary-top [class*='block-group-add'] a,
-  body.socialblue--sky.path-user .region--complementary-top [class*='add-block'] a, body.socialblue--sky.page-node-type-course-article .region--complementary-bottom .card a,
-  body.socialblue--sky.page-node-type-course-article .region--complementary-bottom .off-canvas-xs-only a,
-  body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='block-group-add'] a,
-  body.socialblue--sky.page-node-type-course-article .region--complementary-bottom [class*='add-block'] a,
-  body.socialblue--sky.page-node-type-course-article .region--complementary-top .card a,
-  body.socialblue--sky.page-node-type-course-article .region--complementary-top .off-canvas-xs-only a,
-  body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='block-group-add'] a,
-  body.socialblue--sky.page-node-type-course-article .region--complementary-top [class*='add-block'] a {
+  body.socialblue--sky .sidebar-left .region--complementary-bottom > *:not([class*='statistic-block']) a,
+  body.socialblue--sky .sidebar-left .region--complementary-top > *:not([class*='statistic-block']) a {
     width: 100%;
+  }
+}
+
+@media (max-width: 899px) {
+  .socialblue--sky .card.teaser:not(.teaser--tile):not(.teaser--idea) .card__actionbar {
+    -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+  }
+  .socialblue--sky .card[class*='statistic-block'] {
+    margin-bottom: 0;
+    border-radius: 0 !important;
+    -webkit-box-shadow: none;
+            box-shadow: none;
+  }
+  .socialblue--sky .card[class*='statistic-block'] .teaser__content-text {
+    margin: -1rem -1.875rem 1rem;
+  }
+  .socialblue--sky .content-merged .region--content .content--side_wrapper-card .view-id-user_information .card {
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
+  body.socialblue--sky .sidebar-left .region--complementary-bottom,
+  body.socialblue--sky .sidebar-left .region--complementary-top {
+    top: 0;
+  }
+  body.socialblue--sky .sidebar-left .region--complementary_wrapper {
+    -webkit-box-shadow: none;
+            box-shadow: none;
   }
 }
