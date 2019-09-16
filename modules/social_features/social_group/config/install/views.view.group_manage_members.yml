@@ -13,7 +13,6 @@ dependencies:
     - profile
     - social_group
     - user
-    - views_bulk_operations
 id: group_manage_members
 label: 'Group Manage Members'
 module: views
@@ -594,7 +593,6 @@ display:
     cache_metadata:
       max-age: 0
       contexts:
-        - group_membership.roles.permissions
         - 'languages:language_content'
         - 'languages:language_interface'
         - route
@@ -625,7 +623,6 @@ display:
     cache_metadata:
       max-age: 0
       contexts:
-        - group_membership.roles.permissions
         - 'languages:language_content'
         - 'languages:language_interface'
         - route
