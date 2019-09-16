@@ -5,6 +5,7 @@
  * Activity Creator module file.
  */
 
+use Drupal\activity_creator\ActivityInterface;
 use Drupal\message\Entity\Message;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Config\Entity\ConfigEntityInterface;
@@ -139,6 +140,42 @@ function activity_creator_message_insert(Message $entity) {
     else {
       $queue = \Drupal::queue('activity_creator_logger');
       $queue->createItem($data);
+    }
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_insert().
+ */
+function activity_creator_activity_insert(ActivityInterface $activity) {
+  // We only care about status for activities when we're dealing with
+  // notifications.
+  if (in_array('notifications', $activity->getDestinations(), TRUE)) {
+    // Get recipients.
+    $recipients = $activity->getRecipient();
+
+    if (is_array($recipients)) {
+      $uids = [];
+
+      // Loop through the recipients and track the ID if the target is a user.
+      foreach ($recipients as $recipient) {
+        if ($recipient['target_type'] === 'user') {
+          $uids[] = $recipient['target_id'];
+        }
+      }
+
+      if (!empty($uids)) {
+        // If we have users, we insert a status for each user for the activity.
+        $connection = \Drupal::database();
+        $query = $connection->insert('activity_notification_status')->fields(['uid', 'aid']);
+        foreach ($uids as $uid) {
+          $query->values([
+            'uid' => $uid,
+            'aid' => $activity->id(),
+          ]);
+        }
+        $query->execute();
+      }
     }
   }
 }
