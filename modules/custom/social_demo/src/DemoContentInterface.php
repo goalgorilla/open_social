@@ -82,7 +82,7 @@ interface DemoContentInterface extends PluginInspectionInterface, ContainerFacto
    *
    * @param array $data
    *   The data array to scramble.
-   * @param int|NULL $max
+   * @param int|null $max
    *   How many items to generate.
    *
    * @return array

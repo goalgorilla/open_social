@@ -217,10 +217,13 @@ abstract class DemoUser extends DemoContent {
    * Scramble it.
    *
    * @param array $data
+   *   The data array to scramble.
+   * @param int|null $max
+   *   How many items to generate.
    */
   public function scrambleData(array $data, $max = NULL) {
     $new_data = [];
-    for ($i=0; $i < $max; $i++) {
+    for ($i = 0; $i < $max; $i++) {
       // Get a random item from the array.
       $old_uuid = array_rand($data);
       $item = $data[$old_uuid];
@@ -231,7 +234,7 @@ abstract class DemoUser extends DemoContent {
       $item['last_name'] = 'Last Name';
       $item['self_introduction'] = $uuid;
       $item['mail'] = $uuid . '@example.com';
-      $item['created'] = '-' . random_int(1, 2*365) . ' day|' . random_int(0,23) . ':' . random_int(0,59);
+      $item['created'] = '-' . random_int(1, 2 * 365) . ' day|' . random_int(0, 23) . ':' . random_int(0, 59);
       $new_data[$uuid] = $item;
     }
     return $new_data;
