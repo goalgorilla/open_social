@@ -95,7 +95,6 @@ class SocialGroupViewsBulkOperationsBulkForm extends ViewsBulkOperationsBulkForm
         '@count' => $this->tempStoreData['total_results'] ? ' ' . $this->tempStoreData['total_results'] : '',
       ]);
       // Styling attributes for the select box.
-      $form['header'][$this->options['id']]['select_all']['#wrapper_attributes']['class'][] = 'panel-heading';
       $form['header'][$this->options['id']]['select_all']['#attributes']['class'][] = 'form-no-label';
       $form['header'][$this->options['id']]['select_all']['#attributes']['class'][] = 'checkbox';
     }
@@ -112,9 +111,12 @@ class SocialGroupViewsBulkOperationsBulkForm extends ViewsBulkOperationsBulkForm
       '#value' => $title,
     ];
 
-    $tempstoreData =  $this->getTempstoreData($this->view->id(), $this->view->current_display);
+    // Add selector so the JS of VBO applies correctly.
+    $wrapper['multipage']['#attributes']['class'][] = 'vbo-multipage-selector';
 
-    if (!empty($wrapper['multipage']['list']) && count($wrapper['multipage']['list']['#items']) > 0) {
+    // Get tempstore data so we know what messages to show based on the data.
+    $tempstoreData =  $this->getTempstoreData($this->view->id(), $this->view->current_display);
+    if (!empty($wrapper['multipage']['list']['#items']) && count($wrapper['multipage']['list']['#items']) > 0) {
       $excluded = FALSE;
       if (!empty($tempstoreData['exclude_mode']) && $tempstoreData['exclude_mode']) {
         $excluded = TRUE;
@@ -122,7 +124,11 @@ class SocialGroupViewsBulkOperationsBulkForm extends ViewsBulkOperationsBulkForm
       $wrapper['multipage']['list']['#title'] = !$excluded ? $this->t('See selected members on other pages') : $this->t('Members excluded on other pages:');
     }
 
-    $wrapper['multipage']['#attributes']['class'][] = 'vbo-multipage-selector';
+    // Update the clear submit button.
+    if (!empty($wrapper['multipage']['clear'])) {
+      $wrapper['multipage']['clear']['#value'] = $this->t('Clear all selected members');
+      $wrapper['multipage']['clear']['#attributes']['class'][] = 'btn-default dropdown-toggle waves-effect waves-btn margin-top-l margin-left-m';
+    }
 
     $group = _social_group_get_current_group();
     // Add the group to the display id, so the ajax callback that is run
