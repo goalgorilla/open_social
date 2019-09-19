@@ -115,7 +115,7 @@ display:
             preserve_tags: ''
             html: false
           element_type: ''
-          element_class: ''
+          element_class: views-field-views-bulk-operations-bulk-form
           element_label_type: ''
           element_label_class: ''
           element_label_colon: false
@@ -126,27 +126,24 @@ display:
           hide_empty: false
           empty_zero: false
           hide_alter_empty: true
-          batch: true
-          batch_size: 10
+          batch: 1
+          batch_size: '10'
           form_step: true
-          buttons: true
-          clear_on_exposed: false
+          buttons: 0
+          clear_on_exposed: 0
           action_title: Action
           selected_actions:
             comment_delete_action: 0
-            social_group_members_export_member_action: 0
             views_bulk_operations_delete_entity: 0
-            social_group_send_email_action: social_group_send_email_action
-            social_group_delete_group_content_action: social_group_delete_group_content_action
             social_group_change_member_role_action: social_group_change_member_role_action
+            social_group_delete_group_content_action: social_group_delete_group_content_action
+            social_group_send_email_action: social_group_send_email_action
             'entity:save_action:group_content': 0
           preconfiguration:
-            social_group_send_email_action:
-              label_override: Email
-            social_group_delete_group_content_action:
-              label_override: Remove
             social_group_change_member_role_action:
               label_override: 'Change the role'
+            social_group_delete_group_content_action:
+              label_override: Remove
           plugin_id: social_views_bulk_operations_bulk_form_group
         rendered_entity:
           id: rendered_entity

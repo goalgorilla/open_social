@@ -5,7 +5,7 @@ namespace Drupal\social_group\Plugin\views\field;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Url;
-use Drupal\gvbo\Plugin\views\field\GroupViewsBulkOperationsBulkForm;
+use Drupal\views_bulk_operations\Plugin\views\field\ViewsBulkOperationsBulkForm;
 
 /**
  * Defines the Groups Views Bulk Operations field plugin.
@@ -14,7 +14,7 @@ use Drupal\gvbo\Plugin\views\field\GroupViewsBulkOperationsBulkForm;
  *
  * @ViewsField("social_views_bulk_operations_bulk_form_group")
  */
-class SocialGroupViewsBulkOperationsBulkForm extends GroupViewsBulkOperationsBulkForm {
+class SocialGroupViewsBulkOperationsBulkForm extends ViewsBulkOperationsBulkForm {
 
   /**
    * {@inheritdoc}
@@ -35,10 +35,16 @@ class SocialGroupViewsBulkOperationsBulkForm extends GroupViewsBulkOperationsBul
       }
 
       switch ($id) {
-        case 'social_group_send_email_action':
         case 'social_group_members_export_member_action':
         case 'social_group_delete_group_content_action':
           $label = $this->t('<b>@action</b> selected members', [
+            '@action' => $real_label,
+          ]);
+
+          break;
+
+        case 'social_group_send_email_action':
+          $label = $this->t('<b>@action</b>', [
             '@action' => $real_label,
           ]);
 
@@ -68,80 +74,87 @@ class SocialGroupViewsBulkOperationsBulkForm extends GroupViewsBulkOperationsBul
       return;
     }
 
-    // Get pager data if available.
-    if (!empty($this->view->pager) && method_exists($this->view->pager, 'hasMoreRecords')) {
-      $pagerData = [
-        'current' => $this->view->pager->getCurrentPage(),
-        'more' => $this->view->pager->hasMoreRecords(),
-      ];
-    }
-
-    // Render select all results checkbox when there is a pager and more data.
-    $display_select_all = isset($pagerData) && ($pagerData['more'] || $pagerData['current'] > 0);
-    if ($display_select_all) {
-      $form['header'][$this->options['id']]['select_all'] = [
-        '#type' => 'checkbox',
-        '#title' => $this->t('Select all @count results in this view', [
-          '@count' => $this->tempStoreData['total_results'] ? ' ' . $this->tempStoreData['total_results'] : '',
-        ]),
-        '#attributes' => [
-          'class' => [
-            'vbo-select-all',
-            'form-no-label',
-            'checkbox',
-          ],
-        ],
-      ];
-    }
+    // Reorder the form array.
+    $multipage = $form['header'][$this->options['id']]['multipage'];
+    unset($form['header'][$this->options['id']]['multipage']);
+    $form['header'][$this->options['id']]['multipage'] = $multipage;
 
     // Render proper classes for the header in VBO form.
     $wrapper = &$form['header'][$this->options['id']];
+
+    // Styling related for the wrapper div.
     $wrapper['#attributes']['class'][] = 'card';
     $wrapper['#attributes']['class'][] = 'card__block';
 
+    // Add some JS for altering titles and switches.
     $form['#attached']['library'][] = 'social_group/views_bulk_operations.frontUi';
 
-    // Render page title.
-    $count = isset($this->tempStoreData['list']) ? count($this->tempStoreData['list']) : 0;
-    $title = $this->formatPlural($count, '<b>@count Member</b> is selected', '<b>@count Members</b> are selected');
+    // Render select all results checkbox.
+    if (!empty($wrapper['select_all'])) {
+      $wrapper['select_all']['#title'] = $this->t('Select / unselect all @count results in this view', [
+        '@count' => $this->tempStoreData['total_results'] ? ' ' . $this->tempStoreData['total_results'] : '',
+      ]);
+      // Styling attributes for the select box.
+      $form['header'][$this->options['id']]['select_all']['#wrapper_attributes']['class'][] = 'panel-heading';
+      $form['header'][$this->options['id']]['select_all']['#attributes']['class'][] = 'form-no-label';
+      $form['header'][$this->options['id']]['select_all']['#attributes']['class'][] = 'checkbox';
+    }
 
+    /** @var \Drupal\Core\StringTranslation\TranslatableMarkup $title */
+    $title = $wrapper['multipage']['#title'];
+    $arguments = $title->getArguments();
+    $count = empty($arguments['%count']) ? 0 : $arguments['%count'];
+
+    $title = $this->formatPlural($count, '<b><em class="placeholder">@count</em> Member</b> is selected', '<b><em class="placeholder">@count</em> Members</b> are selected');
     $wrapper['multipage']['#title'] = [
       '#type' => 'html_tag',
       '#tag' => 'div',
-      '#attributes' => [
-        'class' => ['placeholder'],
-      ],
       '#value' => $title,
     ];
 
-    $wrapper['multipage']['list']['#title'] = $this->t('See selected members on other pages');
+    $tempstoreData =  $this->getTempstoreData($this->view->id(), $this->view->current_display);
 
-    // We don't show the multipage list if there are no items selected.
-    if (isset($wrapper['multipage']['list']['#items']) && count($wrapper['multipage']['list']['#items']) < 1) {
-      unset($wrapper['multipage']['list']);
+    if (!empty($wrapper['multipage']['list']) && count($wrapper['multipage']['list']['#items']) > 0) {
+      $excluded = FALSE;
+      if (!empty($tempstoreData['exclude_mode']) && $tempstoreData['exclude_mode']) {
+        $excluded = TRUE;
+      }
+      $wrapper['multipage']['list']['#title'] = !$excluded ? $this->t('See selected members on other pages') : $this->t('Members excluded on other pages:');
     }
 
+    $wrapper['multipage']['#attributes']['class'][] = 'vbo-multipage-selector';
+
+    $group = _social_group_get_current_group();
+    // Add the group to the display id, so the ajax callback that is run
+    // will count and select across pages correctly.
+    if ($group) {
+      $wrapper['multipage']['#attributes']['data-group-id'] = $group->id();
+      if (!empty($wrapper['multipage']['#attributes']['data-display-id'])) {
+        $current_display = $wrapper['multipage']['#attributes']['data-display-id'];
+        $wrapper['multipage']['#attributes']['data-display-id'] = $current_display . '/' . $group->id();
+      }
+    }
+
+    // Actions are not a select list but a dropbutton list.
     $actions = &$wrapper['actions'];
     $actions['#theme'] = 'links__dropbutton__operations__actions';
     $actions['#label'] = $this->t('Actions');
+    $actions['#type'] = 'dropbutton';
 
-    unset($actions['#type']);
-
-    unset($wrapper['multipage']['clear']);
     $items = [];
-
     foreach ($wrapper['action']['#options'] as $key => $value) {
-      if (!empty($key)) {
+      if (!empty($key) && array_key_exists($key, $this->bulkOptions)) {
         $items[] = [
           '#type' => 'submit',
           '#value' => $value,
         ];
       }
     }
+
     // Add our links to the dropdown buttondrop type.
     $actions['#links'] = $items;
     // Remove the Views select list and submit button.
-    $form['actions']['#access'] = FALSE;
+    $form['actions']['#type'] = 'hidden';
     $form['header']['social_views_bulk_operations_bulk_form_group']['action']['#access'] = FALSE;
   }
 
