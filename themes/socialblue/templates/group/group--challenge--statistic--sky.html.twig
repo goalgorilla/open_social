@@ -1,0 +1,41 @@
+<div class="card__counter">
+  <ul>
+    <li>
+      <span class="card__counter-quantity">{{ group_events }}</span>
+      <span class="card__counter-text">{% trans %}event{% plural group_events %}events{% endtrans %}</span>
+    </li>
+    <li>
+      <span class="card__counter-quantity">{{ group_topics }}</span>
+      <span class="card__counter-text">{% trans %}topic{% plural group_topics %}topics{% endtrans %}</span>
+    </li>
+    <li>
+      <span class="card__counter-quantity">{{ group_members }}</span>
+      <span class="card__counter-text">{% trans %}member{% plural group_members %}members{% endtrans %}</span>
+    </li>
+  </ul>
+</div>
+{% if group_operations_url %}
+  <div class="hero-footer__cta">
+    <div class="btn-group btn-group__chellange">
+      {% if group_operations_url or challenge_primary_button %}
+        <div class="">
+          {{ challenge_primary_button }}
+          {% if group_operations_url and challenge_operations_text %}
+            <button type="button" autocomplete="off" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-accent btn-raised dropdown-toggle"><span class="caret"></span></button>
+            <ul class="dropdown-menu dropdown-menu-right">
+              <li><a href="{{ group_operations_url }}">{{ challenge_operations_text }}</a></li>
+            </ul>
+          {% endif %}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+{% endif %}
+
+{% if group_stream_url %}
+  <footer class="card__actionbar">
+    <a href="{{ group_stream_url }}" class="card__link card__link-arrow">
+      {% trans %}See group stream{% endtrans %}
+    </a>
+  </footer>
+{% endif %}

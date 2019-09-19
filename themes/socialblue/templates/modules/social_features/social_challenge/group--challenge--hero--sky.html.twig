@@ -1,0 +1,60 @@
+{#
+/**
+ * @file
+ *
+ * Default theme implementation for profiles.
+ *
+ * Available variables:
+ * - content: Items for the content of the profile.
+ *   Use 'content' to print them all, or print a subset such as
+ *   'content.title'. Use the following code to exclude the
+ *   printing of a given child element:
+ *   @code
+ *   {{ content|without('title') }}
+ *   @endcode
+ * - attributes: HTML attributes for the wrapper.
+ * - profile: The profile object.
+ * - url: The profile URL.
+ *
+ * @ingroup themeable
+ */
+#}
+{{ attach_library('socialbase/hero')}}
+
+{%
+  set cover_classes = [
+  'cover',
+  group_hero_styled_image_url ? 'cover-img cover-img-gradient',
+]
+%}
+
+<div{{ attributes.addClass(cover_classes) }} {% if group_hero_styled_image_url %} style="background-image: url('{{ group_hero_styled_image_url }}');" {% endif %}>
+  {% if group_edit_url %}
+    <div class="hero-action-button">
+      <a href="{{ group_edit_url }}"  title="Edit challenge" class="btn btn-default btn-floating">
+        <svg class="icon-gray icon-medium">
+          <use xlink:href="#icon-edit"></use>
+        </svg>
+      </a>
+    </div>
+  {% endif %}
+  <div class="cover-wrap">
+    <header class="page-title">
+      <h1>{{ content.label }}</h1>
+      <p>
+        <span>
+          {% trans %}1 idea {% plural challenge_ideas_count %} @count ideas{% endtrans %}
+        </span>
+        <span>&nbsp;&bullet;&nbsp;</span>
+        <span>
+          {% trans %}1 participant {% plural group_members %} @count participants{% endtrans %}
+        </span>
+      </p>
+      {% if challenge_phase_name %}
+        <div class="badge badge-accent">
+          {{ challenge_phase_name }} | {{ challenge_phase_date }}
+        </div>
+      {% endif %}
+    </header>
+  </div> {# cover-wrap #}
+</div> {# cover #}
