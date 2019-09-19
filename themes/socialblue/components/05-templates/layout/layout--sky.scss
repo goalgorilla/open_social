@@ -163,10 +163,16 @@ body.socialblue--sky {
   .region--complementary_wrapper {
     position: relative;
     margin-bottom: 0;
-    z-index: 100;
+    z-index: 5;
 
     @include for-tablet-landscape-down {
       border-radius: 0 !important;
+    }
+  }
+
+  .layout--with-complementary:not(.sidebar-left) {
+    .region--complementary_wrapper.card {
+      box-shadow: none;
     }
   }
 

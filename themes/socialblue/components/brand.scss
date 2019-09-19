@@ -780,11 +780,21 @@ body.socialblue--sky .block-course-material-navigation .complementary-title > a 
     }
   }
 
-  .layout--with-complementary .navbar-secondary .navbar-scrollable .navbar-nav .hidden-list li a {
-    &:hover,
-    &:focus,
-    &:active {
-      color: $brand-primary;
+  .navbar-scrollable .navbar-nav .hidden-list {
+    li {
+      a {
+        &:hover,
+        &:focus,
+        &:active {
+          color: $brand-primary;
+        }
+      }
+
+      &.active {
+        a {
+          color: $brand-primary;
+        }
+      }
     }
   }
 

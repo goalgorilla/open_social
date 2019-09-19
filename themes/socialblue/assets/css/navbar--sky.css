@@ -192,6 +192,10 @@
             transform: translateY(-50%);
     cursor: pointer;
   }
+  .socialblue--sky .layout--with-complementary .navbar-scrollable .navbar-nav .caret.active {
+    -webkit-transform: translateY(-50%) rotate(180deg);
+            transform: translateY(-50%) rotate(180deg);
+  }
   .socialblue--sky .layout--with-complementary .navbar-scrollable .navbar-nav .visible-list {
     display: -webkit-box;
     display: -ms-flexbox;
@@ -218,9 +222,8 @@
     padding: .5rem 0 .75rem;
     background: #fff;
     z-index: 10;
-    border-radius: 0 0 5px 5px;
-    -webkit-box-shadow: 0 2px 4px #4a4a4a;
-            box-shadow: 0 2px 4px #4a4a4a;
+    border-top-left-radius: 0 !important;
+    border-top-right-radius: 0 !important;
   }
   .socialblue--sky .layout--with-complementary .navbar-scrollable .navbar-nav .hidden-list li {
     display: block;
@@ -232,8 +235,8 @@
     padding: .5rem 2rem;
     color: #9b9b9b;
   }
-  .socialblue--sky .layout--with-complementary .navbar-scrollable .navbar-nav .hidden-list li a:hover {
-    color: orange;
+  .socialblue--sky .layout--with-complementary .navbar-scrollable .navbar-nav .hidden-list li a:focus {
+    background: transparent;
   }
   .socialblue--sky .navbar-fixed-top .navbar-nav {
     padding-left: 17px;

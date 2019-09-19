@@ -32,20 +32,23 @@
 
               // Create wrapper for hidden items.
               $this.find('li:not(.visible-item)')
-                .wrapAll('<div class="hidden-list" />');
+                .wrapAll('<div class="hidden-list card" />');
 
               // Add caret.
               $this.append('<span class="caret"></span>');
 
               var hiddenList = $this.find('.hidden-list');
+              var cart = $this.find('.caret');
 
-              $this.find('.caret').on('click', function () {
+              cart.on('click', function () {
                 hiddenList.slideToggle(300);
+                $(this).toggleClass('active');
               });
 
               $(document).on('click', function(event) {
                 if ($(event.target).closest('.navbar-secondary').length) return;
                 hiddenList.slideUp(300);
+                cart.removeClass('active');
                 event.stopPropagation();
               });
             });
