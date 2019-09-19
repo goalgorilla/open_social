@@ -108,6 +108,7 @@ projects[url_embed][patch][] = "https://www.drupal.org/files/issues/2018-03-16/u
 projects[url_embed][patch][] = "https://www.drupal.org/files/issues/2018-03-16/url_embed_translate_dialog_title-2953591-2.patch"
 projects[views_bulk_operations][type] = module
 projects[views_bulk_operations][version] = 3.2
+projects[views_bulk_operations][patch][] = "https://www.drupal.org/files/issues/2019-03-22/3042494-trigger-vbo-action-on-jquery-checkbox-change-2.patch"
 projects[views_infinite_scroll][type] = module
 projects[views_infinite_scroll][version] = 1.6
 projects[votingapi][type] = module
