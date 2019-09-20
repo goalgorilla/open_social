@@ -32,7 +32,9 @@
         </div>
         <div class="media-body message__inbox-body">
           {{ content.membernames }} <span class="read-indicator"></span>
-          {{ content.last_message }}
+          <div class="message__updated">
+            {{ content.updated }} {{ 'ago' }}
+          </div>
         </div>
       </div>
     </div>

@@ -414,6 +414,28 @@ function social_private_message_preprocess_field(&$variables) {
 }
 
 /**
+ * Prepares variables for private_message_thread templates.
+ *
+ * Default template: private-message-thread.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - elements: An array of elements to display in view mode.
+ *   - private_message_thread: The private messsage thread object.
+ *   - view_mode: View mode; e.g., 'full', 'teaser', etc.
+ */
+function social_private_message_preprocess_private_message_thread(array &$variables) {
+
+  /** @var \Drupal\Core\Datetime\DateFormatterInterface $formatter */
+  $date_formatter = \Drupal::service('date.formatter');
+  $updated_time = $variables['elements']['#private_message_thread']->getUpdatedTime();
+  $variables['content']['updated'] = $date_formatter->formatDiff($updated_time, time(), [
+    'granularity' => 1,
+    'return_as_object' => TRUE,
+  ]);
+}
+
+/**
  * Implements hook_user_cancel().
  */
 function social_private_message_user_cancel($edit, $account, $method) {
