@@ -5,6 +5,7 @@ namespace Drupal\activity_creator;
 use Drupal\activity_creator\Entity\Activity;
 use Drupal\Component\Render\FormattableMarkup;
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\language\ConfigurableLanguageManagerInterface;
 use Drupal\message\Entity\Message;
 use Drupal\activity_creator\Plugin\ActivityDestinationManager;
@@ -498,18 +499,20 @@ class ActivityFactory extends ControllerBase {
       'clear' => $clear,
     ];
 
+    $bubbleable_metadata = new BubbleableMetadata();
     foreach ($output as $key => $value) {
       if (is_string($value)) {
         $output[$key] = \Drupal::token()
-          ->replace($value, ['message' => $message], $options);
+          ->replace($value, ['message' => $message], $options, $bubbleable_metadata);
       }
       else {
         if (isset($value['value'])) {
           $output[$key] = \Drupal::token()
-            ->replace($value['value'], ['message' => $message], $options);
+            ->replace($value['value'], ['message' => $message], $options, $bubbleable_metadata);
         }
       }
     }
+    $bubbleable_metadata->applyTo($output);
 
     return $output;
   }
