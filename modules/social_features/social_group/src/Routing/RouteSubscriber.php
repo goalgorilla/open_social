@@ -59,6 +59,14 @@ class RouteSubscriber extends RouteSubscriberBase {
       $requirements['_custom_access'] = "\Drupal\social_group\Controller\SocialGroupController::myGroupAccess";
       $route->setRequirements($requirements);
     }
+
+    // Write our own VBO update selection for validation.
+    if ($route = $collection->get('views_bulk_operations.update_selection')) {
+      $defaults = $route->getDefaults();
+      $defaults['_controller'] = '\Drupal\social_group\Controller\SocialGroupController::updateSelection';
+      $route->setDefaults($defaults);
+    }
+
   }
 
 }
