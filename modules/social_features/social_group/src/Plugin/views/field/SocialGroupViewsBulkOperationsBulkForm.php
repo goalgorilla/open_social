@@ -74,6 +74,30 @@ class SocialGroupViewsBulkOperationsBulkForm extends ViewsBulkOperationsBulkForm
       return;
     }
 
+    $group = _social_group_get_current_group();
+    $tempstoreData = $this->getTempstoreData($this->view->id(), $this->view->current_display);
+    // Make sure the selection is saved for the current group.
+    if (!empty($tempstoreData['group_id']) && $tempstoreData['group_id'] !== $group->id()) {
+      // If not we clear it right away.
+      // Since we don't want to mess with cached date.
+      $this->deleteTempstoreData($this->view->id(), $this->view->current_display);
+      // Add initial values.
+      $tempstoreData = [
+        'view_id' => $this->view->id(),
+        'display_id' => $this->view->current_display,
+        'list' => [],
+        'exclude_mode' => FALSE,
+        'batch' => $this->options['batch'],
+        'batch_size' => $this->options['batch'] ? $this->options['batch_size'] : 0,
+        'total_results' => $this->viewData->getTotalResults($this->options['clear_on_exposed']),
+        'arguments' => $this->view->args,
+        'exposed_input' => $this->view->getExposedInput(),
+      ];
+    }
+    // Add the Group ID to the data.
+    $tempstoreData['group_id'] = $group->id();
+    $this->setTempstoreData($tempstoreData, $this->view->id(), $this->view->current_display);
+
     // Reorder the form array.
     $multipage = $form['header'][$this->options['id']]['multipage'];
     unset($form['header'][$this->options['id']]['multipage']);
@@ -115,7 +139,7 @@ class SocialGroupViewsBulkOperationsBulkForm extends ViewsBulkOperationsBulkForm
     $wrapper['multipage']['#attributes']['class'][] = 'vbo-multipage-selector';
 
     // Get tempstore data so we know what messages to show based on the data.
-    $tempstoreData =  $this->getTempstoreData($this->view->id(), $this->view->current_display);
+    $tempstoreData = $this->getTempstoreData($this->view->id(), $this->view->current_display);
     if (!empty($wrapper['multipage']['list']['#items']) && count($wrapper['multipage']['list']['#items']) > 0) {
       $excluded = FALSE;
       if (!empty($tempstoreData['exclude_mode']) && $tempstoreData['exclude_mode']) {
@@ -130,7 +154,6 @@ class SocialGroupViewsBulkOperationsBulkForm extends ViewsBulkOperationsBulkForm
       $wrapper['multipage']['clear']['#attributes']['class'][] = 'btn-default dropdown-toggle waves-effect waves-btn margin-top-l margin-left-m';
     }
 
-    $group = _social_group_get_current_group();
     // Add the group to the display id, so the ajax callback that is run
     // will count and select across pages correctly.
     if ($group) {
