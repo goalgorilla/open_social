@@ -85,18 +85,6 @@ class SocialGroupViewsBulkOperationsBulkForm extends ViewsBulkOperationsBulkForm
       $this->updateTempstoreData();
       // Initialize it again.
       $tempstoreData = $this->getTempstoreData($this->view->id(), $this->view->current_display);
-      $x = 1;
-//      $tempstoreData = [
-//        'view_id' => $this->view->id(),
-//        'display_id' => $this->view->current_display,
-//        'list' => [],
-//        'exclude_mode' => FALSE,
-//        'batch' => $this->options['batch'],
-//        'batch_size' => $this->options['batch'] ? $this->options['batch_size'] : 0,
-//        'total_results' => $this->viewData->getTotalResults($this->options['clear_on_exposed']),
-//        'arguments' => $this->view->args,
-//        'exposed_input' => $this->view->getExposedInput(),
-//      ];
     }
     // Add the Group ID to the data.
     $tempstoreData['group_id'] = $group->id();
