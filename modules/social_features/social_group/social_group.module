@@ -480,7 +480,7 @@ function social_group_group_insert(GroupInterface $group) {
       // Then we grant this user de Group Admin role.
       $grant_group_admin = TRUE;
     }
-    // When a CM+ creates a group, he is given the group_manager role
+    // When a CM+ creates a group, it is given the group_manager role
     // alongside the group_admin role to keep the full control over the group.
     if ($grant_group_admin) {
       // Delete the initial created membership.
@@ -1299,7 +1299,7 @@ function social_group_block_access(Block $block, $operation, AccountInterface $a
     }
     elseif (!$group->getMember($user)) {
       // If it is closed and the current user is not an member of this group,
-      // then he is not allowed to see these blocks.
+      // then it is not allowed to see these blocks.
       $forbidden_blocks = [
         'views_block:upcoming_events-upcoming_events_group',
         'views_block:latest_topics-group_topics_block',
@@ -1362,7 +1362,7 @@ function _social_group_delete_group() {
     // See /social_group/src/Controller/DeleteGroup.php for further process.
     $batch = [
       'title' => t('Deleting the group and all the content within the group...'),
-      'init_message' => t("Preparing to delete the group and all it\'s topic\'s, event\'s and post\'s..."),
+      'init_message' => t("Preparing to delete the group and all it's topic's, event's and post's..."),
       'operations' => [
         [
           '\Drupal\social_group\Controller\DeleteGroup::deleteGroupAndContent',
@@ -1399,7 +1399,7 @@ function social_group_get_all_groups() {
  * Get all group memberships for a certain user.
  *
  * @param int $uid
- *   The UID for which we fetch the groups he is member of.
+ *   The UID for which we fetch the groups it is member of.
  *
  * @return array
  *   List of group IDs the user is member of.
@@ -1699,8 +1699,45 @@ function social_group_user_cancel_methods_alter(&$methods) {
  * Implements hook_social_user_account_header_create_links().
  *
  * Adds the "Create Group" link to the content creation menu.
+ * When the user can only create groups of one type, the user skips the
+ * group type selection page.
  */
 function social_group_social_user_account_header_create_links($context) {
+  // Create url to create a group.
+  $route_add_group = Url::fromRoute('entity.group.add_page');
+
+  // If we have a user to work with, we can check if we should redirect it to
+  // the create group overview or a single group.
+  // If we do not have a user we'll default to the overview.
+  if (!empty($context['user'])) {
+    /** @var \Drupal\Core\Session\AccountInterface $user */
+    $account = $context['user'];
+    $user_can_create_groups = [];
+    // Get all available group types.
+    foreach (GroupType::loadMultiple() as $group_type) {
+      // When the user has permission to create a group of the current type, add
+      // this to the create group array.
+      if ($account->hasPermission('create ' . $group_type->id() . ' group')) {
+        $user_can_create_groups[$group_type->id()] = $group_type;
+      }
+
+      if (count($user_can_create_groups) > 1) {
+        break;
+      }
+    }
+
+    // There's just one group this user can create.
+    if (count($user_can_create_groups) === 1) {
+      // When there is only one group allowed, add create the url to create a
+      // group of this type.
+      /** @var \Drupal\group\Entity\Group $allowed_group_type */
+      $allowed_group_type = reset($user_can_create_groups);
+      $route_add_group = Url::fromRoute('entity.group.add_form', [
+        'group_type' => $allowed_group_type->id(),
+      ]);
+    }
+  }
+
   return [
     'add_group' => [
       '#type' => 'link',
@@ -1709,7 +1746,7 @@ function social_group_social_user_account_header_create_links($context) {
       ],
       '#title' => new TranslatableMarkup('New Group'),
       '#weight' => 500,
-    ] + Url::fromRoute('entity.group.add_page')->toRenderArray(),
+    ] + $route_add_group->toRenderArray(),
   ];
 }
 

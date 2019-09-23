@@ -70,9 +70,12 @@ abstract class DemoSystem extends DemoContent {
   /**
    * {@inheritdoc}
    */
-  public function createContent() {
+  public function createContent($generate = FALSE, $max = NULL) {
     // Fetch data from yml file.
     $data = $this->fetchData();
+    if ($generate === TRUE) {
+      $data = $this->scrambleData($data, $max);
+    }
 
     // First let's load the active theme.
     $active_theme = \Drupal::theme()->getActiveTheme()->getName();

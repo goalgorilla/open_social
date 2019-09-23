@@ -1,9 +1,9 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: node-gettext\n"
-"POT-Creation-Date: 2019-08-07 22:17+0000\n"
-"PO-Revision-Date: 2019-04-03 00:25+0000\n"
-"Last-Translator: Evelien Schut <evelienschut@goalgorilla.com>\n"
+"POT-Creation-Date: 2019-09-18 22:19+0000\n"
+"PO-Revision-Date: 2019-08-29 20:04+0000\n"
+"Last-Translator: Robert Ragas <robertragas@goalgorilla.com>\n"
 "Language-Team: German <https://translate.getopensocial.com/projects/open-"
 "social/distribution/de/>\n"
 "Language: de\n"
@@ -27,7 +27,7 @@ msgid ""
 "later, or <a href=\":url\">request a new password</a>"
 msgstr ""
 
-#: modules/social_features/social_comment/social_comment.module:214
+#: modules/social_features/social_comment/social_comment.module:213
 #: modules/social_features/social_post/post.page.inc:35
 #: themes/socialbase/includes/form.inc:105
 msgid "%time ago"
@@ -42,6 +42,14 @@ msgstr[1] ""
 #: modules/social_features/social_event/config/install/views.view.upcoming_events.yml:0
 msgid "(Upcoming) Community events"
 msgstr "(Bevorstehende) Community-Veranstaltungen"
+
+#: modules/social_features/social_search/config/install/views.view.search_content.yml:0
+msgid "(ascending)"
+msgstr ""
+
+#: modules/social_features/social_search/config/install/views.view.search_content.yml:0
+msgid "(descending)"
+msgstr ""
 
 #: modules/social_features/social_content_report/config/install/views.view.report_overview.yml:0;0;0;0;0;0;0;0;0;0
 #: modules/social_features/social_core/config/install/views.view.content.yml:0
@@ -106,7 +114,7 @@ msgstr ""
 msgid "- All -"
 msgstr "- Alle -"
 
-#: modules/social_features/social_search/social_search.module:53
+#: modules/social_features/social_search/social_search.module:81
 #: modules/social_features/social_tagging/social_tagging.module:393;411
 #: modules/social_features/social_user/social_user.module:108
 msgid "- Any -"
@@ -166,11 +174,10 @@ msgstr[1] "1 Element wurde erfolgreich verarbeitet:"
 #: modules/social_features/social_landing_page/templates/group--featured.html.twig:30
 #: themes/socialbase/templates/group/group--hero.html.twig:69
 #: themes/socialbase/templates/group/group--teaser.html.twig:79
-#, fuzzy
 msgid "1 member"
 msgid_plural "@count members"
 msgstr[0] "1 Mitglied"
-msgstr[1] "1 Mitglied"
+msgstr[1] "@count Mitglieder"
 
 #: modules/custom/social_node_statistics/src/Form/NodeStatisticsSettingsForm.php:52
 msgid "1 minute"
@@ -260,7 +267,7 @@ msgstr ""
 "<em>Bücher (Books-Modul)</em> sind mit einer hierarchischen Menüstruktur "
 "ausgestattet - sie sind besonders für Handbücher und Tutorien geeignet."
 
-#: themes/socialbase/src/Plugin/Preprocess/PageTitle.php:36
+#: themes/socialbase/src/Plugin/Preprocess/PageTitle.php:40
 msgid "<em>Configure account settings:</em> @label"
 msgstr "<em>Konfiguriere Account Einstellungen:</em> @label"
 
@@ -993,6 +1000,10 @@ msgstr ""
 msgid "A smaller variant for the hero region"
 msgstr ""
 
+#: modules/custom/social_demo/social_demo.drush.inc:76
+msgid "A space-separated list of content types with info on amount."
+msgstr ""
+
 #: modules/custom/social_demo/social_demo.drush.inc:18;31;44;60
 msgid "A space-separated list of content types."
 msgstr "Eine durch Leerzeichen getrennte Liste von Inhaltstypen."
@@ -1651,7 +1662,11 @@ msgstr ""
 msgid "Administrator"
 msgstr ""
 
-#: modules/social_features/social_search/src/Plugin/views/filter/SocialDate.php:64
+#: modules/social_features/social_search/config/install/views.view.search_content.yml:0
+msgid "Advanced options"
+msgstr ""
+
+#: modules/social_features/social_search/src/Plugin/views/filter/SocialDate.php:69
 #: modules/social_features/social_user/social_user.module:100
 #: modules/social_features/social_search/config/install/views.view.search_content.yml:0
 msgid "After"
@@ -2068,6 +2083,7 @@ msgstr ""
 #: modules/social_features/social_profile/config/install/views.view.newest_users.yml:0
 #: modules/social_features/social_profile/config/install/views.view.user_information.yml:0
 #: modules/social_features/social_search/config/install/views.view.search_all.yml:0
+#: modules/social_features/social_search/config/install/views.view.search_content.yml:0
 #: modules/social_features/social_search/config/install/views.view.search_groups.yml:0
 #: modules/social_features/social_search/modules/social_search_autocomplete/config/install/views.view.search_all_autocomplete.yml:0
 #: modules/social_features/social_topic/config/install/views.view.latest_topics.yml:0
@@ -2169,7 +2185,6 @@ msgstr[1] ""
 #: modules/social_features/social_profile/config/install/views.view.newest_users.yml:0
 #: modules/social_features/social_profile/config/install/views.view.user_information.yml:0
 #: modules/social_features/social_search/config/install/views.view.search_all.yml:0
-#: modules/social_features/social_search/config/install/views.view.search_content.yml:0
 #: modules/social_features/social_search/config/install/views.view.search_groups.yml:0
 #: modules/social_features/social_search/config/install/views.view.search_users.yml:0
 #: modules/social_features/social_search/modules/social_search_autocomplete/config/install/views.view.search_all_autocomplete.yml:0
@@ -2296,7 +2311,7 @@ msgid ""
 "through the search, until you flush the data."
 msgstr ""
 
-#: modules/social_features/social_search/src/Plugin/views/filter/SocialDate.php:63
+#: modules/social_features/social_search/src/Plugin/views/filter/SocialDate.php:68
 #: modules/social_features/social_user/social_user.module:101
 #: modules/social_features/social_search/config/install/views.view.search_content.yml:0
 msgid "Before"
@@ -2308,7 +2323,7 @@ msgid ""
 "policy."
 msgstr ""
 
-#: modules/social_features/social_search/src/Plugin/views/filter/SocialDate.php:65
+#: modules/social_features/social_search/src/Plugin/views/filter/SocialDate.php:70
 #: modules/social_features/social_user/social_user.module:99
 #: modules/social_features/social_search/config/install/views.view.search_content.yml:0
 msgid "Between"
@@ -2596,7 +2611,7 @@ msgstr "Geschlossene Gruppe: Gruppenmitgliedschaft"
 msgid "Comment"
 msgstr "Kommentar"
 
-#: modules/social_features/social_comment/social_comment.module:30;296
+#: modules/social_features/social_comment/social_comment.module:30;295
 msgctxt "Comment Button"
 msgid "Comment"
 msgstr ""
@@ -3010,7 +3025,7 @@ msgstr "Profil für @profile_id konnte nicht aktualisiert werden"
 msgid "Country code"
 msgstr "Länderkennung"
 
-#: modules/custom/download_count/download_count.module:22
+#: modules/custom/download_count/download_count.module:23
 msgid ""
 "Counts file downloads for private core file fields and\n"
 "      logs a message to the watchdog table."
@@ -3035,7 +3050,7 @@ msgstr "Neuen Inhalt erstellen"
 msgid "Create New Event"
 msgstr "Neue Veranstaltung erstellen"
 
-#: modules/social_features/social_group/social_group.module:1708
+#: modules/social_features/social_group/social_group.module:1745
 msgid "Create New Group"
 msgstr "Neue Gruppe erstellen"
 
@@ -3233,8 +3248,12 @@ msgstr ""
 msgid "Created"
 msgstr "Erstellt"
 
-#: modules/social_features/social_search/social_search.module:134
+#: modules/social_features/social_search/social_search.module:192
 msgid "Created Date Filter by Open Social"
+msgstr ""
+
+#: modules/social_features/social_search/config/install/views.view.search_content.yml:0
+msgid "Created date"
 msgstr ""
 
 #: modules/social_features/social_profile/social_profile.install:299
@@ -3338,7 +3357,7 @@ msgstr ""
 msgid "Date"
 msgstr "Datum"
 
-#: modules/social_features/social_search/social_search.module:124;126;136
+#: modules/social_features/social_search/social_search.module:182;184;194
 msgid "Date Filter by Open Social"
 msgstr ""
 
@@ -3346,7 +3365,7 @@ msgstr ""
 msgid "Date exposed"
 msgstr ""
 
-#: modules/social_features/social_search/src/Plugin/views/filter/SocialDate.php:93
+#: modules/social_features/social_search/src/Plugin/views/filter/SocialDate.php:98
 msgid "Date of Event"
 msgstr ""
 
@@ -3559,7 +3578,6 @@ msgstr ""
 #: modules/social_features/social_profile/config/install/views.view.newest_users.yml:0
 #: modules/social_features/social_profile/config/install/views.view.user_information.yml:0
 #: modules/social_features/social_search/config/install/views.view.search_all.yml:0
-#: modules/social_features/social_search/config/install/views.view.search_content.yml:0
 #: modules/social_features/social_search/config/install/views.view.search_groups.yml:0
 #: modules/social_features/social_search/config/install/views.view.search_users.yml:0
 #: modules/social_features/social_search/modules/social_search_autocomplete/config/install/views.view.search_all_autocomplete.yml:0
@@ -3639,7 +3657,7 @@ msgstr ""
 msgid "Determines whether this social network can be used."
 msgstr ""
 
-#: modules/custom/download_count/download_count.module:64
+#: modules/custom/download_count/download_count.module:65
 msgid "Direct download"
 msgstr "Direkter Download"
 
@@ -3817,13 +3835,13 @@ msgstr ""
 #: modules/social_features/social_comment/src/Form/SocialCommentAdminOverview.php:213
 #: modules/social_features/social_event/social_event.links.task.yml:0
 #: modules/social_features/social_event/modules/social_event_type/social_event_type.links.task.yml:0
-#: modules/social_features/social_group/social_group.module:1826
+#: modules/social_features/social_group/social_group.module:1863
 #: modules/social_features/social_post/social_post.links.task.yml:0
 #: modules/social_features/social_post/src/PostViewBuilder.php:211
 msgid "Edit"
 msgstr "Bearbeiten"
 
-#: themes/socialbase/src/Plugin/Preprocess/PageTitle.php:31
+#: themes/socialbase/src/Plugin/Preprocess/PageTitle.php:35
 msgid "Edit @label"
 msgstr "@label bearbeiten"
 
@@ -4119,7 +4137,7 @@ msgid ""
 "event is Public."
 msgstr ""
 
-#: modules/social_features/social_event/modules/social_event_managers/social_event_managers.module:322
+#: modules/social_features/social_event/modules/social_event_managers/social_event_managers.module:320
 #: modules/social_features/social_event/config/install/views.view.event_enrollments.yml:0;0;0
 msgid "Enrollments"
 msgstr ""
@@ -4504,7 +4522,7 @@ msgstr ""
 msgid "Files"
 msgstr ""
 
-#: themes/socialbase/templates/block/block--views-exposed-filter-block.html.twig:56
+#: modules/social_features/social_search/social_search.module:143
 #: modules/social_features/social_core/config/install/views.view.content.yml:0
 #: modules/social_features/social_event/config/install/views.view.events.yml:0
 #: modules/social_features/social_event/config/install/views.view.upcoming_events.yml:0
@@ -4520,12 +4538,9 @@ msgstr ""
 #: modules/social_features/social_group/config/optional/block.block.exposedformgroup_topicspage_group_topics.yml:0
 #: modules/social_features/social_group/config/optional/block.block.socialblue_exposedformgroup_eventspage_group_events.yml:0
 #: modules/social_features/social_group/config/optional/block.block.socialblue_exposedformgroup_topicspage_group_topics.yml:0
-#: modules/social_features/social_search/config/install/views.view.search_content.yml:0
 #: modules/social_features/social_search/config/install/views.view.search_users.yml:0
-#: modules/social_features/social_search/config/optional/block.block.exposed_form_search_content_page_sidebar.yml:0
 #: modules/social_features/social_search/config/optional/block.block.exposed_form_search_groups_page_sidebar.yml:0
 #: modules/social_features/social_search/config/optional/block.block.exposed_form_search_users_page_sidebar.yml:0
-#: modules/social_features/social_search/config/optional/block.block.socialblue_exposed_form_search_content_page_sidebar.yml:0
 #: modules/social_features/social_search/config/optional/block.block.socialblue_exposed_form_search_groups_page_sidebar.yml:0
 #: modules/social_features/social_search/config/optional/block.block.socialblue_exposed_form_search_users_page_sidebar.yml:0
 #: modules/social_features/social_topic/config/install/views.view.topics.yml:0
@@ -4557,7 +4572,7 @@ msgstr ""
 msgid "Filters"
 msgstr "Filterkriterien"
 
-#: modules/social_features/social_search/social_search.module:127;137
+#: modules/social_features/social_search/social_search.module:185;195
 msgid "Filters for date used in Open Social"
 msgstr ""
 
@@ -4775,6 +4790,10 @@ msgstr "Allgemeine Konfiguration"
 msgid "Generate demo content and users"
 msgstr "Demo-Inhalte und Benutzer generieren"
 
+#: modules/custom/social_demo/social_demo.drush.inc:74
+msgid "Generate demo content."
+msgstr ""
+
 #: social.profile:439
 msgid "Generated %num %demo_description."
 msgstr "%num %demo_description wurde erzeugt."
@@ -4784,6 +4803,10 @@ msgid "Generated 1 group tab aliases."
 msgid_plural "Generated @count group tab aliases."
 msgstr[0] ""
 msgstr[1] ""
+
+#: modules/custom/social_demo/social_demo.drush.inc:79
+msgid "Generates 10000 demo users and 2000 topics."
+msgstr ""
 
 #: modules/custom/social_demo/social_demo.drush.inc:51
 msgid "Generates demo content for users and topics from the EEA profile."
@@ -6082,7 +6105,7 @@ msgid ""
 "this content, please contact a site manager."
 msgstr ""
 
-#: modules/social_features/social_group/social_group.module:1738;1743
+#: modules/social_features/social_group/social_group.module:1775;1780
 msgid "My Groups"
 msgstr "Meine Gruppen"
 
@@ -6090,7 +6113,7 @@ msgstr "Meine Gruppen"
 msgid "My events"
 msgstr "Meine Veranstaltungen"
 
-#: modules/social_features/social_group/social_group.module:1765
+#: modules/social_features/social_group/social_group.module:1802
 msgid "My groups"
 msgstr "Meine Gruppen"
 
@@ -6159,7 +6182,7 @@ msgstr ""
 msgid "New Event"
 msgstr ""
 
-#: modules/social_features/social_group/social_group.module:1710
+#: modules/social_features/social_group/social_group.module:1747
 msgid "New Group"
 msgstr ""
 
@@ -6392,7 +6415,7 @@ msgstr ""
 msgid "Notification"
 msgstr ""
 
-#: modules/social_features/social_activity/social_activity.module:51;59;125;1
+#: modules/social_features/social_activity/social_activity.module:33;40;131;1
 msgid "Notification Centre"
 msgstr "Benachrichtigungszentrale"
 
@@ -6405,7 +6428,7 @@ msgid "Notification from %site_name"
 msgstr "Benachrichtigung von %site_name"
 
 #: modules/custom/activity_basics/src/Plugin/ActivityDestination/NotificationsActivityDestination.php:7
-#: modules/social_features/social_activity/social_activity.module:54
+#: modules/social_features/social_activity/social_activity.module:35
 #: modules/social_features/social_activity/config/install/views.view.activity_stream_notifications.yml:0
 msgid "Notifications"
 msgstr ""
@@ -7581,7 +7604,7 @@ msgstr ""
 msgid "Register"
 msgstr ""
 
-#: modules/social_features/social_search/src/Plugin/views/filter/SocialDate.php:94
+#: modules/social_features/social_search/src/Plugin/views/filter/SocialDate.php:99
 #: modules/social_features/social_search/config/install/views.view.search_users.yml:0
 msgid "Registration Date"
 msgstr ""
@@ -7618,7 +7641,21 @@ msgstr ""
 msgid "Related object"
 msgstr ""
 
-#: modules/social_features/social_group/social_group.module:581;1827
+#: modules/social_features/social_search/config/install/views.view.search_content.yml:0
+msgid "Relevance"
+msgstr ""
+
+#: modules/social_features/social_search/config/install/views.view.search_content.yml:0
+msgid ""
+"Relevance (ascending)|Least relevant first\r\n"
+"Relevance (descending)|Most relevant first\r\n"
+"Created date (ascending)|Least recent first\r\n"
+"Created date (descending)|Most recent first\r\n"
+"Title (ascending)|A - Z\r\n"
+"Title (descending)|Z - A"
+msgstr ""
+
+#: modules/social_features/social_group/social_group.module:581;1864
 msgid "Remove"
 msgstr "Entfernen"
 
@@ -7868,7 +7905,7 @@ msgstr "Sag deiner Community etwas"
 msgid "Say something to the group"
 msgstr ""
 
-#: modules/social_features/social_search/social_search.module:159
+#: modules/social_features/social_search/social_search.module:217
 #: modules/social_features/social_search/src/SocialSearchBreadcrumbBuilder.php:53
 #: modules/social_features/social_search/src/Form/SearchHeroForm.php:73;84
 #: themes/socialbase/templates/block/block--system-menu-block--main.html.twig:45
@@ -8037,6 +8074,10 @@ msgstr ""
 #: themes/socialbase/components/03-molecules/form-elements/multiselect/select2.init.js:0
 msgid "Select an option"
 msgstr "Eine Option auswählen"
+
+#: modules/social_features/social_search/config/install/views.view.search_content.yml:0
+msgid "Select any filter and click on Apply to see results"
+msgstr ""
 
 #: modules/custom/activity_logger/activity_logger.module:139
 msgid "Select destinations where to display this message."
@@ -8313,7 +8354,7 @@ msgstr ""
 msgid "Show \"@field_group\" on my profile"
 msgstr "Zeige \"@field_group\" in meinem Profil"
 
-#: modules/social_features/social_comment/social_comment.module:303
+#: modules/social_features/social_comment/social_comment.module:302
 #: modules/social_features/social_core/src/Plugin/Field/FieldFormatter/CommentNodeFormatter.php:135
 #: modules/social_features/social_post/src/Plugin/Field/FieldFormatter/CommentPostFormatter.php:82
 msgid "Show all :num_comments comments"
@@ -9125,6 +9166,15 @@ msgid ""
 "drupal.org/docs/8/distributions/open-social/private-files"
 msgstr ""
 
+#: modules/social_features/social_search/config/install/views.view.search_content.yml:0;0
+msgid "Sort"
+msgstr ""
+
+#: modules/social_features/social_search/config/optional/block.block.exposed_form_search_content_page_sidebar.yml:0
+#: modules/social_features/social_search/config/optional/block.block.socialblue_exposed_form_search_content_page_sidebar.yml:0
+msgid "Sort and Filter"
+msgstr ""
+
 #: themes/socialbase/templates/system/tablesort-indicator.html.twig:17
 msgid "Sort ascending"
 msgstr "Aufsteigend sortieren"
@@ -9160,7 +9210,6 @@ msgstr "Aufsteigend sortieren"
 #: modules/social_features/social_profile/config/install/views.view.newest_users.yml:0
 #: modules/social_features/social_profile/config/install/views.view.user_information.yml:0
 #: modules/social_features/social_search/config/install/views.view.search_all.yml:0
-#: modules/social_features/social_search/config/install/views.view.search_content.yml:0
 #: modules/social_features/social_search/config/install/views.view.search_groups.yml:0
 #: modules/social_features/social_search/config/install/views.view.search_users.yml:0
 #: modules/social_features/social_search/modules/social_search_autocomplete/config/install/views.view.search_all_autocomplete.yml:0
@@ -10072,6 +10121,7 @@ msgstr ""
 #: modules/social_features/social_landing_page/config/install/field.field.paragraph.hero.field_hero_title.yml:0
 #: modules/social_features/social_landing_page/config/install/field.field.paragraph.hero_small.field_hero_small_title.yml:0
 #: modules/social_features/social_landing_page/config/install/field.field.paragraph.introduction.field_introduction_title.yml:0
+#: modules/social_features/social_search/config/install/views.view.search_content.yml:0
 msgid "Title"
 msgstr "Titel"
 
@@ -10701,7 +10751,7 @@ msgstr "Wert"
 #: modules/custom/social_font/social_font.links.task.yml:0
 #: modules/social_features/social_comment/src/Form/SocialCommentAdminOverview.php:209
 #: modules/social_features/social_event/social_event.links.task.yml:0
-#: modules/social_features/social_group/social_group.module:1828
+#: modules/social_features/social_group/social_group.module:1865
 #: modules/social_features/social_post/social_post.links.task.yml:0
 msgid "View"
 msgstr "Ansicht"
@@ -10738,7 +10788,7 @@ msgstr "Aktivitäten anzeigen"
 msgid "View all hidden profile fields"
 msgstr "Alle ausgeblendeten Profilfelder anzeigen"
 
-#: modules/social_features/social_activity/social_activity.module:80
+#: modules/social_features/social_activity/social_activity.module:86
 msgid "View all notifications"
 msgstr ""
 
@@ -10780,7 +10830,7 @@ msgstr "Ansichtsmodus"
 msgid "View my events"
 msgstr "Meine Veranstaltungen anzeigen"
 
-#: modules/social_features/social_group/social_group.module:1763
+#: modules/social_features/social_group/social_group.module:1800
 msgid "View my groups"
 msgstr "Meine Gruppen anzeigen"
 
@@ -11462,6 +11512,10 @@ msgstr "aufsteigend"
 #: modules/social_features/social_core/config/install/views.view.content.yml:0
 msgid "author"
 msgstr "Autor"
+
+#: modules/social_features/social_search/config/install/views.view.search_content.yml:0
+msgid "basic_html"
+msgstr ""
 
 #: themes/socialbase/templates/node/node--full.html.twig:155
 #, fuzzy

@@ -5,6 +5,7 @@ namespace Drupal\activity_creator;
 use Drupal\activity_creator\Entity\Activity;
 use Drupal\Component\Render\FormattableMarkup;
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\language\ConfigurableLanguageManagerInterface;
 use Drupal\message\Entity\Message;
 use Drupal\activity_creator\Plugin\ActivityDestinationManager;
@@ -282,12 +283,14 @@ class ActivityFactory extends ControllerBase {
       $comment_storage = \Drupal::entityTypeManager()->getStorage('comment');
       // @TODO: Check if comment published?
       $comment = $comment_storage->load($related_object['target_id']);
-      $parent_comment = $comment->getParentComment();
-      if (!empty($parent_comment)) {
-        $related_object = [
-          'target_type' => $parent_comment->getEntityTypeId(),
-          'target_id' => $parent_comment->id(),
-        ];
+      if ($comment) {
+        $parent_comment = $comment->getParentComment();
+        if (!empty($parent_comment)) {
+          $related_object = [
+            'target_type' => $parent_comment->getEntityTypeId(),
+            'target_id' => $parent_comment->id(),
+          ];
+        }
       }
     }
     // We return commented entity as related object for all other comments.
@@ -496,18 +499,20 @@ class ActivityFactory extends ControllerBase {
       'clear' => $clear,
     ];
 
+    $bubbleable_metadata = new BubbleableMetadata();
     foreach ($output as $key => $value) {
       if (is_string($value)) {
         $output[$key] = \Drupal::token()
-          ->replace($value, ['message' => $message], $options);
+          ->replace($value, ['message' => $message], $options, $bubbleable_metadata);
       }
       else {
         if (isset($value['value'])) {
           $output[$key] = \Drupal::token()
-            ->replace($value['value'], ['message' => $message], $options);
+            ->replace($value['value'], ['message' => $message], $options, $bubbleable_metadata);
         }
       }
     }
+    $bubbleable_metadata->applyTo($output);
 
     return $output;
   }

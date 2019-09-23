@@ -21,7 +21,6 @@ Feature: Create Post with Photo
    Then I should see the success message "Your post has been posted."
     And I should see "This post with a photo."
     And I should see "PostPhotoCreate1" in the "Main content front"
-    And I should be on "/stream"
 
         # Scenario: edit the post
    When I click the xth "1" element with the css ".dropdown-toggle" in the "Main content"
