@@ -141,54 +141,77 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
       }
     }
 
-    // Get pager data if available.
-    if (!empty($this->view->pager) && method_exists($this->view->pager, 'hasMoreRecords')) {
-      $pagerData = [
-        'current' => $this->view->pager->getCurrentPage(),
-        'more' => $this->view->pager->hasMoreRecords(),
-      ];
+    $event = social_event_get_current_event();
+    if (!$event) {
+      return;
     }
-
-    $display_select_all = isset($pagerData) && ($pagerData['more'] || $pagerData['current'] > 0);
-
-    // Select all results checkbox.
-    if ($display_select_all) {
-      $form['header'][$this->options['id']]['select_all'] = [
-        '#type' => 'checkbox',
-        '#title' => $this->t('Select all @count results in this view', [
-          '@count' => $this->tempStoreData['total_results'] ? ' ' . $this->tempStoreData['total_results'] : '',
-        ]),
-        '#attributes' => [
-          'class' => ['vbo-select-all', 'form-no-label', 'checkbox'],
-        ],
-      ];
+    $tempstoreData = $this->getTempstoreData($this->view->id(), $this->view->current_display);
+    // Make sure the selection is saved for the current group.
+    if (!empty($tempstoreData['event_id']) && $tempstoreData['event_id'] !== $event->id()) {
+      // If not we clear it right away.
+      // Since we don't want to mess with cached date.
+      $this->deleteTempstoreData($this->view->id(), $this->view->current_display);
+      // Reset initial values.
+      $this->updateTempstoreData();
+      // Initialize it again.
+      $tempstoreData = $this->getTempstoreData($this->view->id(), $this->view->current_display);
     }
+    // Add the Event ID to the data.
+    $tempstoreData['event_id'] = $event->id();
+    $this->setTempstoreData($tempstoreData, $this->view->id(), $this->view->current_display);
 
+    // Reorder the form array.
+    $multipage = $form['header'][$this->options['id']]['multipage'];
+    unset($form['header'][$this->options['id']]['multipage']);
+    $form['header'][$this->options['id']]['multipage'] = $multipage;
+
+    // Render proper classes for the header in VBO form.
     $wrapper = &$form['header'][$this->options['id']];
+
+    // Styling related for the wrapper div.
     $wrapper['#attributes']['class'][] = 'card';
     $wrapper['#attributes']['class'][] = 'card__block';
-
     $form['#attached']['library'][] = 'social_event_managers/views_bulk_operations.frontUi';
 
-    // Render page title.
-    $count = isset($this->tempStoreData['list']) ? count($this->tempStoreData['list']) : 0;
-    $title = $this->formatPlural($count, '<b>@count enrollee</b> is selected', '<b>@count enrollees</b> are selected');
+    // Render select all results checkbox.
+    if (!empty($wrapper['select_all'])) {
+      $wrapper['select_all']['#title'] = $this->t('Select / unselect all @count results in this view', [
+        '@count' => $this->tempStoreData['total_results'] ? ' ' . $this->tempStoreData['total_results'] : '',
+      ]);
+      // Styling attributes for the select box.
+      $form['header'][$this->options['id']]['select_all']['#attributes']['class'][] = 'form-no-label';
+      $form['header'][$this->options['id']]['select_all']['#attributes']['class'][] = 'checkbox';
+    }
 
+    /** @var \Drupal\Core\StringTranslation\TranslatableMarkup $title */
+    $title = $wrapper['multipage']['#title'];
+    $arguments = $title->getArguments();
+    $count = empty($arguments['%count']) ? 0 : $arguments['%count'];
+
+    $title = $this->formatPlural($count, '<b><em class="placeholder">@count</em> enrollee</b> is selected', '<b><em class="placeholder">@count</em> enrollees</b> are selected');
     $wrapper['multipage']['#title'] = [
       '#type' => 'html_tag',
       '#tag' => 'div',
-      '#attributes' => [
-        'class' => ['placeholder'],
-      ],
       '#value' => $title,
     ];
 
-    $wrapper['multipage']['list']['#title'] = $this->t('See selected enrollees on other pages');
+    // Add selector so the JS of VBO applies correctly.
+    $wrapper['multipage']['#attributes']['class'][] = 'vbo-multipage-selector';
 
-    // We don't show the multipage list if there are no items selected.
-    $items = isset($wrapper['multipage']['list']['#items']) ? count($wrapper['multipage']['list']['#items']) : 0;
-    if ($items < 1) {
-      unset($wrapper['multipage']['list']);
+    // Get tempstore data so we know what messages to show based on the data.
+    $tempstoreData = $this->getTempstoreData($this->view->id(), $this->view->current_display);
+    if (!empty($wrapper['multipage']['list']['#items']) && count($wrapper['multipage']['list']['#items']) > 0) {
+      $excluded = FALSE;
+      if (!empty($tempstoreData['exclude_mode']) && $tempstoreData['exclude_mode']) {
+        $excluded = TRUE;
+      }
+      $wrapper['multipage']['list']['#title'] = !$excluded ? $this->t('See selected enrollees on other pages') : $this->t('See excluded enrollees on other pages');
+    }
+
+    // Update the clear submit button.
+    if (!empty($wrapper['multipage']['clear'])) {
+      $wrapper['multipage']['clear']['#value'] = $this->t('Clear all selected members');
+      $wrapper['multipage']['clear']['#attributes']['class'][] = 'btn-default dropdown-toggle waves-effect waves-btn margin-top-l margin-left-m';
     }
 
     $actions = &$wrapper['actions'];
@@ -226,22 +249,27 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
    * {@inheritdoc}
    */
   public function viewsFormValidate(&$form, FormStateInterface $form_state) {
-    if ($this->view->id() === 'event_manage_enrollments' && $this->options['buttons']) {
+    if ($this->view->id() === 'event_manage_enrollments') {
       $user_input = $form_state->getUserInput();
-      $actions = &$form['header'][$this->options['id']]['actions'];
-
-      foreach (Element::children($actions) as $action_id) {
-        $action = &$actions[$action_id];
-
-        if (isset($action['#access']) && !$action['#access']) {
+      $available_options = $this->getBulkOptions();
+      // Grab all the actions that are available.
+      foreach (Element::children($this->actions) as $action) {
+        // If the option is not in our selected options, next.
+        if (empty($available_options[$action])) {
           continue;
         }
 
         /** @var \Drupal\Core\StringTranslation\TranslatableMarkup $label */
-        $label = $action['#value'];
+        $label = $available_options[$action];
 
+        // Match the Users action from our custom dropdown.
+        // Find the action from the VBO selection.
+        // And set that as the chosen action in the form_state.
         if (strip_tags($label->render()) === $user_input['op']) {
-          $form_state->setTriggeringElement($action);
+          $user_input['action'] = $action;
+          $form_state->setUserInput($user_input);
+          $form_state->setValue('action', $action);
+          $form_state->setTriggeringElement($this->actions[$action]);
           break;
         }
       }

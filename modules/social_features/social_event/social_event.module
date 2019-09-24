@@ -596,3 +596,23 @@ function social_event_activity_send_email_notifications_alter(array &$items, arr
 function social_event_social_follow_content_types_alter(array &$types) {
   $types[] = 'event';
 }
+
+/**
+ * Return the Event from a given page.
+ *
+ * @return \Drupal\Core\Entity\EntityInterface|\Drupal\node\Entity\Node|null
+ *   The event or NULL if nothing found.
+ */
+function social_event_get_current_event() {
+  $node = \Drupal::service('current_route_match')->getParameter('node');
+
+  if (!is_null($node) && (!$node instanceof Node)) {
+    $node = Node::load($node);
+  }
+
+  if (($node instanceof Node) && $node->getType() === 'event') {
+    return $node;
+  }
+
+  return NULL;
+}
