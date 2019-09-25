@@ -5,3 +5,23 @@
     border-radius: $border-radius-base;
   }
 }
+
+.socialblue--sky {
+  .offcanvas-head {
+    @include for-tablet-landscape-up {
+      padding: 1.25rem 1.875rem 0;
+    }
+  }
+
+  .offcanvas-body {
+    @include for-tablet-landscape-up {
+      padding: 1.25rem 1.875rem;
+    }
+  }
+
+  .views-exposed-form {
+    @include for-tablet-landscape-down {
+      top: -4rem;
+    }
+  }
+}

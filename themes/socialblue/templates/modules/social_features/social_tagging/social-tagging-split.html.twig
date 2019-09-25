@@ -16,39 +16,55 @@
  */
 #}
 
-{% if style == 'sky' %}
-  <div class="card">
-    <div class="card__block">
-      {% for content in taghierarchy %}
-        <div class="group-about__item">
-          <p>{{ content.title }}</p>
-          <div class="group-about__wrapper">
-            {% for group in content.group %}
-              <div class="tags-group">
-                {% for tag in group.tags %}
-                  {% set classes = [
-                    'badge badge-default badge--large badge--pill',
-                    tag.is_parent ? 'parent-tag',
-                    tag.with_children ? 'tag-with-children',
-                    tag.is_child ? 'child-tag'
-                  ] %}
-                  <a {{ attributes.setAttribute('class', classes) }}
-                    href="{{ tag.url }}">{{ tag.name }}</a>
-                {% endfor %}
-              </div>
-            {% endfor %}
-          </div>
-        </div>
-      {% endfor %}
-    </div>
-  </div>
-{% else %}
-  <div class="card__block">
-    {% for content in taghierarchy %}
+{#{% if style == 'sky' %}#}
+{#  <div class="card">#}
+{#    <div class="card__block card__block--list">#}
+{#      {% for content in taghierarchy %}#}
+{#        <div class="group-about__item">#}
+{#          <p>{{ content.title }}</p>#}
+{#          <div class="group-about__wrapper">#}
+{#            <div class="tags-group">#}
+{#              <a class="badge badge-default badge--large badge--pill" href="/search/content?constituency%5B%5D=51">Local government</a>#}
+{#            </div>#}
+{#            {% for group in content.group %}#}
+{#              <div class="tags-group">#}
+{#                <a class="badge badge-default badge--large badge--pill" href="/search/content?constituency%5B%5D=51">Local government</a>#}
+{#                {% for tag in group.tags %}#}
+{#                  {% set classes = [#}
+{#                    'badge badge-default badge--large badge--pill',#}
+{#                    tag.is_parent ? 'parent-tag',#}
+{#                    tag.with_children ? 'tag-with-children',#}
+{#                    tag.is_child ? 'child-tag'#}
+{#                  ] %}#}
+{#                  <a {{ attributes.setAttribute('class', classes) }}#}
+{#                    href="{{ tag.url }}">{{ tag.name }}</a>#}
+{#                {% endfor %}#}
+{#              </div>#}
+{#            {% endfor %}#}
+{#          </div>#}
+{#        </div>#}
+{#      {% endfor %}#}
+{#    </div>#}
+{#  </div>#}
+{#{% else %}#}
+{#{% endif %}#}
+
+<div class="card__block">
+  {% for content in taghierarchy %}
+    {% if style == 'sky' %}
+      <p class="badge--tag__title">{{ content.title }}</p>
+    {% else %}
       <p><strong>{{ content.title }}</strong></p>
-      {% for tag in content.tags %}
+    {% endif %}
+
+    {% for tag in content.tags %}
+
+      {% if style == 'sky' %}
+        <a class="badge badge-default badge--large badge--pill badge--tag" href="{{ tag.url }}">{{ tag.name }}</a>
+      {% else %}
         <a class="badge badge-default badge--large badge--pill" href="{{ tag.url }}">{{ tag.name }}</a>
-      {% endfor %}
+      {% endif %}
+
     {% endfor %}
-  </div>
-{% endif %}
+  {% endfor %}
+</div>

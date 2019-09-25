@@ -24,7 +24,55 @@
   color: $badge-color;
 }
 
-.socialblue--sky .main-container {
+.badge__icon {
+  fill: $default-color;
+}
+
+.badge--pill {
+  @include border-radius($badge-pill-border-radius);
+}
+
+.badge-default {
+  @include badge-variant($badge-default-bg, $default-color);
+}
+
+.badge-primary {
+  @include badge-variant($badge-primary-bg, #fff);
+}
+
+.badge-secondary {
+  @include badge-variant($badge-secondary-bg, #fff);
+}
+
+.badge-accent {
+  @include badge-variant($badge-accent-bg, $default-color);
+}
+
+.badge-success {
+  @include badge-variant($badge-success-bg, #fff);
+}
+
+.badge-info {
+  @include badge-variant($badge-info-bg, #fff);
+}
+
+.badge-warning {
+  @include badge-variant($badge-warning-bg, #fff);
+}
+
+.badge-danger {
+  @include badge-variant($badge-danger-bg, #fff);
+}
+
+a .badge-default {
+  color: $default-color;
+
+  &:hover {
+    color: $default-color;
+  }
+}
+
+.socialblue--sky {
   .teaser__body {
     .badge {
       border-radius: $border-radius-extra;
@@ -53,13 +101,13 @@
       background: transparent;
     }
   }
-}
 
-.badge__icon {
-  fill: $default-color;
+  .badge-accent {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
 
-  .socialblue--sky & {
-
+  .badge__icon {
     path {
       stroke: $default-color;
       fill: $default-color;
@@ -69,55 +117,13 @@
       height: 11px;
     }
   }
-}
 
-.badge--pill {
-  @include border-radius($badge-pill-border-radius);
-}
-
-.badge-default {
-  @include badge-variant($badge-default-bg, $default-color);
-}
-
-.badge-primary {
-  @include badge-variant($badge-primary-bg, #fff);
-}
-
-.badge-secondary {
-  @include badge-variant($badge-secondary-bg, #fff);
-}
-
-.badge-accent {
-  @include badge-variant($badge-accent-bg, $default-color);
-}
-
-.socialblue--sky .main-container {
-  .badge-accent {
-    padding-left: 15px;
-    padding-right: 15px;
+  .badge--tag {
+    margin-right: 1.875rem;
+    margin-bottom: 1rem;
   }
-}
 
-.badge-success {
-  @include badge-variant($badge-success-bg, #fff);
-}
-
-.badge-info {
-  @include badge-variant($badge-info-bg, #fff);
-}
-
-.badge-warning {
-  @include badge-variant($badge-warning-bg, #fff);
-}
-
-.badge-danger {
-  @include badge-variant($badge-danger-bg, #fff);
-}
-
-a .badge-default {
-  color: $default-color;
-
-  &:hover {
-    color: $default-color;
+  .badge--tag__title {
+    font-size: .875rem;
   }
 }

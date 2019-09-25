@@ -222,8 +222,12 @@
         }
       }
     }
+  }
 
-
+  .card__actionbar {
+    margin-top: -.75rem;
+    padding-top: 1.5em;
+    padding-bottom: 1.5rem;
   }
 
   .card__block {
@@ -250,10 +254,6 @@
     }
   }
 
-  .card--list {
-    padding-bottom: .75rem;
-  }
-
   .card__title {
     font-weight: 700;
     text-transform: uppercase;
@@ -267,7 +267,6 @@
     position: relative;
     float: none;
     margin-left: 0;
-    padding-left: 30px;
     padding-right: 30px;
     text-transform: uppercase;
     font-weight: 700;
@@ -952,12 +951,6 @@
     }
   }
 
-  &.path-user {
-    .card[class*='statistic-block'] {
-      overflow: visible;
-    }
-  }
-
   //Move to separate file
   // User information/group about cards.
   .content-merged {
@@ -1195,14 +1188,6 @@
     }
   }
 
-  &.path-group {
-    .region--complementary-top {
-      .block-course-add-section {
-        padding: 1.25rem 2.25rem;
-      }
-    }
-  }
-
   // Move to separate file
   // Group about card.
   .path-group:not(.group-type-challenge) .content-merged {
@@ -1312,66 +1297,30 @@
     }
   }
 
-  // Block Idea with new social sky card.
-  .block-views-blockchallenge-ideas-block {
-    padding: 0 1.25rem 1.25rem;
-  }
-
   .card--list .card__block--list:not(:last-child) {
     padding-top: 1.25rem;
   }
-}
 
-
-// Move to separate file
-// Card on region complementary top/bottom.
-body.socialblue--sky {
   .sidebar-left {
-    .region--complementary-top {
-      .card.block-social-tagging {
-        @include for-tablet-landscape-up {
-          &:after {
-            content: '' !important;
-            display: block !important;
-            position: absolute;
-            height: 2px;
-            bottom: 0;
-            left: 20px;
-            right: 20px;
-            margin: 0 auto;
-            background: #fafafa;
-          }
-        }
+    .region--complementary_wrapper {
+      @include for-tablet-landscape-down {
+        box-shadow: none;
       }
     }
 
     .region--complementary-bottom,
     .region--complementary-top {
-      .local-actions {
-        position: relative;
-        padding: 1.25rem 2.25rem;
-
-        .btn {
-          margin-bottom: 0;
-        }
-      }
-
-      .local-actions .btn {
-        width: 100%;
-      }
-
       > *:not([class*='statistic-block']) {
         position: relative;
         box-shadow: none;
-        padding-bottom: 1.5rem;
         margin-bottom: 0;
         background: transparent;
 
         @include for-phone-only {
-          width: 100%;
+          max-width: 100%;
 
           a {
-            width: 100%;
+            max-width: 100%;
           }
         }
 
@@ -1391,7 +1340,7 @@ body.socialblue--sky {
           }
         }
 
-        &:nth-last-child(1):after {
+        &:last-child:after {
           display: none;
         }
 
@@ -1399,7 +1348,7 @@ body.socialblue--sky {
           padding-bottom: 0;
 
           .card__block {
-            padding-bottom: 1.25rem;
+            padding-bottom: 1.5rem;
           }
         }
 
@@ -1418,27 +1367,15 @@ body.socialblue--sky {
 
         .card__block,
         .offcanvas-body {
-          padding-top: 1.25rem;
-          padding-bottom: 2.5rem;
-
-          .card--list & {
-            padding-bottom: 0
-          }
+          padding-top: 1.5rem;
+          padding-bottom: 1.5rem;
         }
 
         &.card--list ,
         .card--list {
 
-          .card__block {
-            padding-bottom: 0;
-
-            &:last-child {
-              padding-bottom: 2.5rem;
-            }
-          }
-
           .card__block--list {
-            padding-top: 1.25rem;
+            padding-top: 1.5rem;
             padding-bottom: 0;
 
             + .card__block--list {
@@ -1446,17 +1383,13 @@ body.socialblue--sky {
             }
 
             &:last-child {
-              padding-bottom: 2.5rem;
+              padding-bottom: 1.5rem;
             }
           }
         }
 
         .offcanvas-body {
           padding-bottom: 0;
-        }
-
-        .card__actionbar {
-          padding: 0;
         }
       }
 
@@ -1470,9 +1403,9 @@ body.socialblue--sky {
       }
     }
 
-    .region--complementary_wrapper {
+    .views-exposed-form {
       @include for-tablet-landscape-down {
-        box-shadow: none;
+        position: absolute;
       }
     }
   }

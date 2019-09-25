@@ -113,6 +113,12 @@
   border-color: #fafafa;
 }
 
+.socialblue--sky .card__actionbar {
+  margin-top: -.75rem;
+  padding-top: 1.5em;
+  padding-bottom: 1.5rem;
+}
+
 .socialblue--sky .card__block {
   padding: 1.25rem 1.875rem;
 }
@@ -139,10 +145,6 @@
   height: 44px;
 }
 
-.socialblue--sky .card--list {
-  padding-bottom: .75rem;
-}
-
 .socialblue--sky .card__title {
   font-weight: 700;
   text-transform: uppercase;
@@ -152,7 +154,6 @@
   position: relative;
   float: none;
   margin-left: 0;
-  padding-left: 30px;
   padding-right: 30px;
   text-transform: uppercase;
   font-weight: 700;
@@ -743,10 +744,6 @@
   display: inline-block;
 }
 
-.socialblue--sky.path-user .card[class*='statistic-block'] {
-  overflow: visible;
-}
-
 .socialblue--sky .content-merged .block-views-blockgroup-managers-block-list-managers {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -1122,10 +1119,6 @@
           box-shadow: none;
 }
 
-.socialblue--sky.path-group .region--complementary-top .block-course-add-section {
-  padding: 1.25rem 2.25rem;
-}
-
 .socialblue--sky .path-group:not(.group-type-challenge) .content-merged .region--content .content--side_wrapper-card {
   padding-bottom: 1.5rem;
 }
@@ -1333,42 +1326,21 @@
   border-bottom: 1px solid #d5d6d2;
 }
 
-.socialblue--sky .block-views-blockchallenge-ideas-block {
-  padding: 0 1.25rem 1.25rem;
-}
-
 .socialblue--sky .card--list .card__block--list:not(:last-child) {
   padding-top: 1.25rem;
 }
 
-body.socialblue--sky .sidebar-left .region--complementary-bottom .local-actions,
-body.socialblue--sky .sidebar-left .region--complementary-top .local-actions {
-  position: relative;
-  padding: 1.25rem 2.25rem;
-}
-
-body.socialblue--sky .sidebar-left .region--complementary-bottom .local-actions .btn,
-body.socialblue--sky .sidebar-left .region--complementary-top .local-actions .btn {
-  margin-bottom: 0;
-}
-
-body.socialblue--sky .sidebar-left .region--complementary-bottom .local-actions .btn,
-body.socialblue--sky .sidebar-left .region--complementary-top .local-actions .btn {
-  width: 100%;
-}
-
-body.socialblue--sky .sidebar-left .region--complementary-bottom > *:not([class*='statistic-block']),
-body.socialblue--sky .sidebar-left .region--complementary-top > *:not([class*='statistic-block']) {
+.socialblue--sky .sidebar-left .region--complementary-bottom > *:not([class*='statistic-block']),
+.socialblue--sky .sidebar-left .region--complementary-top > *:not([class*='statistic-block']) {
   position: relative;
   -webkit-box-shadow: none;
           box-shadow: none;
-  padding-bottom: 1.5rem;
   margin-bottom: 0;
   background: transparent;
 }
 
-body.socialblue--sky .sidebar-left .region--complementary-bottom > *:not([class*='statistic-block']):after,
-body.socialblue--sky .sidebar-left .region--complementary-top > *:not([class*='statistic-block']):after {
+.socialblue--sky .sidebar-left .region--complementary-bottom > *:not([class*='statistic-block']):after,
+.socialblue--sky .sidebar-left .region--complementary-top > *:not([class*='statistic-block']):after {
   content: '';
   position: absolute;
   height: 2px;
@@ -1379,103 +1351,77 @@ body.socialblue--sky .sidebar-left .region--complementary-top > *:not([class*='s
   background: #fafafa;
 }
 
-body.socialblue--sky .sidebar-left .region--complementary-bottom > *:not([class*='statistic-block']):nth-last-child(1):after,
-body.socialblue--sky .sidebar-left .region--complementary-top > *:not([class*='statistic-block']):nth-last-child(1):after {
+.socialblue--sky .sidebar-left .region--complementary-bottom > *:not([class*='statistic-block']):last-child:after,
+.socialblue--sky .sidebar-left .region--complementary-top > *:not([class*='statistic-block']):last-child:after {
   display: none;
 }
 
-body.socialblue--sky .sidebar-left .region--complementary-bottom > *:not([class*='statistic-block']).block-social-tagging,
-body.socialblue--sky .sidebar-left .region--complementary-top > *:not([class*='statistic-block']).block-social-tagging {
+.socialblue--sky .sidebar-left .region--complementary-bottom > *:not([class*='statistic-block']).block-social-tagging,
+.socialblue--sky .sidebar-left .region--complementary-top > *:not([class*='statistic-block']).block-social-tagging {
   padding-bottom: 0;
 }
 
-body.socialblue--sky .sidebar-left .region--complementary-bottom > *:not([class*='statistic-block']).block-social-tagging .card__block,
-body.socialblue--sky .sidebar-left .region--complementary-top > *:not([class*='statistic-block']).block-social-tagging .card__block {
-  padding-bottom: 1.25rem;
+.socialblue--sky .sidebar-left .region--complementary-bottom > *:not([class*='statistic-block']).block-social-tagging .card__block,
+.socialblue--sky .sidebar-left .region--complementary-top > *:not([class*='statistic-block']).block-social-tagging .card__block {
+  padding-bottom: 1.5rem;
 }
 
-body.socialblue--sky .sidebar-left .region--complementary-bottom > *:not([class*='statistic-block']) .card__title,
-body.socialblue--sky .sidebar-left .region--complementary-bottom > *:not([class*='statistic-block']) .offcanvas-head,
-body.socialblue--sky .sidebar-left .region--complementary-bottom > *:not([class*='statistic-block']) .complementary-title,
-body.socialblue--sky .sidebar-left .region--complementary-top > *:not([class*='statistic-block']) .card__title,
-body.socialblue--sky .sidebar-left .region--complementary-top > *:not([class*='statistic-block']) .offcanvas-head,
-body.socialblue--sky .sidebar-left .region--complementary-top > *:not([class*='statistic-block']) .complementary-title {
+.socialblue--sky .sidebar-left .region--complementary-bottom > *:not([class*='statistic-block']) .card__title,
+.socialblue--sky .sidebar-left .region--complementary-bottom > *:not([class*='statistic-block']) .offcanvas-head,
+.socialblue--sky .sidebar-left .region--complementary-bottom > *:not([class*='statistic-block']) .complementary-title,
+.socialblue--sky .sidebar-left .region--complementary-top > *:not([class*='statistic-block']) .card__title,
+.socialblue--sky .sidebar-left .region--complementary-top > *:not([class*='statistic-block']) .offcanvas-head,
+.socialblue--sky .sidebar-left .region--complementary-top > *:not([class*='statistic-block']) .complementary-title {
   padding-top: 1.5rem;
   font-size: .875rem;
   line-height: 20px;
 }
 
-body.socialblue--sky .sidebar-left .region--complementary-bottom > *:not([class*='statistic-block']) .complementary-title,
-body.socialblue--sky .sidebar-left .region--complementary-top > *:not([class*='statistic-block']) .complementary-title {
+.socialblue--sky .sidebar-left .region--complementary-bottom > *:not([class*='statistic-block']) .complementary-title,
+.socialblue--sky .sidebar-left .region--complementary-top > *:not([class*='statistic-block']) .complementary-title {
   padding-top: 0;
   font-weight: 700;
 }
 
-body.socialblue--sky .sidebar-left .region--complementary-bottom > *:not([class*='statistic-block']) .card__block,
-body.socialblue--sky .sidebar-left .region--complementary-bottom > *:not([class*='statistic-block']) .offcanvas-body,
-body.socialblue--sky .sidebar-left .region--complementary-top > *:not([class*='statistic-block']) .card__block,
-body.socialblue--sky .sidebar-left .region--complementary-top > *:not([class*='statistic-block']) .offcanvas-body {
-  padding-top: 1.25rem;
-  padding-bottom: 2.5rem;
+.socialblue--sky .sidebar-left .region--complementary-bottom > *:not([class*='statistic-block']) .card__block,
+.socialblue--sky .sidebar-left .region--complementary-bottom > *:not([class*='statistic-block']) .offcanvas-body,
+.socialblue--sky .sidebar-left .region--complementary-top > *:not([class*='statistic-block']) .card__block,
+.socialblue--sky .sidebar-left .region--complementary-top > *:not([class*='statistic-block']) .offcanvas-body {
+  padding-top: 1.5rem;
+  padding-bottom: 1.5rem;
 }
 
-.card--list body.socialblue--sky .sidebar-left .region--complementary-bottom > *:not([class*='statistic-block']) .card__block, .card--list
-body.socialblue--sky .sidebar-left .region--complementary-bottom > *:not([class*='statistic-block']) .offcanvas-body, .card--list
-body.socialblue--sky .sidebar-left .region--complementary-top > *:not([class*='statistic-block']) .card__block, .card--list
-body.socialblue--sky .sidebar-left .region--complementary-top > *:not([class*='statistic-block']) .offcanvas-body {
+.socialblue--sky .sidebar-left .region--complementary-bottom > *:not([class*='statistic-block']).card--list .card__block--list,
+.socialblue--sky .sidebar-left .region--complementary-bottom > *:not([class*='statistic-block']) .card--list .card__block--list,
+.socialblue--sky .sidebar-left .region--complementary-top > *:not([class*='statistic-block']).card--list .card__block--list,
+.socialblue--sky .sidebar-left .region--complementary-top > *:not([class*='statistic-block']) .card--list .card__block--list {
+  padding-top: 1.5rem;
   padding-bottom: 0;
 }
 
-body.socialblue--sky .sidebar-left .region--complementary-bottom > *:not([class*='statistic-block']).card--list .card__block,
-body.socialblue--sky .sidebar-left .region--complementary-bottom > *:not([class*='statistic-block']) .card--list .card__block,
-body.socialblue--sky .sidebar-left .region--complementary-top > *:not([class*='statistic-block']).card--list .card__block,
-body.socialblue--sky .sidebar-left .region--complementary-top > *:not([class*='statistic-block']) .card--list .card__block {
-  padding-bottom: 0;
-}
-
-body.socialblue--sky .sidebar-left .region--complementary-bottom > *:not([class*='statistic-block']).card--list .card__block:last-child,
-body.socialblue--sky .sidebar-left .region--complementary-bottom > *:not([class*='statistic-block']) .card--list .card__block:last-child,
-body.socialblue--sky .sidebar-left .region--complementary-top > *:not([class*='statistic-block']).card--list .card__block:last-child,
-body.socialblue--sky .sidebar-left .region--complementary-top > *:not([class*='statistic-block']) .card--list .card__block:last-child {
-  padding-bottom: 2.5rem;
-}
-
-body.socialblue--sky .sidebar-left .region--complementary-bottom > *:not([class*='statistic-block']).card--list .card__block--list,
-body.socialblue--sky .sidebar-left .region--complementary-bottom > *:not([class*='statistic-block']) .card--list .card__block--list,
-body.socialblue--sky .sidebar-left .region--complementary-top > *:not([class*='statistic-block']).card--list .card__block--list,
-body.socialblue--sky .sidebar-left .region--complementary-top > *:not([class*='statistic-block']) .card--list .card__block--list {
-  padding-top: 1.25rem;
-  padding-bottom: 0;
-}
-
-body.socialblue--sky .sidebar-left .region--complementary-bottom > *:not([class*='statistic-block']).card--list .card__block--list + .card__block--list,
-body.socialblue--sky .sidebar-left .region--complementary-bottom > *:not([class*='statistic-block']) .card--list .card__block--list + .card__block--list,
-body.socialblue--sky .sidebar-left .region--complementary-top > *:not([class*='statistic-block']).card--list .card__block--list + .card__block--list,
-body.socialblue--sky .sidebar-left .region--complementary-top > *:not([class*='statistic-block']) .card--list .card__block--list + .card__block--list {
+.socialblue--sky .sidebar-left .region--complementary-bottom > *:not([class*='statistic-block']).card--list .card__block--list + .card__block--list,
+.socialblue--sky .sidebar-left .region--complementary-bottom > *:not([class*='statistic-block']) .card--list .card__block--list + .card__block--list,
+.socialblue--sky .sidebar-left .region--complementary-top > *:not([class*='statistic-block']).card--list .card__block--list + .card__block--list,
+.socialblue--sky .sidebar-left .region--complementary-top > *:not([class*='statistic-block']) .card--list .card__block--list + .card__block--list {
   padding-top: 0;
 }
 
-body.socialblue--sky .sidebar-left .region--complementary-bottom > *:not([class*='statistic-block']).card--list .card__block--list:last-child,
-body.socialblue--sky .sidebar-left .region--complementary-bottom > *:not([class*='statistic-block']) .card--list .card__block--list:last-child,
-body.socialblue--sky .sidebar-left .region--complementary-top > *:not([class*='statistic-block']).card--list .card__block--list:last-child,
-body.socialblue--sky .sidebar-left .region--complementary-top > *:not([class*='statistic-block']) .card--list .card__block--list:last-child {
-  padding-bottom: 2.5rem;
+.socialblue--sky .sidebar-left .region--complementary-bottom > *:not([class*='statistic-block']).card--list .card__block--list:last-child,
+.socialblue--sky .sidebar-left .region--complementary-bottom > *:not([class*='statistic-block']) .card--list .card__block--list:last-child,
+.socialblue--sky .sidebar-left .region--complementary-top > *:not([class*='statistic-block']).card--list .card__block--list:last-child,
+.socialblue--sky .sidebar-left .region--complementary-top > *:not([class*='statistic-block']) .card--list .card__block--list:last-child {
+  padding-bottom: 1.5rem;
 }
 
-body.socialblue--sky .sidebar-left .region--complementary-bottom > *:not([class*='statistic-block']) .offcanvas-body,
-body.socialblue--sky .sidebar-left .region--complementary-top > *:not([class*='statistic-block']) .offcanvas-body {
+.socialblue--sky .sidebar-left .region--complementary-bottom > *:not([class*='statistic-block']) .offcanvas-body,
+.socialblue--sky .sidebar-left .region--complementary-top > *:not([class*='statistic-block']) .offcanvas-body {
   padding-bottom: 0;
 }
 
-body.socialblue--sky .sidebar-left .region--complementary-bottom > *:not([class*='statistic-block']) .card__actionbar,
-body.socialblue--sky .sidebar-left .region--complementary-top > *:not([class*='statistic-block']) .card__actionbar {
-  padding: 0;
-}
-
-body.socialblue--sky .sidebar-left .region--complementary-bottom .card:not([class*='statistic-block']),
-body.socialblue--sky .sidebar-left .region--complementary-bottom .off-canvas-xs-only,
-body.socialblue--sky .sidebar-left .region--complementary-top .card:not([class*='statistic-block']),
-body.socialblue--sky .sidebar-left .region--complementary-top .off-canvas-xs-only {
+.socialblue--sky .sidebar-left .region--complementary-bottom .card:not([class*='statistic-block']),
+.socialblue--sky .sidebar-left .region--complementary-bottom .off-canvas-xs-only,
+.socialblue--sky .sidebar-left .region--complementary-top .card:not([class*='statistic-block']),
+.socialblue--sky .sidebar-left .region--complementary-top .off-canvas-xs-only {
   -webkit-box-shadow: none;
           box-shadow: none;
 }
@@ -1755,19 +1701,8 @@ body.socialblue--sky .sidebar-left .region--complementary-top .off-canvas-xs-onl
   .socialblue--sky .path-group:not(.group-type-challenge) .content-merged .group-about__item > p {
     margin-top: 3px;
   }
-  body.socialblue--sky .sidebar-left .region--complementary-top .card.block-social-tagging:after {
-    content: '' !important;
-    display: block !important;
-    position: absolute;
-    height: 2px;
-    bottom: 0;
-    left: 20px;
-    right: 20px;
-    margin: 0 auto;
-    background: #fafafa;
-  }
-  body.socialblue--sky .sidebar-left .region--complementary-bottom > *:not([class*='statistic-block']):after,
-  body.socialblue--sky .sidebar-left .region--complementary-top > *:not([class*='statistic-block']):after {
+  .socialblue--sky .sidebar-left .region--complementary-bottom > *:not([class*='statistic-block']):after,
+  .socialblue--sky .sidebar-left .region--complementary-top > *:not([class*='statistic-block']):after {
     left: 2.5rem;
     right: 2.5rem;
   }
@@ -1805,13 +1740,16 @@ body.socialblue--sky .sidebar-left .region--complementary-top .off-canvas-xs-onl
     padding-left: 1.25rem;
     padding-right: 1.25rem;
   }
-  body.socialblue--sky .sidebar-left .region--complementary-bottom,
-  body.socialblue--sky .sidebar-left .region--complementary-top {
-    top: 0;
-  }
-  body.socialblue--sky .sidebar-left .region--complementary_wrapper {
+  .socialblue--sky .sidebar-left .region--complementary_wrapper {
     -webkit-box-shadow: none;
             box-shadow: none;
+  }
+  .socialblue--sky .sidebar-left .region--complementary-bottom,
+  .socialblue--sky .sidebar-left .region--complementary-top {
+    top: 0;
+  }
+  .socialblue--sky .sidebar-left .views-exposed-form {
+    position: absolute;
   }
 }
 
@@ -1854,12 +1792,12 @@ body.socialblue--sky .sidebar-left .region--complementary-top .off-canvas-xs-onl
   .socialblue--sky .card.teaser:not(.teaser--tile):not(.teaser--idea) .card__link {
     margin-left: 12px;
   }
-  body.socialblue--sky .sidebar-left .region--complementary-bottom > *:not([class*='statistic-block']),
-  body.socialblue--sky .sidebar-left .region--complementary-top > *:not([class*='statistic-block']) {
-    width: 100%;
+  .socialblue--sky .sidebar-left .region--complementary-bottom > *:not([class*='statistic-block']),
+  .socialblue--sky .sidebar-left .region--complementary-top > *:not([class*='statistic-block']) {
+    max-width: 100%;
   }
-  body.socialblue--sky .sidebar-left .region--complementary-bottom > *:not([class*='statistic-block']) a,
-  body.socialblue--sky .sidebar-left .region--complementary-top > *:not([class*='statistic-block']) a {
-    width: 100%;
+  .socialblue--sky .sidebar-left .region--complementary-bottom > *:not([class*='statistic-block']) a,
+  .socialblue--sky .sidebar-left .region--complementary-top > *:not([class*='statistic-block']) a {
+    max-width: 100%;
   }
 }
