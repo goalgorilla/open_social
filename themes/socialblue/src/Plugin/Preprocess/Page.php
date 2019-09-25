@@ -2,7 +2,6 @@
 
 namespace Drupal\socialblue\Plugin\Preprocess;
 
-use Drupal\Core\Template\Attribute;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\node\Entity\Node;
 use Drupal\socialbase\Plugin\Preprocess\Page as PageBase;
