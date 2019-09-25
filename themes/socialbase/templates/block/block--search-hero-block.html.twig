@@ -47,11 +47,7 @@
 #}
 {{ attach_library('socialbase/page-search')}}
 
-{% if style == 'sky' %}
-  <div{{ attributes.addClass('cover container') }}>
-{% else %}
-  <div{{ attributes.addClass('cover') }}>
-{% endif %}
+<div{{ attributes.addClass('cover', 'container') }}>
   {{ title_prefix }}
   {% if label %}
     <h1{{ title_attributes.addClass('page-title h2') }}>{{ label }}</h1>
