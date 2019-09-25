@@ -112,7 +112,8 @@ function get_link_to_event_from_enrollment($object_id, $as_link = FALSE) {
     // Check if the event still exists.
     if ($event !== NULL) {
       if ($as_link) {
-        return $event->toUrl('canonical')->toString();
+        $url_string = $event->toUrl('canonical')->toString(TRUE);
+        return $url_string->getGeneratedUrl();
       }
 
       return Link::fromTextAndUrl($event->getTitle(), $event->toUrl('canonical'))->toString();
