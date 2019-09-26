@@ -261,6 +261,13 @@ function social_group_flexible_group_views_query_alter(ViewExecutable $view, Que
 
   $account = \Drupal::currentUser();
 
+  if (!$account->isAnonymous()) {
+    // Don't trigger page cache, this will cache it for AN
+    // but with LU data.
+    // Dynamic page cache handles this.
+    \Drupal::service('page_cache_kill_switch')->trigger();
+  }
+
   // Don't check, they can see it all.
   if ($account->hasPermission('manage all groups')) {
     return;
@@ -295,10 +302,22 @@ function social_group_flexible_group_views_query_alter(ViewExecutable $view, Que
 
   // AN users can only see flexible groups that are public.
   if ($account->isAnonymous()) {
+    // Add context so for AN it will have a different cache.
+    $view->element['#cache']['contexts'][] = 'user.roles:anonymous';
+    $query->setGroupOperator('OR');
+    // Secret group also alters the query, so lets do it better.
+    if (\Drupal::moduleHandler()->moduleExists('social_group_secret')) {
+      $query->addWhere(1, 'groups_field_data.type', ['flexible_group'], 'NOT IN');
+      $query->addWhere(2, 'groups_field_data.type', ['flexible_group', 'secret_group', 'closed_group', 'open_group'], 'NOT IN');
+      $query->addWhere($new_where, 'field_group_allowed_visibility_value', ['public'], 'IN');
+      $query->addWhere($new_where, 'groups_field_data.type', ['flexible_group'], 'IN');
+      return;
+    }
+
     // Make sure we remove flexible group as an option so only public groups
     // are part of this clause.
     $query->addWhere($current_where, 'groups_field_data.type', ['flexible_group'], 'NOT IN');
-    $query->setGroupOperator('OR');
+
     // OR it is a flexible group but than we only want groups
     // that have the public content visibility for AN users.
     $query->setWhereGroup('AND', $new_where);
