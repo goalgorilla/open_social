@@ -17,7 +17,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *   id = "image_copyright_attributes",
  *   label = @Translation("Image copyright"),
  *   field_types = {
- *     "image"
+ *     "advance_image"
  *   }
  * )
  */
@@ -71,29 +71,6 @@ class ImageCopyrightAttributeWidget extends ImageWidget {
   /**
    * {@inheritdoc}
    */
-  public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
-    $element = parent::formElement($items, $delta, $element, $form, $form_state);
-
-    // Get the field settings of this widget.
-    $field_settings = $this->getFieldSettings();
-    $element['#image_copyright_field'] = $field_settings['image_copyright_field'];
-    $element['#image_copyright_field_required'] = $field_settings['image_copyright_field_required'];
-
-
-
-    // If copyright attribute setting is enabled. We need to show it as
-    // part of the field widget. This together with it's
-    // requirements like, is mandatory.
-    $setting = $this->getSetting('copyright_attribute');
-
-
-
-    return $element;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public static function defaultSettings() {
     return [
       'copyright_attribute' => FALSE,
@@ -109,7 +86,7 @@ class ImageCopyrightAttributeWidget extends ImageWidget {
 
     $element['copyright_attribute'] = [
       '#type' => 'checkbox',
-      '#title' => $this->t('Add copyright attribute'),
+      '#title' => $this->t('Display copyright attribute'),
       '#default_value' => $this->getSetting('copyright_attribute'),
       '#description' => $this->t('The copyright will only be shown when it has been supplied'),
     ];
@@ -130,6 +107,42 @@ class ImageCopyrightAttributeWidget extends ImageWidget {
     ]);
 
     return $summary;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
+    $element = parent::formElement($items, $delta, $element, $form, $form_state);
+
+    // Get the field settings of this widget.
+    $field_settings = $this->getFieldSettings();
+    $element['#image_copyright_field'] = $field_settings['image_copyright_field'];
+    $element['#image_copyright_field_required'] = $field_settings['image_copyright_field_required'];
+
+    return $element;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function process($element, FormStateInterface $form_state, $form) {
+    $item = $element['#value'];
+    $item['fids'] = $element['fids']['#value'];
+
+    $element['copyright'] = [
+      '#type' => 'textfield',
+      '#title' => t('Copyright text'),
+      '#default_value' => isset($item['copyright']) ? $item['copyright'] : '',
+      '#description' => t('The copyright attribute is used as a tooltip when the mouse hovers over the image.'),
+      '#maxlength' => 1024,
+      '#weight' => -10,
+      '#access' => (bool) $item['fids'] && $element['#image_copyright_field'],
+      '#required' => $element['#image_copyright_field_required'],
+      '#element_validate' => $element['#image_copyright_field_required'] == 1 ? [[get_called_class(), 'validateRequiredFields']] : [],
+    ];
+
+    return parent::process($element, $form_state, $form);
   }
 
 }
