@@ -39,6 +39,21 @@ $info = [
         'navbar-sec-text' => '#f9f9f9',
       ],
     ],
+    'default--sky' => [
+      'title' => t('Social Blue Sky'),
+      'colors' => [
+        'brand-primary' => '#36a9e1',
+        'brand-secondary' => '#1f80aa',
+        'brand-accent' => '#ffc142',
+        'brand-link' => '#33b5e5',
+        'navbar-bg' => '#36a9e1',
+        'navbar-text' => '#ffffff',
+        'navbar-active-bg' => '#0d6b93',
+        'navbar-active-text' => '#ffffff',
+        'navbar-sec-bg' => '#1f80aa',
+        'navbar-sec-text' => '#8ccff0',
+      ],
+    ],
     'purple_rain' => [
       'title' => t('Purple Rain'),
       'colors' => [

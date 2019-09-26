@@ -25,7 +25,8 @@
 .hero-form[role='search'] .form-control:focus, .hero-form[role='search'] .form-control:active,
 .hero-form[role='search'] .form-control:focus ~ .search-icon,
 .hero-form[role='search'] .form-control:active ~ .search-icon {
-  box-shadow: 0 2px 0 0 #1f80aa;
+  -webkit-box-shadow: 0 2px 0 0 #1f80aa;
+          box-shadow: 0 2px 0 0 #1f80aa;
 }
 
 .hero-form[role='search'] .form-submit,
@@ -38,8 +39,32 @@
   background: white;
 }
 
+.socialblue--sky .cover--landing {
+  position: relative;
+  margin-bottom: 9px;
+}
+
+.socialblue--sky .cover--landing:after {
+  content: '';
+  position: absolute;
+  display: block;
+  top: 100%;
+  width: 100%;
+  left: 0;
+  height: 9px;
+}
+
 @media (min-width: 600px) {
   .hero-avatar {
     border-width: 3px;
+  }
+}
+
+@media (min-width: 900px) {
+  .socialblue--sky .cover--landing {
+    margin-bottom: 18px;
+  }
+  .socialblue--sky .cover--landing:after {
+    height: 18px;
   }
 }
