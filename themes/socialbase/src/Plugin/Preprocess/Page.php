@@ -89,13 +89,14 @@ class Page extends PreprocessBase {
     }
 
     // Check complementary_top and complementary_bottom variables.
-    if ($variables['page']['complementary_top'] || $variables['page']['complementary_bottom']) {
+    if (!empty($variables['page']['complementary_top']) || !empty($variables['page']['complementary_bottom'])) {
       $attributes->addClass('layout--with-complementary');
+      $variables['display_complementary'] = TRUE;
     }
-    // Check if sidebars are empty.
-    if (empty($variables['page']['sidebar_first']) && empty($variables['page']['sidebar_second'])) {
-      $attributes->addClass('layout--with-complementary');
+    else {
+      $variables['display_complementary'] = FALSE;
     }
+
     // Sidebars logic.
     if (empty($variables['page']['complementary_top']) && empty($variables['page']['complementary_bottom'])) {
       if ($variables['page']['sidebar_first'] && $variables['page']['sidebar_second']) {
