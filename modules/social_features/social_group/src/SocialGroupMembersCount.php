@@ -27,7 +27,7 @@ class SocialGroupMembersCount {
   protected $database;
 
   /**
-   * Constructor for SocialGroupHelperService.
+   * Constructor for SocialGroupMembersCount.
    *
    * @param \Drupal\Core\Database\Connection $connection
    *   The database connection.
