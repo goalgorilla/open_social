@@ -277,23 +277,19 @@
   text-transform: uppercase;
 }
 
-.socialblue--sky .hero__banner-static--event .hero-image {
+.socialblue--sky.page-node-type-event .hero__banner-static .hero-image {
   margin-bottom: 3.5rem;
 }
 
-.socialblue--sky .hero__banner-static--event .metainfo {
+.socialblue--sky.page-node-type-event .hero__banner-static .metainfo {
   margin-bottom: 26px;
 }
 
-.socialblue--sky .hero__banner-static--event .hero-footer {
+.socialblue--sky.page-node-type-event .hero__banner-static .hero-footer {
   padding-top: 0;
 }
 
-.socialblue--sky .hero__banner-static--event .hero-footer .hero-footer__header {
-  margin-bottom: 20px;
-}
-
-.socialblue--sky .hero__banner-static--event .hero-footer__header {
+.socialblue--sky.page-node-type-event .hero__banner-static .hero-footer__header {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -301,27 +297,36 @@
   -webkit-box-direction: normal;
       -ms-flex-direction: column;
           flex-direction: column;
-  padding: 25px 15px;
-  background: #f3f3f3;
+  padding-bottom: 2.5rem;
+  margin-bottom: 1.25rem;
+  border-bottom: 1px solid #d5d6d2;
 }
 
-.socialblue--sky .hero__banner-static--event .hero-footer__text {
+.socialblue--sky.page-node-type-event .hero__banner-static .hero-footer__text {
   margin-top: 0;
 }
 
-.socialblue--sky .hero__banner-static--event .article__special-fields {
+.socialblue--sky.page-node-type-event .hero__banner-static .article__special-fields {
   padding: 0;
   border: 0;
   letter-spacing: .4px;
 }
 
-.socialblue--sky .hero__banner-static--event .hero-footer__cta .btn {
+.socialblue--sky.page-node-type-event .hero__banner-static .article__special-fields .article__special-field {
+  margin-bottom: 10px;
+}
+
+.socialblue--sky.page-node-type-event .hero__banner-static .article__special-fields .article__special-field:last-child {
+  margin-bottom: 0;
+}
+
+.socialblue--sky.page-node-type-event .hero__banner-static .hero-footer__cta .btn {
   min-width: 195px;
   color: inherit;
 }
 
 .socialblue--sky main:not(.is-navbar-secondary) .hero__banner-static .hero-footer {
-  padding-bottom: 20px;
+  padding-bottom: 1.25rem;
 }
 
 .socialblue--sky main:not(.is-navbar-secondary) .hero__full .hero-footer__bottom {
@@ -355,25 +360,28 @@
     margin-left: 0;
     margin-right: 25%;
   }
-  .socialblue--sky .hero__banner-static--event {
+  .socialblue--sky.page-node-type-event .hero__banner-static {
     padding-top: 75px;
   }
-  .socialblue--sky .hero__banner-static--event .hero-footer__header {
+  .socialblue--sky.page-node-type-event .hero__banner-static .hero-footer__header {
     -webkit-box-orient: horizontal;
     -webkit-box-direction: normal;
         -ms-flex-direction: row;
             flex-direction: row;
-    -webkit-box-align: center;
-        -ms-flex-align: center;
-            align-items: center;
-    padding-right: 30px;
-    padding-left: 30px;
+    -webkit-box-align: end;
+        -ms-flex-align: end;
+            align-items: flex-end;
   }
-  .socialblue--sky .hero__banner-static--event .hero-footer__text {
+  .socialblue--sky.page-node-type-event .hero__banner-static .hero-footer__text {
+    -webkit-box-flex: 0;
+        -ms-flex: 0 0 100%;
+            flex: 0 0 100%;
+    max-width: 100%;
     margin-right: 0;
   }
-  .socialblue--sky .hero__banner-static--event .article__special-fields {
-    padding-bottom: 0;
+  .socialblue--sky.page-node-type-event .hero__banner-static .article__special-fields .article__special-fields-icon {
+    width: 20px;
+    height: 20px;
   }
   .socialblue--sky main:not(.is-navbar-secondary) .hero__banner-static {
     padding-bottom: 0;
@@ -420,11 +428,17 @@
     max-width: 50%;
     padding-top: 0;
   }
-  .socialblue--sky .hero__banner-static--event .hero-footer .hero-footer__header {
+  .socialblue--sky.page-node-type-event .hero__banner-static .hero-footer__header {
     -webkit-box-flex: 0;
         -ms-flex: 0 0 100%;
             flex: 0 0 100%;
     max-width: 100%;
+  }
+  .socialblue--sky.page-node-type-event .hero__banner-static .hero-footer__text {
+    -webkit-box-flex: 0;
+        -ms-flex: 0 0 50%;
+            flex: 0 0 50%;
+    max-width: 50%;
   }
   .socialblue--sky main:not(.is-navbar-secondary) .hero__full .hero-footer__bottom {
     padding-bottom: 20px;
@@ -442,20 +456,7 @@
   .socialblue--sky .hero__banner-static .hero-footer__cta .btn {
     width: 100%;
   }
-  .socialblue--sky .hero__banner-static--event .hero-image {
+  .socialblue--sky.page-node-type-event .hero__banner-static .hero-image {
     margin-bottom: 1.75rem;
-  }
-  .socialblue--sky .hero__banner-static--event .hero-footer .hero-footer__header {
-    margin-bottom: 1rem;
-  }
-  .socialblue--sky .hero__banner-static--event .hero-footer__header {
-    padding-top: 1rem;
-    padding-bottom: 1rem;
-  }
-  .socialblue--sky .hero__banner-static--event .article__special-fields > * {
-    margin-bottom: 10px;
-  }
-  .socialblue--sky .hero__banner-static--event .article__special-fields > *:last-child {
-    margin-bottom: 0;
   }
 }
