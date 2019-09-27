@@ -308,7 +308,12 @@ function social_group_flexible_group_views_query_alter(ViewExecutable $view, Que
     // Secret group also alters the query, so lets do it better.
     if (\Drupal::moduleHandler()->moduleExists('social_group_secret')) {
       $query->addWhere(1, 'groups_field_data.type', ['flexible_group'], 'NOT IN');
-      $query->addWhere(2, 'groups_field_data.type', ['flexible_group', 'secret_group', 'closed_group', 'open_group'], 'NOT IN');
+      $query->addWhere(2, 'groups_field_data.type', [
+        'flexible_group',
+        'secret_group',
+        'closed_group',
+        'open_group'
+      ], 'NOT IN');
       $query->addWhere($new_where, 'field_group_allowed_visibility_value', ['public'], 'IN');
       $query->addWhere($new_where, 'groups_field_data.type', ['flexible_group'], 'IN');
       return;
