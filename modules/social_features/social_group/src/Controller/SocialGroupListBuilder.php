@@ -105,7 +105,8 @@ class SocialGroupListBuilder extends EntityListBuilder {
     $row['name']['data'] = $entity->toLink()->toRenderable();
     $row['type'] = $entity->getGroupType()->label();
     $row['uid'] = $entity->uid->entity->toLink();
-    $row['members'] = count($entity->getMembers());
+    $group_members_count = \Drupal::service('social_group.group_members_count');
+    $row['members'] = $group_members_count->getGroupMemberCount($entity);
     $row['created'] = $this->dateTime->format($entity->getCreatedTime(), 'short');
 
     return $row + parent::buildRow($entity);
