@@ -93,12 +93,14 @@
         </div>
       {% endif %}
 
-      <div class="metainfo card_metainfo">
-        {{ content.links.moderation }}
-      </div>
+      {% if content.links.moderation %}
+        <div class="metainfo card_metainfo">
+          {{ content.links.moderation }}
+        </div>
+      {% endif %}
 
       <div class="hero__tag">
-        {{ node.type.entity.label() }}
+        <span>{{ node.type.entity.label() }}</span>
         {% if topic_type or event_type %}
           &nbsp; &nbsp; ▶ &nbsp; &nbsp;
           {{ topic_type }}
@@ -167,7 +169,7 @@
                    title="{% trans %}Total amount of comments{% endtrans %}">
               <span class="badge__container">
                 <svg class="badge__icon">
-                  <use xlink:href="#icon-comment_thicker"></use>
+                  <use xlink:href="#icon-comment"></use>
                 </svg>
                 <span class="badge__label">
                   {{ comment_count }}
