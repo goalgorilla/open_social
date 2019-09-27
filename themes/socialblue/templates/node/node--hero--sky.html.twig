@@ -68,7 +68,6 @@
 
 {{ attach_library('socialbase/hero') }}
 {{ attach_library('socialblue/hero--sky') }}
-{{ attach_library('socialblue/organization-tag--sky') }}
 
 {% set classes = [
   'hero__banner',
@@ -93,9 +92,13 @@
         </div>
       {% endif %}
 
-      {% if content.links.moderation %}
-        <div class="metainfo card_metainfo">
-          {{ content.links.moderation }}
+      <div class="metainfo card_metainfo">
+        {{ content.links.moderation }}
+      </div>
+
+      {% if content.field_event_image %}
+        <div class="hero-image">
+          {{ content.field_event_image }}
         </div>
       {% endif %}
 
@@ -104,7 +107,6 @@
         {% if topic_type or event_type %}
           &nbsp; &nbsp; ▶ &nbsp; &nbsp;
           {{ topic_type }}
-          {{ event_type }}
         {% endif %}
       </div>
 
@@ -147,17 +149,22 @@
         {% endblock %}
       {% endif %}
 
-      <div class="hero-image">
-        {% block card_image %}
-          {{ content.field_event_image }}
-          {{ content.field_topic_image }}
-          {{ content.field_page_image }}
-          {{ content.field_book_image }}
-          {{ content.field_image }}
-        {% endblock %}
-      </div>
+
+      {% if not content.field_event_image %}
+        <div class="hero-image">
+          {% block card_image %}
+            {{ content.field_topic_image }}
+            {{ content.field_page_image }}
+            {{ content.field_book_image }}
+            {{ content.field_image }}
+          {% endblock %}
+        </div>
+      {% endif %}
 
       <div class="hero-footer">
+
+        {% block nodefull_specialfields %}
+        {% endblock %}
 
         <div class="hero-footer__list">
 
@@ -169,7 +176,7 @@
                    title="{% trans %}Total amount of comments{% endtrans %}">
               <span class="badge__container">
                 <svg class="badge__icon">
-                  <use xlink:href="#icon-comment"></use>
+                  <use xlink:href="#icon-comment_thicker"></use>
                 </svg>
                 <span class="badge__label">
                   {{ comment_count }}
