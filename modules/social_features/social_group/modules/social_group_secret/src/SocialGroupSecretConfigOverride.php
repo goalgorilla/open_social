@@ -168,7 +168,7 @@ class SocialGroupSecretConfigOverride implements ConfigFactoryOverrideInterface 
       foreach ($displays as $display_name) {
         $overrides[$config_name] = [
           'display' => [
-            $display_name=> [
+            $display_name => [
               'cache_metadata' => [
                 'contexts' => [
                   'user' => 'user',
