@@ -7,8 +7,8 @@
 
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Entity\ContentEntityInterface;
-use Drupal\Core\Entity\EntityTypeInterface;
-use Drupal\Core\Field\BaseFieldDefinition;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Template\Attribute;
@@ -46,7 +46,10 @@ function social_landing_page_form_views_exposed_form_alter(&$form, FormStateInte
   }
 }
 
-function social_landing_page_entity_access(\Drupal\Core\Entity\EntityInterface $entity, $operation, \Drupal\Core\Session\AccountInterface $account) {
+/**
+ * Implements hook_entity_access().
+ */
+function social_landing_page_entity_access(EntityInterface $entity, $operation, AccountInterface $account) {
   if ($entity->getEntityTypeId() === 'paragraph') {
     if ($entity->hasField('field_roles')) {
       $field_roles = $entity->get('field_roles')->getValue();
