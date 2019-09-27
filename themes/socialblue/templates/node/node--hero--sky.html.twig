@@ -68,7 +68,6 @@
 
 {{ attach_library('socialbase/hero') }}
 {{ attach_library('socialblue/hero--sky') }}
-{{ attach_library('socialblue/organization-tag--sky') }}
 
 {% set classes = [
   'hero__banner',
@@ -97,12 +96,17 @@
         {{ content.links.moderation }}
       </div>
 
+      {% if content.field_event_image %}
+        <div class="hero-image">
+          {{ content.field_event_image }}
+        </div>
+      {% endif %}
+
       <div class="hero__tag">
         {{ node.type.entity.label() }}
-        {% if topic_type or event_type %}
+        {% if topic_type %}
           &nbsp; &nbsp; ▶ &nbsp; &nbsp;
           {{ topic_type }}
-          {{ event_type }}
         {% endif %}
       </div>
 
@@ -145,17 +149,22 @@
         {% endblock %}
       {% endif %}
 
-      <div class="hero-image">
-        {% block card_image %}
-          {{ content.field_event_image }}
-          {{ content.field_topic_image }}
-          {{ content.field_page_image }}
-          {{ content.field_book_image }}
-          {{ content.field_image }}
-        {% endblock %}
-      </div>
+
+      {% if not content.field_event_image %}
+        <div class="hero-image">
+          {% block card_image %}
+            {{ content.field_topic_image }}
+            {{ content.field_page_image }}
+            {{ content.field_book_image }}
+            {{ content.field_image }}
+          {% endblock %}
+        </div>
+      {% endif %}
 
       <div class="hero-footer">
+
+        {% block nodefull_specialfields %}
+        {% endblock %}
 
         <div class="hero-footer__list">
 
