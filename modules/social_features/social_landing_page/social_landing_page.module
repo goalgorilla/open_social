@@ -369,13 +369,10 @@ function social_landing_page_social_user_account_header_create_links($context) {
  * @see options_allowed_values()
  */
 function roles_allowed_values_function(FieldStorageConfig $definition, ContentEntityInterface $entity = NULL, $cacheable) {
-
   $roles = \Drupal::entityTypeManager()->getStorage('user_role')->loadMultiple();
-
   foreach ($roles as $role) {
     $options[$role->id()] = $role->label();
   }
-
   return $options;
 }
 
@@ -394,11 +391,9 @@ function roles_allowed_values_function(FieldStorageConfig $definition, ContentEn
  */
 function roles_default_value_function(ContentEntityInterface $entity, FieldDefinitionInterface $definition) {
   $roles = \Drupal::entityTypeManager()->getStorage('user_role')->loadMultiple();
-
   $default = [];
   foreach ($roles as $role) {
     $default[] = ['value' => $role->id()];
   }
-
   return $default;
 }
