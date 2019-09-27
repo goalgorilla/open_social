@@ -1,0 +1,20 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_roles
+    - paragraphs.paragraphs_type.block
+  module:
+    - options
+id: paragraph.block.field_roles
+field_name: field_roles
+entity_type: paragraph
+bundle: block
+label: roles
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: 'roles_default_value_function'
+settings: {  }
+field_type: list_string

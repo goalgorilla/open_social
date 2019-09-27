@@ -66,14 +66,16 @@ Feature: Create Landing Page
     And I fill in "field_landing_page_section[2][subform][field_section_paragraph][0][subform][field_featured_items][2][target_id]" with "Featured Topic 2"
     And I press "Add Section"
     And I wait for AJAX to finish
-    # Create Block
+    # Create Block only visible for CM+
     And I press "Add Block"
     And I wait for AJAX to finish
     And I select "views_block:community_activities-block_stream_landing" from "field_landing_page_section[3][subform][field_section_paragraph][0][subform][field_block_reference][0][plugin_id]"
     And I select "activity_overview_block" from "field_landing_page_section[3][subform][field_section_paragraph][0][subform][field_block_reference_secondary][0][plugin_id]"
     And I fill in the following:
       | field_landing_page_section[3][subform][field_section_paragraph][0][subform][field_block_link][0][uri]   | /explore   |
-      | field_landing_page_section[3][subform][field_section_paragraph][0][subform][field_block_link][0][title] | Block Link |
+      | field_landing_page_section[3][subform][field_section_paragraph][0][subform][field_block_link][0][title] | Block Link for CM+ |
+    And I click the xth "1" element with the css ".select2-selection__choice__remove"
+    And I click the xth "0" element with the css ".select2-selection__choice__remove"
     # Set URL Alias
     And I click "URL path settings"
     And I set alias as "landingpage"
@@ -85,6 +87,7 @@ Feature: Create Landing Page
     And I should see the link "Hero Link LU"
     And I should not see the link "Hero Link AN"
     And I should not see the link "Hero Link AN 2"
+    And I should see the link "Block Link for CM+"
     And I should see "Introduction title"
     And I should see the link "Introduction Link LU"
     And I should not see the link "Introduction Link AN"
@@ -121,6 +124,7 @@ Feature: Create Landing Page
     And I should not see the link "Hero Link LU"
     And I should see the link "Hero Link AN"
     And I should see the link "Hero Link AN 2"
+    And I should not see the link "Block Link for CM+"
     And I should see "Introduction title"
     And I should not see the link "Introduction Link LU"
     And I should see the link "Introduction Link AN"
@@ -129,4 +133,4 @@ Feature: Create Landing Page
     And I should see the link "Featured Event"
     And I should see the link "Featured Topic 1"
     And I should see the link "Featured Topic 2"
-    And I should see "Community activities"
+    And I should not see "Community activities"

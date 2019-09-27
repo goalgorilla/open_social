@@ -5,8 +5,14 @@
  * The Social landing page module.
  */
 
+use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Entity\ContentEntityInterface;
+use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\Field\BaseFieldDefinition;
+use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Template\Attribute;
+use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\file\Entity\File;
 use Drupal\image\Entity\ImageStyle;
 use Drupal\node\NodeInterface;
@@ -38,6 +44,23 @@ function social_landing_page_form_views_exposed_form_alter(&$form, FormStateInte
       unset($form['type']['#options']['landing_page']);
     }
   }
+}
+
+function social_landing_page_entity_access(\Drupal\Core\Entity\EntityInterface $entity, $operation, \Drupal\Core\Session\AccountInterface $account) {
+  if ($entity->getEntityTypeId() === 'paragraph') {
+    if ($entity->hasField('field_roles')) {
+      $field_roles = $entity->get('field_roles')->getValue();
+      $current_user = \Drupal::currentUser();
+      $user_roles = $current_user->getRoles();
+      foreach ($field_roles as $field_role) {
+        if (in_array($field_role["value"], $user_roles)) {
+          return AccessResult::neutral();
+        }
+      }
+      return AccessResult::forbidden();
+    }
+  }
+  return AccessResult::neutral();
 }
 
 /**
@@ -328,4 +351,54 @@ function social_landing_page_social_user_account_header_create_links($context) {
       '#weight' => 400,
     ] + Url::fromRoute('node.add', ['node_type' => 'landing_page'])->toRenderArray(),
   ];
+}
+
+/**
+ * Set dynamic allowed values for the roles field.
+ *
+ * @param \Drupal\field\Entity\FieldStorageConfig $definition
+ *   The field definition.
+ * @param \Drupal\Core\Entity\ContentEntityInterface|null $entity
+ *   The entity being created if applicable.
+ * @param bool $cacheable
+ *   Boolean indicating if the results are cacheable.
+ *
+ * @return array
+ *   An array of possible key and value options.
+ *
+ * @see options_allowed_values()
+ */
+function roles_allowed_values_function(FieldStorageConfig $definition, ContentEntityInterface $entity = NULL, $cacheable) {
+
+  $roles = \Drupal::entityTypeManager()->getStorage('user_role')->loadMultiple();
+
+  foreach ($roles as $role) {
+    $options[$role->id()] = $role->label();
+  }
+
+  return $options;
+}
+
+/**
+ * Sets the default value for the alignment field.
+ *
+ * @param \Drupal\Core\Entity\ContentEntityInterface $entity
+ *   The entity being created.
+ * @param \Drupal\Core\Field\FieldDefinitionInterface $definition
+ *   The field definition.
+ *
+ * @return array
+ *   An array of default value keys with each entry keyed with the “value” key.
+ *
+ * @see \Drupal\Core\Field\FieldConfigBase::getDefaultValue()
+ */
+function roles_default_value_function(ContentEntityInterface $entity, FieldDefinitionInterface $definition) {
+  $roles = \Drupal::entityTypeManager()->getStorage('user_role')->loadMultiple();
+
+  $default = [];
+  foreach ($roles as $role) {
+    $default[] = ['value' => $role->id()];
+  }
+
+  return $default;
 }
