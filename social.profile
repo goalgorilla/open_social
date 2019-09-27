@@ -163,7 +163,6 @@ function social_form_install_configure_form_alter(&$form, FormStateInterface $fo
       'social_search_autocomplete',
       'social_lets_connect_contact',
       'social_lets_connect_usage',
-      'social_group_flexible_group',
     ],
   ];
 
