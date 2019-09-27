@@ -8,7 +8,6 @@
 use Drupal\comment\CommentInterface;
 use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\Render\Markup;
-use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
 use Drupal\social_post\Entity\PostInterface;
 use Drupal\views\Plugin\views\field\FieldPluginBase;
