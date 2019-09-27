@@ -161,14 +161,11 @@ function social_comment_tokens($type, $tokens, array $data, array $options, Bubb
                 }
 
                 if ($name === 'comment_reply_link_html') {
-                  $replacements[$original] = Url::fromRoute('comment.reply', [
-                    'entity_type' => $comment->getCommentedEntityTypeId(),
-                    'entity' => $comment->getCommentedEntityId(),
-                    'field_name' => $comment->getFieldName(),
-                    'pid' => $comment->id(),
-                  ])->toString();
+                  /** @var \Drupal\Core\Entity\Entity $entity */
+                  $entity = $comment->getCommentedEntity();
+                  $url_options = ['absolute' => TRUE];
+                  $replacements[$original] = $entity->toUrl('canonical', $url_options)->toString();
                 }
-
               }
             }
           }
