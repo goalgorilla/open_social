@@ -179,7 +179,7 @@ function social_event_menu_local_tasks_alter(&$data, $route_name) {
  */
 function social_event_node_view_alter(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display) {
   $current_user = \Drupal::currentUser();
-  if (!$current_user->isAnonymous() && $entity->getType() === 'event' && ($display->getMode() === 'teaser' || $display->getMode() === 'small_teaser')) {
+  if (!$current_user->isAnonymous() && $entity->getType() === 'event') {
     $uid = $current_user->id();
     $nid = $entity->id();
 
