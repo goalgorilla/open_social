@@ -1,0 +1,17 @@
+{% extends "profile--profile--teaser.html.twig" %}
+
+{% block card_actionbar %}
+  <div class="teaser__tag">
+    {% trans %}Member{% endtrans %}
+  </div>
+  <a href="{{ profile_contact_url }}" class="card__link btn btn-default">
+    {% if profile_contact_label == 'private_message' %}
+      {% trans %}Private message{% endtrans %}
+    {% else %}
+      {% trans %}View profile{% endtrans %}
+    {% endif %}
+  </a>
+  <a href="{{ profile_stream_url }}" class="card__link hidden-for-phone-only btn btn-default">
+    {% trans %}View activities{% endtrans %}
+  </a>
+{% endblock %}

@@ -33,6 +33,7 @@
          {{ profile_name }} {{ profile_name_extra }}
         </a>
       </h4>
+      {% block card_body %}
         {% if content.field_profile_function|render or content.field_profile_organization|render %}
         <div class="teaser__content-line">
           <svg class="teaser__content-type-icon">
@@ -59,20 +60,23 @@
             {% endfor %}
           </div>
         {% endif %}
+      {% endblock %}
 
     </div>
 
     <div class="card__actionbar">
-      <a href="{{ profile_contact_url }}" class="card__link">
-        {% if profile_contact_label == 'private_message' %}
-          {% trans %}Private message{% endtrans %}
-        {% else %}
-          {% trans %}View profile{% endtrans %}
-        {% endif %}
-      </a>
-      <a href="{{ profile_stream_url }}" class="card__link hidden-for-phone-only">
-        {% trans %}View activities{% endtrans %}
-      </a>
+      {% block card_actionbar %}
+        <a href="{{ profile_contact_url }}" class="card__link">
+          {% if profile_contact_label == 'private_message' %}
+            {% trans %}Private message{% endtrans %}
+          {% else %}
+            {% trans %}View profile{% endtrans %}
+          {% endif %}
+        </a>
+        <a href="{{ profile_stream_url }}" class="card__link hidden-for-phone-only">
+          {% trans %}View activities{% endtrans %}
+        </a>
+      {% endblock %}
     </div>
   </div>
 </div>
