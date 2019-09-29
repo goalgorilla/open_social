@@ -276,3 +276,38 @@ function _social_path_manager_update_alias(EntityInterface $entity, $op, $bulk =
     }
   }
 }
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function social_path_manager_preprocess_block(&$variables) {
+  /** @var \Drupal\node\Entity\Node $node */
+  $node = \Drupal::routeMatch()->getParameter('node');
+
+  // Due to PR #1427 there are now two heroes shown on pages
+  // with a certain url alias. Due to the refactor in socialpagetitleblock.
+  if ($node !== NULL) {
+    if (!empty($variables['elements']['#plugin_id']) &&
+      $variables['elements']['#plugin_id'] === 'social_page_title_block' &&
+      $variables['elements']['#id'] === 'socialblue_pagetitleblock_content') {
+      $current_url = Url::fromRoute('<current>');
+      $current_path = $current_url->toString();
+
+      $paths_to_exclude = [
+        'edit',
+        'add',
+        'delete',
+      ];
+
+      $in_path = str_replace($paths_to_exclude, '', $current_path) !== $current_path;
+
+      // We make sure there are no two heroes shown only page titles.
+      if ($in_path) {
+        $variables['content']['#type'] = 'page_title';
+        if (!empty($variables['content']['#hero_node'])) {
+          unset($variables['content']['#hero_node']);
+        }
+      }
+    }
+  }
+}

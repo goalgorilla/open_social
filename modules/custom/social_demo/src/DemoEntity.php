@@ -36,8 +36,11 @@ abstract class DemoEntity extends DemoContent {
   /**
    * {@inheritdoc}
    */
-  public function createContent() {
+  public function createContent($generate = FALSE, $max = NULL) {
     $data = $this->fetchData();
+    if ($generate === TRUE) {
+      $data = $this->scrambleData($data, $max);
+    }
     $entity_type_id = $this->entityStorage->getEntityTypeId();
 
     foreach ($data as $uuid => $item) {
