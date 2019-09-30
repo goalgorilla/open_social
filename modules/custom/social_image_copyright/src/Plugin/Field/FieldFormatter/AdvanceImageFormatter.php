@@ -2,9 +2,7 @@
 
 namespace Drupal\social_image_copyright\Plugin\Field\FieldFormatter;
 
-use Drupal\Core\Cache\Cache;
 use Drupal\Core\Field\FieldItemListInterface;
-use Drupal\Core\Url;
 use Drupal\file\FileInterface;
 use Drupal\image\Plugin\Field\FieldFormatter\ImageFormatter;
 
