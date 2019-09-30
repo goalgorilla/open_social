@@ -57,6 +57,19 @@ class ImageCopyrightAttributePageConfigOverride implements ConfigFactoryOverride
   }
 
   /**
+   * Form displays to override.
+   *
+   * @return array
+   *   Display related configurations to override.
+   */
+  private function configDisplayOverrides() {
+    return [
+      // Page.
+      'core.entity_form_display.node.page.default' => 'field_page_image',
+    ];
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function loadOverrides($names) {
@@ -78,6 +91,14 @@ class ImageCopyrightAttributePageConfigOverride implements ConfigFactoryOverride
       }
     }
 
+    // Update the form display configurations.
+    $form_display_configs = $this->configDisplayOverrides();
+    foreach ($form_display_configs as $config_name => $field_name) {
+      if (in_array($config_name, $names, TRUE)) {
+        $this->addImageDisplayOverride($config_name, $field_name, $overrides);
+      }
+    }
+
     return $overrides;
   }
 
@@ -94,10 +115,7 @@ class ImageCopyrightAttributePageConfigOverride implements ConfigFactoryOverride
   protected function addImageFieldOverride($config_name, $field_name, array &$overrides) {
     if (!empty($config_name) && !empty($field_name)) {
       // Add dependency to social_image_copyright module.
-      $config = $this->configFactory->getEditable($config_name);
-      $dependencies = $config->getOriginal('dependencies.module');
-      $overrides[$config_name]['dependencies']['module'] = $dependencies;
-      $overrides[$config_name]['dependencies']['module'][] = 'social_image_copyright';
+      $this->addModuleDependencies($config_name, $overrides);
 
       // Add copyright attribute field settings.
       $overrides[$config_name]['field_type'] = self::FIELD_TYPE;
@@ -120,14 +138,33 @@ class ImageCopyrightAttributePageConfigOverride implements ConfigFactoryOverride
   protected function addImageStorageOverride($config_name, $field_name, array &$overrides) {
     if (!empty($config_name) && !empty($field_name)) {
       // Add dependency to social_image_copyright module.
-      $config = $this->configFactory->getEditable($config_name);
-      $dependencies = $config->getOriginal('dependencies.module');
-      $overrides[$config_name]['dependencies']['module'] = $dependencies;
-      $overrides[$config_name]['dependencies']['module'][] = 'social_image_copyright';
+      $this->addModuleDependencies($config_name, $overrides);
 
+      // Add copyright attribute field settings.
       $overrides[$config_name]['type'] = self::FIELD_TYPE;
       $overrides[$config_name]['settings']['default_image']['copyright'] = '';
       $overrides[$config_name]['module'] = 'social_image_copyright';
+    }
+  }
+
+  /**
+   * Alters the form display widget.
+   *
+   * @param string $config_name
+   *   The config name to override.
+   * @param string $field_name
+   *   The field to override.
+   * @param array $overrides
+   *   A configuration to override.
+   */
+  protected function addImageDisplayOverride($config_name, $field_name, array &$overrides) {
+    if (!empty($config_name) && !empty($field_name)) {
+      // Add dependency to social_image_copyright module.
+      $this->addModuleDependencies($config_name, $overrides);
+
+      // Add copyright attribute field settings.
+      $overrides[$config_name]['content'][$field_name]['copyright_attribute'] = 1;
+      $overrides[$config_name]['content'][$field_name]['type'] = 'image_crop_copyright_attribute';
     }
   }
 
@@ -150,6 +187,21 @@ class ImageCopyrightAttributePageConfigOverride implements ConfigFactoryOverride
    */
   public function getCacheableMetadata($name) {
     return new CacheableMetadata();
+  }
+
+  /**
+   * Get and update the module dependencies.
+   *
+   * @param string $config_name
+   *   The config name to override.
+   * @param array $overrides
+   *   A configuration to override.
+   */
+  private function addModuleDependencies($config_name, array &$overrides) {
+    $config = $this->configFactory->getEditable($config_name);
+    $dependencies = $config->getOriginal('dependencies.module');
+    $overrides[$config_name]['dependencies']['module'] = $dependencies;
+    $overrides[$config_name]['dependencies']['module'][] = 'social_image_copyright';
   }
 
 }
