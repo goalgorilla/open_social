@@ -294,6 +294,24 @@ class SocialDrupalContext extends DrupalContext {
   }
 
   /**
+   * Set alias field as specified value
+   * Example: When I set alias as: "bwayne"
+   *
+   * @When /^(?:|I )set alias as "(?P<value>(?:[^"]|\\")*)"$/
+   */
+  public function iSetAlias($value) {
+    // Uncheck "Generate automatic URL alias" if social_path_manager is enabled.
+    if (\Drupal::service('module_handler')->moduleExists('social_path_manager')) {
+      $option = $this->fixStepArgument('Generate automatic URL alias');
+      $this->getSession()->getPage()->uncheckField($option);
+    }
+    // Fill in "URL alias" field with given value
+    $field = $this->fixStepArgument('URL alias');
+    $value = $this->fixStepArgument($value);
+    $this->getSession()->getPage()->fillField($field, $value);
+  }
+
+  /**
    * Allow platforms that re-use the Open Social platform a chance to fill in
    * custom form fields that are not present in the distribution but may lead to
    * validation errors (e.g. because a field is required).

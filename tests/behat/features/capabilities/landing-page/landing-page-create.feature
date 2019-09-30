@@ -77,7 +77,7 @@ Feature: Create Landing Page
     # Set URL Alias
     And I click "URL path settings"
     And I uncheck "Generate automatic URL alias"
-    And I fill in "URL alias" with "landingpage"
+    And I set alias as "landingpage"
     And I press "Save"
     # Ses as LU
     Then I should see "Landing page This is a dynamic page has been created."
