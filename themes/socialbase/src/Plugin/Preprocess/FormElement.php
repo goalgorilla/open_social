@@ -22,8 +22,7 @@ class FormElement extends BaseFormElement {
 
     // Check if form element is part of
     // email_notifications and add class to label.
-    if (isset($element['#parents'])
-      && in_array('email_notifications', $element['#parents'])) {
+    if ($element->hasProperty('parents') && in_array('email_notifications', $element->getProperty('parents'))) {
       $variables['label']['#attributes']['class'][] = 'control-label--wide';
     }
 
