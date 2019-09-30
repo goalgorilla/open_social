@@ -146,7 +146,8 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
       return;
     }
     $tempstoreData = $this->getTempstoreData($this->view->id(), $this->view->current_display);
-    // Make sure the selection is saved for the current group.
+
+    // Make sure the selection is saved for the current event.
     if (!empty($tempstoreData['event_id']) && $tempstoreData['event_id'] !== $event->id()) {
       // If not we clear it right away.
       // Since we don't want to mess with cached date.
@@ -168,6 +169,14 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
     // Render proper classes for the header in VBO form.
     $wrapper = &$form['header'][$this->options['id']];
 
+    if (!empty($event->id())) {
+      $wrapper['multipage']['#attributes']['event-id'] = $event->id();
+      if (!empty($wrapper['multipage']['#attributes']['data-display-id'])) {
+        $current_display = $wrapper['multipage']['#attributes']['data-display-id'];
+        $wrapper['multipage']['#attributes']['data-display-id'] = $current_display . '/' . $event->id();
+      }
+    }
+
     // Styling related for the wrapper div.
     $wrapper['#attributes']['class'][] = 'card';
     $wrapper['#attributes']['class'][] = 'card__block';
@@ -185,6 +194,7 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
 
     /** @var \Drupal\Core\StringTranslation\TranslatableMarkup $title */
     $title = $wrapper['multipage']['#title'];
+
     $arguments = $title->getArguments();
     $count = empty($arguments['%count']) ? 0 : $arguments['%count'];
 
@@ -210,39 +220,30 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
 
     // Update the clear submit button.
     if (!empty($wrapper['multipage']['clear'])) {
-      $wrapper['multipage']['clear']['#value'] = $this->t('Clear all selected members');
+      $wrapper['multipage']['clear']['#value'] = $this->t('Clear all selected enrollees');
       $wrapper['multipage']['clear']['#attributes']['class'][] = 'btn-default dropdown-toggle waves-effect waves-btn margin-top-l margin-left-m';
     }
 
     $actions = &$wrapper['actions'];
     $actions['#theme'] = 'links__dropbutton__operations__actions';
     $actions['#label'] = $this->t('Actions');
-
-    unset($actions['#type']);
-
-    unset($wrapper['multipage']['clear']);
-
-    $labels = [];
-
-    foreach (Element::children($actions) as $action_id) {
-      $labels[$action_id] = $actions[$action_id]['#value'];
-    }
-
-    asort($labels);
-
-    foreach (array_keys($labels) as $weight => $action_id) {
-      $actions[$action_id]['#weight'] = $weight;
-    }
+    $actions['#type'] = 'dropbutton';
 
     $items = [];
-
-    foreach (Element::children($actions, TRUE) as $key) {
-      $items[$key] = $actions[$key];
+    foreach ($wrapper['action']['#options'] as $key => $value) {
+      if (!empty($key) && array_key_exists($key, $this->bulkOptions)) {
+        $items[] = [
+          '#type' => 'submit',
+          '#value' => $value,
+        ];
+      }
     }
 
+    // Add our links to the dropdown buttondrop type.
     $actions['#links'] = $items;
-
-    $form['actions']['#access'] = FALSE;
+    // Remove the Views select list and submit button.
+    $form['actions']['#type'] = 'hidden';
+    $form['header']['social_views_bulk_operations_bulk_form_enrollments']['action']['#access'] = FALSE;
   }
 
   /**

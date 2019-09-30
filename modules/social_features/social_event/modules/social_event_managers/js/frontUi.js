@@ -10,7 +10,7 @@
   /**
    * @type {Drupal~behavior}
    */
-  Drupal.behaviors.social_event_views_bulk_operations = {
+  Drupal.behaviors.social_views_bulk_operations = {
     attach: function (context, settings) {
       $('.vbo-view-form').once('social-vbo-init').each(Drupal.socialEventViewsBulkOperationsFrontUi);
     }

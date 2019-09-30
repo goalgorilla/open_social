@@ -3,7 +3,6 @@
 namespace Drupal\social_group\Controller;
 
 use Drupal\Core\Access\AccessResult;
-use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\TempStore\PrivateTempStoreFactory;
@@ -12,9 +11,7 @@ use Drupal\user\Entity\User;
 use Drupal\views_bulk_operations\Form\ViewsBulkOperationsFormTrait;
 use Drupal\views_bulk_operations\Service\ViewsBulkOperationsActionProcessorInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * Returns responses for Social Group routes.
@@ -177,86 +174,6 @@ class SocialGroupController extends ControllerBase {
    */
   public function otherGroupPage($group) {
     return $this->redirect('entity.group.canonical', ['group' => $group]);
-  }
-
-  /**
-   * AJAX callback to update selection (multipage).
-   *
-   * @param string $view_id
-   *   The current view ID.
-   * @param string $display_id
-   *   The display ID of the current view.
-   * @param \Symfony\Component\HttpFoundation\Request $request
-   *   The request object.
-   */
-  public function updateSelection($view_id, $display_id, Request $request) {
-    $view_data = $this->getTempstoreData($view_id, $display_id);
-    if (empty($view_data)) {
-      throw new NotFoundHttpException();
-    }
-
-    // If the group id doesn't match.
-    // We reset the selection and update the group.
-    if ($view_id === 'group_manage_members') {
-      $group_id = $request->attributes->get('group');
-      if (!empty($group_id) && !empty($view_data['group_id'])) {
-        if ($group_id !== $view_data['group_id']) {
-          $view_data['list'] = [];
-          $view_data['group_id'] = $group_id;
-          $view_data['total_results'] = 0;
-        }
-      }
-    }
-
-    // All borrowed from ViewsBulkOperationsController.php.
-    $list = $request->request->get('list');
-
-    $op = $request->request->get('op', 'check');
-    // Reverse operation when in exclude mode.
-    if (!empty($view_data['exclude_mode'])) {
-      if ($op === 'add') {
-        $op = 'remove';
-      }
-      elseif ($op === 'remove') {
-        $op = 'add';
-      }
-    }
-
-    switch ($op) {
-      case 'add':
-        foreach ($list as $bulkFormKey) {
-          if (!isset($view_data['list'][$bulkFormKey])) {
-            $view_data['list'][$bulkFormKey] = $this->getListItem($bulkFormKey);
-          }
-        }
-        break;
-
-      case 'remove':
-        foreach ($list as $bulkFormKey) {
-          if (isset($view_data['list'][$bulkFormKey])) {
-            unset($view_data['list'][$bulkFormKey]);
-          }
-        }
-        break;
-
-      case 'method_include':
-        unset($view_data['exclude_mode']);
-        $view_data['list'] = [];
-        break;
-
-      case 'method_exclude':
-        $view_data['exclude_mode'] = TRUE;
-        $view_data['list'] = [];
-        break;
-    }
-
-    $this->setTempstoreData($view_data);
-
-    $count = empty($view_data['exclude_mode']) ? count($view_data['list']) : $view_data['total_results'] - count($view_data['list']);
-
-    $response = new AjaxResponse();
-    $response->setData(['count' => $count]);
-    return $response;
   }
 
 }

@@ -19,6 +19,14 @@ class RouteSubscriber extends RouteSubscriberBase {
     if ($route = $collection->get('system.entity_autocomplete')) {
       $route->setDefault('_controller', '\Drupal\social_core\Controller\EntityAutocompleteController::handleAutocomplete');
     }
+
+    // Write our own VBO update selection for validation
+    // on AJAX request.
+    if ($route = $collection->get('views_bulk_operations.update_selection')) {
+      $defaults = $route->getDefaults();
+      $defaults['_controller'] = '\Drupal\social_core\Controller\SocialCoreController::updateSelection';
+      $route->setDefaults($defaults);
+    }
   }
 
 }
