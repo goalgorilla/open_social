@@ -106,69 +106,74 @@ function social_comment_tokens($type, $tokens, array $data, array $options, Bubb
           if (isset($message->field_message_related_object)) {
             $target_type = $message->field_message_related_object->target_type;
             $target_id = $message->field_message_related_object->target_id;
+            if($target_id) {
 
-            $comment = \Drupal::entityTypeManager()->getStorage($target_type)
-              ->load($target_id);
+              $comment = \Drupal::entityTypeManager()->getStorage($target_type)
+                ->load($target_id);
 
-            if ($comment instanceof CommentInterface) {
-              if ($comment->getEntityTypeId() === 'comment') {
-                $date_formatter = \Drupal::service('date.formatter');
-                $date_format = 'social_long_date';
+              if ($comment instanceof CommentInterface) {
+                if ($comment->getEntityTypeId() === 'comment') {
+                  $date_formatter = \Drupal::service('date.formatter');
+                  $date_format = 'social_long_date';
 
-                if ($comment->hasParentComment()) {
-                  $parent_comment = $comment->getParentComment();
+                  if ($comment->hasParentComment()) {
+                    $parent_comment = $comment->getParentComment();
 
-                  if ($name === 'parent_comment_author') {
-                    $replacements[$original] = $parent_comment->getOwner()->getDisplayName();
+                    if ($name === 'parent_comment_author') {
+                      $replacements[$original] = $parent_comment->getOwner()
+                        ->getDisplayName();
+                    }
+
+                    if ($name === 'parent_comment_date') {
+                      $replacements[$original] = $date_formatter->format($parent_comment->getCreatedTime(), $date_format);
+                    }
+
+                    if ($name === 'parent_comment_text') {
+                      if ($parent_comment->hasField('field_comment_body') && !$parent_comment->field_comment_body->isEmpty()) {
+                        $replacements[$original] = _social_comment_get_summary($parent_comment->field_comment_body->value);
+                      }
+                      else {
+                        $replacements[$original] = '';
+                      }
+                    }
                   }
 
-                  if ($name === 'parent_comment_date') {
-                    $replacements[$original] = $date_formatter->format($parent_comment->getCreatedTime(), $date_format);
+                  if (!empty($comment->getCommentedEntity())) {
+                    $commented_entity = $comment->getCommentedEntity();
+                    if ($name === 'parent_entity_author') {
+                      $replacements[$original] = $commented_entity->getOwner()
+                        ->getDisplayName();
+                    }
                   }
 
-                  if ($name === 'parent_comment_text') {
-                    if ($parent_comment->hasField('field_comment_body') && !$parent_comment->field_comment_body->isEmpty()) {
-                      $replacements[$original] = _social_comment_get_summary($parent_comment->field_comment_body->value);
+                  if ($name === 'comment_author') {
+                    $replacements[$original] = $comment->getOwner()
+                      ->getDisplayName();
+                  }
+
+                  if ($name === 'comment_date') {
+                    $replacements[$original] = $date_formatter->format($comment->getCreatedTime(), $date_format);
+                  }
+
+                  if ($name === 'comment_text') {
+                    if ($comment->hasField('field_comment_body') && !$comment->field_comment_body->isEmpty()) {
+                      $replacements[$original] = _social_comment_get_summary($comment->field_comment_body->value);
                     }
                     else {
                       $replacements[$original] = '';
                     }
                   }
-                }
 
-                if (!empty($comment->getCommentedEntity())) {
-                  $commented_entity = $comment->getCommentedEntity();
-                  if ($name === 'parent_entity_author') {
-                    $replacements[$original] = $commented_entity->getOwner()->getDisplayName();
+                  if ($name === 'comment_reply_link_html') {
+                    $replacements[$original] = Url::fromRoute('comment.reply', [
+                      'entity_type' => $comment->getCommentedEntityTypeId(),
+                      'entity' => $comment->getCommentedEntityId(),
+                      'field_name' => $comment->getFieldName(),
+                      'pid' => $comment->id(),
+                    ])->toString();
                   }
-                }
 
-                if ($name === 'comment_author') {
-                  $replacements[$original] = $comment->getOwner()->getDisplayName();
                 }
-
-                if ($name === 'comment_date') {
-                  $replacements[$original] = $date_formatter->format($comment->getCreatedTime(), $date_format);
-                }
-
-                if ($name === 'comment_text') {
-                  if ($comment->hasField('field_comment_body') && !$comment->field_comment_body->isEmpty()) {
-                    $replacements[$original] = _social_comment_get_summary($comment->field_comment_body->value);
-                  }
-                  else {
-                    $replacements[$original] = '';
-                  }
-                }
-
-                if ($name === 'comment_reply_link_html') {
-                  $replacements[$original] = Url::fromRoute('comment.reply', [
-                    'entity_type' => $comment->getCommentedEntityTypeId(),
-                    'entity' => $comment->getCommentedEntityId(),
-                    'field_name' => $comment->getFieldName(),
-                    'pid' => $comment->id(),
-                  ])->toString();
-                }
-
               }
             }
           }
@@ -181,47 +186,51 @@ function social_comment_tokens($type, $tokens, array $data, array $options, Bubb
           if (isset($message->field_message_related_object)) {
             $target_type = $message->field_message_related_object->target_type;
             $target_id = $message->field_message_related_object->target_id;
+            if($target_id) {
 
-            $comment = \Drupal::entityTypeManager()->getStorage($target_type)
-              ->load($target_id);
+              $comment = \Drupal::entityTypeManager()->getStorage($target_type)
+                ->load($target_id);
 
-            if ($comment instanceof CommentInterface) {
-              /** @var \Drupal\Core\Entity\Entity $entity */
-              $entity = $comment->getCommentedEntity();
-              if (!empty($entity)) {
-                if ($entity instanceof PostInterface) {
-                  $commented_content_type = mb_strtolower($entity->getEntityType()->getLabel());
-                }
-                elseif (is_callable([$entity, 'getDisplayName'])) {
-                  $commented_content_type = $entity->getDisplayName();
-                }
-                else {
-                  if ($entity instanceof NodeInterface) {
-                    $commented_content_type = strtolower($entity->type->entity->label());
+              if ($comment instanceof CommentInterface) {
+                /** @var \Drupal\Core\Entity\Entity $entity */
+                $entity = $comment->getCommentedEntity();
+                if (!empty($entity)) {
+                  if ($entity instanceof PostInterface) {
+                    $commented_content_type = mb_strtolower($entity->getEntityType()
+                      ->getLabel());
+                  }
+                  elseif (is_callable([$entity, 'getDisplayName'])) {
+                    $commented_content_type = $entity->getDisplayName();
                   }
                   else {
-                    $commented_content_type = $entity->bundle();
+                    if ($entity instanceof NodeInterface) {
+                      $commented_content_type = strtolower($entity->type->entity->label());
+                    }
+                    else {
+                      $commented_content_type = $entity->bundle();
+                    }
                   }
-                }
 
-                if ($name === 'commented_content_type') {
-                  if (!empty($commented_content_type)) {
-                    $replacements[$original] = $commented_content_type;
-                  }
-                }
-                else {
-                  $url_options = ['absolute' => TRUE];
-                  $link = $entity->toUrl('canonical', $url_options)->toString();
-
-                  // We should only use the label of entities who have a label.
-                  if ($link_label = $entity->label()) {
-                    $entity_link_html = $commented_content_type . ' <a href="' . $link . '">' . $link_label . '</a>';
+                  if ($name === 'commented_content_type') {
+                    if (!empty($commented_content_type)) {
+                      $replacements[$original] = $commented_content_type;
+                    }
                   }
                   else {
-                    $entity_link_html = '<a href="' . $link . '">' . $commented_content_type . '</a>';
-                  }
+                    $url_options = ['absolute' => TRUE];
+                    $link = $entity->toUrl('canonical', $url_options)
+                      ->toString();
 
-                  $replacements[$original] = Markup::create($entity_link_html);
+                    // We should only use the label of entities who have a label.
+                    if ($link_label = $entity->label()) {
+                      $entity_link_html = $commented_content_type . ' <a href="' . $link . '">' . $link_label . '</a>';
+                    }
+                    else {
+                      $entity_link_html = '<a href="' . $link . '">' . $commented_content_type . '</a>';
+                    }
+
+                    $replacements[$original] = Markup::create($entity_link_html);
+                  }
                 }
               }
             }
