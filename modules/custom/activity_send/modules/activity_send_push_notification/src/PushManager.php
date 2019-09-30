@@ -6,6 +6,7 @@ use Drupal\activity_send_push_notification\Annotation\Push;
 use Drupal\Component\Utility\SortArray;
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\DefaultPluginManager;
 
 /**
@@ -54,6 +55,28 @@ class PushManager extends DefaultPluginManager {
     });
 
     return $definitions;
+  }
+
+  /**
+   * Save settings of plugin instances.
+   *
+   * @param array $form
+   *   The form.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The form state.
+   */
+  public static function submitForm(array $form, FormStateInterface $form_state) {
+    /** @var \Drupal\Component\Plugin\PluginManagerInterface $service */
+    $service = \Drupal::service('plugin.manager.push');
+
+    foreach ($service->getDefinitions() as $plugin_id => $definition) {
+      /** @var \Drupal\activity_send_push_notification\PushInterface $plugin */
+      $plugin = $service->createInstance($plugin_id);
+
+      if ($plugin->access()) {
+        $plugin->submitForm($form_state);
+      }
+    }
   }
 
 }

@@ -5,6 +5,7 @@
  * The Activity Send Push Notification module.
  */
 
+use Drupal\activity_send_push_notification\PushManager;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
@@ -24,14 +25,14 @@ function activity_send_push_notification_form_user_form_alter(&$form, FormStateI
     /** @var \Drupal\activity_send_push_notification\PushInterface $plugin */
     $plugin = $service->createInstance($plugin_id);
 
-    if ($plugin_form = $plugin->form()) {
+    if ($plugin->access()) {
       $plugin_forms[$plugin_id] = [
         '#type' => 'details',
         '#title' => '<h5>' . $definition['title'] . '</h5>',
         '#attributes' => [
           'class' => ['form-fieldset'],
         ],
-      ] + $plugin_form;
+      ] + $plugin->buildForm();
     }
   }
 
@@ -53,4 +54,6 @@ function activity_send_push_notification_form_user_form_alter(&$form, FormStateI
   ];
 
   $form['push_notifications'] = $form['push_notifications'] + $plugin_forms;
+
+  $form['actions']['submit']['#submit'][] = [PushManager::class, 'submitForm'];
 }
