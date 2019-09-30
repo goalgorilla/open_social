@@ -77,4 +77,17 @@ interface DemoContentInterface extends PluginInspectionInterface, ContainerFacto
    */
   public function setEntityStorage(EntityStorageInterface $entity_storage);
 
+  /**
+   * Scramble it.
+   *
+   * @param array $data
+   *   The data array to scramble.
+   * @param int|null $max
+   *   How many items to generate.
+   *
+   * @return array
+   *   An array with list of data.
+   */
+  public function scrambleData(array $data, $max = NULL);
+
 }

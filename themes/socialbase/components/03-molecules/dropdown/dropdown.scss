@@ -53,7 +53,7 @@
   z-index: $zindex-dropdown;
   display: none; // none by default, but block on "open" of the menu
   float: left;
-  min-width: 160px;
+  min-width: 275px;
   max-width: 500px;
   padding: 5px 0;
   margin: 2px 0 0; // override default ul
@@ -336,5 +336,30 @@
 
   p {
     margin-bottom: 0;
+  }
+}
+
+// Dropdown without js.
+html:not(.js) {
+
+  .dropdown:focus .dropdown-menu,
+  .dropdown:hover .dropdown-menu,
+  .comment__actions:hover .dropdown-menu,
+  .comment__actions:hover .dropdown-menu,
+  .dropdown-menu:hover {
+    display: block;
+  }
+
+  .dropdown {
+    cursor: pointer;
+
+    &:focus {
+      outline: none;
+    }
+
+    .dropdown-toggle {
+      pointer-events: none;
+      z-index: -1;
+    }
   }
 }

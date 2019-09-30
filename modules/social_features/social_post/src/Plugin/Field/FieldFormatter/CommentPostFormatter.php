@@ -34,7 +34,7 @@ class CommentPostFormatter extends CommentDefaultFormatter {
   public static function defaultSettings() {
     return [
       'num_comments' => 2,
-      'order' => 'DESC',
+      'order' => 'ASC',
     ];
   }
 

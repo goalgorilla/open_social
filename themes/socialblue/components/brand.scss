@@ -300,6 +300,24 @@ blockquote {
   }
 }
 
+html:not(.js) .navbar-default {
+  .dropdown {
+
+    &:focus,
+    &:hover {
+
+      > a {
+        color: $navbar-default-link-active-color;
+        background-color: $navbar-default-link-active-bg;
+
+        .navbar-nav__icon {
+          fill: $navbar-default-link-active-color;
+        }
+      }
+    }
+  }
+}
+
 .dropdown {
   &.has-alert {
     > a {
@@ -425,13 +443,9 @@ blockquote {
   background-color: #1f7ea7 !important;
 }
 
-.marker-cluster-small {
-  background-color: #1f7ea7;
-  opacity: 0.6;
-}
-
+.marker-cluster-small,
 .marker-cluster-small div {
-  background-color: opacify(#1f7ea7, 0.8);
+  background-color: $brand-secondary;
 }
 
 .marker-cluster div {
@@ -446,9 +460,9 @@ blockquote {
 
 .leaflet-popup-content .card__text {
   > a {
-    color: $navbar-default-link-color;
+    color: $link-color;
     &:after {
-      color: $navbar-default-link-color;
+      color: $link-color;
     }
   }
 }

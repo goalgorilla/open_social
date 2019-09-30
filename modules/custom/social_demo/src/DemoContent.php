@@ -280,4 +280,25 @@ abstract class DemoContent extends PluginBase implements DemoContentInterface {
    */
   abstract protected function getEntry(array $item);
 
+  /**
+   * Scramble it.
+   *
+   * @param array $data
+   *   The data array to scramble.
+   * @param int|null $max
+   *   How many items to generate.
+   */
+  public function scrambleData(array $data, $max = NULL) {
+    $new_data = [];
+    for ($i = 0; $i < $max; $i++) {
+      // Get a random item from the array.
+      $old_uuid = array_rand($data);
+      $item = $data[$old_uuid];
+      $uuid = 'ScrambledDemo_' . time() . '_' . $i;
+      $item['uuid'] = $uuid;
+      $new_data[$uuid] = $item;
+    }
+    return $new_data;
+  }
+
 }

@@ -161,35 +161,40 @@ function social_comment_form_reply_validate($form, FormStateInterface $form_stat
 function social_comment_comment_links_alter(array &$links, CommentInterface $entity, array &$context) {
   $bundle = $entity->bundle();
   $commented_entity = $entity->getCommentedEntity();
+  $account = \Drupal::currentUser();
 
   if (!$entity->isPublished()) {
     // If the comment is not published disable the reply link.
     $links['comment']['#links']['comment-reply']['url'] = Url::fromRoute('<nolink>');
   }
 
+  if ($entity->isPublished() && $account->hasPermission('administer comments')) {
+    $links['comment']['#links']['comment-unpublish'] = [
+      'title' => t('Unpublish'),
+      'url' => Url::fromRoute('social_comment.unpublish', ['comment' => $entity->id()]),
+    ];
+  }
+
   if ($bundle === 'post_comment') {
     // For post comments remove the reply button.
     unset($links['comment']['#links']['comment-reply']);
   }
+  // If it is not a post comment do some extra checks.
+  elseif ($entity->getParentComment() !== NULL || \Drupal::routeMatch()->getRouteName() === 'comment.reply') {
+    // If this is already on the second level, remove the reply button.
+    unset($links['comment']['#links']['comment-reply']);
+  }
   else {
-    // If it is not a post comment do some extra checks.
-    if (!empty($entity->getParentComment()) || \Drupal::routeMatch()->getRouteName() === 'comment.reply') {
-      // If this is already on the second level, remove the reply button.
-      unset($links['comment']['#links']['comment-reply']);
-    }
-    else {
-      $group_contents = GroupContent::loadByEntity($commented_entity);
-      // Only react if it is actually posted inside a group.
-      if (!empty($group_contents)) {
-        $account = \Drupal::currentUser();
+    $group_contents = GroupContent::loadByEntity($commented_entity);
+    // Only react if it is actually posted inside a group.
+    if (!empty($group_contents)) {
+      foreach ($group_contents as $group_content) {
+        $group = $group_content->getGroup();
 
-        foreach ($group_contents as $group_content) {
-          $group = $group_content->getGroup();
-
-          // Remove comments from output if user don't have access.
-          if (!$group->hasPermission('post comments', $account)) {
-            unset($links['comment']['#links']['comment-reply']);
-          }
+        // Remove comments from output if user don't have access.
+        if (!$group->hasPermission('post comments', $account)) {
+          unset($links['comment']['#links']['comment-reply']);
+          break;
         }
       }
     }

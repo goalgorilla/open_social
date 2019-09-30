@@ -21,6 +21,7 @@ use Drupal\Core\Field\FieldItemList;
  */
 function social_core_theme() {
   return [
+    // @deprecated: use node--hero.html.twig instead.
     'page_hero_data' => [
       'variables' => [
         'title' => NULL,
@@ -36,27 +37,15 @@ function social_core_theme() {
 }
 
 /**
- * Prepares variables for the social page hero data.
- *
- * Default template: page-hero-data.html.twig.
- *
- * @param array $variables
- *   An associative array containing:
- *   - title: Page title as a string
- *   - author_name: Author as a string
- *   - created_date: Timestamp
- *   - created_date_formatted: Formatted date as a string
- *   - topic_type: List of topic types as an array or NULL
- *   - hero_node: Rendered hero display of the current active node or NULL.
+ * Implements hook_preprocess_HOOK().
  */
-function template_preprocess_page_hero_data(array &$variables) {
-  // Get current user.
-  $account = \Drupal::currentUser();
-
-  // Get current node object.
+function social_core_preprocess_node(&$variables) {
+  /** @var \Drupal\node\Entity\NodeInterface $node */
   $node = $variables['node'];
+  if ($variables['view_mode'] === 'hero') {
+    // Get current user.
+    $account = \Drupal::currentUser();
 
-  if (is_object($node)) {
     if (empty($variables['event_enrollment'])) {
       if ($node->getType() == 'event') {
         $form = \Drupal::formBuilder()

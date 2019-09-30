@@ -207,6 +207,7 @@ class SocialGroupSelectorWidget extends OptionsSelectWidget implements Container
   public static function validateGroupSelection(array $form, FormStateInterface $form_state) {
 
     $ajax_response = new AjaxResponse();
+    $entity = $form_state->getFormObject()->getEntity();
 
     $selected_visibility = $form_state->getValue('field_content_visibility');
     if (!empty($selected_visibility)) {
@@ -218,14 +219,13 @@ class SocialGroupSelectorWidget extends OptionsSelectWidget implements Container
         $group = Group::load($gid);
         $group_type_id = $group->getGroupType()->id();
 
-        $allowed_visibility_options = social_group_get_allowed_visibility_options_per_group_type($group_type_id);
+        $allowed_visibility_options = social_group_get_allowed_visibility_options_per_group_type($group_type_id, NULL, $entity, $group);
         // TODO Add support for multiple groups, for now just process 1 group.
         break;
       }
     }
     else {
       $default_visibility = $form_state->getValue('default_visibility');
-      $entity = $form_state->getFormObject()->getEntity();
 
       $allowed_visibility_options = social_group_get_allowed_visibility_options_per_group_type(NULL, NULL, $entity);
       $ajax_response->addCommand(new InvokeCommand('#edit-field-content-visibility-' . $default_visibility, 'prop', ['checked', 'checked']));

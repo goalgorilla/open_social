@@ -1,0 +1,6 @@
+services:
+  social_lazy_loading_images.overrider:
+    class: Drupal\social_lazy_loading_images\SocialLazyLoadingImageDisplayOverride
+    arguments: ['@config.factory']
+    tags:
+      - { name: config.factory.override, priority: 200 }

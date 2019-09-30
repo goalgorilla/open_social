@@ -21,6 +21,7 @@ use Drupal\social_event_managers\SocialEventManagersAccessHelper;
 use Drupal\user\Entity\User;
 use Drupal\views\ViewExecutable;
 use Drupal\social_event\Entity\EventEnrollment;
+use Drupal\views_bulk_operations\ViewsBulkOperationsBatch;
 
 /**
  * Implements hook_preprocess_block().
@@ -187,27 +188,25 @@ function social_event_managers_form_node_event_edit_form_alter(&$form, FormState
  * Implements hook_node_access_records().
  */
 function social_event_managers_node_access_records(NodeInterface $node) {
-
   $grants = [];
-
   // Only for events.
-  if ($node->getType() === 'event') {
+  if (($node->getType() === 'event') && $event_managers_ids = array_column($node->get('field_event_managers')
+    ->getValue(), 'target_id')) {
     // Event organizers should be granted access.
-    foreach ($node->get('field_event_managers')->getValue() as $eventmanager) {
-      // Load the event managers account.
-      if ($account = User::load($eventmanager['target_id'])) {
-        // Event organizers must have access
-        // to view the record in the first place.
-        if ($node->access('view', $account)) {
-          // Add grant.
-          $grants[] = [
-            'realm' => 'social_event_managers:' . $node->id(),
-            'gid' => $eventmanager['target_id'],
-            'grant_view' => 1,
-            'grant_update' => 1,
-            'grant_delete' => 0,
-          ];
-        }
+    // Load the event managers accounts.
+    $users = User::loadMultiple($event_managers_ids);
+    foreach ($users as $event_manager) {
+      // Event organizers must have access
+      // to view the record in the first place.
+      if ($node->access('view', $event_manager)) {
+        // Add grant.
+        $grants[] = [
+          'realm' => 'social_event_managers:' . $node->id(),
+          'gid' => $event_manager->id(),
+          'grant_view' => 1,
+          'grant_update' => 1,
+          'grant_delete' => 0,
+        ];
       }
     }
   }
@@ -371,7 +370,7 @@ function social_event_managers_activity_recipient_organizer_alter(array &$recipi
   if (!empty($organizers)) {
     foreach ($organizers as $organizer) {
       // We don't want Organizers to receive activity_on_events_im_organizing.
-      // He will already receive it as part of a different context.
+      // It will already receive it as part of a different context.
       if (!empty($receiver) && $organizer['target_id'] === $receiver) {
         continue;
       }
@@ -407,13 +406,13 @@ function social_event_managers_batch_alter(&$batch) {
   $url = &$batch['source_url'];
 
   if ($url->getRouteName() === 'social_event_managers.vbo.confirm' ||
-    $url->getRouteName() === 'views_bulk_operations.confirm') {
-    /** @var \Drupal\Core\Form\FormStateInterface $form_state */
-    $form_state = &$batch['form_state'];
+    $url->getRouteName() === 'views_bulk_operations.confirm' ||
+    $url->getRouteName() === 'views_bulk_operations.execute_batch') {
+    // Get the action ID.
+    $action_id = _social_event_managers_get_action_id($batch);
 
-    $data = $form_state->get('views_bulk_operations');
-    $batch['sets'][0]['results']['action'] = $data['action_id'];
-    if (in_array($data['action_id'], $actions)) {
+    $batch['sets'][0]['results']['action'] = $action_id;
+    if (in_array($action_id, $actions, TRUE)) {
       $batch['sets'][0]['finished'] = '_social_event_managers_action_batch_finish';
     }
   }
@@ -430,6 +429,14 @@ function social_event_managers_batch_alter(&$batch) {
  *   Performed operations array.
  */
 function _social_event_managers_action_batch_finish($success, array $results, array $operations) {
+  // When we do a bulk action on all the items in a view, across multiple pages,
+  // the saveList function needs to be called. So after pre-populating the list
+  // the actual action is performed on the entities.
+  if (!empty($results['view_id']) && !empty($results['display_id'])) {
+    ViewsBulkOperationsBatch::saveList(TRUE, $results, $operations);
+    return;
+  }
+
   $operations = array_count_values($results['operations']);
   $results_count = 0;
 
@@ -459,6 +466,49 @@ function _social_event_managers_action_batch_finish($success, array $results, ar
       }
     }
   }
+}
+
+/**
+ * Function to get the action id of a batch.
+ *
+ * @param array $batch
+ *   The batch array.
+ *
+ * @return string
+ *   Returns the batch action id.
+ */
+function _social_event_managers_get_action_id(array &$batch) {
+  /** @var \Drupal\Core\Form\FormStateInterface $form_state */
+  $form_state = &$batch['form_state'];
+
+  $action_id = '';
+  if ($form_state instanceof FormStateInterface) {
+    $data = $form_state->get('views_bulk_operations');
+    $action_id = $data['action_id'];
+  }
+  else {
+    foreach ($batch['sets'][0]['operations'] as $operations) {
+      if (empty($operations) || !is_array($operations)) {
+        break;
+      }
+      foreach ($operations as $operation) {
+        if (empty($operation) || !is_array($operation)) {
+          break;
+        }
+        foreach ($operation as $items) {
+          if (empty($items) || !is_array($items)) {
+            break;
+          }
+
+          if (!empty($items['action_id'])) {
+            $action_id = $items['action_id'];
+            break;
+          }
+        }
+      }
+    }
+  }
+  return $action_id;
 }
 
 /**

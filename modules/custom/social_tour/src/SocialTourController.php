@@ -2,14 +2,17 @@
 
 namespace Drupal\social_tour;
 
-use Drupal\user\UserData;
-use Drupal\user\Entity\User;
-use Drupal\Core\Session\AccountProxy;
-use Drupal\Core\Config\ConfigFactory;
+use Drupal\Core\Cache\Cache;
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Path\PathValidatorInterface;
+use Drupal\Core\Routing\RedirectDestinationInterface;
+use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\user\UserDataInterface;
+use Drupal\user\UserInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
  * Class SocialTourController.
@@ -21,34 +24,57 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 class SocialTourController extends ControllerBase {
 
   /**
-   * Protected var UserData.
+   * The user data.
    *
-   * @var \Drupal\user\UserData
+   * @var \Drupal\user\UserDataInterface
    */
   protected $userData;
 
   /**
-   * Protected var ConfigFactory.
+   * The path validator.
    *
-   * @var \Drupal\Core\Config\ConfigFactory
+   * @var \Drupal\Core\Path\PathValidatorInterface
    */
-  protected $configFactory;
+  protected $pathValidator;
 
   /**
-   * Protected var for the current user.
+   * The redirect destination helper.
    *
-   * @var \Drupal\Core\Session\AccountProxy
+   * @var \Drupal\Core\Routing\RedirectDestinationInterface
    */
-  protected $currentUser;
+  protected $redirectDestination;
 
   /**
    * SocialTourController constructor.
+   *
+   * @param \Drupal\user\UserDataInterface $user_data
+   *   The user data.
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *   The configuration factory.
+   * @param \Drupal\Core\Session\AccountProxyInterface $current_user
+   *   The current user service.
+   * @param \Drupal\Core\Path\PathValidatorInterface $path_validator
+   *   The path validator.
+   * @param \Drupal\Core\Routing\RedirectDestinationInterface $redirect_destination
+   *   The redirect destination helper.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
    */
-  public function __construct(UserData $user_data, ConfigFactory $config_factory, AccountProxy $current_user) {
+  public function __construct(
+    UserDataInterface $user_data,
+    ConfigFactoryInterface $config_factory,
+    AccountProxyInterface $current_user,
+    PathValidatorInterface $path_validator,
+    RedirectDestinationInterface $redirect_destination,
+    EntityTypeManagerInterface $entity_type_manager
+  ) {
     // We needs it.
     $this->userData = $user_data;
     $this->configFactory = $config_factory->get('social_tour.settings');
     $this->currentUser = $current_user;
+    $this->pathValidator = $path_validator;
+    $this->redirectDestination = $redirect_destination;
+    $this->entityTypeManager = $entity_type_manager;
   }
 
   /**
@@ -58,7 +84,10 @@ class SocialTourController extends ControllerBase {
     return new static(
       $container->get('user.data'),
       $container->get('config.factory'),
-      $container->get('current_user')
+      $container->get('current_user'),
+      $container->get('path.validator'),
+      $container->get('redirect.destination'),
+      $container->get('entity_type.manager')
     );
   }
 
@@ -70,7 +99,7 @@ class SocialTourController extends ControllerBase {
    */
   public function onboardingEnabled() {
     // Check if tour is enabled by SM setting.
-    if ($this->configFactory->get('social_tour_enabled') == FALSE) {
+    if (!$this->configFactory->get('social_tour_enabled')) {
       return FALSE;
     }
 
@@ -80,9 +109,10 @@ class SocialTourController extends ControllerBase {
     }
 
     // Check if current disabled it.
-    if ($this->userData->get('social_tour', $this->currentUser->id(), 'onboarding_disabled') == TRUE) {
+    if ($this->userData->get('social_tour', $this->currentUser->id(), 'onboarding_disabled')) {
       return FALSE;
     }
+
     return TRUE;
   }
 
@@ -96,12 +126,12 @@ class SocialTourController extends ControllerBase {
 
     // No user given, then current user.
     $id = $this->currentUser->id();
-    if ($account instanceof User) {
+    if ($account instanceof UserInterface) {
       $id = $account->id();
     }
 
     $new_value = TRUE;
-    if ($this->userData->get('social_tour', $id, 'onboarding_disabled') == TRUE) {
+    if ($this->userData->get('social_tour', $id, 'onboarding_disabled')) {
       $new_value = FALSE;
     }
 
@@ -124,12 +154,19 @@ class SocialTourController extends ControllerBase {
    */
   public function disableOnboarding() {
     // Save the value in the user_data.
-    $this->setData(TRUE);
-    $redirect = \Drupal::request()->get('destination') ?: '/stream';
+    $this->setData();
+
+    $route_name = $this->pathValidator
+      ->getUrlIfValid($this->redirectDestination->get())
+      ->getRouteName();
+
+    Cache::invalidateTags($this->getCacheTags($route_name));
+
     // Set a message that they can be turned on again.
-    drupal_set_message($this->t('You will not see tips like this anymore.'));
-    // Return to Profile.
-    return new RedirectResponse($redirect);
+    $this->messenger()->addStatus($this->t('You will not see tips like this anymore.'));
+
+    // Return to previous page.
+    return $this->redirect($route_name);
   }
 
   /**
@@ -140,6 +177,26 @@ class SocialTourController extends ControllerBase {
    */
   private function setData($disabled = TRUE) {
     $this->userData->set('social_tour', $this->currentUser->id(), 'onboarding_disabled', $disabled);
+  }
+
+  /**
+   * Returns tags based on tours of page.
+   *
+   * @param string $route_name
+   *   A route name.
+   *
+   * @return array
+   *   The cache tags.
+   */
+  public function getCacheTags($route_name) {
+    $tours = $this->entityTypeManager->getStorage('tour')
+      ->getQuery()
+      ->condition('routes.*.route_name', $route_name)
+      ->execute();
+
+    return array_map(function ($tour) {
+      return 'user:' . $this->currentUser->id() . ':tour:' . $tour;
+    }, $tours);
   }
 
 }

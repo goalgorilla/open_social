@@ -5,6 +5,8 @@ namespace Drupal\entity_access_by_field;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Access\AccessResult;
 use Drupal\node\NodeInterface;
+use Drupal\group\Entity\GroupContent;
+use Drupal\group\Entity\Group;
 
 /**
  * Helper class for checking entity access.
@@ -42,6 +44,7 @@ class EntityAccessHelper {
       foreach ($field_definitions as $field_name => $field_definition) {
         if ($field_definition->getType() === 'entity_access_field') {
           $field_values = $node->get($field_name)->getValue();
+
           if (!empty($field_values)) {
             foreach ($field_values as $field_value) {
               if (isset($field_value['value'])) {
@@ -55,7 +58,21 @@ class EntityAccessHelper {
                 // When content is posted in a group and the account does not
                 // have permission we return Access::ignore.
                 if ($field_value['value'] === 'group') {
+                  // Don't look no further.
+                  if ($account->hasPermission('manage all groups')) {
+                    return 0;
+                  }
                   if (!$account->hasPermission('view ' . $permission_label . ' content')) {
+                    // Lets verify if we are a member for flexible groups.
+                    $groups = GroupContent::loadByEntity($node);
+                    if (!empty($groups)) {
+                      $group = reset($groups)->getGroup();
+                      if ($group instanceof Group
+                        && !$group->getMember($account)
+                        && $group->getGroupType()->id() === 'flexible_group') {
+                        return 1;
+                      }
+                    }
                     return 0;
                   }
                 }

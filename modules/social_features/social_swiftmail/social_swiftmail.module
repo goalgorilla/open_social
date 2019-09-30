@@ -7,6 +7,7 @@
 
 use Drupal\Component\Utility\Xss;
 use Drupal\file\Entity\File;
+use Drupal\social_swiftmail\Element\SocialSwiftmailTextFormat;
 
 /**
  * Preprocess swift template.
@@ -37,10 +38,12 @@ function social_swiftmail_preprocess_swiftmailer(array &$variables) {
   $variables['link'] = $link;
   $variables['border_radius'] = $border_radius;
 
+  // Check if custom e-mail setting for branding removal is enabled.
   $social_swiftmail_config = \Drupal::config('social_swiftmail.settings');
-  if ($social_swiftmail_config->get('remove_open_social_branding') === 1) {
+  if ($social_swiftmail_config->get('remove_open_social_branding') === TRUE) {
     $site_config = \Drupal::config('system.site');
-
+    // When branding should be removed, check if the default site settings are
+    // set and override variables.
     if ($site_config) {
       $variables['site_link'] = TRUE;
       $variables['site_name'] = $site_config->get('name');
@@ -52,6 +55,30 @@ function social_swiftmail_preprocess_swiftmailer(array &$variables) {
   else {
     $variables['site_name'] = t('Open Social');
     $variables['site_slogan'] = '"' . t('Make your people bloom') . '"';
+  }
+
+  // Check if a custom e-mail header is set and apply the configuration
+  // to the render array.
+  if (($header_config = $social_swiftmail_config->get('template_header'))
+    && (!empty($header_config['value']) && !empty($header_config['format']))) {
+    $header_markup = [
+      '#type' => 'processed_text',
+      '#text' => $header_config['value'],
+      '#format' => $header_config['format'],
+    ];
+    $variables['header'] = \Drupal::service('renderer')->renderRoot($header_markup);
+  }
+
+  // Check if a custom e-mail footer is set and apply the configuration
+  // to the render array.
+  if (($footer_config = $social_swiftmail_config->get('template_footer'))
+    && (!empty($footer_config['value']) && !empty($footer_config['format']))) {
+    $footer_markup = [
+      '#type' => 'processed_text',
+      '#text' => $footer_config['value'],
+      '#format' => $footer_config['format'],
+    ];
+    $variables['footer'] = \Drupal::service('renderer')->renderRoot($footer_markup);
   }
 
   $message = &$variables['message'];
@@ -114,4 +141,20 @@ function social_swiftmail_get_logo($theme_id) {
   }
 
   return $logo;
+}
+
+/**
+ * Implements hook_element_info_alter().
+ */
+function social_swiftmail_element_info_alter(array &$info) {
+  if (isset($info['text_format'])) {
+    if (!isset($info['text_format']['#process'])) {
+      $info['text_format']['#process'] = [];
+    }
+
+    $info['text_format']['#process'][] = [
+      SocialSwiftmailTextFormat::class,
+      'process',
+    ];
+  }
 }
