@@ -3,6 +3,7 @@
 namespace Drupal\activity_send_push_notification;
 
 use Drupal\activity_send_push_notification\Annotation\Push;
+use Drupal\Component\Utility\SortArray;
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Plugin\DefaultPluginManager;
@@ -25,7 +26,11 @@ class PushManager extends DefaultPluginManager {
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    *   The module handler to invoke the alter hook with.
    */
-  public function __construct(\Traversable $namespaces, CacheBackendInterface $cache_backend, ModuleHandlerInterface $module_handler) {
+  public function __construct(
+    \Traversable $namespaces,
+    CacheBackendInterface $cache_backend,
+    ModuleHandlerInterface $module_handler
+  ) {
     parent::__construct(
       'Plugin/Push',
       $namespaces,
@@ -36,6 +41,19 @@ class PushManager extends DefaultPluginManager {
 
     $this->alterInfo('push_info');
     $this->setCacheBackend($cache_backend, 'push');
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getDefinitions() {
+    $definitions = parent::getDefinitions();
+
+    uasort($definitions, function ($a, $b) {
+      return SortArray::sortByKeyInt($a, $b, 'weight');
+    });
+
+    return $definitions;
   }
 
 }
