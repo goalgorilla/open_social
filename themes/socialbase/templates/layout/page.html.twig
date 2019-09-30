@@ -65,12 +65,14 @@
 
       {% if page.complementary_top or page.complementary_bottom %}
         <aside class="region--complementary" role="complementary">
-          {% if page.complementary_top %}
-            {{ page.complementary_top }}
-          {% endif %}
-          {% if page.complementary_bottom %}
-            {{ page.complementary_bottom }}
-          {% endif %}
+          <div class="complementary--content-merged card">
+            {% if page.complementary_top %}
+              {{ page.complementary_top }}
+            {% endif %}
+            {% if page.complementary_bottom %}
+              {{ page.complementary_bottom }}
+            {% endif %}
+          </div>
         </aside>
       {% endif %}
 

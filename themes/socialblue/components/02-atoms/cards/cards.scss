@@ -60,7 +60,32 @@
 
 }
 
+body:not(.socialblue--sky) {
+  .complementary--content-merged {
+    border-radius: 0 !important;
+    box-shadow: none;
+    background: transparent;
+  }
+}
+
 // SocialBlue Sky
+@mixin separate-line {
+  content: '';
+  position: absolute;
+  left: 1.5rem;
+  right: 1.5rem;
+  height: 2px;
+  margin: 0 auto;
+  background: #fafafa;
+  z-index: 1;
+
+  @include for-tablet-landscape-up {
+    left: 1.875rem;
+    right: 1.875rem;
+    max-width: 280px;
+  }
+}
+
 .socialblue--sky {
   @mixin btn-link__arrow($cycle-width, $cycle-height, $arrow-right, $arrow-padding) {
     position: relative;
@@ -114,6 +139,14 @@
     margin-bottom: 2.5rem;
   }
 
+  section:not(.content-merged) {
+    .complementary--content-merged {
+      background: transparent;
+      border-radius: 0 !important;
+      box-shadow: none;
+    }
+  }
+
   .card--views__sidebar {
 
     .card__block {
@@ -133,6 +166,99 @@
   .paragraph--featured {
     .field--name-field-featured-link a {
       @include btn-link__arrow(18px, 18px, 5px, 2px);
+    }
+  }
+
+  // Content Merged.
+  .card__content-merged {
+    > h4 {
+      margin-bottom: 1.25rem;
+
+      @include for-tablet-landscape-up {
+        font-size: 1.5rem;
+      }
+    }
+
+    @include for-desktop-up {
+      padding: .875rem 3.5rem 5.75rem;
+    }
+
+    .content-merged__list {
+      display: flex;
+      flex-direction: column;
+      padding-top: 1.75rem;
+      padding-bottom: 1.75rem;
+      border-bottom: 2px solid #fafafa;
+
+      @include for-tablet-portrait-up {
+        flex-direction: row;
+      }
+
+      h5,
+      .list-item__label {
+        margin-top: 0;
+        font-size: .875rem;
+        font-weight: 300;
+        color: #9b9b9b;
+
+        @include for-tablet-portrait-up {
+          flex: 0 0 120px;
+          max-width: 120px;
+          margin: 0;
+        }
+      }
+
+      &:last-child {
+        border-bottom: 0;
+      }
+    }
+  }
+
+  // Content merged for Sidebar.
+  .content-merged {
+    .region--complementary {
+      .card {
+        margin-bottom: 0;
+
+        > .card__title {
+          padding-top: 1.875rem;
+          font-size: .875rem;
+          text-transform: uppercase;
+          color: #9b9b9b;
+        }
+
+        > .card__actionbar {
+          padding-bottom: 1.875rem;
+        }
+      }
+    }
+
+    .complementary--content-merged {
+      background: #fff;
+    }
+
+    .region--complementary-top,
+    .region--complementary-bottom {
+      > .card {
+        position: relative;
+        box-shadow: none;
+
+        &:after {
+          @include separate-line;
+          top: 100%;
+        }
+
+        &:last-child:after {
+          display: none;
+        }
+      }
+    }
+
+    .region--complementary-top + .region--complementary-bottom {
+      > .card:first-child:before {
+        @include separate-line;
+        bottom: 100%;
+      }
     }
   }
 }

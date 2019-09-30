@@ -224,3 +224,26 @@
   }
 
 }
+
+// SocialBlue Sky
+.socialblue--sky {
+  .layout--with-complementary.sidebar-left {
+    > .region--complementary {
+      @include for-tablet-landscape-up {
+        order: 1;
+      }
+
+      @include for-desktop-up {
+        padding-right: 1rem;
+        padding-left: 0;
+      }
+    }
+
+    > .region--content {
+      @include for-desktop-up {
+        padding-left: 1rem;
+        padding-right: 0;
+      }
+    }
+  }
+}

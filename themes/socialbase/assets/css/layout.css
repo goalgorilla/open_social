@@ -128,6 +128,11 @@
   .region--complementary-top {
     margin-top: 0;
   }
+  .socialblue--sky .layout--with-complementary.sidebar-left > .region--complementary {
+    -webkit-box-ordinal-group: 2;
+        -ms-flex-order: 1;
+            order: 1;
+  }
 }
 
 @media (min-width: 1200px) {
@@ -148,6 +153,14 @@
     padding-left: 0;
   }
   .layout--with-three-columns .region--sidebar-second {
+    padding-right: 0;
+  }
+  .socialblue--sky .layout--with-complementary.sidebar-left > .region--complementary {
+    padding-right: 1rem;
+    padding-left: 0;
+  }
+  .socialblue--sky .layout--with-complementary.sidebar-left > .region--content {
+    padding-left: 1rem;
     padding-right: 0;
   }
 }

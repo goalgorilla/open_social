@@ -958,8 +958,22 @@ fieldset[disabled] .btn--twitter.focus {
   width: 100%;
 }
 
+body:not(.socialblue--sky) .complementary--content-merged {
+  border-radius: 0 !important;
+  -webkit-box-shadow: none;
+          box-shadow: none;
+  background: transparent;
+}
+
 .socialblue--sky .card {
   margin-bottom: 2.5rem;
+}
+
+.socialblue--sky section:not(.content-merged) .complementary--content-merged {
+  background: transparent;
+  border-radius: 0 !important;
+  -webkit-box-shadow: none;
+          box-shadow: none;
 }
 
 .socialblue--sky .card--views__sidebar .card__actionbar .btn {
@@ -1058,6 +1072,91 @@ fieldset[disabled] .btn--twitter.focus {
   -webkit-transform: rotate(-45deg) translateY(-50%);
           transform: rotate(-45deg) translateY(-50%);
   z-index: 2;
+}
+
+.socialblue--sky .card__content-merged > h4 {
+  margin-bottom: 1.25rem;
+}
+
+.socialblue--sky .card__content-merged .content-merged__list {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  padding-top: 1.75rem;
+  padding-bottom: 1.75rem;
+  border-bottom: 2px solid #fafafa;
+}
+
+.socialblue--sky .card__content-merged .content-merged__list h5,
+.socialblue--sky .card__content-merged .content-merged__list .list-item__label {
+  margin-top: 0;
+  font-size: .875rem;
+  font-weight: 300;
+  color: #9b9b9b;
+}
+
+.socialblue--sky .card__content-merged .content-merged__list:last-child {
+  border-bottom: 0;
+}
+
+.socialblue--sky .content-merged .region--complementary .card {
+  margin-bottom: 0;
+}
+
+.socialblue--sky .content-merged .region--complementary .card > .card__title {
+  padding-top: 1.875rem;
+  font-size: .875rem;
+  text-transform: uppercase;
+  color: #9b9b9b;
+}
+
+.socialblue--sky .content-merged .region--complementary .card > .card__actionbar {
+  padding-bottom: 1.875rem;
+}
+
+.socialblue--sky .content-merged .complementary--content-merged {
+  background: #fff;
+}
+
+.socialblue--sky .content-merged .region--complementary-top > .card,
+.socialblue--sky .content-merged .region--complementary-bottom > .card {
+  position: relative;
+  -webkit-box-shadow: none;
+          box-shadow: none;
+}
+
+.socialblue--sky .content-merged .region--complementary-top > .card:after,
+.socialblue--sky .content-merged .region--complementary-bottom > .card:after {
+  content: '';
+  position: absolute;
+  left: 1.5rem;
+  right: 1.5rem;
+  height: 2px;
+  margin: 0 auto;
+  background: #fafafa;
+  z-index: 1;
+  top: 100%;
+}
+
+.socialblue--sky .content-merged .region--complementary-top > .card:last-child:after,
+.socialblue--sky .content-merged .region--complementary-bottom > .card:last-child:after {
+  display: none;
+}
+
+.socialblue--sky .content-merged .region--complementary-top + .region--complementary-bottom > .card:first-child:before {
+  content: '';
+  position: absolute;
+  left: 1.5rem;
+  right: 1.5rem;
+  height: 2px;
+  margin: 0 auto;
+  background: #fafafa;
+  z-index: 1;
+  bottom: 100%;
 }
 
 .form-control {
@@ -1508,10 +1607,6 @@ html.js .input-group-addon .glyphicon.glyphicon-spin {
 
 .photoswipe-gallery-custom .field--item .file-link a {
   font-weight: 500;
-}
-
-.socialblue--sky [id='section-comments'] .card__block {
-  margin-top: -.625rem;
 }
 
 .socialblue--sky .comment__text {
@@ -2142,6 +2237,20 @@ html:not(.js) .navbar-default .dropdown:focus > a .navbar-nav__icon, html:not(.j
 }
 
 @media (min-width: 600px) {
+  .socialblue--sky .card__content-merged .content-merged__list {
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: row;
+            flex-direction: row;
+  }
+  .socialblue--sky .card__content-merged .content-merged__list h5,
+  .socialblue--sky .card__content-merged .content-merged__list .list-item__label {
+    -webkit-box-flex: 0;
+        -ms-flex: 0 0 120px;
+            flex: 0 0 120px;
+    max-width: 120px;
+    margin: 0;
+  }
   .teaser__image {
     border-top-left-radius: inherit;
     border-bottom-left-radius: inherit;
@@ -2175,6 +2284,20 @@ html:not(.js) .navbar-default .dropdown:focus > a .navbar-nav__icon, html:not(.j
   .socialblue--sky .card--views__sidebar .card__block {
     padding-left: 1.875rem;
     padding-right: 1.875rem;
+  }
+  .socialblue--sky .card__content-merged > h4 {
+    font-size: 1.5rem;
+  }
+  .socialblue--sky .content-merged .region--complementary-top > .card:after,
+  .socialblue--sky .content-merged .region--complementary-bottom > .card:after {
+    left: 1.875rem;
+    right: 1.875rem;
+    max-width: 280px;
+  }
+  .socialblue--sky .content-merged .region--complementary-top + .region--complementary-bottom > .card:first-child:before {
+    left: 1.875rem;
+    right: 1.875rem;
+    max-width: 280px;
   }
   .search-take-over .form-text {
     color: #ffffff;
@@ -2237,6 +2360,12 @@ html:not(.js) .navbar-default .dropdown:focus > a .navbar-nav__icon, html:not(.j
   .btn--close-search-take-over svg,
   .search-take-over svg {
     fill: #ffffff;
+  }
+}
+
+@media (min-width: 1200px) {
+  .socialblue--sky .card__content-merged {
+    padding: .875rem 3.5rem 5.75rem;
   }
 }
 
