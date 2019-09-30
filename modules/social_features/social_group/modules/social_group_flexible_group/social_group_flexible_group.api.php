@@ -11,7 +11,7 @@
  */
 
 /**
- * Alter an array of routes that require content visibility acces checks.
+ * Alter an array of routes that require content visibility access checks.
  *
  * @param array $content_routes
  *   List of routes that required flexible group content visibility checks.
