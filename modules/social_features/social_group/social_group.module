@@ -1583,6 +1583,12 @@ function social_group_get_allowed_visibility_options_per_group_type($group_type_
       $visibility_options['group'] = FALSE;
       break;
 
+    case 'secret_group':
+      $visibility_options['public'] = FALSE;
+      $visibility_options['community'] = FALSE;
+      $visibility_options['group'] = TRUE;
+      break;
+
     case 'flexible_group':
       if (empty($group)) {
         $group = _social_group_get_current_group();
@@ -1610,9 +1616,11 @@ function social_group_get_allowed_visibility_options_per_group_type($group_type_
         }
         else {
           /** @var \Drupal\node\Entity\Node $entity */
-          $current_visibility = $entity->get('field_content_visibility')->getString();
-          if ($current_visibility !== 'public') {
-            $visibility_options['public'] = FALSE;
+          if ($entity->hasField('field_content_visibility')) {
+            $current_visibility = $entity->get('field_content_visibility')->getString();
+            if ($current_visibility !== 'public') {
+              $visibility_options['public'] = FALSE;
+            }
           }
         }
       }
