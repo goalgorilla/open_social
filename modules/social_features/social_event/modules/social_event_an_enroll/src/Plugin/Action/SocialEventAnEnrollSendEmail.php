@@ -61,6 +61,8 @@ class SocialEventAnEnrollSendEmail extends SocialEventManagersSendEmail {
    *   The language manager.
    * @param \Egulias\EmailValidator\EmailValidator $email_validator
    *   The email validator.
+   * @param bool $allow_text_format
+   *   TRUE if the current user can use the "Mail HTML" text format.
    * @param \Drupal\social_event_an_enroll\EventAnEnrollManager $social_event_an_enroll_manager
    *   The event an enroll manager.
    */
@@ -74,9 +76,10 @@ class SocialEventAnEnrollSendEmail extends SocialEventManagersSendEmail {
     MailManagerInterface $mail_manager,
     LanguageManagerInterface $language_manager,
     EmailValidator $email_validator,
+    $allow_text_format,
     EventAnEnrollManager $social_event_an_enroll_manager
   ) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition, $token, $entity_type_manager, $logger, $mail_manager, $language_manager, $email_validator);
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $token, $entity_type_manager, $logger, $mail_manager, $language_manager, $email_validator, $allow_text_format);
 
     $this->socialEventAnEnrollManager = $social_event_an_enroll_manager;
   }
@@ -92,6 +95,7 @@ class SocialEventAnEnrollSendEmail extends SocialEventManagersSendEmail {
       $container->get('plugin.manager.mail'),
       $container->get('language_manager'),
       $container->get('email.validator'),
+      $container->get('current_user')->hasPermission('use text format mail_html'),
       $container->get('social_event_an_enroll.manager')
     );
   }
