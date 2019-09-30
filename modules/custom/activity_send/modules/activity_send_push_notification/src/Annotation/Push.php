@@ -27,4 +27,11 @@ class Push extends Plugin {
    */
   public $title;
 
+  /**
+   * The plugin weight.
+   *
+   * @var int
+   */
+  public $weight = 0;
+
 }
