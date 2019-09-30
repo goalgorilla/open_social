@@ -100,8 +100,14 @@ class ExportUser extends ViewsBulkOperationsActionBase implements ContainerFacto
 
     // Create the file if applicable.
     if (empty($this->context['sandbox']['results']['file_path'])) {
-      $this->context['sandbox']['results']['file_path'] = $this->getFileTemporaryPath();
-      $csv = Writer::createFromPath($this->context['sandbox']['results']['file_path'], 'w');
+      // Store only the name relative to the output directory. On platforms such
+      // as Pantheon, different batch ticks can happen on different webheads.
+      // This can cause the file mount path to change, thus changing where on
+      // disk the tmp folder is actually located.
+      $this->context['sandbox']['results']['file_path'] = $this->generateFilePath();
+      $file_path = $this->getBaseOutputDirectory() . DIRECTORY_SEPARATOR . $this->context['sandbox']['results']['file_path'];
+
+      $csv = Writer::createFromPath($file_path, 'w');
       $csv->setDelimiter(',');
       $csv->setEnclosure('"');
       $csv->setEscape('\\');
@@ -109,7 +115,8 @@ class ExportUser extends ViewsBulkOperationsActionBase implements ContainerFacto
       $csv->insertOne($this->context['sandbox']['results']['headers']);
     }
     else {
-      $csv = Writer::createFromPath($this->context['sandbox']['results']['file_path'], 'a');
+      $file_path = $this->getBaseOutputDirectory() . DIRECTORY_SEPARATOR . $this->context['sandbox']['results']['file_path'];
+      $csv = Writer::createFromPath($file_path, 'a');
     }
 
     // Add formatter.
@@ -128,7 +135,7 @@ class ExportUser extends ViewsBulkOperationsActionBase implements ContainerFacto
     }
 
     if (($this->context['sandbox']['current_batch'] * $this->context['sandbox']['batch_size']) >= $this->context['sandbox']['total']) {
-      $data = @file_get_contents($this->context['sandbox']['results']['file_path']);
+      $data = @file_get_contents($file_path);
       $name = basename($this->context['sandbox']['results']['file_path']);
       $path = 'private://csv';
 
@@ -171,15 +178,32 @@ class ExportUser extends ViewsBulkOperationsActionBase implements ContainerFacto
   }
 
   /**
-   * Returns unique file path.
+   * Returns the directory that forms the base for this exports file output.
+   *
+   * This method wraps file_directory_temp() to give inheriting classes the
+   * ability to use a different file system than the temporary file system.
+   * This was previously possible but was changed in #3075818.
+   *
+   * @return string
+   *   The path to the Drupal directory that should be used for this export.
+   */
+  protected function getBaseOutputDirectory() : string {
+    return file_directory_temp();
+  }
+
+  /**
+   * Returns a unique file path for this export.
+   *
+   * The returned path is relative to getBaseOutputDirectory(). This allows it
+   * to work on distributed systems where the temporary file path may change
+   * in between batch ticks.
    *
    * @return string
    *   The path to the file.
    */
-  public function getFileTemporaryPath() {
+  protected function generateFilePath() : string {
     $hash = md5(microtime(TRUE));
-    $filename = 'export-users-' . substr($hash, 20, 12) . '.csv';
-    return file_directory_temp() . '/' . $filename;
+    return 'export-users-' . substr($hash, 20, 12) . '.csv';
   }
 
   /**
