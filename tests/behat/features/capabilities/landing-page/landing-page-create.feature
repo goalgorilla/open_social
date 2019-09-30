@@ -76,7 +76,6 @@ Feature: Create Landing Page
       | field_landing_page_section[3][subform][field_section_paragraph][0][subform][field_block_link][0][title] | Block Link |
     # Set URL Alias
     And I click "URL path settings"
-    And I uncheck "Generate automatic URL alias"
     And I set alias as "landingpage"
     And I press "Save"
     # Ses as LU
