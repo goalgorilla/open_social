@@ -2,12 +2,14 @@
 
 namespace Drupal\activity_send_push_notification;
 
+use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+
 /**
  * Interface PushInterface.
  *
  * @package Drupal\activity_send_push_notification
  */
-interface PushInterface {
+interface PushInterface extends ContainerFactoryPluginInterface {
 
   /**
    * Build form elements.
