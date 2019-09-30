@@ -83,6 +83,7 @@ class ImageCopyrightAttributeWidget extends ImageWidget {
    * This is the form display setting when this plugin is chosen as widget.
    */
   public function settingsForm(array $form, FormStateInterface $form_state) {
+    $element = parent::settingsForm($form, $form_state);
 
     $element['copyright_attribute'] = [
       '#type' => 'checkbox',
