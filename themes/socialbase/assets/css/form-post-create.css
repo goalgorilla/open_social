@@ -53,6 +53,21 @@
   margin-bottom: 1rem;
 }
 
+.form--post-create .field--name-field-post-image .image-widget.hidden {
+  display: block !important;
+  height: 0;
+  margin-bottom: 0 !important;
+}
+
+.form--post-create .field--name-field-post-image .image-widget.hidden .form-file {
+  display: none;
+}
+
+.form--post-create .field--name-field-post-image .image-widget.hidden .form-submit {
+  position: absolute;
+  z-index: 10;
+}
+
 .form--post-create .field--name-field-post-visibility {
   -webkit-box-flex: 1;
       -ms-flex: 1 1 auto;
@@ -71,6 +86,12 @@
 }
 
 @media (min-width: 600px) {
+  .form--post-create .field--name-field-post-image .image-widget.hidden .form-submit {
+    position: relative;
+    top: -2px;
+    left: 150px;
+    right: auto;
+  }
   .form--post-create .field--name-field-post-image {
     -ms-flex-preferred-size: auto;
         flex-basis: auto;
@@ -89,5 +110,18 @@
     -webkit-box-flex: 0;
         -ms-flex-positive: 0;
             flex-grow: 0;
+  }
+}
+
+@media (max-width: 599px) {
+  .form--post-create .field--name-field-post-image .image-widget.hidden .form-submit {
+    width: 29px;
+    height: 29px;
+    top: 3px;
+    right: 3px;
+  }
+  .form--post-create .field--name-field-post-image .image-widget.hidden .form-submit .ajax-throbber {
+    top: 4px;
+    left: 4px;
   }
 }

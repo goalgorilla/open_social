@@ -152,6 +152,10 @@ class ActivityPostVisibilityAccess extends FilterPluginBase {
 
     $post_status = db_or();
     $post_status->condition('post.status', 1, '=');
+
+    if ($account->hasPermission('view unpublished post entities')) {
+      $post_status->condition('post.status', 0, '=');
+    }
     $post_status->condition('activity__field_activity_entity.field_activity_entity_target_type', 'post', '!=');
     $and_wrapper->condition($post_status);
 

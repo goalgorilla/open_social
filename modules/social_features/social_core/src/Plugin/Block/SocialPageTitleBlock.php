@@ -4,6 +4,7 @@ namespace Drupal\social_core\Plugin\Block;
 
 use Drupal\Core\Controller\TitleResolverInterface;
 use Drupal\Core\Entity\EntityRepositoryInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Symfony\Cmf\Component\Routing\RouteObjectInterface;
@@ -54,6 +55,13 @@ class SocialPageTitleBlock extends PageTitleBlock implements ContainerFactoryPlu
   protected $titleResolver;
 
   /**
+   * The entity type manager.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  protected $entityTypeManager;
+
+  /**
    * EventAddBlock constructor.
    *
    * @param array $configuration
@@ -70,13 +78,16 @@ class SocialPageTitleBlock extends PageTitleBlock implements ContainerFactoryPlu
    *   The entity repository.
    * @param \Drupal\Core\Controller\TitleResolverInterface $title_resolver
    *   The title resolver.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, RouteMatchInterface $route_match, RequestStack $request_stack, EntityRepositoryInterface $entity_repository, TitleResolverInterface $title_resolver) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, RouteMatchInterface $route_match, RequestStack $request_stack, EntityRepositoryInterface $entity_repository, TitleResolverInterface $title_resolver, EntityTypeManagerInterface $entity_type_manager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->routeMatch = $route_match;
     $this->requestStack = $request_stack;
     $this->entityRepository = $entity_repository;
     $this->titleResolver = $title_resolver;
+    $this->entityTypeManager = $entity_type_manager;
   }
 
   /**
@@ -90,7 +101,8 @@ class SocialPageTitleBlock extends PageTitleBlock implements ContainerFactoryPlu
       $container->get('current_route_match'),
       $container->get('request_stack'),
       $container->get('entity.repository'),
-      $container->get('title_resolver')
+      $container->get('title_resolver'),
+      $container->get('entity_type.manager')
     );
   }
 
@@ -132,15 +144,12 @@ class SocialPageTitleBlock extends PageTitleBlock implements ContainerFactoryPlu
         $node->setTitle($translation->getTitle());
       }
 
-      $paths_to_exclude = [
-        'edit',
-        'add',
-        'delete',
-      ];
-
-      $in_path = str_replace($paths_to_exclude, '', $current_path) != $current_path;
-
-      if (!$in_path) {
+      $name = $this->routeMatch->getRouteName();
+      if (!in_array($name, [
+        'entity.node.edit_form',
+        'entity.node.delete_form',
+        'entity.node.add_form',
+      ])) {
 
         $title = $node->getTitle();
 
@@ -148,6 +157,7 @@ class SocialPageTitleBlock extends PageTitleBlock implements ContainerFactoryPlu
           '#theme' => 'page_hero_data',
           '#title' => $title,
           '#node' => $node,
+          '#hero_node' => $this->entityTypeManager->getViewBuilder('node')->view($node, 'hero'),
         ];
 
       }

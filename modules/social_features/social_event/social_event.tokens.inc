@@ -7,6 +7,7 @@
 
 use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\Link;
+use Drupal\social_event\EventEnrollmentInterface;
 
 /**
  * Implements hook_token_info().
@@ -111,7 +112,8 @@ function get_link_to_event_from_enrollment($object_id, $as_link = FALSE) {
     // Check if the event still exists.
     if ($event !== NULL) {
       if ($as_link) {
-        return $event->toUrl('canonical')->toString();
+        $url_string = $event->toUrl('canonical')->toString(TRUE);
+        return $url_string->getGeneratedUrl();
       }
 
       return Link::fromTextAndUrl($event->getTitle(), $event->toUrl('canonical'))->toString();
@@ -142,14 +144,16 @@ function get_name_from_enrollment($id) {
   // User is AN by default.
   $enrollment_name = \Drupal::configFactory()->get('user.settings')->get('anonymous');
 
-  // If there is a Uid. Lets load the user and return his display name.
-  if ($enrollment->hasField('field_account') &&
-    $enrollment->getFieldValue('field_account', 'target_id') > 0) {
-    $entity_storage = \Drupal::entityTypeManager()
-      ->getStorage('user');
-    /** @var \Drupal\user\Entity\User $user */
-    $user = $entity_storage->load($enrollment->getFieldValue('field_account', 'target_id'));
-    return $user->getDisplayName();
+  if (!$enrollment instanceof EventEnrollmentInterface) {
+    // If there is a Uid. Lets load the user and return his display name.
+    if ($enrollment->hasField('field_account') &&
+      $enrollment->getFieldValue('field_account', 'target_id') > 0) {
+      $entity_storage = \Drupal::entityTypeManager()
+        ->getStorage('user');
+      /** @var \Drupal\user\Entity\User $user */
+      $user = $entity_storage->load($enrollment->getFieldValue('field_account', 'target_id'));
+      return $user->getDisplayName();
+    }
   }
 
   // User is AN but has enrollment settings available, lets see if we can get

@@ -1,23 +1,50 @@
 langcode: en
 status: true
 dependencies:
+  module:
+    - node
+    - search_api
   config:
+    - field.storage.node.field_event_date
+    - field.storage.node.field_event_date_end
     - search_api.server.social_database
     - core.entity_view_mode.node.search_index
-  module:
-    - search_api
-    - node
 id: social_content
 name: 'Social Content'
 description: 'Default content index created for the Social distribution.'
 read_only: false
 field_settings:
-  title:
-    label: Title
+  created:
+    label: 'Authored on'
     datasource_id: 'entity:node'
-    property_path: title
-    type: text
-    boost: !!float 8
+    property_path: created
+    type: date
+    dependencies:
+      module:
+        - node
+  field_event_date:
+    label: Start
+    datasource_id: 'entity:node'
+    property_path: field_event_date
+    type: date
+    dependencies:
+      config:
+        - field.storage.node.field_event_date
+  field_event_date_end:
+    label: End
+    datasource_id: 'entity:node'
+    property_path: field_event_date_end
+    type: date
+    dependencies:
+      config:
+        - field.storage.node.field_event_date_end
+  node_grants:
+    label: 'Node access information'
+    property_path: search_api_node_grants
+    type: string
+    indexed_locked: true
+    type_locked: true
+    hidden: true
   rendered_item:
     label: 'Rendered HTML output'
     property_path: rendered_item
@@ -31,11 +58,6 @@ field_settings:
           event: search_index
           page: search_index
           topic: search_index
-  type:
-    label: Type
-    datasource_id: 'entity:node'
-    property_path: type
-    type: string
   status:
     label: 'Publishing status'
     datasource_id: 'entity:node'
@@ -43,6 +65,27 @@ field_settings:
     type: boolean
     indexed_locked: true
     type_locked: true
+    dependencies:
+      module:
+        - node
+  title:
+    label: Title
+    datasource_id: 'entity:node'
+    property_path: title
+    type: text
+    boost: !!float 21
+    dependencies:
+      module:
+        - node
+  type:
+    label: Type
+    datasource_id: 'entity:node'
+    property_path: type
+    type: text
+    boost: !!float 13
+    dependencies:
+      module:
+        - node
   uid:
     label: 'Authored by'
     datasource_id: 'entity:node'
@@ -50,18 +93,9 @@ field_settings:
     type: integer
     indexed_locked: true
     type_locked: true
-  node_grants:
-    label: 'Node access information'
-    property_path: search_api_node_grants
-    type: string
-    indexed_locked: true
-    type_locked: true
-    hidden: true
-  created:
-    label: 'Authored on'
-    datasource_id: 'entity:node'
-    property_path: created
-    type: date
+    dependencies:
+      module:
+        - node
 datasource_settings:
   'entity:node':
     plugin_id: 'entity:node'
@@ -72,6 +106,11 @@ datasource_settings:
       default: true
       selected: {  }
 processor_settings:
+  rendered_item:
+    plugin_id: rendered_item
+    weights:
+      add_properties: 0
+      pre_index_save: -10
   add_url:
     plugin_id: add_url
     weights:
@@ -80,49 +119,24 @@ processor_settings:
     plugin_id: aggregated_field
     weights:
       add_properties: 20
-  content_access:
-    plugin_id: content_access
-    weights:
-      preprocess_index: -10
-      preprocess_query: -10
-  html_filter:
-    plugin_id: html_filter
+  tokenizer:
+    plugin_id: tokenizer
     all_fields: false
     fields:
       - rendered_item
-    title: true
-    alt: true
-    tags:
-      h1: 5
-      h2: 3
-      h3: 2
-      strong: 2
-      b: 2
-      em: 1
-      u: 1
-    weights:
-      preprocess_index: -10
-      preprocess_query: -10
-  ignorecase:
-    plugin_id: ignorecase
-    all_fields: false
-    fields:
       - title
-      - rendered_item
+    spaces: ''
+    overlap_cjk: 1
+    minimum_word_size: '3'
     weights:
-      preprocess_index: -10
-      preprocess_query: -10
-  rendered_item:
-    plugin_id: rendered_item
-    weights:
-      add_properties: 0
-      pre_index_save: -10
+      preprocess_index: -6
+      preprocess_query: -6
   stopwords:
     plugin_id: stopwords
     all_fields: false
     fields:
-      - title
       - rendered_item
+      - title
     stopwords:
       - a
       - an
@@ -162,24 +176,44 @@ processor_settings:
     weights:
       preprocess_index: -5
       preprocess_query: -2
-  tokenizer:
-    plugin_id: tokenizer
+  ignorecase:
+    plugin_id: ignorecase
     all_fields: false
     fields:
-      - title
       - rendered_item
-    spaces: ''
-    overlap_cjk: 1
-    minimum_word_size: '3'
+      - title
     weights:
-      preprocess_index: -6
-      preprocess_query: -6
+      preprocess_index: -10
+      preprocess_query: -10
   transliteration:
     plugin_id: transliteration
     all_fields: false
     fields:
-      - title
       - rendered_item
+      - title
+    weights:
+      preprocess_index: -10
+      preprocess_query: -10
+  content_access:
+    plugin_id: content_access
+    weights:
+      preprocess_index: -10
+      preprocess_query: -10
+  html_filter:
+    plugin_id: html_filter
+    all_fields: false
+    fields:
+      - rendered_item
+    title: true
+    alt: true
+    tags:
+      b: 2
+      em: 1
+      h1: 5
+      h2: 3
+      h3: 2
+      strong: 2
+      u: 1
     weights:
       preprocess_index: -10
       preprocess_query: -10

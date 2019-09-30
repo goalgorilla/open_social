@@ -19,7 +19,6 @@ Feature: Comment on a Post
    Then I should see the success message "Your post has been posted."
     And I should see "This is a community post." in the "Main content front"
     And I should see "PostUser1" in the "Main content front"
-    And I should be on "/stream"
 
         # Scenario: Post a comment on this private post
   Given I am logged in as "PostUser2"

@@ -3,31 +3,26 @@
  * Update the notification bell badge.
  */
 
-(function ($) {
-    /**
-     * Behaviors.
-     */
-    Drupal.behaviors.notificationUpdate = {
-        attach: function (context, settings) {
-            // TODO Implement this with a no-js fallback.
-            var notification_count = $('.notification-bell .badge');
+(function ($, Drupal) {
+  /**
+   * Notification centre bell update behavior.
+   */
+  Drupal.behaviors.notificationUpdate = {
+    attach: function (context) {
+      $('.notification-bell', context)
+        .once('notificationUpdate')
+        .click(this._updateNotificationCount);
+    },
 
-          if (notification_count.val() != "0") {
-              $('.notification-bell').click(function(e) {
-                  $.ajax({
-                      method: 'POST',
-                      url: '/ajax/notifications-mark-as-read',
-                      data: { },
-                      success: function(result) {
-                          // Update the notification bell.
-                          var remaining_notifications = result['remaining_notifications'];
+    _updateNotificationCount: function () {
 
-                          notification_count.html(remaining_notifications);
-                        $('.notification-bell.mobile .badge').html(remaining_notifications);
-                      }
-                    });
-              });
-          }
-        }
+      // We won't proceed if the dropdown is already open.
+      if ($(this).hasClass('open')) {
+        return;
+      }
+
+      // Post to the notification endpoint.
+      $('.dropdown-menu a', this).first().click();
+    }
   };
-})(jQuery);
+})(jQuery, Drupal);

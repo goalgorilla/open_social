@@ -210,7 +210,7 @@ function activity_creator_entity_view(array &$build, EntityInterface $entity, En
     \Drupal::service('activity_creator.activity_notifications')->markEntityNotificationsAsRead($account, $entity);
   }
 
-  // Generate the output text for the user in his selected language.
+  // Generate the output text for the user in it's selected language.
   if ($entity instanceof Activity && !empty($entity->get('field_activity_message')->target_id)) {
     $message = Message::load($entity->get('field_activity_message')->target_id);
     if ($message instanceof Message) {

@@ -4,7 +4,7 @@ namespace Drupal\activity_creator;
 
 use Drupal\activity_creator\Entity\Activity;
 use Drupal\Core\Controller\ControllerBase;
-use Drupal\Core\Entity\Entity;
+use Drupal\Core\Entity\EntityBase;
 use Drupal\Core\Session\AccountInterface;
 
 /**
@@ -56,19 +56,20 @@ class ActivityNotifications extends ControllerBase {
    *
    * @return int
    *   Number of remaining notifications.
+   *
+   * @throws \Drupal\Core\Entity\EntityStorageException
    */
   public function markAllNotificationsAsSeen(AccountInterface $account) {
 
     // Retrieve all the activities referring this entity for this account.
     $ids = $this->getNotificationIds($account, [ACTIVITY_STATUS_RECEIVED]);
 
-    foreach ($ids as $activity_id) {
-      $activity = Activity::load($activity_id);
+    $activities = Activity::loadMultiple($ids);
+    foreach ($activities as $activity) {
       $this->changeStatusOfActivity($activity, ACTIVITY_STATUS_SEEN);
     }
 
-    $remaining_notifications = 0;
-    return $remaining_notifications;
+    return 0;
   }
 
   /**
@@ -76,16 +77,16 @@ class ActivityNotifications extends ControllerBase {
    *
    * @param \Drupal\Core\Session\AccountInterface $account
    *   Account object.
-   * @param \Drupal\Core\Entity\Entity $entity
+   * @param \Drupal\Core\Entity\EntityBase $entity
    *   Entity object.
    */
-  public function markEntityNotificationsAsRead(AccountInterface $account, Entity $entity) {
+  public function markEntityNotificationsAsRead(AccountInterface $account, EntityBase $entity) {
 
     // Retrieve all the activities referring this entity for this account.
     $ids = $this->getNotificationIds($account, [ACTIVITY_STATUS_RECEIVED, ACTIVITY_STATUS_SEEN], $entity);
 
-    foreach ($ids as $activity_id) {
-      $activity = Activity::load($activity_id);
+    $activities = Activity::loadMultiple($ids);
+    foreach ($activities as $activity) {
       $this->changeStatusOfActivity($activity, ACTIVITY_STATUS_READ);
     }
 
@@ -96,16 +97,18 @@ class ActivityNotifications extends ControllerBase {
    *
    * @param \Drupal\Core\Session\AccountInterface $account
    *   Account object.
-   * @param \Drupal\Core\Entity\Entity $entity
+   * @param \Drupal\Core\Entity\EntityBase $entity
    *   Entity object.
+   *
+   * @throws \Drupal\Core\Entity\EntityStorageException
    */
-  public function markEntityAsRead(AccountInterface $account, Entity $entity) {
+  public function markEntityAsRead(AccountInterface $account, EntityBase $entity) {
 
     // Retrieve all the activities referring this entity for this account.
     $ids = $this->getNotificationIds($account, [ACTIVITY_STATUS_RECEIVED, ACTIVITY_STATUS_SEEN], $entity);
 
-    foreach ($ids as $activity_id) {
-      $activity = Activity::load($activity_id);
+    $activities = Activity::loadMultiple($ids);
+    foreach ($activities as $activity) {
       $this->changeStatusOfActivity($activity, ACTIVITY_STATUS_READ);
     }
 
@@ -117,10 +120,13 @@ class ActivityNotifications extends ControllerBase {
    * @param \Drupal\activity_creator\Entity\Activity $activity
    *   Activity object.
    * @param int $status
-   *   See: activity_creator_field_activity_status_allowed_values().
+   *   See: activity_creator_field_activity_status_allowed_values()
    *
-   * @return \Drupal\activity_creator\Entity\Activity
-   *   Returns activity object.
+   * @return bool|int
+   *   SAVED_NEW or SAVED_UPDATED is returned depending on the operation
+   *   performed.
+   *
+   * @throws \Drupal\Core\Entity\EntityStorageException
    */
   public function changeStatusOfActivity(Activity $activity, $status = ACTIVITY_STATUS_RECEIVED) {
     $activity->set('field_activity_status', $status);
@@ -135,13 +141,13 @@ class ActivityNotifications extends ControllerBase {
    *   Account object.
    * @param array $status
    *   Array of statuses.
-   * @param \Drupal\Core\Entity\Entity $entity
+   * @param \Drupal\Core\Entity\EntityBase $entity
    *   Optionally provide a related entity to get the activities for.
    *
    * @return array
    *   Returns an array of notification ids.
    */
-  private function getNotificationIds(AccountInterface $account, array $status = [], Entity $entity = NULL) {
+  private function getNotificationIds(AccountInterface $account, array $status = [], EntityBase $entity = NULL) {
     $destinations = ['notifications'];
 
     $uid = $account->id();

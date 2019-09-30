@@ -53,11 +53,24 @@
             <svg class="icon-gray icon-small">
               <use xlink:href="#icon-lock"></use>
             </svg>
+          {% elseif secret_group_shield %}
+            <svg class="icon-gray icon-small">
+              <use xlink:href="#icon-shield"></use>
+            </svg>
           {% endif %}
           <a href="{{ url }}" rel="bookmark">{{ label }}</a>
         </h4>
       {% endif %}
       {{ title_suffix }}
+        <div class="teaser__content-line">
+            <svg class="teaser__content-type-icon">
+                <use xlink:href="#icon-label"></use>
+            </svg>
+            <span class="teaser__content-text">
+            {{ group_type }}
+            {{ group_settings_help }}
+            </span>
+        </div>
       <div class="teaser__content-line">
         <svg class="teaser__content-type-icon">
           <use xlink:href="#icon-group"></use>

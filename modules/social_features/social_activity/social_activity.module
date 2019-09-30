@@ -5,6 +5,7 @@
  * The Social activity module.
  */
 
+use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Template\Attribute;
 use Drupal\Core\Url;
@@ -20,27 +21,8 @@ function social_activity_social_user_account_header_items(array $context) {
     return [];
   }
 
-  $account = $context['user'];
-
-  $notifications_view = views_embed_view('activity_stream_notifications', 'block_1');
-  // Mark all notifications as seen.
-  $notifications_view['#attached'] = [
-    'library' => [
-      'activity_creator/activity_creator.notifications',
-    ],
-  ];
-
-  // Make sure we check if attached is part of the render array.
-  if (!isset($notifications_view['#attached'])) {
-    $notifications_view['#attached'] = [];
-  }
-  if (!isset($notifications_view['#attached']['library'])) {
-    $notifications_view['#attached']['library'] = [];
-  }
-  $notifications_view['#attached']['library'][] = 'activity_creator/activity_creator.notifications';
-
-  $account_notifications = \Drupal::service('activity_creator.activity_notifications');
-  $num_notifications = count($account_notifications->getNotifications($account, [ACTIVITY_STATUS_RECEIVED]));
+  // Get the total amount of notifications for the user.
+  $num_notifications = social_activity_social_account_notifications_counter($context['user']);
 
   return [
     'notifications' => [
@@ -49,7 +31,6 @@ function social_activity_social_user_account_header_items(array $context) {
         'class' => ['desktop', 'notification-bell'],
       ],
       '#title' => new TranslatableMarkup('Notification Centre'),
-      '#url' => Url::fromRoute('<none>'),
       '#icon' => $num_notifications > 0 ? 'notifications' : 'notifications_none',
       '#label' => new TranslatableMarkup('Notifications'),
       '#notification_count' => $num_notifications,
@@ -62,7 +43,32 @@ function social_activity_social_user_account_header_items(array $context) {
         '#wrapper_attributes' => ['class' => 'divider'],
         '#markup' => '',
       ],
-      'notifications' => $notifications_view,
+      // Element to contain the link for ajaxified view for notifications.
+      'load_link' => [
+        '#title' => '',
+        '#type' => 'link',
+        '#url' => Url::fromRoute('activity_creator.stream.notifications'),
+        '#attributes' => ['class' => 'use-ajax'],
+      ],
+      'notifications' => [
+        '#wrapper_attributes' => ['class' => 'js-notification-center-wrapper'],
+        // @todo: Change ajax throbber to opensocial spinner.
+        // @see: https://www.drupal.org/project/social/issues/3074740
+        '#markup' => '<div className="spinner">
+      <div className="bounce1"></div>
+      <div className="bounce2"></div>
+      <div className="bounce3"></div>
+    </div>',
+        '#attached' => [
+          'library' => [
+            'core/drupal.ajax',
+            'activity_creator/activity_creator.notifications',
+          ],
+        ],
+        '#cache' => [
+          'max-age' => 0,
+        ],
+      ],
       'footer-divider' => [
         '#wrapper_attributes' => ['class' => 'divider'],
         '#markup' => '',
@@ -101,14 +107,14 @@ function social_activity_social_user_account_header_account_links(array $context
     return [];
   }
 
-  $account_notifications = \Drupal::service('activity_creator.activity_notifications');
-  $num_notifications = count($account_notifications->getNotifications($context['user'], [ACTIVITY_STATUS_RECEIVED]));
-
+  // Get the total amount of notifications for the user.
+  $num_notifications = social_activity_social_account_notifications_counter($context['user']);
+  // Depending on the amount of notifications, set a class for the indicator.
   $label_classes = 'hidden';
-
   if ($num_notifications > 0) {
     $label_classes = 'badge badge-accent badge--pill';
-
+    // When there are more than 99 notifications, display this and not
+    // the exact amount.
     if ($num_notifications > 99) {
       $num_notifications = '99+';
     }
@@ -152,10 +158,50 @@ function social_activity_social_user_account_header_items_alter(array &$menu_lin
     return;
   }
 
-  $account_notifications = \Drupal::service('activity_creator.activity_notifications');
-  $num_notifications = count($account_notifications->getNotifications($context['user'], [ACTIVITY_STATUS_RECEIVED]));
-
+  // Get the total amount of notifications for the user.
+  $num_notifications = social_activity_social_account_notifications_counter($context['user']);
   if ($num_notifications > 0) {
     $menu_links['account_box']['#wrapper_attributes']['class'][] = 'has-alert';
   }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function social_activity_theme($existing, $type, $theme, $path) {
+  return [
+    'message_post_teaser' => [
+      'variables' => [
+        'link' => '',
+        'name' => '',
+        'date' => '',
+        'summary' => '',
+      ],
+    ],
+    'message_node_teaser' => [
+      'variables' => [
+        'link' => '',
+        'type' => '',
+      ],
+    ],
+  ];
+}
+
+/**
+ * Wrapper method to get the number of unread notifications.
+ *
+ * @param \Drupal\Core\Session\AccountInterface $account
+ *   Account object to get notifications for.
+ * @param array $status
+ *   Filter by status.
+ *
+ * @return int|void
+ *   Returns the amount of notifications.
+ *
+ * @see \Drupal\activity_creator\ActivityNotifications
+ */
+function social_activity_social_account_notifications_counter(AccountInterface $account, array $status = [ACTIVITY_STATUS_RECEIVED]) {
+  $account_notifications = \Drupal::service('activity_creator.activity_notifications');
+
+  return count($account_notifications->getNotifications($account, $status)) ?? 0;
 }

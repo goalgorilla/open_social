@@ -14,7 +14,7 @@ Feature: Group access roles
     And I am on "user"
     And I click "Groups"
     And I click "Add a group"
-    Then I click radio button "Closed group This is a closed group. Users can only join by invitation and all content added in this group will be hidden for non members." with the id "edit-group-type-closed-group"
+    Then I click radio button "Closed group This is a closed group. Users can only join by invitation and the content in the group is hidden from non members." with the id "edit-group-type-closed-group"
     And I press "Continue"
     When I fill in "Title" with "Test closed group 3"
     And I fill in the "edit-field-group-description-0-value" WYSIWYG editor with "Description text"
@@ -63,7 +63,7 @@ Feature: Group access roles
     And I click "Test closed group 3"
 
   # DS-647 As a LU I want to join a group
-    Then I should see the link "Join" in the "Hero block"
+    Then I should see the link "Join"
     And I click "Join"
     And I should see "Join group Test closed group 3"
     And I should see the button "Cancel"
@@ -80,7 +80,7 @@ Feature: Group access roles
   # As a CM+ member of this closed group I want to leave the group
     When I click "Test closed group 3"
     Then I should see the button "Joined"
-    And I click the element with css selector "#hero .dropdown-toggle"
+    And I press "Joined"
     And I should see the link "Leave group"
     And I click "Leave group"
     And I should see "This action cannot be undone."
