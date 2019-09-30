@@ -24,16 +24,14 @@
     {{ group_settings_help }}
   </div>
 
-  <div class="teaser__content-line">
-    <div class="badge teaser__badge">
-      <div class="badge__container">
-        <svg class="badge__icon">
-          <use xlink:href="#icon-user"></use>
-        </svg>
-        <span class="badge__label">
-          {{ group_members }}
-        </span>
-      </div>
+  <div class="badge teaser__badge">
+    <div class="badge__container">
+      <svg class="badge__icon">
+        <use xlink:href="#icon-group"></use>
+      </svg>
+      <span class="badge__label">
+        {{ group_members }}
+      </span>
     </div>
   </div>
 
@@ -43,9 +41,11 @@
     </span>
   {% endif %}
 
-  <a href="{{ url }}" class="card__link btn btn-default" title="{{ label }}">
-    {% trans %}Read more{% endtrans %}
-  </a>
+  <div class="card__link">
+    <a href="{{ url }}" class="btn btn-default" title="{{ label }}">
+      {% trans %}Read more{% endtrans %}
+    </a>
+  </div>
 
 {% endblock %}
 

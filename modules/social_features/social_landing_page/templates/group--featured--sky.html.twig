@@ -2,19 +2,17 @@
 
 {% block card_title %}
 
-  <div class="teaser__content-line teaser__content-header">
-    <div class="teaser__published">
-      <div class="teaser__tag">
-        {{ group_type }}
-        {{ group_settings_help }}
-      </div>
+  <div class="text__header">
+    <div class="teaser__tag">
+      {{ group_type }}
+      {{ group_settings_help }}
+    </div>
 
-      {% if joined %}
-        <span class="badge teaser__badge badge-secondary">
+    {% if joined %}
+      <span class="badge badge-secondary badge-status">
           {% trans with {'context': 'Is a member'} %}Joined{% endtrans %}
         </span>
-      {% endif %}
-    </div>
+    {% endif %}
   </div>
 
   {{ title_prefix }}
@@ -46,13 +44,14 @@
 {% endblock %}
 
 {% block card_link %}
-
-  <div class="card__actionbar-side">
-    <div class="teaser__content-line">
-      <svg class="teaser__content-type-icon">
-        <use xlink:href="#icon-group"></use>
-      </svg>
-      <span class="teaser__content-text">
+  <div class="badge teaser__badge">
+    <div class="badge__container">
+      <div class="badge__icon">
+        <svg class="teaser__content-type-icon">
+          <use xlink:href="#icon-group"></use>
+        </svg>
+      </div>
+      <span class="badge__label">
         {{ group_members }}
       </span>
     </div>

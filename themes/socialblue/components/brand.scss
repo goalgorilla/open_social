@@ -522,6 +522,24 @@ html:not(.js) .navbar-default {
     }
   }
 
+  .paragraph--featured  {
+    .field--name-field-featured-link a {
+      &:before {
+        background: $brand-primary;
+      }
+
+      &:hover,
+      &:active,
+      &:focus {
+        color: $brand-accent;
+
+        &:before {
+          background: $brand-accent;
+        }
+      }
+    }
+  }
+
   .teaser {
     .card__link {
       .btn {

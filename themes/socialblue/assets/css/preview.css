@@ -1011,6 +1011,55 @@ fieldset[disabled] .btn--twitter.focus {
   z-index: 2;
 }
 
+.socialblue--sky .paragraph--featured .field--name-field-featured-link a {
+  position: relative;
+  float: none;
+  margin-left: 0;
+  padding: 0 30px 0 0;
+  text-transform: uppercase;
+  font-weight: 700;
+  border: none;
+  -webkit-box-shadow: none;
+          box-shadow: none;
+  -webkit-transition: .3s ease-out;
+  transition: .3s ease-out;
+}
+
+.socialblue--sky .paragraph--featured .field--name-field-featured-link a:hover, .socialblue--sky .paragraph--featured .field--name-field-featured-link a:active, .socialblue--sky .paragraph--featured .field--name-field-featured-link a:focus {
+  background: transparent;
+}
+
+.socialblue--sky .paragraph--featured .field--name-field-featured-link a:before, .socialblue--sky .paragraph--featured .field--name-field-featured-link a:after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: 0;
+  -webkit-transform: translateY(-50%);
+          transform: translateY(-50%);
+  -webkit-transition: .3s ease-out;
+  transition: .3s ease-out;
+}
+
+.socialblue--sky .paragraph--featured .field--name-field-featured-link a:before {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  z-index: 1;
+}
+
+.socialblue--sky .paragraph--featured .field--name-field-featured-link a:after {
+  content: '';
+  display: block;
+  right: 5px;
+  margin-top: -1px;
+  padding: 2px;
+  border: solid #fff;
+  border-width: 0 2px 2px 0;
+  -webkit-transform: rotate(-45deg) translateY(-50%);
+          transform: rotate(-45deg) translateY(-50%);
+  z-index: 2;
+}
+
 .form-control {
   color: #555555;
   background-color: #fff;
@@ -1410,7 +1459,7 @@ html.js .input-group-addon .glyphicon.glyphicon-spin {
   border-width: 2px;
 }
 
-.socialblue--sky .teaser:not(.teaser--stream) .badge__label {
+.socialblue--sky .teaser__badge {
   color: #4a4a4a;
 }
 
@@ -2051,6 +2100,18 @@ html:not(.js) .navbar-default .dropdown:focus > a .navbar-nav__icon, html:not(.j
   background: #ffc142;
 }
 
+.socialblue--sky .paragraph--featured .field--name-field-featured-link a:before {
+  background: #29abe2;
+}
+
+.socialblue--sky .paragraph--featured .field--name-field-featured-link a:hover, .socialblue--sky .paragraph--featured .field--name-field-featured-link a:active, .socialblue--sky .paragraph--featured .field--name-field-featured-link a:focus {
+  color: #ffc142;
+}
+
+.socialblue--sky .paragraph--featured .field--name-field-featured-link a:hover:before, .socialblue--sky .paragraph--featured .field--name-field-featured-link a:active:before, .socialblue--sky .paragraph--featured .field--name-field-featured-link a:focus:before {
+  background: #ffc142;
+}
+
 .socialblue--sky .teaser .card__link .btn {
   color: #29abe2;
 }
@@ -2105,6 +2166,12 @@ html:not(.js) .navbar-default .dropdown:focus > a .navbar-nav__icon, html:not(.j
 }
 
 @media (min-width: 900px) {
+  .socialblue--sky .badge-status {
+    margin-left: .5rem;
+    padding: 5px .875rem;
+    font-size: .875rem;
+    font-weight: 300;
+  }
   .socialblue--sky .card--views__sidebar .card__block {
     padding-left: 1.875rem;
     padding-right: 1.875rem;
@@ -2134,12 +2201,6 @@ html:not(.js) .navbar-default .dropdown:focus > a .navbar-nav__icon, html:not(.j
   }
   .nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus {
     border-bottom: 2px solid #29abe2;
-  }
-  .socialblue--sky .badge-status {
-    margin-left: .5rem;
-    padding: 5px .875rem;
-    font-size: .875rem;
-    font-weight: 300;
   }
   .socialblue--sky [id='section-comments'] .card__block {
     padding-left: 3.75rem;
