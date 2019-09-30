@@ -1,0 +1,5 @@
+services:
+  social_profile_privacy.overrider:
+    class: Drupal\social_profile_privacy\RestrictedNameProcessorOverride
+    tags:
+      - { name: config.factory.override, priority: 5 }
