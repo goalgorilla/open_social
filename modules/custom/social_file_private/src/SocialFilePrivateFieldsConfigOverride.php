@@ -3,6 +3,7 @@
 namespace Drupal\social_file_private;
 
 use Drupal\Core\Cache\CacheableMetadata;
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Config\ConfigFactoryOverrideInterface;
 use Drupal\Core\Config\StorageInterface;
 use Drupal\Core\StreamWrapper\PrivateStream;
@@ -15,6 +16,23 @@ use Drupal\Core\StreamWrapper\PrivateStream;
  * @package Drupal\social_file_private
  */
 class SocialFilePrivateFieldsConfigOverride implements ConfigFactoryOverrideInterface {
+
+  /**
+   * The config factory.
+   *
+   * @var \Drupal\Core\Config\ConfigFactoryInterface
+   */
+  protected $configFactory;
+
+  /**
+   * Constructs the configuration override.
+   *
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *   The Drupal configuration factory.
+   */
+  public function __construct(ConfigFactoryInterface $config_factory) {
+    $this->configFactory = $config_factory;
+  }
 
   /**
    * Get all the file and image fields to protect.
@@ -56,8 +74,7 @@ class SocialFilePrivateFieldsConfigOverride implements ConfigFactoryOverrideInte
       $config_names = $this->getFileImageFieldsToProtect();
       foreach ($config_names as $config_name) {
         if (in_array($config_name, $names)) {
-          $config = \Drupal::service('config.factory')->getEditable($config_name);
-          $uri_scheme = $config->get('settings.uri_scheme');
+          $uri_scheme = $this->configFactory->get('settings.uri_scheme');
           if ($uri_scheme == 'public') {
             $overrides[$config_name]['settings']['uri_scheme'] = 'private';
           }
