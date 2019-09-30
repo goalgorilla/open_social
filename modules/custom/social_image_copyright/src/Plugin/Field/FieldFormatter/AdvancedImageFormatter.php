@@ -7,20 +7,20 @@ use Drupal\file\FileInterface;
 use Drupal\image\Plugin\Field\FieldFormatter\ImageFormatter;
 
 /**
- * Plugin implementation of the 'advance image' formatter.
+ * Plugin implementation of the 'Advanced Image' formatter.
  *
  * @FieldFormatter(
- *   id = "advance_image",
- *   label = @Translation("Advance Image"),
+ *   id = "advanced_image",
+ *   label = @Translation("Advanced Image"),
  *   field_types = {
- *      "advance_image",
+ *      "advanced_image",
  *   },
  *   quickedit = {
  *     "editor" = "image"
  *   }
  * )
  */
-class AdvanceImageFormatter extends ImageFormatter {
+class AdvancedImageFormatter extends ImageFormatter {
 
   /**
    * {@inheritdoc}

@@ -17,7 +17,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *   id = "image_copyright_attributes",
  *   label = @Translation("Image copyright"),
  *   field_types = {
- *     "advance_image"
+ *     "advanced_image"
  *   }
  * )
  */

@@ -11,12 +11,12 @@ use Drupal\image\Plugin\Field\FieldType\ImageItem;
  * Plugin implementation of the 'image' field type.
  *
  * @FieldType(
- *   id = "advance_image",
+ *   id = "advanced_image",
  *   label = @Translation("Image Advanced"),
  *   description = @Translation("This field stores the ID of an image file as an integer value."),
  *   category = @Translation("Reference"),
  *   default_widget = "image_copyright_attributes",
- *   default_formatter = "advance_image",
+ *   default_formatter = "advanced_image",
  *   column_groups = {
  *     "file" = {
  *       "label" = @Translation("File"),
@@ -42,7 +42,7 @@ use Drupal\image\Plugin\Field\FieldType\ImageItem;
  *   constraints = {"ReferenceAccess" = {}, "FileValidation" = {}}
  * )
  */
-class AdvanceImageItem extends ImageItem {
+class AdvancedImageItem extends ImageItem {
 
   /**
    * {@inheritdoc}

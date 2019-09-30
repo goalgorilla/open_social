@@ -8,11 +8,11 @@ use Drupal\Core\Config\ConfigFactoryOverrideInterface;
 use Drupal\Core\Config\StorageInterface;
 
 /**
- * Override to add the advance image copyright attribute to the page field.
+ * Override to add the advanced image copyright attribute to the page field.
  */
 class ImageCopyrightAttributePageConfigOverride implements ConfigFactoryOverrideInterface {
 
-  protected const FIELD_TYPE = 'advance_image';
+  protected const FIELD_TYPE = 'advanced_image';
 
   /**
    * The config factory.
