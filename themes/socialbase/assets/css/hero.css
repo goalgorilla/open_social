@@ -58,6 +58,8 @@
           align-items: stretch;
 }
 
+/* IE11 */
+
 .cover-with-canvas .cover-wrap {
   -webkit-box-pack: justify;
       -ms-flex-pack: justify;
@@ -274,5 +276,13 @@
   *::-ms-backdrop, .cover-wrap {
     height: 410px;
   }
-  /* IE11 */
+  *::-ms-backdrop, .cover-wrap.small {
+    height: 206px;
+  }
+  *::-ms-backdrop, .paragraph--hero .cover-wrap {
+    height: 350px;
+  }
+  *::-ms-backdrop, .paragraph--hero-small .cover-wrap {
+    height: 206px;
+  }
 }
