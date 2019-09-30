@@ -49,9 +49,10 @@ class SocialEventManagersSendEmail extends SocialSendEmail {
     LoggerInterface $logger,
     MailManagerInterface $mail_manager,
     LanguageManagerInterface $language_manager,
-    EmailValidator $email_validator
+    EmailValidator $email_validator,
+    $allow_text_format
   ) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition, $token, $entity_type_manager, $logger, $mail_manager, $language_manager, $email_validator);
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $token, $entity_type_manager, $logger, $mail_manager, $language_manager, $email_validator, $allow_text_format);
 
     $this->entityTypeManager = $entity_type_manager;
   }

@@ -70,6 +70,17 @@ function social_demo_drush_command() {
     'aliases' => ['sdr'],
   ];
 
+  $items['social-demo-generate'] = [
+    'description' => dt('Generate demo content.'),
+    'arguments' => [
+      'content_types' => dt('A space-separated list of content types with info on amount.'),
+    ],
+    'examples' => [
+      'drush social-demo-generate user:100 topic:2000 event:500 group:100' => dt('Generates 10000 demo users and 2000 topics.'),
+    ],
+    'aliases' => ['sdg'],
+  ];
+
   return $items;
 }
 
@@ -149,6 +160,36 @@ function _social_demo_convert_content_types(array &$content_types = []) {
   foreach ($content_types as &$content_type) {
     if (isset($replacements[$content_type])) {
       $content_type = $replacements[$content_type];
+    }
+  }
+}
+
+/**
+ * Creates demo content.
+ */
+function drush_social_demo_generate() {
+  \Drupal::currentUser()->setAccount(User::load(1));
+  $input_args = func_get_args();
+  $content_types = [];
+  foreach ($input_args as $input_arg) {
+    $pieces = explode(':', $input_arg);
+    $content_type = $pieces[0];
+    $content_types[] = $content_type;
+    $num_content_types[$content_type] = $pieces[1];
+  }
+
+  $manager = \Drupal::service('plugin.manager.demo_content');
+  $plugins = $manager->createInstances($content_types);
+
+  /** @var \Drupal\social_demo\DemoContentInterface $plugin */
+  foreach ($plugins as $plugin) {
+    $num = $num_content_types[$plugin->getPluginId()];
+    $definition = $plugin->getPluginDefinition();
+    $plugin->createContent(TRUE, $num);
+    $count = $plugin->count();
+
+    if ($count !== FALSE) {
+      drush_log("{$count} {$definition['label']}(s) created", LogLevel::SUCCESS);
     }
   }
 }

@@ -7,6 +7,7 @@
 
 use Drupal\Component\Utility\Xss;
 use Drupal\file\Entity\File;
+use Drupal\social_swiftmail\Element\SocialSwiftmailTextFormat;
 
 /**
  * Preprocess swift template.
@@ -140,4 +141,20 @@ function social_swiftmail_get_logo($theme_id) {
   }
 
   return $logo;
+}
+
+/**
+ * Implements hook_element_info_alter().
+ */
+function social_swiftmail_element_info_alter(array &$info) {
+  if (isset($info['text_format'])) {
+    if (!isset($info['text_format']['#process'])) {
+      $info['text_format']['#process'] = [];
+    }
+
+    $info['text_format']['#process'][] = [
+      SocialSwiftmailTextFormat::class,
+      'process',
+    ];
+  }
 }

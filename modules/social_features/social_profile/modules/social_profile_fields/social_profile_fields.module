@@ -8,6 +8,7 @@
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Entity\Entity\EntityViewDisplay;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Session\AccountInterface;
@@ -222,5 +223,16 @@ function social_profile_fields_social_user_export_plugin_info_alter(array &$plug
         }
       }
     }
+  }
+}
+
+/**
+ * Implements hook_entity_bundle_field_info_alter().
+ */
+function social_profile_fields_entity_bundle_field_info_alter(&$fields, EntityTypeInterface $entity_type, $bundle) {
+  // Add the unique nickname constraint.
+  if ($bundle === 'profile' && isset($fields['field_profile_nick_name']) && $entity_type->id() === 'profile'
+    && \Drupal::config('social_profile_fields.settings')->get('nickname_unique_validation')) {
+    $fields['field_profile_nick_name']->addConstraint('UniqueNickname', []);
   }
 }
