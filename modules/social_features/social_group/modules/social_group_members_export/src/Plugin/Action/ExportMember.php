@@ -48,10 +48,9 @@ class ExportMember extends ExportUser {
   /**
    * {@inheritdoc}
    */
-  public function getFileTemporaryPath() {
+  protected function generateFilePath() : string {
     $hash = md5(microtime(TRUE));
-    $filename = 'export-members-' . substr($hash, 20, 12) . '.csv';
-    return file_directory_temp() . '/' . $filename;
+    return 'export-members-' . substr($hash, 20, 12) . '.csv';
   }
 
 }
