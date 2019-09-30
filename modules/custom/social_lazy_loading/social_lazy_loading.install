@@ -10,7 +10,7 @@
  *
  * Perform actions related to the installation of social_language.
  */
-function social_lazy_loading() {
+function social_lazy_loading_install() {
   // Enable the submodule, it's standalone so don't depend on it.
   install_lazy_loading_images();
 }
@@ -27,7 +27,7 @@ function install_lazy_loading_images() {
 }
 
 /**
- * Implements hook_update_N().
+ * Install social_lazy_loading_images module.
  */
 function social_lazy_loading_update_8601() {
   install_lazy_loading_images();
