@@ -53,12 +53,7 @@ class SocialLandingPageConfigOverride implements ConfigFactoryOverrideInterface 
     }
 
     $config_names = [
-      'core.entity_form_display.paragraph.block.default',
-      'core.entity_form_display.paragraph.featured.default',
-      'core.entity_form_display.paragraph.featured_item.default',
-      'core.entity_form_display.paragraph.hero.default',
-      'core.entity_form_display.paragraph.hero_small.default',
-      'core.entity_form_display.paragraph.introduction.default',
+      'core.entity_form_display.paragraph.section.default',
     ];
 
     foreach ($config_names as $config_name) {
@@ -72,7 +67,7 @@ class SocialLandingPageConfigOverride implements ConfigFactoryOverrideInterface 
         $overrides[$config_name]['content']['field_roles'] = [
           'region' => 'content',
           'type' => 'options_select',
-          'weight' => 5,
+          'weight' => 1,
           'third_party_settings' => [],
           'settings' => [],
         ];

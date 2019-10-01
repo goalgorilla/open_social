@@ -74,8 +74,8 @@ Feature: Create Landing Page
     And I fill in the following:
       | field_landing_page_section[3][subform][field_section_paragraph][0][subform][field_block_link][0][uri]   | /explore   |
       | field_landing_page_section[3][subform][field_section_paragraph][0][subform][field_block_link][0][title] | Block Link for CM+ |
-    And I click the xth "1" element with the css ".select2-selection__choice__remove"
-    And I click the xth "0" element with the css ".select2-selection__choice__remove"
+    And I click the xth "1" element with the css ".form-item-field-landing-page-section-3-subform-field-roles .select2-selection__choice__remove"
+    And I click the xth "0" element with the css ".form-item-field-landing-page-section-3-subform-field-roles .select2-selection__choice__remove"
     # Set URL Alias
     And I click "URL path settings"
     And I set alias as "landingpage"
