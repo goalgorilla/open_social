@@ -46,8 +46,6 @@ Feature: Edit group type after creation
       And I wait for AJAX to finish
     Then I should see "Please note that changing the group type will also change the visibility of the group content and the way users can join the group"
       And I press "Save"
-    # TODO: Uncomment this step - https://www.drupal.org/project/social/issues/3047912
-    # Then I should see "Updating Group Content..."
       And I wait for the batch job to finish
     Then I should see "Nescafe"
 
