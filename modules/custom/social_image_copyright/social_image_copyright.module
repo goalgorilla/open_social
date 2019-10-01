@@ -5,3 +5,9 @@
  * Contains main module functions.
  */
 
+/**
+ * Implements hook_page_attachments().
+ */
+function social_image_copyright_page_attachments(array &$attachments) {
+  $attachments['#attached']['library'][] = 'social_image_copyright/attribute.copyright';
+}
