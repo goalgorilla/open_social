@@ -30,6 +30,9 @@ function _social_gdpr_set_permissions() {
       user_role_grant_permissions($role->id(), $permissions);
     }
   }
+
+  // Only for AN.
+  user_role_grant_permissions('anonymous', ['without consent']);
 }
 
 /**
@@ -43,9 +46,7 @@ function _social_gdpr_set_permissions() {
  */
 function _social_gdpr_get_permissions($role) {
   // Anonymous.
-  $permissions['anonymous'] = [
-    'without consent',
-  ];
+  $permissions['anonymous'] = [];
 
   // Authenticated.
   $permissions['authenticated'] = array_merge($permissions['anonymous'], []);
