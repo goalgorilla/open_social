@@ -5,13 +5,36 @@
  * Install, update and uninstall functions for the social_image_copyright module.
  */
 
+use Drupal\Core\Database\Database;
+
 /**
  * Implements hook_install().
  *
  * Perform actions on install related to the image copyright fields.
  */
 function social_image_copyright_install() {
+  $spec = [
+    'type' => 'varchar',
+    'description' => "Image copyright text, for the image's 'copyright' attribute.",
+    'length' => 1024,
+  ];
 
+  $schema = Database::getConnection()->schema();
+  $entity_definitions = \Drupal::entityDefinitionUpdateManager();
+  $change_list = $entity_definitions->getChangeList();
+  if (!empty($change_list['node']['field_storage_definitions'])) {
+    // Check all changed definitions and update the tables.
+    foreach ($change_list['node']['field_storage_definitions'] as $field_name => $value) {
+      // Update field table.
+      if (!$schema->fieldExists('node__' . $field_name, $field_name . '_copyright')) {
+        $schema->addField('node__' . $field_name, $field_name . '_copyright', $spec);
+      }
+      // Update revisions table.
+      if (!$schema->fieldExists('node_revision__' . $field_name, $field_name . '_copyright')) {
+        $schema->addField('node_revision__' . $field_name, $field_name . '_copyright', $spec);
+      }
+    }
+  }
 }
 
 
@@ -22,4 +45,32 @@ function social_image_copyright_install() {
  */
 function social_image_copyright_uninstall() {
 
+}
+
+/**
+ * Add the copyright storage to image field definitions.
+ */
+function social_image_copyright_update_8007() {
+  $spec = [
+    'type' => 'varchar',
+    'description' => "Image copyright text, for the image's 'copyright' attribute.",
+    'length' => 1024,
+  ];
+
+  $schema = Database::getConnection()->schema();
+  $entity_definitions = \Drupal::entityDefinitionUpdateManager();
+  $change_list = $entity_definitions->getChangeList();
+  if (!empty($change_list['node']['field_storage_definitions'])) {
+    // Check all changed definitions and update the tables.
+    foreach ($change_list['node']['field_storage_definitions'] as $field_name => $value) {
+      // Update field table.
+      if (!$schema->fieldExists('node__' . $field_name, $field_name . '_copyright')) {
+        $schema->addField('node__' . $field_name, $field_name . '_copyright', $spec);
+      }
+      // Update revisions table.
+      if (!$schema->fieldExists('node_revision__' . $field_name, $field_name . '_copyright')) {
+        $schema->addField('node_revision__' . $field_name, $field_name . '_copyright', $spec);
+      }
+    }
+  }
 }
