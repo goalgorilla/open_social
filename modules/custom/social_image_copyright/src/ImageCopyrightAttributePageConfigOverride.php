@@ -39,8 +39,18 @@ class ImageCopyrightAttributePageConfigOverride implements ConfigFactoryOverride
    */
   private function configFieldOverrides() {
     return [
-      // Page.
+      // Book pages.
+      'field.field.node.book.field_book_image' => 'field_book_image',
+      // Events.
+      'field.field.node.event.field_event_image' => 'field_event_image',
+      // Landing pages.
+      'field.field.paragraph.hero.field_hero_image' => 'field_hero_image',
+      'field.field.paragraph.hero_small.field_hero_small_image' => 'field_hero_small_image',
+      'field.field.paragraph.featured_item.field_featured_item_image' => 'field_featured_item_image',
+      // Pages.
       'field.field.node.page.field_page_image' => 'field_page_image',
+      // Topics.
+      'field.field.node.topic.field_topic_image' => 'field_topic_image',
     ];
   }
 
@@ -52,7 +62,18 @@ class ImageCopyrightAttributePageConfigOverride implements ConfigFactoryOverride
    */
   private function configStorageOverrides() {
     return [
+      // Book pages.
+      'field.storage.node.field_book_image' => 'field_book_image',
+      // Events.
+      'field.storage.node.field_event_image' => 'field_event_image',
+      // Landing pages.
+      'field.storage.paragraph.field_hero_image' => 'field_hero_image',
+      'field.storage.paragraph.field_hero_small_image' => 'field_hero_small_image',
+      'field.storage.paragraph.field_featured_item_image' => 'field_featured_item_image',
+      // Pages.
       'field.storage.node.field_page_image' => 'field_page_image',
+      // Topics.
+      'field.storage.node.field_topic_image' => 'field_topic_image',
     ];
   }
 
@@ -64,8 +85,18 @@ class ImageCopyrightAttributePageConfigOverride implements ConfigFactoryOverride
    */
   private function configDisplayOverrides() {
     return [
-      // Page.
+      // Book pages.
+      'core.entity_form_display.node.book.default' => 'field_book_image',
+      // Events.
+      'core.entity_form_display.node.event.default' => 'field_event_image',
+      // Landing pages.
+      'core.entity_view_display.paragraph.hero.default' => 'field_hero_image',
+      'core.entity_view_display.paragraph.hero_small.default' => 'field_hero_small_image',
+      'core.entity_view_display.paragraph.featured_item.default' => 'field_featured_item_image',
+      // Pages.
       'core.entity_form_display.node.page.default' => 'field_page_image',
+      // Topics.
+      'core.entity_form_display.node.topic.default' => 'field_topic_image',
     ];
   }
 
