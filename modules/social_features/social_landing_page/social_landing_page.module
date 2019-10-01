@@ -39,10 +39,8 @@ function social_landing_page_form_alter(array &$form, FormStateInterface $form_s
  * Remove Landing Page option from Search Content filter.
  */
 function social_landing_page_form_views_exposed_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-  if ($form['#id'] === 'views-exposed-form-search-content-page') {
-    if (isset($form['type']['#options']['landing_page'])) {
-      unset($form['type']['#options']['landing_page']);
-    }
+  if ($form['#id'] === 'views-exposed-form-search-content-page' && isset($form['type']['#options']['landing_page'])) {
+    unset($form['type']['#options']['landing_page']);
   }
 }
 
@@ -50,19 +48,25 @@ function social_landing_page_form_views_exposed_form_alter(&$form, FormStateInte
  * Implements hook_entity_access().
  */
 function social_landing_page_entity_access(EntityInterface $entity, $operation, AccountInterface $account) {
-  if ($entity->getEntityTypeId() === 'paragraph') {
-    if ($entity->hasField('field_roles')) {
-      $field_roles = $entity->get('field_roles')->getValue();
-      $current_user = \Drupal::currentUser();
-      $user_roles = $current_user->getRoles();
-      foreach ($field_roles as $field_role) {
-        if (in_array($field_role["value"], $user_roles)) {
-          return AccessResult::neutral();
-        }
+  // If we're viewing a paragraph we want to see if we need to exclude people
+  // based on the Role selection.
+  if ($operation === 'view' && $entity->getEntityTypeId() === 'paragraph' && $entity->hasField('field_roles')) {
+    $field_roles = $entity->get('field_roles')->getValue();
+    $user_roles = $account->getRoles();
+
+    foreach ($field_roles as $field_role) {
+      // If the user has a role which is allowed to view the Paragraph, return
+      // neutral.
+      if (in_array($field_role['value'], $user_roles)) {
+        return AccessResult::neutral();
       }
-      return AccessResult::forbidden();
     }
+
+    // Use may not view this Paragraph.
+    return AccessResult::forbidden();
   }
+
+  // In any other case, return neutral.
   return AccessResult::neutral();
 }
 
