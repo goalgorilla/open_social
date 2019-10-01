@@ -76,6 +76,12 @@ function social_core_preprocess_node(&$variables) {
     if (!empty($node->{$image_field}->entity)) {
       $variables['hero_styled_image_url'] = ImageStyle::load('social_xx_large')
         ->buildUrl($node->{$image_field}->entity->getFileUri());
+
+      // Check if module is enabled. Then add copyright attribute.
+      if (NULL !== $node->{$image_field}->copyright
+        && \Drupal::service('module_handler')->moduleExists('social_image_copyright')) {
+        $variables['hero_styled_image_attr']['data-copyright'] = $node->{$image_field}->copyright;
+      }
     }
     else {
       // If machine name too long or using another image field.
@@ -88,6 +94,12 @@ function social_core_preprocess_node(&$variables) {
           if (!empty(($node->get($field->getName())->entity))) {
             $variables['hero_styled_image_url'] = ImageStyle::load('social_xx_large')
               ->buildUrl($node->get($field->getName())->entity->getFileUri());
+
+            // Check if module is enabled. Then add copyright attribute.
+            if (NULL !== $node->get($field->getName())->copyright
+              && \Drupal::service('module_handler')->moduleExists('social_image_copyright')) {
+              $variables['hero_styled_image_attr']['data-copyright'] = $node->get($field->getName())->copyright;
+            }
           }
         }
       }

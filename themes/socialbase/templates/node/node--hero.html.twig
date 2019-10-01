@@ -78,8 +78,14 @@
 {%
   set cover_wrap_classes = group_hero_small ? 'cover-wrap small' : 'cover-wrap'
 %}
-
-<div{{ attributes.addClass(cover_classes) }} {% if hero_styled_image_url %} style="background-image: url('{{ hero_styled_image_url }}');" {% endif %}>
+<div{{ attributes.addClass(cover_classes) }}
+  {% if hero_styled_image_url %}
+    style="background-image: url('{{ hero_styled_image_url }}');"
+  {% endif %}
+  {% if hero_styled_image_attr %}
+    {{ attributes.setAttribute('data-copyright', hero_styled_image_attr)  }}
+  {% endif %}
+>
   <div class="hero__bgimage-overlay"></div>
   {% if node_edit_url %}
     <div class="hero-action-button">
