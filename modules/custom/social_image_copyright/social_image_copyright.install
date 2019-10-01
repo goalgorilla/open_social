@@ -46,37 +46,3 @@ function social_image_copyright_install() {
 function social_image_copyright_uninstall() {
 
 }
-
-/**
- * Add the copyright storage to image field definitions.
- */
-function social_image_copyright_update_8008() {
-  $spec = [
-    'type' => 'varchar',
-    'description' => "Image copyright text, for the image's 'copyright' attribute.",
-    'length' => 1024,
-  ];
-
-  $schema = Database::getConnection()->schema();
-  $entity_definitions = \Drupal::entityDefinitionUpdateManager();
-  $change_list = $entity_definitions->getChangeList();
-  if (!empty($change_list)) {
-    foreach ($change_list as $type => $changes) {
-      // Check all changed definitions and update the tables.
-      foreach ($changes['field_storage_definitions'] as $field_name => $value) {
-        // Update field table.
-        if (!$schema->fieldExists($type . '__' . $field_name, $field_name . '_copyright')) {
-          $schema->addField($type . '__' . $field_name, $field_name . '_copyright', $spec);
-        }
-        // Update revisions table if it exists.
-        if ($schema->tableExists($type . '_revision__' . $field_name)
-          && !$schema->fieldExists($type . '_revision__' . $field_name, $field_name . '_copyright')) {
-          $schema->addField($type . '_revision__' . $field_name, $field_name . '_copyright', $spec);
-        }
-      }
-    }
-
-
-
-  }
-}
