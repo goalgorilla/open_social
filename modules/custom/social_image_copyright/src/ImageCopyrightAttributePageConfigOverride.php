@@ -51,6 +51,12 @@ class ImageCopyrightAttributePageConfigOverride implements ConfigFactoryOverride
       'field.field.node.page.field_page_image' => 'field_page_image',
       // Topics.
       'field.field.node.topic.field_topic_image' => 'field_topic_image',
+      // Groups.
+      'field.field.group.open_group.field_group_image' => 'field_group_image',
+      'field.field.group.closed_group.field_group_image' => 'field_group_image',
+      'field.field.group.public_group.field_group_image' => 'field_group_image',
+      'field.field.group.flexible_group.field_group_image' => 'field_group_image',
+      'field.field.group.secret_group.field_group_image' => 'field_group_image',
     ];
   }
 
@@ -74,6 +80,8 @@ class ImageCopyrightAttributePageConfigOverride implements ConfigFactoryOverride
       'field.storage.node.field_page_image' => 'field_page_image',
       // Topics.
       'field.storage.node.field_topic_image' => 'field_topic_image',
+      // Groups.
+      'field.storage.group.field_group_image' => 'field_group_image',
     ];
   }
 
@@ -97,6 +105,12 @@ class ImageCopyrightAttributePageConfigOverride implements ConfigFactoryOverride
       'core.entity_form_display.node.page.default' => 'field_page_image',
       // Topics.
       'core.entity_form_display.node.topic.default' => 'field_topic_image',
+      // Groups.
+      'core.entity_form_display.group.open_group.default' => 'field_group_image',
+      'core.entity_form_display.group.closed_group.default' => 'field_group_image',
+      'core.entity_form_display.group.public_group.default' => 'field_group_image',
+      'core.entity_form_display.group.flexible_group.default' => 'field_group_image',
+      'core.entity_form_display.group.secret_group.default' => 'field_group_image',
     ];
   }
 
