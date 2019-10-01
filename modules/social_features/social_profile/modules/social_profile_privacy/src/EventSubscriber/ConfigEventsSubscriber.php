@@ -7,7 +7,6 @@ use Drupal\Core\Config\ConfigEvents;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
-use Drupal\search_api\SearchApiException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -75,6 +74,7 @@ class ConfigEventsSubscriber implements EventSubscriberInterface {
    *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   * @throws \Drupal\search_api\SearchApiException
    */
   public function configSave(ConfigCrudEvent $event) {
     // We're only interested in the settings for this module.
@@ -99,23 +99,13 @@ class ConfigEventsSubscriber implements EventSubscriberInterface {
       ->getStorage('search_api_index')
       ->loadMultiple();
 
-    // Check if the search index has profile entities as data source in which
-    // case we'll have to re-index all items with the change in settings.
     /** @var \Drupal\search_api\IndexInterface $index */
     foreach ($indexes as $index) {
+      // Check if the search index has profile entities as data source.
       if ($index->isValidDatasource('entity:profile')) {
-        try {
-          $index->reindex();
-        }
-        catch (SearchApiException $exception) {
-          $this->logger->error(
-            'Could not mark index "@index" for re-indexing. @exception',
-            [
-              '@index' => $index->label(),
-              '@exception' => $exception->getMessage(),
-            ]
-          );
-        }
+        // Mark any indexed items based on profile entities as having changed so
+        // they are re-indexed.
+        $index->getTrackerInstance()->trackAllItemsUpdated('entity:profile');
       }
     }
   }
