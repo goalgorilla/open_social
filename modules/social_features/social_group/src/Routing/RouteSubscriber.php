@@ -59,6 +59,7 @@ class RouteSubscriber extends RouteSubscriberBase {
       $requirements['_custom_access'] = "\Drupal\social_group\Controller\SocialGroupController::myGroupAccess";
       $route->setRequirements($requirements);
     }
+
   }
 
 }
