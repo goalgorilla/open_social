@@ -228,7 +228,7 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
     }
 
     $actions = &$wrapper['actions'];
-    if (!empty($actions)) {
+    if (!empty($actions) && !empty($wrapper['action'])) {
       $actions['#theme'] = 'links__dropbutton__operations__actions';
       $actions['#label'] = $this->t('Actions');
       $actions['#type'] = 'dropbutton';
@@ -249,7 +249,7 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
 
     // Remove the Views select list and submit button.
     $form['actions']['#type'] = 'hidden';
-    $form['header']['social_views_bulk_operations_bulk_form_enrollments']['action']['#access'] = FALSE;
+    $form['header']['social_views_bulk_operations_bulk_form_enrollments_1']['action']['#access'] = FALSE;
   }
 
   /**
