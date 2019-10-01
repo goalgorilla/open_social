@@ -67,11 +67,7 @@ function _social_gdpr_get_permissions($role) {
     'administer inform and consent settings',
     'change inform and consent setting status',
   ]);
-
-  // An authenticated user should give consent when it necessary.
-  $id = array_search('without consent', $permissions['authenticated']);
-  unset($permissions['authenticated'][$id]);
-
+  
   if (isset($permissions[$role])) {
     return $permissions[$role];
   }
