@@ -19,6 +19,8 @@ use Drupal\profile\Entity\Profile;
 use Drupal\profile\Entity\ProfileType;
 use Drupal\user\Entity\User;
 use Drupal\user\UserInterface;
+use Drupal\block\Entity\Block;
+use Drupal\Core\Access\AccessResult;
 
 define('SOCIAL_PROFILE_SUGGESTIONS_USERNAME', 'username');
 define('SOCIAL_PROFILE_SUGGESTIONS_FULL_NAME', 'full_name');
@@ -377,6 +379,18 @@ function social_profile_preprocess_profile(array &$variables) {
       ->buildUrl($profile->field_profile_image->entity->getFileUri());
   }
 
+  // Prepare variables for statistic block.
+  $storage = \Drupal::entityTypeManager()->getStorage('node');
+  $variables['profile_topics'] = count($storage->loadByProperties([
+    'uid' => $user->id(),
+    'type' => 'topic',
+  ]));
+  $variables['profile_events'] = count($storage->loadByProperties([
+    'uid' => $user->id(),
+    'type' => 'event',
+  ]));
+  $variables['profile_groups'] = count(\Drupal::service('social_group.helper_service')->getAllGroupsForUser($user->id()));
+
 }
 
 /**
@@ -660,24 +674,24 @@ function social_profile_social_user_account_header_account_links(array $context)
 
   return [
     'my_profile' => [
-      '#type' => 'link',
-      '#attributes' => [
-        'title' => new TranslatableMarkup('View my profile'),
-      ],
-      '#title' => new TranslatableMarkup('My profile'),
-      '#weight' => 500,
-    ] + Url::fromRoute('user.page')->toRenderArray(),
+        '#type' => 'link',
+        '#attributes' => [
+          'title' => new TranslatableMarkup('View my profile'),
+        ],
+        '#title' => new TranslatableMarkup('My profile'),
+        '#weight' => 500,
+      ] + Url::fromRoute('user.page')->toRenderArray(),
     'edit_profile' => [
-      '#type' => 'link',
-      '#attributes' => [
-        'title' => new TranslatableMarkup("Edit profile"),
-      ],
-      '#title' => new TranslatableMarkup("Edit profile"),
-      '#weight' => 1300,
-    ] + Url::fromRoute('entity.profile.type.user_profile_form', [
-      'user' => $context['user']->id(),
-      'profile_type' => 'profile',
-    ])->toRenderArray(),
+        '#type' => 'link',
+        '#attributes' => [
+          'title' => new TranslatableMarkup("Edit profile"),
+        ],
+        '#title' => new TranslatableMarkup("Edit profile"),
+        '#weight' => 1300,
+      ] + Url::fromRoute('entity.profile.type.user_profile_form', [
+        'user' => $context['user']->id(),
+        'profile_type' => 'profile',
+      ])->toRenderArray(),
   ];
 }
 
@@ -710,4 +724,18 @@ function social_profile_social_user_account_header_items_alter(array &$menu_item
     ->getViewBuilder('profile')
     ->view($profile, 'small');;
 
+}
+
+/**
+ * Implements hook_block_access().
+ */
+function social_profile_block_access(Block $block, $operation, AccountInterface $account) {
+  // Show statistic block only when new style is enabled.
+  if ($operation == 'view' && $block->getPluginId() === 'profile_statistic_block') {
+    if (theme_get_setting('style') !== 'sky') {
+      return AccessResult::forbidden();
+    }
+  }
+  // No opinion for other situations.
+  return AccessResult::neutral();
 }
