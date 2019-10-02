@@ -425,14 +425,6 @@ function social_profile_user_insert(UserInterface $account) {
         'uid' => $account->id(),
       ];
 
-      // Get all field instances for the profile entity and check if the address
-      // field exists.
-      $instances = \Drupal::service('entity_field.manager')->getFieldDefinitions('profile', $profile_type->id());
-      if (array_key_exists('field_profile_address', $instances)) {
-        // Set the users default country to the site default country.
-        $default_values['field_profile_address'][0]['country_code'] = \Drupal::config('system.date')->get('country.default');
-      }
-
       // Create a profile.
       $profile = Profile::create($default_values);
       $profile->save();
