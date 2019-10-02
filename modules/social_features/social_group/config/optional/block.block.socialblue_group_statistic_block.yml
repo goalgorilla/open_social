@@ -1,0 +1,26 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - social_group
+    - system
+  theme:
+    - socialblue
+id: socialblue_group_statistic_block
+theme: socialblue
+region: complementary_top
+weight: -100
+provider: null
+plugin: group_statistic_block
+settings:
+  id: group_statistic_block
+  label: 'Group statistic block'
+  provider: social_group
+  label_display: '0'
+  context_mapping: {  }
+visibility:
+  request_path:
+    id: request_path
+    pages: "/group/*/stream\r\n/group/*/about\r\n/group/*/events\r\n/group/*/topics\r\n/group/*/members\r\n/group/*/discussions"
+    negate: false
+    context_mapping: {  }

@@ -317,10 +317,20 @@ function social_group_preprocess_group(array &$variables) {
       }
     }
   }
-
   // Count number of group members.
-  $group_members_count = \Drupal::service('social_group.group_members_count');
-  $variables['group_members'] = $group_members_count->getGroupMemberCount($group);
+  $variables['group_members'] = count($group->getMembers());
+
+  // Prepare variables for statistic block.
+  if ($group->getGroupType()->hasContentPlugin('group_node:event')) {
+    $variables['group_events'] = count($group->getContent('group_node:event'));
+  }
+  if ($group->getGroupType()->hasContentPlugin('group_node:topic')) {
+    $variables['group_topics'] = count($group->getContent('group_node:topic'));
+  }
+  if ($group->getGroupType()->id() !== 'closed_group' || $group->getMember($account) || $group->hasPermission('manage all groups', $account)) {
+    $variables['group_stream_url'] = Url::fromUserInput('/group/' . $group->id() . '/stream');
+  }
+
 }
 
 /**
@@ -1273,6 +1283,7 @@ function social_group_block_access(Block $block, $operation, AccountInterface $a
     'views_block:groups-block_user_groups',
     'views_block:upcoming_events-upcoming_events_group',
     'views_block:latest_topics-group_topics_block',
+    'group_statistic_block',
   ];
   if (!in_array($block_id, $managed_blocks)) {
     return AccessResult::neutral();
@@ -1324,6 +1335,12 @@ function social_group_block_access(Block $block, $operation, AccountInterface $a
       return AccessResult::forbidden();
     }
     return $access;
+  }
+  // Show statistic block only when new style is enabled.
+  if ($operation == 'view' && $block->getPluginId() === 'group_statistic_block') {
+    if (theme_get_setting('style') !== 'sky') {
+      return AccessResult::forbidden();
+    }
   }
 
   return AccessResult::neutral();
