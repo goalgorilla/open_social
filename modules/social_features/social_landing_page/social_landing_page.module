@@ -52,6 +52,12 @@ function social_landing_page_entity_access(EntityInterface $entity, $operation, 
   // based on the Role selection.
   if ($operation === 'view' && $entity->getEntityTypeId() === 'paragraph' && $entity->hasField('field_roles')) {
     $field_roles = $entity->get('field_roles')->getValue();
+
+    // Return neutral if no roles are selected.
+    if (empty($field_roles)) {
+      return AccessResult::neutral();
+    }
+
     $user_roles = $account->getRoles();
 
     foreach ($field_roles as $field_role) {
