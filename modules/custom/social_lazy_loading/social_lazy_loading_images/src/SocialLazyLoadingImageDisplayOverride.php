@@ -3,7 +3,6 @@
 namespace Drupal\social_lazy_loading_images;
 
 use Drupal\Core\Cache\CacheableMetadata;
-use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Config\ConfigFactoryOverrideInterface;
 use Drupal\Core\Config\StorageInterface;
 
@@ -13,23 +12,6 @@ use Drupal\Core\Config\StorageInterface;
  * @package Drupal\social_lazy_loading_images
  */
 class SocialLazyLoadingImageDisplayOverride implements ConfigFactoryOverrideInterface {
-
-  /**
-   * The config factory.
-   *
-   * @var \Drupal\Core\Config\ConfigFactoryInterface
-   */
-  protected $configFactory;
-
-  /**
-   * Constructs the configuration override.
-   *
-   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
-   *   The configuration factory.
-   */
-  public function __construct(ConfigFactoryInterface $config_factory) {
-    $this->configFactory = $config_factory;
-  }
 
   /**
    * {@inheritdoc}
@@ -82,38 +64,11 @@ class SocialLazyLoadingImageDisplayOverride implements ConfigFactoryOverrideInte
     ];
 
     foreach ($config_fields as $config_name => $field_name) {
-      $this->addImageOverride($config_name, $field_name, $overrides);
+      $overrides[$config_name]['dependencies']['module']['lazy'] = 'lazy';
+      $overrides[$config_name]['content'][$field_name]['third_party_settings']['lazy'] = ['lazy_image' => '1'];
     }
 
     return $overrides;
-  }
-
-  /**
-   * Alters the filter settings for the text format.
-   *
-   * @param string $config_name
-   *   A config name to override.
-   * @param string $field_name
-   *   A field to override.
-   * @param array $overrides
-   *   An override configuration.
-   */
-  protected function addImageOverride($config_name, $field_name, array &$overrides) {
-    if (!empty($config_name) && !empty($field_name)) {
-      $config = $this->configFactory->getEditable($config_name);
-      $dependencies = $config->getOriginal('dependencies.module');
-      $overrides[$config_name]['dependencies']['module'] = $dependencies;
-      $overrides[$config_name]['dependencies']['module'][] = 'lazy';
-
-      $settings = $config->getOriginal('content.' . $field_name . 'third_party_settings');
-
-      $overrides[$config_name]['content'][$field_name]['third_party_settings'] = $settings;
-      $overrides[$config_name]['content'][$field_name]['third_party_settings'] = [
-        'lazy' => [
-          'lazy_image' => '1',
-        ],
-      ];
-    }
   }
 
   /**
