@@ -64,8 +64,10 @@ class SocialLazyLoadingImageDisplayOverride implements ConfigFactoryOverrideInte
     ];
 
     foreach ($config_fields as $config_name => $field_name) {
-      $overrides[$config_name]['dependencies']['module']['lazy'] = 'lazy';
-      $overrides[$config_name]['content'][$field_name]['third_party_settings']['lazy'] = ['lazy_image' => '1'];
+      if (in_array($config_name, $names)) {
+        $overrides[$config_name]['dependencies']['module']['lazy'] = 'lazy';
+        $overrides[$config_name]['content'][$field_name]['third_party_settings']['lazy'] = ['lazy_image' => '1'];
+      }
     }
 
     return $overrides;
