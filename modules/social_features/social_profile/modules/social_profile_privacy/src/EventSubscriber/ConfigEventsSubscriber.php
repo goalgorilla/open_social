@@ -77,17 +77,28 @@ class ConfigEventsSubscriber implements EventSubscriberInterface {
    * @throws \Drupal\search_api\SearchApiException
    */
   public function configSave(ConfigCrudEvent $event) {
-    // We're only interested in the settings for this module.
-    if ($event->getConfig()->getName() !== 'social_profile_privacy.settings') {
-      return;
-    }
+    // A list of configuration changes that trigger an index update.
+    $triggers = [
+      'social_profile_privacy.settings' => 'limit_search_and_mention',
+      'social_profile_fields.settings' => 'profile_profile_field_profile_nick_name',
+    ];
 
-    // We only need to act if the setting controlling our custom processor has
-    // changed.
-    if (!$event->isChanged('limit_search_and_mention')) {
-      return;
+    // If the config that changed is part of our trigger list and the value that
+    // changed is one we're interested in, perform the re-index.
+    $config_name = $event->getConfig()->getName();
+    if (isset($triggers[$config_name]) && $event->isChanged($triggers[$config_name])) {
+      $this->invalidateSearchIndices();
     }
+  }
 
+  /**
+   * Invalidates the search indices for every index that uses profile data.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   * @throws \Drupal\search_api\SearchApiException
+   */
+  protected function invalidateSearchIndices() : void {
     // If the search api module is not installed we have nothing to do.
     if (!$this->moduleHandler->moduleExists('search_api')) {
       return;
