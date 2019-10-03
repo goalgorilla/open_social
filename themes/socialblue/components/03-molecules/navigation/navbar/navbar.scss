@@ -301,17 +301,36 @@
   }
 
   .navbar-secondary {
+    min-height: 44px;
+    box-shadow: none;
+
+    @include for-tablet-landscape-up {
+      flex: 0 0 (100%/1.5);
+      max-width: (100%/1.5);
+      border-radius: 5px 5px 0 0;
+      order: 1;
+    }
+
     .navbar-nav {
       li {
         a {
+          padding-top: 8px;
+          padding-bottom: 9px;
+          border: none;
+          font-size: .875rem;
+          font-weight: 700;
+          text-transform: uppercase;
           opacity: 1;
-          border-bottom-width: 3px;
+
+          @include for-tablet-landscape-up {
+            padding-right: 20px;
+            padding-left: 20px;
+          }
 
           &:hover,
           &:active,
           &:focus {
             background: transparent;
-            border-bottom-color: #fff;
             color: #fff;
           }
         }
@@ -319,10 +338,14 @@
         &.active {
           a {
             color: #fff;
-            border-bottom-color: #fff;
           }
         }
       }
     }
+  }
+
+  // Secondary navigation on the user page.
+  &.navbar-secondary {
+
   }
 }

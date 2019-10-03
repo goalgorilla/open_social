@@ -47,8 +47,10 @@
     {{ page.hero }}
   {% endif %}
 
-  {% if page.secondary_navigation %}
-    {{ page.secondary_navigation }}
+  {% if not style == 'sky' %}
+    {% if page.secondary_navigation %}
+      {{ page.secondary_navigation }}
+    {% endif %}
   {% endif %}
 
   {% if page.content_top %}
@@ -61,6 +63,12 @@
 
       {% if page.title and display_page_title %}
         {{ page.title }}
+      {% endif %}
+
+      {% if style == 'sky' %}
+        {% if page.secondary_navigation %}
+          {{ page.secondary_navigation }}
+        {% endif %}
       {% endif %}
 
       {% if page.complementary_top or page.complementary_bottom %}

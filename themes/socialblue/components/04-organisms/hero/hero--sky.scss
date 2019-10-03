@@ -346,7 +346,6 @@
     }
   }
 
-
   // Hero banner static for event teaser pages.
   &.page-node-type-event .hero__banner-static {
     @include for-tablet-portrait-up {
@@ -450,6 +449,23 @@
 
         padding-bottom: 20px;
       }
+    }
+  }
+
+  //Profile Hero Banner.
+  &.path-user {
+    .cover-wrap {
+      @include for-tablet-landscape-down {
+        min-height: 160px;
+      }
+    }
+  }
+
+  //Profile/Group Hero Banner.
+  &.path-user,
+  &.path-group {
+    .cover-wrap {
+      max-width: 1200px;
     }
   }
 }

@@ -502,6 +502,12 @@ html:not(.js) .navbar-default {
     }
   }
 
+  [class*='statistic-block'] {
+    .hero-footer__cta .btn-default {
+      color: $brand-primary;
+    }
+  }
+
   .card--views__sidebar {
     .card__actionbar {
       .btn {
@@ -518,6 +524,24 @@ html:not(.js) .navbar-default {
             background: $brand-accent;
           }
         }
+      }
+    }
+  }
+
+  .card__link--arrow {
+    color: $brand-primary;
+
+    &:before {
+      background: $brand-primary;
+    }
+
+    &:hover,
+    &:active,
+    &:focus {
+      color: $brand-accent;
+
+      &:before {
+        background: $brand-accent;
       }
     }
   }
