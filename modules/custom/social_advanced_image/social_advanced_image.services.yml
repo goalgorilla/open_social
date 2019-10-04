@@ -3,7 +3,7 @@ services:
     class: Drupal\social_advanced_image\AdvancedImageAttributesManager
     arguments: ['@module_handler', '@cache.discovery']
 
-  image_copyright.overrider:
+  advanced_image_attributes.overrider:
     class: Drupal\social_advanced_image\AdvancedImageAttributeEntityConfigOverride
     arguments: ['@config.factory']
     tags:
