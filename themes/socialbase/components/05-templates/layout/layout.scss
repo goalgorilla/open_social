@@ -274,12 +274,14 @@
 
     .region--secondary-navigation {
       position: relative;
-      z-index: 2;
+      z-index: 3;
 
       @include for-tablet-landscape-up {
         display: flex;
         justify-content: flex-end;
         margin: -44px 0 0;
+        padding-left: 2rem;
+        padding-right: 1rem;
       }
 
       @include for-desktop-up {
@@ -287,6 +289,7 @@
         margin-left: auto;
         margin-right: auto;
         padding-left: 1.5rem;
+        padding-right: 0;
       }
     }
 

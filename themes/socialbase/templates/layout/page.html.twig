@@ -39,8 +39,10 @@
 
 <main id="content" class="main-container" role="main">
 
-  {% if page.breadcrumb %}
-    {{ page.breadcrumb }}
+  {% if not style == 'sky' %}
+    {% if page.breadcrumb %}
+      {{ page.breadcrumb }}
+    {% endif %}
   {% endif %}
 
   {% if page.hero %}

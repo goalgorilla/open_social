@@ -466,6 +466,65 @@
   &.path-group {
     .cover-wrap {
       max-width: 1200px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+  }
+
+  &.path-group {
+    .cover-wrap {
+      padding: 0 2.25rem;
+
+      .page-title {
+        width: 100%;
+        max-width: 100%;
+        text-align: left;
+      }
+
+      h1 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        line-height: 32px;
+        text-shadow: none;
+        margin: 0;
+
+        @include for-tablet-landscape-up {
+          font-size: 2.25rem;
+          line-height: 1.4;
+        }
+      }
+
+      .teaser__tag {
+        display: inline-block;
+        width: auto;
+        padding: 4px 11px;
+        margin-bottom: .875rem;
+        font-size: 14px;
+        color: #fff;
+        border-radius: 2px;
+        text-shadow: none;
+
+        @include for-tablet-landscape-down {
+          padding-left: 7px;
+          padding-right: 7px;
+          font-size: 11px;
+        }
+
+        &:hover {
+          color: #fff;
+        }
+      }
+
+      .hero-footer {
+        padding-top: 0;
+      }
+
+      .hero-footer__text {
+        flex: 0 0 100%;
+        max-width: 100%;
+        margin: 0;
+        text-align: left;
+      }
     }
   }
 }

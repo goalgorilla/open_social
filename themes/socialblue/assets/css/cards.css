@@ -69,6 +69,7 @@ body:not(.socialblue--sky) .complementary--content-merged {
           box-shadow: none;
   -webkit-transition: .3s ease-out;
   transition: .3s ease-out;
+  font-size: .875rem;
 }
 
 .socialblue--sky .card__link--arrow:hover, .socialblue--sky .card__link--arrow:active, .socialblue--sky .card__link--arrow:focus {
@@ -298,7 +299,7 @@ body:not(.socialblue--sky) .complementary--content-merged {
 
 .socialblue--sky [class*='statistic-block'] {
   position: relative;
-  padding: 1rem 1.875rem;
+  padding: 1rem 1.875rem 0;
   background: #fafafa;
   -webkit-box-shadow: none;
           box-shadow: none;
@@ -322,13 +323,12 @@ body:not(.socialblue--sky) .complementary--content-merged {
 }
 
 .socialblue--sky [class*='statistic-block'] .card__actionbar {
-  padding-left: 0;
-  padding-right: 0;
+  padding: 1.5rem 0;
 }
 
-.socialblue--sky [class*='statistic-block'] > *:last-child {
-  margin-bottom: 0;
-  padding-bottom: 0;
+.socialblue--sky [class*='statistic-block'] .card__actionbar {
+  padding-left: 0;
+  padding-right: 0;
 }
 
 .socialblue--sky [class*='statistic-block'].block-profile-statistic-block {
@@ -502,6 +502,12 @@ body:not(.socialblue--sky) .complementary--content-merged {
 }
 
 @media (max-width: 899px) {
+  .socialblue--sky .complementary--content-merged {
+    margin-bottom: 0;
+  }
+  .socialblue--sky .content-merged .complementary--content-merged {
+    margin-bottom: 0;
+  }
   .socialblue--sky [class*='statistic-block'] {
     margin-bottom: 0;
     border-radius: 0 !important;

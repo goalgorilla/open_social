@@ -141,6 +141,7 @@ body:not(.socialblue--sky) {
 
   .card__link--arrow {
     @include btn-link__arrow(18px, 18px, 5px, 2px);
+    font-size: .875rem;
   }
 
   section:not(.content-merged) {
@@ -175,6 +176,7 @@ body:not(.socialblue--sky) {
 
   // Content Merged.
   .card__content-merged {
+
     > h4 {
       margin-bottom: 1.25rem;
 
@@ -219,6 +221,12 @@ body:not(.socialblue--sky) {
   }
 
   // Content merged for Sidebar.
+  .complementary--content-merged {
+    @include for-tablet-landscape-down {
+      margin-bottom: 0;
+    }
+  }
+
   .content-merged {
     .region--complementary {
       .card {
@@ -239,6 +247,10 @@ body:not(.socialblue--sky) {
 
     .complementary--content-merged {
       background: #fff;
+
+      @include for-tablet-landscape-down {
+        margin-bottom: 0;
+      }
     }
 
     .region--complementary-top,
@@ -269,7 +281,7 @@ body:not(.socialblue--sky) {
   // Statistic block.
   [class*='statistic-block'] {
     position: relative;
-    padding: 1rem 1.875rem;
+    padding: 1rem 1.875rem 0;
     background: #fafafa;
     box-shadow: none;
 
@@ -306,6 +318,10 @@ body:not(.socialblue--sky) {
       }
     }
 
+    .card__actionbar {
+      padding: 1.5rem 0;
+    }
+
     //.btn-group__chellange {
     //  > div {
     //    display: flex;
@@ -327,11 +343,6 @@ body:not(.socialblue--sky) {
     .card__actionbar {
       padding-left: 0;
       padding-right: 0;
-    }
-
-    > *:last-child {
-      margin-bottom: 0;
-      padding-bottom: 0;
     }
 
     &.block-profile-statistic-block {
