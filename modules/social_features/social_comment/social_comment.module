@@ -173,6 +173,16 @@ function social_comment_comment_links_alter(array &$links, CommentInterface $ent
       'title' => t('Unpublish'),
       'url' => Url::fromRoute('social_comment.unpublish', ['comment' => $entity->id()]),
     ];
+
+    if (\Drupal::moduleHandler()->moduleExists('social_ajax_comments')) {
+      $links['comment']['#links']['comment-unpublish']['url'] = Url::fromRoute('social_ajax_comments.unpublish', ['comment' => $entity->id()]);
+      $links['comment']['#links']['comment-unpublish']['attributes']['class'] = [
+        'use-ajax',
+        'js-use-ajax-comments',
+        'js-ajax-comments-unpublish',
+        'js-ajax-comments-unpublish-' . $entity->id(),
+      ];
+    }
   }
 
   if ($bundle === 'post_comment') {
