@@ -17,7 +17,7 @@ use Drupal\image_widget_crop\Plugin\Field\FieldWidget\ImageCropWidget;
  *   }
  * )
  */
-class ImageCropCopyrightAttributeWidget extends ImageCropWidget {
+class AdvancedImageCropAttributeWidget extends ImageCropWidget {
 
   /**
    * {@inheritdoc}

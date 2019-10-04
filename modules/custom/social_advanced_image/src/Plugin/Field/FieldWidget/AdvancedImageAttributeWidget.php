@@ -21,7 +21,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *   }
  * )
  */
-class ImageCopyrightAttributeWidget extends ImageWidget {
+class AdvancedImageAttributeWidget extends ImageWidget {
 
   /**
    * The copyright attribute manager.
