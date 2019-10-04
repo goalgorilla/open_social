@@ -21,17 +21,29 @@ function social_advanced_image_install() {
 
   $schema = Database::getConnection()->schema();
   $entity_definitions = \Drupal::entityDefinitionUpdateManager();
-  $change_list = $entity_definitions->getChangeList();
-  if (!empty($change_list['node']['field_storage_definitions'])) {
-    // Check all changed definitions and update the tables.
-    foreach ($change_list['node']['field_storage_definitions'] as $field_name => $value) {
-      // Update field table.
-      if (!$schema->fieldExists('node__' . $field_name, $field_name . '_copyright')) {
-        $schema->addField('node__' . $field_name, $field_name . '_copyright', $spec);
-      }
-      // Update revisions table.
-      if (!$schema->fieldExists('node_revision__' . $field_name, $field_name . '_copyright')) {
-        $schema->addField('node_revision__' . $field_name, $field_name . '_copyright', $spec);
+  $changes_list = $entity_definitions->getChangeList();
+  if (!empty($changes_list)) {
+    // Check which entity types require an update.
+    foreach ($changes_list as $type => $change) {
+      // Check all changed definitions and update the tables.
+      if (!empty($change['field_storage_definitions'])) {
+        // For each entity type we are going to execute the field storage definitions.
+        foreach ($change['field_storage_definitions'] as $field_name => $change_type) {
+
+          // Update field table.
+          if ($schema->tableExists($type . '__' . $field_name)
+            && !$schema->fieldExists($type . '__' . $field_name, $field_name . '_copyright')) {
+            // Add the field to the table.
+            $schema->addField('node__' . $field_name, $field_name . '_copyright', $spec);
+          }
+
+          // Update revisions table.
+          if ($schema->tableExists($type . '_revision__' . $field_name)
+            && !$schema->fieldExists($type . '_revision__' . $field_name, $field_name . '_copyright')) {
+            // Add the field to the table.
+            $schema->addField('node_revision__' . $field_name, $field_name . '_copyright', $spec);
+          }
+        }
       }
     }
   }
