@@ -34,14 +34,14 @@ function social_advanced_image_install() {
           if ($schema->tableExists($type . '__' . $field_name)
             && !$schema->fieldExists($type . '__' . $field_name, $field_name . '_copyright')) {
             // Add the field to the table.
-            $schema->addField('node__' . $field_name, $field_name . '_copyright', $spec);
+            $schema->addField($type . '__' . $field_name, $field_name . '_copyright', $spec);
           }
 
           // Update revisions table.
           if ($schema->tableExists($type . '_revision__' . $field_name)
             && !$schema->fieldExists($type . '_revision__' . $field_name, $field_name . '_copyright')) {
             // Add the field to the table.
-            $schema->addField('node_revision__' . $field_name, $field_name . '_copyright', $spec);
+            $schema->addField($type . '_revision__' . $field_name, $field_name . '_copyright', $spec);
           }
         }
       }
@@ -60,7 +60,7 @@ function social_advanced_image_uninstall() {
 }
 
 /**
- * Increase download count flood window from 2 to 5 seconds.
+ * Add the correct copyright fields.
  */
 function social_advanced_image_update_8001(&$sandbox) {
   $spec = [
@@ -84,14 +84,14 @@ function social_advanced_image_update_8001(&$sandbox) {
           if ($schema->tableExists($type . '__' . $field_name)
             && !$schema->fieldExists($type . '__' . $field_name, $field_name . '_copyright')) {
             // Add the field to the table.
-            $schema->addField('node__' . $field_name, $field_name . '_copyright', $spec);
+            $schema->addField($type . '__' . $field_name, $field_name . '_copyright', $spec);
           }
 
           // Update revisions table.
           if ($schema->tableExists($type . '_revision__' . $field_name)
             && !$schema->fieldExists($type . '_revision__' . $field_name, $field_name . '_copyright')) {
             // Add the field to the table.
-            $schema->addField('node_revision__' . $field_name, $field_name . '_copyright', $spec);
+            $schema->addField($type . '_revision__' . $field_name, $field_name . '_copyright', $spec);
           }
         }
       }
