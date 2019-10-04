@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\social_image_copyright\Plugin\Field\FieldType;
+namespace Drupal\social_advanced_image\Plugin\Field\FieldType;
 
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\Form\FormStateInterface;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\social_image_copyright;
+namespace Drupal\social_advanced_image;
 
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Config\ConfigFactoryInterface;
@@ -10,7 +10,7 @@ use Drupal\Core\Config\StorageInterface;
 /**
  * Override to add the advanced image copyright attribute to the page field.
  */
-class ImageCopyrightAttributePageConfigOverride implements ConfigFactoryOverrideInterface {
+class AdvancedImageAttributeEntityConfigOverride implements ConfigFactoryOverrideInterface {
 
   protected const FIELD_TYPE = 'advanced_image';
 
@@ -159,7 +159,7 @@ class ImageCopyrightAttributePageConfigOverride implements ConfigFactoryOverride
    */
   protected function addImageFieldOverride($config_name, $field_name, array &$overrides) {
     if (!empty($config_name) && !empty($field_name)) {
-      // Add dependency to social_image_copyright module.
+      // Add dependency to social_advanced_image module.
       $this->addModuleDependencies($config_name, $overrides);
 
       // Add copyright attribute field settings.
@@ -182,13 +182,13 @@ class ImageCopyrightAttributePageConfigOverride implements ConfigFactoryOverride
    */
   protected function addImageStorageOverride($config_name, $field_name, array &$overrides) {
     if (!empty($config_name) && !empty($field_name)) {
-      // Add dependency to social_image_copyright module.
+      // Add dependency to social_advanced_image module.
       $this->addModuleDependencies($config_name, $overrides);
 
       // Add copyright attribute field settings.
       $overrides[$config_name]['type'] = self::FIELD_TYPE;
       $overrides[$config_name]['settings']['default_image']['copyright'] = '';
-      $overrides[$config_name]['module'] = 'social_image_copyright';
+      $overrides[$config_name]['module'] = 'social_advanced_image';
     }
   }
 
@@ -204,7 +204,7 @@ class ImageCopyrightAttributePageConfigOverride implements ConfigFactoryOverride
    */
   protected function addImageDisplayOverride($config_name, $field_name, array &$overrides) {
     if (!empty($config_name) && !empty($field_name)) {
-      // Add dependency to social_image_copyright module.
+      // Add dependency to social_advanced_image module.
       $this->addModuleDependencies($config_name, $overrides);
 
       // Add copyright attribute field settings.
@@ -246,7 +246,7 @@ class ImageCopyrightAttributePageConfigOverride implements ConfigFactoryOverride
     $config = $this->configFactory->getEditable($config_name);
     $dependencies = $config->getOriginal('dependencies.module');
     $overrides[$config_name]['dependencies']['module'] = $dependencies;
-    $overrides[$config_name]['dependencies']['module'][] = 'social_image_copyright';
+    $overrides[$config_name]['dependencies']['module'][] = 'social_advanced_image';
   }
 
 }

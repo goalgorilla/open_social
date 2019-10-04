@@ -1,13 +1,13 @@
 <?php
 
-namespace Drupal\social_image_copyright\Plugin\Field\FieldWidget;
+namespace Drupal\social_advanced_image\Plugin\Field\FieldWidget;
 
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\ElementInfoManagerInterface;
 use Drupal\image\Plugin\Field\FieldWidget\ImageWidget;
-use Drupal\social_image_copyright\ImageCopyrightAttributeManager;
+use Drupal\social_advanced_image\AdvancedImageAttributesManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -26,7 +26,7 @@ class ImageCopyrightAttributeWidget extends ImageWidget {
   /**
    * The copyright attribute manager.
    *
-   * @var \Drupal\social_image_copyright\ImageCopyrightAttributeManager
+   * @var \Drupal\social_advanced_image\AdvancedImageAttributesManager
    */
   protected $imageCrManager;
 
@@ -45,10 +45,10 @@ class ImageCopyrightAttributeWidget extends ImageWidget {
    *   Any third party settings.
    * @param \Drupal\Core\Render\ElementInfoManagerInterface $element_info
    *   The element info manager.
-   * @param \Drupal\social_image_copyright\ImageCopyrightAttributeManager $copyright_attribute_manager
+   * @param \Drupal\social_advanced_image\AdvancedImageAttributesManager $copyright_attribute_manager
    *   The copyright attribute manager.
    */
-  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, array $third_party_settings, ElementInfoManagerInterface $element_info, ImageCopyrightAttributeManager $copyright_attribute_manager) {
+  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, array $third_party_settings, ElementInfoManagerInterface $element_info, AdvancedImageAttributesManager $copyright_attribute_manager) {
     parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $third_party_settings, $element_info);
     $this->imageCrManager = $copyright_attribute_manager;
   }

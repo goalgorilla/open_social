@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\social_image_copyright\Plugin\Field\FieldWidget;
+namespace Drupal\social_advanced_image\Plugin\Field\FieldWidget;
 
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Form\FormStateInterface;

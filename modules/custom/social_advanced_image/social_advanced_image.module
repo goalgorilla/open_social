@@ -1,0 +1,13 @@
+<?php
+
+/**
+ * @file
+ * Contains main module functions.
+ */
+
+/**
+ * Implements hook_page_attachments().
+ */
+function social_advanced_image_page_attachments(array &$attachments) {
+  $attachments['#attached']['library'][] = 'social_advanced_image/attribute.copyright';
+}

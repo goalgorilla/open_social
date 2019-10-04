@@ -1,10 +1,10 @@
 services:
   plugin.manager.image_copyright_attributes:
-    class: Drupal\social_image_copyright\ImageCopyrightAttributeManager
+    class: Drupal\social_advanced_image\AdvancedImageAttributesManager
     arguments: ['@module_handler', '@cache.discovery']
 
   image_copyright.overrider:
-    class: Drupal\social_image_copyright\ImageCopyrightAttributePageConfigOverride
+    class: Drupal\social_advanced_image\AdvancedImageAttributeEntityConfigOverride
     arguments: ['@config.factory']
     tags:
       - { name: config.factory.override, priority: 5 }

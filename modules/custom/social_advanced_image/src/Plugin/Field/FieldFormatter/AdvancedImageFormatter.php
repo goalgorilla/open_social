@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\social_image_copyright\Plugin\Field\FieldFormatter;
+namespace Drupal\social_advanced_image\Plugin\Field\FieldFormatter;
 
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\file\FileInterface;

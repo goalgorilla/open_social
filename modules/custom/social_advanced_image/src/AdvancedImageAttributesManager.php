@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\social_image_copyright;
+namespace Drupal\social_advanced_image;
 
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
@@ -9,10 +9,10 @@ use Drupal\Core\Plugin\DefaultPluginManager;
 /**
  * Class ImageCopyrightAttributeManager.
  */
-class ImageCopyrightAttributeManager extends DefaultPluginManager {
+class AdvancedImageAttributesManager extends DefaultPluginManager {
 
   /**
-   * ImageCopyrightAttributeManager constructor.
+   * AdvancedImageAttributesManager constructor.
    *
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    *   The module handler.
