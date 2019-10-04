@@ -10,8 +10,8 @@ use Drupal\image_widget_crop\Plugin\Field\FieldWidget\ImageCropWidget;
  * Plugin implementation of the 'image crop copyright' attribute.
  *
  * @FieldWidget(
- *   id = "image_crop_copyright_attribute",
- *   label = @Translation("Image crop copyright"),
+ *   id = "advance_image_crop_attributes",
+ *   label = @Translation("Advanced Crop Image"),
  *   field_types = {
  *     "advanced_image"
  *   }

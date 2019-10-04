@@ -209,7 +209,7 @@ class AdvancedImageAttributeEntityConfigOverride implements ConfigFactoryOverrid
 
       // Add copyright attribute field settings.
       $overrides[$config_name]['content'][$field_name]['copyright_attribute'] = 1;
-      $overrides[$config_name]['content'][$field_name]['type'] = 'image_crop_copyright_attribute';
+      $overrides[$config_name]['content'][$field_name]['type'] = 'advance_image_crop_attributes';
     }
   }
 
