@@ -14,8 +14,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * Plugin implementation of the 'image copyright' widget.
  *
  * @FieldWidget(
- *   id = "image_copyright_attributes",
- *   label = @Translation("Image copyright"),
+ *   id = "advance_image_attributes",
+ *   label = @Translation("Advanced Image"),
  *   field_types = {
  *     "advanced_image"
  *   }

@@ -15,7 +15,7 @@ use Drupal\image\Plugin\Field\FieldType\ImageItem;
  *   label = @Translation("Image Advanced"),
  *   description = @Translation("This field stores the ID of an image file as an integer value."),
  *   category = @Translation("Reference"),
- *   default_widget = "image_copyright_attributes",
+ *   default_widget = "advance_image_attributes",
  *   default_formatter = "advanced_image",
  *   column_groups = {
  *     "file" = {
