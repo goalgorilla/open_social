@@ -64,7 +64,7 @@ class ImageCopyrightAttributeWidget extends ImageWidget {
       $configuration['settings'],
       $configuration['third_party_settings'],
       $container->get('plugin.manager.element_info'),
-      $container->get('plugin.manager.image_copyright_attributes')
+      $container->get('plugin.manager.advanced_image_attributes')
     );
   }
 
