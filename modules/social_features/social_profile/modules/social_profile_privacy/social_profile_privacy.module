@@ -145,8 +145,7 @@ function social_profile_privacy_form_alter(&$form, FormStateInterface $form_stat
       $settings_form_id = $field_groups['settings_form_id'];
       $profile = $form_state->getFormObject()->getEntity();
       $account = \Drupal::routeMatch()->getParameter('user');
-
-      $uid = $account->id();
+      $uid = $account ? $account->id() : NULL;
       if (empty($uid)) {
         $uid = $profile->get('uid')->target_id;
       }
