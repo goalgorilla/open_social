@@ -79,7 +79,7 @@ function social_core_preprocess_node(&$variables) {
 
       // Check if module is enabled. Then add copyright attribute.
       if (NULL !== $node->{$image_field}->copyright
-        && \Drupal::service('module_handler')->moduleExists('social_image_copyright')) {
+        && \Drupal::service('module_handler')->moduleExists('social_advanced_image')) {
         $variables['hero_styled_image_attr']['data-copyright'] = $node->{$image_field}->copyright;
       }
     }
@@ -97,7 +97,7 @@ function social_core_preprocess_node(&$variables) {
 
             // Check if module is enabled. Then add copyright attribute.
             if (NULL !== $node->get($field->getName())->copyright
-              && \Drupal::service('module_handler')->moduleExists('social_image_copyright')) {
+              && \Drupal::service('module_handler')->moduleExists('social_advanced_image')) {
               $variables['hero_styled_image_attr']['data-copyright'] = $node->get($field->getName())->copyright;
             }
           }
