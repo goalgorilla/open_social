@@ -46,7 +46,6 @@ class AdvancedImageAttributeEntityConfigOverride implements ConfigFactoryOverrid
       // Landing pages.
       'field.field.paragraph.hero.field_hero_image' => 'field_hero_image',
       'field.field.paragraph.hero_small.field_hero_small_image' => 'field_hero_small_image',
-      'field.field.paragraph.featured_item.field_featured_item_image' => 'field_featured_item_image',
       // Pages.
       'field.field.node.page.field_page_image' => 'field_page_image',
       // Topics.
@@ -75,7 +74,6 @@ class AdvancedImageAttributeEntityConfigOverride implements ConfigFactoryOverrid
       // Landing pages.
       'field.storage.paragraph.field_hero_image' => 'field_hero_image',
       'field.storage.paragraph.field_hero_small_image' => 'field_hero_small_image',
-      'field.storage.paragraph.field_featured_item_image' => 'field_featured_item_image',
       // Pages.
       'field.storage.node.field_page_image' => 'field_page_image',
       // Topics.
@@ -100,7 +98,6 @@ class AdvancedImageAttributeEntityConfigOverride implements ConfigFactoryOverrid
       // Landing pages.
       'core.entity_view_display.paragraph.hero.default' => 'field_hero_image',
       'core.entity_view_display.paragraph.hero_small.default' => 'field_hero_small_image',
-      'core.entity_view_display.paragraph.featured_item.default' => 'field_featured_item_image',
       // Pages.
       'core.entity_form_display.node.page.default' => 'field_page_image',
       // Topics.
