@@ -5,8 +5,11 @@ namespace Drupal\social_group\Controller;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\TempStore\PrivateTempStoreFactory;
 use Drupal\group\Entity\Group;
 use Drupal\user\Entity\User;
+use Drupal\views_bulk_operations\Form\ViewsBulkOperationsFormTrait;
+use Drupal\views_bulk_operations\Service\ViewsBulkOperationsActionProcessorInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -14,6 +17,23 @@ use Symfony\Component\HttpFoundation\RequestStack;
  * Returns responses for Social Group routes.
  */
 class SocialGroupController extends ControllerBase {
+
+  use ViewsBulkOperationsFormTrait;
+
+  /**
+   * The tempstore service.
+   *
+   * @var \Drupal\Core\TempStore\PrivateTempStoreFactory
+   */
+  protected $tempStoreFactory;
+
+  /**
+   * Views Bulk Operations action processor.
+   *
+   * @var \Drupal\views_bulk_operations\Service\ViewsBulkOperationsActionProcessorInterface
+   */
+  protected $actionProcessor;
+
 
   /**
    * The request.
@@ -27,9 +47,15 @@ class SocialGroupController extends ControllerBase {
    *
    * @param \Symfony\Component\HttpFoundation\RequestStack $requestStack
    *   The request stack.
+   * @param \Drupal\Core\TempStore\PrivateTempStoreFactory $tempStoreFactory
+   *   Private temporary storage factory.
+   * @param \Drupal\views_bulk_operations\Service\ViewsBulkOperationsActionProcessorInterface $actionProcessor
+   *   Views Bulk Operations action processor.
    */
-  public function __construct(RequestStack $requestStack) {
+  public function __construct(RequestStack $requestStack, PrivateTempStoreFactory $tempStoreFactory, ViewsBulkOperationsActionProcessorInterface $actionProcessor) {
     $this->requestStack = $requestStack;
+    $this->tempStoreFactory = $tempStoreFactory;
+    $this->actionProcessor = $actionProcessor;
   }
 
   /**
@@ -37,7 +63,9 @@ class SocialGroupController extends ControllerBase {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('request_stack')
+      $container->get('request_stack'),
+      $container->get('tempstore.private'),
+      $container->get('views_bulk_operations.processor')
     );
   }
 
