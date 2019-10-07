@@ -37,7 +37,7 @@
     </a>
   </div>
 {% elseif profile_edit_url %}
-  <div class="hero-footer__cta">
+  <div class="hero-footer__cta card__link">
     <a href="{{ profile_edit_url }}" title="{% trans %}Edit profile information{% endtrans %}" class="btn btn-default">
       {% trans %} Edit profile {% endtrans %}
     </a>
@@ -45,7 +45,7 @@
 {% endif %}
 
 <footer class="card__actionbar">
-  <a href="{{ profile_stream_url }}" class="card__link card__link-arrow">
+  <a href="{{ profile_stream_url }}" class="card__link--arrow">
     {% trans %} See full stream {% endtrans %}
   </a>
 </footer>

@@ -57,6 +57,56 @@ body:not(.socialblue--sky) .complementary--content-merged {
   margin-bottom: 2.5rem;
 }
 
+.socialblue--sky .card__link--arrow {
+  position: relative;
+  float: none;
+  margin-left: 0;
+  padding: 0 30px 0 0;
+  text-transform: uppercase;
+  font-weight: 700;
+  border: none;
+  -webkit-box-shadow: none;
+          box-shadow: none;
+  -webkit-transition: .3s ease-out;
+  transition: .3s ease-out;
+  font-size: .875rem;
+}
+
+.socialblue--sky .card__link--arrow:hover, .socialblue--sky .card__link--arrow:active, .socialblue--sky .card__link--arrow:focus {
+  background: transparent;
+}
+
+.socialblue--sky .card__link--arrow:before, .socialblue--sky .card__link--arrow:after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: 0;
+  -webkit-transform: translateY(-50%);
+          transform: translateY(-50%);
+  -webkit-transition: .3s ease-out;
+  transition: .3s ease-out;
+}
+
+.socialblue--sky .card__link--arrow:before {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  z-index: 1;
+}
+
+.socialblue--sky .card__link--arrow:after {
+  content: '';
+  display: block;
+  right: 5px;
+  margin-top: -1px;
+  padding: 2px;
+  border: solid #fff;
+  border-width: 0 2px 2px 0;
+  -webkit-transform: rotate(-45deg) translateY(-50%);
+          transform: rotate(-45deg) translateY(-50%);
+  z-index: 2;
+}
+
 .socialblue--sky section:not(.content-merged) .complementary--content-merged {
   background: transparent;
   border-radius: 0 !important;
@@ -247,6 +297,145 @@ body:not(.socialblue--sky) .complementary--content-merged {
   bottom: 100%;
 }
 
+.socialblue--sky [class*='statistic-block'] {
+  position: relative;
+  padding: 1rem 1.875rem 0;
+  background: #fafafa;
+  -webkit-box-shadow: none;
+          box-shadow: none;
+}
+
+.socialblue--sky [class*='statistic-block'] .hero-footer__cta {
+  position: static;
+  padding: 0 0 1.25rem;
+  margin: 0;
+}
+
+.socialblue--sky [class*='statistic-block'] .hero-footer__cta > * {
+  width: 100%;
+}
+
+.socialblue--sky [class*='statistic-block'] .hero-footer__cta .btn {
+  width: 100%;
+  font-weight: 700;
+  text-transform: uppercase;
+  border-width: 2px;
+}
+
+.socialblue--sky [class*='statistic-block'] .card__actionbar {
+  padding: 1.5rem 0;
+}
+
+.socialblue--sky [class*='statistic-block'] .card__actionbar {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.socialblue--sky [class*='statistic-block'].block-profile-statistic-block {
+  padding-top: 0;
+}
+
+.socialblue--sky [class*='statistic-block'].block-profile-statistic-block .card__info-user .hero-avatar {
+  border-color: #fafafa;
+}
+
+.socialblue--sky .card__info-user {
+  position: relative;
+  width: 100%;
+  margin-bottom: 1.875rem;
+  padding-top: 0;
+  padding-bottom: 1.25rem;
+  text-align: center;
+}
+
+.socialblue--sky .card__info-user:after {
+  content: '';
+  position: absolute;
+  height: 2px;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #000;
+}
+
+.socialblue--sky .card__info-user .hero-avatar {
+  width: 160px;
+  height: 160px;
+  margin: -80px 0 5px;
+  border-width: 10px;
+  -webkit-box-shadow: none;
+          box-shadow: none;
+}
+
+.socialblue--sky .card__info-user--name {
+  margin: 0 0 10px;
+  font-size: 1.375rem;
+  line-height: 24px;
+}
+
+.socialblue--sky .card__info-user--about {
+  font-size: 1rem;
+  line-height: 24px;
+}
+
+.socialblue--sky .card__info-user--about-job, .socialblue--sky .card__info-user--about-organization {
+  font-size: .875rem;
+  margin-bottom: 5px;
+}
+
+.socialblue--sky .card__info-user--about-address {
+  color: #989b97;
+  font-weight: 700;
+}
+
+.socialblue--sky .card__info-user--about-address p {
+  margin-bottom: 0;
+}
+
+.socialblue--sky .card__counter {
+  padding-bottom: 1.25rem;
+}
+
+.socialblue--sky .card__counter ul {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  -webkit-box-align: start;
+      -ms-flex-align: start;
+          align-items: flex-start;
+  list-style: none;
+  margin: 0 -.5rem;
+  padding: 0;
+}
+
+.socialblue--sky .card__counter li {
+  padding: 0 .5rem;
+  -webkit-box-flex: 0;
+      -ms-flex: 0 0 33.333333%;
+          flex: 0 0 33.333333%;
+  max-width: 125px;
+}
+
+.socialblue--sky .card__counter span {
+  display: block;
+  text-align: center;
+}
+
+.socialblue--sky .card__counter-quantity {
+  font-size: 1.875rem;
+  font-weight: 700;
+  line-height: 28px;
+  margin-bottom: 5px;
+}
+
+.socialblue--sky .card__counter-text {
+  font-size: .75rem;
+  line-height: 1.2;
+}
+
 @media (min-width: 600px) {
   .socialblue--sky .card__content-merged .content-merged__list {
     -webkit-box-orient: horizontal;
@@ -261,6 +450,27 @@ body:not(.socialblue--sky) .complementary--content-merged {
             flex: 0 0 120px;
     max-width: 120px;
     margin: 0;
+  }
+  .socialblue--sky [class*='statistic-block'] {
+    padding: 2.5rem 2.25rem 0;
+  }
+  .socialblue--sky [class*='statistic-block'] .hero-footer__cta {
+    -webkit-box-flex: 0;
+        -ms-flex: 0 0 100%;
+            flex: 0 0 100%;
+    max-width: 100%;
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
+  }
+  .socialblue--sky .card__info-user--name {
+    font-size: 2.25rem;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+  .socialblue--sky .card__info-user--about-job, .socialblue--sky .card__info-user--about-organization {
+    font-size: 1.125rem;
+    margin-bottom: 10px;
   }
 }
 
@@ -288,5 +498,57 @@ body:not(.socialblue--sky) .complementary--content-merged {
 @media (min-width: 1200px) {
   .socialblue--sky .card__content-merged {
     padding: .875rem 3.5rem 5.75rem;
+  }
+}
+
+@media (max-width: 899px) {
+  .socialblue--sky .complementary--content-merged {
+    margin-bottom: 0;
+  }
+  .socialblue--sky .content-merged .complementary--content-merged {
+    margin-bottom: 0;
+  }
+  .socialblue--sky [class*='statistic-block'] {
+    margin-bottom: 0;
+    border-radius: 0 !important;
+    -webkit-box-shadow: none;
+            box-shadow: none;
+  }
+}
+
+@media (max-width: 599px) {
+  .socialblue--sky .card__info-user {
+    margin: 0  auto .75rem;
+    padding-bottom: .75rem;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+  .socialblue--sky .card__info-user:after {
+    left: 1.5rem;
+    right: 1.5rem;
+  }
+  .socialblue--sky .card__info-user .hero-avatar {
+    width: 100px;
+    height: 100px;
+    border-width: 5px;
+    margin: -50px 0 10px;
+  }
+  .socialblue--sky .card__info-user--about-address {
+    font-size: .875rem;
+    color: #b5b8b3;
+    text-transform: uppercase;
+  }
+  .socialblue--sky .card__counter {
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 1.25rem 1rem;
+  }
+  .socialblue--sky .card__counter-quantity {
+    font-size: 1.5rem;
+    line-height: 1.2;
+    margin-bottom: 5px;
+  }
+  .socialblue--sky .card__counter-text {
+    font-size: 11px;
   }
 }

@@ -538,6 +538,12 @@ html:not(.js) .navbar-default {
     }
   }
 
+  [class*='statistic-block'] {
+    .hero-footer__cta .btn-default {
+      color: $brand-primary;
+    }
+  }
+
   .card--views__sidebar {
     .card__actionbar {
       .btn {
@@ -554,6 +560,24 @@ html:not(.js) .navbar-default {
             background: $brand-accent;
           }
         }
+      }
+    }
+  }
+
+  .card__link--arrow {
+    color: $brand-primary;
+
+    &:before {
+      background: $brand-primary;
+    }
+
+    &:hover,
+    &:active,
+    &:focus {
+      color: $brand-accent;
+
+      &:before {
+        background: $brand-accent;
       }
     }
   }
@@ -596,6 +620,15 @@ html:not(.js) .navbar-default {
     }
   }
 
+  &.path-group {
+    .cover-wrap {
+      .teaser__tag {
+        background-color: $brand-primary;
+        color: #fff;
+      }
+    }
+  }
+
   .badge-primary {
     background: $brand-primary;
   }
@@ -614,6 +647,21 @@ html:not(.js) .navbar-default {
         &:active,
         &:focus {
           color: $brand-accent;
+        }
+      }
+    }
+  }
+
+  .navbar-secondary {
+    .navbar-nav {
+      .hidden-list {
+        li a {
+          &:hover,
+          &.active,
+          &:focus,
+          &.is-active {
+            color: $brand-primary;
+          }
         }
       }
     }
