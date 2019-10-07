@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: node-gettext\n"
 "POT-Creation-Date: 2019-09-28 02:34+0000\n"
-"PO-Revision-Date: 2019-10-07 16:37+0000\n"
+"PO-Revision-Date: 2019-10-07 16:43+0000\n"
 "Last-Translator: aborbon <aborbon@greenpeace.org>\n"
 "Language-Team: Greenpeace Spanish (Mexico) <https://translate.getopensocial."
 "com/projects/open-social/distribution/es_MX_gpi/>\n"
@@ -264,13 +264,13 @@ msgstr[1] "<b>@count Members</b> están seleccionados"
 #: modules/social_features/social_event/modules/social_event_managers/src/Plugin/views/field/SocialEventManagersViewsBulkOperationsBulkForm.php:175
 msgid "<b>@count enrollee</b> is selected"
 msgid_plural "<b>@count enrollees</b> are selected"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "<b>@count enrollee</b> está seleccionado"
+msgstr[1] "<b>@count enrollees</b> están seleccionados"
 
 #: modules/social_features/social_event/modules/social_event_managers/js/frontUi.js:0
 #: modules/social_features/social_group/js/frontUi.js:0
 msgid "<b>All members across all pages</b> are selected."
-msgstr ""
+msgstr "<b>Todos los miembros en todas las páginas.</b> son seleccionados."
 
 #: modules/social_features/social_book/config/install/node.type.book.yml:0
 msgid ""
@@ -282,7 +282,7 @@ msgstr ""
 
 #: themes/socialbase/src/Plugin/Preprocess/PageTitle.php:40
 msgid "<em>Configure account settings:</em> @label"
-msgstr ""
+msgstr "<em>Configurar la configuración de la cuenta:</em> @label"
 
 #: modules/custom/sitewide_js/src/Form/SiteWideJSForm.php:37
 msgid ""
@@ -290,46 +290,57 @@ msgid ""
 "to the HTML template and therefore break both the front-end javascript "
 "applications and the layout for your website.</p>"
 msgstr ""
+"<h2>Advertencia</h2><p>Tenga cuidado, en esta sección puede hacer cambios en "
+"todo el sitio a la plantilla HTML y, por lo tanto, romper tanto las "
+"aplicaciones de front-end de JavaScript como el diseño de su sitio web.</p>"
 
 #: modules/social_features/social_search/config/install/views.view.search_users.yml:0;0
 msgid "<h4 class=\"section-title\">Member results</h4>"
-msgstr ""
+msgstr "<h4 class=\"section-title\">Resultados de miembros</h4>"
 
 #: modules/social_features/social_search/config/install/views.view.search_all.yml:0
 msgid "<h4>All results</h4>"
-msgstr ""
+msgstr "<h4>Todos los resultados</h4>"
 
 #: modules/social_features/social_search/config/install/views.view.search_content.yml:0;0
 msgid "<h4>Content results</h4>"
-msgstr ""
+msgstr "<h4>Resultados de contenido</h4>"
 
 #: modules/social_features/social_search/config/install/views.view.search_groups.yml:0;0
 msgid "<h4>Group results</h4>"
-msgstr ""
+msgstr "<h4>Resultados grupales</h4>"
 
 #: modules/social_features/social_user/src/Form/SocialUserNavigationSettingsForm.php:89
 msgid ""
 "<i>Disabling this will simply hide the 'My Groups' button from the main "
 "navigation.</i>"
 msgstr ""
+"<i>Deshabilitar esto simplemente ocultará el botón 'Mis grupos' de la "
+"navegación principal.</i>"
 
 #: modules/social_features/social_user/src/Form/SocialUserNavigationSettingsForm.php:79
 msgid ""
 "<i>Disabling this won't disable the Social Private Message feature, but only "
 "hide the icon from the navigation.</i>"
 msgstr ""
+"<i>Deshabilitar esto no deshabilitará la función de mensaje privado social, "
+"sino que solo ocultará el ícono de la navegación.</i>"
 
 #: modules/social_features/social_mentions/config/install/message.template.create_mention_post_stream.yml:0
 msgid ""
 "<p><a href=\"\">[message:author:display-name]</a> mentioned <a href=\"\">"
 "[social_mentions:mentioned_user]</a> in a post</p>\n"
 msgstr ""
+"<p><a href=\"\">[message:author:display-name]</a> mencionado<a href=\"\""
+">[social_mentions:mentioned_user]</a> en una publicación</p>\n"
 
 #: modules/social_features/social_mentions/config/install/message.template.create_mention_comment_stream.yml:0
 msgid ""
 "<p><a href=\"\">[message:author:display-name]</a> mentioned<a href=\"\"> "
 "[social_mentions:mentioned_user] </a>in a comment</p>\n"
 msgstr ""
+"<p><a href=\"\">[message:author:display-name]</a> mencionado<a href=\"\"> "
+"[social_mentions:mentioned_user] </a>en un comentario</p>\n"
 
 #: modules/social_features/social_activity/config/install/message.template.create_post_profile_stream.yml:0
 msgid ""
@@ -337,12 +348,17 @@ msgid ""
 "a> &gt; <a href=\"[message:recipient-user-url]\">[activity:"
 "field_activity_recipient_user_display_name]</a></p>\n"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-"
+"name]</a> &gt; <a href=\"[message:recipient-user-url]\""
+">[activity:field_activity_recipient_user_display_name]</a></p>\n"
 
 #: modules/social_features/social_event/modules/social_event_managers/config/optional/message.template.member_added_by_event_organiser.yml:0;0;0
 msgid ""
 "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
 "a> added you to the event [social_event:event_iam_organizing]</p>"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-"
+"name]</a> te agregó al evento [social_event:event_iam_organizing]</p>"
 
 #: modules/social_features/social_activity/config/install/message.template.create_comment_group_node.yml:0
 msgid ""
@@ -351,6 +367,11 @@ msgid ""
 "[social_comment:commented_content_type] in <a href=\"[message:gurl]\">"
 "[message:gtitle]</a></p>"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-"
+"name]</a> y otros @count comentaron\n"
+"[social_comment:parent_entity_author]'s "
+"[social_comment:commented_content_type] en <a href=\"[message:gurl]\""
+">[message:gtitle]</a></p>"
 
 #: modules/social_features/social_activity/config/install/message.template.create_comment_community_node.yml:0
 msgid ""
@@ -358,6 +379,9 @@ msgid ""
 "a> and @count others commented on [social_comment:parent_entity_author]'s "
 "[social_comment:commented_content_type]</p>\n"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-"
+"name]</a> y otros @count comentaron en [social_comment:parent_entity_author]"
+"'s [social_comment:commented_content_type]</p>\n"
 
 #: modules/social_features/social_activity/config/install/message.template.create_comment_group_post.yml:0
 msgid ""
@@ -365,12 +389,17 @@ msgid ""
 "a> and @count others commented on a post in <a href=\"[message:gurl]\">"
 "[message:gtitle]</a></p>"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-"
+"name]</a> y otros @count comentaron en un post en <a href=\"[message:gurl]\""
+">[message:gtitle]</a></p>"
 
 #: modules/social_features/social_activity/config/install/message.template.create_comment_community_post.yml:0
 msgid ""
 "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
 "a> and @count others commented on a post</p>"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-"
+"name]</a> y otros @count comentaron en un post</p>"
 
 #: modules/social_features/social_follow_content/config/install/message.template.create_comment_following_node.yml:0;0
 msgid ""
