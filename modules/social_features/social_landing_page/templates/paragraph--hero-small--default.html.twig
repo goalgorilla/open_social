@@ -52,8 +52,13 @@
 ]
 %}
 
-<div{{ attributes.addClass(cover_classes) }} {% if hero_small_styled_image_url %} style="background-image: url('{{ hero_small_styled_image_url }}');" {% endif %}>
-  <div class="hero-small__bgimage-overlay"></div>
+<div{{ attributes.addClass(cover_classes) }}
+  {% if hero_small_styled_image_url %} style="background-image: url('{{ hero_small_styled_image_url }}');" {% endif %}
+  {% if hero_styled_image_attr %}
+    {{ attributes.setAttribute('data-copyright', hero_styled_image_attr)  }}
+  {% endif %}
+>
+<div class="hero-small__bgimage-overlay"></div>
   {% if node_edit_url %}
     <div class="hero-small-action-button">
       <a href="{{ node_edit_url }}"  title="Edit content" class="btn btn-default btn-floating waves-effect waves-circle">

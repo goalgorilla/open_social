@@ -51,9 +51,13 @@
     hero_styled_image_url ? 'cover-img cover-img-gradient',
   ]
 %}
-
-<div{{ attributes.addClass(cover_classes) }} {% if hero_styled_image_url %} style="background-image: url('{{ hero_styled_image_url }}');" {% endif %}>
-  <div class="hero__bgimage-overlay"></div>
+<div{{ attributes.addClass(cover_classes) }}
+  {% if hero_styled_image_url %} style="background-image: url('{{ hero_styled_image_url }}');" {% endif %}
+  {% if hero_styled_image_attr %}
+    {{ attributes.setAttribute('data-copyright', hero_styled_image_attr)  }}
+  {% endif %}
+>
+<div class="hero__bgimage-overlay"></div>
   {% if node_edit_url %}
     <div class="hero-action-button">
       <a href="{{ node_edit_url }}"  title="Edit content" class="btn btn-default btn-floating waves-effect waves-circle">
