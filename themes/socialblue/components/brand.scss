@@ -443,13 +443,9 @@ html:not(.js) .navbar-default {
   background-color: #1f7ea7 !important;
 }
 
-.marker-cluster-small {
-  background-color: #1f7ea7;
-  opacity: 0.6;
-}
-
+.marker-cluster-small,
 .marker-cluster-small div {
-  background-color: opacify(#1f7ea7, 0.8);
+  background-color: $brand-secondary;
 }
 
 .marker-cluster div {
@@ -481,6 +477,46 @@ html:not(.js) .navbar-default {
     &:active {
       color: $brand-accent;
       fill: $brand-accent;
+    }
+  }
+}
+
+.course__navigation {
+  .course_nav-title,
+  .course_nav-toggle,
+  .course_dividing-line {
+    color: $brand-primary;
+  }
+
+  .course_nav-title {
+    .icon {
+      background: $brand-primary;
+    }
+
+    &:hover,
+    &:active,
+    &:focus {
+      color: $brand-accent;
+
+      .icon {
+        background: $brand-accent;
+      }
+    }
+  }
+
+  .course_nav-toggle {
+    svg {
+      fill: $brand-primary;
+    }
+
+    &:hover,
+    &:active,
+    &:focus {
+      color: $brand-accent;
+
+      svg {
+        fill: $brand-accent;
+      }
     }
   }
 }
@@ -547,7 +583,7 @@ html:not(.js) .navbar-default {
       }
     }
   }
-  
+
   .teaser__tag {
     color: $brand-primary;
 
