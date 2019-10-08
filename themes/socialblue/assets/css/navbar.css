@@ -176,6 +176,23 @@
   color: #fff;
 }
 
+.socialblue--sky.path-user .navbar-secondary .navbar-scrollable, .socialblue--sky.path-group .navbar-secondary .navbar-scrollable {
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+  height: 44px;
+}
+
+.socialblue--sky.path-user .navbar-secondary .navbar-nav, .socialblue--sky.path-group .navbar-secondary .navbar-nav {
+  width: 100%;
+  display: table;
+  text-align: center;
+}
+
+.socialblue--sky.path-user .navbar-secondary .navbar-nav li, .socialblue--sky.path-group .navbar-secondary .navbar-nav li {
+  display: table-cell;
+}
+
 @media (min-width: 900px) {
   .search-take-over .form-text {
     color: #ffffff;
@@ -200,16 +217,6 @@
     -webkit-transform: scale(100);
             transform: scale(100);
   }
-  .socialblue--sky .navbar-secondary {
-    -webkit-box-flex: 0;
-        -ms-flex: 0 0 66.66667%;
-            flex: 0 0 66.66667%;
-    max-width: 66.66667%;
-    border-radius: 5px 5px 0 0;
-    -webkit-box-ordinal-group: 2;
-        -ms-flex-order: 1;
-            order: 1;
-  }
   .socialblue--sky .navbar-secondary .navbar-scrollable {
     border-radius: 0 5px 0 0;
     overflow: visible;
@@ -221,7 +228,24 @@
     padding-right: 20px;
     padding-left: 20px;
   }
-  .socialblue--sky .navbar-secondary .navbar-nav .caret {
+  .socialblue--sky.path-user .navbar-secondary, .socialblue--sky.path-group .navbar-secondary {
+    -webkit-box-flex: 0;
+        -ms-flex: 0 0 66.66667%;
+            flex: 0 0 66.66667%;
+    max-width: 66.66667%;
+    border-radius: 5px 5px 0 0;
+    -webkit-box-ordinal-group: 2;
+        -ms-flex-order: 1;
+            order: 1;
+  }
+  .socialblue--sky.path-user .navbar-secondary .navbar-scrollable, .socialblue--sky.path-group .navbar-secondary .navbar-scrollable {
+    border-radius: 0 5px 0 0;
+    overflow: visible;
+  }
+  .socialblue--sky.path-user .navbar-secondary .navbar-nav li, .socialblue--sky.path-group .navbar-secondary .navbar-nav li {
+    position: relative;
+  }
+  .socialblue--sky.path-user .navbar-secondary .navbar-nav .caret, .socialblue--sky.path-group .navbar-secondary .navbar-nav .caret {
     position: absolute;
     top: 50%;
     right: 15px;
@@ -231,11 +255,11 @@
             transform: translateY(-50%);
     cursor: pointer;
   }
-  .socialblue--sky .navbar-secondary .navbar-nav .caret.active {
+  .socialblue--sky.path-user .navbar-secondary .navbar-nav .caret.active, .socialblue--sky.path-group .navbar-secondary .navbar-nav .caret.active {
     -webkit-transform: translateY(-50%) rotate(180deg);
             transform: translateY(-50%) rotate(180deg);
   }
-  .socialblue--sky .navbar-secondary .navbar-nav .visible-list {
+  .socialblue--sky.path-user .navbar-secondary .navbar-nav .visible-list, .socialblue--sky.path-group .navbar-secondary .navbar-nav .visible-list {
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
@@ -248,10 +272,10 @@
             justify-content: center;
     padding: 0 25px;
   }
-  .socialblue--sky .navbar-secondary .navbar-nav .visible-list a {
+  .socialblue--sky.path-user .navbar-secondary .navbar-nav .visible-list a, .socialblue--sky.path-group .navbar-secondary .navbar-nav .visible-list a {
     display: block;
   }
-  .socialblue--sky .navbar-secondary .navbar-nav .hidden-list {
+  .socialblue--sky.path-user .navbar-secondary .navbar-nav .hidden-list, .socialblue--sky.path-group .navbar-secondary .navbar-nav .hidden-list {
     display: none;
     position: absolute;
     top: 100%;
@@ -262,17 +286,17 @@
     border-top-left-radius: 0 !important;
     border-top-right-radius: 0 !important;
   }
-  .socialblue--sky .navbar-secondary .navbar-nav .hidden-list li {
+  .socialblue--sky.path-user .navbar-secondary .navbar-nav .hidden-list li, .socialblue--sky.path-group .navbar-secondary .navbar-nav .hidden-list li {
     display: block;
     text-align: left;
   }
-  .socialblue--sky .navbar-secondary .navbar-nav .hidden-list li a {
+  .socialblue--sky.path-user .navbar-secondary .navbar-nav .hidden-list li a, .socialblue--sky.path-group .navbar-secondary .navbar-nav .hidden-list li a {
     display: block;
     width: 100%;
     padding: .5rem 2rem;
     color: #9b9b9b;
   }
-  .socialblue--sky .navbar-secondary .navbar-nav .hidden-list li a:focus {
+  .socialblue--sky.path-user .navbar-secondary .navbar-nav .hidden-list li a:focus, .socialblue--sky.path-group .navbar-secondary .navbar-nav .hidden-list li a:focus {
     background: transparent;
   }
 }
@@ -328,6 +352,34 @@
     z-index: 2;
   }
   .socialblue--sky .navbar-secondary .navbar-scrollable .navbar-nav {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    -webkit-user-select: none;
+       -moz-user-select: none;
+        -ms-user-select: none;
+            user-select: none;
+    overflow-x: scroll;
+    overflow-y: hidden;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
+  }
+  .socialblue--sky.path-user .navbar-secondary .navbar-scrollable:after, .socialblue--sky.path-group .navbar-secondary .navbar-scrollable:after {
+    content: '';
+    display: block;
+    position: absolute;
+    width: 24px;
+    height: 100%;
+    top: 0;
+    right: 0;
+    z-index: 2;
+  }
+  .socialblue--sky.path-user .navbar-secondary .navbar-scrollable .navbar-nav, .socialblue--sky.path-group .navbar-secondary .navbar-scrollable .navbar-nav {
     position: absolute;
     left: 0;
     top: 0;
