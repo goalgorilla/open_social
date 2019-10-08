@@ -245,12 +245,13 @@
         padding-right: 0;
       }
     }
-
-    .region--secondary-navigation {
-      flex: 0 0 100%;
-      max-width: 100%;
+  }
+  .region--secondary-navigation {
+    @include for-tablet-landscape-up {
+      flex: 0 0 1200px;
     }
   }
+
 
   // Layout for the user/group page.
   &.path-user,
@@ -296,6 +297,8 @@
     // Change position for secondary nav, sidebar and content regions.
     @include for-tablet-landscape-down {
       .region--secondary-navigation {
+        flex: 0 0 100%;
+        max-width: 100%;
         order: 1;
       }
 

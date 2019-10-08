@@ -1209,12 +1209,15 @@ body:not(.socialblue--sky) .complementary--content-merged {
   bottom: 100%;
 }
 
+.socialblue--sky .content-merged [class*='statistic-block'] {
+  -webkit-box-shadow: none;
+          box-shadow: none;
+}
+
 .socialblue--sky [class*='statistic-block'] {
   position: relative;
   padding: 1rem 1.875rem 0;
   background: #fafafa;
-  -webkit-box-shadow: none;
-          box-shadow: none;
 }
 
 .socialblue--sky [class*='statistic-block'] .hero-footer__cta {
@@ -1715,6 +1718,23 @@ html.js .input-group-addon .glyphicon.glyphicon-spin {
 
 .socialblue--sky .navbar-secondary .navbar-nav li.active a {
   color: #fff;
+}
+
+.socialblue--sky.path-user .navbar-secondary .navbar-scrollable, .socialblue--sky.path-group .navbar-secondary .navbar-scrollable {
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+  height: 44px;
+}
+
+.socialblue--sky.path-user .navbar-secondary .navbar-nav, .socialblue--sky.path-group .navbar-secondary .navbar-nav {
+  width: 100%;
+  display: table;
+  text-align: center;
+}
+
+.socialblue--sky.path-user .navbar-secondary .navbar-nav li, .socialblue--sky.path-group .navbar-secondary .navbar-nav li {
+  display: table-cell;
 }
 
 .nav-tabs {
@@ -2353,13 +2373,9 @@ html:not(.js) .navbar-default .dropdown:focus > a .navbar-nav__icon, html:not(.j
   background-color: #1f7ea7 !important;
 }
 
-.marker-cluster-small {
-  background-color: #1f7ea7;
-  opacity: 0.6;
-}
-
+.marker-cluster-small,
 .marker-cluster-small div {
-  background-color: #1f7ea7;
+  background-color: #1f80aa;
 }
 
 .marker-cluster div {
@@ -2387,6 +2403,36 @@ html:not(.js) .navbar-default .dropdown:focus > a .navbar-nav__icon, html:not(.j
 
 .card__featured-items .teaser__info svg:hover, .card__featured-items .teaser__info svg:focus, .card__featured-items .teaser__info svg:active {
   color: #ffc142;
+  fill: #ffc142;
+}
+
+.course__navigation .course_nav-title,
+.course__navigation .course_nav-toggle,
+.course__navigation .course_dividing-line {
+  color: #29abe2;
+}
+
+.course__navigation .course_nav-title .icon {
+  background: #29abe2;
+}
+
+.course__navigation .course_nav-title:hover, .course__navigation .course_nav-title:active, .course__navigation .course_nav-title:focus {
+  color: #ffc142;
+}
+
+.course__navigation .course_nav-title:hover .icon, .course__navigation .course_nav-title:active .icon, .course__navigation .course_nav-title:focus .icon {
+  background: #ffc142;
+}
+
+.course__navigation .course_nav-toggle svg {
+  fill: #29abe2;
+}
+
+.course__navigation .course_nav-toggle:hover, .course__navigation .course_nav-toggle:active, .course__navigation .course_nav-toggle:focus {
+  color: #ffc142;
+}
+
+.course__navigation .course_nav-toggle:hover svg, .course__navigation .course_nav-toggle:active svg, .course__navigation .course_nav-toggle:focus svg {
   fill: #ffc142;
 }
 
@@ -2592,16 +2638,6 @@ html:not(.js) .navbar-default .dropdown:focus > a .navbar-nav__icon, html:not(.j
     -webkit-transform: scale(100);
             transform: scale(100);
   }
-  .socialblue--sky .navbar-secondary {
-    -webkit-box-flex: 0;
-        -ms-flex: 0 0 66.66667%;
-            flex: 0 0 66.66667%;
-    max-width: 66.66667%;
-    border-radius: 5px 5px 0 0;
-    -webkit-box-ordinal-group: 2;
-        -ms-flex-order: 1;
-            order: 1;
-  }
   .socialblue--sky .navbar-secondary .navbar-scrollable {
     border-radius: 0 5px 0 0;
     overflow: visible;
@@ -2613,7 +2649,24 @@ html:not(.js) .navbar-default .dropdown:focus > a .navbar-nav__icon, html:not(.j
     padding-right: 20px;
     padding-left: 20px;
   }
-  .socialblue--sky .navbar-secondary .navbar-nav .caret {
+  .socialblue--sky.path-user .navbar-secondary, .socialblue--sky.path-group .navbar-secondary {
+    -webkit-box-flex: 0;
+        -ms-flex: 0 0 66.66667%;
+            flex: 0 0 66.66667%;
+    max-width: 66.66667%;
+    border-radius: 5px 5px 0 0;
+    -webkit-box-ordinal-group: 2;
+        -ms-flex-order: 1;
+            order: 1;
+  }
+  .socialblue--sky.path-user .navbar-secondary .navbar-scrollable, .socialblue--sky.path-group .navbar-secondary .navbar-scrollable {
+    border-radius: 0 5px 0 0;
+    overflow: visible;
+  }
+  .socialblue--sky.path-user .navbar-secondary .navbar-nav li, .socialblue--sky.path-group .navbar-secondary .navbar-nav li {
+    position: relative;
+  }
+  .socialblue--sky.path-user .navbar-secondary .navbar-nav .caret, .socialblue--sky.path-group .navbar-secondary .navbar-nav .caret {
     position: absolute;
     top: 50%;
     right: 15px;
@@ -2623,11 +2676,11 @@ html:not(.js) .navbar-default .dropdown:focus > a .navbar-nav__icon, html:not(.j
             transform: translateY(-50%);
     cursor: pointer;
   }
-  .socialblue--sky .navbar-secondary .navbar-nav .caret.active {
+  .socialblue--sky.path-user .navbar-secondary .navbar-nav .caret.active, .socialblue--sky.path-group .navbar-secondary .navbar-nav .caret.active {
     -webkit-transform: translateY(-50%) rotate(180deg);
             transform: translateY(-50%) rotate(180deg);
   }
-  .socialblue--sky .navbar-secondary .navbar-nav .visible-list {
+  .socialblue--sky.path-user .navbar-secondary .navbar-nav .visible-list, .socialblue--sky.path-group .navbar-secondary .navbar-nav .visible-list {
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
@@ -2640,10 +2693,10 @@ html:not(.js) .navbar-default .dropdown:focus > a .navbar-nav__icon, html:not(.j
             justify-content: center;
     padding: 0 25px;
   }
-  .socialblue--sky .navbar-secondary .navbar-nav .visible-list a {
+  .socialblue--sky.path-user .navbar-secondary .navbar-nav .visible-list a, .socialblue--sky.path-group .navbar-secondary .navbar-nav .visible-list a {
     display: block;
   }
-  .socialblue--sky .navbar-secondary .navbar-nav .hidden-list {
+  .socialblue--sky.path-user .navbar-secondary .navbar-nav .hidden-list, .socialblue--sky.path-group .navbar-secondary .navbar-nav .hidden-list {
     display: none;
     position: absolute;
     top: 100%;
@@ -2654,17 +2707,17 @@ html:not(.js) .navbar-default .dropdown:focus > a .navbar-nav__icon, html:not(.j
     border-top-left-radius: 0 !important;
     border-top-right-radius: 0 !important;
   }
-  .socialblue--sky .navbar-secondary .navbar-nav .hidden-list li {
+  .socialblue--sky.path-user .navbar-secondary .navbar-nav .hidden-list li, .socialblue--sky.path-group .navbar-secondary .navbar-nav .hidden-list li {
     display: block;
     text-align: left;
   }
-  .socialblue--sky .navbar-secondary .navbar-nav .hidden-list li a {
+  .socialblue--sky.path-user .navbar-secondary .navbar-nav .hidden-list li a, .socialblue--sky.path-group .navbar-secondary .navbar-nav .hidden-list li a {
     display: block;
     width: 100%;
     padding: .5rem 2rem;
     color: #9b9b9b;
   }
-  .socialblue--sky .navbar-secondary .navbar-nav .hidden-list li a:focus {
+  .socialblue--sky.path-user .navbar-secondary .navbar-nav .hidden-list li a:focus, .socialblue--sky.path-group .navbar-secondary .navbar-nav .hidden-list li a:focus {
     background: transparent;
   }
   .nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus {
@@ -2759,6 +2812,34 @@ html:not(.js) .navbar-default .dropdown:focus > a .navbar-nav__icon, html:not(.j
     z-index: 2;
   }
   .socialblue--sky .navbar-secondary .navbar-scrollable .navbar-nav {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    -webkit-user-select: none;
+       -moz-user-select: none;
+        -ms-user-select: none;
+            user-select: none;
+    overflow-x: scroll;
+    overflow-y: hidden;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
+  }
+  .socialblue--sky.path-user .navbar-secondary .navbar-scrollable:after, .socialblue--sky.path-group .navbar-secondary .navbar-scrollable:after {
+    content: '';
+    display: block;
+    position: absolute;
+    width: 24px;
+    height: 100%;
+    top: 0;
+    right: 0;
+    z-index: 2;
+  }
+  .socialblue--sky.path-user .navbar-secondary .navbar-scrollable .navbar-nav, .socialblue--sky.path-group .navbar-secondary .navbar-scrollable .navbar-nav {
     position: absolute;
     left: 0;
     top: 0;
