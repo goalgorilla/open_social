@@ -98,9 +98,9 @@ function social_swiftmail_preprocess_swiftmailer(array &$variables) {
     }
 
     $replace = [
-      '%display_name' => $display_name,
+      '@display_name' => $display_name,
     ];
-    $variables['heading'] = t('Hi %display_name', $replace, $options);
+    $variables['heading'] = t('Hi <strong>@display_name</strong>', $replace, $options);
   }
 }
 
