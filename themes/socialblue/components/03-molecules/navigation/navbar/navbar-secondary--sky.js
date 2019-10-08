@@ -8,12 +8,7 @@
         var navSecondary = navScroll.find('.nav');
         var items = navSecondary.find('li');
 
-        console.log(1);
-
         if($(window).width() >= 900) {
-
-          console.log(navSecondary.width());
-          console.log(navScroll.width());
 
           if (navSecondary.width() > navScroll.width()) {
             var total = 0;

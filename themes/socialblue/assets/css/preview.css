@@ -1679,6 +1679,7 @@ html.js .input-group-addon .glyphicon.glyphicon-spin {
 }
 
 .socialblue--sky .navbar-secondary {
+  width: 100%;
   min-height: 44px;
   -webkit-box-shadow: none;
           box-shadow: none;
@@ -1691,20 +1692,9 @@ html.js .input-group-addon .glyphicon.glyphicon-spin {
   height: 44px;
 }
 
-.socialblue--sky .navbar-secondary .navbar-nav {
-  width: 100%;
-  display: table;
-  text-align: center;
-}
-
-.socialblue--sky .navbar-secondary .navbar-nav li {
-  display: table-cell;
-}
-
 .socialblue--sky .navbar-secondary .navbar-nav li a {
   padding-top: 10px;
-  padding-bottom: 10px;
-  border: none;
+  padding-bottom: 8px;
   font-size: .875rem;
   font-weight: 700;
   text-transform: uppercase;
@@ -1712,7 +1702,6 @@ html.js .input-group-addon .glyphicon.glyphicon-spin {
 }
 
 .socialblue--sky .navbar-secondary .navbar-nav li a:hover, .socialblue--sky .navbar-secondary .navbar-nav li a:active, .socialblue--sky .navbar-secondary .navbar-nav li a:focus, .socialblue--sky .navbar-secondary .navbar-nav li a.is-active {
-  background: transparent;
   color: #fff;
 }
 
@@ -1720,20 +1709,20 @@ html.js .input-group-addon .glyphicon.glyphicon-spin {
   color: #fff;
 }
 
-.socialblue--sky.path-user .navbar-secondary .navbar-scrollable, .socialblue--sky.path-group .navbar-secondary .navbar-scrollable {
+.socialblue--sky.path-user .layout--with-complementary .navbar-secondary .navbar-scrollable, .socialblue--sky.path-group .layout--with-complementary .navbar-secondary .navbar-scrollable {
   overflow: hidden;
   position: relative;
   width: 100%;
   height: 44px;
 }
 
-.socialblue--sky.path-user .navbar-secondary .navbar-nav, .socialblue--sky.path-group .navbar-secondary .navbar-nav {
+.socialblue--sky.path-user .layout--with-complementary .navbar-secondary .navbar-nav, .socialblue--sky.path-group .layout--with-complementary .navbar-secondary .navbar-nav {
   width: 100%;
   display: table;
   text-align: center;
 }
 
-.socialblue--sky.path-user .navbar-secondary .navbar-nav li, .socialblue--sky.path-group .navbar-secondary .navbar-nav li {
+.socialblue--sky.path-user .layout--with-complementary .navbar-secondary .navbar-nav li, .socialblue--sky.path-group .layout--with-complementary .navbar-secondary .navbar-nav li {
   display: table-cell;
 }
 
@@ -2642,14 +2631,11 @@ html:not(.js) .navbar-default .dropdown:focus > a .navbar-nav__icon, html:not(.j
     border-radius: 0 5px 0 0;
     overflow: visible;
   }
-  .socialblue--sky .navbar-secondary .navbar-nav li {
-    position: relative;
-  }
   .socialblue--sky .navbar-secondary .navbar-nav li a {
     padding-right: 20px;
     padding-left: 20px;
   }
-  .socialblue--sky.path-user .navbar-secondary, .socialblue--sky.path-group .navbar-secondary {
+  .socialblue--sky.path-user .layout--with-complementary .navbar-secondary, .socialblue--sky.path-group .layout--with-complementary .navbar-secondary {
     -webkit-box-flex: 0;
         -ms-flex: 0 0 66.66667%;
             flex: 0 0 66.66667%;
@@ -2659,14 +2645,14 @@ html:not(.js) .navbar-default .dropdown:focus > a .navbar-nav__icon, html:not(.j
         -ms-flex-order: 1;
             order: 1;
   }
-  .socialblue--sky.path-user .navbar-secondary .navbar-scrollable, .socialblue--sky.path-group .navbar-secondary .navbar-scrollable {
+  .socialblue--sky.path-user .layout--with-complementary .navbar-secondary .navbar-scrollable, .socialblue--sky.path-group .layout--with-complementary .navbar-secondary .navbar-scrollable {
     border-radius: 0 5px 0 0;
     overflow: visible;
   }
-  .socialblue--sky.path-user .navbar-secondary .navbar-nav li, .socialblue--sky.path-group .navbar-secondary .navbar-nav li {
+  .socialblue--sky.path-user .layout--with-complementary .navbar-secondary .navbar-nav li, .socialblue--sky.path-group .layout--with-complementary .navbar-secondary .navbar-nav li {
     position: relative;
   }
-  .socialblue--sky.path-user .navbar-secondary .navbar-nav .caret, .socialblue--sky.path-group .navbar-secondary .navbar-nav .caret {
+  .socialblue--sky.path-user .layout--with-complementary .navbar-secondary .navbar-nav .caret, .socialblue--sky.path-group .layout--with-complementary .navbar-secondary .navbar-nav .caret {
     position: absolute;
     top: 50%;
     right: 15px;
@@ -2676,11 +2662,11 @@ html:not(.js) .navbar-default .dropdown:focus > a .navbar-nav__icon, html:not(.j
             transform: translateY(-50%);
     cursor: pointer;
   }
-  .socialblue--sky.path-user .navbar-secondary .navbar-nav .caret.active, .socialblue--sky.path-group .navbar-secondary .navbar-nav .caret.active {
+  .socialblue--sky.path-user .layout--with-complementary .navbar-secondary .navbar-nav .caret.active, .socialblue--sky.path-group .layout--with-complementary .navbar-secondary .navbar-nav .caret.active {
     -webkit-transform: translateY(-50%) rotate(180deg);
             transform: translateY(-50%) rotate(180deg);
   }
-  .socialblue--sky.path-user .navbar-secondary .navbar-nav .visible-list, .socialblue--sky.path-group .navbar-secondary .navbar-nav .visible-list {
+  .socialblue--sky.path-user .layout--with-complementary .navbar-secondary .navbar-nav .visible-list, .socialblue--sky.path-group .layout--with-complementary .navbar-secondary .navbar-nav .visible-list {
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
@@ -2693,10 +2679,10 @@ html:not(.js) .navbar-default .dropdown:focus > a .navbar-nav__icon, html:not(.j
             justify-content: center;
     padding: 0 25px;
   }
-  .socialblue--sky.path-user .navbar-secondary .navbar-nav .visible-list a, .socialblue--sky.path-group .navbar-secondary .navbar-nav .visible-list a {
+  .socialblue--sky.path-user .layout--with-complementary .navbar-secondary .navbar-nav .visible-list a, .socialblue--sky.path-group .layout--with-complementary .navbar-secondary .navbar-nav .visible-list a {
     display: block;
   }
-  .socialblue--sky.path-user .navbar-secondary .navbar-nav .hidden-list, .socialblue--sky.path-group .navbar-secondary .navbar-nav .hidden-list {
+  .socialblue--sky.path-user .layout--with-complementary .navbar-secondary .navbar-nav .hidden-list, .socialblue--sky.path-group .layout--with-complementary .navbar-secondary .navbar-nav .hidden-list {
     display: none;
     position: absolute;
     top: 100%;
@@ -2707,17 +2693,17 @@ html:not(.js) .navbar-default .dropdown:focus > a .navbar-nav__icon, html:not(.j
     border-top-left-radius: 0 !important;
     border-top-right-radius: 0 !important;
   }
-  .socialblue--sky.path-user .navbar-secondary .navbar-nav .hidden-list li, .socialblue--sky.path-group .navbar-secondary .navbar-nav .hidden-list li {
+  .socialblue--sky.path-user .layout--with-complementary .navbar-secondary .navbar-nav .hidden-list li, .socialblue--sky.path-group .layout--with-complementary .navbar-secondary .navbar-nav .hidden-list li {
     display: block;
     text-align: left;
   }
-  .socialblue--sky.path-user .navbar-secondary .navbar-nav .hidden-list li a, .socialblue--sky.path-group .navbar-secondary .navbar-nav .hidden-list li a {
+  .socialblue--sky.path-user .layout--with-complementary .navbar-secondary .navbar-nav .hidden-list li a, .socialblue--sky.path-group .layout--with-complementary .navbar-secondary .navbar-nav .hidden-list li a {
     display: block;
     width: 100%;
     padding: .5rem 2rem;
     color: #9b9b9b;
   }
-  .socialblue--sky.path-user .navbar-secondary .navbar-nav .hidden-list li a:focus, .socialblue--sky.path-group .navbar-secondary .navbar-nav .hidden-list li a:focus {
+  .socialblue--sky.path-user .layout--with-complementary .navbar-secondary .navbar-nav .hidden-list li a:focus, .socialblue--sky.path-group .layout--with-complementary .navbar-secondary .navbar-nav .hidden-list li a:focus {
     background: transparent;
   }
   .nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus {
@@ -2829,7 +2815,7 @@ html:not(.js) .navbar-default .dropdown:focus > a .navbar-nav__icon, html:not(.j
         -ms-flex-pack: center;
             justify-content: center;
   }
-  .socialblue--sky.path-user .navbar-secondary .navbar-scrollable:after, .socialblue--sky.path-group .navbar-secondary .navbar-scrollable:after {
+  .socialblue--sky.path-user .layout--with-complementary .navbar-secondary .navbar-scrollable:after, .socialblue--sky.path-group .layout--with-complementary .navbar-secondary .navbar-scrollable:after {
     content: '';
     display: block;
     position: absolute;
@@ -2839,7 +2825,7 @@ html:not(.js) .navbar-default .dropdown:focus > a .navbar-nav__icon, html:not(.j
     right: 0;
     z-index: 2;
   }
-  .socialblue--sky.path-user .navbar-secondary .navbar-scrollable .navbar-nav, .socialblue--sky.path-group .navbar-secondary .navbar-scrollable .navbar-nav {
+  .socialblue--sky.path-user .layout--with-complementary .navbar-secondary .navbar-scrollable .navbar-nav, .socialblue--sky.path-group .layout--with-complementary .navbar-secondary .navbar-scrollable .navbar-nav {
     position: absolute;
     left: 0;
     top: 0;
