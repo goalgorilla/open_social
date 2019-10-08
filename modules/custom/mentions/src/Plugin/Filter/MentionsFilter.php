@@ -238,6 +238,12 @@ class MentionsFilter extends FilterBase implements ContainerFactoryPluginInterfa
    * {@inheritdoc}
    */
   public function process($text, $langcode) {
+    // We only need the value, so strip out the format.
+    // Otherwise it may crash later on during pregmatch or the strip tags.
+    if (is_array($text)) {
+      $text = array_column($text, 'value')[0];
+    }
+
     if ($this->shouldApplyFilter()) {
       $text = $this->filterMentions($text);
 
