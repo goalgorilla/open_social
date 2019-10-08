@@ -22,23 +22,15 @@ class Page extends PageBase {
     $style = theme_get_setting('style');
     if ($style && $style === 'sky') {
 
-      // Display sidebar on the left side of profile pages, except edit.
+      // Display merged sidebar on the left side of profile pages, except edit.
       $route_match = \Drupal::routeMatch();
       if ($route_match->getParameter('user') && $route_match->getRouteName() !== 'entity.profile.type.user_profile_form') {
-        $variables['content_attributes']->addClass('sidebar-left');
-        // Visually merge content in body card in and sidebar blocks.
-        if ($route_match->getRouteName() === 'view.user_information.user_information') {
-          $variables['content_attributes']->addClass('content-merged');
-        }
+        $variables['content_attributes']->addClass('sidebar-left', 'content-merged');
       }
 
-      // Display sidebar on the left side of group pages, except edit.
+      // Display merged sidebar on the left side of group pages, except edit.
       if ($route_match->getParameter('group') && $route_match->getRouteName() !== 'entity.group.edit_form') {
-        $variables['content_attributes']->addClass('sidebar-left');
-        // Visually merge content in body card in and sidebar blocks.
-        if ($route_match->getRouteName() === 'view.group_information.page_group_about') {
-          $variables['content_attributes']->addClass('content-merged');
-        }
+        $variables['content_attributes']->addClass('sidebar-left', 'content-merged');
       }
 
       // Add extra class if we have blocks in both complementary regions.

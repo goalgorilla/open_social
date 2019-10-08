@@ -112,7 +112,6 @@
       {{ content.field_image }}
     {% endblock %}
 
-
   </div>
 
   <div class='teaser__body'>
@@ -200,7 +199,7 @@
 
         {% if content.enrolled %}
           <span class="badge badge-secondary teaser__badge">
-            {%- trans -%} Enrolled {%- endtrans -%}
+            {{ content.enrolled }}
           </span>
         {% endif %}
 
