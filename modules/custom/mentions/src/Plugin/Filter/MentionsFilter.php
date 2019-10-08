@@ -238,6 +238,7 @@ class MentionsFilter extends FilterBase implements ContainerFactoryPluginInterfa
    * {@inheritdoc}
    */
   public function process($text, $langcode) {
+    // Todo:: Enforce that $text can only be a string.
     // We only need the value, so strip out the format.
     // Otherwise it may crash later on during pregmatch or the strip tags.
     if (is_array($text)) {
