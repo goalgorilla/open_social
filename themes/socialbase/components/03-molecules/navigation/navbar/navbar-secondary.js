@@ -2,6 +2,7 @@
 
   Drupal.behaviors.navbarSecondaryAnchor = {
     attach: function (context, settings) {
+      
       // General variables.
       var windowMain = $(window);
       var windowHeight = windowMain.height();
@@ -14,13 +15,10 @@
       var scrollTo = navSecondary.offset().top;
 
       windowMain.on('load', function () {
-        var topSpaceMain = parseFloat($('body').css('padding-top'));
-
-        if (activeItem.index() !== 0 && activeItem.index() !== -1 && (mainHeight >= (windowHeight * 2)) && main.filter('.user-logged-in')) {
-          main.animate({scrollTop: scrollTo - topSpaceMain +'px'}, 800);
-        }
-        else if (activeItem.index() !== 0 && activeItem.index() !== -1 && (mainHeight >= (windowHeight * 2))) {
-          main.animate({scrollTop: scrollTo +'px'}, 800);
+        if (windowMain.width() < 900) {
+          if (activeItem.index() !== 0 && activeItem.index() !== -1 && (mainHeight >= (windowHeight * 2))) {
+            main.animate({scrollTop: scrollTo +'px'}, 800);
+          }
         }
       });
 
