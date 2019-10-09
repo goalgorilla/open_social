@@ -67,10 +67,9 @@ Feature: Group access roles
     And I click "Join"
     And I should see "Join group Test closed group 3"
     And I should see the button "Cancel"
-    And I should see the button "Join group"
     And I press "Join group"
-    And I am on "user"
-    And I click "Groups"
+    And I click the xth "0" element with the css ".navbar-nav .profile"
+    And I click "My groups"
     Then I click "Test closed group 3"
     And I should see the button "Joined"
 
