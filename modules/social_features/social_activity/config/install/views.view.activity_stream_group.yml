@@ -310,11 +310,12 @@ display:
     cache_metadata:
       max-age: -1
       contexts:
-        - user.group_permissions
         - 'languages:language_interface'
         - route
+        - route.group
         - url
         - url.query_args
+        - user.group_permissions
       tags:
         - 'config:core.entity_view_display.activity.activity.default'
         - 'config:core.entity_view_display.activity.activity.notification'
@@ -330,11 +331,12 @@ display:
     cache_metadata:
       max-age: -1
       contexts:
-        - user.group_permissions
         - 'languages:language_interface'
         - route
+        - route.group
         - url
         - url.query_args
+        - user.group_permissions
       tags:
         - 'config:core.entity_view_display.activity.activity.default'
         - 'config:core.entity_view_display.activity.activity.notification'
