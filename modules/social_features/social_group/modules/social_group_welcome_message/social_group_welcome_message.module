@@ -1,0 +1,151 @@
+<?php
+
+/**
+ * @file
+ * Primary module hooks for social_group_welcome_message module.
+ */
+
+use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\Field\BaseFieldDefinition;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\group\Entity\GroupContentInterface;
+use Drupal\private_message\Entity\PrivateMessage;
+
+/**
+ * Implements hook_entity_base_field_info().
+ */
+function social_group_welcome_message_entity_base_field_info(EntityTypeInterface $entity_type) {
+  $fields = [];
+
+  // Add a 'Welcome message' base fields to all group types.
+  if ($entity_type->id() === 'group') {
+    $fields['private_message_send'] = BaseFieldDefinition::create('boolean')
+      ->setLabel(t('Send a private message people joined'))
+      ->setRevisionable(TRUE)
+      ->setTranslatable(TRUE)
+      ->setDefaultValue(FALSE)
+      ->setDisplayOptions('form', [
+        'type' => 'boolean_checkbox',
+        'settings' => [
+          'display_label' => TRUE,
+        ],
+        'weight' => 99,
+      ])
+      ->setDisplayConfigurable('form', TRUE);
+
+    $fields['private_message_body'] = BaseFieldDefinition::create('text_long')
+      ->setLabel(t('Message'))
+      ->setRevisionable(TRUE)
+      ->setTranslatable(TRUE)
+      ->setDisplayOptions('form', [
+        'type' => 'text_textfield',
+        'weight' => 100,
+      ])
+      ->setDisplayConfigurable('form', TRUE);
+  }
+
+  return $fields;
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function social_group_welcome_message_form_alter(array &$form, FormStateInterface $form_state, $form_id) {
+  $social_group_types = [
+    'open_group',
+    'closed_group',
+    'public_group',
+  ];
+
+  \Drupal::moduleHandler()->alter('social_group_types', $social_group_types);
+
+  $group_forms = [];
+  foreach ($social_group_types as $social_group_type) {
+    $group_forms[] = "group_{$social_group_type}_add_form";
+    $group_forms[] = "group_{$social_group_type}_edit_form";
+  }
+
+  if (
+    in_array($form_id, $group_forms) &&
+    isset($form['private_message_body']) &&
+    isset($form['private_message_send'])
+  ) {
+    $form['private_message_body']['#states'] = [
+      'visible' => [
+        ':input[name="private_message_send[value]"]' => ['checked' => TRUE],
+      ],
+    ];
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_insert().
+ */
+function social_group_welcome_message_group_content_insert(GroupContentInterface $group_content) {
+  $type = $group_content->getContentPlugin()->getPluginId();
+  $group = $group_content->getGroup();
+
+  // If new membership is created.
+  if (
+    $type === 'group_membership' &&
+    !$group->get('private_message_send')->isEmpty() &&
+    $group->get('private_message_send')->value == 1 &&
+    !$group->get('private_message_body')->isEmpty()
+  ) {
+    $g_type_id = $group->getGroupType()->id();
+
+    // Get group admins entities.
+    $g_admins = $group->getMembers([$g_type_id . '-group_admin']);
+    $g_admins_users = [];
+    /** @var \Drupal\group\GroupMembership $member */
+    foreach ($g_admins as $key => $member) {
+      $g_admins_users[$key] = $member->getUser();
+    }
+
+    // Get group managers entities.
+    $g_managers = $group->getMembers([$g_type_id . '-group_manager']);
+    $g_managers_users = [];
+    /** @var \Drupal\group\GroupMembership $member */
+    foreach ($g_managers as $key => $member) {
+      $g_managers_users[$key] = $member->getUser();
+    }
+
+    // Set sender (owner) of the pm.
+    if (count($g_admins_users) === 1) {
+      list($owner) = $g_admins_users;
+    }
+    elseif (count($g_managers_users) > 0) {
+      list($owner) = $g_managers_users;
+    }
+    else {
+      $owner = $group->getOwner();
+    }
+
+    // Merge all managers of the group to managers array.
+    $managers = array_merge($g_admins_users, $g_managers_users, [$group->getOwner()]);
+
+    // Load joined user.
+    $user = $group_content->getEntity();
+
+    // Add the joined user to the already existing managers array.
+    $managers[] = $user;
+
+    /** @var \Drupal\private_message\Service\PrivateMessageServiceInterface $private_message_service */
+    $private_message_service = \Drupal::service('private_message.service');
+
+    // Create a pm thread between these users.
+    $thread = $private_message_service->getThreadForMembers($managers);
+
+    // Get body of pm.
+    $private_message_body = $group->get('private_message_body')->first()->getValue();
+
+    // Create a single message with the pm body.
+    $private_message = PrivateMessage::create([
+      'owner' => $owner,
+      'message' => $private_message_body,
+    ]);
+
+    $private_message->save();
+    $thread->addMessage($private_message)->save();
+  }
+}
