@@ -4,8 +4,10 @@ namespace Drupal\activity_creator;
 
 use Drupal\activity_creator\Entity\Activity;
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityBase;
 use Drupal\Core\Session\AccountInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Class ActivityNotifications to get Personalised activity items for account.
@@ -13,6 +15,32 @@ use Drupal\Core\Session\AccountInterface;
  * @package Drupal\activity_creator
  */
 class ActivityNotifications extends ControllerBase {
+
+  /**
+   * Database services.
+   *
+   * @var \Drupal\Core\Database\Connection
+   */
+  protected $database;
+
+  /**
+   * ActivityNotifications constructor.
+   *
+   * @param \Drupal\Core\Database\Connection $connection
+   *   Database services.
+   */
+  public function __construct(Connection $connection) {
+    $this->database = $connection;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('database')
+    );
+  }
 
   /**
    * Returns the Notifications for a given account.
@@ -63,11 +91,7 @@ class ActivityNotifications extends ControllerBase {
 
     // Retrieve all the activities referring this entity for this account.
     $ids = $this->getNotificationIds($account, [ACTIVITY_STATUS_RECEIVED]);
-
-    $activities = Activity::loadMultiple($ids);
-    foreach ($activities as $activity) {
-      $this->changeStatusOfActivity($activity, ACTIVITY_STATUS_SEEN);
-    }
+    $this->changeStatusOfActivity($ids, ACTIVITY_STATUS_SEEN);
 
     return 0;
   }
@@ -106,32 +130,25 @@ class ActivityNotifications extends ControllerBase {
 
     // Retrieve all the activities referring this entity for this account.
     $ids = $this->getNotificationIds($account, [ACTIVITY_STATUS_RECEIVED, ACTIVITY_STATUS_SEEN], $entity);
-
-    $activities = Activity::loadMultiple($ids);
-    foreach ($activities as $activity) {
-      $this->changeStatusOfActivity($activity, ACTIVITY_STATUS_READ);
-    }
+    $this->changeStatusOfActivity($ids, ACTIVITY_STATUS_READ);
 
   }
 
   /**
    * Change the status of an activity.
    *
-   * @param \Drupal\activity_creator\Entity\Activity $activity
-   *   Activity object.
+   * @param array $ids
+   *   Array of IDs.
    * @param int $status
    *   See: activity_creator_field_activity_status_allowed_values()
-   *
-   * @return bool|int
-   *   SAVED_NEW or SAVED_UPDATED is returned depending on the operation
-   *   performed.
-   *
-   * @throws \Drupal\Core\Entity\EntityStorageException
    */
-  public function changeStatusOfActivity(Activity $activity, $status = ACTIVITY_STATUS_RECEIVED) {
-    $activity->set('field_activity_status', $status);
-
-    return $activity->save();
+  public function changeStatusOfActivity(array $ids, $status = ACTIVITY_STATUS_RECEIVED) {
+    $this->database->update('activity_notification_status')
+      ->fields([
+        'status' => $status,
+      ])
+      ->condition('aid', $ids, 'IN')
+      ->execute();
   }
 
   /**
@@ -152,22 +169,14 @@ class ActivityNotifications extends ControllerBase {
 
     $uid = $account->id();
 
-    $entity_query = \Drupal::entityQuery('activity');
-    $entity_query->condition('field_activity_recipient_user', $uid, '=');
-    $entity_query->condition('field_activity_destinations', $destinations, 'IN');
+    $query = $this->database->select('activity_notification_status', 'ans')
+      ->fields('ans', ['aid'])
+      ->condition('uid', $uid);
 
-    if ($entity !== NULL) {
-      $entity_type = $entity->getEntityTypeId();
-      $entity_id = $entity->id();
-      $entity_query->condition('field_activity_entity.target_id', $entity_id, '=');
-      $entity_query->condition('field_activity_entity.target_type', $entity_type, '=');
-
-    }
     if (!empty($status)) {
-      $entity_query->condition('field_activity_status', $status, 'IN');
+      $query->condition('status', $status, 'IN');
     }
-
-    $ids = $entity_query->execute();
+    $ids = $query->execute()->fetchCol();
 
     return $ids;
   }

@@ -55,7 +55,7 @@ class NotificationsController extends ControllerBase {
   /**
    * Ajax callback to mark notifications as read.
    *
-   * @deprecated in social:8.x-7.0 and is removed from social:8.x-8.0. Use NotificationsController::getNotificationListCallback()::getNotificationListCallback() instead.
+   * @deprecated in social:8.x-7.0 and is removed from social:8.x-8.0. Use NotificationsController::getNotificationListCallback() instead.
    * @see https://www.drupal.org/project/social/issues/3056821
    */
   public function readNotificationCallback(): AjaxResponse {
