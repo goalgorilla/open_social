@@ -123,6 +123,8 @@ function social_comment_upload_comment_delete(EntityInterface $entity) {
  *
  * @param \Drupal\Core\Entity\EntityInterface $entity
  *   The comment for which attached files should be deleted.
+ *
+ * @throws \Drupal\Core\Entity\EntityStorageException
  */
 function _social_comment_upload_delete_comment_files(EntityInterface $entity) {
   // If this comment doesn't have any attached files we abort early.
@@ -130,11 +132,12 @@ function _social_comment_upload_delete_comment_files(EntityInterface $entity) {
     return;
   }
 
-  foreach ($entity->field_comment_files as $file_reference) {
-    // Try to load the actual file object.
-    $file = File::load($file_reference->target_id);
-    // Check if it's an actual file object.
-    if ($file instanceof File) {
+  // Extract all the file ids referred.
+  $file_ids = array_column($entity->get('field_comment_files')->getValue(), 'target_id');
+  // Try to load the actual file objects.
+  if ($files = File::loadMultiple($file_ids)) {
+    // Iterate and delete individual file objects.
+    foreach ($files as $file) {
       // Delete the file object.
       $file->delete();
     }
