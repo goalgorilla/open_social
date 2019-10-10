@@ -161,14 +161,24 @@ function social_comment_tokens($type, $tokens, array $data, array $options, Bubb
                 }
 
                 if ($name === 'comment_reply_link_html') {
-                  $replacements[$original] = Url::fromRoute('comment.reply', [
-                    'entity_type' => $comment->getCommentedEntityTypeId(),
-                    'entity' => $comment->getCommentedEntityId(),
-                    'field_name' => $comment->getFieldName(),
-                    'pid' => $comment->id(),
-                  ])->toString();
-                }
+                  /** @var \Drupal\Core\Entity\Entity $entity */
+                  $entity = $comment->getCommentedEntity();
+                  $commented_entity_type = $commented_entity->getEntityTypeId();
 
+                  // A reply link for a post should go to the post view.
+                  if ($commented_entity_type === 'post') {
+                    $replacements[$original] = $entity->toUrl('canonical', ['absolute' => TRUE])->toString();
+                  }
+                  else {
+                    // For comments however it should go to comment reply page.
+                    $replacements[$original] = Url::fromRoute('comment.reply', [
+                      'entity_type' => $comment->getCommentedEntityTypeId(),
+                      'entity' => $comment->getCommentedEntityId(),
+                      'field_name' => $comment->getFieldName(),
+                      'pid' => $comment->id(),
+                    ])->toString();
+                  }
+                }
               }
             }
           }
