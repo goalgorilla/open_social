@@ -11,8 +11,6 @@ use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Access\AccessResult;
-use Drupal\search_api\Query\ConditionGroup;
-use Drupal\search_api\Query\QueryInterface;
 
 /**
  * Implements hook_form_FORM_ID_alter().
@@ -453,87 +451,6 @@ function social_profile_privacy_form_field_group_options() {
     unset($field_groups['group_profile_names_image']);
   }
   return $field_groups;
-}
-
-/**
- * Implements hook_search_api_query_alter().
- *
- * Ensures that when the setting is enabled to be strict with first/last name
- * display and the current user does not have the permission to bypass this
- * setting that the search queries are altered to ignore the first name/last
- * name when the target user has filled in a nickname.
- *
- * Users will not be able to find themselves by first/last name if they have
- * filled in a nickname and do not have the correct permissions. This is
- * intentional because it means that they can test how other users can find
- * them.
- */
-function social_profile_privacy_search_api_query_alter(QueryInterface &$query) {
-  // If the social profile fields module isn't enabled then we don't have
-  // anything to hide behind.
-  if (!\Drupal::moduleHandler()->moduleExists('social_profile_fields')) {
-    return;
-  }
-
-  $ids = [
-    'social_all',
-    'social_users',
-  ];
-
-  // If the current query isn't for an index with users then we're done too.
-  if (!in_array($query->getIndex()->id(), $ids)) {
-    return;
-  }
-
-  $config = \Drupal::config('social_profile_privacy.settings');
-  $account = \Drupal::currentUser();
-
-  // If the use of real names is not limited or the user can bypass this
-  // restriction then we're done too.
-  if (!$config->get('limit_search_and_mention') || $account->hasPermission('social profile privacy always show full name')) {
-    return;
-  }
-
-  $search_term = $query->getOriginalKeys();
-
-  // Conditions must match lowercase because that's how they're indexed.
-  if (is_array($search_term)) {
-    $search_term = array_map("strtolower", $search_term);
-  }
-  else {
-    $search_term = strtolower($search_term);
-  }
-
-  // If no search string was filled out, don't add the subquery.
-  if (empty($search_term)) {
-    return;
-  }
-
-  // When a user has no nickname, there can be a match for a (part of the) name.
-  $matched_name = (new ConditionGroup("AND", ['social_profile_privacy_full_name_protection']))
-    ->addCondition('field_profile_nick_name', NULL, '=')
-    ->addConditionGroup(
-      (new ConditionGroup("OR", ['social_profile_privacy_full_name_protection']))
-        ->addCondition('field_profile_first_name', $search_term, '=')
-        ->addCondition('field_profile_last_name', $search_term, '=')
-    );
-
-  // Given that a user has a nickname there can be no match for the first and
-  // last name.
-  $no_name_match = (new ConditionGroup('AND', ['social_profile_privacy_full_name_protection']))
-    ->addCondition('field_profile_nick_name', NULL, '<>')
-    ->addCondition('field_profile_first_name', $search_term, '<>')
-    ->addCondition('field_profile_last_name', $search_term, '<>');
-
-  // Results are matched only when they do not match the first name and last
-  // name, or they also match the username.
-  $full_name_restricted = (new ConditionGroup('OR', ['social_profile_privacy_full_name_protection']))
-    ->addCondition('name', $search_term)
-    ->addCondition('field_profile_nick_name', $search_term)
-    ->addConditionGroup($matched_name)
-    ->addConditionGroup($no_name_match);
-
-  $query->addConditionGroup($full_name_restricted);
 }
 
 /**
