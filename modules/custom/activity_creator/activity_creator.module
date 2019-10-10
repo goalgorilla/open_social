@@ -258,7 +258,7 @@ function activity_creator_theme_suggestions_activity(array $variables) {
  * TODO: Maybe this should be an event subscriber service
  */
 function activity_creator_entity_view(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, $view_mode) {
-  if ($view_mode === 'full') {
+  if ($view_mode === 'full' && $entity->id() == 'activity') {
     $account = \Drupal::currentUser();
     // @TODO Check if this entity is even specified in ActivityLoggerFactory
     \Drupal::service('activity_creator.activity_notifications')->markEntityNotificationsAsRead($account, $entity);
