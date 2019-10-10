@@ -78,6 +78,11 @@ datasource_settings:
       default: true
       selected: {  }
 processor_settings:
+  rendered_item:
+    plugin_id: rendered_item
+    weights:
+      add_properties: 0
+      pre_index_save: -10
   add_url:
     plugin_id: add_url
     weights:
@@ -86,71 +91,18 @@ processor_settings:
     plugin_id: aggregated_field
     weights:
       add_properties: 20
-  html_filter:
-    plugin_id: html_filter
-    all_fields: false
+  tokenizer:
+    plugin_id: tokenizer
+    all_fields: true
     fields:
       - field_group_description
       - rendered_item
-    title: true
-    alt: true
-    tags:
-      b: 2
-      em: 1
-      h1: 5
-      h2: 3
-      h3: 2
-      strong: 2
-      u: 1
+    spaces: ''
+    overlap_cjk: 1
+    minimum_word_size: '3'
     weights:
-      preprocess_index: -10
-      preprocess_query: -10
-  ignore_character:
-    plugin_id: ignore_character
-    all_fields: false
-    fields:
-      - field_group_description
-      - label
-      - name
-      - type
-    ignorable: '[''¿¡!?,.:;]'
-    strip:
-      character_sets:
-        Pc: Pc
-        Pd: Pd
-        Pe: Pe
-        Pf: Pf
-        Pi: Pi
-        Po: Po
-        Ps: Ps
-    weights:
-      preprocess_index: -10
-      preprocess_query: -10
-    ignorable_classes:
-      - Pc
-      - Pd
-      - Pe
-      - Pf
-      - Pi
-      - Po
-      - Ps
-  ignorecase:
-    plugin_id: ignorecase
-    all_fields: false
-    fields:
-      - field_group_description
-      - label
-      - name
-      - rendered_item
-      - type
-    weights:
-      preprocess_index: -10
-      preprocess_query: -10
-  rendered_item:
-    plugin_id: rendered_item
-    weights:
-      add_properties: 0
-      pre_index_save: -10
+      preprocess_index: -6
+      preprocess_query: -6
   stopwords:
     plugin_id: stopwords
     all_fields: false
@@ -196,25 +148,73 @@ processor_settings:
     weights:
       preprocess_index: -5
       preprocess_query: -2
-  tokenizer:
-    plugin_id: tokenizer
-    all_fields: false
+  ignorecase:
+    plugin_id: ignorecase
+    all_fields: true
     fields:
       - field_group_description
+      - label
+      - name
       - rendered_item
-    spaces: ''
-    overlap_cjk: 1
-    minimum_word_size: '3'
+      - type
     weights:
-      preprocess_index: -6
-      preprocess_query: -6
+      preprocess_index: -10
+      preprocess_query: -10
   transliteration:
     plugin_id: transliteration
-    all_fields: false
+    all_fields: true
     fields:
       - field_group_description
       - label
       - rendered_item
+    weights:
+      preprocess_index: -10
+      preprocess_query: -10
+  ignore_character:
+    plugin_id: ignore_character
+    all_fields: false
+    fields:
+      - field_group_description
+      - label
+      - name
+      - type
+    ignorable: '[''¿¡!?,.:;]'
+    strip:
+      character_sets:
+        Pc: Pc
+        Pd: Pd
+        Pe: Pe
+        Pf: Pf
+        Pi: Pi
+        Po: Po
+        Ps: Ps
+    weights:
+      preprocess_index: -10
+      preprocess_query: -10
+    ignorable_classes:
+      - Pc
+      - Pd
+      - Pe
+      - Pf
+      - Pi
+      - Po
+      - Ps
+  html_filter:
+    plugin_id: html_filter
+    all_fields: false
+    fields:
+      - field_group_description
+      - rendered_item
+    title: true
+    alt: true
+    tags:
+      b: 2
+      em: 1
+      h1: 5
+      h2: 3
+      h3: 2
+      strong: 2
+      u: 1
     weights:
       preprocess_index: -10
       preprocess_query: -10

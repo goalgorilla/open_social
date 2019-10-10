@@ -22,8 +22,7 @@ class Page extends PreprocessBase {
   public function preprocess(array &$variables, $hook, array $info) {
     parent::preprocess($variables, $hook, $info);
 
-    // Add needed attributes so later in template we can manipulate with them.
-    $attributes = new Attribute();
+    $attributes = $variables['content_attributes'] instanceof Attribute ? $variables['content_attributes'] : new Attribute();
     // Default classes.
     $attributes->addClass('row', 'container');
     // If page has title.

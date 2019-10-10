@@ -16,7 +16,7 @@ Feature: Create data policy and view new policy
     Given I am logged in as "behatuser"
     Then I should be on the homepage
 
-    Given I am logged in as "behatsitemanager"
+    Given I am logged in as "behatsitemanager" with the "without consent" permission
     And I am on "admin/config/people/data-policy"
     Then I should be on "data-policy/revisions"
     And I should see the heading "Revisions" in the "Hero block" region

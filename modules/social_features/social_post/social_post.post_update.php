@@ -36,3 +36,11 @@ function social_post_post_update_remove_orphaned_posts() {
   $entities = $storage_handler->loadMultiple($pids);
   $storage_handler->delete($entities);
 }
+
+/**
+ * Grant permission to administer post entities to CM and SM.
+ */
+function social_post_post_update_8601_administer_post_permissions() {
+  user_role_grant_permissions('contentmanager', ['administer post entities']);
+  user_role_grant_permissions('sitemanager', ['administer post entities']);
+}

@@ -1,0 +1,34 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the social_lazy_loading module.
+ */
+
+/**
+ * Implements hook_install().
+ *
+ * Perform actions related to the installation of social_language.
+ */
+function social_lazy_loading_install() {
+  // Enable the submodule, it's standalone so don't depend on it.
+  install_lazy_loading_images();
+}
+
+/**
+ * Function that enables the lazy loading images module.
+ */
+function install_lazy_loading_images() {
+  $module = [
+    'social_lazy_loading_images',
+  ];
+
+  \Drupal::service('module_installer')->install($module);
+}
+
+/**
+ * Install social_lazy_loading_images module.
+ */
+function social_lazy_loading_update_8601() {
+  install_lazy_loading_images();
+}

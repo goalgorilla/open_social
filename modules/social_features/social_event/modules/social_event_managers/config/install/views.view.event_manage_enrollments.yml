@@ -2,16 +2,16 @@ langcode: en
 status: true
 dependencies:
   config:
-  - core.entity_view_mode.profile.table
-  - field.storage.profile.field_profile_organization
-  - node.type.event
+    - core.entity_view_mode.profile.table
+    - field.storage.profile.field_profile_organization
+    - node.type.event
   module:
-  - node
-  - options
-  - profile
-  - social_event
-  - social_event_managers
-  - user
+    - node
+    - options
+    - profile
+    - social_event
+    - social_event_managers
+    - user
 id: event_manage_enrollments
 label: 'Manage All Enrollments'
 module: views
@@ -177,8 +177,8 @@ display:
           batch: 1
           batch_size: '10'
           form_step: true
-          buttons: 1
-          clear_on_exposed: false
+          buttons: 0
+          clear_on_exposed: 0
           action_title: Action
           selected_actions:
             comment_delete_action: 0
@@ -616,23 +616,23 @@ display:
     cache_metadata:
       max-age: 0
       contexts:
-      - 'languages:language_content'
-      - 'languages:language_interface'
-      - url
-      - url.query_args
+        - 'languages:language_content'
+        - 'languages:language_interface'
+        - url
+        - url.query_args
       tags:
-      - 'config:core.entity_view_display.profile.profile.autocomplete_item'
-      - 'config:core.entity_view_display.profile.profile.compact'
-      - 'config:core.entity_view_display.profile.profile.compact_notification'
-      - 'config:core.entity_view_display.profile.profile.compact_teaser'
-      - 'config:core.entity_view_display.profile.profile.default'
-      - 'config:core.entity_view_display.profile.profile.hero'
-      - 'config:core.entity_view_display.profile.profile.search_index'
-      - 'config:core.entity_view_display.profile.profile.small'
-      - 'config:core.entity_view_display.profile.profile.small_teaser'
-      - 'config:core.entity_view_display.profile.profile.table'
-      - 'config:core.entity_view_display.profile.profile.teaser'
-      - 'config:field.storage.profile.field_profile_organization'
+        - 'config:core.entity_view_display.profile.profile.autocomplete_item'
+        - 'config:core.entity_view_display.profile.profile.compact'
+        - 'config:core.entity_view_display.profile.profile.compact_notification'
+        - 'config:core.entity_view_display.profile.profile.compact_teaser'
+        - 'config:core.entity_view_display.profile.profile.default'
+        - 'config:core.entity_view_display.profile.profile.hero'
+        - 'config:core.entity_view_display.profile.profile.search_index'
+        - 'config:core.entity_view_display.profile.profile.small'
+        - 'config:core.entity_view_display.profile.profile.small_teaser'
+        - 'config:core.entity_view_display.profile.profile.table'
+        - 'config:core.entity_view_display.profile.profile.teaser'
+        - 'config:field.storage.profile.field_profile_organization'
   page_manage_enrollments:
     display_plugin: page
     id: page_manage_enrollments
@@ -653,20 +653,20 @@ display:
     cache_metadata:
       max-age: 0
       contexts:
-      - 'languages:language_content'
-      - 'languages:language_interface'
-      - url
-      - url.query_args
+        - 'languages:language_content'
+        - 'languages:language_interface'
+        - url
+        - url.query_args
       tags:
-      - 'config:core.entity_view_display.profile.profile.autocomplete_item'
-      - 'config:core.entity_view_display.profile.profile.compact'
-      - 'config:core.entity_view_display.profile.profile.compact_notification'
-      - 'config:core.entity_view_display.profile.profile.compact_teaser'
-      - 'config:core.entity_view_display.profile.profile.default'
-      - 'config:core.entity_view_display.profile.profile.hero'
-      - 'config:core.entity_view_display.profile.profile.search_index'
-      - 'config:core.entity_view_display.profile.profile.small'
-      - 'config:core.entity_view_display.profile.profile.small_teaser'
-      - 'config:core.entity_view_display.profile.profile.table'
-      - 'config:core.entity_view_display.profile.profile.teaser'
-      - 'config:field.storage.profile.field_profile_organization'
+        - 'config:core.entity_view_display.profile.profile.autocomplete_item'
+        - 'config:core.entity_view_display.profile.profile.compact'
+        - 'config:core.entity_view_display.profile.profile.compact_notification'
+        - 'config:core.entity_view_display.profile.profile.compact_teaser'
+        - 'config:core.entity_view_display.profile.profile.default'
+        - 'config:core.entity_view_display.profile.profile.hero'
+        - 'config:core.entity_view_display.profile.profile.search_index'
+        - 'config:core.entity_view_display.profile.profile.small'
+        - 'config:core.entity_view_display.profile.profile.small_teaser'
+        - 'config:core.entity_view_display.profile.profile.table'
+        - 'config:core.entity_view_display.profile.profile.teaser'
+        - 'config:field.storage.profile.field_profile_organization'

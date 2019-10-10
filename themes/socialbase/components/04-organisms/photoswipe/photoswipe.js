@@ -295,6 +295,7 @@
       openPhotoSwipe(hashData.pid, galleryElements[hashData.gid - 1], true, true);
     }
   };
+
   Drupal.behaviors.photoSwipe = {
     attach: function (context, settings) {
       initPhotoSwipeFromDOM('.photoswipe-gallery');

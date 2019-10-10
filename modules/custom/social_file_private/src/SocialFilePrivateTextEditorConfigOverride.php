@@ -3,6 +3,7 @@
 namespace Drupal\social_file_private;
 
 use Drupal\Core\Cache\CacheableMetadata;
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Config\ConfigFactoryOverrideInterface;
 use Drupal\Core\Config\StorageInterface;
 use Drupal\Core\StreamWrapper\PrivateStream;
@@ -15,6 +16,23 @@ use Drupal\Core\StreamWrapper\PrivateStream;
  * @package Drupal\social_file_private
  */
 class SocialFilePrivateTextEditorConfigOverride implements ConfigFactoryOverrideInterface {
+
+  /**
+   * The config factory.
+   *
+   * @var \Drupal\Core\Config\ConfigFactoryInterface
+   */
+  protected $configFactory;
+
+  /**
+   * Constructs the configuration override.
+   *
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *   The Drupal configuration factory.
+   */
+  public function __construct(ConfigFactoryInterface $config_factory) {
+    $this->configFactory = $config_factory;
+  }
 
   /**
    * Get all the editors/input formats we need to protect.
@@ -44,8 +62,9 @@ class SocialFilePrivateTextEditorConfigOverride implements ConfigFactoryOverride
       $config_names = $this->getTextEditorsToProtect();
       foreach ($config_names as $config_name) {
         if (in_array($config_name, $names)) {
-          $config = \Drupal::service('config.factory')->getEditable($config_name);
-          $scheme = $config->get('image_upload.scheme');
+          $scheme = $this->configFactory
+            ->getEditable($config_name)
+            ->get('image_upload.scheme');
           if ($scheme == 'public') {
             $overrides[$config_name]['image_upload']['scheme'] = 'private';
           }
