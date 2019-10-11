@@ -82,38 +82,3 @@ function activity_creator_update_8001() {
   $schema = $db->schema();
   $schema->createTable('activity_notification_status', $spec['activity_notification_status']);
 }
-
-/**
- * Implements hook_update_N().
- *
- * Migrate all the activity information to new table.
- * This is necessary as we have changed the logic of reading notifications
- * and marking them as seen. So, we have migrate the existing activity entries
- * to new table so as to avoid any missing notifications by users.
- *
- * @throws \Exception
- */
-function activity_creator_update_8002() {
-  // Get all the necessary information from current database.
-  $query = \Drupal::database()->select('activity__field_activity_recipient_user', 'aur');
-  $query->join('activity__field_activity_status', 'asv', 'aur.entity_id = asv.entity_id');
-  $results = $query
-    ->fields('aur', ['entity_id', 'field_activity_recipient_user_target_id'])
-    ->fields('asv', ['field_activity_status_value'])
-    ->execute()->fetchAll();
-
-  // Insert the information in activity_notification_status table.
-  foreach ($results as $result) {
-    \Drupal::database()->insert('activity_notification_status')
-      ->fields([
-        'uid',
-        'aid',
-        'status',
-      ], [
-        $result->{'entity_id'},
-        $result->{'field_activity_recipient_user_target_id'},
-        $result->{'field_activity_status_value'},
-      ])
-      ->execute();
-  }
-}

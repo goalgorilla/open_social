@@ -88,9 +88,8 @@ class ActivityNotifications extends ControllerBase {
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
   public function markAllNotificationsAsSeen(AccountInterface $account) {
-
     // Retrieve all the activities referring this entity for this account.
-    $ids = $this->getNotificationIds($account, [ACTIVITY_STATUS_RECEIVED]);
+    $ids = $this->getNotificationIds($account);
     $this->changeStatusOfActivity($ids, ACTIVITY_STATUS_SEEN);
 
     return 0;
