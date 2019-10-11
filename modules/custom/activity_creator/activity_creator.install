@@ -84,6 +84,8 @@ function activity_creator_update_8001() {
 }
 
 /**
+ * Implements hook_update_N().
+ *
  * Migrate all the activity information to new table.
  * This is necessary as we have changed the logic of reading notifications
  * and marking them as seen. So, we have migrate the existing activity entries
@@ -101,7 +103,7 @@ function activity_creator_update_8002() {
     ->execute()->fetchAll();
 
   // Insert the information in activity_notification_status table.
-  foreach ( $results as $result) {
+  foreach ($results as $result) {
     \Drupal::database()->insert('activity_notification_status')
       ->fields([
         'uid',
