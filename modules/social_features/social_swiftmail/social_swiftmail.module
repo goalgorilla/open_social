@@ -40,7 +40,8 @@ function social_swiftmail_preprocess_swiftmailer(array &$variables) {
 
   // Check if custom e-mail setting for branding removal is enabled.
   $social_swiftmail_config = \Drupal::config('social_swiftmail.settings');
-  if ($social_swiftmail_config->get('remove_open_social_branding') === TRUE) {
+  $remove_open_social_branding = $social_swiftmail_config->get('remove_open_social_branding');
+  if ($remove_open_social_branding == 1) {
     $site_config = \Drupal::config('system.site');
     // When branding should be removed, check if the default site settings are
     // set and override variables.
