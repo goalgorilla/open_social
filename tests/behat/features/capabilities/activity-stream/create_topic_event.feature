@@ -121,9 +121,7 @@ Feature: See and get notified when content is created
       | CreateUser  | 1      | CreateUser  |
       | SeeUser     | 1      | SeeUser     |
     And I am logged in as "CreateUser"
-    And I am on "user"
-    And I click "Groups"
-    And I click "Add a group"
+    And I am on "group/add"
     And I click radio button "Open group This is an open group. Users may join without approval and all content added in this group will be visible to all community members." with the id "edit-group-type-open-group"
     And I press "Continue"
     When I fill in "Title" with "Test open group"
