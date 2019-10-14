@@ -2,10 +2,8 @@
 
 /**
  * @file
- *  Contains post update hook implementations.
+ * Contains post update hook implementations.
  */
-
-use Drupal\group\Entity\Group;
 
 /**
  * Implements hook_post_update_name().

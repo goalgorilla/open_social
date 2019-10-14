@@ -2,7 +2,6 @@
 
 namespace Drupal\activity_creator;
 
-use Drupal\activity_creator\Entity\Activity;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityBase;
@@ -85,7 +84,6 @@ class ActivityNotifications extends ControllerBase {
    *
    * @return int
    *   Number of remaining notifications.
-   *
    */
   public function markAllNotificationsAsSeen(AccountInterface $account): int {
     // Retrieve all the activities referring this entity for this account.
@@ -102,11 +100,19 @@ class ActivityNotifications extends ControllerBase {
    *   Account object.
    * @param \Drupal\Core\Entity\EntityBase $entity
    *   Entity object.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
   public function markEntityNotificationsAsRead(AccountInterface $account, EntityBase $entity) {
 
     // Retrieve all the activities referring this entity for this account.
-    $ids = $this->getNotificationIds($account, [ACTIVITY_STATUS_RECEIVED, ACTIVITY_STATUS_SEEN]);
+    $entity_query = $this->entityTypeManager->getStorage('activity')->getQuery();
+    $entity_query->condition('field_activity_recipient_user', $account->id(), '=');
+    $entity_query->condition('field_activity_destinations', ['notifications'], 'IN');
+    $ids = $entity_query->execute();
+
+    // Change the status of this entity.
     $this->changeStatusOfActivity($ids, ACTIVITY_STATUS_READ);
 
   }
@@ -119,8 +125,12 @@ class ActivityNotifications extends ControllerBase {
    * @param \Drupal\Core\Entity\EntityBase $entity
    *   Entity object.
    *
-   * @deprecated Will be removed in 8.x-7.x.
-   *   Use ::markEntityNotificationsAsRead() instead.
+   * @deprecated in opensocial:8.x-7.0 and is removed from opensocial:8.x-7.1. Use
+   *   \Drupal\activity_creator\ActivityNotifications
+   * ::markEntityNotificationsAsRead() instead.
+   *
+   * TODO: Change @see to point to a change record.
+   * @see https://www.drupal.org/project/social/issues/3087083
    */
   public function markEntityAsRead(AccountInterface $account, EntityBase $entity) {
 
