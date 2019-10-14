@@ -53,10 +53,8 @@ class ActivityNotifications extends ControllerBase {
    * @return array
    *   Return array of notification ids.
    */
-  public function getNotifications(AccountInterface $account, array $status = [ACTIVITY_STATUS_RECEIVED]) {
-    $ids = $this->getNotificationIds($account, $status);
-
-    return $ids;
+  public function getNotifications(AccountInterface $account, array $status = [ACTIVITY_STATUS_RECEIVED]): array {
+    return $this->getNotificationIds($account, $status);
   }
 
   /**
@@ -69,11 +67,14 @@ class ActivityNotifications extends ControllerBase {
    *
    * @return array
    *   Return array of notifications as activity objects.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  public function getNotificationsActivities(AccountInterface $account, array $status = [ACTIVITY_STATUS_RECEIVED]) {
+  public function getNotificationsActivities(AccountInterface $account, array $status = [ACTIVITY_STATUS_RECEIVED]): array {
     $ids = $this->getNotificationIds($account, $status);
 
-    return entity_load_multiple('activity', $ids);
+    return \Drupal::entityTypeManager()->getStorage('activity')->loadMultiple($ids);
   }
 
   /**
@@ -85,9 +86,8 @@ class ActivityNotifications extends ControllerBase {
    * @return int
    *   Number of remaining notifications.
    *
-   * @throws \Drupal\Core\Entity\EntityStorageException
    */
-  public function markAllNotificationsAsSeen(AccountInterface $account) {
+  public function markAllNotificationsAsSeen(AccountInterface $account): int {
     // Retrieve all the activities referring this entity for this account.
     $ids = $this->getNotificationIds($account);
     $this->changeStatusOfActivity($ids, ACTIVITY_STATUS_SEEN);
@@ -106,12 +106,8 @@ class ActivityNotifications extends ControllerBase {
   public function markEntityNotificationsAsRead(AccountInterface $account, EntityBase $entity) {
 
     // Retrieve all the activities referring this entity for this account.
-    $ids = $this->getNotificationIds($account, [ACTIVITY_STATUS_RECEIVED, ACTIVITY_STATUS_SEEN], $entity);
-
-    $activities = Activity::loadMultiple($ids);
-    foreach ($activities as $activity) {
-      $this->changeStatusOfActivity($activity, ACTIVITY_STATUS_READ);
-    }
+    $ids = $this->getNotificationIds($account, [ACTIVITY_STATUS_RECEIVED, ACTIVITY_STATUS_SEEN]);
+    $this->changeStatusOfActivity($ids, ACTIVITY_STATUS_READ);
 
   }
 
@@ -123,7 +119,8 @@ class ActivityNotifications extends ControllerBase {
    * @param \Drupal\Core\Entity\EntityBase $entity
    *   Entity object.
    *
-   * @throws \Drupal\Core\Entity\EntityStorageException
+   * @deprecated Will be removed in 8.x-7.x.
+   *   Use ::markEntityNotificationsAsRead() instead.
    */
   public function markEntityAsRead(AccountInterface $account, EntityBase $entity) {
 
@@ -162,10 +159,11 @@ class ActivityNotifications extends ControllerBase {
    *
    * @return array
    *   Returns an array of notification ids.
+   *
+   * @todo: Remove $entity parameter after deprecations are removed.
    */
-  private function getNotificationIds(AccountInterface $account, array $status = [], EntityBase $entity = NULL) {
-    $destinations = ['notifications'];
-
+  private function getNotificationIds(AccountInterface $account, array $status = [], EntityBase $entity = NULL): array {
+    // Get the user ID.
     $uid = $account->id();
 
     $query = $this->database->select('activity_notification_status', 'ans')
@@ -175,9 +173,7 @@ class ActivityNotifications extends ControllerBase {
     if (!empty($status)) {
       $query->condition('status', $status, 'IN');
     }
-    $ids = $query->execute()->fetchCol();
-
-    return $ids;
+    return $query->execute()->fetchCol();
   }
 
 }
