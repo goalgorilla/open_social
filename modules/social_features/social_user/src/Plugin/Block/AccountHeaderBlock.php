@@ -152,6 +152,9 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
       // Add the create links as children of the create content menu item.
       $menu_items['create'] += $create_links;
 
+      // Check if user can create content.
+      $menu_items['create']['#access'] = $this->renderer->render($create_links) ? TRUE : FALSE;
+
       $account_name = $account->getDisplayName();
 
       $menu_items['account_box'] = [
