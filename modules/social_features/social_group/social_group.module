@@ -1474,6 +1474,18 @@ function social_group_entity_base_field_info_alter(&$fields, EntityTypeInterface
 function social_group_form_node_form_alter(&$form, FormStateInterface $form_state) {
   if (isset($form['#entity_type']) && $form['#entity_type'] === 'node') {
     if (isset($form['groups'])) {
+      // Check if groups exists.
+      $groups = \Drupal::entityTypeManager()->getStorage('group')->loadMultiple();
+      $form_groups_access = (!empty($groups)) ? TRUE : FALSE;
+      // Check if user has permissions or is a member of any groups.
+      $current_user = \Drupal::currentUser();
+      if ($form_groups_access && !$current_user->hasPermission('manage all groups')) {
+        /** @var \Drupal\social_group\SocialGroupHelperService $social_group_helper_service */
+        $social_group_helper_service = \Drupal::service('social_group.helper_service');
+        $user_has_group = $social_group_helper_service->getAllGroupsForUser($current_user->id());
+        $form_groups_access = (!empty($user_has_group)) ? TRUE : FALSE;
+      }
+      $form['groups']['#access'] = $form_groups_access;
       $change_fieldgroup_titles = [
         'group_topic_visibility',
         'group_event_visibility',
