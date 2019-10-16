@@ -55,9 +55,9 @@ function activity_creator_post_update_8001_one_to_many_activities(&$sandbox) {
         'uid',
         'status',
       ], [
-        $result->{'entity_id'},
-        $result->{'field_activity_recipient_user_target_id'},
-        $result->{'field_activity_status_value'},
+        $result->entity_id,
+        $result->field_activity_recipient_user_target_id,
+        $result->field_activity_status_value,
       ])
       ->execute();
     // Increment currently processed entities.
