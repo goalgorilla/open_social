@@ -23,7 +23,7 @@ function SearchSuggestions(props) {
       <div className="search-suggestions">{results}</div>
       <div className="search-suggestions__all">
         <a href={searchUrl} className="btn btn-default btn-raised">
-          See all results
+          {Drupal.t('See all results')}
         </a>
       </div>
     </React.Fragment>
