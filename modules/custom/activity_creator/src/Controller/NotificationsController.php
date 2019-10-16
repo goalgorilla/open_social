@@ -6,7 +6,6 @@ use Drupal\activity_creator\ActivityNotifications;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\HtmlCommand;
 use Drupal\Core\Controller\ControllerBase;
-use Drupal\Core\Session\AccountInterface;
 use Drupal\views\Views;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -23,23 +22,13 @@ class NotificationsController extends ControllerBase {
   protected $activities;
 
   /**
-   * The current user services.
-   *
-   * @var \Drupal\Core\Session\AccountInterface
-   */
-  protected $user;
-
-  /**
    * NotificationsController constructor.
    *
    * @param \Drupal\activity_creator\ActivityNotifications $notifications
    *   The activity notifications.
-   * @param \Drupal\Core\Session\AccountInterface $account
-   *   The current user account services.
    */
-  public function __construct(ActivityNotifications $notifications, AccountInterface $account) {
+  public function __construct(ActivityNotifications $notifications) {
     $this->activities = $notifications;
-    $this->user = $account;
   }
 
   /**
@@ -47,8 +36,7 @@ class NotificationsController extends ControllerBase {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('activity_creator.activity_notifications'),
-      $container->get('current_user')
+      $container->get('activity_creator.activity_notifications')
     );
   }
 
@@ -62,7 +50,7 @@ class NotificationsController extends ControllerBase {
     // Create AJAX Response object.
     $response = new AjaxResponse();
     $data = [
-      'remaining_notifications' => $this->activities->markAllNotificationsAsSeen($this->user),
+      'remaining_notifications' => $this->activities->markAllNotificationsAsSeen($this->currentUser()),
     ];
     $response->setData($data);
 
@@ -75,8 +63,6 @@ class NotificationsController extends ControllerBase {
    *
    * @return \Drupal\Core\Ajax\AjaxResponse
    *   Returns a render array list of notifications.
-   *
-   * @throws \Drupal\Core\Entity\EntityStorageException
    */
   public function getNotificationListCallback(): AjaxResponse {
     // The data to display, will be the view.
@@ -84,13 +70,21 @@ class NotificationsController extends ControllerBase {
     $view->setDisplay('block_1');
     $rendered_view = $view->render();
 
-    $notification_count = (string) $this->activities->markAllNotificationsAsSeen($this->user);
+    // Set the notification count.
+    if ($this->activities->markAllNotificationsAsSeen($this->currentUser())) {
+      // All the notifications are marked as seen, set notification count to 0.
+      $notification_count = 0;
+    }
+    else {
+      // Else fetch and count received notifications by user.
+      $notification_count = count($this->activities->getNotifications());
+    }
 
     // Create a response.
     $response = new AjaxResponse();
     $response->addCommand(new HtmlCommand('.js-notification-center-wrapper', $rendered_view));
     // Update the notification count to mark as read.
-    $response->addCommand(new HtmlCommand('.notification-bell .badge', $notification_count));
+    $response->addCommand(new HtmlCommand('.notification-bell .badge', $notification_count ?? 0));
 
     return $response;
   }

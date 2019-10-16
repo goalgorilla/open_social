@@ -259,9 +259,8 @@ function activity_creator_theme_suggestions_activity(array $variables) {
  */
 function activity_creator_entity_view(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, $view_mode) {
   if ($view_mode === 'full') {
-    $account = \Drupal::currentUser();
     // @TODO Check if this entity is even specified in ActivityLoggerFactory
-    \Drupal::service('activity_creator.activity_notifications')->markEntityNotificationsAsRead($account, $entity);
+    \Drupal::service('activity_creator.activity_notifications')->markEntityNotificationsAsRead(\Drupal::currentUser(), $entity);
   }
 
   // Generate the output text for the user in it's selected language.
@@ -273,6 +272,8 @@ function activity_creator_entity_view(array &$build, EntityInterface $entity, En
       // Replace the old text with the correct one.
       $build['field_activity_output_text'][0]['#text'] = $output[0];
     }
+    // Mark this activity notification as read.
+    \Drupal::service('activity_creator.activity_notifications')->markNotificationAsRead(\Drupal::currentUser(), $entity);
   }
 }
 
