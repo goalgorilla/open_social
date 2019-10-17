@@ -59,6 +59,13 @@
     @include for-tablet-portrait-up {
       min-height: 206px;
     }
+
+    > .hero-footer {
+      @include for-tablet-portrait-up {
+        position: static;
+        margin-top: -2.5rem;
+      }
+    }
   }
 
   // this excludes the social_landing page hero section
@@ -74,13 +81,13 @@
 
 /* IE11 */
 @media all and (-ms-high-contrast:none) {
-  *::-ms-backdrop, .cover-wrap { height: 410px; }
+  *::-ms-backdrop, .cover-wrap { min-height: 410px; }
 
-  *::-ms-backdrop, .cover-wrap.small { height: 206px; }
+  *::-ms-backdrop, .cover-wrap.small { min-height: 206px; }
 
-  *::-ms-backdrop, .paragraph--hero .cover-wrap { height: 350px; }
+  *::-ms-backdrop, .paragraph--hero .cover-wrap { min-height: 350px; }
 
-  *::-ms-backdrop, .paragraph--hero-small .cover-wrap { height: 206px; }
+  *::-ms-backdrop, .paragraph--hero-small .cover-wrap { min-height: 206px; }
 }
 
 // anon homepage hero
