@@ -2,7 +2,6 @@
 
 namespace Drupal\social_group_flexible_group\Access;
 
-use Drupal\group\Access\GroupAccessResult;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Routing\Access\AccessInterface;
@@ -35,33 +34,25 @@ class FlexibleGroupContentAccessCheck implements AccessInterface {
 
     // Don't interfere if no permission was specified.
     if ($permission === NULL) {
-      return AccessResult::neutral();
+      return AccessResult::allowed();
     }
 
     // Don't interfere if no group was specified.
     $parameters = $route_match->getParameters();
     if (!$parameters->has('group')) {
-      return AccessResult::neutral();
+      return AccessResult::allowed();
     }
 
     // Don't interfere if the group isn't a real group.
     $group = $parameters->get('group');
     if (!$group instanceof GroupInterface) {
-      return AccessResult::neutral();
+      return AccessResult::allowed();
     }
 
     $type = $group->getGroupType();
     // Don't interfere if the group isn't a flexible group.
     if ($type instanceof GroupTypeInterface && $type->id() !== 'flexible_group') {
-      if (!empty($group_permission)) {
-        return GroupAccessResult::allowedIfHasGroupPermissions($group, $account, [$group_permission]);
-      }
-
-      $condition1 = $account->hasPermission('manage all groups');
-      $condition2 = $group->hasPermission('administer members', $account);
-      $condition3 = $group->getMember($account);
-
-      return AccessResult::allowedIf($condition1 || $condition2 || $condition3);
+      return AccessResult::allowed();
     }
 
     // A user with this access can definitely do everything.

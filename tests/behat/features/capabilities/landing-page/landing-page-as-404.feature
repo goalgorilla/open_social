@@ -22,7 +22,7 @@ Feature: Use a landing page as 404 page
       | field_landing_page_section[0][subform][field_section_paragraph][0][subform][field_hero_subtitle][0][value]                                  | Hero subtitle |
     # Set URL Alias
     And I click "URL path settings"
-    And I fill in "URL alias" with "page-not-found"
+    And I set alias as "page-not-found"
     And I press "Save"
     And I wait for "3" seconds
     # See as LU

@@ -24,6 +24,7 @@ Feature: Like post stream
     And I wait for AJAX to finish
 
     Given I am logged in as "user_1"
+    And I wait for the queue to be empty
     And I am on "/notifications"
     Then I should see "Isaac Newton likes your post"
 
