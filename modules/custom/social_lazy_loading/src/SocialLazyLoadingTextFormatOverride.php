@@ -3,7 +3,6 @@
 namespace Drupal\social_lazy_loading;
 
 use Drupal\Core\Cache\CacheableMetadata;
-use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Config\ConfigFactoryOverrideInterface;
 use Drupal\Core\Config\StorageInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
@@ -23,23 +22,13 @@ class SocialLazyLoadingTextFormatOverride implements ConfigFactoryOverrideInterf
   protected $moduleHandler;
 
   /**
-   * The config factory.
-   *
-   * @var \Drupal\Core\Config\ConfigFactoryInterface
-   */
-  protected $configFactory;
-
-  /**
    * Constructs the configuration override.
    *
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    *   The module handler.
-   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
-   *   The configuration factory.
    */
-  public function __construct(ModuleHandlerInterface $module_handler, ConfigFactoryInterface $config_factory) {
+  public function __construct(ModuleHandlerInterface $module_handler) {
     $this->moduleHandler = $module_handler;
-    $this->configFactory = $config_factory;
   }
 
   /**
@@ -90,11 +79,7 @@ class SocialLazyLoadingTextFormatOverride implements ConfigFactoryOverrideInterf
     $config_name = 'filter.format.' . $text_format;
 
     if ($convert_url) {
-      $config = $this->configFactory->getEditable($config_name);
-      $dependencies = $config->getOriginal('dependencies.module');
-      $overrides[$config_name]['dependencies']['module'] = $dependencies;
-      $overrides[$config_name]['dependencies']['module'][] = 'lazy';
-
+      $overrides[$config_name]['dependencies']['module']['lazy'] = 'lazy';
       $overrides[$config_name]['filters']['lazy_filter'] = [
         'id' => 'lazy_filter',
         'provider' => 'lazy',

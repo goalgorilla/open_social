@@ -224,6 +224,8 @@ html:not(.js) .dropdown .dropdown-toggle {
   z-index: -1;
 }
 
+/* IE11 */
+
 @media (min-width: 600px) {
   .dropdown-menu .divider.mobile {
     display: none;
@@ -244,6 +246,12 @@ html:not(.js) .dropdown .dropdown-toggle {
   .scrollable-menu {
     height: auto;
     max-height: 450px;
+  }
+}
+
+@media (min-width: 600px) and (-ms-high-contrast: none) {
+  *::-ms-backdrop, .dropdown-menu .media-body {
+    padding-right: 17px;
   }
 }
 

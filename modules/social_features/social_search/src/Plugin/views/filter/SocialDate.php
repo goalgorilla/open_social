@@ -30,6 +30,15 @@ class SocialDate extends DateTimeDate {
       $operator = $this->operator;
     }
 
+    // Custom override to ensure that when users
+    // filter on something different than the event type
+    // we also don't use an event field filter.
+    if (!empty($input['type']) && $input['type'] !== 'event') {
+      $input['field_event_date']['value'] = '';
+      $input['field_event_date']['max'] = '';
+      $input['field_event_date']['min'] = '';
+    }
+
     // Fallback for exposed operator.
     $operatorfromurl = NULL;
     if ($operator === NULL && $this->realField === 'created') {

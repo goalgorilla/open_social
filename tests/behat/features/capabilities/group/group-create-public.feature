@@ -14,9 +14,7 @@ Feature: Create Public Group
       | Webinar  |
       | Other    |
     And I am logged in as "GivenUserOne"
-    And I am on "user"
-    And I click "Groups" in the "Tabs"
-    And I click "Add a group"
+    And I am on "group/add"
     Then I click radio button "Public group This is a public group. Users may join without approval and all content added in this group will be visible to all community members and anonymous users." with the id "edit-group-type-public-group"
     And I press "Continue"
     When I fill in "Title" with "Test public group"

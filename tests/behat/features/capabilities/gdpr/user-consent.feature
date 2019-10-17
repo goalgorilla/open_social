@@ -15,7 +15,7 @@ Feature: Give user consent
 
     Given I enable the module "social_gdpr"
 
-    Given I am logged in as "behatsitemanager"
+    Given I am logged in as "behatsitemanager" with the "without consent" permission
     When I am on "admin/config/people/data-policy/settings"
     Then I should see the heading "Data policy settings" in the "Admin page title block" region
     And I should see checked the box "Enforce consent"
@@ -40,7 +40,7 @@ Feature: Give user consent
     When I click "here"
     Then I should be on "data-policy-agreement"
 
-    When I am logged in as "behatsitemanager"
+    When I am logged in as "behatsitemanager" with the "without consent" permission
     And I am on "admin/reports/data-policy-agreements"
     Then I should not see the text "User consents not found."
     And I should see "Undecided" in the "td.views-field-state" element
@@ -52,7 +52,7 @@ Feature: Give user consent
     And I press "Save"
     Then I should be on the homepage
 
-    When I am logged in as "behatsitemanager"
+    When I am logged in as "behatsitemanager" with the "without consent" permission
     And I am on "admin/reports/data-policy-agreements"
     Then I should see "Not agree" in the "td.views-field-state" element
 
@@ -62,7 +62,7 @@ Feature: Give user consent
     And I press "Save"
     Then I should be on the homepage
 
-    When I am logged in as "behatsitemanager"
+    When I am logged in as "behatsitemanager" with the "without consent" permission
     And I am on "admin/reports/data-policy-agreements"
     Then I should see "Agree" in the "td.views-field-state" element
 
@@ -71,7 +71,7 @@ Feature: Give user consent
     And I am logged in as "behatuser3"
     And I click "here"
     And I press "Save"
-    And I am logged in as "behatsitemanager"
+    And I am logged in as "behatsitemanager" with the "without consent" permission
     And I am on "admin/reports/data-policy-agreements"
     Then I should see the link "behatuser1"
     And I should see the link "behatuser2"
