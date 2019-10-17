@@ -95,7 +95,7 @@ function social_group_welcome_message_group_content_insert(GroupContentInterface
     $g_type_id = $group->getGroupType()->id();
 
     // Get group admins entities.
-    $g_admins = $group->getMembers([$g_type_id . '-group_admin']);
+    $g_admins = $group->getMembers($g_type_id . '-group_admin');
     $g_admins_users = [];
     /** @var \Drupal\group\GroupMembership $member */
     foreach ($g_admins as $key => $member) {
@@ -103,7 +103,7 @@ function social_group_welcome_message_group_content_insert(GroupContentInterface
     }
 
     // Get group managers entities.
-    $g_managers = $group->getMembers([$g_type_id . '-group_manager']);
+    $g_managers = $group->getMembers($g_type_id . '-group_manager');
     $g_managers_users = [];
     /** @var \Drupal\group\GroupMembership $member */
     foreach ($g_managers as $key => $member) {
@@ -140,7 +140,7 @@ function social_group_welcome_message_group_content_insert(GroupContentInterface
     $private_message_body = $group->get('private_message_body')->first()->getValue();
 
     // Create a single message with the pm body.
-    $private_message = PrivateMessage::create([
+    $private_message = \Drupal::entityTypeManager()->getStorage('private_message')->create([
       'owner' => $owner,
       'message' => $private_message_body,
     ]);
