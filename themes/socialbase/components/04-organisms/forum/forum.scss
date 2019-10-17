@@ -1,0 +1,78 @@
+@import 'settings';
+
+.path-forum .layout--with-complementary {
+
+  @include for-tablet-landscape-up {
+    .region--content {
+      flex: 0 0 100%;
+      max-width: 100%;
+    }
+  }
+}
+
+.table-forum {
+  margin-bottom: 1.75rem;
+
+  thead,
+  tbody {
+    td,
+    th {
+      &:first-child {
+        @media (min-width: 900px) {
+          padding-left: 2.5rem;
+        }
+      }
+
+      &:last-child {
+        @media (min-width: 900px) {
+          padding-right: 2.5rem;
+        }
+      }
+    }
+  }
+
+  thead {
+    th {
+      padding: 1.5rem 30px 1rem;
+
+      a,
+      &.is-active a {
+        color: #4a4a4a;
+
+        &:hover {
+          text-decoration: underline;
+        }
+
+        .icon-tablesort {
+          fill: #4a4a4a;
+        }
+      }
+    }
+
+    th,
+    th a {
+      font-size: 14px;
+      font-weight: 700;
+    }
+  }
+
+  tbody {
+    td {
+      padding-right: 30px;
+      padding-left: 30px;
+
+      > * {
+        margin-bottom: 1rem;
+
+        &[title='No new posts'],
+        &:last-child {
+          margin-bottom: 0;
+        }
+      }
+
+      a {
+        font-weight: 700;
+      }
+    }
+  }
+}
