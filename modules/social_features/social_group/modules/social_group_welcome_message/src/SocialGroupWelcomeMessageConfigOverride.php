@@ -7,14 +7,11 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Config\ConfigFactoryOverrideInterface;
 use Drupal\Core\Config\StorageInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
-use Drupal\Core\StringTranslation\StringTranslationTrait;
-use Drupal\Core\StringTranslation\TranslationInterface;
 
 /**
  * Social Group welcome message configuration override.
  */
 class SocialGroupWelcomeMessageConfigOverride implements ConfigFactoryOverrideInterface {
-  use StringTranslationTrait;
 
   /**
    * The config factory.
@@ -37,17 +34,13 @@ class SocialGroupWelcomeMessageConfigOverride implements ConfigFactoryOverrideIn
    *   The config factory.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    *   The module handler.
-   * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
-   *   The string translation.
    */
   public function __construct(
     ConfigFactoryInterface $config_factory,
-    ModuleHandlerInterface $module_handler,
-    TranslationInterface $string_translation
+    ModuleHandlerInterface $module_handler
   ) {
     $this->configFactory = $config_factory;
     $this->moduleHandler = $module_handler;
-    $this->setStringTranslation($string_translation);
   }
 
   /**
@@ -81,7 +74,7 @@ class SocialGroupWelcomeMessageConfigOverride implements ConfigFactoryOverrideIn
                 ],
                 'parent_name' => '',
                 'weight' => 99,
-                'label' => $this->t('Welcome message')->render(),
+                'label' => t('Welcome message')->render(),
                 'format_type' => 'fieldset',
                 'format_settings' => [
                   'description' => '',
