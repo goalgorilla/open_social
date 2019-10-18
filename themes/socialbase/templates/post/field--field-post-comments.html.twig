@@ -27,22 +27,24 @@
  */
 #}
 
-{% if comments and not label_hidden %}
-    {{ title_prefix }}
-    <h2{{ title_attributes }}>{{ label }}</h2>
-    {{ title_suffix }}
-{% endif %}
+<div {{ attributes.addClass('js-comment comment comment-form__wrapper') }}>
+    {% if comments and not label_hidden %}
+        {{ title_prefix }}
+        <h2{{ title_attributes }}>{{ label }}</h2>
+        {{ title_suffix }}
+    {% endif %}
 
-{% if logged_in and more_link %}
-    <div class="text-center">
-        {{ more_link }}
-    </div>
-{% endif %}
+    {% if logged_in and more_link %}
+        <div class="text-center">
+            {{ more_link }}
+        </div>
+    {% endif %}
 
-{{ comments }}
+    {{ comments }}
 
-{% if comment_form %}
+    {% if comment_form %}
 
-    {{ comment_form }}
+        {{ comment_form }}
 
-{% endif %}
+    {% endif %}
+</div>

@@ -5,6 +5,7 @@
  * The Social comment module.
  */
 
+use Drupal\Component\Utility\Html;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Link;
@@ -182,6 +183,14 @@ function social_comment_comment_links_alter(array &$links, CommentInterface $ent
         'js-ajax-comments-unpublish',
         'js-ajax-comments-unpublish-' . $entity->id(),
       ];
+      if ($bundle === 'post_comment') {
+        $wrapper_id = Html::getId(
+          $commented_entity->getEntityTypeId() . '-' . $commented_entity->bundle() . '-' . 'field_post_comments' . '-' . $commented_entity->id()
+        );
+        $links['comment']['#links']['comment-edit']['attributes']['data-wrapper-html-id'] = $wrapper_id;
+        $links['comment']['#links']['comment-unpublish']['attributes']['data-wrapper-html-id'] = $wrapper_id;
+        $links['comment']['#links']['comment-delete']['attributes']['data-wrapper-html-id'] = $wrapper_id;
+      }
     }
   }
 
@@ -214,9 +223,30 @@ function social_comment_comment_links_alter(array &$links, CommentInterface $ent
 /**
  * Implements hook_preprocess_comment().
  */
+function social_comment_preprocess_field(&$variables) {
+  $field_name = $variables['element']['#field_name'];
+  if (!empty($field_name) && $field_name === 'field_post_comments'
+    && !empty($variables['element']['#object'])
+    && !empty($variables['element']['#object']->id())) {
+    // Necessary for adding the correct wrapper for Ajax.
+    $entity_id = $variables['element']['#object']->id();
+    $variables['element']['#attributes']['id'] = $variables['element']['#attributes']['id'] . '-' . $entity_id;
+    if (!empty($variables['attributes']['id'])) {
+      $variables['attributes']['id'] = $variables['attributes']['id'] . '-' . $entity_id;
+    }
+    if (!empty($variables['#attributes']['id'])) {
+      $variables['#attributes']['id'] = $variables['#attributes']['id'] . '-' . $entity_id;
+    }
+  }
+}
+
+/**
+ * Implements hook_preprocess_comment().
+ */
 function social_comment_preprocess_comment(&$variables) {
   /* @var \Drupal\comment\Entity\Comment $comment */
   $comment = $variables['elements']['#comment'];
+
   // Display comment created date in format 'time ago'.
   $created_time_ago = \Drupal::service('date.formatter')
     ->formatTimeDiffSince($comment->getCreatedTime(), ['granularity' => 1, 'return_as_object' => TRUE]);
