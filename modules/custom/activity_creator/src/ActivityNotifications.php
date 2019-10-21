@@ -2,10 +2,10 @@
 
 namespace Drupal\activity_creator;
 
-use Drupal\activity_creator\Entity\Activity;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityBase;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -66,7 +66,7 @@ class ActivityNotifications extends ControllerBase {
    *   Status string: activity_creator_field_activity_status_allowed_values().
    *
    * @return array
-   *   Return array of notifications as activity objects.
+   *   Return array of notifications as activity objects or an empty array.
    *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
@@ -76,10 +76,59 @@ class ActivityNotifications extends ControllerBase {
       return $this->entityTypeManager()->getStorage('activity')->loadMultiple($ids);
     }
 
-    // Log as notice.
-    $this->loggerFactory->get('activity_creator')->notice('There are no activity notifications for user @id', [
-      '@id' => $account->id(),
-    ]);
+    return [];
+  }
+
+  /**
+   * Gets all activity IDs by given entity.
+   *
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   The entity object.
+   *
+   * @return array
+   *   Return array of activity IDs or an empty array.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   */
+  public function getActivityIdsByEntity(EntityInterface $entity): array {
+    $ids = [];
+    $entity_type = $entity->id();
+    $entity_id = $entity->getEntityType();
+    switch ($entity_type) {
+      case 'user':
+      case 'group':
+        $entity_query = $this->entityTypeManager()->getStorage('activity')->getQuery();
+        $entity_query->condition('field_activity_recipient_' . $entity_type, $entity_id, '=');
+        $ids = $entity_query->execute();
+        break;
+
+      case 'group_content':
+        /** @var \Drupal\group\Entity\GroupContent $group_content */
+        $group_content = $entity;
+        $linked_entity = $group_content->getEntity();
+        $group = $group_content->getGroup();
+        if ($linked_entity && $linked_entity->getEntityTypeId() === 'node' && $group->id()) {
+          $entity_query = $this->entityTypeManager()->getStorage('activity')->getQuery();
+          $entity_query->condition('field_activity_entity.target_id', $linked_entity->id(), '=');
+          $entity_query->condition('field_activity_entity.target_type', $linked_entity->getEntityTypeId(), '=');
+          $entity_query->condition('field_activity_recipient_group', $group->id(), '=');
+          $ids = $entity_query->execute();
+        }
+        break;
+
+      default:
+        if ($entity_type !== 'activity') {
+
+          $entity_query = $this->entityTypeManager()->getStorage('activity')->getQuery();
+          $entity_query->condition('field_activity_entity.target_id', $entity_id, '=');
+          $entity_query->condition('field_activity_entity.target_type', $entity_type, '=');
+          $ids = $entity_query->execute();
+        }
+        break;
+    }
+
+    return $ids;
   }
 
   /**
@@ -97,50 +146,7 @@ class ActivityNotifications extends ControllerBase {
       return $this->changeStatusOfActivity($ids, $account, ACTIVITY_STATUS_SEEN);
     }
 
-    // Log as notice.
-    $this->loggerFactory->get('activity_creator')->notice('There are no notification to be marked as seen for user @id', [
-      '@id' => $account->id(),
-    ]);
-  }
-
-  /**
-   * Mark Notifications as Read for given account and entity.
-   *
-   * @param \Drupal\Core\Session\AccountInterface $account
-   *   Account object.
-   * @param \Drupal\Core\Entity\EntityBase $entity
-   *   Entity object.
-   *
-   * @return bool
-   *   TRUE or FALSE depending upon update status.
-   */
-  public function markEntityNotificationsAsRead(AccountInterface $account, EntityBase $entity) {
-    try {
-      // Retrieve all the activities referring to this entity for this account.
-      if ($entity !== NULL) {
-        $entity_type = $entity->getEntityTypeId();
-        $entity_id = $entity->id();
-        $entity_query = $this->entityTypeManager()->getStorage('activity')->getQuery();
-        $entity_query->condition('field_activity_recipient_user', $account->id(), '=');
-        $entity_query->condition('field_activity_destinations', ['notifications'], 'IN');
-        $entity_query->condition('field_activity_entity.target_id', $entity_id, '=');
-        $entity_query->condition('field_activity_entity.target_type', $entity_type, '=');
-        if (!empty($ids = $entity_query->execute())) {
-          // Change the status of this entity.
-          return $this->changeStatusOfActivity($ids, $account, ACTIVITY_STATUS_READ);
-        }
-      }
-      else {
-        // Log as notice.
-        $this->loggerFactory->get('activity_creator')->notice('There are no notification to be marked as read for user @id', [
-          '@id' => $account->id()
-        ]);
-      }
-    }
-    catch (\Exception $exception) {
-      $this->loggerFactory->get('activity_creator')->error($exception->getMessage());
-    }
-
+    return FALSE;
   }
 
   /**
@@ -153,7 +159,7 @@ class ActivityNotifications extends ControllerBase {
    *
    * @deprecated in opensocial:8.x-7.1 and is removed from opensocial:8.x-8.0. Use
    *   \Drupal\activity_creator\ActivityNotifications
-   * ::markEntityNotificationsAsRead() instead.
+   * ::markEntityNotificationsAsSeen() instead.
    *
    * TODO: Change @see to point to a change record.
    * @see https://www.drupal.org/project/social/issues/3087083
@@ -163,43 +169,6 @@ class ActivityNotifications extends ControllerBase {
     $ids = $this->getNotificationIds($account, [ACTIVITY_STATUS_RECEIVED, ACTIVITY_STATUS_SEEN], $entity);
     $this->changeStatusOfActivity($ids, $account, ACTIVITY_STATUS_READ);
 
-  }
-
-  /**
-   * Mark an activity notification as read for a given account.
-   *
-   * @param \Drupal\Core\Session\AccountInterface $account
-   *   Account object.
-   * @param \Drupal\activity_creator\Entity\Activity $activity
-   *   Activity object.
-   *
-   * @return bool
-   *   TRUE or FALSE depending upon update status.
-   */
-  public function markNotificationAsRead(AccountInterface $account, Activity $activity): bool {
-    // Change the activity notification status to read.
-    return $this->changeStatusOfActivity([$activity->id()], $account, ACTIVITY_STATUS_READ);
-
-  }
-
-  /**
-   * Mark all acitivty notification as read for a given account.
-   *
-   * @param \Drupal\Core\Session\AccountInterface $account
-   *   Account object.
-   *
-   * @return bool
-   *   TRUE or FALSE depending upon update status.
-   */
-  public function markAllNotificationAsRead(AccountInterface $account) {
-    // Retrieve all the activities referring this entity for this account.
-    if (!empty($ids = $this->getNotificationIds($account, [ACTIVITY_STATUS_RECEIVED, ACTIVITY_STATUS_SEEN]))) {
-      return $this->changeStatusOfActivity($ids, $account, ACTIVITY_STATUS_READ);
-    }
-
-    $this->loggerFactory->get('activity_creator')->notice('There are no notification to be marked as read for user @id', [
-      '@id' => $account->id(),
-    ]);
   }
 
   /**
@@ -221,7 +190,7 @@ class ActivityNotifications extends ControllerBase {
       $txn = $this->database->startTransaction();
       try {
         // Collect the information about affected rows.
-        $count = $this->database->update('activity_notification_status')
+        $this->database->update('activity_notification_status')
           ->fields(['status' => $status])
           ->condition('uid', $account->id())
           ->condition('aid', $ids, 'IN')
@@ -232,7 +201,7 @@ class ActivityNotifications extends ControllerBase {
         // Something went wrong somewhere, so roll back now.
         $txn->rollBack();
         // Log the exception to watchdog.
-        $this->loggerFactory->get('activity_creator')->error($exception->getMessage());
+        $this->loggerFactory->get('default')->error($exception->getMessage());
       }
     }
 
@@ -265,12 +234,43 @@ class ActivityNotifications extends ControllerBase {
       }
       catch (\Exception $exception) {
         // Log the exception to watchdog.
-        $this->loggerFactory->get('activity_creator')->error($exception->getMessage());
+        $this->loggerFactory->get('default')->error($exception->getMessage());
       }
     }
     else {
       return [];
     }
+  }
+
+  /**
+   * Deletes all entries in activity_notification_table by given ids.
+   *
+   * @param array $activity_ids
+   *   Array of activity ids to be deleted.
+   *
+   * @return bool
+   *   Status of update query.
+   */
+  public function deleteNotificationsbyIds(array $activity_ids): bool {
+    if (!empty($activity_ids)) {
+      // The transaction opens here.
+      $txn = $this->database->startTransaction();
+      try {
+        $this->database->delete('activity_notification_status')
+          ->condition('aid', $activity_ids)
+          ->execute();
+      }
+      catch (\Exception $exception) {
+        // Something went wrong somewhere, so roll back now.
+        $txn->rollBack();
+        // Log the exception to watchdog.
+        $this->loggerFactory->get('default')->error($exception->getMessage());
+      }
+
+      return TRUE;
+    }
+
+    return FALSE;
   }
 
 }
