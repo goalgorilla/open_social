@@ -93,8 +93,8 @@ class ActivityNotifications extends ControllerBase {
    */
   public function getActivityIdsByEntity(EntityInterface $entity): array {
     $ids = [];
-    $entity_type = $entity->id();
-    $entity_id = $entity->getEntityType();
+    $entity_id = $entity->id();
+    $entity_type = $entity->getEntityTypeId();
     switch ($entity_type) {
       case 'user':
       case 'group':
@@ -119,7 +119,6 @@ class ActivityNotifications extends ControllerBase {
 
       default:
         if ($entity_type !== 'activity') {
-
           $entity_query = $this->entityTypeManager()->getStorage('activity')->getQuery();
           $entity_query->condition('field_activity_entity.target_id', $entity_id, '=');
           $entity_query->condition('field_activity_entity.target_type', $entity_type, '=');
