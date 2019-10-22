@@ -9,11 +9,14 @@ use Drupal\block\Entity\Block;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultNeutral;
 use Drupal\Core\Block\BlockPluginInterface;
+use Drupal\Core\Entity\ContentEntityInterface;
+use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
+use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\social_topic\Controller\SocialTopicController;
 use Drupal\views\Plugin\views\query\QueryPluginBase;
 use Drupal\views\ViewExecutable;
@@ -52,6 +55,12 @@ function social_topic_preprocess_node(array &$variables) {
         $topic_type_link = Link::fromTextAndUrl($topic->label(), $topic_type_url)
           ->toString();
         $variables['topic_type'] = $topic_type_link;
+
+        if (!$topic->get('field_topic_type_icon')->isEmpty()) {
+          $variables['topic_type_icon'] = $topic->get('field_topic_type_icon')->value;
+        }
+
+        $variables['#cache']['tags'][] = $topic->getEntityTypeId() . ':' . $topic->id();
       }
     }
     else {
@@ -278,4 +287,28 @@ function social_topic_block_access(Block $block, $operation, AccountInterface $a
  */
 function social_topic_social_follow_content_types_alter(array &$types) {
   $types[] = 'topic';
+}
+
+/**
+ * Sets dynamic allowed values for the topic type icon field.
+ */
+function social_topic_allowed_values_function(FieldStorageConfig $definition, ContentEntityInterface $entity = NULL, $cacheable) {
+  $theme_path = drupal_get_path('theme', 'socialbase');
+  $icon_files = file_scan_directory(DRUPAL_ROOT . '/' . $theme_path . '/assets/images/icons', '/^icon-.*\.svg$/', ['recurse' => FALSE]);
+
+  $options = [];
+  foreach ($icon_files as $file) {
+    $options[$file->name] = $file->name;
+  }
+
+  return $options;
+}
+
+/**
+ * Sets the default value for the topic type icon field.
+ */
+function social_topic_default_value_function(ContentEntityInterface $entity, FieldDefinitionInterface $definition) {
+  return [
+    ['value' => 'icon-topic'],
+  ];
 }

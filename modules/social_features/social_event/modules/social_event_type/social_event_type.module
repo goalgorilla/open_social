@@ -5,9 +5,12 @@
  * The Social event type module.
  */
 
+use Drupal\Core\Entity\ContentEntityInterface;
+use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 use Drupal\Core\Link;
+use Drupal\field\Entity\FieldStorageConfig;
 
 /**
  * Implements hook_form_FORM_ID_alter().
@@ -82,6 +85,12 @@ function social_event_type_preprocess_node(array &$variables) {
         $event_type_link = Link::fromTextAndUrl($event->label(), $event_type_url)
           ->toString();
         $variables['event_type'] = $event_type_link;
+
+        if (!$event->get('field_event_type_icon')->isEmpty()) {
+          $variables['event_type_icon'] = $event->get('field_event_type_icon')->value;
+        }
+
+        $variables['#cache']['tags'][] = $event->getEntityTypeId() . ':' . $event->id();
       }
     }
     else {
@@ -89,4 +98,28 @@ function social_event_type_preprocess_node(array &$variables) {
       $variables['event_type'] = NULL;
     }
   }
+}
+
+/**
+ * Sets dynamic allowed values for the event type icon field.
+ */
+function social_event_type_allowed_values_function(FieldStorageConfig $definition, ContentEntityInterface $entity = NULL, $cacheable) {
+  $theme_path = drupal_get_path('theme', 'socialbase');
+  $icon_files = file_scan_directory(DRUPAL_ROOT . '/' . $theme_path . '/assets/images/icons', '/^icon-.*\.svg$/', ['recurse' => FALSE]);
+
+  $options = [];
+  foreach ($icon_files as $file) {
+    $options[$file->name] = $file->name;
+  }
+
+  return $options;
+}
+
+/**
+ * Sets the default value for the event type icon field.
+ */
+function social_event_type_default_value_function(ContentEntityInterface $entity, FieldDefinitionInterface $definition) {
+  return [
+    ['value' => 'icon-event'],
+  ];
 }

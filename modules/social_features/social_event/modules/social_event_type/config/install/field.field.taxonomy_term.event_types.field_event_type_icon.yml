@@ -1,0 +1,20 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.taxonomy_term.field_event_type_icon
+    - taxonomy.vocabulary.event_types
+  module:
+    - options
+id: taxonomy_term.event_types.field_event_type_icon
+field_name: field_event_type_icon
+entity_type: taxonomy_term
+bundle: event_types
+label: Icon
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: 'social_event_type_default_value_function'
+settings: {  }
+field_type: list_string
