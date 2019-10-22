@@ -20,11 +20,15 @@ function social_profile_manager_notes_form_alter(array &$form, FormStateInterfac
   ];
 
   if (in_array($form_id, $profile_forms)) {
-    unset($form['actions']['preview']);
-    // Originally it is a TranslatableMarkup
-    $form['actions']['submit']['#value'] = "Leave remark";
     if (!\Drupal::currentUser()->hasPermission('edit field manager notes')) {
-      $form['field_comment_body']['#access'] = FALSE;
+      $form['comment_body']['#access'] = FALSE;
+      unset($form["actions"]);
+    }
+    else {
+      unset($form['actions']['preview']);
+      // Originally it is a TranslatableMarkup
+      $form['actions']['submit']['#value'] = "Leave remark";
+      $form['#attached']['library'][] = 'social_profile_manager_notes/manager_notes';
     }
   }
 }
@@ -41,8 +45,10 @@ function social_profile_manager_notes_comment_view_alter(array &$build, EntityIn
  */
 function social_profile_manager_notes_profile_view_alter(array &$build, EntityInterface $entity, EntityViewDisplay $display) {
 
+  $user = \Drupal::currentUser();
+
   if (!\Drupal::currentUser()->hasPermission('view field manager notes')) {
-    unset($build["field_note"]);
+    unset($build["field_manager_notes"]);
   }
 
 }

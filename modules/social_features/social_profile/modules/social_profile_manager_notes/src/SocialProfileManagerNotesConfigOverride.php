@@ -50,11 +50,11 @@ class SocialProfileManagerNotesConfigOverride implements ConfigFactoryOverrideIn
         $config = $this->configFactory->getEditable($config_name);
         // We have to add config dependencies to field storage.
         $dependencies = $config->getOriginal('dependencies', FALSE)['config'];
-        $dependencies[] = 'field.field.profile.profile.field_note';
+        $dependencies[] = 'field.field.profile.profile.field_manager_notes';
         $overrides[$config_name]['dependencies']['config'] = $dependencies;
 
         // Add the manager note field to the profile.
-        $overrides[$config_name]['content']['field_note'] = [
+        $overrides[$config_name]['content']['field_manager_notes'] = [
           'weight' => 6,
           'settings' => [
             'view_mode' => 'default',
