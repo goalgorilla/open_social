@@ -5,25 +5,6 @@
  * The Social Event An Enroll Enrolments Export module.
  */
 
-use Drupal\Core\Form\FormStateInterface;
-use Drupal\views\ViewExecutable;
-
-/**
- * Implements hook_form_alter().
- */
-function social_event_an_enroll_enrolments_export_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-  if ((isset($form['views_bulk_operations_bulk_form']) || strpos($form_id, 'views_form_event_manage_enrollments_page_manage_enrollments') !== FALSE) && isset($form['output'][0]['#view'])) {
-    $view = &$form['output'][0]['#view'];
-
-    if ($view instanceof ViewExecutable && $view->id() === 'event_manage_enrollments') {
-      $actions = &$form['header']['social_views_bulk_operations_bulk_form_enrollments_1']['actions'];
-      $action = 'social_event_enrolments_export_enrollments_action';
-      $actions[$action]['#access'] = FALSE;
-      unset($actions['#links'][$action]);
-    }
-  }
-}
-
 /**
  * Implements hook_social_event_managers_action_ACTION_ID_finish().
  */
