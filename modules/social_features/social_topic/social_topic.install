@@ -22,15 +22,25 @@ function social_topic_install() {
 
   // Create some default taxonomy terms.
   $terms = [
-    t('Blog'),
-    t('Discussion'),
-    t('News'),
+    [
+      'label' => t('Blog'),
+      'icon' => 'icon-blog',
+    ],
+    [
+      'label' => t('Discussion'),
+      'icon' => 'icon-discussion',
+    ],
+    [
+      'label' => t('News'),
+      'icon' => 'icon-news',
+    ],
   ];
 
-  foreach ($terms as $term_name) {
+  foreach ($terms as $term) {
     $term = Term::create([
       'vid' => 'topic_types',
-      'name' => $term_name,
+      'name' => $term['label'],
+      'field_topic_type_icon' => $term['icon'],
     ]);
     $term->save();
   }
@@ -173,4 +183,46 @@ function social_topic_update_8003() {
   $config = \Drupal::configFactory()->getEditable('social_topic.settings');
   $config->set('social_topic_type_select_changer', 8);
   $config->save();
+}
+
+/**
+ * Add icons to default topic types.
+ */
+function social_topic_update_8004() {
+  // Default topic types.
+  $topic_types = [
+    [
+      'label' => t('Blog')->render(),
+      'icon' => 'icon-blog',
+    ],
+    [
+      'label' => t('Discussion')->render(),
+      'icon' => 'icon-discussion',
+    ],
+    [
+      'label' => t('News')->render(),
+      'icon' => 'icon-news',
+    ],
+  ];
+
+  foreach ($topic_types as $type) {
+    $term = _social_topic_get_term_id_by_name($type['label']);
+    if ($term && $term->field_topic_type_icon->isEmpty()) {
+      $term->field_topic_type_icon->value = $type['icon'];
+      $term->save();
+    }
+  }
+}
+
+/**
+ * Find topic type term by name.
+ */
+function _social_topic_get_term_id_by_name($term_name) {
+  $terms = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadByProperties([
+    'name' => $term_name,
+    'vid' => 'topic_types',
+  ]);
+  $term = reset($terms);
+
+  return !empty($term) ? $term : FALSE;
 }
