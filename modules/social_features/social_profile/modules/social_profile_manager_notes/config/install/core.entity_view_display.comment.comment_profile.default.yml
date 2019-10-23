@@ -3,15 +3,18 @@ status: true
 dependencies:
   config:
     - comment.type.comment_profile
-    - field.field.comment.comment_profile.comment_body
+    - field.field.comment.comment_profile.field_comment_body
   module:
     - text
+  enforced:
+    module:
+      - social_profile_manager_notes
 id: comment.comment_profile.default
 targetEntityType: comment
 bundle: comment_profile
 mode: default
 content:
-  comment_body:
+  field_comment_body:
     label: hidden
     type: text_default
     weight: 0

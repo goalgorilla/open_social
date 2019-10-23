@@ -3,11 +3,14 @@ status: true
 dependencies:
   config:
     - comment.type.comment_profile
-    - field.storage.comment.comment_body
+    - field.storage.comment.field_comment_body
   module:
     - text
-id: comment.comment_profile.comment_body
-field_name: comment_body
+  enforced:
+    module:
+      - social_profile_manager_notes
+id: comment.comment_profile.field_comment_body
+field_name: field_comment_body
 entity_type: comment
 bundle: comment_profile
 label: 'Remark'

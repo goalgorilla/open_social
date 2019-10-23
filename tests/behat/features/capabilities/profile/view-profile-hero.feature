@@ -17,15 +17,3 @@ Feature: Profile information
     # And I should not see "user_1" in the "Hero block"
     And I should see the link "Edit profile information"
     # @TODO: Add scenario about view profile information of other user when Search Users will be ready
-
-  Scenario: Create a manager note for a profile
-    Given I am logged in as an "administrator"
-    And I am on "/user/12/information"
-    And I should see "Site manager remarks"
-    And I fill in "edit-comment-body-0-value" with "New remark created"
-    And I press "edit-submit--2"
-    And I should see "New remark created"
-
-    Given I am logged in as an "authenticated user"
-    And I am on "/user/12/information"
-    And I should not see "Site manager remarks"
