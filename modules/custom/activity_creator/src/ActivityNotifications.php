@@ -104,10 +104,10 @@ class ActivityNotifications extends ControllerBase {
         break;
 
       case 'group_content':
-        /** @var \Drupal\group\Entity\GroupContent $group_content */
+        /** @var \Drupal\group\Entity\GroupContent $entity */
         $group_content = $entity;
-        $linked_entity = $group_content->getEntity();
-        $group = $group_content->getGroup();
+        $linked_entity = $entity->getEntity();
+        $group = $entity->getGroup();
         if ($linked_entity && $linked_entity->getEntityTypeId() === 'node' && $group->id()) {
           $entity_query = $this->entityTypeManager()->getStorage('activity')->getQuery();
           $entity_query->condition('field_activity_entity.target_id', $linked_entity->id(), '=');
@@ -200,7 +200,7 @@ class ActivityNotifications extends ControllerBase {
         // Something went wrong somewhere, so roll back now.
         $txn->rollBack();
         // Log the exception to watchdog.
-        $this->loggerFactory->get('default')->error($exception->getMessage());
+        $this->getLogger('default')->error($exception->getMessage());
       }
     }
 
@@ -233,7 +233,7 @@ class ActivityNotifications extends ControllerBase {
       }
       catch (\Exception $exception) {
         // Log the exception to watchdog.
-        $this->loggerFactory->get('default')->error($exception->getMessage());
+        $this->getLogger('default')->error($exception->getMessage());
       }
     }
     else {
@@ -263,7 +263,7 @@ class ActivityNotifications extends ControllerBase {
         // Something went wrong somewhere, so roll back now.
         $txn->rollBack();
         // Log the exception to watchdog.
-        $this->loggerFactory->get('default')->error($exception->getMessage());
+        $this->getLogger('default')->error($exception->getMessage());
       }
 
       return TRUE;
