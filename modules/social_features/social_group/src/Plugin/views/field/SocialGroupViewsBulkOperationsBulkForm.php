@@ -70,7 +70,7 @@ class SocialGroupViewsBulkOperationsBulkForm extends ViewsBulkOperationsBulkForm
 
     parent::viewsForm($form, $form_state);
 
-    if ($this->view->id() !== 'group_manage_members') {
+    if ($this->view->id() !== 'group_manage_members' || empty($form['output'][0]['#rows'])) {
       return;
     }
 
