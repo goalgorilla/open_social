@@ -1,4 +1,14 @@
 services:
+  social_core.helper:
+    class: Drupal\social_core\Service\SocialCoreHelper
+    arguments:
+      - '@entity.definition_update_manager'
+      - '@entity_type.manager'
+      - '@entity_field.manager'
+      - '@entity.last_installed_schema.repository'
+      - '@entity_type.listener'
+      - '@field_storage_definition.listener'
+
   social_core.route_subscriber:
     class: \Drupal\social_core\Routing\RouteSubscriber
     tags:
