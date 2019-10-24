@@ -71,20 +71,13 @@ class NotificationsController extends ControllerBase {
     $rendered_view = $view->render();
 
     // Set the notification count.
-    if ($this->activities->markAllNotificationsAsSeen($this->currentUser())) {
-      // All the notifications are marked as seen, set notification count to 0.
-      $notification_count = 0;
-    }
-    else {
-      // Else fetch and count received notifications by user.
-      $notification_count = count($this->activities->getNotifications());
-    }
+    $notification_count = $this->activities->markAllNotificationsAsSeen($this->currentUser()) ? 0 : count($this->activities->getNotifications($this->currentUser()));
 
     // Create a response.
     $response = new AjaxResponse();
     $response->addCommand(new HtmlCommand('.js-notification-center-wrapper', $rendered_view));
     // Update the notification count to mark as read.
-    $response->addCommand(new HtmlCommand('.notification-bell .badge', $notification_count ?? 0));
+    $response->addCommand(new HtmlCommand('.notification-bell .badge', $notification_count));
 
     return $response;
   }
