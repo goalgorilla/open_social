@@ -48,6 +48,7 @@ class ThemeSuggestions extends BaseThemeSuggestions {
           'group_members-block_newest_members',
           'upcoming_events-upcoming_events_group',
           'latest_topics-group_topics_block',
+          'birthday-block_upcoming_birthdays',
         ];
         if (in_array($block_id, $blocks_id)) {
           $suggestions = [$variables['theme_hook_original'] . '__' . 'views_block__sidebar'];
