@@ -135,11 +135,23 @@ function social_mentions_comment_links_alter(array &$links, CommentInterface $en
 
     // If the comment is not published disable the reply link.
     if ($entity->isPublished()) {
-      $links['comment']['#links']['comment-reply']['url'] = Url::fromUserInput('#' . $entity->getParentComment()->id());
-      $links['comment']['#links']['comment-reply']['attributes'] = [
-        'class' => ['mention-reply'],
-        'data-author' => Json::encode($item),
-      ];
+      $items = explode(".", $entity->getThread());
+      $levels = \Drupal::config('social_comment.settings')->get('social_comment_level') ? \Drupal::config('social_comment.settings')->get('social_comment_level') : 1;
+      if (count($items) < ++$levels) {
+        $links['comment']['#links']['comment-reply']['url'] = Url::fromUserInput('/comment/reply/node/' . $entity->getCommentedEntity()->id() . '/field_topic_comments/' . $entity->id());
+        $links['comment']['#links']['comment-reply']['attributes'] = [
+          //'class' => ['mention-reply'],
+          //'data-author' => Json::encode($item),
+        ];
+      }
+      else {
+        $links['comment']['#links']['comment-reply']['url'] = Url::fromUserInput('#' . $entity->getParentComment()
+            ->id());
+        $links['comment']['#links']['comment-reply']['attributes'] = [
+          'class' => ['mention-reply'],
+          'data-author' => Json::encode($item),
+        ];
+      }
     }
     else {
       $links['comment']['#links']['comment-reply']['url'] = Url::fromRoute('<nolink>');

@@ -16,6 +16,10 @@ function social_comment_install() {
 
   // Set some default permissions.
   _social_comment_set_permissions();
+  // Set default reply level settings.
+  $config = \Drupal::configFactory()->getEditable('social_comment.settings');
+  $config->set('social_comment_level', 1);
+  $config->save();
 }
 
 /**
