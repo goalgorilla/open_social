@@ -140,13 +140,11 @@ function social_mentions_comment_links_alter(array &$links, CommentInterface $en
       if (count($items) < ++$levels) {
         $links['comment']['#links']['comment-reply']['url'] = Url::fromUserInput('/comment/reply/node/' . $entity->getCommentedEntity()->id() . '/field_topic_comments/' . $entity->id());
         $links['comment']['#links']['comment-reply']['attributes'] = [
-          //'class' => ['mention-reply'],
-          //'data-author' => Json::encode($item),
         ];
       }
       else {
         $links['comment']['#links']['comment-reply']['url'] = Url::fromUserInput('#' . $entity->getParentComment()
-            ->id());
+          ->id());
         $links['comment']['#links']['comment-reply']['attributes'] = [
           'class' => ['mention-reply'],
           'data-author' => Json::encode($item),
