@@ -139,8 +139,6 @@ function social_mentions_comment_links_alter(array &$links, CommentInterface $en
       $levels = \Drupal::config('social_comment.settings')->get('social_comment_level') ? \Drupal::config('social_comment.settings')->get('social_comment_level') : 1;
       if (count($items) < ++$levels) {
         $links['comment']['#links']['comment-reply']['url'] = Url::fromUserInput('/comment/reply/node/' . $entity->getCommentedEntity()->id() . '/field_topic_comments/' . $entity->id());
-        $links['comment']['#links']['comment-reply']['attributes'] = [
-        ];
       }
       else {
         $links['comment']['#links']['comment-reply']['url'] = Url::fromUserInput('#' . $entity->getParentComment()
