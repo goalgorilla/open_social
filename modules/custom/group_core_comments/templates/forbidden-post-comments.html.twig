@@ -1,0 +1,24 @@
+<hr>
+<div class="forbidden-post-comments-wrapper">
+  <div class="description">{{ description }}</div>
+  <div class="popup-info">
+    {{ group_info.image }} <br>
+    {{ group_info.label }} <br>
+    <svg class="teaser__content-type-icon">
+      <use xlink:href="#icon-label"></use>
+    </svg>
+    {{ group_info.type }} <br>
+    <svg class="teaser__content-type-icon">
+      <use xlink:href="#icon-group"></use>
+    </svg>
+    {{ group_info.members_count }}
+
+    <div class="actions">
+      <a href="{{ action.url }}" title="{{ group_info.label }}">{{ action.label }}</a>
+
+      <a href="{{ group_info.url }}" title="{{ group_info.label }}">
+        {% trans %}Read more{% endtrans %}
+      </a>
+    </div>
+  </div>
+</div>
