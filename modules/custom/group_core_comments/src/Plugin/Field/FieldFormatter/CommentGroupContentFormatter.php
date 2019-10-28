@@ -47,54 +47,62 @@ class CommentGroupContentFormatter extends CommentDefaultFormatter {
 
       $access_post_comments = $this->getPermissionInGroups('post comments', $account, $group_contents, $output);
       if ($access_post_comments->isForbidden()) {
-        if ($group->hasPermission('join group', $account)) {
-          $description = $this->t('You are not allowed to comment on content in a group you are not member of. You can join the group @group_link.',
-            [
-              '@group_link' => Link::fromTextAndUrl($this->t('here'), Url::fromUserInput('#'))
-                ->toString(),
-            ]
-          );
+        $join_directly_bool = FALSE;
 
-          $group_image = NULL;
-          if ($group->hasField('field_group_image') && !$group->get('field_group_image')->isEmpty()) {
-            /** @var \Drupal\file\FileInterface $image_file */
-            $image_file = $group->get('field_group_image')->entity;
-            $group_image = [
-              '#theme' => 'image_style',
-              '#style_name' => 'social_xx_large',
-              '#uri' => $image_file->getFileUri(),
-            ];
+        if ($group->getGroupType()->id() === 'flexible_group') {
+          if (social_group_flexible_group_can_join_directly($group)) {
+            $join_directly_bool = TRUE;
           }
+        }
+        elseif ($group->hasPermission('join group', $account)) {
+          $join_directly_bool = TRUE;
+        }
 
-          $output[0]['comment_form'] = [
-            '#theme' => 'forbidden_post_comments',
-            '#description' => $description,
-            '#group_info' => [
-              'image' => $group_image,
-              'label' => $group->label(),
-              'type' => $group->getGroupType()->label(),
-              'members_count' => count($group->getMembers()),
-              'url' => $group_url->toString(),
-            ],
-            '#action' => [
-              'label' => $this->t('Join group'),
-              'url' => Url::fromRoute('group_core_comments.quick_join_group', ['group' => $group->id()]),
-            ],
+        if ($join_directly_bool) {
+          $action = [
+            'type' => 'join_directly',
+            'label' => $this->t('Join group'),
+            'url' => Url::fromRoute('group_core_comments.quick_join_group', ['group' => $group->id()]),
           ];
         }
         else {
-          $description = $this->t('You are not allowed to comment on content in a group you are not member of. You can join the group @group_link.',
-            [
-              '@group_link' => Link::fromTextAndUrl($this->t('here'), $group_url)
-                ->toString(),
-            ]
-          );
-
-          $output[0]['comment_form'] = [
-            '#prefix' => '<hr>',
-            '#markup' => $description,
+          $action = [
+            'type' => 'invitation_only',
+            'label' => $this->t('Invitation only'),
+            'url' => NULL,
           ];
         }
+
+        $description = $this->t('You are not allowed to comment on content in a group you are not member of. You can join the group @group_link.',
+          [
+            '@group_link' => Link::fromTextAndUrl($this->t('here'), Url::fromUserInput('#'))
+              ->toString(),
+          ]
+        );
+
+        $group_image = NULL;
+        if ($group->hasField('field_group_image') && !$group->get('field_group_image')->isEmpty()) {
+          /** @var \Drupal\file\FileInterface $image_file */
+          $image_file = $group->get('field_group_image')->entity;
+          $group_image = [
+            '#theme' => 'image_style',
+            '#style_name' => 'social_xx_large',
+            '#uri' => $image_file->getFileUri(),
+          ];
+        }
+
+        $output[0]['comment_form'] = [
+          '#theme' => 'forbidden_post_comments',
+          '#description' => $description,
+          '#group_info' => [
+            'image' => $group_image,
+            'label' => $group->label(),
+            'type' => $group->getGroupType()->label(),
+            'members_count' => count($group->getMembers()),
+            'url' => $group_url->toString(),
+          ],
+          '#action' => $action,
+        ];
       }
 
       $access_view_comments = $this->getPermissionInGroups('access comments', $account, $group_contents, $output);
