@@ -1,24 +1,49 @@
-<hr>
-<div class="forbidden-post-comments-wrapper">
-  <div class="description">{{ description }}</div>
-  <div class="popup-info">
-    {{ group_info.image }} <br>
-    {{ group_info.label }} <br>
-    <svg class="teaser__content-type-icon">
-      <use xlink:href="#icon-label"></use>
-    </svg>
-    {{ group_info.type }} <br>
-    <svg class="teaser__content-type-icon">
-      <use xlink:href="#icon-group"></use>
-    </svg>
-    {{ group_info.members_count }}
+{{ attach_library('group_core_comments/group_core_comments')}}
 
-    <div class="actions">
-      <a href="{{ action.url }}" title="{{ group_info.label }}">{{ action.label }}</a>
+<div class="forbidden-post-comments-wrapper card">
+  <div class="description">
+    {{ description }}
 
-      <a href="{{ group_info.url }}" title="{{ group_info.label }}">
-        {% trans %}Read more{% endtrans %}
-      </a>
+    <div class="popup-info">
+      <div class="card teaser">
+        <div class="teaser__image">
+          {{ group_info.image }}
+        </div>
+
+        <div class="teaser__body">
+          <div class="teaser__content">
+
+            <div class="teaser__title"><h4>{{ group_info.label }}</h4></div>
+
+            <div class="teaser__content-line">
+              <svg class="teaser__content-type-icon">
+                <use xlink:href="#icon-label"></use>
+              </svg>
+              {{ group_info.type }}
+            </div>
+
+            <div class="teaser__content-line">
+              <svg class="teaser__content-type-icon">
+                <use xlink:href="#icon-group"></use>
+              </svg>
+              {{ group_info.members_count }}
+            </div>
+
+            <div class="actions">
+              <a href="{{ action.url }}" title="{{ group_info.label }}" class="{{ action.class }}">{{ action.label }}</a>
+              <a href="{{ group_info.url }}" title="{{ group_info.label }}" class="btn btn-default">
+                {% trans %}Read more{% endtrans %}
+              </a>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
     </div>
+
   </div>
+
 </div>
