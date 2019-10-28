@@ -136,12 +136,12 @@ function social_event_type_form_taxonomy_term_event_types_form_alter(&$form, For
 
   $default_icon = $form['field_event_type_icon']['widget']['#default_value'][0];
 
-  $form['field_event_type_icon']['preview']  = [
+  $form['field_event_type_icon']['preview'] = [
     '#type' => 'inline_template',
     '#template' => '<div class="event-type-icon-svg-wrapper"><svg><use xlink:href="#' . $default_icon . '"></use></svg>{{ svg_icons|raw }}</div>',
     '#context' => [
       'svg_icons' => file_get_contents(drupal_get_path('theme', 'socialbase') . '/assets/icons/icons.svg'),
-    ]
+    ],
   ];
 
   $form['field_event_type_icon']['widget']['#ajax'] = [
@@ -162,7 +162,7 @@ function _social_event_type_change_topic_icon_ajax(array $form, FormStateInterfa
     '#template' => '<div class="event-type-icon-svg-wrapper"><svg><use xlink:href="#' . $icon . '"></use></svg>{{ svg_icons|raw }}</div>',
     '#context' => [
       'svg_icons' => file_get_contents(drupal_get_path('theme', 'socialbase') . '/assets/icons/icons.svg'),
-    ]
+    ],
   ];
 
   $response->addCommand(new ReplaceCommand('.event-type-icon-svg-wrapper', $replaced));

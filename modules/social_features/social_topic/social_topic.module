@@ -325,12 +325,12 @@ function social_topic_form_taxonomy_term_topic_types_form_alter(&$form, FormStat
 
   $default_icon = $form['field_topic_type_icon']['widget']['#default_value'][0];
 
-  $form['field_topic_type_icon']['preview']  = [
+  $form['field_topic_type_icon']['preview'] = [
     '#type' => 'inline_template',
     '#template' => '<div class="topic-type-icon-svg-wrapper"><svg><use xlink:href="#' . $default_icon . '"></use></svg>{{ svg_icons|raw }}</div>',
     '#context' => [
       'svg_icons' => file_get_contents(drupal_get_path('theme', 'socialbase') . '/assets/icons/icons.svg'),
-    ]
+    ],
   ];
 
   $form['field_topic_type_icon']['widget']['#ajax'] = [
@@ -351,7 +351,7 @@ function _social_topic_change_topic_icon_ajax(array $form, FormStateInterface $f
     '#template' => '<div class="topic-type-icon-svg-wrapper"><svg><use xlink:href="#' . $icon . '"></use></svg>{{ svg_icons|raw }}</div>',
     '#context' => [
       'svg_icons' => file_get_contents(drupal_get_path('theme', 'socialbase') . '/assets/icons/icons.svg'),
-    ]
+    ],
   ];
 
   $response->addCommand(new ReplaceCommand('.topic-type-icon-svg-wrapper', $replaced));
