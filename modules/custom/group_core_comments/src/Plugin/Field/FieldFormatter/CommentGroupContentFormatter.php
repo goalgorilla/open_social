@@ -63,6 +63,7 @@ class CommentGroupContentFormatter extends CommentDefaultFormatter {
             'type' => 'join_directly',
             'label' => $this->t('Join group'),
             'url' => Url::fromRoute('group_core_comments.quick_join_group', ['group' => $group->id()]),
+            'class' => 'btn btn-accent',
           ];
         }
         else {
@@ -70,6 +71,7 @@ class CommentGroupContentFormatter extends CommentDefaultFormatter {
             'type' => 'invitation_only',
             'label' => $this->t('Invitation only'),
             'url' => NULL,
+            'class' => 'btn btn-accent disabled',
           ];
         }
 

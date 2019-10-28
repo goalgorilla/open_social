@@ -1,13 +1,22 @@
-.forbidden-post-comments-wrapper {
-  background-color: #f3f3f3;
+.forbidden-post-comments-wrapper.card {
+  display: block;
   margin: 1.25rem -1.25rem -1.25rem;
   padding: 1.25rem;
+  background-color: #f3f3f3;
+  box-shadow: none;
+  border-top-left-radius: 0 !important;
+  border-top-right-radius: 0 !important;
 }
-.forbidden-post-comments-wrapper .description {
+.forbidden-post-comments-wrapper.card .description {
   position: relative;
   display: inline;
 }
-.forbidden-post-comments-wrapper .popup-info {
+@media (max-width: 899px) {
+  .forbidden-post-comments-wrapper.card .description {
+    display: block;
+  }
+}
+.forbidden-post-comments-wrapper.card .popup-info {
   position: absolute;
   width: 375px;
   top: 0;
@@ -16,16 +25,23 @@
   pointer-events: none;
   transition: opacity 0.1s linear;
 }
-.forbidden-post-comments-wrapper .popup-info.open {
+@media (max-width: 899px) {
+  .forbidden-post-comments-wrapper.card .popup-info {
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+  }
+}
+.forbidden-post-comments-wrapper.card .popup-info.open {
   opacity: 1;
   pointer-events: auto;
 }
 @media (max-width: 599px) {
-  .forbidden-post-comments-wrapper .popup-info {
+  .forbidden-post-comments-wrapper.card .popup-info {
     width: 320px;
   }
 }
-.forbidden-post-comments-wrapper .popup-info:before, .forbidden-post-comments-wrapper .popup-info:after {
+.forbidden-post-comments-wrapper.card .popup-info:before, .forbidden-post-comments-wrapper.card .popup-info:after {
   right: 100%;
   border: solid transparent;
   content: " ";
@@ -35,34 +51,39 @@
   left: 1.25rem;
   pointer-events: none;
 }
-.forbidden-post-comments-wrapper .popup-info:before {
+@media (max-width: 899px) {
+  .forbidden-post-comments-wrapper.card .popup-info:before, .forbidden-post-comments-wrapper.card .popup-info:after {
+    display: none;
+  }
+}
+.forbidden-post-comments-wrapper.card .popup-info:before {
   border-top-color: rgba(0, 0, 0, 0.12);
   border-width: 11px;
   bottom: -10px;
 }
-.forbidden-post-comments-wrapper .popup-info:after {
+.forbidden-post-comments-wrapper.card .popup-info:after {
   border-top-color: white;
   border-width: 11px;
   bottom: -9px;
 }
-.forbidden-post-comments-wrapper .popup-info .card {
+.forbidden-post-comments-wrapper.card .popup-info .card {
   overflow: hidden;
 }
-.forbidden-post-comments-wrapper .popup-info .teaser__body {
+.forbidden-post-comments-wrapper.card .popup-info .teaser__body {
   padding: 1.25rem;
 }
-.forbidden-post-comments-wrapper .popup-info .teaser__title {
+.forbidden-post-comments-wrapper.card .popup-info .teaser__title {
   margin-bottom: 1.25rem;
 }
-.forbidden-post-comments-wrapper .popup-info .teaser__title h4 {
+.forbidden-post-comments-wrapper.card .popup-info .teaser__title h4 {
   margin: 0;
 }
-.forbidden-post-comments-wrapper .popup-info .teaser__content-line {
+.forbidden-post-comments-wrapper.card .popup-info .teaser__content-line {
   display: flex;
   max-width: 100%;
   font-size: 0.875rem;
 }
-.forbidden-post-comments-wrapper .popup-info .teaser__content-type-icon {
+.forbidden-post-comments-wrapper.card .popup-info .teaser__content-type-icon {
   width: 18px;
   height: 18px;
   flex: 0 0 18px;
@@ -72,25 +93,30 @@
   margin-right: 12px;
   margin-bottom: 0.5rem;
 }
-.forbidden-post-comments-wrapper .popup-info .teaser__content-text {
+.forbidden-post-comments-wrapper.card .popup-info .teaser__content-text {
   line-height: 21px;
   flex-grow: 1;
   text-overflow: ellipsis;
   overflow-x: hidden;
   white-space: nowrap;
 }
-.forbidden-post-comments-wrapper .popup-info .actions {
+.forbidden-post-comments-wrapper.card .popup-info .actions {
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-top: 1.25rem;
 }
-.forbidden-post-comments-wrapper .popup-info .actions .btn {
+.forbidden-post-comments-wrapper.card .popup-info .actions .btn {
   flex: 0 0 calc(50% - 15px);
   max-width: calc(50% - 15px);
   margin-right: 15px;
 }
-.forbidden-post-comments-wrapper .popup-info .actions .btn + .btn {
+@media (max-width: 599px) {
+  .forbidden-post-comments-wrapper.card .popup-info .actions .btn {
+    font-size: 12px;
+  }
+}
+.forbidden-post-comments-wrapper.card .popup-info .actions .btn + .btn {
   margin-left: 15px;
   margin-right: 0;
 }
