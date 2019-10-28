@@ -1512,36 +1512,38 @@ function social_group_form_node_form_alter(&$form, FormStateInterface $form_stat
  * @param \Drupal\Core\Form\FormStateInterface $form_state
  *   Form state interface.
  */
-function social_group_save_group_from_node(array $form, FormStateInterface $form_state) {
-  /* @var \Drupal\node\Entity\Node $node */
-  $node = $form_state->getFormObject()->getEntity();
+ function social_group_save_group_from_node(array $form, FormStateInterface $form_state) {
+   /* @var \Drupal\node\Entity\Node $node */
+   $node = $form_state->getFormObject()->getEntity();
 
-  // Check if the created node is new or updated.
-  $is_new = NULL !== $form_state->getValue('is_new') ? $form_state->getValue('is_new') : FALSE;
+   // Check if the created node is new or updated.
+   $is_new = NULL !== $form_state->getValue('is_new') ? $form_state->getValue('is_new') : FALSE;
 
-  $original_groups = [];
-  $groups_to_add = [];
-  $groups_to_remove = [];
-  foreach ($form_state->getValue('groups') as $new_group_key => $new_group) {
-    $groups_to_add[$new_group['target_id']] = $new_group['target_id'];
-  }
-  // The node already exist so lets also change the logic accordingly.
-  if ($form['#form_id'] === 'node_' . $node->bundle() . '_edit_form') {
-    $original_groups = $form['groups']['widget']['#default_value'];
-    foreach ($original_groups as $original_group_key => $original_group) {
-      if (!in_array($original_group, $groups_to_add)) {
-        $groups_to_remove[$original_group] = $original_group;
-      }
-      else {
-        unset($groups_to_add[$original_group]);
-      }
-    }
-  }
+   $original_groups = [];
+   $groups_to_add = [];
+   $groups_to_remove = [];
+   foreach ($form_state->getValue('groups') as $new_group_key => $new_group) {
+     $groups_to_add[$new_group['target_id']] = $new_group['target_id'];
+   }
+   // The node already exist so lets also change the logic accordingly.
+   if(!empty($form['groups']['widget']['#default_value'])) {
+     if ($form['#form_id'] === 'node_' . $node->bundle() . '_edit_form') {
+       $original_groups = $form['groups']['widget']['#default_value'];
+       foreach ($original_groups as $original_group_key => $original_group) {
+         if (!in_array($original_group, $groups_to_add)) {
+           $groups_to_remove[$original_group] = $original_group;
+         }
+         else {
+           unset($groups_to_add[$original_group]);
+         }
+       }
+     }
 
-  // Now make sure the relevant GroupContent is removed or added.
-  $setGroupsForNodeService = \Drupal::service('social_group.set_groups_for_node_service');
-  $setGroupsForNodeService->setGroupsForNode($node, $groups_to_remove, $groups_to_add, $original_groups, $is_new);
-}
+     // Now make sure the relevant GroupContent is removed or added.
+     $setGroupsForNodeService = \Drupal::service('social_group.set_groups_for_node_service');
+     $setGroupsForNodeService->setGroupsForNode($node, $groups_to_remove, $groups_to_add, $original_groups, $is_new);
+   }
+ }
 
 /**
  * Get the allowed visibility options for a given group type.
