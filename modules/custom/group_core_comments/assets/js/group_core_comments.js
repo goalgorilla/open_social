@@ -12,6 +12,13 @@
         e.preventDefault();
         popup.toggleClass('open');
       });
+
+      $(document).click(function(event) {
+        if ($(event.target).closest('.forbidden-post-comments-wrapper .description > a').length) return;
+        if ($(event.target).closest('.forbidden-post-comments-wrapper .popup-info').length) return;
+        popup.removeClass('open');
+        event.stopPropagation();
+      });
     }
   };
 })(jQuery);
