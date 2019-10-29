@@ -1,0 +1,37 @@
+uuid: 02702980-fa31-42e8-b4e4-73431ea39445
+langcode: en
+status: true
+dependencies:
+  config:
+    - block_content.type.poll_block
+    - field.field.block_content.poll_block.field_poll_fielddd
+  enforced:
+    module:
+      - social_poll
+  module:
+    - dynamic_entity_reference
+_core:
+  default_config_hash: wxI8M3RiZlLD-lyr-d-yQKQf58g3IrACQspkRZGgzbA
+id: block_content.poll_block.default
+targetEntityType: block_content
+bundle: poll_block
+mode: default
+content:
+  field_poll_fielddd:
+    weight: 27
+    settings:
+      match_operator: CONTAINS
+      size: 40
+      placeholder: ''
+    third_party_settings: {  }
+    type: dynamic_entity_reference_default
+    region: content
+  info:
+    type: string_textfield
+    weight: -5
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+hidden: {  }

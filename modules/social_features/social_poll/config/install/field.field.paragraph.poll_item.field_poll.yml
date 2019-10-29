@@ -1,0 +1,97 @@
+uuid: 2e9be779-c573-4db4-9fe4-71d4aab95e34
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_poll
+    - paragraphs.paragraphs_type.poll_item
+  module:
+    - dynamic_entity_reference
+id: paragraph.poll_item.field_poll
+field_name: field_poll
+entity_type: paragraph
+bundle: poll_item
+label: Poll
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  poll:
+    handler: 'default:poll'
+    handler_settings:
+      target_bundles: null
+      sort:
+        field: _none
+      auto_create: false
+  activity:
+    handler: 'default:activity'
+    handler_settings: {  }
+  comment:
+    handler: 'default:comment'
+    handler_settings: {  }
+  node:
+    handler: 'default:node'
+    handler_settings: {  }
+  crop:
+    handler: 'default:crop'
+    handler_settings: {  }
+  block_content:
+    handler: 'default:block_content'
+    handler_settings: {  }
+  menu_link_content:
+    handler: 'default:menu_link_content'
+    handler_settings: {  }
+  event_enrollment:
+    handler: 'default:event_enrollment'
+    handler_settings: {  }
+  file:
+    handler: 'default:file'
+    handler_settings: {  }
+  flagging:
+    handler: 'default:flagging'
+    handler_settings: {  }
+  font:
+    handler: 'default:font'
+    handler_settings: {  }
+  group:
+    handler: 'default:group'
+    handler_settings: {  }
+  group_content:
+    handler: 'default:group_content'
+    handler_settings: {  }
+  mentions:
+    handler: 'default:mentions'
+    handler_settings: {  }
+  message:
+    handler: 'default:message'
+    handler_settings: {  }
+  paragraph:
+    handler: 'default:paragraph'
+    handler_settings: {  }
+  poll_choice:
+    handler: 'default:poll_choice'
+    handler_settings: {  }
+  post:
+    handler: 'default:post'
+    handler_settings: {  }
+  profile:
+    handler: 'default:profile'
+    handler_settings: {  }
+  search_api_task:
+    handler: 'default:search_api_task'
+    handler_settings: {  }
+  taxonomy_term:
+    handler: 'default:taxonomy_term'
+    handler_settings: {  }
+  user:
+    handler: 'default:user'
+    handler_settings: {  }
+  vote:
+    handler: 'default:vote'
+    handler_settings: {  }
+  vote_result:
+    handler: 'default:vote_result'
+    handler_settings: {  }
+field_type: dynamic_entity_reference

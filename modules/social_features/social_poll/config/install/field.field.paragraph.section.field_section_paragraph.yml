@@ -1,0 +1,78 @@
+uuid: 5dafa17d-8a58-4a7f-885f-ea744395c531
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_section_paragraph
+    - paragraphs.paragraphs_type.accordion
+    - paragraphs.paragraphs_type.block
+    - paragraphs.paragraphs_type.featured
+    - paragraphs.paragraphs_type.hero
+    - paragraphs.paragraphs_type.hero_small
+    - paragraphs.paragraphs_type.introduction
+    - paragraphs.paragraphs_type.poll_item
+    - paragraphs.paragraphs_type.section
+  module:
+    - entity_reference_revisions
+_core:
+  default_config_hash: pyNm46PbNDJ5cFV4mh9bvZZP3kXfSNGfUr1RblOSWHs
+id: paragraph.section.field_section_paragraph
+field_name: field_section_paragraph
+entity_type: paragraph
+bundle: section
+label: Reference
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:paragraph'
+  handler_settings:
+    negate: 0
+    target_bundles:
+      block: block
+      featured: featured
+      hero: hero
+      hero_small: hero_small
+      introduction: introduction
+      accordion: accordion
+      poll_item: poll_item
+    target_bundles_drag_drop:
+      section:
+        weight: 3
+        enabled: false
+      block:
+        enabled: true
+        weight: 4
+      featured:
+        enabled: true
+        weight: 4
+      hero:
+        enabled: true
+        weight: 5
+      hero_small:
+        enabled: true
+        weight: 6
+      introduction:
+        enabled: true
+        weight: 7
+      accordion:
+        enabled: true
+        weight: 8
+      accordion_item:
+        weight: 14
+        enabled: false
+      button:
+        weight: 16
+        enabled: false
+      featured_item:
+        weight: 18
+        enabled: false
+      featured_items:
+        weight: 19
+        enabled: false
+      poll_item:
+        enabled: true
+        weight: 23
+field_type: entity_reference_revisions

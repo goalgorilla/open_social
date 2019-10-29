@@ -1,0 +1,26 @@
+uuid: 5ca672df-ea61-4309-88a4-484843c69319
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.poll_item.field_poll
+    - paragraphs.paragraphs_type.poll_item
+  module:
+    - dynamic_entity_reference
+id: paragraph.poll_item.default
+targetEntityType: paragraph
+bundle: poll_item
+mode: default
+content:
+  field_poll:
+    weight: 0
+    settings:
+      match_operator: CONTAINS
+      size: 40
+      placeholder: ''
+    third_party_settings: {  }
+    type: dynamic_entity_reference_default
+    region: content
+hidden:
+  created: true
+  status: true

@@ -1,0 +1,5 @@
+services:
+  social_poll.overrider:
+    class: \Drupal\social_poll\SocialPollConfigOverride
+    tags:
+      - {name: config.factory.override, priority: 5}

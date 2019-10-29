@@ -1,0 +1,95 @@
+uuid: c53984a7-7d45-4f84-8d66-4735d55ebe0f
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.poll_item.field_poll
+    - paragraphs.paragraphs_type.poll_item
+  module:
+    - dynamic_entity_reference
+id: paragraph.poll_item.default
+targetEntityType: paragraph
+bundle: poll_item
+mode: default
+content:
+  field_poll:
+    weight: 0
+    label: above
+    settings:
+      activity:
+        view_mode: default
+        link: false
+      comment:
+        view_mode: default
+        link: false
+      node:
+        view_mode: default
+        link: false
+      crop:
+        view_mode: default
+        link: false
+      block_content:
+        view_mode: default
+        link: false
+      menu_link_content:
+        view_mode: default
+        link: false
+      event_enrollment:
+        view_mode: default
+        link: false
+      file:
+        view_mode: default
+        link: false
+      flagging:
+        view_mode: default
+        link: false
+      font:
+        view_mode: default
+        link: false
+      group:
+        view_mode: default
+        link: false
+      group_content:
+        view_mode: default
+        link: false
+      mentions:
+        view_mode: default
+        link: false
+      message:
+        view_mode: default
+        link: false
+      paragraph:
+        view_mode: default
+        link: false
+      poll:
+        view_mode: default
+        link: false
+      poll_choice:
+        view_mode: default
+        link: false
+      post:
+        view_mode: default
+        link: false
+      profile:
+        view_mode: default
+        link: false
+      search_api_task:
+        view_mode: default
+        link: false
+      taxonomy_term:
+        view_mode: default
+        link: false
+      user:
+        view_mode: default
+        link: false
+      vote:
+        view_mode: default
+        link: false
+      vote_result:
+        view_mode: default
+        link: false
+    third_party_settings: {  }
+    type: dynamic_entity_reference_entity_view
+    region: content
+hidden:
+  search_api_excerpt: true
