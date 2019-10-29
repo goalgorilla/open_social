@@ -1,0 +1,45 @@
+uuid: 143f7132-4b38-41db-a00e-7f5f82f88147
+langcode: en
+status: true
+dependencies:
+  enforced:
+    module:
+      - social_poll
+  config:
+    - field.field.poll.poll.field_banner
+    - field.field.poll.poll.field_description
+    - image.style.thumbnail
+  module:
+    - image
+    - poll
+id: poll.poll.default
+targetEntityType: poll
+bundle: poll
+mode: default
+content:
+  field_banner:
+    weight: 4
+    settings:
+      progress_indicator: throbber
+      preview_image_style: thumbnail
+    third_party_settings: {  }
+    type: image_image
+    region: content
+  field_description:
+    weight: 5
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textarea
+    region: content
+  uid:
+    type: entity_reference_autocomplete
+    weight: -10
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    region: content
+    third_party_settings: {  }
+hidden: {  }
