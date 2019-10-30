@@ -323,15 +323,13 @@ function social_topic_form_taxonomy_term_topic_types_form_alter(&$form, FormStat
     return;
   }
 
-  if ($form_id == 'taxonomy_term_topic_types_form') {
-    $form['#attached']['library'][] = 'social_topic/admin';
-  }
+  $form['#attached']['library'][] = 'social_topic/admin';
 
   $default_icon = $form['field_topic_type_icon']['widget']['#default_value'][0];
 
   $form['field_topic_type_icon']['preview'] = [
     '#type' => 'inline_template',
-    '#template' => '<div class="topic-type-icon-svg-wrapper" data-href="#' . $default_icon . '"><svg class="selected-svg"><use xlink:href="#' . $default_icon . '"></use></svg>{{ svg_icons|raw }}</div>',
+    '#template' => '<div class="icon-svg-wrapper" data-href="#' . $default_icon . '"><svg class="selected-svg"><use xlink:href="#' . $default_icon . '"></use></svg>{{ svg_icons|raw }}</div>',
     '#context' => [
       'svg_icons' => file_get_contents(drupal_get_path('theme', 'socialbase') . '/assets/icons/icons.svg'),
     ],
@@ -352,13 +350,13 @@ function _social_topic_change_topic_icon_ajax(array $form, FormStateInterface $f
   $icon = $form_state->getValue('field_topic_type_icon')[0]['value'];
   $replaced = [
     '#type' => 'inline_template',
-    '#template' => '<div class="topic-type-icon-svg-wrapper" data-href="#' . $icon . '"><svg class="selected-svg"><use xlink:href="#' . $icon . '"></use></svg>{{ svg_icons|raw }}</div>',
+    '#template' => '<div class="icon-svg-wrapper" data-href="#' . $icon . '"><svg class="selected-svg"><use xlink:href="#' . $icon . '"></use></svg>{{ svg_icons|raw }}</div>',
     '#context' => [
       'svg_icons' => file_get_contents(drupal_get_path('theme', 'socialbase') . '/assets/icons/icons.svg'),
     ],
   ];
 
-  $response->addCommand(new ReplaceCommand('.topic-type-icon-svg-wrapper', $replaced));
+  $response->addCommand(new ReplaceCommand('.icon-svg-wrapper', $replaced));
 
   return $response;
 }
