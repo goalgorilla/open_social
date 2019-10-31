@@ -19,23 +19,35 @@ class SocialPollConfigOverride implements ConfigFactoryOverrideInterface {
    */
   public function loadOverrides($names) {
     $overrides = [];
+    $config_factory = \Drupal::service('config.factory');
 
     $config_names = [
       'field.field.paragraph.section.field_section_paragraph',
     ];
     foreach ($config_names as $config_name) {
       if (in_array($config_name, $names)) {
+        $config = $config_factory->getEditable($config_name);
 
-        $x=-1;
-//        $config = \Drupal::service('config.factory')->getEditable($config_name);
-//        $bundles = $config->get('datasource_settings.entity:node.bundles.selected');
-//        $bundles[] = 'landing_page';
-//        $overrides[$config_name] = ['datasource_settings' => ['entity:node' => ['bundles' => ['selected' => $bundles]]]];
+        // Add our field as config dependency.
+        $config_dependencies = $config->get('dependencies.config');
+        $config_dependencies_next_index = count($config_dependencies);
+        $overrides[$config_name]['dependencies']['config'][$config_dependencies_next_index] = 'paragraphs.paragraphs_type.poll_item';
+
+        // Add our field itself to the index.
+        $overrides[$config_name] = [
+          'settings' => [
+            'handler_settings' => [
+              'target_bundles_drag_drop' => [
+                'poll_item' => [
+                  'enabled' => true,
+                  'weight' => 9,
+                ],
+              ],
+            ],
+          ],
+        ];
       }
     }
-
-
-
     return $overrides;
   }
 
