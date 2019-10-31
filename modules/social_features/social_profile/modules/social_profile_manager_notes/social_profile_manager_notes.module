@@ -46,3 +46,18 @@ function social_profile_manager_notes_profile_view_alter(array &$build, EntityIn
   }
 
 }
+
+/**
+ * Implements hook_theme().
+ */
+function social_profile_manager_notes_theme($existing, $type, $theme, $path) {
+  $items = [
+    'field__profile__type__comment' => [
+      'template' => 'field--profile--type--comment',
+      'path' => $path . '/templates',
+      'render element' => 'elements',
+      'base hook' => 'comment',
+    ],
+  ];
+  return $items;
+}
