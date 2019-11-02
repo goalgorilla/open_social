@@ -1300,7 +1300,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Open Social\n"
 "POT-Creation-Date: 2019-10-25 00:19+0000\n"
-"PO-Revision-Date: 2019-10-31 22:18+0000\n"
+"PO-Revision-Date: 2019-11-02 22:13+0000\n"
 "Last-Translator: Igor <igor.greenpeace@gmail.com>\n"
 "Language-Team: Greenpeace Basque <https://translate.getopensocial.com/"
 "projects/open-social/distribution/eu_GPI/>\n"
@@ -1647,12 +1647,18 @@ msgid ""
 "a> &gt; <a href=\"[message:recipient-user-url]\">[activity:"
 "field_activity_recipient_user_display_name]</a></p>\n"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-"
+"name]</a> &gt;  <a href=\"[message:recipient-user-url]\""
+">[activity:field_activity_recipient_user_display_name]</a></p>\n"
 
 #: modules/social_features/social_event/modules/social_event_managers/config/optional/message.template.member_added_by_event_organiser.yml:0;0;0
 msgid ""
 "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
 "a> added you to the event [social_event:event_iam_organizing]</p>"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-"
+"name]</a> -ek ondorengo ekitaldira gonbidatu zaitu "
+"[social_event:event_iam_organizing]</p>"
 
 #: modules/social_features/social_activity/config/install/message.template.create_comment_group_node.yml:0
 msgid ""
@@ -1661,6 +1667,11 @@ msgid ""
 "[social_comment:commented_content_type] in <a href=\"[message:gurl]\">"
 "[message:gtitle]</a></p>"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-"
+"name]</a> eta beste @count pertsonek hemen iruzkindu dute "
+"[social_comment:parent_entity_author]-ek "
+"[social_comment:commented_content_type] <a href=\"[message:gurl]\""
+">[message:gtitle]</a>-en</p>"
 
 #: modules/social_features/social_activity/config/install/message.template.create_comment_community_node.yml:0
 msgid ""
@@ -1668,6 +1679,10 @@ msgid ""
 "a> and @count others commented on [social_comment:parent_entity_author]'s "
 "[social_comment:commented_content_type]</p>\n"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-"
+"name]</a> eta beste @count pertsonek hemen iruzkindu dute "
+"[social_comment:parent_entity_author]-en "
+"[social_comment:commented_content_type]</p>\n"
 
 #: modules/social_features/social_activity/config/install/message.template.create_comment_group_post.yml:0
 msgid ""
@@ -1675,12 +1690,17 @@ msgid ""
 "a> and @count others commented on a post in <a href=\"[message:gurl]\">"
 "[message:gtitle]</a></p>"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-"
+"name]</a> eta beste @count pertsonek post honetan iruzkindu dute <a href=\""
+"[message:gurl]\">[message:gtitle]</a></p>"
 
 #: modules/social_features/social_activity/config/install/message.template.create_comment_community_post.yml:0
 msgid ""
 "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
 "a> and @count others commented on a post</p>"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-"
+"name]</a> eta beste @count pertsonek post batean iruzkindu dute</p>"
 
 #: modules/social_features/social_follow_content/config/install/message.template.create_comment_following_node.yml:0;0
 msgid ""
@@ -1689,6 +1709,11 @@ msgid ""
 "commented_content_type] <a href=\"[message:field_message_related_object:"
 "entity:url:absolute]\">[message:node-title]</a> you are following</p>\r\n"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-"
+"name]</a> hemen iruzkindu du [social_comment:parent_entity_author]-ren "
+"[social_comment:commented_content_type] <a href=\""
+"[message:field_message_related_object:entity:url:absolute]\">[message:node-"
+"title]</a> eta zuk jarraitzen duzu</p>\n"
 
 #: modules/social_features/social_follow_content/config/install/message.template.create_comment_following_node.yml:0
 msgid ""
@@ -7496,7 +7521,7 @@ msgstr "Hurrengoa ›"
 #: modules/social_features/social_profile/modules/social_profile_fields/src/Plugin/UserExportPlugin/UserNickName.php:23;8
 #: modules/social_features/social_profile/modules/social_profile_fields/config/install/field.field.profile.profile.field_profile_nick_name.yml:0
 msgid "Nickname"
-msgstr ""
+msgstr "Ezizena"
 
 #: modules/social_features/social_comment/src/Form/SocialCommentAdminOverview.php:236
 msgid "No comments available."
@@ -7556,7 +7581,7 @@ msgstr ""
 #: modules/social_features/social_search/config/install/views.view.search_groups.yml:0
 #: modules/social_features/social_search/config/install/views.view.search_users.yml:0
 msgid "No results found."
-msgstr ""
+msgstr "Ez da emaitzarik aurkitu."
 
 #: modules/social_features/social_event/modules/social_event_max_enroll/social_event_max_enroll.module:112;118
 msgid "No spots left"
@@ -8013,7 +8038,7 @@ msgstr "Orria"
 #: modules/social_features/social_search/config/install/views.view.search_groups.yml:0
 #: modules/social_features/social_search/config/install/views.view.search_users.yml:0
 msgid "Page (no value)"
-msgstr ""
+msgstr "Orrialdea (balio barik)"
 
 #: modules/social_features/social_core/config/optional/block.block.seven_page_title.yml:0
 msgid "Page title"
@@ -8415,7 +8440,7 @@ msgstr ""
 
 #: modules/social_features/social_profile/config/install/field.field.profile.profile.field_profile_image.yml:0
 msgid "Profile image"
-msgstr ""
+msgstr "Profileko irudia"
 
 #: modules/social_features/social_core/config/install/crop.type.profile_large.yml:0
 msgid "Profile large"
@@ -9284,6 +9309,7 @@ msgstr ""
 #: modules/social_features/social_search/config/install/views.view.search_content.yml:0
 msgid "Select any filter and click on Apply to see results"
 msgstr ""
+"Aukeratu edozein iragazki eta egin klik Aplikatu gainean emaitzak ikusteko"
 
 #: modules/custom/activity_logger/activity_logger.module:139
 msgid "Select destinations where to display this message."
@@ -12636,7 +12662,7 @@ msgstr "egilea"
 
 #: modules/social_features/social_search/config/install/views.view.search_content.yml:0
 msgid "basic_html"
-msgstr ""
+msgstr "basic_html -a"
 
 #: themes/socialbase/templates/node/node--full.html.twig:155
 msgid "comment"
@@ -12746,9 +12772,8 @@ msgstr ""
 #: modules/social_features/social_mentions/config/install/field.field.message.create_comment_reply_mention.field_message_context.yml:0
 #: modules/social_features/social_mentions/config/install/field.field.message.create_mention_comment.field_message_context.yml:0
 #: modules/social_features/social_mentions/config/install/field.field.message.create_mention_post.field_message_context.yml:0
-#, fuzzy
 msgid "field_message_context"
-msgstr "field_message_context"
+msgstr "field_message_context -a"
 
 #: modules/social_features/social_activity/config/install/field.field.message.moved_content_between_groups.field_message_destination.yml:0
 #: modules/social_features/social_like/config/install/field.field.message.create_like_node_or_post.field_message_destination.yml:0
@@ -12830,7 +12855,7 @@ msgstr ""
 #: themes/socialbase/templates/node/node--full.html.twig:111
 #: themes/socialbase/templates/node/event/node--event--full.html.twig:20
 msgid "in group"
-msgstr ""
+msgstr "taldean"
 
 #: modules/social_features/social_core/social_core.module:212;226;233;240
 msgid "in the community"
@@ -13111,15 +13136,20 @@ msgid "{{ title }}{{ label }}{{ name }}"
 msgstr ""
 
 #: modules/social_features/social_search/modules/social_search_autocomplete/config/install/views.view.search_all_autocomplete.yml:0
+#, fuzzy
 msgid "{{ type }}{{ type_1 }}{{ uid_1 }}"
-msgstr ""
+msgstr "{{ type }}{{ type_1 }}{{ uid_1 }}"
 
 #: modules/social_features/social_content_report/config/install/views.view.report_overview.yml:0
+#, fuzzy
 msgid ""
 "{{ user_id }}\r\n"
 "{{ uid_1 }}\r\n"
 "{{ uid_2 }}"
 msgstr ""
+"{{ user_id }}\n"
+"{{ uid_1 }}\n"
+"{{ uid_2 }}"
 
 #: modules/social_features/social_content_report/config/install/views.view.report_overview.yml:0
 #: modules/social_features/social_core/config/install/views.view.content.yml:0
