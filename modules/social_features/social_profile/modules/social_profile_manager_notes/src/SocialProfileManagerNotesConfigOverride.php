@@ -22,7 +22,7 @@ class SocialProfileManagerNotesConfigOverride implements ConfigFactoryOverrideIn
    * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
   protected $configFactory;
-  
+
   /**
    * Constructs the configuration override.
    *
