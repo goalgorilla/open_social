@@ -56,7 +56,7 @@ class EmailActivityDestination extends SendActivityDestinationBase {
       $value = $activity_factory->getMessageText($message, $langcode);
 
       // Text for email.
-      if (!empty($value[2]) && is_string($value[2])) {
+      if (!empty($value[2])) {
         $text = $value[2];
       }
       // Default text.
@@ -65,7 +65,7 @@ class EmailActivityDestination extends SendActivityDestinationBase {
       }
     }
 
-    return is_string($text) ? $text : NULL;
+    return $text;
   }
 
 }

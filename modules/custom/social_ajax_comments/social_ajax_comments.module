@@ -6,8 +6,10 @@
  */
 
 use Drupal\ajax_comments\Utility;
+use Drupal\comment\CommentInterface;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Entity\ContentEntityInterface;
+use Drupal\Core\Url;
 use Drupal\node\Entity\Node;
 use Drupal\social_post\Entity\Post;
 
@@ -45,6 +47,34 @@ function social_ajax_comments_entity_display_build_alter(&$build, $context) {
           Utility::setEntityRenderArray($build, $context['entity'], $context['display']->getMode());
         }
       }
+    }
+  }
+}
+
+/**
+ * Implements hook_comment_links_alter().
+ *
+ * Alter the links of a comment.
+ */
+function social_ajax_comments_comment_links_alter(array &$links, CommentInterface $entity, array &$context) {
+  $bundle = $entity->bundle();
+  $commented_entity = $entity->getCommentedEntity();
+  $account = \Drupal::currentUser();
+
+  if ($entity->isPublished() && $account->hasPermission('administer comments')) {
+    // For now we don't support edit ajax actions.
+    $links['comment']['#links']['comment-edit']['attributes']['class'] = [];
+    $links['comment']['#links']['comment-edit']['url'] = Url::fromRoute('entity.comment.edit_form', ['comment' => $entity->id()]);
+
+    // For post comments we need to render better data wrapper's so
+    // Ajax replace works on the right ID.
+    if ($bundle === 'post_comment') {
+      $wrapper_id = Html::getId(
+        $commented_entity->getEntityTypeId() . '-' . $commented_entity->bundle() . '-' . 'field_post_comments' . '-' . $commented_entity->id()
+      );
+      $links['comment']['#links']['comment-edit']['attributes']['data-wrapper-html-id'] = $wrapper_id;
+      $links['comment']['#links']['comment-unpublish']['attributes']['data-wrapper-html-id'] = $wrapper_id;
+      $links['comment']['#links']['comment-delete']['attributes']['data-wrapper-html-id'] = $wrapper_id;
     }
   }
 }

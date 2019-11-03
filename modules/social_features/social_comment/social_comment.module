@@ -174,30 +174,6 @@ function social_comment_comment_links_alter(array &$links, CommentInterface $ent
       'title' => t('Unpublish'),
       'url' => Url::fromRoute('social_comment.unpublish', ['comment' => $entity->id()]),
     ];
-
-    if (\Drupal::moduleHandler()->moduleExists('social_ajax_comments')) {
-      // For no we don't support edit ajax actions.
-      //        $links['comment']['#links']['comment-unpublish']['url'] = Url::fromRoute('social_ajax_comments.unpublish', ['comment' => $entity->id()]);
-      //        $links['comment']['#links']['comment-unpublish']['attributes']['class'] = [
-      //          'use-ajax',
-      //          'js-use-ajax-comments',
-      //          'js-ajax-comments-unpublish',
-      //          'js-ajax-comments-unpublish-' . $entity->id(),
-      //        ];
-      $links['comment']['#links']['comment-edit']['attributes']['class'] = [];
-      $links['comment']['#links']['comment-edit']['url'] = Url::fromRoute('entity.comment.edit_form', ['comment' => $entity->id()]);
-
-      // For post comments we need to render better data wrapper's so
-      // Ajax replace works on the right ID.
-      if ($bundle === 'post_comment') {
-        $wrapper_id = Html::getId(
-          $commented_entity->getEntityTypeId() . '-' . $commented_entity->bundle() . '-' . 'field_post_comments' . '-' . $commented_entity->id()
-        );
-        $links['comment']['#links']['comment-edit']['attributes']['data-wrapper-html-id'] = $wrapper_id;
-        $links['comment']['#links']['comment-unpublish']['attributes']['data-wrapper-html-id'] = $wrapper_id;
-        $links['comment']['#links']['comment-delete']['attributes']['data-wrapper-html-id'] = $wrapper_id;
-      }
-    }
   }
 
   if ($bundle === 'post_comment') {
