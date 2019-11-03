@@ -229,26 +229,6 @@ function social_comment_comment_links_alter(array &$links, CommentInterface $ent
 /**
  * Implements hook_preprocess_comment().
  */
-function social_comment_preprocess_field(&$variables) {
-  $field_name = $variables['element']['#field_name'];
-  if (!empty($field_name) && $field_name === 'field_post_comments'
-    && !empty($variables['element']['#object'])
-    && !empty($variables['element']['#object']->id())) {
-    // Necessary for adding the correct wrapper for Ajax.
-    $entity_id = $variables['element']['#object']->id();
-    $variables['element']['#attributes']['id'] = $variables['element']['#attributes']['id'] . '-' . $entity_id;
-    if (!empty($variables['attributes']['id'])) {
-      $variables['attributes']['id'] = $variables['attributes']['id'] . '-' . $entity_id;
-    }
-    if (!empty($variables['#attributes']['id'])) {
-      $variables['#attributes']['id'] = $variables['#attributes']['id'] . '-' . $entity_id;
-    }
-  }
-}
-
-/**
- * Implements hook_preprocess_comment().
- */
 function social_comment_preprocess_comment(&$variables) {
   /* @var \Drupal\comment\Entity\Comment $comment */
   $comment = $variables['elements']['#comment'];
