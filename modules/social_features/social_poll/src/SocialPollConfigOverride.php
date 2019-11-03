@@ -39,7 +39,7 @@ class SocialPollConfigOverride implements ConfigFactoryOverrideInterface {
             'handler_settings' => [
               'target_bundles_drag_drop' => [
                 'poll_item' => [
-                  'enabled' => true,
+                  'enabled' => TRUE,
                   'weight' => 9,
                 ],
               ],
