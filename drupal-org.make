@@ -9,6 +9,7 @@ projects[admin_toolbar][type] = module
 projects[admin_toolbar][version] = 1.27
 projects[ajax_comments][type] = module
 projects[ajax_comments][version] = 1.0-beta2
+projects[ajax_comments][patch][] = "https://www.drupal.org/files/issues/2019-09-12/ajax_comments-ajax_not_working_when_using_non_default_view_mode-2896916-20.patch"
 projects[better_exposed_filters][type] = module
 projects[better_exposed_filters][version] = 3.0-alpha6
 projects[block_field][type] = module
