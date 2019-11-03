@@ -22,6 +22,7 @@ class SocialProfileManagerNotesConfigOverride implements ConfigFactoryOverrideIn
    * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
   protected $configFactory;
+  
   /**
    * Constructs the configuration override.
    *
@@ -40,10 +41,10 @@ class SocialProfileManagerNotesConfigOverride implements ConfigFactoryOverrideIn
 
     $config_names = [
       'core.entity_form_display.profile.profile.default',
-      'core.entity_view_display.profile.profile.default'
+      'core.entity_view_display.profile.profile.default',
     ];
 
-    foreach($config_names as $config_name) {
+    foreach ($config_names as $config_name) {
       if (in_array($config_name, $names)) {
 
         // Grab current configuration and push the new values.
@@ -93,4 +94,3 @@ class SocialProfileManagerNotesConfigOverride implements ConfigFactoryOverrideIn
   }
 
 }
-
