@@ -10,6 +10,7 @@ use Drupal\comment\CommentInterface;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Url;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\node\Entity\Node;
 use Drupal\social_post\Entity\Post;
 
@@ -82,7 +83,7 @@ function social_ajax_comments_comment_links_alter(array &$links, CommentInterfac
 /**
  * Implements hook_ajax_comments_wrapper_id_alter().
  */
-function social_ajax_comments_ajax_comments_wrapper_id_alter($wrapper_html_id, ContentEntityInterface $commented_entity, $field_name) {
+function social_ajax_comments_ajax_comments_wrapper_id_alter(&$wrapper_html_id, ContentEntityInterface $commented_entity, $field_name) {
   if ($commented_entity instanceof Node && $field_name === 'field_topic_comments') {
     $wrapper_html_id = 'node-topic-field-topic-comments';
   }
@@ -90,6 +91,8 @@ function social_ajax_comments_ajax_comments_wrapper_id_alter($wrapper_html_id, C
     $wrapper_html_id = 'node-topic-field-event-comments';
   }
   if ($commented_entity instanceof Post && $field_name === 'field_post_comments') {
-    $wrapper_html_id = 'post-photo-field-post-comments-' . $commented_entity->id();
+    $wrapper_html_id = Html::getId(
+      $commented_entity->getEntityTypeId() . '-' . $commented_entity->bundle() . '-' . 'field_post_comments' . '-' . $commented_entity->id()
+    );
   }
 }
