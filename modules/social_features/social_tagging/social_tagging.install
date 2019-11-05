@@ -6,33 +6,40 @@
  */
 
 use Drupal\Core\Entity\EntityStorageException;
-use Drupal\search_api\Entity\Index;
-use Drupal\user\Entity\User;
 
 /**
  * Install the module.
  */
 function social_tagging_install() {
-  _social_tagging_set_defaults();
+  _social_tagging_assign_default_permissions();
 
   // Update field definitions.
-  _social_tagging_field_defenitions_update();
+  _social_tagging_field_definitions_update();
 
-  // Toggle the index content.
+  // If the search module is enabled trigger updating of the indexes affected
+  // by tagging.
   try {
-    _social_tagging_index_toggle('social_content');
+    if (\Drupal::moduleHandler()->moduleExists('social_search')) {
+      social_search_resave_search_indexes(['social_content', 'social_groups']);
+    }
   }
   catch (EntityStorageException $e) {
     \Drupal::logger('social_tagging')->info($e->getMessage());
   }
+}
 
-  // Toggle the index groups.
-  try {
-    _social_tagging_index_toggle('social_groups');
-  }
-  catch (EntityStorageException $e) {
-    \Drupal::logger('social_tagging')->info($e->getMessage());
-  }
+/**
+ * Assign the default permissions for this module.
+ */
+function _social_tagging_assign_default_permissions() {
+  $permissions = [
+    'administer social_tagging',
+    'delete terms in social_tagging',
+    'edit terms in social_tagging',
+  ];
+
+  // SM should be able to change the permissions.
+  user_role_grant_permissions('sitemanager', $permissions);
 }
 
 /**
@@ -49,10 +56,13 @@ function social_tagging_update_8001() {
  */
 function social_tagging_update_8002() {
   // Update field definitions.
-  _social_tagging_field_defenitions_update();
+  _social_tagging_field_definitions_update();
   // Toggle the index groups.
   try {
-    _social_tagging_index_toggle('social_groups');
+    // If the search module is enabled we need to update the group index.
+    if (\Drupal::moduleHandler()->moduleExists('social_search')) {
+      social_search_resave_search_indexes(['social_groups']);
+    }
   }
   catch (EntityStorageException $e) {
     \Drupal::logger('social_tagging')->info($e->getMessage());
@@ -60,65 +70,9 @@ function social_tagging_update_8002() {
 }
 
 /**
- * Function that sets the default configuration value(s) for this module.
- */
-function _social_tagging_set_defaults() {
-  $permissions = [
-    'administer social_tagging',
-    'delete terms in social_tagging',
-    'edit terms in social_tagging',
-  ];
-
-  // Set allow to true, since that's the case by default.
-  $config = \Drupal::getContainer()->get('config.factory')->getEditable('social_tagging.settings');
-  $config->set('enable_content_tagging', 1)->save();
-  $config->set('allow_category_split', 1)->save();
-  $config->set('tag_node_type_landing_page', FALSE)->save();
-  // SM should be able to change the permissions.
-  user_role_grant_permissions('sitemanager', $permissions);
-}
-
-/**
- * Turn an index off and on.
- *
- * @param string $index_id
- *   The index that needs to be disabled and enabled.
- *
- * @throws \Drupal\Core\Entity\EntityStorageException
- */
-function _social_tagging_index_toggle($index_id) {
-  /* @var Drupal\search_api\Entity\Index $index */
-  $index = Index::load($index_id);
-  if (!$index instanceof Index) {
-    \Drupal::logger('social_tagging')->info('Invalid search index');
-    return;
-  }
-  \Drupal::logger('social_tagging')->info('Loaded search index');
-
-  // If currently enabled we will first disabled and enable the index.
-  if ($index !== NULL && $index->status()) {
-    \Drupal::logger('social_tagging')->info('Search index exists');
-
-    // Elevate permissions so we can index *all* the items.
-    $accountSwitcher = Drupal::service('account_switcher');
-    $account = User::load(1);
-    $accountSwitcher->switchTo($account);
-
-    // Disable and enable the index so the tagging field is properly added.
-    $index->disable()->save();
-    \Drupal::logger('social_tagging')->info('Search index disabled');
-    $index->enable()->save();
-    \Drupal::logger('social_tagging')->info('Search index enabled');
-
-    // Restore user account.
-    $accountSwitcher->switchBack();
-  }
-}
-
-/**
  * Update the field definitions on install, or in an update hook.
  */
-function _social_tagging_field_defenitions_update() {
+function _social_tagging_field_definitions_update() {
   // Create field storage for the 'Highlight' base field.
   \Drupal::entityTypeManager()->clearCachedDefinitions();
   \Drupal::service('entity.definition_update_manager')->applyUpdates();
