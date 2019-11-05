@@ -126,10 +126,9 @@ function social_ajax_comments_comment_links_alter(array &$links, CommentInterfac
  */
 function social_ajax_comments_ajax_comments_wrapper_id_alter(&$wrapper_html_id, ContentEntityInterface $commented_entity, $field_name) {
   if ($commented_entity instanceof Node && $field_name === 'field_topic_comments') {
-    $wrapper_html_id = 'node-topic-field-topic-comments';
-  }
-  if ($commented_entity instanceof Node && $field_name === 'field_event_comments') {
-    $wrapper_html_id = 'node-topic-field-event-comments';
+    $wrapper_html_id = Html::getId(
+      $commented_entity->getEntityTypeId() . '-' . $commented_entity->bundle() . '-' . $field_name
+    );
   }
   if ($commented_entity instanceof Post && $field_name === 'field_post_comments') {
     $wrapper_html_id = Html::getId(
