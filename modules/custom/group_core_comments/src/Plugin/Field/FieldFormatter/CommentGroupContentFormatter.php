@@ -75,12 +75,7 @@ class CommentGroupContentFormatter extends CommentDefaultFormatter {
           ];
         }
 
-        $description = $this->t('You are not allowed to comment on content in a group you are not member of. You can join the group @group_link.',
-          [
-            '@group_link' => Link::fromTextAndUrl($this->t('here'), Url::fromUserInput('#'))
-              ->toString(),
-          ]
-        );
+        $description = $this->t('You are not allowed to comment on content in a group you are not member of.');
 
         $group_image = NULL;
         if ($group->hasField('field_group_image') && !$group->get('field_group_image')->isEmpty()) {

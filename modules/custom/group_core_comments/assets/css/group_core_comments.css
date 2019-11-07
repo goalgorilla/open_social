@@ -1,26 +1,81 @@
 .forbidden-post-comments-wrapper.card {
   display: block;
   margin: 1.25rem -1.25rem -1.25rem;
-  padding: 1.25rem;
+  padding: 1.25rem 1.25rem 1.75rem;
   background-color: #f3f3f3;
   box-shadow: none;
   border-top-left-radius: 0 !important;
   border-top-right-radius: 0 !important;
 }
+@media (min-width: 900px) {
+  .forbidden-post-comments-wrapper.card {
+    padding-bottom: 1.25rem;
+  }
+}
 .forbidden-post-comments-wrapper.card .description {
-  position: relative;
-  display: inline;
+  display: flex;
+  align-items: center;
 }
 @media (max-width: 899px) {
   .forbidden-post-comments-wrapper.card .description {
     display: block;
   }
 }
+.forbidden-post-comments-wrapper.card .description__wrapper {
+  flex-basis: 0;
+  flex-grow: 1;
+  max-width: 100%;
+}
+@media (min-width: 900px) {
+  .forbidden-post-comments-wrapper.card .description__wrapper {
+    margin-right: 15px;
+    border: solid #adadad;
+    border-width: 0 1px 0 0;
+  }
+}
+@media (min-width: 900px) {
+  .forbidden-post-comments-wrapper.card .description__wrapper p {
+    padding-right: 25px;
+    margin-bottom: 0;
+  }
+}
+.forbidden-post-comments-wrapper.card .group-action {
+  position: relative;
+  text-align: center;
+}
+@media (min-width: 900px) {
+  .forbidden-post-comments-wrapper.card .group-action {
+    text-align: left;
+  }
+}
+.forbidden-post-comments-wrapper.card .group-action .btn-action__group {
+  padding-right: 25px;
+  white-space: nowrap;
+}
+@media (max-width: 599px) {
+  .forbidden-post-comments-wrapper.card .group-action .btn-action__group {
+    width: 100%;
+  }
+}
+.forbidden-post-comments-wrapper.card .group-action .btn-action__group svg {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  vertical-align: middle;
+  margin-top: -4px;
+  margin-right: 20px;
+}
+.forbidden-post-comments-wrapper.card .group-action .btn-action__group.open + .popup-info {
+  opacity: 1;
+  pointer-events: auto;
+}
 .forbidden-post-comments-wrapper.card .popup-info {
   position: absolute;
   width: 375px;
   top: 0;
-  right: calc(-375px + 3.25rem);
+  left: 50%;
+  text-align: left;
+  transform: translateX(-50%);
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.1s linear;
@@ -32,13 +87,9 @@
     transform: translateX(-50%);
   }
 }
-.forbidden-post-comments-wrapper.card .popup-info.open {
-  opacity: 1;
-  pointer-events: auto;
-}
 @media (max-width: 599px) {
   .forbidden-post-comments-wrapper.card .popup-info {
-    width: 320px;
+    width: 292px;
   }
 }
 .forbidden-post-comments-wrapper.card .popup-info:before, .forbidden-post-comments-wrapper.card .popup-info:after {
@@ -48,13 +99,9 @@
   height: 0;
   width: 0;
   position: absolute;
-  left: 1.25rem;
+  left: 50%;
   pointer-events: none;
-}
-@media (max-width: 899px) {
-  .forbidden-post-comments-wrapper.card .popup-info:before, .forbidden-post-comments-wrapper.card .popup-info:after {
-    display: none;
-  }
+  transform: translateX(-50%);
 }
 .forbidden-post-comments-wrapper.card .popup-info:before {
   border-top-color: rgba(0, 0, 0, 0.12);
@@ -104,21 +151,29 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-top: 1.25rem;
+  margin-top: 0.75rem;
 }
 .forbidden-post-comments-wrapper.card .popup-info .actions .btn {
-  flex: 0 0 calc(50% - 15px);
-  max-width: calc(50% - 15px);
-  margin-right: 15px;
+  flex: 0 0 calc(50% - 5px);
+  max-width: calc(50% - 5px);
+  margin-right: 5px;
 }
 @media (max-width: 599px) {
   .forbidden-post-comments-wrapper.card .popup-info .actions .btn {
+    flex: 0 0 calc(50% - 10px);
+    max-width: calc(50% - 10px);
+    margin-right: 10px;
     font-size: 12px;
   }
 }
 .forbidden-post-comments-wrapper.card .popup-info .actions .btn + .btn {
-  margin-left: 15px;
+  margin-left: 5px;
   margin-right: 0;
+}
+@media (max-width: 599px) {
+  .forbidden-post-comments-wrapper.card .popup-info .actions .btn + .btn {
+    margin-left: 10px;
+  }
 }
 
 /*# sourceMappingURL=group_core_comments.css.map */

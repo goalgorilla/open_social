@@ -2,38 +2,50 @@
 
 <div class="forbidden-post-comments-wrapper card">
   <div class="description">
-    {{ description }}
+    <div class="description__wrapper">
+      <p>{{ description }}</p>
+    </div>
 
-    <div class="popup-info">
-      <div class="card teaser">
-        <div class="teaser__image">
-          {{ group_info.image }}
-        </div>
+    <div class="group-action">
+      <a href="#" class="btn btn-default btn-action__group" aria-label="{{ 'View group'|t }}">
+        <svg>
+          <use xlink:href="#icon-group"></use>
+        </svg>
+        {{ 'View group'|t }}
+      </a>
 
-        <div class="teaser__body">
-          <div class="teaser__content">
+      <div class="popup-info">
+        <div class="card teaser">
+          <div class="teaser__image">
+            {{ group_info.image }}
+          </div>
 
-            <div class="teaser__title"><h4>{{ group_info.label }}</h4></div>
+          <div class="teaser__body">
+            <div class="teaser__content">
 
-            <div class="teaser__content-line">
-              <svg class="teaser__content-type-icon">
-                <use xlink:href="#icon-label"></use>
-              </svg>
-              {{ group_info.type }}
-            </div>
+              <div class="teaser__title"><h4>{{ group_info.label }}</h4></div>
 
-            <div class="teaser__content-line">
-              <svg class="teaser__content-type-icon">
-                <use xlink:href="#icon-group"></use>
-              </svg>
-              {{ group_info.members_count }}
-            </div>
+              <div class="teaser__content-line">
+                <svg class="teaser__content-type-icon">
+                  <use xlink:href="#icon-label"></use>
+                </svg>
+                {{ group_info.type }}
+              </div>
 
-            <div class="actions">
-              <a href="{{ action.url }}" title="{{ group_info.label }}" class="{{ action.class }}">{{ action.label }}</a>
-              <a href="{{ group_info.url }}" title="{{ group_info.label }}" class="btn btn-default">
-                {% trans %}Read more{% endtrans %}
-              </a>
+              <div class="teaser__content-line">
+                <svg class="teaser__content-type-icon">
+                  <use xlink:href="#icon-group"></use>
+                </svg>
+                {{ group_info.members_count }}
+              </div>
+
+              <div class="actions">
+                <a href="{{ action.url }}" title="{{ group_info.label }}" class="{{ action.class }}">{{ action.label }}</a>
+                <a href="{{ group_info.url }}" title="{{ group_info.label }}" class="btn btn-default">
+                  {% trans %}Read more{% endtrans %}
+                </a>
+              </div>
+
             </div>
 
           </div>
