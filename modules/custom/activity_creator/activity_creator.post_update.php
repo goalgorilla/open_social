@@ -19,21 +19,20 @@ function activity_creator_post_update_8001_one_to_many_activities(&$sandbox) {
   // Fetching amount of data we need to process.
   // Runs only once per update.
   if (!isset($sandbox['total'])) {
-    // Get all the necessary fields information from current database.
+    // Get count of all the necessary fields information from current database.
     /** @var \Drupal\Core\Database\Query\Select $query */
     $query = \Drupal::database()->select('activity__field_activity_recipient_user', 'aur');
     $query->join('activity__field_activity_status', 'asv', 'aur.entity_id = asv.entity_id');
-    $results = $query
+    $number_of_activities = $query
       ->fields('aur', ['entity_id', 'field_activity_recipient_user_target_id'])
       ->fields('asv', ['field_activity_status_value'])
-      ->execute()->fetchAll();
+      ->countQuery()
+      ->execute()->fetchField();
 
     // Write total of entities need to be processed to $sandbox.
-    $sandbox['total'] = count($results);
-    // Initiate default value for current processing № of element.
+    $sandbox['total'] = $number_of_activities;
+    // Initiate default value for current processing of element.
     $sandbox['current'] = 0;
-    // Store all data in sandbox to be processed in chunks.
-    $sandbox['activity-ids'] = $results;
   }
 
   // Do not continue if no entities are found.
@@ -42,27 +41,38 @@ function activity_creator_post_update_8001_one_to_many_activities(&$sandbox) {
     return t('No activities data to be processed.');
   }
 
-  // How much entities can be processed per batch.
-  $limit = 50;
-  // Take out a chunk of activity ids for processing in current batch run.
-  $results = array_slice($sandbox['activity-ids'], $sandbox['current'], $limit);
+  // Get all the necessary fields information from current database.
+  /** @var \Drupal\Core\Database\Query\Select $query */
+  $query = \Drupal::database()->select('activity__field_activity_recipient_user', 'aur');
+  $query->join('activity__field_activity_status', 'asv', 'aur.entity_id = asv.entity_id');
+  $results = $query
+    ->fields('aur', ['entity_id', 'field_activity_recipient_user_target_id'])
+    ->fields('asv', ['field_activity_status_value'])
+    ->range($sandbox['current'], 1000)
+    ->execute()->fetchAll();
+
+  // Prepare the insert query.
+  $query = \Drupal::database()->insert('activity_notification_status')
+    ->fields([
+      'aid',
+      'uid',
+      'status',
+    ]);
 
   // Insert the information in activity_notification_status table.
   foreach ($results as $result) {
-    \Drupal::database()->insert('activity_notification_status')
-      ->fields([
-        'aid',
-        'uid',
-        'status',
-      ], [
-        $result->entity_id,
-        $result->field_activity_recipient_user_target_id,
-        $result->field_activity_status_value,
-      ])
-      ->execute();
+    $query->values([
+      'aid' => $result->entity_id,
+      'uid' => $result->field_activity_recipient_user_target_id,
+      'status' => $result->field_activity_status_value,
+    ]);
+
     // Increment currently processed entities.
     $sandbox['current']++;
   }
+
+  // Execute the query with all values;.
+  $query->execute();
 
   // The batch will finish when '#finished' will become '1'.
   $sandbox['#finished'] = ($sandbox['current'] / $sandbox['total']);
