@@ -18,10 +18,11 @@
 function activity_creator_post_update_8001_one_to_many_activities(&$sandbox) {
   // Fetching amount of data we need to process.
   // Runs only once per update.
+  $connection = \Drupal::database();
   if (!isset($sandbox['total'])) {
     // Get count of all the necessary fields information from current database.
     /** @var \Drupal\Core\Database\Query\Select $query */
-    $query = \Drupal::database()->select('activity__field_activity_recipient_user', 'aur');
+    $query = $connection->select('activity__field_activity_recipient_user', 'aur');
     $query->join('activity__field_activity_status', 'asv', 'aur.entity_id = asv.entity_id');
     $number_of_activities = $query
       ->fields('aur', ['entity_id', 'field_activity_recipient_user_target_id'])
@@ -43,36 +44,26 @@ function activity_creator_post_update_8001_one_to_many_activities(&$sandbox) {
 
   // Get all the necessary fields information from current database.
   /** @var \Drupal\Core\Database\Query\Select $query */
-  $query = \Drupal::database()->select('activity__field_activity_recipient_user', 'aur');
+  $query = $connection->select('activity__field_activity_recipient_user', 'aur');
   $query->join('activity__field_activity_status', 'asv', 'aur.entity_id = asv.entity_id');
-  $results = $query
-    ->fields('aur', ['entity_id', 'field_activity_recipient_user_target_id'])
-    ->fields('asv', ['field_activity_status_value'])
-    ->range($sandbox['current'], 1000)
-    ->execute()->fetchAll();
+  $query->addField('aur', ' field_activity_recipient_user_target_id', 'uid');
+  $query->addField('aur', 'entity_id', 'aid');
+  $query->addField('asv', 'field_activity_status_value', 'status');
+  $query->condition('field_activity_recipient_user_target_id', 0, '!=');
+  $query->range($sandbox['current'], 5000);
 
-  // Prepare the insert query.
-  $query = \Drupal::database()->insert('activity_notification_status')
-    ->fields([
-      'aid',
-      'uid',
-      'status',
-    ]);
+  // Prepare the insert query and execute using previous select query.
+  $connection->insert('activity_notification_status')->from($query)->execute();
 
-  // Insert the information in activity_notification_status table.
-  foreach ($results as $result) {
-    $query->values([
-      'aid' => $result->entity_id,
-      'uid' => $result->field_activity_recipient_user_target_id,
-      'status' => $result->field_activity_status_value,
-    ]);
-
-    // Increment currently processed entities.
-    $sandbox['current']++;
+  // Increment currently processed entities.
+  // Check if current starting point is less than our range selection.
+  if ($sandbox['total'] - $sandbox['current'] > 5000) {
+    $sandbox['current'] += 5000;
   }
-
-  // Execute the query with all values;.
-  $query->execute();
+  else {
+    // If we have less number of results to process, we increment by difference.
+    $sandbox['current'] += ($sandbox['total'] - $sandbox['current']);
+  }
 
   // The batch will finish when '#finished' will become '1'.
   $sandbox['#finished'] = ($sandbox['current'] / $sandbox['total']);
