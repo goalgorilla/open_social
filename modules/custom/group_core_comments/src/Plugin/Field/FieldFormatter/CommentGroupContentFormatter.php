@@ -89,7 +89,7 @@ class CommentGroupContentFormatter extends CommentDefaultFormatter {
         }
 
         $output[0]['comment_form'] = [
-          '#theme' => 'forbidden_post_comments',
+          '#theme' => 'comments_join_group',
           '#description' => $description,
           '#group_info' => [
             'image' => $group_image,

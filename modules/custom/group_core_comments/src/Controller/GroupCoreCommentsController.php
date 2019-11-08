@@ -4,7 +4,9 @@ namespace Drupal\group_core_comments\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\group\Entity\GroupInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -15,20 +17,6 @@ use Symfony\Component\HttpFoundation\RequestStack;
  * Provides group core comments controllers.
  */
 class GroupCoreCommentsController extends ControllerBase {
-
-  /**
-   * Entity type manager.
-   *
-   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
-   */
-  protected $entityTypeManager;
-
-  /**
-   * Current user.
-   *
-   * @var \Drupal\Core\Session\AccountInterface
-   */
-  protected $currentUser;
 
   /**
    * Request service.
@@ -46,11 +34,23 @@ class GroupCoreCommentsController extends ControllerBase {
    *   The current user.
    * @param \Symfony\Component\HttpFoundation\RequestStack $request_stack
    *   The request stack.
+   * @param \Drupal\Core\Messenger\MessengerInterface $messenger
+   *   The messenger service.
+   * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
+   *   The string translation service.
    */
-  public function __construct(EntityTypeManagerInterface $entity_type_manager, AccountInterface $current_user, RequestStack $request_stack) {
+  public function __construct(
+    EntityTypeManagerInterface $entity_type_manager,
+    AccountInterface $current_user,
+    RequestStack $request_stack,
+    MessengerInterface $messenger,
+    TranslationInterface $string_translation
+  ) {
     $this->entityTypeManager = $entity_type_manager;
     $this->currentUser = $current_user;
     $this->requestService = $request_stack;
+    $this->setMessenger($messenger);
+    $this->setStringTranslation($string_translation);
   }
 
   /**
@@ -60,7 +60,9 @@ class GroupCoreCommentsController extends ControllerBase {
     return new static(
       $container->get('entity_type.manager'),
       $container->get('current_user'),
-      $container->get('request_stack')
+      $container->get('request_stack'),
+      $container->get('messenger'),
+      $container->get('string_translation')
     );
   }
 
@@ -81,10 +83,10 @@ class GroupCoreCommentsController extends ControllerBase {
     /** @var \Drupal\group\Plugin\GroupContentEnablerInterface $plugin */
     $plugin = $group->getGroupType()->getContentPlugin('group_membership');
 
-    $group_content = $this->entityTypeManager->getStorage('group_content')->create([
+    $group_content = $this->entityTypeManager()->getStorage('group_content')->create([
       'type' => $plugin->getContentTypeConfigId(),
       'gid' => $group->id(),
-      'entity_id' => $this->currentUser->id(),
+      'entity_id' => $this->currentUser()->id(),
     ]);
 
     $result = $group_content->save();
