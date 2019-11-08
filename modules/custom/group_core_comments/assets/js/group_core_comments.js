@@ -1,4 +1,4 @@
-(function ($) {
+(function ($, Drupal) {
   Drupal.behaviors.groupCoreComments = {
     attach: function (context) {
       var forbiddenPost = $('.forbidden-post-comments-wrapper', context);
@@ -13,17 +13,21 @@
         popup.css('top', (-popupHResize - 5));
       });
 
-      link.on('click', function (e) {
-        e.preventDefault();
+      link.on('click', function (event) {
+        event.preventDefault();
         $(this).toggleClass('open');
       });
 
-      $(document).click(function(event) {
-        if ($(event.target).closest('.forbidden-post-comments-wrapper .description .btn-action__group').length) return;
-        if ($(event.target).closest('.forbidden-post-comments-wrapper .popup-info').length) return;
+      $(document).click(function (event) {
+        if ($(event.target).closest('.forbidden-post-comments-wrapper .description .btn-action__group').length) {
+          return;
+        }
+        if ($(event.target).closest('.forbidden-post-comments-wrapper .popup-info').length) {
+         return;
+        }
         link.removeClass('open');
         event.stopPropagation();
       });
     }
   };
-})(jQuery);
+})(jQuery, Drupal);
