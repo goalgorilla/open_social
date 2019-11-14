@@ -8,6 +8,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Link;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Url;
 
 /**
@@ -16,6 +17,8 @@ use Drupal\Core\Url;
  * @package Drupal\social_content_block
  */
 class ContentBuilder implements ContentBuilderInterface {
+
+  use StringTranslationTrait;
 
   /**
    * The entity type manager.
