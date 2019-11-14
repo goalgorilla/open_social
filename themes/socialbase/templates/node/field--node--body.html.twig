@@ -6,10 +6,27 @@
 
 {% else %}
 
-  <div class="body-text clearfix">
-    {% for item in items %}
-      {{ item.content }}
-    {% endfor %}
-  </div>
+  {%
+    set title_classes = [
+    'field--label',
+    label_display == 'visually_hidden' ? 'sr-only',
+  ]
+  %}
+
+  {% if label_hidden %}
+    <div class="body-text clearfix">
+      {% for item in items %}
+        {{ item.content }}
+      {% endfor %}
+    </div>
+  {% else %}
+    <div{{ title_attributes.addClass(title_classes) }}>{{ label }}</div>
+
+    <div class="body-text clearfix">
+      {% for item in items %}
+        {{ item.content }}
+      {% endfor %}
+    </div>
+  {% endif %}
 
 {% endif %}
