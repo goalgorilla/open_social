@@ -33,17 +33,17 @@ class ContentInMyGroupActivityContext extends ActivityContextBase {
       $owner_id = '';
 
       if (isset($referenced_entity['target_type']) && $referenced_entity['target_type'] == 'post') {
-        $entity = Post::load($referenced_entity['target_id']);
+        $post = Post::load($referenced_entity['target_id']);
 
         // It could happen that a notification has been queued but the content
         // has since been deleted. In that case we can find no additional
         // recipients.
-        if (!$entity instanceof PostInterface) {
+        if (!$post instanceof PostInterface) {
           return $recipients;
         }
 
-        $gid = $entity->get('field_recipient_group')->getValue();
-        $owner_id = $entity->getOwnerId();
+        $gid = $post->get('field_recipient_group')->getValue();
+        $owner_id = $post->getOwnerId();
       }
       else {
         /* @var \Drupal\group\Entity\GroupContentInterface $group_content_entity */
@@ -56,10 +56,14 @@ class ContentInMyGroupActivityContext extends ActivityContextBase {
           return $recipients;
         }
 
-        /* @var \Drupal\node\Entity\Node $entity */
-        $entity = $group_content_entity->getEntity();
-        if ($entity instanceof Node) {
-          $owner_id = $entity->getOwnerId();
+        /* @var \Drupal\node\Entity\Node $node */
+        $node = $group_content_entity->getEntity();
+        if ($node instanceof Node) {
+          $owner_id = $node->getOwnerId();
+
+          if (!$node->isPublished()) {
+            return $recipients;
+          }
         }
         $gid = $group_content_entity->get('gid')->getValue();
       }
@@ -81,15 +85,9 @@ class ContentInMyGroupActivityContext extends ActivityContextBase {
 
         $memberships = $group->getMembers();
 
-        /** @var \Drupal\Core\Entity\EntityAccessControlHandlerInterface $handler */
-        $handler = $this->entityTypeManager->getAccessControlHandler($entity->getEntityTypeId());
-
         foreach ($memberships as $membership) {
           // Check if this not the created user.
-          if (
-            $owner_id != $membership->getUser()->id() &&
-            $handler->access($entity, 'view', $membership->getUser())
-          ) {
+          if ($owner_id != $membership->getUser()->id()) {
             $recipients[] = [
               'target_type' => 'user',
               'target_id' => $membership->getUser()->id(),
