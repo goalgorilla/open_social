@@ -9,11 +9,12 @@ use Drupal\user\Plugin\EntityReferenceSelection\UserSelection as UserSelectionBa
  * Provides specific access control for the user entity type.
  *
  * @EntityReferenceSelection(
- *   id = "social_user",
+ *   id = "social:user",
  *   label = @Translation("Social user selection"),
  *   entity_types = {"user"},
- *   group = "social_user",
- *   weight = 1
+ *   group = "social",
+ *   weight = 1,
+ *   base_plugin_label = @Translation("Social user selection")
  * )
  */
 class UserSelection extends UserSelectionBase {
