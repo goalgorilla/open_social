@@ -82,3 +82,28 @@ function activity_creator_update_8001() {
   $schema = $db->schema();
   $schema->createTable('activity_notification_status', $spec['activity_notification_status']);
 }
+
+/**
+ * Updates activities with status READ to SEEN.
+ *
+ * As we are removing the ACTIVITY_STATUS_READ, so we want to update all the
+ * current activities with status as read to seen, so that we don't have any
+ * dangling data in tables.
+ */
+function activity_creator_update_8002() {
+  try {
+    $connection = Database::getConnection();
+    // Get all the activities with status READ.
+    $txn = $connection->startTransaction();
+
+    // Update all the activities status as READ to SEEN.
+    $connection->update('activity__field_activity_status')
+      ->fields(['field_activity_status_value' => 2])
+      ->condition('field_activity_status_value', 3)
+      ->execute();
+  }
+  catch (\PDOException $exception) {
+    \Drupal::logger('default')->error($exception->getMessage());
+    $txn->rollBack();
+  }
+}
