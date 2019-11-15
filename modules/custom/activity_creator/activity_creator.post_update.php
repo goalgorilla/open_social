@@ -6,14 +6,11 @@
  */
 
 /**
- * Implements hook_post_update_name().
+ * Migrate all the activity status information to new table.
  *
- * Migrate all the activity information to new table.
  * This is necessary as we have changed the logic of reading notifications
  * and marking them as seen. So, we have migrate the existing activity entries
  * to new table so as to avoid any missing notifications by users.
- *
- * @throws \Exception
  */
 function activity_creator_post_update_8001_one_to_many_activities(&$sandbox) {
   // Fetching amount of data we need to process.
@@ -46,7 +43,7 @@ function activity_creator_post_update_8001_one_to_many_activities(&$sandbox) {
   /** @var \Drupal\Core\Database\Query\Select $query */
   $query = $connection->select('activity__field_activity_recipient_user', 'aur');
   $query->join('activity__field_activity_status', 'asv', 'aur.entity_id = asv.entity_id');
-  $query->addField('aur', ' field_activity_recipient_user_target_id', 'uid');
+  $query->addField('aur', 'field_activity_recipient_user_target_id', 'uid');
   $query->addField('aur', 'entity_id', 'aid');
   $query->addField('asv', 'field_activity_status_value', 'status');
   $query->condition('field_activity_recipient_user_target_id', 0, '!=');
