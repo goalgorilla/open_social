@@ -54,11 +54,16 @@ class ContentBuilder implements ContentBuilderInterface {
    * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
    *   The string translation.
    */
-  public function __construct(EntityTypeManagerInterface $entity_type_manager, Connection $connection, ModuleHandlerInterface $module_handler, TranslationInterface $string_translation) {
+  public function __construct(
+    EntityTypeManagerInterface $entity_type_manager,
+    Connection $connection,
+    ModuleHandlerInterface $module_handler,
+    TranslationInterface $string_translation
+  ) {
     $this->entityTypeManager = $entity_type_manager;
     $this->connection = $connection;
     $this->moduleHandler = $module_handler;
-    $this->stringTranslation = $string_translation;
+    $this->setStringTranslation($string_translation);
   }
 
   /**
