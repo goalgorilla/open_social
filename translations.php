@@ -18,5 +18,5 @@
 die('This file should not be run directly.');
 
 // Changed in version X.Y
-//new TranslatableMarkup('Example');
-//new PluralTranslatableMarkup($count, '1 example', '@count examples');
+// new TranslatableMarkup('Example');
+// new PluralTranslatableMarkup($count, '1 example', '@count examples');.
