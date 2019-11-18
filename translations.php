@@ -1,4 +1,5 @@
 <?php
+// phpcs:ignoreFile
 
 /**
  * @file
@@ -20,3 +21,7 @@ die('This file should not be run directly.');
 // Changed in version X.Y
 // new TranslatableMarkup('Example');
 // new PluralTranslatableMarkup($count, '1 example', '@count examples');.
+
+// Changed in version 7.2.
+new TranslatableMarkup('Select / unselect all @count results in this view');
+new TranslatableMarkup('Clear all selected members');
