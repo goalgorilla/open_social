@@ -73,7 +73,7 @@ function template_preprocess_activity(array &$variables) {
   // always check the theme setting first.
   if ($account) {
     $storage = \Drupal::entityTypeManager()->getStorage('profile');
-    if (!empty($storage)) {
+    if ($storage !== NULL) {
       $user_profile = $storage->loadByUser($account, 'profile');
       if ($user_profile) {
         $content = \Drupal::entityTypeManager()
@@ -113,7 +113,7 @@ function template_preprocess_activity(array &$variables) {
   $status = $activity->get('field_activity_status')->getValue();
 
   switch ($status['0']['value']) {
-    case ACTIVITY_STATUS_READ:
+    case ACTIVITY_STATUS_SEEN:
       $status_class = 'bg-white';
       break;
 
