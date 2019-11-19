@@ -8,9 +8,9 @@
   Scenario: Successfully send a private message to another user.
     Given I enable the module "social_private_message"
     Given users:
-      | name          | mail                  | status |
-      | PM User One   | pm_user_1@example.com | 1      |
-      | PM User Two   | pm_user_2@example.com | 1      |
+      | name          | mail                  | status | created    |
+      | PM User One   | pm_user_1@example.com | 1      | 1861920000 |
+      | PM User Two   | pm_user_2@example.com | 1      | 1893456000 |
     When I am logged in as "PM User One"
     And I am on "/user/inbox"
     Then I should see "You do not have any private messages yet. Click on the button on the right to start a new message."

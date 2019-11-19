@@ -140,6 +140,14 @@ function social_event_managers_form_alter(&$form, FormStateInterface $form_state
       $display_id = $view->current_display;
     }
   }
+  elseif (isset($form['social_views_bulk_operations_bulk_form_enrollments_1']) && isset($form['output'][0]['#view'])) {
+    $view = &$form['output'][0]['#view'];
+
+    if ($view instanceof ViewExecutable) {
+      $view_id = $view->id();
+      $display_id = $view->current_display;
+    }
+  }
   elseif ($form_id === 'views_bulk_operations_configure_action') {
     $data = $form_state->get('views_bulk_operations');
     $view_id = $data['view_id'];
