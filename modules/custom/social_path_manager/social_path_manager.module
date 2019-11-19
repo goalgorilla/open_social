@@ -102,13 +102,15 @@ function social_path_manager_batch_alter(&$batch) {
 
 /**
  * Common batch processing callback for all operations.
+ *
+ * @throws \Exception
  */
 function _social_path_manager_update_group_tab_aliases($id, $action) {
   $group_ids = array_keys(\Drupal::entityQuery('group')->execute());
   $created = 0;
 
-  foreach ($group_ids as $group_id) {
-    $group = Group::load($group_id);
+  $groups = Group::loadMultiple($group_ids);
+  foreach ($groups as $group) {
     _social_path_manager_update_alias($group, $action, TRUE);
     $created++;
   }
