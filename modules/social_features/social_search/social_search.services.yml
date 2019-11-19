@@ -3,3 +3,8 @@ services:
     class: Drupal\social_search\SocialSearchBreadcrumbBuilder
     tags:
       - { name: breadcrumb_builder, priority: 100 }
+  social_search.redirect_subscriber:
+    class: Drupal\social_search\EventSubscriber\RedirectSubscriber
+    arguments: ['@current_route_match', '@current_user', '@config.factory', '@request_stack']
+    tags:
+      - { name: event_subscriber }

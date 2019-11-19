@@ -15,3 +15,6 @@
 
 ## Change Record
 If this Pull Request changes the way that developers should do things or introduces a new API for developers then a change record to document this is needed. Please provide a draft for a change record or a link to an unpublished change record below. [Existing change records](https://www.drupal.org/list-changes/social) can be consulted as example.
+
+## Translations
+- [ ] Changed or removed source strings are added to the `translations.php` file.

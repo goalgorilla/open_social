@@ -77,6 +77,9 @@ class EventAnEnrollOverride implements ConfigFactoryOverrideInterface {
           ],
         ],
       ];
+
+      // Unset the regular Email.
+      $overrides[$config_name]['display']['default']['display_options']['fields']['social_views_bulk_operations_bulk_form_enrollments_1']['selected_actions']['social_event_managers_send_email_action'] = 0;
     }
 
     return $overrides;

@@ -234,19 +234,6 @@ function social_event_an_enroll_form_alter(&$form, FormStateInterface $form_stat
     // Hide checkbox if feature is disabled globally.
     $form['field_event_an_enroll']['#access'] = $config->get('event_an_enroll');
   }
-
-  if ((isset($form['views_bulk_operations_bulk_form']) || strpos($form_id, 'views_form_event_manage_enrollments_page_manage_enrollments') !== FALSE) && isset($form['output'][0]['#view'])) {
-    $view = &$form['output'][0]['#view'];
-
-    // Unset the action to send emails to LU members which is replaced by
-    // config override.
-    if ($view instanceof ViewExecutable && $view->id() === 'event_manage_enrollments') {
-      $actions = &$form['header']['social_views_bulk_operations_bulk_form_enrollments_1']['actions'];
-      $action = 'social_event_managers_send_email_action';
-      $actions[$action]['#access'] = FALSE;
-      unset($actions['#links'][$action]);
-    }
-  }
 }
 
 /**

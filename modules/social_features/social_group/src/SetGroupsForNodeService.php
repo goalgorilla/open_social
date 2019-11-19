@@ -47,6 +47,7 @@ class SetGroupsForNodeService {
    *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Core\Entity\EntityStorageException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
   public function setGroupsForNode(NodeInterface $node, array $groups_to_remove, array $groups_to_add, array $original_groups = [], $is_new = FALSE) {
     $moved = FALSE;
@@ -126,16 +127,16 @@ class SetGroupsForNodeService {
     // Remove all the group content references from the Group as well if we
     // moved it out of the group.
     if (!empty($groups_to_remove)) {
-      foreach ($groups_to_remove as $group_id) {
-        $group = Group::load($group_id);
+      $groups = Group::loadMultiple($groups_to_remove);
+      foreach ($groups as $group) {
         self::removeGroupContent($node, $group);
       }
     }
 
     // Add the content to the Group if we placed it in a group.
     if (!empty($groups_to_add)) {
-      foreach ($groups_to_add as $group_id) {
-        $group = Group::load($group_id);
+      $groups = Group::loadMultiple($groups_to_add);
+      foreach ($groups as $group) {
         self::addGroupContent($node, $group);
       }
     }
