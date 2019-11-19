@@ -13,12 +13,6 @@ use Drupal\user\Entity\Role;
 function social_private_message_install() {
   _social_private_message_set_permissions();
 
-  // Disable the email notification provided by private_message.
-  /** @var \Drupal\Core\Config\Config|\Drupal\Core\Config\ImmutableConfig $config */
-  $config = \Drupal::getContainer()->get('config.factory')->getEditable('private_message.settings');
-  $config->set('enable_email_notifications', FALSE)->save();
-  $config->set('send_by_default', FALSE)->save();
-
   // Set module weight.
   module_set_weight('social_private_message', 1);
 }
