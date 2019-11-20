@@ -1,11 +1,11 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: node-gettext\n"
-"POT-Creation-Date: 2019-10-24 00:18+0000\n"
-"PO-Revision-Date: 2019-10-24 14:36+0000\n"
-"Last-Translator: Robert Ragas <robertragas@goalgorilla.com>\n"
-"Language-Team: German <https://translate.getopensocial.com/projects/"
-"open-social/distribution/de/>\n"
+"POT-Creation-Date: 2019-11-19 00:21+0000\n"
+"PO-Revision-Date: 2019-11-04 22:04+0000\n"
+"Last-Translator: Sophia Rabien <sophia.rabien@greenpeace.org>\n"
+"Language-Team: German <https://translate.getopensocial.com/projects/open-"
+"social/distribution/de/>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -60,11 +60,11 @@ msgstr "(Bevorstehende) Community-Veranstaltungen"
 
 #: modules/social_features/social_search/config/install/views.view.search_content.yml:0
 msgid "(ascending)"
-msgstr ""
+msgstr "(aufsteigend)"
 
 #: modules/social_features/social_search/config/install/views.view.search_content.yml:0
 msgid "(descending)"
-msgstr ""
+msgstr "(absteigend)"
 
 #: modules/social_features/social_content_report/config/install/views.view.report_overview.yml:0;0;0;0;0;0;0;0;0;0
 #: modules/social_features/social_core/config/install/views.view.content.yml:0
@@ -241,19 +241,24 @@ msgstr ":num_comments Kommentare"
 msgid ""
 "<a href=\"/node/{{ raw_arguments.nid }}/enrollments\">See all enrollments</a>"
 msgstr ""
+"<a href=\"/node/{{ raw_arguments.nid }}/enrollments\">Alle Anmeldungen "
+"anzeigen</a>"
 
 #: modules/social_features/social_group/src/Plugin/views/field/SocialGroupViewsBulkOperationsBulkForm.php:123
 msgid "<b><em class=\"placeholder\">@count</em> Member</b> is selected"
 msgid_plural ""
 "<b><em class=\"placeholder\">@count</em> Members</b> are selected"
-msgstr[0] "<b><em class=\"placeholder\">@count</em> Mitglied</b> ist ausgewählt"
-msgstr[1] "<b><em class=\"placeholder\">@count</em> Mitglieder</b> sind ausgewählt"
+msgstr[0] ""
+"<b><em class=\"placeholder\">@count</em> Mitglied</b> ist ausgewählt"
+msgstr[1] ""
+"<b><em class=\"placeholder\">@count</em> Mitglieder</b> sind ausgewählt"
 
 #: modules/social_features/social_event/modules/social_event_managers/src/Plugin/views/field/SocialEventManagersViewsBulkOperationsBulkForm.php:204
 msgid "<b><em class=\"placeholder\">@count</em> enrollee</b> is selected"
 msgid_plural ""
 "<b><em class=\"placeholder\">@count</em> enrollees</b> are selected"
-msgstr[0] "<b><em class=\"placeholder\">@count</em> Anmelder</b> ist ausgewählt"
+msgstr[0] ""
+"<b><em class=\"placeholder\">@count</em> Anmelder</b> ist ausgewählt"
 msgstr[1] ""
 "<b><em class=\"placeholder\">@count</em> Anmeldungen</b> sind ausgewählt"
 
@@ -297,7 +302,7 @@ msgstr ""
 
 #: modules/social_features/social_search/config/install/views.view.search_users.yml:0;0
 msgid "<h4 class=\"section-title\">Member results</h4>"
-msgstr ""
+msgstr "<h4 class=\"section-title\">Ergebnisse für Mitglieder</h4>"
 
 #: modules/social_features/social_search/config/install/views.view.search_all.yml:0
 msgid "<h4>All results</h4>"
@@ -352,7 +357,8 @@ msgid ""
 "a> added you to the event [social_event:event_iam_organizing]</p>"
 msgstr ""
 "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
-"a> hat dich zu einer Veranstaltung hinzugefügt</p>"
+"a> hat dich zu einer Veranstaltung hinzugefügt [social_event:"
+"event_iam_organizing]</p>"
 
 #: modules/social_features/social_activity/config/install/message.template.create_comment_group_node.yml:0
 msgid ""
@@ -431,11 +437,10 @@ msgid ""
 "\t</tbody>\r\n"
 "</table>"
 msgstr ""
-"<p><a href=\"[message:author:url:absolute]\">[message:author:display-"
-"name]</a> kommentierte [social_comment:parent_entity_author]'s "
-"[social_comment:commented_content_type] <a href=\""
-"[message:field_message_related_object:entity:url:absolute]\">[message:node-"
-"title]</a> dem/der du folgst</p>\n"
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
+"a> kommentierte [social_comment:parent_entity_author]'s [social_comment:"
+"commented_content_type] <a href=\"[message:field_message_related_object:"
+"entity:url:absolute]\">[message:node-title]</a> dem/der du folgst</p>\n"
 "\n"
 "<table class=\"comments\">\n"
 "<tr>\n"
@@ -448,8 +453,8 @@ msgstr ""
 "<table class=\"btn-wrapp\">\n"
 "\t<tbody>\n"
 "\t\t<tr>\n"
-"\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-"
-"one\" href=\"[social_comment:comment_reply_link_html]\">Auf diesen Kommentar "
+"\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-one"
+"\" href=\"[social_comment:comment_reply_link_html]\">Auf diesen Kommentar "
 "antworten </a></td>\n"
 "\t\t</tr>\n"
 "\t</tbody>\n"
@@ -535,7 +540,8 @@ msgstr ""
 "\t\t<tr>\n"
 "\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-one"
 "\" href=\"[social_comment:comment_reply_link_html]\">Auf diesen Kommentar "
-"antworten </a></td>\n"
+"antworten\n"
+"</a></td>\n"
 "\t\t</tr>\n"
 "\t</tbody>\n"
 "</table>"
@@ -652,8 +658,8 @@ msgid ""
 "a> created an event in <a href=\"[message:gurl]\">[message:gtitle]</a></p>"
 msgstr ""
 "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
-"a> erstellte eine Veranstaltung in\n"
-"<a href=\"[message:gurl]\">[message:gtitle]</a></p>"
+"a> erstellte eine Veranstaltung in <a href=\"[message:gurl]\">[message:"
+"gtitle]</a></p>"
 
 #: modules/social_features/social_activity/config/install/message.template.create_event_community.yml:0
 msgid ""
@@ -709,8 +715,8 @@ msgid ""
 "a> posted in <a href=\"[message:gurl]\">[message:gtitle]</a></p>"
 msgstr ""
 "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
-"a> erstellte einen Beitrag in \n"
-"<a href=\"[message:gurl]\">[message:gtitle]</a></p>"
+"a> erstellte einen Beitrag in <a href=\"[message:gurl]\">[message:gtitle]</"
+"a></p>"
 
 #: modules/social_features/social_activity/config/install/message.template.create_post_profile_stream.yml:0
 msgid ""
@@ -789,14 +795,14 @@ msgid ""
 "\t</tbody>\r\n"
 "</table>\r\n"
 msgstr ""
-"<p><a href=\"[message:author:url:absolute]\">[message:author:display-"
-"name]</a> antwortete auf deinen <a href=\""
-"[message:field_message_related_object:entity:url:absolute]\">Kommentar</a> "
-"in [social_comment:commented_entity_link_html]</p>\n"
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
+"a> antwortete auf deinen <a href=\"[message:field_message_related_object:"
+"entity:url:absolute]\">Kommentar</a> in [social_comment:"
+"commented_entity_link_html]</p>\n"
 "<table class=\"comments\">\n"
 "<tr>\n"
-"<td class=\"comment\"><strong>[social_comment:parent_comment_author]</strong>"
-" <small>• [social_comment:parent_comment_date]</small>\n"
+"<td class=\"comment\"><strong>[social_comment:parent_comment_author]</"
+"strong> <small>• [social_comment:parent_comment_date]</small>\n"
 "<p>[social_comment:parent_comment_text]</p>\n"
 "</td>\n"
 "</tr><tr>\n"
@@ -809,8 +815,8 @@ msgstr ""
 "<table class=\"btn-wrapp\">\n"
 "\t<tbody>\n"
 "\t\t<tr>\n"
-"\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-"
-"one\" href=\"[social_comment:commented_entity_link]\">Auf diesen Kommentar "
+"\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-one"
+"\" href=\"[social_comment:commented_entity_link]\">Auf diesen Kommentar "
 "antworten </a></td>\n"
 "\t\t</tr>\n"
 "\t</tbody>\n"
@@ -915,6 +921,11 @@ msgstr "@action mit <b>Social Accounts</b>"
 #: modules/social_features/social_like/social_like.module:35
 msgid "@amount like(s)"
 msgstr "@amount Gefällt mir"
+
+#: modules/custom/activity_creator/activity_creator.post_update.php:68
+msgid ""
+"@count activities data has been migrated to activity_notification_table."
+msgstr ""
 
 #: themes/socialbase/components/03-molecules/like/like_and_dislike_service.js:0
 msgid "@count like"
@@ -1290,7 +1301,7 @@ msgstr "Über die Gruppe"
 
 #: modules/social_features/social_group/config/install/views.view.group_information.yml:0
 msgid "About {{ arguments.id }}"
-msgstr ""
+msgstr "Info {{ arguments.id }}"
 
 #: themes/socialblue/color/color.inc:13
 msgid "Accent color"
@@ -1378,7 +1389,7 @@ msgstr ""
 #: modules/social_features/social_user/social_user.routing.yml:0
 #: modules/social_features/social_event/config/install/field.field.event_enrollment.event_enrollment.field_account.yml:0
 msgid "Account"
-msgstr "Account"
+msgstr "Konto"
 
 #: modules/social_features/social_user/src/Plugin/Block/AccountHeaderBlock.php:16
 #: modules/social_features/social_user/config/optional/block.block.accountheaderblock.yml:0
@@ -1403,7 +1414,7 @@ msgstr ""
 #: modules/social_features/social_group/src/Plugin/views/field/SocialGroupViewsBulkOperationsBulkForm.php:162
 #: themes/socialbase/src/Plugin/Preprocess/Dropdown.php:26
 msgid "Actions"
-msgstr ""
+msgstr "Aktionen"
 
 #: modules/custom/social_auth_facebook/src/Form/FacebookAuthSettingsForm.php:64
 #: modules/custom/social_auth_google/src/Form/GoogleAuthSettingsForm.php:64
@@ -1423,7 +1434,7 @@ msgstr "Aktiv"
 #: modules/social_features/social_core/config/install/core.entity_view_mode.node.activity.yml:0
 #: modules/social_features/social_post/config/install/core.entity_view_mode.post.activity.yml:0
 msgid "Activity"
-msgstr ""
+msgstr "Aktivität"
 
 #: modules/custom/activity_basics/activity_basics.info.yml:0
 msgid "Activity Basics"
@@ -1453,6 +1464,10 @@ msgstr "Aktivität senden"
 msgid "Activity Send Email"
 msgstr "E-Mail über Aktivität senden"
 
+#: modules/custom/activity_send/modules/activity_send_push_notification/activity_send_push_notification.info.yml:0
+msgid "Activity Send Push Notification"
+msgstr ""
+
 #: modules/social_features/social_activity/config/install/views.view.activity_stream.yml:0
 msgid "Activity Stream"
 msgstr "Aktivitätsverlauf"
@@ -1467,11 +1482,11 @@ msgstr "Aktivitätsanzeige"
 msgid "Activity comment"
 msgstr "Aktivitätskommentar"
 
-#: modules/custom/activity_creator/activity_creator.module:160;162
+#: modules/custom/activity_creator/activity_creator.module:217;219
 msgid "Activity group argument"
 msgstr "Gruppenargument der Aktivität"
 
-#: modules/custom/activity_creator/activity_creator.module:163
+#: modules/custom/activity_creator/activity_creator.module:220
 msgid "Activity group context argument."
 msgstr "Argument im Kontext der Gruppen Aktivität."
 
@@ -1483,15 +1498,15 @@ msgstr "Aktivitäten zu der Veranstaltung, die ich organisiere"
 msgid "Activity overview"
 msgstr "Aktivitätsübersicht"
 
-#: modules/custom/activity_creator/activity_creator.module:143;145
+#: modules/custom/activity_creator/activity_creator.module:200;202
 msgid "Activity post visibility access"
 msgstr "Zugriff auf Beiträge in der Aktivitätenübersicht"
 
-#: modules/custom/activity_creator/activity_creator.module:152;154
+#: modules/custom/activity_creator/activity_creator.module:209;211
 msgid "Activity profile argument"
 msgstr "Argument im Aktivitätsprofil"
 
-#: modules/custom/activity_creator/activity_creator.module:155
+#: modules/custom/activity_creator/activity_creator.module:212
 msgid "Activity profile context argument."
 msgstr "Kontextargument des Aktivitätsprofils."
 
@@ -1532,7 +1547,7 @@ msgstr "Aktivitätsverlauf eines Profils"
 msgid "Activity tokens"
 msgstr "Token für Aktivitäten"
 
-#: modules/custom/activity_creator/activity_creator.module:134;136
+#: modules/custom/activity_creator/activity_creator.module:191;193
 msgid "Activity visibility access"
 msgstr "Zugriff auf die Aktivitätenübersicht"
 
@@ -1573,7 +1588,7 @@ msgstr "Einen Kommentar hinzufügen"
 
 #: modules/social_features/social_group/src/Plugin/Block/GroupAddBlock.php:69
 msgid "Add a group"
-msgstr "Gruppe hinzufügen"
+msgstr "Gruppe erstellen"
 
 #: modules/social_features/social_comment/social_comment.module:50
 msgid "Add a reply"
@@ -2263,6 +2278,10 @@ msgid ""
 "but you tried to use a one-time link for user %resetting_user. Please <a "
 "href=\":logout\">log out</a> and try using the link again."
 msgstr ""
+"Ein*e andere*r Nutzer*in (%other_user) ist bereits auf der Seite auf diesem "
+"Computer angemeldet, aber du versuchtest einen Einmal-Link für Nutzer*in "
+"%resetting_user. Bitte <a href=\":logout\">melde dich ab</a> und versuch den "
+"Link erneut zu verwenden."
 
 #: modules/custom/social_auth_facebook/src/Form/FacebookAuthSettingsForm.php:49
 msgid "Application ID"
@@ -2525,7 +2544,7 @@ msgstr "Grundlegende Implementierung von Aktivitäten in Open Social"
 #: modules/custom/social_demo/src/Plugin/DemoContent/Page.php:12
 #: modules/social_features/social_page/config/install/node.type.page.yml:0
 msgid "Basic page"
-msgstr "Basis Seite"
+msgstr "Basisseite"
 
 #: modules/social_features/social_group/modules/social_group_flexible_group/config/install/field.storage.group.field_group_allowed_join_method.yml:0
 msgid "Be added"
@@ -2549,7 +2568,7 @@ msgstr ""
 msgid "Before"
 msgstr "Davor"
 
-#: modules/custom/social_magic_login/src/Controller/MagicLoginController.php:127
+#: modules/custom/social_magic_login/src/Controller/MagicLoginController.php:138
 msgid ""
 "Before you can log in and set your password, you need to agree to the data "
 "policy."
@@ -2796,11 +2815,11 @@ msgstr[1] ""
 
 #: modules/social_features/social_event/modules/social_event_managers/src/Plugin/views/field/SocialEventManagersViewsBulkOperationsBulkForm.php:226
 msgid "Clear all selected enrollees"
-msgstr ""
+msgstr "Auswahl für ausgewählte Angemeldete aufheben"
 
 #: modules/social_features/social_group/src/Plugin/views/field/SocialGroupViewsBulkOperationsBulkForm.php:145
 msgid "Clear all selected members"
-msgstr ""
+msgstr "Auswahl für ausgewählte Mitglieder aufheben"
 
 #: modules/social_features/social_tagging/src/Form/SocialTaggingSettingsForm.php:115
 msgid "Click here to go to the social tagging overview"
@@ -4220,12 +4239,12 @@ msgstr "E-Mail-Benachrichtigung"
 msgid "Email notifications"
 msgstr "E-Mail-Benachrichtigungen"
 
-#: modules/custom/activity_creator/activity_creator.module:146
+#: modules/custom/activity_creator/activity_creator.module:203
 msgid "Enable activity access control for related post entities."
 msgstr ""
 "Aktivieren der Aktivitätszugriffssteuerung für verwandte Beitrags-Entitäten."
 
-#: modules/custom/activity_creator/activity_creator.module:137
+#: modules/custom/activity_creator/activity_creator.module:194
 msgid "Enable activity access control."
 msgstr "Aktivitätszugriffssteuerung aktivieren."
 
@@ -6565,7 +6584,11 @@ msgstr "Nächste ›"
 msgid "Nickname"
 msgstr "Spitzname"
 
-#: modules/social_features/social_comment/src/Form/SocialCommentAdminOverview.php:236
+#: modules/custom/activity_creator/activity_creator.post_update.php:39
+msgid "No activities data to be processed."
+msgstr ""
+
+#: modules/social_features/social_comment/src/Form/SocialCommentAdminOverview.php:241
 msgid "No comments available."
 msgstr "Keine Kommentare verfügbar."
 
@@ -7459,7 +7482,7 @@ msgstr ""
 msgid "Process activity_logger_message queue."
 msgstr ""
 
-#: modules/custom/activity_send/modules/activity_send_email/src/Plugin/QueueWorker/ActivitySendEmailWorker.php:11
+#: modules/custom/activity_send/modules/activity_send_email/src/Plugin/QueueWorker/ActivitySendEmailWorker.php:14
 msgid "Process activity_send_email queue."
 msgstr "Bearbeiten Sie die \"activity_send_email\" Warteschlange."
 
@@ -7784,6 +7807,10 @@ msgstr "Veröffentlichungsstatus"
 msgid "Purple Rain"
 msgstr "Lila"
 
+#: modules/custom/activity_send/modules/activity_send_push_notification/activity_send_push_notification.module:45
+msgid "Push notifications"
+msgstr ""
+
 #: modules/social_features/social_search/modules/social_search_autocomplete/config/install/views.view.search_all_autocomplete.yml:0
 msgid "REST export"
 msgstr ""
@@ -8042,33 +8069,33 @@ msgstr ""
 #: modules/social_features/social_content_report/config/install/flag.flag.report_node.yml:0
 #: modules/social_features/social_content_report/config/install/flag.flag.report_post.yml:0
 msgid "Report"
-msgstr "Bericht"
+msgstr "Melden"
 
 #: modules/social_features/social_content_report/config/install/flag.flag.report_comment.yml:0;0
 #: modules/social_features/social_content_report/config/install/flag.flag.report_node.yml:0;0
 #: modules/social_features/social_content_report/config/install/flag.flag.report_post.yml:0;0
 msgid "Report as inappropriate"
-msgstr ""
+msgstr "Als unangemessen melden"
 
 #: modules/social_features/social_content_report/config/install/flag.flag.report_comment.yml:0
 msgid "Report inappropriate comment"
-msgstr ""
+msgstr "Unangemessenen Kommentar melden"
 
 #: modules/social_features/social_content_report/config/install/flag.flag.report_node.yml:0
 msgid "Report inappropriate nodes"
-msgstr ""
+msgstr "Unangemessenen Inhalt melden"
 
 #: modules/social_features/social_content_report/config/install/flag.flag.report_post.yml:0
 msgid "Report inappropriate post"
-msgstr ""
+msgstr "Unangemessenen Beitrag melden"
 
 #: modules/social_features/social_content_report/config/install/views.view.report_overview.yml:0;0
 msgid "Report overview"
-msgstr ""
+msgstr "Berichtübersicht"
 
 #: modules/social_features/social_content_report/config/install/taxonomy.vocabulary.report_reasons.yml:0
 msgid "Report reasons"
-msgstr ""
+msgstr "Gründe für Bericht"
 
 #: modules/social_features/social_content_report/src/ContentReportService.php:94
 #: modules/social_features/social_content_report/config/install/flag.flag.report_comment.yml:0
@@ -8076,15 +8103,15 @@ msgstr ""
 #: modules/social_features/social_content_report/config/install/flag.flag.report_post.yml:0
 #: modules/social_features/social_content_report/config/install/views.view.report_overview.yml:0
 msgid "Reported"
-msgstr ""
+msgstr "Gemeldet"
 
 #: modules/social_features/social_content_report/config/install/views.view.report_overview.yml:0
 msgid "Reporter"
-msgstr ""
+msgstr "Meldende*r"
 
 #: modules/social_features/social_content_report/config/install/views.view.report_overview.yml:0
 msgid "Reports"
-msgstr ""
+msgstr "Berichte"
 
 #: modules/social_features/social_activity/config/install/views.view.activity_stream.yml:0
 #: modules/social_features/social_activity/config/install/views.view.activity_stream_group.yml:0
@@ -8431,7 +8458,7 @@ msgstr ""
 msgid "Select members to add"
 msgstr "Mitglieder zum Hinzufügen auswählen"
 
-#: modules/social_features/social_comment/src/Form/SocialCommentAdminOverview.php:251
+#: modules/social_features/social_comment/src/Form/SocialCommentAdminOverview.php:256
 msgid "Select one or more comments to perform the update on."
 msgstr "Einen oder mehrere Kommentare für die Aktualisierung auswählen."
 
@@ -8699,6 +8726,12 @@ msgstr "E-Mail-Adresse in allen Benutzerprofilen anzeigen"
 msgid "Show my email on my profile"
 msgstr "Meine E-Mail-Adresse in meinem Profil anzeigen"
 
+#: modules/custom/activity_send/modules/activity_send_push_notification/activity_send_push_notification.module:53
+msgid ""
+"Show notifications in the corner of your computer screen, even if the "
+"website is closed."
+msgstr ""
+
 #: modules/social_features/social_profile/modules/social_profile_privacy/social_profile_privacy.module:158
 msgid "Show on my profile"
 msgstr "In meinem Profil anzeigen"
@@ -8838,6 +8871,7 @@ msgstr "Schneeweiß"
 #: social.info.yml:0 modules/custom/activity_logger/activity_logger.info.yml:0
 #: modules/custom/activity_send/activity_send.info.yml:0
 #: modules/custom/activity_send/modules/activity_send_email/activity_send_email.info.yml:0
+#: modules/custom/activity_send/modules/activity_send_push_notification/activity_send_push_notification.info.yml:0
 #: modules/custom/activity_viewer/activity_viewer.info.yml:0
 #: modules/custom/social_admin_menu/social_admin_menu.info.yml:0
 #: modules/custom/social_auth_extra/social_auth_extra.info.yml:0
@@ -10217,7 +10251,7 @@ msgstr ""
 msgid "The unique ID of the object that contains mention"
 msgstr ""
 
-#: modules/social_features/social_comment/src/Form/SocialCommentAdminOverview.php:273
+#: modules/social_features/social_comment/src/Form/SocialCommentAdminOverview.php:278
 #: modules/social_features/social_post/social_post.admin.inc:60;161
 msgid "The update has been performed."
 msgstr "Die Aktualisierung wurde durchgeführt."
@@ -10629,7 +10663,7 @@ msgstr ""
 msgid "Tracks views for nodes."
 msgstr ""
 
-#: modules/social_features/social_comment/src/Form/SocialCommentAdminOverview.php:222
+#: modules/social_features/social_comment/src/Form/SocialCommentAdminOverview.php:226
 msgid "Translate"
 msgstr "Übersetzen"
 
@@ -10941,6 +10975,10 @@ msgid "Used to send activity notifications by Email"
 msgstr ""
 "Wird verwendet, um Benachrichtigungen über Aktivitäten per E-Mail zu senden"
 
+#: modules/custom/activity_send/modules/activity_send_push_notification/activity_send_push_notification.info.yml:0
+msgid "Used to send activity notifications by Push service"
+msgstr ""
+
 #: modules/custom/activity_send/activity_send.info.yml:0
 msgid "Used to store and manage external notifications"
 msgstr "Zum Speichern und Verwalten von externen Benachrichtigungen"
@@ -10958,13 +10996,13 @@ msgstr "Zum Speichern und Verwalten von externen Benachrichtigungen"
 msgid "User"
 msgstr "Benutzer*in"
 
-#: modules/custom/social_magic_login/src/Controller/MagicLoginController.php:130
+#: modules/custom/social_magic_login/src/Controller/MagicLoginController.php:141
 msgid ""
 "User %name used magic login link at time %timestamp but needs to set a "
 "password."
 msgstr ""
 
-#: modules/custom/social_magic_login/src/Controller/MagicLoginController.php:152
+#: modules/custom/social_magic_login/src/Controller/MagicLoginController.php:160
 msgid "User %name used one-time login link at time %timestamp."
 msgstr ""
 
@@ -11584,7 +11622,7 @@ msgid "You have insufficient permissions to delete this vocabulary"
 msgstr ""
 "Du hast keine ausreichenden Berechtigungen, um dieses Vokabular zu löschen"
 
-#: modules/custom/social_magic_login/src/Controller/MagicLoginController.php:153
+#: modules/custom/social_magic_login/src/Controller/MagicLoginController.php:161
 msgid ""
 "You have just used your one-time login link. It is no longer necessary to "
 "use this link to log in."
@@ -11629,6 +11667,10 @@ msgstr ""
 msgid "You have tried to use a one-time link that has expired."
 msgstr "Du hast versucht einen Einmal-Link zu verwenden, der abgelaufen ist."
 
+#: modules/custom/social_magic_login/src/Controller/MagicLoginController.php:120
+msgid "You have tried to use a one-time link that is invalid."
+msgstr ""
+
 #: themes/socialbase/assets/js/tabledrag.min.js:0
 #: themes/socialbase/components/03-molecules/tabledrag/tabledrag.js:0
 msgid "You have unsaved changes."
@@ -11644,7 +11686,7 @@ msgid "You need to first create a Google App at <a href=\"@url\">@url</a>"
 msgstr ""
 "Du musst erst eine Google App unter  <a href=\"@url\">@url</a> erstellen"
 
-#: modules/custom/social_magic_login/src/Controller/MagicLoginController.php:123
+#: modules/custom/social_magic_login/src/Controller/MagicLoginController.php:134
 msgid "You need to set your password in order to log in."
 msgstr "Du musst ein Passwort vergeben, um dich anzumelden."
 

@@ -1,0 +1,109 @@
+<?php
+
+/**
+ * @file
+ * Installation code for the activity_creator module.
+ */
+
+use Drupal\Core\Database\Database;
+
+/**
+ * Implements hook_schema().
+ */
+function activity_creator_schema() {
+  $schema['activity_notification_status'] = [
+    'fields' => [
+      'uid' => [
+        'description' => 'The {user}.uid of user.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ],
+      'aid' => [
+        'description' => 'The {activity}.id of activity.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ],
+      'status' => [
+        'description' => 'The activity status.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 1,
+      ],
+    ],
+    'indexes' => [
+      'ans_uid' => ['uid'],
+      'ans_aid' => ['aid'],
+      'ans_uid_aid' => ['uid', 'aid'],
+      'ans_status' => ['status'],
+    ],
+  ];
+
+  return $schema;
+}
+
+/**
+ * Create new database table {activity_notification_status}.
+ */
+function activity_creator_update_8001() {
+  $spec['activity_notification_status'] = [
+    'fields' => [
+      'uid' => [
+        'description' => 'The {user}.uid of user.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ],
+      'aid' => [
+        'description' => 'The {activity}.id of activity.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ],
+      'status' => [
+        'description' => 'The activity status.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 1,
+      ],
+    ],
+    'indexes' => [
+      'ans_uid' => ['uid'],
+      'ans_aid' => ['aid'],
+      'ans_uid_aid' => ['uid', 'aid'],
+      'ans_status' => ['status'],
+    ],
+  ];
+
+  $db = Database::getConnection();
+  $schema = $db->schema();
+  $schema->createTable('activity_notification_status', $spec['activity_notification_status']);
+}
+
+/**
+ * Updates activities with status READ to SEEN.
+ *
+ * As we are removing the ACTIVITY_STATUS_READ, so we want to update all the
+ * current activities with status as read to seen, so that we don't have any
+ * dangling data in tables.
+ */
+function activity_creator_update_8002() {
+  try {
+    $connection = Database::getConnection();
+    // Get all the activities with status READ.
+    $txn = $connection->startTransaction();
+
+    // Update all the activities status as READ to SEEN.
+    $connection->update('activity__field_activity_status')
+      ->fields(['field_activity_status_value' => 2])
+      ->condition('field_activity_status_value', 3)
+      ->execute();
+  }
+  catch (\PDOException $exception) {
+    \Drupal::logger('default')->error($exception->getMessage());
+    $txn->rollBack();
+  }
+}

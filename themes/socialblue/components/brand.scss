@@ -520,3 +520,25 @@ html:not(.js) .navbar-default {
     }
   }
 }
+
+.badge.badge-active {
+  background-color: $brand-accent;
+}
+
+.phase {
+  &.phase-past {
+    &:not(:last-child):before {
+      background-color: $brand-accent;
+    }
+
+    .phase-past--icon .checkmark-icon {
+      fill: $brand-accent;
+    }
+  }
+
+  &.phase-active {
+    &:before {
+      background-color: $brand-accent;
+    }
+  }
+}
