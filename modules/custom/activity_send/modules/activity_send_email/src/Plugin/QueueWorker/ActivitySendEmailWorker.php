@@ -62,7 +62,36 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase implements Containe
       $message_template_id = $message->getTemplate()->id();
 
       // Get target account.
-      $target_accounts = EmailActivityDestination::getSendTargetUsers($activity);
+      if (empty($data['recipients'])) {
+        $recipients = array_column($activity->field_activity_recipient_user->getValue(), 'target_id');
+
+        if (count($recipients) > 50) {
+          // Split up by 50.
+          $batches = array_chunk($recipients, 50);
+
+          foreach ($batches as $batch_recipients) {
+            // Create same queue item, but with IDs of just 50 users.
+            $batch_data = [
+              'entity_id' => $data['entity_id'],
+              'recipients' => $batch_recipients,
+            ];
+
+            $queue = \Drupal::queue('activity_send_email_worker');
+            $queue->createItem($batch_data);
+          }
+
+          // We split up in batches. We can stop processing this specific queue
+          // item.
+          return;
+        }
+      }
+      else {
+        $recipients = $data['recipients'];
+      }
+
+      // Load the user accounts.
+      $target_accounts = User::loadMultiple($recipients);
+
       foreach ($target_accounts as $target_account) {
         if ($target_account instanceof User) {
 
