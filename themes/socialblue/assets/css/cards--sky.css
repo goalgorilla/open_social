@@ -1,0 +1,59 @@
+.socialblue--sky .card {
+  margin-bottom: 2.5rem;
+}
+
+.socialblue--sky .card--views__sidebar .card__actionbar .btn {
+  position: relative;
+  float: none;
+  margin-left: 0;
+  padding: 0 30px 0 0;
+  text-transform: uppercase;
+  font-weight: 700;
+  border: none;
+  -webkit-box-shadow: none;
+          box-shadow: none;
+  -webkit-transition: .3s ease-out;
+  transition: .3s ease-out;
+}
+
+.socialblue--sky .card--views__sidebar .card__actionbar .btn:hover, .socialblue--sky .card--views__sidebar .card__actionbar .btn:active, .socialblue--sky .card--views__sidebar .card__actionbar .btn:focus {
+  background: transparent;
+}
+
+.socialblue--sky .card--views__sidebar .card__actionbar .btn:before, .socialblue--sky .card--views__sidebar .card__actionbar .btn:after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: 0;
+  -webkit-transform: translateY(-50%);
+          transform: translateY(-50%);
+  -webkit-transition: .3s ease-out;
+  transition: .3s ease-out;
+}
+
+.socialblue--sky .card--views__sidebar .card__actionbar .btn:before {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  z-index: 1;
+}
+
+.socialblue--sky .card--views__sidebar .card__actionbar .btn:after {
+  content: '';
+  display: block;
+  right: 5px;
+  margin-top: -1px;
+  padding: 2px;
+  border: solid #fff;
+  border-width: 0 2px 2px 0;
+  -webkit-transform: rotate(-45deg) translateY(-50%);
+          transform: rotate(-45deg) translateY(-50%);
+  z-index: 2;
+}
+
+@media (min-width: 900px) {
+  .socialblue--sky .card--views__sidebar .card__block {
+    padding-left: 1.875rem;
+    padding-right: 1.875rem;
+  }
+}
