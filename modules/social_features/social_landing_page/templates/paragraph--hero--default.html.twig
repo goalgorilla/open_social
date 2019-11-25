@@ -61,15 +61,6 @@
  #}
 <div{{ attributes.addClass(cover_classes) }} {% if hero_image %} style="background-image: url('{{ hero_image|raw }}');" {% endif %}>
   <div class="hero__bgimage-overlay"></div>
-  {% if node_edit_url %}
-    <div class="hero-action-button">
-      <a href="{{ node_edit_url }}"  title="Edit content" class="btn btn-default btn-floating waves-effect waves-circle">
-        <svg class="icon-gray icon-medium">
-          <use xlink:href="#icon-edit"></use>
-        </svg>
-      </a>
-    </div>
-  {% endif %}
 
   <div class="cover-wrap container">
     <div class="cover-small">
