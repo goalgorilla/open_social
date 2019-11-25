@@ -9,7 +9,6 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Template\Attribute;
 use Drupal\file\Entity\File;
 use Drupal\node\NodeInterface;
-use Drupal\node\Entity\Node;
 use Drupal\paragraphs\Entity\Paragraph;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
@@ -200,7 +199,7 @@ function social_landing_page_preprocess_field(&$variables) {
 /**
  * Fetches the first available hero section image from a landing page.
  *
- * @param \Drupal\node\Entity\Node $node
+ * @param \Drupal\node\NodeInterface $node
  *   The landing page.
  *
  * @return array
@@ -208,9 +207,9 @@ function social_landing_page_preprocess_field(&$variables) {
  *
  * @throws \Drupal\Core\Entity\EntityMalformedException
  */
-function _social_landing_page_get_hero_image(Node $node) {
+function _social_landing_page_get_hero_image(NodeInterface $node) {
   // Must be a valid node.
-  if (!$node instanceof Node || $node->getType() !== 'landing_page') {
+  if ($node->getType() !== 'landing_page') {
     return [];
   }
 
