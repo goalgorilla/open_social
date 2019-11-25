@@ -81,13 +81,7 @@
   {{ title_prefix }}
   {{ title_suffix }}
   <div class="hero-action-button">
-    {% if node_edit_url %}
-    <a href="{{ node_edit_url }}" title="{% trans %}Edit content{% endtrans %}" class="waves-effect waves-light btn btn-raised btn-default btn-floating">
-      <svg class="icon-gray icon-medium">
-        <use xlink:href="#icon-edit"></use>
-      </svg>
-    </a>
-    {% endif %}
+    {{ node_edit_url }}
   </div>
   {% if not node.isPublished() %}
     <div class="node--unpublished__label">{% trans %} unpublished {% endtrans %}</div>
