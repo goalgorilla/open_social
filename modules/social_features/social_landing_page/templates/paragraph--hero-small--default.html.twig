@@ -41,18 +41,25 @@
 {{ attach_library('socialbase/hero')}}
 {{ attach_library('social_landing_page/section.hero_small')}}
 
+{# Trim field HTML and Twig debug comments from image field URL output. #}
+{% set hero_image = content.field_hero_small_image|render|striptags|trim %}
+
 {%
   set cover_classes = [
-  'paragraph--' ~ paragraph.bundle|clean_class,
-  'cover',
-  'brand-bg-primary',
-  'cover--landing',
-  'hero-small',
-  hero_small_styled_image_url ? 'cover-img cover-img-gradient',
-]
+    'paragraph--' ~ paragraph.bundle|clean_class,
+    'cover',
+    'brand-bg-primary',
+    'cover--landing',
+    'hero-small',
+    hero_image ? 'cover-img cover-img-gradient',
+  ]
 %}
 
-<div{{ attributes.addClass(cover_classes) }} {% if hero_small_styled_image_url %} style="background-image: url('{{ hero_small_styled_image_url }}');" {% endif %}>
+{#
+ # The hero_image is output using |raw because it's already escaped in |render
+ # (|striptags and |trim remove the safe marking).
+ #}
+<div{{ attributes.addClass(cover_classes) }} {% if hero_image %} style="background-image: url('{{ hero_image|raw }}');" {% endif %}>
   <div class="hero-small__bgimage-overlay"></div>
   {% if node_edit_url %}
     <div class="hero-small-action-button">

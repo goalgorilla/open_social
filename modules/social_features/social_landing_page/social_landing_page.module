@@ -8,7 +8,6 @@
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Template\Attribute;
 use Drupal\file\Entity\File;
-use Drupal\image\Entity\ImageStyle;
 use Drupal\node\NodeInterface;
 use Drupal\node\Entity\Node;
 use Drupal\paragraphs\Entity\Paragraph;
@@ -140,37 +139,6 @@ function social_landing_page_preprocess_page(&$variables) {
       $variables['content_attributes'] = new Attribute();
       $variables['content_attributes']->addClass('container');
     }
-  }
-}
-
-/**
- * Prepares variables for the paragraph.
- */
-function social_landing_page_preprocess_paragraph(&$variables) {
-  /** @var \Drupal\paragraphs\Entity\Paragraph $entity */
-  $entity = $variables['elements']['#paragraph'];
-  $bundle = $entity->bundle();
-
-  switch ($bundle) {
-    case 'hero':
-      // Add the hero styled image.
-      $image_style = 'social_landing_hero';
-      $image_field = "field_{$bundle}_image";
-      if ($entity->hasField($image_field) && !empty($entity->{$image_field}->entity)) {
-        $variables['hero_styled_image_url'] = ImageStyle::load($image_style)
-          ->buildUrl($entity->{$image_field}->entity->getFileUri());
-      }
-      break;
-
-    case 'hero_small':
-      // Add the hero styled image.
-      $image_style = 'social_landing_hero_small';
-      $image_field = "field_{$bundle}_image";
-      if ($entity->hasField($image_field) && !empty($entity->{$image_field}->entity)) {
-        $variables['hero_small_styled_image_url'] = ImageStyle::load($image_style)
-          ->buildUrl($entity->{$image_field}->entity->getFileUri());
-      }
-      break;
   }
 }
 
