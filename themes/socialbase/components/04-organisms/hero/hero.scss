@@ -57,7 +57,18 @@
 
   &.small {
     @include for-tablet-portrait-up {
-      min-height: 206px;
+      height: 193px;
+      min-height: auto;
+    }
+
+    .page-title {
+      h1 {
+        @include for-tablet-portrait-up {
+          font-size: 2rem;
+          max-height: 70px;
+          overflow: hidden;
+        }
+      }
     }
 
     > .hero-footer {
@@ -83,11 +94,11 @@
 @media all and (-ms-high-contrast:none) {
   *::-ms-backdrop, .cover-wrap { min-height: 410px; }
 
-  *::-ms-backdrop, .cover-wrap.small { min-height: 206px; }
+  *::-ms-backdrop, .cover-wrap.small { height: 193px; min-height: auto }
 
   *::-ms-backdrop, .paragraph--hero .cover-wrap { min-height: 350px; }
 
-  *::-ms-backdrop, .paragraph--hero-small .cover-wrap { min-height: 206px; }
+  *::-ms-backdrop, .paragraph--hero-small .cover-wrap { min-height: 206px; height: auto }
 }
 
 // anon homepage hero
