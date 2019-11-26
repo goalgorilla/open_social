@@ -20,7 +20,7 @@ function socialblue_preprocess(&$variables, $hook, $info) {
  * Implements hook_library_info_alter().
  */
 function socialblue_library_info_alter(&$libraries, $extension) {
-  // c.
+  // Add extra CSS files if specific style is chosen.
   $style = theme_get_setting('style');
   if (!empty($style) && $extension === 'socialblue') {
     $theme_path = drupal_get_path('theme', $extension);
