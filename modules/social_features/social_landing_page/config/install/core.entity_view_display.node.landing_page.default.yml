@@ -3,11 +3,14 @@ status: true
 dependencies:
   config:
     - field.field.node.landing_page.field_content_visibility
+    - field.field.node.landing_page.field_landing_page_image
     - field.field.node.landing_page.field_landing_page_section
     - node.type.landing_page
   module:
     - entity_reference_revisions
     - user
+_core:
+  default_config_hash: PxrjIOmLPnhF24JSXnFk36eLtGYTMhNLryDlNU1mNTI
 id: node.landing_page.default
 targetEntityType: node
 bundle: landing_page
@@ -61,4 +64,5 @@ content:
     type: entity_reference_label
 hidden:
   field_content_visibility: true
+  field_landing_page_image: true
   links: true

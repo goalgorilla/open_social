@@ -4,15 +4,28 @@ dependencies:
   config:
     - core.entity_view_mode.node.featured
     - field.field.node.landing_page.field_content_visibility
+    - field.field.node.landing_page.field_landing_page_image
     - field.field.node.landing_page.field_landing_page_section
     - node.type.landing_page
   module:
+    - image
     - user
+_core:
+  default_config_hash: nvrQu61YlL3ZU9opxUd5p1uEB7TQiKkdu5S2x_mg8Fk
 id: node.landing_page.featured
 targetEntityType: node
 bundle: landing_page
 mode: featured
 content:
+  field_landing_page_image:
+    type: image
+    weight: -1
+    region: content
+    label: above
+    settings:
+      image_style: ''
+      image_link: ''
+    third_party_settings: {  }
   groups:
     label: above
     weight: 0

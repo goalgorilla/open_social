@@ -3,6 +3,7 @@ status: true
 dependencies:
   config:
     - field.field.node.landing_page.field_content_visibility
+    - field.field.node.landing_page.field_landing_page_image
     - field.field.node.landing_page.field_landing_page_section
     - node.type.landing_page
   module:
@@ -38,6 +39,8 @@ third_party_settings:
         id: sections
         classes: card
       label: Sections
+_core:
+  default_config_hash: ZmNvrc200HUdqH2M5CVzebvr-UKPAQWa7mq4XhhrYNU
 id: node.landing_page.default
 targetEntityType: node
 bundle: landing_page
@@ -98,6 +101,7 @@ content:
     region: content
     third_party_settings: {  }
 hidden:
+  field_landing_page_image: true
   groups: true
   promote: true
   sticky: true
