@@ -197,7 +197,6 @@ class Node extends PreprocessBase {
       );
       unset($variables['content']['links']['#lazy_builder']);
     }
-
   }
 
 }

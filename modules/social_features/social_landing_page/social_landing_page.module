@@ -7,9 +7,7 @@
 
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Template\Attribute;
-use Drupal\file\Entity\File;
 use Drupal\node\NodeInterface;
-use Drupal\paragraphs\Entity\Paragraph;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
 
@@ -142,40 +140,99 @@ function social_landing_page_preprocess_page(&$variables) {
 }
 
 /**
+ * Implements hook_ENTITY_TYPE_presave().
+ */
+function social_landing_page_node_presave(NodeInterface $node) {
+  if ($node->bundle() === 'landing_page') {
+    social_landing_page_set_hero_image($node);
+  }
+}
+
+/**
+ * Updates the hero image for the landing page based on paragraph sections.
+ *
+ * Some displays, such as the featured view mode, require an image to be used in
+ * teasers. Landing pages don't allow this image to be specified on the form but
+ * instead use the image of the first hero section. This function will find the
+ * first hero image and set it as a teaser image.
+ *
+ * This will overwrite any values that were previously set in the
+ * field_landing_page_image field as there is no way to distinguish between a
+ * value for this field that was deliberately set (e.g. through an API call) or
+ * set by a previous call to this function.
+ *
+ * @param \Drupal\node\NodeInterface $landing_page
+ *   A landing page node to be altered.
+ */
+function social_landing_page_set_hero_image(NodeInterface $landing_page) {
+  // Shorthand some conditions so they can be easily re-used.
+  $is_updating = isset($landing_page->original);
+  $has_image = !$landing_page->get('field_landing_page_image')->isEmpty();
+
+  // Check if the sections have changed.
+  // This expression can not be simplified because $landing_page->original is
+  // undefined if $is_updating is false. Paragraphs have always changed if this
+  // is a new entity (not updating).
+  $paragraphs_changed = !$is_updating || ($is_updating && !$landing_page->get('field_landing_page_section')->equals($landing_page->original->get('field_landing_page_section')));
+
+  // If there is already an image set and the paragraphs haven't changed then we
+  // do nothing.
+  if ($has_image && !$paragraphs_changed) {
+    return;
+  }
+
+  // Find the first hero paragraph in the section paragraphs that has an image.
+  /** @var \Drupal\Core\Field\Plugin\Field\FieldType\EntityReferenceItem $section */
+  foreach ($landing_page->get('field_landing_page_section') as $section) {
+    /** @var \Drupal\entity_reference_revisions\EntityReferenceRevisionsFieldItemList $section_children */
+    $section_children = $section->entity->get('field_section_paragraph');
+
+    // Skip accidentally empty sections.
+    // Each section only holds one paragraph in Open Social but the field type
+    // could have more.
+    if ($section_children->isEmpty()) {
+      continue;
+    }
+    /** @var \Drupal\paragraphs\ParagraphInterface $paragraph */
+    $paragraph = $section_children->first()->entity;
+
+    // Check if this paragraph has the hero small image field we can use.
+    if ($paragraph->hasField('field_hero_small_image') && !$paragraph->get('field_hero_small_image')->isEmpty()) {
+      $landing_page->set('field_landing_page_image', $paragraph->get('field_hero_small_image')->getValue());
+      break;
+    }
+
+    // Check if this paragraph has the normal hero field we can use.
+    if ($paragraph->hasField('field_hero_image') && !$paragraph->get('field_hero_image')->isEmpty()) {
+      $landing_page->set('field_landing_page_image', $paragraph->get('field_hero_image')->getValue());
+      break;
+    }
+  }
+}
+
+/**
  * Implements hook_preprocess_HOOK().
  */
 function social_landing_page_preprocess_node(&$variables) {
   /** @var \Drupal\node\Entity\Node $node */
   $node = $variables['node'];
-  if ($node->getType() === 'landing_page') {
-    // If featured we need to do some magic.
-    if ($variables['view_mode'] === 'featured') {
-      $hero_image = _social_landing_page_get_hero_image($node);
-      if (!empty($hero_image)) {
-        $variables['content']['field_landing_page_image'] = [
-          '#type' => 'markup',
-          '#markup' => $hero_image,
-        ];
-      }
-    }
-
-    // Only existing nodes can be edited. Nodes in preview mode aren't editable.
-    if ($node->id() !== NULL && $node->access('update', $account)) {
-      // TODO #3096639: Replace node_edit_url with content.links.edit.
-      $variables['node_edit_url'] = [
-        '#type' => 'link',
-        '#title' => [
-          '#markup' => '<svg class="icon-gray icon-medium"><use xlink:href="#icon-edit"></use></svg>',
-          '#allowed_tags' => ['use', 'svg'],
+  // Landing page nodes need a specially positioned edit icon.
+  // Only existing nodes can be edited. Nodes in preview mode aren't editable.
+  if ($node->getType() === 'landing_page' && $node->id() !== NULL && $node->access('update', $account)) {
+    // TODO #3096639: Replace node_edit_url with content.links.edit.
+    $variables['node_edit_url'] = [
+      '#type' => 'link',
+      '#title' => [
+        '#markup' => '<svg class="icon-gray icon-medium"><use xlink:href="#icon-edit"></use></svg>',
+        '#allowed_tags' => ['use', 'svg'],
+      ],
+      '#options' => [
+        'attributes' => [
+          'title' => new TranslatableMarkup('Edit content'),
+          'class' => 'waves-effect waves-light btn btn-raised btn-default btn-floating',
         ],
-        '#options' => [
-          'attributes' => [
-            'title' => new TranslatableMarkup('Edit content'),
-            'class' => 'waves-effect waves-light btn btn-raised btn-default btn-floating',
-          ],
-        ],
-      ] + $node->toUrl('edit-form')->toRenderArray();
-    }
+      ],
+    ] + $node->toUrl('edit-form')->toRenderArray();
   }
 }
 
@@ -194,62 +251,6 @@ function social_landing_page_preprocess_field(&$variables) {
       }
     }
   }
-}
-
-/**
- * Fetches the first available hero section image from a landing page.
- *
- * @param \Drupal\node\NodeInterface $node
- *   The landing page.
- *
- * @return array
- *   Render array of the image with a link.
- *
- * @throws \Drupal\Core\Entity\EntityMalformedException
- */
-function _social_landing_page_get_hero_image(NodeInterface $node) {
-  // Must be a valid node.
-  if ($node->getType() !== 'landing_page') {
-    return [];
-  }
-
-  // Loop over the landing page sections of the landing page.
-  foreach ($node->get('field_landing_page_section') as $section) {
-    // Get the referenced paragraph.
-    $referenced = $section->getValue();
-    $paragraph_id = $referenced['target_id'];
-    // First paragraph is always of type section.
-    $paragraph_section = Paragraph::load($paragraph_id);
-
-    // Get the related paragraph (the one with the actual content)
-    $section_id = $paragraph_section->get('field_section_paragraph')->target_id;
-    $paragraph_content = Paragraph::load($section_id);
-
-    // Must be of type hero.
-    if ($paragraph_content && $paragraph_content->getType() === 'hero') {
-      $fid = $paragraph_content->get('field_hero_image')->target_id;
-      $file = File::load($fid);
-      // Check if it's an existing file.
-      if ($file instanceof File) {
-        // Build an image render array.
-        $image = [
-          '#theme' => 'image_style',
-          '#style_name' => 'social_featured',
-          '#uri' => $file->getFileUri(),
-        ];
-        // Build a link render array.
-        $build = [
-          '#title' => render($image),
-          '#type' => 'link',
-          '#url' => $node->toUrl('canonical'),
-        ];
-      }
-      // We immediately return the 1st found hero.
-      return render($build);
-    }
-  }
-
-  return [];
 }
 
 /**
