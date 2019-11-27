@@ -44,6 +44,8 @@ function social_content_report_install() {
   }
 
   // Store the default selected term(s) in the config.
+  // The configuration is updated here because we can't know the IDs of the terms before
+  // they are created. This means that a static configuration file can't be used.
   \Drupal::configFactory()->getEditable('social_content_report.settings')
     ->set('reasons_with_text', $default_values)
     ->save();
