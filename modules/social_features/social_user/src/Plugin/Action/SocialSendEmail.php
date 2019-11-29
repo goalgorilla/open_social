@@ -5,8 +5,8 @@ namespace Drupal\social_user\Plugin\Action;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
-use Drupal\Core\Mail\MailManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\Core\Queue\QueueFactory;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Utility\Token;
 use Drupal\user\UserInterface;
@@ -50,13 +50,6 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
   protected $logger;
 
   /**
-   * The mail manager.
-   *
-   * @var \Drupal\Core\Mail\MailManagerInterface
-   */
-  protected $mailManager;
-
-  /**
    * The language manager.
    *
    * @var \Drupal\Core\Language\LanguageManagerInterface
@@ -69,6 +62,13 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
    * @var \Egulias\EmailValidator\EmailValidator
    */
   protected $emailValidator;
+
+  /**
+   * The queue factory.
+   *
+   * @var \Drupal\Core\Queue\QueueFactory
+   */
+  protected $queue;
 
   /**
    * TRUE if the current user can use the "Mail HTML" text format.
@@ -92,35 +92,27 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
    *   The entity type manager.
    * @param \Psr\Log\LoggerInterface $logger
    *   A logger instance.
-   * @param \Drupal\Core\Mail\MailManagerInterface $mail_manager
-   *   The mail manager.
    * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
    *   The language manager.
    * @param \Egulias\EmailValidator\EmailValidator $email_validator
    *   The email validator.
+   * @param \Drupal\Core\Queue\QueueFactory $queue_factory
+   *   The queue factory.
    * @param bool $allow_text_format
    *   TRUE if the current user can use the "Mail HTML" text format.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  public function __construct(
-    array $configuration,
-    $plugin_id,
-    $plugin_definition,
-    Token $token,
-    EntityTypeManagerInterface $entity_type_manager,
-    LoggerInterface $logger,
-    MailManagerInterface $mail_manager,
-    LanguageManagerInterface $language_manager,
-    EmailValidator $email_validator,
-    $allow_text_format
-  ) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, Token $token, EntityTypeManagerInterface $entity_type_manager, LoggerInterface $logger, LanguageManagerInterface $language_manager, EmailValidator $email_validator, QueueFactory $queue_factory, $allow_text_format) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
     $this->token = $token;
     $this->storage = $entity_type_manager->getStorage('user');
     $this->logger = $logger;
-    $this->mailManager = $mail_manager;
     $this->languageManager = $language_manager;
     $this->emailValidator = $email_validator;
+    $this->queue = $queue_factory;
     $this->allowTextFormat = $allow_text_format;
   }
 
@@ -135,6 +127,7 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
       $container->get('plugin.manager.mail'),
       $container->get('language_manager'),
       $container->get('email.validator'),
+      $container->get('queue'),
       $container->get('current_user')->hasPermission('use text format mail_html')
     );
   }
@@ -160,17 +153,17 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
       $langcode = $this->languageManager->getDefaultLanguage()->getId();
     }
 
-    $params = ['context' => $this->configuration];
-    $email = $this->getEmail($entity);
+    $data = [
+      'email_address' => $this->getEmail($entity),
+      'lang_code' => $langcode,
+      'params' => ['context' => $this->configuration],
+      'config' => $this->configuration,
+    ];
 
-    $message = $this->mailManager->mail('system', 'action_send_email', $email, $langcode, $params, $this->configuration['reply']);
+    /** @var \Drupal\Core\Queue\QueueInterface $queue */
+    $queue = $this->queue->get('user_email_queue');
+    $queue->createItem($data);
 
-    // Error logging is handled by \Drupal\Core\Mail\MailManager::mail().
-    if ($message['result']) {
-      $this->logger->notice('Sent email to %recipient', [
-        '%recipient' => $email,
-      ]);
-    }
 
     return $this->t('Send email');
   }
