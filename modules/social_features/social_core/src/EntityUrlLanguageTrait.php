@@ -14,8 +14,10 @@ use Drupal\Core\Language\LanguageInterface;
  * user.
  *
  * This trait implements the EntityInterface::toUrl method to ensure links
- * doesn't change the interface language of the current user, even if the entity
+ * don't change the interface language of the current user, even if the entity
  * does not have a translation available.
+ *
+ * This Trait should only be used on classes extending EntityBase.
  */
 trait EntityUrlLanguageTrait {
 
@@ -26,22 +28,24 @@ trait EntityUrlLanguageTrait {
     $url = parent::toUrl($rel, $options);
 
     // If a language was requested explicitly then it's not overwritten.
-    // e.g. this happens on content translations.
+    // e.g. this happens on content translations overview pages for links to the
+    // specific translations.
     if (isset($options['language'])) {
       return $url;
     }
 
-    // Override the language to keep the user in the current content language.
-    // Posts in Open Social are not translatable but by default. However,
-    // Drupal sets the link language to the Entity's language which would cause
-    // the content language for the current user to change, this is undesired.
     $url_options = $url->getOptions();
+
+    // Only override the language if the parent `toUrl` method specified a
+    // language. This avoids accidentally setting a language for a page that is
+    // not tied to the entity's language.
     if (isset($url_options['language'])) {
-      // The link language is only changed if it would cause the language for
-      // the viewing user to be changed. This ensures that extending platforms
-      // can make posts translatable without issues.
-      // TODO: Implement logic here.
-      // Check if post has translation in content language.
+      // Override the language to keep the user in the current content language.
+      // By default Drupal sets the link language to the Entity's language which
+      // would cause the content language for the current user to change, this
+      // is undesired. Setting the language to the current content user relies
+      // on the fact that Drupal displays the default language translation for
+      // the entity when no translation is available but properly adjusts links.
       $url_options['language'] = $this->languageManager()->getCurrentLanguage(LanguageInterface::TYPE_CONTENT);
       $url->setOptions($url_options);
     }
