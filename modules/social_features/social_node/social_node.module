@@ -1,0 +1,17 @@
+<?php
+
+/**
+ * @file
+ * The social node module alterations.
+ */
+
+use Drupal\social_node\Entity\Node;
+
+/**
+ * Implements hook_entity_type_alter().
+ */
+function social_node_entity_type_alter(array &$entity_types) {
+  if (isset($entity_types['node'])) {
+    $entity_types['node']->setClass(Node::class);
+  }
+}
