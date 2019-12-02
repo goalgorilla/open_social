@@ -21,6 +21,10 @@ use Drupal\Core\Link;
  *   An associative array containing:
  *   - elements: An associative array containing the user information and any
  *   - attributes: HTML attributes for the containing element.
+ *
+ * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+ * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+ * @throws \Drupal\Core\Entity\EntityMalformedException
  */
 function template_preprocess_activity(array &$variables) {
   // Fetch Activity Entity Object.
@@ -110,15 +114,17 @@ function template_preprocess_activity(array &$variables) {
 
   $variables['full_url'] = $full_url;
 
-  $status = $activity->get('field_activity_status')->getValue();
-
-  switch ($status['0']['value']) {
-    case ACTIVITY_STATUS_SEEN:
-      $status_class = 'bg-white';
+  /** @var \Drupal\activity_creator\ActivityNotifications $activity_notification_service */
+  $activity_notification_service = \Drupal::service('activity_creator.activity_notifications');
+  $status = $activity_notification_service->getActivityStatus($activity);
+  // Add bg classes according to notification status.
+  switch ($status) {
+    case ACTIVITY_STATUS_RECEIVED:
+      $status_class = 'bg-gray-lightest';
       break;
 
     default:
-      $status_class = 'bg-gray-lightest';
+      $status_class = 'bg-white';
       break;
   }
 

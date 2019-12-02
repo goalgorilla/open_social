@@ -2,6 +2,7 @@
 
 namespace Drupal\activity_creator;
 
+use Drupal\activity_creator\Entity\Activity;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityBase;
@@ -269,6 +270,32 @@ class ActivityNotifications extends ControllerBase {
       return TRUE;
     }
 
+    return FALSE;
+  }
+
+  /**
+   * Returns the activity notification status.
+   *
+   * @param \Drupal\activity_creator\Entity\Activity $activity
+   *   Activity entity.
+   *
+   * @return mixed
+   *   FALSE or the status of activity depending upon the execution of query.
+   */
+  public function getActivityStatus(Activity $activity) {
+    // Get the user ID.
+    if (!empty($id = $activity->id())) {
+      try {
+        $query = $this->database->select('activity_notification_status', 'ans')
+          ->fields('ans', ['status'])
+          ->condition('aid', $id);
+        return $query->execute()->fetchField();
+      }
+      catch (\Exception $exception) {
+        // Log the exception to watchdog.
+        $this->getLogger('default')->error($exception->getMessage());
+      }
+    }
     return FALSE;
   }
 
