@@ -14,11 +14,21 @@ use Drupal\comment\CommentInterface;
 use Drupal\Core\Url;
 use Drupal\group\Entity\GroupContent;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
+use Drupal\social_comment\Entity\Comment;
 
 /**
  * @file
  * The Social comment module.
  */
+
+/**
+ * Implements hook_entity_type_alter().
+ */
+function social_comment_entity_type_alter(array &$entity_types) {
+  if (isset($entity_types['comment'])) {
+    $entity_types['comment']->setClass(Comment::class);
+  }
+}
 
 /**
  * Implements hook_form_FORM_ID_alter().
