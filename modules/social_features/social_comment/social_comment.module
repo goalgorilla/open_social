@@ -15,6 +15,7 @@ use Drupal\Core\Url;
 use Drupal\group\Entity\GroupContent;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\social_comment\Entity\Comment;
+use Drupal\social_comment\SocialCommentViewBuilder;
 
 /**
  * @file
@@ -27,6 +28,7 @@ use Drupal\social_comment\Entity\Comment;
 function social_comment_entity_type_alter(array &$entity_types) {
   if (isset($entity_types['comment'])) {
     $entity_types['comment']->setClass(Comment::class);
+    $entity_types['comment']->setViewBuilderClass(SocialCommentViewBuilder::class);
   }
 }
 
@@ -263,14 +265,6 @@ function social_comment_comment_access(EntityInterface $entity, $operation, Acco
         ->addCacheableDependency($entity);
     }
   }
-}
-
-/**
- * Implements hook_entity_type_alter().
- */
-function social_comment_entity_type_alter(array &$entity_types) {
-  /* @var $entity_types \Drupal\Core\Entity\EntityTypeInterface[] */
-  $entity_types['comment']->setViewBuilderClass('Drupal\social_comment\SocialCommentViewBuilder');
 }
 
 /**
