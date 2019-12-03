@@ -44,7 +44,7 @@ class UserLanguage extends UserExportPluginBase {
    * @param \Drupal\Core\Database\Connection $database
    *   The database connection.
    * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
-   *   The group helper service.
+   *   The language manager service.
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager, DateFormatterInterface $date_formatter, Connection $database, LanguageManagerInterface $language_manager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_type_manager, $date_formatter, $database);
