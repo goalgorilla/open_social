@@ -116,7 +116,8 @@ function template_preprocess_activity(array &$variables) {
 
   /** @var \Drupal\activity_creator\ActivityNotifications $activity_notification_service */
   $activity_notification_service = \Drupal::service('activity_creator.activity_notifications');
-  $status = $activity_notification_service->getActivityStatus($activity);
+  // Get the notification status of the current user.
+  $status = $activity_notification_service->getActivityStatus($activity, \Drupal::currentUser());
   // Add bg classes according to notification status.
   switch ($status) {
     case ACTIVITY_STATUS_RECEIVED:

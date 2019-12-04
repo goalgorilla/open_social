@@ -278,17 +278,20 @@ class ActivityNotifications extends ControllerBase {
    *
    * @param \Drupal\activity_creator\Entity\Activity $activity
    *   Activity entity.
+   * @param \Drupal\Core\Session\AccountInterface $account
+   *   Activity Notification of current account.
    *
    * @return mixed
    *   FALSE or the status of activity depending upon the execution of query.
    */
-  public function getActivityStatus(Activity $activity) {
+  public function getActivityStatus(Activity $activity, AccountInterface $account) {
     // Get the user ID.
     if (!empty($id = $activity->id())) {
       try {
         $query = $this->database->select('activity_notification_status', 'ans')
           ->fields('ans', ['status'])
-          ->condition('aid', $id);
+          ->condition('aid', $id)
+          ->condition('uid', $account->id());
         return $query->execute()->fetchField();
       }
       catch (\Exception $exception) {
