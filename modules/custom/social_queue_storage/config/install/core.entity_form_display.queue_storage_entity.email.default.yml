@@ -1,0 +1,62 @@
+langcode: nl
+status: true
+dependencies:
+  config:
+    - field.field.queue_storage_entity.email.field_message
+    - field.field.queue_storage_entity.email.field_reply_to
+    - field.field.queue_storage_entity.email.field_subject
+    - social_queue_storage.queue_storage_entity_type.email
+id: queue_storage_entity.email.default
+targetEntityType: queue_storage_entity
+bundle: email
+mode: default
+content:
+  field_message:
+    weight: 8
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textarea
+    region: content
+  field_reply_to:
+    weight: 6
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+    region: content
+  field_subject:
+    weight: 7
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+    region: content
+  langcode:
+    type: language_select
+    weight: 2
+    region: content
+    settings:
+      include_locked: true
+    third_party_settings: {  }
+  name:
+    type: string_textfield
+    weight: -4
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  user_id:
+    type: entity_reference_autocomplete
+    weight: 5
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    region: content
+    third_party_settings: {  }
+hidden: {  }

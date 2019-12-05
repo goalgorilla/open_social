@@ -1,0 +1,57 @@
+<?php
+
+/**
+ * @file
+ * Contains social_queue_storage.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function social_queue_storage_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the social_queue_storage module.
+    case 'help.page.social_queue_storage':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function social_queue_storage_theme() {
+  $theme = [];
+  $theme['queue_storage_entity'] = [
+    'render element' => 'elements',
+    'file' => 'queue_storage_entity.page.inc',
+    'template' => 'queue_storage_entity',
+  ];
+  $theme['queue_storage_entity_content_add_list'] = [
+    'render element' => 'content',
+    'variables' => ['content' => NULL],
+    'file' => 'queue_storage_entity.page.inc',
+  ];
+  return $theme;
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK().
+ */
+function social_queue_storage_theme_suggestions_queue_storage_entity(array $variables) {
+  $suggestions = [];
+  $entity = $variables['elements']['#queue_storage_entity'];
+  $sanitized_view_mode = strtr($variables['elements']['#view_mode'], '.', '_');
+
+  $suggestions[] = 'queue_storage_entity__' . $sanitized_view_mode;
+  $suggestions[] = 'queue_storage_entity__' . $entity->bundle();
+  $suggestions[] = 'queue_storage_entity__' . $entity->bundle() . '__' . $sanitized_view_mode;
+  $suggestions[] = 'queue_storage_entity__' . $entity->id();
+  $suggestions[] = 'queue_storage_entity__' . $entity->id() . '__' . $sanitized_view_mode;
+  return $suggestions;
+}
