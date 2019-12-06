@@ -28,13 +28,6 @@ class UserMailQueueProcessor extends QueueWorkerBase implements ContainerFactory
   protected $mailManager;
 
   /**
-   * A logger instance.
-   *
-   * @var \Drupal\Core\Logger\LoggerChannelFactory
-   */
-  protected $logger;
-
-  /**
    * The entity storage.
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
@@ -44,10 +37,9 @@ class UserMailQueueProcessor extends QueueWorkerBase implements ContainerFactory
   /**
    * {@inheritdoc}
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, MailManagerInterface $mail_manager, LoggerChannelFactory $logger, EntityTypeManagerInterface $entity_type_manager) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, MailManagerInterface $mail_manager, EntityTypeManagerInterface $entity_type_manager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->mailManager = $mail_manager;
-    $this->logger = $logger;
     $this->storage = $entity_type_manager;
   }
 
@@ -60,7 +52,6 @@ class UserMailQueueProcessor extends QueueWorkerBase implements ContainerFactory
       $plugin_id,
       $plugin_definition,
       $container->get('plugin.manager.mail'),
-      $container->get('logger.factory'),
       $container->get('entity_type.manager')
     );
   }
@@ -81,19 +72,12 @@ class UserMailQueueProcessor extends QueueWorkerBase implements ContainerFactory
         /** @var \Drupal\user\UserInterface $user */
         foreach ($users as $user) {
           // Attempt sending mail.
-          $message = $this->mailManager->mail('system', 'action_send_email', $user->getEmail(), $user->language()->getId(), [
+          $this->mailManager->mail('system', 'action_send_email', $user->getEmail(), $user->language()->getId(), [
             'context' => [
               'subject' => $queue_storage->get('field_subject')->value,
               'message' => $queue_storage->get('field_message')->value,
             ],
-          ], $queue_storage->get('field_reply_to')->value, TRUE);
-
-          // Error logging is handled by \Drupal\Core\Mail\MailManager::mail().
-          if ($message['result']) {
-            $this->logger->get('user_email_queue')->log('notice', 'Mail sent to %recipient.', [
-              '%recipient' => $user->getEmail(),
-            ]);
-          }
+          ], $queue_storage->get('field_reply_to')->value);
         }
       }
     }
