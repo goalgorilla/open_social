@@ -3,9 +3,11 @@
 namespace Drupal\social_user\Plugin\QueueWorker;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Logger\LoggerChannelFactory;
 use Drupal\Core\Mail\MailManagerInterface;
+use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Queue\QueueWorkerBase;
-use Psr\Log\LoggerInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Queue worker to process email to users.
@@ -16,7 +18,7 @@ use Psr\Log\LoggerInterface;
  *   cron = {"time" = 60}
  * )
  */
-class UserMailQueueProcessor extends QueueWorkerBase {
+class UserMailQueueProcessor extends QueueWorkerBase implements ContainerFactoryPluginInterface {
 
   /**
    * The mail manager.
@@ -28,7 +30,7 @@ class UserMailQueueProcessor extends QueueWorkerBase {
   /**
    * A logger instance.
    *
-   * @var \Psr\Log\LoggerInterface
+   * @var \Drupal\Core\Logger\LoggerChannelFactory
    */
   protected $logger;
 
@@ -42,7 +44,7 @@ class UserMailQueueProcessor extends QueueWorkerBase {
   /**
    * {@inheritdoc}
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, MailManagerInterface $mail_manager, LoggerInterface $logger, EntityTypeManagerInterface $entity_type_manager) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, MailManagerInterface $mail_manager, LoggerChannelFactory $logger, EntityTypeManagerInterface $entity_type_manager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->mailManager = $mail_manager;
     $this->logger = $logger;
@@ -52,27 +54,43 @@ class UserMailQueueProcessor extends QueueWorkerBase {
   /**
    * {@inheritdoc}
    */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    return new static(
+      $configuration,
+      $plugin_id,
+      $plugin_definition,
+      $container->get('plugin.manager.mail'),
+      $container->get('logger.factory'),
+      $container->get('entity_type.manager')
+    );
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function processItem($data) {
-    if (!empty($data)) {
+    if (!empty($data) && isset($data['mail'], $data['users'])) {
       // Get the email content that needs to be sent.
       /** @var \Drupal\social_queue_storage\Entity\QueueStorageEntityInterface $queue_storage */
       $queue_storage = $this->storage->getStorage('queue_storage_entity')->load($data['mail']);
-      if ($queue_storage->bundle() === 'mail') {
+      // Check if it's from the configured email bundle type.
+      if ($queue_storage->bundle() === 'email') {
         // Load the users that are in the batch.
         $users = $this->storage->getStorage('user')->loadMultiple($data['users']);
 
         /** @var \Drupal\user\UserInterface $user */
         foreach ($users as $user) {
-          // Send mail.
+          // Attempt sending mail.
           $message = $this->mailManager->mail('system', 'action_send_email', $user->getEmail(), $user->language()->getId(), [
             'context' => [
               'subject' => $queue_storage->get('field_subject')->value,
               'message' => $queue_storage->get('field_message')->value,
             ],
-          ], $queue_storage->get('field_reply_to')->value);
+          ], $queue_storage->get('field_reply_to')->value, TRUE);
+
           // Error logging is handled by \Drupal\Core\Mail\MailManager::mail().
           if ($message['result']) {
-            $this->logger->notice('Sent email to %recipient', [
+            $this->logger->get('user_email_queue')->log('notice', 'Mail sent to %recipient.', [
               '%recipient' => $user->getEmail(),
             ]);
           }
