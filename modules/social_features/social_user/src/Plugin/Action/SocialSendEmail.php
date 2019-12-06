@@ -108,7 +108,7 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
     $this->token = $token;
-    $this->storage = $entity_type_manager->getStorage('user');
+    $this->storage = $entity_type_manager;
     $this->logger = $logger;
     $this->languageManager = $language_manager;
     $this->emailValidator = $email_validator;
@@ -124,7 +124,6 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
       $container->get('token'),
       $container->get('entity_type.manager'),
       $container->get('logger.factory')->get('action'),
-      $container->get('plugin.manager.mail'),
       $container->get('language_manager'),
       $container->get('email.validator'),
       $container->get('queue'),
@@ -135,37 +134,46 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
   /**
    * {@inheritdoc}
    */
+  public function executeMultiple(array $objects) {
+    $results = [];
+    // Array $objects contain all the entities of this bulk operation batch.
+    // We want smaller queue items then this so we chunk these.
+    // @todo: make the chunk size configurable or dependable on the batch size.
+    $chunks = array_chunk($objects, 10);
+    foreach ($chunks as $chunk) {
+      $users = [];
+      // The chunk items contain entities, we want to perform an action on this.
+      foreach ($chunk as $entity) {
+        // The action retrieves the user ID of the user.
+        $users[] = $this->execute($entity);
+      }
+
+      // Get the entity ID of the email that is send.
+      $data['mail'] = $this->configuration['queue_storage_id'];
+      // Add the list of user IDs.
+      $data['users'] = $users;
+
+      // Put the $data in the queue item.
+      /** @var \Drupal\Core\Queue\QueueInterface $queue */
+      $queue = $this->queue->get('user_email_queue');
+      $queued = $queue->createItem($data);
+
+      // Possibly store some result of the queue item creation as an overview
+      // for the user performing the action.
+      if ($queued !== FALSE) {
+        $results[] = $queued;
+      }
+    }
+
+    return $results;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function execute($entity = NULL) {
-    /** @var \Drupal\Core\Entity\EntityInterface $entity */
-    if (!$entity->getEntityTypeId() === 'user') {
-      $this->logger->notice('Can not send e-mail for %entity', [
-        '%entity' => $entity->getEntityTypeId() . ':' . $entity->id(),
-      ]);
-
-      return;
-    }
-
     /** @var \Drupal\user\UserInterface $entity */
-    if ($entity) {
-      $langcode = $entity->getPreferredLangcode();
-    }
-    else {
-      $langcode = $this->languageManager->getDefaultLanguage()->getId();
-    }
-
-    $data = [
-      'email_address' => $this->getEmail($entity),
-      'lang_code' => $langcode,
-      'params' => ['context' => $this->configuration],
-      'config' => $this->configuration,
-    ];
-
-    /** @var \Drupal\Core\Queue\QueueInterface $queue */
-    $queue = $this->queue->get('user_email_queue');
-    $queue->createItem($data);
-
-
-    return $this->t('Send email');
+    return $entity->id();
   }
 
   /**
@@ -270,8 +278,20 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
   public function submitConfigurationForm(array &$form, FormStateInterface $form_state) {
     parent::submitConfigurationForm($form, $form_state);
 
-    if ($this->allowTextFormat) {
-      $this->configuration['message'] = $this->configuration['message']['value'];
+    $form_state->cleanValues();
+    $queue_storage = $this->storage->getStorage('queue_storage_entity');
+
+
+    $entity = $queue_storage->create([
+      'name' => 'user_email_queue',
+      'type' => 'email',
+      'field_reply_to' => $form_state->getValue('reply'),
+      'field_subject' => $form_state->getValue('subject'),
+      'field_message' => $form_state->getValue('message')['value'],
+    ]);
+
+    if ($entity->save()) {
+      $this->configuration['queue_storage_id'] = $entity->id();
     }
   }
 
