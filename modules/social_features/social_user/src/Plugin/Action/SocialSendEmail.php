@@ -134,12 +134,22 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
   /**
    * {@inheritdoc}
    */
+  public function setContext(array &$context) {
+    parent::setContext($context);
+    // @todo: make the batch size configurable.
+    $context['batch_size'] = 25;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function executeMultiple(array $objects) {
-    $results = [];
     // Array $objects contain all the entities of this bulk operation batch.
     // We want smaller queue items then this so we chunk these.
     // @todo: make the chunk size configurable or dependable on the batch size.
-    $chunks = array_chunk($objects, 10);
+    $chunk_size = 10;
+    $chunks = array_chunk($objects, $chunk_size);
+    $results = 0;
     foreach ($chunks as $chunk) {
       $users = [];
       // The chunk items contain entities, we want to perform an action on this.
@@ -161,11 +171,13 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
       // Possibly store some result of the queue item creation as an overview
       // for the user performing the action.
       if ($queued !== FALSE) {
-        $results[] = $queued;
+        $results += $chunk_size;
       }
     }
 
-    return $results;
+
+
+    return [$results => $this->t('Queued the selected users to mail.')];
   }
 
   /**
