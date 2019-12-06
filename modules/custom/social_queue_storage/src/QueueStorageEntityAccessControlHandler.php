@@ -24,11 +24,6 @@ class QueueStorageEntityAccessControlHandler extends EntityAccessControlHandler 
 
       case 'view':
 
-        if (!$entity->isPublished()) {
-          return AccessResult::allowedIfHasPermission($account, 'view unpublished queue storage entity entities');
-        }
-
-
         return AccessResult::allowedIfHasPermission($account, 'view published queue storage entity entities');
 
       case 'update':
