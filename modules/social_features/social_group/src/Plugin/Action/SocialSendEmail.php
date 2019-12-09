@@ -34,6 +34,14 @@ class SocialSendEmail extends SocialSendEmailBase {
   /**
    * {@inheritdoc}
    */
+  public function execute($entity = NULL) {
+    /** @var \Drupal\group\Entity\GroupContentInterface $entity */
+    return $entity->getEntity()->id();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
     // Add title to the form as well.
     if ($form['#title'] !== NULL) {
