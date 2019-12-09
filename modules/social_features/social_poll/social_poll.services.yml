@@ -1,5 +1,6 @@
 services:
   social_poll.overrider:
-    class: \Drupal\social_poll\SocialPollConfigOverride
+    class: Drupal\social_poll\SocialPollConfigOverride
+    arguments: ['@module_handler']
     tags:
       - {name: config.factory.override, priority: 5}
