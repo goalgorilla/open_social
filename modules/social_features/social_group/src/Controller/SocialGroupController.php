@@ -133,7 +133,7 @@ class SocialGroupController extends ControllerBase {
   }
 
   /**
-   * Function that checks access on the my topic pages.
+   * Function that checks access on the my groups pages.
    *
    * @param \Drupal\Core\Session\AccountInterface $account
    *   The account we need to check access for.
@@ -167,9 +167,21 @@ class SocialGroupController extends ControllerBase {
   }
 
   /**
+   * Redirects users to their groups page.
+   *
+   * @return \Symfony\Component\HttpFoundation\RedirectResponse
+   *   Returns a redirect to the groups of the currently logged in user.
+   */
+  public function redirectMyGroups() {
+    return $this->redirect('view.groups.page_user_groups', [
+      'user' => $this->currentUser()->id(),
+    ]);
+  }
+
+  /**
    * OtherGroupPage.
    *
-   * @return RedirectResponse
+   * @return \Symfony\Component\HttpFoundation\RedirectResponse
    *   Return Redirect to the group account.
    */
   public function otherGroupPage($group) {
