@@ -107,7 +107,7 @@ class SocialGroupViewsBulkOperationsBulkForm extends ViewsBulkOperationsBulkForm
 
     // Render select all results checkbox.
     if (!empty($wrapper['select_all'])) {
-      $wrapper['select_all']['#title'] = $this->t('Select / unselect all @count results in this view', [
+      $wrapper['select_all']['#title'] = $this->t('Select / unselect all @count members across all the pages', [
         '@count' => $this->tempStoreData['total_results'] ? ' ' . $this->tempStoreData['total_results'] : '',
       ]);
       // Styling attributes for the select box.
@@ -142,7 +142,7 @@ class SocialGroupViewsBulkOperationsBulkForm extends ViewsBulkOperationsBulkForm
 
     // Update the clear submit button.
     if (!empty($wrapper['multipage']['clear'])) {
-      $wrapper['multipage']['clear']['#value'] = $this->t('Clear all selected members');
+      $wrapper['multipage']['clear']['#value'] = $this->t('Clear selection on all pages');
       $wrapper['multipage']['clear']['#attributes']['class'][] = 'btn-default dropdown-toggle waves-effect waves-btn margin-top-l margin-left-m';
     }
 
