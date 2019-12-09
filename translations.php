@@ -33,6 +33,7 @@ new TranslatableMarkup('Clear all selected members');
 // schema or a string not passed through `TranslatableMarkup`.
 // These should be removed once the underlying issue is identified and fixed.
 new TranslatableMarkup("Title & image");
+new TranslatableMarkup("Names and profile image");
 new TranslatableMarkup("Date & time");
 new TranslatableMarkup("Attachments");
 new TranslatableMarkup("Add attachment");
