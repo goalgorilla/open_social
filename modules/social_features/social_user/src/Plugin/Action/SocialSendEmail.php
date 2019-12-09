@@ -149,9 +149,8 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
     // @todo: make the chunk size configurable or dependable on the batch size.
     $chunk_size = 10;
     $chunks = array_chunk($objects, $chunk_size);
-    $results = 0;
+    $users = [];
     foreach ($chunks as $chunk) {
-      $users = [];
       // The chunk items contain entities, we want to perform an action on this.
       foreach ($chunk as $entity) {
         // The action retrieves the user ID of the user.
@@ -166,18 +165,10 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
       // Put the $data in the queue item.
       /** @var \Drupal\Core\Queue\QueueInterface $queue */
       $queue = $this->queue->get('user_email_queue');
-      $queued = $queue->createItem($data);
-
-      // Possibly store some result of the queue item creation as an overview
-      // for the user performing the action.
-      if ($queued !== FALSE) {
-        $results += $chunk_size;
-      }
+      $queue->createItem($data);
     }
 
-
-
-    return [$results => $this->t('Queued the selected users to mail.')];
+    return $users;
   }
 
   /**
