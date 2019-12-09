@@ -2,41 +2,40 @@ langcode: en
 status: true
 dependencies:
   config:
+    - core.entity_view_mode.poll.teaser
     - field.field.poll.poll.field_banner
     - field.field.poll.poll.field_description
-    - image.style.social_an_hero
   enforced:
     module:
       - social_poll
   module:
     - image
     - poll
-    - text
-id: poll.poll.default
+id: poll.poll.teaser
 targetEntityType: poll
 bundle: poll
-mode: default
+mode: teaser
 content:
   field_banner:
-    weight: 0
-    label: hidden
+    weight: 1
+    label: above
     settings:
-      image_style: social_an_hero
+      image_style: ''
       image_link: ''
     third_party_settings: {  }
     type: image
     region: content
   field_description:
-    weight: 1
-    label: hidden
+    weight: 2
+    label: above
     settings: {  }
     third_party_settings: {  }
-    type: text_default
+    type: basic_string
     region: content
   poll_votes:
-    weight: 2
-    region: content
+    weight: 0
     settings: {  }
     third_party_settings: {  }
+    region: content
 hidden:
   search_api_excerpt: true

@@ -1,0 +1,68 @@
+<?php
+
+/**
+ * @file
+ * The Social Poll (de)installation file.
+ */
+
+use Drupal\user\Entity\Role;
+
+/**
+ * Implements hook_uninstall().
+ */
+function social_poll_install() {
+  _social_poll_set_permissions();
+}
+
+/**
+ * Function to set permissions.
+ */
+function _social_poll_set_permissions() {
+  $roles = Role::loadMultiple();
+
+  /** @var \Drupal\user\Entity\Role $role */
+  foreach ($roles as $role) {
+    if ($role->id() === 'administrator') {
+      continue;
+    }
+
+    $permissions = _social_poll_get_permissions($role->id());
+    user_role_grant_permissions($role->id(), $permissions);
+  }
+}
+
+/**
+ * Build the permissions.
+ *
+ * @param string $role
+ *   The role.
+ *
+ * @return array
+ *   Returns an array containing the permissions.
+ */
+function _social_poll_get_permissions($role) {
+  // Anonymous.
+  $permissions['anonymous'] = [];
+
+  // Authenticated.
+  $permissions['authenticated'] = array_merge($permissions['anonymous'], [
+    'access polls',
+  ]);
+
+  // Content manager.
+  $permissions['contentmanager'] = array_merge($permissions['authenticated'], [
+    'create polls',
+    'edit own polls',
+    'administer polls',
+    'access poll overview'
+  ]);
+
+  // Site manager.
+  $permissions['sitemanager'] = array_merge($permissions['contentmanager'], []);
+
+  if (isset($permissions[$role])) {
+    return $permissions[$role];
+  }
+
+  return [];
+}
