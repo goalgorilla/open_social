@@ -22,15 +22,6 @@ class SocialSendEmail extends SocialSendEmailBase {
   /**
    * {@inheritdoc}
    */
-  public function execute($entity = NULL) {
-    /** @var \Drupal\group\Entity\GroupContentInterface $entity */
-    parent::execute($entity->getEntity());
-    return $this->t('Send mail');
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function access($object, AccountInterface $account = NULL, $return_as_object = FALSE) {
     if ($object instanceof GroupContentInterface) {
       /** @var \Drupal\group\Entity\GroupContentInterface $object */
