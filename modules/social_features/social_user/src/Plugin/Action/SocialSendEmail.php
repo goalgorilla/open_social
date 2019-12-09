@@ -149,8 +149,8 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
     // @todo: make the chunk size configurable or dependable on the batch size.
     $chunk_size = 10;
     $chunks = array_chunk($objects, $chunk_size);
-    $users = [];
     foreach ($chunks as $chunk) {
+      $users = [];
       // The chunk items contain entities, we want to perform an action on this.
       foreach ($chunk as $entity) {
         // The action retrieves the user ID of the user.
