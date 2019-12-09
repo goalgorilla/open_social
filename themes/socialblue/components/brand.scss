@@ -521,48 +521,24 @@ html:not(.js) .navbar-default {
   }
 }
 
-//SocialBlue Sky.
-.socialblue--sky {
+.badge.badge-active {
+  background-color: $brand-accent;
+}
 
-  // Hero on the landing page
-  .cover--landing:after {
-    background: $brand-primary;
+.phase {
+  &.phase-past {
+    &:not(:last-child):before {
+      background-color: $brand-accent;
+    }
+
+    .phase-past--icon .checkmark-icon {
+      fill: $brand-accent;
+    }
   }
 
-  .site-footer {
-    background: #fff;
-    color: $brand-primary;
-
+  &.phase-active {
     &:before {
-      background: $brand-primary;
-    }
-  }
-
-  .card--views__sidebar {
-    .card__actionbar {
-      .btn {
-        &:before {
-          background: $brand-primary;
-        }
-
-        &:hover,
-        &:active,
-        &:focus {
-          color: $brand-accent;
-
-          &:before {
-            background: $brand-accent;
-          }
-        }
-      }
-    }
-  }
-
-  .teaser {
-    .card__link {
-      .btn {
-        color: $brand-primary;
-      }
+      background-color: $brand-accent;
     }
   }
 

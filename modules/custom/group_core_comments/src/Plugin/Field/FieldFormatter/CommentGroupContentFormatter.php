@@ -37,7 +37,7 @@ class CommentGroupContentFormatter extends CommentDefaultFormatter {
     if (!empty($group_contents)) {
       // Add cache contexts.
       $output['#cache']['contexts'][] = 'group.type';
-      $output['#cache']['contexts'][] = 'group_membership';
+      $output['#cache']['contexts'][] = 'user.group_permissions';
 
       $account = \Drupal::currentUser();
       $group = reset($group_contents)->getGroup();

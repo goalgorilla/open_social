@@ -306,4 +306,26 @@ class SocialDrupalContext extends DrupalContext {
     // needed to fill in custom required fields for the used type.
   }
 
+  /**
+   * @Given I am logged in as :name with the :permissions permission(s)
+   */
+  public function assertLoggedInWithPermissionsByName($name, $permissions) {
+    // Create a temporary role with given permissions.
+    $permissions = array_map('trim', explode(',', $permissions));
+    $role = $this->getDriver()->roleCreate($permissions);
+
+    $manager = $this->getUserManager();
+
+    // Change internal current user.
+    $manager->setCurrentUser($manager->getUser($name));
+    $user = $manager->getUser($name);
+
+    // Assign the temporary role with given permissions.
+    $this->getDriver()->userAddRole($user, $role);
+    $this->roles[] = $role;
+
+    // Login.
+    $this->login($user);
+  }
+
 }

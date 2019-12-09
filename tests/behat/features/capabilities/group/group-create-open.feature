@@ -10,9 +10,7 @@ Feature: Create Open Group
       | Group User One | group_user_1@example.com | 1      |
       | Group User Two | group_user_2@example.com | 1      |
     And I am logged in as "Group User One"
-    And I am on "user"
-    And I click "Groups"
-    And I click "Add a group"
+    And I am on "group/add"
     Then I click radio button "Open group This is an open group. Users may join without approval and all content added in this group will be visible to all community members." with the id "edit-group-type-open-group"
     And I press "Continue"
     When I fill in "Title" with "Test open group"
@@ -51,20 +49,18 @@ Feature: Create Open Group
 
   # @TODO: Uncomment this when Group hero caching will be fixed.
   # DS-648 As a LU I want to see the members of a group
-    And I logout
+    Given I logout
     And I am logged in as "Group User Two"
     And I am on "all-members"
     And I click "Group User One"
   # And I should see "Recently joined groups" in the "Sidebar second"
     And I should see "Test open group" in the "Sidebar second"
-    And I click "Groups"
-    And I should see "Test open group" in the "Main content"
+    When I click "Groups" in the "Tabs"
+    Then I should see "Test open group" in the "Main content"
     And I should not see the link "Add a group" in the "Main content"
-    And I click "Test open group"
-  # And I should see "Newest members" in the "Sidebar second"
-  # And I should see "Group User One" in the "Sidebar second"
+    When I click "Test open group"
     And I click "Members"
-    And I should see "Group User One"
+    Then I should see "Group User One"
 
   # DS-647 As a LU I want to join a group
     When I click "Stream" in the "Tabs"
@@ -145,8 +141,8 @@ Feature: Create Open Group
 
   # DS-703 As a LU I want to leave a group
     Given I am logged in as "Group User Two"
-    And I am on "user"
-    And I click "Groups"
+    And I click the xth "0" element with the css ".navbar-nav .profile"
+    And I click "My groups"
     And I click "Test open group"
     And I should see the button "Joined"
     And I press "Joined"

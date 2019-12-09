@@ -6,4 +6,8 @@ services:
       - {name: config.factory.override, priority: 5}
   social_content_block.content_builder:
     class: Drupal\social_content_block\ContentBuilder
-    arguments: ['@entity_type.manager', '@database', '@module_handler']
+    arguments:
+      - '@entity_type.manager'
+      - '@database'
+      - '@module_handler'
+      - '@string_translation'
