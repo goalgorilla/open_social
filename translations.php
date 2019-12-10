@@ -16,6 +16,7 @@
  * are using at least that version.
  */
 
+use Drupal\Core\StringTranslation\PluralTranslatableMarkup;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 
 die('This file should not be run directly.');
@@ -68,3 +69,22 @@ new TranslatableMarkup("Manage Enrollments");
 new TranslatableMarkup("Collaboration Settings");
 new TranslatableMarkup("Reply-to");
 new TranslatableMarkup("Selected @count entities:");
+// Following plural strings are not translatable due to the @todo in
+// _social_event_managers_action_batch_finish().
+new PluralTranslatableMarkup(0, '1 selected enrollee has been exported successfully', '@count selected enrollees have been exported successfully');
+new PluralTranslatableMarkup(0, '1 selected enrollee has not been exported successfully', '@count selected enrollees have not been exported successfully');
+new PluralTranslatableMarkup(0, 'Your email has been sent to 1 selected enrollee successfully', 'Your email has been sent to @count selected enrollees successfully');
+new PluralTranslatableMarkup(0, 'Your email has not been sent to 1 selected enrollee successfully', 'Your email has not been sent to @count selected enrollees successfully');
+new PluralTranslatableMarkup(0, '1 selected enrollee has been removed from the event successfully', '@count selected enrollees have been removed from the event successfully');
+new PluralTranslatableMarkup(0, '1 selected enrollee has not been removed from the event successfully', '@count selected enrollees have not been removed from the event successfully');
+new PluralTranslatableMarkup(0, '1 selected member has been exported successfully', '@count selected members have been exported successfully');
+new PluralTranslatableMarkup(0, '1 selected member has not been exported', '@count selected members have not been exported');
+new PluralTranslatableMarkup(0, '1 selected member has been removed successfully', '@count selected members have been removed successfully');
+new PluralTranslatableMarkup(0, '1 selected member has not been removed successfully', '@count selected members have been removed successfully');
+new PluralTranslatableMarkup(0, 'The role of 1 selected member has been changed successfully', 'The role of @count selected members have been changed successfully');
+new PluralTranslatableMarkup(0, 'The role of 1 selected member has not been changed successfully', 'The role of @count selected members have not been changed successfully');
+new PluralTranslatableMarkup(0, 'Your email has been sent to 1 selected member successfully', 'Your email has been sent to @count selected members successfully');
+new PluralTranslatableMarkup(0, 'Your email has not been sent to 1 selected member successfully', 'Your email has not been sent to @count selected members successfully');
+new TranslatableMarkup("Remove");
+new TranslatableMarkup("Export");
+new TranslatableMarkup("Change the role");
