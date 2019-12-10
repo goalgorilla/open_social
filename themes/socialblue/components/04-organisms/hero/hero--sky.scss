@@ -1,16 +1,31 @@
 @import "settings";
+@import "settings--sky";
 
 // Hero banner with full width.
-@mixin full-with-inside-container {
-  width: 100vw;
-  position: relative;
-  left: 50%;
-  right: 50%;
-  margin-left: -50vw;
-  margin-right: -50vw;
-}
-
 .socialblue--sky {
+
+  .cover--landing {
+    position: relative;
+    margin-bottom: 9px;
+
+    @include for-tablet-landscape-up {
+      margin-bottom: 18px;
+    }
+
+    &:after {
+      content: '';
+      position: absolute;
+      display: block;
+      top: 100%;
+      width: 100%;
+      left: 0;
+      height: 9px;
+
+      @include for-tablet-landscape-up {
+        height: 18px;
+      }
+    }
+  }
 
   .cover-wrap {
     @include for-tablet-portrait-up {

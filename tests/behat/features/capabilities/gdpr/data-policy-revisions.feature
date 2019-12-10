@@ -8,8 +8,12 @@ Feature: Manage data policy revisions
 
     Given I enable the module "social_gdpr"
 
-    Given I am logged in as a user with the "sitemanager" role and I have the following fields:
-      | name | behatsitemanager |
+    Given users:
+      | name             | mail                         | status | roles       |
+      | behatsitemanager | behatsitemanager@example.com | 1      | sitemanager |
+
+
+    Given I am logged in as "behatsitemanager" with the "without consent" permission
     When I am on "data-policy/revisions/add"
     Then I should see "Active" in the ".form-item-active-revision:not(.form-disabled) .control-label" element
     And I should see "Create new revision" in the ".form-item-new-revision.form-disabled .control-label" element
@@ -29,7 +33,7 @@ Feature: Manage data policy revisions
     And I wait for AJAX to finish
     Then I should see the text "First version of the data policy."
 
-    When I am logged in as "behatsitemanager"
+    When I am logged in as "behatsitemanager" with the "without consent" permission
     And I am on "data-policy/revisions"
     And I click the xth "0" element with the css ".revision-2 .dropdown-toggle"
     # Press "Edit" button in operations drop-down menu
@@ -45,7 +49,7 @@ Feature: Manage data policy revisions
     And I wait for AJAX to finish
     Then I should see the text "Second version of the data policy."
 
-    When I am logged in as "behatsitemanager"
+    When I am logged in as "behatsitemanager" with the "without consent" permission
     And I am on "data-policy/revisions/add"
     And I fill in the "Description" WYSIWYG editor with "Third version of the data policy."
     And I check the box "Active"

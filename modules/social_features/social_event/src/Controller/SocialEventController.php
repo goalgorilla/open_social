@@ -43,9 +43,10 @@ class SocialEventController extends ControllerBase {
   }
 
   /**
-   * Redirectmyevents.
+   * Redirects users to their events page.
    *
-   * Redirect to a users events.
+   * @return \Symfony\Component\HttpFoundation\RedirectResponse
+   *   Returns a redirect to the events of the currently logged in user.
    */
   public function redirectMyEvents() {
     return $this->redirect('view.events.events_overview', [

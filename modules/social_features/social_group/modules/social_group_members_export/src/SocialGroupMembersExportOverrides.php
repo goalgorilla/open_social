@@ -25,7 +25,7 @@ class SocialGroupMembersExportOverrides implements ConfigFactoryOverrideInterfac
           'default' => [
             'display_options' => [
               'fields' => [
-                'views_bulk_operations_bulk_form' => [
+                'social_views_bulk_operations_bulk_form_group' => [
                   'selected_actions' => [
                     'social_group_members_export_member_action' => 'social_group_members_export_member_action',
                   ],
