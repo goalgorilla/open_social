@@ -50,3 +50,20 @@
     z-index: 2;
   }
 }
+
+@mixin separate-line {
+  content: '';
+  position: absolute;
+  left: 1.5rem;
+  right: 1.5rem;
+  height: 2px;
+  margin: 0 auto;
+  background: #fafafa;
+  z-index: 1;
+
+  @include for-tablet-landscape-up {
+    left: 1.875rem;
+    right: 1.875rem;
+    max-width: 280px;
+  }
+}
