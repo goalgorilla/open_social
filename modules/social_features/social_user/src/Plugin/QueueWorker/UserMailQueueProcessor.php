@@ -132,10 +132,10 @@ class UserMailQueueProcessor extends QueueWorkerBase implements ContainerFactory
 
         // When there are email addresses configured.
         if ($data['user_mail_addresses']) {
-          foreach ($data['user_mail_addresses'] as $mail_addresses) {
-            if ($this->emailValidator->isValid($mail_addresses)) {
+          foreach ($data['user_mail_addresses'] as $mail_address) {
+            if ($this->emailValidator->isValid($mail_address['email_address'])) {
               // Attempt sending mail.
-              $this->sendMail($mail_addresses, $this->languageManager->getDefaultLanguage()->getId(), $queue_storage);
+              $this->sendMail($mail_address['email_address'], $this->languageManager->getDefaultLanguage()->getId(), $queue_storage, $mail_address['display_name']);
             }
           }
         }
@@ -161,14 +161,22 @@ class UserMailQueueProcessor extends QueueWorkerBase implements ContainerFactory
    *   The recipient language.
    * @param \Drupal\social_queue_storage\Entity\QueueStorageEntity $mail_params
    *   The email content from the storage entity.
+   * @param string $display_name
+   *   In case of anonymous users a display name will be given.
    */
-  protected function sendMail(string $user_mail, string $langcode, QueueStorageEntity $mail_params) {
+  protected function sendMail(string $user_mail, string $langcode, QueueStorageEntity $mail_params, $display_name = NULL) {
+    $context = [
+      'subject' => $mail_params->get('field_subject')->value,
+      'message' => $mail_params->get('field_message')->value,
+    ];
+
+    if ($display_name) {
+      $context['display_name'] = $display_name;
+    }
+
     // Attempt sending mail.
     $this->mailManager->mail('system', 'action_send_email', $user_mail, $langcode, [
-      'context' => [
-        'subject' => $mail_params->get('field_subject')->value,
-        'message' => $mail_params->get('field_message')->value,
-      ],
+      'context' => $context,
     ], $mail_params->get('field_reply_to')->value);
   }
 

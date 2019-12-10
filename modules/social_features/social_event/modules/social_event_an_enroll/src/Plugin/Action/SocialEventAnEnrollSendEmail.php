@@ -6,6 +6,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Queue\QueueFactory;
 use Drupal\Core\Utility\Token;
+use Drupal\social_event\EventEnrollmentInterface;
 use Drupal\social_event_an_enroll\EventAnEnrollManager;
 use Drupal\social_event_managers\Plugin\Action\SocialEventManagersSendEmail;
 use Drupal\user\UserInterface;
@@ -120,7 +121,10 @@ class SocialEventAnEnrollSendEmail extends SocialEventManagersSendEmail {
     $guests = [];
     foreach ($objects as $key => $entity) {
       if ($this->socialEventAnEnrollManager->isGuest($entity)) {
-        $guests[$key] = $entity->field_email->value;
+        $guests[$key] = [
+          'email_address' => $entity->field_email->value,
+          'display_name' => $this->getDisplayName($entity),
+        ];
       }
     }
 
@@ -150,33 +154,21 @@ class SocialEventAnEnrollSendEmail extends SocialEventManagersSendEmail {
   }
 
   /**
-   * {@inheritdoc}
+   * Get the display name of the guest.
+   *
+   * @param \Drupal\social_event\EventEnrollmentInterface $entity
+   *   The event enrolment to get the name from.
+   *
+   * @return \Drupal\Core\StringTranslation\TranslatableMarkup|string
+   *   The name of the guest enrolment.
    */
-//  public function execute($entity = NULL) {
-//    $this->entity = $entity;
-//
-//    if ($this->socialEventAnEnrollManager->isGuest($entity)) {
-//      $display_name = $this->socialEventAnEnrollManager->getGuestName($entity, FALSE);
-//
-//      if (!$display_name) {
-//        $display_name = $this->t('Guest');
-//      }
-//
-//      $this->configuration['display_name'] = $display_name;
-//    }
-//
-//    parent::execute($entity);
-//  }
+  public function getDisplayName(EventEnrollmentInterface $entity) {
+    $display_name = $this->socialEventAnEnrollManager->getGuestName($entity, FALSE);
 
-  /**
-   * {@inheritdoc}
-   */
-  public function getEmail(UserInterface $account) {
-    if ($account->isAnonymous()) {
-      return $this->entity->field_email->value;
+    if (!$display_name) {
+      $display_name = $this->t('Guest');
     }
-
-    return parent::getEmail($account);
+    return $display_name;
   }
 
 }
