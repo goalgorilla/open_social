@@ -66,6 +66,32 @@ class ActivityPostVisibilityAccess extends FilterPluginBase {
     $this->query->addRelationship('post', $join, 'activity__field_activity_entity');
 
     $configuration = [
+      'left_table' => 'activity__field_activity_entity',
+      'left_field' => 'field_activity_entity_target_id',
+      'table' => 'comment_field_data',
+      'field' => 'cid',
+      'operator' => '=',
+      'extra' => [
+        0 => [
+          'left_field' => 'field_activity_entity_target_type',
+          'value' => 'comment',
+        ],
+      ],
+    ];
+    $join = Views::pluginManager('join')->createInstance('standard', $configuration);
+    $this->query->addRelationship('comment', $join, 'activity__field_activity_entity');
+
+    $configuration = [
+      'left_table' => 'comment',
+      'left_field' => 'entity_id',
+      'table' => 'post_field_data',
+      'field' => 'id',
+      'operator' => '=',
+    ];
+    $join = Views::pluginManager('join')->createInstance('standard', $configuration);
+    $this->query->addRelationship('commented_post', $join, 'comment');
+
+    $configuration = [
       'left_table' => 'post',
       'left_field' => 'id',
       'table' => 'post__field_visibility',
@@ -165,12 +191,18 @@ class ActivityPostVisibilityAccess extends FilterPluginBase {
       if (count($groups_unique) > 0) {
         $comments_on_content_in_groups = db_and();
         $comments_on_content_in_groups->condition('activity__field_activity_entity.field_activity_entity_target_type', 'comment', '=');
+        if (!$account->hasPermission('view unpublished post entities')) {
+          $comments_on_content_in_groups->condition('commented_post.status', 1, '=');
+        }
         $comments_on_content_in_groups->condition('activity__field_activity_recipient_group.field_activity_recipient_group_target_id', $groups_unique, 'IN');
         $or->condition($comments_on_content_in_groups);
       }
 
       $comments_on_content = db_and();
       $comments_on_content->condition('activity__field_activity_entity.field_activity_entity_target_type', 'comment', '=');
+      if (!$account->hasPermission('view unpublished post entities')) {
+        $comments_on_content->condition('commented_post.status', 1, '=');
+      }
       $comments_on_content->isNull('activity__field_activity_recipient_group.field_activity_recipient_group_target_id');
       $or->condition($comments_on_content);
     }
