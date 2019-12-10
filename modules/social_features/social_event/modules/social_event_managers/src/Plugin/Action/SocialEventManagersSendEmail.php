@@ -6,12 +6,13 @@ use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
-use Drupal\Core\Mail\MailManagerInterface;
+use Drupal\Core\Queue\QueueFactory;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Utility\Token;
 use Drupal\node\NodeInterface;
 use Drupal\social_event\EventEnrollmentInterface;
 use Drupal\social_user\Plugin\Action\SocialSendEmail;
+use Drupal\user\Entity\User;
 use Egulias\EmailValidator\EmailValidator;
 use Psr\Log\LoggerInterface;
 
@@ -47,12 +48,23 @@ class SocialEventManagersSendEmail extends SocialSendEmail {
     Token $token,
     EntityTypeManagerInterface $entity_type_manager,
     LoggerInterface $logger,
-    MailManagerInterface $mail_manager,
     LanguageManagerInterface $language_manager,
     EmailValidator $email_validator,
+    QueueFactory $queue_factory,
     $allow_text_format
   ) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition, $token, $entity_type_manager, $logger, $mail_manager, $language_manager, $email_validator, $allow_text_format);
+    parent::__construct(
+      $configuration,
+      $plugin_id,
+      $plugin_definition,
+      $token,
+      $entity_type_manager,
+      $logger,
+      $language_manager,
+      $email_validator,
+      $queue_factory,
+      $allow_text_format
+    );
 
     $this->entityTypeManager = $entity_type_manager;
   }
@@ -60,10 +72,22 @@ class SocialEventManagersSendEmail extends SocialSendEmail {
   /**
    * {@inheritdoc}
    */
-  public function execute($entity = NULL) {
-    parent::execute($entity->field_account->entity);
+  public function executeMultiple(array $objects) {
+    $users = [];
+    $chunks = array_chunk($objects, 15);
+    foreach ($chunks as $chunk) {
+      $entities = [];
+      /** @var \Drupal\social_event\Entity\EventEnrollment $enrollment */
+      foreach ($chunk as $enrollment) {
+        /** @var \Drupal\user\Entity\User */
+        $user = User::load($enrollment->getAccount());
+        $entities[] = $this->execute($user);
+      }
 
-    return $this->t('Send mail');
+      $users += $this->entityTypeManager->getStorage('user')->loadMultiple($entities);
+    }
+
+    return parent::executeMultiple($users);
   }
 
   /**

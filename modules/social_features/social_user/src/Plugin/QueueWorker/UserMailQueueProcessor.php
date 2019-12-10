@@ -2,9 +2,11 @@
 
 namespace Drupal\social_user\Plugin\QueueWorker;
 
+use Drupal\Component\Utility\EmailValidatorInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityStorageException;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Logger\LoggerChannelTrait;
 use Drupal\Core\Mail\MailManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
@@ -13,6 +15,7 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\private_message\Entity\PrivateMessage;
 use Drupal\private_message\Service\PrivateMessageService;
+use Drupal\social_queue_storage\Entity\QueueStorageEntity;
 use Drupal\user\Entity\User;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -59,15 +62,31 @@ class UserMailQueueProcessor extends QueueWorkerBase implements ContainerFactory
   protected $privateMessage;
 
   /**
+   * The language manager interface.
+   *
+   * @var \Drupal\Core\Language\LanguageManagerInterface
+   */
+  protected $languageManager;
+
+  /**
+   * The Email validator service.
+   *
+   * @var \Drupal\Component\Utility\EmailValidatorInterface
+   */
+  protected $emailValidator;
+
+  /**
    * {@inheritdoc}
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, MailManagerInterface $mail_manager, EntityTypeManagerInterface $entity_type_manager, TranslationInterface $string_translation, Connection $database, PrivateMessageService $private_message) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, MailManagerInterface $mail_manager, EntityTypeManagerInterface $entity_type_manager, TranslationInterface $string_translation, Connection $database, PrivateMessageService $private_message, LanguageManagerInterface $language_manager, EmailValidatorInterface $email_validator) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->mailManager = $mail_manager;
     $this->storage = $entity_type_manager;
     $this->connection = $database;
     $this->privateMessage = $private_message;
     $this->setStringTranslation($string_translation);
+    $this->languageManager = $language_manager;
+    $this->emailValidator = $email_validator;
   }
 
   /**
@@ -82,7 +101,9 @@ class UserMailQueueProcessor extends QueueWorkerBase implements ContainerFactory
       $container->get('entity_type.manager'),
       $container->get('string_translation'),
       $container->get('database'),
-      $container->get('private_message.service')
+      $container->get('private_message.service'),
+      $container->get('language_manager'),
+      $container->get('email.validator')
     );
   }
 
@@ -90,34 +111,65 @@ class UserMailQueueProcessor extends QueueWorkerBase implements ContainerFactory
    * {@inheritdoc}
    */
   public function processItem($data) {
-    if (!empty($data) && isset($data['mail'], $data['users'])) {
+    // Validate if the queue data is complete before processing.
+    if (self::validateQueueItem($data)) {
       // Get the email content that needs to be sent.
-      /** @var \Drupal\social_queue_storage\Entity\QueueStorageEntityInterface $queue_storage */
+      /** @var \Drupal\social_queue_storage\Entity\QueueStorageEntity $queue_storage */
       $queue_storage = $this->storage->getStorage('queue_storage_entity')->load($data['mail']);
       // Check if it's from the configured email bundle type.
       if ($queue_storage->bundle() === 'email') {
-        // Load the users that are in the batch.
-        $users = $this->storage->getStorage('user')->loadMultiple($data['users']);
+        // When there are user ID's configured.
+        if ($data['users']) {
+          // Load the users that are in the batch.
+          $users = $this->storage->getStorage('user')->loadMultiple($data['users']);
 
-        /** @var \Drupal\user\UserInterface $user */
-        foreach ($users as $user) {
-          // Attempt sending mail.
-          $this->mailManager->mail('system', 'action_send_email', $user->getEmail(), $user->language()->getId(), [
-            'context' => [
-              'subject' => $queue_storage->get('field_subject')->value,
-              'message' => $queue_storage->get('field_message')->value,
-            ],
-          ], $queue_storage->get('field_reply_to')->value);
+          /** @var \Drupal\user\UserInterface $user */
+          foreach ($users as $user) {
+            // Attempt sending mail.
+            $this->sendMail($user->getEmail(), $user->language()->getId(), $queue_storage);
+          }
+        }
+
+        // When there are email addresses configured.
+        if ($data['user_mail_addresses']) {
+          foreach ($data['user_mail_addresses'] as $mail_addresses) {
+            if ($this->emailValidator->isValid($mail_addresses)) {
+              // Attempt sending mail.
+              $this->sendMail($mail_addresses, $this->languageManager->getDefaultLanguage()->getId(), $queue_storage);
+            }
+          }
         }
 
         // Check if this is the last item.
         if ($this->lastItem($data['mail'])) {
           // Send the creator a private message that the job is done.
           $recipient = User::load($queue_storage->getOwner()->id());
-          $this->sendMessage($recipient, $queue_storage->get('field_subject')->value);
+          if ($recipient) {
+            $this->sendMessage($recipient, $queue_storage->get('field_subject')->value);
+          }
         }
       }
     }
+  }
+
+  /**
+   * Send the email.
+   *
+   * @param string $user_mail
+   *   The recipient email address.
+   * @param string $langcode
+   *   The recipient language.
+   * @param \Drupal\social_queue_storage\Entity\QueueStorageEntity $mail_params
+   *   The email content from the storage entity.
+   */
+  protected function sendMail(string $user_mail, string $langcode, QueueStorageEntity $mail_params) {
+    // Attempt sending mail.
+    $this->mailManager->mail('system', 'action_send_email', $user_mail, $langcode, [
+      'context' => [
+        'subject' => $mail_params->get('field_subject')->value,
+        'message' => $mail_params->get('field_message')->value,
+      ],
+    ], $mail_params->get('field_reply_to')->value);
   }
 
   /**
@@ -206,6 +258,25 @@ class UserMailQueueProcessor extends QueueWorkerBase implements ContainerFactory
   public function getMessage(User $recipient, string $subject) {
     // Create a message for the user.
     return $this->t('<strong>(This message is automatically generated)</strong>') . PHP_EOL . t('Dear @recipient_name,', ['@recipient_name' => $recipient->getDisplayName()]) . PHP_EOL . PHP_EOL . t('A background process sending e-mail %subject has just finished.', ['%subject' => $subject]);
+  }
+
+  /**
+   * Validate the queue item data.
+   *
+   * Before processing the queue item data we want to check if all the
+   * necessary components are available.
+   *
+   * @param array $data
+   *   The content of the queue item.
+   *
+   * @return bool
+   *   True if the item contains all the necessary data.
+   */
+  private static function validateQueueItem(array $data) {
+    // The queue data must contain the 'mail' key and it should either
+    // contain 'users' or 'user_mail_addresses'.
+    return isset($data['mail'])
+      && (isset($data['users']) || isset($data['user_mail_addresses']));
   }
 
 }

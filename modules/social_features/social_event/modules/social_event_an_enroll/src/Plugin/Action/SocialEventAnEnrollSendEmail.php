@@ -4,7 +4,7 @@ namespace Drupal\social_event_an_enroll\Plugin\Action;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
-use Drupal\Core\Mail\MailManagerInterface;
+use Drupal\Core\Queue\QueueFactory;
 use Drupal\Core\Utility\Token;
 use Drupal\social_event_an_enroll\EventAnEnrollManager;
 use Drupal\social_event_managers\Plugin\Action\SocialEventManagersSendEmail;
@@ -55,16 +55,19 @@ class SocialEventAnEnrollSendEmail extends SocialEventManagersSendEmail {
    *   The entity type manager.
    * @param \Psr\Log\LoggerInterface $logger
    *   A logger instance.
-   * @param \Drupal\Core\Mail\MailManagerInterface $mail_manager
-   *   The mail manager.
    * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
    *   The language manager.
    * @param \Egulias\EmailValidator\EmailValidator $email_validator
    *   The email validator.
+   * @param \Drupal\Core\Queue\QueueFactory $queue_factory
+   *   The queue factory.
    * @param bool $allow_text_format
    *   TRUE if the current user can use the "Mail HTML" text format.
-   * @param \Drupal\social_event_an_enroll\EventAnEnrollManager $social_event_an_enroll_manager
-   *   The event an enroll manager.
+   * @param \Drupal\social_event_an_enroll\EventAnEnrollManager $event_an_enroller
+   *   The social event anonymous manager.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
   public function __construct(
     array $configuration,
@@ -73,15 +76,25 @@ class SocialEventAnEnrollSendEmail extends SocialEventManagersSendEmail {
     Token $token,
     EntityTypeManagerInterface $entity_type_manager,
     LoggerInterface $logger,
-    MailManagerInterface $mail_manager,
     LanguageManagerInterface $language_manager,
     EmailValidator $email_validator,
+    QueueFactory $queue_factory,
     $allow_text_format,
-    EventAnEnrollManager $social_event_an_enroll_manager
+    EventAnEnrollManager $event_an_enroller
   ) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition, $token, $entity_type_manager, $logger, $mail_manager, $language_manager, $email_validator, $allow_text_format);
-
-    $this->socialEventAnEnrollManager = $social_event_an_enroll_manager;
+    parent::__construct(
+      $configuration,
+      $plugin_id,
+      $plugin_definition,
+      $token,
+      $entity_type_manager,
+      $logger,
+      $language_manager,
+      $email_validator,
+      $queue_factory,
+      $allow_text_format
+    );
+    $this->socialEventAnEnrollManager = $event_an_enroller;
   }
 
   /**
@@ -92,9 +105,9 @@ class SocialEventAnEnrollSendEmail extends SocialEventManagersSendEmail {
       $container->get('token'),
       $container->get('entity_type.manager'),
       $container->get('logger.factory')->get('action'),
-      $container->get('plugin.manager.mail'),
       $container->get('language_manager'),
       $container->get('email.validator'),
+      $container->get('queue'),
       $container->get('current_user')->hasPermission('use text format mail_html'),
       $container->get('social_event_an_enroll.manager')
     );
@@ -103,21 +116,57 @@ class SocialEventAnEnrollSendEmail extends SocialEventManagersSendEmail {
   /**
    * {@inheritdoc}
    */
-  public function execute($entity = NULL) {
-    $this->entity = $entity;
-
-    if ($this->socialEventAnEnrollManager->isGuest($entity)) {
-      $display_name = $this->socialEventAnEnrollManager->getGuestName($entity, FALSE);
-
-      if (!$display_name) {
-        $display_name = $this->t('Guest');
+  public function executeMultiple(array $objects) {
+    $guests = [];
+    foreach ($objects as $key => $entity) {
+      if ($this->socialEventAnEnrollManager->isGuest($entity)) {
+        $guests[$key] = $entity->field_email->value;
       }
-
-      $this->configuration['display_name'] = $display_name;
     }
 
-    parent::execute($entity);
+    if (!empty($guests)) {
+      // Create some chunks and then make queue items.
+      $chunks = array_chunk($guests, 10);
+      foreach ($chunks as $chunk) {
+        // Get the entity ID of the email that is send.
+        $data['mail'] = $this->configuration['queue_storage_id'];
+        // Add the list of user IDs.
+        $data['user_mail_addresses'] = $chunk;
+
+        // Put the $data in the queue item.
+        /** @var \Drupal\Core\Queue\QueueInterface $queue */
+        $queue = $this->queue->get('user_email_queue');
+        $queue->createItem($data);
+      }
+    }
+
+    // Before parent remove the guest from the objects list.
+    // Otherwise they will be processed as users and it will break as there
+    // is no user account.
+    $objects = array_diff_key($objects, array_keys($guests));
+
+    // Execute parent as we still need to check if there are users enrolled.
+    return parent::executeMultiple($objects);
   }
+
+  /**
+   * {@inheritdoc}
+   */
+//  public function execute($entity = NULL) {
+//    $this->entity = $entity;
+//
+//    if ($this->socialEventAnEnrollManager->isGuest($entity)) {
+//      $display_name = $this->socialEventAnEnrollManager->getGuestName($entity, FALSE);
+//
+//      if (!$display_name) {
+//        $display_name = $this->t('Guest');
+//      }
+//
+//      $this->configuration['display_name'] = $display_name;
+//    }
+//
+//    parent::execute($entity);
+//  }
 
   /**
    * {@inheritdoc}
