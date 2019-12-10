@@ -468,6 +468,8 @@ function _social_event_managers_action_batch_finish($success, array $results, ar
       }
 
       if ($fields === 2) {
+        // @todo: source strings will never be translatable when we use
+        // variables. This should be refactored.
         $message = \Drupal::translation()->formatPlural($results_count, $messages['singular'], $messages['plural']);
         $type = $success ? MessengerInterface::TYPE_STATUS : MessengerInterface::TYPE_WARNING;
         \Drupal::messenger()->addMessage($message, $type);
