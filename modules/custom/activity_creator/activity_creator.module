@@ -3,21 +3,26 @@
 /**
  * @file
  * Activity Creator module file.
+ *
+ * @todo: Move entity_type hooks (insert/update/delete) to services after
+ *        Drupal core has event for entities.
+ * @see https://www.drupal.org/project/drupal/issues/2551893
  */
 
+use Drupal\activity_creator\ActivityInterface;
+use Drupal\Core\Config\Entity\ConfigEntityInterface;
 use Drupal\message\Entity\Message;
 use Drupal\Core\Cache\Cache;
-use Drupal\Core\Config\Entity\ConfigEntityInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\activity_creator\Entity\Activity;
+use Drupal\search_api\Task\TaskInterface;
 
 /**
  * Activity statuses.
  */
 const ACTIVITY_STATUS_RECEIVED = 1;
 const ACTIVITY_STATUS_SEEN = 2;
-const ACTIVITY_STATUS_READ = 3;
 
 /**
  * Returns the allowed values for the activity status field.
@@ -30,7 +35,6 @@ function activity_creator_field_activity_status_allowed_values() {
   $allowed_values = [
     ACTIVITY_STATUS_RECEIVED => 'Received',
     ACTIVITY_STATUS_SEEN => 'Seen',
-    ACTIVITY_STATUS_READ => 'Read',
   ];
 
   return $allowed_values;
@@ -90,20 +94,37 @@ function activity_creator_message_insert(Message $entity) {
       /* @var $plugin \Drupal\activity_creator\Plugin\ActivityContextBase */
       $plugin = $context_plugin_manager->createInstance($data['context']);
       $recipients = $plugin->getRecipients($data, $data['last_uid'], 0);
+      $user_recipients = [];
       $activity_factory = \Drupal::service('activity_creator.activity_factory');
       if (!empty($recipients)) {
+        // Default activity creator template.
+        $activity_creator_data = [
+          'mid' => $data['mid'],
+          'message_template' => $data['message_template'],
+          'actor' => $data['actor'],
+          'context' => $data['context'],
+          'destination' => $data['destination'],
+          'related_object' => $data['related_object'],
+        ];
 
-        foreach ($recipients as $recipient) {
-          // Create a queue item for activity creation.
-          $activity_creator_data = [
-            'mid' => $data['mid'],
-            'message_template' => $data['message_template'],
-            'actor' => $data['actor'],
-            'context' => $data['context'],
-            'destination' => $data['destination'],
-            'related_object' => $data['related_object'],
-            'recipient' => $recipient,
-          ];
+        // Get all the activity recipient types. Maintain target IDs as key.
+        $activity_by_type = array_column($recipients, 'target_type');
+        foreach ($activity_by_type as $recipients_key => $target_type) {
+          // For all one to one target entity types we create an activity.
+          if ($target_type !== 'user') {
+            $activity_creator_data['recipient'] = $recipients[$recipients_key];
+            $activity_factory->createActivities($activity_creator_data);
+          }
+
+          if ($target_type === 'user') {
+            $user_recipients[] = $recipients[$recipients_key];
+          }
+        }
+
+        // When the activity should be created for a one to many user entity
+        // we like to group these.
+        if (!empty($user_recipients)) {
+          $activity_creator_data['recipient'] = $user_recipients;
           $activity_factory->createActivities($activity_creator_data);
         }
       }
@@ -122,6 +143,42 @@ function activity_creator_message_insert(Message $entity) {
     else {
       $queue = \Drupal::queue('activity_creator_logger');
       $queue->createItem($data);
+    }
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_insert().
+ */
+function activity_creator_activity_insert(ActivityInterface $activity) {
+  // We only care about status for activities when we're dealing with
+  // notifications.
+  if (in_array('notifications', $activity->getDestinations(), TRUE)) {
+    // Get recipients.
+    $recipients = $activity->getRecipient();
+
+    if (is_array($recipients)) {
+      $uids = [];
+
+      // Loop through the recipients and track the ID if the target is a user.
+      foreach ($recipients as $recipient) {
+        if ($recipient['target_type'] === 'user') {
+          $uids[] = $recipient['target_id'];
+        }
+      }
+
+      if (!empty($uids)) {
+        // If we have users, we insert a status for each user for the activity.
+        $connection = \Drupal::database();
+        $query = $connection->insert('activity_notification_status')->fields(['uid', 'aid']);
+        foreach ($uids as $uid) {
+          $query->values([
+            'uid' => $uid,
+            'aid' => $activity->id(),
+          ]);
+        }
+        $query->execute();
+      }
     }
   }
 }
@@ -187,7 +244,7 @@ function activity_creator_theme() {
 function activity_creator_theme_suggestions_activity(array $variables) {
   $suggestions = [];
   $activity = $variables['elements']['#activity'];
-  $sanitized_view_mode = strtr($variables['elements']['#view_mode'], '.', '_');
+  $sanitized_view_mode = str_replace('.', '_', $variables['elements']['#view_mode']);
 
   $suggestions[] = 'activity__' . $sanitized_view_mode;
   $suggestions[] = 'activity__' . $activity->id();
@@ -200,16 +257,8 @@ function activity_creator_theme_suggestions_activity(array $variables) {
  * Implements hook_entity_view().
  *
  * Mark notifications as read.
- *
- * TODO: Maybe this should be an event subscriber service
  */
 function activity_creator_entity_view(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, $view_mode) {
-  if ($view_mode === 'full') {
-    $account = \Drupal::currentUser();
-    // @TODO Check if this entity is even specified in ActivityLoggerFactory
-    \Drupal::service('activity_creator.activity_notifications')->markEntityNotificationsAsRead($account, $entity);
-  }
-
   // Generate the output text for the user in it's selected language.
   if ($entity instanceof Activity && !empty($entity->get('field_activity_message')->target_id)) {
     $message = Message::load($entity->get('field_activity_message')->target_id);
@@ -248,49 +297,26 @@ function activity_creator_entity_delete(EntityInterface $entity) {
  * @param \Drupal\Core\Entity\EntityInterface $entity
  *   The entity object which is updated or deleted.
  *
- * @TODO: When group is deleted delete activities where group is recipient.
- * @TODO: When user is deleted delete activities where user is recipient.
- * @TODO: Move this to a service.
+ * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+ * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+ * @throws \Drupal\Core\Entity\EntityStorageException
  */
 function _activity_creator_activity_for_entity_updater($action, EntityInterface $entity) {
   if ($entity !== NULL) {
-    $entity_type = $entity->getEntityTypeId();
-    $entity_id = $entity->id();
-
     // We never create activities for configuration entities but accessing
     // entity queries during configuration changes may cause errors.
     if ($entity instanceof ConfigEntityInterface) {
       return;
     }
 
-    // TODO: The if statement below can be refactored after the code that was
-    // added above but we didn't have time for that yet.
-    if ($entity_type !== 'activity') {
-
-      $entity_query = \Drupal::entityQuery('activity');
-      $entity_query->condition('field_activity_entity.target_id', $entity_id, '=');
-      $entity_query->condition('field_activity_entity.target_type', $entity_type, '=');
-      $ids = $entity_query->execute();
-    }
-    if ($entity_type == 'user' || $entity_type == 'group') {
-      $entity_query = \Drupal::entityQuery('activity');
-      $entity_query->condition('field_activity_recipient_' . $entity_type, $entity_id, '=');
-      $ids = $entity_query->execute();
-    }
-    if ($entity_type == 'group_content') {
-      /** @var \Drupal\group\Entity\GroupContent $group_content */
-      $group_content = $entity;
-      $linked_entity = $group_content->getEntity();
-      $group = $group_content->getGroup();
-      if ($linked_entity && $linked_entity->getEntityTypeId() === 'node' && $group->id()) {
-        $entity_query = \Drupal::entityQuery('activity');
-        $entity_query->condition('field_activity_entity.target_id', $linked_entity->id(), '=');
-        $entity_query->condition('field_activity_entity.target_type', $linked_entity->getEntityTypeId(), '=');
-        $entity_query->condition('field_activity_recipient_group', $group->id(), '=');
-        $ids = $entity_query->execute();
-      }
+    // Ignore Task entity from search api module.
+    if (\Drupal::moduleHandler()->moduleExists('search_api') && $entity instanceof TaskInterface) {
+      return;
     }
 
+    /** @var \Drupal\activity_creator\ActivityNotifications $activity_notification_service */
+    $activity_notification_service = \Drupal::service('activity_creator.activity_notifications');
+    $ids = $activity_notification_service->getActivityIdsByEntity($entity);
     if (empty($ids)) {
       return;
     }
@@ -303,7 +329,13 @@ function _activity_creator_activity_for_entity_updater($action, EntityInterface 
       Cache::invalidateTags($tags);
     }
     elseif ($action === 'delete') {
-      entity_delete_multiple('activity', $ids);
+      // Delete all activities.
+      $activity_storage = \Drupal::entityTypeManager()->getStorage('activity');
+      $activities = $activity_storage->loadMultiple($ids);
+      $activity_storage->delete($activities);
+
+      // Remove entries from activity_notification_table.
+      $activity_notification_service->deleteNotificationsbyIds($ids);
     }
   }
 }

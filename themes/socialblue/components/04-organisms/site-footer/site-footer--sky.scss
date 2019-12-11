@@ -1,0 +1,27 @@
+@import 'settings';
+
+.socialblue--sky {
+  .site-footer {
+    position: relative;
+    margin-top: 9px;
+    padding: 25px 0;
+
+    @include for-tablet-landscape-up {
+      margin-top: 18px;
+      padding: 45px 0;
+    }
+
+    &:before {
+      content: '';
+      position: absolute;
+      bottom: 100%;
+      left: 0;
+      width: 100%;
+      height: 9px;
+
+      @include for-tablet-landscape-up {
+        height: 18px;
+      }
+    }
+  }
+}
