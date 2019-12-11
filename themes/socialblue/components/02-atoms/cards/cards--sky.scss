@@ -1,0 +1,24 @@
+@import 'settings';
+
+.socialblue--sky {
+
+  .card {
+    margin-bottom: 2.5rem;
+  }
+
+  .card--views__sidebar {
+
+    .card__block {
+      @include for-tablet-landscape-up {
+        padding-left: 1.875rem;
+        padding-right: 1.875rem;
+      }
+    }
+
+    .card__actionbar {
+      .btn {
+        @include btn-link__arrow(18px, 18px, 5px, 2px);
+      }
+    }
+  }
+}
