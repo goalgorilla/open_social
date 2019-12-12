@@ -95,7 +95,7 @@ function social_follow_content_comment_insert(EntityInterface $entity) {
 
   \Drupal::moduleHandler()->alter('social_follow_content_types', $types);
 
-  if (empty($types)) {
+  if (!in_array($entity->bundle(), $types)) {
     return;
   }
 
