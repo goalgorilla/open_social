@@ -184,7 +184,15 @@ class SocialCommentAdminOverview extends FormBase {
     foreach ($comments as $comment) {
       // Get a render array for the comment body field. We'll render it in the
       // table.
-      $comment_body = $comment->field_comment_body->view('full');
+      if ($comment->hasField('field_comment_body')) {
+        $comment_body = $comment->field_comment_body->view('full');
+      }
+      elseif ($comment->hasField('comment_body')) {
+        $comment_body = $comment->comment_body->view('full');
+      }
+      else {
+        $comment_body = $this->t('n/a');
+      }
 
       $options[$comment->id()] = [
         'title' => ['data' => ['#title' => $comment->getSubject() ?: $comment->id()]],
