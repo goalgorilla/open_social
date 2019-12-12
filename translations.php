@@ -28,6 +28,7 @@ die('This file should not be run directly.');
 // Changed in version 7.2.
 new TranslatableMarkup('Select / unselect all @count results in this view');
 new TranslatableMarkup('Clear all selected members');
+new TranslatableMarkup('A Reply-To address is the email address that receives messages sent from those who select Reply in their email clients.');
 
 // These strings have been added because they were not being picked
 // up by the POTX tool. This usually indicates an issue with configuration
