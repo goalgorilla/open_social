@@ -1,0 +1,30 @@
+uuid: 5da25e59-9c7d-494c-a22f-b393455270ad
+langcode: nl
+status: true
+dependencies:
+  module:
+    - activity_logger
+third_party_settings:
+  activity_logger:
+    activity_bundle_entities:
+      queue_storage_entity-email: queue_storage_entity-email
+    activity_action: update_entity_action
+    activity_context: owner_activity_context
+    activity_destinations:
+      notifications: notifications
+    activity_create_direct: true
+    activity_aggregate: false
+    activity_entity_condition: queue_store_entity_send_activity_condition
+template: background_process_finished
+label: 'Background process finished'
+description: 'A background process started by a user has finished'
+text:
+  -
+    value: "<p>Dear [queue_storage_entity:user_id:entity:display-name], sending the mail [queue_storage_entity:field_subject:value] has just finished.</p>\r\n"
+    format: basic_html
+settings:
+  'token options':
+    clear: false
+    'token replace': true
+  purge_override: false
+  purge_methods: {  }
