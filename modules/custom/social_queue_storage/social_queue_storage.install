@@ -1,0 +1,37 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the social_queue_storage module.
+ */
+
+use Drupal\Core\Field\BaseFieldDefinition;
+
+/**
+ * Add finished field to the "queue_storage_entity" entity.
+ */
+function social_queue_storage_update_8001(&$sandbox) {
+  $definition_update_manager = \Drupal::entityDefinitionUpdateManager();
+
+  /** @var \Drupal\Core\Entity\EntityLastInstalledSchemaRepositoryInterface $last_installed_schema_repository */
+  $last_installed_schema_repository = \Drupal::service('entity.last_installed_schema.repository');
+
+  $entity_type = $definition_update_manager->getEntityType('queue_storage_entity');
+  $field_storage_definitions = $last_installed_schema_repository->getLastInstalledFieldStorageDefinitions('queue_storage_entity');
+
+  // Update the entity type definition.
+  $entity_keys = $entity_type->getKeys();
+  $entity_keys['status'] = 'status';
+  $entity_keys['published'] = 'status';
+  $entity_type->set('entity_keys', $entity_keys);
+
+  $field_storage_definitions['finished'] = BaseFieldDefinition::create('boolean')
+    ->setName('finished')
+    ->setTargetEntityTypeId('queue_storage_entity')
+    ->setLabel(t('Finished'))
+    ->setDescription(t('Is the entity considered finished by the background task it was used in?'))
+    ->setInitialValue(FALSE)
+    ->setDefaultValue(FALSE);
+
+  $definition_update_manager->updateFieldableEntityType($entity_type, $field_storage_definitions, $sandbox);
+}

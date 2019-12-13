@@ -149,6 +149,21 @@ class QueueStorageEntity extends ContentEntityBase implements QueueStorageEntity
   /**
    * {@inheritdoc}
    */
+  public function isFinished() {
+    return $this->get('finished')->value;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setFinished($status) {
+    $this->set('finished', $status);
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
     $fields = parent::baseFieldDefinitions($entity_type);
 
@@ -204,6 +219,12 @@ class QueueStorageEntity extends ContentEntityBase implements QueueStorageEntity
     $fields['changed'] = BaseFieldDefinition::create('changed')
       ->setLabel(t('Changed'))
       ->setDescription(t('The time that the entity was last edited.'));
+
+    $fields['finished'] = BaseFieldDefinition::create('boolean')
+      ->setLabel(t('Finished'))
+      ->setDescription(t('Is the entity considered finished by the background task it was used in?'))
+      ->setInitialValue(FALSE)
+      ->setDefaultValue(FALSE);
 
     return $fields;
   }

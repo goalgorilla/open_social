@@ -69,4 +69,23 @@ interface QueueStorageEntityInterface extends ContentEntityInterface, EntityChan
    */
   public function setCreatedTime($timestamp);
 
+  /**
+   * Get the status of the entity.
+   *
+   * @return bool
+   *   Status of the entity.
+   */
+  public function isFinished();
+
+  /**
+   * Sets the Queue storage entity status.
+   *
+   * @param bool $status
+   *   The Queue storage entity status.
+   *
+   * @return \Drupal\social_queue_storage\Entity\QueueStorageEntityInterface
+   *   The called Queue storage entity entity.
+   */
+  public function setFinished($status);
+
 }
