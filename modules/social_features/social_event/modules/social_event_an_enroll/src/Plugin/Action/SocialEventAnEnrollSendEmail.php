@@ -9,7 +9,6 @@ use Drupal\Core\Utility\Token;
 use Drupal\social_event\EventEnrollmentInterface;
 use Drupal\social_event_an_enroll\EventAnEnrollManager;
 use Drupal\social_event_managers\Plugin\Action\SocialEventManagersSendEmail;
-use Drupal\user\UserInterface;
 use Egulias\EmailValidator\EmailValidator;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
