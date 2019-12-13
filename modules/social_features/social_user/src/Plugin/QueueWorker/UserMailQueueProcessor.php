@@ -143,10 +143,7 @@ class UserMailQueueProcessor extends QueueWorkerBase implements ContainerFactory
         // Check if this is the last item.
         if ($this->lastItem($data['mail'])) {
           // Send the creator a private message that the job is done.
-          $recipient = User::load($queue_storage->getOwner()->id());
-          if ($recipient) {
-            $this->sendMessage($recipient, $queue_storage->get('field_subject')->value);
-          }
+          $this->sendNotification(User::load($queue_storage->getOwner()->id()), $queue_storage->get('field_subject')->value);
         }
       }
     }
@@ -218,7 +215,7 @@ class UserMailQueueProcessor extends QueueWorkerBase implements ContainerFactory
    * @param string $subject
    *   The subject of the email that was sent in a batch.
    */
-  public function sendMessage(User $recipient, $subject) {
+  public function sendNotification(User $recipient, $subject) {
     // We'll use user 1, administrator as a sender.
     $sender = User::load(1);
     if (!empty($subject) && $recipient instanceof User && $sender instanceof User) {
