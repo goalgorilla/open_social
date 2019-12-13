@@ -197,7 +197,6 @@ class QueueStorageEntity extends ContentEntityBase implements QueueStorageEntity
       ->setDisplayConfigurable('view', TRUE)
       ->setRequired(TRUE);
 
-
     $fields['created'] = BaseFieldDefinition::create('created')
       ->setLabel(t('Created'))
       ->setDescription(t('The time that the entity was created.'));
