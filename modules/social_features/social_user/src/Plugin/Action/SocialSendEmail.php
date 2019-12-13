@@ -280,11 +280,10 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
    */
   public function submitConfigurationForm(array &$form, FormStateInterface $form_state) {
     parent::submitConfigurationForm($form, $form_state);
-
+    // Clean form values.
     $form_state->cleanValues();
+    // Get the queue storage entity and create a new entry.
     $queue_storage = $this->storage->getStorage('queue_storage_entity');
-
-
     $entity = $queue_storage->create([
       'name' => 'user_email_queue',
       'type' => 'email',
@@ -293,6 +292,8 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
       'field_message' => $form_state->getValue('message')['value'],
     ]);
 
+    // When the new entity is saved, get the ID and save it within the bulk
+    // operation action configuration.
     if ($entity->save()) {
       $this->configuration['queue_storage_id'] = $entity->id();
     }
