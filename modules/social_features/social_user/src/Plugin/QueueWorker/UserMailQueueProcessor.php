@@ -13,10 +13,7 @@ use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Queue\QueueWorkerBase;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
-use Drupal\private_message\Entity\PrivateMessage;
-use Drupal\private_message\Service\PrivateMessageService;
 use Drupal\social_queue_storage\Entity\QueueStorageEntity;
-use Drupal\user\Entity\User;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -55,13 +52,6 @@ class UserMailQueueProcessor extends QueueWorkerBase implements ContainerFactory
   protected $connection;
 
   /**
-   * The private message service.
-   *
-   * @var \Drupal\private_message\Service\PrivateMessageService
-   */
-  protected $privateMessage;
-
-  /**
    * The language manager interface.
    *
    * @var \Drupal\Core\Language\LanguageManagerInterface
@@ -78,12 +68,11 @@ class UserMailQueueProcessor extends QueueWorkerBase implements ContainerFactory
   /**
    * {@inheritdoc}
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, MailManagerInterface $mail_manager, EntityTypeManagerInterface $entity_type_manager, TranslationInterface $string_translation, Connection $database, PrivateMessageService $private_message, LanguageManagerInterface $language_manager, EmailValidatorInterface $email_validator) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, MailManagerInterface $mail_manager, EntityTypeManagerInterface $entity_type_manager, TranslationInterface $string_translation, Connection $database, LanguageManagerInterface $language_manager, EmailValidatorInterface $email_validator) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->mailManager = $mail_manager;
     $this->storage = $entity_type_manager;
     $this->connection = $database;
-    $this->privateMessage = $private_message;
     $this->setStringTranslation($string_translation);
     $this->languageManager = $language_manager;
     $this->emailValidator = $email_validator;
@@ -101,7 +90,6 @@ class UserMailQueueProcessor extends QueueWorkerBase implements ContainerFactory
       $container->get('entity_type.manager'),
       $container->get('string_translation'),
       $container->get('database'),
-      $container->get('private_message.service'),
       $container->get('language_manager'),
       $container->get('email.validator')
     );
@@ -142,8 +130,17 @@ class UserMailQueueProcessor extends QueueWorkerBase implements ContainerFactory
 
         // Check if this is the last item.
         if ($this->lastItem($data['mail'])) {
-          // Send the creator a private message that the job is done.
-          $this->sendNotification(User::load($queue_storage->getOwner()->id()), $queue_storage->get('field_subject')->value);
+          $queue_storage->setFinished(TRUE);
+
+          // Try to save a the storage entity to update the finished status.
+          try {
+            // Saving the entity and setting it to finished should send
+            // a message template.
+            $queue_storage->save();
+          }
+          catch (EntityStorageException $e) {
+            $this->getLogger('user_email_queue')->error($e->getMessage());
+          }
         }
       }
     }
@@ -205,64 +202,6 @@ class UserMailQueueProcessor extends QueueWorkerBase implements ContainerFactory
 
     // Return TRUE when last item.
     return !($results !== 1);
-  }
-
-  /**
-   * Send a PM.
-   *
-   * @param \Drupal\user\Entity\User $recipient
-   *   The recipient user.
-   * @param string $subject
-   *   The subject of the email that was sent in a batch.
-   */
-  public function sendNotification(User $recipient, $subject) {
-    // We'll use user 1, administrator as a sender.
-    $sender = User::load(1);
-    if (!empty($subject) && $recipient instanceof User && $sender instanceof User) {
-      $members[$sender->id()] = $sender;
-      $members[$recipient->id()] = $recipient;
-      // Create thread between task and job creator.
-      $thread = $this->privateMessage->getThreadForMembers($members);
-      // Create a single message.
-      $private_message = PrivateMessage::create([
-        'owner' => $sender->id(),
-        'message' => [
-          'value' => $this->getMessage($recipient, $subject),
-          'format' => 'basic_html',
-        ],
-      ]);
-
-      // Try to save a new message.
-      try {
-        $private_message->save();
-      }
-      catch (EntityStorageException $e) {
-        $this->getLogger('user_email_queue')->error($e->getMessage());
-      }
-      // Try to add the message to the thread.
-      try {
-        $thread->addMessage($private_message)->save();
-      }
-      catch (EntityStorageException $e) {
-        $this->getLogger('user_email_queue')->error($e->getMessage());
-      }
-    }
-  }
-
-  /**
-   * Create the message for the user.
-   *
-   * @param \Drupal\user\Entity\User $recipient
-   *   The recipient user.
-   * @param string $subject
-   *   The subject of the email that was sent.
-   *
-   * @return string
-   *   The message.
-   */
-  public function getMessage(User $recipient, string $subject) {
-    // Create a message for the user.
-    return $this->t('<strong>(This message is automatically generated)</strong>') . PHP_EOL . t('Dear @recipient_name,', ['@recipient_name' => $recipient->getDisplayName()]) . PHP_EOL . PHP_EOL . t('A background process sending e-mail %subject has just finished.', ['%subject' => $subject]);
   }
 
   /**
