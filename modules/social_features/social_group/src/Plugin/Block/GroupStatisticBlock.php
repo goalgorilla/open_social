@@ -2,9 +2,11 @@
 
 namespace Drupal\social_group\Plugin\Block;
 
+use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Block\BlockBase;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Session\AccountInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 
@@ -91,6 +93,18 @@ class GroupStatisticBlock extends BlockBase implements ContainerFactoryPluginInt
     $build['#cache']['max-age'] = 0;
 
     return $build;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function blockAccess(AccountInterface $account) {
+    // Show statistic block only when new style is enabled.
+    if (theme_get_setting('style') !== 'sky') {
+      return AccessResult::forbidden();
+    }
+
+    return AccessResult::neutral();
   }
 
 }

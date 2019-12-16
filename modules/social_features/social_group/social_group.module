@@ -330,7 +330,7 @@ function social_group_preprocess_group(array &$variables) {
     $variables['group_topics'] = $group_statistics->nodeCount($group, 'topic');
   }
   if ($group->getGroupType()->id() !== 'closed_group' || $group->getMember($account) || $group->hasPermission('manage all groups', $account)) {
-    $variables['group_stream_url'] = Url::fromUserInput('/group/' . $group->id() . '/stream');
+    $variables['group_stream_url'] = Url::fromRoute('social_group.stream', ['group' => $group->id()]);
   }
 
 }
@@ -1336,12 +1336,6 @@ function social_group_block_access(Block $block, $operation, AccountInterface $a
       return AccessResult::forbidden();
     }
     return $access;
-  }
-  // Show statistic block only when new style is enabled.
-  if ($operation == 'view' && $block->getPluginId() === 'group_statistic_block') {
-    if (theme_get_setting('style') !== 'sky') {
-      return AccessResult::forbidden();
-    }
   }
 
   return AccessResult::neutral();
