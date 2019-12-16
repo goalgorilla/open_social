@@ -134,20 +134,6 @@
           {% endembed %}
         {% endif %}
 
-        {% if content.field_event_location|render is not empty %}
-          {% embed "node--teaser__field.html.twig" %}
-            {%- block field_icon -%} location {%- endblock -%}
-            {%- block field_value -%} {{ content.field_event_location }} {%- endblock -%}
-          {% endembed %}
-        {% endif %}
-
-        {% if event_type %}
-          {% embed "node--teaser__field.html.twig" %}
-            {%- block field_icon -%} label {%- endblock -%}
-            {%- block field_value -%} {{ event_type }} {%- endblock -%}
-          {% endembed %}
-        {% endif %}
-
         {% if topic_type %}
           {% embed "node--teaser__field.html.twig" %}
             {%- block field_icon -%} label {%- endblock -%}
