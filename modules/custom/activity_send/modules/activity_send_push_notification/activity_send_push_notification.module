@@ -32,6 +32,7 @@ function activity_send_push_notification_form_user_form_alter(&$form, FormStateI
         '#attributes' => [
           'class' => ['form-fieldset'],
         ],
+        '#prefix' => $definition['description'],
       ] + $plugin->buildForm();
     }
   }
@@ -47,10 +48,6 @@ function activity_send_push_notification_form_user_form_alter(&$form, FormStateI
     '#attributes' => [
       'class' => ['form-horizontal'],
     ],
-  ];
-
-  $form['push_notifications']['description'] = [
-    '#markup' => t('Show notifications in the corner of your computer screen, even if the website is closed.'),
   ];
 
   $form['push_notifications'] = $form['push_notifications'] + $plugin_forms;
