@@ -61,18 +61,21 @@
  * @ingroup themeable
  */
 #}
-{{ attach_library('socialbase/teaser') }}
-{{ attach_library('social_landing_page/featured') }}
+{{ attach_library('socialbase/teaser')}}
+{{ attach_library('social_landing_page/featured')}}
 
-{% set classes = [
+{%
+  set classes = [
   'card teaser teaser--tile',
   no_image ? 'no-image'
 ]
 %}
 
 <div{{ attributes.addClass(classes) }}>
+
   {% block card_image %}
     <div class="teaser__image">
+
       {% block card_hero_image %}
         <div class="img_wrapper">
           {% if no_image %}
@@ -88,17 +91,15 @@
         </div>
       {% endblock %}
 
-      {% if no_image %}
-        {% block card_teaser_type %}
-          <a href="{{ url }}">
-            <div class="teaser__teaser-type">
-              <svg class="teaser__teaser-type-icon">
-                <use xlink:href="#icon-{{- node.bundle|clean_class -}}"></use>
-              </svg>
-            </div>
-          </a>
-        {% endblock %}
-      {% endif %}
+      {% block card_teaser_type %}
+        <a href="{{ url }}">
+          <div class="teaser__teaser-type">
+            <svg class="teaser__teaser-type-icon">
+              <use xlink:href="#icon-{{- node.bundle|clean_class -}}"></use>
+            </svg>
+          </div>
+        </a>
+      {% endblock %}
 
     </div>
   {% endblock %}
@@ -108,9 +109,9 @@
 
       {% block card_title %}
         {{ title_prefix }}
-          <h4{{ title_attributes }} class="teaser__title">
-            <a href="{{ url }}" rel="bookmark">{{ label }}</a>
-          </h4>
+        <h4{{ title_attributes }} class="teaser__title">
+          <a href="{{ url }}" rel="bookmark">{{ label }}</a>
+        </h4>
         {{ title_suffix }}
       {% endblock %}
 
@@ -129,56 +130,28 @@
             {% endembed %}
           {% endif %}
 
-          {% if content.field_event_location|render is not empty %}
-            {% embed "node--teaser__field.html.twig" %}
-              {%- block field_icon -%} location {%- endblock -%}
-              {%- block field_value -%} {{ content.field_event_location }} {%- endblock -%}
-            {% endembed %}
-          {% endif %}
-
-          {% if topic_type %}
-            {% embed "node--teaser__field.html.twig" %}
-              {%- block field_icon -%} label {%- endblock -%}
-              {%- block field_value -%} {{ topic_type }} {%- endblock -%}
-            {% endembed %}
-          {% endif %}
-
-          {% if event_type %}
-            {% embed "node--teaser__field.html.twig" %}
-              {%- block field_icon -%} label {%- endblock -%}
-              {%- block field_value -%} {{ event_type }} {%- endblock -%}
-            {% endembed %}
-          {% endif %}
-
         </small>
       {% endblock %}
 
     </div>
   </div>
-
   <div class="card__actionbar">
     {% block card_actionbar %}
 
       {% if visibility_icon and visibility_label %}
         <div class="badge teaser__badge no-padding" title="{% trans %}The visibility of this content is set to {% endtrans %} {{ visibility_label }}">
-                <span class="badge__container">
-                  <svg class="badge__icon">
-              <use xlink:href="#icon-{{ visibility_icon }}"></use>
-                  </svg>
-            <span class="badge__label text-gray">{{ visibility_label|capitalize }}</span>
-                </span>
-        </div>
-      {% endif %}
-
-      {% if content.enrolled %}
-        <span class="badge badge-secondary teaser__badge">
-          {{ content.enrolled }}
+        <span class="badge__container">
+          <svg class="badge__icon">
+            <use xlink:href="#icon-{{ visibility_icon }}"></use>
+          </svg>
+          <span class="badge__label text-gray">{{ visibility_label|capitalize }}</span>
         </span>
+        </div>
       {% endif %}
 
       {% block card_link %}
         <div class="card__link">
-        <a href="{{ url }}" rel="bookmark">{{ 'Read more'|t }}
+          <a href="{{ url }}" rel="bookmark">{{ 'Read more'|t }}
             <span class="visually-hidden">{{ 'about'|t }}{{ label }}</span>
           </a>
         </div>

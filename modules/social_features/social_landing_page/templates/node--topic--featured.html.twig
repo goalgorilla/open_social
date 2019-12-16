@@ -1,0 +1,22 @@
+{% extends 'node--featured.html.twig' %}
+
+  {% block card_body %}
+    <small class="text-muted">
+      {% embed "node--teaser__field.html.twig" %}
+        {%- block field_icon -%} account_circle {%- endblock -%}
+        {%- block field_value %}
+          <div class="teaser__published">
+            <div class="teaser__published-date"> {{ date }} &bullet;</div>
+            <div class="teaser__published-author"> {{ author_name }} </div>
+          </div>
+        {%- endblock -%}
+      {% endembed %}
+
+      {% if topic_type %}
+        {% embed "node--teaser__field.html.twig" %}
+          {%- block field_icon -%} label {%- endblock -%}
+          {%- block field_value -%} {{ topic_type }} {%- endblock -%}
+        {% endembed %}
+      {% endif %}
+    </small>
+  {% endblock %}

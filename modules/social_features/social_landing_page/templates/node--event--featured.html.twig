@@ -1,0 +1,19 @@
+{% extends 'node--featured.html.twig' %}
+
+  {% block card_body %}
+    <small class="text-muted">
+      {% embed "node--teaser__field.html.twig" %}
+        {%- block field_icon -%} event {%- endblock -%}
+        {%- block field_value %} {{ event_date }} {%- endblock -%}
+      {% endembed %}
+      {% embed "node--teaser__field.html.twig" %}
+        {%- block field_icon -%} location {%- endblock -%}
+        {%- block field_value -%} {{ content.field_event_location }} {%- endblock -%}
+      {% endembed %}
+      {% if content.enrolled %}
+        <span class="badge badge-secondary teaser__badge">
+          {{ content.enrolled }}
+        </span>
+      {% endif %}
+    </small>
+  {% endblock %}
