@@ -6,11 +6,11 @@ use Drupal\Core\Database\Connection;
 use Drupal\group\Entity\GroupInterface;
 
 /**
- * Class SocialGroupMembersCount.
+ * Class GroupStatistics.
  *
  * @package Drupal\social_group
  */
-class SocialGroupMembersCount {
+class GroupStatistics {
 
   /**
    * The database connection object.
@@ -36,14 +36,44 @@ class SocialGroupMembersCount {
    *   The group entity.
    *
    * @return int
-   *   Number of members in a group.
+   *   The number of members.
    */
-  public function getGroupMemberCount(GroupInterface $group) {
+  public function memberCount(GroupInterface $group) {
+    return $this->count($group, 'group_membership');
+  }
+
+  /**
+   * Get node count by type.
+   *
+   * @param \Drupal\group\Entity\GroupInterface $group
+   *   The group entity.
+   * @param string $type
+   *   Node type id.
+   *
+   * @return int
+   *   The number of nodes.
+   */
+  public function nodeCount(GroupInterface $group, $type) {
+    return $this->count($group, 'group_node-' . $type);
+  }
+
+  /**
+   * Get entity count by type for the group.
+   *
+   * @param \Drupal\group\Entity\GroupInterface $group
+   *   The group entity.
+   * @param string $type
+   *   Entity type in group.
+   *
+   * @return int
+   *   The number of entities.
+   */
+  protected function count(GroupInterface $group, $type) {
     // Additional caching not required since views does this for us.
     $query = $this->database->select('group_content_field_data', 'gcfd');
     $query->addField('gcfd', 'gid');
     $query->condition('gcfd.gid', $group->id());
-    $query->condition('gcfd.type', $group->getGroupType()->id() . '-group_membership', 'LIKE');
+    $query->condition('gcfd.type', $group->getGroupType()->id() . '-' . $type, 'LIKE');
 
     return $query->countQuery()->execute()->fetchField();
   }
