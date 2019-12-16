@@ -16,4 +16,16 @@ use Drupal\activity_creator\Plugin\ActivityEntityConditionBase;
  */
 class QueueStorageEntitySendActivityCondition extends ActivityEntityConditionBase {
 
+  /**
+   * {@inheritdoc}
+   */
+  public function isValidEntityCondition($entity) {
+    /** @var \Drupal\social_queue_storage\Entity\QueueStorageEntity $entity */
+    if ($entity->getEntityTypeId() === 'queue_storage_entity') {
+      return $entity->isFinished();
+    }
+
+    return FALSE;
+  }
+
 }

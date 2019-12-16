@@ -6,6 +6,7 @@
  */
 
 use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Entity\EntityInterface;
 
 /**
  * Implements hook_help().
@@ -54,4 +55,16 @@ function social_queue_storage_theme_suggestions_queue_storage_entity(array $vari
   $suggestions[] = 'queue_storage_entity__' . $entity->id();
   $suggestions[] = 'queue_storage_entity__' . $entity->id() . '__' . $sanitized_view_mode;
   return $suggestions;
+}
+
+/**
+ * Implements hook_entity_update().
+ */
+function social_queue_storage_entity_update(EntityInterface $entity) {
+  /** @var \Drupal\social_queue_storage\Entity\QueueStorageEntity $entity */
+  if ($entity->getEntityTypeId() === 'queue_storage_entity') {
+    \Drupal::service('plugin.manager.activity_action.processor')
+      ->createInstance('update_entity_action')
+      ->create($entity);
+  }
 }

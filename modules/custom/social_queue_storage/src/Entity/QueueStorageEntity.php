@@ -150,7 +150,7 @@ class QueueStorageEntity extends ContentEntityBase implements QueueStorageEntity
    * {@inheritdoc}
    */
   public function isFinished() {
-    return $this->get('finished')->value;
+    return (bool) $this->get('finished')->value;
   }
 
   /**
