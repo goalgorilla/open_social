@@ -23,7 +23,7 @@
 {% block card_actionbar %}
 
   {% if visibility_icon and visibility_label %}
-    <div class="badge teaser__badge no-padding" title="{% trans %}The visibility of this content is set to {% endtrans %} {{ visibility_label }}">
+    <div class="badge teaser__badge no-padding" title="{% trans %}The visibility of this content is set to {{ visibility_label }}{% endtrans %} ">
       <span class="badge__container">
         <svg class="badge__icon">
           <use xlink:href="#icon-{{ visibility_icon }}"></use>
@@ -60,7 +60,7 @@
   {% block card_link %}
     <div class="card__link">
       <a href="{{ url }}" rel="bookmark" class="btn btn-default btn-block">{{ 'Read more'|t }}
-        <span class="visually-hidden">{{ 'about'|t }}{{ label }}</span>
+        <span class="visually-hidden">{% trans %}about {{ label }}{% endtrans %} </span>
       </a>
     </div>
   {% endblock %}
