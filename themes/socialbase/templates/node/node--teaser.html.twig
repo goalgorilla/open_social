@@ -104,13 +104,8 @@
       {% endblock %}
     {% endif %}
 
-    {# allows for new content types to just use the plain field_image name #}
     {% block card_image %}
-      {{ content.field_event_image }}
-      {{ content.field_topic_image }}
-      {{ content.field_page_image }}
-      {{ content.field_book_image }}
-      {{ content.field_image }}
+      {{ node_image }}
     {% endblock %}
 
   </div>

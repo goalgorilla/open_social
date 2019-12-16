@@ -224,13 +224,6 @@ function social_landing_page_preprocess_node(&$variables) {
       }
     }
   }
-  // Add no_image flag if there are no image uploaded.
-  $variables['no_image'] = TRUE;
-  $image_field = "field_{$node->getType()}_image";
-
-  if (!empty($node->{$image_field}->entity)) {
-    $variables['no_image'] = FALSE;
-  }
 }
 
 /**
@@ -314,12 +307,12 @@ function _social_landing_page_get_hero_image(Node $node) {
 function social_landing_page_social_user_account_header_create_links($context) {
   return [
     'add_landing_page' => [
-      '#type' => 'link',
-      '#attributes' => [
-        'title' => new TranslatableMarkup('Create New Landing Page'),
-      ],
-      '#title' => new TranslatableMarkup('New Landing Page'),
-      '#weight' => 400,
-    ] + Url::fromRoute('node.add', ['node_type' => 'landing_page'])->toRenderArray(),
+        '#type' => 'link',
+        '#attributes' => [
+          'title' => new TranslatableMarkup('Create New Landing Page'),
+        ],
+        '#title' => new TranslatableMarkup('New Landing Page'),
+        '#weight' => 400,
+      ] + Url::fromRoute('node.add', ['node_type' => 'landing_page'])->toRenderArray(),
   ];
 }

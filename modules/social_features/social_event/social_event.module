@@ -228,6 +228,18 @@ function social_event_preprocess_node(array &$variables) {
   $node = $variables['node'];
   if ($node->getType() === 'event') {
     $variables['event_date'] = _social_event_format_date($node, $view_mode);
+
+    if ($view_mode === 'hero') {
+      // Add Enroll button.
+      if (empty($variables['event_enrollment'])) {
+        $form = \Drupal::formBuilder()
+          ->getForm('Drupal\social_event\Form\EnrollActionForm');
+        $render_array = [
+          'enroll_action_form' => $form,
+        ];
+        $variables['event_enrollment'] = $render_array;
+      }
+    }
   }
 }
 

@@ -78,15 +78,10 @@
 
       {% block card_hero_image %}
         <div class="img_wrapper">
-          {% if no_image %}
-            <hr class="no-feature-image">
+          {% if node_image %}
+            {{ node_image }}
           {% else %}
-            {{ content.field_event_image }}
-            {{ content.field_topic_image }}
-            {{ content.field_page_image }}
-            {{ content.field_book_image }}
-            {{ content.field_landing_page_image }}
-            {{ content.field_image }}
+            <hr class="no-feature-image">
           {% endif %}
         </div>
       {% endblock %}
