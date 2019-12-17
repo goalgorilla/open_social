@@ -1,23 +1,52 @@
 {% extends "node--hero--sky.html.twig" %}
 
+{% block card_prefix %}
+  {% if node_image %}
+    <div class="hero-image">
+      {{ node_image }}
+    </div>
+  {% endif %}
+{% endblock %}
+
+{% block card_title %}
+  <div class="hero__tag">
+    <span>{{ node.type.entity.label() }}</span>
+    {% if event_type %}
+      &nbsp; &nbsp; ▶ &nbsp; &nbsp;
+      {{ event_type }}
+    {% endif %}
+  </div>
+
+  {{ title_prefix }}
+  <h2{{ title_attributes }} class="teaser__title">
+    <a href="{{ url }}" rel="bookmark">{{ label }}</a>
+  </h2>
+  {{ title_suffix }}
+{% endblock %}
+
+{% block card_suffix %}
+{% endblock %}
+
 {% block nodefull_specialfields %}
   <div class="hero-footer__header">
     <div class="hero-footer__text">
 
       <div class="article__special-fields">
+
         <div class="article__special-field">
           <svg class="article__special-fields-icon">
             <use xlink:href="#icon-schedule"></use>
           </svg>
-          <span class="sr-only">{% trans %}Event date {% endtrans %}</span>
+          <span class="sr-only">{% trans %}Event date{% endtrans %}</span>
           <span class="inline-center">{{ event_date }}</span>
         </div>
+
         {% if content.field_event_address|render or content.field_event_location|render %}
           <div class="article__special-field">
             <svg class="article__special-fields-icon">
               <use xlink:href="#icon-location"></use>
             </svg>
-            <span class="sr-only">{% trans %}Event location {% endtrans %}</span>
+            <span class="sr-only">{% trans %}Event location{% endtrans %}</span>
             <span class="inline-center">
             {{ content.field_event_location }}
               {% if content.field_event_address|render is not empty and content.field_event_location|render is not empty %} &bullet; {% endif %}
@@ -25,6 +54,7 @@
             </span>
           </div>
         {% endif %}
+
       </div>
     </div>
 
@@ -33,5 +63,6 @@
         {{ event_enrollment }}
       </div>
     </div>
+
   </div>
 {% endblock %}
