@@ -51,3 +51,28 @@
 
   </small>
 {% endblock %}
+
+{% block card_actionbar %}
+
+  {% if content.enrollments_count is not empty %}
+    <div class="badge teaser__badge" title="{% trans %}Total amount of enrollments{% endtrans %}">
+      <span class="badge__container">
+        <svg class="badge__icon">
+          <use xlink:href="#icon-account-circle"></use>
+        </svg>
+        <span class="badge__label">
+          {{ content.enrollments_count }}
+        </span>
+      </span>
+    </div>
+  {% endif %}
+
+  {% block card_link %}
+    <div class="card__link">
+      <a href="{{ url }}" rel="bookmark" class="btn btn-default btn-block">{{ 'Read more'|t }}
+        <span class="visually-hidden">{% trans %}about {{ label }}{% endtrans %} </span>
+      </a>
+    </div>
+  {% endblock %}
+
+{% endblock %}
