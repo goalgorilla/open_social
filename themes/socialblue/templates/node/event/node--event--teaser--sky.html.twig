@@ -1,5 +1,4 @@
-{# This file overrides node--event--teaser.html.twig #}
-{% extends "node--teaser--sky.html.twig" %}
+{% extends "node--event--teaser.html.twig" %}
 
 {% block card_title %}
 
@@ -39,54 +38,5 @@
       {%- block field_value -%} {{ content.group_name }} {%- endblock -%}
     {% endembed %}
   {% endif %}
-
-{% endblock %}
-
-{% block card_actionbar %}
-
-  {% if visibility_icon and visibility_label %}
-    <div class="badge teaser__badge"
-         title="{% trans %}The visibility of this content is set to {{ visibility_label }}{% endtrans %} ">
-      <span class="badge__container">
-          <svg class="badge__icon">
-            <use xlink:href="#icon-{{ visibility_icon }}"></use>
-          </svg>
-          <span class="badge__label text-gray">{{ visibility_label|capitalize }}</span>
-      </span>
-    </div>
-  {% endif %}
-
-  {% if likes_count is not empty %}
-    <div class="badge teaser__badge" title="{% trans %}Total amount of likes{% endtrans %}">
-      <span class="badge__container">
-        <svg class="badge__icon">
-          <use xlink:href="#icon-like"></use>
-        </svg>
-        <span class="badge__label">
-          {{ likes_count }}
-        </span>
-      </span>
-    </div>
-  {% endif %}
-
-  {% if comment_count %}
-    <a href="{{ url }}#section-comments" class="badge teaser__badge"
-       title="{% trans %}Total amount of comments{% endtrans %}">
-      <span class="badge__container">
-        <svg class="badge__icon">
-          <use xlink:href="#icon-comment"></use>
-        </svg>
-        <span class="badge__label">{{ comment_count }}</span>
-      </span>
-    </a>
-  {% endif %}
-
-  {% if content.enrolled %}
-    <span class="badge badge-primary teaser__badge badge-status">
-     {{ content.enrolled }}
-    </span>
-  {% endif %}
-
-  {{ content.links }}
 
 {% endblock %}
