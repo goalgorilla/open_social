@@ -21,13 +21,11 @@ use Drupal\user\UserInterface;
  *   handlers = {
  *     "view_builder" = "Drupal\Core\Entity\EntityViewBuilder",
  *     "list_builder" = "Drupal\social_queue_storage\QueueStorageEntityListBuilder",
- *     "views_data" = "Drupal\social_queue_storage\Entity\QueueStorageEntityViewsData",
- *
+ *     "views_data" = "Drupal\views\EntityViewsData",
  *     "form" = {
  *       "default" = "Drupal\social_queue_storage\Form\QueueStorageEntityForm",
- *       "add" = "Drupal\social_queue_storage\Form\QueueStorageEntityForm",
  *       "edit" = "Drupal\social_queue_storage\Form\QueueStorageEntityForm",
- *       "delete" = "Drupal\social_queue_storage\Form\QueueStorageEntityDeleteForm",
+ *       "delete" = "Drupal\Core\Entity\ContentEntityDeleteForm",
  *     },
  *     "route_provider" = {
  *       "html" = "Drupal\social_queue_storage\QueueStorageEntityHtmlRouteProvider",
@@ -48,14 +46,11 @@ use Drupal\user\UserInterface;
  *   },
  *   links = {
  *     "canonical" = "/admin/structure/queue_storage_entity/{queue_storage_entity}",
- *     "add-page" = "/admin/structure/queue_storage_entity/add",
- *     "add-form" = "/admin/structure/queue_storage_entity/add/{queue_storage_entity_type}",
  *     "edit-form" = "/admin/structure/queue_storage_entity/{queue_storage_entity}/edit",
  *     "delete-form" = "/admin/structure/queue_storage_entity/{queue_storage_entity}/delete",
  *     "collection" = "/admin/structure/queue_storage_entity",
  *   },
- *   bundle_entity_type = "queue_storage_entity_type",
- *   field_ui_base_route = "entity.queue_storage_entity_type.edit_form"
+ *   bundle_entity_type = "queue_storage_entity_type"
  * )
  */
 class QueueStorageEntity extends ContentEntityBase implements QueueStorageEntityInterface {
@@ -224,7 +219,9 @@ class QueueStorageEntity extends ContentEntityBase implements QueueStorageEntity
       ->setLabel(t('Finished'))
       ->setDescription(t('Is the entity considered finished by the background task it was used in?'))
       ->setInitialValue(FALSE)
-      ->setDefaultValue(FALSE);
+      ->setDefaultValue(FALSE)
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayConfigurable('view', TRUE);
 
     return $fields;
   }

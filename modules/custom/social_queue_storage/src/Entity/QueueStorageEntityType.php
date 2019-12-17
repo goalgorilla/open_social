@@ -12,14 +12,10 @@ use Drupal\Core\Config\Entity\ConfigEntityBundleBase;
  *   label = @Translation("Queue storage entity type"),
  *   handlers = {
  *     "view_builder" = "Drupal\Core\Entity\EntityViewBuilder",
- *     "list_builder" = "Drupal\social_queue_storage\QueueStorageEntityTypeListBuilder",
- *     "form" = {
- *       "add" = "Drupal\social_queue_storage\Form\QueueStorageEntityTypeForm",
- *       "edit" = "Drupal\social_queue_storage\Form\QueueStorageEntityTypeForm",
- *       "delete" = "Drupal\social_queue_storage\Form\QueueStorageEntityTypeDeleteForm"
- *     },
+ *     "list_builder" = "Drupal\Core\Entity\EntityListBuilder",
+ *     "form" = {},
  *     "route_provider" = {
- *       "html" = "Drupal\social_queue_storage\QueueStorageEntityTypeHtmlRouteProvider",
+ *       "html" = "Drupal\Core\Entity\Routing\AdminHtmlRouteProvider",
  *     },
  *   },
  *   config_prefix = "queue_storage_entity_type",
@@ -30,13 +26,7 @@ use Drupal\Core\Config\Entity\ConfigEntityBundleBase;
  *     "label" = "label",
  *     "uuid" = "uuid"
  *   },
- *   links = {
- *     "canonical" = "/admin/structure/queue_storage_entity_type/{queue_storage_entity_type}",
- *     "add-form" = "/admin/structure/queue_storage_entity_type/add",
- *     "edit-form" = "/admin/structure/queue_storage_entity_type/{queue_storage_entity_type}/edit",
- *     "delete-form" = "/admin/structure/queue_storage_entity_type/{queue_storage_entity_type}/delete",
- *     "collection" = "/admin/structure/queue_storage_entity_type"
- *   }
+ *   links = {}
  * )
  */
 class QueueStorageEntityType extends ConfigEntityBundleBase implements QueueStorageEntityTypeInterface {
