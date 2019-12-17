@@ -25,6 +25,11 @@ die('This file should not be run directly.');
 // new TranslatableMarkup('Example');
 // new PluralTranslatableMarkup($count, '1 example', '@count examples');.
 
+// Changed in version 8.x.
+new TranslatableMarkup("Send mail");
+new TranslatableMarkup("Can not send e-mail for %entity");
+new TranslatableMarkup("Sent email to %recipient");
+
 // Changed in version 7.2.
 new TranslatableMarkup('Select / unselect all @count results in this view');
 new TranslatableMarkup('Clear all selected members');
