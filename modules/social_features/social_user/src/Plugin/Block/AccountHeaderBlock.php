@@ -3,8 +3,10 @@
 namespace Drupal\social_user\Plugin\Block;
 
 use Drupal\activity_creator\ActivityNotifications;
+use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Block\BlockBase;
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Controller\ControllerResolverInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
@@ -62,6 +64,13 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
   protected $configFactory;
 
   /**
+   * The controller resolver.
+   *
+   * @var \Drupal\Core\Controller\ControllerResolverInterface
+   */
+  protected $controllerResolver;
+
+  /**
    * AccountHeaderBlock constructor.
    *
    * @param array $configuration
@@ -80,14 +89,17 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
    *   The Entity Type Manager.
    * @param \Drupal\Core\Config\ConfigFactoryInterface $configFactory
    *   The Config Factory.
+   * @param \Drupal\Core\Controller\ControllerResolverInterface $controller_resolver
+   *   The controller resolver.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, ModuleHandlerInterface $module_handler, RendererInterface $renderer, ActivityNotifications $activity_notifications, EntityTypeManagerInterface $entityTypeManager, ConfigFactoryInterface $configFactory) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, ModuleHandlerInterface $module_handler, RendererInterface $renderer, ActivityNotifications $activity_notifications, EntityTypeManagerInterface $entityTypeManager, ConfigFactoryInterface $configFactory, ControllerResolverInterface $controller_resolver) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->moduleHandler = $module_handler;
     $this->renderer = $renderer;
     $this->activityNotifications = $activity_notifications;
     $this->entityTypeManager = $entityTypeManager;
     $this->configFactory = $configFactory;
+    $this->controllerResolver = $controller_resolver;
   }
 
   /**
@@ -102,7 +114,8 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
       $container->get('renderer'),
       $container->get('activity_creator.activity_notifications'),
       $container->get('entity_type.manager'),
-      $container->get('config.factory')
+      $container->get('config.factory'),
+      $container->get('controller_resolver')
     );
   }
 
@@ -149,8 +162,12 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
       // Allow modules to alter the defined content creation links.
       $this->moduleHandler->alter('social_user_account_header_create_links', $create_links, $context);
 
-      // Add the create links as children of the create content menu item.
       $menu_items['create'] += $create_links;
+
+      // If the user can't access any children then we disable the entire menu.
+      if (!$this->hasAccessibleChild($menu_items['create'])) {
+        $menu_items['create']['#access'] = FALSE;
+      }
 
       $account_name = $account->getDisplayName();
 
@@ -263,6 +280,68 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
     }
 
     return $block;
+  }
+
+  /**
+   * Checks if the element has a child with a valid access check.
+   *
+   * Loops through the children until it finds an element whose access is set to
+   * true or who has an access check returning true.
+   *
+   * This method is needed in case the parent creates markup that should be
+   * hidden if the user can't access any of the children.
+   *
+   * This method mutates the checked children and sets their #access values so
+   * that the access checks don't have to happen multiple times.
+   *
+   * @param array $parent
+   *   The parent element whose children to check.
+   *
+   * @return bool
+   *   Whether the parent has visible children.
+   */
+  protected function hasAccessibleChild(array &$parent) : bool {
+    $children = Element::children($parent);
+
+    foreach ($children as $key) {
+      $element = &$parent[$key];
+      // If there's no precomputed access value, check for access callbacks.
+      // This is logic adapted from Drupal\Core\Render\Renderer::doRender.
+      if (!isset($element['#access']) && isset($element['#access_callback'])) {
+        if (is_string($element['#access_callback']) && strpos($element['#access_callback'], '::') === FALSE) {
+          $element['#access_callback'] = $this->controllerResolver->getControllerFromDefinition($element['#access_callback']);
+        }
+        // Store the result of the access callback so it can be checked.
+        $element['#access'] = call_user_func($element['#access_callback'], $element);
+      }
+
+      // Check if there's a precomputed access value or if one has been set
+      // from an access callback.
+      if (isset($element['#access'])) {
+        // It can either be an access result or a true/false value.
+        if ($element['#access'] instanceof AccessResultInterface) {
+          // If this child is inaccessible then we check the other children.
+          if ($element['#access']->isForbidden()) {
+            continue;
+          }
+          // If the child is not forbidden then we've found an accessible child.
+          return TRUE;
+        }
+
+        // If the access variable is falsy then check the other children.
+        if (!$element['#access']) {
+          continue;
+        }
+        // A truthy access value has been found so we have an accessible child.
+        return TRUE;
+      }
+
+      // If this element has no access checks then it's visible.
+      return TRUE;
+    }
+
+    // No accessible child was found.
+    return FALSE;
   }
 
 }

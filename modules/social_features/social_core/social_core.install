@@ -882,3 +882,10 @@ function social_core_update_8501() {
   $config->set('usage_data_enabled', 0);
   $config->save();
 }
+
+/**
+ * Enable social_node module.
+ */
+function social_core_update_8801() {
+  \Drupal::service('module_installer')->install(['social_node']);
+}
