@@ -112,13 +112,14 @@
 
   <div class='teaser__body'>
     <div class="teaser__content">
-      {{ title_prefix }}
-      {% if not page %}
-        <h4{{ title_attributes }} class="teaser__title">
+
+      {% block card_title %}
+        {{ title_prefix }}
+          <h4{{ title_attributes }} class="teaser__title">
             <a href="{{ url }}" rel="bookmark">{{ label }}</a>
-        </h4>
-      {% endif %}
-      {{ title_suffix }}
+          </h4>
+        {{ title_suffix }}
+      {%- endblock -%}
 
       {% block card_body %}
 

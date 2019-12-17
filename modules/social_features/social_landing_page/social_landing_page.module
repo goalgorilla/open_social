@@ -295,12 +295,12 @@ function _social_landing_page_get_hero_image(Node $node) {
 function social_landing_page_social_user_account_header_create_links($context) {
   return [
     'add_landing_page' => [
-        '#type' => 'link',
-        '#attributes' => [
-          'title' => new TranslatableMarkup('Create New Landing Page'),
-        ],
-        '#title' => new TranslatableMarkup('New Landing Page'),
-        '#weight' => 400,
+      '#type' => 'link',
+      '#attributes' => [
+        'title' => new TranslatableMarkup('Create New Landing Page'),
+      ],
+      '#title' => new TranslatableMarkup('New Landing Page'),
+      '#weight' => 400,
       ] + Url::fromRoute('node.add', ['node_type' => 'landing_page'])->toRenderArray(),
   ];
 }
