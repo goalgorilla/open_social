@@ -70,13 +70,15 @@ class NotificationsController extends ControllerBase {
     $view->setDisplay('block_1');
     $rendered_view = $view->render();
 
-    // Set the notification count.
-    $notification_count = $this->activities->markAllNotificationsAsSeen($this->currentUser()) ? 0 : count($this->activities->getNotifications($this->currentUser()));
-
     // Create a response.
     $response = new AjaxResponse();
+    // Attach the view before marking the notification as seen.
+    // This makes sure to render the correct background color of notifications.
+    // @see social/modules/custom/activity_creator/activity.page.inc L#117
     $response->addCommand(new HtmlCommand('.js-notification-center-wrapper', $rendered_view));
-    // Update the notification count to mark as read.
+
+    // Update the notification count to mark as seen.
+    $notification_count = $this->activities->markAllNotificationsAsSeen($this->currentUser()) ? 0 : count($this->activities->getNotifications($this->currentUser()));
     $response->addCommand(new HtmlCommand('.notification-bell .badge', $notification_count));
 
     return $response;

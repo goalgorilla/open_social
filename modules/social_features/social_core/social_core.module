@@ -114,8 +114,7 @@ function social_core_form_system_site_information_settings_alter(&$form, FormSta
  */
 function social_core_node_links_alter(array &$links, NodeInterface $entity, array &$context) {
   // Remove the comment links.
-  unset($links['comment__field_topic_comments']);
-  unset($links['comment__field_event_comments']);
+  unset($links['comment__field_topic_comments'], $links['comment__field_event_comments']);
 
   if (isset($context['view_mode']) && in_array($context['view_mode'], ['activity', 'activity_comment'])) {
     // Add a readmore link.
@@ -124,8 +123,7 @@ function social_core_node_links_alter(array &$links, NodeInterface $entity, arra
       'title' => t('Read more<span class="visually-hidden"> about @title</span>', [
         '@title' => $node_title_stripped,
       ]),
-      'url' => $entity->urlInfo(),
-      'language' => $entity->language(),
+      'url' => $entity->toUrl(),
       'attributes' => [
         'rel' => 'tag',
         'title' => $node_title_stripped,
