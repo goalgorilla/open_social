@@ -3,16 +3,6 @@
 
 // SocialBlue Sky.
 .socialblue--sky {
-  .teaser {
-    .card__link {
-      .btn {
-        font-weight: 700;
-        text-transform: uppercase;
-        border-width: 2px;
-      }
-    }
-  }
-
   .badge-status {
     @include for-tablet-landscape-up {
       margin-left: .5rem;
@@ -37,6 +27,7 @@
     font-weight: 700;
     text-transform: uppercase;
     margin-right: .5rem;
+    margin-bottom: .5rem;
 
     a {
       font-weight: 700;
@@ -45,6 +36,16 @@
 
     @include for-tablet-landscape-down {
       font-size: .75rem;
+    }
+  }
+
+  .teaser--tile {
+    .badge__label {
+      color: $default-color;
+    }
+
+    .teaser__title {
+      min-height: auto;
     }
   }
 }

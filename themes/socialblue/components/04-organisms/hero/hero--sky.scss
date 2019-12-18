@@ -47,10 +47,21 @@
   }
 
   .hero__banner {
+    .hero-footer__share {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+
+      > span {
+        padding-right: 1.25rem;
+        font-size: .875rem;
+        font-weight: 600;
+      }
+    }
+
     .shariff.card__block {
       display: flex;
-      flex: auto;
-      justify-content: flex-end;
+      flex: none;
       padding: 0;
 
       .orientation-horizontal {
@@ -387,9 +398,9 @@
     .hero-footer__header {
       display: flex;
       flex-direction: column;
-      padding: 1.875rem;
+      padding-bottom: 2.5rem;
       margin-bottom: 1.25rem;
-      background: $gray-lightest;
+      border-bottom: 1px solid #d5d6d2;
 
       @include for-tablet-portrait-up {
         flex-direction: row;
