@@ -74,7 +74,6 @@
 #}
 
 {{ attach_library('socialbase/hero') }}
-{{ attach_library('socialblue/hero--sky') }}
 
 {% set classes = [
   'hero__banner',
@@ -83,9 +82,7 @@
 ] %}
 
 <div{{ attributes.addClass(classes) }}>
-
   <div class="container">
-
     <div class="cover-wrap">
 
       {% if node_edit_url %}
@@ -105,66 +102,69 @@
         </div>
       {% endif %}
 
-      {% if content.field_event_image %}
-        <div class="hero-image">
-          {{ content.field_event_image }}
+      {% block card_prefix %}
+      {% endblock %}
+
+      {% block card_title %}
+        <div class="hero__tag">
+          <span>{{ node.type.entity.label() }}</span>
+          {% if topic_type %}
+            &nbsp; &nbsp; ▶ &nbsp; &nbsp;
+            {{ topic_type }}
+          {% endif %}
         </div>
-      {% endif %}
 
-      <div class="hero__tag">
-        <span>{{ node.type.entity.label() }}</span>
-        {% if topic_type or event_type %}
-          &nbsp; &nbsp; ▶ &nbsp; &nbsp;
-          {{ topic_type }}
-        {% endif %}
-      </div>
-
-      {{ title_prefix }}
-      <h2{{ title_attributes }} class="teaser__title">
-        <a href="{{ url }}" rel="bookmark">{{ label }}</a>
-      </h2>
-      {{ title_suffix }}
+        {{ title_prefix }}
+        <h2{{ title_attributes }} class="teaser__title">
+          <a href="{{ url }}" rel="bookmark">{{ label }}</a>
+        </h2>
+        {{ title_suffix }}
+      {% endblock %}
 
       {% if display_submitted %}
         {% block metainfo %}
           <header class="metainfo">
+
             <div class="metainfo__avatar">
               {{ author_picture }}
             </div>
+
             <div class="metainfo__content">
               {{ author }}
               <span class="metainfo__published-date">&bullet; {{ created_date_formatted }} </span>
-              <div>
-                {% if group_link %}
-                  {% trans %} in group {{ group_link }}{% endtrans %}
-                  &bullet;
-                {% endif %}
-                {% if visibility_icon and visibility_label %}
-                  <div class="badge badge--large"
-                       title="{% trans %}The visibility of this content is set to {{ visibility_label }}{% endtrans %} ">
+
+              {% if visibility_icon and visibility_label %}
+                &bullet;
+                <div class="badge badge--large"
+                     title="{% trans %}The visibility of this content is set to {{ visibility_label }}{% endtrans %} ">
                     <span class="badge__container">
                       <svg class="badge__icon">
                         <use xlink:href="#icon-{{ visibility_icon }}"></use>
                       </svg>
                       <span class="badge__label">&nbsp;</span>
-                      <span class="badge__label badge__label--description">{{ visibility_label }}</span>
+                      <span class="badge__label badge__label--description">{{ visibility_label|capitalize }}</span>
                     </span>
-                  </div>
+                </div>
+              {% endif %}
+
+              <div>
+                {% if group_link %}
+                  {% trans %} in group {{ group_link }}{% endtrans %}
                 {% endif %}
               </div>
             </div>
+
           </header>
         {% endblock %}
       {% endif %}
 
-
-      {% if not content.field_event_image %}
-        <div class="hero-image">
-          {% block card_image %}
+      {% block card_suffix %}
+        {% if node_image %}
+          <div class="hero-image">
             {{ node_image }}
-          {% endblock %}
-        </div>
-      {% endif %}
+          </div>
+        {% endif %}
+      {% endblock %}
 
       <div class="hero-footer">
 
@@ -179,25 +179,40 @@
               {% if comment_field_status is not empty %}
                 <a href="#section-comments" class="badge badge--large"
                    title="{% trans %}Total amount of comments{% endtrans %}">
-              <span class="badge__container">
-                <svg class="badge__icon">
-                  <use xlink:href="#icon-comment"></use>
-                </svg>
-                <span class="badge__label">
-                  {{ comment_count }}
-                </span>
-                <span class="badge__label badge__label--description">
-                  {% trans %}
-                    comment
-                  {% plural comment_count %}
-                    comments
-                  {% endtrans %}
-                </span>
-              </span>
+                  <span class="badge__container">
+                    <svg class="badge__icon">
+                      <use xlink:href="#icon-comment"></use>
+                    </svg>
+                    <span class="badge__label">
+                      {{ comment_count }}
+                    </span>
+                    <span class="badge__label badge__label--description">
+                      {% trans %}
+                        comment
+                      {% plural comment_count %}
+                        comments
+                      {% endtrans %}
+                    </span>
+                  </span>
                 </a>
               {% endif %}
 
               {{ content.like_and_dislike }}
+
+              {% if views_count is not empty and views_label %}
+                <div class="badge badge-default badge--large badge--pill"
+                     title="{% trans %}Total amount of views{% endtrans %}">
+                <span class="badge__container">
+                  <svg class="badge__icon">
+                    <use xlink:href="#icon-views"></use>
+                  </svg>
+                  <span class="badge__label">
+                    {{ views_count }}
+                  </span>
+                  <span class="badge__label badge__label--description">{{ views_label }}</span>
+                </span>
+                </div>
+              {% endif %}
 
               {% if content.flag_follow_content|render is not empty %}
                 <div class="meta-follow">
@@ -209,8 +224,12 @@
           {% endblock %}
 
         </div>
-
-        {{ content.shariff_field }}
+        {% if visibility_icon == 'public' %}
+          <div class="hero-footer__share">
+            {% trans %} Share this page {% endtrans %}
+            {{ content.shariff_field }}
+          </div>
+        {% endif %}
 
       </div>
     </div>

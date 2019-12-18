@@ -112,13 +112,14 @@
 
   <div class='teaser__body'>
     <div class="teaser__content">
-      {{ title_prefix }}
-      {% if not page %}
-        <h4{{ title_attributes }} class="teaser__title">
+
+      {% block card_title %}
+        {{ title_prefix }}
+          <h4{{ title_attributes }} class="teaser__title">
             <a href="{{ url }}" rel="bookmark">{{ label }}</a>
-        </h4>
-      {% endif %}
-      {{ title_suffix }}
+          </h4>
+        {{ title_suffix }}
+      {%- endblock -%}
 
       {% block card_body %}
 
@@ -131,20 +132,6 @@
                 <div class="teaser__published-author"> {{ author_name }} </div>
               </div>
             {%- endblock -%}
-          {% endembed %}
-        {% endif %}
-
-        {% if content.field_event_location|render is not empty %}
-          {% embed "node--teaser__field.html.twig" %}
-            {%- block field_icon -%} location {%- endblock -%}
-            {%- block field_value -%} {{ content.field_event_location }} {%- endblock -%}
-          {% endembed %}
-        {% endif %}
-
-        {% if event_type %}
-          {% embed "node--teaser__field.html.twig" %}
-            {%- block field_icon -%} label {%- endblock -%}
-            {%- block field_value -%} {{ event_type }} {%- endblock -%}
           {% endembed %}
         {% endif %}
 
@@ -171,7 +158,34 @@
 
     <div class="card__actionbar">
       {% block card_actionbar %}
-        {% if comment_count > 0 %}
+
+        {% if visibility_icon and visibility_label %}
+          <div class="badge teaser__badge"
+               title="{% trans %}The visibility of this content is set to {{ visibility_label }}{% endtrans %}">
+            <span class="badge__container">
+                <svg class="badge__icon">
+                  <use xlink:href="#icon-{{ visibility_icon }}"></use>
+                </svg>
+                <span class="badge__label text-gray">{{ visibility_label|capitalize }}</span>
+            </span>
+          </div>
+        {% endif %}
+
+
+        {% if likes_count is not empty %}
+          <div class="badge teaser__badge" title="{% trans %}Total amount of likes{% endtrans %}">
+            <span class="badge__container">
+              <svg class="badge__icon">
+                <use xlink:href="#icon-like"></use>
+              </svg>
+              <span class="badge__label">
+                {{ likes_count }}
+              </span>
+            </span>
+          </div>
+        {% endif %}
+
+        {% if comment_count is not empty %}
           <a href="{{ url }}#section-comments" class="badge badge--pill teaser__badge">
             <span class="badge__container">
               <svg class="badge__icon">
@@ -182,24 +196,8 @@
           </a>
         {% endif %}
 
-        {% if visibility_icon and visibility_label %}
-          <div class="badge teaser__badge" title="{% trans %}The visibility of this content is set to {{ visibility_label }}{% endtrans %} ">
-              <span class="badge__container">
-                  <svg class="badge__icon">
-                    <use xlink:href="#icon-{{ visibility_icon }}"></use>
-                  </svg>
-                  <span class="badge__label text-gray">{{ visibility_label|capitalize }}</span>
-              </span>
-          </div>
-        {% endif %}
-
-        {% if content.enrolled %}
-          <span class="badge badge-secondary teaser__badge">
-            {{ content.enrolled }}
-          </span>
-        {% endif %}
-
         {{ content.links }}
+
       {% endblock %}
     </div>
 
