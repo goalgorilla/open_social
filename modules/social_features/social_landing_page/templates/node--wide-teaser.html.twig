@@ -1,0 +1,99 @@
+{{ attach_library('socialbase/teaser') }}
+{{ attach_library('socialbase/page-node') }}
+
+{% set classes = [
+  'card',
+  'teaser',
+  'teaser--wide',
+] %}
+
+<div{{ attributes.addClass(classes) }}>
+  {% if status_label %}
+    <div class="node--unpublished__label">
+      {{ status_label }}
+    </div>
+  {% endif %}
+
+  <div class='teaser__image'>
+
+    {% if no_image %}
+      {% block card_teaser_type %}
+        <a href="{{ url }}">
+          <div class="teaser__teaser-type">
+            <svg class="teaser__teaser-type-icon">
+              <use xlink:href="#icon-{{- node.bundle|clean_class -}}"></use>
+            </svg>
+          </div>
+        </a>
+      {% endblock %}
+    {% endif %}
+
+    {% block card_image %}
+      {{ content.field_topic_image }}
+    {% endblock %}
+  </div>
+  <div class="teaser__icon">
+    <svg class="teaser__content-type-icon">
+      <use xlink:href="#icon-{{- node.bundle|clean_class -}}"></use>
+    </svg>
+  </div>
+  <div class='teaser__body'>
+    <div class="teaser__content">
+      <h4{{ title_attributes }} class="teaser__title">
+        <a href="{{ url }}" rel="bookmark">{{ label }}</a>
+      </h4>
+
+      {% block card_body %}
+
+        <div class="teaser__content-line">
+          <div class="teaser__published">
+              <div class="teaser__published-author">
+                {% if original_authors %}
+                  {% for item in original_authors %}
+                    <span>{{ item }}</span>
+                  {% endfor %}
+                {% else %}
+                  {{ author_name }}
+                {% endif %}
+              </div>
+
+            <div class="teaser__published-date">
+              <span> &nbsp; &bullet; &nbsp; </span>
+              {% if original_date %}
+                {{ original_date }}
+              {% else %}
+                {{ date }}
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      {% endblock %}
+    </div>
+
+    <div class="card__actionbar">
+      <div class="card__actionbar-side">
+        <div class="teaser__tag">
+          {{ content_type }}
+        </div>
+
+        <div class="teaser__published-lang">
+          {% if original_languages %}
+            {% for item in original_languages %}
+              {% if loop.last %}
+                <span>{{ item }}</span>
+              {% else %}
+                <span>{{ item }}</span>&nbsp;|&nbsp;
+              {% endif %}
+            {% endfor %}
+          {% endif %}
+        </div>
+
+      </div>
+      <div class="card__actionbar-side right-side">
+        {{ content.links }}
+      </div>
+    </div>
+
+  </div>
+
+</div>
