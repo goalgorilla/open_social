@@ -2,11 +2,26 @@
 
 {% block card_title %}
 
-  <div class="teaser__tag">
-    {% if topic_type %}
-      {{ topic_type }}
-    {% else %}
-      {{ node.type.entity.label() }}
+  <div class="teaser__header">
+
+    <div class="teaser__tag">
+      {% if topic_type %}
+        {{ topic_type }}
+      {% else %}
+        {{ node.type.entity.label() }}
+      {% endif %}
+    </div>
+
+    {% if visibility_icon and visibility_label %}
+      <div class="badge teaser__badge no-padding"
+           title="{% trans %}The visibility of this content is set to {{ visibility_label }}{% endtrans %} ">
+        <span class="badge__container">
+          <svg class="badge__icon">
+            <use xlink:href="#icon-{{ visibility_icon }}"></use>
+          </svg>
+          <span class="badge__label text-gray">{{ visibility_label|capitalize }}</span>
+        </span>
+      </div>
     {% endif %}
   </div>
 
@@ -16,23 +31,11 @@
   </h4>
   {{ title_suffix }}
 
-  {% if visibility_icon and visibility_label %}
-    <div class="badge teaser__badge no-padding"
-         title="{% trans %}The visibility of this content is set to {{ visibility_label }}{% endtrans %} ">
-      <span class="badge__container">
-        <svg class="badge__icon">
-          <use xlink:href="#icon-{{ visibility_icon }}"></use>
-        </svg>
-        <span class="badge__label text-gray">{{ visibility_label|capitalize }}</span>
-      </span>
-    </div>
-  {% endif %}
-
 {% endblock %}
 
 {% block card_body %}
 
-  <small class="text-muted">
+  <small class="text-muted teaser__not-icon">
     {% if display_submitted %}
       {% embed "node--teaser__field.html.twig" %}
         {%- block field_icon -%} account_circle {%- endblock -%}
