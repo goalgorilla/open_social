@@ -4,6 +4,7 @@ dependencies:
   config:
     - field.field.paragraph.featured.field_featured_description
     - field.field.paragraph.featured.field_featured_items
+    - field.field.paragraph.featured.field_featured_layout
     - field.field.paragraph.featured.field_featured_link
     - field.field.paragraph.featured.field_featured_title
     - paragraphs.paragraphs_type.featured
@@ -32,6 +33,12 @@ content:
       placeholder: ''
     third_party_settings: {  }
     type: dynamic_entity_reference_default
+    region: content
+  field_featured_layout:
+    weight: 4
+    settings: {  }
+    third_party_settings: {  }
+    type: options_select
     region: content
   field_featured_link:
     weight: 3

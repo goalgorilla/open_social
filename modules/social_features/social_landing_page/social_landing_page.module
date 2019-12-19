@@ -52,6 +52,9 @@ function social_landing_page_theme() {
   $theme_templates['node__landing_page'] = [
     'base hook' => 'node',
   ];
+  $theme_templates['node__wide_teaser'] = [
+    'base hook' => 'node',
+  ];
   $theme_templates['node__featured'] = [
     'base hook' => 'node',
   ];
@@ -74,8 +77,14 @@ function social_landing_page_theme() {
   $theme_templates['group__featured'] = [
     'base hook' => 'group',
   ];
+  $theme_templates['group__wide_teaser'] = [
+    'base hook' => 'group',
+  ];
   // Profile.
   $theme_templates['profile__featured'] = [
+    'base hook' => 'profile',
+  ];
+  $theme_templates['profile__wide_teaser'] = [
     'base hook' => 'profile',
   ];
   // Paragraphs.
@@ -184,6 +193,18 @@ function social_landing_page_preprocess_paragraph(&$variables) {
       if ($entity->hasField($image_field) && !empty($entity->{$image_field}->entity)) {
         $variables['hero_small_styled_image_url'] = ImageStyle::load($image_style)
           ->buildUrl($entity->{$image_field}->entity->getFileUri());
+      }
+      break;
+
+    case 'featured':
+      $field_name = 'field_featured_layout';
+      if ($entity->hasField($field_name) && $entity->{$field_name}->value === 'vertical') {
+        for ($i = 0; $i < 3; $i++) {
+          if (isset($variables['content']['field_featured_items'][$i])) {
+            $variables['content']['field_featured_items'][$i]['#view_mode'] = 'wide_teaser';
+            $variables['content']['field_featured_items'][$i]['#cache']['tags'][] = 'paragraph:config:' . $entity->id();
+          }
+        }
       }
       break;
   }

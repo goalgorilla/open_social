@@ -4,6 +4,7 @@ dependencies:
   config:
     - field.field.paragraph.featured.field_featured_description
     - field.field.paragraph.featured.field_featured_items
+    - field.field.paragraph.featured.field_featured_layout
     - field.field.paragraph.featured.field_featured_link
     - field.field.paragraph.featured.field_featured_title
     - paragraphs.paragraphs_type.featured
@@ -90,6 +91,9 @@ content:
       vote_result:
         view_mode: default
         link: false
+      course_enrollment:
+        view_mode: default
+        link: false
     third_party_settings: {  }
     type: dynamic_entity_reference_entity_view
     region: content
@@ -113,4 +117,6 @@ content:
     third_party_settings: {  }
     type: string
     region: content
-hidden: {  }
+hidden:
+  field_featured_layout: true
+  search_api_excerpt: true
