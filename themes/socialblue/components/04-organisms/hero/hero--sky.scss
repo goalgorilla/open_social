@@ -295,12 +295,6 @@
         justify-content: space-between;
       }
 
-      a:not(.btn) {
-        @include for-tablet-landscape-up {
-          font-size: 1rem;
-        }
-      }
-
       > * {
         margin-bottom: 1rem;
         flex: 0 0 100%;
@@ -314,6 +308,14 @@
 
         &:last-child {
           margin-bottom: 0;
+        }
+      }
+    }
+
+    .hero-footer__list {
+      a {
+        @include for-tablet-landscape-up {
+          font-size: 1rem;
         }
       }
     }
