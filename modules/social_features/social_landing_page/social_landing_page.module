@@ -55,7 +55,7 @@ function social_landing_page_theme() {
   $theme_templates['node__featured'] = [
     'base hook' => 'node',
   ];
-  $theme_templates['node__featured__sky'] = [
+  $theme_templates['node__event__featured'] = [
     'base hook' => 'node',
   ];
   // Group.
@@ -217,13 +217,6 @@ function social_landing_page_preprocess_node(&$variables) {
         }
       }
     }
-  }
-  // Add no_image flag if there are no image uploaded.
-  $variables['no_image'] = TRUE;
-  $image_field = "field_{$node->getType()}_image";
-
-  if (!empty($node->{$image_field}->entity)) {
-    $variables['no_image'] = FALSE;
   }
 }
 

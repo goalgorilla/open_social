@@ -47,10 +47,21 @@
   }
 
   .hero__banner {
+    .hero-footer__share {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+
+      > span {
+        padding-right: 1.25rem;
+        font-size: .875rem;
+        font-weight: 600;
+      }
+    }
+
     .shariff.card__block {
       display: flex;
-      flex: auto;
-      justify-content: flex-end;
+      flex: none;
       padding: 0;
 
       .orientation-horizontal {
@@ -133,7 +144,7 @@
 
         @include for-tablet-landscape-up {
           width: 26px;
-          margin-right: 1rem;
+          margin-right: 10px;
         }
       }
 
@@ -142,8 +153,9 @@
         margin-bottom: 0;
 
 
-        .badge--large:first-child {
+        .badge--large {
           padding-left: 0;
+          font-size: 1rem;
           font-weight: 700;
         }
 
@@ -152,7 +164,7 @@
           padding-right: 1rem;
 
           @include for-tablet-landscape-up {
-            padding-right: 2.5rem;
+            padding-right: 45px;
           }
         }
       }
@@ -161,6 +173,10 @@
         margin-left: 0;
         margin-bottom: 0;
         flex-basis: auto;
+      }
+
+      .vote__count {
+        font-size: 1rem;
       }
     }
 
@@ -279,12 +295,6 @@
         justify-content: space-between;
       }
 
-      a:not(.btn) {
-        @include for-tablet-landscape-up {
-          font-size: 1rem;
-        }
-      }
-
       > * {
         margin-bottom: 1rem;
         flex: 0 0 100%;
@@ -298,6 +308,14 @@
 
         &:last-child {
           margin-bottom: 0;
+        }
+      }
+    }
+
+    .hero-footer__list {
+      a {
+        @include for-tablet-landscape-up {
+          font-size: 1rem;
         }
       }
     }
@@ -362,7 +380,7 @@
   }
 
   // Hero banner static for event teaser pages.
-  &.page-node-type-event .hero__banner-static {
+  &.path-node:not(.page-node-type-topic) .hero__banner-static {
     @include for-tablet-portrait-up {
       padding-top: 75px;
     }

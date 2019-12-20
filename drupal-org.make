@@ -53,6 +53,7 @@ projects[group][patch][] = "https://www.drupal.org/files/issues/2018-12-19/group
 projects[group][patch][] = "https://www.drupal.org/files/issues/2018-11-01/3010896-02.patch"
 projects[group][patch][] = "https://www.drupal.org/files/issues/2019-01-31/gnode-loadbyentity-3029878-2.patch"
 projects[group][patch][] = "https://www.drupal.org/files/issues/2019-01-31/gnode-access-grants-3029849-2.patch"
+projects[group][patch][] = "https://www.drupal.org/files/issues/2019-12-04/group-3098675-2.patch"
 projects[image_effects][type] = module
 projects[image_effects][version] = 2.3
 projects[image_widget_crop][type] = module

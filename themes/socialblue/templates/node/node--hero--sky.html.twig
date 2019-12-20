@@ -5,10 +5,17 @@
  *
  * Available variables:
  * - node: The node entity with limited access to object properties and methods.
-     Only "getter" methods (method names starting with "get", "has", or "is")
-     and a few common methods such as "id" and "label" are available. Calling
-     other methods (such as node.delete) will result in an exception.
- * - label: The title of the node.
+ *   Only method names starting with "get", "has", or "is" and a few common
+ *   methods such as "id", "label", and "bundle" are available. For example:
+ *   - node.getCreatedTime() will return the node creation timestamp.
+ *   - node.hasField('field_example') returns TRUE if the node bundle includes
+ *     field_example. (This does not indicate the presence of a value in this
+ *     field.)
+ *   - node.isPublished() will return whether the node is published or not.
+ *   Calling other methods, such as node.delete(), will result in an exception.
+ *   See \Drupal\node\Entity\Node for a full list of public properties and
+ *   methods for the node object.
+ * - label: (optional) The title of the node.
  * - content: All node items. Use {{ content }} to print them all,
  *   or print a subset such as {{ content.field_example }}. Use
  *   {{ content|without('field_example') }} to temporarily suppress the printing
@@ -16,8 +23,8 @@
  * - author_picture: The node author user entity, rendered using the "compact"
  *   view mode.
  * - metadata: Metadata for this node.
- * - date: Themed creation date field.
- * - author_name: Themed author name field.
+ * - date: (optional) Themed creation date field.
+ * - author_name: (optional) Themed author name field.
  * - url: Direct URL of the current node.
  * - display_submitted: Whether submission information should be displayed.
  * - attributes: HTML attributes for the containing element.
@@ -67,7 +74,7 @@
 #}
 
 {{ attach_library('socialbase/hero') }}
-{{ attach_library('socialblue/hero--sky') }}
+{{ attach_library('socialbase/page-node') }}
 
 {% set classes = [
   'hero__banner',
@@ -76,9 +83,7 @@
 ] %}
 
 <div{{ attributes.addClass(classes) }}>
-
   <div class="container">
-
     <div class="cover-wrap">
 
       {% if node_edit_url %}
@@ -98,70 +103,69 @@
         </div>
       {% endif %}
 
-      {% if content.field_event_image %}
-        <div class="hero-image">
-          {{ content.field_event_image }}
+      {% block card_prefix %}
+      {% endblock %}
+
+      {% block card_title %}
+        <div class="hero__tag">
+          <span>{{ node.type.entity.label() }}</span>
+          {% if topic_type %}
+            &nbsp; &nbsp; ▶ &nbsp; &nbsp;
+            {{ topic_type }}
+          {% endif %}
         </div>
-      {% endif %}
 
-      <div class="hero__tag">
-        <span>{{ node.type.entity.label() }}</span>
-        {% if topic_type or event_type %}
-          &nbsp; &nbsp; ▶ &nbsp; &nbsp;
-          {{ topic_type }}
-        {% endif %}
-      </div>
-
-      {{ title_prefix }}
-      <h2{{ title_attributes }} class="teaser__title">
-        <a href="{{ url }}" rel="bookmark">{{ label }}</a>
-      </h2>
-      {{ title_suffix }}
+        {{ title_prefix }}
+        <h2{{ title_attributes }} class="teaser__title">
+          <a href="{{ url }}" rel="bookmark">{{ label }}</a>
+        </h2>
+        {{ title_suffix }}
+      {% endblock %}
 
       {% if display_submitted %}
         {% block metainfo %}
           <header class="metainfo">
+
             <div class="metainfo__avatar">
               {{ author_picture }}
             </div>
+
             <div class="metainfo__content">
               {{ author }}
               <span class="metainfo__published-date">&bullet; {{ created_date_formatted }} </span>
-              <div>
-                {% if group_link %}
-                  {% trans %} in group {% endtrans %}
-                  {{ group_link }}
-                  &bullet;
-                {% endif %}
-                {% if visibility_icon and visibility_label %}
-                  <div class="badge badge--large"
-                       title="{% trans %}The visibility of this content is set to {% endtrans %} {{ visibility_label }}">
+
+              {% if visibility_icon and visibility_label %}
+                &bullet;
+                <div class="badge badge--large"
+                     title="{% trans %}The visibility of this content is set to {{ visibility_label }}{% endtrans %} ">
                     <span class="badge__container">
                       <svg class="badge__icon">
                         <use xlink:href="#icon-{{ visibility_icon }}"></use>
                       </svg>
                       <span class="badge__label">&nbsp;</span>
-                      <span class="badge__label badge__label--description">{{ visibility_label }}</span>
+                      <span class="badge__label badge__label--description">{{ visibility_label|capitalize }}</span>
                     </span>
-                  </div>
+                </div>
+              {% endif %}
+
+              <div>
+                {% if group_link %}
+                  {% trans %} in group {{ group_link }}{% endtrans %}
                 {% endif %}
               </div>
             </div>
+
           </header>
         {% endblock %}
       {% endif %}
 
-
-      {% if not content.field_event_image %}
-        <div class="hero-image">
-          {% block card_image %}
-            {{ content.field_topic_image }}
-            {{ content.field_page_image }}
-            {{ content.field_book_image }}
-            {{ content.field_image }}
-          {% endblock %}
-        </div>
-      {% endif %}
+      {% block card_suffix %}
+        {% if node_image %}
+          <div class="hero-image">
+            {{ node_image }}
+          </div>
+        {% endif %}
+      {% endblock %}
 
       <div class="hero-footer">
 
@@ -176,27 +180,42 @@
               {% if comment_field_status is not empty %}
                 <a href="#section-comments" class="badge badge--large"
                    title="{% trans %}Total amount of comments{% endtrans %}">
-              <span class="badge__container">
-                <svg class="badge__icon">
-                  <use xlink:href="#icon-comment_thicker"></use>
-                </svg>
-                <span class="badge__label">
-                  {{ comment_count }}
-                </span>
-                <span class="badge__label badge__label--description">
-                  {% if comment_count == 1 %}
-                    {% trans %}comment{% endtrans %}
-                  {% else %}
-                    {% trans %}comments{% endtrans %}
-                  {% endif %}
-                </span>
-              </span>
+                  <span class="badge__container">
+                    <svg class="badge__icon">
+                      <use xlink:href="#icon-comment"></use>
+                    </svg>
+                    <span class="badge__label">
+                      {{ comment_count }}
+                    </span>
+                    <span class="badge__label badge__label--description">
+                      {% trans %}
+                        comment
+                      {% plural comment_count %}
+                        comments
+                      {% endtrans %}
+                    </span>
+                  </span>
                 </a>
               {% endif %}
 
               {{ content.like_and_dislike }}
 
-              {% if content.flag_follow_content|render is not empty and logged_in %}
+              {% if views_count is not empty and views_label %}
+                <div class="badge badge--large"
+                     title="{% trans %}Total amount of views{% endtrans %}">
+                <span class="badge__container">
+                  <svg class="badge__icon">
+                    <use xlink:href="#icon-views"></use>
+                  </svg>
+                  <span class="badge__label">
+                    {{ views_count }}
+                  </span>
+                  <span class="badge__label badge__label--description">{{ views_label }}</span>
+                </span>
+                </div>
+              {% endif %}
+
+              {% if content.flag_follow_content|render is not empty %}
                 <div class="meta-follow">
                   {{ content.flag_follow_content }}
                 </div>
@@ -206,8 +225,12 @@
           {% endblock %}
 
         </div>
-
-        {{ content.shariff_field }}
+        {% if visibility_icon == 'public' %}
+          <div class="hero-footer__share">
+            <span>{% trans %} Share this page {% endtrans %}</span>
+            {{ content.shariff_field }}
+          </div>
+        {% endif %}
 
       </div>
     </div>

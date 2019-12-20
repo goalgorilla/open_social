@@ -23,16 +23,31 @@
       flex-wrap: wrap;
 }
 
+.socialblue--sky .hero__banner .hero-footer__share {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: end;
+      -ms-flex-pack: end;
+          justify-content: flex-end;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+.socialblue--sky .hero__banner .hero-footer__share > span {
+  padding-right: 1.25rem;
+  font-size: .875rem;
+  font-weight: 600;
+}
+
 .socialblue--sky .hero__banner .shariff.card__block {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-  -webkit-box-flex: 1;
-      -ms-flex: auto;
-          flex: auto;
-  -webkit-box-pack: end;
-      -ms-flex-pack: end;
-          justify-content: flex-end;
+  -webkit-box-flex: 0;
+      -ms-flex: none;
+          flex: none;
   padding: 0;
 }
 
@@ -129,8 +144,9 @@
   margin-bottom: 0;
 }
 
-.socialblue--sky .hero__banner .hero-footer__list .meta-engage .badge--large:first-child {
+.socialblue--sky .hero__banner .hero-footer__list .meta-engage .badge--large {
   padding-left: 0;
+  font-size: 1rem;
   font-weight: 700;
 }
 
@@ -144,6 +160,10 @@
   margin-bottom: 0;
   -ms-flex-preferred-size: auto;
       flex-basis: auto;
+}
+
+.socialblue--sky .hero__banner .hero-footer__list .vote__count {
+  font-size: 1rem;
 }
 
 .socialblue--sky .hero__banner .badge {
@@ -292,19 +312,19 @@
   text-transform: uppercase;
 }
 
-.socialblue--sky.page-node-type-event .hero__banner-static .hero-image {
+.socialblue--sky.path-node:not(.page-node-type-topic) .hero__banner-static .hero-image {
   margin-bottom: 3.5rem;
 }
 
-.socialblue--sky.page-node-type-event .hero__banner-static .metainfo {
+.socialblue--sky.path-node:not(.page-node-type-topic) .hero__banner-static .metainfo {
   margin-bottom: 26px;
 }
 
-.socialblue--sky.page-node-type-event .hero__banner-static .hero-footer {
+.socialblue--sky.path-node:not(.page-node-type-topic) .hero__banner-static .hero-footer {
   padding-top: 0;
 }
 
-.socialblue--sky.page-node-type-event .hero__banner-static .hero-footer__header {
+.socialblue--sky.path-node:not(.page-node-type-topic) .hero__banner-static .hero-footer__header {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -317,25 +337,25 @@
   border-bottom: 1px solid #d5d6d2;
 }
 
-.socialblue--sky.page-node-type-event .hero__banner-static .hero-footer__text {
+.socialblue--sky.path-node:not(.page-node-type-topic) .hero__banner-static .hero-footer__text {
   margin-top: 0;
 }
 
-.socialblue--sky.page-node-type-event .hero__banner-static .article__special-fields {
+.socialblue--sky.path-node:not(.page-node-type-topic) .hero__banner-static .article__special-fields {
   padding: 0;
   border: 0;
   letter-spacing: .4px;
 }
 
-.socialblue--sky.page-node-type-event .hero__banner-static .article__special-fields .article__special-field {
+.socialblue--sky.path-node:not(.page-node-type-topic) .hero__banner-static .article__special-fields .article__special-field {
   margin-bottom: 10px;
 }
 
-.socialblue--sky.page-node-type-event .hero__banner-static .article__special-fields .article__special-field:last-child {
+.socialblue--sky.path-node:not(.page-node-type-topic) .hero__banner-static .article__special-fields .article__special-field:last-child {
   margin-bottom: 0;
 }
 
-.socialblue--sky.page-node-type-event .hero__banner-static .hero-footer__cta .btn {
+.socialblue--sky.path-node:not(.page-node-type-topic) .hero__banner-static .hero-footer__cta .btn {
   min-width: 195px;
   color: inherit;
 }
@@ -427,10 +447,10 @@
     margin-left: 0;
     margin-right: 25%;
   }
-  .socialblue--sky.page-node-type-event .hero__banner-static {
+  .socialblue--sky.path-node:not(.page-node-type-topic) .hero__banner-static {
     padding-top: 75px;
   }
-  .socialblue--sky.page-node-type-event .hero__banner-static .hero-footer__header {
+  .socialblue--sky.path-node:not(.page-node-type-topic) .hero__banner-static .hero-footer__header {
     -webkit-box-orient: horizontal;
     -webkit-box-direction: normal;
         -ms-flex-direction: row;
@@ -439,14 +459,14 @@
         -ms-flex-align: end;
             align-items: flex-end;
   }
-  .socialblue--sky.page-node-type-event .hero__banner-static .hero-footer__text {
+  .socialblue--sky.path-node:not(.page-node-type-topic) .hero__banner-static .hero-footer__text {
     -webkit-box-flex: 0;
         -ms-flex: 0 0 100%;
             flex: 0 0 100%;
     max-width: 100%;
     margin-right: 0;
   }
-  .socialblue--sky.page-node-type-event .hero__banner-static .article__special-fields .article__special-fields-icon {
+  .socialblue--sky.path-node:not(.page-node-type-topic) .hero__banner-static .article__special-fields .article__special-fields-icon {
     width: 20px;
     height: 20px;
   }
@@ -464,10 +484,10 @@
   }
   .socialblue--sky .hero__banner .hero-footer__list svg {
     width: 26px;
-    margin-right: 1rem;
+    margin-right: 10px;
   }
   .socialblue--sky .hero__banner .hero-footer__list .meta-engage > * {
-    padding-right: 2.5rem;
+    padding-right: 45px;
   }
   .socialblue--sky .hero__banner-static .teaser__title {
     font-size: 2.25rem;
@@ -484,15 +504,15 @@
         -ms-flex-pack: justify;
             justify-content: space-between;
   }
-  .socialblue--sky .hero__banner-static .hero-footer a:not(.btn) {
-    font-size: 1rem;
-  }
   .socialblue--sky .hero__banner-static .hero-footer > * {
     margin-bottom: 0;
     -webkit-box-flex: 0;
         -ms-flex: 0 0 auto;
             flex: 0 0 auto;
     max-width: inherit;
+  }
+  .socialblue--sky .hero__banner-static .hero-footer__list a {
+    font-size: 1rem;
   }
   .socialblue--sky .hero__banner-static .hero-footer__cta {
     -webkit-box-flex: 0;
@@ -501,13 +521,13 @@
     max-width: 35%;
     padding-top: 0;
   }
-  .socialblue--sky.page-node-type-event .hero__banner-static .hero-footer__header {
+  .socialblue--sky.path-node:not(.page-node-type-topic) .hero__banner-static .hero-footer__header {
     -webkit-box-flex: 0;
         -ms-flex: 0 0 100%;
             flex: 0 0 100%;
     max-width: 100%;
   }
-  .socialblue--sky.page-node-type-event .hero__banner-static .hero-footer__text {
+  .socialblue--sky.path-node:not(.page-node-type-topic) .hero__banner-static .hero-footer__text {
     -webkit-box-flex: 0;
         -ms-flex: 0 0 65%;
             flex: 0 0 65%;
@@ -533,7 +553,7 @@
   .socialblue--sky .hero__banner-static .hero-footer__cta .btn {
     width: 100%;
   }
-  .socialblue--sky.page-node-type-event .hero__banner-static .hero-image {
+  .socialblue--sky.path-node:not(.page-node-type-topic) .hero__banner-static .hero-image {
     margin-bottom: 1.75rem;
   }
 }
