@@ -1300,7 +1300,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Open Social\n"
 "POT-Creation-Date: 2019-12-06 00:22+0000\n"
-"PO-Revision-Date: 2019-12-02 22:03+0000\n"
+"PO-Revision-Date: 2019-12-23 21:53+0000\n"
 "Last-Translator: Alicia Pallas <traducciones.aliciapallas@gmail.com>\n"
 "Language-Team: Greenpeace Galician <https://translate.getopensocial.com/"
 "projects/open-social/distribution/gl_GPI/>\n"
@@ -1714,6 +1714,28 @@ msgid ""
 "\t</tbody>\r\n"
 "</table>"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-"
+"name]</a> comentou [social_comment:commented_content_type] <a href=\""
+"[message:field_message_related_object:entity:url:absolute]\">[message:node-"
+"title]</a> de [social_comment:parent_entity_author] que ti segues</p>\n"
+"\n"
+"<table class=\"comments\">\n"
+"<tr>\n"
+"<td class=\"post\"><strong>[social_comment:comment_author]</strong> <small>• "
+"[social_comment:comment_date]</small>\n"
+"<p>[social_comment:comment_text]</p>\n"
+"</td>\n"
+"</tr>\n"
+"</table>\n"
+"<table class=\"btn-wrapp\">\n"
+"\t<tbody>\n"
+"\t\t<tr>\n"
+"\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-"
+"one\" href=\"[social_comment:commented_entity_link]\">Responder a este "
+"comentario </a></td>\n"
+"\t\t</tr>\n"
+"\t</tbody>\n"
+"</table>"
 
 #: modules/social_features/social_activity/config/install/message.template.create_comment_group_node.yml:0
 msgid ""
@@ -1722,6 +1744,10 @@ msgid ""
 "commented_content_type] in <a href=\"[message:gurl]\">[message:gtitle]</a></"
 "p>\n"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-"
+"name]</a> comentou [social_comment:commented_content_type] de "
+"[social_comment:parent_entity_author] en <a href=\"[message:gurl]\""
+">[message:gtitle]</a></p>\n"
 
 #: modules/social_features/social_activity/config/install/message.template.create_comment_community_node.yml:0
 msgid ""
@@ -1729,12 +1755,18 @@ msgid ""
 "a> commented on [social_comment:parent_entity_author]'s [social_comment:"
 "commented_content_type]</p>\n"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-"
+"name]</a> comentou un  [social_comment:commented_content_type] de "
+"[social_comment:parent_entity_author]</p>\n"
 
 #: modules/social_features/social_activity/config/install/message.template.create_comment_group_post.yml:0
 msgid ""
 "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
 "a> commented on a post in <a href=\"[message:gurl]\">[message:gtitle]</a></p>"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-"
+"name]</a> comentou unha publicación en <a href=\"[message:gurl]\""
+">[message:gtitle]</a></p>"
 
 #: modules/social_features/social_activity/config/install/message.template.create_comment_post_profile.yml:0;0
 msgid ""
@@ -1742,6 +1774,9 @@ msgid ""
 "a> commented on a post on your <a href=\"[message:recipient-user-"
 "url]\">profile</a></p>\r\n"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-"
+"name]</a> comentou unha publicación no teu <a href=\"[message:recipient-user-"
+"url]\">perfil</a></p>\n"
 
 #: modules/social_features/social_activity/config/install/message.template.create_comment_post_profile.yml:0
 msgid ""
@@ -1766,18 +1801,42 @@ msgid ""
 "\t</tbody>\r\n"
 "</table>"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-"
+"name]</a> comentou unha publicación no teu <a href=\"[message:recipient-user-"
+"url]\">perfil</a></p>\n"
+"<table class=\"comments\">\n"
+"<tr>\n"
+"<td class=\"post\"><strong>[social_comment:comment_author]</strong> <small>• "
+"[social_comment:comment_date]</small>\n"
+"<p>[social_comment:comment_text]</p>\n"
+"</td>\n"
+"</tr>\n"
+"</table>\n"
+"<table class=\"btn-wrapp\">\n"
+"\t<tbody>\n"
+"\t\t<tr>\n"
+"\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-"
+"one\" href=\"[social_comment:comment_reply_link_html]\">Responder a este "
+"comentario </a></td>\n"
+"\t\t</tr>\n"
+"\t</tbody>\n"
+"</table>"
 
 #: modules/social_features/social_activity/config/install/message.template.create_comment_community_post.yml:0
 msgid ""
 "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
 "a> commented on a post</p>"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-"
+"name]</a> comentou unha publicación</p>"
 
 #: modules/social_features/social_activity/config/install/message.template.create_comment_author_node_post.yml:0;0
 msgid ""
 "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
 "a> commented on your [social_comment:commented_entity_link_html]</p>\r\n"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-"
+"name]</a> comentou o teu [social_comment:commented_entity_link_html]</p>\n"
 
 #: modules/social_features/social_activity/config/install/message.template.create_comment_author_node_post.yml:0
 msgid ""
@@ -1801,6 +1860,25 @@ msgid ""
 "\t</tbody>\r\n"
 "</table>"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-"
+"name]</a> comentou o teu [social_comment:commented_entity_link_html]</p>\n"
+"<table class=\"comments\">\n"
+"<tr>\n"
+"<td class=\"post\"><strong>[social_comment:comment_author]</strong> <small>• "
+"[social_comment:comment_date]</small>\n"
+"<p>[social_comment:comment_text]</p>\n"
+"</td>\n"
+"</tr>\n"
+"</table>\n"
+"<table class=\"btn-wrapp\">\n"
+"\t<tbody>\n"
+"\t\t<tr>\n"
+"\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-"
+"one\" href=\"[social_comment:comment_reply_link_html]\">Responder a este "
+"comentario </a></td>\n"
+"\t\t</tr>\n"
+"\t</tbody>\n"
+"</table>"
 
 #: modules/social_features/social_activity/config/install/message.template.moved_content_between_groups.yml:0
 msgid ""
@@ -1808,6 +1886,9 @@ msgid ""
 "a> created [social_group:content_type] in <a href=\"[message:gurl]\">"
 "[message:gtitle]</a></p>"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-"
+"name]</a> creou [social_group:content_type] en <a href=\"[message:gurl]\""
+">[message:gtitle]</a></p>"
 
 #: modules/social_features/social_activity/config/install/message.template.create_content_in_joined_group.yml:0;0
 msgid ""
@@ -1815,6 +1896,9 @@ msgid ""
 "a> created [social_group:created_entity_link_html] in the <a href=\"[message:"
 "gurl]\">[message:gtitle]</a> group</p>"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-"
+"name]</a> creou [social_group:created_entity_link_html] no grupo <a href=\""
+"[message:gurl]\">[message:gtitle]</a></p>"
 
 #: modules/social_features/social_activity/config/install/message.template.create_content_in_joined_group.yml:0
 msgid ""
@@ -1822,30 +1906,44 @@ msgid ""
 "a> created [social_group:created_entity_link_html] in the <a href=\"[message:"
 "gurl]\">[message:gtitle]</a> group</p><p>[message:additional_information]</p>"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-"
+"name]</a> creou [social_group:created_entity_link_html] no grupo<a href=\""
+"[message:gurl]\">[message:gtitle]</a> "
+"</p><p>[message:additional_information]</p>"
 
 #: modules/social_features/social_activity/config/install/message.template.create_topic_group.yml:0
 msgid ""
 "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
 "a> created a topic in <a href=\"[message:gurl]\">[message:gtitle]</a></p>"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-"
+"name]</a> creou un tema en <a href=\"[message:gurl]\""
+">[message:gtitle]</a></p>"
 
 #: modules/social_features/social_activity/config/install/message.template.create_topic_community.yml:0
 msgid ""
 "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
 "a> created a topic</p>"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-"
+"name]</a> creou un tema</p>"
 
 #: modules/social_features/social_activity/config/install/message.template.create_event_group.yml:0
 msgid ""
 "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
 "a> created an event in <a href=\"[message:gurl]\">[message:gtitle]</a></p>"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-"
+"name]</a> creou un evento en <a href=\"[message:gurl]\""
+">[message:gtitle]</a></p>"
 
 #: modules/social_features/social_activity/config/install/message.template.create_event_community.yml:0
 msgid ""
 "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
 "a> created an event</p>"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-"
+"name]</a> creou un evento</p>"
 
 #: modules/social_features/social_like/config/install/message.template.create_like_node_or_post.yml:0;0;0
 msgid ""
@@ -2361,19 +2459,19 @@ msgstr ""
 
 #: modules/social_features/social_activity/config/install/message.template.create_topic_group.yml:0
 msgid "A user created a topic in a group"
-msgstr ""
+msgstr "Un/ha usuari@ creou un tema nun grupo"
 
 #: modules/social_features/social_activity/config/install/message.template.create_topic_community.yml:0
 msgid "A user created a topic in the community"
-msgstr ""
+msgstr "Un/ha usuari@ creou un tema na comunidade"
 
 #: modules/social_features/social_activity/config/install/message.template.create_event_group.yml:0
 msgid "A user created an event in a group"
-msgstr ""
+msgstr "Un/ha usuari@ creou un evento nun grupo"
 
 #: modules/social_features/social_activity/config/install/message.template.create_event_community.yml:0
 msgid "A user created an event in the community"
-msgstr ""
+msgstr "Un/ha usuari@ creou un evento na comunidade"
 
 #: modules/social_features/social_content_report/config/install/message.template.content_reported.yml:0
 msgid "A user reported inappropriate content"
@@ -2721,11 +2819,11 @@ msgstr ""
 
 #: translations.php:38
 msgid "Add attachment"
-msgstr ""
+msgstr "Engadir arquivo adxunto"
 
 #: modules/custom/social_demo/social_demo.drush.inc:42
 msgid "Add demo content."
-msgstr ""
+msgstr "Engadir contido de mostra"
 
 #: modules/social_features/social_event/modules/social_event_managers/social_event_managers.links.action.yml:0
 #: modules/social_features/social_event/modules/social_event_managers/social_event_managers.routing.yml:0
@@ -2739,7 +2837,7 @@ msgstr ""
 
 #: themes/socialbase/templates/file/image-widget.html.twig:73
 msgid "Add image"
-msgstr ""
+msgstr "Engadir imaxe"
 
 #: modules/social_features/social_group/social_group.links.action.yml:0
 #: modules/social_features/social_group/src/Controller/SocialGroupController.php:122
@@ -3063,7 +3161,7 @@ msgstr ""
 
 #: modules/custom/activity_basics/src/Plugin/ActivityEntityCondition/CommentAllActivityEntityCondition.php:7
 msgid "All comments"
-msgstr ""
+msgstr "Todos os comentarios"
 
 #: modules/social_features/social_search/config/install/search_api.index.social_all.yml:0
 msgid "All content index created for the Social distribution."
@@ -5483,21 +5581,23 @@ msgstr "Inscrit@"
 
 #: modules/social_features/social_event/modules/social_event_managers/config/install/views.view.event_manage_enrollments.yml:0
 msgid "Enrollee"
-msgstr ""
+msgstr "Persoa inscrita"
 
 #: translations.php:55
 msgid "Enrollment options"
-msgstr ""
+msgstr "Opcións de inscrición"
 
 #: modules/social_features/social_event/config/install/field.field.event_enrollment.event_enrollment.field_enrollment_status.yml:0
 msgid "Enrollment status"
-msgstr ""
+msgstr "Estado de inscrición"
 
 #: modules/social_features/social_event/modules/social_event_an_enroll/social_event_an_enroll.module:251
 msgid ""
 "Enrollment without account can only be enabled when the visibility of the "
 "event is Public."
 msgstr ""
+"A inscrición sen conta só se pode activar cando o evento ten visibilidade "
+"pública."
 
 #: modules/social_features/social_event/modules/social_event_managers/social_event_managers.module:328
 #: modules/social_features/social_event/config/install/views.view.event_enrollments.yml:0;0;0
@@ -6285,7 +6385,7 @@ msgstr ""
 
 #: modules/social_features/social_group/config/install/views.view.group_members.yml:0;0
 msgid "Group Members"
-msgstr ""
+msgstr "Membros do grupo"
 
 #: modules/custom/social_tour/config/install/tour.tour.social_group_overview.yml:0
 msgid "Group Overview functionality."
@@ -6394,7 +6494,7 @@ msgstr ""
 #: modules/social_features/social_group/modules/social_group_flexible_group/config/install/field.storage.group.field_group_allowed_visibility.yml:0
 #: modules/social_features/social_post/config/install/field.storage.post.field_visibility.yml:0
 msgid "Group members"
-msgstr ""
+msgstr "Membros do grupo"
 
 #: modules/social_features/social_event/config/install/field.storage.node.field_content_visibility.yml:0
 msgid "Group members - visible only to group members"
@@ -6960,7 +7060,7 @@ msgstr ""
 
 #: modules/custom/social_demo/src/Plugin/DemoContent/Like.php:7
 msgid "Like"
-msgstr ""
+msgstr "Gústame"
 
 #: modules/social_features/social_like/config/install/votingapi.vote_type.like.yml:0
 msgid "Like vote"
@@ -7585,7 +7685,7 @@ msgstr "O máis recente primeiro"
 #: modules/social_features/social_landing_page/src/Plugin/Field/FieldWidget/BlockFieldWidget.php:46
 #: modules/social_features/social_group/config/install/views.view.newest_groups.yml:0;0
 msgid "Newest groups"
-msgstr ""
+msgstr "Grupos máis recentes"
 
 #: modules/social_features/social_group/config/install/views.view.newest_groups.yml:0;0
 msgid "Newest groups block"
@@ -7667,11 +7767,11 @@ msgstr ""
 
 #: modules/social_features/social_group/config/install/views.view.group_events.yml:0
 msgid "No events in this group"
-msgstr ""
+msgstr "Non hai eventos neste grupo"
 
 #: modules/social_features/social_group/config/install/views.view.groups.yml:0
 msgid "No groups found for this user"
-msgstr ""
+msgstr "Non se atoparon grupos para est@ usuari@"
 
 #: modules/social_features/social_like/config/install/views.view.who_liked_this_entity.yml:0
 msgid "No likes yet"
@@ -7899,7 +7999,7 @@ msgstr "Desprazamento"
 
 #: themes/socialbase/templates/views/views-mini-pager.html.twig:34
 msgid "Older items"
-msgstr ""
+msgstr "Elementos máis antigos"
 
 #: modules/social_features/social_post/src/Plugin/Field/FieldFormatter/CommentPostFormatter.php:165
 msgid "Oldest first"
@@ -8860,7 +8960,7 @@ msgstr ""
 #: modules/social_features/social_landing_page/templates/profile--featured.html.twig:32
 #: themes/socialbase/templates/group/group--teaser.html.twig:109
 msgid "Read more"
-msgstr ""
+msgstr "Ler máis"
 
 #: modules/social_features/social_activity/templates/message-node-teaser.html.twig:5
 msgid "Read more about this"
@@ -9092,17 +9192,17 @@ msgstr ""
 #: modules/social_features/social_content_report/config/install/flag.flag.report_node.yml:0
 #: modules/social_features/social_content_report/config/install/flag.flag.report_post.yml:0
 msgid "Report"
-msgstr ""
+msgstr "Denunciar"
 
 #: modules/social_features/social_content_report/config/install/flag.flag.report_comment.yml:0;0
 #: modules/social_features/social_content_report/config/install/flag.flag.report_node.yml:0;0
 #: modules/social_features/social_content_report/config/install/flag.flag.report_post.yml:0;0
 msgid "Report as inappropriate"
-msgstr ""
+msgstr "Denunciar como desapropiado"
 
 #: modules/social_features/social_content_report/config/install/flag.flag.report_comment.yml:0
 msgid "Report inappropriate comment"
-msgstr ""
+msgstr "Denunciar comentario non apropiado"
 
 #: modules/social_features/social_content_report/config/install/flag.flag.report_node.yml:0
 msgid "Report inappropriate nodes"
@@ -9263,11 +9363,11 @@ msgstr ""
 
 #: modules/social_features/social_post/social_post.module:62
 msgid "Say something to the Community"
-msgstr ""
+msgstr "Dille algo á comunidade"
 
 #: modules/social_features/social_post/social_post.module:51;52
 msgid "Say something to the group"
-msgstr ""
+msgstr "Dille algo ao grupo"
 
 #: modules/social_features/social_search/social_search.module:217
 #: modules/social_features/social_search/src/SocialSearchBreadcrumbBuilder.php:53
@@ -9277,7 +9377,7 @@ msgstr ""
 #: modules/social_features/social_search/config/optional/block.block.search_block_hero.yml:0
 #: modules/social_features/social_search/config/optional/block.block.socialblue_search_block_hero.yml:0
 msgid "Search"
-msgstr "Buscar"
+msgstr "Procurar"
 
 #: modules/social_features/social_search/config/schema/social_search.views.schema.yml:0
 msgid "Search API date"
