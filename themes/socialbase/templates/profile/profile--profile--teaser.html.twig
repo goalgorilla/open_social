@@ -19,20 +19,40 @@
  * @ingroup themeable
  */
 #}
+
 {{ attach_library('socialbase/teaser')}}
+
 <div class="card teaser">
-  <a href="{{ profile_home }}" class="teaser__image">
-    {% if content.field_profile_image %}
+
+  {% block card_image %}
+    <div class="teaser__image">
+      <a href="{{ profile_home }}">
         {{ content.field_profile_image }}
-    {% endif %}
-  </a>
+      </a>
+    </div>
+  {% endblock %}
+
+  {% block card_teaser_type %}
+    <a href="{{ profile_home }}">
+      <div class="teaser__teaser-type">
+        <svg class="teaser__teaser-type-icon">
+          <use xlink:href="#icon-account_circle"></use>
+        </svg>
+      </div>
+    </a>
+  {% endblock %}
+
   <div class="teaser__body">
     <div class="teaser__content">
-      <h4 class="teaser__title">
-       <a href="{{ profile_home }}">
-         {{ profile_name }} {{ profile_name_extra }}
-        </a>
-      </h4>
+
+      {% block card_title %}
+        <h4 class="teaser__title">
+         <a href="{{ profile_home }}">
+           {{ profile_name }} {{ profile_name_extra }}
+          </a>
+        </h4>
+      {% endblock %}
+
       {% block card_body %}
         {% if content.field_profile_function|render or content.field_profile_organization|render %}
         <div class="teaser__content-line">
