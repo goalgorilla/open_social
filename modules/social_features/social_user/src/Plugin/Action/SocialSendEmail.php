@@ -168,7 +168,9 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
       $queue->createItem($data);
     }
 
-    return $users;
+    // Add a clarifying message.
+    $this->messenger()->addMessage($this->t('The emails are send in the background. You will be notified upon completion.'));
+    return [];
   }
 
   /**
