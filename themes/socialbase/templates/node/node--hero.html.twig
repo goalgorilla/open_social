@@ -71,12 +71,8 @@
 {%
   set cover_classes = [
   'cover',
-  group_hero_styled_image_url ? 'cover-img cover-img-gradient',
+  hero_styled_image_url ? 'cover-img cover-img-gradient',
 ]
-%}
-
-{%
-  set cover_wrap_classes = group_hero_small ? 'cover-wrap small' : 'cover-wrap'
 %}
 
 <div{{ attributes.addClass(cover_classes) }} {% if hero_styled_image_url %} style="background-image: url('{{ hero_styled_image_url }}');" {% endif %}>
