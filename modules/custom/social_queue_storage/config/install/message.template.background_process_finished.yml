@@ -1,5 +1,4 @@
-uuid: 5da25e59-9c7d-494c-a22f-b393455270ad
-langcode: nl
+langcode: en
 status: true
 dependencies:
   module:
@@ -12,15 +11,22 @@ third_party_settings:
     activity_context: platform_activity_context
     activity_destinations:
       notifications: notifications
+      email: email
     activity_create_direct: true
     activity_aggregate: false
     activity_entity_condition: queue_store_entity_send_activity_condition
 template: background_process_finished
 label: 'Background process finished'
-description: 'A background process started by a user has finished'
+description: 'A background process (e.g. sending bulk emails) has finished'
 text:
   -
-    value: "<p>Background activity sending email [queue_storage_entity:mail_task_subject] has finished.</p>"
+    value: '<p>Background process "[queue_storage_entity:mail_task_subject]" has finished.</p>'
+    format: basic_html
+  -
+    value: '<p>Background process "[queue_storage_entity:mail_task_subject]" has finished.</p>'
+    format: basic_html
+  -
+    value: '<p>Background process "[queue_storage_entity:mail_task_subject]" has finished.</p>'
     format: basic_html
 settings:
   'token options':
