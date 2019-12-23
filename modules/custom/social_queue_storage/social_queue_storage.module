@@ -18,3 +18,14 @@ function social_queue_storage_entity_update(EntityInterface $entity) {
       ->create($entity);
   }
 }
+
+/**
+ * Implements hook_activity_send_email_notifications_alter().
+ */
+function social_queue_storage_activity_send_email_notifications_alter(array &$items, array $email_message_templates) {
+  // If our background_process_finished template is enabled for email then we
+  // add it to the "System Notifications" section.
+  if (isset($email_message_templates['background_process_finished'])) {
+    $items['system_notifications']['templates'][] = 'background_process_finished';
+  }
+}
