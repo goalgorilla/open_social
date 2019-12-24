@@ -91,6 +91,8 @@ new PluralTranslatableMarkup(0, 'The role of 1 selected member has been changed 
 new PluralTranslatableMarkup(0, 'The role of 1 selected member has not been changed successfully', 'The role of @count selected members have not been changed successfully');
 new PluralTranslatableMarkup(0, 'Your email has been sent to 1 selected member successfully', 'Your email has been sent to @count selected members successfully');
 new PluralTranslatableMarkup(0, 'Your email has not been sent to 1 selected member successfully', 'Your email has not been sent to @count selected members successfully');
+new PluralTranslatableMarkup(0, 'Your email will be send to 1 selected enrollee', 'Your email will be send to @count selected enrollees');
+new PluralTranslatableMarkup(0, 'Your email will be send to 1 selected member', 'Your email will be send to @count selected members');
 new TranslatableMarkup("Remove");
 new TranslatableMarkup("Export");
 new TranslatableMarkup("Change the role");
