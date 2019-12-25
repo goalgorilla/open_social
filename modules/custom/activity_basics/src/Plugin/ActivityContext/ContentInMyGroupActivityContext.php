@@ -2,21 +2,20 @@
 
 namespace Drupal\activity_basics\Plugin\ActivityContext;
 
-use Drupal\activity_creator\Plugin\ActivityContextBase;
-use Drupal\group\Entity\Group;
 use Drupal\activity_creator\ActivityFactory;
+use Drupal\activity_creator\Plugin\ActivityContextBase;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\group\Entity\GroupContentInterface;
 use Drupal\group\Entity\GroupInterface;
-use Drupal\node\Entity\Node;
-use Drupal\social_post\Entity\Post;
+use Drupal\node\NodeInterface;
 use Drupal\social_post\Entity\PostInterface;
 
 /**
- * Provides a 'ContentInMyGroupActivityContext' acitivy context.
+ * Provides a 'ContentInMyGroupActivityContext' activity context.
  *
  * @ActivityContext(
- *  id = "content_in_my_group_activity_context",
- *  label = @Translation("Content in my group activity context"),
+ *   id = "content_in_my_group_activity_context",
+ *   label = @Translation("Content in my group activity context"),
  * )
  */
 class ContentInMyGroupActivityContext extends ActivityContextBase {
@@ -32,8 +31,9 @@ class ContentInMyGroupActivityContext extends ActivityContextBase {
       $referenced_entity = ActivityFactory::getActivityRelatedEntity($data);
       $owner_id = '';
 
-      if (isset($referenced_entity['target_type']) && $referenced_entity['target_type'] == 'post') {
-        $post = Post::load($referenced_entity['target_id']);
+      if (isset($referenced_entity['target_type']) && $referenced_entity['target_type'] === 'post') {
+        $post = $this->entityTypeManager->getStorage('post')
+          ->load($referenced_entity['target_id']);
 
         // It could happen that a notification has been queued but the content
         // has since been deleted. In that case we can find no additional
@@ -47,7 +47,8 @@ class ContentInMyGroupActivityContext extends ActivityContextBase {
       }
       else {
         /* @var \Drupal\group\Entity\GroupContentInterface $group_content_entity */
-        $group_content_entity = \Drupal::entityTypeManager()->getStorage('group_content')->load($referenced_entity['target_id']);
+        $group_content_entity = $this->entityTypeManager->getStorage('group_content')
+          ->load($referenced_entity['target_id']);
 
         // It could happen that a notification has been queued but the content
         // has since been deleted. In that case we can find no additional
@@ -56,11 +57,12 @@ class ContentInMyGroupActivityContext extends ActivityContextBase {
           return $recipients;
         }
 
-        /* @var \Drupal\node\Entity\Node $node */
         $node = $group_content_entity->getEntity();
-        if ($node instanceof Node) {
+
+        if ($node instanceof NodeInterface) {
           $owner_id = $node->getOwnerId();
         }
+
         $gid = $group_content_entity->get('gid')->getValue();
       }
 
@@ -70,7 +72,9 @@ class ContentInMyGroupActivityContext extends ActivityContextBase {
           'target_type' => 'group',
           'target_id' => $target_id,
         ];
-        $group = Group::load($target_id);
+
+        $group = $this->entityTypeManager->getStorage('group')
+          ->load($target_id);
 
         // It could happen that a notification has been queued but the content
         // has since been deleted. In that case we can find no additional
@@ -98,16 +102,18 @@ class ContentInMyGroupActivityContext extends ActivityContextBase {
   /**
    * {@inheritdoc}
    */
-  public function isValidEntity($entity) {
+  public function isValidEntity(EntityInterface $entity) {
     // Check if it's placed in a group (regardless off content type).
     if ($entity->getEntityTypeId() === 'group_content') {
       return TRUE;
     }
+
     if ($entity->getEntityTypeId() === 'post') {
-      if (!empty($entity->get('field_recipient_group')->getValue())) {
+      if (!$entity->field_recipient_group->isEmpty()) {
         return TRUE;
       }
     }
+
     return FALSE;
   }
 
