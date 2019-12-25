@@ -45,8 +45,8 @@ class ContentInMyGroupActivityContext extends ActivityContextBase {
         $owner_id = $post->getOwnerId();
       }
       else {
-        /* @var \Drupal\group\Entity\GroupContentInterface $group_content */
-        $group_content = $this->entityTypeManager->getStorage('group_content')
+        /* @var \Drupal\group\Entity\GroupContentInterface $group_content_entity */
+        $group_content_entity = $this->entityTypeManager->getStorage('group_content')
           ->load($referenced_entity['target_id']);
 
         // It could happen that a notification has been queued but the content
@@ -56,7 +56,7 @@ class ContentInMyGroupActivityContext extends ActivityContextBase {
           return $recipients;
         }
 
-        $node = $group_content->getEntity();
+        $node = $group_content_entity->getEntity();
 
         if ($node instanceof NodeInterface) {
           $owner_id = $node->getOwnerId();
@@ -66,7 +66,7 @@ class ContentInMyGroupActivityContext extends ActivityContextBase {
           }
         }
 
-        $gid = $group_content->get('gid')->getValue();
+        $gid = $group_content_entity->get('gid')->getValue();
       }
 
       if ($gid && isset($gid[0]['target_id'])) {
@@ -107,16 +107,17 @@ class ContentInMyGroupActivityContext extends ActivityContextBase {
   /**
    * {@inheritdoc}
    */
-  public function isValidEntity($entity) {
+  public function isValidEntity(EntityInterface $entity) {
     // Check if it's placed in a group (regardless off content type).
     if ($entity instanceof EntityInterface) {
       if ($entity->getEntityTypeId() === 'group_content') {
         return TRUE;
       }
-      elseif ($entity->getEntityTypeId() === 'post') {
-        if (!$entity->field_recipient_group->isEmpty()) {
-          return TRUE;
-        }
+    }
+
+    if ($entity->getEntityTypeId() === 'post') {
+      if (!$entity->field_recipient_group->isEmpty()) {
+        return TRUE;
       }
     }
 
