@@ -40,6 +40,8 @@ class ProfileActivityContext extends ActivityContextBase {
   public function isValidEntity($entity) {
     // Special cases for comments.
     if ($entity->getEntityTypeId() === 'comment') {
+      $comment_owner_id = $entity->getOwnerId();
+
       // Returns the entity to which the comment is attached.
       $entity = $entity->getCommentedEntity();
     }
@@ -57,6 +59,10 @@ class ProfileActivityContext extends ActivityContextBase {
         return FALSE;
       }
       elseif (!empty($entity->get('field_recipient_user')->getValue())) {
+        if (isset($comment_owner_id)) {
+          return $comment_owner_id !== $entity->field_recipient_user->target_id;
+        }
+
         return TRUE;
       }
     }
