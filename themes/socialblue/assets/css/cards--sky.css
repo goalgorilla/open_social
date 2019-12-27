@@ -1,26 +1,19 @@
-body:not(.socialblue--sky) .complementary--content-merged {
-  border-radius: 0 !important;
-  -webkit-box-shadow: none;
-          box-shadow: none;
-  background: transparent;
-}
-
 .socialblue--sky .card {
   margin-bottom: 1.5rem;
 }
 
-.socialblue--sky section:not(.content-merged) .complementary--content-merged {
+.socialblue--sky section:not(.content-merged--sky) .content-merged--sky--complementary {
   background: transparent;
   border-radius: 0 !important;
   -webkit-box-shadow: none;
           box-shadow: none;
 }
 
-.socialblue--sky .card__content-merged > h4 {
+.socialblue--sky .card--content-merged > h4 {
   margin-bottom: 1.25rem;
 }
 
-.socialblue--sky .card__content-merged .content-merged__list {
+.socialblue--sky .card--content-merged .card--content-merged__list {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -33,46 +26,46 @@ body:not(.socialblue--sky) .complementary--content-merged {
   border-bottom: 2px solid #fafafa;
 }
 
-.socialblue--sky .card__content-merged .content-merged__list h5,
-.socialblue--sky .card__content-merged .content-merged__list .list-item__label {
+.socialblue--sky .card--content-merged .card--content-merged__list h5,
+.socialblue--sky .card--content-merged .card--content-merged__list .list-item__label {
   margin-top: 0;
   font-size: .875rem;
   font-weight: 300;
   color: #9b9b9b;
 }
 
-.socialblue--sky .card__content-merged .content-merged__list:last-child {
+.socialblue--sky .card--content-merged .card--content-merged__list:last-child {
   border-bottom: 0;
 }
 
-.socialblue--sky .content-merged .region--complementary .card {
+.socialblue--sky .content-merged--sky .region--complementary .card {
   margin-bottom: 0;
 }
 
-.socialblue--sky .content-merged .region--complementary .card > .card__title {
+.socialblue--sky .content-merged--sky .region--complementary .card > .card__title {
   padding-top: 1.875rem;
   font-size: .875rem;
   text-transform: uppercase;
   color: #9b9b9b;
 }
 
-.socialblue--sky .content-merged .region--complementary .card > .card__actionbar {
+.socialblue--sky .content-merged--sky .region--complementary .card > .card__actionbar {
   padding-bottom: 1.875rem;
 }
 
-.socialblue--sky .content-merged .complementary--content-merged {
+.socialblue--sky .content-merged--sky .content-merged--sky--complementary {
   background: #fff;
 }
 
-.socialblue--sky .content-merged .region--complementary-top > .card,
-.socialblue--sky .content-merged .region--complementary-bottom > .card {
+.socialblue--sky .content-merged--sky .region--complementary-top > .card,
+.socialblue--sky .content-merged--sky .region--complementary-bottom > .card {
   position: relative;
   -webkit-box-shadow: none;
           box-shadow: none;
 }
 
-.socialblue--sky .content-merged .region--complementary-top > .card:after,
-.socialblue--sky .content-merged .region--complementary-bottom > .card:after {
+.socialblue--sky .content-merged--sky .region--complementary-top > .card:after,
+.socialblue--sky .content-merged--sky .region--complementary-bottom > .card:after {
   content: '';
   position: absolute;
   left: 1.5rem;
@@ -84,12 +77,12 @@ body:not(.socialblue--sky) .complementary--content-merged {
   top: 100%;
 }
 
-.socialblue--sky .content-merged .region--complementary-top > .card:last-child:after,
-.socialblue--sky .content-merged .region--complementary-bottom > .card:last-child:after {
+.socialblue--sky .content-merged--sky .region--complementary-top > .card:last-child:after,
+.socialblue--sky .content-merged--sky .region--complementary-bottom > .card:last-child:after {
   display: none;
 }
 
-.socialblue--sky .content-merged .region--complementary-top + .region--complementary-bottom > .card:first-child:before {
+.socialblue--sky .content-merged--sky .region--complementary-top + .region--complementary-bottom > .card:first-child:before {
   content: '';
   position: absolute;
   left: 1.5rem;
@@ -101,7 +94,8 @@ body:not(.socialblue--sky) .complementary--content-merged {
   bottom: 100%;
 }
 
-.socialblue--sky .content-merged [class*='statistic-block'] {
+.socialblue--sky .content-merged--sky .block-profile-statistic-block,
+.socialblue--sky .content-merged--sky .block-group-statistic-block {
   -webkit-box-shadow: none;
           box-shadow: none;
 }
@@ -244,14 +238,14 @@ body:not(.socialblue--sky) .complementary--content-merged {
 }
 
 @media (min-width: 600px) {
-  .socialblue--sky .card__content-merged .content-merged__list {
+  .socialblue--sky .card--content-merged .card--content-merged__list {
     -webkit-box-orient: horizontal;
     -webkit-box-direction: normal;
         -ms-flex-direction: row;
             flex-direction: row;
   }
-  .socialblue--sky .card__content-merged .content-merged__list h5,
-  .socialblue--sky .card__content-merged .content-merged__list .list-item__label {
+  .socialblue--sky .card--content-merged .card--content-merged__list h5,
+  .socialblue--sky .card--content-merged .card--content-merged__list .list-item__label {
     -webkit-box-flex: 0;
         -ms-flex: 0 0 120px;
             flex: 0 0 120px;
@@ -286,16 +280,16 @@ body:not(.socialblue--sky) .complementary--content-merged {
     padding-left: 1.875rem;
     padding-right: 1.875rem;
   }
-  .socialblue--sky .card__content-merged > h4 {
+  .socialblue--sky .card--content-merged > h4 {
     font-size: 1.5rem;
   }
-  .socialblue--sky .content-merged .region--complementary-top > .card:after,
-  .socialblue--sky .content-merged .region--complementary-bottom > .card:after {
+  .socialblue--sky .content-merged--sky .region--complementary-top > .card:after,
+  .socialblue--sky .content-merged--sky .region--complementary-bottom > .card:after {
     left: 1.875rem;
     right: 1.875rem;
     max-width: 280px;
   }
-  .socialblue--sky .content-merged .region--complementary-top + .region--complementary-bottom > .card:first-child:before {
+  .socialblue--sky .content-merged--sky .region--complementary-top + .region--complementary-bottom > .card:first-child:before {
     left: 1.875rem;
     right: 1.875rem;
     max-width: 280px;
@@ -303,16 +297,16 @@ body:not(.socialblue--sky) .complementary--content-merged {
 }
 
 @media (min-width: 1200px) {
-  .socialblue--sky .card__content-merged {
+  .socialblue--sky .card--content-merged {
     padding: .875rem 3.5rem 5.75rem;
   }
 }
 
 @media (max-width: 899px) {
-  .socialblue--sky .complementary--content-merged {
+  .socialblue--sky .content-merged--sky--complementary {
     margin-bottom: 0;
   }
-  .socialblue--sky .content-merged .complementary--content-merged {
+  .socialblue--sky .content-merged--sky .content-merged--sky--complementary {
     margin-bottom: 0;
   }
   .socialblue--sky [class*='statistic-block'] {

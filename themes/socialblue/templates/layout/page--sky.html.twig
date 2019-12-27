@@ -39,16 +39,8 @@
 
 <main id="content" class="main-container" role="main">
 
-  {% if page.breadcrumb %}
-    {{ page.breadcrumb }}
-  {% endif %}
-
   {% if page.hero %}
     {{ page.hero }}
-  {% endif %}
-
-  {% if page.secondary_navigation %}
-    {{ page.secondary_navigation }}
   {% endif %}
 
   {% if page.content_top %}
@@ -63,14 +55,20 @@
         {{ page.title }}
       {% endif %}
 
+      {% if page.secondary_navigation %}
+        {{ page.secondary_navigation }}
+      {% endif %}
+
       {% if page.complementary_top or page.complementary_bottom %}
         <aside class="region--complementary" role="complementary">
-          {% if page.complementary_top %}
-            {{ page.complementary_top }}
-          {% endif %}
-          {% if page.complementary_bottom %}
-            {{ page.complementary_bottom }}
-          {% endif %}
+          <div class="content-merged--sky--complementary card">
+            {% if page.complementary_top %}
+              {{ page.complementary_top }}
+            {% endif %}
+            {% if page.complementary_bottom %}
+              {{ page.complementary_bottom }}
+            {% endif %}
+          </div>
         </aside>
       {% endif %}
 
