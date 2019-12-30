@@ -72,6 +72,7 @@
 {%
   set classes = [
     'teaser',
+    'teaser-' ~ node.bundle|clean_class,
     view_mode == 'teaser' ? 'card',
     view_mode == 'activity' ? 'teaser--stream',
     view_mode == 'activity_comment' ? 'teaser--stream',
