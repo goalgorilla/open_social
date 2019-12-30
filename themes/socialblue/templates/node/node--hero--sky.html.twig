@@ -107,14 +107,6 @@
       {% endblock %}
 
       {% block card_title %}
-        <div class="hero__tag">
-          <span>{{ node.type.entity.label() }}</span>
-          {% if topic_type %}
-            &nbsp; &nbsp; ▶ &nbsp; &nbsp;
-            {{ topic_type }}
-          {% endif %}
-        </div>
-
         {{ title_prefix }}
         <h2{{ title_attributes }} class="teaser__title">
           <a href="{{ url }}" rel="bookmark">{{ label }}</a>
