@@ -26,14 +26,12 @@ function social_sharing_update_8001() {
   // Default shariff settings.
   _social_sharing_shariff_settings();
 
-  $blocks = [
+  $blocks = Block::loadMultiple([
     'addtoanybuttons',
     'addtoanybuttons_2',
-  ];
+  ]);
 
-  foreach ($blocks as $block_id) {
-    $block = Block::load($block_id);
-
+  foreach ($blocks as $block) {
     try {
       $block->delete();
     }
