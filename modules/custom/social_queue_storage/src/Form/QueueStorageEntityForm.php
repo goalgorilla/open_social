@@ -44,10 +44,12 @@ class QueueStorageEntityForm extends ContentEntityForm {
    * {@inheritdoc}
    */
   public function save(array $form, FormStateInterface $form_state) {
+    // Possibility to add additional data to the entity upon saving.
     $entity = $this->entity;
 
     $status = parent::save($form, $form_state);
 
+    // Add status message depending on the created state of the entity.
     switch ($status) {
       case SAVED_NEW:
         $this->messenger()->addMessage($this->t('Created the %label Queue storage entity.', [
