@@ -46,7 +46,7 @@ class QueueStorageEntitySettingsForm extends FormBase {
    *   Form definition array.
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    $form['queuestorageentity_settings']['#markup'] = 'Settings form for Queue storage entity entities. Manage field settings here.';
+    $form['queuestorageentity_settings']['#markup'] = $this->t('Settings form for Queue storage entity entities. Manage field settings here.');
     return $form;
   }
 
