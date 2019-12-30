@@ -12,8 +12,12 @@ use Drupal\Core\Config\Entity\ConfigEntityBundleBase;
  *   label = @Translation("Queue storage entity type"),
  *   handlers = {
  *     "view_builder" = "Drupal\Core\Entity\EntityViewBuilder",
- *     "list_builder" = "Drupal\Core\Entity\EntityListBuilder",
- *     "form" = {},
+ *     "list_builder" = "Drupal\social_queue_storage\QueueStorageEntityTypeListBuilder",
+ *     "form" = {
+ *       "default" = "Drupal\social_queue_storage\Form\QueueStorageEntityTypeForm",
+ *       "add" = "Drupal\social_queue_storage\Form\QueueStorageEntityTypeForm",
+ *       "edit" = "Drupal\social_queue_storage\Form\QueueStorageEntityTypeForm"
+ *   },
  *     "route_provider" = {
  *       "html" = "Drupal\Core\Entity\Routing\AdminHtmlRouteProvider",
  *     },
@@ -26,7 +30,12 @@ use Drupal\Core\Config\Entity\ConfigEntityBundleBase;
  *     "label" = "label",
  *     "uuid" = "uuid"
  *   },
- *   links = {}
+ *   links = {
+ *     "canonical" = "/admin/structure/queue_storage_entity_type/{queue_storage_entity_type}",
+ *     "add-form" = "/admin/structure/queue_storage_entity_type/add",
+ *     "edit-form" = "/admin/structure/queue_storage_entity_type/{queue_storage_entity_type}/edit",
+ *     "collection" = "/admin/structure/queue_storage_entity_type"
+ *   }
  * )
  */
 class QueueStorageEntityType extends ConfigEntityBundleBase implements QueueStorageEntityTypeInterface {

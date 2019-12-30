@@ -50,7 +50,8 @@ use Drupal\user\UserInterface;
  *     "delete-form" = "/admin/structure/queue_storage_entity/{queue_storage_entity}/delete",
  *     "collection" = "/admin/structure/queue_storage_entity",
  *   },
- *   bundle_entity_type = "queue_storage_entity_type"
+ *   bundle_entity_type = "queue_storage_entity_type",
+ *   field_ui_base_route = "entity.queue_storage_entity_type.edit_form"
  * )
  */
 class QueueStorageEntity extends ContentEntityBase implements QueueStorageEntityInterface {

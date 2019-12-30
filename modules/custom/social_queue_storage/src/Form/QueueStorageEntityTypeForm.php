@@ -21,7 +21,7 @@ class QueueStorageEntityTypeForm extends EntityForm {
       '#title' => $this->t('Label'),
       '#maxlength' => 255,
       '#default_value' => $queue_storage_entity_type->label(),
-      '#description' => $this->t("Label for the Queue storage entity type."),
+      '#description' => $this->t('Label for the Queue storage entity type.'),
       '#required' => TRUE,
     ];
     $form['id'] = [
