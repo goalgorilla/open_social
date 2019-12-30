@@ -40,6 +40,8 @@ class SocialEventAnEnrollEnrolmentsExportOverrides implements ConfigFactoryOverr
           ],
         ],
       ];
+
+      $overrides[$config_name]['display']['default']['display_options']['fields']['social_views_bulk_operations_bulk_form_enrollments_1']['selected_actions']['social_event_enrolments_export_enrollments_action'] = 0;
     }
 
     return $overrides;

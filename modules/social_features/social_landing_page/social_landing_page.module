@@ -106,6 +106,12 @@ function social_landing_page_theme() {
   $theme_templates['paragraph__section__default'] = [
     'base hook' => 'paragraph',
   ];
+  $theme_templates['paragraph__accordion__default'] = [
+    'base hook' => 'paragraph',
+  ];
+  $theme_templates['paragraph__accordion_item__default'] = [
+    'base hook' => 'paragraph',
+  ];
   // Fields.
   $theme_templates['field__paragraph__section'] = [
     'base hook' => 'field',
@@ -150,19 +156,6 @@ function social_landing_page_preprocess_page(&$variables) {
       $variables['content_attributes']->addClass('container');
     }
   }
-}
-
-/**
- * Implements hook_theme_registry_alter().
- */
-function social_landing_page_theme_registry_alter(&$theme_registry) {
-  // Here we put our preprocess function after bootstrap
-  // preprocess to have content_attributes inside.
-  $original = $theme_registry['page']['preprocess functions'];
-  $key = array_search('social_landing_page_preprocess_page', $original, TRUE);
-  unset($original[$key]);
-  array_splice($original, ++$key, 0, ['social_landing_page_preprocess_page']);
-  $theme_registry['page']['preprocess functions'] = $original;
 }
 
 /**

@@ -3,9 +3,11 @@ status: true
 dependencies:
   config:
     - field.storage.paragraph.field_section_paragraph
+    - paragraphs.paragraphs_type.accordion
     - paragraphs.paragraphs_type.block
     - paragraphs.paragraphs_type.featured
     - paragraphs.paragraphs_type.hero
+    - paragraphs.paragraphs_type.hero_small
     - paragraphs.paragraphs_type.introduction
     - paragraphs.paragraphs_type.section
   module:
@@ -31,6 +33,7 @@ settings:
       hero: hero
       hero_small: hero_small
       introduction: introduction
+      accordion: accordion
     target_bundles_drag_drop:
       section:
         weight: 3
@@ -50,4 +53,7 @@ settings:
       introduction:
         enabled: true
         weight: 7
+      accordion:
+        enabled: true
+        weight: 8
 field_type: entity_reference_revisions

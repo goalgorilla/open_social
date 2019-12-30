@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Install, update and uninstall functions for the social_comment module.
+ * Install, update and uninstall functions for the social_core module.
  */
 
 use Drupal\block\Entity\Block;
@@ -18,7 +18,6 @@ use Drupal\crop\Entity\CropType;
 use Drupal\node\Entity\Node;
 use Drupal\profile\Entity\Profile;
 use Drupal\group\Entity\Group;
-use Drupal\user\Entity\Role;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -27,7 +26,7 @@ use Symfony\Component\Yaml\Yaml;
 function social_core_requirements($phase) {
   $requirements = [];
 
-  if ($phase == 'runtime') {
+  if ($phase === 'runtime') {
     if (!\Drupal::service('module_handler')->moduleExists('social_file_private')) {
       $requirements['social_file_private_module_check'] = [
         'title' => 'Social Private Files',
@@ -73,7 +72,7 @@ function social_core_update_dependencies() {
 /**
  * Re-set permissions.
  */
-function social_core_update_8001(&$sandbox) {
+function social_core_update_8001() {
   // Set some default permissions.
   _social_core_set_permissions();
 }
@@ -82,16 +81,13 @@ function social_core_update_8001(&$sandbox) {
  * Function to set permissions.
  */
 function _social_core_set_permissions() {
-  $roles = Role::loadMultiple();
+  $roles = \Drupal::entityQuery('user_role')
+    ->condition('id', 'administrator', '<>')
+    ->execute();
 
-  /** @var \Drupal\user\Entity\Role $role */
   foreach ($roles as $role) {
-    if ($role->id() === 'administrator') {
-      continue;
-    }
-
-    $permissions = _social_core_get_permissions($role->id());
-    user_role_grant_permissions($role->id(), $permissions);
+    $permissions = _social_core_get_permissions($role);
+    user_role_grant_permissions($role, $permissions);
   }
 }
 
@@ -149,10 +145,7 @@ function _social_core_get_permissions($role) {
     'administer blocks',
   ]);
 
-  if (isset($permissions[$role])) {
-    return $permissions[$role];
-  }
-  return [];
+  return $permissions[$role] ?? [];
 }
 
 /**
@@ -257,17 +250,16 @@ function _social_core_create_menu_links() {
  * Enable full_html format for contentmanager and sitemanager roles.
  */
 function social_core_update_8002() {
-  $roles = Role::loadMultiple();
+  $roles = \Drupal::entityQuery('user_role')
+    ->condition('id', ['contentmanager', 'sitemanager'], 'IN')
+    ->execute();
 
   $permissions = [
     'use text format full_html',
   ];
 
-  /** @var \Drupal\user\Entity\Role $role */
   foreach ($roles as $role) {
-    if ($role->id() === 'contentmanager' || $role->id() === 'sitemanager') {
-      user_role_grant_permissions($role->id(), $permissions);
-    }
+    user_role_grant_permissions($role, $permissions);
   }
 }
 
@@ -287,17 +279,16 @@ function social_core_update_8003() {
  * Add permission to view admin theme for contentmanager and sitemanager roles.
  */
 function social_core_update_8004() {
-  $roles = Role::loadMultiple();
+  $roles = \Drupal::entityQuery('user_role')
+    ->condition('id', ['contentmanager', 'sitemanager'], 'IN')
+    ->execute();
 
   $permissions = [
     'view the administration theme',
   ];
 
-  /** @var \Drupal\user\Entity\Role $role */
   foreach ($roles as $role) {
-    if ($role->id() === 'contentmanager' || $role->id() === 'sitemanager') {
-      user_role_grant_permissions($role->id(), $permissions);
-    }
+    user_role_grant_permissions($role, $permissions);
   }
 }
 
@@ -890,5 +881,11 @@ function social_core_update_8501() {
   $config = \Drupal::configFactory()->getEditable('social_lets_connect_usage.settings');
   $config->set('usage_data_enabled', 0);
   $config->save();
+}
 
+/**
+ * Enable social_node module.
+ */
+function social_core_update_8801() {
+  \Drupal::service('module_installer')->install(['social_node']);
 }

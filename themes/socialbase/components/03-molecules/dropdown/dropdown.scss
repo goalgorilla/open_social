@@ -53,7 +53,7 @@
   z-index: $zindex-dropdown;
   display: none; // none by default, but block on "open" of the menu
   float: left;
-  min-width: 160px;
+  min-width: 275px;
   max-width: 500px;
   padding: 5px 0;
   margin: 2px 0 0; // override default ul
@@ -362,4 +362,9 @@ html:not(.js) {
       z-index: -1;
     }
   }
+}
+
+/* IE11 */
+@media (min-width: 600px) and (-ms-high-contrast:none) {
+  *::-ms-backdrop, .dropdown-menu .media-body { padding-right: 17px; }
 }

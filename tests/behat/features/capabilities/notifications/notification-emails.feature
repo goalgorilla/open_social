@@ -33,6 +33,10 @@ Feature: Receive email notifications and choose frequency
     And I am logged in as "user1"
     And I click the xth "0" element with the css ".navbar-nav .profile"
     And I click "Settings"
+    And I click "Email notifications"
+    And I wait for "2" seconds
+    And I click "Message to me"
+    And I wait for "2" seconds
     And I select "none" from "A person mentioned me in a post"
     And I press "Save"
 
@@ -54,6 +58,10 @@ Feature: Receive email notifications and choose frequency
     And I am logged in as "user1"
     And I click the xth "0" element with the css ".navbar-nav .profile"
     And I click "Settings"
+    And I click "Email notifications"
+    And I wait for "2" seconds
+    And I click "Message to me"
+    And I wait for "2" seconds
     And I select "daily" from "A person mentioned me in a post"
     And I press "Save"
 
@@ -88,6 +96,10 @@ Feature: Receive email notifications and choose frequency
     And I am logged in as "user1"
     And I click the xth "0" element with the css ".navbar-nav .profile"
     And I click "Settings"
+    And I click "Email notifications"
+    And I wait for "2" seconds
+    And I click "Message to me"
+    And I wait for "2" seconds
     And I select "weekly" from "A person mentioned me in a post"
     And I press "Save"
 

@@ -11,7 +11,7 @@ Feature: I want to restrict full name visibility when nickname is used
     And users:
       | name   | mail                     | status | field_profile_first_name | field_profile_last_name | field_profile_nick_name |
       | user_1 | user_1@example.localhost | 1      | Open                     | User                    |                         |
-      | user_2 | user_2@example.localhost | 1      | Secretive                | User                    | Hide my name            |
+      | user_2 | user_2@example.localhost | 1      | Secretive                | Person                  | Hide my name            |
       | user_3 | user_3@example.localhost | 1      |                          |                         | Completely Anonymous    |
 
   Scenario: Extra protection for real names
@@ -25,7 +25,7 @@ Feature: I want to restrict full name visibility when nickname is used
 
     When I go to the profile of "user_2"
     Then I should see "Hide my name"
-    But I should not see "Secretive User"
+    But I should not see "Secretive Person"
 
     # Search only allows searching for real names when the nickname is not
     # filled in.
@@ -34,10 +34,15 @@ Feature: I want to restrict full name visibility when nickname is used
 
     When I search users for "Secretive"
     Then I should not see "Hide my name"
-    And I should not see "Secretive user"
+    And I should not see "Secretive Person"
 
     When I search users for "Hide my name"
     Then I should see "Hide my name"
+
+    # Searching for an exact full name should not expose it. This tests for a
+    # reported bug that allowed users to guess hidden full names.
+    When I search users for "Secretive Person"
+    Then I should not see "Hide my name"
 
     # TODO: Add test for mentioning using Javascript?
 
@@ -55,7 +60,7 @@ Feature: I want to restrict full name visibility when nickname is used
     Then I should see "Open User"
 
     When I go to the profile of "user_2"
-    Then I should see "Hide my name (Secretive User)"
+    Then I should see "Hide my name (Secretive Person)"
 
     When I go to the profile of "user_3"
     Then I should see "Completely Anonymous"
@@ -65,10 +70,10 @@ Feature: I want to restrict full name visibility when nickname is used
     Then I should see "Open User"
 
     When I search users for "Secretive"
-    Then I should see "Hide my name (Secretive User)"
+    Then I should see "Hide my name (Secretive Person)"
 
     When I search users for "Hide my name"
-    Then I should see "Hide my name (Secretive User)"
+    Then I should see "Hide my name (Secretive Person)"
 
     When I search users for "Completely"
     Then I should see "Completely Anonymous"
@@ -103,14 +108,7 @@ Feature: I want to restrict full name visibility when nickname is used
 
     When I search users for "user"
     Then I should see "Open User"
-    ###
-    # Due to a small bug in the code, a match on username is filtered out when
-    # the user has a nickname and the search also matched the full name. Even
-    # though the match on the username should always cause a result to be
-    # displayed. The bug should be fixed and the next line uncommented as a test
-    # that it works.
-    ###
-    # And I should see "Hide my name"
+    And I should see "Hide my name"
     And I should see "Completely Anonymous"
 
     # TODO: This should happen automatically see: https://github.com/goalgorilla/open_social/pull/1306
@@ -130,7 +128,7 @@ Feature: I want to restrict full name visibility when nickname is used
 
     When I go to the profile of "user_2"
     Then I should see "Hide my name"
-    And I should not see "Secretive User"
+    And I should not see "Secretive Person"
 
     # Search shows Nickname but allows searching for real name
     When I search users for "Open"

@@ -1,5 +1,5 @@
 @api @gdpr @inform-block @DS-5586 @stability @stability-4
-Feature: Inform about personal data colleciton
+Feature: Inform about personal data collection
   Benefit: So I can make an informed decision.
   Role: As a LU
   Goal/desire: I want to understand what data the site collects about me
