@@ -57,40 +57,35 @@
   background: #fff;
 }
 
-.socialblue--sky .content-merged--sky .region--complementary-top > .card,
-.socialblue--sky .content-merged--sky .region--complementary-bottom > .card {
-  position: relative;
+.socialblue--sky .content-merged--sky .region--complementary-top > *:not(.views-exposed-form),
+.socialblue--sky .content-merged--sky .region--complementary-top .off-canvas-xs-only,
+.socialblue--sky .content-merged--sky .region--complementary-bottom > *:not(.views-exposed-form),
+.socialblue--sky .content-merged--sky .region--complementary-bottom .off-canvas-xs-only {
   -webkit-box-shadow: none;
           box-shadow: none;
 }
 
-.socialblue--sky .content-merged--sky .region--complementary-top > .card:after,
-.socialblue--sky .content-merged--sky .region--complementary-bottom > .card:after {
-  content: '';
-  position: absolute;
-  left: 1.5rem;
-  right: 1.5rem;
-  height: 2px;
-  margin: 0 auto;
-  background: #fafafa;
-  z-index: 1;
+.socialblue--sky .content-merged--sky .region--complementary-top > *:not(.views-exposed-form),
+.socialblue--sky .content-merged--sky .region--complementary-bottom > *:not(.views-exposed-form) {
+  position: relative;
+}
+
+.socialblue--sky .content-merged--sky .region--complementary-top > *:not(.views-exposed-form):after,
+.socialblue--sky .content-merged--sky .region--complementary-bottom > *:not(.views-exposed-form):after {
   top: 100%;
 }
 
-.socialblue--sky .content-merged--sky .region--complementary-top > .card:last-child:after,
-.socialblue--sky .content-merged--sky .region--complementary-bottom > .card:last-child:after {
+.socialblue--sky .content-merged--sky .region--complementary-top > *:not(.views-exposed-form):last-child:after,
+.socialblue--sky .content-merged--sky .region--complementary-bottom > *:not(.views-exposed-form):last-child:after {
   display: none;
 }
 
+.socialblue--sky .content-merged--sky .region--complementary-top > *:not(.views-exposed-form).block-group-add-idea-block,
+.socialblue--sky .content-merged--sky .region--complementary-bottom > *:not(.views-exposed-form).block-group-add-idea-block {
+  padding: 20px;
+}
+
 .socialblue--sky .content-merged--sky .region--complementary-top + .region--complementary-bottom > .card:first-child:before {
-  content: '';
-  position: absolute;
-  left: 1.5rem;
-  right: 1.5rem;
-  height: 2px;
-  margin: 0 auto;
-  background: #fafafa;
-  z-index: 1;
   bottom: 100%;
 }
 
@@ -100,43 +95,51 @@
           box-shadow: none;
 }
 
-.socialblue--sky [class*='statistic-block'] {
+.socialblue--sky .block-profile-statistic-block,
+.socialblue--sky .block-group-statistic-block {
   position: relative;
   padding: 1rem 1.875rem 0;
   background: #fafafa;
 }
 
-.socialblue--sky [class*='statistic-block'] .hero-footer__cta {
+.socialblue--sky .block-profile-statistic-block .hero-footer__cta,
+.socialblue--sky .block-group-statistic-block .hero-footer__cta {
   position: static;
   padding: 0 0 1.25rem;
   margin: 0;
 }
 
-.socialblue--sky [class*='statistic-block'] .hero-footer__cta > * {
+.socialblue--sky .block-profile-statistic-block .hero-footer__cta > *,
+.socialblue--sky .block-group-statistic-block .hero-footer__cta > * {
   width: 100%;
 }
 
-.socialblue--sky [class*='statistic-block'] .hero-footer__cta .btn {
+.socialblue--sky .block-profile-statistic-block .hero-footer__cta .btn,
+.socialblue--sky .block-group-statistic-block .hero-footer__cta .btn {
   width: 100%;
   font-weight: 700;
   text-transform: uppercase;
   border-width: 2px;
 }
 
-.socialblue--sky [class*='statistic-block'] .card__actionbar {
+.socialblue--sky .block-profile-statistic-block .card__actionbar,
+.socialblue--sky .block-group-statistic-block .card__actionbar {
   padding: 1.5rem 0;
 }
 
-.socialblue--sky [class*='statistic-block'] .card__actionbar {
+.socialblue--sky .block-profile-statistic-block .card__actionbar,
+.socialblue--sky .block-group-statistic-block .card__actionbar {
   padding-left: 0;
   padding-right: 0;
 }
 
-.socialblue--sky [class*='statistic-block'].block-profile-statistic-block {
+.socialblue--sky .block-profile-statistic-block.block-profile-statistic-block,
+.socialblue--sky .block-group-statistic-block.block-profile-statistic-block {
   padding-top: 0;
 }
 
-.socialblue--sky [class*='statistic-block'].block-profile-statistic-block .card__info-user .hero-avatar {
+.socialblue--sky .block-profile-statistic-block.block-profile-statistic-block .card__info-user .hero-avatar,
+.socialblue--sky .block-group-statistic-block.block-profile-statistic-block .card__info-user .hero-avatar {
   border-color: #fafafa;
 }
 
@@ -252,10 +255,12 @@
     max-width: 120px;
     margin: 0;
   }
-  .socialblue--sky [class*='statistic-block'] {
+  .socialblue--sky .block-profile-statistic-block,
+  .socialblue--sky .block-group-statistic-block {
     padding: 2.5rem 2.25rem 0;
   }
-  .socialblue--sky [class*='statistic-block'] .hero-footer__cta {
+  .socialblue--sky .block-profile-statistic-block .hero-footer__cta,
+  .socialblue--sky .block-group-statistic-block .hero-footer__cta {
     -webkit-box-flex: 0;
         -ms-flex: 0 0 100%;
             flex: 0 0 100%;
@@ -283,16 +288,28 @@
   .socialblue--sky .card--content-merged > h4 {
     font-size: 1.5rem;
   }
-  .socialblue--sky .content-merged--sky .region--complementary-top > .card:after,
-  .socialblue--sky .content-merged--sky .region--complementary-bottom > .card:after {
+  .socialblue--sky .content-merged--sky .region--complementary-top > *:not(.views-exposed-form):after,
+  .socialblue--sky .content-merged--sky .region--complementary-bottom > *:not(.views-exposed-form):after {
+    max-width: 280px;
+    content: '';
+    position: absolute;
     left: 1.875rem;
     right: 1.875rem;
-    max-width: 280px;
+    height: 2px;
+    margin: 0 auto;
+    background: #fafafa;
+    z-index: 1;
   }
   .socialblue--sky .content-merged--sky .region--complementary-top + .region--complementary-bottom > .card:first-child:before {
+    max-width: 280px;
+    content: '';
+    position: absolute;
     left: 1.875rem;
     right: 1.875rem;
-    max-width: 280px;
+    height: 2px;
+    margin: 0 auto;
+    background: #fafafa;
+    z-index: 1;
   }
 }
 
@@ -305,11 +322,15 @@
 @media (max-width: 899px) {
   .socialblue--sky .content-merged--sky--complementary {
     margin-bottom: 0;
+    border-radius: 0 !important;
+    -webkit-box-shadow: none;
+            box-shadow: none;
   }
   .socialblue--sky .content-merged--sky .content-merged--sky--complementary {
     margin-bottom: 0;
   }
-  .socialblue--sky [class*='statistic-block'] {
+  .socialblue--sky .block-profile-statistic-block,
+  .socialblue--sky .block-group-statistic-block {
     margin-bottom: 0;
     border-radius: 0 !important;
     -webkit-box-shadow: none;

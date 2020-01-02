@@ -26,7 +26,6 @@
 
   // Content Merged.
   .card--content-merged {
-
     > h4 {
       margin-bottom: 1.25rem;
 
@@ -74,6 +73,8 @@
   .content-merged--sky--complementary {
     @include for-tablet-landscape-down {
       margin-bottom: 0;
+      border-radius: 0 !important;
+      box-shadow: none;
     }
   }
 
@@ -105,9 +106,13 @@
 
     .region--complementary-top,
     .region--complementary-bottom {
-      > .card {
-        position: relative;
+      > *:not(.views-exposed-form),
+      .off-canvas-xs-only {
         box-shadow: none;
+      }
+
+      > *:not(.views-exposed-form) {
+        position: relative;
 
         &:after {
           @include separate-line;
@@ -116,6 +121,10 @@
 
         &:last-child:after {
           display: none;
+        }
+
+        &.block-group-add-idea-block {
+          padding: 20px;
         }
       }
     }
