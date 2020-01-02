@@ -4,13 +4,7 @@
 
   <div class="teaser__header">
 
-    <div class="teaser__tag">
-      {% if topic_type %}
-        {{ topic_type }}
-      {% else %}
-        {{ node.type.entity.label() }}
-      {% endif %}
-    </div>
+    {{ title_prefix.teaser_tag }}
 
     {% if visibility_icon and visibility_label %}
       <div class="badge teaser__badge no-padding"
@@ -25,7 +19,7 @@
     {% endif %}
   </div>
 
-  {{ title_prefix }}
+  {{ title_prefix|without('teaser_tag') }}
   <h4{{ title_attributes }} class="teaser__title">
     <a href="{{ url }}" rel="bookmark">{{ label }}</a>
   </h4>
