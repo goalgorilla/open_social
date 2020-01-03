@@ -173,6 +173,26 @@
         margin-left: 0;
         margin-bottom: 0;
         flex-basis: auto;
+        order: initial;
+      }
+
+      .metainfo__vote {
+        .card__link {
+          margin: 0;
+
+          .btn {
+            border-color: #adadad;
+
+            &.voted {
+              border-color: #f3f3f3;
+              background: #f3f3f3;
+            }
+          }
+
+          .vote__label {
+            text-transform: initial;
+          }
+        }
       }
 
       .vote__count {
@@ -512,6 +532,30 @@
         width: 100%;
         max-width: 100%;
         text-align: left;
+
+        .badge {
+          font-size: 12px;
+          font-weight: 700;
+          padding-left: 1em;
+          padding-right: 1em;
+        }
+
+        .group-hero--wrapper {
+          margin-top: 8px;
+        }
+
+        @include for-phone-only {
+          display: flex;
+          flex-direction: column;
+
+          > * {
+            align-self: flex-start;
+
+            &:not(:first-child) {
+              margin-top: 8px;
+            }
+          }
+        }
       }
 
       h1 {
@@ -530,7 +574,7 @@
       .teaser__tag {
         display: inline-block;
         width: auto;
-        padding: 1px 11px;
+        padding: 1px 1em;
         margin-bottom: 0;
         font-size: .75rem;
         color: #fff;

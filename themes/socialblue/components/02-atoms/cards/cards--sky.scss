@@ -108,7 +108,9 @@
     .region--complementary-bottom {
       > *:not(.views-exposed-form),
       .off-canvas-xs-only {
-        box-shadow: none;
+        @include for-tablet-landscape-up {
+          box-shadow: none !important;
+        }
       }
 
       > *:not(.views-exposed-form) {
