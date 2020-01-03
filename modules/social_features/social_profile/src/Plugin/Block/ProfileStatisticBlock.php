@@ -2,10 +2,12 @@
 
 namespace Drupal\social_profile\Plugin\Block;
 
+use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Block\BlockBase;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\Core\Session\AccountInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -68,11 +70,9 @@ class ProfileStatisticBlock extends BlockBase implements ContainerFactoryPluginI
     $profile = $storage->loadByUser($account, 'profile');
 
     if ($profile) {
-      $build['content'] = $this->entityTypeManager
+      $build = $this->entityTypeManager
         ->getViewBuilder('profile')
         ->view($profile, 'statistic');
-      $build['content']['#cache']['tags'] = $this->getCacheTags();
-      $build['content']['#cache']['contexts'] = $this->getCacheContexts();
     }
 
     return $build;
@@ -101,6 +101,17 @@ class ProfileStatisticBlock extends BlockBase implements ContainerFactoryPluginI
    */
   public function getCacheContexts() {
     return Cache::mergeContexts(parent::getCacheContexts(), ['user.permissions']);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function blockAccess(AccountInterface $account) {
+    // Show statistic block only when new style is enabled.
+    if (theme_get_setting('style') === 'sky') {
+      return AccessResult::allowed();
+    }
+    return AccessResult::forbidden();
   }
 
 }

@@ -44,8 +44,10 @@
   </div>
 {% endif %}
 
-<footer class="card__actionbar">
-  <a href="{{ profile_stream_url }}">
-    {% trans %} See full stream {% endtrans %}
-  </a>
-</footer>
+{% if profile_info_url %}
+  <footer class="card__actionbar">
+    <a href="{{ profile_info_url }}" class="card__link">
+      {% trans %} See full profile {% endtrans %}
+    </a>
+  </footer>
+{% endif %}
