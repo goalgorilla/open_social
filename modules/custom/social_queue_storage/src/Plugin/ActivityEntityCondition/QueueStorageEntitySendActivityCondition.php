@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Drupal\social_queue_storage\Plugin\ActivityEntityCondition;
 
 use Drupal\activity_creator\Plugin\ActivityEntityConditionBase;
