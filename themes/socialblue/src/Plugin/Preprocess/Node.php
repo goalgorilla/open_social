@@ -22,9 +22,11 @@ class Node extends NodeBase {
     parent::preprocessElement($element, $variables);
     /** @var \Drupal\node\Entity\Node $node */
     $node = $variables['node'];
+    $style = theme_get_setting('style');
+    $view_modes = ['teaser', 'activity', 'activity_comment', 'featured', 'hero'];
 
-    if (theme_get_setting('style') === 'sky') {
-
+    // Add teaser tag as title prefix to node teasers and hero view modes.
+    if ($style === 'sky' && in_array($variables['view_mode'], $view_modes)) {
       if (!empty($variables['topic_type'])) {
         $teaser_tag = $variables['topic_type'];
       }
