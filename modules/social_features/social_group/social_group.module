@@ -334,16 +334,14 @@ function social_group_preprocess_group(array &$variables) {
   $variables['group_members'] = $group_statistics->memberCount($group);
 
   // Prepare variables for statistic block.
-  if ($group->getGroupType()->hasContentPlugin('group_node:event')) {
-    $variables['group_events'] = $group_statistics->nodeCount($group, 'event');
+  if ($variables['view_mode'] === 'statistic') {
+    if ($group->getGroupType()->hasContentPlugin('group_node:event')) {
+      $variables['group_events'] = $group_statistics->nodeCount($group, 'event');
+    }
+    if ($group->getGroupType()->hasContentPlugin('group_node:topic')) {
+      $variables['group_topics'] = $group_statistics->nodeCount($group, 'topic');
+    }
   }
-  if ($group->getGroupType()->hasContentPlugin('group_node:topic')) {
-    $variables['group_topics'] = $group_statistics->nodeCount($group, 'topic');
-  }
-  if ($group->getGroupType()->id() !== 'closed_group' || $group->getMember($account) || $group->hasPermission('manage all groups', $account)) {
-    $variables['group_stream_url'] = Url::fromRoute('social_group.stream', ['group' => $group->id()]);
-  }
-
 }
 
 /**
