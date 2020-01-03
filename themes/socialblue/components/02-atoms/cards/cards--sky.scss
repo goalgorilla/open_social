@@ -51,15 +51,17 @@
 
       h5,
       .list-item__label {
-        margin-top: 0;
+        margin: 0 0 1rem;
         font-size: .875rem;
-        font-weight: 300;
-        color: #9b9b9b;
+        text-align: center;
+        align-self: center;
 
         @include for-tablet-portrait-up {
-          flex: 0 0 120px;
-          max-width: 120px;
+          flex: 0 0 200px;
+          max-width: 200px;
           margin: 0;
+          text-align: left;
+          align-self: flex-start;
         }
       }
 
@@ -181,24 +183,6 @@
     .card__actionbar {
       padding: 1.5rem 0;
     }
-
-    //.btn-group__chellange {
-    //  > div {
-    //    display: flex;
-    //
-    //    > *:not(.caret) {
-    //      width: auto;
-    //    }
-    //
-    //    > a {
-    //      flex: 1 1 auto;
-    //    }
-    //
-    //    .btn + .btn {
-    //      margin-left: 10px;
-    //    }
-    //  }
-    //}
 
     .card__actionbar {
       padding-left: 0;
@@ -353,6 +337,70 @@
 
       @include for-phone-only {
         font-size: 11px;
+      }
+    }
+  }
+
+  // Info tab on the group page.
+  .block-views-blockgroup-managers-block-list-managers,
+  .view-group-information,
+  .block-social-group-tags-block {
+    .card,
+    &.card {
+      padding: 1.75rem 1.5rem;
+
+      @include for-tablet-portrait-up {
+        flex-direction: row;
+      }
+
+      @include for-tablet-landscape-up {
+        padding-left: 2.5rem;
+        padding-right: 2.5rem;
+      }
+
+      @include for-desktop-up {
+        padding-left: 3.5rem;
+        padding-right: 3.5rem;
+      }
+
+      .view--group-managers {
+        padding: 0;
+        margin-top: -.625rem;
+      }
+
+      > .card__title {
+        margin-top: 0;
+        padding: 0;
+        margin-bottom: 1rem;
+
+        @include for-tablet-portrait-up {
+          text-align: left;
+          flex: 0 0 200px;
+          max-width: 200px;
+          margin: 0;
+        }
+      }
+
+      > .card__block,
+      > .card__body {
+        flex-basis: 0;
+        flex-grow: 1;
+        max-width: 100%;
+        padding: 0;
+      }
+    }
+  }
+
+  .block-social-group-tags-block.card {
+    > .card__block {
+      p {
+        font-size: .875rem;
+        margin: .75rem 0 .25rem;
+
+        &:first-child,
+        &:nth-child(1) {
+          margin-top: 0;
+        }
       }
     }
   }

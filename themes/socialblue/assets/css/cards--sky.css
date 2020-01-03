@@ -28,10 +28,11 @@
 
 .socialblue--sky .card--content-merged .card--content-merged__list h5,
 .socialblue--sky .card--content-merged .card--content-merged__list .list-item__label {
-  margin-top: 0;
+  margin: 0 0 1rem;
   font-size: .875rem;
-  font-weight: 300;
-  color: #9b9b9b;
+  text-align: center;
+  -ms-flex-item-align: center;
+      align-self: center;
 }
 
 .socialblue--sky .card--content-merged .card--content-merged__list:last-child {
@@ -226,6 +227,62 @@
   line-height: 1.2;
 }
 
+.socialblue--sky .block-views-blockgroup-managers-block-list-managers .card, .socialblue--sky .block-views-blockgroup-managers-block-list-managers.card,
+.socialblue--sky .view-group-information .card,
+.socialblue--sky .view-group-information.card,
+.socialblue--sky .block-social-group-tags-block .card,
+.socialblue--sky .block-social-group-tags-block.card {
+  padding: 1.75rem 1.5rem;
+}
+
+.socialblue--sky .block-views-blockgroup-managers-block-list-managers .card .view--group-managers, .socialblue--sky .block-views-blockgroup-managers-block-list-managers.card .view--group-managers,
+.socialblue--sky .view-group-information .card .view--group-managers,
+.socialblue--sky .view-group-information.card .view--group-managers,
+.socialblue--sky .block-social-group-tags-block .card .view--group-managers,
+.socialblue--sky .block-social-group-tags-block.card .view--group-managers {
+  padding: 0;
+  margin-top: -.625rem;
+}
+
+.socialblue--sky .block-views-blockgroup-managers-block-list-managers .card > .card__title, .socialblue--sky .block-views-blockgroup-managers-block-list-managers.card > .card__title,
+.socialblue--sky .view-group-information .card > .card__title,
+.socialblue--sky .view-group-information.card > .card__title,
+.socialblue--sky .block-social-group-tags-block .card > .card__title,
+.socialblue--sky .block-social-group-tags-block.card > .card__title {
+  margin-top: 0;
+  padding: 0;
+  margin-bottom: 1rem;
+}
+
+.socialblue--sky .block-views-blockgroup-managers-block-list-managers .card > .card__block,
+.socialblue--sky .block-views-blockgroup-managers-block-list-managers .card > .card__body, .socialblue--sky .block-views-blockgroup-managers-block-list-managers.card > .card__block,
+.socialblue--sky .block-views-blockgroup-managers-block-list-managers.card > .card__body,
+.socialblue--sky .view-group-information .card > .card__block,
+.socialblue--sky .view-group-information .card > .card__body,
+.socialblue--sky .view-group-information.card > .card__block,
+.socialblue--sky .view-group-information.card > .card__body,
+.socialblue--sky .block-social-group-tags-block .card > .card__block,
+.socialblue--sky .block-social-group-tags-block .card > .card__body,
+.socialblue--sky .block-social-group-tags-block.card > .card__block,
+.socialblue--sky .block-social-group-tags-block.card > .card__body {
+  -ms-flex-preferred-size: 0;
+      flex-basis: 0;
+  -webkit-box-flex: 1;
+      -ms-flex-positive: 1;
+          flex-grow: 1;
+  max-width: 100%;
+  padding: 0;
+}
+
+.socialblue--sky .block-social-group-tags-block.card > .card__block p {
+  font-size: .875rem;
+  margin: .75rem 0 .25rem;
+}
+
+.socialblue--sky .block-social-group-tags-block.card > .card__block p:first-child, .socialblue--sky .block-social-group-tags-block.card > .card__block p:nth-child(1) {
+  margin-top: 0;
+}
+
 @media (min-width: 600px) {
   .socialblue--sky .card--content-merged .card--content-merged__list {
     -webkit-box-orient: horizontal;
@@ -236,10 +293,13 @@
   .socialblue--sky .card--content-merged .card--content-merged__list h5,
   .socialblue--sky .card--content-merged .card--content-merged__list .list-item__label {
     -webkit-box-flex: 0;
-        -ms-flex: 0 0 120px;
-            flex: 0 0 120px;
-    max-width: 120px;
+        -ms-flex: 0 0 200px;
+            flex: 0 0 200px;
+    max-width: 200px;
     margin: 0;
+    text-align: left;
+    -ms-flex-item-align: start;
+        align-self: flex-start;
   }
   .socialblue--sky .block-profile-statistic-block,
   .socialblue--sky .block-group-statistic-block {
@@ -263,6 +323,28 @@
   .socialblue--sky .card__info-user--about-job, .socialblue--sky .card__info-user--about-organization {
     font-size: 1.125rem;
     margin-bottom: 10px;
+  }
+  .socialblue--sky .block-views-blockgroup-managers-block-list-managers .card, .socialblue--sky .block-views-blockgroup-managers-block-list-managers.card,
+  .socialblue--sky .view-group-information .card,
+  .socialblue--sky .view-group-information.card,
+  .socialblue--sky .block-social-group-tags-block .card,
+  .socialblue--sky .block-social-group-tags-block.card {
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: row;
+            flex-direction: row;
+  }
+  .socialblue--sky .block-views-blockgroup-managers-block-list-managers .card > .card__title, .socialblue--sky .block-views-blockgroup-managers-block-list-managers.card > .card__title,
+  .socialblue--sky .view-group-information .card > .card__title,
+  .socialblue--sky .view-group-information.card > .card__title,
+  .socialblue--sky .block-social-group-tags-block .card > .card__title,
+  .socialblue--sky .block-social-group-tags-block.card > .card__title {
+    text-align: left;
+    -webkit-box-flex: 0;
+        -ms-flex: 0 0 200px;
+            flex: 0 0 200px;
+    max-width: 200px;
+    margin: 0;
   }
 }
 
@@ -304,11 +386,27 @@
     background: #fafafa;
     z-index: 1;
   }
+  .socialblue--sky .block-views-blockgroup-managers-block-list-managers .card, .socialblue--sky .block-views-blockgroup-managers-block-list-managers.card,
+  .socialblue--sky .view-group-information .card,
+  .socialblue--sky .view-group-information.card,
+  .socialblue--sky .block-social-group-tags-block .card,
+  .socialblue--sky .block-social-group-tags-block.card {
+    padding-left: 2.5rem;
+    padding-right: 2.5rem;
+  }
 }
 
 @media (min-width: 1200px) {
   .socialblue--sky .card--content-merged {
     padding: .875rem 3.5rem 5.75rem;
+  }
+  .socialblue--sky .block-views-blockgroup-managers-block-list-managers .card, .socialblue--sky .block-views-blockgroup-managers-block-list-managers.card,
+  .socialblue--sky .view-group-information .card,
+  .socialblue--sky .view-group-information.card,
+  .socialblue--sky .block-social-group-tags-block .card,
+  .socialblue--sky .block-social-group-tags-block.card {
+    padding-left: 3.5rem;
+    padding-right: 3.5rem;
   }
 }
 
