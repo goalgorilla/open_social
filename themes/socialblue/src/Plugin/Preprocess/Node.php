@@ -23,8 +23,7 @@ class Node extends NodeBase {
     /** @var \Drupal\node\Entity\Node $node */
     $node = $variables['node'];
 
-    $style = theme_get_setting('style');
-    if ($style && $style === 'sky') {
+    if (theme_get_setting('style') === 'sky') {
 
       if (!empty($variables['topic_type'])) {
         $teaser_tag = $variables['topic_type'];

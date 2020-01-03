@@ -19,8 +19,7 @@ class Page extends PageBase {
   public function preprocess(array &$variables, $hook, array $info) {
     parent::preprocess($variables, $hook, $info);
 
-    $style = theme_get_setting('style');
-    if ($style && $style === 'sky') {
+    if (theme_get_setting('style') === 'sky') {
 
       // Display merged sidebar on the left side of profile pages, except edit.
       $route_match = \Drupal::routeMatch();
