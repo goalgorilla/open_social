@@ -78,4 +78,59 @@
       margin: 0 0 .5rem 3px;
     }
   }
+
+  // Profile tile teasers.
+  .teaser--tile-profile {
+    overflow: hidden;
+
+    .teaser__image {
+      position: relative;
+      overflow: visible;
+
+      .teaser__teaser-type {
+        display: none;
+      }
+
+      &:before {
+        content: '';
+        position: absolute;
+        width: 100%;
+        height: 64px;
+        top: 0;
+        left: 0;
+      }
+
+      .img_wrapper {
+        position: relative;
+        height: auto;
+        margin-top: 15px;
+        margin-left: 15px;
+        padding: 0;
+
+        a {
+          display: block;
+          width: 95px;
+          height: 95px;
+          border: 5px solid #fff;
+          border-radius: 50%;
+          overflow: hidden;
+
+          img {
+            position: static;
+            max-width: 100%;
+          }
+        }
+      }
+    }
+
+    .teaser__body {
+      .teaser__content {
+        padding-top: 10px;
+      }
+    }
+
+    .teaser__tag {
+      margin-bottom: 4px;
+    }
+  }
 }
