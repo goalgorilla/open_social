@@ -6,6 +6,7 @@ use Drupal\bootstrap\Plugin\Preprocess\PreprocessBase;
 use Drupal\Core\Template\Attribute;
 use Drupal\node\Entity\Node;
 use Drupal\Core\Url;
+use Drupal\Core\Entity\EntityInterface;
 
 /**
  * Pre-processes variables for the "page" theme hook.
@@ -109,6 +110,18 @@ class Page extends PreprocessBase {
 
     if ($route === 'view.event_manage_enrollments.page_manage_enrollments' || $route === 'view.group_manage_members.page_group_manage_members') {
       $attributes->removeClass('row', 'layout--with-complementary');
+    }
+
+    // Only whenever the social_core layout service is registered
+    // see SocialCoreServiceProvider, we can run this code.
+    if (\Drupal::hasService('social_core.layout')) {
+      // Let's grab all entities available from the route params.
+      foreach (\Drupal::routeMatch()->getParameters() as $param) {
+        // If it is an Entity, lets see if layout_builder is enabled.
+        if ($param instanceof EntityInterface && \Drupal::service('social_core.layout')->isTrueLayoutCompatibleEntity($param)) {
+          $attributes->removeClass('row', 'layout--with-complementary');
+        }
+      }
     }
 
     $variables['content_attributes'] = $attributes;
