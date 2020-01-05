@@ -117,9 +117,11 @@ class Page extends PreprocessBase {
     if (\Drupal::hasService('social_core.layout')) {
       // Let's grab all entities available from the route params.
       foreach (\Drupal::routeMatch()->getParameters() as $param) {
-        // If it is an Entity, lets see if layout_builder is enabled.
+        // If it is an Entity, lets see if layout_builder is enabled
+        // and remove or add necessary classes.
         if ($param instanceof EntityInterface && \Drupal::service('social_core.layout')->isTrueLayoutCompatibleEntity($param)) {
           $attributes->removeClass('row', 'layout--with-complementary');
+          $attributes->addClass('layout--full');
         }
       }
     }
