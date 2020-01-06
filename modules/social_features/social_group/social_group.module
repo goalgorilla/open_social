@@ -311,7 +311,6 @@ function social_group_preprocess_group(array &$variables) {
         $variables['hero_styled_image_attr']['data-copyright'] = $group->{'field_group_image'}->copyright;
       }
 
-
       if ($overridden_image_style !== $original_image_style) {
         $variables['group_hero_styled_image_url'] = ImageStyle::load($overridden_image_style)
           ->buildUrl($group->get('field_group_image')->entity->getFileUri());
