@@ -21,19 +21,30 @@ class EntityAccessHelper {
    * @return array
    *   An array containing a list of values to ignore.
    */
-  public static function getIgnoredValues() {
+  public static function getIgnoredValues(): array {
     return [];
   }
 
   /**
    * NodeAccessCheck for given operation, node and user account.
+   *
+   * @param \Drupal\node\NodeInterface $node
+   *   Node object.
+   * @param string $op
+   *   Operation.
+   * @param \Drupal\Core\Session\AccountInterface $account
+   *   Current user account.
+   *
+   * @return int
+   *   Returns the access code which is passed to getEntityAccessResult().
    */
-  public static function nodeAccessCheck(NodeInterface $node, $op, AccountInterface $account) {
+  public static function nodeAccessCheck(NodeInterface $node, $op, AccountInterface $account): int {
     if ($op === 'view') {
       // Check published status.
-      if (isset($node->status) && $node->status->value == NODE_NOT_PUBLISHED) {
+      if (isset($node->status) && $node->status->value === NodeInterface::NOT_PUBLISHED) {
+        $edit_any = $account->hasPermission('edit any' . $node->getType() . 'content');
         $unpublished_own = $account->hasPermission('view own unpublished content');
-        if (($node->getOwnerId() !== $account->id()) || ($node->getOwnerId() === $account->id() && !$unpublished_own)) {
+        if (($node->getOwnerId() !== $account->id() && !$edit_any) || (($node->getOwnerId() === $account->id() && !$unpublished_own))) {
           return 1;
         }
       }
@@ -49,7 +60,7 @@ class EntityAccessHelper {
             foreach ($field_values as $field_value) {
               if (isset($field_value['value'])) {
 
-                if (in_array($field_value['value'], EntityAccessHelper::getIgnoredValues())) {
+                if (in_array($field_value['value'], self::getIgnoredValues())) {
                   return 0;
                 }
 
@@ -98,9 +109,19 @@ class EntityAccessHelper {
 
   /**
    * Gets the Entity access for the given node.
+   *
+   * @param \Drupal\node\NodeInterface $node
+   *   Node object.
+   * @param string $op
+   *   Operation.
+   * @param \Drupal\Core\Session\AccountInterface $account
+   *   Current user account.
+   *
+   * @return \Drupal\Core\Access\AccessResultAllowed|\Drupal\Core\Access\AccessResultForbidden|\Drupal\Core\Access\AccessResultNeutral
+   *   Access Result.
    */
   public static function getEntityAccessResult(NodeInterface $node, $op, AccountInterface $account) {
-    $access = EntityAccessHelper::nodeAccessCheck($node, $op, $account);
+    $access = self::nodeAccessCheck($node, $op, $account);
 
     switch ($access) {
       case 2:
