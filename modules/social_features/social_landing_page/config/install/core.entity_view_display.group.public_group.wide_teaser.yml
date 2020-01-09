@@ -8,25 +8,42 @@ dependencies:
     - field.field.group.public_group.field_group_image
     - field.field.group.public_group.field_group_location
     - group.type.public_group
+  module:
+    - address
+    - image
 id: group.public_group.wide_teaser
 targetEntityType: group
 bundle: public_group
 mode: wide_teaser
 content:
-  field_group_description:
-    type: basic_string
-    weight: 0
+  field_group_address:
+    type: address_default
+    weight: 1
+    region: content
     label: hidden
     settings: {  }
     third_party_settings: {  }
+  field_group_image:
+    type: image
+    weight: 0
     region: content
+    label: hidden
+    settings:
+      image_style: ''
+      image_link: ''
+    third_party_settings: {  }
+  field_group_location:
+    type: string
+    weight: 2
+    region: content
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
 hidden:
   changed: true
   created: true
-  field_group_address: true
   field_group_description: true
-  field_group_image: true
-  field_group_location: true
   label: true
   search_api_excerpt: true
   uid: true

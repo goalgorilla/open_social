@@ -3,41 +3,32 @@ status: true
 dependencies:
   config:
     - core.entity_view_mode.node.wide_teaser
-    - field.field.node.topic.body
-    - field.field.node.topic.field_content_visibility
-    - field.field.node.topic.field_files
-    - field.field.node.topic.field_topic_comments
-    - field.field.node.topic.field_topic_image
-    - field.field.node.topic.field_topic_type
-    - node.type.topic
+    - field.field.node.page.body
+    - field.field.node.page.field_content_visibility
+    - field.field.node.page.field_files
+    - field.field.node.page.field_page_comments
+    - field.field.node.page.field_page_image
+    - node.type.page
   module:
     - image
     - user
-id: node.topic.wide_teaser
+id: node.page.wide_teaser
 targetEntityType: node
-bundle: topic
+bundle: page
 mode: wide_teaser
 content:
-  field_topic_image:
+  field_page_image:
     type: image
-    weight: 7
+    weight: 8
     region: content
-    label: hidden
+    label: above
     settings:
       image_style: ''
       image_link: ''
     third_party_settings: {  }
-  field_topic_type:
-    type: entity_reference_label
-    weight: 8
-    region: content
-    label: hidden
-    settings:
-      link: true
-    third_party_settings: {  }
   groups:
     type: entity_reference_label
-    weight: 0
+    weight: 4
     region: content
     label: above
     settings:
@@ -45,7 +36,7 @@ content:
     third_party_settings: {  }
   groups_type_asdasd:
     label: above
-    weight: -5
+    weight: 0
     region: content
     settings:
       link: true
@@ -53,7 +44,7 @@ content:
     type: entity_reference_label
   groups_type_closed_group:
     type: entity_reference_label
-    weight: 1
+    weight: 5
     region: content
     label: above
     settings:
@@ -61,7 +52,7 @@ content:
     third_party_settings: {  }
   groups_type_course_advanced:
     label: above
-    weight: 2
+    weight: 1
     region: content
     settings:
       link: true
@@ -69,7 +60,7 @@ content:
     type: entity_reference_label
   groups_type_course_basic:
     label: above
-    weight: 3
+    weight: 2
     region: content
     settings:
       link: true
@@ -77,7 +68,7 @@ content:
     type: entity_reference_label
   groups_type_flexible_group:
     label: above
-    weight: 4
+    weight: 3
     region: content
     settings:
       link: true
@@ -85,7 +76,7 @@ content:
     type: entity_reference_label
   groups_type_open_group:
     type: entity_reference_label
-    weight: 5
+    weight: 6
     region: content
     label: above
     settings:
@@ -93,7 +84,7 @@ content:
     third_party_settings: {  }
   groups_type_public_group:
     type: entity_reference_label
-    weight: 6
+    weight: 7
     region: content
     label: above
     settings:
@@ -103,8 +94,7 @@ hidden:
   body: true
   field_content_visibility: true
   field_files: true
-  field_topic_comments: true
+  field_page_comments: true
   flag_follow_content: true
-  like_and_dislike: true
   links: true
   search_api_excerpt: true

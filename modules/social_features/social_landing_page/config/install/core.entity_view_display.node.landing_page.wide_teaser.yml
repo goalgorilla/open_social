@@ -3,79 +3,32 @@ status: true
 dependencies:
   config:
     - core.entity_view_mode.node.wide_teaser
-    - field.field.node.topic.body
-    - field.field.node.topic.field_content_visibility
-    - field.field.node.topic.field_files
-    - field.field.node.topic.field_topic_comments
-    - field.field.node.topic.field_topic_image
-    - field.field.node.topic.field_topic_type
-    - node.type.topic
+    - field.field.node.landing_page.field_content_visibility
+    - field.field.node.landing_page.field_landing_page_section
+    - node.type.landing_page
   module:
-    - image
+    - entity_reference_revisions
     - user
-id: node.topic.wide_teaser
+id: node.landing_page.wide_teaser
 targetEntityType: node
-bundle: topic
+bundle: landing_page
 mode: wide_teaser
 content:
-  field_topic_image:
-    type: image
-    weight: 7
-    region: content
+  field_landing_page_section:
+    type: entity_reference_revisions_entity_view
+    weight: 9
     label: hidden
     settings:
-      image_style: ''
-      image_link: ''
+      view_mode: default
+      link: ''
     third_party_settings: {  }
-  field_topic_type:
-    type: entity_reference_label
+    region: content
+  flag_follow_content:
     weight: 8
     region: content
-    label: hidden
-    settings:
-      link: true
+    settings: {  }
     third_party_settings: {  }
   groups:
-    type: entity_reference_label
-    weight: 0
-    region: content
-    label: above
-    settings:
-      link: true
-    third_party_settings: {  }
-  groups_type_asdasd:
-    label: above
-    weight: -5
-    region: content
-    settings:
-      link: true
-    third_party_settings: {  }
-    type: entity_reference_label
-  groups_type_closed_group:
-    type: entity_reference_label
-    weight: 1
-    region: content
-    label: above
-    settings:
-      link: true
-    third_party_settings: {  }
-  groups_type_course_advanced:
-    label: above
-    weight: 2
-    region: content
-    settings:
-      link: true
-    third_party_settings: {  }
-    type: entity_reference_label
-  groups_type_course_basic:
-    label: above
-    weight: 3
-    region: content
-    settings:
-      link: true
-    third_party_settings: {  }
-    type: entity_reference_label
-  groups_type_flexible_group:
     label: above
     weight: 4
     region: content
@@ -83,28 +36,63 @@ content:
       link: true
     third_party_settings: {  }
     type: entity_reference_label
-  groups_type_open_group:
+  groups_type_asdasd:
+    label: above
+    weight: 0
+    region: content
+    settings:
+      link: true
+    third_party_settings: {  }
     type: entity_reference_label
+  groups_type_closed_group:
+    label: above
     weight: 5
     region: content
-    label: above
     settings:
       link: true
     third_party_settings: {  }
-  groups_type_public_group:
     type: entity_reference_label
+  groups_type_course_advanced:
+    label: above
+    weight: 1
+    region: content
+    settings:
+      link: true
+    third_party_settings: {  }
+    type: entity_reference_label
+  groups_type_course_basic:
+    label: above
+    weight: 2
+    region: content
+    settings:
+      link: true
+    third_party_settings: {  }
+    type: entity_reference_label
+  groups_type_flexible_group:
+    label: above
+    weight: 3
+    region: content
+    settings:
+      link: true
+    third_party_settings: {  }
+    type: entity_reference_label
+  groups_type_open_group:
+    label: above
     weight: 6
     region: content
-    label: above
     settings:
       link: true
     third_party_settings: {  }
+    type: entity_reference_label
+  groups_type_public_group:
+    label: above
+    weight: 7
+    region: content
+    settings:
+      link: true
+    third_party_settings: {  }
+    type: entity_reference_label
 hidden:
-  body: true
   field_content_visibility: true
-  field_files: true
-  field_topic_comments: true
-  flag_follow_content: true
-  like_and_dislike: true
   links: true
   search_api_excerpt: true
