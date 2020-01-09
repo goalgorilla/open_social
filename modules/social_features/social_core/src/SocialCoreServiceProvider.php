@@ -26,7 +26,8 @@ class SocialCoreServiceProvider extends ServiceProviderBase {
 
     // Check for installed layout_builder module.
     if (isset($modules['layout_builder'])) {
-      // Add a normalizer service for file entities.
+      // If it's installed we can register our service, which uses layout_builder
+      // classes to check whether entities enabled layout builder.
       $service_definition = new Definition(LayoutService::class);
       $container->setDefinition('social_core.layout', $service_definition);
     }
