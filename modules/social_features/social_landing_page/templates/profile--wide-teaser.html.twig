@@ -1,3 +1,5 @@
+{{ attach_library('socialbase/teaser') }}
+
 <div class="card teaser teaser--wide teaser--wide-profile">
   <a href="{{ profile_stream_url }}" class="teaser__image">
     {% if content.field_profile_image %}
@@ -5,7 +7,15 @@
         {{ content.field_profile_image }}
       </span>
     {% endif %}
+
+    <div class="teaser__teaser-type">
+      <svg class="teaser__teaser-type-icon">
+        <title>{{- node.bundle|clean_class|capitalize -}} : &nbsp; {{- label|render|striptags|trim -}}</title>
+        <use xlink:href="#icon-{{- node.bundle|clean_class -}}"></use>
+      </svg>
+    </div>
   </a>
+
   <div class="teaser__icon">
     <svg class="teaser__content-type-icon">
       <use xlink:href="#icon-user"></use>
@@ -32,26 +42,21 @@
     </div>
 
     <div class="card__actionbar">
-      <div class="card__actionbar-side">
 
-        {% if content.field_profile_address|render %}
-          <div class="teaser__content-line">
-            <svg class="teaser__content-type-icon">
-              <use xlink:href="#icon-location"></use>
-            </svg>
-            <span class="teaser__content-text">
+      {% if content.field_profile_address|render %}
+        <div class="teaser__content-line">
+          <svg class="teaser__content-type-icon">
+            <use xlink:href="#icon-location"></use>
+          </svg>
+          <span class="teaser__content-text">
             {{ content.field_profile_address }}
           </span>
-          </div>
-        {% endif %}
-      </div>
-      <div class="card__actionbar-side right-side">
-        <div class="card__link">
-          <a href="{{ profile_info_url }}" class="btn btn-default waves-effect waves-btn">
-            {% trans %}Read more{% endtrans %}
-          </a>
         </div>
-      </div>
+      {% endif %}
+
+      <a href="{{ profile_info_url }}" class="card__link">
+        {% trans %}Read more{% endtrans %}
+      </a>
     </div>
   </div>
 </div>

@@ -137,3 +137,133 @@
   }
 
 }
+
+@mixin user-avatar {
+  flex: 0 0 80px;
+  height: 80px;
+  margin-bottom: 55px;
+  border-radius: 0;
+  text-align: center;
+  overflow: visible;
+  display: block;
+  @content;
+
+  a,
+  span {
+    display: block;
+    height: 100%;
+
+    @content;
+  }
+
+  img {
+    display: block;
+    margin: 0 auto;
+    width: 100px;
+    height: 100px;
+    border: 10px solid white;
+    border-radius: 50%;
+    position: relative;
+    top: 30px;
+    background-color: #adadad;
+
+    @content;
+  }
+}
+
+.teaser.teaser--wide {
+  flex: 0 0 100%;
+  max-width: 100%;
+
+  @media (min-width: 900px) {
+    height: 150px;
+  }
+
+  .teaser__image {
+    @media (min-width: 600px) {
+      border-top-left-radius: inherit;
+      border-bottom-left-radius: inherit;
+      flex: 0 0 250px;
+    }
+
+    @media (min-width: 900px) {
+      flex: 0 0 300px;
+      height: 150px;
+    }
+
+    @media (min-width: 1200px) {
+      flex: 0 0 450px;
+    }
+
+    img {
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+  .teaser__icon,
+  .teaser__date {
+    display: none;
+
+    @media (min-width: 900px) {
+      height: 150px;
+      display: flex;
+      flex: 0 0 120px;
+      align-items: center;
+      justify-content: center;
+      background: #fafafa;
+    }
+
+    .teaser__content-type-icon {
+      width: 45px;
+      flex: 0 0 45px;
+      height: 45px;
+      margin-right: 0;
+    }
+  }
+
+  .teaser__tag {
+    font-weight: 700;
+
+    a {
+      font-weight: 700;
+    }
+  }
+
+  .teaser__date {
+    font-size: 48px;
+    font-weight: 700;
+    flex-direction: column;
+    line-height: 1.2;
+    text-align: center;
+
+    span {
+      display: block;
+      font-size: 14px;
+      font-weight: 500;
+    }
+  }
+
+  .teaser__content {
+    padding-bottom: 10px;
+  }
+
+  &-profile {
+    .teaser__image {
+      &-wrapper {
+        @include user-avatar {
+          position: relative;
+          height: 100%;
+          margin-bottom: 0;
+        }
+
+        img {
+          height: 120px;
+          width: 120px;
+          top: 50%;
+          transform: translateY(-50%);
+        }
+      }
+    }
+  }
+}
