@@ -184,9 +184,24 @@
       padding: 1.5rem 0;
     }
 
-    .card__actionbar {
-      padding-left: 0;
-      padding-right: 0;
+    .btn-group__chellange {
+      display: flex;
+
+      > *:not(.caret) {
+        width: auto;
+      }
+
+      > a {
+        flex: 1 1 auto;
+      }
+
+      .btn + .btn {
+        margin-left: 10px;
+      }
+
+      > .dropdown-toggle:not(:first-child) {
+        border-radius: 10px;
+      }
     }
 
     &.block-profile-statistic-block {
