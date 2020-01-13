@@ -40,7 +40,16 @@ function socialblue_library_info_alter(&$libraries, $extension) {
  */
 function socialblue_preprocess_group(array &$variables) {
   $view_modes = ['teaser', 'featured'];
-  if (theme_get_setting('style') === 'sky' && in_array($variables['view_mode'], $view_modes)) {
+  $social_group_types = [
+    'open_group',
+    'closed_group',
+    'public_group',
+    'secret_group',
+    'flexible_group',
+  ];
+  if (theme_get_setting('style') === 'sky'
+    && in_array($variables['view_mode'], $view_modes)
+    && in_array($variables['group_type_id'], $social_group_types)) {
     $variables['title_prefix']['teaser_tag'] = [
       '#markup' => '<div class="teaser__tag">' . t('Group') . '</div>',
     ];
