@@ -10,21 +10,15 @@
 
 .message {
   font-weight: 300;
-  -webkit-transition: -webkit-box-shadow 0.3s;
-  transition: -webkit-box-shadow 0.3s;
   transition: box-shadow 0.3s;
-  transition: box-shadow 0.3s, -webkit-box-shadow 0.3s;
 }
 
 .message:hover, .message:focus {
-  -webkit-box-shadow: 0 0 4px rgba(0, 0, 0, 0.14), 0 4px 8px rgba(0, 0, 0, 0.28);
-          box-shadow: 0 0 4px rgba(0, 0, 0, 0.14), 0 4px 8px rgba(0, 0, 0, 0.28);
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.14), 0 4px 8px rgba(0, 0, 0, 0.28);
 }
 
 .message .avatar {
-  -webkit-box-flex: 64px;
-      -ms-flex: 64px 0 0px;
-          flex: 64px 0 0;
+  flex: 64px 0 0;
 }
 
 .message__inbox-body {
@@ -42,31 +36,23 @@
 
 .message__excerpt .message__owner {
   padding-right: 0.5em;
-  -webkit-box-flex: 0;
-      -ms-flex: 0 0 auto;
-          flex: 0 0 auto;
+  flex: 0 0 auto;
   white-space: nowrap;
 }
 
 .message__heading {
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
+  align-items: center;
   padding: 1.25rem 0 0.5rem;
   border-bottom: 1px solid #e6e6e6;
   margin-bottom: 0.5rem;
 }
 
 .message__recipients {
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
+  align-items: center;
 }
 
 .message__back-btn {
-  -webkit-box-flex: 0;
-      -ms-flex: 0 0 38px;
-          flex: 0 0 38px;
+  flex: 0 0 38px;
 }
 
 .private-message-thread-messages {
@@ -96,12 +82,8 @@
 }
 
 .message__by-me {
-  display: -webkit-box;
-  display: -ms-flexbox;
   display: flex;
-  -webkit-box-pack: end;
-      -ms-flex-pack: end;
-          justify-content: flex-end;
+  justify-content: flex-end;
 }
 
 .message__by-me .message__message-body {
@@ -185,14 +167,10 @@
 
 @media (min-width: 900px) {
   .message__excerpt {
-    display: -webkit-box;
-    display: -ms-flexbox;
     display: flex;
   }
   .message__message-excerpt {
-    -webkit-box-flex: 1;
-        -ms-flex-positive: 1;
-            flex-grow: 1;
+    flex-grow: 1;
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
