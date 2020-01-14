@@ -42,7 +42,7 @@ class EntityAccessHelper {
     if ($op === 'view') {
       // Check published status.
       if (isset($node->status) && $node->status->value === NodeInterface::NOT_PUBLISHED) {
-        $edit_any = $account->hasPermission('edit any' . $node->getType() . 'content');
+        $edit_any = $account->hasPermission('edit any ' . $node->getType() . ' content');
         $unpublished_own = $account->hasPermission('view own unpublished content');
         if (($node->getOwnerId() !== $account->id() && !$edit_any) || (($node->getOwnerId() === $account->id() && !$unpublished_own))) {
           return 1;
