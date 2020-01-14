@@ -1,19 +1,23 @@
-{{ attach_library('socialbase/teaser') }}
+{% extends 'node--featured.html.twig' %}
 
-<div class="card teaser teaser--wide teaser--wide-profile">
+{% block card_image %}
   <a href="{{ profile_stream_url }}" class="teaser__image">
-    {% if content.field_profile_image %}
-      <span class="teaser__image-wrapper">
-        {{ content.field_profile_image }}
-      </span>
-    {% endif %}
+    {% block card_hero_image %}
+      {% if content.field_profile_image %}
+        <span class="teaser__image-wrapper">
+      {{ content.field_profile_image }}
+    </span>
+      {% endif %}
+    {% endblock %}
 
-    <div class="teaser__teaser-type">
-      <svg class="teaser__teaser-type-icon">
-        <title>{{- node.bundle|clean_class|capitalize -}} : &nbsp; {{- label|render|striptags|trim -}}</title>
-        <use xlink:href="#icon-{{- node.bundle|clean_class -}}"></use>
-      </svg>
-    </div>
+    {% block card_teaser_type %}
+      <div class="teaser__teaser-type">
+        <svg class="teaser__teaser-type-icon">
+          <title>{{- node.bundle|clean_class|capitalize -}} : &nbsp; {{- label|render|striptags|trim -}}</title>
+          <use xlink:href="#icon-{{- node.bundle|clean_class -}}"></use>
+        </svg>
+      </div>
+    {% endblock %}
   </a>
 
   <div class="teaser__icon">
@@ -21,15 +25,18 @@
       <use xlink:href="#icon-user"></use>
     </svg>
   </div>
-  <div class="teaser__body">
-    <div class="teaser__content">
-      <h4 class="teaser__title">
-        <a href="{{ profile_stream_url }}">
-          {{ profile_name }} {{ profile_name_extra }}
-        </a>
-      </h4>
-      {% if content.field_profile_function|render or content.field_profile_organization|render %}
-        <div class="teaser__content-line">
+{% endblock %}
+
+{% block card_title %}
+
+  <h4 class="teaser__title">
+    <a href="{{ profile_stream_url }}">
+      {{ profile_name }} {{ profile_name_extra }}
+    </a>
+  </h4>
+
+  {% if content.field_profile_function|render or content.field_profile_organization|render %}
+    <div class="teaser__content-line">
           <span class="teaser__content-text">
             {% if content.field_profile_organization|render %}
               {{ '@function at @organization'|t({'@function': content.field_profile_function|render, '@organization': content.field_profile_organization|render}) }}
@@ -37,26 +44,28 @@
               {{ content.field_profile_function }}
             {% endif %}
           </span>
-        </div>
-      {% endif %}
     </div>
+  {% endif %}
 
-    <div class="card__actionbar">
-
-      {% if content.field_profile_address|render %}
-        <div class="teaser__content-line">
-          <svg class="teaser__content-type-icon">
-            <use xlink:href="#icon-location"></use>
-          </svg>
-          <span class="teaser__content-text">
+  <div class="card__actionbar">
+    {% if content.field_profile_address|render %}
+      <div class="teaser__content-line">
+        <svg class="teaser__content-type-icon">
+          <use xlink:href="#icon-location"></use>
+        </svg>
+        <span class="teaser__content-text">
             {{ content.field_profile_address }}
           </span>
-        </div>
-      {% endif %}
+      </div>
+    {% endif %}
 
-      <a href="{{ profile_info_url }}" class="card__link">
-        {% trans %}Read more{% endtrans %}
-      </a>
-    </div>
+    <a href="{{ profile_info_url }}" class="card__link">
+      {% trans %}Read more{% endtrans %}
+    </a>
   </div>
-</div>
+
+{% endblock %}
+
+
+
+

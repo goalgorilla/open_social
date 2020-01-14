@@ -1,15 +1,13 @@
-{{ attach_library('socialbase/teaser') }}
+{% extends 'node--featured.html.twig' %}
 
-<div class="card teaser teaser--wide">
-  <div class='teaser__image'>
-    {{ content.field_group_image }}
+{% block card_hero_image %}
 
-    <div class="teaser__teaser-type">
-      <svg class="teaser__teaser-type-icon">
-        <title>{{- node.bundle|clean_class|capitalize -}} : &nbsp; {{- label|render|striptags|trim -}}</title>
-        <use xlink:href="#icon-{{- node.bundle|clean_class -}}"></use>
-      </svg>
-    </div>
+  {{ content.field_group_image }}
+  <div class="teaser__teaser-type">
+    <svg class="teaser__teaser-type-icon">
+      <title>{{- node.bundle|clean_class|capitalize -}} : &nbsp; {{- label|render|striptags|trim -}}</title>
+      <use xlink:href="#icon-{{- node.bundle|clean_class -}}"></use>
+    </svg>
   </div>
 
   <div class="teaser__icon">
@@ -18,50 +16,41 @@
     </svg>
   </div>
 
-  <div class='teaser__body'>
-    <div class="teaser__content">
-      <div class="teaser__tag">
-        {{ group_type }}
-      </div>
+{% endblock %}
 
-      {{ title_prefix }}
-      {% if not page %}
-        <h4{{ title_attributes }} class="teaser__title">
-          <a href="{{ url }}" rel="bookmark">{{ label }}</a>
-        </h4>
-      {% endif %}
-      {{ title_suffix }}
-      {% if content.field_group_location|render or content.field_group_address|render %}
-        <div class="teaser__content-line">
-          <svg class="teaser__content-type-icon">
-            <use xlink:href="#icon-location"></use>
-          </svg>
-          <span class="teaser__content-text">
-            {{ content.field_group_location }}
-            {% if content.field_group_location|render is not empty and content.field_group_address|render is not empty %},{% endif %}
-            {{ content.field_group_address }}
-            </span>
-        </div>
-      {% endif %}
-    </div>
+{% block card_body %}
 
-    <div class="card__actionbar">
-
-      <div class="badge teaser__badge" title="Total amount of members">
-        <span class="badge__container">
-          <svg class="badge__icon">
-            <use xlink:href="#icon-user"></use>
-          </svg>
-          <span class="badge__label">
-            {{ group_members }}
-          </span>
-        </span>
-      </div>
-
-      <a href="{{ url }}" class="card__link" title="{{ label }}">
-        {% trans %}Read more{% endtrans %}
-      </a>
-    </div>
-
+  <div class="teaser__tag">
+    {{ group_type }}
   </div>
-</div>
+
+  {% if content.field_group_location|render or content.field_group_address|render %}
+    <div class="teaser__content-line">
+      <svg class="teaser__content-type-icon">
+        <use xlink:href="#icon-location"></use>
+      </svg>
+      <span class="teaser__content-text">
+          {{ content.field_group_location }}
+        {% if content.field_group_location|render is not empty and content.field_group_address|render is not empty %},{% endif %}
+        {{ content.field_group_address }}
+          </span>
+    </div>
+  {% endif %}
+
+  <div class="card__actionbar">
+    <div class="badge teaser__badge" title="Total amount of members">
+      <span class="badge__container">
+        <svg class="badge__icon">
+          <use xlink:href="#icon-user"></use>
+        </svg>
+        <span class="badge__label">
+          {{ group_members }}
+        </span>
+      </span>
+    </div>
+
+    <a href="{{ url }}" class="card__link" title="{{ label }}">
+      {% trans %}Read more{% endtrans %}
+    </a>
+  </div>
+{% endblock %}
