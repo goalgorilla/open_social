@@ -67,7 +67,7 @@
 #}
 
 <div class="card">
-  <div class="card__body">
+  <div class="card__body body-text">
     {% if (content.field_profile_phone_number|render or user_mail or content.field_profile_address|render) %}
       <h4>{% trans %}Contact information{% endtrans %}</h4>
     {% endif %}
@@ -94,7 +94,6 @@
           </div>
       </div>
     {% endif %}
-
 
     {% if content.field_profile_self_introduction|render %}
       <h5>{% trans %}Intro{% endtrans %}</h5>

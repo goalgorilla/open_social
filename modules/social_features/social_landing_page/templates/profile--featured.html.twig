@@ -1,28 +1,31 @@
 {% extends 'node--featured.html.twig' %}
 
+{% set attributes = attributes.addClass('teaser-profile') %}
+
 {% block card_hero_image %}
   <div class="img_wrapper">
-    <a href="{{ profile_stream_url }}">
+    <a href="{{ profile_home }}">
       {{ content.field_profile_image }}
     </a>
   </div>
 {% endblock %}
 
 {% block card_teaser_type %}
-  <div class="teaser__teaser-type">
-    <svg class="teaser__teaser-type-icon">
-      <use xlink:href="#icon-account_circle"></use>
-    </svg>
-  </div>
+  <a href="{{ profile_home }}">
+    <div class="teaser__teaser-type">
+      <svg class="teaser__teaser-type-icon">
+        <use xlink:href="#icon-account_circle"></use>
+      </svg>
+    </div>
+  </a>
 {% endblock %}
 
 {% block card_title %}
   <h4 class="teaser__title">
-    <a href="{{ profile_stream_url }}">
-      {{ profile_name }}
+    <a href="{{ profile_home }}">
+      {{ profile_name }} {{ profile_name_extra }}
     </a>
   </h4>
-  {{ profile_name_extra }}
 {% endblock %}
 
 {% block card_body %}{% endblock %}
@@ -30,7 +33,7 @@
 {% block card_link %}
   <div class="card__link">
     <a href="{{ profile_stream_url }}" rel="bookmark">{{ 'Read more'|t }}
-      <span class="visually-hidden">{{ 'about'|t }}{{ label }}</span>
+      <span class="visually-hidden">{% trans %}about {{ label }}{% endtrans %} </span>
     </a>
   </div>
 {% endblock %}

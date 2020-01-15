@@ -28,10 +28,41 @@
     {% endembed %}
   {% endif %}
 
-  {% if content.body %}
-    {% embed "node--teaser__body.html.twig" %}
-      {% block field_body %} {{ content.body }} {% endblock %}
-    {% endembed %}
+{% endblock %}
+
+{% block card_actionbar %}
+
+  {% if visibility_icon and visibility_label %}
+    <div class="badge teaser__badge"
+         title="{% trans %}The visibility of this content is set to {{ visibility_label }}{% endtrans %} ">
+      <span class="badge__container">
+        <svg class="badge__icon">
+          <use xlink:href="#icon-{{ visibility_icon }}"></use>
+        </svg>
+        <span class="badge__label text-gray">{{ visibility_label|capitalize }}</span>
+      </span>
+    </div>
   {% endif %}
+
+  {% if content.enrollments_count is not empty %}
+    <div class="badge teaser__badge" title="{% trans %}Total amount of enrollments{% endtrans %}">
+      <span class="badge__container">
+        <svg class="badge__icon">
+          <use xlink:href="#icon-person"></use>
+        </svg>
+        <span class="badge__label">
+          {{ content.enrollments_count }}
+        </span>
+      </span>
+    </div>
+  {% endif %}
+
+  {% if content.enrolled %}
+    <span class="badge badge-default teaser__badge">
+      {{ content.enrolled }}
+    </span>
+  {% endif %}
+
+  {{ content.links }}
 
 {% endblock %}

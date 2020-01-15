@@ -239,6 +239,8 @@ function _social_group_get_group_labels() {
  *   - view_mode: View mode; e.g., 'full', 'teaser', etc.
  */
 function social_group_preprocess_group(array &$variables) {
+  /** @var \Drupal\social_group\GroupStatistics $group_statistics */
+  $group_statistics = \Drupal::service('social_group.group_statistics');
   /** @var \Drupal\group\Entity\GroupInterface $group */
   $group = $variables['group'];
   $variables['title'] = $group->label();
@@ -328,10 +330,18 @@ function social_group_preprocess_group(array &$variables) {
       }
     }
   }
-
   // Count number of group members.
-  $group_members_count = \Drupal::service('social_group.group_members_count');
-  $variables['group_members'] = $group_members_count->getGroupMemberCount($group);
+  $variables['group_members'] = $group_statistics->memberCount($group);
+
+  // Prepare variables for statistic block.
+  if ($variables['view_mode'] === 'statistic') {
+    if ($group->getGroupType()->hasContentPlugin('group_node:event')) {
+      $variables['group_events'] = $group_statistics->nodeCount($group, 'event');
+    }
+    if ($group->getGroupType()->hasContentPlugin('group_node:topic')) {
+      $variables['group_topics'] = $group_statistics->nodeCount($group, 'topic');
+    }
+  }
 }
 
 /**
