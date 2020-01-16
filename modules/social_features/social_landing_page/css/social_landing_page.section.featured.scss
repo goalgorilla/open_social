@@ -180,12 +180,36 @@
 .teaser.teaser--wide {
   flex: 0 0 100%;
   max-width: 100%;
+  flex-wrap: wrap;
 
   @media (min-width: 900px) {
     height: 150px;
   }
 
+  &.no-image {
+    .teaser__image {
+      .teaser__teaser-type {
+        position: absolute;
+        margin-bottom: 0;
+        left: 0;
+        width: 44px;
+        height: 44px;
+        padding: 12px;
+
+        @media (min-width: 600px) {
+          background-color: rgba(0, 0, 0, 0.5);
+        }
+      }
+
+      .teaser__teaser-type-icon {
+        fill: #fff;
+      }
+    }
+  }
+
   .teaser__image {
+    display: flex;
+
     @media (min-width: 600px) {
       border-top-left-radius: inherit;
       border-bottom-left-radius: inherit;
@@ -193,17 +217,69 @@
     }
 
     @media (min-width: 900px) {
-      flex: 0 0 300px;
+      flex: 0 0 420px;
       height: 150px;
     }
 
     @media (min-width: 1200px) {
-      flex: 0 0 450px;
+      flex: 0 0 570px;
+    }
+
+    img,
+    .img_wrapper {
+      @media (min-width: 600px) {
+        flex: 0 0 250px;
+        max-width: 250px;
+      }
+
+      @media (min-width: 900px) {
+        flex: 0 0 300px;
+        max-width: 300px;
+      }
+
+      @media (min-width: 1200px) {
+        flex: 0 0 450px;
+        max-width: 450px;
+      }
     }
 
     img {
       height: 100%;
       object-fit: cover;
+    }
+
+    .img_wrapper {
+      order: 0;
+
+      .no-feature-image {
+        display: none;
+      }
+    }
+
+    .teaser__icon {
+      order: 2;
+    }
+
+    > a {
+      order: 1;
+    }
+  }
+
+  .card__actionbar,
+  .teaser__body {
+    @media (min-width: 600px) {
+      flex: 0 0 calc(100% - 250px);
+      max-width: calc(100% - 250px);
+    }
+
+    @media (min-width: 900px) {
+      flex: 0 0 calc(100% - 420px);
+      max-width: calc(100% - 420px);
+    }
+
+    @media (min-width: 1200px) {
+      flex: 0 0 calc(100% - 570px);
+      max-width: calc(100% - 570px);
     }
   }
 
@@ -218,6 +294,7 @@
       align-items: center;
       justify-content: center;
       background: #fafafa;
+      order: 4;
     }
 
     .teaser__content-type-icon {
@@ -225,14 +302,6 @@
       flex: 0 0 45px;
       height: 45px;
       margin-right: 0;
-    }
-  }
-
-  .teaser__tag {
-    font-weight: 700;
-
-    a {
-      font-weight: 700;
     }
   }
 
@@ -247,6 +316,14 @@
       display: block;
       font-size: 14px;
       font-weight: 500;
+    }
+  }
+
+  .teaser__tag {
+    font-weight: 700;
+
+    a {
+      font-weight: 700;
     }
   }
 
