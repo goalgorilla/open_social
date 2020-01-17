@@ -5,6 +5,16 @@
  * Lists available colors and color schemes for the Social Blue theme.
  */
 
+$brand_css = [
+  'assets/css/brand.css',
+];
+// Add brand css files for new Sky style.
+$theme_path = drupal_get_path('theme', 'socialblue');
+$sky_brand_css = 'assets/css/brand--sky.css';
+if (file_exists($theme_path . '/' . $sky_brand_css)) {
+  $brand_css[] = $sky_brand_css;
+}
+
 $info = [
   // Available colors and color labels used in theme.
   'fields' => [
@@ -86,9 +96,7 @@ $info = [
     ],
   ],
 
-  'css' => [
-    'assets/css/brand.css',
-  ],
+  'css' => $brand_css,
 
   // Files to copy.
   'copy' => [
