@@ -29,13 +29,8 @@ class AjaxCommentsController extends ContribController {
     // Store the selectors from the incoming request, if applicable.
     // If the selectors are not in the request, the stored ones will
     // not be overwritten.
-//    $test = $this->tempStore->getSelectors($request, $overwrite = TRUE);
-
     // Rebuild the form to trigger form submission.
     $this->tempStore->setSelector('form_html_id', 'node-topic-field-topic-comments');
-
-    $x = 1;
-
     $comment->setUnpublished();
 
     // Build the updated comment field and insert into a replaceWith response.

@@ -12,7 +12,11 @@ use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Url;
 use Drupal\node\Entity\Node;
 use Drupal\social_post\Entity\Post;
+use Drupal\Core\Entity\EntityInterface;
 
+/**
+ * Implements hook_entity_display_build_alter().
+ */
 function social_ajax_comments_entity_display_build_alter(&$build, $context) {
   // Only for comments on nodes on the default display.
   // This is to override the defaults in ajax_comments who
@@ -57,7 +61,7 @@ function social_ajax_comments_entity_display_build_alter(&$build, $context) {
 /**
  * Implements hook_entity_view_mode_alter().
  */
-function social_ajax_comments_entity_view_mode_alter(&$view_mode, Drupal\Core\Entity\EntityInterface $entity, $context) {
+function social_ajax_comments_entity_view_mode_alter(&$view_mode, EntityInterface $entity, $context) {
   // We need this to alter the view modes for Nodes as ajax_comments
   // doesn't handle this correctly. And will add it as activity.
   /** @var \Drupal\ajax_comments\FieldSettingsHelper $field_settings_helper */
@@ -103,6 +107,9 @@ function social_ajax_comments_comment_links_alter(array &$links, CommentInterfac
   $commented_entity = $entity->getCommentedEntity();
   $account = \Drupal::currentUser();
 
+  // Url::fromRoute()->toRenderable doesn't fully take care of access checks.
+  // We need the custom checks to override what Ajax comments does for us.
+  // Mainly because of UX flaws in the edit form that opens up.
   if ($entity->isPublished() && $account->hasPermission('administer comments')) {
     // For now we don't support edit ajax actions nor unpublishing.
     $links['comment']['#links']['comment-edit']['attributes']['class'] = [];
