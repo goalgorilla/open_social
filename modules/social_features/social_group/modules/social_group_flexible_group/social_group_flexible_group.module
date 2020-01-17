@@ -32,6 +32,20 @@ function social_group_flexible_group_social_group_types_alter(array &$social_gro
 }
 
 /**
+ * Implements hook_views_data_alter().
+ */
+function social_group_flexible_group_views_data_alter(array &$data) {
+  $data['node_access']['flexible_group_node_access'] = [
+    'title' => t('Filter nodes, with visibility group, placed in group you are not a member of.'),
+    'filter' => [
+      'title' => t('Filter nodes, with visibility group, placed in group you are not a member of.'),
+      'help' => t('Filter nodes, with visibility group, placed in group you are not a member of.'),
+      'id' => 'flexible_group_node_access',
+    ],
+  ];
+}
+
+/**
  * Implements hook_form_FORM_ID_form_alter().
  */
 function social_group_flexible_group_form_group_flexible_group_edit_form_alter(&$form, FormStateInterface $form_state, $form_id) {
