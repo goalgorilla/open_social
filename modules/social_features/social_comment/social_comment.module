@@ -5,6 +5,7 @@
  * The Social comment module.
  */
 
+use Drupal\Component\Utility\Html;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Link;
@@ -219,6 +220,7 @@ function social_comment_comment_links_alter(array &$links, CommentInterface $ent
 function social_comment_preprocess_comment(&$variables) {
   /* @var \Drupal\comment\Entity\Comment $comment */
   $comment = $variables['elements']['#comment'];
+
   // Display comment created date in format 'time ago'.
   $created_time_ago = \Drupal::service('date.formatter')
     ->formatTimeDiffSince($comment->getCreatedTime(), ['granularity' => 1, 'return_as_object' => TRUE]);
