@@ -45,9 +45,8 @@ class FlexibleGroupNodeAccess extends FilterPluginBase {
       // Add extra condition for Group Membership related check in Flexible groups.
       $group_memberships = \Drupal::service('social_group.helper_service')->getAllGroupsForUser($account->id());
       // OR content is GROUP.
-      $group_access = new Condition('AND');
+      $group_access = new Condition('OR');
       $group_access->condition('membership.gid', $group_memberships, 'IN');
-      $this->query->addWhere('membership', $group_access);
 
       // Also check for Open / Public within groups.
       $configuration = [
@@ -61,11 +60,12 @@ class FlexibleGroupNodeAccess extends FilterPluginBase {
       $join = Views::pluginManager('join')->createInstance('standard', $configuration);
       $this->query->addRelationship('field_visibility_relationship', $join, 'node__field_content_visibility');
 
-      $group_visible = new Condition('AND');
+      $group_visible = new Condition('OR');
       $group_visible->condition('field_content_visibility_value', 'public');
       if (!$account->isAnonymous()) {
         $group_visible->condition('field_content_visibility_value', 'community');
       }
+      $group_visible->condition($group_access);
 
       // And we should check for open / public.
       $this->query->addWhere('visibility', $group_visible);
