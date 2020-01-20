@@ -15,10 +15,14 @@ use Drupal\views\Views;
  */
 class FlexibleGroupNodeAccess extends FilterPluginBase {
 
+  /**
+   * {@inheritdoc}
+   */
   public function adminSummary() {}
 
-//  protected function operatorForm(&$form, FormStateInterface $form_state) {}
-
+  /**
+   * {@inheritdoc}
+   */
   public function canExpose() {
     return FALSE;
   }
@@ -42,7 +46,8 @@ class FlexibleGroupNodeAccess extends FilterPluginBase {
       $join = Views::pluginManager('join')->createInstance('standard', $configuration);
       $this->query->addRelationship('membership', $join, 'node_field_data');
 
-      // Add extra condition for Group Membership related check in Flexible groups.
+      // Add extra condition for Group Membership
+      // related check in Flexible groups.
       $group_memberships = \Drupal::service('social_group.helper_service')->getAllGroupsForUser($account->id());
       // OR content is GROUP.
       $group_access = new Condition('OR');
