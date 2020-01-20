@@ -28,17 +28,19 @@
 // Remove 'padding-left' from teaser badge if teaser badge(first-child) does not use 'background-color'.
 .teaser {
   .teaser__badge {
-    &:not(.badge-default),
-    &:not(.badge-primary),
-    &:not(.badge-secondary),
-    &:not(.badge-accent),
-    &:not(.badge-success),
-    &:not(.badge-info),
-    &:not(.badge-warning),
-    &:not(.badge-danger),
-    &:not(.badge-active) {
-      &:first-child {
-        padding-left: 0;
+    &:first-child {
+      padding-left: 0;
+
+      &.badge-default,
+      &.badge-primary,
+      &.badge-secondary,
+      &.badge-accent,
+      &.badge-success,
+      &.badge-info,
+      &.badge-warning,
+      &.badge-danger,
+      &.badge-active {
+        padding-left: 1em;
       }
     }
   }

@@ -29,7 +29,7 @@ function socialblue_library_info_alter(&$libraries, $extension) {
       $style_css = $base_path . $key . '--' . $style . '.css';
       if (file_exists($theme_path . '/' . $style_css)) {
         $libraries[$key]['css']['theme'][$style_css] = [];
-        $libraries[$key]['css']['theme'][$style_css]['weight'] = 700;
+        $libraries[$key]['css']['theme'][$style_css]['weight'] = 600;
       }
     }
   }
