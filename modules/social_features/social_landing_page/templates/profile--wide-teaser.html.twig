@@ -16,7 +16,7 @@
       <div class="teaser__teaser-type">
         <svg class="teaser__teaser-type-icon">
           <title>{{- node.bundle|clean_class|capitalize -}} : &nbsp; {{- label|render|striptags|trim -}}</title>
-          <use xlink:href="#icon-user"></use>
+          <use xlink:href="#icon-user_white"></use>
         </svg>
       </div>
     {% endblock %}
@@ -48,23 +48,6 @@
       </span>
     </div>
   {% endif %}
-{% endblock %}
-
-{% block card_actionbar %}
-  {% if content.field_profile_address|render %}
-    <div class="teaser__content-line">
-      <svg class="teaser__content-type-icon">
-        <use xlink:href="#icon-location"></use>
-      </svg>
-      <span class="teaser__content-text">
-          {{ content.field_profile_address }}
-        </span>
-    </div>
-  {% endif %}
-
-  <a href="{{ profile_info_url }}" class="card__link">
-    {% trans %}Read more{% endtrans %}
-  </a>
 {% endblock %}
 
 

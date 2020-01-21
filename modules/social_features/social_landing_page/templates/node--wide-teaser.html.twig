@@ -49,6 +49,12 @@
     <div class="teaser__content">
 
       {% block card_title %}
+        {% if group_type %}
+          <div class="teaser__tag">
+            {{ group_type }}
+          </div>
+        {% endif %}
+
         {{ title_prefix }}
         <h4{{ title_attributes }} class="teaser__title">
           <a href="{{ url }}" rel="bookmark">{{ label }}</a>
@@ -61,7 +67,7 @@
 
           {% if display_submitted %}
             {% embed "node--teaser__field.html.twig" %}
-              {%- block field_icon -%} account_circle {%- endblock -%}
+              {%- block field_icon -%} schedule {%- endblock -%}
               {%- block field_value %}
                 <div class="teaser__published">
                   <div class="teaser__published-date"> {{ date }} &bullet;</div>

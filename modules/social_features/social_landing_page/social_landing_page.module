@@ -7,6 +7,7 @@
 
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Template\Attribute;
+use Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface;
 use Drupal\file\Entity\File;
 use Drupal\image\Entity\ImageStyle;
 use Drupal\node\NodeInterface;
@@ -59,6 +60,9 @@ function social_landing_page_theme() {
     'base hook' => 'node',
   ];
   $theme_templates['node__event__featured'] = [
+    'base hook' => 'node',
+  ];
+  $theme_templates['node__event__wide_teaser'] = [
     'base hook' => 'node',
   ];
   // Group.
@@ -204,35 +208,57 @@ function social_landing_page_preprocess_paragraph(&$variables) {
 function social_landing_page_preprocess_node(&$variables) {
   /** @var \Drupal\node\Entity\Node $node */
   $node = $variables['node'];
-  if ($node->getType() === 'landing_page') {
-    // If featured we need to do some magic.
-    if ($variables['view_mode'] === 'featured') {
-      $hero_image = _social_landing_page_get_hero_image($node);
-      if (!empty($hero_image)) {
-        $variables['content']['field_landing_page_image'] = [
-          '#type' => 'markup',
-          '#markup' => $hero_image,
-        ];
-      }
-    }
-    // Get current user.
-    $account = \Drupal::currentUser();
-
-    // Add node edit url for management.
-    if ($node instanceof NodeInterface) {
-      // Get the current route name to check if the user is on the
-      // edit or delete page.
-      $route = \Drupal::routeMatch()->getRouteName();
-      if (!in_array($route, [
-        'entity.node.edit_form',
-        'entity.node.delete_form',
-      ])) {
-        if ($node->access('update', $account)) {
-          $variables['node_edit_url'] = $node->toUrl('edit-form')->toString();
+  switch ($node->getType()) {
+    case 'landing_page':
+      // If featured we need to do some magic.
+      if ($variables['view_mode'] === 'featured') {
+        $hero_image = _social_landing_page_get_hero_image($node);
+        if (!empty($hero_image)) {
+          $variables['content']['field_landing_page_image'] = [
+            '#type' => 'markup',
+            '#markup' => $hero_image,
+          ];
         }
       }
-    }
+      // Get current user.
+      $account = \Drupal::currentUser();
+
+      // Add node edit url for management.
+      if ($node instanceof NodeInterface) {
+        // Get the current route name to check if the user is on the
+        // edit or delete page.
+        $route = \Drupal::routeMatch()->getRouteName();
+        if (!in_array($route, [
+          'entity.node.edit_form',
+          'entity.node.delete_form',
+        ])) {
+          if ($node->access('update', $account)) {
+            $variables['node_edit_url'] = $node->toUrl('edit-form')->toString();
+          }
+        }
+      }
+      break;
+
+    case 'event':
+      // This will get the users timezone, which is either set by the user
+      // or defaults back to the sites timezone if the user didn't select any.
+      $timezone = drupal_get_user_timezone();
+      // Timezone that dates should be stored in.
+      $utc_timezone = DateTimeItemInterface::STORAGE_TIMEZONE;
+      // Get start date.
+      if ($start_date_field = $node->field_event_date) {
+        if (!empty($start_date_field->value)) {
+          $start_datetime = new \DateTime($start_date_field->value, new \DateTimeZone($utc_timezone));
+          $start_datetime->setTimezone(new \DateTimeZone($timezone));
+          $start_datetime = $start_datetime->getTimestamp();
+          $date_formatter = \Drupal::service('date.formatter');
+          $variables['start_month'] = $date_formatter->format($start_datetime, 'custom', 'F');
+          $variables['start_day'] = $date_formatter->format($start_datetime, 'custom', 'j');
+        }
+      }
+      break;
   }
+
   _social_landing_page_teaser_wide_attributes($variables);
 }
 

@@ -1,0 +1,35 @@
+{% extends 'node--wide-teaser.html.twig' %}
+
+{% block card_image %}
+  <div class="teaser__image">
+    <div class="teaser__image-wrapper">
+      {% block card_hero_image %}
+        <div class="img_wrapper">
+          {% if content.field_topic_image|render %}
+            {{ content.field_topic_image }}
+          {% else %}
+            <hr class="no-feature-image">
+          {% endif %}
+        </div>
+
+      {% endblock %}
+
+      {% block card_teaser_type %}
+        <a href="{{ url }}">
+          <div class="teaser__teaser-type">
+            <svg class="teaser__teaser-type-icon">
+              <use xlink:href="#icon-{{- node.bundle|clean_class -}}"></use>
+            </svg>
+          </div>
+        </a>
+      {% endblock %}
+    </div>
+
+    <div class="teaser__date">
+      <div class="teaser__date-wrap">
+        {{ start_day }}
+        <span>{{ start_month }}</span>
+      </div>
+    </div>
+  </div>
+{% endblock %}
