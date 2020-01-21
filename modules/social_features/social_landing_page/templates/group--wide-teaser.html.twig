@@ -2,12 +2,14 @@
 
 {% block card_hero_image %}
 
-  {{ content.field_group_image }}
-  <div class="teaser__teaser-type">
-    <svg class="teaser__teaser-type-icon">
-      <title>{{- node.bundle|clean_class|capitalize -}} : &nbsp; {{- label|render|striptags|trim -}}</title>
-      <use xlink:href="#icon-{{- node.bundle|clean_class -}}"></use>
-    </svg>
+  <div class="teaser__image-wrapper">
+    {{ content.field_group_image }}
+    <div class="teaser__teaser-type">
+      <svg class="teaser__teaser-type-icon">
+        <title>{{- node.bundle|clean_class|capitalize -}} : &nbsp; {{- label|render|striptags|trim -}}</title>
+        <use xlink:href="#icon-{{- node.bundle|clean_class -}}"></use>
+      </svg>
+    </div>
   </div>
 
   <div class="teaser__icon">
@@ -37,20 +39,21 @@
     </div>
   {% endif %}
 
-  <div class="card__actionbar">
+  {% block card_actionbar %}
     <div class="badge teaser__badge" title="Total amount of members">
-      <span class="badge__container">
-        <svg class="badge__icon">
-          <use xlink:href="#icon-user"></use>
-        </svg>
-        <span class="badge__label">
-          {{ group_members }}
-        </span>
+    <span class="badge__container">
+      <svg class="badge__icon">
+        <use xlink:href="#icon-user"></use>
+      </svg>
+      <span class="badge__label">
+        {{ group_members }}
       </span>
+    </span>
     </div>
 
     <a href="{{ url }}" class="card__link" title="{{ label }}">
       {% trans %}Read more{% endtrans %}
     </a>
-  </div>
+  {% endblock %}
+
 {% endblock %}

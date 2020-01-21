@@ -1,12 +1,14 @@
-{% extends 'node--featured.html.twig' %}
+{% extends 'node--wide-teaser.html.twig' %}
+
+{% set attributes = attributes.addClass('teaser--wide-profile') %}
 
 {% block card_image %}
-  <a href="{{ profile_stream_url }}" class="teaser__image">
+  <div class="teaser__image">
     {% block card_hero_image %}
       {% if content.field_profile_image %}
         <span class="teaser__image-wrapper">
-      {{ content.field_profile_image }}
-    </span>
+          <a href="{{ profile_stream_url }}">{{ content.field_profile_image }}</a>
+        </span>
       {% endif %}
     {% endblock %}
 
@@ -14,16 +16,16 @@
       <div class="teaser__teaser-type">
         <svg class="teaser__teaser-type-icon">
           <title>{{- node.bundle|clean_class|capitalize -}} : &nbsp; {{- label|render|striptags|trim -}}</title>
-          <use xlink:href="#icon-{{- node.bundle|clean_class -}}"></use>
+          <use xlink:href="#icon-user"></use>
         </svg>
       </div>
     {% endblock %}
-  </a>
 
-  <div class="teaser__icon">
-    <svg class="teaser__content-type-icon">
-      <use xlink:href="#icon-user"></use>
-    </svg>
+    <div class="teaser__icon">
+      <svg class="teaser__content-type-icon">
+        <use xlink:href="#icon-user"></use>
+      </svg>
+    </div>
   </div>
 {% endblock %}
 
@@ -37,33 +39,32 @@
 
   {% if content.field_profile_function|render or content.field_profile_organization|render %}
     <div class="teaser__content-line">
-          <span class="teaser__content-text">
-            {% if content.field_profile_organization|render %}
-              {{ '@function at @organization'|t({'@function': content.field_profile_function|render, '@organization': content.field_profile_organization|render}) }}
-            {% else %}
-              {{ content.field_profile_function }}
-            {% endif %}
-          </span>
+      <span class="teaser__content-text">
+        {% if content.field_profile_organization|render %}
+          {{ '@function at @organization'|t({'@function': content.field_profile_function|render, '@organization': content.field_profile_organization|render}) }}
+        {% else %}
+          {{ content.field_profile_function }}
+        {% endif %}
+      </span>
+    </div>
+  {% endif %}
+{% endblock %}
+
+{% block card_actionbar %}
+  {% if content.field_profile_address|render %}
+    <div class="teaser__content-line">
+      <svg class="teaser__content-type-icon">
+        <use xlink:href="#icon-location"></use>
+      </svg>
+      <span class="teaser__content-text">
+          {{ content.field_profile_address }}
+        </span>
     </div>
   {% endif %}
 
-  <div class="card__actionbar">
-    {% if content.field_profile_address|render %}
-      <div class="teaser__content-line">
-        <svg class="teaser__content-type-icon">
-          <use xlink:href="#icon-location"></use>
-        </svg>
-        <span class="teaser__content-text">
-            {{ content.field_profile_address }}
-          </span>
-      </div>
-    {% endif %}
-
-    <a href="{{ profile_info_url }}" class="card__link">
-      {% trans %}Read more{% endtrans %}
-    </a>
-  </div>
-
+  <a href="{{ profile_info_url }}" class="card__link">
+    {% trans %}Read more{% endtrans %}
+  </a>
 {% endblock %}
 
 
