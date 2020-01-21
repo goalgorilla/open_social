@@ -9,6 +9,7 @@ use Drupal\ajax_comments\Utility;
 use Drupal\comment\CommentInterface;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Entity\ContentEntityInterface;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 use Drupal\node\Entity\Node;
 use Drupal\social_post\Entity\Post;
@@ -55,6 +56,32 @@ function social_ajax_comments_entity_display_build_alter(&$build, $context) {
         }
       }
     }
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ *
+ * Triggers on form for deleting a comment on a post.
+ */
+function social_ajax_comments_form_comment_post_comment_delete_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  // We set a new class, so we can remove wrapper div.
+  // Due to the form.inc and confirm-form twig setup.
+  if (\Drupal::request()->isXmlHttpRequest()) {
+    $form['#attributes']['class'][] = 'is_modal';
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ *
+ * Triggers on form for deleting a comment on a node.
+ */
+function social_ajax_comments_form_comment_comment_delete_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  // We set a new class, so we can remove wrapper div.
+  // Due to the form.inc and confirm-form twig setup.
+  if (\Drupal::request()->isXmlHttpRequest()) {
+    $form['#attributes']['class'][] = 'is_modal';
   }
 }
 
