@@ -32,6 +32,7 @@ class FlexibleGroupNodeAccess extends FilterPluginBase {
    */
   public function query() {
     $account = $this->view->getUser();
+    $group_access = NULL;
     if (!$account->hasPermission('bypass node access')) {
       // Ensure we check for group content.
       // Join node table(s).
@@ -49,9 +50,11 @@ class FlexibleGroupNodeAccess extends FilterPluginBase {
       // Add extra condition for Group Membership
       // related check in Flexible groups.
       $group_memberships = \Drupal::service('social_group.helper_service')->getAllGroupsForUser($account->id());
-      // OR content is GROUP.
-      $group_access = new Condition('OR');
-      $group_access->condition('membership.gid', $group_memberships, 'IN');
+      if (!empty($group_memberships) && !$account->isAnonymous()) {
+        // OR content is GROUP.
+        $group_access = new Condition('OR');
+        $group_access->condition('membership.gid', $group_memberships, 'IN');
+      }
 
       // Also check for Open / Public within groups.
       $configuration = [
@@ -70,7 +73,9 @@ class FlexibleGroupNodeAccess extends FilterPluginBase {
       if (!$account->isAnonymous()) {
         $group_visible->condition('field_content_visibility_value', 'community');
       }
-      $group_visible->condition($group_access);
+      if ($group_access !== NULL) {
+        $group_visible->condition($group_access);
+      }
 
       // And we should check for open / public.
       $this->query->addWhere('visibility', $group_visible);
