@@ -2,7 +2,6 @@
 
 namespace Drupal\socialbase\Plugin\Preprocess;
 
-
 use Drupal\bootstrap\Plugin\Alter\AlterInterface;
 
 /**
