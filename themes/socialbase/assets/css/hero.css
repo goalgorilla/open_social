@@ -216,7 +216,17 @@
     min-height: 410px;
   }
   .cover-wrap.small {
-    min-height: 206px;
+    height: 193px;
+    min-height: auto;
+  }
+  .cover-wrap.small .page-title h1 {
+    font-size: 2rem;
+    max-height: 70px;
+    overflow: hidden;
+  }
+  .cover-wrap.small > .hero-footer {
+    position: static;
+    margin-top: -2.5rem;
   }
   .cover-wrap > .hero-footer {
     position: absolute;
@@ -274,15 +284,17 @@
 
 @media all and (-ms-high-contrast: none) {
   *::-ms-backdrop, .cover-wrap {
-    height: 410px;
+    min-height: 410px;
   }
   *::-ms-backdrop, .cover-wrap.small {
-    height: 206px;
+    height: 193px;
+    min-height: auto;
   }
   *::-ms-backdrop, .paragraph--hero .cover-wrap {
-    height: 350px;
+    min-height: 350px;
   }
   *::-ms-backdrop, .paragraph--hero-small .cover-wrap {
-    height: 206px;
+    min-height: 206px;
+    height: auto;
   }
 }

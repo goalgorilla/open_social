@@ -8,6 +8,8 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Link;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
 
 /**
@@ -16,6 +18,8 @@ use Drupal\Core\Url;
  * @package Drupal\social_content_block
  */
 class ContentBuilder implements ContentBuilderInterface {
+
+  use StringTranslationTrait;
 
   /**
    * The entity type manager.
@@ -47,11 +51,19 @@ class ContentBuilder implements ContentBuilderInterface {
    *   Database Service Object.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    *   The module handler to invoke the alter hook with.
+   * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
+   *   The string translation.
    */
-  public function __construct(EntityTypeManagerInterface $entity_type_manager, Connection $connection, ModuleHandlerInterface $module_handler) {
+  public function __construct(
+    EntityTypeManagerInterface $entity_type_manager,
+    Connection $connection,
+    ModuleHandlerInterface $module_handler,
+    TranslationInterface $string_translation
+  ) {
     $this->entityTypeManager = $entity_type_manager;
     $this->connection = $connection;
     $this->moduleHandler = $module_handler;
+    $this->setStringTranslation($string_translation);
   }
 
   /**
