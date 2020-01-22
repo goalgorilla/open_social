@@ -216,6 +216,17 @@ function socialbase_form_user_form_alter(&$form) {
 }
 
 /**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function socialbase_form_event_an_enroll_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  // Extend the core dialog library with our own because we can not do this
+  // globally anymore as it broke the layout builder.
+  if (isset($form['#attached']['library']) && in_array('core/drupal.dialog.ajax', $form['#attached']['library'], TRUE)) {
+    $form['#attached']['library'][] = 'socialbase/modal';
+  }
+}
+
+/**
  * Implements hook_form_alter().
  */
 function socialbase_form_alter(&$form, FormStateInterface $form_state, $form_id) {

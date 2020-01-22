@@ -49,8 +49,6 @@ libraries-extend:
   # why we added weights to the library JS files in socialbase.
   bootstrap/popover:
     - socialbase/popover
-  core/drupal.dialog.ajax:
-    - socialbase/modal
   image_widget_crop/cropper.integration:
     - socialbase/cropper.integration
 
@@ -66,16 +64,6 @@ libraries-override:
   # The library name.
   core/normalize: false
   # Remove jQuery UI styles
-  core/jquery.ui:
-    css:
-      component:
-        assets/vendor/jquery.ui/themes/base/core.css: false
-      theme:
-        assets/vendor/jquery.ui/themes/base/theme.css: false
-  core/jquery.ui.button:
-    css:
-      component:
-        assets/vendor/jquery.ui/themes/base/button.css: false
   core/jquery.ui.datepicker:
       # CSS files are always labeled as such. This format is required.
       css:
@@ -86,14 +74,6 @@ libraries-override:
           # was defined. Setting to 'false' prevents the file from being
           # included.
           assets/vendor/jquery.ui/themes/base/datepicker.css: false
-  core/jquery.ui.dialog:
-    css:
-      component:
-        assets/vendor/jquery.ui/themes/base/dialog.css: false
-  core/jquery.ui.menu:
-    css:
-      component:
-        assets/vendor/jquery.ui/themes/base/menu.css: false
   system/base: false
   views/views.module: false
   classy/file: false
