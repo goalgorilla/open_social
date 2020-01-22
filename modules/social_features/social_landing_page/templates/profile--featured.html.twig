@@ -30,7 +30,7 @@
 {% block card_link %}
   <div class="card__link">
     <a href="{{ profile_stream_url }}" rel="bookmark">{{ 'Read more'|t }}
-      <span class="visually-hidden">{{ 'about'|t }}{{ label }}</span>
+      <span class="visually-hidden">{% trans %}about {{ label }}{% endtrans %} </span>
     </a>
   </div>
 {% endblock %}
