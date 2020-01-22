@@ -115,11 +115,22 @@ class MagicLoginController extends ControllerBase {
       return $this->redirect('user.login', [], ['query' => ['destination' => $destination]]);
     }
 
-    // When the user hasn't set a password, redirect the user to
-    // the set passwords page.
-    if (NULL === $user->getPassword()) {
-      user_login_finalize($user);
+    // Ensure the hash from the route is checked.
+    if (!Crypt::hashEquals($hash, user_pass_rehash($user, $timestamp))) {
+      $this->messenger()->addError($this->t('You have tried to use a one-time link that is invalid.'));
 
+      return $this->redirect('user.login', [], ['query' => ['destination' => $destination]]);
+    }
+
+    // It's safe to finalize the login now.
+    // Hashes are checked, link is still valid and
+    // we are sure it is the correct user.
+    user_login_finalize($user);
+
+    // When the user hasn't set a password, redirect the user to
+    // the set passwords page. This now includes users that have
+    // registered through social login possibilities.
+    if (NULL === $user->getPassword()) {
       $message_set_password = $this->t('You need to set your password in order to log in.');
       if ($this->dataPolicyConsensus() === FALSE) {
         // Set a different text when the user still needs to comply to
@@ -146,14 +157,10 @@ class MagicLoginController extends ControllerBase {
       );
     }
 
-    // The user already had a password, check the hash.
-    if (Crypt::hashEquals($hash, user_pass_rehash($user, $timestamp))) {
-      user_login_finalize($user);
-      $this->logger->notice('User %name used one-time login link at time %timestamp.', ['%name' => $user->getDisplayName(), '%timestamp' => $timestamp]);
-      $this->messenger()->addStatus($this->t('You have just used your one-time login link. It is no longer necessary to use this link to log in.'));
+    $this->logger->notice('User %name used one-time login link at time %timestamp.', ['%name' => $user->getDisplayName(), '%timestamp' => $timestamp]);
+    $this->messenger()->addStatus($this->t('You have just used your one-time login link. It is no longer necessary to use this link to log in.'));
 
-      return new RedirectResponse($destination);
-    }
+    return new RedirectResponse($destination);
   }
 
   /**

@@ -12,9 +12,12 @@
  */
 #}
 
-
-<div class="card">
-  <div class="card__block">
-    {{ form }}
+{% if attributes.hasClass('is_modal') %}
+ {{ form }}
+{% else %}
+  <div class="card">
+    <div class="card__block">
+      {{ form }}
+    </div>
   </div>
-</div>
+{% endif %}

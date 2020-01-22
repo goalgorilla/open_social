@@ -140,6 +140,14 @@ function social_event_managers_form_alter(&$form, FormStateInterface $form_state
       $display_id = $view->current_display;
     }
   }
+  elseif (isset($form['social_views_bulk_operations_bulk_form_enrollments_1']) && isset($form['output'][0]['#view'])) {
+    $view = &$form['output'][0]['#view'];
+
+    if ($view instanceof ViewExecutable) {
+      $view_id = $view->id();
+      $display_id = $view->current_display;
+    }
+  }
   elseif ($form_id === 'views_bulk_operations_configure_action') {
     $data = $form_state->get('views_bulk_operations');
     $view_id = $data['view_id'];
@@ -460,6 +468,8 @@ function _social_event_managers_action_batch_finish($success, array $results, ar
       }
 
       if ($fields === 2) {
+        // @todo: source strings will never be translatable when we use
+        // variables. This should be refactored.
         $message = \Drupal::translation()->formatPlural($results_count, $messages['singular'], $messages['plural']);
         $type = $success ? MessengerInterface::TYPE_STATUS : MessengerInterface::TYPE_WARNING;
         \Drupal::messenger()->addMessage($message, $type);
@@ -516,6 +526,15 @@ function _social_event_managers_get_action_id(array &$batch) {
  */
 function social_event_managers_social_event_managers_action_social_event_managers_send_email_action_finish($success) {
   if ($success) {
+    // When the queue storage module is enabled the email is send in the
+    // background.
+    if (\Drupal::moduleHandler()->moduleExists('social_queue_storage')) {
+      return [
+        'singular' => 'Your email will be send to 1 selected enrollee',
+        'plural' => 'Your email will be send to @count selected enrollees',
+      ];
+    }
+
     return [
       'singular' => 'Your email has been sent to 1 selected enrollee successfully',
       'plural' => 'Your email has been sent to @count selected enrollees successfully',

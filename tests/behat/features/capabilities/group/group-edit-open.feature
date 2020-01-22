@@ -10,9 +10,7 @@ Feature: Edit my group as a group manager
       | Group Manager One | gm_1@example.com | GoalGorilla                | 1      |
       | Group Member Two  | gm_2@example.com | Drupal                     | 1      |
     And I am logged in as "Group Manager One"
-    And I am on "user"
-    And I click "Groups"
-    And I click "Add a group"
+    And I am on "group/add"
     And I press "Continue"
     And I wait for AJAX to finish
     When I fill in "Title" with "Test open group"
@@ -21,9 +19,9 @@ Feature: Edit my group as a group manager
     And I should see "Test open group" in the "Main content"
     And I should see "1 member"
 
-    Given I am on "user"
-    And I click "Groups"
-    And I click "Test open group" in the "Main content"
+    Given I click the xth "0" element with the css ".navbar-nav .profile"
+    And I click "My groups"
+    When I click "Test open group" in the "Main content"
     Then I should see "Test open group"
 
     # As a LU I want to see the information about a group
@@ -78,24 +76,24 @@ Feature: Edit my group as a group manager
     And I should see the button "Cancel"
 
   # DS-607 As a Group Manager I shouldn't be able to manage group content from other users
-    And I logout
+    Given I logout
     And I am logged in as "Group Member Two"
-    And I am on "user"
-    And I click "Groups"
+    When I click the xth "0" element with the css ".navbar-nav .profile"
+    And I click "My groups"
     And I click "Test open group"
     And I click "Topics"
     And I click "Create Topic"
-    When I fill in the following:
+    And I fill in the following:
       | Title | Test group topic |
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text"
     And I click radio button "Discussion"
     And I press "Save"
-    And I should see "Test group topic"
-    And I logout
+    Then I should see "Test group topic"
+    Given I logout
     And I am logged in as "Group Manager One"
-    And I am on "user"
-    And I click "Groups"
+    When I click the xth "0" element with the css ".navbar-nav .profile"
+    And I click "My groups"
     And I click "Test open group"
     And I click "Topics"
     And I click "Test group topic"
-    And I should not see the link "Edit group"
+    Then I should not see the link "Edit group"

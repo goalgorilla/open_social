@@ -11,17 +11,13 @@ Feature: Create Secret Group
       |  SecretGroup User Two   | group_user_2@example.com | 1      |             |
     And I enable the module "social_group_secret"
     And I am logged in as an "authenticated user"
-    And I am on "user"
-    And I click "Groups"
-    And I click "Add a group"
+    And I am on "group/add"
     Then I should not see "Secret group"
     Given I am logged in as "SecretGroup User One"
-    And I am on "user"
-    And I click "Groups"
-    And I click "Add group"
-    Then I click radio button "Secret group This is a secret group. Users can only join by invitation and the group itself and its content are hidden from non members." with the id "edit-group-type-secret-group"
+    And I am on "group/add"
+    When I click radio button "Secret group This is a secret group. Users can only join by invitation and the group itself and its content are hidden from non members." with the id "edit-group-type-secret-group"
     And I press "Continue"
-    When I fill in "Title" with "Test secret group"
+    And I fill in "Title" with "Test secret group"
     And I fill in the "edit-field-group-description-0-value" WYSIWYG editor with "Description text"
     And I fill in "Location name" with "Disclosed"
     And I select "NL" from "Country"
@@ -31,8 +27,8 @@ Feature: Create Secret Group
       | City | Hengelo |
       | Street address | Padangstraat 11 |
       | Postal code | 7556SP |
-    And I press "Save"
-    And I should see "Test secret group" in the "Main content"
+    When I press "Save"
+    Then I should see "Test secret group" in the "Main content"
     And I should see "Disclosed"
     And I should see "1 member"
     And I should see "Joined"

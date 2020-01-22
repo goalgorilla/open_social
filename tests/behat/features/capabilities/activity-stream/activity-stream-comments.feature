@@ -53,9 +53,7 @@ Feature: See comments in activity stream
       | CreateUser  | 1      | CreateUser  |
       | SeeUser     | 1      | SeeUser     |
     And I am logged in as "CreateUser"
-    And I am on "user"
-    And I click "Groups"
-    And I click "Add a group"
+    And I am on "group/add"
     And I press "Continue"
     When I fill in "Title" with "Test open group"
     And I fill in the "edit-field-group-description-0-value" WYSIWYG editor with "Description text"
