@@ -4,15 +4,9 @@
 
   Drupal.behaviors.socialLazyLoadReactivate = {
     attach: function (context, setting) {
-      var $accordion = $('.paragraph--type--accordion', context);
-
-      $accordion.each(function () {
-        var $currentAccord = $(this);
-        var $accordItem = $currentAccord.find('.paragraph--type--accordion-item');
-        $accordItem.find('.card__title-accord').on('click', function () {
-            var bLazy = new Blazy();
-            bLazy.revalidate();
-        });
+      $('.paragraph--type--accordion .paragraph--type--accordion-item .card__title-accord', context).on('click', function () {
+        var bLazy = new Blazy();
+        bLazy.revalidate();
       });
     }
   };
