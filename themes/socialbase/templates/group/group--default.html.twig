@@ -50,13 +50,8 @@
     %}
 
     <div{{ content_attributes.addClass('card__body body-text') }}>
-      {% if label_hidden %}
-        {{ content.field_group_description }}
-      {% else %}
-        <div{{ title_attributes.addClass(title_classes) }}>{{ label }}</div>
-
-        {{ content.field_group_description }}
-      {% endif %}
+      <div{{ title_attributes.addClass(title_classes) }}>{{ label }}</div>
+      {{ content.field_group_description }}
     </div>
   </div>
 {% endif %}

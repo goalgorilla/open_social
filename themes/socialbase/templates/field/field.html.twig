@@ -41,21 +41,11 @@
 
 {% if bare %}
   {% for item in items %}
-    {% if label_hidden %}
-      {% if entity_type == "node" and field_name == "body" and part_of_teaser %}
-        {{ item.content|render|striptags }}
-      {% else %}
-        {{ item.content }}
-      {% endif %}
+    <div{{ title_attributes.addClass(title_classes) }}>{{ label }}</div>
+    {% if entity_type == "node" and field_name == "body" and part_of_teaser %}
+      {{ item.content|render|striptags }}
     {% else %}
-      <div{{ title_attributes.addClass(title_classes) }}>{{ label }}</div>
-
-      {% if entity_type == "node" and field_name == "body" and part_of_teaser %}
-        {{ item.content|render|striptags }}
-      {% else %}
-        {{ item.content }}
-      {% endif %}
-
+      {{ item.content }}
     {% endif %}
   {% endfor %}
 

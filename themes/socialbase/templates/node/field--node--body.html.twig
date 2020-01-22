@@ -13,20 +13,11 @@
   ]
   %}
 
-  {% if label_hidden %}
-    <div class="body-text clearfix">
-      {% for item in items %}
-        {{ item.content }}
-      {% endfor %}
-    </div>
-  {% else %}
-    <div{{ title_attributes.addClass(title_classes) }}>{{ label }}</div>
-
-    <div class="body-text clearfix">
-      {% for item in items %}
-        {{ item.content }}
-      {% endfor %}
-    </div>
-  {% endif %}
+  <div{{ title_attributes.addClass(title_classes) }}>{{ label }}</div>
+  <div class="body-text clearfix">
+    {% for item in items %}
+      {{ item.content }}
+    {% endfor %}
+  </div>
 
 {% endif %}
