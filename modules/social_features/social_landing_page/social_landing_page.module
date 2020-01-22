@@ -144,16 +144,15 @@ function social_landing_page_preprocess_page(&$variables) {
   // EG: on: /node/%node/enrollments.
   if (!is_null($nid) && !is_object($nid)) {
     $node = Node::load($nid);
-  }
-
-  // Here we remove class for landing page.
-  if (isset($variables['node']) && $node->bundle() === 'landing_page') {
-    if ($variables['content_attributes'] instanceof Attribute) {
-      $variables['content_attributes']->removeClass('layout--with-complementary');
-    }
-    else {
-      $variables['content_attributes'] = new Attribute();
-      $variables['content_attributes']->addClass('container');
+    // Here we remove class for landing page.
+    if (isset($variables['node']) && $node->bundle() === 'landing_page') {
+      if ($variables['content_attributes'] instanceof Attribute) {
+        $variables['content_attributes']->removeClass('layout--with-complementary');
+      }
+      else {
+        $variables['content_attributes'] = new Attribute();
+        $variables['content_attributes']->addClass('container');
+      }
     }
   }
 }
@@ -315,4 +314,21 @@ function social_landing_page_social_user_account_header_create_links($context) {
       '#weight' => 400,
     ] + Url::fromRoute('node.add', ['node_type' => 'landing_page'])->toRenderArray(),
   ];
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK_alter().
+ */
+function social_landing_page_theme_suggestions_page_alter(array &$suggestions, array $variables) {
+  // Get Request Object.
+  $request = \Drupal::request();
+
+  // If there is HTTP Exception..
+  if ($exception = $request->attributes->get('exception')) {
+    // Get the status code.
+    $status_code = $exception->getStatusCode();
+    if ($status_code == 404) {
+      $suggestions[] = 'page__node__landing_page';
+    }
+  }
 }
