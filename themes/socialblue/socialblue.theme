@@ -4,3 +4,33 @@
  * @file
  * The primary PHP file for the Social Blue theme.
  */
+
+/**
+ * Implements theme_preprocess().
+ */
+function socialblue_preprocess(&$variables, $hook, $info) {
+  // Add style variable to be able to attach new libraries and change templates.
+  $style = theme_get_setting('style');
+  if (!empty($style)) {
+    $variables['style'] = $style;
+  }
+}
+
+/**
+ * Implements hook_library_info_alter().
+ */
+function socialblue_library_info_alter(&$libraries, $extension) {
+  // Add extra CSS files if specific style is chosen.
+  $style = theme_get_setting('style');
+  if (!empty($style) && $extension === 'socialblue') {
+    $theme_path = drupal_get_path('theme', $extension);
+    $base_path = 'assets/css/';
+    foreach ($libraries as $key => $library) {
+      $style_css = $base_path . $key . '--' . $style . '.css';
+      if (file_exists($theme_path . '/' . $style_css)) {
+        $libraries[$key]['css']['theme'][$style_css] = [];
+        $libraries[$key]['css']['theme'][$style_css]['weight'] = 700;
+      }
+    }
+  }
+}

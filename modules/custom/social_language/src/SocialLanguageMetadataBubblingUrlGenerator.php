@@ -12,6 +12,8 @@ use Drupal\Core\Routing\UrlGeneratorInterface;
  * Class SocialLanguageMetadataBubblingUrlGenerator.
  *
  * @package Drupal\social_language
+ * @deprecated in Open Social 8.x and will be removed before 9.0.
+ * @see https://www.drupal.org/project/social/issues/3098046
  */
 class SocialLanguageMetadataBubblingUrlGenerator extends MetadataBubblingUrlGenerator {
 

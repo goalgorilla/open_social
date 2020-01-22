@@ -1,0 +1,36 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - activity_logger
+third_party_settings:
+  activity_logger:
+    activity_bundle_entities:
+      queue_storage_entity-email: queue_storage_entity-email
+    activity_action: update_entity_action
+    activity_context: platform_activity_context
+    activity_destinations:
+      notifications: notifications
+      email: email
+    activity_create_direct: true
+    activity_aggregate: false
+    activity_entity_condition: queue_store_entity_send_activity_condition
+template: background_process_finished
+label: 'Background process finished'
+description: 'A background process (e.g. sending bulk emails) has finished'
+text:
+  -
+    value: '<p>Background process "[queue_storage_entity:mail_task_subject]" has finished.</p>'
+    format: basic_html
+  -
+    value: '<p>Background process "[queue_storage_entity:mail_task_subject]" has finished.</p>'
+    format: basic_html
+  -
+    value: '<p>Background process "[queue_storage_entity:mail_task_subject]" has finished.</p>'
+    format: basic_html
+settings:
+  'token options':
+    clear: false
+    'token replace': true
+  purge_override: false
+  purge_methods: {  }
