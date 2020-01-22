@@ -19,6 +19,15 @@ class CommunityActivityContext extends ActivityContextBase {
   /**
    * {@inheritdoc}
    */
+  public function getRecipients(array $data, $last_uid, $limit) {
+    // Always return empty array here. Since community does not have specific
+    // recipients.
+    return [];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function isValidEntity(EntityInterface $entity) {
     // Special cases for comments.
     if ($entity->getEntityTypeId() === 'comment') {
