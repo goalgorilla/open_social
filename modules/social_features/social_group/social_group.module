@@ -2074,6 +2074,15 @@ function social_group_social_group_action_social_group_change_member_role_action
  */
 function social_group_social_group_action_social_group_send_email_action_finish($success) {
   if ($success) {
+    // When the queue storage module is enabled the email is send in the
+    // background.
+    if (\Drupal::moduleHandler()->moduleExists('social_queue_storage')) {
+      return [
+        'singular' => 'Your email will be send to 1 selected member',
+        'plural' => 'Your email will be send to @count selected members',
+      ];
+    }
+
     return [
       'singular' => 'Your email has been sent to 1 selected member successfully',
       'plural' => 'Your email has been sent to @count selected members successfully',
