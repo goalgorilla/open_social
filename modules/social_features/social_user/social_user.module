@@ -135,6 +135,7 @@ function _social_user_get_groups() {
     $data = \Drupal::database()
       ->select('groups_field_data', 'gfd')
       ->fields('gfd', ['id', 'label'])
+      ->orderBy('label')
       ->execute()
       ->fetchAllKeyed(0, 1);
   }
