@@ -5,10 +5,8 @@ namespace Drupal\activity_basics\Plugin\ActivityContext;
 use Drupal\activity_creator\ActivityFactory;
 use Drupal\activity_creator\Plugin\ActivityContextBase;
 use Drupal\Core\Entity\EntityInterface;
-use Drupal\group\Entity\GroupContentInterface;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\node\NodeInterface;
-use Drupal\social_post\Entity\PostInterface;
 
 /**
  * Provides a 'ContentInMyGroupActivityContext' activity context.
@@ -32,13 +30,14 @@ class ContentInMyGroupActivityContext extends ActivityContextBase {
       $owner_id = '';
 
       if (isset($referenced_entity['target_type']) && $referenced_entity['target_type'] === 'post') {
+        /** @var \Drupal\social_post\Entity\PostInterface $post */
         $post = $this->entityTypeManager->getStorage('post')
           ->load($referenced_entity['target_id']);
 
         // It could happen that a notification has been queued but the content
         // has since been deleted. In that case we can find no additional
         // recipients.
-        if (!$post instanceof PostInterface) {
+        if (!$post) {
           return $recipients;
         }
 
@@ -46,28 +45,33 @@ class ContentInMyGroupActivityContext extends ActivityContextBase {
         $owner_id = $post->getOwnerId();
       }
       else {
-        /* @var \Drupal\group\Entity\GroupContentInterface $group_content_entity */
-        $group_content_entity = $this->entityTypeManager->getStorage('group_content')
+        /* @var \Drupal\group\Entity\GroupContentInterface $group_content */
+        $group_content = $this->entityTypeManager->getStorage('group_content')
           ->load($referenced_entity['target_id']);
 
         // It could happen that a notification has been queued but the content
         // has since been deleted. In that case we can find no additional
         // recipients.
-        if (!$group_content_entity instanceof GroupContentInterface) {
+        if (!$group_content) {
           return $recipients;
         }
 
-        $node = $group_content_entity->getEntity();
+        $node = $group_content->getEntity();
 
         if ($node instanceof NodeInterface) {
           $owner_id = $node->getOwnerId();
+
+          if (!$node->isPublished()) {
+            return $recipients;
+          }
         }
 
-        $gid = $group_content_entity->get('gid')->getValue();
+        $gid = $group_content->get('gid')->getValue();
       }
 
       if ($gid && isset($gid[0]['target_id'])) {
         $target_id = $gid[0]['target_id'];
+
         $recipients[] = [
           'target_type' => 'group',
           'target_id' => $target_id,
@@ -96,6 +100,7 @@ class ContentInMyGroupActivityContext extends ActivityContextBase {
         }
       }
     }
+
     return $recipients;
   }
 

@@ -1,17 +1,81 @@
 @import 'settings';
 
+
+// SocialBlue Sky.
 .socialblue--sky {
-  .teaser {
-    .card__link {
-      .btn {
-        font-weight: 700;
-        text-transform: uppercase;
-        border-width: 2px;
-      }
+  .badge-status {
+    @include for-tablet-landscape-up {
+      margin-left: .5rem;
+      padding: 5px .875rem;
+      font-size: .875rem;
+      font-weight: 300;
     }
   }
 
-  .teaser__title {
+  .teaser__content-line {
     margin-bottom: 5px;
+  }
+
+  .teaser__content {
+    padding-bottom: 0;
+  }
+
+  .teaser__title {
+    margin-bottom: .75rem;
+  }
+
+  .teaser__tag {
+    display: inline-block;
+    vertical-align: middle;
+    font-size: .875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    margin-right: .5rem;
+    margin-bottom: .5rem;
+
+    a {
+      font-weight: 700;
+      transition: .3s ease-out;
+    }
+
+    @include for-tablet-landscape-down {
+      font-size: .75rem;
+    }
+  }
+
+  .teaser {
+    .badge__label {
+      color: $default-color;
+    }
+  }
+
+  .teaser--tile {
+
+    .teaser__title {
+      min-height: auto;
+      max-height: none;
+      margin-bottom: .5rem;
+    }
+
+    .teaser__content {
+      flex: none;
+      padding-bottom: 10px;
+    }
+  }
+
+  .teaser__not-icon {
+    svg {
+      display: none;
+    }
+  }
+
+  .teaser__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .teaser__badge {
+      margin: 0 0 .5rem 3px;
+    }
   }
 }
