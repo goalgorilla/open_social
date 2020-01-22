@@ -126,7 +126,7 @@ function social_user_form_views_exposed_form_alter(&$form, FormStateInterface $f
 }
 
 /**
- * Returns array with titles of all groups.
+ * Returns array with titles of all groups, ordered by their label.
  */
 function _social_user_get_groups() {
   $data = &drupal_static(__FUNCTION__);
