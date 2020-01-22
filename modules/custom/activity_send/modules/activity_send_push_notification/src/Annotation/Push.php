@@ -28,6 +28,15 @@ class Push extends Plugin {
   public $title;
 
   /**
+   * The description of form elements set.
+   *
+   * @var \Drupal\Core\Annotation\Translation
+   *
+   * @ingroup plugin_translatable
+   */
+  public $description = NULL;
+
+  /**
    * The plugin weight.
    *
    * @var int
