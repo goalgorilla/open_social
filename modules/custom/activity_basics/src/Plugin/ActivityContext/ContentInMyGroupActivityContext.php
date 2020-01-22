@@ -4,6 +4,7 @@ namespace Drupal\activity_basics\Plugin\ActivityContext;
 
 use Drupal\activity_creator\ActivityFactory;
 use Drupal\activity_creator\Plugin\ActivityContextBase;
+use Drupal\Component\Plugin\Exception\PluginNotFoundException;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\node\NodeInterface;
@@ -30,9 +31,14 @@ class ContentInMyGroupActivityContext extends ActivityContextBase {
       $owner_id = '';
 
       if (isset($referenced_entity['target_type']) && $referenced_entity['target_type'] === 'post') {
-        /** @var \Drupal\social_post\Entity\PostInterface $post */
-        $post = $this->entityTypeManager->getStorage('post')
-          ->load($referenced_entity['target_id']);
+        try {
+          /** @var \Drupal\social_post\Entity\PostInterface $post */
+          $post = $this->entityTypeManager->getStorage('post')
+            ->load($referenced_entity['target_id']);
+        }
+        catch (PluginNotFoundException $exception) {
+          return $recipients;
+        }
 
         // It could happen that a notification has been queued but the content
         // has since been deleted. In that case we can find no additional
@@ -52,7 +58,7 @@ class ContentInMyGroupActivityContext extends ActivityContextBase {
         // It could happen that a notification has been queued but the content
         // has since been deleted. In that case we can find no additional
         // recipients.
-        if (!$group_content) {
+        if (!$group_content_entity) {
           return $recipients;
         }
 
@@ -110,18 +116,17 @@ class ContentInMyGroupActivityContext extends ActivityContextBase {
   public function isValidEntity(EntityInterface $entity) {
     // Check if it's placed in a group (regardless off content type).
     if ($entity instanceof EntityInterface) {
-      if ($entity->getEntityTypeId() === 'group_content') {
-        return TRUE;
+      switch ($entity->getEntityTypeId()) {
+        case 'group_content':
+          return TRUE;
+
+        case 'post':
+          return !$entity->field_recipient_group->isEmpty();
+
+        default:
+          return FALSE;
       }
     }
-
-    if ($entity->getEntityTypeId() === 'post') {
-      if (!$entity->field_recipient_group->isEmpty()) {
-        return TRUE;
-      }
-    }
-
-    return FALSE;
   }
 
 }
