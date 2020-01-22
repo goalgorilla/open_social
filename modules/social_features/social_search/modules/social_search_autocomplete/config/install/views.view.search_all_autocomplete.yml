@@ -11,6 +11,8 @@ dependencies:
     - search_api
     - serialization
     - user
+_core:
+  default_config_hash: OqzYowGv0kur_1XWmN81Ha5sf6JuKniFTDMmEyUsUi0
 id: search_all_autocomplete
 label: 'Search All autocomplete'
 module: views
@@ -621,8 +623,8 @@ display:
           label: ''
           exclude: true
           alter:
-            alter_text: false
-            text: ''
+            alter_text: true
+            text: 'node/{{ nid }}'
             make_link: false
             path: '/node/{{ nid }}'
             absolute: false
@@ -683,7 +685,7 @@ display:
             separator: ''
             format_plural: false
             format_plural_string: !!binary MQNAY291bnQ=
-            prefix: node/
+            prefix: ''
             suffix: ''
             link_to_item: false
             use_highlighting: false
@@ -704,8 +706,8 @@ display:
           label: ''
           exclude: true
           alter:
-            alter_text: false
-            text: ''
+            alter_text: true
+            text: 'user/{{ uid }}'
             make_link: false
             path: '/user/{{ uid }}'
             absolute: false
@@ -766,7 +768,7 @@ display:
             separator: ''
             format_plural: false
             format_plural_string: !!binary MQNAY291bnQ=
-            prefix: user/
+            prefix: ''
             suffix: ''
             link_to_item: false
             use_highlighting: false
@@ -787,8 +789,8 @@ display:
           label: ''
           exclude: true
           alter:
-            alter_text: false
-            text: ''
+            alter_text: true
+            text: 'group/{{ id }}'
             make_link: false
             path: '/group/{{ id }}'
             absolute: false
@@ -849,7 +851,7 @@ display:
             separator: ''
             format_plural: false
             format_plural_string: !!binary MQNAY291bnQ=
-            prefix: group/
+            prefix: ''
             suffix: ''
             link_to_item: false
             use_highlighting: false

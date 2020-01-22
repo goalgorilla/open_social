@@ -1,0 +1,25 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - comment.type.comment_profile
+    - field.storage.comment.field_comment_body
+  module:
+    - text
+  enforced:
+    module:
+      - social_profile_manager_notes
+id: comment.comment_profile.field_comment_body
+field_name: field_comment_body
+entity_type: comment
+bundle: comment_profile
+label: 'Remark'
+description: ''
+required: true
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string
+hidden:
+  label: true

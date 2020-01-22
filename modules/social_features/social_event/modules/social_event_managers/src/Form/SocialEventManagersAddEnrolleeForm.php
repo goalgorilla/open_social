@@ -89,15 +89,11 @@ class SocialEventManagersAddEnrolleeForm extends FormBase {
 
       // Add nice messages.
       if (!empty($count)) {
-        $singular = '@count new member is enrolled to this event.';
-        $plural = '@count new members are enrolled to this event.';
+        $message = $this->formatPlural($count, '@count new member is enrolled to this event.', '@count new members are enrolled to this event.');
 
         if (social_event_manager_or_organizer(NULL, TRUE)) {
-          $singular = '@count new member is enrolled to your event.';
-          $plural = '@count new members are enrolled to your event.';
+          $message = $this->formatPlural($count, '@count new member is enrolled to your event.', '@count new members are enrolled to your event.');
         }
-
-        $message = $this->formatPlural($count, $singular, $plural);
         \Drupal::messenger()->addMessage($message, 'status');
       }
 
