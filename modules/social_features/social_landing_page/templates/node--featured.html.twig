@@ -61,12 +61,13 @@
  * @ingroup themeable
  */
 #}
-{{ attach_library('socialbase/teaser')}}
-{{ attach_library('social_landing_page/featured')}}
+{{ attach_library('socialbase/teaser') }}
+{{ attach_library('social_landing_page/featured') }}
 
 {%
   set classes = [
   'card teaser teaser--tile',
+  'teaser-' ~ node.bundle|clean_class,
   no_image ? 'no-image'
 ]
 %}
@@ -74,29 +75,29 @@
 <div{{ attributes.addClass(classes) }}>
 
   {% block card_image %}
-    <div class="teaser__image" >
+    <div class="teaser__image">
 
-    {% block card_hero_image %}
+      {% block card_hero_image %}
 
-      <div class="img_wrapper">
-      {% if content.field_node_image|render %}
-        {{ content.field_node_image }}
-      {% else %}
-        <hr class="no-feature-image">
-      {% endif %}
-      </div>
-
-    {% endblock %}
-
-    {% block card_teaser_type %}
-      <a href="{{ url }}">
-        <div class="teaser__teaser-type">
-          <svg class="teaser__teaser-type-icon">
-            <use xlink:href="#icon-{{- node.bundle|clean_class -}}"></use>
-          </svg>
+        <div class="img_wrapper">
+          {% if node_image %}
+            {{ node_image }}
+          {% else %}
+            <hr class="no-feature-image">
+          {% endif %}
         </div>
-      </a>
-    {% endblock %}
+
+      {% endblock %}
+
+      {% block card_teaser_type %}
+        <a href="{{ url }}">
+          <div class="teaser__teaser-type">
+            <svg class="teaser__teaser-type-icon">
+              <use xlink:href="#icon-{{- node.bundle|clean_class -}}"></use>
+            </svg>
+          </div>
+        </a>
+      {% endblock %}
 
     </div>
   {% endblock %}
@@ -105,53 +106,63 @@
     <div class="teaser__content">
 
       {% block card_title %}
-
         {{ title_prefix }}
-        {% if not page %}
-          <h4{{ title_attributes }} class="teaser__title">
-            <a href="{{ url }}" rel="bookmark">{{ label }}</a>
-          </h4>
-        {% endif %}
+        <h4{{ title_attributes }} class="teaser__title">
+          <a href="{{ url }}" rel="bookmark">{{ label }}</a>
+        </h4>
         {{ title_suffix }}
-
       {% endblock %}
 
       {% block card_body %}
-
         <small class="text-muted">
-          {% embed "node--teaser__field.html.twig" %}
-            {%- block field_icon -%} account_circle {%- endblock -%}
-            {%- block field_value %}
-              <div class="teaser__published">
-                <div class="teaser__published-date"> {{ date }} &bullet; </div>
-                <div class="teaser__published-author"> {{ author_name }} </div>
-              </div>
-            {%- endblock -%}
-          {% endembed %}
-        </small>
 
+          {% if display_submitted %}
+            {% embed "node--teaser__field.html.twig" %}
+              {%- block field_icon -%} account_circle {%- endblock -%}
+              {%- block field_value %}
+                <div class="teaser__published">
+                  <div class="teaser__published-date"> {{ date }} &bullet;</div>
+                  <div class="teaser__published-author"> {{ author_name }} </div>
+                </div>
+              {%- endblock -%}
+            {% endembed %}
+
+            {% if topic_type %}
+              {% embed "node--teaser__field.html.twig" %}
+                {%- block field_icon -%} label {%- endblock -%}
+                {%- block field_value -%} {{ topic_type }} {%- endblock -%}
+              {% endembed %}
+            {% endif %}
+
+          {% endif %}
+        </small>
       {% endblock %}
 
     </div>
   </div>
   <div class="card__actionbar">
-    {% if visibility_icon and visibility_label %}
-      <div class="badge teaser__badge no-padding" title="{% trans %}The visibility of this content is set to {% endtrans %} {{ visibility_label }}">
+    {% block card_actionbar %}
+
+      {% if visibility_icon and visibility_label %}
+        <div class="badge teaser__badge no-padding"
+             title="{% trans %}The visibility of this content is set to {{ visibility_label }}{% endtrans %} ">
         <span class="badge__container">
           <svg class="badge__icon">
             <use xlink:href="#icon-{{ visibility_icon }}"></use>
           </svg>
           <span class="badge__label text-gray">{{ visibility_label|capitalize }}</span>
         </span>
-      </div>
-    {% endif %}
+        </div>
+      {% endif %}
 
-    {% block card_link %}
-    <div class="card__link">
-      <a href="{{ url }}" rel="bookmark">{{ 'Read more'|t }}
-        <span class="visually-hidden">{{ 'about'|t }}{{ label }}</span>
-      </a>
-    </div>
+      {% block card_link %}
+        <div class="card__link">
+          <a href="{{ url }}" rel="bookmark">{{ 'Read more'|t }}
+            <span class="visually-hidden">{% trans %}about {{ label }}{% endtrans %} </span>
+          </a>
+        </div>
+      {% endblock %}
+
     {% endblock %}
   </div>
 </div>
