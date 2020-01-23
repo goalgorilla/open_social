@@ -1,0 +1,32 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - crop.type.profile_small
+  module:
+    - crop
+    - image_effects
+name: social_small
+label: 'social small (24 x 24)'
+effects:
+  29ad2442-2731-11e6-b67b-9e71128cae77:
+    uuid: 29ad2442-2731-11e6-b67b-9e71128cae77
+    id: image_scale_and_crop
+    weight: 2
+    data:
+      anchor: center-center
+      width: 24
+      height: 24
+  3da54178-876f-4602-a245-60f035dc3c66:
+    uuid: 3da54178-876f-4602-a245-60f035dc3c66
+    id: crop_crop
+    weight: 1
+    data:
+      crop_type: profile_small
+      automatic_crop_provider: null
+  db56295b-59b4-4adb-873b-4fd967615ffc:
+    uuid: db56295b-59b4-4adb-873b-4fd967615ffc
+    id: image_effects_auto_orient
+    weight: 3
+    data:
+      scan_exif: true

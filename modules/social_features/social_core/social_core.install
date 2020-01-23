@@ -53,8 +53,10 @@ function social_core_install() {
   _social_core_create_an_homepage_block();
   // Add menu items.
   _social_core_create_menu_links();
-  // Set jpeg quality.
-  _social_core_set_image_quality();
+
+  // Set image quality defaults.
+  $config = \Drupal::service('config.factory')->getEditable('system.image.gd');
+  $config->set('jpeg_quality', 90)->save();
 }
 
 /**
@@ -451,13 +453,6 @@ function social_core_update_8006(&$sandbox) {
  * Set higher jpeg quality instead of default 75%.
  */
 function social_core_update_8007() {
-  _social_core_set_image_quality();
-}
-
-/**
- * Set image quality.
- */
-function _social_core_set_image_quality() {
   $config = \Drupal::service('config.factory')->getEditable('system.image.gd');
 
   $config->set('jpeg_quality', 90)->save();
@@ -877,7 +872,8 @@ function social_core_update_8501() {
   ];
   \Drupal::service('module_installer')->install($modules);
 
-  // Let's disable sharing data by default.
+  // Let's disable sharing data by default for existing sites because this
+  // changes behaviour. For new installs this will be enabled through settings.
   $config = \Drupal::configFactory()->getEditable('social_lets_connect_usage.settings');
   $config->set('usage_data_enabled', 0);
   $config->save();
