@@ -32,6 +32,12 @@ function socialblue_library_info_alter(&$libraries, $extension) {
         $libraries[$key]['css']['theme'][$style_css]['weight'] = 600;
       }
     }
+
+    // Add extra JS for secondary navigation in Sky style.
+    $navbar_js = 'assets/js/navbar-secondary--sky.min.js';
+    if (file_exists($theme_path . '/' . $navbar_js)) {
+      $libraries['navbar']['js'][$navbar_js] = [];
+    }
   }
 }
 
