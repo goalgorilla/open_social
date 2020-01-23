@@ -126,7 +126,7 @@ function social_user_form_views_exposed_form_alter(&$form, FormStateInterface $f
 }
 
 /**
- * Returns array with titles of all groups.
+ * Returns array with titles of all groups, ordered by their label.
  */
 function _social_user_get_groups() {
   $data = &drupal_static(__FUNCTION__);
@@ -135,6 +135,7 @@ function _social_user_get_groups() {
     $data = \Drupal::database()
       ->select('groups_field_data', 'gfd')
       ->fields('gfd', ['id', 'label'])
+      ->orderBy('label')
       ->execute()
       ->fetchAllKeyed(0, 1);
   }
