@@ -5,6 +5,7 @@
  * Contains social_font.module.
  */
 
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\file\Entity\File;
 use Drupal\social_font\Entity\Font;
@@ -78,7 +79,7 @@ function social_font_render($font_id = NULL) {
         }
       }
       $css .= social_font_fontfiles_render($fonts);
-      $css .= "} body { font-family: '" . $fontname . "', " . $fallback . " !important; }";
+      $css .= "} body { font-family: '" . $fontname . "', " . $fallback . " !important; font-weight: initial !important; }";
     }
   }
 
