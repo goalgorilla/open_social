@@ -22,6 +22,7 @@
 
 .socialblue--sky .teaser__tag a {
   font-weight: 700;
+  -webkit-transition: .3s ease-out;
   transition: .3s ease-out;
 }
 
@@ -36,7 +37,9 @@
 }
 
 .socialblue--sky .teaser--tile .teaser__content {
-  flex: none;
+  -webkit-box-flex: 0;
+      -ms-flex: none;
+          flex: none;
   padding-bottom: 10px;
 }
 
@@ -45,40 +48,22 @@
 }
 
 .socialblue--sky .teaser__header {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
 }
 
 .socialblue--sky .teaser__header .teaser__badge {
   margin: 0 0 .5rem 3px;
 }
 
-.socialblue--sky .teaser-profile {
-  text-align: left;
-}
-
-.socialblue--sky .teaser-profile .teaser__image {
-  -webkit-box-flex: 0;
-      -ms-flex: 0 0 60px;
-          flex: 0 0 60px;
-  height: 60px;
-  margin-bottom: 55px;
-  text-align: left;
-  overflow: visible;
-}
-
-.socialblue--sky .teaser-profile .teaser__image .teaser__teaser-type {
-  display: none;
-}
-
 .socialblue--sky .teaser-profile .teaser__image img {
-  width: 90px;
-  height: 90px;
-  top: 15px;
-  left: 15px;
-  margin-left: 0;
-  border: 5px solid white;
   border-radius: 50%;
 }
 
