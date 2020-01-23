@@ -1,0 +1,40 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.private_message.inbox
+  module:
+    - private_message
+    - text
+id: private_message.private_message.inbox
+targetEntityType: private_message
+bundle: private_message
+mode: inbox
+content:
+  created:
+    label: hidden
+    weight: 0
+    region: content
+    settings:
+      future_format: '@interval hence'
+      past_format: '@interval ago'
+      granularity: 1
+    third_party_settings: {  }
+    type: timestamp_ago
+  message:
+    label: visually_hidden
+    type: text_trimmed
+    weight: 2
+    region: content
+    settings:
+      trim_length: 200
+    third_party_settings: {  }
+  owner:
+    label: hidden
+    type: entity_reference_label
+    weight: 1
+    region: content
+    settings:
+      link: false
+    third_party_settings: {  }
+hidden: {  }
