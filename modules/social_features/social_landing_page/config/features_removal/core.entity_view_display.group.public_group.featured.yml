@@ -1,0 +1,49 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.group.featured
+    - field.field.group.public_group.field_group_address
+    - field.field.group.public_group.field_group_description
+    - field.field.group.public_group.field_group_image
+    - field.field.group.public_group.field_group_location
+    - group.type.public_group
+    - image.style.social_featured
+  module:
+    - address
+    - image
+id: group.public_group.featured
+targetEntityType: group
+bundle: public_group
+mode: featured
+content:
+  field_group_address:
+    type: address_plain
+    weight: 1
+    region: content
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+  field_group_image:
+    type: image
+    weight: 0
+    region: content
+    label: hidden
+    settings:
+      image_style: social_featured
+      image_link: content
+    third_party_settings: {  }
+  field_group_location:
+    type: string
+    weight: 2
+    region: content
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+hidden:
+  changed: true
+  created: true
+  field_group_description: true
+  label: true
+  uid: true
