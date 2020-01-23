@@ -2,16 +2,17 @@
 
 namespace Drupal\activity_basics\Plugin\ActivityContext;
 
-use Drupal\activity_creator\Plugin\ActivityContextBase;
-use Drupal\group\Entity\GroupContent;
 use Drupal\activity_creator\ActivityFactory;
+use Drupal\activity_creator\Plugin\ActivityContextBase;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\group\Entity\GroupContent;
 
 /**
  * Provides a 'ProfileActivityContext' activity context.
  *
  * @ActivityContext(
- *  id = "profile_activity_context",
- *  label = @Translation("Profile activity context"),
+ *   id = "profile_activity_context",
+ *   label = @Translation("Profile activity context"),
  * )
  */
 class ProfileActivityContext extends ActivityContextBase {
@@ -37,9 +38,11 @@ class ProfileActivityContext extends ActivityContextBase {
   /**
    * {@inheritdoc}
    */
-  public function isValidEntity($entity) {
+  public function isValidEntity(EntityInterface $entity) {
     // Special cases for comments.
     if ($entity->getEntityTypeId() === 'comment') {
+      $comment_owner_id = $entity->getOwnerId();
+
       // Returns the entity to which the comment is attached.
       $entity = $entity->getCommentedEntity();
     }
@@ -52,14 +55,20 @@ class ProfileActivityContext extends ActivityContextBase {
     if (GroupContent::loadByEntity($entity)) {
       return FALSE;
     }
+
     if ($entity->getEntityTypeId() === 'post') {
-      if (!empty($entity->get('field_recipient_group')->getValue())) {
+      if (!$entity->field_recipient_group->isEmpty()) {
         return FALSE;
       }
-      elseif (!empty($entity->get('field_recipient_user')->getValue())) {
+      elseif (!$entity->field_recipient_user->isEmpty()) {
+        if (isset($comment_owner_id)) {
+          return $comment_owner_id !== $entity->field_recipient_user->target_id;
+        }
+
         return TRUE;
       }
     }
+
     return FALSE;
   }
 
