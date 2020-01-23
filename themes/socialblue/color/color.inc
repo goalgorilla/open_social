@@ -98,7 +98,7 @@ $info = [
 
   'css' => $brand_css,
 
-// Files to copy.
+  // Files to copy.
   'copy' => [
     'logo.svg',
   ],
