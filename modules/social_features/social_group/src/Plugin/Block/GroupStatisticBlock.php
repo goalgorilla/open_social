@@ -100,11 +100,11 @@ class GroupStatisticBlock extends BlockBase implements ContainerFactoryPluginInt
    */
   protected function blockAccess(AccountInterface $account) {
     // Show statistic block only when new style is enabled.
-    if (theme_get_setting('style') !== 'sky') {
-      return AccessResult::forbidden();
+    if (theme_get_setting('style') === 'sky') {
+      return AccessResult::allowed();
     }
 
-    return AccessResult::neutral();
+    return AccessResult::forbidden();
   }
 
 }

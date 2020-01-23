@@ -10,15 +10,12 @@
 }
 
 .socialblue--sky .navbar-secondary .navbar-scrollable {
-  overflow: hidden;
-  position: relative;
   width: 100%;
   height: 44px;
 }
 
 .socialblue--sky .navbar-secondary .navbar-nav li a {
-  padding-top: 9px;
-  padding-bottom: 8px;
+  padding: 9px 20px 8px;
   opacity: 1;
   border-bottom-width: 3px;
 }
@@ -34,34 +31,9 @@
   border-bottom-color: #fff;
 }
 
-.socialblue--sky.path-user .layout--with-complementary .navbar-secondary .navbar-scrollable, .socialblue--sky.path-group .layout--with-complementary .navbar-secondary .navbar-scrollable {
-  overflow: hidden;
-  position: relative;
-  width: 100%;
-  height: 44px;
-}
-
-.socialblue--sky.path-user .layout--with-complementary .navbar-secondary .navbar-nav, .socialblue--sky.path-group .layout--with-complementary .navbar-secondary .navbar-nav {
-  width: 100%;
-  display: table;
-  text-align: center;
-}
-
-.socialblue--sky.path-user .layout--with-complementary .navbar-secondary .navbar-nav li, .socialblue--sky.path-group .layout--with-complementary .navbar-secondary .navbar-nav li {
-  display: table-cell;
-}
-
 @media (min-width: 900px) {
   .socialblue--sky .navbar-fixed-top .navbar-nav {
     padding-right: 1.625rem;
-  }
-  .socialblue--sky .navbar-default .profile > a {
-    padding-top: 8px;
-    padding-bottom: 8px;
-  }
-  .socialblue--sky .navbar-default .profile img {
-    width: 34px;
-    height: 34px;
   }
   .socialblue--sky.mode-search .navbar__open-search-block {
     -webkit-transform: scale(100);
@@ -81,11 +53,13 @@
         -ms-flex-order: 1;
             order: 1;
   }
-  .socialblue--sky.path-user .layout--with-complementary .navbar-secondary .navbar-scrollable, .socialblue--sky.path-group .layout--with-complementary .navbar-secondary .navbar-scrollable {
-    border-radius: 0 5px 0 0;
-    overflow: visible;
+  .socialblue--sky.path-user .layout--with-complementary .navbar-secondary .navbar-nav, .socialblue--sky.path-group .layout--with-complementary .navbar-secondary .navbar-nav {
+    width: 100%;
+    display: table;
+    text-align: center;
   }
   .socialblue--sky.path-user .layout--with-complementary .navbar-secondary .navbar-nav li, .socialblue--sky.path-group .layout--with-complementary .navbar-secondary .navbar-nav li {
+    display: table-cell;
     position: relative;
   }
   .socialblue--sky.path-user .layout--with-complementary .navbar-secondary .navbar-nav .caret, .socialblue--sky.path-group .layout--with-complementary .navbar-secondary .navbar-nav .caret {
@@ -141,64 +115,5 @@
   }
   .socialblue--sky.path-user .layout--with-complementary .navbar-secondary .navbar-nav .hidden-list li a:focus, .socialblue--sky.path-group .layout--with-complementary .navbar-secondary .navbar-nav .hidden-list li a:focus {
     background: transparent;
-  }
-}
-
-@media (max-width: 899px) {
-  .socialblue--sky .navbar-secondary .navbar-scrollable:after {
-    content: '';
-    display: block;
-    position: absolute;
-    width: 24px;
-    height: 100%;
-    top: 0;
-    right: 0;
-    z-index: 2;
-  }
-  .socialblue--sky .navbar-secondary .navbar-scrollable .navbar-nav {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    -webkit-user-select: none;
-       -moz-user-select: none;
-        -ms-user-select: none;
-            user-select: none;
-    overflow-x: scroll;
-    overflow-y: hidden;
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-    -webkit-box-pack: center;
-        -ms-flex-pack: center;
-            justify-content: center;
-  }
-  .socialblue--sky.path-user .layout--with-complementary .navbar-secondary .navbar-scrollable:after, .socialblue--sky.path-group .layout--with-complementary .navbar-secondary .navbar-scrollable:after {
-    content: '';
-    display: block;
-    position: absolute;
-    width: 24px;
-    height: 100%;
-    top: 0;
-    right: 0;
-    z-index: 2;
-  }
-  .socialblue--sky.path-user .layout--with-complementary .navbar-secondary .navbar-scrollable .navbar-nav, .socialblue--sky.path-group .layout--with-complementary .navbar-secondary .navbar-scrollable .navbar-nav {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    -webkit-user-select: none;
-       -moz-user-select: none;
-        -ms-user-select: none;
-            user-select: none;
-    overflow-x: scroll;
-    overflow-y: hidden;
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-    -webkit-box-pack: center;
-        -ms-flex-pack: center;
-            justify-content: center;
   }
 }

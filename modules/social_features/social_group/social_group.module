@@ -334,16 +334,14 @@ function social_group_preprocess_group(array &$variables) {
   $variables['group_members'] = $group_statistics->memberCount($group);
 
   // Prepare variables for statistic block.
-  if ($group->getGroupType()->hasContentPlugin('group_node:event')) {
-    $variables['group_events'] = $group_statistics->nodeCount($group, 'event');
+  if ($variables['view_mode'] === 'statistic') {
+    if ($group->getGroupType()->hasContentPlugin('group_node:event')) {
+      $variables['group_events'] = $group_statistics->nodeCount($group, 'event');
+    }
+    if ($group->getGroupType()->hasContentPlugin('group_node:topic')) {
+      $variables['group_topics'] = $group_statistics->nodeCount($group, 'topic');
+    }
   }
-  if ($group->getGroupType()->hasContentPlugin('group_node:topic')) {
-    $variables['group_topics'] = $group_statistics->nodeCount($group, 'topic');
-  }
-  if ($group->getGroupType()->id() !== 'closed_group' || $group->getMember($account) || $group->hasPermission('manage all groups', $account)) {
-    $variables['group_stream_url'] = Url::fromRoute('social_group.stream', ['group' => $group->id()]);
-  }
-
 }
 
 /**
@@ -1287,7 +1285,6 @@ function social_group_block_access(Block $block, $operation, AccountInterface $a
     'views_block:groups-block_user_groups',
     'views_block:upcoming_events-upcoming_events_group',
     'views_block:latest_topics-group_topics_block',
-    'group_statistic_block',
   ];
   if (!in_array($block_id, $managed_blocks)) {
     return AccessResult::neutral();

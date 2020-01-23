@@ -13,24 +13,6 @@
     }
   }
 
-  .navbar-default {
-    .profile {
-      > a {
-        @include for-tablet-landscape-up {
-          padding-top: 8px;
-          padding-bottom: 8px;
-        }
-      }
-
-      img {
-        @include for-tablet-landscape-up {
-          width: 34px;
-          height: 34px;
-        }
-      }
-    }
-  }
-
   &.mode-search {
     .navbar__open-search-block {
       @include for-tablet-landscape-up {
@@ -45,8 +27,6 @@
     box-shadow: none;
 
     .navbar-scrollable {
-      overflow: hidden;
-      position: relative;
       width: 100%;
       height: 44px;
 
@@ -54,38 +34,12 @@
         border-radius: 0 $border-radius-extrasmall 0 0;
         overflow: visible;
       }
-
-      @include for-tablet-landscape-down {
-        &:after {
-          content: '';
-          display: block;
-          position: absolute;
-          width: 24px;
-          height: 100%;
-          top: 0;
-          right: 0;
-          z-index: 2;
-        }
-
-        .navbar-nav {
-          position: absolute;
-          left: 0;
-          top: 0;
-          width: 100%;
-          user-select: none;
-          overflow-x: scroll;
-          overflow-y: hidden;
-          display: flex;
-          justify-content: center;
-        }
-      }
     }
 
     .navbar-nav {
       li {
         a {
-          padding-top: 9px;
-          padding-bottom: 8px;
+          padding: 9px 20px 8px;
           opacity: 1;
           border-bottom-width: 3px;
 
@@ -108,7 +62,7 @@
     }
   }
 
-  // Secondary navigation on the user page.
+  // Secondary navigation on the user/group pages.
   &.path-user,
   &.path-group {
     .layout--with-complementary {
@@ -120,52 +74,16 @@
           order: 1;
         }
 
-        .navbar-scrollable {
-          overflow: hidden;
-          position: relative;
-          width: 100%;
-          height: 44px;
-
-          @include for-tablet-landscape-up {
-            border-radius: 0 $border-radius-extrasmall 0 0;
-            overflow: visible;
-          }
-
-          @include for-tablet-landscape-down {
-            &:after {
-              content: '';
-              display: block;
-              position: absolute;
-              width: 24px;
-              height: 100%;
-              top: 0;
-              right: 0;
-              z-index: 2;
-            }
-
-            .navbar-nav {
-              position: absolute;
-              left: 0;
-              top: 0;
-              width: 100%;
-              user-select: none;
-              overflow-x: scroll;
-              overflow-y: hidden;
-              display: flex;
-              justify-content: center;
-            }
-          }
-        }
-
         .navbar-nav {
-          width: 100%;
-          display: table;
-          text-align: center;
+          @include for-tablet-landscape-up {
+            width: 100%;
+            display: table;
+            text-align: center;
+          }
 
           li {
-            display: table-cell;
-
             @include for-tablet-landscape-up {
+              display: table-cell;
               position: relative;
             }
           }

@@ -103,6 +103,11 @@ class Block extends PreprocessBase {
       }
     }
 
+    // Show group tags block in a card.
+    if ($variables['elements']['#plugin_id'] == 'social_group_tags_block') {
+      $variables['card'] = TRUE;
+    }
+
     // Show group managers block in a card.
     if ($variables['elements']['#derivative_plugin_id'] == 'group_managers-block_list_managers') {
       $variables['card'] = TRUE;

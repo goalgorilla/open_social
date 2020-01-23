@@ -3,6 +3,8 @@
 .socialblue--sky {
   .layout--with-complementary.sidebar-left {
     > .region--complementary {
+      z-index: 10;
+
       @include for-tablet-landscape-up {
         order: 1;
       }
@@ -22,7 +24,7 @@
   }
   .region--secondary-navigation {
     @include for-tablet-landscape-up {
-      flex: 0 0 1200px;
+      width: 100%;
     }
   }
 

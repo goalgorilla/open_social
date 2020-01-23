@@ -1,16 +1,7 @@
 @import 'settings';
 @import 'settings--sky';
 
-body:not(.socialblue--sky) {
-  .complementary--content-merged {
-    border-radius: 0 !important;
-    box-shadow: none;
-    background: transparent;
-  }
-}
-
 .socialblue--sky {
-
   .card {
     margin-bottom: 1.5rem;
   }
@@ -25,8 +16,8 @@ body:not(.socialblue--sky) {
     }
   }
 
-  section:not(.content-merged) {
-    .complementary--content-merged {
+  section:not(.content-merged--sky) {
+    .content-merged--sky--complementary {
       background: transparent;
       border-radius: 0 !important;
       box-shadow: none;
@@ -34,8 +25,7 @@ body:not(.socialblue--sky) {
   }
 
   // Content Merged.
-  .card__content-merged {
-
+  .card--content-merged {
     > h4 {
       margin-bottom: 1.25rem;
 
@@ -48,7 +38,7 @@ body:not(.socialblue--sky) {
       padding: .875rem 3.5rem 5.75rem;
     }
 
-    .content-merged__list {
+    .card--content-merged__list {
       display: flex;
       flex-direction: column;
       padding-top: 1.75rem;
@@ -61,15 +51,17 @@ body:not(.socialblue--sky) {
 
       h5,
       .list-item__label {
-        margin-top: 0;
+        margin: 0 0 1rem;
         font-size: .875rem;
-        font-weight: 300;
-        color: #9b9b9b;
+        text-align: center;
+        align-self: center;
 
         @include for-tablet-portrait-up {
-          flex: 0 0 120px;
-          max-width: 120px;
+          flex: 0 0 200px;
+          max-width: 200px;
           margin: 0;
+          text-align: left;
+          align-self: flex-start;
         }
       }
 
@@ -80,31 +72,27 @@ body:not(.socialblue--sky) {
   }
 
   // Content merged for Sidebar.
-  .complementary--content-merged {
+  .content-merged--sky--complementary {
     @include for-tablet-landscape-down {
       margin-bottom: 0;
+      border-radius: 0 !important;
+      box-shadow: none;
     }
   }
 
-  .content-merged {
+  .content-merged--sky {
     .region--complementary {
       .card {
         margin-bottom: 0;
 
-        > .card__title {
-          padding-top: 1.875rem;
-          font-size: .875rem;
-          text-transform: uppercase;
-          color: #9b9b9b;
-        }
-
+        > .card__title,
         > .card__actionbar {
-          padding-bottom: 1.875rem;
+          padding-top: 1.875rem;
         }
       }
     }
 
-    .complementary--content-merged {
+    .content-merged--sky--complementary {
       background: #fff;
 
       @include for-tablet-landscape-down {
@@ -114,9 +102,15 @@ body:not(.socialblue--sky) {
 
     .region--complementary-top,
     .region--complementary-bottom {
-      > .card {
+      > *:not(.views-exposed-form),
+      .off-canvas-xs-only {
+        @include for-tablet-landscape-up {
+          box-shadow: none !important;
+        }
+      }
+
+      > *:not(.views-exposed-form) {
         position: relative;
-        box-shadow: none;
 
         &:after {
           @include separate-line;
@@ -125,6 +119,13 @@ body:not(.socialblue--sky) {
 
         &:last-child:after {
           display: none;
+        }
+
+        &.block-group-add-idea-block,
+        &.block-group-add-topic-block,
+        &.block-group-add-event-block,
+        &.block-group-add-discussion-block {
+          padding: 20px;
         }
       }
     }
@@ -136,13 +137,15 @@ body:not(.socialblue--sky) {
       }
     }
 
-    [class*='statistic-block'] {
+    .block-profile-statistic-block,
+    .block-group-statistic-block {
       box-shadow: none;
     }
   }
 
   // Statistic block.
-  [class*='statistic-block'] {
+  .block-profile-statistic-block,
+  .block-group-statistic-block {
     position: relative;
     padding: 1rem 1.875rem 0;
     background: #fafafa;
@@ -184,27 +187,24 @@ body:not(.socialblue--sky) {
       padding: 1.5rem 0;
     }
 
-    //.btn-group__chellange {
-    //  > div {
-    //    display: flex;
-    //
-    //    > *:not(.caret) {
-    //      width: auto;
-    //    }
-    //
-    //    > a {
-    //      flex: 1 1 auto;
-    //    }
-    //
-    //    .btn + .btn {
-    //      margin-left: 10px;
-    //    }
-    //  }
-    //}
+    .btn-group__chellange {
+      display: flex;
 
-    .card__actionbar {
-      padding-left: 0;
-      padding-right: 0;
+      > *:not(.caret) {
+        width: auto;
+      }
+
+      > a {
+        flex: 1 1 auto;
+      }
+
+      .btn + .btn {
+        margin-left: 10px;
+      }
+
+      > .dropdown-toggle:not(:first-child) {
+        border-radius: 10px;
+      }
     }
 
     &.block-profile-statistic-block {
@@ -355,6 +355,70 @@ body:not(.socialblue--sky) {
 
       @include for-phone-only {
         font-size: 11px;
+      }
+    }
+  }
+
+  // Info tab on the group page.
+  .block-views-blockgroup-managers-block-list-managers,
+  .view-group-information,
+  .block-social-group-tags-block {
+    .card,
+    &.card {
+      padding: 1.75rem 1.5rem;
+
+      @include for-tablet-portrait-up {
+        flex-direction: row;
+      }
+
+      @include for-tablet-landscape-up {
+        padding-left: 2.5rem;
+        padding-right: 2.5rem;
+      }
+
+      @include for-desktop-up {
+        padding-left: 3.5rem;
+        padding-right: 3.5rem;
+      }
+
+      .view--group-managers {
+        padding: 0;
+        margin-top: -.625rem;
+      }
+
+      > .card__title {
+        margin-top: 0;
+        padding: 0;
+        margin-bottom: 1rem;
+
+        @include for-tablet-portrait-up {
+          text-align: left;
+          flex: 0 0 200px;
+          max-width: 200px;
+          margin: 0;
+        }
+      }
+
+      > .card__block,
+      > .card__body {
+        flex-basis: 0;
+        flex-grow: 1;
+        max-width: 100%;
+        padding: 0;
+      }
+    }
+  }
+
+  .block-social-group-tags-block.card {
+    > .card__block {
+      p {
+        font-size: .875rem;
+        margin: .75rem 0 .25rem;
+
+        &:first-child,
+        &:nth-child(1) {
+          margin-top: 0;
+        }
       }
     }
   }

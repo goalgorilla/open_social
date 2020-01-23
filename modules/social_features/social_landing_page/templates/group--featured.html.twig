@@ -1,5 +1,7 @@
 {% extends 'node--featured.html.twig' %}
 
+{% set attributes = attributes.addClass('teaser-group') %}
+
 {% if not content.field_group_image|render  %}
   {% set attributes = attributes.addClass('no-image') %}
 {% endif %}

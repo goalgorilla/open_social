@@ -67,27 +67,27 @@
 #}
 
 <div class="card">
-  <div class="card__body body-text">
+  <div class="card__body card--content-merged">
     {% if (content.field_profile_phone_number|render or user_mail or content.field_profile_address|render) %}
       <h4>{% trans %}Contact information{% endtrans %}</h4>
     {% endif %}
 
     {% if content.field_profile_phone_number|render %}
-      <div class="list-item list-item--withlabel">
+      <div class="list-item list-item--withlabel card--content-merged__list">
           <div class="list-item__label">{% trans %}Phone{% endtrans %}</div>
           <div class="list-item__text">{{ content.field_profile_phone_number }}</div>
       </div>
     {% endif %}
 
     {% if user_mail %}
-      <div class="list-item list-item--withlabel">
+      <div class="list-item list-item--withlabel card--content-merged__list">
           <div class="list-item__label">{% trans %}E-mail{% endtrans %}</div>
           <div class="list-item__text">{{ user_mail }}</a></div>
       </div>
     {% endif %}
 
     {% if content.field_profile_address|render %}
-      <div class="list-item list-item--withlabel">
+      <div class="list-item list-item--withlabel card--content-merged__list">
           <div class="list-item__label">{% trans %}Address{% endtrans %}</div>
           <div class="list-item__text">
               {{ content.field_profile_address }}
@@ -96,34 +96,42 @@
     {% endif %}
 
     {% if content.field_profile_self_introduction|render %}
-      <h5>{% trans %}Intro{% endtrans %}</h5>
-      {{ content.field_profile_self_introduction }}
+      <div class="card--content-merged__list">
+        <h5>{% trans %}Intro{% endtrans %}</h5>
+        {{ content.field_profile_self_introduction }}
+      </div>
     {% endif %}
 
     {% if content.field_profile_expertise['#items'] %}
-      <h5>{% trans %}Your expertise{% endtrans %}</h5>
-      {% for item in content.field_profile_expertise['#items'] %}
-        <div class="badge badge--pill badge--large badge-default">{{ item.entity.label }}</div>
-      {% endfor %}
+      <div class="card--content-merged__list">
+        <h5>{% trans %}Your expertise{% endtrans %}</h5>
+        {% for item in content.field_profile_expertise['#items'] %}
+          <div class="badge badge--pill badge--large badge-default">{{ item.entity.label }}</div>
+        {% endfor %}
+      </div>
     {% endif %}
 
     {% if content.field_profile_interests['#items'] %}
-      <h5>{% trans %}Your interests{% endtrans %}</h5>
-      {% for item in content.field_profile_interests['#items'] %}
-        <div class="badge badge--pill badge--large badge-default">{{ item.entity.label }}</div>
-      {% endfor %}
+      <div class="card--content-merged__list">
+        <h5>{% trans %}Your interests{% endtrans %}</h5>
+        {% for item in content.field_profile_interests['#items'] %}
+          <div class="badge badge--pill badge--large badge-default">{{ item.entity.label }}</div>
+          {% endfor %}
+      </div>
     {% endif %}
 
     {% if content.field_profile_profile_tag['#items'] %}
-      <h5>{% trans %}Profile tags{% endtrans %}</h5>
-      {% for item in content.field_profile_profile_tag['#items'] %}
-        <div class="badge badge--pill badge--large badge-default">{{ item.entity.label }}</div>
-      {% endfor %}
+      <div class="card--content-merged__list">
+        <h5>{% trans %}Profile tags{% endtrans %}</h5>
+        {% for item in content.field_profile_profile_tag['#items'] %}
+          <div class="badge badge--pill badge--large badge-default">{{ item.entity.label }}</div>
+        {% endfor %}
+      </div>
     {% endif %}
 
     {{  content|without('field_profile_phone_number', 'user_mail', 'field_profile_address',
       'field_profile_self_introduction', 'field_profile_interests', 'field_profile_expertise',
-      'field_profile_profile_tag', 'field_manager_notes') }}
+      'field_profile_profile_tag') }}
 
     {% if (content|render is empty and user_mail is empty)%}
         {% trans %}{{ profile_name }} {{ profile_name_extra }} has not shared profile information.{% endtrans %}
@@ -131,7 +139,3 @@
 
   </div>
 </div>
-
-{% if (content.field_manager_notes|render) %}
-        {{ content.field_manager_notes }}
-{% endif %}
