@@ -53,6 +53,10 @@ function social_core_install() {
   _social_core_create_an_homepage_block();
   // Add menu items.
   _social_core_create_menu_links();
+
+  // Set image quality defaults.
+  $config = \Drupal::service('config.factory')->getEditable('system.image.gd');
+  $config->set('jpeg_quality', 90)->save();
 }
 
 /**
