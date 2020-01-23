@@ -38,10 +38,10 @@ third_party_settings:
         - body
       parent_name: ''
       weight: 2
-      label: 'Description'
+      label: Description
       format_type: fieldset
       format_settings:
-        label: 'Description'
+        label: Description
         required_fields: true
         id: description
         classes: 'card '
@@ -70,6 +70,8 @@ third_party_settings:
         required_fields: true
         id: attachments
         classes: 'card '
+_core:
+  default_config_hash: 7gp9MbxXU7HOGmCzXk8LMVCxpLv_WPYpnFy49fW_2os
 id: node.topic.default
 targetEntityType: node
 bundle: topic
@@ -130,6 +132,12 @@ content:
     third_party_settings: {  }
     type: options_buttons
     region: content
+  groups:
+    type: options_select
+    settings: {  }
+    weight: 16
+    region: content
+    third_party_settings: {  }
   path:
     type: path
     weight: 7
@@ -158,6 +166,7 @@ content:
       match_operator: CONTAINS
       size: 60
       placeholder: ''
+      match_limit: 10
     third_party_settings: {  }
     region: content
 hidden:
