@@ -1,0 +1,31 @@
+<?php
+
+/**
+ * @file
+ * Contains social_queue_storage.module.
+ */
+
+use Drupal\Core\Entity\EntityInterface;
+
+/**
+ * Implements hook_entity_update().
+ */
+function social_queue_storage_entity_update(EntityInterface $entity) {
+  /** @var \Drupal\social_queue_storage\Entity\QueueStorageEntity $entity */
+  if ($entity->getEntityTypeId() === 'queue_storage_entity') {
+    \Drupal::service('plugin.manager.activity_action.processor')
+      ->createInstance('update_entity_action')
+      ->create($entity);
+  }
+}
+
+/**
+ * Implements hook_activity_send_email_notifications_alter().
+ */
+function social_queue_storage_activity_send_email_notifications_alter(array &$items, array $email_message_templates) {
+  // If our background_process_finished template is enabled for email then we
+  // add it to the "System Notifications" section.
+  if (isset($email_message_templates['background_process_finished'])) {
+    $items['system_notifications']['templates'][] = 'background_process_finished';
+  }
+}

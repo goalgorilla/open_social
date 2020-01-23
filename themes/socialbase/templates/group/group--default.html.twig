@@ -41,7 +41,16 @@
 #}
 {% if content.field_group_description|render %}
   <div{{ attributes.addClass('card') }}>
+
+    {%
+      set title_classes = [
+      'field--label',
+      label_display == 'visually_hidden' ? 'sr-only',
+    ]
+    %}
+
     <div{{ content_attributes.addClass('card__body body-text') }}>
+      <div{{ title_attributes.addClass(title_classes) }}>{{ label }}</div>
       {{ content.field_group_description }}
     </div>
   </div>
