@@ -1,0 +1,22 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_block_link
+    - paragraphs.paragraphs_type.block
+  module:
+    - link
+id: paragraph.block.field_block_link
+field_name: field_block_link
+entity_type: paragraph
+bundle: block
+label: Link
+description: 'Optional link. Sometimes blocks already contain more link.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  link_type: 17
+  title: 1
+field_type: link
