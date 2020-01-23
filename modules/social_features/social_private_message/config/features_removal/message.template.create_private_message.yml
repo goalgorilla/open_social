@@ -1,0 +1,34 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - activity_logger
+third_party_settings:
+  activity_logger:
+    activity_bundle_entities:
+      private_message-private_message: private_message-private_message
+    activity_action: create_entitiy_action
+    activity_context: private_message_activity_context
+    activity_destinations:
+      email: email
+    activity_create_direct: 0
+    activity_aggregate: 0
+template: create_private_message
+label: 'Create private message'
+description: 'A user sends a private message to me'
+text:
+  -
+    value: '<p>You have received a <a href="[message:pmt-url]">message</a> from <a href="[message:author:url:absolute]">[message:author:display-name]</a></p>'
+    format: full_html
+  -
+    value: '<p>You have received a <a href="[message:pmt-url]">message</a> from <a href="[message:author:url:absolute]">[message:author:display-name]</a></p>'
+    format: full_html
+  -
+    value: '<p>You have received a <a href="[message:pmt-url]">message</a> from <a href="[message:author:url:absolute]">[message:author:display-name]</a></p>'
+    format: full_html
+settings:
+  'token options':
+    clear: false
+    'token replace': true
+  purge_override: false
+  purge_methods: {  }

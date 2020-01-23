@@ -1,0 +1,87 @@
+<?php
+
+/**
+ * @file
+ * The social profile manager notes module file.
+ */
+
+use Drupal\Core\Cache\Cache;
+use Drupal\Core\Entity\Entity\EntityViewDisplay;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\profile\Entity\Profile;
+
+/**
+ * Implements hook_form_alter().
+ */
+function social_profile_manager_notes_form_alter(array &$form, FormStateInterface $form_state, $form_id) {
+  $profile_forms = [
+    'comment_comment_profile_form',
+  ];
+
+  if (in_array($form_id, $profile_forms)) {
+    if (!\Drupal::currentUser()->hasPermission('edit field manager notes')) {
+      $form['field_comment_body']['#access'] = FALSE;
+      unset($form['actions']);
+    }
+    else {
+      unset($form['actions']['preview']);
+      unset($form['field_comment_body']['widget'][0]['#title']);
+      $form['actions']['submit']['#value'] = new TranslatableMarkup('Leave remark');
+      $form['#attached']['library'][] = 'social_profile_manager_notes/manager_notes';
+      $form['actions']['submit']['#submit'][] = '_social_profile_manager_notes_form_submit';
+    }
+  }
+}
+
+/**
+ * Form submit for profile_profile_edit_form and profile_profile_add_form.
+ *
+ * @param array $form
+ *   The profile edit form.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   The form state interface.
+ */
+function _social_profile_manager_notes_form_submit(array $form, FormStateInterface $form_state) {
+  /** @var \Drupal\profile\Entity\Profile $profile */
+  $profile = _social_profile_get_profile_from_route();
+  $x = 1;
+  // Let's be on the safe side.
+  if ($profile instanceof Profile) {
+    // Get the uid of the profile.
+    $uid = $profile->getOwnerId();
+    // Invalidate cache tag.
+    Cache::invalidateTags(['user:breadcrumb:' . $uid]);
+    // Set redirect to the profile page when a SM submits a note.
+    $form_state->setRedirect(
+      'view.user_information.user_information', [
+        'user' => $uid,
+      ]
+    );
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_view_alter().
+ */
+function social_profile_manager_notes_profile_view_alter(array &$build, EntityInterface $entity, EntityViewDisplay $display) {
+  if (!\Drupal::currentUser()->hasPermission('view field manager notes')) {
+    unset($build['field_manager_notes']);
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function social_profile_manager_notes_theme($existing, $type, $theme, $path) {
+  $items = [
+    'field__profile__type__comment' => [
+      'template' => 'field--profile--type--comment',
+      'path' => $path . '/templates',
+      'render element' => 'elements',
+      'base hook' => 'comment',
+    ],
+  ];
+  return $items;
+}

@@ -57,7 +57,25 @@
 
   &.small {
     @include for-tablet-portrait-up {
-      min-height: 206px;
+      height: 193px;
+      min-height: auto;
+    }
+
+    .page-title {
+      h1 {
+        @include for-tablet-portrait-up {
+          font-size: 2rem;
+          max-height: 70px;
+          overflow: hidden;
+        }
+      }
+    }
+
+    > .hero-footer {
+      @include for-tablet-portrait-up {
+        position: static;
+        margin-top: -2.5rem;
+      }
     }
   }
 
@@ -71,16 +89,15 @@
 
 }
 
-
 /* IE11 */
 @media all and (-ms-high-contrast:none) {
-  *::-ms-backdrop, .cover-wrap { height: 410px; }
+  *::-ms-backdrop, .cover-wrap { min-height: 410px; }
 
-  *::-ms-backdrop, .cover-wrap.small { height: 206px; }
+  *::-ms-backdrop, .cover-wrap.small { height: 193px; min-height: auto }
 
-  *::-ms-backdrop, .paragraph--hero .cover-wrap { height: 350px; }
+  *::-ms-backdrop, .paragraph--hero .cover-wrap { min-height: 350px; }
 
-  *::-ms-backdrop, .paragraph--hero-small .cover-wrap { height: 206px; }
+  *::-ms-backdrop, .paragraph--hero-small .cover-wrap { min-height: 206px; height: auto }
 }
 
 // anon homepage hero
@@ -97,7 +114,7 @@
   display: block;
 }
 
-.page-title {
+.cover .page-title {
   font-weight: 700;
   text-shadow: 0 1px 3px rgba(0, 0, 0, .5);
   text-align: center;
@@ -197,8 +214,6 @@
 
 
 }
-
-
 
 .hero-footer-icon {
   fill: white;

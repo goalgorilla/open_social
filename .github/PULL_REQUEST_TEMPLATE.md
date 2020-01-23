@@ -10,6 +10,9 @@
 ## How to test
 - [ ] <enter multiple how to test steps here>
 
+## Screenshots
+If this Pull Request makes visual changes then please include some screenshots that show what has changed here. 
+
 ## Release notes
 <describe the release notes>
 

@@ -103,6 +103,7 @@ class SearchHeroForm extends FormBase implements ContainerInjectionInterface {
       // Redirect to the search page with filters in the GET parameters.
       $search_input = Xss::filter($form_state->getValue('search_input'));
       $search_input = preg_replace('/[\/]+/', ' ', $search_input);
+      $search_input = str_replace('&amp;', '&', $search_input);
       $new_route = "view.{$route_parts[1]}.page";
       $search_group_page = Url::fromRoute($new_route, ['keys' => $search_input]);
     }
