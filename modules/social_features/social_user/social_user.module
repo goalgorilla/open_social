@@ -201,7 +201,7 @@ function social_user_form_user_register_form_alter(&$form, FormStateInterface $f
     }
 
     // Only show for anonymous.
-    if (true === \Drupal::currentUser()->isAnonymous()) {
+    if (TRUE === \Drupal::currentUser()->isAnonymous()) {
       $login_link = Link::createFromRoute(new TranslatableMarkup('Log in'), 'user.login', [], $link_options)->toString();
 
       $form['account']['login-link'] = [
