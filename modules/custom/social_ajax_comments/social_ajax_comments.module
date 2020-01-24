@@ -138,9 +138,10 @@ function social_ajax_comments_comment_links_alter(array &$links, CommentInterfac
   // We need the custom checks to override what Ajax comments does for us.
   // Mainly because of UX flaws in the edit form that opens up.
   // For now we don't support edit ajax actions nor unpublishing.
-  $links['comment']['#links']['comment-edit']['attributes']['class'] = [];
-  $links['comment']['#links']['comment-edit']['url'] = Url::fromRoute('entity.comment.edit_form', ['comment' => $entity->id()]);
-
+  if (!empty($links['comment']['#links']['comment-edit'])) {
+    $links['comment']['#links']['comment-edit']['attributes']['class'] = [];
+    $links['comment']['#links']['comment-edit']['url'] = Url::fromRoute('entity.comment.edit_form', ['comment' => $entity->id()]);
+  }
   // For post comments we need to render better data wrapper's so
   // Ajax replace works on the right ID.
   if ($entity->isPublished() && $account->hasPermission('administer comments') && $bundle === 'post_comment') {
