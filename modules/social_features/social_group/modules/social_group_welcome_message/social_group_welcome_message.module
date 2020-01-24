@@ -19,7 +19,7 @@ function social_group_welcome_message_entity_base_field_info(EntityTypeInterface
   // Add a 'Welcome message' base fields to all group types.
   if ($entity_type->id() === 'group') {
     $fields['private_message_send'] = BaseFieldDefinition::create('boolean')
-      ->setLabel(t('Send a private message people joined'))
+      ->setLabel(t('Send a welcome message to new group members'))
       ->setRevisionable(TRUE)
       ->setTranslatable(TRUE)
       ->setDefaultValue(FALSE)
