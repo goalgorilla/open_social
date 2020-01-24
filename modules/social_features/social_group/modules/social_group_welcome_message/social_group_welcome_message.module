@@ -120,20 +120,20 @@ function social_group_welcome_message_group_content_insert(GroupContentInterface
       $owner = $group->getOwner();
     }
 
-    // Merge all managers of the group to managers array.
-    $managers = array_merge($g_admins_users, $g_managers_users, [$group->getOwner()]);
+    // Merge all managers of the group to recipients array.
+    $recipients = array_merge($g_admins_users, $g_managers_users, [$group->getOwner()]);
 
     // Load joined user.
     $user = $group_content->getEntity();
 
-    // Add the joined user to the already existing managers array.
-    $managers[] = $user;
+    // Add the joined user to the already existing recipients array.
+    $recipients[] = $user;
 
     /** @var \Drupal\private_message\Service\PrivateMessageServiceInterface $private_message_service */
     $private_message_service = \Drupal::service('private_message.service');
 
     // Create a pm thread between these users.
-    $thread = $private_message_service->getThreadForMembers($managers);
+    $thread = $private_message_service->getThreadForMembers($recipients);
 
     // Get body of pm.
     $private_message_body = $group->get('private_message_body')->first()->getValue();
@@ -147,4 +147,34 @@ function social_group_welcome_message_group_content_insert(GroupContentInterface
     $private_message->save();
     $thread->addMessage($private_message)->save();
   }
+}
+
+/**
+ * Implements hook_field_widget_form_alter().
+ */
+function social_group_welcome_message_field_widget_form_alter(&$element, FormStateInterface $form_state, $context) {
+  // Maps field names to an array containing a single format.
+  $map = [
+    'private_message_body' => ['basic_html'],
+  ];
+
+  $field_name = $context['items']->getFieldDefinition()->getName();
+
+  if (array_key_exists($field_name, $map)) {
+    $element['#allowed_formats'] = $map[$field_name];
+    $element['#after_build'][] = '_social_group_welcome_message_remove_text_format_box';
+  }
+}
+
+/**
+ * Remove text format box (after_build callback).
+ */
+function _social_group_welcome_message_remove_text_format_box($form_element, FormStateInterface $form_state) {
+  // Remove help, guidelines and wrapper.
+  unset($form_element['format']['help']);
+  unset($form_element['format']['guidelines']);
+  unset($form_element['format']['#type']);
+  unset($form_element['format']['#theme_wrappers']);
+
+  return $form_element;
 }
