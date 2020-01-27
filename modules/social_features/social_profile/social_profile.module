@@ -380,11 +380,13 @@ function social_profile_preprocess_profile(array &$variables) {
   $variables['profile_info_url'] = Url::fromRoute('view.user_information.user_information', ['user' => $profile->getOwnerId()]);
 
   // Prepare variables for statistic block.
-  /** @var \Drupal\social_profile\UserStatistics $user_statistics */
-  $user_statistics = \Drupal::service('social_profile.user_statistics');
-  $variables['profile_topics'] = $user_statistics->nodeCount($user->id(), 'topic');
-  $variables['profile_events'] = $user_statistics->nodeCount($user->id(), 'event');
-  $variables['profile_groups'] = count(\Drupal::service('social_group.helper_service')->getAllGroupsForUser($user->id()));
+  if ($variables['view_mode'] === 'statistic') {
+    /** @var \Drupal\social_profile\UserStatistics $user_statistics */
+    $user_statistics = \Drupal::service('social_profile.user_statistics');
+    $variables['profile_topics'] = $user_statistics->nodeCount($user->id(), 'topic');
+    $variables['profile_events'] = $user_statistics->nodeCount($user->id(), 'event');
+    $variables['profile_groups'] = count(\Drupal::service('social_group.helper_service')->getAllGroupsForUser($user->id()));
+  }
 }
 
 /**
