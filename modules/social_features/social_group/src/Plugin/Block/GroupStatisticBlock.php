@@ -17,7 +17,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
  *  id = "group_statistic_block",
  *  admin_label = @Translation("Group statistic block"),
  *  context = {
- *    "group" = @ContextDefinition("entity:group", required = FALSE)
+ *    "group" = @ContextDefinition("entity:group")
  *  }
  * )
  */
@@ -76,7 +76,7 @@ class GroupStatisticBlock extends BlockBase implements ContainerFactoryPluginInt
   public function build() {
     $build = [];
 
-    $group = _social_group_get_current_group();
+    $group = $this->getContextValue('group');
 
     if (!empty($group)) {
       // Content.
