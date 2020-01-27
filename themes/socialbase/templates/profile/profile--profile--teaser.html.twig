@@ -22,7 +22,14 @@
 
 {{ attach_library('socialbase/teaser')}}
 
-<div class="card teaser">
+{%
+  set classes = [
+    'card',
+    'teaser',
+  ]
+%}
+
+<div{{ attributes.addClass(classes) }}>
 
   {% block card_image %}
     <div class="teaser__image">
