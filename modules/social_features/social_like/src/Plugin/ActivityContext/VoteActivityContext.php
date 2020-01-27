@@ -3,14 +3,15 @@
 namespace Drupal\social_like\Plugin\ActivityContext;
 
 use Drupal\activity_creator\Plugin\ActivityContextBase;
-use Drupal\votingapi\Entity\Vote;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\votingapi\VoteInterface;
 
 /**
  * Provides a 'VoteActivityContext' activity context.
  *
  * @ActivityContext(
- *  id = "vote_activity_context",
- *  label = @Translation("Vote activity context"),
+ *   id = "vote_activity_context",
+ *   label = @Translation("Vote activity context"),
  * )
  */
 class VoteActivityContext extends ActivityContextBase {
@@ -24,14 +25,17 @@ class VoteActivityContext extends ActivityContextBase {
     // We only know the context if there is a related object.
     if (isset($data['related_object']) && !empty($data['related_object'])) {
       $related_object = $data['related_object'][0];
-      if ($related_object['target_type'] == 'vote') {
-        $vote_storage = \Drupal::entityTypeManager()->getStorage('vote');
 
+      if ($related_object['target_type'] === 'vote') {
+        $vote_storage = $this->entityTypeManager->getStorage('vote');
         $vote = $vote_storage->load($related_object['target_id']);
-        if ($vote instanceof Vote) {
-          $entity_storage = \Drupal::entityTypeManager()->getStorage($vote->getVotedEntityType());
-          /** @var \Drupal\Core\Entity\EntityBase $entity */
+
+        if ($vote instanceof VoteInterface) {
+          $entity_storage = $this->entityTypeManager->getStorage($vote->getVotedEntityType());
+
+          /** @var \Drupal\Core\Entity\EntityInterface $entity */
           $entity = $entity_storage->load($vote->getVotedEntityId());
+
           $uid = $entity->getOwnerId();
 
           // Don't send notifications to myself.
@@ -44,18 +48,15 @@ class VoteActivityContext extends ActivityContextBase {
         }
       }
     }
+
     return $recipients;
   }
 
   /**
-   * Check if it's valid.
+   * {@inheritdoc}
    */
-  public function isValidEntity($entity) {
-    if ($entity->getEntityTypeId() === 'vote') {
-      return TRUE;
-    }
-
-    return FALSE;
+  public function isValidEntity(EntityInterface $entity) {
+    return $entity->getEntityTypeId() === 'vote';
   }
 
 }

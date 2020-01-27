@@ -42,55 +42,39 @@ function social_core_theme() {
 function social_core_preprocess_node(&$variables) {
   /** @var \Drupal\node\Entity\NodeInterface $node */
   $node = $variables['node'];
+  // Add common variable for teaser images.
+  $image_field = "field_{$node->getType()}_image";
+  // If machine name too long or using another image field.
+  if (!$node->hasField($image_field)) {
+    $node_fields = $node->getFields();
+    $image_fields = array_filter($node_fields, '_social_core_find_image_field');
+    // Get the first image field of all the fields.
+    $image_field = reset($image_fields);
+  }
+  if (!empty($variables['content'][$image_field]['#theme'])) {
+    $variables['node_image'] = $variables['content'][$image_field];
+    $variables['no_image'] = FALSE;
+  }
+  else {
+    $variables['no_image'] = TRUE;
+  }
+
   if ($variables['view_mode'] === 'hero') {
-    // Get current user.
-    $account = \Drupal::currentUser();
-
-    if (empty($variables['event_enrollment'])) {
-      if ($node->getType() == 'event') {
-        $form = \Drupal::formBuilder()
-          ->getForm('Drupal\social_event\Form\EnrollActionForm');
-
-        $render_array = [
-          'enroll_action_form' => $form,
-        ];
-
-        $variables['event_enrollment'] = $render_array;
-      }
-    }
-
     // Add node edit url for management.
-    if ($node instanceof NodeInterface) {
-      // Get the current route name to check if the user is on the
-      // edit or delete page.
-      $route = \Drupal::routeMatch()->getRouteName();
-      if (!in_array($route, ['entity.node.edit_form', 'entity.node.delete_form'])) {
-        if ($node->access('update', $account)) {
-          $variables['node_edit_url'] = $node->toUrl('edit-form')->toString();
-        }
+    // Get the current route name to check if the user is on the
+    // edit or delete page.
+    $route = \Drupal::routeMatch()->getRouteName();
+    if (!in_array($route, ['entity.node.edit_form', 'entity.node.delete_form'])) {
+      $account = \Drupal::currentUser();
+      if ($node->access('update', $account)) {
+        $variables['node_edit_url'] = $node->toUrl('edit-form')->toString();
       }
     }
 
     // Add the hero styled image.
-    $image_field = "field_{$node->getType()}_image";
-    if (!empty($node->{$image_field}->entity)) {
+    if ($node->hasField($image_field) && !empty($node->{$image_field}->entity)) {
       $variables['hero_styled_image_url'] = ImageStyle::load('social_xx_large')
         ->buildUrl($node->{$image_field}->entity->getFileUri());
-    }
-    else {
-      // If machine name too long or using another image field.
-      $node_fields = $node->getFields();
-      $image_fields = array_filter($node_fields, '_social_core_find_image_field');
-      // Get the first image field of all the fields.
-      $field = reset($image_fields);
-      if ($field !== NULL && $field !== FALSE) {
-        if ($field->getFieldDefinition()->get("field_type") === 'image') {
-          if (!empty(($node->get($field->getName())->entity))) {
-            $variables['hero_styled_image_url'] = ImageStyle::load('social_xx_large')
-              ->buildUrl($node->get($field->getName())->entity->getFileUri());
-          }
-        }
-      }
     }
   }
 }
@@ -130,8 +114,7 @@ function social_core_form_system_site_information_settings_alter(&$form, FormSta
  */
 function social_core_node_links_alter(array &$links, NodeInterface $entity, array &$context) {
   // Remove the comment links.
-  unset($links['comment__field_topic_comments']);
-  unset($links['comment__field_event_comments']);
+  unset($links['comment__field_topic_comments'], $links['comment__field_event_comments']);
 
   if (isset($context['view_mode']) && in_array($context['view_mode'], ['activity', 'activity_comment'])) {
     // Add a readmore link.
@@ -140,8 +123,7 @@ function social_core_node_links_alter(array &$links, NodeInterface $entity, arra
       'title' => t('Read more<span class="visually-hidden"> about @title</span>', [
         '@title' => $node_title_stripped,
       ]),
-      'url' => $entity->urlInfo(),
-      'language' => $entity->language(),
+      'url' => $entity->toUrl(),
       'attributes' => [
         'rel' => 'tag',
         'title' => $node_title_stripped,

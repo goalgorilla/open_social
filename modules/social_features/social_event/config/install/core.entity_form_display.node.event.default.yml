@@ -113,6 +113,8 @@ third_party_settings:
         required_fields: true
         id: enrollment
         classes: card
+_core:
+  default_config_hash: qKBzdABwV4xgosxvvpPa9VD-XmjoctFRVihQvmMs2a4
 id: node.event.default
 targetEntityType: node
 bundle: event
@@ -201,6 +203,12 @@ content:
     third_party_settings: {  }
     type: file_generic
     region: content
+  groups:
+    type: options_select
+    settings: {  }
+    weight: 16
+    region: content
+    third_party_settings: {  }
   path:
     type: path
     weight: 10
@@ -243,6 +251,7 @@ content:
       match_operator: CONTAINS
       size: 60
       placeholder: ''
+      match_limit: 10
     third_party_settings: {  }
     region: content
 hidden: {  }

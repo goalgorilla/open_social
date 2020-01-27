@@ -13,7 +13,6 @@ use Drupal\Core\Ajax\HtmlCommand;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\group\Entity\Group;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\group\Entity\GroupContentInterface;
 use Drupal\group\Entity\GroupContentType;
@@ -22,6 +21,8 @@ use Drupal\group\Entity\GroupContent;
 use Drupal\group\Entity\GroupType;
 use Drupal\node\NodeInterface;
 use Drupal\social_group\Controller\SocialGroupController;
+use Drupal\social_group\Controller\SocialGroupListBuilder;
+use Drupal\social_group\Entity\Group;
 use Drupal\social_group\Form\SocialGroupAddForm;
 use Drupal\views\ViewExecutable;
 use Drupal\views\Plugin\views\cache\CachePluginBase;
@@ -52,6 +53,16 @@ function social_group_theme() {
       ],
     ],
   ];
+}
+
+/**
+ * Implements hook_entity_type_alter().
+ */
+function social_group_entity_type_alter(array &$entity_types) {
+  if (isset($entity_types['group'])) {
+    $entity_types['group']->setClass(Group::class);
+    $entity_types['group']->setListBuilderClass(SocialGroupListBuilder::class);
+  }
 }
 
 /**
@@ -1084,14 +1095,6 @@ function social_group_menu_local_actions_alter(&$local_actions) {
 }
 
 /**
- * Implements hook_entity_type_alter().
- */
-function social_group_entity_type_alter(array &$entity_types) {
-  /* @var $entity_types \Drupal\Core\Entity\EntityTypeInterface[] */
-  $entity_types['group']->setListBuilderClass('Drupal\social_group\Controller\SocialGroupListBuilder');
-}
-
-/**
  * Return user profile by given group membership content.
  *
  * @param \Drupal\group\Entity\GroupContent $group_content
@@ -2071,6 +2074,15 @@ function social_group_social_group_action_social_group_change_member_role_action
  */
 function social_group_social_group_action_social_group_send_email_action_finish($success) {
   if ($success) {
+    // When the queue storage module is enabled the email is send in the
+    // background.
+    if (\Drupal::moduleHandler()->moduleExists('social_queue_storage')) {
+      return [
+        'singular' => 'Your email will be send to 1 selected member',
+        'plural' => 'Your email will be send to @count selected members',
+      ];
+    }
+
     return [
       'singular' => 'Your email has been sent to 1 selected member successfully',
       'plural' => 'Your email has been sent to @count selected members successfully',

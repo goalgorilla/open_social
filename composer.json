@@ -36,7 +36,7 @@
                 "Restrict images to this site blocks image style derivatives": "https://www.drupal.org/files/issues/2018-10-26/2528214-47.patch",
                 "Optimize getCommentedEntity()": "https://www.drupal.org/files/issues/2018-12-28/2580551-72.patch",
                 "#states cannot check/uncheck 'radios' and 'checkboxes' elements": "https://www.drupal.org/files/issues/drupal-994360-74-states-checkboxes-checked.patch",
-                "Multiple usages of FieldPluginBase::getEntity do not check for NULL, leading to WSOD": "https://www.drupal.org/files/issues/2019-05-06/drupal-Multiple-usages-of-FieldPluginBase-getEntity-3007424-15.patch",
+                "Multiple usages of FieldPluginBase::getEntity do not check for NULL, leading to WSOD": "https://www.drupal.org/files/issues/2019-11-14/3007424-68.patch",
                 "Default role id causes issues with validation on VBO": "https://www.drupal.org/files/issues/2018-05-24/2974925-default-rid-config-causes-illegal-error.patch"
             },
             "drupal/flag": {
@@ -46,13 +46,11 @@
                 "Automated crop integration": "https://www.drupal.org/files/issues/2018-12-16/2830768-crop-automated_crop_integration-45.patch"
             },
             "drupal/group": {
-                "Prevent view.group_nodes.page_1 does not exist": "https://www.drupal.org/files/issues/2019-08-02/group-3062380-15.patch",
                 "Add computed field for Group reference": "https://www.drupal.org/files/issues/add-computed-field-without-FieldItemListComputedInterface-2718195-34.patch",
                 "Use VBO together with group permission": "https://www.drupal.org/files/issues/2019-10-09/vbo-and-group-permission-3020883-10.patch",
                 "Ability to use group tokens in node context": "https://www.drupal.org/files/issues/2018-12-19/group-2774827-41-gnode-tokens.patch",
                 "Group: Don't try to re-save deleted entities": "https://www.drupal.org/files/issues/2018-11-01/3010896-02.patch",
-                "Statically cache loadByEntity()": "https://www.drupal.org/files/issues/2019-01-31/gnode-loadbyentity-3029878-2.patch",
-                "Statically cache gnode_node_grants()": "https://www.drupal.org/files/issues/2019-01-31/gnode-access-grants-3029849-2.patch"
+                "Rely on toUrl defaults for Entit url link": "https://www.drupal.org/files/issues/2019-12-04/group-3098675-2.patch"
             },
             "drupal/image_widget_crop": {
                 "Remove theme function override for verticalTabs": "https://www.drupal.org/files/issues/2019-02-13/3032584-verticaltabs-theme-override-removal-2.patch"
@@ -81,18 +79,15 @@
             "drupal/bootstrap": {
                 "Dropdown toggle variable ignored when using links__dropbutton": "https://www.drupal.org/files/issues/2018-12-19/dropdown-without-default-button-3021413-2.patch"
             },
-            "drupal/message": {
-                "Notice: Undefined index: value in MessageTemplate->getText()": "https://www.drupal.org/files/issues/2018-09-16/undefined-index-value-3000026-2.patch"
-            },
             "drupal/lazy": {
                 "Make sure we grab active config for lazy settings": "https://www.drupal.org/files/issues/2019-05-23/3056630-2.patch",
                 "Make sure lazy doesnt do anything on cron": "https://www.drupal.org/files/issues/2019-07-30/3071331-lazy-cron-empty-path-2.patch"
             },
+            "drupal/ajax_comments": {
+                "Fix display mode issue": "https://www.drupal.org/files/issues/2019-11-05/ajax_comments-ajax_not_working_when_using_non_default_view_mode-2896916-22.patch"
+            },
             "drupal/views_bulk_operations": {
-                "Make sure select all gets fired for socialbase theme": "https://www.drupal.org/files/issues/2019-09-19/3042494-trigger-vbo-action-on-jquery-checkbox-change-5.patch",
-                "Make sure select all works better": "https://git.drupalcode.org/project/views_bulk_operations/commit/1e9d1e5.patch",
-                "Pass through arguments": "https://www.drupal.org/files/issues/2019-09-30/3084741-pass-arguments-to-view-2.patch",
-                "Save pager data": "https://git.drupalcode.org/project/views_bulk_operations/commit/8f4ac86cd9b118edafc23ebf34ceae78e29d6443.patch"
+                "Make sure select all gets fired for socialbase theme": "https://www.drupal.org/files/issues/2019-09-19/3042494-trigger-vbo-action-on-jquery-checkbox-change-5.patch"
             }
         }
     },
@@ -101,9 +96,10 @@
         "composer/installers": "^1.6",
         "oomphinc/composer-installers-extender": "^1.1",
         "drupal-composer/drupal-scaffold": "^2.5.0",
-        "drupal/core": "~8.7.1",
+        "drupal/core": "~8.8.1",
         "drupal/address": "1.7",
         "drupal/admin_toolbar": "1.27",
+        "drupal/ajax_comments": "^1.0",
         "drupal/better_exposed_filters": "3.0-alpha6",
         "drupal/block_field": "1.0-alpha8",
         "drupal/config_update": "1.6",
@@ -120,13 +116,13 @@
         "drupal/field_group": "3.0-beta1",
         "drupal/file_mdm": "1.1",
         "drupal/flag": "4.0-alpha3",
-        "drupal/group": "1.0-rc4",
+        "drupal/group": "1.0-rc5",
         "drupal/image_effects": "2.3",
         "drupal/image_widget_crop": "2.2",
         "drupal/lazy": "2.0",
         "drupal/like_and_dislike": "1.0-alpha2",
         "drupal/link_css": "1.x-dev",
-        "drupal/message": "1.0-rc2",
+        "drupal/message": "1.0",
         "drupal/metatag": "1.9",
         "drupal/override_node_options": "2.4",
         "drupal/paragraphs": "1.8",
@@ -140,11 +136,11 @@
         "drupal/swiftmailer" : "1.0-beta2",
         "drupal/token": "1.5",
         "drupal/url_embed": "1.0-alpha1",
-        "drupal/views_bulk_operations": "3.2",
+        "drupal/views_bulk_operations": "3.3",
         "drupal/views_infinite_scroll": "1.6",
         "drupal/votingapi": "3.0-beta1",
         "drupal/bootstrap": "3.20",
-        "drupal/pathauto": "1.4",
+        "drupal/pathauto": "1.6",
         "drupal/redirect": "1.4",
         "drupal/ctools": "3.2",
         "league/csv": "^9.3",

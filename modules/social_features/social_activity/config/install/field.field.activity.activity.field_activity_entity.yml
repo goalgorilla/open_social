@@ -13,6 +13,8 @@ dependencies:
   module:
     - activity_creator
     - dynamic_entity_reference
+_core:
+  default_config_hash: ppRhEM1LrV_b49cOQDQYvFnKzJaey1Y8WO-JL1uyEzs
 id: activity.activity.field_activity_entity
 field_name: field_activity_entity
 entity_type: activity
@@ -121,5 +123,11 @@ settings:
     handler_settings: {  }
   vote_result:
     handler: 'default:vote_result'
+    handler_settings: {  }
+  queue_storage_entity:
+    handler: 'default:queue_storage_entity'
+    handler_settings: {  }
+  path_alias:
+    handler: 'default:path_alias'
     handler_settings: {  }
 field_type: dynamic_entity_reference

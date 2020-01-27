@@ -1,9 +1,14 @@
-import React from "react";
+import React, { useContext } from "react";
 import PropTypes from "prop-types";
 import Suggestion from "./Suggestion";
+import TranslationContext from "../TranslationContext";
 
 function SearchSuggestions(props) {
   const { searchBase, query, suggestions } = props;
+
+  // The TranslationContext exposes the `t` and `formatPlural` function.
+  // The name `Drupal` is chosen so that code analysis from POTX works.
+  const Drupal = useContext(TranslationContext);
 
   if (!query.length || !suggestions.length) {
     return null;
@@ -23,7 +28,7 @@ function SearchSuggestions(props) {
       <div className="search-suggestions">{results}</div>
       <div className="search-suggestions__all">
         <a href={searchUrl} className="btn btn-default btn-raised">
-          See all results
+          {Drupal.t('See all results')}
         </a>
       </div>
     </React.Fragment>

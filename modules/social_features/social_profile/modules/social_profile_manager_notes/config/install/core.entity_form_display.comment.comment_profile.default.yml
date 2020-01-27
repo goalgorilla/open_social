@@ -1,0 +1,29 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - comment.type.comment_profile
+    - field.field.comment.comment_profile.field_comment_body
+  module:
+    - text
+  enforced:
+    module:
+      - social_profile_manager_notes
+id: comment.comment_profile.default
+targetEntityType: comment
+bundle: comment_profile
+mode: default
+content:
+  author:
+    weight: -2
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  field_comment_body:
+    type: string_textfield
+    weight: 11
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+hidden:
+  subject: true
