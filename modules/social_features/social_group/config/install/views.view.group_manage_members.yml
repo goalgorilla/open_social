@@ -13,6 +13,8 @@ dependencies:
     - profile
     - social_group
     - user
+_core:
+  default_config_hash: XMkAOCeioLxvZ_MJvF7EhWEcAKSZP07d7Z4Nx-BeutI
 id: group_manage_members
 label: 'Group Manage Members'
 module: views
@@ -20,7 +22,6 @@ description: ''
 tag: ''
 base_table: group_content_field_data
 base_field: id
-core: 8.x
 display:
   default:
     display_plugin: default
@@ -468,6 +469,8 @@ display:
             remember_roles:
               authenticated: authenticated
             reduce: false
+            operator_limit_selection: false
+            operator_list: {  }
           is_grouped: false
           group_info:
             label: ''
