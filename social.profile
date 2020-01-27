@@ -16,10 +16,6 @@ use Drupal\search_api\Entity\Index;
  */
 function social_install_tasks(&$install_state) {
   $tasks = [
-    'social_install_profile_modules' => [
-      'display_name' => t('Install Open Social modules'),
-      'type' => 'batch',
-    ],
     'social_final_site_setup' => [
       'display_name' => t('Apply configuration'),
       'type' => 'batch',
@@ -185,85 +181,6 @@ function social_features_submit($form_id, &$form_state) {
   $optional_modules = array_filter($form_state->getValue('optional_modules'));
   \Drupal::state()->set('social_install_optional_modules', $optional_modules);
   \Drupal::state()->set('social_install_demo_content', $form_state->getValue('demo_content'));
-}
-
-/**
- * Installs required modules via a batch process.
- *
- * @param array $install_state
- *   An array of information about the current installation state.
- *
- * @return array
- *   The batch definition.
- */
-function social_install_profile_modules(array &$install_state) {
-
-  $files = system_rebuild_module_data();
-
-  $modules = [
-    'social_core' => 'social_core',
-    'social_user' => 'social_user',
-    'social_group' => 'social_group',
-    'social_group_gvbo' => 'social_group_gvbo',
-    'social_event' => 'social_event',
-    'social_topic' => 'social_topic',
-    'social_profile' => 'social_profile',
-    'social_editor' => 'social_editor',
-    'social_comment' => 'social_comment',
-    'social_post' => 'social_post',
-    'social_page' => 'social_page',
-    'social_search' => 'social_search',
-    'social_activity' => 'social_activity',
-    'social_follow_content' => 'social_follow_content',
-    'social_mentions' => 'social_mentions',
-    'social_font' => 'social_font',
-    'social_like' => 'social_like',
-    'social_post_photo' => 'social_post_photo',
-    'social_swiftmail' => 'social_swiftmail',
-    'social_queue_storage' => 'social_queue_storage',
-  ];
-  $social_modules = $modules;
-  // Always install required modules first. Respect the dependencies between
-  // the modules.
-  $required = [];
-  $non_required = [];
-
-  // Add modules that other modules depend on.
-  foreach ($modules as $module) {
-    if ($files[$module]->requires) {
-      $module_requires = array_keys($files[$module]->requires);
-      // Remove the social modules from required modules.
-      $module_requires = array_diff_key($module_requires, $social_modules);
-      $modules = array_merge($modules, $module_requires);
-    }
-  }
-  $modules = array_unique($modules);
-  // Remove the social modules from to install modules.
-  $modules = array_diff_key($modules, $social_modules);
-  foreach ($modules as $module) {
-    if (!empty($files[$module]->info['required'])) {
-      $required[$module] = $files[$module]->sort;
-    }
-    else {
-      $non_required[$module] = $files[$module]->sort;
-    }
-  }
-  arsort($required);
-
-  $operations = [];
-  foreach ($required + $non_required + $social_modules as $module => $weight) {
-    $operations[] = [
-      '_social_install_module_batch',
-      [[$module], $module],
-    ];
-  }
-
-  $batch = [
-    'operations' => $operations,
-    'title' => t('Install Open Social modules'),
-    'error_message' => t('The installation has encountered an error.'),
-  ];
-  return $batch;
 }
 
 /**
