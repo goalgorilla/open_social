@@ -79,7 +79,7 @@ function social_landing_page_theme() {
   $theme_templates['profile__featured'] = [
     'base hook' => 'profile',
   ];
-  $theme_templates['profile__wide_teaser'] = [
+  $theme_templates['profile__profile__wide_teaser'] = [
     'base hook' => 'profile',
   ];
   // Paragraphs.
@@ -262,38 +262,16 @@ function social_landing_page_preprocess_node(&$variables) {
       break;
   }
 
-  _social_landing_page_teaser_wide_attributes($variables);
 }
 
 /**
  * Implements hook_preprocess_HOOK().
  */
 function social_landing_page_preprocess_group(&$variables) {
-  _social_landing_page_teaser_wide_attributes($variables);
-}
-
-/**
- * Implements hook_preprocess_HOOK().
- */
-function social_landing_page_preprocess_profile(&$variables) {
-  $variables['view_mode'] = $variables['elements']['#view_mode'];
-  _social_landing_page_teaser_wide_attributes($variables);
-}
-
-/**
- * Add new attributes to the entity with wide_teaser view mode.
- *
- * @param array $variables
- */
-function _social_landing_page_teaser_wide_attributes(&$variables) {
-  $variables['attributes'] = new Attribute($variables['attributes']);
-
   if ($variables['view_mode'] === 'wide_teaser') {
-    $variables['#attached']['library'][] =  'socialbase/page-node';
-    $variables['attributes']->addClass(['teaser--wide']);
-  }
-  elseif ($variables['view_mode'] === 'featured') {
-    $variables['attributes']->addClass(['teaser--tile']);
+    $variables['title_prefix']['teaser_tag'] = [
+      '#markup' => '<div class="teaser__tag">' .t('Group') . '</div>',
+    ];
   }
 }
 

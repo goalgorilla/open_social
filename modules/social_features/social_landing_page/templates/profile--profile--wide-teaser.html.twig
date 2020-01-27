@@ -1,0 +1,54 @@
+{% extends 'profile--profile--teaser.html.twig' %}
+
+{%
+  set classes = [
+    'card',
+    'teaser',
+    'teaser--wide',
+    'teaser-wide-profile',
+    no_image ? 'no-image',
+  ]
+%}
+
+{% set attributes = attributes.addClass(classes) %}
+
+{% block card_image %}
+  <div class="teaser__image">
+    {% block card_hero_image %}
+      {% if content.field_profile_image %}
+        <span class="teaser__image-wrapper">
+          <a href="{{ profile_stream_url }}">{{ content.field_profile_image }}</a>
+        </span>
+      {% endif %}
+    {% endblock %}
+
+    {% block card_teaser_type %}
+      <a href="{{ profile_stream_url }}">
+        <div class="teaser__teaser-type">
+          <svg class="teaser__teaser-type-icon">
+            <use xlink:href="#icon-user_white"></use>
+          </svg>
+        </div>
+      </a>
+    {% endblock %}
+
+    <div class="teaser__icon">
+      <svg class="teaser__content-type-icon">
+        <use xlink:href="#icon-user"></use>
+      </svg>
+    </div>
+  </div>
+{% endblock %}
+
+{% block card_title %}
+  <div class="teaser__tag">
+    {% trans %}Member{% endtrans %}
+  </div>
+  {{ parent() }}
+{% endblock %}
+
+{% block card_actionbar %}
+  <a href="{{ profile_contact_url }}" class="card__link">
+    {% trans %}View profile{% endtrans %}
+  </a>
+{% endblock %}
