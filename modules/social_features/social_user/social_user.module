@@ -202,7 +202,7 @@ function social_user_form_user_register_form_alter(&$form, FormStateInterface $f
 
     // Ensure this is not shown for site managers when creating accounts through
     // the admin interface.
-    if (TRUE === \Drupal::currentUser()->isAnonymous()) {
+    if (\Drupal::currentUser()->isAnonymous()) {
       $login_link = Link::createFromRoute(new TranslatableMarkup('Log in'), 'user.login', [], $link_options)->toString();
 
       $form['account']['login-link'] = [
