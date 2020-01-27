@@ -86,19 +86,22 @@ function _social_like_set_defaults() {
   $container = \Drupal::getContainer()->get('config.factory');
   $config = $container->getEditable('like_and_dislike.settings');
   $config->set('hide_vote_widget', TRUE)->save();
-  $config->set('enabled_types', [
-    'comment' => [
-      'comment',
-      'post_comment'
-    ],
-    'node' => [
-      'topic',
-      'event'
-    ],
-    'post' => [
-      'post'
+  $config->set(
+    'enabled_types',
+    [
+      'comment' => [
+        'comment',
+        'post_comment',
+      ],
+      'node' => [
+        'topic',
+        'event',
+      ],
+      'post' => [
+        'post',
+      ],
     ]
-  ])->save();
+  )->save();
   // Add voting api settings.
   $config = $container->getEditable('like_and_dislike.settings');
   $config->set('delete_everywhere', FALSE)->save();
