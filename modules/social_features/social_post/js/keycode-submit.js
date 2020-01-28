@@ -24,7 +24,7 @@
           // post forms this has some side effects that are required for a
           // successful submission.
           if ($submit.length) {
-            $submit.click();
+            $submit.mousedown();
           }
           // If a submit button isn't found we fall back to submitting the form
           // outright.
