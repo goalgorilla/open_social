@@ -440,6 +440,44 @@
   .nav > li.desktop {
     display: none;
   }
+  .navbar-scrollable {
+    overflow: hidden;
+    position: relative;
+    width: 100%;
+    height: 46px;
+  }
+  .navbar-scrollable .navbar-nav {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    -webkit-overflow-scrolling: touch;
+    -webkit-user-select: none;
+       -moz-user-select: none;
+        -ms-user-select: none;
+            user-select: none;
+    overflow-x: scroll;
+    overflow-y: hidden;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: start;
+        -ms-flex-pack: start;
+            justify-content: flex-start;
+  }
+  .navbar-scrollable .navbar-nav::-webkit-scrollbar {
+    display: none;
+  }
+  .navbar-scrollable:after {
+    content: '';
+    display: block;
+    position: absolute;
+    width: 24px;
+    height: 100%;
+    top: 0;
+    right: 0;
+    z-index: 2;
+  }
 }
 
 @media (max-width: 899px) {
@@ -507,44 +545,6 @@
   .region--content-top .search-take-over,
   .btn--close-search-take-over {
     display: none;
-  }
-  .navbar-scrollable {
-    overflow: hidden;
-    position: relative;
-    width: 100%;
-    height: 46px;
-  }
-  .navbar-scrollable .navbar-nav {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    -webkit-overflow-scrolling: touch;
-    -webkit-user-select: none;
-       -moz-user-select: none;
-        -ms-user-select: none;
-            user-select: none;
-    overflow-x: scroll;
-    overflow-y: hidden;
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-    -webkit-box-pack: start;
-        -ms-flex-pack: start;
-            justify-content: flex-start;
-  }
-  .navbar-scrollable .navbar-nav::-webkit-scrollbar {
-    display: none;
-  }
-  .navbar-scrollable:after {
-    content: '';
-    display: block;
-    position: absolute;
-    width: 24px;
-    height: 100%;
-    top: 0;
-    right: 0;
-    z-index: 2;
   }
   html:not(.js) .navbar-header:focus + .navbar-collapse, html:not(.js) .navbar-header:hover + .navbar-collapse {
     display: block;
