@@ -1,0 +1,58 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.book.body
+    - field.field.node.book.field_book_comments
+    - field.field.node.book.field_book_image
+    - field.field.node.book.field_content_visibility
+    - field.field.node.book.field_files
+    - image.style.social_xx_large
+    - node.type.book
+  module:
+    - image
+    - options
+    - user
+id: node.book.hero
+targetEntityType: node
+bundle: book
+mode: hero
+content:
+  field_book_image:
+    type: image
+    weight: 0
+    label: above
+    settings:
+      image_style: social_xx_large
+      image_link: ''
+    third_party_settings: {  }
+  field_content_visibility:
+    type: list_default
+    weight: 1
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+  links:
+    weight: 2
+    settings: {  }
+    third_party_settings: {  }
+  flag_follow_content:
+    weight: 3
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  shariff_field:
+    weight: 4
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+hidden:
+  body: true
+  field_book_comments: true
+  field_files: true
+  groups: true
+  groups_type_closed_group: true
+  groups_type_open_group: true
+  groups_type_public_group: true
+  search_api_excerpt: true
