@@ -146,6 +146,15 @@ function social_group_welcome_message_group_content_insert(GroupContentInterface
 
     $private_message->save();
     $thread->addMessage($private_message)->save();
+
+    // There is a contrib private message bug that when creating a new thread
+    // and adding messages to it, for the recipient the $last_message and
+    // $thread_last_check get the same timestamp. Showing no new messages badge.
+    // https://www.drupal.org/project/private_message/issues/3043898
+    // TODO:: Update to the correct version when issue has been solved.
+    /** @var UserDataInterface $userData */
+    $userData = \Drupal::service('user.data');
+    $userData->set('private_message', $user->id(), 'private_message_thread:' . $thread->id(), 0);
   }
 }
 
