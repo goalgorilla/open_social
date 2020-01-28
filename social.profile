@@ -5,8 +5,9 @@
  * Enables modules and site configuration for a social site installation.
  */
 
-use Drupal\user\Entity\User;
 use Drupal\search_api\Entity\Index;
+use Drupal\social\Installer\Form\ModuleConfigureForm;
+use Drupal\user\Entity\User;
 
 /**
  * Implements hook_install_tasks().
@@ -51,7 +52,7 @@ function social_install_tasks_alter(&$tasks, $install_state) {
       'social_module_configure_form' => [
         'display_name' => t('Select optional modules'),
         'type' => 'form',
-        'function' => 'Drupal\social\Installer\Form\ModuleConfigureForm',
+        'function' => ModuleConfigureForm::class,
       ],
     ] +
     array_slice($tasks, $insert_before - 1, NULL, TRUE);

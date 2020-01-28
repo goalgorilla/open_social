@@ -20,12 +20,12 @@
             "@composer drupal-scaffold"
         ],
         "drupal-scaffold": "DrupalComposer\\DrupalScaffold\\Plugin::scaffold",
-        "enable-asset-packagist": "Social\\Composer\\AssetPackagist::execute"
+        "enable-asset-packagist": "Drupal\\social\\Composer\\AssetPackagist::execute"
     },
     "autoload": {
         "psr-4": {
-            "Social\\": "src",
-            "Drupal\\social\\Behat\\": "tests/behat/features/bootstrap"
+            "Drupal\\social\\Behat\\": "tests/behat/features/bootstrap",
+            "Drupal\\social\\": "src"
         }
     },
     "extra": {
