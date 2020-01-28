@@ -57,11 +57,6 @@
   position: relative;
 }
 
-.socialblue--sky .content-merged--sky .region--complementary-top > *:not(.views-exposed-form):after,
-.socialblue--sky .content-merged--sky .region--complementary-bottom > *:not(.views-exposed-form):after {
-  top: 100%;
-}
-
 .socialblue--sky .content-merged--sky .region--complementary-top > *:not(.views-exposed-form):last-child:after,
 .socialblue--sky .content-merged--sky .region--complementary-bottom > *:not(.views-exposed-form):last-child:after {
   display: none;
@@ -73,10 +68,6 @@
 .socialblue--sky .content-merged--sky .region--complementary-bottom > *:not(.views-exposed-form).block-group-add-event-block,
 .socialblue--sky .content-merged--sky .region--complementary-bottom > *:not(.views-exposed-form).block-group-add-discussion-block {
   padding: 20px;
-}
-
-.socialblue--sky .content-merged--sky .region--complementary-top + .region--complementary-bottom > .card:first-child:before {
-  bottom: 100%;
 }
 
 .socialblue--sky .content-merged--sky .block-profile-statistic-block,
@@ -405,8 +396,9 @@
     right: 1.875rem;
     height: 2px;
     margin: 0 auto;
-    background: #fafafa;
+    background: #adadad;
     z-index: 1;
+    top: 100%;
   }
   .socialblue--sky .content-merged--sky .region--complementary-top + .region--complementary-bottom > .card:first-child:before {
     max-width: 280px;
@@ -416,8 +408,24 @@
     right: 1.875rem;
     height: 2px;
     margin: 0 auto;
+    background: #adadad;
+    z-index: 1;
+    bottom: 100%;
+  }
+  .socialblue--sky .block-profile-statistic-block:before,
+  .socialblue--sky .block-group-statistic-block:before {
+    max-width: 280px;
+    content: '';
+    position: absolute;
+    left: 1.875rem;
+    right: 1.875rem;
+    height: 2px;
+    margin: 0 auto;
     background: #fafafa;
     z-index: 1;
+    top: 100%;
+    margin-top: -2px;
+    z-index: 10;
   }
   .socialblue--sky .block-views-blockgroup-managers-block-list-managers .card, .socialblue--sky .block-views-blockgroup-managers-block-list-managers.card,
   .socialblue--sky .view-group-information .card,
