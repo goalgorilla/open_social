@@ -4,6 +4,7 @@ namespace Drupal\social_post\Plugin\Field\FieldFormatter;
 
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\comment\CommentInterface;
+use Drupal\Core\Field\FieldItemListInterface;
 
 /**
  * Provides a post comment activity formatter.
@@ -21,6 +22,18 @@ use Drupal\comment\CommentInterface;
  * )
  */
 class CommentPostActivityFormatter extends CommentPostFormatter {
+
+  /**
+   * {@inheritdoc}
+   */
+  public function viewElements(FieldItemListInterface $items, $langcode) {
+    // Set number of comments to 0 which equals ALL. But only do this for the
+    // AJAX comments which apparently use _custom view mode.
+    if ($this->viewMode === '_custom') {
+      $this->setSetting('num_comments', 0);
+    }
+    return parent::viewElements($items, $langcode);
+  }
 
   /**
    * {@inheritdoc}
