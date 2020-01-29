@@ -2,13 +2,48 @@
 
 namespace Drupal\social\Installer\Form;
 
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\social\Installer\OptionalModuleManager;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Provides the site configuration form.
  */
 class ModuleConfigureForm extends ConfigFormBase {
+
+  /**
+   * The module extension list.
+   *
+   * @var \Drupal\social\Installer\OptionalModuleManager
+   */
+  protected $optionalModuleManager;
+
+  /**
+   * Constructs a ModuleConfigureForm object.
+   *
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *   The factory for configuration objects.
+   * @param \Drupal\social\Installer\OptionalModuleManager $optional_module_manager
+   *   The module extension list.
+   */
+  public function __construct(ConfigFactoryInterface $config_factory, OptionalModuleManager $optional_module_manager) {
+    parent::__construct($config_factory);
+    $this->optionalModuleManager = $optional_module_manager;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('config.factory'),
+      // Create the OptionalModuleManager ourselves because it can not be
+      // available as a service yet.
+      OptionalModuleManager::create($container)
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -39,21 +74,28 @@ class ModuleConfigureForm extends ConfigFormBase {
       '#type' => 'container',
     ];
 
+    $optional_features = $this->optionalModuleManager->getOptionalModules();
+    $feature_options = array_map(
+      static function ($info) {
+        return $info['name'];
+      },
+      $optional_features
+    );
+    $default_features = array_keys(
+      array_filter(
+        $optional_features,
+        static function ($info) {
+          return $info['default'];
+        }
+      )
+    );
+
     // Checkboxes to enable Optional modules.
     $form['install_modules']['optional_modules'] = [
       '#type' => 'checkboxes',
       '#title' => t('Enable additional features'),
-      '#options' => $this->getOptionalModules(),
-      '#default_value' => [
-        'dynamic_page_cache',
-        'inline_form_errors',
-        'page_cache',
-        'social_file_private',
-        'social_search_autocomplete',
-        'social_lets_connect_contact',
-        'social_lets_connect_usage',
-        'social_group_flexible_group',
-      ],
+      '#options' => $feature_options,
+      '#default_value' => $default_features,
     ];
 
     $form['install_demo'] = [
@@ -93,33 +135,6 @@ class ModuleConfigureForm extends ConfigFormBase {
 
     // Store whether we need to set up demo content.
     \Drupal::state()->set('social_install_demo_content', $form_state->getValue('demo_content'));
-  }
-
-  /**
-   * Contains the optional modules for Open Social.
-   *
-   * TODO: Refactor this into an OptionalModuleManagerService as used by
-   *   Thunder.
-   *
-   * @return array
-   *   The optional modules that users can install.
-   */
-  private function getOptionalModules() {
-    return [
-      'social_book' => t('Book functionality'),
-      'social_sharing' => t('Share content on social media'),
-      'social_event_type' => t('Categorize events in event types'),
-      'social_sso' => t('Registration with social networks'),
-      'social_search_autocomplete' => t('Suggested results in the search overlay'),
-      'social_file_private' => t('Use the private file system for uploaded files (highly recommended)'),
-      'inline_form_errors' => t('Inline Form Errors'),
-      'page_cache' => t('Cache page for anonymous users (highly recommended)'),
-      'dynamic_page_cache' => t('Cache pages for any user (highly recommended)'),
-      'social_lets_connect_contact' => t('Adds Open Social Links to the main menu.'),
-      'social_lets_connect_usage' => t('Shares usage data to the Open Social team.'),
-      'social_group_flexible_group' => t('Flexible group functionality'),
-      'social_group_secret' => t('Secret group functionality'),
-    ];
   }
 
 }
