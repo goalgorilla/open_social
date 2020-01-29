@@ -10,6 +10,8 @@ dependencies:
     - activity_viewer
     - options
     - user
+_core:
+  default_config_hash: ttxaKuxOXNBOVRhBP19lSnXWA1LFxjYkmqqlkNX6mWE
 id: activity_stream_notifications
 label: 'Activity stream notifications'
 module: views
@@ -17,7 +19,6 @@ description: 'Activity stream notifications on a profile'
 tag: ''
 base_table: activity_field_data
 base_field: id
-core: 8.x
 display:
   default:
     display_plugin: default
@@ -144,6 +145,8 @@ display:
             multiple: false
             remember_roles:
               authenticated: authenticated
+            operator_limit_selection: false
+            operator_list: {  }
           is_grouped: false
           group_info:
             label: ''
@@ -183,6 +186,8 @@ display:
             remember_roles:
               authenticated: authenticated
             reduce: false
+            operator_limit_selection: false
+            operator_list: {  }
           is_grouped: false
           group_info:
             label: ''
@@ -220,6 +225,8 @@ display:
             multiple: false
             remember_roles:
               authenticated: authenticated
+            operator_limit_selection: false
+            operator_list: {  }
           is_grouped: false
           group_info:
             label: ''
