@@ -200,15 +200,19 @@ function social_user_form_user_register_form_alter(&$form, FormStateInterface $f
       ];
     }
 
-    $login_link = Link::createFromRoute(new TranslatableMarkup('Log in'), 'user.login', [], $link_options)->toString();
+    // Ensure this is not shown for site managers when creating accounts through
+    // the admin interface.
+    if (\Drupal::currentUser()->isAnonymous()) {
+      $login_link = Link::createFromRoute(new TranslatableMarkup('Log in'), 'user.login', [], $link_options)->toString();
 
-    $form['account']['login-link'] = [
-      '#markup' => new TranslatableMarkup("Have an account already? @link", ["@link" => $login_link]),
-      '#weight' => 1000,
-      '#cache' => [
-        'contexts' => ['url.query_args'],
-      ],
-    ];
+      $form['account']['login-link'] = [
+        '#markup' => new TranslatableMarkup("Have an account already? @link", ["@link" => $login_link]),
+        '#weight' => 1000,
+        '#cache' => [
+          'contexts' => ['url.query_args'],
+        ],
+      ];
+    }
   }
 
   // Add an extra validation option, to check for existing data.
