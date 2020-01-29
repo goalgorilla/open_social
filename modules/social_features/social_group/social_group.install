@@ -39,11 +39,13 @@ function social_group_update_dependencies() {
  * Perform actions related to the installation of social_group.
  */
 function social_group_install() {
-
   // Set some default permissions.
   _social_group_set_permissions();
   // Add menu items.
   _social_group_create_menu_links();
+
+  // Set the view mode to use when shown in activities.
+  activity_creator_set_entity_view_mode('group', 'stream');
 
   // Make sure the admin theme is not used when managing groups.
   $group_settings = \Drupal::configFactory()->getEditable('group.settings');

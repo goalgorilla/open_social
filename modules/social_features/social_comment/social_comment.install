@@ -13,9 +13,11 @@ use Drupal\user\Entity\Role;
  * Perform actions related to the installation of social_comment.
  */
 function social_comment_install() {
-
   // Set some default permissions.
   _social_comment_set_permissions();
+
+  // Set the view mode to use when shown in activities.
+  activity_creator_set_entity_view_mode('comment', 'activity');
 }
 
 /**
