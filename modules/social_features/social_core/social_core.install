@@ -91,14 +91,22 @@ function social_core_update_dependencies() {
  */
 function _social_core_dependencies_for_features_removal(&$dependencies) {
   $dependencies['social_core'][8802] = [
+    // Make sure all Drupal core updates for 8.7 have run.
     'system' => 8702,
+    // Make sure all group updates before rc5 have run.
     'group' => 8016,
+    // We require all 7.x updates for Social Search to have run because
+    // configuration will be reverted that depends on the better exposed filters
+    // module that may still need to be enabled when coming from 6.x.
+    'social_search' => 8701,
   ];
 
+  // Ensure we run before the update hook from Drupal core 8.8.
   $dependencies['system'][8801] = [
     'social_core' => 8802,
   ];
 
+  // Ensure we run before the group updates from rc5.
   $dependencies['group'][8017] = [
     'social_core' => 8802,
   ];
