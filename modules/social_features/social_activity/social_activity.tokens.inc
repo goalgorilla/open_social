@@ -7,6 +7,7 @@
 
 use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\Url;
+use Drupal\group\Entity\GroupContentInterface;
 
 /**
  * Implements hook_token_info().
@@ -77,8 +78,7 @@ function social_activity_tokens($type, $tokens, array $data, array $options, Bub
 
                 $replacements[$original] = \Drupal::service('renderer')->renderPlain($info);
               }
-              elseif ($target_type === 'group_content') {
-                /** @var \Drupal\group\Entity\GroupContentInterface $entity */
+              elseif ($target_type === 'group_content' && $entity instanceof GroupContentInterface) {
                 $group_content_type = $entity->getGroupContentType();
 
                 if ($group_content_type !== NULL) {

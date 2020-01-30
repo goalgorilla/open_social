@@ -4,50 +4,50 @@
 .cover {
   color: white;
   background-color: $brand-primary;
-}
 
-.page-title {
-	color: white;
-}
-
-.hero-avatar {
-  border-radius: 50%;
-  border: 2px solid white;
-
-  @include for-tablet-portrait-up {
-    border-width: 3px;
+  .page-title {
+    color: white;
   }
 
-}
+  .hero-avatar {
+    border-radius: 50%;
+    border: 2px solid white;
 
-.hero-canvas {
-  border-radius: $border-radius-base;
-  background-color: rgba($gray-dark, 0.8);
-  color: white;
-}
-
-.hero-form[role='search'] {
-
-  .form-control {
-    border-radius: $input-border-radius;
-
-    &:focus,
-    &:active,
-    &:focus ~ .search-icon,
-    &:active ~ .search-icon {
-      box-shadow: 0 2px 0 0 $brand-secondary;
+    @include for-tablet-portrait-up {
+      border-width: 3px;
     }
 
   }
 
-  .form-submit,
-  .search-icon {
-    border-radius: 0 $input-border-radius $input-border-radius 0;
+  .hero-canvas {
+    border-radius: $border-radius-base;
+    background-color: rgba($gray-dark, 0.8);
+    color: white;
   }
 
-  .search-icon {
-    fill: $brand-primary;
-    background: white;
-  }
+  .hero-form[role='search'] {
 
+    .form-control {
+      border-radius: $input-border-radius;
+
+      &:focus,
+      &:active,
+      &:focus ~ .search-icon,
+      &:active ~ .search-icon {
+        box-shadow: 0 2px 0 0 $brand-secondary;
+      }
+
+    }
+
+    .form-submit,
+    .search-icon {
+      border-radius: 0 $input-border-radius $input-border-radius 0;
+    }
+
+    .search-icon {
+      fill: $brand-primary;
+      background: white;
+    }
+
+  }
 }

@@ -8,6 +8,8 @@ dependencies:
     - search_api
     - social_search
     - user
+_core:
+  default_config_hash: a19IcAteq_kDlYZTbWZgPHGMlmh_tGlBa_F0086x3bw
 id: search_content
 label: 'Search Content'
 module: views
@@ -15,7 +17,6 @@ description: ''
 tag: ''
 base_table: search_api_index_social_content
 base_field: search_api_id
-core: 8.x
 display:
   default:
     display_plugin: default
@@ -192,6 +193,8 @@ display:
               anonymous: '0'
               administrator: '0'
             reduce: false
+            operator_limit_selection: false
+            operator_list: {  }
           is_grouped: false
           group_info:
             label: ''
@@ -240,6 +243,8 @@ display:
             placeholder: ''
             min_placeholder: ''
             max_placeholder: ''
+            operator_limit_selection: false
+            operator_list: {  }
           is_grouped: false
           group_info:
             label: Start

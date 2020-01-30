@@ -4,17 +4,18 @@ namespace Drupal\activity_basics\Plugin\ActivityContext;
 
 use Drupal\activity_creator\ActivityFactory;
 use Drupal\activity_creator\Plugin\ActivityContextBase;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\Query\Sql\QueryFactory;
 use Drupal\Core\Session\AccountProxyInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Provides a 'GroupContentInMyGroupActivityContext' acitivy context.
+ * Provides a 'GroupContentInMyGroupActivityContext' activity context.
  *
  * @ActivityContext(
- *  id = "group_content_in_my_group_activity_context",
- *  label = @Translation("Group content in my group activity context"),
+ *   id = "group_content_in_my_group_activity_context",
+ *   label = @Translation("Group content in my group activity context"),
  * )
  */
 class GroupContentInMyGroupActivityContext extends ActivityContextBase {
@@ -119,8 +120,7 @@ class GroupContentInMyGroupActivityContext extends ActivityContextBase {
   /**
    * {@inheritdoc}
    */
-  public function isValidEntity($entity) {
-    /** @var \Drupal\Core\Entity\EntityInterface $entity */
+  public function isValidEntity(EntityInterface $entity) {
     return $entity->getEntityTypeId() === 'group_content';
   }
 
