@@ -93,7 +93,6 @@ function _social_core_dependencies_for_features_removal(&$dependencies) {
   $dependencies['social_core'][8802] = [
     'system' => 8702,
     'group' => 8016,
-    'pathauto' => 8107,
   ];
 
   $dependencies['system'][8801] = [
@@ -103,6 +102,14 @@ function _social_core_dependencies_for_features_removal(&$dependencies) {
   $dependencies['group'][8017] = [
     'social_core' => 8802,
   ];
+
+  // If the pathauto module is enabled then all updates for that must have run
+  // before our feature revert is run. If the module isn't installed then we
+  // can't depend on that update because it will cause all dependent updates not
+  // to be executed.
+  if (\Drupal::moduleHandler()->moduleExists('pathauto')) {
+    $dependencies['social_core'][8802]['pathauto'] = 8107;
+  }
 }
 
 /**
