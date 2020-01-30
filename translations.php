@@ -35,6 +35,12 @@ new TranslatableMarkup('Select / unselect all @count results in this view');
 new TranslatableMarkup('Clear all selected members');
 new TranslatableMarkup('A Reply-To address is the email address that receives messages sent from those who select Reply in their email clients.');
 
+// Strings added because they were removed from configuration in the
+// social_private_message module and are now set untranslated in an install
+// hook.
+new TranslatableMarkup("@interval hence");
+new TranslatableMarkup("@interval ago");
+
 // These strings have been added because they were not being picked
 // up by the POTX tool. This usually indicates an issue with configuration
 // schema or a string not passed through `TranslatableMarkup`.
