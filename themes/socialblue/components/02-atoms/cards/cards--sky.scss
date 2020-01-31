@@ -113,8 +113,9 @@
         position: relative;
 
         &:after {
-          @include separate-line;
-          top: 100%;
+          @include separate-line(#adadad) {
+            top: 100%;
+          };
         }
 
         &:last-child:after {
@@ -132,8 +133,9 @@
 
     .region--complementary-top + .region--complementary-bottom {
       > .card:first-child:before {
-        @include separate-line;
-        bottom: 100%;
+        @include separate-line(#adadad) {
+          bottom: 100%;
+        };
       }
     }
 
@@ -149,6 +151,14 @@
     position: relative;
     padding: 1rem 1.875rem 0;
     background: #fafafa;
+
+    &:before {
+      @include separate-line(#fafafa) {
+        top: 100%;
+        margin-top: -2px;
+        z-index: 10;
+      }
+    }
 
     @include for-tablet-portrait-up {
       padding: 2.5rem 2.25rem 0;
