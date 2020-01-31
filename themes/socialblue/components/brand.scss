@@ -449,15 +449,35 @@ html:not(.js) .navbar-default {
   background-color: #1f7ea7 !important;
 }
 
-.marker-cluster-small,
-.marker-cluster-small div {
-  background-color: $brand-secondary;
+.marker-cluster,
+.marker-cluster-small {
+  border-color: rgba($brand-secondary, .6);
+
+  div {
+    background-color: rgba($brand-secondary, .8);
+  }
 }
 
-.marker-cluster div {
-  font-weight: bold;
-  color: #f9f9f9;
-  font-size: 1.2em;
+.marker-cluster,
+.marker-cluster--small {
+  border-width: 5px;
+  border-style: solid;
+
+  div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    border-radius: 50%;
+
+    font-weight: 700;
+    color: #fff;
+    font-size: 1.125rem;
+
+    span {
+      margin-top: -3px;
+    }
+  }
 }
 
 .geolocation-map-container {
