@@ -38,12 +38,12 @@ class GroupStatistics {
    * @return int
    *   The number of members.
    */
-  public function memberCount(GroupInterface $group) {
+  public function getGroupMemberCount(GroupInterface $group) {
     return $this->count($group, 'group_membership');
   }
 
   /**
-   * Get node count by type.
+   * Get group node count by type.
    *
    * @param \Drupal\group\Entity\GroupInterface $group
    *   The group entity.
@@ -53,7 +53,7 @@ class GroupStatistics {
    * @return int
    *   The number of nodes.
    */
-  public function nodeCount(GroupInterface $group, $type) {
+  public function getGroupNodeCount(GroupInterface $group, $type) {
     return $this->count($group, 'group_node-' . $type);
   }
 

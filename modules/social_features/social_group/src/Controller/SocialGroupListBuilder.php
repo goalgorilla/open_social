@@ -123,7 +123,7 @@ class SocialGroupListBuilder extends EntityListBuilder {
     $row['name']['data'] = $entity->toLink()->toRenderable();
     $row['type'] = $entity->getGroupType()->label();
     $row['uid'] = $entity->uid->entity->toLink();
-    $row['members'] = $this->groupStatistics->memberCount($entity);
+    $row['members'] = $this->groupStatistics->getGroupMemberCount($entity);
     $row['created'] = $this->dateTime->format($entity->getCreatedTime(), 'short');
 
     return $row + parent::buildRow($entity);

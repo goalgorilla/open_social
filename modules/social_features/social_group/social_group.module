@@ -331,15 +331,15 @@ function social_group_preprocess_group(array &$variables) {
     }
   }
   // Count number of group members.
-  $variables['group_members'] = $group_statistics->memberCount($group);
+  $variables['group_members'] = $group_statistics->getGroupMemberCount($group);
 
   // Prepare variables for statistic block.
   if ($variables['view_mode'] === 'statistic') {
     if ($group->getGroupType()->hasContentPlugin('group_node:event')) {
-      $variables['group_events'] = $group_statistics->nodeCount($group, 'event');
+      $variables['group_events'] = $group_statistics->getGroupNodeCount($group, 'event');
     }
     if ($group->getGroupType()->hasContentPlugin('group_node:topic')) {
-      $variables['group_topics'] = $group_statistics->nodeCount($group, 'topic');
+      $variables['group_topics'] = $group_statistics->getGroupNodeCount($group, 'topic');
     }
   }
 }
