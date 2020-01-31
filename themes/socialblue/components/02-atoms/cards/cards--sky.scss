@@ -122,11 +122,25 @@
           display: none;
         }
 
-        &.block-group-add-idea-block,
-        &.block-group-add-topic-block,
+        &.block-discussion-add-block,
         &.block-group-add-event-block,
-        &.block-group-add-discussion-block {
-          padding: 20px;
+        &.block-group-add-topic-block,
+        &.block-event-add-block,
+        &.block-topic-add-block,
+        &.block-group-add-block {
+          display: block;
+          margin-top: 0;
+          padding: 20px 1.875rem;
+
+          @include for-tablet-portrait-up {
+            padding-left: 2.25rem;
+            padding-right: 2.25rem;
+          }
+
+          .btn {
+            width: 100%;
+            margin-bottom: 0;
+          }
         }
       }
     }
