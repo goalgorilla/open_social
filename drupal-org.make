@@ -36,6 +36,7 @@ projects[entity][type] = module
 projects[entity][version] = 1.0-rc3
 projects[entity_reference_revisions][type] = module
 projects[entity_reference_revisions][version] = 1.6
+projects[entity_reference_revisions][patch][] = "https://www.drupal.org/files/issues/2020-01-31/entity_reference_revisions-3110377-2.patch"
 projects[exif_orientation][type] = module
 projects[exif_orientation][version] = 1.0
 projects[features][type] = module
