@@ -93,6 +93,15 @@ function social_group_welcome_message_group_content_insert(GroupContentInterface
   ) {
     $g_type_id = $group->getGroupType()->id();
 
+    // Load the account of the user who just joined.
+    $account = $group_content->getEntity();
+
+    // Skip sending notifications to the owner of the group. They probably know
+    // they created the group a second ago.
+    if ($group->getOwnerId() === $account->id()) {
+      return;
+    }
+
     // Get group admins entities.
     $g_admins = $group->getMembers($g_type_id . '-group_admin');
     $g_admins_users = [];
@@ -123,11 +132,8 @@ function social_group_welcome_message_group_content_insert(GroupContentInterface
     // Merge all managers of the group to recipients array.
     $recipients = array_merge($g_admins_users, $g_managers_users, [$group->getOwner()]);
 
-    // Load joined user.
-    $user = $group_content->getEntity();
-
     // Add the joined user to the already existing recipients array.
-    $recipients[] = $user;
+    $recipients[] = $account;
 
     /** @var \Drupal\private_message\Service\PrivateMessageServiceInterface $private_message_service */
     $private_message_service = \Drupal::service('private_message.service');
