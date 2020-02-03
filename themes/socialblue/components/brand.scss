@@ -451,37 +451,15 @@ html:not(.js) .navbar-default {
 
 .marker-cluster,
 .marker-cluster-small {
-  border-color: rgba($brand-secondary, .6);
-
-  div {
-    background-color: rgba($brand-secondary, .8);
+  &:after {
+    background: $brand-secondary;
   }
-}
-
-.marker-cluster,
-.marker-cluster--small {
-  border-width: 5px;
-  border-style: solid;
 
   div {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0;
-    border-radius: 50%;
-
-    font-weight: 700;
-    color: #fff;
-    font-size: 1.125rem;
-
-    span {
-      margin-top: -3px;
+    &:after {
+      background: $brand-secondary;
     }
   }
-}
-
-.geolocation-map-container {
-  z-index: 5;
 }
 
 .leaflet-popup-content .card__text {
