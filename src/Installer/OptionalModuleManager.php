@@ -109,7 +109,8 @@ class OptionalModuleManager implements ContainerInjectionInterface {
    *   An array containing the extra feature definitions, keyed by module name.
    */
   protected function getInstallProfileFeatureDefinitions() : array {
-    $feature_list_file = $this->moduleExtensionList->getPath($this->installProfile) . DIRECTORY_SEPARATOR . $this->installProfile . '.feature_list.yml';
+    $feature_list_name = $this->installProfile . '.installer_options_list.yml';
+    $feature_list_file = $this->moduleExtensionList->getPath($this->installProfile) . DIRECTORY_SEPARATOR . $feature_list_name;
     if (!file_exists($feature_list_file)) {
       return [];
     }
@@ -123,7 +124,7 @@ class OptionalModuleManager implements ContainerInjectionInterface {
         $this->validateSocialFeatureData($module_name, $info);
       }
       catch (SocialFeatureDataException $e) {
-        throw new SocialFeatureDataException("Invalid feature info for '{$module_name}' in `social_feature_list.yml`.", 0, $e);
+        throw new SocialFeatureDataException("Invalid feature info for '{$module_name}' in `{$feature_list_name}`.", 0, $e);
       }
     }
 
@@ -142,7 +143,7 @@ class OptionalModuleManager implements ContainerInjectionInterface {
    */
   protected function getOptionalModuleInfo(Extension $extension) : ?array {
     $module_directory = $extension->getPath();
-    $optional_info_file = $module_directory . DIRECTORY_SEPARATOR . $extension->getName() . '.social_feature.yml';
+    $optional_info_file = $module_directory . DIRECTORY_SEPARATOR . $extension->getName() . '.installer_options.yml';
     if (!file_exists($optional_info_file)) {
       return NULL;
     }
