@@ -74,6 +74,12 @@ class ModuleConfigureForm extends ConfigFormBase {
       '#type' => 'container',
     ];
 
+    // Allow automated installs to easily select all optional modules.
+    $form['install_modules']['select_all'] = [
+      '#type' => 'hidden',
+      '#value' => FALSE,
+    ];
+
     $optional_features = $this->optionalModuleManager->getOptionalModules();
     $feature_options = array_map(
       static function ($info) {
@@ -123,7 +129,16 @@ class ModuleConfigureForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    $optional_modules = array_filter($form_state->getValue('optional_modules'));
+    if ($form_state->getValue('select_all')) {
+      // Create a simple array with all the possible optional modules.
+      $optional_modules = array_keys($this->optionalModuleManager->getOptionalModules());
+    }
+    else {
+      // Filter out the unselected modules.
+      $selected_modules = array_filter($form_state->getValue('optional_modules'));
+      // Create a simple array of just the module names as values.
+      $optional_modules = array_values($selected_modules);
+    }
 
     // Set the modules to be installed by Drupal in the install_profile_modules
     // step.
