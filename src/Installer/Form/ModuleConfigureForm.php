@@ -76,8 +76,11 @@ class ModuleConfigureForm extends ConfigFormBase {
 
     // Allow automated installs to easily select all optional modules.
     $form['install_modules']['select_all'] = [
-      '#type' => 'hidden',
-      '#value' => FALSE,
+      '#type' => 'checkbox',
+      '#label' => 'Install all features',
+      '#attributes' => [
+        'class' => ['visually-hidden'],
+      ],
     ];
 
     $optional_features = $this->optionalModuleManager->getOptionalModules();
