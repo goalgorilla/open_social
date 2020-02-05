@@ -1,14 +1,12 @@
 @import 'settings';
 
 .socialblue--sky {
-
-  // Hero on the landing page
-  .cover--landing:after {
-    background: $brand-primary;
+  .teaser__tag {
+    color: $brand-secondary;
   }
 
-  .hero__banner-static .hero__tag {
-    color: $brand-primary;
+  &.path-group .cover-wrap .teaser__tag {
+    background: $brand-primary;
   }
 
   .site-footer {
@@ -40,7 +38,49 @@
     }
   }
 
-  .teaser__tag {
-    color: $brand-primary;
+  .block-profile-statistic-block,
+  .block-group-statistic-block {
+    .hero-footer__cta .btn-default {
+      color: $brand-primary;
+    }
+  }
+
+  .paragraph--featured  {
+    .field--name-field-featured-link a {
+      &:before {
+        background: $brand-primary;
+      }
+
+      &:hover,
+      &:active,
+      &:focus {
+        color: $brand-accent;
+
+        &:before {
+          background: $brand-accent;
+        }
+      }
+    }
+  }
+
+  .phase.phase-active:before {
+    background-color: $brand-primary;
+  }
+
+  &.path-user,
+  &.path-group {
+    .layout--with-complementary {
+      .navbar-secondary .navbar-nav .hidden-list {
+        li,
+        li.active {
+          a {
+            &:hover,
+            &.is-active {
+              color: $brand-primary;
+            }
+          }
+        }
+      }
+    }
   }
 }
