@@ -20,12 +20,12 @@
             "@composer drupal-scaffold"
         ],
         "drupal-scaffold": "DrupalComposer\\DrupalScaffold\\Plugin::scaffold",
-        "enable-asset-packagist": "Social\\Composer\\AssetPackagist::execute"
+        "enable-asset-packagist": "Drupal\\social\\Composer\\AssetPackagist::execute"
     },
     "autoload": {
         "psr-4": {
-            "Social\\": "src",
-            "Drupal\\social\\Behat\\": "tests/behat/features/bootstrap"
+            "Drupal\\social\\Behat\\": "tests/behat/features/bootstrap",
+            "Drupal\\social\\": "src"
         }
     },
     "extra": {
@@ -44,6 +44,9 @@
             },
             "drupal/crop": {
                 "Automated crop integration": "https://www.drupal.org/files/issues/2018-12-16/2830768-crop-automated_crop_integration-45.patch"
+            },
+            "drupal/entity_reference_revisions": {
+                "Module should declare dependency on drupal:field module": "https://www.drupal.org/files/issues/2020-01-31/entity_reference_revisions-3110377-2.patch"
             },
             "drupal/group": {
                 "Add computed field for Group reference": "https://www.drupal.org/files/issues/add-computed-field-without-FieldItemListComputedInterface-2718195-34.patch",
@@ -88,6 +91,9 @@
             },
             "drupal/views_bulk_operations": {
                 "Make sure select all gets fired for socialbase theme": "https://www.drupal.org/files/issues/2019-09-19/3042494-trigger-vbo-action-on-jquery-checkbox-change-5.patch"
+            },
+            "drupal/votingapi" : {
+                "votingapi_views_data_alter uses incorrect empty check for missing entity error handling": "https://www.drupal.org/files/issues/2020-01-31/votingapi-3110353-2.patch"
             }
         }
     },
