@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Install, update and uninstall functions for the social_comment module.
+ * Install, update and uninstall functions for the social_post module.
  */
 
 use Drupal\user\Entity\Role;
@@ -26,6 +26,9 @@ use Drupal\user\Entity\Role;
 function social_post_install() {
   // Set some default permissions.
   _social_post_set_permissions();
+
+  // Set the view mode for posts in activities.
+  activity_creator_set_entity_view_mode('post', 'activity');
 }
 
 /**

@@ -324,7 +324,7 @@ function social_private_message_entity_view_alter(array &$build, EntityInterface
         $build['membernames']['#suffix'] = '</strong>';
       }
 
-      else {
+      elseif (!empty($profile_picture && $display_name)) {
         $build['members'] = $profile_picture;
         // Add members name.
         $build['membernames'] = $display_name;

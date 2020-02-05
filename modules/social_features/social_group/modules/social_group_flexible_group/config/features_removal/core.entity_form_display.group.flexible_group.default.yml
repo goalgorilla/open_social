@@ -1,0 +1,135 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.group.flexible_group.field_group_address
+    - field.field.group.flexible_group.field_group_allowed_join_method
+    - field.field.group.flexible_group.field_group_allowed_visibility
+    - field.field.group.flexible_group.field_group_description
+    - field.field.group.flexible_group.field_group_image
+    - field.field.group.flexible_group.field_group_location
+    - group.type.flexible_group
+    - image.style.social_x_large
+  module:
+    - address
+    - field_group
+    - image_widget_crop
+    - path
+    - text
+third_party_settings:
+  field_group:
+    group_content:
+      children:
+        - label
+        - field_group_description
+        - field_group_image
+      parent_name: ''
+      weight: 1
+      label: Content
+      format_type: fieldset
+      format_settings:
+        description: ''
+        classes: ''
+        id: ''
+        required_fields: true
+      region: content
+    group_location:
+      children:
+        - field_group_location
+        - field_group_address
+      parent_name: ''
+      weight: 2
+      label: Location
+      format_type: fieldset
+      format_settings:
+        description: ''
+        classes: ''
+        id: ''
+        required_fields: true
+      region: content
+    group_settings:
+      children:
+        - field_group_allowed_visibility
+        - field_group_allowed_join_method
+      parent_name: ''
+      weight: 0
+      format_type: fieldset
+      format_settings:
+        id: ''
+        classes: ''
+        description: ''
+        required_fields: true
+      label: Settings
+      region: content
+id: group.flexible_group.default
+targetEntityType: group
+bundle: flexible_group
+mode: default
+content:
+  field_group_address:
+    weight: 6
+    settings: {  }
+    third_party_settings: {  }
+    type: address_default
+    region: content
+  field_group_allowed_join_method:
+    weight: 5
+    settings: {  }
+    third_party_settings: {  }
+    type: options_buttons
+    region: content
+  field_group_allowed_visibility:
+    weight: 4
+    settings: {  }
+    third_party_settings: {  }
+    type: options_buttons
+    region: content
+  field_group_description:
+    weight: 2
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+    type: text_textarea
+    region: content
+  field_group_image:
+    weight: 3
+    settings:
+      show_crop_area: true
+      show_default_crop: true
+      preview_image_style: social_x_large
+      crop_preview_image_style: crop_thumbnail
+      crop_list:
+        - hero_small
+        - hero
+        - teaser
+      progress_indicator: throbber
+      crop_types_required: {  }
+      warn_multiple_usages: true
+    third_party_settings: {  }
+    type: image_widget_crop
+    region: content
+  field_group_location:
+    weight: 5
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+    region: content
+  label:
+    type: string_textfield
+    weight: 1
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    region: content
+  path:
+    type: path
+    weight: 3
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+hidden:
+  uid: true

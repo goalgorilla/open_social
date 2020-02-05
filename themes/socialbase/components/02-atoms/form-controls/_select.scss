@@ -58,6 +58,12 @@
 
 }
 
+// Reset custom styles of the arrow for the select widget on the IE11.
+@media all and (-ms-high-contrast:none) {
+  *::-ms-backdrop, .select-wrapper:after { display: none }
+  *::-ms-backdrop, .select-wrapper select { padding-right: 12px }
+}
+
 
 .form-disabled .select-wrapper::after {
   color: $btn-link-disabled-color;
