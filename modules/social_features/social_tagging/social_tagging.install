@@ -5,7 +5,6 @@
  * Installation file for Social Tagging.
  */
 
-use Drupal\block\Entity\Block;
 use Drupal\Core\Entity\EntityStorageException;
 
 /**
@@ -44,18 +43,6 @@ function _social_tagging_assign_default_permissions() {
 }
 
 /**
- * Implements hook_update_dependencies().
- */
-function social_tagging_update_dependencies() {
-  // Only create new block in 8.0 update after feature revert has completed.
-  $dependencies['social_tagging'][8801] = [
-    'social_core' => 8802,
-  ];
-
-  return $dependencies;
-}
-
-/**
  * Exclude landing pages from tagging.
  */
 function social_tagging_update_8001() {
@@ -89,47 +76,4 @@ function _social_tagging_field_definitions_update() {
   // Create field storage for the 'Highlight' base field.
   \Drupal::entityTypeManager()->clearCachedDefinitions();
   \Drupal::service('entity.definition_update_manager')->applyUpdates();
-}
-
-/**
- * Add Social Group Tags Block.
- */
-function social_tagging_update_8801() {
-  Block::create([
-    'status' => TRUE,
-    'dependencies' => [
-      'module' => [
-        'social_tagging',
-        'system',
-      ],
-      'theme' => [
-        'socialblue',
-      ],
-      'enforced' => [
-        'module' => [
-          'social_tagging',
-        ],
-      ],
-    ],
-    'id' => 'socialgrouptagsblock',
-    'theme' => 'socialblue',
-    'region' => 'content',
-    'weight' => 0,
-    'provider' => NULL,
-    'plugin' => 'social_group_tags_block',
-    'settings' => [
-      'id' => 'social_group_tags_block',
-      'label' => 'Group Tags',
-      'provider' => 'social_tagging',
-      'label_display' => 'visible',
-    ],
-    'visibility' => [
-      'request_path' => [
-        'id' => 'request_path',
-        'pages' => '/group/*/about',
-        'negate' => FALSE,
-        'context_mapping' => [],
-      ],
-    ],
-  ])->save();
 }
