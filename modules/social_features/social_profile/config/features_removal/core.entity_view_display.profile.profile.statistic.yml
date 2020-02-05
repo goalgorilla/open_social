@@ -2,7 +2,7 @@ langcode: en
 status: true
 dependencies:
   config:
-    - core.entity_view_mode.profile.featured
+    - core.entity_view_mode.profile.statistic
     - field.field.profile.profile.field_profile_address
     - field.field.profile.profile.field_profile_banner_image
     - field.field.profile.profile.field_profile_expertise
@@ -19,22 +19,38 @@ dependencies:
     - image.style.social_large
     - profile.type.profile
   module:
+    - address
     - image
-id: profile.profile.featured
+id: profile.profile.statistic
 targetEntityType: profile
 bundle: profile
-mode: featured
+mode: statistic
 content:
-  field_profile_first_name:
-    type: string
-    weight: 1
+  field_profile_address:
+    weight: 5
+    label: visually_hidden
+    settings: {  }
+    third_party_settings: {  }
+    type: address_default
     region: content
+  field_profile_first_name:
+    weight: 0
     label: hidden
     settings:
       link_to_entity: false
     third_party_settings: {  }
+    type: string
+    region: content
+  field_profile_function:
+    type: string
+    weight: 3
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    region: content
   field_profile_image:
-    weight: 0
+    weight: 2
     label: hidden
     settings:
       image_style: social_large
@@ -43,21 +59,28 @@ content:
     type: image
     region: content
   field_profile_last_name:
-    type: string
-    weight: 2
-    region: content
+    weight: 1
     label: hidden
     settings:
       link_to_entity: false
     third_party_settings: {  }
+    type: string
+    region: content
+  field_profile_organization:
+    type: string
+    weight: 4
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    region: content
 hidden:
-  field_profile_address: true
   field_profile_banner_image: true
   field_profile_expertise: true
-  field_profile_function: true
   field_profile_interests: true
-  field_profile_organization: true
+  field_profile_organisation: true
   field_profile_phone_number: true
   field_profile_profile_tag: true
   field_profile_self_introduction: true
   field_profile_show_email: true
+  search_api_excerpt: true

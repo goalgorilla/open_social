@@ -5,6 +5,7 @@
  * Install, update and uninstall functions for the social_group module.
  */
 
+use Drupal\block\Entity\Block;
 use Drupal\menu_link_content\Entity\MenuLinkContent;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
@@ -30,6 +31,12 @@ function social_group_update_dependencies() {
   $dependencies['profile'][8002] = [
     'social_group' => 8501,
   ];
+
+  // Only create new block in 8.0 update after feature revert has completed.
+  $dependencies['social_group'][8801] = [
+    'social_core' => 8802,
+  ];
+
   return $dependencies;
 }
 
@@ -509,4 +516,43 @@ function social_group_update_8502() {
   $config->set('allow_hero_selection', FALSE);
   $config->set('default_hero', 'hero');
   $config->save();
+}
+
+/**
+ * Add Social Group Statistics Block.
+ */
+function social_group_update_8801() {
+  Block::create([
+    'status' => TRUE,
+    'dependencies' => [
+      'module' => [
+        'social_group',
+        'system',
+      ],
+      'theme' => [
+        'socialblue',
+      ],
+    ],
+    'id' => 'socialblue_group_statistic_block',
+    'theme' => 'socialblue',
+    'region' => 'complementary_top',
+    'weight' => -100,
+    'provider' => NULL,
+    'plugin' => 'group_statistic_block',
+    'settings' => [
+      'id' => 'group_statistic_block',
+      'label' => 'Group statistic block',
+      'provider' => 'social_group',
+      'label_display' => '0',
+      'context_mapping' => [],
+    ],
+    'visibility' => [
+      'request_path' => [
+        'id' => 'request_path',
+        'pages' => '/group/*/stream\r\n/group/*/about\r\n/group/*/events\r\n/group/*/topics\r\n/group/*/members\r\n/group/*/discussions\r\n/group/*/ideas',
+        'negate' => FALSE,
+        'context_mapping' => [],
+      ],
+    ],
+  ])->save();
 }
