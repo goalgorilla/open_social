@@ -236,21 +236,38 @@ function social_user_form_user_register_form_alter(&$form, FormStateInterface $f
  * Validate function for the user register form.
  */
 function social_user_register_validate(&$form, FormStateInterface $form_state) {
-
   // Fetch input.
   $input = $form_state->getValues();
+  // Check if user data with the input can be found.
+  $mail_exists = user_load_by_mail($input['mail']);
+  $name_exists = user_load_by_name($input['name']);
+
 
   // Check if mail or username already exist.
-  if (user_load_by_mail($input['mail']) || user_load_by_name($input['name'])) {
+  if ($mail_exists || $name_exists) {
     // If either the username or mail already exists in the DB, we clear ALL
     // existing messages, making sure nothing about this is being disclosed.
     $form_state->clearErrors();
+
+    // Check if the email address already exist. Set a generic message
+    // regarding the problem.
+    if ($mail_exists) {
+      $form_state->setErrorByName('mail', t('Oops, there is a problem with the email address.'));
+    }
+
+    // Check if the username already exist. Set a generic message regarding
+    // the problem.
+    if ($name_exists) {
+      $form_state->setErrorByName('name', t('Oops, there is a problem with the username.'));
+    }
+
     // Set a new more general error.
     $site_config = \Drupal::config('system.site');
     $site_mail = $site_config->get('mail');
     $show_mail = $site_config->get('show_mail_in_messages');
     $admin_link = ($site_mail && $show_mail) ? Link::fromTextAndUrl(t('site administrator'), Url::fromUri('mailto:' . $site_mail))->toString() : t('site administrator');
-    $form_state->setErrorByName('mail', t("Oops, there was an error with the email address or username you entered. Due to privacy concerns, we can't disclose the existence of already registered email addresses.
+    // Message is set to a generic field so it's not attached to a field.
+    $form_state->setErrorByName('status', t("Oops, there was an error with the email address or username you entered. Due to privacy concerns, we can't disclose the existence of already registered email addresses.
     So, please try again! Contact the @admin_link if there are any problems.", ['@admin_link' => $admin_link]));
   }
 }
