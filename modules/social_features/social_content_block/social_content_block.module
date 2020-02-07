@@ -56,18 +56,6 @@ function _social_content_block_is_custom_content_block(BlockPluginInterface $blo
 }
 
 /**
- * Implements hook_field_group_build_pre_render_alter().
- */
-function social_content_block_field_group_build_pre_render_alter(array &$element) {
-  if (
-    !isset($element['#form_id']) ||
-    $element['#form_id'] !== 'block_content_custom_content_list_form'
-  ) {
-    return;
-  }
-}
-
-/**
  * Implements hook_form_BASE_FORM_ID_alter().
  */
 function social_content_block_form_block_content_custom_content_list_form_alter(&$form, FormStateInterface $form_state, $form_id) {
