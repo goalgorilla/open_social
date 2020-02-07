@@ -40,7 +40,7 @@ function social_core_theme() {
  * Implements hook_preprocess_HOOK().
  */
 function social_core_preprocess_node(&$variables) {
-  /** @var \Drupal\node\Entity\NodeInterface $node */
+  /** @var \Drupal\node\NodeInterface $node */
   $node = $variables['node'];
   // Add common variable for teaser images.
   $image_field = "field_{$node->getType()}_image";
@@ -68,6 +68,8 @@ function social_core_preprocess_node(&$variables) {
       $account = \Drupal::currentUser();
       if ($node->access('update', $account)) {
         $variables['node_edit_url'] = $node->toUrl('edit-form')->toString();
+        // Ensure the cache varies correctly depending upon access of the user.
+        $variables['#cache']['contexts'][] = 'user.node_grants';
       }
     }
 
