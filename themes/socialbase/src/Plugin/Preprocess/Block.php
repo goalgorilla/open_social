@@ -5,6 +5,7 @@ namespace Drupal\socialbase\Plugin\Preprocess;
 use Drupal\bootstrap\Plugin\Preprocess\PreprocessBase;
 use Drupal\block_content\Entity\BlockContent;
 use Drupal\block\Entity\Block as BlockEntity;
+use Drupal\Component\Utility\Html;
 use Drupal\file\Entity\File;
 use Drupal\image\Entity\ImageStyle;
 
@@ -23,6 +24,16 @@ class Block extends PreprocessBase {
   public function preprocess(array &$variables, $hook, array $info) {
     parent::preprocess($variables, $hook, $info);
 
+    $region = '';
+
+    // Blocks don't work well without an id. Unfortunately layout builder blocks
+    // don't have one by default, so we generate one.
+    if (empty($variables['elements']['#id']) && !empty($variables['content']['_layout_builder'])) {
+      $region = '_LAYOUT_BUILDER_DO_NOT_CHANGE';
+      $variables['elements']['#id'] = Html::getUniqueId('_LAYOUT_BUILDER_DO_NOT_CHANGE');
+      $variables['attributes']['id'] = $variables['elements']['#id'];
+    }
+
     // Early return because block missing ID, for example because
     // Rendered in panels display
     // https://www.drupal.org/node/2873726
@@ -36,7 +47,6 @@ class Block extends PreprocessBase {
     $route_name = \Drupal::routeMatch()->getRouteName();
 
     // Get the region of a block.
-    $region = '';
     $block_entity = BlockEntity::load($variables['elements']['#id']);
     if ($block_entity) {
       $region = $block_entity->getRegion();
@@ -218,6 +228,14 @@ class Block extends PreprocessBase {
 
       }
 
+    }
+
+    // Remove our workaround ids so they aren't actually rendered.
+    if ($region === '_LAYOUT_BUILDER_DO_NOT_CHANGE') {
+      unset(
+        $variables['elements']['#id'],
+        $variables['attributes']['id']
+      );
     }
 
   }
