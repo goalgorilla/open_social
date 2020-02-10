@@ -996,8 +996,15 @@ function social_core_update_8802() {
 }
 
 /**
- * Allow site managers to use contextual links.
+ * Set the view mode for nodes to use when shown in activities.
  */
 function social_core_update_8803() {
+  activity_creator_set_entity_view_mode('node', 'activity');
+}
+
+/**
+ * Allow site managers to use contextual links.
+ */
+function social_core_update_8804() {
   user_role_grant_permissions('sitemanager', ['access contextual links']);
 }
