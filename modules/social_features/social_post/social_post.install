@@ -89,3 +89,22 @@ function _social_post_get_permissions($role) {
   }
   return [];
 }
+
+/**
+ * Implements hook_update_dependencies().
+ */
+function social_post_update_dependencies() {
+  // Run the activities view mode update after the final features removal ran.
+  $dependencies['social_post'][8801] = [
+    'social_core' => 8802,
+  ];
+
+  return $dependencies;
+}
+
+/**
+ * Set the view mode to use when shown in activities.
+ */
+function social_post_update_8801() {
+  activity_creator_set_entity_view_mode('post', 'activity');
+}
