@@ -439,3 +439,12 @@ form:not(.layout-builder-add-block) .form-disabled .select-wrapper::after {
     background: inherit;
   }
 }
+
+@media all and (-ms-high-contrast: none) {
+  form:not(.layout-builder-add-block) *::-ms-backdrop, form:not(.layout-builder-add-block) .select-wrapper:after {
+    display: none;
+  }
+  form:not(.layout-builder-add-block) *::-ms-backdrop, form:not(.layout-builder-add-block) .select-wrapper select {
+    padding-right: 12px;
+  }
+}

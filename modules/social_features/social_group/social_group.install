@@ -30,6 +30,7 @@ function social_group_update_dependencies() {
   $dependencies['profile'][8002] = [
     'social_group' => 8501,
   ];
+
   return $dependencies;
 }
 
@@ -39,11 +40,13 @@ function social_group_update_dependencies() {
  * Perform actions related to the installation of social_group.
  */
 function social_group_install() {
-
   // Set some default permissions.
   _social_group_set_permissions();
   // Add menu items.
   _social_group_create_menu_links();
+
+  // Set the view mode to use when shown in activities.
+  activity_creator_set_entity_view_mode('group', 'stream');
 
   // Make sure the admin theme is not used when managing groups.
   $group_settings = \Drupal::configFactory()->getEditable('group.settings');
@@ -56,9 +59,6 @@ function social_group_install() {
     $view->setStatus(FALSE);
     $view->save();
   }
-
-  // Set default group settings.
-  _social_group_set_default_configuration();
 
   // Set module weight.
   module_set_weight('social_group', 2);
@@ -157,15 +157,6 @@ function _social_group_create_menu_links() {
       'parent' => $parent,
     ])->save();
   }
-}
-
-/**
- * Function to set default configuration.
- */
-function _social_group_set_default_configuration() {
-  $config = \Drupal::configFactory()->getEditable('social_group.settings');
-  $config->set('allow_group_selection_in_node', FALSE);
-  $config->save();
 }
 
 /**
@@ -329,7 +320,9 @@ function social_group_update_8008() {
  * Set the default group configuration and permission for sitemanager.
  */
 function social_group_update_8009() {
-  _social_group_set_default_configuration();
+  $config = \Drupal::configFactory()->getEditable('social_group.settings');
+  $config->set('allow_group_selection_in_node', FALSE);
+  $config->save();
 
   // Site manager should have permission to set social group settings.
   $roles = Role::loadMultiple();
