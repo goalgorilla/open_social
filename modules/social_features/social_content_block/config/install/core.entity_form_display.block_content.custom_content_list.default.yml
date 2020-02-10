@@ -7,6 +7,8 @@ dependencies:
     - field.field.block_content.custom_content_list.field_group
     - field.field.block_content.custom_content_list.field_item_amount
     - field.field.block_content.custom_content_list.field_link
+    - field.field.block_content.custom_content_list.field_plugin_field
+    - field.field.block_content.custom_content_list.field_plugin_id
     - field.field.block_content.custom_content_list.field_sorting
     - field.field.block_content.custom_content_list.field_subtitle
     - field.field.block_content.custom_content_list.field_topic_type
@@ -32,6 +34,8 @@ third_party_settings:
       region: content
     group_filter_options:
       children:
+        - field_plugin_id
+        - field_plugin_field
         - field_topic_type
         - field_content_tags
         - field_group
@@ -51,20 +55,22 @@ bundle: custom_content_list
 mode: default
 content:
   field_content_tags:
-    weight: 5
+    weight: 29
     settings:
       match_operator: CONTAINS
       size: 60
       placeholder: ''
+      match_limit: 10
     third_party_settings: {  }
     type: entity_reference_autocomplete
     region: content
   field_group:
-    weight: 7
+    weight: 30
     settings:
       match_operator: CONTAINS
       size: 60
       placeholder: ''
+      match_limit: 10
     third_party_settings: {  }
     type: entity_reference_autocomplete
     region: content
@@ -83,6 +89,18 @@ content:
     third_party_settings: {  }
     type: link_default
     region: content
+  field_plugin_field:
+    weight: 27
+    settings: {  }
+    third_party_settings: {  }
+    type: content_block_plugin_field
+    region: content
+  field_plugin_id:
+    weight: 26
+    settings: {  }
+    third_party_settings: {  }
+    type: content_block_plugin_id
+    region: content
   field_sorting:
     weight: 10
     settings: {  }
@@ -98,11 +116,12 @@ content:
     type: string_textfield
     region: content
   field_topic_type:
-    weight: 4
+    weight: 28
     settings:
       match_operator: CONTAINS
       size: 60
       placeholder: ''
+      match_limit: 10
     third_party_settings: {  }
     type: entity_reference_autocomplete
     region: content
