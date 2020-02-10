@@ -993,3 +993,10 @@ function social_core_update_8802() {
 
   // TODO: Output which config has been imported/updated?
 }
+
+/**
+ * Set the view mode for nodes to use when shown in activities.
+ */
+function social_core_update_8803() {
+  activity_creator_set_entity_view_mode('node', 'activity');
+}
