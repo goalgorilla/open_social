@@ -22,7 +22,7 @@ Feature: Inform about personal data collection
     Then I should see "Data Policy Inform" in the ".form-item-settings-admin-label" element
     # Press "Save block" button
     When I select "Complementary top" from "Region"
-    And I click the xth "0" element with the css ".ui-button.form-submit"
+    And I click the xth "0" element with the css ".button.form-submit"
     Then I should see "The block configuration has been saved."
 
     When I am on "admin/config/system/inform-consent"
