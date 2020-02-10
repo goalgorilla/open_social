@@ -194,6 +194,7 @@ function _social_core_get_permissions($role) {
     'administer account settings',
     'administer themes',
     'administer blocks',
+    'access contextual links',
   ]);
 
   return $permissions[$role] ?? [];
@@ -992,4 +993,11 @@ function social_core_update_8802() {
   $container->set('features.extension_storage', $original_fis);
 
   // TODO: Output which config has been imported/updated?
+}
+
+/**
+ * Allow site managers to use contextual links.
+ */
+function social_core_update_8803() {
+  user_role_grant_permissions('sitemanager', ['access contextual links']);
 }
