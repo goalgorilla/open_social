@@ -1,4 +1,7 @@
 services:
+  plugin.manager.content_block:
+    class: Drupal\social_content_block\ContentBlockManager
+    parent: default_plugin_manager
   social_content_block.override:
     class: Drupal\social_content_block\SocialContentBlockOverride
     arguments: ['@config.factory']

@@ -64,42 +64,57 @@ function social_content_block_form_block_content_custom_content_list_form_alter(
     '#title' => t('Type of content'),
     '#description' => t('Select the type of content which will be shown in this block'),
     '#description_display' => 'before',
-    '#options' => [
-      'topic' => t('Topic'),
-    ],
     '#weight' => -2,
-    '#disabled' => TRUE,
   ];
 
-  $form['filter'] = [
-    '#type' => 'select',
-    '#title' => t('Content selection'),
-    '#description' => t('Further specify how the content should be selected'),
-    '#description_display' => 'before',
-    '#empty_value' => 'all',
-    '#empty_option' => t('All'),
-    '#weight' => -1,
-  ];
+  $form['#group_children']['type'] = 'group_filter_options';
 
-  foreach ($form['#group_children'] as $field_name => $fields_group) {
-    if ($fields_group === 'group_filter_options') {
-      $form['filter']['#options'][$field_name] = $form[$field_name]['widget']['#title'];
+  /** @var \Drupal\social_content_block\ContentBlockManagerInterface $content_block_manager */
+  $content_block_manager = \Drupal::service('plugin.manager.content_block');
 
-      $form[$field_name]['#states'] = [
+  foreach ($content_block_manager->getDefinitions() as $plugin_id => $plugin_definition) {
+    $type = strtolower($plugin_definition['type']);
+    $form['type']['#options'][$type] = $plugin_definition['type'];
+
+    $form[$plugin_id] = [
+      '#type' => 'select',
+      '#title' => t('Content selection'),
+      '#description' => t('Further specify how the content should be selected'),
+      '#description_display' => 'before',
+      '#empty_value' => 'all',
+      '#empty_option' => t('All'),
+      '#weight' => -1,
+      '#states' => [
         'visible' => [
-          ':input[name="filter"]' => [
+          ':input[name="type"]' => [
+            'value' => $type,
+          ],
+        ],
+      ],
+    ];
+
+    $form['#group_children'][$plugin_id] = 'group_filter_options';
+
+    foreach ($plugin_definition['fields'] as $field) {
+      $form[$plugin_id]['#options'][$field] = $form[$field]['widget']['#title'];
+
+      $form[$field]['#states'] = [
+        'visible' => [
+          ':input[name="type"]' => [
+            'value' => $type,
+          ],
+          ':input[name="' . $plugin_id . '"]' => [
             ['value' => 'all'],
-            ['value' => $field_name],
+            ['value' => $field],
           ],
         ],
       ];
     }
   }
 
-  $form['#group_children'] = [
-    'type' => 'group_filter_options',
-    'filter' => 'group_filter_options',
-  ] + $form['#group_children'];
+  if (count($form['type']['#options']) === 1) {
+    $form['type']['#disabled'] = TRUE;
+  }
 
   // Add submit handler to clear cache.
   foreach (array_keys($form['actions']) as $action) {
