@@ -24,7 +24,7 @@ class UserRoleHelper {
    * @return array
    *   The array containing the adjusted role options.
    */
-  public static function alterGrantRevokeRoleOptions(array $roleOptions, $accessRole = NULL, $rolesToAddOrRemove = [], $remove = TRUE, $account = NULL) {
+  public static function alterAddOrRemoveRoleOptions(array $roleOptions, $accessRole = NULL, $rolesToAddOrRemove = [], $remove = TRUE, $account = NULL) {
     // Get the user account and roles, if no user is given we use the current.
     $userRoles = (NULL !== $account ? $account->getRoles(TRUE) : \Drupal::currentUser()->getRoles(TRUE));
     // Check if the user has the correct $accessRole in his or her roles,

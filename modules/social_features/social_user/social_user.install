@@ -173,6 +173,8 @@ function _social_user_get_permissions($role) {
     'block users',
     'administer navigation settings',
     'administer social_user settings',
+    'assign contentmanager role',
+    'assign sitemanager role',
   ]);
 
   if (isset($permissions[$role])) {
@@ -185,5 +187,8 @@ function _social_user_get_permissions($role) {
  * Update permissions for the sitemanager role.
  */
 function social_user_update_8809() {
-  // @todo: add update hook to update existing SM's.
+  user_role_grant_permissions('sitemanager', [
+    'assign contentmanager role',
+    'assign sitemanager role',
+  ]);
 }

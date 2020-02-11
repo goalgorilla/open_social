@@ -38,7 +38,7 @@ class SocialAddRoleUser extends ChangeUserRoleBase {
    */
   public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
     /** @var \Drupal\social_user\UserRoleHelper $roles */
-    $roles = UserRoleHelper::alterGrantRevokeRoleOptions(user_role_names(TRUE), 'sitemanager', ['administrator']);
+    $roles = UserRoleHelper::alterAddOrRemoveRoleOptions(user_role_names(TRUE), 'sitemanager', ['administrator']);
     // Remove the authenticated role.
     unset($roles[RoleInterface::AUTHENTICATED_ID]);
     $form['rid'] = [

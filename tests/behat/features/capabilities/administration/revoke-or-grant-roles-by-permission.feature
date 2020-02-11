@@ -4,9 +4,9 @@ Feature: Revoking or granting roles by permission
   Role: SM
   Goal/desire: Prevent role abuse.
 
-  Scenario: Successfully see user list
+  Scenario: As a SM I should not be able to grant myself the administrator role
     Given I am logged in as an "sitemanager"
     And I am on "admin/people"
-    And I should see "Name or email contains"
-    And I should see "Block the selected users"
-    And I should see "Cancel the selected user accounts"
+    Then I should see "Action"
+
+  # SM should not be able to revoke the administrator role
