@@ -56,9 +56,18 @@ function _social_content_block_is_custom_content_block(BlockPluginInterface $blo
 }
 
 /**
- * Implements hook_form_BASE_FORM_ID_alter().
+ * Implements hook_form_alter().
  */
-function social_content_block_form_block_content_custom_content_list_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+function social_content_block_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  $form_ids = [
+    'block_content_custom_content_list',
+    'block_content_custom_content_list_edit_form',
+  ];
+
+  if (!in_array($form_id, $form_ids)) {
+    return;
+  }
+
   /** @var \Drupal\social_content_block\ContentBlockManagerInterface $content_block_manager */
   $content_block_manager = \Drupal::service('plugin.manager.content_block');
 
@@ -83,7 +92,12 @@ function social_content_block_form_block_content_custom_content_list_form_alter(
       }
     }
   }
+}
 
+/**
+ * Implements hook_form_BASE_FORM_ID_alter().
+ */
+function social_content_block_form_block_content_custom_content_list_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   // Add submit handler to clear cache.
   foreach (array_keys($form['actions']) as $action) {
     if ($action !== 'preview' && isset($form['actions'][$action]['#type']) && $form['actions'][$action]['#type'] === 'submit') {

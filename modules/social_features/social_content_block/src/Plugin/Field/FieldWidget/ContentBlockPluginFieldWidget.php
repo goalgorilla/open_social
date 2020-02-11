@@ -23,6 +23,7 @@ class ContentBlockPluginFieldWidget extends ContentBlockPluginWidgetBase {
    */
   public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
     $element = parent::formElement($items, $delta, $element, $form, $form_state);
+    $selected_plugin_id = $items->getEntity()->field_plugin_id->value;
 
     foreach ($this->definitions as $plugin_id => $plugin_definition) {
       $element[$plugin_id] = [
@@ -41,6 +42,10 @@ class ContentBlockPluginFieldWidget extends ContentBlockPluginWidgetBase {
           ],
         ],
       ];
+
+      if ($selected_plugin_id === $plugin_id) {
+        $element[$plugin_id]['#default_value'] = $element['value']['#default_value'];
+      }
 
       foreach ($plugin_definition['fields'] as $field) {
         if (isset($form[$field])) {
@@ -64,7 +69,27 @@ class ContentBlockPluginFieldWidget extends ContentBlockPluginWidgetBase {
       }
     }
 
+    $element['#element_validate'][] = [get_class($this), 'validateElement'];
+
     return $element;
+  }
+
+  /**
+   * Form validation handler for widget elements.
+   *
+   * @param array $element
+   *   The form element.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The form state.
+   */
+  public static function validateElement(array $element, FormStateInterface $form_state) {
+    $form_state->setValueForElement($element, [
+      'value' => $form_state->getValue([
+        'field_plugin_field',
+        0,
+        $form_state->getValue(['field_plugin_id', 0, 'value']),
+      ]),
+    ]);
   }
 
 }
