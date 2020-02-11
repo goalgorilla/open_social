@@ -14,7 +14,9 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
 use Drupal\profile\Entity\ProfileInterface;
 use Drupal\social_user\Entity\User;
+use Drupal\social_user\Plugin\Action\SocialAddRoleUser;
 use Drupal\social_user\Plugin\Action\SocialBlockUser;
+use Drupal\social_user\Plugin\Action\SocialRemoveRoleUser;
 use Drupal\user\Plugin\Action\BlockUser;
 
 /**
@@ -37,6 +39,19 @@ function social_user_action_info_alter(&$definitions) {
   // though, we'll be polite and do nothing.
   if (isset($definitions['user_block_user_action']['class']) && $definitions['user_block_user_action']['class'] == BlockUser::class) {
     $definitions['user_block_user_action']['class'] = SocialBlockUser::class;
+  }
+  // The role_delegation module makes sure that the SM can't grant
+  // himself/herself that administrator role. However, the VBO bulk action
+  // doesn't take this well into account (yet). Therefore we override the
+  // AddRoleUser.php class from core, to remove the option that should not
+  // be available.
+  if (isset($definitions['user_add_role_action']['class'])) {
+    $route = Drupal::routeMatch()->getRouteName();
+    $form = Drupal::request();
+    $definitions['user_add_role_action']['class'] = SocialAddRoleUser::class;
+  }
+  if (isset($definitions['user_remove_role_action']['class'])) {
+    $definitions['user_remove_role_action']['class'] = SocialRemoveRoleUser::class;
   }
 }
 
