@@ -2,6 +2,8 @@
 
 namespace Drupal\social_user;
 
+use Drupal\Core\Session\AccountInterface;
+
 /**
  * Class UserRoleService.
  */
@@ -18,13 +20,13 @@ class UserRoleHelper {
    *   The role that needs to be removed from the options.
    * @param bool $remove
    *   If FALSE, we add the role. Otherwise it will be removed.
-   * @param null $account
+   * @param \Drupal\Core\Session\AccountInterface $account
    *   The given account.
    *
    * @return array
    *   The array containing the adjusted role options.
    */
-  public static function alterAddOrRemoveRoleOptions(array $roleOptions, $accessRole = NULL, $rolesToAddOrRemove = [], $remove = TRUE, $account = NULL) {
+  public static function alterAddOrRemoveRoleOptions(array $roleOptions, $accessRole = NULL, array $rolesToAddOrRemove = [], $remove = TRUE, AccountInterface $account = NULL) {
     // Get the user account and roles, if no user is given we use the current.
     $userRoles = (NULL !== $account ? $account->getRoles(TRUE) : \Drupal::currentUser()->getRoles(TRUE));
     // Check if the user has the correct $accessRole in his or her roles,
