@@ -988,7 +988,7 @@ function social_core_update_8802() {
   $updated_config = \Drupal::service('features.manager')->import($removed_features, TRUE);
 
   // Restore the services in case other things in the request use them.
-  $container->set('features.maanger', $original_fm);
+  $container->set('features.manager', $original_fm);
   $container->set('features.extension_storage', $original_fis);
 
   // TODO: Output which config has been imported/updated?
