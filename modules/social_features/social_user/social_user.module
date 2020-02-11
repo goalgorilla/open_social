@@ -46,8 +46,6 @@ function social_user_action_info_alter(&$definitions) {
   // AddRoleUser.php class from core, to remove the option that should not
   // be available.
   if (isset($definitions['user_add_role_action']['class'])) {
-    $route = Drupal::routeMatch()->getRouteName();
-    $form = Drupal::request();
     $definitions['user_add_role_action']['class'] = SocialAddRoleUser::class;
   }
   if (isset($definitions['user_remove_role_action']['class'])) {

@@ -3,16 +3,17 @@
 namespace Drupal\social_user\Plugin\Action;
 
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\social_user\UserRoleHelper;
 use Drupal\user\Plugin\Action\ChangeUserRoleBase;
 use Drupal\user\RoleInterface;
 
 /**
- * Adds a role to a user.
+ * Adds a role to a user but restricted by role.
  *
  * @Action(
  *   id = "social_user_add_role_action",
  *   label = @Translation("Add a role to the selected users"),
- *   type = "user"
+ *   type = "social_user"
  * )
  */
 class SocialAddRoleUser extends ChangeUserRoleBase {
@@ -36,8 +37,9 @@ class SocialAddRoleUser extends ChangeUserRoleBase {
    * {@inheritdoc}
    */
   public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
-    $roles = user_role_names(TRUE);
-    // @todo: remove admin role if user has no permission to grant/revoke.
+    /** @var \Drupal\social_user\UserRoleHelper $roles */
+    $roles = UserRoleHelper::alterGrantRevokeRoleOptions(user_role_names(TRUE), 'sitemanager', ['administrator']);
+    // Remove the authenticated role.
     unset($roles[RoleInterface::AUTHENTICATED_ID]);
     $form['rid'] = [
       '#type' => 'radios',
