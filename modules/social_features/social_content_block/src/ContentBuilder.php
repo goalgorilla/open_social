@@ -78,9 +78,9 @@ class ContentBuilder implements ContentBuilderInterface {
    */
   protected function getEntities(BlockContentInterface $block_content) {
     $plugin_id = $block_content->field_plugin_id->value;
+    $definition = $this->contentBlockManager->getDefinition($plugin_id);
 
     if ($block_content->field_plugin_field->isEmpty()) {
-      $definition = $this->contentBlockManager->getDefinition($plugin_id);
       $field_names = $definition['fields'];
     }
     else {
@@ -114,10 +114,12 @@ class ContentBuilder implements ContentBuilderInterface {
 
     if ($entities) {
       // Load all the topics so we can give them back.
-      $entities = $this->entityTypeManager->getStorage('node')
+      $entities = $this->entityTypeManager
+        ->getStorage($definition['entityTypeId'])
         ->loadMultiple($entities);
 
-      return $this->entityTypeManager->getViewBuilder('node')
+      return $this->entityTypeManager
+        ->getViewBuilder($definition['entityTypeId'])
         ->viewMultiple($entities, 'small_teaser');
     }
 

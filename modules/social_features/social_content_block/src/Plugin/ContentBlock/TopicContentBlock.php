@@ -10,6 +10,7 @@ use Drupal\social_content_block\ContentBlockBase;
  * @ContentBlock(
  *   id = "topic_content_block",
  *   type = @Translation("Topic"),
+ *   entityTypeId = "node",
  *   fields = {
  *     "field_topic_type",
  *     "field_content_tags",
