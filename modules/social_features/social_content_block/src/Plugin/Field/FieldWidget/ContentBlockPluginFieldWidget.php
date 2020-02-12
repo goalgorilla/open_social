@@ -28,7 +28,7 @@ class ContentBlockPluginFieldWidget extends ContentBlockPluginWidgetBase {
     foreach ($this->definitions as $plugin_id => $plugin_definition) {
       $element[$plugin_id] = [
         '#type' => 'select',
-        '#title' => $element['value']['#title'] . ' (' . $plugin_definition['type'] . ')',
+        '#title' => $element['value']['#title'],
         '#description' => $element['value']['#description'],
         '#description_display' => 'before',
         '#empty_value' => 'all',
@@ -49,7 +49,7 @@ class ContentBlockPluginFieldWidget extends ContentBlockPluginWidgetBase {
 
       foreach ($plugin_definition['fields'] as $field) {
         if (isset($form[$field])) {
-          $element[$plugin_id]['#options'][$field] = $form[$field]['widget']['#title'];
+          $element[$plugin_id]['#options'][$field] = $form[$field]['widget']['target_id']['#title'];
 
           $form[$field]['#states'] = [
             'visible' => [

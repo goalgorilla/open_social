@@ -21,16 +21,16 @@ third_party_settings:
       children:
         - field_sorting
         - field_item_amount
-        - field_link
       parent_name: ''
-      weight: 4
+      weight: 2
       format_type: fieldset
       format_settings:
-        id: ''
-        classes: ''
+        label: Sorting
         description: ''
         required_fields: true
-      label: 'Display options'
+        id: ''
+        classes: ''
+      label: Sorting
       region: content
     group_filter_options:
       children:
@@ -40,14 +40,29 @@ third_party_settings:
         - field_content_tags
         - field_group
       parent_name: ''
-      weight: 3
+      weight: 1
+      format_type: fieldset
+      format_settings:
+        label: Content
+        description: ''
+        required_fields: true
+        id: ''
+        classes: ''
+      label: Content
+      region: content
+    group_information:
+      children:
+        - info
+        - field_subtitle
+      parent_name: ''
+      weight: 0
       format_type: fieldset
       format_settings:
         id: ''
         classes: ''
         description: ''
         required_fields: true
-      label: 'Filter options'
+      label: Information
       region: content
 id: block_content.custom_content_list.default
 targetEntityType: block_content
@@ -62,7 +77,7 @@ content:
       placeholder: ''
       match_limit: 10
     third_party_settings: {  }
-    type: entity_reference_autocomplete
+    type: entity_reference_autocomplete_tags
     region: content
   field_group:
     weight: 30
@@ -72,7 +87,7 @@ content:
       placeholder: ''
       match_limit: 10
     third_party_settings: {  }
-    type: entity_reference_autocomplete
+    type: entity_reference_autocomplete_tags
     region: content
   field_item_amount:
     weight: 11
@@ -82,7 +97,7 @@ content:
     type: number
     region: content
   field_link:
-    weight: 12
+    weight: 3
     settings:
       placeholder_url: ''
       placeholder_title: ''
@@ -108,7 +123,7 @@ content:
     type: options_select
     region: content
   field_subtitle:
-    weight: 1
+    weight: 2
     settings:
       size: 60
       placeholder: ''
@@ -123,11 +138,11 @@ content:
       placeholder: ''
       match_limit: 10
     third_party_settings: {  }
-    type: entity_reference_autocomplete
+    type: entity_reference_autocomplete_tags
     region: content
   info:
     type: string_textfield
-    weight: 0
+    weight: 1
     region: content
     settings:
       size: 60

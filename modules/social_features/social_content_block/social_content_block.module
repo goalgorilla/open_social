@@ -60,7 +60,7 @@ function _social_content_block_is_custom_content_block(BlockPluginInterface $blo
  */
 function social_content_block_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   $form_ids = [
-    'block_content_custom_content_list',
+    'block_content_custom_content_list_form',
     'block_content_custom_content_list_edit_form',
   ];
 
@@ -76,7 +76,7 @@ function social_content_block_form_alter(&$form, FormStateInterface $form_state,
 
     foreach ($fields as $field_name => $field_title) {
       if ($field_name === $field_title) {
-        $fields[$field_name] = $form[$field_name]['widget']['#title'];
+        $fields[$field_name] = $form[$field_name]['widget']['target_id']['#title'];
 
         $form[$field_name]['#states'] = [
           'visible' => [
@@ -92,6 +92,8 @@ function social_content_block_form_alter(&$form, FormStateInterface $form_state,
       }
     }
   }
+
+  $form['field_sorting']['widget']['#description_display'] = 'before';
 }
 
 /**
