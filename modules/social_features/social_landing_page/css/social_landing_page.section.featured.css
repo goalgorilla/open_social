@@ -119,6 +119,7 @@
   max-width: 100%;
   height: 150px;
   flex-wrap: wrap;
+  overflow: hidden;
 }
 @media (min-width: 600px) {
   .teaser.teaser--wide {
@@ -129,6 +130,11 @@
   .teaser.teaser--wide {
     height: 150px;
   }
+}
+.teaser.teaser--wide .cover-image {
+  background-size: cover;
+  background-position: 50%;
+  background-repeat: no-repeat;
 }
 .teaser.teaser--wide.no-image .teaser__image .teaser__teaser-type {
   position: absolute;
@@ -167,6 +173,9 @@
   .teaser.teaser--wide .teaser__image {
     flex: 0 0 570px;
   }
+}
+.teaser.teaser--wide .teaser__image .teaser__image-wrapper {
+  height: 100%;
 }
 @media (min-width: 600px) {
   .teaser.teaser--wide .teaser__image .teaser__image-wrapper {

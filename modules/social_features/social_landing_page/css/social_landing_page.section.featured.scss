@@ -182,6 +182,7 @@
   max-width: 100%;
   height: 150px;
   flex-wrap: wrap;
+  overflow: hidden;
 
   @media (min-width: 600px) {
     height: 220px;
@@ -189,6 +190,12 @@
 
   @media (min-width: 900px) {
     height: 150px;
+  }
+
+  .cover-image {
+    background-size: cover;
+    background-position: 50%;
+    background-repeat: no-repeat;
   }
 
   &.no-image {
@@ -232,6 +239,8 @@
     }
 
     .teaser__image-wrapper {
+      height: 100%;
+
       @media (min-width: 600px) {
         flex: 0 0 250px;
         max-width: 250px;

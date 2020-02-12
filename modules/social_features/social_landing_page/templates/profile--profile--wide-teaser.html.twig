@@ -5,7 +5,7 @@
     'card',
     'teaser',
     'teaser--wide',
-    'teaser-wide-profile',
+    'teaser--wide-profile',
     no_image ? 'no-image',
   ]
 %}
@@ -13,10 +13,14 @@
 {% set attributes = attributes.addClass(classes) %}
 
 {% block card_image %}
-  <div class="teaser__image">
+  <div class="teaser__image cover-img">
     {% block card_hero_image %}
       {% if content.field_profile_image %}
+        {% if profile_hero_styled_image_url %}
+        <span class="teaser__image-wrapper cover-image" style="background-image: url('{{ profile_hero_styled_image_url }}')">
+          {% else %}
         <span class="teaser__image-wrapper">
+          {% endif %}
           <a href="{{ profile_stream_url }}">{{ content.field_profile_image }}</a>
         </span>
       {% endif %}

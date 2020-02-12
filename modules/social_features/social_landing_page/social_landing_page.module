@@ -191,6 +191,7 @@ function social_landing_page_preprocess_paragraph(&$variables) {
           if (isset($variables['content']['field_featured_items'][$i])) {
             $variables['content']['field_featured_items'][$i]['#view_mode'] = 'wide_teaser';
             $variables['content']['field_featured_items'][$i]['#cache']['tags'][] = 'paragraph:config:' . $entity->id();
+            $variables['#attached']['library'][] = 'social_landing_page/featured';
           }
         }
       }
