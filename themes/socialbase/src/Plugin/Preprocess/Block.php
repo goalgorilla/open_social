@@ -202,8 +202,7 @@ class Block extends PreprocessBase {
         if (isset($variables['elements']['content']['field_hero_image'])) {
           $imageitem = $variables['elements']['content']['field_hero_image'][0]['#item']->getEntity();
           $imagestyle = $variables['elements']['content']['field_hero_image'][0]['#image_style'];
-          $entity = BlockContent::load($imageitem->id());
-          $file_id = $entity->get('field_hero_image')->target_id;
+          $file_id = $imageitem->get('field_hero_image')->target_id;
 
           // First filter out image_style,
           // So responsive image module doesn't break.
