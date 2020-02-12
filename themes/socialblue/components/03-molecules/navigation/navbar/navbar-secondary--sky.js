@@ -1,5 +1,9 @@
 (function ($) {
 
+  /*
+  ** Behavior when the number of items in the secondary navigation
+  * is too big.
+   */
   Drupal.behaviors.navbarSecondaryScrollable = {
     attach: function (context, settings) {
 

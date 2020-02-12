@@ -3,7 +3,7 @@
 // Easily pump out default styles, as well as :hover, :focus, :active,
 // and disabled options for all link buttons of the card
 
-@mixin separate-line {
+@mixin separate-line($bg-color) {
   @include for-tablet-landscape-up {
     max-width: 280px;
     content: '';
@@ -12,7 +12,9 @@
     right: 1.875rem;
     height: 2px;
     margin: 0 auto;
-    background: #fafafa;
+    background: $bg-color;
     z-index: 1;
+
+    @content;
   }
 }

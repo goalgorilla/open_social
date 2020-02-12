@@ -5,8 +5,8 @@ namespace Drupal\social_user\Plugin\Action;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
-use Drupal\Core\Mail\MailManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\Core\Queue\QueueFactory;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Utility\Token;
 use Drupal\user\UserInterface;
@@ -50,13 +50,6 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
   protected $logger;
 
   /**
-   * The mail manager.
-   *
-   * @var \Drupal\Core\Mail\MailManagerInterface
-   */
-  protected $mailManager;
-
-  /**
    * The language manager.
    *
    * @var \Drupal\Core\Language\LanguageManagerInterface
@@ -69,6 +62,13 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
    * @var \Egulias\EmailValidator\EmailValidator
    */
   protected $emailValidator;
+
+  /**
+   * The queue factory.
+   *
+   * @var \Drupal\Core\Queue\QueueFactory
+   */
+  protected $queue;
 
   /**
    * TRUE if the current user can use the "Mail HTML" text format.
@@ -92,35 +92,27 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
    *   The entity type manager.
    * @param \Psr\Log\LoggerInterface $logger
    *   A logger instance.
-   * @param \Drupal\Core\Mail\MailManagerInterface $mail_manager
-   *   The mail manager.
    * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
    *   The language manager.
    * @param \Egulias\EmailValidator\EmailValidator $email_validator
    *   The email validator.
+   * @param \Drupal\Core\Queue\QueueFactory $queue_factory
+   *   The queue factory.
    * @param bool $allow_text_format
    *   TRUE if the current user can use the "Mail HTML" text format.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  public function __construct(
-    array $configuration,
-    $plugin_id,
-    $plugin_definition,
-    Token $token,
-    EntityTypeManagerInterface $entity_type_manager,
-    LoggerInterface $logger,
-    MailManagerInterface $mail_manager,
-    LanguageManagerInterface $language_manager,
-    EmailValidator $email_validator,
-    $allow_text_format
-  ) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, Token $token, EntityTypeManagerInterface $entity_type_manager, LoggerInterface $logger, LanguageManagerInterface $language_manager, EmailValidator $email_validator, QueueFactory $queue_factory, $allow_text_format) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
     $this->token = $token;
-    $this->storage = $entity_type_manager->getStorage('user');
+    $this->storage = $entity_type_manager;
     $this->logger = $logger;
-    $this->mailManager = $mail_manager;
     $this->languageManager = $language_manager;
     $this->emailValidator = $email_validator;
+    $this->queue = $queue_factory;
     $this->allowTextFormat = $allow_text_format;
   }
 
@@ -132,9 +124,9 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
       $container->get('token'),
       $container->get('entity_type.manager'),
       $container->get('logger.factory')->get('action'),
-      $container->get('plugin.manager.mail'),
       $container->get('language_manager'),
       $container->get('email.validator'),
+      $container->get('queue'),
       $container->get('current_user')->hasPermission('use text format mail_html')
     );
   }
@@ -142,37 +134,51 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
   /**
    * {@inheritdoc}
    */
+  public function setContext(array &$context) {
+    parent::setContext($context);
+    // @todo: make the batch size configurable.
+    $context['batch_size'] = 25;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function executeMultiple(array $objects) {
+    // Array $objects contain all the entities of this bulk operation batch.
+    // We want smaller queue items then this so we chunk these.
+    // @todo: make the chunk size configurable or dependable on the batch size.
+    $chunk_size = 10;
+    $chunks = array_chunk($objects, $chunk_size);
+    foreach ($chunks as $chunk) {
+      $users = [];
+      // The chunk items contain entities, we want to perform an action on this.
+      foreach ($chunk as $entity) {
+        // The action retrieves the user ID of the user.
+        $users[] = $this->execute($entity);
+      }
+
+      // Get the entity ID of the email that is send.
+      $data['mail'] = $this->configuration['queue_storage_id'];
+      // Add the list of user IDs.
+      $data['users'] = $users;
+
+      // Put the $data in the queue item.
+      /** @var \Drupal\Core\Queue\QueueInterface $queue */
+      $queue = $this->queue->get('user_email_queue');
+      $queue->createItem($data);
+    }
+
+    // Add a clarifying message.
+    $this->messenger()->addMessage($this->t('The email(s) will be send in the background. You will be notified upon completion.'));
+    return [];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function execute($entity = NULL) {
-    /** @var \Drupal\Core\Entity\EntityInterface $entity */
-    if (!$entity->getEntityTypeId() === 'user') {
-      $this->logger->notice('Can not send e-mail for %entity', [
-        '%entity' => $entity->getEntityTypeId() . ':' . $entity->id(),
-      ]);
-
-      return;
-    }
-
     /** @var \Drupal\user\UserInterface $entity */
-    if ($entity) {
-      $langcode = $entity->getPreferredLangcode();
-    }
-    else {
-      $langcode = $this->languageManager->getDefaultLanguage()->getId();
-    }
-
-    $params = ['context' => $this->configuration];
-    $email = $this->getEmail($entity);
-
-    $message = $this->mailManager->mail('system', 'action_send_email', $email, $langcode, $params, $this->configuration['reply']);
-
-    // Error logging is handled by \Drupal\Core\Mail\MailManager::mail().
-    if ($message['result']) {
-      $this->logger->notice('Sent email to %recipient', [
-        '%recipient' => $email,
-      ]);
-    }
-
-    return $this->t('Send email');
+    return $entity->id();
   }
 
   /**
@@ -276,9 +282,23 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
    */
   public function submitConfigurationForm(array &$form, FormStateInterface $form_state) {
     parent::submitConfigurationForm($form, $form_state);
+    // Clean form values.
+    $form_state->cleanValues();
+    // Get the queue storage entity and create a new entry.
+    $queue_storage = $this->storage->getStorage('queue_storage_entity');
+    $entity = $queue_storage->create([
+      'name' => 'user_email_queue',
+      'type' => 'email',
+      'finished' => FALSE,
+      'field_reply_to' => $form_state->getValue('reply'),
+      'field_subject' => $form_state->getValue('subject'),
+      'field_message' => $form_state->getValue('message')['value'],
+    ]);
 
-    if ($this->allowTextFormat) {
-      $this->configuration['message'] = $this->configuration['message']['value'];
+    // When the new entity is saved, get the ID and save it within the bulk
+    // operation action configuration.
+    if ($entity->save()) {
+      $this->configuration['queue_storage_id'] = $entity->id();
     }
   }
 

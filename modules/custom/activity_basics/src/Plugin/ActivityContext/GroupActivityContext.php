@@ -3,14 +3,16 @@
 namespace Drupal\activity_basics\Plugin\ActivityContext;
 
 use Drupal\activity_creator\Plugin\ActivityContextBase;
+use Drupal\Component\Plugin\Exception\PluginNotFoundException;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\group\Entity\GroupContent;
 
 /**
  * Provides a 'GroupActivityContext' activity context.
  *
  * @ActivityContext(
- *  id = "group_activity_context",
- *  label = @Translation("Group activity context"),
+ *   id = "group_activity_context",
+ *   label = @Translation("Group activity context"),
  * )
  */
 class GroupActivityContext extends ActivityContextBase {
@@ -27,9 +29,15 @@ class GroupActivityContext extends ActivityContextBase {
 
       $referenced_entity = $data['related_object']['0'];
 
-      // TODO: Replace this with dependency injection.
-      /** @var \Drupal\social_group\SocialGroupHelperService $group_helper */
-      $group_helper = \Drupal::service('social_group.helper_service');
+      try {
+        // TODO: Replace this with dependency injection.
+        /** @var \Drupal\social_group\SocialGroupHelperService $group_helper */
+        $group_helper = \Drupal::service('social_group.helper_service');
+      }
+      catch (PluginNotFoundException $e) {
+        return $recipients;
+      }
+
       if ($gid = $group_helper->getGroupFromEntity($referenced_entity, FALSE)) {
         $recipients[] = [
           'target_type' => 'group',
@@ -44,7 +52,7 @@ class GroupActivityContext extends ActivityContextBase {
   /**
    * {@inheritdoc}
    */
-  public function isValidEntity($entity) {
+  public function isValidEntity(EntityInterface $entity) {
     // Special cases for comments.
     if ($entity->getEntityTypeId() === 'comment') {
       // Returns the entity to which the comment is attached.
@@ -59,11 +67,13 @@ class GroupActivityContext extends ActivityContextBase {
     if (GroupContent::loadByEntity($entity)) {
       return TRUE;
     }
+
     if ($entity->getEntityTypeId() === 'post') {
-      if (!empty($entity->get('field_recipient_group')->getValue())) {
+      if (!$entity->field_recipient_group->isEmpty()) {
         return TRUE;
       }
     }
+
     return FALSE;
   }
 

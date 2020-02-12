@@ -2,19 +2,49 @@ name: Social
 type: profile
 description: 'Open Social install profile.'
 core: '8.x'
-version: '8.x-7.x'
+version: '8.x-8.0'
 project: social
 
+# Dependencies that Open Social can not live without.
 dependencies:
-  - drupal:config
-  - drupal:system
-  - drupal:user
+  # core
   - drupal:breakpoint
-  - features:features
+  - drupal:color
+  - drupal:config
+  - drupal:node
+  - drupal:user
+  - drupal:views
+  # Contrib
+  - improved_theme_settings:improved_theme_settings
+  # Open Social
+  - social:social_activity
+  - social:social_core
+  - social:social_group
+  - social:social_swiftmail
+  - social:social_user
+
+# Modules that are installed by default but can be uninstalled.
+install:
+  # Open Social
+  - social:social_comment
+  - social:social_editor
+  - social:social_event
+  - social:social_follow_content
+  - social:social_font
+  - social:social_group_gvbo
+  - social:social_like
+  - social:social_mentions
+  - social:social_page
+  - social:social_post
+  - social:social_post_photo
+  - social:social_profile
+  - social:social_queue_storage
+  - social:social_search
+  - social:social_topic
+
 themes:
   - seven
   - socialbase
   - socialblue
-features: true
 distribution:
   name: Open Social

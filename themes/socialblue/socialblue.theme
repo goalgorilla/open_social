@@ -29,8 +29,13 @@ function socialblue_library_info_alter(&$libraries, $extension) {
       $style_css = $base_path . $key . '--' . $style . '.css';
       if (file_exists($theme_path . '/' . $style_css)) {
         $libraries[$key]['css']['theme'][$style_css] = [];
-        $libraries[$key]['css']['theme'][$style_css]['weight'] = 700;
+        $libraries[$key]['css']['theme'][$style_css]['weight'] = 600;
       }
+    }
+
+    // Add extra JS for secondary navigation in Sky style.
+    if ($style === 'sky') {
+      $libraries['navbar']['js']['assets/js/navbar-secondary--sky.min.js'] = [];
     }
   }
 }
@@ -51,7 +56,9 @@ function socialblue_preprocess_group(array &$variables) {
     && in_array($variables['view_mode'], $view_modes)
     && in_array($variables['group_type_id'], $social_group_types)) {
     $variables['title_prefix']['teaser_tag'] = [
-      '#markup' => '<div class="teaser__tag">' . t('Group') . '</div>',
+      '#type' => 'inline_template',
+      '#template' => '<div class="teaser__tag">{{ teaser_tag }}</div>',
+      '#context' => ['teaser_tag' => t('Group')],
     ];
   }
 }

@@ -38,7 +38,9 @@ class Node extends NodeBase {
       }
 
       $variables['title_prefix']['teaser_tag'] = [
-        '#markup' => '<div class="teaser__tag">' . $teaser_tag . '</div>',
+        '#type' => 'inline_template',
+        '#template' => '<div class="teaser__tag">{{ teaser_tag }}</div>',
+        '#context' => ['teaser_tag' => $teaser_tag],
       ];
     }
 

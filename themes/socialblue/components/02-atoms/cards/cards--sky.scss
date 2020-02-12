@@ -113,27 +113,43 @@
         position: relative;
 
         &:after {
-          @include separate-line;
-          top: 100%;
+          @include separate-line(#adadad) {
+            top: 100%;
+          };
         }
 
         &:last-child:after {
           display: none;
         }
 
-        &.block-group-add-idea-block,
-        &.block-group-add-topic-block,
+        &.block-discussion-add-block,
         &.block-group-add-event-block,
-        &.block-group-add-discussion-block {
-          padding: 20px;
+        &.block-group-add-topic-block,
+        &.block-event-add-block,
+        &.block-topic-add-block,
+        &.block-group-add-block {
+          display: block;
+          margin-top: 0;
+          padding: 20px 1.875rem;
+
+          @include for-tablet-portrait-up {
+            padding-left: 2.25rem;
+            padding-right: 2.25rem;
+          }
+
+          .btn {
+            width: 100%;
+            margin-bottom: 0;
+          }
         }
       }
     }
 
     .region--complementary-top + .region--complementary-bottom {
       > .card:first-child:before {
-        @include separate-line;
-        bottom: 100%;
+        @include separate-line(#adadad) {
+          bottom: 100%;
+        };
       }
     }
 
@@ -150,6 +166,14 @@
     padding: 1rem 1.875rem 0;
     background: #fafafa;
 
+    &:before {
+      @include separate-line(#fafafa) {
+        top: 100%;
+        margin-top: -2px;
+        z-index: 10;
+      }
+    }
+
     @include for-tablet-portrait-up {
       padding: 2.5rem 2.25rem 0;
     }
@@ -161,12 +185,13 @@
     }
 
     .hero-footer__cta {
+      display: block;
       position: static;
       padding: 0 0 1.25rem;
       margin: 0;
 
       @include for-tablet-portrait-up {
-        flex: 0 0 100%;
+        flex: none;
         max-width: 100%;
         justify-content: center;
       }
@@ -185,6 +210,11 @@
 
     .card__actionbar {
       padding: 1.5rem 0;
+      
+      .card__link {
+        float: none;
+        margin-left: 0;
+      }
     }
 
     .btn-group__chellange {
@@ -252,7 +282,8 @@
       width: 160px;
       height: 160px;
       margin: -80px 0 5px;
-      border-width: 10px;
+      border: 10px solid;
+      border-radius: 50%;
       box-shadow: none;
 
       @include for-phone-only {

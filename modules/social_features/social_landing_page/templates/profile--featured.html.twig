@@ -2,12 +2,20 @@
 
 {% set attributes = attributes.addClass('teaser-profile') %}
 
-{% block card_hero_image %}
-  <div class="img_wrapper">
-    <a href="{{ profile_home }}">
-      {{ content.field_profile_image }}
-    </a>
-  </div>
+{% block card_image %}
+  {% if profile_hero_styled_image_url %}
+    <div style="background-image: url('{{ profile_hero_styled_image_url }}')" class="teaser__image">
+  {% else %}
+    <div class="teaser__image">
+  {% endif %}
+      {% block card_hero_image %}
+        <div class="img_wrapper">
+          <a href="{{ profile_home }}">
+            {{ content.field_profile_image }}
+          </a>
+        </div>
+      {% endblock %}
+    </div>
 {% endblock %}
 
 {% block card_teaser_type %}

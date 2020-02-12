@@ -3,30 +3,6 @@
 
 // Hero banner with full width.
 .socialblue--sky {
-
-  .cover--landing {
-    position: relative;
-    margin-bottom: 9px;
-
-    @include for-tablet-landscape-up {
-      margin-bottom: 18px;
-    }
-
-    &:after {
-      content: '';
-      position: absolute;
-      display: block;
-      top: 100%;
-      width: 100%;
-      left: 0;
-      height: 9px;
-
-      @include for-tablet-landscape-up {
-        height: 18px;
-      }
-    }
-  }
-
   .cover-wrap {
     @include for-tablet-portrait-up {
       > .hero-footer {
@@ -219,6 +195,7 @@
 
     .teaser__title {
       margin: 0 0 1rem;
+      max-height: none;
 
       @include for-tablet-landscape-up {
         font-size: 2.25rem;
@@ -330,6 +307,10 @@
       }
     }
 
+    &.no-image .hero-footer {
+      border-top: 1px solid #d5d6d2;
+    }
+
     .hero-footer__list {
       a {
         @include for-tablet-landscape-up {
@@ -417,6 +398,7 @@
 
     .hero-footer {
       padding-top: 0;
+      border: 0;
     }
 
     .hero-footer__header {

@@ -25,10 +25,21 @@ die('This file should not be run directly.');
 // new TranslatableMarkup('Example');
 // new PluralTranslatableMarkup($count, '1 example', '@count examples');.
 
+// Changed in version 8.x.
+new TranslatableMarkup("Send mail");
+new TranslatableMarkup("Can not send e-mail for %entity");
+new TranslatableMarkup("Sent email to %recipient");
+
 // Changed in version 7.2.
 new TranslatableMarkup('Select / unselect all @count results in this view');
 new TranslatableMarkup('Clear all selected members');
 new TranslatableMarkup('A Reply-To address is the email address that receives messages sent from those who select Reply in their email clients.');
+
+// Strings added because they were removed from configuration in the
+// social_private_message module and are now set untranslated in an install
+// hook.
+new TranslatableMarkup("@interval hence");
+new TranslatableMarkup("@interval ago");
 
 // These strings have been added because they were not being picked
 // up by the POTX tool. This usually indicates an issue with configuration
@@ -86,6 +97,8 @@ new PluralTranslatableMarkup(0, 'The role of 1 selected member has been changed 
 new PluralTranslatableMarkup(0, 'The role of 1 selected member has not been changed successfully', 'The role of @count selected members have not been changed successfully');
 new PluralTranslatableMarkup(0, 'Your email has been sent to 1 selected member successfully', 'Your email has been sent to @count selected members successfully');
 new PluralTranslatableMarkup(0, 'Your email has not been sent to 1 selected member successfully', 'Your email has not been sent to @count selected members successfully');
+new PluralTranslatableMarkup(0, 'Your email will be send to 1 selected enrollee', 'Your email will be send to @count selected enrollees');
+new PluralTranslatableMarkup(0, 'Your email will be send to 1 selected member', 'Your email will be send to @count selected members');
 new TranslatableMarkup("Remove");
 new TranslatableMarkup("Export");
 new TranslatableMarkup("Change the role");

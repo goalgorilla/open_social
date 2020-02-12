@@ -8,6 +8,8 @@ dependencies:
   module:
     - profile
     - user
+_core:
+  default_config_hash: 7buHn5i4wy753bx_Q2g9CtIjfu74pZ1uv7L_9GifXlA
 id: newest_users
 label: 'Newest users'
 module: views
@@ -15,7 +17,6 @@ description: 'Displays a block and page for the newest users on the platform bas
 tag: ''
 base_table: profile
 base_field: profile_id
-core: 8.x
 display:
   default:
     display_plugin: default
@@ -136,6 +137,9 @@ display:
           entity_type: profile
           entity_field: type
           plugin_id: bundle
+          expose:
+            operator_limit_selection: false
+            operator_list: {  }
         status:
           id: status
           table: users_field_data
@@ -159,6 +163,8 @@ display:
             multiple: false
             remember_roles:
               authenticated: authenticated
+            operator_limit_selection: false
+            operator_list: {  }
           is_grouped: false
           group_info:
             label: ''
@@ -200,6 +206,8 @@ display:
             multiple: false
             remember_roles:
               authenticated: authenticated
+            operator_limit_selection: false
+            operator_list: {  }
           is_grouped: false
           group_info:
             label: ''

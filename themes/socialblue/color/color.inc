@@ -88,6 +88,7 @@ $info = [
 
   'css' => [
     'assets/css/brand.css',
+    'assets/css/brand--sky.css',
   ],
 
   // Files to copy.
