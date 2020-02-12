@@ -30,6 +30,13 @@ class ContentBlock extends Plugin {
   public $type;
 
   /**
+   * The entity type ID.
+   *
+   * @var string
+   */
+  public $entityTypeId;
+
+  /**
    * An array of fields.
    *
    * @var array
