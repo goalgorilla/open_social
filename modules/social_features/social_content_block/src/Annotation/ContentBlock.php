@@ -21,20 +21,18 @@ class ContentBlock extends Plugin {
   public $id;
 
   /**
-   * Type of content.
-   *
-   * @var \Drupal\Core\Annotation\Translation
-   *
-   * @ingroup plugin_translatable
-   */
-  public $type;
-
-  /**
    * The entity type ID.
    *
    * @var string
    */
   public $entityTypeId;
+
+  /**
+   * The bundle.
+   *
+   * @var string
+   */
+  public $bundle = NULL;
 
   /**
    * An array of fields.

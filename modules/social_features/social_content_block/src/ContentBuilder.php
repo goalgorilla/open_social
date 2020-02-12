@@ -3,6 +3,7 @@
 namespace Drupal\social_content_block;
 
 use Drupal\block_content\BlockContentInterface;
+use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Link;
@@ -34,6 +35,13 @@ class ContentBuilder implements ContentBuilderInterface {
   protected $moduleHandler;
 
   /**
+   * The current active database's master connection.
+   *
+   * @var \Drupal\Core\Database\Connection
+   */
+  protected $connection;
+
+  /**
    * The content block manager.
    *
    * @var \Drupal\social_content_block\ContentBlockManagerInterface
@@ -49,6 +57,8 @@ class ContentBuilder implements ContentBuilderInterface {
    *   The module handler to invoke the alter hook with.
    * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
    *   The string translation.
+   * @param \Drupal\Core\Database\Connection $connection
+   *   The current active database's master connection.
    * @param \Drupal\social_content_block\ContentBlockManagerInterface $content_block_manager
    *   The content block manager.
    */
@@ -56,11 +66,13 @@ class ContentBuilder implements ContentBuilderInterface {
     EntityTypeManagerInterface $entity_type_manager,
     ModuleHandlerInterface $module_handler,
     TranslationInterface $string_translation,
+    Connection $connection,
     ContentBlockManagerInterface $content_block_manager
   ) {
     $this->entityTypeManager = $entity_type_manager;
     $this->moduleHandler = $module_handler;
     $this->setStringTranslation($string_translation);
+    $this->connection = $connection;
     $this->contentBlockManager = $content_block_manager;
   }
 
@@ -98,7 +110,21 @@ class ContentBuilder implements ContentBuilderInterface {
     /** @var \Drupal\social_content_block\ContentBlockPluginInterface $plugin */
     $plugin = $this->contentBlockManager->createInstance($plugin_id);
 
-    $query = $plugin->query($fields);
+    /** @var \Drupal\Core\Entity\EntityTypeInterface $entity_type */
+    $entity_type = $this->entityTypeManager->getDefinition($definition['entityTypeId']);
+
+    /** @var \Drupal\Core\Database\Query\SelectInterface $query */
+    $query = $this->connection->select($entity_type->getBaseTable(), 'base_table')
+      ->fields('base_table', [$entity_type->getKey('id')]);
+
+    if ($definition['bundle']) {
+      $query->condition(
+        'base_table.' . $entity_type->getKey('bundle'),
+        $definition['bundle']
+      );
+    }
+
+    $plugin->query($query, $fields);
 
     // Allow other modules to change the query to add additions.
     $this->moduleHandler->alter('social_content_block_query', $query, $block_content);

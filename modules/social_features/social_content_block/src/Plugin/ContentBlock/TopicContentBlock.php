@@ -2,6 +2,7 @@
 
 namespace Drupal\social_content_block\Plugin\ContentBlock;
 
+use Drupal\Core\Database\Query\SelectInterface;
 use Drupal\social_content_block\ContentBlockBase;
 
 /**
@@ -9,8 +10,8 @@ use Drupal\social_content_block\ContentBlockBase;
  *
  * @ContentBlock(
  *   id = "topic_content_block",
- *   type = @Translation("Topic"),
  *   entityTypeId = "node",
+ *   bundle = "topic",
  *   fields = {
  *     "field_topic_type",
  *     "field_content_tags",
@@ -23,12 +24,7 @@ class TopicContentBlock extends ContentBlockBase {
   /**
    * {@inheritdoc}
    */
-  public function query(array $fields) {
-    /** @var \Drupal\Core\Database\Query\SelectInterface $query */
-    $query = $this->connection->select('node_field_data', 'base_table')
-      ->fields('base_table', ['nid'])
-      ->condition('base_table.type', 'topic');
-
+  public function query(SelectInterface $query, array $fields) {
     foreach ($fields as $field_name => $entity_ids) {
       switch ($field_name) {
         // Add topic type tags.
