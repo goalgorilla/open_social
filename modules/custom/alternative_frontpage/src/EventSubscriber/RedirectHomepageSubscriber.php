@@ -5,6 +5,8 @@ namespace Drupal\alternative_frontpage\EventSubscriber;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Cache\CacheableRedirectResponse;
 use Drupal\Core\Path\PathMatcher;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Language\LanguageManagerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\HttpKernel\KernelEvents;
@@ -25,18 +27,11 @@ class RedirectHomepageSubscriber implements EventSubscriberInterface {
   protected $userData;
 
   /**
-   * Protected var alternativeFrontpageSettings.
+   * Protected var configFactory.
    *
    * @var \Drupal\Core\Config\ConfigFactory
    */
-  protected $alternativeFrontpageSettings;
-
-  /**
-   * Protected var siteSettings.
-   *
-   * @var \Drupal\Core\Config\ConfigFactory
-   */
-  protected $siteSettings;
+  protected $configFactory;
 
   /**
    * Protected var for the current user.
@@ -53,15 +48,30 @@ class RedirectHomepageSubscriber implements EventSubscriberInterface {
   protected $pathMatcher;
 
   /**
+   * Protected var entityTypeManager.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  protected $entityTypeManager;
+
+  /**
+   * The language manager.
+   *
+   * @var \Drupal\Core\Language\LanguageManagerInterface
+   */
+  protected $languageManager;
+
+  /**
    * Constructor for the RedirectHomepageSubscriber.
    */
-  public function __construct(UserData $user_data, ConfigFactory $config_factory, AccountProxy $current_user, PathMatcher $path_matcher) {
+  public function __construct(UserData $user_data, ConfigFactory $config_factory, AccountProxy $current_user, PathMatcher $path_matcher, EntityTypeManagerInterface $entityTypeManager, LanguageManagerInterface $languageManager) {
     // We needs it.
     $this->userData = $user_data;
-    $this->alternativeFrontpageSettings = $config_factory->get('alternative_frontpage.settings');
-    $this->siteSettings = $config_factory->get('system.site');
+    $this->configFactory = $config_factory;
     $this->currentUser = $current_user;
     $this->pathMatcher = $path_matcher;
+    $this->entityTypeManager = $entityTypeManager;
+    $this->languageManager = $languageManager;
   }
 
   /**
@@ -98,21 +108,88 @@ class RedirectHomepageSubscriber implements EventSubscriberInterface {
     /** @var \Symfony\Component\HttpFoundation\Request $request */
     $request = $event->getRequest();
     $request_path = $request->getPathInfo();
-    $frontpage_an = $this->siteSettings->get('page.front');
-    if ($request_path === $frontpage_an || $request_path === '/') {
-      $frontpage_lu = $this->alternativeFrontpageSettings->get('frontpage_for_authenticated_user');
+    $active_language = $this->languageManager->getCurrentLanguage()->getId();
+    $default_language = $this->languageManager->getDefaultLanguage()->getId();
+
+    // Get the frontpage paths.
+    $frontpage_an = $this->getConfigUrlPath('anonymous');
+    $frontpage_lu = $this->getConfigUrlPath('authenticated');
+
+    if ($request_path === '/' . $active_language || $request_path === '/') {
       if ($frontpage_an === $frontpage_lu) {
         return;
       }
-      if ($frontpage_lu && $this->currentUser->isAuthenticated()) {
-        $cache_contexts = new CacheableMetadata();
-        $cache_contexts->setCacheContexts(['user.roles:anonymous']);
 
-        $response = new CacheableRedirectResponse($frontpage_lu);
+      $redirect = FALSE;
+
+      // Check if alternative frontpage has been set for anonymous.
+      if ($frontpage_an && $this->currentUser->isAnonymous()) {
+        $redirect_path = $frontpage_an;
+        // If the active language is not the source, add the prefix.
+        if ($active_language !== $default_language) {
+          $redirect_path = '/' . $active_language . $frontpage_an;
+        }
+        $redirect = TRUE;
+        $role = 'anonymous';
+      }
+
+      // Check if alternative frontpage has been set for authenticated.
+      if ($frontpage_lu && $this->currentUser->isAuthenticated()) {
+        $redirect_path = $frontpage_lu;
+        // If the active language is not the source, add the prefix.
+        if ($active_language !== $default_language) {
+          $redirect_path = '/' . $active_language . $frontpage_lu;
+        }
+        $redirect = TRUE;
+        $role = 'authenticated';
+      }
+
+      // Redirect to the correct alternative frontpage.
+      if ($redirect === TRUE) {
+        $cache_contexts = new CacheableMetadata();
+        $cache_contexts->setCacheContexts(['user.roles:' . $role]);
+
+        $response = new CacheableRedirectResponse($redirect_path);
         $response->addCacheableDependency($cache_contexts);
         $event->setResponse($response);
       }
     }
+  }
+
+  /**
+   * Get the alternative configs based on provided role.
+   */
+  public function getConfigIds($role) {
+    $entity = $this->entityTypeManager->getStorage('alternative_frontpage')->getQuery()
+      ->condition('roles_target_id', $role)
+      ->execute();
+    return key($entity);
+  }
+
+  /**
+   * Get the correct Url Path for the landing page.
+   */
+  public function getConfigUrlPath($role) {
+    $active_language = $this->languageManager->getCurrentLanguage()->getId();
+
+    // Get the frontpage for logged in users.
+    $config_name = $this->getConfigIds($role);
+
+    // Get the target language object.
+    $language = $this->languageManager->getLanguage($active_language);
+    // Remember original language before this operation.
+    $original_language = $this->languageManager->getConfigOverrideLanguage();
+    // Set the translation target language on the configuration factory.
+    $this->languageManager->setConfigOverrideLanguage($language);
+
+    // Get the language config override.
+    $path = $this->configFactory->get('alternative_frontpage.alternative_frontpage.' . $config_name);
+    $path = $path->get('path');
+
+    // Set the configuration language back.
+    $this->languageManager->setConfigOverrideLanguage($original_language);
+
+    return $path;
   }
 
 }

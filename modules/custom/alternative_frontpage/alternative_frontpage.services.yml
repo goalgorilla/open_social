@@ -1,6 +1,6 @@
 services:
   alternative_frontpage.redirect_homepage:
     class: Drupal\alternative_frontpage\EventSubscriber\RedirectHomepageSubscriber
-    arguments: ['@user.data', '@config.factory', '@current_user', '@path.matcher']
+    arguments: ['@user.data', '@config.factory', '@current_user', '@path.matcher', '@entity_type.manager', '@language_manager']
     tags:
       - { name: event_subscriber }
