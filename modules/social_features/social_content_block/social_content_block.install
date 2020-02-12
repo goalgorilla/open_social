@@ -35,3 +35,61 @@ function social_content_block_update_8001(&$sandbox) {
 
   $sandbox['#finished'] = $sandbox['current'] / $sandbox['total'];
 }
+
+/**
+ * Fill in fields for plugin ID and plugin fields in existing blocks.
+ */
+function social_content_block_update_8002(&$sandbox) {
+  if (!isset($sandbox['total'])) {
+    $sandbox['total'] = \Drupal::entityQuery('block_content')
+      ->condition('type', 'custom_content_list')
+      ->count()
+      ->execute();
+
+    if (!$sandbox['total']) {
+      return;
+    }
+
+    $sandbox['entity_id'] = $sandbox['processed'] = 0;
+    $sandbox['plugin_id'] = 'topic_content_block';
+
+    /** @var \Drupal\social_content_block\ContentBlockManagerInterface $content_block_manager */
+    $content_block_manager = \Drupal::service('plugin.manager.content_block');
+
+    $definition = $content_block_manager->getDefinition($sandbox['plugin_id']);
+    $sandbox['fields'] = $definition['fields'];
+  }
+
+  $ids = \Drupal::entityQuery('block_content')
+    ->condition('type', 'custom_content_list')
+    ->condition('id', $sandbox['entity_id'], '>')
+    ->sort('id')
+    ->range(0, 1)
+    ->execute();
+
+  $sandbox['entity_id'] = reset($ids);
+
+  /** @var \Drupal\block_content\BlockContentInterface $entity */
+  $entity = \Drupal::entityTypeManager()->getStorage('block_content')
+    ->load($sandbox['entity_id']);
+
+  $entity->field_plugin_id->value = $sandbox['plugin_id'];
+
+  $fields = [];
+
+  foreach ($sandbox['fields'] as $field) {
+    if (!$entity->get($field)->isEmpty()) {
+      $fields[] = $field;
+    }
+  }
+
+  if (count($fields) === 1) {
+    $entity->field_plugin_field->value = reset($fields);
+  }
+
+  $entity->save();
+
+  $sandbox['processed']++;
+
+  $sandbox['#finished'] = $sandbox['processed'] / $sandbox['total'];
+}
