@@ -2,24 +2,23 @@
 
 namespace Drupal\social_content_block;
 
-use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\Core\Database\Query\SelectInterface;
 
 /**
  * Interface ContentBlockPluginInterface.
  *
  * @package Drupal\social_content_block
  */
-interface ContentBlockPluginInterface extends ContainerFactoryPluginInterface {
+interface ContentBlockPluginInterface {
 
   /**
    * Create filtering query.
    *
+   * @param \Drupal\Core\Database\Query\SelectInterface $query
+   *   The query.
    * @param array $fields
    *   The fields.
-   *
-   * @return \Drupal\Core\Database\Query\SelectInterface
-   *   The query.
    */
-  public function query(array $fields);
+  public function query(SelectInterface $query, array $fields);
 
 }
