@@ -1,0 +1,37 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the social_content_block module.
+ */
+
+use Drupal\Core\Config\FileStorage;
+use Drupal\Core\Config\InstallStorage;
+
+/**
+ * Add fields for plugin ID and plugin fields to the block content form.
+ */
+function social_content_block_update_8001(&$sandbox) {
+  if (!isset($sandbox['total'])) {
+    $sandbox['configs'] = [
+      'field.storage.block_content.field_plugin_id',
+      'field.storage.block_content.field_plugin_field',
+      'field.field.block_content.custom_content_list.field_sorting',
+      'field.field.block_content.custom_content_list.field_plugin_id',
+      'field.field.block_content.custom_content_list.field_plugin_field',
+      'core.entity_form_display.block_content.custom_content_list.default',
+      'core.entity_view_display.block_content.custom_content_list.default',
+    ];
+
+    $sandbox['total'] = count($sandbox['configs']);
+    $sandbox['current'] = 0;
+    $sandbox['path'] = drupal_get_path('module', 'social_content_block') . '/' . InstallStorage::CONFIG_INSTALL_DIRECTORY;
+  }
+
+  $source = new FileStorage($sandbox['path']);
+  $config_storage = \Drupal::service('config.storage');
+  $config = $sandbox['configs'][$sandbox['current']++];
+  $config_storage->write($config, $source->read($config));
+
+  $sandbox['#finished'] = $sandbox['current'] / $sandbox['total'];
+}
