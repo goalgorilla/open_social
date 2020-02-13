@@ -7,6 +7,9 @@
 
 use Drupal\Core\Config\FileStorage;
 use Drupal\Core\Config\InstallStorage;
+use Drupal\field\Entity\FieldConfig;
+use Drupal\field\Entity\FieldStorageConfig;
+use Drupal\field\FieldConfigInterface;
 
 /**
  * Add fields for plugin ID and plugin fields to the block content form.
@@ -29,9 +32,31 @@ function social_content_block_update_8001(&$sandbox) {
   }
 
   $source = new FileStorage($sandbox['path']);
-  $config_storage = \Drupal::service('config.storage');
-  $config = $sandbox['configs'][$sandbox['current']++];
-  $config_storage->write($config, $source->read($config));
+  $name = $sandbox['configs'][$sandbox['current']++];
+  $data = $source->read($name);
+  $parts = explode('.', $name);
+
+  switch ($parts[0] . '.' . $parts[1]) {
+    case 'field.storage':
+      FieldStorageConfig::create($data)->save();
+      break;
+
+    case 'field.field':
+      $field_config = FieldConfig::loadByName($parts[2], $parts[3], $parts[4]);
+
+      if ($field_config instanceof FieldConfigInterface) {
+        $field_config->setDescription($data['description']);
+      }
+      else {
+        $field_config = FieldConfig::create($data);
+      }
+
+      $field_config->save();
+      break;
+
+    default:
+      \Drupal::service('config.storage')->write($name, $data);
+  }
 
   $sandbox['#finished'] = $sandbox['current'] / $sandbox['total'];
 }
