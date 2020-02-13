@@ -71,10 +71,10 @@
   {{ title_suffix }}
 
   {% block content %}
-    {{ content|without('field_link') }}
+    {{ content|without('field_basic_link') }}
 
     <div class="card__link">
-      {{ content.field_link }}
+      {{ content.field_basic_link }}
     </div>
   {% endblock %}
 
