@@ -114,7 +114,7 @@ class ContentBuilder implements ContentBuilderInterface {
     $entity_type = $this->entityTypeManager->getDefinition($definition['entityTypeId']);
 
     /** @var \Drupal\Core\Database\Query\SelectInterface $query */
-    $query = $this->connection->select($entity_type->getBaseTable(), 'base_table')
+    $query = $this->connection->select($entity_type->getDataTable(), 'base_table')
       ->fields('base_table', [$entity_type->getKey('id')]);
 
     if ($definition['bundle']) {
