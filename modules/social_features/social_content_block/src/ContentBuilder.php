@@ -53,26 +53,26 @@ class ContentBuilder implements ContentBuilderInterface {
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity type manager.
+   * @param \Drupal\Core\Database\Connection $connection
+   *   The current active database's master connection.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    *   The module handler to invoke the alter hook with.
    * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
    *   The string translation.
-   * @param \Drupal\Core\Database\Connection $connection
-   *   The current active database's master connection.
    * @param \Drupal\social_content_block\ContentBlockManagerInterface $content_block_manager
    *   The content block manager.
    */
   public function __construct(
     EntityTypeManagerInterface $entity_type_manager,
+    Connection $connection,
     ModuleHandlerInterface $module_handler,
     TranslationInterface $string_translation,
-    Connection $connection,
     ContentBlockManagerInterface $content_block_manager
   ) {
     $this->entityTypeManager = $entity_type_manager;
+    $this->connection = $connection;
     $this->moduleHandler = $module_handler;
     $this->setStringTranslation($string_translation);
-    $this->connection = $connection;
     $this->contentBlockManager = $content_block_manager;
   }
 
