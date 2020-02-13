@@ -3,7 +3,6 @@
 namespace Drupal\socialbase\Plugin\Preprocess;
 
 use Drupal\bootstrap\Plugin\Preprocess\PreprocessBase;
-use Drupal\block_content\Entity\BlockContent;
 use Drupal\block\Entity\Block as BlockEntity;
 use Drupal\Component\Utility\Html;
 use Drupal\file\Entity\File;

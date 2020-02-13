@@ -144,3 +144,26 @@ function social_activity_get_der_settings() {
 
   return $result;
 }
+
+/**
+ * Update activity stream block descriptions.
+ */
+function social_activity_update_8801() {
+  $config_factory = \Drupal::configFactory();
+  // Load the activity stream.
+  $view = $config_factory->getEditable('views.view.activity_stream');
+  $displays = $view->get('display');
+
+  // Update block_descriptions for the stream blocks.
+  foreach ($displays as $display_name => &$display) {
+    if ($display_name === 'block_stream_homepage') {
+      $display['display_options']['block_description'] = t('Activity stream');
+    }
+    if ($display_name === 'block_stream_homepage_without_post') {
+      $display['display_options']['block_description'] = t('Activity stream - Without Post block');
+    }
+  }
+
+  $view->set('display', $displays);
+  $view->save(TRUE);
+}
