@@ -194,6 +194,7 @@ function _social_core_get_permissions($role) {
     'administer account settings',
     'administer themes',
     'administer blocks',
+    'access contextual links',
   ]);
 
   return $permissions[$role] ?? [];
@@ -999,4 +1000,11 @@ function social_core_update_8802() {
  */
 function social_core_update_8803() {
   activity_creator_set_entity_view_mode('node', 'activity');
+}
+
+/**
+ * Allow site managers to use contextual links.
+ */
+function social_core_update_8804() {
+  user_role_grant_permissions('sitemanager', ['access contextual links']);
 }
