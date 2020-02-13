@@ -3,9 +3,8 @@ status: true
 dependencies:
   config:
     - block_content.type.basic
-    - field.field.block_content.basic.field_link
+    - field.field.block_content.basic.field_basic_link
     - field.field.block_content.basic.field_text_block
-    - field.field.block_content.basic.field_title
   module:
     - link
     - text
@@ -14,7 +13,7 @@ targetEntityType: block_content
 bundle: basic
 mode: default
 content:
-  field_link:
+  field_basic_link:
     weight: 2
     label: hidden
     settings:
@@ -32,14 +31,6 @@ content:
     settings: {  }
     third_party_settings: {  }
     type: text_default
-    region: content
-  field_title:
-    weight: 0
-    label: hidden
-    settings:
-      link_to_entity: false
-    third_party_settings: {  }
-    type: string
     region: content
 hidden:
   search_api_excerpt: true
