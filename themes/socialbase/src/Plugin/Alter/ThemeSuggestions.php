@@ -32,7 +32,22 @@ class ThemeSuggestions extends BaseThemeSuggestions {
         }
 
         if (isset($variables['elements']['content']['#block_content'])) {
-          $suggestions[] = 'block__' . $variables['elements']['content']['#block_content']->bundle();
+          // Keep the theme suggestion before the most specific plugin based
+          // suggestion. This allows cases like layout builder blocks to take
+          // precedence over our generic theme based use of the block.
+          // See block_theme_suggestions_block() for how tis is constructed.
+          $parts = explode(':', $variables['elements']['#plugin_id']);
+          $insert_before = 'block__' . implode(
+            '__',
+            array_map(
+              static function ($part) {
+                return str_replace('-', '_', $part);
+              },
+              $parts
+            )
+          );
+          $new_suggestion = 'block__' . $variables['elements']['content']['#block_content']->bundle();
+          array_splice($suggestions, array_search($insert_before, $suggestions, TRUE), 0, $new_suggestion);
         }
 
         $block_id = $variables['elements']['#derivative_plugin_id'];

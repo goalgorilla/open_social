@@ -479,3 +479,11 @@ function socialbase_form_search_content_form_alter(&$form) {
     '#template' => '<svg class="icon--search"><use xlink:href="#icon-search"></use></svg>',
   ];
 }
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function socialbase_form_node_layout_builder_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  // Make the layout builder specific styling available.
+  $form['#attached']['library'][] = 'socialbase/form--toolbar';
+}
