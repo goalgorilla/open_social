@@ -7,6 +7,7 @@
 
 use Drupal\Core\Block\BlockPluginInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Render\Element;
 
 /**
  * Implements hook_preprocess_block().
@@ -93,7 +94,15 @@ function social_content_block_form_alter(&$form, FormStateInterface $form_state,
     }
   }
 
+  $form['#attributes']['class'][] = 'form--default';
   $form['field_sorting']['widget']['#description_display'] = 'before';
+
+  foreach (Element::children($form['actions']) as $key) {
+    if ($key !== 'submit') {
+      $form['actions'][$key]['#attributes']['class'][] = 'btn';
+      $form['actions'][$key]['#attributes']['class'][] = 'btn-flat';
+    }
+  }
 }
 
 /**
