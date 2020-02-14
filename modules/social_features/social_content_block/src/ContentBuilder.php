@@ -92,9 +92,15 @@ class ContentBuilder implements ContentBuilderInterface {
     $plugin_id = $block_content->field_plugin_id->value;
     $definition = $this->contentBlockManager->getDefinition($plugin_id);
 
+    // When the user didn't select any filter in the "Content selection" field
+    // then the block base query will be built based on all filled filterable
+    // fields.
     if ($block_content->field_plugin_field->isEmpty()) {
       $field_names = $definition['fields'];
     }
+    // When the user selected some filter in the "Content selection" field then
+    // only condition based on this filter field will be added to the block base
+    // query.
     else {
       $field_names = [$block_content->field_plugin_field->value];
     }
