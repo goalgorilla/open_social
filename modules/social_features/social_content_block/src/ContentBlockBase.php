@@ -5,9 +5,12 @@ namespace Drupal\social_content_block;
 use Drupal\Component\Plugin\PluginBase;
 
 /**
- * Class ContentBlockBase.
+ * Defines a base content block implementation.
  *
- * @package Drupal\social_content_block\Plugin\ContentBlock
+ * This abstract class provides a method for inserting additional filters to the
+ * base query of the "Custom content list block" custom block.
+ *
+ * @ingroup social_content_block_api
  */
 abstract class ContentBlockBase extends PluginBase implements ContentBlockPluginInterface {
 
