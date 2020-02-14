@@ -212,7 +212,7 @@ class ContentBuilder implements ContentBuilderInterface {
       '#theme' => 'social_content_block',
       '#title' => $block_content->label(),
       '#subtitle' => $block_content->field_subtitle->value,
-      '#topics' => $this->getEntities($block_content),
+      '#entities' => $this->getEntities($block_content),
       '#link' => $this->getLink($block_content),
     ];
 
