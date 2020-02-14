@@ -5,6 +5,7 @@
  * Install, update and uninstall functions for the social_content_block module.
  */
 
+use Drupal\Core\Site\Settings;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\field\FieldConfigInterface;
@@ -323,6 +324,7 @@ function social_content_block_update_8002(&$sandbox) {
 
     $sandbox['processed'] = 0;
     $sandbox['plugin_id'] = 'topic_content_block';
+    $sandbox['limit'] = Settings::get('entity_update_batch_size', 50);
 
     /** @var \Drupal\social_content_block\ContentBlockManagerInterface $content_block_manager */
     $content_block_manager = \Drupal::service('plugin.manager.content_block');
@@ -335,30 +337,33 @@ function social_content_block_update_8002(&$sandbox) {
     ->condition('type', 'custom_content_list')
     ->notExists('field_plugin_id')
     ->sort('id')
-    ->range(0, 1)
+    ->range(0, $sandbox['limit'])
     ->execute();
 
-  /** @var \Drupal\block_content\BlockContentInterface $entity */
-  $entity = \Drupal::entityTypeManager()->getStorage('block_content')
-    ->load(reset($entity_ids));
+  $storage = \Drupal::entityTypeManager()->getStorage('block_content');
 
-  $entity->field_plugin_id->value = $sandbox['plugin_id'];
+  foreach ($entity_ids as $entity_id) {
+    /** @var \Drupal\block_content\BlockContentInterface $entity */
+    $entity = $storage->load($entity_id);
 
-  $fields = [];
+    $entity->field_plugin_id->value = $sandbox['plugin_id'];
 
-  foreach ($sandbox['fields'] as $field) {
-    if (!$entity->get($field)->isEmpty()) {
-      $fields[] = $field;
+    $fields = [];
+
+    foreach ($sandbox['fields'] as $field) {
+      if (!$entity->get($field)->isEmpty()) {
+        $fields[] = $field;
+      }
     }
+
+    if (count($fields) === 1) {
+      $entity->field_plugin_field->value = reset($fields);
+    }
+
+    $entity->save();
   }
 
-  if (count($fields) === 1) {
-    $entity->field_plugin_field->value = reset($fields);
-  }
-
-  $entity->save();
-
-  $sandbox['processed']++;
+  $sandbox['processed'] += count($entity_ids);
 
   $sandbox['#finished'] = $sandbox['processed'] / $sandbox['total'];
 }
