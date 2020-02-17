@@ -95,8 +95,7 @@ class ContentBuilder implements ContentBuilderInterface {
     // When the user didn't select any filter in the "Content selection" field
     // then the block base query will be built based on all filled filterable
     // fields.
-    // 'all' is a special value set in ContentBlockPluginFieldWidget.
-    if ($block_content->field_plugin_field->value === 'all' || $block_content->field_plugin_field->isEmpty()) {
+    if ($block_content->field_plugin_field->isEmpty()) {
       $field_names = $definition['fields'];
     }
     // When the user selected some filter in the "Content selection" field then

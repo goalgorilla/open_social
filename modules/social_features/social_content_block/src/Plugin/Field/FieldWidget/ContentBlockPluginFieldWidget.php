@@ -83,13 +83,18 @@ class ContentBlockPluginFieldWidget extends ContentBlockPluginWidgetBase {
    *   The form state.
    */
   public static function validateElement(array $element, FormStateInterface $form_state) {
-    $form_state->setValueForElement($element, [
-      'value' => $form_state->getValue([
-        'field_plugin_field',
-        0,
-        $form_state->getValue(['field_plugin_id', 0, 'value']),
-      ]),
+    $value = $form_state->getValue([
+      'field_plugin_field',
+      0,
+      $form_state->getValue(['field_plugin_id', 0, 'value']),
     ]);
+
+    if ($value === 'all') {
+      $form_state->setValueForElement($element, NULL);
+    }
+    else {
+      $form_state->setValueForElement($element, ['value' => $value]);
+    }
   }
 
 }
