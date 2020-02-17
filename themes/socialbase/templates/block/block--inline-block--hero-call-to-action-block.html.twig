@@ -49,29 +49,29 @@
 {{ attach_library('socialbase/hero')}}
 
 {%
-set classes = [
+  set classes = [
   'cover',
-  'cover-with-canvas',
   has_image ? 'cover-img',
-  ]
+  has_image ? 'cover-img-gradient',
+  'hero',
+  'hero--dashboard',
+]
 %}
 
 {% if has_image %}
-  <div{{ attributes.addClass(classes) }} style="background-image: url({{ image_url }})">
+<div{{ attributes.addClass(classes) }} style="background-image: url({{ image_url }})">
 {% else %}
-  <div{{ attributes.addClass(classes) }}>
+<div{{ attributes.addClass(classes) }}>
 {% endif %}
+    <div class="hero__bgimage-overlay"></div>
+    {{ title_suffix }}
 
-  {{ title_suffix }}
-
-  {% if content %}
-    <div class="cover-wrap">
-      <div class="hero-canvas">
+    {% if content %}
+      <div class="cover-wrap">
         {% block content %}
           {{ content }}
         {% endblock %}
       </div>
-    </div>
-  {% endif %}
+    {% endif %}
 
-</div>
+  </div>
