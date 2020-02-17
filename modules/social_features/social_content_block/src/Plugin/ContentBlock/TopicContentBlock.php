@@ -36,6 +36,7 @@ class TopicContentBlock extends ContentBlockBase {
         // Add group tags.
         case 'field_group':
           $query->innerJoin('group_content_field_data', 'gd', 'gd.entity_id = base_table.nid');
+          $query->condition('gd.type', '%' . $query->escapeLike('-group_node-topic'), 'LIKE');
           $query->condition('gd.gid', $entity_ids, 'IN');
           break;
 
