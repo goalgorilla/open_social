@@ -110,9 +110,13 @@ class ContentBuilder implements ContentBuilderInterface {
     $fields = [];
 
     foreach ($field_names as $field_name) {
-      $fields[$field_name] = array_map(function ($item) {
-        return $item['target_id'];
-      }, $block_content->get($field_name)->getValue());
+      $field = $block_content->get($field_name);
+
+      if ($field->isEmpty()) {
+        $fields[$field_name] = array_map(function ($item) {
+          return $item['target_id'];
+        }, $field->getValue());
+      }
     }
 
     /** @var \Drupal\social_content_block\ContentBlockPluginInterface $plugin */
@@ -132,7 +136,9 @@ class ContentBuilder implements ContentBuilderInterface {
       );
     }
 
-    $plugin->query($query, $fields);
+    if ($fields) {
+      $plugin->query($query, $fields);
+    }
 
     // Allow other modules to change the query to add additions.
     $this->moduleHandler->alter('social_content_block_query', $query, $block_content);
