@@ -3,34 +3,8 @@
 
 // Hero banner with full width.
 .socialblue--sky {
-
-  .cover--landing {
-    position: relative;
-    margin-bottom: 9px;
-
-    @include for-tablet-landscape-up {
-      margin-bottom: 18px;
-    }
-
-    &:after {
-      content: '';
-      position: absolute;
-      display: block;
-      top: 100%;
-      width: 100%;
-      left: 0;
-      height: 9px;
-
-      @include for-tablet-landscape-up {
-        height: 18px;
-      }
-    }
-  }
-
   .cover-wrap {
     @include for-tablet-portrait-up {
-      min-height: 320px;
-
       > .hero-footer {
         position: static;
       }
@@ -173,6 +147,26 @@
         margin-left: 0;
         margin-bottom: 0;
         flex-basis: auto;
+        order: initial;
+      }
+
+      .metainfo__vote {
+        .card__link {
+          margin: 0;
+
+          .btn {
+            border-color: #adadad;
+
+            &.voted {
+              border-color: #f3f3f3;
+              background: #f3f3f3;
+            }
+          }
+
+          .vote__label {
+            text-transform: initial;
+          }
+        }
       }
 
       .vote__count {
@@ -186,7 +180,7 @@
   }
 
   // Hero static
-  .hero__banner-static {
+  .hero__banner--static {
     @include full-with-inside-container;
     background: #fff;
     padding: 60px 1em 0;
@@ -201,6 +195,7 @@
 
     .teaser__title {
       margin: 0 0 1rem;
+      max-height: none;
 
       @include for-tablet-landscape-up {
         font-size: 2.25rem;
@@ -260,18 +255,18 @@
       padding-bottom: 0;
     }
 
-    .hero__tag {
+    .teaser__tag {
       margin-bottom: .75rem;
+      font-size: 1rem;
+      font-weight: 700;
+      text-transform: uppercase;
 
-      a,
-      span {
-        font-size: 1rem;
+      @include for-tablet-portrait-up {
+        font-size: 1.25rem;
+      }
+
+      > * {
         font-weight: 700;
-        text-transform: uppercase;
-
-        @include for-tablet-portrait-up {
-          font-size: 1.25rem;
-        }
       }
     }
 
@@ -310,6 +305,10 @@
           margin-bottom: 0;
         }
       }
+    }
+
+    &.no-image .hero-footer {
+      border-top: 1px solid #d5d6d2;
     }
 
     .hero-footer__list {
@@ -379,9 +378,8 @@
     }
   }
 
-
   // Hero banner static for event teaser pages.
-  &.path-node:not(.page-node-type-topic) .hero__banner-static {
+  &.path-node:not(.page-node-type-topic) .hero__banner--static {
     @include for-tablet-portrait-up {
       padding-top: 75px;
     }
@@ -400,6 +398,7 @@
 
     .hero-footer {
       padding-top: 0;
+      border: 0;
     }
 
     .hero-footer__header {
@@ -465,7 +464,7 @@
   }
 
   main:not(.is-navbar-secondary) {
-    .hero__banner-static {
+    .hero__banner--static {
       @include for-tablet-portrait-up {
         padding-bottom: 0;
       }
@@ -482,6 +481,101 @@
         }
 
         padding-bottom: 20px;
+      }
+    }
+  }
+
+  //Profile Hero Banner.
+  &.path-user {
+    .cover-wrap {
+      @include for-tablet-landscape-down {
+        min-height: 160px;
+      }
+    }
+  }
+
+  //Profile/Group Hero Banner.
+  &.path-user,
+  &.path-group {
+    .cover-wrap {
+      max-width: 1200px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+  }
+
+  &.path-group {
+    .cover-wrap {
+      padding: 0 2.25rem;
+
+      .page-title {
+        width: 100%;
+        max-width: 100%;
+        text-align: left;
+
+        .badge {
+          font-size: 12px;
+          font-weight: 700;
+          padding-left: 1em;
+          padding-right: 1em;
+        }
+
+        .group-hero--wrapper {
+          margin-top: 8px;
+        }
+
+        @include for-phone-only {
+          display: flex;
+          flex-direction: column;
+
+          > * {
+            align-self: flex-start;
+
+            &:not(:first-child) {
+              margin-top: 8px;
+            }
+          }
+        }
+      }
+
+      h1 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        line-height: 32px;
+        text-shadow: none;
+        margin: 0;
+
+        @include for-tablet-landscape-up {
+          font-size: 2.25rem;
+          line-height: 1.4;
+        }
+      }
+
+      .teaser__tag {
+        display: inline-block;
+        width: auto;
+        padding: 1px 1em;
+        margin-bottom: 0;
+        font-size: .75rem;
+        color: #fff;
+        border-radius: 2px;
+        text-shadow: none;
+        text-transform: inherit;
+
+        &:hover {
+          color: #fff;
+        }
+      }
+
+      .hero-footer {
+        padding-top: 0;
+      }
+
+      .hero-footer__text {
+        flex: 0 0 100%;
+        max-width: 100%;
+        margin: 0;
+        text-align: left;
       }
     }
   }

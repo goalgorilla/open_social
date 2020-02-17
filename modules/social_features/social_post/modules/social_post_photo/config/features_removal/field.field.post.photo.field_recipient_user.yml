@@ -1,0 +1,26 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.post.field_recipient_user
+    - social_post.post_type.photo
+id: post.photo.field_recipient_user
+field_name: field_recipient_user
+entity_type: post
+bundle: photo
+label: 'Recipient (user)'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:user'
+  handler_settings:
+    include_anonymous: false
+    filter:
+      type: _none
+    target_bundles: null
+    sort:
+      field: _none
+field_type: entity_reference

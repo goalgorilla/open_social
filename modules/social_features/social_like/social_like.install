@@ -13,9 +13,9 @@ use Drupal\user\Entity\Role;
  * Perform actions related to the installation of social_like.
  */
 function social_like_install() {
-
   // Set some default permissions.
   _social_like_set_permissions();
+  _social_like_set_defaults();
 }
 
 /**
@@ -75,6 +75,36 @@ function _social_like_set_permissions() {
     $permissions = _social_like_get_permissions($role->id());
     user_role_grant_permissions($role->id(), $permissions);
   }
+}
+
+/**
+ * Set default config.
+ */
+function _social_like_set_defaults() {
+  // Add like and dislike settings.
+  /** @var \Drupal\Core\Config\Config|\Drupal\Core\Config\ImmutableConfig $config */
+  $container = \Drupal::getContainer()->get('config.factory');
+  $config = $container->getEditable('like_and_dislike.settings');
+  $config->set('hide_vote_widget', TRUE)->save();
+  $config->set(
+    'enabled_types',
+    [
+      'comment' => [
+        'comment',
+        'post_comment',
+      ],
+      'node' => [
+        'topic',
+        'event',
+      ],
+      'post' => [
+        'post',
+      ],
+    ]
+  )->save();
+  // Add voting api settings.
+  $config = $container->getEditable('like_and_dislike.settings');
+  $config->set('delete_everywhere', FALSE)->save();
 }
 
 /**

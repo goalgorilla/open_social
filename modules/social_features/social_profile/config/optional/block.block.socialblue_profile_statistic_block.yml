@@ -1,0 +1,27 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - social_profile
+    - system
+  theme:
+    - socialblue
+id: socialblue_profile_statistic_block
+theme: socialblue
+region: complementary_top
+weight: -100
+provider: null
+plugin: profile_statistic_block
+settings:
+  id: profile_statistic_block
+  label: 'Profile statistic block'
+  provider: social_profile
+  label_display: '0'
+  context_mapping:
+    user: '@social_user.user_route_context:user'
+visibility:
+  request_path:
+    id: request_path
+    pages: "/user\r\n/user/*/stream\r\n/user/*/events\r\n/user/*/topics\r\n/user/*/groups\r\n/user/*/information\r\n/user/*/discussions\r\n/user/*/ideas\r\n/user/*/challenges"
+    negate: false
+    context_mapping: {  }
