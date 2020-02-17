@@ -49,8 +49,6 @@ class TopicContentBlock extends ContentBlockBase {
           break;
       }
     }
-
-    return $query;
   }
 
 }
