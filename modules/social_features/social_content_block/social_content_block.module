@@ -5,6 +5,7 @@
  * The Social Content Block module.
  */
 
+use Drupal\block_content\BlockContentInterface;
 use Drupal\Core\Block\BlockPluginInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element;
@@ -26,7 +27,12 @@ function social_content_block_preprocess_block(&$variables) {
  * Implements hook_block_view_BASE_BLOCK_ID_alter().
  */
 function social_content_block_block_view_block_content_alter(&$build, BlockPluginInterface $block) {
-  if ($block_entity = _social_content_block_is_custom_content_block($block)) {
+  // Implements lazy loading for the content block through normal placement.
+  $uuid = $block->getDerivativeId();
+  /** @var \Drupal\block_content\BlockContentInterface $block_entity */
+  $block_entity = \Drupal::service('entity.repository')
+    ->loadEntityByUuid('block_content', $uuid);
+  if ($block_entity->bundle() === 'custom_content_list') {
     $build['social_content_block'] = [
       '#lazy_builder' => [
         'social_content_block.content_builder:build',
@@ -39,21 +45,25 @@ function social_content_block_block_view_block_content_alter(&$build, BlockPlugi
     ];
   }
 }
-
 /**
- * Checks if a block is a Custom content block.
+ * Implements hook_block_view_BASE_BLOCK_ID_alter().
  */
-function _social_content_block_is_custom_content_block(BlockPluginInterface $block) {
-  if ($block->getBaseId() === 'block_content') {
-    $uuid = $block->getDerivativeId();
-    /** @var \Drupal\block_content\BlockContentInterface $block_entity */
-    $block_entity = \Drupal::service('entity.repository')
-      ->loadEntityByUuid('block_content', $uuid);
-    if ($block_entity->bundle() === 'custom_content_list') {
-      return $block_entity;
-    }
+function social_content_block_block_view_inline_block_alter(&$build, BlockPluginInterface $block) {
+  // Implements lazy loading for the content block in layout builder.
+  $block_entity = $build['content']['#block_content'];
+  if (!$block_entity instanceof BlockContentInterface || $block_entity->bundle() !== 'custom_content_list') {
+    return;
   }
-  return FALSE;
+  $build['content'] = [
+    '#lazy_builder' => [
+      'social_content_block.content_builder:build',
+      [
+        $block_entity->getEntityTypeId(),
+        $block_entity->id(),
+      ],
+    ],
+    '#create_placeholder' => TRUE,
+  ];
 }
 
 /**

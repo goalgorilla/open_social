@@ -26,6 +26,10 @@ class TopicContentBlock extends ContentBlockBase {
    */
   public function query(SelectInterface $query, array $fields) {
     foreach ($fields as $field_name => $entity_ids) {
+      // If there are no entity ids to limit to we allow them all.
+      if (empty($entity_ids)) {
+        continue;
+      }
       switch ($field_name) {
         // Add topic type tags.
         case 'field_topic_type':
