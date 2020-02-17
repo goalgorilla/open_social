@@ -111,7 +111,7 @@ class ContentBuilder implements ContentBuilderInterface {
     foreach ($field_names as $field_name) {
       $field = $block_content->get($field_name);
 
-      if ($field->isEmpty()) {
+      if (!$field->isEmpty()) {
         $fields[$field_name] = array_map(function ($item) {
           return $item['target_id'];
         }, $field->getValue());
