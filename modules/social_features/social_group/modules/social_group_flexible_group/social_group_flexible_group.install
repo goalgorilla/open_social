@@ -12,9 +12,6 @@ function social_group_flexible_group_install() {
   // Set some default permissions.
   _social_group_flexible_group_set_permissions();
 
-  // Enable landing page view mode if necessary.
-  _social_group_flexible_group_enable_landing_page_view_mode();
-
   // Set module weight higher as the weight of the "Social Group" module because
   // needs have the Views group type field which added via the "Social Group"
   // module.
@@ -60,18 +57,4 @@ function _social_group_flexible_group_get_permissions($role) {
   $permissions['sitemanager'] = array_merge($permissions['contentmanager'], []);
 
   return $permissions[$role] ?? [];
-}
-
-/**
- * Enable the social_flexible_group_featured if applicable.
- */
-function _social_group_flexible_group_enable_landing_page_view_mode() {
-  // Only when landing page and flexible groups are enabled,
-  // we need to enable this submodule. So we can have the optional
-  // featured view mode that is dependant on flexible groups
-  // and landing page being enabled.
-  // See https://drupal.org/node/3112214.
-  if (\Drupal::moduleHandler()->moduleExists('social_landing_page')) {
-    \Drupal::service('module_installer')->install(['social_flexible_group_featured']);
-  }
 }
