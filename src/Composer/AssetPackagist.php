@@ -1,7 +1,7 @@
 <?php
 // @codingStandardsIgnoreFile
 
-namespace Social\Composer;
+namespace Drupal\social\Composer;
 
 use Composer\Json\JsonFile;
 use Composer\Script\Event;

@@ -284,3 +284,30 @@ function _social_search_retrigger_profile(User $user) {
     }
   }
 }
+
+/**
+ * Re-saves search indices.
+ *
+ * This triggers the save for all search indexes which triggers updates of
+ * fields and processors.
+ *
+ * @param array $index_ids
+ *   An array of index IDs to re-save or NULL to re-save all indices.
+ *
+ * @throws \Drupal\Core\Entity\EntityStorageException
+ */
+function social_search_resave_search_indexes(array $index_ids = NULL) {
+  // We load all indexes, we assume there will never be hundreds of search
+  // indexes which would create its own problems for a site.
+  $indexes = Index::loadMultiple($index_ids);
+
+  /** @var \Drupal\search_api\IndexInterface $index */
+  foreach ($indexes as $index) {
+    // No need to disable and enable the index here, this worked around a
+    // validation of the Search Settings form that prevented the save from being
+    // triggered. However, this validation is not present in the entity save
+    // logic. So a simple call to `save()` will trigger the reprocessing of
+    // fields and processors.
+    $index->save();
+  }
+}

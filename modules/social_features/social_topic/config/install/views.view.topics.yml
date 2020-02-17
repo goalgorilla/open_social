@@ -10,6 +10,8 @@ dependencies:
     - node
     - taxonomy
     - user
+_core:
+  default_config_hash: r72T2d1Jmx-7Disor6Ip5-xvbhZ_P9MdQw8n0tNKPkI
 id: topics
 label: 'User Topics'
 module: views
@@ -17,7 +19,6 @@ description: ''
 tag: ''
 base_table: node_field_data
 base_field: nid
-core: 8.x
 display:
   default:
     display_plugin: default
@@ -136,6 +137,9 @@ display:
           entity_field: type
           plugin_id: bundle
           group: 1
+          expose:
+            operator_limit_selection: false
+            operator_list: {  }
         field_topic_type_target_id:
           id: field_topic_type_target_id
           table: node__field_topic_type
@@ -162,6 +166,8 @@ display:
               anonymous: '0'
               administrator: '0'
             reduce: false
+            operator_limit_selection: false
+            operator_list: {  }
           is_grouped: false
           group_info:
             label: ''
@@ -206,6 +212,8 @@ display:
               authenticated: authenticated
               anonymous: '0'
               administrator: '0'
+            operator_limit_selection: false
+            operator_list: {  }
           is_grouped: false
           group_info:
             label: ''
@@ -244,6 +252,8 @@ display:
             multiple: false
             remember_roles:
               authenticated: authenticated
+            operator_limit_selection: false
+            operator_list: {  }
           is_grouped: false
           group_info:
             label: ''
@@ -431,6 +441,9 @@ display:
           entity_field: type
           plugin_id: bundle
           group: 1
+          expose:
+            operator_limit_selection: false
+            operator_list: {  }
         status:
           id: status
           table: node_field_data
@@ -454,6 +467,8 @@ display:
             multiple: false
             remember_roles:
               authenticated: authenticated
+            operator_limit_selection: false
+            operator_list: {  }
           is_grouped: false
           group_info:
             label: ''
@@ -492,6 +507,8 @@ display:
             multiple: false
             remember_roles:
               authenticated: authenticated
+            operator_limit_selection: false
+            operator_list: {  }
           is_grouped: false
           group_info:
             label: ''

@@ -40,9 +40,12 @@
 {# Fields in the event teaser need to render without a div, because it is a child element of a tag that cannot have a div such as an anchor or paragraph #}
 
 {% if bare %}
+  {% if not label_hidden %}
+    <div{{ title_attributes.addClass(title_classes) }}>{{ label }}</div>
+  {% endif %}
   {% for item in items %}
     {% if entity_type == "node" and field_name == "body" and part_of_teaser %}
-        {{ item.content|render|striptags }}
+      {{ item.content|render|striptags }}
     {% else %}
       {{ item.content }}
     {% endif %}
@@ -52,19 +55,18 @@
 
   {%
     set classes = [
-      'field',
-      'field--name-' ~ field_name|clean_class,
-      'field--type-' ~ field_type|clean_class,
-      'field--label-' ~ label_display,
-    ]
+    'field',
+    'field--name-' ~ field_name|clean_class,
+    'field--type-' ~ field_type|clean_class,
+    'field--label-' ~ label_display,
+  ]
   %}
   {%
     set title_classes = [
-      'field--label',
-      label_display == 'visually_hidden' ? 'sr-only',
-    ]
+    'field--label',
+    label_display == 'visually_hidden' ? 'sr-only',
+  ]
   %}
-
 
   {% if label_hidden %}
     {% if multiple %}
@@ -82,13 +84,13 @@
     <div{{ attributes.addClass(classes) }}>
       <div{{ title_attributes.addClass(title_classes) }}>{{ label }}</div>
       {% if multiple %}
-        <div class="field__items">
-      {% endif %}
-      {% for item in items %}
-        <div{{ item.attributes.addClass('field--item') }}>{{ item.content }}</div>
-      {% endfor %}
-      {% if multiple %}
-        </div>
+      <div class="field__items">
+        {% endif %}
+        {% for item in items %}
+          <div{{ item.attributes.addClass('field--item') }}>{{ item.content }}</div>
+        {% endfor %}
+        {% if multiple %}
+      </div>
       {% endif %}
     </div>
   {% endif %}

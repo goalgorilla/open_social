@@ -13,8 +13,18 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
 use Drupal\profile\Entity\ProfileInterface;
+use Drupal\social_user\Entity\User;
 use Drupal\social_user\Plugin\Action\SocialBlockUser;
 use Drupal\user\Plugin\Action\BlockUser;
+
+/**
+ * Implements hook_entity_type_alter().
+ */
+function social_user_entity_type_alter(array &$entity_types) {
+  if (isset($entity_types['user'])) {
+    $entity_types['user']->setClass(User::class);
+  }
+}
 
 /**
  * Implements hook_action_info_alter().
@@ -116,7 +126,7 @@ function social_user_form_views_exposed_form_alter(&$form, FormStateInterface $f
 }
 
 /**
- * Returns array with titles of all groups.
+ * Returns array with titles of all groups, ordered by their label.
  */
 function _social_user_get_groups() {
   $data = &drupal_static(__FUNCTION__);
@@ -125,6 +135,7 @@ function _social_user_get_groups() {
     $data = \Drupal::database()
       ->select('groups_field_data', 'gfd')
       ->fields('gfd', ['id', 'label'])
+      ->orderBy('label')
       ->execute()
       ->fetchAllKeyed(0, 1);
   }
@@ -189,15 +200,19 @@ function social_user_form_user_register_form_alter(&$form, FormStateInterface $f
       ];
     }
 
-    $login_link = Link::createFromRoute(new TranslatableMarkup('Log in'), 'user.login', [], $link_options)->toString();
+    // Ensure this is not shown for site managers when creating accounts through
+    // the admin interface.
+    if (\Drupal::currentUser()->isAnonymous()) {
+      $login_link = Link::createFromRoute(new TranslatableMarkup('Log in'), 'user.login', [], $link_options)->toString();
 
-    $form['account']['login-link'] = [
-      '#markup' => new TranslatableMarkup("Have an account already? @link", ["@link" => $login_link]),
-      '#weight' => 1000,
-      '#cache' => [
-        'contexts' => ['url.query_args'],
-      ],
-    ];
+      $form['account']['login-link'] = [
+        '#markup' => new TranslatableMarkup("Have an account already? @link", ["@link" => $login_link]),
+        '#weight' => 1000,
+        '#cache' => [
+          'contexts' => ['url.query_args'],
+        ],
+      ];
+    }
   }
 
   // Add an extra validation option, to check for existing data.

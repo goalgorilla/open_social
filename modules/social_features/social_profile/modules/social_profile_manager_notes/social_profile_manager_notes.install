@@ -1,0 +1,21 @@
+<?php
+
+/**
+ * @file
+ * The social profile manager notes install file.
+ */
+
+/**
+ * Implements hook_install().
+ */
+function social_profile_manager_notes_install() {
+  // Set some default permissions.
+  _social_profile_manager_notes_set_permissions();
+}
+
+/**
+ * Function to set permissions.
+ */
+function _social_profile_manager_notes_set_permissions() {
+  user_role_grant_permissions('sitemanager', ['edit field manager notes', 'view field manager notes']);
+}

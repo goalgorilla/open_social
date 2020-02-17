@@ -20,13 +20,13 @@ class EventType extends DemoTaxonomyTerm {
   /**
    * {@inheritdoc}
    */
-  public function createContent() {
+  public function createContent($generate = FALSE, $max = NULL) {
     // Check if event types are enabled.
     if (!\Drupal::moduleHandler()->moduleExists('social_event_type')) {
       return;
     }
 
-    return parent::createContent();
+    return parent::createContent($generate, $max);
   }
 
   /**

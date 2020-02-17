@@ -209,6 +209,12 @@
 
 .field--name-field-introduction-text a:not(.btn),
 .field--name-field-introduction-text a:not(.btn):hover,
+.field--name-field-featured-items-description a:not(.btn),
+.field--name-field-featured-items-description a:not(.btn):hover,
+.field--name-field-featured-description a:not(.btn),
+.field--name-field-featured-description a:not(.btn):hover,
+.field--name-field-accord-description a:not(.btn),
+.field--name-field-accord-description a:not(.btn):hover,
 .body-text a:not(.btn),
 .body-text a:not(.btn):hover {
   color: #33b5e5;
@@ -518,5 +524,92 @@ html:not(.js) .navbar-default {
         fill: $brand-accent;
       }
     }
+  }
+}
+
+.badge.badge-active {
+  background-color: $brand-accent;
+}
+
+.phase {
+  &.phase-past {
+    &:not(:last-child):before {
+      background-color: $brand-accent;
+    }
+
+    .phase-past--icon .checkmark-icon {
+      fill: $brand-accent;
+    }
+  }
+
+  &.phase-active {
+    &:before {
+      background-color: $brand-accent;
+    }
+  }
+
+  .teaser__tag {
+    color: $brand-primary;
+
+    a {
+      &:hover,
+      &:active,
+      &:focus {
+        color: $brand-accent;
+      }
+    }
+  }
+
+  &.path-group {
+    .cover-wrap {
+      .teaser__tag {
+        background-color: $brand-primary;
+        color: #fff;
+      }
+    }
+  }
+
+  .badge-primary {
+    background: $brand-primary;
+  }
+
+  .hero__banner-static {
+    .hero__tag {
+      color: $brand-primary;
+
+      a,
+      span {
+        color: $brand-primary;
+      }
+
+      a {
+        &:hover,
+        &:active,
+        &:focus {
+          color: $brand-accent;
+        }
+      }
+    }
+  }
+
+  .navbar-secondary {
+    .navbar-nav {
+      .hidden-list {
+        li a {
+          &:hover,
+          &.active,
+          &:focus,
+          &.is-active {
+            color: $brand-primary;
+          }
+        }
+      }
+    }
+  }
+}
+
+.teaser--tile.teaser-profile {
+  .teaser__image {
+    background-color: $brand-primary;
   }
 }

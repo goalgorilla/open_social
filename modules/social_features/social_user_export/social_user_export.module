@@ -29,7 +29,10 @@ function social_user_export_file_download($uri) {
     $access = TRUE;
   }
 
-  if ($scheme === 'private' && $access && preg_match('/^csv\/export-(users|enrollments)-([a-f0-9]{12})\.csv$/i', $target)) {
+  // The pattern should match all the declared file patterns from
+  // the `generateFilePath()` methods in export bulk actions plugins.
+  if ($scheme === 'private' && $access
+    && preg_match('/^csv\/export-(users|enrollments|members)-([a-f0-9]{12})\.csv$/i', $target)) {
     return [
       'Content-disposition' => 'attachment; filename="' . basename($target) . '"',
     ];

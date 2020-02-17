@@ -53,7 +53,11 @@ libraries-extend:
     - socialbase/modal
   image_widget_crop/cropper.integration:
     - socialbase/cropper.integration
-
+  # Attach our own libary_builder library to the one in Drupal core. Our
+  # library re-adds some CSS files that we remove elsewhere for our own modals
+  # to work properly. However, that removal breaks the layout builder.
+  layout_builder/drupal.layout_builder:
+    - socialbase/layout_builder
 
 stylesheets-remove:
   - like_and_dislike.icons.css
@@ -157,9 +161,6 @@ component-libraries:
   templates:
     paths:
       - components/05-templates
-  pages:
-    paths:
-      - components/06-pages
 
 # Special stylesheets for CKEditor to use while editing.
 ckeditor_stylesheets:

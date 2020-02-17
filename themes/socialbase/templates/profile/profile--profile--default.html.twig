@@ -67,7 +67,7 @@
 #}
 
 <div class="card">
-  <div class="card__body">
+  <div class="card__body body-text">
     {% if (content.field_profile_phone_number|render or user_mail or content.field_profile_address|render) %}
       <h4>{% trans %}Contact information{% endtrans %}</h4>
     {% endif %}
@@ -94,7 +94,6 @@
           </div>
       </div>
     {% endif %}
-
 
     {% if content.field_profile_self_introduction|render %}
       <h5>{% trans %}Intro{% endtrans %}</h5>
@@ -124,7 +123,7 @@
 
     {{  content|without('field_profile_phone_number', 'user_mail', 'field_profile_address',
       'field_profile_self_introduction', 'field_profile_interests', 'field_profile_expertise',
-      'field_profile_profile_tag') }}
+      'field_profile_profile_tag', 'field_manager_notes') }}
 
     {% if (content|render is empty and user_mail is empty)%}
         {% trans %}{{ profile_name }} {{ profile_name_extra }} has not shared profile information.{% endtrans %}
@@ -132,3 +131,7 @@
 
   </div>
 </div>
+
+{% if (content.field_manager_notes|render) %}
+        {{ content.field_manager_notes }}
+{% endif %}

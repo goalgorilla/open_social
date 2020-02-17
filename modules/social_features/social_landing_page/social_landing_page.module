@@ -58,18 +58,6 @@ function social_landing_page_theme() {
   $theme_templates['node__event__featured'] = [
     'base hook' => 'node',
   ];
-  $theme_templates['node__topic__featured'] = [
-    'base hook' => 'node',
-  ];
-  $theme_templates['node__page__featured'] = [
-    'base hook' => 'node',
-  ];
-  $theme_templates['node__book__featured'] = [
-    'base hook' => 'node',
-  ];
-  $theme_templates['node__landing_page__featured'] = [
-    'base hook' => 'node',
-  ];
   // Group.
   $theme_templates['group__featured'] = [
     'base hook' => 'group',
@@ -139,15 +127,8 @@ function social_landing_page_theme() {
  * Implements hook_preprocess_page().
  */
 function social_landing_page_preprocess_page(&$variables) {
-  $nid = \Drupal::routeMatch()->getRawParameter('node');
-  // At this point the parameter could also be a simple string of a nid.
-  // EG: on: /node/%node/enrollments.
-  if (!is_null($nid) && !is_object($nid)) {
-    $node = Node::load($nid);
-  }
-
   // Here we remove class for landing page.
-  if (isset($variables['node']) && $node->bundle() === 'landing_page') {
+  if (isset($variables['node']) && $variables['node']->bundle() === 'landing_page') {
     if ($variables['content_attributes'] instanceof Attribute) {
       $variables['content_attributes']->removeClass('layout--with-complementary');
     }
@@ -210,18 +191,8 @@ function social_landing_page_preprocess_node(&$variables) {
     $account = \Drupal::currentUser();
 
     // Add node edit url for management.
-    if ($node instanceof NodeInterface) {
-      // Get the current route name to check if the user is on the
-      // edit or delete page.
-      $route = \Drupal::routeMatch()->getRouteName();
-      if (!in_array($route, [
-        'entity.node.edit_form',
-        'entity.node.delete_form',
-      ])) {
-        if ($node->access('update', $account)) {
-          $variables['node_edit_url'] = $node->toUrl('edit-form')->toString();
-        }
-      }
+    if ($node instanceof NodeInterface && $node->access('update', $account)) {
+      $variables['node_edit_url'] = $node->toUrl('edit-form')->toString();
     }
   }
 }
@@ -315,4 +286,21 @@ function social_landing_page_social_user_account_header_create_links($context) {
       '#weight' => 400,
     ] + Url::fromRoute('node.add', ['node_type' => 'landing_page'])->toRenderArray(),
   ];
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK_alter().
+ */
+function social_landing_page_theme_suggestions_page_alter(array &$suggestions, array $variables) {
+  // Get Request Object.
+  $request = \Drupal::request();
+
+  // If there is HTTP Exception..
+  if ($exception = $request->attributes->get('exception')) {
+    // Get the status code.
+    $status_code = $exception->getStatusCode();
+    if ($status_code == 404) {
+      $suggestions[] = 'page__node__landing_page';
+    }
+  }
 }

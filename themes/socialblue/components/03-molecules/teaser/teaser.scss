@@ -24,3 +24,24 @@
 .teaser__teaser-type-icon {
   fill: white;
 }
+
+// Remove 'padding-left' from teaser badge if teaser badge(first-child) does not use 'background-color'.
+.teaser {
+  .teaser__badge {
+    &:first-child {
+      padding-left: 0;
+
+      &.badge-default,
+      &.badge-primary,
+      &.badge-secondary,
+      &.badge-accent,
+      &.badge-success,
+      &.badge-info,
+      &.badge-warning,
+      &.badge-danger,
+      &.badge-active {
+        padding-left: 1em;
+      }
+    }
+  }
+}
