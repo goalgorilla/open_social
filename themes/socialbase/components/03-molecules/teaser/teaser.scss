@@ -250,3 +250,63 @@
     }
   }
 }
+
+// Small teasers, used in blocks for example.
+.teaser--small {
+  display: flex;
+  padding: 1.5rem $card-spacer-x 0;
+
+  .teaser--small__media {
+    flex: none;
+
+    img {
+      // This is not controllable by theme settings on purpose.
+      border-radius: 5px;
+    }
+
+    .teaser--small__type-icon {
+      // Matches the image style for the images.
+      width: 44px;
+      height: 44px;
+
+      fill: $text-color;
+      background-color: $gray-lighter;
+      border-radius: 5px;
+      padding: .75rem;
+    }
+  }
+
+  .teaser--small__title {
+    font-size: 1rem;
+  }
+
+  .teaser--small__details {
+    display: flex;
+    flex-direction: column;
+
+    margin-left: 1rem;
+  }
+
+  .teaser--small__meta {
+    color: $text-muted;
+
+    a {
+      // Matches .light
+      font-weight: 300;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  &:last-child {
+    padding-bottom: 1.5rem;
+  }
+
+  // In case a teaser is a direct sibling to an actionbar card then there's some
+  // issue with spacing that needs to be resolved.
+  & + .card__actionbar {
+    margin-top: 0;
+  }
+}

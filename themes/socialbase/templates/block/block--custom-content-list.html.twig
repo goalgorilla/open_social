@@ -45,11 +45,11 @@
  * @ingroup templates
  */
 #}
-
 {%
   set classes = [
   'block-' ~ configuration.provider|clean_class,
   'block-' ~ plugin_id|clean_class,
+  'block--custom-content-list',
   'card',
 ]
 %}
@@ -60,12 +60,26 @@
 ]
 %}
 
-
 <section{{ attributes.addClass(classes) }}>
 
   {{ title_prefix }}
   {% if label %}
-    <h2 {{ title_attributes.addClass(title_classes) }}>{{ label }}</h2>
+    <h2 {{ title_attributes.addClass(title_classes) }}>
+      {% if elements.content_type %}
+        <svg class="content-list__type">
+          <title>{{- elements.content_type -}}</title>
+          <use xlink:href="#icon-{{- elements.content_type -}}"></use>
+        </svg>
+      {% endif %}
+
+      {{ label }}
+
+      {% if elements.subtitle %}
+        <div class="card__subtitle">
+          {{ elements.subtitle }}
+        </div>
+      {% endif %}
+    </h2>
   {% endif %}
   {{ title_suffix }}
 

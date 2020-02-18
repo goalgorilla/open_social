@@ -216,14 +216,22 @@ class ContentBuilder implements ContentBuilderInterface {
 
     $build['content'] = [];
 
-    if (!$block_content->field_subtitle->isEmpty()) {
-      $build['content']['subtitle'] = $block_content->field_subtitle->view(['label' => 'hidden']);
-    }
     $build['content']['entities'] = $this->getEntities($block_content);
+    // If it's not an empty list, add a helper wrapper for theming.
+    if (!isset($build['content']['entities']['#markup'])) {
+      $build['content']['entities']['#prefix'] = '<div class="content-list__items">';
+      $build['content']['entities']['#suffix'] = '</div>';
+    }
 
     $link = $this->getLink($block_content);
     if (!empty($link)) {
-      $build['content']['link'] = $link;
+      $build['content']['link'] = [
+        '#type' => 'inline_template',
+        '#template' => '<footer class="card__actionbar">{{link}}</footer>',
+        '#context' => [
+          'link' => $link,
+        ],
+      ];
     }
 
     return $build;
