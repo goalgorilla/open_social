@@ -50,6 +50,17 @@ class ThemeSuggestions extends BaseThemeSuggestions {
           array_splice($suggestions, array_search($insert_before, $suggestions, TRUE), 0, $new_suggestion);
         }
 
+        if (isset($variables['elements']['content']['#lazy_builder']) && $variables['elements']['content']['#lazy_builder'][0] === 'social_content_block.content_builder:build') {
+          // Add a block--block-type suggestion just above the layout builder so
+          // it can be shared with other places the block is shown. This works
+          // for properly designed blocks and gives plenty of opportunities for
+          // misbehaving blocks.
+          $block_content_bundle = $variables['elements']['content']['#lazy_builder'][1][2];
+          $new_suggestion = 'block__' . $block_content_bundle;
+          $insert_before = 'block__inline_block__' . $block_content_bundle;
+          array_splice($suggestions, array_search($insert_before, $suggestions, TRUE), 0, $new_suggestion);
+        }
+
         $block_id = $variables['elements']['#derivative_plugin_id'];
         $blocks_id = [
           'upcoming_events-block_my_upcoming_events',

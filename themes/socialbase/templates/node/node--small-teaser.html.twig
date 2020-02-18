@@ -67,6 +67,10 @@
 #}
 <div class="card__block" {{ attributes }}>
 
+  {% block teaser_image %}
+    {{ content['field_' ~ node.bundle ~ '_image'] }}
+  {% endblock %}
+
   {% block text %}
     {{ title_prefix }}
     <div{{ title_attributes }} class="card__text">
@@ -78,8 +82,11 @@
   {% block extra_text %}
     <div class="card__text">
       <small class="text-muted">
-        {{ date }}
+        {{ author_name }} &middot; {{ date }}
+
       </small>
+
+      {{ content|without('field_' ~ node.bundle ~ '_image') }}
     </div>
   {% endblock %}
 
