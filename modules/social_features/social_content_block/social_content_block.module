@@ -37,8 +37,9 @@ function social_content_block_block_view_block_content_alter(&$build, BlockPlugi
       '#lazy_builder' => [
         'social_content_block.content_builder:build',
         [
-          $block_entity->getEntityTypeId(),
           $block_entity->id(),
+          $block_entity->getEntityTypeId(),
+          $block_entity->bundle(),
         ],
       ],
       '#create_placeholder' => TRUE,
@@ -55,12 +56,15 @@ function social_content_block_block_view_inline_block_alter(&$build, BlockPlugin
   if (!$block_entity instanceof BlockContentInterface || $block_entity->bundle() !== 'custom_content_list') {
     return;
   }
+  // The build argument order is relied upon by socialbase
+  // ThemeSuggestionsAlter.
   $build['content'] = [
     '#lazy_builder' => [
       'social_content_block.content_builder:build',
       [
-        $block_entity->getEntityTypeId(),
         $block_entity->id(),
+        $block_entity->getEntityTypeId(),
+        $block_entity->bundle(),
       ],
     ],
     '#create_placeholder' => TRUE,
@@ -134,20 +138,4 @@ function social_content_block_form_block_content_custom_content_list_form_alter(
 function custom_content_block_form_submit($form, FormStateInterface $form_state) {
   // Clear plugin cache.
   \Drupal::service('plugin.cache_clearer')->clearCachedDefinitions();
-}
-
-/**
- * Implements hook_theme().
- */
-function social_content_block_theme($existing, $type, $theme, $path) {
-  return [
-    'social_content_block' => [
-      'variables' => [
-        'title' => NULL,
-        'subtitle' => NULL,
-        'entities' => [],
-        'link' => NULL,
-      ],
-    ],
-  ];
 }
