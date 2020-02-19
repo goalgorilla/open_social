@@ -3,6 +3,3 @@ services:
     class: \Drupal\social_core\Routing\RouteSubscriber
     tags:
       - { name: event_subscriber }
-  social_core.config_update_helper:
-    class: Drupal\social_core\Service\SocialUpdateHelper
-    arguments: ['@config.storage', '@entity_display.repository']
