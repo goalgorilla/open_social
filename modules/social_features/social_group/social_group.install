@@ -31,6 +31,11 @@ function social_group_update_dependencies() {
     'social_group' => 8501,
   ];
 
+  // New config changes should run after the features removal/revert.
+  $dependencies['social_group'][8801] = [
+    'social_core' => 8802,
+  ];
+
   return $dependencies;
 }
 
@@ -510,4 +515,18 @@ function social_group_update_8502() {
   $config->set('allow_hero_selection', FALSE);
   $config->set('default_hero', 'hero');
   $config->save();
+}
+
+/**
+ * Update view mode for new small teaser style
+ */
+function social_group_update_8801() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_group', 'social_group_update_8801');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
 }

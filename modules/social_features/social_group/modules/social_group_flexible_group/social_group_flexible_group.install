@@ -58,3 +58,29 @@ function _social_group_flexible_group_get_permissions($role) {
 
   return $permissions[$role] ?? [];
 }
+
+/**
+ * Implements hook_update_dependencies().
+ */
+function social_group_flexible_group_update_dependencies() {
+  // New config changes should run after the features removal/revert.
+  $dependencies['social_group_flexible_group'][8801] = [
+    'social_core' => 8802,
+  ];
+
+  return $dependencies;
+}
+
+/**
+ * Update view mode for new small teaser style
+ */
+function social_group_flexible_group_update_8801() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_group_flexible_group', 'social_group_flexible_group_update_8801');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}

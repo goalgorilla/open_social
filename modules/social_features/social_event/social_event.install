@@ -118,6 +118,18 @@ function _social_event_create_menu_links() {
 }
 
 /**
+ * Implements hook_update_dependencies().
+ */
+function social_event_update_dependencies() {
+  // New config changes should run after the features removal/revert.
+  $dependencies['social_event'][8801] = [
+    'social_core' => 8802,
+  ];
+
+  return $dependencies;
+}
+
+/**
  * Enable event enrolling of open groups for not member.
  */
 function social_event_update_8001() {
@@ -167,3 +179,32 @@ function social_event_update_8801() {
     $settings->set('enroll', [])->save();
   }
 }
+
+/**
+ * Remove public group from event.small_teaser.
+ */
+function social_event_update_8802() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_event', 'social_event_update_8801');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Update view mode for new small teaser style.
+ */
+function social_event_update_8803() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_event', 'social_event_update_8802');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
