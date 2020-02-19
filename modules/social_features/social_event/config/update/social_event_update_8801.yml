@@ -1,0 +1,25 @@
+core.entity_view_display.node.event.small_teaser:
+  expected_config:
+    content:
+      groups_type_public_group:
+        label: above
+        region: content
+        settings:
+          link: true
+        third_party_settings: {  }
+        type: entity_reference_label
+        weight: -5
+  update_actions:
+    add:
+      hidden:
+        groups_type_public_group: true
+    delete:
+      content:
+        groups_type_public_group:
+          label: above
+          region: content
+          settings:
+            link: true
+          third_party_settings: {  }
+          type: entity_reference_label
+          weight: -5

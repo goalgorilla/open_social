@@ -13,12 +13,12 @@ dependencies:
     - field.field.node.event.field_event_image
     - field.field.node.event.field_event_location
     - field.field.node.event.field_files
+    - image.style.social_medium
     - node.type.event
   module:
     - datetime
+    - image
     - user
-_core:
-  default_config_hash: RxbsGYX4dpCz1n1v-7kLOscoy2QpVi-hNRClHXmWEkE
 id: node.event.small_teaser
 targetEntityType: node
 bundle: event
@@ -26,24 +26,22 @@ mode: small_teaser
 content:
   field_event_date:
     type: datetime_default
-    weight: 0
+    weight: 1
     label: hidden
     settings:
       timezone_override: ''
       format_type: day_month_time
     third_party_settings: {  }
     region: content
-  flag_follow_content:
-    weight: 10
+  field_event_image:
+    type: image
+    weight: 0
     region: content
-  groups_type_public_group:
-    label: above
-    weight: -5
-    region: content
+    label: hidden
     settings:
-      link: true
+      image_style: social_medium
+      image_link: content
     third_party_settings: {  }
-    type: entity_reference_label
 hidden:
   body: true
   field_content_visibility: true
@@ -51,12 +49,6 @@ hidden:
   field_event_comments: true
   field_event_date_end: true
   field_event_enroll: true
-  field_event_image: true
   field_event_location: true
   field_files: true
-  groups: true
-  groups_type_closed_group: true
-  groups_type_open_group: true
-  like_and_dislike: true
   links: true
-  search_api_excerpt: true

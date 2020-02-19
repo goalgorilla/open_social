@@ -132,6 +132,18 @@ function _social_topic_create_menu_links() {
 }
 
 /**
+ * Implements hook_update_dependencies().
+ */
+function social_topic_update_dependencies() {
+  // New config changes should run after the features removal/revert.
+  $dependencies['social_topic'][8801] = [
+    'social_core' => 8802,
+  ];
+
+  return $dependencies;
+}
+
+/**
  * Install download_count module.
  */
 function social_topic_update_8001() {
@@ -168,4 +180,18 @@ function social_topic_update_8003() {
   $config = \Drupal::configFactory()->getEditable('social_topic.settings');
   $config->set('social_topic_type_select_changer', 8);
   $config->save();
+}
+
+/**
+ * Update view mode for new small teaser style
+ */
+function social_topic_update_8801() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_topic', 'social_topic_update_8801');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
 }
