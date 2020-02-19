@@ -1526,21 +1526,23 @@ function social_group_save_group_from_node(array $form, FormStateInterface $form
     $groups_to_add[$new_group['target_id']] = $new_group['target_id'];
   }
   // The node already exist so lets also change the logic accordingly.
-  if ($form['#form_id'] === 'node_' . $node->bundle() . '_edit_form') {
-    $original_groups = $form['groups']['widget']['#default_value'];
-    foreach ($original_groups as $original_group_key => $original_group) {
-      if (!in_array($original_group, $groups_to_add)) {
-        $groups_to_remove[$original_group] = $original_group;
-      }
-      else {
-        unset($groups_to_add[$original_group]);
+  if(!empty($form['groups']['widget']['#default_value'])) {
+    if ($form['#form_id'] === 'node_' . $node->bundle() . '_edit_form') {
+      $original_groups = $form['groups']['widget']['#default_value'];
+      foreach ($original_groups as $original_group_key => $original_group) {
+        if (!in_array($original_group, $groups_to_add)) {
+          $groups_to_remove[$original_group] = $original_group;
+        }
+        else {
+          unset($groups_to_add[$original_group]);
+        }
       }
     }
-  }
 
-  // Now make sure the relevant GroupContent is removed or added.
-  $setGroupsForNodeService = \Drupal::service('social_group.set_groups_for_node_service');
-  $setGroupsForNodeService->setGroupsForNode($node, $groups_to_remove, $groups_to_add, $original_groups, $is_new);
+    // Now make sure the relevant GroupContent is removed or added.
+    $setGroupsForNodeService = \Drupal::service('social_group.set_groups_for_node_service');
+    $setGroupsForNodeService->setGroupsForNode($node, $groups_to_remove, $groups_to_add, $original_groups, $is_new);
+  }
 }
 
 /**
