@@ -1035,7 +1035,7 @@ function social_core_update_8806(&$sandbox) {
         'cardinality' => 1,
         'translatable' => true,
       ],
-      'field.field.block_content.basic.field_basic_link.yml' => [
+      'field.field.block_content.basic.field_basic_link' => [
         'id' => 'block_content.basic.field_basic_link',
         'field_name' => 'field_basic_link',
         'entity_type' => 'block_content',
@@ -1065,6 +1065,39 @@ function social_core_update_8806(&$sandbox) {
         'default_value_callback' => '',
         'settings' => [],
         'field_type' => 'text_long',
+      ],
+      'core.entity_form_display.block_content.basic.default' => [
+        'id' => 'block_content.basic.default',
+        'targetEntityType' => 'block_content',
+        'bundle' => 'basic',
+        'mode' => 'default',
+        'content' => [
+          'info' => [
+            'region' => 'content',
+            'settings' => [
+              'placeholder' => '',
+              'size' => 60,
+            ],
+            'third_party_settings' => [],
+            'type' => 'string_textfield',
+            'weight' => -5,
+          ],
+        ],
+        'hidden' => [
+          'field_text_block' => true,
+          'field_basic_link' => true,
+        ],
+      ],
+      'core.entity_view_display.block_content.basic.default' => [
+        'id' => 'block_content.basic.default',
+        'targetEntityType' => 'block_content',
+        'bundle' => 'basic',
+        'mode' => 'default',
+        'content' => [],
+        'hidden' => [
+          'field_basic_link' => true,
+          'field_text_block' => true,
+        ],
       ],
     ];
 
