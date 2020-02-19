@@ -1010,9 +1010,16 @@ function social_core_update_8804() {
 }
 
 /**
- * Basic block config update
+ * Install update helper for config update usage.
  */
 function social_core_update_8805() {
+  \Drupal::service('module_installer')->install(['update_helper']);
+}
+
+/**
+ * Basic block config update
+ */
+function social_core_update_8806() {
   /** @var \Drupal\update_helper\Updater $updateHelper */
   $updateHelper = \Drupal::service('update_helper.updater');
 
