@@ -684,7 +684,7 @@ function social_profile_social_user_account_header_account_links(array $context)
       ],
       '#title' => new TranslatableMarkup("Edit profile"),
       '#weight' => 1300,
-    ] + Url::fromRoute('entity.profile.type.user_profile_form', [
+    ] + Url::fromRoute('profile.user_page.single', [
       'user' => $context['user']->id(),
       'profile_type' => 'profile',
     ])->toRenderArray(),
