@@ -19,6 +19,7 @@ use Drupal\profile\Entity\Profile;
 use Drupal\profile\Entity\ProfileType;
 use Drupal\user\Entity\User;
 use Drupal\user\UserInterface;
+use Drupal\Core\Cache\RefinableCacheableDependencyInterface;
 
 define('SOCIAL_PROFILE_SUGGESTIONS_USERNAME', 'username');
 define('SOCIAL_PROFILE_SUGGESTIONS_FULL_NAME', 'full_name');
@@ -221,6 +222,15 @@ function social_profile_local_tasks_alter(&$local_tasks) {
   }
   if (!empty($local_tasks['entity.profile.user_profile_form:profile.type.profile'])) {
     unset($local_tasks['entity.profile.user_profile_form:profile.type.profile']);
+  }
+}
+
+/**
+ * Implements hook_menu_local_tasks_alter().
+ */
+function social_profile_menu_local_tasks_alter(&$data, $route_name) {
+  if (isset($data['tabs'][0]['profile.user_page:profile'])) {
+    unset($data['tabs'][0]['profile.user_page:profile']);
   }
 }
 
