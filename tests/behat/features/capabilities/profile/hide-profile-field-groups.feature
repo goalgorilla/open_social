@@ -17,7 +17,7 @@ Feature: I want to be able to hide certain profile information
     And I am on "/user"
     And I click "Edit profile information"
     And I fill in the following:
-      | Phone number | 911 |
+      | Phone number | +1-202-555-0150 |
 
     And I select "UA" from "Country"
     And I wait for AJAX to finish
@@ -39,7 +39,7 @@ Feature: I want to be able to hide certain profile information
     Given I am logged in as "user_2"
     And I am on the profile of "user_1"
     When I click "Information"
-    Then I should see "911"
+    Then I should see "+1-202-555-0150"
     And I should see "Fedkovycha 60a"
     And I should see "79000"
     And I should see "Lviv"
@@ -54,14 +54,10 @@ Feature: I want to be able to hide certain profile information
     And I uncheck the box "edit-profile-privacy-group-profile-contact-info-visible"
     And I press "Save"
 
-    When I click the xth "0" element with the css ".navbar-nav .profile"
-    And I click "Settings"
-    Then I should see "Show \"Phone number and location\" on my profile"
-
     Given I am logged in as "user_2"
     And I am on the profile of "user_1"
     When I click "Information"
-    Then I should not see "911"
+    Then I should not see "+1-202-555-0150"
     And I should not see "Fedkovycha 60a"
     And I should not see "79000"
     And I should not see "Lviv"
@@ -71,7 +67,7 @@ Feature: I want to be able to hide certain profile information
     Given I am logged in as an "administrator"
     And I am on the profile of "user_1"
     When I click "Information"
-    Then I should see "911"
+    Then I should see "+1-202-555-0150"
     And I should see "Fedkovycha 60a"
     And I should see "79000"
     And I should see "Lviv"
