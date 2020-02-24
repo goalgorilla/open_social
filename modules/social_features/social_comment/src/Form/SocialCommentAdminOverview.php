@@ -286,8 +286,8 @@ class SocialCommentAdminOverview extends FormBase {
         $info[$comment->id()][$langcode] = $langcode;
       }
       $this->tempStoreFactory
-        ->get('comment_multiple_delete_confirm')
-        ->set($this->currentUser()->id(), $info);
+        ->get('entity_delete_multiple_confirm')
+        ->set($this->currentUser()->id() . ':comment', $info);
       $form_state->setRedirect('comment.multiple_delete_confirm');
     }
   }
