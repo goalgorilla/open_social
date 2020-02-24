@@ -1,0 +1,26 @@
+<div>
+  <div>
+    {% trans %}Tag{% endtrans %}
+  </div>
+
+  <div>
+    {{ term.name }}
+  </div>
+
+  <div>
+    {% for related_content in term.related_content %}
+      {{ related_content.count }} {{ related_content.label }}
+      {% if not loop.last %}|{% endif %}
+    {% endfor %}
+  </div>
+
+  <div>
+    {{ term.flag }}
+  </div>
+
+  <div class="actions">
+    <a href="{{ term.url }}" class="btn btn-default">
+      {% trans %}See related content{% endtrans %}
+    </a>
+  </div>
+</div>

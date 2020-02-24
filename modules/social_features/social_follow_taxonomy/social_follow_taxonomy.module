@@ -1,0 +1,39 @@
+<?php
+
+/**
+ * @file
+ * Contains social_follow_taxonomy.module.
+ */
+
+use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\Core\Url;
+
+/**
+ * Implements hook_theme().
+ */
+function social_follow_taxonomy_theme($existing, $type, $theme, $path) {
+  return [
+    'flag__follow_term' => [
+      'base hook' => 'flag',
+    ],
+  ];
+
+}
+
+/**
+ * Implements hook_social_user_account_header_account_links().
+ *
+ * Adds the "Following tags" link to the user menu.
+ */
+function social_follow_taxonomy_social_user_account_header_account_links(array $context) {
+  return [
+    'my_tags' => [
+      '#type' => 'link',
+      '#attributes' => [
+        'title' => new TranslatableMarkup("View tags I'm following"),
+      ],
+      '#title' => new TranslatableMarkup('Following tags'),
+      '#weight' => 1001,
+    ] + Url::fromRoute('view.following_tags.following_tags')->toRenderArray(),
+  ];
+}

@@ -1,0 +1,23 @@
+{% for tag in tags %}
+
+  <div>
+    <div>
+      {% trans %}Tag{% endtrans %}
+    </div>
+
+    <div>
+      {{ tag.name }}
+    </div>
+
+    <div>
+      {% for related_content in tag.related_content %}
+        {{ related_content.count }} {{ related_content.label }}
+        {% if not loop.last %}|{% endif %}
+      {% endfor %}
+    </div>
+
+    <div class="actions">
+      {{ tag.flag }}
+    </div>
+  </div>
+{% endfor %}

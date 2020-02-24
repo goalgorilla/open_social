@@ -1,0 +1,16 @@
+<?php
+
+/**
+ * @file
+ * Install, update functions for the social_follow_tag module.
+ */
+
+/**
+ * Implements hook_install().
+ *
+ * Perform actions related to the installation of social_follow_tag.
+ */
+function social_follow_tag_install() {
+  module_set_weight('social_follow_tag', 10);
+  drupal_flush_all_caches();
+}
