@@ -32,17 +32,25 @@
 
   {% set button_classes = [
   'btn',
-  'btn-accent',
+  'btn-primary',
   'btn-follow',
   'follow-term-link',
   ] %}
+
+  {% set button_unfollow_classes = [
+    'btn',
+    'btn-follow',
+    'follow-term-link',
+  ] %}
+
   {% set attributes = attributes.setAttribute('rel', 'nofollow').addClass(button_classes) %}
+  {% set attributes_unfollow = attributes.setAttribute('rel', 'nofollow').addClass(button_unfollow_classes) %}
 
   <div class="{{classes|join(' ')}}">
     {% if action == 'unflag' %}
-    <button type="button" autocomplete="off" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn dropdown-toggle">{% trans %}Followed{% endtrans %}<span class="caret"></span></button>
+    <button type="button" autocomplete="off" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-default dropdown-toggle">{% trans %}Followed{% endtrans %}<span class="caret"></span></button>
     <ul class="dropdown-menu dropdown-menu-right">
-        <li><a role="button"{{ attributes }}>{{ title }}</a></li>
+        <li><a role="button"{{ attributes_unfollow }}>{{ title }}</a></li>
     </ul>
     {% else %}
       <a role="button"{{ attributes }}>{{ title }}</a>
