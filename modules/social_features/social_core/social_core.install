@@ -1016,22 +1016,24 @@ function social_core_update_8804() {
  * Import the configs in an update hook.
  */
 function social_core_update_8805() {
-  $config_files = [
-    'core.entity_form_display.private_message_thread.private_message_thread.default',
-    'core.entity_view_display.private_message.private_message.default',
-    'core.entity_view_display.private_message_thread.private_message_thread.default',
-  ];
+  if (\Drupal::service('module_handler')->moduleExists('social_private_message')) {
+    $config_files = [
+      'core.entity_form_display.private_message_thread.private_message_thread.default',
+      'core.entity_view_display.private_message.private_message.default',
+      'core.entity_view_display.private_message_thread.private_message_thread.default',
+    ];
 
-  foreach ($config_files as $config_file) {
-    $config = drupal_get_path('module', 'social_private_message') . '/config/features_removal/' . $config_file . '.yml';
+    foreach ($config_files as $config_file) {
+      $config = drupal_get_path('module', 'social_private_message') . '/config/features_removal/' . $config_file . '.yml';
 
-    if (is_file($config)) {
-      $settings = Yaml::parse(file_get_contents($config));
-      if (is_array($settings)) {
-        $update_config = \Drupal::configFactory()
-          ->getEditable($config_file);
+      if (is_file($config)) {
+        $settings = Yaml::parse(file_get_contents($config));
+        if (is_array($settings)) {
+          $update_config = \Drupal::configFactory()
+            ->getEditable($config_file);
 
-        $update_config->setData($settings)->save(TRUE);
+          $update_config->setData($settings)->save(TRUE);
+        }
       }
     }
   }
