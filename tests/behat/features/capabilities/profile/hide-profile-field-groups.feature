@@ -8,9 +8,9 @@ Feature: I want to be able to hide certain profile information
     Given I enable the module "social_profile_privacy"
     And I set the configuration item "social_profile_privacy.settings" with key "user_form_display_field_groups.group_profile_contact_info" to "group_profile_contact_info"
     And users:
-      | name          | mail                  | status |
-      | user_1        | user_1@example.com    | 1      |
-      | user_2        | user_2@example.com    | 1      |
+      | name          | mail                  | status | pass   |
+      | user_1        | user_1@example.com    | 1      | user_1 |
+      | user_2        | user_2@example.com    | 1      | user_2 |
 
     # Set your profile information and privacy settings.
     When I am logged in as "user_1"
@@ -54,8 +54,11 @@ Feature: I want to be able to hide certain profile information
     And I uncheck the box "edit-profile-privacy-group-profile-contact-info-visible"
     And I press "Save"
 
+    And I break
+
     Given I am logged in as "user_2"
     And I am on the profile of "user_1"
+    Then I should see "user_1"
     When I click "Information"
     Then I should not see "+1-202-555-0150"
     And I should not see "Fedkovycha 60a"
