@@ -253,13 +253,14 @@ function social_profile_privacy_profile_form_submit($form, FormStateInterface $f
     }
   }
 
+  // We need to clear caches for a user and the profile entity
+  // this to ensure the information block data gets invalidated.
   $entity_type_manager = \Drupal::entityTypeManager();
   $storage = $entity_type_manager->getStorage('profile');
   if ($storage !== NULL) {
     /** @var \Drupal\user\Entity\User $account */
     $account = User::load($uid);
 
-    // Check if the user has a profile already.
     $profile = \Drupal::entityTypeManager()->getStorage('profile')->loadByUser($account, ProfileType::load('profile')->id(), TRUE);
     if ($profile !== NULL) {
       Cache::invalidateTags(['entity_view:profile:' . $profile->id()]);
