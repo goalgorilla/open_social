@@ -55,6 +55,7 @@ Feature: I want to be able to hide certain profile information
     And I press "Save"
 
     Given I am logged in as "user_2"
+    And the cache has been cleared
     And I am on the profile of "user_1"
     Then I should see "user_1"
     When I click "Information"
