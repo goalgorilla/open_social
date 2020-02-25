@@ -22,7 +22,7 @@ function social_follow_tag_theme($existing, $type, $theme, $path) {
       'base hook' => 'social_tagging_split',
     ],
     'search_follow_tag' => [
-      'variables' => ['tagstitle' => NULL, 'tags' => NULL],
+      'variables' => ['tags' => NULL],
     ],
   ];
 
@@ -60,26 +60,27 @@ function social_follow_tag_preprocess_paragraph(&$variables) {
 
         // Get current terms parents.
         $parents = $term_storage->loadParents($term_id);
-        $parent = reset($parents);
-        $category = $parent->getName();
+        if (!empty($parents)) {
+          $parent = reset($parents);
+          $category = $parent->getName();
 
-        $parameter = 'tag';
-        if ($tag_service = Drupal::getContainer()->get('social_tagging.tag_service')->allowSplit()) {
-          $parameter = social_tagging_to_machine_name($category);
+          $parameter = 'tag';
+          if ($tag_service = Drupal::getContainer()->get('social_tagging.tag_service')->allowSplit()) {
+            $parameter = social_tagging_to_machine_name($category);
+          }
+          $route = 'view.search_content.page_no_value';
+          $url = Url::fromRoute($route, [
+            $parameter . '[]' => $term_id,
+          ]);
+
+          $variables['term'] = [
+            'url' => $url->toString(),
+            'name' => $term->getName(),
+            'flag' => $flag_link,
+            'related_content' => $related_content,
+          ];
         }
-        $route = 'view.search_content.page_no_value';
-        $url = Url::fromRoute($route, [
-          $parameter . '[]' => $term_id,
-        ]);
-
-        $variables['term'] = [
-          'url' => $url->toString(),
-          'name' => $term->getName(),
-          'flag' => $flag_link,
-          'related_content' => $related_content,
-        ];
       }
       break;
   }
-
 }

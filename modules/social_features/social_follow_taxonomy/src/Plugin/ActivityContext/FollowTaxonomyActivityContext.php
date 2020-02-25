@@ -22,7 +22,7 @@ class FollowTaxonomyActivityContext extends ActivityContextBase {
       $related_entity = ActivityFactory::getActivityRelatedEntity($data);
 
       if ($related_entity['target_type'] == 'node') {
-        $recipients += $this->getRecipientsWhoFollowContent($related_entity, $data);
+        $recipients += $this->getRecipientsWhoFollowTaxonomy($related_entity, $data);
       }
     }
 
@@ -37,11 +37,10 @@ class FollowTaxonomyActivityContext extends ActivityContextBase {
   }
 
   /**
-   * Returns owner recipient from entity.
+   * Returns recipients from followed taxonomies.
    */
-  public function getRecipientsWhoFollowContent(array $related_entity, array $data) {
+  public function getRecipientsWhoFollowTaxonomy(array $related_entity, array $data) {
     $recipients = [];
-    $storage = \Drupal::entityTypeManager()->getStorage('flagging');
 
     $entity = $this->entityTypeManager->getStorage($related_entity['target_type'])
       ->load($related_entity['target_id']);
@@ -51,6 +50,7 @@ class FollowTaxonomyActivityContext extends ActivityContextBase {
       return [];
     }
 
+    $storage = \Drupal::entityTypeManager()->getStorage('flagging');
     $flaggings = $storage->loadByProperties([
       'flag_id' => 'follow_term',
       'entity_type' => 'taxonomy_term',
