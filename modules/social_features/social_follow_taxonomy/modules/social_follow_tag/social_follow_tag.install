@@ -11,6 +11,8 @@
  * Perform actions related to the installation of social_follow_tag.
  */
 function social_follow_tag_install() {
+  // Set a higher weight to overlap templates.
   module_set_weight('social_follow_tag', 10);
+  // Clear cache so that overlapped templates are used after module enabling.
   drupal_flush_all_caches();
 }
