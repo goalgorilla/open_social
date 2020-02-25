@@ -54,8 +54,6 @@ Feature: I want to be able to hide certain profile information
     And I uncheck the box "edit-profile-privacy-group-profile-contact-info-visible"
     And I press "Save"
 
-    And I break
-
     Given I am logged in as "user_2"
     And I am on the profile of "user_1"
     Then I should see "user_1"

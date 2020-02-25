@@ -1,4 +1,4 @@
-@api @gdpr @data-policy @data-policy-create @DS-5586 @stability
+@api @gdpr @data-policy @data-policy-create @DS-5586 @stability @stability-4
 Feature: Create data policy and view new policy
   Benefit: In order to have a clear data policy users need to accept
   Role: As a SM

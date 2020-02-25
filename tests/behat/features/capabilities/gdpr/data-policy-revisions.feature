@@ -1,4 +1,4 @@
-@api @gdpr @data-policy @data-policy-revisions @DS-5586 @stability
+@api @gdpr @data-policy @data-policy-revisions @DS-5586 @stability @stability-4
 Feature: Manage data policy revisions
   Benefit: In order to be able to have multiple versions
   Role: As a SM
