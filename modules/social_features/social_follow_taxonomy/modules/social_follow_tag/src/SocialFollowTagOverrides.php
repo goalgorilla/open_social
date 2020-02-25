@@ -49,7 +49,7 @@ class SocialFollowTagOverrides implements ConfigFactoryOverrideInterface {
 
     // Add social_tagging taxonomy bundle to follow_term flag config.
     $config_name = 'flag.flag.follow_term';
-    $config = \Drupal::service('config.factory')->getEditable($config_name);
+    $config = $this->configFactory->getEditable($config_name);
     $bundles = $config->get('bundles');
     if (!empty($bundles) && !in_array('social_tagging', $bundles)) {
       array_push($bundles, 'social_tagging');

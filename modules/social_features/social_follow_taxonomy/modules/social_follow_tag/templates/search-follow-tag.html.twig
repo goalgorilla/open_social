@@ -1,5 +1,6 @@
 {{ attach_library('social_follow_taxonomy/paragraph_tag') }}
 
+{% if tags %}
 <div class="paragraph paragraph--featured social_follow_tax">
   <div class="container">
     {% for tag in tags %}
@@ -32,3 +33,4 @@
     {% endfor %}
   </div>
 </div>
+{% endif %}
