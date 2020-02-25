@@ -251,7 +251,10 @@ function social_profile_privacy_profile_form_submit($form, FormStateInterface $f
     }
   }
   // Invalidate the information cache block.
-  Cache::invalidateTags(['user:' . $uid, 'config:views.view.user_information', 'view.user_information.user_information']);
+  Cache::invalidateTags([
+    'user:' . $uid,
+    'config:views.view.user_information',
+    'view.user_information.user_information']);
   $user_data->set('social_profile_privacy', $uid, 'private_info', $data);
 }
 
