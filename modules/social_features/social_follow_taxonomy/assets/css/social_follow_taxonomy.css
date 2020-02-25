@@ -2,6 +2,36 @@
   z-index: 2;
 }
 
+.flag-follow-term {
+  position: relative;
+  display: inline-block;
+}
+.flag-follow-term > * {
+  width: 100%;
+}
+.flag-follow-term .dropdown-menu {
+  min-width: auto;
+  margin-top: 8px;
+  padding: 0;
+  left: 0;
+  right: auto;
+  background-color: transparent;
+  box-shadow: none;
+}
+.flag-follow-term .dropdown-menu .btn {
+  background-color: #fff;
+  text-align: center;
+  padding: 6px 12px;
+}
+@media (min-width: 600px) {
+  .flag-follow-term .btn .caret {
+    margin-left: 24px;
+    border-top-width: 5px;
+    border-right-width: 5px;
+    border-left-width: 5px;
+  }
+}
+
 .social_follow_tax .group-action-wrapper {
   position: relative;
   display: flex;
@@ -11,6 +41,13 @@
   .social_follow_tax .group-action {
     position: relative;
   }
+}
+.social_follow_tax .group-action .badge svg {
+  display: none;
+}
+.social_follow_tax .group-action .badge.term-followed svg {
+  display: inline-block;
+  margin-left: 6px;
 }
 .social_follow_tax .popup-info {
   position: absolute;
@@ -131,7 +168,6 @@
   top: 4px;
 }
 .social_follow_tax .actions .flag {
-  position: relative;
   flex: 0 0 calc(142px - 8px);
   max-width: calc(142px - 8px);
 }
@@ -139,28 +175,6 @@
   .social_follow_tax .actions .flag {
     flex: 0 0 calc(100px - 5px);
     max-width: calc(100px - 5px);
-  }
-}
-.social_follow_tax .actions .flag > * {
-  width: 100%;
-}
-.social_follow_tax .actions .flag .dropdown-menu {
-  min-width: auto;
-  margin-top: 8px;
-  padding: 0;
-  background-color: transparent;
-}
-.social_follow_tax .actions .flag .dropdown-menu .btn {
-  background-color: #fff;
-  text-align: center;
-  padding: 6px 12px;
-}
-@media (min-width: 600px) {
-  .social_follow_tax .actions .flag .caret {
-    margin-left: 24px;
-    border-top-width: 5px;
-    border-right-width: 5px;
-    border-left-width: 5px;
   }
 }
 

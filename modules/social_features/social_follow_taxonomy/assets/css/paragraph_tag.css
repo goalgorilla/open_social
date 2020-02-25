@@ -1,31 +1,73 @@
-.social_follow_tax .teaser__content,
-.social_follow_tax .teaser__left {
+.paragraph--section .paragraph--featured.social_follow_tax {
+  padding: 20px 1rem;
+}
+.paragraph--section .paragraph--featured.social_follow_tax.first {
+  padding-top: 20px;
+}
+.paragraph--section .paragraph--featured.social_follow_tax.multiple {
+  padding-left: 2em;
+  padding-right: 2em;
+}
+@media (min-width: 900px) {
+  .paragraph--section .paragraph--featured.social_follow_tax {
+    padding-bottom: 40px;
+  }
+}
+
+.block-social-follow-tag.card {
+  box-shadow: none;
+  background: transparent;
+  margin-bottom: 0;
+  padding: 20px 1rem 0;
+}
+@media (min-width: 1200px) {
+  .block-social-follow-tag.card {
+    padding-left: 0;
+    padding-right: 0;
+  }
+}
+
+.paragraph--featured.social_follow_tax .teaser {
+  height: auto;
+  min-height: auto;
+}
+.paragraph--featured.social_follow_tax .teaser__content,
+.paragraph--featured.social_follow_tax .teaser__left {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
 }
-.social_follow_tax .teaser__body {
-  padding: 10px;
+.paragraph--featured.social_follow_tax .teaser__body {
+  flex-direction: row;
+  padding: 0 10px;
+  overflow: visible;
 }
-.social_follow_tax .teaser__content {
+.paragraph--featured.social_follow_tax .teaser__content {
+  padding: 0;
   justify-content: space-between;
 }
-.social_follow_tax .teaser__left > * + * {
+.paragraph--featured.social_follow_tax .teaser__left,
+.paragraph--featured.social_follow_tax .actions {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+.paragraph--featured.social_follow_tax .teaser__left > * + * {
   margin-left: 16px;
 }
-.social_follow_tax .actions {
-  min-width: 325px;
+.paragraph--featured.social_follow_tax .actions {
   margin-top: 0;
 }
-.social_follow_tax .actions > * + .btn {
+.paragraph--featured.social_follow_tax .actions > * + .btn {
   min-width: 175px;
+  margin-right: 10px;
 }
-.social_follow_tax .teaser__tag,
-.social_follow_tax .teaser__related-content {
+.paragraph--featured.social_follow_tax .teaser__tag,
+.paragraph--featured.social_follow_tax .teaser__related-content {
   font-size: 0.875rem;
 }
-.social_follow_tax .teaser__title,
-.social_follow_tax .teaser__tag,
-.social_follow_tax h5 {
+.paragraph--featured.social_follow_tax .teaser__title,
+.paragraph--featured.social_follow_tax .teaser__tag,
+.paragraph--featured.social_follow_tax h5 {
   margin-top: 0;
   margin-bottom: 0;
 }

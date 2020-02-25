@@ -1,12 +1,16 @@
-# Action link library.
-follow_term.link_ajax:
+social_follow_taxonomy:
   version: VERSION
   css:
     base:
       assets/css/social_follow_taxonomy.css: {}
   js:
-    assets/js/follow-action_link.js: {}
     assets/js/follow_popup.js: {}
+  dependencies:
+    - core/drupal
+
+follow_term.link_ajax:
+  js:
+    assets/js/follow-action_link.js: {}
   dependencies:
     - core/drupal
     - core/drupal.ajax

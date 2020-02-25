@@ -2,6 +2,40 @@
   z-index: 2;
 }
 
+.flag-follow-term {
+  position: relative;
+  display: inline-block;
+
+  > * {
+    width: 100%;
+  }
+
+  .dropdown-menu {
+    min-width: auto;
+    margin-top: 8px;
+    padding: 0;
+    left: 0;
+    right: auto;
+    background-color: transparent;
+    box-shadow: none;
+
+    .btn {
+      background-color: #fff;
+      text-align: center;
+      padding: 6px 12px;
+    }
+  }
+
+  .btn .caret {
+    @media(min-width: 600px) {
+      margin-left: 24px;
+      border-top-width: 5px;
+      border-right-width: 5px;
+      border-left-width: 5px;
+    }
+  }
+}
+
 .social_follow_tax {
   .group-action-wrapper {
     position: relative;
@@ -12,6 +46,19 @@
   .group-action {
     @media(min-width: 900px) {
       position: relative;
+    }
+
+    .badge {
+      svg {
+        display: none;
+      }
+
+      &.term-followed {
+        svg {
+          display: inline-block;
+          margin-left: 6px;
+        }
+      }
     }
   }
 
@@ -143,39 +190,12 @@
     }
 
     .flag {
-      position: relative;
       flex: 0 0 calc(142px - 8px);
       max-width: calc(142px - 8px);
 
       @media(max-width: 599px) {
         flex: 0 0 calc(100px - 5px);
         max-width: calc(100px - 5px);
-      }
-
-      > * {
-        width: 100%;
-      }
-
-      .dropdown-menu {
-        min-width: auto;
-        margin-top: 8px;
-        padding: 0;
-        background-color: transparent;
-
-        .btn {
-          background-color: #fff;
-          text-align: center;
-          padding: 6px 12px;
-        }
-      }
-
-      .caret {
-        @media(min-width: 600px) {
-          margin-left: 24px;
-          border-top-width: 5px;
-          border-right-width: 5px;
-          border-left-width: 5px;
-        }
       }
     }
   }

@@ -17,7 +17,6 @@ function social_follow_taxonomy_theme($existing, $type, $theme, $path) {
       'base hook' => 'flag',
     ],
   ];
-
 }
 
 /**
@@ -36,4 +35,11 @@ function social_follow_taxonomy_social_user_account_header_account_links(array $
       '#weight' => 1001,
     ] + Url::fromRoute('view.following_tags.following_tags')->toRenderArray(),
   ];
+}
+
+/**
+ * Implements hook_page_attachments().
+ */
+function social_follow_taxonomy_page_attachments(array &$page) {
+  $page['#attached']['library'][] = 'social_follow_taxonomy/social_follow_taxonomy';
 }
