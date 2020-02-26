@@ -152,3 +152,18 @@ function social_event_update_8003() {
     }
   }
 }
+
+/**
+ * Fix empty value in enroll setting.
+ */
+function social_event_update_8801() {
+  // This does not need to run before 8802 necessarily because the
+  // features_removal/ folder has also been updated so a revert works too.
+  // This update mostly exists for people who've already updated to 8.0.
+  $settings = \Drupal::configFactory()->getEditable('social_event.settings');
+  $enroll = $settings->get('enroll');
+  // Only change it if no value was set yet.
+  if (empty($enroll)) {
+    $settings->set('enroll', [])->save();
+  }
+}
