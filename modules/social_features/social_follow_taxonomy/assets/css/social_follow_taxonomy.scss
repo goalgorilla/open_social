@@ -29,8 +29,10 @@
 
     .btn {
       background-color: #fff;
+      border: 0;
       text-align: center;
       padding: 6px 12px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, .5);
     }
   }
 
@@ -147,6 +149,12 @@
     .actions {
       > * + .btn {
         flex: 1;
+      }
+
+      .dropdown-menu {
+        .btn {
+          border: none;
+        }
       }
     }
   }
