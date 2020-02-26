@@ -17,7 +17,8 @@
   }
 }
 
-.block-social-follow-tag.card {
+.block-follow-tag-block.block-social-follow-tag.card,
+.block-follow-tag-block.block-social-follow-tag {
   box-shadow: none;
   background: transparent;
   margin-bottom: 0;
@@ -26,6 +27,14 @@
   @media(min-width: 1200px) {
     padding-left: 0;
     padding-right: 0;
+  }
+
+  .card.teaser {
+    margin-bottom: 0;
+
+    +.card {
+      margin-top: 30px;
+    }
   }
 }
 
