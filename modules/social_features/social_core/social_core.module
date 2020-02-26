@@ -37,6 +37,19 @@ function social_core_theme() {
 }
 
 /**
+ * Implements hook_modules_installed().
+ */
+function social_core_modules_installed($modules) {
+  // If either social_group_flexible_group or social_landing_page gets enabled
+  // and the other is already enabled, we should import the the configuration
+  // for the optional view mode by enabling social_flexible_group_featured.
+  if ((in_array('social_group_flexible_group', $modules, TRUE) && \Drupal::moduleHandler()->moduleExists('social_landing_page')) ||
+    (in_array('social_landing_page', $modules, TRUE) && \Drupal::moduleHandler()->moduleExists('social_group_flexible_group'))) {
+    \Drupal::service('module_installer')->install(['social_flexible_group_featured']);
+  }
+}
+
+/**
  * Implements hook_preprocess_HOOK().
  */
 function social_core_preprocess_node(&$variables) {
