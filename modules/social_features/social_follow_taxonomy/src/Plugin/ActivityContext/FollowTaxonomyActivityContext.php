@@ -50,7 +50,7 @@ class FollowTaxonomyActivityContext extends ActivityContextBase {
       return [];
     }
 
-    $storage = \Drupal::entityTypeManager()->getStorage('flagging');
+    $storage = $this->entityTypeManager->getStorage('flagging');
     $flaggings = $storage->loadByProperties([
       'flag_id' => 'follow_term',
       'entity_type' => 'taxonomy_term',

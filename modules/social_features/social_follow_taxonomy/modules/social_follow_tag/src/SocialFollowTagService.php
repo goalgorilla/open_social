@@ -40,57 +40,64 @@ class SocialFollowTagService extends SocialTaggingService {
       if (!$current_term instanceof TermInterface) {
         continue;
       }
+
       // Get current terms parents.
       $parents = $this->termStorage->loadParents($current_term->id());
-      $parent = reset($parents);
-      $category = $parent->getName();
+      if (!empty($parents)) {
+        $parent = reset($parents);
+        $category = $parent->getName();
 
-      $parameter = 'tag';
-      if ($this->allowSplit()) {
-        $parameter = social_tagging_to_machine_name($category);
-      }
-
-      $route = 'view.search_content.page_no_value';
-      if ($entity_type == 'group') {
-        $route = 'view.search_groups.page_no_value';
-      }
-
-      $flag_link_service = \Drupal::service('flag.link_builder');
-      $flag_link = $flag_link_service->build($current_term->getEntityTypeId(), $current_term->id(), 'follow_term');
-
-      $follow = FALSE;
-      $flag = Flag::load('follow_term');
-      if ($flag instanceof FlagInterface) {
-        /** @var \Drupal\flag\FlagService $service */
-        $service = \Drupal::service('flag');
-
-        if (!empty($service->getFlagging($flag, $current_term, \Drupal::currentUser()))) {
-          $follow = TRUE;
+        $parameter = 'tag';
+        if ($this->allowSplit()) {
+          $parameter = social_tagging_to_machine_name($category);
         }
-      }
 
-      $nodes = \Drupal::entityTypeManager()->getStorage('node')->loadByProperties(['social_tagging' => $current_term->id()]);
-      $related_content = [];
-      foreach ($nodes as $node) {
-        $related_content[$node->bundle()]['label'] = $node->type->entity->label();
-        if ($related_content[$node->bundle()]) {
-          $related_content[$node->bundle()]['count'] += 1;
-          $related_content[$node->bundle()]['nid'][] = $node->id();
+        $route = 'view.search_content.page_no_value';
+        if ($entity_type == 'group') {
+          $route = 'view.search_groups.page_no_value';
         }
+
+
+        $flag_link = '';
+        $follow = FALSE;
+        if (!\Drupal::currentUser()->isAnonymous()) {
+          $flag_link_service = \Drupal::service('flag.link_builder');
+          $flag_link = $flag_link_service->build($current_term->getEntityTypeId(), $current_term->id(), 'follow_term');
+
+          $flag = Flag::load('follow_term');
+          if ($flag instanceof FlagInterface) {
+            /** @var \Drupal\flag\FlagService $service */
+            $service = \Drupal::service('flag');
+
+            if (!empty($service->getFlagging($flag, $current_term, \Drupal::currentUser()))) {
+              $follow = TRUE;
+            }
+          }
+        }
+
+        $nodes = \Drupal::entityTypeManager()->getStorage('node')->loadByProperties(['social_tagging' => $current_term->id()]);
+        $related_content = [];
+        foreach ($nodes as $node) {
+          $related_content[$node->bundle()]['label'] = $node->type->entity->label();
+          if ($related_content[$node->bundle()]) {
+            $related_content[$node->bundle()]['count'] += 1;
+            $related_content[$node->bundle()]['nid'][] = $node->id();
+          }
+        }
+
+        $url = Url::fromRoute($route, [
+          $parameter . '[]' => $current_term->id(),
+        ]);
+
+        $tree[$parent->id()]['title'] = $category;
+        $tree[$parent->id()]['tags'][$current_term->id()] = [
+          'url' => $url->toString(),
+          'name' => $current_term->getName(),
+          'flag' => $flag_link,
+          'related_content' => $related_content,
+          'follow' => $follow,
+        ];
       }
-
-      $url = Url::fromRoute($route, [
-        $parameter . '[]' => $current_term->id(),
-      ]);
-
-      $tree[$parent->id()]['title'] = $category;
-      $tree[$parent->id()]['tags'][$current_term->id()] = [
-        'url' => $url->toString(),
-        'name' => $current_term->getName(),
-        'flag' => $flag_link,
-        'related_content' => $related_content,
-        'follow' => $follow,
-      ];
     }
     // Return the tree.
     return $tree;

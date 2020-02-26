@@ -7,8 +7,10 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Render\RendererInterface;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\flag\Entity\Flag;
 use Drupal\flag\FlagInterface;
+use Drupal\flag\FlagLinkBuilderInterface;
 use Drupal\flag\FlagServiceInterface;
 use Drupal\social_tagging\SocialTaggingService;
 use Drupal\taxonomy\Entity\Term;
@@ -60,6 +62,20 @@ class FollowTagBlock extends BlockBase implements ContainerFactoryPluginInterfac
   protected $renderer;
 
   /**
+   * The builder for flag links.
+   *
+   * @var \Drupal\flag\FlagLinkBuilderInterface
+   */
+  protected $flagLinkBuilder;
+
+  /**
+   * The Current User object.
+   *
+   * @var \Drupal\Core\Session\AccountInterface
+   */
+  protected $currentUser;
+
+  /**
    * SearchHeroBlock constructor.
    *
    * @param array $configuration
@@ -78,6 +94,10 @@ class FollowTagBlock extends BlockBase implements ContainerFactoryPluginInterfac
    *   Flag service.
    * @param \Drupal\Core\Render\RendererInterface $renderer
    *   The renderer.
+   * @param \Drupal\flag\FlagLinkBuilderInterface $flag_link_builder
+   *   The builder for flag links.
+   * @param \Drupal\Core\Session\AccountInterface $current_user
+   *   The current user.
    */
   public function __construct(
     array $configuration,
@@ -87,7 +107,9 @@ class FollowTagBlock extends BlockBase implements ContainerFactoryPluginInterfac
     FormBuilderInterface $formBuilder,
     SocialTaggingService $tagging_service,
     FlagServiceInterface $flag_service,
-    RendererInterface $renderer
+    RendererInterface $renderer,
+    FlagLinkBuilderInterface $flag_link_builder,
+    AccountInterface $current_user
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->entityTypeManager = $entity_type_manager;
@@ -95,6 +117,8 @@ class FollowTagBlock extends BlockBase implements ContainerFactoryPluginInterfac
     $this->tagService = $tagging_service;
     $this->flagService = $flag_service;
     $this->renderer = $renderer;
+    $this->flagLinkBuilder = $flag_link_builder;
+    $this->currentUser = $current_user;
   }
 
   /**
@@ -109,7 +133,9 @@ class FollowTagBlock extends BlockBase implements ContainerFactoryPluginInterfac
       $container->get('form_builder'),
       $container->get('social_tagging.tag_service'),
       $container->get('flag'),
-      $container->get('renderer')
+      $container->get('renderer'),
+      $container->get('flag.link_builder'),
+      $container->get('current_user')
     );
   }
 
@@ -118,6 +144,7 @@ class FollowTagBlock extends BlockBase implements ContainerFactoryPluginInterfac
    */
   public function build() {
     $build = [];
+    $identifiers = [];
     $terms = [];
 
     if ($this->tagService->allowSplit()) {
@@ -135,19 +162,18 @@ class FollowTagBlock extends BlockBase implements ContainerFactoryPluginInterfac
       }
     }
 
-    $flag_link_service = \Drupal::service('flag.link_builder');
-
-    // Just a simple way to add all tags to the array.
     $tags = [];
     foreach ($terms as $term_ids) {
       foreach ($term_ids as $term_key => $term) {
 
+        /** @var \Drupal\taxonomy\Entity\Term $taxonomy_term */
         $taxonomy_term = Term::load($term);
 
         $nodes = $this->entityTypeManager
           ->getStorage('node')
           ->loadByProperties(['social_tagging' => $term]);
         $related_content = [];
+
         foreach ($nodes as $node) {
           $related_content[$node->bundle()]['label'] = $node->type->entity->label();
           if ($related_content[$node->bundle()]) {
@@ -162,12 +188,12 @@ class FollowTagBlock extends BlockBase implements ContainerFactoryPluginInterfac
           }
         }
 
-        $flag_link = $flag_link_service->build($taxonomy_term->getEntityTypeId(), $taxonomy_term->id(), 'follow_term');
+        $flag_link = $this->flagLinkBuilder->build($taxonomy_term->getEntityTypeId(), $taxonomy_term->id(), 'follow_term');
 
         $follow = FALSE;
         $flag = Flag::load('follow_term');
         if ($flag instanceof FlagInterface) {
-          if (!empty($this->flagService->getFlagging($flag, $taxonomy_term, \Drupal::currentUser()))) {
+          if (!empty($this->flagService->getFlagging($flag, $taxonomy_term, $this->currentUser))) {
             $follow = TRUE;
           }
         }
