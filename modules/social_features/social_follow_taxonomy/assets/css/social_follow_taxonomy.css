@@ -6,6 +6,14 @@
   position: relative;
   display: inline-block;
 }
+.views-field-link-flag .flag-follow-term {
+  min-width: 132px;
+}
+@media (max-width: 599px) {
+  .views-field-link-flag .flag-follow-term {
+    min-width: 95px;
+  }
+}
 .flag-follow-term > * {
   width: 100%;
 }
@@ -30,6 +38,18 @@
     border-right-width: 5px;
     border-left-width: 5px;
   }
+}
+.flag-follow-term .btn {
+  position: relative;
+}
+@media (max-width: 599px) {
+  .flag-follow-term .btn {
+    font-size: 12px;
+  }
+}
+.flag-follow-term .btn .ajax-throbber {
+  position: absolute;
+  top: 4px;
 }
 
 .social_follow_tax .group-action-wrapper {
@@ -108,6 +128,9 @@
   border-width: 11px;
   bottom: -10px;
 }
+.social_follow_tax .popup-info .actions > * + .btn {
+  flex: 1;
+}
 .social_follow_tax .teaser__tag {
   margin-bottom: 4px;
   font-size: 0.75rem;
@@ -143,29 +166,13 @@
   }
 }
 .social_follow_tax .actions > * + .btn {
-  flex-grow: 1;
-  flex-basis: 0;
-  max-width: calc(100% - 8px);
   margin-left: 8px;
   margin-right: 0;
 }
 @media (max-width: 599px) {
   .social_follow_tax .actions > * + .btn {
-    max-width: calc(100% - 5px);
     margin-left: 5px;
   }
-}
-.social_follow_tax .actions .btn {
-  position: relative;
-}
-@media (max-width: 599px) {
-  .social_follow_tax .actions .btn {
-    font-size: 12px;
-  }
-}
-.social_follow_tax .actions .btn .ajax-throbber {
-  position: absolute;
-  top: 4px;
 }
 .social_follow_tax .actions .flag {
   flex: 0 0 calc(142px - 8px);

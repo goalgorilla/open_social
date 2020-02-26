@@ -6,6 +6,14 @@
   position: relative;
   display: inline-block;
 
+  .views-field-link-flag & {
+    min-width: 132px;
+
+    @media(max-width: 599px) {
+      min-width: 95px;
+    }
+  }
+
   > * {
     width: 100%;
   }
@@ -32,6 +40,19 @@
       border-top-width: 5px;
       border-right-width: 5px;
       border-left-width: 5px;
+    }
+  }
+
+  .btn {
+    position: relative;
+
+    @media(max-width: 599px) {
+      font-size: 12px;
+    }
+
+    .ajax-throbber {
+      position: absolute;
+      top: 4px;
     }
   }
 }
@@ -122,6 +143,12 @@
       border-width: 11px;
       bottom: -10px;
     }
+
+    .actions {
+      > * + .btn {
+        flex: 1;
+      }
+    }
   }
 
   .teaser__tag {
@@ -163,29 +190,12 @@
       }
 
       + .btn {
-        flex-grow: 1;
-        flex-basis: 0;
-        max-width: calc(100% - 8px);
         margin-left: 8px;
         margin-right: 0;
 
         @media(max-width: 599px) {
-          max-width: calc(100% - 5px);
           margin-left: 5px;
         }
-      }
-    }
-
-    .btn {
-      position: relative;
-
-      @media(max-width: 599px) {
-        font-size: 12px;
-      }
-
-      .ajax-throbber {
-        position: absolute;
-        top: 4px;
       }
     }
 
