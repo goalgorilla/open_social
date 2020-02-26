@@ -1,35 +1,25 @@
 core.entity_view_display.node.event.small_teaser:
   expected_config:
     content:
-      field_event_date:
-        weight: 0
-      flag_follow_content:
+      groups_type_public_group:
+        label: above
         region: content
-        weight: 10
-    hidden:
-      field_event_image: true
+        settings:
+          link: true
+        third_party_settings: {  }
+        type: entity_reference_label
+        weight: -5
   update_actions:
     add:
       hidden:
-        flag_follow_content: true
-        social_tagging: true
-    change:
-      content:
-        field_event_date:
-          weight: 1
-        field_event_image:
-          label: hidden
-          region: content
-          settings:
-            image_link: content
-            image_style: social_medium
-          third_party_settings: {  }
-          type: image
-          weight: 0
+        groups_type_public_group: true
     delete:
       content:
-        flag_follow_content:
+        groups_type_public_group:
+          label: above
           region: content
-          weight: 10
-      hidden:
-        field_event_image: true
+          settings:
+            link: true
+          third_party_settings: {  }
+          type: entity_reference_label
+          weight: -5

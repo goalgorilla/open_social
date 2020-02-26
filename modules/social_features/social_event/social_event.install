@@ -122,7 +122,7 @@ function _social_event_create_menu_links() {
  */
 function social_event_update_dependencies() {
   // New config changes should run after the features removal/revert.
-  $dependencies['social_event'][8801] = [
+  $dependencies['social_event'][8802] = [
     'social_core' => 8802,
   ];
 
@@ -166,14 +166,29 @@ function social_event_update_8003() {
 }
 
 /**
- * Remove public group from event.small_teaser.
+ * Fix empty value in enroll setting.
  */
 function social_event_update_8801() {
+  // This does not need to run before 8802 necessarily because the
+  // features_removal/ folder has also been updated so a revert works too.
+  // This update mostly exists for people who've already updated to 8.0.
+  $settings = \Drupal::configFactory()->getEditable('social_event.settings');
+  $enroll = $settings->get('enroll');
+  // Only change it if no value was set yet.
+  if (empty($enroll)) {
+    $settings->set('enroll', [])->save();
+  }
+}
+
+/**
+ * Remove public group from event.small_teaser.
+ */
+function social_event_update_8802() {
   /** @var \Drupal\update_helper\Updater $updateHelper */
   $updateHelper = \Drupal::service('update_helper.updater');
 
   // Execute configuration update definitions with logging of success.
-  $updateHelper->executeUpdate('social_event', 'social_event_update_8801');
+  $updateHelper->executeUpdate('social_event', 'social_event_update_8802');
 
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
@@ -182,12 +197,12 @@ function social_event_update_8801() {
 /**
  * Update view mode for new small teaser style.
  */
-function social_event_update_8802() {
+function social_event_update_8803() {
   /** @var \Drupal\update_helper\Updater $updateHelper */
   $updateHelper = \Drupal::service('update_helper.updater');
 
   // Execute configuration update definitions with logging of success.
-  $updateHelper->executeUpdate('social_event', 'social_event_update_8802');
+  $updateHelper->executeUpdate('social_event', 'social_event_update_8803');
 
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
