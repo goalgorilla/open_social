@@ -1031,9 +1031,9 @@ function social_core_update_8806(&$sandbox) {
         'type' => 'link',
         'settings' => [],
         'module' => 'link',
-        'locked' => false,
+        'locked' => FALSE,
         'cardinality' => 1,
-        'translatable' => true,
+        'translatable' => TRUE,
       ],
       'field.field.block_content.basic.field_basic_link' => [
         'id' => 'block_content.basic.field_basic_link',
@@ -1042,8 +1042,8 @@ function social_core_update_8806(&$sandbox) {
         'bundle' => 'basic',
         'label' => 'Read more link',
         'description' => '',
-        'required' => false,
-        'translatable' => true,
+        'required' => FALSE,
+        'translatable' => TRUE,
         'default_value' => [],
         'default_value_callback' => '',
         'settings' => [
@@ -1059,8 +1059,8 @@ function social_core_update_8806(&$sandbox) {
         'bundle' => 'basic',
         'label' => 'Text block',
         'description' => '',
-        'required' => true,
-        'translatable' => true,
+        'required' => FALSE,
+        'translatable' => TRUE,
         'default_value' => [],
         'default_value_callback' => '',
         'settings' => [],
@@ -1084,8 +1084,8 @@ function social_core_update_8806(&$sandbox) {
           ],
         ],
         'hidden' => [
-          'field_text_block' => true,
-          'field_basic_link' => true,
+          'field_text_block' => TRUE,
+          'field_basic_link' => TRUE,
         ],
       ],
       'core.entity_view_display.block_content.basic.default' => [
@@ -1095,8 +1095,8 @@ function social_core_update_8806(&$sandbox) {
         'mode' => 'default',
         'content' => [],
         'hidden' => [
-          'field_basic_link' => true,
-          'field_text_block' => true,
+          'field_basic_link' => TRUE,
+          'field_text_block' => TRUE,
         ],
       ],
     ];
@@ -1117,7 +1117,7 @@ function social_core_update_8806(&$sandbox) {
 }
 
 /**
- * Basic block config changes
+ * Basic block config changes.
  */
 function social_core_update_8807() {
   /** @var \Drupal\update_helper\Updater $updateHelper */
