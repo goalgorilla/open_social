@@ -46,11 +46,7 @@
   }
 
   .btn {
-    position: relative;
-
-    @media(max-width: 599px) {
-      font-size: 12px;
-    }
+    position: relative;s
 
     .ajax-throbber {
       position: absolute;
@@ -150,6 +146,10 @@
       bottom: -10px;
     }
 
+    .card {
+      flex-direction: row;
+    }
+
     .actions {
       > * + .btn {
         flex: 1;
@@ -170,6 +170,7 @@
   .teaser__tag {
     margin-bottom: 4px;
     font-size: .75rem;
+    font-weight: 700;
     line-height: 21px;
   }
 
@@ -192,7 +193,7 @@
 
   .teaser__related-content {
     font-size: .75rem;
-    font-weight: 700;
+    font-weight: 300;
     line-height: 21px;
     color: #777;
   }
@@ -203,20 +204,17 @@
     justify-content: space-between;
     margin-top: .75rem;
 
-    > * {
-      margin-right: 8px;
+    > * + * {
+      margin-left: 16px;
 
       @media(max-width: 599px) {
-        margin-right: 5px;
+        margin-left: 10px;
       }
+    }
 
-      + .btn {
-        margin-left: 8px;
-        margin-right: 0;
-
-        @media(max-width: 599px) {
-          margin-left: 5px;
-        }
+    .btn {
+      @media(max-width: 599px) {
+        font-size: 12px;
       }
     }
 
@@ -228,6 +226,32 @@
         flex: 0 0 calc(100px - 5px);
         max-width: calc(100px - 5px);
       }
+    }
+  }
+}
+
+.view-following-tags {
+  .card {
+    display: block;
+  }
+
+  .card__block--table {
+    padding: 0;
+  }
+
+  table {
+    margin-bottom: 0;
+
+    td {
+      vertical-align: middle;
+    }
+
+    .views-field-name {
+      font-weight: 700;
+    }
+
+    .views-field-link-flag {
+      width: 1px;
     }
   }
 }
