@@ -1008,3 +1008,10 @@ function social_core_update_8803() {
 function social_core_update_8804() {
   user_role_grant_permissions('sitemanager', ['access contextual links']);
 }
+
+/**
+ * Install update helper for config update usage.
+ */
+function social_core_update_8805() {
+  \Drupal::service('module_installer')->install(['update_helper']);
+}
