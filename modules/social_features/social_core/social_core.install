@@ -21,6 +21,9 @@ use Drupal\group\Entity\Group;
 use Drupal\social_core\FeaturesRemoval\FeaturesInstallStorage;
 use Drupal\social_core\FeaturesRemoval\FeaturesManager;
 use Symfony\Component\Yaml\Yaml;
+use Drupal\field\Entity\FieldConfig;
+use Drupal\field\Entity\FieldStorageConfig;
+use Drupal\field\FieldConfigInterface;
 
 /**
  * Implements hook_requirements().
@@ -1067,6 +1070,19 @@ function social_core_update_8806(&$sandbox) {
         'field_type' => 'text_long',
       ],
       'core.entity_form_display.block_content.basic.default' => [
+        'langcode' => 'en',
+        'status' => TRUE,
+        'dependencies' => [
+          'config' => [
+            'block_content.type.basic',
+            'field.field.block_content.basic.field_basic_link',
+            'field.field.block_content.basic.field_text_block',
+          ],
+          'module' => [
+            'text',
+            'link',
+          ],
+        ],
         'id' => 'block_content.basic.default',
         'targetEntityType' => 'block_content',
         'bundle' => 'basic',
@@ -1089,6 +1105,19 @@ function social_core_update_8806(&$sandbox) {
         ],
       ],
       'core.entity_view_display.block_content.basic.default' => [
+        'langcode' => 'en',
+        'status' => TRUE,
+        'dependencies' => [
+          'config' => [
+            'block_content.type.basic',
+            'field.field.block_content.basic.field_basic_link',
+            'field.field.block_content.basic.field_text_block',
+          ],
+          'module' => [
+            'text',
+            'link',
+          ],
+        ],
         'id' => 'block_content.basic.default',
         'targetEntityType' => 'block_content',
         'bundle' => 'basic',
@@ -1110,8 +1139,30 @@ function social_core_update_8806(&$sandbox) {
   $name = $names[$sandbox['current']++];
   $data = $sandbox['configs'][$name];
 
-  // Insert newly created config in the storage.
-  \Drupal::service('config.storage')->write($name, $data);
+  $parts = explode('.', $name);
+
+  switch ($parts[0] . '.' . $parts[1]) {
+    case 'field.storage':
+      FieldStorageConfig::create($data)->save();
+      break;
+
+    case 'field.field':
+      $field_config = FieldConfig::loadByName($parts[2], $parts[3], $parts[4]);
+
+      if ($field_config instanceof FieldConfigInterface) {
+        $field_config->setDescription($data);
+      }
+      else {
+        $field_config = FieldConfig::create($data);
+      }
+
+      $field_config->save();
+      break;
+
+    default:
+      // Insert newly created config in the storage.
+      \Drupal::service('config.storage')->write($name, $data);
+  }
 
   $sandbox['#finished'] = $sandbox['current'] / $sandbox['total'];
 }
