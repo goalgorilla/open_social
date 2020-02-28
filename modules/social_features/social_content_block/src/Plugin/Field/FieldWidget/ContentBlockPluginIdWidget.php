@@ -41,7 +41,7 @@ class ContentBlockPluginIdWidget extends ContentBlockPluginWidgetBase {
    *   The widget settings.
    * @param array $third_party_settings
    *   Any third party settings.
-   * @param \Drupal\social_content_block\ContentBlockPluginInterface[] $definitions
+   * @param array $definitions
    *   The content block plugin definitions.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity type manager.

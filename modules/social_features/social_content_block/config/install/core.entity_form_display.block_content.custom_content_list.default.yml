@@ -3,15 +3,12 @@ status: true
 dependencies:
   config:
     - block_content.type.custom_content_list
-    - field.field.block_content.custom_content_list.field_content_tags
-    - field.field.block_content.custom_content_list.field_group
     - field.field.block_content.custom_content_list.field_item_amount
     - field.field.block_content.custom_content_list.field_link
     - field.field.block_content.custom_content_list.field_plugin_field
     - field.field.block_content.custom_content_list.field_plugin_id
     - field.field.block_content.custom_content_list.field_sorting
     - field.field.block_content.custom_content_list.field_subtitle
-    - field.field.block_content.custom_content_list.field_topic_type
   module:
     - field_group
     - link
@@ -36,9 +33,6 @@ third_party_settings:
       children:
         - field_plugin_id
         - field_plugin_field
-        - field_topic_type
-        - field_content_tags
-        - field_group
       parent_name: ''
       weight: 1
       format_type: fieldset
@@ -69,26 +63,6 @@ targetEntityType: block_content
 bundle: custom_content_list
 mode: default
 content:
-  field_content_tags:
-    weight: 29
-    settings:
-      match_operator: CONTAINS
-      size: 60
-      placeholder: ''
-      match_limit: 10
-    third_party_settings: {  }
-    type: entity_reference_autocomplete_tags
-    region: content
-  field_group:
-    weight: 30
-    settings:
-      match_operator: CONTAINS
-      size: 60
-      placeholder: ''
-      match_limit: 10
-    third_party_settings: {  }
-    type: entity_reference_autocomplete_tags
-    region: content
   field_item_amount:
     weight: 11
     settings:
@@ -105,13 +79,13 @@ content:
     type: link_default
     region: content
   field_plugin_field:
-    weight: 27
+    weight: 1
     settings: {  }
     third_party_settings: {  }
     type: content_block_plugin_field
     region: content
   field_plugin_id:
-    weight: 26
+    weight: 0
     settings: {  }
     third_party_settings: {  }
     type: content_block_plugin_id
@@ -129,16 +103,6 @@ content:
       placeholder: ''
     third_party_settings: {  }
     type: string_textfield
-    region: content
-  field_topic_type:
-    weight: 28
-    settings:
-      match_operator: CONTAINS
-      size: 60
-      placeholder: ''
-      match_limit: 10
-    third_party_settings: {  }
-    type: entity_reference_autocomplete_tags
     region: content
   info:
     type: string_textfield
