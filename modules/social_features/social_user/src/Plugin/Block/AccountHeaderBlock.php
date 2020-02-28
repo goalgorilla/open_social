@@ -307,7 +307,7 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
       $element = &$parent[$key];
       // If there's no precomputed access value, check for access callbacks.
       // This is logic adapted from Drupal\Core\Render\Renderer::doRender.
-      if (!isset($element['#access']) && isset($element['#access_callback'])) {
+      if (!empty($element) && !isset($element['#access']) && isset($element['#access_callback'])) {
         if (is_string($element['#access_callback']) && strpos($element['#access_callback'], '::') === FALSE) {
           $element['#access_callback'] = $this->controllerResolver->getControllerFromDefinition($element['#access_callback']);
         }
