@@ -25,11 +25,22 @@ class Page extends PageBase {
       $route_match = \Drupal::routeMatch();
       if ($route_match->getParameter('user') && $route_match->getRouteName() !== 'entity.profile.type.user_profile_form') {
         $variables['content_attributes']->addClass('sidebar-left', 'content-merged--sky');
+//        dump($variables);
+
+        // If page has title.
+        if ($variables['page']['title']) {
+          $variables['display_page_title'] = FALSE;
+        }
       }
 
       // Display merged sidebar on the left side of group pages, except edit.
       if ($route_match->getParameter('group') && $route_match->getRouteName() !== 'entity.group.edit_form') {
         $variables['content_attributes']->addClass('sidebar-left', 'content-merged--sky');
+
+        // If page has title.
+        if ($variables['page']['title']) {
+          $variables['display_page_title'] = FALSE;
+        }
       }
 
       // Add extra class if we have blocks in both complementary regions.
