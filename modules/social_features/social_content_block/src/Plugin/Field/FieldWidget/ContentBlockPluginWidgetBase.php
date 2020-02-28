@@ -19,7 +19,7 @@ abstract class ContentBlockPluginWidgetBase extends WidgetBase implements Contai
   /**
    * The content block plugin definitions.
    *
-   * @var \Drupal\social_content_block\ContentBlockPluginInterface[]
+   * @var array
    */
   protected $definitions;
 
@@ -36,7 +36,7 @@ abstract class ContentBlockPluginWidgetBase extends WidgetBase implements Contai
    *   The widget settings.
    * @param array $third_party_settings
    *   Any third party settings.
-   * @param \Drupal\social_content_block\ContentBlockPluginInterface[] $definitions
+   * @param array $definitions
    *   The content block plugin definitions.
    */
   public function __construct(
