@@ -25,7 +25,6 @@ class Page extends PageBase {
       $route_match = \Drupal::routeMatch();
       if ($route_match->getParameter('user') && $route_match->getRouteName() !== 'entity.profile.type.user_profile_form') {
         $variables['content_attributes']->addClass('sidebar-left', 'content-merged--sky');
-//        dump($variables);
 
         // If page has title.
         if ($variables['page']['title']) {
