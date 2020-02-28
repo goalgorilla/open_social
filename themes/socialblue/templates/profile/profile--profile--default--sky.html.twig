@@ -73,21 +73,21 @@
     {% endif %}
 
     {% if content.field_profile_phone_number|render %}
-      <div class="list-item list-item--withlabel card--content-merged__list">
+      <div class="list-item card--content-merged__list">
           <div class="list-item__label">{% trans %}Phone{% endtrans %}</div>
           <div class="list-item__text">{{ content.field_profile_phone_number }}</div>
       </div>
     {% endif %}
 
     {% if user_mail %}
-      <div class="list-item list-item--withlabel card--content-merged__list">
+      <div class="list-item card--content-merged__list">
           <div class="list-item__label">{% trans %}E-mail{% endtrans %}</div>
           <div class="list-item__text">{{ user_mail }}</a></div>
       </div>
     {% endif %}
 
     {% if content.field_profile_address|render %}
-      <div class="list-item list-item--withlabel card--content-merged__list">
+      <div class="list-item card--content-merged__list">
           <div class="list-item__label">{% trans %}Address{% endtrans %}</div>
           <div class="list-item__text">
               {{ content.field_profile_address }}
@@ -98,34 +98,42 @@
     {% if content.field_profile_self_introduction|render %}
       <div class="card--content-merged__list">
         <h5>{% trans %}Intro{% endtrans %}</h5>
-        {{ content.field_profile_self_introduction }}
+        <div class="list-item__text">
+          {{ content.field_profile_self_introduction }}
+        </div>
       </div>
     {% endif %}
 
     {% if content.field_profile_expertise['#items'] %}
       <div class="card--content-merged__list">
-        <h5>{% trans %}Your expertise{% endtrans %}</h5>
-        {% for item in content.field_profile_expertise['#items'] %}
-          <div class="badge badge--pill badge--large badge-default">{{ item.entity.label }}</div>
-        {% endfor %}
+        <h5>{% trans %}Expertise{% endtrans %}</h5>
+        <div class="list-item__text">
+          {% for item in content.field_profile_expertise['#items'] %}
+            <div class="badge badge--pill badge--large badge-default">{{ item.entity.label }}</div>
+          {% endfor %}
+        </div>
       </div>
     {% endif %}
 
     {% if content.field_profile_interests['#items'] %}
       <div class="card--content-merged__list">
-        <h5>{% trans %}Your interests{% endtrans %}</h5>
-        {% for item in content.field_profile_interests['#items'] %}
-          <div class="badge badge--pill badge--large badge-default">{{ item.entity.label }}</div>
+        <h5>{% trans %}Interests{% endtrans %}</h5>
+        <div class="list-item__text">
+          {% for item in content.field_profile_interests['#items'] %}
+            <div class="badge badge--pill badge--large badge-default">{{ item.entity.label }}</div>
           {% endfor %}
+        </div>
       </div>
     {% endif %}
 
     {% if content.field_profile_profile_tag['#items'] %}
       <div class="card--content-merged__list">
         <h5>{% trans %}Profile tags{% endtrans %}</h5>
-        {% for item in content.field_profile_profile_tag['#items'] %}
-          <div class="badge badge--pill badge--large badge-default">{{ item.entity.label }}</div>
-        {% endfor %}
+        <div class="list-item__text">
+          {% for item in content.field_profile_profile_tag['#items'] %}
+            <div class="badge badge--pill badge--large badge-default">{{ item.entity.label }}</div>
+          {% endfor %}
+        </div>
       </div>
     {% endif %}
 
