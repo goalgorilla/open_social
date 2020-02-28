@@ -29,7 +29,7 @@ class ContentBlockManager extends DefaultPluginManager implements ContentBlockMa
       ContentBlock::class
     );
 
-    $this->alterInfo('content_block');
+    $this->alterInfo('social_content_block_info');
     $this->setCacheBackend($cache_backend, 'content_block_plugins');
   }
 
