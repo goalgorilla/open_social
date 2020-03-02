@@ -30,7 +30,6 @@ class ContentBlockPluginFieldWidget extends ContentBlockPluginWidgetBase {
         '#type' => 'select',
         '#title' => $element['value']['#title'],
         '#description' => $element['value']['#description'],
-        '#description_display' => 'before',
         '#empty_value' => 'all',
         '#empty_option' => t('All'),
         '#weight' => -1,
