@@ -21,6 +21,9 @@ use Drupal\group\Entity\Group;
 use Drupal\social_core\FeaturesRemoval\FeaturesInstallStorage;
 use Drupal\social_core\FeaturesRemoval\FeaturesManager;
 use Symfony\Component\Yaml\Yaml;
+use Drupal\field\Entity\FieldConfig;
+use Drupal\field\Entity\FieldStorageConfig;
+use Drupal\field\FieldConfigInterface;
 
 /**
  * Implements hook_requirements().
@@ -1007,4 +1010,173 @@ function social_core_update_8803() {
  */
 function social_core_update_8804() {
   user_role_grant_permissions('sitemanager', ['access contextual links']);
+}
+
+/**
+ * Install update helper for config update usage.
+ */
+function social_core_update_8805() {
+  \Drupal::service('module_installer')->install(['update_helper']);
+}
+
+/**
+ * Add new basic block config items.
+ */
+function social_core_update_8806(&$sandbox) {
+  if (!isset($sandbox['total'])) {
+    // Declare all the config render arrays,
+    // keyed by the config name.
+    $sandbox['configs'] = [
+      'field.storage.block_content.field_basic_link' => [
+        'id' => 'block_content.field_basic_link',
+        'field_name' => 'field_basic_link',
+        'entity_type' => 'block_content',
+        'type' => 'link',
+        'settings' => [],
+        'module' => 'link',
+        'locked' => FALSE,
+        'cardinality' => 1,
+        'translatable' => TRUE,
+      ],
+      'field.field.block_content.basic.field_basic_link' => [
+        'id' => 'block_content.basic.field_basic_link',
+        'field_name' => 'field_basic_link',
+        'entity_type' => 'block_content',
+        'bundle' => 'basic',
+        'label' => 'Read more link',
+        'description' => '',
+        'required' => FALSE,
+        'translatable' => TRUE,
+        'default_value' => [],
+        'default_value_callback' => '',
+        'settings' => [
+          'link_type' => 17,
+          'title' => 1,
+        ],
+        'field_type' => 'link',
+      ],
+      'field.field.block_content.basic.field_text_block' => [
+        'id' => 'block_content.basic.field_text_block',
+        'field_name' => 'field_text_block',
+        'entity_type' => 'block_content',
+        'bundle' => 'basic',
+        'label' => 'Text block',
+        'description' => '',
+        'required' => FALSE,
+        'translatable' => TRUE,
+        'default_value' => [],
+        'default_value_callback' => '',
+        'settings' => [],
+        'field_type' => 'text_long',
+      ],
+      'core.entity_form_display.block_content.basic.default' => [
+        'langcode' => 'en',
+        'status' => TRUE,
+        'dependencies' => [
+          'config' => [
+            'block_content.type.basic',
+            'field.field.block_content.basic.field_basic_link',
+            'field.field.block_content.basic.field_text_block',
+          ],
+          'module' => [
+            'text',
+            'link',
+          ],
+        ],
+        'id' => 'block_content.basic.default',
+        'targetEntityType' => 'block_content',
+        'bundle' => 'basic',
+        'mode' => 'default',
+        'content' => [
+          'info' => [
+            'region' => 'content',
+            'settings' => [
+              'placeholder' => '',
+              'size' => 60,
+            ],
+            'third_party_settings' => [],
+            'type' => 'string_textfield',
+            'weight' => -5,
+          ],
+        ],
+        'hidden' => [
+          'field_text_block' => TRUE,
+          'field_basic_link' => TRUE,
+        ],
+      ],
+      'core.entity_view_display.block_content.basic.default' => [
+        'langcode' => 'en',
+        'status' => TRUE,
+        'dependencies' => [
+          'config' => [
+            'block_content.type.basic',
+            'field.field.block_content.basic.field_basic_link',
+            'field.field.block_content.basic.field_text_block',
+          ],
+          'module' => [
+            'text',
+            'link',
+          ],
+        ],
+        'id' => 'block_content.basic.default',
+        'targetEntityType' => 'block_content',
+        'bundle' => 'basic',
+        'mode' => 'default',
+        'content' => [],
+        'hidden' => [
+          'field_basic_link' => TRUE,
+          'field_text_block' => TRUE,
+        ],
+      ],
+    ];
+
+    // Count the amount we need to add to cover batching..
+    $sandbox['total'] = count($sandbox['configs']);
+    $sandbox['current'] = 0;
+  }
+
+  $names = array_keys($sandbox['configs']);
+  $name = $names[$sandbox['current']++];
+  $data = $sandbox['configs'][$name];
+
+  $parts = explode('.', $name);
+
+  switch ($parts[0] . '.' . $parts[1]) {
+    case 'field.storage':
+      FieldStorageConfig::create($data)->save();
+      break;
+
+    case 'field.field':
+      $field_config = FieldConfig::loadByName($parts[2], $parts[3], $parts[4]);
+
+      if ($field_config instanceof FieldConfigInterface) {
+        $field_config->setDescription($data);
+      }
+      else {
+        $field_config = FieldConfig::create($data);
+      }
+
+      $field_config->save();
+      break;
+
+    default:
+      // Insert newly created config in the storage.
+      \Drupal::service('config.storage')->write($name, $data);
+  }
+
+  $sandbox['#finished'] = $sandbox['current'] / $sandbox['total'];
+}
+
+/**
+ * Basic block config changes.
+ */
+function social_core_update_8807() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_core', 'social_core_update_8807');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
 }
