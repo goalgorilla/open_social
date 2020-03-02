@@ -77,7 +77,6 @@ abstract class ContentBlockPluginWidgetBase extends WidgetBase implements Contai
    */
   public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
     $element['value'] = $element + [
-      '#description_display' => 'before',
       '#default_value' => $items[$delta]->value ?? NULL,
     ];
 
