@@ -31,14 +31,18 @@ function social_search_form_views_exposed_form_alter(&$form, FormStateInterface 
   if (in_array($form['#id'], $filter_forms, TRUE)) {
     // We need to add the language prefix to the action if a different language
     // is chosen in a multi language environment.
-    $languagecode = \Drupal::languageManager()->getCurrentLanguage()->getId();
-    $default_language = \Drupal::languageManager()->getDefaultLanguage()->getId();
+    $langcode = \Drupal::languageManager()->getCurrentLanguage()->getId();
+    $prefix = \Drupal::config('language.negotiation')->get('url.prefixes');
+    $prefix = $prefix[$langcode];
+
     // get the current path.
     $path = \Drupal::service('path.current')->getPath();
-    if ($languagecode != $default_language) {
-      // prepend the language code if the current language is not the default.
-      $path = '/' . $languagecode . $path;
+
+    // Append the language prefix.
+    if (!empty($prefix)) {
+      $path = '/' . $prefix . $path;
     }
+
     // Set current path as form action, in order to keep search input.
     $form['#action'] = $path;
     // Always enable the reset button.
