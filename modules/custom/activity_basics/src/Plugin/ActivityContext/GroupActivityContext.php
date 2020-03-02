@@ -3,6 +3,7 @@
 namespace Drupal\activity_basics\Plugin\ActivityContext;
 
 use Drupal\activity_creator\Plugin\ActivityContextBase;
+use Drupal\Component\Plugin\Exception\PluginNotFoundException;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\group\Entity\GroupContent;
 
@@ -28,9 +29,15 @@ class GroupActivityContext extends ActivityContextBase {
 
       $referenced_entity = $data['related_object']['0'];
 
-      // TODO: Replace this with dependency injection.
-      /** @var \Drupal\social_group\SocialGroupHelperService $group_helper */
-      $group_helper = \Drupal::service('social_group.helper_service');
+      try {
+        // TODO: Replace this with dependency injection.
+        /** @var \Drupal\social_group\SocialGroupHelperService $group_helper */
+        $group_helper = \Drupal::service('social_group.helper_service');
+      }
+      catch (PluginNotFoundException $e) {
+        return $recipients;
+      }
+
       if ($gid = $group_helper->getGroupFromEntity($referenced_entity, FALSE)) {
         $recipients[] = [
           'target_type' => 'group',

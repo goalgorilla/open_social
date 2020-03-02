@@ -146,17 +146,19 @@ th {
 }
 
 // Table drag
-.tabledrag-handle {
-  color: $gray-light;
-  cursor: move;
-  position: absolute;
-  line-height: 1;
-  margin: 0 0 0 -10px;
-  padding: 10px;
+form:not(.layout-builder-add-block) {
+  .tabledrag-handle {
+    color: $gray-light;
+    cursor: move;
+    position: absolute;
+    line-height: 1;
+    margin: 0 0 0 -10px;
+    padding: 10px;
 
-  ~ .form-managed-file {
-    display: block;
-    padding-left: 24px;
+    ~ .form-managed-file {
+      display: block;
+      padding-left: 24px;
+    }
   }
 }
 

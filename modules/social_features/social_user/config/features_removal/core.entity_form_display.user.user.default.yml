@@ -1,0 +1,52 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - field_group
+    - user
+third_party_settings:
+  field_group:
+    group_information:
+      children:
+        - account
+      parent_name: ''
+      weight: 0
+      label: 'Account information'
+      format_type: fieldset
+      format_settings:
+        label: 'Account information'
+        required_fields: true
+        id: ''
+        classes: ''
+    group_locale_settings:
+      children:
+        - timezone
+      parent_name: ''
+      weight: 1
+      format_type: fieldset
+      format_settings:
+        id: ''
+        classes: ''
+        description: ''
+        required_fields: true
+      label: 'Locale settings'
+id: user.user.default
+targetEntityType: user
+bundle: user
+mode: default
+content:
+  account:
+    weight: 1
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  timezone:
+    weight: 0
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+hidden:
+  contact: true
+  language: true
+  profile_profiles: true
+  groups: true

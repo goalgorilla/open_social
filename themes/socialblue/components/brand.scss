@@ -560,6 +560,15 @@ html:not(.js) .navbar-default {
     }
   }
 
+  &.path-group {
+    .cover-wrap {
+      .teaser__tag {
+        background-color: $brand-primary;
+        color: #fff;
+      }
+    }
+  }
+
   .badge-primary {
     background: $brand-primary;
   }
@@ -581,5 +590,26 @@ html:not(.js) .navbar-default {
         }
       }
     }
+  }
+
+  .navbar-secondary {
+    .navbar-nav {
+      .hidden-list {
+        li a {
+          &:hover,
+          &.active,
+          &:focus,
+          &.is-active {
+            color: $brand-primary;
+          }
+        }
+      }
+    }
+  }
+}
+
+.teaser--tile.teaser-profile {
+  .teaser__image {
+    background-color: $brand-primary;
   }
 }

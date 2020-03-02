@@ -18,7 +18,12 @@ use Drupal\crop\Entity\CropType;
 use Drupal\node\Entity\Node;
 use Drupal\profile\Entity\Profile;
 use Drupal\group\Entity\Group;
+use Drupal\social_core\FeaturesRemoval\FeaturesInstallStorage;
+use Drupal\social_core\FeaturesRemoval\FeaturesManager;
 use Symfony\Component\Yaml\Yaml;
+use Drupal\field\Entity\FieldConfig;
+use Drupal\field\Entity\FieldStorageConfig;
+use Drupal\field\FieldConfigInterface;
 
 /**
  * Implements hook_requirements().
@@ -53,8 +58,10 @@ function social_core_install() {
   _social_core_create_an_homepage_block();
   // Add menu items.
   _social_core_create_menu_links();
-  // Set jpeg quality.
-  _social_core_set_image_quality();
+
+  // Set image quality defaults.
+  $config = \Drupal::service('config.factory')->getEditable('system.image.gd');
+  $config->set('jpeg_quality', 90)->save();
 }
 
 /**
@@ -66,7 +73,54 @@ function social_core_update_dependencies() {
     'profile' => 8001,
   ];
 
+  // Apply update hook positioning for features removal.
+  _social_core_dependencies_for_features_removal($dependencies);
+
   return $dependencies;
+}
+
+/**
+ * Properly position the features removal update hook in between others.
+ *
+ * The features removal in 8.0 happened before Drupal core was updated to 8.8.0,
+ * Group was updated to rc5 and pathauto was updated to 1.6. This means that our
+ * features revert update hook needs to run before the update hooks from those
+ * updates make configuration changes. We do want our updates to run directly
+ * after the previous update hook however.
+ *
+ * Pathauto does not have new configuration changes in 1.5 or 1.6 so it has no
+ * dependency on our features removal. Simply doing it after the 1.4 update hook
+ * is fine.
+ */
+function _social_core_dependencies_for_features_removal(&$dependencies) {
+  $dependencies['social_core'][8802] = [
+    // Make sure all Drupal core updates for 8.7 have run.
+    'system' => 8702,
+    // Make sure all group updates before rc5 have run.
+    'group' => 8016,
+    // We require all 7.x updates for Social Search to have run because
+    // configuration will be reverted that depends on the better exposed filters
+    // module that may still need to be enabled when coming from 6.x.
+    'social_search' => 8701,
+  ];
+
+  // Ensure we run before the update hook from Drupal core 8.8.
+  $dependencies['system'][8801] = [
+    'social_core' => 8802,
+  ];
+
+  // Ensure we run before the group updates from rc5.
+  $dependencies['group'][8017] = [
+    'social_core' => 8802,
+  ];
+
+  // If the pathauto module is enabled then all updates for that must have run
+  // before our feature revert is run. If the module isn't installed then we
+  // can't depend on that update because it will cause all dependent updates not
+  // to be executed.
+  if (\Drupal::moduleHandler()->moduleExists('pathauto')) {
+    $dependencies['social_core'][8802]['pathauto'] = 8107;
+  }
 }
 
 /**
@@ -143,6 +197,7 @@ function _social_core_get_permissions($role) {
     'administer account settings',
     'administer themes',
     'administer blocks',
+    'access contextual links',
   ]);
 
   return $permissions[$role] ?? [];
@@ -451,13 +506,6 @@ function social_core_update_8006(&$sandbox) {
  * Set higher jpeg quality instead of default 75%.
  */
 function social_core_update_8007() {
-  _social_core_set_image_quality();
-}
-
-/**
- * Set image quality.
- */
-function _social_core_set_image_quality() {
   $config = \Drupal::service('config.factory')->getEditable('system.image.gd');
 
   $config->set('jpeg_quality', 90)->save();
@@ -877,7 +925,8 @@ function social_core_update_8501() {
   ];
   \Drupal::service('module_installer')->install($modules);
 
-  // Let's disable sharing data by default.
+  // Let's disable sharing data by default for existing sites because this
+  // changes behaviour. For new installs this will be enabled through settings.
   $config = \Drupal::configFactory()->getEditable('social_lets_connect_usage.settings');
   $config->set('usage_data_enabled', 0);
   $config->save();
@@ -888,4 +937,246 @@ function social_core_update_8501() {
  */
 function social_core_update_8801() {
   \Drupal::service('module_installer')->install(['social_node']);
+}
+
+/**
+ * Perform features revert for the last time.
+ */
+function social_core_update_8802() {
+  // This function goes through all the installed modules and finds the
+  // `features_removal` folder. Any configuration inside of that folder will be
+  // imported as if `features-revert` was performed. This has to be done because
+  // configuration changes in 8.0 may not yet have an update hook at the time
+  // features was removed. This would cause required configuration changes not
+  // to be applied.
+  $removed_features = [];
+
+  // Go through the directories of enabled modules and find our special
+  // `config/features_removal` folder.
+  $drupal_root = \Drupal::root();
+  $active_modules = \Drupal::moduleHandler()->getModuleList();
+  foreach ($active_modules as $name => $module) {
+    $snapshot_dir = $drupal_root . DIRECTORY_SEPARATOR . $module->getPath() . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'features_removal';
+    if (is_dir($snapshot_dir)) {
+      $removed_features[] = $name;
+    }
+  }
+
+  $container = \Drupal::getContainer();
+
+  // Store the original services so they can be restored later.
+  $original_fm = $container->get('features.manager');
+  $original_fis = $container->get('features.extension_storage');
+
+  // Overwrite the services, we'll have to manually instantiate them.
+  // This is according to the original features.services.yml.
+  $container->set(
+    'features.manager',
+    new FeaturesManager(
+      $container->get('app.root'),
+      $container->get('entity.manager'),
+      $container->get('config.factory'),
+      $container->get('config.storage'),
+      $container->get('config.manager'),
+      $container->get('module_handler'),
+      $container->get('features.config_update')
+    )
+  );
+  $container->set(
+    'features.extension_storage',
+    new FeaturesInstallStorage($container->get('config.storage'))
+  );
+
+  // Let features import our modules one last time. We tell it to import
+  // non-features modules because the *.features.yaml file is already removed.
+  $updated_config = \Drupal::service('features.manager')->import($removed_features, TRUE);
+
+  // Restore the services in case other things in the request use them.
+  $container->set('features.manager', $original_fm);
+  $container->set('features.extension_storage', $original_fis);
+
+  // TODO: Output which config has been imported/updated?
+}
+
+/**
+ * Set the view mode for nodes to use when shown in activities.
+ */
+function social_core_update_8803() {
+  activity_creator_set_entity_view_mode('node', 'activity');
+}
+
+/**
+ * Allow site managers to use contextual links.
+ */
+function social_core_update_8804() {
+  user_role_grant_permissions('sitemanager', ['access contextual links']);
+}
+
+/**
+ * Install update helper for config update usage.
+ */
+function social_core_update_8805() {
+  \Drupal::service('module_installer')->install(['update_helper']);
+}
+
+/**
+ * Add new basic block config items.
+ */
+function social_core_update_8806(&$sandbox) {
+  if (!isset($sandbox['total'])) {
+    // Declare all the config render arrays,
+    // keyed by the config name.
+    $sandbox['configs'] = [
+      'field.storage.block_content.field_basic_link' => [
+        'id' => 'block_content.field_basic_link',
+        'field_name' => 'field_basic_link',
+        'entity_type' => 'block_content',
+        'type' => 'link',
+        'settings' => [],
+        'module' => 'link',
+        'locked' => FALSE,
+        'cardinality' => 1,
+        'translatable' => TRUE,
+      ],
+      'field.field.block_content.basic.field_basic_link' => [
+        'id' => 'block_content.basic.field_basic_link',
+        'field_name' => 'field_basic_link',
+        'entity_type' => 'block_content',
+        'bundle' => 'basic',
+        'label' => 'Read more link',
+        'description' => '',
+        'required' => FALSE,
+        'translatable' => TRUE,
+        'default_value' => [],
+        'default_value_callback' => '',
+        'settings' => [
+          'link_type' => 17,
+          'title' => 1,
+        ],
+        'field_type' => 'link',
+      ],
+      'field.field.block_content.basic.field_text_block' => [
+        'id' => 'block_content.basic.field_text_block',
+        'field_name' => 'field_text_block',
+        'entity_type' => 'block_content',
+        'bundle' => 'basic',
+        'label' => 'Text block',
+        'description' => '',
+        'required' => FALSE,
+        'translatable' => TRUE,
+        'default_value' => [],
+        'default_value_callback' => '',
+        'settings' => [],
+        'field_type' => 'text_long',
+      ],
+      'core.entity_form_display.block_content.basic.default' => [
+        'langcode' => 'en',
+        'status' => TRUE,
+        'dependencies' => [
+          'config' => [
+            'block_content.type.basic',
+            'field.field.block_content.basic.field_basic_link',
+            'field.field.block_content.basic.field_text_block',
+          ],
+          'module' => [
+            'text',
+            'link',
+          ],
+        ],
+        'id' => 'block_content.basic.default',
+        'targetEntityType' => 'block_content',
+        'bundle' => 'basic',
+        'mode' => 'default',
+        'content' => [
+          'info' => [
+            'region' => 'content',
+            'settings' => [
+              'placeholder' => '',
+              'size' => 60,
+            ],
+            'third_party_settings' => [],
+            'type' => 'string_textfield',
+            'weight' => -5,
+          ],
+        ],
+        'hidden' => [
+          'field_text_block' => TRUE,
+          'field_basic_link' => TRUE,
+        ],
+      ],
+      'core.entity_view_display.block_content.basic.default' => [
+        'langcode' => 'en',
+        'status' => TRUE,
+        'dependencies' => [
+          'config' => [
+            'block_content.type.basic',
+            'field.field.block_content.basic.field_basic_link',
+            'field.field.block_content.basic.field_text_block',
+          ],
+          'module' => [
+            'text',
+            'link',
+          ],
+        ],
+        'id' => 'block_content.basic.default',
+        'targetEntityType' => 'block_content',
+        'bundle' => 'basic',
+        'mode' => 'default',
+        'content' => [],
+        'hidden' => [
+          'field_basic_link' => TRUE,
+          'field_text_block' => TRUE,
+        ],
+      ],
+    ];
+
+    // Count the amount we need to add to cover batching..
+    $sandbox['total'] = count($sandbox['configs']);
+    $sandbox['current'] = 0;
+  }
+
+  $names = array_keys($sandbox['configs']);
+  $name = $names[$sandbox['current']++];
+  $data = $sandbox['configs'][$name];
+
+  $parts = explode('.', $name);
+
+  switch ($parts[0] . '.' . $parts[1]) {
+    case 'field.storage':
+      FieldStorageConfig::create($data)->save();
+      break;
+
+    case 'field.field':
+      $field_config = FieldConfig::loadByName($parts[2], $parts[3], $parts[4]);
+
+      if ($field_config instanceof FieldConfigInterface) {
+        $field_config->setDescription($data);
+      }
+      else {
+        $field_config = FieldConfig::create($data);
+      }
+
+      $field_config->save();
+      break;
+
+    default:
+      // Insert newly created config in the storage.
+      \Drupal::service('config.storage')->write($name, $data);
+  }
+
+  $sandbox['#finished'] = $sandbox['current'] / $sandbox['total'];
+}
+
+/**
+ * Basic block config changes.
+ */
+function social_core_update_8807() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_core', 'social_core_update_8807');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
 }
