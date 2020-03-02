@@ -5,6 +5,8 @@
  * Installation code for the alternative_frontpage module.
  */
 
+use Drupal\user\Entity\Role;
+
 /**
  * Implements hook_install().
  *
@@ -12,7 +14,12 @@
  */
 function alternative_frontpage_install() {
   // Set some default permissions for the site_manager and administrator.
-  $permissions = ['administer alternative frontpage settings'];
+  $permissions = [
+    'administer alternative frontpage settings',
+    'add alternative frontpage settings',
+    'delete alternative frontpage settings',
+    'edit alternative frontpage settings',
+  ];
 
   user_role_grant_permissions('administrator', $permissions);
   user_role_grant_permissions('sitemanager', $permissions);
@@ -52,5 +59,21 @@ function alternative_frontpage_update_8001(&$sandbox) {
       'roles_target_id' => 'anonymous',
     ]);
     $storage->save();
+  }
+
+  // Give the new permission to sitemanagers.
+  $roles = Role::loadMultiple();
+
+  $permissions = [
+    'add alternative frontpage settings',
+    'delete alternative frontpage settings',
+    'edit alternative frontpage settings',
+  ];
+
+  /** @var \Drupal\user\Entity\Role $role */
+  foreach ($roles as $role) {
+    if ($role->id() === 'sitemanager') {
+      user_role_grant_permissions($role->id(), $permissions);
+    }
   }
 }
