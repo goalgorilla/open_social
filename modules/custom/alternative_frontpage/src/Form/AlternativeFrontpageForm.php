@@ -34,14 +34,14 @@ class AlternativeFrontpageForm extends EntityForm {
    *
    * @param \Drupal\Core\Config\TypedConfigManagerInterface $typed_config_manager
    *   The typed configuration manager.
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entityTypeManager.
    * @param \Drupal\Core\Path\PathValidatorInterface $path_validator
    *   The factory for configuration objects.
    */
-  public function __construct(TypedConfigManagerInterface $typed_config_manager, EntityTypeManagerInterface $entityTypeManager, PathValidatorInterface $path_validator) {
+  public function __construct(TypedConfigManagerInterface $typed_config_manager, EntityTypeManagerInterface $entity_type_manager, PathValidatorInterface $path_validator) {
     $this->typedConfigManager = $typed_config_manager;
-    $this->entityTypeManager = $entityTypeManager;
+    $this->entityTypeManager = $entity_type_manager;
     $this->pathValidator = $path_validator;
   }
 
@@ -162,6 +162,12 @@ class AlternativeFrontpageForm extends EntityForm {
 
   /**
    * Check whether an Alternative Frontpage configuration entity exists.
+   *
+   * @param int $id
+   *   Entity Id to check.
+   *
+   * @return bool
+   *   Returns true when the configuration exists.
    */
   public function exist($id) {
     $entity = $this->entityTypeManager->getStorage('alternative_frontpage')->getQuery()
@@ -172,6 +178,14 @@ class AlternativeFrontpageForm extends EntityForm {
 
   /**
    * Check if there is already a configuration entity with the same user role.
+   *
+   * @param string $roles_target_id
+   *   Role target to check.
+   * @param int $id
+   *   Entity Id to check.
+   *
+   * @return bool
+   *   Returns true when the configuration exists.
    */
   public function roleExist($roles_target_id, $id) {
     $entity = $this->entityTypeManager->getStorage('alternative_frontpage')->getQuery()

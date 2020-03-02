@@ -27,7 +27,7 @@ class RedirectHomepageSubscriber implements EventSubscriberInterface {
   protected $userData;
 
   /**
-   * Protected var configFactory.
+   * The config factory to perform operations on the configs.
    *
    * @var \Drupal\Core\Config\ConfigFactory
    */
@@ -64,14 +64,14 @@ class RedirectHomepageSubscriber implements EventSubscriberInterface {
   /**
    * Constructor for the RedirectHomepageSubscriber.
    */
-  public function __construct(UserData $user_data, ConfigFactory $config_factory, AccountProxy $current_user, PathMatcher $path_matcher, EntityTypeManagerInterface $entityTypeManager, LanguageManagerInterface $languageManager) {
+  public function __construct(UserData $user_data, ConfigFactory $config_factory, AccountProxy $current_user, PathMatcher $path_matcher, EntityTypeManagerInterface $entity_type_manager, LanguageManagerInterface $language_manager) {
     // We needs it.
     $this->userData = $user_data;
     $this->configFactory = $config_factory;
     $this->currentUser = $current_user;
     $this->pathMatcher = $path_matcher;
-    $this->entityTypeManager = $entityTypeManager;
-    $this->languageManager = $languageManager;
+    $this->entityTypeManager = $entity_type_manager;
+    $this->languageManager = $language_manager;
   }
 
   /**
