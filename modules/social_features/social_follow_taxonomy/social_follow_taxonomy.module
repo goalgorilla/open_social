@@ -7,6 +7,8 @@
 
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
+use Drupal\message\Entity\Message;
+use Drupal\node\NodeInterface;
 
 /**
  * Implements hook_theme().
@@ -15,6 +17,9 @@ function social_follow_taxonomy_theme($existing, $type, $theme, $path) {
   return [
     'flag__follow_term' => [
       'base hook' => 'flag',
+    ],
+    'activity__node__followed' => [
+      'base hook' => 'activity',
     ],
   ];
 }
@@ -42,4 +47,73 @@ function social_follow_taxonomy_social_user_account_header_account_links(array $
  */
 function social_follow_taxonomy_page_attachments(array &$page) {
   $page['#attached']['library'][] = 'social_follow_taxonomy/social_follow_taxonomy';
+}
+
+/**
+ * Implements hook_theme_suggestions_alter().
+ */
+function social_follow_taxonomy_theme_suggestions_activity(array $variables) {
+  $suggestions = [];
+
+  $activity = $variables['elements']['#activity'];
+  $message = Message::load($activity->field_activity_message->target_id);
+
+  if ($message->getTemplate()->id() == 'create_node_following_tag') {
+    $entity_type = $activity->field_activity_entity->first()->target_type;
+
+    if ($entity_type === 'node') {
+      $suggestions[] = 'activity__' . $entity_type . '__followed';
+    }
+  }
+
+  return $suggestions;
+}
+
+/**
+ * Implements hook_preprocess_activity().
+ */
+function social_follow_taxonomy_preprocess_activity(&$variables) {
+  $activity = $variables['elements']['#activity'];
+
+  $message = Message::load($activity->field_activity_message->target_id);
+  $message_template_id = $message->getTemplate()->id();
+
+  if ($message_template_id == 'create_node_following_tag') {
+    $entity = $activity->getRelatedEntity();
+
+    if ($entity->getEntityTypeId() === 'node') {
+      $taxonomy_ids = [];
+      $storage = \Drupal::entityTypeManager()->getStorage('flagging');
+
+      if ($entity instanceof NodeInterface) {
+        if ($entity->hasField('social_tagging')) {
+          if (!empty($tags = $entity->get('social_tagging')->getValue())) {
+            foreach ($tags as $tag) {
+              $taxonomy_ids[] = $tag['target_id'];
+            }
+          }
+        }
+
+        foreach ($taxonomy_ids as $taxonomy_id) {
+          $flag = $storage->loadByProperties([
+            'flag_id' => 'follow_term',
+            'entity_type' => 'taxonomy_term',
+            'entity_id' => $taxonomy_id,
+          ]);
+          $flag = reset($flag);
+
+          if (!empty($flag) && \Drupal::currentUser()->id() == $flag->getOwner()->id()) {
+            $term = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->load($taxonomy_id);
+            $flag_link_service = \Drupal::service('flag.link_builder');
+            $flag_link = $flag_link_service->build($term->getEntityTypeId(), $term->id(), 'follow_term');
+            $variables['content_type'] = $entity->type->entity->label();
+            $variables['followed_tags'][$taxonomy_id] = [
+              'name' => $term->getName(),
+              'flag' => $flag_link,
+            ];
+          }
+        }
+      }
+    }
+  }
 }
