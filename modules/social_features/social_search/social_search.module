@@ -29,18 +29,18 @@ function social_search_form_views_exposed_form_alter(&$form, FormStateInterface 
   ];
 
   if (in_array($form['#id'], $filter_forms, TRUE)) {
-    // get the current path.
+    // Get the current path.
     $path = \Drupal::service('path.current')->getPath();
 
     // We need to add the language prefix to the action if a different language
     // is chosen in a multi language environment.
-    if(\Drupal::languageManager()->isMultilingual()) {
+    if (\Drupal::languageManager()->isMultilingual()) {
       $langcode = \Drupal::languageManager()->getCurrentLanguage()->getId();
       $prefix = \Drupal::config('language.negotiation')->get('url.prefixes');
 
       // Append the language prefix.
       if ($prefix[$langcode]) {
-        $path = '/' .  $prefix[$langcode] . $path;
+        $path = '/' . $prefix[$langcode] . $path;
       }
     }
 
