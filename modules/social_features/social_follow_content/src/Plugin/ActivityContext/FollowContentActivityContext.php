@@ -4,6 +4,8 @@ namespace Drupal\social_follow_content\Plugin\ActivityContext;
 
 use Drupal\activity_creator\Plugin\ActivityContextBase;
 use Drupal\activity_creator\ActivityFactory;
+use Drupal\node\Entity\Node;
+use Drupal\social_comment\Entity\Comment;
 use Drupal\user\UserInterface;
 
 /**
@@ -73,6 +75,22 @@ class FollowContentActivityContext extends ActivityContextBase {
         break;
       }
 
+      // The owner of a node automatically follows his / her own content.
+      // Because of this, we do not want to send a follow notification.
+      if ($original_related_entity instanceof Comment) {
+        // What is our original node?
+        // We need to compare the owner ID of the original node to the one
+        // being the current recipient. If that is the same, dont send the
+        // notification.
+        $original_node = $original_related_entity->getCommentedEntity();
+        if ($original_node instanceof \Drupal\social_node\Entity\Node) {
+          $original_author = $original_node->getOwnerId();
+          if ($recipient->id() !== $original_author) {
+            break;
+          }
+        }
+      }
+
       if ($recipient->id() !== $original_related_entity->getOwnerId() && $original_related_entity->access('view', $recipient)) {
         $recipients[] = [
           'target_type' => 'user',
@@ -80,7 +98,6 @@ class FollowContentActivityContext extends ActivityContextBase {
         ];
       }
     }
-
     return $recipients;
   }
 
