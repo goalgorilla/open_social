@@ -80,11 +80,12 @@ class FollowContentActivityContext extends ActivityContextBase {
       if ($original_related_entity instanceof Comment) {
         // What is our original node?
         // We need to compare the owner ID of the original node to the one
-        // being the current recipient. If that is the same, dont send the
-        // notification.
+        // being the current recipient.
         $original_node = $original_related_entity->getCommentedEntity();
         if ($original_node instanceof Node) {
           $original_author = $original_node->getOwnerId();
+          // If the recipient ID is the same as the original content author,
+          // do not send a notification.
           if ($recipient->id() !== $original_author) {
             break;
           }
