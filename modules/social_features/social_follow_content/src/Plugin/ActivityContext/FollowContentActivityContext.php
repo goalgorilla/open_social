@@ -4,8 +4,8 @@ namespace Drupal\social_follow_content\Plugin\ActivityContext;
 
 use Drupal\activity_creator\Plugin\ActivityContextBase;
 use Drupal\activity_creator\ActivityFactory;
-use Drupal\node\Entity\Node;
 use Drupal\social_comment\Entity\Comment;
+use Drupal\social_node\Entity\Node;
 use Drupal\user\UserInterface;
 
 /**
@@ -83,7 +83,7 @@ class FollowContentActivityContext extends ActivityContextBase {
         // being the current recipient. If that is the same, dont send the
         // notification.
         $original_node = $original_related_entity->getCommentedEntity();
-        if ($original_node instanceof \Drupal\social_node\Entity\Node) {
+        if ($original_node instanceof Node) {
           $original_author = $original_node->getOwnerId();
           if ($recipient->id() !== $original_author) {
             break;
