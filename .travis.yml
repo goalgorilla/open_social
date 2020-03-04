@@ -31,6 +31,7 @@ matrix:
   - env: TEST_SUITE=install_stability_3
   - env: TEST_SUITE=install_stability_4
   - env: TEST_SUITE=install_update
+  - env: TEST_SUITE=install_without_optional
   - env: TEST_SUITE=drush_make
 #  - env: TEST_SUITE=accessibility
 
@@ -56,7 +57,7 @@ before_install:
   # Installing hirak/prestissimo allows composer to parallelise downloads which speeds up the composer install.
   - composer global require hirak/prestissimo
   - echo "TRAVIS_BRANCH=$TRAVIS_BRANCH, PR=$PR, BRANCH=$BRANCH, COMMIT=$COMMIT"
-  - if [ "$TEST_SUITE" = "install_update" ]; then composer require goalgorilla/open_social:dev-8.x-6.x --prefer-dist; fi
+  - if [ "$TEST_SUITE" = "install_update" ]; then composer require goalgorilla/open_social:dev-8.x-7.x --prefer-dist; fi
   - if [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ "$TRAVIS_PULL_REQUEST_SLUG" != "goalgorilla/open_social" ]; then composer config repositories.social git https://github.com/$TRAVIS_PULL_REQUEST_SLUG.git; fi
   - if [ "$TEST_SUITE" != "install_update" ]; then composer require goalgorilla/open_social:dev-${BRANCH}#${COMMIT} --prefer-dist; fi
 
@@ -65,7 +66,8 @@ before_install:
   - docker-compose -f docker-compose-ci.yml up -d
 
 install:
-  - if [ "$TEST_SUITE" = "install_stability_1" ] || [ "$TEST_SUITE" = "install_stability_2" ] || [ "$TEST_SUITE" = "install_stability_3" ] || [ "$TEST_SUITE" = "install_stability_4" ]; then docker exec -i social_ci_web bash /var/www/scripts/social/install/install_script.sh; fi
+  - if [ "$TEST_SUITE" = "install_stability_1" ] || [ "$TEST_SUITE" = "install_stability_2" ] || [ "$TEST_SUITE" = "install_stability_3" ] || [ "$TEST_SUITE" = "install_stability_4" ]; then docker exec -i social_ci_web bash /var/www/scripts/social/install/install_script.sh --with-optional; fi
+  - if [ "$TEST_SUITE" = "install_without_optional" ]; then docker exec -i social_ci_web bash /var/www/scripts/social/install/install_script.sh; fi
   - if [ "$TEST_SUITE" = "install_update" ]; then bash scripts/social/ci/build-install-update.sh $PR $BRANCH $COMMIT; fi
   - if [ "$TEST_SUITE" = "drush_make" ]; then bash scripts/social/ci/build-social-make.sh; fi
 
@@ -73,13 +75,13 @@ script:
   - set -e
   - if [ "$TEST_SUITE" = "install_stability_1" ]; then docker exec -i social_ci_web bash /var/www/scripts/social/check-coding-standards.sh full; fi
   - if [ "$TEST_SUITE" = "install_stability_1" ]; then docker exec -i social_ci_web_scripts sh /var/www/scripts/social/unit-tests.sh; fi
-  - if [ "$TEST_SUITE" = "install_stability_1" ] ; then docker exec -i social_ci_web bash /var/www/scripts/social/check-feature-state.sh social; fi
   - if [ "$TEST_SUITE" = "install_stability_1" ]; then docker exec -it social_ci_behat sh /var/www/scripts/social/behatstability.sh "stability-1 --stop-on-failure --strict"; fi
   - if [ "$TEST_SUITE" = "install_stability_2" ]; then docker exec -it social_ci_behat sh /var/www/scripts/social/behatstability.sh "notifications --stop-on-failure --strict"; fi
   - if [ "$TEST_SUITE" = "install_stability_2" ]; then docker exec -it social_ci_behat sh /var/www/scripts/social/behatstability.sh "stability-2 --stop-on-failure --strict"; fi
   - if [ "$TEST_SUITE" = "install_stability_3" ]; then docker exec -it social_ci_behat sh /var/www/scripts/social/behatstability.sh "stability-3 --stop-on-failure --strict"; fi
   - if [ "$TEST_SUITE" = "install_stability_4" ]; then docker exec -it social_ci_behat sh /var/www/scripts/social/behatstability.sh "stability-4 --stop-on-failure --strict"; fi
   - if [ "$TEST_SUITE" = "install_update" ]; then docker exec -it social_ci_behat sh /var/www/scripts/social/behatstability.sh "stability-1&&~DS-1136&&~DS-3605 --stop-on-failure --strict"; fi
+  - if [ "$TEST_SUITE" = "install_without_optional" ]; then docker exec -it social_ci_behat sh /var/www/scripts/social/behatstability.sh "stability-1&&~DS-1136&&~DS-3605 --stop-on-failure --strict"; fi
   - if [ "$TEST_SUITE" = "accessibility" ]; then docker exec -it social_ci_web bash /var/www/scripts/social/check-accessibility.sh install; fi
 
 after_success:

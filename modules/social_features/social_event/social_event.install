@@ -19,8 +19,6 @@ function social_event_install() {
   _social_event_set_permissions();
   // Add menu links.
   _social_event_create_menu_links();
-  // Enable event enrolling of some group types for not member.
-  _social_event_enroll_group_types();
 }
 
 /**
@@ -120,19 +118,12 @@ function _social_event_create_menu_links() {
 }
 
 /**
- * Allow enrolling to an event of an open group for not a member.
- */
-function _social_event_enroll_group_types() {
-  \Drupal::configFactory()->getEditable('social_event.settings')
-    ->set('enroll', [])
-    ->save();
-}
-
-/**
  * Enable event enrolling of open groups for not member.
  */
 function social_event_update_8001() {
-  _social_event_enroll_group_types();
+  \Drupal::configFactory()->getEditable('social_event.settings')
+    ->set('enroll', [])
+    ->save();
 }
 
 /**
@@ -159,5 +150,20 @@ function social_event_update_8003() {
     if ($role->hasPermission('access user profiles')) {
       user_role_grant_permissions($role->id(), $permissions);
     }
+  }
+}
+
+/**
+ * Fix empty value in enroll setting.
+ */
+function social_event_update_8801() {
+  // This does not need to run before 8802 necessarily because the
+  // features_removal/ folder has also been updated so a revert works too.
+  // This update mostly exists for people who've already updated to 8.0.
+  $settings = \Drupal::configFactory()->getEditable('social_event.settings');
+  $enroll = $settings->get('enroll');
+  // Only change it if no value was set yet.
+  if (empty($enroll)) {
+    $settings->set('enroll', [])->save();
   }
 }

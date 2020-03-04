@@ -44,11 +44,6 @@ function social_topic_install() {
     ]);
     $term->save();
   }
-
-  // Set default topic type settings.
-  $config = \Drupal::configFactory()->getEditable('social_topic.settings');
-  $config->set('social_topic_type_select_changer', 8);
-  $config->save();
 }
 
 /**

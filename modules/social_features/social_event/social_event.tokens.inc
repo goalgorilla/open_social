@@ -146,7 +146,7 @@ function get_name_from_enrollment($id) {
   // User is AN by default.
   $enrollment_name = \Drupal::configFactory()->get('user.settings')->get('anonymous');
 
-  if (!$enrollment instanceof EventEnrollmentInterface) {
+  if ($enrollment instanceof EventEnrollmentInterface) {
     // If there is a Uid. Lets load the user and return his display name.
     if ($enrollment !== NULL &&
       $enrollment->hasField('field_account') &&

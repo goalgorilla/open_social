@@ -1,0 +1,51 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.book.body
+    - field.field.node.book.field_book_comments
+    - field.field.node.book.field_book_image
+    - field.field.node.book.field_content_visibility
+    - field.field.node.book.field_files
+    - node.type.book
+  module:
+    - file
+    - group_core_comments
+    - text
+    - user
+    - social_book
+id: node.book.default
+targetEntityType: node
+bundle: book
+mode: default
+content:
+  body:
+    label: hidden
+    type: text_default
+    weight: 0
+    settings: {  }
+    third_party_settings: {  }
+  field_book_comments:
+    type: comment_group_content
+    weight: 2
+    label: above
+    settings:
+      pager_id: 0
+    third_party_settings: {  }
+  field_files:
+    type: file_default
+    weight: 3
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+  links:
+    weight: 4
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+hidden:
+  field_book_image: true
+  field_content_visibility: true
+  groups: true
+  groups_type_closed_group: true
+  groups_type_open_group: true
