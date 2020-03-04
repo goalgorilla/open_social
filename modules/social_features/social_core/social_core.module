@@ -47,6 +47,13 @@ function social_core_modules_installed($modules) {
     (in_array('social_landing_page', $modules, TRUE) && \Drupal::moduleHandler()->moduleExists('social_group_flexible_group'))) {
     \Drupal::service('module_installer')->install(['social_flexible_group_featured']);
   }
+  // If either social_book or social_landing_page gets enabled and
+  // the other is already enabled, we should import the the configuration
+  // for the optional view mode by enabling social_book_featured.
+  if ((in_array('social_book', $modules, TRUE) && \Drupal::moduleHandler()->moduleExists('social_landing_page')) ||
+    (in_array('social_landing_page', $modules, TRUE) && \Drupal::moduleHandler()->moduleExists('social_book'))) {
+    \Drupal::service('module_installer')->install(['social_book_featured']);
+  }
 }
 
 /**
