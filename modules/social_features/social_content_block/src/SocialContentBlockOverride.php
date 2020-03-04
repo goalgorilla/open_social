@@ -29,7 +29,7 @@ class SocialContentBlockOverride implements ConfigFactoryOverrideInterface {
    *
    * @var array
    */
-  protected $definitions;
+  protected $definitions = NULL;
 
   /**
    * Constructs the configuration override.
@@ -39,7 +39,10 @@ class SocialContentBlockOverride implements ConfigFactoryOverrideInterface {
    */
   public function __construct(ConfigFactoryInterface $config_factory) {
     $this->configFactory = $config_factory;
-    $this->definitions = \Drupal::service('plugin.manager.content_block')->getDefinitions();
+
+    if (\Drupal::hasService('plugin.manager.content_block')) {
+      $this->definitions = \Drupal::service('plugin.manager.content_block')->getDefinitions();
+    }
   }
 
   /**
@@ -74,6 +77,10 @@ class SocialContentBlockOverride implements ConfigFactoryOverrideInterface {
       }
 
       $overrides[$config_name]['settings']['plugin_ids'] = $settings;
+    }
+
+    if (!$this->definitions) {
+      return $overrides;
     }
 
     $config_name = 'core.entity_form_display.block_content.custom_content_list.default';
