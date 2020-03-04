@@ -1,0 +1,36 @@
+{{ attach_library('social_follow_taxonomy/paragraph_tag') }}
+
+{% if tags %}
+<div class="paragraph paragraph--featured social_follow_tax">
+  <div class="container">
+    {% for tag in tags %}
+      <div class="card teaser">
+        <div class="teaser__body">
+          <div class="teaser__content">
+            <div class="teaser__left">
+              <div class="teaser__tag">
+                {% trans %}Tag{% endtrans %}
+              </div>
+
+              <div class="teaser__title">
+                <h5>{{ tag.name }}</h5>
+              </div>
+
+              <div class="teaser__related-content">
+                {% for related_content in tag.related_content %}
+                  {{ related_content.count }} {{ related_content.label }}
+                  {% if not loop.last %}|{% endif %}
+                {% endfor %}
+              </div>
+            </div>
+
+            <div class="actions">
+              {{ tag.flag }}
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}

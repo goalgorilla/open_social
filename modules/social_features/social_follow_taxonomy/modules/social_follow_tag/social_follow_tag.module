@@ -1,0 +1,88 @@
+<?php
+
+/**
+ * @file
+ * Contains social_follow_tag.module.
+ */
+
+use Drupal\Core\Url;
+
+/**
+ * Implements hook_theme().
+ */
+function social_follow_tag_theme($existing, $type, $theme, $path) {
+  return [
+    'paragraph__tag__default' => [
+      'base hook' => 'paragraph',
+    ],
+    'social_tagging_nosplit' => [
+      'base hook' => 'social_tagging_nosplit',
+    ],
+    'social_tagging_split' => [
+      'base hook' => 'social_tagging_split',
+    ],
+    'search_follow_tag' => [
+      'variables' => ['tags' => NULL],
+    ],
+  ];
+
+}
+
+/**
+ * Prepares variables for the paragraph.
+ */
+function social_follow_tag_preprocess_paragraph(&$variables) {
+  /** @var \Drupal\paragraphs\Entity\Paragraph $entity */
+  $entity = $variables['elements']['#paragraph'];
+  $bundle = $entity->bundle();
+
+  switch ($bundle) {
+    case 'tag':
+      if ($entity->hasField('field_tag') && !empty($entity->field_tag)) {
+        $term_id = $entity->field_tag->target_id;
+        $term_storage = \Drupal::entityTypeManager()->getStorage('taxonomy_term');
+        $term = $term_storage->load($term_id);
+
+        if (!empty($term)) {
+          $flag_link_service = \Drupal::service('flag.link_builder');
+          $flag_link = $flag_link_service->build('taxonomy_term', $term_id, 'follow_term');
+
+          $nodes = \Drupal::entityTypeManager()->getStorage('node')->loadByProperties(
+            ['social_tagging' => $term_id]
+          );
+          $related_content = [];
+          foreach ($nodes as $node) {
+            $related_content[$node->bundle()]['label'] = $node->type->entity->label();
+            if ($related_content[$node->bundle()]) {
+              $related_content[$node->bundle()]['count'] += 1;
+              $related_content[$node->bundle()]['nid'][] = $node->id();
+            }
+          }
+
+          // Get current terms parents.
+          $parents = $term_storage->loadParents($term_id);
+          if (!empty($parents)) {
+            $parent = reset($parents);
+            $category = $parent->getName();
+
+            $parameter = 'tag';
+            if ($tag_service = Drupal::getContainer()->get('social_tagging.tag_service')->allowSplit()) {
+              $parameter = social_tagging_to_machine_name($category);
+            }
+            $route = 'view.search_content.page_no_value';
+            $url = Url::fromRoute($route, [
+              $parameter . '[]' => $term_id,
+            ]);
+
+            $variables['term'] = [
+              'url' => $url->toString(),
+              'name' => $term->getName(),
+              'flag' => $flag_link,
+              'related_content' => $related_content,
+            ];
+          }
+        }
+      }
+      break;
+  }
+}

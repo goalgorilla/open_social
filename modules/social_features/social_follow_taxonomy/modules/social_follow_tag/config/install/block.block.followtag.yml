@@ -1,0 +1,25 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - social_follow_tag
+    - system
+  theme:
+    - socialblue
+id: followtag
+theme: socialblue
+region: secondary_navigation
+weight: 2
+provider: null
+plugin: follow_tag_block
+settings:
+  id: follow_tag_block
+  label: 'Follow tag'
+  provider: social_follow_tag
+  label_display: '0'
+visibility:
+  request_path:
+    id: request_path
+    pages: "/search/content\r\n"
+    negate: false
+    context_mapping: {  }

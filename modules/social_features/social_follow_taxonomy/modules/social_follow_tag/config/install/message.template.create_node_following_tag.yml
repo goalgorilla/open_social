@@ -1,0 +1,43 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - activity_logger
+third_party_settings:
+  activity_logger:
+    activity_bundle_entities:
+      node-discussion: node-discussion
+      node-discussion_phase: node-discussion_phase
+      node-event: node-event
+      node-landing_page: node-landing_page
+      node-page: node-page
+      node-social_idea: node-social_idea
+      node-topic: node-topic
+    activity_action: create_entitiy_action
+    activity_context: follow_tag_activity_context
+    activity_destinations:
+      stream_profile: stream_profile
+      notifications: notifications
+      email: email
+    activity_create_direct: true
+    activity_aggregate: false
+    activity_entity_condition: ''
+template: create_node_following_tag
+label: 'Create node with following tag'
+description: 'A person create content with tag I am following'
+text:
+  -
+    value: "<p>Content with tag I am following created</p>\r\n"
+    format: basic_html
+  -
+    value: "<p>Content with tag I am following created</p>\r\n"
+    format: basic_html
+  -
+    value: "<p>Content with tag I am following created</p>\r\n"
+    format: basic_html
+settings:
+  'token options':
+    clear: false
+    'token replace': true
+  purge_override: false
+  purge_methods: {  }
