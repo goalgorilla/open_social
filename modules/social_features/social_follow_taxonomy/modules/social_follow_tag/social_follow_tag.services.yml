@@ -1,7 +1,4 @@
 services:
-  social_tagging.tag_service:
-    class: Drupal\social_follow_tag\SocialFollowTagService
-    arguments: ['@entity_type.manager', '@config.factory']
   social_follow_tag.overrider:
     class: Drupal\social_follow_tag\SocialFollowTagOverrides
     arguments: ['@config.factory']

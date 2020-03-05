@@ -36,9 +36,11 @@
               <div class="teaser__body">
                 <div class="teaser__content">
                   <div class="teaser__tag">{% trans %}TAG{% endtrans %}</div>
+
                   <h4 class="teaser__title">
                     {{ tag.name }}
                   </h4>
+
                   <div class="teaser__related-content">
                     {% for related_content in tag.related_content %}
                       {{ related_content.count }} {{ related_content.label }}
@@ -52,15 +54,10 @@
                       {% trans %}See related content{% endtrans %}
                     </a>
                   </div>
-
                 </div>
-
               </div>
-
             </div>
-
           </div>
-
         </div>
       {% endfor %}
     </div>
