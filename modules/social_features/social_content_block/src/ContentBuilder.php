@@ -4,12 +4,14 @@ namespace Drupal\social_content_block;
 
 use Drupal\block_content\BlockContentInterface;
 use Drupal\Core\Database\Connection;
+use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Link;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
+use Drupal\group\Entity\Group;
 
 /**
  * Class ContentBuilder.
@@ -141,14 +143,8 @@ class ContentBuilder implements ContentBuilderInterface {
     // Allow other modules to change the query to add additions.
     $this->moduleHandler->alter('social_content_block_query', $query, $block_content);
 
-    // Add sorting.
-    $query->orderBy('base_table.' . $block_content->field_sorting->value);
-
-    // Add range.
-    $query->range(0, $block_content->field_item_amount->value);
-
     // Execute the query to get the results.
-    $entities = $query->execute()->fetchAllKeyed(0, 0);
+    $entities = $this->sortAndRange($block_content, $query, $entity_type->id());
 
     if ($entities) {
       // Load all the topics so we can give them back.
@@ -235,6 +231,62 @@ class ContentBuilder implements ContentBuilderInterface {
     }
 
     return $build;
+  }
+
+  /**
+   * @param \Drupal\block_content\BlockContentInterface $block_content
+   *   The block content where we get the settings from.
+   * @param \Drupal\Core\Database\Query\SelectInterface $query
+   *   The query.
+   * @param string $entity_type
+   *   The entity type.
+   *
+   * @return array
+   */
+  private function sortAndRange($block_content, $query, $entity_type) {
+    $entities = $query->execute()->fetchAllKeyed(0, 0);
+    $start_time = strtotime('-90 days');
+
+    switch ($block_content->field_sorting->value) {
+      case 'most_commented':
+        if ($entity_type === 'group') {
+          $query = $this->connection->select('group_content_field_data', 'gfd');
+          $query->condition('gfd.gid', $entities, 'IN');
+          $cfd_alias = $query->innerJoin('comment_field_data', 'cfd', 'gfd.entity_id = %alias.entity_id');
+          $query->condition("{$cfd_alias}.created", $start_time, '>');
+          $query->addField('gfd', 'gid');
+          $query->addExpression("COUNT({$cfd_alias}.entity_id)", 'count');
+          $query->groupBy("gfd.gid");
+          $query->orderBy('count','DESC');
+        }
+        else {
+          $query = $this->connection->select('comment_field_data', 'cfd');
+          $query->condition('cfd.entity_id', $entities, 'IN');
+          $query->condition('cfd.created', $start_time, '>');
+          $query->addField('cfd', 'entity_id');
+          $query->addExpression('COUNT(cfd.entity_id)', 'count');
+          $query->groupBy('cfd.entity_id');
+          $query->orderBy('count','DESC');
+        }
+        break;
+
+      case 'most_liked':
+        $query = $this->connection->select('votingapi_vote', 'vv');
+        $query->condition('vv.entity_id', $entities, 'IN');
+        $query->condition('vv.entity_type', $entity_type, '=');
+        $query->condition('vv.timestamp', $start_time, '>');
+        $query->addField('vv', 'entity_id');
+        $query->addExpression('COUNT(vv.entity_id)', 'count');
+        $query->groupBy('vv.entity_id');
+        $query->orderBy('count','DESC');
+        break;
+
+      default:
+        $query->orderBy('base_table.' . $block_content->field_sorting->value);
+    }
+    $query->range(0, $block_content->field_item_amount->value);
+
+    return $query->execute()->fetchAllKeyed(0, 0);
   }
 
 }

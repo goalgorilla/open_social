@@ -325,3 +325,26 @@ function social_content_block_update_8002(&$sandbox) {
 
   $sandbox['#finished'] = $sandbox['processed'] / $sandbox['total'];
 }
+
+/**
+ * Add an extra allowed values to the sorting field.
+ */
+function social_content_block_update_8003() {
+  $config_name = 'field.storage.block_content.field_sorting';
+  $config =  Drupal::configFactory()->getEditable($config_name);
+  $config_data = $config->getRawData();
+  $allowed_values = $config_data['settings']['allowed_values'];
+
+  $allowed_values[] = [
+    'value' => 'most_commented',
+    'label' => 'Most commented',
+  ];
+  $allowed_values[] = [
+    'value' => 'most_liked',
+    'label' => 'Most liked',
+  ];
+
+  $config_data['settings']['allowed_values'] = $allowed_values;
+  $config->setData($config_data)->save();
+  Drupal::service('entity_field.manager')->clearCachedFieldDefinitions();
+}
