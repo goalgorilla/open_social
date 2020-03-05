@@ -8,8 +8,6 @@ use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\flag\Entity\Flag;
-use Drupal\flag\FlagInterface;
 use Drupal\flag\FlagLinkBuilderInterface;
 use Drupal\flag\FlagServiceInterface;
 use Drupal\social_tagging\SocialTaggingService;
@@ -145,8 +143,10 @@ class FollowTagBlock extends BlockBase implements ContainerFactoryPluginInterfac
   public function build() {
     $build = [];
     $identifiers = [];
-    $terms = [];
 
+    // Get the tag category identifier that is used as a parameter in the URL.
+    // It takes on the value of the parent term if the allow_category_split
+    // settings is enabled or equal to the default name of the filter (tag).
     if ($this->tagService->allowSplit()) {
       foreach ($this->tagService->getCategories() as $tid => $value) {
         if (!empty($this->tagService->getChildren($tid))) {
@@ -154,63 +154,35 @@ class FollowTagBlock extends BlockBase implements ContainerFactoryPluginInterfac
         }
       }
     }
-
+    else {
+      $identifiers = ['tag'];
+    }
+    // Get term id from url parameters.
+    $term_ids = [];
     foreach ($identifiers as $identifier) {
       if (isset($_GET[$identifier])) {
-        $query = $_GET[$identifier];
-        $terms[] = $query;
+        $term_ids = array_merge($term_ids, $_GET[$identifier]);
       }
     }
 
     $tags = [];
-    foreach ($terms as $term_ids) {
-      foreach ($term_ids as $term_key => $term) {
+    foreach ($term_ids as $term_id) {
+      /** @var \Drupal\taxonomy\Entity\Term $term */
+      $term = Term::load($term_id);
 
-        /** @var \Drupal\taxonomy\Entity\Term $taxonomy_term */
-        $taxonomy_term = Term::load($term);
-
-        $nodes = $this->entityTypeManager
-          ->getStorage('node')
-          ->loadByProperties(['social_tagging' => $term]);
-        $related_content = [];
-
-        foreach ($nodes as $node) {
-          $related_content[$node->bundle()]['label'] = $node->type->entity->label();
-          if ($related_content[$node->bundle()]) {
-            if (isset($related_content[$node->bundle()]['count'])) {
-              $related_content[$node->bundle()]['count'] += 1;
-            }
-            else {
-              $related_content[$node->bundle()]['count'] = 1;
-            }
-
-            $related_content[$node->bundle()]['nid'][] = $node->id();
-          }
-        }
-
-        $flag_link = $this->flagLinkBuilder->build($taxonomy_term->getEntityTypeId(), $taxonomy_term->id(), 'follow_term');
-
-        $follow = FALSE;
-        $flag = Flag::load('follow_term');
-        if ($flag instanceof FlagInterface) {
-          if (!empty($this->flagService->getFlagging($flag, $taxonomy_term, $this->currentUser))) {
-            $follow = TRUE;
-          }
-        }
-
-        if ($follow) {
-          $tags[$term] = [
-            'name' => $taxonomy_term->getName(),
-            'flag' => $flag_link,
-            'related_content' => $related_content,
-          ];
-        }
+      // Show only tags followed by user.
+      if (_social_follow_tag_follow($term)) {
+        $tags[$term_id] = [
+          'name' => $term->getName(),
+          'flag' => _social_follow_taxonomy_flag_link($term),
+          'related_content' => _social_follow_tag_related_content($term),
+        ];
       }
     }
 
     $renderable = [
       '#theme' => 'search_follow_tag',
-      '#tagstitle' => t('Tags'),
+      '#tagstitle' => $this->t('Tags'),
       '#tags' => $tags,
     ];
 
