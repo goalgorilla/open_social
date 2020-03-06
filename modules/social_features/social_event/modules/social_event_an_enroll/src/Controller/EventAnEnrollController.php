@@ -23,30 +23,31 @@ class EventAnEnrollController extends ControllerBase {
   /**
    * The route match.
    *
-   * @var RouteMatchInterface
+   * @var \Drupal\Core\Routing\RouteMatchInterface
    */
   protected $routeMatch;
 
   /**
    * The entity type manager.
    *
-   * @var EntityTypeManagerInterface
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
   protected $entityTypeManager;
 
   /**
-   * @var ConfigFactoryInterface
+   * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
   protected $configFactory;
 
   /**
    * SocialTopicController constructor.
    *
-   * @param RouteMatchInterface $routeMatch
+   * @param \Drupal\Core\Routing\RouteMatchInterface $routeMatch
    *   The route match object.
-   * @param EntityTypeManagerInterface $entityTypeManager
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
    *   The entity type manager.
-   * @param ConfigFactoryInterface $configFactory
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $configFactory
+   *   The config factory.
    */
   public function __construct(RouteMatchInterface $routeMatch,
                               EntityTypeManagerInterface $entityTypeManager,
