@@ -145,7 +145,7 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
       }
 
       $groups = $this->getGroups($node);
-      if (!empty($groups)) {
+      if (!empty($groups) && $node->field_event_request_enroll->value == FALSE) {
         $group_type_ids = $this->configFactory->getEditable('social_event.settings')
           ->get('enroll');
 
@@ -180,6 +180,11 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
     if ($this->eventHasBeenFinished($node)) {
       $submit_text = $this->t('Event has passed');
       $enrollment_open = FALSE;
+    }
+
+    // Add request to join event.
+    if ($node->field_event_request_enroll->value == TRUE) {
+      $submit_text = $this->t('Request to join');
     }
 
     if (!$current_user->isAnonymous()) {
