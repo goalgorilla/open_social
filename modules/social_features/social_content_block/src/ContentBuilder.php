@@ -234,6 +234,8 @@ class ContentBuilder implements ContentBuilderInterface {
   }
 
   /**
+   * Sorting and range logic by specific case.
+   *
    * @param \Drupal\block_content\BlockContentInterface $block_content
    *   The block content where we get the settings from.
    * @param \Drupal\Core\Database\Query\SelectInterface $query
@@ -250,13 +252,7 @@ class ContentBuilder implements ContentBuilderInterface {
     switch ($block_content->field_sorting->value) {
       case 'most_commented':
         if ($entity_type === 'group') {
-          $query = $this->connection->select('group_content_field_data', 'gfd');
-          $query->condition('gfd.gid', $entities, 'IN');
-          $cfd_alias = $query->innerJoin('comment_field_data', 'cfd', 'gfd.entity_id = %alias.entity_id');
-          $query->condition("{$cfd_alias}.created", $start_time, '>');
-          $query->addField('gfd', 'gid');
-          $query->addExpression("COUNT({$cfd_alias}.entity_id)", 'count');
-          $query->groupBy("gfd.gid");
+          $this->groupSorting($query, $entities, $start_time, 'comment_field_data', 'created');
         }
         else {
           $query = $this->connection->select('comment_field_data', 'cfd');
@@ -271,14 +267,7 @@ class ContentBuilder implements ContentBuilderInterface {
 
       case 'most_liked':
         if ($entity_type === 'group') {
-          $query = $this->connection->select('group_content_field_data', 'gfd');
-          $query->condition('gfd.gid', $entities, 'IN');
-          $vv_alias = $query->innerJoin('votingapi_vote', 'vv', 'gfd.entity_id = %alias.entity_id');
-          $query->condition("{$vv_alias}.timestamp", $start_time, '>');
-          $query->addField('gfd', 'gid');
-          $query->addExpression("COUNT({$vv_alias}.entity_id)", 'count');
-          $query->groupBy("gfd.gid");
-          $query->orderBy('count','DESC');
+          $this->groupSorting($query, $entities, $start_time, 'votingapi_vote', 'timestamp');
         }
         else {
           $query = $this->connection->select('votingapi_vote', 'vv');
@@ -288,8 +277,8 @@ class ContentBuilder implements ContentBuilderInterface {
           $query->addField('vv', 'entity_id');
           $query->addExpression('COUNT(vv.entity_id)', 'count');
           $query->groupBy('vv.entity_id');
-          $query->orderBy('count','DESC');
         }
+        $query->orderBy('count','DESC');
         break;
 
       default:
@@ -298,6 +287,30 @@ class ContentBuilder implements ContentBuilderInterface {
     $query->range(0, $block_content->field_item_amount->value);
 
     return $query->execute()->fetchAllKeyed(0, 0);
+  }
+
+  /**
+   * Specific group sorting.
+   *
+   * @param \Drupal\Core\Database\Query\SelectInterface $query
+   *   The query.
+   * @param array $entities
+   *   The list of specific type entities.
+   * @param string $start_time
+   *   Timestamp range.
+   * @param string $join_table
+   *   The table name.
+   * @param string $created_date_column
+   *   The column name with timestamp.
+   */
+  private function groupSorting(&$query, $entities, $start_time, $join_table, $created_date_column) {
+    $query = $this->connection->select('group_content_field_data', 'gfd');
+    $query->condition('gfd.gid', $entities, 'IN');
+    $alias = $query->innerJoin($join_table, $join_table, 'gfd.entity_id = %alias.entity_id');
+    $query->condition("{$alias}.{$created_date_column}", $start_time, '>');
+    $query->addField('gfd', 'gid');
+    $query->addExpression("COUNT({$alias}.entity_id)", 'count');
+    $query->groupBy("gfd.gid");
   }
 
 }
