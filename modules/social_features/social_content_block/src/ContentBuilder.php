@@ -4,14 +4,12 @@ namespace Drupal\social_content_block;
 
 use Drupal\block_content\BlockContentInterface;
 use Drupal\Core\Database\Connection;
-use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Link;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
-use Drupal\group\Entity\Group;
 
 /**
  * Class ContentBuilder.
