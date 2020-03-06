@@ -35,6 +35,8 @@ class EventAnEnrollController extends ControllerBase {
   protected $entityTypeManager;
 
   /**
+   * The config factory.
+   *
    * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
   protected $configFactory;
@@ -70,6 +72,10 @@ class EventAnEnrollController extends ControllerBase {
 
   /**
    * Determines if user has access to enroll form.
+   *
+   * @param \Drupal\node\NodeInterface $node
+   *
+   * @return \Drupal\Core\Access\AccessResultAllowed|\Drupal\Core\Access\AccessResultForbidden
    */
   public function enrollAccess(NodeInterface $node) {
     $config = $this->config('social_event_an_enroll.settings');
