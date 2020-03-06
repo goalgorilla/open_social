@@ -257,7 +257,6 @@ class ContentBuilder implements ContentBuilderInterface {
           $query->addField('gfd', 'gid');
           $query->addExpression("COUNT({$cfd_alias}.entity_id)", 'count');
           $query->groupBy("gfd.gid");
-          $query->orderBy('count','DESC');
         }
         else {
           $query = $this->connection->select('comment_field_data', 'cfd');
@@ -266,19 +265,31 @@ class ContentBuilder implements ContentBuilderInterface {
           $query->addField('cfd', 'entity_id');
           $query->addExpression('COUNT(cfd.entity_id)', 'count');
           $query->groupBy('cfd.entity_id');
-          $query->orderBy('count','DESC');
         }
+        $query->orderBy('count','DESC');
         break;
 
       case 'most_liked':
-        $query = $this->connection->select('votingapi_vote', 'vv');
-        $query->condition('vv.entity_id', $entities, 'IN');
-        $query->condition('vv.entity_type', $entity_type, '=');
-        $query->condition('vv.timestamp', $start_time, '>');
-        $query->addField('vv', 'entity_id');
-        $query->addExpression('COUNT(vv.entity_id)', 'count');
-        $query->groupBy('vv.entity_id');
-        $query->orderBy('count','DESC');
+        if ($entity_type === 'group') {
+          $query = $this->connection->select('group_content_field_data', 'gfd');
+          $query->condition('gfd.gid', $entities, 'IN');
+          $vv_alias = $query->innerJoin('votingapi_vote', 'vv', 'gfd.entity_id = %alias.entity_id');
+          $query->condition("{$vv_alias}.timestamp", $start_time, '>');
+          $query->addField('gfd', 'gid');
+          $query->addExpression("COUNT({$vv_alias}.entity_id)", 'count');
+          $query->groupBy("gfd.gid");
+          $query->orderBy('count','DESC');
+        }
+        else {
+          $query = $this->connection->select('votingapi_vote', 'vv');
+          $query->condition('vv.entity_id', $entities, 'IN');
+          $query->condition('vv.entity_type', $entity_type, '=');
+          $query->condition('vv.timestamp', $start_time, '>');
+          $query->addField('vv', 'entity_id');
+          $query->addExpression('COUNT(vv.entity_id)', 'count');
+          $query->groupBy('vv.entity_id');
+          $query->orderBy('count','DESC');
+        }
         break;
 
       default:
