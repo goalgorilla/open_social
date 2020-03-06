@@ -11,6 +11,7 @@ dependencies:
     - field.field.node.event.field_event_enroll
     - field.field.node.event.field_event_image
     - field.field.node.event.field_event_location
+    - field.field.node.event.field_event_request_enroll
     - field.field.node.event.field_files
     - image.style.social_x_large
     - node.type.event
@@ -104,6 +105,7 @@ third_party_settings:
     group_enrollment:
       children:
         - field_event_enroll
+        - field_event_request_enroll
       parent_name: ''
       weight: 3
       label: 'Enrollment options'
@@ -114,7 +116,7 @@ third_party_settings:
         id: enrollment
         classes: card
 _core:
-  default_config_hash: qKBzdABwV4xgosxvvpPa9VD-XmjoctFRVihQvmMs2a4
+  default_config_hash: Q96etTO0MCux6qGbqUd3feJnCmtYC1HDhCqeXL58ouA
 id: node.event.default
 targetEntityType: node
 bundle: event
@@ -195,6 +197,13 @@ content:
       placeholder: ''
     third_party_settings: {  }
     type: string_textfield
+    region: content
+  field_event_request_enroll:
+    weight: 121
+    settings:
+      display_label: true
+    third_party_settings: {  }
+    type: boolean_checkbox
     region: content
   field_files:
     weight: 12

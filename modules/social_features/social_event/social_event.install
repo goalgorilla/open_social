@@ -5,9 +5,9 @@
  * Install, update and uninstall functions for the social_event module.
  */
 
-use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\menu_link_content\Entity\MenuLinkContent;
 use Drupal\user\Entity\Role;
+use Drupal\Core\Config\FileStorage;
 
 /**
  * Implements hook_install().
@@ -168,3 +168,28 @@ function social_event_update_8801() {
     $settings->set('enroll', [])->save();
   }
 }
+
+/**
+ * Install new fields for the request to join event.
+ */
+function social_event_update_8802() {
+  $module_handler = \Drupal::moduleHandler();
+  $config_storage = new FileStorage($module_handler->getModule('social_event')->getPath() . '/config/install');
+
+  $config_names = [
+    'field.storage.event_enrollment.field_request_status', 'field.storage.event_enrollment.field_request_status',
+    'field.storage.node.field_event_request_enroll', 'field.storage.node.field_event_request_enroll',
+  ];
+
+  // Install new fields.
+  foreach ($config_names as $config_name) {
+    $config_record = $config_storage->read($config_name);
+
+    $entity_type = \Drupal::service('config.manager')->getEntityTypeIdByName($config_name);
+    /** @var \Drupal\Core\Config\Entity\ConfigEntityStorageInterface $storage */
+    $storage = \Drupal::entityTypeManager()->getStorage($entity_type);
+    $entity = $storage->createFromStorageRecord($config_record);
+    $entity->save();
+  }
+}
+
