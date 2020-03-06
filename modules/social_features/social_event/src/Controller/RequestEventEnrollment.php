@@ -1,16 +1,13 @@
 <?php
 
-namespace Drupal\social_event_request_enroll\Controller;
+namespace Drupal\social_event\Controller;
 
-use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\node\NodeInterface;
 
 /**
  * Class RequestEventEnrollment.
  */
 class RequestEventEnrollment {
-
-  use StringTranslationTrait;
 
   /**
    * Provides the form for requesting a group membership.

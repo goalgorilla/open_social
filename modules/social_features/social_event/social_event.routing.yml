@@ -14,3 +14,23 @@ social_event.settings:
     _permission: 'administer social_event settings'
   options:
     _admin_route: TRUE
+
+social_event.request_enrollment:
+  path: '/{event}/request-enrollment'
+  defaults:
+    _controller: '\Drupal\social_event\Controller\RequestEventEnrollment::requestEnrollment'
+    _title_callback: '\Drupal\social_event\Controller\RequestEventEnrollment::requestEnrollmentTitle'
+  options:
+    parameters:
+      event:
+        type: entity:node
+
+social_event.approve_enrollment_request:
+  path: '/{event}/approve-enrollment-request'
+  defaults:
+    _controller: '\Drupal\social_event\Controller\RequestEventEnrollment::approveEnrollmentRequest'
+    _title_callback: '\Drupal\social_event\Controller\RequestEventEnrollment::approveEnrollmentRequestTitle'
+  options:
+    parameters:
+      event:
+        type: entity:node
