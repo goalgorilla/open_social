@@ -176,15 +176,16 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
     $to_enroll_status = '1';
     $enrollment_open = TRUE;
 
+    // Add request to join event.
+    if ($node->field_event_request_enroll->value == TRUE) {
+      $submit_text = $this->t('Request to join');
+      $to_enroll_status = '2';
+    }
+
     // Add the enrollment closed label.
     if ($this->eventHasBeenFinished($node)) {
       $submit_text = $this->t('Event has passed');
       $enrollment_open = FALSE;
-    }
-
-    // Add request to join event.
-    if ($node->field_event_request_enroll->value == TRUE) {
-      $submit_text = $this->t('Request to join');
     }
 
     if (!$current_user->isAnonymous()) {
@@ -199,6 +200,16 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
         if ($current_enrollment_status === '1') {
           $submit_text = $this->t('Enrolled');
           $to_enroll_status = '0';
+        }
+        // If someone requested to join the event.
+        elseif ($node->field_event_request_enroll->value == TRUE) {
+          $enroll_request_status = $enrollment->field_request_status->value;
+          if ($enroll_request_status === 'pending') {
+            $submit_text = $this->t('Pending');
+            $enrollment_open = FALSE;
+          } elseif ($enroll_request_status === 'declined') {
+            return [];
+          }
         }
       }
     }
@@ -343,16 +354,36 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
       elseif ($to_enroll_status === '1' && $current_enrollment_status === '0') {
         $enrollment->field_enrollment_status->value = '1';
         $enrollment->save();
+
+      }
+      elseif ($to_enroll_status === '2' && $current_enrollment_status === '0') {
+        $enrollment->field_enrollment_status->value = '0';
+        $enrollment->field_request_status->value = 'pending';
+        $enrollment->save();
+
+        $message = $this->t('Your event enrollment request has been received and is pending');
+        drupal_set_message($message);
       }
     }
     else {
-      // Create a new enrollment for the event.
-      $enrollment = EventEnrollment::create([
-        'user_id' => $uid,
-        'field_event' => $nid,
-        'field_enrollment_status' => '1',
-        'field_account' => $uid,
-      ]);
+      if ($to_enroll_status === '2') {
+        // Create a new enrollment for the event.
+        $enrollment = EventEnrollment::create([
+          'user_id' => $uid,
+          'field_event' => $nid,
+          'field_enrollment_status' => '0',
+          'field_request_status' => 'pending',
+          'field_account' => $uid,
+        ]);
+      } else {
+        // Create a new enrollment for the event.
+        $enrollment = EventEnrollment::create([
+          'user_id' => $uid,
+          'field_event' => $nid,
+          'field_enrollment_status' => '1',
+          'field_account' => $uid,
+        ]);
+      }
       $enrollment->save();
     }
   }
