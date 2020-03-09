@@ -178,8 +178,19 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
 
     // Add request to join event.
     if ($node->field_event_request_enroll->value == TRUE) {
-      $submit_text = $this->t('Request to join');
-      $to_enroll_status = '2';
+      // If the users is already a member skip it!
+      $is_member = FALSE;
+      if (!empty($groups)) {
+        foreach ($groups as $group) {
+          if ($group->getMember($current_user)) {
+            $is_member = TRUE;
+          }
+        }
+      }
+      if ($is_member === FALSE) {
+        $submit_text = $this->t('Request to join');
+        $to_enroll_status = '2';
+      }
     }
 
     // Add the enrollment closed label.
@@ -356,14 +367,14 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
         $enrollment->save();
 
       }
-      elseif ($to_enroll_status === '2' && $current_enrollment_status === '0') {
-        $enrollment->field_enrollment_status->value = '0';
-        $enrollment->field_request_status->value = 'pending';
-        $enrollment->save();
-
-        $message = $this->t('Your event enrollment request has been received and is pending');
-        drupal_set_message($message);
-      }
+//      elseif ($to_enroll_status === '2' && $current_enrollment_status === '0') {
+//        $enrollment->field_enrollment_status->value = '0';
+//        $enrollment->field_request_status->value = 'pending';
+//        $enrollment->save();
+//
+//        $message = $this->t('Your event enrollment request has been received and is pending');
+//        drupal_set_message($message);
+//      }
     }
     else {
       if ($to_enroll_status === '2') {
@@ -375,7 +386,11 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
           'field_request_status' => 'pending',
           'field_account' => $uid,
         ]);
-      } else {
+
+        $message = $this->t('Your event enrollment request has been received and is pending');
+        drupal_set_message($message);
+      }
+      else {
         // Create a new enrollment for the event.
         $enrollment = EventEnrollment::create([
           'user_id' => $uid,
