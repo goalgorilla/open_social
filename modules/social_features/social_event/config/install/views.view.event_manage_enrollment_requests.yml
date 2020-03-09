@@ -11,10 +11,9 @@ dependencies:
     - options
     - profile
     - social_event
-    - social_event_managers
     - user
 _core:
-  default_config_hash: S7zlDRb2I_r7xhwQSsHTQnDCNP2BoE7V29qygooSMM8
+  default_config_hash: gY02uZle1UUT03qcUECNzAKmBHm_e0--0rz7VOl2XEo
 id: event_manage_enrollment_requests
 label: 'Manage event enrollment requests'
 module: views
@@ -30,8 +29,9 @@ display:
     position: 0
     display_options:
       access:
-        type: manage_by_organizers_only
-        options: {  }
+        type: perm
+        options:
+          perm: 'manage event enrollment requests'
       cache:
         type: tag
         options: {  }
@@ -634,6 +634,7 @@ display:
         - 'languages:language_interface'
         - url
         - url.query_args
+        - user.permissions
       tags:
         - 'config:core.entity_view_display.profile.profile.autocomplete_item'
         - 'config:core.entity_view_display.profile.profile.compact'
@@ -673,6 +674,7 @@ display:
         - 'languages:language_interface'
         - url
         - url.query_args
+        - user.permissions
       tags:
         - 'config:core.entity_view_display.profile.profile.autocomplete_item'
         - 'config:core.entity_view_display.profile.profile.compact'
