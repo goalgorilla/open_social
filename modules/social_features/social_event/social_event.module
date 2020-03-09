@@ -156,6 +156,7 @@ function social_event_menu_local_tasks_alter(&$data, $route_name) {
     'view.managers.view_managers',
     'view.manage_enrollments.page',
     'view.event_manage_enrollments.page_manage_enrollments',
+    'view.event_manage_enrollments.page_manage_enrollment_request',
   ];
   if (in_array($route_name, $routes_to_check)) {
     $node = \Drupal::service('current_route_match')->getParameter('node');
