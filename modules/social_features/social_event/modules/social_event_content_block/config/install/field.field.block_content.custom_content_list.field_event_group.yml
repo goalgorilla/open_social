@@ -1,0 +1,29 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - block_content.type.custom_content_list
+    - field.storage.block_content.field_event_group
+    - group.type.open_group
+    - group.type.public_group
+id: block_content.custom_content_list.field_group
+field_name: field_event_group
+entity_type: block_content
+bundle: custom_content_list
+label: Group
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:group'
+  handler_settings:
+    target_bundles:
+      open_group: open_group
+      public_group: public_group
+    sort:
+      field: _none
+    auto_create: false
+    auto_create_bundle: open_group
+field_type: entity_reference
