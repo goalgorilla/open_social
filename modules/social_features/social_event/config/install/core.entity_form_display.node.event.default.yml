@@ -10,6 +10,7 @@ dependencies:
     - field.field.node.event.field_event_date
     - field.field.node.event.field_event_date_end
     - field.field.node.event.field_event_enroll
+    - field.field.node.event.field_event_enroll_outside_group
     - field.field.node.event.field_event_image
     - field.field.node.event.field_event_location
     - field.field.node.event.field_files
@@ -118,6 +119,7 @@ third_party_settings:
     group_enrollment_methods:
       children:
         - field_enroll_method
+        - field_event_enroll_outside_group
       parent_name: group_enrollment
       weight: 20
       format_type: html_element
@@ -200,6 +202,13 @@ content:
     type: boolean_checkbox
     weight: 12
     third_party_settings: {  }
+  field_event_enroll_outside_group:
+    weight: 123
+    settings:
+      display_label: true
+    third_party_settings: {  }
+    type: boolean_checkbox
+    region: content
   field_event_image:
     weight: 3
     settings:
