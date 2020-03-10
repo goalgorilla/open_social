@@ -16,7 +16,8 @@ use Drupal\Core\Render\Element;
 function social_content_block_preprocess_block(&$variables) {
   if ($variables['base_plugin_id'] === 'block_content' &&
     isset($variables['content']['#block_content']) &&
-    $variables['content']['#block_content']->bundle() === 'custom_content_list'
+    $variables['content']['#block_content']->bundle() === 'custom_content_list' &&
+    !isset($variables['content']['social_content_block'])
   ) {
     $variables['content']['social_content_block'] = $variables['elements']['social_content_block'];
     $variables['card'] = TRUE;
