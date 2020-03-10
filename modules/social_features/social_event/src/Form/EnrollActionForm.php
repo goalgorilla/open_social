@@ -145,7 +145,9 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
       }
 
       $groups = $this->getGroups($node);
-      if (!empty($groups) && $node->field_event_request_enroll->value == FALSE) {
+
+      // Check if groups are not empty, or that the outsiders are able to join.
+      if (!empty($groups) && $node->field_event_enroll_outside_group->value !== '1') {
         $group_type_ids = $this->configFactory->getEditable('social_event.settings')
           ->get('enroll');
 
@@ -177,20 +179,9 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
     $enrollment_open = TRUE;
 
     // Add request to join event.
-    if ($node->field_event_request_enroll->value == TRUE) {
-      // If the users is already a member skip it!
-      $is_member = FALSE;
-      if (!empty($groups)) {
-        foreach ($groups as $group) {
-          if ($group->getMember($current_user)) {
-            $is_member = TRUE;
-          }
-        }
-      }
-      if ($is_member === FALSE) {
-        $submit_text = $this->t('Request to join');
-        $to_enroll_status = '2';
-      }
+    if ($node->field_enroll_method->value === '2') {
+      $submit_text = $this->t('Request to join');
+      $to_enroll_status = '2';
     }
 
     // Add the enrollment closed label.
@@ -213,13 +204,11 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
           $to_enroll_status = '0';
         }
         // If someone requested to join the event.
-        elseif ($node->field_event_request_enroll->value == TRUE) {
+        elseif ($node->field_enroll_method->value === '2') {
           $enroll_request_status = $enrollment->field_request_status->value;
           if ($enroll_request_status === 'pending') {
             $submit_text = $this->t('Pending');
             $enrollment_open = FALSE;
-          } elseif ($enroll_request_status === 'declined') {
-            return [];
           }
         }
       }
@@ -367,38 +356,24 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
         $enrollment->save();
 
       }
-//      elseif ($to_enroll_status === '2' && $current_enrollment_status === '0') {
-//        $enrollment->field_enrollment_status->value = '0';
-//        $enrollment->field_request_status->value = 'pending';
-//        $enrollment->save();
-//
-//        $message = $this->t('Your event enrollment request has been received and is pending');
-//        drupal_set_message($message);
-//      }
     }
     else {
-      if ($to_enroll_status === '2') {
-        // Create a new enrollment for the event.
-        $enrollment = EventEnrollment::create([
-          'user_id' => $uid,
-          'field_event' => $nid,
-          'field_enrollment_status' => '0',
-          'field_request_status' => 'pending',
-          'field_account' => $uid,
-        ]);
+      // Default event enrollment field set.
+      $fields = [
+        'user_id' => $uid,
+        'field_event' => $nid,
+        'field_enrollment_status' => '1',
+        'field_account' => $uid,
+      ];
 
-        $message = $this->t('Your event enrollment request has been received and is pending');
-        drupal_set_message($message);
+      // If request to join is on, alter fields
+      if ($to_enroll_status === '2') {
+        $fields['field_enrollment_status'] = '0';
+        $fields['field_request_status'] = 'pending';
       }
-      else {
-        // Create a new enrollment for the event.
-        $enrollment = EventEnrollment::create([
-          'user_id' => $uid,
-          'field_event' => $nid,
-          'field_enrollment_status' => '1',
-          'field_account' => $uid,
-        ]);
-      }
+
+      // Create a new enrollment for the event.
+      $enrollment = EventEnrollment::create($fields);
       $enrollment->save();
     }
   }
