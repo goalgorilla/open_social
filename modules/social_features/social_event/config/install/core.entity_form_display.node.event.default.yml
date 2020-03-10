@@ -4,6 +4,7 @@ dependencies:
   config:
     - field.field.node.event.body
     - field.field.node.event.field_content_visibility
+    - field.field.node.event.field_enroll_method
     - field.field.node.event.field_event_address
     - field.field.node.event.field_event_comments
     - field.field.node.event.field_event_date
@@ -11,7 +12,6 @@ dependencies:
     - field.field.node.event.field_event_enroll
     - field.field.node.event.field_event_image
     - field.field.node.event.field_event_location
-    - field.field.node.event.field_event_request_enroll
     - field.field.node.event.field_files
     - image.style.social_x_large
     - node.type.event
@@ -105,7 +105,7 @@ third_party_settings:
     group_enrollment:
       children:
         - field_event_enroll
-        - field_event_request_enroll
+        - group_enrollment_methods
       parent_name: ''
       weight: 3
       label: 'Enrollment options'
@@ -115,8 +115,27 @@ third_party_settings:
         required_fields: true
         id: enrollment
         classes: card
+    group_enrollment_methods:
+      children:
+        - field_enroll_method
+      parent_name: group_enrollment
+      weight: 20
+      format_type: html_element
+      format_settings:
+        label: 'Enrollment options fieldset'
+        element: div
+        show_label: false
+        label_element: h3
+        attributes: ''
+        effect: none
+        speed: fast
+        id: ''
+        classes: enrollment-methods
+        required_fields: false
+      label: 'Enrollment options fieldset'
+      region: hidden
 _core:
-  default_config_hash: Q96etTO0MCux6qGbqUd3feJnCmtYC1HDhCqeXL58ouA
+  default_config_hash: xj2qT9ti-krrpsSuXqyN1Qifab5o3gteM8uYIWwCPf0
 id: node.event.default
 targetEntityType: node
 bundle: event
@@ -139,6 +158,12 @@ content:
     region: content
   field_content_visibility:
     weight: 17
+    settings: {  }
+    third_party_settings: {  }
+    type: options_buttons
+    region: content
+  field_enroll_method:
+    weight: 122
     settings: {  }
     third_party_settings: {  }
     type: options_buttons
@@ -197,13 +222,6 @@ content:
       placeholder: ''
     third_party_settings: {  }
     type: string_textfield
-    region: content
-  field_event_request_enroll:
-    weight: 121
-    settings:
-      display_label: true
-    third_party_settings: {  }
-    type: boolean_checkbox
     region: content
   field_files:
     weight: 12

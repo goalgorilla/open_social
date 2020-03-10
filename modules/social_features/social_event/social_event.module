@@ -487,11 +487,30 @@ function social_event_form_alter(&$form, FormStateInterface $form_state, $form_i
         $form['field_event_enroll']['widget']['value']['#default_value'] = TRUE;
       }
 
+      // Alter visibility of enrollment methods.
+      $trigger = 'field_event_enroll';
+
+      $fields = [
+        'field_enroll_method',
+      ];
+
+      social_event_field_visibility($form, $trigger, $fields);
+
+      break;
     case 'node_event_form':
       $form['event_all_day'] = [
         '#type' => 'checkbox',
         '#title' => t('All day'),
       ];
+
+      // Alter visibility of enrollment methods.
+      $trigger = 'field_event_enroll';
+
+      $fields = [
+        'field_enroll_method',
+      ];
+
+      social_event_field_visibility($form, $trigger, $fields);
 
       // Set default value and fieldgroup for all day checkbox.
       if ($date = $form['field_event_date']['widget'][0]['value']['#default_value']) {
@@ -637,4 +656,28 @@ function social_event_get_current_event() {
   }
 
   return NULL;
+}
+
+/**
+ * Add conditional field visibility triggers.
+ *
+ * @param $form
+ *   The form that needs to be altered.
+ * @param $trigger
+ *   The field that acts as a trigger.
+ * @param array $fields
+ *   The field that should show upon trigger.
+ */
+function social_event_field_visibility(&$form, $trigger, array $fields) {
+  // Todo:: Refactor outside of an alter when going to React.
+  // Hide fields if event enrollment is disabled for event.
+  $state = [
+    ':input[name="' . $trigger . '[value]"]' => ['checked' => TRUE],
+  ];
+
+  foreach ($fields as $field) {
+    $form[$field]['#states'] = [
+      'visible' => $state,
+    ];
+  }
 }
