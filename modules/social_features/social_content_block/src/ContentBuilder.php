@@ -279,6 +279,23 @@ class ContentBuilder implements ContentBuilderInterface {
         $query->orderBy('count','DESC');
         break;
 
+      case 'last_interacted':
+        // Last interacted for last 90 days.
+        $query = $this->connection->select('votingapi_vote', 'vv');
+        $query->condition('vv.entity_id', $entities, 'IN');
+        $query->condition('vv.entity_type', $entity_type, '=');
+        $query->condition('vv.timestamp', $start_time, '>');
+
+        $query->leftjoin('comment_field_data', 'cfd', 'vv.entity_id = %alias.entity_id');
+        $query->leftjoin('node_field_data', 'nfd', 'vv.entity_id = %alias.nid');
+
+        $query->addField('vv', 'entity_id');
+        $query->addExpression('GREATEST(MAX(vv.timestamp), MAX(cfd.changed), MAX(nfd.changed))', 'newest_timestamp');
+
+        $query->groupBy('vv.entity_id');
+        $query->orderBy('newest_timestamp','DESC');
+        break;
+
       default:
         $query->orderBy('base_table.' . $block_content->field_sorting->value);
     }
