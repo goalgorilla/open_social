@@ -2,8 +2,10 @@
 
 namespace Drupal\social_content_block\Plugin\Field\FieldWidget;
 
+use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Plugin implementation of the 'content_block_plugin_field' widget.
@@ -17,6 +19,72 @@ use Drupal\Core\Form\FormStateInterface;
  * )
  */
 class ContentBlockPluginFieldWidget extends ContentBlockPluginWidgetBase {
+
+  /**
+   * The prefix to search for.
+   */
+  const CONFIG_PREFIX = 'field.field.block_content.custom_content_list.';
+
+  /**
+   * An array containing matching configuration object names.
+   *
+   * @var array
+   */
+  protected $fieldConfigs;
+
+  /**
+   * Constructs a ContentBlockPluginFieldWidget object.
+   *
+   * @param string $plugin_id
+   *   The plugin_id for the widget.
+   * @param mixed $plugin_definition
+   *   The plugin implementation definition.
+   * @param \Drupal\Core\Field\FieldDefinitionInterface $field_definition
+   *   The definition of the field to which the widget is associated.
+   * @param array $settings
+   *   The widget settings.
+   * @param array $third_party_settings
+   *   Any third party settings.
+   * @param array $definitions
+   *   The content block plugin definitions.
+   * @param array $field_configs
+   *   An array containing matching configuration object names.
+   */
+  public function __construct(
+    $plugin_id,
+    $plugin_definition,
+    FieldDefinitionInterface $field_definition,
+    array $settings,
+    array $third_party_settings,
+    array $definitions,
+    array $field_configs
+  ) {
+    parent::__construct(
+      $plugin_id,
+      $plugin_definition,
+      $field_definition,
+      $settings,
+      $third_party_settings,
+      $definitions
+    );
+
+    $this->fieldConfigs = $field_configs;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    return new static(
+      $plugin_id,
+      $plugin_definition,
+      $configuration['field_definition'],
+      $configuration['settings'],
+      $configuration['third_party_settings'],
+      $container->get('plugin.manager.content_block')->getDefinitions(),
+      $container->get('config.factory')->listAll(self::CONFIG_PREFIX)
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -63,7 +131,7 @@ class ContentBlockPluginFieldWidget extends ContentBlockPluginWidgetBase {
             ],
           ];
         }
-        else {
+        elseif (in_array(self::CONFIG_PREFIX . $field, $this->fieldConfigs)) {
           // Add the field machine name instead of the field label when the
           // field still not added to the form structure. The field will be
           // processed in the following place:
