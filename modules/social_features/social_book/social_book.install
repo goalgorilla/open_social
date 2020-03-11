@@ -6,6 +6,7 @@
  */
 
 use Drupal\user\Entity\Role;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Implements hook_install().
@@ -16,6 +17,18 @@ function social_book_install() {
 
   // Set some default permissions.
   _social_book_set_permissions();
+}
+
+/**
+ * Implements hook_update_dependencies().
+ */
+function social_book_update_dependencies() {
+  // Run the config update after the final features removal ran.
+  $dependencies['social_book'][8801] = [
+    'social_core' => 8802,
+  ];
+
+  return $dependencies;
 }
 
 /**
@@ -100,4 +113,37 @@ function social_book_update_8001() {
     }
   }
 
+}
+
+/**
+ * Config import social_book default configs.
+ *
+ * The feature removal script did not succeed for social_book.
+ * Import the configs in an update hook.
+ */
+function social_book_update_8801() {
+  $config_files = [
+    'core.base_field_override.node.book.promote',
+    'core.entity_form_display.node.book.default',
+    'core.entity_view_display.node.book.activity_comment',
+    'core.entity_view_display.node.book.activity',
+    'core.entity_view_display.node.book.default',
+    'core.entity_view_display.node.book.hero',
+    'core.entity_view_display.node.book.search_index',
+    'core.entity_view_display.node.book.teaser',
+  ];
+  
+  foreach ($config_files as $config_file) {
+    $config = drupal_get_path('module', 'social_private_message') . '/config/features_removal/' . $config_file . '.yml';
+
+    if (is_file($config)) {
+      $settings = Yaml::parse(file_get_contents($config));
+      if (is_array($settings)) {
+        $update_config = \Drupal::configFactory()
+          ->getEditable($config_file);
+
+        $update_config->setData($settings)->save(TRUE);
+      }
+    }
+  }
 }
