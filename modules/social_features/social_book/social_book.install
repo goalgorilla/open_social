@@ -132,9 +132,9 @@ function social_book_update_8801() {
     'core.entity_view_display.node.book.search_index',
     'core.entity_view_display.node.book.teaser',
   ];
-  
+
   foreach ($config_files as $config_file) {
-    $config = drupal_get_path('module', 'social_private_message') . '/config/features_removal/' . $config_file . '.yml';
+    $config = drupal_get_path('module', 'social_book') . '/config/features_removal/' . $config_file . '.yml';
 
     if (is_file($config)) {
       $settings = Yaml::parse(file_get_contents($config));
