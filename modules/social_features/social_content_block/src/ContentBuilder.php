@@ -313,11 +313,10 @@ class ContentBuilder implements ContentBuilderInterface {
           $query->orderBy('newest_timestamp', 'DESC');
         }
         else {
-          // Last interacted for last 90 days.
+          // Last interacted for all the time.
           $query = $this->connection->select('votingapi_vote', 'vv');
           $query->condition('vv.entity_id', $entities, 'IN');
           $query->condition('vv.entity_type', $entity_type, '=');
-          $query->condition('vv.timestamp', $start_time, '>');
 
           $query->leftjoin('comment_field_data', 'cfd', 'vv.entity_id = %alias.entity_id');
           $query->leftjoin('node_field_data', 'nfd', 'vv.entity_id = %alias.nid');
