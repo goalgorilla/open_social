@@ -230,7 +230,7 @@ function social_private_message_update_8002() {
  * The feature removal script did not succeed for social_private_message.
  * Import the configs in an update hook.
  */
-function social_private_message_update_8803() {
+function social_private_message_update_8801() {
   $config_files = [
     'core.entity_form_display.private_message_thread.private_message_thread.default',
     'core.entity_view_display.private_message.private_message.default',
@@ -244,7 +244,7 @@ function social_private_message_update_8803() {
 /**
  * Revert remaining social_private_message configs not included in 8801.
  */
-function social_private_message_update_8804() {
+function social_private_message_update_8802() {
   $config_files = [
     'core.entity_view_display.private_message.private_message.inbox',
     'core.entity_view_display.profile.profile.compact_private_message',
