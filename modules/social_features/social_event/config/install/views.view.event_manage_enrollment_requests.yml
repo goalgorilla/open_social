@@ -14,7 +14,7 @@ dependencies:
     - social_event
     - user
 _core:
-  default_config_hash: gY02uZle1UUT03qcUECNzAKmBHm_e0--0rz7VOl2XEo
+  default_config_hash: wB-u819Wd4lK4eUdpsUuixHahEUPpdY8-wJpiC8rmMc
 id: event_manage_enrollment_requests
 label: 'Manage event enrollment requests'
 module: views
@@ -539,16 +539,19 @@ display:
           plugin_id: date
       title: 'Manage enrollment requests'
       header:
-        result:
-          id: result
+        area:
+          id: area
           table: views
-          field: result
+          field: area
           relationship: none
           group_type: group
           admin_label: ''
           empty: true
-          content: '@total Request(s)'
-          plugin_id: result
+          tokenize: false
+          content:
+            value: '[view:total-rows] Enroll request(s) to event: [current-page:title]'
+            format: basic_html
+          plugin_id: text
       footer: {  }
       empty:
         area_text_custom:
