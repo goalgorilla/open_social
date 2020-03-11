@@ -74,8 +74,10 @@ class EventAnEnrollController extends ControllerBase {
    * Determines if user has access to enroll form.
    *
    * @param \Drupal\node\NodeInterface $node
+   *   The node.
    *
    * @return \Drupal\Core\Access\AccessResultAllowed|\Drupal\Core\Access\AccessResultForbidden
+   *   Allowed or not allowed.
    */
   public function enrollAccess(NodeInterface $node) {
     $config = $this->config('social_event_an_enroll.settings');
