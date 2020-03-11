@@ -18,6 +18,7 @@
 #}
 
 {{ attach_library('socialbase/stream') }}
+{{ attach_library('social_follow_taxonomy/activity-followed') }}
 
 {%
 set classes = [
@@ -33,12 +34,20 @@ post and not published ? 'post-unpublished',
 
     <div class="card__block">
       {% if followed_tags %}
-        <span>{{ content_type }}</span> related to tag(s) you follow:
-        {#{{  dump(_context) }}#}
-        {% for tag in followed_tags %}
-          <h5>{{ tag.name }}</h5>
-          {{ tag.flag }}
-        {% endfor %}
+        <div class="card__activity-followed">
+          <span>{{ content_type }} related to tag(s) you follow:</span>
+          {% for tag in followed_tags %}
+            <div class="activity-followed">
+              <p class="tag__name">{{ tag.name }}</p>
+              <div class="tag__arrow">
+                {{ tag.flag }}
+                <svg>
+                  <use xlink:href="#icon-expand_more"></use>
+                </svg>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
       {% endif %}
       <div class="media-wrapper">
 
