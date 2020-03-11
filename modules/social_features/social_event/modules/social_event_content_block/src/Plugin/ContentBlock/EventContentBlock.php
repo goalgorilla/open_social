@@ -19,7 +19,7 @@ use Drupal\social_content_block\ContentBlockBase;
  *   },
  * )
  */
-class TopicContentBlock extends ContentBlockBase {
+class EventContentBlock extends ContentBlockBase {
 
   /**
    * {@inheritdoc}
