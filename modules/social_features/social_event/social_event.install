@@ -5,9 +5,10 @@
  * Install, update and uninstall functions for the social_event module.
  */
 
+use Drupal\field\Entity\FieldConfig;
+use Drupal\field\FieldConfigInterface;
 use Drupal\menu_link_content\Entity\MenuLinkContent;
 use Drupal\user\Entity\Role;
-use Drupal\Core\Config\FileStorage;
 
 /**
  * Implements hook_install().
@@ -172,24 +173,125 @@ function social_event_update_8801() {
 /**
  * Install new fields for the request to join event.
  */
-function social_event_update_8802() {
-  $module_handler = \Drupal::moduleHandler();
-  $config_storage = new FileStorage($module_handler->getModule('social_event')->getPath() . '/config/install');
+function social_event_update_8802(&$sandbox) {
+  if (!isset($sandbox['total'])) {
+    // Declare all the config render arrays,
+    // keyed by the config name.
+    $sandbox['configs'] = [
+      'field.storage.event_enrollment.field_request_status' => [
+        'langcode' => 'en',
+        'status' => TRUE,
+        'dependencies' => [
+          'module' => [
+            'options',
+            'social_event',
+          ],
+        ],
+        '_core' => [
+          'default_config_hash' => 'yFOYsMA0MkbwlWIsynBGZ46Px5ozA0AoJbjv5wdgBb0',
+        ],
+        'id' => 'event_enrollment.field_request_status',
+        'field_name' => 'field_request_status',
+        'entity_type' => 'event_enrollment',
+        'type' => 'list_string',
+        'settings' => [
+          'allowed_values' => [
+            0 => [
+              'value' => 'pending',
+              'label' => 'Pending',
+            ],
+            1 => [
+              'value' => 'approved',
+              'label' => 'Approved',
+            ],
+            2 => [
+              'value' => 'declined',
+              'label' => 'Declined',
+            ],
+          ],
+          'allowed_values_function' => '',
+        ],
+        'module' => 'options',
+        'locked' => FALSE,
+        'cardinality' => 1,
+        'translatable' => TRUE,
+        'indexes' => [],
+        'persist_with_no_fields' => FALSE,
+        'custom_storage' => FALSE,
+      ],
+      'field.field.event_enrollment.event_enrollment.field_request_status' => [
+        'langcode' => 'en',
+        'status' => TRUE,
+        'dependencies' => [
+          'config' => [
+            'field.storage.event_enrollment.field_request_status',
+          ],
+          'module' => [
+            'options',
+            'social_event',
+          ],
+        ],
+        '_core' => [
+          'default_config_hash' => 'vTIIOmhh_gxNqOTgQF-q8Kis5V9izsGllnIOzwn-nIM',
+        ],
+        'id' => 'event_enrollment.event_enrollment.field_request_status',
+        'field_name' => 'field_request_status',
+        'entity_type' => 'event_enrollment',
+        'bundle' => 'event_enrollment',
+        'label' => 'Enrollment request status',
+        'description' => '',
+        'required' => FALSE,
+        'translatable' => FALSE,
+        'default_value' =>
+          [
+            0 => [
+              'value' => 'pending',
+            ],
+          ],
+        'default_value_callback' => '',
+        'settings' => [],
+        'field_type' => 'list_string',
+      ],
+    ];
 
-  $config_names = [
-    'field.storage.event_enrollment.field_request_status',
-    'field.storage.node.field_event_request_enroll',
-  ];
-
-  // Install new fields.
-  foreach ($config_names as $config_name) {
-    $config_record = $config_storage->read($config_name);
-
-    $entity_type = \Drupal::service('config.manager')->getEntityTypeIdByName($config_name);
-    /** @var \Drupal\Core\Config\Entity\ConfigEntityStorageInterface $storage */
-    $storage = \Drupal::entityTypeManager()->getStorage($entity_type);
-    $entity = $storage->createFromStorageRecord($config_record);
-    $entity->save();
+    // Count the amount we need to add to cover batching..
+    $sandbox['total'] = count($sandbox['configs']);
+    $sandbox['current'] = 0;
   }
-}
 
+  $names = array_keys($sandbox['configs']);
+  $name = $names[$sandbox['current']++];
+  $data = $sandbox['configs'][$name];
+
+  $parts = explode('.', $name);
+
+  switch ($parts[0] . '.' . $parts[1]) {
+    case 'field.storage':
+      $entity_type = \Drupal::service('config.manager')->getEntityTypeIdByName($name);
+
+      /** @var \Drupal\Core\Config\Entity\ConfigEntityStorageInterface $storage */
+      $storage = \Drupal::entityTypeManager()->getStorage($entity_type);
+      $entity = $storage->createFromStorageRecord($data);
+      $entity->save();
+      break;
+
+    case 'field.field':
+      $field_config = FieldConfig::loadByName($parts[2], $parts[3], $parts[4]);
+
+      if ($field_config instanceof FieldConfigInterface) {
+        $field_config->setDescription($data);
+      }
+      else {
+        $field_config = FieldConfig::create($data);
+      }
+
+      $field_config->save();
+      break;
+
+    default:
+      // Insert newly created config in the storage.
+      \Drupal::service('config.storage')->write($name, $data);
+  }
+
+  $sandbox['#finished'] = $sandbox['current'] / $sandbox['total'];
+}
