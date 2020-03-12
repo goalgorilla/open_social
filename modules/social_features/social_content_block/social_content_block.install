@@ -331,7 +331,7 @@ function social_content_block_update_8002(&$sandbox) {
  */
 function social_content_block_update_8003() {
   $config_name = 'field.storage.block_content.field_sorting';
-  $config =  Drupal::configFactory()->getEditable($config_name);
+  $config =  \Drupal::configFactory()->getEditable($config_name);
   $config_data = $config->getRawData();
   $allowed_values = $config_data['settings']['allowed_values'];
 
@@ -346,7 +346,7 @@ function social_content_block_update_8003() {
 
   $config_data['settings']['allowed_values'] = $allowed_values;
   $config->setData($config_data)->save();
-  Drupal::service('entity_field.manager')->clearCachedFieldDefinitions();
+  \Drupal::service('entity_field.manager')->clearCachedFieldDefinitions();
 }
 
 /**
@@ -354,7 +354,7 @@ function social_content_block_update_8003() {
  */
 function social_content_block_update_8004() {
   $config_name = 'field.storage.block_content.field_sorting';
-  $config =  Drupal::configFactory()->getEditable($config_name);
+  $config =  \Drupal::configFactory()->getEditable($config_name);
   $config_data = $config->getRawData();
   $allowed_values = $config_data['settings']['allowed_values'];
 
@@ -365,5 +365,5 @@ function social_content_block_update_8004() {
 
   $config_data['settings']['allowed_values'] = $allowed_values;
   $config->setData($config_data)->save();
-  Drupal::service('entity_field.manager')->clearCachedFieldDefinitions();
+  \Drupal::service('entity_field.manager')->clearCachedFieldDefinitions();
 }

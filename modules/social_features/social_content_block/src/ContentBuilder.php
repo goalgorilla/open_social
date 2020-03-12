@@ -285,9 +285,9 @@ class ContentBuilder implements ContentBuilderInterface {
           $query = $this->connection->select('group_content_field_data', 'gfd');
           $query->condition('gfd.gid', $entities, 'IN');
 
-          $query->leftJoin('votingapi_vote', 'vv', 'gfd.entity_id = %alias.entity_id');
-          $query->leftjoin('comment_field_data', 'cfd', 'gfd.entity_id = %alias.entity_id');
-          $query->leftjoin('node_field_data', 'nfd', 'gfd.entity_id = %alias.nid');
+          $query->leftJoin('votingapi_vote', 'vv', 'gfd.entity_id = vv.entity_id');
+          $query->leftjoin('comment_field_data', 'cfd', 'gfd.entity_id = cfd.entity_id');
+          $query->leftjoin('node_field_data', 'nfd', 'gfd.entity_id = nfd.nid');
 
           // Create or update post.
           $query->leftjoin('post__field_recipient_group', 'pst', 'gfd.gid = pst.field_recipient_group_target_id');
@@ -317,11 +317,11 @@ class ContentBuilder implements ContentBuilderInterface {
           $query = $this->connection->select('node_field_data', 'nfd');
           $query->condition('nfd.nid', $entities, 'IN');
           // Comment entity.
-          $cfd_alias = $query->leftjoin('comment_field_data', 'cfd', 'nfd.nid = %alias.entity_id');
+          $query->leftjoin('comment_field_data', 'cfd', 'nfd.nid = cfd.entity_id');
           // Like node.
-          $query->leftjoin('votingapi_vote', 'vv', 'nfd.nid = %alias.entity_id');
+          $query->leftjoin('votingapi_vote', 'vv', 'nfd.nid = vv.entity_id');
           // Like comment related to node.
-          $query->leftjoin('votingapi_vote', 'vvn', "{$cfd_alias}.cid = %alias.entity_id");
+          $query->leftjoin('votingapi_vote', 'vvn', 'cfd.cid = vvn.entity_id');
 
           $query->addField('nfd', 'nid');
           $query->addExpression('GREATEST(COALESCE(MAX(vv.timestamp), 0),
