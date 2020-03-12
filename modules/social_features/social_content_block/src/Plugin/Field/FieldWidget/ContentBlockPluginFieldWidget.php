@@ -63,6 +63,10 @@ class ContentBlockPluginFieldWidget extends ContentBlockPluginWidgetBase {
           ];
         }
         else {
+          // Add the field machine name instead of the field label when the
+          // field still not added to the form structure. The field will be
+          // processed in the following place:
+          // @see social_content_block_form_alter()
           $element[$plugin_id]['#options'][$field] = $field;
         }
       }
