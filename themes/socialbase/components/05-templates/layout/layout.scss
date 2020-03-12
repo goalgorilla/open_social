@@ -63,6 +63,18 @@
   @include for-tablet-landscape-up {
     max-width: 1200px;
   }
+
+  &:not(.layout--with-complementary) {
+    .region--content {
+      padding-left: 1rem;
+      padding-right: 1rem;
+
+      @include for-desktop-up {
+        padding-left: 0;
+        padding-right: 0;
+      }
+    }
+  }
 }
 
 .row {

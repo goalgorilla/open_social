@@ -7,10 +7,18 @@
   margin-right: auto;
 }
 
+.container:not(.layout--with-complementary) .region--content, .region--content-top:not(.layout--with-complementary) .region--content, .region--content-bottom:not(.layout--with-complementary) .region--content, .region--hero:not(.layout--with-complementary) .region--content, .region--secondary-navigation:not(.layout--with-complementary) .region--content {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
 .row {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
   width: 100%;
-  flex-wrap: wrap;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
 }
 
 .main-container {
@@ -23,7 +31,8 @@
 }
 
 .region--title {
-  flex-basis: 100%;
+  -ms-flex-preferred-size: 100%;
+      flex-basis: 100%;
   max-width: 100%;
 }
 
@@ -37,21 +46,24 @@
 .layout--with-complementary > .region--content {
   padding-left: 1em;
   padding-right: 1em;
-  flex-basis: 100%;
+  -ms-flex-preferred-size: 100%;
+      flex-basis: 100%;
   max-width: 100%;
 }
 
 .region--complementary {
   padding-left: 1em;
   padding-right: 1em;
-  flex-basis: 100%;
+  -ms-flex-preferred-size: 100%;
+      flex-basis: 100%;
   max-width: 100%;
 }
 
 .layout--with-two-columns .region--content,
 .layout--with-two-columns .region--sidebar-first,
 .layout--with-two-columns .region--sidebar-second {
-  flex-basis: 100%;
+  -ms-flex-preferred-size: 100%;
+      flex-basis: 100%;
   padding-left: 1em;
   padding-right: 1em;
 }
@@ -61,7 +73,8 @@
 .layout--with-three-columns .region--sidebar-second {
   padding-left: 1em;
   padding-right: 1em;
-  flex-basis: 100%;
+  -ms-flex-preferred-size: 100%;
+      flex-basis: 100%;
 }
 
 .region--complementary-bottom {
@@ -79,26 +92,38 @@
     margin-top: 1rem;
   }
   .layout--with-complementary > .region--content {
-    flex: 0 0 66.66667%;
+    -webkit-box-flex: 0;
+        -ms-flex: 0 0 66.66667%;
+            flex: 0 0 66.66667%;
     max-width: 66.66667%;
-    order: 1;
+    -webkit-box-ordinal-group: 2;
+        -ms-flex-order: 1;
+            order: 1;
   }
   .region--complementary {
     margin-top: 1rem;
-    flex: 0 1 33.33333%;
-    order: 2;
+    -webkit-box-flex: 0;
+        -ms-flex: 0 1 33.33333%;
+            flex: 0 1 33.33333%;
+    -webkit-box-ordinal-group: 3;
+        -ms-flex-order: 2;
+            order: 2;
     max-width: 33.33333%;
   }
   .layout--with-two-columns .region--content,
   .layout--with-two-columns .region--sidebar-first,
   .layout--with-two-columns .region--sidebar-second {
-    flex: 0 0 50%;
+    -webkit-box-flex: 0;
+        -ms-flex: 0 0 50%;
+            flex: 0 0 50%;
     max-width: 50%;
   }
   .layout--with-three-columns .region--content,
   .layout--with-three-columns .region--sidebar-first,
   .layout--with-three-columns .region--sidebar-second {
-    flex: 0 0 33.33333%;
+    -webkit-box-flex: 0;
+        -ms-flex: 0 0 33.33333%;
+            flex: 0 0 33.33333%;
     max-width: 33.33333%;
   }
   .region--complementary-bottom {
@@ -110,6 +135,10 @@
 }
 
 @media (min-width: 1200px) {
+  .container:not(.layout--with-complementary) .region--content, .region--content-top:not(.layout--with-complementary) .region--content, .region--content-bottom:not(.layout--with-complementary) .region--content, .region--hero:not(.layout--with-complementary) .region--content, .region--secondary-navigation:not(.layout--with-complementary) .region--content {
+    padding-left: 0;
+    padding-right: 0;
+  }
   .layout--with-complementary > .region--content {
     padding-left: 0;
   }
