@@ -103,10 +103,11 @@ function social_follow_taxonomy_preprocess_activity(&$variables) {
             'flag_id' => 'follow_term',
             'entity_type' => 'taxonomy_term',
             'entity_id' => $taxonomy_id,
+            'uid' => \Drupal::currentUser()->id(),
           ]);
           $flag = reset($flag);
 
-          if (!empty($flag) && \Drupal::currentUser()->id() == $flag->getOwner()->id()) {
+          if (!empty($flag)) {
             /** @var \Drupal\taxonomy\TermInterface $term */
             $term = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->load($taxonomy_id);
             $variables['content_type'] = $entity->type->entity->label();
