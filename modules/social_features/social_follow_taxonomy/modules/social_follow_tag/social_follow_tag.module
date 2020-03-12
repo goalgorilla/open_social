@@ -88,30 +88,31 @@ function social_follow_tag_preprocess_paragraph(&$variables) {
  * {@inheritdoc}
  */
 function social_follow_tag_preprocess_social_tagging_split(&$variables) {
-  $parent_tag = reset($variables['taghierarchy']);
+  // Iterate over an array with parent terms (category).
+  foreach ($variables['taghierarchy'] as $parent_tag) {
+    // Iterate over an array with terms in each category.
+    foreach ($parent_tag['tags'] as $tag_id => $tag_info) {
+      /** @var \Drupal\taxonomy\TermStorageInterface $term_storage */
+      $term_storage = \Drupal::entityTypeManager()->getStorage('taxonomy_term');
+      $current_term = $term_storage->load($tag_id);
+      // Must be a valid Term.
+      if (!$current_term instanceof TermInterface) {
+        continue;
+      }
+      // Get current term parent.
+      $parents = $term_storage->loadParents($current_term->id());
+      if (!empty($parents)) {
+        $parent = reset($parents);
 
-  foreach ($parent_tag['tags'] as $tag_id => $tag_info) {
-    /** @var \Drupal\taxonomy\TermStorageInterface $term_storage */
-    $term_storage = \Drupal::entityTypeManager()->getStorage('taxonomy_term');
-    $current_term = $term_storage->load($tag_id);
-    // Must be a valid Term.
-    if (!$current_term instanceof TermInterface) {
-      continue;
-    }
-
-    // Get current term parent.
-    $parents = $term_storage->loadParents($current_term->id());
-    if (!empty($parents)) {
-      $parent = reset($parents);
-
-      // Adding additional data to the term variable to extend the template.
-      $variables['taghierarchy'][$parent->id()]['tags'][$current_term->id()] = [
-        'url' => $tag_info['url'],
-        'name' => $tag_info['name'],
-        'flag' => _social_follow_taxonomy_flag_link($current_term),
-        'related_content' => _social_follow_tag_related_content($current_term),
-        'follow' => _social_follow_tag_follow($current_term),
-      ];
+        // Adding additional data to the term variable to extend the template.
+        $variables['taghierarchy'][$parent->id()]['tags'][$current_term->id()] = [
+          'url' => $tag_info['url'],
+          'name' => $tag_info['name'],
+          'flag' => _social_follow_taxonomy_flag_link($current_term),
+          'related_content' => _social_follow_tag_related_content($current_term),
+          'follow' => _social_follow_tag_follow($current_term),
+        ];
+      }
     }
   }
 }
