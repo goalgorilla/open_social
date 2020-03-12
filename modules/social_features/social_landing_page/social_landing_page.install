@@ -5,6 +5,7 @@
  * Install, update and uninstall functions for the social_landing_page module.
  */
 
+use Drupal\Core\Extension\Extension;
 use Drupal\user\Entity\Role;
 
 /**
@@ -75,4 +76,70 @@ function _social_landing_page_get_permissions($role) {
     return $permissions[$role];
   }
   return [];
+}
+
+/**
+ * Enable the Social Featured Items module.
+ */
+function social_landing_page_update_8801() {
+  $module = 'social_featured_items';
+
+  // We don't actually install the module because this would cause issues with
+  // configuration already existing. The configuration has been moved from this
+  // module to the separate sub module so we simply mark the module as enabled.
+  $extension_config = \Drupal::configFactory()->getEditable('core.extension');
+  // Only enable the module if it's not installed already.
+  if ($extension_config->get("module.$module") !== NULL) {
+    // Nothing to do.
+    return;
+  }
+
+  // Mark the module as enabled. From ModuleInstaller::install().
+  $extension_config
+    ->set("module.$module", 0)
+    ->set('module', module_config_sort($extension_config->get('module')))
+    ->save(TRUE);
+
+  // Prepare the new module list, sorted by weight, including filenames.
+  // This list is used for both the ModuleHandler and DrupalKernel. It
+  // needs to be kept in sync between both. A DrupalKernel reboot or
+  // rebuild will automatically re-instantiate a new ModuleHandler that
+  // uses the new module list of the kernel. However, DrupalKernel does
+  // not cause any modules to be loaded.
+  // Furthermore, the currently active (fixed) module list can be
+  // different from the configured list of enabled modules. For all active
+  // modules not contained in the configured enabled modules, we assume a
+  // weight of 0.
+  $current_module_filenames = \Drupal::moduleHandler()->getModuleList();
+  $current_modules = array_fill_keys(array_keys($current_module_filenames), 0);
+  $current_modules = module_config_sort(array_merge($current_modules, $extension_config->get('module')));
+  $module_filenames = [];
+  foreach ($current_modules as $name => $weight) {
+    if (isset($current_module_filenames[$name])) {
+      $module_filenames[$name] = $current_module_filenames[$name];
+    }
+    else {
+      $module_path = \Drupal::service('extension.list.module')->getPath($name);
+      $pathname = "$module_path/$name.info.yml";
+      $filename = file_exists($module_path . "/$name.module") ? "$name.module" : NULL;
+      $module_filenames[$name] = new Extension(\Drupal::root(), 'module', $pathname, $filename);
+    }
+  }
+
+  // Update the module handler in order to load the module's code.
+  // This allows the module to participate in hooks and its existence to
+  // be discovered by other modules.
+  // The current ModuleHandler instance is obsolete with the kernel
+  // rebuild below.
+  \Drupal::moduleHandler()->setModuleList($module_filenames);
+  \Drupal::moduleHandler()->load($module);
+  // No need to module_load_install($module); since there is no such file.
+
+  // Clear the static cache of the "extension.list.module" service to pick
+  // up the new module, since it merges the installation status of modules
+  // into its statically cached list.
+  \Drupal::service('extension.list.module')->reset();
+
+  // Given that we know that the module only contains existing configuration at
+  // this point we don't need to go through the rest of the install process.
 }
