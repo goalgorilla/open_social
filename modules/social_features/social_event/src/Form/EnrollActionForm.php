@@ -180,7 +180,7 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
 
     // Add request to join event.
     if ($node->field_enroll_method->value === '2') {
-      $submit_text = $this->t('Request to join');
+      $submit_text = $this->t('Request to enroll');
       $to_enroll_status = '2';
     }
 
@@ -224,6 +224,31 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
       '#value' => $submit_text,
       '#disabled' => !$enrollment_open,
     ];
+
+    if ($node->field_enroll_method->value === '2') {
+      $attributes = [
+        'class' => [
+          'use-ajax',
+          'js-form-submit',
+          'form-submit',
+          'btn',
+          'btn-accent',
+          'btn-lg',
+        ],
+        'data-dialog-type' => 'modal',
+        'data-dialog-options' => json_encode([
+          'title' => t('Request to enroll'),
+          'width' => 'auto',
+        ]),
+      ];
+
+      $form['enroll_for_this_event'] = [
+        '#type' => 'link',
+        '#title' => $submit_text,
+        '#url' => Url::fromRoute('social_event.request_enroll_dialog', ['node' => $nid]),
+        '#attributes' => $attributes,
+      ];
+    }
 
     $form['#attributes']['name'] = 'enroll_action_form';
 

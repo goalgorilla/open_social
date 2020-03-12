@@ -224,6 +224,9 @@ function social_event_an_enroll_form_alter(&$form, FormStateInterface $form_stat
         ':input[name="field_content_visibility"]' => ['value' => 'public'],
         ':input[name="field_event_enroll[value]"]' => ['checked' => TRUE],
       ],
+      'disabled' => [
+        ':input[name="field_enroll_method"]' => ['value' => '2'],
+      ],
     ];
     // Set default value on event creation form.
     if ($form_id == 'node_event_form') {

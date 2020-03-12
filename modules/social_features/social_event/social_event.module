@@ -670,21 +670,23 @@ function social_event_get_current_event() {
  *
  * @param $form
  *   The form that needs to be altered.
+ * @param $state
+ *   Which state do you want for the form field. Defaults to visibility.
  * @param $trigger
  *   The field that acts as a trigger.
  * @param array $fields
  *   The field that should show upon trigger.
  */
-function social_event_field_visibility(&$form, $trigger, array $fields) {
+function social_event_field_visibility(&$form, $trigger, array $fields, $state = 'visibility') {
   // Todo:: Refactor outside of an alter when going to React.
   // Hide fields if event enrollment is disabled for event.
-  $state = [
+  $trigger = [
     ':input[name="' . $trigger . '[value]"]' => ['checked' => TRUE],
   ];
 
   foreach ($fields as $field) {
     $form[$field]['#states'] = [
-      'visible' => $state,
+      $state => $trigger,
     ];
   }
 }
