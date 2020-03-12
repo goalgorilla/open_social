@@ -314,17 +314,22 @@ class ContentBuilder implements ContentBuilderInterface {
         }
         else {
           // Last interacted for all the time.
-          $query = $this->connection->select('votingapi_vote', 'vv');
-          $query->condition('vv.entity_id', $entities, 'IN');
-          $query->condition('vv.entity_type', $entity_type, '=');
+          $query = $this->connection->select('node_field_data', 'nfd');
+          $query->condition('nfd.nid', $entities, 'IN');
+          // Comment entity.
+          $cfd_alias = $query->leftjoin('comment_field_data', 'cfd', 'nfd.nid = %alias.entity_id');
+          // Like node.
+          $query->leftjoin('votingapi_vote', 'vv', 'nfd.nid = %alias.entity_id');
+          // Like comment related to node.
+          $query->leftjoin('votingapi_vote', 'vvn', "{$cfd_alias}.cid = %alias.entity_id");
 
-          $query->leftjoin('comment_field_data', 'cfd', 'vv.entity_id = %alias.entity_id');
-          $query->leftjoin('node_field_data', 'nfd', 'vv.entity_id = %alias.nid');
+          $query->addField('nfd', 'nid');
+          $query->addExpression('GREATEST(COALESCE(MAX(vv.timestamp), 0),
+          COALESCE(MAX(vvn.timestamp), 0),
+          COALESCE(MAX(cfd.changed), 0),
+          COALESCE(MAX(nfd.changed), 0))', 'newest_timestamp');
 
-          $query->addField('vv', 'entity_id');
-          $query->addExpression('GREATEST(MAX(vv.timestamp), MAX(cfd.changed), MAX(nfd.changed))', 'newest_timestamp');
-
-          $query->groupBy('vv.entity_id');
+          $query->groupBy('nfd.nid');
           $query->orderBy('newest_timestamp','DESC');
         }
         break;
