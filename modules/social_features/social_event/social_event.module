@@ -715,3 +715,17 @@ function social_event_entity_operation_alter(array &$operations, EntityInterface
     $operations['decline']['url'] = Url::fromRoute('social_event.update_enrollment_request', ['node' => $node, 'event_enrollment' => $entity->id(), 'approve' => 0]);
   }
 }
+
+/**
+ * Implements template_preprocess_views_view().
+ */
+function social_event_preprocess_views_view(&$variables) {
+  // Implement custom button to go back to the enroll request overview.
+  $variables['back_button'] = [];
+}
+
+function social_event_preprocess_views_view_field(&$variables) {
+  if ($variables) {
+
+  }
+}

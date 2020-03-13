@@ -65,13 +65,15 @@ class UpdateEnrollRequestController extends ControllerBase {
       // When the user approved, we set the field_request_status to approved.
       if ($approve === '1') {
         $event_enrollment->field_request_status->value = 'approved';
+        $this->messenger()->addStatus(t('The event enrollment request has been approved.'));
       }
       // When the user declined, we set the field_request_status to decline.
       elseif ($approve === '0') {
         $event_enrollment->field_request_status->value = 'declined';
+        $this->messenger()->addStatus(t('The event enrollment request has been declined.'));
       }
       // And finally save (update) this updated $event_enrollment.
-      // @todo: maybe think of deleting approved/declined records?
+      // @todo: maybe think of deleting approved/declined records from the db?
       $this->entityTypeManager()->getStorage('event_enrollment')->save($event_enrollment);
     }
 
