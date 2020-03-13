@@ -697,20 +697,21 @@ function social_event_field_visibility(&$form, $trigger, array $fields, $state =
  */
 function social_event_entity_operation_alter(array &$operations, EntityInterface $entity) {
   // Check access first.
-  if (!(\Drupal::currentUser()->hasPermission('access content'))) {
+  if (!(\Drupal::currentUser()->hasPermission('manage event enrollment requests'))) {
     return;
   }
-
+  // Get the node, so we can pass it as a parameter.
   $node = \Drupal::routeMatch()->getParameter('node');
-
+  // Check if the entity type is one of event_enrollment and that we're on the
+  // correct view. Otherwise it would update all actions across the platform.
   if ($entity->getEntityTypeId() === 'event_enrollment' && \Drupal::routeMatch()->getRouteName() === 'view.event_manage_enrollment_requests.page_manage_enrollment_requests') {
     // Empty the current operations.
     $operations = [];
     // Add the "Approve" option.
     $operations['approve']['title'] = t('Approve');
-    $operations['approve']['url'] = Url::fromRoute('social_event.update_enrollment_request', ['node' => $node, 'event_enrollment' => $entity->id()]);
+    $operations['approve']['url'] = Url::fromRoute('social_event.update_enrollment_request', ['node' => $node, 'event_enrollment' => $entity->id(), 'approve' => 1]);
     // Add the "Decline" option.
     $operations['decline']['title'] = t('Decline');
-    $operations['decline']['url'] = Url::fromRoute('social_event.update_enrollment_request', ['node' => $node, 'event_enrollment' => $entity->id()]);
+    $operations['decline']['url'] = Url::fromRoute('social_event.update_enrollment_request', ['node' => $node, 'event_enrollment' => $entity->id(), 'approve' => 0]);
   }
 }
