@@ -48,8 +48,9 @@ function social_content_block_block_content_view(array &$build, EntityInterface 
       '#lazy_builder' => [
         'social_content_block.content_builder:build',
         [
-          $entity->getEntityTypeId(),
           $entity->id(),
+          $entity->getEntityTypeId(),
+          $entity->bundle(),
         ],
       ],
       '#create_placeholder' => TRUE,
