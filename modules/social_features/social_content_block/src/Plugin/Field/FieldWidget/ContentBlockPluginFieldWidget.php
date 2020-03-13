@@ -66,7 +66,7 @@ class ContentBlockPluginFieldWidget extends ContentBlockPluginWidgetBase {
           // Add the field machine name instead of the field label when the
           // field still not added to the form structure. The field will be
           // processed in the following place:
-          // @see social_content_block_form_alter()
+          // @see \Drupal\social_content_block\ContentBuilder::processBlockForm()
           $element[$plugin_id]['#options'][$field] = $field;
         }
       }
