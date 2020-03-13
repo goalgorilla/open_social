@@ -12,9 +12,11 @@ use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
 
 /**
- * Class RequestEventEnrollment.
+ * Contains methods for the modal form when requesting to enroll in an event.
+ *
+ * @package Drupal\social_event\Controller
  */
-class RequestEventEnrollment extends ControllerBase {
+class EnrollRequestDialogController extends ControllerBase {
 
   /**
    * The form builder.
@@ -45,23 +47,6 @@ class RequestEventEnrollment extends ControllerBase {
     return new static(
       $container->get('form_builder')
     );
-  }
-  /**
-   * Provides the form for requesting a group membership.
-   *
-   * @param \Drupal\node\NodeInterface $node
-   *   The event node.
-   */
-  public function requestEnrollment(NodeInterface $node) {
-  }
-
-  /**
-   * Provides the form for approving a requested group membership.
-   *
-   * @param \Drupal\node\NodeInterface $node
-   *   The event node.
-   */
-  public function approveEnrollmentRequest(NodeInterface $node) {
   }
 
   /**

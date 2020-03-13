@@ -15,34 +15,27 @@ social_event.settings:
   options:
     _admin_route: TRUE
 
-social_event.request_enrollment:
-  path: '/node/{event}/request-enrollment'
+social_event.update_enrollment_request:
+  path: '/node/{node}/all-enrollment-requests/update-enrollment/{event_enrollment}'
   defaults:
-    _controller: '\Drupal\social_event\Controller\RequestEventEnrollment::requestEnrollment'
-    _title_callback: '\Drupal\social_event\Controller\RequestEventEnrollment::requestEnrollmentTitle'
+    _controller: '\Drupal\social_event\Controller\UpdateEnrollRequestController::updateEnrollmentRequest'
   options:
     parameters:
-      event:
+      node:
         type: entity:node
+      event_enrollment:
+        type: entity:event_enrollment
+  _requirements:
+    _custom_access: '\Drupal\social_event\Controller\UpdateEnrollRequestController::access'
 
 social_event.request_enroll_dialog:
   path: '/node/{node}/enroll-dialog'
   defaults:
-    _controller: '\Drupal\social_event\Controller\RequestEventEnrollment::enrollDialog'
-    _title_callback: '\Drupal\social_event\Controller\RequestEventEnrollment::enrollTitle'
+    _controller: '\Drupal\social_event\Controller\EnrollRequestDialogController::enrollDialog'
+    _title_callback: '\Drupal\social_event\Controller\EnrollRequestDialogController::enrollTitle'
   options:
     parameters:
       node:
         type: entity:node
   requirements:
-    _custom_access: '\Drupal\social_event\Controller\RequestEventEnrollment::enrollAccess'
-
-social_event.approve_enrollment_request:
-  path: '/{event}/approve-enrollment-request'
-  defaults:
-    _controller: '\Drupal\social_event\Controller\RequestEventEnrollment::approveEnrollmentRequest'
-    _title_callback: '\Drupal\social_event\Controller\RequestEventEnrollment::approveEnrollmentRequestTitle'
-  options:
-    parameters:
-      event:
-        type: entity:node
+    _custom_access: '\Drupal\social_event\Controller\EnrollRequestDialogController::enrollAccess'

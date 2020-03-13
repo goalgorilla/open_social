@@ -701,14 +701,16 @@ function social_event_entity_operation_alter(array &$operations, EntityInterface
     return;
   }
 
+  $node = \Drupal::routeMatch()->getParameter('node');
+
   if ($entity->getEntityTypeId() === 'event_enrollment' && \Drupal::routeMatch()->getRouteName() === 'view.event_manage_enrollment_requests.page_manage_enrollment_requests') {
     // Empty the current operations.
     $operations = [];
     // Add the "Approve" option.
     $operations['approve']['title'] = t('Approve');
-    $operations['approve']['url'] = Url::fromRoute('<front>');
+    $operations['approve']['url'] = Url::fromRoute('social_event.update_enrollment_request', ['node' => $node, 'event_enrollment' => $entity->id()]);
     // Add the "Decline" option.
     $operations['decline']['title'] = t('Decline');
-    $operations['decline']['url'] = Url::fromRoute('<front>');
+    $operations['decline']['url'] = Url::fromRoute('social_event.update_enrollment_request', ['node' => $node, 'event_enrollment' => $entity->id()]);
   }
 }

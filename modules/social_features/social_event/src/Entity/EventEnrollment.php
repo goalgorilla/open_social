@@ -52,6 +52,7 @@ use Drupal\user\UserInterface;
  *     "edit-form" = "/admin/structure/event_enrollment/{event_enrollment}/edit",
  *     "delete-form" = "/admin/structure/event_enrollment/{event_enrollment}/delete",
  *     "collection" = "/admin/structure/event_enrollment",
+ *     "update-request" = "/node/{node}/all-enrollment-requests/update-enrollment/{event_enrollment}",
  *   },
  *   field_ui_base_route = "event_enrollment.settings"
  * )
