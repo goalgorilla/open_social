@@ -5,7 +5,8 @@
  * The Social Content Block module.
  */
 
-use Drupal\Core\Block\BlockPluginInterface;
+use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
@@ -16,43 +17,44 @@ function social_content_block_preprocess_block(&$variables) {
     isset($variables['content']['#block_content']) &&
     $variables['content']['#block_content']->bundle() === 'custom_content_list'
   ) {
-    $variables['content']['social_content_block'] = $variables['elements']['social_content_block'];
     $variables['card'] = TRUE;
   }
 }
 
 /**
- * Implements hook_block_view_BASE_BLOCK_ID_alter().
+ * Implements hook_entity_extra_field_info().
  */
-function social_content_block_block_view_block_content_alter(&$build, BlockPluginInterface $block) {
-  if ($block_entity = _social_content_block_is_custom_content_block($block)) {
+function social_content_block_entity_extra_field_info() {
+  return [
+    'block_content' => [
+      'custom_content_list' => [
+        'display' => [
+          'entities' => [
+            'label' => t('Entities'),
+            'weight' => 0,
+          ],
+        ],
+      ],
+    ],
+  ];
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_view().
+ */
+function social_content_block_block_content_view(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, $view_mode) {
+  if ($entity->bundle() === 'custom_content_list' && $display->getComponent('entities')) {
     $build['social_content_block'] = [
       '#lazy_builder' => [
         'social_content_block.content_builder:build',
         [
-          $block_entity->getEntityTypeId(),
-          $block_entity->id(),
+          $entity->getEntityTypeId(),
+          $entity->id(),
         ],
       ],
       '#create_placeholder' => TRUE,
     ];
   }
-}
-
-/**
- * Checks if a block is a Custom content block.
- */
-function _social_content_block_is_custom_content_block(BlockPluginInterface $block) {
-  if ($block->getBaseId() === 'block_content') {
-    $uuid = $block->getDerivativeId();
-    /** @var \Drupal\block_content\BlockContentInterface $block_entity */
-    $block_entity = \Drupal::service('entity.repository')
-      ->loadEntityByUuid('block_content', $uuid);
-    if ($block_entity->bundle() === 'custom_content_list') {
-      return $block_entity;
-    }
-  }
-  return FALSE;
 }
 
 /**
