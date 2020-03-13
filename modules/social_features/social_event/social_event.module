@@ -24,6 +24,7 @@ use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
 use Drupal\social_event\Controller\SocialEventController;
 use Drupal\social_event\EventEnrollmentInterface;
+use Drupal\views\Plugin\views\cache\CachePluginBase;
 use Drupal\views\Plugin\views\query\QueryPluginBase;
 use Drupal\views\ViewExecutable;
 
@@ -688,5 +689,26 @@ function social_event_field_visibility(&$form, $trigger, array $fields, $state =
     $form[$field]['#states'] = [
       $state => $trigger,
     ];
+  }
+}
+
+/**
+ * Implements hook_entity_operation_alter().
+ */
+function social_event_entity_operation_alter(array &$operations, EntityInterface $entity) {
+  // Check access first.
+  if (!(\Drupal::currentUser()->hasPermission('access content'))) {
+    return;
+  }
+
+  if ($entity->getEntityTypeId() === 'event_enrollment' && \Drupal::routeMatch()->getRouteName() === 'view.event_manage_enrollment_requests.page_manage_enrollment_requests') {
+    // Empty the current operations.
+    $operations = [];
+    // Add the "Approve" option.
+    $operations['approve']['title'] = t('Approve');
+    $operations['approve']['url'] = Url::fromRoute('<front>');
+    // Add the "Decline" option.
+    $operations['decline']['title'] = t('Decline');
+    $operations['decline']['url'] = Url::fromRoute('<front>');
   }
 }
