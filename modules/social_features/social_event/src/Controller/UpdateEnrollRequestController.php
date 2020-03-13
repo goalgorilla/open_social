@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Drupal\social_event\Controller;
 
 use Drupal\Core\Access\AccessResult;
