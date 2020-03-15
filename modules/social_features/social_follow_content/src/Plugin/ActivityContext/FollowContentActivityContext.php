@@ -78,17 +78,11 @@ class FollowContentActivityContext extends ActivityContextBase {
       // The owner of a node automatically follows his / her own content.
       // Because of this, we do not want to send a follow notification.
       if ($original_related_entity instanceof Comment) {
-        // What is our original node?
         // We need to compare the owner ID of the original node to the one
         // being the current recipient.
         $original_node = $original_related_entity->getCommentedEntity();
-        if ($original_node instanceof Node) {
-          $original_author = $original_node->getOwnerId();
-          // If the recipient ID is the same as the original content author,
-          // do not send a notification.
-          if ($recipient->id() !== $original_author) {
-            break;
-          }
+        if ($original_node instanceof Node && $recipient->id()!== $original_node->getOwnerId()) {
+          break;
         }
       }
 
