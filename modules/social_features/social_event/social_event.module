@@ -574,14 +574,17 @@ function social_event_show_pending_requests_message() {
       // Third, get the current node (if any) to perform an extra check
       // just to make sure that we are actually on an event node.
       $node = social_event_get_current_event();
-      if ($node) {
+      if ($node && $node->field_enroll_method->value === '2') {
         // At this point we try to get the amount of pending requests.
         try {
-          $pending_requests = \Drupal::entityTypeManager()
+          $query = \Drupal::entityTypeManager()
             ->getStorage('event_enrollment')
-            ->getQuery()
-            ->condition('field_request_status.value', 'pending', '=')
-            ->execute();
+            ->getQuery();
+          $condition_group = $query->andConditionGroup()
+            ->condition('field_request_status.value', 'pending')
+            ->condition('field_enrollment_status.value', '0');
+          $query->condition($condition_group);
+          $pending_requests = $query->execute();
           if (!empty($pending_requests)) {
             $link = Link::createFromRoute(t('(@amount) new requests', ['@amount' => count($pending_requests)]), 'view.event_manage_enrollment_requests.page_manage_enrollment_requests', ['node' => $node->id()])->toString();
             $message = \Drupal::messenger()
