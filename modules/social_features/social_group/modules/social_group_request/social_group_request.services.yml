@@ -1,0 +1,14 @@
+services:
+
+  # Defines service for overriding configs
+  social_group_request.overrider:
+    class: Drupal\social_group_request\SocialGroupRequestConfigOverride
+    arguments: ['@config.factory', '@module_handler']
+    tags:
+      - {name: config.factory.override, priority: 5}
+
+  # Defines route subscriber service
+  social_group_request.route_subscriber:
+    class: Drupal\social_group_request\Routing\SocialGroupRequestRouteSubscriber
+    tags:
+      - { name: event_subscriber }
