@@ -81,6 +81,7 @@ class SocialEventManagersAddEnrolleeForm extends FormBase {
           'field_event' => $event,
           'field_enrollment_status' => '1',
           'field_account' => $uid,
+          'field_request_status' => 'approved',
         ]);
         $enrollment->save();
 
