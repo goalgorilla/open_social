@@ -52,8 +52,6 @@
 
 <div{{ attributes.addClass(classes) }}>
 
-  {{ dump() }}
-
   {% if header %}
     <div class="row form-group-inline--right">
       {{ header.area }}
@@ -91,6 +89,12 @@
   {% endif %}
 
   {{ pager }}
+
+  {% if back_button %}
+    <div class="view-filters form-group">
+      {{ back_button }}
+    </div>
+  {% endif %}
 
   {{ attachment_after }}
   {{ more }}
