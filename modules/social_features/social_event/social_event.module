@@ -731,7 +731,7 @@ function social_event_get_current_event() {
  * @param array $fields
  *   The field that should show upon trigger.
  */
-function social_event_field_visibility(&$form, $trigger, array $fields, $state = 'visibility') {
+function social_event_field_visibility(&$form, $trigger, array $fields, $state = 'visible') {
   // Todo:: Refactor outside of an alter when going to React.
   // Hide fields if event enrollment is disabled for event.
   $trigger = [
