@@ -177,6 +177,7 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
     $submit_text = $this->t('Enroll');
     $to_enroll_status = '1';
     $enrollment_open = TRUE;
+    $request_to_join = FALSE;
 
     // Add request to join event.
     if ($node->field_enroll_method->value === '2') {
@@ -204,13 +205,35 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
           $to_enroll_status = '0';
         }
         // If someone requested to join the event.
-        elseif ($node->field_enroll_method->value === '2') {
+        elseif ($node->field_enroll_method->value && $node->field_enroll_method->value === '2') {
           $enroll_request_status = $enrollment->field_request_status->value;
           if ($enroll_request_status === 'pending') {
             $submit_text = $this->t('Pending');
             $enrollment_open = FALSE;
           }
+          $event_request_ajax = TRUE;
         }
+      }
+
+      // Use the ajax submit if the enrollments are empty, or if the
+      // user cancelled his enrollment and tries again.
+      if (empty($enrollment) || (isset($event_request_ajax) && $event_request_ajax === TRUE)) {
+        $attributes = [
+          'class' => [
+            'use-ajax',
+            'js-form-submit',
+            'form-submit',
+            'btn',
+            'btn-accent',
+            'btn-lg',
+          ],
+          'data-dialog-type' => 'modal',
+          'data-dialog-options' => json_encode([
+            'title' => t('Request to enroll'),
+            'width' => 'auto',
+          ]),
+        ];
+        $request_to_join = TRUE;
       }
     }
 
@@ -225,23 +248,7 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
       '#disabled' => !$enrollment_open,
     ];
 
-    if ($node->field_enroll_method->value === '2') {
-      $attributes = [
-        'class' => [
-          'use-ajax',
-          'js-form-submit',
-          'form-submit',
-          'btn',
-          'btn-accent',
-          'btn-lg',
-        ],
-        'data-dialog-type' => 'modal',
-        'data-dialog-options' => json_encode([
-          'title' => t('Request to enroll'),
-          'width' => 'auto',
-        ]),
-      ];
-
+    if ($request_to_join === TRUE) {
       $form['enroll_for_this_event'] = [
         '#type' => 'link',
         '#title' => $submit_text,
