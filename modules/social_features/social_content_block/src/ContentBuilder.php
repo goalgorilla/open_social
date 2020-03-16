@@ -253,6 +253,8 @@ class ContentBuilder implements ContentBuilderInterface {
     /** @var \Drupal\social_content_block\ContentBlockManagerInterface $content_block_manager */
     $content_block_manager = \Drupal::service('plugin.manager.content_block');
 
+    $selector = $content_block_manager->getSelector('field_plugin_id', 'value');
+
     foreach ($content_block_manager->getDefinitions() as $plugin_id => $plugin_definition) {
       $fields = &$element['field_plugin_field']['widget'][0][$plugin_id]['#options'];
 
@@ -266,10 +268,10 @@ class ContentBuilder implements ContentBuilderInterface {
 
           $element[$field_name]['#states'] = [
             'visible' => [
-              ':input[name="field_plugin_id[0][value]"]' => [
+              $selector => [
                 'value' => $plugin_id,
               ],
-              ':input[name="field_plugin_field[0][' . $plugin_id . ']"]' => [
+              $content_block_manager->getSelector('field_plugin_field', $plugin_id) => [
                 ['value' => 'all'],
                 ['value' => $field_name],
               ],

@@ -24,8 +24,9 @@ class ContentBlockPluginFieldWidget extends ContentBlockPluginWidgetBase {
   public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
     $element = parent::formElement($items, $delta, $element, $form, $form_state);
     $selected_plugin_id = $items->getEntity()->field_plugin_id->value;
+    $selector = $this->contentBlockManager->getSelector('field_plugin_id', 'value', $element['#field_parents']);
 
-    foreach ($this->definitions as $plugin_id => $plugin_definition) {
+    foreach ($this->contentBlockManager->getDefinitions() as $plugin_id => $plugin_definition) {
       $element[$plugin_id] = [
         '#type' => 'select',
         '#title' => $element['value']['#title'],
@@ -35,7 +36,7 @@ class ContentBlockPluginFieldWidget extends ContentBlockPluginWidgetBase {
         '#weight' => -1,
         '#states' => [
           'visible' => [
-            ':input[name="field_plugin_id[0][value]"]' => [
+            $selector => [
               'value' => $plugin_id,
             ],
           ],
@@ -52,10 +53,10 @@ class ContentBlockPluginFieldWidget extends ContentBlockPluginWidgetBase {
 
           $form[$field]['#states'] = [
             'visible' => [
-              ':input[name="field_plugin_id[0][value]"]' => [
+              $selector => [
                 'value' => $plugin_id,
               ],
-              ':input[name="field_plugin_field[0][' . $plugin_id . ']"]' => [
+              $this->contentBlockManager->getSelector('field_plugin_field', $plugin_id) => [
                 ['value' => 'all'],
                 ['value' => $field],
               ],
