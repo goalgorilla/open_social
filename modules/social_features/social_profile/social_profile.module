@@ -369,7 +369,7 @@ function social_profile_preprocess_profile(array &$variables) {
   // Get the current route name to check if the user is on the edit or delete
   // page.
   $route = \Drupal::routeMatch()->getRouteName();
-  if ($route !== 'entity.profile.type.user_profile_form' && $profile->access('update', $current_user)) {
+  if ($route !== 'profile.user_page.single' && $profile->access('update', $current_user)) {
     $variables['profile_edit_url'] = Url::fromUserInput('/user/' . $profile->getOwnerId() . '/profile');
     $variables['#cache']['contexts'][] = 'route.name';
   }
