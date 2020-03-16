@@ -207,11 +207,12 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
         // If someone requested to join the event.
         elseif ($node->field_enroll_method->value && $node->field_enroll_method->value === '2') {
           $enroll_request_status = $enrollment->field_request_status->value;
+          $event_request_ajax = TRUE;
           if ($enroll_request_status === 'pending') {
             $submit_text = $this->t('Pending');
             $enrollment_open = FALSE;
+            $event_request_ajax = FALSE;
           }
-          $event_request_ajax = TRUE;
         }
       }
 
