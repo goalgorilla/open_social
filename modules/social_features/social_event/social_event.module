@@ -13,6 +13,7 @@ use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Link;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
@@ -485,6 +486,7 @@ function social_event_block_access(Block $block, $operation, AccountInterface $a
  * Implements hook_form_alter().
  */
 function social_event_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  social_event_show_pending_requests_message();
   switch ($form_id) {
     case 'node_event_edit_form':
       // Set allow event enrollment checked by default for existing events.
@@ -544,6 +546,57 @@ function social_event_form_alter(&$form, FormStateInterface $form_state, $form_i
       }
       break;
   }
+}
+
+/**
+ * Determine if we need to show a message with pending requests on the page.
+ */
+function social_event_show_pending_requests_message() {
+  $message = NULL;
+  // First lets check if the user has the correct permission.
+  if (\Drupal::currentUser()->hasPermission('manage event enrollment requests')) {
+    // Then get the current route to check on.
+    $current_route = \Drupal::routeMatch()->getRouteName();
+    // Defined routes on which a message with amount
+    // of unattended pending enrollment requests.
+    $defined_routes = [
+      'view.event_enrollments.view_enrollments',
+      'entity.node.canonical',
+      'view.event_manage_enrollments.page_manage_enrollments',
+      'view.managers.view_managers',
+      'social_event_managers.add_enrollees',
+      'entity.event_enrollment.delete_form',
+      'social_event_managers.vbo.execute_configurable',
+      'social_event_managers.vbo.confirm',
+    ];
+    // If the route matches, proceed.
+    if (in_array($current_route, $defined_routes)) {
+      // Third, get the current node (if any) to perform an extra check
+      // just to make sure that we are actually on an event node.
+      $node = social_event_get_current_event();
+      if ($node) {
+        // At this point we try to get the amount of pending requests.
+        try {
+          $pending_requests = \Drupal::entityTypeManager()
+            ->getStorage('event_enrollment')
+            ->getQuery()
+            ->condition('field_request_status.value', 'pending', '=')
+            ->execute();
+          if (!empty($pending_requests)) {
+            $link = Link::createFromRoute(t('(@amount) new requests', ['@amount' => count($pending_requests)]), 'view.event_manage_enrollment_requests.page_manage_enrollment_requests', ['node' => $node->id()])->toString();
+            $message = \Drupal::messenger()
+              ->addStatus(t('There are @link to enroll in this event.', ['@link' => $link]));
+          }
+        } catch (\Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException $e) {
+          \Drupal::logger('social_event')->error($e->getMessage());
+        } catch (\Drupal\Component\Plugin\Exception\PluginNotFoundException $e) {
+          \Drupal::logger('social_event')->error($e->getMessage());
+        }
+      }
+    }
+  }
+
+  return $message;
 }
 
 /**
