@@ -581,6 +581,7 @@ function social_event_show_pending_requests_message() {
             ->getStorage('event_enrollment')
             ->getQuery();
           $condition_group = $query->andConditionGroup()
+            ->condition('field_event.target_id', $node->id())
             ->condition('field_request_status.value', 'pending')
             ->condition('field_enrollment_status.value', '0');
           $query->condition($condition_group);
