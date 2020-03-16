@@ -268,9 +268,13 @@ class ContentBuilder implements ContentBuilderInterface {
           $query = $this->connection->select('comment_field_data', 'cfd');
           $query->condition('cfd.entity_id', $entities, 'IN');
           $query->condition('cfd.created', $start_time, '>');
-          $query->addField('cfd', 'entity_id');
+          $query->condition('cfd.status', 1, '=');
+          // Only nodes, without posts or other entities.
+          $query->innerJoin('node_field_data', 'nfd', 'nfd.nid = cfd.entity_id');
+
+          $query->addField('nfd', 'nid');
           $query->addExpression('COUNT(cfd.entity_id)', 'count');
-          $query->groupBy('cfd.entity_id');
+          $query->groupBy('nfd.nid');
         }
         $query->orderBy('count','DESC');
         break;
@@ -295,9 +299,12 @@ class ContentBuilder implements ContentBuilderInterface {
           $query->condition('vv.entity_id', $entities, 'IN');
           $query->condition('vv.entity_type', $entity_type, '=');
           $query->condition('vv.timestamp', $start_time, '>');
-          $query->addField('vv', 'entity_id');
+          // Only nodes, without posts or other entities.
+          $query->innerJoin('node_field_data', 'nfd', 'nfd.nid = vv.entity_id');
+
+          $query->addField('nfd', 'nid');
           $query->addExpression('COUNT(vv.entity_id)', 'count');
-          $query->groupBy('vv.entity_id');
+          $query->groupBy('nfd.nid');
         }
         $query->orderBy('count','DESC');
         break;
@@ -339,6 +346,7 @@ class ContentBuilder implements ContentBuilderInterface {
           // Last interacted for all the time.
           $query = $this->connection->select('node_field_data', 'nfd');
           $query->condition('nfd.nid', $entities, 'IN');
+          $query->condition('nfd.status', 1, '=');
           // Comment entity.
           $query->leftjoin('comment_field_data', 'cfd', 'nfd.nid = cfd.entity_id');
           // Like node.
