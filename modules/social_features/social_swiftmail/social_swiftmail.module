@@ -81,7 +81,7 @@ function social_swiftmail_preprocess_swiftmailer(array &$variables) {
     $variables['footer'] = \Drupal::service('renderer')->renderRoot($footer_markup);
   }
 
-  $user = '';
+  $user = FALSE;
   $message = &$variables['message'];
 
   if (!empty($message['to'])) {
