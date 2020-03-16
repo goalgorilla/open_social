@@ -250,7 +250,19 @@ class ContentBuilder implements ContentBuilderInterface {
     switch ($block_content->field_sorting->value) {
       case 'most_commented':
         if ($entity_type === 'group') {
-          $this->groupSorting($query, $entities, $start_time, 'comment_field_data', 'created');
+          $entities = implode(',', $entities);
+
+          $query = $this->connection->select('comment_field_data', 'cfd');
+          $query->condition('cfd.status', 1, '=');
+          $query->condition('cfd.created', $start_time, '>');
+
+          $query->leftJoin('post__field_recipient_group', 'pfrg', 'cfd.entity_id = pfrg.entity_id');
+          $query->leftJoin('group_content_field_data', 'gfd', 'cfd.entity_id = gfd.entity_id');
+
+          $query->addExpression('COALESCE(gfd.gid, pfrg.field_recipient_group_target_id)', 'group_id');
+          $query->addExpression('COUNT(cfd.cid)', 'count');
+          $query->where("COALESCE(gfd.gid, pfrg.field_recipient_group_target_id) IN ($entities)");
+          $query->groupBy('group_id');
         }
         else {
           $query = $this->connection->select('comment_field_data', 'cfd');
@@ -265,7 +277,18 @@ class ContentBuilder implements ContentBuilderInterface {
 
       case 'most_liked':
         if ($entity_type === 'group') {
-          $this->groupSorting($query, $entities, $start_time, 'votingapi_vote', 'timestamp');
+          // This query does not include likes for post comments and likes for entity comments.
+          $entities = implode(',', $entities);
+          $query = $this->connection->select('votingapi_vote', 'vv');
+          $query->condition('vv.timestamp', $start_time, '>');
+
+          $query->leftJoin('post__field_recipient_group', 'pfrg', 'vv.entity_id = pfrg.entity_id');
+          $query->leftJoin('group_content_field_data', 'gfd', 'vv.entity_id = gfd.entity_id');
+
+          $query->addExpression('COALESCE(gfd.gid, pfrg.field_recipient_group_target_id)', 'group_id');
+          $query->addExpression('COUNT(vv.id)', 'count');
+          $query->where("COALESCE(gfd.gid, pfrg.field_recipient_group_target_id) IN ($entities)");
+          $query->groupBy('group_id');
         }
         else {
           $query = $this->connection->select('votingapi_vote', 'vv');
@@ -340,30 +363,6 @@ class ContentBuilder implements ContentBuilderInterface {
     $query->range(0, $block_content->field_item_amount->value);
 
     return $query->execute()->fetchAllKeyed(0, 0);
-  }
-
-  /**
-   * Specific group sorting.
-   *
-   * @param \Drupal\Core\Database\Query\SelectInterface $query
-   *   The query.
-   * @param array $entities
-   *   The list of specific type entities.
-   * @param string $start_time
-   *   Timestamp range.
-   * @param string $join_table
-   *   The table name.
-   * @param string $created_date_column
-   *   The column name with timestamp.
-   */
-  private function groupSorting(&$query, $entities, $start_time, $join_table, $created_date_column) {
-    $query = $this->connection->select('group_content_field_data', 'gfd');
-    $query->condition('gfd.gid', $entities, 'IN');
-    $alias = $query->innerJoin($join_table, $join_table, 'gfd.entity_id = %alias.entity_id');
-    $query->condition("{$alias}.{$created_date_column}", $start_time, '>');
-    $query->addField('gfd', 'gid');
-    $query->addExpression("COUNT({$alias}.entity_id)", 'count');
-    $query->groupBy("gfd.gid");
   }
 
 }
