@@ -24,6 +24,18 @@ function social_event_install() {
 }
 
 /**
+ * Implements hook_update_dependencies().
+ */
+function social_event_update_dependencies() {
+  // Run the event request enrollment update after the final features removal ran.
+  $dependencies['social_event'][8802] = [
+    'social_core' => 8802,
+  ];
+
+  return $dependencies;
+}
+
+/**
  * Function to set permissions.
  */
 function _social_event_set_permissions() {
