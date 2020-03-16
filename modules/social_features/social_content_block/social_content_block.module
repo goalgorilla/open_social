@@ -8,7 +8,6 @@
 use Drupal\block_content\BlockContentInterface;
 use Drupal\Core\Block\BlockPluginInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Render\Element;
 
 /**
  * Implements hook_preprocess_block().
@@ -126,6 +125,10 @@ function social_content_block_form_alter(&$form, FormStateInterface $form_state,
     $fields = &$form['field_plugin_field']['widget'][0][$plugin_id]['#options'];
 
     foreach ($fields as $field_name => $field_title) {
+      // When the filter field was absent during executing the code of the field
+      // widget plugin for the filters list field then process this field
+      // repeatedly.
+      // @see \Drupal\social_content_block\Plugin\Field\FieldWidget\ContentBlockPluginFieldWidget::formElement()
       if ($field_name === $field_title) {
         $fields[$field_name] = $form[$field_name]['widget']['target_id']['#title'];
 
@@ -141,15 +144,6 @@ function social_content_block_form_alter(&$form, FormStateInterface $form_state,
           ],
         ];
       }
-    }
-  }
-
-  $form['#attributes']['class'][] = 'form--default';
-
-  foreach (Element::children($form['actions']) as $key) {
-    if ($key !== 'submit') {
-      $form['actions'][$key]['#attributes']['class'][] = 'btn';
-      $form['actions'][$key]['#attributes']['class'][] = 'btn-flat';
     }
   }
 }
