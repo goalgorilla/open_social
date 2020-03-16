@@ -1,4 +1,3 @@
-uuid: 62fe87c3-c2c3-4812-900b-485bfd45be63
 langcode: en
 status: true
 dependencies:
@@ -14,7 +13,7 @@ dependencies:
     - social_event
     - user
 _core:
-  default_config_hash: wB-u819Wd4lK4eUdpsUuixHahEUPpdY8-wJpiC8rmMc
+  default_config_hash: jbezOVNx6pmRLxx7Up1yUrQe4XMXC8g2DHaC6Et2tLc
 id: event_manage_enrollment_requests
 label: 'Manage event enrollment requests'
 module: views
@@ -547,9 +546,9 @@ display:
           group_type: group
           admin_label: ''
           empty: true
-          tokenize: false
+          tokenize: true
           content:
-            value: '[view:total-rows] Enroll request(s) to event: [current-page:title]'
+            value: '[view:total-rows] Enroll request(s) to event: {{ arguments.nid }}'
             format: basic_html
           plugin_id: text
       footer: {  }
