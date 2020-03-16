@@ -720,20 +720,22 @@ function social_event_entity_operation_alter(array &$operations, EntityInterface
  * Implements template_preprocess_views_view().
  */
 function social_event_preprocess_views_view(&$variables) {
-  $node_id = \Drupal::routeMatch()->getParameter('node');
-  // Implement custom button to go back to the enroll request overview.
-  $variables['back_button'] = [
-    '#title' => t('Back to event'),
-    '#type' => 'link',
-    '#url' => Url::fromRoute('entity.node.canonical', ['node' => (int) $node_id]),
-    '#attributes' => [
-      'class' => [
-        'btn',
-        'btn-default',
-        'btn-lg',
-        'btn-raised',
-        'waves-effect',
-      ],
-    ],
-  ];
+  if ($variables['view']->id() === 'event_manage_enrollment_requests') {
+    $node_id = \Drupal::routeMatch()->getParameter('node');
+    // Implement custom button to go back to the enroll request overview.
+    $variables['more'] = [
+      '#title' => t('Back to event'),
+      '#type' => 'link',
+      '#url' => Url::fromRoute('entity.node.canonical', ['node' => (int) $node_id]),
+        '#attributes' => [
+          'class' => [
+            'btn',
+            'btn-default',
+            'btn-lg',
+            'btn-raised',
+            'waves-effect',
+          ],
+        ],
+    ];
+  }
 }
