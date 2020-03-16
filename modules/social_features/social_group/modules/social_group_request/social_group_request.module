@@ -151,6 +151,7 @@ function social_group_request_preprocess_group__hero(&$variables) {
   }
 
   $variables['#attached']['library'][] = 'core/drupal.dialog.ajax';
+  $variables['#attached']['library'][] = 'social_group_request/social_group_popup';
   $variables['#cache']['tags'][] = 'request-membership:' . $group->id();
 }
 

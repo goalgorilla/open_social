@@ -115,7 +115,10 @@ class GroupRequestController extends ControllerBase {
     $request_form = \Drupal::formBuilder()->getForm(GroupRequestMembershipRequestForm::class, $group);
 
     $response = new AjaxResponse();
-    $response->addCommand(new OpenModalDialogCommand(t('Request to join'), $request_form, []));
+    $response->addCommand(new OpenModalDialogCommand(t('Request to join'), $request_form, [
+      'width' => '582px',
+      'dialogClass' => 'social_group-popup'
+    ]));
 
     return $response;
   }
