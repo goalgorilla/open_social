@@ -158,10 +158,9 @@ function social_event_menu_local_tasks_alter(&$data, $route_name) {
     'view.managers.view_managers',
     'view.manage_enrollments.page',
     'view.event_manage_enrollments.page_manage_enrollments',
-    'view.event_manage_enrollments.page_manage_enrollment_request',
   ];
-  $node = \Drupal::service('current_route_match')->getParameter('node');
   if (in_array($route_name, $routes_to_check)) {
+    $node = \Drupal::service('current_route_match')->getParameter('node');
     if (!is_null($node) && (!$node instanceof Node)) {
       $node = Node::load($node);
     }
@@ -174,10 +173,6 @@ function social_event_menu_local_tasks_alter(&$data, $route_name) {
   // and not only on the mentioned routes.
   if (!$can_show_enrollments_link) {
     unset($data['tabs'][0]['views_view:view.event_enrollments.view_enrollments']);
-  }
-  // Only show the "Manage requests" tab when the enroll method is set to this.
-  if ($node->field_enroll_method->value !== '2') {
-    unset($data['tabs'][0]['views_view:view.event_manage_enrollment_requests.page_manage_enrollment_requests']);
   }
 }
 
@@ -587,9 +582,10 @@ function social_event_show_pending_requests_message() {
           $query->condition($condition_group);
           $pending_requests = $query->execute();
           if (!empty($pending_requests)) {
-            $link = Link::createFromRoute(t('(@amount) new requests', ['@amount' => count($pending_requests)]), 'view.event_manage_enrollment_requests.page_manage_enrollment_requests', ['node' => $node->id()])->toString();
+            $plural = \Drupal::translation()->formatPlural(count($pending_requests), 'is (1) new request', 'are (@count) new requests');
+            $link = Link::createFromRoute(t('@amount', ['@amount' => $plural]), 'view.event_manage_enrollment_requests.page_manage_enrollment_requests', ['node' => $node->id()])->toString();
             $message = \Drupal::messenger()
-              ->addStatus(t('There are @link to enroll in this event.', ['@link' => $link]));
+              ->addStatus(t('There @link to enroll in this event.', ['@link' => $link]));
           }
         } catch (\Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException $e) {
           \Drupal::logger('social_event')->error($e->getMessage());
