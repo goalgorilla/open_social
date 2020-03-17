@@ -1,0 +1,55 @@
+.social_group-popup {
+  @media(max-width: 599px) {
+    width: 90% !important;
+  }
+
+  .ui-dialog-titlebar {
+    padding-top: 12px;
+    padding-bottom: 12px;
+  }
+
+  .ui-dialog-title  {
+    font-size: 1rem;
+  }
+
+  .ui-dialog-titlebar-close:before {
+    font-weight: 400;
+  }
+
+  form {
+    padding-bottom: 1.5rem;
+
+    > *:not(.btn),
+    label {
+      font-size: .875rem;
+      line-height: 21px;
+    }
+
+    > p {
+      margin-bottom: 1.5rem;
+    }
+
+    &:not(.layout-builder-configure-block) {
+      .form-control--autogrow {
+        min-height: 195px;
+      }
+    }
+    button.btn {
+      float: right;
+      min-width: 175px;
+      font-size: 1rem;
+    }
+  }
+}
+
+// Ajax loading icon.
+.btn {
+  position: relative;
+
+  .ajax-throbber {
+    position: absolute;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    right: -2px;
+  }
+}
