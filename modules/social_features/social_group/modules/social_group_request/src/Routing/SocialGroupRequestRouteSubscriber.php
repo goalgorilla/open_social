@@ -23,7 +23,10 @@ class SocialGroupRequestRouteSubscriber extends RouteSubscriberBase {
     }
 
     if ($route = $collection->get('grequest.group_request_membership_approve')) {
-      $route->setDefault('_title_callback', GroupRequestController::class . '::getTitleApproveRequest');
+      $route->setDefaults([
+        '_title_callback' => GroupRequestController::class . '::getTitleApproveRequest',
+        '_controller' => GroupRequestController::class . '::approveRequest',
+      ]);
     }
 
     if ($route = $collection->get('grequest.group_request_membership_reject')) {

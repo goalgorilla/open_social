@@ -5,11 +5,14 @@
  * Primary module hooks for social_group_request module.
  */
 
+use Drupal\block\Entity\Block;
+use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Cache\RefinableCacheableDependencyInterface;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Link;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
@@ -87,7 +90,22 @@ function social_group_request_group_content_insert(GroupContentInterface $group_
         ->set('grequest_updated_by', $approver)
         ->save();
 
-      _activity_basics_entity_action($request, 'change_status_group_membership_request_entity_action');
+      if ($request) {
+        \Drupal::messenger()->addStatus(t('Membership request rejected'));
+        _activity_basics_entity_action($request, 'change_status_group_membership_request_entity_action');
+      }
+      else {
+        $this->messenger()->addError($this->t('Error updating Request'));
+      }
+    }
+  }
+}
+
+function social_group_request_module_implements_alter(&$implementations, $hook) {
+  if ($hook == 'group_content_insert') {
+    // Remove the grequest implementation, we have a fallback in our hook.
+    if (isset($implementations['grequest'])) {
+      unset($implementations['grequest']);
     }
   }
 }
@@ -159,6 +177,7 @@ function social_group_request_preprocess_group__hero(&$variables) {
     $variables['group_operations_url'] = Url::fromRoute('social_group_request.cancel_request', ['group' => $group->id()]);
   }
 
+  $variables['#attached']['library'][] = 'social_group_request/social_group_popup';
   $variables['#attached']['library'][] = 'social_group_request/social_group_request_popup';
   $variables['#attached']['library'][] = 'core/drupal.dialog.ajax';
   $variables['#cache']['tags'][] = 'request-membership:' . $group->id();
@@ -231,7 +250,6 @@ function social_group_request_form_alter(array &$form, FormStateInterface $form_
     elseif (!$group_type->hasContentPlugin('group_membership_request')) {
       unset($form['allow_request']);
     }
-
   }
 }
 
@@ -253,9 +271,9 @@ function social_group_request_preprocess_activity(array &$variables) {
         $activity_entity = $activity->getRelatedEntity();
 
         if ($activity_entity instanceof GroupContentInterface) {
-          //          $variables['full_url'] = Url::fromRoute('view.group_pending_members.pending_members', [
-          //            'group' => $activity_entity->getGroup()->id(),
-          //          ]);
+          $variables['full_url'] = Url::fromRoute('view.group_pending_members.membership_requests', [
+            'arg_0' => $activity_entity->getGroup()->id(),
+          ]);
         }
       }
 
@@ -347,5 +365,22 @@ function social_group_request_views_pre_view(ViewExecutable $view, $display_id, 
     ];
     $view->setHandler('membership_requests', 'footer', 'area_text_custom', $options);
     $view->element['#attached']['library'][] = 'social_group_request/social_group_table';
+  }
+}
+
+/**
+ * Implements hook_block_access().
+ */
+function social_group_request_block_access(Block $block, $operation, AccountInterface $account) {
+  if ($operation == 'view' && $block->getPluginId() == 'group_hero_block') {
+    $route_name = \Drupal::routeMatch()->getRouteName();
+    $excluded_routes = [
+      'grequest.group_request_membership_approve',
+      'grequest.group_request_membership_reject',
+    ];
+
+    if (in_array($route_name, $excluded_routes)) {
+      return AccessResult::forbidden();
+    }
   }
 }
