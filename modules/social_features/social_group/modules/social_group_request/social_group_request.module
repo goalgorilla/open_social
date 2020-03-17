@@ -325,7 +325,7 @@ function social_group_request_allowed_join_method_values(FieldStorageConfig $def
  */
 function social_group_request_views_pre_view(ViewExecutable $view, $display_id, array &$args) {
   if ($view->id() === 'group_pending_members' && $display_id === 'membership_requests') {
-    $options = array(
+    $options = [
       'id' => 'area_text_custom',
       'table' => 'views',
       'field' => 'area_text_custom',
@@ -334,9 +334,18 @@ function social_group_request_views_pre_view(ViewExecutable $view, $display_id, 
       'admin_label' => '',
       'empty' => TRUE,
       'tokenize' => FALSE,
-      'content' => Link::fromTextAndUrl(t('Back to group'), Url::fromRoute('entity.group.canonical', ['group' => $args[0]]))->toString(),
+      'content' => Link::fromTextAndUrl(t('Back to group'),
+        Url::fromRoute('entity.group.canonical', ['group' => $args[0]], [
+          'attributes' => [
+            'class' => [
+              'btn',
+              'btn-default',
+            ],
+          ],
+        ]))->toString(),
       'plugin_id' => 'text_custom',
-    );
+    ];
     $view->setHandler('membership_requests', 'footer', 'area_text_custom', $options);
+    $view->element['#attached']['library'][] = 'social_group_request/social_group_table';
   }
 }
