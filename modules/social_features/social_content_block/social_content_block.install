@@ -1,0 +1,327 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the social_content_block module.
+ */
+
+use Drupal\Core\Site\Settings;
+use Drupal\field\Entity\FieldConfig;
+use Drupal\field\Entity\FieldStorageConfig;
+use Drupal\field\FieldConfigInterface;
+
+/**
+ * Add fields for plugin ID and plugin fields to the block content form.
+ */
+function social_content_block_update_8001(&$sandbox) {
+  if (!isset($sandbox['total'])) {
+    $sandbox['configs'] = [
+      'field.storage.block_content.field_plugin_id' => [
+        'id' => 'block_content.field_plugin_id',
+        'field_name' => 'field_plugin_id',
+        'entity_type' => 'block_content',
+        'type' => 'string',
+        'settings' => [
+          'max_length' => 255,
+          'is_ascii' => FALSE,
+          'case_sensitive' => FALSE,
+        ],
+        'cardinality' => 1,
+        'translatable' => TRUE,
+      ],
+      'field.storage.block_content.field_plugin_field' => [
+        'id' => 'block_content.field_plugin_field',
+        'field_name' => 'field_plugin_field',
+        'entity_type' => 'block_content',
+        'type' => 'string',
+        'settings' => [
+          'max_length' => 255,
+          'is_ascii' => FALSE,
+          'case_sensitive' => FALSE,
+        ],
+        'cardinality' => 1,
+        'translatable' => TRUE,
+      ],
+      'field.field.block_content.custom_content_list.field_sorting' => 'Select in what order selected content should be displayed',
+      'field.field.block_content.custom_content_list.field_plugin_id' => [
+        'id' => 'block_content.custom_content_list.field_plugin_id',
+        'field_name' => 'field_plugin_id',
+        'entity_type' => 'block_content',
+        'bundle' => 'custom_content_list',
+        'label' => 'Type of content',
+        'description' => 'Select the type of content which will be shown in this block',
+        'required' => TRUE,
+        'translatable' => FALSE,
+        'default_value' => [],
+        'default_value_callback' => '',
+        'settings' => [],
+        'field_type' => 'string',
+      ],
+      'field.field.block_content.custom_content_list.field_plugin_field' => [
+        'id' => 'block_content.custom_content_list.field_plugin_field',
+        'field_name' => 'field_plugin_field',
+        'entity_type' => 'block_content',
+        'bundle' => 'custom_content_list',
+        'label' => 'Content selection',
+        'description' => 'Further specify how the content should be selected',
+        'required' => FALSE,
+        'translatable' => FALSE,
+        'default_value' => [],
+        'default_value_callback' => '',
+        'settings' => [],
+        'field_type' => 'string',
+      ],
+      'core.entity_form_display.block_content.custom_content_list.default' => [
+        'langcode' => 'en',
+        'status' => TRUE,
+        'dependencies' => [
+          'config' => [
+            'block_content.type.custom_content_list',
+            'field.field.block_content.custom_content_list.field_item_amount',
+            'field.field.block_content.custom_content_list.field_link',
+            'field.field.block_content.custom_content_list.field_plugin_field',
+            'field.field.block_content.custom_content_list.field_plugin_id',
+            'field.field.block_content.custom_content_list.field_sorting',
+            'field.field.block_content.custom_content_list.field_subtitle',
+          ],
+          'module' => [
+            'field_group',
+            'link',
+          ],
+        ],
+        'third_party_settings' => [
+          'field_group' => [
+            'group_display_options' => [
+              'children' => [
+                'field_sorting',
+                'field_item_amount',
+              ],
+              'parent_name' => '',
+              'weight' => 2,
+              'format_type' => 'fieldset',
+              'format_settings' => [
+                'label' => 'Sorting',
+                'description' => '',
+                'required_fields' => TRUE,
+                'id' => '',
+                'classes' => '',
+              ],
+              'label' => 'Sorting',
+              'region' => 'content',
+            ],
+            'group_filter_options' => [
+              'children' => [
+                'field_plugin_id',
+                'field_plugin_field',
+              ],
+              'parent_name' => '',
+              'weight' => 1,
+              'format_type' => 'fieldset',
+              'format_settings' => [
+                'label' => 'Content',
+                'description' => '',
+                'required_fields' => TRUE,
+                'id' => '',
+                'classes' => '',
+              ],
+              'label' => 'Content',
+              'region' => 'content',
+            ],
+            'group_information' => [
+              'children' => [
+                'info',
+                'field_subtitle',
+              ],
+              'parent_name' => '',
+              'weight' => 0,
+              'format_type' => 'fieldset',
+              'format_settings' => [
+                'id' => '',
+                'classes' => '',
+                'description' => '',
+                'required_fields' => TRUE,
+              ],
+              'label' => 'Information',
+              'region' => 'content',
+            ],
+          ],
+        ],
+        'id' => 'block_content.custom_content_list.default',
+        'targetEntityType' => 'block_content',
+        'bundle' => 'custom_content_list',
+        'mode' => 'default',
+        'content' => [
+          'field_item_amount' => [
+            'weight' => 11,
+            'settings' => [
+              'placeholder' => '',
+            ],
+            'third_party_settings' => [],
+            'type' => 'number',
+            'region' => 'content',
+          ],
+          'field_link' => [
+            'weight' => 3,
+            'settings' => [
+              'placeholder_url' => '',
+              'placeholder_title' => '',
+            ],
+            'third_party_settings' => [],
+            'type' => 'link_default',
+            'region' => 'content',
+          ],
+          'field_plugin_field' => [
+            'weight' => 1,
+            'settings' => [],
+            'third_party_settings' => [],
+            'type' => 'content_block_plugin_field',
+            'region' => 'content',
+          ],
+          'field_plugin_id' => [
+            'weight' => 0,
+            'settings' => [],
+            'third_party_settings' => [],
+            'type' => 'content_block_plugin_id',
+            'region' => 'content',
+          ],
+          'field_sorting' => [
+            'weight' => 10,
+            'settings' => [],
+            'third_party_settings' => [],
+            'type' => 'options_select',
+            'region' => 'content',
+          ],
+          'field_subtitle' => [
+            'weight' => 2,
+            'settings' => [
+              'size' => 60,
+              'placeholder' => '',
+            ],
+            'third_party_settings' => [],
+            'type' => 'string_textfield',
+            'region' => 'content',
+          ],
+          'info' => [
+            'type' => 'string_textfield',
+            'weight' => 1,
+            'region' => 'content',
+            'settings' => [
+              'size' => 60,
+              'placeholder' => '',
+            ],
+            'third_party_settings' => [],
+          ],
+        ],
+        'hidden' => [],
+      ],
+      'core.entity_view_display.block_content.custom_content_list.default' => [
+        'field_plugin_id',
+        'field_plugin_field',
+      ],
+    ];
+
+    $sandbox['total'] = count($sandbox['configs']);
+    $sandbox['current'] = 0;
+  }
+
+  $names = array_keys($sandbox['configs']);
+  $name = $names[$sandbox['current']++];
+  $data = $sandbox['configs'][$name];
+  $parts = explode('.', $name);
+
+  switch ($parts[0] . '.' . $parts[1]) {
+    case 'field.storage':
+      FieldStorageConfig::create($data)->save();
+      break;
+
+    case 'field.field':
+      $field_config = FieldConfig::loadByName($parts[2], $parts[3], $parts[4]);
+
+      if ($field_config instanceof FieldConfigInterface) {
+        $field_config->setDescription($data);
+      }
+      else {
+        $field_config = FieldConfig::create($data);
+      }
+
+      $field_config->save();
+      break;
+
+    case 'core.entity_view_display':
+      /** @var \Drupal\Core\Entity\Display\EntityViewDisplayInterface $view_display */
+      $view_display = \Drupal::service('entity_display.repository')
+        ->getViewDisplay($parts[2], $parts[3], $parts[4]);
+
+      foreach ($data as $field) {
+        $view_display->removeComponent($field);
+      }
+
+      break;
+
+    default:
+      \Drupal::service('config.storage')->write($name, $data);
+  }
+
+  $sandbox['#finished'] = $sandbox['current'] / $sandbox['total'];
+}
+
+/**
+ * Fill in fields for plugin ID and plugin fields in existing blocks.
+ */
+function social_content_block_update_8002(&$sandbox) {
+  if (!isset($sandbox['total'])) {
+    $sandbox['total'] = \Drupal::entityQuery('block_content')
+      ->condition('type', 'custom_content_list')
+      ->notExists('field_plugin_id')
+      ->count()
+      ->execute();
+
+    if (!$sandbox['total']) {
+      return;
+    }
+
+    $sandbox['processed'] = 0;
+    $sandbox['plugin_id'] = 'topic_content_block';
+    $sandbox['limit'] = Settings::get('entity_update_batch_size', 50);
+
+    /** @var \Drupal\social_content_block\ContentBlockManagerInterface $content_block_manager */
+    $content_block_manager = \Drupal::service('plugin.manager.content_block');
+
+    $definition = $content_block_manager->getDefinition($sandbox['plugin_id']);
+    $sandbox['fields'] = $definition['fields'];
+  }
+
+  $entity_ids = \Drupal::entityQuery('block_content')
+    ->condition('type', 'custom_content_list')
+    ->notExists('field_plugin_id')
+    ->sort('id')
+    ->range(0, $sandbox['limit'])
+    ->execute();
+
+  $storage = \Drupal::entityTypeManager()->getStorage('block_content');
+
+  foreach ($entity_ids as $entity_id) {
+    /** @var \Drupal\block_content\BlockContentInterface $entity */
+    $entity = $storage->load($entity_id);
+
+    $entity->field_plugin_id->value = $sandbox['plugin_id'];
+
+    $fields = [];
+
+    foreach ($sandbox['fields'] as $field) {
+      if (!$entity->get($field)->isEmpty()) {
+        $fields[] = $field;
+      }
+    }
+
+    if (count($fields) === 1) {
+      $entity->field_plugin_field->value = reset($fields);
+    }
+
+    $entity->save();
+  }
+
+  $sandbox['processed'] += count($entity_ids);
+
+  $sandbox['#finished'] = $sandbox['processed'] / $sandbox['total'];
+}
