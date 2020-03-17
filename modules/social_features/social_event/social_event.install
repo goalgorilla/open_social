@@ -1230,6 +1230,57 @@ function social_event_update_8802(&$sandbox) {
           ],
         ],
       ],
+      // Message templates.
+      'message.template.request_event_enrollment' => [
+        'langcode' => 'en',
+        'status' => TRUE,
+        'dependencies' => [
+          'module' => [
+            'activity_logger',
+          ],
+        ],
+        'third_party_settings' => [
+          'activity_logger' => [
+            'activity_bundle_entities' => [
+              'event_enrollment-event_enrollment' => 'event_enrollment-event_enrollment',
+            ],
+            'activity_action' => 'create_entitiy_action',
+            'activity_context' => 'event_request_activity_context',
+            'activity_destinations' => [
+              'notifications' => 'notifications',
+              'email' => 'email',
+            ],
+            'activity_create_direct' => FALSE,
+            'activity_aggregate' => FALSE,
+            'activity_entity_condition' => '',
+          ],
+        ],
+        'template' => 'request_event_enrollment',
+        'label' => 'Request event enrollment',
+        'description' => 'A user request an enrollment for event',
+        'text' => [
+          [
+            'value' => '<p><a href="[social_event:enrolled_event_url]">[social_event:enrolled_user]</a> has requested enrollment to the event [social_event:event_iam_organizing] you are organizing</p>',
+            'format' => 'full_html',
+          ],
+          [
+            'value' => '<p><a href="[social_event:enrolled_event_url]">[social_event:enrolled_user]</a> has requested enrollment to the event [social_event:event_iam_organizing] you are organizing</p>',
+            'format' => 'full_html',
+          ],
+          [
+            'value' => '<p><a href="[social_event:enrolled_event_url]">[social_event:enrolled_user]</a> has requested enrollment to the event [social_event:event_iam_organizing] you are organizing</p>',
+            'format' => 'full_html',
+          ],
+        ],
+        'settings' => [
+          'token options' => [
+            'clear' => FALSE,
+            'token replace' => TRUE,
+          ],
+          'purge_override' => FALSE,
+          'purge_methods' => [],
+        ],
+      ],
     ];
 
     // Count the amount we need to add to cover batching..
