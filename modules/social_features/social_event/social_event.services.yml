@@ -3,6 +3,10 @@ services:
     class: Drupal\social_event\Routing\RouteSubscriber
     tags:
       - { name: event_subscriber }
+  social_event.enroll_request_overview_subscriber:
+    class: Drupal\social_event\Routing\EnrollRequestsOverviewSubscriber
+    tags:
+      - { name: event_subscriber }
   social_event.translation_defaults:
     class: Drupal\social_event\ContentTranslationDefaultsConfigOverride
     tags:
