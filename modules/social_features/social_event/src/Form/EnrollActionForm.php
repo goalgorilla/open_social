@@ -178,9 +178,10 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
     $to_enroll_status = '1';
     $enrollment_open = TRUE;
     $request_to_join = FALSE;
+    $isNodeOwner = ($node->getOwnerId() === $uid);
 
     // Add request to join event.
-    if ($node->field_enroll_method->value === '2') {
+    if ($node->field_enroll_method->value === '2' && !$isNodeOwner) {
       $submit_text = $this->t('Request to enroll');
       $to_enroll_status = '2';
     }
@@ -205,7 +206,7 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
           $to_enroll_status = '0';
         }
         // If someone requested to join the event.
-        elseif ($node->field_enroll_method->value && $node->field_enroll_method->value === '2') {
+        elseif ($node->field_enroll_method->value && $node->field_enroll_method->value === '2' && !$isNodeOwner) {
           $enroll_request_status = $enrollment->field_request_status->value;
           $event_request_ajax = TRUE;
           if ($enroll_request_status === 'pending') {
@@ -218,7 +219,7 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
 
       // Use the ajax submit if the enrollments are empty, or if the
       // user cancelled his enrollment and tries again.
-      if ((empty($enrollment) && $node->field_enroll_method->value && $node->field_enroll_method->value === '2') || (isset($event_request_ajax) && $event_request_ajax === TRUE)) {
+      if (!$isNodeOwner && (empty($enrollment) && $node->field_enroll_method->value && $node->field_enroll_method->value === '2') || (isset($event_request_ajax) && $event_request_ajax === TRUE)) {
         $attributes = [
           'class' => [
             'use-ajax',
