@@ -73,7 +73,7 @@ class EnrollRequestDialogController extends ControllerBase {
     $form = $this->formBuilder->getForm('Drupal\social_event\Form\EnrollRequestModalForm');
 
     // Add an AJAX command to open a modal dialog with the form as the content.
-    $response->addCommand(new OpenModalDialogCommand($this->t('Request enrollment'), $form, static::getDataDialogOptions()));
+    $response->addCommand(new OpenModalDialogCommand($this->t('Request to enroll'), $form, static::getDataDialogOptions()));
 
     return $response;
   }

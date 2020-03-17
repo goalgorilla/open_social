@@ -48,7 +48,7 @@ class EnrollRequestModalForm extends FormBase {
 
     $form['message'] = [
       '#type' => 'textarea',
-      '#prefix' => '<div class="help-block">' . $this->t('You can leave a message in your request. Once your request is approved, you will receive a notification via email and notification center.') . '</div>',
+      '#prefix' => '<div class="help-block">' . $this->t('You can leave a message in your request. You will only be notified once your request is approved.') . '</div>',
       '#title' => $this->t('Message'),
       '#rows' => 4,
       '#resizable' => 'vertical',
@@ -93,7 +93,7 @@ class EnrollRequestModalForm extends FormBase {
       ];
       $form_state->setRebuild();
 
-      return $response->addCommand(new OpenModalDialogCommand($this->t('Request enrollment'), $form, static::getDataDialogOptions()));
+      return $response->addCommand(new OpenModalDialogCommand($this->t('Request to enroll'), $form, static::getDataDialogOptions()));
     }
 
     // Refactor this into a service or helper.
