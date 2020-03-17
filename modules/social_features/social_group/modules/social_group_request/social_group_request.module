@@ -9,6 +9,7 @@ use Drupal\Core\Cache\RefinableCacheableDependencyInterface;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
+use Drupal\Core\Link;
 use Drupal\Core\Url;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
@@ -159,7 +160,6 @@ function social_group_request_preprocess_group__hero(&$variables) {
 
   $variables['#attached']['library'][] = 'social_group_request/social_group_request_popup';
   $variables['#attached']['library'][] = 'core/drupal.dialog.ajax';
-  $variables['#attached']['library'][] = 'social_group_request/social_group_popup';
   $variables['#cache']['tags'][] = 'request-membership:' . $group->id();
 }
 
@@ -252,9 +252,9 @@ function social_group_request_preprocess_activity(array &$variables) {
         $activity_entity = $activity->getRelatedEntity();
 
         if ($activity_entity instanceof GroupContentInterface) {
-//          $variables['full_url'] = Url::fromRoute('view.group_pending_members.pending_members', [
-//            'group' => $activity_entity->getGroup()->id(),
-//          ]);
+          //          $variables['full_url'] = Url::fromRoute('view.group_pending_members.pending_members', [
+          //            'group' => $activity_entity->getGroup()->id(),
+          //          ]);
         }
       }
 
@@ -317,4 +317,25 @@ function social_group_request_allowed_join_method_values(FieldStorageConfig $def
   $allowed_values = $definition->getSetting('allowed_values');
   $allowed_values['request'] = t('Request to join - user requests to join need to be approved by group managers');
   return $allowed_values;
+}
+
+/**
+ * Implements hook_views_pre_view().
+ */
+function social_group_request_views_pre_view(ViewExecutable $view, $display_id, array &$args) {
+  if ($view->id() === 'group_pending_members' && $display_id === 'membership_requests') {
+    $options = array(
+      'id' => 'area_text_custom',
+      'table' => 'views',
+      'field' => 'area_text_custom',
+      'relationship' => 'none',
+      'group_type' => 'none',
+      'admin_label' => '',
+      'empty' => TRUE,
+      'tokenize' => FALSE,
+      'content' => Link::fromTextAndUrl(t('Back to group'), Url::fromRoute('entity.group.canonical', ['group' => $args[0]]))->toString(),
+      'plugin_id' => 'text_custom',
+    );
+    $view->setHandler('membership_requests', 'footer', 'area_text_custom', $options);
+  }
 }
