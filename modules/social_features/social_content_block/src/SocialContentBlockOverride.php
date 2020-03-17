@@ -92,9 +92,9 @@ class SocialContentBlockOverride implements ConfigFactoryOverrideInterface {
       $fields = [];
 
       foreach ($this->definitions as $plugin_definition) {
-        // It's set in a two because zero-weight and first-weight are using by
-        // the plugin ID field and plugin filters field.
-        $weight = 2;
+        // It's set in a six because weights from zero to five are reserved by
+        // other fields such as the plugin ID field and plugin filters field.
+        $weight = 6;
 
         foreach ($plugin_definition['fields'] as $field) {
           $dependencies[] = 'field.field.block_content.custom_content_list.' . $field;
