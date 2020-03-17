@@ -119,10 +119,8 @@ class GroupRequestMembershipRequestAnonymousForm extends FormBase {
       '#title' => $this->t('Sign up'),
       '#attributes' => [
         'class' => [
-          'button',
-          'button--flat',
           'btn',
-          'btn-flat',
+          'btn-primary',
           'waves-effect',
           'waves-btn',
         ],
@@ -137,10 +135,8 @@ class GroupRequestMembershipRequestAnonymousForm extends FormBase {
       '#title' => $this->t('Log in'),
       '#attributes' => [
         'class' => [
-          'button',
-          'button--flat',
           'btn',
-          'btn-flat',
+          'btn-default',
           'waves-effect',
           'waves-btn',
         ],

@@ -125,6 +125,7 @@ function social_group_request_preprocess_group__hero(&$variables) {
     $variables['anonymous_request'] = TRUE;
     $variables['group_operations_url'] = Url::fromRoute('social_group_request.anonymous_request_membership', ['group' => $group->id()]);
     $variables['#attached']['library'][] = 'core/drupal.dialog.ajax';
+    $variables['#attached']['library'][] = 'social_group_request/social_group_popup';
     return;
   }
 

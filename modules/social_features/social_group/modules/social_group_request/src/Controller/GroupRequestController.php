@@ -130,7 +130,10 @@ class GroupRequestController extends ControllerBase {
 
     if ($request == 0) {
       $request_form = \Drupal::formBuilder()->getForm(GroupRequestMembershipRequestForm::class, $group);
-      $response->addCommand(new OpenModalDialogCommand(t('Request to join'), $request_form, []));
+      $response->addCommand(new OpenModalDialogCommand(t('Request to join'), $request_form, [
+        'width' => '582px',
+        'dialogClass' => 'social_group-popup'
+      ]));
     }
 
     return $response;
@@ -144,8 +147,8 @@ class GroupRequestController extends ControllerBase {
 
     $response = new AjaxResponse();
     $response->addCommand(new OpenModalDialogCommand(t('Request to join'), $request_form, [
-      'width' => '582px',
-      'dialogClass' => 'social_group-popup'
+      'width' => '337px',
+      'dialogClass' => 'social_group-popup social_group-popup--anonymous'
     ]));
 
     return $response;
