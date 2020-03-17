@@ -81,7 +81,7 @@ class FollowContentActivityContext extends ActivityContextBase {
         // We need to compare the owner ID of the original node to the one
         // being the current recipient.
         $original_node = $original_related_entity->getCommentedEntity();
-        if ($original_node instanceof Node && $recipient->id()!== $original_node->getOwnerId()) {
+        if ($original_node instanceof Node && $recipient->id() !== $original_node->getOwnerId()) {
           break;
         }
       }
