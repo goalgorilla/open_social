@@ -6,6 +6,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\social_content_block\ContentBlockManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -41,8 +42,8 @@ class ContentBlockPluginIdWidget extends ContentBlockPluginWidgetBase {
    *   The widget settings.
    * @param array $third_party_settings
    *   Any third party settings.
-   * @param array $definitions
-   *   The content block plugin definitions.
+   * @param \Drupal\social_content_block\ContentBlockManagerInterface $content_block_manager
+   *   The content block manager.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity type manager.
    */
@@ -52,7 +53,7 @@ class ContentBlockPluginIdWidget extends ContentBlockPluginWidgetBase {
     FieldDefinitionInterface $field_definition,
     array $settings,
     array $third_party_settings,
-    array $definitions,
+    ContentBlockManagerInterface $content_block_manager,
     EntityTypeManagerInterface $entity_type_manager
   ) {
     parent::__construct(
@@ -61,7 +62,7 @@ class ContentBlockPluginIdWidget extends ContentBlockPluginWidgetBase {
       $field_definition,
       $settings,
       $third_party_settings,
-      $definitions
+      $content_block_manager
     );
 
     $this->entityTypeManager = $entity_type_manager;
@@ -77,7 +78,7 @@ class ContentBlockPluginIdWidget extends ContentBlockPluginWidgetBase {
       $configuration['field_definition'],
       $configuration['settings'],
       $configuration['third_party_settings'],
-      $container->get('plugin.manager.content_block')->getDefinitions(),
+      $container->get('plugin.manager.content_block'),
       $container->get('entity_type.manager')
     );
   }
@@ -89,12 +90,13 @@ class ContentBlockPluginIdWidget extends ContentBlockPluginWidgetBase {
     $element = parent::formElement($items, $delta, $element, $form, $form_state);
     $value = &$element['value'];
     $value['#type'] = 'select';
+    $definitions = $this->contentBlockManager->getDefinitions();
 
     if (!$element['value']['#default_value']) {
-      $element['value']['#default_value'] = key($this->definitions);
+      $element['value']['#default_value'] = key($definitions);
     }
 
-    foreach ($this->definitions as $plugin_id => $plugin_definition) {
+    foreach ($definitions as $plugin_id => $plugin_definition) {
       $entity_type = $this->entityTypeManager->getDefinition($plugin_definition['entityTypeId']);
 
       if ($plugin_definition['bundle']) {
@@ -108,7 +110,7 @@ class ContentBlockPluginIdWidget extends ContentBlockPluginWidgetBase {
       }
     }
 
-    if (count($this->definitions) === 1) {
+    if (count($definitions) === 1) {
       $value['#empty_value'] = key($value['#options']);
       $value['#empty_option'] = reset($value['#options']);
       $value['#disabled'] = TRUE;
