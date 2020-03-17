@@ -218,7 +218,7 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
 
       // Use the ajax submit if the enrollments are empty, or if the
       // user cancelled his enrollment and tries again.
-      if (empty($enrollment) || (isset($event_request_ajax) && $event_request_ajax === TRUE)) {
+      if ((empty($enrollment) && $node->field_enroll_method->value && $node->field_enroll_method->value === '2') || (isset($event_request_ajax) && $event_request_ajax === TRUE)) {
         $attributes = [
           'class' => [
             'use-ajax',

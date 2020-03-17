@@ -10,14 +10,14 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Provides a 'OrganizerActivityContext' activity context.
+ * Provides a 'EventRequestActivityContext' activity context.
  *
  * @ActivityContext(
- *   id = "organizer_activity_context",
- *   label = @Translation("Organizer activity context"),
+ *   id = "event_request_activity_context",
+ *   label = @Translation("Event request activity context"),
  * )
  */
-class OrganizerActivityContext extends ActivityContextBase {
+class EventRequestActivityContext extends ActivityContextBase {
 
   /**
    * The module handler.
@@ -27,7 +27,7 @@ class OrganizerActivityContext extends ActivityContextBase {
   protected $moduleHandler;
 
   /**
-   * Constructs a OrganizerActivityContext object.
+   * Constructs a EventRequestActivityContext object.
    *
    * @param array $configuration
    *   A configuration array containing information about the plugin instance.
@@ -82,8 +82,9 @@ class OrganizerActivityContext extends ActivityContextBase {
         /** @var \Drupal\social_event\EventEnrollmentInterface $event_enrollment */
         $event_enrollment = $this->entityTypeManager->getStorage('event_enrollment')
           ->load($data['related_object'][0]['target_id']);
-        // Only send out enrollments notifications when people actually enrolled.
-        if (!$event_enrollment->get('field_enrollment_status')->isEmpty() && $event_enrollment->get('field_enrollment_status')->value !== '0') {
+        // Send out the notification if the user is pending
+        if (!$event_enrollment->get('field_enrollment_status')->isEmpty()
+        && $event_enrollment->get('field_request_status')->value === 'pending') {
           $recipients = $this->getRecipientOrganizerFromEntity($related_entity, $data);
         }
       }
