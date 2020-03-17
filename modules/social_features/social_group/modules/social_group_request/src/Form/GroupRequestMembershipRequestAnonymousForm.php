@@ -8,14 +8,16 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Routing\RedirectDestinationInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
+use Drupal\Core\Url;
 use Drupal\grequest\Plugin\GroupContentEnabler\GroupMembershipRequest;
 use Drupal\group\Entity\GroupInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  *
  */
-class GroupRequestMembershipRequestForm extends FormBase {
+class GroupRequestMembershipRequestAnonymousForm extends FormBase {
 
   /**
    * Group entity.
@@ -92,7 +94,7 @@ class GroupRequestMembershipRequestForm extends FormBase {
    * {@inheritdoc}
    */
   public function getFormId() {
-    return 'social_group_request_membership_request';
+    return 'social_group_request_membership_request_anonymous';
   }
 
   /**
@@ -104,17 +106,48 @@ class GroupRequestMembershipRequestForm extends FormBase {
     $form['description'] = [
       '#type' => 'html_tag',
       '#tag' => 'p',
-      '#value' => $this->t('You can leave a message in your request. Only when your request is approved, you will receive a notification via email and notification center.'),
+      '#value' => $this->t('In order to send your request, please first sign up or log in.'),
     ];
 
-    $form['message'] = [
-      '#type' => 'textarea',
-      '#title' => $this->t('Message'),
+    $previous_url = \Drupal::requestStack()->getCurrentRequest()->headers->get('referer');
+    $request = Request::create($previous_url);
+    $referer_path = $request->getRequestUri();
+
+    $form['actions']['#type'] = 'actions';
+    $form['actions']['sign_up'] = [
+      '#type' => 'link',
+      '#title' => $this->t('Sign up'),
+      '#attributes' => [
+        'class' => [
+          'button',
+          'button--flat',
+          'btn',
+          'btn-flat',
+          'waves-effect',
+          'waves-btn',
+        ],
+      ],
+      '#url' => Url::fromRoute('user.register', [
+        'destination' => $referer_path . '?requested-membership=' . $this->group->id(),
+      ]),
     ];
 
-    $form['actions']['submit'] = [
-      '#type' => 'submit',
-      '#value' => $this->t('Send request'),
+    $form['actions']['log_in'] = [
+      '#type' => 'link',
+      '#title' => $this->t('Log in'),
+      '#attributes' => [
+        'class' => [
+          'button',
+          'button--flat',
+          'btn',
+          'btn-flat',
+          'waves-effect',
+          'waves-btn',
+        ],
+      ],
+      '#url' => Url::fromRoute('user.login', [
+        'destination' => $referer_path . '?requested-membership=' . $this->group->id(),
+      ]),
     ];
 
     return $form;
@@ -123,31 +156,6 @@ class GroupRequestMembershipRequestForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
-    $content_type_config_id = $this->group
-      ->getGroupType()
-      ->getContentPlugin('group_membership_request')
-      ->getContentTypeConfigId();
-
-    $group_content = \Drupal::entityTypeManager()->getStorage('group_content')->create([
-      'type' => $content_type_config_id,
-      'gid' => $this->group->id(),
-      'entity_id' => $this->currentUser()->id(),
-      'grequest_status' => GroupMembershipRequest::REQUEST_PENDING,
-      'field_grequest_message' => $form_state->getValue('message'),
-    ]);
-    $result = $group_content->save();
-
-    if ($result) {
-      $this->messenger()->addMessage($this->t('Your request has been sent successfully'));
-    }
-    else {
-      $this->messenger()->addError($this->t('Error when creating a request to join'));
-    }
-
-    $this->cacheTagsInvalidator->invalidateTags(['request-membership:' . $this->group->id()]);
-
-    return $form_state->setRedirect('social_group.stream', ['group' => $this->group->id()]);
-  }
+  public function submitForm(array &$form, FormStateInterface $form_state) {}
 
 }

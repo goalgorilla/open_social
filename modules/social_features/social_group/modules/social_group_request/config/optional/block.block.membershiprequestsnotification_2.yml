@@ -1,0 +1,25 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - social_group_request
+    - system
+  theme:
+    - socialbase
+id: membershiprequestsnotification_2
+theme: socialbase
+region: title
+weight: 0
+provider: null
+plugin: membership_requests_notification
+settings:
+  id: membership_requests_notification
+  label: 'Membership requests notification'
+  provider: social_group_request
+  label_display: '0'
+visibility:
+  request_path:
+    id: request_path
+    pages: "/group/*/edit\r\n/group/*/delete\r\n/group/*/content/*/approve-membership\r\n/group/*/content/*/reject-membership"
+    negate: true
+    context_mapping: {  }

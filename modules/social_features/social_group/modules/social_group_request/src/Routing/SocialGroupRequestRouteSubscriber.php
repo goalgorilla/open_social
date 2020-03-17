@@ -3,6 +3,8 @@
 namespace Drupal\social_group_request\Routing;
 
 use Drupal\Core\Routing\RouteSubscriberBase;
+use Drupal\social_group_request\Controller\GroupRequestController;
+use Drupal\social_group_request\Form\GroupRequestMembershipRejectForm;
 use Symfony\Component\Routing\RouteCollection;
 
 /**
@@ -16,7 +18,18 @@ class SocialGroupRequestRouteSubscriber extends RouteSubscriberBase {
   protected function alterRoutes(RouteCollection $collection) {
     if ($route = $collection->get('grequest.request_membership')) {
       $route->setDefaults([
-        '_controller' => '\Drupal\social_group_request\Controller\GroupRequestController::requestMembership',
+        '_controller' => GroupRequestController::class . '::requestMembership',
+      ]);
+    }
+
+    if ($route = $collection->get('grequest.group_request_membership_approve')) {
+      $route->setDefault('_title_callback', GroupRequestController::class . '::getTitleApproveRequest');
+    }
+
+    if ($route = $collection->get('grequest.group_request_membership_reject')) {
+      $route->setDefaults([
+        '_title_callback' => GroupRequestController::class . '::getTitleRejectRequest',
+        '_form' => GroupRequestMembershipRejectForm::class,
       ]);
     }
   }

@@ -14,6 +14,7 @@ use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\grequest\Plugin\GroupContentEnabler\GroupMembershipRequest;
 use Drupal\group\Entity\GroupContentInterface;
 use Drupal\group\Entity\GroupInterface;
+use Drupal\social_group_request\Form\GroupRequestMembershipRequestAnonymousForm;
 use Drupal\social_group_request\Form\GroupRequestMembershipRequestForm;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -112,7 +113,34 @@ class GroupRequestController extends ControllerBase {
    * Callback to request membership.
    */
   public function requestMembership(GroupInterface $group) {
-    $request_form = \Drupal::formBuilder()->getForm(GroupRequestMembershipRequestForm::class, $group);
+    $response = new AjaxResponse();
+
+    $contentTypeConfigId = $group
+      ->getGroupType()
+      ->getContentPlugin('group_membership_request')
+      ->getContentTypeConfigId();
+
+    $request = \Drupal::entityQuery('group_content')
+      ->condition('type', $contentTypeConfigId)
+      ->condition('gid', $group->id())
+      ->condition('entity_id', \Drupal::currentUser()->id())
+      ->condition('grequest_status', GroupMembershipRequest::REQUEST_PENDING)
+      ->count()
+      ->execute();
+
+    if ($request == 0) {
+      $request_form = \Drupal::formBuilder()->getForm(GroupRequestMembershipRequestForm::class, $group);
+      $response->addCommand(new OpenModalDialogCommand(t('Request to join'), $request_form, []));
+    }
+
+    return $response;
+  }
+
+  /**
+   * Callback to request membership for anonymous.
+   */
+  public function anonymousRequestMembership(GroupInterface $group) {
+    $request_form = \Drupal::formBuilder()->getForm(GroupRequestMembershipRequestAnonymousForm::class, $group);
 
     $response = new AjaxResponse();
     $response->addCommand(new OpenModalDialogCommand(t('Request to join'), $request_form, []));
