@@ -1287,3 +1287,17 @@ function social_event_update_8803() {
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
 }
+
+
+/**
+ * Grant CM+ with 'manage event enrollment requests' permission.
+ */
+function social_event_update_8004() {
+  $roles = Role::loadMultiple();
+  /** @var \Drupal\user\Entity\Role $role */
+  foreach ($roles as $role) {
+    if ($role->id() === 'contentmanager' || $role->id() === 'sitemanager') {
+      user_role_grant_permissions($role->id(), ['manage event enrollment requests']);
+    }
+  }
+}
