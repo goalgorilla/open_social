@@ -296,6 +296,12 @@ class ContentBuilder implements ContentBuilderInterface {
     $entities = $query->execute()->fetchAllKeyed(0, 0);
     $start_time = strtotime('-90 days');
 
+    if (empty($entities)) {
+      $query->orderBy('base_table.' . $block_content->field_sorting->value);
+      $query->range(0, $block_content->field_item_amount->value);
+      return $query->execute()->fetchAllKeyed(0, 0);
+    }
+
     switch ($block_content->field_sorting->value) {
       case 'most_commented':
         if ($entity_type === 'group') {
