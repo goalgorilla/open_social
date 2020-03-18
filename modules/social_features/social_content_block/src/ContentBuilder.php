@@ -4,6 +4,7 @@ namespace Drupal\social_content_block;
 
 use Drupal\block_content\BlockContentInterface;
 use Drupal\Core\Database\Connection;
+use Drupal\Core\Database\Query\SelectInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -289,8 +290,9 @@ class ContentBuilder implements ContentBuilderInterface {
    *   The entity type.
    *
    * @return array
+   *   The entity IDs list.
    */
-  private function sortAndRange($block_content, $query, $entity_type) {
+  private function sortAndRange(BlockContentInterface $block_content, SelectInterface $query, $entity_type) {
     $entities = $query->execute()->fetchAllKeyed(0, 0);
     $start_time = strtotime('-90 days');
 
@@ -323,12 +325,13 @@ class ContentBuilder implements ContentBuilderInterface {
           $query->addExpression('COUNT(cfd.entity_id)', 'count');
           $query->groupBy('nfd.nid');
         }
-        $query->orderBy('count','DESC');
+        $query->orderBy('count', 'DESC');
         break;
 
       case 'most_liked':
         if ($entity_type === 'group') {
-          // This query does not include likes for post comments and likes for entity comments.
+          // This query does not include likes for post comments and likes for
+          // entity comments.
           $entities = implode(',', $entities);
           $query = $this->connection->select('votingapi_vote', 'vv');
           $query->condition('vv.timestamp', $start_time, '>');
@@ -353,7 +356,7 @@ class ContentBuilder implements ContentBuilderInterface {
           $query->addExpression('COUNT(vv.entity_id)', 'count');
           $query->groupBy('nfd.nid');
         }
-        $query->orderBy('count','DESC');
+        $query->orderBy('count', 'DESC');
         break;
 
       case 'last_interacted':
@@ -408,7 +411,7 @@ class ContentBuilder implements ContentBuilderInterface {
           COALESCE(MAX(nfd.changed), 0))', 'newest_timestamp');
 
           $query->groupBy('nfd.nid');
-          $query->orderBy('newest_timestamp','DESC');
+          $query->orderBy('newest_timestamp', 'DESC');
         }
         break;
 
