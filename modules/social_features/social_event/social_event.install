@@ -27,7 +27,7 @@ function social_event_install() {
  * Implements hook_update_dependencies().
  */
 function social_event_update_dependencies() {
-  // Run the event request enrollment update after the final features removal ran.
+  // Run the event request enrollment update after the features removal ran.
   $dependencies['social_event'][8802] = [
     'social_core' => 8802,
   ];
@@ -189,10 +189,10 @@ function social_event_update_8802(&$sandbox) {
   if (!isset($sandbox['total'])) {
 
     // Install new fields:
-    // - event_enrollment.field_request_status
-    // - field_enroll_method
-    // - field_event_enroll_outside_group
-    // - event_enrollment.field_request_message
+    // - event_enrollment.field_request_status.
+    // - field_enroll_method.
+    // - field_event_enroll_outside_group.
+    // - event_enrollment.field_request_message.
     $sandbox['configs'] = [
       'field.storage.event_enrollment.field_request_status' => [
         'langcode' => 'en',
@@ -1338,7 +1338,6 @@ function social_event_update_8803() {
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
 }
-
 
 /**
  * Grant CM+ with 'manage event enrollment requests' permission.

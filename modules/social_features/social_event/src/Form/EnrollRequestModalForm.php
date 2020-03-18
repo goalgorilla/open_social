@@ -2,14 +2,11 @@
 
 namespace Drupal\social_event\Form;
 
-use Drupal\Core\Ajax\CloseDialogCommand;
 use Drupal\Core\Ajax\RedirectCommand;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\OpenModalDialogCommand;
-use Drupal\Core\Ajax\HtmlCommand;
-use Drupal\Core\Ajax\ReplaceCommand;
 use Drupal\Core\Url;
 use Drupal\social_event\Entity\EventEnrollment;
 
@@ -54,7 +51,6 @@ class EnrollRequestModalForm extends FormBase {
       '#resizable' => 'vertical',
       '#required' => TRUE,
     ];
-
 
     $form['actions'] = [
       '#type' => 'actions',

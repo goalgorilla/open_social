@@ -82,7 +82,7 @@ class EventRequestActivityContext extends ActivityContextBase {
         /** @var \Drupal\social_event\EventEnrollmentInterface $event_enrollment */
         $event_enrollment = $this->entityTypeManager->getStorage('event_enrollment')
           ->load($data['related_object'][0]['target_id']);
-        // Send out the notification if the user is pending
+        // Send out the notification if the user is pending.
         if (!$event_enrollment->get('field_enrollment_status')->isEmpty()
           && $event_enrollment->get('field_enrollment_status')->value !== '1'
           && !$event_enrollment->get('field_request_status')->isEmpty()

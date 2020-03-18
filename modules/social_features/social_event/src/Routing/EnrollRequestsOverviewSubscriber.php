@@ -9,13 +9,15 @@ use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
- * Class RedirectSubscriber
+ * Class RedirectSubscriber.
  *
  * @package Drupal\social_event\Routing
  */
 class EnrollRequestsOverviewSubscriber implements EventSubscriberInterface {
 
   /**
+   * Get the request events.
+   *
    * @inheritDoc
    */
   public static function getSubscribedEvents() {
@@ -27,6 +29,7 @@ class EnrollRequestsOverviewSubscriber implements EventSubscriberInterface {
    * Check if the user is allowed to view this overview.
    *
    * @param \Symfony\Component\HttpKernel\Event\GetResponseEvent $event
+   *   The event.
    */
   public function checkAccessToEnrollRequestsOverview(GetResponseEvent $event) {
     $current_route = \Drupal::routeMatch()->getRouteName();
@@ -45,9 +48,9 @@ class EnrollRequestsOverviewSubscriber implements EventSubscriberInterface {
       }
 
       // Now, lets check:
-      //  - If the current user has a permission to see the overview.
-      //  - If the current user is the owner/creator of this event.
-      //  - If the current user is an organiser/manager of this event.
+      // - If the current user has a permission to see the overview.
+      // - If the current user is the owner/creator of this event.
+      // - If the current user is an organiser/manager of this event.
       // And then allow access.
       if ($current_user->hasPermission('manage event enrollment requests')
         || $event_accountables['owner'] === $current_user->id()
@@ -61,4 +64,5 @@ class EnrollRequestsOverviewSubscriber implements EventSubscriberInterface {
       $event->setResponse(new RedirectResponse(Url::fromUri($referer)));
     }
   }
+
 }

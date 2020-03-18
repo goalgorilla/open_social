@@ -8,7 +8,6 @@ use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\OpenModalDialogCommand;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Form\FormBuilder;
-use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
 
 /**
@@ -97,4 +96,5 @@ class EnrollRequestDialogController extends ControllerBase {
   public function enrollAccess(NodeInterface $node) {
     return AccessResult::allowed();
   }
+
 }

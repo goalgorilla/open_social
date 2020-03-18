@@ -400,7 +400,7 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
         'field_account' => $uid,
       ];
 
-      // If request to join is on, alter fields
+      // If request to join is on, alter fields.
       if ($to_enroll_status === '2') {
         $fields['field_enrollment_status'] = '0';
         $fields['field_request_status'] = 'pending';

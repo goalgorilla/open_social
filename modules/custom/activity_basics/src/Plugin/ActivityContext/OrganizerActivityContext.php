@@ -82,7 +82,7 @@ class OrganizerActivityContext extends ActivityContextBase {
         /** @var \Drupal\social_event\EventEnrollmentInterface $event_enrollment */
         $event_enrollment = $this->entityTypeManager->getStorage('event_enrollment')
           ->load($data['related_object'][0]['target_id']);
-        // Only send out enrollments notifications when people actually enrolled.
+        // Send out enrollments notifications when people actually enrolled.
         if (!$event_enrollment->get('field_enrollment_status')->isEmpty() && $event_enrollment->get('field_enrollment_status')->value !== '0') {
           $recipients = $this->getRecipientOrganizerFromEntity($related_entity, $data);
         }
