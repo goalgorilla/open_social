@@ -5,6 +5,7 @@ namespace Drupal\social_content_block\Plugin\Field\FieldWidget;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\social_content_block\ContentBlockManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -45,8 +46,8 @@ class ContentBlockPluginFieldWidget extends ContentBlockPluginWidgetBase {
    *   The widget settings.
    * @param array $third_party_settings
    *   Any third party settings.
-   * @param array $definitions
-   *   The content block plugin definitions.
+   * @param \Drupal\social_content_block\ContentBlockManagerInterface $content_block_manager
+   *   The content block manager.
    * @param array $field_configs
    *   An array containing matching configuration object names.
    */
@@ -56,7 +57,7 @@ class ContentBlockPluginFieldWidget extends ContentBlockPluginWidgetBase {
     FieldDefinitionInterface $field_definition,
     array $settings,
     array $third_party_settings,
-    array $definitions,
+    ContentBlockManagerInterface $content_block_manager,
     array $field_configs
   ) {
     parent::__construct(
@@ -65,7 +66,7 @@ class ContentBlockPluginFieldWidget extends ContentBlockPluginWidgetBase {
       $field_definition,
       $settings,
       $third_party_settings,
-      $definitions
+      $content_block_manager
     );
 
     $this->fieldConfigs = $field_configs;
@@ -81,7 +82,7 @@ class ContentBlockPluginFieldWidget extends ContentBlockPluginWidgetBase {
       $configuration['field_definition'],
       $configuration['settings'],
       $configuration['third_party_settings'],
-      $container->get('plugin.manager.content_block')->getDefinitions(),
+      $container->get('plugin.manager.content_block'),
       $container->get('config.factory')->listAll(self::CONFIG_PREFIX)
     );
   }
