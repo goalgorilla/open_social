@@ -6,6 +6,7 @@ use Drupal\block_content\BlockContentInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
@@ -229,6 +230,52 @@ class ContentBuilder implements ContentBuilderInterface {
     }
 
     return $build;
+  }
+
+  /**
+   * Process callback to insert a Custom Block form.
+   *
+   * @param array $element
+   *   The containing element.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The form state.
+   *
+   * @return array
+   *   The containing element, with the Custom Block form inserted.
+   */
+  public static function processBlockForm(array $element, FormStateInterface $form_state) {
+    /** @var \Drupal\social_content_block\ContentBlockManagerInterface $content_block_manager */
+    $content_block_manager = \Drupal::service('plugin.manager.content_block');
+
+    $selector = $content_block_manager->getSelector('field_plugin_id', 'value');
+
+    foreach ($content_block_manager->getDefinitions() as $plugin_id => $plugin_definition) {
+      $fields = &$element['field_plugin_field']['widget'][0][$plugin_id]['#options'];
+
+      foreach ($fields as $field_name => $field_title) {
+        // When the filter field was absent during executing the code of the
+        // field widget plugin for the filters list field then process this
+        // field repeatedly.
+        // @see \Drupal\social_content_block\Plugin\Field\FieldWidget\ContentBlockPluginFieldWidget::formElement()
+        if ($field_name === $field_title) {
+          $fields[$field_name] = $element[$field_name]['widget']['target_id']['#title'];
+
+          $element[$field_name]['#states'] = [
+            'visible' => [
+              $selector => [
+                'value' => $plugin_id,
+              ],
+              $content_block_manager->getSelector('field_plugin_field', $plugin_id) => [
+                ['value' => 'all'],
+                ['value' => $field_name],
+              ],
+            ],
+          ];
+        }
+      }
+    }
+
+    return $element;
   }
 
   /**

@@ -18,6 +18,13 @@ class ContentBlockManager extends DefaultPluginManager implements ContentBlockMa
   use ContextAwarePluginManagerTrait;
 
   /**
+   * The field parents.
+   *
+   * @var array
+   */
+  protected $fieldParents = [];
+
+  /**
    * {@inheritdoc}
    */
   public function __construct(\Traversable $namespaces, CacheBackendInterface $cache_backend, ModuleHandlerInterface $module_handler) {
@@ -31,6 +38,20 @@ class ContentBlockManager extends DefaultPluginManager implements ContentBlockMa
 
     $this->alterInfo('social_content_block_info');
     $this->setCacheBackend($cache_backend, 'content_block_plugins');
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getSelector($field_name, $column, $field_parents = NULL) {
+    if ($field_parents !== NULL) {
+      $this->fieldParents = $field_parents;
+    }
+
+    $parents = array_merge($this->fieldParents, [$field_name, 0, $column]);
+    $parent = array_shift($parents);
+
+    return ':input[name="' . $parent . '[' . implode('][', $parents) . ']"]';
   }
 
 }

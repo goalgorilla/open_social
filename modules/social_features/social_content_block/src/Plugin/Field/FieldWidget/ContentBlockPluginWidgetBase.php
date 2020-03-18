@@ -7,6 +7,7 @@ use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\WidgetBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\social_content_block\ContentBlockManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -17,11 +18,11 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 abstract class ContentBlockPluginWidgetBase extends WidgetBase implements ContainerFactoryPluginInterface {
 
   /**
-   * The content block plugin definitions.
+   * The content block manager.
    *
-   * @var array
+   * @var \Drupal\social_content_block\ContentBlockManagerInterface
    */
-  protected $definitions;
+  protected $contentBlockManager;
 
   /**
    * Constructs a ContentBlockPluginWidgetBase object.
@@ -36,8 +37,8 @@ abstract class ContentBlockPluginWidgetBase extends WidgetBase implements Contai
    *   The widget settings.
    * @param array $third_party_settings
    *   Any third party settings.
-   * @param array $definitions
-   *   The content block plugin definitions.
+   * @param \Drupal\social_content_block\ContentBlockManagerInterface $content_block_manager
+   *   The content block manager.
    */
   public function __construct(
     $plugin_id,
@@ -45,7 +46,7 @@ abstract class ContentBlockPluginWidgetBase extends WidgetBase implements Contai
     FieldDefinitionInterface $field_definition,
     array $settings,
     array $third_party_settings,
-    array $definitions
+    ContentBlockManagerInterface $content_block_manager
   ) {
     parent::__construct(
       $plugin_id,
@@ -55,7 +56,7 @@ abstract class ContentBlockPluginWidgetBase extends WidgetBase implements Contai
       $third_party_settings
     );
 
-    $this->definitions = $definitions;
+    $this->contentBlockManager = $content_block_manager;
   }
 
   /**
@@ -68,7 +69,7 @@ abstract class ContentBlockPluginWidgetBase extends WidgetBase implements Contai
       $configuration['field_definition'],
       $configuration['settings'],
       $configuration['third_party_settings'],
-      $container->get('plugin.manager.content_block')->getDefinitions()
+      $container->get('plugin.manager.content_block')
     );
   }
 
