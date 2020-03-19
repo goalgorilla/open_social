@@ -79,6 +79,7 @@ projects[override_node_options][type] = module
 projects[override_node_options][version] = 2.4
 projects[paragraphs][type] = module
 projects[paragraphs][version] = 1.8
+projects[paragraphs][patch][] = "https://www.drupal.org/files/issues/2019-07-10/paragraphs-set_langcode_widgets-2901390-29.patch"
 projects[pathauto][type] = module
 projects[pathauto][version] = 1.6
 projects[private_message][type] = module

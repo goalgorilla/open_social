@@ -5,6 +5,7 @@
  * Install, update and uninstall functions for the social_landing_page module.
  */
 
+use Drupal\Core\Extension\Extension;
 use Drupal\user\Entity\Role;
 
 /**
@@ -75,4 +76,241 @@ function _social_landing_page_get_permissions($role) {
     return $permissions[$role];
   }
   return [];
+}
+
+/**
+ * Enable the Social Featured Items module.
+ */
+function social_landing_page_update_8801() {
+  $module = 'social_featured_items';
+
+  // We don't actually install the module because this would cause issues with
+  // configuration already existing. The configuration has been moved from this
+  // module to the separate sub module so we simply mark the module as enabled.
+  $extension_config = \Drupal::configFactory()->getEditable('core.extension');
+  // Only enable the module if it's not installed already.
+  if ($extension_config->get("module.$module") !== NULL) {
+    // Nothing to do.
+    return;
+  }
+
+  // Mark the module as enabled. From ModuleInstaller::install().
+  $extension_config
+    ->set("module.$module", 0)
+    ->set('module', module_config_sort($extension_config->get('module')))
+    ->save(TRUE);
+
+  // Prepare the new module list, sorted by weight, including filenames.
+  // This list is used for both the ModuleHandler and DrupalKernel. It
+  // needs to be kept in sync between both. A DrupalKernel reboot or
+  // rebuild will automatically re-instantiate a new ModuleHandler that
+  // uses the new module list of the kernel. However, DrupalKernel does
+  // not cause any modules to be loaded.
+  // Furthermore, the currently active (fixed) module list can be
+  // different from the configured list of enabled modules. For all active
+  // modules not contained in the configured enabled modules, we assume a
+  // weight of 0.
+  $current_module_filenames = \Drupal::moduleHandler()->getModuleList();
+  $current_modules = array_fill_keys(array_keys($current_module_filenames), 0);
+  $current_modules = module_config_sort(array_merge($current_modules, $extension_config->get('module')));
+  $module_filenames = [];
+  foreach ($current_modules as $name => $weight) {
+    if (isset($current_module_filenames[$name])) {
+      $module_filenames[$name] = $current_module_filenames[$name];
+    }
+    else {
+      $module_path = \Drupal::service('extension.list.module')->getPath($name);
+      $pathname = "$module_path/$name.info.yml";
+      $filename = file_exists($module_path . "/$name.module") ? "$name.module" : NULL;
+      $module_filenames[$name] = new Extension(\Drupal::root(), 'module', $pathname, $filename);
+    }
+  }
+
+  // Update the module handler in order to load the module's code.
+  // This allows the module to participate in hooks and its existence to
+  // be discovered by other modules.
+  // The current ModuleHandler instance is obsolete with the kernel
+  // rebuild below.
+  \Drupal::moduleHandler()->setModuleList($module_filenames);
+  \Drupal::moduleHandler()->load($module);
+  // No need to module_load_install($module); since there is no such file.
+  //
+  // Clear the static cache of the "extension.list.module" service to pick
+  // up the new module, since it merges the installation status of modules
+  // into its statically cached list.
+  \Drupal::service('extension.list.module')->reset();
+
+  // Given that we know that the module only contains existing configuration at
+  // this point we don't need to go through the rest of the install process.
+}
+
+/**
+ * Import new block type for featured items.
+ */
+function social_landing_page_update_8802() {
+  // This creates some new configuration that can be used by the dashboard
+  // module. This is done in this module because we also enable the
+  // social_featured_items module. If that module is enabled through another
+  // module then that will take care of the module installation.
+  $configs = [
+    'block_content.type.featured_items' => [
+      'langcode' => 'en',
+      'status' => TRUE,
+      'dependencies' => [],
+      'id' => 'featured_items',
+      'label' => 'Featured Items',
+      'revision' => 0,
+      'description' => 'A list of featured items that can have a title, link, image/icon, and description.',
+    ],
+    'field.storage.block_content.field_featured_items' => [
+      'langcode' => 'en',
+      'status' => TRUE,
+      'dependencies' => [
+        'module' => [
+          'block_content',
+          'entity_reference_revisions',
+          'paragraphs',
+        ],
+      ],
+      'id' => 'block_content.field_featured_items',
+      'field_name' => 'field_featured_items',
+      'entity_type' => 'block_content',
+      'type' => 'entity_reference_revisions',
+      'settings' => [
+        'target_type' => 'paragraph',
+      ],
+      'module' => 'entity_reference_revisions',
+      'locked' => FALSE,
+      'cardinality' => -1,
+      'translatable' => TRUE,
+      'indexes' => [],
+      'persist_with_no_fields' => FALSE,
+      'custom_storage' => FALSE,
+    ],
+    'field.field.block_content.featured_items.field_featured_items' => [
+      'langcode' => 'en',
+      'status' => TRUE,
+      'dependencies' => [
+        'config' => [
+          'block_content.type.featured_items',
+          'field.storage.block_content.field_featured_items',
+          'paragraphs.paragraphs_type.featured_item',
+        ],
+        'module' => [
+          'entity_reference_revisions',
+        ],
+      ],
+      'id' => 'block_content.featured_items.field_featured_items',
+      'field_name' => 'field_featured_items',
+      'entity_type' => 'block_content',
+      'bundle' => 'featured_items',
+      'label' => 'Featured Items',
+      'description' => '',
+      'required' => TRUE,
+      'translatable' => TRUE,
+      'default_value' => [],
+      'default_value_callback' => '',
+      'settings' => [
+        'handler' => 'default:paragraph',
+        'handler_settings' => [
+          'negate' => 0,
+          'target_bundles' => [
+            'featured_item' => 'featured_item',
+          ],
+          'target_bundles_drag_drop' => [
+            'featured_item' => [
+              'enabled' => TRUE,
+              'weight' => 3,
+            ],
+            'featured_items' => [
+              'weight' => 4,
+              'enabled' => FALSE,
+            ],
+          ],
+        ],
+      ],
+      'field_type' => 'entity_reference_revisions',
+    ],
+    'core.entity_form_display.block_content.featured_items.default' => [
+      'langcode' => 'en',
+      'status' => TRUE,
+      'dependencies' => [
+        'config' => [
+          'block_content.type.featured_items',
+          'field.field.block_content.featured_items.field_featured_items',
+        ],
+        'module' => [
+          'paragraphs',
+        ],
+      ],
+      'id' => 'block_content.featured_items.default',
+      'targetEntityType' => 'block_content',
+      'bundle' => 'featured_items',
+      'mode' => 'default',
+      'content' => [
+        'field_featured_items' => [
+          'type' => 'entity_reference_paragraphs',
+          'weight' => 27,
+          'settings' => [
+            'title' => 'Paragraph',
+            'title_plural' => 'Paragraphs',
+            'edit_mode' => 'open',
+            'add_mode' => 'dropdown',
+            'form_display_mode' => 'default',
+            'default_paragraph_type' => '',
+          ],
+          'third_party_settings' => [],
+          'region' => 'content',
+        ],
+        'info' => [
+          'type' => 'string_textfield',
+          'weight' => -5,
+          'region' => 'content',
+          'settings' => [
+            'size' => 60,
+            'placeholder' => '',
+          ],
+          'third_party_settings' => [],
+        ],
+      ],
+      'hidden' => [],
+    ],
+    'core.entity_view_display.block_content.featured_items.default' => [
+      'langcode' => 'en',
+      'status' => TRUE,
+      'dependencies' => [
+        'config' => [
+          'block_content.type.featured_items',
+          'field.field.block_content.featured_items.field_featured_items',
+        ],
+        'module' => [
+          'entity_reference_revisions',
+        ],
+      ],
+      'id' => 'block_content.featured_items.default',
+      'targetEntityType' => 'block_content',
+      'bundle' => 'featured_items',
+      'mode' => 'default',
+      'content' => [
+        'field_featured_items' => [
+          'type' => 'entity_reference_revisions_entity_view',
+          'weight' => 1,
+          'label' => 'hidden',
+          'settings' => [
+            'view_mode' => 'default',
+            'link' => '',
+          ],
+          'third_party_settings' => [],
+          'region' => 'content',
+        ],
+      ],
+    ],
+  ];
+
+  foreach ($configs as $name => $config) {
+    \Drupal::configFactory()
+      ->getEditable($name)
+      ->setData($config)
+      ->save(TRUE);
+  }
 }
