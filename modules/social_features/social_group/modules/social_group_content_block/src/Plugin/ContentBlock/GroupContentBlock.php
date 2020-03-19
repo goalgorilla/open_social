@@ -12,6 +12,7 @@ use Drupal\social_content_block\ContentBlockBase;
  *   id = "group_content_block",
  *   entityTypeId = "group",
  *   fields = {
+ *     "field_group_type",
  *     "field_group_content_tag",
  *   },
  * )
@@ -24,6 +25,10 @@ class GroupContentBlock extends ContentBlockBase {
   public function query(SelectInterface $query, array $fields) {
     foreach ($fields as $field_name => $entity_ids) {
       switch ($field_name) {
+        case 'field_group_type':
+          $query->condition('base_table.type', $entity_ids, 'IN');
+          break;
+
         case 'field_group_content_tag':
           $query->innerJoin('group__social_tagging', 'st', 'st.entity_id = base_table.id');
           $query->condition('st.social_tagging_target_id', $entity_ids, 'IN');
