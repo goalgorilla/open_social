@@ -55,13 +55,18 @@ function social_follow_taxonomy_page_attachments(array &$page) {
 
 /**
  * Implements hook_theme_suggestions_alter().
+ *
+ * Add new activity stream message template for nodes with a term followed by
+ * the user to make it possible to override the default template.
  */
 function social_follow_taxonomy_theme_suggestions_activity(array $variables) {
   $suggestions = [];
 
   $activity = $variables['elements']['#activity'];
+  // Get a message entity from the activity.
   $message = Message::load($activity->field_activity_message->target_id);
 
+  // Get the name of the template from the data of the message entity.
   if ($message->getTemplate()->id() == 'create_node_following_tag_stream') {
     $entity_type = $activity->field_activity_entity->first()->target_type;
 

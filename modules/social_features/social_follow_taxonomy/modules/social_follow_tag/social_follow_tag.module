@@ -88,8 +88,15 @@ function social_follow_tag_preprocess_paragraph(&$variables) {
  * {@inheritdoc}
  */
 function social_follow_tag_preprocess_social_tagging_split(&$variables) {
+  if (!isset($variables['taghierarchy'])) {
+    return;
+  }
+
   // Iterate over an array with parent terms (category).
   foreach ($variables['taghierarchy'] as $parent_tag) {
+    if (!isset($parent_tag['tags'])) {
+      continue;
+    }
     // Iterate over an array with terms in each category.
     foreach ($parent_tag['tags'] as $tag_id => $tag_info) {
       /** @var \Drupal\taxonomy\TermStorageInterface $term_storage */
@@ -124,6 +131,10 @@ function social_follow_tag_preprocess_social_tagging_split(&$variables) {
  * {@inheritdoc}
  */
 function social_follow_tag_preprocess_social_tagging_nosplit(&$variables) {
+  if (!isset($variables['tags'])) {
+    return;
+  }
+
   $term_storage = \Drupal::entityTypeManager()->getStorage('taxonomy_term');
 
   foreach ($variables['tags'] as $tag_name => $tag_info) {
