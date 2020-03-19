@@ -99,7 +99,7 @@ class ContentBlockPluginIdWidget extends ContentBlockPluginWidgetBase {
     foreach ($definitions as $plugin_id => $plugin_definition) {
       $entity_type = $this->entityTypeManager->getDefinition($plugin_definition['entityTypeId']);
 
-      if ($plugin_definition['bundle']) {
+      if (isset($plugin_definition['bundle'])) {
         $value['#options'][$plugin_id] = $this->entityTypeManager
           ->getStorage($entity_type->getBundleEntityType())
           ->load($plugin_definition['bundle'])
