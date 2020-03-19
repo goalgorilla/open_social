@@ -130,7 +130,7 @@ class ContentBuilder implements ContentBuilderInterface {
     $query = $this->connection->select($entity_type->getDataTable(), 'base_table')
       ->fields('base_table', [$entity_type->getKey('id')]);
 
-    if ($definition['bundle']) {
+    if (isset($definition['bundle'])) {
       $query->condition(
         'base_table.' . $entity_type->getKey('bundle'),
         $definition['bundle']
