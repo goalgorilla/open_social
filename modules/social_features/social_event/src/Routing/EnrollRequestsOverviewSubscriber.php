@@ -37,31 +37,17 @@ class EnrollRequestsOverviewSubscriber implements EventSubscriberInterface {
     if ($current_route === 'view.event_manage_enrollment_requests.page_manage_enrollment_requests') {
       // Now lets get some stuff we need to perform some checks on.
       $current_event = social_event_get_current_event();
-      $current_user = \Drupal::currentUser();
-
-      // Get the event owner/author and it's organisers (if any).
-      $event_accountables['owner'] = $current_event->getOwnerId();
-      // Also check whether the social_event_managers is enabled so we can
-      // check if the user might be an organiser/manager of this event.
-      if (\Drupal::moduleHandler()->moduleExists('social_event_managers')) {
-        $event_accountables['organiser'] = social_event_manager_or_organizer($current_event);
-      }
-
       // Now, lets check:
       // - If the current user has a permission to see the overview.
       // - If the current user is the owner/creator of this event.
       // - If the current user is an organiser/manager of this event.
       // And then allow access.
-      if ($current_user->hasPermission('manage event enrollment requests')
-        || $event_accountables['owner'] === $current_user->id()
-        || $event_accountables['organiser'] === TRUE) {
+      if (social_event_owner_or_organizer()) {
         return;
       }
 
-      // We deny the rest and send them straight to where they came from!
-      $requestHeaders = $event->getRequest()->server->getHeaders();
-      $referer = $requestHeaders['REFERER'];
-      $event->setResponse(new RedirectResponse(Url::fromUri($referer)));
+      // We deny the rest and send them to the front page.
+      $event->setResponse(new RedirectResponse(Url::fromRoute('entity.node.canonical', ['node' => $current_event->id()])->toString()));
     }
   }
 

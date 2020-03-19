@@ -555,51 +555,49 @@ function social_event_form_alter(&$form, FormStateInterface $form_state, $form_i
  */
 function social_event_show_pending_requests_message() {
   $message = NULL;
-  // First lets check if the user has the correct permission.
-  if (\Drupal::currentUser()->hasPermission('manage event enrollment requests')) {
-    // Then get the current route to check on.
-    $current_route = \Drupal::routeMatch()->getRouteName();
-    // Defined routes on which a message with amount
-    // of unattended pending enrollment requests.
-    $defined_routes = [
-      'view.event_enrollments.view_enrollments',
-      'entity.node.canonical',
-      'view.event_manage_enrollments.page_manage_enrollments',
-      'view.managers.view_managers',
-      'social_event_managers.add_enrollees',
-      'entity.event_enrollment.delete_form',
-      'social_event_managers.vbo.execute_configurable',
-      'social_event_managers.vbo.confirm',
-    ];
-    // If the route matches, proceed.
-    if (in_array($current_route, $defined_routes)) {
-      // Third, get the current node (if any) to perform an extra check
-      // just to make sure that we are actually on an event node.
-      $node = social_event_get_current_event();
-      if ($node && $node->field_enroll_method->value === '2') {
-        // At this point we try to get the amount of pending requests.
-        try {
-          $query = \Drupal::entityTypeManager()
-            ->getStorage('event_enrollment')
-            ->getQuery();
-          $condition_group = $query->andConditionGroup()
-            ->condition('field_event.target_id', $node->id())
-            ->condition('field_request_status.value', 'pending')
-            ->condition('field_enrollment_status.value', '0');
-          $query->condition($condition_group);
-          $pending_requests = $query->execute();
-          if (!empty($pending_requests)) {
-            $plural = \Drupal::translation()->formatPlural(count($pending_requests), 'is (1) new request', 'are (@count) new requests');
-            $link = Link::createFromRoute(t('@amount', ['@amount' => $plural]), 'view.event_manage_enrollment_requests.page_manage_enrollment_requests', ['node' => $node->id()])->toString();
-            $message = \Drupal::messenger()->addWarning(t('There @link to enroll in this event.', ['@link' => $link]));
-          }
+  $current_user = \Drupal::currentUser();
+  // Check the current routes vs what we need to check on.
+  $current_route = \Drupal::routeMatch()->getRouteName();
+  // Defined routes on which a message with amount
+  // of unattended pending enrollment requests.
+  $defined_routes = [
+    'view.event_enrollments.view_enrollments',
+    'entity.node.canonical',
+    'view.event_manage_enrollments.page_manage_enrollments',
+    'view.managers.view_managers',
+    'social_event_managers.add_enrollees',
+    'entity.event_enrollment.delete_form',
+    'social_event_managers.vbo.execute_configurable',
+    'social_event_managers.vbo.confirm',
+  ];
+  // If the route matches, proceed.
+  if (in_array($current_route, $defined_routes)) {
+    // Third, get the current node (if any) to perform an extra check
+    // just to make sure that we are actually on an event node.
+    $node = social_event_get_current_event();
+    if ($node && $node->field_enroll_method->value === '2' && social_event_owner_or_organizer($node, $current_user)) {
+      // At this point we try to get the amount of pending requests.
+      try {
+        $query = \Drupal::entityTypeManager()
+          ->getStorage('event_enrollment')
+          ->getQuery();
+        $condition_group = $query->andConditionGroup()
+          ->condition('field_event.target_id', $node->id())
+          ->condition('field_request_status.value', 'pending')
+          ->condition('field_enrollment_status.value', '0');
+        $query->condition($condition_group);
+        $pending_requests = $query->execute();
+        if (!empty($pending_requests)) {
+          $plural = \Drupal::translation()->formatPlural(count($pending_requests), 'is (1) new request', 'are (@count) new requests');
+          $link = Link::createFromRoute(t('@amount', ['@amount' => $plural]), 'view.event_manage_enrollment_requests.page_manage_enrollment_requests', ['node' => $node->id()])->toString();
+          $message = \Drupal::messenger()->addWarning(t('There @link to enroll in this event.', ['@link' => $link]));
         }
-        catch (InvalidPluginDefinitionException $e) {
-          \Drupal::logger('social_event')->error($e->getMessage());
-        }
-        catch (PluginNotFoundException $e) {
-          \Drupal::logger('social_event')->error($e->getMessage());
-        }
+      }
+      catch (InvalidPluginDefinitionException $e) {
+        \Drupal::logger('social_event')->error($e->getMessage());
+      }
+      catch (PluginNotFoundException $e) {
+        \Drupal::logger('social_event')->error($e->getMessage());
       }
     }
   }
@@ -754,11 +752,45 @@ function social_event_field_visibility(array &$form, $field_name, array $fields,
 }
 
 /**
+ * Determine if the user is an owner or organizer of a specific event node.
+ *
+ * @param \Drupal\node\NodeInterface|null $node
+ *   The (optional) event node.
+ * @param \Drupal\Core\Session\AccountInterface|null $current_user
+ *   The (optional) user.
+ *
+ * @return bool
+ *   Return TRUE if the user is the owner or organizer of this event.
+ */
+function social_event_owner_or_organizer(NodeInterface $node = NULL, AccountInterface $current_user = NULL) {
+  if (!$current_user) {
+    $current_user = \Drupal::currentUser();
+  }
+  if (!$node) {
+    $node = social_event_get_current_event();
+  }
+  // Get the event owner/author and it's organisers (if any).
+  $event_accountables['owner'] = $node->getOwnerId();
+  // Also check whether the social_event_managers is enabled so we can
+  // check if the user might be an organiser/manager of this event.
+  if (\Drupal::moduleHandler()->moduleExists('social_event_managers')) {
+    $event_accountables['organiser'] = social_event_manager_or_organizer($node);
+  }
+  if ($current_user->hasPermission('manage event enrollment requests')
+    || $event_accountables['owner'] === $current_user->id()
+    || $event_accountables['organiser'] === TRUE) {
+    return TRUE;
+  }
+
+  return FALSE;
+}
+
+/**
  * Implements hook_entity_operation_alter().
  */
 function social_event_entity_operation_alter(array &$operations, EntityInterface $entity) {
   // Check access first.
-  if (!(\Drupal::currentUser()->hasPermission('manage event enrollment requests'))) {
+  if (!social_event_owner_or_organizer()) {
     return;
   }
   // Get the node, so we can pass it as a parameter.
