@@ -160,7 +160,7 @@ function social_follow_taxonomy_token_info() {
  */
 function social_follow_taxonomy_tokens($type, $tokens, array $data, array $options, BubbleableMetadata $bubbleable_metadata) {
   $replacements = [];
-  $names = '';
+  $names = [];
 
   if ($type === 'social_taxonomy' && !empty($data['message'])) {
     foreach ($tokens as $name => $original) {
