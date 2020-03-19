@@ -23,7 +23,7 @@ class Page extends PageBase {
 
       // Display merged sidebar on the left side of profile pages, except edit.
       $route_match = \Drupal::routeMatch();
-      if ($route_match->getParameter('user') && $route_match->getRouteName() !== 'entity.profile.type.user_profile_form') {
+      if ($route_match->getParameter('user') && $route_match->getRouteName() !== 'profile.user_page.single') {
         $variables['content_attributes']->addClass('sidebar-left', 'content-merged--sky');
       }
 

@@ -422,7 +422,6 @@ form:not(.layout-builder-configure-block) .form-disabled .select-wrapper::after 
   form:not(.layout-builder-configure-block) .form-control {
     font-size: 16px;
   }
-  form:not(.layout-builder-configure-block) input[type="date"].form-control,
   form:not(.layout-builder-configure-block) input[type="time"].form-control,
   form:not(.layout-builder-configure-block) input[type="datetime-local"].form-control,
   form:not(.layout-builder-configure-block) input[type="month"].form-control {
@@ -432,10 +431,19 @@ form:not(.layout-builder-configure-block) .form-disabled .select-wrapper::after 
        -moz-appearance: none;
             appearance: none;
   }
-  form:not(.layout-builder-configure-block) input[type="date"].form-control:focus,
   form:not(.layout-builder-configure-block) input[type="time"].form-control:focus,
   form:not(.layout-builder-configure-block) input[type="datetime-local"].form-control:focus,
   form:not(.layout-builder-configure-block) input[type="month"].form-control:focus {
+    background: inherit;
+  }
+  form:not(.layout-builder-configure-block) input[type="date"].form-control {
+    line-height: 24px;
+    background: none;
+    -webkit-appearance: none;
+       -moz-appearance: none;
+            appearance: none;
+  }
+  form:not(.layout-builder-configure-block) input[type="date"].form-control:focus {
     background: inherit;
   }
 }
