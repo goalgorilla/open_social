@@ -110,7 +110,7 @@ function social_follow_tag_preprocess_social_tagging_split(&$variables) {
           'name' => $tag_info['name'],
           'flag' => _social_follow_taxonomy_flag_link($current_term),
           'related_content' => _social_follow_tag_related_content($current_term),
-          'follow' => _social_follow_tag_follow($current_term),
+          'follow' => social_follow_taxonomy_term_followed($current_term),
         ];
       }
     }
@@ -144,7 +144,7 @@ function social_follow_tag_preprocess_social_tagging_nosplit(&$variables) {
       'name' => $tag_name,
       'flag' => _social_follow_taxonomy_flag_link($current_term),
       'related_content' => _social_follow_tag_related_content($current_term),
-      'follow' => _social_follow_tag_follow($current_term),
+      'follow' => social_follow_taxonomy_term_followed($current_term),
     ];
   }
 }
@@ -177,30 +177,4 @@ function _social_follow_tag_related_content(TermInterface $term) {
   }
 
   return $related_content;
-}
-
-/**
- * Function to check if term is followed.
- *
- * @param \Drupal\taxonomy\TermInterface $term
- *   Term entity.
- *
- * @return bool
- *   Follow result.
- */
-function _social_follow_tag_follow(TermInterface $term) {
-  $follow = FALSE;
-
-  if (!\Drupal::currentUser()->isAnonymous()) {
-    $flag = Flag::load('follow_term');
-    if ($flag instanceof FlagInterface) {
-      /** @var \Drupal\flag\FlagService $service */
-      $service = \Drupal::service('flag');
-      if (!empty($service->getFlagging($flag, $term, \Drupal::currentUser()))) {
-        $follow = TRUE;
-      }
-    }
-  }
-
-  return $follow;
 }

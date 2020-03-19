@@ -19,7 +19,6 @@ class FollowTagActivityContext extends FollowTaxonomyActivityContext {
    */
   public function taxonomyTermsList($entity) {
     $taxonomy_ids = [];
-
     if ($entity->hasField('social_tagging')) {
       if (!empty($entity->get('social_tagging')->getValue())) {
         $tags = $entity->get('social_tagging')->getValue();

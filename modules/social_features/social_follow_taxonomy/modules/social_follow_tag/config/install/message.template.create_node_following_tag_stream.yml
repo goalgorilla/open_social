@@ -1,4 +1,4 @@
-uuid: 8681f0a8-15fe-4983-b19e-dc5ac2a932a8
+uuid: 5908423f-c5fe-4826-b62e-616e8e6e36fa
 langcode: en
 status: true
 dependencies:
@@ -17,16 +17,23 @@ third_party_settings:
     activity_action: create_entitiy_action
     activity_context: follow_tag_activity_context
     activity_destinations:
-      notifications: notifications
+      stream_profile: stream_profile
+      email: email
     activity_create_direct: false
     activity_aggregate: false
     activity_entity_condition: ''
-template: create_node_following_tag
-label: 'Create node with following tag'
+template: create_node_following_tag_stream
+label: 'Create node with following tag (stream: profile)'
 description: 'A person create content with tag I am following'
 text:
   -
-    value: "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</a> created a [message:field_message_related_object:entity:content-type] with the tag(s) [social_taxonomy:taxonomy_i_follow] that you follow.</p>\r\n"
+    value: "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</a> created a [message:field_message_related_object:entity:content-type]</p>\r\n"
+    format: basic_html
+  -
+    value: "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</a> created a [message:field_message_related_object:entity:content-type]</p>\r\n"
+    format: basic_html
+  -
+    value: "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</a> created a [message:field_message_related_object:entity:content-type]</p>\r\n"
     format: basic_html
 settings:
   'token options':

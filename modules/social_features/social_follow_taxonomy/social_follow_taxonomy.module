@@ -5,8 +5,11 @@
  * Contains social_follow_taxonomy.module.
  */
 
+use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
+use Drupal\flag\Entity\Flag;
+use Drupal\flag\FlagInterface;
 use Drupal\message\Entity\Message;
 use Drupal\node\NodeInterface;
 use Drupal\taxonomy\TermInterface;
@@ -59,7 +62,7 @@ function social_follow_taxonomy_theme_suggestions_activity(array $variables) {
   $activity = $variables['elements']['#activity'];
   $message = Message::load($activity->field_activity_message->target_id);
 
-  if ($message->getTemplate()->id() == 'create_node_following_tag') {
+  if ($message->getTemplate()->id() == 'create_node_following_tag_stream') {
     $entity_type = $activity->field_activity_entity->first()->target_type;
 
     if ($entity_type === 'node') {
@@ -82,7 +85,7 @@ function social_follow_taxonomy_preprocess_activity(&$variables) {
   $message = Message::load($activity->field_activity_message->target_id);
   $message_template_id = $message->getTemplate()->id();
 
-  if ($message_template_id == 'create_node_following_tag') {
+  if ($message_template_id == 'create_node_following_tag_stream') {
     $entity = $activity->getRelatedEntity();
 
     if ($entity->getEntityTypeId() === 'node') {
@@ -120,6 +123,103 @@ function social_follow_taxonomy_preprocess_activity(&$variables) {
       }
     }
   }
+}
+
+/**
+ * Implements hook_token_info().
+ */
+function social_follow_taxonomy_token_info() {
+
+  $type = [
+    'name' => t('Social Follow Taxonomy'),
+    'description' => t('Tokens from the Social Follow Taxonomy module.'),
+  ];
+
+  $social_taxonomy['taxonomy_i_follow'] = [
+    'name' => t('Taxonomy I follow.'),
+    'description' => t('Taxonomy term I follow'),
+  ];
+
+  return [
+    'types' => ['social_taxonomy' => $type],
+    'tokens' => [
+      'social_taxonomy' => $social_taxonomy,
+    ],
+  ];
+}
+
+/**
+ * Implements hook_tokens().
+ *
+ * { @inheritdoc }
+ */
+function social_follow_taxonomy_tokens($type, $tokens, array $data, array $options, BubbleableMetadata $bubbleable_metadata) {
+  $replacements = [];
+  $names = '';
+
+  if ($type === 'social_taxonomy' && !empty($data['message'])) {
+    foreach ($tokens as $name => $original) {
+      switch ($name) {
+        case 'taxonomy_i_follow':
+          $entity_id = $data['message']->getFieldValue('field_message_related_object', 'target_id');
+          if (!empty($entity_id)) {
+            $node_storage = \Drupal::entityTypeManager()->getStorage('node');
+            /** @var \Drupal\node\Entity\Node $node */
+            $node = $node_storage->load($entity_id);
+            if ($node !== NULL) {
+              if ($node->hasField('social_tagging')) {
+                if (!empty($node->get('social_tagging')->getValue())) {
+                  $tags = $node->get('social_tagging')->getValue();
+
+                  foreach ($tags as $tag) {
+                    /** @var \Drupal\taxonomy\TermInterface $term */
+                    $term = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->load($tag['target_id']);
+                    if ($term instanceof TermInterface) {
+                      if (social_follow_taxonomy_term_followed($term)) {
+                        $names[] = $term->getName();
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+
+          // String with term names in quotation marks, separated by commas.
+          $replacement_string = "'" . implode("', '", $names) . "'";
+          $replacements[$original] = $replacement_string;
+          break;
+      }
+    }
+  }
+
+  return $replacements;
+}
+
+/**
+ * Function to check if term is followed.
+ *
+ * @param \Drupal\taxonomy\TermInterface $term
+ *   Term entity.
+ *
+ * @return bool
+ *   Follow result.
+ */
+function social_follow_taxonomy_term_followed(TermInterface $term) {
+  $follow = FALSE;
+
+  if (!\Drupal::currentUser()->isAnonymous()) {
+    $flag = Flag::load('follow_term');
+    if ($flag instanceof FlagInterface) {
+      /** @var \Drupal\flag\FlagService $service */
+      $service = \Drupal::service('flag');
+      if (!empty($service->getFlagging($flag, $term, \Drupal::currentUser()))) {
+        $follow = TRUE;
+      }
+    }
+  }
+
+  return $follow;
 }
 
 /**
