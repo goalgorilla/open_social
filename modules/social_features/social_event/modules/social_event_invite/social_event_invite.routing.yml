@@ -1,0 +1,11 @@
+social_event_invite.invite:
+  path: '/node/{node}/invite'
+  defaults:
+    _form: '\Drupal\social_event_invite\Form\EnrollInviteForm'
+    _title: 'Invite people'
+  options:
+    parameters:
+      node:
+        type: entity:node
+  requirements:
+    _permission: 'access content'

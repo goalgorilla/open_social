@@ -7,11 +7,7 @@ use Drupal\Core\Block\BlockBase;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\Core\Url;
-use Drupal\group\Entity\GroupInterface;
-use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
-use Drupal\social_event\EventEnrollmentInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -65,16 +61,7 @@ class SocialEventInviteLocalActionsBlock extends BlockBase implements ContainerF
    * {@inheritdoc}.
    */
   protected function blockAccess(AccountInterface $account) {
-    // If current Group doesn't allow for inviting.
-    if () {
-      return AccessResult::forbidden();
-    }
-    // Only when user has correct access.
-    if () {
-      return AccessResult::allowed();
-    }
-
-    return AccessResult::forbidden();
+    return AccessResult::allowed();
   }
 
   /**
@@ -91,11 +78,6 @@ class SocialEventInviteLocalActionsBlock extends BlockBase implements ContainerF
    */
   public function getCacheTags() {
     $cache_tags = parent::getCacheTags();
-    $group = $this->routeMatch->getParameter('group');
-
-    if ($group instanceof GroupInterface) {
-      $cache_tags[] = 'group:' . $group->id();
-    }
 
     return $cache_tags;
   }
@@ -114,15 +96,15 @@ class SocialEventInviteLocalActionsBlock extends BlockBase implements ContainerF
         '#links' => [
           'add_directly' => [
             'title' => $this->t('Add directly'),
-            'url' => Url::fromRoute('entity.group_content.add_form', ['plugin_id' => 'group_membership', 'event' => $event->id()]),
+            'url' => 'test1',
           ],
           'invite_by_mail' => [
             'title' => $this->t('Invite by mail'),
-            'url' => Url::fromRoute('ginvite.invitation.bulk', ['group' => $event->id()]),
+            'url' => 'test2',
           ],
           'view_invites' => [
             'title' => $this->t('View invites'),
-            'url' => Url::fromRoute('view.group_invitations.page_1', ['group' => $event->id()]),
+            'url' => 'test3',
           ],
         ],
       ];
