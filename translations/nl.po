@@ -1,9 +1,9 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: node-gettext\n"
-"POT-Creation-Date: 2020-03-17 00:32+0000\n"
-"PO-Revision-Date: 2020-03-02 13:19+0000\n"
-"Last-Translator: Ronald te Brake <ronald@goalgorilla.com>\n"
+"POT-Creation-Date: 2020-03-20 00:30+0000\n"
+"PO-Revision-Date: 2020-03-19 17:19+0000\n"
+"Last-Translator: Alexander Varwijk <alexander@getopensocial.com>\n"
 "Language-Team: Dutch <https://translate.getopensocial.com/projects/open-"
 "social/distribution/nl/>\n"
 "Language: nl\n"
@@ -146,7 +146,7 @@ msgstr "- Beperkte toegang -"
 
 #: translations.php:68
 msgid "-- Select action --"
-msgstr ""
+msgstr "-- Selecteer actie --"
 
 #: modules/custom/download_count/src/Plugin/Field/FieldFormatter/FieldDownloadCount.php:86
 msgid "0 downloads"
@@ -604,7 +604,7 @@ msgid ""
 "a> commented on a post</p>"
 msgstr ""
 "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
-"a> reageerde op jouw bericht</p>"
+"a> reageerde op een bericht</p>"
 
 #: modules/social_features/social_activity/config/install/message.template.create_comment_author_node_post.yml:0;0
 msgid ""
@@ -906,9 +906,9 @@ msgid ""
 "display-name]</a> joined the <a href=\"[message:gurl]\">[message:gtitle]</a> "
 "group</p>"
 msgstr ""
-"<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
-"a> is lid geworden van de <a href=\"[message:gurl]\">[message:gtitle]</a> "
-"groep</p>"
+"<p><a href=\"[message:recipient-user:url:absolute]\">[message:recipient-user:"
+"display-name]</a> is lid geworden van de  <a href=\"[message:gurl]\">"
+"[message:gtitle]</a> groep</p>"
 
 #: modules/social_features/social_event/config/optional/message.template.activity_on_events_im_organizing.yml:0;0;0
 msgid ""
@@ -1147,7 +1147,7 @@ msgstr ""
 
 #: modules/custom/social_queue_storage/config/install/message.template.background_process_finished.yml:0
 msgid "A background process (e.g. sending bulk emails) has finished"
-msgstr ""
+msgstr "Een achtergrondproces is voltooid."
 
 #: modules/social_features/social_core/config/install/block_content.type.basic.yml:0
 msgid "A basic block contains a title and a body."
@@ -1180,6 +1180,12 @@ msgstr ""
 #: modules/social_features/social_content_report/social_content_report.module:65
 msgid "A description of your report is mandatory."
 msgstr "Een omschrijving van uw rapport is verplicht."
+
+#: modules/social_features/social_featured_items/config/install/block_content.type.featured_items.yml:0
+msgid ""
+"A list of featured items that can have a title, link, image/icon, and "
+"description."
+msgstr ""
 
 #: modules/social_features/social_content_report/config/install/taxonomy.vocabulary.report_reasons.yml:0
 msgid "A list of reasons users can choose from for reporting content."
@@ -2008,7 +2014,7 @@ msgstr "Na"
 msgid "Aggregate activity"
 msgstr "Aggregeer activiteit"
 
-#: modules/social_features/social_content_block/src/Plugin/Field/FieldWidget/ContentBlockPluginFieldWidget.php:34
+#: modules/social_features/social_content_block/src/Plugin/Field/FieldWidget/ContentBlockPluginFieldWidget.php:35
 #: modules/social_features/social_search/social_search.links.task.yml:0;0
 #: modules/social_features/social_activity/config/install/views.view.activity_stream_notifications.yml:0
 #: modules/social_features/social_activity/config/optional/views.view.activity_stream_group.yml:0
@@ -3220,7 +3226,7 @@ msgstr "Inhoud Rapportering instellingen"
 msgid "Content Type"
 msgstr "Inhoud type"
 
-#: modules/social_features/social_content_block/src/Plugin/Field/FieldWidget/ContentBlockPluginIdWidget.php:11
+#: modules/social_features/social_content_block/src/Plugin/Field/FieldWidget/ContentBlockPluginIdWidget.php:12
 msgid "Content block plugin ID"
 msgstr ""
 
@@ -3456,7 +3462,7 @@ msgstr "Evenement aanmaken"
 msgid "Create New Group"
 msgstr "Nieuwe groep aanmaken"
 
-#: modules/social_features/social_landing_page/social_landing_page.module:287
+#: modules/social_features/social_landing_page/social_landing_page.module:281
 msgid "Create New Landing Page"
 msgstr "Maak een nieuwe landingspagina"
 
@@ -4024,6 +4030,8 @@ msgstr ""
 #: modules/custom/mentions/src/Form/MentionsTypeForm.php:138
 #: modules/custom/social_queue_storage/src/QueueStorageEntityListBuilder.php:23
 #: modules/social_features/social_content_report/config/install/views.view.report_overview.yml:0
+#: modules/social_features/social_featured_items/config/install/field.field.paragraph.featured_item.field_featured_item_description.yml:0
+#: modules/social_features/social_featured_items/config/install/field.field.paragraph.featured_items.field_featured_items_description.yml:0
 #: modules/social_features/social_group/config/install/field.field.group.closed_group.field_group_description.yml:0
 #: modules/social_features/social_group/config/install/field.field.group.open_group.field_group_description.yml:0
 #: modules/social_features/social_group/config/install/field.field.group.public_group.field_group_description.yml:0
@@ -4032,8 +4040,6 @@ msgstr ""
 #: modules/social_features/social_landing_page/config/install/field.field.paragraph.accordion.field_accord_description.yml:0
 #: modules/social_features/social_landing_page/config/install/field.field.paragraph.accordion_item.field_accord_item_description.yml:0
 #: modules/social_features/social_landing_page/config/install/field.field.paragraph.featured.field_featured_description.yml:0
-#: modules/social_features/social_landing_page/config/install/field.field.paragraph.featured_item.field_featured_item_description.yml:0
-#: modules/social_features/social_landing_page/config/install/field.field.paragraph.featured_items.field_featured_items_description.yml:0
 #: modules/social_features/social_page/config/install/field.field.node.page.body.yml:0
 #: modules/social_features/social_topic/config/install/field.field.node.topic.body.yml:0
 msgid "Description"
@@ -4267,7 +4273,7 @@ msgstr ""
 #: themes/socialblue/theme-settings.php:85
 #: themes/socialblue/templates/profile/profile--profile--default--sky.html.twig:84
 msgid "E-mail"
-msgstr "Email"
+msgstr "E-mail"
 
 #: modules/social_features/social_swiftmail/social_swiftmail.links.menu.yml:0
 msgid "E-mail settings"
@@ -4663,6 +4669,10 @@ msgstr "Vul je @s gebruikersnaam of e-mailadres in."
 msgid "Enter your email, so we can send you event updates."
 msgstr "Voeg uw e-mailadres toe, zodat we u evenement updates kunnen sturen."
 
+#: modules/social_features/social_content_block/social_content_block.module:34
+msgid "Entities"
+msgstr ""
+
 #: modules/custom/mentions/src/Plugin/Mentions/Entity.php:14
 #: modules/custom/activity_creator/config/install/field.field.activity.activity.field_activity_entity.yml:0
 msgid "Entity"
@@ -4964,11 +4974,13 @@ msgstr "Uitgelicht"
 msgid "Featured Content"
 msgstr ""
 
-#: modules/social_features/social_landing_page/config/install/paragraphs.paragraphs_type.featured_item.yml:0
+#: modules/social_features/social_featured_items/config/install/paragraphs.paragraphs_type.featured_item.yml:0
 msgid "Featured Item"
 msgstr "Uitgelicht item"
 
-#: modules/social_features/social_landing_page/config/install/paragraphs.paragraphs_type.featured_items.yml:0
+#: modules/social_features/social_featured_items/config/install/block_content.type.featured_items.yml:0
+#: modules/social_features/social_featured_items/config/install/field.field.block_content.featured_items.field_featured_items.yml:0
+#: modules/social_features/social_featured_items/config/install/paragraphs.paragraphs_type.featured_items.yml:0
 msgid "Featured Items"
 msgstr "Uitgelichte Items"
 
@@ -5168,11 +5180,11 @@ msgstr "Volg inhoud"
 msgid "Follow functionality."
 msgstr ""
 
-#: modules/social_features/social_follow_content/social_follow_content.module:77
+#: modules/social_features/social_follow_content/social_follow_content.module:102
 msgid "Following"
 msgstr "Volgend"
 
-#: modules/social_features/social_follow_content/src/Plugin/ActivityContext/FollowContentActivityContext.php:9
+#: modules/social_features/social_follow_content/src/Plugin/ActivityContext/FollowContentActivityContext.php:11
 msgid "Following content activity context"
 msgstr ""
 
@@ -5773,7 +5785,7 @@ msgstr ""
 
 #: modules/social_features/social_book/config/optional/field.field.node.book.field_book_image.yml:0
 #: modules/social_features/social_event/config/install/field.field.node.event.field_event_image.yml:0
-#: modules/social_features/social_landing_page/config/install/field.field.paragraph.featured_item.field_featured_item_image.yml:0
+#: modules/social_features/social_featured_items/config/install/field.field.paragraph.featured_item.field_featured_item_image.yml:0
 #: modules/social_features/social_landing_page/config/install/field.field.paragraph.hero.field_hero_image.yml:0
 #: modules/social_features/social_landing_page/config/install/field.field.paragraph.hero_small.field_hero_small_image.yml:0
 #: modules/social_features/social_page/config/install/field.field.node.page.field_page_image.yml:0
@@ -5914,8 +5926,8 @@ msgid ""
 "open-social/private-files"
 msgstr ""
 
+#: modules/social_features/social_featured_items/config/install/field.field.paragraph.featured_items.field_featured_items_items.yml:0
 #: modules/social_features/social_landing_page/config/install/field.field.paragraph.featured.field_featured_items.yml:0
-#: modules/social_features/social_landing_page/config/install/field.field.paragraph.featured_items.field_featured_items_items.yml:0
 msgid "Items"
 msgstr ""
 
@@ -6151,9 +6163,9 @@ msgstr "Beperk zoekopdracht en mention"
 #: modules/custom/mentions/src/MentionsViewsData.php:138
 #: modules/custom/mentions/src/Form/MentionsTypeForm.php:224
 #: modules/custom/social_auth_extra/social_auth_extra.module:323
+#: modules/social_features/social_featured_items/config/install/field.field.paragraph.featured_item.field_featured_item_link.yml:0
 #: modules/social_features/social_landing_page/config/install/field.field.paragraph.block.field_block_link.yml:0
 #: modules/social_features/social_landing_page/config/install/field.field.paragraph.featured.field_featured_link.yml:0
-#: modules/social_features/social_landing_page/config/install/field.field.paragraph.featured_item.field_featured_item_link.yml:0
 msgid "Link"
 msgstr "Link"
 
@@ -6710,7 +6722,7 @@ msgstr "Naam of email bevat"
 
 #: translations.php:49
 msgid "Names and profile image"
-msgstr ""
+msgstr "Naam en profielfoto"
 
 #: modules/social_features/social_user/social_user.links.menu.yml:0
 #: modules/social_features/social_user/social_user.routing.yml:0
@@ -6749,7 +6761,7 @@ msgstr "Nieuw evenement"
 msgid "New Group"
 msgstr "Nieuwe groep"
 
-#: modules/social_features/social_landing_page/social_landing_page.module:289
+#: modules/social_features/social_landing_page/social_landing_page.module:283
 msgid "New Landing Page"
 msgstr "Nieuwe landingspagina"
 
@@ -6872,7 +6884,7 @@ msgstr "Geen groepen gevonden voor deze gebruiker"
 msgid "No likes yet"
 msgstr "Nog geen likes"
 
-#: modules/social_features/social_content_block/src/ContentBuilder.php:165
+#: modules/social_features/social_content_block/src/ContentBuilder.php:166
 msgid "No matching content found"
 msgstr ""
 
@@ -7239,7 +7251,7 @@ msgstr "Operatie"
 #: modules/social_features/social_follow_content/config/install/views.view.following.yml:0
 #: modules/social_features/social_user/config/install/views.view.user_admin_people.yml:0
 msgid "Operations"
-msgstr "Operaties"
+msgstr "Acties"
 
 #: modules/social_features/social_landing_page/config/install/field.field.paragraph.block.field_block_title.yml:0
 msgid ""
@@ -7951,6 +7963,10 @@ msgstr ""
 msgid "Provides a flexible Group featured view mode for use on landing pages."
 msgstr ""
 
+#: modules/social_features/social_featured_items/social_featured_items.info.yml:0
+msgid "Provides a shared paragraphs type for landing pages and dashboards."
+msgstr ""
+
 #: modules/social_features/social_event/modules/social_event_an_enroll/social_event_an_enroll.info.yml:0
 msgid ""
 "Provides ability to enroll to an event without having to create an account."
@@ -8416,7 +8432,7 @@ msgstr "Gerapporteerd"
 
 #: modules/social_features/social_content_report/config/install/views.view.report_overview.yml:0
 msgid "Reporter"
-msgstr "Reporter"
+msgstr "Melder"
 
 #: modules/social_features/social_content_report/config/install/views.view.report_overview.yml:0
 msgid "Reports"
@@ -9246,6 +9262,7 @@ msgstr "Sneeuwwit"
 #: modules/social_features/social_event/modules/social_event_managers/social_event_managers.info.yml:0
 #: modules/social_features/social_event/modules/social_event_max_enroll/social_event_max_enroll.info.yml:0
 #: modules/social_features/social_event/modules/social_event_type/social_event_type.info.yml:0
+#: modules/social_features/social_featured_items/social_featured_items.info.yml:0
 #: modules/social_features/social_follow_content/social_follow_content.info.yml:0
 #: modules/social_features/social_group/social_group.info.yml:0
 #: modules/social_features/social_group/modules/social_group_default_route/social_group_default_route.info.yml:0
@@ -9545,6 +9562,10 @@ msgstr "Social Evenement Type"
 #: modules/social_features/social_event/modules/social_event_type/config/schema/social_event_type.schema.yml:0
 msgid "Social Event Type settings"
 msgstr "Social Evenement Type instellingen"
+
+#: modules/social_features/social_featured_items/social_featured_items.info.yml:0
+msgid "Social Featured Items"
+msgstr ""
 
 #: modules/custom/social_file_private/social_file_private.info.yml:0
 msgid "Social File Private"
@@ -10037,7 +10058,7 @@ msgstr ""
 #: modules/social_features/social_activity/config/optional/views.view.activity_stream.yml:0
 #: modules/social_features/social_group/config/install/core.entity_view_mode.group.stream.yml:0
 msgid "Stream"
-msgstr ""
+msgstr "Tijdlijn"
 
 #: modules/custom/activity_basics/src/Plugin/ActivityDestination/StreamExploreActivityDestination.php:7
 msgid "Stream (explore)"
@@ -10121,7 +10142,7 @@ msgstr "Systeemgegevens (besturingssysteem, PHP-versie en extensies)"
 
 #: modules/custom/activity_send/modules/activity_send_email/activity_send_email.module:173
 msgid "System notifications"
-msgstr ""
+msgstr "Systeem notificaties"
 
 #: modules/social_features/social_group/modules/social_group_default_route/social_group_default_route.module:37
 msgid "Tab Management"
@@ -10947,13 +10968,13 @@ msgstr ""
 #: modules/custom/mentions/src/MentionsViewsData.php:50
 #: modules/social_features/social_profile/modules/social_profile_privacy/social_profile_privacy.module:92
 #: config/install/views.view.content.yml:0;0
+#: modules/social_features/social_featured_items/config/install/field.field.paragraph.featured_item.field_featured_item_title.yml:0
+#: modules/social_features/social_featured_items/config/install/field.field.paragraph.featured_items.field_featured_items_title.yml:0
 #: modules/social_features/social_follow_content/config/install/views.view.following.yml:0
 #: modules/social_features/social_landing_page/config/install/field.field.paragraph.accordion.field_accord_title.yml:0
 #: modules/social_features/social_landing_page/config/install/field.field.paragraph.accordion_item.field_accord_item_title.yml:0
 #: modules/social_features/social_landing_page/config/install/field.field.paragraph.block.field_block_title.yml:0
 #: modules/social_features/social_landing_page/config/install/field.field.paragraph.featured.field_featured_title.yml:0
-#: modules/social_features/social_landing_page/config/install/field.field.paragraph.featured_item.field_featured_item_title.yml:0
-#: modules/social_features/social_landing_page/config/install/field.field.paragraph.featured_items.field_featured_items_title.yml:0
 #: modules/social_features/social_landing_page/config/install/field.field.paragraph.hero.field_hero_title.yml:0
 #: modules/social_features/social_landing_page/config/install/field.field.paragraph.hero_small.field_hero_small_title.yml:0
 #: modules/social_features/social_landing_page/config/install/field.field.paragraph.introduction.field_introduction_title.yml:0
@@ -11259,7 +11280,7 @@ msgstr "UUID"
 msgid "Unfollow content"
 msgstr "Inhoud niet meer volgen"
 
-#: modules/social_features/social_follow_content/social_follow_content.module:122
+#: modules/social_features/social_follow_content/social_follow_content.module:147
 msgid "Unfollow this content"
 msgstr "Volg deze inhoud niet meer"
 
@@ -11303,7 +11324,7 @@ msgstr ""
 
 #: modules/social_features/social_comment/social_comment.module:185
 msgid "Unpublish"
-msgstr ""
+msgstr "Publicatie ongedaan maken"
 
 #: modules/social_features/social_comment/social_comment.routing.yml:0
 msgid "Unpublish Comment"
@@ -11416,7 +11437,7 @@ msgstr ""
 
 #: modules/social_features/social_landing_page/config/install/node.type.landing_page.yml:0
 msgid "Use landing pages for your dynamic content, such as a home page."
-msgstr ""
+msgstr "Gebruik landingspagina's voor dynamische inhoud, zoals de voorpagina."
 
 #: modules/custom/mentions/mentions.permissions.yml:0
 msgid "Use mentions"
@@ -11670,7 +11691,7 @@ msgstr "Reacties bekijken"
 msgid "View community Posts"
 msgstr "Community-berichten bekijken"
 
-#: modules/social_features/social_follow_content/social_follow_content.module:75
+#: modules/social_features/social_follow_content/social_follow_content.module:100
 msgid "View content I'm following"
 msgstr "De inhoud die ik volg weergeven"
 
@@ -12104,7 +12125,7 @@ msgstr ""
 msgid "You are now able to log in with @network"
 msgstr ""
 
-#: modules/social_features/social_follow_content/social_follow_content.module:124
+#: modules/social_features/social_follow_content/social_follow_content.module:149
 msgid "You are now automatically following this @type. @unfollow_link."
 msgstr "Je volgt nu automatisch dit @type. @unfollow_link."
 
@@ -12154,7 +12175,7 @@ msgstr ""
 
 #: modules/social_features/social_event/social_event.module:208
 msgid "You have enrolled"
-msgstr ""
+msgstr "U bent aangemeld"
 
 #: modules/social_features/social_event/src/Plugin/Block/EnrollActionBlock.php:119
 msgid "You have enrolled for this event."
@@ -12195,7 +12216,7 @@ msgid_plural "You have received <strong>:count</strong> notifications"
 msgstr[0] "Je hebt <strong>:count</strong> notificatie ontvangen"
 msgstr[1] "Je hebt <strong>:count</strong> notificaties ontvangen"
 
-#: modules/social_features/social_follow_content/social_follow_content.module:58
+#: modules/social_features/social_follow_content/social_follow_content.module:83
 msgid ""
 "You have successfully enrolled to this event. Also you are now following the "
 "event, which means you will receive notifications when a new comment is "
@@ -12721,7 +12742,7 @@ msgstr ""
 
 #: modules/social_features/social_core/social_core.module:216;230;237;244
 msgid "in the community"
-msgstr "in de community"
+msgstr "binnen de community"
 
 #: modules/social_features/social_core/social_core.module:285;294;304
 msgid "in the group"
@@ -12841,7 +12862,7 @@ msgstr "openbaar"
 
 #: modules/social_features/social_post/src/PostListBuilder.php:43
 msgid "published"
-msgstr ""
+msgstr "gepubliceerd"
 
 #: modules/custom/activity_creator/activity_creator.routing.yml:0
 msgid "readNotifications"
