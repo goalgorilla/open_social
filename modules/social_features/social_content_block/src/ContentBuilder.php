@@ -310,7 +310,15 @@ class ContentBuilder implements ContentBuilderInterface {
       // Creates a join to select the number of comments for a given entity
       // in a recent timeframe and use that for sorting.
       case 'most_commented':
-        $query->leftJoin('comment_field_data', 'cfd', "base_table.${entity_id_key} = cfd.entity_id AND cfd.entity_type=:entity_type", ['entity_type' => $entity_type_id]);
+        if ($entity_type_id === 'group') {
+          $query->leftJoin('post__field_recipient_group', 'pfrg', "base_table.${entity_id_key} = pfrg.field_recipient_group_target_id");
+          $query->leftJoin('comment_field_data', 'cfd', "(base_table.${entity_id_key} = cfd.entity_id AND cfd.entity_type=:entity_type) OR (pfrg.entity_id = cfd.entity_id AND cfd.entity_type='post')", ['entity_type' => $entity_type_id]);
+        }
+        // Otherwise only check direct votes.
+        elseif ($entity_type_id === 'node') {
+          $query->leftJoin('comment_field_data', 'cfd', "base_table.${entity_id_key} = cfd.entity_id AND cfd.entity_type=:entity_type", ['entity_type' => $entity_type_id]);
+        }
+
         $query->addExpression('COUNT(cfd.cid)', 'comment_count');
         $query
           ->condition('cfd.status', 1, '=')
@@ -322,7 +330,15 @@ class ContentBuilder implements ContentBuilderInterface {
       // Creates a join to select the number of likes for a given entity in a
       // recent timeframe and use that for sorting.
       case 'most_liked':
-        $query->leftJoin('votingapi_vote', 'vv', "base_table.${entity_id_key} = vv.entity_id AND vv.entity_type=:entity_type", ['entity_type' => $entity_type_id]);
+        // For groups also check likes on posts in groups. This does not (yet) take into account likes on comments on posts or likes on other group content entities.
+        if ($entity_type_id === 'group') {
+          $query->leftJoin('post__field_recipient_group', 'pfrg', "base_table.${entity_id_key} = pfrg.field_recipient_group_target_id");
+          $query->leftJoin('votingapi_vote', 'vv', "(base_table.${entity_id_key} = vv.entity_id AND vv.entity_type=:entity_type) OR (pfrg.entity_id = vv.entity_id AND vv.entity_type='post')", ['entity_type' => $entity_type_id]);
+        }
+        // Otherwise only check direct votes.
+        elseif ($entity_type_id === 'node') {
+          $query->leftJoin('votingapi_vote', 'vv', "base_table.${entity_id_key} = vv.entity_id AND vv.entity_type=:entity_type", ['entity_type' => $entity_type_id]);
+        }
         $query->addExpression('COUNT(vv.id)', 'vote_count');
         // This assumes all votes are likes and all likes are equal. To
         // support downvoting or rating, the query should be altered.
@@ -331,54 +347,37 @@ class ContentBuilder implements ContentBuilderInterface {
           ->condition('vv.timestamp', $popularity_time_start, '>')
           ->groupBy("base_table.${entity_id_key}")
           ->orderBy('vote_count', 'DESC');
-
         break;
 
       // Creates a join that pulls in all related entities, taking the highest
       // update time for all related entities as last interaction time and using
       // that as sort value.
       case 'last_interacted':
-        if ($entity_type === 'group') {
-          $query->leftJoin('group_content_field_data', "base_table.${entity_id_key} = gfd.gid");
-
-          $query->leftJoin('votingapi_vote', 'vv', 'gfd.entity_id = vv.entity_id');
-          $query->leftjoin('comment_field_data', 'cfd', 'gfd.entity_id = cfd.entity_id');
-          $query->leftjoin('node_field_data', 'nfd', 'gfd.entity_id = nfd.nid');
-
-          // Create or update post.
-          $query->leftjoin('post__field_recipient_group', 'pst', 'gfd.gid = pst.field_recipient_group_target_id');
+        if ($entity_type_id === 'group') {
+          $query->leftJoin('group_content_field_data', 'gfd',"base_table.${entity_id_key} = gfd.gid");
+          $query->leftjoin('post__field_recipient_group', 'pst', "base_table.${entity_id_key} = pst.field_recipient_group_target_id");
           $query->leftjoin('post_field_data', 'pfd', 'pst.entity_id = pfd.id');
-          // Create or update comment for the post.
-          $query->leftjoin('comment_field_data', 'cfdp', 'pfd.id = cfdp.entity_id');
-          // Like post.
-          $query->leftjoin('votingapi_vote', 'vvp', 'pfd.id = vvp.entity_id');
-          // Like comment related to node.
-          $query->leftjoin('votingapi_vote', 'vvn', 'cfd.cid = vvn.entity_id');
+          $query->leftjoin('comment_field_data', 'cfd', '(gfd.entity_id = cfd.entity_id) OR (pfd.id = cfd.entity_id)');
+          $query->leftJoin('votingapi_vote', 'vv', '(gfd.entity_id = vv.entity_id) OR (pfd.id = vv.entity_id) OR (cfd.cid = vv.entity_id)');
+          $query->leftjoin('node_field_data', 'nfd', 'gfd.entity_id = nfd.nid');
 
           $query->addExpression('GREATEST(COALESCE(MAX(gfd.changed), 0),
             COALESCE(MAX(vv.timestamp), 0),
             COALESCE(MAX(cfd.changed), 0),
             COALESCE(MAX(nfd.changed), 0),
-            COALESCE(MAX(pfd.changed), 0),
-            COALESCE(MAX(cfdp.changed), 0),
-            COALESCE(MAX(vvp.timestamp), 0),
-            COALESCE(MAX(vvn.timestamp), 0))', 'newest_timestamp');
+            COALESCE(MAX(pfd.changed), 0))', 'newest_timestamp');
 
           $query->groupBy("base_table.${entity_id_key}");
           $query->orderBy('newest_timestamp', 'DESC');
         }
-        elseif ($entity_type === 'node') {
+        elseif ($entity_type_id === 'node') {
           $query->leftJoin('node_field_data', 'nfd', "base_table.${entity_id_key} = nfd.nid");
-
           // Comment entity.
           $query->leftjoin('comment_field_data', 'cfd', 'nfd.nid = cfd.entity_id');
-          // Like node.
-          $query->leftjoin('votingapi_vote', 'vv', 'nfd.nid = vv.entity_id');
-          // Like comment related to node.
-          $query->leftjoin('votingapi_vote', 'vvn', 'cfd.cid = vvn.entity_id');
+          // Like node or comment related to node.
+          $query->leftjoin('votingapi_vote', 'vv', '(nfd.nid = vv.entity_id) OR (cfd.cid = vv.entity_id)');
 
           $query->addExpression('GREATEST(COALESCE(MAX(vv.timestamp), 0),
-          COALESCE(MAX(vvn.timestamp), 0),
           COALESCE(MAX(cfd.changed), 0),
           COALESCE(MAX(nfd.changed), 0))', 'newest_timestamp');
 
