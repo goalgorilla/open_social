@@ -17,9 +17,8 @@ third_party_settings:
     group_display_options:
       children:
         - field_sorting
-        - field_item_amount
       parent_name: ''
-      weight: 9
+      weight: 11
       format_type: fieldset
       format_settings:
         label: Sorting
@@ -33,6 +32,7 @@ third_party_settings:
       children:
         - field_plugin_id
         - field_plugin_field
+        - field_item_amount
       parent_name: ''
       weight: 3
       format_type: fieldset
@@ -64,14 +64,14 @@ bundle: custom_content_list
 mode: default
 content:
   field_item_amount:
-    weight: 11
+    weight: 10
     settings:
       placeholder: ''
     third_party_settings: {  }
     type: number
     region: content
   field_link:
-    weight: 12
+    weight: 13
     settings:
       placeholder_url: ''
       placeholder_title: ''
@@ -91,7 +91,7 @@ content:
     type: content_block_plugin_id
     region: content
   field_sorting:
-    weight: 10
+    weight: 12
     settings: {  }
     third_party_settings: {  }
     type: options_select

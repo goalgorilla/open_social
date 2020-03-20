@@ -366,3 +366,18 @@ function social_content_block_update_8004() {
   $config->setData($config_data)->save();
   \Drupal::service('entity_field.manager')->clearCachedFieldDefinitions();
 }
+
+/**
+ * Move the "Number of items" field to the "Content" section.
+ */
+function social_content_block_update_8005() {
+  /** @var \Drupal\update_helper\UpdaterInterface $update_helper */
+  $update_helper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $update_helper->executeUpdate('social_content_block', 'social_content_block_update_8005');
+
+  // Output logged messages to related channel of update execution.
+  return $update_helper->logger()->output();
+}
+
