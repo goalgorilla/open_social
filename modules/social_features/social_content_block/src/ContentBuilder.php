@@ -312,14 +312,15 @@ class ContentBuilder implements ContentBuilderInterface {
       case 'most_commented':
         if ($entity_type_id === 'group') {
           $query->leftJoin('post__field_recipient_group', 'pfrg', "base_table.${entity_id_key} = pfrg.field_recipient_group_target_id");
-          $query->leftJoin('comment_field_data', 'cfd', "(base_table.${entity_id_key} = cfd.entity_id AND cfd.entity_type=:entity_type) OR (pfrg.entity_id = cfd.entity_id AND cfd.entity_type='post')", ['entity_type' => $entity_type_id]);
+          $query->leftJoin('group_content_field_data', 'gfd', "base_table.${entity_id_key} = gfd.gid");
+          $query->leftJoin('comment_field_data', 'cfd', "(base_table.${entity_id_key} = cfd.entity_id AND cfd.entity_type=:entity_type) OR (pfrg.entity_id = cfd.entity_id AND cfd.entity_type='post') OR (gfd.entity_id = cfd.entity_id AND cfd.entity_type='node')", ['entity_type' => $entity_type_id]);
         }
         // Otherwise only check direct votes.
-        elseif ($entity_type_id === 'node') {
+        else {
           $query->leftJoin('comment_field_data', 'cfd', "base_table.${entity_id_key} = cfd.entity_id AND cfd.entity_type=:entity_type", ['entity_type' => $entity_type_id]);
         }
 
-        $query->addExpression('COUNT(cfd.cid)', 'comment_count');
+        $query->addExpression('COUNT(distinct cfd.cid)', 'comment_count');
         $query
           ->condition('cfd.status', 1, '=')
           ->condition('cfd.created', $popularity_time_start, '>')
@@ -333,13 +334,14 @@ class ContentBuilder implements ContentBuilderInterface {
         // For groups also check likes on posts in groups. This does not (yet) take into account likes on comments on posts or likes on other group content entities.
         if ($entity_type_id === 'group') {
           $query->leftJoin('post__field_recipient_group', 'pfrg', "base_table.${entity_id_key} = pfrg.field_recipient_group_target_id");
-          $query->leftJoin('votingapi_vote', 'vv', "(base_table.${entity_id_key} = vv.entity_id AND vv.entity_type=:entity_type) OR (pfrg.entity_id = vv.entity_id AND vv.entity_type='post')", ['entity_type' => $entity_type_id]);
+          $query->leftJoin('group_content_field_data', 'gfd', "base_table.${entity_id_key} = gfd.gid");
+          $query->leftJoin('votingapi_vote', 'vv', "(base_table.${entity_id_key} = vv.entity_id AND vv.entity_type=:entity_type) OR (pfrg.entity_id = vv.entity_id AND vv.entity_type = 'post') OR (gfd.entity_id = vv.entity_id AND vv.entity_type = 'node')", ['entity_type' => $entity_type_id]);
         }
         // Otherwise only check direct votes.
-        elseif ($entity_type_id === 'node') {
+        else {
           $query->leftJoin('votingapi_vote', 'vv', "base_table.${entity_id_key} = vv.entity_id AND vv.entity_type=:entity_type", ['entity_type' => $entity_type_id]);
         }
-        $query->addExpression('COUNT(vv.id)', 'vote_count');
+        $query->addExpression('COUNT(distinct vv.id)', 'vote_count');
         // This assumes all votes are likes and all likes are equal. To
         // support downvoting or rating, the query should be altered.
         $query
@@ -357,8 +359,8 @@ class ContentBuilder implements ContentBuilderInterface {
           $query->leftJoin('group_content_field_data', 'gfd',"base_table.${entity_id_key} = gfd.gid");
           $query->leftjoin('post__field_recipient_group', 'pst', "base_table.${entity_id_key} = pst.field_recipient_group_target_id");
           $query->leftjoin('post_field_data', 'pfd', 'pst.entity_id = pfd.id');
-          $query->leftjoin('comment_field_data', 'cfd', '(gfd.entity_id = cfd.entity_id) OR (pfd.id = cfd.entity_id)');
-          $query->leftJoin('votingapi_vote', 'vv', '(gfd.entity_id = vv.entity_id) OR (pfd.id = vv.entity_id) OR (cfd.cid = vv.entity_id)');
+          $query->leftjoin('comment_field_data', 'cfd', "(gfd.entity_id = cfd.entity_id AND cfd.entity_type = 'node') OR (pfd.id = cfd.entity_id AND cfd.entity_type = 'post')");
+          $query->leftJoin('votingapi_vote', 'vv', "(gfd.entity_id = vv.entity_id AND vv.entity_type = 'node') OR (pfd.id = vv.entity_id AND vv.entity_type = 'post') OR (cfd.cid = vv.entity_id AND vv.entity_type = 'comment')");
           $query->leftjoin('node_field_data', 'nfd', 'gfd.entity_id = nfd.nid');
 
           $query->addExpression('GREATEST(COALESCE(MAX(gfd.changed), 0),
@@ -375,7 +377,7 @@ class ContentBuilder implements ContentBuilderInterface {
           // Comment entity.
           $query->leftjoin('comment_field_data', 'cfd', 'nfd.nid = cfd.entity_id');
           // Like node or comment related to node.
-          $query->leftjoin('votingapi_vote', 'vv', '(nfd.nid = vv.entity_id) OR (cfd.cid = vv.entity_id)');
+          $query->leftjoin('votingapi_vote', 'vv', '(nfd.nid = vv.entity_id AND vv.entity_type = :entity_type_id) OR (cfd.cid = vv.entity_id)', ['entity_type_id' => $entity_type_id]);
 
           $query->addExpression('GREATEST(COALESCE(MAX(vv.timestamp), 0),
           COALESCE(MAX(cfd.changed), 0),
