@@ -357,21 +357,6 @@ function social_content_block_update_8004() {
     'value' => 'most_liked',
     'label' => 'Most liked',
   ];
-
-  $config_data['settings']['allowed_values'] = $allowed_values;
-  $config->setData($config_data)->save();
-  \Drupal::service('entity_field.manager')->clearCachedFieldDefinitions();
-}
-
-/**
- * Add a last interacted as an extra allowed value to the sorting field.
- */
-function social_content_block_update_8005() {
-  $config_name = 'field.storage.block_content.field_sorting';
-  $config = \Drupal::configFactory()->getEditable($config_name);
-  $config_data = $config->getRawData();
-  $allowed_values = $config_data['settings']['allowed_values'];
-
   $allowed_values[] = [
     'value' => 'last_interacted',
     'label' => 'Last interacted',
