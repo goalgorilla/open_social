@@ -24,18 +24,6 @@ function social_event_install() {
 }
 
 /**
- * Implements hook_update_dependencies().
- */
-function social_event_update_dependencies() {
-  // Run the event request enrollment update after the features removal ran.
-  $dependencies['social_event'][8802] = [
-    'social_core' => 8802,
-  ];
-
-  return $dependencies;
-}
-
-/**
  * Function to set permissions.
  */
 function _social_event_set_permissions() {
@@ -132,6 +120,18 @@ function _social_event_create_menu_links() {
 }
 
 /**
+ * Implements hook_update_dependencies().
+ */
+function social_event_update_dependencies() {
+  // New config changes should run after the features removal/revert.
+  $dependencies['social_event'][8802] = [
+    'social_core' => 8805,
+  ];
+
+  return $dependencies;
+}
+
+/**
  * Enable event enrolling of open groups for not member.
  */
 function social_event_update_8001() {
@@ -183,9 +183,37 @@ function social_event_update_8801() {
 }
 
 /**
+ * Remove public group from event.small_teaser.
+ */
+function social_event_update_8802() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_event', 'social_event_update_8802');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Update view mode for new small teaser style.
+ */
+function social_event_update_8803() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_event', 'social_event_update_8803');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
  * Install new fields for the request to join event.
  */
-function social_event_update_8802(&$sandbox) {
+function social_event_update_8804(&$sandbox) {
   if (!isset($sandbox['total'])) {
 
     // Install new fields:
@@ -1324,12 +1352,12 @@ function social_event_update_8802(&$sandbox) {
 /**
  * Node event and views changes for the social_event request enrollment feature.
  */
-function social_event_update_8803() {
+function social_event_update_8805() {
   /** @var \Drupal\update_helper\Updater $updateHelper */
   $updateHelper = \Drupal::service('update_helper.updater');
 
   // Execute configuration update definitions with logging of success.
-  $updateHelper->executeUpdate('social_event', 'social_event_update_8803');
+  $updateHelper->executeUpdate('social_event', 'social_event_update_8805');
 
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
@@ -1338,7 +1366,7 @@ function social_event_update_8803() {
 /**
  * Grant CM+ with 'manage event enrollment requests' permission.
  */
-function social_event_update_8804() {
+function social_event_update_8806() {
   $roles = Role::loadMultiple();
   /** @var \Drupal\user\Entity\Role $role */
   foreach ($roles as $role) {
