@@ -343,6 +343,7 @@ function social_landing_page_update_8803() {
   // for Fields and FieldStorage we need to do better.
   $new_config = _social_landing_page_featured_items_config();
   foreach ($new_config as $name => $data) {
+    $parts = explode('.', $name);
     switch ($parts[0] . '.' . $parts[1]) {
       case 'field.storage':
         FieldStorageConfig::create($data)->save();
