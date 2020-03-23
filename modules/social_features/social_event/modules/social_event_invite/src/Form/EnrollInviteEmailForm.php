@@ -5,6 +5,7 @@ namespace Drupal\social_event_invite\Form;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\social_core\Form\InviteEmailBaseForm;
 use Drupal\social_event\Entity\EventEnrollment;
+use Drupal\user\UserInterface;
 
 /**
  * Class EnrollInviteForm.
@@ -52,14 +53,25 @@ class EnrollInviteEmailForm extends InviteEmailBaseForm {
     $nid = $form_state->getValue('event');
 
     foreach ($emails as $email) {
-      // Default event enrollment field set.
+      $user = user_load_by_mail($email);
+
+      // Default values.
       $fields = [
         'field_event' => $nid,
         'field_enrollment_status' => '0',
         'field_request_status' => 'invited',
-        'field_email' => $email,
       ];
 
+      if ($user instanceof UserInterface) {
+        // Add user information.
+        $fields['user_id'] = $user->id();
+        $fields['field_account'] = $user->id();
+      }
+      else {
+        // Add email address.
+        $fields['field_email'] = $email;
+      }
+      
       // Create a new enrollment for the event.
       $enrollment = EventEnrollment::create($fields);
       $enrollment->save();

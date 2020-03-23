@@ -2,6 +2,7 @@
 
 namespace Drupal\social_core\Form;
 
+use Drupal\Component\Render\FormattableMarkup;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
@@ -30,13 +31,6 @@ class InviteEmailBaseForm extends FormBase {
   protected $entityTypeManager;
 
   /**
-   * The tempstore factory.
-   *
-   * @var \Drupal\Core\TempStore\PrivateTempStoreFactory
-   */
-  protected $tempStoreFactory;
-
-  /**
    * The logger factory.
    *
    * @var \Drupal\Core\Logger\LoggerChannelFactoryInterface
@@ -50,20 +44,16 @@ class InviteEmailBaseForm extends FormBase {
    *   The route match.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity type manager.
-   * @param \Drupal\Core\TempStore\PrivateTempStoreFactory $temp_store_factory
-   *   The tempstore factory.
    * @param \Drupal\Core\Logger\LoggerChannelFactoryInterface $logger_factory
    *   The logger factory service.
    */
   public function __construct(
     RouteMatchInterface $route_match,
     EntityTypeManagerInterface $entity_type_manager,
-    PrivateTempStoreFactory $temp_store_factory,
     LoggerChannelFactoryInterface $logger_factory
   ) {
     $this->routeMatch = $route_match;
     $this->entityTypeManager = $entity_type_manager;
-    $this->tempStoreFactory = $temp_store_factory;
     $this->loggerFactory = $logger_factory;
     $this->group = $this->routeMatch->getParameter('group');
   }
@@ -75,7 +65,6 @@ class InviteEmailBaseForm extends FormBase {
     return new static(
       $container->get('current_route_match'),
       $container->get('entity_type.manager'),
-      $container->get('tempstore.private'),
       $container->get('logger.factory')
     );
   }
