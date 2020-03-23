@@ -359,8 +359,11 @@ function social_landing_page_update_8803() {
         break;
 
       default:
-        // Insert newly created config in the storage.
-        \Drupal::service('config.storage')->write($name, $data);
+        // Fallback similar to before.
+        \Drupal::configFactory()
+          ->getEditable($name)
+          ->setData($data)
+          ->save(TRUE);
     }
   }
 }
