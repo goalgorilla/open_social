@@ -258,24 +258,17 @@ class ContentBuilder implements ContentBuilderInterface {
     $selector = $content_block_manager->getSelector('field_plugin_id', 'value');
 
     foreach ($content_block_manager->getDefinitions() as $plugin_id => $plugin_definition) {
-      $fields = &$element['field_plugin_field']['widget'][0][$plugin_id]['#options'];
-
-      foreach ($fields as $field_name => $field_title) {
-        // When the filter field was absent during executing the code of the
-        // field widget plugin for the filters list field then process this
-        // field repeatedly.
-        // @see \Drupal\social_content_block\Plugin\Field\FieldWidget\ContentBlockPluginFieldWidget::formElement()
-        if ($field_name === $field_title) {
-          $fields[$field_name] = $element[$field_name]['widget']['target_id']['#title'];
-
+      foreach ($plugin_definition['fields'] as $field_name) {
+        if (!isset($element[$field_name]['#states'])) {
           $element[$field_name]['#states'] = [
             'visible' => [
               $selector => [
                 'value' => $plugin_id,
               ],
+            ],
+            'disabled' => [
               $content_block_manager->getSelector('field_plugin_field', $plugin_id) => [
-                ['value' => 'all'],
-                ['value' => $field_name],
+                'checked' => TRUE,
               ],
             ],
           ];

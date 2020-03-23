@@ -1,0 +1,47 @@
+core.entity_form_display.block_content.custom_content_list.default:
+  expected_config:
+    content:
+      field_plugin_field:
+        region: content
+        settings: {  }
+        third_party_settings: {  }
+        type: content_block_plugin_field
+        weight: 5
+    third_party_settings:
+      field_group:
+        group_filter_options:
+          children:
+            - field_plugin_field
+  update_actions:
+    change:
+      content:
+        field_plugin_filters:
+          region: content
+          settings: {  }
+          third_party_settings: {  }
+          type: content_block_plugin_filters
+          weight: 5
+      third_party_settings:
+        field_group:
+          group_filter_options:
+            children:
+              - field_plugin_filters
+    delete:
+      content:
+        field_plugin_field: {  }
+      third_party_settings:
+        field_group:
+          group_filter_options:
+            children:
+              - field_plugin_field
+core.entity_view_display.block_content.custom_content_list.default:
+  expected_config:
+    hidden:
+      field_plugin_field: true
+  update_actions:
+    add:
+      hidden:
+        field_plugin_filters: true
+    delete:
+      hidden:
+        field_plugin_field: true
