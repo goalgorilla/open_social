@@ -113,7 +113,7 @@ function social_group_request_module_implements_alter(&$implementations, $hook) 
 /**
  * Implements hook_preprocess_group().
  */
-function social_group_request_preprocess_group__hero(&$variables) {
+function social_group_request_preprocess_group(&$variables) {
   /** @var \Drupal\group\Entity\GroupInterface $group */
   $group = $variables['group'];
   $group_type = $group->getGroupType();
