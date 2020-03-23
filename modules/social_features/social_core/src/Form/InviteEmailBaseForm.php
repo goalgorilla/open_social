@@ -14,7 +14,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Class InviteBaseForm.
  */
-class InviteBaseForm extends FormBase {
+class InviteEmailBaseForm extends FormBase {
   /**
    * The route match.
    *
@@ -84,7 +84,7 @@ class InviteBaseForm extends FormBase {
    * {@inheritdoc}
    */
   public function getFormId() {
-    return 'invite_base_form';
+    return 'invite_email_base_form';
   }
 
   /**
@@ -168,7 +168,7 @@ class InviteBaseForm extends FormBase {
    * @return array
    *   List of emails to invite .
    */
-  private function getSubmittedEmails(FormStateInterface $form_state) {
+  public function getSubmittedEmails(FormStateInterface $form_state) {
     return array_map(
       'trim',
       array_unique(
