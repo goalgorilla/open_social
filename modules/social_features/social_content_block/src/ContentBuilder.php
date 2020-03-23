@@ -356,7 +356,7 @@ class ContentBuilder implements ContentBuilderInterface {
       // that as sort value.
       case 'last_interacted':
         if ($entity_type_id === 'group') {
-          $query->leftJoin('group_content_field_data', 'gfd',"base_table.${entity_id_key} = gfd.gid");
+          $query->leftJoin('group_content_field_data', 'gfd', "base_table.${entity_id_key} = gfd.gid");
           $query->leftjoin('post__field_recipient_group', 'pst', "base_table.${entity_id_key} = pst.field_recipient_group_target_id");
           $query->leftjoin('post_field_data', 'pfd', 'pst.entity_id = pfd.id');
           $query->leftjoin('comment_field_data', 'cfd', "(gfd.entity_id = cfd.entity_id AND cfd.entity_type = 'node') OR (pfd.id = cfd.entity_id AND cfd.entity_type = 'post')");
