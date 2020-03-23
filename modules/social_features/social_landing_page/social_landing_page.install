@@ -6,6 +6,9 @@
  */
 
 use Drupal\Core\Extension\Extension;
+use Drupal\field\Entity\FieldConfig;
+use Drupal\field\Entity\FieldStorageConfig;
+use Drupal\field\FieldConfigInterface;
 use Drupal\user\Entity\Role;
 
 /**
@@ -152,7 +155,23 @@ function social_landing_page_update_8802() {
   // module. This is done in this module because we also enable the
   // social_featured_items module. If that module is enabled through another
   // module then that will take care of the module installation.
-  $configs = [
+  $configs = _social_landing_page_featured_items_config();
+
+  foreach ($configs as $name => $config) {
+    \Drupal::configFactory()
+      ->getEditable($name)
+      ->setData($config)
+      ->save(TRUE);
+  }
+}
+
+/**
+ * Returns the featured item block config details.
+ *
+ * @return array
+ */
+function _social_landing_page_featured_items_config() {
+  return [
     'block_content.type.featured_items' => [
       'langcode' => 'en',
       'status' => TRUE,
@@ -306,11 +325,42 @@ function social_landing_page_update_8802() {
       ],
     ],
   ];
+}
+
+/**
+ * Update fields for featured items.
+ */
+function social_landing_page_update_8803() {
+  // Delete our last attempt in reverse order.
+  $configs = array_reverse(_social_landing_page_featured_items_config());
 
   foreach ($configs as $name => $config) {
-    \Drupal::configFactory()
-      ->getEditable($name)
-      ->setData($config)
-      ->save(TRUE);
+    \Drupal::configFactory()->getEditable($name)->delete();
+  }
+
+  // Re-create it now with better usage of config.
+  // In the last we used the ConfigInterface
+  // for Fields and FieldStorage we need to do better.
+  $new_config = _social_landing_page_featured_items_config();
+  foreach ($new_config as $name => $data) {
+    switch ($parts[0] . '.' . $parts[1]) {
+      case 'field.storage':
+        FieldStorageConfig::create($data)->save();
+        break;
+
+      case 'field.field':
+        $field_config = FieldConfig::loadByName($parts[2], $parts[3], $parts[4]);
+
+        if (!$field_config instanceof FieldConfigInterface) {
+          $field_config = FieldConfig::create($data);
+        }
+
+        $field_config->save();
+        break;
+
+      default:
+        // Insert newly created config in the storage.
+        \Drupal::service('config.storage')->write($name, $data);
+    }
   }
 }
