@@ -326,21 +326,18 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $current_user = $this->currentUser;
     $uid = $current_user->id();
-
     $nid = $form_state->getValue('event');
+    $node = $this->entityTypeManager->getStorage('node')->load($nid);
 
     // Redirect anonymous use to login page before enrolling to an event.
     if ($current_user->isAnonymous()) {
-      $node_url = Url::fromRoute('entity.node.canonical', ['node' => $nid])
-        ->toString();
-      $form_state->setRedirect('user.login',
-        [],
-        [
-          'query' => [
-            'destination' => $node_url,
-          ],
-        ]
-      );
+      $node_url = Url::fromRoute('entity.node.canonical', ['node' => $nid])->toString();
+      $destination = $node_url;
+      // If the request enroll method is set, alter the destination for AN.
+      if ($node->get('field_enroll_method')->value === '2') {
+        $destination = $node_url . '?requested-enrollment=TRUE';
+      }
+      $form_state->setRedirect('user.login', [], ['query' => ['destination' => $destination]]);
 
       // Check if user can register accounts.
       if ($this->configFactory->get('user.settings')->get('register') != USER_REGISTER_ADMINISTRATORS_ONLY) {

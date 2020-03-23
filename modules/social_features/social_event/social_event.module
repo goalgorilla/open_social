@@ -840,3 +840,37 @@ function social_event_preprocess_views_view(&$variables) {
     ];
   }
 }
+
+/**
+ * Implements hook_preprocess_page().
+ */
+function social_event_preprocess_page(array &$variables) {
+  /** @var \Drupal\Core\Routing\AdminContext $admin_context */
+  $admin_context = \Drupal::service('router.admin_context');
+  // Don't add the modal for admin pages.
+  if ($admin_context->isAdminRoute()) {
+    return;
+  }
+  // Get current event.
+  $node = social_event_get_current_event();
+  $requested = \Drupal::request()->query->get('requested-enrollment');
+  // Only show the modal if the request method is set on this node
+  // and if the 'requested-enrollment' parameter is TRUE.
+  if ($node instanceof Node && $node->get('field_enroll_method')->value === '2' && $requested) {
+    $url = Url::fromRoute('social_event.request_enroll_dialog', ['node' => $node->id()]);
+    $link = Link::fromTextAndUrl('', $url)->toRenderable();
+    $link['#attributes'] = [
+      'id' => 'modal-trigger',
+      'class' => [
+        'use-ajax',
+        'hidden',
+      ],
+    ];
+    // Attach link and libraries.
+    $variables['page']['content']['eventEnrollmentRequest'] = $link;
+    $variables['page']['content']['eventEnrollmentRequest']['#attached']['library'] = [
+      'core/drupal.dialog.ajax',
+      'social_event/modal',
+    ];
+  }
+}
