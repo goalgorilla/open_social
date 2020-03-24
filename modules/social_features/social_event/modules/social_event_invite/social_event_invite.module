@@ -4,3 +4,71 @@
  * @file
  * The Social event invite enroll module.
  */
+
+use Drupal\Core\Render\BubbleableMetadata;
+use Drupal\Core\Url;
+use Drupal\social_event\EventEnrollmentInterface;
+
+/**
+ * Sends email when invitation created for not registered user.
+ *
+ * Implements hook_ENTITY_TYPE_insert().
+ */
+function social_event_invite_event_enrollment_insert(EventEnrollmentInterface $eventEnrollment) {
+  $messenger = \Drupal::messenger();
+
+  $mail = $eventEnrollment->get('field_email')->getString();
+
+  $mailManager = \Drupal::service('plugin.manager.mail');
+  $from = \Drupal::config('system.site')->get('mail');
+  $params = [
+    'user' => $from,
+    'existing_user' => FALSE,
+  ];
+
+  $langcode = 'en';
+  
+  $mailManager->mail('social_event_invite', 'invite', $mail, $langcode, $params, NULL, TRUE);
+  $messenger->addMessage(t('Invite sent to %mail', ['%mail' => $mail]));
+
+}
+
+/**
+ * Implements hook_mail().
+ *
+ * This mail is sent when people who do not have an account on the website yet
+ * are invited into an event. It is sent in the language the inviter was using
+ * the website in.
+ *
+ */
+function social_event_invite_mail($key, &$message, $params) {
+  if ($key == 'invite') {
+    $token_service = \Drupal::token();
+    $language_manager = \Drupal::languageManager();
+
+    // Get email from GroupInvitation.
+    $event = $params['event'];
+    $langcode = $message['langcode'];
+
+    $language = $language_manager->getLanguage($langcode);
+    $original_language = $language_manager->getConfigOverrideLanguage();
+    $language_manager->setConfigOverrideLanguage($language);
+
+    // Load event invite configuration
+    $invite_config = \Drupal::service('config.factory')->getEditable('social_event_invite.settings');
+
+    $invitation_subject = $invite_config->get('invite_subject');
+    $invitation_body = $invite_config->get('invite_message');
+
+    unset($params['existing_user']);
+
+    $body = $token_service->replace($invitation_body, $params);
+    $subject = $token_service->replace($invitation_subject, $params);
+
+    $message['subject'] = $subject;
+    $message['body'][] = $body;
+
+    $language_manager->setConfigOverrideLanguage($original_language);
+
+  }
+}

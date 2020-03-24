@@ -1,4 +1,4 @@
-social_event_invite.invite:
+social_event_invite.invite_email:
   path: '/node/{node}/invite/email'
   defaults:
     _form: '\Drupal\social_event_invite\Form\EnrollInviteEmailForm'
@@ -9,3 +9,23 @@ social_event_invite.invite:
         type: entity:node
   requirements:
     _permission: 'access content'
+social_event_invite.invite_user:
+  path: '/node/{node}/invite/user'
+  defaults:
+    _form: '\Drupal\social_event_invite\Form\EnrollInviteUserForm'
+    _title: 'Invite people'
+  options:
+    parameters:
+      node:
+        type: entity:node
+  requirements:
+    _permission: 'access content'
+social_event_invite.settings:
+  path: '/admin/config/opensocial/event_invite'
+  defaults:
+    _form: '\Drupal\social_event_invite\Form\EventInviteSettingsForm'
+    _title: 'Event settings'
+  requirements:
+    _permission: 'administer social_event settings'
+  options:
+    _admin_route: TRUE

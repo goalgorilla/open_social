@@ -1,0 +1,37 @@
+uuid: b6d706f6-99a9-4748-86f4-ef52bfc586e2
+langcode: en
+status: true
+dependencies:
+  module:
+    - activity_logger
+third_party_settings:
+  activity_logger:
+    activity_bundle_entities:
+      event_enrollment-event_enrollment: event_enrollment-event_enrollment
+    activity_action: create_entitiy_action
+    activity_context: event_invite_activity_context
+    activity_destinations:
+      notifications: notifications
+      email: email
+    activity_create_direct: false
+    activity_aggregate: false
+    activity_entity_condition: ''
+template: invite_event_enrollment
+label: 'Invite event enrollment'
+description: 'A user got an invite for an event'
+text:
+  -
+    value: "<p>You got invited for the event [social_event:enrolled_event_url] on [site:name]. Follow the link to give your response.</p>\r\n"
+    format: full_html
+  -
+    value: "<p>You got invited for the event [social_event:enrolled_event_url] on [site:name]. Follow the link to give your response.</p>\r\n"
+    format: full_html
+  -
+    value: "<p>You got invited for the event [social_event:enrolled_event_url] on [site:name]. Follow the link to give your response.</p>\r\n"
+    format: full_html
+settings:
+  'token options':
+    clear: false
+    'token replace': true
+  purge_override: false
+  purge_methods: {  }
