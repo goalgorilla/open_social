@@ -97,8 +97,9 @@ class SocialInviteLocalActionsBlock extends BlockBase implements ContainerFactor
    */
   public function getCacheContexts() {
     $cache_contexts = parent::getCacheContexts();
-    $cache_contexts[] = 'user';
+    $cache_contexts[] = 'user.group_permissions';
     $cache_contexts[] = 'group';
+    $cache_contexts[] = 'route.group';
     return $cache_contexts;
   }
 
@@ -111,6 +112,7 @@ class SocialInviteLocalActionsBlock extends BlockBase implements ContainerFactor
 
     if ($group instanceof GroupInterface) {
       $cache_tags[] = 'group:' . $group->id();
+      $cache_tags[] = 'group_content_type_list';
     }
 
     return $cache_tags;
@@ -124,7 +126,8 @@ class SocialInviteLocalActionsBlock extends BlockBase implements ContainerFactor
 
     // Get current group so we can build correct links.
     $group = _social_group_get_current_group();
-    if ($group instanceof GroupInterface) {
+    $group_type = $group->getGroupType();
+    if ($group instanceof GroupInterface && $group_type->hasContentPlugin('group_invitation')) {
       $links = [
         '#type' => 'dropbutton',
         '#links' => [

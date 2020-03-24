@@ -5,6 +5,8 @@
  * The Social Invite group module.
  */
 
+use Drupal\group\Entity\GroupInterface;
+
 /**
  * Implements hook_preprocess_HOOK().
  */
@@ -17,13 +19,24 @@ function social_group_invite_preprocess_views_view(&$variables) {
   // and render our own block instance in the view for placement.
   // hook_theme_registry_alter will ensure our hooks is invoked later.
   // That is also why hook_menu_local_actions_alter won't work.
-  if ($view->id() === 'group_manage_members') {
+  // Get current group so we can build correct links.
+  $group = _social_group_get_current_group();
+  $group_type = $group->getGroupType();
+  if ($group instanceof GroupInterface &&
+    $view->id() === 'group_manage_members' &&
+    $group_type->hasContentPlugin('group_invitation')) {
     $entity = \Drupal::entityTypeManager()->getStorage('block')
       ->load('socialinviteactionsblock');
 
-    $variables['header']['actions'] = \Drupal::entityTypeManager()
-      ->getViewBuilder('block')
-      ->view($entity);
+    if (NULL !== $entity) {
+      $block_content = \Drupal::entityTypeManager()
+        ->getViewBuilder('block')
+        ->view($entity);
+
+      if (!empty($block_content)) {
+        $variables['header']['actions'] = $block_content;
+      }
+    }
   }
 }
 
