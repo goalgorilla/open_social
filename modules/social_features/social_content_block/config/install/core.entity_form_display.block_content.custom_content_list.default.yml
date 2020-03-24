@@ -5,7 +5,7 @@ dependencies:
     - block_content.type.custom_content_list
     - field.field.block_content.custom_content_list.field_item_amount
     - field.field.block_content.custom_content_list.field_link
-    - field.field.block_content.custom_content_list.field_plugin_filters
+    - field.field.block_content.custom_content_list.field_plugin_field
     - field.field.block_content.custom_content_list.field_plugin_id
     - field.field.block_content.custom_content_list.field_sorting
     - field.field.block_content.custom_content_list.field_subtitle
@@ -31,7 +31,7 @@ third_party_settings:
     group_filter_options:
       children:
         - field_plugin_id
-        - field_plugin_filters
+        - field_plugin_field
         - field_item_amount
       parent_name: ''
       weight: 3
@@ -78,11 +78,11 @@ content:
     third_party_settings: {  }
     type: link_default
     region: content
-  field_plugin_filters:
+  field_plugin_field:
     weight: 5
     settings: {  }
     third_party_settings: {  }
-    type: content_block_plugin_filters
+    type: content_block_plugin_field
     region: content
   field_plugin_id:
     weight: 4

@@ -2,7 +2,6 @@
 
 namespace Drupal\social_content_block\Plugin\Field\FieldWidget;
 
-use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\WidgetBase;
@@ -26,13 +25,6 @@ abstract class ContentBlockPluginWidgetBase extends WidgetBase implements Contai
   protected $contentBlockManager;
 
   /**
-   * The entity type manager.
-   *
-   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
-   */
-  protected $entityTypeManager;
-
-  /**
    * Constructs a ContentBlockPluginWidgetBase object.
    *
    * @param string $plugin_id
@@ -47,8 +39,6 @@ abstract class ContentBlockPluginWidgetBase extends WidgetBase implements Contai
    *   Any third party settings.
    * @param \Drupal\social_content_block\ContentBlockManagerInterface $content_block_manager
    *   The content block manager.
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
-   *   The entity type manager.
    */
   public function __construct(
     $plugin_id,
@@ -56,8 +46,7 @@ abstract class ContentBlockPluginWidgetBase extends WidgetBase implements Contai
     FieldDefinitionInterface $field_definition,
     array $settings,
     array $third_party_settings,
-    ContentBlockManagerInterface $content_block_manager,
-    EntityTypeManagerInterface $entity_type_manager
+    ContentBlockManagerInterface $content_block_manager
   ) {
     parent::__construct(
       $plugin_id,
@@ -68,7 +57,6 @@ abstract class ContentBlockPluginWidgetBase extends WidgetBase implements Contai
     );
 
     $this->contentBlockManager = $content_block_manager;
-    $this->entityTypeManager = $entity_type_manager;
   }
 
   /**
@@ -81,8 +69,7 @@ abstract class ContentBlockPluginWidgetBase extends WidgetBase implements Contai
       $configuration['field_definition'],
       $configuration['settings'],
       $configuration['third_party_settings'],
-      $container->get('plugin.manager.content_block'),
-      $container->get('entity_type.manager')
+      $container->get('plugin.manager.content_block')
     );
   }
 
@@ -95,31 +82,6 @@ abstract class ContentBlockPluginWidgetBase extends WidgetBase implements Contai
     ];
 
     return $element;
-  }
-
-  /**
-   * Returns the plural label of an entity type or a bundle.
-   *
-   * @param array $plugin_definition
-   *   The plugin definition.
-   *
-   * @return \Drupal\Core\StringTranslation\TranslatableMarkup|string
-   *   The label.
-   */
-  protected function getLabel(array $plugin_definition) {
-    $entity_type = $this->entityTypeManager->getDefinition($plugin_definition['entityTypeId']);
-
-    if (isset($plugin_definition['bundle'])) {
-      $label = $this->entityTypeManager
-        ->getStorage($entity_type->getBundleEntityType())
-        ->load($plugin_definition['bundle'])
-        ->label();
-    }
-    else {
-      $label = $entity_type->getLabel();
-    }
-
-    return $label . 's';
   }
 
 }

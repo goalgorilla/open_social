@@ -3,20 +3,16 @@ status: true
 dependencies:
   config:
     - block_content.type.custom_content_list
-    - field.storage.block_content.field_plugin_filters
-id: block_content.custom_content_list.field_plugin_filters
-field_name: field_plugin_filters
+    - field.storage.block_content.field_plugin_field
+id: block_content.custom_content_list.field_plugin_field
+field_name: field_plugin_field
 entity_type: block_content
 bundle: custom_content_list
 label: 'Content selection'
 description: 'Further specify how the content should be selected'
 required: false
 translatable: false
-default_value:
-  -
-    value: 1
+default_value: {  }
 default_value_callback: ''
-settings:
-  on_label: 'All entities'
-  off_label: 'Off'
-field_type: boolean
+settings: {  }
+field_type: string
