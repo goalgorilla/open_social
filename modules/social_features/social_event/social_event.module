@@ -769,17 +769,19 @@ function social_event_owner_or_organizer(NodeInterface $node = NULL, AccountInte
   if (!$node) {
     $node = social_event_get_current_event();
   }
-  // Get the event owner/author and it's organisers (if any).
-  $event_accountables['owner'] = $node->getOwnerId();
-  // Also check whether the social_event_managers is enabled so we can
-  // check if the user might be an organiser/manager of this event.
-  if (\Drupal::moduleHandler()->moduleExists('social_event_managers')) {
-    $event_accountables['organiser'] = social_event_manager_or_organizer($node);
-  }
-  if ($current_user->hasPermission('manage event enrollment requests')
-    || $event_accountables['owner'] === $current_user->id()
-    || $event_accountables['organiser'] === TRUE) {
-    return TRUE;
+  if (!empty($node) && !empty($current_user)) {
+    // Get the event owner/author and it's organisers (if any).
+    $event_accountables['owner'] = $node->getOwnerId();
+    // Also check whether the social_event_managers is enabled so we can
+    // check if the user might be an organiser/manager of this event.
+    if (\Drupal::moduleHandler()->moduleExists('social_event_managers')) {
+      $event_accountables['organiser'] = social_event_manager_or_organizer($node);
+    }
+    if ($current_user->hasPermission('manage event enrollment requests')
+      || $event_accountables['owner'] === $current_user->id()
+      || $event_accountables['organiser'] === TRUE) {
+      return TRUE;
+    }
   }
 
   return FALSE;
