@@ -12,14 +12,15 @@ use Drupal\group\Entity\GroupInterface;
 use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
 use Drupal\ginvite\GroupInvitationLoaderInterface;
+use Drupal\social_group\Entity\Group;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Provides a 'SocialInviteLocalActionsBlock' block.
  *
  * @Block(
- *  id = "social_tags_block",
- *  admin_label = @Translation("Social Tags block"),
+ *  id = "social_invite_actions_block",
+ *  admin_label = @Translation("Social Invite Actions block"),
  * )
  */
 class SocialInviteLocalActionsBlock extends BlockBase implements ContainerFactoryPluginInterface {
@@ -75,13 +76,17 @@ class SocialInviteLocalActionsBlock extends BlockBase implements ContainerFactor
    * {@inheritdoc}.
    */
   protected function blockAccess(AccountInterface $account) {
-    // If current Group doesn't allow for inviting.
-    if () {
-      return AccessResult::forbidden();
-    }
-    // Only when user has correct access.
-    if () {
-      return AccessResult::allowed();
+    $group = _social_group_get_current_group();
+    if ($group instanceof GroupInterface) {
+      // If group allows Group Invites by content plugin.
+      $group_type = $group->getGroupType();
+      if (!$group_type->hasContentPlugin('group_invitation')) {
+        return AccessResult::forbidden();
+      }
+      // Only when user has correct access.
+      if ($group->hasPermission('invite users to group', $account)) {
+        return AccessResult::allowed();
+      }
     }
 
     return AccessResult::forbidden();
@@ -93,6 +98,7 @@ class SocialInviteLocalActionsBlock extends BlockBase implements ContainerFactor
   public function getCacheContexts() {
     $cache_contexts = parent::getCacheContexts();
     $cache_contexts[] = 'user';
+    $cache_contexts[] = 'group';
     return $cache_contexts;
   }
 
@@ -117,11 +123,15 @@ class SocialInviteLocalActionsBlock extends BlockBase implements ContainerFactor
     $build = [];
 
     // Get current group so we can build correct links.
-    $group = $this->routeMatch->getParameter('group');
+    $group = _social_group_get_current_group();
     if ($group instanceof GroupInterface) {
       $links = [
         '#type' => 'dropbutton',
         '#links' => [
+          'title' => [
+            'title' => $this->t('Add members'),
+            'url' => Url::fromRoute('<current>', []),
+          ],
           'add_directly' => [
             'title' => $this->t('Add directly'),
             'url' => Url::fromRoute('entity.group_content.add_form', ['plugin_id' => 'group_membership', 'group' => $group->id()]),

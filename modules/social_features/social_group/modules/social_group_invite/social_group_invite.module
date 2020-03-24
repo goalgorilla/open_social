@@ -5,3 +5,40 @@
  * The Social Invite group module.
  */
 
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function social_group_invite_preprocess_views_view(&$variables) {
+  /** @var \Drupal\views\ViewExecutable $view */
+  $view = &$variables['view'];
+
+  // See function social_group_preprocess_views_view(&$variables).
+  // We have to override the local actions block.
+  // and render our own block instance in the view for placement.
+  // hook_theme_registry_alter will ensure our hooks is invoked later.
+  // That is also why hook_menu_local_actions_alter won't work.
+  if ($view->id() === 'group_manage_members') {
+    $entity = \Drupal::entityTypeManager()->getStorage('block')
+      ->load('socialinviteactionsblock');
+
+    $variables['header']['actions'] = \Drupal::entityTypeManager()
+      ->getViewBuilder('block')
+      ->view($entity);
+  }
+}
+
+/**
+ * Implements hook_theme_registry_alter().
+ */
+function social_group_invite_theme_registry_alter(&$theme_registry) {
+  // Unfortunately the preprocess functions aren't ordered by module weight.
+  // Changing module weight doesn't work, also with dependency set to
+  // social_group this should be dealt with but isnt.
+  // So we enforce our preprocess after social_group.
+  if (!empty($theme_registry['views_view']['preprocess functions'])) {
+    $current_key = array_search('social_group_invite_preprocess_views_view', $theme_registry['views_view']['preprocess functions'], FALSE);
+    unset($theme_registry['views_view']['preprocess functions'][$current_key]);
+    // Give it a new key all the way at the end.
+    $theme_registry['views_view']['preprocess functions'][] = 'social_group_invite_preprocess_views_view';
+  }
+}
