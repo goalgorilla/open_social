@@ -65,15 +65,15 @@ class UpdateEnrollRequestController extends ControllerBase {
   public function updateEnrollmentRequest(NodeInterface $node, EventEnrollmentInterface $event_enrollment, $approve) {
     // Just some sanity checks.
     if ($node instanceof Node && !empty($event_enrollment)) {
-      // When the user approved, we set the field_request_status to approved.
+      // When the user approved, we set the field_request_or_invite_status to approved.
       if ($approve === '1') {
-        $event_enrollment->field_request_status->value = 'approved';
+        $event_enrollment->field_request_or_invite_status->value = '1';
         $event_enrollment->field_enrollment_status->value = '1';
         $this->messenger()->addStatus(t('The event enrollment request has been approved.'));
       }
-      // When the user declined, we set the field_request_status to decline.
+      // When the user declined, we set the field_request_or_invite_status to decline.
       elseif ($approve === '0') {
-        $event_enrollment->field_request_status->value = 'declined';
+        $event_enrollment->field_request_or_invite_status->value = '2';
         $this->messenger()->addStatus(t('The event enrollment request has been declined.'));
       }
       // And finally save (update) this updated $event_enrollment.

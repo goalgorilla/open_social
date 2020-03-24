@@ -4,21 +4,30 @@ dependencies:
   module:
     - options
     - social_event
-id: event_enrollment.field_request_status
-field_name: field_request_status
+id: event_enrollment.field_request_or_invite_status
+field_name: field_request_or_invite_status
 entity_type: event_enrollment
 type: list_string
 settings:
   allowed_values:
     -
-      value: pending
+      value: '0'
       label: Pending
     -
-      value: approved
+      value: '1'
       label: Approved
     -
-      value: declined
+      value: '2'
       label: Declined
+    -
+      value: '3'
+      label: Invited
+    -
+      value: '4'
+      label: 'Pending reply'
+    -
+      value: '5'
+      label: 'Accepted and joined'
   allowed_values_function: ''
 module: options
 locked: false

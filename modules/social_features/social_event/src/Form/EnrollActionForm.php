@@ -207,9 +207,9 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
         }
         // If someone requested to join the event.
         elseif ($node->field_enroll_method->value && $node->field_enroll_method->value === '2' && !$isNodeOwner) {
-          $enroll_request_status = $enrollment->field_request_status->value;
+          $enroll_request_status = $enrollment->field_request_or_invite_status->value;
           $event_request_ajax = TRUE;
-          if ($enroll_request_status === 'pending') {
+          if ($enroll_request_status === '0') {
             $submit_text = $this->t('Pending');
             $enrollment_open = FALSE;
             $event_request_ajax = FALSE;
@@ -400,7 +400,7 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
       // If request to join is on, alter fields.
       if ($to_enroll_status === '2') {
         $fields['field_enrollment_status'] = '0';
-        $fields['field_request_status'] = 'pending';
+        $fields['field_request_or_invite_status'] = '0';
       }
 
       // Create a new enrollment for the event.

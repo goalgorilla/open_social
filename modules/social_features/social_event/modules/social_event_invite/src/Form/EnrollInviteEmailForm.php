@@ -59,7 +59,8 @@ class EnrollInviteEmailForm extends InviteEmailBaseForm {
       $fields = [
         'field_event' => $nid,
         'field_enrollment_status' => '0',
-        'field_request_status' => 'invited',
+        'field_request_or_invite_status' => '3',
+        'field_email' => $email,
       ];
 
       if ($user instanceof UserInterface) {

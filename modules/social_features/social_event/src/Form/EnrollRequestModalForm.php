@@ -106,7 +106,7 @@ class EnrollRequestModalForm extends FormBase {
       'field_event' => $nid,
       'field_enrollment_status' => '0',
       'field_account' => $uid,
-      'field_request_status' => 'pending',
+      'field_request_or_invite_status' => '0',
       'field_request_message' => $message,
     ];
 

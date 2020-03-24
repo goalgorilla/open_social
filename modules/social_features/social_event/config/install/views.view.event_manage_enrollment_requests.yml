@@ -1,11 +1,10 @@
-uuid: 0d872f44-e696-4f4f-b404-759e1c9e45fc
 langcode: en
 status: true
 dependencies:
   config:
     - core.entity_view_mode.profile.table
     - field.storage.event_enrollment.field_request_message
-    - field.storage.event_enrollment.field_request_status
+    - field.storage.event_enrollment.field_request_or_invite_status
     - field.storage.profile.field_profile_organization
     - node.type.event
   module:
@@ -15,7 +14,7 @@ dependencies:
     - social_event
     - user
 _core:
-  default_config_hash: bUh96QCe1R-P508LPzSDKhKKBPLhSpoh8Zmer05qsGo
+  default_config_hash: I4HuMmYWnxJImGZGt6n5U8lr1SfKJBKJFCqU8zK-Pvs
 id: event_manage_enrollment_requests
 label: 'Manage event enrollment requests'
 module: views
@@ -89,8 +88,9 @@ display:
           columns:
             rendered_entity: rendered_entity
             field_profile_organization: field_profile_organization
+            field_request_message: field_request_message
+            field_request_or_invite_status: field_request_or_invite_status
             created: created
-            field_request_status: field_request_status
             operations_1: operations_1
           info:
             rendered_entity:
@@ -107,14 +107,21 @@ display:
               separator: ''
               empty_column: false
               responsive: ''
-            created:
+            field_request_message:
+              sortable: false
+              default_sort_order: asc
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+            field_request_or_invite_status:
               sortable: true
               default_sort_order: asc
               align: ''
               separator: ''
               empty_column: false
               responsive: ''
-            field_request_status:
+            created:
               sortable: true
               default_sort_order: asc
               align: ''
@@ -307,6 +314,68 @@ display:
           separator: ', '
           field_api_classes: false
           plugin_id: field
+        field_request_or_invite_status:
+          id: field_request_or_invite_status
+          table: event_enrollment__field_request_or_invite_status
+          field: field_request_or_invite_status
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: 'Request status'
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: true
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: list_default
+          settings: {  }
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+          plugin_id: field
         created:
           id: created
           table: event_enrollment_field_data
@@ -373,68 +442,6 @@ display:
           field_api_classes: false
           entity_type: event_enrollment
           entity_field: created
-          plugin_id: field
-        field_request_status:
-          id: field_request_status
-          table: event_enrollment__field_request_status
-          field: field_request_status
-          relationship: none
-          group_type: group
-          admin_label: ''
-          label: 'Request status'
-          exclude: false
-          alter:
-            alter_text: false
-            text: ''
-            make_link: false
-            path: ''
-            absolute: false
-            external: false
-            replace_spaces: false
-            path_case: none
-            trim_whitespace: false
-            alt: ''
-            rel: ''
-            link_class: ''
-            prefix: ''
-            suffix: ''
-            target: ''
-            nl2br: false
-            max_length: 0
-            word_boundary: true
-            ellipsis: true
-            more_link: false
-            more_link_text: ''
-            more_link_path: ''
-            strip_tags: false
-            trim: false
-            preserve_tags: ''
-            html: false
-          element_type: ''
-          element_class: ''
-          element_label_type: ''
-          element_label_class: ''
-          element_label_colon: true
-          element_wrapper_type: ''
-          element_wrapper_class: ''
-          element_default_classes: true
-          empty: ''
-          hide_empty: false
-          empty_zero: false
-          hide_alter_empty: true
-          click_sort_column: value
-          type: list_default
-          settings: {  }
-          group_column: value
-          group_columns: {  }
-          group_rows: true
-          delta_limit: 0
-          delta_offset: 0
-          delta_reversed: false
-          delta_first_last: false
-          multi_type: separator
-          separator: ', '
-          field_api_classes: false
           plugin_id: field
         operations_1:
           id: operations_1
@@ -530,16 +537,16 @@ display:
           entity_type: node
           entity_field: type
           plugin_id: bundle
-        field_request_status_value:
-          id: field_request_status_value
-          table: event_enrollment__field_request_status
-          field: field_request_status_value
+        field_request_or_invite_status_value:
+          id: field_request_or_invite_status_value
+          table: event_enrollment__field_request_or_invite_status
+          field: field_request_or_invite_status_value
           relationship: none
           group_type: group
           admin_label: ''
           operator: or
           value:
-            pending: pending
+            - '0'
           group: 1
           exposed: false
           expose:
@@ -572,18 +579,6 @@ display:
           reduce_duplicates: false
           plugin_id: list_field
       sorts:
-        field_request_status_value:
-          id: field_request_status_value
-          table: event_enrollment__field_request_status
-          field: field_request_status_value
-          relationship: none
-          group_type: group
-          admin_label: ''
-          order: DESC
-          exposed: false
-          expose:
-            label: ''
-          plugin_id: standard
         created:
           id: created
           table: event_enrollment_field_data
@@ -599,6 +594,18 @@ display:
           entity_type: event_enrollment
           entity_field: created
           plugin_id: date
+        field_request_or_invite_status_value:
+          id: field_request_or_invite_status_value
+          table: event_enrollment__field_request_or_invite_status
+          field: field_request_or_invite_status_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          order: DESC
+          exposed: false
+          expose:
+            label: ''
+          plugin_id: standard
       title: 'Manage enrollment requests'
       header:
         area:
@@ -716,7 +723,7 @@ display:
         - 'config:core.entity_view_display.profile.profile.table'
         - 'config:core.entity_view_display.profile.profile.teaser'
         - 'config:field.storage.event_enrollment.field_request_message'
-        - 'config:field.storage.event_enrollment.field_request_status'
+        - 'config:field.storage.event_enrollment.field_request_or_invite_status'
         - 'config:field.storage.profile.field_profile_organization'
   page_manage_enrollment_requests:
     display_plugin: page
@@ -756,5 +763,5 @@ display:
         - 'config:core.entity_view_display.profile.profile.table'
         - 'config:core.entity_view_display.profile.profile.teaser'
         - 'config:field.storage.event_enrollment.field_request_message'
-        - 'config:field.storage.event_enrollment.field_request_status'
+        - 'config:field.storage.event_enrollment.field_request_or_invite_status'
         - 'config:field.storage.profile.field_profile_organization'
