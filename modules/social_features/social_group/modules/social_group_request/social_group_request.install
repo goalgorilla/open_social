@@ -10,6 +10,8 @@ use Drupal\group\Entity\GroupType;
 function social_group_request_install() {
   // Set some default permissions.
   _social_group_request_set_permissions();
+
+  module_set_weight('social_group_request', 6);
 }
 
 /**
@@ -21,4 +23,11 @@ function _social_group_request_set_permissions() {
 
   $group_type = GroupType::load('closed_group');
   $group_type->getOutsiderRole()->grantPermissions(['request group membership'])->save();
+}
+
+/**
+ * Set module weight.
+ */
+function social_group_request_update_8001() {
+  module_set_weight('social_group_request', 6);
 }
