@@ -36,6 +36,7 @@ function social_follow_tag_theme() {
  * {@inheritdoc}
  */
 function social_follow_tag_preprocess_paragraph(&$variables) {
+  $terms = [];
   /** @var \Drupal\paragraphs\Entity\Paragraph $entity */
   $entity = $variables['elements']['#paragraph'];
   $bundle = $entity->bundle();
@@ -43,37 +44,42 @@ function social_follow_tag_preprocess_paragraph(&$variables) {
   switch ($bundle) {
     case 'tag':
       if ($entity->hasField('field_tag') && !empty($entity->field_tag)) {
-        $term_id = $entity->field_tag->target_id;
-        /** @var \Drupal\taxonomy\TermStorageInterface $term_storage */
-        $term_storage = \Drupal::entityTypeManager()->getStorage('taxonomy_term');
-        /** @var \Drupal\taxonomy\TermInterface $term */
-        $term = $term_storage->load($term_id);
+        foreach ($entity->field_tag as $term_reference) {
+          /** @var \Drupal\taxonomy\TermInterface $term */
+          $term = $term_reference->entity;
 
-        if (!empty($term)) {
-          // Creates a link to a search page with a tag as a filter parameter.
-          $parameter = 'tag';
-          $route = 'view.search_content.page_no_value';
-          $parents = $term_storage->loadParents($term_id);
-          if (!empty($parents)) {
-            $parent = reset($parents);
-            $category = $parent->getName();
-
-            if ($tag_service = Drupal::getContainer()->get('social_tagging.tag_service')->allowSplit()) {
-              $parameter = social_tagging_to_machine_name($category);
+          if (!empty($term)) {
+            // Creates a link to a search page with a tag as a filter parameter.
+            $parameter = 'tag';
+            $route = 'view.search_content.page_no_value';
+            // Override filter parameter id if split option is enabled.
+            if (Drupal::getContainer()->get('social_tagging.tag_service')->allowSplit()) {
+              if (isset($term->parent)) {
+                $parent = $term->parent->entity;
+                if (!empty($parent)) {
+                  $category = $parent->getName();
+                  // Use the name of parent term as id of the filter parameter.
+                  $parameter = social_tagging_to_machine_name($category);
+                }
+              }
             }
-          }
-          $url = Url::fromRoute($route, [
-            $parameter . '[]' => $term_id,
-          ]);
+            $url = Url::fromRoute($route, [
+              $parameter . '[]' => $term->id(),
+            ]);
 
-          // Adding additional data to the term variable to extend the template.
-          $variables['term'] = [
-            'url' => $url->toString(),
-            'name' => $term->getName(),
-            'flag' => _social_follow_taxonomy_flag_link($term),
-            'related_content' => _social_follow_tag_related_content($term),
-          ];
+            // Prepare additional data for the term variables.
+            $terms[] = [
+              'url' => $url->toString(),
+              'name' => $term->getName(),
+              'flag' => _social_follow_taxonomy_flag_link($term),
+              'related_nodes_count' => _social_follow_tag_related_nodes_count($term),
+              'followers_count' => social_follow_taxonomy_term_followers_count($term),
+            ];
+          }
         }
+
+        // Adding data to the terms variable to extend the template.
+        $variables['terms'] = $terms;
       }
       break;
   }
@@ -114,7 +120,8 @@ function social_follow_tag_preprocess_social_tagging_split(&$variables) {
           'url' => $tag_info['url'],
           'name' => $tag_info['name'],
           'flag' => _social_follow_taxonomy_flag_link($current_term),
-          'related_content' => _social_follow_tag_related_content($current_term),
+          'related_nodes_count' => _social_follow_tag_related_nodes_count($current_term),
+          'followers_count' => social_follow_taxonomy_term_followers_count($current_term),
           'follow' => social_follow_taxonomy_term_followed($current_term),
         ];
       }
@@ -152,38 +159,26 @@ function social_follow_tag_preprocess_social_tagging_nosplit(&$variables) {
       'url' => $tag_info,
       'name' => $tag_name,
       'flag' => _social_follow_taxonomy_flag_link($current_term),
-      'related_content' => _social_follow_tag_related_content($current_term),
+      'related_nodes_count' => _social_follow_tag_related_nodes_count($current_term),
+      'followers_count' => social_follow_taxonomy_term_followers_count($current_term),
       'follow' => social_follow_taxonomy_term_followed($current_term),
     ];
   }
 }
 
 /**
- * Function for counting the number of content related to the term.
+ * Function for counting the number of nodes related to the term.
  *
  * @param \Drupal\taxonomy\TermInterface $term
  *   Term entity.
  *
- * @return array
- *   Array with related content.
+ * @return int
+ *   Count of related nodes.
  */
-function _social_follow_tag_related_content(TermInterface $term) {
-  $related_content = [];
+function _social_follow_tag_related_nodes_count(TermInterface $term) {
   $nodes = \Drupal::entityTypeManager()
     ->getStorage('node')
     ->loadByProperties(['social_tagging' => $term->id()]);
 
-  /** @var \Drupal\node\Entity\Node $node */
-  foreach ($nodes as $node) {
-    $related_content[$node->bundle()]['label'] = $node->type->entity->label();
-    // Counting the number of nodes separately for each type.
-    if (isset($related_content[$node->bundle()]['count'])) {
-      $related_content[$node->bundle()]['count'] += 1;
-    }
-    else {
-      $related_content[$node->bundle()]['count'] = 1;
-    }
-  }
-
-  return $related_content;
+  return count($nodes);
 }

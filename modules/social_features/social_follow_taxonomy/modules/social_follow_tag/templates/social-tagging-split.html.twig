@@ -42,10 +42,9 @@
                   </h4>
 
                   <div class="teaser__related-content">
-                    {% for related_content in tag.related_content %}
-                      {{ related_content.count }} {{ related_content.label }}
-                      {% if not loop.last %}|{% endif %}
-                    {% endfor %}
+                    {% trans %} 1 item {% plural tag.related_nodes_count %} @count items{% endtrans %}
+                    |
+                    {% trans %} 1 follower {% plural tag.followers_count %} @count followers{% endtrans %}
                   </div>
 
                   <div class="actions">

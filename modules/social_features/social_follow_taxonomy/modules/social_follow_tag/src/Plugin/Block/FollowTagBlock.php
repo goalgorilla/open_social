@@ -175,7 +175,8 @@ class FollowTagBlock extends BlockBase implements ContainerFactoryPluginInterfac
         $tags[$term_id] = [
           'name' => $term->getName(),
           'flag' => _social_follow_taxonomy_flag_link($term),
-          'related_content' => _social_follow_tag_related_content($term),
+          'related_nodes_count' => _social_follow_tag_related_nodes_count($term),
+          'followers_count' => social_follow_taxonomy_term_followers_count($term),
         ];
       }
     }

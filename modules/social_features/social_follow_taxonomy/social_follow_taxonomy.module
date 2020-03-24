@@ -228,6 +228,26 @@ function social_follow_taxonomy_term_followed(TermInterface $term) {
 }
 
 /**
+ * Function for counting the number of followers of the term.
+ *
+ * @param \Drupal\taxonomy\TermInterface $term
+ *   Term entity.
+ *
+ * @return int
+ *   Count of followers.
+ */
+function social_follow_taxonomy_term_followers_count(TermInterface $term) {
+  $count = 0;
+  $term_followers_count = \Drupal::service('flag.count')->getEntityFlagCounts($term);
+
+  if (isset($term_followers_count['follow_term'])) {
+    $count = $term_followers_count['follow_term'];
+  }
+
+  return $count;
+}
+
+/**
  * A function that prepares a flag link for a taxonomy term.
  *
  * @param \Drupal\taxonomy\TermInterface $term
