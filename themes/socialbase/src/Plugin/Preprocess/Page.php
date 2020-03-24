@@ -117,6 +117,7 @@ class Page extends PreprocessBase {
       'view.event_manage_enrollments.page_manage_enrollments',
       'view.group_manage_members.page_group_manage_members',
       'view.event_manage_enrollment_requests.page_manage_enrollment_requests',
+      'view.event_manage_enrollment_invites.page_manage_enrollment_invites',
     ];
 
     if (in_array($route, $altered_section_class_routes)) {

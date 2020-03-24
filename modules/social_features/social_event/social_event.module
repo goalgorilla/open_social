@@ -159,7 +159,6 @@ function social_event_menu_local_tasks_alter(&$data, $route_name) {
     'view.managers.view_managers',
     'view.manage_enrollments.page',
     'view.event_manage_enrollments.page_manage_enrollments',
-    'view.event_manage_enrollments.page_manage_enrollment_request',
   ];
   if (in_array($route_name, $routes_to_check)) {
     $node = \Drupal::service('current_route_match')->getParameter('node');
@@ -175,10 +174,6 @@ function social_event_menu_local_tasks_alter(&$data, $route_name) {
   // and not only on the mentioned routes.
   if (!$can_show_enrollments_link) {
     unset($data['tabs'][0]['views_view:view.event_enrollments.view_enrollments']);
-  }
-  // Don't show this tab on the secondary (local) nav.
-  if (isset($data['tabs'][0]['views_view:view.event_manage_enrollment_requests.page_manage_enrollment_requests'])) {
-    unset($data['tabs'][0]['views_view:view.event_manage_enrollment_requests.page_manage_enrollment_requests']);
   }
 }
 
