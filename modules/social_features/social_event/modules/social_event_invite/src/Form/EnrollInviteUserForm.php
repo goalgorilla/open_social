@@ -67,7 +67,7 @@ class EnrollInviteUserForm extends InviteUserBaseForm {
       $fields = [
         'field_event' => $nid,
         'field_enrollment_status' => '0',
-        'field_request_or_invite_status' => '3',
+        'field_request_or_invite_status' => '4',
         'user_id' => $uid,
         'field_account' => $uid,
       ];

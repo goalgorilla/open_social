@@ -98,7 +98,7 @@ class SocialEventInviteRecipientField extends FieldPluginBase {
     $build = [];
 
     // Check the database for the email and account.
-    $recipient = $this->checkEmailAndAccount($values->id);
+    $recipient = $this->checkEmailAndAccount($values->id, $values->profile_users_field_data_profile_id);
     // Set the email already.
     if (!empty($recipient['email'])) {
       $build = $recipient['email'];
@@ -138,11 +138,26 @@ class SocialEventInviteRecipientField extends FieldPluginBase {
    * @param string $enrollment_id
    *   The enrollment id.
    *
+   * @param $profile_id
+   *   The profile id.
+   *
    * @return array
    *   Return the fetched values.
    */
-  private function checkEmailAndAccount($enrollment_id) {
-    // Get the recipient email.
+  private function checkEmailAndAccount($enrollment_id, $profile_id) {
+    $email = NULL;
+    $account = NULL;
+
+    // If we already have a given profile, load the profile.
+    if ($profile_id) {
+      $account = $this->entityTypeManager->getStorage('user')->load($profile_id);
+      return [
+        'email' => $account->getEmail(),
+        'account' => $account,
+      ];
+    }
+
+    // Otherwise, see if we have an recipient email.
     $emailQuery = $this->database->select('event_enrollment__field_event', 'eefev');
     $emailQuery->join('event_enrollment__field_email', 'eefem', 'eefem.entity_id = ' . $enrollment_id);
     $emailQuery->addField('eefem', 'field_email_value');
