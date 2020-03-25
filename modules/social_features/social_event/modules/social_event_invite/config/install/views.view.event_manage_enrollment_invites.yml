@@ -3,7 +3,6 @@ status: true
 dependencies:
   config:
     - field.storage.event_enrollment.field_request_or_invite_status
-    - field.storage.profile.field_profile_organization
     - node.type.event
   module:
     - node
@@ -13,7 +12,7 @@ dependencies:
     - social_event_invite
     - user
 _core:
-  default_config_hash: WUaIJVbYH8vDY77B6o8Nxhp2JJFWYDXsHM8db66ZvrI
+  default_config_hash: Fczt0j-M5JkDyujUgtuWU2TRpUDPQ6Gw_TmQ-pL1IgA
 id: event_manage_enrollment_invites
 label: 'Manage event enrollment invites'
 module: views
@@ -29,7 +28,7 @@ display:
     position: 0
     display_options:
       access:
-        type: none
+        type: event_owner_or_organizer
         options: {  }
       cache:
         type: tag
@@ -187,69 +186,6 @@ display:
           hide_alter_empty: true
           node_type: event
           plugin_id: social_event_invite_recipient
-        field_profile_organization:
-          id: field_profile_organization
-          table: profile__field_profile_organization
-          field: field_profile_organization
-          relationship: profile
-          group_type: group
-          admin_label: ''
-          label: Organization
-          exclude: false
-          alter:
-            alter_text: false
-            text: ''
-            make_link: false
-            path: ''
-            absolute: false
-            external: false
-            replace_spaces: false
-            path_case: none
-            trim_whitespace: false
-            alt: ''
-            rel: ''
-            link_class: ''
-            prefix: ''
-            suffix: ''
-            target: ''
-            nl2br: false
-            max_length: 0
-            word_boundary: true
-            ellipsis: true
-            more_link: false
-            more_link_text: ''
-            more_link_path: ''
-            strip_tags: false
-            trim: false
-            preserve_tags: ''
-            html: false
-          element_type: ''
-          element_class: ''
-          element_label_type: ''
-          element_label_class: ''
-          element_label_colon: true
-          element_wrapper_type: ''
-          element_wrapper_class: ''
-          element_default_classes: true
-          empty: '-'
-          hide_empty: false
-          empty_zero: false
-          hide_alter_empty: true
-          click_sort_column: value
-          type: string
-          settings:
-            link_to_entity: false
-          group_column: value
-          group_columns: {  }
-          group_rows: true
-          delta_limit: 0
-          delta_offset: 0
-          delta_reversed: false
-          delta_first_last: false
-          multi_type: separator
-          separator: ', '
-          field_api_classes: false
-          plugin_id: field
         field_request_or_invite_status:
           id: field_request_or_invite_status
           table: event_enrollment__field_request_or_invite_status
@@ -650,7 +586,6 @@ display:
         - url.query_args
       tags:
         - 'config:field.storage.event_enrollment.field_request_or_invite_status'
-        - 'config:field.storage.profile.field_profile_organization'
   page_manage_enrollment_invites:
     display_plugin: page
     id: page_manage_enrollment_invites
@@ -677,4 +612,3 @@ display:
         - url.query_args
       tags:
         - 'config:field.storage.event_enrollment.field_request_or_invite_status'
-        - 'config:field.storage.profile.field_profile_organization'
