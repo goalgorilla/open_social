@@ -3,9 +3,9 @@
 {% if tags %}
 <div class="paragraph paragraph--featured social_follow_tax">
   <div class="container">
-    {% for tag in tags %}
-      <div class="card teaser">
-        <div class="teaser__body">
+    <div class="card teaser">
+      <div class="teaser__body">
+        {% for tag in tags %}
           <div class="teaser__content">
             <div class="teaser__left">
               <div class="teaser__tag">
@@ -27,9 +27,9 @@
               {{ tag.flag }}
             </div>
           </div>
-        </div>
+        {% endfor %}
       </div>
-    {% endfor %}
+    </div>
   </div>
 </div>
 {% endif %}
