@@ -14,9 +14,10 @@ class EventInvitesOverview implements AccessInterface {
 
   /**
    * Custom access check on the event invites overview.
+   *
+   * @return \Drupal\Core\Access\AccessResult
    */
   public function access() {
-    // @todo: do the proper access checks.
-    return AccessResult::allowed();
+    return AccessResult::allowedIf(social_event_owner_or_organizer());
   }
 }
