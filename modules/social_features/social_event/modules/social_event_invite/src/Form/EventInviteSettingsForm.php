@@ -72,7 +72,6 @@ class EventInviteSettingsForm extends ConfigFormBase {
       '#value' => $this->t('Save configuration'),
     ];
 
-
     return $form;
   }
 
