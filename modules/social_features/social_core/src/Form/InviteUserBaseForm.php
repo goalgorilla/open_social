@@ -80,12 +80,7 @@ class InviteUserBaseForm extends FormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-      $form['users'] = [
-      '#type' => 'textfield',
-      '#title' => $this->t('Select users'),
-      '#description' => $this->t('Autocomplete widget.'),
-      '#required' => TRUE,
-    ];
+    $form['#attributes']['class'][] = 'card card__block form--default form-wrapper form-group';
 
     $form['actions']['submit_cancel'] = array (
       '#type' => 'submit',

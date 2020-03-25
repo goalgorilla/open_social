@@ -80,6 +80,8 @@ class InviteEmailBaseForm extends FormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
+    $form['#attributes']['class'][] = 'card card__block form--default form-wrapper form-group';
+
     $form['email_address'] = [
       '#type' => 'textarea',
       '#title' => $this->t('Select Recipients'),

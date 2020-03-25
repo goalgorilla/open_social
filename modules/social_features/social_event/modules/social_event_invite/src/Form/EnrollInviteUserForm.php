@@ -5,7 +5,6 @@ namespace Drupal\social_event_invite\Form;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\social_core\Form\InviteUserBaseForm;
 use Drupal\social_event\Entity\EventEnrollment;
-use Drupal\user\UserInterface;
 
 /**
  * Class EnrollInviteForm.
@@ -31,6 +30,17 @@ class EnrollInviteUserForm extends InviteUserBaseForm {
       '#value' => $nid,
     ];
 
+    $form['name'] = [
+      '#type' => 'social_enrollment_entity_autocomplete',
+      '#selection_handler' => 'social',
+      '#selection_settings' => [],
+      '#target_type' => 'user',
+      '#tags' => TRUE,
+      '#description' => $this->t('To add multiple members, separate each member with a comma ( , ).'),
+      '#title' => $this->t('Select members to add'),
+      '#weight' => -1,
+    ];
+
     $form['actions']['submit_cancel']['#value'] = $this->t('Back to event');
 
     return $form;
@@ -49,24 +59,22 @@ class EnrollInviteUserForm extends InviteUserBaseForm {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     parent::submitForm($form, $form_state);
 
-    $users = $this->getUsers($form_state);
+    $users = $form_state->getValue('entity_id_new');
     $nid = $form_state->getValue('event');
 
-    foreach ($users as $user) {
-      if ($user instanceof UserInterface) {
-        // Default values.
-        $fields = [
-          'field_event' => $nid,
-          'field_enrollment_status' => '0',
-          'field_request_or_invite_status' => '3',
-          'user_id' => $user->id(),
-          'field_account' => $user->id(),
-        ];
+    foreach ($users as $uid => $target_id) {
+      // Default values.
+      $fields = [
+        'field_event' => $nid,
+        'field_enrollment_status' => '0',
+        'field_request_or_invite_status' => '3',
+        'user_id' => $uid,
+        'field_account' => $uid,
+      ];
 
-        // Create a new enrollment for the event.
-        $enrollment = EventEnrollment::create($fields);
-        $enrollment->save();
-      }
+      // Create a new enrollment for the event.
+      $enrollment = EventEnrollment::create($fields);
+      $enrollment->save();
     }
   }
 }

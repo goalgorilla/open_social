@@ -23,6 +23,7 @@ class EventInviteSettingsForm extends ConfigFormBase {
   public function buildForm(array $form, FormStateInterface $form_state) {
     $social_event_config = $this->configFactory->getEditable('social_event_invite.settings');
 
+
     $form['invite_enroll'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Enable invite enrollment to events'),
