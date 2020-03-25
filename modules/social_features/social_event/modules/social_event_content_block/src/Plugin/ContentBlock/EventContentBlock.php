@@ -46,4 +46,14 @@ class EventContentBlock extends ContentBlockBase {
     }
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function supportedSortOptions() : array {
+    $defaults = parent::supportedSortOptions();
+    return [
+      'event_date' => 'Event date',
+    ] + $defaults;
+  }
+
 }

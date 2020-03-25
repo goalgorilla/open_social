@@ -1,0 +1,20 @@
+<?php
+
+/**
+ * @file
+ * Installation code for the social_event_content_block module.
+ */
+
+/**
+ * Add field event date filter to event content list blocks.
+ */
+function social_event_content_block_update_8001() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_event_content_block', 'social_event_content_block_update_8001');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
