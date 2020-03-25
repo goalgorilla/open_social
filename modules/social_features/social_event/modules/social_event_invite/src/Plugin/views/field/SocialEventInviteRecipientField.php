@@ -165,37 +165,6 @@ class SocialEventInviteRecipientField extends FieldPluginBase {
     ];
   }
 
-//  /**
-//   * {@inheritdoc}
-//   */
-//  public function getCacheContexts() {
-//    return [];
-//  }
-//
-//  /**
-//   * {@inheritdoc}
-//   */
-//  public function getCacheTags() {
-//    $view_display_storage = $this->entityTypeManager->getStorage('entity_view_display');
-//    $view_displays = $view_display_storage->loadMultiple($view_display_storage
-//      ->getQuery()
-//      ->condition('targetEntityType', $this->getEntityTypeId())
-//      ->execute());
-//
-//    $tags = [];
-//    foreach ($view_displays as $view_display) {
-//      $tags = array_merge($tags, $view_display->getCacheTags());
-//    }
-//    return $tags;
-//  }
-//
-//  /**
-//   * {@inheritdoc}
-//   */
-//  public function getCacheMaxAge() {
-//    return Cache::PERMANENT;
-//  }
-
   /**
    * @inheritDoc
    */
