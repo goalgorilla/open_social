@@ -84,22 +84,14 @@ class EventInviteActivityContext extends ActivityContextBase {
         // Send out the notification if the user is pending.
         if (!$event_enrollment->get('field_enrollment_status')->isEmpty()
           && $event_enrollment->get('field_enrollment_status')->value !== '1'
-          && !$event_enrollment->get('field_request_status')->isEmpty()
-          && $event_enrollment->get('field_request_or_invite_status')->value === '3'
+          && !$event_enrollment->get('field_request_or_invite_status')->isEmpty()
+          && $event_enrollment->get('field_request_or_invite_status')->value === '4'
           && !$event_enrollment->get('field_account')->isEmpty()) {
             $recipients[] = [
               'target_type' => 'user',
-              'target_id' => $event_enrollment->get('field_account')->value,
+              'target_id' => $event_enrollment->get('field_account')->getString(),
             ];
         }
-      }
-    }
-
-    // Remove the actor (user performing action) from recipients list.
-    if (!empty($data['actor'])) {
-      $key = array_search($data['actor'], array_column($recipients, 'target_id'), FALSE);
-      if ($key !== FALSE) {
-        unset($recipients[$key]);
       }
     }
 

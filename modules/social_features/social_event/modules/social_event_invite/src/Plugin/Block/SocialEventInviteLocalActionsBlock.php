@@ -10,6 +10,7 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\node\Entity\Node;
 
 /**
  * Provides a 'SocialEventInviteLocalActionsBlock' block.
@@ -91,6 +92,9 @@ class SocialEventInviteLocalActionsBlock extends BlockBase implements ContainerF
 
     // Get current group so we can build correct links.
     $event = $this->routeMatch->getParameter('node');
+    $event = Node::load($event);
+
+    // Todo:: not needed because we get parameter from node anyway?
     if ($event instanceof NodeInterface) {
       $links = [
         '#type' => 'dropbutton',
@@ -102,6 +106,14 @@ class SocialEventInviteLocalActionsBlock extends BlockBase implements ContainerF
           'add_directly' => [
             'title' => $this->t('Add directly'),
             'url' => Url::fromRoute('social_event_invite.invite_user', ['node' => $event->id()]),
+          ],
+          'invite_by_mail' => [
+            'title' => $this->t('Invite by mail'),
+            'url' => Url::fromRoute('social_event_invite.invite_email', ['node' => $event->id()]),
+          ],
+          'view_invites' => [
+            'title' => $this->t('View invites'),
+            'url' => Url::fromRoute('view.event_manage_enrollment_invites.page_manage_enrollment_invites', ['node' => $event->id()]),
           ],
         ],
       ];

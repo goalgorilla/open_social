@@ -5,7 +5,6 @@
  * The Social event invite enroll module.
  */
 
-use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\Url;
 use Drupal\social_event\EventEnrollmentInterface;
 
@@ -18,20 +17,26 @@ function social_event_invite_event_enrollment_insert(EventEnrollmentInterface $e
   $messenger = \Drupal::messenger();
 
   $mail = $eventEnrollment->get('field_email')->getString();
+  $langcode = 'en';
 
   $mailManager = \Drupal::service('plugin.manager.mail');
   $from = \Drupal::config('system.site')->get('mail');
   $params = [
     'user' => $from,
-    'existing_user' => FALSE,
+    'existing_user' => TRUE,
     'event_enrollment' => $eventEnrollment->id(),
   ];
 
-  $langcode = 'en';
-
-  $mailManager->mail('social_event_invite', 'invite', $mail, $langcode, $params, NULL, TRUE);
-  $messenger->addMessage(t('Invite sent to %mail', ['%mail' => $mail]));
-
+  // Send a normal mail when the user has no account yet.
+  if (empty($eventEnrollment->get('field_account')->getString())) {
+    $params['existing_user'] = FALSE;
+    $mailManager->mail('social_event_invite', 'invite', $mail, $langcode, $params, NULL, TRUE);
+    $messenger->addMessage(t('Invite sent to %mail', ['%mail' => $mail]));
+  }
+  else {
+    $account = \Drupal::entityTypeManager()->getStorage('user')->load($eventEnrollment->get('field_account')->getString());
+    $messenger->addMessage(t('Invite sent to %user', ['%user' => $account->getEmail()]));
+  }
 }
 
 /**
