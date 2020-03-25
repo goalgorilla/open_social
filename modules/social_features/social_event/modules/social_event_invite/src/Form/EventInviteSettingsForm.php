@@ -4,6 +4,7 @@ namespace Drupal\social_event_invite\Form;
 
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\group\Entity\GroupType;
 
 /**
  * Class EnrollInviteForm.
@@ -16,19 +17,38 @@ class EventInviteSettingsForm extends ConfigFormBase {
     return 'enroll_invite_email_form';
   }
 
-
   /**
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
     $social_event_config = $this->configFactory->getEditable('social_event_invite.settings');
 
-
     $form['invite_enroll'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Enable invite enrollment to events'),
-      '#description' => $this->t('Enabling this feature provides the possibility to let event managers to invite people to their events'),
+      '#description' => $this->t('Enabling this feature provides the possibility to let event managers to invite people to their events.'),
       '#default_value' => $social_event_config->get('invite_enroll'),
+    ];
+
+    $group_types = [];
+    /** @var \Drupal\group\Entity\GroupType $group_type */
+    foreach (GroupType::loadMultiple() as $group_type) {
+      $group_types[$group_type->id()] = $group_type->label();
+    }
+
+    $form['invite_group_types'] = [
+      '#type' => 'checkboxes',
+      '#title' => $this->t('Enable event invite per group type'),
+      '#description' => $this->t('Select the group types for which you want to enable the event invite feature.'),
+      '#options' => $group_types,
+      '#default_value' => $social_event_config->get('invite_group_types'),
+    ];
+
+    $form['invite_group_controllable'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Allow group managers to enable/disable inviting to events'),
+      '#description' => $this->t('When enabled group managers can decide if event managers can invite people to events placed in that group.'),
+      '#default_value' => $social_event_config->get('invite_group_controllable'),
     ];
 
     $form['invite_subject'] = [
