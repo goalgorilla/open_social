@@ -1,0 +1,6 @@
+services:
+  social_group_invite.route_subscriber:
+    class: Drupal\social_group_invite\EventSubscriber\CustomRedirects
+    arguments: ['@current_route_match', '@current_user']
+    tags:
+      - { name: event_subscriber }
