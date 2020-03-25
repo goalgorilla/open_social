@@ -53,7 +53,7 @@ function social_group_invite_preprocess_views_view(&$variables) {
   }
   if ($variables['view']->id() === 'social_group_invitations') {
     $group = _social_group_get_current_group();
-    // Implement custom button to go back to the event.
+    // Implement button to go back to the group for our custom view.
     $variables['more'] = [
       '#title' => t('Back to group'),
       '#type' => 'link',
