@@ -5,9 +5,21 @@
  * The Social Invite group module.
  */
 
-use Drupal\Core\Render\BubbleableMetadata;
-use Drupal\Core\Url;
 use Drupal\group\Entity\GroupInterface;
+
+/**
+ * Implements hook_menu_local_actions_alter().
+ */
+function social_group_invite_menu_local_actions_alter(&$local_actions) {
+  // Remove "Invite members" button.
+  if (isset($local_actions['ginvite.invitation.bulk'])) {
+    unset($local_actions['ginvite.invitation.bulk']);
+  }
+  // Remove "Invite member" button.
+  if (isset($local_actions['ginvite.invite_member'])) {
+    unset($local_actions['ginvite.invite_member']);
+  }
+}
 
 /**
  * Implements hook_preprocess_HOOK().

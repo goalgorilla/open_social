@@ -143,7 +143,7 @@ class SocialInviteLocalActionsBlock extends BlockBase implements ContainerFactor
           ],
           'view_invites' => [
             'title' => $this->t('View invites'),
-            'url' => Url::fromRoute('view.group_invitations.page_1', ['group' => $group->id()]),
+            'url' => Url::fromRoute('view.social_group_invitations.page_1', ['group' => $group->id()]),
           ],
         ],
       ];
