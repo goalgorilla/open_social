@@ -1,12 +1,15 @@
 <?php
 
+/**
+ * @file
+ * Install/Uninstall/Update hooks for social_group_request module.
+ */
+
 use Drupal\group\Entity\GroupType;
 
 /**
- * @file
- * Primary module hooks for social_group_request module.
+ * Implements hook_install().
  */
-
 function social_group_request_install() {
   // Set some default permissions.
   _social_group_request_set_permissions();

@@ -7,7 +7,6 @@
 
 use Drupal\block\Entity\Block;
 use Drupal\Core\Access\AccessResult;
-use Drupal\Core\Cache\RefinableCacheableDependencyInterface;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
@@ -18,13 +17,12 @@ use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\grequest\Plugin\GroupContentEnabler\GroupMembershipRequest;
 use Drupal\group\Entity\GroupContentTypeInterface;
-use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupContentInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\views\ViewExecutable;
 
 /**
- * Implements hook_ENTITY_TYPE_insert() for media_bundle.
+ * Implements hook_ENTITY_TYPE_insert() for group_content_type.
  */
 function social_group_request_group_content_type_insert(GroupContentTypeInterface $group_content_type) {
   if ($group_content_type->getContentPluginId() === 'group_membership_request') {
@@ -95,12 +93,15 @@ function social_group_request_group_content_insert(GroupContentInterface $group_
         _activity_basics_entity_action($request, 'change_status_group_membership_request_entity_action');
       }
       else {
-        $this->messenger()->addError($this->t('Error updating Request'));
+        \Drupal::messenger()->addError(t('Error updating Request'));
       }
     }
   }
 }
 
+/**
+ * Implements hook_module_implements_alter().
+ */
 function social_group_request_module_implements_alter(&$implementations, $hook) {
   if ($hook == 'group_content_insert') {
     // Remove the grequest implementation, we have a fallback in our hook.
@@ -243,11 +244,7 @@ function social_group_request_form_alter(array &$form, FormStateInterface $form_
   if (in_array($form_id, $group_forms)) {
     /** @var \Drupal\group\Entity\GroupTypeInterface $group_type */
     $group_type = $form_state->getFormObject()->getEntity()->getGroupType();
-    if ($group_type->id() === 'flexible_group') {
-      $form['#attached']['library'][] = 'social_group_request/social_group_request_form';
-      unset($form['allow_request']);
-    }
-    elseif (!$group_type->hasContentPlugin('group_membership_request')) {
+    if ($group_type->id() === 'flexible_group' || !$group_type->hasContentPlugin('group_membership_request')) {
       unset($form['allow_request']);
     }
   }

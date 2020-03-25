@@ -2,20 +2,17 @@
 
 namespace Drupal\social_group_request\Form;
 
-use Drupal\Core\Cache\CacheTagsInvalidatorInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Routing\RedirectDestinationInterface;
-use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
-use Drupal\grequest\Plugin\GroupContentEnabler\GroupMembershipRequest;
 use Drupal\group\Entity\GroupInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
- *
+ * Provides a form to request group membership for anonymous.
  */
 class GroupRequestMembershipRequestAnonymousForm extends FormBase {
 
@@ -27,55 +24,23 @@ class GroupRequestMembershipRequestAnonymousForm extends FormBase {
   protected $group;
 
   /**
-   * Group membership request.
+   * Request stack.
    *
-   * @var \Drupal\group\Entity\GroupContentInterface
+   * @var \Symfony\Component\HttpFoundation\RequestStack
    */
-  protected $groupContent;
-
-  /**
-   * The redirect destination helper.
-   *
-   * @var \Drupal\Core\Routing\RedirectDestinationInterface
-   */
-  protected $redirectDestination;
-
-  /**
-   * The cache tags invalidator.
-   *
-   * @var \Drupal\Core\Cache\CacheTagsInvalidatorInterface
-   */
-  protected $cacheTagsInvalidator;
-
-  /**
-   * The current user.
-   *
-   * @var \Drupal\Core\Session\AccountInterface
-   */
-  protected $currentUser;
+  protected $requestStack;
 
   /**
    * GroupRequestMembershipRejectForm constructor.
    *
-   * @param \Drupal\Core\Routing\RedirectDestinationInterface $redirect_destination
-   *   The redirect destination.
-   * @param \Drupal\Core\Cache\CacheTagsInvalidatorInterface $cache_tags_invalidator
-   *   The cache tags invalidator.
-   * @param \Drupal\Core\Session\AccountInterface $current_user
-   *   The current user.
    * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
    *   The string translation.
+   * @param \Symfony\Component\HttpFoundation\RequestStack $request_stack
+   *   The request stack.
    */
-  public function __construct(
-    RedirectDestinationInterface $redirect_destination,
-    CacheTagsInvalidatorInterface $cache_tags_invalidator,
-    AccountInterface $current_user,
-    TranslationInterface $string_translation
-  ) {
-    $this->redirectDestination = $redirect_destination;
-    $this->cacheTagsInvalidator = $cache_tags_invalidator;
-    $this->currentUser = $current_user;
+  public function __construct(TranslationInterface $string_translation, RequestStack $request_stack) {
     $this->setStringTranslation($string_translation);
+    $this->requestStack = $request_stack;
   }
 
   /**
@@ -83,10 +48,8 @@ class GroupRequestMembershipRequestAnonymousForm extends FormBase {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('redirect.destination'),
-      $container->get('cache_tags.invalidator'),
-      $container->get('current_user'),
-      $container->get('string_translation')
+      $container->get('string_translation'),
+      $container->get('request_stack')
     );
   }
 
@@ -109,7 +72,7 @@ class GroupRequestMembershipRequestAnonymousForm extends FormBase {
       '#value' => $this->t('In order to send your request, please first sign up or log in.'),
     ];
 
-    $previous_url = \Drupal::requestStack()->getCurrentRequest()->headers->get('referer');
+    $previous_url = $this->requestStack->getCurrentRequest()->headers->get('referer');
     $request = Request::create($previous_url);
     $referer_path = $request->getRequestUri();
 

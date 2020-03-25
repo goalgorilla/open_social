@@ -7,11 +7,14 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Config\ConfigFactoryOverrideInterface;
 use Drupal\Core\Config\StorageInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\Core\StringTranslation\TranslationInterface;
 
 /**
  * Social Group request configuration override.
  */
 class SocialGroupRequestConfigOverride implements ConfigFactoryOverrideInterface {
+  use StringTranslationTrait;
 
   /**
    * The config factory.
@@ -34,13 +37,17 @@ class SocialGroupRequestConfigOverride implements ConfigFactoryOverrideInterface
    *   The config factory.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    *   The module handler.
+   * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
+   *   The string translation.
    */
   public function __construct(
     ConfigFactoryInterface $config_factory,
-    ModuleHandlerInterface $module_handler
+    ModuleHandlerInterface $module_handler,
+    TranslationInterface $string_translation
   ) {
     $this->configFactory = $config_factory;
     $this->moduleHandler = $module_handler;
+    $this->setStringTranslation($string_translation);
   }
 
   /**
@@ -106,7 +113,7 @@ class SocialGroupRequestConfigOverride implements ConfigFactoryOverrideInterface
                 ],
                 'parent_name' => '',
                 'weight' => 99,
-                'label' => t('Request membership')->render(),
+                'label' => $this->t('Request membership')->render(),
                 'format_type' => 'fieldset',
                 'format_settings' => [
                   'description' => '',
@@ -142,20 +149,20 @@ class SocialGroupRequestConfigOverride implements ConfigFactoryOverrideInterface
                   'role' => [
                     'administrator' => 'administrator',
                   ],
-                ]
+                ],
               ],
             ],
           ],
           'membership_requests' => [
             'display_plugin' => 'page',
             'id' => 'membership_requests',
-            'display_title' => 'Membership requests',
+            'display_title' => $this->t('Membership requests')->render(),
             'position' => 2,
             'display_options' => [
               'display_extenders' => [],
               'display_description' => '',
               'path' => 'group/%/membership-requests',
-              'title' => 'Membership requests',
+              'title' => $this->t('Membership requests')->render(),
               'defaults' => [
                 'title' => FALSE,
                 'fields' => FALSE,
@@ -168,7 +175,7 @@ class SocialGroupRequestConfigOverride implements ConfigFactoryOverrideInterface
                   'relationship' => 'gc__user',
                   'group_type' => 'group',
                   'admin_label' => '',
-                  'label' => 'Member',
+                  'label' => $this->t('Member')->render(),
                   'exclude' => FALSE,
                   'alter' => [
                     'alter_text' => FALSE,
@@ -298,7 +305,7 @@ class SocialGroupRequestConfigOverride implements ConfigFactoryOverrideInterface
                   'relationship' => 'none',
                   'group_type' => 'group',
                   'admin_label' => '',
-                  'label' => 'Request date',
+                  'label' => $this->t('Request date')->render(),
                   'exclude' => FALSE,
                   'alter' => [
                     'alter_text' => FALSE,
@@ -503,11 +510,11 @@ class SocialGroupRequestConfigOverride implements ConfigFactoryOverrideInterface
                   'relationship' => 'none',
                   'group_type' => 'group',
                   'admin_label' => '',
-                  'label' => 'Approve membership',
+                  'label' => $this->t('Approve membership')->render(),
                   'exclude' => TRUE,
                   'alter' => [
                     'alter_text' => TRUE,
-                    'text' => 'Approve Membership',
+                    'text' => $this->t('Approve Membership')->render(),
                     'make_link' => TRUE,
                     'path' => 'group/{{ gid }}/content/{{ id }}/approve-membership',
                     'absolute' => FALSE,
@@ -515,7 +522,7 @@ class SocialGroupRequestConfigOverride implements ConfigFactoryOverrideInterface
                     'replace_spaces' => FALSE,
                     'path_case' => 'none',
                     'trim_whitespace' => FALSE,
-                    'alt' => 'Approve membership',
+                    'alt' => $this->t('Approve membership')->render(),
                     'rel' => '',
                     'link_class' => '',
                     'prefix' => '',
@@ -554,11 +561,11 @@ class SocialGroupRequestConfigOverride implements ConfigFactoryOverrideInterface
                   'relationship' => 'none',
                   'group_type' => 'group',
                   'admin_label' => '',
-                  'label' => 'Reject Membership',
+                  'label' => $this->t('Reject Membership')->render(),
                   'exclude' => TRUE,
                   'alter' => [
                     'alter_text' => TRUE,
-                    'text' => 'Reject Membership',
+                    'text' => $this->t('Reject Membership')->render(),
                     'make_link' => TRUE,
                     'path' => 'group/{{ gid }}/content/{{ id }}/reject-membership',
                     'absolute' => FALSE,
@@ -566,7 +573,7 @@ class SocialGroupRequestConfigOverride implements ConfigFactoryOverrideInterface
                     'replace_spaces' => FALSE,
                     'path_case' => 'none',
                     'trim_whitespace' => FALSE,
-                    'alt' => 'Reject Membership',
+                    'alt' => $this->t('Reject Membership')->render(),
                     'rel' => '',
                     'link_class' => '',
                     'prefix' => '',
@@ -605,7 +612,7 @@ class SocialGroupRequestConfigOverride implements ConfigFactoryOverrideInterface
                   'relationship' => 'none',
                   'group_type' => 'group',
                   'admin_label' => '',
-                  'label' => 'Action',
+                  'label' => $this->t('Action')->render(),
                   'exclude' => FALSE,
                   'alter' => [
                     'alter_text' => FALSE,

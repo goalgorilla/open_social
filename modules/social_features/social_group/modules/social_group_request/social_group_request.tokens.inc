@@ -58,7 +58,7 @@ function social_group_request_tokens($type, $tokens, array $data, array $options
                 ->load($target_id);
 
               if (!empty($group_content)) {
-//                $replacements[$original] = Url::fromRoute('view.group_pending_members.pending_members', ['group' => $group_content->getGroup()->id()])->toString();
+                $replacements[$original] = Url::fromRoute('view.group_pending_members.membership_requests', ['arg_0' => $group_content->getGroup()->id()])->toString();
               }
             }
           }

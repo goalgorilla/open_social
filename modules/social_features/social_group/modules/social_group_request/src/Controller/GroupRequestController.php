@@ -120,19 +120,19 @@ class GroupRequestController extends ControllerBase {
       ->getContentPlugin('group_membership_request')
       ->getContentTypeConfigId();
 
-    $request = \Drupal::entityQuery('group_content')
+    $request = $this->entityTypeManager()->getStorage('group_content')->getQuery()
       ->condition('type', $contentTypeConfigId)
       ->condition('gid', $group->id())
-      ->condition('entity_id', \Drupal::currentUser()->id())
+      ->condition('entity_id', $this->currentUser()->id())
       ->condition('grequest_status', GroupMembershipRequest::REQUEST_PENDING)
       ->count()
       ->execute();
 
     if ($request == 0) {
-      $request_form = \Drupal::formBuilder()->getForm(GroupRequestMembershipRequestForm::class, $group);
-      $response->addCommand(new OpenModalDialogCommand(t('Request to join'), $request_form, [
+      $request_form = $this->entityFormBuilder->getForm(GroupRequestMembershipRequestForm::class, $group);
+      $response->addCommand(new OpenModalDialogCommand($this->t('Request to join'), $request_form, [
         'width' => '582px',
-        'dialogClass' => 'social_group-popup'
+        'dialogClass' => 'social_group-popup',
       ]));
     }
 
@@ -143,12 +143,12 @@ class GroupRequestController extends ControllerBase {
    * Callback to request membership for anonymous.
    */
   public function anonymousRequestMembership(GroupInterface $group) {
-    $request_form = \Drupal::formBuilder()->getForm(GroupRequestMembershipRequestAnonymousForm::class, $group);
+    $request_form = $this->entityFormBuilder->getForm(GroupRequestMembershipRequestAnonymousForm::class, $group);
 
     $response = new AjaxResponse();
-    $response->addCommand(new OpenModalDialogCommand(t('Request to join'), $request_form, [
+    $response->addCommand(new OpenModalDialogCommand($this->t('Request to join'), $request_form, [
       'width' => '337px',
-      'dialogClass' => 'social_group-popup social_group-popup--anonymous'
+      'dialogClass' => 'social_group-popup social_group-popup--anonymous',
     ]));
 
     return $response;

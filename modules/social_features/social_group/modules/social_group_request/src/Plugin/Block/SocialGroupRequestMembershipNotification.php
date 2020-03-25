@@ -5,16 +5,16 @@ namespace Drupal\social_group_request\Plugin\Block;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Block\BlockBase;
 use Drupal\Core\Cache\Cache;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Drupal\grequest\Plugin\GroupContentEnabler\GroupMembershipRequest;
-use Drupal\group\Entity\GroupInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Provides a 'Fax' block.
+ * Provides a 'Membership requests notification' block.
  *
  * @Block(
  *   id = "membership_requests_notification",
@@ -24,41 +24,57 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class SocialGroupRequestMembershipNotification extends BlockBase implements ContainerFactoryPluginInterface {
 
   /**
-   * @var AccountInterface $account
+   * User account entity.
+   *
+   * @var \Drupal\Core\Session\AccountInterface
    */
   protected $account;
 
   /**
-   * @var \Drupal\group\Entity\GroupInterface $group
+   * Group entity.
+   *
+   * @var \Drupal\group\Entity\GroupInterface
    */
   protected $group;
 
   /**
-   * @param array $configuration
-   * @param string $plugin_id
-   * @param mixed $plugin_definition
-   * @param \Drupal\Core\Session\AccountInterface $account
+   * Entity type manger.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, AccountInterface $account) {
+  protected $entityTypeManager;
+
+  /**
+   * Constructs SocialGroupRequestMembershipNotification.
+   *
+   * @param array $configuration
+   *   Configuration array.
+   * @param string $plugin_id
+   *   Plugin ID.
+   * @param mixed $plugin_definition
+   *   Plugin definition.
+   * @param \Drupal\Core\Session\AccountInterface $account
+   *   User account entity.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
+   */
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, AccountInterface $account, EntityTypeManagerInterface $entity_type_manager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->account = $account;
     $this->group = _social_group_get_current_group();
+    $this->entityTypeManager = $entity_type_manager;
   }
 
   /**
-   * @param \Symfony\Component\DependencyInjection\ContainerInterface $container
-   * @param array $configuration
-   * @param string $plugin_id
-   * @param mixed $plugin_definition
-   *
-   * @return static
+   * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
     return new static(
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('current_user')
+      $container->get('current_user'),
+      $container->get('entity_type.manager')
     );
   }
 
@@ -89,7 +105,7 @@ class SocialGroupRequestMembershipNotification extends BlockBase implements Cont
       ->getContentPlugin('group_membership_request')
       ->getContentTypeConfigId();
 
-    $requests = \Drupal::entityQuery('group_content')
+    $requests = $this->entityTypeManager->getStorage('group_content')->getQuery()
       ->condition('type', $contentTypeConfigId)
       ->condition('gid', $this->group->id())
       ->condition('grequest_status', GroupMembershipRequest::REQUEST_PENDING)
