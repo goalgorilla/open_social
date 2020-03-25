@@ -85,14 +85,14 @@ class InviteUserBaseForm extends FormBase {
     $form['actions']['submit_cancel'] = array (
       '#type' => 'submit',
       '#weight' => 999,
-      '#value' =>  $this->t('Back to group'),
+      '#value' =>  $this->t('Back '),
       '#submit' => [[$this, 'cancelForm']],
       '#limit_validation_errors' => [],
     );
 
     $form['submit'] = [
       '#type' => 'submit',
-      '#value' => $this->t('Submit'),
+      '#value' => $this->t('Send invite(s)'),
     ];
 
     return $form;

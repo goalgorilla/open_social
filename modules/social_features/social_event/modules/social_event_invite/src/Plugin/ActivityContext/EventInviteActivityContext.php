@@ -87,10 +87,10 @@ class EventInviteActivityContext extends ActivityContextBase {
           && !$event_enrollment->get('field_request_status')->isEmpty()
           && $event_enrollment->get('field_request_or_invite_status')->value === '3'
           && !$event_enrollment->get('field_account')->isEmpty()) {
-          $recipients[] = [
-            'target_type' => 'user',
-            'target_id' => $event_enrollment->get('field_account')->value,
-          ];
+            $recipients[] = [
+              'target_type' => 'user',
+              'target_id' => $event_enrollment->get('field_account')->value,
+            ];
         }
       }
     }

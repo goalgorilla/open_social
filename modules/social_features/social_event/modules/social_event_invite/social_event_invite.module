@@ -24,6 +24,7 @@ function social_event_invite_event_enrollment_insert(EventEnrollmentInterface $e
   $params = [
     'user' => $from,
     'existing_user' => FALSE,
+    'event_enrollment' => $eventEnrollment->id(),
   ];
 
   $langcode = 'en';
@@ -46,8 +47,6 @@ function social_event_invite_mail($key, &$message, $params) {
     $token_service = \Drupal::token();
     $language_manager = \Drupal::languageManager();
 
-    // Get email from GroupInvitation.
-    $event = $params['event'];
     $langcode = $message['langcode'];
 
     $language = $language_manager->getLanguage($langcode);

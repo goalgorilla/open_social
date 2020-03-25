@@ -8,7 +8,6 @@ use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
-use Drupal\Core\TempStore\PrivateTempStoreFactory;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 
@@ -92,14 +91,14 @@ class InviteEmailBaseForm extends FormBase {
     $form['actions']['submit_cancel'] = array (
       '#type' => 'submit',
       '#weight' => 999,
-      '#value' =>  $this->t('Back to group'),
+      '#value' =>  $this->t('Back'),
       '#submit' => [[$this, 'cancelForm']],
       '#limit_validation_errors' => [],
     );
 
     $form['submit'] = [
       '#type' => 'submit',
-      '#value' => $this->t('Submit'),
+      '#value' => $this->t('Send Invite(s)'),
     ];
 
     return $form;
@@ -151,7 +150,7 @@ class InviteEmailBaseForm extends FormBase {
 
 
   /**
-   * Get array of submited emails.
+   * Get array of submitted emails.
    *
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The current state of the form.

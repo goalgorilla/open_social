@@ -6,6 +6,7 @@
  */
 
 use Drupal\Core\Render\BubbleableMetadata;
+use Drupal\Core\Url;
 
 /**
  * Implements hook_token_info().
@@ -34,18 +35,23 @@ function social_event_invite_token_info() {
  */
 function social_event_invite_tokens($type, $tokens, array $data, array $options, BubbleableMetadata $bubbleable_metadata) {
   $replacements = [];
-  if ($type == 'social_event_invite' && !empty($data[$type])) {
-    /** @var \Drupal\social_event\EventEnrollmentInterface $event_enrollment */
-    $event_enrollment = $data['event_enrollment'];
-
+  if ($type == 'social_event_invite') {
     foreach ($tokens as $name => $original) {
-      switch ($name) {
-        case 'register_link':
-          $mail = $event_enrollment->get('field_email')->getString();
-          $mail_encoded = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($mail));
-          $register_link = Url::fromRoute('user.register', ['invitee_mail' => $mail_encoded], ['absolute' => TRUE])->toString();
-          $replacements[$original] = $register_link;
-          break;
+      if ($name == 'register_link') {
+        // Load the current Event enrollments so we can check duplicates.
+        $storage = \Drupal::entityTypeManager()->getStorage('event_enrollment');
+        /** @var \Drupal\social_event\EventEnrollmentInterface $event_enrollment */
+        $event_enrollment = $storage->load($data['event_enrollment']);
+
+        $mail = $event_enrollment->get('field_email')->getString();
+        $mail_encoded = str_replace(['+', '/', '='], [
+          '-',
+          '_',
+          ''
+        ], base64_encode($mail));
+        $register_link = Url::fromRoute('user.register', ['invitee_mail' => $mail_encoded], ['absolute' => TRUE])
+          ->toString();
+        $replacements[$original] = $register_link;
       }
     }
   }

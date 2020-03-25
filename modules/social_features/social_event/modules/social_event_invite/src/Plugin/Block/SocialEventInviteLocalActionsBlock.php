@@ -7,6 +7,7 @@ use Drupal\Core\Block\BlockBase;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -94,17 +95,13 @@ class SocialEventInviteLocalActionsBlock extends BlockBase implements ContainerF
       $links = [
         '#type' => 'dropbutton',
         '#links' => [
+          'title' => [
+            'title' => $this->t('Invite'),
+            'url' => Url::fromRoute('<current>', []),
+          ],
           'add_directly' => [
             'title' => $this->t('Add directly'),
-            'url' => 'test1',
-          ],
-          'invite_by_mail' => [
-            'title' => $this->t('Invite by mail'),
-            'url' => 'test2',
-          ],
-          'view_invites' => [
-            'title' => $this->t('View invites'),
-            'url' => 'test3',
+            'url' => Url::fromRoute('social_event_invite.invite_user', ['node' => $event->id()]),
           ],
         ],
       ];
