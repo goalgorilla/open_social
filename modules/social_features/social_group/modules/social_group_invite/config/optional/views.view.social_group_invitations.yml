@@ -6,8 +6,9 @@ dependencies:
     - field.storage.group_content.invitee_mail
   module:
     - group
-    - ginvite
     - user
+    - social_group_invite
+    - ginvite
   enforced:
     module:
       - social_group_invite
@@ -262,14 +263,14 @@ display:
           element_wrapper_type: ''
           element_wrapper_class: ''
           element_default_classes: true
-          empty: '{{ invitee_mail }} '
-          hide_empty: true
-          empty_zero: false
-          hide_alter_empty: true
+          empty: '{{ invitee_mail }}'
+          hide_empty: false
+          empty_zero: true
+          hide_alter_empty: false
           click_sort_column: value
           type: user_name
           settings:
-            link_to_entity: true
+            link_to_entity: false
           group_column: value
           group_columns: {  }
           group_rows: true
@@ -349,6 +350,68 @@ display:
           field_api_classes: false
           entity_type: group_content
           entity_field: created
+          plugin_id: field
+        invitation_status:
+          id: invitation_status
+          table: group_content__invitation_status
+          field: invitation_status
+          relationship: none
+          group_type: group
+          admin_label: ''
+          label: 'Invitation status'
+          exclude: false
+          alter:
+            alter_text: false
+            text: "{{ invitation_status }} == Invitation status\r\n{{ invitation_status__value }} == Raw value"
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: number_unformatted
+          settings: {  }
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
           plugin_id: field
         delete_group_content:
           id: delete_group_content
@@ -460,115 +523,7 @@ display:
             created: '0'
           destination: true
           plugin_id: dropbutton
-        invitation_status:
-          id: invitation_status
-          table: group_content__invitation_status
-          field: invitation_status
-          relationship: none
-          group_type: group
-          admin_label: ''
-          label: 'Invitation status'
-          exclude: false
-          alter:
-            alter_text: false
-            text: ''
-            make_link: false
-            path: ''
-            absolute: false
-            external: false
-            replace_spaces: false
-            path_case: none
-            trim_whitespace: false
-            alt: ''
-            rel: ''
-            link_class: ''
-            prefix: ''
-            suffix: ''
-            target: ''
-            nl2br: false
-            max_length: 0
-            word_boundary: true
-            ellipsis: true
-            more_link: false
-            more_link_text: ''
-            more_link_path: ''
-            strip_tags: false
-            trim: false
-            preserve_tags: ''
-            html: false
-          element_type: ''
-          element_class: ''
-          element_label_type: ''
-          element_label_class: ''
-          element_label_colon: false
-          element_wrapper_type: ''
-          element_wrapper_class: ''
-          element_default_classes: true
-          empty: ''
-          hide_empty: false
-          empty_zero: false
-          hide_alter_empty: true
-          click_sort_column: value
-          type: number_integer
-          settings:
-            thousand_separator: ''
-            prefix_suffix: false
-          group_column: value
-          group_columns: {  }
-          group_rows: true
-          delta_limit: 0
-          delta_offset: 0
-          delta_reversed: false
-          delta_first_last: false
-          multi_type: separator
-          separator: ', '
-          field_api_classes: false
-          plugin_id: field
-      filters:
-        invitation_status_value:
-          id: invitation_status_value
-          table: group_content__invitation_status
-          field: invitation_status_value
-          relationship: none
-          group_type: group
-          admin_label: ''
-          operator: '='
-          value:
-            min: ''
-            max: ''
-            value: '0'
-          group: 1
-          exposed: false
-          expose:
-            operator_id: ''
-            label: ''
-            description: ''
-            use_operator: false
-            operator: ''
-            identifier: ''
-            required: false
-            remember: false
-            multiple: false
-            remember_roles:
-              authenticated: authenticated
-            placeholder: ''
-            min_placeholder: ''
-            max_placeholder: ''
-            operator_limit_selection: false
-            operator_list: {  }
-          is_grouped: false
-          group_info:
-            label: ''
-            description: ''
-            identifier: ''
-            optional: true
-            widget: select
-            multiple: false
-            remember: false
-            default_group: All
-            default_group_multiple: {  }
-            group_items: {  }
-          plugin_id: numeric
+      filters: {  }
       sorts: {  }
       header: {  }
       footer: {  }
@@ -659,7 +614,7 @@ display:
       display_extenders: {  }
       path: group/%group/invitation-overview
       menu:
-        type: tab
+        type: none
         title: Invitations
         description: 'Group invitations'
         expanded: false

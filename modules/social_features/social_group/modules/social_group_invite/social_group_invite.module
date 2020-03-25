@@ -5,6 +5,7 @@
  * The Social Invite group module.
  */
 
+use Drupal\ginvite\Plugin\GroupContentEnabler\GroupInvitation;
 use Drupal\group\Entity\GroupInterface;
 
 /**
@@ -47,6 +48,42 @@ function social_group_invite_preprocess_views_view(&$variables) {
       if (!empty($block_content)) {
         $variables['header']['actions'] = $block_content;
       }
+    }
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function social_group_invite_preprocess_views_view_field(&$variables) {
+  $view = $variables['view'];
+  // Alter some group invite fields for better representation in the
+  // custom social overview.
+  if ($view->id() === 'social_group_invitations') {
+    if ($variables['field']->field === 'invitation_status' && !empty($variables['row']->_entity)) {
+      $entity = $variables['row']->_entity;
+      $field_value = $entity->get('invitation_status')->first()->getValue()['value'];
+      // Field values are always returned as string,
+      // so lets typecast them for now.
+      $current_status = (integer) $field_value;
+      switch ($current_status) {
+        case GroupInvitation::INVITATION_PENDING:
+          $output = t('Pending reply');
+          break;
+
+        case GroupInvitation::INVITATION_ACCEPTED:
+          $output = t('Accepted and joined');
+          break;
+
+        case GroupInvitation::INVITATION_REJECTED:
+          $output = t('Declined');
+          break;
+
+        default:
+          $output = $variables['output'];
+      }
+
+      $variables['output'] = $output;
     }
   }
 }
