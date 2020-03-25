@@ -59,7 +59,7 @@ class EnrollInviteEmailForm extends InviteEmailBaseForm {
       $fields = [
         'field_event' => $nid,
         'field_enrollment_status' => '0',
-        'field_request_or_invite_status' => '3',
+        'field_request_or_invite_status' => '4',
       ];
 
       if ($user instanceof UserInterface) {
@@ -71,7 +71,7 @@ class EnrollInviteEmailForm extends InviteEmailBaseForm {
         // Add email address.
         $fields['field_email'] = $email;
       }
-      
+
       // Create a new enrollment for the event.
       $enrollment = EventEnrollment::create($fields);
       $enrollment->save();
