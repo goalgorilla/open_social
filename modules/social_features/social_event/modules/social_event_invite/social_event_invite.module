@@ -27,7 +27,7 @@ function social_event_invite_event_enrollment_insert(EventEnrollmentInterface $e
   ];
 
   $langcode = 'en';
-  
+
   $mailManager->mail('social_event_invite', 'invite', $mail, $langcode, $params, NULL, TRUE);
   $messenger->addMessage(t('Invite sent to %mail', ['%mail' => $mail]));
 
@@ -70,5 +70,44 @@ function social_event_invite_mail($key, &$message, $params) {
 
     $language_manager->setConfigOverrideLanguage($original_language);
 
+  }
+}
+
+/**
+ * Implements hook_views_data().
+ */
+function social_event_invite_views_data() {
+  $data['views']['social_event_invite_recipient'] = [
+    'group' => t('Event enrollment'),
+    'title' => t('Recipient'),
+    'help' => t('The recipient of an event invite.'),
+    'field' => [
+      'id' => 'social_event_invite_recipient',
+    ],
+  ];
+  return $data;
+}
+
+/**
+ * Implements template_preprocess_views_view().
+ */
+function social_event_invite_preprocess_views_view(&$variables) {
+  if ($variables['view']->id() === 'event_manage_enrollment_invites') {
+    $node_id = \Drupal::routeMatch()->getParameter('node');
+    // Implement custom button to go back to the event.
+    $variables['more'] = [
+      '#title' => t('Back to event'),
+      '#type' => 'link',
+      '#url' => Url::fromRoute('entity.node.canonical', ['node' => (int) $node_id]),
+      '#attributes' => [
+        'class' => [
+          'btn',
+          'btn-default',
+          'btn-lg',
+          'btn-raised',
+          'waves-effect',
+        ],
+      ],
+    ];
   }
 }
