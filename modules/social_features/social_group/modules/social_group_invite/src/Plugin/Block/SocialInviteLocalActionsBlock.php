@@ -79,8 +79,7 @@ class SocialInviteLocalActionsBlock extends BlockBase implements ContainerFactor
     $group = _social_group_get_current_group();
     if ($group instanceof GroupInterface) {
       // If group allows Group Invites by content plugin.
-      $group_type = $group->getGroupType();
-      if (!$group_type->hasContentPlugin('group_invitation')) {
+      if (_social_group_invite_current_type_enabled_invites()) {
         return AccessResult::forbidden();
       }
       // Only when user has correct access.
@@ -125,9 +124,8 @@ class SocialInviteLocalActionsBlock extends BlockBase implements ContainerFactor
     $build = [];
 
     // Get current group so we can build correct links.
-    $group = _social_group_get_current_group();
-    $group_type = $group->getGroupType();
-    if ($group instanceof GroupInterface && $group_type->hasContentPlugin('group_invitation')) {
+    if (_social_group_invite_current_type_enabled_invites()) {
+      $group = _social_group_get_current_group();
       $links = [
         '#type' => 'dropbutton',
         '#links' => [

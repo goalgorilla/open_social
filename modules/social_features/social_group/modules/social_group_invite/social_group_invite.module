@@ -5,6 +5,8 @@
  * The Social Invite group module.
  */
 
+use Drupal\Core\Render\BubbleableMetadata;
+use Drupal\Core\Url;
 use Drupal\group\Entity\GroupInterface;
 
 /**
@@ -20,11 +22,8 @@ function social_group_invite_preprocess_views_view(&$variables) {
   // hook_theme_registry_alter will ensure our hooks is invoked later.
   // That is also why hook_menu_local_actions_alter won't work.
   // Get current group so we can build correct links.
-  $group = _social_group_get_current_group();
-  $group_type = $group->getGroupType();
-  if ($group instanceof GroupInterface &&
-    $view->id() === 'group_manage_members' &&
-    $group_type->hasContentPlugin('group_invitation')) {
+  if ($view->id() === 'group_manage_members' &&
+    _social_group_invite_current_type_enabled_invites()) {
     $entity = \Drupal::entityTypeManager()->getStorage('block')
       ->load('socialinviteactionsblock');
 
@@ -38,6 +37,26 @@ function social_group_invite_preprocess_views_view(&$variables) {
       }
     }
   }
+}
+
+/**
+ * Check if current group it's group_type has invites enabled.
+ *
+ * @return bool
+ *  TRUE if it's enabled.
+ */
+function _social_group_invite_current_type_enabled_invites() {
+  $enabled = FALSE;
+  $group = _social_group_get_current_group();
+  // Check if group type has content plugin enabled.
+  if ($group instanceof GroupInterface) {
+    $group_type = $group->getGroupType();
+    if ($group_type->hasContentPlugin('group_invitation')) {
+      $enabled = TRUE;
+    }
+  }
+
+  return $enabled;
 }
 
 /**
