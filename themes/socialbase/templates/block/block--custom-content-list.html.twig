@@ -65,18 +65,18 @@
   {{ title_prefix }}
   {% if label %}
     <h2 {{ title_attributes.addClass(title_classes) }}>
-      {% if elements.content_type %}
+      {% if content_type %}
         <svg class="content-list__type">
-          <title>{{- elements.content_type -}}</title>
-          <use xlink:href="#icon-{{- elements.content_type -}}"></use>
+          <title>{{- content_type -}}</title>
+          <use xlink:href="#icon-{{- content_type -}}"></use>
         </svg>
       {% endif %}
 
       {{ label }}
 
-      {% if elements.subtitle %}
+      {% if subtitle %}
         <div class="card__subtitle">
-          {{ elements.subtitle }}
+          {{ subtitle }}
         </div>
       {% endif %}
     </h2>

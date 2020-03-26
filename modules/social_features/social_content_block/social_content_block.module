@@ -5,6 +5,7 @@
  * The Social Content Block module.
  */
 
+use Drupal\block_content\BlockContentInterface;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -14,11 +15,21 @@ use Drupal\social_content_block\ContentBuilder;
  * Implements hook_preprocess_block().
  */
 function social_content_block_preprocess_block(&$variables) {
-  if ($variables['base_plugin_id'] === 'block_content' &&
-    isset($variables['content']['#block_content']) &&
-    $variables['content']['#block_content']->bundle() === 'custom_content_list'
-  ) {
-    $variables['card'] = TRUE;
+  if (isset($variables['content']['#block_content']) && $variables['content']['#block_content']->bundle() === 'custom_content_list') {
+    if ($variables['base_plugin_id'] === 'block_content') {
+      $variables['card'] = TRUE;
+    }
+    // Add subtitle and content type icon for display on dashboards.
+    elseif ($variables['base_plugin_id'] === 'inline_block') {
+      $block_entity = $variables['content']['#block_content'];
+      if (!$block_entity instanceof BlockContentInterface || $block_entity->bundle() !== 'custom_content_list') {
+        return;
+      }
+      $variables['content_type'] = ['#plain_text' => _social_content_block_get_content_type_for_block($block_entity)];
+      if (!$block_entity->field_subtitle->isEmpty()) {
+        $variables['subtitle'] = $block_entity->field_subtitle->view(['label' => 'hidden']);
+      }
+    }
   }
 }
 
@@ -57,6 +68,31 @@ function social_content_block_block_content_view(array &$build, EntityInterface 
       '#create_placeholder' => TRUE,
     ];
   }
+}
+
+/**
+ * Get content type for the block.
+ *
+ * @param \Drupal\block_content\BlockContentInterface $block_entity
+ *   The block content entity object.
+ *
+ * @return string
+ *   The entity type.
+ */
+function _social_content_block_get_content_type_for_block(BlockContentInterface $block_entity) {
+  if ($block_entity->field_plugin_id->isEmpty()) {
+    return '';
+  }
+
+  $plugin_id = $block_entity->field_plugin_id->value;
+  $definition = \Drupal::service('plugin.manager.content_block')->getDefinition($plugin_id);
+
+  // For nodes we distinguish bundles, otherwise we only show the entity type.
+  if ($definition['entityTypeId'] === 'node') {
+    return $definition['bundle'];
+  }
+
+  return $definition['entity_type'];
 }
 
 /**
