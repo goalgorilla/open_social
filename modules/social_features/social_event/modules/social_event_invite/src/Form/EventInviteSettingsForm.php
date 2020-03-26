@@ -23,6 +23,13 @@ class EventInviteSettingsForm extends ConfigFormBase {
   public function buildForm(array $form, FormStateInterface $form_state) {
     $social_event_config = $this->configFactory->getEditable('social_event_invite.settings');
 
+    // Add an introduction text to explain what can be done here.
+    $form['introduction']['warning'] = [
+      '#type' => 'html_tag',
+      '#tag' => 'p',
+      '#value' => $this->t('Be aware that when disabling invites altogether or for a specific group type, the outstanding invites in question <em>are cancelled</em>. Invitees will no longer be able to use their invite link.'),
+    ];
+
     $form['invite_enroll'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Enable invite enrollment to events'),
