@@ -22,6 +22,11 @@ function social_event_invite_token_info() {
     'description' => t('Url to register page with prefilled email address.'),
   ];
 
+  $social_event_invite['user_login_event_destination'] = [
+    'name' => t('Event link with login page'),
+    'description' => t('Url to the login page with event as destination.'),
+  ];
+
   return [
     'types' => ['social_event_invite' => $type],
     'tokens' => [
@@ -52,6 +57,21 @@ function social_event_invite_tokens($type, $tokens, array $data, array $options,
         $register_link = Url::fromRoute('user.register', ['invitee_mail' => $mail_encoded], ['absolute' => TRUE])
           ->toString();
         $replacements[$original] = $register_link;
+      }
+      if ($name == 'user_login_event_destination') {
+        /** @var \Drupal\message\Entity\Message $message */
+        $message = $data['message'];
+
+        // Load the current Event enrollments so we can check duplicates.
+        $storage = \Drupal::entityTypeManager()->getStorage('event_enrollment');
+        /** @var \Drupal\social_event\EventEnrollmentInterface $event_enrollment */
+        $event_enrollment = $storage->load($message->field_message_related_object->target_id);
+
+        $event = $event_enrollment->get('field_event')->getString();
+        $destination = Url::fromRoute('entity.node.canonical', ['node' => $event])->toString();
+        $login_link = Url::fromRoute('user.login', ['destination' => $destination], ['absolute' => TRUE])
+          ->toString();
+        $replacements[$original] = $login_link;
       }
     }
   }
