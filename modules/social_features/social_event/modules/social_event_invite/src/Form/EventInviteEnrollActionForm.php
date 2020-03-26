@@ -138,6 +138,7 @@ class EventInviteEnrollActionForm extends EnrollActionForm {
 
     $enrollments = $this->entityStorage->loadByProperties($conditions);
 
+    // TODO:: also clear the breadcrumb cachetags.
     // Invalidate cache for our enrollment cache tag in
     // social_event_node_view_alter().
     $cache_tag = 'enrollment:' . $nid . '-' . $uid;
