@@ -5,6 +5,8 @@
  * The Social event invite enroll module.
  */
 
+use Drupal\Core\Cache\Cache;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Url;
 use Drupal\social_event\EventEnrollmentInterface;
 
@@ -120,16 +122,56 @@ function social_event_invite_preprocess_views_view(&$variables) {
  * Override variables for the social page hero data.
  */
 function social_event_invite_preprocess_node(array &$variables) {
-  $account = \Drupal::currentUser();
   if (!empty($variables['event_enrollment'])) {
     $node = $variables['node'];
 
     if ($variables['view_mode'] === 'hero') {
-      $form = \Drupal::formBuilder()->getForm('Drupal\social_event_invite\Form\EventInviteEnrollActionForm', $node);
+      $form = \Drupal::formBuilder()
+        ->getForm('Drupal\social_event_invite\Form\EventInviteEnrollActionForm', $node);
 
       $variables['event_enrollment'] = [
         'enroll_action_form' => $form,
       ];
     }
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_insert().
+ */
+function social_event_invite_user_insert(EntityInterface $entity) {
+  // @todo: implement a better, more specific way to invalidate cache.
+  // - config:field.storage.event_enrollment.field_request_or_invite_status.
+  // - config:views.view.event_manage_enrollment_invites.
+  // - event_enrollment_list.
+  // - user_list.
+  // - profile_list.
+  // - profile_view.
+  // - event_enrollment:ID.
+  $tags = [
+    'config:field.storage.event_enrollment.field_request_or_invite_status',
+    'config:views.view.event_manage_enrollment_invites',
+  ];
+  Cache::invalidateTags($tags);
+}
+
+/**
+ * Implements hook_entity_operation_alter().
+ */
+function social_event_invite_entity_operation_alter(array &$operations, EntityInterface $entity) {
+  // Check access first.
+  if (!social_event_owner_or_organizer()) {
+    return;
+  }
+  // Get the node, so we can pass it as a parameter.
+  $node = \Drupal::routeMatch()->getParameter('node');
+  // Check if the entity type is one of event_enrollment and that we're on the
+  // correct view. Otherwise it would update all actions across the platform.
+  if ($entity->getEntityTypeId() === 'event_enrollment' && \Drupal::routeMatch()->getRouteName() === 'view.event_manage_enrollment_invites.page_manage_enrollment_invites') {
+    // Empty the current operations.
+    $operations = [];
+    // Add the "Cancel invite" option.
+    $operations['approve']['title'] = t('Cancel invite');
+    $operations['approve']['url'] = Url::fromRoute('<front>', []);
   }
 }
