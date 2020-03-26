@@ -8,6 +8,7 @@ use Drupal\Core\Database\Query\SelectInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\Core\Field\EntityReferenceFieldItemListInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
@@ -120,10 +121,15 @@ class ContentBuilder implements ContentBuilderInterface {
     foreach ($field_names as $field_name) {
       $field = $block_content->get($field_name);
 
-      if (!$field->isEmpty()) {
+      // Make non-empty entity reference fields easier to use.
+      if ($field instanceof EntityReferenceFieldItemListInterface && !$field->isEmpty()) {
         $fields[$field_name] = array_map(function ($item) {
           return $item['target_id'];
         }, $field->getValue());
+      }
+      // Other fields just get added as is.
+      elseif (!$field->isEmpty()) {
+        $fields[$field_name] = $field->getValue();
       }
     }
 
@@ -444,14 +450,15 @@ class ContentBuilder implements ContentBuilderInterface {
         break;
 
       case 'event_date':
-        $query->leftJoin('node__field_event_date', 'nfed', "base_table.${entity_id_key} = nfed.entity_id");
-        $query->orderBy('field_event_date_value', 'ASC');
+        $nfed_alias = $query->leftJoin('node__field_event_date', 'nfed', "base_table.${entity_id_key} = %alias.entity_id");
+        $query->orderBy("${nfed_alias}.field_event_date_value", 'ASC');
         break;
 
       // Fall back by assuming the sorting option is a field.
       default:
         $query->orderBy("base_table.${sort_by}");
     }
+
   }
 
 }
