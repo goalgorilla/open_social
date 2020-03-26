@@ -118,13 +118,8 @@ class SocialEventInviteRecipientField extends FieldPluginBase {
       if ($entity && $profile) {
         $build = [];
         $entity = $this->getEntityTranslation($entity, $values);
-        $access = $entity->access('view', NULL, TRUE);
-        $build['#access'] = $access;
-        if ($access->isAllowed()) {
-          $view_builder = $this->entityTypeManager->getViewBuilder('profile');
-          $build += $view_builder->view($profile, 'table', $entity->language()
-            ->getId());
-        }
+        $view_builder = $this->entityTypeManager->getViewBuilder('profile');
+        $build += $view_builder->view($profile, 'table', $entity->language()->getId());
         return $build;
       }
     }

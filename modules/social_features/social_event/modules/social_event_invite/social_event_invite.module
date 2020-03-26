@@ -136,3 +136,24 @@ function social_event_invite_user_insert(EntityInterface $entity) {
   ];
   Cache::invalidateTags($tags);
 }
+
+/**
+ * Implements hook_entity_operation_alter().
+ */
+function social_event_invite_entity_operation_alter(array &$operations, EntityInterface $entity) {
+  // Check access first.
+  if (!social_event_owner_or_organizer()) {
+    return;
+  }
+  // Get the node, so we can pass it as a parameter.
+  $node = \Drupal::routeMatch()->getParameter('node');
+  // Check if the entity type is one of event_enrollment and that we're on the
+  // correct view. Otherwise it would update all actions across the platform.
+  if ($entity->getEntityTypeId() === 'event_enrollment' && \Drupal::routeMatch()->getRouteName() === 'view.event_manage_enrollment_invites.page_manage_enrollment_invites') {
+    // Empty the current operations.
+    $operations = [];
+    // Add the "Cancel invite" option.
+    $operations['approve']['title'] = t('Cancel invite');
+    $operations['approve']['url'] = Url::fromRoute('<front>', []);
+  }
+}
