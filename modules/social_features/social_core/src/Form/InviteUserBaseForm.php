@@ -82,14 +82,6 @@ class InviteUserBaseForm extends FormBase {
   public function buildForm(array $form, FormStateInterface $form_state) {
     $form['#attributes']['class'][] = 'card card__block form--default form-wrapper form-group';
 
-    $form['actions']['submit_cancel'] = array (
-      '#type' => 'submit',
-      '#weight' => 999,
-      '#value' =>  $this->t('Back '),
-      '#submit' => [[$this, 'cancelForm']],
-      '#limit_validation_errors' => [],
-    );
-
     $form['submit'] = [
       '#type' => 'submit',
       '#value' => $this->t('Send invite(s)'),

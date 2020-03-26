@@ -88,14 +88,6 @@ class InviteEmailBaseForm extends FormBase {
       '#required' => TRUE,
     ];
 
-    $form['actions']['submit_cancel'] = array (
-      '#type' => 'submit',
-      '#weight' => 999,
-      '#value' =>  $this->t('Back'),
-      '#submit' => [[$this, 'cancelForm']],
-      '#limit_validation_errors' => [],
-    );
-
     $form['submit'] = [
       '#type' => 'submit',
       '#value' => $this->t('Send Invite(s)'),
