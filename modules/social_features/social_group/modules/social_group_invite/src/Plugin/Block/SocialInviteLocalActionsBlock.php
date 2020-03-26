@@ -9,10 +9,7 @@ use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Drupal\group\Entity\GroupInterface;
-use Drupal\node\Entity\Node;
-use Drupal\node\NodeInterface;
 use Drupal\ginvite\GroupInvitationLoaderInterface;
-use Drupal\social_group\Entity\Group;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -73,7 +70,7 @@ class SocialInviteLocalActionsBlock extends BlockBase implements ContainerFactor
   }
 
   /**
-   * {@inheritdoc}.
+   * {@inheritdoc}
    */
   protected function blockAccess(AccountInterface $account) {
     $group = _social_group_get_current_group();
