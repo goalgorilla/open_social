@@ -115,3 +115,21 @@ function social_event_invite_preprocess_views_view(&$variables) {
     ];
   }
 }
+
+/**
+ * Override variables for the social page hero data.
+ */
+function social_event_invite_preprocess_node(array &$variables) {
+  $account = \Drupal::currentUser();
+  if (!empty($variables['event_enrollment'])) {
+    $node = $variables['node'];
+
+    if ($variables['view_mode'] === 'hero') {
+      $form = \Drupal::formBuilder()->getForm('Drupal\social_event_invite\Form\EventInviteEnrollActionForm', $node);
+
+      $variables['event_enrollment'] = [
+        'enroll_action_form' => $form,
+      ];
+    }
+  }
+}
