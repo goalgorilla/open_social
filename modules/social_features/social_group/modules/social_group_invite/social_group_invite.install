@@ -17,17 +17,7 @@ function social_group_invite_install() {
   // that have group_invitation enabled.
   foreach (GroupType::loadMultiple() as $group_type) {
     if ($group_type->hasContentPlugin('group_invitation')) {
-      /** @var \Drupal\group\Entity\GroupRoleInterface $roles */
-      $roles = $group_type->getRoles();
-      // Make sure this is done for managers and admins.
-      if (!empty($roles[$group_type->id() . '-group_manager'])) {
-        $role = $roles[$group_type->id() . '-group_manager'];
-        social_group_invite_set_default_permissions_for_role_on_group_type($role);
-      }
-      if (!empty($roles[$group_type->id() . '-group_admin'])) {
-        $role = $roles[$group_type->id() . '-group_admin'];
-        social_group_invite_set_default_permissions_for_role_on_group_type($role);
-      }
+      social_group_invite_set_default_permissions_for_group_type($group_type);
     }
   }
 }

@@ -9,6 +9,7 @@ use Drupal\ginvite\Plugin\GroupContentEnabler\GroupInvitation;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupRoleInterface;
 use Drupal\Core\Url;
+use Drupal\group\Entity\GroupTypeInterface;
 
 /**
  * Implements hook_menu_local_actions_alter().
@@ -162,7 +163,7 @@ function social_group_invite_preprocess_page_title(&$variables) {
 }
 
 /**
- * A specific Group Type role, will get default invite permissions.
+ * A specific Group Type Role, will get default invite permissions.
  *
  * @param \Drupal\group\Entity\GroupRoleInterface $role
  *   The role that we will add the default permissions to.
@@ -177,4 +178,26 @@ function social_group_invite_set_default_permissions_for_role_on_group_type(Grou
     'view group invitations',
   ]);
   $role->save();
+}
+
+/**
+ * A specific Group Type, where will assign invite permissions.
+ *
+ * @param \Drupal\group\Entity\GroupTypeInterface $group_type
+ *   The Group type role that we will add the default permissions to.
+ *
+ * @throws \Drupal\Core\Entity\EntityStorageException
+ */
+function social_group_invite_set_default_permissions_for_group_type(GroupTypeInterface $group_type) {
+  /** @var \Drupal\group\Entity\GroupRoleInterface $roles */
+  $roles = $group_type->getRoles();
+  // Make sure this is done for managers and admins.
+  if (!empty($roles[$group_type->id() . '-group_manager'])) {
+    $role = $roles[$group_type->id() . '-group_manager'];
+    social_group_invite_set_default_permissions_for_role_on_group_type($role);
+  }
+  if (!empty($roles[$group_type->id() . '-group_admin'])) {
+    $role = $roles[$group_type->id() . '-group_admin'];
+    social_group_invite_set_default_permissions_for_role_on_group_type($role);
+  }
 }

@@ -2,10 +2,14 @@
 
 namespace Drupal\social_group_invite\EventSubscriber;
 
+use Drupal\Core\Config\ConfigCrudEvent;
+use Drupal\Core\Config\ConfigEvents;
 use Drupal\Core\Routing\CurrentRouteMatch;
 use Drupal\Core\Session\AccountProxy;
 use Drupal\Core\Url;
 use Drupal\group\Entity\Group;
+use Drupal\group\Entity\GroupType;
+use Drupal\group\Entity\GroupTypeInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
@@ -16,7 +20,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
  *
  * @package Drupal\social_group_invite\EventSubscriber
  */
-class CustomRedirects implements EventSubscriberInterface {
+class EventSubscribers implements EventSubscriberInterface {
 
   /**
    * The current route.
@@ -53,7 +57,30 @@ class CustomRedirects implements EventSubscriberInterface {
    */
   public static function getSubscribedEvents() {
     $events[KernelEvents::REQUEST][] = ['customRedirect'];
+    $events[ConfigEvents::SAVE][] = ['checkForInvite'];
     return $events;
+  }
+
+  /**
+   * Checks for group invite save.
+   *
+   * @param \Drupal\Core\Config\ConfigCrudEvent $event
+   *   The event when config is saved.
+   *
+   * @throws \Drupal\Core\Entity\EntityStorageException
+   */
+  public function checkForInvite(ConfigCrudEvent $event) {
+    $saved_config = $event->getConfig()->getRawData();
+    // When group_invitation is enabled, add some default config.
+    if (!empty($saved_config['group_type']) &&
+      !empty($saved_config['content_plugin']) &&
+      $saved_config['content_plugin'] === 'group_invitation') {
+      // Load the Group type and add permissions.
+      $group_type = GroupType::load($saved_config['group_type']);
+      if ($group_type instanceof GroupTypeInterface) {
+        social_group_invite_set_default_permissions_for_group_type($group_type);
+      }
+    }
   }
 
   /**
@@ -63,7 +90,6 @@ class CustomRedirects implements EventSubscriberInterface {
    *   The event.
    */
   public function customRedirect(GetResponseEvent $event) {
-
     // First check if the current route is the group canonical.
     $routeMatch = $this->currentRoute->getRouteName();
 
