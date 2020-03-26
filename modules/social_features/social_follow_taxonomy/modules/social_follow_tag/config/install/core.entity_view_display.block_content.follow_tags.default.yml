@@ -1,0 +1,24 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - block_content.type.follow_tags
+    - field.field.block_content.follow_tags.field_tags
+  module:
+    - entity_reference_revisions
+id: block_content.follow_tags.default
+targetEntityType: block_content
+bundle: follow_tags
+mode: default
+content:
+  field_tags:
+    type: entity_reference_revisions_entity_view
+    weight: 1
+    label: hidden
+    settings:
+      view_mode: default
+      link: ''
+    third_party_settings: {  }
+    region: content
+hidden:
+  search_api_excerpt: true
