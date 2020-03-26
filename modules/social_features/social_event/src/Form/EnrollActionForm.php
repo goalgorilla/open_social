@@ -146,8 +146,18 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
 
       $groups = $this->getGroups($node);
 
+      // If the user is invited to an event
+      // it shouldn't care about group permissions.
+      $conditions = [
+        'field_account' => $current_user->id(),
+        'field_event' => $node->id(),
+      ];
+
+      $enrollments = $this->entityStorage->loadByProperties($conditions);
+
       // Check if groups are not empty, or that the outsiders are able to join.
-      if (!empty($groups) && $node->field_event_enroll_outside_group->value !== '1') {
+      if (!empty($groups) && $node->field_event_enroll_outside_group->value !== '1' && empty($enrollments)) {
+
         $group_type_ids = $this->configFactory->getEditable('social_event.settings')
           ->get('enroll');
 

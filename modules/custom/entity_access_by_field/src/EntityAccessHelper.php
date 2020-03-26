@@ -7,6 +7,7 @@ use Drupal\Core\Access\AccessResult;
 use Drupal\node\NodeInterface;
 use Drupal\group\Entity\GroupContent;
 use Drupal\group\Entity\Group;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 
 /**
  * Helper class for checking entity access.
@@ -101,6 +102,27 @@ class EntityAccessHelper {
    */
   public static function getEntityAccessResult(NodeInterface $node, $op, AccountInterface $account) {
     $access = EntityAccessHelper::nodeAccessCheck($node, $op, $account);
+
+    $moduleHandler = \Drupal::service('module_handler');
+    // If the social_event_invite module is enabled and a person got invited
+    // then allow access to view the node.
+    // Todo:: Come up with a better solution for this code.
+    if ($moduleHandler->moduleExists('social_event_invite')){
+      if ($op == 'view') {
+        $conditions = [
+          'field_account' => $account->id(),
+          'field_event' => $node->id(),
+        ];
+
+        // Load the current Event enrollments so we can check duplicates.
+        $storage = \Drupal::entityTypeManager()->getStorage('event_enrollment');
+        $enrollments = $storage->loadByProperties($conditions);
+
+        if (!empty($enrollments)) {
+          $access = 2;
+        }
+      }
+    }
 
     switch ($access) {
       case 2:

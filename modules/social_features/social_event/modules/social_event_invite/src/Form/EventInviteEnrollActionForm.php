@@ -145,7 +145,7 @@ class EventInviteEnrollActionForm extends EnrollActionForm {
 
     if ($enrollment = array_pop($enrollments)) {
       $enrollment->field_enrollment_status->value = '1';
-      $enrollment->field_request_or_invite_status_value = '5';
+      $enrollment->field_request_or_invite_status->value = '5';
       $enrollment->save();
     }
   }
