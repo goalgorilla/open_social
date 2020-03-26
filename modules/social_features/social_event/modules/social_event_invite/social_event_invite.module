@@ -5,6 +5,8 @@
  * The Social event invite enroll module.
  */
 
+use Drupal\Core\Cache\Cache;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Url;
 use Drupal\social_event\EventEnrollmentInterface;
 
@@ -114,4 +116,23 @@ function social_event_invite_preprocess_views_view(&$variables) {
       ],
     ];
   }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_insert().
+ */
+function social_event_invite_user_insert(EntityInterface $entity) {
+  // @todo: implement a better, more specific way to invalidate cache.
+  // - config:field.storage.event_enrollment.field_request_or_invite_status.
+  // - config:views.view.event_manage_enrollment_invites.
+  // - event_enrollment_list.
+  // - user_list.
+  // - profile_list.
+  // - profile_view.
+  // - event_enrollment:ID.
+  $tags = [
+    'config:field.storage.event_enrollment.field_request_or_invite_status',
+    'config:views.view.event_manage_enrollment_invites',
+  ];
+  Cache::invalidateTags($tags);
 }
