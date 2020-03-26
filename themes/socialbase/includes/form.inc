@@ -256,6 +256,11 @@ function socialbase_form_alter(&$form, FormStateInterface $form_state, $form_id)
     $group_add_card_to_forms[] = "group_content_{$social_group_type}-group_membership_edit_form";
     $group_confirm_forms[] = "group_content_{$social_group_type}-group_membership_group-leave_form";
     $group_confirm_forms[] = "group_content_{$social_group_type}-group_membership_delete_form";
+    $group_confirm_forms[] = "group_content_{$social_group_type}-group_membership_delete_form";
+    $group_confirm_forms[] = "group_content_{$social_group_type}-group_invitation_delete_form";
+    $group_confirm_forms[] = "group_content_{$social_group_type}-group_invitation_add_form";
+    $group_confirm_forms[] = "bulk_group_invitation";
+    $group_confirm_forms[] = "bulk_group_invitation_confirm";
     $group_confirm_forms[] = "group_{$social_group_type}_delete_form";
     $group_default_forms[] = "group_{$social_group_type}_add_form";
     $group_default_forms[] = "group_{$social_group_type}_edit_form";
