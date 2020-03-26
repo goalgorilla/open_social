@@ -87,6 +87,8 @@ class EventInviteSettingsForm extends ConfigFormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $config = $this->configFactory->getEditable('social_event_invite.settings');
     $config->set('invite_enroll', $form_state->getValue('invite_enroll'));
+    $config->set('invite_group_types', $form_state->getValue('invite_group_types'));
+    $config->set('invite_group_controllable', $form_state->getValue('invite_group_controllable'));
     $config->set('invite_message', $form_state->getValue('invite_message'));
     $config->set('invite_subject', $form_state->getValue('invite_subject'));
     $config->save();

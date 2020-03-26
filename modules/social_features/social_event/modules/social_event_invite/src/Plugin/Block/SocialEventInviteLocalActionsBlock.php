@@ -113,6 +113,7 @@ class SocialEventInviteLocalActionsBlock extends BlockBase implements ContainerF
       'target_id' => $node_id,
     ]);
 
+    // If we have a group we need to additional checks.
     if ($gid_from_entity !== NULL) {
       /* @var $group \Drupal\group\Entity\GroupInterface */
       $group = $this->entityTypeManager
@@ -121,9 +122,12 @@ class SocialEventInviteLocalActionsBlock extends BlockBase implements ContainerF
 
       $enabled_for_group = $config->get('invite_group_types');
       $enabled = FALSE;
-      foreach ($enabled_for_group as $group_type) {
-        if ($group_type === $group->bundle()) {
-          $enabled = TRUE;
+      if (is_array($enabled_for_group)) {
+        foreach ($enabled_for_group as $group_type) {
+          if ($group_type === $group->bundle()) {
+            $enabled = TRUE;
+            break;
+          }
         }
       }
 
@@ -135,13 +139,14 @@ class SocialEventInviteLocalActionsBlock extends BlockBase implements ContainerF
 
       // If the group manager of the group this event belongs to decided that this
       // feature is enabled, we don't want to show the block.
-      $group_enabled = $group->get('event_invite');
       if ($config->get('invite_group_controllable') && !$group->get('event_invite')) {
         return AccessResult::forbidden();
       }
     }
 
-    return AccessResult::neutral();
+    // If we've got this far we can be sure the user is allowed to see this
+    // block.
+    return AccessResult::allowed();
   }
 
   /**
