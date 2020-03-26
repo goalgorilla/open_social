@@ -20,19 +20,19 @@ class RouteSubscriber extends RouteSubscriberBase {
     // Add our custom access check for the
     if ($route = $collection->get('social_event_invite.invite_email')) {
       $requirements = $route->getRequirements();
-      $requirements['_custom_access'] = 'social_event_invite.access::access';
+      $requirements['_custom_access'] = 'social_event_invite.access::eventFeatureAccess';
       $route->setRequirements($requirements);
     }
 
     if ($route = $collection->get('social_event_invite.invite_user')) {
       $requirements = $route->getRequirements();
-      $requirements['_custom_access'] = 'social_event_invite.access::access';
+      $requirements['_custom_access'] = 'social_event_invite.access::eventFeatureAccess';
       $route->setRequirements($requirements);
     }
 
     if ($route = $collection->get('view.event_manage_enrollment_invites.page_manage_enrollment_invites')) {
       $requirements = $route->getRequirements();
-      $requirements['_custom_access'] = 'social_event_invite.access::access';
+      $requirements['_custom_access'] = 'social_event_invite.access::eventFeatureAccess';
       $route->setRequirements($requirements);
     }
   }

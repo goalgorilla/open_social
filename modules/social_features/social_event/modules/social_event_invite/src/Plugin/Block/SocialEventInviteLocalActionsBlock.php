@@ -2,16 +2,16 @@
 
 namespace Drupal\social_event_invite\Plugin\Block;
 
+use Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException;
+use Drupal\Component\Plugin\Exception\PluginNotFoundException;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Block\BlockBase;
-use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
-use Drupal\social_group\SocialGroupHelperService;
+use Drupal\social_event_invite\SocialEventInviteAccessHelper;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\node\Entity\Node;
 
@@ -23,7 +23,7 @@ use Drupal\node\Entity\Node;
  *  admin_label = @Translation("Social Event Invite block"),
  * )
  */
-class SocialEventInviteLocalActionsBlock extends BlockBase {
+class SocialEventInviteLocalActionsBlock extends BlockBase implements ContainerFactoryPluginInterface {
 
   /**
    * The route match.
@@ -33,25 +33,11 @@ class SocialEventInviteLocalActionsBlock extends BlockBase {
   protected $routeMatch;
 
   /**
-   * Configuration factory.
+   * The event invite access helper.
    *
-   * @var \Drupal\Core\Config\ConfigFactoryInterface
+   * @var \Drupal\social_event_invite\SocialEventInviteAccessHelper
    */
-  protected $configFactory;
-
-  /**
-   * Group helper service.
-   *
-   * @var \Drupal\social_group\SocialGroupHelperService
-   */
-  protected $groupHelperService;
-
-  /**
-   * Entity type manager.
-   *
-   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
-   */
-  protected $entityTypeManager;
+  protected $accessHelper;
 
   /**
    * EventAddBlock constructor.
@@ -64,19 +50,13 @@ class SocialEventInviteLocalActionsBlock extends BlockBase {
    *   The given plugin definition.
    * @param \Drupal\Core\Routing\RouteMatchInterface $routeMatch
    *   The route match.
-   * @param \Drupal\Core\Config\ConfigFactoryInterface $configFactory
-   *   Configuration factory.
-   * @param \Drupal\social_group\SocialGroupHelperService $groupHelperService
-   *   The group helper service.
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
-   *   The entity type manager.
+   * @param \Drupal\social_event_invite\SocialEventInviteAccessHelper
+   *   The event invite access helper.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, RouteMatchInterface $routeMatch, ConfigFactoryInterface $configFactory, SocialGroupHelperService $groupHelperService, EntityTypeManagerInterface $entityTypeManager) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, RouteMatchInterface $routeMatch, SocialEventInviteAccessHelper $accessHelper) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->routeMatch = $routeMatch;
-    $this->configFactory = $configFactory;
-    $this->groupHelperService = $groupHelperService;
-    $this->entityTypeManager = $entityTypeManager;
+    $this->accessHelper = $accessHelper;
   }
 
   /**
@@ -88,9 +68,7 @@ class SocialEventInviteLocalActionsBlock extends BlockBase {
       $plugin_id,
       $plugin_definition,
       $container->get('current_route_match'),
-      $container->get('config.factory'),
-      $container->get('social_group.helper_service'),
-      $container->get('entity_type.manager')
+      $container->get('social_event_invite.access_helper')
     );
   }
 
@@ -98,49 +76,13 @@ class SocialEventInviteLocalActionsBlock extends BlockBase {
    * {@inheritdoc}.
    */
   protected function blockAccess(AccountInterface $account) {
-    $config = $this->configFactory->get('social_event_invite.settings');
-    $enabled_global = $config->get('invite_enroll');
-
-    // If it's globally disabled, we don't want to show the block.
-    if (!$enabled_global) {
-      return AccessResult::forbidden();
+    try {
+      return $this->accessHelper->eventFeatureAccess();
+    } catch (InvalidPluginDefinitionException $e) {
+      return AccessResult::neutral();
+    } catch (PluginNotFoundException $e) {
+      return AccessResult::neutral();
     }
-
-    // Get the group of this node.
-    $node_id = $this->routeMatch->getParameter('node');
-    $gid_from_entity = $this->groupHelperService->getGroupFromEntity([
-      'target_type' => 'node',
-      'target_id' => $node_id,
-    ]);
-
-    // If we have a group we need to additional checks.
-    if ($gid_from_entity !== NULL) {
-      /* @var $group \Drupal\group\Entity\GroupInterface */
-      $group = $this->entityTypeManager
-        ->getStorage('group')
-        ->load($gid_from_entity);
-
-      $enabled_for_group = $config->get('invite_group_types');
-      $enabled = FALSE;
-      if (is_array($enabled_for_group)) {
-        foreach ($enabled_for_group as $group_type) {
-          if ($group_type === $group->bundle()) {
-            $enabled = TRUE;
-            break;
-          }
-        }
-      }
-
-      // If it's not enabled for the group this event belongs to, we don't want to
-      // show the block.
-      if (!$enabled) {
-        return AccessResult::forbidden();
-      }
-    }
-
-    // If we've got this far we can be sure the user is allowed to see this
-    // block.
-    return AccessResult::allowed();
   }
 
   /**
