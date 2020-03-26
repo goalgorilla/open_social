@@ -1,0 +1,53 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - block_content
+    - options
+id: block_content.field_event_date
+field_name: field_event_date
+entity_type: block_content
+type: list_string
+settings:
+  allowed_values:
+    -
+      value: future
+      label: 'Future Events'
+    -
+      value: past
+      label: 'Past Events'
+    -
+      value: last_month
+      label: 'Last Month'
+    -
+      value: current_month
+      label: 'This month'
+    -
+      value: next_moth
+      label: 'Next month'
+    -
+      value: last_30
+      label: 'Last 30 days'
+    -
+      value: next_30
+      label: 'Next 30 days'
+    -
+      value: last_14
+      label: 'Last 14 days'
+    -
+      value: next_14
+      label: 'Next 14 days'
+    -
+      value: last_7
+      label: 'Last 7 days'
+    -
+      value: next_7
+      label: 'Next 7 days'
+  allowed_values_function: ''
+module: options
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

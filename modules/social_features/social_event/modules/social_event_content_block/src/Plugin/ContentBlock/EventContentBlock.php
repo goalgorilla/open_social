@@ -16,6 +16,7 @@ use Drupal\social_content_block\ContentBlockBase;
  *     "field_event_type",
  *     "field_event_content_tag",
  *     "field_event_group",
+ *     "field_event_date",
  *   },
  * )
  */
