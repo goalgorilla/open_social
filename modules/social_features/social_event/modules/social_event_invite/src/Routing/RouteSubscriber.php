@@ -35,6 +35,13 @@ class RouteSubscriber extends RouteSubscriberBase {
       $requirements['_custom_access'] = 'social_event_invite.access::eventFeatureAccess';
       $route->setRequirements($requirements);
     }
+
+    // @todo: Needs the correct view route for the user invites overview.
+    if ($route = $collection->get('view...')) {
+      $requirements = $route->getRequirements();
+      $requirements['_custom_access'] = 'social_event_invite.access::userInviteAccess';
+      $route->setRequirements($requirements);
+    }
   }
 
 }

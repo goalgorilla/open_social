@@ -48,4 +48,15 @@ class SocialEventInvitesAccess {
     }
   }
 
+  /**
+   * Custom access check for the user invite overview.
+   *
+   * @return \Drupal\Core\Access\AccessResult
+   *   Returns the result of the access helper.
+   * @see \Drupal\social_event_invite\SocialEventInviteAccessHelper::userInviteAccess()
+   */
+  public function userInviteAccess() {
+    return $this->accessHelper->userInviteAccess();
+  }
+
 }

@@ -6,6 +6,7 @@ use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\node\NodeInterface;
 use Drupal\social_group\SocialGroupHelperService;
 
@@ -45,6 +46,13 @@ class SocialEventInviteAccessHelper {
   protected $entityTypeManager;
 
   /**
+   * The current user.
+   *
+   * @var \Drupal\Core\Session\AccountProxyInterface
+   */
+  protected $currentUser;
+
+  /**
    * EventInvitesAccess constructor.
    *
    * @param \Drupal\Core\Routing\RouteMatchInterface $routeMatch
@@ -55,12 +63,15 @@ class SocialEventInviteAccessHelper {
    *   The group helper service.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
    *   The entity type manager.
+   * @param \Drupal\Core\Session\AccountProxyInterface $currentUser
+   *   The current user.
    */
-  public function __construct(RouteMatchInterface $routeMatch, ConfigFactoryInterface $configFactory, SocialGroupHelperService $groupHelperService, EntityTypeManagerInterface $entityTypeManager) {
+  public function __construct(RouteMatchInterface $routeMatch, ConfigFactoryInterface $configFactory, SocialGroupHelperService $groupHelperService, EntityTypeManagerInterface $entityTypeManager, AccountProxyInterface $currentUser) {
     $this->routeMatch = $routeMatch;
     $this->configFactory = $configFactory;
     $this->groupHelperService = $groupHelperService;
     $this->entityTypeManager = $entityTypeManager;
+    $this->currentUser = $currentUser;
   }
 
   /**
@@ -119,5 +130,30 @@ class SocialEventInviteAccessHelper {
     // block.
     // @todo: move that function to a service.
     return AccessResult::allowedIf(social_event_owner_or_organizer());
+  }
+
+  /**
+   * Custom access check for the user invite overview.
+   *
+   * @return \Drupal\Core\Access\AccessResult
+   */
+  public function userInviteAccess() {
+    $config = $this->configFactory->get('social_event_invite.settings');
+    $enabled_global = $config->get('invite_enroll');
+
+    // If it's globally disabled, we don't want to show the block.
+    if (!$enabled_global) {
+      return AccessResult::forbidden();
+    }
+
+    // Get the user.
+    $account = $this->routeMatch->getParameter('user');
+    if ($account instanceof AccountProxyInterface) {
+      /* @var $account \Drupal\Core\Session\AccountProxyInterface */
+      $account = $account->id();
+      return AccessResult::allowedIf($account->id() === $this->currentUser->id());
+    }
+
+    return AccessResult::neutral();
   }
 }
