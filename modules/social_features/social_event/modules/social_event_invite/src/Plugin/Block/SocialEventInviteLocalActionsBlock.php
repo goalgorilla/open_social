@@ -23,7 +23,7 @@ use Drupal\node\Entity\Node;
  *  admin_label = @Translation("Social Event Invite block"),
  * )
  */
-class SocialEventInviteLocalActionsBlock extends BlockBase implements ContainerFactoryPluginInterface {
+class SocialEventInviteLocalActionsBlock extends BlockBase {
 
   /**
    * The route match.
@@ -134,12 +134,6 @@ class SocialEventInviteLocalActionsBlock extends BlockBase implements ContainerF
       // If it's not enabled for the group this event belongs to, we don't want to
       // show the block.
       if (!$enabled) {
-        return AccessResult::forbidden();
-      }
-
-      // If the group manager of the group this event belongs to decided that this
-      // feature is enabled, we don't want to show the block.
-      if ($config->get('invite_group_controllable') && !$group->get('event_invite')) {
         return AccessResult::forbidden();
       }
     }

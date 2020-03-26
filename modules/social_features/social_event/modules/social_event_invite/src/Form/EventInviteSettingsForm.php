@@ -44,13 +44,6 @@ class EventInviteSettingsForm extends ConfigFormBase {
       '#default_value' => $social_event_config->get('invite_group_types'),
     ];
 
-    $form['invite_group_controllable'] = [
-      '#type' => 'checkbox',
-      '#title' => $this->t('Allow group managers to enable/disable inviting to events'),
-      '#description' => $this->t('When enabled group managers can decide if event managers can invite people to events placed in that group.'),
-      '#default_value' => $social_event_config->get('invite_group_controllable'),
-    ];
-
     $form['invite_subject'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Subject'),
@@ -88,7 +81,6 @@ class EventInviteSettingsForm extends ConfigFormBase {
     $config = $this->configFactory->getEditable('social_event_invite.settings');
     $config->set('invite_enroll', $form_state->getValue('invite_enroll'));
     $config->set('invite_group_types', $form_state->getValue('invite_group_types'));
-    $config->set('invite_group_controllable', $form_state->getValue('invite_group_controllable'));
     $config->set('invite_message', $form_state->getValue('invite_message'));
     $config->set('invite_subject', $form_state->getValue('invite_subject'));
     $config->save();
