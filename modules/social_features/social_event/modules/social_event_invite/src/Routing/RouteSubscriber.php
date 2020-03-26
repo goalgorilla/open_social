@@ -30,7 +30,7 @@ class RouteSubscriber extends RouteSubscriberBase {
       $route->setRequirements($requirements);
     }
 
-    if ($route = $collection->get('view.event_manage_enrollment_invites.page_manage_enrollment_invite')) {
+    if ($route = $collection->get('view.event_manage_enrollment_invites.page_manage_enrollment_invites')) {
       $requirements = $route->getRequirements();
       $requirements['_custom_access'] = 'social_event_invite.access::access';
       $route->setRequirements($requirements);

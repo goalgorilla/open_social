@@ -8,6 +8,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Routing\Access\AccessInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\node\NodeInterface;
 use Drupal\social_group\SocialGroupHelperService;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -84,9 +85,12 @@ class SocialEventInvitesAccess {
 
     // Get the group of this node.
     $node = $this->routeMatch->getParameter('node');
+    if ($node instanceof NodeInterface) {
+      $node = $node->id();
+    }
     $gid_from_entity = $this->groupHelperService->getGroupFromEntity([
       'target_type' => 'node',
-      'target_id' => $node->id(),
+      'target_id' => $node,
     ]);
 
     // If we have a group we need to additional checks.
@@ -117,6 +121,6 @@ class SocialEventInvitesAccess {
     // If we've got this far we can be sure the user is allowed to see this
     // block.
     // @todo: move that function to a service.
-    return AccessResult::allowedIf(social_event_owner_or_organizer($node));
+    return AccessResult::allowedIf(social_event_owner_or_organizer());
   }
 }
