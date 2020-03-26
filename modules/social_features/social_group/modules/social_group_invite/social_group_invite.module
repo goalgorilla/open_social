@@ -5,6 +5,9 @@
  * The Social Invite group module.
  */
 
+use Drupal\block\Entity\Block;
+use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\ginvite\Plugin\GroupContentEnabler\GroupInvitation;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupRoleInterface;
@@ -22,6 +25,43 @@ function social_group_invite_menu_local_actions_alter(&$local_actions) {
   // Remove "Invite member" button.
   if (isset($local_actions['ginvite.invite_member'])) {
     unset($local_actions['ginvite.invite_member']);
+  }
+}
+
+/**
+ * Implements hook_block_access().
+ */
+function social_group_invite_block_access(Block $block, $operation, AccountInterface $account) {
+  $route_name = \Drupal::routeMatch()->getRouteName();
+  $hide_blocks = [];
+  $routes_to_check = [
+    'entity.group_content.add_form',
+    'entity.group_content.delete_form',
+  ];
+
+  // Only when on the confirm page of removing or adding invites
+  // we remove the block for tasks and heros,the cancel button
+  // will allow users to go back.
+  if (in_array($route_name, $routes_to_check)) {
+    $block_id = $block->getPluginId();
+    /** @var \Drupal\group\Entity\GroupContent $group_content */
+    $group_content = \Drupal::routeMatch()->getParameter('group_content');
+
+    // Only if we are sure it's a group invitation.
+    if (NULL !== $group_content &&
+      NULL !==  $group_content->getGroupContentType() &&
+      $group_content->getGroupContentType()->getContentPluginId() === 'group_invitation')
+      // This is a list of the blocks that this function cares about, if we're being
+      // called for a different block we exit early.
+      $hide_blocks = [
+        'group_hero_block',
+        'local_tasks_block',
+      ];
+      if (!in_array($block_id, $hide_blocks)) {
+        return AccessResult::neutral();
+      }
+      // Remove the blocks.
+      return AccessResult::forbidden();
   }
 }
 
