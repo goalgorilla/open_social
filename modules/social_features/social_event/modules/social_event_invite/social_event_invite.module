@@ -7,6 +7,7 @@
 
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 use Drupal\social_event\EventEnrollmentInterface;
 
@@ -22,9 +23,12 @@ function social_event_invite_event_enrollment_insert(EventEnrollmentInterface $e
   $langcode = 'en';
 
   $mailManager = \Drupal::service('plugin.manager.mail');
-  $from = \Drupal::config('system.site')->get('mail');
+  $from = $eventEnrollment->get('user_id')->first()->get('entity')->getTarget()->getValue();
+  $node = $eventEnrollment->get('field_event')->first()->get('entity')->getTarget()->getValue();
+
   $params = [
     'user' => $from,
+    'node' => $node,
     'existing_user' => TRUE,
     'event_enrollment' => $eventEnrollment->id(),
   ];
@@ -78,6 +82,23 @@ function social_event_invite_mail($key, &$message, $params) {
 
   }
 }
+
+/**
+ * Prefill email address when user comes from social_event_invite registration url.
+ *
+ * Implements hook_form_FORM_ID_alter().
+ */
+function social_event_invite_form_user_register_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  if (isset($_GET["invitee_mail"])) {
+    $invitee_mail = $_GET["invitee_mail"];
+    $invitee_mail = base64_decode(str_replace(['-', '_'], ['+', '/'], $invitee_mail));
+    if (\Drupal::service('email.validator')->isValid($invitee_mail)) {
+      $form["account"]["mail"]["#default_value"] = $invitee_mail;
+      $form["account"]["mail"]["#disabled"] = TRUE;
+    }
+  }
+}
+
 
 /**
  * Implements hook_views_data().
