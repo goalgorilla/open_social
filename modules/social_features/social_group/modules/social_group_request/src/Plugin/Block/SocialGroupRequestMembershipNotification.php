@@ -9,6 +9,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\StringTranslation\TranslationManager;
 use Drupal\Core\Url;
 use Drupal\grequest\Plugin\GroupContentEnabler\GroupMembershipRequest;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -45,6 +46,13 @@ class SocialGroupRequestMembershipNotification extends BlockBase implements Cont
   protected $entityTypeManager;
 
   /**
+   * Translation manager.
+   *
+   * @var \Drupal\Core\StringTranslation\TranslationManager
+   */
+  protected $translation;
+
+  /**
    * Constructs SocialGroupRequestMembershipNotification.
    *
    * @param array $configuration
@@ -57,12 +65,22 @@ class SocialGroupRequestMembershipNotification extends BlockBase implements Cont
    *   User account entity.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity type manager.
+   * @param \Drupal\Core\StringTranslation\TranslationManager $translation
+   *   The translation manager.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, AccountInterface $account, EntityTypeManagerInterface $entity_type_manager) {
+  public function __construct(
+    array $configuration,
+    $plugin_id,
+    $plugin_definition,
+    AccountInterface $account,
+    EntityTypeManagerInterface $entity_type_manager,
+    TranslationManager $translation
+  ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->account = $account;
     $this->group = _social_group_get_current_group();
     $this->entityTypeManager = $entity_type_manager;
+    $this->translation = $translation;
   }
 
   /**
@@ -74,7 +92,8 @@ class SocialGroupRequestMembershipNotification extends BlockBase implements Cont
       $plugin_id,
       $plugin_definition,
       $container->get('current_user'),
-      $container->get('entity_type.manager')
+      $container->get('entity_type.manager'),
+      $container->get('string_translation')
     );
   }
 
@@ -121,9 +140,7 @@ class SocialGroupRequestMembershipNotification extends BlockBase implements Cont
       '#tag' => 'div',
       '#value' => $this->t('There are @link to join this group.', [
         '@link' => Link::fromTextAndUrl(
-          $this->t('(@count) new requests', [
-            '@count' => $requests,
-          ]),
+          $this->translation->formatPlural($requests, '(1) new request', '(@count) new requests'),
           Url::fromRoute('view.group_pending_members.membership_requests', ['arg_0' => $this->group->id()])
         )->toString(),
       ]),

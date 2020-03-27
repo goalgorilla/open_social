@@ -167,8 +167,6 @@ class GroupRequestMembershipRejectForm extends FormBase {
       $this->messenger()->addError($this->t('Error updating Request'));
     }
 
-    _activity_basics_entity_action($this->groupContent, 'change_status_group_membership_request_entity_action');
-
     $this->cacheTagsInvalidator->invalidateTags(['request-membership:' . $this->group->id()]);
 
     $form_state->setRedirectUrl($this->getCancelUrl());

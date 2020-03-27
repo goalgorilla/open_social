@@ -27,10 +27,3 @@ function _social_group_request_set_permissions() {
   $group_type = GroupType::load('closed_group');
   $group_type->getOutsiderRole()->grantPermissions(['request group membership'])->save();
 }
-
-/**
- * Set module weight.
- */
-function social_group_request_update_8001() {
-  module_set_weight('social_group_request', 6);
-}

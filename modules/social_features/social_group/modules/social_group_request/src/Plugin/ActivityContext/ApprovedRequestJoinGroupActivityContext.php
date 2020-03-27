@@ -25,16 +25,18 @@ class ApprovedRequestJoinGroupActivityContext extends ActivityContextBase {
     if (!empty($data['related_object'])) {
       $referenced_entity = ActivityFactory::getActivityRelatedEntity($data);
 
-      /** @var \Drupal\group\Entity\GroupContentInterface $group_content */
-      $group_content = $this->entityTypeManager->getStorage('group_content')
-        ->load($referenced_entity['target_id']);
+      $storage = $this->entityTypeManager->getStorage('group_content');
 
-      if (
-        !$group_content->get('entity_id')->isEmpty() &&
-        $group_content->hasField('grequest_status') &&
-        !$group_content->get('grequest_status')->isEmpty() &&
-        $group_content->get('grequest_status')->value == GroupMembershipRequest::REQUEST_ACCEPTED
-      ) {
+      /** @var \Drupal\group\Entity\GroupContentInterface $group_content */
+      $group_content = $storage->load($referenced_entity['target_id']);
+
+      $filters = [
+        'entity_id' => $group_content->getEntity()->id(),
+        'grequest_status' => GroupMembershipRequest::REQUEST_ACCEPTED,
+      ];
+      $requests = $storage->loadByGroup($group_content->getGroup(), 'group_membership_request', $filters);
+
+      if (!empty($requests)) {
         $recipients[] = [
           'target_type' => 'user',
           'target_id' => $group_content->getEntity()->id(),

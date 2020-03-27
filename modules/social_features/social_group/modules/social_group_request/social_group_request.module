@@ -89,8 +89,7 @@ function social_group_request_group_content_insert(GroupContentInterface $group_
         ->save();
 
       if ($request) {
-        \Drupal::messenger()->addStatus(t('Membership request rejected'));
-        _activity_basics_entity_action($request, 'change_status_group_membership_request_entity_action');
+        \Drupal::messenger()->addStatus(t('Membership request approved'));
       }
       else {
         \Drupal::messenger()->addError(t('Error updating Request'));
@@ -216,6 +215,7 @@ function social_group_request_form_alter(array &$form, FormStateInterface $form_
 
   $route = \Drupal::routeMatch()->getRouteName();
   if (in_array($form_id, $group_membership_add_forms) && $route === 'grequest.group_request_membership_approve') {
+    // Remove possibility to select members to add to group.
     if (isset($form['entity_id']['widget'][0]['target_id'])) {
       $form['entity_id']['widget'][0]['target_id']['#access'] = FALSE;
     }
@@ -224,6 +224,7 @@ function social_group_request_form_alter(array &$form, FormStateInterface $form_
       $form['group_roles']['widget']['#title'] = t('Group role');
     }
 
+    // Name of user which we're adding to the group.
     $user_name = $form['entity_id']['widget'][0]['target_id']['#default_value']->getDisplayName();
     $form['question'] = [
       '#type' => 'html_tag',
@@ -318,9 +319,10 @@ function social_group_request_preprocess_page_title(&$variables) {
     ->count()
     ->execute();
 
-  $variables['title'] = t('@count membership request(s) to group: @group_title', [
-    '@count' => $requests,
-    '@group_title' => $group->label(),
+  $title_singular = '1 membership request to group: :group_title';
+  $title_multiple = '@count membership requests to group: :group_title';
+  $variables['title'] = \Drupal::translation()->formatPlural($requests, $title_singular, $title_multiple, [
+    ':group_title' => $group->label(),
   ]);
 
   $variables['#cache']['tags'][] = 'request-membership:' . $group->id();

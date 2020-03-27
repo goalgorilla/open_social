@@ -115,9 +115,7 @@ class GroupRequestMembershipRequestForm extends FormBase {
     $form['actions']['submit'] = [
       '#type' => 'submit',
       '#value' => $this->t('Send request'),
-      '#attributes' => [
-        'class' => ['btn btn-primary'],
-      ],
+      '#button_type' => 'primary',
     ];
 
     return $form;

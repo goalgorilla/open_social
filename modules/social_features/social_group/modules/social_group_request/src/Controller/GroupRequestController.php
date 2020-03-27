@@ -8,6 +8,7 @@ use Drupal\Core\Cache\CacheTagsInvalidatorInterface;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityFormBuilderInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
@@ -33,6 +34,8 @@ class GroupRequestController extends ControllerBase {
   /**
    * GroupRequestController constructor.
    *
+   * @param \Drupal\Core\Form\FormBuilderInterface $form_builder
+   *   The form builder.
    * @param \Drupal\Core\Entity\EntityFormBuilderInterface $entity_form_builder
    *   The entity form builder.
    * @param \Drupal\Core\Messenger\MessengerInterface $messenger
@@ -47,6 +50,7 @@ class GroupRequestController extends ControllerBase {
    *   The current user.
    */
   public function __construct(
+    FormBuilderInterface $form_builder,
     EntityFormBuilderInterface $entity_form_builder,
     MessengerInterface $messenger,
     CacheTagsInvalidatorInterface $cache_tags_invalidator,
@@ -54,6 +58,7 @@ class GroupRequestController extends ControllerBase {
     EntityTypeManagerInterface $entity_type_manager,
     AccountInterface $current_user
   ) {
+    $this->formBuilder = $form_builder;
     $this->entityFormBuilder = $entity_form_builder;
     $this->setMessenger($messenger);
     $this->cacheTagsInvalidator = $cache_tags_invalidator;
@@ -67,6 +72,7 @@ class GroupRequestController extends ControllerBase {
    */
   public static function create(ContainerInterface $container) {
     return new static(
+      $container->get('form_builder'),
       $container->get('entity.form_builder'),
       $container->get('messenger'),
       $container->get('cache_tags.invalidator'),
@@ -106,7 +112,7 @@ class GroupRequestController extends ControllerBase {
 
     $this->cacheTagsInvalidator->invalidateTags(['request-membership:' . $group->id()]);
 
-    return $this->entityFormBuilder->getForm($group_content, 'add');
+    return $this->entityFormBuilder()->getForm($group_content, 'add');
   }
 
   /**
@@ -129,7 +135,7 @@ class GroupRequestController extends ControllerBase {
       ->execute();
 
     if ($request == 0) {
-      $request_form = $this->entityFormBuilder->getForm(GroupRequestMembershipRequestForm::class, $group);
+      $request_form = $this->formBuilder()->getForm(GroupRequestMembershipRequestForm::class, $group);
       $response->addCommand(new OpenModalDialogCommand($this->t('Request to join'), $request_form, [
         'width' => '582px',
         'dialogClass' => 'social_group-popup',
@@ -143,7 +149,7 @@ class GroupRequestController extends ControllerBase {
    * Callback to request membership for anonymous.
    */
   public function anonymousRequestMembership(GroupInterface $group) {
-    $request_form = $this->entityFormBuilder->getForm(GroupRequestMembershipRequestAnonymousForm::class, $group);
+    $request_form = $this->formBuilder()->getForm(GroupRequestMembershipRequestAnonymousForm::class, $group);
 
     $response = new AjaxResponse();
     $response->addCommand(new OpenModalDialogCommand($this->t('Request to join'), $request_form, [
