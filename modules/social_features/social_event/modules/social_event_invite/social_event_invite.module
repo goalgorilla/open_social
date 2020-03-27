@@ -7,6 +7,7 @@
 
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 use Drupal\social_event\EventEnrollmentInterface;
 
@@ -81,6 +82,23 @@ function social_event_invite_mail($key, &$message, $params) {
 
   }
 }
+
+/**
+ * Prefill email address when user comes from social_event_invite registration url.
+ *
+ * Implements hook_form_FORM_ID_alter().
+ */
+function social_event_invite_form_user_register_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  if (isset($_GET["invitee_mail"])) {
+    $invitee_mail = $_GET["invitee_mail"];
+    $invitee_mail = base64_decode(str_replace(['-', '_'], ['+', '/'], $invitee_mail));
+    if (\Drupal::service('email.validator')->isValid($invitee_mail)) {
+      $form["account"]["mail"]["#default_value"] = $invitee_mail;
+      $form["account"]["mail"]["#disabled"] = TRUE;
+    }
+  }
+}
+
 
 /**
  * Implements hook_views_data().
