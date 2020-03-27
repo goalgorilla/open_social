@@ -4,6 +4,7 @@ namespace Drupal\social_event_invite\Form;
 
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\group\Entity\GroupType;
 
 /**
  * Class EnrollInviteForm.
@@ -16,19 +17,38 @@ class EventInviteSettingsForm extends ConfigFormBase {
     return 'enroll_invite_email_form';
   }
 
-
   /**
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
     $social_event_config = $this->configFactory->getEditable('social_event_invite.settings');
 
+    // Add an introduction text to explain what can be done here.
+    $form['introduction']['warning'] = [
+      '#type' => 'html_tag',
+      '#tag' => 'p',
+      '#value' => $this->t('Be aware that when disabling invites altogether or for a specific group type, the outstanding invites in question <em>are cancelled</em>. Invitees will no longer be able to use their invite link.'),
+    ];
 
     $form['invite_enroll'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Enable invite enrollment to events'),
-      '#description' => $this->t('Enabling this feature provides the possibility to let event managers to invite people to their events'),
+      '#description' => $this->t('Enabling this feature provides the possibility to let event managers to invite people to their events.'),
       '#default_value' => $social_event_config->get('invite_enroll'),
+    ];
+
+    $group_types = [];
+    /** @var \Drupal\group\Entity\GroupType $group_type */
+    foreach (GroupType::loadMultiple() as $group_type) {
+      $group_types[$group_type->id()] = $group_type->label();
+    }
+
+    $form['invite_group_types'] = [
+      '#type' => 'checkboxes',
+      '#title' => $this->t('Enable event invite per group type'),
+      '#description' => $this->t('Select the group types for which you want to enable the event invite feature.'),
+      '#options' => $group_types,
+      '#default_value' => $social_event_config->get('invite_group_types'),
     ];
 
     $form['invite_subject'] = [
@@ -52,7 +72,6 @@ class EventInviteSettingsForm extends ConfigFormBase {
       '#value' => $this->t('Save configuration'),
     ];
 
-
     return $form;
   }
 
@@ -68,6 +87,7 @@ class EventInviteSettingsForm extends ConfigFormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $config = $this->configFactory->getEditable('social_event_invite.settings');
     $config->set('invite_enroll', $form_state->getValue('invite_enroll'));
+    $config->set('invite_group_types', $form_state->getValue('invite_group_types'));
     $config->set('invite_message', $form_state->getValue('invite_message'));
     $config->set('invite_subject', $form_state->getValue('invite_subject'));
     $config->save();

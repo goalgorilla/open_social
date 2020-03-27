@@ -2,6 +2,8 @@
 
 namespace Drupal\social_event_invite\Plugin\Block;
 
+use Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException;
+use Drupal\Component\Plugin\Exception\PluginNotFoundException;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Block\BlockBase;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
@@ -9,6 +11,7 @@ use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
+use Drupal\social_event_invite\SocialEventInviteAccessHelper;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\node\Entity\Node;
 
@@ -29,6 +32,12 @@ class SocialEventInviteLocalActionsBlock extends BlockBase implements ContainerF
    */
   protected $routeMatch;
 
+  /**
+   * The event invite access helper.
+   *
+   * @var \Drupal\social_event_invite\SocialEventInviteAccessHelper
+   */
+  protected $accessHelper;
 
   /**
    * EventAddBlock constructor.
@@ -41,10 +50,13 @@ class SocialEventInviteLocalActionsBlock extends BlockBase implements ContainerF
    *   The given plugin definition.
    * @param \Drupal\Core\Routing\RouteMatchInterface $routeMatch
    *   The route match.
+   * @param \Drupal\social_event_invite\SocialEventInviteAccessHelper
+   *   The event invite access helper.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, RouteMatchInterface $routeMatch) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, RouteMatchInterface $routeMatch, SocialEventInviteAccessHelper $accessHelper) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->routeMatch = $routeMatch;
+    $this->accessHelper = $accessHelper;
   }
 
   /**
@@ -55,7 +67,8 @@ class SocialEventInviteLocalActionsBlock extends BlockBase implements ContainerF
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('current_route_match')
+      $container->get('current_route_match'),
+      $container->get('social_event_invite.access_helper')
     );
   }
 
@@ -63,7 +76,13 @@ class SocialEventInviteLocalActionsBlock extends BlockBase implements ContainerF
    * {@inheritdoc}.
    */
   protected function blockAccess(AccountInterface $account) {
-    return AccessResult::allowed();
+    try {
+      return $this->accessHelper->eventFeatureAccess();
+    } catch (InvalidPluginDefinitionException $e) {
+      return AccessResult::neutral();
+    } catch (PluginNotFoundException $e) {
+      return AccessResult::neutral();
+    }
   }
 
   /**
@@ -73,15 +92,6 @@ class SocialEventInviteLocalActionsBlock extends BlockBase implements ContainerF
     $cache_contexts = parent::getCacheContexts();
     $cache_contexts[] = 'user';
     return $cache_contexts;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getCacheTags() {
-    $cache_tags = parent::getCacheTags();
-
-    return $cache_tags;
   }
 
   /**
