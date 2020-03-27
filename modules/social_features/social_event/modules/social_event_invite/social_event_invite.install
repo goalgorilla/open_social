@@ -1,11 +1,34 @@
 <?php
 
 use Drupal\field\Entity\FieldConfig;
+use Drupal\group\Entity\GroupType;
 
 /**
  * @file
  * The Social event invite enroll module.
  */
+
+/**
+ * Implements hook_install().
+ */
+function social_event_invite_install() {
+  // Set default settings for the group types invite feature is enabled for.
+  $group_types = [];
+  /** @var \Drupal\group\Entity\GroupType $group_type */
+  foreach (GroupType::loadMultiple() as $group_type) {
+    // We do not want to enable the invite feature for closed or secret groups.
+    if (in_array($group_type->id(), ['closed_group', 'secret_group'])) {
+      $group_types[$group_type->id()] = 0;
+    }
+    else {
+      $group_types[$group_type->id()] = $group_type->id();
+    }
+  }
+
+  \Drupal::configFactory()->getEditable('social_event_invite.settings')
+    ->set('invite_group_types', $group_types)
+    ->save();
+}
 
 /**
  * Implements hook_uninstall().
