@@ -575,7 +575,7 @@ function social_event_show_pending_requests_message() {
     // Third, get the current node (if any) to perform an extra check
     // just to make sure that we are actually on an event node.
     $node = social_event_get_current_event();
-    if ($node && $node->field_enroll_method->value === '2' && social_event_owner_or_organizer($node, $current_user)) {
+    if ($node instanceof NodeInterface && $node->field_enroll_method->value === '2' && social_event_owner_or_organizer($node, $current_user)) {
       // At this point we try to get the amount of pending requests.
       try {
         $query = \Drupal::entityTypeManager()
@@ -708,13 +708,13 @@ function social_event_social_follow_content_types_alter(array &$types) {
 /**
  * Return the Event from a given page.
  *
- * @return \Drupal\Core\Entity\EntityInterface|\Drupal\node\Entity\Node|null
+ * @return \Drupal\Core\Entity\EntityInterface|null
  *   The event or NULL if nothing found.
  */
 function social_event_get_current_event() {
   $node = \Drupal::service('current_route_match')->getParameter('node');
 
-  if (!is_null($node) && (!$node instanceof Node)) {
+  if ($node !== NULL && (!$node instanceof NodeInterface)) {
     $node = Node::load($node);
   }
 
@@ -769,6 +769,11 @@ function social_event_owner_or_organizer(NodeInterface $node = NULL, AccountInte
   if (!$node) {
     $node = social_event_get_current_event();
   }
+
+  if (!$node instanceof NodeInterface) {
+    return FALSE;
+  }
+
   // Get the event owner/author and it's organisers (if any).
   $event_accountables['owner'] = $node->getOwnerId();
   // Also check whether the social_event_managers is enabled so we can
@@ -776,13 +781,10 @@ function social_event_owner_or_organizer(NodeInterface $node = NULL, AccountInte
   if (\Drupal::moduleHandler()->moduleExists('social_event_managers')) {
     $event_accountables['organiser'] = social_event_manager_or_organizer($node);
   }
-  if ($current_user->hasPermission('manage event enrollment requests')
-    || $event_accountables['owner'] === $current_user->id()
-    || $event_accountables['organiser'] === TRUE) {
-    return TRUE;
-  }
 
-  return FALSE;
+  return $current_user->hasPermission('manage event enrollment requests')
+    || $event_accountables['owner'] === $current_user->id()
+    || $event_accountables['organiser'] === TRUE;
 }
 
 /**
@@ -851,26 +853,32 @@ function social_event_preprocess_page(array &$variables) {
   if ($admin_context->isAdminRoute()) {
     return;
   }
-  // Get current event.
-  $node = social_event_get_current_event();
+
   $requested = \Drupal::request()->query->get('requested-enrollment');
-  // Only show the modal if the request method is set on this node
-  // and if the 'requested-enrollment' parameter is TRUE.
-  if ($node instanceof Node && $node->get('field_enroll_method')->value === '2' && $requested) {
-    $url = Url::fromRoute('social_event.request_enroll_dialog', ['node' => $node->id()]);
-    $link = Link::fromTextAndUrl('', $url)->toRenderable();
-    $link['#attributes'] = [
-      'id' => 'modal-trigger',
-      'class' => [
-        'use-ajax',
-        'hidden',
-      ],
-    ];
-    // Attach link and libraries.
-    $variables['page']['content']['eventEnrollmentRequest'] = $link;
-    $variables['page']['content']['eventEnrollmentRequest']['#attached']['library'] = [
-      'core/drupal.dialog.ajax',
-      'social_event/modal',
-    ];
+
+  // Make sure we do the expensive checks only after we see that there's
+  // something in the url.
+  if ($requested) {
+    // Get current event.
+    $node = social_event_get_current_event();
+    // Only show the modal if the request method is set on this node
+    // and if the 'requested-enrollment' parameter is TRUE.
+    if ($node instanceof NodeInterface && $node->get('field_enroll_method')->value === '2') {
+      $url = Url::fromRoute('social_event.request_enroll_dialog', ['node' => $node->id()]);
+      $link = Link::fromTextAndUrl('', $url)->toRenderable();
+      $link['#attributes'] = [
+        'id' => 'modal-trigger',
+        'class' => [
+          'use-ajax',
+          'hidden',
+        ],
+      ];
+      // Attach link and libraries.
+      $variables['page']['content']['eventEnrollmentRequest'] = $link;
+      $variables['page']['content']['eventEnrollmentRequest']['#attached']['library'] = [
+        'core/drupal.dialog.ajax',
+        'social_event/modal',
+      ];
+    }
   }
 }
