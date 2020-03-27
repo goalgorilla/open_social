@@ -307,6 +307,8 @@ function socialbase_form_alter(&$form, FormStateInterface $form_state, $form_id)
       'data_policy_data_policy_agreement',
       'data_policy_data_policy_revision_edit',
       'event_an_enroll_form',
+      'block_content_custom_content_list_form',
+      'block_content_custom_content_list_edit_form',
     ]
   );
 

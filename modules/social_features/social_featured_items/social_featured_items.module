@@ -1,0 +1,21 @@
+<?php
+
+/**
+ * @file
+ * The Featured Items paragraph type and block module.
+ */
+
+/**
+ * Implements hook_theme().
+ */
+function social_featured_items_theme() {
+  // Paragraphs.
+  $theme_templates['paragraph__featured_item__default'] = [
+    'base hook' => 'paragraph',
+  ];
+  $theme_templates['paragraph__featured_items__default'] = [
+    'base hook' => 'paragraph',
+  ];
+
+  return $theme_templates;
+}

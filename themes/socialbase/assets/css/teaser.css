@@ -175,6 +175,58 @@
   background-color: #fff;
 }
 
+.teaser--small {
+  display: flex;
+  padding: 1.5rem 1.25rem 0;
+}
+
+.teaser--small .teaser--small__media {
+  flex: none;
+}
+
+.teaser--small .teaser--small__media img {
+  border-radius: 5px;
+}
+
+.teaser--small .teaser--small__media .teaser--small__type-icon {
+  width: 44px;
+  height: 44px;
+  fill: #4d4d4d;
+  background-color: #e6e6e6;
+  border-radius: 5px;
+  padding: .75rem;
+}
+
+.teaser--small .teaser--small__title {
+  font-size: 1rem;
+}
+
+.teaser--small .teaser--small__details {
+  display: flex;
+  flex-direction: column;
+  margin-left: 1rem;
+}
+
+.teaser--small .teaser--small__meta {
+  color: #555555;
+}
+
+.teaser--small .teaser--small__meta a {
+  font-weight: 300;
+}
+
+.teaser--small .teaser--small__meta a:hover {
+  text-decoration: underline;
+}
+
+.teaser--small:last-child {
+  padding-bottom: 1.5rem;
+}
+
+.teaser--small + .card__actionbar {
+  margin-top: 0;
+}
+
 @media (min-width: 600px) {
   .teaser {
     -ms-flex-wrap: nowrap;
