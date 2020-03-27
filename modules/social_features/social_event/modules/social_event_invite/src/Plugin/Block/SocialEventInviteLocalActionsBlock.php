@@ -110,7 +110,7 @@ class SocialEventInviteLocalActionsBlock extends BlockBase implements ContainerF
         '#type' => 'dropbutton',
         '#links' => [
           'title' => [
-            'title' => $this->t('Invite'),
+            'title' => $this->t('Add enrollees'),
             'url' => Url::fromRoute('<current>', []),
           ],
           'add_directly' => [
