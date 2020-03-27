@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: node-gettext\n"
-"POT-Creation-Date: 2020-03-04 00:31+0000\n"
+"POT-Creation-Date: 2020-03-25 00:32+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -928,6 +928,12 @@ msgstr ""
 msgid "A description of your report is mandatory."
 msgstr ""
 
+#: modules/social_features/social_featured_items/config/install/block_content.type.featured_items.yml:0
+msgid ""
+"A list of featured items that can have a title, link, image/icon, and "
+"description."
+msgstr ""
+
 #: modules/social_features/social_content_report/config/install/taxonomy.vocabulary.report_reasons.yml:0
 msgid "A list of reasons users can choose from for reporting content."
 msgstr ""
@@ -1735,6 +1741,7 @@ msgstr "Después"
 msgid "Aggregate activity"
 msgstr ""
 
+#: modules/social_features/social_content_block/src/Plugin/Field/FieldWidget/ContentBlockPluginFieldWidget.php:35
 #: modules/social_features/social_search/social_search.links.task.yml:0;0
 #: modules/social_features/social_activity/config/install/views.view.activity_stream_notifications.yml:0
 #: modules/social_features/social_activity/config/optional/views.view.activity_stream_group.yml:0
@@ -1791,7 +1798,7 @@ msgstr "Todas las inscripciones"
 msgid "All events"
 msgstr ""
 
-#: modules/social_features/social_group/social_group.install:152
+#: modules/social_features/social_group/social_group.install:157
 #: modules/social_features/social_group/config/install/views.view.groups.yml:0
 #: modules/social_features/social_group/config/install/views.view.newest_groups.yml:0;0
 msgid "All groups"
@@ -2279,15 +2286,15 @@ msgstr "Escrito por"
 msgid "Autocomplete Item"
 msgstr ""
 
-#: modules/social_features/social_content_block/social_content_block.module:75
+#: translations.php:111
 msgid "Autocomplete field with group names."
 msgstr ""
 
-#: modules/social_features/social_content_block/social_content_block.module:72
+#: translations.php:110
 msgid "Autocomplete field with items from taxonomy list content tags."
 msgstr ""
 
-#: modules/social_features/social_content_block/social_content_block.module:69
+#: translations.php:109
 msgid "Autocomplete field with items from taxonomy list topic types."
 msgstr ""
 
@@ -2896,6 +2903,14 @@ msgstr ""
 msgid "Content Type"
 msgstr "Tipo de contenido"
 
+#: modules/social_features/social_content_block/src/Plugin/Field/FieldWidget/ContentBlockPluginIdWidget.php:12
+msgid "Content block plugin ID"
+msgstr ""
+
+#: modules/social_features/social_content_block/src/Plugin/Field/FieldWidget/ContentBlockPluginFieldWidget.php:8
+msgid "Content block plugin field"
+msgstr ""
+
 #: modules/social_features/social_topic/config/install/views.view.latest_topics.yml:0
 msgid "Content group content"
 msgstr ""
@@ -2915,6 +2930,10 @@ msgstr ""
 
 #: modules/social_features/social_content_report/src/Plugin/ActivityContext/ContentReportActivityContext.php:7
 msgid "Content report activity context"
+msgstr ""
+
+#: modules/social_features/social_content_block/config/install/field.field.block_content.custom_content_list.field_plugin_field.yml:0
+msgid "Content selection"
 msgstr ""
 
 #: modules/social_features/social_tagging/social_tagging.module:27
@@ -3112,7 +3131,7 @@ msgstr "Crear nuevo evento"
 msgid "Create New Group"
 msgstr "Crear Nuevo Grupo"
 
-#: modules/social_features/social_landing_page/social_landing_page.module:287
+#: modules/social_features/social_landing_page/social_landing_page.module:281
 msgid "Create New Landing Page"
 msgstr ""
 
@@ -3670,6 +3689,8 @@ msgstr ""
 #: modules/custom/mentions/src/Form/MentionsTypeForm.php:138
 #: modules/custom/social_queue_storage/src/QueueStorageEntityListBuilder.php:23
 #: modules/social_features/social_content_report/config/install/views.view.report_overview.yml:0
+#: modules/social_features/social_featured_items/config/install/field.field.paragraph.featured_item.field_featured_item_description.yml:0
+#: modules/social_features/social_featured_items/config/install/field.field.paragraph.featured_items.field_featured_items_description.yml:0
 #: modules/social_features/social_group/config/install/field.field.group.closed_group.field_group_description.yml:0
 #: modules/social_features/social_group/config/install/field.field.group.open_group.field_group_description.yml:0
 #: modules/social_features/social_group/config/install/field.field.group.public_group.field_group_description.yml:0
@@ -3678,8 +3699,6 @@ msgstr ""
 #: modules/social_features/social_landing_page/config/install/field.field.paragraph.accordion.field_accord_description.yml:0
 #: modules/social_features/social_landing_page/config/install/field.field.paragraph.accordion_item.field_accord_item_description.yml:0
 #: modules/social_features/social_landing_page/config/install/field.field.paragraph.featured.field_featured_description.yml:0
-#: modules/social_features/social_landing_page/config/install/field.field.paragraph.featured_item.field_featured_item_description.yml:0
-#: modules/social_features/social_landing_page/config/install/field.field.paragraph.featured_items.field_featured_items_description.yml:0
 #: modules/social_features/social_page/config/install/field.field.node.page.body.yml:0
 #: modules/social_features/social_topic/config/install/field.field.node.topic.body.yml:0
 msgid "Description"
@@ -4272,6 +4291,10 @@ msgstr ""
 msgid "Enter your email, so we can send you event updates."
 msgstr ""
 
+#: modules/social_features/social_content_block/social_content_block.module:34
+msgid "Entities"
+msgstr ""
+
 #: modules/custom/mentions/src/Plugin/Mentions/Entity.php:14
 #: modules/custom/activity_creator/config/install/field.field.activity.activity.field_activity_entity.yml:0
 msgid "Entity"
@@ -4573,11 +4596,13 @@ msgstr "Destacado"
 msgid "Featured Content"
 msgstr ""
 
-#: modules/social_features/social_landing_page/config/install/paragraphs.paragraphs_type.featured_item.yml:0
+#: modules/social_features/social_featured_items/config/install/paragraphs.paragraphs_type.featured_item.yml:0
 msgid "Featured Item"
 msgstr ""
 
-#: modules/social_features/social_landing_page/config/install/paragraphs.paragraphs_type.featured_items.yml:0
+#: modules/social_features/social_featured_items/config/install/block_content.type.featured_items.yml:0
+#: modules/social_features/social_featured_items/config/install/field.field.block_content.featured_items.field_featured_items.yml:0
+#: modules/social_features/social_featured_items/config/install/paragraphs.paragraphs_type.featured_items.yml:0
 msgid "Featured Items"
 msgstr ""
 
@@ -4773,11 +4798,11 @@ msgstr "Seguir Contenido"
 msgid "Follow functionality."
 msgstr ""
 
-#: modules/social_features/social_follow_content/social_follow_content.module:77
+#: modules/social_features/social_follow_content/social_follow_content.module:102
 msgid "Following"
 msgstr ""
 
-#: modules/social_features/social_follow_content/src/Plugin/ActivityContext/FollowContentActivityContext.php:9
+#: modules/social_features/social_follow_content/src/Plugin/ActivityContext/FollowContentActivityContext.php:11
 msgid "Following content activity context"
 msgstr ""
 
@@ -4881,6 +4906,10 @@ msgstr "Función"
 
 #: translations.php:55
 msgid "Function and organization"
+msgstr ""
+
+#: modules/social_features/social_content_block/config/install/field.field.block_content.custom_content_list.field_plugin_field.yml:0
+msgid "Further specify how the content should be selected"
 msgstr ""
 
 #: modules/custom/mentions/src/Form/MentionsSettingsForm.php:65
@@ -5366,7 +5395,7 @@ msgstr ""
 
 #: modules/social_features/social_book/config/optional/field.field.node.book.field_book_image.yml:0
 #: modules/social_features/social_event/config/install/field.field.node.event.field_event_image.yml:0
-#: modules/social_features/social_landing_page/config/install/field.field.paragraph.featured_item.field_featured_item_image.yml:0
+#: modules/social_features/social_featured_items/config/install/field.field.paragraph.featured_item.field_featured_item_image.yml:0
 #: modules/social_features/social_landing_page/config/install/field.field.paragraph.hero.field_hero_image.yml:0
 #: modules/social_features/social_landing_page/config/install/field.field.paragraph.hero_small.field_hero_small_image.yml:0
 #: modules/social_features/social_page/config/install/field.field.node.page.field_page_image.yml:0
@@ -5505,8 +5534,8 @@ msgid ""
 "open-social/private-files"
 msgstr ""
 
+#: modules/social_features/social_featured_items/config/install/field.field.paragraph.featured_items.field_featured_items_items.yml:0
 #: modules/social_features/social_landing_page/config/install/field.field.paragraph.featured.field_featured_items.yml:0
-#: modules/social_features/social_landing_page/config/install/field.field.paragraph.featured_items.field_featured_items_items.yml:0
 msgid "Items"
 msgstr "Elementos"
 
@@ -5638,6 +5667,10 @@ msgstr ""
 msgid "Last access"
 msgstr "Último acceso"
 
+#: modules/social_features/social_content_block/config/install/field.storage.block_content.field_sorting.yml:0
+msgid "Last interacted"
+msgstr ""
+
 #: modules/social_features/social_user_export/src/Plugin/UserExportPlugin/UserLastLogin.php:23;8
 #: modules/social_features/social_user/config/install/views.view.user_admin_people.yml:0
 msgid "Last login"
@@ -5742,9 +5775,9 @@ msgstr ""
 #: modules/custom/mentions/src/MentionsViewsData.php:138
 #: modules/custom/mentions/src/Form/MentionsTypeForm.php:224
 #: modules/custom/social_auth_extra/social_auth_extra.module:323
+#: modules/social_features/social_featured_items/config/install/field.field.paragraph.featured_item.field_featured_item_link.yml:0
 #: modules/social_features/social_landing_page/config/install/field.field.paragraph.block.field_block_link.yml:0
 #: modules/social_features/social_landing_page/config/install/field.field.paragraph.featured.field_featured_link.yml:0
-#: modules/social_features/social_landing_page/config/install/field.field.paragraph.featured_item.field_featured_item_link.yml:0
 msgid "Link"
 msgstr "Enlace"
 
@@ -6241,6 +6274,14 @@ msgstr ""
 msgid "More options"
 msgstr ""
 
+#: modules/social_features/social_content_block/config/install/field.storage.block_content.field_sorting.yml:0
+msgid "Most commented"
+msgstr ""
+
+#: modules/social_features/social_content_block/config/install/field.storage.block_content.field_sorting.yml:0
+msgid "Most liked"
+msgstr ""
+
 #: modules/social_features/social_activity/config/install/message.template.moved_content_between_groups.yml:0
 msgid "Moved event or topic between groups"
 msgstr ""
@@ -6337,7 +6378,7 @@ msgstr ""
 msgid "New Group"
 msgstr ""
 
-#: modules/social_features/social_landing_page/social_landing_page.module:289
+#: modules/social_features/social_landing_page/social_landing_page.module:283
 msgid "New Landing Page"
 msgstr ""
 
@@ -6460,7 +6501,7 @@ msgstr ""
 msgid "No likes yet"
 msgstr ""
 
-#: modules/social_features/social_content_block/src/ContentBuilder.php:146
+#: modules/social_features/social_content_block/src/ContentBuilder.php:168
 msgid "No matching content found"
 msgstr ""
 
@@ -7510,6 +7551,10 @@ msgstr ""
 msgid "Provides a flexible Group featured view mode for use on landing pages."
 msgstr ""
 
+#: modules/social_features/social_featured_items/social_featured_items.info.yml:0
+msgid "Provides a shared paragraphs type for landing pages and dashboards."
+msgstr ""
+
 #: modules/social_features/social_event/modules/social_event_an_enroll/social_event_an_enroll.info.yml:0
 msgid ""
 "Provides ability to enroll to an event without having to create an account."
@@ -8321,6 +8366,10 @@ msgid ""
 "performance implications!"
 msgstr ""
 
+#: modules/social_features/social_content_block/config/install/field.field.block_content.custom_content_list.field_sorting.yml:0
+msgid "Select in what order selected content should be displayed"
+msgstr ""
+
 #: modules/social_features/social_event/modules/social_event_managers/src/Form/SocialEventManagersAddEnrolleeForm.php:152
 #: modules/social_features/social_group/social_group.module:649
 msgid "Select members to add"
@@ -8350,6 +8399,10 @@ msgstr ""
 msgid ""
 "Select the terms that will show an additional field where users can describe "
 "their reasons."
+msgstr ""
+
+#: modules/social_features/social_content_block/config/install/field.field.block_content.custom_content_list.field_plugin_id.yml:0
+msgid "Select the type of content which will be shown in this block"
 msgstr ""
 
 #: modules/social_features/social_user/src/Form/SocialUserNavigationSettingsForm.php:69
@@ -8777,6 +8830,7 @@ msgstr ""
 #: modules/social_features/social_event/modules/social_event_managers/social_event_managers.info.yml:0
 #: modules/social_features/social_event/modules/social_event_max_enroll/social_event_max_enroll.info.yml:0
 #: modules/social_features/social_event/modules/social_event_type/social_event_type.info.yml:0
+#: modules/social_features/social_featured_items/social_featured_items.info.yml:0
 #: modules/social_features/social_follow_content/social_follow_content.info.yml:0
 #: modules/social_features/social_group/social_group.info.yml:0
 #: modules/social_features/social_group/modules/social_group_default_route/social_group_default_route.info.yml:0
@@ -9066,6 +9120,10 @@ msgstr ""
 #: modules/social_features/social_event/modules/social_event_type/social_event_type.permissions.yml:0
 #: modules/social_features/social_event/modules/social_event_type/config/schema/social_event_type.schema.yml:0
 msgid "Social Event Type settings"
+msgstr ""
+
+#: modules/social_features/social_featured_items/social_featured_items.info.yml:0
+msgid "Social Featured Items"
 msgstr ""
 
 #: modules/custom/social_file_private/social_file_private.info.yml:0
@@ -10430,13 +10488,13 @@ msgstr ""
 #: modules/custom/mentions/src/MentionsViewsData.php:50
 #: modules/social_features/social_profile/modules/social_profile_privacy/social_profile_privacy.module:92
 #: config/install/views.view.content.yml:0;0
+#: modules/social_features/social_featured_items/config/install/field.field.paragraph.featured_item.field_featured_item_title.yml:0
+#: modules/social_features/social_featured_items/config/install/field.field.paragraph.featured_items.field_featured_items_title.yml:0
 #: modules/social_features/social_follow_content/config/install/views.view.following.yml:0
 #: modules/social_features/social_landing_page/config/install/field.field.paragraph.accordion.field_accord_title.yml:0
 #: modules/social_features/social_landing_page/config/install/field.field.paragraph.accordion_item.field_accord_item_title.yml:0
 #: modules/social_features/social_landing_page/config/install/field.field.paragraph.block.field_block_title.yml:0
 #: modules/social_features/social_landing_page/config/install/field.field.paragraph.featured.field_featured_title.yml:0
-#: modules/social_features/social_landing_page/config/install/field.field.paragraph.featured_item.field_featured_item_title.yml:0
-#: modules/social_features/social_landing_page/config/install/field.field.paragraph.featured_items.field_featured_items_title.yml:0
 #: modules/social_features/social_landing_page/config/install/field.field.paragraph.hero.field_hero_title.yml:0
 #: modules/social_features/social_landing_page/config/install/field.field.paragraph.hero_small.field_hero_small_title.yml:0
 #: modules/social_features/social_landing_page/config/install/field.field.paragraph.introduction.field_introduction_title.yml:0
@@ -10470,7 +10528,7 @@ msgid ""
 "include them in download counts."
 msgstr ""
 
-#: modules/social_features/social_content_block/social_content_block.module:64
+#: translations.php:108
 msgid ""
 "To make the list of topics more specific you can additionally configure more "
 "filters such as topic types, content tags and groups."
@@ -10686,6 +10744,10 @@ msgstr "Tipo"
 msgid "Type configuration"
 msgstr ""
 
+#: modules/social_features/social_content_block/config/install/field.field.block_content.custom_content_list.field_plugin_id.yml:0
+msgid "Type of content"
+msgstr ""
+
 #: modules/social_features/social_event/modules/social_event_an_enroll/social_event_an_enroll.tokens.inc:22
 msgid "URL of anonymously enrolled event with token to cancel enrollment."
 msgstr ""
@@ -10734,7 +10796,7 @@ msgstr ""
 msgid "Unfollow content"
 msgstr ""
 
-#: modules/social_features/social_follow_content/social_follow_content.module:122
+#: modules/social_features/social_follow_content/social_follow_content.module:147
 msgid "Unfollow this content"
 msgstr ""
 
@@ -11140,7 +11202,7 @@ msgstr "Ver comentarios"
 msgid "View community Posts"
 msgstr ""
 
-#: modules/social_features/social_follow_content/social_follow_content.module:75
+#: modules/social_features/social_follow_content/social_follow_content.module:100
 msgid "View content I'm following"
 msgstr ""
 
@@ -11545,7 +11607,7 @@ msgstr ""
 msgid "You are now able to log in with @network"
 msgstr ""
 
-#: modules/social_features/social_follow_content/social_follow_content.module:124
+#: modules/social_features/social_follow_content/social_follow_content.module:149
 msgid "You are now automatically following this @type. @unfollow_link."
 msgstr ""
 
@@ -11632,7 +11694,7 @@ msgid_plural "You have received <strong>:count</strong> notifications"
 msgstr[0] ""
 msgstr[1] ""
 
-#: modules/social_features/social_follow_content/social_follow_content.module:58
+#: modules/social_features/social_follow_content/social_follow_content.module:83
 msgid ""
 "You have successfully enrolled to this event. Also you are now following the "
 "event, which means you will receive notifications when a new comment is "
