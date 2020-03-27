@@ -22,9 +22,12 @@ function social_event_invite_event_enrollment_insert(EventEnrollmentInterface $e
   $langcode = 'en';
 
   $mailManager = \Drupal::service('plugin.manager.mail');
-  $from = \Drupal::config('system.site')->get('mail');
+  $from = $eventEnrollment->get('user_id')->first()->get('entity')->getTarget()->getValue();
+  $node = $eventEnrollment->get('field_event')->first()->get('entity')->getTarget()->getValue();
+
   $params = [
     'user' => $from,
+    'node' => $node,
     'existing_user' => TRUE,
     'event_enrollment' => $eventEnrollment->id(),
   ];
