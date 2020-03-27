@@ -5,8 +5,10 @@
  * The Social Content Block module.
  */
 
-use Drupal\Core\Block\BlockPluginInterface;
+use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\social_content_block\ContentBuilder;
 
 /**
  * Implements hook_preprocess_block().
@@ -16,22 +18,40 @@ function social_content_block_preprocess_block(&$variables) {
     isset($variables['content']['#block_content']) &&
     $variables['content']['#block_content']->bundle() === 'custom_content_list'
   ) {
-    $variables['content']['social_content_block'] = $variables['elements']['social_content_block'];
     $variables['card'] = TRUE;
   }
 }
 
 /**
- * Implements hook_block_view_BASE_BLOCK_ID_alter().
+ * Implements hook_entity_extra_field_info().
  */
-function social_content_block_block_view_block_content_alter(&$build, BlockPluginInterface $block) {
-  if ($block_entity = _social_content_block_is_custom_content_block($block)) {
+function social_content_block_entity_extra_field_info() {
+  return [
+    'block_content' => [
+      'custom_content_list' => [
+        'display' => [
+          'entities' => [
+            'label' => t('Entities'),
+            'weight' => 0,
+          ],
+        ],
+      ],
+    ],
+  ];
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_view().
+ */
+function social_content_block_block_content_view(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, $view_mode) {
+  if ($entity->bundle() === 'custom_content_list' && $display->getComponent('entities')) {
     $build['social_content_block'] = [
       '#lazy_builder' => [
         'social_content_block.content_builder:build',
         [
-          $block_entity->getEntityTypeId(),
-          $block_entity->id(),
+          $entity->id(),
+          $entity->getEntityTypeId(),
+          $entity->bundle(),
         ],
       ],
       '#create_placeholder' => TRUE,
@@ -40,41 +60,35 @@ function social_content_block_block_view_block_content_alter(&$build, BlockPlugi
 }
 
 /**
- * Checks if a block is a Custom content block.
+ * Implements hook_form_alter().
  */
-function _social_content_block_is_custom_content_block(BlockPluginInterface $block) {
-  if ($block->getBaseId() === 'block_content') {
-    $uuid = $block->getDerivativeId();
-    /** @var \Drupal\block_content\BlockContentInterface $block_entity */
-    $block_entity = \Drupal::service('entity.repository')
-      ->loadEntityByUuid('block_content', $uuid);
-    if ($block_entity->bundle() === 'custom_content_list') {
-      return $block_entity;
-    }
+function social_content_block_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  $form_ids = [
+    'block_content_custom_content_list_form',
+    'block_content_custom_content_list_edit_form',
+  ];
+
+  if (in_array($form_id, $form_ids)) {
+    $form['#process'][] = [ContentBuilder::class, 'processBlockForm'];
   }
-  return FALSE;
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function social_content_block_form_layout_builder_add_block_alter(&$form, FormStateInterface $form_state, $form_id) {
+  /** @var \Drupal\layout_builder\SectionComponent $component */
+  $component = $form_state->get('layout_builder__component');
+
+  if ($component->getPluginId() === 'inline_block:custom_content_list') {
+    $form['settings']['block_form']['#process'][] = [ContentBuilder::class, 'processBlockForm'];
+  }
 }
 
 /**
  * Implements hook_form_BASE_FORM_ID_alter().
  */
 function social_content_block_form_block_content_custom_content_list_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-  // Add general description above first field to explain what the filters do.
-  $form['field_topic_type'] += [
-    '#prefix' => t('To make the list of topics more specific you can additionally configure more filters such as topic types, content tags and groups.'),
-  ];
-
-  // Add description per field explaining what to fill in.
-  $form['field_topic_type'] += [
-    '#suffix' => t('Autocomplete field with items from taxonomy list topic types.'),
-  ];
-  $form['field_content_tags'] += [
-    '#suffix' => t('Autocomplete field with items from taxonomy list content tags.'),
-  ];
-  $form['field_group'] += [
-    '#suffix' => t('Autocomplete field with group names.'),
-  ];
-
   // Add submit handler to clear cache.
   foreach (array_keys($form['actions']) as $action) {
     if ($action !== 'preview' && isset($form['actions'][$action]['#type']) && $form['actions'][$action]['#type'] === 'submit') {
@@ -89,20 +103,4 @@ function social_content_block_form_block_content_custom_content_list_form_alter(
 function custom_content_block_form_submit($form, FormStateInterface $form_state) {
   // Clear plugin cache.
   \Drupal::service('plugin.cache_clearer')->clearCachedDefinitions();
-}
-
-/**
- * Implements hook_theme().
- */
-function social_content_block_theme($existing, $type, $theme, $path) {
-  return [
-    'social_content_block' => [
-      'variables' => [
-        'title' => NULL,
-        'subtitle' => NULL,
-        'topics' => [],
-        'link' => NULL,
-      ],
-    ],
-  ];
 }

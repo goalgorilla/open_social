@@ -1,4 +1,17 @@
 {% extends "node--small-teaser.html.twig" %}
 
+{% block teaser_image %}
+  <div class="teaser--small__media">
+    {% if content['field_group_image'] | render | striptags('<img>') is not empty %}
+      {{ content['field_group_image'] }}
+    {% else %}
+      <svg class="teaser--small__type-icon">
+        <title>{{- group.bundle|clean_class|capitalize -}}</title>
+        <use xlink:href="#icon-group"></use>
+      </svg>
+    {% endif %}
+  </div>
+{% endblock %}
+
 {% block extra_text %}
 {% endblock %}
