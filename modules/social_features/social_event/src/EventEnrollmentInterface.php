@@ -14,6 +14,51 @@ use Drupal\user\EntityOwnerInterface;
 interface EventEnrollmentInterface extends ContentEntityInterface, EntityChangedInterface, EntityOwnerInterface {
 
   /**
+   * Event enrollment method where users can directly enroll.
+   */
+  const ENROLL_METHOD_JOIN = 1;
+
+  /**
+   * Event enrollment method where users need to request enrollment.
+   */
+  const ENROLL_METHOD_REQUEST = 2;
+
+  /**
+   * Request created and waiting for event owners or managers response.
+   */
+  const REQUEST_PENDING = 0;
+
+  /**
+   * Request approved by event owner or manager.
+   */
+  const REQUEST_APPROVED = 1;
+
+  /**
+   * Request or invite declined by event owner, manager or user.
+   */
+  const REQUEST_OR_INVITE_DECLINED = 2;
+
+  /**
+   * Invited, a status to check if a user has been invited.
+   */
+  const INVITE_INVITED = 3;
+
+  /**
+   * Invite is pending by invited user.
+   */
+  const INVITE_PENDING_REPLY = 4;
+
+  /**
+   * Invite has been accepted and the user joined.
+   */
+  const INVITE_ACCEPTED_AND_JOINED = 5;
+
+  /**
+   * Invite is invalid or has been expired.
+   */
+  const INVITE_INVALID_OR_EXPIRED = 6;
+
+  /**
    * Gets the Event enrollment name.
    *
    * @return string

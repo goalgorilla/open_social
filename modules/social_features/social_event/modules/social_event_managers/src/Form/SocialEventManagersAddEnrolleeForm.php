@@ -6,6 +6,7 @@ use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Render\RendererInterface;
+use Drupal\social_event\EventEnrollmentInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Url;
 use Drupal\social_event\Entity\EventEnrollment;
@@ -81,7 +82,7 @@ class SocialEventManagersAddEnrolleeForm extends FormBase {
           'field_event' => $event,
           'field_enrollment_status' => '1',
           'field_account' => $uid,
-          'field_request_or_invite_status' => '1',
+          'field_request_or_invite_status' => EventEnrollmentInterface::REQUEST_APPROVED,
         ]);
         $enrollment->save();
 

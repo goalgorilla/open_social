@@ -2,6 +2,7 @@
 
 namespace Drupal\social_event_invite\Form;
 
+use Drupal\social_event\EventEnrollmentInterface;
 use Drupal\social_event\Form\EnrollActionForm;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\node\Entity\Node;
@@ -138,7 +139,7 @@ class EventInviteEnrollActionForm extends EnrollActionForm {
 
     $enrollments = $this->entityStorage->loadByProperties($conditions);
 
-    // TODO:: also clear the breadcrumb cachetags.
+    // @todo: also clear the breadcrumb cachetags.
     // Invalidate cache for our enrollment cache tag in
     // social_event_node_view_alter().
     $cache_tag = 'enrollment:' . $nid . '-' . $uid;
@@ -146,7 +147,7 @@ class EventInviteEnrollActionForm extends EnrollActionForm {
 
     if ($enrollment = array_pop($enrollments)) {
       $enrollment->field_enrollment_status->value = '1';
-      $enrollment->field_request_or_invite_status->value = '5';
+      $enrollment->field_request_or_invite_status->value = EventEnrollmentInterface::INVITE_ACCEPTED_AND_JOINED;
       $enrollment->save();
     }
   }

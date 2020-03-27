@@ -9,6 +9,7 @@ use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\OpenModalDialogCommand;
 use Drupal\Core\Url;
 use Drupal\social_event\Entity\EventEnrollment;
+use Drupal\social_event\EventEnrollmentInterface;
 
 /**
  * SendToDestinationsForm class.
@@ -106,7 +107,7 @@ class EnrollRequestModalForm extends FormBase {
       'field_event' => $nid,
       'field_enrollment_status' => '0',
       'field_account' => $uid,
-      'field_request_or_invite_status' => '0',
+      'field_request_or_invite_status' => EventEnrollmentInterface::REQUEST_PENDING,
       'field_request_message' => $message,
     ];
 
