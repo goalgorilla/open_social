@@ -74,7 +74,7 @@ class SocialEventInviteStatusHelper {
     $current_user = $this->currentUser;
     $uid = $current_user->id();
     $nid = $this->routeMatch->getRawParameter('node');
-    
+
     if ($event) {
       $nid = $event;
     }
@@ -83,6 +83,7 @@ class SocialEventInviteStatusHelper {
     $conditions = [
       'field_account' => $uid,
       'field_event' => $nid,
+      'field_request_or_invite_status_value' => 4,
     ];
 
     if($user) {
@@ -98,14 +99,42 @@ class SocialEventInviteStatusHelper {
         $conditions = [
           'field_account' => $account->id(),
           'field_event' => $nid,
+          'field_request_or_invite_status_value' => 4,
         ];
       }
     }
 
-    // If the event id is 0 then search for all invites.
-    if ($event === 0) {
-      unset($conditions['field_event']);
-    }
+    return $conditions;
+  }
+
+  /**
+   * Custom check to see if a user has enrollments
+   *
+   * @param $user string
+   *   The email or userid you want to check on.
+   * @return bool|\Drupal\Core\Entity\EntityInterface|mixed
+   */
+  public function getAllEventEnrollments($user) {
+    $conditions = $this->userEnrollments($user, null);
+
+    unset($conditions['field_event']);
+
+    $enrollments = $this->entityTypeManager->getStorage('event_enrollment')->loadByProperties($conditions);
+
+    return $enrollments;
+  }
+
+  /**
+   * Custom check to see if a user has enrollments
+   *
+   * @param $user string
+   *   The email or userid you want to check on.
+   * @param $event integer
+   *   The event id you want to check on, use 0 for all.
+   * @return bool|\Drupal\Core\Entity\EntityInterface|mixed
+   */
+  public function getEventEnrollments($user, $event) {
+    $conditions = $this->userEnrollments($user, $event);
 
     $enrollments = $this->entityTypeManager->getStorage('event_enrollment')->loadByProperties($conditions);
 
