@@ -13,6 +13,7 @@ use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupRoleInterface;
 use Drupal\Core\Url;
 use Drupal\group\Entity\GroupTypeInterface;
+use Drupal\Core\Cache\RefinableCacheableDependencyInterface;
 
 /**
  * Implements hook_menu_local_actions_alter().
@@ -25,6 +26,30 @@ function social_group_invite_menu_local_actions_alter(&$local_actions) {
   // Remove "Invite member" button.
   if (isset($local_actions['ginvite.invite_member'])) {
     unset($local_actions['ginvite.invite_member']);
+  }
+}
+
+/**
+ * Implements hook_menu_local_tasks_alter().
+ */
+function social_group_invite_menu_local_tasks_alter(&$data, $route_name, RefinableCacheableDependencyInterface $cacheability) {
+  // Add tasks on these route for invite Groups/Events.
+  if ($route_name === 'view.social_group_user_invitations.page_1') {
+    $tabs_to_remove = [
+      'social_user.groups',
+      'social_user.stream',
+      'social_user.topics',
+      'social_user.events',
+      'social_profile.information',
+      'profile.user_page:profile',
+      'entity.user.canonical',
+      'entity.user.edit_form',
+    ];
+    foreach ($tabs_to_remove as $task_name) {
+      if (!empty($data['tabs'][0][$task_name])) {
+        unset($data['tabs'][0][$task_name]);
+      }
+    }
   }
 }
 
