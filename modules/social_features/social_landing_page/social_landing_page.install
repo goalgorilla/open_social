@@ -82,8 +82,16 @@ function _social_landing_page_get_permissions($role) {
  * Enable the Social Featured Items module.
  */
 function social_landing_page_update_8801() {
-  $module = 'social_featured_items';
+  _social_landing_page_install_module('social_featured_items');
+}
 
+/**
+ * Install a separate module of the moved section.
+ *
+ * @param string $module
+ *   The module name.
+ */
+function _social_landing_page_install_module($module) {
   // We don't actually install the module because this would cause issues with
   // configuration already existing. The configuration has been moved from this
   // module to the separate sub module so we simply mark the module as enabled.
@@ -312,5 +320,177 @@ function social_landing_page_update_8802() {
       ->getEditable($name)
       ->setData($config)
       ->save(TRUE);
+  }
+}
+
+/**
+ * Enable the Social Featured Content module.
+ */
+function social_landing_page_update_8803() {
+  _social_landing_page_install_module('social_follow_content');
+}
+
+/**
+ * Import new block type for featured content.
+ */
+function social_landing_page_update_8804() {
+  // This creates some new configuration that can be used by the dashboard
+  // module. This is done in this module because we also enable the
+  // social_follow_content module. If that module is enabled through another
+  // module then that will take care of the module installation.
+  $configs = [
+    'block_content.type.featured' => [
+      'langcode' => 'en',
+      'status' => TRUE,
+      'dependencies' => [],
+      'id' => 'featured',
+      'label' => 'Featured Content',
+      'revision' => 0,
+      'description' => 'A list of featured content that can have a title, link, group/node/profile, and description.',
+    ],
+    'field.storage.block_content.field_featured' => [
+      'langcode' => 'en',
+      'status' => TRUE,
+      'dependencies' => [
+        'module' => [
+          'block_content',
+          'entity_reference_revisions',
+          'paragraphs',
+        ],
+      ],
+      'id' => 'block_content.field_featured',
+      'field_name' => 'field_featured',
+      'entity_type' => 'block_content',
+      'type' => 'entity_reference_revisions',
+      'settings' => [
+        'target_type' => 'paragraph',
+      ],
+      'module' => 'entity_reference_revisions',
+      'locked' => FALSE,
+      'cardinality' => -1,
+      'translatable' => TRUE,
+      'indexes' => [],
+      'persist_with_no_fields' => FALSE,
+      'custom_storage' => FALSE,
+    ],
+    'field.field.block_content.featured.field_featured' => [
+      'langcode' => 'en',
+      'status' => TRUE,
+      'dependencies' => [
+        'config' => [
+          'block_content.type.featured',
+          'field.storage.block_content.field_featured',
+          'paragraphs.paragraphs_type.featured',
+        ],
+        'module' => [
+          'entity_reference_revisions',
+        ],
+      ],
+      'id' => 'block_content.featured.field_featured',
+      'field_name' => 'field_featured',
+      'entity_type' => 'block_content',
+      'bundle' => 'featured',
+      'label' => 'Featured Content',
+      'description' => '',
+      'required' => TRUE,
+      'translatable' => FALSE,
+      'default_value' => [],
+      'default_value_callback' => '',
+      'settings' => [
+        'handler' => 'default:paragraph',
+        'handler_settings' => [
+          'negate' => 0,
+          'target_bundles' => [
+            'featured' => 'featured',
+          ],
+          'target_bundles_drag_drop' => [
+            'featured' => [
+              'enabled' => TRUE,
+              'weight' => 0,
+            ],
+          ],
+        ],
+      ],
+      'field_type' => 'entity_reference_revisions',
+    ],
+    'core.entity_form_display.block_content.featured.default' => [
+      'langcode' => 'en',
+      'status' => TRUE,
+      'dependencies' => [
+        'config' => [
+          'block_content.type.featured',
+          'field.field.block_content.featured.field_featured',
+        ],
+        'module' => [
+          'paragraphs',
+        ],
+      ],
+      'id' => 'block_content.featured.default',
+      'targetEntityType' => 'block_content',
+      'bundle' => 'featured',
+      'mode' => 'default',
+      'content' => [
+        'field_featured' => [
+          'type' => 'entity_reference_paragraphs',
+          'weight' => 1,
+          'settings' => [
+            'title' => 'Paragraph',
+            'title_plural' => 'Paragraphs',
+            'edit_mode' => 'open',
+            'add_mode' => 'dropdown',
+            'form_display_mode' => 'default',
+            'default_paragraph_type' => '',
+          ],
+          'third_party_settings' => [],
+          'region' => 'content',
+        ],
+        'info' => [
+          'type' => 'string_textfield',
+          'weight' => 0,
+          'region' => 'content',
+          'settings' => [
+            'size' => 60,
+            'placeholder' => '',
+          ],
+          'third_party_settings' => [],
+        ],
+      ],
+      'hidden' => [],
+    ],
+    'core.entity_view_display.block_content.featured.default' => [
+      'langcode' => 'en',
+      'status' => TRUE,
+      'dependencies' => [
+        'config' => [
+          'block_content.type.featured',
+          'field.field.block_content.featured.field_featured',
+        ],
+        'module' => [
+          'entity_reference_revisions',
+        ],
+      ],
+      'id' => 'block_content.featured.default',
+      'targetEntityType' => 'block_content',
+      'bundle' => 'featured',
+      'mode' => 'default',
+      'content' => [
+        'field_featured' => [
+          'type' => 'entity_reference_revisions_entity_view',
+          'weight' => 0,
+          'label' => 'hidden',
+          'settings' => [
+            'view_mode' => 'default',
+            'link' => '',
+          ],
+          'third_party_settings' => [],
+          'region' => 'content',
+        ],
+      ],
+      'hidden' => [],
+    ],
+  ];
+
+  foreach ($configs as $name => $config) {
+    \Drupal::configFactory()->getEditable($name)->setData($config)->save(TRUE);
   }
 }
