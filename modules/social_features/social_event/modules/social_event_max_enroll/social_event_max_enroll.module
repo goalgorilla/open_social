@@ -95,6 +95,7 @@ function social_event_max_enroll_form_alter(&$form, FormStateInterface $form_sta
               ->loadByProperties([
                 'field_event' => $node->id(),
                 'user_id' => \Drupal::currentUser()->id(),
+                'field_enrollment_status' => 1,
               ]);
           }
 
@@ -109,6 +110,7 @@ function social_event_max_enroll_form_alter(&$form, FormStateInterface $form_sta
           // there are no more spots left.
           if (!$enrollments && !$an_enrollments) {
             if ($form_id === 'enroll_action_form') {
+              $form['enroll_for_this_event']['#type'] = 'submit';
               $form['enroll_for_this_event']['#value'] = t('No spots left');
               $form['enroll_for_this_event']['#disabled'] = TRUE;
             }

@@ -50,7 +50,6 @@ class EnrollRequestModalForm extends FormBase {
       '#title' => $this->t('Message'),
       '#rows' => 4,
       '#resizable' => 'vertical',
-      '#required' => TRUE,
     ];
 
     $form['actions'] = [
