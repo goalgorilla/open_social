@@ -33,7 +33,6 @@ function social_group_invite_menu_local_actions_alter(&$local_actions) {
  */
 function social_group_invite_block_access(Block $block, $operation, AccountInterface $account) {
   $route_name = \Drupal::routeMatch()->getRouteName();
-  $hide_blocks = [];
   $routes_to_check = [
     'entity.group_content.add_form',
     'entity.group_content.delete_form',
@@ -49,10 +48,10 @@ function social_group_invite_block_access(Block $block, $operation, AccountInter
 
     // Only if we are sure it's a group invitation.
     if (NULL !== $group_content &&
-      NULL !==  $group_content->getGroupContentType() &&
-      $group_content->getGroupContentType()->getContentPluginId() === 'group_invitation')
-      // This is a list of the blocks that this function cares about, if we're being
-      // called for a different block we exit early.
+      NULL !== $group_content->getGroupContentType() &&
+      $group_content->getGroupContentType()->getContentPluginId() === 'group_invitation') {
+      // This is a list of the blocks that this function cares about,
+      // if we're being called for a different block we exit early.
       $hide_blocks = [
         'group_hero_block',
         'local_tasks_block',
@@ -62,6 +61,7 @@ function social_group_invite_block_access(Block $block, $operation, AccountInter
       }
       // Remove the blocks.
       return AccessResult::forbidden();
+    }
   }
 }
 
