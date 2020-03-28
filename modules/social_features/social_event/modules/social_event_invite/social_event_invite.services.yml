@@ -5,6 +5,9 @@ services:
   social_event_invite.access_helper:
     class: Drupal\social_event_invite\SocialEventInviteAccessHelper
     arguments: ['@current_route_match', '@config.factory', '@social_group.helper_service', '@entity_type.manager', '@current_user']
+  social_event_invite.status_helper:
+    class: Drupal\social_event_invite\SocialEventInviteStatusHelper
+    arguments: ['@current_route_match', '@entity_type.manager', '@current_user', '@config.factory']
   social_event_invite.route_subscriber:
     class: Drupal\social_event_invite\Routing\RouteSubscriber
     tags:
