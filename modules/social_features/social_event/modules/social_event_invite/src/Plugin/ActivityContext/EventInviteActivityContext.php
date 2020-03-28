@@ -86,7 +86,7 @@ class EventInviteActivityContext extends ActivityContextBase {
         if (!$event_enrollment->get('field_enrollment_status')->isEmpty()
           && $event_enrollment->get('field_enrollment_status')->value !== '1'
           && !$event_enrollment->get('field_request_or_invite_status')->isEmpty()
-          && $event_enrollment->get('field_request_or_invite_status')->value === EventEnrollmentInterface::INVITE_PENDING_REPLY
+          && (int) $event_enrollment->get('field_request_or_invite_status')->value === EventEnrollmentInterface::INVITE_PENDING_REPLY
           && !$event_enrollment->get('field_account')->isEmpty()) {
             $recipients[] = [
               'target_type' => 'user',

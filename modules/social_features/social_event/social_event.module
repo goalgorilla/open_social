@@ -866,7 +866,7 @@ function social_event_preprocess_page(array &$variables) {
 
     // Only show the modal if the request method is set on this node
     // and if the 'requested-enrollment' parameter is TRUE.
-    if ($node instanceof Node && $node->get('field_enroll_method')->value === EventEnrollmentInterface::ENROLL_METHOD_REQUEST) {
+    if ($node instanceof Node && (int) $node->get('field_enroll_method')->value === EventEnrollmentInterface::ENROLL_METHOD_REQUEST) {
       // Query to see if the user is already enrolled,
       // has already requested or is already invited.
       $query = \Drupal::entityTypeManager()
