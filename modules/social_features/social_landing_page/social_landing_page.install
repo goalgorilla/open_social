@@ -348,7 +348,7 @@ function social_landing_page_update_8804() {
       'revision' => 0,
       'description' => 'A list of featured content that can have a title, link, group/node/profile, and description.',
     ],
-    'field.storage.block_content.field_featured' => [
+    'field.storage' => [
       'langcode' => 'en',
       'status' => TRUE,
       'dependencies' => [
@@ -373,7 +373,7 @@ function social_landing_page_update_8804() {
       'persist_with_no_fields' => FALSE,
       'custom_storage' => FALSE,
     ],
-    'field.field.block_content.featured.field_featured' => [
+    'field.field' => [
       'langcode' => 'en',
       'status' => TRUE,
       'dependencies' => [
@@ -490,7 +490,19 @@ function social_landing_page_update_8804() {
     ],
   ];
 
-  foreach ($configs as $name => $config) {
-    \Drupal::configFactory()->getEditable($name)->setData($config)->save(TRUE);
+  $entity_type_ids = [
+    'field.storage' => 'field_storage_config',
+    'field.field' => 'field_config',
+  ];
+
+  foreach ($configs as $name => $data) {
+    if (isset($entity_type_ids[$name])) {
+      \Drupal::entityTypeManager()->getStorage($entity_type_ids[$name])
+        ->create($data)
+        ->save();
+    }
+    else {
+      \Drupal::service('config.storage')->write($name, $data);
+    }
   }
 }
