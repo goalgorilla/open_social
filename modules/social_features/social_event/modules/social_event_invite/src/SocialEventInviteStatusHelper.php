@@ -64,14 +64,20 @@ class SocialEventInviteStatusHelper {
   /**
    * Custom check to see if a user has enrollments
    *
-   * @param $trigger string
+   * @param $user string
    *   The email or userid you want to check on.
+   * @param $event integer
+   *   The event id you want to check on.
    * @return bool|\Drupal\Core\Entity\EntityInterface|mixed
    */
-  public function userEnrollments($trigger) {
+  public function userEnrollments($user, $event) {
     $current_user = $this->currentUser;
     $uid = $current_user->id();
     $nid = $this->routeMatch->getRawParameter('node');
+
+    if ($event) {
+      $nid = $event;
+    }
 
     // If there is no trigger get the enrollment for the current user.
     $conditions = [
@@ -79,18 +85,18 @@ class SocialEventInviteStatusHelper {
       'field_event' => $nid,
     ];
 
-    if($trigger) {
+    if($user) {
       // Always assume the trigger is emails unless the ID is a user.
       $conditions = [
-        'field_email' => $trigger,
+        'field_email' => $user,
         'field_event' => $nid,
       ];
 
       /** @var \Drupal\user\Entity\User $user */
-      $user = User::load($trigger);
-      if ($user InstanceOf UserInterface) {
+      $account = User::load($user);
+      if ($account InstanceOf UserInterface) {
         $conditions = [
-          'field_account' => $user->id(),
+          'field_account' => $account->id(),
           'field_event' => $nid,
         ];
       }
