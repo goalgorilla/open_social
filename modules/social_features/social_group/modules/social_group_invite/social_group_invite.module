@@ -104,7 +104,6 @@ function social_group_invite_preprocess_views_view(&$variables) {
         'class' => [
           'btn',
           'btn-default',
-          'btn-lg',
           'btn-raised',
           'waves-effect',
         ],
@@ -121,6 +120,7 @@ function social_group_invite_preprocess_views_view_field(&$variables) {
   // Alter some group invite fields for better representation in the
   // custom social overview.
   if ($view->id() === 'social_group_invitations') {
+    // For invite status we want to show the readable name.
     if ($variables['field']->field === 'invitation_status' && !empty($variables['row']->_entity)) {
       $entity = $variables['row']->_entity;
       $field_value = $entity->get('invitation_status')->first()->getValue()['value'];
@@ -145,6 +145,17 @@ function social_group_invite_preprocess_views_view_field(&$variables) {
       }
 
       $variables['output'] = $output;
+    }
+    // If user accepted the invite, don't render the actions.
+    if ($variables['field']->field === 'dropbutton' && !empty($variables['row']->_entity)) {
+      $entity = $variables['row']->_entity;
+      $field_value = $entity->get('invitation_status')->first()->getValue()['value'];
+      // Field values are always returned as string,
+      // so lets typecast them for now.
+      $current_status = (integer) $field_value;
+      if ($current_status === GroupInvitation::INVITATION_ACCEPTED) {
+        $variables['output'] = '';
+      }
     }
   }
 }
