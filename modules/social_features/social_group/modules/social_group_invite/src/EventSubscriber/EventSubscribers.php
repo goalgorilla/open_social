@@ -93,8 +93,13 @@ class EventSubscribers implements EventSubscriberInterface {
     // First check if the current route is the group canonical.
     $routeMatch = $this->currentRoute->getRouteName();
 
-    // Not group canonical, then we leave.
-    if ($routeMatch !== 'view.group_invitations.page_1') {
+    $routes_to_check = [
+      'view.group_invitations.page_1',
+      'view.my_invitations.page_1',
+    ];
+
+    // Not related to group invite, we leave.
+    if (!in_array($routeMatch, $routes_to_check, TRUE)) {
       return;
     }
 
@@ -104,11 +109,14 @@ class EventSubscribers implements EventSubscriberInterface {
     if (!$group instanceof Group) {
       return;
     }
-
     // Determine the URL we want to redirect to.
-    $url = Url::fromRoute('view.social_group_invitations.page_1', ['group' => $group->id()]);
+    $url = Url::fromRoute('view.social_group_user_invitations.page_1', ['group' => $group->id()]);
 
-    // If it's not set, set to canonical, or the current user has no access.
+    if ($routeMatch === 'view.group_invitations.page_1') {
+      $url = Url::fromRoute('view.social_group_invitations.page_1', ['group' => $group->id()]);
+    }
+
+    // If the current user has no access we leave it be.
     if ($url->access($this->currentUser) === FALSE) {
       // This basically means that the normal flow remains intact.
       return;
