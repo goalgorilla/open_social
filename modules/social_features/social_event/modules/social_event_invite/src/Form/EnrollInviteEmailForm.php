@@ -8,6 +8,7 @@ use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\social_core\Form\InviteEmailBaseForm;
 use Drupal\social_event\Entity\EventEnrollment;
+use Drupal\social_event\EventEnrollmentInterface;
 use Drupal\user\UserInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -16,7 +17,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * Class EnrollInviteForm.
  */
 class EnrollInviteEmailForm extends InviteEmailBaseForm{
-  
+
   /**
    * The node storage for event enrollments.
    *
@@ -159,7 +160,7 @@ class EnrollInviteEmailForm extends InviteEmailBaseForm{
       $fields = [
         'field_event' => $nid,
         'field_enrollment_status' => '0',
-        'field_request_or_invite_status' => '4',
+        'field_request_or_invite_status' => EventEnrollmentInterface::INVITE_PENDING_REPLY,
       ];
 
       if ($user instanceof UserInterface) {

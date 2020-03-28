@@ -16,6 +16,7 @@ use Drupal\Core\Url;
 use Drupal\Core\Link;
 use Drupal\node\Entity\Node;
 use Drupal\social_event\Entity\EventEnrollment;
+use Drupal\social_event\EventEnrollmentInterface;
 use Drupal\user\UserStorageInterface;
 use Drupal\group\Entity\GroupContent;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -191,7 +192,7 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
     $isNodeOwner = ($node->getOwnerId() === $uid);
 
     // Add request to join event.
-    if ($node->field_enroll_method->value === '2' && !$isNodeOwner) {
+    if ((int) $node->field_enroll_method->value === EventEnrollmentInterface::ENROLL_METHOD_REQUEST && !$isNodeOwner) {
       $submit_text = $this->t('Request to enroll');
       $to_enroll_status = '2';
     }
@@ -216,10 +217,9 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
           $to_enroll_status = '0';
         }
         // If someone requested to join the event.
-        elseif ($node->field_enroll_method->value && $node->field_enroll_method->value === '2' && !$isNodeOwner) {
-          $enroll_request_status = $enrollment->field_request_or_invite_status->value;
+        elseif ($node->field_enroll_method->value && (int) $node->field_enroll_method->value === EventEnrollmentInterface::ENROLL_METHOD_REQUEST && !$isNodeOwner) {
           $event_request_ajax = TRUE;
-          if ($enroll_request_status === '0') {
+          if ((int) $enrollment->field_request_or_invite_status->value === EventEnrollmentInterface::REQUEST_PENDING) {
             $submit_text = $this->t('Pending');
             $enrollment_open = FALSE;
             $event_request_ajax = FALSE;
@@ -229,7 +229,8 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
 
       // Use the ajax submit if the enrollments are empty, or if the
       // user cancelled his enrollment and tries again.
-      if (!$isNodeOwner && (empty($enrollment) && $node->field_enroll_method->value && $node->field_enroll_method->value === '2') || (isset($event_request_ajax) && $event_request_ajax === TRUE)) {
+      if (!$isNodeOwner && (empty($enrollment) && $node->field_enroll_method->value && (int) $node->field_enroll_method->value === EventEnrollmentInterface::ENROLL_METHOD_REQUEST)
+        || (isset($event_request_ajax) && $event_request_ajax === TRUE)) {
         $attributes = [
           'class' => [
             'use-ajax',
@@ -344,7 +345,7 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
       $node_url = Url::fromRoute('entity.node.canonical', ['node' => $nid])->toString();
       $destination = $node_url;
       // If the request enroll method is set, alter the destination for AN.
-      if ($node->get('field_enroll_method')->value === '2') {
+      if ((int) $node->get('field_enroll_method')->value === EventEnrollmentInterface::ENROLL_METHOD_REQUEST) {
         $destination = $node_url . '?requested-enrollment=TRUE';
       }
       $form_state->setRedirect('user.login', [], ['query' => ['destination' => $destination]]);
@@ -410,7 +411,7 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
       // If request to join is on, alter fields.
       if ($to_enroll_status === '2') {
         $fields['field_enrollment_status'] = '0';
-        $fields['field_request_or_invite_status'] = '0';
+        $fields['field_request_or_invite_status'] = EventEnrollmentInterface::REQUEST_PENDING;
       }
 
       // Create a new enrollment for the event.
@@ -428,7 +429,6 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
    *   Array of group entities.
    */
   public function getGroups($node) {
-
     $groupcontents = GroupContent::loadByEntity($node);
 
     $groups = [];

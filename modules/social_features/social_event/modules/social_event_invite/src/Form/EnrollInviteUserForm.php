@@ -5,6 +5,7 @@ namespace Drupal\social_event_invite\Form;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\social_core\Form\InviteUserBaseForm;
 use Drupal\social_event\Entity\EventEnrollment;
+use Drupal\social_event\EventEnrollmentInterface;
 
 /**
  * Class EnrollInviteForm.
@@ -87,7 +88,7 @@ class EnrollInviteUserForm extends InviteUserBaseForm {
       $fields = [
         'field_event' => $nid,
         'field_enrollment_status' => '0',
-        'field_request_or_invite_status' => '4',
+        'field_request_or_invite_status' => EventEnrollmentInterface::INVITE_PENDING_REPLY,
         'user_id' => $uid,
         'field_account' => $uid,
       ];

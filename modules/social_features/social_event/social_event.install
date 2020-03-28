@@ -234,35 +234,35 @@ function social_event_update_8804(&$sandbox) {
         'id' => 'event_enrollment.field_request_or_invite_status',
         'field_name' => 'field_request_or_invite_status',
         'entity_type' => 'event_enrollment',
-        'type' => 'list_string',
+        'type' => 'list_integer',
         'settings' => [
           'allowed_values' => [
             [
-              'value' => '0',
+              'value' => 0,
               'label' => 'Pending',
             ],
             [
-              'value' => '1',
+              'value' => 1,
               'label' => 'Approved',
             ],
             [
-              'value' => '2',
+              'value' => 2,
               'label' => 'Declined',
             ],
             [
-              'value' => '3',
+              'value' => 3,
               'label' => 'Invited',
             ],
             [
-              'value' => '4',
+              'value' => 4,
               'label' => 'Pending reply',
             ],
             [
-              'value' => '5',
+              'value' => 5,
               'label' => 'Accepted and joined',
             ],
             [
-              'value' => '6',
+              'value' => 6,
               'label' => 'Invalid or expired',
             ],
           ],
@@ -299,7 +299,7 @@ function social_event_update_8804(&$sandbox) {
         'default_value' => [],
         'default_value_callback' => '',
         'settings' => [],
-        'field_type' => 'list_string',
+        'field_type' => 'list_integer',
       ],
       'field.storage.node.field_enroll_method' => [
         'langcode' => 'en',
@@ -313,15 +313,15 @@ function social_event_update_8804(&$sandbox) {
         'id' => 'node.field_enroll_method',
         'field_name' => 'field_enroll_method',
         'entity_type' => 'node',
-        'type' => 'list_string',
+        'type' => 'list_integer',
         'settings' => [
           'allowed_values' => [
             0 => [
-              'value' => '1',
+              'value' => 1,
               'label' => 'Enroll directly - users can enroll in this event without approval',
             ],
             1 => [
-              'value' => '2',
+              'value' => 2,
               'label' => 'Request to enroll - user enrollment requests need to be approved by event organisers',
             ],
           ],
@@ -358,12 +358,12 @@ function social_event_update_8804(&$sandbox) {
         'default_value' =>
           [
             0 => [
-              'value' => '1',
+              'value' => 1,
             ],
           ],
         'default_value_callback' => '',
         'settings' => [],
-        'field_type' => 'list_string',
+        'field_type' => 'list_integer',
       ],
       'field.storage.node.field_event_enroll_outside_group' => [
         'langcode' => 'en',
