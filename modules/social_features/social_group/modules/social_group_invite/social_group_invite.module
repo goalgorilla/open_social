@@ -1,0 +1,254 @@
+<?php
+
+/**
+ * @file
+ * The Social Invite group module.
+ */
+
+use Drupal\block\Entity\Block;
+use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\ginvite\Plugin\GroupContentEnabler\GroupInvitation;
+use Drupal\group\Entity\GroupInterface;
+use Drupal\group\Entity\GroupRoleInterface;
+use Drupal\Core\Url;
+use Drupal\group\Entity\GroupTypeInterface;
+
+/**
+ * Implements hook_menu_local_actions_alter().
+ */
+function social_group_invite_menu_local_actions_alter(&$local_actions) {
+  // Remove "Invite members" button.
+  if (isset($local_actions['ginvite.invitation.bulk'])) {
+    unset($local_actions['ginvite.invitation.bulk']);
+  }
+  // Remove "Invite member" button.
+  if (isset($local_actions['ginvite.invite_member'])) {
+    unset($local_actions['ginvite.invite_member']);
+  }
+}
+
+/**
+ * Implements hook_block_access().
+ */
+function social_group_invite_block_access(Block $block, $operation, AccountInterface $account) {
+  $route_name = \Drupal::routeMatch()->getRouteName();
+  $routes_to_check = [
+    'entity.group_content.add_form',
+    'entity.group_content.delete_form',
+  ];
+
+  // Only when on the confirm page of removing or adding invites
+  // we remove the block for tasks and heros,the cancel button
+  // will allow users to go back.
+  if (in_array($route_name, $routes_to_check)) {
+    $block_id = $block->getPluginId();
+    /** @var \Drupal\group\Entity\GroupContent $group_content */
+    $group_content = \Drupal::routeMatch()->getParameter('group_content');
+
+    // Only if we are sure it's a group invitation.
+    if (NULL !== $group_content &&
+      NULL !== $group_content->getGroupContentType() &&
+      $group_content->getGroupContentType()->getContentPluginId() === 'group_invitation') {
+      // This is a list of the blocks that this function cares about,
+      // if we're being called for a different block we exit early.
+      $hide_blocks = [
+        'group_hero_block',
+        'local_tasks_block',
+      ];
+      if (!in_array($block_id, $hide_blocks)) {
+        return AccessResult::neutral();
+      }
+      // Remove the blocks.
+      return AccessResult::forbidden();
+    }
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function social_group_invite_preprocess_views_view(&$variables) {
+  /** @var \Drupal\views\ViewExecutable $view */
+  $view = &$variables['view'];
+
+  // See function social_group_preprocess_views_view(&$variables).
+  // We have to override the local actions block.
+  // and render our own block instance in the view for placement.
+  // hook_theme_registry_alter will ensure our hooks is invoked later.
+  // That is also why hook_menu_local_actions_alter won't work.
+  // Get current group so we can build correct links.
+  if ($view->id() === 'group_manage_members' &&
+    _social_group_invite_current_type_enabled_invites()) {
+    $entity = \Drupal::entityTypeManager()->getStorage('block')
+      ->load('socialinviteactionsblock');
+
+    if (NULL !== $entity) {
+      $block_content = \Drupal::entityTypeManager()
+        ->getViewBuilder('block')
+        ->view($entity);
+
+      if (!empty($block_content)) {
+        $variables['header']['actions'] = $block_content;
+      }
+    }
+  }
+  if ($variables['view']->id() === 'social_group_invitations') {
+    $group = _social_group_get_current_group();
+    // Implement button to go back to the group for our custom view.
+    $variables['more'] = [
+      '#title' => t('Back to group'),
+      '#type' => 'link',
+      '#url' => Url::fromRoute('entity.group.canonical', ['group' => $group->id()]),
+      '#attributes' => [
+        'class' => [
+          'btn',
+          'btn-default',
+          'btn-raised',
+          'waves-effect',
+        ],
+      ],
+    ];
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function social_group_invite_preprocess_views_view_field(&$variables) {
+  $view = $variables['view'];
+  // Alter some group invite fields for better representation in the
+  // custom social overview.
+  if ($view->id() === 'social_group_invitations') {
+    // For invite status we want to show the readable name.
+    if ($variables['field']->field === 'invitation_status' && !empty($variables['row']->_entity)) {
+      $entity = $variables['row']->_entity;
+      $field_value = $entity->get('invitation_status')->first()->getValue()['value'];
+      // Field values are always returned as string,
+      // so lets typecast them for now.
+      $current_status = (integer) $field_value;
+      switch ($current_status) {
+        case GroupInvitation::INVITATION_PENDING:
+          $output = t('Pending reply');
+          break;
+
+        case GroupInvitation::INVITATION_ACCEPTED:
+          $output = t('Accepted and joined');
+          break;
+
+        case GroupInvitation::INVITATION_REJECTED:
+          $output = t('Declined');
+          break;
+
+        default:
+          $output = $variables['output'];
+      }
+
+      $variables['output'] = $output;
+    }
+    // If user accepted the invite, don't render the actions.
+    if ($variables['field']->field === 'dropbutton' && !empty($variables['row']->_entity)) {
+      $entity = $variables['row']->_entity;
+      $field_value = $entity->get('invitation_status')->first()->getValue()['value'];
+      // Field values are always returned as string,
+      // so lets typecast them for now.
+      $current_status = (integer) $field_value;
+      if ($current_status === GroupInvitation::INVITATION_ACCEPTED) {
+        $variables['output'] = '';
+      }
+    }
+  }
+}
+
+/**
+ * Check if current group it's group_type has invites enabled.
+ *
+ * @return bool
+ *   TRUE if it's enabled.
+ */
+function _social_group_invite_current_type_enabled_invites() {
+  $enabled = FALSE;
+  $group = _social_group_get_current_group();
+  // Check if group type has content plugin enabled.
+  if ($group instanceof GroupInterface) {
+    $group_type = $group->getGroupType();
+    if ($group_type->hasContentPlugin('group_invitation')) {
+      $enabled = TRUE;
+    }
+  }
+
+  return $enabled;
+}
+
+/**
+ * Implements hook_theme_registry_alter().
+ */
+function social_group_invite_theme_registry_alter(&$theme_registry) {
+  // Unfortunately the preprocess functions aren't ordered by module weight.
+  // Changing module weight doesn't work, also with dependency set to
+  // social_group this should be dealt with but isnt.
+  // So we enforce our preprocess after social_group.
+  if (!empty($theme_registry['views_view']['preprocess functions'])) {
+    $current_key = array_search('social_group_invite_preprocess_views_view', $theme_registry['views_view']['preprocess functions'], FALSE);
+    unset($theme_registry['views_view']['preprocess functions'][$current_key]);
+    // Give it a new key all the way at the end.
+    $theme_registry['views_view']['preprocess functions'][] = 'social_group_invite_preprocess_views_view';
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function social_group_invite_preprocess_page_title(&$variables) {
+  $view_id = 'social_group_invitations';
+  // Ensure the page title becomes Group context related.
+  if (\Drupal::routeMatch()->getParameter('view_id') === $view_id &&
+    !empty(\Drupal::routeMatch()->getParameter('group'))) {
+    $group = _social_group_get_current_group();
+    if (!empty($group->label())) {
+      $title = \Drupal::translation()
+        ->translate('Membership invite(s) for group: @group_name', ['@group_name' => $group->label()]);
+      $variables['title'] = $title;
+    }
+  }
+}
+
+/**
+ * A specific Group Type Role, will get default invite permissions.
+ *
+ * @param \Drupal\group\Entity\GroupRoleInterface $role
+ *   The role that we will add the default permissions to.
+ *
+ * @throws \Drupal\Core\Entity\EntityStorageException
+ */
+function social_group_invite_set_default_permissions_for_role_on_group_type(GroupRoleInterface $role) {
+  $role->grantPermissions([
+    'delete any invitation',
+    'delete own invitations',
+    'invite users to group',
+    'view group invitations',
+  ]);
+  $role->save();
+}
+
+/**
+ * A specific Group Type, where will assign invite permissions.
+ *
+ * @param \Drupal\group\Entity\GroupTypeInterface $group_type
+ *   The Group type role that we will add the default permissions to.
+ *
+ * @throws \Drupal\Core\Entity\EntityStorageException
+ */
+function social_group_invite_set_default_permissions_for_group_type(GroupTypeInterface $group_type) {
+  /** @var \Drupal\group\Entity\GroupRoleInterface $roles */
+  $roles = $group_type->getRoles();
+  // Make sure this is done for managers and admins.
+  if (!empty($roles[$group_type->id() . '-group_manager'])) {
+    $role = $roles[$group_type->id() . '-group_manager'];
+    social_group_invite_set_default_permissions_for_role_on_group_type($role);
+  }
+  if (!empty($roles[$group_type->id() . '-group_admin'])) {
+    $role = $roles[$group_type->id() . '-group_admin'];
+    social_group_invite_set_default_permissions_for_role_on_group_type($role);
+  }
+}
