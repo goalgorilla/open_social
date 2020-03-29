@@ -713,7 +713,7 @@ function social_event_get_current_event() {
     $node = Node::load($node);
   }
 
-  if (($node instanceof Node) && $node->getType() === 'event') {
+  if (($node instanceof NodeInterface) && $node->getType() === 'event') {
     return $node;
   }
 

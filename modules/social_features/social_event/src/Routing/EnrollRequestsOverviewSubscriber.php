@@ -3,6 +3,7 @@
 namespace Drupal\social_event\Routing;
 
 use Drupal\Core\Url;
+use Drupal\node\NodeInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
@@ -37,6 +38,10 @@ class EnrollRequestsOverviewSubscriber implements EventSubscriberInterface {
     if ($current_route === 'view.event_manage_enrollment_requests.page_manage_enrollment_requests') {
       // Now lets get some stuff we need to perform some checks on.
       $current_event = social_event_get_current_event();
+      if (!$current_event instanceof NodeInterface) {
+        return;
+      }
+
       // Now, lets check:
       // - If the current user has a permission to see the overview.
       // - If the current user is the owner/creator of this event.
