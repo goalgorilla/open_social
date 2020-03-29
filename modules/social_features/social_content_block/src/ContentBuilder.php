@@ -4,6 +4,8 @@ namespace Drupal\social_content_block;
 
 use Drupal\block_content\BlockContentInterface;
 use Drupal\Core\Database\Connection;
+use Drupal\Core\Database\Query\SelectInterface;
+use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -105,6 +107,30 @@ class ContentBuilder implements ContentBuilderInterface {
     else {
       $field_names = [$block_content->field_plugin_field->value];
     }
+    // When the user selected some filter in the "Content selection" field then
+    // only condition based on this filter field will be added to the block base
+    // query.
+    else {
+      $field_names = [$block_content->field_plugin_field->value];
+    }
+
+    $fields = [];
+
+    foreach ($field_names as $field_name) {
+      $field = $block_content->get($field_name);
+
+      if (!$field->isEmpty()) {
+        $fields[$field_name] = array_map(function ($item) {
+          return $item['target_id'];
+        }, $field->getValue());
+      }
+    }
+
+    /** @var \Drupal\social_content_block\ContentBlockPluginInterface $plugin */
+    $plugin = $this->contentBlockManager->createInstance($plugin_id);
+
+    /** @var \Drupal\Core\Entity\EntityTypeInterface $entity_type */
+    $entity_type = $this->entityTypeManager->getDefinition($definition['entityTypeId']);
 
     $fields = [];
 
@@ -142,8 +168,8 @@ class ContentBuilder implements ContentBuilderInterface {
     // Allow other modules to change the query to add additions.
     $this->moduleHandler->alter('social_content_block_query', $query, $block_content);
 
-    // Add sorting.
-    $query->orderBy('base_table.' . $block_content->field_sorting->value);
+    // Apply our sorting logic.
+    $this->sortBy($query, $entity_type, $block_content->field_sorting->value);
 
     // Add range.
     $query->range(0, $block_content->field_item_amount->value);
@@ -282,6 +308,116 @@ class ContentBuilder implements ContentBuilderInterface {
     }
 
     return $element;
+  }
+
+  /**
+   * Sorting and range logic by specific case.
+   *
+   * @param \Drupal\Core\Database\Query\SelectInterface $query
+   *   The query.
+   * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
+   *   The entity type that is being queried.
+   * @param string $sort_by
+   *   The type of sorting that should happen.
+   */
+  protected function sortBy(SelectInterface $query, EntityTypeInterface $entity_type, string $sort_by) : void {
+    // Define a lower limit for popular content so that content with a large
+    // amount of comments/votes is not popular forever.
+    // Sorry cool kids, your time's up.
+    $popularity_time_start = strtotime('-90 days');
+
+    // Provide some values that are often used in the query.
+    $entity_type_id = $entity_type->id();
+    $entity_id_key = $entity_type->getKey('id');
+
+    switch ($sort_by) {
+      // Creates a join to select the number of comments for a given entity
+      // in a recent timeframe and use that for sorting.
+      case 'most_commented':
+        if ($entity_type_id === 'group') {
+          $query->leftJoin('post__field_recipient_group', 'pfrg', "base_table.${entity_id_key} = pfrg.field_recipient_group_target_id");
+          $query->leftJoin('group_content_field_data', 'gfd', "base_table.${entity_id_key} = gfd.gid AND gfd.type LIKE '%-group_node-%'");
+          $query->leftJoin('comment_field_data', 'cfd', "(base_table.${entity_id_key} = cfd.entity_id AND cfd.entity_type=:entity_type) OR (pfrg.entity_id = cfd.entity_id AND cfd.entity_type='post') OR (gfd.entity_id = cfd.entity_id AND cfd.entity_type='node')", ['entity_type' => $entity_type_id]);
+        }
+        // Otherwise only check direct votes.
+        else {
+          $query->leftJoin('comment_field_data', 'cfd', "base_table.${entity_id_key} = cfd.entity_id AND cfd.entity_type=:entity_type", ['entity_type' => $entity_type_id]);
+        }
+
+        $query->addExpression('COUNT(cfd.cid)', 'comment_count');
+        $query
+          ->condition('cfd.status', 1, '=')
+          ->condition('cfd.created', $popularity_time_start, '>')
+          ->groupBy("base_table.${entity_id_key}")
+          ->orderBy('comment_count', 'DESC');
+        break;
+
+      // Creates a join to select the number of likes for a given entity in a
+      // recent timeframe and use that for sorting.
+      case 'most_liked':
+        // For groups also check likes on posts in groups. This does not (yet)
+        // take into account likes on comments on posts or likes on other group
+        // content entities.
+        if ($entity_type_id === 'group') {
+          $query->leftJoin('post__field_recipient_group', 'pfrg', "base_table.${entity_id_key} = pfrg.field_recipient_group_target_id");
+          $query->leftJoin('group_content_field_data', 'gfd', "base_table.${entity_id_key} = gfd.gid AND gfd.type LIKE '%-group_node-%'");
+          $query->leftJoin('votingapi_vote', 'vv', "(base_table.${entity_id_key} = vv.entity_id AND vv.entity_type=:entity_type) OR (pfrg.entity_id = vv.entity_id AND vv.entity_type = 'post') OR (gfd.entity_id = vv.entity_id AND vv.entity_type = 'node')", ['entity_type' => $entity_type_id]);
+        }
+        // Otherwise only check direct votes.
+        else {
+          $query->leftJoin('votingapi_vote', 'vv', "base_table.${entity_id_key} = vv.entity_id AND vv.entity_type=:entity_type", ['entity_type' => $entity_type_id]);
+        }
+        $query->addExpression('COUNT(vv.id)', 'vote_count');
+        // This assumes all votes are likes and all likes are equal. To
+        // support downvoting or rating, the query should be altered.
+        $query
+          ->condition('vv.type', 'like')
+          ->condition('vv.timestamp', $popularity_time_start, '>')
+          ->groupBy("base_table.${entity_id_key}")
+          ->orderBy('vote_count', 'DESC');
+        break;
+
+      // Creates a join that pulls in all related entities, taking the highest
+      // update time for all related entities as last interaction time and using
+      // that as sort value.
+      case 'last_interacted':
+        if ($entity_type_id === 'group') {
+          $query->leftJoin('group_content_field_data', 'gfd', "base_table.${entity_id_key} = gfd.gid");
+          $query->leftjoin('post__field_recipient_group', 'pst', "base_table.${entity_id_key} = pst.field_recipient_group_target_id");
+          $query->leftjoin('post_field_data', 'pfd', 'pst.entity_id = pfd.id');
+          $query->leftjoin('comment_field_data', 'cfd', "(gfd.entity_id = cfd.entity_id AND cfd.entity_type = 'node') OR (pfd.id = cfd.entity_id AND cfd.entity_type = 'post')");
+          $query->leftJoin('votingapi_vote', 'vv', "(gfd.entity_id = vv.entity_id AND vv.entity_type = 'node') OR (pfd.id = vv.entity_id AND vv.entity_type = 'post') OR (cfd.cid = vv.entity_id AND vv.entity_type = 'comment')");
+          $query->leftjoin('node_field_data', 'nfd', 'gfd.entity_id = nfd.nid');
+
+          $query->addExpression('GREATEST(COALESCE(MAX(gfd.changed), 0),
+            COALESCE(MAX(vv.timestamp), 0),
+            COALESCE(MAX(cfd.changed), 0),
+            COALESCE(MAX(nfd.changed), 0),
+            COALESCE(MAX(pfd.changed), 0))', 'newest_timestamp');
+
+          $query->groupBy("base_table.${entity_id_key}");
+          $query->orderBy('newest_timestamp', 'DESC');
+        }
+        elseif ($entity_type_id === 'node') {
+          $query->leftJoin('node_field_data', 'nfd', "base_table.${entity_id_key} = nfd.nid");
+          // Comment entity.
+          $query->leftjoin('comment_field_data', 'cfd', 'nfd.nid = cfd.entity_id');
+          // Like node or comment related to node.
+          $query->leftjoin('votingapi_vote', 'vv', '(nfd.nid = vv.entity_id AND vv.entity_type = :entity_type_id) OR (cfd.cid = vv.entity_id)', ['entity_type_id' => $entity_type_id]);
+
+          $query->addExpression('GREATEST(COALESCE(MAX(vv.timestamp), 0),
+          COALESCE(MAX(cfd.changed), 0),
+          COALESCE(MAX(nfd.changed), 0))', 'newest_timestamp');
+
+          $query->groupBy("base_table.${entity_id_key}");
+          $query->orderBy('newest_timestamp', 'DESC');
+        }
+        break;
+
+      // Fall back by assuming the sorting option is a field.
+      default:
+        $query->orderBy("base_table.${sort_by}");
+    }
   }
 
 }
