@@ -26,13 +26,13 @@ class SocialGroupMembershipCount extends FieldPluginBase {
    */
   public function render(ResultRow $row) {
     $group_content = $this->getEntity($row);
-    // Grab the group from the group_invite
+    // Grab the group from the group_invite.
     if ($group_content instanceof GroupContent) {
       $group = $group_content->getGroup();
       if ($group instanceof Group) {
         /** @var \Drupal\social_group\GroupStatistics $group_statistics */
         $group_statistics = \Drupal::service('social_group.group_statistics');
-        // return the group member count.
+        // Return the group member count.
         return $group_statistics->getGroupMemberCount($group);
       }
     }
