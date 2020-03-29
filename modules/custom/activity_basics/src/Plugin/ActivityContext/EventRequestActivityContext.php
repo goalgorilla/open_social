@@ -7,6 +7,7 @@ use Drupal\activity_creator\ActivityFactory;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\Query\Sql\QueryFactory;
 use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\social_event\EventEnrollmentInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -85,8 +86,8 @@ class EventRequestActivityContext extends ActivityContextBase {
         // Send out the notification if the user is pending.
         if (!$event_enrollment->get('field_enrollment_status')->isEmpty()
           && $event_enrollment->get('field_enrollment_status')->value !== '1'
-          && !$event_enrollment->get('field_request_status')->isEmpty()
-          && $event_enrollment->get('field_request_status')->value === 'pending') {
+          && !$event_enrollment->get('field_request_or_invite_status')->isEmpty()
+          && (int) $event_enrollment->get('field_request_or_invite_status')->value === EventEnrollmentInterface::REQUEST_PENDING) {
           $recipients = $this->getRecipientOrganizerFromEntity($related_entity, $data);
         }
       }
