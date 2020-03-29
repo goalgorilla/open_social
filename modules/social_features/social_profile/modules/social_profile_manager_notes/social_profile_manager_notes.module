@@ -46,7 +46,6 @@ function social_profile_manager_notes_form_alter(array &$form, FormStateInterfac
 function _social_profile_manager_notes_form_submit(array $form, FormStateInterface $form_state) {
   /** @var \Drupal\profile\Entity\Profile $profile */
   $profile = _social_profile_get_profile_from_route();
-  $x = 1;
   // Let's be on the safe side.
   if ($profile instanceof Profile) {
     // Get the uid of the profile.
