@@ -297,12 +297,10 @@ function social_group_invite_set_default_permissions_for_group_type(GroupTypeInt
  * Implements hook_preprocess_activity().
  */
 function social_group_invite_preprocess_activity(&$variables) {
-  // Update the URL for invites to point to the group
-  // instead of the user.
   $activity = $variables['elements']['#activity'];
   $related_entity = $activity->getRelatedEntity();
-  // If it's a group invite, lets link the entity
-  // to the group itself.
+  // If the related entity is a piece of GroupContent and coming from the
+  // ginvite group_invitation plugin, lets link the entity to the group itself.
   if (!empty($related_entity) &&
     $related_entity instanceof GroupContent &&
     $related_entity->getGroupContentType()->getContentPluginId() === 'group_invitation') {
