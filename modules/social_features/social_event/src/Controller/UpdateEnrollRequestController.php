@@ -5,6 +5,7 @@ namespace Drupal\social_event\Controller;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\node\Entity\Node;
 use Drupal\node\NodeInterface;
 use Drupal\social_event\EventEnrollmentInterface;
@@ -27,13 +28,23 @@ class UpdateEnrollRequestController extends ControllerBase {
   protected $requestStack;
 
   /**
+   * The current user.
+   *
+   * @var \Drupal\Core\Session\AccountProxyInterface
+   */
+  protected $currentUser;
+
+  /**
    * UpdateEnrollRequestController constructor.
    *
    * @param \Symfony\Component\HttpFoundation\RequestStack $requestStack
    *   The request stack.
+   * @param \Drupal\Core\Session\AccountProxyInterface $currentUser
+   *   The current user.
    */
-  public function __construct(RequestStack $requestStack) {
+  public function __construct(RequestStack $requestStack, AccountProxyInterface $currentUser) {
     $this->requestStack = $requestStack;
+    $this->currentUser = $currentUser;
   }
 
   /**
@@ -41,7 +52,8 @@ class UpdateEnrollRequestController extends ControllerBase {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('request_stack')
+      $container->get('request_stack'),
+      $container->get('current_user')
     );
   }
 
@@ -58,8 +70,6 @@ class UpdateEnrollRequestController extends ControllerBase {
    * @return \Symfony\Component\HttpFoundation\RedirectResponse
    *   Return to the original destination from the current request.
    *
-   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
-   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
   public function updateEnrollmentRequest(NodeInterface $node, EventEnrollmentInterface $event_enrollment, $approve) {
@@ -76,9 +86,16 @@ class UpdateEnrollRequestController extends ControllerBase {
         $event_enrollment->field_request_or_invite_status->value = EventEnrollmentInterface::REQUEST_OR_INVITE_DECLINED;
         $this->messenger()->addStatus(t('The event enrollment request has been declined.'));
       }
+
+      // In order for the notifications to be sent correctly we're updating the
+      // owner here. The account is still linked to the actual enrollee.
+      // The owner is always used as the actor.
+      // @see activity_creator_message_insert().
+      $event_enrollment->setOwnerId($this->currentUser->id());
+
       // And finally save (update) this updated $event_enrollment.
       // @todo: maybe think of deleting approved/declined records from the db?
-      $this->entityTypeManager()->getStorage('event_enrollment')->save($event_enrollment);
+      $event_enrollment->save();
     }
 
     // Get the redirect destination we're given in the request for the response.

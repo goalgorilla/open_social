@@ -1364,6 +1364,56 @@ function social_event_update_8804(&$sandbox) {
           'purge_methods' => [],
         ],
       ],
+      'message.template.request_approved_event_enrollment' => [
+        'langcode' => 'en',
+        'status' => TRUE,
+        'dependencies' => [
+          'module' => [
+            'activity_logger',
+          ],
+        ],
+        'third_party_settings' => [
+          'activity_logger' => [
+            'activity_bundle_entities' => [
+              'event_enrollment-event_enrollment' => 'event_enrollment-event_enrollment',
+            ],
+            'activity_action' => 'update_entity_action',
+            'activity_context' => 'event_request_activity_context',
+            'activity_destinations' => [
+              'notifications' => 'notifications',
+              'email' => 'email',
+            ],
+            'activity_create_direct' => TRUE,
+            'activity_aggregate' => FALSE,
+            'activity_entity_condition' => '',
+          ],
+        ],
+        'template' => 'request_approved_event_enrollment',
+        'label' => 'Request approved event enrollment',
+        'description' => 'The request to enroll to an enrollment is approved',
+        'text' => [
+          [
+            'value' => '<p><a href="[message:author:url:absolute]">[message:author:display-name]</a> approved your request to enroll for the event [social_event:event_iam_organizing]</p>',
+            'format' => 'full_html',
+          ],
+          [
+            'value' => '<p><a href="[message:author:url:absolute]">[message:author:display-name]</a> approved your request to enroll for the event [social_event:event_iam_organizing]</p>',
+            'format' => 'full_html',
+          ],
+          [
+            'value' => '<p><a href="[message:author:url:absolute]">[message:author:display-name]</a> approved your request to enroll for the event [social_event:event_iam_organizing]</p>',
+            'format' => 'full_html',
+          ],
+        ],
+        'settings' => [
+          'token options' => [
+            'clear' => FALSE,
+            'token replace' => TRUE,
+          ],
+          'purge_override' => FALSE,
+          'purge_methods' => [],
+        ],
+      ],
     ];
 
     // Count the amount we need to add to cover batching..

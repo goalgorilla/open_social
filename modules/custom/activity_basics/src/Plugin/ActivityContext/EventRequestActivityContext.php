@@ -90,6 +90,14 @@ class EventRequestActivityContext extends ActivityContextBase {
           && (int) $event_enrollment->get('field_request_or_invite_status')->value === EventEnrollmentInterface::REQUEST_PENDING) {
           $recipients = $this->getRecipientOrganizerFromEntity($related_entity, $data);
         }
+
+        // Send out a notification if the request is approved.
+        if (!$event_enrollment->get('field_enrollment_status')->isEmpty()
+          && $event_enrollment->get('field_enrollment_status')->value === '1'
+          && !$event_enrollment->get('field_request_or_invite_status')->isEmpty()
+          && (int) $event_enrollment->get('field_request_or_invite_status')->value === EventEnrollmentInterface::REQUEST_APPROVED) {
+          $recipients = $this->getEventEnrollmentOwner($event_enrollment, $data);
+        }
       }
     }
 
@@ -117,6 +125,9 @@ class EventRequestActivityContext extends ActivityContextBase {
    *   pairs:
    *   - target_type: The entity type ID.
    *   - target_id: The entity ID.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
   public function getRecipientOrganizerFromEntity(array $related_entity, array $data) {
     $recipients = [];
@@ -142,6 +153,29 @@ class EventRequestActivityContext extends ActivityContextBase {
     // If there are any others we should add. Make them also part of the
     // recipients array.
     $this->moduleHandler->alter('activity_recipient_organizer', $recipients, $event, $original_related_object);
+
+    return $recipients;
+  }
+
+  /**
+   * Returns event enrollment owner.
+   *
+   * @param \Drupal\social_event\EventEnrollmentInterface $event_enrollment
+   *   Event enrollment object.
+   * @param array $data
+   *   The data.
+   *
+   * @return array
+   *   An associative array of recipients, containing the following key-value
+   *   pairs:
+   *   - target_type: The entity type ID.
+   *   - target_id: The entity ID.
+   */
+  public function getEventEnrollmentOwner(EventEnrollmentInterface $event_enrollment, array $data) {
+    $recipients[] = [
+      'target_type' => 'user',
+      'target_id' => $event_enrollment->get('field_account')->getValue()[0]['target_id'],
+    ];
 
     return $recipients;
   }
