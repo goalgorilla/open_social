@@ -73,7 +73,7 @@ class UpdateEnrollRequestController extends ControllerBase {
       }
       // When the user declined, we set the field_request_or_invite_status to decline.
       elseif ($approve === '0') {
-        $event_enrollment->field_request_or_invite_status->value = EventEnrollmentInterface::REQUEST_DECLINED;
+        $event_enrollment->field_request_or_invite_status->value = EventEnrollmentInterface::REQUEST_OR_INVITE_DECLINED;
         $this->messenger()->addStatus(t('The event enrollment request has been declined.'));
       }
       // And finally save (update) this updated $event_enrollment.
