@@ -339,3 +339,30 @@ function social_content_block_update_8003() {
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
 }
+
+/**
+ * Add an extra allowed values to the sorting field.
+ */
+function social_content_block_update_8004() {
+  $config_name = 'field.storage.block_content.field_sorting';
+  $config = \Drupal::configFactory()->getEditable($config_name);
+  $config_data = $config->getRawData();
+  $allowed_values = $config_data['settings']['allowed_values'];
+
+  $allowed_values[] = [
+    'value' => 'most_commented',
+    'label' => 'Most commented',
+  ];
+  $allowed_values[] = [
+    'value' => 'most_liked',
+    'label' => 'Most liked',
+  ];
+  $allowed_values[] = [
+    'value' => 'last_interacted',
+    'label' => 'Last interacted',
+  ];
+
+  $config_data['settings']['allowed_values'] = $allowed_values;
+  $config->setData($config_data)->save();
+  \Drupal::service('entity_field.manager')->clearCachedFieldDefinitions();
+}
