@@ -107,24 +107,6 @@ class ContentBuilder implements ContentBuilderInterface {
     else {
       $field_names = [$block_content->field_plugin_field->value];
     }
-    // When the user selected some filter in the "Content selection" field then
-    // only condition based on this filter field will be added to the block base
-    // query.
-    else {
-      $field_names = [$block_content->field_plugin_field->value];
-    }
-
-    $fields = [];
-
-    foreach ($field_names as $field_name) {
-      $field = $block_content->get($field_name);
-
-      if (!$field->isEmpty()) {
-        $fields[$field_name] = array_map(function ($item) {
-          return $item['target_id'];
-        }, $field->getValue());
-      }
-    }
 
     /** @var \Drupal\social_content_block\ContentBlockPluginInterface $plugin */
     $plugin = $this->contentBlockManager->createInstance($plugin_id);
