@@ -151,6 +151,12 @@ class SocialGroupRequestConfigOverride implements ConfigFactoryOverrideInterface
                   ],
                 ],
               ],
+              'style' => [
+                'options' => [
+                  'empty_table' => TRUE,
+                  ],
+                ],
+              ],
             ],
           ],
           'membership_requests' => [
