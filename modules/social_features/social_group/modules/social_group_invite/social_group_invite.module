@@ -14,6 +14,8 @@ use Drupal\group\Entity\GroupRoleInterface;
 use Drupal\Core\Url;
 use Drupal\group\Entity\GroupTypeInterface;
 use Drupal\Core\Cache\RefinableCacheableDependencyInterface;
+use Drupal\group\Entity\GroupContent;
+use Drupal\social_group\Entity\Group;
 
 /**
  * Implements hook_menu_local_actions_alter().
@@ -288,5 +290,25 @@ function social_group_invite_set_default_permissions_for_group_type(GroupTypeInt
   if (!empty($roles[$group_type->id() . '-group_admin'])) {
     $role = $roles[$group_type->id() . '-group_admin'];
     social_group_invite_set_default_permissions_for_role_on_group_type($role);
+  }
+}
+
+/**
+ * Implements hook_preprocess_activity().
+ */
+function social_group_invite_preprocess_activity(&$variables) {
+  // Update the URL for invites to point to the group
+  // instead of the user.
+  $activity = $variables['elements']['#activity'];
+  $related_entity = $activity->getRelatedEntity();
+  // If it's a group invite, lets link the entity
+  // to the group itself.
+  if (!empty($related_entity) &&
+    $related_entity instanceof GroupContent &&
+    $related_entity->getGroupContentType()->getContentPluginId() === 'group_invitation') {
+    $group = $related_entity->getGroup();
+    if ($group instanceof Group) {
+      $variables['full_url'] = $group->urlInfo('canonical');
+    }
   }
 }
