@@ -107,6 +107,12 @@ class EventInviteEnrollActionForm extends EnrollActionForm {
             '#markup' => '<ul class="dropdown-menu dropdown-menu-right"><li><a href="#" class="enroll-form-submit"> ' . $decline_text . ' </a></li></ul>',
           ];
 
+          // Add a hidden operation we can fill with jquery when declining.
+          $form['operation'] = [
+            '#type' => 'hidden',
+            '#default_value' => '',
+          ];
+
           $form['#attached']['library'][] = 'social_event/form_submit';
 
         }
@@ -128,6 +134,7 @@ class EventInviteEnrollActionForm extends EnrollActionForm {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     parent::submitForm($form, $form_state);
+    $operation = $form_state->getValue('operation');
     $current_user = $this->currentUser;
     $uid = $current_user->id();
     $nid = $form_state->getValue('event');
@@ -148,6 +155,10 @@ class EventInviteEnrollActionForm extends EnrollActionForm {
     if ($enrollment = array_pop($enrollments)) {
       $enrollment->field_enrollment_status->value = '1';
       $enrollment->field_request_or_invite_status->value = EventEnrollmentInterface::INVITE_ACCEPTED_AND_JOINED;
+      if ($operation === 'decline') {
+        $enrollment->field_enrollment_status->value = '0';
+        $enrollment->field_request_or_invite_status->value = EventEnrollmentInterface::REQUEST_OR_INVITE_DECLINED;
+      }
       $enrollment->save();
     }
   }
