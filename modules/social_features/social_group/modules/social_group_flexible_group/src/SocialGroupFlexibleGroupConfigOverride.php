@@ -213,6 +213,14 @@ class SocialGroupFlexibleGroupConfigOverride implements ConfigFactoryOverrideInt
         ];
     }
 
+    $config_name = 'message.template.approve_request_join_group';
+    if (in_array($config_name, $names, FALSE)) {
+      $overrides[$config_name]['third_party_settings']['activity_logger']['activity_bundle_entities'] =
+        [
+          'group_content-flexible_group-group_membership' => 'group_content-flexible_group-group_membership',
+        ];
+    }
+
     $config_name = 'views.view.group_managers';
 
     if (in_array($config_name, $names, FALSE)) {
