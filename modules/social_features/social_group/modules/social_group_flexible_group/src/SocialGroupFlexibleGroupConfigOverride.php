@@ -194,6 +194,25 @@ class SocialGroupFlexibleGroupConfigOverride implements ConfigFactoryOverrideInt
       ];
     }
 
+    $blocks = [
+      'block.block.membershiprequestsnotification',
+      'block.block.membershiprequestsnotification_2',
+    ];
+
+    foreach ($blocks as $config_name => $block) {
+      if (in_array($config_name, $names, FALSE)) {
+        $overrides[$config_name] = [
+          'visibility' => [
+            'group_type' => [
+              'group_types' => [
+                'flexible_group' => 'flexible_group',
+              ],
+            ],
+          ],
+        ];
+      }
+    }
+
     $config_name = 'message.template.create_content_in_joined_group';
 
     if (in_array($config_name, $names, FALSE)) {

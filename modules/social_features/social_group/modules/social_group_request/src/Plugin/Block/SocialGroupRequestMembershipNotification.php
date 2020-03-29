@@ -12,6 +12,7 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslationManager;
 use Drupal\Core\Url;
 use Drupal\grequest\Plugin\GroupContentEnabler\GroupMembershipRequest;
+use Drupal\group\Entity\GroupInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -161,6 +162,17 @@ class SocialGroupRequestMembershipNotification extends BlockBase implements Cont
     $is_group_manager = $account->hasPermission('administer members');
 
     return AccessResult::allowedIf($is_group_page && $is_group_manager);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getCacheContexts() {
+    $contexts = parent::getCacheContexts();
+    // Ensure the context keeps track of the URL
+    // so we don't see the message on every group.
+    $contexts = Cache::mergeContexts($contexts, ['url', 'user.permissions', 'group']);
+    return $contexts;
   }
 
   /**
