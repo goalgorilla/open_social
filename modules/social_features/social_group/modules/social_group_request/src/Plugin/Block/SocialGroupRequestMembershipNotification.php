@@ -170,7 +170,11 @@ class SocialGroupRequestMembershipNotification extends BlockBase implements Cont
     $contexts = parent::getCacheContexts();
     // Ensure the context keeps track of the URL
     // so we don't see the message on every group.
-    $contexts = Cache::mergeContexts($contexts, ['url', 'user.permissions', 'group']);
+    $contexts = Cache::mergeContexts($contexts, [
+      'url',
+      'user.permissions',
+      'group'
+    ]);
     return $contexts;
   }
 
