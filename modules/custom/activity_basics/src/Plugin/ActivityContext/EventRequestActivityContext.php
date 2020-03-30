@@ -79,24 +79,33 @@ class EventRequestActivityContext extends ActivityContextBase {
     // We only know the context if there is a related object.
     if (isset($data['related_object']) && !empty($data['related_object'])) {
       $related_entity = ActivityFactory::getActivityRelatedEntity($data);
+
       if ($data['related_object'][0]['target_type'] === 'event_enrollment') {
+        // Get the enrollment id.
+        $enrollment_id = $data['related_object'][0]['target_id'];
+
         /** @var \Drupal\social_event\EventEnrollmentInterface $event_enrollment */
         $event_enrollment = $this->entityTypeManager->getStorage('event_enrollment')
-          ->load($data['related_object'][0]['target_id']);
-        // Send out the notification if the user is pending.
-        if (!$event_enrollment->get('field_enrollment_status')->isEmpty()
-          && $event_enrollment->get('field_enrollment_status')->value !== '1'
-          && !$event_enrollment->get('field_request_or_invite_status')->isEmpty()
-          && (int) $event_enrollment->get('field_request_or_invite_status')->value === EventEnrollmentInterface::REQUEST_PENDING) {
-          $recipients = $this->getRecipientOrganizerFromEntity($related_entity, $data);
-        }
+          ->load($enrollment_id);
 
-        // Send out a notification if the request is approved.
-        if (!$event_enrollment->get('field_enrollment_status')->isEmpty()
-          && $event_enrollment->get('field_enrollment_status')->value === '1'
-          && !$event_enrollment->get('field_request_or_invite_status')->isEmpty()
-          && (int) $event_enrollment->get('field_request_or_invite_status')->value === EventEnrollmentInterface::REQUEST_APPROVED) {
-          $recipients = $this->getEventEnrollmentOwner($event_enrollment, $data);
+        if (!empty($event_enrollment)) {
+          // Send out the notification if the user is pending.
+          if (!$event_enrollment->get('field_enrollment_status')->isEmpty()
+            && $event_enrollment->get('field_enrollment_status')->value === '0'
+            && !$event_enrollment->get('field_request_or_invite_status')
+              ->isEmpty()
+            && (int) $event_enrollment->get('field_request_or_invite_status')->value === EventEnrollmentInterface::REQUEST_PENDING) {
+            $recipients = $this->getRecipientOrganizerFromEntity($related_entity, $data);
+          }
+
+          // Send out a notification if the request is approved.
+          if (!$event_enrollment->get('field_enrollment_status')->isEmpty()
+            && $event_enrollment->get('field_enrollment_status')->value === '1'
+            && !$event_enrollment->get('field_request_or_invite_status')
+              ->isEmpty()
+            && (int) $event_enrollment->get('field_request_or_invite_status')->value === EventEnrollmentInterface::REQUEST_APPROVED) {
+            $recipients = $this->getEventEnrollmentOwner($event_enrollment, $data);
+          }
         }
       }
     }
