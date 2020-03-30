@@ -50,13 +50,6 @@ class EventSettingsForm extends ConfigFormBase {
       ],
     ];
 
-    $form['request_enroll'] = [
-      '#type' => 'checkbox',
-      '#title' => $this->t('Enable requesting enrollment to events'),
-      '#description' => $this->t('Enabling this feature provides the possibility to let users submit a request to enroll to an event.'),
-      '#default_value' => $social_event_config->get('request_enroll'),
-    ];
-
     /** @var \Drupal\group\Entity\GroupTypeInterface $group_type */
     foreach (GroupType::loadMultiple() as $group_type) {
       // Check if this group type uses events.
@@ -85,7 +78,6 @@ class EventSettingsForm extends ConfigFormBase {
 
     $this->configFactory->getEditable('social_event.settings')
       ->set('enroll', $group_type_ids)
-      ->set('request_enroll', $form_state->getValue('request_enroll'))
       ->save();
   }
 
