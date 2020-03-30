@@ -18,6 +18,15 @@
           location.assign(location.origin + location.pathname);
         });
       });
+
+      // When submitting the request, close the page.
+      var closeDialog = settings.eventEnrollmentRequest.closeDialog;
+
+      $('body').once('eventEnrollmentSubmitRequest').on('dialogclose', '.ui-dialog', function() {
+        if (closeDialog === true) {
+          location.assign(location.origin + location.pathname);
+        }
+      });
     }
   }
 

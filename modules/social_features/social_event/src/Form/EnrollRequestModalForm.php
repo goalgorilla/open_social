@@ -2,12 +2,11 @@
 
 namespace Drupal\social_event\Form;
 
-use Drupal\Core\Ajax\RedirectCommand;
+use Drupal\Core\Ajax\CloseDialogCommand;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\OpenModalDialogCommand;
-use Drupal\Core\Url;
 use Drupal\social_event\Entity\EventEnrollment;
 use Drupal\social_event\EventEnrollmentInterface;
 
@@ -69,7 +68,13 @@ class EnrollRequestModalForm extends FormBase {
       ],
     ];
 
-    $form['#attached']['library'][] = 'core/drupal.dialog.ajax';
+    $form['#attached']['library'] = [
+      'core/drupal.dialog.ajax',
+      'social_event/modal',
+    ];
+    $form['#attached']['drupalSettings']['eventEnrollmentRequest'] = [
+      'closeDialog' => TRUE,
+    ];
 
     return $form;
   }
@@ -115,9 +120,8 @@ class EnrollRequestModalForm extends FormBase {
     $enrollment->save();
 
     // On success leave a message and reload the page.
-    $currentURL = Url::fromRoute('entity.node.canonical', ['node' => $nid]);
     \Drupal::messenger()->addStatus(t('Your request has been sent successfully'));
-    return $response->addCommand(new RedirectCommand($currentURL->toString()));
+    return $response->addCommand(new CloseDialogCommand());
   }
 
   /**
