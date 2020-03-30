@@ -7,6 +7,7 @@ use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\node\Entity\NodeType;
 use Drupal\taxonomy\Entity\Vocabulary;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -118,12 +119,10 @@ class FilterSettingsForm extends ConfigFormBase implements ContainerInjectionInt
    */
   public function getReferencedTaxonomyFields(array $vocabulary_list) {
 
-    $node_types = node_type_get_types();
-
     $field_names = [];
     foreach ($vocabulary_list as $vocabulary) {
 
-      foreach ($node_types as $content_type => $type) {
+      foreach (NodeType::loadMultiple() as $content_type => $type) {
         $field_definitions = \Drupal::service('entity_field.manager')
           ->getFieldDefinitions('node', $content_type);
 
