@@ -162,7 +162,7 @@ class InviteEmailBaseForm extends FormBase {
   }
 
   private function extract_emails_from($string){
-    preg_match_all("/[\._a-zA-Z0-9-]+@[\._a-zA-Z0-9-]+/i", $string, $matches);
+    preg_match_all("/[\._a-zA-Z0-9+-]+@[\._a-zA-Z0-9+-]+/i", $string, $matches);
     return $matches[0];
   }
 
