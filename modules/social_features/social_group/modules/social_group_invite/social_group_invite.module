@@ -7,6 +7,7 @@
 
 use Drupal\block\Entity\Block;
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\TypedData\Exception\MissingDataException;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\ginvite\Plugin\GroupContentEnabler\GroupInvitation;
@@ -290,6 +291,56 @@ function social_group_invite_preprocess_page_title(&$variables) {
       $variables['#cache']['tags'][] = 'group_content_list:entity:' . $user;
       $variables['#cache']['tags'][] = 'group_content_list:plugin:group_invitation:entity:' . $user;
     }
+  }
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function social_group_invite_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  // we need to write a custom form alter, since the ginvite module
+  // has it's own routes, with no group context that loads the
+  // join form. Decline is done differently. Due to the fact on joining
+  // users need to fill in their membership fields.
+  $social_group_types = [
+    'open_group',
+    'closed_group',
+    'public_group',
+  ];
+
+  // Also include any added optional group types.
+  \Drupal::moduleHandler()->alter('social_group_types', $social_group_types);
+
+  $join_forms = [];
+  foreach ($social_group_types as $social_group_type) {
+    $join_forms[] = "group_content_{$social_group_type}-group_membership_group-join_form";
+  }
+
+  // Perform alterations on joining / leaving groups.
+  if (in_array($form_id, $join_forms)) {
+    $x = 1;
+    // Add custom redirect form submit.
+    $form['actions']['submit']['#submit'][] = '_social_group_invite_action_form_submit';
+  }
+}
+
+/**
+ * Form submit for group invite join form.
+ */
+function _social_group_invite_action_form_submit($form, FormStateInterface $form_state) {
+  $invite_content = \Drupal::routeMatch()->getParameter('group_content');
+  $group = '';
+  if ($invite_content instanceof GroupContent) {
+    $group = $invite_content->getGroup();
+  }
+  if (is_string($invite_content)) {
+    $group_content = GroupContent::load($invite_content);
+    $group = $group_content->getGroup();
+  }
+
+  // Redirect user back to the group they joined.
+  if ($group instanceof Group) {
+    $form_state->setRedirect('entity.group.canonical', ['group' => $group->id(), []]);
   }
 }
 
