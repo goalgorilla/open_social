@@ -253,4 +253,15 @@ function social_event_invite_menu_local_tasks_alter(&$data, $route_name, Refinab
       }
     }
   }
+
+  if ($route_name !== 'view.user_event_invites.page_user_event_invites') {
+    $tabs_to_remove = [
+      'social_event_invite.user_events',
+    ];
+    foreach ($tabs_to_remove as $task_name) {
+      if (!empty($data['tabs'][0][$task_name])) {
+        unset($data['tabs'][0][$task_name]);
+      }
+    }
+  }
 }
