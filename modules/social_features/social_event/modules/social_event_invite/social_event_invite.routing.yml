@@ -9,6 +9,7 @@ social_event_invite.invite_email:
         type: entity:node
   requirements:
     _permission: 'access content'
+
 social_event_invite.invite_user:
   path: '/node/{node}/invite/user'
   defaults:
@@ -20,6 +21,7 @@ social_event_invite.invite_user:
         type: entity:node
   requirements:
     _permission: 'access content'
+
 social_event_invite.settings:
   path: '/admin/config/opensocial/event-invite'
   defaults:
@@ -29,3 +31,16 @@ social_event_invite.settings:
     _permission: 'administer social_event settings'
   options:
     _admin_route: TRUE
+
+social_event_invite.cancel_enrollment_invite:
+  path: '/node/{node}/all-enrollment-invites/cancel-enrollment/{event_enrollment}'
+  defaults:
+    _controller: '\Drupal\social_event_invite\Controller\CancelEnrollInviteController::cancelEnrollmentInvite'
+  options:
+    parameters:
+      node:
+        type: entity:node
+      event_enrollment:
+        type: entity:event_enrollment
+  requirements:
+    _custom_access: '\Drupal\social_event_invite\Controller\CancelEnrollInviteController::access'

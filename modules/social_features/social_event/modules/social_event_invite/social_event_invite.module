@@ -226,8 +226,11 @@ function social_event_invite_entity_operation_alter(array &$operations, EntityIn
     // Empty the current operations.
     $operations = [];
     // Add the "Cancel invite" option.
-    $operations['approve']['title'] = t('Cancel invite');
-    $operations['approve']['url'] = Url::fromRoute('<front>', []);
+    $operations['cancel']['title'] = t('Cancel invite');
+    $operations['cancel']['url'] = Url::fromRoute('social_event_invite.cancel_enrollment_invite', [
+      'node' => $node,
+      'event_enrollment' => $entity->id(),
+    ]);
   }
 }
 

@@ -882,7 +882,7 @@ function social_event_preprocess_page(array &$variables) {
           EventEnrollmentInterface::INVITE_INVALID_OR_EXPIRED,
         ], 'IN');
       $queryResult = (bool) $query->execute();
-      if ($queryResult === TRUE) {
+      if ($queryResult === FALSE) {
         $url = Url::fromRoute('social_event.request_enroll_dialog', ['node' => $node->id()]);
         $link = Link::fromTextAndUrl('', $url)->toRenderable();
         $link['#attributes'] = [
