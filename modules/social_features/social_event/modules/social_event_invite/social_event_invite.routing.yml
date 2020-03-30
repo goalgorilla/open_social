@@ -44,3 +44,17 @@ social_event_invite.cancel_enrollment_invite:
         type: entity:event_enrollment
   requirements:
     _custom_access: '\Drupal\social_event_invite\Controller\CancelEnrollInviteController::access'
+
+social_event_invite.update_enrollment_invite:
+  path: '/user/{user}/event-invites/{event_enrollment}/{accept_decline}'
+  defaults:
+    _controller: '\Drupal\social_event_invite\Controller\UserEnrollInviteController::updateEnrollmentInvite'
+  options:
+    parameters:
+      node:
+        type: entity:user
+      event_enrollment:
+        type: entity:event_enrollment
+      accept_decline: '[0-1]+'
+  requirements:
+    _custom_access: '\Drupal\social_event_invite\Controller\UserEnrollInviteController::access'
