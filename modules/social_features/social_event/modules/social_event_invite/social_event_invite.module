@@ -11,6 +11,7 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 use Drupal\social_event\EventEnrollmentInterface;
+use Drupal\user\UserInterface;
 
 /**
  * Sends email when invitation created for not registered user.
@@ -194,7 +195,7 @@ function social_event_invite_preprocess_node(array &$variables) {
 /**
  * Implements hook_ENTITY_TYPE_insert().
  */
-function social_event_invite_user_insert(EntityInterface $entity) {
+function social_event_invite_user_insert(UserInterface $entity) {
   // @todo: implement a better, more specific way to invalidate cache.
   // - config:field.storage.event_enrollment.field_request_or_invite_status.
   // - config:views.view.event_manage_enrollment_invites.
@@ -208,6 +209,18 @@ function social_event_invite_user_insert(EntityInterface $entity) {
     'config:views.view.event_manage_enrollment_invites',
   ];
   Cache::invalidateTags($tags);
+
+  // After a user registers check if there are invites and convert them to uid.
+  /** @var \Drupal\social_event_invite\SocialEventInviteStatusHelper $enrollments */
+  $enrollments = \Drupal::service('social_event_invite.status_helper');
+
+  foreach($enrollments->getAllEventEnrollments($entity->getEmail()) as $enrollment) {
+    /** @var \Drupal\social_event\EventEnrollmentInterface $enrollment */
+    $enrollment->set('field_email', '');
+    $enrollment->set('field_account', $entity->id());
+    $enrollment->set('user_id', $entity->id());
+    $enrollment->save();
+  }
 }
 
 /**
