@@ -5,6 +5,7 @@
  * The Social event invite enroll module.
  */
 
+use Drupal\Core\Access\AccessResultForbidden;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Cache\RefinableCacheableDependencyInterface;
 use Drupal\Core\Entity\EntityInterface;
@@ -35,15 +36,20 @@ function social_event_invite_event_enrollment_insert(EventEnrollmentInterface $e
     'event_enrollment' => $eventEnrollment->id(),
   ];
 
-  // Send a normal mail when the user has no account yet.
-  if (empty($eventEnrollment->get('field_account')->getString())) {
-    $params['existing_user'] = FALSE;
-    $mailManager->mail('social_event_invite', 'invite', $mail, $langcode, $params, NULL, TRUE);
-    $messenger->addMessage(t('Invite sent to %mail', ['%mail' => $mail]));
-  }
-  else {
-    $account = \Drupal::entityTypeManager()->getStorage('user')->load($eventEnrollment->get('field_account')->getString());
-    $messenger->addMessage(t('Invite sent to %user', ['%user' => $account->getEmail()]));
+  // Only set this message when the request status is pending.
+  if ((int) $eventEnrollment->get('field_request_or_invite_status')->value === EventEnrollmentInterface::INVITE_PENDING_REPLY) {
+    // Send a normal mail when the user has no account yet.
+    if (empty($eventEnrollment->get('field_account')->getString())) {
+      $params['existing_user'] = FALSE;
+      $mailManager->mail('social_event_invite', 'invite', $mail, $langcode, $params, NULL, TRUE);
+      $messenger->addMessage(t('Invite sent to %mail', ['%mail' => $mail]));
+    }
+    else {
+      $account = \Drupal::entityTypeManager()
+        ->getStorage('user')
+        ->load($eventEnrollment->get('field_account')->getString());
+      $messenger->addMessage(t('Invite sent to %user', ['%user' => $account->getEmail()]));
+    }
   }
 }
 
@@ -143,16 +149,22 @@ function social_event_invite_preprocess_views_view(&$variables) {
   // hook_theme_registry_alter will ensure our hooks is invoked later.
   // That is also why hook_menu_local_actions_alter won't work.
   if ($variables['view']->id() === 'event_manage_enrollments') {
-    $entity = \Drupal::entityTypeManager()->getStorage('block')
-      ->load('socialeventinviteblock');
+    /** @var \Drupal\social_event_invite\SocialEventInviteAccessHelper $access */
+    $access = \Drupal::service('social_event_invite.access_helper');
+    $access = $access->eventFeatureAccess();
 
-    if (NULL !== $entity) {
-      $block_content = \Drupal::entityTypeManager()
-        ->getViewBuilder('block')
-        ->view($entity);
+    if(!$access instanceof AccessResultForbidden) {
+      $entity = \Drupal::entityTypeManager()->getStorage('block')
+        ->load('socialeventinviteblock');
 
-      if (!empty($block_content)) {
-        $variables['header']['actions'] = $block_content;
+      if (NULL !== $entity) {
+        $block_content = \Drupal::entityTypeManager()
+          ->getViewBuilder('block')
+          ->view($entity);
+
+        if (!empty($block_content)) {
+          $variables['header']['actions'] = $block_content;
+        }
       }
     }
   }
@@ -293,7 +305,8 @@ function social_event_invite_menu_local_tasks_alter(&$data, $route_name, Refinab
     }
   }
 
-  if ($route_name !== 'view.user_event_invites.page_user_event_invites') {
+  if ($route_name !== 'view.user_event_invites.page_user_event_invites'
+    && $route_name !== 'view.social_group_user_invitations.page_1') {
     $tabs_to_remove = [
       'social_event_invite.user_events',
     ];
