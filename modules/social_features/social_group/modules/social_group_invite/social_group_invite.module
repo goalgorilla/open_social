@@ -7,6 +7,7 @@
 
 use Drupal\block\Entity\Block;
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\TypedData\Exception\MissingDataException;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\ginvite\Plugin\GroupContentEnabler\GroupInvitation;
 use Drupal\group\Entity\GroupInterface;
@@ -149,43 +150,78 @@ function social_group_invite_preprocess_views_view_field(&$variables) {
   if ($view->id() === 'social_group_invitations') {
     // For invite status we want to show the readable name.
     if ($variables['field']->field === 'invitation_status' && !empty($variables['row']->_entity)) {
+      /** @var \Drupal\group\Entity\GroupContent $entity */
       $entity = $variables['row']->_entity;
-      $field_value = $entity->get('invitation_status')->first()->getValue()['value'];
-      // Field values are always returned as string,
-      // so lets typecast them for now.
-      $current_status = (integer) $field_value;
-      switch ($current_status) {
-        case GroupInvitation::INVITATION_PENDING:
-          $output = t('Pending reply');
-          break;
+      // If we have a invite we check it's status.
+      $field_value = _social_group_get_group_invite_value($entity, 'invitation_status');
+      if (NULL !== $field_value) {
+        // Field values are always returned as string,
+        // so lets typecast them for now.
+        $current_status = (integer) $field_value;
+        switch ($current_status) {
+          case GroupInvitation::INVITATION_PENDING:
+            $output = t('Pending reply');
+            break;
 
-        case GroupInvitation::INVITATION_ACCEPTED:
-          $output = t('Accepted and joined');
-          break;
+          case GroupInvitation::INVITATION_ACCEPTED:
+            $output = t('Accepted and joined');
+            break;
 
-        case GroupInvitation::INVITATION_REJECTED:
-          $output = t('Declined');
-          break;
+          case GroupInvitation::INVITATION_REJECTED:
+            $output = t('Declined');
+            break;
 
-        default:
-          $output = $variables['output'];
+          default:
+            $output = $variables['output'];
+            break;
+        }
+
+        $variables['output'] = $output;
       }
-
-      $variables['output'] = $output;
     }
     // If user accepted the invite, don't render the actions.
     if ($variables['field']->field === 'dropbutton' && !empty($variables['row']->_entity)) {
       $entity = $variables['row']->_entity;
-      $field_value = $entity->get('invitation_status')->first()->getValue()['value'];
+      $field_value = _social_group_get_group_invite_value($entity, 'invitation_status');
       // Field values are always returned as string,
       // so lets typecast them for now.
-      $current_status = (integer) $field_value;
-      if ($current_status === GroupInvitation::INVITATION_ACCEPTED) {
-        $variables['output'] = '';
+      if (NULL !== $field_value) {
+        $current_status = (integer) $field_value;
+        if ($current_status === GroupInvitation::INVITATION_ACCEPTED) {
+          $variables['output'] = '';
+        }
       }
     }
   }
 }
+
+/**
+ * Return a group invites field value if it exists.
+ *
+ * @param \Drupal\group\Entity\GroupContent $entity
+ *   Group invitation
+ * @param string $field_name
+ *   The field name.
+ *
+ * @return string|NULL
+ */
+function _social_group_get_group_invite_value(GroupContent $entity, $field_name) {
+  $field_value = NULL;
+  if ($entity->hasField($field_name)) {
+    try {
+      /** @var \Drupal\Core\TypedData\ListInterface $field */
+      $field = $entity->get($field_name)->first();
+      if (NULL !== $field && !empty($field->getValue())) {
+        $field_value = $field->getValue()['value'];
+      }
+    }
+    catch (MissingDataException $e) {
+    }
+  }
+
+  return $field_value;
+}
+
 
 /**
  * Check if current group it's group_type has invites enabled.
