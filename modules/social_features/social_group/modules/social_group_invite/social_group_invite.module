@@ -318,7 +318,6 @@ function social_group_invite_form_alter(&$form, FormStateInterface $form_state, 
 
   // Perform alterations on joining / leaving groups.
   if (in_array($form_id, $join_forms)) {
-    $x = 1;
     // Add custom redirect form submit.
     $form['actions']['submit']['#submit'][] = '_social_group_invite_action_form_submit';
   }
