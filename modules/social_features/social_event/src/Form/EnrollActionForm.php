@@ -234,7 +234,6 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
           $event_request_ajax = TRUE;
           if ((int) $enrollment->field_request_or_invite_status->value === EventEnrollmentInterface::REQUEST_PENDING) {
             $submit_text = $this->t('Pending');
-            $enrollment_open = FALSE;
             $event_request_ajax = FALSE;
           }
         }
@@ -286,7 +285,9 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
 
     $form['#attributes']['name'] = 'enroll_action_form';
 
-    if (isset($enrollment->field_enrollment_status->value) && $enrollment->field_enrollment_status->value === '1') {
+    if ((isset($enrollment->field_enrollment_status->value) && $enrollment->field_enrollment_status->value === '1')
+      || (isset($enrollment->field_request_or_invite_status->value)
+      && (int) $enrollment->field_request_or_invite_status->value === EventEnrollmentInterface::REQUEST_PENDING)) {
       // Extra attributes needed for when a user is logged in. This will make
       // sure the button acts like a dropwdown.
       $form['enroll_for_this_event']['#attributes'] = [
@@ -410,8 +411,11 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
       elseif ($to_enroll_status === '1' && $current_enrollment_status === '0') {
         $enrollment->field_enrollment_status->value = '1';
         $enrollment->save();
-
       }
+      elseif ($to_enroll_status === '2' && $current_enrollment_status === '0') {
+        $enrollment->delete();
+      }
+
     }
     else {
       // Default event enrollment field set.
