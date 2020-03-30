@@ -149,8 +149,10 @@ class EventInviteEnrollActionForm extends EnrollActionForm {
     // @todo: also clear the breadcrumb cachetags.
     // Invalidate cache for our enrollment cache tag in
     // social_event_node_view_alter().
-    $cache_tag = 'enrollment:' . $nid . '-' . $uid;
-    Cache::invalidateTags([$cache_tag]);
+    $tags = [];
+    $tags[] = 'enrollment:' . $nid . '-' . $uid;
+    $tags[] = 'event_content_list:entity:' . $uid;
+    Cache::invalidateTags($tags);
 
     if ($enrollment = array_pop($enrollments)) {
       $enrollment->field_enrollment_status->value = '1';

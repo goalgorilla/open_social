@@ -6,6 +6,7 @@
  */
 
 use Drupal\Core\Cache\Cache;
+use Drupal\Core\Cache\RefinableCacheableDependencyInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
@@ -230,5 +231,29 @@ function social_event_invite_entity_operation_alter(array &$operations, EntityIn
       'node' => $node,
       'event_enrollment' => $entity->id(),
     ]);
+  }
+}
+
+/**
+ * Implements hook_menu_local_tasks_alter().
+ */
+function social_event_invite_menu_local_tasks_alter(&$data, $route_name, RefinableCacheableDependencyInterface $cacheability) {
+  // Add tasks on these route for invite Groups/Events.
+  if ($route_name === 'view.user_event_invites.page_user_event_invites') {
+    $tabs_to_remove = [
+      'social_user.groups',
+      'social_user.stream',
+      'social_user.topics',
+      'social_user.events',
+      'social_profile.information',
+      'profile.user_page:profile',
+      'entity.user.canonical',
+      'entity.user.edit_form',
+    ];
+    foreach ($tabs_to_remove as $task_name) {
+      if (!empty($data['tabs'][0][$task_name])) {
+        unset($data['tabs'][0][$task_name]);
+      }
+    }
   }
 }
