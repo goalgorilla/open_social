@@ -58,8 +58,11 @@ function social_group_invite_menu_local_tasks_alter(&$data, $route_name, Refinab
   }
   // Else we remove our custom group task.
   // This will render for example on the user profile etc.
-  if (!empty($data['tabs'][0]['social_group_invite.user_groups'])) {
-    unset($data['tabs'][0]['social_group_invite']);
+  if ($route_name !== 'view.social_group_user_invitations.page_1' &&
+    $route_name !== 'view.user_event_invites.page_user_event_invites') {
+    if (!empty($data['tabs'][0]['social_group_invite.user_groups'])) {
+      unset($data['tabs'][0]['social_group_invite.user_groups']);
+    }
   }
 }
 
