@@ -31,7 +31,7 @@ class ActivityFilterTags extends FilterPluginBase {
 
     // @todo: replace it!
     $database = \Drupal::database();
-    if($database->schema()->tableExists($taxonomy_table)) {
+    if ($database->schema()->tableExists($taxonomy_table)) {
 
       $this->query->addTable($taxonomy_table);
 

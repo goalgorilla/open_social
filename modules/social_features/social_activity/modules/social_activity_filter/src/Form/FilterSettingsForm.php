@@ -109,13 +109,19 @@ class FilterSettingsForm extends ConfigFormBase implements ContainerInjectionInt
 
   /**
    * Helper function to find all referenced taxonomy fields.
+   *
+   * @param array $vocabulary_list
+   *   Array of vocabulary id's.
+   *
+   * @return array
+   *   Mapped array: vid => taxonomy_field.
    */
-  function getReferencedTaxonomyFields(array $vocabularyList) {
+  public function getReferencedTaxonomyFields(array $vocabulary_list) {
 
     $node_types = node_type_get_types();
 
     $field_names = [];
-    foreach ($vocabularyList as $vocabulary) {
+    foreach ($vocabulary_list as $vocabulary) {
 
       foreach ($node_types as $content_type => $type) {
         $field_definitions = \Drupal::service('entity_field.manager')

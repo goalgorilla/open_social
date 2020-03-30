@@ -162,6 +162,7 @@ class FilterBlock extends Block {
             ],
           ];
           break;
+
         case 'tags':
           $form['override']['tags'] = [
             '#type' => 'select',
@@ -175,6 +176,7 @@ class FilterBlock extends Block {
             '#suffix' => '</div>',
           ];
           break;
+
         case 'items_per_page':
           $form['override']['items_per_page']['#weight'] = 10;
           break;
@@ -188,6 +190,19 @@ class FilterBlock extends Block {
     return $form;
   }
 
+  /**
+   * Processes the tags form element.
+   *
+   * @param array $element
+   *   The form element to process.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The current state of the form.
+   * @param array $complete_form
+   *   The complete form structure.
+   *
+   * @return array
+   *   The processed element.
+   */
   public static function processFilterTags(array &$element, FormStateInterface $form_state, array &$complete_form) {
     $input = $form_state->getUserInput();
 
