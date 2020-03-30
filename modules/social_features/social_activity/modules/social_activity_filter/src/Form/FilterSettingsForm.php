@@ -63,6 +63,7 @@ class FilterSettingsForm extends ConfigFormBase implements ContainerInjectionInt
 
     // Get the configuration file.
     $config = $this->config('social_activity_filter.settings');
+    $taxonomyFields = $config->get('taxonomy_fields');
 
     $form['social_activity_filter'] = [
       '#type' => 'fieldset',
@@ -73,7 +74,8 @@ class FilterSettingsForm extends ConfigFormBase implements ContainerInjectionInt
 
     /** @var \Drupal\taxonomy\Entity\Vocabulary */
     foreach (Vocabulary::loadMultiple() as $vid => $vocabulary) {
-      $vocabulariesList[$vid] = $vocabulary->get('name');
+      $referencedField = isset($taxonomyFields[$vid]) ? $taxonomyFields[$vid] : $this->t('none');
+      $vocabulariesList[$vid] = $vocabulary->get('name') . " (field: $referencedField)";
     }
 
     $form['social_activity_filter']['vocabulary'] = [
@@ -95,10 +97,48 @@ class FilterSettingsForm extends ConfigFormBase implements ContainerInjectionInt
     // Get the configuration file.
     $config = $this->config('social_activity_filter.settings');
 
-    $config_name = 'vocabulary';
-    $config->set($config_name, $form_state->getValue($config_name))->save();
+    $vocabularies = ($form_state->getValue('vocabulary'));
+    $fields = $this->getReferencedTaxonomyFields($vocabularies);
+
+    $config->set('vocabulary', $vocabularies);
+    $config->set('taxonomy_fields', $fields);
+    $config->save();
 
     parent::submitForm($form, $form_state);
+  }
+
+  /**
+   * Helper function to find all referenced taxonomy fields.
+   */
+  function getReferencedTaxonomyFields(array $vocabularyList) {
+
+    $node_types = node_type_get_types();
+
+    $field_names = [];
+    foreach ($vocabularyList as $vocabulary) {
+
+      foreach ($node_types as $content_type => $type) {
+        $field_definitions = \Drupal::service('entity_field.manager')
+          ->getFieldDefinitions('node', $content_type);
+
+        foreach ($field_definitions as $field_definition) {
+
+          if ($field_definition->getType() == 'entity_reference' && $field_definition->getSetting('target_type') == 'taxonomy_term') {
+            $handler_settings = $field_definition->getSetting('handler_settings');
+
+            if (isset($handler_settings['target_bundles'][$vocabulary])) {
+
+              if (isset($field_names[$vocabulary])) {
+                continue;
+              }
+
+              $field_names[$vocabulary] = $field_definition->getName();
+            }
+          }
+        }
+      }
+    }
+    return $field_names;
   }
 
 }
