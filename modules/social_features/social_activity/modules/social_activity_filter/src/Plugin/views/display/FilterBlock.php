@@ -3,12 +3,14 @@
 namespace Drupal\social_activity_filter\Plugin\views\display;
 
 use Drupal\Core\Block\BlockManagerInterface;
+use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\DependencyInjection\DeprecatedServicePropertyTrait;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\taxonomy\Entity\Vocabulary;
 use Drupal\views\Plugin\Block\ViewsBlock;
 use Drupal\views\Plugin\views\display\Block;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * The plugin that handles a block.
@@ -34,6 +36,13 @@ class FilterBlock extends Block {
   use DeprecatedServicePropertyTrait;
 
   /**
+   * Configuration Factory.
+   *
+   * @var \Drupal\Core\Config\ConfigFactory
+   */
+  protected $configFactory;
+
+  /**
    * Constructs a new Block instance.
    *
    * @param array $configuration
@@ -46,9 +55,33 @@ class FilterBlock extends Block {
    *   The entity manager.
    * @param \Drupal\Core\Block\BlockManagerInterface $block_manager
    *   The block manager.
+   * @param \Drupal\Core\Config\ConfigFactory $configFactory
+   *   The config factory.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager, BlockManagerInterface $block_manager) {
+  public function __construct(
+    array $configuration,
+    $plugin_id,
+    $plugin_definition,
+    EntityTypeManagerInterface $entity_type_manager,
+    BlockManagerInterface $block_manager,
+    ConfigFactory $configFactory
+  ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_type_manager, $block_manager);
+    $this->configFactory = $configFactory;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    return new static(
+      $configuration,
+      $plugin_id,
+      $plugin_definition,
+      $container->get('entity_type.manager'),
+      $container->get('plugin.manager.block'),
+      $container->get('config.factory')
+    );
   }
 
   /**
@@ -247,8 +280,7 @@ class FilterBlock extends Block {
     parent::preBlockBuild($block);
 
     $config = $block->getConfiguration();
-    $social_activity_filter = \Drupal::configFactory()
-      ->getEditable('social_activity_filter.settings');
+    $social_activity_filter = $this->configFactory->getEditable('social_activity_filter.settings');
 
     $this->view->filter_tags = $config['tags'];
 
@@ -257,11 +289,13 @@ class FilterBlock extends Block {
   }
 
   /**
-   * {@inheritdoc}
+   * Get vocabulary options list.
+   *
+   * @return array
+   *   The vocabulary list.
    */
   public function getVocabularyOptionsList() {
-    $config = \Drupal::configFactory()
-      ->getEditable('social_activity_filter.settings');
+    $config = $this->configFactory->getEditable('social_activity_filter.settings');
 
     $allowedList = $config->get('vocabulary');
     $vocabularies = Vocabulary::loadMultiple();
@@ -278,11 +312,19 @@ class FilterBlock extends Block {
   }
 
   /**
-   * {@inheritdoc}
+   * Get term options list.
+   *
+   * @param string $vid
+   *   The vocabulary id.
+   *
+   * @return array
+   *   The options term list.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
   public function getTermOptionslist($vid) {
-    $taxonomy_storage = \Drupal::service('entity_type.manager')
-      ->getStorage("taxonomy_term");
+    $taxonomy_storage = $this->entityTypeManager->getStorage('taxonomy_term');
     $taxonomy_terms = $taxonomy_storage->loadTree($vid);
     $term_list = [];
     /** @var \Drupal\taxonomy\Entity\Term $taxonomy_term */

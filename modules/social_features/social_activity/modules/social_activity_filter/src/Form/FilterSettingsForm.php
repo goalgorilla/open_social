@@ -98,7 +98,7 @@ class FilterSettingsForm extends ConfigFormBase implements ContainerInjectionInt
     // Get the configuration file.
     $config = $this->config('social_activity_filter.settings');
 
-    $vocabularies = ($form_state->getValue('vocabulary'));
+    $vocabularies = array_filter($form_state->getValue('vocabulary'));
     $fields = $this->getReferencedTaxonomyFields($vocabularies);
 
     $config->set('vocabulary', $vocabularies);
