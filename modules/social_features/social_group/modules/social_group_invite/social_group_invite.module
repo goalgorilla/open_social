@@ -10,6 +10,7 @@ use Drupal\Core\Access\AccessResult;
 use Drupal\Core\TypedData\Exception\MissingDataException;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\ginvite\Plugin\GroupContentEnabler\GroupInvitation;
+use Drupal\ginvite\GroupInvitation as GroupInvitationWrapper;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupRoleInterface;
 use Drupal\Core\Url;
@@ -199,11 +200,12 @@ function social_group_invite_preprocess_views_view_field(&$variables) {
  * Return a group invites field value if it exists.
  *
  * @param \Drupal\group\Entity\GroupContent $entity
- *   Group invitation
+ *   Group invitation.
  * @param string $field_name
  *   The field name.
  *
- * @return string|NULL
+ * @return string|null
+ *   The field value or NULL if there isn't any.
  */
 function _social_group_get_group_invite_value(GroupContent $entity, $field_name) {
   $field_value = NULL;
@@ -221,7 +223,6 @@ function _social_group_get_group_invite_value(GroupContent $entity, $field_name)
 
   return $field_value;
 }
-
 
 /**
  * Check if current group it's group_type has invites enabled.
@@ -263,17 +264,20 @@ function social_group_invite_theme_registry_alter(&$theme_registry) {
  * Implements hook_preprocess_HOOK().
  */
 function social_group_invite_preprocess_page_title(&$variables) {
-  // Ensure the page title becomes Group context related.
+  // Add count of pending invites to the page title for a group.
   if (\Drupal::routeMatch()->getParameter('view_id') === 'social_group_invitations' &&
     !empty(\Drupal::routeMatch()->getParameter('group'))) {
     $group = _social_group_get_current_group();
     if (!empty($group->label())) {
-      $title = \Drupal::translation()
-        ->translate('Membership invite(s) for group: @group_name', ['@group_name' => $group->label()]);
+      $loader = \Drupal::service('ginvite.invitation_loader');
+      $count = count($loader->loadByProperties(['gid' => $group->id()]));
+      $title = \Drupal::translation()->formatPlural($count, '1 membership invite for group: @group_name', '@count membership invites for group: @group_name', ['@group_name' => $group->label()]);
       $variables['title'] = $title;
+      $variables['#cache']['tags'][] = 'group_content_list:group:' . $group->id();
+      $variables['#cache']['tags'][] = 'group_content_list:plugin:group_invitation:group:' . $group->id();
     }
   }
-  // Add count of pending invites to the page title.
+  // Add count of pending invites to the page title for a user.
   if (\Drupal::routeMatch()->getParameter('view_id') === 'social_group_user_invitations' &&
     !empty(\Drupal::routeMatch()->getParameter('user'))) {
     $loader = \Drupal::service('ginvite.invitation_loader');
@@ -343,6 +347,56 @@ function social_group_invite_preprocess_activity(&$variables) {
     $group = $related_entity->getGroup();
     if ($group instanceof Group) {
       $variables['full_url'] = $group->urlInfo('canonical');
+    }
+  }
+}
+
+/**
+ * Implements hook_preprocess_group().
+ */
+function social_group_invite_preprocess_group(&$variables) {
+  /** @var \Drupal\group\Entity\GroupInterface $group */
+  $group = $variables['group'];
+  $group_type = $group->getGroupType();
+  $variables['user_is_invited'] = FALSE;
+
+  // Only for groups that have invites enabled.
+  if (!$group_type->hasContentPlugin('group_invitation')) {
+    return;
+  }
+
+  // Only for LU.
+  $account = \Drupal::currentUser();
+  if ($account->isAnonymous()) {
+    return;
+  }
+
+  // Check if the user (entity_id) has a pending invite for the group.
+  $properties = [
+    'entity_id' => $account->id(),
+    'gid' => $group->id(),
+    'invitation_status' => GroupInvitation::INVITATION_PENDING,
+  ];
+  /** @var \Drupal\ginvite\GroupInvitationLoaderInterface $loader */
+  $loader = \Drupal::service('ginvite.invitation_loader');
+  $invitations = $loader->loadByProperties($properties);
+  // We have pending invites, let's build a button to accept or decline one.
+  if ($invitations > 0) {
+    // Build routes.
+    $invitation = reset($invitations);
+    if ($invitation instanceof GroupInvitationWrapper) {
+      // Lets grab the group content so we can build the URL.
+      $group_content = $invitation->getGroupContent();
+      if ($group_content instanceof GroupContent) {
+        $variables['user_is_invited'] = TRUE;
+        // It will become two links with a dropdown button.
+        $variables['group_invite_accept_operations_url'] = Url::fromRoute('ginvite.invitation.accept', ['group_content' => $group_content->id()]);
+        $variables['group_invite_decline_operations_url'] = Url::fromRoute('ginvite.invitation.decline', ['group_content' => $group_content->id()]);
+        $variables['#cache']['tags'][] = 'group_content_list:entity:' . $account->id();
+        $variables['#cache']['tags'][] = 'group_content_list:plugin:group_invitation:entity:' . $account->id();
+        $variables['#cache']['context'][] = 'group';
+        $variables['#cache']['context'][] = 'user';
+      }
     }
   }
 }
