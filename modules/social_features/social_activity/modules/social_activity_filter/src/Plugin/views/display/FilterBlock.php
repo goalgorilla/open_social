@@ -282,6 +282,7 @@ class FilterBlock extends Block {
     $config = $block->getConfiguration();
     $social_activity_filter = $this->configFactory->getEditable('social_activity_filter.settings');
 
+    // Prepare values to use it in the views filter.
     $this->view->filter_tags = $config['tags'];
 
     $taxonomy_fields = $social_activity_filter->get('taxonomy_fields');
@@ -297,18 +298,18 @@ class FilterBlock extends Block {
   public function getVocabularyOptionsList() {
     $config = $this->configFactory->getEditable('social_activity_filter.settings');
 
-    $allowedList = $config->get('vocabulary');
+    $allowed_list = $config->get('vocabulary');
     $vocabularies = Vocabulary::loadMultiple();
-    $vocabulariesList = [];
-    foreach ($vocabularies as $vid => $vocablary) {
+    $vocabulary_list = [];
+    foreach ($vocabularies as $vid => $vocabulary) {
 
-      if (!in_array($vid, $allowedList)) {
+      if (!in_array($vid, $allowed_list)) {
         continue;
       }
 
-      $vocabulariesList[$vid] = $vocablary->get('name');
+      $vocabulary_list[$vid] = $vocabulary->get('name');
     }
-    return $vocabulariesList;
+    return $vocabulary_list;
   }
 
   /**
