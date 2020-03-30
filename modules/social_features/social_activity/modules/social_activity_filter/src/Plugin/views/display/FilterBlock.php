@@ -6,7 +6,6 @@ use Drupal\Core\Block\BlockManagerInterface;
 use Drupal\Core\DependencyInjection\DeprecatedServicePropertyTrait;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\taxonomy\Entity\Vocabulary;
 use Drupal\views\Plugin\Block\ViewsBlock;
 use Drupal\views\Plugin\views\display\Block;
 
@@ -149,10 +148,13 @@ class FilterBlock extends Block {
       }
       switch ($type) {
         case 'vocabulary':
+          $config = \Drupal::configFactory()
+            ->getEditable('social_activity_filter.settings');
+
           $form['override']['vocabulary'] = [
             '#type' => 'select',
             '#title' => $this->t('Vocabulary'),
-            '#options' => $this->getVocabularyOptionsList(),
+            '#options' => !empty($config->get('vocabulary')) ? array_filter($config->get('vocabulary')) : [],
             '#default_value' => $block_configuration['vocabulary'],
             '#empty_option' => t('None'),
             '#required' => TRUE,
@@ -242,18 +244,6 @@ class FilterBlock extends Block {
     else {
       $this->view->filter_vocabulary = $config['vocabulary'];
     }
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getVocabularyOptionsList() {
-    $vocabularies = Vocabulary::loadMultiple();
-    $vocabulariesList = [];
-    foreach ($vocabularies as $vid => $vocablary) {
-      $vocabulariesList[$vid] = $vocablary->get('name');
-    }
-    return $vocabulariesList;
   }
 
   /**
