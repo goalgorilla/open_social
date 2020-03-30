@@ -15,3 +15,12 @@ function social_featured_content_theme() {
     ],
   ];
 }
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function social_featured_content_preprocess_node(&$variables) {
+  if ($variables['view_mode'] === 'featured') {
+    $variables['label'] = render($variables['label']);
+  }
+}
