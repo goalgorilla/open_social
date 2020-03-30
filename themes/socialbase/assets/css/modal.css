@@ -19,22 +19,26 @@
 @-webkit-keyframes fadein_scale {
   from {
     opacity: 0;
-    transform: translateY(-30px);
+    -webkit-transform: translateY(-30px);
+            transform: translateY(-30px);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    -webkit-transform: translateY(0);
+            transform: translateY(0);
   }
 }
 
 @keyframes fadein_scale {
   from {
     opacity: 0;
-    transform: translateY(-30px);
+    -webkit-transform: translateY(-30px);
+            transform: translateY(-30px);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    -webkit-transform: translateY(0);
+            transform: translateY(0);
   }
 }
 
@@ -80,7 +84,8 @@
   z-index: 1050;
   background-color: #fff;
   border: 1px solid rgba(0, 0, 0, 0.2);
-  box-shadow: 0 3px 9px rgba(0, 0, 0, 0.5);
+  -webkit-box-shadow: 0 3px 9px rgba(0, 0, 0, 0.5);
+          box-shadow: 0 3px 9px rgba(0, 0, 0, 0.5);
   background-clip: padding-box;
   -webkit-backface-visibility: hidden;
           backface-visibility: hidden;
@@ -88,11 +93,28 @@
           animation: fadein_scale 0.5s ease-out;
 }
 
+.ui-dialog .btn {
+  position: relative;
+}
+
+.ui-dialog .btn .ajax-throbber {
+  position: absolute;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  right: -2px;
+}
+
 .ui-dialog-titlebar {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 1rem;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  padding: 12px 1rem;
   border-bottom: 1px solid #e6e6e6;
 }
 
@@ -103,6 +125,7 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  font-size: 1rem;
 }
 
 .ui-dialog-titlebar-close {
@@ -118,6 +141,7 @@
   border: 0;
   outline: 0;
   -webkit-appearance: none;
+  -webkit-transition: 0.3s;
   transition: 0.3s;
   position: relative;
 }
@@ -128,6 +152,7 @@
   text-indent: 0;
   top: 0;
   right: 0;
+  font-weight: 400;
 }
 
 .ui-dialog-titlebar-close:hover {
@@ -142,8 +167,11 @@
 .ui-dialog-content {
   position: relative;
   overflow: auto;
-  box-shadow: none;
-  flex: 1 1 auto;
+  -webkit-box-shadow: none;
+          box-shadow: none;
+  -webkit-box-flex: 1;
+      -ms-flex: 1 1 auto;
+          flex: 1 1 auto;
   padding: 1rem;
 }
 
@@ -165,12 +193,17 @@
 }
 
 .modal.fade .modal-dialog {
-  transform: translate(0, -25%);
+  -webkit-transform: translate(0, -25%);
+          transform: translate(0, -25%);
+  -webkit-transition: -webkit-transform 0.3s ease-out;
+  transition: -webkit-transform 0.3s ease-out;
   transition: transform 0.3s ease-out;
+  transition: transform 0.3s ease-out, -webkit-transform 0.3s ease-out;
 }
 
 .modal.in .modal-dialog {
-  transform: translate(0, 0);
+  -webkit-transform: translate(0, 0);
+          transform: translate(0, 0);
 }
 
 .modal-open .modal {
@@ -190,7 +223,8 @@
   border: 1px solid #999;
   border: 1px solid rgba(0, 0, 0, 0.2);
   border-radius: 12px;
-  box-shadow: 0 3px 9px rgba(0, 0, 0, 0.5);
+  -webkit-box-shadow: 0 3px 9px rgba(0, 0, 0, 0.5);
+          box-shadow: 0 3px 9px rgba(0, 0, 0, 0.5);
   background-clip: padding-box;
   outline: 0;
 }
@@ -227,9 +261,15 @@
 }
 
 .social-dialog .form-actions {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  justify-content: space-between;
-  flex: 0 0 50%;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  -webkit-box-flex: 0;
+      -ms-flex: 0 0 50%;
+          flex: 0 0 50%;
   margin-bottom: 0;
 }
 
@@ -244,7 +284,9 @@
 }
 
 .social-dialog .pull-left {
-  order: -1;
+  -webkit-box-ordinal-group: 0;
+      -ms-flex-order: -1;
+          order: -1;
   margin-left: 0 !important;
   margin-right: 1rem;
 }
@@ -254,9 +296,6 @@
 }
 
 @media (min-width: 900px) {
-  .ui-dialog-title {
-    font-size: 1.25rem;
-  }
   .social-dialog.ui-dialog {
     max-width: 400px;
   }
@@ -266,6 +305,9 @@
 }
 
 @media (max-width: 599px) {
+  .ui-dialog {
+    width: 90% !important;
+  }
   .ui-dialog-content {
     max-height: 60vh !important;
   }
