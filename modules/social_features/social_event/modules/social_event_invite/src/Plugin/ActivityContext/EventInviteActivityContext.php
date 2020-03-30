@@ -79,19 +79,26 @@ class EventInviteActivityContext extends ActivityContextBase {
     // We only know the context if there is a related object.
     if (isset($data['related_object']) && !empty($data['related_object'])) {
       if ($data['related_object'][0]['target_type'] === 'event_enrollment') {
+        // Get the enrollment id.
+        $enrollment_id = $data['related_object'][0]['target_id'];
+
         /** @var \Drupal\social_event\EventEnrollmentInterface $event_enrollment */
         $event_enrollment = $this->entityTypeManager->getStorage('event_enrollment')
-          ->load($data['related_object'][0]['target_id']);
+          ->load($enrollment_id);
+
         // Send out the notification if the user is pending.
-        if (!$event_enrollment->get('field_enrollment_status')->isEmpty()
-          && $event_enrollment->get('field_enrollment_status')->value !== '1'
-          && !$event_enrollment->get('field_request_or_invite_status')->isEmpty()
-          && (int) $event_enrollment->get('field_request_or_invite_status')->value === EventEnrollmentInterface::INVITE_PENDING_REPLY
-          && !$event_enrollment->get('field_account')->isEmpty()) {
+        if (!empty($event_enrollment)) {
+          if (!$event_enrollment->get('field_enrollment_status')->isEmpty()
+            && $event_enrollment->get('field_enrollment_status')->value === '0'
+            && !$event_enrollment->get('field_request_or_invite_status')->isEmpty()
+            && (int) $event_enrollment->get('field_request_or_invite_status')->value === EventEnrollmentInterface::INVITE_PENDING_REPLY
+            && !$event_enrollment->get('field_account')->isEmpty()) {
             $recipients[] = [
               'target_type' => 'user',
-              'target_id' => $event_enrollment->get('field_account')->getString(),
+              'target_id' => $event_enrollment->get('field_account')
+                ->getString(),
             ];
+          }
         }
       }
     }
