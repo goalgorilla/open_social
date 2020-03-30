@@ -2,6 +2,7 @@
 
 namespace Drupal\social_event_invite\Form;
 
+use Drupal\Core\Cache\Cache;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\social_core\Form\InviteUserBaseForm;
 use Drupal\social_event\Entity\EventEnrollment;
@@ -92,6 +93,12 @@ class EnrollInviteUserForm extends InviteUserBaseForm {
         'user_id' => $uid,
         'field_account' => $uid,
       ];
+
+      // Clear the cache.
+      $tags = [];
+      $tags[] = 'enrollment:' . $nid . '-' . $uid;
+      $tags[] = 'event_content_list:entity:' . $uid;
+      Cache::invalidateTags($tags);
 
       // Create a new enrollment for the event.
       $enrollment = EventEnrollment::create($fields);

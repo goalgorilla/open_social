@@ -83,7 +83,7 @@ class SocialEventInviteStatusHelper {
     $conditions = [
       'field_account' => $uid,
       'field_event' => $nid,
-      'field_request_or_invite_status_value' => 4,
+      'field_request_or_invite_status' => 4,
     ];
 
     if($user) {
@@ -99,7 +99,7 @@ class SocialEventInviteStatusHelper {
         $conditions = [
           'field_account' => $account->id(),
           'field_event' => $nid,
-          'field_request_or_invite_status_value' => 4,
+          'field_request_or_invite_status' => 4,
         ];
       }
     }

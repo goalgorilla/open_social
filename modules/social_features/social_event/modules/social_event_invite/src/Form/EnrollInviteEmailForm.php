@@ -2,6 +2,7 @@
 
 namespace Drupal\social_event_invite\Form;
 
+use Drupal\Core\Cache\Cache;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
@@ -167,6 +168,12 @@ class EnrollInviteEmailForm extends InviteEmailBaseForm{
         // Add user information.
         $fields['user_id'] = $user->id();
         $fields['field_account'] = $user->id();
+
+        // Clear the cache.
+        $tags = [];
+        $tags[] = 'enrollment:' . $nid . '-' . $user->id();
+        $tags[] = 'event_content_list:entity:' . $user->id();
+        Cache::invalidateTags($tags);
       }
       else {
         // Add email address.
