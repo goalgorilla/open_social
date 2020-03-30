@@ -230,7 +230,6 @@ class SocialGroupFlexibleGroupConfigOverride implements ConfigFactoryOverrideInt
         ];
     }
 
-
     $config_name = 'message.template.invited_to_join_group';
     if (in_array($config_name, $names, FALSE)) {
       $overrides[$config_name]['third_party_settings']['activity_logger']['activity_bundle_entities'] =
