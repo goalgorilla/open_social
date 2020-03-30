@@ -30,6 +30,7 @@ use Drupal\views\Plugin\views\display\Block;
  * @see \Drupal\views\Plugin\Derivative\ViewsBlock
  */
 class FilterBlock extends Block {
+
   use DeprecatedServicePropertyTrait;
 
   /**
@@ -86,12 +87,9 @@ class FilterBlock extends Block {
   public function optionsSummary(&$categories, &$options) {
     parent::optionsSummary($categories, $options);
 
-    @$filtered_allow = array_filter($this->getOption('test_allow'));
-    $options['test_allow'] = [
-      'category' => 'block',
-      'title' => $this->t('Test Allow settings'),
-      'value' => empty($filtered_allow) ? $this->t('None test') : $this->t('test per page'),
-    ];
+    if ($this->getOption('override_tags_filter')) {
+      $options['allow']['value'] .= ', ' . $this->t('Overridden Tags filter');
+    }
   }
 
   /**
@@ -100,22 +98,16 @@ class FilterBlock extends Block {
   public function buildOptionsForm(&$form, FormStateInterface $form_state) {
     parent::buildOptionsForm($form, $form_state);
 
-    switch ($form_state->get('section')) {
-      case 'test_allow':
-        $form['#title'] .= $this->t('test_allow settings in the block configuration');
-
-        $options = [
-          'test_allow' => $this->t('test_allow'),
-        ];
-
-        $allow = array_filter($this->getOption('test_allow'));
-        $form['test_allow'] = [
-          '#type' => 'checkboxes',
-          '#default_value' => $allow,
-          '#options' => $options,
-        ];
-        break;
+    if ($form_state->get('section') !== 'allow') {
+      return;
     }
+    $customized_filters = $this->getOption('override_tags_filter');
+    $form['override_tags_filter'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Override Tags filters'),
+      '#description' => $this->t('Select the filters which users should be able to customize default values for when placing the views block into a layout.'),
+      '#default_value' => !empty($customized_filters) ? $customized_filters : [],
+    ];
   }
 
   /**
@@ -123,11 +115,9 @@ class FilterBlock extends Block {
    */
   public function submitOptionsForm(&$form, FormStateInterface $form_state) {
     parent::submitOptionsForm($form, $form_state);
-    $section = $form_state->get('section');
-    switch ($section) {
-      case 'test_allow':
-        $this->setOption($section, $form_state->getValue($section));
-        break;
+
+    if ($form_state->get('section') === 'allow') {
+      $this->setOption('override_tags_filter', $form_state->getValue('override_tags_filter'));
     }
   }
 
@@ -137,14 +127,19 @@ class FilterBlock extends Block {
   public function blockForm(ViewsBlock $block, array &$form, FormStateInterface $form_state) {
     parent::blockForm($block, $form, $form_state);
 
+    // Check if overridden filter option is enabled for current views block.
+    if (!$this->getOption('override_tags_filter')) {
+      return $form;
+    }
+
     $allow_settings = $this->getOption('tags_filter');
     $allow_settings += array_filter($this->getOption('allow'));
     $block_configuration = $block->getConfiguration();
 
-    if($vid = $form_state->get('new_options_tags')){
+    if ($vid = $form_state->get('new_options_tags')) {
       $opt = $this->getTermOptionslist($vid);
     }
-    else{
+    else {
       $opt = $this->getTermOptionslist($block_configuration['vocabulary']);
     }
 
@@ -196,7 +191,7 @@ class FilterBlock extends Block {
   public static function processFilterTags(array &$element, FormStateInterface $form_state, array &$complete_form) {
     $input = $form_state->getUserInput();
 
-    if(isset($input['settings']['override']['vocabulary'])){
+    if (isset($input['settings']['override']['vocabulary'])) {
       $override = $input['settings']['override']['vocabulary'];
       $form_state->set('new_options_tags', $override);
     }
@@ -205,7 +200,7 @@ class FilterBlock extends Block {
   }
 
   /**
-   * Handles switching the available regions based on the selected theme.
+   * Handles switching the available terms based on the selected vocabulary.
    */
   public static function updateTagsOptions($form, FormStateInterface $form_state) {
     return $form['settings']['override']['tags'];
@@ -241,10 +236,10 @@ class FilterBlock extends Block {
     $this->view->filter_tags = $config['tags'];
 
     //@todo: Needs imporve it!
-    if(strpos($config['vocabulary'], 'cop') !== NULL){
+    if (strpos($config['vocabulary'], 'cop') !== NULL) {
       $this->view->filter_vocabulary = 'cop_tags';
     }
-    else{
+    else {
       $this->view->filter_vocabulary = $config['vocabulary'];
     }
   }
@@ -265,7 +260,8 @@ class FilterBlock extends Block {
    * {@inheritdoc}
    */
   public function getTermOptionslist($vid) {
-    $taxonomy_storage = \Drupal::service('entity_type.manager')->getStorage("taxonomy_term");
+    $taxonomy_storage = \Drupal::service('entity_type.manager')
+      ->getStorage("taxonomy_term");
     $taxonomy_terms = $taxonomy_storage->loadTree($vid);
     $term_list = [];
     /** @var \Drupal\taxonomy\Entity\Term $taxonomy_term */

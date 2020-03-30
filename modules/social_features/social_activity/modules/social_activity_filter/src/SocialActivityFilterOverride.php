@@ -25,7 +25,6 @@ class SocialActivityFilterOverride implements ConfigFactoryOverrideInterface {
     $config_name = 'views.view.activity_stream';
 
     if (in_array($config_name, $names)) {
-
       $data = [
         'id' => 'activity_filter_tags',
         'table' => 'activity',
@@ -70,24 +69,16 @@ class SocialActivityFilterOverride implements ConfigFactoryOverrideInterface {
         'plugin_id' => 'activity_filter_tags',
       ];
 
-      $overrides[$config_name] = [
-        'display' => [
-          'block_stream_homepage' => [
-            'display_options' => [
-              'filters' => [
-                'activity_filter_tags' => $data,
-              ],
-            ],
-          ],
-          'block_stream_homepage_without_post' => [
-            'display_options' => [
-              'filters' => [
-                'activity_filter_tags' => $data,
-              ],
-            ],
-          ],
-        ],
+      $displays = [
+        'block_stream_homepage',
+        'block_stream_homepage_without_post',
       ];
+
+      foreach ($displays as $display) {
+        $display_options = &$overrides[$config_name]['display'][$display]['display_options'];
+        $display_options['filters']['activity_filter_tags'] = $data;
+        $display_options['override_tags_filter'] = TRUE;
+      }
     }
 
     return $overrides;
