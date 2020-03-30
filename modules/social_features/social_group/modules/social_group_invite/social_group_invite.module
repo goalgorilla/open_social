@@ -298,7 +298,7 @@ function social_group_invite_preprocess_page_title(&$variables) {
  * Implements hook_form_alter().
  */
 function social_group_invite_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-  // we need to write a custom form alter, since the ginvite module
+  // We need to write a custom form alter, since the ginvite module
   // has it's own routes, with no group context that loads the
   // join form. Decline is done differently. Due to the fact on joining
   // users need to fill in their membership fields.
