@@ -1,6 +1,6 @@
 {# This file overrides node--event--full.html.twig #}
 {% extends "node--full--sky.html.twig" %}
-
+{# In sky style, we hide fields below from full view and display in hero instead.  #}
 {% block nodefull_body %}
   {{ content|without('flag_follow_content', 'like_and_dislike', 'field_event_location', 'field_event_address', 'enrollments_count', 'links') }}
 {% endblock %}
