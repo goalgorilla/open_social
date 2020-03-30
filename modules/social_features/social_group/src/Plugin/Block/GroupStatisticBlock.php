@@ -89,7 +89,9 @@ class GroupStatisticBlock extends BlockBase implements ContainerFactoryPluginInt
       $build['#cache']['tags'][] = 'group_block:' . $group->id();
     }
     // Cache contexts.
-    $build['#cache']['contexts'][] = 'url.path';
+    $build['#cache']['contexts'][] = 'url';
+    $build['#cache']['contexts'][] = 'user';
+    $build['#cache']['contexts'][] = 'group';
     $build['#cache']['max-age'] = 0;
 
     return $build;
