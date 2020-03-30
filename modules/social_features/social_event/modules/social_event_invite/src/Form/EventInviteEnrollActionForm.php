@@ -26,22 +26,10 @@ class EventInviteEnrollActionForm extends EnrollActionForm {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state, Node $node = NULL) {
-    $form =  parent::buildForm($form, $form_state);
+    $form = parent::buildForm($form, $form_state);
     $nid = $this->routeMatch->getRawParameter('node');
     $current_user = $this->currentUser;
     $uid = $current_user->id();
-
-    // For some reason my buildform removes all the button classes.
-    // So put them back.
-    $form['enroll_for_this_event']['#attributes'] = [
-      'class' => [
-        'btn',
-        'btn-accent brand-bg-accent',
-        'btn-lg btn-raised',
-        'dropdown-toggle',
-        'waves-effect',
-      ],
-    ];
 
     if (!$current_user->isAnonymous()) {
       $conditions = [
