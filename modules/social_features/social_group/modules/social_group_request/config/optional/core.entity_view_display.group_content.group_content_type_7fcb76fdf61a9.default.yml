@@ -1,0 +1,37 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.group_content.group_content_type_7fcb76fdf61a9.grequest_status
+    - field.field.group_content.group_content_type_7fcb76fdf61a9.grequest_updated_by
+    - group.content_type.group_content_type_7fcb76fdf61a9
+  enforced:
+    module:
+      - social_group_request
+      - social_group_flexible_group
+id: group_content.group_content_type_7fcb76fdf61a9.default
+targetEntityType: group_content
+bundle: group_content_type_7fcb76fdf61a9
+mode: default
+content:
+  grequest_status:
+    type: number_integer
+    weight: -4
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    region: content
+  grequest_updated_by:
+    label: above
+    type: entity_reference_label
+    settings:
+      link: true
+    weight: -3
+    third_party_settings: {  }
+    region: content
+hidden:
+  entity_id: true
+  search_api_excerpt: true
+  uid: true
