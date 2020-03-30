@@ -5,6 +5,7 @@
  * Contains social_follow_tag.module.
  */
 
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Url;
 use Drupal\taxonomy\TermInterface;
 
@@ -184,4 +185,52 @@ function _social_follow_tag_related_nodes_count(TermInterface $term) {
     ->loadByProperties(['social_tagging' => $term->id()]);
 
   return count($nodes);
+}
+
+/**
+ * Create a notification when tags followed by a user are added to the node.
+ *
+ * Implements hook_entity_update().
+ * {@inheritdoc}
+ */
+function social_follow_tag_entity_update(EntityInterface $entity) {
+  $taxonomy_ids = [];
+  $original_taxonomy_ids = [];
+
+  /** @var \Drupal\social_queue_storage\Entity\QueueStorageEntity $entity */
+  if ($entity->getEntityTypeId() === 'node') {
+    // Prepare list of tags before update node.
+    if ($original_entity = $entity->original) {
+      if ($original_entity->hasField('social_tagging')) {
+        if (!empty($original_entity->get('social_tagging')->getValue())) {
+          $original_tags = $original_entity->get('social_tagging')->getValue();
+
+          foreach ($original_tags as $original_tag) {
+            $original_taxonomy_ids[] = $original_tag['target_id'];
+          }
+        }
+      }
+    }
+
+    // Prepare list of tags after update node.
+    if ($entity->hasField('social_tagging')) {
+      if (!empty($entity->get('social_tagging')->getValue())) {
+        $tags = $entity->get('social_tagging')->getValue();
+
+        foreach ($tags as $tag) {
+          // Check if new tags have been added after the update.
+          if (!in_array($tag['target_id'], $original_taxonomy_ids)) {
+            $taxonomy_ids[] = $tag['target_id'];
+          }
+        }
+      }
+    }
+
+    // Create activity notification.
+    if (!empty($taxonomy_ids)) {
+      \Drupal::service('plugin.manager.activity_action.processor')
+        ->createInstance('update_entity_action')
+        ->create($entity);
+    }
+  }
 }
