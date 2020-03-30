@@ -191,6 +191,19 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
     $request_to_join = FALSE;
     $isNodeOwner = ($node->getOwnerId() === $uid);
 
+    // Initialise the default attributes for the "Enroll" button
+    // if the event enroll method is request to enroll, this will
+    // be overwritten because of the modal.
+    $attributes = [
+      'class' => [
+        'btn',
+        'btn-accent brand-bg-accent',
+        'btn-lg btn-raised',
+        'dropdown-toggle',
+        'waves-effect',
+      ],
+    ];
+
     // Add request to join event.
     if ((int) $node->field_enroll_method->value === EventEnrollmentInterface::ENROLL_METHOD_REQUEST && !$isNodeOwner) {
       $submit_text = $this->t('Request to enroll');
@@ -259,6 +272,7 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
       '#type' => 'submit',
       '#value' => $submit_text,
       '#disabled' => !$enrollment_open,
+      '#attributes' => $attributes,
     ];
 
     if ($request_to_join === TRUE) {
