@@ -76,12 +76,6 @@ function social_landing_page_theme() {
   $theme_templates['paragraph__featured__default'] = [
     'base hook' => 'paragraph',
   ];
-  $theme_templates['paragraph__featured_item__default'] = [
-    'base hook' => 'paragraph',
-  ];
-  $theme_templates['paragraph__featured_items__default'] = [
-    'base hook' => 'paragraph',
-  ];
   $theme_templates['paragraph__hero__default'] = [
     'base hook' => 'paragraph',
   ];
@@ -128,7 +122,11 @@ function social_landing_page_theme() {
  */
 function social_landing_page_preprocess_page(&$variables) {
   // Here we remove class for landing page.
-  if (isset($variables['node']) && $variables['node']->bundle() === 'landing_page') {
+  if (
+    isset($variables['node']) &&
+    $variables['node'] instanceof NodeInterface &&
+    $variables['node']->bundle() === 'landing_page'
+  ) {
     if ($variables['content_attributes'] instanceof Attribute) {
       $variables['content_attributes']->removeClass('layout--with-complementary');
     }

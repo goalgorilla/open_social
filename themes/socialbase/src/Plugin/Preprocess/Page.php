@@ -112,6 +112,11 @@ class Page extends PreprocessBase {
       $attributes->removeClass('row', 'layout--with-complementary');
     }
 
+    // @TODO Cleanup when other PR's are merged in to better array.
+    if ($route === 'view.social_group_invitations.page_1') {
+      $attributes->removeClass('row', 'layout--with-complementary');
+    }
+
     // Only whenever the social_core layout service is registered
     // see SocialCoreServiceProvider, we can run this code.
     if (\Drupal::hasService('social_core.layout')) {

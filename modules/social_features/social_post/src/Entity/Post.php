@@ -144,7 +144,7 @@ class Post extends ContentEntityBase implements PostInterface {
    * {@inheritdoc}
    */
   public function setType($type) {
-    $this->set('type', $this->bundle());
+    $this->set('type', $type);
     return $this;
   }
 

@@ -6,6 +6,7 @@
  */
 
 use Drupal\user\Entity\Role;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Implements hook_uninstall().
@@ -30,6 +31,18 @@ function social_private_message_install() {
   _social_private_message_set_private_message_default_view_settings();
   _social_private_message_set_private_message_inbox_view_settings();
   _social_private_message_set_private_message_thread_default_view_settings();
+}
+
+/**
+ * Implements hook_update_dependencies().
+ */
+function social_private_message_update_dependencies() {
+  // Run the activities view mode update after the final features removal ran.
+  $dependencies['social_private_message'][8801] = [
+    'social_core' => 8802,
+  ];
+
+  return $dependencies;
 }
 
 /**
@@ -208,5 +221,59 @@ function social_private_message_update_8002() {
   /** @var \Drupal\block\Entity\Block $block */
   foreach ($blocks as $block) {
     $block->delete();
+  }
+}
+
+/**
+ * Config import social_private_message default configs.
+ *
+ * The feature removal script did not succeed for social_private_message.
+ * Import the configs in an update hook.
+ */
+function social_private_message_update_8801() {
+  $config_files = [
+    'core.entity_form_display.private_message_thread.private_message_thread.default',
+    'core.entity_view_display.private_message.private_message.default',
+    'core.entity_view_display.private_message_thread.private_message_thread.default',
+  ];
+
+  // Revert the configurations.
+  _social_private_message_features_removal_config_revert_helper($config_files);
+}
+
+/**
+ * Revert remaining social_private_message configs not included in 8801.
+ */
+function social_private_message_update_8802() {
+  $config_files = [
+    'core.entity_view_display.private_message.private_message.inbox',
+    'core.entity_view_display.profile.profile.compact_private_message',
+    'core.entity_view_mode.profile.compact_private_message',
+    'message.template.create_private_message',
+    'views.view.inbox',
+  ];
+  // Revert the configurations.
+  _social_private_message_features_removal_config_revert_helper($config_files);
+}
+
+/**
+ * Helper function to revert configurations.
+ *
+ * @param array $config_files
+ *   Array of configuration file names.
+ */
+function _social_private_message_features_removal_config_revert_helper(array $config_files) {
+  foreach ($config_files as $config_file) {
+    $config = drupal_get_path('module', 'social_private_message') . '/config/features_removal/' . $config_file . '.yml';
+
+    if (is_file($config)) {
+      $settings = Yaml::parse(file_get_contents($config));
+      if (is_array($settings)) {
+        $update_config = \Drupal::configFactory()
+          ->getEditable($config_file);
+
+        $update_config->setData($settings)->save(TRUE);
+      }
+    }
   }
 }
