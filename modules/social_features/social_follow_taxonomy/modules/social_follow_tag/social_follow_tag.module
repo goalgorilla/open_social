@@ -182,13 +182,3 @@ function _social_follow_tag_related_nodes_count(TermInterface $term) {
 
   return count($nodes);
 }
-
-/**
- * Adds follow_tags block type to array of allowed blocks for the Dashboard.
- *
- * Implements hook_social_dashboard_allowed_block_list_alter().
- * { @inheritdoc }
- */
-function social_follow_tag_social_dashboard_allowed_block_list_alter(array &$allowed_blocks) {
-  $allowed_blocks[] = 'inline_block:follow_tags';
-}
