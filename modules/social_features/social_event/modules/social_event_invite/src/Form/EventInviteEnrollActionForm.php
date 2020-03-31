@@ -146,6 +146,8 @@ class EventInviteEnrollActionForm extends EnrollActionForm {
       // Only trigger when the user is invited.
       if ($enrollment->field_request_or_invite_status
         && (int) $enrollment->field_request_or_invite_status->value === EventEnrollmentInterface::INVITE_PENDING_REPLY) {
+        // Delete any messages since it would show a 'successful enrollment'.
+        $this->messenger()->deleteAll();
         // Accept the invite.
         $enrollment->field_enrollment_status->value = '1';
         $enrollment->field_request_or_invite_status->value = EventEnrollmentInterface::INVITE_ACCEPTED_AND_JOINED;
