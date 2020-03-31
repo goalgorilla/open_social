@@ -17,7 +17,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Class EnrollInviteForm.
  */
-class EnrollInviteEmailForm extends InviteEmailBaseForm{
+class EnrollInviteEmailForm extends InviteEmailBaseForm {
 
   /**
    * The node storage for event enrollments.
