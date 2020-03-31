@@ -2,8 +2,10 @@
 
 namespace Drupal\social_activity_filter\Plugin\views\filter;
 
+use Drupal\Core\Database\Connection;
 use Drupal\views\Plugin\views\filter\FilterPluginBase;
 use Drupal\views\Views;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Filters activity by the taxonomy tags in the stream block.
@@ -13,6 +15,28 @@ use Drupal\views\Views;
  * @ViewsFilter("activity_filter_tags")
  */
 class ActivityFilterTags extends FilterPluginBase {
+
+  /**
+   * The database service.
+   *
+   * @var \Drupal\Core\Database\Connection
+   */
+  protected $database;
+
+  /**
+   * {@inheritdoc}
+   */
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, Connection $database) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition);
+    $this->database = $database;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    return new static($configuration, $plugin_id, $plugin_definition, $container->get('database'));
+  }
 
   /**
    * Not exposable.
@@ -29,9 +53,7 @@ class ActivityFilterTags extends FilterPluginBase {
     $taxonomy_field = $this->view->filter_vocabulary;
     $taxonomy_table = "node__{$taxonomy_field}";
 
-    // @todo: replace it!
-    $database = \Drupal::database();
-    if ($database->schema()->tableExists($taxonomy_table)) {
+    if ($this->database->schema()->tableExists($taxonomy_table)) {
 
       $this->query->addTable($taxonomy_table);
 

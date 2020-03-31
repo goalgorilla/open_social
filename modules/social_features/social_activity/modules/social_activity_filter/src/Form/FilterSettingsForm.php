@@ -4,11 +4,11 @@ namespace Drupal\social_activity_filter\Form;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
+use Drupal\Core\Entity\EntityFieldManagerInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\node\Entity\NodeType;
-use Drupal\taxonomy\Entity\Vocabulary;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -26,11 +26,27 @@ class FilterSettingsForm extends ConfigFormBase implements ContainerInjectionInt
   protected $moduleHandler;
 
   /**
+   * The entity field manager.
+   *
+   * @var \Drupal\Core\Entity\EntityFieldManagerInterface
+   */
+  protected $entityFieldManager;
+
+  /**
+   * The entity manager.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  protected $entityTypeManager;
+
+  /**
    * {@inheritdoc}
    */
-  public function __construct(ConfigFactoryInterface $config_factory, ModuleHandlerInterface $moduleHandler) {
+  public function __construct(ConfigFactoryInterface $config_factory, ModuleHandlerInterface $moduleHandler, EntityFieldManagerInterface $entity_field_manager, EntityTypeManagerInterface $entity_type_manager) {
     parent::__construct($config_factory);
     $this->moduleHandler = $moduleHandler;
+    $this->entityFieldManager = $entity_field_manager;
+    $this->entityTypeManager = $entity_type_manager;
   }
 
   /**
@@ -39,7 +55,9 @@ class FilterSettingsForm extends ConfigFormBase implements ContainerInjectionInt
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('config.factory'),
-      $container->get('module_handler')
+      $container->get('module_handler'),
+      $container->get('entity_field.manager'),
+      $container->get('entity_type.manager')
     );
   }
 
@@ -71,10 +89,13 @@ class FilterSettingsForm extends ConfigFormBase implements ContainerInjectionInt
       '#title' => $this->t('Filter options list'),
     ];
 
+    $storage = $this->entityTypeManager->getStorage('taxonomy_vocabulary');
+    $taxonomy_vocabularies = $storage->loadMultiple();
+
     $vocabulariesList = [];
 
-    /** @var \Drupal\taxonomy\Entity\Vocabulary */
-    foreach (Vocabulary::loadMultiple() as $vid => $vocabulary) {
+    /** @var \Drupal\taxonomy\Entity\Vocabulary $vocabulary*/
+    foreach ($taxonomy_vocabularies as $vid => $vocabulary) {
       $referencedField = isset($taxonomyFields[$vid]) ? $taxonomyFields[$vid] : $this->t('none');
       $vocabulariesList[$vid] = $vocabulary->get('name') . " (field: $referencedField)";
     }
@@ -119,12 +140,13 @@ class FilterSettingsForm extends ConfigFormBase implements ContainerInjectionInt
    */
   public function getReferencedTaxonomyFields(array $vocabulary_list) {
 
+    $content_types = $this->entityTypeManager->getStorage('node_type')->loadMultiple();
+
     $field_names = [];
     foreach ($vocabulary_list as $vocabulary) {
 
-      foreach (NodeType::loadMultiple() as $content_type => $type) {
-        $field_definitions = \Drupal::service('entity_field.manager')
-          ->getFieldDefinitions('node', $content_type);
+      foreach ($content_types as $content_type => $type) {
+        $field_definitions = $this->entityFieldManager->getFieldDefinitions('node', $content_type);
 
         foreach ($field_definitions as $field_definition) {
 
