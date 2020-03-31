@@ -143,14 +143,6 @@ class SocialGroupRequestConfigOverride implements ConfigFactoryOverrideInterface
         'display' => [
           'default' => [
             'display_options' => [
-              'access' => [
-                'type' => 'role',
-                'options' => [
-                  'role' => [
-                    'administrator' => 'administrator',
-                  ],
-                ],
-              ],
               'style' => [
                 'options' => [
                   'empty_table' => TRUE,
@@ -165,12 +157,18 @@ class SocialGroupRequestConfigOverride implements ConfigFactoryOverrideInterface
             'position' => 2,
             'display_options' => [
               'display_extenders' => [],
-              'display_description' => '',
               'path' => 'group/%/membership-requests',
-              'title' => $this->t('Membership requests')->render(),
+              'access' => [
+                'type' => 'role',
+                'options' => [
+                  'role' => [
+                    'authenticated' => 'authenticated',
+                  ],
+                ],
+              ],
               'defaults' => [
-                'title' => FALSE,
                 'fields' => FALSE,
+                'access' => FALSE,
               ],
               'fields' => [
                 'name' => [
@@ -671,12 +669,6 @@ class SocialGroupRequestConfigOverride implements ConfigFactoryOverrideInterface
                   'plugin_id' => 'dropbutton',
                 ],
               ],
-              'access' => [
-                'type' => 'group_permission',
-                'options' => [
-                  'group_permission' => 'administer members',
-                ],
-              ],
             ],
             'cache_metadata' => [
               'max-age' => -1,
@@ -686,6 +678,8 @@ class SocialGroupRequestConfigOverride implements ConfigFactoryOverrideInterface
                 'url',
                 'url.query_args',
                 'user.roles',
+                'user.group_permissions',
+                'route.group',
               ],
               'tags' => [],
             ],
