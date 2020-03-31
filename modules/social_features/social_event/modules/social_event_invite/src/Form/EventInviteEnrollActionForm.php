@@ -143,15 +143,22 @@ class EventInviteEnrollActionForm extends EnrollActionForm {
     Cache::invalidateTags($tags);
 
     if ($enrollment = array_pop($enrollments)) {
-      $enrollment->field_enrollment_status->value = '1';
-      $enrollment->field_request_or_invite_status->value = EventEnrollmentInterface::INVITE_ACCEPTED_AND_JOINED;
-      if ($operation === 'decline') {
-        // Delete any messages since it would show a 'successful enrollment'.
-        $this->messenger()->deleteAll();
-        $enrollment->field_enrollment_status->value = '0';
-        $enrollment->field_request_or_invite_status->value = EventEnrollmentInterface::REQUEST_OR_INVITE_DECLINED;
+      // Only trigger when the user is invited.
+      if ($enrollment->field_request_or_invite_status
+        && $enrollment->field_request_or_invite_status->value === EventEnrollmentInterface::INVITE_PENDING_REPLY) {
+        // Accept the invite.
+        $enrollment->field_enrollment_status->value = '1';
+        $enrollment->field_request_or_invite_status->value = EventEnrollmentInterface::INVITE_ACCEPTED_AND_JOINED;
+
+        // If decline is chosen, set invite to declined.
+        if ($operation === 'decline') {
+          // Delete any messages since it would show a 'successful enrollment'.
+          $this->messenger()->deleteAll();
+          $enrollment->field_enrollment_status->value = '0';
+          $enrollment->field_request_or_invite_status->value = EventEnrollmentInterface::REQUEST_OR_INVITE_DECLINED;
+        }
+        $enrollment->save();
       }
-      $enrollment->save();
     }
   }
 
