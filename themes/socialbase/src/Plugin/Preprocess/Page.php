@@ -113,15 +113,17 @@ class Page extends PreprocessBase {
     // @see https://www.drupal.org/project/social/issues/3119191
     // @todo: remove the if statement below and fix logic mentioned above.
     $route = \Drupal::routeMatch()->getRouteName();
-    $altered_section_class_routes = [
+
+    $routes_remove_complementary_class = [
       'view.event_manage_enrollments.page_manage_enrollments',
       'view.group_manage_members.page_group_manage_members',
+      'view.group_pending_members.membership_requests',
       'view.event_manage_enrollment_requests.page_manage_enrollment_requests',
       'view.event_manage_enrollment_invites.page_manage_enrollment_invites',
       'view.user_event_invites.page_user_event_invites',
     ];
 
-    if (in_array($route, $altered_section_class_routes)) {
+    if (in_array($route, $routes_remove_complementary_class)) {
       $attributes->removeClass('row', 'layout--with-complementary');
     }
 
