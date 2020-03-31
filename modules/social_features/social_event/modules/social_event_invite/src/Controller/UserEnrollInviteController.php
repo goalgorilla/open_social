@@ -84,15 +84,20 @@ class UserEnrollInviteController extends CancelEnrollInviteController {
     $target_event_id = $event_enrollment->get('field_event')->getValue();
     // Get the event node.
     $event = $this->entityTypeManager()->getStorage('node')->load($target_event_id[0]['target_id']);
-    $link = Link::createFromRoute($this->t('@node', ['@node' => $event->get('title')->value]), 'entity.node.canonical', ['node' => $event->id()])->toString();
 
-    // Nice message with link to the event the user has enrolled in.
-    if (!empty($event->get('title')->value) && $accept_decline === '1') {
-      $statusMessage = $this->t('You have accepted the invitation for the @event event.', ['@event' => $link]);
-    }
-    // Nice message with link to the event the user has respectfully declined.
-    elseif (!empty($event->get('title')->value) && $accept_decline === '0') {
-      $statusMessage = $this->t('You have declined the invitation for the @event event.', ['@event' => $link]);
+    // Only if we have an event, we perform the rest of the logic.
+    if (!empty($event)) {
+      // Build the link to the event node.
+      $link = Link::createFromRoute($this->t('@node', ['@node' => $event->get('title')->value]), 'entity.node.canonical', ['node' => $event->id()])
+        ->toString();
+      // Nice message with link to the event the user has enrolled in.
+      if (!empty($event->get('title')->value) && $accept_decline === '1') {
+        $statusMessage = $this->t('You have accepted the invitation for the @event event.', ['@event' => $link]);
+      }
+      // Nice message with link to the event the user has respectfully declined.
+      elseif (!empty($event->get('title')->value) && $accept_decline === '0') {
+        $statusMessage = $this->t('You have declined the invitation for the @event event.', ['@event' => $link]);
+      }
     }
 
     return $statusMessage;
