@@ -3,3 +3,11 @@ services:
     class: \Drupal\social_core\Routing\RouteSubscriber
     tags:
       - { name: event_subscriber }
+  social_core.invite:
+    class: Drupal\social_core\InviteService
+    arguments: ['@request_stack', '@module_handler', '@current_user']
+  social_core.event_subscriber:
+    class: Drupal\social_core\EventSubscriber\SocialInviteSubscriber
+    arguments: ['@social_core.invite', '@current_user', '@messenger']
+    tags:
+      - {name: event_subscriber}
