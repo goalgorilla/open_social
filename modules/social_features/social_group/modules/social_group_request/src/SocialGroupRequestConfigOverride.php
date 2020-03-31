@@ -143,6 +143,14 @@ class SocialGroupRequestConfigOverride implements ConfigFactoryOverrideInterface
         'display' => [
           'default' => [
             'display_options' => [
+              'access' => [
+                'type' => 'role',
+                'options' => [
+                  'role' => [
+                    'administrator' => 'administrator',
+                  ],
+                ],
+              ],
               'style' => [
                 'options' => [
                   'empty_table' => TRUE,

@@ -12,6 +12,7 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslationManager;
 use Drupal\Core\Url;
 use Drupal\grequest\Plugin\GroupContentEnabler\GroupMembershipRequest;
+use Drupal\social_group\Entity\Group;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -158,9 +159,12 @@ class SocialGroupRequestMembershipNotification extends BlockBase implements Cont
    */
   public function access(AccountInterface $account, $return_as_object = FALSE) {
     $is_group_page = isset($this->group);
-    $is_group_manager = $this->group->hasPermission('administer members', $account);
+    if ($this->group instanceof Group) {
+      $is_group_manager = $this->group->hasPermission('administer members', $account);
+      return AccessResult::allowedIf($is_group_page && $is_group_manager);
+    }
 
-    return AccessResult::allowedIf($is_group_page && $is_group_manager);
+    return AccessResult::forbidden();
   }
 
   /**
