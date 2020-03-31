@@ -314,6 +314,7 @@ function socialbase_form_alter(&$form, FormStateInterface $form_state, $form_id)
       'event_an_enroll_form',
       'block_content_custom_content_list_form',
       'block_content_custom_content_list_edit_form',
+      'bulk_group_invitation',
     ]
   );
 
@@ -336,7 +337,6 @@ function socialbase_form_alter(&$form, FormStateInterface $form_state, $form_id)
       }
 
     }
-
     if (isset($form['actions']['cancel'])) {
 
       // Some `cancel` buttons are not inputs but links.
@@ -359,6 +359,7 @@ function socialbase_form_alter(&$form, FormStateInterface $form_state, $form_id)
       'data_policy_data_policy_revision_edit',
       'views_bulk_operations_configure_action',
       'views_bulk_operations_confirm_action',
+      'bulk_group_invitation',
     ]
   );
 
