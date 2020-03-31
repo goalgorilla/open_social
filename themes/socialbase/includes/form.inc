@@ -315,6 +315,7 @@ function socialbase_form_alter(&$form, FormStateInterface $form_state, $form_id)
       'block_content_custom_content_list_form',
       'block_content_custom_content_list_edit_form',
       'bulk_group_invitation',
+      'social_bulk_group_invitation',
       'enroll_invite_email_form',
       'enroll_invite_user_form',
     ]
@@ -362,6 +363,7 @@ function socialbase_form_alter(&$form, FormStateInterface $form_state, $form_id)
       'views_bulk_operations_configure_action',
       'views_bulk_operations_confirm_action',
       'bulk_group_invitation',
+      'social_bulk_group_invitation',
       'enroll_invite_email_form',
       'enroll_invite_user_form',
     ]

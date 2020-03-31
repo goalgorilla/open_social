@@ -1,6 +1,10 @@
 services:
-  social_group_invite.route_subscriber:
+  social_group_invite.event_subscriber:
     class: Drupal\social_group_invite\EventSubscriber\EventSubscribers
     arguments: ['@current_route_match', '@current_user']
+    tags:
+      - { name: event_subscriber }
+  social_group_invite.route_subscriber:
+    class: Drupal\social_group_invite\Routing\RouteSubscriber
     tags:
       - { name: event_subscriber }
