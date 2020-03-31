@@ -1,0 +1,37 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - social_group_invite
+    - system
+  theme:
+    - socialblue
+  enforced:
+    module:
+      - social_group_invite
+id: membershipinvitenotification
+theme: socialblue
+region: content
+weight: -100
+provider: null
+plugin: membership_invite_notification
+settings:
+  id: membership_invite_notification
+  label: 'Membership invite notification'
+  provider: social_group_invite
+  label_display: '0'
+visibility:
+  request_path:
+    id: request_path
+    pages: "/group/*/edit\r\n/group/*/delete\r\n/group/*/content/*/approve-membership\r\n/group/*/content/*/reject-membership\r\n/group/*/content/*"
+    negate: true
+    context_mapping: {  }
+  group_type:
+    id: group_type
+    group_types:
+      closed_group: closed_group
+      open_group: open_group
+      public_group: public_group
+    negate: false
+    context_mapping:
+      group: '@group.group_route_context:group'

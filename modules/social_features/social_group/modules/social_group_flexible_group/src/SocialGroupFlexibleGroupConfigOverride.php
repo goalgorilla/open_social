@@ -194,27 +194,35 @@ class SocialGroupFlexibleGroupConfigOverride implements ConfigFactoryOverrideInt
       ];
     }
 
-    $blocks = [
-      'block.block.membershiprequestsnotification',
-      'block.block.membershiprequestsnotification_2',
-    ];
+    $config_name = 'block.block.membershiprequestsnotification';
 
-    foreach ($blocks as $config_name => $block) {
-      if (in_array($config_name, $names, FALSE)) {
-        $overrides[$config_name] = [
-          'visibility' => [
-            'group_type' => [
-              'group_types' => [
-                'flexible_group' => 'flexible_group',
-              ],
+    if (in_array($config_name, $names, FALSE)) {
+      $overrides[$config_name] = [
+        'visibility' => [
+          'group_type' => [
+            'group_types' => [
+              'flexible_group' => 'flexible_group',
             ],
           ],
-        ];
-      }
+        ],
+      ];
+    }
+
+    $config_name = 'block.block.membershiprequestsnotification_2';
+
+    if (in_array($config_name, $names, FALSE)) {
+      $overrides[$config_name] = [
+        'visibility' => [
+          'group_type' => [
+            'group_types' => [
+              'flexible_group' => 'flexible_group',
+            ],
+          ],
+        ],
+      ];
     }
 
     $config_name = 'message.template.create_content_in_joined_group';
-
     if (in_array($config_name, $names, FALSE)) {
       $overrides[$config_name]['third_party_settings']['activity_logger']['activity_bundle_entities'] =
         [
@@ -224,11 +232,18 @@ class SocialGroupFlexibleGroupConfigOverride implements ConfigFactoryOverrideInt
     }
 
     $config_name = 'message.template.join_to_group';
-
     if (in_array($config_name, $names, FALSE)) {
       $overrides[$config_name]['third_party_settings']['activity_logger']['activity_bundle_entities'] =
         [
           'group_content-flexible_group-group_membership' => 'group_content-flexible_group-group_membership',
+        ];
+    }
+
+    $config_name = 'message.template.invited_to_join_group';
+    if (in_array($config_name, $names, FALSE)) {
+      $overrides[$config_name]['third_party_settings']['activity_logger']['activity_bundle_entities'] =
+        [
+          'group_content-flexible_group-group_invitation' => 'group_content-flexible_group-group_invitation',
         ];
     }
 

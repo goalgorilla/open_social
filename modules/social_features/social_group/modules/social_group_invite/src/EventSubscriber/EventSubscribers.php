@@ -93,23 +93,42 @@ class EventSubscribers implements EventSubscriberInterface {
     // First check if the current route is the group canonical.
     $routeMatch = $this->currentRoute->getRouteName();
 
-    // Not group canonical, then we leave.
-    if ($routeMatch !== 'view.group_invitations.page_1') {
+    $routes_to_check = [
+      'view.group_invitations.page_1',
+      'view.my_invitations.page_1',
+    ];
+
+    // Not related to group invite, we leave.
+    if (!in_array($routeMatch, $routes_to_check, TRUE)) {
       return;
     }
 
-    // Fetch the group parameter and check if's an actual group.
-    $group = $this->currentRoute->getParameter('group');
-    // Not group, then we leave.
-    if (!$group instanceof Group) {
-      return;
+    $url = NULL;
+    // For the user group invite overview, we need the current user
+    // to be a LU in order to be able to build the URL.
+    if ($routeMatch === 'view.my_invitations.page_1') {
+      // Check if user is logged in.
+      if ($this->currentUser->isAnonymous()) {
+        return;
+      }
+      // Determine the URL we want to redirect to.
+      $url = Url::fromRoute('view.social_group_user_invitations.page_1', ['user' => $this->currentUser->id()]);
     }
 
-    // Determine the URL we want to redirect to.
-    $url = Url::fromRoute('view.social_group_invitations.page_1', ['group' => $group->id()]);
+    // For the group invites overview, we need the group
+    // in order to be able to build the URL.
+    if ($routeMatch === 'view.group_invitations.page_1') {
+      // Fetch the group parameter and check if's an actual group.
+      $group = $this->currentRoute->getParameter('group');
+      // Not group, then we leave.
+      if (!$group instanceof Group) {
+        return;
+      }
+      $url = Url::fromRoute('view.social_group_invitations.page_1', ['group' => $group->id()]);
+    }
 
-    // If it's not set, set to canonical, or the current user has no access.
-    if ($url->access($this->currentUser) === FALSE) {
+    // If the current user has no access we leave it be.
+    if (NULL !== $url && $url->access($this->currentUser) === FALSE) {
       // This basically means that the normal flow remains intact.
       return;
     }
