@@ -144,7 +144,7 @@ function social_event_max_enroll_preprocess_page_hero_data(array &$variables) {
   $node = $variables['node'];
 
   // Add spots left counter to the hero block.
-  if ($event_max_enroll_service->isEnabled($node)) {
+  if ($node instanceof NodeInterface && $event_max_enroll_service->isEnabled($node)) {
     $total = $event_max_enroll_service->getEnrollmentsNumber($node);
     $left = $event_max_enroll_service->getEnrollmentsLeft($node);
 

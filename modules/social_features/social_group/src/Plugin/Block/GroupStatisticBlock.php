@@ -4,6 +4,7 @@ namespace Drupal\social_group\Plugin\Block;
 
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Block\BlockBase;
+use Drupal\Core\Cache\Cache;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountInterface;
@@ -89,9 +90,6 @@ class GroupStatisticBlock extends BlockBase implements ContainerFactoryPluginInt
       $build['#cache']['tags'][] = 'group_block:' . $group->id();
     }
     // Cache contexts.
-    $build['#cache']['contexts'][] = 'url.path';
-    $build['#cache']['max-age'] = 0;
-
     return $build;
   }
 
@@ -105,6 +103,38 @@ class GroupStatisticBlock extends BlockBase implements ContainerFactoryPluginInt
     }
 
     return AccessResult::forbidden();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getCacheTags() {
+    $group = _social_group_get_current_group();
+
+    return Cache::mergeTags(parent::getCacheTags(), [
+      'group_content_list:entity:' . \Drupal::currentUser()->id(),
+      'group_content_list:plugin:group_invitation:entity:' . \Drupal::currentUser()->id(),
+      'group:' . $group->id(),
+    ]);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getCacheContexts() {
+    $cache_contexts = parent::getCacheContexts();
+    $cache_contexts[] = 'user';
+    $cache_contexts[] = 'group';
+    $cache_contexts[] = 'route.group';
+    $cache_contexts[] = 'url';
+    return $cache_contexts;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getCacheMaxAge() {
+    return 0;
   }
 
 }

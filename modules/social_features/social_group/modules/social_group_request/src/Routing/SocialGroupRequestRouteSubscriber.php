@@ -35,6 +35,18 @@ class SocialGroupRequestRouteSubscriber extends RouteSubscriberBase {
         '_form' => GroupRequestMembershipRejectForm::class,
       ]);
     }
+
+    if ($route = $collection->get('view.group_pending_members.page_1')) {
+      $route->setRequirements([
+        '_custom_access' => GroupRequestController::class . '::routeAccess',
+      ]);
+    }
+
+    if ($route = $collection->get('view.group_pending_members.membership_requests')) {
+      $route->setRequirements([
+        '_custom_access' => GroupRequestController::class . '::routeAccess',
+      ]);
+    }
   }
 
 }

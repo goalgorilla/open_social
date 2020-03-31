@@ -112,13 +112,10 @@ class Page extends PreprocessBase {
       'view.event_manage_enrollments.page_manage_enrollments',
       'view.group_manage_members.page_group_manage_members',
       'view.group_pending_members.membership_requests',
+      'view.social_group_invitations.page_1',
+      'view.social_group_user_invitations.page_1',
     ];
     if (in_array($route, $routes_remove_complementary_class)) {
-      $attributes->removeClass('row', 'layout--with-complementary');
-    }
-
-    // @TODO Cleanup when other PR's are merged in to better array.
-    if ($route === 'view.social_group_invitations.page_1') {
       $attributes->removeClass('row', 'layout--with-complementary');
     }
 
