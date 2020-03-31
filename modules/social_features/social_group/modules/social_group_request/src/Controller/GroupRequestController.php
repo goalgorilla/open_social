@@ -2,6 +2,7 @@
 
 namespace Drupal\social_group_request\Controller;
 
+use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\OpenModalDialogCommand;
 use Drupal\Core\Cache\CacheTagsInvalidatorInterface;
@@ -15,6 +16,7 @@ use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\grequest\Plugin\GroupContentEnabler\GroupMembershipRequest;
 use Drupal\group\Entity\GroupContentInterface;
 use Drupal\group\Entity\GroupInterface;
+use Drupal\social_group\Entity\Group;
 use Drupal\social_group_request\Form\GroupRequestMembershipRequestAnonymousForm;
 use Drupal\social_group_request\Form\GroupRequestMembershipRequestForm;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -185,6 +187,35 @@ class GroupRequestController extends ControllerBase {
     $this->cacheTagsInvalidator->invalidateTags(['request-membership:' . $group->id()]);
 
     return $this->redirect('social_group.stream', ['group' => $group->id()]);
+  }
+
+  /**
+   * Checks access for a specific route request to see if user can see requests.
+   *
+   * @param \Drupal\Core\Session\AccountInterface $account
+   *   Run access checks for this account.
+   *
+   * @return \Drupal\Core\Access\AccessResultInterface
+   *   The access result.
+   */
+  public function routeAccess(AccountInterface $account) {
+    // @TODO:: refactor this when Group entity query access lands.
+    $has_administer_users = $account->hasPermission('administer members');
+    if ($has_administer_users) {
+      return AccessResult::allowed();
+    }
+    $group = _social_group_get_current_group();
+    if (!$group instanceof Group) {
+      $group_id = \Drupal::routeMatch()->getParameter('group');
+      // Views upcasting is lame.
+      if (!isset($group_id)) {
+        $group_id = \Drupal::routeMatch()->getParameter('arg_0');
+      }
+      $group = Group::load($group_id);
+    }
+    $is_group_page = isset($group);
+    $is_group_manager = $group->hasPermission('administer members', $account);
+    return AccessResult::allowedIf($is_group_page && $is_group_manager);
   }
 
 }
