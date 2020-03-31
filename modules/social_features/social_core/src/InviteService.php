@@ -52,10 +52,13 @@ class InviteService {
   /**
    * The route name that we will redirect to.
    *
-   * @return array $invite_data
-   *  Array containing the route name and invite amount.
+   * @param string $specific
+   *   Can be either name or amount.
+   *
+   * @return array|string $invite_data
+   *  Array containing the route name and or invite amount.
    */
-  public function baseRoute() {
+  public function baseRoute($specific = '') {
     // Empty by default, we will decorate this in our custom extensions.
     // these can decide on priority what the baseRoute should be.
     $route = [
@@ -80,13 +83,22 @@ class InviteService {
         $loader = \Drupal::service('ginvite.invitation_loader');
         $group_invites = count($loader->loadByUser());
         if (NULL !== $group_invites && $group_invites > 0) {
-          $route['amount'] += count($group_invites);
-          $route['name'] = 'view.social_group_invitations.page_1';
+          $route['amount'] += $group_invites;
+          $route['name'] = 'view.social_group_user_invitations.page_1';
         }
       }
     }
 
+    // Return specific data.
+    if ($specific === 'name') {
+      return $route['name'];
+    }
+    if ($specific === 'amount') {
+      return $route['amount'];
+    }
+
     return $route;
+
   }
 
 }
