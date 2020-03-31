@@ -90,7 +90,6 @@ class GroupStatisticBlock extends BlockBase implements ContainerFactoryPluginInt
       $build['#cache']['tags'][] = 'group_block:' . $group->id();
     }
     // Cache contexts.
-
     return $build;
   }
 
@@ -131,6 +130,9 @@ class GroupStatisticBlock extends BlockBase implements ContainerFactoryPluginInt
     return $cache_contexts;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function getCacheMaxAge() {
     return 0;
   }
