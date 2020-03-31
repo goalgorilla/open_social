@@ -1,0 +1,119 @@
+<?php
+
+namespace Drupal\social_event_invite\Controller;
+
+use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\Link;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\Core\Url;
+use Drupal\node\Entity\Node;
+use Drupal\node\NodeInterface;
+use Drupal\social_event\EventEnrollmentInterface;
+use Drupal\user\Entity\User;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\RequestStack;
+
+/**
+ * Accepts or declines an event enrollment invite.
+ *
+ * @package Drupal\social_event_invite\Controller
+ */
+class UserEnrollInviteController extends CancelEnrollInviteController {
+
+  /**
+   * {@inheritDoc}
+   */
+  public function updateEnrollmentInvite(EventEnrollmentInterface $event_enrollment, $accept_decline) {
+    // Just some sanity checks.
+    if (!empty($event_enrollment)) {
+      // First, lets delete all messages to keep the messages clean.
+      $this->messenger()->deleteAll();
+      // When the user accepted the invite, we set the
+      // field_request_or_invite_status to approved.
+      if ($accept_decline === '1') {
+        $event_enrollment->field_request_or_invite_status->value = EventEnrollmentInterface::INVITE_ACCEPTED_AND_JOINED;
+        $event_enrollment->field_enrollment_status->value = '1';
+        $statusMessage = $this->getMessage($event_enrollment, $accept_decline);
+        if (!empty($statusMessage)) {
+          $this->messenger()->addStatus($statusMessage);
+        }
+      }
+      // When the user declined, we set the field_request_or_invite_status to decline.
+      elseif ($accept_decline === '0') {
+        $event_enrollment->field_request_or_invite_status->value = EventEnrollmentInterface::REQUEST_OR_INVITE_DECLINED;
+        $statusMessage = $this->getMessage($event_enrollment, $accept_decline);
+        if (!empty($statusMessage)) {
+          $this->messenger()->addStatus($statusMessage);
+        }
+      }
+
+      // In order for the notifications to be sent correctly we're updating the
+      // owner here. The account is still linked to the actual enrollee.
+      // The owner is always used as the actor.
+      // @see activity_creator_message_insert().
+      $event_enrollment->setOwnerId($this->currentUser->id());
+
+      // And finally save (update) this updated $event_enrollment.
+      // @todo: maybe think of deleting approved/declined records from the db?
+      $event_enrollment->save();
+    }
+
+    // Get the redirect destination we're given in the request for the response.
+    $destination = Url::fromRoute('view.user_event_invites.page_user_event_invites', ['user' => $this->currentUser->id()])->toString();
+
+    return new RedirectResponse($destination);
+  }
+
+  /**
+   * Generates a nice message for the user.
+   *
+   * @param \Drupal\social_event\EventEnrollmentInterface $event_enrollment
+   *   The event enrollment.
+   * @param string $accept_decline
+   *   The approve (1) or decline (0) number.
+   *
+   * @return \Drupal\Core\StringTranslation\TranslatableMarkup|null
+   *   The message.
+   */
+  public function getMessage(EventEnrollmentInterface $event_enrollment, $accept_decline) {
+    $statusMessage = NULL;
+    // Get the target event id.
+    $target_event_id = $event_enrollment->get('field_event')->getValue();
+    // Get the event node.
+    $event = $this->entityTypeManager()->getStorage('node')->load($target_event_id[0]['target_id']);
+
+    // Only if we have an event, we perform the rest of the logic.
+    if (!empty($event)) {
+      // Build the link to the event node.
+      $link = Link::createFromRoute($this->t('@node', ['@node' => $event->get('title')->value]), 'entity.node.canonical', ['node' => $event->id()])
+        ->toString();
+      // Nice message with link to the event the user has enrolled in.
+      if (!empty($event->get('title')->value) && $accept_decline === '1') {
+        $statusMessage = $this->t('You have accepted the invitation for the @event event.', ['@event' => $link]);
+      }
+      // Nice message with link to the event the user has respectfully declined.
+      elseif (!empty($event->get('title')->value) && $accept_decline === '0') {
+        $statusMessage = $this->t('You have declined the invitation for the @event event.', ['@event' => $link]);
+      }
+    }
+
+    return $statusMessage;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public function access(AccountInterface $account) {
+    // Get the parameter from the request that has been done.
+    $user_parameter = $this->requestStack->getCurrentRequest()->attributes->get('user');
+    // Check if it's the same that is in the current session's account.
+    if ($account->id() === $user_parameter) {
+      return AccessResult::allowed();
+    }
+    return AccessResult::neutral();
+  }
+
+}

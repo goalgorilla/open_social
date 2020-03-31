@@ -239,23 +239,46 @@ function social_event_invite_user_insert(UserInterface $entity) {
  * Implements hook_entity_operation_alter().
  */
 function social_event_invite_entity_operation_alter(array &$operations, EntityInterface $entity) {
-  // Check access first.
-  if (!social_event_owner_or_organizer()) {
-    return;
-  }
   // Get the node, so we can pass it as a parameter.
   $node = \Drupal::routeMatch()->getParameter('node');
+  // Get the route name.
+  $route_name = \Drupal::routeMatch()->getRouteName();
+  // Get the current user.
+  $user_account = \Drupal::currentUser()->getAccount();
+
   // Check if the entity type is one of event_enrollment and that we're on the
   // correct view. Otherwise it would update all actions across the platform.
-  if ($entity->getEntityTypeId() === 'event_enrollment' && \Drupal::routeMatch()->getRouteName() === 'view.event_manage_enrollment_invites.page_manage_enrollment_invites') {
-    // Empty the current operations.
-    $operations = [];
-    // Add the "Cancel invite" option.
-    $operations['cancel']['title'] = t('Cancel invite');
-    $operations['cancel']['url'] = Url::fromRoute('social_event_invite.cancel_enrollment_invite', [
-      'node' => $node,
-      'event_enrollment' => $entity->id(),
-    ]);
+  if ($entity->getEntityTypeId() === 'event_enrollment') {
+    // Build operations for the event invites overview for the owner/manager.
+    if (social_event_owner_or_organizer() && $route_name === 'view.event_manage_enrollment_invites.page_manage_enrollment_invites') {
+      // Empty the current operations.
+      $operations = [];
+      // Add the "Cancel invite" option.
+      $operations['cancel']['title'] = t('Cancel invite');
+      $operations['cancel']['url'] = Url::fromRoute('social_event_invite.cancel_enrollment_invite', [
+        'node' => $node,
+        'event_enrollment' => $entity->id(),
+      ]);
+    }
+    // Build operations for the users overview for event invites.
+    if ($route_name === 'view.user_event_invites.page_user_event_invites') {
+      // Empty the current operations.
+      $operations = [];
+      // Add the "Accept invite" option.
+      $operations['accept']['title'] = t('Accept invite');
+      $operations['accept']['url'] = Url::fromRoute('social_event_invite.update_enrollment_invite', [
+        'user' => $user_account->id(),
+        'event_enrollment' => $entity->id(),
+        'accept_decline' => '1',
+      ]);
+      // Add the "Decline invite" option.
+      $operations['decline']['title'] = t('Decline invite');
+      $operations['decline']['url'] = Url::fromRoute('social_event_invite.update_enrollment_invite', [
+        'user' => $user_account->id(),
+        'event_enrollment' => $entity->id(),
+        'accept_decline' => '0',
+      ]);
+    }
   }
 }
 

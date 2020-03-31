@@ -75,6 +75,8 @@ class UpdateEnrollRequestController extends ControllerBase {
   public function updateEnrollmentRequest(NodeInterface $node, EventEnrollmentInterface $event_enrollment, $approve) {
     // Just some sanity checks.
     if ($node instanceof Node && !empty($event_enrollment)) {
+      // First, lets delete all messages to keep the messages clean.
+      $this->messenger()->deleteAll();
       // When the user approved, we set the field_request_or_invite_status to approved.
       if ($approve === '1') {
         $event_enrollment->field_request_or_invite_status->value = EventEnrollmentInterface::REQUEST_APPROVED;

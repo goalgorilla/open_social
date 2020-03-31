@@ -241,24 +241,26 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
 
       // Use the ajax submit if the enrollments are empty, or if the
       // user cancelled his enrollment and tries again.
-      if (!$isNodeOwner && (empty($enrollment) && $node->field_enroll_method->value && (int) $node->field_enroll_method->value === EventEnrollmentInterface::ENROLL_METHOD_REQUEST)
-        || (isset($event_request_ajax) && $event_request_ajax === TRUE)) {
-        $attributes = [
-          'class' => [
-            'use-ajax',
-            'js-form-submit',
-            'form-submit',
-            'btn',
-            'btn-accent',
-            'btn-lg',
-          ],
-          'data-dialog-type' => 'modal',
-          'data-dialog-options' => json_encode([
-            'title' => t('Request to enroll'),
-            'width' => 'auto',
-          ]),
-        ];
-        $request_to_join = TRUE;
+      if ($enrollment_open === TRUE) {
+        if (!$isNodeOwner && (empty($enrollment) && $node->field_enroll_method->value && (int) $node->field_enroll_method->value === EventEnrollmentInterface::ENROLL_METHOD_REQUEST)
+          || (isset($event_request_ajax) && $event_request_ajax === TRUE)) {
+          $attributes = [
+            'class' => [
+              'use-ajax',
+              'js-form-submit',
+              'form-submit',
+              'btn',
+              'btn-accent',
+              'btn-lg',
+            ],
+            'data-dialog-type' => 'modal',
+            'data-dialog-options' => json_encode([
+              'title' => t('Request to enroll'),
+              'width' => 'auto',
+            ]),
+          ];
+          $request_to_join = TRUE;
+        }
       }
     }
 
