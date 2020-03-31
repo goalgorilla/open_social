@@ -1,12 +1,11 @@
-uuid: b6d706f6-99a9-4748-86f4-ef52bfc586e2
 langcode: en
 status: true
 dependencies:
-  module:
-    - activity_logger
   enforced:
     module:
       - social_event_invite
+  module:
+    - activity_logger
 third_party_settings:
   activity_logger:
     activity_bundle_entities:
@@ -24,13 +23,13 @@ label: 'Invite event enrollment'
 description: 'A user got an invite for an event'
 text:
   -
-    value: "<p>You got invited for the event [social_event:enrolled_event_url] on [site:name]. Follow the link to give your response.</p>\r\n"
+    value: "<p>You have been invited for the event [node:title] by [user:display-name]</p>\r\n"
     format: full_html
   -
-    value: "<p>You got invited for the event [social_event:enrolled_event_url] on [site:name]. Follow the link to give your response.</p>\r\n"
+    value: "<p>You have been invited for the event [node:title] by [user:display-name]</p>\r\n"
     format: full_html
   -
-    value: "<p>You got invited for the event [social_event:enrolled_event_url] on [site:name]. Follow the link to give your response.</p>\r\n"
+    value: "<p>Hi,</p>\r\n\r\n<p>I would like to invite you to join my event [node:title] on [site:name]. Use the following link to accept or decline the invite: [social_event_invite:user_login_event_destination].</p>\r\n\r\n<p>Kind regards, [user:display-name]</p>\r\n"
     format: full_html
 settings:
   'token options':
