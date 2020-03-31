@@ -8,6 +8,7 @@ use Drupal\node\NodeInterface;
 use Drupal\group\Entity\GroupContent;
 use Drupal\group\Entity\Group;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\social_event\EventEnrollmentInterface;
 
 /**
  * Helper class for checking entity access.
@@ -118,8 +119,12 @@ class EntityAccessHelper {
         $storage = \Drupal::entityTypeManager()->getStorage('event_enrollment');
         $enrollments = $storage->loadByProperties($conditions);
 
-        if (!empty($enrollments)) {
-          $access = 2;
+        if ($enrollment = array_pop($enrollments)) {
+          if ($enrollment->field_request_or_invite_status
+            && (int) $enrollment->field_request_or_invite_status->value !== EventEnrollmentInterface::REQUEST_OR_INVITE_DECLINED
+            && (int) $enrollment->field_request_or_invite_status->value !== EventEnrollmentInterface::INVITE_INVALID_OR_EXPIRED) {
+            $access = 2;
+          }
         }
       }
     }

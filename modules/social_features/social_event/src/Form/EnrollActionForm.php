@@ -408,6 +408,12 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
       $current_enrollment_status = $enrollment->field_enrollment_status->value;
       if ($to_enroll_status === '0' && $current_enrollment_status === '1') {
         $enrollment->field_enrollment_status->value = '0';
+
+        if ($enrollment->field_request_or_invite_status
+          && (int) $enrollment->field_request_or_invite_status->value === EventEnrollmentInterface::INVITE_ACCEPTED_AND_JOINED) {
+          $enrollment->field_request_or_invite_status->value = EventEnrollmentInterface::REQUEST_OR_INVITE_DECLINED;
+        }
+
         $enrollment->save();
       }
       elseif ($to_enroll_status === '1' && $current_enrollment_status === '0') {
@@ -415,7 +421,7 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
         $enrollment->save();
       }
       elseif ($to_enroll_status === '2' && $current_enrollment_status === '0') {
-        if ((int) $enrollment->field_request_or_invite_status->value === 0) {
+        if ((int) $enrollment->field_request_or_invite_status->value === EventEnrollmentInterface::REQUEST_PENDING) {
           $enrollment->delete();
         }
       }

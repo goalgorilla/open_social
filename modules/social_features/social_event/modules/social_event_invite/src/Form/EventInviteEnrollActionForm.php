@@ -145,7 +145,7 @@ class EventInviteEnrollActionForm extends EnrollActionForm {
     if ($enrollment = array_pop($enrollments)) {
       // Only trigger when the user is invited.
       if ($enrollment->field_request_or_invite_status
-        && $enrollment->field_request_or_invite_status->value === EventEnrollmentInterface::INVITE_PENDING_REPLY) {
+        && (int) $enrollment->field_request_or_invite_status->value === EventEnrollmentInterface::INVITE_PENDING_REPLY) {
         // Accept the invite.
         $enrollment->field_enrollment_status->value = '1';
         $enrollment->field_request_or_invite_status->value = EventEnrollmentInterface::INVITE_ACCEPTED_AND_JOINED;
