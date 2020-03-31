@@ -335,6 +335,9 @@ function social_group_preprocess_group(array &$variables) {
 
   // Prepare variables for statistic block.
   if ($variables['view_mode'] === 'statistic') {
+    // Add context, since we render join / invite only etc links in the block.
+    $variables['#cache']['context'][] = 'group';
+    $variables['#cache']['context'][] = 'user';
     if ($group->getGroupType()->hasContentPlugin('group_node:event')) {
       $variables['group_events'] = $group_statistics->getGroupNodeCount($group, 'event');
     }
