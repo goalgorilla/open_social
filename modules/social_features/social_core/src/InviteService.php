@@ -50,7 +50,7 @@ class InviteService {
   }
 
   /**
-   * The route name that we will redirect to.
+   * The Invite data for redirect.
    *
    * @param string $specific
    *   Can be either name or amount.
@@ -58,7 +58,7 @@ class InviteService {
    * @return array|string $invite_data
    *  Array containing the route name and or invite amount.
    */
-  public function baseRoute($specific = '') {
+  public function getInviteData($specific = '') {
     // Empty by default, we will decorate this in our custom extensions.
     // these can decide on priority what the baseRoute should be.
     $route = [

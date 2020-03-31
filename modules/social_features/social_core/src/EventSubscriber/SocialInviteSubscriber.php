@@ -64,12 +64,12 @@ class SocialInviteSubscriber implements EventSubscriberInterface {
    *   The GetResponseEvent to process.
    */
   public function notifyAboutPendingInvitations(GetResponseEvent $event) {
-    $route = $this->inviteService->baseRoute();
+    $route = $this->inviteService->getInviteData();
     if (!empty($route['name']) && !empty($route['amount'])) {
       $replacement_url = ['@url' => Url::fromRoute($route['name'], ['user' => $this->currentUser->id()])->toString()];
       $message = $this->formatPlural($route['amount'],
-        'You have 1 pending invite <a href="@url">Visit your profile</a> to see it.',
-        'You have @count pending invites <a href="@url">Visit your profile</a> to see them.', $replacement_url);
+        'You have 1 pending invite <a href="@url">visit your invite overview</a> to see it.',
+        'You have @count pending invites <a href="@url">visit your invite overview</a> to see them.', $replacement_url);
 
       $this->messenger->addMessage($message, 'warning', FALSE);
     }

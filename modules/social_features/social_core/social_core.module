@@ -6,6 +6,9 @@
  */
 
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\Core\Template\Attribute;
 use Drupal\node\NodeInterface;
 use Drupal\image\Entity\ImageStyle;
 use Drupal\Core\Url;
@@ -98,6 +101,74 @@ function social_core_preprocess_node(&$variables) {
       $variables['hero_styled_image_url'] = ImageStyle::load('social_xx_large')
         ->buildUrl($node->{$image_field}->entity->getFileUri());
     }
+  }
+}
+
+/**
+ * Implements hook_social_user_account_header_account_links().
+ *
+ * Adds the "My invitations" link to the user menu.
+ */
+function social_core_social_user_account_header_account_links(array $context) {
+  // We require a user for this link.
+  if (empty($context['user']) || !($context['user'] instanceof AccountInterface)) {
+    return [];
+  }
+  /** @var \Drupal\social_core\InviteService $core_invites */
+  $core_invites = \Drupal::service('social_core.invite');
+  // Only when there are actual Invites.
+  if ($core_invites->getInviteData('amount') > 0) {
+    return [
+      'divider_no_mobile' => [
+        '#wrapper_attributes' => [
+          'class' => ['divider', 'no-mobile'],
+          'role' => 'separator',
+        ],
+        '#weight' => 325,
+      ],
+      'my_invites' => [
+          '#type' => 'link',
+          '#attributes' => [
+            'title' => new TranslatableMarkup('Invites'),
+          ],
+          '#title' => [
+            '#type' => 'inline_template',
+            '#template' => '<span>{% trans %}Invites{% endtrans %}</span> <span{{ attributes }}>{{ icon }}</span>',
+            '#context' => [
+              'attributes' => new Attribute(['class' => 'margin-left-xs badge badge-accent badge--pill']),
+              'icon' => (string) $core_invites->getInviteData('amount') ,
+            ],
+          ],
+          '#weight' => 350,
+        ] + Url::fromRoute($core_invites->getInviteData('name'), [
+          'user' => $context['user']->id(),
+        ])->toRenderArray(),
+    ];
+  }
+}
+
+/**
+ * Implements hook_social_user_account_header_items().
+ *
+ * Adds an indicator to the user account menu.
+ */
+function social_core_social_user_account_header_items_alter(array &$menu_links, array $context) {
+  // We require a logged in user for this indicator.
+  if (empty($context['user']) || !$context['user']->isAuthenticated()) {
+    return;
+  }
+
+  // If the account_box link was removed we have nothing to do.
+  if (!isset($menu_links['account_box'])) {
+    return;
+  }
+
+  // Get the total amount of notifications for the user.
+  /** @var \Drupal\social_core\InviteService $core_invites */
+  $core_invites = \Drupal::service('social_core.invite');
+  // Only when there are actual Invites.
+  if ($core_invites->getInviteData('amount') > 0) {
+    $menu_links['account_box']['#wrapper_attributes']['class'][] = 'has-alert';
   }
 }
 
