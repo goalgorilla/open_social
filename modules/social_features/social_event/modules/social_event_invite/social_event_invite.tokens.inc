@@ -67,11 +67,14 @@ function social_event_invite_tokens($type, $tokens, array $data, array $options,
         /** @var \Drupal\social_event\EventEnrollmentInterface $event_enrollment */
         $event_enrollment = $storage->load($message->field_message_related_object->target_id);
 
-        $event = $event_enrollment->get('field_event')->getString();
-        $destination = Url::fromRoute('entity.node.canonical', ['node' => $event])->toString();
-        $login_link = Url::fromRoute('user.login', ['destination' => $destination], ['absolute' => TRUE])
-          ->toString();
-        $replacements[$original] = $login_link;
+        if ($event_enrollment) {
+          $event = $event_enrollment->get('field_event')->getString();
+          $destination = Url::fromRoute('entity.node.canonical', ['node' => $event])
+            ->toString();
+          $login_link = Url::fromRoute('user.login', ['destination' => $destination], ['absolute' => TRUE])
+            ->toString();
+          $replacements[$original] = $login_link;
+        }
       }
     }
   }

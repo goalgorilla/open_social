@@ -182,6 +182,11 @@ class EnrollInviteEmailForm extends InviteEmailBaseForm{
 
       // Create a new enrollment for the event.
       $enrollment = EventEnrollment::create($fields);
+      // In order for the notifications to be sent correctly we're updating the
+      // owner here. The account is still linked to the actual enrollee.
+      // The owner is always used as the actor.
+      // @see activity_creator_message_insert().
+      $enrollment->setOwnerId(\Drupal::currentUser()->id());
       $enrollment->save();
     }
   }
