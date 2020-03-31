@@ -158,9 +158,11 @@ class SocialEventInviteAccessHelper {
 
     // Get the user.
     $account = $this->routeMatch->getRawParameter('user');
-    $account = User::load($account);
-    if ($account instanceof UserInterface) {
-      return AccessResult::allowedIf($account->id() === $this->currentUser->id());
+    if (!empty($account)) {
+      $account = User::load($account);
+      if ($account instanceof UserInterface) {
+        return AccessResult::allowedIf($account->id() === $this->currentUser->id());
+      }
     }
 
     return AccessResult::neutral();
