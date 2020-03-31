@@ -415,7 +415,9 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
         $enrollment->save();
       }
       elseif ($to_enroll_status === '2' && $current_enrollment_status === '0') {
-        $enrollment->delete();
+        if ((int) $enrollment->field_request_or_invite_status->value === 0) {
+          $enrollment->delete();
+        }
       }
 
     }
