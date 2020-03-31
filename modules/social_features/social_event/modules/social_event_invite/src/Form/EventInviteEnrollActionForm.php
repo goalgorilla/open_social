@@ -52,7 +52,7 @@ class EventInviteEnrollActionForm extends EnrollActionForm {
           ];
 
           // Extra attributes needed for when a user is logged in. This will make
-          // sure the button acts like a dropwdown.
+          // sure the button acts like a dropdown.
           $form['enroll_for_this_event']['#attributes'] = [
             'class' => [
               'btn',
@@ -70,7 +70,7 @@ class EventInviteEnrollActionForm extends EnrollActionForm {
           ];
 
           // Extra attributes needed for when a user is logged in. This will make
-          // sure the button acts like a dropwdown.
+          // sure the button acts like a dropdown.
           $form['decline_invite']['#attributes'] = [
             'class' => [
               'btn',
