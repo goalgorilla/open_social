@@ -21,60 +21,59 @@ class SocialActivityFilterOverride implements ConfigFactoryOverrideInterface {
   public function loadOverrides($names) {
     $overrides = [];
 
-    // Override activity_stream views.
-    $config_name = 'views.view.activity_stream';
+    // Override activity_stream & community_activities views.
+    $config_names = [
+      'views.view.activity_stream' => 'block_stream_homepage_without_post',
+      'views.view.community_activities' => 'block_stream_landing',
+    ];
 
-    if (in_array($config_name, $names)) {
-      $data = [
-        'id' => 'activity_filter_tags',
-        'table' => 'activity',
-        'field' => 'activity_filter_tags',
-        'relationship' => 'none',
-        'group_type' => 'group',
-        'admin_label' => '',
-        'operator' => '=',
-        'value' => '',
-        'group' => 1,
-        'exposed' => FALSE,
-        'expose' => [
-          'operator_id' => '',
-          'label' => '',
-          'description' => '',
-          'use_operator' => FALSE,
-          'operator' => '',
-          'operator_limit_selection' => FALSE,
-          'operator_list' => [],
-          'identifier' => '',
-          'required' => FALSE,
-          'remember' => FALSE,
-          'multiple' => FALSE,
-          'remember_roles' => [
-            'authenticated' => 'authenticated',
+    foreach ($config_names as $config_name => $display) {
+
+      if (in_array($config_name, $names)) {
+        $data = [
+          'id' => 'activity_filter_tags',
+          'table' => 'activity',
+          'field' => 'activity_filter_tags',
+          'relationship' => 'none',
+          'group_type' => 'group',
+          'admin_label' => '',
+          'operator' => '=',
+          'value' => '',
+          'group' => 1,
+          'exposed' => FALSE,
+          'expose' => [
+            'operator_id' => '',
+            'label' => '',
+            'description' => '',
+            'use_operator' => FALSE,
+            'operator' => '',
+            'operator_limit_selection' => FALSE,
+            'operator_list' => [],
+            'identifier' => '',
+            'required' => FALSE,
+            'remember' => FALSE,
+            'multiple' => FALSE,
+            'remember_roles' => [
+              'authenticated' => 'authenticated',
+            ],
           ],
-        ],
-        'is_grouped' => FALSE,
-        'group_info' => [
-          'label' => '',
-          'description' => '',
-          'identifier' => '',
-          'optional' => TRUE,
-          'widget' => 'select',
-          'multiple' => FALSE,
-          'remember' => FALSE,
-          'default_group' => 'All',
-          'default_group_multiple' => [],
-          'group_items' => [],
-        ],
-        'entity_type' => 'activity',
-        'plugin_id' => 'activity_filter_tags',
-      ];
+          'is_grouped' => FALSE,
+          'group_info' => [
+            'label' => '',
+            'description' => '',
+            'identifier' => '',
+            'optional' => TRUE,
+            'widget' => 'select',
+            'multiple' => FALSE,
+            'remember' => FALSE,
+            'default_group' => 'All',
+            'default_group_multiple' => [],
+            'group_items' => [],
+          ],
+          'entity_type' => 'activity',
+          'plugin_id' => 'activity_filter_tags',
+        ];
 
-      $displays = [
-        'block_stream_homepage',
-        'block_stream_homepage_without_post',
-      ];
-
-      foreach ($displays as $display) {
         $display_options = &$overrides[$config_name]['display'][$display]['display_options'];
         $display_options['filters']['activity_filter_tags'] = $data;
         $display_options['override_tags_filter'] = TRUE;
