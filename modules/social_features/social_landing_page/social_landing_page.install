@@ -512,56 +512,12 @@ function social_landing_page_update_8804() {
  * Makes the items field multiple.
  */
 function social_landing_page_update_8805() {
-  $entity_type_id = 'paragraph';
-  $field_name = 'field_featured_items';
-
-  // To update the field schema we need to have no field data in the storage,
-  // thus we retrieve it, delete it from storage, and write it back to the
-  // storage after updating the schema.
-  $database = \Drupal::database();
-
-  $columns = [
-    'bundle',
-    'deleted',
-    'entity_id',
-    'revision_id',
-    'langcode',
-    'delta',
-    $field_name . '_target_id',
-    $field_name . '_target_type',
-  ];
-
-  // Retrieve existing entity data.
-  $rows = $database->select($table = $entity_type_id . '__' . $field_name, 'f')
-    ->fields('f', $columns)
-    ->execute()
-    ->fetchAll();
-
-  // Remove data from the storage.
-  $database->truncate($table)->execute();
-
-  // Update definitions and schema.
   $manager = \Drupal::entityDefinitionUpdateManager();
-  $storage_definition = $manager->getFieldStorageDefinition($field_name, $entity_type_id);
+  $storage_definition = $manager->getFieldStorageDefinition('field_featured_items', 'paragraph');
   $storage_definition->setCardinality(FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED);
   $manager->updateFieldStorageDefinition($storage_definition);
 
-  if (!$rows) {
-    return;
-  }
-
-  // Restore entity data in the new schema.
-  $query = $database->insert($table)->fields($columns);
-
-  foreach ($rows as $row) {
-    $values = [];
-
-    foreach ($columns as $column) {
-      $values[] = $row->{$column};
-    }
-
-    $query->values($values);
-  }
-
-  $query->execute();
+  $update_helper = \Drupal::service('update_helper.updater');
+  $update_helper->executeUpdate('social_landing_page', 'social_landing_page_update_8805');
+  return $update_helper->logger()->output();
 }
