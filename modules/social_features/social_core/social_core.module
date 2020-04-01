@@ -116,8 +116,21 @@ function social_core_social_user_account_header_account_links(array $context) {
   }
   /** @var \Drupal\social_core\InviteService $core_invites */
   $core_invites = \Drupal::service('social_core.invite');
-  // Only when there are actual Invites.
-  if ($core_invites->getInviteData('amount') > 0) {
+  // Only when there are actual Invite plugins enabled.
+  if (!empty($core_invites->getInviteData('name'))) {
+    $title = new TranslatableMarkup('Invites');
+    // If we have invites show the number.
+    if (!empty($core_invites->getInviteData('amount'))) {
+      $title = [
+        '#type' => 'inline_template',
+        '#template' => '<span>{% trans %}Invites{% endtrans %}</span> <span{{ attributes }}>{{ icon }}</span>',
+        '#context' => [
+          'attributes' => new Attribute(['class' => 'margin-left-xs badge badge-accent badge--pill']),
+          'icon' => (string) $core_invites->getInviteData('amount') ,
+        ],
+      ];
+    }
+    $x = 1;
     return [
       'divider_no_mobile' => [
         '#wrapper_attributes' => [
@@ -131,14 +144,7 @@ function social_core_social_user_account_header_account_links(array $context) {
           '#attributes' => [
             'title' => new TranslatableMarkup('Invites'),
           ],
-          '#title' => [
-            '#type' => 'inline_template',
-            '#template' => '<span>{% trans %}Invites{% endtrans %}</span> <span{{ attributes }}>{{ icon }}</span>',
-            '#context' => [
-              'attributes' => new Attribute(['class' => 'margin-left-xs badge badge-accent badge--pill']),
-              'icon' => (string) $core_invites->getInviteData('amount') ,
-            ],
-          ],
+          '#title' => $title,
           '#weight' => 350,
         ] + Url::fromRoute($core_invites->getInviteData('name'), [
           'user' => $context['user']->id(),

@@ -118,8 +118,24 @@ function social_group_request_preprocess_group(&$variables) {
   $group = $variables['group'];
   $group_type = $group->getGroupType();
 
+  $account = \Drupal::currentUser();
+  // If the user is already a member we don't bother processing any further.
+  if ($group->getMember($account)) {
+    return;
+  }
+
   if (!$group_type->hasContentPlugin('group_membership_request')) {
     return;
+  }
+
+  // If user has a pending invite we should skip the request button.
+  if (\Drupal::hasService('ginvite.invitation_loader')) {
+    /** @var \Drupal\ginvite\GroupInvitationLoader $loader */
+    $loader = \Drupal::service('ginvite.invitation_loader');
+    $group_invites = count($loader->loadByUser());
+    if (NULL !== $group_invites && $group_invites > 0) {
+      return;
+    }
   }
 
   if ($group_type->id() === 'flexible_group') {
@@ -139,7 +155,6 @@ function social_group_request_preprocess_group(&$variables) {
     }
   }
 
-  $account = \Drupal::currentUser();
   if ($account->isAnonymous()) {
     $variables['anonymous_request'] = TRUE;
     $variables['group_operations_url'] = Url::fromRoute('social_group_request.anonymous_request_membership', ['group' => $group->id()]);
