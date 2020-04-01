@@ -272,6 +272,9 @@ function social_event_invite_entity_operation_alter(array &$operations, EntityIn
         $operations = [];
         $operations['delete'] = $delete_operation;
       }
+      if ((int) $entity->field_request_or_invite_status->value === EventEnrollmentInterface::INVITE_ACCEPTED_AND_JOINED) {
+        $operations = [];
+      }
     }
     // Build operations for the users overview for event invites.
     if ($route_name === 'view.user_event_invites.page_user_event_invites') {
