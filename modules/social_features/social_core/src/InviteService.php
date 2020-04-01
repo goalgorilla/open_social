@@ -65,6 +65,18 @@ class InviteService {
       'amount' => 0,
       'name' => '',
     ];
+    // Default routes. These will be overridden when there are
+    // invites available, but we need to determine defaults so we can
+    // render the Invite accountheader block link pointing to the overview
+    // that is available by the plugins.
+    // @TODO make this more pretty and generic.
+    if ($this->moduleHandler->moduleExists('social_event_invite')) {
+      $route['name'] = 'view.user_event_invites.page_user_event_invites';
+    }
+    if ($this->moduleHandler->moduleExists('social_group_invite')) {
+      $route['name'] = 'view.social_group_user_invitations.page_1';
+    }
+
     // If module is enabled and it has invites, lets add the route.
     if ($this->moduleHandler->moduleExists('social_event_invite')) {
       if (\Drupal::hasService('social_event_invite.status_helper')) {
@@ -73,6 +85,7 @@ class InviteService {
         $event_invites = $eventHelper->getAllEventEnrollments($this->currentUser->id());
         if (NULL !== $event_invites && $event_invites > 0) {
           $route['amount'] += count($event_invites);
+          // Override the route, because we have available invites!
           $route['name'] = 'view.user_event_invites.page_user_event_invites';
         }
       }
@@ -84,6 +97,7 @@ class InviteService {
         $group_invites = count($loader->loadByUser());
         if (NULL !== $group_invites && $group_invites > 0) {
           $route['amount'] += $group_invites;
+          // Override the route, because we have available invites!
           $route['name'] = 'view.social_group_user_invitations.page_1';
         }
       }
