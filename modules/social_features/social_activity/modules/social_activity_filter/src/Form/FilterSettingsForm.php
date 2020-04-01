@@ -106,6 +106,8 @@ class FilterSettingsForm extends ConfigFormBase implements ContainerInjectionInt
       '#options' => $vocabulariesList,
       '#default_value' => $config->get('vocabulary'),
       '#required' => TRUE,
+      '#description' => $this->t('Select vocabulary which should be displayed in the "Activity filter block". Note, for selected vocabulary will be automatically added a  taxonomy field that is referenced to the content type of activity.
+       Also, this field will be used to filter items in the list. If both content types have the same taxonomy but with different fields then only the first matched field be selected.'),
     ];
 
     return parent::buildForm($form, $form_state);
