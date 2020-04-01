@@ -7,7 +7,6 @@ use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\DependencyInjection\DeprecatedServicePropertyTrait;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\taxonomy\Entity\Vocabulary;
 use Drupal\views\Plugin\Block\ViewsBlock;
 use Drupal\views\Plugin\views\display\Block;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -279,14 +278,21 @@ class FilterBlock extends Block {
   public function preBlockBuild(ViewsBlock $block) {
     parent::preBlockBuild($block);
 
-    $config = $block->getConfiguration();
-    $social_activity_filter = $this->configFactory->getEditable('social_activity_filter.settings');
-
     // Prepare values to use it in the views filter.
-    $this->view->filter_tags = $config['tags'];
+    $block_configuration = $block->getConfiguration();
 
-    $taxonomy_fields = $social_activity_filter->get('taxonomy_fields');
-    $this->view->filter_vocabulary = $taxonomy_fields[$config['vocabulary']];
+    if (isset($block_configuration['tags'])) {
+      $this->view->filter_tags = $block_configuration['tags'];
+    }
+
+    $taxonomy_fields = $this->configFactory
+      ->getEditable('social_activity_filter.settings')
+      ->get('taxonomy_fields');
+    $vid = $block_configuration['vocabulary'];
+
+    if (isset($taxonomy_fields[$vid])) {
+      $this->view->filter_vocabulary = $taxonomy_fields[$vid];
+    }
   }
 
   /**
@@ -299,7 +305,11 @@ class FilterBlock extends Block {
     $config = $this->configFactory->getEditable('social_activity_filter.settings');
 
     $allowed_list = $config->get('vocabulary');
-    $vocabularies = Vocabulary::loadMultiple();
+
+    $vocabularies = $this->entityTypeManager
+      ->getStorage('taxonomy_vocabulary')
+      ->loadMultiple();
+
     $vocabulary_list = [];
     foreach ($vocabularies as $vid => $vocabulary) {
 
