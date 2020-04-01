@@ -1180,3 +1180,17 @@ function social_core_update_8807() {
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
 }
+
+/**
+ * Hide tabs from /user/x/profile page.
+ */
+function social_core_update_8808() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_core', 'social_core_update_8808');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
