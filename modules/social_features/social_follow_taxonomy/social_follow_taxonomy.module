@@ -121,7 +121,7 @@ function social_follow_taxonomy_preprocess_activity(&$variables) {
             $variables['content_type'] = $entity->type->entity->label();
             $variables['followed_tags'][$taxonomy_id] = [
               'name' => $term->getName(),
-              'flag' => _social_follow_taxonomy_flag_link($term),
+              'flag' => social_follow_taxonomy_flag_link($term),
             ];
           }
         }
@@ -256,7 +256,7 @@ function social_follow_taxonomy_term_followers_count(TermInterface $term) {
  * @return string
  *   Link button to flag/unflag current term.
  */
-function _social_follow_taxonomy_flag_link(TermInterface $term) {
+function social_follow_taxonomy_flag_link(TermInterface $term) {
   $flag_link = '';
 
   if (!\Drupal::currentUser()->isAnonymous()) {
@@ -265,4 +265,23 @@ function _social_follow_taxonomy_flag_link(TermInterface $term) {
   }
 
   return $flag_link;
+}
+
+/**
+ * Function for counting the number of nodes related to the term.
+ *
+ * @param \Drupal\taxonomy\TermInterface $term
+ *   Term entity.
+ * @param string $field_id
+ *   Taxonomy term reference field id.
+ *
+ * @return int
+ *   Count of related nodes.
+ */
+function social_follow_taxonomy_related_nodes_count(TermInterface $term, $field_id) {
+  $nodes = \Drupal::entityTypeManager()
+    ->getStorage('node')
+    ->loadByProperties([$field_id => $term->id()]);
+
+  return count($nodes);
 }

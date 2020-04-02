@@ -75,8 +75,8 @@ function social_follow_tag_preprocess_paragraph(&$variables) {
             $terms[] = [
               'url' => $url->toString(),
               'name' => $term->getName(),
-              'flag' => _social_follow_taxonomy_flag_link($term),
-              'related_nodes_count' => _social_follow_tag_related_nodes_count($term),
+              'flag' => social_follow_taxonomy_flag_link($term),
+              'related_nodes_count' => social_follow_taxonomy_related_nodes_count($term, 'social_tagging'),
               'followers_count' => social_follow_taxonomy_term_followers_count($term),
             ];
           }
@@ -123,8 +123,8 @@ function social_follow_tag_preprocess_social_tagging_split(&$variables) {
         $variables['taghierarchy'][$parent->id()]['tags'][$current_term->id()] = [
           'url' => $tag_info['url'],
           'name' => $tag_info['name'],
-          'flag' => _social_follow_taxonomy_flag_link($current_term),
-          'related_nodes_count' => _social_follow_tag_related_nodes_count($current_term),
+          'flag' => social_follow_taxonomy_flag_link($current_term),
+          'related_nodes_count' => social_follow_taxonomy_related_nodes_count($current_term, 'social_tagging'),
           'followers_count' => social_follow_taxonomy_term_followers_count($current_term),
           'follow' => social_follow_taxonomy_term_followed($current_term),
         ];
@@ -162,29 +162,12 @@ function social_follow_tag_preprocess_social_tagging_nosplit(&$variables) {
     $variables['tags'][$tag_name] = [
       'url' => $tag_info,
       'name' => $tag_name,
-      'flag' => _social_follow_taxonomy_flag_link($current_term),
-      'related_nodes_count' => _social_follow_tag_related_nodes_count($current_term),
+      'flag' => social_follow_taxonomy_flag_link($current_term),
+      'related_nodes_count' => social_follow_taxonomy_related_nodes_count($current_term, 'social_tagging'),
       'followers_count' => social_follow_taxonomy_term_followers_count($current_term),
       'follow' => social_follow_taxonomy_term_followed($current_term),
     ];
   }
-}
-
-/**
- * Function for counting the number of nodes related to the term.
- *
- * @param \Drupal\taxonomy\TermInterface $term
- *   Term entity.
- *
- * @return int
- *   Count of related nodes.
- */
-function _social_follow_tag_related_nodes_count(TermInterface $term) {
-  $nodes = \Drupal::entityTypeManager()
-    ->getStorage('node')
-    ->loadByProperties(['social_tagging' => $term->id()]);
-
-  return count($nodes);
 }
 
 /**
