@@ -11,7 +11,6 @@ use Drupal\Core\Render\BubbleableMetadata;
  * Implements hook_token_info().
  */
 function social_user_token_info() {
-
   $type = [
     'name' => t('Social User'),
     'description' => t('Tokens from the social user module.'),
