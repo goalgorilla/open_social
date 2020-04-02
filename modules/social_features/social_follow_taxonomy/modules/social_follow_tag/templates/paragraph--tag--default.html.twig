@@ -25,9 +25,11 @@
 
             <div class="actions">
               {{ term.flag }}
-              <a href="{{ term.url }}" class="btn btn-default">
-                {% trans %}See related content{% endtrans %}
-              </a>
+              {% if(term.url) %}
+                <a href="{{ term.url }}" class="btn btn-default">
+                  {% trans %}See related content{% endtrans %}
+                </a>
+              {% endif %}
             </div>
           </div>
         {% endfor %}

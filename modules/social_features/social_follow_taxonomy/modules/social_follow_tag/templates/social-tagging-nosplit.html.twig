@@ -49,9 +49,11 @@
 
                 <div class="actions">
                   {{ tag.flag }}
-                  <a href="{{  tag.url }}" class="btn btn-default">
-                    {% trans %}See related content{% endtrans %}
-                  </a>
+                  {% if(tag.url) %}
+                    <a href="{{ tag.url }}" class="btn btn-default">
+                      {% trans %}See related content{% endtrans %}
+                    </a>
+                  {% endif %}
                 </div>
               </div>
             </div>
