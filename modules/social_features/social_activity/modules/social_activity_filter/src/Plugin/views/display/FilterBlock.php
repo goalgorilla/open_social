@@ -159,6 +159,14 @@ class FilterBlock extends Block {
   public function blockForm(ViewsBlock $block, array &$form, FormStateInterface $form_state) {
     parent::blockForm($block, $form, $form_state);
 
+    if ($triggering_element = $form_state->getTriggeringElement()) {
+
+      // Do not show filters for referenced views block.
+      if (in_array('field_block_reference', $triggering_element["#parents"])) {
+        return $form;
+      }
+    }
+
     // Check if overridden filter option is enabled for current views block.
     if (!$this->getOption('override_tags_filter')) {
       return $form;
