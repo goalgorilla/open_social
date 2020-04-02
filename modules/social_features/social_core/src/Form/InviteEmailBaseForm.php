@@ -81,7 +81,7 @@ class InviteEmailBaseForm extends FormBase {
   public function buildForm(array $form, FormStateInterface $form_state) {
     $form['email_address'] = [
       '#type' => 'textarea',
-      '#title' => $this->t('Select Recipients'),
+      '#title' => $this->t('Add Recipients'),
       '#description' => $this->t('You can copy/paste multiple emails, enter one email per line.'),
       '#required' => TRUE,
     ];
