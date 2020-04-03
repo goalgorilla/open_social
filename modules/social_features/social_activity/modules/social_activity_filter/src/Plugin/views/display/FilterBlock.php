@@ -195,7 +195,7 @@ class FilterBlock extends Block {
             '#options' => $this->getVocabularyOptionsList(),
             '#default_value' => $block_configuration['vocabulary'],
             '#empty_option' => t('None'),
-            '#required' => TRUE,
+            '#empty_value' => '_none',
             '#ajax' => [
               'callback' => [static::class, 'updateTagsOptions'],
               'wrapper' => 'edit-block-term-wrapper',
@@ -211,7 +211,7 @@ class FilterBlock extends Block {
             '#default_value' => $block_configuration['tags'],
             '#options' => $opt,
             '#multiple' => TRUE,
-            '#required' => TRUE,
+            '#required' => !empty($opt) ? TRUE : FALSE,
             '#prefix' => '<div id="edit-block-term-wrapper">',
             '#suffix' => '</div>',
           ];
@@ -298,8 +298,11 @@ class FilterBlock extends Block {
       ->get('taxonomy_fields');
     $vid = $block_configuration['vocabulary'];
 
-    if (isset($taxonomy_fields[$vid])) {
+    if (!empty($taxonomy_fields[$vid])) {
       $this->view->filter_vocabulary = $taxonomy_fields[$vid];
+    }
+    else {
+      $this->view->filter_vocabulary = '';
     }
   }
 
@@ -308,6 +311,9 @@ class FilterBlock extends Block {
    *
    * @return array
    *   The vocabulary list.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
   public function getVocabularyOptionsList() {
     $config = $this->configFactory->getEditable('social_activity_filter.settings');

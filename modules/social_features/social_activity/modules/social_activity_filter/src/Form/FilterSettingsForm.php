@@ -94,7 +94,7 @@ class FilterSettingsForm extends ConfigFormBase implements ContainerInjectionInt
 
     $vocabulariesList = [];
 
-    /** @var \Drupal\taxonomy\Entity\Vocabulary $vocabulary*/
+    /** @var \Drupal\taxonomy\Entity\Vocabulary $vocabulary */
     foreach ($taxonomy_vocabularies as $vid => $vocabulary) {
       $referencedField = isset($taxonomyFields[$vid]) ? $taxonomyFields[$vid] : $this->t('none');
       $vocabulariesList[$vid] = $vocabulary->get('name') . " (field: $referencedField)";
@@ -142,7 +142,8 @@ class FilterSettingsForm extends ConfigFormBase implements ContainerInjectionInt
    */
   public function getReferencedTaxonomyFields(array $vocabulary_list) {
 
-    $content_types = $this->entityTypeManager->getStorage('node_type')->loadMultiple();
+    $content_types = $this->entityTypeManager->getStorage('node_type')
+      ->loadMultiple();
 
     $field_names = [];
     foreach ($vocabulary_list as $vocabulary) {
