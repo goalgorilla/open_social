@@ -208,6 +208,26 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
     if ((int) $node->field_enroll_method->value === EventEnrollmentInterface::ENROLL_METHOD_REQUEST && !$isNodeOwner) {
       $submit_text = $this->t('Request to enroll');
       $to_enroll_status = '2';
+
+      if ($current_user->isAnonymous()) {
+        $attributes = [
+          'class' => [
+            'use-ajax',
+            'js-form-submit',
+            'form-submit',
+            'btn',
+            'btn-accent',
+            'btn-lg',
+          ],
+          'data-dialog-type' => 'modal',
+          'data-dialog-options' => json_encode([
+            'title' => t('Request to enroll'),
+            'width' => 'auto',
+          ]),
+        ];
+
+        $request_to_join = TRUE;
+      }
     }
 
     // Add the enrollment closed label.

@@ -5,6 +5,7 @@ namespace Drupal\social_event\Controller;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Ajax\AjaxResponse;
+use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\Ajax\OpenModalDialogCommand;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Form\FormBuilder;
@@ -25,13 +26,23 @@ class EnrollRequestDialogController extends ControllerBase {
   protected $formBuilder;
 
   /**
+   * The current user.
+   *
+   * @var \Drupal\Core\Session\AccountProxyInterface
+   */
+  protected $currentUser;
+
+  /**
    * The ModalFormExampleController constructor.
    *
    * @param \Drupal\Core\Form\FormBuilder $formBuilder
    *   The form builder.
+   * @param \Drupal\Core\Session\AccountProxyInterface $currentUser
+   *   The current user.
    */
-  public function __construct(FormBuilder $formBuilder) {
+  public function __construct(FormBuilder $formBuilder, AccountProxyInterface $currentUser) {
     $this->formBuilder = $formBuilder;
+    $this->currentUser = $currentUser;
   }
 
   /**
@@ -44,7 +55,8 @@ class EnrollRequestDialogController extends ControllerBase {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('form_builder')
+      $container->get('form_builder'),
+      $container->get('current_user')
     );
   }
 
@@ -70,6 +82,10 @@ class EnrollRequestDialogController extends ControllerBase {
 
     // Get the modal form using the form builder.
     $form = $this->formBuilder->getForm('Drupal\social_event\Form\EnrollRequestModalForm');
+
+    if($this->currentUser()->isAnonymous()) {
+      $form = $this->formBuilder->getForm('Drupal\social_event\Form\EnrollRequestAnonymousForm');
+    }
 
     // Add an AJAX command to open a modal dialog with the form as the content.
     $response->addCommand(new OpenModalDialogCommand($this->t('Request to enroll'), $form, static::getDataDialogOptions()));
