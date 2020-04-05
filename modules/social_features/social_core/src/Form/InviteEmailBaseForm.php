@@ -10,7 +10,6 @@ use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-
 /**
  * Class InviteBaseForm.
  */
@@ -139,7 +138,6 @@ class InviteEmailBaseForm extends FormBase {
     }
   }
 
-
   /**
    * Get array of submitted emails.
    *
@@ -153,14 +151,17 @@ class InviteEmailBaseForm extends FormBase {
     return array_map(
       'trim',
       array_unique(
-          $this->extract_emails_from(
+          $this->extractEmailsFrom(
             $form_state->getValue('email_address')
         )
       )
     );
   }
 
-  private function extract_emails_from($string){
+  /**
+   * Custom function to extract email addresses from a string.
+   */
+  private function extractEmailsFrom($string) {
     preg_match_all("/[\._a-zA-Z0-9+-]+@[\._a-zA-Z0-9+-]+/i", $string, $matches);
     return $matches[0];
   }
@@ -191,4 +192,5 @@ class InviteEmailBaseForm extends FormBase {
       $form_state->setErrorByName('email_address', $this->formatPlural($count, $message_singular, $message_plural, ['@error_message' => $error_message]));
     }
   }
+
 }

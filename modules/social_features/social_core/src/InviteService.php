@@ -3,12 +3,11 @@
 namespace Drupal\social_core;
 
 use Drupal\Core\Session\AccountProxyInterface;
-use Drupal\social_event_invite\SocialEventInviteStatusHelper;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 
 /**
- * Class InviteService
+ * Class InviteService.
  */
 class InviteService {
 
@@ -38,7 +37,7 @@ class InviteService {
    *
    * @param \Symfony\Component\HttpFoundation\RequestStack $request_stack
    *   Request.
-   * @param \Drupal\Core\Extension\ModuleHandlerInterface $moduleHandler;
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface $moduleHandler
    *   ModuleHandler.
    * @param \Drupal\Core\Session\AccountProxyInterface $currentUser
    *   The current user.
@@ -55,8 +54,8 @@ class InviteService {
    * @param string $specific
    *   Can be either name or amount.
    *
-   * @return array|string $invite_data
-   *  Array containing the route name and or invite amount.
+   * @return array|string
+   *   Array containing the route name and or invite amount.
    */
   public function getInviteData($specific = '') {
     // Empty by default, we will decorate this in our custom extensions.

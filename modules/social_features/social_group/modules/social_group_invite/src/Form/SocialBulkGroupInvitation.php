@@ -114,10 +114,13 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
     return 'social_bulk_group_invitation';
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function buildForm(array $form, FormStateInterface $form_state) {
     $form = parent::buildForm($form, $form_state);
     $form['actions']['#type'] = 'actions';
-    unset ($form['submit']);
+    unset($form['submit']);
     $form['actions']['submit'] = [
       '#type' => 'submit',
       '#value' => $this->t('Send invite(s)'),

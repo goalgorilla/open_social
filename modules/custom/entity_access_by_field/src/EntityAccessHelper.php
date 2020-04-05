@@ -107,7 +107,7 @@ class EntityAccessHelper {
     // If the social_event_invite module is enabled and a person got invited
     // then allow access to view the node.
     // Todo:: Come up with a better solution for this code.
-    if ($moduleHandler->moduleExists('social_event_invite')){
+    if ($moduleHandler->moduleExists('social_event_invite')) {
       if ($op == 'view') {
         $conditions = [
           'field_account' => $account->id(),
