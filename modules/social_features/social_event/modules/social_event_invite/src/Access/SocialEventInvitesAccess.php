@@ -8,7 +8,7 @@ use Drupal\Core\Access\AccessResult;
 use Drupal\social_event_invite\SocialEventInviteAccessHelper;
 
 /**
- * Class SocialEventInvitesAccess
+ * Class SocialEventInvitesAccess.
  *
  * @package Drupal\social_event_invite\Access
  */
@@ -36,14 +36,17 @@ class SocialEventInvitesAccess {
    *
    * @return \Drupal\Core\Access\AccessResult
    *   Returns the result of the access helper.
+   *
    * @see \Drupal\social_event_invite\SocialEventInviteAccessHelper::eventFeatureAccess()
    */
   public function eventFeatureAccess() {
     try {
       return $this->accessHelper->eventFeatureAccess();
-    } catch (InvalidPluginDefinitionException $e) {
+    }
+    catch (InvalidPluginDefinitionException $e) {
       return AccessResult::neutral();
-    } catch (PluginNotFoundException $e) {
+    }
+    catch (PluginNotFoundException $e) {
       return AccessResult::neutral();
     }
   }
@@ -53,6 +56,7 @@ class SocialEventInvitesAccess {
    *
    * @return \Drupal\Core\Access\AccessResult
    *   Returns the result of the access helper.
+   *
    * @see \Drupal\social_event_invite\SocialEventInviteAccessHelper::userInviteAccess()
    */
   public function userInviteAccess() {

@@ -5,7 +5,6 @@ namespace Drupal\social_event\Form;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
-use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Provides a form to request event enrollment for anonymous.

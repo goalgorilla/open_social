@@ -12,6 +12,7 @@ use Drupal\social_event\EventEnrollmentInterface;
  * Class EnrollInviteForm.
  */
 class EnrollInviteUserForm extends InviteUserBaseForm {
+
   /**
    * {@inheritdoc}
    */
@@ -19,12 +20,11 @@ class EnrollInviteUserForm extends InviteUserBaseForm {
     return 'enroll_invite_user_form';
   }
 
-
   /**
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    $form =  parent::buildForm($form, $form_state);
+    $form = parent::buildForm($form, $form_state);
     $nid = $this->routeMatch->getRawParameter('node');
 
     $form['event'] = [
@@ -43,13 +43,13 @@ class EnrollInviteUserForm extends InviteUserBaseForm {
       '#weight' => -1,
     ];
 
-    $form['actions']['submit_cancel'] = array (
+    $form['actions']['submit_cancel'] = [
       '#type' => 'submit',
       '#weight' => 999,
-      '#value' =>  $this->t('Back to events'),
+      '#value' => $this->t('Back to events'),
       '#submit' => [[$this, 'cancelForm']],
       '#limit_validation_errors' => [],
-    );
+    ];
 
     return $form;
   }
@@ -64,15 +64,8 @@ class EnrollInviteUserForm extends InviteUserBaseForm {
    */
   public function cancelForm(array &$form, FormStateInterface $form_state) {
     $form_state->setRedirect('view.event_manage_enrollments.page_manage_enrollments', [
-      'node' => $this->routeMatch->getRawParameter('node')
+      'node' => $this->routeMatch->getRawParameter('node'),
     ]);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function validateForm(array &$form, FormStateInterface $form_state) {
-    parent::validateForm($form, $form_state);
   }
 
   /**
@@ -110,4 +103,5 @@ class EnrollInviteUserForm extends InviteUserBaseForm {
       $enrollment->save();
     }
   }
+
 }

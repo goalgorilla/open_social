@@ -52,7 +52,7 @@ function social_event_invite_tokens($type, $tokens, array $data, array $options,
         $mail_encoded = str_replace(['+', '/', '='], [
           '-',
           '_',
-          ''
+          '',
         ], base64_encode($mail));
         $register_link = Url::fromRoute('user.register', ['invitee_mail' => $mail_encoded], ['absolute' => TRUE])
           ->toString();

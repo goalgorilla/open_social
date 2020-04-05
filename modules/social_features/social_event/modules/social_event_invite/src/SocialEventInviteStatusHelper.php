@@ -10,7 +10,9 @@ use Drupal\user\Entity\User;
 use Drupal\user\UserInterface;
 
 /**
- * Class SocialEventInviteStatusHelper
+ * Class SocialEventInviteStatusHelper.
+ *
+ * Providers service to get the enrollments for a user.
  */
 class SocialEventInviteStatusHelper {
 
@@ -62,13 +64,15 @@ class SocialEventInviteStatusHelper {
   }
 
   /**
-   * Custom check to see if a user has enrollments
+   * Custom check to see if a user has enrollments.
    *
-   * @param $user string
+   * @param string $user
    *   The email or userid you want to check on.
-   * @param $event integer
+   * @param int $event
    *   The event id you want to check on, use 0 for all.
+   *
    * @return bool|\Drupal\Core\Entity\EntityInterface|mixed
+   *   Returns the conditions for which to search event enrollments on.
    */
   public function userEnrollments($user, $event) {
     $current_user = $this->currentUser;
@@ -86,7 +90,7 @@ class SocialEventInviteStatusHelper {
       'field_request_or_invite_status' => 4,
     ];
 
-    if($user) {
+    if ($user) {
       // Always assume the trigger is emails unless the ID is a user.
       $conditions = [
         'field_email' => $user,
@@ -95,7 +99,7 @@ class SocialEventInviteStatusHelper {
 
       /** @var \Drupal\user\Entity\User $user */
       $account = User::load($user);
-      if ($account InstanceOf UserInterface) {
+      if ($account instanceof UserInterface) {
         $conditions = [
           'field_account' => $account->id(),
           'field_event' => $nid,
@@ -108,36 +112,42 @@ class SocialEventInviteStatusHelper {
   }
 
   /**
-   * Custom check to see if a user has enrollments
+   * Custom check to see if a user has enrollments.
    *
-   * @param $user string
+   * @param string $user
    *   The email or userid you want to check on.
+   *
    * @return bool|\Drupal\Core\Entity\EntityInterface|mixed
+   *   Returns all the enrollments for a user.
    */
   public function getAllEventEnrollments($user) {
-    $conditions = $this->userEnrollments($user, null);
+    $conditions = $this->userEnrollments($user, NULL);
 
     unset($conditions['field_event']);
 
-    $enrollments = $this->entityTypeManager->getStorage('event_enrollment')->loadByProperties($conditions);
+    $enrollments = $this->entityTypeManager->getStorage('event_enrollment')
+      ->loadByProperties($conditions);
 
     return $enrollments;
   }
 
   /**
-   * Custom check to see if a user has enrollments
+   * Custom check to see if a user has enrollments.
    *
-   * @param $user string
+   * @param string $user
    *   The email or userid you want to check on.
-   * @param $event integer
+   * @param int $event
    *   The event id you want to check on, use 0 for all.
+   *
    * @return bool|\Drupal\Core\Entity\EntityInterface|mixed
+   *   Returns a specific event enrollment for a user.
    */
   public function getEventEnrollments($user, $event) {
     $conditions = $this->userEnrollments($user, $event);
-
-    $enrollments = $this->entityTypeManager->getStorage('event_enrollment')->loadByProperties($conditions);
+    $enrollments = $this->entityTypeManager->getStorage('event_enrollment')
+      ->loadByProperties($conditions);
 
     return $enrollments;
   }
+
 }

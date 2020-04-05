@@ -34,10 +34,7 @@ class EnrollInviteEmailForm extends InviteEmailBaseForm {
   }
 
   /**
-   * Construct.
-   *
-   * @param \Drupal\Core\Entity\EntityStorageInterface $entity_storage
-   *   The entity storage.
+   * {@inheritdoc}
    */
   public function __construct(RouteMatchInterface $route_match, EntityTypeManagerInterface $entity_type_manager, LoggerChannelFactoryInterface $logger_factory, EntityStorageInterface $entity_storage) {
     parent::__construct($route_match, $entity_type_manager, $logger_factory);
@@ -57,12 +54,11 @@ class EnrollInviteEmailForm extends InviteEmailBaseForm {
     );
   }
 
-
   /**
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    $form =  parent::buildForm($form, $form_state);
+    $form = parent::buildForm($form, $form_state);
     $nid = $this->routeMatch->getRawParameter('node');
 
     $form['event'] = [
@@ -70,13 +66,13 @@ class EnrollInviteEmailForm extends InviteEmailBaseForm {
       '#value' => $nid,
     ];
 
-    $form['actions']['submit_cancel'] = array (
+    $form['actions']['submit_cancel'] = [
       '#type' => 'submit',
       '#weight' => 999,
-      '#value' =>  $this->t('Back to event'),
+      '#value' => $this->t('Back to event'),
       '#submit' => [[$this, 'cancelForm']],
       '#limit_validation_errors' => [],
-    );
+    ];
 
     return $form;
   }
@@ -91,11 +87,11 @@ class EnrollInviteEmailForm extends InviteEmailBaseForm {
    */
   public function cancelForm(array &$form, FormStateInterface $form_state) {
     $form_state->setRedirect('view.event_manage_enrollments.page_manage_enrollments', [
-      'node' => $this->routeMatch->getRawParameter('node')
+      'node' => $this->routeMatch->getRawParameter('node'),
     ]);
   }
 
-    /**
+  /**
    * {@inheritdoc}
    */
   public function validateForm(array &$form, FormStateInterface $form_state) {
@@ -190,4 +186,5 @@ class EnrollInviteEmailForm extends InviteEmailBaseForm {
       $enrollment->save();
     }
   }
+
 }

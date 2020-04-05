@@ -59,7 +59,6 @@ function social_event_invite_event_enrollment_insert(EventEnrollmentInterface $e
  * This mail is sent when people who do not have an account on the website yet
  * are invited into an event. It is sent in the language the inviter was using
  * the website in.
- *
  */
 function social_event_invite_mail($key, &$message, $params) {
   if ($key == 'invite') {
@@ -72,7 +71,7 @@ function social_event_invite_mail($key, &$message, $params) {
     $original_language = $language_manager->getConfigOverrideLanguage();
     $language_manager->setConfigOverrideLanguage($language);
 
-    // Load event invite configuration
+    // Load event invite configuration.
     $invite_config = \Drupal::service('config.factory')->getEditable('social_event_invite.settings');
 
     $invitation_subject = $invite_config->get('invite_subject');
@@ -92,7 +91,7 @@ function social_event_invite_mail($key, &$message, $params) {
 }
 
 /**
- * Prefill email address when user comes from social_event_invite registration url.
+ * Prefill email address on registration url.
  *
  * Implements hook_form_FORM_ID_alter().
  */
@@ -106,7 +105,6 @@ function social_event_invite_form_user_register_form_alter(&$form, FormStateInte
     }
   }
 }
-
 
 /**
  * Implements hook_views_data().
@@ -153,7 +151,7 @@ function social_event_invite_preprocess_views_view(&$variables) {
     $access = \Drupal::service('social_event_invite.access_helper');
     $access = $access->eventFeatureAccess();
 
-    if(!$access instanceof AccessResultForbidden) {
+    if (!$access instanceof AccessResultForbidden) {
       $entity = \Drupal::entityTypeManager()->getStorage('block')
         ->load('socialeventinviteblock');
 
@@ -226,7 +224,7 @@ function social_event_invite_user_insert(UserInterface $entity) {
   /** @var \Drupal\social_event_invite\SocialEventInviteStatusHelper $enrollments */
   $enrollments = \Drupal::service('social_event_invite.status_helper');
 
-  foreach($enrollments->getAllEventEnrollments($entity->getEmail()) as $enrollment) {
+  foreach ($enrollments->getAllEventEnrollments($entity->getEmail()) as $enrollment) {
     /** @var \Drupal\social_event\EventEnrollmentInterface $enrollment */
     $enrollment->set('field_email', '');
     $enrollment->set('field_account', $entity->id());

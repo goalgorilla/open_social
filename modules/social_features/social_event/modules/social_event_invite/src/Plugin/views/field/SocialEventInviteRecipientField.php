@@ -2,14 +2,11 @@
 
 namespace Drupal\social_event_invite\Plugin\views\field;
 
-use Drupal\Core\Cache\Cache;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\views\Entity\Render\EntityTranslationRenderTrait;
 use Drupal\views\Plugin\views\field\FieldPluginBase;
 use Drupal\views\ResultRow;
-use Drupal\views\Plugin\views\display\DisplayPluginBase;
-use Drupal\views\ViewExecutable;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -30,7 +27,6 @@ class SocialEventInviteRecipientField extends FieldPluginBase {
    */
   protected $entityTypeManager;
 
-
   /**
    * The database connection.
    *
@@ -39,7 +35,7 @@ class SocialEventInviteRecipientField extends FieldPluginBase {
   protected $database;
 
   /**
-   * {@inheritDoc}
+   * {@inheritdoc}
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entityTypeManager, Connection $database) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
@@ -49,7 +45,7 @@ class SocialEventInviteRecipientField extends FieldPluginBase {
   }
 
   /**
-   * {@inheritDoc}
+   * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
     return new static(
@@ -64,13 +60,6 @@ class SocialEventInviteRecipientField extends FieldPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function init(ViewExecutable $view, DisplayPluginBase $display, array &$options = NULL) {
-    parent::init($view, $display, $options);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function usesGroupBy() {
     return FALSE;
   }
@@ -80,13 +69,6 @@ class SocialEventInviteRecipientField extends FieldPluginBase {
    */
   public function query() {
     // Do nothing -- to override the parent query.
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  protected function defineOptions() {
-    return parent::defineOptions();
   }
 
   /**
@@ -132,8 +114,7 @@ class SocialEventInviteRecipientField extends FieldPluginBase {
    *
    * @param string $enrollment_id
    *   The enrollment id.
-   *
-   * @param $account_id
+   * @param int $account_id
    *   The account id.
    *
    * @return array
@@ -176,23 +157,24 @@ class SocialEventInviteRecipientField extends FieldPluginBase {
   }
 
   /**
-   * @inheritDoc
+   * {@inheritdoc}
    */
   public function getEntityTypeId() {
     return $this->getEntityTypeId();
   }
 
   /**
-   * @inheritDoc
+   * {@inheritdoc}
    */
   protected function getLanguageManager() {
     return $this->getLanguageManager();
   }
 
   /**
-   * @inheritDoc
+   * {@inheritdoc}
    */
   protected function getView() {
     return $this->getView();
   }
+
 }

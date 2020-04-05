@@ -7,7 +7,6 @@ use Drupal\Core\Access\AccessResult;
 use Drupal\node\NodeInterface;
 use Drupal\group\Entity\GroupContent;
 use Drupal\group\Entity\Group;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\social_event\EventEnrollmentInterface;
 
 /**
@@ -127,6 +126,7 @@ class EntityAccessHelper {
           }
         }
       }
+
     }
 
     switch ($access) {

@@ -3,18 +3,11 @@
 namespace Drupal\social_event_invite\Controller;
 
 use Drupal\Core\Access\AccessResult;
-use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Link;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\Url;
-use Drupal\node\Entity\Node;
-use Drupal\node\NodeInterface;
 use Drupal\social_event\EventEnrollmentInterface;
-use Drupal\user\Entity\User;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Accepts or declines an event enrollment invite.
@@ -24,15 +17,15 @@ use Symfony\Component\HttpFoundation\RequestStack;
 class UserEnrollInviteController extends CancelEnrollInviteController {
 
   /**
-   * {@inheritDoc}
+   * {@inheritdoc}
    */
   public function updateEnrollmentInvite(EventEnrollmentInterface $event_enrollment, $accept_decline) {
     // Just some sanity checks.
     if (!empty($event_enrollment)) {
       // First, lets delete all messages to keep the messages clean.
       $this->messenger()->deleteAll();
-      // When the user accepted the invite, we set the
-      // field_request_or_invite_status to approved.
+      // When the user accepted the invite,
+      // we set the field_request_or_invite_status to approved.
       if ($accept_decline === '1') {
         $event_enrollment->field_request_or_invite_status->value = EventEnrollmentInterface::INVITE_ACCEPTED_AND_JOINED;
         $event_enrollment->field_enrollment_status->value = '1';
@@ -41,7 +34,8 @@ class UserEnrollInviteController extends CancelEnrollInviteController {
           $this->messenger()->addStatus($statusMessage);
         }
       }
-      // When the user declined, we set the field_request_or_invite_status to decline.
+      // When the user declined,
+      // we set the field_request_or_invite_status to decline.
       elseif ($accept_decline === '0') {
         $event_enrollment->field_request_or_invite_status->value = EventEnrollmentInterface::REQUEST_OR_INVITE_DECLINED;
         $statusMessage = $this->getMessage($event_enrollment, $accept_decline);
@@ -104,7 +98,7 @@ class UserEnrollInviteController extends CancelEnrollInviteController {
   }
 
   /**
-   * {@inheritDoc}
+   * {@inheritdoc}
    */
   public function access(AccountInterface $account) {
     // Get the parameter from the request that has been done.

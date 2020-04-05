@@ -50,7 +50,7 @@ class SocialEventInviteLocalActionsBlock extends BlockBase implements ContainerF
    *   The given plugin definition.
    * @param \Drupal\Core\Routing\RouteMatchInterface $routeMatch
    *   The route match.
-   * @param \Drupal\social_event_invite\SocialEventInviteAccessHelper
+   * @param \Drupal\social_event_invite\SocialEventInviteAccessHelper $accessHelper
    *   The event invite access helper.
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition, RouteMatchInterface $routeMatch, SocialEventInviteAccessHelper $accessHelper) {
@@ -73,14 +73,16 @@ class SocialEventInviteLocalActionsBlock extends BlockBase implements ContainerF
   }
 
   /**
-   * {@inheritdoc}.
+   * {@inheritdoc}
    */
   protected function blockAccess(AccountInterface $account) {
     try {
       return $this->accessHelper->eventFeatureAccess();
-    } catch (InvalidPluginDefinitionException $e) {
+    }
+    catch (InvalidPluginDefinitionException $e) {
       return AccessResult::neutral();
-    } catch (PluginNotFoundException $e) {
+    }
+    catch (PluginNotFoundException $e) {
       return AccessResult::neutral();
     }
   }

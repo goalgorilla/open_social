@@ -14,7 +14,7 @@ use Drupal\user\Entity\User;
 use Drupal\user\UserInterface;
 
 /**
- * Class SocialEventInviteAccessHelper
+ * Class SocialEventInviteAccessHelper.
  *
  * @package Drupal\social_event_invite\Access
  */
@@ -81,6 +81,7 @@ class SocialEventInviteAccessHelper {
    * Custom access check for the event invite features for event managers.
    *
    * @return \Drupal\Core\Access\AccessResult
+   *   Returns the access result.
    *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
@@ -123,8 +124,8 @@ class SocialEventInviteAccessHelper {
         }
       }
 
-      // If it's not enabled for the group this event belongs to, we don't want to
-      // show the block.
+      // If it's not enabled for the group this event belongs to,
+      // we don't want to show the block.
       if (!$enabled) {
         return AccessResult::forbidden();
       }
@@ -146,6 +147,7 @@ class SocialEventInviteAccessHelper {
    * Custom access check for the user invite overview.
    *
    * @return \Drupal\Core\Access\AccessResult
+   *   Returns the access result.
    */
   public function userInviteAccess() {
     $config = $this->configFactory->get('social_event_invite.settings');
@@ -167,4 +169,5 @@ class SocialEventInviteAccessHelper {
 
     return AccessResult::neutral();
   }
+
 }

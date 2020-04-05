@@ -51,8 +51,8 @@ class EventInviteEnrollActionForm extends EnrollActionForm {
             '#name' => 'accept_invite',
           ];
 
-          // Extra attributes needed for when a user is logged in. This will make
-          // sure the button acts like a dropdown.
+          // Extra attributes needed for when a user is logged in.
+          // This will make sure the button acts like a dropdown.
           $form['enroll_for_this_event']['#attributes'] = [
             'class' => [
               'btn',
@@ -69,8 +69,8 @@ class EventInviteEnrollActionForm extends EnrollActionForm {
             '#name' => 'decline_invite',
           ];
 
-          // Extra attributes needed for when a user is logged in. This will make
-          // sure the button acts like a dropdown.
+          // Extra attributes needed for when a user is logged in.
+          // This will make sure the button acts like a dropdown.
           $form['decline_invite']['#attributes'] = [
             'class' => [
               'btn',
@@ -86,10 +86,8 @@ class EventInviteEnrollActionForm extends EnrollActionForm {
             'data-caret' => 'true',
           ];
 
-
           $decline_text = $this->t('Decline');
 
-          // Todo:: this one calls the javascript that submits default form and gets the wrong operation.
           // Add markup for the button so it will be a dropdown.
           $form['decline_invite_dropdown'] = [
             '#markup' => '<ul class="dropdown-menu dropdown-menu-right"><li><a href="#" class="enroll-form-submit"> ' . $decline_text . ' </a></li></ul>',
@@ -108,13 +106,6 @@ class EventInviteEnrollActionForm extends EnrollActionForm {
     }
 
     return $form;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function validateForm(array &$form, FormStateInterface $form_state) {
-    parent::validateForm($form, $form_state);
   }
 
   /**

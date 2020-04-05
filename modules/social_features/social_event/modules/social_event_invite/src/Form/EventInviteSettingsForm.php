@@ -10,6 +10,7 @@ use Drupal\group\Entity\GroupType;
  * Class EnrollInviteForm.
  */
 class EventInviteSettingsForm extends ConfigFormBase {
+
   /**
    * {@inheritdoc}
    */
@@ -95,12 +96,9 @@ class EventInviteSettingsForm extends ConfigFormBase {
 
   /**
    * Gets the configuration names that will be editable.
-   *
-   * @return array
-   *   An array of configuration object names that are editable if called in
-   *   conjunction with the trait's config() method.
    */
   protected function getEditableConfigNames() {
     // TODO: Implement getEditableConfigNames() method.
   }
+
 }

@@ -83,7 +83,7 @@ class EnrollRequestDialogController extends ControllerBase {
     // Get the modal form using the form builder.
     $form = $this->formBuilder->getForm('Drupal\social_event\Form\EnrollRequestModalForm');
 
-    if($this->currentUser()->isAnonymous()) {
+    if ($this->currentUser()->isAnonymous()) {
       $form = $this->formBuilder->getForm('Drupal\social_event\Form\EnrollRequestAnonymousForm');
     }
 

@@ -3,7 +3,6 @@
 namespace Drupal\social_event_invite\Plugin\ActivityContext;
 
 use Drupal\activity_creator\Plugin\ActivityContextBase;
-use Drupal\activity_creator\ActivityFactory;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\Query\Sql\QueryFactory;
 use Drupal\Core\Extension\ModuleHandlerInterface;
@@ -105,4 +104,5 @@ class EventInviteActivityContext extends ActivityContextBase {
 
     return $recipients;
   }
+
 }

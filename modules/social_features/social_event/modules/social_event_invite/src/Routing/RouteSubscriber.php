@@ -17,7 +17,6 @@ class RouteSubscriber extends RouteSubscriberBase {
    * {@inheritdoc}
    */
   protected function alterRoutes(RouteCollection $collection) {
-    // Add our custom access check for the
     if ($route = $collection->get('social_event_invite.invite_email')) {
       $requirements = $route->getRequirements();
       $requirements['_custom_access'] = 'social_event_invite.access::eventFeatureAccess';
