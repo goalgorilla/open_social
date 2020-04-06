@@ -71,6 +71,18 @@ class CommentGroupContentFormatter extends CommentDefaultFormatter {
             'class' => 'btn btn-accent',
           ];
         }
+        elseif ($group->hasPermission('request group membership', $account)) {
+          $url = Url::fromRoute('entity.group.canonical', ['group' => $group->id()]);
+          $url = $url->setOption('query', [
+            'requested-membership' => $group->id(),
+          ]);
+          $action = [
+            'type' => 'request_only',
+            'label' => $this->t('Request only'),
+            'url' => $url,
+            'class' => 'btn btn-accent',
+          ];
+        }
         else {
           $action = [
             'type' => 'invitation_only',
