@@ -132,8 +132,8 @@ class EnrollInviteEmailForm extends InviteEmailBaseForm {
       $users = implode(', ', $duplicated_values);
 
       $message = \Drupal::translation()->formatPlural(count($duplicated_values),
-        "@users is already enrolled, you can't add them again",
-        "@users are already enrolled, you can't add them again",
+        "@users is already invited or enrolled, you can't invite them again",
+        "@users are already invited or enrolled, you can't invite them again",
         ['@users' => $users]
       );
 
