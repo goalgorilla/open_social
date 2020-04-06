@@ -68,6 +68,14 @@
 
 <div class="card">
   <div class="card__body card--content-merged">
+    {% if content.field_profile_self_introduction|render %}
+      <div class="card--content-merged__list">
+        <div class="list-item__text">
+          {{ content.field_profile_self_introduction }}
+        </div>
+      </div>
+    {% endif %}
+
     {% if (content.field_profile_phone_number|render or user_mail or content.field_profile_address|render) %}
       <h4>{% trans %}Contact information{% endtrans %}</h4>
     {% endif %}
@@ -92,15 +100,6 @@
           <div class="list-item__text">
               {{ content.field_profile_address }}
           </div>
-      </div>
-    {% endif %}
-
-    {% if content.field_profile_self_introduction|render %}
-      <div class="card--content-merged__list">
-        <h5>{% trans %}Intro{% endtrans %}</h5>
-        <div class="list-item__text">
-          {{ content.field_profile_self_introduction }}
-        </div>
       </div>
     {% endif %}
 
