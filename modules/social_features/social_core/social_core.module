@@ -133,7 +133,7 @@ function social_core_social_user_account_header_account_links(array $context) {
     return [
       'divider_no_mobile' => [
         '#wrapper_attributes' => [
-          'class' => ['divider', 'no-mobile'],
+          'class' => ['divider', 'hidden-for-phone-only'],
           'role' => 'separator',
         ],
         '#weight' => 325,
@@ -173,7 +173,7 @@ function social_core_social_user_account_header_items_alter(array &$menu_links, 
   $core_invites = \Drupal::service('social_core.invite');
   // Only when there are actual Invites.
   if ($core_invites->getInviteData('amount') > 0) {
-    $menu_links['account_box']['#wrapper_attributes']['class'][] = 'has-alert';
+    $menu_links['account_box']['#wrapper_attributes']['class'][] = 'has-alert has-alert--desktop';
   }
 }
 
