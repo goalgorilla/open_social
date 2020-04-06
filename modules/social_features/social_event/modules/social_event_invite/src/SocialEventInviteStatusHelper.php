@@ -6,6 +6,7 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\social_event\EventEnrollmentInterface;
 use Drupal\user\Entity\User;
 use Drupal\user\UserInterface;
 
@@ -71,10 +72,10 @@ class SocialEventInviteStatusHelper {
    * @param int $event
    *   The event id you want to check on, use 0 for all.
    *
-   * @return bool|\Drupal\Core\Entity\EntityInterface|mixed
+   * @return array
    *   Returns the conditions for which to search event enrollments on.
    */
-  public function userEnrollments($user, $event) {
+  public function userEnrollments($user, $event, $invite_status = NULL) {
     $current_user = $this->currentUser;
     $uid = $current_user->id();
     $nid = $this->routeMatch->getRawParameter('node');
@@ -87,7 +88,7 @@ class SocialEventInviteStatusHelper {
     $conditions = [
       'field_account' => $uid,
       'field_event' => $nid,
-      'field_request_or_invite_status' => 4,
+      'field_request_or_invite_status' => EventEnrollmentInterface::INVITE_PENDING_REPLY,
     ];
 
     if ($user) {
@@ -103,7 +104,7 @@ class SocialEventInviteStatusHelper {
         $conditions = [
           'field_account' => $account->id(),
           'field_event' => $nid,
-          'field_request_or_invite_status' => 4,
+          'field_request_or_invite_status' => EventEnrollmentInterface::INVITE_PENDING_REPLY,
         ];
       }
     }
@@ -125,10 +126,8 @@ class SocialEventInviteStatusHelper {
 
     unset($conditions['field_event']);
 
-    $enrollments = $this->entityTypeManager->getStorage('event_enrollment')
+    return $this->entityTypeManager->getStorage('event_enrollment')
       ->loadByProperties($conditions);
-
-    return $enrollments;
   }
 
   /**
@@ -138,16 +137,23 @@ class SocialEventInviteStatusHelper {
    *   The email or userid you want to check on.
    * @param int $event
    *   The event id you want to check on, use 0 for all.
+   * @param bool $ignore_all_status
+   *   Default FALSE, if set to TRUE then ignore any request_or_invite status.
    *
-   * @return bool|\Drupal\Core\Entity\EntityInterface|mixed
+   * @return \Drupal\Core\Entity\EntityInterface[]
    *   Returns a specific event enrollment for a user.
    */
-  public function getEventEnrollments($user, $event) {
+  public function getEventEnrollments($user, $event, $ignore_all_status = FALSE) {
     $conditions = $this->userEnrollments($user, $event);
-    $enrollments = $this->entityTypeManager->getStorage('event_enrollment')
-      ->loadByProperties($conditions);
 
-    return $enrollments;
+    // If the $ignore_all_status parameter is TRUE, and we have the field
+    // field_request_or_invite_status in our $conditions, unset this field.
+    if ($ignore_all_status === TRUE && isset($conditions['field_request_or_invite_status'])) {
+      unset($conditions['field_request_or_invite_status']);
+    }
+
+    return $this->entityTypeManager->getStorage('event_enrollment')
+      ->loadByProperties($conditions);
   }
 
 }

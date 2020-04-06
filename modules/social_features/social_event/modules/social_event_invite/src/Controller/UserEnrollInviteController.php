@@ -23,8 +23,6 @@ class UserEnrollInviteController extends CancelEnrollInviteController {
   public function updateEnrollmentInvite(EventEnrollmentInterface $event_enrollment, $accept_decline) {
     // Just some sanity checks.
     if (!empty($event_enrollment)) {
-      // First, lets delete all messages to keep the messages clean.
-      $this->messenger()->deleteAll();
       // When the user accepted the invite,
       // we set the field_request_or_invite_status to approved.
       if ($accept_decline === '1') {
@@ -32,6 +30,8 @@ class UserEnrollInviteController extends CancelEnrollInviteController {
         $event_enrollment->field_enrollment_status->value = '1';
         $statusMessage = $this->getMessage($event_enrollment, $accept_decline);
         if (!empty($statusMessage)) {
+          // Lets delete all messages to keep the messages clean.
+          $this->messenger()->deleteAll();
           $this->messenger()->addStatus($statusMessage);
         }
       }
@@ -41,6 +41,8 @@ class UserEnrollInviteController extends CancelEnrollInviteController {
         $event_enrollment->field_request_or_invite_status->value = EventEnrollmentInterface::REQUEST_OR_INVITE_DECLINED;
         $statusMessage = $this->getMessage($event_enrollment, $accept_decline);
         if (!empty($statusMessage)) {
+          // Lets delete all messages to keep the messages clean.
+          $this->messenger()->deleteAll();
           $this->messenger()->addStatus($statusMessage);
         }
       }
