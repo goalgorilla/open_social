@@ -33,6 +33,24 @@ class SocialEventInviteConfigOverride implements ConfigFactoryOverrideInterface 
         $overrides[$config_name] = ['visibility' => ['request_path' => ['pages' => $request_path]]];
       }
     }
+
+    $config_names = [
+      'block.block.socialbase_pagetitleblock',
+      'block.block.socialblue_pagetitleblock',
+      'block.block.views_block__managers_event_managers_2',
+      'block.block.socialblue_views_block__event_enrollments_event_enrollments_socialbase',
+    ];
+    foreach ($config_names as $config_name) {
+      if (in_array($config_name, $names)) {
+
+        $config = \Drupal::service('config.factory')->getEditable($config_name);
+        $request_path = $config->get('visibility.request_path');
+        $request_path = $request_path['pages'] . "\r\n" . '*/invite/email' . "\r\n" . '*/invite/user';
+
+        $overrides[$config_name] = ['visibility' => ['request_path' => ['pages' => $request_path]]];
+      }
+    }
+
     return $overrides;
   }
 
