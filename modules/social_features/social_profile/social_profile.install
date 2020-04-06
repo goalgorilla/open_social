@@ -5,6 +5,8 @@
  * Install, update and uninstall functions for the social_profile module.
  */
 
+use Drupal\Core\Entity\Entity\EntityViewDisplay;
+use Drupal\Core\Entity\Entity\EntityViewMode;
 use Drupal\file\Entity\File;
 use Drupal\menu_link_content\Entity\MenuLinkContent;
 use Drupal\user\Entity\Role;
@@ -312,17 +314,21 @@ function social_profile_update_8007(&$sandbox) {
 }
 
 /**
- * Create "Medium Teaser" view mode for profile.
+ * Create "Medium Teaser" view mode/display for profile.
  */
 function social_profile_update_8008() {
-  $storage = \Drupal::entityTypeManager()->getStorage('entity_view_mode');
+  // Create a new profile entity view mode.
+  EntityViewMode::create([
+    'targetEntityType' => 'profile',
+    'id' => 'profile.medium_teaser',
+    'status' => TRUE,
+    'label' => t('Medium Teaser'),
+  ])->save();
 
-  if (!$storage->load('profile.medium_teaser')) {
-    $storage->create([
-      'targetEntityType' => 'profile',
-      'id' => 'profile.medium_teaser',
-      'status' => TRUE,
-      'label' => t('Medium Teaser'),
-    ])->save();
-  }
+  // Create the corresponding entity view display for profile entity type.
+  EntityViewDisplay::create([
+    'targetEntityType' => 'profile',
+    'bundle' => 'profile',
+    'mode' => 'medium_teaser',
+  ])->setStatus(TRUE)->save();
 }
