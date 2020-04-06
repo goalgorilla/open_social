@@ -3,6 +3,7 @@
 namespace Drupal\social_event_invite\Controller;
 
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Cache\Cache;
 use Drupal\Core\Link;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
@@ -53,6 +54,12 @@ class UserEnrollInviteController extends CancelEnrollInviteController {
       // And finally save (update) this updated $event_enrollment.
       // @todo: maybe think of deleting approved/declined records from the db?
       $event_enrollment->save();
+
+      // Invalidate cache.
+      $tags = [];
+      $tags[] = 'enrollment:' . $event_enrollment->field_event->value . '-' . $this->currentUser->id();
+      $tags[] = 'event_content_list:entity:' . $this->currentUser->id();
+      Cache::invalidateTags($tags);
     }
 
     // Get the redirect destination we're given in the request for the response.
