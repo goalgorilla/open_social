@@ -1,0 +1,85 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.profile.medium_teaser
+    - field.field.profile.profile.field_profile_address
+    - field.field.profile.profile.field_profile_banner_image
+    - field.field.profile.profile.field_profile_expertise
+    - field.field.profile.profile.field_profile_first_name
+    - field.field.profile.profile.field_profile_function
+    - field.field.profile.profile.field_profile_geolocation
+    - field.field.profile.profile.field_profile_image
+    - field.field.profile.profile.field_profile_interests
+    - field.field.profile.profile.field_profile_last_name
+    - field.field.profile.profile.field_profile_organization
+    - field.field.profile.profile.field_profile_organization_tag
+    - field.field.profile.profile.field_profile_phone_number
+    - field.field.profile.profile.field_profile_profile_tag
+    - field.field.profile.profile.field_profile_self_introduction
+    - field.field.profile.profile.field_profile_show_email
+    - image.style.medium
+    - profile.type.profile
+  module:
+    - image
+    - lazy
+id: profile.profile.medium_teaser
+targetEntityType: profile
+bundle: profile
+mode: medium_teaser
+content:
+  field_profile_first_name:
+    type: string
+    weight: 1
+    region: content
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+  field_profile_function:
+    type: string
+    weight: 3
+    region: content
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+  field_profile_image:
+    type: image
+    weight: 0
+    region: content
+    label: hidden
+    settings:
+      image_style: medium
+      image_link: ''
+    third_party_settings:
+      lazy:
+        lazy_image: 0
+  field_profile_last_name:
+    type: string
+    weight: 2
+    region: content
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+  field_profile_organization:
+    type: string
+    weight: 4
+    region: content
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+hidden:
+  field_profile_address: true
+  field_profile_banner_image: true
+  field_profile_expertise: true
+  field_profile_geolocation: true
+  field_profile_interests: true
+  field_profile_organization_tag: true
+  field_profile_phone_number: true
+  field_profile_profile_tag: true
+  field_profile_self_introduction: true
+  field_profile_show_email: true
+  search_api_excerpt: true

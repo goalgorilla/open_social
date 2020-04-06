@@ -310,3 +310,19 @@ function social_profile_update_8007(&$sandbox) {
     user_role_grant_permissions($role, $permissions);
   }
 }
+
+/**
+ * Create "Medium Teaser" view mode for profile.
+ */
+function social_profile_update_8008() {
+  $storage = \Drupal::entityTypeManager()->getStorage('entity_view_mode');
+
+  if (!$storage->load('profile.medium_teaser')) {
+    $storage->create([
+      'targetEntityType' => 'profile',
+      'id' => 'profile.medium_teaser',
+      'status' => TRUE,
+      'label' => t('Medium Teaser'),
+    ])->save();
+  }
+}
