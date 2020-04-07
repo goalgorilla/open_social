@@ -4,6 +4,7 @@ namespace Drupal\group_core_comments;
 
 use Drupal\Core\Access\AccessResult;
 use Drupal\comment\CommentAccessControlHandler;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\group\Entity\GroupContent;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
@@ -26,6 +27,9 @@ class GroupCommentAccessControlHandler extends CommentAccessControlHandler {
     $parent_access = parent::checkAccess($entity, $operation, $account);
 
     $commented_entity = $entity->getCommentedEntity();
+    if (!($commented_entity instanceof ContentEntityInterface)) {
+      return AccessResult::neutral();
+    }
     $group_contents = GroupContent::loadByEntity($commented_entity);
 
     // Check for 'delete all comments' permission in case content is not from
