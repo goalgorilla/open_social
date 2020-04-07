@@ -120,7 +120,7 @@ class SocialInviteSubscriber implements EventSubscriberInterface {
     if (in_array($request_path, $paths_allowed) || in_array($route_name, $routes_allowed)) {
       if (!empty($data['name']) && !empty($data['amount'])) {
         $replacement_url = [
-          '@url' => Url::fromRoute($data['name'], ['user' => $this->currentUser->id()])->toString()
+          '@url' => Url::fromRoute($data['name'], ['user' => $this->currentUser->id()])->toString(),
         ];
         $message = $this->formatPlural($data['amount'],
           'You have 1 pending invite <a href="@url">visit your invite overview</a> to see it.',
