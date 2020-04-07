@@ -113,6 +113,7 @@ class SocialEventInviteLocalActionsBlock extends BlockBase implements ContainerF
         '#attributes' => [
           'no-split' => [
             'title' => $this->t('Add enrollees'),
+            'alignment' => 'right',
           ],
         ],
         '#links' => [

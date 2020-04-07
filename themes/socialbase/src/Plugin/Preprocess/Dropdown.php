@@ -29,6 +29,7 @@ class Dropdown extends BootstrapDropdown {
     if (isset($variables['attributes']['no-split'])) {
       $variables['default_button'] = FALSE;
       $variables['toggle_label'] = $variables['attributes']['no-split']['title'];
+      $variables['alignment'] = $variables['attributes']['no-split']['alignment'];
     }
 
     parent::preprocess($variables, $hook, $info);
