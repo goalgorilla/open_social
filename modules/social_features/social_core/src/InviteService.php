@@ -81,7 +81,7 @@ class InviteService {
       if (\Drupal::hasService('social_event_invite.status_helper')) {
         /** @var \Drupal\social_event_invite\SocialEventInviteStatusHelper $eventHelper */
         $eventHelper = \Drupal::service('social_event_invite.status_helper');
-        $event_invites = $eventHelper->getAllEventEnrollments($this->currentUser->id());
+        $event_invites = $eventHelper->getAllUserEventEnrollments($this->currentUser->id());
         if (NULL !== $event_invites && $event_invites > 0) {
           $route['amount'] += count($event_invites);
           // Override the route, because we have available invites!

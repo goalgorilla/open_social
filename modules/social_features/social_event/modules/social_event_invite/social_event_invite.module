@@ -224,7 +224,7 @@ function social_event_invite_user_insert(UserInterface $entity) {
   /** @var \Drupal\social_event_invite\SocialEventInviteStatusHelper $enrollments */
   $enrollments = \Drupal::service('social_event_invite.status_helper');
 
-  foreach ($enrollments->getAllEventEnrollments($entity->getEmail()) as $enrollment) {
+  foreach ($enrollments->getAllUserEventEnrollments($entity->getEmail()) as $enrollment) {
     /** @var \Drupal\social_event\EventEnrollmentInterface $enrollment */
     $enrollment->set('field_email', '');
     $enrollment->set('field_account', $entity->id());
