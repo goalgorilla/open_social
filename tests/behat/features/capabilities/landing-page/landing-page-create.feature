@@ -62,7 +62,11 @@ Feature: Create Landing Page
       | field_landing_page_section[2][subform][field_section_paragraph][0][subform][field_featured_link][0][uri]    | /search/content |
       | field_landing_page_section[2][subform][field_section_paragraph][0][subform][field_featured_link][0][title]  | Featured Link   |
     And I fill in "field_landing_page_section[2][subform][field_section_paragraph][0][subform][field_featured_items][0][target_id]" with "Featured Event"
+    And I press "Add another item"
+    And I wait for AJAX to finish
     And I fill in "field_landing_page_section[2][subform][field_section_paragraph][0][subform][field_featured_items][1][target_id]" with "Featured Topic 1"
+    And I press "Add another item"
+    And I wait for AJAX to finish
     And I fill in "field_landing_page_section[2][subform][field_section_paragraph][0][subform][field_featured_items][2][target_id]" with "Featured Topic 2"
     And I press "Add Section"
     And I wait for AJAX to finish
