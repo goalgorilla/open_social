@@ -8,6 +8,6 @@ services:
     arguments: ['@request_stack', '@module_handler', '@current_user']
   social_core.event_subscriber:
     class: Drupal\social_core\EventSubscriber\SocialInviteSubscriber
-    arguments: ['@social_core.invite', '@current_user', '@messenger']
+    arguments: ['@social_core.invite', '@current_user', '@messenger', '@current_route_match', '@config.factory']
     tags:
       - {name: event_subscriber}
