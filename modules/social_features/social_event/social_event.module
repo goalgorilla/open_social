@@ -821,6 +821,32 @@ function social_event_entity_operation_alter(array &$operations, EntityInterface
 }
 
 /**
+ * Implements hook_ENTITY_TYPE_update().
+ *
+ * Delete the event enrollments request if type is changed to directly.
+ *
+ * @param \Drupal\Core\Entity\EntityInterface $entity
+ */
+function social_event_node_update(Drupal\Core\Entity\EntityInterface $entity) {
+  if ($entity->getType() === 'event') {
+    $enroll_state_original = $entity->original->get('field_enroll_method')->getString();
+
+    // If the request to enroll was turned off then delete the request.
+    if ((int) $enroll_state_original === 2) {
+      /** @var \Drupal\social_event_invite\EventEnrollmentStatusHelper $enrollments */
+      $enrollments = \Drupal::service('social_event.status_helper');
+
+      foreach($enrollments->getAllEventEnrollments($entity->id(), TRUE) as $enrollment) {
+        if ((int) $enrollment->get('field_request_or_invite_status')->getString() === EventEnrollmentInterface::REQUEST_PENDING) {
+          $enrollment->delete();
+        }
+      }
+    }
+  }
+}
+
+
+/**
  * Implements template_preprocess_views_view().
  */
 function social_event_preprocess_views_view(&$variables) {

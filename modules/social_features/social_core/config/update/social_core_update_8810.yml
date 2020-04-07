@@ -1,0 +1,20 @@
+block.block.socialblue_breadcrumbs:
+  expected_config: {  }
+  update_actions:
+    add:
+      visibility:
+        request_path:
+          context_mapping: {  }
+          id: request_path
+          negate: true
+          pages: "/node/*/all-enrollment-requests\r\n/node/*/all-enrollment-invites"
+block.block.socialblue_local_actions:
+  expected_config:
+    visibility:
+      request_path:
+        pages: "/admin/reports/*\r\n/group/*/membership\r\n/group/*/join\r\n/group/*/leave\r\n/group/*/delete\r\n/group/*/content/*\r\n/node/*/all-enrollments\r\n/node/*/delete\r\n/user/*/edit"
+  update_actions:
+    change:
+      visibility:
+        request_path:
+          pages: "/admin/reports/*\r\n/group/*/membership\r\n/group/*/join\r\n/group/*/leave\r\n/group/*/delete\r\n/group/*/content/*\r\n/node/*/all-enrollments\r\n/node/*/all-enrollment-requests\r\n/node/*/delete\r\n/user/*/edit"

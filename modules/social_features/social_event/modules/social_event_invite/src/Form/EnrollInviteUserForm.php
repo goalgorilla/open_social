@@ -3,15 +3,48 @@
 namespace Drupal\social_event_invite\Form;
 
 use Drupal\Core\Cache\Cache;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Logger\LoggerChannelFactoryInterface;
+use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\social_core\Form\InviteUserBaseForm;
 use Drupal\social_event\Entity\EventEnrollment;
 use Drupal\social_event\EventEnrollmentInterface;
+use Drupal\social_event\EventEnrollmentStatusHelper;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Class EnrollInviteForm.
  */
 class EnrollInviteUserForm extends InviteUserBaseForm {
+
+
+  /**
+   * The event invite status helper.
+   *
+   * @var \Drupal\social_event\EventEnrollmentStatusHelper
+   */
+  protected $eventInviteStatus;
+
+  /**
+   * {@inheritDoc}
+   */
+  public function __construct(RouteMatchInterface $route_match, EntityTypeManagerInterface $entity_type_manager, LoggerChannelFactoryInterface $logger_factory, EventEnrollmentStatusHelper $eventInviteStatus) {
+    parent::__construct($route_match, $entity_type_manager, $logger_factory);
+    $this->eventInviteStatus = $eventInviteStatus;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('current_route_match'),
+      $container->get('entity_type.manager'),
+      $container->get('logger.factory'),
+      $container->get('social_event.status_helper')
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -86,6 +119,24 @@ class EnrollInviteUserForm extends InviteUserBaseForm {
         'user_id' => $uid,
         'field_account' => $uid,
       ];
+
+      // Check if this user has been invited before. It might be that the user
+      // declined the invite, or that the invite is now invalid and expired.
+      // We simply delete the outdated invite and create a new one.
+      $existing_enrollment = $this->eventInviteStatus->getEventEnrollments($uid, $nid, TRUE);
+      if (!empty($existing_enrollment)) {
+        /** @var EventEnrollment $enrollment */
+        $enrollment = end($existing_enrollment);
+        // Of course, only delete the previous invite if it was declined
+        // or if it was invalid or expired.
+        $status_checks = [
+          EventEnrollmentInterface::REQUEST_OR_INVITE_DECLINED,
+          EventEnrollmentInterface::INVITE_INVALID_OR_EXPIRED,
+        ];
+        if (in_array($enrollment->field_request_or_invite_status->value, $status_checks)) {
+          $enrollment->delete();
+        }
+      }
 
       // Clear the cache.
       $tags = [];

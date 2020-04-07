@@ -57,13 +57,13 @@ class EventInviteLocalTask extends LocalTaskDefault implements ContainerFactoryP
    * {@inheritdoc}
    */
   public function getTitle(Request $request = NULL) {
-    /** @var \Drupal\social_event_invite\SocialEventInviteStatusHelper $enrollments */
-    $enrollments = \Drupal::service('social_event_invite.status_helper');
+    /** @var \Drupal\social_event\EventEnrollmentStatusHelper $enrollments */
+    $enrollments = \Drupal::service('social_event.status_helper');
 
-    if ($enrollments->getAllEventEnrollments(NULL)) {
+    if ($enrollments->getAllUserEventEnrollments(NULL)) {
       // We don't need plural because users will be redirected
       // if there is no invite.
-      return $this->t('Event invites (@count)', ['@count' => count($enrollments->getAllEventEnrollments(NULL))]);
+      return $this->t('Event invites (@count)', ['@count' => count($enrollments->getAllUserEventEnrollments(NULL))]);
     }
 
     return $this->t('Event invites');
