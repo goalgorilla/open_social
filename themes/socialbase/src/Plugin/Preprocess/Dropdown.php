@@ -26,6 +26,11 @@ class Dropdown extends BootstrapDropdown {
       $variables['toggle_label'] = $this->t('Actions');
     }
 
+    if (isset($variables['attributes']['no-split'])) {
+      $variables['default_button'] = FALSE;
+      $variables['toggle_label'] = $variables['attributes']['no-split']['title'];
+    }
+
     parent::preprocess($variables, $hook, $info);
 
     if (isset($variables['items']['#items']['publish']['element']['#button_type']) && $variables['items']['#items']['publish']['element']['#button_type'] === 'primary') {

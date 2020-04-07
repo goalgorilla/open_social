@@ -110,11 +110,12 @@ class SocialEventInviteLocalActionsBlock extends BlockBase implements ContainerF
     if ($event instanceof NodeInterface) {
       $links = [
         '#type' => 'dropbutton',
-        '#links' => [
-          'title' => [
+        '#attributes' => [
+          'no-split' => [
             'title' => $this->t('Add enrollees'),
-            'url' => Url::fromRoute('social_event_invite.invite_user', ['node' => $event->id()]),
           ],
+        ],
+        '#links' => [
           'add_directly' => [
             'title' => $this->t('Add directly'),
             'url' => Url::fromRoute('social_event_invite.invite_user', ['node' => $event->id()]),
