@@ -1196,6 +1196,20 @@ function social_core_update_8808() {
 }
 
 /**
+ * Hide primary admin actions from /user/x/edit and some other pages.
+ */
+function social_core_update_8809() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_core', 'social_core_update_8809');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
  * Block changes for the social_event request enrollment feature.
  */
 function social_core_update_8810() {
