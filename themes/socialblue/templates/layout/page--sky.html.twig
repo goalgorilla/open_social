@@ -59,7 +59,7 @@
         {{ page.secondary_navigation }}
       {% endif %}
 
-      {% if page.complementary_top|render|striptags|trim or page.complementary_bottom|render|striptags|trim %}
+      {% if page.complementary_top or page.complementary_bottom %}
         <aside class="region--complementary" role="complementary">
           <div class="content-merged--sky--complementary card">
             {% if page.complementary_top %}
