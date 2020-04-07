@@ -78,9 +78,9 @@ class InviteService {
 
     // If module is enabled and it has invites, lets add the route.
     if ($this->moduleHandler->moduleExists('social_event_invite')) {
-      if (\Drupal::hasService('social_event_invite.status_helper')) {
-        /** @var \Drupal\social_event_invite\SocialEventInviteStatusHelper $eventHelper */
-        $eventHelper = \Drupal::service('social_event_invite.status_helper');
+      if (\Drupal::hasService('social_event.status_helper')) {
+        /** @var \Drupal\social_event\EventEnrollmentStatusHelper $eventHelper */
+        $eventHelper = \Drupal::service('social_event.status_helper');
         $event_invites = $eventHelper->getAllUserEventEnrollments($this->currentUser->id());
         if (NULL !== $event_invites && $event_invites > 0) {
           $route['amount'] += count($event_invites);

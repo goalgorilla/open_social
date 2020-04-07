@@ -833,8 +833,8 @@ function social_event_node_update(Drupal\Core\Entity\EntityInterface $entity) {
 
     // If the request to enroll was turned off then delete the request.
     if ((int) $enroll_state_original === 2) {
-      /** @var \Drupal\social_event_invite\SocialEventInviteStatusHelper $enrollments */
-      $enrollments = \Drupal::service('social_event_invite.status_helper');
+      /** @var \Drupal\social_event_invite\EventEnrollmentStatusHelper $enrollments */
+      $enrollments = \Drupal::service('social_event.status_helper');
 
       foreach($enrollments->getAllEventEnrollments($entity->id(), TRUE) as $enrollment) {
         if ((int) $enrollment->get('field_request_or_invite_status')->getString() === EventEnrollmentInterface::REQUEST_PENDING) {

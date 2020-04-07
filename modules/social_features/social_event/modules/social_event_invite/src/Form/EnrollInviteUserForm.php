@@ -10,7 +10,7 @@ use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\social_core\Form\InviteUserBaseForm;
 use Drupal\social_event\Entity\EventEnrollment;
 use Drupal\social_event\EventEnrollmentInterface;
-use Drupal\social_event_invite\SocialEventInviteStatusHelper;
+use Drupal\social_event\EventEnrollmentStatusHelper;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -22,14 +22,14 @@ class EnrollInviteUserForm extends InviteUserBaseForm {
   /**
    * The event invite status helper.
    *
-   * @var \Drupal\social_event_invite\SocialEventInviteStatusHelper
+   * @var \Drupal\social_event\EventEnrollmentStatusHelper
    */
   protected $eventInviteStatus;
 
   /**
    * {@inheritDoc}
    */
-  public function __construct(RouteMatchInterface $route_match, EntityTypeManagerInterface $entity_type_manager, LoggerChannelFactoryInterface $logger_factory, SocialEventInviteStatusHelper $eventInviteStatus) {
+  public function __construct(RouteMatchInterface $route_match, EntityTypeManagerInterface $entity_type_manager, LoggerChannelFactoryInterface $logger_factory, EventEnrollmentStatusHelper $eventInviteStatus) {
     parent::__construct($route_match, $entity_type_manager, $logger_factory);
     $this->eventInviteStatus = $eventInviteStatus;
   }
@@ -42,7 +42,7 @@ class EnrollInviteUserForm extends InviteUserBaseForm {
       $container->get('current_route_match'),
       $container->get('entity_type.manager'),
       $container->get('logger.factory'),
-      $container->get('social_event_invite.status_helper')
+      $container->get('social_event.status_helper')
     );
   }
 

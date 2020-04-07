@@ -1,21 +1,20 @@
 <?php
 
-namespace Drupal\social_event_invite;
+namespace Drupal\social_event;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountProxyInterface;
-use Drupal\social_event\EventEnrollmentInterface;
 use Drupal\user\Entity\User;
 use Drupal\user\UserInterface;
 
 /**
- * Class SocialEventInviteStatusHelper.
+ * Class EventEnrollmentStatusHelper.
  *
  * Providers service to get the enrollments for a user.
  */
-class SocialEventInviteStatusHelper {
+class EventEnrollmentStatusHelper {
 
   /**
    * The route match.

@@ -221,8 +221,8 @@ function social_event_invite_user_insert(UserInterface $entity) {
   Cache::invalidateTags($tags);
 
   // After a user registers check if there are invites and convert them to uid.
-  /** @var \Drupal\social_event_invite\SocialEventInviteStatusHelper $enrollments */
-  $enrollments = \Drupal::service('social_event_invite.status_helper');
+  /** @var \Drupal\social_event\EventEnrollmentStatusHelper $enrollments */
+  $enrollments = \Drupal::service('social_event.status_helper');
 
   foreach ($enrollments->getAllUserEventEnrollments($entity->getEmail()) as $enrollment) {
     /** @var \Drupal\social_event\EventEnrollmentInterface $enrollment */
