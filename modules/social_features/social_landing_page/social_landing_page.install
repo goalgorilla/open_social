@@ -95,8 +95,7 @@ function social_landing_page_update_8801() {
   }
 
   // Mark the module as enabled. From ModuleInstaller::install().
-  $extension_config
-    ->set("module.$module", 0)
+  $extension_config->set("module.$module", 0)
     ->set('module', module_config_sort($extension_config->get('module')))
     ->save(TRUE);
 
@@ -308,9 +307,1064 @@ function social_landing_page_update_8802() {
   ];
 
   foreach ($configs as $name => $config) {
-    \Drupal::configFactory()
-      ->getEditable($name)
-      ->setData($config)
-      ->save(TRUE);
+    \Drupal::configFactory()->getEditable($name)->setData($config)->save(TRUE);
+  }
+}
+
+/**
+ * Import new block type for featured items.
+ */
+function social_landing_page_update_8803() {
+  $configs = [
+    'core.entity_view_display.group.closed_group.wide_teaser' => [
+      'langcode' => 'en',
+      'status' => TRUE,
+      'dependencies' => [
+        'config' => [
+          'core.entity_view_mode.group.wide_teaser',
+          'field.field.group.closed_group.field_group_address',
+          'field.field.group.closed_group.field_group_description',
+          'field.field.group.closed_group.field_group_image',
+          'field.field.group.closed_group.field_group_location',
+          'group.type.closed_group',
+        ],
+        'module' => [
+          'address',
+          'image',
+        ],
+      ],
+      'id' => 'group.closed_group.wide_teaser',
+      'targetEntityType' => 'group',
+      'bundle' => 'closed_group',
+      'mode' => 'wide_teaser',
+      'content' => [
+        'field_group_address' => [
+          'type' => 'address_default',
+          'weight' => 1,
+          'region' => 'content',
+          'label' => 'hidden',
+          'settings' => [],
+          'third_party_settings' => [],
+        ],
+        'field_group_image' => [
+          'type' => 'image',
+          'weight' => 0,
+          'region' => 'content',
+          'label' => 'hidden',
+          'settings' => [
+            'image_style' => '',
+            'image_link' => '',
+          ],
+          'third_party_settings' => [],
+        ],
+        'field_group_location' => [
+          'type' => 'string',
+          'weight' => 2,
+          'region' => 'content',
+          'label' => 'hidden',
+          'settings' => [
+            'link_to_entity' => FALSE,
+          ],
+          'third_party_settings' => [],
+        ],
+      ],
+    ],
+    'core.entity_view_display.group.flexible_group.wide_teaser' => [
+      'langcode' => 'en',
+      'status' => TRUE,
+      'dependencies' => [
+        'config' => [
+          'core.entity_view_mode.group.wide_teaser',
+          'field.field.group.flexible_group.field_group_address',
+          'field.field.group.flexible_group.field_group_allowed_join_method',
+          'field.field.group.flexible_group.field_group_allowed_visibility',
+          'field.field.group.flexible_group.field_group_description',
+          'field.field.group.flexible_group.field_group_image',
+          'field.field.group.flexible_group.field_group_location',
+          'group.type.flexible_group',
+        ],
+        'module' => [
+          'options',
+        ],
+      ],
+      'id' => 'group.flexible_group.wide_teaser',
+      'targetEntityType' => 'group',
+      'bundle' => 'flexible_group',
+      'mode' => 'wide_teaser',
+      'content' => [
+        'field_group_allowed_join_method' => [
+          'weight' => 2,
+          'label' => 'above',
+          'settings' => [],
+          'third_party_settings' => [],
+          'type' => 'list_default',
+          'region' => 'content',
+        ],
+        'field_group_allowed_visibility' => [
+          'weight' => 1,
+          'label' => 'above',
+          'settings' => [],
+          'third_party_settings' => [],
+          'type' => 'list_default',
+          'region' => 'content',
+        ],
+        'field_group_description' => [
+          'type' => 'basic_string',
+          'weight' => 0,
+          'label' => 'hidden',
+          'settings' => [],
+          'third_party_settings' => [],
+          'region' => 'content',
+        ],
+      ],
+    ],
+    'core.entity_view_display.group.open_group.wide_teaser' => [
+      'langcode' => 'en',
+      'status' => TRUE,
+      'dependencies' => [
+        'config' => [
+          'core.entity_view_mode.group.wide_teaser',
+          'field.field.group.open_group.field_group_address',
+          'field.field.group.open_group.field_group_description',
+          'field.field.group.open_group.field_group_image',
+          'field.field.group.open_group.field_group_location',
+          'group.type.open_group',
+        ],
+        'module' => [
+          'address',
+          'image',
+        ],
+      ],
+      'id' => 'group.open_group.wide_teaser',
+      'targetEntityType' => 'group',
+      'bundle' => 'open_group',
+      'mode' => 'wide_teaser',
+      'content' => [
+        'field_group_address' => [
+          'type' => 'address_default',
+          'weight' => 1,
+          'region' => 'content',
+          'label' => 'hidden',
+          'settings' => [],
+          'third_party_settings' => [],
+        ],
+        'field_group_image' => [
+          'type' => 'image',
+          'weight' => 0,
+          'region' => 'content',
+          'label' => 'hidden',
+          'settings' => [
+            'image_style' => '',
+            'image_link' => '',
+          ],
+          'third_party_settings' => [],
+        ],
+        'field_group_location' => [
+          'type' => 'string',
+          'weight' => 2,
+          'region' => 'content',
+          'label' => 'hidden',
+          'settings' => [
+            'link_to_entity' => FALSE,
+          ],
+          'third_party_settings' => [],
+        ],
+      ],
+    ],
+    'core.entity_view_display.group.public_group.wide_teaser' => [
+      'langcode' => 'en',
+      'status' => TRUE,
+      'dependencies' => [
+        'config' => [
+          'core.entity_view_mode.group.wide_teaser',
+          'field.field.group.public_group.field_group_address',
+          'field.field.group.public_group.field_group_description',
+          'field.field.group.public_group.field_group_image',
+          'field.field.group.public_group.field_group_location',
+          'group.type.public_group',
+        ],
+        'module' => [
+          'address',
+          'image',
+        ],
+      ],
+      'id' => 'group.public_group.wide_teaser',
+      'targetEntityType' => 'group',
+      'bundle' => 'public_group',
+      'mode' => 'wide_teaser',
+      'content' => [
+        'field_group_address' => [
+          'type' => 'address_default',
+          'weight' => 1,
+          'region' => 'content',
+          'label' => 'hidden',
+          'settings' => [],
+          'third_party_settings' => [],
+        ],
+        'field_group_image' => [
+          'type' => 'image',
+          'weight' => 0,
+          'region' => 'content',
+          'label' => 'hidden',
+          'settings' => [
+            'image_style' => '',
+            'image_link' => '',
+          ],
+          'third_party_settings' => [],
+        ],
+        'field_group_location' => [
+          'type' => 'string',
+          'weight' => 2,
+          'region' => 'content',
+          'label' => 'hidden',
+          'settings' => [
+            'link_to_entity' => FALSE,
+          ],
+          'third_party_settings' => [],
+        ],
+      ],
+    ],
+    'core.entity_view_display.node.event.wide_teaser' => [
+      'langcode' => 'en',
+      'status' => TRUE,
+      'dependencies' => [
+        'config' => [
+          'core.entity_view_mode.node.wide_teaser',
+          'field.field.node.event.body',
+          'field.field.node.event.field_content_visibility',
+          'field.field.node.event.field_event_address',
+          'field.field.node.event.field_event_comments',
+          'field.field.node.event.field_event_date',
+          'field.field.node.event.field_event_date_end',
+          'field.field.node.event.field_event_enroll',
+          'field.field.node.event.field_event_image',
+          'field.field.node.event.field_event_location',
+          'field.field.node.event.field_files',
+          'node.type.event',
+        ],
+        'module' => [
+          'address',
+          'image',
+          'user',
+        ],
+      ],
+      'id' => 'node.event.wide_teaser',
+      'targetEntityType' => 'node',
+      'bundle' => 'event',
+      'mode' => 'wide_teaser',
+      'content' => [
+        'field_event_address' => [
+          'type' => 'address_plain',
+          'weight' => 7,
+          'label' => 'hidden',
+          'settings' => [],
+          'third_party_settings' => [],
+          'region' => 'content',
+        ],
+        'field_event_image' => [
+          'type' => 'image',
+          'weight' => 5,
+          'region' => 'content',
+          'label' => 'hidden',
+          'settings' => [
+            'image_style' => '',
+            'image_link' => '',
+          ],
+          'third_party_settings' => [],
+        ],
+        'field_event_location' => [
+          'type' => 'string',
+          'weight' => 6,
+          'label' => 'hidden',
+          'settings' => [
+            'link_to_entity' => FALSE,
+          ],
+          'third_party_settings' => [],
+          'region' => 'content',
+        ],
+        'groups_type_asdasd' => [
+          'label' => 'above',
+          'weight' => 0,
+          'region' => 'content',
+          'settings' => [
+            'link' => TRUE,
+          ],
+          'third_party_settings' => [],
+          'type' => 'entity_reference_label',
+        ],
+        'groups_type_course_advanced' => [
+          'label' => 'above',
+          'weight' => 1,
+          'region' => 'content',
+          'settings' => [
+            'link' => TRUE,
+          ],
+          'third_party_settings' => [],
+          'type' => 'entity_reference_label',
+        ],
+        'groups_type_course_basic' => [
+          'label' => 'above',
+          'weight' => 2,
+          'region' => 'content',
+          'settings' => [
+            'link' => TRUE,
+          ],
+          'third_party_settings' => [],
+          'type' => 'entity_reference_label',
+        ],
+        'groups_type_flexible_group' => [
+          'label' => 'above',
+          'weight' => 3,
+          'region' => 'content',
+          'settings' => [
+            'link' => TRUE,
+          ],
+          'third_party_settings' => [],
+          'type' => 'entity_reference_label',
+        ],
+        'groups_type_public_group' => [
+          'label' => 'above',
+          'weight' => 4,
+          'region' => 'content',
+          'settings' => [
+            'link' => TRUE,
+          ],
+          'third_party_settings' => [],
+          'type' => 'entity_reference_label',
+        ],
+      ],
+    ],
+    'core.entity_view_display.node.landing_page.wide_teaser' => [
+      'langcode' => 'en',
+      'status' => TRUE,
+      'dependencies' => [
+        'config' => [
+          'core.entity_view_mode.node.wide_teaser',
+          'field.field.node.landing_page.field_content_visibility',
+          'field.field.node.landing_page.field_landing_page_section',
+          'node.type.landing_page',
+        ],
+        'module' => [
+          'entity_reference_revisions',
+          'user',
+        ],
+      ],
+      'id' => 'node.landing_page.wide_teaser',
+      'targetEntityType' => 'node',
+      'bundle' => 'landing_page',
+      'mode' => 'wide_teaser',
+      'content' => [
+        'field_landing_page_section' => [
+          'type' => 'entity_reference_revisions_entity_view',
+          'weight' => 9,
+          'label' => 'hidden',
+          'settings' => [
+            'view_mode' => 'default',
+            'link' => '',
+          ],
+          'third_party_settings' => [],
+          'region' => 'content',
+        ],
+        'flag_follow_content' => [
+          'weight' => 8,
+          'region' => 'content',
+          'settings' => [],
+          'third_party_settings' => [],
+        ],
+        'groups' => [
+          'label' => 'above',
+          'weight' => 4,
+          'region' => 'content',
+          'settings' => [
+            'link' => TRUE,
+          ],
+          'third_party_settings' => [],
+          'type' => 'entity_reference_label',
+        ],
+        'groups_type_asdasd' => [
+          'label' => 'above',
+          'weight' => 0,
+          'region' => 'content',
+          'settings' => [
+            'link' => TRUE,
+          ],
+          'third_party_settings' => [],
+          'type' => 'entity_reference_label',
+        ],
+        'groups_type_closed_group' => [
+          'label' => 'above',
+          'weight' => 5,
+          'region' => 'content',
+          'settings' => [
+            'link' => TRUE,
+          ],
+          'third_party_settings' => [],
+          'type' => 'entity_reference_label',
+        ],
+        'groups_type_course_advanced' => [
+          'label' => 'above',
+          'weight' => 1,
+          'region' => 'content',
+          'settings' => [
+            'link' => TRUE,
+          ],
+          'third_party_settings' => [],
+          'type' => 'entity_reference_label',
+        ],
+        'groups_type_course_basic' => [
+          'label' => 'above',
+          'weight' => 2,
+          'region' => 'content',
+          'settings' => [
+            'link' => TRUE,
+          ],
+          'third_party_settings' => [],
+          'type' => 'entity_reference_label',
+        ],
+        'groups_type_flexible_group' => [
+          'label' => 'above',
+          'weight' => 3,
+          'region' => 'content',
+          'settings' => [
+            'link' => TRUE,
+          ],
+          'third_party_settings' => [],
+          'type' => 'entity_reference_label',
+        ],
+        'groups_type_open_group' => [
+          'label' => 'above',
+          'weight' => 6,
+          'region' => 'content',
+          'settings' => [
+            'link' => TRUE,
+          ],
+          'third_party_settings' => [],
+          'type' => 'entity_reference_label',
+        ],
+        'groups_type_public_group' => [
+          'label' => 'above',
+          'weight' => 7,
+          'region' => 'content',
+          'settings' => [
+            'link' => TRUE,
+          ],
+          'third_party_settings' => [],
+          'type' => 'entity_reference_label',
+        ],
+      ],
+    ],
+    'core.entity_view_display.node.page.wide_teaser' => [
+      'langcode' => 'en',
+      'status' => TRUE,
+      'dependencies' => [
+        'config' => [
+          'core.entity_view_mode.node.wide_teaser',
+          'field.field.node.page.body',
+          'field.field.node.page.field_content_visibility',
+          'field.field.node.page.field_files',
+          'field.field.node.page.field_page_comments',
+          'field.field.node.page.field_page_image',
+          'node.type.page',
+        ],
+        'module' => [
+          'image',
+          'user',
+        ],
+      ],
+      'id' => 'node.page.wide_teaser',
+      'targetEntityType' => 'node',
+      'bundle' => 'page',
+      'mode' => 'wide_teaser',
+      'content' => [
+        'field_page_image' => [
+          'type' => 'image',
+          'weight' => 8,
+          'region' => 'content',
+          'label' => 'above',
+          'settings' => [
+            'image_style' => '',
+            'image_link' => '',
+          ],
+          'third_party_settings' => [],
+        ],
+        'groups' => [
+          'type' => 'entity_reference_label',
+          'weight' => 4,
+          'region' => 'content',
+          'label' => 'above',
+          'settings' => [
+            'link' => TRUE,
+          ],
+          'third_party_settings' => [],
+        ],
+        'groups_type_asdasd' => [
+          'label' => 'above',
+          'weight' => 0,
+          'region' => 'content',
+          'settings' => [
+            'link' => TRUE,
+          ],
+          'third_party_settings' => [],
+          'type' => 'entity_reference_label',
+        ],
+        'groups_type_closed_group' => [
+          'type' => 'entity_reference_label',
+          'weight' => 5,
+          'region' => 'content',
+          'label' => 'above',
+          'settings' => [
+            'link' => TRUE,
+          ],
+          'third_party_settings' => [],
+        ],
+        'groups_type_course_advanced' => [
+          'label' => 'above',
+          'weight' => 1,
+          'region' => 'content',
+          'settings' => [
+            'link' => TRUE,
+          ],
+          'third_party_settings' => [],
+          'type' => 'entity_reference_label',
+        ],
+        'groups_type_course_basic' => [
+          'label' => 'above',
+          'weight' => 2,
+          'region' => 'content',
+          'settings' => [
+            'link' => TRUE,
+          ],
+          'third_party_settings' => [],
+          'type' => 'entity_reference_label',
+        ],
+        'groups_type_flexible_group' => [
+          'label' => 'above',
+          'weight' => 3,
+          'region' => 'content',
+          'settings' => [
+            'link' => TRUE,
+          ],
+          'third_party_settings' => [],
+          'type' => 'entity_reference_label',
+        ],
+        'groups_type_open_group' => [
+          'type' => 'entity_reference_label',
+          'weight' => 6,
+          'region' => 'content',
+          'label' => 'above',
+          'settings' => [
+            'link' => TRUE,
+          ],
+          'third_party_settings' => [],
+        ],
+        'groups_type_public_group' => [
+          'type' => 'entity_reference_label',
+          'weight' => 7,
+          'region' => 'content',
+          'label' => 'above',
+          'settings' => [
+            'link' => TRUE,
+          ],
+          'third_party_settings' => [],
+        ],
+      ],
+    ],
+    'core.entity_view_display.node.topic.wide_teaser' => [
+      'langcode' => 'en',
+      'status' => TRUE,
+      'dependencies' => [
+        'config' => [
+          'core.entity_view_mode.node.wide_teaser',
+          'field.field.node.topic.body',
+          'field.field.node.topic.field_content_visibility',
+          'field.field.node.topic.field_files',
+          'field.field.node.topic.field_topic_comments',
+          'field.field.node.topic.field_topic_image',
+          'field.field.node.topic.field_topic_type',
+          'node.type.topic',
+        ],
+        'module' => [
+          'image',
+          'user',
+        ],
+      ],
+      'id' => 'node.topic.wide_teaser',
+      'targetEntityType' => 'node',
+      'bundle' => 'topic',
+      'mode' => 'wide_teaser',
+      'content' => [
+        'field_topic_image' => [
+          'type' => 'image',
+          'weight' => 7,
+          'region' => 'content',
+          'label' => 'hidden',
+          'settings' => [
+            'image_style' => '',
+            'image_link' => '',
+          ],
+          'third_party_settings' => [],
+        ],
+        'field_topic_type' => [
+          'type' => 'entity_reference_label',
+          'weight' => 8,
+          'region' => 'content',
+          'label' => 'hidden',
+          'settings' => [
+            'link' => TRUE,
+          ],
+          'third_party_settings' => [],
+        ],
+        'groups' => [
+          'type' => 'entity_reference_label',
+          'weight' => 0,
+          'region' => 'content',
+          'label' => 'above',
+          'settings' => [
+            'link' => TRUE,
+          ],
+          'third_party_settings' => [],
+        ],
+        'groups_type_asdasd' => [
+          'label' => 'above',
+          'weight' => -5,
+          'region' => 'content',
+          'settings' => [
+            'link' => TRUE,
+          ],
+          'third_party_settings' => [],
+          'type' => 'entity_reference_label',
+        ],
+        'groups_type_closed_group' => [
+          'type' => 'entity_reference_label',
+          'weight' => 1,
+          'region' => 'content',
+          'label' => 'above',
+          'settings' => [
+            'link' => TRUE,
+          ],
+          'third_party_settings' => [],
+        ],
+        'groups_type_course_advanced' => [
+          'label' => 'above',
+          'weight' => 2,
+          'region' => 'content',
+          'settings' => [
+            'link' => TRUE,
+          ],
+          'third_party_settings' => [],
+          'type' => 'entity_reference_label',
+        ],
+        'groups_type_course_basic' => [
+          'label' => 'above',
+          'weight' => 3,
+          'region' => 'content',
+          'settings' => [
+            'link' => TRUE,
+          ],
+          'third_party_settings' => [],
+          'type' => 'entity_reference_label',
+        ],
+        'groups_type_flexible_group' => [
+          'label' => 'above',
+          'weight' => 4,
+          'region' => 'content',
+          'settings' => [
+            'link' => TRUE,
+          ],
+          'third_party_settings' => [],
+          'type' => 'entity_reference_label',
+        ],
+        'groups_type_open_group' => [
+          'type' => 'entity_reference_label',
+          'weight' => 5,
+          'region' => 'content',
+          'label' => 'above',
+          'settings' => [
+            'link' => TRUE,
+          ],
+          'third_party_settings' => [],
+        ],
+        'groups_type_public_group' => [
+          'type' => 'entity_reference_label',
+          'weight' => 6,
+          'region' => 'content',
+          'label' => 'above',
+          'settings' => [
+            'link' => TRUE,
+          ],
+          'third_party_settings' => [],
+        ],
+      ],
+    ],
+//    'core.entity_view_display.paragraph.featured.preview' => [
+//      'langcode' => 'en',
+//      'status' => TRUE,
+//      'dependencies' => [
+//        'config' => [
+//          'core.entity_view_mode.paragraph.preview',
+//          'field.field.paragraph.featured.field_featured_description',
+//          'field.field.paragraph.featured.field_featured_items',
+//          'field.field.paragraph.featured.field_featured_link',
+//          'field.field.paragraph.featured.field_featured_title',
+//          'paragraphs.paragraphs_type.featured',
+//        ],
+//        'module' => [
+//          'dynamic_entity_reference',
+//          'link',
+//          'text',
+//        ],
+//      ],
+//      'id' => 'paragraph.featured.preview',
+//      'targetEntityType' => 'paragraph',
+//      'bundle' => 'featured',
+//      'mode' => 'preview',
+//      'content' => [
+//        'field_featured_description' => [
+//          'weight' => 1,
+//          'label' => 'above',
+//          'settings' => [],
+//          'third_party_settings' => [],
+//          'type' => 'text_default',
+//          'region' => 'content',
+//        ],
+//        'field_featured_items' => [
+//          'weight' => 2,
+//          'label' => 'above',
+//          'settings' => [
+//            'node' => [
+//              'view_mode' => 'featured',
+//            ],
+//            'group' => [
+//              'view_mode' => 'featured',
+//            ],
+//            'profile' => [
+//              'view_mode' => 'featured',
+//            ],
+//            'activity' => [
+//              'view_mode' => 'default',
+//              'link' => FALSE,
+//            ],
+//            'comment' => [
+//              'view_mode' => 'default',
+//              'link' => FALSE,
+//            ],
+//            'crop' => [
+//              'view_mode' => 'default',
+//              'link' => FALSE,
+//            ],
+//            'block_content' => [
+//              'view_mode' => 'default',
+//              'link' => FALSE,
+//            ],
+//            'menu_link_content' => [
+//              'view_mode' => 'default',
+//              'link' => FALSE,
+//            ],
+//            'event_enrollment' => [
+//              'view_mode' => 'default',
+//              'link' => FALSE,
+//            ],
+//            'file' => [
+//              'view_mode' => 'default',
+//              'link' => FALSE,
+//            ],
+//            'flagging' => [
+//              'view_mode' => 'default',
+//              'link' => FALSE,
+//            ],
+//            'font' => [
+//              'view_mode' => 'default',
+//              'link' => FALSE,
+//            ],
+//            'group_content' => [
+//              'view_mode' => 'default',
+//              'link' => FALSE,
+//            ],
+//            'mentions' => [
+//              'view_mode' => 'default',
+//              'link' => FALSE,
+//            ],
+//            'message' => [
+//              'view_mode' => 'default',
+//              'link' => FALSE,
+//            ],
+//            'paragraph' => [
+//              'view_mode' => 'default',
+//              'link' => FALSE,
+//            ],
+//            'post' => [
+//              'view_mode' => 'default',
+//              'link' => FALSE,
+//            ],
+//            'search_api_task' => [
+//              'view_mode' => 'default',
+//              'link' => FALSE,
+//            ],
+//            'taxonomy_term' => [
+//              'view_mode' => 'default',
+//              'link' => FALSE,
+//            ],
+//            'user' => [
+//              'view_mode' => 'default',
+//              'link' => FALSE,
+//            ],
+//            'vote' => [
+//              'view_mode' => 'default',
+//              'link' => FALSE,
+//            ],
+//            'vote_result' => [
+//              'view_mode' => 'default',
+//              'link' => FALSE,
+//            ],
+//          ],
+//          'third_party_settings' => [],
+//          'type' => 'dynamic_entity_reference_entity_view',
+//          'region' => 'content',
+//        ],
+//        'field_featured_link' => [
+//          'weight' => 3,
+//          'label' => 'inline',
+//          'settings' => [
+//            'trim_length' => 80,
+//            'url_only' => FALSE,
+//            'url_plain' => FALSE,
+//            'rel' => '',
+//            'target' => '',
+//          ],
+//          'third_party_settings' => [],
+//          'type' => 'link',
+//          'region' => 'content',
+//        ],
+//        'field_featured_title' => [
+//          'weight' => 0,
+//          'label' => 'inline',
+//          'settings' => [
+//            'link_to_entity' => FALSE,
+//          ],
+//          'third_party_settings' => [],
+//          'type' => 'string',
+//          'region' => 'content',
+//        ],
+//      ],
+//    ],
+    'core.entity_view_display.profile.profile.wide_teaser' => [
+      'langcode' => 'en',
+      'status' => TRUE,
+      'dependencies' => [
+        'config' => [
+          'core.entity_view_mode.profile.wide_teaser',
+          'field.field.profile.profile.field_profile_address',
+          'field.field.profile.profile.field_profile_banner_image',
+          'field.field.profile.profile.field_profile_expertise',
+          'field.field.profile.profile.field_profile_first_name',
+          'field.field.profile.profile.field_profile_function',
+          'field.field.profile.profile.field_profile_image',
+          'field.field.profile.profile.field_profile_interests',
+          'field.field.profile.profile.field_profile_last_name',
+          'field.field.profile.profile.field_profile_organization',
+          'field.field.profile.profile.field_profile_phone_number',
+          'field.field.profile.profile.field_profile_profile_tag',
+          'field.field.profile.profile.field_profile_self_introduction',
+          'field.field.profile.profile.field_profile_show_email',
+          'profile.type.profile',
+        ],
+        'module' => [
+          'image',
+        ],
+      ],
+      'id' => 'profile.profile.wide_teaser',
+      'targetEntityType' => 'profile',
+      'bundle' => 'profile',
+      'mode' => 'wide_teaser',
+      'content' => [
+        'field_profile_first_name' => [
+          'type' => 'string',
+          'weight' => 1,
+          'region' => 'content',
+          'label' => 'hidden',
+          'settings' => [
+            'link_to_entity' => FALSE,
+          ],
+          'third_party_settings' => [],
+        ],
+        'field_profile_function' => [
+          'type' => 'string',
+          'weight' => 4,
+          'region' => 'content',
+          'label' => 'hidden',
+          'settings' => [
+            'link_to_entity' => FALSE,
+          ],
+          'third_party_settings' => [],
+        ],
+        'field_profile_image' => [
+          'type' => 'image',
+          'weight' => 0,
+          'region' => 'content',
+          'label' => 'hidden',
+          'settings' => [
+            'image_style' => '',
+            'image_link' => '',
+          ],
+          'third_party_settings' => [],
+        ],
+        'field_profile_last_name' => [
+          'type' => 'string',
+          'weight' => 2,
+          'region' => 'content',
+          'label' => 'hidden',
+          'settings' => [
+            'link_to_entity' => FALSE,
+          ],
+          'third_party_settings' => [],
+        ],
+        'field_profile_organization' => [
+          'type' => 'string',
+          'weight' => 3,
+          'region' => 'content',
+          'label' => 'hidden',
+          'settings' => [
+            'link_to_entity' => FALSE,
+          ],
+          'third_party_settings' => [],
+        ],
+      ],
+    ],
+//    'field.field.paragraph.featured.field_featured_items' => [
+//      'langcode' => 'en',
+//      'status' => TRUE,
+//      'dependencies' => [
+//        'config' => [
+//          'field.storage.paragraph.field_featured_items',
+//          'paragraphs.paragraphs_type.featured',
+//        ],
+//        'module' => [
+//          'dynamic_entity_reference',
+//        ],
+//      ],
+//      'id' => 'paragraph.featured.field_featured_items',
+//      'field_name' => 'field_featured_items',
+//      'entity_type' => 'paragraph',
+//      'bundle' => 'featured',
+//      'label' => 'Items',
+//      'description' => '',
+//      'required' => FALSE,
+//      'translatable' => FALSE,
+//      'default_value' => [],
+//      'default_value_callback' => '',
+//      'settings' => [
+//        'node' => [
+//          'handler' => 'views',
+//          'handler_settings' => [
+//            'view' => [
+//              'view_name' => 'featured_content_reference',
+//              'display_name' => 'entity_reference_1',
+//              'arguments' => [],
+//            ],
+//          ],
+//        ],
+//        'group' => [
+//          'handler' => 'views',
+//          'handler_settings' => [
+//            'view' => [
+//              'view_name' => 'featured_group_reference',
+//              'display_name' => 'entity_reference_1',
+//              'arguments' => [],
+//            ],
+//          ],
+//        ],
+//        'profile' => [
+//          'handler' => 'views',
+//          'handler_settings' => [
+//            'view' => [
+//              'view_name' => 'featured_profile_reference',
+//              'display_name' => 'entity_reference_1',
+//              'arguments' => [],
+//            ],
+//          ],
+//        ],
+//        'activity' => [
+//          'handler' => 'default:activity',
+//          'handler_settings' => [],
+//        ],
+//        'comment' => [
+//          'handler' => 'default:comment',
+//          'handler_settings' => [],
+//        ],
+//        'crop' => [
+//          'handler' => 'default:crop',
+//          'handler_settings' => [],
+//        ],
+//        'block_content' => [
+//          'handler' => 'default:block_content',
+//          'handler_settings' => [],
+//        ],
+//        'menu_link_content' => [
+//          'handler' => 'default:menu_link_content',
+//          'handler_settings' => [],
+//        ],
+//        'event_enrollment' => [
+//          'handler' => 'default:event_enrollment',
+//          'handler_settings' => [],
+//        ],
+//        'file' => [
+//          'handler' => 'default:file',
+//          'handler_settings' => [],
+//        ],
+//        'flagging' => [
+//          'handler' => 'default:flagging',
+//          'handler_settings' => [],
+//        ],
+//        'font' => [
+//          'handler' => 'default:font',
+//          'handler_settings' => [],
+//        ],
+//        'group_content' => [
+//          'handler' => 'default:group_content',
+//          'handler_settings' => [],
+//        ],
+//        'mentions' => [
+//          'handler' => 'default:mentions',
+//          'handler_settings' => [],
+//        ],
+//        'message' => [
+//          'handler' => 'default:message',
+//          'handler_settings' => [],
+//        ],
+//        'paragraph' => [
+//          'handler' => 'default:paragraph',
+//          'handler_settings' => [],
+//        ],
+//        'post' => [
+//          'handler' => 'default:post',
+//          'handler_settings' => [],
+//        ],
+//        'search_api_task' => [
+//          'handler' => 'default:search_api_task',
+//          'handler_settings' => [],
+//        ],
+//        'taxonomy_term' => [
+//          'handler' => 'default:taxonomy_term',
+//          'handler_settings' => [],
+//        ],
+//        'user' => [
+//          'handler' => 'default:user',
+//          'handler_settings' => [],
+//        ],
+//        'vote' => [
+//          'handler' => 'default:vote',
+//          'handler_settings' => [],
+//        ],
+//        'vote_result' => [
+//          'handler' => 'default:vote_result',
+//          'handler_settings' => [],
+//        ],
+//      ],
+//      'field_type' => 'dynamic_entity_reference',
+//    ],
+  ];
+
+  foreach ($configs as $name => $config) {
+    \Drupal::configFactory()->getEditable($name)->setData($config)->save(TRUE);
   }
 }
