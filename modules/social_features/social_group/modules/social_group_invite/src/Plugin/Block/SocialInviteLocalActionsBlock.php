@@ -125,11 +125,13 @@ class SocialInviteLocalActionsBlock extends BlockBase implements ContainerFactor
       $group = _social_group_get_current_group();
       $links = [
         '#type' => 'dropbutton',
-        '#links' => [
-          'title' => [
+        '#attributes' => [
+          'no-split' => [
             'title' => $this->t('Add members'),
-            'url' => Url::fromRoute('entity.group_content.add_form', ['plugin_id' => 'group_membership', 'group' => $group->id()]),
+            'alignment' => 'right',
           ],
+        ],
+        '#links' => [
           'add_directly' => [
             'title' => $this->t('Add directly'),
             'url' => Url::fromRoute('entity.group_content.add_form', ['plugin_id' => 'group_membership', 'group' => $group->id()]),
