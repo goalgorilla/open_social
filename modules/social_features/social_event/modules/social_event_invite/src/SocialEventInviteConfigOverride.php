@@ -37,7 +37,6 @@ class SocialEventInviteConfigOverride implements ConfigFactoryOverrideInterface 
     $config_names = [
       'block.block.socialbase_pagetitleblock',
       'block.block.socialblue_pagetitleblock',
-      'block.block.views_block__managers_event_managers_2',
       'block.block.socialblue_views_block__event_enrollments_event_enrollments_socialbase',
     ];
     foreach ($config_names as $config_name) {
