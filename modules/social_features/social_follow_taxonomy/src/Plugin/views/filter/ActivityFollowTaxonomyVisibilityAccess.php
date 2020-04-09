@@ -30,13 +30,15 @@ class ActivityFollowTaxonomyVisibilityAccess extends FilterPluginBase {
     $and_wrapper = db_and();
     $or = db_or();
 
-    // Nodes: retrieve all the nodes 'created' activity by node access grants.
+    // Adds a condition to the request to limit the visibility of personal
+    // activities for nodes: if the activity is not personal, then make it
+    // available to all users, otherwise only to the associated user.
     $node_access = db_and();
     $node_access->condition('activity__field_activity_entity.field_activity_entity_target_type', 'node', '=');
+    $this->query->addTable('activity__field_activity_recipient_user');
 
     if ($account->isAuthenticated()) {
       $na_or = db_or();
-      $this->query->addTable('activity__field_activity_recipient_user');
       $node_access->condition($na_or
         ->isNull('activity__field_activity_recipient_user.field_activity_recipient_user_target_id')
         ->condition('activity__field_activity_recipient_user.field_activity_recipient_user_target_id', $account->id(), 'IN')
