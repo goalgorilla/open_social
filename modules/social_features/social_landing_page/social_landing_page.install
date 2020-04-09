@@ -348,4 +348,11 @@ function social_landing_page_update_8804() {
   foreach ($config_names as $name) {
     $config_storage->write($name, $source->read($name));
   }
+
+  $change_list = \Drupal::entityDefinitionUpdateManager()->getChangeList();
+  if (!empty($change_list['paragraph']['field_storage_definitions'])) {
+    $storage_definitions = \Drupal::service('entity_field.manager')->getFieldStorageDefinitions('paragraph');
+    $storage_definition = isset($storage_definitions['field_featured_layout']) ? $storage_definitions['field_featured_layout'] : NULL;
+    \Drupal::service('field_storage_definition.listener')->onFieldStorageDefinitionCreate($storage_definition);
+  }
 }
