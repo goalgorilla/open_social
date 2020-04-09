@@ -29,6 +29,20 @@ social_event.update_enrollment_request:
   requirements:
     _custom_access: '\Drupal\social_event\Controller\UpdateEnrollRequestController::access'
 
+social_event.enrollment_request_decline_form:
+  path: '/node/{node}/all-enrollment-requests/confirm-decline/{event_enrollment}'
+  defaults:
+    _form: '\Drupal\social_event\Form\EnrollRequestDeclineForm'
+    _title_callback: '\Drupal\social_event\Controller\SocialEventController::getTitleDeclineRequest'
+  options:
+    parameters:
+      node:
+        type: entity:node
+      event_enrollment:
+        type: entity:event_enrollment
+  requirements:
+    _custom_access: '\Drupal\social_event\Controller\UpdateEnrollRequestController::access'
+
 social_event.request_enroll_dialog:
   path: '/node/{node}/enroll-dialog'
   defaults:

@@ -812,10 +812,9 @@ function social_event_entity_operation_alter(array &$operations, EntityInterface
     ]);
     // Add the "Decline" option.
     $operations['decline']['title'] = t('Decline');
-    $operations['decline']['url'] = Url::fromRoute('social_event.update_enrollment_request', [
+    $operations['decline']['url'] = Url::fromRoute('social_event.enrollment_request_decline_form', [
       'node' => $node,
       'event_enrollment' => $entity->id(),
-      'approve' => 0,
     ]);
   }
 }
@@ -833,7 +832,7 @@ function social_event_node_update(Drupal\Core\Entity\EntityInterface $entity) {
 
     // If the request to enroll was turned off then delete the request.
     if ((int) $enroll_state_original === 2) {
-      /** @var \Drupal\social_event_invite\EventEnrollmentStatusHelper $enrollments */
+      /** @var \Drupal\social_event\EventEnrollmentStatusHelper $enrollments */
       $enrollments = \Drupal::service('social_event.status_helper');
 
       foreach($enrollments->getAllEventEnrollments($entity->id(), TRUE) as $enrollment) {
