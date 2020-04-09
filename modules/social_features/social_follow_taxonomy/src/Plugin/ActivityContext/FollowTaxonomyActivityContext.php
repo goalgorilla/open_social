@@ -4,6 +4,7 @@ namespace Drupal\social_follow_taxonomy\Plugin\ActivityContext;
 
 use Drupal\activity_creator\Plugin\ActivityContextBase;
 use Drupal\activity_creator\ActivityFactory;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\user\UserInterface;
 
 /**
@@ -79,6 +80,48 @@ class FollowTaxonomyActivityContext extends ActivityContextBase {
     }
 
     return $recipients;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function isValidEntity(EntityInterface $entity) {
+    switch ($entity->getEntityTypeId()) {
+      case 'node':
+        $recipients = [];
+        $tids = $this->taxonomyTermsList($entity);
+
+        if (empty($tids)) {
+          return FALSE;
+        }
+
+        $storage = $this->entityTypeManager->getStorage('flagging');
+        $flaggings = $storage->loadByProperties([
+          'flag_id' => 'follow_term',
+          'entity_type' => 'taxonomy_term',
+          'entity_id' => $tids,
+        ]);
+
+        foreach ($flaggings as $flagging) {
+          /* @var $flagging \Drupal\flag\FlaggingInterface */
+          $recipient = $flagging->getOwner();
+
+          if (!$recipient instanceof UserInterface) {
+            break;
+          }
+
+          // We don't send notifications to content creator.
+          if ($recipient->id() !== $entity->getOwnerId() && $entity->access('view', $recipient)) {
+            if (!in_array($recipient->id(), array_column($recipients, 'target_id'))) {
+              $recipients[] = $recipient->id();
+            }
+          }
+        }
+        if (!empty($recipients)) {
+          return TRUE;
+        }
+    }
+    return FALSE;
   }
 
 }

@@ -6,6 +6,7 @@
  */
 
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\Url;
 use Drupal\taxonomy\TermInterface;
 
@@ -31,6 +32,70 @@ function social_follow_tag_theme() {
     ],
   ];
 
+}
+
+/**
+ * Implements hook_token_info().
+ */
+function social_follow_tag_token_info() {
+  $social_tag['taxonomy_i_follow'] = [
+    'name' => t('Taxonomy I follow.'),
+    'description' => t('Taxonomy term I follow'),
+  ];
+
+  return [
+    'tokens' => [
+      'social_taxonomy' => $social_tag,
+    ],
+  ];
+}
+
+/**
+ * Implements hook_tokens().
+ *
+ * { @inheritdoc }
+ */
+function social_follow_tag_tokens($type, $tokens, array $data, array $options, BubbleableMetadata $bubbleable_metadata) {
+  $replacements = [];
+  $names = [];
+
+  if ($type === 'social_taxonomy' && !empty($data['message'])) {
+    foreach ($tokens as $name => $original) {
+      switch ($name) {
+        case 'taxonomy_i_follow':
+          $entity_id = $data['message']->getFieldValue('field_message_related_object', 'target_id');
+          if (!empty($entity_id)) {
+            $node_storage = \Drupal::entityTypeManager()->getStorage('node');
+            /** @var \Drupal\node\Entity\Node $node */
+            $node = $node_storage->load($entity_id);
+            if ($node !== NULL) {
+              if ($node->hasField('social_tagging')) {
+                if (!empty($node->get('social_tagging')->getValue())) {
+                  $tags = $node->get('social_tagging')->getValue();
+
+                  foreach ($tags as $tag) {
+                    /** @var \Drupal\taxonomy\TermInterface $term */
+                    $term = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->load($tag['target_id']);
+                    if ($term instanceof TermInterface) {
+                      if (social_follow_taxonomy_term_followed($term)) {
+                        $names[] = $term->getName();
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+
+          // String with term names in quotation marks, separated by commas.
+          $replacement_string = "'" . implode("', '", $names) . "'";
+          $replacements[$original] = $replacement_string;
+          break;
+      }
+    }
+  }
+
+  return $replacements;
 }
 
 /**
