@@ -491,18 +491,6 @@ function social_event_form_alter(&$form, FormStateInterface $form_state, $form_i
         $form['field_event_enroll']['widget']['value']['#default_value'] = TRUE;
       }
 
-      // Alter visibility of enrollment methods.
-      $field_name = 'field_event_enroll';
-
-      $fields = [
-        'field_enroll_method',
-        'field_event_enroll_outside_group',
-      ];
-
-      social_event_field_visibility($form, $field_name, $fields);
-
-      break;
-
     case 'node_event_form':
       $form['event_all_day'] = [
         '#type' => 'checkbox',
