@@ -2,14 +2,11 @@
 
 namespace Drupal\social_event_invite\Form;
 
-use Drupal\Core\Cache\Cache;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\social_core\Form\InviteUserBaseForm;
-use Drupal\social_event\Entity\EventEnrollment;
-use Drupal\social_event\EventEnrollmentInterface;
 use Drupal\social_event\EventEnrollmentStatusHelper;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -110,49 +107,16 @@ class EnrollInviteUserForm extends InviteUserBaseForm {
     $users = $form_state->getValue('entity_id_new');
     $nid = $form_state->getValue('event');
 
-    foreach ($users as $uid => $target_id) {
-      // Default values.
-      $fields = [
-        'field_event' => $nid,
-        'field_enrollment_status' => '0',
-        'field_request_or_invite_status' => EventEnrollmentInterface::INVITE_PENDING_REPLY,
-        'user_id' => $uid,
-        'field_account' => $uid,
-      ];
-
-      // Check if this user has been invited before. It might be that the user
-      // declined the invite, or that the invite is now invalid and expired.
-      // We simply delete the outdated invite and create a new one.
-      $existing_enrollment = $this->eventInviteStatus->getEventEnrollments($uid, $nid, TRUE);
-      if (!empty($existing_enrollment)) {
-        /** @var EventEnrollment $enrollment */
-        $enrollment = end($existing_enrollment);
-        // Of course, only delete the previous invite if it was declined
-        // or if it was invalid or expired.
-        $status_checks = [
-          EventEnrollmentInterface::REQUEST_OR_INVITE_DECLINED,
-          EventEnrollmentInterface::INVITE_INVALID_OR_EXPIRED,
-        ];
-        if (in_array($enrollment->field_request_or_invite_status->value, $status_checks)) {
-          $enrollment->delete();
-        }
-      }
-
-      // Clear the cache.
-      $tags = [];
-      $tags[] = 'enrollment:' . $nid . '-' . $uid;
-      $tags[] = 'event_content_list:entity:' . $uid;
-      Cache::invalidateTags($tags);
-
-      // Create a new enrollment for the event.
-      $enrollment = EventEnrollment::create($fields);
-      // In order for the notifications to be sent correctly we're updating the
-      // owner here. The account is still linked to the actual enrollee.
-      // The owner is always used as the actor.
-      // @see activity_creator_message_insert().
-      $enrollment->setOwnerId(\Drupal::currentUser()->id());
-      $enrollment->save();
-    }
+    $batch = [
+      'title' => $this->t('Sending invites...'),
+      'init_message' => $this->t("Preparing to send invites..."),
+      'operations' => [
+        [
+          '\Drupal\social_event_invite\SocialEventInviteBulkHelper::bulkInviteUsers',
+          [$users, $nid],
+        ],
+      ],
+    ];
+    batch_set($batch);
   }
-
 }

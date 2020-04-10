@@ -150,41 +150,17 @@ class EnrollInviteEmailForm extends InviteEmailBaseForm {
     $emails = $this->getSubmittedEmails($form_state);
     $nid = $form_state->getValue('event');
 
-    foreach ($emails as $email) {
-      $user = user_load_by_mail($email);
-
-      // Default values.
-      $fields = [
-        'field_event' => $nid,
-        'field_enrollment_status' => '0',
-        'field_request_or_invite_status' => EventEnrollmentInterface::INVITE_PENDING_REPLY,
-      ];
-
-      if ($user instanceof UserInterface) {
-        // Add user information.
-        $fields['user_id'] = $user->id();
-        $fields['field_account'] = $user->id();
-
-        // Clear the cache.
-        $tags = [];
-        $tags[] = 'enrollment:' . $nid . '-' . $user->id();
-        $tags[] = 'event_content_list:entity:' . $user->id();
-        Cache::invalidateTags($tags);
-      }
-      else {
-        // Add email address.
-        $fields['field_email'] = $email;
-      }
-
-      // Create a new enrollment for the event.
-      $enrollment = EventEnrollment::create($fields);
-      // In order for the notifications to be sent correctly we're updating the
-      // owner here. The account is still linked to the actual enrollee.
-      // The owner is always used as the actor.
-      // @see activity_creator_message_insert().
-      $enrollment->setOwnerId(\Drupal::currentUser()->id());
-      $enrollment->save();
-    }
+    $batch = [
+      'title' => $this->t('Sending invites...'),
+      'init_message' => $this->t("Preparing to send invites..."),
+      'operations' => [
+        [
+          '\Drupal\social_event_invite\SocialEventInviteBulkHelper::bulkInviteEmails',
+          [$emails, $nid],
+        ],
+      ],
+    ];
+    batch_set($batch);
   }
 
 }
