@@ -1,0 +1,22 @@
+social_group_request.anonymous_request_membership:
+  path: '/group/{group}/anonymous-request-membership'
+  defaults:
+    _controller: '\Drupal\social_group_request\Controller\GroupRequestController::anonymousRequestMembership'
+  requirements:
+    _access: 'TRUE'
+  options:
+    parameters:
+      group:
+        type: 'entity:group'
+
+social_group_request.cancel_request:
+  path: '/group/{group}/cancel-request'
+  defaults:
+    _controller: '\Drupal\social_group_request\Controller\GroupRequestController::cancelRequest'
+  requirements:
+    _group_permission: 'request group membership'
+    _group_member: 'FALSE'
+  options:
+    parameters:
+      group:
+        type: 'entity:group'
