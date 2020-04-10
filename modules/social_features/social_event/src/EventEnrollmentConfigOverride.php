@@ -32,7 +32,7 @@ class EventEnrollmentConfigOverride implements ConfigFactoryOverrideInterface {
         $request_path = $config->get('visibility.request_path');
 
         if (!empty($request_path)) {
-          $request_path['pages'] = "\r\n";
+          $request_path['pages'] .= "\r\n";
         }
 
         $request_path['id'] = 'request_path';
