@@ -2,6 +2,9 @@
 
 namespace Drupal\social_activity_filter\Plugin\views\display;
 
+use Drupal\Console\Core\Utils\NestedArray;
+use Drupal\Core\Ajax\AjaxResponse;
+use Drupal\Core\Ajax\ReplaceCommand;
 use Drupal\Core\Block\BlockManagerInterface;
 use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\DependencyInjection\DeprecatedServicePropertyTrait;
@@ -159,14 +162,6 @@ class FilterBlock extends Block {
   public function blockForm(ViewsBlock $block, array &$form, FormStateInterface $form_state) {
     parent::blockForm($block, $form, $form_state);
 
-    if ($triggering_element = $form_state->getTriggeringElement()) {
-
-      // Do not show filters for referenced views block.
-      if (in_array('field_block_reference', $triggering_element["#parents"])) {
-        return $form;
-      }
-    }
-
     // Check if overridden filter option is enabled for current views block.
     if (!$this->getOption('override_tags_filter')) {
       return $form;
@@ -244,13 +239,15 @@ class FilterBlock extends Block {
    *   The processed element.
    */
   public static function processFilterTags(array &$element, FormStateInterface $form_state, array &$complete_form) {
+    // Get selected vocabulary value.
+    $parents = $element["#parents"];
     $input = $form_state->getUserInput();
+    $values = NestedArray::getValue($input, $parents);
 
-    if (isset($input['settings']['override']['vocabulary'])) {
-      $override = $input['settings']['override']['vocabulary'];
-      $form_state->set('new_options_tags', $override);
+    // Save it & use to build new_options list tags.
+    if (isset($values['vocabulary'])) {
+      $form_state->set('new_options_tags', $values['vocabulary']);
     }
-
     return $element;
   }
 
@@ -258,7 +255,24 @@ class FilterBlock extends Block {
    * Handles switching the available terms based on the selected vocabulary.
    */
   public static function updateTagsOptions($form, FormStateInterface $form_state) {
-    return $form['settings']['override']['tags'];
+
+    // Check if there is triggered parent of element.
+    if ($triggered = $form_state->getTriggeringElement()) {
+
+      // Build array of parents for triggered child element.
+      $parents = $triggered['#array_parents'];
+      array_pop($parents);
+      array_push($parents, 'tags');
+
+      // Get triggered child element.
+      $element = NestedArray::getValue($form, $parents);
+
+      // Return child element.
+      $response = new AjaxResponse();
+      $response->addCommand(new ReplaceCommand('#edit-block-term-wrapper', $element));
+
+      return $response;
+    }
   }
 
   /**
