@@ -507,6 +507,12 @@ function social_event_form_alter(&$form, FormStateInterface $form_state, $form_i
 
       social_event_field_visibility($form, $field_name, $fields);
 
+      $form['field_event_enroll_outside_group']['#states'] = [
+        'visible' => [
+          ':input[name="groups"]' => ['!value' => '_none'],
+        ],
+      ];
+      
       // Set default value and fieldgroup for all day checkbox.
       if ($date = $form['field_event_date']['widget'][0]['value']['#default_value']) {
         $all_day_value = $date instanceof DrupalDateTime && social_event_date_is_all_day($date);
