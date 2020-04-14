@@ -51,7 +51,7 @@ class SocialEventInviteConfigOverride implements ConfigFactoryOverrideInterface 
         }
 
         $request_path['id'] = 'request_path';
-        $request_path['negate'] = TRUE;
+        $request_path['negate'] = FALSE;
         $request_path['context_mapping'] = [];
         $request_path['pages'] .= '*/invite/email' . "\r\n" . '*/invite/user';
 
