@@ -223,9 +223,7 @@ function social_event_an_enroll_form_alter(&$form, FormStateInterface $form_stat
       'visible' => [
         ':input[name="field_content_visibility"]' => ['value' => 'public'],
         ':input[name="field_event_enroll[value]"]' => ['checked' => TRUE],
-      ],
-      'disabled' => [
-        ':input[name="field_enroll_method"]' => ['value' => '2'],
+        ':input[name="field_enroll_method"]' => ['value' => '1'],
       ],
     ];
     // Set default value on event creation form.
@@ -240,7 +238,7 @@ function social_event_an_enroll_form_alter(&$form, FormStateInterface $form_stat
 }
 
 /**
- * Implements hook_ENTIT_YTYPE_update().
+ * Implements hook_ENTITY_TYPE_update().
  *
  * Display warning if visibility was changed for already enabled AN enroll.
  */
@@ -253,6 +251,18 @@ function social_event_an_enroll_node_update(Node $node) {
     if ($is_event_an_enroll && $old_visibility === 'public' && $new_visibility !== 'public') {
       drupal_set_message(t('Enrollment without account can only be enabled when the visibility of the event is Public.'), 'warning');
     }
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_presave().
+ *
+ * Set the correct value for AN enroll when enroll method is set to request.
+ */
+function social_event_an_enroll_node_presave(Drupal\Core\Entity\EntityInterface $entity) {
+  // If the enroll method is request then anonymous must be off.
+  if ($entity->getType() === 'event' && $entity->get('field_enroll_method')->value === '2') {
+    $entity->set('field_event_an_enroll', '0');
   }
 }
 
