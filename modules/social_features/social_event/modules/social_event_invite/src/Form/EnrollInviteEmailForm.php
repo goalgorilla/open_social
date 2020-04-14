@@ -10,6 +10,7 @@ use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\social_core\Form\InviteEmailBaseForm;
 use Drupal\social_event\Entity\EventEnrollment;
 use Drupal\social_event\EventEnrollmentInterface;
+use Drupal\social_event_invite\SocialEventInviteBulkHelper;
 use Drupal\user\UserInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -122,6 +123,20 @@ class EnrollInviteEmailForm extends InviteEmailBaseForm {
       }
 
       $enrollments = $this->entityStorage->loadByProperties($conditions);
+
+      if (!empty($enrollments)) {
+        /** @var EventEnrollment $enrollment */
+        $enrollment = end($enrollments);
+        // Of course, only delete the previous invite if it was declined
+        // or if it was invalid or expired.
+        $status_checks = [
+          EventEnrollmentInterface::REQUEST_OR_INVITE_DECLINED,
+          EventEnrollmentInterface::INVITE_INVALID_OR_EXPIRED,
+        ];
+        if (in_array($enrollment->field_request_or_invite_status->value, $status_checks)) {
+          $enrollment->delete();
+        }
+      }
 
       // If enrollments can be found this user is already invited or joined.
       if (!empty($enrollments)) {
