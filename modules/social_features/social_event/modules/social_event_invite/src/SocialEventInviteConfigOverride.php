@@ -46,13 +46,16 @@ class SocialEventInviteConfigOverride implements ConfigFactoryOverrideInterface 
         $config = \Drupal::service('config.factory')->getEditable($config_name);
         $request_path = $config->get('visibility.request_path');
 
-        if (!empty($request_path)) {
+        // If there is not request path, set the default options.
+        if (empty($request_path)) {
+          $request_path['id'] = 'request_path';
+          $request_path['negate'] = TRUE;
+          $request_path['context_mapping'] = [];
+        }
+        else {
           $request_path['pages'] .= "\r\n";
         }
 
-        $request_path['id'] = 'request_path';
-        $request_path['negate'] = FALSE;
-        $request_path['context_mapping'] = [];
         $request_path['pages'] .= '*/invite/email' . "\r\n" . '*/invite/user';
 
         $overrides[$config_name] = ['visibility' => ['request_path' => $request_path]];
