@@ -3,6 +3,7 @@
 namespace Drupal\social_content_block;
 
 use Drupal\block_content\BlockContentInterface;
+use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Database\Query\SelectInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
@@ -279,7 +280,12 @@ class ContentBuilder implements ContentBuilderInterface {
         // field repeatedly.
         // @see \Drupal\social_content_block\Plugin\Field\FieldWidget\ContentBlockPluginFieldWidget::formElement()
         if ($field_name === $field_title) {
-          $fields[$field_name] = $element[$field_name]['widget']['target_id']['#title'];
+          if (isset($element[$field_name]['widget']['target_id'])) {
+            $fields[$field_name] = $element[$field_name]['widget']['target_id']['#title'];
+          }
+          else {
+            $fields[$field_name] = $element[$field_name]['widget']['#title'];
+          }
 
           $element[$field_name]['#states'] = [
             'visible' => [
@@ -302,23 +308,35 @@ class ContentBuilder implements ContentBuilderInterface {
       'wrapper' => 'social-content-block-sorting-options',
     ];
 
-    // Set the sorting options based on the selected plugins.
-    $selected_plugin = $form_state->getValue(
-      ['settings', 'block_form', 'field_plugin_id', 0, 'value']
+    $parents = array_merge(
+      $element['field_plugin_id']['widget']['#field_parents'],
+      ['field_plugin_id']
     );
+
+    // Set the sorting options based on the selected plugins.
+    $value_parents = array_merge($parents, ['0', 'value']);
+    $selected_plugin = $form_state->getValue($value_parents);
+
     // If there's no value in the form state check if there was anything in the
     // submissions.
     if ($selected_plugin === NULL) {
       $input = $form_state->getUserInput();
-      if (!empty($input['settings']['block_form']['field_plugin_id'][0]['value']) &&
-        isset($element['field_plugin_id']['widget'][0]['value']['#options'][$input['settings']['block_form']['field_plugin_id'][0]['value']])) {
-        $selected_plugin = $input['settings']['block_form']['field_plugin_id'][0]['value'];
+      $field = $element['field_plugin_id']['widget'][0]['value'];
+
+      if (NestedArray::keyExists($input, $value_parents)) {
+        $input_value = NestedArray::getValue($input, $value_parents);
+
+        if (!empty($input_value) && isset($field['#options'][$input_value])) {
+          $selected_plugin = $input_value;
+        }
       }
+
       // If nothing valid was selected yet then we fallback to the default.
-      else {
-        $selected_plugin = key($element['field_plugin_id']['widget'][0]['value']['#options']);
+      if (empty($selected_plugin)) {
+        $selected_plugin = $field['#default_value'];
       }
     }
+
     $element['field_sorting']['widget']['#options'] = $content_block_manager->createInstance($selected_plugin)->supportedSortOptions();
     $element['field_sorting']['#prefix'] = '<div id="social-content-block-sorting-options">';
     $element['field_sorting']['#suffix'] = '</div>';
@@ -330,19 +348,24 @@ class ContentBuilder implements ContentBuilderInterface {
    * Update the sorting field after a plugin choice change.
    */
   public function updateFormSortingOptions($form, FormStateInterface $form_state) {
+    $parents = ['field_sorting'];
+
+    if ($form_state->has('layout_builder__component')) {
+      $parents = array_merge(['settings', 'block_form'], $parents);
+    }
+
     // Check that the currently selected value is valid and change it otherwise.
-    $sort_value = $form_state->getValue(
-      ['settings', 'block_form', 'field_sorting', '0', 'value']
-    );
-    if ($sort_value === NULL || !isset($form['settings']['block_form']['field_sorting']['widget']['#options'][$sort_value])) {
+    $value_parents = array_merge($parents, ['0', 'value']);
+    $sort_value = $form_state->getValue($value_parents);
+    $options = NestedArray::getValue($form, array_merge($parents, ['widget', '#options']));
+
+    if ($sort_value === NULL || !isset($options[$sort_value])) {
       // Unfortunately this has already triggered a validation error.
       $form_state->clearErrors();
-      $form_state->setValue(
-        ['settings', 'block_form', 'field_sorting', '0', 'value'],
-        key($form['settings']['block_form']['field_sorting']['widget']['#options'])
-      );
+      $form_state->setValue($value_parents, key($options));
     }
-    return $form['settings']['block_form']['field_sorting'];
+
+    return NestedArray::getValue($form, $parents);
   }
 
   /**
