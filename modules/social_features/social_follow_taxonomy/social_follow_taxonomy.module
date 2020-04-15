@@ -5,6 +5,7 @@
  * Contains social_follow_taxonomy.module.
  */
 
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
@@ -94,32 +95,25 @@ function social_follow_taxonomy_preprocess_activity(&$variables) {
     $entity = $activity->getRelatedEntity();
 
     if ($entity->getEntityTypeId() === 'node') {
-      $taxonomy_ids = [];
       $storage = \Drupal::entityTypeManager()->getStorage('flagging');
 
       if ($entity instanceof NodeInterface) {
-        if ($entity->hasField('social_tagging')) {
-          if (!empty($tags = $entity->get('social_tagging')->getValue())) {
-            foreach ($tags as $tag) {
-              $taxonomy_ids[] = $tag['target_id'];
-            }
-          }
-        }
+        $term_ids = social_follow_taxonomy_terms_list($entity);
 
-        foreach ($taxonomy_ids as $taxonomy_id) {
+        foreach ($term_ids as $term_id) {
           $flag = $storage->loadByProperties([
             'flag_id' => 'follow_term',
             'entity_type' => 'taxonomy_term',
-            'entity_id' => $taxonomy_id,
+            'entity_id' => $term_id,
             'uid' => \Drupal::currentUser()->id(),
           ]);
           $flag = reset($flag);
 
           if (!empty($flag)) {
             /** @var \Drupal\taxonomy\TermInterface $term */
-            $term = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->load($taxonomy_id);
+            $term = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->load($term_id);
             $variables['content_type'] = $entity->type->entity->label();
-            $variables['followed_tags'][$taxonomy_id] = [
+            $variables['followed_tags'][$term_id] = [
               'name' => $term->getName(),
               'flag' => social_follow_taxonomy_flag_link($term),
             ];
@@ -145,6 +139,11 @@ function social_follow_taxonomy_token_info() {
     'description' => t('The type of the content that is related to following term.'),
   ];
 
+  $social_taxonomy['taxonomy_i_follow'] = [
+    'name' => t('Taxonomy I follow.'),
+    'description' => t('Taxonomy term I follow'),
+  ];
+
   return [
     'types' => ['social_taxonomy' => $type],
     'tokens' => [
@@ -165,6 +164,7 @@ function social_follow_taxonomy_tokens($type, $tokens, array $data, array $optio
     foreach ($tokens as $name => $original) {
       switch ($name) {
         case 'content_type':
+        case 'taxonomy_i_follow':
           /** @var \Drupal\message\Entity\Message $message */
           $message = $data['message'];
           // Get the related entity.
@@ -178,31 +178,71 @@ function social_follow_taxonomy_tokens($type, $tokens, array $data, array $optio
             if (is_object($entity)) {
               switch ($target_type) {
                 case 'node':
-                  $display_name = strtolower($entity->type->entity->label());
-                  break;
-              }
+                  /** @var \Drupal\node\Entity\Node $entity */
+                  if ($entity instanceof NodeInterface) {
+                    // Get the name of the content.
+                    $display_name = strtolower($entity->type->entity->label());
 
-              // When a name of content name starts from a vowel letter then
-              // will be added "an" before this name. For example "an
-              // event".
-              if (isset($display_name)) {
-                if (preg_match('/^[aeiou]/', $display_name)) {
-                  $display_name = t('an @content_type', ['@content_type' => $display_name]);
-                }
-                else {
-                  $display_name = t('a @content_type', ['@content_type' => $display_name]);
-                }
-                $replacements[$original] = $display_name;
+                    // Get the names of terms related to the content.
+                    $term_ids = social_follow_taxonomy_terms_list($entity);
+                    foreach ($term_ids as $term_id) {
+                      /** @var \Drupal\taxonomy\TermInterface $term */
+                      $term = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->load($term_id);
+                      if ($term instanceof TermInterface) {
+                        if (social_follow_taxonomy_term_followed($term)) {
+                          $names[] = $term->getName();
+                        }
+                      }
+                    }
+                  }
+
+                  break;
               }
             }
           }
-          break;
 
+          if ($name === 'content_type' && !empty($display_name)) {
+            // Prepares a replacement token: content name.
+            // When a name of content name starts from a vowel letter then
+            // will be added "an" before this name. For example "an event".
+            if (preg_match('/^[aeiou]/', $display_name)) {
+              $display_name = t('an @content_type', ['@content_type' => $display_name]);
+            }
+            else {
+              $display_name = t('a @content_type', ['@content_type' => $display_name]);
+            }
+            $replacements[$original] = $display_name;
+          }
+
+          if ($name === 'taxonomy_i_follow' && !empty($names)) {
+            // Prepares a replacement token: a string with term names.
+            // Wrap the names in quotation marks and separate it with commas.
+            $replacement_string = "'" . implode("', '", $names) . "'";
+            $replacements[$original] = $replacement_string;
+          }
+
+          break;
       }
     }
   }
 
   return $replacements;
+}
+
+/**
+ * Implements hook_views_data().
+ */
+function social_follow_taxonomy_views_data() {
+  $data['activity']['activity_follow_taxonomy_visibility_access_filter'] = [
+    'title' => t('Filter on taxonomy activities for the personalised homepage.'),
+    'filter' => [
+      'title' => t('Filter following taxonomy activities for personalised homepage'),
+      'help' => t('Filter following taxonomy on activities for personalised homepage.'),
+      'field' => 'field_visibility',
+      'id' => 'activity_follow_taxonomy_visibility_access',
+    ],
+  ];
+  return $data;
 }
 
 /**
@@ -291,17 +331,18 @@ function social_follow_taxonomy_related_nodes_count(TermInterface $term, $field_
 }
 
 /**
- * Implements hook_views_data().
+ * Provide an array of terms related to entity.
+ *
+ * @param Drupal\Core\Entity\EntityInterface $entity
+ *   Related entity.
+ *
+ * @return array
+ *   List of term ids.
  */
-function social_follow_taxonomy_views_data() {
-  $data['activity']['activity_follow_taxonomy_visibility_access_filter'] = [
-    'title' => t('Filter on taxonomy activities for the personalised homepage.'),
-    'filter' => [
-      'title' => t('Filter following taxonomy activities for personalised homepage'),
-      'help' => t('Filter following taxonomy on activities for personalised homepage.'),
-      'field' => 'field_visibility',
-      'id' => 'activity_follow_taxonomy_visibility_access',
-    ],
-  ];
-  return $data;
+function social_follow_taxonomy_terms_list(EntityInterface $entity) {
+  $term_ids = [];
+
+  \Drupal::moduleHandler()->alter('social_follow_taxonomy_terms_list', $term_ids, $entity);
+
+  return $term_ids;
 }

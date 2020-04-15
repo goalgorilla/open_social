@@ -9,6 +9,11 @@ use Drupal\user\UserInterface;
 
 /**
  * Provides a 'FollowTaxonomyActivityContext' activity context plugin.
+ *
+ * @ActivityContext(
+ *  id = "follow_taxonomy_activity_context",
+ *  label = @Translation("Following taxonomy activity context"),
+ * )
  */
 class FollowTaxonomyActivityContext extends ActivityContextBase {
 
@@ -34,7 +39,9 @@ class FollowTaxonomyActivityContext extends ActivityContextBase {
    * List of taxonomy terms.
    */
   public function taxonomyTermsList($entity) {
-    return [];
+    $term_ids = social_follow_taxonomy_terms_list($entity);
+
+    return $term_ids;
   }
 
   /**
@@ -65,14 +72,13 @@ class FollowTaxonomyActivityContext extends ActivityContextBase {
       // It could happen that a notification has been queued but the content or
       // account has since been deleted. In that case we can find no recipient.
       if (!$recipient instanceof UserInterface) {
-        break;
+        continue;
       }
 
       // We don't send notifications to content creator.
       if ($recipient->id() !== $entity->getOwnerId() && $entity->access('view', $recipient)) {
         if (!in_array($recipient->id(), array_column($recipients, 'target_id'))) {
           $recipients[] = [
-            'target_type' => 'user',
             'target_id' => $recipient->id(),
           ];
         }
@@ -109,6 +115,7 @@ class FollowTaxonomyActivityContext extends ActivityContextBase {
           if (!$recipient instanceof UserInterface) {
             break;
           }
+
 
           // We don't send notifications to content creator.
           if ($recipient->id() !== $entity->getOwnerId() && $entity->access('view', $recipient)) {
