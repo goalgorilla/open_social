@@ -1,0 +1,385 @@
+<?php
+
+/**
+ * @file
+ * Primary module hooks for social_group_request module.
+ */
+
+use Drupal\block\Entity\Block;
+use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Entity\ContentEntityInterface;
+use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\Field\BaseFieldDefinition;
+use Drupal\Core\Link;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Url;
+use Drupal\field\Entity\FieldConfig;
+use Drupal\field\Entity\FieldStorageConfig;
+use Drupal\grequest\Plugin\GroupContentEnabler\GroupMembershipRequest;
+use Drupal\group\Entity\GroupContentTypeInterface;
+use Drupal\group\Entity\GroupContentInterface;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\views\ViewExecutable;
+
+/**
+ * Implements hook_ENTITY_TYPE_insert() for group_content_type.
+ */
+function social_group_request_group_content_type_insert(GroupContentTypeInterface $group_content_type) {
+  if ($group_content_type->getContentPluginId() === 'group_membership_request') {
+    // Add Message field.
+    FieldConfig::create([
+      'field_storage' => FieldStorageConfig::loadByName('group_content', 'field_grequest_message'),
+      'bundle' => $group_content_type->id(),
+      'label' => t('Message'),
+      'description' => '',
+      'required' => FALSE,
+      'settings' => [],
+      'field_type' => 'string_long',
+    ])->save();
+  }
+}
+
+/**
+ * Implements hook_entity_base_field_info().
+ */
+function social_group_request_entity_base_field_info(EntityTypeInterface $entity_type) {
+  $fields = [];
+
+  if ($entity_type->id() === 'group') {
+    $fields['allow_request'] = BaseFieldDefinition::create('boolean')
+      ->setLabel(t('Allow users to request membership'))
+      ->setRevisionable(TRUE)
+      ->setTranslatable(TRUE)
+      ->setDefaultValue(FALSE)
+      ->setDisplayOptions('form', [
+        'type' => 'boolean_checkbox',
+        'settings' => [
+          'display_label' => TRUE,
+        ],
+        'weight' => 99,
+      ])
+      ->setDisplayConfigurable('form', TRUE);
+  }
+
+  return $fields;
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_insert().
+ */
+function social_group_request_group_content_insert(GroupContentInterface $group_content) {
+  $type = $group_content->getContentPlugin()->getPluginId();
+  $membership_request_enabled = $group_content->getGroup()->getGroupType()->hasContentPlugin('group_membership_request');
+
+  // If new membership is created, check related membership request exists.
+  if ($type === 'group_membership' && $membership_request_enabled) {
+    $approver = \Drupal::currentUser()->id();
+    $storage = \Drupal::entityTypeManager()->getStorage('group_content');
+    $filters = [
+      'entity_id' => $group_content->getEntity()->id(),
+      'grequest_status' => GroupMembershipRequest::REQUEST_PENDING,
+    ];
+    $requests = $storage->loadByGroup($group_content->getGroup(), 'group_membership_request', $filters);
+
+    /** @var \Drupal\group\Entity\GroupContentInterface $request */
+    foreach ($requests as $request) {
+      $request
+        ->set('grequest_status', GroupMembershipRequest::REQUEST_ACCEPTED)
+        ->set('grequest_updated_by', $approver)
+        ->save();
+
+      if ($request) {
+        \Drupal::messenger()->addStatus(t('Membership request approved'));
+      }
+      else {
+        \Drupal::messenger()->addError(t('Error updating Request'));
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_module_implements_alter().
+ */
+function social_group_request_module_implements_alter(&$implementations, $hook) {
+  if ($hook == 'group_content_insert') {
+    // Remove the grequest implementation, we have a fallback in our hook.
+    if (isset($implementations['grequest'])) {
+      unset($implementations['grequest']);
+    }
+  }
+}
+
+/**
+ * Implements hook_preprocess_group().
+ */
+function social_group_request_preprocess_group(&$variables) {
+  /** @var \Drupal\group\Entity\GroupInterface $group */
+  $group = $variables['group'];
+  $group_type = $group->getGroupType();
+
+  if (!$group_type->hasContentPlugin('group_membership_request')) {
+    return;
+  }
+
+  if ($group_type->id() === 'flexible_group') {
+    $join_methods = $group->get('field_group_allowed_join_method')->getValue();
+
+    $request_option = in_array('request', array_column($join_methods, 'value'), FALSE);
+    if (!$request_option) {
+      $variables['allow_request'] = FALSE;
+      return;
+    }
+  }
+  else {
+    $allow_request = $group->get('allow_request');
+    if ($allow_request->isEmpty() || $allow_request->value == 0) {
+      $variables['allow_request'] = FALSE;
+      return;
+    }
+  }
+
+  $account = \Drupal::currentUser();
+  if ($account->isAnonymous()) {
+    $variables['anonymous_request'] = TRUE;
+    $variables['group_operations_url'] = Url::fromRoute('social_group_request.anonymous_request_membership', ['group' => $group->id()]);
+    $variables['#attached']['library'][] = 'core/drupal.dialog.ajax';
+    $variables['#attached']['library'][] = 'social_group_request/social_group_popup';
+    return;
+  }
+
+  if (
+    !$group->hasPermission('request group membership', $account) ||
+    !$group->hasField('allow_request')
+  ) {
+    $variables['allow_request'] = FALSE;
+    return;
+  }
+
+  $variables['allow_request'] = TRUE;
+  $variables['group_operations_url'] = Url::fromRoute('grequest.request_membership', ['group' => $group->id()]);
+
+  $contentTypeConfigId = $group
+    ->getGroupType()
+    ->getContentPlugin('group_membership_request')
+    ->getContentTypeConfigId();
+
+  $request = \Drupal::entityQuery('group_content')
+    ->condition('type', $contentTypeConfigId)
+    ->condition('gid', $group->id())
+    ->condition('entity_id', $account->id())
+    ->condition('grequest_status', GroupMembershipRequest::REQUEST_PENDING)
+    ->count()
+    ->execute();
+
+  if ($request > 0) {
+    $variables['requested'] = TRUE;
+    $variables['group_operations_url'] = Url::fromRoute('social_group_request.cancel_request', ['group' => $group->id()]);
+  }
+
+  $variables['#attached']['library'][] = 'social_group_request/social_group_popup';
+  $variables['#attached']['library'][] = 'social_group_request/social_group_request_popup';
+  $variables['#attached']['library'][] = 'core/drupal.dialog.ajax';
+  $variables['#cache']['tags'][] = 'request-membership:' . $group->id();
+}
+
+/**
+ * Implements hook_activity_send_email_notifications_alter().
+ */
+function social_group_request_activity_send_email_notifications_alter(array &$items, array $email_message_templates) {
+  if (isset($email_message_templates['request_to_join_a_group'])) {
+    $items['what_manage']['templates'][] = 'request_to_join_a_group';
+  }
+
+  if (isset($email_message_templates['approve_request_join_group'])) {
+    $items['message_to_me']['templates'][] = 'approve_request_join_group';
+  }
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function social_group_request_form_alter(array &$form, FormStateInterface $form_state, $form_id) {
+  $social_group_types = [
+    'open_group',
+    'closed_group',
+    'public_group',
+  ];
+
+  \Drupal::moduleHandler()->alter('social_group_types', $social_group_types);
+
+  $group_membership_add_forms = [];
+  foreach ($social_group_types as $social_group_type) {
+    $group_membership_add_forms[] = "group_content_{$social_group_type}-group_membership_add_form";
+  }
+
+  $route = \Drupal::routeMatch()->getRouteName();
+  if (in_array($form_id, $group_membership_add_forms) && $route === 'grequest.group_request_membership_approve') {
+    // Remove possibility to select members to add to group.
+    if (isset($form['entity_id']['widget'][0]['target_id'])) {
+      $form['entity_id']['widget'][0]['target_id']['#access'] = FALSE;
+    }
+
+    if (isset($form['group_roles']['widget'])) {
+      $form['group_roles']['widget']['#title'] = t('Group role');
+    }
+
+    // Name of user which we're adding to the group.
+    $user_name = $form['entity_id']['widget'][0]['target_id']['#default_value']->getDisplayName();
+    $form['question'] = [
+      '#type' => 'html_tag',
+      '#tag' => 'p',
+      '#value' => t('Are you sure you want to approve the membership request for @name?', ['@name' => $user_name]),
+      '#weight' => 1,
+    ];
+
+    $form['actions']['submit']['#value'] = t('Yes');
+  }
+
+  $group_forms = [];
+  foreach ($social_group_types as $social_group_type) {
+    $group_forms[] = "group_{$social_group_type}_edit_form";
+    $group_forms[] = "group_{$social_group_type}_add_form";
+  }
+
+  if (in_array($form_id, $group_forms)) {
+    /** @var \Drupal\group\Entity\GroupTypeInterface $group_type */
+    $group_type = $form_state->getFormObject()->getEntity()->getGroupType();
+    if ($group_type->id() === 'flexible_group' || !$group_type->hasContentPlugin('group_membership_request')) {
+      unset($form['allow_request']);
+    }
+  }
+}
+
+/**
+ * Implements hook_preprocess_activity().
+ */
+function social_group_request_preprocess_activity(array &$variables) {
+  /** @var \Drupal\activity_creator\ActivityInterface $activity */
+  $activity = $variables['elements']['#activity'];
+
+  if (!$activity->get('field_activity_message')->isEmpty()) {
+    /** @var \Drupal\message\MessageInterface $message */
+    $message = $activity->field_activity_message->entity;
+
+    if (!$message->get('template')->isEmpty()) {
+      $message_template = $message->template->target_id;
+
+      if ($message_template === 'request_to_join_a_group') {
+        $activity_entity = $activity->getRelatedEntity();
+
+        if ($activity_entity instanceof GroupContentInterface) {
+          $variables['full_url'] = Url::fromRoute('view.group_pending_members.membership_requests', [
+            'arg_0' => $activity_entity->getGroup()->id(),
+          ]);
+        }
+      }
+
+      if ($message_template === 'approve_request_join_group') {
+        $activity_entity = $activity->getRelatedEntity();
+
+        if ($activity_entity instanceof GroupContentInterface) {
+          $variables['full_url'] = Url::fromRoute('social_group.stream', [
+            'group' => $activity_entity->getGroup()->id(),
+          ]);
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_preprocess_page_title().
+ */
+function social_group_request_preprocess_page_title(&$variables) {
+  if (\Drupal::routeMatch()->getRouteName() !== 'view.group_pending_members.membership_requests') {
+    return;
+  }
+
+  $group_id = \Drupal::routeMatch()->getParameter('arg_0');
+  if (!isset($group_id) || empty($group_id)) {
+    return;
+  }
+
+  /** @var \Drupal\group\Entity\GroupInterface $group */
+  $group = \Drupal::entityTypeManager()->getStorage('group')->load($group_id);
+  if (!$group->getGroupType()->hasContentPlugin('group_membership_request')) {
+    return;
+  }
+
+  $contentTypeConfigId = $group
+    ->getGroupType()
+    ->getContentPlugin('group_membership_request')
+    ->getContentTypeConfigId();
+
+  $requests = \Drupal::entityQuery('group_content')
+    ->condition('type', $contentTypeConfigId)
+    ->condition('gid', $group->id())
+    ->condition('grequest_status', GroupMembershipRequest::REQUEST_PENDING)
+    ->count()
+    ->execute();
+
+  $title_singular = '1 membership request to group: :group_title';
+  $title_multiple = '@count membership requests to group: :group_title';
+  $variables['title'] = \Drupal::translation()->formatPlural($requests, $title_singular, $title_multiple, [
+    ':group_title' => $group->label(),
+  ]);
+
+  $variables['#cache']['tags'][] = 'request-membership:' . $group->id();
+}
+
+/**
+ * Allowed join method values.
+ */
+function social_group_request_allowed_join_method_values(FieldStorageConfig $definition, ContentEntityInterface $entity = NULL, $cacheable) {
+  $allowed_values = $definition->getSetting('allowed_values');
+  $allowed_values['request'] = t('Request to join - user requests to join need to be approved by group managers');
+  return $allowed_values;
+}
+
+/**
+ * Implements hook_views_pre_view().
+ */
+function social_group_request_views_pre_view(ViewExecutable $view, $display_id, array &$args) {
+  if ($view->id() === 'group_pending_members' && $display_id === 'membership_requests') {
+    $options = [
+      'id' => 'area_text_custom',
+      'table' => 'views',
+      'field' => 'area_text_custom',
+      'relationship' => 'none',
+      'group_type' => 'none',
+      'admin_label' => '',
+      'empty' => TRUE,
+      'tokenize' => FALSE,
+      'content' => Link::fromTextAndUrl(t('Back to group'),
+        Url::fromRoute('entity.group.canonical', ['group' => $args[0]], [
+          'attributes' => [
+            'class' => [
+              'btn',
+              'btn-default',
+            ],
+          ],
+        ]))->toString(),
+      'plugin_id' => 'text_custom',
+    ];
+    $view->setHandler('membership_requests', 'footer', 'area_text_custom', $options);
+    $view->element['#attached']['library'][] = 'social_group_request/social_group_table';
+  }
+}
+
+/**
+ * Implements hook_block_access().
+ */
+function social_group_request_block_access(Block $block, $operation, AccountInterface $account) {
+  if ($operation == 'view' && $block->getPluginId() == 'group_hero_block') {
+    $route_name = \Drupal::routeMatch()->getRouteName();
+    $excluded_routes = [
+      'grequest.group_request_membership_approve',
+      'grequest.group_request_membership_reject',
+    ];
+
+    if (in_array($route_name, $excluded_routes)) {
+      return AccessResult::forbidden();
+    }
+  }
+}
