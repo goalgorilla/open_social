@@ -63,6 +63,10 @@ class EnrollRequestAnonymousForm extends FormBase {
       ]),
     ];
 
+    $form['#attached']['library'] = [
+      'social_event/modal',
+    ];
+
     return $form;
   }
 

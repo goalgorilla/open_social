@@ -68,9 +68,9 @@ class EnrollRequestDialogController extends ControllerBase {
    */
   protected static function getDataDialogOptions() {
     return [
-      'dialogClass' => 'form--default',
+      'dialogClass' => 'form--default social_event-popup',
       'closeOnEscape' => TRUE,
-      'width' => '400',
+      'width' => '582',
     ];
   }
 
@@ -85,10 +85,15 @@ class EnrollRequestDialogController extends ControllerBase {
 
     if ($this->currentUser()->isAnonymous()) {
       $form = $this->formBuilder->getForm('Drupal\social_event\Form\EnrollRequestAnonymousForm');
+      $response->addCommand(new OpenModalDialogCommand($this->t('Request to enroll'), $form, [
+        'width' => '337px',
+        'closeOnEscape' => TRUE,
+        'dialogClass' => 'social_event-popup social_event-popup--anonymous',
+      ]));
     }
-
-    // Add an AJAX command to open a modal dialog with the form as the content.
-    $response->addCommand(new OpenModalDialogCommand($this->t('Request to enroll'), $form, static::getDataDialogOptions()));
+    else {
+      $response->addCommand(new OpenModalDialogCommand($this->t('Request to enroll'), $form, static::getDataDialogOptions()));
+    }
 
     return $response;
   }

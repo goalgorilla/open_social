@@ -43,25 +43,21 @@ class EnrollRequestModalForm extends FormBase {
       '#value' => $nid,
     ];
 
+    $form['description'] = [
+      '#type' => 'html_tag',
+      '#tag' => 'p',
+      '#value' => $this->t('You can leave a message in your request. Only when your request is approved, you will receive a notification via email and notification center.'),
+    ];
+
     $form['message'] = [
       '#type' => 'textarea',
-      '#prefix' => '<div class="help-block">' . $this->t('You can leave a message in your request. You will only be notified once your request is approved.') . '</div>',
       '#title' => $this->t('Message'),
-      '#rows' => 4,
-      '#resizable' => 'vertical',
     ];
 
-    $form['actions'] = [
-      '#type' => 'actions',
-    ];
-
-    // Add a submit button that handles the submission of the form.
     $form['actions']['submit'] = [
       '#type' => 'submit',
       '#value' => $this->t('Send request'),
-      '#attributes' => [
-        'class' => ['btn', 'btn-primary'],
-      ],
+      '#button_type' => 'primary',
       '#ajax' => [
         'callback' => [$this, 'submitModalFormAjax'],
         'event' => 'click',
@@ -153,9 +149,9 @@ class EnrollRequestModalForm extends FormBase {
    */
   protected static function getDataDialogOptions() {
     return [
-      'dialogClass' => 'form--default',
+      'dialogClass' => 'form--default social_event-popup',
       'closeOnEscape' => TRUE,
-      'width' => '400',
+      'width' => '582',
     ];
   }
 
