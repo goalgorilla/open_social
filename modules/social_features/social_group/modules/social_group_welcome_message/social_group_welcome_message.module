@@ -160,7 +160,7 @@ function social_group_welcome_message_group_content_insert(GroupContentInterface
     // TODO:: Update to the correct version when issue has been solved.
     /** @var UserDataInterface $userData */
     $userData = \Drupal::service('user.data');
-    $userData->set('private_message', $user->id(), 'private_message_thread:' . $thread->id(), 0);
+    $userData->set('private_message', $account->id(), 'private_message_thread:' . $thread->id(), 0);
   }
 }
 
