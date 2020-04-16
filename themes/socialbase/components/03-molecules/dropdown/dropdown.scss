@@ -368,3 +368,29 @@ html:not(.js) {
 @media (min-width: 600px) and (-ms-high-contrast:none) {
   *::-ms-backdrop, .dropdown-menu .media-body { padding-right: 17px; }
 }
+
+// Behaviors arrow on the dropdown menu
+.dropdown,
+.enroll-action-form,
+.hero-footer__cta {
+  .caret {
+    transition: transform 0.1s;
+  }
+
+  &.open .caret,
+  .open .caret {
+    transform: rotate(180deg);
+  }
+}
+
+.social-gtranslate-list--desktop {
+   > a:after {
+     transition: transform 0.1s;
+  }
+
+  &.open > a:after {
+    margin-top: -.4rem;
+    right: auto;
+    transform: rotate(180deg);
+  }
+}

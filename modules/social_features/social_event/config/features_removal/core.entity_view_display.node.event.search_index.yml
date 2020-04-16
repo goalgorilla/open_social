@@ -1,0 +1,67 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_display.comment.comment.default
+    - core.entity_view_mode.node.search_index
+    - field.field.node.event.body
+    - field.field.node.event.field_content_visibility
+    - field.field.node.event.field_event_address
+    - field.field.node.event.field_event_comments
+    - field.field.node.event.field_event_date
+    - field.field.node.event.field_event_date_end
+    - field.field.node.event.field_event_enroll
+    - field.field.node.event.field_event_image
+    - field.field.node.event.field_event_location
+    - field.field.node.event.field_files
+    - node.type.event
+  module:
+    - comment
+    - text
+    - user
+id: node.event.search_index
+targetEntityType: node
+bundle: event
+mode: search_index
+content:
+  body:
+    label: hidden
+    type: text_default
+    weight: 0
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+  field_event_comments:
+    weight: 1
+    label: above
+    settings:
+      pager_id: 0
+    third_party_settings: {  }
+    type: comment_default
+    region: content
+  flag_follow_content:
+    weight: 10
+    region: content
+  groups_type_public_group:
+    label: above
+    weight: -5
+    region: content
+    settings:
+      link: true
+    third_party_settings: {  }
+    type: entity_reference_label
+hidden:
+  field_content_visibility: true
+  field_event_address: true
+  field_event_date: true
+  field_event_date_end: true
+  field_event_enroll: true
+  field_event_image: true
+  field_event_location: true
+  field_files: true
+  groups: true
+  groups_type_closed_group: true
+  groups_type_open_group: true
+  like_and_dislike: true
+  links: true
+  search_api_excerpt: true

@@ -12,7 +12,7 @@
  */
 #}
 
-{% if attributes.hasClass('is_modal') %}
+{% if attributes.hasClass('is_modal') or attributes.hasClass('layout-builder-remove-section') or attributes.hasClass('layout-builder-remove-block') %}
  {{ form }}
 {% else %}
   <div class="card">

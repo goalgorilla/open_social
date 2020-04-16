@@ -7,8 +7,6 @@
 
 use Drupal\menu_link_content\Entity\MenuLinkContent;
 use Drupal\message\Entity\MessageTemplate;
-use Drupal\block\Entity\Block;
-use Drupal\views\Views;
 
 /**
  * Social activity install function.
@@ -16,16 +14,6 @@ use Drupal\views\Views;
 function social_activity_install() {
   // Add menu items.
   _social_activity_create_menu_links();
-
-  // We can't add this as dependency, because this modules should be installed
-  // after config and other activity modules installation.
-  $modules = [
-    'activity_basics',
-    'activity_send_email',
-  ];
-  \Drupal::service('module_installer')->install($modules);
-
-  _social_activity_create_activity_homepage_block();
 }
 
 /**
@@ -50,80 +38,6 @@ function _social_activity_create_menu_links() {
       'weight' => 10,
       'parent' => $parent,
     ])->save();
-  }
-}
-
-/**
- * Place a block for the activity stream homepage.
- */
-function social_activity_update_8001() {
-  _social_activity_create_activity_homepage_block();
-}
-
-/**
- * Create a block for the activity stream homepage.
- */
-function _social_activity_create_activity_homepage_block() {
-  // Revert view so it has the block display.
-  $config_update_service = \Drupal::service('features.config_update');
-
-  // Check if view exists.
-  $view = Views::getView('activity_stream');
-  if (is_object($view)) {
-    // If exists, we revert.
-    $config_update_service->revert('view', 'activity_stream');
-  }
-  else {
-    // Otherwise we import.
-    $config_update_service->import('view', 'activity_stream');
-  }
-
-  $config = \Drupal::configFactory();
-
-  // Do not add a new block if it already exists.
-  $block = Block::load('views_block__activity_stream_block_stream_homepage');
-  if (!isset($block)) {
-    $visibility = [
-      'request_path' => [
-        'id' => 'request_path',
-        'pages' => '/stream',
-        'negate' => FALSE,
-        'context_mapping' => [],
-      ],
-    ];
-
-    $settings = [
-      'plugin' => 'views_block:activity_stream-block_stream_homepage',
-      'region' => 'content',
-      'id' => 'views_block__activity_stream_block_stream_homepage',
-      'theme' => $config->get('system.theme')->get('default'),
-      'label' => '',
-      'visibility' => $visibility,
-      'weight' => NULL,
-    ];
-
-    $values = [];
-    foreach (['region', 'id', 'theme', 'plugin', 'weight', 'visibility'] as $key) {
-      $values[$key] = $settings[$key];
-      // Remove extra values that do not belong in the settings array.
-      unset($settings[$key]);
-    }
-    foreach ($values['visibility'] as $id => $visibility) {
-      $values['visibility'][$id]['id'] = $id;
-    }
-
-    $settings = [
-      'id' => 'views_block:activity_stream-block_stream_homepage',
-      'label' => '',
-      'provider' => 'views',
-      'label_display' => '0',
-      'views_label' => '',
-      'items_per_page' => 'none',
-    ];
-    $values['settings'] = $settings;
-    $block = Block::create($values);
-
-    $block->save();
   }
 }
 
@@ -229,4 +143,27 @@ function social_activity_get_der_settings() {
   }
 
   return $result;
+}
+
+/**
+ * Update activity stream block descriptions.
+ */
+function social_activity_update_8801() {
+  $config_factory = \Drupal::configFactory();
+  // Load the activity stream.
+  $view = $config_factory->getEditable('views.view.activity_stream');
+  $displays = $view->get('display');
+
+  // Update block_descriptions for the stream blocks.
+  foreach ($displays as $display_name => &$display) {
+    if ($display_name === 'block_stream_homepage') {
+      $display['display_options']['block_description'] = t('Activity stream');
+    }
+    if ($display_name === 'block_stream_homepage_without_post') {
+      $display['display_options']['block_description'] = t('Activity stream - Without Post block');
+    }
+  }
+
+  $view->set('display', $displays);
+  $view->save(TRUE);
 }

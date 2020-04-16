@@ -8,6 +8,7 @@ use Drupal\Core\Entity\EntityListBuilder;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Routing\RedirectDestinationInterface;
+use Drupal\social_group\GroupStatistics;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -32,6 +33,13 @@ class SocialGroupListBuilder extends EntityListBuilder {
   protected $dateTime;
 
   /**
+   * The Group Statistics service.
+   *
+   * @var \Drupal\social_group\GroupStatistics
+   */
+  protected $groupStatistics;
+
+  /**
    * Constructs a new GroupListBuilder object.
    *
    * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
@@ -42,11 +50,20 @@ class SocialGroupListBuilder extends EntityListBuilder {
    *   The redirect destination service.
    * @param \Drupal\Core\Datetime\DateFormatterInterface $date_time
    *   The datetime formatter service.
+   * @param \Drupal\social_group\GroupStatistics $group_statistics
+   *   The group statistics service.
    */
-  public function __construct(EntityTypeInterface $entity_type, EntityStorageInterface $storage, RedirectDestinationInterface $redirect_destination, DateFormatterInterface $date_time) {
+  public function __construct(
+    EntityTypeInterface $entity_type,
+    EntityStorageInterface $storage,
+    RedirectDestinationInterface $redirect_destination,
+    DateFormatterInterface $date_time,
+    GroupStatistics $group_statistics
+  ) {
     parent::__construct($entity_type, $storage);
     $this->redirectDestination = $redirect_destination;
     $this->dateTime = $date_time;
+    $this->groupStatistics = $group_statistics;
   }
 
   /**
@@ -57,7 +74,8 @@ class SocialGroupListBuilder extends EntityListBuilder {
       $entity_type,
       $container->get('entity_type.manager')->getStorage($entity_type->id()),
       $container->get('redirect.destination'),
-      $container->get('date.formatter')
+      $container->get('date.formatter'),
+      $container->get('social_group.group_statistics')
     );
   }
 
@@ -105,8 +123,7 @@ class SocialGroupListBuilder extends EntityListBuilder {
     $row['name']['data'] = $entity->toLink()->toRenderable();
     $row['type'] = $entity->getGroupType()->label();
     $row['uid'] = $entity->uid->entity->toLink();
-    $group_members_count = \Drupal::service('social_group.group_members_count');
-    $row['members'] = $group_members_count->getGroupMemberCount($entity);
+    $row['members'] = $this->groupStatistics->getGroupMemberCount($entity);
     $row['created'] = $this->dateTime->format($entity->getCreatedTime(), 'short');
 
     return $row + parent::buildRow($entity);

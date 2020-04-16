@@ -30,6 +30,12 @@ function social_group_update_dependencies() {
   $dependencies['profile'][8002] = [
     'social_group' => 8501,
   ];
+
+  // New config changes should run after the features removal/revert.
+  $dependencies['social_group'][8801] = [
+    'social_core' => 8805,
+  ];
+
   return $dependencies;
 }
 
@@ -39,11 +45,13 @@ function social_group_update_dependencies() {
  * Perform actions related to the installation of social_group.
  */
 function social_group_install() {
-
   // Set some default permissions.
   _social_group_set_permissions();
   // Add menu items.
   _social_group_create_menu_links();
+
+  // Set the view mode to use when shown in activities.
+  activity_creator_set_entity_view_mode('group', 'stream');
 
   // Make sure the admin theme is not used when managing groups.
   $group_settings = \Drupal::configFactory()->getEditable('group.settings');
@@ -56,9 +64,6 @@ function social_group_install() {
     $view->setStatus(FALSE);
     $view->save();
   }
-
-  // Set default group settings.
-  _social_group_set_default_configuration();
 
   // Set module weight.
   module_set_weight('social_group', 2);
@@ -157,15 +162,6 @@ function _social_group_create_menu_links() {
       'parent' => $parent,
     ])->save();
   }
-}
-
-/**
- * Function to set default configuration.
- */
-function _social_group_set_default_configuration() {
-  $config = \Drupal::configFactory()->getEditable('social_group.settings');
-  $config->set('allow_group_selection_in_node', FALSE);
-  $config->save();
 }
 
 /**
@@ -329,7 +325,9 @@ function social_group_update_8008() {
  * Set the default group configuration and permission for sitemanager.
  */
 function social_group_update_8009() {
-  _social_group_set_default_configuration();
+  $config = \Drupal::configFactory()->getEditable('social_group.settings');
+  $config->set('allow_group_selection_in_node', FALSE);
+  $config->save();
 
   // Site manager should have permission to set social group settings.
   $roles = Role::loadMultiple();
@@ -517,4 +515,18 @@ function social_group_update_8502() {
   $config->set('allow_hero_selection', FALSE);
   $config->set('default_hero', 'hero');
   $config->save();
+}
+
+/**
+ * Update view mode for new small teaser style.
+ */
+function social_group_update_8801() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_group', 'social_group_update_8801');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
 }

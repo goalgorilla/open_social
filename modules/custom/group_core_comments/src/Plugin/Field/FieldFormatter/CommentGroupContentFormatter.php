@@ -58,6 +58,11 @@ class CommentGroupContentFormatter extends CommentDefaultFormatter {
           $join_directly_bool = TRUE;
         }
 
+        // If a user can't join directly, about page makes more sense.
+        if (!$join_directly_bool) {
+          $group_url = Url::fromRoute('view.group_information.page_group_about', ['group' => $group->id()]);
+        }
+
         if ($join_directly_bool) {
           $action = [
             'type' => 'join_directly',

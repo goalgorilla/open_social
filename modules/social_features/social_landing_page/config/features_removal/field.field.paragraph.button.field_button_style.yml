@@ -1,0 +1,22 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_button_style
+    - paragraphs.paragraphs_type.button
+  module:
+    - options
+id: paragraph.button.field_button_style
+field_name: field_button_style
+entity_type: paragraph
+bundle: button
+label: Style
+description: 'Style for button see:<a href="http://styleguide.getopensocial.com/section-atoms.html#kssref-atoms-button-style">styleguide</a>.'
+required: true
+translatable: false
+default_value:
+  -
+    value: btn-default
+default_value_callback: ''
+settings: {  }
+field_type: list_string

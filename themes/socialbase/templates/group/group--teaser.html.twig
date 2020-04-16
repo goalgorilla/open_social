@@ -39,15 +39,40 @@
  * @ingroup themeable
  */
 #}
+
 {{ attach_library('socialbase/teaser')}}
-<div class="card teaser">
+
+{%
+  set classes = [
+  'card',
+  'teaser',
+  not content.field_group_image|render ? 'no-image'
+]
+%}
+
+<div{{ attributes.addClass(classes) }}>
+
   <div class='teaser__image'>
+    {% block card_image %}
       {{ content.field_group_image }}
+    {% endblock %}
+
+    {% block card_teaser_type %}
+      <a href="{{ url }}">
+        <div class="teaser__teaser-type">
+          <svg class="teaser__teaser-type-icon">
+            <use xlink:href="#icon-group-white"></use>
+          </svg>
+        </div>
+      </a>
+    {% endblock %}
   </div>
+
   <div class='teaser__body'>
     <div class="teaser__content">
-      {{ title_prefix }}
-      {% if not page %}
+
+      {% block card_title %}
+        {{ title_prefix }}
         <h4{{ title_attributes }} class="teaser__title">
           {% if closed_group_lock %}
             <svg class="icon-gray icon-small">
@@ -60,31 +85,20 @@
           {% endif %}
           <a href="{{ url }}" rel="bookmark">{{ label }}</a>
         </h4>
-      {% endif %}
-      {{ title_suffix }}
+        {{ title_suffix }}
+      {% endblock %}
+
+      {% block card_body %}
         <div class="teaser__content-line">
-            <svg class="teaser__content-type-icon">
-                <use xlink:href="#icon-label"></use>
-            </svg>
-            <span class="teaser__content-text">
+          <svg class="teaser__content-type-icon">
+            <use xlink:href="#icon-label"></use>
+          </svg>
+          <span class="teaser__content-text">
             {{ group_type }}
             {{ group_settings_help }}
-            </span>
+          </span>
         </div>
-      <div class="teaser__content-line">
-        <svg class="teaser__content-type-icon">
-          <use xlink:href="#icon-group"></use>
-        </svg>
-        <span class="teaser__content-text">
-          {% trans %}
-            1 member
-          {% plural group_members %}
-            @count members
-          {% endtrans %}
-          &nbsp;
-        </span>
-      </div>
-      {% if content.field_group_location|render or content.field_group_address|render %}
+        {% if content.field_group_location|render or content.field_group_address|render %}
           <div class="teaser__content-line">
               <svg class="teaser__content-type-icon">
                   <use xlink:href="#icon-location"></use>
@@ -95,19 +109,37 @@
               {{ content.field_group_address }}
             </span>
           </div>
-      {% endif %}
+        {% endif %}
+      {% endblock %}
     </div>
 
     <div class="card__actionbar">
-      {% if joined %}
-        <span class="badge teaser__badge badge-secondary">
-          {% trans with {'context': 'Is a member'} %}Joined{% endtrans %}
-        </span>
-      {% endif %}
+      {% block card_actionbar %}
 
-      <a href="{{ url }}" class="card__link" title="{{ label }}">
-        {% trans %}Read more{% endtrans %}
-      </a>
+        {% if group_members is not empty %}
+          <div class="badge teaser__badge" title="{% trans %}Total amount of group members{% endtrans %}">
+            <span class="badge__container">
+              <svg class="badge__icon">
+                <use xlink:href="#icon-group"></use>
+              </svg>
+              <span class="badge__label">
+                {{ group_members }}
+              </span>
+            </span>
+          </div>
+        {% endif %}
+
+        {% if joined %}
+          <span class="badge teaser__badge badge-default">
+            {% trans with {'context': 'Is a member'} %}You have joined{% endtrans %}
+          </span>
+        {% endif %}
+
+        <a href="{{ url }}" class="card__link" title="{{ label }}">
+          {% trans %}Read more{% endtrans %}
+        </a>
+
+      {% endblock %}
     </div>
 
   </div>

@@ -24,7 +24,16 @@
           // post forms this has some side effects that are required for a
           // successful submission.
           if ($submit.length) {
-            $submit.click();
+            // If it's a submit button, used by Ajax comments
+            // the click event is canceled by ajax_comments, see
+            // e.preventDefault() in ajax_comments.js.
+            // So we use the mousedown event in that specific case.
+            if ($textarea.parents('.ajax-comments-form-add').length) {
+              $submit.mousedown();
+            }
+            else {
+              $submit.click();
+            }
           }
           // If a submit button isn't found we fall back to submitting the form
           // outright.

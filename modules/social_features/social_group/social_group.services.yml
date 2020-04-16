@@ -33,5 +33,9 @@ services:
     class: Drupal\social_group\SocialGroupHero
     arguments: ['@config.factory']
   social_group.group_members_count:
-    class: Drupal\social_group\SocialGroupMembersCount
+    class: Drupal\social_group\GroupStatistics
+    arguments: ['@database']
+    deprecated: The "%service_id%" service is deprecated. You should use the 'social_group.group_statistics' service instead.
+  social_group.group_statistics:
+    class: Drupal\social_group\GroupStatistics
     arguments: ['@database']

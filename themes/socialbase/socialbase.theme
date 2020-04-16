@@ -25,6 +25,7 @@ function socialbase_library_info_alter(&$libraries, $extension) {
   // photoswipe styling with the comment styling.
   if ($extension === 'socialbase' && isset($libraries['comment']) && \Drupal::moduleHandler()->moduleExists('social_comment_upload')) {
     $libraries['comment']['dependencies'][] = 'socialbase/photoswipe-gallery';
+    $libraries['comment']['dependencies'][] = 'socialbase/photoswipe.image';
   }
 }
 

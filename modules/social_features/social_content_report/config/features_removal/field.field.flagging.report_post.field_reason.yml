@@ -1,0 +1,31 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.flagging.field_reason
+    - flag.flag.report_post
+    - taxonomy.vocabulary.report_reasons
+  enforced:
+    module:
+      - social_content_report
+id: flagging.report_post.field_reason
+field_name: field_reason
+entity_type: flagging
+bundle: report_post
+label: Reason
+description: ''
+required: true
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      report_reasons: report_reasons
+    sort:
+      field: name
+      direction: asc
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

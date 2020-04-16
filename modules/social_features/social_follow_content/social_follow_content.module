@@ -15,6 +15,31 @@ use Drupal\flag\FlagInterface;
 use Drupal\node\NodeInterface;
 
 /**
+ * Implements hook_modules_installed().
+ */
+function social_follow_content_modules_installed($modules) {
+  // Check if the topic, flag or this module is being installed in which case
+  // the follow content field needs to be hidden for topic small teaser view
+  // modes. All these modules are checked because the order is not guaranteed
+  // and it's not quite known when the `flag_follow_content` field is added.
+  if (!empty(array_intersect(['social_topic', 'flag', 'social_follow_content'], $modules))) {
+    /** @var \Drupal\Core\Entity\EntityDisplayRepositoryInterface $entityDisplayRepository */
+    $entityDisplayRepository = \Drupal::service('entity_display.repository');
+    /** @var \Drupal\Core\Entity\Display\EntityViewDisplayInterface $view_mode */
+    $view_mode = $entityDisplayRepository->getViewDisplay('node', 'topic', 'small_teaser');
+    // The getViewDisplay returns a new view mode entity if one didn't already
+    // exist but only existing view modes should be edited.
+    if ($view_mode->isNew()) {
+      return;
+    }
+
+    // When a field gets moved to the hidden region its component just gets
+    // removed.
+    $view_mode->removeComponent('flag_follow_content')->save();
+  }
+}
+
+/**
  * Implements hook_ENTITY_TYPE_insert().
  */
 function social_follow_content_event_enrollment_insert(EntityInterface $entity) {

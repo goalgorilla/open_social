@@ -106,12 +106,12 @@
 .forbidden-post-comments-wrapper.card .popup-info:before {
   border-top-color: rgba(0, 0, 0, 0.12);
   border-width: 11px;
-  bottom: -10px;
+  bottom: 0;
 }
 .forbidden-post-comments-wrapper.card .popup-info:after {
   border-top-color: white;
   border-width: 11px;
-  bottom: -9px;
+  bottom: 2px;
 }
 .forbidden-post-comments-wrapper.card .popup-info .card {
   overflow: hidden;
@@ -124,6 +124,14 @@
 }
 .forbidden-post-comments-wrapper.card .popup-info .teaser__title h4 {
   margin: 0;
+}
+.forbidden-post-comments-wrapper.card .popup-info .teaser__image {
+  min-height: 102px;
+}
+@media (min-width: 600px) {
+  .forbidden-post-comments-wrapper.card .popup-info .teaser__image {
+    min-height: 132px;
+  }
 }
 .forbidden-post-comments-wrapper.card .popup-info .teaser__content-line {
   display: flex;
