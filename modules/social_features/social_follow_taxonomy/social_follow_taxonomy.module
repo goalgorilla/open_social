@@ -188,9 +188,10 @@ function social_follow_taxonomy_tokens($type, $tokens, array $data, array $optio
                     foreach ($term_ids as $term_id) {
                       /** @var \Drupal\taxonomy\TermInterface $term */
                       $term = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->load($term_id);
+                      $term_names = [];
                       if ($term instanceof TermInterface) {
                         if (social_follow_taxonomy_term_followed($term)) {
-                          $names[] = $term->getName();
+                          $term_names[] = $term->getName();
                         }
                       }
                     }
@@ -214,10 +215,10 @@ function social_follow_taxonomy_tokens($type, $tokens, array $data, array $optio
             $replacements[$original] = $display_name;
           }
 
-          if ($name === 'taxonomy_i_follow' && !empty($names)) {
+          if ($name === 'taxonomy_i_follow' && !empty($term_names)) {
             // Prepares a replacement token: a string with term names.
             // Wrap the names in quotation marks and separate it with commas.
-            $replacement_string = "'" . implode("', '", $names) . "'";
+            $replacement_string = "'" . implode("', '", $term_names) . "'";
             $replacements[$original] = $replacement_string;
           }
 
