@@ -79,6 +79,7 @@ class FollowTaxonomyActivityContext extends ActivityContextBase {
       if ($recipient->id() !== $entity->getOwnerId() && $entity->access('view', $recipient)) {
         if (!in_array($recipient->id(), array_column($recipients, 'target_id'))) {
           $recipients[] = [
+            'target_type' => 'user',
             'target_id' => $recipient->id(),
           ];
         }
@@ -113,9 +114,8 @@ class FollowTaxonomyActivityContext extends ActivityContextBase {
           $recipient = $flagging->getOwner();
 
           if (!$recipient instanceof UserInterface) {
-            break;
+            continue;
           }
-
 
           // We don't send notifications to content creator.
           if ($recipient->id() !== $entity->getOwnerId() && $entity->access('view', $recipient)) {
