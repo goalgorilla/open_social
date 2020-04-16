@@ -185,10 +185,10 @@ function social_follow_taxonomy_tokens($type, $tokens, array $data, array $optio
 
                     // Get the names of terms related to the content.
                     $term_ids = social_follow_taxonomy_terms_list($entity);
+                    $term_names = [];
                     foreach ($term_ids as $term_id) {
                       /** @var \Drupal\taxonomy\TermInterface $term */
                       $term = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->load($term_id);
-                      $term_names = [];
                       if ($term instanceof TermInterface) {
                         if (social_follow_taxonomy_term_followed($term)) {
                           $term_names[] = $term->getName();
