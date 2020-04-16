@@ -5,6 +5,7 @@
  * The Social event AN enroll module.
  */
 
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 use Drupal\views\ViewExecutable;
@@ -259,7 +260,7 @@ function social_event_an_enroll_node_update(Node $node) {
  *
  * Set the correct value for AN enroll when enroll method is set to request.
  */
-function social_event_an_enroll_node_presave(Drupal\Core\Entity\EntityInterface $entity) {
+function social_event_an_enroll_node_presave(EntityInterface $entity) {
   // If the enroll method is request then anonymous must be off.
   if ($entity->getType() === 'event' && $entity->get('field_enroll_method')->value === '2') {
     $entity->set('field_event_an_enroll', '0');

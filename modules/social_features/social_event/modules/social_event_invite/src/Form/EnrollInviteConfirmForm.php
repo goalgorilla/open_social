@@ -54,12 +54,25 @@ class EnrollInviteConfirmForm extends FormBase {
    */
   protected $fullName;
 
+  /**
+   * EnrollInviteConfirmForm constructor.
+   *
+   * @param \Drupal\Core\Routing\RedirectDestinationInterface $redirect_destination
+   *   The redirect interface.
+   * @param \Drupal\Core\Session\AccountInterface $current_user
+   *   The account interface.
+   * @param \Drupal\social_event\EventEnrollmentStatusHelper $enrollmentStatusHelper
+   *   The enrollment status helper.
+   */
   public function __construct(RedirectDestinationInterface $redirect_destination, AccountInterface $current_user, EventEnrollmentStatusHelper $enrollmentStatusHelper) {
     $this->redirectDestination = $redirect_destination;
     $this->currentUser = $current_user;
     $this->eventInviteStatus = $enrollmentStatusHelper;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('redirect.destination'),
@@ -69,7 +82,7 @@ class EnrollInviteConfirmForm extends FormBase {
   }
 
   /**
-   * {@inheritDoc}
+   * {@inheritdoc}
    */
   public function getFormId() {
     return 'invite_enrollment_confirm_form';
@@ -83,7 +96,7 @@ class EnrollInviteConfirmForm extends FormBase {
   }
 
   /**
-   * {@inheritDoc}
+   * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
     // Get the event_enrollment from the request.
@@ -91,7 +104,7 @@ class EnrollInviteConfirmForm extends FormBase {
 
     // Load the user profile to format a nice name.
     if (!empty($this->eventEnrollment)) {
-      /** @var Profile $user_profile */
+      /** @var \Drupal\profile\Entity\Profile $user_profile */
       $user_profile = Profile::load($this->eventEnrollment->getAccount());
       $this->fullName = $user_profile->field_profile_first_name->value . ' ' . $user_profile->field_profile_last_name->value;
     }
@@ -136,7 +149,7 @@ class EnrollInviteConfirmForm extends FormBase {
   }
 
   /**
-   * {@inheritDoc}
+   * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     if (!empty($this->eventEnrollment)) {
@@ -148,4 +161,5 @@ class EnrollInviteConfirmForm extends FormBase {
 
     $form_state->setRedirectUrl($this->getCancelUrl());
   }
+
 }

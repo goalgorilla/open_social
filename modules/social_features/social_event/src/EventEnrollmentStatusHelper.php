@@ -70,6 +70,8 @@ class EventEnrollmentStatusHelper {
    *   The email or userid you want to check on.
    * @param int $event
    *   The event id you want to check on, use 0 for all.
+   * @param int $invite_status
+   *   The event status to filter on.
    *
    * @return array
    *   Returns the conditions for which to search event enrollments on.
@@ -112,10 +114,12 @@ class EventEnrollmentStatusHelper {
   }
 
   /**
-   * Custom check to get all enrollments for an event
+   * Custom check to get all enrollments for an event.
    *
    * @param int $event
    *   The event id you want to check on.
+   * @param int $invite_status
+   *   The event status to filter on.
    *
    * @return array
    *   Returns the conditions for which to search event enrollments on.
@@ -180,9 +184,8 @@ class EventEnrollmentStatusHelper {
       ->loadByProperties($conditions);
   }
 
-
   /**
-   * Custom check to get all enrollments for an event
+   * Custom check to get all enrollments for an event.
    *
    * @param int $event
    *   The event id you want to check on.
@@ -193,7 +196,7 @@ class EventEnrollmentStatusHelper {
    *   Returns all enrollments for an event.
    */
   public function getAllEventEnrollments($event, $ignore_all_status = FALSE) {
-    $conditions = $this->eventEnrollments( $event);
+    $conditions = $this->eventEnrollments($event);
 
     // If the $ignore_all_status parameter is TRUE, and we have the field
     // field_request_or_invite_status in our $conditions, unset this field.

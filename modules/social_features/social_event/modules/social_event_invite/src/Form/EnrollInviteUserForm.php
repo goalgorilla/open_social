@@ -24,7 +24,7 @@ class EnrollInviteUserForm extends InviteUserBaseForm {
   protected $eventInviteStatus;
 
   /**
-   * {@inheritDoc}
+   * {@inheritdoc}
    */
   public function __construct(RouteMatchInterface $route_match, EntityTypeManagerInterface $entity_type_manager, LoggerChannelFactoryInterface $logger_factory, EventEnrollmentStatusHelper $eventInviteStatus) {
     parent::__construct($route_match, $entity_type_manager, $logger_factory);
@@ -32,7 +32,7 @@ class EnrollInviteUserForm extends InviteUserBaseForm {
   }
 
   /**
-   * {@inheritDoc}
+   * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
     return new static(
@@ -119,4 +119,5 @@ class EnrollInviteUserForm extends InviteUserBaseForm {
     ];
     batch_set($batch);
   }
+
 }

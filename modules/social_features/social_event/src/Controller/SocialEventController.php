@@ -89,7 +89,10 @@ class SocialEventController extends ControllerBase {
   }
 
   /**
+   * Function to get the decline request title.
+   *
    * @return \Drupal\Core\StringTranslation\TranslatableMarkup
+   *   The decline title markup.
    */
   public function getTitleDeclineRequest() {
     /** @var \Drupal\node\NodeInterface $node */

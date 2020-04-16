@@ -14,7 +14,7 @@ use Drupal\Core\Config\StorageInterface;
 class EventEnrollmentConfigOverride implements ConfigFactoryOverrideInterface {
 
   /**
-   * {@inheritDoc}
+   * {@inheritdoc}
    */
   public function loadOverrides($names) {
     $overrides = [];
@@ -70,4 +70,5 @@ class EventEnrollmentConfigOverride implements ConfigFactoryOverrideInterface {
   public function createConfigObject($name, $collection = StorageInterface::DEFAULT_COLLECTION) {
     return NULL;
   }
+
 }

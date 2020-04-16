@@ -50,7 +50,7 @@ class SocialEventInviteBulkHelper {
       $existing_enrollment = $eventEnrollmentStorage->loadByProperties($conditions);
 
       if (!empty($existing_enrollment)) {
-        /** @var EventEnrollment $enrollment */
+        /** @var \Drupal\social_event\Entity\EventEnrollment $enrollment */
         $enrollment = end($existing_enrollment);
         // Of course, only delete the previous invite if it was declined
         // or if it was invalid or expired.

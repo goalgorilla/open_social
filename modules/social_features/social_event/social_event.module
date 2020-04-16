@@ -512,7 +512,7 @@ function social_event_form_alter(&$form, FormStateInterface $form_state, $form_i
           ':input[name="groups"]' => ['!value' => '_none'],
         ],
       ];
-      
+
       // Set default value and fieldgroup for all day checkbox.
       if ($date = $form['field_event_date']['widget'][0]['value']['#default_value']) {
         $all_day_value = $date instanceof DrupalDateTime && social_event_date_is_all_day($date);
@@ -817,10 +817,8 @@ function social_event_entity_operation_alter(array &$operations, EntityInterface
  * Implements hook_ENTITY_TYPE_update().
  *
  * Delete the event enrollments request if type is changed to directly.
- *
- * @param \Drupal\Core\Entity\EntityInterface $entity
  */
-function social_event_node_update(Drupal\Core\Entity\EntityInterface $entity) {
+function social_event_node_update(EntityInterface $entity) {
   if ($entity->getType() === 'event') {
     $enroll_state_original = $entity->original->get('field_enroll_method')->getString();
 
@@ -829,7 +827,7 @@ function social_event_node_update(Drupal\Core\Entity\EntityInterface $entity) {
       /** @var \Drupal\social_event\EventEnrollmentStatusHelper $enrollments */
       $enrollments = \Drupal::service('social_event.status_helper');
 
-      foreach($enrollments->getAllEventEnrollments($entity->id(), TRUE) as $enrollment) {
+      foreach ($enrollments->getAllEventEnrollments($entity->id(), TRUE) as $enrollment) {
         if ((int) $enrollment->get('field_request_or_invite_status')->getString() === EventEnrollmentInterface::REQUEST_PENDING) {
           $enrollment->delete();
         }
@@ -837,7 +835,6 @@ function social_event_node_update(Drupal\Core\Entity\EntityInterface $entity) {
     }
   }
 }
-
 
 /**
  * Implements template_preprocess_views_view().
