@@ -10,6 +10,9 @@ use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\field\FieldConfigInterface;
 
+/**
+ * Implements hook_modules_installed().
+ */
 function social_content_block_modules_installed() {
   // When the set of installed modules change, reload the sorting optios.
   _social_content_block_update_sorting_options();
