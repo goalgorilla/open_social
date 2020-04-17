@@ -22,19 +22,22 @@
 
 }
 
-// make sure we can see both menu's
-.toolbar-fixed .navbar-default {
-  position: relative;
-  z-index: 100;
+.toolbar-vertical,
+.toolbar-fixed {
+  // The vertical or fixed toolbar is already fixed so the navbar needs to be
+  // made to just sit on the page.
+  .navbar-default {
+    position: relative;
+  }
+
+  // The admin toolbar needs to have a higher z-index than the normal menu.
+  // Lowering the z-index of the normal menu causes other issues.
+  .toolbar .toolbar-bar {
+    z-index: $zindex-admin-menu;
+  }
 }
+
 .toolbar-fixed .main-container,
 .toolbar-vertical .main-container {
   padding-top: 0;
-}
-
-@include for-phone-only {
-  .toolbar-vertical .navbar-default {
-    position: relative;
-    z-index: 1;
-  }
 }

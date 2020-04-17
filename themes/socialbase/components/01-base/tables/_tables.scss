@@ -209,7 +209,9 @@ form:not(.layout-builder-add-block) {
   }
 }
 
-.select-all.checkbox {
+.select-all.checkbox,
+// Specificity rule to make sure we override form-controls.scss
+form:not(.layout-builder-configure-block) .select-all.checkbox {
   display: table-cell;
 }
 
