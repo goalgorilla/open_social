@@ -2,6 +2,7 @@
 
 namespace Drupal\social_event_an_enroll\Controller;
 
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Url;
@@ -34,16 +35,28 @@ class EventAnEnrollController extends ControllerBase {
   protected $entityTypeManager;
 
   /**
+   * The config factory.
+   *
+   * @var \Drupal\Core\Config\ConfigFactoryInterface
+   */
+  protected $configFactory;
+
+  /**
    * SocialTopicController constructor.
    *
    * @param \Drupal\Core\Routing\RouteMatchInterface $routeMatch
    *   The route match object.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
    *   The entity type manager.
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $configFactory
+   *   The config factory.
    */
-  public function __construct(RouteMatchInterface $routeMatch, EntityTypeManagerInterface $entityTypeManager) {
+  public function __construct(RouteMatchInterface $routeMatch,
+                              EntityTypeManagerInterface $entityTypeManager,
+                              ConfigFactoryInterface $configFactory) {
     $this->routeMatch = $routeMatch;
     $this->entityTypeManager = $entityTypeManager;
+    $this->configFactory = $configFactory;
   }
 
   /**
@@ -52,12 +65,19 @@ class EventAnEnrollController extends ControllerBase {
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('current_route_match'),
-      $container->get('entity_type.manager')
+      $container->get('entity_type.manager'),
+      $container->get('config.factory')
     );
   }
 
   /**
    * Determines if user has access to enroll form.
+   *
+   * @param \Drupal\node\NodeInterface $node
+   *   The node.
+   *
+   * @return \Drupal\Core\Access\AccessResultAllowed|\Drupal\Core\Access\AccessResultForbidden
+   *   Allowed or not allowed.
    */
   public function enrollAccess(NodeInterface $node) {
     $config = $this->config('social_event_an_enroll.settings');
@@ -76,35 +96,40 @@ class EventAnEnrollController extends ControllerBase {
    * Enroll dialog callback.
    */
   public function enrollDialog(NodeInterface $node) {
-    $action_links = [
-      'login' => [
-        'uri' => Url::fromRoute('user.login', [], [
-          'query' => [
-            'destination' => Url::fromRoute('entity.node.canonical', ['node' => $node->id()])
-              ->toString(),
-          ],
-        ])->toString(),
-      ],
-      'register' => [
+
+    // Fetch the user settings.
+    $userSettings = $this->configFactory->get('user.settings');
+
+    $action_links['login'] = [
+      'uri' => Url::fromRoute('user.login', [], [
+        'query' => [
+          'destination' => Url::fromRoute('entity.node.canonical', ['node' => $node->id()])
+            ->toString(),
+        ],
+      ])->toString(),
+    ];
+
+    // Check if users are allowed to register.
+    if ('admin_only' !== $userSettings->get('register')) {
+      $action_links['register'] = [
         'uri' => Url::fromRoute('user.register', [], [
           'query' => [
             'destination' => Url::fromRoute('entity.node.canonical', ['node' => $node->id()])
               ->toString(),
           ],
         ])->toString(),
-      ],
-      'guest' => [
-        'uri' => Url::fromRoute('social_event_an_enroll.enroll_form', ['node' => $node->id()], [])
-          ->toString(),
-      ],
+      ];
+    }
+
+    $action_links['guest'] = [
+      'uri' => Url::fromRoute('social_event_an_enroll.enroll_form', ['node' => $node->id()], [])
+        ->toString(),
     ];
 
-    $output = [
+    return [
       '#theme' => 'event_an_enroll_dialog',
       '#links' => $action_links,
     ];
-
-    return $output;
   }
 
   /**
