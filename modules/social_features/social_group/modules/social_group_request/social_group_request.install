@@ -1,0 +1,29 @@
+<?php
+
+/**
+ * @file
+ * Install/Uninstall/Update hooks for social_group_request module.
+ */
+
+use Drupal\group\Entity\GroupType;
+
+/**
+ * Implements hook_install().
+ */
+function social_group_request_install() {
+  // Set some default permissions.
+  _social_group_request_set_permissions();
+
+  module_set_weight('social_group_request', 6);
+}
+
+/**
+ * Assign group request permission for closed and flexible group types.
+ */
+function _social_group_request_set_permissions() {
+  $group_type = GroupType::load('flexible_group');
+  $group_type->getOutsiderRole()->grantPermissions(['request group membership'])->save();
+
+  $group_type = GroupType::load('closed_group');
+  $group_type->getOutsiderRole()->grantPermissions(['request group membership'])->save();
+}

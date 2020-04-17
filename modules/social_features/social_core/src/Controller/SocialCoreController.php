@@ -115,7 +115,6 @@ class SocialCoreController extends ControllerBase {
       $event_id = $request->attributes->get('group');
       if (!empty($event_id) && !empty($view_data['event_id'])) {
         if ($event_id !== $view_data['event_id']) {
-          $x = 1;
           $view_data['list'] = [];
           $view_data['event_id'] = $event_id;
           $view_data['total_results'] = 0;

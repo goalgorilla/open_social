@@ -33,4 +33,14 @@ function social_group_views_data_alter(array &$data) {
       'id' => 'social_views_bulk_operations_bulk_form_group',
     ],
   ];
+
+  // Field with the count of group members.
+  $data['group_content']['group_membership_count'] = [
+    'title' => t('Membership count'),
+    'field' => [
+      'title' => t('Membership count'),
+      'help' => t('Displays the count of members in a group.'),
+      'id' => 'social_group_membership_count',
+    ],
+  ];
 }

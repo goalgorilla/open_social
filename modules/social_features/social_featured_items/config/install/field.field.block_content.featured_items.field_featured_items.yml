@@ -1,0 +1,33 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - block_content.type.featured_items
+    - field.storage.block_content.field_featured_items
+    - paragraphs.paragraphs_type.featured_item
+  module:
+    - entity_reference_revisions
+id: block_content.featured_items.field_featured_items
+field_name: field_featured_items
+entity_type: block_content
+bundle: featured_items
+label: 'Featured Items'
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:paragraph'
+  handler_settings:
+    negate: 0
+    target_bundles:
+      featured_item: featured_item
+    target_bundles_drag_drop:
+      featured_item:
+        enabled: true
+        weight: 3
+      featured_items:
+        weight: 4
+        enabled: false
+field_type: entity_reference_revisions
