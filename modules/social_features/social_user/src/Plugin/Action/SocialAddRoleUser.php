@@ -2,10 +2,14 @@
 
 namespace Drupal\social_user\Plugin\Action;
 
+use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\social_user\UserRoleHelper;
+use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\role_delegation\DelegatableRolesInterface;
 use Drupal\user\Plugin\Action\ChangeUserRoleBase;
 use Drupal\user\RoleInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Adds a role to a user but restricted by role.
@@ -16,7 +20,42 @@ use Drupal\user\RoleInterface;
  *   type = "social_user"
  * )
  */
-class SocialAddRoleUser extends ChangeUserRoleBase {
+class SocialAddRoleUser extends ChangeUserRoleBase implements ContainerFactoryPluginInterface {
+
+  /**
+   * The account proxy interface.
+   *
+   * @var \Drupal\Core\Session\AccountProxyInterface
+   */
+  protected $currentUser;
+
+  /**
+   * The role delegation delegatable roles interface.
+   *
+   * @var \Drupal\role_delegation\DelegatableRolesInterface
+   */
+  protected $delegatableRoles;
+
+  /**
+   * @inheritdoc
+   */
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeInterface $entity_type, AccountProxyInterface $currentUser, DelegatableRolesInterface $delegatableRoles) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_type);
+    $this->entityType = $entity_type;
+    $this->currentUser = $currentUser->getAccount();
+    $this->delegatableRoles = $delegatableRoles;
+  }
+
+  /**
+   * @inheritdoc
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    return new static($configuration, $plugin_id, $plugin_definition,
+      $container->get('entity_type.manager')->getDefinition('user_role'),
+      $container->get('current_user'),
+      $container->get('delegatable_roles')
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -37,8 +76,7 @@ class SocialAddRoleUser extends ChangeUserRoleBase {
    * {@inheritdoc}
    */
   public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
-    /** @var \Drupal\social_user\UserRoleHelper $roles */
-    $roles = UserRoleHelper::alterAddOrRemoveRoleOptions(user_role_names(TRUE), 'sitemanager', ['administrator']);
+    $roles = $this->delegatableRoles->getAssignableRoles($this->currentUser);
     // Remove the authenticated role.
     unset($roles[RoleInterface::AUTHENTICATED_ID]);
     $form['rid'] = [
@@ -50,5 +88,4 @@ class SocialAddRoleUser extends ChangeUserRoleBase {
     ];
     return $form;
   }
-
 }
