@@ -102,3 +102,10 @@ new PluralTranslatableMarkup(0, 'Your email will be send to 1 selected member', 
 new TranslatableMarkup("Remove");
 new TranslatableMarkup("Export");
 new TranslatableMarkup("Change the role");
+
+// Strings added because they were removed from the creation/edit page of the
+// "Custom content list block" block according to the new design.
+new TranslatableMarkup('To make the list of topics more specific you can additionally configure more filters such as topic types, content tags and groups.');
+new TranslatableMarkup('Autocomplete field with items from taxonomy list topic types.');
+new TranslatableMarkup('Autocomplete field with items from taxonomy list content tags.');
+new TranslatableMarkup('Autocomplete field with group names.');

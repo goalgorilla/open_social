@@ -101,14 +101,14 @@
     {% endif %}
 
     {% if content.field_profile_expertise['#items'] %}
-      <h5>{% trans %}Your expertise{% endtrans %}</h5>
+      <h5>{% trans %}Expertise{% endtrans %}</h5>
       {% for item in content.field_profile_expertise['#items'] %}
         <div class="badge badge--pill badge--large badge-default">{{ item.entity.label }}</div>
       {% endfor %}
     {% endif %}
 
     {% if content.field_profile_interests['#items'] %}
-      <h5>{% trans %}Your interests{% endtrans %}</h5>
+      <h5>{% trans %}Interests{% endtrans %}</h5>
       {% for item in content.field_profile_interests['#items'] %}
         <div class="badge badge--pill badge--large badge-default">{{ item.entity.label }}</div>
       {% endfor %}

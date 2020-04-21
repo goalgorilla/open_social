@@ -2,10 +2,6 @@
 @import 'settings--sky';
 
 .socialblue--sky {
-  .card {
-    margin-bottom: 1.5rem;
-  }
-
   .card--views__sidebar {
 
     .card__block {
@@ -68,6 +64,16 @@
       &:last-child {
         border-bottom: 0;
       }
+
+      .badge {
+        text-align: left;
+        white-space: normal;
+      }
+
+      .list-item__text {
+        display: flex;
+        flex-wrap: wrap;
+      }
     }
   }
 
@@ -125,9 +131,12 @@
         &.block-discussion-add-block,
         &.block-group-add-event-block,
         &.block-group-add-topic-block,
+        &.block-group-add-idea-block,
         &.block-event-add-block,
         &.block-topic-add-block,
-        &.block-group-add-block {
+        &.block-group-add-block,
+        &.block-social-idea,
+        &.block-group-add-discussion-block {
           display: block;
           margin-top: 0;
           padding: 20px 1.875rem;
@@ -199,18 +208,11 @@
       > * {
         width: 100%;
       }
-
-      .btn {
-        width: 100%;
-        font-weight: 700;
-        text-transform: uppercase;
-        border-width: 2px;
-      }
     }
 
     .card__actionbar {
       padding: 1.5rem 0;
-      
+
       .card__link {
         float: none;
         margin-left: 0;
