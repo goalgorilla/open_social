@@ -37,7 +37,7 @@ class SocialAddRoleUser extends ChangeUserRoleBase implements ContainerFactoryPl
   protected $delegatableRoles;
 
   /**
-   * @inheritdoc
+   * {@inheritdoc}
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeInterface $entity_type, AccountProxyInterface $currentUser, DelegatableRolesInterface $delegatableRoles) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_type);
@@ -47,7 +47,7 @@ class SocialAddRoleUser extends ChangeUserRoleBase implements ContainerFactoryPl
   }
 
   /**
-   * @inheritdoc
+   * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
     return new static($configuration, $plugin_id, $plugin_definition,
@@ -88,4 +88,5 @@ class SocialAddRoleUser extends ChangeUserRoleBase implements ContainerFactoryPl
     ];
     return $form;
   }
+
 }

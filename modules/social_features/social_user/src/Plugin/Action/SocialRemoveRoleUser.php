@@ -7,7 +7,6 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\role_delegation\DelegatableRolesInterface;
-use Drupal\social_user\UserRoleHelper;
 use Drupal\user\Plugin\Action\ChangeUserRoleBase;
 use Drupal\user\RoleInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -38,7 +37,7 @@ class SocialRemoveRoleUser extends ChangeUserRoleBase implements ContainerFactor
   protected $delegatableRoles;
 
   /**
-   * @inheritdoc
+   * {@inheritdoc}
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeInterface $entity_type, AccountProxyInterface $currentUser, DelegatableRolesInterface $delegatableRoles) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_type);
@@ -48,7 +47,7 @@ class SocialRemoveRoleUser extends ChangeUserRoleBase implements ContainerFactor
   }
 
   /**
-   * @inheritdoc
+   * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
     return new static($configuration, $plugin_id, $plugin_definition,
