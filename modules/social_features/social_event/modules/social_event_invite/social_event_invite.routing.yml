@@ -22,6 +22,18 @@ social_event_invite.invite_user:
   requirements:
     _permission: 'access content'
 
+social_event_invite.confirm_invite:
+  path: '/node/{node}/invite/confirm'
+  defaults:
+    _form: '\Drupal\social_event_invite\Form\EnrollInviteConfirmForm'
+    _title: 'Confirm invite'
+  options:
+    parameters:
+      node:
+        type: entity:node
+  requirements:
+    _permission: 'access content'
+
 social_event_invite.settings:
   path: '/admin/config/opensocial/event-invite'
   defaults:

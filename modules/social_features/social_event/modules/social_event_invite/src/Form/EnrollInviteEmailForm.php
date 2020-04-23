@@ -6,6 +6,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\TempStore\PrivateTempStoreFactory;
 use Drupal\social_core\Form\InviteEmailBaseForm;
 use Drupal\social_event\EventEnrollmentInterface;
 use Drupal\user\UserInterface;
@@ -25,6 +26,13 @@ class EnrollInviteEmailForm extends InviteEmailBaseForm {
   protected $entityStorage;
 
   /**
+   * Drupal\Core\TempStore\PrivateTempStoreFactory definition.
+   *
+   * @var \Drupal\Core\TempStore\PrivateTempStoreFactory
+   */
+  private $tempStoreFactory;
+
+  /**
    * {@inheritdoc}
    */
   public function getFormId() {
@@ -34,9 +42,10 @@ class EnrollInviteEmailForm extends InviteEmailBaseForm {
   /**
    * {@inheritdoc}
    */
-  public function __construct(RouteMatchInterface $route_match, EntityTypeManagerInterface $entity_type_manager, LoggerChannelFactoryInterface $logger_factory, EntityStorageInterface $entity_storage) {
+  public function __construct(RouteMatchInterface $route_match, EntityTypeManagerInterface $entity_type_manager, LoggerChannelFactoryInterface $logger_factory, EntityStorageInterface $entity_storage, PrivateTempStoreFactory $tempStoreFactory) {
     parent::__construct($route_match, $entity_type_manager, $logger_factory);
     $this->entityStorage = $entity_storage;
+    $this->tempStoreFactory = $tempStoreFactory;
   }
 
   /**
@@ -48,7 +57,7 @@ class EnrollInviteEmailForm extends InviteEmailBaseForm {
       $container->get('entity_type.manager'),
       $container->get('logger.factory'),
       $container->get('entity.manager')->getStorage('event_enrollment'),
-      $container->get('entity_type.manager')
+      $container->get('tempstore.private')
     );
   }
 
@@ -160,20 +169,17 @@ class EnrollInviteEmailForm extends InviteEmailBaseForm {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     parent::submitForm($form, $form_state);
 
-    $emails = $this->getSubmittedEmails($form_state);
-    $nid = $form_state->getValue('event');
-
-    $batch = [
-      'title' => $this->t('Sending invites...'),
-      'init_message' => $this->t("Preparing to send invites..."),
-      'operations' => [
-        [
-          '\Drupal\social_event_invite\SocialEventInviteBulkHelper::bulkInviteEmails',
-          [$emails, $nid],
-        ],
-      ],
-    ];
-    batch_set($batch);
+    $params['recipients'] = $this->getSubmittedEmails($form_state);
+    $params['nid'] = $form_state->getValue('event');
+    $tempstore = $this->tempStoreFactory->get('event_invite_form_values');
+    try {
+      $tempstore->set('params', $params);
+      $form_state->setRedirect('social_event_invite.confirm_invite', ['node' => $form_state->getValue('event')]);
+    }
+    catch (\Exception $error) {
+      $this->loggerFactory->get('event_invite_form_values')->alert(t('@err', ['@err' => $error]));
+      $this->messenger->addWarning(t('Unable to proceed, please try again.'));
+    }
   }
 
 }

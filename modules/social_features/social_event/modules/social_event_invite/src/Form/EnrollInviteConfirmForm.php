@@ -2,10 +2,12 @@
 
 namespace Drupal\social_event_invite\Form;
 
+use Drupal\Component\Render\FormattableMarkup;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Routing\RedirectDestinationInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\TempStore\PrivateTempStoreFactory;
 use Drupal\Core\Url;
 use Drupal\profile\Entity\Profile;
 use Drupal\social_event\EventEnrollmentInterface;
@@ -48,11 +50,22 @@ class EnrollInviteConfirmForm extends FormBase {
   protected $eventInviteStatus;
 
   /**
-   * The full name of the user.
+   * Tempstore service.
    *
+   * @var \Drupal\Core\TempStore\PrivateTempStoreFactory
+   */
+  protected $tempStoreFactory;
+
+  /**
+   * @var array
+   */
+  private $recipients;
+
+  /**
    * @var string
    */
-  protected $fullName;
+  private $nid;
+
 
   /**
    * EnrollInviteConfirmForm constructor.
@@ -64,10 +77,11 @@ class EnrollInviteConfirmForm extends FormBase {
    * @param \Drupal\social_event\EventEnrollmentStatusHelper $enrollmentStatusHelper
    *   The enrollment status helper.
    */
-  public function __construct(RedirectDestinationInterface $redirect_destination, AccountInterface $current_user, EventEnrollmentStatusHelper $enrollmentStatusHelper) {
+  public function __construct(RedirectDestinationInterface $redirect_destination, AccountInterface $current_user, EventEnrollmentStatusHelper $enrollmentStatusHelper, PrivateTempStoreFactory $tempStoreFactory) {
     $this->redirectDestination = $redirect_destination;
     $this->currentUser = $current_user;
     $this->eventInviteStatus = $enrollmentStatusHelper;
+    $this->tempStoreFactory = $tempStoreFactory;
   }
 
   /**
@@ -77,7 +91,8 @@ class EnrollInviteConfirmForm extends FormBase {
     return new static(
       $container->get('redirect.destination'),
       $container->get('current_user'),
-      $container->get('social_event.status_helper')
+      $container->get('social_event.status_helper'),
+      $container->get('tempstore.private')
     );
   }
 
@@ -99,27 +114,45 @@ class EnrollInviteConfirmForm extends FormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    // Get the event_enrollment from the request.
-    $this->eventEnrollment = $this->getRequest()->get('event_enrollment');
+    $tempstore = $this->tempStoreFactory->get('event_invite_form_values');
+    $params = $tempstore->get('params');
+    $this->recipients = $params['recipients'];
+    $this->nid = $params['nid'];
 
-    // Load the user profile to format a nice name.
-    if (!empty($this->eventEnrollment)) {
-      /** @var \Drupal\profile\Entity\Profile $user_profile */
-      $user_profile = Profile::load($this->eventEnrollment->getAccount());
-      $this->fullName = $user_profile->field_profile_first_name->value . ' ' . $user_profile->field_profile_last_name->value;
-    }
+//    // Get the event_enrollment from the request.
+//    $this->eventEnrollment = $this->getRequest()->get('event_enrollment');
+//
+//    // Load the user profile to format a nice name.
+//    if (!empty($this->eventEnrollment)) {
+//      /** @var \Drupal\profile\Entity\Profile $user_profile */
+//      $user_profile = Profile::load($this->eventEnrollment->getAccount());
+//      $this->fullName = $user_profile->field_profile_first_name->value . ' ' . $user_profile->field_profile_last_name->value;
+//    }
 
     $form['#attributes']['class'][] = 'form--default';
 
     $form['question'] = [
       '#type' => 'html_tag',
       '#tag' => 'p',
-      '#value' => $this->t('Are you sure you want to invite the enrollment request for @name?', [
-        '@name' => $this->fullName,
-      ]),
+      '#value' => $this->t('Are you sure you want to send a invitation to all e-mails listed bellow?'),
       '#weight' => 1,
       '#prefix' => '<div class="card"><div class="card__block">',
       '#suffix' => '</div></div>',
+    ];
+
+    $recipients_list_markup = "";
+    foreach ($this->recipients as $recipient) {
+      $recipients_list_markup .= "{$recipient} <br />";
+    }
+
+    $form['question']['invitees'] = [
+      '#type' => 'html_tag',
+      '#tag' => 'p',
+      '#value' => $this->t("Invitation recipients: <br /> @email_list",
+        [
+          '@email_list' => new FormattableMarkup($recipients_list_markup, []),
+        ]
+      ),
     ];
 
     $form['actions']['#type'] = 'actions';
@@ -152,14 +185,17 @@ class EnrollInviteConfirmForm extends FormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    if (!empty($this->eventEnrollment)) {
-      $this->eventEnrollment->field_request_or_invite_status->value = EventEnrollmentInterface::REQUEST_OR_INVITE_DECLINED;
-      $this->eventEnrollment->save();
-    }
-
-    $this->messenger()->addStatus($this->t('The enrollment request of @name has been declined.', ['@name' => $this->fullName]));
-
-    $form_state->setRedirectUrl($this->getCancelUrl());
+    $batch = [
+      'title' => $this->t('Sending invites...'),
+      'init_message' => $this->t("Preparing to send invites..."),
+      'operations' => [
+        [
+          '\Drupal\social_event_invite\SocialEventInviteBulkHelper::bulkInviteEmails',
+          [$this->recipients, $this->nid],
+        ],
+      ],
+    ];
+    batch_set($batch);
   }
 
 }
