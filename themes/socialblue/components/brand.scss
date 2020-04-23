@@ -451,19 +451,17 @@ html:not(.js) .navbar-default {
   background-color: #1f7ea7 !important;
 }
 
-.marker-cluster-small,
-.marker-cluster-small div {
-  background-color: $brand-secondary;
-}
+.marker-cluster,
+.marker-cluster-small {
+  &:after {
+    background: $brand-secondary;
+  }
 
-.marker-cluster div {
-  font-weight: bold;
-  color: #f9f9f9;
-  font-size: 1.2em;
-}
-
-.geolocation-map-container {
-  z-index: 5;
+  div {
+    &:after {
+      background: $brand-secondary;
+    }
+  }
 }
 
 .leaflet-popup-content .card__text {
