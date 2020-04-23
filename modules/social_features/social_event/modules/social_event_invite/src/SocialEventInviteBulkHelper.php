@@ -60,6 +60,7 @@ class SocialEventInviteBulkHelper {
         ];
         if (in_array($enrollment->field_request_or_invite_status->value, $status_checks)) {
           $enrollment->delete();
+          unset($existing_enrollment[$enrollment->id()]);
         }
       }
 

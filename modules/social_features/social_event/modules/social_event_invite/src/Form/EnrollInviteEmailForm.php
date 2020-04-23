@@ -132,6 +132,7 @@ class EnrollInviteEmailForm extends InviteEmailBaseForm {
         ];
         if (in_array($enrollment->field_request_or_invite_status->value, $status_checks)) {
           $enrollment->delete();
+          unset($enrollments[$enrollment->id()]);
         }
       }
 
