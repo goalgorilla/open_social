@@ -403,19 +403,20 @@ function social_profile_preprocess_profile(array &$variables) {
  *   Return TRUE if current user is allowed to see the email, FALSE otherwise.
  */
 function social_profile_check_email_field_access(Profile $profile, AccountProxyInterface $current_user) {
+  // If the current user has this permission, return true straight away.
+  if ($current_user->hasPermission('social profile privacy view hidden fields') || $current_user->hasPermission('view profile email')) {
+    return TRUE;
+  }
+
   // Prepare some variables for checking on the email field.
   $global_show_email = \Drupal::config('social_profile.settings')->get('social_profile_show_email');
   if (isset($profile->field_profile_show_email)) {
-    $profile_show_email = $profile->field_profile_show_email->value;
+    $profile_show_email = $profile->field_profile_show_email->value ?? NULL;
   }
 
-  // If the current user has this permission, return true straight away.
-  if ($current_user->hasPermission('social profile privacy view hidden fields')) {
-    return TRUE;
-  }
   // If the current user doesn't have the above permission, perform additional
   // checks to see if the current user is still able to view this email field.
-  if ($global_show_email || (!$global_show_email && !empty($profile_show_email)) || $current_user->hasPermission('view profile email')) {
+  if ($global_show_email || (!$global_show_email && !empty($profile_show_email))) {
     return TRUE;
   }
 
