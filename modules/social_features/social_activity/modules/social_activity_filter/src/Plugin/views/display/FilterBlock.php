@@ -96,6 +96,7 @@ class FilterBlock extends Block {
       'contains' => [
         'vocabulary' => ['default' => 'vocabulary'],
         'tags' => ['default' => 'tags'],
+        'type' => ['default' => 'type'],
       ],
     ];
 
@@ -110,6 +111,7 @@ class FilterBlock extends Block {
 
     $settings['vocabulary'] = 'none';
     $settings['tags'] = 'none';
+    $settings['type'] = 'none';
 
     return $settings;
   }
@@ -167,9 +169,15 @@ class FilterBlock extends Block {
       return $form;
     }
 
+    $info = $form_state->getBuildInfo();
     $allow_settings = $this->getOption('tags_filter');
     $allow_settings += array_filter($this->getOption('allow'));
     $block_configuration = $block->getConfiguration();
+
+    // Override default view mode only for layout_builder.
+    if ($info['form_id'] === 'layout_builder_update_block') {
+      $block_configuration['type'] = 'dashboard';
+    }
 
     if ($vid = $form_state->get('new_options_tags')) {
       $opt = $this->getTermOptionslist($vid);
@@ -209,6 +217,13 @@ class FilterBlock extends Block {
             '#required' => !empty($opt) ? TRUE : FALSE,
             '#prefix' => '<div id="edit-block-term-wrapper">',
             '#suffix' => '</div>',
+          ];
+          break;
+
+        case 'type':
+          $form['override']['type'] = [
+            '#type' => 'hidden',
+            '#value' => $block_configuration['type'],
           ];
           break;
 
@@ -291,6 +306,11 @@ class FilterBlock extends Block {
     }
     $form_state->unsetValue(['override', 'vocabulary']);
 
+    if ($value = $form_state->getValue(['override', 'type'])) {
+      $block->setConfigurationValue('type', $value);
+    }
+    $form_state->unsetValue(['override', 'type']);
+
     $form_state->setRebuild();
   }
 
@@ -305,6 +325,9 @@ class FilterBlock extends Block {
 
     if (isset($block_configuration['tags'])) {
       $this->view->filter_tags = $block_configuration['tags'];
+    }
+    if (isset($block_configuration['type'])) {
+      $this->view->filter_type = $block_configuration['type'];
     }
 
     $taxonomy_fields = $this->configFactory
