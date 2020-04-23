@@ -52,6 +52,7 @@ class EnrollRequestModalForm extends FormBase {
     $form['message'] = [
       '#type' => 'textarea',
       '#title' => $this->t('Message'),
+      '#maxlength' => 250,
     ];
 
     $form['actions']['submit'] = [
