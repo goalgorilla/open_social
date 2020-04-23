@@ -56,7 +56,7 @@ class SocialEventInviteConfigOverride implements ConfigFactoryOverrideInterface 
           $request_path['pages'] .= "\r\n";
         }
 
-        $request_path['pages'] .= '*/invite/email' . "\r\n" . '*/invite/user';
+        $request_path['pages'] .= '*/invite/email' . "\r\n" . '*/invite/user' . "\r\n" . '*/invite/confirm';
 
         $overrides[$config_name] = ['visibility' => ['request_path' => $request_path]];
       }

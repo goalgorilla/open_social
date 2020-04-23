@@ -114,8 +114,11 @@ class EnrollInviteConfirmForm extends FormBase {
     if ($this->inviteType === 'user') {
       return Url::fromRoute('social_event_invite.invite_user', ['node' => $this->nid]);
     }
-    else {
+    elseif ($this->inviteType === 'email') {
       return Url::fromRoute('social_event_invite.invite_email', ['node' => $this->nid]);
+    }
+    else {
+      return Url::fromRoute('entity.node.canonical', ['node' => $this->nid]);
     }
   }
 
