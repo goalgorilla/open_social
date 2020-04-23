@@ -3,9 +3,11 @@
 namespace Drupal\social_event_invite;
 
 use Drupal\Core\Cache\Cache;
+use Drupal\Core\Url;
 use Drupal\social_event\Entity\EventEnrollment;
 use Drupal\social_event\EventEnrollmentInterface;
 use Drupal\user\UserInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
  * Class SocialEventBulkInvite.
@@ -21,12 +23,14 @@ class SocialEventInviteBulkHelper {
    *   Array containing users.
    * @param string $nid
    *   The node id.
+   * @param array $context
+   *   The context.
    *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
-  public static function bulkInviteUsers(array $users, $nid) {
+  public static function bulkInviteUsers(array $users, $nid, array &$context) {
     $results = [];
 
     foreach ($users as $uid => $target_id) {
@@ -77,7 +81,9 @@ class SocialEventInviteBulkHelper {
       // The owner is always used as the actor.
       // @see activity_creator_message_insert().
       $enrollment->setOwnerId(\Drupal::currentUser()->id());
-      $results[] = $enrollment->save();
+      // Add the node id to the results so we have the nid available in the
+      // finished callback so we can redirect to the correct node.
+      $results[$nid] = $enrollment->save();
     }
 
     $context['results'] = $results;
@@ -90,10 +96,12 @@ class SocialEventInviteBulkHelper {
    *   Array containing emails.
    * @param string $nid
    *   The node id.
+   * @param array $context
+   *   The context.
    *
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
-  public static function bulkInviteEmails(array $emails, $nid) {
+  public static function bulkInviteEmails(array $emails, $nid, array &$context) {
     $results = [];
 
     foreach ($emails as $email) {
@@ -129,10 +137,52 @@ class SocialEventInviteBulkHelper {
       // The owner is always used as the actor.
       // @see activity_creator_message_insert().
       $enrollment->setOwnerId(\Drupal::currentUser()->id());
-      $results[] = $enrollment->save();
+      // Add the node id to the results so we have the nid available in the
+      // finished callback so we can redirect to the correct node.
+      $results[$nid] = $enrollment->save();
     }
 
     $context['results'] = $results;
+  }
+
+  /**
+   * Callback when the batch for inviting users for an event has finished.
+   */
+  public static function bulkInviteUserFinished($success, $results, $operations) {
+    $nid = NULL;
+    // We got the node event id in the results array so we will use that
+    // to provide the param in in redirect url.
+    foreach ($results as $key => $value) {
+      $nid = $key;
+    }
+    if ($success) {
+      drupal_set_message(t('Invites have been successfully sent.'));
+    }
+    else {
+      drupal_set_message(t('There was an unexpected error.'), 'error');
+    }
+
+    return new RedirectResponse(Url::fromRoute('social_event_invite.invite_user', ['node' => $nid])->toString());
+  }
+
+  /**
+   * Callback when the batch for inviting emails for an event has finished.
+   */
+  public static function bulkInviteEmailFinished($success, $results, $operations) {
+    $nid = NULL;
+    // We got the node event id in the results array so we will use that
+    // to provide the param in in redirect url.
+    foreach ($results as $key => $value) {
+      $nid = $key;
+    }
+    if ($success) {
+      drupal_set_message(t('Invites have been successfully sent.'));
+    }
+    else {
+      drupal_set_message(t('There was an unexpected error.'), 'error');
+    }
+
+    return new RedirectResponse(Url::fromRoute('social_event_invite.invite_email', ['node' => $nid])->toString());
   }
 
 }

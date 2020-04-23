@@ -10,7 +10,6 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\TempStore\PrivateTempStoreFactory;
 use Drupal\Core\Url;
 use Drupal\profile\Entity\Profile;
-use Drupal\social_event\EventEnrollmentInterface;
 use Drupal\social_event\EventEnrollmentStatusHelper;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -20,13 +19,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * @package Drupal\social_event_invite\Form
  */
 class EnrollInviteConfirmForm extends FormBase {
-
-  /**
-   * The event enrollment entity.
-   *
-   * @var \Drupal\social_event\Entity\EventEnrollment
-   */
-  protected $eventEnrollment;
 
   /**
    * The redirect destination helper.
@@ -57,15 +49,25 @@ class EnrollInviteConfirmForm extends FormBase {
   protected $tempStoreFactory;
 
   /**
+   * The recipients.
+   *
    * @var array
    */
   private $recipients;
 
   /**
+   * The event node id.
+   *
    * @var string
    */
   private $nid;
 
+  /**
+   * The invite type.
+   *
+   * @var string
+   */
+  private $inviteType;
 
   /**
    * EnrollInviteConfirmForm constructor.
@@ -76,6 +78,8 @@ class EnrollInviteConfirmForm extends FormBase {
    *   The account interface.
    * @param \Drupal\social_event\EventEnrollmentStatusHelper $enrollmentStatusHelper
    *   The enrollment status helper.
+   * @param \Drupal\Core\TempStore\PrivateTempStoreFactory $tempStoreFactory
+   *   The temp store factory.
    */
   public function __construct(RedirectDestinationInterface $redirect_destination, AccountInterface $current_user, EventEnrollmentStatusHelper $enrollmentStatusHelper, PrivateTempStoreFactory $tempStoreFactory) {
     $this->redirectDestination = $redirect_destination;
@@ -104,53 +108,81 @@ class EnrollInviteConfirmForm extends FormBase {
   }
 
   /**
-   * {@inheritdoc}
+   * Provide a cancel redirect.
    */
   private function getCancelUrl() {
-    return Url::fromUserInput($this->redirectDestination->get());
+    if ($this->inviteType === 'user') {
+      return Url::fromRoute('social_event_invite.invite_user', ['node' => $this->nid]);
+    }
+    else {
+      return Url::fromRoute('social_event_invite.invite_email', ['node' => $this->nid]);
+    }
+  }
+
+  /**
+   * Builds a list with recipients.
+   *
+   * @return string
+   *   Returns a markup string with the recipient(s).
+   */
+  private function getRecipientsList() {
+    $recipients = "";
+    if ($this->inviteType === 'user') {
+      // Load the user profile to format a nice name.
+      foreach ($this->recipients as $key => $value) {
+        /** @var \Drupal\profile\Entity\Profile $user_profile */
+        $user_profile = Profile::load($key);
+        $recipient = $user_profile->field_profile_first_name->value . ' ' . $user_profile->field_profile_last_name->value;
+        $recipients .= "{$recipient} <br />";
+      }
+    }
+    elseif ($this->inviteType === 'email') {
+      // Simply provide the email.
+      foreach ($this->recipients as $recipient) {
+        $recipients .= "{$recipient} <br />";
+      }
+    }
+
+    return $recipients;
   }
 
   /**
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
+    // Get the tempstore values.
     $tempstore = $this->tempStoreFactory->get('event_invite_form_values');
     $params = $tempstore->get('params');
+    $this->inviteType = $params['invite_type'];
     $this->recipients = $params['recipients'];
     $this->nid = $params['nid'];
-
-//    // Get the event_enrollment from the request.
-//    $this->eventEnrollment = $this->getRequest()->get('event_enrollment');
-//
-//    // Load the user profile to format a nice name.
-//    if (!empty($this->eventEnrollment)) {
-//      /** @var \Drupal\profile\Entity\Profile $user_profile */
-//      $user_profile = Profile::load($this->eventEnrollment->getAccount());
-//      $this->fullName = $user_profile->field_profile_first_name->value . ' ' . $user_profile->field_profile_last_name->value;
-//    }
+    $recipients_list_markup = $this->getRecipientsList();
 
     $form['#attributes']['class'][] = 'form--default';
 
+    // Based on the invite type, prepare some variables.
+    $questionType = '';
+    if ($this->inviteType === 'user') {
+      $questionType = 'user(s)';
+    }
+    elseif ($this->inviteType === 'email') {
+      $questionType = 'e-mail(s)';
+    }
     $form['question'] = [
       '#type' => 'html_tag',
       '#tag' => 'p',
-      '#value' => $this->t('Are you sure you want to send a invitation to all e-mails listed bellow?'),
+      '#value' => $this->t('Are you sure you want to send a invitation to all @questionType listed bellow?', ['@questionType' => $questionType]),
       '#weight' => 1,
       '#prefix' => '<div class="card"><div class="card__block">',
       '#suffix' => '</div></div>',
     ];
 
-    $recipients_list_markup = "";
-    foreach ($this->recipients as $recipient) {
-      $recipients_list_markup .= "{$recipient} <br />";
-    }
-
     $form['question']['invitees'] = [
       '#type' => 'html_tag',
       '#tag' => 'p',
-      '#value' => $this->t("Invitation recipients: <br /> @email_list",
+      '#value' => $this->t('Invitation recipients: <br /> @recipients_list',
         [
-          '@email_list' => new FormattableMarkup($recipients_list_markup, []),
+          '@recipients_list' => new FormattableMarkup($recipients_list_markup, []),
         ]
       ),
     ];
@@ -185,17 +217,34 @@ class EnrollInviteConfirmForm extends FormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    $batch = [
-      'title' => $this->t('Sending invites...'),
-      'init_message' => $this->t("Preparing to send invites..."),
-      'operations' => [
-        [
-          '\Drupal\social_event_invite\SocialEventInviteBulkHelper::bulkInviteEmails',
-          [$this->recipients, $this->nid],
+    if ($this->inviteType === 'email') {
+      $batch = [
+        'title' => $this->t('Sending invites...'),
+        'init_message' => $this->t("Preparing to send invites..."),
+        'operations' => [
+          [
+            '\Drupal\social_event_invite\SocialEventInviteBulkHelper::bulkInviteEmails',
+            [$this->recipients, $this->nid],
+          ],
         ],
-      ],
-    ];
-    batch_set($batch);
+        'finished' => '\Drupal\social_event_invite\SocialEventInviteBulkHelper::bulkInviteEmailFinished',
+      ];
+      batch_set($batch);
+    }
+    elseif ($this->inviteType === 'user') {
+      $batch = [
+        'title' => $this->t('Sending invites...'),
+        'init_message' => $this->t("Preparing to send invites..."),
+        'operations' => [
+          [
+            '\Drupal\social_event_invite\SocialEventInviteBulkHelper::bulkInviteUsers',
+            [$this->recipients, $this->nid],
+          ],
+        ],
+        'finished' => '\Drupal\social_event_invite\SocialEventInviteBulkHelper::bulkInviteUserFinished',
+      ];
+      batch_set($batch);
+    }
   }
 
 }

@@ -169,6 +169,7 @@ class EnrollInviteEmailForm extends InviteEmailBaseForm {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     parent::submitForm($form, $form_state);
 
+    $params['invite_type'] = 'email';
     $params['recipients'] = $this->getSubmittedEmails($form_state);
     $params['nid'] = $form_state->getValue('event');
     $tempstore = $this->tempStoreFactory->get('event_invite_form_values');
