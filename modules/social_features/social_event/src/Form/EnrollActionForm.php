@@ -426,15 +426,21 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
 
     if ($enrollment = array_pop($enrollments)) {
       $current_enrollment_status = $enrollment->field_enrollment_status->value;
+      // The user is enrolled, but cancels his enrollment.
       if ($to_enroll_status === '0' && $current_enrollment_status === '1') {
-        $enrollment->field_enrollment_status->value = '0';
-
+        // The user is enrolled by invited or request, but either the user or
+        // event manager is declining or invalidating the enrollment.
         if ($enrollment->field_request_or_invite_status
           && (int) $enrollment->field_request_or_invite_status->value === EventEnrollmentInterface::INVITE_ACCEPTED_AND_JOINED) {
+          // Mark this user his enrollment as declined.
           $enrollment->field_request_or_invite_status->value = EventEnrollmentInterface::REQUEST_OR_INVITE_DECLINED;
+          $enrollment->save();
         }
-
-        $enrollment->save();
+        // Else, the user simply wants to cancel his enrollment, so at
+        // this point we can safely delete the enrollment record as well.
+        else {
+          $enrollment->delete();
+        }
       }
       elseif ($to_enroll_status === '1' && $current_enrollment_status === '0') {
         $enrollment->field_enrollment_status->value = '1';
