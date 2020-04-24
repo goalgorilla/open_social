@@ -882,3 +882,10 @@ function social_core_update_8501() {
   $config->set('usage_data_enabled', 0);
   $config->save();
 }
+
+/**
+ * Install the role delegation module.
+ */
+function social_core_update_8701() {
+  \Drupal::service('module_installer')->install(['role_delegation']);
+}
