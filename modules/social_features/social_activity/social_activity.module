@@ -219,6 +219,9 @@ function social_activity_filter_views_post_build(ViewExecutable $view) {
       // Override default view mode for activity stream views block if it was
       // added via layout builder.
       $view->rowPlugin->options['view_mode'] = 'featured';
+
+      // Attach and use featured styles for activity stream on dashboard.
+      $view->element['#attached']['library'][] = 'social_featured_content/paragraph.featured';
     }
   }
 }
