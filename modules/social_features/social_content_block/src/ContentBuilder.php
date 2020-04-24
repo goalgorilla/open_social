@@ -361,8 +361,8 @@ class ContentBuilder implements ContentBuilderInterface {
           $query->leftJoin('group_content_field_data', 'gfd', "base_table.${entity_id_key} = gfd.gid");
           $query->leftjoin('post__field_recipient_group', 'pst', "base_table.${entity_id_key} = pst.field_recipient_group_target_id");
           $query->leftjoin('post_field_data', 'pfd', 'pst.entity_id = pfd.id');
-          $query->leftjoin('comment_field_data', 'cfd', "(gfd.entity_id = cfd.entity_id AND cfd.entity_type = 'node') OR (pfd.id = cfd.entity_id AND cfd.entity_type = 'post')");
-          $query->leftJoin('votingapi_vote', 'vv', "(gfd.entity_id = vv.entity_id AND vv.entity_type = 'node') OR (pfd.id = vv.entity_id AND vv.entity_type = 'post') OR (cfd.cid = vv.entity_id AND vv.entity_type = 'comment')");
+          $query->leftjoin('comment_field_data', 'cfd', "pfd.id = cfd.entity_id AND cfd.entity_type = 'post'");
+          $query->leftJoin('votingapi_vote', 'vv', "pfd.id = vv.entity_id AND vv.entity_type = 'post'");
           $query->leftjoin('node_field_data', 'nfd', 'gfd.entity_id = nfd.nid');
 
           $query->addExpression('GREATEST(COALESCE(MAX(gfd.changed), 0),
