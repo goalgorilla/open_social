@@ -70,7 +70,7 @@ class SocialGroupViewsBulkOperationsBulkForm extends ViewsBulkOperationsBulkForm
 
     parent::viewsForm($form, $form_state);
 
-    // Continue, if there are no group members on the manage members view.
+    // Continue, if group members as a result on the manage members view.
     if (empty($form['output'][0]['#rows']) || $this->view->id() !== 'group_manage_members') {
       return;
     }
