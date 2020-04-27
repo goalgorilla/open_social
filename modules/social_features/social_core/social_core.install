@@ -1208,3 +1208,10 @@ function social_core_update_8809() {
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
 }
+
+/**
+ * Install the role delegation module.
+ */
+function social_core_update_8810() {
+  \Drupal::service('module_installer')->install(['role_delegation']);
+}
