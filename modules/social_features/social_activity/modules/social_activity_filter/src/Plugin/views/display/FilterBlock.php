@@ -175,7 +175,7 @@ class FilterBlock extends Block {
     $block_configuration = $block->getConfiguration();
 
     // Override default view mode only for layout_builder.
-    if ($info['form_id'] === 'layout_builder_update_block') {
+    if (in_array($info['form_id'], ['layout_builder_add_block', 'layout_builder_update_block'])) {
       $block_configuration['type'] = 'dashboard';
     }
 
