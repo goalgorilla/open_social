@@ -2,8 +2,11 @@
 
 namespace Drupal\social_content_block\Plugin\Field\FieldWidget;
 
+use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\social_content_block\ContentBlockManagerInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Plugin implementation of the 'content_block_plugin_field' widget.
@@ -17,6 +20,72 @@ use Drupal\Core\Form\FormStateInterface;
  * )
  */
 class ContentBlockPluginFieldWidget extends ContentBlockPluginWidgetBase {
+
+  /**
+   * The prefix to search for.
+   */
+  const CONFIG_PREFIX = 'field.field.block_content.custom_content_list.';
+
+  /**
+   * An array containing matching configuration object names.
+   *
+   * @var array
+   */
+  protected $fieldConfigs;
+
+  /**
+   * Constructs a ContentBlockPluginFieldWidget object.
+   *
+   * @param string $plugin_id
+   *   The plugin_id for the widget.
+   * @param mixed $plugin_definition
+   *   The plugin implementation definition.
+   * @param \Drupal\Core\Field\FieldDefinitionInterface $field_definition
+   *   The definition of the field to which the widget is associated.
+   * @param array $settings
+   *   The widget settings.
+   * @param array $third_party_settings
+   *   Any third party settings.
+   * @param \Drupal\social_content_block\ContentBlockManagerInterface $content_block_manager
+   *   The content block manager.
+   * @param array $field_configs
+   *   An array containing matching configuration object names.
+   */
+  public function __construct(
+    $plugin_id,
+    $plugin_definition,
+    FieldDefinitionInterface $field_definition,
+    array $settings,
+    array $third_party_settings,
+    ContentBlockManagerInterface $content_block_manager,
+    array $field_configs
+  ) {
+    parent::__construct(
+      $plugin_id,
+      $plugin_definition,
+      $field_definition,
+      $settings,
+      $third_party_settings,
+      $content_block_manager
+    );
+
+    $this->fieldConfigs = $field_configs;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    return new static(
+      $plugin_id,
+      $plugin_definition,
+      $configuration['field_definition'],
+      $configuration['settings'],
+      $configuration['third_party_settings'],
+      $container->get('plugin.manager.content_block'),
+      $container->get('config.factory')->listAll(self::CONFIG_PREFIX)
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -49,7 +118,21 @@ class ContentBlockPluginFieldWidget extends ContentBlockPluginWidgetBase {
 
       foreach ($plugin_definition['fields'] as $field) {
         if (isset($form[$field])) {
-          $element[$plugin_id]['#options'][$field] = $form[$field]['widget']['target_id']['#title'];
+          // Depending on the field type the field title to filter by is in
+          // different places.
+          // For entity reference fields.
+          if (isset($form[$field]['widget']['target_id']['#title'])) {
+            $element[$plugin_id]['#options'][$field] = $form[$field]['widget']['target_id']['#title'];
+          }
+          // For other field types (e.g. select)
+          elseif (isset($form[$field]['widget']['#title'])) {
+            $element[$plugin_id]['#options'][$field] = $form[$field]['widget']['#title'];
+          }
+          // Otherwise we show a helpful message to the developer or QA that
+          // they should implement an additional clause.
+          else {
+            $element[$plugin_id]['#options'][$field] = "-- Could not find widget title for '{$field}' in " . self::class . ' --';
+          }
 
           $form[$field]['#states'] = [
             'visible' => [
@@ -63,7 +146,7 @@ class ContentBlockPluginFieldWidget extends ContentBlockPluginWidgetBase {
             ],
           ];
         }
-        else {
+        elseif (in_array(self::CONFIG_PREFIX . $field, $this->fieldConfigs)) {
           // Add the field machine name instead of the field label when the
           // field still not added to the form structure. The field will be
           // processed in the following place:
