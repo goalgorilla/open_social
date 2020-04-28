@@ -115,6 +115,7 @@ projects[views_infinite_scroll][type] = module
 projects[views_infinite_scroll][version] = 1.6
 projects[votingapi][type] = module
 projects[votingapi][version] = 3.0-beta1
+projects[votingapi][patch][] = "https://www.drupal.org/files/issues/2019-05-02/votingapi-timecallback-3048085-1-4.patch"
 projects[bootstrap][type] = theme
 projects[bootstrap][version] = 3.20
 projects[bootstrap][patch][] = "https://www.drupal.org/files/issues/2018-12-19/dropdown-without-default-button-3021413-2.patch"
