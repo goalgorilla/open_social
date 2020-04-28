@@ -1552,8 +1552,10 @@ function social_group_save_group_from_node(array $form, FormStateInterface $form
   foreach ($form_state->getValue('groups') as $new_group_key => $new_group) {
     $groups_to_add[$new_group['target_id']] = $new_group['target_id'];
   }
-  // The node already exist so lets also change the logic accordingly.
-  if ($form['#form_id'] === 'node_' . $node->bundle() . '_edit_form') {
+  // The node already exist so lets also change the logic accordingly,
+  // only if there is already a group that needs to be removed.
+  if (!empty($form['groups']['widget']['#default_value']) &&
+    $form['#form_id'] === 'node_' . $node->bundle() . '_edit_form') {
     $original_groups = $form['groups']['widget']['#default_value'];
     foreach ($original_groups as $original_group_key => $original_group) {
       if (!in_array($original_group, $groups_to_add)) {
