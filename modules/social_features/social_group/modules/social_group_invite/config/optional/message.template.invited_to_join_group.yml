@@ -1,0 +1,37 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - activity_logger
+third_party_settings:
+  activity_logger:
+    activity_bundle_entities:
+      group_content-closed_group-group_invitation: group_content-closed_group-group_invitation
+      group_content-open_group-group_invitation: group_content-open_group-group_invitation
+      group_content-public_group-group_invitation: group_content-public_group-group_invitation
+    activity_action: create_entitiy_action
+    activity_context: invited_to_join_group_activity_context
+    activity_destinations:
+      notifications: notifications
+    activity_create_direct: true
+    activity_aggregate: false
+    activity_entity_condition: ''
+template: invited_to_join_group
+label: 'Invited to join a group'
+description: 'You have been invited to join a group'
+text:
+  -
+    value: "<p>You have been invited to join the group <a href=\"[message:gurl]\">[message:gtitle]</a></p>\r\n"
+    format: basic_html
+  -
+    value: "<p>You have been invited to join the group <a href=\"[message:gurl]\">[message:gtitle]</a></p>\r\n"
+    format: basic_html
+  -
+    value: "<p>You have been invited to join the group <a href=\"[message:gurl]\">[message:gtitle]</a></p>\r\n"
+    format: full_html
+settings:
+  'token options':
+    clear: false
+    'token replace': true
+  purge_override: false
+  purge_methods: {  }

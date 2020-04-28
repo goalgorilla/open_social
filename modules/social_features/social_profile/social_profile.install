@@ -310,3 +310,29 @@ function social_profile_update_8007(&$sandbox) {
     user_role_grant_permissions($role, $permissions);
   }
 }
+
+/**
+ * Remove title property from field_profile_image.
+ */
+function social_profile_update_8008() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_profile', 'social_profile_update_8008');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Implements hook_update_dependencies().
+ */
+function social_profile_update_dependencies() {
+  // Run the config update after the update_helper module is enabled.
+  $dependencies['social_profile'][8808] = [
+    'social_core' => 8805,
+  ];
+
+  return $dependencies;
+}

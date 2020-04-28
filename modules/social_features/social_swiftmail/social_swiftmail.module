@@ -81,8 +81,12 @@ function social_swiftmail_preprocess_swiftmailer(array &$variables) {
     $variables['footer'] = \Drupal::service('renderer')->renderRoot($footer_markup);
   }
 
+  $user = FALSE;
   $message = &$variables['message'];
-  $user = user_load_by_mail($message['to']);
+
+  if (!empty($message['to'])) {
+    $user = user_load_by_mail($message['to']);
+  }
 
   // Try to add a heading message.
   if ($user || !empty($message['params']['context']['display_name'])) {
