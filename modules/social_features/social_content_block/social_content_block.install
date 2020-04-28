@@ -11,6 +11,50 @@ use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\field\FieldConfigInterface;
 
 /**
+ * Implements hook_modules_installed().
+ */
+function social_content_block_modules_installed() {
+  // When the set of installed modules change, reload the sorting optios.
+  _social_content_block_update_sorting_options();
+}
+
+/**
+ * Update the allowed values in the sorting options field based on plugins.
+ */
+function _social_content_block_update_sorting_options() {
+  /** @var \Drupal\social_content_block\ContentBlockManagerInterface $content_block_manager */
+  $content_block_manager = \Drupal::service('plugin.manager.content_block');
+
+  // Retrieve all sort options, removing duplicates and format them to the
+  // format of field storage configuration.
+  $sort_options_raw = [];
+  foreach ($content_block_manager->getDefinitions() as $plugin_id => $plugin_definition) {
+    /** @var \Drupal\social_content_block\ContentBlockPluginInterface $plugin */
+    $plugin = $content_block_manager->createInstance($plugin_id);
+    $sort_options_raw += $plugin->supportedSortOptions();
+  }
+
+  $sort_options = [];
+  foreach ($sort_options_raw as $value => $label) {
+    $sort_options[] = [
+      'value' => $value,
+      'label' => $label,
+    ];
+  }
+
+  // Load the existing cnofiguration and update it if it's different.
+  $config_name = 'field.storage.block_content.field_sorting';
+  $config = \Drupal::configFactory()->getEditable($config_name);
+  $config_data = $config->getRawData();
+
+  if ($sort_options !== $config_data['settings']['allowed_values']) {
+    $config_data['settings']['allowed_values'] = $sort_options;
+    $config->setData($config_data)->save();
+    \Drupal::service('entity_field.manager')->clearCachedFieldDefinitions();
+  }
+}
+
+/**
  * Add fields for plugin ID and plugin fields to the block content form.
  */
 function social_content_block_update_8001(&$sandbox) {
@@ -344,27 +388,28 @@ function social_content_block_update_8003() {
  * Add an extra allowed values to the sorting field.
  */
 function social_content_block_update_8004() {
-  $config_name = 'field.storage.block_content.field_sorting';
-  $config = \Drupal::configFactory()->getEditable($config_name);
-  $config_data = $config->getRawData();
-  $allowed_values = $config_data['settings']['allowed_values'];
+  // Update hook removed and replaced by 8006.
+}
 
-  $allowed_values[] = [
-    'value' => 'most_commented',
-    'label' => 'Most commented',
-  ];
-  $allowed_values[] = [
-    'value' => 'most_liked',
-    'label' => 'Most liked',
-  ];
-  $allowed_values[] = [
-    'value' => 'last_interacted',
-    'label' => 'Last interacted',
-  ];
+/**
+ * Move the "Number of items" field to the "Content" section.
+ */
+function social_content_block_update_8005() {
+  /** @var \Drupal\update_helper\UpdaterInterface $update_helper */
+  $update_helper = \Drupal::service('update_helper.updater');
 
-  $config_data['settings']['allowed_values'] = $allowed_values;
-  $config->setData($config_data)->save();
-  \Drupal::service('entity_field.manager')->clearCachedFieldDefinitions();
+  // Execute configuration update definitions with logging of success.
+  $update_helper->executeUpdate('social_content_block', 'social_content_block_update_8005');
+
+  // Output logged messages to related channel of update execution.
+  return $update_helper->logger()->output();
+}
+
+/**
+ * Add event date as sorting option for events.
+ */
+function social_content_block_update_8006() {
+  _social_content_block_update_sorting_options();
 }
 
 /**

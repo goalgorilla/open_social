@@ -118,7 +118,21 @@ class ContentBlockPluginFieldWidget extends ContentBlockPluginWidgetBase {
 
       foreach ($plugin_definition['fields'] as $field) {
         if (isset($form[$field])) {
-          $element[$plugin_id]['#options'][$field] = $form[$field]['widget']['target_id']['#title'];
+          // Depending on the field type the field title to filter by is in
+          // different places.
+          // For entity reference fields.
+          if (isset($form[$field]['widget']['target_id']['#title'])) {
+            $element[$plugin_id]['#options'][$field] = $form[$field]['widget']['target_id']['#title'];
+          }
+          // For other field types (e.g. select)
+          elseif (isset($form[$field]['widget']['#title'])) {
+            $element[$plugin_id]['#options'][$field] = $form[$field]['widget']['#title'];
+          }
+          // Otherwise we show a helpful message to the developer or QA that
+          // they should implement an additional clause.
+          else {
+            $element[$plugin_id]['#options'][$field] = "-- Could not find widget title for '{$field}' in " . self::class . ' --';
+          }
 
           $form[$field]['#states'] = [
             'visible' => [
