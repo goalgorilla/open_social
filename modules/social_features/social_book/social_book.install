@@ -28,6 +28,12 @@ function social_book_update_dependencies() {
     'social_core' => 8802,
   ];
 
+  // Ensure update helper dependant hooks run after update helper
+  // is enabled.
+  $dependencies['social_book'][8802] = [
+    'social_core' => 8805,
+  ];
+
   return $dependencies;
 }
 
