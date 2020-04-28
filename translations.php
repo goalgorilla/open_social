@@ -25,6 +25,11 @@ die('This file should not be run directly.');
 // new TranslatableMarkup('Example');
 // new PluralTranslatableMarkup($count, '1 example', '@count examples');.
 
+// Change in version 8.3.
+new TranslatableMarkup("Set wether event types field is required or not.");
+new TranslatableMarkup("Determine wether users can upload documents to comments.");
+new TranslatableMarkup("Set wether the tour is enabled or not.");
+
 // Changed in version 8.x.
 new TranslatableMarkup("Send mail");
 new TranslatableMarkup("Can not send e-mail for %entity");
