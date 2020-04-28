@@ -9,8 +9,8 @@ use Drupal\activity_creator\ActivityFactory;
  * Provides a 'OwnerActivityContext' activity context.
  *
  * @ActivityContext(
- *  id = "owner_activity_context",
- *  label = @Translation("Owner activity context"),
+ *   id = "owner_activity_context",
+ *   label = @Translation("Owner activity context"),
  * )
  */
 class OwnerActivityContext extends ActivityContextBase {
@@ -43,12 +43,22 @@ class OwnerActivityContext extends ActivityContextBase {
 
   /**
    * Returns owner recipient from entity.
+   *
+   * @param array $related_entity
+   *   The related entity.
+   * @param array $data
+   *   The data.
+   *
+   * @return array
+   *   An associative array of recipients, containing the following key-value
+   *   pairs:
+   *   - target_type: The entity type ID.
+   *   - target_id: The entity ID.
    */
   public function getRecipientOwnerFromEntity(array $related_entity, array $data) {
     $recipients = [];
 
-    $entity_storage = \Drupal::entityTypeManager()
-      ->getStorage($related_entity['target_type']);
+    $entity_storage = $this->entityTypeManager->getStorage($related_entity['target_type']);
     $entity = $entity_storage->load($related_entity['target_id']);
 
     // It could happen that a notification has been queued but the content
@@ -60,19 +70,17 @@ class OwnerActivityContext extends ActivityContextBase {
 
     // Don't return recipients if user comments on own content.
     $original_related_object = $data['related_object'][0];
-    if (isset($original_related_object['target_type']) && $original_related_object['target_type'] == 'comment') {
-      $storage = \Drupal::entityTypeManager()
-        ->getStorage($original_related_object['target_type']);
+    if (isset($original_related_object['target_type']) && $original_related_object['target_type'] === 'comment') {
+      $storage = $this->entityTypeManager->getStorage($original_related_object['target_type']);
       $original_related_entity = $storage->load($original_related_object['target_id']);
 
-      if (!empty($original_related_entity) && $original_related_entity->getOwnerId() == $entity->getOwnerId()) {
+      if (!empty($original_related_entity) && $original_related_entity->getOwnerId() === $entity->getOwnerId()) {
         return $recipients;
       }
     }
 
-    if (isset($original_related_object['target_type']) && $original_related_object['target_type'] == 'event_enrollment') {
-      $storage = \Drupal::entityTypeManager()
-        ->getStorage($original_related_object['target_type']);
+    if (isset($original_related_object['target_type']) && $original_related_object['target_type'] === 'event_enrollment') {
+      $storage = $this->entityTypeManager->getStorage($original_related_object['target_type']);
       $original_related_entity = $storage->load($original_related_object['target_id']);
 
       if (!empty($original_related_entity) && $original_related_entity->getAccount() !== NULL) {

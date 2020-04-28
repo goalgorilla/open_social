@@ -4,16 +4,70 @@ namespace Drupal\activity_basics\Plugin\ActivityContext;
 
 use Drupal\activity_creator\Plugin\ActivityContextBase;
 use Drupal\activity_creator\ActivityFactory;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Entity\Query\Sql\QueryFactory;
+use Drupal\Core\Extension\ModuleHandlerInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Provides a 'OrganizerActivityContext' activity context.
  *
  * @ActivityContext(
- *  id = "organizer_activity_context",
- *  label = @Translation("Organizer activity context"),
+ *   id = "organizer_activity_context",
+ *   label = @Translation("Organizer activity context"),
  * )
  */
 class OrganizerActivityContext extends ActivityContextBase {
+
+  /**
+   * The module handler.
+   *
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface
+   */
+  protected $moduleHandler;
+
+  /**
+   * Constructs a OrganizerActivityContext object.
+   *
+   * @param array $configuration
+   *   A configuration array containing information about the plugin instance.
+   * @param string $plugin_id
+   *   The plugin_id for the plugin instance.
+   * @param mixed $plugin_definition
+   *   The plugin implementation definition.
+   * @param \Drupal\Core\Entity\Query\Sql\QueryFactory $entity_query
+   *   The query factory.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
+   *   The module handler.
+   */
+  public function __construct(
+    array $configuration,
+    $plugin_id,
+    $plugin_definition,
+    QueryFactory $entity_query,
+    EntityTypeManagerInterface $entity_type_manager,
+    ModuleHandlerInterface $module_handler
+  ) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_query, $entity_type_manager);
+
+    $this->moduleHandler = $module_handler;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    return new static(
+      $configuration,
+      $plugin_id,
+      $plugin_definition,
+      $container->get('entity.query.sql'),
+      $container->get('entity_type.manager'),
+      $container->get('module_handler')
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -42,6 +96,17 @@ class OrganizerActivityContext extends ActivityContextBase {
 
   /**
    * Returns Organizer recipient from Events.
+   *
+   * @param array $related_entity
+   *   The related entity.
+   * @param array $data
+   *   The data.
+   *
+   * @return array
+   *   An associative array of recipients, containing the following key-value
+   *   pairs:
+   *   - target_type: The entity type ID.
+   *   - target_id: The entity ID.
    */
   public function getRecipientOrganizerFromEntity(array $related_entity, array $data) {
     $recipients = [];
@@ -51,7 +116,7 @@ class OrganizerActivityContext extends ActivityContextBase {
     if (isset($original_related_object['target_type'])
       && $original_related_object['target_type'] === 'event_enrollment'
       && $related_entity !== NULL) {
-      $storage = \Drupal::entityTypeManager()->getStorage($related_entity['target_type']);
+      $storage = $this->entityTypeManager->getStorage($related_entity['target_type']);
       $event = $storage->load($related_entity['target_id']);
 
       if ($event === NULL) {
@@ -66,8 +131,7 @@ class OrganizerActivityContext extends ActivityContextBase {
 
     // If there are any others we should add. Make them also part of the
     // recipients array.
-    \Drupal::moduleHandler()
-      ->alter('activity_recipient_organizer', $recipients, $event, $original_related_object);
+    $this->moduleHandler->alter('activity_recipient_organizer', $recipients, $event, $original_related_object);
 
     return $recipients;
   }

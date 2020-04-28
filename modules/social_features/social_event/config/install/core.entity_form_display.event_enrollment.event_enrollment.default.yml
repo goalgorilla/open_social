@@ -7,6 +7,8 @@ dependencies:
     - field.field.event_enrollment.event_enrollment.field_event
   module:
     - social_event
+_core:
+  default_config_hash: NMbvfZgCd0-cBojlZ5n_KDJOjX69vRHjnCw-i5a_hMc
 id: event_enrollment.event_enrollment.default
 targetEntityType: event_enrollment
 bundle: event_enrollment
@@ -24,6 +26,7 @@ content:
       match_operator: CONTAINS
       size: 60
       placeholder: ''
+      match_limit: 10
     third_party_settings: {  }
     type: entity_reference_autocomplete
     region: content
@@ -48,6 +51,7 @@ content:
       match_operator: CONTAINS
       size: 60
       placeholder: ''
+      match_limit: 10
     third_party_settings: {  }
     region: content
 hidden:

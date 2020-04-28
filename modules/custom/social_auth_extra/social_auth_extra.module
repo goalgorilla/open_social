@@ -202,7 +202,7 @@ function social_auth_extra_form_user_register_form_submit($form, FormStateInterf
 
             // Redirect to profile.
             $form_state->setRedirect(
-              'entity.profile.type.user_profile_form', [
+              'profile.user_page.single', [
                 'user' => $account->id(),
                 'profile_type' => 'profile',
                 [],

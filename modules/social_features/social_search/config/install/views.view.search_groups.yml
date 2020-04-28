@@ -6,6 +6,8 @@ dependencies:
   module:
     - search_api
     - user
+_core:
+  default_config_hash: UzqYXdbaXFDPvfUFswTry6Km44lfyuNVMAG2cOgMC6w
 id: search_groups
 label: 'Search Groups'
 module: views
@@ -13,7 +15,6 @@ description: ''
 tag: ''
 base_table: search_api_index_social_groups
 base_field: search_api_id
-core: 8.x
 display:
   default:
     display_plugin: default
@@ -164,6 +165,8 @@ display:
             placeholder: ''
             min_placeholder: ''
             max_placeholder: ''
+            operator_limit_selection: false
+            operator_list: {  }
           is_grouped: false
           group_info:
             label: ''

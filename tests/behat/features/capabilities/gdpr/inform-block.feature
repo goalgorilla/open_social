@@ -18,15 +18,12 @@ Feature: Inform about personal data collection
     And I uncheck the box "Enforce consent"
     Then I press "Save configuration"
 
-    When I am on "admin/structure/block"
-    And I click "Place block"
-    And I wait for AJAX to finish
-    And I click the xth "4" element with the css ".block-add-table a"
-    And I wait for AJAX to finish
-    And I should see "Data Policy Inform" in the ".form-item-settings-admin-label" element
+    When I am on "admin/structure/block/add/data_policy_inform_block/"
+    Then I should see "Data Policy Inform" in the ".form-item-settings-admin-label" element
     # Press "Save block" button
-    Then I select "Complementary top" from "Region"
-    And I click the xth "0" element with the css ".ui-button.form-submit"
+    When I select "Complementary top" from "Region"
+    And I click the xth "0" element with the css ".button.form-submit"
+    Then I should see "The block configuration has been saved."
 
     When I am on "admin/config/system/inform-consent"
     And I click "Add page"

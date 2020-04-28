@@ -10,6 +10,8 @@ dependencies:
     - profile
     - social_event
     - user
+_core:
+  default_config_hash: oqH52X8EmLo58zmC-MtaJP97dVGIRxxtppFmPV8uyb4
 id: event_enrollments
 label: Enrollments
 module: views
@@ -17,7 +19,6 @@ description: ''
 tag: ''
 base_table: profile
 base_field: profile_id
-core: 8.x
 display:
   default:
     display_plugin: default
@@ -154,6 +155,8 @@ display:
             remember_roles:
               authenticated: authenticated
             reduce: false
+            operator_limit_selection: false
+            operator_list: {  }
           is_grouped: false
           group_info:
             label: ''

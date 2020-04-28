@@ -1,0 +1,8 @@
+services:
+
+  # Defines service for overriding configs
+  social_group_welcome_message.overrider:
+    class: Drupal\social_group_welcome_message\SocialGroupWelcomeMessageConfigOverride
+    arguments: ['@config.factory', '@module_handler']
+    tags:
+      - {name: config.factory.override, priority: 5}

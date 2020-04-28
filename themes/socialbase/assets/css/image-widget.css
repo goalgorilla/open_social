@@ -22,7 +22,6 @@
   background: rgba(0, 0, 0, 0.2);
   border: 0;
   padding: 0;
-  -webkit-transition: 0.3s background-color;
   transition: 0.3s background-color;
 }
 
@@ -31,36 +30,27 @@
 }
 
 .btn--post-remove-image:hover .btn-icon {
-  -webkit-transform: rotate(90deg);
-          transform: rotate(90deg);
+  transform: rotate(90deg);
 }
 
 .btn--post-remove-image .btn-icon {
   fill: white;
   height: 32px;
   width: 32px;
-  -webkit-transition: 0.3s -webkit-transform;
-  transition: 0.3s -webkit-transform;
   transition: 0.3s transform;
-  transition: 0.3s transform, 0.3s -webkit-transform;
 }
 
 @media (min-width: 600px) {
   .form-type-managed-file .image-widget {
-    display: -webkit-box;
-    display: -ms-flexbox;
     display: flex;
   }
   .form-type-managed-file .image-widget .preview {
-    -webkit-box-flex: 0;
-        -ms-flex: 0 0 auto;
-            flex: 0 0 auto;
+    flex: 0 0 auto;
   }
   .form-type-managed-file .image-widget .file--image {
     margin-bottom: 0.5rem;
   }
   .form--post-create .field--name-field-post-image.container-post-image {
-    -ms-flex-preferred-size: 100%;
-        flex-basis: 100%;
+    flex-basis: 100%;
   }
 }

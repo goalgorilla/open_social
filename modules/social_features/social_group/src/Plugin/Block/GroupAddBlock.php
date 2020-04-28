@@ -51,8 +51,8 @@ class GroupAddBlock extends BlockBase {
   public function build() {
     $build = [];
 
-    // TODO: Change url and add caching when closed groups will be added.
-    $url = Url::fromUserInput('/group/add');
+    // TODO: Add caching when closed groups will be added.
+    $url = Url::fromRoute('entity.group.add_page');
     $link_options = [
       'attributes' => [
         'class' => [

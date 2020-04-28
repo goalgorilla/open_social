@@ -29,12 +29,9 @@ function social_search_form_views_exposed_form_alter(&$form, FormStateInterface 
   ];
 
   if (in_array($form['#id'], $filter_forms, TRUE)) {
-    // Set current path as form action, in order to keep search input.
-    $form['#action'] = \Drupal::service('path.current')->getPath();
     // Always enable the reset button.
     $form['actions']['reset']['#access'] = TRUE;
     $form['#attached']['library'][] = 'social_search/search_filters';
-
     switch ($form['#id']) {
       case 'views-exposed-form-search-users-page':
         social_search_alter_users_exposed_filter_block($form, $form_state, $form_id);
@@ -282,5 +279,32 @@ function _social_search_retrigger_profile(User $user) {
         $index->trackItemsUpdated($datasource_id, $profile_ids);
       }
     }
+  }
+}
+
+/**
+ * Re-saves search indices.
+ *
+ * This triggers the save for all search indexes which triggers updates of
+ * fields and processors.
+ *
+ * @param array $index_ids
+ *   An array of index IDs to re-save or NULL to re-save all indices.
+ *
+ * @throws \Drupal\Core\Entity\EntityStorageException
+ */
+function social_search_resave_search_indexes(array $index_ids = NULL) {
+  // We load all indexes, we assume there will never be hundreds of search
+  // indexes which would create its own problems for a site.
+  $indexes = Index::loadMultiple($index_ids);
+
+  /** @var \Drupal\search_api\IndexInterface $index */
+  foreach ($indexes as $index) {
+    // No need to disable and enable the index here, this worked around a
+    // validation of the Search Settings form that prevented the save from being
+    // triggered. However, this validation is not present in the entity save
+    // logic. So a simple call to `save()` will trigger the reprocessing of
+    // fields and processors.
+    $index->save();
   }
 }

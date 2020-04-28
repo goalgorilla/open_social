@@ -362,19 +362,14 @@ html:not(.js) .navbar-default .dropdown:focus > a .navbar-nav__icon, html:not(.j
   background-color: #1f7ea7 !important;
 }
 
-.marker-cluster-small,
-.marker-cluster-small div {
-  background-color: #1f80aa;
+.marker-cluster:after,
+.marker-cluster-small:after {
+  background: #1f80aa;
 }
 
-.marker-cluster div {
-  font-weight: bold;
-  color: #f9f9f9;
-  font-size: 1.2em;
-}
-
-.geolocation-map-container {
-  z-index: 5;
+.marker-cluster div:after,
+.marker-cluster-small div:after {
+  background: #1f80aa;
 }
 
 .leaflet-popup-content .card__text > a {
@@ -439,6 +434,44 @@ html:not(.js) .navbar-default .dropdown:focus > a .navbar-nav__icon, html:not(.j
 
 .phase.phase-active:before {
   background-color: #ffc142;
+}
+
+.phase .teaser__tag {
+  color: #29abe2;
+}
+
+.phase .teaser__tag a:hover, .phase .teaser__tag a:active, .phase .teaser__tag a:focus {
+  color: #ffc142;
+}
+
+.phase.path-group .cover-wrap .teaser__tag {
+  background-color: #29abe2;
+  color: #fff;
+}
+
+.phase .badge-primary {
+  background: #29abe2;
+}
+
+.phase .hero__banner-static .hero__tag {
+  color: #29abe2;
+}
+
+.phase .hero__banner-static .hero__tag a,
+.phase .hero__banner-static .hero__tag span {
+  color: #29abe2;
+}
+
+.phase .hero__banner-static .hero__tag a:hover, .phase .hero__banner-static .hero__tag a:active, .phase .hero__banner-static .hero__tag a:focus {
+  color: #ffc142;
+}
+
+.phase .navbar-secondary .navbar-nav .hidden-list li a:hover, .phase .navbar-secondary .navbar-nav .hidden-list li a.active, .phase .navbar-secondary .navbar-nav .hidden-list li a:focus, .phase .navbar-secondary .navbar-nav .hidden-list li a.is-active {
+  color: #29abe2;
+}
+
+.teaser--tile.teaser-profile .teaser__image {
+  background-color: #29abe2;
 }
 
 @media (min-width: 900px) {

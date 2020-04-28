@@ -11,6 +11,8 @@ dependencies:
     - node
     - taxonomy
     - user
+_core:
+  default_config_hash: tL9gepi6J0s7ykJivuWs6lvK0MkeSW1DK6I6A1OC9xs
 id: latest_topics
 label: 'Latest topics'
 module: views
@@ -18,7 +20,6 @@ description: 'Displays the newest topics in the community'
 tag: ''
 base_table: node_field_data
 base_field: nid
-core: 8.x
 display:
   default:
     display_plugin: default
@@ -122,6 +123,8 @@ display:
           id: status
           expose:
             operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
           group: 1
         type:
           id: type
@@ -132,6 +135,9 @@ display:
           entity_type: node
           entity_field: type
           plugin_id: bundle
+          expose:
+            operator_limit_selection: false
+            operator_list: {  }
         nid:
           id: nid
           table: node_access
@@ -155,6 +161,8 @@ display:
             multiple: false
             remember_roles:
               authenticated: authenticated
+            operator_limit_selection: false
+            operator_list: {  }
           is_grouped: false
           group_info:
             label: ''
@@ -391,6 +399,8 @@ display:
           id: status
           expose:
             operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
           group: 1
         type:
           id: type
@@ -401,6 +411,9 @@ display:
           entity_type: node
           entity_field: type
           plugin_id: bundle
+          expose:
+            operator_limit_selection: false
+            operator_list: {  }
         field_topic_type_target_id:
           id: field_topic_type_target_id
           table: node__field_topic_type
@@ -427,6 +440,8 @@ display:
               anonymous: '0'
               administrator: '0'
             reduce: false
+            operator_limit_selection: false
+            operator_list: {  }
           is_grouped: false
           group_info:
             label: ''
@@ -469,6 +484,8 @@ display:
             multiple: false
             remember_roles:
               authenticated: authenticated
+            operator_limit_selection: false
+            operator_list: {  }
           is_grouped: false
           group_info:
             label: ''

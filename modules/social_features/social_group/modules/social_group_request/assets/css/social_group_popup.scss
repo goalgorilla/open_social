@@ -1,0 +1,60 @@
+.social_group-popup {
+  form {
+    padding-bottom: 1.5rem;
+
+    > *:not(.btn),
+    label {
+      font-size: .875rem;
+      line-height: 21px;
+    }
+
+    > p {
+      margin-bottom: 1.5rem;
+    }
+
+    &:not(.layout-builder-configure-block) {
+      .form-control--autogrow {
+        min-height: 195px;
+      }
+    }
+    button.btn {
+      float: right;
+      min-width: 175px;
+      font-size: 1rem;
+    }
+  }
+
+  &--anonymous {
+    form {
+      padding-bottom: 0;
+
+      >  p,
+      .form-actions,
+      .form-actions * {
+        margin-bottom: 0;
+      }
+    }
+
+    .ui-dialog-buttonset {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1rem 30px;
+      text-align: center;
+
+      .btn {
+        flex: 0 0 calc(50% - 10px);
+        max-width: calc(50% - 10px);
+        margin-right: 10px;
+
+        + .btn {
+          margin-left: 10px;
+        }
+
+        &:last-child {
+          margin-right: 0;
+        }
+      }
+    }
+  }
+}

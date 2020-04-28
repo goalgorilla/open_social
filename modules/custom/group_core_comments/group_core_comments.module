@@ -14,3 +14,18 @@ function group_core_comments_entity_type_alter(array &$entity_types) {
     $entity_types['comment']->setAccessClass($class);
   }
 }
+
+/**
+ * Implements hook_theme().
+ */
+function group_core_comments_theme($existing, $type, $theme, $path) {
+  return [
+    'comments_join_group' => [
+      'variables' => [
+        'description' => NULL,
+        'group_info' => NULL,
+        'action' => NULL,
+      ],
+    ],
+  ];
+}

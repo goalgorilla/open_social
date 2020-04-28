@@ -77,7 +77,9 @@ function social_event_tokens($type, $tokens, array $data, array $options, Bubble
           if (!empty($id)) {
             $enrollment_name = get_name_from_enrollment($id);
 
-            $replacements[$original] = $enrollment_name;
+            if ($enrollment_name !== NULL) {
+              $replacements[$original] = $enrollment_name;
+            }
           }
           break;
       }
@@ -144,9 +146,10 @@ function get_name_from_enrollment($id) {
   // User is AN by default.
   $enrollment_name = \Drupal::configFactory()->get('user.settings')->get('anonymous');
 
-  if (!$enrollment instanceof EventEnrollmentInterface) {
+  if ($enrollment instanceof EventEnrollmentInterface) {
     // If there is a Uid. Lets load the user and return his display name.
-    if ($enrollment->hasField('field_account') &&
+    if ($enrollment !== NULL &&
+      $enrollment->hasField('field_account') &&
       $enrollment->getFieldValue('field_account', 'target_id') > 0) {
       $entity_storage = \Drupal::entityTypeManager()
         ->getStorage('user');

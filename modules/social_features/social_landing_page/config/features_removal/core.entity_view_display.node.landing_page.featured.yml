@@ -1,0 +1,53 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.featured
+    - field.field.node.landing_page.field_content_visibility
+    - field.field.node.landing_page.field_landing_page_section
+    - node.type.landing_page
+  module:
+    - user
+id: node.landing_page.featured
+targetEntityType: node
+bundle: landing_page
+mode: featured
+content:
+  groups:
+    label: above
+    weight: 0
+    region: content
+    settings:
+      link: true
+    third_party_settings: {  }
+    type: entity_reference_label
+  groups_type_closed_group:
+    label: above
+    weight: 1
+    region: content
+    settings:
+      link: true
+    third_party_settings: {  }
+    type: entity_reference_label
+  groups_type_open_group:
+    label: above
+    weight: 2
+    region: content
+    settings:
+      link: true
+    third_party_settings: {  }
+    type: entity_reference_label
+  groups_type_public_group:
+    label: above
+    weight: 3
+    region: content
+    settings:
+      link: true
+    third_party_settings: {  }
+    type: entity_reference_label
+hidden:
+  field_content_visibility: true
+  field_landing_page_section: true
+  flag_follow_content: true
+  links: true
+  private_message_link: true

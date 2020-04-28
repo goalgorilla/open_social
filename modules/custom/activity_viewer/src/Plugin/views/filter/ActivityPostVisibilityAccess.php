@@ -40,8 +40,14 @@ class ActivityPostVisibilityAccess extends FilterPluginBase {
   public function query() {
     $account = $this->view->getUser();
 
-    $open_groups = social_group_get_all_open_groups();
-    $group_memberships = social_group_get_all_group_members($account->id());
+    $open_groups = [];
+    $group_memberships = [];
+    if (\Drupal::moduleHandler()->moduleExists('social_group')) {
+      // TODO: This creates a dependency on Social Group which shouldn't exist,
+      // this access logic should be in that module instead.
+      $open_groups = social_group_get_all_open_groups();
+      $group_memberships = social_group_get_all_group_members($account->id());
+    }
     $groups = array_merge($open_groups, $group_memberships);
     $groups_unique = array_unique($groups);
 

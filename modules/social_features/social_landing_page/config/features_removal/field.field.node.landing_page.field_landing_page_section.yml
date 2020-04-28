@@ -1,0 +1,33 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_landing_page_section
+    - node.type.landing_page
+    - paragraphs.paragraphs_type.section
+  module:
+    - entity_reference_revisions
+id: node.landing_page.field_landing_page_section
+field_name: field_landing_page_section
+entity_type: node
+bundle: landing_page
+label: Sections
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:paragraph'
+  handler_settings:
+    negate: 0
+    target_bundles:
+      section: section
+    target_bundles_drag_drop:
+      section:
+        enabled: true
+        weight: 3
+      featured:
+        weight: 4
+        enabled: false
+field_type: entity_reference_revisions

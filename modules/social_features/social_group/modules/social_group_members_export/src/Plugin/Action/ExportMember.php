@@ -47,6 +47,11 @@ class ExportMember extends ExportUser {
 
   /**
    * {@inheritdoc}
+   *
+   * To make sure the file can be downloaded, the path must be declared in the
+   * download pattern of the social user export module.
+   *
+   * @see social_user_export_file_download()
    */
   protected function generateFilePath() : string {
     $hash = md5(microtime(TRUE));

@@ -184,28 +184,6 @@ class Node extends PreprocessBase {
       $variables['#attached']['library'][] = 'socialbase/preview';
     }
 
-    // Add no_image flag if there are no image uploaded.
-    $variables['no_image'] = TRUE;
-    $image_field = "field_{$node->getType()}_image";
-
-    if (!empty($node->{$image_field}->entity)) {
-      $variables['no_image'] = FALSE;
-    }
-    else {
-      // If machine name too long or using another image field.
-      $node_fields = $node->getFields();
-      $image_fields = array_filter($node_fields, '_social_core_find_image_field');
-      // Get the first image field of all the fields.
-      $field = reset($image_fields);
-      if ($field !== NULL && $field !== FALSE) {
-        if ($field->getFieldDefinition()->get("field_type") === 'image') {
-          if (!empty(($node->get($field->getName())->entity))) {
-            $variables['no_image'] = FALSE;
-          }
-        }
-      }
-    }
-
     // For full view modes we render the links outside of the lazy builder so
     // we can render only subgroups of links.
     if ($variables['view_mode'] === 'full' && isset($variables['content']['links']['#lazy_builder'])) {
@@ -218,15 +196,6 @@ class Node extends PreprocessBase {
         )
       );
       unset($variables['content']['links']['#lazy_builder']);
-    }
-
-    // A landing page has a different way of determining this.
-    if ($node->getType() === 'landing_page') {
-      $variables['no_image'] = FALSE;
-      $image = _social_landing_page_get_hero_image($node);
-      if (empty($image)) {
-        $variables['no_image'] = TRUE;
-      }
     }
 
   }

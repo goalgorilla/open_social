@@ -38,7 +38,8 @@ function social_node_statistics_preprocess_node(&$variables) {
   // count for this node.
   $variables['views_count'] = NULL;
   $enabled_types = \Drupal::config('social_node_statistics.settings')->get('node_types');
-  if ($variables['view_mode'] === 'full' && in_array($variables['node']->getType(), $enabled_types)) {
+  $enabled_view_modes = ['full', 'hero'];
+  if (in_array($variables['view_mode'], $enabled_view_modes) && in_array($variables['node']->getType(), $enabled_types)) {
     $views_count = social_node_statistics_node_get_views_count($variables['node']->id());
     $variables['views_count'] = $views_count;
     $variables['views_label'] = \Drupal::translation()->formatPlural($views_count, 'view', 'views');

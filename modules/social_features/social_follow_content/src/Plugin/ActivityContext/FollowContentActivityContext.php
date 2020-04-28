@@ -4,14 +4,16 @@ namespace Drupal\social_follow_content\Plugin\ActivityContext;
 
 use Drupal\activity_creator\Plugin\ActivityContextBase;
 use Drupal\activity_creator\ActivityFactory;
+use Drupal\social_comment\Entity\Comment;
+use Drupal\social_node\Entity\Node;
 use Drupal\user\UserInterface;
 
 /**
  * Provides a 'FollowContentActivityContext' activity context plugin.
  *
  * @ActivityContext(
- *  id = "follow_content_activity_context",
- *  label = @Translation("Following content activity context"),
+ *   id = "follow_content_activity_context",
+ *   label = @Translation("Following content activity context"),
  * )
  */
 class FollowContentActivityContext extends ActivityContextBase {
@@ -36,11 +38,22 @@ class FollowContentActivityContext extends ActivityContextBase {
 
   /**
    * Returns owner recipient from entity.
+   *
+   * @param array $related_entity
+   *   The related entity.
+   * @param array $data
+   *   The data.
+   *
+   * @return array
+   *   An associative array of recipients, containing the following key-value
+   *   pairs:
+   *   - target_type: The entity type ID.
+   *   - target_id: The entity ID.
    */
   public function getRecipientsWhoFollowContent(array $related_entity, array $data) {
     $recipients = [];
 
-    $storage = \Drupal::entityTypeManager()->getStorage('flagging');
+    $storage = $this->entityTypeManager->getStorage('flagging');
     $flaggings = $storage->loadByProperties([
       'flag_id' => 'follow_content',
       'entity_type' => $related_entity['target_type'],
@@ -49,8 +62,7 @@ class FollowContentActivityContext extends ActivityContextBase {
 
     // We don't send notifications to users about their own comments.
     $original_related_object = $data['related_object'][0];
-    $storage = \Drupal::entityTypeManager()
-      ->getStorage($original_related_object['target_type']);
+    $storage = $this->entityTypeManager->getStorage($original_related_object['target_type']);
     $original_related_entity = $storage->load($original_related_object['target_id']);
 
     foreach ($flaggings as $flagging) {
@@ -63,6 +75,17 @@ class FollowContentActivityContext extends ActivityContextBase {
         break;
       }
 
+      // The owner of a node automatically follows his / her own content.
+      // Because of this, we do not want to send a follow notification.
+      if ($original_related_entity instanceof Comment) {
+        // We need to compare the owner ID of the original node to the one
+        // being the current recipient.
+        $original_node = $original_related_entity->getCommentedEntity();
+        if ($original_node instanceof Node && $recipient->id() !== $original_node->getOwnerId()) {
+          break;
+        }
+      }
+
       if ($recipient->id() !== $original_related_entity->getOwnerId() && $original_related_entity->access('view', $recipient)) {
         $recipients[] = [
           'target_type' => 'user',
@@ -70,7 +93,6 @@ class FollowContentActivityContext extends ActivityContextBase {
         ];
       }
     }
-
     return $recipients;
   }
 

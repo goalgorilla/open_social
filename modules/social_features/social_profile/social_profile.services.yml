@@ -3,3 +3,6 @@ services:
     class: Drupal\social_profile\EventSubscriber\ProfileLabelSubscriber
     tags:
       - { name: event_subscriber }
+  social_profile.user_statistics:
+    class: Drupal\social_profile\UserStatistics
+    arguments: ['@database']

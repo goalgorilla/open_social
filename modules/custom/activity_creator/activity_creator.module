@@ -363,9 +363,7 @@ function activity_creator_empty_queue() {
   // The workermanager.
   $workerManager = \Drupal::service('plugin.manager.queue_worker');
 
-  /*
-   * @var Drupal\Core\Queue\QueueFactory; $queue
-   */
+  /* @var Drupal\Core\Queue\QueueFactory $queue */
   $queue = \Drupal::service('queue');
 
   for ($i = 0; $i < 5; $i++) {
@@ -385,4 +383,29 @@ function activity_creator_empty_queue() {
       }
     }
   }
+}
+
+/**
+ * Set the view mode for the activity entity reference for an entity type.
+ *
+ * Provides no validation on the validity of the entity type id or the view mode
+ * id.
+ *
+ * @param string $entity_type_id
+ *   The entity type for which to change the view mode.
+ * @param string $view_mode_id
+ *   The view mode to use in the activity entity reference field.
+ */
+function activity_creator_set_entity_view_mode(string $entity_type_id, string $view_mode_id) {
+  /** @var \Drupal\Core\Entity\Display\EntityViewDisplayInterface $activity_display */
+  $activity_display = \Drupal::service('entity_type.manager')
+    ->getStorage('entity_view_display')
+    ->load('activity.activity.default');
+  $field = $activity_display->getComponent('field_activity_entity');
+
+  $field['settings'][$entity_type_id]['view_mode'] = $view_mode_id;
+
+  $activity_display
+    ->setComponent('field_activity_entity', $field)
+    ->save();
 }
