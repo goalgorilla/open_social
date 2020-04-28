@@ -77,12 +77,14 @@ function social_like_entity_extra_field_info_alter(&$info) {
     // The entity type has no bundles. Add display component to the default one.
     if (!$entity_type_manager->getDefinition($entity_type_id)->hasKey('bundle')) {
       $info[$entity_type_id][$entity_type_id]['display']['like_and_dislike']['visible'] = TRUE;
+      $info[$entity_type_id][$entity_type_id]['display']['like_and_dislike']['weight'] = 0;
       continue;
     }
 
     // Add likes and dislikes for each of the enabled bundles.
     foreach ($bundles as $bundle) {
       $info[$entity_type_id][$bundle]['display']['like_and_dislike']['visible'] = TRUE;
+      $info[$entity_type_id][$bundle]['display']['like_and_dislike']['weight'] = 0;
     }
   }
 }
