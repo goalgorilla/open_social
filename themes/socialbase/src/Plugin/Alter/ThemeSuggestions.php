@@ -118,7 +118,7 @@ class ThemeSuggestions extends BaseThemeSuggestions {
         }
 
         // Template suggestion for upload attachments in comments.
-        if (isset($variables['element']['#entity_type']) && $variables['element']['#entity_type'] == 'comment') {
+        if (isset($variables['element']['#id']) && strpos($variables['element']['#id'], 'edit-group-add-attachment') === 0) {
           $suggestions[] = 'details__comment';
         }
 

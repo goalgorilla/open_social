@@ -175,6 +175,10 @@ form:not(.layout-builder-add-block) {
     -ms-overflow-style: -ms-autohiding-scrollbar;
     padding-bottom: 100px;
     margin-bottom: -100px;
+
+    &.card__block--table {
+      margin-bottom: 0;
+    }
   }
 
   // Prevent double border on horizontal scroll due to use of `display: block;`
@@ -205,7 +209,9 @@ form:not(.layout-builder-add-block) {
   }
 }
 
-.select-all.checkbox {
+.select-all.checkbox,
+// Specificity rule to make sure we override form-controls.scss
+form:not(.layout-builder-configure-block) .select-all.checkbox {
   display: table-cell;
 }
 
