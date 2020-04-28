@@ -33,7 +33,7 @@ class FlexibleGroupNodeAccess extends FilterPluginBase {
   public function query() {
     $account = $this->view->getUser();
     $group_access = NULL;
-    if (!$account->hasPermission('bypass node access') || !$account->hasPermission('administer content')) {
+    if (!$account->hasPermission('bypass node access') || !$account->hasPermission('administer nodes')) {
       // Ensure we check for group content.
       // Join node table(s).
       $configuration = [
