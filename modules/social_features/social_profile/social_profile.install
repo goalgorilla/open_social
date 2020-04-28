@@ -339,10 +339,7 @@ function social_profile_update_dependencies() {
   return $dependencies;
 }
 
-/**
- * Create "Medium Teaser" view mode/display for profile.
- */
-function social_profile_update_8008() {
+function social_profile_update_8009() {
   // Create a new profile entity view mode.
   EntityViewMode::create([
     'targetEntityType' => 'profile',
@@ -351,10 +348,20 @@ function social_profile_update_8008() {
     'label' => t('Medium Teaser'),
   ])->save();
 
+  // Load teaser profile view mode.
+  $display = EntityViewDisplay::load('profile.profile.teaser')->toArray();
+
+  // Make sure that labels are hidden for all fields.
+  foreach ($display['content'] as &$field) {
+    $field['label'] = 'hidden';
+  }
+
   // Create the corresponding entity view display for profile entity type.
-  EntityViewDisplay::create([
+  $display = array_merge($display, [
+    'uuid' => NULL,
     'targetEntityType' => 'profile',
     'bundle' => 'profile',
     'mode' => 'medium_teaser',
-  ])->setStatus(TRUE)->save();
+  ]);
+  EntityViewDisplay::create($display)->save();
 }
