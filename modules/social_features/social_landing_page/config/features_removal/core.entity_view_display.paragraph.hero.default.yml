@@ -1,0 +1,53 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.hero.field_hero_buttons
+    - field.field.paragraph.hero.field_hero_image
+    - field.field.paragraph.hero.field_hero_subtitle
+    - field.field.paragraph.hero.field_hero_title
+    - image.style.social_landing_hero
+    - paragraphs.paragraphs_type.hero
+  module:
+    - entity_reference_revisions
+    - image
+id: paragraph.hero.default
+targetEntityType: paragraph
+bundle: hero
+mode: default
+content:
+  field_hero_buttons:
+    type: entity_reference_revisions_entity_view
+    weight: 5
+    label: hidden
+    settings:
+      view_mode: default
+      link: ''
+    third_party_settings: {  }
+    region: content
+  field_hero_image:
+    weight: 0
+    label: hidden
+    settings:
+      image_style: social_landing_hero
+      image_link: ''
+    third_party_settings: {  }
+    type: image
+    region: content
+  field_hero_subtitle:
+    weight: 2
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+  field_hero_title:
+    weight: 1
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    type: string
+    region: content
+hidden: {  }

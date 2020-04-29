@@ -1,0 +1,22 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - image_effects
+name: social_post_photo
+label: 'social post photo (714 x 1071)'
+effects:
+  0f1c5195-648a-4b02-ae21-1fa1ca6cb413:
+    uuid: 0f1c5195-648a-4b02-ae21-1fa1ca6cb413
+    id: image_scale
+    weight: 1
+    data:
+      width: 714
+      height: 1071
+      upscale: false
+  1c9fe5fc-70fa-4b42-a1e2-41d7bb5323e6:
+    uuid: 1c9fe5fc-70fa-4b42-a1e2-41d7bb5323e6
+    id: image_effects_auto_orient
+    weight: 2
+    data:
+      scan_exif: true

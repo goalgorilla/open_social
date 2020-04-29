@@ -26,7 +26,7 @@ class Node extends NodeBase {
     $view_modes = ['teaser', 'activity', 'activity_comment', 'featured', 'hero'];
 
     // Add teaser tag as title prefix to node teasers and hero view modes.
-    if ($style && $style === 'sky' && in_array($variables['view_mode'], $view_modes)) {
+    if ($style === 'sky' && in_array($variables['view_mode'], $view_modes)) {
       if (!empty($variables['topic_type'])) {
         $teaser_tag = $variables['topic_type'];
       }

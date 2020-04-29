@@ -1,0 +1,14 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the social_node module.
+ */
+
+/**
+ * Implements hook_install().
+ */
+function social_node_install() {
+  // Set the view mode to use when shown in activities.
+  activity_creator_set_entity_view_mode('node', 'activity');
+}

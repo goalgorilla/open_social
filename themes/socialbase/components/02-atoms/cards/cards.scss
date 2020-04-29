@@ -140,10 +140,6 @@
   padding: $card-spacer-x;
   position: relative;
   z-index:2;
-
-  .teaser__badge:first-child {
-    padding-left: 0;
-  }
 }
 
 .card__link {
@@ -168,4 +164,16 @@
 
 .card--stream .card__block .card__nested-section {
   padding-top: ($card-spacer-x/2);
+}
+
+// Info tab on the group page.
+.block-views-blockgroup-managers-block-list-managers,
+.view-group-information,
+.block-social-group-tags-block {
+  .card,
+  &.card {
+    > .card__title {
+      text-align: center;
+    }
+  }
 }

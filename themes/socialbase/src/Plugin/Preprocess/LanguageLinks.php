@@ -19,7 +19,9 @@ class LanguageLinks extends PreprocessBase {
    */
   public function preprocessVariables(Variables $variables) {
     $variables['attributes']['class'][] = 'dropdown-menu';
-    $variables['heading']['text'] = \Drupal::languageManager()->getCurrentLanguage()->getName();
+    $langcode = \Drupal::languageManager()->getCurrentLanguage()->getId();
+    $language = \Drupal::languageManager()->getLanguage($langcode);
+    $variables['heading']['text'] = $language->getName();
   }
 
 }

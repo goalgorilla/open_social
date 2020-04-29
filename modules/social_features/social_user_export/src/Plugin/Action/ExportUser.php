@@ -198,6 +198,11 @@ class ExportUser extends ViewsBulkOperationsActionBase implements ContainerFacto
    * to work on distributed systems where the temporary file path may change
    * in between batch ticks.
    *
+   * To make sure the file can be downloaded, the path must be declared in the
+   * download pattern of the social user export module.
+   *
+   * @see social_user_export_file_download()
+   *
    * @return string
    *   The path to the file.
    */

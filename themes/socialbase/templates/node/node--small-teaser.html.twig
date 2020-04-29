@@ -65,22 +65,44 @@
  * @ingroup themeable
  */
 #}
-<div class="card__block" {{ attributes }}>
+{{ attach_library('socialbase/teaser') }}
+{%
+  set classes = [
+    'teaser--small'
+  ]
+%}
 
+<div {{ attributes.addClass(classes) }}>
+
+  {% block teaser_image %}
+    <div class="teaser--small__media">
+      {% if content['field_' ~ node.bundle ~ '_image'] | render | striptags('<img>') is not empty %}
+          {{ content['field_' ~ node.bundle ~ '_image'] }}
+      {% else %}
+        <svg class="teaser--small__type-icon">
+          <title>{{- node.bundle|clean_class|capitalize -}}</title>
+          <use xlink:href="#icon-{{- node.bundle|clean_class -}}"></use>
+        </svg>
+      {% endif %}
+    </div>
+  {% endblock %}
+
+  <div class="teaser--small__details small">
   {% block text %}
     {{ title_prefix }}
-    <div{{ title_attributes }} class="card__text">
+    <div{{ title_attributes }} class="card__text teaser--small__title">
       <a href="{{ url }}" rel="bookmark">{{ label }}</a>
     </div>
     {{ title_suffix }}
   {% endblock %}
 
   {% block extra_text %}
-    <div class="card__text">
-      <small class="text-muted">
-        {{ date }}
-      </small>
+    <div class="teaser--small__meta">
+      {{ author_name }} &middot; {{ date }}
+
+      {{ content|without('field_' ~ node.bundle ~ '_image') }}
     </div>
   {% endblock %}
+  </div>
 
 </div>

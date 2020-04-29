@@ -149,6 +149,11 @@ form--timepicker:
   js:
     /libraries/timepicker/jquery.timepicker.min.js: { minified: true }
 
+form--toolbar:
+  css:
+    component:
+      assets/css/form-toolbar.css: {}
+
 imagecrop:
   css:
     component:
@@ -356,3 +361,15 @@ charts:
     /libraries/mocha/mocha.js: {}
     /libraries/raphael/raphael.min.js: { minified: true }
     /libraries/eve-raphael/eve.js: {}
+
+# Contains libraries required for the layout builder that have been previously
+# removed in Open Social to fix our own modals.
+layout_builder:
+  css:
+    component:
+      /core/assets/vendor/jquery.ui/themes/base/core.css: {}
+      /core/assets/vendor/jquery.ui/themes/base/button.css: {}
+      /core/assets/vendor/jquery.ui/themes/base/dialog.css: {}
+      /core/assets/vendor/jquery.ui/themes/base/menu.css: {}
+    theme:
+      /core/assets/vendor/jquery.ui/themes/base/theme.css: {}

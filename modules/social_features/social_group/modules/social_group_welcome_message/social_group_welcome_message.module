@@ -93,6 +93,15 @@ function social_group_welcome_message_group_content_insert(GroupContentInterface
   ) {
     $g_type_id = $group->getGroupType()->id();
 
+    // Load the account of the user who just joined.
+    $account = $group_content->getEntity();
+
+    // Skip sending notifications to the owner of the group. They probably know
+    // they created the group a second ago.
+    if ($group->getOwnerId() === $account->id()) {
+      return;
+    }
+
     // Get group admins entities.
     $g_admins = $group->getMembers($g_type_id . '-group_admin');
     $g_admins_users = [];
@@ -123,11 +132,8 @@ function social_group_welcome_message_group_content_insert(GroupContentInterface
     // Merge all managers of the group to recipients array.
     $recipients = array_merge($g_admins_users, $g_managers_users, [$group->getOwner()]);
 
-    // Load joined user.
-    $user = $group_content->getEntity();
-
     // Add the joined user to the already existing recipients array.
-    $recipients[] = $user;
+    $recipients[] = $account;
 
     /** @var \Drupal\private_message\Service\PrivateMessageServiceInterface $private_message_service */
     $private_message_service = \Drupal::service('private_message.service');
@@ -146,6 +152,15 @@ function social_group_welcome_message_group_content_insert(GroupContentInterface
 
     $private_message->save();
     $thread->addMessage($private_message)->save();
+
+    // There is a contrib private message bug that when creating a new thread
+    // and adding messages to it, for the recipient the $last_message and
+    // $thread_last_check get the same timestamp. Showing no new messages badge.
+    // https://www.drupal.org/project/private_message/issues/3043898
+    // TODO:: Update to the correct version when issue has been solved.
+    /** @var UserDataInterface $userData */
+    $userData = \Drupal::service('user.data');
+    $userData->set('private_message', $account->id(), 'private_message_thread:' . $thread->id(), 0);
   }
 }
 

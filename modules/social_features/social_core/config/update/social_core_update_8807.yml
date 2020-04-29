@@ -1,0 +1,69 @@
+core.entity_form_display.block_content.basic.default:
+  expected_config:
+    content:
+      info:
+        region: content
+        settings:
+          placeholder: ''
+          size: 60
+        third_party_settings: {  }
+        type: string_textfield
+        weight: -5
+    hidden:
+      field_basic_link: true
+      field_text_block: true
+  update_actions:
+    change:
+      content:
+        field_basic_link:
+          region: content
+          settings:
+            placeholder_title: ''
+            placeholder_url: ''
+          third_party_settings: {  }
+          type: link_default
+          weight: 1
+        field_text_block:
+          region: content
+          settings:
+            placeholder: ''
+            rows: 5
+          third_party_settings: {  }
+          type: text_textarea
+          weight: 0
+    delete:
+      hidden:
+        field_basic_link: true
+        field_text_block: true
+core.entity_view_display.block_content.basic.default:
+  expected_config:
+    content: {  }
+    hidden:
+      field_basic_link: true
+      field_text_block: true
+  update_actions:
+    change:
+      content:
+        field_basic_link:
+          label: hidden
+          region: content
+          settings:
+            rel: ''
+            target: ''
+            trim_length: 80
+            url_only: false
+            url_plain: false
+          third_party_settings: {  }
+          type: link
+          weight: 1
+        field_text_block:
+          label: hidden
+          region: content
+          settings: {  }
+          third_party_settings: {  }
+          type: text_default
+          weight: 0
+    delete:
+      hidden:
+        field_basic_link: true
+        field_text_block: true

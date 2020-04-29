@@ -1,0 +1,198 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.profile.profile.field_profile_address
+    - field.field.profile.profile.field_profile_banner_image
+    - field.field.profile.profile.field_profile_expertise
+    - field.field.profile.profile.field_profile_first_name
+    - field.field.profile.profile.field_profile_function
+    - field.field.profile.profile.field_profile_image
+    - field.field.profile.profile.field_profile_interests
+    - field.field.profile.profile.field_profile_last_name
+    - field.field.profile.profile.field_profile_organization
+    - field.field.profile.profile.field_profile_phone_number
+    - field.field.profile.profile.field_profile_profile_tag
+    - field.field.profile.profile.field_profile_self_introduction
+    - field.field.profile.profile.field_profile_show_email
+    - image.style.social_x_large
+    - profile.type.profile
+  module:
+    - address
+    - field_group
+    - image_widget_crop
+    - telephone
+    - text
+third_party_settings:
+  field_group:
+    group_profile_names_image:
+      children:
+        - field_profile_first_name
+        - field_profile_last_name
+        - field_profile_image
+        - field_profile_banner_image
+      parent_name: ''
+      weight: 0
+      label: 'Names and profile image'
+      format_type: fieldset
+      format_settings:
+        label: 'Names and profile image'
+        required_fields: true
+        id: name
+        classes: scrollspy
+    group_profile_funct_organization:
+      children:
+        - field_profile_function
+        - field_profile_organization
+      parent_name: ''
+      weight: 1
+      label: 'Function and organization'
+      format_type: fieldset
+      format_settings:
+        label: 'Function and organization'
+        required_fields: true
+        id: work
+        classes: scollspy
+    group_profile_self_intro:
+      children:
+        - field_profile_self_introduction
+        - field_profile_expertise
+        - field_profile_interests
+        - field_profile_profile_tag
+      parent_name: ''
+      weight: 3
+      label: 'Self introduction, expertise and interests'
+      format_type: fieldset
+      format_settings:
+        label: 'Self introduction, expertise and interests'
+        required_fields: true
+        id: details
+        classes: scrollspy
+    group_profile_contact_info:
+      children:
+        - field_profile_phone_number
+        - field_profile_address
+      parent_name: ''
+      weight: 2
+      label: 'Phone number and location'
+      format_type: fieldset
+      format_settings:
+        label: 'Phone number and location'
+        required_fields: true
+        id: contact
+        classes: scollspy
+id: profile.profile.default
+targetEntityType: profile
+bundle: profile
+mode: default
+content:
+  field_profile_address:
+    weight: 7
+    settings:
+      default_country: site_default
+    third_party_settings: {  }
+    type: address_default
+    region: content
+  field_profile_banner_image:
+    weight: 4
+    settings:
+      show_crop_area: true
+      show_default_crop: true
+      warn_multiple_usages: true
+      preview_image_style: social_x_large
+      crop_preview_image_style: crop_thumbnail
+      progress_indicator: throbber
+      crop_list:
+        - hero
+    third_party_settings: {  }
+    type: image_widget_crop
+    region: content
+  field_profile_expertise:
+    weight: 6
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: entity_reference_autocomplete_tags
+    region: content
+  field_profile_first_name:
+    weight: 1
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+    region: content
+  field_profile_function:
+    weight: 2
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+    region: content
+  field_profile_image:
+    weight: 3
+    settings:
+      show_default_crop: true
+      preview_image_style: social_x_large
+      crop_preview_image_style: crop_thumbnail
+      crop_list:
+        - profile_large
+        - teaser
+        - profile_medium
+        - profile_small
+      progress_indicator: throbber
+      show_crop_area: true
+    third_party_settings: {  }
+    type: image_widget_crop
+    region: content
+  field_profile_interests:
+    weight: 7
+    settings:
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: entity_reference_autocomplete_tags
+    region: content
+  field_profile_last_name:
+    weight: 2
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+    region: content
+  field_profile_organization:
+    weight: 3
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: string_textfield
+    region: content
+  field_profile_phone_number:
+    weight: 6
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+    type: telephone_default
+    region: content
+  field_profile_profile_tag:
+    weight: 8
+    settings: {  }
+    third_party_settings: {  }
+    type: options_buttons
+    region: content
+  field_profile_self_introduction:
+    weight: 5
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+    type: text_textarea
+    region: content
+hidden:
+  field_profile_show_email: true

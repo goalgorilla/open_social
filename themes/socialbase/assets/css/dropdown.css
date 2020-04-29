@@ -224,6 +224,31 @@ html:not(.js) .dropdown .dropdown-toggle {
 
 /* IE11 */
 
+.dropdown .caret,
+.enroll-action-form .caret,
+.hero-footer__cta .caret {
+  transition: transform 0.1s;
+}
+
+.dropdown.open .caret,
+.dropdown .open .caret,
+.enroll-action-form.open .caret,
+.enroll-action-form .open .caret,
+.hero-footer__cta.open .caret,
+.hero-footer__cta .open .caret {
+  transform: rotate(180deg);
+}
+
+.social-gtranslate-list--desktop > a:after {
+  transition: transform 0.1s;
+}
+
+.social-gtranslate-list--desktop.open > a:after {
+  margin-top: -.4rem;
+  right: auto;
+  transform: rotate(180deg);
+}
+
 @media (min-width: 600px) {
   .dropdown-menu .divider.mobile {
     display: none;
