@@ -83,6 +83,11 @@ class EnrollInviteUserForm extends InviteUserBaseForm {
       '#weight' => -1,
     ];
 
+    $form['actions']['submit'] = [
+      '#type' => 'submit',
+      '#value' => $this->t('Save'),
+    ];
+
     $form['actions']['submit_cancel'] = [
       '#type' => 'submit',
       '#weight' => 999,
