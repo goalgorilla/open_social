@@ -3,11 +3,13 @@
 namespace Drupal\social_content_block;
 
 use Drupal\block_content\BlockContentInterface;
+use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Database\Query\SelectInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\Core\Field\EntityReferenceFieldItemListInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
@@ -99,7 +101,14 @@ class ContentBuilder implements ContentBuilderInterface {
     // then the block base query will be built based on all filled filterable
     // fields.
     if ($block_content->field_plugin_field->isEmpty()) {
-      $field_names = $definition['fields'];
+      // It could be that the plugin supports more fields than are currently
+      // available, those are removed.
+      $field_names = array_filter(
+        $definition['fields'],
+        static function ($field_name) use ($block_content) {
+          return $block_content->hasField($field_name);
+        }
+      );
     }
     // When the user selected some filter in the "Content selection" field then
     // only condition based on this filter field will be added to the block base
@@ -113,10 +122,15 @@ class ContentBuilder implements ContentBuilderInterface {
     foreach ($field_names as $field_name) {
       $field = $block_content->get($field_name);
 
-      if (!$field->isEmpty()) {
+      // Make non-empty entity reference fields easier to use.
+      if ($field instanceof EntityReferenceFieldItemListInterface && !$field->isEmpty()) {
         $fields[$field_name] = array_map(function ($item) {
           return $item['target_id'];
         }, $field->getValue());
+      }
+      // Other fields just get added as is.
+      elseif (!$field->isEmpty()) {
+        $fields[$field_name] = $field->getValue();
       }
     }
 
@@ -130,7 +144,7 @@ class ContentBuilder implements ContentBuilderInterface {
     $query = $this->connection->select($entity_type->getDataTable(), 'base_table')
       ->fields('base_table', [$entity_type->getKey('id')]);
 
-    if ($definition['bundle']) {
+    if (isset($definition['bundle'])) {
       $query->condition(
         'base_table.' . $entity_type->getKey('bundle'),
         $definition['bundle']
@@ -266,7 +280,12 @@ class ContentBuilder implements ContentBuilderInterface {
         // field repeatedly.
         // @see \Drupal\social_content_block\Plugin\Field\FieldWidget\ContentBlockPluginFieldWidget::formElement()
         if ($field_name === $field_title) {
-          $fields[$field_name] = $element[$field_name]['widget']['target_id']['#title'];
+          if (isset($element[$field_name]['widget']['target_id'])) {
+            $fields[$field_name] = $element[$field_name]['widget']['target_id']['#title'];
+          }
+          else {
+            $fields[$field_name] = $element[$field_name]['widget']['#title'];
+          }
 
           $element[$field_name]['#states'] = [
             'visible' => [
@@ -283,7 +302,70 @@ class ContentBuilder implements ContentBuilderInterface {
       }
     }
 
+    // Add a callback to update sorting options based on the selected plugins.
+    $element['field_plugin_id']['widget'][0]['value']['#ajax'] = [
+      'callback' => [self::class, 'updateFormSortingOptions'],
+      'wrapper' => 'social-content-block-sorting-options',
+    ];
+
+    $parents = array_merge(
+      $element['field_plugin_id']['widget']['#field_parents'],
+      ['field_plugin_id']
+    );
+
+    // Set the sorting options based on the selected plugins.
+    $value_parents = array_merge($parents, ['0', 'value']);
+    $selected_plugin = $form_state->getValue($value_parents);
+
+    // If there's no value in the form state check if there was anything in the
+    // submissions.
+    if ($selected_plugin === NULL) {
+      $input = $form_state->getUserInput();
+      $field = $element['field_plugin_id']['widget'][0]['value'];
+
+      if (NestedArray::keyExists($input, $value_parents)) {
+        $input_value = NestedArray::getValue($input, $value_parents);
+
+        if (!empty($input_value) && isset($field['#options'][$input_value])) {
+          $selected_plugin = $input_value;
+        }
+      }
+
+      // If nothing valid was selected yet then we fallback to the default.
+      if (empty($selected_plugin)) {
+        $selected_plugin = $field['#default_value'];
+      }
+    }
+
+    $element['field_sorting']['widget']['#options'] = $content_block_manager->createInstance($selected_plugin)->supportedSortOptions();
+    $element['field_sorting']['#prefix'] = '<div id="social-content-block-sorting-options">';
+    $element['field_sorting']['#suffix'] = '</div>';
+
     return $element;
+  }
+
+  /**
+   * Update the sorting field after a plugin choice change.
+   */
+  public function updateFormSortingOptions($form, FormStateInterface $form_state) {
+    $parents = ['field_sorting'];
+
+    if ($form_state->has('layout_builder__component')) {
+      $parents = array_merge(['settings', 'block_form'], $parents);
+    }
+
+    // Check that the currently selected value is valid and change it otherwise.
+    $value_parents = array_merge($parents, ['0', 'value']);
+    $sort_value = $form_state->getValue($value_parents);
+    $options = NestedArray::getValue($form, array_merge($parents, ['widget', '#options']));
+
+    if ($sort_value === NULL || !isset($options[$sort_value])) {
+      // Unfortunately this has already triggered a validation error.
+      $form_state->clearErrors();
+      $form_state->setValue($value_parents, key($options));
+    }
+
+    return NestedArray::getValue($form, $parents);
   }
 
   /**
@@ -361,8 +443,8 @@ class ContentBuilder implements ContentBuilderInterface {
           $query->leftJoin('group_content_field_data', 'gfd', "base_table.${entity_id_key} = gfd.gid");
           $query->leftjoin('post__field_recipient_group', 'pst', "base_table.${entity_id_key} = pst.field_recipient_group_target_id");
           $query->leftjoin('post_field_data', 'pfd', 'pst.entity_id = pfd.id');
-          $query->leftjoin('comment_field_data', 'cfd', "(gfd.entity_id = cfd.entity_id AND cfd.entity_type = 'node') OR (pfd.id = cfd.entity_id AND cfd.entity_type = 'post')");
-          $query->leftJoin('votingapi_vote', 'vv', "(gfd.entity_id = vv.entity_id AND vv.entity_type = 'node') OR (pfd.id = vv.entity_id AND vv.entity_type = 'post') OR (cfd.cid = vv.entity_id AND vv.entity_type = 'comment')");
+          $query->leftjoin('comment_field_data', 'cfd', "pfd.id = cfd.entity_id AND cfd.entity_type = 'post'");
+          $query->leftJoin('votingapi_vote', 'vv', "pfd.id = vv.entity_id AND vv.entity_type = 'post'");
           $query->leftjoin('node_field_data', 'nfd', 'gfd.entity_id = nfd.nid');
 
           $query->addExpression('GREATEST(COALESCE(MAX(gfd.changed), 0),
@@ -390,10 +472,16 @@ class ContentBuilder implements ContentBuilderInterface {
         }
         break;
 
+      case 'event_date':
+        $nfed_alias = $query->leftJoin('node__field_event_date', 'nfed', "base_table.${entity_id_key} = %alias.entity_id");
+        $query->orderBy("${nfed_alias}.field_event_date_value", 'ASC');
+        break;
+
       // Fall back by assuming the sorting option is a field.
       default:
         $query->orderBy("base_table.${sort_by}");
     }
+
   }
 
 }
