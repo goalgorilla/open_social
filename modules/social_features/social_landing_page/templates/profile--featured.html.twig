@@ -36,7 +36,16 @@
   </h4>
 {% endblock %}
 
-{% block card_body %}{% endblock %}
+{% block card_body %}
+  {% if content.field_profile_function|render or content.field_profile_organization|render %}
+    <div class="teaser__content-line">
+      <span class="teaser__content-text">
+        <span>{{ content.field_profile_function|render }}</span>
+        <span>{{ content.field_profile_organization|render }}</span>
+      </span>
+    </div>
+  {% endif %}
+{% endblock %}
 
 {% block card_link %}
   {% if not hide_card_link %}

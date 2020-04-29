@@ -371,9 +371,23 @@ function social_landing_page_update_8803() {
 }
 
 /**
- * Enable the Social Featured Content module.
+ * Add organization and function fields to profile featured teasers.
  */
 function social_landing_page_update_8804() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_landing_page', 'social_landing_page_update_8804');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Enable the Social Featured Content module.
+ */
+function social_landing_page_update_8805() {
   $module = 'social_featured_content';
   // We don't actually install the module because this would cause issues with
   // configuration already existing. The configuration has been moved from this
@@ -438,7 +452,7 @@ function social_landing_page_update_8804() {
 /**
  * Import new block type for featured content.
  */
-function social_landing_page_update_8805() {
+function social_landing_page_update_8806() {
   // This creates some new configuration that can be used by the dashboard
   // module. This is done in this module because we also enable the
   // social_follow_content module. If that module is enabled through another
@@ -615,13 +629,13 @@ function social_landing_page_update_8805() {
 /**
  * Makes the items field multiple.
  */
-function social_landing_page_update_8806() {
+function social_landing_page_update_8807() {
   $manager = \Drupal::entityDefinitionUpdateManager();
   $storage_definition = $manager->getFieldStorageDefinition('field_featured_items', 'paragraph');
   $storage_definition->setCardinality(FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED);
   $manager->updateFieldStorageDefinition($storage_definition);
 
   $update_helper = \Drupal::service('update_helper.updater');
-  $update_helper->executeUpdate('social_landing_page', 'social_landing_page_update_8805');
+  $update_helper->executeUpdate('social_landing_page', 'social_landing_page_update_8807');
   return $update_helper->logger()->output();
 }
