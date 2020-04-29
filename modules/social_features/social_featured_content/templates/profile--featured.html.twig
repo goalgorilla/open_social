@@ -48,9 +48,11 @@
 {% endblock %}
 
 {% block card_link %}
-  <div class="card__link">
-    <a href="{{ profile_stream_url }}" rel="bookmark">{{ 'Read more'|t }}
-      <span class="visually-hidden">{% trans %}about {{ label }}{% endtrans %} </span>
-    </a>
-  </div>
+  {% if not hide_card_link %}
+    <div class="card__link">
+      <a href="{{ profile_stream_url }}" rel="bookmark">{{ 'Read more'|t }}
+        <span class="visually-hidden">{% trans %}about {{ label }}{% endtrans %} </span>
+      </a>
+    </div>
+  {% endif %}
 {% endblock %}

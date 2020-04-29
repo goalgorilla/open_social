@@ -95,7 +95,9 @@
     </span>
   {% endif %}
 
-  <a href="{{ url }}" class="card__link" title="{{ label }}">
-    {% trans %}Read more{% endtrans %}
-  </a>
+  {% if not hide_card_link %}
+    <a href="{{ url }}" class="card__link" title="{{ label }}">
+      {% trans %}Read more{% endtrans %}
+    </a>
+  {% endif %}
 {% endblock %}
