@@ -37,6 +37,73 @@ class SocialGroupFlexibleGroupConfigOverride implements ConfigFactoryOverrideInt
   public function loadOverrides($names) {
     $overrides = [];
 
+    // Add Content access views filter to exclude
+    // nodes, with visibility group, placed in group you are not a member of.
+    $config_names = [
+      'views.view.latest_topics' => [
+        'default',
+        'page_latest_topics',
+      ],
+      'views.view.upcoming_events' => [
+        'default',
+        'block_community_events',
+        'block_my_upcoming_events',
+        'page_community_events',
+        'upcoming_events_group',
+      ],
+    ];
+
+    // Filter plugin for Flexible group node access.
+    $filter_node_access = [
+      'id' => 'flexible_group_node_access',
+      'table' => 'node_access',
+      'field' => 'flexible_group_node_access',
+      'relationship' => 'none',
+      'group_type' => 'group',
+      'admin_label' => '',
+      'operator' => '=',
+      'value' => [],
+      'group' => 1,
+      'exposed' => FALSE,
+      'expose' => [
+        'operator_id' => '',
+        'label' => '',
+        'description' => '',
+        'use_operator' => FALSE,
+        'operator' => '',
+        'identifier' => '',
+        'required' => FALSE,
+        'remember' => FALSE,
+        'multiple' => FALSE,
+        'remember_roles' => [
+          'authenticated' => 'authenticated',
+        ],
+      ],
+      'is_grouped' => FALSE,
+      'group_info' => [
+        'label' => '',
+        'description' => '',
+        'identifier' => '',
+        'optional' => TRUE,
+        'widget' => 'select',
+        'multiple' => FALSE,
+        'remember' => FALSE,
+        'default_group' => 'All',
+        'default_group_multiple' => [],
+        'group_items' => [],
+      ],
+      'plugin_id' => 'flexible_group_node_access',
+    ];
+
+    foreach ($config_names as $config_name => $displays) {
+      if (in_array($config_name, $names)) {
+        // Loop through the displays.
+        foreach ($displays as $display) {
+          $overrides[$config_name]['display'][$display]['display_options']['filters']['flexible_group_node_access'] = $filter_node_access;
+        }
+      }
+    }
+
     $config_names = [
       'search_api.index.social_all',
       'search_api.index.social_groups',
