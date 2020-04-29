@@ -1,0 +1,30 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - block_content.type.featured
+    - field.storage.block_content.field_featured
+    - paragraphs.paragraphs_type.featured
+  module:
+    - entity_reference_revisions
+id: block_content.featured.field_featured
+field_name: field_featured
+entity_type: block_content
+bundle: featured
+label: 'Featured Content'
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:paragraph'
+  handler_settings:
+    negate: 0
+    target_bundles:
+      featured: featured
+    target_bundles_drag_drop:
+      featured:
+        enabled: true
+        weight: 0
+field_type: entity_reference_revisions
