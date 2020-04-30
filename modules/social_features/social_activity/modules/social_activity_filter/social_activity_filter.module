@@ -1,0 +1,29 @@
+<?php
+
+/**
+ * @file
+ * The Social activity filter module.
+ */
+
+/**
+ * Implements hook_views_plugins_display_alter().
+ */
+function social_activity_filter_views_plugins_display_alter(array &$plugins) {
+  $plugins['block']['class'] = 'Drupal\social_activity_filter\Plugin\views\display\FilterBlock';
+}
+
+/**
+ * Implements hook_views_data().
+ */
+function social_activity_filter_views_data() {
+  $data['activity']['activity_filter_tags'] = [
+    'title' => t('Filter activities by tags'),
+    'filter' => [
+      'title' => t('Filter activities by tags'),
+      'help' => t('Filter activities by tags'),
+      'field' => 'tags',
+      'id' => 'activity_filter_tags',
+    ],
+  ];
+  return $data;
+}

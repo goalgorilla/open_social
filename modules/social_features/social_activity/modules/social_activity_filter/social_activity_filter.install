@@ -1,0 +1,15 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for social_activity_filter module.
+ */
+
+/**
+ * Implements hook_install().
+ *
+ * Perform actions related to the installation of social_activity_filter module.
+ */
+function social_activity_filter_install() {
+  user_role_grant_permissions('sitemanager', ['administer social_activity_filter']);
+}
