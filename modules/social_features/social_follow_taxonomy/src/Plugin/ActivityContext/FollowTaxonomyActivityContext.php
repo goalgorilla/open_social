@@ -27,7 +27,7 @@ class FollowTaxonomyActivityContext extends ActivityContextBase {
     if (isset($data['related_object']) && !empty($data['related_object'])) {
       $related_entity = ActivityFactory::getActivityRelatedEntity($data);
 
-      if ($related_entity['target_type'] == 'node') {
+      if ($related_entity['target_type'] == 'node' || $related_entity['target_type'] == 'post') {
         $recipients += $this->getRecipientsWhoFollowTaxonomy($related_entity, $data);
       }
     }
@@ -53,7 +53,6 @@ class FollowTaxonomyActivityContext extends ActivityContextBase {
     $entity = $this->entityTypeManager->getStorage($related_entity['target_type'])
       ->load($related_entity['target_id']);
     $tids = $this->taxonomyTermsList($entity);
-
     if (empty($tids)) {
       return [];
     }
@@ -95,6 +94,7 @@ class FollowTaxonomyActivityContext extends ActivityContextBase {
   public function isValidEntity(EntityInterface $entity) {
     switch ($entity->getEntityTypeId()) {
       case 'node':
+      case 'post':
         $recipients = [];
         $tids = $this->taxonomyTermsList($entity);
 
@@ -127,6 +127,7 @@ class FollowTaxonomyActivityContext extends ActivityContextBase {
         if (!empty($recipients)) {
           return TRUE;
         }
+        break;
     }
     return FALSE;
   }

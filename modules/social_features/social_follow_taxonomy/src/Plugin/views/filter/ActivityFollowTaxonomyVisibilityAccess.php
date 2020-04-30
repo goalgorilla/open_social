@@ -52,6 +52,25 @@ class ActivityFollowTaxonomyVisibilityAccess extends FilterPluginBase {
 
     // Lets add all the or conditions to the Views query.
     $and_wrapper->condition($or);
+
+    // Posts: all the posts the user has access to and posted to community.
+    $post_access = db_and();
+    $post_access->condition('activity__field_activity_entity.field_activity_entity_target_type', 'post', '=');
+    $post_access->condition('post__field_visibility.field_visibility_value', '3', '!=');
+
+    if (!$account->hasPermission('view public posts')) {
+      $post_access->condition('post__field_visibility.field_visibility_value', '1', '!=');
+    }
+    if (!$account->hasPermission('view community posts')) {
+      $post_access->condition('post__field_visibility.field_visibility_value', '2', '!=');
+      // Also do not show recipient posts (e.g. on open groups).
+      $post_access->condition('post__field_visibility.field_visibility_value', '0', '!=');
+    }
+    $post_access
+      ->condition('activity__field_activity_recipient_user.field_activity_recipient_user_target_id', $account->id(), 'IN');
+
+    $or->condition($post_access);
+
     $this->query->addWhere('visibility', $and_wrapper);
   }
 

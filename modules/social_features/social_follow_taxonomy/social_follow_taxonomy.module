@@ -139,6 +139,11 @@ function social_follow_taxonomy_token_info() {
     'description' => t('The type of the content that is related to following term.'),
   ];
 
+  $social_taxonomy['indefinite_article'] = [
+    'name' => t('A/an article.'),
+    'description' => t('Adds an article before the content label.'),
+  ];
+
   $social_taxonomy['taxonomy_i_follow'] = [
     'name' => t('Taxonomy I follow.'),
     'description' => t('Taxonomy term I follow'),
@@ -159,11 +164,13 @@ function social_follow_taxonomy_token_info() {
  */
 function social_follow_taxonomy_tokens($type, $tokens, array $data, array $options, BubbleableMetadata $bubbleable_metadata) {
   $replacements = [];
+  $display_name = '';
 
   if ($type === 'social_taxonomy' && !empty($data['message'])) {
     foreach ($tokens as $name => $original) {
       switch ($name) {
         case 'content_type':
+        case 'indefinite_article':
         case 'taxonomy_i_follow':
           /** @var \Drupal\message\Entity\Message $message */
           $message = $data['message'];
@@ -198,21 +205,35 @@ function social_follow_taxonomy_tokens($type, $tokens, array $data, array $optio
                   }
 
                   break;
+
+                case 'post':
+                  // Get the name of the entity type.
+                  $display_name = strtolower($entity->getEntityType()->getLabel());
+                  break;
               }
             }
           }
 
-          if ($name === 'content_type' && !empty($display_name)) {
-            // Prepares a replacement token: content name.
-            // When a name of content name starts from a vowel letter then
-            // will be added "an" before this name. For example "an event".
-            if (preg_match('/^[aeiou]/', $display_name)) {
-              $display_name = t('an @content_type', ['@content_type' => $display_name]);
+          if ($name === 'content_type') {
+            $replacements[$original] = $display_name;
+          }
+
+          if ($name === 'indefinite_article') {
+            if (!empty($display_name)) {
+              // Prepares a replacement token: content name.
+              // When a name of content name starts from a vowel letter then
+              // will be added "an" before this name. For example "an event".
+              if (preg_match('/^[aeiou]/', $display_name)) {
+                $indefinite_article = t('an');
+              }
+              else {
+                $indefinite_article = t('a');
+              }
+              $replacements[$original] = $indefinite_article;
             }
             else {
-              $display_name = t('a @content_type', ['@content_type' => $display_name]);
+              $replacements[$original] = '';
             }
-            $replacements[$original] = $display_name;
           }
 
           if ($name === 'taxonomy_i_follow' && !empty($term_names)) {
