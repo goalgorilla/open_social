@@ -12,6 +12,13 @@ use Drupal\Core\Url;
 use Drupal\views\ViewExecutable;
 
 /**
+ * Implements hook_views_plugins_display_alter().
+ */
+function social_activity_views_plugins_display_alter(array &$plugins) {
+  $plugins['block']['class'] = 'Drupal\social_activity\Plugin\views\display\ModeBlock';
+}
+
+/**
  * Implements hook_social_user_account_header_items().
  *
  * Adds the Notification Center to the account header block.
@@ -214,7 +221,12 @@ function social_activity_social_account_notifications_counter(AccountInterface $
  * @todo: Move all related functionality from social_activity_filter module.
  */
 function social_activity_views_post_build(ViewExecutable $view) {
-  if ($view->id() == "activity_stream" && $view->current_display == 'block_stream_homepage_without_post') {
+  $override_displays = [
+    'block_stream_homepage',
+    'block_stream_homepage_without_post',
+  ];
+
+  if ($view->id() == "activity_stream" && in_array($view->current_display, $override_displays)) {
     if (isset($view->filter_type) && $view->filter_type === 'dashboard') {
       // Override default view mode for activity stream views block if it was
       // added via layout builder.
