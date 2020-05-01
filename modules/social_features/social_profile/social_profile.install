@@ -5,6 +5,8 @@
  * Install, update and uninstall functions for the social_profile module.
  */
 
+use Drupal\Core\Entity\Entity\EntityViewDisplay;
+use Drupal\Core\Entity\Entity\EntityViewMode;
 use Drupal\file\Entity\File;
 use Drupal\menu_link_content\Entity\MenuLinkContent;
 use Drupal\user\Entity\Role;
@@ -335,4 +337,34 @@ function social_profile_update_dependencies() {
   ];
 
   return $dependencies;
+}
+
+/**
+ * Create medium_teaser profile view mode.
+ */
+function social_profile_update_8009() {
+  // Create a new profile entity view mode.
+  EntityViewMode::create([
+    'targetEntityType' => 'profile',
+    'id' => 'profile.medium_teaser',
+    'status' => TRUE,
+    'label' => t('Medium Teaser'),
+  ])->save();
+
+  // Load teaser profile view mode.
+  $display = EntityViewDisplay::load('profile.profile.teaser')->toArray();
+
+  // Make sure that labels are hidden for all fields.
+  foreach ($display['content'] as &$field) {
+    $field['label'] = 'hidden';
+  }
+
+  // Create the corresponding entity view display for profile entity type.
+  $display = array_merge($display, [
+    'uuid' => NULL,
+    'targetEntityType' => 'profile',
+    'bundle' => 'profile',
+    'mode' => 'medium_teaser',
+  ]);
+  EntityViewDisplay::create($display)->save();
 }

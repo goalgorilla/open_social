@@ -207,3 +207,17 @@ function social_event_update_8803() {
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
 }
+
+/**
+ * Fix small teaser view mode after accidental regression for some sites.
+ */
+function social_event_update_8804() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_event', 'social_event_update_8804');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
