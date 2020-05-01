@@ -115,7 +115,7 @@ function social_content_block_form_alter(&$form, FormStateInterface $form_state,
       break;
 
     case 'layout_builder_update_block':
-      if ($form['settings']['block_form']['#block']->bundle() === 'custom_content_list') {
+      if (isset($form['settings']['block_form']['#block']) && $form['settings']['block_form']['#block']->bundle() === 'custom_content_list') {
         $element = &$form['settings']['block_form'];
       }
       break;
