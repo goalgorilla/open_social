@@ -13,9 +13,11 @@ dependencies:
     - field.field.node.event.field_event_image
     - field.field.node.event.field_event_location
     - field.field.node.event.field_files
+    - image.style.social_medium
     - node.type.event
   module:
     - datetime
+    - image
     - user
 id: node.event.small_teaser
 targetEntityType: node
@@ -24,13 +26,22 @@ mode: small_teaser
 content:
   field_event_date:
     type: datetime_default
-    weight: 0
+    weight: 1
     label: hidden
     settings:
       timezone_override: ''
       format_type: day_month_time
     third_party_settings: {  }
     region: content
+  field_event_image:
+    type: image
+    weight: 0
+    region: content
+    label: hidden
+    settings:
+      image_style: social_medium
+      image_link: content
+    third_party_settings: {  }
   flag_follow_content:
     weight: 10
     region: content
@@ -49,7 +60,6 @@ hidden:
   field_event_comments: true
   field_event_date_end: true
   field_event_enroll: true
-  field_event_image: true
   field_event_location: true
   field_files: true
   groups: true

@@ -1,0 +1,45 @@
+<?php
+
+/**
+ * @file
+ * Provides "Featured Content" paragraphs type for landing pages.
+ */
+
+/**
+ * Implements hook_theme().
+ */
+function social_featured_content_theme() {
+  // Paragraph.
+  $theme_templates['paragraph__featured__default'] = [
+    'base hook' => 'paragraph',
+  ];
+  // Field.
+  $theme_templates['field__paragraph__field_featured_items'] = [
+    'base hook' => 'field',
+  ];
+  // Node.
+  $theme_templates['node__featured'] = [
+    'base hook' => 'node',
+  ];
+  $theme_templates['node__event__featured'] = [
+    'base hook' => 'node',
+  ];
+  // Group.
+  $theme_templates['group__featured'] = [
+    'base hook' => 'group',
+  ];
+  // Profile.
+  $theme_templates['profile__featured'] = [
+    'base hook' => 'profile',
+  ];
+  return $theme_templates;
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function social_featured_content_preprocess_node(&$variables) {
+  if ($variables['view_mode'] === 'featured') {
+    $variables['label'] = render($variables['label']);
+  }
+}

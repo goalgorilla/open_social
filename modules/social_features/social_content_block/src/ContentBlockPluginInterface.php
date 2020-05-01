@@ -21,4 +21,16 @@ interface ContentBlockPluginInterface {
    */
   public function query(SelectInterface $query, array $fields);
 
+  /**
+   * The sort options that are supported for this content block type.
+   *
+   * Used to configure the sorting field storage as well as the content block
+   * form.
+   *
+   * @return array
+   *   An array with sorting option's system name as key and a human readable
+   *   label as value.
+   */
+  public function supportedSortOptions() : array;
+
 }
