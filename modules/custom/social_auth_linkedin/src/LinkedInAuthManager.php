@@ -37,6 +37,11 @@ class LinkedInAuthManager extends AuthManager {
    * {@inheritdoc}
    */
   public function getAuthenticationUrl($type, array $scope = [Scope::READ_LITE_PROFILE, Scope::READ_EMAIL_ADDRESS]) {
+    $redirect_url = $this->getRedirectUrl($type);
+
+    // Set the redirect for the third party with our own.
+    $this->sdk->setRedirectUrl($redirect_url);
+
     return $this->sdk->getLoginUrl([
       'scope' => implode(',', $scope),
     ]);
@@ -47,7 +52,11 @@ class LinkedInAuthManager extends AuthManager {
    */
   public function getAccessToken($type = '') {
     try {
-      $access_token = $this->sdk->getAccessToken();
+      // set the RedirectUrl before retrieving the access token.
+      $redirect_url = $this->getRedirectUrl($type);
+      $this->sdk->setRedirectUrl($redirect_url);
+
+      $access_token = $this->sdk->getAccessToken($_GET['code']);
       return $access_token;
     }
     catch (LinkedInException $e) {
@@ -75,10 +84,18 @@ class LinkedInAuthManager extends AuthManager {
    * {@inheritdoc}
    */
   public function getProfile() {
-    $x =1;
     if (!$this->profile) {
-      if (($profile = $this->sdk->get('v1/people/~:(id,firstName,lastName,email-address,formattedName,pictureUrls::(original))')) && !isset($profile['errorCode'])) {
-        $this->profile = $profile;
+      // Add basic profile information.
+      if (($profile = $this->sdk->get('me', ['fields' => 'id,firstName,lastName'])) && !isset($profile['errorCode'])) {
+        $this->profile['id'] = $profile['id'];
+        $this->profile['basic_information'] = $profile;
+      }
+      if (($profile = $this->sdk->get('me', ['projection' => '(id,profilePicture(displayImage~:playableStreams))'])) && !isset($profile['errorCode'])) {
+        $this->profile['profile_picture'] = $profile;
+      }
+
+      if (($profile = $this->sdk->get('emailAddress', ['q' => 'members', 'projection' => '(elements*(handle~))'])) && !isset($profile['errorCode'])) {
+        $this->profile['email_information'] = $profile;
       }
     }
 
@@ -89,8 +106,9 @@ class LinkedInAuthManager extends AuthManager {
    * {@inheritdoc}
    */
   public function getProfilePicture() {
-    if (!empty($this->profile['pictureUrls']['_total'])) {
-      return end($this->profile['pictureUrls']['values']);
+    if (!empty($this->profile['profile_picture']['profilePicture']['displayImage~']['elements'])) {
+      $profile_picture = end($this->profile['profile_picture']['profilePicture']['displayImage~']['elements']);
+      return $profile_picture['identifiers'][0]['identifier'];
     }
   }
 
@@ -112,14 +130,27 @@ class LinkedInAuthManager extends AuthManager {
    * {@inheritdoc}
    */
   public function getFirstName() {
-    return isset($this->profile['firstName']) ? $this->profile['firstName'] : NULL;
+    if (!empty($this->profile['basic_information']['firstName'])) {
+      return array_values($this->profile['basic_information']['firstName']['localized'])[0];
+    }
   }
 
   /**
    * {@inheritdoc}
    */
   public function getLastName() {
-    return isset($this->profile['lastName']) ? $this->profile['lastName'] : NULL;
+    if (!empty($this->profile['basic_information']['lastName'])) {
+      return array_values($this->profile['basic_information']['lastName']['localized'])[0];
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getEmailAddress() {
+    if (!empty($this->profile['email_information']['elements'])) {
+      return $this->profile['email_information']['elements'][0]['handle~']['emailAddress'];
+    }
   }
 
 }
