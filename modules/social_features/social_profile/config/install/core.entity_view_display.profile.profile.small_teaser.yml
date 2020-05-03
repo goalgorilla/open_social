@@ -3,6 +3,9 @@ status: true
 dependencies:
   config:
     - core.entity_view_mode.profile.small_teaser
+    - field.field.profile.profile.field_birthdate
+    - field.field.profile.profile.field_birthdate_next
+    - field.field.profile.profile.field_manager_notes
     - field.field.profile.profile.field_profile_address
     - field.field.profile.profile.field_profile_banner_image
     - field.field.profile.profile.field_profile_expertise
@@ -11,40 +14,67 @@ dependencies:
     - field.field.profile.profile.field_profile_image
     - field.field.profile.profile.field_profile_interests
     - field.field.profile.profile.field_profile_last_name
+    - field.field.profile.profile.field_profile_nick_name
     - field.field.profile.profile.field_profile_organization
+    - field.field.profile.profile.field_profile_organization_tag
     - field.field.profile.profile.field_profile_phone_number
     - field.field.profile.profile.field_profile_profile_tag
     - field.field.profile.profile.field_profile_self_introduction
     - field.field.profile.profile.field_profile_show_email
-    - image.style.social_small
+    - image.style.social_medium
     - profile.type.profile
   module:
     - image
-_core:
-  default_config_hash: cme1dXyejIMZqleCc1lq6guoASVtyxwnTDJ0TZQPdUA
+    - lazy
 id: profile.profile.small_teaser
 targetEntityType: profile
 bundle: profile
 mode: small_teaser
 content:
+  badges:
+    weight: 3
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_profile_function:
+    type: string
+    weight: 1
+    region: content
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
   field_profile_image:
     type: image
     weight: 0
     label: hidden
     settings:
-      image_style: social_small
+      image_style: social_medium
       image_link: ''
-    third_party_settings: {  }
+    third_party_settings:
+      lazy:
+        lazy_image: '1'
     region: content
+  field_profile_organization:
+    type: string
+    weight: 2
+    region: content
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
 hidden:
+  field_birthdate: true
+  field_birthdate_next: true
+  field_manager_notes: true
   field_profile_address: true
   field_profile_banner_image: true
   field_profile_expertise: true
   field_profile_first_name: true
-  field_profile_function: true
   field_profile_interests: true
   field_profile_last_name: true
-  field_profile_organization: true
+  field_profile_nick_name: true
+  field_profile_organization_tag: true
   field_profile_phone_number: true
   field_profile_profile_tag: true
   field_profile_self_introduction: true
