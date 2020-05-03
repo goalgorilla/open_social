@@ -4,8 +4,8 @@ namespace Drupal\social_auth_linkedin;
 
 use Drupal\social_auth_extra\AuthManager;
 use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
-use Happyr\LinkedIn\LinkedIn;
-use Happyr\LinkedIn\Exception\LinkedInException;
+use LinkedIn\Client;
+use LinkedIn\Scope;
 use Drupal\social_auth_linkedin\Settings\LinkedInAuthSettings;
 
 /**
@@ -26,8 +26,8 @@ class LinkedInAuthManager extends AuthManager {
    * {@inheritdoc}
    */
   public function setSdk($sdk) {
-    if (!$sdk instanceof LinkedIn) {
-      throw new InvalidArgumentException('SDK object should be instance of \Happyr\LinkedIn\LinkedIn class');
+    if (!$sdk instanceof Client) {
+      throw new InvalidArgumentException('SDK object should be instance of \LinkedIn\Client class');
     }
 
     $this->sdk = $sdk;
@@ -36,9 +36,8 @@ class LinkedInAuthManager extends AuthManager {
   /**
    * {@inheritdoc}
    */
-  public function getAuthenticationUrl($type, array $scope = ['r_basicprofile', 'r_emailaddress']) {
+  public function getAuthenticationUrl($type, array $scope = [Scope::READ_LITE_PROFILE, Scope::READ_EMAIL_ADDRESS]) {
     return $this->sdk->getLoginUrl([
-      'redirect_uri' => $this->getRedirectUrl($type),
       'scope' => implode(',', $scope),
     ]);
   }
@@ -67,7 +66,7 @@ class LinkedInAuthManager extends AuthManager {
 
     $this->loggerFactory
       ->get('social_auth_linkedin')
-      ->error('Could not get LinkedIn access token. User cancelled the dialog in Facebook or return URL was not valid.');
+      ->error('Could not get LinkedIn access token. User cancelled the dialog in LinkedIn or return URL was not valid.');
 
     return NULL;
   }
@@ -76,6 +75,7 @@ class LinkedInAuthManager extends AuthManager {
    * {@inheritdoc}
    */
   public function getProfile() {
+    $x =1;
     if (!$this->profile) {
       if (($profile = $this->sdk->get('v1/people/~:(id,firstName,lastName,email-address,formattedName,pictureUrls::(original))')) && !isset($profile['errorCode'])) {
         $this->profile = $profile;
