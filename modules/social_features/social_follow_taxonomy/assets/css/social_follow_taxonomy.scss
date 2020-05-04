@@ -46,7 +46,7 @@
   }
 
   .btn {
-    position: relative;s
+    position: relative;
 
     .ajax-throbber {
       position: absolute;
@@ -227,6 +227,18 @@
       @media(max-width: 599px) {
         flex: 0 0 calc(100px - 5px);
         max-width: calc(100px - 5px);
+      }
+
+    }
+  }
+
+  &:not(.paragraph) {
+    .actions {
+      .flag {
+        &:first-child:last-child {
+          flex: 0 0 100%;
+          max-width: 100%;
+        }
       }
     }
   }
