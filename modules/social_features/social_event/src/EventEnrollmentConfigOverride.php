@@ -37,11 +37,15 @@ class EventEnrollmentConfigOverride implements ConfigFactoryOverrideInterface {
           $request_path['negate'] = TRUE;
           $request_path['context_mapping'] = [];
         }
-        else {
-          $request_path['pages'] .= "\r\n";
-        }
 
-        $request_path['pages'] .= '*/all-enrollment-requests/confirm-decline/*';
+        if (isset($request_path['pages'])) {
+          if (!empty($request_path['pages'])) {
+            $request_path['pages'] .= "\r\n" . '*/all-enrollment-requests/confirm-decline/*';
+          }
+          else {
+            $request_path['pages'] = '*/all-enrollment-requests/confirm-decline/*';
+          }
+        }
 
         $overrides[$config_name] = ['visibility' => ['request_path' => $request_path]];
       }
