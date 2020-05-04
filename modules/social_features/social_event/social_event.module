@@ -490,6 +490,7 @@ function social_event_form_alter(&$form, FormStateInterface $form_state, $form_i
       if ($entity->hasField('field_event_enroll') && $entity->field_event_enroll->isEmpty()) {
         $form['field_event_enroll']['widget']['value']['#default_value'] = TRUE;
       }
+      break;
 
     case 'node_event_form':
       $form['event_all_day'] = [
@@ -497,6 +498,8 @@ function social_event_form_alter(&$form, FormStateInterface $form_state, $form_i
         '#title' => t('All day'),
       ];
 
+      // Hide the default checkbox in favor of new enrollment options.
+      $form['field_event_enroll']['#attributes']['class'][] = 'hidden';
       // Alter visibility of enrollment methods.
       $field_name = 'field_event_enroll';
 
@@ -727,7 +730,7 @@ function social_event_get_current_event() {
  *   Which state do you want for the form field. Defaults to visibility.
  */
 function social_event_field_visibility(array &$form, $field_name, array $fields, $state = 'visible') {
-  // Todo:: Refactor outside of an alter when going to React.
+  // Todo: Refactor outside of an alter when going to React.
   // Hide fields if event enrollment is disabled for event.
   $trigger = [
     ':input[name="' . $field_name . '[value]"]' => ['checked' => TRUE],

@@ -46,21 +46,7 @@ function social_event_max_enroll_form_alter(&$form, FormStateInterface $form_sta
       $form['field_event_max_enroll']['#access'] = $config->get('max_enroll');
       $form['field_event_max_enroll_num']['#access'] = $config->get('max_enroll');
 
-      // Hide checkbox if event enrollment is disabled for event.
-      $state = [
-        ':input[name="field_event_enroll[value]"]' => ['checked' => TRUE],
-      ];
-
-      $fields = [
-        'field_event_max_enroll',
-        'field_event_max_enroll_num',
-      ];
-
-      foreach ($fields as $field) {
-        $form[$field]['#states'] = [
-          'visible' => $state,
-        ];
-      }
+      $form['field_event_max_enroll']['#prefix'] = t('<span>Enrollments amount limit</span>');
 
       // Show the checkbox only when max enroll is enabled.
       if ($config->get('max_enroll_required')) {
@@ -68,11 +54,6 @@ function social_event_max_enroll_form_alter(&$form, FormStateInterface $form_sta
         $form['field_event_max_enroll']['widget']['value']['#disabled'] = TRUE;
         $form['field_event_max_enroll']['widget']['value']['#required'] = TRUE;
         $form['field_event_max_enroll_num']['widget'][0]['value']['#required'] = TRUE;
-      }
-      else {
-        $form['field_event_max_enroll_num']['#states']['visible'][] = [
-          ':input[name="field_event_max_enroll[value]"]' => ['checked' => TRUE],
-        ];
       }
       break;
 
@@ -135,6 +116,16 @@ function social_event_max_enroll_form_alter(&$form, FormStateInterface $form_sta
         }
       }
       break;
+  }
+}
+
+/**
+ * Implements hook_field_widget_form_alter().
+ */
+function social_event_max_enroll_field_widget_form_alter(&$element, FormStateInterface $form_state, $context) {
+  $field_definition = $context['items']->getFieldDefinition();
+  if ($field_definition->getName() === 'field_event_max_enroll_num') {
+    $element['value']['#title_display'] = 'none';
   }
 }
 

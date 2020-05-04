@@ -1484,3 +1484,94 @@ function social_event_update_8806() {
     }
   }
 }
+
+/**
+ * Update event enroll method field with new options.
+ */
+function social_event_update_8807(&$sandbox) {
+  if (!isset($sandbox['total'])) {
+
+    // Install new fields:
+    // - field_enroll_method.
+    $sandbox['configs'] = [
+      'field.storage.node.field_enroll_method' => [
+        'langcode' => 'en',
+        'status' => TRUE,
+        'dependencies' => [
+          'module' => [
+            'node',
+            'options',
+          ],
+        ],
+        'id' => 'node.field_enroll_method',
+        'field_name' => 'field_enroll_method',
+        'entity_type' => 'node',
+        'type' => 'list_integer',
+        'settings' => [
+          'allowed_values' => [
+            0 => [
+              'value' => 1,
+              'label' => 'Open for all - users can enroll in this event without approval',
+            ],
+            1 => [
+              'value' => 2,
+              'label' => 'Open to requests - user requests to enroll need to be approved by event organisers',
+            ],
+            2 => [
+              'value' => 3,
+              'label' => 'Invite-only - users can only be added or invited by event organisers',
+            ],
+          ],
+          'allowed_values_function' => '',
+        ],
+        'module' => 'options',
+        'locked' => FALSE,
+        'cardinality' => 1,
+        'translatable' => TRUE,
+        'indexes' => [],
+        'persist_with_no_fields' => FALSE,
+        'custom_storage' => FALSE,
+      ],
+    ];
+
+    // Count the amount we need to add to cover batching.
+    $sandbox['total'] = count($sandbox['configs']);
+    $sandbox['current'] = 0;
+  }
+
+  $names = array_keys($sandbox['configs']);
+  $name = $names[$sandbox['current']++];
+  $data = $sandbox['configs'][$name];
+
+  $parts = explode('.', $name);
+
+  switch ($parts[0] . '.' . $parts[1]) {
+    case 'field.storage':
+      $entity_type = \Drupal::service('config.manager')->getEntityTypeIdByName($name);
+
+      /** @var \Drupal\Core\Config\Entity\ConfigEntityStorageInterface $storage */
+      $storage = \Drupal::entityTypeManager()->getStorage($entity_type);
+      $entity = $storage->createFromStorageRecord($data);
+      $entity->save();
+      break;
+
+    case 'field.field':
+      $field_config = FieldConfig::loadByName($parts[2], $parts[3], $parts[4]);
+
+      if ($field_config instanceof FieldConfigInterface) {
+        $field_config->setDescription($data);
+      }
+      else {
+        $field_config = FieldConfig::create($data);
+      }
+
+      $field_config->save();
+      break;
+
+    default:
+      // Insert newly created config in the storage.
+      \Drupal::service('config.storage')->write($name, $data);
+  }
+
+  $sandbox['#finished'] = $sandbox['current'] / $sandbox['total'];
+}
