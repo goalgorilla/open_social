@@ -174,7 +174,7 @@
       }
     }
 
-    .badge {
+    .badge:not(.badge--date-range) {
       color: #4a4a4a;
     }
   }
@@ -191,6 +191,23 @@
 
     @include for-phone-only {
       padding-top: 30px;
+    }
+
+    .hero-header {
+      margin-bottom: .75rem;
+
+      >  * {
+        display: inline-block;
+        vertical-align: middle;
+      }
+
+      .teaser__tag {
+        margin-bottom: 0;
+      }
+
+      .badge {
+        margin-left: 1rem;
+      }
     }
 
     .teaser__title {
