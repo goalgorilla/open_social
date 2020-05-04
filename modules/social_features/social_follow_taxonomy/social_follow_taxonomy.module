@@ -345,11 +345,13 @@ function social_follow_taxonomy_flag_link(TermInterface $term) {
  *   Count of related nodes.
  */
 function social_follow_taxonomy_related_nodes_count(TermInterface $term, $field_id) {
-  $nodes = \Drupal::entityTypeManager()
+  $items = \Drupal::entityTypeManager()
     ->getStorage('node')
     ->loadByProperties([$field_id => $term->id()]);
 
-  return count($nodes);
+  \Drupal::moduleHandler()->alter('social_follow_taxonomy_related_items', $items, $term);
+
+  return count($items);
 }
 
 /**

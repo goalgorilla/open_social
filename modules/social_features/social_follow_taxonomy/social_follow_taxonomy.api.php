@@ -7,6 +7,7 @@
 
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\node\NodeInterface;
+use Drupal\taxonomy\TermInterface;
 
 /**
  * @addtogroup hooks
@@ -37,6 +38,25 @@ function hook_social_follow_taxonomy_terms_list_alter(array &$term_ids, EntityIn
   }
 
   return $term_ids;
+}
+
+/**
+ * Provide a method to alter array of related items.
+ *
+ * @param array $items
+ *   The input array of related entities.
+ * @param \Drupal\taxonomy\TermInterface $term
+ *   Related taxonomy term.
+ *
+ * @return array
+ *   Extended array of related entities.
+ */
+function hook_social_follow_taxonomy_related_items_alter(array &$items, TermInterface $term) {
+  $items = \Drupal::entityTypeManager()
+    ->getStorage('node')
+    ->loadByProperties(['field_terms' => $term->id()]);
+
+  return $items;
 }
 
 /**
