@@ -52,7 +52,7 @@ class LinkedInAuthManager extends AuthManager {
    */
   public function getAccessToken($type = '') {
     try {
-      // set the RedirectUrl before retrieving the access token.
+      // Set the RedirectUrl before retrieving the access token.
       $redirect_url = $this->getRedirectUrl($type);
       $this->sdk->setRedirectUrl($redirect_url);
 
