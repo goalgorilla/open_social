@@ -9,3 +9,4 @@ projects[drupal][patch][] = "https://www.drupal.org/files/issues/drupal-994360-7
 projects[drupal][patch][] = "https://www.drupal.org/files/issues/2019-11-14/3007424-68.patch"
 projects[drupal][patch][] = "https://www.drupal.org/files/issues/2018-05-24/2974925-default-rid-config-causes-illegal-error.patch"
 projects[drupal][patch][] = "https://www.drupal.org/files/issues/2020-04-17/views-exposed-form-block-args-2821962-30-8.8-notest.patch"
+projects[drupal][patch][] = "https://www.drupal.org/files/issues/2019-11-19/1091852-104.patch"

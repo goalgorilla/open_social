@@ -197,9 +197,13 @@ form:not(.layout-builder-add-block) {
 }
 
 .view-group-manage-members {
-  @include for-phone-only {
-    padding: 0 10px;
+  padding: 0 10px;
+  
+  @include for-desktop-up {
+    padding: 0;
+  }
 
+  @include for-phone-only {
     .form-group-inline--right {
       display: block;
     }

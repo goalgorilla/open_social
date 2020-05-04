@@ -211,9 +211,23 @@ function social_event_update_8803() {
 }
 
 /**
+ * Fix small teaser view mode after accidental regression for some sites.
+ */
+function social_event_update_8804() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_event', 'social_event_update_8804');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
  * Install new fields for the request to join event.
  */
-function social_event_update_8804(&$sandbox) {
+function social_event_update_8805(&$sandbox) {
   if (!isset($sandbox['total'])) {
 
     // Install new fields:
@@ -1461,7 +1475,7 @@ function social_event_update_8804(&$sandbox) {
 /**
  * Node event and views changes for the social_event request enrollment feature.
  */
-function social_event_update_8805() {
+function social_event_update_8806() {
   /** @var \Drupal\update_helper\Updater $updateHelper */
   $updateHelper = \Drupal::service('update_helper.updater');
 
@@ -1475,7 +1489,7 @@ function social_event_update_8805() {
 /**
  * Grant CM+ with 'manage event enrollment requests' permission.
  */
-function social_event_update_8806() {
+function social_event_update_8807() {
   $roles = Role::loadMultiple();
   /** @var \Drupal\user\Entity\Role $role */
   foreach ($roles as $role) {
@@ -1484,3 +1498,4 @@ function social_event_update_8806() {
     }
   }
 }
+
