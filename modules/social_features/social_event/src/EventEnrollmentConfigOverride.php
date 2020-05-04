@@ -37,7 +37,7 @@ class EventEnrollmentConfigOverride implements ConfigFactoryOverrideInterface {
           $request_path['negate'] = TRUE;
           $request_path['context_mapping'] = [];
         }
-        
+
         if (isset($request_path['pages'])) {
           if (!empty($request_path['pages'])) {
             $request_path['pages'] .= "\r\n" . '*/all-enrollment-requests/confirm-decline/*';
