@@ -55,10 +55,15 @@ class ActivityFilterTags extends FilterPluginBase {
 
     if ($this->database->schema()->tableExists($taxonomy_table)) {
 
+      $or = db_or();
+      $and_wrapper = db_and();
+
+      // Filter Nodes by selected tags.
       $this->query->addTable($taxonomy_table);
+      $activity_entity_table = 'activity__field_activity_entity';
 
       $configuration = [
-        'left_table' => 'activity__field_activity_entity',
+        'left_table' => $activity_entity_table,
         'left_field' => 'field_activity_entity_target_id',
         'table' => $taxonomy_table,
         'field' => 'entity_id',
@@ -74,8 +79,39 @@ class ActivityFilterTags extends FilterPluginBase {
         ->createInstance('standard', $configuration);
       $this->query->addRelationship($taxonomy_field, $join, $taxonomy_table);
 
-      $and_wrapper = db_and();
-      $and_wrapper->condition("{$taxonomy_field}.{$taxonomy_field}_target_id", $tags, 'IN');
+      $and_node_wrapper = db_and();
+      $and_node_wrapper->condition("{$taxonomy_field}.{$taxonomy_field}_target_id", $tags, 'IN');
+
+      $or->condition($and_node_wrapper);
+
+      // Filter Posts by selected tags.
+      $post_cop_tags_table = 'post__field_cop_tags';
+
+      $this->query->addTable($post_cop_tags_table);
+      $this->query->addTable($activity_entity_table);
+
+      $configuration = [
+        'table' => $post_cop_tags_table,
+        'field' => 'entity_id',
+        'left_table' => $activity_entity_table,
+        'left_field' => 'field_activity_entity_target_id',
+        'operator' => '=',
+        'extra' => [
+          0 => [
+            'left_field' => 'field_activity_entity_target_type',
+            'value' => 'post',
+          ],
+        ],
+      ];
+      $join = Views::pluginManager('join')
+        ->createInstance('standard', $configuration);
+      $this->query->addRelationship($post_cop_tags_table, $join, $post_cop_tags_table);
+
+      $and_post_wrapper = db_and();
+      $and_post_wrapper->condition("{$post_cop_tags_table}.field_cop_tags_target_id", $tags, 'IN');
+      $or->condition($and_post_wrapper);
+
+      $and_wrapper->condition($or);
 
       // Lets add all the or conditions to the Views query.
       $this->query->addWhere('tags', $and_wrapper);
