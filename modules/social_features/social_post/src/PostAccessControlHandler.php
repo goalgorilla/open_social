@@ -116,8 +116,8 @@ class PostAccessControlHandler extends EntityAccessControlHandler implements Ent
                     $group_roles = $group_role_storage->loadByUserAndGroup($account, $group);
                     /** @var \Drupal\group\Entity\GroupRoleInterface $group_role */
                     foreach ($group_roles as $group_role) {
-                      if ($group_role->isOutsider() && $group_role->hasPermission($permission)) {
-                        return AccessResult::allowed()->cachePerUser()->addCacheableDependency($entity);
+                      if ($group_role->isOutsider()) {
+                        return AccessResult::forbidden()->cachePerUser()->addCacheableDependency($entity);
                       }
                     }
                     if ($group->getMember($account)) {
