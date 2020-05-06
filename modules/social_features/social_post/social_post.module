@@ -209,6 +209,10 @@ function social_post_theme() {
       'file' => 'post.page.inc',
       'template' => 'post',
     ],
+    'post__featured' => [
+      'template' => 'post--featured',
+      'base hook' => 'post',
+    ],
   ];
   return $items;
 }
