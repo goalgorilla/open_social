@@ -57,7 +57,7 @@ class PostGroupBlock extends PostBlock {
         $group->hasPermission('add post entities in group', $account) &&
         (
           $account->hasPermission('add post entities') ||
-          $account->hasPermission("add $this->bundle post entities")
+          $account->hasPermission("add {$this->bundle} post entities")
         )
       ) {
         $membership = $group->getMember($account);
