@@ -500,6 +500,11 @@ function social_event_form_alter(&$form, FormStateInterface $form_state, $form_i
 
       // Hide the default checkbox in favor of new enrollment options.
       $form['field_event_enroll']['#attributes']['class'][] = 'hidden';
+      $form['field_event_enroll']['#states'] = [
+        'unchecked' => [
+          ':input[name="field_enroll_method"]' => ['value' => '3'],
+        ],
+      ];
       // Alter visibility of enrollment methods.
       $field_name = 'field_event_enroll';
 

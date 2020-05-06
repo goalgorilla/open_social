@@ -219,49 +219,22 @@ function social_event_an_enroll_form_alter(&$form, FormStateInterface $form_stat
 
   if (in_array($form_id, $event_forms)) {
     $config = \Drupal::config('social_event_an_enroll.settings');
-    // Only make the checkbox available when the content visibility
-    // is set to public and if the enroll method is open for all.
+    // Show the checkbox only when AN enroll is enabled.
     $form['field_event_an_enroll']['#states'] = [
-      'unchecked' => [
-        [
-          ':input[name="field_enroll_method"]' => ['value' => '2'],
-        ],
-        [
-          ':input[name="field_enroll_method"]' => ['value' => '3'],
-        ],
-        [
-          ':input[name="field_content_visibility"]' => ['value' => 'community'],
-        ],
-        [
-          ':input[name="field_content_visibility"]' => ['value' => 'group'],
-        ],
-      ],
-      'disabled' => [
-        [
-          ':input[name="field_enroll_method"]' => ['value' => '2'],
-        ],
-        [
-          ':input[name="field_enroll_method"]' => ['value' => '3'],
-        ],
-        [
-          ':input[name="field_content_visibility"]' => ['value' => 'community'],
-        ],
-        [
-          ':input[name="field_content_visibility"]' => ['value' => 'group'],
-        ],
+      'visible' => [
+        ':input[name="field_content_visibility"]' => ['value' => 'public'],
+        ':input[name="field_event_enroll[value]"]' => ['checked' => TRUE],
+        ':input[name="field_enroll_method"]' => ['value' => '1'],
       ],
     ];
+    // Set default value on event creation form.
+    if ($form_id === 'node_event_form') {
+      $form['field_event_an_enroll']['widget']['value']['#default_value'] = $config->get('event_an_enroll_default_value');
+    }
+    // Set ability to change default value.
+    $form['field_event_an_enroll']['widget']['value']['#disabled'] = $config->get('event_an_enroll_default_value') && !$config->get('event_an_enroll_allow_edit');
     // Hide checkbox if feature is disabled globally.
     $form['field_event_an_enroll']['#access'] = $config->get('event_an_enroll');
-    if ($config->get('event_an_enroll') === 1) {
-      $form['field_event_an_enroll']['#prefix'] = t('<span>Other enrollment options</span>');
-      // Set default value on event creation form.
-      if ($form_id === 'node_event_form') {
-        $form['field_event_an_enroll']['widget']['value']['#default_value'] = $config->get('event_an_enroll_default_value');
-      }
-      // Set ability to change default value.
-      $form['field_event_an_enroll']['widget']['value']['#disabled'] = $config->get('event_an_enroll_default_value') && !$config->get('event_an_enroll_allow_edit');
-    }
   }
 }
 
