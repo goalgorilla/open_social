@@ -3,9 +3,6 @@ status: true
 dependencies:
   config:
     - core.entity_view_mode.profile.small_teaser
-    - field.field.profile.profile.field_birthdate
-    - field.field.profile.profile.field_birthdate_next
-    - field.field.profile.profile.field_manager_notes
     - field.field.profile.profile.field_profile_address
     - field.field.profile.profile.field_profile_banner_image
     - field.field.profile.profile.field_profile_expertise
@@ -25,17 +22,11 @@ dependencies:
     - profile.type.profile
   module:
     - image
-    - lazy
 id: profile.profile.small_teaser
 targetEntityType: profile
 bundle: profile
 mode: small_teaser
 content:
-  badges:
-    weight: 3
-    region: content
-    settings: {  }
-    third_party_settings: {  }
   field_profile_function:
     type: string
     weight: 1
@@ -51,9 +42,7 @@ content:
     settings:
       image_style: social_medium
       image_link: ''
-    third_party_settings:
-      lazy:
-        lazy_image: '1'
+    third_party_settings: {  }
     region: content
   field_profile_organization:
     type: string
@@ -64,9 +53,6 @@ content:
       link_to_entity: false
     third_party_settings: {  }
 hidden:
-  field_birthdate: true
-  field_birthdate_next: true
-  field_manager_notes: true
   field_profile_address: true
   field_profile_banner_image: true
   field_profile_expertise: true
