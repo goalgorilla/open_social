@@ -13,6 +13,7 @@ use Drupal\flag\Entity\Flag;
 use Drupal\flag\FlagInterface;
 use Drupal\message\Entity\Message;
 use Drupal\node\NodeInterface;
+use Drupal\social_post\Entity\PostInterface;
 use Drupal\taxonomy\TermInterface;
 
 /**
@@ -22,6 +23,9 @@ function social_follow_taxonomy_theme($existing, $type, $theme, $path) {
   return [
     'flag__follow_term' => [
       'base hook' => 'flag',
+    ],
+    'activity__followed' => [
+      'base hook' => 'activity',
     ],
     'activity__node__followed' => [
       'base hook' => 'activity',
@@ -67,12 +71,23 @@ function social_follow_taxonomy_theme_suggestions_activity(array $variables) {
   // Get a message entity from the activity.
   $message = Message::load($activity->field_activity_message->target_id);
 
+  $message_template = [
+    'update_node_following_tag',
+    'create_discussion_group',
+    'create_event_group',
+    'create_idea_group',
+    'create_topic_group',
+    'create_post_group',
+    'update_post_following_tag',
+  ];
   // Get the name of the template from the data of the message entity.
-  if ($message->getTemplate()->id() == 'create_node_following_tag_stream') {
+  if (in_array($message->getTemplate()->id(), $message_template)) {
     $entity_type = $activity->field_activity_entity->first()->target_type;
-
-    if ($entity_type === 'node') {
-      $suggestions[] = 'activity__' . $entity_type . '__followed';
+    if (isset($activity->view) && $activity->view->current_display == 'block_stream_homepage') {
+      if ($entity_type === 'node' || $entity_type === 'post') {
+        $suggestions[] = 'activity__followed';
+        $suggestions[] = 'activity__' . $entity_type . '__followed';
+      }
     }
   }
 
@@ -87,11 +102,20 @@ function social_follow_taxonomy_theme_suggestions_activity(array $variables) {
  */
 function social_follow_taxonomy_preprocess_activity(&$variables) {
   $activity = $variables['elements']['#activity'];
+  $message_template = [
+    'update_node_following_tag',
+    'create_discussion_group',
+    'create_event_group',
+    'create_idea_group',
+    'create_topic_group',
+    'create_post_group',
+    'update_post_following_tag',
+  ];
 
   $message = Message::load($activity->field_activity_message->target_id);
   $message_template_id = $message->getTemplate()->id();
 
-  if ($message_template_id == 'create_node_following_tag_stream') {
+  if (in_array($message_template_id, $message_template)) {
     $entity = $activity->getRelatedEntity();
 
     if ($entity->getEntityTypeId() === 'node') {
@@ -113,6 +137,33 @@ function social_follow_taxonomy_preprocess_activity(&$variables) {
             /** @var \Drupal\taxonomy\TermInterface $term */
             $term = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->load($term_id);
             $variables['content_type'] = $entity->type->entity->label();
+            $variables['followed_tags'][$term_id] = [
+              'name' => $term->getName(),
+              'flag' => social_follow_taxonomy_flag_link($term),
+            ];
+          }
+        }
+      }
+    }
+    if ($entity->getEntityTypeId() === 'post') {
+      $storage = \Drupal::entityTypeManager()->getStorage('flagging');
+
+      if ($entity instanceof PostInterface) {
+        $term_ids = social_follow_taxonomy_terms_list($entity);
+
+        foreach ($term_ids as $term_id) {
+          $flag = $storage->loadByProperties([
+            'flag_id' => 'follow_term',
+            'entity_type' => 'taxonomy_term',
+            'entity_id' => $term_id,
+            'uid' => \Drupal::currentUser()->id(),
+          ]);
+          $flag = reset($flag);
+
+          if (!empty($flag)) {
+            /** @var \Drupal\taxonomy\TermInterface $term */
+            $term = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->load($term_id);
+            $variables['content_type'] = $entity->getEntityType()->getLabel();
             $variables['followed_tags'][$term_id] = [
               'name' => $term->getName(),
               'flag' => social_follow_taxonomy_flag_link($term),
@@ -249,22 +300,6 @@ function social_follow_taxonomy_tokens($type, $tokens, array $data, array $optio
   }
 
   return $replacements;
-}
-
-/**
- * Implements hook_views_data().
- */
-function social_follow_taxonomy_views_data() {
-  $data['activity']['activity_follow_taxonomy_visibility_access_filter'] = [
-    'title' => t('Filter on taxonomy activities for the personalised homepage.'),
-    'filter' => [
-      'title' => t('Filter following taxonomy activities for personalised homepage'),
-      'help' => t('Filter following taxonomy on activities for personalised homepage.'),
-      'field' => 'field_visibility',
-      'id' => 'activity_follow_taxonomy_visibility_access',
-    ],
-  ];
-  return $data;
 }
 
 /**
