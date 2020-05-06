@@ -72,11 +72,14 @@ function social_follow_taxonomy_theme_suggestions_activity(array $variables) {
   $message = Message::load($activity->field_activity_message->target_id);
 
   $message_template = [
-    'update_node_following_tag',
+    'create_discussion',
+    'create_event_community',
+    'create_topic_community',
     'create_discussion_group',
     'create_event_group',
     'create_idea_group',
     'create_topic_group',
+    'update_node_following_tag',
     'create_post_group',
     'update_post_following_tag',
   ];
@@ -103,11 +106,14 @@ function social_follow_taxonomy_theme_suggestions_activity(array $variables) {
 function social_follow_taxonomy_preprocess_activity(&$variables) {
   $activity = $variables['elements']['#activity'];
   $message_template = [
-    'update_node_following_tag',
+    'create_discussion',
+    'create_event_community',
+    'create_topic_community',
     'create_discussion_group',
     'create_event_group',
     'create_idea_group',
     'create_topic_group',
+    'update_node_following_tag',
     'create_post_group',
     'update_post_following_tag',
   ];
