@@ -99,25 +99,30 @@ function _social_content_block_get_content_type_for_block(BlockContentInterface 
  * Implements hook_form_alter().
  */
 function social_content_block_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-  $form_ids = [
-    'block_content_custom_content_list_form',
-    'block_content_custom_content_list_edit_form',
-  ];
+  switch ($form_id) {
+    case 'block_content_custom_content_list_form':
+    case 'block_content_custom_content_list_edit_form':
+      $element = &$form;
+      break;
 
-  if (in_array($form_id, $form_ids)) {
-    $form['#process'][] = [ContentBuilder::class, 'processBlockForm'];
+    case 'layout_builder_add_block':
+      /** @var \Drupal\layout_builder\SectionComponent $component */
+      $component = $form_state->get('layout_builder__component');
+
+      if ($component->getPluginId() === 'inline_block:custom_content_list') {
+        $element = &$form['settings']['block_form'];
+      }
+      break;
+
+    case 'layout_builder_update_block':
+      if (isset($form['settings']['block_form']['#block']) && $form['settings']['block_form']['#block']->bundle() === 'custom_content_list') {
+        $element = &$form['settings']['block_form'];
+      }
+      break;
   }
-}
 
-/**
- * Implements hook_form_FORM_ID_alter().
- */
-function social_content_block_form_layout_builder_add_block_alter(&$form, FormStateInterface $form_state, $form_id) {
-  /** @var \Drupal\layout_builder\SectionComponent $component */
-  $component = $form_state->get('layout_builder__component');
-
-  if ($component->getPluginId() === 'inline_block:custom_content_list') {
-    $form['settings']['block_form']['#process'][] = [ContentBuilder::class, 'processBlockForm'];
+  if (isset($element)) {
+    $element['#process'][] = [ContentBuilder::class, 'processBlockForm'];
   }
 }
 
