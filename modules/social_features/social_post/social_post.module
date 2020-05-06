@@ -262,6 +262,16 @@ function social_post_theme_suggestions_post(array $variables) {
 }
 
 /**
+ * Implements hook_theme_suggestions_HOOK_alter().
+ */
+function social_post_theme_suggestions_post_alter(array &$suggestions, array $variables) {
+  if (isset($variables["elements"]["#view_mode"]) && $variables["elements"]["#view_mode"] === 'featured') {
+    // If current view mode is featured override suggestions priority.
+    $suggestions = array_reverse($suggestions);
+  }
+}
+
+/**
  * Prepares variables for comment field templates.
  *
  * Default template: field--comment.html.twig.
