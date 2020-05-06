@@ -385,11 +385,11 @@ function social_profile_update_8010() {
 }
 
 /**
- * Update social_profile.settings config. Update permissions for SM role.
+ * Update social_profile.settings config & permissions for authenticated role.
  */
 function social_profile_update_8011(&$sandbox) {
   $config = \Drupal::configFactory()->getEditable('social_profile.settings');
-  $config->set('social_profile_show_language', 1);
+  $config->set('social_profile_show_language', TRUE);
   $config->save();
 
   // Add permission to view profile language for authenticated role.
@@ -399,7 +399,7 @@ function social_profile_update_8011(&$sandbox) {
   ];
   /** @var \Drupal\user\Entity\Role $role */
   foreach ($roles as $role) {
-    if ($role->id() === 'authenticated') {
+    if (in_array($role->id(), ['sitemanager', 'contentmanager'])) {
       user_role_grant_permissions($role->id(), $permissions);
     }
   }
