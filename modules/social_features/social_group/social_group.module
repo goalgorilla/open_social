@@ -765,10 +765,12 @@ function _social_group_type_edit_submit($form, FormStateInterface $form_state) {
     }
   }
 
-  // Make sure we clear cache tags accordingly.
-  $cache_tags = _social_group_cache_tags($group);
-  foreach ($cache_tags as $cache_tag) {
-    Cache::invalidateTags([$cache_tag]);
+  if ($group instanceof GroupInterface) {
+    // Make sure we clear cache tags accordingly.
+    $cache_tags = _social_group_cache_tags($group);
+    foreach ($cache_tags as $cache_tag) {
+      Cache::invalidateTags([$cache_tag]);
+    }
   }
 }
 
