@@ -119,7 +119,7 @@ class SocialEventInviteLocalActionsBlock extends BlockBase implements ContainerF
         '#links' => [
           'add_directly' => [
             'title' => $this->t('Add directly'),
-            'url' => Url::fromRoute('social_event_invite.invite_user', ['node' => $event->id()]),
+            'url' => Url::fromRoute('social_event_managers.add_enrollees', ['node' => $event->id()]),
           ],
           'invite_by_mail' => [
             'title' => $this->t('Invite by email'),
