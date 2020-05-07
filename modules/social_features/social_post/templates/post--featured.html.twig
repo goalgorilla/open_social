@@ -33,28 +33,34 @@
 
       {% block post %}
         <div class="media-wrapper">
-          <div {{ attributes.addClass(classes) }}>
-            <div class="media-body">
-              <div class="media-heading text-m">
-                {% if content.user_id %}
-                  {{ content.user_id }}
-                {% endif %}
-            </div>
-          </div>
           {% if content.links %}
             {{ content.links }}
           {% endif %}
         </div>
         <div class="margin-top-s iframe-container">
 
-          {{ content|without('links', 'like_and_dislike', 'field_post_image', 'user_id') }}
+          {{ content|without('links', 'like_and_dislike', 'field_post_comments', 'field_post_image', 'user_id') }}
 
           {% if content.field_post_image|render %}
             <p>{{ content.field_post_image }}</p>
           {% endif %}
 
           <div class="clearfix"></div>
-          {{ content.like_and_dislike }}
+          <div class="media-post-social">
+            {{ content.like_and_dislike }}
+            {% if dashboard and comment_count > 0 %}
+              <a href="{{ comment_url }}" class="badge badge--pill badge--post">
+                <span class="badge__container">
+                  <svg class="badge__icon">
+                    <use xlink:href="#icon-comment"></use>
+                  </svg>
+                  <span class="badge__label">
+                    {{ comment_count }}
+                  </span>
+                </span>
+              </a>
+            {% endif %}
+          </div>
         </div>
       {% endblock %}
 
