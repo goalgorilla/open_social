@@ -197,3 +197,46 @@ function social_activity_update_8802() {
   ]);
   EntityViewDisplay::create($display)->save();
 }
+
+/**
+ * Create "Featured" view mode/display for post.
+ *
+ * @todo: should be moved into social_post module.
+ */
+function social_activity_update_8803() {
+  // Create a new profile entity view mode.
+  EntityViewMode::create([
+    'targetEntityType' => 'post',
+    'id' => 'post.featured',
+    'status' => TRUE,
+    'label' => t('Featured'),
+  ])->save();
+
+  // Create view display for post bundle of Post entity.
+  $display = EntityViewDisplay::load('post.post.default')->toArray();
+  unset(
+    $display['content']['field_post_comments'],
+    $display['hidden']['like_and_dislike']
+  );
+  $display['content']['like_and_dislike'] = [
+    'weight' => 3,
+    'region' => 'content',
+  ];
+  $display = array_merge($display, [
+    'uuid' => NULL,
+    '_core' => NULL,
+    'targetEntityType' => 'post',
+    'mode' => 'featured',
+  ]);
+  EntityViewDisplay::create($display)->save();
+
+  // Create view display for photo bundle of Post entity.
+  $display = EntityViewDisplay::load('post.photo.default')->toArray();
+  $display = array_merge($display, [
+    'uuid' => NULL,
+    '_core' => NULL,
+    'targetEntityType' => 'post',
+    'mode' => 'featured',
+  ]);
+  EntityViewDisplay::create($display)->save();
+}
