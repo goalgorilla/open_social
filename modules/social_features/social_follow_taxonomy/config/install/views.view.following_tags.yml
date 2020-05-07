@@ -181,8 +181,8 @@ display:
           id: uuid
           table: node
           field: uuid
-          relationship: nid_1
-          group_type: count
+          relationship: nid
+          group_type: count_distinct
           admin_label: ''
           label: Items
           exclude: false
@@ -237,9 +237,8 @@ display:
           type: string
           settings:
             link_to_entity: false
-          group_column: value
-          group_columns:
-            value: value
+          group_column: null
+          group_columns: null
           group_rows: true
           delta_limit: 0
           delta_offset: 0
@@ -416,22 +415,13 @@ display:
           user_scope: current
           entity_type: taxonomy_term
           plugin_id: flag_relationship
-        nid_1:
-          id: nid_1
-          table: taxonomy_index
-          field: nid
-          relationship: none
-          group_type: group
-          admin_label: Content
-          required: false
-          plugin_id: standard
         nid:
           id: nid
           table: taxonomy_index
           field: nid
           relationship: none
           group_type: group
-          admin_label: node
+          admin_label: Content
           required: false
           plugin_id: standard
       arguments: {  }
