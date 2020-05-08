@@ -51,6 +51,27 @@ class SocialGroupSettings extends ConfigFormBase {
       '#options' => $this->getCropTypes(),
     ];
 
+    // Group the settings for visibility options.
+    $form['visibility_settings'] = [
+      '#type' => 'fieldset',
+      '#title' => $this->t('Group visibility settings'),
+    ];
+
+    $form['visibility_settings']['available_visibility_options'] = [
+      '#type' => 'checkboxes',
+      '#title' => $this->t('Select available visibility options'),
+      '#description' => $this->t('Determines which visibility options should be available when creating a new group.'),
+      '#default_value' => $config->get('available_visibility_options'),
+      '#options' => $this->getVisibilityOptions(),
+    ];
+
+    $form['visibility_settings']['hide_visibility_options'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Hide visibility options'),
+      '#description' => $this->t('Hide all visibility options.'),
+      '#default_value' => $config->get('hide_visibility_options'),
+    ];
+
     return parent::buildForm($form, $form_state);
   }
 
@@ -63,6 +84,8 @@ class SocialGroupSettings extends ConfigFormBase {
     $this->config('social_group.settings')
       ->set('allow_group_selection_in_node', $form_state->getValue('allow_group_selection_in_node'))
       ->set('default_hero', $form_state->getValue('default_hero'))
+      ->set('available_visibility_options', $form_state->getValue('available_visibility_options'))
+      ->set('hide_visibility_options', $form_state->getValue('hide_visibility_options'))
       ->save();
 
     Cache::invalidateTags(['group_view']);
@@ -87,6 +110,22 @@ class SocialGroupSettings extends ConfigFormBase {
       if ($type instanceof CropType) {
         $options[$type->id()] = $type->label();
       }
+    }
+
+    return $options;
+  }
+
+  /**
+   * Return the available group content visibility options.
+   *
+   * @return array
+   *   Array with options.
+   */
+  protected function getVisibilityOptions() {
+    $options = [];
+    $visibility_options = social_group_get_allowed_visibility_options_per_group_type(NULL);
+    foreach ($visibility_options as $key => $value) {
+      $options[$key] = ucfirst($key);
     }
 
     return $options;
