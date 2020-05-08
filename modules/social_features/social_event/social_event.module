@@ -490,7 +490,6 @@ function social_event_form_alter(&$form, FormStateInterface $form_state, $form_i
       if ($entity->hasField('field_event_enroll') && $entity->field_event_enroll->isEmpty()) {
         $form['field_event_enroll']['widget']['value']['#default_value'] = TRUE;
       }
-      break;
 
     case 'node_event_form':
       $form['event_all_day'] = [
