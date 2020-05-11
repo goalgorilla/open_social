@@ -332,11 +332,15 @@ function social_event_update_8805(&$sandbox) {
           'allowed_values' => [
             0 => [
               'value' => 1,
-              'label' => 'Enroll directly - users can enroll in this event without approval',
+              'label' => 'Open for all - users can enroll in this event without approval',
             ],
             1 => [
               'value' => 2,
-              'label' => 'Request to enroll - user enrollment requests need to be approved by event organisers',
+              'label' => 'Open to requests - user requests to enroll need to be approved by event organisers',
+            ],
+            2 => [
+              'value' => 3,
+              'label' => 'Invite-only - users can only be added or invited by event organisers',
             ],
           ],
           'allowed_values_function' => '',
