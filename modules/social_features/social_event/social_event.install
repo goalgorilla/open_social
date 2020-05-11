@@ -1480,7 +1480,7 @@ function social_event_update_8806() {
   $updateHelper = \Drupal::service('update_helper.updater');
 
   // Execute configuration update definitions with logging of success.
-  $updateHelper->executeUpdate('social_event', 'social_event_update_8805');
+  $updateHelper->executeUpdate('social_event', 'social_event_update_8806');
 
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
@@ -1497,18 +1497,4 @@ function social_event_update_8807() {
       user_role_grant_permissions($role->id(), ['manage event enrollment requests']);
     }
   }
-}
-
-/**
- * Import enrollment methods form display
- */
-function social_event_update_8808() {
-  /** @var \Drupal\update_helper\Updater $updateHelper */
-  $updateHelper = \Drupal::service('update_helper.updater');
-
-  // Execute configuration update definitions with logging of success.
-  $updateHelper->executeUpdate('social_event', 'social_event_update_8809');
-
-  // Output logged messages to related channel of update execution.
-  return $updateHelper->logger()->output();
 }
