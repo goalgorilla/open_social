@@ -33,8 +33,8 @@ class EventSettingsForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    $group_type_ids = $this->configFactory->getEditable('social_event.settings')
-      ->get('enroll');
+    $config = $this->configFactory->getEditable('social_event.settings');
+    $group_type_ids = $config->get('enroll');
 
     $form['enroll'] = [
       '#type' => 'checkboxes',
@@ -47,6 +47,23 @@ class EventSettingsForm extends ConfigFormBase {
             'checked' => TRUE,
           ],
         ],
+      ],
+    ];
+
+    // Group the settings for visibility options.
+    $form['visibility_settings'] = [
+      '#type' => 'fieldset',
+      '#title' => $this->t('Event visibility settings'),
+    ];
+    $form['visibility_settings']['available_visibility_options'] = [
+      '#type' => 'checkboxes',
+      '#title' => $this->t('Select available visibility options'),
+      '#description' => $this->t('Determines which visibility options should be available when creating a new event.'),
+      '#default_value' => $config->get('available_visibility_options'),
+      '#options' => [
+        'public' => $this->t('Public'),
+        'community' => $this->t('Community'),
+        'group' => $this->t('Group'),
       ],
     ];
 
@@ -78,6 +95,7 @@ class EventSettingsForm extends ConfigFormBase {
 
     $this->configFactory->getEditable('social_event.settings')
       ->set('enroll', $group_type_ids)
+      ->set('available_visibility_options', $form_state->getValue('available_visibility_options'))
       ->save();
   }
 
