@@ -30,7 +30,7 @@ Feature: Limitation event enrollments
     When I check the box "Set a limit to number of enrollees"
     Then I should see "Maximum number of enrollees" in the "#enrollment" element
     And I should see "Set a limit for event enrollments. Users are not able to enroll once the maximum number of enrollees is reached." in the "#enrollment" element
-    When I fill in "Maximum number of enrollees" with "2"
+    When I fill in "field_event_max_enroll_num[0][value]" with "2"
     And I press "Save"
     Then I should see "0 people have enrolled (2 spots left)"
     When I press "Enroll"
