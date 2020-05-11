@@ -1039,11 +1039,6 @@ function social_group_field_widget_form_alter(&$element, FormStateInterface $for
         unset($element['#options'][$visibility]);
       }
     }
-
-    // todo: if there is only one, show the message area.
-    if (count($element['#options']) === 1) {
-      // Transform this element to the new message.
-    }
   }
 
   // Unset the public options on visibility field.
