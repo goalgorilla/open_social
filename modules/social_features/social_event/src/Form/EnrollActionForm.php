@@ -178,6 +178,10 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
           }
         }
       }
+      // If the event is invite only, always return.
+      if ((int) $node->field_enroll_method->value === EventEnrollmentInterface::ENROLL_METHOD_INVITE) {
+        return [];
+      }
     }
 
     $form['event'] = [
