@@ -3,8 +3,11 @@
 namespace Drupal\social_group;
 
 use Drupal\Core\Database\Connection;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Url;
 use Drupal\group\Entity\GroupContent;
 use Drupal\group\Entity\GroupContentType;
+use Drupal\group\Entity\GroupType;
 use Drupal\node\Entity\Node;
 use Drupal\social_post\Entity\Post;
 
@@ -145,7 +148,7 @@ class SocialGroupHelperService {
    * Get all group memberships for a certain user.
    *
    * @param int $uid
-   *   The UID for which we fetch the groups he is member of.
+   *   The UID for which we fetch the groups it is member of.
    *
    * @return array
    *   List of group IDs the user is member of.
@@ -169,6 +172,47 @@ class SocialGroupHelperService {
     }
 
     return $groups[$uid];
+  }
+
+  /**
+   * Get the add group URL for given user.
+   *
+   * This returns either /group/add or /group/add/{group_type}
+   * depending upon the permission of the user to create group.
+   *
+   * @param \Drupal\Core\Session\AccountInterface $account
+   *   The user account.
+   *
+   * @return \Drupal\Core\Url
+   *   URL of the group add page.
+   */
+  public function getGroupsToAddUrl(AccountInterface $account) {
+    $url = NULL;
+    $user_can_create_groups = [];
+    // Get all available group types.
+    foreach (GroupType::loadMultiple() as $group_type) {
+      // When the user has permission to create a group of the current type, add
+      // this to the create group array.
+      if ($account->hasPermission('create ' . $group_type->id() . ' group')) {
+        $user_can_create_groups[$group_type->id()] = $group_type;
+      }
+
+      if (count($user_can_create_groups) > 1) {
+        break;
+      }
+    }
+
+    // There's just one group this user can create.
+    if (count($user_can_create_groups) === 1) {
+      // When there is only one group allowed, add create the url to create a
+      // group of this type.
+      $allowed_group_type = reset($user_can_create_groups);
+      /** @var \Drupal\group\Entity\Group $allowed_group_type */
+      $url = Url::fromRoute('entity.group.add_form', [
+        'group_type' => $allowed_group_type->id(),
+      ]);
+    }
+    return $url;
   }
 
 }
