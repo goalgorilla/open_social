@@ -591,8 +591,46 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
   $action_forms = array_merge($join_forms, $leave_forms, $membership_delete_forms, $membership_add_forms);
   $membership_forms = array_merge($membership_add_forms, $membership_edit_forms);
 
-  if ($form_id === 'group_flexible_group_add_form') {
+  // In the 'social_group_field_widget_form_alter' we check and
+  // set what the available visibility options are. So here we
+  // check which one that is and provide a message accordingly.
+  if ($form_id === 'group_flexible_group_add_form' || $form_id === 'group_flexible_group_edit_form') {
+    $message = '';
+    // Retrieve settings and check if we only have one available.
+    $only_one_visibility = (count($form['field_group_allowed_visibility']['widget']['#options']) === 1) ?? FALSE;
+    // Check which option is enforced.
+    if ($only_one_visibility) {
+      $option = key($form['field_group_allowed_visibility']['widget']['#options']);
+      // Adjust the message according to the option.
+      switch ($option) {
+        case 'public':
+          $message = t('<strong>Public - visible to everyone including people who have not logged in</strong>');
+          break;
 
+        case 'community':
+          $message = t('<strong>Community - visible only to logged-in members</strong>');
+          break;
+
+        case 'group':
+          $message = t('<strong>Group members - only visible to the members of this group</strong>');
+          break;
+      }
+      // Hide widget inside 'field_group_allowed_visibility'.
+      $form['field_group_allowed_visibility']['widget']['#attributes']['class'][] = 'hidden';
+      // Finally set the message so that it's clear to the user.
+      $form['field_group_allowed_visibility']['single_visibility_title'] = [
+        '#type' => 'html_tag',
+        '#tag' => 'span',
+        '#value' => t('Content visibility'),
+        '#prefix' => '<label class="control-label">',
+        '#suffix' => '</label>',
+      ];
+      $form['field_group_allowed_visibility']['single_visibility_message'] = [
+        '#type' => 'html_tag',
+        '#tag' => 'p',
+        '#value' => $message,
+      ];
+    }
   }
 
   // Perform alterations on joining / leaving groups.

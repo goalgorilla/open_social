@@ -56,20 +56,12 @@ class SocialGroupSettings extends ConfigFormBase {
       '#type' => 'fieldset',
       '#title' => $this->t('Group visibility settings'),
     ];
-
     $form['visibility_settings']['available_visibility_options'] = [
       '#type' => 'checkboxes',
       '#title' => $this->t('Select available visibility options'),
       '#description' => $this->t('Determines which visibility options should be available when creating a new group.'),
       '#default_value' => $config->get('available_visibility_options'),
       '#options' => $this->getVisibilityOptions(),
-    ];
-
-    $form['visibility_settings']['hide_visibility_options'] = [
-      '#type' => 'checkbox',
-      '#title' => $this->t('Hide visibility options'),
-      '#description' => $this->t('Hide all visibility options.'),
-      '#default_value' => $config->get('hide_visibility_options'),
     ];
 
     return parent::buildForm($form, $form_state);
@@ -85,7 +77,6 @@ class SocialGroupSettings extends ConfigFormBase {
       ->set('allow_group_selection_in_node', $form_state->getValue('allow_group_selection_in_node'))
       ->set('default_hero', $form_state->getValue('default_hero'))
       ->set('available_visibility_options', $form_state->getValue('available_visibility_options'))
-      ->set('hide_visibility_options', $form_state->getValue('hide_visibility_options'))
       ->save();
 
     Cache::invalidateTags(['group_view']);
