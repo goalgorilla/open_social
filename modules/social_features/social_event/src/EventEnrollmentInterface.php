@@ -24,6 +24,11 @@ interface EventEnrollmentInterface extends ContentEntityInterface, EntityChanged
   const ENROLL_METHOD_REQUEST = 2;
 
   /**
+   * Event enrollment method where users need to get invited.
+   */
+  const ENROLL_METHOD_INVITE = 3;
+
+  /**
    * Request created and waiting for event owners or managers response.
    */
   const REQUEST_PENDING = 0;

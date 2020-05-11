@@ -499,7 +499,7 @@ function social_event_form_alter(&$form, FormStateInterface $form_state, $form_i
 
       // Hide the default checkbox in favor of new enrollment options.
       $form['field_event_enroll']['#attributes']['class'][] = 'hidden';
-      $form['field_event_enroll']['#states'] = [
+      $form['fiel   d_event_enroll']['#states'] = [
         'unchecked' => [
           ':input[name="field_enroll_method"]' => ['value' => '3'],
         ],
@@ -508,7 +508,6 @@ function social_event_form_alter(&$form, FormStateInterface $form_state, $form_i
       $field_name = 'field_event_enroll';
 
       $fields = [
-        'field_enroll_method',
         'field_event_enroll_outside_group',
       ];
 
@@ -517,6 +516,7 @@ function social_event_form_alter(&$form, FormStateInterface $form_state, $form_i
       $form['field_event_enroll_outside_group']['#states'] = [
         'visible' => [
           ':input[name="groups"]' => ['!value' => '_none'],
+          ':input[name="field_enroll_method"]' => ['!value' => '3'],
         ],
       ];
 
