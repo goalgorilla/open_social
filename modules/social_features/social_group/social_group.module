@@ -629,6 +629,12 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
         '#type' => 'html_tag',
         '#tag' => 'p',
         '#value' => $message,
+        '#attributes' => [
+          'class' => ['fixed-value'],
+        ],
+        '#attached' => [
+          'library' => ['socialbase/form--fixed-value'],
+        ],
       ];
     }
   }
