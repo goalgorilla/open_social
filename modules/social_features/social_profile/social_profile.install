@@ -368,3 +368,17 @@ function social_profile_update_8009() {
   ]);
   EntityViewDisplay::create($display)->save();
 }
+
+/**
+ * Update small_teaser profile view mode.
+ */
+function social_profile_update_8010() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_profile', 'social_profile_update_8008');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}

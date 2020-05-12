@@ -177,8 +177,8 @@ class LinkedInAuthController extends ControllerBase {
     // form.
     $data_handler = $this->networkManager->createInstance('social_auth_linkedin')->getDataHandler();
     $data_handler->set('access_token', $this->accessToken);
-    $data_handler->set('mail', $profile['emailAddress']);
-    $data_handler->set('name', $profile['formattedName']);
+    $data_handler->set('mail', $this->authManager->getEmailAddress());
+    $data_handler->set('name', $this->authManager->getFirstName() . ' ' . $this->authManager->getLastName());
 
     drupal_set_message($this->t('You are now connected with @network, please continue registration', [
       '@network' => $this->t('LinkedIn'),
