@@ -58,7 +58,7 @@ class EventSettingsForm extends ConfigFormBase {
     $form['visibility_settings']['available_visibility_options'] = [
       '#type' => 'checkboxes',
       '#title' => $this->t('Select available visibility options'),
-      '#description' => $this->t('Determines which visibility options should be available when creating a new event.'),
+      '#description' => $this->t('Determines which visibility options should be available when creating a new event.<br /><strong>Note:</strong> this is only applied when creating events outside of groups.'),
       '#default_value' => $config->get('available_visibility_options'),
       '#options' => [
         'public' => $this->t('Public'),

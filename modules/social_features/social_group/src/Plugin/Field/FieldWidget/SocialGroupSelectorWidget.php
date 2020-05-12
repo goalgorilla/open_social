@@ -5,6 +5,7 @@ namespace Drupal\social_group\Plugin\Field\FieldWidget;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\HtmlCommand;
 use Drupal\Core\Ajax\InvokeCommand;
+use Drupal\Core\Ajax\ReplaceCommand;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\FieldableEntityInterface;
@@ -91,7 +92,7 @@ class SocialGroupSelectorWidget extends OptionsSelectWidget implements Container
         return parent::getOptions($entity);
       }
 
-      // Get the bundle fron the node.
+      // Get the bundle from the node.
       $entity_type = $entity->bundle();
 
       $account = $entity->getOwner();
@@ -231,7 +232,61 @@ class SocialGroupSelectorWidget extends OptionsSelectWidget implements Container
       $ajax_response->addCommand(new InvokeCommand('#edit-field-content-visibility-' . $default_visibility, 'prop', ['checked', 'checked']));
     }
 
+    // This functions as a 'reset' of the conditions
+    // because after every change, we need to re-check.
+    $ajax_response->addCommand(new InvokeCommand('#edit-field-content-visibility--wrapper', 'removeClass', ['hidden']));
+    $ajax_response->addCommand(new InvokeCommand('#single_visibility_title', 'addClass', ['hidden']));
+    $ajax_response->addCommand(new InvokeCommand('#single_visibility_message', 'addClass', ['hidden']));
+    $ajax_response->addCommand(new InvokeCommand('#group-selection-result', 'removeClass', ['hidden']));
+
     foreach ($allowed_visibility_options as $visibility => $allowed) {
+      // Count the allowed options.
+      $count_allowed_options = count(array_keys($allowed_visibility_options, TRUE));
+      // If we only have one allowed option, show a message
+      // instead of the list with disabled options.
+      if ($count_allowed_options === 1 && $allowed === TRUE) {
+        $ajax_response->addCommand(new InvokeCommand('#edit-field-content-visibility-' . $visibility, 'prop', ['checked', 'checked']));
+        $ajax_response->addCommand(new InvokeCommand('#edit-field-content-visibility--wrapper', 'addClass', ['hidden']));
+        $ajax_response->addCommand(new InvokeCommand('#single_visibility_title', 'removeClass', ['hidden']));
+        $ajax_response->addCommand(new InvokeCommand('#single_visibility_message', 'removeClass', ['hidden']));
+        $ajax_response->addCommand(new InvokeCommand('#group-selection-result', 'addClass', ['hidden']));
+
+        switch ($visibility) {
+          case 'public':
+            $message = t('<strong>Public - visible to everyone including people who have not logged in</strong>');
+            break;
+
+          case 'community':
+            $message = t('<strong>Community - visible only to logged-in members</strong>');
+            break;
+
+          case 'group':
+            $message = t('<strong>Group members - only visible to the members of this group</strong>');
+            break;
+        }
+
+        $element = [
+          '#type' => 'html_tag',
+          '#tag' => 'p',
+          '#value' => $message,
+          '#attributes' => [
+            'id' => 'single_visibility_message',
+            'class' => [
+              'fixed-value',
+            ],
+          ],
+          '#attached' => [
+            'library' => ['socialbase/form--fixed-value'],
+          ],
+        ];
+
+        $renderer = \Drupal::service('renderer');
+        $renderedField = $renderer->render($element);
+        $ajax_response->addCommand(new ReplaceCommand('#single_visibility_message', $renderedField));
+
+        return $ajax_response;
+      }
+
       $ajax_response->addCommand(new InvokeCommand('#edit-field-content-visibility-' . $visibility, 'addClass', ['js--animate-enabled-form-control']));
       if ($allowed === TRUE) {
         $ajax_response->addCommand(new InvokeCommand('#edit-field-content-visibility-' . $visibility, 'removeAttr', ['disabled']));

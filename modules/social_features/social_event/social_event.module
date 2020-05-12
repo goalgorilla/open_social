@@ -493,65 +493,74 @@ function social_event_form_alter(&$form, FormStateInterface $form_state, $form_i
         '#title' => t('All day'),
       ];
 
-      $available_visibility_options = \Drupal::configFactory()->get('social_event.settings')->get('available_visibility_options');
-      if (!empty($available_visibility_options)) {
-        foreach ($available_visibility_options as $key => $value) {
-          if ($value === 0) {
-            unset($form['field_content_visibility']['widget']['#options'][$key]);
-          }
-        }
-      }
+
+      $form['field_content_visibility']['single_visibility_title'] = [
+        '#type' => 'html_tag',
+        '#tag' => 'label',
+        '#value' => t('Visibility'),
+        '#attributes' => [
+          'id' => 'single_visibility_title',
+          'class' => [
+            'hidden',
+            'control-label',
+          ],
+        ],
+      ];
+      $form['field_content_visibility']['single_visibility_message'] = [
+        '#type' => 'html_tag',
+        '#tag' => 'p',
+        '#value' => '',
+        '#attributes' => [
+          'id' => 'single_visibility_message',
+          'class' => [
+            'hidden',
+            'fixed-value',
+          ],
+        ],
+        '#attached' => [
+          'library' => ['socialbase/form--fixed-value'],
+        ],
+      ];
 
       $message = '';
       // Retrieve settings and check if we only have one available.
-      $only_one_visibility = (count($form['field_content_visibility']['widget']['#options']) === 1) ?? FALSE;
+      $default_visibility_options = social_group_get_allowed_visibility_options_per_group_type(NULL);
       // Check which option is enforced.
-      if ($only_one_visibility) {
-        $option = key($form['field_content_visibility']['widget']['#options']);
-        // Adjust the message according to the option.
-        switch ($option) {
-          case 'public':
-            // todo: there's a caveat about this one.
-            // If there is $only_one_visibility and it's public
-            // the group selector has to be disabled/altered.
-            $message = t('<strong>Public - visible to everyone including people who have not logged in</strong>');
-            break;
+      foreach ($default_visibility_options as $visibility => $allowed) {
+        if ($allowed && count(array_keys($default_visibility_options, TRUE)) === 1) {
+          // Adjust the message according to the option.
+          switch ($visibility) {
+            case 'public':
+              $message = t('<strong>Public - visible to everyone including people who have not logged in</strong>');
+              break;
 
-          case 'community':
-            $message = t('<strong>Community - visible only to logged-in members</strong>');
-            break;
+            case 'community':
+              $message = t('<strong>Community - visible only to logged-in members</strong>');
+              break;
 
-          case 'group':
-            $message = t('<strong>Group members - only visible to the members of this group</strong>');
-            // Make the group selector required since
-            // the enforced visibility is group.
-            $form['groups']['widget']['#required'] = TRUE;
-            break;
+            case 'group':
+              $message = t('<strong>Group members - only visible to the members of this group</strong>');
+              // Make the group selector required since
+              // the enforced visibility is group.
+              $form['groups']['widget']['#required'] = TRUE;
+              break;
+          }
+          // Since there is only one allowed visibility
+          // set default and hide the visibility options.
+          $form['field_content_visibility']['widget']['#default_value'] = $visibility;
+          $form['field_content_visibility']['widget']['#attributes']['class'][] = 'hidden';
+          // Finally set the message so that it's clear to the user.
+          unset($form['field_content_visibility']['single_visibility_title']['#attributes']['class'][0]);
+          unset($form['field_content_visibility']['single_visibility_message']['#attributes']['class'][0]);
+          $form['field_content_visibility']['single_visibility_message']['#value'] = $message;
         }
-        // Since there is only one allowed visibility
-        // set default and hide the visibility options.
-        $form['field_content_visibility']['widget']['#default_value'] = $option;
-        $form['field_content_visibility']['widget']['#attributes']['class'][] = 'hidden';
-        // Finally set the message so that it's clear to the user.
-        $form['field_content_visibility']['single_visibility_title'] = [
-          '#type' => 'html_tag',
-          '#tag' => 'span',
-          '#value' => t('Visibility'),
-          '#prefix' => '<label class="control-label">',
-          '#suffix' => '</label>',
-        ];
-        $form['field_content_visibility']['single_visibility_message'] = [
-          '#type' => 'html_tag',
-          '#tag' => 'p',
-          '#value' => $message,
-          '#attributes' => [
-            'class' => ['fixed-value'],
-          ],
-          '#attached' => [
-            'library' => ['socialbase/form--fixed-value'],
-          ],
-        ];
       }
+
+      $form['groups']['#states'] = [
+        'required' => [
+          'input[name="field_content_visibility"]' => ['value' => 'group'],
+        ],
+      ];
 
       // Set default value and fieldgroup for all day checkbox.
       if ($date = $form['field_event_date']['widget'][0]['value']['#default_value']) {
