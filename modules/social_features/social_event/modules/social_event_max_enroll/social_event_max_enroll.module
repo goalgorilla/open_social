@@ -5,6 +5,7 @@
  * The Social Event Max Enroll module.
  */
 
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\node\NodeInterface;
 use Drupal\views\Plugin\views\cache\CachePluginBase;
@@ -139,6 +140,18 @@ function social_event_max_enroll_form_alter(&$form, FormStateInterface $form_sta
         }
       }
       break;
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_presave().
+ *
+ * Set the correct value for AN enroll when enroll method is set to request.
+ */
+function social_event_max_enroll_node_presave(EntityInterface $entity) {
+  // If the enroll method is invite then max enrollment must be off.
+  if ($entity->getType() === 'event' && $entity->get('field_enroll_method')->value === '3') {
+    $entity->set('field_event_max_enroll', '0');
   }
 }
 
