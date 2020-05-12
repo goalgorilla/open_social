@@ -58,6 +58,7 @@ function social_event_max_enroll_form_alter(&$form, FormStateInterface $form_sta
       $form['field_event_max_enroll_num']['#states'] = [
         'visible' => [
           ':input[name="field_event_max_enroll[value]"]' => ['checked' => TRUE],
+          ':input[name="field_enroll_method"]' => ['!value' => '3'],
         ],
       ];
 
@@ -72,6 +73,7 @@ function social_event_max_enroll_form_alter(&$form, FormStateInterface $form_sta
         $form['field_event_max_enroll_num']['#states'] = [
           'visible' => [
             ':input[name="field_event_max_enroll[value]"]' => ['checked' => TRUE],
+            ':input[name="field_enroll_method"]' => ['!value' => '3'],
           ],
         ];
       }
