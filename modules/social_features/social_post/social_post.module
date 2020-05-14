@@ -128,9 +128,13 @@ function _social_post_comment_post_comment_form_submit(array $form, FormStateInt
  */
 function social_post_get_visibility_details($visibility, $return_value = 'icon') {
 
-  $return = &drupal_static(__FUNCTION__ . $visibility . $return_value);
+  $return = &drupal_static(__FUNCTION__ . $visibility);
 
-  if (!isset($return)) {
+  if (isset($return)) {
+    $icon = $return['icon'];
+    $title = $return['label'];
+  }
+  else {
     // Set the materialize icon.
     switch ($visibility) {
       case '0':
@@ -161,9 +165,14 @@ function social_post_get_visibility_details($visibility, $return_value = 'icon')
 
   \Drupal::moduleHandler()->alter('social_post_visibility_info_alter', $visibility, $icon, $title);
 
-  $return = ($return_value === 'icon') ? $icon : $title;
+  if (!isset($return)) {
+    $return = [
+      'icon' => $icon,
+      'label' => $title,
+    ];
+  }
 
-  return $return;
+  return $return[$return_value];
 }
 
 /**
