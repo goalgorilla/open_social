@@ -58,7 +58,7 @@ class EventSettingsForm extends ConfigFormBase {
     $form['visibility_settings']['available_visibility_options'] = [
       '#type' => 'checkboxes',
       '#title' => $this->t('Select available visibility options'),
-      '#description' => $this->t('Determines which visibility options should be available when creating a new event.<br /><strong>Note:</strong> this is only applied when creating events outside of groups.'),
+      '#description' => $this->t('Determines which visibility options should be available when creating a new event.<br /><strong>Note:</strong> this is only applied for creating events outside of groups.'),
       '#default_value' => $config->get('available_visibility_options'),
       '#options' => [
         'public' => $this->t('Public'),
@@ -77,6 +77,21 @@ class EventSettingsForm extends ConfigFormBase {
     }
 
     return parent::buildForm($form, $form_state);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function validateForm(array &$form, FormStateInterface $form_state) {
+    parent::validateForm($form, $form_state);
+    $available_visibility_options = $form_state->getValue('available_visibility_options');
+    $public = $available_visibility_options['public'];
+    $community = $available_visibility_options['community'];
+    $group = $available_visibility_options['group'];
+
+    if ($public === 0 && $community === 0 && $group === 0) {
+      $form_state->setError($form['visibility_settings']['available_visibility_options'], $this->t('Select at least one visibility'));
+    }
   }
 
   /**

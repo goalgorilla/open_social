@@ -1660,7 +1660,6 @@ function social_group_get_allowed_visibility_options_per_group_type($group_type_
         // Default set of options.
         $visibility_options['public'] = TRUE;
         $visibility_options['community'] = TRUE;
-        $visibility_options['group'] = TRUE;
         // Check if the default should be altered
         // due to global platform settings.
         $available_visibility_options = \Drupal::configFactory()->get('social_event.settings')->get('available_visibility_options');
@@ -1674,6 +1673,7 @@ function social_group_get_allowed_visibility_options_per_group_type($group_type_
             }
           }
         }
+        $visibility_options['group'] = FALSE;
       }
       break;
   }
