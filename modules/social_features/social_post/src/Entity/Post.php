@@ -182,7 +182,8 @@ class Post extends ContentEntityBase implements PostInterface {
               ->execute();
             $role_id = reset($roles);
             // If role_id is empty it means we have an uninspected visibility
-            // option, because this option does not default and not from the role.
+            // option, because this option does not default and not from
+            // the role.
             if (!empty($role_id)) {
               $visibility = $role_id;
             }
