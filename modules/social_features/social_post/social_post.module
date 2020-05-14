@@ -124,7 +124,10 @@ function _social_post_comment_post_comment_form_submit(array $form, FormStateInt
  * @param string $visibility
  *   The current field_visibility value for the post.
  * @param string $return_value
- *   Icon or Title depending on what we should return.
+ *   (optional) Icon or Title depending on what we should return.
+ *
+ * @return \Drupal\Core\StringTranslation\TranslatableMarkup|string
+ *   Post visibility detail.
  */
 function social_post_get_visibility_details($visibility, $return_value = 'icon') {
 
@@ -137,19 +140,9 @@ function social_post_get_visibility_details($visibility, $return_value = 'icon')
   else {
     // Set the materialize icon.
     switch ($visibility) {
-      case '0':
-        $icon = 'community';
-        $title = t('Community');
-        break;
-
       case '1':
         $icon = 'public';
         $title = t('Public');
-        break;
-
-      case '2':
-        $icon = 'community';
-        $title = t('Community');
         break;
 
       case '3':
@@ -230,14 +223,14 @@ function social_post_preprocess_activity(&$variables) {
   if (!empty($variables['elements']['field_activity_entity'][0]['#post'])) {
     $post = $variables['elements']['field_activity_entity'][0]['#post'];
 
-    $variables['visibility_icon'] = social_post_get_visibility_details($post->get('field_visibility')->value, 'icon');
-    $variables['visibility_label'] = social_post_get_visibility_details($post->get('field_visibility')->value, 'label');
-
+    $visibility = $post->field_visibility->value;
+    $variables['visibility_icon'] = social_post_get_visibility_details($visibility);
+    $variables['visibility_label'] = social_post_get_visibility_details($visibility, 'label');
   }
 
   $activity = $variables['elements']['#activity'];
   $post = $activity->getRelatedEntity();
-  if (!empty($post) && $post->getEntityTypeId() === "post") {
+  if (!empty($post) && $post->getEntityTypeId() === 'post') {
     $variables['post'] = TRUE;
     $variables['published'] = $post->isPublished();
   }
