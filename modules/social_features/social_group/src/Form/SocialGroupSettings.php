@@ -3,16 +3,45 @@
 namespace Drupal\social_group\Form;
 
 use Drupal\Core\Cache\Cache;
+use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\crop\Entity\CropType;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Class SocialGroupSettings.
  *
  * @package Drupal\social_event_managers\Form
  */
-class SocialGroupSettings extends ConfigFormBase {
+class SocialGroupSettings extends ConfigFormBase implements ContainerInjectionInterface {
+
+  /**
+   * The module handler.
+   *
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface
+   */
+  protected $moduleHandler;
+
+  /**
+   * {@inheritdoc}
+   */
+  public function __construct(ConfigFactoryInterface $config_factory, ModuleHandlerInterface $moduleHandler) {
+    parent::__construct($config_factory);
+    $this->moduleHandler = $moduleHandler;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('config.factory'),
+      $container->get('module_handler')
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -51,18 +80,20 @@ class SocialGroupSettings extends ConfigFormBase {
       '#options' => $this->getCropTypes(),
     ];
 
-    // Group the settings for visibility options.
-    $form['visibility_settings'] = [
-      '#type' => 'fieldset',
-      '#title' => $this->t('Group visibility settings'),
-    ];
-    $form['visibility_settings']['available_visibility_options'] = [
-      '#type' => 'checkboxes',
-      '#title' => $this->t('Select available visibility options'),
-      '#description' => $this->t('Determines which visibility options should be available when creating a new group.'),
-      '#default_value' => $config->get('available_visibility_options'),
-      '#options' => $this->getVisibilityOptions(),
-    ];
+    // Check if the module is enabled before we show the setting.
+    if ($this->moduleHandler->moduleExists('social_group_flexible_group')) {
+      $form['visibility_settings'] = [
+        '#type' => 'fieldset',
+        '#title' => $this->t('Flexible group visibility settings'),
+      ];
+      $form['visibility_settings']['available_visibility_options'] = [
+        '#type' => 'checkboxes',
+        '#title' => $this->t('Select available visibility options'),
+        '#description' => $this->t('<strong>Note:</strong> Since flexible groups can contain content with multiple visibility options, you can determine which visibility options should be available when creating a new <strong>flexible</strong> group.'),
+        '#default_value' => $config->get('available_visibility_options'),
+        '#options' => $this->getVisibilityOptions(),
+      ];
+    }
 
     return parent::buildForm($form, $form_state);
   }
@@ -73,11 +104,15 @@ class SocialGroupSettings extends ConfigFormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     parent::submitForm($form, $form_state);
 
-    $this->config('social_group.settings')
-      ->set('allow_group_selection_in_node', $form_state->getValue('allow_group_selection_in_node'))
-      ->set('default_hero', $form_state->getValue('default_hero'))
-      ->set('available_visibility_options', $form_state->getValue('available_visibility_options'))
-      ->save();
+    $config = $this->config('social_group.settings');
+    $config->set('allow_group_selection_in_node', $form_state->getValue('allow_group_selection_in_node'));
+    $config->set('default_hero', $form_state->getValue('default_hero'));
+
+    if ($this->moduleHandler->moduleExists('social_group_flexible_group')) {
+      $config->set('available_visibility_options', $form_state->getValue('available_visibility_options'));
+    }
+
+    $config->save();
 
     Cache::invalidateTags(['group_view']);
   }
