@@ -565,8 +565,10 @@ function social_event_form_alter(&$form, FormStateInterface $form_state, $form_i
           $form['field_content_visibility']['widget']['#attributes']['class'][] = 'hidden';
           // Remove the 'hidden' class to reveal the visibility
           // message so that it's clear to the user.
-          unset($form['field_content_visibility']['single_visibility_title']['#attributes']['class'][0]);
-          unset($form['field_content_visibility']['single_visibility_message']['#attributes']['class'][0]);
+          unset(
+            $form['field_content_visibility']['single_visibility_title']['#attributes']['class'][0],
+            $form['field_content_visibility']['single_visibility_message']['#attributes']['class'][0]
+          );
           $form['field_content_visibility']['single_visibility_message']['#value'] = $message;
         }
         // If there is no option allowed we set the default
@@ -574,12 +576,7 @@ function social_event_form_alter(&$form, FormStateInterface $form_state, $form_i
         elseif (count(array_keys($default_visibility_options, FALSE)) === 3) {
           $form['groups']['widget']['#required'] = TRUE;
           $form['field_content_visibility']['widget']['#attributes']['class'][] = 'hidden';
-          unset(
-            $form['field_content_visibility']['single_visibility_title']['#attributes']['class'][0],
-            $form['field_content_visibility']['single_visibility_message']['#attributes']['class'][0]
-          );
           $form['field_content_visibility']['widget']['#default_value'] = 'group';
-          $form['field_content_visibility']['single_visibility_message']['#value'] = t('<strong>Group members - only visible to the members of this group</strong>');;
         }
       }
 

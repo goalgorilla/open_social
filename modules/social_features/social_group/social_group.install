@@ -530,3 +530,16 @@ function social_group_update_8801() {
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
 }
+
+/**
+ * Add some extra configuration for setting default visibility options.
+ */
+function social_group_update_8802() {
+  $config = \Drupal::configFactory()->getEditable('social_group.settings');
+  $config->set('available_visibility_options', [
+    'public' => 'public',
+    'community' => 'community',
+    'group' => 'group',
+  ]);
+  $config->save();
+}

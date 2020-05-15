@@ -292,12 +292,10 @@ class SocialGroupSelectorWidget extends OptionsSelectWidget implements Container
       if (!$group && $count_available_options < 3 && in_array($visibility, $available_options, TRUE)) {
         // Hide the original options.
         $ajax_response->addCommand(new InvokeCommand('#edit-field-content-visibility--wrapper', 'addClass', ['hidden']));
+        // Hide the info message.
+        $ajax_response->addCommand(new InvokeCommand('#group-selection-result', 'addClass', ['hidden']));
         // Check group since it's the only option now.
         $ajax_response->addCommand(new InvokeCommand('#edit-field-content-visibility-' . 'group', 'prop', ['checked', 'checked']));
-        // Show the single visibility message.
-        $renderedMessageField = self::getVisibilityMessageElement($visibility);
-        $ajax_response->addCommand(new InvokeCommand('#single_visibility_title', 'removeClass', ['hidden']));
-        $ajax_response->addCommand(new ReplaceCommand('#single_visibility_message', $renderedMessageField));
       }
 
       $ajax_response->addCommand(new InvokeCommand('#edit-field-content-visibility-' . $visibility, 'change'));
