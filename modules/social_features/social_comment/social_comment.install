@@ -120,3 +120,17 @@ function social_comment_update_8002() {
 function social_comment_update_8801() {
   activity_creator_set_entity_view_mode('comment', 'activity');
 }
+
+/**
+ * Set trimmed format for comment body in activity comment view mode.
+ */
+function social_comment_update_8802() {
+  $config = \Drupal::service('config.factory')
+    ->getEditable('core.entity_view_display.comment.comment.activity_comment');
+
+  if (!empty($config)) {
+    $config->set('content.field_comment_body.settings', ['trim_length' => 300]);
+    $config->set('content.field_comment_body.type', 'text_trimmed');
+    $config->save();
+  }
+}

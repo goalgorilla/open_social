@@ -77,12 +77,52 @@ class ActivityFilterTags extends FilterPluginBase {
       ];
       $join = Views::pluginManager('join')
         ->createInstance('standard', $configuration);
-      $this->query->addRelationship($taxonomy_field, $join, $taxonomy_table);
+      $this->query->addRelationship('filtered_nodes', $join, $taxonomy_table);
 
       $and_node_wrapper = db_and();
-      $and_node_wrapper->condition("{$taxonomy_field}.{$taxonomy_field}_target_id", $tags, 'IN');
+      $and_node_wrapper->condition("filtered_nodes.{$taxonomy_field}_target_id", $tags, 'IN');
 
       $or->condition($and_node_wrapper);
+
+      // Attach commented entity activity.
+      $comment_table = 'comment_field_data';
+      $this->query->addTable($comment_table);
+
+      $configuration = [
+        'left_table' => $activity_entity_table,
+        'left_field' => 'field_activity_entity_target_id',
+        'table' => $comment_table,
+        'field' => 'cid',
+        'operator' => '=',
+        'extra' => [
+          0 => [
+            'left_field' => 'field_activity_entity_target_type',
+            'value' => 'comment',
+          ],
+        ],
+      ];
+      $join = Views::pluginManager('join')
+        ->createInstance('standard', $configuration);
+      $this->query->addRelationship($comment_table, $join, $comment_table);
+
+      $and_comment_wrapper = db_and();
+      $and_comment_wrapper->condition("{$comment_table}.comment_type", 'comment');
+
+      $configuration = [
+        'left_table' => $comment_table,
+        'left_field' => 'entity_id',
+        'table' => $taxonomy_table,
+        'field' => 'entity_id',
+        'operator' => '=',
+      ];
+
+      // Apply filter by tags to commented entity activity.
+      $join = Views::pluginManager('join')
+        ->createInstance('standard', $configuration);
+      $this->query->addRelationship('commented_nodes', $join, $comment_table);
+      $and_comment_wrapper->condition("commented_nodes.{$taxonomy_field}_target_id", $tags, 'IN');
+
+      $or->condition($and_comment_wrapper);
 
       // Filter Posts by selected tags.
       $post_cop_tags_table = 'post__field_cop_tags';
