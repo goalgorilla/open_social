@@ -18,8 +18,10 @@
 
               <div class="teaser__related-content">
                 {% trans %} 1 item{% plural term.related_nodes_count %} @count items{% endtrans %}
-                |
-                {% trans %} 1 follower{% plural term.followers_count %} @count followers{% endtrans %}
+                {% if term.followers_count %}
+                  |
+                  {% trans %} 1 follower{% plural term.followers_count %} @count followers{% endtrans %}
+                {% endif %}
               </div>
             </div>
 
