@@ -44,3 +44,17 @@ function social_event_invite_uninstall() {
     }
   }
 }
+
+/**
+ * Added node context to the social invite block to vary results.
+ */
+function social_event_invite_update_8001() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_event_invite', 'social_event_invite_update_8001');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
