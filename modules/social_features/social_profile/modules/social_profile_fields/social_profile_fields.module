@@ -230,9 +230,38 @@ function social_profile_fields_social_user_export_plugin_info_alter(array &$plug
  * Implements hook_entity_bundle_field_info_alter().
  */
 function social_profile_fields_entity_bundle_field_info_alter(&$fields, EntityTypeInterface $entity_type, $bundle) {
-  // Add the unique nickname constraint.
-  if ($bundle === 'profile' && isset($fields['field_profile_nick_name']) && $entity_type->id() === 'profile'
-    && \Drupal::config('social_profile_fields.settings')->get('nickname_unique_validation')) {
-    $fields['field_profile_nick_name']->addConstraint('UniqueNickname', []);
+  if ($bundle === 'profile' && $entity_type->id() === 'profile') {
+    $config = \Drupal::config('social_profile_fields.settings');
+
+    // Add the unique nickname constraint.
+    if (isset($fields['field_profile_nick_name']) && $config->get('nickname_unique_validation')) {
+      $fields['field_profile_nick_name']->addConstraint('UniqueNickname', []);
+    }
+
+    // Change address fields override settings.
+    if (isset($fields['field_profile_address'])) {
+      $settings = $fields['field_profile_address']->getSetting('field_overrides');
+
+      if ($config->get('profile_address_field_city') == FALSE) {
+        $settings['locality'] = [
+          'override' => 'hidden',
+        ];
+      }
+      else {
+        unset($settings['locality']);
+      }
+
+      if ($config->get('profile_address_field_address') == FALSE) {
+        $settings['addressLine1'] = [
+          'override' => 'hidden',
+        ];
+      }
+      else {
+        unset($settings['addressLine1']);
+      }
+
+      // Update the settings of address field.
+      $fields['field_profile_address']->setSetting('field_overrides', $settings);
+    }
   }
 }
