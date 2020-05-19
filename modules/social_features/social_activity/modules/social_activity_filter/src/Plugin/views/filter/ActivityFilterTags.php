@@ -127,9 +127,6 @@ class ActivityFilterTags extends FilterPluginBase {
       // Filter Posts by selected tags.
       $post_cop_tags_table = 'post__field_cop_tags';
 
-      $this->query->addTable($post_cop_tags_table);
-      $this->query->addTable($activity_entity_table);
-
       $configuration = [
         'table' => $post_cop_tags_table,
         'field' => 'entity_id',
@@ -145,10 +142,10 @@ class ActivityFilterTags extends FilterPluginBase {
       ];
       $join = Views::pluginManager('join')
         ->createInstance('standard', $configuration);
-      $this->query->addRelationship($post_cop_tags_table, $join, $post_cop_tags_table);
+      $this->query->addRelationship('filtered_posts', $join, $post_cop_tags_table);
 
       $and_post_wrapper = db_and();
-      $and_post_wrapper->condition("{$post_cop_tags_table}.field_cop_tags_target_id", $tags, 'IN');
+      $and_post_wrapper->condition('filtered_posts.field_cop_tags_target_id', $tags, 'IN');
       $or->condition($and_post_wrapper);
 
       $and_wrapper->condition($or);
