@@ -140,6 +140,58 @@
 
   }
 
+  // Second level menu
+  > li > ul {
+    > li.expanded {
+      position: relative;
+
+      @include for-tablet-landscape-up {
+        > a:hover:not(.is-active)  {
+
+          + .dropdown-menu {
+            display: block;
+          }
+        }
+      }
+
+      .caret {
+        @include for-tablet-landscape-up {
+          position: absolute;
+          top: 44%;
+          right: 10px;
+          transform: rotate(-90deg) translateY(-50%);
+        }
+      }
+
+      > .dropdown-menu {
+        margin-top: 0;
+        padding-top: 5px;
+
+        @include for-tablet-landscape-up {
+          display: none;
+          top: 0;
+          left: 185px;
+          padding-top: 0;
+        }
+
+        > li > a {
+          @include for-tablet-landscape-down {
+            padding-left: 45px;
+          }
+        }
+
+        @include for-tablet-landscape-up {
+          &:hover {
+            display: block;
+          }
+        }
+
+        &.open {
+          display: none;
+        }
+      }
+    }
+  }
 }
 
 .navbar-user > li > a,
