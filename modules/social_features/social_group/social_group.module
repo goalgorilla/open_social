@@ -1901,14 +1901,14 @@ function social_group_can_view_groups_of_type(string $type, AccountInterface $ac
   // Authenticated is a locked Role,
   // So first we check outsiders also easier on the performance :)
   $outsider = $group_type->getOutsiderRole();
-  if (NULL !== $outsider && $outsider->hasPermission('view group'))  {
+  if (NULL !== $outsider && $outsider->hasPermission('view group')) {
     return TRUE;
   }
 
   // If members can see it, we also need to show group types because
   // we are not calculation memberships.
   $member = $group_type->getMemberRole();
-  if (NULL !== $member && $member->hasPermission('view group'))  {
+  if (NULL !== $member && $member->hasPermission('view group')) {
     return TRUE;
   }
 
