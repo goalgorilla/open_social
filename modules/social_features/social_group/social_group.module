@@ -734,6 +734,36 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
       array_unshift($form['actions']['submit']['#submit'], '_social_group_delete_group');
     }
   }
+  
+  if (in_array($form_id, ['group_flexible_group_edit_form', 'group_flexible_group_add_form'])) {
+    $join_method_default_value = 'added';
+    if (in_array('direct', $form['field_group_allowed_join_method']['widget']['#default_value'])) {
+      $join_method_default_value = 'direct';
+    }
+    elseif (in_array('request', $form['field_group_allowed_join_method']['widget']['#default_value'])) {
+      $join_method_default_value = 'request';
+    }
+    $form['field_group_allowed_join_method']['widget']['#type'] = 'radios';
+    $form['field_group_allowed_join_method']['widget']['#default_value'] = $join_method_default_value;
+  }
+
+  // Exposed Filter block on the all-groups overview.
+  if ($form['#id'] === 'views-exposed-form-newest-groups-page-all-groups' ||
+  $form['#id'] === 'views-exposed-form-search-groups-page-no-value' ||
+  $form['#id'] === 'views-exposed-form-search-groups-page') {
+    if (!empty($form['type']['#options'])) {
+      foreach ($form['type']['#options'] as $type => $label) {
+        // All / Any we can skip they are optional translatable options
+        // and not group types.
+        if ($label instanceof TranslatableMarkup) {
+          continue;
+        }
+        if (!social_group_can_view_groups_of_type($type, \Drupal::currentUser())) {
+          unset($form['type']['#options'][$type]);
+        }
+      }
+    }
+  }
 }
 
 /**
@@ -1237,6 +1267,20 @@ function social_group_block_view_local_tasks_block_alter(array &$build, BlockPlu
 }
 
 /**
+ * Implements hook_block_build_alter().
+ */
+function social_group_block_build_alter(array &$build, BlockPluginInterface $block) {
+  if (!empty($block->getPluginId()) &&
+    ($block->getPluginId() === 'views_exposed_filter_block:newest_groups-page_all_groups' ||
+    $block->getPluginId() === 'views_exposed_filter_block:search_groups-page')) {
+    // The Group Type filter has to listen to changes in
+    // group type role permissions. Using the role list ensures
+    // it's cleared correctly.
+    $build['#cache']['tags'][] = 'config:group_role_list';
+  }
+}
+
+/**
  * Implements hook_preprocess_HOOK().
  */
 function social_group_preprocess_profile(&$variables) {
@@ -1300,12 +1344,14 @@ function social_group_block_access(Block $block, $operation, AccountInterface $a
     return AccessResult::neutral();
   }
 
-  if ($block->getPluginId() == 'views_exposed_filter_block:newest_groups-page_all_groups' && $operation == 'view' && $account->isAnonymous()) {
+  // Check access for AN and LU, if only one group type is available
+  // we can remove the filter block.
+  if ($block->getPluginId() == 'views_exposed_filter_block:newest_groups-page_all_groups' && $operation == 'view') {
     $group_types = 0;
 
     /** @var \Drupal\group\Entity\GroupTypeInterface $group_type */
     foreach (GroupType::loadMultiple() as $group_type) {
-      $group_types += (int) $group_type->getAnonymousRole()->hasPermission('view group');
+      $group_types += (int) social_group_can_view_groups_of_type($group_type->id(), $account);
     }
 
     if ($group_types < 2) {
@@ -1833,7 +1879,7 @@ function social_group_can_view_groups_of_type(string $type, AccountInterface $ac
   $group_type = GroupType::load($type);
 
   // If the group type doesn't exist then the user can't see the group type.
-  if ($group_type === FALSE) {
+  if ($group_type === FALSE || $group_type === NULL) {
     return FALSE;
   }
 
@@ -1852,8 +1898,23 @@ function social_group_can_view_groups_of_type(string $type, AccountInterface $ac
 
   $user_roles = $account->getRoles(TRUE);
 
+  // Authenticated is a locked Role,
+  // So first we check outsiders also easier on the performance :)
+  $outsider = $group_type->getOutsiderRole();
+  if (NULL !== $outsider && $outsider->hasPermission('view group'))  {
+    return TRUE;
+  }
+
+  // If members can see it, we also need to show group types because
+  // we are not calculation memberships.
+  $member = $group_type->getMemberRole();
+  if (NULL !== $member && $member->hasPermission('view group'))  {
+    return TRUE;
+  }
+
   // Check each role this user has whether its group counterpart has the correct
-  // permission.
+  // permission. This counts for the advanced group permissions.
+  // Admin, SM, CM.
   foreach ($user_roles as $role) {
     $group_role = $group_role_synchroniser->getGroupRoleId($type, $role);
     if ($group_roles[$group_role]->hasPermission('view group')) {
