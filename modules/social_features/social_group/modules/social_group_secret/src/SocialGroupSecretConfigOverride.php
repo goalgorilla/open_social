@@ -167,6 +167,16 @@ class SocialGroupSecretConfigOverride implements ConfigFactoryOverrideInterface 
         ];
     }
 
+    // Send a notification when a person joins secret groups.
+    $config_name = 'message.template.join_to_group';
+
+    if (in_array($config_name, $names, FALSE)) {
+      $overrides[$config_name]['third_party_settings']['activity_logger']['activity_bundle_entities'] =
+        [
+          'group_content-secret_group-group_membership' => 'group_content-secret_group-group_membership',
+        ];
+    }
+
     $config_name = 'views.view.newest_groups';
 
     $displays = [
