@@ -48,6 +48,8 @@ class SocialContentBlockLandingPageContentBuilder extends ContentBuilder {
    */
   protected function getLink(BlockContentInterface $block_content) : array {
     if ($link = parent::getLink($block_content)) {
+      $link['#url']->setOption('attributes', []);
+
       $link = [
         '#type' => 'container',
         '#attributes' => [
