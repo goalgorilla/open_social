@@ -51,7 +51,9 @@ class ActivityFilterTags extends FilterPluginBase {
   public function query() {
     $tags = isset($this->view->filter_tags) ? $this->view->filter_tags : '';
     $taxonomy_field = isset($this->view->filter_vocabulary) ? $this->view->filter_vocabulary : '';
+
     $taxonomy_table = "node__{$taxonomy_field}";
+    $activity_entity_table = 'activity__field_activity_entity';
 
     if ($this->database->schema()->tableExists($taxonomy_table)) {
 
@@ -60,7 +62,7 @@ class ActivityFilterTags extends FilterPluginBase {
 
       // Filter Nodes by selected tags.
       $this->query->addTable($taxonomy_table);
-      $activity_entity_table = 'activity__field_activity_entity';
+      $this->query->addTable($activity_entity_table);
 
       $configuration = [
         'left_table' => $activity_entity_table,

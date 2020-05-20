@@ -24,6 +24,7 @@ class SocialActivityFilterOverride implements ConfigFactoryOverrideInterface {
     // Override activity_stream & community_activities views.
     $config_names = [
       'views.view.activity_stream' => [
+        'block_stream_explore',
         'block_stream_homepage',
         'block_stream_homepage_without_post',
       ],

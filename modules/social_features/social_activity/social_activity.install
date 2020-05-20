@@ -9,6 +9,7 @@ use Drupal\Core\Entity\Entity\EntityViewDisplay;
 use Drupal\Core\Entity\Entity\EntityViewMode;
 use Drupal\menu_link_content\Entity\MenuLinkContent;
 use Drupal\message\Entity\MessageTemplate;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Social activity install function.
@@ -239,4 +240,22 @@ function social_activity_update_8803() {
     'mode' => 'featured',
   ]);
   EntityViewDisplay::create($display)->save();
+}
+
+/**
+ * Revert and create "Explore Stream" views block.
+ */
+function social_activity_update_88017() {
+  $config_file = 'views.view.activity_stream';
+  $config = drupal_get_path('module', 'social_activity') . '/config/optional/' . $config_file . '.yml';
+
+  if (is_file($config)) {
+    $settings = Yaml::parse(file_get_contents($config));
+    if (is_array($settings)) {
+      $update_config = \Drupal::configFactory()
+        ->getEditable($config_file);
+
+      $update_config->setData($settings)->save(TRUE);
+    }
+  }
 }
