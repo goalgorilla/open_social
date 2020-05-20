@@ -37,6 +37,9 @@ new TranslatableMarkup("Sent email to %recipient");
 new TranslatableMarkup("Open to enroll - users can enroll for this event without approval");
 new TranslatableMarkup("Request to enroll - users can 'request to enroll' for this event which event organisers approve/decline");
 new TranslatableMarkup('Invite-only - users can only enroll for this event if they are added/invited by event organisers');
+new TranslatableMarkup('Request to join - users can "request to join" this group which group managers approve/decline');
+new TranslatableMarkup('Invite-only - users can only join this group if they are added/invited by group managers');
+new TranslatableMarkup('Open to join - users can join this group without approval');
 
 // Changed in version 7.2.
 new TranslatableMarkup('Select / unselect all @count results in this view');
