@@ -34,6 +34,9 @@ new TranslatableMarkup("Set wether the tour is enabled or not.");
 new TranslatableMarkup("Send mail");
 new TranslatableMarkup("Can not send e-mail for %entity");
 new TranslatableMarkup("Sent email to %recipient");
+new TranslatableMarkup("Open to enroll - users can enroll for this event without approval");
+new TranslatableMarkup("Request to enroll - users can 'request to enroll' for this event which event organisers approve/decline");
+new TranslatableMarkup('Invite-only - users can only enroll for this event if they are added/invited by event organisers');
 
 // Changed in version 7.2.
 new TranslatableMarkup('Select / unselect all @count results in this view');
