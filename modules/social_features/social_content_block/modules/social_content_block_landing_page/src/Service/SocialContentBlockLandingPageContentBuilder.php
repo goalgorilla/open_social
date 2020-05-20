@@ -19,6 +19,29 @@ class SocialContentBlockLandingPageContentBuilder extends ContentBuilder {
   public function build($entity_id, $entity_type_id, $entity_bundle) : array {
     $build = parent::build($entity_id, $entity_type_id, $entity_bundle);
 
+    if (!$build) {
+      return $build;
+    }
+
+    $weight = 1;
+
+    foreach (Element::children($build['content']) as $key) {
+      $build['content'][$key]['#weight'] = $weight++;
+    }
+
+    $build['content']['title'] = [
+      '#type' => 'html_tag',
+      '#tag' => 'h2',
+      '#attributes' => [
+        'class' => ['title'],
+      ],
+      '#value' => $this->entityTypeManager->getStorage($entity_type_id)
+        ->load($entity_id)
+        ->field_subtitle
+        ->value,
+      '#weight' => 0,
+    ];
+
     if (!isset($build['content']['entities']['#markup'])) {
       $build['content']['entities']['#prefix'] = str_replace(
         'content-list__items',
