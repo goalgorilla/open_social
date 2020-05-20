@@ -6,6 +6,16 @@
  */
 
 /**
+ * Implements hook_preprocess().
+ */
+function social_content_block_landing_page_preprocess(&$variables, $hook) {
+  if (isset($variables['elements']['#custom_content_list_section'])) {
+    $variables['attributes']['class'][] = 'card';
+    $variables['attributes']['class'][] = 'teaser';
+  }
+}
+
+/**
  * Implements hook_preprocess_HOOK().
  */
 function social_content_block_landing_page_preprocess_field(&$variables) {

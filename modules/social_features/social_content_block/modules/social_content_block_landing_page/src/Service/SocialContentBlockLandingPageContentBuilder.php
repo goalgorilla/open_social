@@ -3,6 +3,7 @@
 namespace Drupal\social_content_block_landing_page\Service;
 
 use Drupal\block_content\BlockContentInterface;
+use Drupal\Core\Render\Element;
 use Drupal\social_content_block\ContentBuilder;
 
 /**
@@ -27,6 +28,19 @@ class SocialContentBlockLandingPageContentBuilder extends ContentBuilder {
     }
 
     return $build;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function getEntities(BlockContentInterface $block_content) {
+    $elements = parent::getEntities($block_content);
+
+    foreach (Element::children($elements) as $delta) {
+      $elements[$delta]['#custom_content_list_section'] = TRUE;
+    }
+
+    return $elements;
   }
 
   /**
