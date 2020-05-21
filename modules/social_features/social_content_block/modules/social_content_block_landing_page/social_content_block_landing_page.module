@@ -34,6 +34,7 @@ function social_content_block_landing_page_preprocess_field(&$variables) {
  */
 function social_content_block_landing_page_preprocess_paragraph(&$variables) {
   if ($variables['paragraph']->bundle() === 'custom_content_list') {
+    $variables['#attached']['library'][] = 'social_featured_content/featured';
     $variables['attributes']['class'][] = 'paragraph--featured';
   }
 }
