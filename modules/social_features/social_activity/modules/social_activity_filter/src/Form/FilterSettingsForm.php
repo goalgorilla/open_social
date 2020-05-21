@@ -14,7 +14,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Class FilterSettingsForm.
  *
- * @package Drupal\unpd_cop\Form
+ * @package Drupal\social_activity_filter\Form
  */
 class FilterSettingsForm extends ConfigFormBase implements ContainerInjectionInterface {
 

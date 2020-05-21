@@ -52,22 +52,25 @@ class ActivityFilterTags extends FilterPluginBase {
     $tags = isset($this->view->filter_tags) ? $this->view->filter_tags : '';
     $taxonomy_field = isset($this->view->filter_vocabulary) ? $this->view->filter_vocabulary : '';
 
-    $taxonomy_table = "node__{$taxonomy_field}";
+    $taxonomy_node_table = "node__{$taxonomy_field}";
+    $taxonomy_post_table = "post__field_{$taxonomy_field}";
     $activity_entity_table = 'activity__field_activity_entity';
 
-    if ($this->database->schema()->tableExists($taxonomy_table)) {
-
+    if (
+      $this->database->schema()->tableExists($taxonomy_node_table) &&
+      $this->database->schema()->tableExists($taxonomy_post_table)
+    ) {
       $or = db_or();
       $and_wrapper = db_and();
 
       // Filter Nodes by selected tags.
-      $this->query->addTable($taxonomy_table);
+      $this->query->addTable($taxonomy_node_table);
       $this->query->addTable($activity_entity_table);
 
       $configuration = [
         'left_table' => $activity_entity_table,
         'left_field' => 'field_activity_entity_target_id',
-        'table' => $taxonomy_table,
+        'table' => $taxonomy_node_table,
         'field' => 'entity_id',
         'operator' => '=',
         'extra' => [
@@ -79,7 +82,7 @@ class ActivityFilterTags extends FilterPluginBase {
       ];
       $join = Views::pluginManager('join')
         ->createInstance('standard', $configuration);
-      $this->query->addRelationship('filtered_nodes', $join, $taxonomy_table);
+      $this->query->addRelationship('filtered_nodes', $join, $taxonomy_node_table);
 
       $and_node_wrapper = db_and();
       $and_node_wrapper->condition("filtered_nodes.{$taxonomy_field}_target_id", $tags, 'IN');
@@ -113,7 +116,7 @@ class ActivityFilterTags extends FilterPluginBase {
       $configuration = [
         'left_table' => $comment_table,
         'left_field' => 'entity_id',
-        'table' => $taxonomy_table,
+        'table' => $taxonomy_node_table,
         'field' => 'entity_id',
         'operator' => '=',
       ];
@@ -127,10 +130,8 @@ class ActivityFilterTags extends FilterPluginBase {
       $or->condition($and_comment_wrapper);
 
       // Filter Posts by selected tags.
-      $post_cop_tags_table = 'post__field_cop_tags';
-
       $configuration = [
-        'table' => $post_cop_tags_table,
+        'table' => $taxonomy_post_table,
         'field' => 'entity_id',
         'left_table' => $activity_entity_table,
         'left_field' => 'field_activity_entity_target_id',
@@ -144,10 +145,10 @@ class ActivityFilterTags extends FilterPluginBase {
       ];
       $join = Views::pluginManager('join')
         ->createInstance('standard', $configuration);
-      $this->query->addRelationship('filtered_posts', $join, $post_cop_tags_table);
+      $this->query->addRelationship('filtered_posts', $join, $taxonomy_post_table);
 
       $and_post_wrapper = db_and();
-      $and_post_wrapper->condition('filtered_posts.field_cop_tags_target_id', $tags, 'IN');
+      $and_post_wrapper->condition("filtered_posts.field_{$taxonomy_field}_target_id", $tags, 'IN');
       $or->condition($and_post_wrapper);
 
       $and_wrapper->condition($or);
