@@ -39,7 +39,7 @@ class SocialContentBlockLandingPageConfigOverride implements ConfigFactoryOverri
     $config_name = 'field.field.paragraph.section.field_section_paragraph';
 
     if (in_array($config_name, $names)) {
-      $dependencies = $this->configFactory->get($config_name)
+      $dependencies = $this->configFactory->getEditable($config_name)
         ->get('dependencies.config');
 
       $dependencies[] = 'paragraphs.paragraphs_type.custom_content_list';
