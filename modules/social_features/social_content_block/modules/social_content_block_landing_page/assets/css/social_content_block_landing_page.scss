@@ -35,9 +35,18 @@
       }
 
       .teaser--small__title {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
         max-height: 52px;
         overflow: hidden;
       }
     }
+  }
+}
+
+@media not all and (min-resolution:.001dpcm) {
+  .paragraph--featured.paragraph--type--custom-content-list .field--name-field-featured-items > .teaser .teaser--small__title {
+    display: block;
   }
 }
