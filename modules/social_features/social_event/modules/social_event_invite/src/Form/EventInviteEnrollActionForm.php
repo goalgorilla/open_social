@@ -116,7 +116,7 @@ class EventInviteEnrollActionForm extends EnrollActionForm {
     $operation = $form_state->getValue('operation');
     $current_user = $this->currentUser;
     $uid = $current_user->id();
-    $nid = $form_state->getValue('event');
+    $nid = $form_state->getValue('event') ?? $this->routeMatch->getRawParameter('node');
 
     $conditions = [
       'field_account' => $uid,
