@@ -644,56 +644,41 @@ function social_event_get_current_event() {
  */
 function social_event_preprocess_field(&$variables) {
   $formatter = $variables['element']['#formatter'];
-  if ($formatter === 'address_plain') {
-    _social_event_address_privacy($variables, function (&$variables) {
-      $variables['items'][0]['content']['#address_line1'] = NULL;
-      $variables['items'][0]['content']['#postal_code'] = NULL;
-    });
-  }
+  if (in_array($formatter, ['address_plain', 'address_default'])) {
+    $entity = $variables['element']['#object'];
+    if ($entity && $entity instanceof NodeInterface && $entity->getType() === 'event') {
+      $social_event_settings = \Drupal::config('social_event.settings');
+      $address_visibility_settings = $social_event_settings->get('address_visibility_settings');
+      if (isset($address_visibility_settings['street_code_private']) && !empty($address_visibility_settings['street_code_private'])) {
+        $enrollments = \Drupal::entityTypeManager()->getStorage('event_enrollment')->loadByProperties([
+          'field_account' => \Drupal::currentUser()->id(),
+          'field_event' => $entity->id(),
+        ]);
 
-  if ($formatter === 'address_default') {
-    _social_event_address_privacy($variables, function (&$variables) {
-      $variables['items'][0]['content']['address_line1']['#value'] = '';
-      $variables['items'][0]['content']['postal_code']['#value'] = '';
-    });
-  }
-}
-
-/**
- * Provides address privacy checking for events.
- *
- * @param array $variables
- *   Address field variables.
- * @param callable $callback
- *   Callback to change field variables.
- *
- * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
- * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
- */
-function _social_event_address_privacy(array &$variables, callable $callback) {
-  $entity = $variables['element']['#object'];
-  if ($entity && $entity instanceof NodeInterface && $entity->getType() === 'event') {
-    $social_event_settings = \Drupal::config('social_event.settings');
-    $address_visibility_settings = $social_event_settings->get('address_visibility_settings');
-    if (isset($address_visibility_settings['street_code_private']) && !empty($address_visibility_settings['street_code_private'])) {
-      $enrollments = \Drupal::entityTypeManager()->getStorage('event_enrollment')->loadByProperties([
-        'field_account' => \Drupal::currentUser()->id(),
-        'field_event' => $entity->id(),
-      ]);
-
-      $hide_street_and_postal_code = FALSE;
-      if ($enrollment = array_pop($enrollments)) {
-        $enrollment_status = $enrollment->field_enrollment_status->value;
-        if ($enrollment_status === '0') {
+        $hide_street_and_postal_code = FALSE;
+        if ($enrollment = array_pop($enrollments)) {
+          $enrollment_status = $enrollment->field_enrollment_status->value;
+          if ($enrollment_status === '0') {
+            $hide_street_and_postal_code = TRUE;
+          }
+        }
+        else {
           $hide_street_and_postal_code = TRUE;
         }
-      }
-      else {
-        $hide_street_and_postal_code = TRUE;
-      }
 
-      if ($hide_street_and_postal_code) {
-        $callback($variables);
+        if ($hide_street_and_postal_code) {
+          switch ($formatter) {
+            case 'address_plain':
+              $variables['items'][0]['content']['#address_line1'] = NULL;
+              $variables['items'][0]['content']['#postal_code'] = NULL;
+              break;
+
+            case 'address_default':
+              $variables['items'][0]['content']['address_line1']['#value'] = '';
+              $variables['items'][0]['content']['postal_code']['#value'] = '';
+              break;
+          }
+        }
       }
     }
   }
