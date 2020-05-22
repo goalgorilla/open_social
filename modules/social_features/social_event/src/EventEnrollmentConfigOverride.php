@@ -43,7 +43,7 @@ class EventEnrollmentConfigOverride implements ConfigFactoryOverrideInterface {
             $request_path['pages'] .= "\r\n" . '*/all-enrollment-requests/confirm-decline/*' . "\r\n" . '*/invite/email' . "\r\n" . '*/invite/user' . "\r\n" . '*/invite/confirm';
           }
           else {
-            $request_path['pages'] = '*/all-enrollment-requests/confirm-decline/*' . "\r\n" . '*/invite/email' . "\r\n"  . '*/invite/user' . "\r\n" . '*/invite/confirm';
+            $request_path['pages'] = '*/all-enrollment-requests/confirm-decline/*' . "\r\n" . '*/invite/email' . "\r\n" . '*/invite/user' . "\r\n" . '*/invite/confirm';
           }
         }
 
