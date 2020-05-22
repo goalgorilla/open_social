@@ -1,0 +1,81 @@
+{#
+/**
+* @file post.html.twig
+* Default theme implementation to present Post data.
+*
+* This template is used when viewing Post pages.
+*
+*
+* Available variables:
+* - content: A list of content items. Use 'content' to print all content, or
+* - attributes: HTML attributes for the container element.
+*
+* @see template_preprocess_post()
+*
+* @ingroup themeable
+*/
+#}
+
+{{ attach_library('socialbase/comment') }}
+{{ attach_library('socialbase/post') }}
+{{ attach_library('socialbase/page-node')}}
+
+{%
+  set classes = [
+  'media',
+  not published ? 'post-unpublished',
+]
+%}
+
+{% block wrapper %}
+  <div class="card">
+    <div class="card__block">
+
+      {% block post %}
+
+        {% block post_badge %}
+          <div class="media-wrapper">
+            {% if content.links %}
+              {{ content.links }}
+            {% endif %}
+          </div>
+        {% endblock %}
+
+        <div class="margin-top-s iframe-container">
+
+          {{ content|without('links', 'like_and_dislike', 'field_post_comments', 'field_post_image', 'user_id') }}
+
+          {% if content.field_post_image|render %}
+            <p>{{ content.field_post_image }}</p>
+          {% endif %}
+
+          <div class="clearfix"></div>
+          <div class="media-post-social">
+            {{ content.like_and_dislike }}
+            {% if dashboard and comment_count > 0 %}
+              <a href="{{ comment_url }}" class="badge badge--pill badge--post">
+                <span class="badge__container">
+                  <svg class="badge__icon">
+                    <use xlink:href="#icon-comment"></use>
+                  </svg>
+                  <span class="badge__label">
+                    {{ comment_count }}
+                  </span>
+                </span>
+              </a>
+            {% endif %}
+          </div>
+        </div>
+      {% endblock %}
+
+      {% block comments %}
+        {% if logged_in %}
+          <div class="card__nested-section">
+            {{ content.field_post_comments }}
+          </div>
+        {% endif %}
+      {% endblock %}
+
+    </div>
+  </div>
+{% endblock %}
