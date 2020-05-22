@@ -282,6 +282,15 @@
   cursor: default;
 }
 
+@media (min-width: 768px) and (max-width: 1024px) {
+  .navbar-nav > li > ul > li.expanded > .dropdown-menu > li > a {
+    padding-left: 30px;
+  }
+  .navbar-nav > li > ul > li.expanded > .dropdown-menu > li > a:hover, .navbar-nav > li > ul > li.expanded > .dropdown-menu > li > a.is-active {
+    background: #fff;
+  }
+}
+
 @media (min-width: 900px) {
   .navbar-user {
     -webkit-box-ordinal-group: 11;
@@ -468,7 +477,7 @@
   .navbar-nav > li > ul > li.expanded > .dropdown-menu {
     display: none;
     top: 0;
-    left: 185px;
+    left: 100%;
     padding-top: 0;
   }
   .navbar-nav > li > ul > li.expanded > .dropdown-menu:hover {
@@ -527,6 +536,10 @@
   }
   .navbar-nav > li > ul > li.expanded > .dropdown-menu > li > a {
     padding-left: 45px;
+  }
+  .navbar-nav > li > ul > li.expanded > .dropdown-menu > li > a:hover, .navbar-nav > li > ul > li.expanded > .dropdown-menu > li > a.is-active {
+    background: #e6e6e6;
+    color: #4d4d4d;
   }
   .navbar-fixed-top .navbar-nav .open .dropdown-menu {
     background-color: #fff;
@@ -603,9 +616,39 @@
     display: block;
     -webkit-box-shadow: none;
             box-shadow: none;
+    background: #f5f5f5;
+  }
+}
+
+@media only screen and (min-device-width: 768px) and (max-device-width: 1024px) and (orientation: portrait) {
+  .navbar-nav > li > ul > li.expanded > .dropdown-menu {
+    position: static;
+    display: block;
+    -webkit-box-shadow: none;
+            box-shadow: none;
+    background: #f5f5f5;
   }
   .navbar-nav > li > ul > li.expanded > .dropdown-menu > li > a {
     padding-left: 30px;
+  }
+  .navbar-nav > li > ul > li.expanded > .dropdown-menu > li > a:hover, .navbar-nav > li > ul > li.expanded > .dropdown-menu > li > a.is-active {
+    background: #fff;
+  }
+}
+
+@media only screen and (min-device-width: 768px) and (max-device-width: 1024px) and (orientation: landscape) {
+  .navbar-nav > li > ul > li.expanded > .dropdown-menu {
+    position: static;
+    display: block;
+    -webkit-box-shadow: none;
+            box-shadow: none;
+    background: #f5f5f5;
+  }
+  .navbar-nav > li > ul > li.expanded > .dropdown-menu > li > a {
+    padding-left: 30px;
+  }
+  .navbar-nav > li > ul > li.expanded > .dropdown-menu > li > a:hover, .navbar-nav > li > ul > li.expanded > .dropdown-menu > li > a.is-active {
+    background: #fff;
   }
 }
 

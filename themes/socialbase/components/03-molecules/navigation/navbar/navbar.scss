@@ -172,7 +172,7 @@
         @media(min-width: 1025px) {
           display: none;
           top: 0;
-          left: 185px;
+          left: 100%;
           padding-top: 0;
         }
 
@@ -180,15 +180,71 @@
           position: static;
           display: block;
           box-shadow: none;
+          background: #f5f5f5;
+        }
+
+        @media only screen
+        and (min-device-width : 768px)
+        and (max-device-width : 1024px)
+        and (orientation : portrait) {
+          position: static;
+          display: block;
+          box-shadow: none;
+          background: #f5f5f5;
+        }
+
+        @media only screen
+        and (min-device-width : 768px)
+        and (max-device-width : 1024px)
+        and (orientation : landscape) {
+          position: static;
+          display: block;
+          box-shadow: none;
+          background: #f5f5f5;
         }
 
         > li > a {
-          @media(max-width: 1024px) {
+          @media(min-width: 768px) and (max-width: 1024px) {
             padding-left: 30px;
+
+            &:hover,
+            &.is-active {
+              background: #fff;
+            }
+          }
+
+          @media only screen
+          and (min-device-width : 768px)
+          and (max-device-width : 1024px)
+          and (orientation : portrait) {
+            padding-left: 30px;
+
+            &:hover,
+            &.is-active {
+              background: #fff;
+            }
+          }
+
+          @media only screen
+          and (min-device-width : 768px)
+          and (max-device-width : 1024px)
+          and (orientation : landscape) {
+            padding-left: 30px;
+
+            &:hover,
+            &.is-active {
+              background: #fff;
+            }
           }
 
           @include for-tablet-landscape-down {
             padding-left: 45px;
+
+            &:hover,
+            &.is-active {
+              background: #e6e6e6;
+              color: #4d4d4d;
+            }
           }
         }
 
