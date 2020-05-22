@@ -73,6 +73,11 @@
   position: relative;
 }
 
+.navbar-nav > li > ul > li.expanded .caret {
+  -webkit-transform: rotate(0);
+          transform: rotate(0);
+}
+
 .navbar-nav > li > ul > li.expanded > .dropdown-menu {
   margin-top: 0;
   padding-top: 5px;
@@ -305,25 +310,6 @@
     padding-top: 13px;
     padding-bottom: 13px;
   }
-  .navbar-nav > li > ul > li.expanded > a:hover:not(.is-active) + .dropdown-menu {
-    display: block;
-  }
-  .navbar-nav > li > ul > li.expanded .caret {
-    position: absolute;
-    top: 44%;
-    right: 10px;
-    -webkit-transform: rotate(-90deg) translateY(-50%);
-            transform: rotate(-90deg) translateY(-50%);
-  }
-  .navbar-nav > li > ul > li.expanded > .dropdown-menu {
-    display: none;
-    top: 0;
-    left: 185px;
-    padding-top: 0;
-  }
-  .navbar-nav > li > ul > li.expanded > .dropdown-menu:hover {
-    display: block;
-  }
   .navbar-collapse {
     width: auto;
     border-top: 0;
@@ -468,6 +454,28 @@
   }
 }
 
+@media (min-width: 1025px) {
+  .navbar-nav > li > ul > li.expanded > a:hover:not(.is-active) + .dropdown-menu {
+    display: block;
+  }
+  .navbar-nav > li > ul > li.expanded .caret {
+    position: absolute;
+    top: 44%;
+    right: 10px;
+    -webkit-transform: rotate(-90deg) translateY(-50%);
+            transform: rotate(-90deg) translateY(-50%);
+  }
+  .navbar-nav > li > ul > li.expanded > .dropdown-menu {
+    display: none;
+    top: 0;
+    left: 185px;
+    padding-top: 0;
+  }
+  .navbar-nav > li > ul > li.expanded > .dropdown-menu:hover {
+    display: block;
+  }
+}
+
 @media (max-width: 599px) {
   .nav > li.desktop {
     display: none;
@@ -586,6 +594,18 @@
   }
   html:not(.js) .navbar-collapse:focus, html:not(.js) .navbar-collapse:hover {
     display: block;
+  }
+}
+
+@media (max-width: 1024px) {
+  .navbar-nav > li > ul > li.expanded > .dropdown-menu {
+    position: static;
+    display: block;
+    -webkit-box-shadow: none;
+            box-shadow: none;
+  }
+  .navbar-nav > li > ul > li.expanded > .dropdown-menu > li > a {
+    padding-left: 30px;
   }
 }
 

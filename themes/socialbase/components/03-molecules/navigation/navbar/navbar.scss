@@ -145,7 +145,7 @@
     > li.expanded {
       position: relative;
 
-      @include for-tablet-landscape-up {
+      @media(min-width: 1025px) {
         > a:hover:not(.is-active)  {
 
           + .dropdown-menu {
@@ -155,7 +155,9 @@
       }
 
       .caret {
-        @include for-tablet-landscape-up {
+        transform: rotate(0);
+
+        @media(min-width: 1025px) {
           position: absolute;
           top: 44%;
           right: 10px;
@@ -167,20 +169,30 @@
         margin-top: 0;
         padding-top: 5px;
 
-        @include for-tablet-landscape-up {
+        @media(min-width: 1025px) {
           display: none;
           top: 0;
           left: 185px;
           padding-top: 0;
         }
 
+        @media(max-width: 1024px) {
+          position: static;
+          display: block;
+          box-shadow: none;
+        }
+
         > li > a {
+          @media(max-width: 1024px) {
+            padding-left: 30px;
+          }
+
           @include for-tablet-landscape-down {
             padding-left: 45px;
           }
         }
 
-        @include for-tablet-landscape-up {
+        @media(min-width: 1025px) {
           &:hover {
             display: block;
           }
