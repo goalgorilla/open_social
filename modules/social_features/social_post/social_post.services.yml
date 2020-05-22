@@ -3,3 +3,7 @@ services:
     class: Drupal\social_post\Routing\RouteSubscriber
     tags:
       - { name: event_subscriber }
+
+  social_post.permission_generator:
+    class: Drupal\social_post\Service\PostPermissions
+    arguments: ['@entity_type.manager', '@string_translation']
