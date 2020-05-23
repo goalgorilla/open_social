@@ -2,7 +2,6 @@
 
 namespace Drupal\activity_basics\Plugin\ActivityContext;
 
-use Drupal\activity_creator\ActivityFactory;
 use Drupal\activity_creator\Plugin\ActivityContextBase;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -77,7 +76,7 @@ class GroupContentInMyGroupActivityContext extends ActivityContextBase {
     $recipients = [];
 
     if (!empty($data['related_object'])) {
-      $referenced_entity = ActivityFactory::getActivityRelatedEntity($data);
+      $referenced_entity = $this->activityFactory->getActivityRelatedEntity($data);
 
       /** @var \Drupal\group\Entity\GroupContentInterface $group_content */
       $group_content = $this->entityTypeManager->getStorage('group_content')
