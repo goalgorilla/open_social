@@ -532,15 +532,22 @@ function social_group_update_8801() {
 }
 
 /**
- * Add new field for rendered profile entity so we can sort it
+ * Add new field for rendered profile entity so we can sort it.
+ *
+ * Load in a config file from an specific update hook that will never change.
+ * Update helper did not update all fields correctly.
  */
 function social_group_update_8802() {
-  /** @var \Drupal\update_helper\Updater $updateHelper */
-  $updateHelper = \Drupal::service('update_helper.updater');
+  $config_file = drupal_get_path('module', 'social_group') . '/config/update/social_group_update_8802.yml';
 
-  // Execute configuration update definitions with logging of success.
-  $updateHelper->executeUpdate('social_group', 'social_group_update_8802');
+  if (is_file($config_file)) {
+    $settings = \Symfony\Component\Yaml\Yaml::parse(file_get_contents($config_file));
+    if (is_array($settings)) {
+      $config = \Drupal::configFactory()
+        ->getEditable('views.view.group_manage_members');
 
-  // Output logged messages to related channel of update execution.
-  return $updateHelper->logger()->output();
+      $config->setData($settings)->save(TRUE);
+    }
+  }
 }
+

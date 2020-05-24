@@ -67,15 +67,21 @@ function social_event_managers_update_8003() {
 }
 
 /**
- * Add new field for rendered profile entity so we can sort it
+ * Add new field for rendered profile entity so we can sort it.
+ *
+ * Load in a config file from an specific update hook that will never change.
+ * Update helper did not update all fields correctly.
  */
 function social_event_managers_update_8004() {
-  /** @var \Drupal\update_helper\Updater $updateHelper */
-  $updateHelper = \Drupal::service('update_helper.updater');
+  $config_file = drupal_get_path('module', 'social_event_managers') . '/config/update/social_event_managers_update_8004.yml';
 
-  // Execute configuration update definitions with logging of success.
-  $updateHelper->executeUpdate('social_event_managers', 'social_event_managers_update_8004');
+  if (is_file($config_file)) {
+    $settings = \Symfony\Component\Yaml\Yaml::parse(file_get_contents($config_file));
+    if (is_array($settings)) {
+      $config = \Drupal::configFactory()
+        ->getEditable('views.view.event_manage_enrollments');
 
-  // Output logged messages to related channel of update execution.
-  return $updateHelper->logger()->output();
+      $config->setData($settings)->save(TRUE);
+    }
+  }
 }
