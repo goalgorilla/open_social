@@ -12,9 +12,8 @@ dependencies:
     - group
     - profile
     - social_group
+    - social_profile
     - user
-_core:
-  default_config_hash: XMkAOCeioLxvZ_MJvF7EhWEcAKSZP07d7Z4Nx-BeutI
 id: group_manage_members
 label: 'Group Manage Members'
 module: views
@@ -146,10 +145,10 @@ display:
             social_group_delete_group_content_action:
               label_override: Remove
           plugin_id: social_views_bulk_operations_bulk_form_group
-        rendered_entity:
-          id: rendered_entity
+        profile_entity_sortable:
+          id: profile_entity_sortable
           table: profile
-          field: rendered_entity
+          field: profile_entity_sortable
           relationship: profile
           group_type: group
           admin_label: ''
@@ -196,7 +195,7 @@ display:
           hide_alter_empty: true
           view_mode: table
           entity_type: profile
-          plugin_id: rendered_entity
+          plugin_id: profile_entity_sortable
         field_profile_organization:
           id: field_profile_organization
           table: profile__field_profile_organization

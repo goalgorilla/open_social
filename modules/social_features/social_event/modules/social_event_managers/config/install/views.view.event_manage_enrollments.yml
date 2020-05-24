@@ -11,6 +11,7 @@ dependencies:
     - profile
     - social_event
     - social_event_managers
+    - social_profile
     - user
 id: event_manage_enrollments
 label: 'Manage All Enrollments'
@@ -19,7 +20,6 @@ description: ''
 tag: ''
 base_table: event_enrollment_field_data
 base_field: id
-core: 8.x
 display:
   default:
     display_plugin: default
@@ -85,7 +85,7 @@ display:
           description: ''
           columns:
             social_views_bulk_operations_bulk_form_enrollments_1: social_views_bulk_operations_bulk_form_enrollments_1
-            rendered_entity: rendered_entity
+            profile_entity_sortable: profile_entity_sortable
             field_profile_organization: field_profile_organization
             created: created
             operations_1: operations_1
@@ -95,7 +95,7 @@ display:
               separator: ''
               empty_column: false
               responsive: ''
-            rendered_entity:
+            profile_entity_sortable:
               sortable: true
               default_sort_order: asc
               align: ''
@@ -192,10 +192,10 @@ display:
             social_event_managers_send_email_action:
               label_override: Email
           plugin_id: social_views_bulk_operations_bulk_form_enrollments
-        rendered_entity:
-          id: rendered_entity
+        profile_entity_sortable:
+          id: profile_entity_sortable
           table: profile
-          field: rendered_entity
+          field: profile_entity_sortable
           relationship: profile
           group_type: group
           admin_label: ''
@@ -242,7 +242,7 @@ display:
           hide_alter_empty: true
           view_mode: table
           entity_type: profile
-          plugin_id: rendered_entity
+          plugin_id: profile_entity_sortable
         field_profile_organization:
           id: field_profile_organization
           table: profile__field_profile_organization
