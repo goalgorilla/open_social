@@ -1,6 +1,5 @@
-views.view.event_manage_enrollments:
+views.view.event_manage_enrollment_requests:
   expected_config:
-    core: 8.x
     display:
       default:
         display_options:
@@ -67,10 +66,9 @@ views.view.event_manage_enrollments:
                   empty_column: false
                   responsive: ''
                   separator: ''
-                  sortable: true
+                  sortable: false
   update_actions:
     delete:
-      core: 8.x
       display:
         default:
           display_options:
@@ -137,29 +135,17 @@ views.view.event_manage_enrollments:
                     empty_column: false
                     responsive: ''
                     separator: ''
-                    sortable: true
+                    sortable: false
     add:
       display:
         default:
           cache_metadata:
             tags:
               - 'config:core.entity_view_display.profile.profile.medium_teaser'
-              - 'config:core.entity_view_display.profile.profile.statistic'
-          display_options:
-            filters:
-              field_enrollment_status_value:
-                expose:
-                  operator_limit_selection: false
-                  operator_list: {  }
-              type:
-                expose:
-                  operator_limit_selection: false
-                  operator_list: {  }
-        page_manage_enrollments:
+        page_manage_enrollment_requests:
           cache_metadata:
             tags:
               - 'config:core.entity_view_display.profile.profile.medium_teaser'
-              - 'config:core.entity_view_display.profile.profile.statistic'
     change:
       display:
         default:

@@ -1502,3 +1502,17 @@ function social_event_update_8807() {
     }
   }
 }
+
+/**
+ * Add new field for rendered profile entity so we can sort it
+ */
+function social_event_update_8808() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_event', 'social_event_update_8808');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}

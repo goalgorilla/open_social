@@ -12,9 +12,8 @@ dependencies:
     - options
     - profile
     - social_event
+    - social_profile
     - user
-_core:
-  default_config_hash: WUaIJVbYH8vDY77B6o8Nxhp2JJFWYDXsHM8db66ZvrI
 id: event_manage_enrollment_requests
 label: 'Manage event enrollment requests'
 module: views
@@ -86,15 +85,15 @@ display:
           summary: ''
           description: ''
           columns:
-            rendered_entity: rendered_entity
+            profile_entity_sortable: profile_entity_sortable
             field_profile_organization: field_profile_organization
             field_request_message: field_request_message
             field_request_or_invite_status: field_request_or_invite_status
             created: created
             operations_1: operations_1
           info:
-            rendered_entity:
-              sortable: false
+            profile_entity_sortable:
+              sortable: true
               default_sort_order: asc
               align: ''
               separator: ''
@@ -138,10 +137,10 @@ display:
       row:
         type: fields
       fields:
-        rendered_entity:
-          id: rendered_entity
+        profile_entity_sortable:
+          id: profile_entity_sortable
           table: profile
-          field: rendered_entity
+          field: profile_entity_sortable
           relationship: profile
           group_type: group
           admin_label: ''
@@ -188,7 +187,7 @@ display:
           hide_alter_empty: true
           view_mode: table
           entity_type: profile
-          plugin_id: rendered_entity
+          plugin_id: profile_entity_sortable
         field_profile_organization:
           id: field_profile_organization
           table: profile__field_profile_organization
@@ -716,6 +715,7 @@ display:
         - 'config:core.entity_view_display.profile.profile.compact_teaser'
         - 'config:core.entity_view_display.profile.profile.default'
         - 'config:core.entity_view_display.profile.profile.hero'
+        - 'config:core.entity_view_display.profile.profile.medium_teaser'
         - 'config:core.entity_view_display.profile.profile.search_index'
         - 'config:core.entity_view_display.profile.profile.small'
         - 'config:core.entity_view_display.profile.profile.small_teaser'
@@ -756,6 +756,7 @@ display:
         - 'config:core.entity_view_display.profile.profile.compact_teaser'
         - 'config:core.entity_view_display.profile.profile.default'
         - 'config:core.entity_view_display.profile.profile.hero'
+        - 'config:core.entity_view_display.profile.profile.medium_teaser'
         - 'config:core.entity_view_display.profile.profile.search_index'
         - 'config:core.entity_view_display.profile.profile.small'
         - 'config:core.entity_view_display.profile.profile.small_teaser'
