@@ -125,12 +125,12 @@ function social_comment_update_8801() {
  * Set trimmed format for comment body in activity comment view mode.
  */
 function social_comment_update_8802() {
-  $config = \Drupal::service('config.factory')
-    ->getEditable('core.entity_view_display.comment.comment.activity_comment');
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
 
-  if (!empty($config)) {
-    $config->set('content.field_comment_body.settings', ['trim_length' => 300]);
-    $config->set('content.field_comment_body.type', 'text_trimmed');
-    $config->save();
-  }
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_comment', 'social_comment_update_8803');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
 }
