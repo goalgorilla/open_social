@@ -747,6 +747,12 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
   $form['#id'] === 'views-exposed-form-search-groups-page') {
     $account = \Drupal::currentUser();
     if (!empty($form['type']['#options'])) {
+      // We dont need to show the filter option if there is
+      // only 1 option. All / Any is also in the form
+      // therefor we cant check the form options itself.
+      if (_social_group_get_current_group_types($account) < 2) {
+        $form['type']['#type'] = 'hidden';
+      }
       foreach ($form['type']['#options'] as $type => $label) {
         // All / Any we can skip they are optional translatable options
         // and not group types.
