@@ -52,18 +52,15 @@ class ActivityFilterTags extends FilterPluginBase {
     $tags = isset($this->view->filter_tags) ? $this->view->filter_tags : '';
     $taxonomy_field = isset($this->view->filter_vocabulary) ? $this->view->filter_vocabulary : '';
 
+    $or = db_or();
+    $and_wrapper = db_and();
+
     $taxonomy_node_table = "node__{$taxonomy_field}";
     $taxonomy_post_table = "post__field_{$taxonomy_field}";
     $activity_entity_table = 'activity__field_activity_entity';
 
-    if (
-      $this->database->schema()->tableExists($taxonomy_node_table) &&
-      $this->database->schema()->tableExists($taxonomy_post_table)
-    ) {
-      $or = db_or();
-      $and_wrapper = db_and();
-
-      // Filter Nodes by selected tags.
+    // Filter Nodes by selected tags.
+    if ($this->database->schema()->tableExists($taxonomy_node_table)) {
       $this->query->addTable($taxonomy_node_table);
       $this->query->addTable($activity_entity_table);
 
@@ -128,8 +125,10 @@ class ActivityFilterTags extends FilterPluginBase {
       $and_comment_wrapper->condition("commented_nodes.{$taxonomy_field}_target_id", $tags, 'IN');
 
       $or->condition($and_comment_wrapper);
+    }
 
-      // Filter Posts by selected tags.
+    // Filter Posts by selected tags.
+    if ($this->database->schema()->tableExists($taxonomy_post_table)) {
       $configuration = [
         'table' => $taxonomy_post_table,
         'field' => 'entity_id',
@@ -150,10 +149,11 @@ class ActivityFilterTags extends FilterPluginBase {
       $and_post_wrapper = db_and();
       $and_post_wrapper->condition("filtered_posts.field_{$taxonomy_field}_target_id", $tags, 'IN');
       $or->condition($and_post_wrapper);
+    }
 
+    // Lets add all the or conditions to the Views query.
+    if ($or->count()) {
       $and_wrapper->condition($or);
-
-      // Lets add all the or conditions to the Views query.
       $this->query->addWhere('tags', $and_wrapper);
     }
   }
