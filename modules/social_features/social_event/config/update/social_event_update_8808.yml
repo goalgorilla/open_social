@@ -1,20 +1,29 @@
-field.storage.node.field_enroll_method:
-  expected_config:
-    settings:
-      allowed_values:
-        -1:
-          label: 'Open for all - users can enroll in this event without approval'
-        0:
-          label: 'Open to requests - user requests to enroll need to be approved by event organisers'
-        1:
-          label: 'Invite-only - users can only be added or invited by event organisers'
-  update_actions:
-    change:
-      settings:
-        allowed_values:
-          -1:
-            label: 'Open to enroll - users can enroll for this event without approval'
-          0:
-            label: 'Request to enroll - users can "request to enroll" for this event which event organisers approve/decline'
-          1:
-            label: 'Invite-only - users can only enroll for this event if they are added/invited by event organisers'
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+    - options
+id: node.field_enroll_method
+field_name: field_enroll_method
+entity_type: node
+type: list_integer
+settings:
+  allowed_values:
+    -
+      value: 1
+      label: 'Open to enroll - users can enroll for this event without approval'
+    -
+      value: 2
+      label: 'Request to enroll - users can "request to enroll" for this event which event organisers approve/decline'
+    -
+      value: 3
+      label: 'Invite-only - users can only enroll for this event if they are added/invited by event organisers'
+  allowed_values_function: ''
+module: options
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false
