@@ -65,6 +65,19 @@ class EntityVisibilityForm extends ConfigFormBase {
       ->setData($form_state->getValues())
       ->save();
 
+    // When we add the disable public visibility,
+    // it will also affect the group visibility settings.
+    if ($form_state->getValue('disable_public_visibility') === (int) TRUE
+      && \Drupal::service('module_handler')->moduleExists('social_group_flexible_group')) {
+      // Get the current visibility configuration for groups.
+      $config = \Drupal::service('config.factory')->getEditable('social_group.settings');
+      $visibilities = $config->get('available_visibility_options');
+      // Disable the visibility and save.
+      $visibilities['public'] = FALSE;
+      $config->set('available_visibility_options', $visibilities);
+      $config->save();
+    }
+
     parent::submitForm($form, $form_state);
   }
 

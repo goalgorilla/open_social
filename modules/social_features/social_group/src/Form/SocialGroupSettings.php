@@ -95,6 +95,12 @@ class SocialGroupSettings extends ConfigFormBase implements ContainerInjectionIn
       ];
     }
 
+    // If public visibility is disabled, don't show it here.
+    $disable_public_visibility = $this->config('entity_access_by_field.settings')->get('disable_public_visibility');
+    if ($disable_public_visibility === (int) TRUE) {
+      unset($form['visibility_settings']['available_visibility_options']['#options']['public']);
+    }
+
     return parent::buildForm($form, $form_state);
   }
 
