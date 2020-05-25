@@ -733,8 +733,8 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
     $join_method_default_value = 'added';
     // Ensure we have a better descriptive label.
     if (array_key_exists('added', $form['field_group_allowed_join_method']['widget']['#options'])) {
+      $form['field_group_allowed_join_method']['widget']['#options']['added'] = t('Invite-only - users can only join this group if they are added/invited by group managers');
     }
-    $form['field_group_allowed_join_method']['widget']['#options']['added'] = t('Invite-only - users can only join this group if they are added/invited by group managers');
     if (array_key_exists('direct', $form['field_group_allowed_join_method']['widget']['#options'])) {
       $form['field_group_allowed_join_method']['widget']['#options']['direct'] = t('Open to join - users can join this group without approval');
     }
