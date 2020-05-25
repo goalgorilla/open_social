@@ -147,7 +147,9 @@ function social_group_flexible_group_can_join_directly(Group $group) {
 function social_group_flexible_group_can_be_added(Group $group) {
   $join_methods = $group->get('field_group_allowed_join_method')->getValue();
 
-  if (!in_array('added', array_column($join_methods, 'value'), FALSE)) {
+  $allowed_methods = ['added', 'drect'];
+
+  if (count(array_intersect($allowed_methods, array_column($join_methods, 'value'))) === 0) {
     return FALSE;
   }
 
