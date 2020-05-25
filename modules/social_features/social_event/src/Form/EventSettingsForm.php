@@ -89,6 +89,9 @@ class EventSettingsForm extends ConfigFormBase {
       ->set('enroll', $group_type_ids)
       ->set('address_visibility_settings', $form_state->getValue('address_visibility_settings'))
       ->save();
+
+    // Invalidate cache tags to refresh blocks of list of events.
+    \Drupal::service('cache_tags.invalidator')->invalidateTags(['node_list']);
   }
 
 }
