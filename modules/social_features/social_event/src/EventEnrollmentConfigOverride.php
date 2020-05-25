@@ -40,14 +40,30 @@ class EventEnrollmentConfigOverride implements ConfigFactoryOverrideInterface {
 
         if (isset($request_path['pages'])) {
           if (!empty($request_path['pages'])) {
-            $request_path['pages'] .= "\r\n" . '*/all-enrollment-requests/confirm-decline/*';
+            $request_path['pages'] .= "\r\n" . '*/all-enrollment-requests/confirm-decline/*' . "\r\n" . '*/invite/email' . "\r\n" . '*/invite/user' . "\r\n" . '*/invite/confirm';
           }
           else {
-            $request_path['pages'] = '*/all-enrollment-requests/confirm-decline/*';
+            $request_path['pages'] = '*/all-enrollment-requests/confirm-decline/*' . "\r\n" . '*/invite/email' . "\r\n" . '*/invite/user' . "\r\n" . '*/invite/confirm';
           }
         }
 
         $overrides[$config_name] = ['visibility' => ['request_path' => $request_path]];
+      }
+    }
+
+    // Remove the page title block for event invites.
+    $config_names = [
+      'block.block.socialbase_pagetitleblock_content',
+      'block.block.socialblue_pagetitleblock_content',
+    ];
+    foreach ($config_names as $config_name) {
+      if (in_array($config_name, $names)) {
+
+        $config = \Drupal::service('config.factory')->getEditable($config_name);
+        $request_path = $config->get('visibility.request_path');
+        $request_path = $request_path['pages'] . "\r\n" . '*/event-invites' . "\r\n" . '*/all-enrollments/add-enrollees';
+
+        $overrides[$config_name] = ['visibility' => ['request_path' => ['pages' => $request_path]]];
       }
     }
 

@@ -9,6 +9,7 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Cache\Cache;
 use Drupal\social_post\Entity\Post;
 use Drupal\node\Entity\Node;
+use Drupal\user\RoleInterface;
 
 /**
  * Class FlexibleGroupContentVisibilityUpdate.
@@ -213,29 +214,36 @@ class FlexibleGroupContentVisibilityUpdate {
   public static function calculateVisibility($current_visibility, array $new_options) {
     // If there is only one option just return that one.
     if (count($new_options) === 1) {
-      return $new_options[0]['value'];
+      return reset($new_options)['value'];
+    }
+
+    /** @var \Drupal\user\RoleInterface $role */
+    $role = \Drupal::entityTypeManager()->getStorage('user_role')->load($current_visibility);
+    if ($role instanceof RoleInterface) {
+      return reset($new_options)['value'];
     }
 
     $visibility = '';
+    $option_values = array_column($new_options, 'value');
     // Calculate new options based on what it was before editting.
     switch ($current_visibility) {
       case 'community':
         $visibility = 'public';
-        if (array_search('group', array_column($new_options, 'value')) !== FALSE) {
+        if (in_array('group', $option_values)) {
           $visibility = 'group';
         }
         break;
 
       case 'public':
         $visibility = 'group';
-        if (array_search('community', array_column($new_options, 'value')) !== FALSE) {
+        if (in_array('community', $option_values)) {
           $visibility = 'community';
         }
         break;
 
       case 'group':
         $visibility = 'public';
-        if (array_search('community', array_column($new_options, 'value')) !== FALSE) {
+        if (in_array('community', $option_values)) {
           $visibility = 'community';
         }
         break;

@@ -378,7 +378,7 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $current_user = $this->currentUser;
     $uid = $current_user->id();
-    $nid = $form_state->getValue('event');
+    $nid = $form_state->getValue('event') ?? $this->routeMatch->getRawParameter('node');
     $node = $this->entityTypeManager->getStorage('node')->load($nid);
 
     // Redirect anonymous use to login page before enrolling to an event.
