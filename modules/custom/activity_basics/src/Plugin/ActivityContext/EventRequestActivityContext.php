@@ -88,7 +88,7 @@ class EventRequestActivityContext extends ActivityContextBase {
         $event_enrollment = $this->entityTypeManager->getStorage('event_enrollment')
           ->load($enrollment_id);
 
-        if (!empty($event_enrollment)) {
+        if ($event_enrollment instanceof EventEnrollmentInterface) {
           // Send out the notification if the user is pending.
           if (!$event_enrollment->get('field_enrollment_status')->isEmpty()
             && $event_enrollment->get('field_enrollment_status')->value === '0'
