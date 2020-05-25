@@ -722,6 +722,7 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
   if ($form['#id'] === 'views-exposed-form-newest-groups-page-all-groups' ||
   $form['#id'] === 'views-exposed-form-search-groups-page-no-value' ||
   $form['#id'] === 'views-exposed-form-search-groups-page') {
+    $account = \Drupal::currentUser();
     if (!empty($form['type']['#options'])) {
       foreach ($form['type']['#options'] as $type => $label) {
         // All / Any we can skip they are optional translatable options
@@ -729,7 +730,7 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
         if ($label instanceof TranslatableMarkup) {
           continue;
         }
-        if (!social_group_can_view_groups_of_type($type, \Drupal::currentUser())) {
+        if (!social_group_can_view_groups_of_type($type, $account)) {
           unset($form['type']['#options'][$type]);
         }
       }
@@ -1324,14 +1325,9 @@ function social_group_block_access(Block $block, $operation, AccountInterface $a
   // Check access for AN and LU, if only one group type is available
   // we can remove the filter block.
   if ($block->getPluginId() == 'views_exposed_filter_block:newest_groups-page_all_groups' && $operation == 'view') {
-    $group_types = 0;
+    $user_grouptypes = _social_group_get_current_group_types($account);
 
-    /** @var \Drupal\group\Entity\GroupTypeInterface $group_type */
-    foreach (GroupType::loadMultiple() as $group_type) {
-      $group_types += (int) social_group_can_view_groups_of_type($group_type->id(), $account);
-    }
-
-    if ($group_types < 2) {
+    if ($user_grouptypes < 2) {
       return AccessResult::forbidden();
     }
   }
@@ -1373,6 +1369,27 @@ function social_group_block_access(Block $block, $operation, AccountInterface $a
 
   return AccessResult::neutral();
 }
+
+/**
+ * Determine the amount of group_types a user can see.
+ *
+ * @param \Drupal\Core\Session\AccountInterface $account
+ *   The user to check for.
+ *
+ * @return int
+ *   The amount of group_types
+ */
+function _social_group_get_current_group_types($account) {
+  $group_types = 0;
+
+  /** @var \Drupal\group\Entity\GroupTypeInterface $group_type */
+  foreach (GroupType::loadMultiple() as $group_type) {
+    $group_types += (int) social_group_can_view_groups_of_type($group_type->id(), $account);
+  }
+
+  return $group_types;
+}
+
 
 /**
  * Delete the group and all of its content.
