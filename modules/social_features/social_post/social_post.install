@@ -7,6 +7,7 @@
 
 use Drupal\Core\Entity\Entity\EntityViewDisplay;
 use Drupal\Core\Entity\Entity\EntityViewMode;
+use Drupal\Core\Site\Settings;
 use Drupal\user\Entity\Role;
 
 /**
@@ -69,6 +70,7 @@ function _social_post_get_permissions($role) {
   // Authenticated.
   $permissions['authenticated'] = array_merge($permissions['anonymous'], [
     'add post entities',
+    'add post post entities',
     'delete own post entities',
     'edit own post entities',
     'view community posts',
@@ -112,9 +114,45 @@ function social_post_update_8801() {
 }
 
 /**
+ * Give access to creating posts of specific types.
+ */
+function social_post_update_8802(&$sandbox) {
+  if (!isset($sandbox['total'])) {
+    $sandbox['total'] = \Drupal::entityQuery('user_role')
+      ->condition('id', 'administrator', '<>')
+      ->count()
+      ->execute();
+
+    $sandbox['processed'] = 0;
+    $sandbox['limit'] = Settings::get('entity_update_batch_size', 50);
+    $sandbox['permissions'] = array_keys(\Drupal::service('social_post.permission_generator')->permissions());
+  }
+
+  $role_ids = \Drupal::entityQuery('user_role')
+    ->condition('id', 'administrator', '<>')
+    ->range($sandbox['processed'], $sandbox['limit'])
+    ->execute();
+
+  $storage = \Drupal::entityTypeManager()->getStorage('user_role');
+
+  foreach ($role_ids as $role_id) {
+    /** @var \Drupal\user\RoleInterface $role */
+    $role = $storage->load($role_id);
+
+    if ($role->hasPermission('add post entities')) {
+      user_role_grant_permissions($role_id, $sandbox['permissions']);
+    }
+  }
+
+  $sandbox['processed'] += count($role_ids);
+
+  $sandbox['#finished'] = $sandbox['processed'] / $sandbox['total'];
+}
+
+/**
  * Create "Featured" view mode/display for post.
  */
-function social_post_update_8802() {
+function social_post_update_8803() {
   // Create a new post featured entity view mode.
   EntityViewMode::create([
     'targetEntityType' => 'post',
