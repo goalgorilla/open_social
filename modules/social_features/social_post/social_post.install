@@ -5,6 +5,8 @@
  * Install, update and uninstall functions for the social_post module.
  */
 
+use Drupal\Core\Entity\Entity\EntityViewDisplay;
+use Drupal\Core\Entity\Entity\EntityViewMode;
 use Drupal\user\Entity\Role;
 
 /**
@@ -107,4 +109,35 @@ function social_post_update_dependencies() {
  */
 function social_post_update_8801() {
   activity_creator_set_entity_view_mode('post', 'activity');
+}
+
+/**
+ * Create "Featured" view mode/display for post.
+ */
+function social_post_update_8802() {
+  // Create a new post featured entity view mode.
+  EntityViewMode::create([
+    'targetEntityType' => 'post',
+    'id' => 'post.featured',
+    'status' => TRUE,
+    'label' => t('Featured'),
+  ])->save();
+
+  // Create view display for post bundle of Post entity.
+  $display = EntityViewDisplay::load('post.post.default')->toArray();
+  unset(
+    $display['content']['field_post_comments'],
+    $display['hidden']['like_and_dislike']
+  );
+  $display['content']['like_and_dislike'] = [
+    'weight' => 3,
+    'region' => 'content',
+  ];
+  $display = array_merge($display, [
+    'uuid' => NULL,
+    '_core' => NULL,
+    'targetEntityType' => 'post',
+    'mode' => 'featured',
+  ]);
+  EntityViewDisplay::create($display)->save();
 }
