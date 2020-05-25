@@ -63,7 +63,7 @@ class LinkedInAuth extends SocialAuthNetwork {
    * @throws \Drupal\social_api\SocialApiException
    */
   public function initSdk() {
-    $class_name = '\Happyr\LinkedIn\LinkedIn';
+    $class_name = '\LinkedIn\Client';
 
     if (!class_exists($class_name)) {
       throw new SocialApiException(sprintf('The PHP SDK for LinkedIn could not be found. Class: %s.', $class_name));

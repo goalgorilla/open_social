@@ -9,6 +9,14 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Template\Attribute;
 use Drupal\Core\Url;
+use Drupal\views\ViewExecutable;
+
+/**
+ * Implements hook_views_plugins_display_alter().
+ */
+function social_activity_views_plugins_display_alter(array &$plugins) {
+  $plugins['block']['class'] = 'Drupal\social_activity\Plugin\views\display\ModeBlock';
+}
 
 /**
  * Implements hook_social_user_account_header_items().
@@ -204,4 +212,25 @@ function social_activity_social_account_notifications_counter(AccountInterface $
   $account_notifications = \Drupal::service('activity_creator.activity_notifications');
 
   return count($account_notifications->getNotifications($account, $status)) ?? 0;
+}
+
+/**
+ * Implements hook_views_post_build().
+ */
+function social_activity_views_post_build(ViewExecutable $view) {
+  $override_displays = [
+    'block_stream_homepage',
+    'block_stream_homepage_without_post',
+  ];
+
+  if ($view->id() == "activity_stream" && in_array($view->current_display, $override_displays)) {
+    if (isset($view->filter_type) && $view->filter_type === 'dashboard') {
+      // Override default view mode for activity stream views block if it was
+      // added via layout builder.
+      $view->rowPlugin->options['view_mode'] = 'featured';
+
+      // Attach and use featured styles for activity stream on dashboard.
+      $view->element['#attached']['library'][] = 'social_featured_content/paragraph.featured';
+    }
+  }
 }

@@ -22,21 +22,31 @@
 .dropup,
 .dropdown {
   position: relative;
-  &.has-alert {
-    > a {
-      @include for-phone-only {
-        &:before {
-          content: '';
-          position: absolute;
-          top: 11px;
-          right: 7px;
-          width: 12px;
-          height: 12px;
-          background-color: $gray-light;
-          border-radius: 50%;
-        }
-      }
+
+  @include for-phone-only {
+    &.has-alert > a:before {
+      content: '';
+      position: absolute;
+      top: 11px;
+      right: 7px;
+      width: 12px;
+      height: 12px;
+      background-color: $gray-light;
+      border-radius: 50%;
     }
+  }
+
+  // There are now items that don't have their own top level icon so these
+  // should show notifications in the user menu also on desktop.
+  &.has-alert.has-alert--desktop > a:before {
+    content: '';
+    position: absolute;
+    top: 11px;
+    right: 7px;
+    width: 12px;
+    height: 12px;
+    background-color: $gray-light;
+    border-radius: 50%;
   }
 }
 
