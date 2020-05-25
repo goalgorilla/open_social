@@ -9,6 +9,7 @@ use Drupal\field\Entity\FieldConfig;
 use Drupal\field\FieldConfigInterface;
 use Drupal\menu_link_content\Entity\MenuLinkContent;
 use Drupal\user\Entity\Role;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Implements hook_install().
@@ -1513,7 +1514,7 @@ function social_event_update_8808() {
   $config_file = drupal_get_path('module', 'social_event') . '/config/update/social_event_update_8808.yml';
 
   if (is_file($config_file)) {
-    $settings = \Symfony\Component\Yaml\Yaml::parse(file_get_contents($config_file));
+    $settings = Yaml::parse(file_get_contents($config_file));
     if (is_array($settings)) {
       $config = \Drupal::configFactory()
         ->getEditable('views.view.event_manage_enrollment_requests');
