@@ -174,7 +174,7 @@ class EnrollInviteConfirmForm extends FormBase {
     $form['question'] = [
       '#type' => 'html_tag',
       '#tag' => 'p',
-      '#value' => $this->t('Are you sure you want to send a invitation to all @questionType listed bellow?', ['@questionType' => $questionType]),
+      '#value' => $this->t('Are you sure you want to send an invitation to all @questionType listed below?', ['@questionType' => $questionType]),
       '#weight' => 1,
       '#prefix' => '<div class="card"><div class="card__block">',
       '#suffix' => '</div></div>',
