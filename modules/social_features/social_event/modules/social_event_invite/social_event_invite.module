@@ -11,6 +11,7 @@ use Drupal\Core\Cache\RefinableCacheableDependencyInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
+use Drupal\node\Entity\Node;
 use Drupal\social_event\EventEnrollmentInterface;
 use Drupal\user\UserInterface;
 
@@ -152,13 +153,14 @@ function social_event_invite_preprocess_views_view(&$variables) {
     $access = $access->eventFeatureAccess();
 
     if (!$access instanceof AccessResultForbidden) {
-      $entity = \Drupal::entityTypeManager()->getStorage('block')
-        ->load('socialeventinviteblock');
+      // Add the roster-link block to the build-array.
+      /** @var \Drupal\social_event_invite\Plugin\Block\SocialEventInviteLocalActionsBlock $block */
+      $block = \Drupal::service('plugin.manager.block')
+        ->createInstance('social_event_invite_block');
 
-      if (NULL !== $entity) {
-        $block_content = \Drupal::entityTypeManager()
-          ->getViewBuilder('block')
-          ->view($entity);
+      if (NULL !== $block) {
+        $block->setContextValue('node', Node::load(\Drupal::routeMatch()->getParameter('node')));
+        $block_content = $block->build();
 
         if (!empty($block_content)) {
           $variables['header']['actions'] = $block_content;
