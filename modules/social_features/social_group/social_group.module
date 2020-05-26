@@ -1379,7 +1379,7 @@ function social_group_block_access(Block $block, $operation, AccountInterface $a
  * @return int
  *   The amount of group_types
  */
-function _social_group_get_current_group_types($account) {
+function _social_group_get_current_group_types(AccountInterface $account) {
   $group_types = 0;
 
   /** @var \Drupal\group\Entity\GroupTypeInterface $group_type */
@@ -1389,7 +1389,6 @@ function _social_group_get_current_group_types($account) {
 
   return $group_types;
 }
-
 
 /**
  * Delete the group and all of its content.
