@@ -75,7 +75,7 @@ class CancelEnrollInviteController extends ControllerBase {
     if ($node instanceof Node && !empty($event_enrollment)) {
       // When the event owner/organizer cancelled the invite, update the status
       // and set a message for the executor that it has been done.
-      $event_enrollment->field_request_or_invite_status->value = EventEnrollmentInterface::INVITE_INVALID_OR_EXPIRED;
+      $event_enrollment->field_request_or_invite_status->value = EventEnrollmentInterface::REQUEST_OR_INVITE_DECLINED;
       $this->messenger()->addStatus(t('The event enrollment request has been declined.'));
 
       // In order for the notifications to be sent correctly we're updating the

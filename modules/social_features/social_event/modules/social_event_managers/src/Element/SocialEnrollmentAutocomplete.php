@@ -28,15 +28,13 @@ class SocialEnrollmentAutocomplete extends EntityAutocomplete {
     // Load the current Event enrollments so we can check duplicates.
     $storage = \Drupal::entityTypeManager()->getStorage('event_enrollment');
 
-    if (empty($nid)) {
-      $node = \Drupal::routeMatch()->getParameter('node');
-      if ($node instanceof NodeInterface) {
-        // You can get nid and anything else you need from the node object.
-        $nid = $node->id();
-      }
-      elseif (!is_object($node)) {
-        $nid = $node;
-      }
+    $node = \Drupal::routeMatch()->getParameter('node');
+    if ($node instanceof NodeInterface) {
+      // You can get nid and anything else you need from the node object.
+      $nid = $node->id();
+    }
+    elseif (!is_object($node)) {
+      $nid = $node;
     }
 
     // Grab all the input values so we can get the ID's out of them.

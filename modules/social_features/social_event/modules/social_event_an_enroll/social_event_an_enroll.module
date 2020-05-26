@@ -74,7 +74,7 @@ function social_event_an_enroll_preprocess_views_view_field(&$variables) {
   /** @var \Drupal\views\ViewExecutable $view */
   $view = &$variables['view'];
 
-  if ($view->id() === 'event_manage_enrollments' && $variables['field']->field === 'rendered_entity') {
+  if ($view->id() === 'event_manage_enrollments' && $variables['field']->field === 'profile_entity_sortable') {
     $entity = &$variables['row']->_entity;
 
     /** @var \Drupal\social_event_an_enroll\EventAnEnrollManager $service */

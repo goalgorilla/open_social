@@ -13,7 +13,6 @@ use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
 use Drupal\social_event_invite\SocialEventInviteAccessHelper;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\node\Entity\Node;
 
 /**
  * Provides a 'SocialEventInviteLocalActionsBlock' block.
@@ -21,6 +20,9 @@ use Drupal\node\Entity\Node;
  * @Block(
  *  id = "social_event_invite_block",
  *  admin_label = @Translation("Social Event Invite block"),
+ *   context = {
+ *     "node" = @ContextDefinition("entity:node", label = @Translation("Node"), required = FALSE)
+ *   }
  * )
  */
 class SocialEventInviteLocalActionsBlock extends BlockBase implements ContainerFactoryPluginInterface {
@@ -90,23 +92,11 @@ class SocialEventInviteLocalActionsBlock extends BlockBase implements ContainerF
   /**
    * {@inheritdoc}
    */
-  public function getCacheContexts() {
-    $cache_contexts = parent::getCacheContexts();
-    $cache_contexts[] = 'user';
-    return $cache_contexts;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function build() {
     $build = [];
 
-    // Get current group so we can build correct links.
-    $event = $this->routeMatch->getParameter('node');
-    $event = Node::load($event);
-
-    // Todo:: not needed because we get parameter from node anyway?
+    // Get current node so we can build correct links.
+    $event = $this->getContextValue('node');
     if ($event instanceof NodeInterface) {
       $links = [
         '#type' => 'dropbutton',
@@ -133,8 +123,11 @@ class SocialEventInviteLocalActionsBlock extends BlockBase implements ContainerF
       ];
 
       $build['content'] = $links;
+      $build['#cache'] = [
+        'keys' => ['social_event_invite_block', 'node', $event->id()],
+        'contexts' => ['user'],
+      ];
     }
-
     return $build;
   }
 
