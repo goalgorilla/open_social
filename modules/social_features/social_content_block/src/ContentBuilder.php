@@ -117,6 +117,12 @@ class ContentBuilder implements ContentBuilderInterface {
       $field_names = [$block_content->field_plugin_field->value];
     }
 
+    /** @var \Drupal\social_content_block\ContentBlockPluginInterface $plugin */
+    $plugin = $this->contentBlockManager->createInstance($plugin_id);
+
+    /** @var \Drupal\Core\Entity\EntityTypeInterface $entity_type */
+    $entity_type = $this->entityTypeManager->getDefinition($definition['entityTypeId']);
+
     $fields = [];
 
     foreach ($field_names as $field_name) {

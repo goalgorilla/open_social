@@ -88,4 +88,17 @@ class SocialEventController extends ControllerBase {
     return AccessResult::allowedIfHasPermission($account, 'view events on other profiles');
   }
 
+  /**
+   * Function to get the decline request title.
+   *
+   * @return \Drupal\Core\StringTranslation\TranslatableMarkup
+   *   The decline title markup.
+   */
+  public function getTitleDeclineRequest() {
+    /** @var \Drupal\node\NodeInterface $node */
+    $node = $this->requestStack->getCurrentRequest()->get('node');
+
+    return $this->t('Decline enrollment request for the event @event_title', ['@event_title' => $node->getTitle()]);
+  }
+
 }
