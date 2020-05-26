@@ -24,6 +24,22 @@ function social_sharing_block_access(Block $block, $operation, AccountInterface 
       'entity.node.edit_form',
     ];
 
+    // Call module handler service.
+    $module_handler = \Drupal::service('module_handler');
+
+    // Exclude Social Sharing block form event invite pages.
+    if ($module_handler->moduleExists('social_group_invite')) {
+      $excluded_routes[] = 'ginvite.invitation.bulk';
+      $excluded_routes[] = 'ginvite.invitation.bulk.confirm';
+    }
+
+    // Exclude Social Sharing block form group invite pages.
+    if ($module_handler->moduleExists('social_event_invite')) {
+      $excluded_routes[] = 'social_event_invite.invite_email';
+      $excluded_routes[] = 'social_event_invite.invite_user';
+      $excluded_routes[] = 'social_event_invite.confirm_invite';
+    }
+
     if (in_array($route_name, $excluded_routes)) {
       return AccessResult::forbidden();
     }
