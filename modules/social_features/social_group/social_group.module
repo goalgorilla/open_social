@@ -2115,13 +2115,21 @@ function social_group_preprocess_field(&$variables) {
         if (!$entity->getMember(\Drupal::currentUser())) {
           switch ($formatter) {
             case 'address_plain':
-              $variables['items'][0]['content']['#address_line1'] = NULL;
-              $variables['items'][0]['content']['#postal_code'] = NULL;
+              if (isset($variables['items'][0]['content']['#address_line1'])) {
+                $variables['items'][0]['content']['#address_line1'] = NULL;
+              }
+              if (isset($variables['items'][0]['content']['#postal_code'])) {
+                $variables['items'][0]['content']['#postal_code'] = NULL;
+              }
               break;
 
             case 'address_default':
-              $variables['items'][0]['content']['address_line1']['#value'] = '';
-              $variables['items'][0]['content']['postal_code']['#value'] = '';
+              if (isset($variables['items'][0]['content']['address_line1']['#value'])) {
+                $variables['items'][0]['content']['address_line1']['#value'] = '';
+              }
+              if (isset($variables['items'][0]['content']['postal_code']['#value'])) {
+                $variables['items'][0]['content']['postal_code']['#value'] = '';
+              }
               break;
           }
         }
