@@ -1517,7 +1517,7 @@ function social_event_update_8808() {
     $settings = Yaml::parse(file_get_contents($config_file));
     if (is_array($settings)) {
       $config = \Drupal::configFactory()
-        ->getEditable('field.storage.node.field_enroll_method');
+        ->getEditable('views.view.event_manage_enrollment_requests');
       $config->setData($settings)->save(TRUE);
     }
   }
@@ -1536,7 +1536,7 @@ function social_event_update_8809() {
     $settings = Yaml::parse(file_get_contents($config_file));
     if (is_array($settings)) {
       $config = \Drupal::configFactory()
-        ->getEditable('views.view.event_manage_enrollment_requests');
+        ->getEditable('field.storage.node.field_enroll_method');
       $config->setData($settings)->save(TRUE);
     }
   }
