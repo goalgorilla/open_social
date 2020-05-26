@@ -240,28 +240,33 @@ function social_profile_fields_entity_bundle_field_info_alter(&$fields, EntityTy
 
     // Change address fields override settings.
     if (isset($fields['field_profile_address'])) {
-      $settings = $fields['field_profile_address']->getSetting('field_overrides');
+      $field_profile_address = $fields['field_profile_address'];
 
-      if ($config->get('profile_address_field_city') == FALSE) {
-        $settings['locality'] = [
-          'override' => 'hidden',
-        ];
-      }
-      else {
-        unset($settings['locality']);
-      }
+      if ($setting = $field_profile_address->getSetting('fields')) {
+        $setting['locality'] = !$config->get('profile_address_field_city') ? '0' : 'locality';
+        $setting['addressLine1'] = !$config->get('profile_address_field_address') ? '0' : 'addressLine1';
 
-      if ($config->get('profile_address_field_address') == FALSE) {
-        $settings['addressLine1'] = [
-          'override' => 'hidden',
-        ];
+        // Update the settings of address field.
+        $fields['field_profile_address']->setSetting('fields', $setting);
       }
-      else {
-        unset($settings['addressLine1']);
-      }
+      elseif ($setting = $field_profile_address->getSetting('field_overrides')) {
+        if (!$config->get('profile_address_field_city')) {
+          $setting['locality'] = ['override' => 'hidden'];
+        }
+        else {
+          unset($setting['locality']);
+        }
 
-      // Update the settings of address field.
-      $fields['field_profile_address']->setSetting('field_overrides', $settings);
+        if (!$config->get('profile_address_field_address')) {
+          $setting['addressLine1'] = ['override' => 'hidden'];
+        }
+        else {
+          unset($setting['addressLine1']);
+        }
+
+        // Update the settings of address field.
+        $fields['field_profile_address']->setSetting('field_overrides', $setting);
+      }
     }
   }
 }
