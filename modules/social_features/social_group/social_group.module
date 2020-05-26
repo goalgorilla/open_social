@@ -1322,16 +1322,6 @@ function social_group_block_access(Block $block, $operation, AccountInterface $a
     return AccessResult::neutral();
   }
 
-  // Check access for AN and LU, if only one group type is available
-  // we can remove the filter block.
-  if ($block->getPluginId() == 'views_exposed_filter_block:newest_groups-page_all_groups' && $operation == 'view') {
-    $user_grouptypes = _social_group_get_current_group_types($account);
-
-    if ($user_grouptypes < 2) {
-      return AccessResult::forbidden();
-    }
-  }
-
   $group = _social_group_get_current_group();
   $user = Drupal::currentUser();
   // Check if there is a group set and if its an closed group.
