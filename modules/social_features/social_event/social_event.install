@@ -1505,18 +1505,38 @@ function social_event_update_8807() {
 }
 
 /**
- * Update the enrollment method text of an event on event add form.
+ * Add new field for rendered profile entity so we can sort it.
  *
  * Load in a config file from an specific update hook that will never change.
  * Update helper did not update all fields correctly.
  */
 function social_event_update_8808() {
   $config_file = drupal_get_path('module', 'social_event') . '/config/update/social_event_update_8808.yml';
+
   if (is_file($config_file)) {
     $settings = Yaml::parse(file_get_contents($config_file));
     if (is_array($settings)) {
       $config = \Drupal::configFactory()
         ->getEditable('field.storage.node.field_enroll_method');
+      $config->setData($settings)->save(TRUE);
+    }
+  }
+}
+
+/**
+ * Update the enrollment method text of an event on event add form.
+ *
+ * Load in a config file from an specific update hook that will never change.
+ * Update helper did not update all fields correctly.
+ */
+function social_event_update_8809() {
+  $config_file = drupal_get_path('module', 'social_event') . '/config/update/social_event_update_8809.yml';
+
+  if (is_file($config_file)) {
+    $settings = Yaml::parse(file_get_contents($config_file));
+    if (is_array($settings)) {
+      $config = \Drupal::configFactory()
+        ->getEditable('views.view.event_manage_enrollment_requests');
       $config->setData($settings)->save(TRUE);
     }
   }
