@@ -303,6 +303,21 @@ blockquote {
       }
     }
 
+    li > ul > li.expanded {
+      > .dropdown-menu {
+        @include for-tablet-landscape-down {
+          background-color: $navbar-default-link-active-bg;
+
+          > li {
+            &:focus,
+            &:hover,
+            &.active {
+              background: $navbar-default-bg;
+            }
+          }
+        }
+      }
+    }
   }
 }
 

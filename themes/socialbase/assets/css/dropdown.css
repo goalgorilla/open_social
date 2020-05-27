@@ -4,10 +4,10 @@
   height: 0;
   margin-left: 2px;
   vertical-align: middle;
-  border-top: 4px dashed;
-  border-top: 4px solid \9 ;
-  border-right: 4px solid transparent;
-  border-left: 4px solid transparent;
+  border-top: 5px dashed;
+  border-top: 5px solid \9 ;
+  border-right: 5px solid transparent;
+  border-left: 5px solid transparent;
 }
 
 .dropup,
@@ -26,7 +26,7 @@
   z-index: 1000;
   display: none;
   float: left;
-  min-width: 275px;
+  min-width: 185px;
   max-width: 500px;
   padding: 5px 0;
   margin: 2px 0 0;
@@ -34,7 +34,8 @@
   font-size: 0.875rem;
   text-align: left;
   background-color: #fff;
-  box-shadow: 0 0 6px rgba(0, 0, 0, 0.16), 0 6px 12px rgba(0, 0, 0, 0.32);
+  -webkit-box-shadow: 0 0 6px rgba(0, 0, 0, 0.16), 0 6px 12px rgba(0, 0, 0, 0.32);
+          box-shadow: 0 0 6px rgba(0, 0, 0, 0.16), 0 6px 12px rgba(0, 0, 0, 0.32);
   background-clip: padding-box;
 }
 
@@ -154,7 +155,8 @@
 }
 
 .dropdown-menu .media-left {
-  flex-shrink: 0;
+  -ms-flex-negative: 0;
+      flex-shrink: 0;
 }
 
 .dropdown-menu .media-left img {
