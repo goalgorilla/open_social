@@ -12,6 +12,7 @@ use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\profile\Entity\ProfileInterface;
 use Drupal\profile\Entity\ProfileType;
 
 /**
@@ -266,6 +267,38 @@ function social_profile_fields_entity_bundle_field_info_alter(&$fields, EntityTy
 
         // Update the settings of address field.
         $fields['field_profile_address']->setSetting('field_overrides', $setting);
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_preprocess_field().
+ */
+function social_profile_fields_preprocess_field(&$variables) {
+  $formatter = $variables['element']['#formatter'];
+  if (in_array($formatter, ['address_plain', 'address_default'])) {
+    $entity = $variables['element']['#object'];
+    if ($entity && $entity instanceof ProfileInterface && $entity->bundle() === 'profile') {
+      $config = \Drupal::config('social_profile_fields.settings');
+      switch ($formatter) {
+        case 'address_plain':
+          if (isset($variables['items'][0]['content']['#locality']) && !$config->get('profile_address_field_city')) {
+            $variables['items'][0]['content']['#locality'] = NULL;
+          }
+          if (isset($variables['items'][0]['content']['#address_line1']) && !$config->get('profile_address_field_address')) {
+            $variables['items'][0]['content']['#address_line1'] = NULL;
+          }
+          break;
+
+        case 'address_default':
+          if (isset($variables['items'][0]['content']['locality']['#value']) && !$config->get('profile_address_field_city')) {
+            $variables['items'][0]['content']['locality']['#value'] = '';
+          }
+          if (isset($variables['items'][0]['content']['address_line1']['#value']) && !$config->get('profile_address_field_address')) {
+            $variables['items'][0]['content']['address_line1']['#value'] = '';
+          }
+          break;
       }
     }
   }
