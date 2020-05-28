@@ -4,15 +4,27 @@
   height: 0;
   margin-left: 2px;
   vertical-align: middle;
-  border-top: 4px dashed;
-  border-top: 4px solid \9 ;
-  border-right: 4px solid transparent;
-  border-left: 4px solid transparent;
+  border-top: 5px dashed;
+  border-top: 5px solid \9 ;
+  border-right: 5px solid transparent;
+  border-left: 5px solid transparent;
 }
 
 .dropup,
 .dropdown {
   position: relative;
+}
+
+.dropup.has-alert.has-alert--desktop > a:before,
+.dropdown.has-alert.has-alert--desktop > a:before {
+  content: '';
+  position: absolute;
+  top: 11px;
+  right: 7px;
+  width: 12px;
+  height: 12px;
+  background-color: #777777;
+  border-radius: 50%;
 }
 
 .dropdown-toggle:focus {
@@ -26,7 +38,7 @@
   z-index: 1000;
   display: none;
   float: left;
-  min-width: 275px;
+  min-width: 185px;
   max-width: 500px;
   padding: 5px 0;
   margin: 2px 0 0;
@@ -34,7 +46,8 @@
   font-size: 0.875rem;
   text-align: left;
   background-color: #fff;
-  box-shadow: 0 0 6px rgba(0, 0, 0, 0.16), 0 6px 12px rgba(0, 0, 0, 0.32);
+  -webkit-box-shadow: 0 0 6px rgba(0, 0, 0, 0.16), 0 6px 12px rgba(0, 0, 0, 0.32);
+          box-shadow: 0 0 6px rgba(0, 0, 0, 0.16), 0 6px 12px rgba(0, 0, 0, 0.32);
   background-clip: padding-box;
 }
 
@@ -154,7 +167,8 @@
 }
 
 .dropdown-menu .media-left {
-  flex-shrink: 0;
+  -ms-flex-negative: 0;
+      flex-shrink: 0;
 }
 
 .dropdown-menu .media-left img {
@@ -227,7 +241,10 @@ html:not(.js) .dropdown .dropdown-toggle {
 .dropdown .caret,
 .enroll-action-form .caret,
 .hero-footer__cta .caret {
+  -webkit-transition: -webkit-transform 0.1s;
+  transition: -webkit-transform 0.1s;
   transition: transform 0.1s;
+  transition: transform 0.1s, -webkit-transform 0.1s;
 }
 
 .dropdown.open .caret,
@@ -236,17 +253,22 @@ html:not(.js) .dropdown .dropdown-toggle {
 .enroll-action-form .open .caret,
 .hero-footer__cta.open .caret,
 .hero-footer__cta .open .caret {
-  transform: rotate(180deg);
+  -webkit-transform: rotate(180deg);
+          transform: rotate(180deg);
 }
 
 .social-gtranslate-list--desktop > a:after {
+  -webkit-transition: -webkit-transform 0.1s;
+  transition: -webkit-transform 0.1s;
   transition: transform 0.1s;
+  transition: transform 0.1s, -webkit-transform 0.1s;
 }
 
 .social-gtranslate-list--desktop.open > a:after {
   margin-top: -.4rem;
   right: auto;
-  transform: rotate(180deg);
+  -webkit-transform: rotate(180deg);
+          transform: rotate(180deg);
 }
 
 @media (min-width: 600px) {
