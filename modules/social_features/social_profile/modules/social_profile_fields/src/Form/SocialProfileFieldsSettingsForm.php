@@ -208,14 +208,6 @@ class SocialProfileFieldsSettingsForm extends ConfigFormBase implements Containe
             '#type' => 'checkbox',
             '#title' => $this->t('Address'),
             '#default_value' => is_null($config->get('profile_address_field_address')) ? TRUE : $config->get('profile_address_field_address'),
-            '#states' => [
-              'disabled' => [
-                ':input[name="profile_address_field_city"]' => ['checked' => FALSE],
-              ],
-              'unchecked' => [
-                ':input[name="profile_address_field_city"]' => ['checked' => FALSE],
-              ],
-            ],
           ];
         }
       }
