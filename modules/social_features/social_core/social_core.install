@@ -1229,3 +1229,18 @@ function social_core_update_8811() {
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
 }
+
+/**
+ * Install the Gin theme and make it as admin, Install Gin Toolbar and Coffee
+ * modules.
+ */
+function social_core_update_8812(&$sandbox) {
+  // Install Gin Admin Theme.
+  \Drupal::service('theme_installer')->install(['gin']);
+  // Set Gin Admin Theme as admin theme.
+  \Drupal::configFactory()->getEditable('system.theme')
+    ->set('admin', 'gin')
+    ->save();
+  // Install Gin Toolbar and Coffee modules.
+  \Drupal::service('module_installer')->install(['gin_toolbar', 'coffee']);
+}
