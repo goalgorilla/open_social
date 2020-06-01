@@ -211,8 +211,16 @@
   z-index: $zindex-navbar-fixed;
 
   // Media query from Gin theme.
-  @media (min-width: 976px) {
-    left: 88px;
+  .toolbar-fixed[data-toolbar-menu='open'] & {
+    @media (min-width: 976px) {
+      left: 240px;
+    }
+  }
+
+  .user-logged-in & {
+    @media (min-width: 976px) {
+      left: 88px;
+    }
   }
 
   .navbar-user .dropdown-menu {
