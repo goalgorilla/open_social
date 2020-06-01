@@ -7,6 +7,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\social_core\Entity\Element\EntityAutocomplete;
 use Drupal\Component\Utility\Tags;
 use Drupal\node\NodeInterface;
+use Drupal\social_event\EventEnrollmentInterface;
 
 /**
  * Provides an Enroll member autocomplete form element.
@@ -27,15 +28,13 @@ class SocialEnrollmentAutocomplete extends EntityAutocomplete {
     // Load the current Event enrollments so we can check duplicates.
     $storage = \Drupal::entityTypeManager()->getStorage('event_enrollment');
 
-    if (empty($nid)) {
-      $node = \Drupal::routeMatch()->getParameter('node');
-      if ($node instanceof NodeInterface) {
-        // You can get nid and anything else you need from the node object.
-        $nid = $node->id();
-      }
-      elseif (!is_object($node)) {
-        $nid = $node;
-      }
+    $node = \Drupal::routeMatch()->getParameter('node');
+    if ($node instanceof NodeInterface) {
+      // You can get nid and anything else you need from the node object.
+      $nid = $node->id();
+    }
+    elseif (!is_object($node)) {
+      $nid = $node;
     }
 
     // Grab all the input values so we can get the ID's out of them.
@@ -64,6 +63,24 @@ class SocialEnrollmentAutocomplete extends EntityAutocomplete {
 
         $enrollments = $storage->loadByProperties(['field_event' => $nid, 'field_account' => $match]);
 
+        // If the social_event_invite module is enabled, we want to check if
+        // an user is already invited, but not really enrolled yet.
+        if (\Drupal::moduleHandler()->moduleExists('social_event_invite')) {
+          $invited_or_joined = TRUE;
+          // So if this user is already invited or joined we keep them.
+          $status_checks = [
+            EventEnrollmentInterface::REQUEST_OR_INVITE_DECLINED,
+            EventEnrollmentInterface::INVITE_INVALID_OR_EXPIRED,
+          ];
+          /** @var \Drupal\social_event\Entity\EventEnrollment $enrollment */
+          foreach ($enrollments as $id => $enrollment) {
+            if (in_array((int) $enrollment->field_request_or_invite_status->value, $status_checks)) {
+              $invited_or_joined = FALSE;
+              unset($enrollments[$id]);
+            }
+          }
+        }
+
         // User is already a member, add it to an array for the Form element
         // to render an error after all checks are gone.
         if (!empty($enrollments)) {
@@ -88,6 +105,14 @@ class SocialEnrollmentAutocomplete extends EntityAutocomplete {
         "@usernames are already enrolled, you can't add them again",
         ['@usernames' => $usernames]
       );
+
+      if (\Drupal::moduleHandler()->moduleExists('social_event_invite') && $invited_or_joined === TRUE) {
+        $message = \Drupal::translation()->formatPlural(count($duplicated_values),
+          "@usernames is already invited or enrolled, you can't invite them again",
+          "@usernames are already invited or enrolled, you can't invite them again",
+          ['@usernames' => $usernames]
+        );
+      }
 
       // We have to kick in a form set error here, or else the
       // GroupContentCardinalityValidator will kick in and show a faulty

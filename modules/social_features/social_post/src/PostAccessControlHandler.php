@@ -219,8 +219,15 @@ class PostAccessControlHandler extends EntityAccessControlHandler implements Ent
         return AccessResult::forbidden();
       }
     }
+
     // Fallback.
-    return AccessResult::allowedIfHasPermission($account, 'add post entities');
+    $access = AccessResult::allowedIfHasPermission($account, 'add post entities');
+
+    if ($entity_bundle !== NULL) {
+      return $access->orIf(AccessResult::allowedIfHasPermission($account, "add $entity_bundle post entities"));
+    }
+
+    return $access;
   }
 
 }

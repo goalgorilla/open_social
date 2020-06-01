@@ -65,8 +65,15 @@ function social_follow_content_event_enrollment_follow(EntityInterface $entity) 
       return;
     }
 
+    $user_id = $account->id();
+
+    // If the user got enrolled by someone else, then use the target_id as user.
+    if ($account->id() !== $entity->field_account->target_id) {
+      $user_id = $entity->field_account->target_id;
+    }
+
     $properties = [
-      'uid' => $account->id(),
+      'uid' => $user_id,
       'entity_type' => 'node',
       'entity_id' => $entity->field_event->target_id,
       'flag_id' => 'follow_content',
@@ -80,8 +87,11 @@ function social_follow_content_event_enrollment_follow(EntityInterface $entity) 
       $flagging = Flagging::create($properties);
       if ($flagging) {
         $flagging->save();
-        $message = t('You have successfully enrolled to this event. Also you are now following the event, which means you will receive notifications when a new comment is placed.');
-        drupal_set_message($message);
+        // No need to set a message if the user got enrolled by someone else.
+        if ($account->id() === $entity->field_account->target_id) {
+          $message = t('You have successfully enrolled to this event. Also you are now following the event, which means you will receive notifications when a new comment is placed.');
+          drupal_set_message($message);
+        }
       }
     }
   }
