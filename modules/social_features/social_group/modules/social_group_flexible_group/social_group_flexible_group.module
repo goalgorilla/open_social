@@ -89,7 +89,7 @@ function social_group_flexible_group_form_alter(&$form, FormStateInterface $form
       !empty($form['type']['#options']) &&
       $form['type']['#type'] !== 'hidden') {
       $form['field_group_allowed_join_method']['#states'] = [
-        'visible' =>  [
+        'visible' => [
           ':input[name="type"]' => ['value' => 'flexible_group'],
         ],
       ];
