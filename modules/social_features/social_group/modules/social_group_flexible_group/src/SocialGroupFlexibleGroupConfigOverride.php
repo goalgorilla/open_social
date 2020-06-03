@@ -448,7 +448,7 @@ class SocialGroupFlexibleGroupConfigOverride implements ConfigFactoryOverrideInt
             'label' => 'Allowed join method',
             'datasource_id' => 'entity:group',
             'property_path' => 'field_group_allowed_join_method',
-            'type' => 'text',
+            'type' => 'string',
             'dependencies' => [
               'config' => [
                 'field.storage.group.field_group_allowed_join_method' => 'field.storage.group.field_group_allowed_join_method',

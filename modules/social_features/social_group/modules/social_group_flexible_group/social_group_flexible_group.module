@@ -69,6 +69,19 @@ function social_group_flexible_group_form_alter(&$form, FormStateInterface $form
     $form['#id'] === 'views-exposed-form-search-groups-page-no-value' ||
     $form['#id'] === 'views-exposed-form-search-groups-page') {
 
+    // Update filter values so it matches the join methods in the popover.
+    if (!empty($form['field_group_allowed_join_method'])) {
+      if (array_key_exists('added', $form['field_group_allowed_join_method']['#options'])) {
+        $form['field_group_allowed_join_method']['#options']['added'] = t('Invite only');
+      }
+      if (array_key_exists('direct', $form['field_group_allowed_join_method']['#options'])) {
+        $form['field_group_allowed_join_method']['#options']['direct'] = t('Open to join');
+      }
+      if (array_key_exists('request', $form['field_group_allowed_join_method']['#options'])) {
+        $form['field_group_allowed_join_method']['#options']['request'] = t('Request to join');
+      }
+    }
+
     // Add states so this is only available when flexible groups is checked.
     // Could be hidden when only flexible groups is enabled, so check that.
     // @TODO remove this once everything is migrated to flexible groups.
