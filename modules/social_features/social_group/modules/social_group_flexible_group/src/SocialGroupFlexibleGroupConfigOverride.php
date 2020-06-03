@@ -378,27 +378,8 @@ class SocialGroupFlexibleGroupConfigOverride implements ConfigFactoryOverrideInt
       ];
     }
 
-    // Add join methods as option to search api groups.
-    if (in_array('search_api.index.social_groups', $names)) {
-      $overrides[$config_name] = [
-        'field_settings' => [
-          'field_group_allowed_join_method' => [
-            'label' => 'Allowed join method',
-            'datasource_id' => 'entity:group',
-            'property_path' => 'field_group_allowed_join_method',
-            'type' => 'string',
-            'dependencies' => [
-              'config' => [
-                'field.storage.group.field_group_allowed_join_method' => 'field.storage.group.field_group_allowed_join_method',
-              ],
-            ],
-          ],
-        ],
-      ];
-    }
-
     // Add join options to the all-groups and search groups views.
-    $filter_join_methods = [
+    $filter_overview_join_methods = [
       'id' => 'field_group_allowed_join_method_value',
       'table' => 'group__field_group_allowed_join_method',
       'field' => 'field_group_allowed_join_method_value',
@@ -415,7 +396,7 @@ class SocialGroupFlexibleGroupConfigOverride implements ConfigFactoryOverrideInt
         'description' => '',
         'use_operator' => FALSE,
         'operator' => 'field_group_allowed_join_method_value_op',
-        'identifier' => 'field_group_allowed_join_method_value',
+        'identifier' => 'field_group_allowed_join_method',
         'required' => FALSE,
         'remember' => FALSE,
         'multiple' => FALSE,
@@ -427,7 +408,7 @@ class SocialGroupFlexibleGroupConfigOverride implements ConfigFactoryOverrideInt
       'group_info' => [
         'label' => '',
         'description' => '',
-        'identifier' => 'field_group_allowed_join_method_value',
+        'identifier' => 'field_group_allowed_join_method',
         'optional' => TRUE,
         'widget' => 'select',
         'multiple' => FALSE,
@@ -444,17 +425,83 @@ class SocialGroupFlexibleGroupConfigOverride implements ConfigFactoryOverrideInt
         'default',
         'page_all_groups',
       ],
-      'views.view.search_groups' => [
-        'default',
-      ],
     ];
 
     foreach ($config_names_groups as $config_name_groups => $displays_groups) {
       if (in_array($config_name_groups, $names)) {
         foreach ($displays_groups as $display_group) {
-          $overrides[$config_name_groups]['display'][$display_group]['display_options']['filters']['field_group_allowed_join_method_value'] = $filter_join_methods;
+          $overrides[$config_name_groups]['display'][$display_group]['display_options']['filters']['field_group_allowed_join_method_value'] = $filter_overview_join_methods;
         }
       }
+    }
+
+    // Add join methods as option to search api groups.
+    if (in_array('search_api.index.social_groups', $names)) {
+      $overrides['search_api.index.social_groups'] = [
+        'dependencies' => [
+          'config' => [
+            'field.storage.group.field_group_allowed_join_method' => 'field.storage.group.field_group_allowed_join_method',
+          ],
+        ],
+        'field_settings' => [
+          'field_group_allowed_join_method' => [
+            'label' => 'Allowed join method',
+            'datasource_id' => 'entity:group',
+            'property_path' => 'field_group_allowed_join_method',
+            'type' => 'text',
+            'dependencies' => [
+              'config' => [
+                'field.storage.group.field_group_allowed_join_method' => 'field.storage.group.field_group_allowed_join_method',
+              ],
+            ],
+          ],
+        ],
+      ];
+    }
+
+    // Add search api specific filter for join method.
+    $filter_sapi_join_methods = [
+      'id' => 'field_group_allowed_join_method',
+      'table' => 'search_api_index_social_groups',
+      'field' => 'field_group_allowed_join_method',
+      'relationship' => 'none',
+      'group_type' => 'group',
+      'admin_label' => '',
+      'operator' => 'or',
+      'value' => [],
+      'group' => 1,
+      'exposed' => TRUE,
+      'expose' => [
+        'operator_id' => 'field_group_allowed_join_method_op',
+        'label' => 'Join method',
+        'description' => '',
+        'use_operator' => FALSE,
+        'operator' => 'field_group_allowed_join_method_op',
+        'identifier' => 'field_group_allowed_join_method',
+        'required' => FALSE,
+        'remember' => FALSE,
+        'multiple' => FALSE,
+        'remember_roles' => [
+          'authenticated' => 'authenticated',
+        ],
+      ],
+      'is_grouped' => FALSE,
+      'group_info' => [
+        'label' => '',
+        'description' => '',
+        'optional' => TRUE,
+        'widget' => 'select',
+        'multiple' => FALSE,
+        'remember' => FALSE,
+        'default_group' => 'All',
+        'default_group_multiple' => [],
+        'group_items' => [],
+      ],
+      'plugin_id' => 'search_api_options',
+    ];
+
+    if (in_array('views.view.search_groups', $names)) {
+      $overrides['views.view.search_groups']['display']['default']['display_options']['filters']['field_group_allowed_join_method'] = $filter_sapi_join_methods;
     }
 
     return $overrides;
