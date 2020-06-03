@@ -61,6 +61,30 @@ function social_group_flexible_group_form_group_flexible_group_edit_form_alter(&
 }
 
 /**
+ * Implements hook_form_alter().
+ */
+function social_group_flexible_group_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  // Exposed Filter block on the all-groups overview and search.
+  if ($form['#id'] === 'views-exposed-form-newest-groups-page-all-groups' ||
+    $form['#id'] === 'views-exposed-form-search-groups-page-no-value' ||
+    $form['#id'] === 'views-exposed-form-search-groups-page') {
+
+    // Add states so this is only available when flexible groups is checked.
+    // Could be hidden when only flexible groups is enabled, so check that.
+    // @TODO remove this once everything is migrated to flexible groups.
+    if (!empty($form['field_group_allowed_join_method']) &&
+      !empty($form['type']['#options']) &&
+      $form['type']['#type'] !== 'hidden') {
+      $form['field_group_allowed_join_method']['#states'] = [
+        'visible' =>  [
+          ':input[name="type"]' => ['value' => 'flexible_group'],
+        ],
+      ];
+    }
+  }
+}
+
+/**
  * Custom form submit handler for editing a flexible group.
  *
  * @param array $form
