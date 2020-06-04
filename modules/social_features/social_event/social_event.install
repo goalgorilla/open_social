@@ -9,6 +9,7 @@ use Drupal\field\Entity\FieldConfig;
 use Drupal\field\FieldConfigInterface;
 use Drupal\menu_link_content\Entity\MenuLinkContent;
 use Drupal\user\Entity\Role;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Implements hook_install().
@@ -332,15 +333,15 @@ function social_event_update_8805(&$sandbox) {
           'allowed_values' => [
             0 => [
               'value' => 1,
-              'label' => 'Open for all - users can enroll in this event without approval',
+              'label' => 'Open to enroll - users can enroll for this event without approval',
             ],
             1 => [
               'value' => 2,
-              'label' => 'Open to requests - user requests to enroll need to be approved by event organisers',
+              'label' => 'Request to enroll - users can "request to enroll" for this event which event organisers approve/decline',
             ],
             2 => [
               'value' => 3,
-              'label' => 'Invite-only - users can only be added or invited by event organisers',
+              'label' => 'Invite-only - users can only enroll for this event if they are added/invited by event organisers',
             ],
           ],
           'allowed_values_function' => '',
@@ -1499,6 +1500,44 @@ function social_event_update_8807() {
   foreach ($roles as $role) {
     if ($role->id() === 'contentmanager' || $role->id() === 'sitemanager') {
       user_role_grant_permissions($role->id(), ['manage event enrollment requests']);
+    }
+  }
+}
+
+/**
+ * Add new field for rendered profile entity so we can sort it.
+ *
+ * Load in a config file from an specific update hook that will never change.
+ * Update helper did not update all fields correctly.
+ */
+function social_event_update_8808() {
+  $config_file = drupal_get_path('module', 'social_event') . '/config/update/social_event_update_8808.yml';
+
+  if (is_file($config_file)) {
+    $settings = Yaml::parse(file_get_contents($config_file));
+    if (is_array($settings)) {
+      $config = \Drupal::configFactory()
+        ->getEditable('views.view.event_manage_enrollment_requests');
+      $config->setData($settings)->save(TRUE);
+    }
+  }
+}
+
+/**
+ * Update the enrollment method text of an event on event add form.
+ *
+ * Load in a config file from an specific update hook that will never change.
+ * Update helper did not update all fields correctly.
+ */
+function social_event_update_8809() {
+  $config_file = drupal_get_path('module', 'social_event') . '/config/update/social_event_update_8809.yml';
+
+  if (is_file($config_file)) {
+    $settings = Yaml::parse(file_get_contents($config_file));
+    if (is_array($settings)) {
+      $config = \Drupal::configFactory()
+        ->getEditable('field.storage.node.field_enroll_method');
+      $config->setData($settings)->save(TRUE);
     }
   }
 }
