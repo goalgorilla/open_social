@@ -114,7 +114,7 @@ class UserMailQueueProcessor extends QueueWorkerBase implements ContainerFactory
           /** @var \Drupal\user\UserInterface $user */
           foreach ($users as $user) {
             // Attempt sending mail.
-            if ($user->isAuthenticated() || $user->getEmail()) {
+            if ($user->getEmail()) {
               $this->sendMail($user->getEmail(), $user->language()->getId(), $queue_storage);
             }
           }
