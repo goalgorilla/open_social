@@ -30,16 +30,27 @@ class EventInviteEnrollActionForm extends EnrollActionForm {
     $nid = $this->routeMatch->getRawParameter('node');
     $current_user = $this->currentUser;
     $uid = $current_user->id();
+    $isNodeOwner = ($node->getOwnerId() === $uid);
 
     if (!$current_user->isAnonymous()) {
       $conditions = [
         'field_account' => $uid,
         'field_event' => $nid,
       ];
-
       $enrollments = $this->entityStorage->loadByProperties($conditions);
-      if ($enrollment = array_pop($enrollments)) {
+
+      // If the event is invite only and you have not been invited, return.
+      // Unless you are the node owner or organizer.
+      if (empty($enrollments)) {
+        if ((int) $node->field_enroll_method->value === EventEnrollmentInterface::ENROLL_METHOD_INVITE
+          && !$isNodeOwner
+          && social_event_manager_or_organizer() === FALSE) {
+          return [];
+        }
+      }
+      elseif ($enrollment = array_pop($enrollments)) {
         $enroll_request_status = $enrollment->field_request_or_invite_status->value;
+
         // If user got invited perform actions.
         if ($enroll_request_status == '4') {
 
