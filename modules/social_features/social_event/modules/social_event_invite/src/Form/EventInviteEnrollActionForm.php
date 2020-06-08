@@ -30,7 +30,6 @@ class EventInviteEnrollActionForm extends EnrollActionForm {
     $nid = $this->routeMatch->getRawParameter('node');
     $current_user = $this->currentUser;
     $uid = $current_user->id();
-    $isNodeOwner = ($node->getOwnerId() === $uid);
 
     if (!$current_user->isAnonymous()) {
       $conditions = [
@@ -43,8 +42,7 @@ class EventInviteEnrollActionForm extends EnrollActionForm {
       // Unless you are the node owner or organizer.
       if (empty($enrollments)) {
         if ((int) $node->field_enroll_method->value === EventEnrollmentInterface::ENROLL_METHOD_INVITE
-          && !$isNodeOwner
-          && social_event_manager_or_organizer() === FALSE) {
+          && social_event_owner_or_organizer() === FALSE) {
           return [];
         }
       }
