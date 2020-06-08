@@ -34,6 +34,8 @@ new TranslatableMarkup("Set wether the tour is enabled or not.");
 new TranslatableMarkup("Send mail");
 new TranslatableMarkup("Can not send e-mail for %entity");
 new TranslatableMarkup("Sent email to %recipient");
+new TranslatableMarkup("Due to privacy concerns, we can't disclose the existence of registered email addresses. Please make sure the email address is entered correctly and try again.");
+new TranslatableMarkup('The entered username already exists or has an incorrect format. Please try again.');
 
 // Changed in version 7.2.
 new TranslatableMarkup('Select / unselect all @count results in this view');
