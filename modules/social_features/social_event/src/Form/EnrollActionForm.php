@@ -436,6 +436,11 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
           && (int) $enrollment->field_request_or_invite_status->value === EventEnrollmentInterface::INVITE_ACCEPTED_AND_JOINED) {
           // Mark this user his enrollment as declined.
           $enrollment->field_request_or_invite_status->value = EventEnrollmentInterface::REQUEST_OR_INVITE_DECLINED;
+          // If the user is cancelling, un-enroll.
+          $current_enrollment_status = $enrollment->field_enrollment_status->value;
+          if ($current_enrollment_status === '1') {
+            $enrollment->field_enrollment_status->value = '0';
+          }
           $enrollment->save();
         }
         // Else, the user simply wants to cancel his enrollment, so at
