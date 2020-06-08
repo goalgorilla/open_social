@@ -40,6 +40,8 @@ new TranslatableMarkup('Invite-only - users can only enroll for this event if th
 new TranslatableMarkup('Request to join - users can "request to join" this group which group managers approve/decline');
 new TranslatableMarkup('Invite-only - users can only join this group if they are added/invited by group managers');
 new TranslatableMarkup('Open to join - users can join this group without approval');
+new TranslatableMarkup("Due to privacy concerns, we can't disclose the existence of registered email addresses. Please make sure the email address is entered correctly and try again.");
+new TranslatableMarkup('The entered username already exists or has an incorrect format. Please try again.');
 
 // Changed in version 7.2.
 new TranslatableMarkup('Select / unselect all @count results in this view');
