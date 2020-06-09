@@ -18,6 +18,7 @@ use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\group\Entity\Group;
 use Drupal\group\Plugin\GroupContentEnablerManager;
+use Drupal\node\NodeInterface;
 use Drupal\user\Entity\User;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -208,6 +209,7 @@ class SocialGroupSelectorWidget extends OptionsSelectWidget implements Container
   public static function validateGroupSelection(array $form, FormStateInterface $form_state) {
 
     $ajax_response = new AjaxResponse();
+    /** @var NodeInterface $entity */
     $entity = $form_state->getFormObject()->getEntity();
 
     $selected_visibility = $form_state->getValue('field_content_visibility');
@@ -232,81 +234,116 @@ class SocialGroupSelectorWidget extends OptionsSelectWidget implements Container
       $ajax_response->addCommand(new InvokeCommand('#edit-field-content-visibility-' . $default_visibility, 'prop', ['checked', 'checked']));
     }
 
-    // This functions as a 'reset' of the conditions
-    // because after every change, we need to re-check.
-    $ajax_response->addCommand(new InvokeCommand('#edit-field-content-visibility--wrapper', 'removeClass', ['hidden']));
-    $ajax_response->addCommand(new InvokeCommand('#single_visibility_title', 'addClass', ['hidden']));
-    $ajax_response->addCommand(new InvokeCommand('#single_visibility_message', 'addClass', ['hidden']));
-    $ajax_response->addCommand(new InvokeCommand('#group-selection-result', 'removeClass', ['hidden']));
+    // NOTE:
+    // The following if statement is temporarily and will be deprecated
+    // in the future when the visibility system in open social gets an
+    // overhaul. This should only be applicable for nodes of type event
+    // and not other nodes. The 'old' behavior can be found in the
+    // 'else' of this if statement
+    // @see issue TB-4585 for more information.
+    if ($entity !== NULL && $entity->getType() === 'event') {
+      // This functions as a 'reset' of the conditions
+      // because after every change, we need to re-check.
+      $ajax_response->addCommand(new InvokeCommand('#edit-field-content-visibility--wrapper', 'removeClass', ['hidden']));
+      $ajax_response->addCommand(new InvokeCommand('#single_visibility_title', 'addClass', ['hidden']));
+      $ajax_response->addCommand(new InvokeCommand('#single_visibility_message', 'addClass', ['hidden']));
+      $ajax_response->addCommand(new InvokeCommand('#group-selection-result', 'removeClass', ['hidden']));
 
-    // Get the available event visibility settings
-    // and prepare some variables that we check on
-    // in a later stage.
-    $available_visibility_options = \Drupal::configFactory()->get('social_event.settings')->get('available_visibility_options');
-    $count_available_options = 0;
-    $available_options = [];
-    foreach ($available_visibility_options as $option => $available) {
-      if ($available !== 0) {
-        $count_available_options++;
-        $available_options[] = $option;
-      }
-    }
-
-    foreach ($allowed_visibility_options as $visibility => $allowed) {
-      // Count the allowed options.
-      $count_allowed_options = count(array_keys($allowed_visibility_options, TRUE));
-
-      // By default we disable and uncheck the visibility.
-      $ajax_response->addCommand(new InvokeCommand('#edit-field-content-visibility-' . $visibility, 'prop', ['disabled', 'disabled']));
-
-      // If only this particular visibility is allowed.
-      if ($count_allowed_options === 1 && $allowed === TRUE && $count_available_options <= 3) {
-        $ajax_response->addCommand(new InvokeCommand('#edit-field-content-visibility-' . $visibility, 'removeAttr', ['disabled']));
-        $ajax_response->addCommand(new InvokeCommand('#edit-field-content-visibility-' . $visibility, 'prop', ['checked', 'checked']));
-        $ajax_response->addCommand(new InvokeCommand('#edit-field-content-visibility--wrapper', 'addClass', ['hidden']));
-        $ajax_response->addCommand(new InvokeCommand('#single_visibility_title', 'removeClass', ['hidden']));
-        $ajax_response->addCommand(new InvokeCommand('#single_visibility_message', 'removeClass', ['hidden']));
-        // If the pop-up message about the visibility change
-        // needs to be removed, add the class hidden to the
-        // #group-selection-result here.
-        $renderedMessageField = self::getVisibilityMessageElement($visibility);
-        $ajax_response->addCommand(new ReplaceCommand('#single_visibility_message', $renderedMessageField));
-      }
-
-      $ajax_response->addCommand(new InvokeCommand('#edit-field-content-visibility-' . $visibility, 'addClass', ['js--animate-enabled-form-control']));
-      if ($allowed === TRUE) {
-        $ajax_response->addCommand(new InvokeCommand('#edit-field-content-visibility-' . $visibility, 'removeAttr', ['disabled']));
-        if (empty($default_visibility) || $visibility === $default_visibility) {
-          $ajax_response->addCommand(new InvokeCommand('#edit-field-content-visibility-' . $visibility, 'prop', ['checked', 'checked']));
+      // Get the available event visibility settings
+      // and prepare some variables that we check on
+      // in a later stage.
+      $available_visibility_options = \Drupal::configFactory()->get('social_event.settings')->get('available_visibility_options');
+      $count_available_options = 0;
+      $available_options = [];
+      foreach ($available_visibility_options as $option => $available) {
+        if ($available !== 0) {
+          $count_available_options++;
+          $available_options[] = $option;
         }
       }
-      else {
-        if ($selected_visibility && $selected_visibility === $visibility) {
-          $ajax_response->addCommand(new InvokeCommand('#edit-field-content-visibility-' . $visibility, 'removeAttr', ['checked']));
-        }
+
+      foreach ($allowed_visibility_options as $visibility => $allowed) {
+        // Count the allowed options.
+        $count_allowed_options = count(array_keys($allowed_visibility_options, TRUE));
+
+        // By default we disable and uncheck the visibility.
         $ajax_response->addCommand(new InvokeCommand('#edit-field-content-visibility-' . $visibility, 'prop', ['disabled', 'disabled']));
-      }
 
-      // In this case the user switches the group back to
-      // "none" and the only allowed visibility is group.
-      if (!$group && $count_available_options < 3 && in_array($visibility, $available_options, TRUE)) {
-        // Hide the original options.
-        $ajax_response->addCommand(new InvokeCommand('#edit-field-content-visibility--wrapper', 'addClass', ['hidden']));
-        // Hide the info message.
-        $ajax_response->addCommand(new InvokeCommand('#group-selection-result', 'addClass', ['hidden']));
-        // Check group since it's the only option now.
-        $ajax_response->addCommand(new InvokeCommand('#edit-field-content-visibility-' . 'group', 'prop', ['checked', 'checked']));
-      }
+        // If only this particular visibility is allowed.
+        if ($count_allowed_options === 1 && $allowed === TRUE && $count_available_options <= 3) {
+          $ajax_response->addCommand(new InvokeCommand('#edit-field-content-visibility-' . $visibility, 'removeAttr', ['disabled']));
+          $ajax_response->addCommand(new InvokeCommand('#edit-field-content-visibility-' . $visibility, 'prop', ['checked', 'checked']));
+          $ajax_response->addCommand(new InvokeCommand('#edit-field-content-visibility--wrapper', 'addClass', ['hidden']));
+          $ajax_response->addCommand(new InvokeCommand('#single_visibility_title', 'removeClass', ['hidden']));
+          $ajax_response->addCommand(new InvokeCommand('#single_visibility_message', 'removeClass', ['hidden']));
+          // If the pop-up message about the visibility change
+          // needs to be removed, add the class hidden to the
+          // #group-selection-result here.
+          $renderedMessageField = self::getVisibilityMessageElement($visibility);
+          $ajax_response->addCommand(new ReplaceCommand('#single_visibility_message', $renderedMessageField));
+        }
 
-      $ajax_response->addCommand(new InvokeCommand('#edit-field-content-visibility-' . $visibility, 'change'));
+        $ajax_response->addCommand(new InvokeCommand('#edit-field-content-visibility-' . $visibility, 'addClass', ['js--animate-enabled-form-control']));
+        if ($allowed === TRUE) {
+          $ajax_response->addCommand(new InvokeCommand('#edit-field-content-visibility-' . $visibility, 'removeAttr', ['disabled']));
+          if (empty($default_visibility) || $visibility === $default_visibility) {
+            $ajax_response->addCommand(new InvokeCommand('#edit-field-content-visibility-' . $visibility, 'prop', ['checked', 'checked']));
+          }
+        } else {
+          if ($selected_visibility && $selected_visibility === $visibility) {
+            $ajax_response->addCommand(new InvokeCommand('#edit-field-content-visibility-' . $visibility, 'removeAttr', ['checked']));
+          }
+          $ajax_response->addCommand(new InvokeCommand('#edit-field-content-visibility-' . $visibility, 'prop', ['disabled', 'disabled']));
+        }
+
+        // In this case the user switches the group back to
+        // "none" and the only allowed visibility is group.
+        if (!$group && $count_available_options < 3 && in_array($visibility, $available_options, TRUE)) {
+          // Hide the original options.
+          $ajax_response->addCommand(new InvokeCommand('#edit-field-content-visibility--wrapper', 'addClass', ['hidden']));
+          // Hide the info message.
+          $ajax_response->addCommand(new InvokeCommand('#group-selection-result', 'addClass', ['hidden']));
+          // Check group since it's the only option now.
+          $ajax_response->addCommand(new InvokeCommand('#edit-field-content-visibility-' . 'group', 'prop', ['checked', 'checked']));
+        }
+
+        $ajax_response->addCommand(new InvokeCommand('#edit-field-content-visibility-' . $visibility, 'change'));
+      }
+      $text = t('Changing the group may have impact on the <strong>visibility settings</strong>.');
+
+      drupal_set_message($text, 'info');
+      $alert = ['#type' => 'status_messages'];
+      $ajax_response->addCommand(new HtmlCommand('#group-selection-result', $alert));
+
+      return $ajax_response;
     }
-    $text = t('Changing the group may have impact on the <strong>visibility settings</strong>.');
+    // The original behavior.
+    else {
+      foreach ($allowed_visibility_options as $visibility => $allowed) {
+        $ajax_response->addCommand(new InvokeCommand('#edit-field-content-visibility-' . $visibility, 'addClass', ['js--animate-enabled-form-control']));
+        if ($allowed === TRUE) {
+          $ajax_response->addCommand(new InvokeCommand('#edit-field-content-visibility-' . $visibility, 'removeAttr', ['disabled']));
+          if (empty($default_visibility) || $visibility === $default_visibility) {
+            $ajax_response->addCommand(new InvokeCommand('#edit-field-content-visibility-' . $visibility, 'prop', ['checked', 'checked']));
+          }
+        }
+        else {
+          if ($selected_visibility && $selected_visibility === $visibility) {
+            $ajax_response->addCommand(new InvokeCommand('#edit-field-content-visibility-' . $visibility, 'removeAttr', ['checked']));
+          }
+          $ajax_response->addCommand(new InvokeCommand('#edit-field-content-visibility-' . $visibility, 'prop', ['disabled', 'disabled']));
+        }
 
-    drupal_set_message($text, 'info');
-    $alert = ['#type' => 'status_messages'];
-    $ajax_response->addCommand(new HtmlCommand('#group-selection-result', $alert));
+        $ajax_response->addCommand(new InvokeCommand('#edit-field-content-visibility-' . $visibility, 'change'));
+      }
+      $text = t('Changing the group may have impact on the <strong>visibility settings</strong>.');
 
-    return $ajax_response;
+      drupal_set_message($text, 'info');
+      $alert = ['#type' => 'status_messages'];
+      $ajax_response->addCommand(new HtmlCommand('#group-selection-result', $alert));
+
+      return $ajax_response;
+    }
   }
 
   /**
