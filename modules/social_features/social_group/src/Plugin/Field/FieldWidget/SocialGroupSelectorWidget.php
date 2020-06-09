@@ -18,7 +18,6 @@ use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\group\Entity\Group;
 use Drupal\group\Plugin\GroupContentEnablerManager;
-use Drupal\node\NodeInterface;
 use Drupal\user\Entity\User;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -209,7 +208,7 @@ class SocialGroupSelectorWidget extends OptionsSelectWidget implements Container
   public static function validateGroupSelection(array $form, FormStateInterface $form_state) {
 
     $ajax_response = new AjaxResponse();
-    /** @var NodeInterface $entity */
+    /** @var \Drupal\node\NodeInterface $entity */
     $entity = $form_state->getFormObject()->getEntity();
 
     $selected_visibility = $form_state->getValue('field_content_visibility');
@@ -239,7 +238,7 @@ class SocialGroupSelectorWidget extends OptionsSelectWidget implements Container
     // in the future when the visibility system in open social gets an
     // overhaul. This should only be applicable for nodes of type event
     // and not other nodes. The 'old' behavior can be found in the
-    // 'else' of this if statement
+    // 'else' of this if statement.
     // @see issue TB-4585 for more information.
     if ($entity !== NULL && $entity->getType() === 'event') {
       // This functions as a 'reset' of the conditions
@@ -289,10 +288,12 @@ class SocialGroupSelectorWidget extends OptionsSelectWidget implements Container
           if (empty($default_visibility) || $visibility === $default_visibility) {
             $ajax_response->addCommand(new InvokeCommand('#edit-field-content-visibility-' . $visibility, 'prop', ['checked', 'checked']));
           }
-        } else {
+        }
+        else {
           if ($selected_visibility && $selected_visibility === $visibility) {
             $ajax_response->addCommand(new InvokeCommand('#edit-field-content-visibility-' . $visibility, 'removeAttr', ['checked']));
           }
+
           $ajax_response->addCommand(new InvokeCommand('#edit-field-content-visibility-' . $visibility, 'prop', ['disabled', 'disabled']));
         }
 
