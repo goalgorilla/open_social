@@ -12,6 +12,7 @@ use Drupal\Core\Database\Database;
 use Drupal\user\Entity\Role;
 use Drupal\social_post\Entity\Post;
 use Drupal\node\Entity\Node;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Implements hook_update_dependencies().
@@ -532,9 +533,29 @@ function social_group_update_8801() {
 }
 
 /**
- * Add some extra configuration for setting default visibility options.
+ * Add new field for rendered profile entity so we can sort it.
+ *
+ * Load in a config file from an specific update hook that will never change.
+ * Update helper did not update all fields correctly.
  */
 function social_group_update_8802() {
+  $config_file = drupal_get_path('module', 'social_group') . '/config/update/social_group_update_8802.yml';
+
+  if (is_file($config_file)) {
+    $settings = Yaml::parse(file_get_contents($config_file));
+    if (is_array($settings)) {
+      $config = \Drupal::configFactory()
+        ->getEditable('views.view.group_manage_members');
+
+      $config->setData($settings)->save(TRUE);
+    }
+  }
+}
+
+/**
+ * Add some extra configuration for setting default visibility options.
+ */
+function social_group_update_8803() {
   $config = \Drupal::configFactory()->getEditable('social_group.settings');
   $config->set('available_visibility_options', [
     'public' => 'public',
