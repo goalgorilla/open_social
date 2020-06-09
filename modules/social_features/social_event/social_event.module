@@ -856,7 +856,9 @@ function social_event_node_update(EntityInterface $entity) {
       $enrollments = \Drupal::service('social_event.status_helper');
 
       foreach ($enrollments->getAllEventEnrollments($entity->id(), TRUE) as $enrollment) {
-        if ((int) $enrollment->get('field_request_or_invite_status')->getString() === EventEnrollmentInterface::REQUEST_PENDING) {
+        // Check if the field is not empty before getting the value,
+        // Since (int) will otherwise return 0 and give false positives.
+        if (!$enrollment->get('field_request_or_invite_status')->isEmpty() && (int) $enrollment->get('field_request_or_invite_status')->getString() === EventEnrollmentInterface::REQUEST_PENDING) {
           $enrollment->delete();
         }
       }
