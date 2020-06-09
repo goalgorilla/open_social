@@ -128,7 +128,20 @@ function social_comment_tokens($type, $tokens, array $data, array $options, Bubb
 
                   if ($name === 'parent_comment_text') {
                     if ($parent_comment->hasField('field_comment_body') && !$parent_comment->field_comment_body->isEmpty()) {
-                      $replacements[$original] = _social_comment_get_summary($parent_comment->field_comment_body->value);
+                      $comment_text = $parent_comment->field_comment_body->getValue();
+                      // If the Social Mentions module exists then we need to
+                      // process mentions in these texts.
+                      if (\Drupal::moduleHandler()->moduleExists('social_mentions')) {
+                        /** @var \Drupal\filter\Plugin\FilterInterface $mentions_filter */
+                        $mentions_filter = \Drupal::service('plugin.manager.filter')->createInstance(
+                          'filter_mentions',
+                          ['settings' => social_mentions_get_social_mentions_filter_settings()]
+                        );
+                        $comment_text = $mentions_filter->process(
+                          $comment_text, $parent_comment->language()->getId()
+                        );
+                      }
+                      $replacements[$original] = _social_comment_get_summary($comment_text);
                     }
                     else {
                       $replacements[$original] = '';
@@ -153,7 +166,20 @@ function social_comment_tokens($type, $tokens, array $data, array $options, Bubb
 
                 if ($name === 'comment_text') {
                   if ($comment->hasField('field_comment_body') && !$comment->field_comment_body->isEmpty()) {
-                    $replacements[$original] = _social_comment_get_summary($comment->field_comment_body->value);
+                    $comment_text = $comment->field_comment_body->value;
+                    // If the Social Mentions module exists then we need to
+                    // process mentions in these texts.
+                    if (\Drupal::moduleHandler()->moduleExists('social_mentions')) {
+                      /** @var \Drupal\filter\Plugin\FilterInterface $mentions_filter */
+                      $mentions_filter = \Drupal::service('plugin.manager.filter')->createInstance(
+                        'filter_mentions',
+                        ['settings' => social_mentions_get_social_mentions_filter_settings()]
+                      );
+                      $comment_text = $mentions_filter->process(
+                        $comment_text, $comment->language()->getId()
+                      );
+                    }
+                    $replacements[$original] = _social_comment_get_summary($comment_text);
                   }
                   else {
                     $replacements[$original] = '';

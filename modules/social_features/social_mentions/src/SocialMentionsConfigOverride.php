@@ -32,12 +32,7 @@ class SocialMentionsConfigOverride implements ConfigFactoryOverrideInterface {
         'provider' => 'mentions',
         'status' => TRUE,
         'weight' => 40,
-        'settings' => [
-          'mentions_filter' => [
-            'ProfileMention' => 1,
-            'UserMention' => 1,
-          ],
-        ],
+        'settings' => social_mentions_get_social_mentions_filter_settings(),
       ];
     }
 

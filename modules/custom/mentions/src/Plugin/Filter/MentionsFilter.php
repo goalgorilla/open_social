@@ -227,7 +227,7 @@ class MentionsFilter extends FilterBase implements ContainerFactoryPluginInterfa
           '#render_link' => $output_settings['renderlink'],
           '#render_value' => $output['value'],
         ];
-        $mentions = $this->renderer->render($build);
+        $mentions = $this->renderer->renderPlain($build);
         $text = str_replace($match['source']['string'], $mentions, $text);
       }
     }
@@ -239,6 +239,13 @@ class MentionsFilter extends FilterBase implements ContainerFactoryPluginInterfa
    * {@inheritdoc}
    */
   public function process($text, $langcode) {
+    // Todo:: Enforce that $text can only be a string.
+    // We only need the value, so strip out the format.
+    // Otherwise it may crash later on during pregmatch or the strip tags.
+    if (is_array($text)) {
+      $text = array_column($text, 'value')[0];
+    }
+
     if ($this->shouldApplyFilter()) {
       $text = $this->filterMentions($text);
 

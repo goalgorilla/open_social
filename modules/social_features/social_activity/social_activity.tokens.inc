@@ -60,7 +60,21 @@ function social_activity_tokens($type, $tokens, array $data, array $options, Bub
                 $date = $date_formatter->format($entity->getCreatedTime(), $date_format);
 
                 if ($entity->hasField('field_post') && !$entity->field_post->isEmpty()) {
-                  $summary = _social_comment_get_summary($entity->field_post->value);
+                  $comment_text = $entity->field_post->value;
+                  // If the Social Mentions module exists then we need to
+                  // process mentions in these texts.
+                  if (\Drupal::moduleHandler()->moduleExists('social_mentions')) {
+                    /** @var \Drupal\filter\Plugin\FilterInterface $mentions_filter */
+                    $mentions_filter = \Drupal::service('plugin.manager.filter')->createInstance(
+                      'filter_mentions',
+                      ['settings' => social_mentions_get_social_mentions_filter_settings()]
+                    );
+                    $comment_text = $mentions_filter->process(
+                      $comment_text, $entity->language()->getId()
+                    );
+                  }
+
+                  $summary = _social_comment_get_summary($comment_text);
                 }
 
                 $post_link = Url::fromRoute('entity.post.canonical',
