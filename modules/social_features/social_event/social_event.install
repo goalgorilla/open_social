@@ -1543,9 +1543,23 @@ function social_event_update_8809() {
 }
 
 /**
- * Add some extra configuration for setting default visibility options.
+ * Adds the enrollment method field as filter on the community events page.
  */
 function social_event_update_8810() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_event', 'social_event_update_8810');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Add some extra configuration for setting default visibility options.
+ */
+function social_event_update_8811() {
   $config = \Drupal::configFactory()->getEditable('social_event.settings');
   $config->set('available_visibility_options', [
     'public' => 'public',

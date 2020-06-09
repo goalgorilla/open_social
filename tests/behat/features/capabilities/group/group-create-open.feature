@@ -9,6 +9,7 @@ Feature: Create Open Group
       | name           | mail                     | status |
       | Group User One | group_user_1@example.com | 1      |
       | Group User Two | group_user_2@example.com | 1      |
+      | Outsider       | outsider@example.com     | 1      |
     And I am logged in as "Group User One"
     And I am on "group/add"
     Then I click radio button "Open group This is an open group. Users may join without approval and all content added in this group will be visible to all community members." with the id "edit-group-type-open-group"
@@ -155,9 +156,11 @@ Feature: Create Open Group
     And I should see "Group User Two"
     And I should see "Groups"
     And I should not see "Test open group"
+    And I logout
 
   # DS-722 As an outsider I am not allowed to enrol to an event in group
-    When I click "Events"
+    Given I am logged in as "Outsider"
+    When I am on "/community-events"
     And I click "Test group event"
     And I should not see "Enroll" in the "Hero buttons"
 

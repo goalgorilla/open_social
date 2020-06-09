@@ -69,6 +69,21 @@ function social_event_form_views_exposed_form_alter(&$form, FormStateInterface $
     // Make sure we redirect to the current group page.
     $form['#action'] = '/group/' . $group_id . '/events';
   }
+  // Only on the community or explore events overview.
+  if ($form['#id'] === 'views-exposed-form-upcoming-events-page-community-events') {
+    // Update the filter values with better labels.
+    if (!empty($form['field_enroll_method_value']) && !empty($form['field_enroll_method_value']['#options'])) {
+      if (array_key_exists(1, $form['field_enroll_method_value']['#options'])) {
+        $form['field_enroll_method_value']['#options'][1] = t('Open to enroll');
+      }
+      if (array_key_exists(2, $form['field_enroll_method_value']['#options'])) {
+        $form['field_enroll_method_value']['#options'][2] = t('Request to enroll');
+      }
+      if (array_key_exists(3, $form['field_enroll_method_value']['#options'])) {
+        $form['field_enroll_method_value']['#options'][3] = t('Invite-only');
+      }
+    }
+  }
 }
 
 /**
@@ -920,7 +935,9 @@ function social_event_node_update(EntityInterface $entity) {
       $enrollments = \Drupal::service('social_event.status_helper');
 
       foreach ($enrollments->getAllEventEnrollments($entity->id(), TRUE) as $enrollment) {
-        if ((int) $enrollment->get('field_request_or_invite_status')->getString() === EventEnrollmentInterface::REQUEST_PENDING) {
+        // Check if the field is not empty before getting the value,
+        // Since (int) will otherwise return 0 and give false positives.
+        if (!$enrollment->get('field_request_or_invite_status')->isEmpty() && (int) $enrollment->get('field_request_or_invite_status')->getString() === EventEnrollmentInterface::REQUEST_PENDING) {
           $enrollment->delete();
         }
       }
