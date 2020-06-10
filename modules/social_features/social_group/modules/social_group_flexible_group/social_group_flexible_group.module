@@ -403,20 +403,22 @@ function social_group_flexible_group_block_access(Block $block, $operation, Acco
     'views_block:upcoming_events-upcoming_events_group',
     'views_block:latest_topics-group_topics_block',
     'views_block:group_managers-block_list_managers',
+    'views_block:group_members-block_newest_members',
   ];
   // We don't care for other blocks.
   if (!in_array($block_id, $managed_blocks, FALSE)) {
     return AccessResult::neutral();
   }
 
+  /** @var \Drupal\group\Entity\GroupInterface $current_group */
   $group = _social_group_get_current_group();
   // We don't care about other group types in here.
-  if ($group && $group->getGroupType()->id() === 'flexible_group') {
+  if ($group instanceof GroupInterface  && $group->getGroupType()->id() === 'flexible_group') {
     // Only when users cant join directly, add the managers block
     // so they know who to contact.
     if ($operation === 'view' &&
       social_group_flexible_group_can_join_directly($group) &&
-      $block->getPluginId() === 'views_block:group_managers-block_list_managers') {
+      $block_id === 'views_block:group_managers-block_list_managers') {
       return AccessResult::forbidden();
     }
 
@@ -436,7 +438,22 @@ function social_group_flexible_group_block_access(Block $block, $operation, Acco
         'views_block:latest_topics-group_topics_block',
       ];
       foreach ($forbidden_blocks as $forbidden_block) {
-        if ($operation === 'view' && $block->getPluginId() === $forbidden_block) {
+        if ($operation === 'view' && $block_id === $forbidden_block) {
+          return AccessResult::forbidden();
+        }
+      }
+    }
+
+    if ($operation == 'view' && $block_id === 'views_block:group_members-block_newest_members') {
+      if ($group->hasField('field_group_allowed_visibility') && $group->hasField('field_newest_members_visibility') && $group->field_newest_members_visibility->value === '0') {
+        $current_visibilities = array_column($group->field_group_allowed_visibility->getValue(), 'value');
+        $skip_visibilities = [
+          'public',
+          'community',
+        ];
+
+        $is_member = $group->getMember($account);
+        if (!array_intersect($current_visibilities, $skip_visibilities) && !$is_member) {
           return AccessResult::forbidden();
         }
       }
