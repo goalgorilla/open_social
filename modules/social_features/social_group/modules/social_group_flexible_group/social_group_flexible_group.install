@@ -98,3 +98,139 @@ function social_group_flexible_group_update_8802() {
     $index->reindex();
   }
 }
+
+/**
+ * Create field_members_tab_visibility and
+ * field_newest_members_visibility fields.
+ */
+function social_group_flexible_group_update_8803() {
+  $configs = [
+    'field_storage_config' => [
+      [
+        'langcode' => 'en',
+        'status' => TRUE,
+        'dependencies' => [
+          'module' => [
+            'group',
+          ],
+        ],
+        'id' => 'group.field_members_tab_visibility',
+        'field_name' => 'field_members_tab_visibility',
+        'entity_type' => 'group',
+        'type' => 'boolean',
+        'settings' => [],
+        'module' => 'core',
+        'locked' => FALSE,
+        'cardinality' => 1,
+        'translatable' => TRUE,
+        'indexes' => [],
+        'persist_with_no_fields' => FALSE,
+        'custom_storage' => FALSE,
+      ],
+      [
+        'langcode' => 'en',
+        'status' => TRUE,
+        'dependencies' => [
+          'module' => [
+            0 => 'group',
+          ],
+        ],
+        'id' => 'group.field_newest_members_visibility',
+        'field_name' => 'field_newest_members_visibility',
+        'entity_type' => 'group',
+        'type' => 'boolean',
+        'settings' => [],
+        'module' => 'core',
+        'locked' => FALSE,
+        'cardinality' => 1,
+        'translatable' => TRUE,
+        'indexes' => [],
+        'persist_with_no_fields' => FALSE,
+        'custom_storage' => FALSE,
+      ],
+    ],
+    'field_config' => [
+      [
+        'langcode' => 'en',
+        'status' => TRUE,
+        'dependencies' => [
+          'config' => [
+            'field.storage.group.field_members_tab_visibility',
+            'group.type.flexible_group',
+          ],
+        ],
+        'id' => 'group.flexible_group.field_members_tab_visibility',
+        'field_name' => 'field_members_tab_visibility',
+        'entity_type' => 'group',
+        'bundle' => 'flexible_group',
+        'label' => 'Show group members tab',
+        'description' => 'If this box is unchecked then the "Members" tab for the group will be hidden for the outsiders. This condition will be ignored for "Public" and "Community" visibilities.',
+        'required' => FALSE,
+        'translatable' => FALSE,
+        'default_value' => [
+          [
+            'value' => 1,
+          ],
+        ],
+        'default_value_callback' => '',
+        'settings' => [
+          'on_label' => 'On',
+          'off_label' => 'Off',
+        ],
+        'field_type' => 'boolean',
+      ],
+      [
+        'langcode' => 'en',
+        'status' => TRUE,
+        'dependencies' => [
+          'config' => [
+            'field.storage.group.field_newest_members_visibility',
+            'group.type.flexible_group',
+          ],
+        ],
+        'id' => 'group.flexible_group.field_newest_members_visibility',
+        'field_name' => 'field_newest_members_visibility',
+        'entity_type' => 'group',
+        'bundle' => 'flexible_group',
+        'label' => 'Show newest members block',
+        'description' => 'If this box is unchecked then the "Newest members" block for the group will be hidden for the outsiders. This condition will be ignored for "Public" and "Community" visibilities.',
+        'required' => FALSE,
+        'translatable' => FALSE,
+        'default_value' => [
+          [
+            'value' => 1,
+          ],
+        ],
+        'default_value_callback' => '',
+        'settings' => [
+          'on_label' => 'On',
+          'off_label' => 'Off',
+        ],
+        'field_type' => 'boolean',
+      ],
+    ],
+  ];
+
+  foreach ($configs as $entity_type_id => $data) {
+    /** @var \Drupal\Core\Config\Entity\ConfigEntityStorageInterface $storage */
+    $storage = \Drupal::entityTypeManager()->getStorage($entity_type_id);
+
+    foreach ($data as $datum) {
+      $storage->createFromStorageRecord($datum)->save();
+    }
+  }
+}
+
+/**
+ * Create "Outsider settings" group settings block.
+ */
+function social_group_flexible_group_update_8804() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_group_flexible_group', 'social_group_flexible_group_update_8802');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
