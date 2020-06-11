@@ -32,7 +32,6 @@ class RedirectSubscriber implements EventSubscriberInterface {
    */
   protected $currentUser;
 
-
   /**
    * Redirectsubscriber construct.
    *
