@@ -134,4 +134,4 @@ projects[votingapi][patch][] = "https://www.drupal.org/files/issues/2019-05-02/v
 projects[bootstrap][type] = theme
 projects[bootstrap][version] = 3.20
 projects[bootstrap][patch][] = "https://www.drupal.org/files/issues/2018-12-19/dropdown-without-default-button-3021413-2.patch"
-projects[gin][patch][] = "https://www.drupal.org/files/issues/2020-06-09/3150243-layout-action-block-content-page_1.patch"
+projects[gin][patch][] = "https://www.drupal.org/files/issues/2020-06-11/3150243-layout-action-block-content-page_2.patch"
