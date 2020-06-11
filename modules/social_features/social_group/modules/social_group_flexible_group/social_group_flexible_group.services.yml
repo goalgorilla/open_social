@@ -10,6 +10,7 @@ services:
 
   social_group_flexible_group_access.route_subscriber:
     class: Drupal\social_group_flexible_group\Subscriber\Route
+    arguments: ['@module_handler']
     tags:
       - { name: event_subscriber }
 
