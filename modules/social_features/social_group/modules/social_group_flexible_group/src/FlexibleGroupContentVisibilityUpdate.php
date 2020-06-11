@@ -69,7 +69,7 @@ class FlexibleGroupContentVisibilityUpdate {
 
     // Add posts to the entities we need to update based on visibility.
     if (!empty($posts)) {
-      foreach ($posts as $pid => $post) {
+      foreach ($posts as $post) {
         if (in_array($post->getVisibility(), $changed_visibility, FALSE)) {
           $entities[] = $post;
         }
@@ -136,7 +136,7 @@ class FlexibleGroupContentVisibilityUpdate {
     $context['results'][] = $entity;
 
     // Optional message displayed under the progressbar.
-    $context['message'] = t('Updating group content (@id)', ['@id' => $entity->id()]);
+    $context['message'] = $this->t('Updating group content (@id)', ['@id' => $entity->id()]);
   }
 
   /**

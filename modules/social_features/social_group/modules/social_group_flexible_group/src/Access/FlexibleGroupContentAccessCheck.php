@@ -30,7 +30,6 @@ class FlexibleGroupContentAccessCheck implements AccessInterface {
    */
   public function access(Route $route, RouteMatchInterface $route_match, AccountInterface $account) {
     $permission = $route->getRequirement('_flexible_group_content_visibility');
-    $group_permission = $route->getRequirement('_group_permission');
 
     // Don't interfere if no permission was specified.
     if ($permission === NULL) {
