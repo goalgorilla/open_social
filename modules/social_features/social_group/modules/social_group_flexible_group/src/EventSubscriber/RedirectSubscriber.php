@@ -82,10 +82,13 @@ class RedirectSubscriber implements EventSubscriberInterface {
       if ($this->currentUser->hasPermission('manage all groups')) {
         return;
       }
-      // If the user is not an member of this group.
-      elseif (!$group->getMember($this->currentUser) && in_array($routeMatch, $routes, FALSE)
-        && !social_group_flexible_group_community_enabled($group)
-        && !social_group_flexible_group_public_enabled($group)) {
+      // If the user is not a member and if "Allowed join method" is not set to
+      // "Join directly" in this group.
+      elseif (
+        !$group->getMember($this->currentUser) &&
+        in_array($routeMatch, $routes, FALSE) &&
+        !social_group_flexible_group_can_join_directly($group)
+      ) {
         $event->setResponse(new RedirectResponse(Url::fromRoute('view.group_information.page_group_about', ['group' => $group->id()])
           ->toString()));
       }
