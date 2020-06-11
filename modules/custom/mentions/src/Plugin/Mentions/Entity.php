@@ -29,7 +29,7 @@ class Entity implements MentionsPluginInterface {
   /**
    * Entity constructor.
    */
-  public function __construct(Token $token, EntityManager $entity_manager, QueryFactory $entity_query) {
+  public function __construct(Token $token, EntityManager $entity_manager, QueryFactory $entity_query, ConfigFactory $config) {
     $this->tokenService = $token;
     $this->entityManager = $entity_manager;
     $this->entityQueryService = $entity_query;
