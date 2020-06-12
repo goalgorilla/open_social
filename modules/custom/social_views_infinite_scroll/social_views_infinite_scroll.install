@@ -1,0 +1,22 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the social_views_infinite_scroll module.
+ */
+
+/**
+ * Implements hook_install().
+ *
+ * Perform actions related to the installation of social_views_infinite_scroll.
+ */
+function social_views_infinite_scroll_install() {
+  $roles = [
+    'sitemanager',
+    'administrator',
+  ];
+
+  foreach ($roles as $role) {
+    user_role_grant_permissions($role, ['administer social_infinite_scroll']);
+  }
+}
