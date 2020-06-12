@@ -24,6 +24,7 @@ Feature: Create data policy and view new policy
     And I should see the link "Revisions" in the "Tabs" region
     And I should see the text "Revision"
     And I should see the text "Operations"
+    And I should see the text "List is empty."
     And I should see the link "Add new revision" in the "Sidebar second" region
 
     When I click "Details"
