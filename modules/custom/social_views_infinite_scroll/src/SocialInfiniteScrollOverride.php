@@ -22,13 +22,23 @@ class SocialInfiniteScrollOverride implements ConfigFactoryOverrideInterface {
   protected $configFactory;
 
   /**
+   * The SocialInfiniteScrollManager manager.
+   *
+   * @var \Drupal\social_views_infinite_scroll\SocialInfiniteScrollManager
+   */
+  protected $socialInfiniteScrollManager;
+
+  /**
    * Constructs the configuration override.
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The config factory.
+   * @param \Drupal\social_views_infinite_scroll\SocialInfiniteScrollManager $social_infinite_scroll_manager
+   *   The SocialInfiniteScrollManager manager.
    */
-  public function __construct(ConfigFactoryInterface $config_factory) {
+  public function __construct(ConfigFactoryInterface $config_factory, SocialInfiniteScrollManager $social_infinite_scroll_manager) {
     $this->configFactory = $config_factory;
+    $this->socialInfiniteScrollManager = $social_infinite_scroll_manager;
   }
 
   /**
