@@ -22,6 +22,7 @@ function social_views_infinite_scroll_form_alter(&$form, FormStateInterface $for
     foreach ($enabled_views as $view) {
       foreach ($view as $view_display) {
         if ($view_display === $display_id) {
+          // Hide the pager block if this view is overridden by this module.
           $form['displays']['settings']['settings_content']['tab_content']['details']['columns']['second']['pager']['#access'] = FALSE;
           /** @var \Drupal\views_ui\ViewEditForm $form_object */
           $form_object = $form_state->getFormObject();
