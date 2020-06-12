@@ -6,7 +6,6 @@ use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Config\ConfigFactoryOverrideInterface;
 use Drupal\Core\Config\StorageInterface;
-use Drupal\views\Views;
 
 /**
  * Class SocialInfiniteScrollOverride.
@@ -42,42 +41,36 @@ class SocialInfiniteScrollOverride implements ConfigFactoryOverrideInterface {
 
     foreach ($scroll_data as $key => $scroll_datum) {
       if ($scroll_datum) {
-
         $config_name = str_replace('__', '.', $key);
+
         if (in_array($config_name, $names)) {
           $current_view = $this->configFactory->getEditable($config_name);
 
-          $display = NULL;
-          foreach($current_view->get('display') as $index => $data) {
-            if (strpos($index, 'page') !== FALSE)
-              $display = $index;
-          }
-          if (!$display) {
-            return [];
-          }
 
-          $overrides[$config_name] = [
-            'display' => [
-              $display => [
-                'display_options' => [
-                  'use_ajax' => TRUE,
-                  'pager' => [
-                    'type' => 'infinite_scroll',
-                    'options' => [
-                      'views_infinite_scroll' => [
-                        'button_text' => 'Load More',
-                        'automatically_load_content' => TRUE,
-                      ],
+          foreach ($scroll_datum as $view_display) {
+            if ($view_display) {
+              $display_options = $current_view->getOriginal('display.' . $view_display . '.display_options');
+              $overrides[$config_name]['display'][$view_display]['display_options'] = array_merge($display_options, [
+                'use_ajax' => TRUE,
+                'pager' => [
+                  'type' => 'infinite_scroll',
+                  'options' => [
+                    'views_infinite_scroll' => [
+                      'button_text' => 'Load More',
+                      'automatically_load_content' => FALSE,
                     ],
                   ],
                 ],
-              ],
-            ],
-          ];
+              ]);
+
+
+            }
+          }
 
         }
       }
     }
+
     return $overrides;
   }
 
