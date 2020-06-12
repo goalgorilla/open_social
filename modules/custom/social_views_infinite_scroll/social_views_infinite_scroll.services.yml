@@ -1,6 +1,11 @@
 services:
   social_views_infinite_scroll.override:
     class: Drupal\social_views_infinite_scroll\SocialInfiniteScrollOverride
-    arguments: ['@config.factory']
+    arguments:
+      - '@config.factory'
     tags:
-      - { name: config.factory.override, priority: 0 }
+      - { name: config.factory.override, priority: 50 }
+  social_views_infinite_scroll.manager:
+    class: 'Drupal\social_views_infinite_scroll\SocialInfiniteScrollManager'
+    arguments:
+      - '@config.factory'
