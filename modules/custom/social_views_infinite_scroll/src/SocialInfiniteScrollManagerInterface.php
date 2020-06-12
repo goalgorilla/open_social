@@ -8,6 +8,11 @@ namespace Drupal\social_views_infinite_scroll;
 interface SocialInfiniteScrollManagerInterface {
 
   /**
+   * The module name.
+   */
+  const MODULE_NAME = 'social_views_infinite_scroll';
+
+  /**
    * Get all available views from social infinite scroll settings.
    *
    * @return array
