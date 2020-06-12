@@ -97,12 +97,21 @@ class SocialInfiniteScrollSettingsForm extends ConfigFormBase implements Contain
         $value = $config->get($changed_view_id);
         $default_value = !empty($value) ? $config->get($changed_view_id) : FALSE;
 
+        $options = array_keys($display);
+        // Remove blocks view from options.
+        foreach ($options as $key => $option) {
+          if (strpos($option, 'block') !== FALSE) {
+            unset($options[$key]);
+          }
+        }
+
         $form['settings']['views'][$changed_view_id] = [
-          '#type' => 'checkbox',
-          '#title' => '<strong>' . $label . '</strong>' . ' ' . '(' . implode(array_keys($display), ', ') . ')',
+          '#type' => 'checkboxes',
+          '#title' => '<strong>' . $label . '</strong>',
           '#default_value' => $default_value,
-          '#required' => FALSE,
+          '#options' => array_combine($options, $options) ? array_combine($options, $options) : [],
         ];
+
       }
     }
 
@@ -118,7 +127,7 @@ class SocialInfiniteScrollSettingsForm extends ConfigFormBase implements Contain
     $values = $form_state->getValues();
 
     foreach ($values as $key => $value) {
-      if (!is_array($value) && strpos($key, 'views') !== FALSE) {
+      if (strpos($key, 'views') !== FALSE) {
         $config->set($key, $value);
       }
     }
