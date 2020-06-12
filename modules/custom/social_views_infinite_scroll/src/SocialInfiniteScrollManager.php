@@ -7,7 +7,7 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 /**
  * Class SocialInfiniteScrollManager.
  */
-class SocialInfiniteScrollManager {
+class SocialInfiniteScrollManager implements SocialInfiniteScrollManagerInterface {
 
   /**
    * The config factory interface.
