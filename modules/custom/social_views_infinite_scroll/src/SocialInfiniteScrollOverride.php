@@ -46,18 +46,17 @@ class SocialInfiniteScrollOverride implements ConfigFactoryOverrideInterface {
    */
   public function loadOverrides($names) {
     $overrides = [];
-    $scroll_config = $this->configFactory->getEditable('social_views_infinite_scroll.settings');
-    $scroll_data = $scroll_config->getOriginal();
+    $enabled_views = $this->socialInfiniteScrollManager->getEnabledViews();
 
-    foreach ($scroll_data as $key => $scroll_datum) {
-      if ($scroll_datum) {
+    foreach ($enabled_views as $key => $view) {
+      if ($view) {
         $config_name = str_replace('__', '.', $key);
 
         if (in_array($config_name, $names)) {
           $current_view = $this->configFactory->getEditable($config_name);
 
 
-          foreach ($scroll_datum as $view_display) {
+          foreach ($view as $view_display) {
             if ($view_display) {
               $display_options = $current_view->getOriginal('display.' . $view_display . '.display_options');
               $overrides[$config_name]['display'][$view_display]['display_options'] = array_merge($display_options, [
