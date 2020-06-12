@@ -73,6 +73,7 @@ class FlexibleGroupContentAccessCheck implements AccessInterface {
     // It's a non member but Community isn't enabled.
     // No access for you only for the about page.
     if ($account->isAuthenticated() && !social_group_flexible_group_community_enabled($group)
+      && social_group_flexible_group_public_enabled($group)
       && $route_match->getRouteName() !== 'view.group_information.page_group_about'
       && $route_match->getRouteName() !== 'entity.group.canonical'
       && $route_match->getRouteName() !== 'view.group_members.page_group_members') {
