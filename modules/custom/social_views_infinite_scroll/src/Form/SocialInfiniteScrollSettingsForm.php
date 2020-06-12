@@ -67,22 +67,39 @@ class SocialInfiniteScrollSettingsForm extends ConfigFormBase implements Contain
     // Get the configuration file.
     $config = $this->config(self::CONFIG_NAME);
 
+    $form['page_display'] = [
+      '#type' => 'item',
+      '#title' => $this->t('Here\'s a list of views that have a "page" display.'),
+    ];
+
     $form['settings']['views'] = [
       '#type' => 'fieldset',
       '#title' => $this->t('Views'),
     ];
 
     foreach ($views as $view) {
-      $label = $this->configFactory->getEditable($view)->getOriginal('label');
+      $current_view = $this->configFactory->getEditable($view);
+
+      $label = $current_view->getOriginal('label');
+      $display = $current_view->get('display');
+      $page_display = NULL;
+      if ($display) {
+        foreach ($current_view->get('display') as $index => $data) {
+          if (strpos($index, 'page') !== FALSE) {
+            $page_display = $index;
+          }
+        }
+      }
+
       $changed_view_id = str_replace('.', '__', $view);
 
-      if ($label) {
+      if ($label && $page_display) {
         $value = $config->get($changed_view_id);
         $default_value = !empty($value) ? $config->get($changed_view_id) : FALSE;
 
         $form['settings']['views'][$changed_view_id] = [
           '#type' => 'checkbox',
-          '#title' => $label,
+          '#title' => '<strong>' . $label . '</strong>' . ' ' . '(' . implode(array_keys($display), ', ') . ')',
           '#default_value' => $default_value,
           '#required' => FALSE,
         ];
