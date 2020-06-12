@@ -55,7 +55,6 @@ class SocialInfiniteScrollOverride implements ConfigFactoryOverrideInterface {
         if (in_array($config_name, $names)) {
           $current_view = $this->configFactory->getEditable($config_name);
 
-
           foreach ($view as $view_display) {
             if ($view_display) {
               $display_options = $current_view->getOriginal('display.' . $view_display . '.display_options');
@@ -71,7 +70,6 @@ class SocialInfiniteScrollOverride implements ConfigFactoryOverrideInterface {
                   ],
                 ],
               ]);
-
 
             }
           }
