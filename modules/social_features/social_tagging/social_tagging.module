@@ -160,7 +160,7 @@ function social_tagging_form_alter(&$form, FormStateInterface $form_state, $form
           if (count($options) > 0) {
             // Add a field.
             $form['tagging'][$field_name] = [
-              '#type' => 'select',
+              '#type' => 'select2',
               '#title' => $category,
               '#multiple' => TRUE,
               '#default_value' => $default_value,
