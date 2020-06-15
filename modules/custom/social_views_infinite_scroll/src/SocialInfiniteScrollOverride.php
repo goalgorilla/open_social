@@ -48,33 +48,37 @@ class SocialInfiniteScrollOverride implements ConfigFactoryOverrideInterface {
     $overrides = [];
     $enabled_views = $this->socialInfiniteScrollManager->getEnabledViews();
 
-    foreach ($enabled_views as $key => $view) {
-      if ($view) {
-        $config_name = str_replace('__', '.', $key);
+    foreach ($enabled_views as $key => $status) {
+      $config_name = str_replace('__', '.', $key);
 
-        if (in_array($config_name, $names)) {
-          $current_view = $this->configFactory->getEditable($config_name);
+      if (in_array($config_name, $names)) {
+        $current_view = $this->configFactory->getEditable($config_name);
+        $displays = $current_view->getOriginal('display');
+        $pages = [];
 
-          foreach ($view as $view_display) {
-            if ($view_display) {
-              $display_options = $current_view->getOriginal('display.' . $view_display . '.display_options');
-              $overrides[$config_name]['display'][$view_display]['display_options'] = array_merge($display_options, [
-                'use_ajax' => TRUE,
-                'pager' => [
-                  'type' => 'infinite_scroll',
-                  'options' => [
-                    'views_infinite_scroll' => [
-                      'button_text' => 'Load More',
-                      'automatically_load_content' => FALSE,
-                    ],
-                  ],
-                ],
-              ]);
-
-            }
+        foreach ($displays as $id => $display) {
+          if ($display['display_plugin'] !== 'block') {
+            $pages[] = $id;
           }
+        }
+
+        foreach ($pages as $display_page) {
+          $display_options = $current_view->getOriginal('display.' . $display_page . '.display_options');
+          $overrides[$config_name]['display'][$display_page]['display_options'] = array_merge($display_options, [
+            'use_ajax' => TRUE,
+            'pager' => [
+              'type' => 'infinite_scroll',
+              'options' => [
+                'views_infinite_scroll' => [
+                  'button_text' => 'Load More',
+                  'automatically_load_content' => FALSE,
+                ],
+              ],
+            ],
+          ]);
 
         }
+
       }
     }
 

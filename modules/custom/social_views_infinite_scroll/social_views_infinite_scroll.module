@@ -16,22 +16,34 @@ function social_views_infinite_scroll_form_alter(&$form, FormStateInterface $for
   if ($form_id === 'view_edit_form') {
     /** @var \Drupal\social_views_infinite_scroll\SocialInfiniteScrollManagerInterface $social_infinite_scroll_manager */
     $social_infinite_scroll_manager = \Drupal::service('social_views_infinite_scroll.manager');
-    $enabled_views = $social_infinite_scroll_manager->getEnabledViews();
+    $enabled_views = array_keys($social_infinite_scroll_manager->getEnabledViews());
     $display_id = $form_state->get('display_id');
 
     foreach ($enabled_views as $view) {
-      foreach ($view as $view_display) {
-        if ($view_display === $display_id) {
-          // Hide the pager block if this view is overridden by this module.
-          $form['displays']['settings']['settings_content']['tab_content']['details']['columns']['second']['pager']['#access'] = FALSE;
-          /** @var \Drupal\views_ui\ViewEditForm $form_object */
-          $form_object = $form_state->getFormObject();
-          $module_name = \Drupal::moduleHandler()->getName(SocialInfiniteScrollManagerInterface::MODULE_NAME);
-          $form_object->messenger()->addWarning(t('You cannot change the pager settings because it is overridden by the "@module_name" module. You can change the settings @here', [
-            '@module_name' => $module_name,
-            '@here' => Link::createFromRoute('here', 'social_views_infinite_scroll.settings')->toString(),
-          ]));
+      $config_name = str_replace('__', '.', $view);
+      $current_view = \Drupal::configFactory()->getEditable($config_name);
+      $displays = $current_view->getOriginal('display');
+      $pages = [];
+
+      foreach ($displays as $id => $display) {
+        if ($display['display_plugin'] !== 'block') {
+          $pages[] = $id;
         }
+      }
+
+      if (in_array($display_id, $pages)) {
+        // Hide the pager block if this view is overridden by this module.
+        $form['displays']['settings']['settings_content']['tab_content']['details']['columns']['second']['pager']['#access'] = FALSE;
+        /** @var \Drupal\views_ui\ViewEditForm $form_object */
+        $form_object = $form_state->getFormObject();
+        $module_name = \Drupal::moduleHandler()
+          ->getName(SocialInfiniteScrollManagerInterface::MODULE_NAME);
+        $form_object->messenger()
+          ->addWarning(t('You cannot change the pager settings because it is overridden by the "@module_name" module. You can change the settings @here', [
+            '@module_name' => $module_name,
+            '@here' => Link::createFromRoute('here', 'social_views_infinite_scroll.settings')
+              ->toString(),
+          ]));
       }
     }
   }

@@ -40,12 +40,9 @@ class SocialInfiniteScrollManager implements SocialInfiniteScrollManagerInterfac
     $all_views = $this->getAllViews();
     $enabled_views = [];
 
-    foreach ($all_views as $key => $view) {
-      foreach ($view as $status) {
-        if ($status) {
-          $enabled_views[$key] = $view;
-          continue;
-        }
+    foreach ($all_views as $key => $status) {
+      if ($status) {
+        $enabled_views[$key] = $status;
       }
     }
 

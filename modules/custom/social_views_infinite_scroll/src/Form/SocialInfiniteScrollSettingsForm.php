@@ -78,41 +78,20 @@ class SocialInfiniteScrollSettingsForm extends ConfigFormBase implements Contain
     ];
 
     foreach ($views as $view) {
-      $current_view = $this->configFactory->getEditable($view);
-      $display = $current_view->get('display');
+      $label = $this->configFactory->getEditable($view)->getOriginal('label');
+      $changed_view_id = str_replace('.', '__', $view);
 
-      if ($display && count($display)) {
-        foreach ($display as $index => $data) {
-          if ($data['display_plugin'] === 'block') {
-            unset($display[$index]);
-          }
-        }
+      if ($label) {
+        $value = $config->get($changed_view_id);
+        $default_value = !empty($value) ? $config->get($changed_view_id) : FALSE;
 
-        $changed_view_id = str_replace('.', '__', $view);
-        $label = $current_view->getOriginal('label');
-
-        if ($label) {
-          $value = $config->get($changed_view_id);
-          $default_value = !empty($value) ? $config->get($changed_view_id) : [];
-          $options = array_column($display, 'display_title', 'id');
-
-          foreach ($options as $id => $option) {
-            $options[$id] = $option . ' ' . '(' . $id . ')';
-            if (isset($display[$id]['display_options']['path'])) {
-              $options[$id] .= '<br>' . $display[$id]['display_options']['path'];
-            }
-          }
-
-          $form['settings']['views'][$changed_view_id] = [
-            '#type' => 'checkboxes',
-            '#title' => '<strong>' . $label . '</strong>',
-            '#default_value' => $default_value,
-            '#options' => !empty($options) ? $options : [],
-          ];
-
-        }
+        $form['settings']['views'][$changed_view_id] = [
+          '#type' => 'checkbox',
+          '#title' => $label,
+          '#default_value' => $default_value,
+          '#required' => FALSE,
+        ];
       }
-
     }
 
     return parent::buildForm($form, $form_state);
