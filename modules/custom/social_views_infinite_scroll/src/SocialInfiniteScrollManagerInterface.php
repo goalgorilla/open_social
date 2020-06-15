@@ -18,7 +18,7 @@ interface SocialInfiniteScrollManagerInterface {
    * @return array
    *   All available views from social infinite scroll settings.
    */
-  public function getAllViews();
+  public function getAllAvailableViews();
 
   /**
    * Get only enabled views from social infinite scroll settings.
