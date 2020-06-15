@@ -5,6 +5,7 @@ namespace Drupal\social_group\Plugin\views\field;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Url;
+use Drupal\group\Entity\GroupInterface;
 use Drupal\views_bulk_operations\Plugin\views\field\ViewsBulkOperationsBulkForm;
 
 /**
@@ -75,20 +76,24 @@ class SocialGroupViewsBulkOperationsBulkForm extends ViewsBulkOperationsBulkForm
       return;
     }
 
+    /** @var \Drupal\group\Entity\GroupInterface $group */
     $group = _social_group_get_current_group();
     $tempstoreData = $this->getTempstoreData($this->view->id(), $this->view->current_display);
     // Make sure the selection is saved for the current group.
-    if (!empty($tempstoreData['group_id']) && $tempstoreData['group_id'] !== $group->id()) {
-      // If not we clear it right away.
-      // Since we don't want to mess with cached date.
-      $this->deleteTempstoreData($this->view->id(), $this->view->current_display);
-      // Reset initial values.
-      $this->updateTempstoreData();
-      // Initialize it again.
-      $tempstoreData = $this->getTempstoreData($this->view->id(), $this->view->current_display);
+    if ($group instanceof GroupInterface) {
+      if (!empty($tempstoreData['group_id']) && $tempstoreData['group_id'] !== $group->id()) {
+        // If not we clear it right away.
+        // Since we don't want to mess with cached date.
+        $this->deleteTempstoreData($this->view->id(), $this->view->current_display);
+        // Reset initial values.
+        $this->updateTempstoreData();
+        // Initialize it again.
+        $tempstoreData = $this->getTempstoreData($this->view->id(), $this->view->current_display);
+      }
+      // Add the Group ID to the data.
+      $tempstoreData['group_id'] = $group->id();
     }
-    // Add the Group ID to the data.
-    $tempstoreData['group_id'] = $group->id();
+
     $this->setTempstoreData($tempstoreData, $this->view->id(), $this->view->current_display);
 
     // Reorder the form array.
@@ -149,7 +154,7 @@ class SocialGroupViewsBulkOperationsBulkForm extends ViewsBulkOperationsBulkForm
 
     // Add the group to the display id, so the ajax callback that is run
     // will count and select across pages correctly.
-    if ($group) {
+    if ($group instanceof GroupInterface) {
       $wrapper['multipage']['#attributes']['data-group-id'] = $group->id();
       if (!empty($wrapper['multipage']['#attributes']['data-display-id'])) {
         $current_display = $wrapper['multipage']['#attributes']['data-display-id'];
