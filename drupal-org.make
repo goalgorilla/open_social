@@ -107,6 +107,7 @@ projects[role_delegation][type] = module
 projects[role_delegation][version] = 1.1
 projects[search_api][type] = module
 projects[search_api][version] = 1.15
+projects[search_api][patch][] = "https://www.drupal.org/files/issues/2020-06-03/2949022-12--views_filter_options_callback.patch"
 projects[social_api][type] = module
 projects[social_api][version] = 1.1
 projects[social_auth][type] = module
