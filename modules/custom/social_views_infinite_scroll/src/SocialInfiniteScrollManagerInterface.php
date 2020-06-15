@@ -28,4 +28,12 @@ interface SocialInfiniteScrollManagerInterface {
    */
   public function getEnabledViews();
 
+  /**
+   * Get blocked views.
+   *
+   * @return array
+   *   Some system and distro views.
+   */
+  public function getBlockedViews();
+
 }

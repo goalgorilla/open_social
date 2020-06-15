@@ -49,4 +49,34 @@ class SocialInfiniteScrollManager implements SocialInfiniteScrollManagerInterfac
     return $enabled_views;
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function getBlockedViews() {
+    return [
+      'views.view.who_voted_this_entity',
+      'views.view.who_liked_this_entity',
+      'views.view.watchdog',
+      'views.view.user_admin_people',
+      'views.view.report_overview',
+      'views.view.redirect',
+      'views.view.recipient_group_reference',
+      'views.view.inbox',
+      'views.view.idea_coauthors',
+      'views.view.ideas_user',
+      'views.view.featured_profile_reference',
+      'views.view.featured_group_reference',
+      'views.view.featured_content_reference',
+      'views.view.event_manage_enrollments',
+      'views.view.event_enrollments',
+      'views.view.content',
+      'views.view.community_activities',
+      'views.view.comment',
+      'views.view.activity_stream_profile',
+      'views.view.activity_stream_notifications',
+      'views.view.activity_stream_group',
+      'views.view.activity_stream',
+    ];
+  }
+
 }

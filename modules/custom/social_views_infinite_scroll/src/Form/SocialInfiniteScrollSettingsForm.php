@@ -7,6 +7,7 @@ use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\social_views_infinite_scroll\SocialInfiniteScrollManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -26,11 +27,26 @@ class SocialInfiniteScrollSettingsForm extends ConfigFormBase implements Contain
   protected $moduleHandler;
 
   /**
-   * {@inheritdoc}
+   * The SocialInfiniteScrollManager manager.
+   *
+   * @var \Drupal\social_views_infinite_scroll\SocialInfiniteScrollManager
    */
-  public function __construct(ConfigFactoryInterface $config_factory, ModuleHandlerInterface $moduleHandler) {
+  protected $socialInfiniteScrollManager;
+
+  /**
+   * SocialInfiniteScrollSettingsForm constructor.
+   *
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *   The config factory service.
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface $moduleHandler
+   *   The module handler service.
+   * @param \Drupal\social_views_infinite_scroll\SocialInfiniteScrollManager $social_infinite_scroll_manager
+   *   The SocialInfiniteScrollManager manager.
+   */
+  public function __construct(ConfigFactoryInterface $config_factory, ModuleHandlerInterface $moduleHandler, SocialInfiniteScrollManager $social_infinite_scroll_manager) {
     parent::__construct($config_factory);
     $this->moduleHandler = $moduleHandler;
+    $this->socialInfiniteScrollManager = $social_infinite_scroll_manager;
   }
 
   /**
@@ -40,7 +56,8 @@ class SocialInfiniteScrollSettingsForm extends ConfigFormBase implements Contain
     /* @noinspection  PhpParamsInspection */
     return new static(
       $container->get('config.factory'),
-      $container->get('module_handler')
+      $container->get('module_handler'),
+      $container->get('social_views_infinite_scroll.manager')
     );
   }
 
@@ -62,8 +79,9 @@ class SocialInfiniteScrollSettingsForm extends ConfigFormBase implements Contain
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    $views = $this->configFactory->listAll('views');
-
+    $all_views = $this->configFactory->listAll('views');
+    $blocked_views = $this->socialInfiniteScrollManager->getBlockedViews();
+    $views = array_diff($all_views, $blocked_views);
     // Get the configuration file.
     $config = $this->config(self::CONFIG_NAME);
 
