@@ -75,7 +75,7 @@ class FlexibleGroupContentAccessCheck implements AccessInterface {
       && $route_match->getRouteName() !== 'view.group_information.page_group_about'
       && $route_match->getRouteName() !== 'entity.group.canonical') {
 
-      if ($group->hasField('field_members_tab_visibility') && $group->field_members_tab_visibility->value !== '0' && $route_match->getRouteName() === 'view.group_members.page_group_members') {
+      if ($group->hasField('field_members_visibility') && $group->field_members_visibility->value !== '0' && $route_match->getRouteName() === 'view.group_members.page_group_members') {
         return AccessResult::allowed()->addCacheableDependency($group);
       }
       else {

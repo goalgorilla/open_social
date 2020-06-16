@@ -445,7 +445,7 @@ function social_group_flexible_group_block_access(Block $block, $operation, Acco
     }
 
     if ($operation == 'view' && $block_id === 'views_block:group_members-block_newest_members') {
-      if ($group->hasField('field_group_allowed_visibility') && $group->hasField('field_newest_members_visibility') && $group->field_newest_members_visibility->value === '0') {
+      if ($group->hasField('field_group_allowed_visibility') && $group->hasField('field_members_visibility') && $group->field_members_visibility->value === '0') {
         $current_visibilities = array_column($group->field_group_allowed_visibility->getValue(), 'value');
         $skip_visibilities = [
           'public',
