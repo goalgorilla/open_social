@@ -25,9 +25,11 @@ function social_views_infinite_scroll_form_alter(&$form, FormStateInterface $for
       $displays = $current_view->getOriginal('display');
       $pages = [];
 
-      foreach ($displays as $id => $display) {
-        if ($display['display_plugin'] !== 'block') {
-          $pages[] = $id;
+      if (is_array($displays)) {
+        foreach ($displays as $id => $display) {
+          if ($display['display_plugin'] !== 'block') {
+            $pages[] = $id;
+          }
         }
       }
 

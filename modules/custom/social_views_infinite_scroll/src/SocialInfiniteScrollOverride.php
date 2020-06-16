@@ -65,7 +65,6 @@ class SocialInfiniteScrollOverride implements ConfigFactoryOverrideInterface {
         foreach ($pages as $display_page) {
           $display_options = $current_view->getOriginal('display.' . $display_page . '.display_options');
           $overrides[$config_name]['display'][$display_page]['display_options'] = array_merge($display_options, [
-            'use_ajax' => TRUE,
             'pager' => [
               'type' => 'infinite_scroll',
               'options' => [
@@ -76,7 +75,7 @@ class SocialInfiniteScrollOverride implements ConfigFactoryOverrideInterface {
               ],
             ],
           ]);
-
+          $overrides[$config_name]['display'][$display_page]['display_options']['use_ajax'] = TRUE;
         }
 
       }
