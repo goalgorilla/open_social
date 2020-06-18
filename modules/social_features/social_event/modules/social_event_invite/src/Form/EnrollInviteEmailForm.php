@@ -2,11 +2,14 @@
 
 namespace Drupal\social_event_invite\Form;
 
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\TempStore\PrivateTempStoreFactory;
+use Drupal\Core\Utility\Token;
+use Drupal\file\Entity\File;
 use Drupal\social_core\Form\InviteEmailBaseForm;
 use Drupal\social_event\EventEnrollmentInterface;
 use Drupal\user\UserInterface;
@@ -33,6 +36,20 @@ class EnrollInviteEmailForm extends InviteEmailBaseForm {
   private $tempStoreFactory;
 
   /**
+   * The Config factory.
+   *
+   * @var \Drupal\Core\Config\ConfigFactory
+   */
+  protected $configFactory;
+
+  /**
+   * The token service.
+   *
+   * @var \Drupal\Core\Utility\Token
+   */
+  protected $token;
+
+  /**
    * {@inheritdoc}
    */
   public function getFormId() {
@@ -42,10 +59,20 @@ class EnrollInviteEmailForm extends InviteEmailBaseForm {
   /**
    * {@inheritdoc}
    */
-  public function __construct(RouteMatchInterface $route_match, EntityTypeManagerInterface $entity_type_manager, LoggerChannelFactoryInterface $logger_factory, EntityStorageInterface $entity_storage, PrivateTempStoreFactory $tempStoreFactory) {
+  public function __construct(
+    RouteMatchInterface $route_match,
+    EntityTypeManagerInterface $entity_type_manager,
+    LoggerChannelFactoryInterface $logger_factory,
+    EntityStorageInterface $entity_storage,
+    PrivateTempStoreFactory $tempStoreFactory,
+    ConfigFactoryInterface $config_factory,
+    Token $token
+  ) {
     parent::__construct($route_match, $entity_type_manager, $logger_factory);
     $this->entityStorage = $entity_storage;
     $this->tempStoreFactory = $tempStoreFactory;
+    $this->configFactory = $config_factory;
+    $this->token = $token;
   }
 
   /**
@@ -57,7 +84,9 @@ class EnrollInviteEmailForm extends InviteEmailBaseForm {
       $container->get('entity_type.manager'),
       $container->get('logger.factory'),
       $container->get('entity.manager')->getStorage('event_enrollment'),
-      $container->get('tempstore.private')
+      $container->get('tempstore.private'),
+      $container->get('config.factory'),
+      $container->get('token')
     );
   }
 
@@ -66,11 +95,40 @@ class EnrollInviteEmailForm extends InviteEmailBaseForm {
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
     $form = parent::buildForm($form, $form_state);
-    $nid = $this->routeMatch->getRawParameter('node');
+
+    $params = [
+      'user' => $this->currentUser(),
+      'node' => $this->routeMatch->getParameter('node'),
+    ];
+
+    // Load event invite configuration.
+    $invite_config = $this->configFactory->get('social_event_invite.settings');
+
+    // Get default logo image and replace if it overridden with email settings.
+    $theme_id = $this->configFactory->get('system.theme')->get('default');
+    $logo = $this->getRequest()->getBaseUrl() . theme_get_setting('logo.url', $theme_id);
+    $email_logo = theme_get_setting('email_logo', $theme_id);
+
+    if (is_array($email_logo) && !empty($email_logo)) {
+      $file = File::load(reset($email_logo));
+
+      if ($file instanceof File) {
+        $logo = file_create_url($file->getFileUri());
+      }
+    }
+
+    $form['preview'] = [
+      '#theme' => 'invite_email_preview',
+      '#title' => $this->t('Message'),
+      '#logo' => $logo,
+      '#subject' => $this->token->replace($invite_config->get('invite_subject'), $params),
+      '#body' => $this->token->replace($invite_config->get('invite_message'), $params),
+      '#helper' => $this->token->replace($invite_config->get('invite_helper'), $params),
+    ];
 
     $form['event'] = [
       '#type' => 'hidden',
-      '#value' => $nid,
+      '#value' => $this->routeMatch->getRawParameter('node'),
     ];
 
     $form['actions']['submit_cancel'] = [
