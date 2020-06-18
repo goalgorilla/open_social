@@ -54,7 +54,7 @@ class SocialInfiniteScrollManager implements SocialInfiniteScrollManagerInterfac
    */
   public function getBlockedViews() {
     return [
-      // System views.
+      // Some system or distro views.
       'views.view.who_voted_this_entity',
       'views.view.who_liked_this_entity',
       'views.view.watchdog',
@@ -63,8 +63,6 @@ class SocialInfiniteScrollManager implements SocialInfiniteScrollManagerInterfac
       'views.view.redirect',
       'views.view.recipient_group_reference',
       'views.view.inbox',
-      'views.view.idea_coauthors',
-      'views.view.ideas_user',
       'views.view.featured_profile_reference',
       'views.view.featured_group_reference',
       'views.view.featured_content_reference',
@@ -79,13 +77,13 @@ class SocialInfiniteScrollManager implements SocialInfiniteScrollManagerInterfac
       'views.view.activity_stream',
       // Temporarily here because ajax does not work correctly with these views,
       // probably because of we have a lot config overrides for these views.
-      'views.view.group_events',
-      'views.view.group_topics',
       'views.view.search_all',
       'views.view.search_all_autocomplete',
       'views.view.search_content',
       'views.view.search_groups',
       'views.view.search_users',
+      // Replace the results to no result.
+      'views.view.events',
     ];
   }
 
