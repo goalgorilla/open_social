@@ -2,14 +2,18 @@
 
 namespace Drupal\social_group_invite\Form;
 
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\TempStore\PrivateTempStoreFactory;
+use Drupal\Core\Utility\Token;
+use Drupal\file\Entity\File;
 use Drupal\ginvite\GroupInvitationLoader;
 use Drupal\group\GroupMembershipLoaderInterface;
+use Drupal\group\Plugin\GroupContentEnablerManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\ginvite\Form\BulkGroupInvitation;
 
@@ -62,6 +66,27 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
   protected $group;
 
   /**
+   * The Config factory.
+   *
+   * @var \Drupal\Core\Config\ConfigFactory
+   */
+  protected $configFactory;
+
+  /**
+   * The token service.
+   *
+   * @var \Drupal\Core\Utility\Token
+   */
+  protected $token;
+
+  /**
+   * The group content plugin manager.
+   *
+   * @var \Drupal\group\Plugin\GroupContentEnablerManagerInterface
+   */
+  protected $pluginManager;
+
+  /**
    * Constructs a new BulkGroupInvitation Form.
    *
    * @param \Drupal\Core\Routing\RouteMatchInterface $route_match
@@ -78,6 +103,12 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
    *   The group membership loader.
    * @param \Drupal\ginvite\GroupInvitationLoader $invitation_loader
    *   Invitations loader service.
+   * @param \Drupal\group\Plugin\GroupContentEnablerManagerInterface $plugin_manager
+   *   The group content enabler manager.
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *   The config factory.
+   * @param \Drupal\Core\Utility\Token $token
+   *   The token service.
    */
   public function __construct(
     RouteMatchInterface $route_match,
@@ -86,10 +117,16 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
     LoggerChannelFactoryInterface $logger_factory,
     MessengerInterface $messenger,
     GroupMembershipLoaderInterface $group_membership_loader,
-    GroupInvitationLoader $invitation_loader
+    GroupInvitationLoader $invitation_loader,
+    GroupContentEnablerManagerInterface $plugin_manager,
+    ConfigFactoryInterface $config_factory,
+    Token $token
   ) {
     parent::__construct($route_match, $entity_type_manager, $temp_store_factory, $logger_factory, $messenger, $group_membership_loader, $invitation_loader);
     $this->group = $this->routeMatch->getParameter('group');
+    $this->pluginManager = $plugin_manager;
+    $this->configFactory = $config_factory;
+    $this->token = $token;
   }
 
   /**
@@ -103,7 +140,10 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
       $container->get('logger.factory'),
       $container->get('messenger'),
       $container->get('group.membership_loader'),
-      $container->get('ginvite.invitation_loader')
+      $container->get('ginvite.invitation_loader'),
+      $container->get('plugin.manager.group_content_enabler'),
+      $container->get('config.factory'),
+      $container->get('token')
     );
   }
 
@@ -119,6 +159,46 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
     $form = parent::buildForm($form, $form_state);
+
+    $group = $this->routeMatch->getParameter('group');
+
+    $params = [
+      'user' => $this->currentUser(),
+      'group' => $this->routeMatch->getParameter('group'),
+    ];
+
+    // Load plugin configuration.
+    $group_plugin_collection = $this->pluginManager->getInstalled($group->getGroupType());
+    $group_invite_config = $group_plugin_collection->getConfiguration()['group_invitation'];
+
+    $invitation_subject = $group_invite_config['invitation_subject'];
+    $invitation_body = $group_invite_config['invitation_body'];
+
+    // Get default logo image and replace if it overridden with email settings.
+    $theme_id = $this->configFactory->get('system.theme')->get('default');
+    $logo = $this->getRequest()->getBaseUrl() . theme_get_setting('logo.url', $theme_id);
+    $email_logo = theme_get_setting('email_logo', $theme_id);
+
+    if (is_array($email_logo) && !empty($email_logo)) {
+      $file = File::load(reset($email_logo));
+
+      if ($file instanceof File) {
+        $logo = file_create_url($file->getFileUri());
+      }
+    }
+
+    // Load event invite configuration.
+    $invite_config = $this->configFactory->get('social_group_invite.settings');
+
+    $form['preview'] = [
+      '#theme' => 'invite_email_preview',
+      '#title' => $this->t('Message'),
+      '#logo' => $logo,
+      '#subject' => $this->token->replace($invitation_subject, $params),
+      '#body' => $this->token->replace($invitation_body, $params),
+      '#helper' => $this->token->replace($invite_config->get('invite_helper'), $params),
+    ];
+
     $form['actions']['#type'] = 'actions';
     unset($form['submit']);
     $form['actions']['submit'] = [

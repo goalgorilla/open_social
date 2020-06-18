@@ -21,3 +21,12 @@ function social_group_invite_install() {
     }
   }
 }
+
+/**
+ * Configuration update.
+ */
+function social_group_invite_update_8001() {
+  $config = \Drupal::configFactory()->getEditable('social_group_invite.settings');
+  $config->set('invite_helper', "<p>The message above is edited by the community managers. Please contact them for questions and ideas</p>");
+  $config->save();
+}
