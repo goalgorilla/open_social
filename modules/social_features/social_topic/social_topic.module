@@ -160,12 +160,15 @@ function social_topic_views_query_alter(ViewExecutable $view, QueryPluginBase $q
   // Only show the unpublished option when you are member of the group.
   // You can't place content in a group you are not a member of anyway.
   if ($view->id() == 'group_topics' && $view->getDisplay()->display['id'] == 'page_group_topics') {
+    /** @var \Drupal\group\Entity\GroupInterface $group_from_route */
     $group_from_route = _social_group_get_current_group();
-    $current_user = \Drupal::currentUser();
-    $membership = FALSE;
-    $group_membership = $group_from_route->getMember($current_user);
-    if ($group_membership) {
-      $membership = TRUE;
+    if ($group_from_route instanceof GroupInterface) {
+      $current_user = \Drupal::currentUser();
+      $membership = FALSE;
+      $group_membership = $group_from_route->getMember($current_user);
+      if ($group_membership) {
+        $membership = TRUE;
+      }
     }
 
     // Needs 1 and NODE_PUBLISHED, because it can be TRUE ( default ) or "1"
