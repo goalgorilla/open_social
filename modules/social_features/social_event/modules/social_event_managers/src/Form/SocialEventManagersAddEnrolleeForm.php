@@ -10,6 +10,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Url;
 use Drupal\social_event\Entity\EventEnrollment;
 use Drupal\node\NodeInterface;
+use Drupal\social_event_managers\Element\SocialEnrollmentAutocomplete;
 
 /**
  * Class SocialEventTypeSettings.
@@ -141,16 +142,22 @@ class SocialEventManagersAddEnrolleeForm extends FormBase {
     }
 
     $form['name'] = [
-      '#type' => 'social_enrollment_entity_autocomplete',
+      '#type' => 'select2',
+      '#title' => $this->t('Select members to add'),
+      '#description' => $this->t('To add multiple members, separate each member with a comma ( , ).'),
+      '#multiple' => TRUE,
+      '#tags' => TRUE,
+      '#autocomplete' => TRUE,
       '#selection_handler' => 'social',
       '#selection_settings' => [
         'skip_entity' => $enrollmentIds,
       ],
       '#target_type' => 'user',
-      '#tags' => TRUE,
-      '#description' => $this->t('To add multiple members, separate each member with a comma ( , ).'),
-      '#title' => $this->t('Select members to add'),
-    ];
+      '#element_validate' => [
+        [$this, 'unique_members'],
+      ],
+   ];
+
 
     $form['actions']['cancel'] = [
       '#type' => 'link',
@@ -171,4 +178,11 @@ class SocialEventManagersAddEnrolleeForm extends FormBase {
     return $form;
   }
 
+  /**
+   * Public function to validate members against enrollments.
+   */
+  public function unique_members($element, &$form_state, $complete_form) {
+    // Call the autocomplete function to make sure enrollees are unique.
+    SocialEnrollmentAutocomplete::validateEntityAutocomplete($element, $form_state, $complete_form, TRUE);
+  }
 }
