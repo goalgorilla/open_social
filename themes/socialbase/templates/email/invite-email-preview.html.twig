@@ -33,92 +33,71 @@
 
 {{ attach_library('socialbase/email-preview') }}
 
-<div class="title">
-    {{ title }}
-</div>
+<div class="email-preview">
+    <div class="card__title card__title--underline">
+        {{ title }}
+    </div>
 
-<table border="0" cellpadding="0" cellspacing="0" class="body">
-    <tr>
-        <td class="container">
-            <div class="content">
-                <div class="subject">
-                  {{ subject }}
-                </div>
-              <!-- START CENTERED WHITE CONTAINER -->
-                <span class="preheader"></span>
+    <div class="email-preview--content">
+        <div class="subject">
+          {{ subject }}
+        </div>
 
-                <div class="header">
-                    <img src="{{ logo }}" alt="Logo" class="logo" />
-                </div>
+        <div class="email-preview--inside">
+            <span class="preheader"></span>
 
+            <div class="header">
+                <img src="{{ logo }}" alt="Logo" class="logo" />
+            </div>
+
+            {% if heading %}
                 <div class="postheader">
                     {{ heading }}
                 </div>
+            {% endif %}
 
-                <table class="main">
+            <div class="main">
+                <div class="wrapper">
+                    {% if header %}
+                        <div>
+                           {{ header }}
+                        </div>
+                    {% endif %}
 
-                    <!-- START MAIN CONTENT AREA -->
-                    <tr>
-                        <td class="wrapper">
-                            <table border="0" cellpadding="0" cellspacing="0">
-                                {% if header %}
-                                <tr>
-                                    <td>
-                                       {{ header }}
-                                    </td>
-                                </tr>
-                                {% endif %}
-                                <tr>
-                                    <td>
-                                        {{ body|raw }}
-                                    </td>
-                                </tr>
-                                {% if footer %}
-                                    <tr>
-                                        <td>
-                                            {{ footer }}
-                                        </td>
-                                    </tr>
-                                {% endif %}
+                    <div>
+                        {{ body|raw }}
+                    </div>
 
-                            </table>
-                        </td>
-                    </tr>
-
-                    <!-- END MAIN CONTENT AREA -->
-                </table>
-
-                <!-- START FOOTER -->
-                <div class="footer">
-                    <table border="0" cellpadding="0" cellspacing="0">
-                        <tr>
-                            <td class="content-block">
-                                <strong class="brand">
-                                    {% if site_link %}
-                                        <a href="{{ base_url }}">{{ site_name }}</a>
-                                    {% else %}
-                                        {{ site_name }}
-                                    {% endif %}
-                                </strong>
-                                {% if site_slogan %}
-                                    <br />
-                                    <span class="tagline">{{ site_slogan }}</span>
-                                {% endif %}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="content-block powered-by">
-                                Copyright &copy; {{ "now"|date("Y") }}.
-                            </td>
-                        </tr>
-                    </table>
+                    {% if footer %}
+                        <div>
+                            {{ footer }}
+                        </div>
+                    {% endif %}
                 </div>
-                <!-- END FOOTER -->
             </div>
-        </td>
-        <td>&nbsp;</td>
-    </tr>
-</table>
-<div class="helper">
-    {{ helper|raw }}
+
+            <!-- START FOOTER -->
+            <div class="footer">
+                <div class="content-block">
+                    <strong class="brand">
+                        {% if site_link %}
+                            <a href="{{ base_url }}">{{ site_name }}</a>
+                        {% else %}
+                            {{ site_name }}
+                        {% endif %}
+                    </strong>
+                    {% if site_slogan %}
+                        <br />
+                        <span class="tagline">{{ site_slogan }}</span>
+                    {% endif %}
+                </div>
+                <div class="content-block powered-by">
+                    Copyright &copy; {{ "now"|date("Y") }}.
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="helper">
+        {{ helper|raw }}
+    </div>
 </div>
