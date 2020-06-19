@@ -5,6 +5,8 @@
  * The Social activity install.
  */
 
+use Drupal\Core\Entity\Entity\EntityViewDisplay;
+use Drupal\Core\Entity\Entity\EntityViewMode;
 use Drupal\menu_link_content\Entity\MenuLinkContent;
 use Drupal\message\Entity\MessageTemplate;
 
@@ -70,7 +72,8 @@ function social_activity_update_8002() {
           $templates[$name]->save();
 
           $config_name = "message.template.{$template->getConfigTarget()}";
-          $config = \Drupal::service('config.factory')->getEditable($config_name);
+          $config = \Drupal::service('config.factory')
+            ->getEditable($config_name);
 
           if (!empty($config)) {
             $config->set('text', $new_text);
@@ -88,7 +91,8 @@ function social_activity_update_8002() {
  * Related configs to work with latest version of DER.
  */
 function social_activity_update_8003() {
-  $config = \Drupal::service('config.factory')->getEditable('core.entity_view_display.activity.activity.default');
+  $config = \Drupal::service('config.factory')
+    ->getEditable('core.entity_view_display.activity.activity.default');
 
   // Only update if config exists and this is not a fresh install.
   if (!empty($config) && !empty($settings = $config->get('content.field_activity_entity.settings'))) {
@@ -166,4 +170,73 @@ function social_activity_update_8801() {
 
   $view->set('display', $displays);
   $view->save(TRUE);
+}
+
+/**
+ * Create "Featured" view mode/display for activity.
+ */
+function social_activity_update_8802() {
+  // Create a new activity featured entity view mode.
+  EntityViewMode::create([
+    'targetEntityType' => 'activity',
+    'id' => 'activity.featured',
+    'status' => TRUE,
+    'label' => t('Featured'),
+  ])->save();
+
+  // Create the corresponding entity view display for activity entity type.
+  $display = EntityViewDisplay::load('activity.activity.default')->toArray();
+  $display['content']['field_activity_entity']['settings']['node'] = [
+    'view_mode' => 'featured',
+  ];
+  $display = array_merge($display, [
+    'uuid' => NULL,
+    'targetEntityType' => 'activity',
+    'bundle' => 'activity',
+    'mode' => 'featured',
+  ]);
+  EntityViewDisplay::create($display)->save();
+}
+
+/**
+ * Create "Featured" view mode/display for post.
+ *
+ * @todo: should be moved into social_post module.
+ */
+function social_activity_update_8803() {
+  // Create a new post featured entity view mode.
+  EntityViewMode::create([
+    'targetEntityType' => 'post',
+    'id' => 'post.featured',
+    'status' => TRUE,
+    'label' => t('Featured'),
+  ])->save();
+
+  // Create view display for post bundle of Post entity.
+  $display = EntityViewDisplay::load('post.post.default')->toArray();
+  unset(
+    $display['content']['field_post_comments'],
+    $display['hidden']['like_and_dislike']
+  );
+  $display['content']['like_and_dislike'] = [
+    'weight' => 3,
+    'region' => 'content',
+  ];
+  $display = array_merge($display, [
+    'uuid' => NULL,
+    '_core' => NULL,
+    'targetEntityType' => 'post',
+    'mode' => 'featured',
+  ]);
+  EntityViewDisplay::create($display)->save();
+
+  // Create view display for photo bundle of Post entity.
+  $display = EntityViewDisplay::load('post.photo.default')->toArray();
+  $display = array_merge($display, [
+    'uuid' => NULL,
+    '_core' => NULL,
+    'targetEntityType' => 'post',
+    'mode' => 'featured',
+  ]);
+  EntityViewDisplay::create($display)->save();
 }

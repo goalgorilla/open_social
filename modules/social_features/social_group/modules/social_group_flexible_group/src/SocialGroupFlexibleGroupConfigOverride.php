@@ -37,6 +37,73 @@ class SocialGroupFlexibleGroupConfigOverride implements ConfigFactoryOverrideInt
   public function loadOverrides($names) {
     $overrides = [];
 
+    // Add Content access views filter to exclude
+    // nodes, with visibility group, placed in group you are not a member of.
+    $config_names = [
+      'views.view.latest_topics' => [
+        'default',
+        'page_latest_topics',
+      ],
+      'views.view.upcoming_events' => [
+        'default',
+        'block_community_events',
+        'block_my_upcoming_events',
+        'page_community_events',
+        'upcoming_events_group',
+      ],
+    ];
+
+    // Filter plugin for Flexible group node access.
+    $filter_node_access = [
+      'id' => 'flexible_group_node_access',
+      'table' => 'node_access',
+      'field' => 'flexible_group_node_access',
+      'relationship' => 'none',
+      'group_type' => 'group',
+      'admin_label' => '',
+      'operator' => '=',
+      'value' => [],
+      'group' => 1,
+      'exposed' => FALSE,
+      'expose' => [
+        'operator_id' => '',
+        'label' => '',
+        'description' => '',
+        'use_operator' => FALSE,
+        'operator' => '',
+        'identifier' => '',
+        'required' => FALSE,
+        'remember' => FALSE,
+        'multiple' => FALSE,
+        'remember_roles' => [
+          'authenticated' => 'authenticated',
+        ],
+      ],
+      'is_grouped' => FALSE,
+      'group_info' => [
+        'label' => '',
+        'description' => '',
+        'identifier' => '',
+        'optional' => TRUE,
+        'widget' => 'select',
+        'multiple' => FALSE,
+        'remember' => FALSE,
+        'default_group' => 'All',
+        'default_group_multiple' => [],
+        'group_items' => [],
+      ],
+      'plugin_id' => 'flexible_group_node_access',
+    ];
+
+    foreach ($config_names as $config_name => $displays) {
+      if (in_array($config_name, $names)) {
+        // Loop through the displays.
+        foreach ($displays as $display) {
+          $overrides[$config_name]['display'][$display]['display_options']['filters']['flexible_group_node_access'] = $filter_node_access;
+        }
+      }
+    }
+
     $config_names = [
       'search_api.index.social_all',
       'search_api.index.social_groups',
@@ -309,6 +376,132 @@ class SocialGroupFlexibleGroupConfigOverride implements ConfigFactoryOverrideInt
           ],
         ],
       ];
+    }
+
+    // Add join options to the all-groups and search groups views.
+    $filter_overview_join_methods = [
+      'id' => 'field_group_allowed_join_method_value',
+      'table' => 'group__field_group_allowed_join_method',
+      'field' => 'field_group_allowed_join_method_value',
+      'relationship' => 'none',
+      'group_type' => 'group',
+      'admin_label' => '',
+      'operator' => 'or',
+      'value' => [],
+      'group' => 1,
+      'exposed' => TRUE,
+      'expose' => [
+        'operator_id' => 'field_group_allowed_join_method_value_op',
+        'label' => 'Join method',
+        'description' => '',
+        'use_operator' => FALSE,
+        'operator' => 'field_group_allowed_join_method_value_op',
+        'identifier' => 'field_group_allowed_join_method',
+        'required' => FALSE,
+        'remember' => FALSE,
+        'multiple' => FALSE,
+        'remember_roles' => [
+          'authenticated' => 'authenticated',
+        ],
+      ],
+      'is_grouped' => FALSE,
+      'group_info' => [
+        'label' => '',
+        'description' => '',
+        'identifier' => 'field_group_allowed_join_method',
+        'optional' => TRUE,
+        'widget' => 'select',
+        'multiple' => FALSE,
+        'remember' => FALSE,
+        'default_group' => 'All',
+        'default_group_multiple' => [],
+        'group_items' => [],
+      ],
+      'plugin_id' => 'list_field',
+    ];
+
+    $config_names_groups = [
+      'views.view.newest_groups' => [
+        'default',
+        'page_all_groups',
+      ],
+    ];
+
+    foreach ($config_names_groups as $config_name_groups => $displays_groups) {
+      if (in_array($config_name_groups, $names)) {
+        foreach ($displays_groups as $display_group) {
+          $overrides[$config_name_groups]['display'][$display_group]['display_options']['filters']['field_group_allowed_join_method_value'] = $filter_overview_join_methods;
+        }
+      }
+    }
+
+    // Add join methods as option to search api groups.
+    if (in_array('search_api.index.social_groups', $names)) {
+      $overrides['search_api.index.social_groups'] = [
+        'dependencies' => [
+          'config' => [
+            'field.storage.group.field_group_allowed_join_method' => 'field.storage.group.field_group_allowed_join_method',
+          ],
+        ],
+        'field_settings' => [
+          'field_group_allowed_join_method' => [
+            'label' => 'Allowed join method',
+            'datasource_id' => 'entity:group',
+            'property_path' => 'field_group_allowed_join_method',
+            'type' => 'string',
+            'dependencies' => [
+              'config' => [
+                'field.storage.group.field_group_allowed_join_method' => 'field.storage.group.field_group_allowed_join_method',
+              ],
+            ],
+          ],
+        ],
+      ];
+    }
+
+    // Add search api specific filter for join method.
+    $filter_sapi_join_methods = [
+      'id' => 'field_group_allowed_join_method',
+      'table' => 'search_api_index_social_groups',
+      'field' => 'field_group_allowed_join_method',
+      'relationship' => 'none',
+      'group_type' => 'group',
+      'admin_label' => '',
+      'operator' => 'or',
+      'value' => [],
+      'group' => 1,
+      'exposed' => TRUE,
+      'expose' => [
+        'operator_id' => 'field_group_allowed_join_method_op',
+        'label' => 'Join method',
+        'description' => '',
+        'use_operator' => FALSE,
+        'operator' => 'field_group_allowed_join_method_op',
+        'identifier' => 'field_group_allowed_join_method',
+        'required' => FALSE,
+        'remember' => FALSE,
+        'multiple' => FALSE,
+        'remember_roles' => [
+          'authenticated' => 'authenticated',
+        ],
+      ],
+      'is_grouped' => FALSE,
+      'group_info' => [
+        'label' => '',
+        'description' => '',
+        'optional' => TRUE,
+        'widget' => 'select',
+        'multiple' => FALSE,
+        'remember' => FALSE,
+        'default_group' => 'All',
+        'default_group_multiple' => [],
+        'group_items' => [],
+      ],
+      'plugin_id' => 'search_api_options',
+    ];
+
+    if (in_array('views.view.search_groups', $names)) {
+      $overrides['views.view.search_groups']['display']['default']['display_options']['filters']['field_group_allowed_join_method'] = $filter_sapi_join_methods;
     }
 
     return $overrides;

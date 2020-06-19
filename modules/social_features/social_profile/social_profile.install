@@ -5,6 +5,8 @@
  * Install, update and uninstall functions for the social_profile module.
  */
 
+use Drupal\Core\Entity\Entity\EntityViewDisplay;
+use Drupal\Core\Entity\Entity\EntityViewMode;
 use Drupal\file\Entity\File;
 use Drupal\menu_link_content\Entity\MenuLinkContent;
 use Drupal\user\Entity\Role;
@@ -309,4 +311,74 @@ function social_profile_update_8007(&$sandbox) {
   foreach ($roles as $role) {
     user_role_grant_permissions($role, $permissions);
   }
+}
+
+/**
+ * Remove title property from field_profile_image.
+ */
+function social_profile_update_8008() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_profile', 'social_profile_update_8008');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Implements hook_update_dependencies().
+ */
+function social_profile_update_dependencies() {
+  // Run the config update after the update_helper module is enabled.
+  $dependencies['social_profile'][8808] = [
+    'social_core' => 8805,
+  ];
+
+  return $dependencies;
+}
+
+/**
+ * Create medium_teaser profile view mode.
+ */
+function social_profile_update_8009() {
+  // Create a new profile entity view mode.
+  EntityViewMode::create([
+    'targetEntityType' => 'profile',
+    'id' => 'profile.medium_teaser',
+    'status' => TRUE,
+    'label' => t('Medium Teaser'),
+  ])->save();
+
+  // Load teaser profile view mode.
+  $display = EntityViewDisplay::load('profile.profile.teaser')->toArray();
+
+  // Make sure that labels are hidden for all fields.
+  foreach ($display['content'] as &$field) {
+    $field['label'] = 'hidden';
+  }
+
+  // Create the corresponding entity view display for profile entity type.
+  $display = array_merge($display, [
+    'uuid' => NULL,
+    'targetEntityType' => 'profile',
+    'bundle' => 'profile',
+    'mode' => 'medium_teaser',
+  ]);
+  EntityViewDisplay::create($display)->save();
+}
+
+/**
+ * Update small_teaser profile view mode.
+ */
+function social_profile_update_8010() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_profile', 'social_profile_update_8008');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
 }

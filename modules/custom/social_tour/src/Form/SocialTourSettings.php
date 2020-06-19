@@ -37,7 +37,7 @@ class SocialTourSettings extends ConfigFormBase {
     $form['social_tour_enabled'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Enable the social tour'),
-      '#description' => $this->t('Set wether the tour is enabled or not.'),
+      '#description' => $this->t('Set whether the tour is enabled or not.'),
       '#default_value' => $config->get('social_tour_enabled'),
     ];
 
