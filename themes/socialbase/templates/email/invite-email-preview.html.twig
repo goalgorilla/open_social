@@ -40,7 +40,7 @@
 
     <div class="email-preview--content">
         <div class="subject">
-          {{ subject }}
+            {% trans %}Subject{% endtrans %}: {{ subject }}
         </div>
 
         <div class="email-preview--inside">
@@ -63,11 +63,9 @@
                            {{ header }}
                         </div>
                     {% endif %}
-
                     <div>
                         {{ body|raw }}
                     </div>
-
                     {% if footer %}
                         <div>
                             {{ footer }}
