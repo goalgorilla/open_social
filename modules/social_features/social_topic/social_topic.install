@@ -228,7 +228,7 @@ function social_topic_update_8802() {
 
   foreach ($topic_types as $type) {
     $term = _social_topic_get_term_id_by_name($type['label']);
-    if ($term && $term->field_topic_type_icon->isEmpty()) {
+    if ($term && $term->hasField('field_topic_type_icon') && $term->field_topic_type_icon->isEmpty()) {
       $term->field_topic_type_icon->value = $type['icon'];
       $term->save();
     }
