@@ -5,6 +5,7 @@
  * The Social Content Block module.
  */
 
+use Drupal\block_content\BlockContentInterface;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -14,11 +15,21 @@ use Drupal\social_content_block\ContentBuilder;
  * Implements hook_preprocess_block().
  */
 function social_content_block_preprocess_block(&$variables) {
-  if ($variables['base_plugin_id'] === 'block_content' &&
-    isset($variables['content']['#block_content']) &&
-    $variables['content']['#block_content']->bundle() === 'custom_content_list'
-  ) {
-    $variables['card'] = TRUE;
+  if (isset($variables['content']['#block_content']) && $variables['content']['#block_content']->bundle() === 'custom_content_list') {
+    if ($variables['base_plugin_id'] === 'block_content') {
+      $variables['card'] = TRUE;
+    }
+    // Add subtitle and content type icon for display on dashboards.
+    elseif ($variables['base_plugin_id'] === 'inline_block') {
+      $block_entity = $variables['content']['#block_content'];
+      if (!$block_entity instanceof BlockContentInterface || $block_entity->bundle() !== 'custom_content_list') {
+        return;
+      }
+      $variables['content_type'] = ['#plain_text' => _social_content_block_get_content_type_for_block($block_entity)];
+      if (!$block_entity->field_subtitle->isEmpty()) {
+        $variables['subtitle'] = $block_entity->field_subtitle->view(['label' => 'hidden']);
+      }
+    }
   }
 }
 
@@ -60,28 +71,58 @@ function social_content_block_block_content_view(array &$build, EntityInterface 
 }
 
 /**
- * Implements hook_form_alter().
+ * Get content type for the block.
+ *
+ * @param \Drupal\block_content\BlockContentInterface $block_entity
+ *   The block content entity object.
+ *
+ * @return string
+ *   The entity type.
  */
-function social_content_block_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-  $form_ids = [
-    'block_content_custom_content_list_form',
-    'block_content_custom_content_list_edit_form',
-  ];
-
-  if (in_array($form_id, $form_ids)) {
-    $form['#process'][] = [ContentBuilder::class, 'processBlockForm'];
+function _social_content_block_get_content_type_for_block(BlockContentInterface $block_entity) {
+  if ($block_entity->field_plugin_id->isEmpty()) {
+    return '';
   }
+
+  $plugin_id = $block_entity->field_plugin_id->value;
+  $definition = \Drupal::service('plugin.manager.content_block')->getDefinition($plugin_id);
+
+  // For nodes we distinguish bundles, otherwise we only show the entity type.
+  if ($definition['entityTypeId'] === 'node') {
+    return $definition['bundle'];
+  }
+
+  return $definition['entityTypeId'];
 }
 
 /**
- * Implements hook_form_FORM_ID_alter().
+ * Implements hook_form_alter().
  */
-function social_content_block_form_layout_builder_add_block_alter(&$form, FormStateInterface $form_state, $form_id) {
-  /** @var \Drupal\layout_builder\SectionComponent $component */
-  $component = $form_state->get('layout_builder__component');
+function social_content_block_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  switch ($form_id) {
+    case 'block_content_custom_content_list_form':
+    case 'block_content_custom_content_list_edit_form':
+      $element = &$form;
+      break;
 
-  if ($component->getPluginId() === 'inline_block:custom_content_list') {
-    $form['settings']['block_form']['#process'][] = [ContentBuilder::class, 'processBlockForm'];
+    case 'layout_builder_add_block':
+      /** @var \Drupal\layout_builder\SectionComponent $component */
+      $component = $form_state->get('layout_builder__component');
+
+      if ($component->getPluginId() === 'inline_block:custom_content_list') {
+        $element = &$form['settings']['block_form'];
+      }
+      break;
+
+    case 'layout_builder_update_block':
+      if (isset($form['settings']['block_form']['#block']) && $form['settings']['block_form']['#block']->bundle() === 'custom_content_list') {
+        $element = &$form['settings']['block_form'];
+      }
+      break;
+  }
+
+  if (isset($element)) {
+    $element['#process'][] = [ContentBuilder::class, 'processBlockForm'];
   }
 }
 

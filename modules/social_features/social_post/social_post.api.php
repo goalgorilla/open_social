@@ -5,6 +5,9 @@
  * Hooks provided by the Social Post module.
  */
 
+use Drupal\Core\Url;
+use Drupal\social_post\Entity\PostInterface;
+
 /**
  * @addtogroup hooks
  * @{
@@ -15,6 +18,10 @@
  *
  * @param string $visibility
  *   The current field_visibility value, "1" for 'Community' etc.
+ * @param string $icon
+ *   The icon name.
+ * @param string $title
+ *   The visibility label.
  *
  * @ingroup social_post_api
  */
@@ -37,7 +44,7 @@ function hook_social_post_visibility_info_alter($visibility, &$icon, &$title) {
  *
  * @param array &$links
  *   A renderable array representing the post links.
- * @param \Drupal\social_post\PostInterface $entity
+ * @param \Drupal\social_post\Entity\PostInterface $entity
  *   The post being rendered.
  * @param array &$context
  *   Various aspects of the context in which the post links are going to be
