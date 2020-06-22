@@ -52,7 +52,11 @@ class FollowTaxonomyActivityContext extends ActivityContextBase {
 
     $entity = $this->entityTypeManager->getStorage($related_entity['target_type'])
       ->load($related_entity['target_id']);
-    $tids = $this->taxonomyTermsList($entity);
+
+    if (!empty($entity)) {
+      $tids = $this->taxonomyTermsList($entity);
+    }
+
     if (empty($tids)) {
       return [];
     }
