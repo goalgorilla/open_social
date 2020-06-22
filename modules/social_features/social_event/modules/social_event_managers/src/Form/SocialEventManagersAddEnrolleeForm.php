@@ -171,7 +171,7 @@ class SocialEventManagersAddEnrolleeForm extends FormBase {
       $form['#attached']['library'][] = 'social_event_managers/social_select2_populate';
       $form['#attached']['drupalSettings']['populateEnrollmentsFromGroup'] = [
         'nid' => $nid,
-        'group' => $group_id,
+        'group_id' => $group_id,
       ];
     }
 

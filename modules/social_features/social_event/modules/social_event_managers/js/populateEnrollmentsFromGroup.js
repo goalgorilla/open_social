@@ -10,11 +10,12 @@
   Drupal.behaviors.populateEnrollmentsFromGroup = {
     attach: function (context, settings) {
       var nid = settings.populateEnrollmentsFromGroup.nid;
+      var groupId = settings.populateEnrollmentsFromGroup.group_id;
       $('#enroll_users', context).on('click', function() {
         var enrolleesSelect = $('#edit-name');
         $.ajax({
           type: 'GET',
-          url: '/node/' + nid + '/all-enrollments/add-enrollees/populate-from-group'
+          url: '/node/' + nid + '/all-enrollments/add-enrollees/populate-from-group/' + groupId
         }).then(function (data) {
           var arrayLength = data.length;
           for (var i = 0; i < arrayLength; i++) {

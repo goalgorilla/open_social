@@ -8,7 +8,9 @@ use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Routing\RouteMatch;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\node\NodeInterface;
+use Drupal\group\Entity\GroupInterface;
+use Drupal\group\GroupMembershipLoaderInterface;
+use Drupal\user\Entity\User;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -61,28 +63,61 @@ class AutocompleteController extends ControllerBase {
    *   Thrown if the storage handler couldn't be loaded.
    */
   public function access(AccountInterface $account, RouteMatch $route_match) {
-    return AccessResult::allowed();
+    // Check if the user is member of the group.
+    $group = $route_match->getParameter('group');
+    $group = $this->entityTypeManager->getStorage('group')
+      ->load($group);
+
+    if ($group instanceof GroupInterface) {
+      $is_member = $group->getMember($account) instanceof GroupMembershipLoaderInterface;
+      // Invert this.
+      if (!$is_member) {
+        // Also check if the person is event owner or organizer
+        $hasPermissionIsOwnerOrOrganizer = social_event_owner_or_organizer();
+        return AccessResult::allowedIf($hasPermissionIsOwnerOrOrganizer === TRUE);
+      }
+    }
+
+    return AccessResult::forbidden();
   }
 
-  public function populate ($node) {
-    $response = new AjaxResponse();
-
-    // Create the dataset.
+  public function populate ($node, $group) {
+    // Create the dataset to send at the end.
     $data = [];
-    $data[] = [
-      'id' => '3',
-      'full_name' => 'Jim (3)',
-    ];
 
-    $data[] = [
-      'id' => '1',
-      'full_name' =>  'testing (1)',
-    ];
+    // Get all the members from the group.
+    $group = $this->entityTypeManager->getStorage('group')
+      ->load($group);
 
+    if ($group instanceof GroupInterface) {
+      $memberships = $group->getMembers();
+      /** @var \Drupal\social_event\EventEnrollmentStatusHelper $enrollments */
+      $enrollments = \Drupal::service('social_event.status_helper');
 
-    $response->setData($data);
+      foreach ($memberships as $membership) {
+       $user_id = $membership->getUser()->id();
+       $user = User::load($user_id);
 
-    return $response;
+       // Or should we get all the enrollments and include them in the foreach?
+       if($enrollments->getEventEnrollments($user_id, $node, TRUE)) {
+         // If the user already has an enrollments, skip it.
+         continue;
+       };
+       $display_name = $user->getDisplayName();
+       $display_name = "$display_name ($user_id)";
 
+        $data[] = [
+         'id' => $membership->getUser()->id(),
+         'full_name' => $display_name
+       ];
+      }
+    }
+
+    if (!empty($data)) {
+      $response = new AjaxResponse();
+      $response->setData($data);
+
+      return $response;
+    }
   }
 }
