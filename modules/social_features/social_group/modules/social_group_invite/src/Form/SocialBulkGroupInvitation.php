@@ -174,6 +174,10 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
     $invitation_subject = $group_invite_config['invitation_subject'];
     $invitation_body = $group_invite_config['invitation_body'];
 
+    // Cleanup message body and replace any links on preview page.
+    $invitation_body = $this->token->replace($invitation_body, $params);
+    $invitation_body = preg_replace('/href="([^"]*)"/', 'href="#"', $invitation_body);
+
     // Get default logo image and replace if it overridden with email settings.
     $theme_id = $this->configFactory->get('system.theme')->get('default');
     $logo = $this->getRequest()->getBaseUrl() . theme_get_setting('logo.url', $theme_id);
@@ -195,7 +199,7 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
       '#title' => $this->t('Message'),
       '#logo' => $logo,
       '#subject' => $this->token->replace($invitation_subject, $params),
-      '#body' => $this->token->replace($invitation_body, $params),
+      '#body' => $invitation_body,
       '#helper' => $this->token->replace($invite_config->get('invite_helper'), $params),
     ];
 
