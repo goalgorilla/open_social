@@ -6,6 +6,7 @@ use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Render\RendererInterface;
+use Drupal\social_event\Form\EnrollActionForm;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Url;
 use Drupal\social_event\Entity\EventEnrollment;
@@ -132,6 +133,17 @@ class SocialEventManagersAddEnrolleeForm extends FormBase {
       }
     }
 
+    // We check if the node is placed in a Group.
+    if (!empty($nid)) {
+      if (!is_object($nid) && !is_null($nid)) {
+        $node = $this->entityTypeManager
+          ->getStorage('node')
+          ->load($nid);
+      }
+      $groups = EnrollActionForm::getGroups($node);
+    }
+
+
     // Load the current Event enrollments so we can check duplicates.
     $storage = \Drupal::entityTypeManager()->getStorage('event_enrollment');
     $enrollments = $storage->loadByProperties(['field_event' => $nid]);
@@ -141,9 +153,31 @@ class SocialEventManagersAddEnrolleeForm extends FormBase {
       $enrollmentIds[] = $enrollment->getAccount();
     }
 
+    // If the groups are not empty, give the option to pre-fill members.
+    if (!empty($groups)) {
+      // Add the button to add all the current members of the group.
+      $enroll = $this->t('Select all members of the group this event belongs to');
+      $form['enroll_users'] = [
+        '#markup' => '<div class="card__link" id="enroll_users"><a href="#" class="enroll-form-submit"><svg class="icon icon-plus">+ <use xlink:href="#icon-plus" /></svg>' . $enroll . '</a></div>',
+        '#allowed_tags' => ['a', 'div'],
+      ];
+
+      // Only 1 group per content is possible now.
+      foreach ($groups as $group) {
+        $group_id = $group->id();
+      }
+
+      // Attach a JS library so we can populate it with group members.
+      $form['#attached']['library'][] = 'social_event_managers/social_select2_populate';
+      $form['#attached']['drupalSettings']['populateEnrollmentsFromGroup'] = [
+        'nid' => $nid,
+        'group' => $group_id,
+      ];
+    }
+
     $form['name'] = [
       '#type' => 'select2',
-      '#title' => $this->t('Select members to add'),
+      '#title' => $this->t('Members'),
       '#description' => $this->t('To add multiple members, separate each member with a comma ( , ).'),
       '#multiple' => TRUE,
       '#tags' => TRUE,
@@ -156,7 +190,7 @@ class SocialEventManagersAddEnrolleeForm extends FormBase {
       '#element_validate' => [
         [$this, 'unique_members'],
       ],
-   ];
+    ];
 
 
     $form['actions']['cancel'] = [
