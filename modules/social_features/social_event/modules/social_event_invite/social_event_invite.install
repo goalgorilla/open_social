@@ -60,9 +60,21 @@ function social_event_invite_update_8001() {
 }
 
 /**
- * Set helper text of invite mail on the preview page for Events.
+ * Use display name instead of username for the event invite email.
  */
 function social_event_invite_update_8002() {
+  // Get the config.
+  $config = \Drupal::configFactory()->getEditable('social_event_invite.settings');
+
+  // Change the value of the invite_subject.
+  $config->set('invite_subject', '[current-user:display-name] has invited you to the event [node:title] on [site:name]');
+  $config->save();
+}
+
+/**
+ * Set helper text of invite mail on the preview page for Events.
+ */
+function social_event_invite_update_8003() {
   /** @var \Drupal\update_helper\Updater $updateHelper */
   $updateHelper = \Drupal::service('update_helper.updater');
 
