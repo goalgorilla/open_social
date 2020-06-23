@@ -176,3 +176,25 @@ function social_group_flexible_group_update_8804() {
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
 }
+
+/**
+ * Set default values for the field_members_visibility in flexible groups.
+ */
+function social_group_flexible_group_update_8805() {
+  $query = \Drupal::entityTypeManager()->getStorage('group')->getQuery();
+  $flexible_group_ids = $query->condition('type', 'flexible_group')->execute();
+
+  if (!empty($flexible_group_ids)) {
+    foreach ($flexible_group_ids as $group_id) {
+      \Drupal::database()->insert('group__field_members_visibility')->fields([
+        'bundle' => 'flexible_group',
+        'deleted' => 0,
+        'entity_id' => $group_id,
+        'revision_id' => $group_id,
+        'langcode' => \Drupal::service('language_manager')->getCurrentLanguage()->getId(),
+        'delta' => 0,
+        'field_members_visibility_value' => 1,
+      ])->execute();
+    }
+  }
+}
