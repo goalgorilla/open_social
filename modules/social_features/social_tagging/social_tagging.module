@@ -160,7 +160,7 @@ function social_tagging_form_alter(&$form, FormStateInterface $form_state, $form
           if (count($options) > 0) {
             // Add a field.
             $form['tagging'][$field_name] = [
-              '#type' => 'select',
+              '#type' => 'select2',
               '#title' => $category,
               '#multiple' => TRUE,
               '#default_value' => $default_value,
@@ -392,7 +392,7 @@ function social_tagging_form_views_exposed_form_alter(&$form, FormStateInterface
         $form[$label]['#options'] = [];
         $form[$label]['#options'][''] = t('- Any -');
         $form[$label]['#options'] += $tag_service->getChildren($tid);
-        $form[$label]['#type'] = 'select';
+        $form[$label]['#type'] = 'select2';
         $form[$label]['#size'] = NULL;
 
         /** @var \Symfony\Component\HttpFoundation\ParameterBag $query */
@@ -409,7 +409,7 @@ function social_tagging_form_views_exposed_form_alter(&$form, FormStateInterface
     // Remove main items and just insert child options.
     $form['tag']['#options'] = [];
     $form['tag']['#options'][''] = t('- Any -');
-    $form['tag']['#type'] = 'select';
+    $form['tag']['#type'] = 'select2';
     $form['tag']['#size'] = NULL;
 
     /** @var \Symfony\Component\HttpFoundation\ParameterBag $query */
