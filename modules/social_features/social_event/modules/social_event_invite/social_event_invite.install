@@ -58,3 +58,15 @@ function social_event_invite_update_8001() {
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
 }
+
+/**
+ * Use display name instead of username for the event invite email.
+ */
+function social_event_invite_update_8002() {
+  // Get the config.
+  $config = \Drupal::configFactory()->getEditable('social_event_invite.settings');
+
+  // Change the value of the invite_subject.
+  $config->set('invite_subject', '[current-user:display-name] has invited you to the event [node:title] on [site:name]');
+  $config->save();
+}
