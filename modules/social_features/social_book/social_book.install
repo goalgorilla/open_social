@@ -28,6 +28,12 @@ function social_book_update_dependencies() {
     'social_core' => 8802,
   ];
 
+  // Ensure update helper dependant hooks run after update helper
+  // is enabled.
+  $dependencies['social_book'][8802] = [
+    'social_core' => 8805,
+  ];
+
   return $dependencies;
 }
 
@@ -146,4 +152,18 @@ function social_book_update_8801() {
       }
     }
   }
+}
+
+/**
+ * Hide image label in teasers.
+ */
+function social_book_update_8802() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_book', 'social_book_update_8802');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
 }
