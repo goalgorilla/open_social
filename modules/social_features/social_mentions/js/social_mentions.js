@@ -140,6 +140,13 @@
             mentionsInput = $textarea.data("mentionsInput"),
             editor = CKEDITOR.instances[$textarea.attr("id")];
 
+          $(".comments .comment__reply-btn a").on("click", function (e) {
+            e.preventDefault();
+            $("html, body").animate({
+              scrollTop: $("[data-drupal-selector=\"comment-form\"]").offset().top
+            }, 1000)
+          });
+
           $(".mention-reply").on("click", function (e) {
             e.preventDefault();
 
