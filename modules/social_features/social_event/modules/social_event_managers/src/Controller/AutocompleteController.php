@@ -81,6 +81,10 @@ class AutocompleteController extends ControllerBase {
     return AccessResult::forbidden();
   }
 
+  /**
+   * Get all the members from a group where the event is in,
+   * and strip out people who are already enrolled.
+   */
   public function populate ($node, $group) {
     // Create the dataset to send at the end.
     $data = [];
@@ -114,10 +118,18 @@ class AutocompleteController extends ControllerBase {
     }
 
     if (!empty($data)) {
+      usort($data, [$this ,'sort_alphabetically']);
       $response = new AjaxResponse();
       $response->setData($data);
 
       return $response;
     }
+  }
+
+  /**
+   * Enroll
+   */
+  private static function sort_alphabetically($a,$b) {
+    return ($a['full_name'] >= $b['full_name']) ? -1 : 1;
   }
 }
