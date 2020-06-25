@@ -9,16 +9,15 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Routing\RouteMatch;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\group\Entity\GroupInterface;
-use Drupal\group\GroupMembershipLoaderInterface;
-use Drupal\user\Entity\User;
+use Drupal\group\GroupMembership;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Class AutocompleteController.
+ * Class Select2PopulateController.
  *
  * @package Drupal\social_event_managers\Controller
  */
-class AutocompleteController extends ControllerBase {
+class Select2PopulateController extends ControllerBase {
 
   /**
    * The entity type manager.
@@ -69,9 +68,8 @@ class AutocompleteController extends ControllerBase {
       ->load($group);
 
     if ($group instanceof GroupInterface) {
-      $is_member = $group->getMember($account) instanceof GroupMembershipLoaderInterface;
-      // Invert this.
-      if (!$is_member) {
+      $is_member = $group->getMember($account) instanceof GroupMembership;
+      if ($is_member) {
         // Also check if the person is event owner or organizer
         $hasPermissionIsOwnerOrOrganizer = social_event_owner_or_organizer();
         return AccessResult::allowedIf($hasPermissionIsOwnerOrOrganizer === TRUE);
@@ -98,16 +96,16 @@ class AutocompleteController extends ControllerBase {
       /** @var \Drupal\social_event\EventEnrollmentStatusHelper $enrollments */
       $enrollments = \Drupal::service('social_event.status_helper');
 
+      $x = 1;
       foreach ($memberships as $membership) {
        $user_id = $membership->getUser()->id();
-       $user = User::load($user_id);
 
        // Or should we get all the enrollments and include them in the foreach?
        if($enrollments->getEventEnrollments($user_id, $node, TRUE)) {
          // If the user already has an enrollments, skip it.
          continue;
-       };
-       $display_name = $user->getDisplayName();
+       }
+       $display_name = $membership->getUser()->getDisplayName();
        $display_name = "$display_name ($user_id)";
 
         $data[] = [
@@ -130,6 +128,6 @@ class AutocompleteController extends ControllerBase {
    * Enroll
    */
   private static function sort_alphabetically($a,$b) {
-    return ($a['full_name'] >= $b['full_name']) ? -1 : 1;
+    return (strcasecmp($a['full_name'], $b['full_name']) > 0) ? 1 : -1;
   }
 }

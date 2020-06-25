@@ -12,6 +12,7 @@
       var nid = settings.populateEnrollmentsFromGroup.nid;
       var groupId = settings.populateEnrollmentsFromGroup.group_id;
       $('#enroll_users', context).on('click', function() {
+        $( 'a', this ).append( ' <span class="ajax-throbber glyphicon-spin icon glyphicon glyphicon-refresh"></span>' );
         var enrolleesSelect = $('#edit-name');
         $.ajax({
           type: 'GET',
@@ -22,15 +23,15 @@
             // create the option and append to Select2
             var option = new Option(data[i].full_name, data[i].id, true, true);
             enrolleesSelect.append(option).trigger('change');
-
-            // manually trigger the `select2:select` event
-            enrolleesSelect.trigger({
-              type: 'select2:select',
-              params: {
-                data: data
-              }
-            });
           }
+          // manually trigger the `select2:select` event
+          enrolleesSelect.trigger({
+            type: 'select2:select',
+            params: {
+              data: data
+            }
+          });
+          $('span.ajax-throbber', '#enroll_users').remove();
         });
       });
     }

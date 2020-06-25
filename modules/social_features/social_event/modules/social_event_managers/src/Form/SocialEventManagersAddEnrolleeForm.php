@@ -121,6 +121,7 @@ class SocialEventManagersAddEnrolleeForm extends FormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
     $form['#attributes']['class'][] = 'card card__block form--default form-wrapper form-group';
+    //$nid = $this->routeMatch->getRawParameter('node');
 
     if (empty($nid)) {
       $node = \Drupal::routeMatch()->getParameter('node');
@@ -155,13 +156,19 @@ class SocialEventManagersAddEnrolleeForm extends FormBase {
 
     // If the groups are not empty, give the option to pre-fill members.
     if (!empty($groups)) {
+      $group_members_count = \Drupal::service('social_group.group_members_count');
+      $member_count = $group_members_count->getGroupMemberCount($groups[0]);
+
       // Add the button to add all the current members of the group.
-      $enroll = $this->t('Select all members of the group this event belongs to');
+      $enroll = $this->t('Select @count member(s) of the group this event belongs to', ['@count' => $member_count]);
       $form['enroll_users'] = [
-        '#markup' => '<div class="card__link" id="enroll_users"><a href="#" class="enroll-form-submit"><svg class="icon icon-plus">+ <use xlink:href="#icon-plus" /></svg>' . $enroll . '</a></div>',
-        '#allowed_tags' => ['a', 'div'],
+        '#markup' => '<div class="btn-link control-label" id="enroll_users"><a href="#" class="enroll-form-submit">+ ' . $enroll . '</a></div>',
       ];
 
+
+      if ($member_count > 100) {
+        $form['enroll_users']['#suffix'] = '<div class="help-block">' . $this->t('Notice: if you want to select all the members from the group which has more than 100 members it can take up to 1 minute to load.') . "</div>";
+      }
       // Only 1 group per content is possible now.
       foreach ($groups as $group) {
         $group_id = $group->id();
