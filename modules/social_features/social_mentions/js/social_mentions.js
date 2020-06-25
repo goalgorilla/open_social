@@ -150,10 +150,9 @@
           $(".mention-reply").on("click", function (e) {
             e.preventDefault();
 
-            var author = $(this).data("author"),
-              empty = editor ? !editor.getData().length : !$textarea.val().length;
+            var author = $(this).data("author");
 
-            if (author && empty) {
+            if (author) {
               if (!editor) {
                 $textarea.val(author.value);
 
@@ -169,6 +168,14 @@
                 $textarea.focus();
               }
               else {
+                if(editor.getData().length) {
+                  $("[data-drupal-selector=\"comment-form\"]")
+                    .find('iframe')
+                    .contents()
+                    .find('body')
+                    .empty();
+                  editor.updateElement();
+                }
                 mentionsInput.handler.refreshMentions();
 
                 mentionsInput.handler.editor.focus();
