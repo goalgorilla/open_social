@@ -66,6 +66,30 @@ function social_like_invalidate_cache(EntityInterface $entity) {
 }
 
 /**
+ * Implements hook_entity_extra_field_info_alter().
+ */
+function social_like_entity_extra_field_info_alter(&$info) {
+  // By default the like_and_dislike module adds the like count as hidden field.
+  // However, in Open Social it should be visible in all places. This hook
+  // changes the default. See like_and_dislike_entity_extra_field_info.
+  $entity_type_manager = \Drupal::entityTypeManager();
+  foreach (\Drupal::config('like_and_dislike.settings')->get('enabled_types') as $entity_type_id => $bundles) {
+    // The entity type has no bundles. Add display component to the default one.
+    if (!$entity_type_manager->getDefinition($entity_type_id)->hasKey('bundle')) {
+      $info[$entity_type_id][$entity_type_id]['display']['like_and_dislike']['visible'] = TRUE;
+      $info[$entity_type_id][$entity_type_id]['display']['like_and_dislike']['weight'] = 0;
+      continue;
+    }
+
+    // Add likes and dislikes for each of the enabled bundles.
+    foreach ($bundles as $bundle) {
+      $info[$entity_type_id][$bundle]['display']['like_and_dislike']['visible'] = TRUE;
+      $info[$entity_type_id][$bundle]['display']['like_and_dislike']['weight'] = 0;
+    }
+  }
+}
+
+/**
  * Implements hook_preprocess().
  */
 function social_like_preprocess_like_and_dislike_icons(&$variables) {

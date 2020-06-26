@@ -19,11 +19,18 @@ class SocialTaggingOverrides implements ConfigFactoryOverrideInterface {
   protected $tagService;
 
   /**
-   * {@inheritdoc}
+   * Whether this config override should apply to the provided configurations.
+   *
+   * Used to check what to return in loadOverrides as well as in the metadata
+   * method.
+   *
+   * @param array $names
+   *   The names of the configs for which overrides are being loaded.
+   *
+   * @return bool
+   *   Whether we override those configs.
    */
-  public function loadOverrides($names) {
-    $overrides = [];
-
+  private function shouldApplyOverrides(array $names) {
     $config_names = [
       'views.view.search_content',
       'views.view.search_groups',
@@ -38,18 +45,27 @@ class SocialTaggingOverrides implements ConfigFactoryOverrideInterface {
       'views.view.newest_groups',
     ];
 
-    $found = FALSE;
-
-    foreach ($config_names as $config_name) {
-      if (in_array($config_name, $names)) {
-        $found = TRUE;
-        break;
+    // We loop over the provided names instead of the config names we override
+    // which is slightly faster in the case of being called from
+    // `getCacheableMetadata` which checks for a single config only.
+    foreach ($names as $name) {
+      if (in_array($name, $config_names)) {
+        return TRUE;
       }
     }
 
-    if (!$found) {
-      return $overrides;
+    return FALSE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function loadOverrides($names) {
+    if (!$this->shouldApplyOverrides($names)) {
+      return [];
     }
+
+    $overrides = [];
 
     // Check if tagging is active.
     $tagService = \Drupal::service('social_tagging.tag_service');
@@ -300,7 +316,43 @@ class SocialTaggingOverrides implements ConfigFactoryOverrideInterface {
    * {@inheritdoc}
    */
   public function getCacheableMetadata($name) {
-    return new CacheableMetadata();
+    // If this override doesn't apply to the given config then we return an
+    // empty cacheable metadata object that can be cached forever.
+    if (!$this->shouldApplyOverrides([$name])) {
+      return new CacheableMetadata();
+    }
+
+    // We could dinstinguish between the various configurations that we override
+    // in how granular we cache. However, for simplicty just cache based on all
+    // the calls that are made in the loadOverrides method and assume this is
+    // the same for any config that's overridden.
+    $metadata = new CacheableMetadata();
+    // Calls to SocialTaggingService's methods active, groupActive, allowSplit
+    // all depend on the settings under the hood.
+    $metadata->addCacheContexts(['config:social_tagging.settings']);
+    // The loadOverrides method calls the getCategories and getChildren methods
+    // to build the fields that are shown in the views and the values they have.
+    // The output of these methods ultimately depends on the contents of the
+    // `social_tagging` vocabulary. With that in mind we want to invalidate on
+    // any taxonomy change in the `social_tagging` vocabulary which we can do
+    // with the `taxonomy_term_list` cache tag that's automatically defined as
+    // EntityType::id . '_list_' in EntityType::__construct. Additionally as of
+    // 8.9.0 (https://www.drupal.org/node/3107058) we can specify a specific
+    // Taxonomy bundle. (Remember that a taxonomy Term bundle is its
+    // vocabulary).
+    // So for Drupal versions before 8.9.0 we'll have to invalidate on any term
+    // addition and for anything above 8.9.0 we can enjoy a performance
+    // increase.
+    if (version_compare(\Drupal::VERSION, '8.9', '<')) {
+      $metadata->addCacheTags(['taxonomy_term_list']);
+    }
+    else {
+      $metadata->addCacheTags(['taxonomy_term_list:social_tagging']);
+    }
+
+    // The above should ensure that if things change in the tagging
+    // configuration or the available tags, the search UI is rebuilt.
+    return $metadata;
   }
 
   /**

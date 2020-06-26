@@ -1,0 +1,32 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the social_group_invite module.
+ */
+
+use Drupal\group\Entity\GroupType;
+
+/**
+ * Implements hook_install().
+ *
+ * @throws \Drupal\Core\Entity\EntityStorageException
+ */
+function social_group_invite_install() {
+  // Assign permissions by default to all group types
+  // that have group_invitation enabled.
+  foreach (GroupType::loadMultiple() as $group_type) {
+    if ($group_type->hasContentPlugin('group_invitation')) {
+      social_group_invite_set_default_permissions_for_group_type($group_type);
+    }
+  }
+}
+
+/**
+ * Set helper text of invite mail on the preview page for Groups.
+ */
+function social_group_invite_update_8001() {
+  $config = \Drupal::configFactory()->getEditable('social_group_invite.settings');
+  $config->set('invite_helper', "<p>The message above is edited by the community managers. Please contact them for questions and ideas</p>");
+  $config->save();
+}

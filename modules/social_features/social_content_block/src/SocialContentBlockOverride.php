@@ -25,6 +25,13 @@ class SocialContentBlockOverride implements ConfigFactoryOverrideInterface {
   protected $configFactory;
 
   /**
+   * The content block plugin definitions.
+   *
+   * @var array
+   */
+  protected $definitions = NULL;
+
+  /**
    * Constructs the configuration override.
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
@@ -32,6 +39,10 @@ class SocialContentBlockOverride implements ConfigFactoryOverrideInterface {
    */
   public function __construct(ConfigFactoryInterface $config_factory) {
     $this->configFactory = $config_factory;
+
+    if (\Drupal::hasService('plugin.manager.content_block')) {
+      $this->definitions = \Drupal::service('plugin.manager.content_block')->getDefinitions();
+    }
   }
 
   /**
@@ -66,6 +77,80 @@ class SocialContentBlockOverride implements ConfigFactoryOverrideInterface {
       }
 
       $overrides[$config_name]['settings']['plugin_ids'] = $settings;
+    }
+
+    if (!$this->definitions) {
+      return $overrides;
+    }
+
+    $config_name = 'core.entity_form_display.block_content.custom_content_list.default';
+
+    if (in_array($config_name, $names)) {
+      $config = $this->configFactory->getEditable($config_name);
+      $dependencies = $config->get('dependencies.config');
+      $group = $config->get('third_party_settings.field_group.group_filter_options.children');
+      $fields = [];
+      $field_config_prefix = 'field.field.block_content.custom_content_list.';
+      $field_configs = $this->configFactory->listAll($field_config_prefix);
+
+      foreach ($this->definitions as $plugin_definition) {
+        // It's set in a six because weights from zero to five are reserved by
+        // other fields such as the plugin ID field and plugin filters field.
+        $weight = 6;
+
+        foreach ($plugin_definition['fields'] as $field) {
+          $field_config = $field_config_prefix . $field;
+
+          if (in_array($field_config, $field_configs)) {
+            $dependencies[] = $field_config;
+            $group[] = $field;
+
+            $fields[$field] = [
+              'weight' => $weight++,
+              'settings' => [
+                'match_operator' => 'CONTAINS',
+                'size' => 60,
+                'placeholder' => '',
+                'match_limit' => 10,
+              ],
+              'third_party_settings' => [],
+              'type' => 'entity_reference_autocomplete_tags',
+              'region' => 'content',
+            ];
+          }
+        }
+      }
+
+      $overrides[$config_name] = [
+        'dependencies' => [
+          'config' => $dependencies,
+        ],
+        'third_party_settings' => [
+          'field_group' => [
+            'group_filter_options' => [
+              'children' => $group,
+            ],
+          ],
+        ],
+        'content' => $fields,
+      ];
+    }
+
+    $config_name = 'core.entity_view_display.block_content.custom_content_list.default';
+
+    if (in_array($config_name, $names)) {
+      $field_config_prefix = 'field.field.block_content.custom_content_list.';
+      $field_configs = $this->configFactory->listAll($field_config_prefix);
+
+      foreach ($this->definitions as $plugin_definition) {
+        foreach ($plugin_definition['fields'] as $field) {
+          $field_config = $field_config_prefix . $field;
+
+          if (in_array($field_config, $field_configs)) {
+            $overrides[$config_name]['hidden'][$field] = TRUE;
+          }
+        }
+      }
     }
 
     return $overrides;

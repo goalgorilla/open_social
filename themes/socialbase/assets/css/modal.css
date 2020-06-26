@@ -88,11 +88,22 @@
           animation: fadein_scale 0.5s ease-out;
 }
 
+.ui-dialog .btn {
+  position: relative;
+}
+
+.ui-dialog .btn .ajax-throbber {
+  position: absolute;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  right: -2px;
+}
+
 .ui-dialog-titlebar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1rem;
+  padding: 12px 1rem;
   border-bottom: 1px solid #e6e6e6;
 }
 
@@ -103,11 +114,12 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  font-size: 1rem;
 }
 
 .ui-dialog-titlebar-close {
   font-size: 1.5rem;
-  font-weight: 700;
+  font-weight: 400;
   line-height: 1;
   color: #000;
   text-shadow: 0 1px 0 #fff;
@@ -254,9 +266,6 @@
 }
 
 @media (min-width: 900px) {
-  .ui-dialog-title {
-    font-size: 1.25rem;
-  }
   .social-dialog.ui-dialog {
     max-width: 400px;
   }

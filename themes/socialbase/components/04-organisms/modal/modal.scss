@@ -79,13 +79,25 @@
   background-clip: padding-box;
   backface-visibility: hidden;
   animation: fadein_scale 0.5s ease-out;
+
+  // Update position for the ajax throbber.
+  .btn {
+    position: relative;
+
+    .ajax-throbber {
+      position: absolute;
+      margin-left: 0 !important;
+      margin-right: 0 !important;
+      right: -2px;
+    }
+  }
 }
 
 .ui-dialog-titlebar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1rem;
+  padding: 12px 1rem;
   border-bottom: 1px solid $gray-lighter;
 }
 
@@ -96,15 +108,12 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-
-  @include for-tablet-landscape-up {
-    font-size: 1.25rem;
-  }
+  font-size: 1rem;
 }
 
 .ui-dialog-titlebar-close {
   font-size: 1.5rem;
-  font-weight: 700;
+  font-weight: 400;
   line-height: 1;
   color: #000;
   text-shadow: 0 1px 0 #fff;

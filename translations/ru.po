@@ -1,17 +1,17 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: node-gettext\n"
-"POT-Creation-Date: 2020-03-04 00:31+0000\n"
-"PO-Revision-Date: 2020-03-03 16:19+0000\n"
+"POT-Creation-Date: 2020-04-30 00:37+0000\n"
+"PO-Revision-Date: 2020-06-18 16:20+0000\n"
 "Last-Translator: Anna Kopytova <anna.kopytova@greenpeace.org>\n"
-"Language-Team: Russian <https://translate.getopensocial.com/projects/open-"
-"social/distribution/ru/>\n"
+"Language-Team: Russian <https://translate.getopensocial.com/projects/"
+"open-social/distribution/ru/>\n"
 "Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<="
+"4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 "X-Generator: Weblate 3.10.1\n"
 
 #: modules/social_features/social_user/src/Form/SocialUserLoginForm.php:253
@@ -47,13 +47,13 @@ msgstr "%time назад"
 #: modules/social_features/social_event/modules/social_event_max_enroll/social_event_max_enroll.module:28;152
 msgid "(1 spot left)"
 msgid_plural "(@count spots left)"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "(1 место осталось)"
+msgstr[1] "(@count мест(а) осталось)"
 msgstr[2] ""
 
 #: modules/social_features/social_event/config/install/views.view.upcoming_events.yml:0
 msgid "(Upcoming) Community events"
-msgstr ""
+msgstr "(Предстоящие) События сообщества"
 
 #: modules/social_features/social_search/config/install/views.view.search_content.yml:0
 msgid "(ascending)"
@@ -77,9 +77,8 @@ msgstr ""
 #: modules/social_features/social_group/config/install/views.view.group_topics.yml:0
 #: modules/social_features/social_group/config/install/views.view.groups.yml:0
 #: modules/social_features/social_group/config/install/views.view.newest_groups.yml:0
-#: modules/social_features/social_landing_page/config/install/views.view.featured_content_reference.yml:0
-#: modules/social_features/social_landing_page/config/install/views.view.featured_group_reference.yml:0
-#: modules/social_features/social_landing_page/config/install/views.view.featured_profile_reference.yml:0;0;0
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_invitations.yml:0;0;0;0
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_user_invitations.yml:0;0;0;0
 #: modules/social_features/social_like/config/install/views.view.who_liked_this_entity.yml:0
 #: modules/social_features/social_post/config/install/views.view.recipient_group_reference.yml:0
 #: modules/social_features/social_search/config/install/views.view.search_all.yml:0
@@ -108,10 +107,9 @@ msgstr ""
 #: modules/social_features/social_group/config/install/views.view.group_topics.yml:0
 #: modules/social_features/social_group/config/install/views.view.groups.yml:0
 #: modules/social_features/social_group/config/install/views.view.newest_groups.yml:0
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_invitations.yml:0
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_user_invitations.yml:0
 #: modules/social_features/social_landing_page/config/install/views.view.community_activities.yml:0
-#: modules/social_features/social_landing_page/config/install/views.view.featured_content_reference.yml:0
-#: modules/social_features/social_landing_page/config/install/views.view.featured_group_reference.yml:0
-#: modules/social_features/social_landing_page/config/install/views.view.featured_profile_reference.yml:0
 #: modules/social_features/social_like/config/install/views.view.who_liked_this_entity.yml:0
 #: modules/social_features/social_post/config/install/views.view.recipient_group_reference.yml:0
 #: modules/social_features/social_private_message/config/install/views.view.inbox.yml:0
@@ -126,9 +124,9 @@ msgstr ""
 msgid "- All -"
 msgstr "- Все -"
 
-#: modules/social_features/social_search/social_search.module:96
+#: modules/social_features/social_search/social_search.module:78
 #: modules/social_features/social_tagging/social_tagging.module:393;411
-#: modules/social_features/social_user/social_user.module:118
+#: modules/social_features/social_user/social_user.module:131
 msgid "- Any -"
 msgstr "- Любой -"
 
@@ -145,7 +143,7 @@ msgstr "- Не указано -"
 msgid "- Restricted access -"
 msgstr "- Ограниченный доступ -"
 
-#: translations.php:68
+#: translations.php:73
 msgid "-- Select action --"
 msgstr ""
 
@@ -165,7 +163,7 @@ msgid "1 attachment."
 msgid_plural "@count attachments."
 msgstr[0] "1 вложение"
 msgstr[1] "@count вложения(й)"
-msgstr[2] "@count attachments."
+msgstr[2] "@count вложения(й)."
 
 #: modules/custom/social_node_statistics/src/Form/NodeStatisticsSettingsForm.php:61
 msgid "1 day"
@@ -174,6 +172,13 @@ msgstr "1 день"
 #: modules/custom/download_count/src/Plugin/Field/FieldFormatter/FieldDownloadCount.php:83
 msgid "1 download"
 msgid_plural "@count downloads"
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+
+#: modules/social_features/social_group/modules/social_group_invite/social_group_invite.module:294
+msgid "1 group invite"
+msgid_plural "@count group invites"
 msgstr[0] ""
 msgstr[1] ""
 msgstr[2] ""
@@ -191,24 +196,32 @@ msgstr[1] "@count пункта обработано:"
 msgstr[2] "@count[2] пунктов обработано:"
 
 #: themes/socialbase/templates/group/group--hero.html.twig:69
+#: themes/socialbase/templates/group/group--small-teaser.html.twig:27
 msgid "1 member"
 msgid_plural "@count members"
 msgstr[0] "1 участник"
 msgstr[1] "1 участник"
 msgstr[2] "@count участники"
 
+#: modules/social_features/social_group/modules/social_group_invite/social_group_invite.module:283
+msgid "1 membership invite for group: @group_name"
+msgid_plural "@count membership invites for group: @group_name"
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+
 #: modules/custom/social_node_statistics/src/Form/NodeStatisticsSettingsForm.php:52
 msgid "1 minute"
 msgstr "1 минута"
 
-#: translations.php:86
+#: translations.php:91
 msgid "1 selected enrollee has been exported successfully"
 msgid_plural "@count selected enrollees have been exported successfully"
 msgstr[0] ""
 msgstr[1] ""
 msgstr[2] ""
 
-#: translations.php:90
+#: translations.php:95
 msgid "1 selected enrollee has been removed from the event successfully"
 msgid_plural ""
 "@count selected enrollees have been removed from the event successfully"
@@ -216,14 +229,14 @@ msgstr[0] ""
 msgstr[1] ""
 msgstr[2] ""
 
-#: translations.php:87
+#: translations.php:92
 msgid "1 selected enrollee has not been exported successfully"
 msgid_plural "@count selected enrollees have not been exported successfully"
 msgstr[0] ""
 msgstr[1] ""
 msgstr[2] ""
 
-#: translations.php:91
+#: translations.php:96
 msgid "1 selected enrollee has not been removed from the event successfully"
 msgid_plural ""
 "@count selected enrollees have not been removed from the event successfully"
@@ -231,28 +244,28 @@ msgstr[0] ""
 msgstr[1] ""
 msgstr[2] ""
 
-#: translations.php:92
+#: translations.php:97
 msgid "1 selected member has been exported successfully"
 msgid_plural "@count selected members have been exported successfully"
 msgstr[0] ""
 msgstr[1] ""
 msgstr[2] ""
 
-#: translations.php:94
+#: translations.php:99
 msgid "1 selected member has been removed successfully"
 msgid_plural "@count selected members have been removed successfully"
 msgstr[0] ""
 msgstr[1] ""
 msgstr[2] ""
 
-#: translations.php:93
+#: translations.php:98
 msgid "1 selected member has not been exported"
 msgid_plural "@count selected members have not been exported"
 msgstr[0] ""
 msgstr[1] ""
 msgstr[2] ""
 
-#: translations.php:95
+#: translations.php:100
 msgid "1 selected member has not been removed successfully"
 msgid_plural "@count selected members have been removed successfully"
 msgstr[0] ""
@@ -304,13 +317,13 @@ msgid ""
 "<a href=\"/node/{{ raw_arguments.nid }}/enrollments\">See all enrollments</a>"
 msgstr ""
 
-#: modules/social_features/social_group/src/Plugin/views/field/SocialGroupViewsBulkOperationsBulkForm.php:123
+#: modules/social_features/social_group/src/Plugin/views/field/SocialGroupViewsBulkOperationsBulkForm.php:124
 msgid "<b><em class=\"placeholder\">@count</em> Member</b> is selected"
 msgid_plural ""
 "<b><em class=\"placeholder\">@count</em> Members</b> are selected"
-msgstr[0] "<b><em class=\"placeholder\">@count</em> Member</b> is selected"
-msgstr[1] "<b><em class=\"placeholder\">@count</em> Members</b> are selected"
-msgstr[2] "<b><em class=\"placeholder\">@count</em> Members</b> are selected"
+msgstr[0] "<b><em class=\"placeholder\">@count</em> Участник</b> выбран"
+msgstr[1] "<b><em class=\"placeholder\">@count</em> Участника(ов)</b> выбранно"
+msgstr[2] "<b><em class=\"placeholder\">@count</em> Участника(ов)</b> выбранно"
 
 #: modules/social_features/social_event/modules/social_event_managers/src/Plugin/views/field/SocialEventManagersViewsBulkOperationsBulkForm.php:204
 msgid "<b><em class=\"placeholder\">@count</em> enrollee</b> is selected"
@@ -346,7 +359,7 @@ msgstr ""
 
 #: themes/socialbase/src/Plugin/Preprocess/PageTitle.php:40
 msgid "<em>Configure account settings:</em> @label"
-msgstr ""
+msgstr "<em>Настройте параметры учетной записи:</em> @label"
 
 #: modules/custom/sitewide_js/src/Form/SiteWideJSForm.php:37
 msgid ""
@@ -629,16 +642,17 @@ msgid ""
 "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
 "a> created a topic in <a href=\"[message:gurl]\">[message:gtitle]</a></p>"
 msgstr ""
-"<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
-"a> создать пост в <a href=\"[message:gurl]\">[message:gtitle]</a></p>"
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-"
+"name]</a> создать публикацию в <a href=\"[message:gurl]\""
+">[message:gtitle]</a></p>"
 
 #: modules/social_features/social_activity/config/install/message.template.create_topic_community.yml:0
 msgid ""
 "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
 "a> created a topic</p>"
 msgstr ""
-"<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
-"a> Создал(а) пост</p>"
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-"
+"name]</a> Создал(а) публикацию</p>"
 
 #: modules/social_features/social_activity/config/install/message.template.create_event_group.yml:0
 msgid ""
@@ -807,6 +821,30 @@ msgstr ""
 "a> пожаловался(ась) на <a href=\"[social_content_report:"
 "content_url]\">контент</a> как на неприемлемый</p>\n"
 
+#: modules/social_features/social_group/modules/social_group_request/config/install/message.template.request_to_join_a_group.yml:0;0
+msgid ""
+"<p><a href=\"[message:recipient-user:url:absolute]\">[message:recipient-user:"
+"display-name]</a> has requested membership to the <a href=\"[message:gurl]\">"
+"[message:gtitle]</a> group</p>\r\n"
+msgstr ""
+
+#: modules/social_features/social_group/modules/social_group_request/config/install/message.template.request_to_join_a_group.yml:0
+msgid ""
+"<p><a href=\"[message:recipient-user:url:absolute]\">[message:recipient-user:"
+"display-name]</a> has requested membership to the <a href=\"[message:gurl]\">"
+"[message:gtitle]</a> group</p>\r\n"
+"\r\n"
+"<table class=\"btn-wrapp\">\r\n"
+"\t<tbody>\r\n"
+"\t\t<tr>\r\n"
+"\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-one"
+"\" href=\"[social_group_request:request_page_link]\">View request</a></td>"
+"\r\n"
+"\t\t</tr>\r\n"
+"\t</tbody>\r\n"
+"</table>\r\n"
+msgstr ""
+
 #: modules/social_features/social_activity/config/install/message.template.join_to_group.yml:0;0;0
 msgid ""
 "<p><a href=\"[message:recipient-user:url:absolute]\">[message:recipient-user:"
@@ -837,6 +875,12 @@ msgid ""
 "finished.</p>"
 msgstr ""
 
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/message.template.invited_to_join_group.yml:0;0;0
+msgid ""
+"<p>You have been invited to join the group <a href=\"[message:gurl]\">"
+"[message:gtitle]</a></p>\r\n"
+msgstr ""
+
 #: modules/social_features/social_core/src/Controller/SocialCoreController.php:66
 msgid ""
 "<p>You have insufficient permissions to view the page you're trying to "
@@ -855,6 +899,27 @@ msgid ""
 msgstr ""
 "<p>Вы получили <a href=\"[message:pmt-url]\">сообщение</a> от <a href="
 "\"[message:author:url:absolute]\">[message:author:display-name]</a></p>"
+
+#: modules/social_features/social_group/modules/social_group_request/config/install/message.template.approve_request_join_group.yml:0
+msgid ""
+"<p>Your membership request for the <a href=\"[message:gurl]\">[message:"
+"gtitle]</a> group has been approved</p>\r\n"
+"\r\n"
+"<table class=\"btn-wrapp\">\r\n"
+"\t<tbody>\r\n"
+"\t\t<tr>\r\n"
+"\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-one"
+"\" href=\"[message:gurl]\">Visit group</a></td>\r\n"
+"\t\t</tr>\r\n"
+"\t</tbody>\r\n"
+"</table>\r\n"
+msgstr ""
+
+#: modules/social_features/social_group/modules/social_group_request/config/install/message.template.approve_request_join_group.yml:0;0
+msgid ""
+"<p>Your membership request for the <a href=\"gurl]\">[message:gtitle]</a> "
+"group has been approved</p>\r\n"
+msgstr ""
 
 #: modules/social_features/social_profile/modules/social_profile_fields/src/Form/SocialProfileFieldsFlushForm.php:131
 msgid ""
@@ -904,11 +969,11 @@ msgid ""
 "@entity_type @entity_id could not be unpublished after a user reported it."
 msgstr ""
 
-#: translations.php:42
+#: translations.php:47
 msgid "@interval ago"
 msgstr ""
 
-#: translations.php:41
+#: translations.php:46
 msgid "@interval hence"
 msgstr ""
 
@@ -980,7 +1045,7 @@ msgid "@network login failed. Token is not valid."
 msgstr ""
 
 #: themes/socialbase/templates/profile/profile--profile--default.html.twig:129
-#: themes/socialblue/templates/profile/profile--profile--default--sky.html.twig:145
+#: themes/socialblue/templates/profile/profile--profile--default--sky.html.twig:140
 msgid "@profile_name @profile_name_extra has not shared profile information."
 msgstr ""
 
@@ -1023,7 +1088,7 @@ msgstr[0] ""
 msgstr[1] ""
 msgstr[2] ""
 
-#: translations.php:36;76
+#: translations.php:41;81
 msgid ""
 "A Reply-To address is the email address that receives messages sent from "
 "those who select Reply in their email clients."
@@ -1061,6 +1126,18 @@ msgstr ""
 
 #: modules/social_features/social_content_report/social_content_report.module:65
 msgid "A description of your report is mandatory."
+msgstr ""
+
+#: modules/social_features/social_featured_content/config/install/block_content.type.featured.yml:0
+msgid ""
+"A list of featured content that can have a title, link, group/node/profile, "
+"and description."
+msgstr ""
+
+#: modules/social_features/social_featured_items/config/install/block_content.type.featured_items.yml:0
+msgid ""
+"A list of featured items that can have a title, link, image/icon, and "
+"description."
 msgstr ""
 
 #: modules/social_features/social_content_report/config/install/taxonomy.vocabulary.report_reasons.yml:0
@@ -1133,6 +1210,10 @@ msgstr "Кто-то ответил на мои комментарии"
 #: modules/social_features/social_mentions/config/install/message.template.create_comment_reply_mention.yml:0
 msgid "A person replied to a comment where I am mentioned"
 msgstr "Кто-то ответил на комментарий, в котором я упомянут(а)"
+
+#: modules/social_features/social_group/modules/social_group_request/config/install/message.template.request_to_join_a_group.yml:0
+msgid "A person requests membership to a group I manage"
+msgstr ""
 
 #: modules/social_features/social_landing_page/config/install/field.field.paragraph.block.field_block_reference_secondary.yml:0
 msgid ""
@@ -1212,12 +1293,12 @@ msgstr "Пользователь сообщил о недопустимом ко
 msgid "A user sends a private message to me"
 msgstr "Пользователь послал мне личное сообщение"
 
-#: translations.php:60
+#: translations.php:65
 #: modules/social_features/social_profile/config/install/taxonomy.vocabulary.expertise.yml:0
 msgid "A users expertises"
 msgstr ""
 
-#: translations.php:62
+#: translations.php:67
 #: modules/social_features/social_profile/config/install/taxonomy.vocabulary.interests.yml:0
 msgid "A users interests for their profile."
 msgstr "Интересы пользователей для их профиля."
@@ -1263,6 +1344,16 @@ msgstr ""
 
 #: modules/social_features/social_landing_page/config/install/field.storage.paragraph.field_button_style.yml:0
 msgid "Accent style"
+msgstr ""
+
+#: themes/socialbase/templates/group/group--hero.html.twig:90
+#: themes/socialblue/templates/group/group--statistic.html.twig:29
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_user_invitations.yml:0;0
+msgid "Accept"
+msgstr "Принять"
+
+#: modules/social_features/social_group/modules/social_group_invite/social_group_invite.module:177
+msgid "Accepted and joined"
 msgstr ""
 
 #: modules/social_features/social_core/social_core.routing.yml:0
@@ -1351,11 +1442,12 @@ msgstr "Учётная запись"
 msgid "Account header block"
 msgstr ""
 
-#: translations.php:56
+#: translations.php:61
 msgid "Account information"
-msgstr ""
+msgstr "Информация об учетной записи"
 
 #: modules/social_features/social_comment/src/Form/SocialCommentAdminOverview.php:140
+#: modules/social_features/social_group/modules/social_group_request/src/SocialGroupRequestConfigOverride.php:618
 msgid "Action"
 msgstr "Действие"
 
@@ -1373,8 +1465,10 @@ msgid "Action that is triggered when a entity is updated"
 msgstr ""
 
 #: modules/social_features/social_event/modules/social_event_managers/src/Plugin/views/field/SocialEventManagersViewsBulkOperationsBulkForm.php:233
-#: modules/social_features/social_group/src/Plugin/views/field/SocialGroupViewsBulkOperationsBulkForm.php:162
+#: modules/social_features/social_group/src/Plugin/views/field/SocialGroupViewsBulkOperationsBulkForm.php:163
 #: themes/socialbase/src/Plugin/Preprocess/Dropdown.php:26
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_invitations.yml:0
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_user_invitations.yml:0
 msgid "Actions"
 msgstr "Действия"
 
@@ -1565,12 +1659,20 @@ msgstr "Добавить группу"
 msgid "Add a reply"
 msgstr ""
 
-#: translations.php:52
+#: modules/social_features/social_user/src/Plugin/Action/SocialAddRoleUser.php:14
+msgid "Add a role to the selected users"
+msgstr ""
+
+#: translations.php:57
 msgid "Add attachment"
 msgstr ""
 
 #: modules/custom/social_demo/social_demo.drush.inc:42
 msgid "Add demo content."
+msgstr ""
+
+#: modules/social_features/social_group/modules/social_group_invite/src/Plugin/Block/SocialInviteLocalActionsBlock.php:134
+msgid "Add directly"
 msgstr ""
 
 #: modules/social_features/social_event/modules/social_event_managers/social_event_managers.links.action.yml:0
@@ -1587,8 +1689,17 @@ msgstr ""
 msgid "Add image"
 msgstr "Добавить изображение"
 
+#: modules/social_features/social_group/src/Controller/SocialGroupController.php:131
+msgid "Add invites"
+msgstr ""
+
+#: modules/social_features/social_group/src/Controller/SocialGroupController.php:129
+msgid "Add invites to group: @group_name"
+msgstr ""
+
 #: modules/social_features/social_group/social_group.links.action.yml:0
-#: modules/social_features/social_group/src/Controller/SocialGroupController.php:122
+#: modules/social_features/social_group/modules/social_group_invite/src/Plugin/Block/SocialInviteLocalActionsBlock.php:130
+#: modules/social_features/social_group/src/Controller/SocialGroupController.php:133
 msgid "Add members"
 msgstr "Добавить участников"
 
@@ -1641,7 +1752,7 @@ msgid "Additional message information."
 msgstr ""
 
 #: themes/socialbase/templates/profile/profile--profile--default.html.twig:91
-#: themes/socialblue/templates/profile/profile--profile--default--sky.html.twig:91
+#: themes/socialblue/templates/profile/profile--profile--default--sky.html.twig:95
 #: modules/social_features/social_event/config/install/field.field.node.event.field_event_address.yml:0
 #: modules/social_features/social_group/config/install/field.field.group.closed_group.field_group_address.yml:0
 #: modules/social_features/social_group/config/install/field.field.group.open_group.field_group_address.yml:0
@@ -1739,6 +1850,11 @@ msgstr ""
 #: modules/social_features/social_profile/modules/social_profile_privacy/src/Plugin/search_api/processor/RestrictedNameProcessor.php:11
 msgid "Adds the restricted name to the index according to the privacy rules."
 msgstr ""
+
+#: modules/social_features/social_group/modules/social_group_request/config/install/group.content_type.group_content_type_c8bae2527294c.yml:0
+#: modules/social_features/social_group/modules/social_group_request/config/optional/group.content_type.group_content_type_7fcb76fdf61a9.yml:0
+msgid "Adds users as requesters for the group."
+msgstr "Добавляет пользователей как запрашивающих доступ в группу."
 
 #: modules/social_features/social_group/config/install/group.content_type.closed_group-group_membership.yml:0
 #: modules/social_features/social_group/config/install/group.content_type.open_group-group_membership.yml:0
@@ -1866,7 +1982,7 @@ msgid "Advanced options"
 msgstr ""
 
 #: modules/social_features/social_search/src/Plugin/views/filter/SocialDate.php:78
-#: modules/social_features/social_user/social_user.module:110
+#: modules/social_features/social_user/social_user.module:123
 #: modules/social_features/social_search/config/install/views.view.search_content.yml:0
 msgid "After"
 msgstr "После"
@@ -1876,6 +1992,7 @@ msgstr "После"
 msgid "Aggregate activity"
 msgstr ""
 
+#: modules/social_features/social_content_block/src/Plugin/Field/FieldWidget/ContentBlockPluginFieldWidget.php:104
 #: modules/social_features/social_search/social_search.links.task.yml:0;0
 #: modules/social_features/social_activity/config/install/views.view.activity_stream_notifications.yml:0
 #: modules/social_features/social_activity/config/optional/views.view.activity_stream_group.yml:0
@@ -1893,6 +2010,8 @@ msgstr ""
 #: modules/social_features/social_group/config/install/views.view.group_members.yml:0
 #: modules/social_features/social_group/config/install/views.view.group_topics.yml:0
 #: modules/social_features/social_group/config/install/views.view.groups.yml:0
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_invitations.yml:0
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_user_invitations.yml:0
 #: modules/social_features/social_like/config/install/views.view.who_liked_this_entity.yml:0;0
 #: modules/social_features/social_private_message/config/install/views.view.inbox.yml:0
 #: modules/social_features/social_profile/config/install/views.view.user_information.yml:0
@@ -1932,7 +2051,7 @@ msgstr ""
 msgid "All events"
 msgstr "Все события"
 
-#: modules/social_features/social_group/social_group.install:152
+#: modules/social_features/social_group/social_group.install:157
 #: modules/social_features/social_group/config/install/views.view.groups.yml:0
 #: modules/social_features/social_group/config/install/views.view.newest_groups.yml:0;0
 msgid "All groups"
@@ -2113,6 +2232,10 @@ msgstr ""
 msgid "Allow users to join groups with a single click."
 msgstr "Разрешить пользователям присоединяться к группам одним щелчком мыши."
 
+#: modules/social_features/social_group/modules/social_group_request/social_group_request.module:50
+msgid "Allow users to request membership"
+msgstr ""
+
 #: modules/social_features/social_private_message/social_private_message.info.yml:0
 msgid "Allow users to send private messages to each other"
 msgstr "Разрешить пользователям отправлять личные сообщения друг другу"
@@ -2183,11 +2306,15 @@ msgstr ""
 msgid "Allows access to translating site information."
 msgstr ""
 
+#: modules/social_features/social_group/modules/social_group_request/social_group_request.info.yml:0
+msgid "Allows users to request access to Groups"
+msgstr "Позволяет пользователям запрашивать доступ к группам"
+
 #: modules/social_features/social_group/modules/social_group_quickjoin/social_group_quickjoin.info.yml:0
 msgid "Allows users to skip confirmation when joining a group."
 msgstr ""
 
-#: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.module:44
+#: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.module:58
 msgid ""
 "Altering the visibility options could result in changes in access for "
 "content within this group."
@@ -2225,7 +2352,7 @@ msgstr "Произошла ошибка и процесс не был завер
 #: modules/social_features/social_group/modules/social_group_flexible_group/src/FlexibleGroupContentVisibilityUpdate.php:163
 #: modules/social_features/social_group/src/GroupContentVisibilityUpdate.php:171
 msgid "An error occurred while processing @operation with arguments : @args"
-msgstr "Возникла ошибка в процессе @operation с аргументами: @args"
+msgstr "Произошла ошибка при обработке @operation с аргументами: @args"
 
 #: config/install/user.settings.yml:0
 #: modules/social_features/social_group/config/install/group.role.closed_group-anonymous.yml:0
@@ -2272,10 +2399,9 @@ msgstr ""
 #: modules/social_features/social_group/config/install/views.view.group_managers.yml:0
 #: modules/social_features/social_group/config/install/views.view.group_members.yml:0
 #: modules/social_features/social_group/config/install/views.view.groups.yml:0
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_invitations.yml:0
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_user_invitations.yml:0
 #: modules/social_features/social_landing_page/config/install/views.view.community_activities.yml:0
-#: modules/social_features/social_landing_page/config/install/views.view.featured_content_reference.yml:0
-#: modules/social_features/social_landing_page/config/install/views.view.featured_group_reference.yml:0
-#: modules/social_features/social_landing_page/config/install/views.view.featured_profile_reference.yml:0
 #: modules/social_features/social_like/config/install/views.view.who_liked_this_entity.yml:0
 #: modules/social_features/social_post/config/install/views.view.recipient_group_reference.yml:0
 #: modules/social_features/social_private_message/config/install/views.view.inbox.yml:0
@@ -2288,6 +2414,31 @@ msgstr ""
 #: modules/social_features/social_topic/config/install/views.view.latest_topics.yml:0
 msgid "Apply"
 msgstr "Применить"
+
+#: modules/social_features/social_group/modules/social_group_request/src/SocialGroupRequestConfigOverride.php:520
+msgid "Approve Membership"
+msgstr ""
+
+#: modules/social_features/social_group/modules/social_group_request/src/SocialGroupRequestConfigOverride.php:516;528
+msgid "Approve membership"
+msgstr "Подтвердить участие"
+
+#: modules/social_features/social_group/modules/social_group_request/src/Controller/GroupRequestController.php:91
+msgid "Approve membership request for the group @group_title"
+msgstr ""
+
+#: modules/social_features/social_group/modules/social_group_request/config/install/message.template.approve_request_join_group.yml:0
+msgid "Approve request to join a group"
+msgstr ""
+
+#: modules/social_features/social_group/modules/social_group_request/src/Plugin/ActivityContext/ApprovedRequestJoinGroupActivityContext.php:9
+msgid "Approved request to join a group activity context"
+msgstr ""
+
+#: modules/social_features/social_group/modules/social_group_request/config/install/field.field.group_content.group_content_type_c8bae2527294c.grequest_updated_by.yml:0
+#: modules/social_features/social_group/modules/social_group_request/config/optional/field.field.group_content.group_content_type_7fcb76fdf61a9.grequest_updated_by.yml:0
+msgid "Approved/Rejected by"
+msgstr "Утверждено / отклонено"
 
 #: modules/custom/social_gdpr/social_gdpr.routing.yml:0
 #: modules/custom/social_gdpr/src/Form/DataPolicyRevisionRevertForm.php:33
@@ -2318,11 +2469,15 @@ msgstr[1] ""
 msgstr[2] ""
 "Вы уверены, что хотите \"% action\" для следующих %count пользователей?"
 
+#: modules/social_features/social_group/modules/social_group_request/social_group_request.module:232
+msgid "Are you sure you want to approve the membership request for @name?"
+msgstr ""
+
 #: modules/social_features/social_post/src/Form/PostTypeDeleteForm.php:18
 msgid "Are you sure you want to delete %name?"
 msgstr "Вы уверены, что хотите удалить %name?"
 
-#: modules/social_features/social_group/social_group.module:719
+#: modules/social_features/social_group/social_group.module:722
 msgid ""
 "Are you sure you want to delete your group \"@group\" along with all of the "
 "posts, events and topics inside this group? This action cannot be undone."
@@ -2331,7 +2486,11 @@ msgstr ""
 "публикациями, событиями и обсуждениями? Это действие будет невозможно "
 "отменить."
 
-#: modules/social_features/social_group/social_group.module:603
+#: modules/social_features/social_group/modules/social_group_request/src/Form/GroupRequestMembershipRejectForm.php:119
+msgid "Are you sure you want to reject the membership request for @name?"
+msgstr ""
+
+#: modules/social_features/social_group/social_group.module:606
 msgid "Are you sure you want to remove %name from %group?"
 msgstr "Вы уверены что хотите удалить %name из %group?"
 
@@ -2373,10 +2532,9 @@ msgstr[2] ""
 #: modules/social_features/social_group/config/install/views.view.group_members.yml:0
 #: modules/social_features/social_group/config/install/views.view.groups.yml:0
 #: modules/social_features/social_group/config/install/views.view.newest_groups.yml:0
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_invitations.yml:0
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_user_invitations.yml:0
 #: modules/social_features/social_landing_page/config/install/views.view.community_activities.yml:0
-#: modules/social_features/social_landing_page/config/install/views.view.featured_content_reference.yml:0
-#: modules/social_features/social_landing_page/config/install/views.view.featured_group_reference.yml:0
-#: modules/social_features/social_landing_page/config/install/views.view.featured_profile_reference.yml:0
 #: modules/social_features/social_like/config/install/views.view.who_liked_this_entity.yml:0
 #: modules/social_features/social_post/config/install/views.view.recipient_group_reference.yml:0
 #: modules/social_features/social_private_message/config/install/views.view.inbox.yml:0
@@ -2407,7 +2565,7 @@ msgid ""
 "At what number of event types to switch from radio buttons to select widget."
 msgstr ""
 
-#: translations.php:51
+#: translations.php:56
 msgid "Attachments"
 msgstr ""
 
@@ -2438,15 +2596,15 @@ msgstr "Автор"
 msgid "Autocomplete Item"
 msgstr ""
 
-#: modules/social_features/social_content_block/social_content_block.module:75
+#: translations.php:116
 msgid "Autocomplete field with group names."
 msgstr ""
 
-#: modules/social_features/social_content_block/social_content_block.module:72
+#: translations.php:115
 msgid "Autocomplete field with items from taxonomy list content tags."
-msgstr ""
+msgstr "Поле автозаполнения с элементами таксономии из тегов содержимого."
 
-#: modules/social_features/social_content_block/social_content_block.module:69
+#: translations.php:114
 msgid "Autocomplete field with items from taxonomy list topic types."
 msgstr ""
 
@@ -2457,6 +2615,11 @@ msgstr ""
 #: modules/social_features/social_group/modules/social_group_flexible_group/config/install/field.field.group.flexible_group.field_group_allowed_visibility.yml:0
 msgid "Available content visibility"
 msgstr ""
+
+#: modules/social_features/social_group/modules/social_group_invite/social_group_invite.module:138
+#: modules/social_features/social_group/modules/social_group_request/social_group_request.module:354
+msgid "Back to group"
+msgstr "Вернуться в группу"
 
 #: modules/custom/social_queue_storage/config/install/message.template.background_process_finished.yml:0
 msgid "Background process finished"
@@ -2514,7 +2677,7 @@ msgstr "Страница"
 msgid "Be added"
 msgstr ""
 
-#: modules/social_features/social_group/social_group.module:393;401;415
+#: modules/social_features/social_group/social_group.module:396;404;418
 msgid "Be added by group managers"
 msgstr ""
 
@@ -2525,7 +2688,7 @@ msgid ""
 msgstr ""
 
 #: modules/social_features/social_search/src/Plugin/views/filter/SocialDate.php:77
-#: modules/social_features/social_user/social_user.module:111
+#: modules/social_features/social_user/social_user.module:124
 #: modules/social_features/social_search/config/install/views.view.search_content.yml:0
 msgid "Before"
 msgstr "До"
@@ -2539,7 +2702,7 @@ msgstr ""
 "условиями сайта."
 
 #: modules/social_features/social_search/src/Plugin/views/filter/SocialDate.php:79
-#: modules/social_features/social_user/social_user.module:109
+#: modules/social_features/social_user/social_user.module:122
 #: modules/social_features/social_search/config/install/views.view.search_content.yml:0
 msgid "Between"
 msgstr "Между"
@@ -2585,7 +2748,7 @@ msgstr "Блог"
 #: config/optional/field.field.node.book.body.yml:0
 #: modules/social_features/social_event/config/install/field.field.node.event.body.yml:0
 msgid "Body"
-msgstr "Содержимое"
+msgstr "Основа"
 
 #: modules/social_features/social_book/src/Plugin/Block/BookAddBlock.php:14
 msgid "Book add block"
@@ -2602,7 +2765,7 @@ msgstr "Перекрёстные ссылки книги для"
 
 #: themes/socialblue/theme-settings.php:46
 msgid "Border radius"
-msgstr ""
+msgstr "Радиус границы"
 
 #: modules/social_features/social_mentions/social_mentions.module:181
 msgid "Both (username and full name)"
@@ -2623,6 +2786,8 @@ msgstr "Строка навигации"
 msgid "Bulk action"
 msgstr ""
 
+#: modules/social_features/social_landing_page/config/install/core.entity_form_display.paragraph.hero.default.yml:0
+#: modules/social_features/social_landing_page/config/install/core.entity_form_display.paragraph.hero_small.default.yml:0
 #: modules/social_features/social_landing_page/config/install/paragraphs.paragraphs_type.button.yml:0
 msgid "Button"
 msgstr "Кнопка"
@@ -2631,6 +2796,8 @@ msgstr "Кнопка"
 msgid "Button border radius (px)"
 msgstr ""
 
+#: modules/social_features/social_landing_page/config/install/core.entity_form_display.paragraph.hero.default.yml:0
+#: modules/social_features/social_landing_page/config/install/core.entity_form_display.paragraph.hero_small.default.yml:0
 #: modules/social_features/social_landing_page/config/install/field.field.paragraph.hero.field_hero_buttons.yml:0
 #: modules/social_features/social_landing_page/config/install/field.field.paragraph.hero_small.field_hero_small_buttons.yml:0
 msgid "Buttons"
@@ -2641,7 +2808,7 @@ msgid ""
 "By choosing this option you can customize many group settings to your needs."
 msgstr ""
 
-#: modules/social_features/social_group/social_group.module:613
+#: modules/social_features/social_group/social_group.module:616
 msgid ""
 "By submitting this form you will become a member of the group. Please fill "
 "out any available fields to complete your membership information."
@@ -2649,12 +2816,12 @@ msgstr ""
 "После отправки этой формы вы присоединитесь к группе. Пожалуйста, заполните "
 "все доступные поля."
 
-#: translations.php:64
+#: translations.php:69
 #: modules/social_features/social_profile/modules/social_profile_organization_tag/config/install/taxonomy.vocabulary.profile_organization_tag.yml:0
 msgid "CM can tag a user and indicate that user is part of an organization."
 msgstr ""
 
-#: translations.php:66
+#: translations.php:71
 #: modules/social_features/social_profile/config/install/taxonomy.vocabulary.profile_tag.yml:0
 msgid "CM can tag a user, giving options on filtering / searching users."
 msgstr ""
@@ -2663,13 +2830,14 @@ msgstr ""
 msgid "Call to action link"
 msgstr ""
 
-#: translations.php:30
+#: translations.php:35
 msgid "Can not send e-mail for %entity"
 msgstr ""
 
 #: modules/social_features/social_event/modules/social_event_managers/src/Form/SocialEventManagersAddEnrolleeForm.php:157
-#: modules/social_features/social_group/social_group.module:624;722
-#: modules/social_features/social_profile/social_profile.module:182
+#: modules/social_features/social_group/social_group.module:627;725
+#: modules/social_features/social_group/modules/social_group_request/src/Form/GroupRequestMembershipRejectForm.php:130
+#: modules/social_features/social_profile/social_profile.module:183
 msgid "Cancel"
 msgstr "Отмена"
 
@@ -2678,7 +2846,12 @@ msgstr "Отмена"
 msgid "Cancel enrollment"
 msgstr "Отменить участие"
 
-#: translations.php:79
+#: themes/socialbase/templates/group/group--hero.html.twig:106
+#: themes/socialblue/templates/group/group--statistic.html.twig:44
+msgid "Cancel request"
+msgstr ""
+
+#: translations.php:84
 msgid "Canceled \"%action\"."
 msgstr ""
 
@@ -2686,10 +2859,10 @@ msgstr ""
 msgid "Card border radius (px)"
 msgstr ""
 
-#: translations.php:57
+#: translations.php:62
 #: modules/social_features/social_tagging/config/install/taxonomy.vocabulary.social_tagging.yml:0
 msgid "Categories and terms used to tag content"
-msgstr ""
+msgstr "Категории и термины, используемые для тэгов контента"
 
 #: modules/social_features/social_profile/src/Plugin/Field/FieldWidget/CategorizedOptionsbuttonsWidget.php:9
 msgid "Categorized check boxes/radio buttons"
@@ -2712,7 +2885,7 @@ msgstr ""
 msgid "Change roles"
 msgstr ""
 
-#: translations.php:104
+#: translations.php:109
 msgid "Change the role"
 msgstr ""
 
@@ -2741,7 +2914,7 @@ msgid ""
 "strong>."
 msgstr ""
 
-#: modules/social_features/social_profile/social_profile.install:257
+#: modules/social_features/social_profile/social_profile.install:259
 msgid "Checking profile status for @count users"
 msgstr ""
 
@@ -2769,11 +2942,11 @@ msgstr[2] ""
 msgid "Clear all selected enrollees"
 msgstr ""
 
-#: translations.php:35
+#: translations.php:40
 msgid "Clear all selected members"
 msgstr ""
 
-#: modules/social_features/social_group/src/Plugin/views/field/SocialGroupViewsBulkOperationsBulkForm.php:145
+#: modules/social_features/social_group/src/Plugin/views/field/SocialGroupViewsBulkOperationsBulkForm.php:146
 msgid "Clear selection on all pages"
 msgstr ""
 
@@ -2785,7 +2958,7 @@ msgstr ""
 msgid "Click on the explore button to browse to all content in the community"
 msgstr ""
 
-#: themes/socialbase/templates/block/block--system-menu-block--main.html.twig:44
+#: themes/socialbase/templates/block/block--system-menu-block--main.html.twig:51
 msgid "Click to open search box"
 msgstr ""
 
@@ -2809,7 +2982,7 @@ msgstr "Пароль клиента"
 msgid "Close"
 msgstr "Закрыть"
 
-#: translations.php:70
+#: translations.php:75
 msgid "Close report"
 msgstr ""
 
@@ -2827,11 +3000,19 @@ msgstr "Закрыто"
 msgid "Closed group"
 msgstr "Закрытая группа"
 
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/group.content_type.closed_group-group_invitation.yml:0
+msgid "Closed group: Group Invitation"
+msgstr ""
+
 #: modules/social_features/social_group/config/install/group.content_type.closed_group-group_membership.yml:0
 msgid "Closed group: Group membership"
 msgstr ""
 
-#: translations.php:81
+#: modules/social_features/social_group/modules/social_group_request/config/install/group.content_type.group_content_type_c8bae2527294c.yml:0
+msgid "Closed group: Group membership request"
+msgstr ""
+
+#: translations.php:86
 msgid "Collaboration Settings"
 msgstr ""
 
@@ -2890,7 +3071,7 @@ msgid "Comments created"
 msgstr ""
 
 #: modules/social_features/social_activity/social_activity.install:34
-#: modules/social_features/social_group/social_group.module:449;469
+#: modules/social_features/social_group/social_group.module:452;472
 #: modules/social_features/social_post/social_post.module:138;148;158
 #: modules/social_features/social_group/modules/social_group_flexible_group/config/install/field.storage.group.field_group_allowed_visibility.yml:0
 #: modules/social_features/social_post/config/install/field.storage.post.field_visibility.yml:0;0
@@ -3029,9 +3210,8 @@ msgid "Contact"
 msgstr "Контакт"
 
 #: themes/socialbase/templates/profile/profile--profile--default.html.twig:72
-#: themes/socialblue/templates/profile/profile--profile--default--sky.html.twig:72
 msgid "Contact information"
-msgstr ""
+msgstr "Контакты"
 
 #: modules/custom/social_lets_connect/modules/social_lets_connect_contact/social_lets_connect_contact.info.yml:0
 msgid ""
@@ -3069,6 +3249,14 @@ msgstr ""
 msgid "Content Type"
 msgstr "Тип материала"
 
+#: modules/social_features/social_content_block/src/Plugin/Field/FieldWidget/ContentBlockPluginIdWidget.php:12
+msgid "Content block plugin ID"
+msgstr ""
+
+#: modules/social_features/social_content_block/src/Plugin/Field/FieldWidget/ContentBlockPluginFieldWidget.php:11
+msgid "Content block plugin field"
+msgstr ""
+
 #: modules/social_features/social_topic/config/install/views.view.latest_topics.yml:0
 msgid "Content group content"
 msgstr ""
@@ -3090,15 +3278,23 @@ msgstr "Контент-менеджер"
 msgid "Content report activity context"
 msgstr ""
 
+#: modules/social_features/social_content_block/config/install/field.field.block_content.custom_content_list.field_plugin_field.yml:0
+msgid "Content selection"
+msgstr ""
+
 #: modules/social_features/social_tagging/social_tagging.module:27
 #: modules/social_features/social_tagging/social_tagging.info.yml:0
 msgid "Content tagging module"
 msgstr ""
 
 #: modules/social_features/social_content_block/config/install/field.field.block_content.custom_content_list.field_content_tags.yml:0
+#: modules/social_features/social_content_block/modules/social_event_content_block/config/install/field.field.block_content.custom_content_list.field_event_content_tag.yml:0
+#: modules/social_features/social_content_block/modules/social_group_content_block/config/install/field.field.block_content.custom_content_list.field_group_content_tag.yml:0
+#: modules/social_features/social_event/modules/social_event_content_block/config/install/field.field.block_content.custom_content_list.field_event_content_tag.yml:0
+#: modules/social_features/social_group/modules/social_group_content_block/config/install/field.field.block_content.custom_content_list.field_group_content_tag.yml:0
 #: modules/social_features/social_tagging/config/install/taxonomy.vocabulary.social_tagging.yml:0
 msgid "Content tags"
-msgstr ""
+msgstr "Теги контента"
 
 #: modules/social_features/social_follow_content/config/install/views.view.following.yml:0
 #: modules/social_features/social_search/config/install/views.view.search_content.yml:0
@@ -3195,7 +3391,7 @@ msgstr ""
 msgid "Could not create new user. Exception: @message"
 msgstr "Не смогли создать нового пользователя. Исключение: @message"
 
-#: modules/social_features/social_profile/social_profile.install:282
+#: modules/social_features/social_profile/social_profile.install:284
 msgid "Could not create profile for @user_id"
 msgstr ""
 
@@ -3281,11 +3477,11 @@ msgstr ""
 msgid "Create New Event"
 msgstr "Создать новое событие"
 
-#: modules/social_features/social_group/social_group.module:1766
+#: modules/social_features/social_group/social_group.module:1783
 msgid "Create New Group"
 msgstr "Создать Новую Группу"
 
-#: modules/social_features/social_landing_page/social_landing_page.module:287
+#: modules/social_features/social_landing_page/social_landing_page.module:260
 msgid "Create New Landing Page"
 msgstr "Создать Новую Целевую Страницу"
 
@@ -3295,12 +3491,12 @@ msgstr "Создать Новую Страницу"
 
 #: modules/social_features/social_topic/social_topic.module:188
 msgid "Create New Topic"
-msgstr ""
+msgstr "Создать новую публикацию"
 
 #: modules/social_features/social_group/src/Plugin/Block/GroupAddTopicBlock.php:68
 #: modules/social_features/social_topic/src/Plugin/Block/TopicAddBlock.php:94
 msgid "Create Topic"
-msgstr ""
+msgstr "Создать Публикацию"
 
 #: modules/social_features/social_user/src/Plugin/Block/SocialUserLoginBlock.php:49
 msgid "Create a new user account."
@@ -3308,14 +3504,14 @@ msgstr "Создать новую учётную запись пользоват
 
 #: modules/social_features/social_activity/config/install/message.template.create_content_in_joined_group.yml:0
 msgid "Create a post, topic or event in a joined group"
-msgstr ""
+msgstr "Создать сообщение, публикацию или событие в объединенной группе"
 
 #: modules/custom/activity_logger/activity_logger.module:148
 #: modules/custom/activity_logger/config/schema/activity_logger.schema.yml:0
 msgid "Create activity items direct instead of in Queue"
 msgstr ""
 
-#: modules/social_features/social_event/modules/social_event_an_enroll/templates/event-an-enroll-dialog.html.twig:6;6
+#: modules/social_features/social_event/modules/social_event_an_enroll/templates/event-an-enroll-dialog.html.twig:9;9
 msgid "Create an account"
 msgstr "Зарегистрироваться"
 
@@ -3364,7 +3560,7 @@ msgstr ""
 msgid "Create event in group"
 msgstr ""
 
-#: modules/social_features/social_landing_page/config/install/paragraphs.paragraphs_type.featured.yml:0
+#: modules/social_features/social_featured_content/config/install/paragraphs.paragraphs_type.featured.yml:0
 msgid ""
 "Create featured items block, editor will be able to provide title, items to "
 "show and a link like see all."
@@ -3463,11 +3659,11 @@ msgstr ""
 
 #: modules/social_features/social_activity/config/install/message.template.create_topic_community.yml:0
 msgid "Create topic"
-msgstr ""
+msgstr "Создать публикацию"
 
 #: modules/social_features/social_activity/config/install/message.template.create_topic_group.yml:0
 msgid "Create topic in group"
-msgstr ""
+msgstr "Создать публикацию в группе"
 
 #: modules/custom/social_tour/config/install/tour.tour.social_user.yml:0
 msgid "Create your profile"
@@ -3482,9 +3678,9 @@ msgstr ""
 #: modules/social_features/social_post/src/PostListBuilder.php:24
 #: modules/social_features/social_post/src/Entity/Post.php:290
 msgid "Created"
-msgstr ""
+msgstr "созданно"
 
-#: modules/social_features/social_search/social_search.module:207
+#: modules/social_features/social_search/social_search.module:189
 msgid "Created Date Filter by Open Social"
 msgstr ""
 
@@ -3492,7 +3688,7 @@ msgstr ""
 msgid "Created date"
 msgstr ""
 
-#: modules/social_features/social_profile/social_profile.install:291
+#: modules/social_features/social_profile/social_profile.install:293
 msgid "Created profiles for @count users"
 msgstr ""
 
@@ -3527,6 +3723,14 @@ msgstr ""
 #: modules/social_features/social_core/config/install/field.field.block_content.hero_call_to_action_block.field_call_to_action_link.yml:0
 msgid "Creates a call to action link in a block"
 msgstr ""
+
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/group.content_type.closed_group-group_invitation.yml:0
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/group.content_type.flexible_group-group_invitation.yml:0
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/group.content_type.open_group-group_invitation.yml:0
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/group.content_type.public_group-group_invitation.yml:0
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/group.content_type.secret_group-group_invitation.yml:0
+msgid "Creates invitations to group."
+msgstr "Создает приглашения в группу."
 
 #: modules/social_features/social_content_block/config/install/field.storage.block_content.field_sorting.yml:0
 msgid "Creation date"
@@ -3572,14 +3776,6 @@ msgstr "Собственная"
 msgid "Custom dynamic entity reference formatter for activities"
 msgstr ""
 
-#: modules/social_features/social_landing_page/config/install/views.view.featured_content_reference.yml:0
-msgid "Custom selection handler for content that will be selected as featured."
-msgstr ""
-
-#: modules/social_features/social_landing_page/config/install/views.view.featured_group_reference.yml:0
-msgid "Custom selection handler for group that will be selected as featured."
-msgstr ""
-
 #: modules/custom/activity_send/modules/activity_send_email/src/Plugin/EmailFrequency/Daily.php:7
 msgid "Daily"
 msgstr "Ежедневно"
@@ -3597,15 +3793,15 @@ msgid "Data policy agreement"
 msgstr ""
 
 #: modules/custom/mentions/src/MentionsViewsData.php:110;111
-#: modules/social_features/social_user/social_user.module:85;91;104
+#: modules/social_features/social_user/social_user.module:98;104;117
 msgid "Date"
 msgstr "Дата"
 
-#: translations.php:50
+#: translations.php:55
 msgid "Date & time"
-msgstr ""
+msgstr "Дата и время"
 
-#: modules/social_features/social_search/social_search.module:197;199;209
+#: modules/social_features/social_search/social_search.module:179;181;191
 msgid "Date Filter by Open Social"
 msgstr ""
 
@@ -3617,12 +3813,26 @@ msgstr ""
 msgid "Date of Event"
 msgstr ""
 
+#: modules/social_features/social_content_block/modules/social_event_content_block/config/install/field.field.block_content.custom_content_list.field_event_date.yml:0
+msgid "Date period"
+msgstr ""
+
 #: modules/social_features/social_core/config/install/core.date_format.day_month.yml:0
 msgid "Day Month"
 msgstr ""
 
 #: modules/social_features/social_core/config/install/core.date_format.day_month_time.yml:0
 msgid "Day Month Time"
+msgstr ""
+
+#: themes/socialbase/templates/group/group--hero.html.twig:93
+#: themes/socialblue/templates/group/group--statistic.html.twig:32
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_user_invitations.yml:0;0
+msgid "Decline"
+msgstr "Отклонить"
+
+#: modules/social_features/social_group/modules/social_group_invite/social_group_invite.module:181
+msgid "Declined"
 msgstr ""
 
 #: modules/social_features/social_profile/modules/social_profile_privacy/social_profile_privacy.module:426
@@ -3646,7 +3856,7 @@ msgstr ""
 msgid "Default group index created for the Social distribution."
 msgstr ""
 
-#: modules/social_features/social_profile/config/install/field.field.profile.profile.field_profile_image.yml:0;0
+#: modules/social_features/social_profile/config/install/field.field.profile.profile.field_profile_image.yml:0
 msgid "Default profile image"
 msgstr "Изображение профиля по умолчанию"
 
@@ -3770,7 +3980,7 @@ msgstr "Удалить отмеченные комментарии"
 msgid "Delete thread"
 msgstr "Удалить ветку"
 
-#: modules/social_features/social_user/social_user.module:388
+#: modules/social_features/social_user/social_user.module:401
 msgid "Delete your account and anonymize all other content."
 msgstr ""
 
@@ -3790,7 +4000,7 @@ msgstr ""
 msgid "Deleting @type's"
 msgstr ""
 
-#: modules/social_features/social_group/social_group.module:1377
+#: modules/social_features/social_group/social_group.module:1392
 msgid "Deleting the group and all the content within the group..."
 msgstr ""
 
@@ -3817,10 +4027,9 @@ msgstr ""
 #: modules/social_features/social_group/config/install/views.view.group_members.yml:0
 #: modules/social_features/social_group/config/install/views.view.groups.yml:0
 #: modules/social_features/social_group/config/install/views.view.newest_groups.yml:0
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_invitations.yml:0
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_user_invitations.yml:0
 #: modules/social_features/social_landing_page/config/install/views.view.community_activities.yml:0
-#: modules/social_features/social_landing_page/config/install/views.view.featured_content_reference.yml:0
-#: modules/social_features/social_landing_page/config/install/views.view.featured_group_reference.yml:0
-#: modules/social_features/social_landing_page/config/install/views.view.featured_profile_reference.yml:0
 #: modules/social_features/social_like/config/install/views.view.who_liked_this_entity.yml:0
 #: modules/social_features/social_post/config/install/views.view.recipient_group_reference.yml:0
 #: modules/social_features/social_private_message/config/install/views.view.inbox.yml:0
@@ -3843,6 +4052,9 @@ msgstr ""
 #: modules/custom/mentions/src/Form/MentionsTypeForm.php:138
 #: modules/custom/social_queue_storage/src/QueueStorageEntityListBuilder.php:23
 #: modules/social_features/social_content_report/config/install/views.view.report_overview.yml:0
+#: modules/social_features/social_featured_content/config/install/field.field.paragraph.featured.field_featured_description.yml:0
+#: modules/social_features/social_featured_items/config/install/field.field.paragraph.featured_item.field_featured_item_description.yml:0
+#: modules/social_features/social_featured_items/config/install/field.field.paragraph.featured_items.field_featured_items_description.yml:0
 #: modules/social_features/social_group/config/install/field.field.group.closed_group.field_group_description.yml:0
 #: modules/social_features/social_group/config/install/field.field.group.open_group.field_group_description.yml:0
 #: modules/social_features/social_group/config/install/field.field.group.public_group.field_group_description.yml:0
@@ -3850,9 +4062,6 @@ msgstr ""
 #: modules/social_features/social_group/modules/social_group_secret/config/install/field.field.group.secret_group.field_group_description.yml:0
 #: modules/social_features/social_landing_page/config/install/field.field.paragraph.accordion.field_accord_description.yml:0
 #: modules/social_features/social_landing_page/config/install/field.field.paragraph.accordion_item.field_accord_item_description.yml:0
-#: modules/social_features/social_landing_page/config/install/field.field.paragraph.featured.field_featured_description.yml:0
-#: modules/social_features/social_landing_page/config/install/field.field.paragraph.featured_item.field_featured_item_description.yml:0
-#: modules/social_features/social_landing_page/config/install/field.field.paragraph.featured_items.field_featured_items_description.yml:0
 #: modules/social_features/social_page/config/install/field.field.node.page.body.yml:0
 #: modules/social_features/social_topic/config/install/field.field.node.topic.body.yml:0
 msgid "Description"
@@ -3887,8 +4096,10 @@ msgid ""
 "Determine if the main categories of the vocabury will be used as seperate "
 "tag fields or as a single tag field when using tags on content."
 msgstr ""
+"Определите, будут ли основные категории словаря использоваться как отдельные "
+"поля тегов или как одно поле тегов при использовании тегов в контенте."
 
-#: modules/social_features/social_comment_upload/src/Form/SocialCommentUploadSettingsForm.php:71
+#: translations.php:30
 msgid "Determine wether users can upload documents to comments."
 msgstr ""
 
@@ -3897,10 +4108,16 @@ msgid ""
 "Determine whether users are allowed to tag content, view tags and filter on "
 "tags in content. (@content)"
 msgstr ""
+"Определите, разрешено ли пользователям добавлять теги к контенту, "
+"просматривать теги и фильтровать теги в содержимом. (@content)"
+
+#: modules/social_features/social_comment_upload/src/Form/SocialCommentUploadSettingsForm.php:71
+msgid "Determine whether users can upload documents to comments."
+msgstr ""
 
 #: modules/social_features/social_tagging/config/schema/social_tagging.schema.yml:0
 msgid "Determines whether content tagging is enabled for users."
-msgstr ""
+msgstr "Определяет, включены ли тэги содержимого для пользователей."
 
 #: modules/social_features/social_tagging/config/schema/social_tagging.schema.yml:0
 msgid "Determines whether the landing page node type has tagging enabled."
@@ -3976,11 +4193,11 @@ msgstr ""
 "Отображается в карточке регистрации пользователя, использующего социальную "
 "сеть."
 
-#: modules/social_features/social_user/social_user.module:657
+#: modules/social_features/social_user/social_user.module:670
 msgid "Displayed in the user log in card."
 msgstr ""
 
-#: modules/social_features/social_user/social_user.module:650
+#: modules/social_features/social_user/social_user.module:663
 msgid "Displayed in the user sign-up card."
 msgstr "Отображается в карточке регистрации пользователя."
 
@@ -3988,6 +4205,10 @@ msgstr "Отображается в карточке регистрации по
 msgid ""
 "Displays a block and page for the newest users on the platform based on "
 "Profile"
+msgstr ""
+
+#: modules/social_features/social_group/social_group.views.inc:42
+msgid "Displays the count of members in a group."
 msgstr ""
 
 #: modules/social_features/social_content_report/social_content_report.views.inc:27
@@ -4071,10 +4292,17 @@ msgid ""
 "not get a reset link or a confirmation/warning about that here. Please "
 "contact the @admin_link if there are any problems."
 msgstr ""
+"В целях конфиденциальности личность зарегистрированные адреса электронной "
+"почты не будут разглашаться.. Поэтому ссылка для сброса пароля была "
+"отправлена вам, только в случае если вы ввели правильный адрес электронной "
+"почты или имя пользователя.\n"
+"<br>Если введенный вами адрес электронной почты или имя пользователя не "
+"существует, вы не увидите здесь ссылку для сброса или предупреждение об "
+"этом. Пожалуйста, свяжитесь с @admin_link если есть какие-то проблемы."
 
 #: themes/socialbase/templates/profile/profile--profile--default.html.twig:84
 #: themes/socialblue/theme-settings.php:85
-#: themes/socialblue/templates/profile/profile--profile--default--sky.html.twig:84
+#: themes/socialblue/templates/profile/profile--profile--default--sky.html.twig:88
 msgid "E-mail"
 msgstr ""
 
@@ -4093,7 +4321,7 @@ msgstr ""
 #: modules/social_features/social_comment/src/Form/SocialCommentAdminOverview.php:213
 #: modules/social_features/social_event/social_event.links.task.yml:0
 #: modules/social_features/social_event/modules/social_event_type/social_event_type.links.task.yml:0
-#: modules/social_features/social_group/social_group.module:1884
+#: modules/social_features/social_group/social_group.module:1901
 #: modules/social_features/social_post/social_post.links.task.yml:0
 #: modules/social_features/social_post/src/PostViewBuilder.php:211
 msgid "Edit"
@@ -4136,7 +4364,7 @@ msgstr "Изменить сообщение"
 msgid "Edit Queue storage entity entities"
 msgstr ""
 
-#: modules/social_features/social_profile/social_profile.module:659
+#: modules/social_features/social_profile/social_profile.module:684
 msgid "Edit account"
 msgstr ""
 
@@ -4172,7 +4400,7 @@ msgstr "Правка своих комментариев"
 msgid "Edit own posts entities"
 msgstr ""
 
-#: modules/social_features/social_profile/social_profile.module:661;692;694
+#: modules/social_features/social_profile/social_profile.module:686;717;719
 #: themes/socialblue/templates/profile/profile--profile--statistic.html.twig:42
 msgid "Edit profile"
 msgstr "Редактировать профиль"
@@ -4207,6 +4435,7 @@ msgstr "Изменить редакцию"
 #: modules/social_features/social_user_export/src/Plugin/UserExportPlugin/UserEmail.php:23;8
 #: modules/custom/social_queue_storage/config/install/social_queue_storage.queue_storage_entity_type.email.yml:0
 #: modules/social_features/social_event/modules/social_event_an_enroll/config/install/views.view.manage_enrollments.yml:0
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_invitations.yml:0
 msgid "Email"
 msgstr ""
 
@@ -4340,7 +4569,7 @@ msgstr "Участвовать"
 msgid "Enroll action block"
 msgstr ""
 
-#: modules/social_features/social_event/modules/social_event_an_enroll/templates/event-an-enroll-dialog.html.twig:11;11
+#: modules/social_features/social_event/modules/social_event_an_enroll/templates/event-an-enroll-dialog.html.twig:16;16
 msgid "Enroll as guest"
 msgstr "Участвовать как гость"
 
@@ -4359,7 +4588,7 @@ msgstr "Дата подписки"
 msgid "Enroll in"
 msgstr "Участвовать в"
 
-#: modules/social_features/social_event/modules/social_event_an_enroll/src/Controller/EventAnEnrollController.php:120
+#: modules/social_features/social_event/modules/social_event_an_enroll/src/Controller/EventAnEnrollController.php:145
 msgid "Enroll in @label Event"
 msgstr "Участвовать в @label"
 
@@ -4379,7 +4608,7 @@ msgstr "Пользователи которые не подписаны на э�
 msgid "Enroll with account"
 msgstr "Присоединиться с аккаунтом"
 
-#: modules/social_features/social_event/modules/social_event_an_enroll/templates/event-an-enroll-dialog.html.twig:10
+#: modules/social_features/social_event/modules/social_event_an_enroll/templates/event-an-enroll-dialog.html.twig:15
 msgid "Enroll without account"
 msgstr "Присоединиться без аккаунта"
 
@@ -4393,7 +4622,7 @@ msgstr "Участвую"
 msgid "Enrollee"
 msgstr ""
 
-#: translations.php:69
+#: translations.php:74
 msgid "Enrollment options"
 msgstr ""
 
@@ -4447,6 +4676,10 @@ msgstr "Ввести ваше @s имя пользователя или адре
 msgid "Enter your email, so we can send you event updates."
 msgstr ""
 
+#: modules/social_features/social_content_block/social_content_block.module:45
+msgid "Entities"
+msgstr ""
+
 #: modules/custom/mentions/src/Plugin/Mentions/Entity.php:14
 #: modules/custom/activity_creator/config/install/field.field.activity.activity.field_activity_entity.yml:0
 msgid "Entity"
@@ -4472,9 +4705,6 @@ msgstr ""
 msgid "Entity Path"
 msgstr ""
 
-#: modules/social_features/social_landing_page/config/install/views.view.featured_content_reference.yml:0
-#: modules/social_features/social_landing_page/config/install/views.view.featured_group_reference.yml:0
-#: modules/social_features/social_landing_page/config/install/views.view.featured_profile_reference.yml:0
 #: modules/social_features/social_post/config/install/views.view.recipient_group_reference.yml:0
 msgid "Entity Reference"
 msgstr "Ссылка на сущность"
@@ -4514,11 +4744,20 @@ msgstr "Тип сущности"
 msgid "Entity type of entity that contains mention"
 msgstr ""
 
+#: modules/social_features/social_group/modules/social_group_request/social_group_request.module:95
+#: modules/social_features/social_group/modules/social_group_request/src/Form/GroupRequestMembershipRejectForm.php:167
+msgid "Error updating Request"
+msgstr ""
+
+#: modules/social_features/social_group/modules/social_group_request/src/Form/GroupRequestMembershipRequestForm.php:146
+msgid "Error when creating a request to join"
+msgstr ""
+
 #: modules/custom/group_core_comments/src/Controller/GroupCoreCommentsController.php:98
 msgid "Error when joining the group."
 msgstr ""
 
-#: translations.php:75
+#: translations.php:80
 #: modules/custom/social_demo/src/Plugin/DemoContent/Event.php:14
 #: modules/social_features/social_event/config/install/field.field.event_enrollment.event_enrollment.field_event.yml:0
 #: modules/social_features/social_event/config/install/node.type.event.yml:0
@@ -4541,6 +4780,7 @@ msgstr ""
 
 #: themes/socialbase/templates/node/event/node--event--full.html.twig:39
 #: themes/socialblue/templates/node/event/node--event--hero--sky.html.twig:24
+#: modules/social_features/social_content_block/config/install/field.storage.block_content.field_sorting.yml:0
 msgid "Event date"
 msgstr ""
 
@@ -4619,7 +4859,9 @@ msgstr "Тип события"
 msgid "Event type settings"
 msgstr ""
 
-#: translations.php:58
+#: translations.php:63
+#: modules/social_features/social_content_block/modules/social_event_content_block/config/optional/field.field.block_content.custom_content_list.field_event_type.yml:0
+#: modules/social_features/social_event/modules/social_event_content_block/config/optional/field.field.block_content.custom_content_list.field_event_type.yml:0
 #: modules/social_features/social_event/modules/social_event_type/config/install/taxonomy.vocabulary.event_types.yml:0;0
 msgid "Event types"
 msgstr ""
@@ -4664,13 +4906,13 @@ msgstr "События, которые уже начались или прошл
 msgid "Excluded file extensions"
 msgstr ""
 
-#: translations.php:78
+#: translations.php:83
 msgid "Execute action"
 msgstr ""
 
-#: translations.php:59
+#: translations.php:64
 #: themes/socialbase/templates/profile/profile--profile--default.html.twig:104
-#: themes/socialblue/templates/profile/profile--profile--default--sky.html.twig:109
+#: themes/socialblue/templates/profile/profile--profile--default--sky.html.twig:104
 #: modules/social_features/social_profile/config/install/field.field.profile.profile.field_profile_expertise.yml:0
 #: modules/social_features/social_profile/config/install/taxonomy.vocabulary.expertise.yml:0
 #: modules/social_features/social_search/config/install/views.view.search_users.yml:0
@@ -4694,7 +4936,7 @@ msgstr "Исследуйте функциональность."
 msgid "Explore page for LU"
 msgstr ""
 
-#: translations.php:103
+#: translations.php:108
 msgid "Export"
 msgstr ""
 
@@ -4738,34 +4980,26 @@ msgid "Facebook user ID"
 msgstr ""
 
 #: themes/socialbase/templates/node/node--full.html.twig:142
-#: modules/social_features/social_landing_page/config/install/core.entity_view_mode.group.featured.yml:0
-#: modules/social_features/social_landing_page/config/install/core.entity_view_mode.node.featured.yml:0
-#: modules/social_features/social_landing_page/config/install/core.entity_view_mode.profile.featured.yml:0
+#: modules/social_features/social_featured_content/config/install/core.entity_view_mode.group.featured.yml:0
+#: modules/social_features/social_featured_content/config/install/core.entity_view_mode.node.featured.yml:0
+#: modules/social_features/social_featured_content/config/install/core.entity_view_mode.profile.featured.yml:0
 msgid "Featured"
 msgstr "Популярное"
 
-#: modules/social_features/social_landing_page/config/install/paragraphs.paragraphs_type.featured.yml:0
+#: modules/social_features/social_featured_content/config/install/block_content.type.featured.yml:0
+#: modules/social_features/social_featured_content/config/install/field.field.block_content.featured.field_featured.yml:0
+#: modules/social_features/social_featured_content/config/install/paragraphs.paragraphs_type.featured.yml:0
 msgid "Featured Content"
 msgstr ""
 
-#: modules/social_features/social_landing_page/config/install/paragraphs.paragraphs_type.featured_item.yml:0
+#: modules/social_features/social_featured_items/config/install/paragraphs.paragraphs_type.featured_item.yml:0
 msgid "Featured Item"
 msgstr ""
 
-#: modules/social_features/social_landing_page/config/install/paragraphs.paragraphs_type.featured_items.yml:0
+#: modules/social_features/social_featured_items/config/install/block_content.type.featured_items.yml:0
+#: modules/social_features/social_featured_items/config/install/field.field.block_content.featured_items.field_featured_items.yml:0
+#: modules/social_features/social_featured_items/config/install/paragraphs.paragraphs_type.featured_items.yml:0
 msgid "Featured Items"
-msgstr ""
-
-#: modules/social_features/social_landing_page/config/install/views.view.featured_content_reference.yml:0
-msgid "Featured content reference"
-msgstr ""
-
-#: modules/social_features/social_landing_page/config/install/views.view.featured_group_reference.yml:0
-msgid "Featured group reference"
-msgstr ""
-
-#: modules/social_features/social_landing_page/config/install/views.view.featured_profile_reference.yml:0
-msgid "Featured profile reference"
 msgstr ""
 
 #: modules/social_features/social_profile/modules/social_profile_privacy/social_profile_privacy.module:62
@@ -4799,7 +5033,7 @@ msgstr ""
 msgid "Files"
 msgstr "Файлы"
 
-#: modules/social_features/social_search/social_search.module:158
+#: modules/social_features/social_search/social_search.module:140
 #: config/install/views.view.content.yml:0
 #: modules/social_features/social_event/config/install/views.view.events.yml:0
 #: modules/social_features/social_event/config/install/views.view.upcoming_events.yml:0
@@ -4837,6 +5071,11 @@ msgstr ""
 msgid "Filter deleted threads"
 msgstr ""
 
+#: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.module:39;41;42
+msgid ""
+"Filter nodes, with visibility group, placed in group you are not a member of."
+msgstr ""
+
 #: modules/custom/activity_viewer/activity_viewer.module:16
 msgid "Filter on activities for personalised homepage."
 msgstr ""
@@ -4849,7 +5088,7 @@ msgstr ""
 msgid "Filters"
 msgstr "Фильтры"
 
-#: modules/social_features/social_search/social_search.module:200;210
+#: modules/social_features/social_search/social_search.module:182;192
 msgid "Filters for date used in Open Social"
 msgstr ""
 
@@ -4898,9 +5137,17 @@ msgstr ""
 msgid "Flexible group"
 msgstr "Адаптивная группа"
 
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/group.content_type.flexible_group-group_invitation.yml:0
+msgid "Flexible group: Group Invitation"
+msgstr ""
+
 #: modules/social_features/social_group/modules/social_group_flexible_group/config/install/group.content_type.flexible_group-group_membership.yml:0
 msgid "Flexible group: Group membership"
 msgstr "Адаптивная группа: \tучастники группы"
+
+#: modules/social_features/social_group/modules/social_group_request/config/optional/group.content_type.group_content_type_7fcb76fdf61a9.yml:0
+msgid "Flexible group: Group membership request"
+msgstr ""
 
 #: modules/custom/download_count/src/Form/DownloadCountSettingsForm.php:47
 msgid "Flood Control Settings"
@@ -4948,11 +5195,11 @@ msgstr "Подписаться на контент"
 msgid "Follow functionality."
 msgstr ""
 
-#: modules/social_features/social_follow_content/social_follow_content.module:77
+#: modules/social_features/social_follow_content/social_follow_content.module:102
 msgid "Following"
 msgstr "Подписаны"
 
-#: modules/social_features/social_follow_content/src/Plugin/ActivityContext/FollowContentActivityContext.php:9
+#: modules/social_features/social_follow_content/src/Plugin/ActivityContext/FollowContentActivityContext.php:11
 msgid "Following content activity context"
 msgstr ""
 
@@ -5036,7 +5283,11 @@ msgid ""
 "Form mode on which users will be able to hide some groups of profile fields."
 msgstr ""
 
-#: modules/social_features/social_group/social_group.module:400;412
+#: themes/socialbase/templates/forum/forum-list.html.twig:54
+msgid "Forum"
+msgstr ""
+
+#: modules/social_features/social_group/social_group.module:403;415
 msgid "Free to join"
 msgstr ""
 
@@ -5057,8 +5308,16 @@ msgstr "Полный HTML"
 msgid "Function"
 msgstr "Функция"
 
-#: translations.php:55
+#: translations.php:60
 msgid "Function and organization"
+msgstr ""
+
+#: modules/social_features/social_content_block/config/install/field.field.block_content.custom_content_list.field_plugin_field.yml:0
+msgid "Further specify how the content should be selected"
+msgstr ""
+
+#: modules/social_features/social_content_block/modules/social_event_content_block/config/install/field.storage.block_content.field_event_date.yml:0
+msgid "Future Events"
 msgstr ""
 
 #: modules/custom/mentions/src/Form/MentionsSettingsForm.php:65
@@ -5137,7 +5396,7 @@ msgstr ""
 
 #: modules/custom/group_core_comments/group_core_comments.info.yml:0
 #: modules/custom/social_demo/src/Plugin/DemoContent/Group.php:7
-#: modules/social_features/social_group/social_group.module:1469
+#: modules/social_features/social_group/social_group.module:1484
 #: modules/social_features/social_group/src/Plugin/Action/AddMembersToGroup.php:145
 #: modules/social_features/social_tagging/src/Form/SocialTaggingSettingsForm.php:97
 #: themes/socialblue/socialblue.theme:61
@@ -5259,7 +5518,7 @@ msgstr ""
 msgid "Group add topic block"
 msgstr ""
 
-#: modules/social_features/social_group/social_group.module:1496
+#: modules/social_features/social_group/social_group.module:1511
 msgid "Group and visibility"
 msgstr "Группа и видимость"
 
@@ -5298,7 +5557,19 @@ msgstr ""
 msgid "Group hero block"
 msgstr ""
 
-#: modules/social_features/social_group/social_group.module:1247
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_invitations.yml:0
+msgid "Group invitations"
+msgstr "Приглашения группы"
+
+#: modules/social_features/social_group/modules/social_group_invite/src/Plugin/Menu/LocalTask/GroupInviteLocalTask.php:78
+msgid "Group invites"
+msgstr ""
+
+#: modules/social_features/social_group/modules/social_group_invite/src/Plugin/Menu/LocalTask/GroupInviteLocalTask.php:75
+msgid "Group invites (@count)"
+msgstr ""
+
+#: modules/social_features/social_group/social_group.module:1262
 msgid "Group manager"
 msgstr "Менеджер группы"
 
@@ -5306,7 +5577,7 @@ msgstr "Менеджер группы"
 msgid "Group managers"
 msgstr ""
 
-#: modules/social_features/social_group/social_group.module:443;472
+#: modules/social_features/social_group/social_group.module:446;475
 #: modules/social_features/social_post/social_post.module:153
 #: modules/social_features/social_group/modules/social_group_flexible_group/config/install/field.storage.group.field_group_allowed_visibility.yml:0
 #: modules/social_features/social_post/config/install/field.storage.post.field_visibility.yml:0
@@ -5321,6 +5592,10 @@ msgstr "члены группы – видно только"
 msgid "Group members landing tab"
 msgstr ""
 
+#: modules/social_features/social_group/modules/social_group_invite/src/Plugin/Block/SocialGroupInviteNotificationBlock.php:15
+msgid "Group membership invite notification"
+msgstr ""
+
 #: modules/social_features/social_user_export/src/Plugin/UserExportPlugin/UserAnalyticsGroupMemberships.php:86;13
 msgid "Group memberships"
 msgstr "Членство в группах"
@@ -5329,7 +5604,11 @@ msgstr "Членство в группах"
 msgid "Group memberships (specified)"
 msgstr ""
 
-#: modules/social_features/social_group/social_group.module:635
+#: modules/social_features/social_group/modules/social_group_request/social_group_request.module:224
+msgid "Group role"
+msgstr "Роль в группе"
+
+#: modules/social_features/social_group/social_group.module:638
 #: modules/social_features/social_group/src/Plugin/Action/ChangeGroupMembershipRole.php:167
 msgid "Group roles"
 msgstr "Роли группы"
@@ -5339,7 +5618,7 @@ msgstr "Роли группы"
 msgid "Group settings"
 msgstr "Настройки группы"
 
-#: modules/social_features/social_group/src/Plugin/Block/GroupStatisticBlock.php:13
+#: modules/social_features/social_group/src/Plugin/Block/GroupStatisticBlock.php:14
 #: modules/social_features/social_group/config/optional/block.block.socialblue_group_statistic_block.yml:0
 msgid "Group statistic block"
 msgstr ""
@@ -5355,11 +5634,15 @@ msgid "Group type"
 msgstr "Тип группы"
 
 #: modules/social_features/social_group/modules/social_group_quickjoin/src/Form/SocialGroupQuickjoinSettings.php:52
+#: modules/social_features/social_content_block/modules/social_group_content_block/config/install/field.field.block_content.custom_content_list.field_group_type.yml:0
+#: modules/social_features/social_group/modules/social_group_content_block/config/install/field.field.block_content.custom_content_list.field_group_type.yml:0
 msgid "Group types"
 msgstr "Типы материалов группы"
 
 #: modules/social_features/social_group/social_group.links.task.yml:0
 #: modules/social_features/social_search/social_search.links.task.yml:0;0
+#: modules/social_features/social_content_block/modules/social_event_content_block/config/install/field.field.block_content.custom_content_list.field_event_group.yml:0
+#: modules/social_features/social_event/modules/social_event_content_block/config/install/field.field.block_content.custom_content_list.field_event_group.yml:0
 #: modules/social_features/social_group/config/install/views.view.groups.yml:0;0
 #: modules/social_features/social_search/config/install/views.view.search_groups.yml:0
 msgid "Groups"
@@ -5383,7 +5666,7 @@ msgstr ""
 msgid "Guest"
 msgstr "Гость"
 
-#: translations.php:73
+#: translations.php:78
 #: modules/social_features/social_event/modules/social_event_an_enroll/config/install/views.view.manage_enrollments.yml:0
 msgid "Guest enrollments"
 msgstr ""
@@ -5393,7 +5676,7 @@ msgctxt "PHP date format"
 msgid "H:i"
 msgstr ""
 
-#: modules/social_features/social_user/social_user.module:209
+#: modules/social_features/social_user/social_user.module:222
 msgid "Have an account already? @link"
 msgstr "У вас уже есть аккаунт? @link"
 
@@ -5478,8 +5761,45 @@ msgstr ""
 msgid "Hero small"
 msgstr ""
 
-#: modules/social_features/social_swiftmail/social_swiftmail.module:103
+#: modules/social_features/social_swiftmail/social_swiftmail.module:107
 msgid "Hi <strong>@display_name</strong>"
+msgstr ""
+
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/group.content_type.closed_group-group_invitation.yml:0
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/group.content_type.flexible_group-group_invitation.yml:0
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/group.content_type.open_group-group_invitation.yml:0
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/group.content_type.public_group-group_invitation.yml:0
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/group.content_type.secret_group-group_invitation.yml:0
+msgid ""
+"Hi<br /><br /> I would like to invite you to join the group [group:title] on "
+"[site:name].<br /><br />Kind regards,<br />[current-user:display-name]<br /"
+"><br /><table class=\"btn-wrapp\">\r\n"
+"\t<tbody>\r\n"
+"\t\t<tr>\r\n"
+"\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-one"
+"\" href=\"[group_content:register_link]\">Sign up </a></td>\r\n"
+"\t\t</tr>\r\n"
+"\t</tbody>\r\n"
+"</table>"
+msgstr ""
+
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/group.content_type.closed_group-group_invitation.yml:0
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/group.content_type.flexible_group-group_invitation.yml:0
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/group.content_type.open_group-group_invitation.yml:0
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/group.content_type.public_group-group_invitation.yml:0
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/group.content_type.secret_group-group_invitation.yml:0
+msgid ""
+"Hi<br /><br />I would like to invite you to join the group [group:title] on "
+"[site:name].<br /><br />Kind regards,<br />[current-user:display-name]<br /"
+"><br /><table class=\"btn-wrapp\">\r\n"
+"\t<tbody>\r\n"
+"\t\t<tr>\r\n"
+"\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-one"
+"\" href=\"[group_content:my_invitations_link]\">View group invite</a></td>"
+"\r\n"
+"\t\t</tr>\r\n"
+"\t</tbody>\r\n"
+"</table>"
 msgstr ""
 
 #: modules/social_features/social_comment/src/SocialCommentBreadcrumbBuilder.php:54;55
@@ -5545,7 +5865,7 @@ msgstr ""
 
 #: modules/social_features/social_book/config/optional/field.field.node.book.field_book_image.yml:0
 #: modules/social_features/social_event/config/install/field.field.node.event.field_event_image.yml:0
-#: modules/social_features/social_landing_page/config/install/field.field.paragraph.featured_item.field_featured_item_image.yml:0
+#: modules/social_features/social_featured_items/config/install/field.field.paragraph.featured_item.field_featured_item_image.yml:0
 #: modules/social_features/social_landing_page/config/install/field.field.paragraph.hero.field_hero_image.yml:0
 #: modules/social_features/social_landing_page/config/install/field.field.paragraph.hero_small.field_hero_small_image.yml:0
 #: modules/social_features/social_page/config/install/field.field.node.page.field_page_image.yml:0
@@ -5575,6 +5895,13 @@ msgid ""
 "In order to change the group type, \n"
 "        please contact the content or site managers."
 msgstr ""
+"Для того, чтобы изменить тип группы,\n"
+"        пожалуйста, свяжитесь с менеджером."
+
+#: modules/social_features/social_group/modules/social_group_request/src/Form/GroupRequestMembershipRequestAnonymousForm.php:72
+msgid "In order to send your request, please first sign up or log in."
+msgstr ""
+"Чтобы отправить запрос, сначала зарегистрируйтесь или войдите в систему."
 
 #: modules/social_features/social_content_report/config/install/message.template.content_reported.yml:0
 msgid "Inappropriate content reported"
@@ -5638,10 +5965,10 @@ msgstr ""
 msgid "Integration with Ajax Comments."
 msgstr ""
 
-#: translations.php:61
+#: translations.php:66
 #: modules/social_features/social_user_export/src/Plugin/UserExportPlugin/UserInterests.php:23;8
 #: themes/socialbase/templates/profile/profile--profile--default.html.twig:111
-#: themes/socialblue/templates/profile/profile--profile--default--sky.html.twig:120
+#: themes/socialblue/templates/profile/profile--profile--default--sky.html.twig:115
 #: modules/social_features/social_profile/config/install/field.field.profile.profile.field_profile_interests.yml:0
 #: modules/social_features/social_profile/config/install/taxonomy.vocabulary.interests.yml:0
 #: modules/social_features/social_search/config/install/views.view.search_users.yml:0
@@ -5653,11 +5980,9 @@ msgid "Interface language"
 msgstr "Язык интерфейса"
 
 #: themes/socialbase/templates/profile/profile--profile--default.html.twig:99
-#: themes/socialblue/templates/profile/profile--profile--default--sky.html.twig:100
 msgid "Intro"
 msgstr ""
 
-#: themes/socialblue/templates/group/group--default--sky.html.twig:44
 #: modules/social_features/social_landing_page/config/install/paragraphs.paragraphs_type.introduction.yml:0
 msgid "Introduction"
 msgstr "Введение"
@@ -5665,6 +5990,39 @@ msgstr "Введение"
 #: modules/custom/group_core_comments/src/Plugin/Field/FieldFormatter/CommentGroupContentFormatter.php:77
 #: modules/social_features/social_group/social_group.module:286;295
 msgid "Invitation only"
+msgstr ""
+
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_invitations.yml:0
+msgid "Invitation status"
+msgstr "Статус приглашения"
+
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_invitations.yml:0;0
+msgid "Invitations"
+msgstr "Приглашения"
+
+#: modules/social_features/social_group/modules/social_group_invite/src/Plugin/Block/SocialInviteLocalActionsBlock.php:138
+msgid "Invite by mail"
+msgstr ""
+
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_user_invitations.yml:0
+msgid "Invited by"
+msgstr "По приглашению"
+
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_invitations.yml:0
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_user_invitations.yml:0
+msgid "Invited on"
+msgstr "Приглашен на"
+
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/message.template.invited_to_join_group.yml:0
+msgid "Invited to join a group"
+msgstr ""
+
+#: modules/social_features/social_group/modules/social_group_invite/src/Plugin/ActivityContext/InvitedToGroupActivityContext.php:9
+msgid "Invited to join a group activity context"
+msgstr ""
+
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_user_invitations.yml:0
+msgid "Invites Overview"
 msgstr ""
 
 #: modules/custom/social_queue_storage/src/Entity/QueueStorageEntity.php:221
@@ -5684,8 +6042,13 @@ msgid ""
 "open-social/private-files"
 msgstr ""
 
-#: modules/social_features/social_landing_page/config/install/field.field.paragraph.featured.field_featured_items.yml:0
-#: modules/social_features/social_landing_page/config/install/field.field.paragraph.featured_items.field_featured_items_items.yml:0
+#: modules/social_features/social_featured_items/config/install/core.entity_form_display.paragraph.featured_items.default.yml:0
+msgid "Item"
+msgstr ""
+
+#: modules/social_features/social_featured_content/config/install/field.field.paragraph.featured.field_featured_items.yml:0
+#: modules/social_features/social_featured_items/config/install/core.entity_form_display.paragraph.featured_items.default.yml:0
+#: modules/social_features/social_featured_items/config/install/field.field.paragraph.featured_items.field_featured_items_items.yml:0
 msgid "Items"
 msgstr "Элементы"
 
@@ -5707,10 +6070,9 @@ msgstr "Элементы"
 #: modules/social_features/social_group/config/install/views.view.group_topics.yml:0
 #: modules/social_features/social_group/config/install/views.view.groups.yml:0
 #: modules/social_features/social_group/config/install/views.view.newest_groups.yml:0
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_invitations.yml:0
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_user_invitations.yml:0
 #: modules/social_features/social_landing_page/config/install/views.view.community_activities.yml:0
-#: modules/social_features/social_landing_page/config/install/views.view.featured_content_reference.yml:0
-#: modules/social_features/social_landing_page/config/install/views.view.featured_group_reference.yml:0
-#: modules/social_features/social_landing_page/config/install/views.view.featured_profile_reference.yml:0
 #: modules/social_features/social_like/config/install/views.view.who_liked_this_entity.yml:0
 #: modules/social_features/social_post/config/install/views.view.recipient_group_reference.yml:0
 #: modules/social_features/social_private_message/config/install/views.view.inbox.yml:0
@@ -5733,8 +6095,8 @@ msgstr ""
 msgid "Javascript"
 msgstr ""
 
-#: themes/socialbase/templates/group/group--hero.html.twig:96;96
-#: themes/socialblue/templates/group/group--statistic.html.twig:28;28
+#: themes/socialbase/templates/group/group--hero.html.twig:90;117;117
+#: themes/socialblue/templates/group/group--statistic.html.twig:29;55;55
 msgid "Join"
 msgstr "Присоединиться"
 
@@ -5750,8 +6112,8 @@ msgstr ""
 msgid "Join to group"
 msgstr ""
 
-#: themes/socialbase/templates/group/group--hero.html.twig:89
-#: themes/socialblue/templates/group/group--statistic.html.twig:21
+#: themes/socialbase/templates/group/group--hero.html.twig:97
+#: themes/socialblue/templates/group/group--statistic.html.twig:35
 msgctxt "Is a member"
 msgid "Joined"
 msgstr "Уже тут"
@@ -5812,10 +6174,30 @@ msgstr "Большой"
 msgid "Large sized profile image"
 msgstr ""
 
+#: modules/social_features/social_content_block/modules/social_event_content_block/config/install/field.storage.block_content.field_event_date.yml:0
+msgid "Last 14 days"
+msgstr ""
+
+#: modules/social_features/social_content_block/modules/social_event_content_block/config/install/field.storage.block_content.field_event_date.yml:0
+msgid "Last 30 days"
+msgstr ""
+
+#: modules/social_features/social_content_block/modules/social_event_content_block/config/install/field.storage.block_content.field_event_date.yml:0
+msgid "Last 7 days"
+msgstr ""
+
+#: modules/social_features/social_content_block/modules/social_event_content_block/config/install/field.storage.block_content.field_event_date.yml:0
+msgid "Last Month"
+msgstr ""
+
 #: modules/social_features/social_user_export/src/Plugin/UserExportPlugin/UserLastAccess.php:23;8
 #: modules/social_features/social_user/config/install/views.view.user_admin_people.yml:0
 msgid "Last access"
 msgstr "Последнее посещение"
+
+#: modules/social_features/social_content_block/config/install/field.storage.block_content.field_sorting.yml:0
+msgid "Last interacted"
+msgstr ""
 
 #: modules/social_features/social_user_export/src/Plugin/UserExportPlugin/UserLastLogin.php:23;8
 #: modules/social_features/social_user/config/install/views.view.user_admin_people.yml:0
@@ -5834,6 +6216,10 @@ msgstr "Фамилия"
 #: themes/socialbase/templates/system/pager.html.twig:95
 msgid "Last page"
 msgstr "Последняя страница"
+
+#: themes/socialbase/templates/forum/forum-list.html.twig:57
+msgid "Last post"
+msgstr ""
 
 #: modules/social_features/social_post/src/Plugin/Field/FieldFormatter/CommentPostActivityFormatter.php:8
 msgid "Last two comments on post"
@@ -5866,6 +6252,11 @@ msgstr ""
 #: modules/social_features/social_user/config/install/views.view.user_admin_people.yml:0
 msgid "Last »"
 msgstr "Последняя »"
+
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_invitations.yml:0
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_user_invitations.yml:0
+msgid "Last Â»"
+msgstr "Последний(яя) Â»"
 
 #: modules/social_features/social_topic/config/install/views.view.latest_topics.yml:0
 msgid "Latest group topics"
@@ -5900,8 +6291,8 @@ msgstr "Оставить комментарий"
 msgid "Leave a message to @name"
 msgstr "Отправить сообщение @name"
 
-#: themes/socialbase/templates/group/group--hero.html.twig:91
-#: themes/socialblue/templates/group/group--statistic.html.twig:23
+#: themes/socialbase/templates/group/group--hero.html.twig:99
+#: themes/socialblue/templates/group/group--statistic.html.twig:37
 msgid "Leave group"
 msgstr "Покинуть группу"
 
@@ -5921,9 +6312,9 @@ msgstr ""
 #: modules/custom/mentions/src/MentionsViewsData.php:138
 #: modules/custom/mentions/src/Form/MentionsTypeForm.php:224
 #: modules/custom/social_auth_extra/social_auth_extra.module:323
+#: modules/social_features/social_featured_content/config/install/field.field.paragraph.featured.field_featured_link.yml:0
+#: modules/social_features/social_featured_items/config/install/field.field.paragraph.featured_item.field_featured_item_link.yml:0
 #: modules/social_features/social_landing_page/config/install/field.field.paragraph.block.field_block_link.yml:0
-#: modules/social_features/social_landing_page/config/install/field.field.paragraph.featured.field_featured_link.yml:0
-#: modules/social_features/social_landing_page/config/install/field.field.paragraph.featured_item.field_featured_item_link.yml:0
 msgid "Link"
 msgstr "Ссылка"
 
@@ -6000,15 +6391,16 @@ msgstr ""
 msgid "Location name"
 msgstr "Название местоположения"
 
-#: modules/social_features/social_user/social_user.module:656
+#: modules/social_features/social_user/social_user.module:669
 msgid "Log In"
 msgstr "Зарегистрироваться"
 
 #: modules/custom/social_auth_extra/social_auth_extra.module:89
 #: modules/custom/social_auth_extra/src/Form/AuthLoginNoticeForm.php:41
 #: modules/custom/social_auth_twitter/src/Form/TwitterAuthLoginNoticeForm.php:34
-#: modules/social_features/social_event/modules/social_event_an_enroll/templates/event-an-enroll-dialog.html.twig:7
-#: modules/social_features/social_user/social_user.module:206
+#: modules/social_features/social_event/modules/social_event_an_enroll/templates/event-an-enroll-dialog.html.twig:11
+#: modules/social_features/social_group/modules/social_group_request/src/Form/GroupRequestMembershipRequestAnonymousForm.php:98
+#: modules/social_features/social_user/social_user.module:219
 #: modules/social_features/social_user/src/Form/SocialUserLoginForm.php:100
 #: modules/social_features/social_user/src/Routing/RouteSubscriber.php:24
 msgid "Log in"
@@ -6027,11 +6419,11 @@ msgstr ""
 #: modules/custom/social_auth_linkedin/social_auth_linkedin.routing.yml:0
 #: modules/custom/social_auth_twitter/social_auth_twitter.routing.yml:0
 #: modules/social_features/social_core/social_core.install:270
-#: modules/social_features/social_event/modules/social_event_an_enroll/templates/event-an-enroll-dialog.html.twig:7
+#: modules/social_features/social_event/modules/social_event_an_enroll/templates/event-an-enroll-dialog.html.twig:11
 msgid "Login"
 msgstr "Имя пользователя"
 
-#: modules/social_features/social_user/social_user.module:726
+#: modules/social_features/social_user/social_user.module:739
 msgid "Login and Registration help texts"
 msgstr "Тексты для помощи при входе и регистрации"
 
@@ -6051,7 +6443,7 @@ msgstr ""
 msgid "Logo for e-mails"
 msgstr ""
 
-#: modules/social_features/social_user/social_user.module:541;543
+#: modules/social_features/social_user/social_user.module:554;556
 msgid "Logout"
 msgstr "Выход"
 
@@ -6102,7 +6494,7 @@ msgstr ""
 msgid "Manage All Enrollments"
 msgstr ""
 
-#: translations.php:80
+#: translations.php:85
 #: modules/social_features/social_event/modules/social_event_an_enroll/config/install/views.view.manage_enrollments.yml:0;0
 msgid "Manage Enrollments"
 msgstr ""
@@ -6135,7 +6527,7 @@ msgstr ""
 msgid "Manage form and displays settings of posts"
 msgstr ""
 
-#: modules/social_features/social_group/social_group.module:1039
+#: modules/social_features/social_group/social_group.module:1054
 msgid "Manage members"
 msgstr "Управление участниками"
 
@@ -6168,10 +6560,9 @@ msgstr ""
 #: modules/social_features/social_group/config/install/views.view.group_topics.yml:0
 #: modules/social_features/social_group/config/install/views.view.groups.yml:0
 #: modules/social_features/social_group/config/install/views.view.newest_groups.yml:0
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_invitations.yml:0
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_user_invitations.yml:0
 #: modules/social_features/social_landing_page/config/install/views.view.community_activities.yml:0
-#: modules/social_features/social_landing_page/config/install/views.view.featured_content_reference.yml:0
-#: modules/social_features/social_landing_page/config/install/views.view.featured_group_reference.yml:0
-#: modules/social_features/social_landing_page/config/install/views.view.featured_profile_reference.yml:0
 #: modules/social_features/social_like/config/install/views.view.who_liked_this_entity.yml:0
 #: modules/social_features/social_post/config/install/views.view.recipient_group_reference.yml:0
 #: modules/social_features/social_private_message/config/install/views.view.inbox.yml:0
@@ -6222,11 +6613,17 @@ msgstr ""
 msgid "Media"
 msgstr "Мультимедиа"
 
+#: modules/social_features/social_profile/social_profile.install:351
+#: modules/social_features/social_profile/config/install/core.entity_view_mode.profile.medium_teaser.yml:0
+msgid "Medium Teaser"
+msgstr ""
+
 #: modules/social_features/social_core/config/install/crop.type.profile_medium.yml:0
 msgid "Medium sized profile image"
 msgstr ""
 
-#: themes/socialblue/templates/profile/profile--featured--sky.html.twig:5
+#: modules/social_features/social_group/modules/social_group_request/src/SocialGroupRequestConfigOverride.php:181
+#: themes/socialblue/templates/profile/profile--featured--sky.html.twig:6
 #: themes/socialblue/templates/profile/profile--profile--teaser--sky.html.twig:5
 #: modules/social_features/social_group/config/install/group.role.closed_group-member.yml:0
 #: modules/social_features/social_group/config/install/group.role.open_group-member.yml:0
@@ -6235,7 +6632,12 @@ msgstr ""
 #: modules/social_features/social_group/modules/social_group_flexible_group/config/install/group.role.flexible_group-member.yml:0
 #: modules/social_features/social_group/modules/social_group_secret/config/install/group.role.secret_group-member.yml:0
 msgid "Member"
-msgstr ""
+msgstr "Участник"
+
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_invitations.yml:0
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_user_invitations.yml:0
+msgid "Member account"
+msgstr "Аккаунт участника"
 
 #: modules/social_features/social_user/config/install/views.view.user_admin_people.yml:0
 msgid "Member for"
@@ -6246,11 +6648,11 @@ msgstr "Зарегистрирован на сайте"
 msgid "Members"
 msgstr "Участники"
 
-#: modules/social_features/social_group/src/Plugin/views/field/SocialGroupViewsBulkOperationsBulkForm.php:140
+#: modules/social_features/social_group/src/Plugin/views/field/SocialGroupViewsBulkOperationsBulkForm.php:141
 msgid "Members excluded on other pages:"
 msgstr ""
 
-#: modules/social_features/social_group/src/Controller/SocialGroupController.php:86
+#: modules/social_features/social_group/src/Controller/SocialGroupController.php:88
 msgid "Members of @name"
 msgstr ""
 
@@ -6258,8 +6660,41 @@ msgstr ""
 msgid "Members of {{ arguments.gid }}"
 msgstr ""
 
-#: modules/social_features/social_like/social_like.module:91
+#: modules/social_features/social_like/social_like.module:115
 msgid "Members who liked this @content"
+msgstr ""
+
+#: modules/social_features/social_group/social_group.views.inc:39;41
+msgid "Membership count"
+msgstr ""
+
+#: modules/social_features/social_group/modules/social_group_request/src/Controller/GroupRequestController.php:185
+msgid "Membership has been successfully denied."
+msgstr ""
+
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/block.block.membershipinvitenotification.yml:0
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/block.block.membershipinvitenotification_2.yml:0
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/block.block.membershipinvitenotification_3.yml:0
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/block.block.membershipinvitenotification_4.yml:0
+msgid "Membership invite notification"
+msgstr ""
+
+#: modules/social_features/social_group/modules/social_group_request/social_group_request.module:92
+msgid "Membership request approved"
+msgstr ""
+
+#: modules/social_features/social_group/modules/social_group_request/src/Form/GroupRequestMembershipRejectForm.php:164
+msgid "Membership request rejected"
+msgstr ""
+
+#: modules/social_features/social_group/modules/social_group_request/src/SocialGroupRequestConfigOverride.php:156
+msgid "Membership requests"
+msgstr "Запрос на участие"
+
+#: modules/social_features/social_group/modules/social_group_request/src/Plugin/Block/SocialGroupRequestMembershipNotification.php:18
+#: modules/social_features/social_group/modules/social_group_request/config/optional/block.block.membershiprequestsnotification.yml:0
+#: modules/social_features/social_group/modules/social_group_request/config/optional/block.block.membershiprequestsnotification_2.yml:0
+msgid "Membership requests notification"
 msgstr ""
 
 #: modules/custom/mentions/mentions.routing.yml:0
@@ -6351,7 +6786,7 @@ msgstr ""
 msgid "MentionsTypeForm"
 msgstr ""
 
-#: themes/socialbase/templates/block/block--system-branding-block.html.twig:34
+#: themes/socialbase/templates/block/block--system-menu-block--main.html.twig:38
 msgid "Menu"
 msgstr "Меню"
 
@@ -6359,6 +6794,8 @@ msgstr "Меню"
 msgid "Menu link"
 msgstr "Ссылка меню"
 
+#: modules/social_features/social_group/modules/social_group_request/social_group_request.module:33
+#: modules/social_features/social_group/modules/social_group_request/src/Form/GroupRequestMembershipRequestForm.php:112
 #: modules/social_features/social_group/modules/social_group_welcome_message/social_group_welcome_message.module:36
 #: modules/social_features/social_user/src/Plugin/Action/SocialSendEmail.php:235
 #: modules/custom/activity_creator/config/install/field.field.activity.activity.field_activity_message.yml:0
@@ -6420,6 +6857,14 @@ msgstr ""
 msgid "More options"
 msgstr ""
 
+#: modules/social_features/social_content_block/config/install/field.storage.block_content.field_sorting.yml:0
+msgid "Most commented"
+msgstr ""
+
+#: modules/social_features/social_content_block/config/install/field.storage.block_content.field_sorting.yml:0
+msgid "Most liked"
+msgstr ""
+
 #: modules/social_features/social_activity/config/install/message.template.moved_content_between_groups.yml:0
 msgid "Moved event or topic between groups"
 msgstr ""
@@ -6429,20 +6874,30 @@ msgid ""
 "Moving content after creation function has been disabled. In order to move "
 "this content, please contact a site manager."
 msgstr ""
+"Перемещение контента после создания было отключено. Для перемещения этого "
+"контента, пожалуйста, свяжитесь с менеджером сайта."
 
-#: modules/social_features/social_group/social_group.module:1796;1801
+#: modules/social_features/social_group/social_group.module:1813;1818
 msgid "My Groups"
 msgstr "Группы"
 
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_user_invitations.yml:0
+msgid "My Invitations"
+msgstr "Мои приглашения"
+
 #: modules/social_features/social_event/social_event.module:434
 msgid "My events"
+msgstr "Мои события"
+
+#: modules/social_features/social_group/modules/social_group_request/config/install/message.template.approve_request_join_group.yml:0
+msgid "My group membership request is approved"
 msgstr ""
 
-#: modules/social_features/social_group/social_group.module:1823
+#: modules/social_features/social_group/social_group.module:1840
 msgid "My groups"
 msgstr "Группы"
 
-#: modules/social_features/social_profile/social_profile.module:686
+#: modules/social_features/social_profile/social_profile.module:711
 msgid "My profile"
 msgstr "Мой профиль"
 
@@ -6456,7 +6911,7 @@ msgstr "Мои предстоящие события"
 
 #: modules/social_features/social_event/config/install/views.view.upcoming_events.yml:0;0
 msgid "My upcoming events block"
-msgstr ""
+msgstr "Блок предстоящих событий"
 
 #: modules/custom/activity_creator/src/ActivityListBuilder.php:23
 #: modules/custom/mentions/config/schema/mentions.schema.yml:0
@@ -6475,7 +6930,7 @@ msgstr "Название"
 msgid "Name or email contains"
 msgstr "Имя или email содержит"
 
-#: translations.php:49
+#: translations.php:54
 msgid "Names and profile image"
 msgstr ""
 
@@ -6512,11 +6967,11 @@ msgstr "Новое содержимое"
 msgid "New Event"
 msgstr "Новое Событие"
 
-#: modules/social_features/social_group/social_group.module:1768
+#: modules/social_features/social_group/social_group.module:1785
 msgid "New Group"
 msgstr "Новая Группа"
 
-#: modules/social_features/social_landing_page/social_landing_page.module:289
+#: modules/social_features/social_landing_page/social_landing_page.module:262
 msgid "New Landing Page"
 msgstr "Новая Целевая Страница"
 
@@ -6582,6 +7037,22 @@ msgstr ""
 msgid "News"
 msgstr "Новости"
 
+#: modules/social_features/social_content_block/modules/social_event_content_block/config/install/field.storage.block_content.field_event_date.yml:0
+msgid "Next 14 days"
+msgstr ""
+
+#: modules/social_features/social_content_block/modules/social_event_content_block/config/install/field.storage.block_content.field_event_date.yml:0
+msgid "Next 30 days"
+msgstr ""
+
+#: modules/social_features/social_content_block/modules/social_event_content_block/config/install/field.storage.block_content.field_event_date.yml:0
+msgid "Next 7 days"
+msgstr ""
+
+#: modules/social_features/social_content_block/modules/social_event_content_block/config/install/field.storage.block_content.field_event_date.yml:0
+msgid "Next month"
+msgstr ""
+
 #: themes/socialbase/templates/system/pager.html.twig:84
 msgid "Next page"
 msgstr "Следующая страница"
@@ -6635,11 +7106,16 @@ msgstr "Пока в этой группе нет событий"
 msgid "No groups found for this user"
 msgstr "У этого пользователя нет групп"
 
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_invitations.yml:0
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_user_invitations.yml:0
+msgid "No invitations available."
+msgstr "Приглашения недоступны."
+
 #: modules/social_features/social_like/config/install/views.view.who_liked_this_entity.yml:0
 msgid "No likes yet"
 msgstr "Пока не лайкнули"
 
-#: modules/social_features/social_content_block/src/ContentBuilder.php:146
+#: modules/social_features/social_content_block/src/ContentBuilder.php:182
 msgid "No matching content found"
 msgstr "Подходящий контент не найден"
 
@@ -6796,6 +7272,10 @@ msgstr ""
 "Количество элементов на единицу (например, количество участников, постов, "
 "события и т. Д.)"
 
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_user_invitations.yml:0
+msgid "Number of members"
+msgstr ""
+
 #: modules/custom/download_count/src/Form/DownloadCountSettingsForm.php:62
 msgid "Number of seconds in the time window for counting a file download."
 msgstr ""
@@ -6850,10 +7330,9 @@ msgstr ""
 #: modules/social_features/social_group/config/install/views.view.group_topics.yml:0
 #: modules/social_features/social_group/config/install/views.view.groups.yml:0
 #: modules/social_features/social_group/config/install/views.view.newest_groups.yml:0
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_invitations.yml:0
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_user_invitations.yml:0
 #: modules/social_features/social_landing_page/config/install/views.view.community_activities.yml:0
-#: modules/social_features/social_landing_page/config/install/views.view.featured_content_reference.yml:0
-#: modules/social_features/social_landing_page/config/install/views.view.featured_group_reference.yml:0
-#: modules/social_features/social_landing_page/config/install/views.view.featured_profile_reference.yml:0
 #: modules/social_features/social_like/config/install/views.view.who_liked_this_entity.yml:0
 #: modules/social_features/social_post/config/install/views.view.recipient_group_reference.yml:0
 #: modules/social_features/social_private_message/config/install/views.view.inbox.yml:0
@@ -6915,18 +7394,18 @@ msgstr "Только Имя и Фамилия"
 msgid "Only username"
 msgstr "Полько имя пользователя"
 
-#: modules/social_features/social_user/social_user.module:240
+#: modules/social_features/social_user/social_user.module:253
 msgid ""
 "Oops, there was an error with the email address or username you entered. Due "
 "to privacy concerns, we can't disclose the existence of already registered "
 "email addresses.\n"
 "    So, please try again! Contact the @admin_link if there are any problems."
 msgstr ""
-"Ой, произошла ошибка с email или именем пользователя которое вы ввели. По "
-"соображениям конфиденциальности, мы не можем раскрыть уже существующий "
-"email.\n"
-"    Поэтому, пожалуйста, попробуйте снова ! Свяжитесь с @admin_link если у "
-"вас возникнут проблемы."
+"Ой, произошла ошибка с адресом электронной почты или именем пользователя "
+"которое вы ввели. По соображениям конфиденциальности, мы не можем раскрыть "
+"уже существующий email.\n"
+"    Поэтому, пожалуйста, попробуйте снова или введите более сложное имя "
+"пользователя! Свяжитесь с @admin_link если у вас возникнут проблемы."
 
 #: social.info.yml:0
 #: modules/custom/social_lets_connect/social_lets_connect.links.menu.yml:0
@@ -6970,6 +7449,10 @@ msgstr ""
 #: modules/social_features/social_group/config/install/group.type.open_group.yml:0
 msgid "Open group"
 msgstr "Открытая группа"
+
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/group.content_type.open_group-group_invitation.yml:0
+msgid "Open group: Group Invitation"
+msgstr ""
 
 #: modules/social_features/social_group/config/install/group.content_type.open_group-group_membership.yml:0
 msgid "Open group: Group membership"
@@ -7090,7 +7573,7 @@ msgstr ""
 #: modules/social_features/social_group/modules/social_group_flexible_group/config/install/group.role.flexible_group-outsider.yml:0
 #: modules/social_features/social_group/modules/social_group_secret/config/install/group.role.secret_group-outsider.yml:0
 msgid "Outsider"
-msgstr ""
+msgstr "Сторонний наблюдатель"
 
 #: modules/custom/entity_access_by_field/entity_access_by_field.permissions.yml:0
 msgid "Override disabled public visiblility settings"
@@ -7125,6 +7608,8 @@ msgstr ""
 #: modules/social_features/social_group/config/install/views.view.group_manage_members.yml:0
 #: modules/social_features/social_group/config/install/views.view.group_members.yml:0
 #: modules/social_features/social_group/config/install/views.view.group_topics.yml:0
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_invitations.yml:0
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_user_invitations.yml:0
 #: modules/social_features/social_private_message/config/install/views.view.inbox.yml:0
 #: modules/social_features/social_profile/config/install/views.view.user_information.yml:0
 #: modules/social_features/social_search/config/install/views.view.search_all.yml:0
@@ -7174,6 +7659,18 @@ msgstr ""
 msgid "Pagination"
 msgstr "Нумерация страниц"
 
+#: modules/social_features/social_featured_content/config/install/core.entity_form_display.block_content.featured.default.yml:0
+#: modules/social_features/social_featured_items/config/install/core.entity_form_display.block_content.featured_items.default.yml:0
+#: modules/social_features/social_landing_page/config/install/core.entity_form_display.paragraph.accordion.default.yml:0
+msgid "Paragraph"
+msgstr ""
+
+#: modules/social_features/social_featured_content/config/install/core.entity_form_display.block_content.featured.default.yml:0
+#: modules/social_features/social_featured_items/config/install/core.entity_form_display.block_content.featured_items.default.yml:0
+#: modules/social_features/social_landing_page/config/install/core.entity_form_display.paragraph.accordion.default.yml:0
+msgid "Paragraphs"
+msgstr ""
+
 #: modules/social_features/social_user/src/Form/SocialUserLoginForm.php:71
 msgid "Password"
 msgstr "Пароль"
@@ -7183,6 +7680,14 @@ msgid "Password reset instructions mailed to %name at %email."
 msgstr ""
 "Инструкции по сбросу пароля были отправлены пользователю %name по адресу "
 "%email."
+
+#: modules/social_features/social_content_block/modules/social_event_content_block/config/install/field.storage.block_content.field_event_date.yml:0
+msgid "Past Events"
+msgstr ""
+
+#: modules/social_features/social_group/modules/social_group_invite/social_group_invite.module:173
+msgid "Pending reply"
+msgstr ""
 
 #: modules/social_features/social_user/config/install/views.view.user_admin_people.yml:0;0;0
 msgid "People"
@@ -7211,7 +7716,7 @@ msgid "Personalised activity stream (with post form)"
 msgstr ""
 
 #: themes/socialbase/templates/profile/profile--profile--default.html.twig:77
-#: themes/socialblue/templates/profile/profile--profile--default--sky.html.twig:77
+#: themes/socialblue/templates/profile/profile--profile--default--sky.html.twig:81
 msgid "Phone"
 msgstr "Телефон"
 
@@ -7220,9 +7725,9 @@ msgstr "Телефон"
 msgid "Phone number"
 msgstr "Номер телефона"
 
-#: translations.php:54
+#: translations.php:59
 msgid "Phone number and location"
-msgstr ""
+msgstr "Номер телефона и геолокацию"
 
 #: modules/social_features/social_post/modules/social_post_photo/config/install/social_post.post_type.photo.yml:0
 msgid "Photo"
@@ -7261,7 +7766,7 @@ msgid ""
 "Your report will only be visible to the content moderation team."
 msgstr ""
 
-#: modules/social_features/social_group/social_group.module:738
+#: modules/social_features/social_group/social_group.module:753
 msgid ""
 "Please note that changing the group type will also change the\n"
 "  visibility of the group content and the way users can join the group."
@@ -7271,7 +7776,7 @@ msgstr ""
 msgid ""
 "Please note: the community manager remarks below are only visible to site "
 "managers"
-msgstr ""
+msgstr "Обратите внимание: комментарии ниже видны только менеджерам сайта"
 
 #: modules/social_features/social_post/src/Plugin/views/area/SocialPostPostForm.php:74
 msgid "Please select"
@@ -7393,6 +7898,7 @@ msgid "Postal code"
 msgstr "Почтовый индекс"
 
 #: modules/social_features/social_post/social_post.links.menu.yml:0
+#: themes/socialbase/templates/forum/forum-list.html.twig:56
 msgid "Posts"
 msgstr "Сообщения"
 
@@ -7405,7 +7911,7 @@ msgstr ""
 msgid "Prefix"
 msgstr "Префикс"
 
-#: modules/social_features/social_group/social_group.module:1378
+#: modules/social_features/social_group/social_group.module:1393
 msgid ""
 "Preparing to delete the group and all it's topic's, event's and post's..."
 msgstr ""
@@ -7441,7 +7947,7 @@ msgstr ""
 msgid "Primary tabs"
 msgstr "Главные вкладки"
 
-#: modules/social_features/social_profile/social_profile.module:476
+#: modules/social_features/social_profile/social_profile.module:501
 #: modules/social_features/social_profile/src/Form/SocialProfileSettingsForm.php:70
 msgid "Privacy settings"
 msgstr "настройки приватности"
@@ -7456,7 +7962,7 @@ msgstr ""
 
 #: modules/social_features/social_private_message/config/install/views.view.inbox.yml:0
 msgid "Private Message"
-msgstr ""
+msgstr "Личное сообщение"
 
 #: modules/social_features/social_private_message/config/install/views.view.inbox.yml:0
 msgid "Private Message Thread Delete Time"
@@ -7584,7 +8090,7 @@ msgstr ""
 msgid "Profile of others"
 msgstr ""
 
-#: translations.php:63
+#: translations.php:68
 #: modules/social_features/social_profile/modules/social_profile_organization_tag/config/install/taxonomy.vocabulary.profile_organization_tag.yml:0
 msgid "Profile organization tag"
 msgstr ""
@@ -7606,7 +8112,7 @@ msgstr ""
 msgid "Profile statistic block"
 msgstr ""
 
-#: translations.php:65
+#: translations.php:70
 #: modules/social_features/social_user_export/src/Plugin/UserExportPlugin/UserProfileTag.php:23;8
 #: modules/social_features/social_profile/config/install/field.field.profile.profile.field_profile_profile_tag.yml:0
 #: modules/social_features/social_profile/config/install/taxonomy.vocabulary.profile_tag.yml:0
@@ -7615,7 +8121,7 @@ msgid "Profile tag"
 msgstr "Тег профиля"
 
 #: themes/socialbase/templates/profile/profile--profile--default.html.twig:118
-#: themes/socialblue/templates/profile/profile--profile--default--sky.html.twig:131
+#: themes/socialblue/templates/profile/profile--profile--default--sky.html.twig:126
 msgid "Profile tags"
 msgstr ""
 
@@ -7649,12 +8155,20 @@ msgstr ""
 msgid "Provide textual block with some link."
 msgstr ""
 
+#: modules/social_features/social_featured_content/social_featured_content.info.yml:0
+msgid "Provides \"Featured Content\" paragraphs type for landing pages."
+msgstr ""
+
 #: modules/social_features/social_follow_content/social_follow_content.info.yml:0
 msgid "Provides \"Follow Content\" flag type and related functionality."
 msgstr ""
 
 #: modules/social_features/social_event/social_event.info.yml:0
 msgid "Provides Event content type and related configuration. "
+msgstr ""
+
+#: modules/social_features/social_group/modules/social_group_invite/social_group_invite.info.yml:0
+msgid "Provides Group Invite member feature."
 msgstr ""
 
 #: modules/social_features/social_group/social_group.info.yml:0
@@ -7690,6 +8204,16 @@ msgstr ""
 msgid "Provides a book featured view mode for use on landing pages."
 msgstr ""
 
+#: modules/social_features/social_content_block/modules/social_event_content_block/social_event_content_block.info.yml:0
+#: modules/social_features/social_event/modules/social_event_content_block/social_event_content_block.info.yml:0
+msgid "Provides a content block for events."
+msgstr ""
+
+#: modules/social_features/social_content_block/modules/social_group_content_block/social_group_content_block.info.yml:0
+#: modules/social_features/social_group/modules/social_group_content_block/social_group_content_block.info.yml:0
+msgid "Provides a content block for groups."
+msgstr ""
+
 #: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.info.yml:0
 msgid ""
 "Provides a flexible Group feature allowing members to configure the group to "
@@ -7698,6 +8222,10 @@ msgstr ""
 
 #: modules/social_features/social_group/modules/social_group_flexible_group/modules/social_flexible_group_featured/social_flexible_group_featured.info.yml:0
 msgid "Provides a flexible Group featured view mode for use on landing pages."
+msgstr ""
+
+#: modules/social_features/social_featured_items/social_featured_items.info.yml:0
+msgid "Provides a shared paragraphs type for landing pages and dashboards."
 msgstr ""
 
 #: modules/social_features/social_event/modules/social_event_an_enroll/social_event_an_enroll.info.yml:0
@@ -7794,7 +8322,7 @@ msgstr ""
 msgid "Provides user profiles."
 msgstr ""
 
-#: modules/social_features/social_group/social_group.module:455;466
+#: modules/social_features/social_group/social_group.module:458;469
 #: modules/social_features/social_post/social_post.module:143
 #: modules/social_features/social_group/modules/social_group_flexible_group/config/install/field.storage.group.field_group_allowed_visibility.yml:0
 #: modules/social_features/social_post/config/install/field.storage.post.field_visibility.yml:0
@@ -7809,6 +8337,10 @@ msgstr "Публичный - видно всем, включая людей, н�
 #: modules/social_features/social_group/config/install/group.type.public_group.yml:0
 msgid "Public group"
 msgstr "Открытая группа"
+
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/group.content_type.public_group-group_invitation.yml:0
+msgid "Public group: Group Invitation"
+msgstr ""
 
 #: modules/social_features/social_group/config/install/group.content_type.public_group-group_membership.yml:0
 msgid "Public group: Group membership"
@@ -7893,12 +8425,12 @@ msgid "Re-order rows by numerical weight instead of dragging."
 msgstr "Упорядочить строки по весу вместо перетаскивания."
 
 #: modules/custom/group_core_comments/templates/comments-join-group.html.twig:45
-#: modules/social_features/social_landing_page/templates/group--featured.html.twig:99
-#: modules/social_features/social_landing_page/templates/node--featured.html.twig:160
-#: modules/social_features/social_landing_page/templates/profile--featured.html.twig:43
+#: modules/social_features/social_featured_content/templates/group--featured.html.twig:100
+#: modules/social_features/social_featured_content/templates/node--featured.html.twig:161
+#: modules/social_features/social_featured_content/templates/profile--featured.html.twig:53
 #: themes/socialbase/templates/group/group--teaser.html.twig:139
-#: themes/socialblue/templates/node/node--featured--sky.html.twig:77
-#: themes/socialblue/templates/node/event/node--event--featured--sky.html.twig:81
+#: themes/socialblue/templates/node/node--featured--sky.html.twig:78
+#: themes/socialblue/templates/node/event/node--event--featured--sky.html.twig:82
 msgid "Read more"
 msgstr "Подробнее"
 
@@ -7926,7 +8458,7 @@ msgstr "Причина"
 msgid "Reason term for which an additional textfield is displayed."
 msgstr ""
 
-#: modules/social_features/social_group/social_group.module:1716
+#: modules/social_features/social_group/social_group.module:1733
 msgid "Reassign your groups to the super administrator."
 msgstr "Переназначить свои группы на супер администратора."
 
@@ -7963,6 +8495,10 @@ msgstr ""
 
 #: modules/custom/activity_logger/activity_logger.tokens.inc:51
 msgid "Recipient user url"
+msgstr ""
+
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_invitations.yml:0
+msgid "Recipients"
 msgstr ""
 
 #: modules/custom/mentions/mentions.info.yml:0
@@ -8012,6 +8548,14 @@ msgstr "Дата регистриции"
 msgid "Registration date"
 msgstr "Дата регистрации"
 
+#: modules/social_features/social_group/modules/social_group_request/src/SocialGroupRequestConfigOverride.php:567;571;579
+msgid "Reject Membership"
+msgstr "Отказать в участии"
+
+#: modules/social_features/social_group/modules/social_group_request/src/Controller/GroupRequestController.php:98
+msgid "Reject membership request for the group @group_title"
+msgstr ""
+
 #: modules/social_features/social_activity/config/install/field.field.message.create_comment_author_node_post.field_message_related_object.yml:0
 #: modules/social_features/social_activity/config/install/field.field.message.create_comment_community_node.field_message_related_object.yml:0
 #: modules/social_features/social_activity/config/install/field.field.message.create_comment_community_post.field_message_related_object.yml:0
@@ -8048,12 +8592,12 @@ msgstr ""
 msgid "Remark"
 msgstr "замечание"
 
-#: translations.php:102
-#: modules/social_features/social_group/social_group.module:602;1885
+#: translations.php:107
+#: modules/social_features/social_group/social_group.module:605;1902
 msgid "Remove"
 msgstr "Удалить"
 
-#: modules/social_features/social_group/social_group.module:598
+#: modules/social_features/social_group/social_group.module:601
 msgid "Remove %name from %group"
 msgstr "Удалить %name из %group"
 
@@ -8061,9 +8605,13 @@ msgstr "Удалить %name из %group"
 msgid "Remove Open Social Branding"
 msgstr ""
 
-#: modules/social_features/social_group/src/Controller/SocialGroupController.php:132
+#: modules/social_features/social_group/src/Controller/SocialGroupController.php:152
 msgid "Remove a member"
 msgstr "Удалить участника"
+
+#: modules/social_features/social_user/src/Plugin/Action/SocialRemoveRoleUser.php:14
+msgid "Remove a role from the selected users"
+msgstr ""
 
 #: modules/custom/social_demo/social_demo.drush.inc:29;58
 msgid "Remove demo content."
@@ -8072,6 +8620,19 @@ msgstr "Удалить демо-контент."
 #: themes/socialbase/templates/file/image-widget.html.twig:49
 msgid "Remove image"
 msgstr "Удалить изображение"
+
+#: modules/social_features/social_group/src/Controller/SocialGroupController.php:150
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_invitations.yml:0
+msgid "Remove invitation"
+msgstr "Удалить приглашение"
+
+#: modules/social_features/social_group/src/Controller/SocialGroupController.php:148
+msgid "Remove invitee from group: @group_name"
+msgstr ""
+
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_invitations.yml:0
+msgid "Remove member link"
+msgstr "Удалить ссылку участника"
 
 #: modules/social_features/social_group/src/Plugin/Action/GroupContentEntityDeleteAction.php:24
 msgid "Remove members from a group"
@@ -8116,7 +8677,7 @@ msgstr "Ответить на комментарий"
 msgid "Reply to Comment"
 msgstr "Ответить на комментарий"
 
-#: translations.php:82
+#: translations.php:87
 #: modules/social_features/social_user/src/Plugin/Action/SocialSendEmail.php:221
 msgid "Reply-to"
 msgstr ""
@@ -8170,6 +8731,47 @@ msgstr ""
 msgid "Reports"
 msgstr "Отчёты"
 
+#: modules/social_features/social_group/modules/social_group_request/src/SocialGroupRequestConfigOverride.php:311
+msgid "Request date"
+msgstr ""
+
+#: modules/social_features/social_group/modules/social_group_request/social_group_request.group.permissions.yml:0
+msgid "Request group membership"
+msgstr "Запросить членство в группе"
+
+#: modules/social_features/social_group/modules/social_group_request/src/SocialGroupRequestConfigOverride.php:116
+msgid "Request membership"
+msgstr "Запросить членство"
+
+#: modules/social_features/social_group/modules/social_group_request/social_group_request.tokens.inc:22
+msgid "Request page link."
+msgstr ""
+
+#: themes/socialbase/templates/group/group--hero.html.twig:104
+#: themes/socialblue/templates/group/group--statistic.html.twig:42
+msgid "Request sent"
+msgstr ""
+
+#: modules/social_features/social_group/modules/social_group_request/config/install/field.field.group_content.group_content_type_c8bae2527294c.grequest_status.yml:0
+#: modules/social_features/social_group/modules/social_group_request/config/optional/field.field.group_content.group_content_type_7fcb76fdf61a9.grequest_status.yml:0
+msgid "Request status"
+msgstr "Статус запроса"
+
+#: modules/social_features/social_group/modules/social_group_request/src/Controller/GroupRequestController.php:141;157
+#: themes/socialbase/templates/group/group--hero.html.twig:109;109;115;115
+#: themes/socialblue/templates/group/group--statistic.html.twig:47;47;53;53
+msgid "Request to join"
+msgstr ""
+
+#: modules/social_features/social_group/modules/social_group_request/social_group_request.module:336
+msgid ""
+"Request to join - user requests to join need to be approved by group managers"
+msgstr ""
+
+#: modules/social_features/social_group/modules/social_group_request/config/install/message.template.request_to_join_a_group.yml:0
+msgid "Request to join a group"
+msgstr ""
+
 #: config/install/views.view.content.yml:0
 #: modules/social_features/social_activity/config/install/views.view.activity_stream_notifications.yml:0
 #: modules/social_features/social_activity/config/optional/views.view.activity_stream.yml:0
@@ -8191,10 +8793,9 @@ msgstr "Отчёты"
 #: modules/social_features/social_group/config/install/views.view.group_topics.yml:0
 #: modules/social_features/social_group/config/install/views.view.groups.yml:0
 #: modules/social_features/social_group/config/install/views.view.newest_groups.yml:0
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_invitations.yml:0
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_user_invitations.yml:0
 #: modules/social_features/social_landing_page/config/install/views.view.community_activities.yml:0
-#: modules/social_features/social_landing_page/config/install/views.view.featured_content_reference.yml:0
-#: modules/social_features/social_landing_page/config/install/views.view.featured_group_reference.yml:0
-#: modules/social_features/social_landing_page/config/install/views.view.featured_profile_reference.yml:0
 #: modules/social_features/social_like/config/install/views.view.who_liked_this_entity.yml:0
 #: modules/social_features/social_post/config/install/views.view.recipient_group_reference.yml:0
 #: modules/social_features/social_private_message/config/install/views.view.inbox.yml:0
@@ -8232,13 +8833,15 @@ msgstr ""
 
 #: modules/custom/social_gdpr/src/Controller/DataPolicy.php:38
 msgid "Revision from %date"
-msgstr "Редакция с  %date"
+msgstr "Редакция с %date"
 
 #: modules/custom/social_gdpr/social_gdpr.links.task.yml:0
 #: modules/custom/social_gdpr/social_gdpr.routing.yml:0
 msgid "Revisions"
 msgstr "Редакции"
 
+#: modules/social_features/social_user/src/Plugin/Action/SocialAddRoleUser.php:84
+#: modules/social_features/social_user/src/Plugin/Action/SocialRemoveRoleUser.php:84
 #: modules/social_features/social_group/config/install/views.view.group_manage_members.yml:0
 #: modules/social_features/social_user/config/install/views.view.user_admin_people.yml:0
 msgid "Role"
@@ -8255,7 +8858,7 @@ msgid "Roles"
 msgstr "Роли"
 
 #: modules/social_features/social_event/modules/social_event_managers/src/Form/SocialEventManagersAddEnrolleeForm.php:165
-#: modules/social_features/social_group/social_group.module:671
+#: modules/social_features/social_group/social_group.module:674
 msgid "Save"
 msgstr "Сохранить"
 
@@ -8309,10 +8912,10 @@ msgstr "Сказать что-нибудь сообществу"
 msgid "Say something to the group"
 msgstr "Сказать что-нибудь в группе"
 
-#: modules/social_features/social_search/social_search.module:232
+#: modules/social_features/social_search/social_search.module:214
 #: modules/social_features/social_search/src/SocialSearchBreadcrumbBuilder.php:53
 #: modules/social_features/social_search/src/Form/SearchHeroForm.php:73;84
-#: themes/socialbase/templates/block/block--system-menu-block--main.html.twig:45
+#: themes/socialbase/templates/block/block--system-menu-block--main.html.twig:52
 #: modules/social_features/social_search/config/install/views.view.search_all.yml:0
 #: modules/social_features/social_search/config/optional/block.block.search_block_hero.yml:0
 #: modules/social_features/social_search/config/optional/block.block.socialblue_search_block_hero.yml:0
@@ -8403,6 +9006,8 @@ msgstr ""
 msgid "Secret group: Group membership"
 msgstr ""
 
+#: modules/social_features/social_landing_page/config/install/core.entity_form_display.node.landing_page.default.yml:0
+#: modules/social_features/social_landing_page/config/install/core.entity_form_display.paragraph.section.default.yml:0
 #: modules/social_features/social_landing_page/config/install/paragraphs.paragraphs_type.section.yml:0
 msgid "Section"
 msgstr "Раздел"
@@ -8415,10 +9020,12 @@ msgstr "Фон навигационной панели раздела"
 msgid "Section navbar text"
 msgstr "Текст навигационной панели раздела"
 
-#: modules/social_features/social_landing_page/config/install/field.field.paragraph.featured.field_featured_title.yml:0
+#: modules/social_features/social_featured_content/config/install/field.field.paragraph.featured.field_featured_title.yml:0
 msgid "Section title"
 msgstr "Название раздела"
 
+#: modules/social_features/social_landing_page/config/install/core.entity_form_display.node.landing_page.default.yml:0
+#: modules/social_features/social_landing_page/config/install/core.entity_form_display.paragraph.section.default.yml:0
 #: modules/social_features/social_landing_page/config/install/field.field.node.landing_page.field_landing_page_section.yml:0
 msgid "Sections"
 msgstr "Разделы"
@@ -8439,7 +9046,7 @@ msgstr ""
 msgid "See full profile"
 msgstr ""
 
-#: themes/socialblue/templates/group/group--statistic.html.twig:36
+#: themes/socialblue/templates/group/group--statistic.html.twig:63
 msgid "See group information"
 msgstr ""
 
@@ -8447,16 +9054,16 @@ msgstr ""
 msgid "See selected enrollees on other pages"
 msgstr "Посмотреть выбранных участников на других страницах"
 
-#: modules/social_features/social_group/src/Plugin/views/field/SocialGroupViewsBulkOperationsBulkForm.php:140
+#: modules/social_features/social_group/src/Plugin/views/field/SocialGroupViewsBulkOperationsBulkForm.php:141
 msgid "See selected members on other pages"
 msgstr "Посмотреть выбранных участников на других страницах"
 
 #: modules/social_features/social_event/modules/social_event_managers/src/Plugin/views/field/SocialEventManagersViewsBulkOperationsBulkForm.php:189
-#: modules/social_features/social_group/src/Plugin/views/field/SocialGroupViewsBulkOperationsBulkForm.php:110
+#: modules/social_features/social_group/src/Plugin/views/field/SocialGroupViewsBulkOperationsBulkForm.php:111
 msgid "Select / unselect all @count members across all the pages"
 msgstr ""
 
-#: translations.php:34
+#: translations.php:39
 msgid "Select / unselect all @count results in this view"
 msgstr ""
 
@@ -8480,7 +9087,7 @@ msgstr ""
 msgid "Select a entity condition for this message."
 msgstr ""
 
-#: modules/social_features/social_group/social_group.module:634
+#: modules/social_features/social_group/social_group.module:637
 msgid "Select a member"
 msgstr ""
 
@@ -8514,8 +9121,12 @@ msgid ""
 "performance implications!"
 msgstr ""
 
+#: modules/social_features/social_content_block/config/install/field.field.block_content.custom_content_list.field_sorting.yml:0
+msgid "Select in what order selected content should be displayed"
+msgstr "Выберите, в каком порядке должен отображаться выбранный контент"
+
 #: modules/social_features/social_event/modules/social_event_managers/src/Form/SocialEventManagersAddEnrolleeForm.php:152
-#: modules/social_features/social_group/social_group.module:649
+#: modules/social_features/social_group/social_group.module:652
 msgid "Select members to add"
 msgstr "Выбрать участников, чтобы добавить"
 
@@ -8537,12 +9148,16 @@ msgstr ""
 
 #: modules/social_features/social_post/src/Plugin/Field/FieldFormatter/CommentPostFormatter.php:171
 msgid "Select the order used to show the list of comments."
-msgstr ""
+msgstr "Выберите порядок, используемый для отображения списка комментариев."
 
 #: modules/social_features/social_content_report/src/Form/ContentReportSettingsForm.php:88
 msgid ""
 "Select the terms that will show an additional field where users can describe "
 "their reasons."
+msgstr ""
+
+#: modules/social_features/social_content_block/config/install/field.field.block_content.custom_content_list.field_plugin_id.yml:0
+msgid "Select the type of content which will be shown in this block"
 msgstr ""
 
 #: modules/social_features/social_user/src/Form/SocialUserNavigationSettingsForm.php:69
@@ -8558,7 +9173,7 @@ msgstr ""
 msgid "Select which usage data to share"
 msgstr ""
 
-#: translations.php:83
+#: translations.php:88
 msgid "Selected @count entities:"
 msgstr ""
 
@@ -8571,7 +9186,7 @@ msgstr "Самопрезентация"
 msgid "Self introduction"
 msgstr "Самопрезентация"
 
-#: translations.php:53
+#: translations.php:58
 msgid "Self introduction, expertise and interests"
 msgstr ""
 
@@ -8603,7 +9218,7 @@ msgstr ""
 msgid "Send in case"
 msgstr ""
 
-#: translations.php:29
+#: translations.php:34
 msgid "Send mail"
 msgstr "Отправить письмо"
 
@@ -8611,11 +9226,15 @@ msgstr "Отправить письмо"
 msgid "Send password reset instructions via email."
 msgstr "Отправить инструкции по сбросу пароля на электронную почту."
 
+#: modules/social_features/social_group/modules/social_group_request/src/Form/GroupRequestMembershipRequestForm.php:117
+msgid "Send request"
+msgstr ""
+
 #: modules/custom/social_lets_connect/modules/social_lets_connect_usage/src/Plugin/QueueWorker/SendUsageData.php:14
 msgid "Send usage data."
 msgstr ""
 
-#: translations.php:31
+#: translations.php:36
 msgid "Sent email to %recipient"
 msgstr "Отправка почты для получателя %recipient"
 
@@ -8624,6 +9243,10 @@ msgstr "Отправка почты для получателя %recipient"
 #: modules/social_features/social_search/config/install/views.view.search_users.yml:0;0
 msgid "Separate multiple values by a comma."
 msgstr "Разделить несколько вводных запятой."
+
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/group.content_type.secret_group-group_invitation.yml:0
+msgid "Seret group: Group Invitation"
+msgstr ""
 
 #: modules/custom/social_lets_connect/modules/social_lets_connect_contact/social_lets_connect_contact.links.menu.yml:0
 msgid "Services"
@@ -8667,12 +9290,20 @@ msgid ""
 "display is invalidated."
 msgstr ""
 
-#: modules/social_features/social_event/modules/social_event_type/src/Form/SocialEventTypeSettings.php:40
+#: translations.php:29
 msgid "Set wether event types field is required or not."
+msgstr ""
+
+#: translations.php:31
+msgid "Set wether the tour is enabled or not."
+msgstr ""
+
+#: modules/social_features/social_event/modules/social_event_type/src/Form/SocialEventTypeSettings.php:40
+msgid "Set whether event types field is required or not."
 msgstr "Указать, требуется ли поле типов событий или нет"
 
 #: modules/custom/social_tour/src/Form/SocialTourSettings.php:40
-msgid "Set wether the tour is enabled or not."
+msgid "Set whether the tour is enabled or not."
 msgstr ""
 
 #: modules/custom/entity_access_by_field/entity_access_by_field.links.menu.yml:0
@@ -8687,7 +9318,7 @@ msgstr ""
 #: modules/custom/social_font/social_font.links.task.yml:0
 #: modules/social_features/social_event/social_event.links.task.yml:0
 #: modules/social_features/social_group/src/Form/SocialGroupAddForm.php:94
-#: modules/social_features/social_user/social_user.module:524;526
+#: modules/social_features/social_user/social_user.module:537;539
 msgid "Settings"
 msgstr "Настройки"
 
@@ -8782,7 +9413,7 @@ msgstr ""
 msgid "Show email"
 msgstr ""
 
-#: modules/social_features/social_user/social_user.module:686
+#: modules/social_features/social_user/social_user.module:699
 msgid "Show email address in help messages"
 msgstr ""
 
@@ -8790,15 +9421,15 @@ msgstr ""
 msgid "Show email on all user profiles"
 msgstr ""
 
-#: modules/social_features/social_profile/social_profile.module:481
+#: modules/social_features/social_profile/social_profile.module:506
 msgid "Show my email on my profile"
-msgstr ""
+msgstr "Показать мой адрес электронной почты в профиле"
 
 #: modules/social_features/social_profile/modules/social_profile_privacy/social_profile_privacy.module:161
 msgid "Show on my profile"
 msgstr ""
 
-#: modules/social_features/social_user/social_user.module:687
+#: modules/social_features/social_user/social_user.module:700
 msgid ""
 "Show site email address in help messages after failed login, signup or "
 "password reset."
@@ -8810,21 +9441,22 @@ msgstr ""
 
 #: modules/social_features/social_event/config/install/views.view.upcoming_events.yml:0
 msgid "Show upcoming events (my, community and overview)"
-msgstr ""
+msgstr "Показать предстоящие события (мои, сообщества и все)"
 
-#: modules/social_features/social_user/social_user.module:649
+#: modules/social_features/social_user/social_user.module:662
 msgid "Sign Up"
 msgstr "Зарегистрироваться"
 
 #: modules/custom/social_auth_extra/social_auth_extra.module:88
 #: modules/social_features/social_core/social_core.install:266
+#: modules/social_features/social_group/modules/social_group_request/src/Form/GroupRequestMembershipRequestAnonymousForm.php:82
 #: modules/social_features/social_user/social_user.links.menu.yml:0
 #: modules/social_features/social_user/src/Form/SocialUserLoginForm.php:88
 #: modules/social_features/social_user/src/Form/SocialUserPasswordForm.php:44
 msgid "Sign up"
 msgstr "Регистрация"
 
-#: modules/social_features/social_user/social_user.module:174
+#: modules/social_features/social_user/social_user.module:187
 msgid "Sign up with <b>email</b>"
 msgstr "Войти через <b>email</b>"
 
@@ -8964,6 +9596,8 @@ msgstr ""
 #: modules/social_features/social_comment/social_comment.info.yml:0
 #: modules/social_features/social_comment_upload/social_comment_upload.info.yml:0
 #: modules/social_features/social_content_block/social_content_block.info.yml:0
+#: modules/social_features/social_content_block/modules/social_event_content_block/social_event_content_block.info.yml:0
+#: modules/social_features/social_content_block/modules/social_group_content_block/social_group_content_block.info.yml:0
 #: modules/social_features/social_content_report/social_content_report.info.yml:0
 #: modules/social_features/social_core/social_core.info.yml:0
 #: modules/social_features/social_download_count/social_download_count.info.yml:0
@@ -8972,18 +9606,24 @@ msgstr ""
 #: modules/social_features/social_event/social_event.info.yml:0
 #: modules/social_features/social_event/modules/social_event_an_enroll/social_event_an_enroll.info.yml:0
 #: modules/social_features/social_event/modules/social_event_an_enroll_enrolments_export/social_event_an_enroll_enrolments_export.info.yml:0
+#: modules/social_features/social_event/modules/social_event_content_block/social_event_content_block.info.yml:0
 #: modules/social_features/social_event/modules/social_event_enrolments_export/social_event_enrolments_export.info.yml:0
 #: modules/social_features/social_event/modules/social_event_managers/social_event_managers.info.yml:0
 #: modules/social_features/social_event/modules/social_event_max_enroll/social_event_max_enroll.info.yml:0
 #: modules/social_features/social_event/modules/social_event_type/social_event_type.info.yml:0
+#: modules/social_features/social_featured_content/social_featured_content.info.yml:0
+#: modules/social_features/social_featured_items/social_featured_items.info.yml:0
 #: modules/social_features/social_follow_content/social_follow_content.info.yml:0
 #: modules/social_features/social_group/social_group.info.yml:0
+#: modules/social_features/social_group/modules/social_group_content_block/social_group_content_block.info.yml:0
 #: modules/social_features/social_group/modules/social_group_default_route/social_group_default_route.info.yml:0
 #: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.info.yml:0
 #: modules/social_features/social_group/modules/social_group_flexible_group/modules/social_flexible_group_featured/social_flexible_group_featured.info.yml:0
 #: modules/social_features/social_group/modules/social_group_gvbo/social_group_gvbo.info.yml:0
+#: modules/social_features/social_group/modules/social_group_invite/social_group_invite.info.yml:0
 #: modules/social_features/social_group/modules/social_group_members_export/social_group_members_export.info.yml:0
 #: modules/social_features/social_group/modules/social_group_quickjoin/social_group_quickjoin.info.yml:0
+#: modules/social_features/social_group/modules/social_group_request/social_group_request.info.yml:0
 #: modules/social_features/social_group/modules/social_group_secret/social_group_secret.info.yml:0
 #: modules/social_features/social_landing_page/social_landing_page.info.yml:0
 #: modules/social_features/social_like/social_like.info.yml:0
@@ -9230,6 +9870,11 @@ msgstr ""
 msgid "Social Event Anonymous Enrolments Export"
 msgstr ""
 
+#: modules/social_features/social_content_block/modules/social_event_content_block/social_event_content_block.info.yml:0
+#: modules/social_features/social_event/modules/social_event_content_block/social_event_content_block.info.yml:0
+msgid "Social Event Content Block"
+msgstr ""
+
 #: modules/social_features/social_event/modules/social_event_enrolments_export/social_event_enrolments_export.info.yml:0
 msgid "Social Event Enrolments Export"
 msgstr ""
@@ -9267,6 +9912,14 @@ msgstr ""
 msgid "Social Event Type settings"
 msgstr ""
 
+#: modules/social_features/social_featured_content/social_featured_content.info.yml:0
+msgid "Social Featured Content"
+msgstr ""
+
+#: modules/social_features/social_featured_items/social_featured_items.info.yml:0
+msgid "Social Featured Items"
+msgstr ""
+
 #: modules/custom/social_file_private/social_file_private.info.yml:0
 msgid "Social File Private"
 msgstr ""
@@ -9296,8 +9949,17 @@ msgstr ""
 msgid "Social Group"
 msgstr ""
 
+#: modules/social_features/social_content_block/modules/social_group_content_block/social_group_content_block.info.yml:0
+#: modules/social_features/social_group/modules/social_group_content_block/social_group_content_block.info.yml:0
+msgid "Social Group Content Block"
+msgstr ""
+
 #: modules/social_features/social_group/modules/social_group_default_route/social_group_default_route.info.yml:0
 msgid "Social Group Default Route"
+msgstr ""
+
+#: modules/social_features/social_group/modules/social_group_invite/social_group_invite.info.yml:0
+msgid "Social Group Invite"
 msgstr ""
 
 #: modules/social_features/social_group/modules/social_group_members_export/social_group_members_export.info.yml:0
@@ -9312,12 +9974,20 @@ msgstr ""
 msgid "Social Group Quickjoin settings"
 msgstr ""
 
+#: modules/social_features/social_group/modules/social_group_request/social_group_request.tokens.inc:17
+msgid "Social Group Request"
+msgstr ""
+
 #: modules/social_features/social_group/config/schema/social_group.schema.yml:0
 msgid "Social Group Settings"
 msgstr ""
 
 #: modules/social_features/social_tagging/src/Plugin/Block/SocialGroupTagsBlock.php:16
 msgid "Social Group Tags block"
+msgstr ""
+
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_user_invitations.yml:0
+msgid "Social Group User invitations"
 msgstr ""
 
 #: modules/social_features/social_group/modules/social_group_gvbo/social_group_gvbo.info.yml:0
@@ -9328,8 +9998,21 @@ msgstr ""
 msgid "Social Group Welcome Message"
 msgstr ""
 
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_invitations.yml:0
+msgid "Social Group invitations"
+msgstr ""
+
+#: modules/social_features/social_group/modules/social_group_request/social_group_request.info.yml:0
+msgid "Social Group request"
+msgstr ""
+
 #: modules/social_features/social_search/config/install/search_api.index.social_groups.yml:0
 msgid "Social Groups"
+msgstr ""
+
+#: modules/social_features/social_group/modules/social_group_invite/src/Plugin/Block/SocialInviteLocalActionsBlock.php:15
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/block.block.socialinviteactionsblock.yml:0
+msgid "Social Invite Actions block"
 msgstr ""
 
 #: modules/social_features/social_landing_page/social_landing_page.info.yml:0
@@ -9677,10 +10360,9 @@ msgstr "Сортировать по возрастанию"
 #: modules/social_features/social_group/config/install/views.view.group_topics.yml:0
 #: modules/social_features/social_group/config/install/views.view.groups.yml:0
 #: modules/social_features/social_group/config/install/views.view.newest_groups.yml:0
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_invitations.yml:0
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_user_invitations.yml:0
 #: modules/social_features/social_landing_page/config/install/views.view.community_activities.yml:0
-#: modules/social_features/social_landing_page/config/install/views.view.featured_content_reference.yml:0
-#: modules/social_features/social_landing_page/config/install/views.view.featured_group_reference.yml:0
-#: modules/social_features/social_landing_page/config/install/views.view.featured_profile_reference.yml:0
 #: modules/social_features/social_like/config/install/views.view.who_liked_this_entity.yml:0
 #: modules/social_features/social_post/config/install/views.view.recipient_group_reference.yml:0
 #: modules/social_features/social_private_message/config/install/views.view.inbox.yml:0
@@ -9791,11 +10473,11 @@ msgstr ""
 #: modules/social_features/social_event/modules/social_event_an_enroll/src/Form/EventAnEnrollSettingsForm.php:94
 #: modules/social_features/social_user/src/Plugin/Action/SocialSendEmail.php:227
 msgid "Subject"
-msgstr "Тема"
+msgstr "Объект"
 
 #: modules/social_features/social_comment/social_comment.module:71;72
 msgid "Submit"
-msgstr "Отправить"
+msgstr "Подтвердить"
 
 #: themes/socialbase/templates/comment/form--comment-edit.html.twig:25
 msgid "Submitted"
@@ -9842,7 +10524,7 @@ msgstr ""
 
 #: modules/custom/activity_send/modules/activity_send_email/activity_send_email.module:173
 msgid "System notifications"
-msgstr ""
+msgstr "уведомления"
 
 #: modules/social_features/social_group/modules/social_group_default_route/social_group_default_route.module:37
 msgid "Tab Management"
@@ -9864,7 +10546,7 @@ msgstr "Вкладки"
 
 #: modules/social_features/social_tagging/social_tagging.module:142
 msgid "Tag content"
-msgstr ""
+msgstr "Тэг контента"
 
 #: modules/social_features/social_tagging/social_tagging.links.menu.yml:0
 #: modules/social_features/social_tagging/social_tagging.routing.yml:0
@@ -10205,6 +10887,10 @@ msgstr ""
 msgid "The link to the entity, can be post or node, will include raw HTML."
 msgstr ""
 
+#: modules/social_features/social_group/modules/social_group_request/social_group_request.tokens.inc:23
+msgid "The link to the request page of the group."
+msgstr ""
+
 #: modules/social_features/social_private_message/social_private_message.module:64
 msgid ""
 "The member(s) of the private message thread. Add multiple members by "
@@ -10289,6 +10975,8 @@ msgid ""
 "The public visibility setting has been disabled. In order to change the "
 "visibility to public, please contact a site manager."
 msgstr ""
+"Параметр публичного доступа отключен. Чтобы изменить видимость для "
+"незарегистрированных пользователей, пожалуйста, свяжитесь с менеджером сайта."
 
 #: modules/custom/activity_creator/activity_creator.tokens.inc:22
 msgid "The recipient user entity display name."
@@ -10314,7 +11002,7 @@ msgstr ""
 msgid "The related node title."
 msgstr ""
 
-#: translations.php:96
+#: translations.php:101
 msgid "The role of 1 selected member has been changed successfully"
 msgid_plural ""
 "The role of @count selected members have been changed successfully"
@@ -10322,7 +11010,7 @@ msgstr[0] ""
 msgstr[1] ""
 msgstr[2] ""
 
-#: translations.php:97
+#: translations.php:102
 msgid "The role of 1 selected member has not been changed successfully"
 msgid_plural ""
 "The role of @count selected members have not been changed successfully"
@@ -10475,7 +11163,7 @@ msgid ""
 "displayed values and edit forms."
 msgstr ""
 
-#: modules/social_features/social_landing_page/templates/node--featured.html.twig:148
+#: modules/social_features/social_featured_content/templates/node--featured.html.twig:148
 #: themes/socialbase/templates/node/node--full.html.twig:186
 #: themes/socialbase/templates/node/node--teaser.html.twig:165
 #: themes/socialbase/templates/node/event/node--event--teaser.html.twig:37
@@ -10483,6 +11171,10 @@ msgstr ""
 #: themes/socialblue/templates/node/node--hero--sky.html.twig:132
 #: themes/socialblue/templates/node/event/node--event--featured--sky.html.twig:11
 msgid "The visibility of this content is set to @visibility_label"
+msgstr ""
+
+#: modules/social_features/social_group/modules/social_group_request/src/Plugin/Block/SocialGroupRequestMembershipNotification.php:142
+msgid "There @link to join this group."
 msgstr ""
 
 #: modules/social_features/social_group/src/Controller/SocialGroupListBuilder.php:154
@@ -10506,11 +11198,11 @@ msgid ""
 "profile\">add a profile here</a>"
 msgstr ""
 
-#: modules/social_features/social_profile/social_profile.module:166
+#: modules/social_features/social_profile/social_profile.module:167
 msgid "There is no profile information you can change here."
 msgstr ""
 
-#: modules/social_features/social_profile/social_profile.module:155
+#: modules/social_features/social_profile/social_profile.module:156
 msgid ""
 "There is no profile information you can change here. Change your @settings."
 msgstr ""
@@ -10519,7 +11211,7 @@ msgstr ""
 msgid "There was an unexpected error."
 msgstr ""
 
-#: modules/social_features/social_user/social_user.module:727
+#: modules/social_features/social_user/social_user.module:740
 msgid ""
 "These fields allow you to configure various help texts that are shown to "
 "users during signup and login"
@@ -10614,6 +11306,10 @@ msgid ""
 "member and non-members."
 msgstr ""
 
+#: modules/social_features/social_content_block/modules/social_event_content_block/config/install/field.storage.block_content.field_event_date.yml:0
+msgid "This month"
+msgstr ""
+
 #: modules/social_features/social_group/social_group.permissions.yml:0
 msgid ""
 "This permission grants access to change group types on already existing "
@@ -10624,7 +11320,7 @@ msgstr ""
 msgid "This permission grants full access to all groups."
 msgstr ""
 
-#: modules/social_features/social_profile/social_profile.module:492
+#: modules/social_features/social_profile/social_profile.module:517
 msgid ""
 "This setting is currently being controlled by a platform wide setting and "
 "cannot be changed. Please contact a sitemanager if you have questions."
@@ -10647,13 +11343,14 @@ msgstr ""
 #: modules/custom/mentions/src/MentionsViewsData.php:50
 #: modules/social_features/social_profile/modules/social_profile_privacy/social_profile_privacy.module:92
 #: config/install/views.view.content.yml:0;0
+#: modules/social_features/social_featured_content/config/install/field.field.paragraph.featured.field_featured_title.yml:0
+#: modules/social_features/social_featured_items/config/install/field.field.paragraph.featured_item.field_featured_item_title.yml:0
+#: modules/social_features/social_featured_items/config/install/field.field.paragraph.featured_items.field_featured_items_title.yml:0
 #: modules/social_features/social_follow_content/config/install/views.view.following.yml:0
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_user_invitations.yml:0
 #: modules/social_features/social_landing_page/config/install/field.field.paragraph.accordion.field_accord_title.yml:0
 #: modules/social_features/social_landing_page/config/install/field.field.paragraph.accordion_item.field_accord_item_title.yml:0
 #: modules/social_features/social_landing_page/config/install/field.field.paragraph.block.field_block_title.yml:0
-#: modules/social_features/social_landing_page/config/install/field.field.paragraph.featured.field_featured_title.yml:0
-#: modules/social_features/social_landing_page/config/install/field.field.paragraph.featured_item.field_featured_item_title.yml:0
-#: modules/social_features/social_landing_page/config/install/field.field.paragraph.featured_items.field_featured_items_title.yml:0
 #: modules/social_features/social_landing_page/config/install/field.field.paragraph.hero.field_hero_title.yml:0
 #: modules/social_features/social_landing_page/config/install/field.field.paragraph.hero_small.field_hero_small_title.yml:0
 #: modules/social_features/social_landing_page/config/install/field.field.paragraph.introduction.field_introduction_title.yml:0
@@ -10661,7 +11358,7 @@ msgstr ""
 msgid "Title"
 msgstr "Заголовок"
 
-#: translations.php:48
+#: translations.php:53
 msgid "Title & image"
 msgstr ""
 
@@ -10670,7 +11367,7 @@ msgid "Title of entity containing mention"
 msgstr ""
 
 #: modules/social_features/social_event/modules/social_event_managers/src/Form/SocialEventManagersAddEnrolleeForm.php:151
-#: modules/social_features/social_group/social_group.module:650
+#: modules/social_features/social_group/social_group.module:653
 msgid "To add multiple members, separate each member with a comma ( , )."
 msgstr "Чтобы добавить несколько участников, разделите их запятой ( , )."
 
@@ -10687,17 +11384,20 @@ msgid ""
 "include them in download counts."
 msgstr ""
 
-#: modules/social_features/social_content_block/social_content_block.module:64
+#: translations.php:113
 msgid ""
 "To make the list of topics more specific you can additionally configure more "
 "filters such as topic types, content tags and groups."
 msgstr ""
+"130/5000\n"
+"Чтобы сделать список публикаций более конкретным, вы можете дополнительно "
+"настроить фильтры, такие как типы публикаций, теги содержимого и группы."
 
 #: themes/socialbase/templates/form/input--button--split.html.twig:58
 msgid "Toggle Dropdown"
 msgstr ""
 
-#: themes/socialbase/templates/block/block--system-branding-block.html.twig:36
+#: themes/socialbase/templates/block/block--system-menu-block--main.html.twig:40
 msgid "Toggle navigation"
 msgstr ""
 
@@ -10737,6 +11437,10 @@ msgstr ""
 msgid "Tokens from the social group module."
 msgstr ""
 
+#: modules/social_features/social_group/modules/social_group_request/social_group_request.tokens.inc:18
+msgid "Tokens from the social group request module."
+msgstr ""
+
 #: modules/social_features/social_like/social_like.tokens.inc:21
 msgid "Tokens from the social like module."
 msgstr ""
@@ -10745,7 +11449,7 @@ msgstr ""
 msgid "Tokens from the social mentions module."
 msgstr ""
 
-#: translations.php:74
+#: translations.php:79
 #: modules/custom/social_demo/src/Plugin/DemoContent/Topic.php:13
 #: modules/social_features/social_topic/config/install/node.type.topic.yml:0
 msgid "Topic"
@@ -10770,21 +11474,22 @@ msgstr ""
 msgid "Topic type"
 msgstr ""
 
-#: translations.php:67
+#: translations.php:72
 #: modules/social_features/social_topic/config/install/taxonomy.vocabulary.topic_types.yml:0;0
 msgid "Topic types"
 msgstr ""
 
 #: modules/social_features/social_group/social_group.links.task.yml:0
 #: modules/social_features/social_topic/social_topic.links.task.yml:0
+#: themes/socialbase/templates/forum/forum-list.html.twig:55
 #: modules/social_features/social_event/config/install/views.view.events.yml:0
 #: modules/social_features/social_topic/config/install/views.view.topics.yml:0;0;0
 msgid "Topics"
-msgstr "Темы"
+msgstr "Публикации"
 
 #: modules/social_features/social_user_export/src/Plugin/UserExportPlugin/UserAnalyticsTopicsCreated.php:23;8
 msgid "Topics created"
-msgstr ""
+msgstr "Публикация создана"
 
 #: modules/social_features/social_topic/src/Controller/SocialTopicController.php:86
 msgid "Topics of type @type"
@@ -10802,7 +11507,7 @@ msgstr ""
 msgid "Total amount of enrollments"
 msgstr ""
 
-#: modules/social_features/social_landing_page/templates/group--featured.html.twig:80
+#: modules/social_features/social_featured_content/templates/group--featured.html.twig:80
 #: themes/socialbase/templates/group/group--teaser.html.twig:120
 msgid "Total amount of group members"
 msgstr ""
@@ -10903,6 +11608,10 @@ msgstr "Тип"
 msgid "Type configuration"
 msgstr ""
 
+#: modules/social_features/social_content_block/config/install/field.field.block_content.custom_content_list.field_plugin_id.yml:0
+msgid "Type of content"
+msgstr ""
+
 #: modules/social_features/social_event/modules/social_event_an_enroll/social_event_an_enroll.tokens.inc:22
 msgid "URL of anonymously enrolled event with token to cancel enrollment."
 msgstr ""
@@ -10951,7 +11660,7 @@ msgstr ""
 msgid "Unfollow content"
 msgstr "Отписаться от контента"
 
-#: modules/social_features/social_follow_content/social_follow_content.module:122
+#: modules/social_features/social_follow_content/social_follow_content.module:147
 msgid "Unfollow this content"
 msgstr "Отписаться от этого контента"
 
@@ -11123,6 +11832,8 @@ msgid ""
 "Use the plus button in the navigation bar to create a new topic, or to start "
 "a new event or group"
 msgstr ""
+"Используйте кнопку «плюс» на панели навигации, чтобы создать новую "
+"публикацию или начать новое событие или группу."
 
 #: modules/custom/social_tour/config/install/tour.tour.social_topic_overview.yml:0
 msgid "Use the topic filter to filter on topic type."
@@ -11155,7 +11866,6 @@ msgstr ""
 #: modules/social_features/social_event/modules/social_event_managers/config/install/views.view.managers.yml:0
 #: modules/social_features/social_follow_content/config/install/views.view.following.yml:0
 #: modules/social_features/social_group/config/install/views.view.group_managers.yml:0
-#: modules/social_features/social_landing_page/config/install/views.view.featured_profile_reference.yml:0
 #: modules/social_features/social_profile/config/install/views.view.newest_users.yml:0
 #: modules/social_features/social_profile/config/install/views.view.user_information.yml:0
 #: modules/social_features/social_search/modules/social_search_autocomplete/config/install/views.view.search_all_autocomplete.yml:0
@@ -11229,6 +11939,10 @@ msgstr ""
 msgid "User information"
 msgstr ""
 
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_user_invitations.yml:0
+msgid "User invitations to Groups"
+msgstr ""
+
 #: modules/social_features/social_group/social_group.views.inc:17
 msgid "User is member"
 msgstr ""
@@ -11250,7 +11964,7 @@ msgstr "Меню пользователя"
 msgid "User name"
 msgstr "Имя пользователя"
 
-#: translations.php:77
+#: translations.php:82
 #: modules/social_features/social_user/social_user.links.menu.yml:0;0
 #: modules/social_features/social_user/social_user.routing.yml:0
 msgid "User settings"
@@ -11308,7 +12022,7 @@ msgstr "Значение"
 #: modules/custom/social_queue_storage/social_queue_storage.links.task.yml:0
 #: modules/social_features/social_comment/src/Form/SocialCommentAdminOverview.php:209
 #: modules/social_features/social_event/social_event.links.task.yml:0
-#: modules/social_features/social_group/social_group.module:1886
+#: modules/social_features/social_group/social_group.module:1903
 #: modules/social_features/social_post/social_post.links.task.yml:0
 msgid "View"
 msgstr "Просмотр"
@@ -11361,7 +12075,7 @@ msgstr "Просмотр комментариев"
 msgid "View community Posts"
 msgstr ""
 
-#: modules/social_features/social_follow_content/social_follow_content.module:75
+#: modules/social_features/social_follow_content/social_follow_content.module:100
 msgid "View content I'm following"
 msgstr ""
 
@@ -11379,6 +12093,10 @@ msgstr ""
 msgid "View group stream page"
 msgstr ""
 
+#: modules/social_features/social_group/modules/social_group_invite/src/Plugin/Block/SocialInviteLocalActionsBlock.php:142
+msgid "View invites"
+msgstr ""
+
 #: modules/social_features/social_like/social_like.permissions.yml:0
 msgid "View like widget"
 msgstr ""
@@ -11393,13 +12111,13 @@ msgstr "Режим просмотра"
 
 #: modules/social_features/social_event/social_event.module:432
 msgid "View my events"
-msgstr ""
+msgstr "Посмотреть мои события"
 
-#: modules/social_features/social_group/social_group.module:1821
+#: modules/social_features/social_group/social_group.module:1838
 msgid "View my groups"
 msgstr ""
 
-#: modules/social_features/social_profile/social_profile.module:684
+#: modules/social_features/social_profile/social_profile.module:709
 msgid "View my profile"
 msgstr ""
 
@@ -11441,11 +12159,11 @@ msgstr ""
 
 #: modules/social_features/social_event/social_event.permissions.yml:0
 msgid "View the My events overview and block on other peoples profile"
-msgstr ""
+msgstr "Просмотреть обзор моих событий и заблокировать в профиле других людей"
 
 #: modules/social_features/social_event/social_event.permissions.yml:0
 msgid "View the My events overview and block on your own profile"
-msgstr ""
+msgstr "Просмотрите обзор моих событий и заблокировать на своём профиле"
 
 #: modules/social_features/social_group/social_group.permissions.yml:0
 msgid "View the My groups overview and block on other peoples profile"
@@ -11589,7 +12307,7 @@ msgstr "За чем я слежу"
 
 #: modules/custom/activity_send/modules/activity_send_email/activity_send_email.module:159
 msgid "What I manage"
-msgstr ""
+msgstr "Чем я управляю"
 
 #: themes/socialbase/src/Plugin/Preprocess/Block.php:170
 msgid "What are you looking for ?"
@@ -11597,7 +12315,7 @@ msgstr ""
 
 #: modules/social_features/social_event/modules/social_event_type/src/SocialEventTypeConfigOverride.php:108
 msgid "What type of events do you want to see?"
-msgstr ""
+msgstr "Какой тип событий вы хотите увидеть?"
 
 #: modules/social_features/social_post/config/install/core.entity_form_display.post.post.default.yml:0
 #: modules/social_features/social_post/config/install/core.entity_form_display.post.post.group.yml:0
@@ -11632,6 +12350,9 @@ msgid ""
 "edit and create page, the radio widget will be changed to a select widget "
 "for better usability."
 msgstr ""
+"Когда количество доступных типов публикации достигнет этого числа, на "
+"странице редактирования и создания публикации виджет с пунктами изменится на "
+"выбранный виджет для удобства использования."
 
 #: modules/social_features/social_event/modules/social_event_an_enroll/src/Form/EventAnEnrollSettingsForm.php:46
 msgid ""
@@ -11708,14 +12429,16 @@ msgstr ""
 #: src/Installer/Form/ModuleConfigureForm.php:117
 msgid "Will generate files, users, groups, events, topics, comments and posts."
 msgstr ""
-"Будут сгенерированы файлы, пользователи, группы, события, темы, комментарии "
-"и сообщения."
+"Будут сгенерированы файлы, пользователи, группы, события, публикации, "
+"комментарии и сообщения."
 
 #: themes/socialbase/includes/form.inc:157
 msgid "Write a comment..."
 msgstr ""
 
 #: modules/custom/social_gdpr/src/Form/DataPolicyRevisionRevertForm.php:26
+#: modules/social_features/social_group/modules/social_group_request/social_group_request.module:236
+#: modules/social_features/social_group/modules/social_group_request/src/Form/GroupRequestMembershipRejectForm.php:146
 msgid "Yes"
 msgstr "Да"
 
@@ -11768,7 +12491,7 @@ msgstr ""
 msgid "You are now able to log in with @network"
 msgstr ""
 
-#: modules/social_features/social_follow_content/social_follow_content.module:124
+#: modules/social_features/social_follow_content/social_follow_content.module:149
 msgid "You are now automatically following this @type. @unfollow_link."
 msgstr ""
 
@@ -11783,6 +12506,12 @@ msgstr ""
 msgid ""
 "You can enable 'Mentions Filter' for the mentions type below for the "
 "appropriate @text_format"
+msgstr ""
+
+#: modules/social_features/social_group/modules/social_group_request/src/Form/GroupRequestMembershipRequestForm.php:107
+msgid ""
+"You can leave a message in your request. Only when your request is approved, "
+"you will receive a notification via email and notification center."
 msgstr ""
 
 #: modules/social_features/social_activity/config/install/views.view.activity_stream_notifications.yml:0
@@ -11806,6 +12535,8 @@ msgid ""
 "You have been already enrolled to this event. You have also received a "
 "notification via email."
 msgstr ""
+"Вы уже зарегистрированы на это событие и получили уведомление по электронной "
+"почте."
 
 #: modules/social_features/social_event/modules/social_event_an_enroll/config/install/social_event_an_enroll.settings.yml:0
 msgid ""
@@ -11813,20 +12544,31 @@ msgid ""
 "enrollment anytime using the following link: [social_event_an_enroll:"
 "enrolled_event]."
 msgstr ""
+"Вы уже зарегистрированы на это событие [node:title]. Вы можете отменить свою "
+"регистрацию в любое время, используя следующую ссылку: "
+"[social_event_an_enroll:enrolled_event]."
+
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/message.template.invited_to_join_group.yml:0
+msgid "You have been invited to join a group"
+msgstr ""
+
+#: modules/social_features/social_group/modules/social_group_invite/src/Plugin/Block/SocialGroupInviteNotificationBlock.php:122
+msgid "You have been invited to join this group"
+msgstr ""
 
 #: modules/social_features/social_event/social_event.module:208
 msgid "You have enrolled"
-msgstr ""
+msgstr "Вы участвуете"
 
 #: modules/social_features/social_event/src/Plugin/Block/EnrollActionBlock.php:119
 msgid "You have enrolled for this event."
-msgstr ""
+msgstr "Вы зарегистрировались на это событие."
 
 #: modules/social_features/social_core/social_core.module:375
 msgid "You have insufficient permissions to delete this vocabulary"
 msgstr ""
 
-#: modules/social_features/social_landing_page/templates/group--featured.html.twig:94
+#: modules/social_features/social_featured_content/templates/group--featured.html.twig:94
 #: themes/socialbase/templates/group/group--teaser.html.twig:134
 msgctxt "Is a member"
 msgid "You have joined"
@@ -11860,18 +12602,23 @@ msgstr[0] ""
 msgstr[1] ""
 msgstr[2] ""
 
-#: modules/social_features/social_follow_content/social_follow_content.module:58
+#: modules/social_features/social_follow_content/social_follow_content.module:83
 msgid ""
 "You have successfully enrolled to this event. Also you are now following the "
 "event, which means you will receive notifications when a new comment is "
 "placed."
 msgstr ""
+"Вы успешно зарегистрировались на этом мероприятии. Также вы теперь следите "
+"за событием, что означает, что вы будете получать уведомления, когда новый "
+"комментарий размещен."
 
 #: modules/social_features/social_event/modules/social_event_an_enroll/src/Form/EventAnEnrollForm.php:150
 msgid ""
 "You have successfully enrolled to this event. You have also received a "
 "notification via email."
 msgstr ""
+"Вы успешно зарегистрировались на это событие. Вы также получили уведомление "
+"по электронной почте."
 
 #: modules/custom/social_magic_login/src/Controller/MagicLoginController.php:113
 msgid "You have tried to use a one-time link that has expired."
@@ -11896,7 +12643,7 @@ msgstr ""
 
 #: modules/custom/social_magic_login/src/Controller/MagicLoginController.php:134
 msgid "You need to set your password in order to log in."
-msgstr ""
+msgstr "Вам необходимо установить пароль для входа в систему."
 
 #: modules/custom/social_tour/src/SocialTourController.php:166
 msgid "You will not see tips like this anymore."
@@ -11944,7 +12691,7 @@ msgid ""
 "You can now start exploring @community_name."
 msgstr ""
 
-#: translations.php:88
+#: translations.php:93
 msgid "Your email has been sent to 1 selected enrollee successfully"
 msgid_plural ""
 "Your email has been sent to @count selected enrollees successfully"
@@ -11952,14 +12699,14 @@ msgstr[0] ""
 msgstr[1] ""
 msgstr[2] ""
 
-#: translations.php:98
+#: translations.php:103
 msgid "Your email has been sent to 1 selected member successfully"
 msgid_plural "Your email has been sent to @count selected members successfully"
 msgstr[0] ""
 msgstr[1] ""
 msgstr[2] ""
 
-#: translations.php:89
+#: translations.php:94
 msgid "Your email has not been sent to 1 selected enrollee successfully"
 msgid_plural ""
 "Your email has not been sent to @count selected enrollees successfully"
@@ -11967,7 +12714,7 @@ msgstr[0] ""
 msgstr[1] ""
 msgstr[2] ""
 
-#: translations.php:99
+#: translations.php:104
 msgid "Your email has not been sent to 1 selected member successfully"
 msgid_plural ""
 "Your email has not been sent to @count selected members successfully"
@@ -11975,14 +12722,14 @@ msgstr[0] ""
 msgstr[1] ""
 msgstr[2] ""
 
-#: translations.php:100
+#: translations.php:105
 msgid "Your email will be send to 1 selected enrollee"
 msgid_plural "Your email will be send to @count selected enrollees"
 msgstr[0] ""
 msgstr[1] ""
 msgstr[2] ""
 
-#: translations.php:101
+#: translations.php:106
 msgid "Your email will be send to 1 selected member"
 msgid_plural "Your email will be send to @count selected members"
 msgstr[0] ""
@@ -12019,6 +12766,10 @@ msgstr ""
 msgid "Your report is removed."
 msgstr ""
 
+#: modules/social_features/social_group/modules/social_group_request/src/Form/GroupRequestMembershipRequestForm.php:143
+msgid "Your request has been sent successfully"
+msgstr ""
+
 #: modules/custom/social_file_private/social_file_private.install:25
 msgid ""
 "Your uploaded files on the Open Social entities are not fully protected "
@@ -12035,6 +12786,15 @@ msgstr ""
 #: modules/custom/social_metatag/config/install/metatag.metatag_defaults.node__page.yml:0;0
 #: modules/custom/social_metatag/config/install/metatag.metatag_defaults.node__topic.yml:0;0
 msgid "[current-page:title]"
+msgstr ""
+
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/group.content_type.closed_group-group_invitation.yml:0;0
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/group.content_type.flexible_group-group_invitation.yml:0;0
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/group.content_type.open_group-group_invitation.yml:0;0
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/group.content_type.public_group-group_invitation.yml:0;0
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/group.content_type.secret_group-group_invitation.yml:0;0
+msgid ""
+"[current-user:display-name] has invited you to join a group on [site:name]."
 msgstr ""
 
 #: modules/custom/social_metatag/config/install/metatag.metatag_defaults.group.yml:0
@@ -12134,14 +12894,14 @@ msgid ""
 "span.badge.badge--pill.badge-default|Pill badge"
 msgstr ""
 
-#: modules/social_features/social_landing_page/templates/node--featured.html.twig:161
-#: modules/social_features/social_landing_page/templates/profile--featured.html.twig:44
-#: themes/socialblue/templates/node/node--featured--sky.html.twig:78
-#: themes/socialblue/templates/node/event/node--event--featured--sky.html.twig:82
+#: modules/social_features/social_featured_content/templates/node--featured.html.twig:162
+#: modules/social_features/social_featured_content/templates/profile--featured.html.twig:54
+#: themes/socialblue/templates/node/node--featured--sky.html.twig:79
+#: themes/socialblue/templates/node/event/node--event--featured--sky.html.twig:83
 msgid "about @label"
 msgstr ""
 
-#: modules/social_features/social_profile/social_profile.module:148
+#: modules/social_features/social_profile/social_profile.module:149
 msgid "account settings here"
 msgstr ""
 
@@ -12285,6 +13045,8 @@ msgid "field_event_managers"
 msgstr ""
 
 #: modules/social_features/social_activity/config/install/field.field.message.moved_content_between_groups.field_message_context.yml:0
+#: modules/social_features/social_group/modules/social_group_request/config/install/field.field.message.approve_request_join_group.field_message_context.yml:0
+#: modules/social_features/social_group/modules/social_group_request/config/install/field.field.message.request_to_join_a_group.field_message_context.yml:0
 #: modules/social_features/social_like/config/install/field.field.message.create_like_node_or_post.field_message_context.yml:0
 #: modules/social_features/social_mentions/config/install/field.field.message.create_comment_reply_mention.field_message_context.yml:0
 #: modules/social_features/social_mentions/config/install/field.field.message.create_mention_comment.field_message_context.yml:0
@@ -12293,6 +13055,8 @@ msgid "field_message_context"
 msgstr ""
 
 #: modules/social_features/social_activity/config/install/field.field.message.moved_content_between_groups.field_message_destination.yml:0
+#: modules/social_features/social_group/modules/social_group_request/config/install/field.field.message.approve_request_join_group.field_message_destination.yml:0
+#: modules/social_features/social_group/modules/social_group_request/config/install/field.field.message.request_to_join_a_group.field_message_destination.yml:0
 #: modules/social_features/social_like/config/install/field.field.message.create_like_node_or_post.field_message_destination.yml:0
 #: modules/social_features/social_mentions/config/install/field.field.message.create_comment_reply_mention.field_message_destination.yml:0
 #: modules/social_features/social_mentions/config/install/field.field.message.create_mention_comment.field_message_destination.yml:0
@@ -12301,6 +13065,8 @@ msgid "field_message_destination"
 msgstr ""
 
 #: modules/social_features/social_activity/config/install/field.field.message.moved_content_between_groups.field_message_related_object.yml:0
+#: modules/social_features/social_group/modules/social_group_request/config/install/field.field.message.approve_request_join_group.field_message_related_object.yml:0
+#: modules/social_features/social_group/modules/social_group_request/config/install/field.field.message.request_to_join_a_group.field_message_related_object.yml:0
 #: modules/social_features/social_like/config/install/field.field.message.create_like_node_or_post.field_message_related_object.yml:0
 #: modules/social_features/social_mentions/config/install/field.field.message.create_comment_reply_mention.field_message_related_object.yml:0
 #: modules/social_features/social_mentions/config/install/field.field.message.create_mention_comment.field_message_related_object.yml:0
@@ -12391,6 +13157,13 @@ msgstr "в этой группе"
 msgid "internal uuid"
 msgstr ""
 
+#: modules/social_features/social_group/modules/social_group_request/src/Plugin/Block/SocialGroupRequestMembershipNotification.php:144
+msgid "is (1) new request"
+msgid_plural "are (@count) new requests"
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+
 #: modules/social_features/social_group/config/install/views.view.group_topics.yml:0
 #: modules/social_features/social_topic/config/install/views.view.latest_topics.yml:0
 #: modules/social_features/social_topic/config/install/views.view.topics.yml:0
@@ -12462,12 +13235,12 @@ msgstr "никогда"
 msgid "node/{{ nid }}"
 msgstr ""
 
-#: translations.php:71
+#: translations.php:76
 #: modules/social_features/social_like/social_like.tokens.inc:116
 msgid "on a"
 msgstr ""
 
-#: translations.php:72
+#: translations.php:77
 #: modules/social_features/social_like/social_like.tokens.inc:112
 msgid "on the"
 msgstr ""
@@ -12525,7 +13298,7 @@ msgstr ""
 msgid "show some more"
 msgstr ""
 
-#: modules/social_features/social_user/social_user.module:239;239
+#: modules/social_features/social_user/social_user.module:252;252
 #: modules/social_features/social_user/src/Form/SocialUserPasswordForm.php:88;88
 msgid "site administrator"
 msgstr ""
@@ -12544,10 +13317,6 @@ msgstr ""
 
 #: modules/social_features/social_core/config/install/image.style.social_x_large.yml:0
 msgid "social extra large (220 x 220)"
-msgstr ""
-
-#: modules/social_features/social_landing_page/config/install/image.style.social_featured.yml:0
-msgid "social featured (600×200)"
 msgstr ""
 
 #: modules/social_features/social_core/config/install/image.style.social_hero_small.yml:0
@@ -12666,6 +13435,10 @@ msgstr[2] ""
 msgid "view download counts"
 msgstr ""
 
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_invitations.yml:0
+msgid "{{ arguments.gid|placeholder }} invitations"
+msgstr ""
+
 #: modules/social_features/social_content_report/config/install/views.view.report_overview.yml:0
 msgid ""
 "{{ changed }}\r\n"
@@ -12675,6 +13448,12 @@ msgstr ""
 
 #: modules/social_features/social_event/modules/social_event_an_enroll/config/install/views.view.manage_enrollments.yml:0
 msgid "{{ field_first_name }} {{ field_last_name }}"
+msgstr ""
+
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_invitations.yml:0
+msgid ""
+"{{ invitation_status }} == Invitation status\r\n"
+"{{ invitation_status__value }} == Raw value"
 msgstr ""
 
 #: modules/social_features/social_follow_content/config/install/views.view.following.yml:0
@@ -12724,6 +13503,21 @@ msgstr ""
 msgid "« First"
 msgstr "« Первая"
 
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_invitations.yml:0
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_user_invitations.yml:0
+msgid "Â« First"
+msgstr "Â« Первый(ая)"
+
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_invitations.yml:0
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_user_invitations.yml:0
+msgid "â€¹â€¹"
+msgstr ""
+
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_invitations.yml:0
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_user_invitations.yml:0
+msgid "â€ºâ€º"
+msgstr ""
+
 #: config/install/views.view.content.yml:0
 #: modules/social_features/social_event/config/install/views.view.event_enrollments.yml:0
 #: modules/social_features/social_event/config/install/views.view.events.yml:0
@@ -12755,9 +13549,6 @@ msgstr "‹ Предыдущий"
 #: modules/social_features/social_group/config/install/views.view.groups.yml:0
 #: modules/social_features/social_group/config/install/views.view.newest_groups.yml:0
 #: modules/social_features/social_landing_page/config/install/views.view.community_activities.yml:0
-#: modules/social_features/social_landing_page/config/install/views.view.featured_content_reference.yml:0
-#: modules/social_features/social_landing_page/config/install/views.view.featured_group_reference.yml:0
-#: modules/social_features/social_landing_page/config/install/views.view.featured_profile_reference.yml:0
 #: modules/social_features/social_post/config/install/views.view.recipient_group_reference.yml:0
 #: modules/social_features/social_private_message/config/install/views.view.inbox.yml:0
 #: modules/social_features/social_profile/config/install/views.view.newest_users.yml:0;0
@@ -12781,9 +13572,6 @@ msgstr ""
 #: modules/social_features/social_group/config/install/views.view.groups.yml:0
 #: modules/social_features/social_group/config/install/views.view.newest_groups.yml:0
 #: modules/social_features/social_landing_page/config/install/views.view.community_activities.yml:0
-#: modules/social_features/social_landing_page/config/install/views.view.featured_content_reference.yml:0
-#: modules/social_features/social_landing_page/config/install/views.view.featured_group_reference.yml:0
-#: modules/social_features/social_landing_page/config/install/views.view.featured_profile_reference.yml:0
 #: modules/social_features/social_post/config/install/views.view.recipient_group_reference.yml:0
 #: modules/social_features/social_private_message/config/install/views.view.inbox.yml:0
 #: modules/social_features/social_profile/config/install/views.view.newest_users.yml:0;0

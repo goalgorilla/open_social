@@ -1,0 +1,22 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - block_content.type.featured_items
+    - field.field.block_content.featured_items.field_featured_items
+  module:
+    - entity_reference_revisions
+id: block_content.featured_items.default
+targetEntityType: block_content
+bundle: featured_items
+mode: default
+content:
+  field_featured_items:
+    type: entity_reference_revisions_entity_view
+    weight: 1
+    label: hidden
+    settings:
+      view_mode: default
+      link: ''
+    third_party_settings: {  }
+    region: content

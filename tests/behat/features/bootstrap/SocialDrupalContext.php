@@ -27,6 +27,13 @@ class SocialDrupalContext extends DrupalContext {
    * @BeforeScenario
    */
   public function prepareBigPipeNoJsCookie(BeforeScenarioScope $scope) {
+    // Start a session if not already done.
+    // Needed since https://github.com/minkphp/Mink/pull/705
+    // Otherwise executeScript or setCookie will throw an error.
+    if (!$this->getSession()->isStarted()) {
+      $this->getSession()->start();
+    }
+
     try {
       // Check if JavaScript can be executed by Driver.
       $this->getSession()->getDriver()->executeScript('true');

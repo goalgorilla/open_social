@@ -1,0 +1,134 @@
+<?php
+
+/**
+ * @file
+ * Installation code for the social_event_content_block module.
+ */
+
+/**
+ * Add field event date sorting to event content list blocks.
+ */
+function social_event_content_block_update_8001() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_event_content_block', 'social_event_content_block_update_8001');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Add field event date filter to event content list blocks.
+ */
+function social_event_content_block_update_8002() {
+  $configs = [
+    'field_storage_config' => [
+      'langcode' => 'en',
+      'status' => TRUE,
+      'dependencies' => [
+        'module' => [
+          'block_content',
+          'options',
+        ],
+      ],
+      'id' => 'block_content.field_event_date',
+      'field_name' => 'field_event_date',
+      'entity_type' => 'block_content',
+      'type' => 'list_string',
+      'settings' => [
+        'allowed_values' => [
+          [
+            'value' => 'future',
+            'label' => 'Future Events',
+          ],
+          [
+            'value' => 'past',
+            'label' => 'Past Events',
+          ],
+          [
+            'value' => 'last_month',
+            'label' => 'Last Month',
+          ],
+          [
+            'value' => 'current_month',
+            'label' => 'This month',
+          ],
+          [
+            'value' => 'next_month',
+            'label' => 'Next month',
+          ],
+          [
+            'value' => 'last_30',
+            'label' => 'Last 30 days',
+          ],
+          [
+            'value' => 'next_30',
+            'label' => 'Next 30 days',
+          ],
+          [
+            'value' => 'last_14',
+            'label' => 'Last 14 days',
+          ],
+          [
+            'value' => 'next_14',
+            'label' => 'Next 14 days',
+          ],
+          [
+            'value' => 'last_7',
+            'label' => 'Last 7 days',
+          ],
+          [
+            'value' => 'next_7',
+            'label' => 'Next 7 days',
+          ],
+        ],
+        'allowed_values_function' => '',
+      ],
+      'module' => 'options',
+      'locked' => FALSE,
+      'cardinality' => 1,
+      'translatable' => TRUE,
+      'indexes' => [],
+      'persist_with_no_fields' => FALSE,
+      'custom_storage' => FALSE,
+    ],
+    'field_config' => [
+      'langcode' => 'en',
+      'status' => TRUE,
+      'dependencies' => [
+        'config' => [
+          'block_content.type.custom_content_list',
+          'field.storage.block_content.field_event_date',
+        ],
+        'module' => [
+          'options',
+        ],
+      ],
+      'id' => 'block_content.custom_content_list.field_event_date',
+      'field_name' => 'field_event_date',
+      'entity_type' => 'block_content',
+      'bundle' => 'custom_content_list',
+      'label' => 'Date period',
+      'description' => '',
+      'required' => FALSE,
+      'translatable' => FALSE,
+      'default_value' => [
+        [
+          'value' => 'future',
+        ],
+      ],
+      'default_value_callback' => '',
+      'settings' => [],
+      'field_type' => 'list_string',
+    ],
+  ];
+
+  foreach ($configs as $entity_type_id => $data) {
+    /** @var \Drupal\Core\Config\Entity\ConfigEntityStorageInterface $storage */
+    $storage = \Drupal::entityTypeManager()->getStorage($entity_type_id);
+
+    $storage->createFromStorageRecord($data)->save();
+  }
+}

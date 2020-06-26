@@ -12,6 +12,7 @@ use Drupal\Core\Database\Database;
 use Drupal\user\Entity\Role;
 use Drupal\social_post\Entity\Post;
 use Drupal\node\Entity\Node;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Implements hook_update_dependencies().
@@ -29,6 +30,11 @@ function social_group_update_dependencies() {
   // Prevent errors when missing VBO module.
   $dependencies['profile'][8002] = [
     'social_group' => 8501,
+  ];
+
+  // New config changes should run after the features removal/revert.
+  $dependencies['social_group'][8801] = [
+    'social_core' => 8805,
   ];
 
   return $dependencies;
@@ -510,4 +516,38 @@ function social_group_update_8502() {
   $config->set('allow_hero_selection', FALSE);
   $config->set('default_hero', 'hero');
   $config->save();
+}
+
+/**
+ * Update view mode for new small teaser style.
+ */
+function social_group_update_8801() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_group', 'social_group_update_8801');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Add new field for rendered profile entity so we can sort it.
+ *
+ * Load in a config file from an specific update hook that will never change.
+ * Update helper did not update all fields correctly.
+ */
+function social_group_update_8802() {
+  $config_file = drupal_get_path('module', 'social_group') . '/config/update/social_group_update_8802.yml';
+
+  if (is_file($config_file)) {
+    $settings = Yaml::parse(file_get_contents($config_file));
+    if (is_array($settings)) {
+      $config = \Drupal::configFactory()
+        ->getEditable('views.view.group_manage_members');
+
+      $config->setData($settings)->save(TRUE);
+    }
+  }
 }

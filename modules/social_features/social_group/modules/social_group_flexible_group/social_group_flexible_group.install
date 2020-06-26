@@ -5,6 +5,8 @@
  * Install and update functions for the social_group_flexible_group module.
  */
 
+use Drupal\search_api\Entity\Index;
+
 /**
  * Implements hook_install().
  */
@@ -57,4 +59,42 @@ function _social_group_flexible_group_get_permissions($role) {
   $permissions['sitemanager'] = array_merge($permissions['contentmanager'], []);
 
   return $permissions[$role] ?? [];
+}
+
+/**
+ * Implements hook_update_dependencies().
+ */
+function social_group_flexible_group_update_dependencies() {
+  // New config changes should run after the features removal/revert.
+  $dependencies['social_group_flexible_group'][8801] = [
+    'social_core' => 8805,
+  ];
+
+  return $dependencies;
+}
+
+/**
+ * Update view mode for new small teaser style.
+ */
+function social_group_flexible_group_update_8801() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_group_flexible_group', 'social_group_flexible_group_update_8801');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Trigger a search_api re-index.
+ */
+function social_group_flexible_group_update_8802() {
+  $index = Index::load('social_groups');
+  if ($index->status()) {
+    $index->save();
+    $index->clear();
+    $index->reindex();
+  }
 }

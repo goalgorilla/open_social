@@ -144,7 +144,7 @@ class PostForm extends ContentEntityForm {
 
     // For the explanation of the numbers see
     // field.storage.post.field_visibility.
-    if ($display_id === $this->postViewDefault) {
+    if ($display_id === $this->postViewDefault || $display_id === $this->postViewProfile) {
       // Set default value to community.
       unset($form['field_visibility']['widget'][0]['#options'][0]);
 
