@@ -70,7 +70,7 @@ class Select2PopulateController extends ControllerBase {
     if ($group instanceof GroupInterface) {
       $is_member = $group->getMember($account) instanceof GroupMembership;
       if ($is_member) {
-        // Also check if the person is event owner or organizer
+        // Also check if the person is event owner or organizer.
         $hasPermissionIsOwnerOrOrganizer = social_event_owner_or_organizer();
         return AccessResult::allowedIf($hasPermissionIsOwnerOrOrganizer === TRUE);
       }
@@ -80,10 +80,17 @@ class Select2PopulateController extends ControllerBase {
   }
 
   /**
-   * Get all the members from a group where the event is in,
-   * and strip out people who are already enrolled.
+   * Get all the members from a group excluding enrollments for select2.
+   *
+   * @param int $node
+   *   The node id.
+   * @param int $group
+   *   The group id.
+   *
+   * @return \Drupal\Core\Ajax\AjaxResponse
+   *   Data array containing members of the group.
    */
-  public function populate ($node, $group) {
+  public function populate($node, $group) {
     // Create the dataset to send at the end.
     $data = [];
 
@@ -96,27 +103,26 @@ class Select2PopulateController extends ControllerBase {
       /** @var \Drupal\social_event\EventEnrollmentStatusHelper $enrollments */
       $enrollments = \Drupal::service('social_event.status_helper');
 
-      $x = 1;
       foreach ($memberships as $membership) {
-       $user_id = $membership->getUser()->id();
+        $user_id = $membership->getUser()->id();
 
-       // Or should we get all the enrollments and include them in the foreach?
-       if($enrollments->getEventEnrollments($user_id, $node, TRUE)) {
-         // If the user already has an enrollments, skip it.
-         continue;
-       }
-       $display_name = $membership->getUser()->getDisplayName();
-       $display_name = "$display_name ($user_id)";
+        // Or should we get all the enrollments and include them in the foreach?
+        if ($enrollments->getEventEnrollments($user_id, $node, TRUE)) {
+          // If the user already has an enrollments, skip it.
+          continue;
+        }
+        $display_name = $membership->getUser()->getDisplayName();
+        $display_name = "$display_name ($user_id)";
 
         $data[] = [
-         'id' => $membership->getUser()->id(),
-         'full_name' => $display_name
-       ];
+          'id' => $membership->getUser()->id(),
+          'full_name' => $display_name,
+        ];
       }
     }
 
     if (!empty($data)) {
-      usort($data, [$this ,'sort_alphabetically']);
+      usort($data, [$this, 'sortAlphabetically']);
       $response = new AjaxResponse();
       $response->setData($data);
 
@@ -125,9 +131,10 @@ class Select2PopulateController extends ControllerBase {
   }
 
   /**
-   * Enroll
+   * Sort the data array alphabetically.
    */
-  private static function sort_alphabetically($a,$b) {
+  private static function sortAlphabetically($a, $b) {
     return (strcasecmp($a['full_name'], $b['full_name']) > 0) ? 1 : -1;
   }
+
 }

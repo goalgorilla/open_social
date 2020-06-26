@@ -6,6 +6,7 @@ use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Render\RendererInterface;
+use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\social_event\Form\EnrollActionForm;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Url;
@@ -19,6 +20,13 @@ use Drupal\social_event_managers\Element\SocialEnrollmentAutocomplete;
  * @package Drupal\social_event_managers\Form
  */
 class SocialEventManagersAddEnrolleeForm extends FormBase {
+
+  /**
+   * The routing matcher to get the nid.
+   *
+   * @var \Drupal\Core\Routing\RouteMatchInterface
+   */
+  protected $routeMatch;
 
   /**
    * The entity type manager.
@@ -37,7 +45,8 @@ class SocialEventManagersAddEnrolleeForm extends FormBase {
   /**
    * Constructs a new GroupContentController.
    */
-  public function __construct(EntityTypeManagerInterface $entity_type_manager, RendererInterface $renderer) {
+  public function __construct(RouteMatchInterface $route_match, EntityTypeManagerInterface $entity_type_manager, RendererInterface $renderer) {
+    $this->routeMatch = $route_match;
     $this->entityTypeManager = $entity_type_manager;
     $this->renderer = $renderer;
   }
@@ -47,6 +56,7 @@ class SocialEventManagersAddEnrolleeForm extends FormBase {
    */
   public static function create(ContainerInterface $container) {
     return new static(
+      $container->get('current_route_match'),
       $container->get('entity_type.manager'),
       $container->get('renderer')
     );
@@ -121,10 +131,10 @@ class SocialEventManagersAddEnrolleeForm extends FormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
     $form['#attributes']['class'][] = 'card card__block form--default form-wrapper form-group';
-    //$nid = $this->routeMatch->getRawParameter('node');
+    $nid = $this->routeMatch->getRawParameter('node');
 
     if (empty($nid)) {
-      $node = \Drupal::routeMatch()->getParameter('node');
+      $node = $this->routeMatch->getParameter('node');
       if ($node instanceof NodeInterface) {
         // You can get nid and anything else you need from the node object.
         $nid = $node->id();
@@ -144,9 +154,8 @@ class SocialEventManagersAddEnrolleeForm extends FormBase {
       $groups = EnrollActionForm::getGroups($node);
     }
 
-
     // Load the current Event enrollments so we can check duplicates.
-    $storage = \Drupal::entityTypeManager()->getStorage('event_enrollment');
+    $storage = $this->entityTypeManager->getStorage('event_enrollment');
     $enrollments = $storage->loadByProperties(['field_event' => $nid]);
 
     $enrollmentIds = [];
@@ -164,7 +173,6 @@ class SocialEventManagersAddEnrolleeForm extends FormBase {
       $form['enroll_users'] = [
         '#markup' => '<div class="btn-link control-label" id="enroll_users"><a href="#" class="enroll-form-submit">+ ' . $enroll . '</a></div>',
       ];
-
 
       if ($member_count > 100) {
         $form['enroll_users']['#suffix'] = '<div class="help-block">' . $this->t('Notice: if you want to select all the members from the group which has more than 100 members it can take up to 1 minute to load.') . "</div>";
@@ -195,10 +203,9 @@ class SocialEventManagersAddEnrolleeForm extends FormBase {
       ],
       '#target_type' => 'user',
       '#element_validate' => [
-        [$this, 'unique_members'],
+        [$this, 'uniqueMembers'],
       ],
     ];
-
 
     $form['actions']['cancel'] = [
       '#type' => 'link',
@@ -222,8 +229,9 @@ class SocialEventManagersAddEnrolleeForm extends FormBase {
   /**
    * Public function to validate members against enrollments.
    */
-  public function unique_members($element, &$form_state, $complete_form) {
+  public function uniqueMembers($element, &$form_state, $complete_form) {
     // Call the autocomplete function to make sure enrollees are unique.
     SocialEnrollmentAutocomplete::validateEntityAutocomplete($element, $form_state, $complete_form, TRUE);
   }
+
 }

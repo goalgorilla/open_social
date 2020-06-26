@@ -19,9 +19,9 @@ class Select2EntityAutocompleteMatcher extends EntityAutocompleteMatcherBase {
     $matches = [];
 
     $options = $selection_settings + [
-        'target_type' => $target_type,
-        'handler' => $selection_handler,
-      ];
+      'target_type' => $target_type,
+      'handler' => $selection_handler,
+    ];
     $handler = $this->selectionManager->getInstance($options);
 
     if (isset($string)) {
