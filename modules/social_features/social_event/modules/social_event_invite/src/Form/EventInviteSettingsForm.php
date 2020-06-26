@@ -66,6 +66,14 @@ class EventInviteSettingsForm extends ConfigFormBase {
       '#required' => TRUE,
     ];
 
+    $form['invite_helper'] = [
+      '#type' => 'textarea',
+      '#title' => $this->t('Helper'),
+      '#default_value' => $social_event_config->get('invite_helper'),
+      '#required' => TRUE,
+      '#rows' => '2',
+    ];
+
     $form['actions']['submit'] = [
       '#type' => 'submit',
       '#button_type' => 'primary',
@@ -91,6 +99,7 @@ class EventInviteSettingsForm extends ConfigFormBase {
     $config->set('invite_group_types', $form_state->getValue('invite_group_types'));
     $config->set('invite_message', $form_state->getValue('invite_message'));
     $config->set('invite_subject', $form_state->getValue('invite_subject'));
+    $config->set('invite_helper', $form_state->getValue('invite_helper'));
     $config->save();
   }
 

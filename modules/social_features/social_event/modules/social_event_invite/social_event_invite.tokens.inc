@@ -42,7 +42,7 @@ function social_event_invite_tokens($type, $tokens, array $data, array $options,
   $replacements = [];
   if ($type == 'social_event_invite') {
     foreach ($tokens as $name => $original) {
-      if ($name == 'register_link') {
+      if ($name == 'register_link' && !empty($data['event_enrollment'])) {
         // Load the current Event enrollments so we can check duplicates.
         $storage = \Drupal::entityTypeManager()->getStorage('event_enrollment');
         /** @var \Drupal\social_event\EventEnrollmentInterface $event_enrollment */

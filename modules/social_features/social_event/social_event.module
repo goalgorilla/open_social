@@ -887,6 +887,11 @@ function social_event_preprocess_views_view(&$variables) {
       ],
     ];
   }
+  // Add a custom cache tag to the user events overview page.
+  if ($variables['view']->current_display === 'events_overview' && $variables['view']->id() === 'events') {
+    $account_id = \Drupal::routeMatch()->getParameter('user');
+    $variables['#cache']['tags'][] = 'event_content_list:user:' . $account_id;
+  }
 }
 
 /**
