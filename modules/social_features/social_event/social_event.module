@@ -31,6 +31,37 @@ use Drupal\views\Plugin\views\query\QueryPluginBase;
 use Drupal\views\ViewExecutable;
 
 /**
+ * Alter the visibility of blocks coming from the event module.
+ */
+function social_event_social_core_block_visibility_path_alter(array &$blocks) {
+  $changes = [
+    'social_page_title_block' => [
+      '*/all-enrollment-requests/confirm-decline/*',
+      '*/invite/email',
+      '*/invite/confirm',
+      '*/event-invites',
+      '*/all-enrollments/add-enrollees',
+    ],
+    'views_block:managers-event_managers' => [
+      '*/all-enrollment-requests/confirm-decline/*',
+      '*/invite/email',
+      '*/invite/confirm',
+    ],
+    'views_block:event_enrollments-event_enrollments' => [
+      '*/all-enrollment-requests/confirm-decline/*',
+      '*/invite/email',
+      '*/invite/confirm',
+    ]
+  ];
+
+  foreach ($changes as $key => $values) {
+    foreach ($values as $value) {
+      $blocks[$key][] = $value;
+    }
+  }
+}
+
+/**
  * Implements hook_form_form_ID_alter().
  *
  * Enhance the exposed filter form of the event overview.
