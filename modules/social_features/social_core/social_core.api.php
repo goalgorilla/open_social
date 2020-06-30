@@ -18,13 +18,13 @@
  * This way we can also make sure that if another modules alter the same
  * block that it will merge the array in one.
  *
- * @param array $blocks
- *   List of group views used in open social.
+ * @return array
+ *   Blocks in this array will be hidden from the associated paths.
  *
  * @ingroup social_core_block_api
  */
-function hook_social_core_block_visibility_path_alter(array &$blocks) {
-  $changes = [
+function hook_social_core_block_visibility_path() {
+  $blocks = [
     'block_plugin_id_1' => [
       'path_1',
       'path_2',
@@ -35,11 +35,7 @@ function hook_social_core_block_visibility_path_alter(array &$blocks) {
     ]
   ];
 
-  foreach ($changes as $key => $values) {
-    foreach ($values as $value) {
-      $blocks[$key][] = $value;
-    }
-  }
+  return $blocks;
 }
 
 /**

@@ -33,8 +33,8 @@ use Drupal\views\ViewExecutable;
 /**
  * Alter the visibility of blocks coming from the event module.
  */
-function social_event_social_core_block_visibility_path_alter(array &$blocks) {
-  $changes = [
+function social_event_social_core_block_visibility_path() {
+  $blocks = [
     'social_page_title_block' => [
       '*/all-enrollment-requests/confirm-decline/*',
       '*/invite/email',
@@ -54,11 +54,7 @@ function social_event_social_core_block_visibility_path_alter(array &$blocks) {
     ]
   ];
 
-  foreach ($changes as $key => $values) {
-    foreach ($values as $value) {
-      $blocks[$key][] = $value;
-    }
-  }
+  return $blocks;
 }
 
 /**

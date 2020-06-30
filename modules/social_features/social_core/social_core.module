@@ -538,7 +538,7 @@ function social_core_block_access(Block $block, $operation, AccountInterface $ac
   $cache = \Drupal::service('cache.default');
   if ($cache->get('social_core.block_visibility_cache') === FALSE) {
     // Allow other modules to change the block visibility.
-    \Drupal::moduleHandler()->alter('social_core_block_visibility_path', $blocks);
+    $blocks = \Drupal::moduleHandler()->invokeAll('social_core_block_visibility_path');
 
     // Set the cache expire to 1 week.
     $date = new DateTime(date('Y-m-d'));
