@@ -536,7 +536,7 @@ function social_core_block_access(Block $block, $operation, AccountInterface $ac
   // Allow other modules to change the block visibility.
   \Drupal::moduleHandler()->alter('social_core_block_visibility_path', $blocks);
 
-  if ($operation === 'view' && array_key_exists($block->getPluginId(), $blocks)) {
+  if ($operation === 'view' && isset($blocks[$block->getPluginId()])) {
     // Get the current path.
     $current_path = \Drupal::service('path.current')->getPath();
 
