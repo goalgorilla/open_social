@@ -533,19 +533,18 @@ function social_core_block_access(Block $block, $operation, AccountInterface $ac
   $blocks = &drupal_static(__FUNCTION__);
   $blocks = [];
 
-  // Allow other modules to change the group types.
+  // Allow other modules to change the block visibility.
   \Drupal::moduleHandler()->alter('social_core_block_visibility_path', $blocks);
 
-  // Not sure if using a foreach here is heavy?
-  foreach ($blocks as $block_id => $pages) {
-    if ($operation === 'view' && ($block->getPluginId() === $block_id)) {
-      // Get the current path.
-      $current_path = \Drupal::service('path.current')->getPath();
+  if ($operation === 'view' && array_key_exists($block->getPluginId(), $blocks)) {
+    // Get the current path.
+    $current_path = \Drupal::service('path.current')->getPath();
 
-      foreach ($pages as $page) {
-        if (\Drupal::service('path.matcher')->matchPath($current_path, $page) === TRUE) {
-          return AccessResult::forbidden();
-        }
+    // Go through the request paths and see if they match.
+    foreach ($blocks[$block->getPluginId()] as $page) {
+      if (\Drupal::service('path.matcher')
+          ->matchPath($current_path, $page) === TRUE) {
+        return AccessResult::forbidden();
       }
     }
   }
