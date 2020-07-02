@@ -116,6 +116,9 @@ function social_event_an_enroll_preprocess_node(array &$variables) {
       if (in_array(\Drupal::routeMatch()->getRouteName(), $an_enroll_routes)) {
         unset($variables['event_enrollment']);
       }
+
+      // Add caching context to anonymous users.
+      $variables['#cache']['contexts'][] = 'user.roles:anonymous';
     }
   }
 }
