@@ -2,7 +2,7 @@
 
 namespace Drupal\social_auth_google\Plugin\Network;
 
-use Drupal\social_auth\Plugin\Network\SocialAuthNetwork;
+use Drupal\social_auth\Plugin\Network\NetworkBase;
 use Drupal\social_api\SocialApiException;
 use Drupal\social_auth_google\Settings\GoogleAuthSettings;
 
@@ -23,7 +23,7 @@ use Drupal\social_auth_google\Settings\GoogleAuthSettings;
  *   }
  * )
  */
-class GoogleAuth extends SocialAuthNetwork {
+class GoogleAuth extends NetworkBase {
 
   /**
    * Returns an instance of sdk.

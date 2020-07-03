@@ -2,13 +2,9 @@
 
 namespace Drupal\social_auth_twitter\Plugin\Network;
 
-use Drupal\social_auth\Plugin\Network\SocialAuthNetwork;
+use Drupal\social_auth\Plugin\Network\NetworkBase;
 use Drupal\social_api\SocialApiException;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\social_auth_twitter\Settings\TwitterAuthSettings;
-use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 
 /**
  * Defines Social Auth Twitter Network Plugin.
@@ -25,32 +21,7 @@ use Drupal\Core\Logger\LoggerChannelFactoryInterface;
  *   }
  * )
  */
-class TwitterAuth extends SocialAuthNetwork {
-
-  protected $loggerFactory;
-
-  /**
-   * TwitterAuth constructor.
-   */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager, ConfigFactoryInterface $config_factory, LoggerChannelFactoryInterface $logger_factory) {
-    $this->loggerFactory = $logger_factory;
-
-    parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_type_manager, $config_factory);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
-    return new static(
-      $configuration,
-      $plugin_id,
-      $plugin_definition,
-      $container->get('entity_type.manager'),
-      $container->get('config.factory'),
-      $container->get('logger.factory')
-    );
-  }
+class TwitterAuth extends NetworkBase {
 
   /**
    * {@inheritdoc}
