@@ -118,7 +118,9 @@ function social_event_an_enroll_preprocess_node(array &$variables) {
       }
 
       // Add caching context to anonymous users.
-      $variables['#cache']['contexts'][] = 'user.roles:anonymous';
+      // This is custom context. We added it in order to vary page cache
+      // of routes given in $an_enroll_routes.
+      $variables['#cache']['contexts'][] = 'event_an_enroll_route';
     }
   }
 }
