@@ -1339,6 +1339,13 @@ function social_group_preprocess_views_view(&$variables) {
     $variables['header']['actions'] = \Drupal::entityTypeManager()
       ->getViewBuilder('block')
       ->view($entity);
+
+    // Add caching tag on group itself.
+    // If the group join method will be changed, we will invalidate this
+    // cache tag. This will help "Add member" button to appear on
+    // "Manage members" tab.
+    $group_id = $view->args[0];
+    $variables['#cache']['tag'][] = "group:$group_id:join_method";
   }
 }
 
