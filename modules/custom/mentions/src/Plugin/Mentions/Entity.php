@@ -10,6 +10,7 @@ use Drupal\Core\Form\FormInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Utility\Token;
 use Drupal\mentions\MentionsPluginInterface;
+use Drupal\profile\Entity\ProfileInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -59,23 +60,26 @@ class Entity implements MentionsPluginInterface {
     // If the mentions is run with cron, replace the output ourself.
     if (PHP_SAPI === 'cli') {
       // Get the profile.
-      $profile = $this->entityManager->getStorage($mention['target']['entity_type'])
+      $user = $this->entityManager->getStorage($mention['target']['entity_type'])
         ->load($mention['target']['entity_id']);
+      if ($user instanceof ProfileInterface) {
+        $user = $user->getOwner();
+      }
 
       // Get the output value according to the config settings.
       $config = $this->config->get('mentions.settings');
       switch ($config->get('suggestions_format')) {
         case SOCIAL_PROFILE_SUGGESTIONS_FULL_NAME:
         case SOCIAL_PROFILE_SUGGESTIONS_ALL:
-          $output['value'] = $profile->getOwner()->getDisplayName();
+          $output['value'] = $user->getDisplayName();
       }
       if (empty($output['value'])) {
-        $output['value'] = $profile->getOwner()->getAccountName();
+        $output['value'] = $user->getAccountName();
       }
 
       // Convert to the correct output link based on the mention config.
       // Ex: user/[user:uid] will replace between the brackets for the OwnerId.
-      $output['link'] = preg_replace("/\[([^\[\]]++|(?R))*+\]/", $profile->getOwnerId(), $settings['rendertextbox']);
+      $output['link'] = preg_replace("/\[([^\[\]]++|(?R))*+\]/", $user->id(), $settings['rendertextbox']);
 
       return $output;
     }
