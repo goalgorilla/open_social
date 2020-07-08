@@ -122,12 +122,13 @@ function _social_flexible_group_edit_submit(array $form, FormStateInterface $for
     }
   }
 
+  // Get the current group.
+  $group = _social_group_get_current_group();
+
   // So there is now a visibility setting we don't support anymore
   // after editing. Make sure we update all the content that has this
   // to the next best optin.
   if (!empty($changed_visibility)) {
-    $group = _social_group_get_current_group();
-
     // Update the default visibility of all the content.
     FlexibleGroupContentVisibilityUpdate::batchUpdateGroupContentVisibility($group, $changed_visibility, $new_visibility);
 
