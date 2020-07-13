@@ -143,7 +143,7 @@ function _social_flexible_group_edit_submit(array $form, FormStateInterface $for
   // This will help "Add member" button to appear on "Manage members" tab.
   $original_join_method = $form['field_group_allowed_join_method']['widget']['#default_value'];
   $changed_join_method = $form_state->getValue('field_group_allowed_join_method');
-  if (array_diff($original_join_method, array_column($changed_join_method, 'value'))) {
+  if ($original_join_method !== array_column($changed_join_method, 'value')) {
     Cache::invalidateTags(['group:' . $group->id() . ':join_method']);
   }
 }
