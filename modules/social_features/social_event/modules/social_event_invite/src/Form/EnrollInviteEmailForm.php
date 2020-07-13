@@ -96,6 +96,8 @@ class EnrollInviteEmailForm extends InviteEmailBaseForm {
   public function buildForm(array $form, FormStateInterface $form_state) {
     $form = parent::buildForm($form, $form_state);
 
+    $form['#attributes']['class'][] = 'form--default';
+
     $params = [
       'user' => $this->currentUser(),
       'node' => $this->routeMatch->getParameter('node'),
@@ -121,9 +123,30 @@ class EnrollInviteEmailForm extends InviteEmailBaseForm {
       }
     }
 
-    $form['preview'] = [
+    $form['email_preview'] = [
+      '#type' => 'fieldset',
+      '#title' => [
+        'text' => [
+          '#markup' => t('Preview the email that the invitees will see.'),
+        ],
+        'icon' => [
+          '#markup' => '<svg class="icon icon-expand_more"><use xlink:href="#icon-expand_more" /></svg>',
+          '#allowed_tags' => ['svg', 'use'],
+        ],
+      ],
+      '#tree' => TRUE,
+      '#collapsible' => TRUE,
+      '#collapsed' => TRUE,
+      '#attributes' => [
+        'class' => [
+          'form-horizontal',
+          'form-preview-email',
+        ],
+      ],
+    ];
+
+    $form['email_preview']['preview'] = [
       '#theme' => 'invite_email_preview',
-      '#title' => $this->t('Message'),
       '#logo' => $logo,
       '#subject' => $this->token->replace($invite_config->get('invite_subject'), $params),
       '#body' => $body,
@@ -166,11 +189,11 @@ class EnrollInviteEmailForm extends InviteEmailBaseForm {
   public function validateForm(array &$form, FormStateInterface $form_state) {
     parent::validateForm($form, $form_state);
     $duplicated_values = [];
-    $emails = $this->getSubmittedEmails($form_state);
+//    $emails = $this->getSubmittedEmails($form_state);
     $nid = $form_state->getValue('event');
 
     // Check if the user is already enrolled.
-    foreach ($emails as $email) {
+    foreach ($form_state->getValue('email_address') as $email) {
       $user = user_load_by_mail($email);
 
       if ($user instanceof UserInterface) {

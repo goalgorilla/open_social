@@ -78,10 +78,37 @@ class InviteEmailBaseForm extends FormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    $form['email_address'] = [
-      '#type' => 'textarea',
-      '#title' => $this->t('Add Recipients'),
-      '#description' => $this->t('You can copy/paste multiple emails, enter one email per line.'),
+    $form['email_address_fieldset'] = [
+      '#type' => 'fieldset',
+      '#title' => [
+        'text' => [
+          '#markup' => $this->t('Invite people to your event'),
+        ],
+      ],
+      '#tree' => TRUE,
+      '#collapsible' => FALSE,
+      '#collapsed' => FALSE,
+      '#attributes' => [
+        'class' => [
+          'form-horizontal',
+        ],
+      ],
+    ];
+
+    $form['email_address_fieldset']['email_address'] = [
+      '#type' => 'select2',
+      '#description' => $this->t('To add multiple members, separate each member with a comma ( , ) or semicolon ( ; ).'),
+      '#multiple' => TRUE,
+      '#tags' => TRUE,
+      '#autocomplete' => TRUE,
+      '#selection_handler' => 'social',
+      '#target_type' => 'user',
+      '#select2' => [
+        'tags' => TRUE,
+        'placeholder' => t('Profile name, janedoe@email.com'),
+        'tokenSeparators' => [',', ';'],
+        'autocomplete' => FALSE,
+      ],
       '#required' => TRUE,
     ];
 
