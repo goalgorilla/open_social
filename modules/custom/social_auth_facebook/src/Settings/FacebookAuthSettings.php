@@ -2,12 +2,12 @@
 
 namespace Drupal\social_auth_facebook\Settings;
 
-use Drupal\social_api\Settings\SettingsBase;
+use Drupal\social_auth_extra\Settings\SettingsExtraBase;
 
 /**
  * Defines methods to get Social Auth Facebook app settings.
  */
-class FacebookAuthSettings extends SettingsBase implements FacebookAuthSettingsInterface {
+class FacebookAuthSettings extends SettingsExtraBase implements FacebookAuthSettingsInterface {
 
   /**
    * Facebook Application ID.
@@ -68,13 +68,6 @@ class FacebookAuthSettings extends SettingsBase implements FacebookAuthSettingsI
     }
 
     return $this->graphVersion;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function isActive() {
-    return (bool) $this->config->get('status');
   }
 
   /**

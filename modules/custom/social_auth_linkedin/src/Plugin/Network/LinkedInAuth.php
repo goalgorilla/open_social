@@ -2,8 +2,8 @@
 
 namespace Drupal\social_auth_linkedin\Plugin\Network;
 
-use Drupal\social_auth\Plugin\Network\NetworkBase;
 use Drupal\social_api\SocialApiException;
+use Drupal\social_auth_extra\Plugin\Network\NetworkExtraBase;
 use Drupal\social_auth_linkedin\Settings\LinkedInAuthSettings;
 
 /**
@@ -23,7 +23,7 @@ use Drupal\social_auth_linkedin\Settings\LinkedInAuthSettings;
  *   }
  * )
  */
-class LinkedInAuth extends NetworkBase {
+class LinkedInAuth extends NetworkExtraBase {
 
   /**
    * Returns an instance of sdk.
@@ -45,16 +45,6 @@ class LinkedInAuth extends NetworkBase {
     }
 
     return new $class_name($this->settings->getClientId(), $this->settings->getClientSecret());
-  }
-
-  /**
-   * Returns status of social network.
-   *
-   * @return bool
-   *   The status of the social network.
-   */
-  public function isActive() {
-    return (bool) $this->settings->isActive();
   }
 
   /**

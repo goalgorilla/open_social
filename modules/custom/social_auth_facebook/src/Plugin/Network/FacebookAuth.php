@@ -2,8 +2,8 @@
 
 namespace Drupal\social_auth_facebook\Plugin\Network;
 
-use Drupal\social_auth\Plugin\Network\NetworkBase;
 use Drupal\social_api\SocialApiException;
+use Drupal\social_auth_extra\Plugin\Network\NetworkExtraBase;
 use Drupal\social_auth_facebook\Settings\FacebookAuthSettings;
 
 /**
@@ -23,7 +23,7 @@ use Drupal\social_auth_facebook\Settings\FacebookAuthSettings;
  *   }
  * )
  */
-class FacebookAuth extends NetworkBase {
+class FacebookAuth extends NetworkExtraBase {
 
   /**
    * Returns an instance of sdk.
@@ -52,16 +52,6 @@ class FacebookAuth extends NetworkBase {
     ];
 
     return new $class_name($settings);
-  }
-
-  /**
-   * Returns status of social network.
-   *
-   * @return bool
-   *   The status of the social network.
-   */
-  public function isActive() {
-    return (bool) $this->settings->isActive();
   }
 
   /**

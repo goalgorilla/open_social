@@ -2,12 +2,12 @@
 
 namespace Drupal\social_auth_twitter\Settings;
 
-use Drupal\social_api\Settings\SettingsBase;
+use Drupal\social_auth_extra\Settings\SettingsExtraBase;
 
 /**
  * Returns the client information.
  */
-class TwitterAuthSettings extends SettingsBase implements TwitterAuthSettingsInterface {
+class TwitterAuthSettings extends SettingsExtraBase implements TwitterAuthSettingsInterface {
 
   /**
    * Consumer Key.
@@ -43,13 +43,6 @@ class TwitterAuthSettings extends SettingsBase implements TwitterAuthSettingsInt
     }
 
     return $this->consumerSecret;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function isActive() {
-    return (bool) $this->config->get('status');
   }
 
   /**

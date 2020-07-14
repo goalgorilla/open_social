@@ -114,7 +114,7 @@ abstract class AuthControllerBase extends ControllerBase {
       return $this->sdk;
     }
 
-    /** @var \Drupal\social_auth\Plugin\Network\NetworkInterface $network_manager */
+    /** @var \Drupal\social_auth_extra\Plugin\Network\NetworkExtraInterface $network_manager */
     $network_manager = $this->networkManager->createInstance($this->getModuleName());
 
     if (!$network_manager->isActive()) {

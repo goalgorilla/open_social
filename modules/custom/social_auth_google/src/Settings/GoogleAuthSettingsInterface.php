@@ -2,10 +2,12 @@
 
 namespace Drupal\social_auth_google\Settings;
 
+use Drupal\social_auth_extra\Settings\SettingsExtraInterface;
+
 /**
  * Defines an interface for Social Auth Google settings.
  */
-interface GoogleAuthSettingsInterface {
+interface GoogleAuthSettingsInterface extends SettingsExtraInterface {
 
   /**
    * Gets the client ID.
@@ -22,14 +24,6 @@ interface GoogleAuthSettingsInterface {
    *   The client secret.
    */
   public function getClientSecret();
-
-  /**
-   * Returns status of social network.
-   *
-   * @return bool
-   *   The status of the social network.
-   */
-  public function isActive();
 
   /**
    * Returns key-name of a social network.

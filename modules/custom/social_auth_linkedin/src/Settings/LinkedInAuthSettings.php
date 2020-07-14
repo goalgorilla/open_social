@@ -2,12 +2,12 @@
 
 namespace Drupal\social_auth_linkedin\Settings;
 
-use Drupal\social_api\Settings\SettingsBase;
+use Drupal\social_auth_extra\Settings\SettingsExtraBase;
 
 /**
  * Defines methods to get Social Auth LinkedIn app settings.
  */
-class LinkedInAuthSettings extends SettingsBase implements LinkedInAuthSettingsInterface {
+class LinkedInAuthSettings extends SettingsExtraBase implements LinkedInAuthSettingsInterface {
 
   /**
    * Client ID.
@@ -43,13 +43,6 @@ class LinkedInAuthSettings extends SettingsBase implements LinkedInAuthSettingsI
     }
 
     return $this->clientSecret;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function isActive() {
-    return (bool) $this->config->get('status');
   }
 
   /**

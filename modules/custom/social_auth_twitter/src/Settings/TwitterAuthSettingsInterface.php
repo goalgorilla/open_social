@@ -2,10 +2,12 @@
 
 namespace Drupal\social_auth_twitter\Settings;
 
+use Drupal\social_auth_extra\Settings\SettingsExtraInterface;
+
 /**
  * Defines an interface for Social Auth Twitter settings.
  */
-interface TwitterAuthSettingsInterface {
+interface TwitterAuthSettingsInterface extends SettingsExtraInterface {
 
   /**
    * Gets the consumer key.
@@ -22,14 +24,6 @@ interface TwitterAuthSettingsInterface {
    *   The consumer secret.
    */
   public function getConsumerSecret();
-
-  /**
-   * Returns status of social network.
-   *
-   * @return bool
-   *   The status of the social network.
-   */
-  public function isActive();
 
   /**
    * Returns key-name of a social network.

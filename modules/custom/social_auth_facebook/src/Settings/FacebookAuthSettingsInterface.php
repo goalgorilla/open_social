@@ -2,10 +2,12 @@
 
 namespace Drupal\social_auth_facebook\Settings;
 
+use Drupal\social_auth_extra\Settings\SettingsExtraInterface;
+
 /**
  * Defines an interface for Social Auth Facebook settings.
  */
-interface FacebookAuthSettingsInterface {
+interface FacebookAuthSettingsInterface extends SettingsExtraInterface {
 
   /**
    * Gets the app ID.
@@ -30,14 +32,6 @@ interface FacebookAuthSettingsInterface {
    *   The app default graph version.
    */
   public function getGraphVersion();
-
-  /**
-   * Returns status of social network.
-   *
-   * @return bool
-   *   The status of the social network.
-   */
-  public function isActive();
 
   /**
    * Returns key-name of a social network.

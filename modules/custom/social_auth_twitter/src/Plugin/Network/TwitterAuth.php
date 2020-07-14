@@ -2,8 +2,8 @@
 
 namespace Drupal\social_auth_twitter\Plugin\Network;
 
-use Drupal\social_auth\Plugin\Network\NetworkBase;
 use Drupal\social_api\SocialApiException;
+use Drupal\social_auth_extra\Plugin\Network\NetworkExtraBase;
 use Drupal\social_auth_twitter\Settings\TwitterAuthSettings;
 
 /**
@@ -21,7 +21,7 @@ use Drupal\social_auth_twitter\Settings\TwitterAuthSettings;
  *   }
  * )
  */
-class TwitterAuth extends NetworkBase {
+class TwitterAuth extends NetworkExtraBase {
 
   /**
    * {@inheritdoc}
@@ -42,16 +42,6 @@ class TwitterAuth extends NetworkBase {
 
     // Creates a and sets data to TwitterOAuth object.
     return new $class_name($settings->getConsumerKey(), $settings->getConsumerSecret());
-  }
-
-  /**
-   * Returns status of social network.
-   *
-   * @return bool
-   *   The status of the social network.
-   */
-  public function isActive() {
-    return (bool) $this->settings->isActive();
   }
 
   /**

@@ -2,8 +2,8 @@
 
 namespace Drupal\social_auth_google\Plugin\Network;
 
-use Drupal\social_auth\Plugin\Network\NetworkBase;
 use Drupal\social_api\SocialApiException;
+use Drupal\social_auth_extra\Plugin\Network\NetworkExtraBase;
 use Drupal\social_auth_google\Settings\GoogleAuthSettings;
 
 /**
@@ -23,7 +23,7 @@ use Drupal\social_auth_google\Settings\GoogleAuthSettings;
  *   }
  * )
  */
-class GoogleAuth extends NetworkBase {
+class GoogleAuth extends NetworkExtraBase {
 
   /**
    * Returns an instance of sdk.
@@ -50,16 +50,6 @@ class GoogleAuth extends NetworkBase {
     $client->setClientSecret($this->settings->getClientSecret());
 
     return $client;
-  }
-
-  /**
-   * Returns status of social network.
-   *
-   * @return bool
-   *   The status of the social network.
-   */
-  public function isActive() {
-    return (bool) $this->settings->isActive();
   }
 
   /**

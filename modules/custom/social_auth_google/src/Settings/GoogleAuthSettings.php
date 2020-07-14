@@ -2,12 +2,12 @@
 
 namespace Drupal\social_auth_google\Settings;
 
-use Drupal\social_api\Settings\SettingsBase;
+use Drupal\social_auth_extra\Settings\SettingsExtraBase;
 
 /**
  * Defines methods to get Social Auth Google app settings.
  */
-class GoogleAuthSettings extends SettingsBase implements GoogleAuthSettingsInterface {
+class GoogleAuthSettings extends SettingsExtraBase implements GoogleAuthSettingsInterface {
 
   /**
    * Client ID.
@@ -43,13 +43,6 @@ class GoogleAuthSettings extends SettingsBase implements GoogleAuthSettingsInter
     }
 
     return $this->clientSecret;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function isActive() {
-    return (bool) $this->config->get('status');
   }
 
   /**
