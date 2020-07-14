@@ -2,13 +2,8 @@
 
 namespace Drupal\social_auth_twitter\Controller;
 
-use Drupal\Core\Messenger\MessengerInterface;
-use Drupal\search_api\Controller\IndexController;
-use Drupal\social_auth_extra\AuthManagerInterface;
 use Drupal\social_auth_extra\Controller\AuthControllerBase;
-use Drupal\social_api\Plugin\NetworkManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
