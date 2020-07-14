@@ -6,6 +6,16 @@
  */
 
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\social_auth_apple_extra\Plugin\Network\AppleAuthExtra;
+use Drupal\social_auth_apple_extra\Settings\AppleAuthSettingsExtra;
+
+/**
+ * Implements hook_social_api_network_info_alter().
+ */
+function social_auth_apple_extra_social_api_network_info_alter(array &$info) {
+  $info['social_auth_apple']['class'] = AppleAuthExtra::class;
+  $info['social_auth_apple']['handlers']['settings']['class'] = AppleAuthSettingsExtra::class;
+}
 
 /**
  * Implements hook_form_FORM_ID_alter().

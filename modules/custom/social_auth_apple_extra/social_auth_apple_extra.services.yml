@@ -1,0 +1,8 @@
+services:
+  social_auth_apple_extra.auth_manager:
+    class: Drupal\social_auth_apple_extra\AppleAuthExtraManager
+    arguments:
+      - '@url_generator.non_bubbling'
+      - '@entity_field.manager'
+      - '@logger.factory'
+      - '@social_auth_apple.manager'
