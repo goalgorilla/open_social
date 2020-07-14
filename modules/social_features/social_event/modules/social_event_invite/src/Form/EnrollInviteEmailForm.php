@@ -188,29 +188,23 @@ class EnrollInviteEmailForm extends InviteEmailBaseForm {
    */
   public function validateForm(array &$form, FormStateInterface $form_state) {
     parent::validateForm($form, $form_state);
-    $duplicated_values = [];
-//    $emails = $this->getSubmittedEmails($form_state);
     $nid = $form_state->getValue('event');
 
     // Check if the user is already enrolled.
-    foreach ($form_state->getValue('email_address') as $email) {
-      $user = user_load_by_mail($email);
-
-      if ($user instanceof UserInterface) {
-        $conditions = [
-          'field_account' => $user->id(),
-          'field_event' => $nid,
-        ];
-
-        $user = $user->getEmail();
-      }
-      else {
+    foreach ($form_state->getValue('users_fieldset')['user'] as $user) {
+      // Check if the user is a filled in email.
+      $email = $this->extractEmailsFrom($user);
+      if ($email) {
         $conditions = [
           'field_email' => $email,
           'field_event' => $nid,
         ];
-
-        $user = $email;
+      }
+      else {
+        $conditions = [
+          'field_account' => $user,
+          'field_event' => $nid,
+        ];
       }
 
       $enrollments = $this->entityStorage->loadByProperties($conditions);
@@ -232,20 +226,11 @@ class EnrollInviteEmailForm extends InviteEmailBaseForm {
 
       // If enrollments can be found this user is already invited or joined.
       if (!empty($enrollments)) {
-        $duplicated_values[] = $user;
+        // If the user is already enrolled, don't enroll them again.
+        $form_state->unsetValue(['users_fieldset', 'user', $user]);
       }
     }
-    if (!empty($duplicated_values)) {
-      $users = implode(', ', $duplicated_values);
 
-      $message = \Drupal::translation()->formatPlural(count($duplicated_values),
-        "@users is already invited or enrolled, you can't invite them again",
-        "@users are already invited or enrolled, you can't invite them again",
-        ['@users' => $users]
-      );
-
-      $form_state->setErrorByName('email_address', $message);
-    }
   }
 
   /**
@@ -254,8 +239,8 @@ class EnrollInviteEmailForm extends InviteEmailBaseForm {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     parent::submitForm($form, $form_state);
 
-    $params['invite_type'] = 'email';
-    $params['recipients'] = $this->getSubmittedEmails($form_state);
+    $params['invite_type'] = 'email_user';
+    $params['recipients'] = $form_state->getValue('users_fieldset')['user'];
     $params['nid'] = $form_state->getValue('event');
     $tempstore = $this->tempStoreFactory->get('event_invite_form_values');
     try {

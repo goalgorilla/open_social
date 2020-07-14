@@ -3,6 +3,7 @@
 namespace Drupal\social_event_invite\Form;
 
 use Drupal\Component\Render\FormattableMarkup;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Routing\RedirectDestinationInterface;
@@ -10,6 +11,7 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\TempStore\PrivateTempStoreFactory;
 use Drupal\Core\Url;
 use Drupal\profile\Entity\Profile;
+use Drupal\profile\Entity\ProfileInterface;
 use Drupal\social_event\EventEnrollmentStatusHelper;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -70,6 +72,13 @@ class EnrollInviteConfirmForm extends FormBase {
   private $inviteType;
 
   /**
+   * The entity type manager.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  protected $entityTypeManager;
+
+  /**
    * EnrollInviteConfirmForm constructor.
    *
    * @param \Drupal\Core\Routing\RedirectDestinationInterface $redirect_destination
@@ -80,12 +89,15 @@ class EnrollInviteConfirmForm extends FormBase {
    *   The enrollment status helper.
    * @param \Drupal\Core\TempStore\PrivateTempStoreFactory $tempStoreFactory
    *   The temp store factory.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
    */
-  public function __construct(RedirectDestinationInterface $redirect_destination, AccountInterface $current_user, EventEnrollmentStatusHelper $enrollmentStatusHelper, PrivateTempStoreFactory $tempStoreFactory) {
+  public function __construct(RedirectDestinationInterface $redirect_destination, AccountInterface $current_user, EventEnrollmentStatusHelper $enrollmentStatusHelper, PrivateTempStoreFactory $tempStoreFactory, EntityTypeManagerInterface $entity_type_manager) {
     $this->redirectDestination = $redirect_destination;
     $this->currentUser = $current_user;
     $this->eventInviteStatus = $enrollmentStatusHelper;
     $this->tempStoreFactory = $tempStoreFactory;
+    $this->entityTypeManager = $entity_type_manager;
   }
 
   /**
@@ -96,7 +108,8 @@ class EnrollInviteConfirmForm extends FormBase {
       $container->get('redirect.destination'),
       $container->get('current_user'),
       $container->get('social_event.status_helper'),
-      $container->get('tempstore.private')
+      $container->get('tempstore.private'),
+      $container->get('entity_type.manager')
     );
   }
 
@@ -143,6 +156,28 @@ class EnrollInviteConfirmForm extends FormBase {
       // Simply provide the email.
       foreach ($this->recipients as $recipient) {
         $recipients .= "{$recipient} <br />";
+      }
+    }
+    elseif($this->inviteType === 'email_user') {
+      foreach ($this->recipients as $key => $value) {
+        $email = $this->extractEmailsFrom($value);
+        if ($email) {
+          $recipients .= "{$email[0]} <br />";
+        }
+        else {
+          $profiles = $this->entityTypeManager->getStorage('profile')
+            ->loadByProperties([
+              'uid' => $key,
+            ]);
+
+          /** @var \Drupal\profile\Entity\ProfileInterface $profile */
+          $profile = reset($profiles);
+
+          if ($profile instanceof ProfileInterface) {
+            $recipient = $profile->field_profile_first_name->value . ' ' . $profile->field_profile_last_name->value;
+            $recipients .= "{$recipient} <br />";
+          }
+        }
       }
     }
 
@@ -248,6 +283,30 @@ class EnrollInviteConfirmForm extends FormBase {
       ];
       batch_set($batch);
     }
+    elseif ($this->inviteType === 'user_email') {
+      $batch = [
+        'title' => $this->t('Sending invites...'),
+        'init_message' => $this->t("Preparing to send invites..."),
+        'operations' => [
+          [
+            '\Drupal\social_event_invite\SocialEventInviteBulkHelper::bulkInviteUsersEmails',
+            [$this->recipients, $this->nid],
+          ],
+        ],
+        'finished' => '\Drupal\social_event_invite\SocialEventInviteBulkHelper::bulkInviteUserEmailsFinished',
+      ];
+      batch_set($batch);
+    }
+  }
+
+  /**
+   * Custom function to extract email addresses from a string.
+   */
+  public function extractEmailsFrom($string) {
+    // Remove select2 ID parameter.
+    $string = str_replace('$ID:', '', $string);
+    preg_match_all("/[\._a-zA-Z0-9+-]+@[\._a-zA-Z0-9+-]+/i", $string, $matches);
+    return $matches[0];
   }
 
 }
