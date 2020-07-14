@@ -2,11 +2,7 @@
 
 namespace Drupal\social_auth_facebook\Controller;
 
-use Drupal\Core\Controller\ControllerBase;
-use Drupal\social_api\Plugin\NetworkManager;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\social_auth_facebook\FacebookAuthManager;
-use Drupal\Core\Routing\TrustedRedirectResponse;
+use Drupal\social_auth_extra\Controller\AuthControllerBase;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
@@ -14,10 +10,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
  *
  * @package Drupal\social_auth_facebook\Controller
  */
-class FacebookAuthController extends ControllerBase {
-
-  protected $networkManager;
-  protected $authManager;
+class FacebookAuthController extends AuthControllerBase {
 
   /**
    * Contains access token to work with API.
@@ -25,46 +18,6 @@ class FacebookAuthController extends ControllerBase {
    * @var string
    */
   protected $accessToken;
-
-  /**
-   * FacebookAuthController constructor.
-   */
-  public function __construct(NetworkManager $network_manager, FacebookAuthManager $auth_manager) {
-    $this->networkManager = $network_manager;
-    $this->authManager = $auth_manager;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function create(ContainerInterface $container) {
-    return new static(
-      $container->get('plugin.network.manager'),
-      $container->get('social_auth_facebook.auth_manager')
-    );
-  }
-
-  /**
-   * Returns the redirect response.
-   *
-   * @param string $type
-   *   Type of action. "login" or "register".
-   *
-   * @return \Drupal\Core\Routing\TrustedRedirectResponse|\Symfony\Component\HttpFoundation\RedirectResponse
-   *   Returns a RedirectResponse.
-   */
-  protected function getRedirectResponse($type) {
-    $sdk = $this->getSdk($type);
-
-    if ($sdk instanceof RedirectResponse) {
-      return $sdk;
-    }
-
-    $this->authManager->setSdk($sdk);
-    $url = $this->authManager->getAuthenticationUrl($type);
-
-    return new TrustedRedirectResponse($url);
-  }
 
   /**
    * Response for path 'user/login/facebook'.
@@ -125,15 +78,6 @@ class FacebookAuthController extends ControllerBase {
   }
 
   /**
-   * Response for path 'user/register/facebook'.
-   *
-   * Redirects the user to FB for registration.
-   */
-  public function userRegister() {
-    return $this->getRedirectResponse('register');
-  }
-
-  /**
    * Registers the new account after redirect from Facebook.
    *
    * @return \Symfony\Component\HttpFoundation\RedirectResponse
@@ -189,35 +133,6 @@ class FacebookAuthController extends ControllerBase {
     return $this->redirect('user.register', [
       'provider' => 'facebook',
     ]);
-  }
-
-  /**
-   * Returns the SDK instance or RedirectResponse when error occurred.
-   *
-   * @param string $type
-   *   Type of action, "login" or "register".
-   *
-   * @return mixed|\Symfony\Component\HttpFoundation\RedirectResponse
-   *   Returns an instance of the SDK or a Redirect Response.
-   */
-  public function getSdk($type) {
-    $network_manager = $this->networkManager->createInstance('social_auth_facebook');
-
-    if (!$network_manager->isActive()) {
-      drupal_set_message($this->t('@network is disabled. Contact the site administrator', [
-        '@network' => $this->t('Facebook'),
-      ]), 'error');
-      return $this->redirect('user.' . $type);
-    }
-
-    if (!$sdk = $network_manager->getSdk()) {
-      drupal_set_message($this->t('@network Auth not configured properly. Contact the site administrator.', [
-        '@network' => $this->t('Facebook'),
-      ]), 'error');
-      return $this->redirect('user.' . $type);
-    }
-
-    return $sdk;
   }
 
   /**

@@ -2,37 +2,24 @@
 
 namespace Drupal\social_auth_twitter\Controller;
 
-use Drupal\Core\Controller\ControllerBase;
-use Drupal\social_auth_twitter\TwitterAuthManager;
+use Drupal\Core\Messenger\MessengerInterface;
+use Drupal\search_api\Controller\IndexController;
+use Drupal\social_auth_extra\AuthManagerInterface;
+use Drupal\social_auth_extra\Controller\AuthControllerBase;
 use Drupal\social_api\Plugin\NetworkManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\Core\Routing\TrustedRedirectResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
  * Manages requests to Twitter API.
  */
-class TwitterAuthController extends ControllerBase {
-
-  /**
-   * The network plugin manager.
-   *
-   * @var \Drupal\social_api\Plugin\NetworkManager
-   */
-  private $networkManager;
-
-  /**
-   * The Twitter authentication manager.
-   *
-   * @var \Drupal\social_auth_twitter\TwitterAuthManager
-   */
-  private $authManager;
+class TwitterAuthController extends AuthControllerBase {
 
   /**
    * The current request.
    *
-   * @var \Drupal\social_auth\SocialAuthUserManager
+   * @var \Symfony\Component\HttpFoundation\Request
    */
   private $request;
 
@@ -44,52 +31,15 @@ class TwitterAuthController extends ControllerBase {
   protected $accessToken;
 
   /**
-   * Contains instance of PHP Library.
-   *
-   * @var \Abraham\TwitterOAuth\TwitterOAuth
-   */
-  protected $sdk;
-
-  /**
-   * TwitterAuthController constructor.
-   */
-  public function __construct(NetworkManager $network_manager, TwitterAuthManager $auth_manager, RequestStack $request_stack) {
-    $this->networkManager = $network_manager;
-    $this->authManager = $auth_manager;
-    $this->request = $request_stack->getCurrentRequest();
-  }
-
-  /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
-    return new static(
-      $container->get('plugin.network.manager'),
-      $container->get('social_auth_twitter.auth_manager'),
-      $container->get('request_stack')
-    );
-  }
+    /** @var static $controller */
+    $controller = parent::create($container);
 
-  /**
-   * Returns the redirect response.
-   *
-   * @param string $type
-   *   Type of action, "login" or "register".
-   *
-   * @return \Drupal\Core\Routing\TrustedRedirectResponse|\Symfony\Component\HttpFoundation\RedirectResponse
-   *   Returns a RedirectResponse.
-   */
-  protected function getRedirectResponse($type) {
-    $sdk = $this->getSdk($type);
+    $controller->request = $container->get('request_stack')->getCurrentRequest();
 
-    if ($sdk instanceof RedirectResponse) {
-      return $sdk;
-    }
-
-    $this->authManager->setSdk($sdk);
-    $url = $this->authManager->getAuthenticationUrl($type);
-
-    return new TrustedRedirectResponse($url);
+    return $controller;
   }
 
   /**
@@ -149,15 +99,6 @@ class TwitterAuthController extends ControllerBase {
   }
 
   /**
-   * Response for path 'user/register/twitter'.
-   *
-   * Redirects the user to Twitter for registration.
-   */
-  public function userRegister() {
-    return $this->getRedirectResponse('register');
-  }
-
-  /**
    * Registers the new account after redirect from Twitter.
    *
    * @return \Symfony\Component\HttpFoundation\RedirectResponse
@@ -214,39 +155,6 @@ class TwitterAuthController extends ControllerBase {
     return $this->redirect('user.register', [
       'provider' => 'twitter',
     ]);
-  }
-
-  /**
-   * Returns the SDK instance or RedirectResponse when error occurred.
-   *
-   * @param string $type
-   *   Type of action, "login" or "register".
-   *
-   * @return mixed|\Symfony\Component\HttpFoundation\RedirectResponse
-   *   Returns an instance of the SDK or a Redirect Response.
-   */
-  public function getSdk($type) {
-    if ($this->sdk) {
-      return $this->sdk;
-    }
-
-    $network_manager = $this->networkManager->createInstance('social_auth_twitter');
-
-    if (!$network_manager->isActive()) {
-      drupal_set_message($this->t('@network is disabled. Contact the site administrator', [
-        '@network' => $this->t('Twitter'),
-      ]), 'error');
-      return $this->redirect('user.' . $type);
-    }
-
-    if (!$this->sdk = $network_manager->getSdk()) {
-      drupal_set_message($this->t('@network Auth not configured properly. Contact the site administrator.', [
-        '@network' => $this->t('Twitter'),
-      ]), 'error');
-      return $this->redirect('user.' . $type);
-    }
-
-    return $this->sdk;
   }
 
   /**

@@ -2,11 +2,7 @@
 
 namespace Drupal\social_auth_linkedin\Controller;
 
-use Drupal\Core\Controller\ControllerBase;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\social_api\Plugin\NetworkManager;
-use Drupal\Core\Routing\TrustedRedirectResponse;
-use Drupal\social_auth_linkedin\LinkedInAuthManager;
+use Drupal\social_auth_extra\Controller\AuthControllerBase;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
@@ -14,10 +10,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
  *
  * @package Drupal\social_auth_linkedin\Controller
  */
-class LinkedInAuthController extends ControllerBase {
-
-  protected $networkManager;
-  protected $authManager;
+class LinkedInAuthController extends AuthControllerBase {
 
   /**
    * Contains access token to work with API.
@@ -25,46 +18,6 @@ class LinkedInAuthController extends ControllerBase {
    * @var string
    */
   protected $accessToken;
-
-  /**
-   * LinkedInAuthController constructor.
-   */
-  public function __construct(NetworkManager $network_manager, LinkedInAuthManager $auth_manager) {
-    $this->networkManager = $network_manager;
-    $this->authManager = $auth_manager;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function create(ContainerInterface $container) {
-    return new static(
-      $container->get('plugin.network.manager'),
-      $container->get('social_auth_linkedin.auth_manager')
-    );
-  }
-
-  /**
-   * Returns the redirect response.
-   *
-   * @param string $type
-   *   Type of action, "login" or "register".
-   *
-   * @return \Drupal\Core\Routing\TrustedRedirectResponse|\Symfony\Component\HttpFoundation\RedirectResponse
-   *   Returns a RedirectResponse.
-   */
-  protected function getRedirectResponse($type) {
-    $sdk = $this->getSdk($type);
-
-    if ($sdk instanceof RedirectResponse) {
-      return $sdk;
-    }
-
-    $this->authManager->setSdk($sdk);
-    $url = $this->authManager->getAuthenticationUrl($type);
-
-    return new TrustedRedirectResponse($url);
-  }
 
   /**
    * Response for path 'user/login/linkedin'.
@@ -119,15 +72,6 @@ class LinkedInAuthController extends ControllerBase {
     return $this->redirect('entity.user.canonical', [
       'user' => $account->id(),
     ]);
-  }
-
-  /**
-   * Response for path 'user/register/linkedin'.
-   *
-   * Redirects the user to LinkedIn for registration.
-   */
-  public function userRegister() {
-    return $this->getRedirectResponse('register');
   }
 
   /**
@@ -187,35 +131,6 @@ class LinkedInAuthController extends ControllerBase {
     return $this->redirect('user.register', [
       'provider' => 'linkedin',
     ]);
-  }
-
-  /**
-   * Returns the SDK instance or RedirectResponse when error occurred.
-   *
-   * @param string $type
-   *   Type of action, "login" or "register".
-   *
-   * @return mixed|\Symfony\Component\HttpFoundation\RedirectResponse
-   *   Returns an instance of the SDK or a Redirect Response.
-   */
-  public function getSdk($type) {
-    $network_manager = $this->networkManager->createInstance('social_auth_linkedin');
-
-    if (!$network_manager->isActive()) {
-      drupal_set_message($this->t('@network is disabled. Contact the site administrator', [
-        '@network' => $this->t('LinkedIn'),
-      ]), 'error');
-      return $this->redirect('user.' . $type);
-    }
-
-    if (!$sdk = $network_manager->getSdk()) {
-      drupal_set_message($this->t('@network Auth not configured properly. Contact the site administrator.', [
-        '@network' => $this->t('LinkedIn'),
-      ]), 'error');
-      return $this->redirect('user.' . $type);
-    }
-
-    return $sdk;
   }
 
   /**
