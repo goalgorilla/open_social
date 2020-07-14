@@ -1,0 +1,8 @@
+social_auth_apple.user_register:
+  path: '/user/register/apple'
+  defaults:
+    _controller: '\Drupal\social_auth_apple_extra\Controller\AppleAuthController::userRegister'
+  requirements:
+    _role: 'anonymous'
+  options:
+    no_cache: TRUE
