@@ -283,7 +283,7 @@ class EnrollInviteConfirmForm extends FormBase {
       ];
       batch_set($batch);
     }
-    elseif ($this->inviteType === 'user_email') {
+    elseif ($this->inviteType === 'email_user') {
       $batch = [
         'title' => $this->t('Sending invites...'),
         'init_message' => $this->t("Preparing to send invites..."),

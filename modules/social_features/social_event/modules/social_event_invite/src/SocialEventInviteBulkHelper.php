@@ -161,7 +161,10 @@ class SocialEventInviteBulkHelper {
     $results = [];
 
     foreach ($users as $user) {
-      $email = $this->extractEmailsFrom($user);
+      // Remove select2 ID parameter.
+      $user = str_replace('$ID:', '', $user);
+      preg_match_all("/[\._a-zA-Z0-9+-]+@[\._a-zA-Z0-9+-]+/i", $user, $email);
+      $email = $email[0];
       // If the user is an email.
       if ($email) {
         $user = user_load_by_mail($email);
@@ -188,6 +191,7 @@ class SocialEventInviteBulkHelper {
           // Add email address.
           $fields['field_email'] = $email;
         }
+
       }
       // If the user is a UID.
       else {
@@ -307,13 +311,4 @@ class SocialEventInviteBulkHelper {
     return new RedirectResponse(Url::fromRoute('social_event_invite.invite_email', ['node' => $nid])->toString());
   }
 
-  /**
-   * Custom function to extract email addresses from a string.
-   */
-  public function extractEmailsFrom($string) {
-    // Remove select2 ID parameter.
-    $string = str_replace('$ID:', '', $string);
-    preg_match_all("/[\._a-zA-Z0-9+-]+@[\._a-zA-Z0-9+-]+/i", $string, $matches);
-    return $matches[0];
-  }
 }
