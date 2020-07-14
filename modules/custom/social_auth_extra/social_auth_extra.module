@@ -112,9 +112,14 @@ function _social_auth_extra_get_buttons($type = 'login') {
     foreach ($networks as $key => $network) {
       $instance = $network_manager->createInstance($network['id']);
       $status = \Drupal::config("{$key}.settings")->get('status');
-      $network_btnlabel = strtolower('btn--' . $network['social_network']);
+
       $btn_attributes = [
-        'class' => ['btn', 'btn--with-bgicon', $network_btnlabel],
+        'class' => [
+          'btn',
+          'btn--with-bgicon',
+          'btn--social-network',
+          strtolower('btn--' . $network['social_network']),
+        ],
       ];
 
       if ($provider && $provider != $instance->getSocialNetworkKey()) {
