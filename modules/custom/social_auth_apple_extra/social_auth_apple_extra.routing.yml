@@ -1,3 +1,12 @@
+social_auth_apple.user_login:
+  path: '/user/login/apple'
+  defaults:
+    _controller: '\Drupal\social_auth_apple\Controller\AppleAuthController::redirectToProvider'
+  requirements:
+    _role: 'anonymous'
+  options:
+    no_cache: TRUE
+
 social_auth_apple.user_register:
   path: '/user/register/apple'
   defaults:
