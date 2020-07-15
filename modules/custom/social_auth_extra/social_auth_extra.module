@@ -110,8 +110,12 @@ function _social_auth_extra_get_buttons($type = 'login') {
     }
 
     foreach ($networks as $key => $network) {
+      /** @var \Drupal\social_auth_extra\Plugin\Network\NetworkExtraInterface $instance */
       $instance = $network_manager->createInstance($network['id']);
-      $status = \Drupal::config("{$key}.settings")->get('status');
+
+      if (!$instance->isActive()) {
+        continue;
+      }
 
       $btn_attributes = [
         'class' => [
@@ -122,18 +126,16 @@ function _social_auth_extra_get_buttons($type = 'login') {
         ],
       ];
 
-      if ($provider && $provider != $instance->getSocialNetworkKey()) {
+      if ($provider && $provider !== $instance->getSocialNetworkKey()) {
         $btn_attributes['disabled'] = 'disabled';
       }
 
-      if ($status) {
-        $form['social_auth_extra'][$key] = [
-          '#type' => 'link',
-          '#title' => $network['social_network'],
-          '#url' => Url::fromRoute("{$key}.user_{$type}"),
-          '#attributes' => $btn_attributes,
-        ];
-      }
+      $form['social_auth_extra'][$key] = [
+        '#type' => 'link',
+        '#title' => $network['social_network'],
+        '#url' => Url::fromRoute("{$key}.user_{$type}"),
+        '#attributes' => $btn_attributes,
+      ];
     }
 
     // If there are no any active network, hide fieldset.
