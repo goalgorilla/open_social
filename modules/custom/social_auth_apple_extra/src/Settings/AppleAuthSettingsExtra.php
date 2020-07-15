@@ -14,4 +14,11 @@ class AppleAuthSettingsExtra extends AppleAuthSettings implements AppleAuthSetti
 
   use SettingsExtraTrait;
 
+  /**
+   * {@inheritdoc}
+   */
+  public function getSocialNetworkKey() {
+    return 'apple';
+  }
+
 }
