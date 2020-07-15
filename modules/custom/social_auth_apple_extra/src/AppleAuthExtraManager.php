@@ -8,7 +8,6 @@ use Drupal\Core\Routing\UrlGeneratorInterface;
 use Drupal\social_auth\AuthManager\OAuth2ManagerInterface;
 use Drupal\social_auth_extra\AuthManager;
 use League\OAuth2\Client\Provider\Apple;
-use LinkedIn\Client;
 use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 
 /**
@@ -49,14 +48,14 @@ class AppleAuthExtraManager extends AuthManager {
   }
 
   /**
-   * @inheritDoc
+   * {@inheritdoc}
    */
   public function getSocialNetworkKey() {
     // TODO: Implement getSocialNetworkKey() method.
   }
 
   /**
-   * @inheritDoc
+   * {@inheritdoc}
    */
   public function setSdk($sdk) {
     if (!$sdk instanceof Apple) {
@@ -67,7 +66,7 @@ class AppleAuthExtraManager extends AuthManager {
   }
 
   /**
-   * @inheritDoc
+   * {@inheritdoc}
    */
   public function getAuthenticationUrl($type, array $scope = []) {
     return $this->socialAuthAppleManager->setClient($this->sdk)
@@ -75,49 +74,49 @@ class AppleAuthExtraManager extends AuthManager {
   }
 
   /**
-   * @inheritDoc
+   * {@inheritdoc}
    */
   public function getAccessToken($type) {
     // TODO: Implement getAccessToken() method.
   }
 
   /**
-   * @inheritDoc
+   * {@inheritdoc}
    */
   public function getProfile() {
     // TODO: Implement getProfile() method.
   }
 
   /**
-   * @inheritDoc
+   * {@inheritdoc}
    */
   public function getProfilePicture() {
     // TODO: Implement getProfilePicture() method.
   }
 
   /**
-   * @inheritDoc
+   * {@inheritdoc}
    */
   public function setAccessToken($access_token) {
     // TODO: Implement setAccessToken() method.
   }
 
   /**
-   * @inheritDoc
+   * {@inheritdoc}
    */
   public function getAccountId() {
     // TODO: Implement getAccountId() method.
   }
 
   /**
-   * @inheritDoc
+   * {@inheritdoc}
    */
   public function getFirstName() {
     // TODO: Implement getFirstName() method.
   }
 
   /**
-   * @inheritDoc
+   * {@inheritdoc}
    */
   public function getLastName() {
     // TODO: Implement getLastName() method.
