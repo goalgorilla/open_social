@@ -47,9 +47,7 @@ class RouteSubscriber extends RouteSubscriberBase {
 
     // Routes for which needs to disable access if the user is blocked.
     $disable_access_for = [
-      'view.groups.page_user_groups',
       'view.user_information.user_information',
-      'view.user_discussion.page_user_discussions',
       'view.events.events_overview',
       'view.topics.page_profile',
     ];
