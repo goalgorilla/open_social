@@ -48,7 +48,7 @@ class TwitterAuthSettings extends SettingsExtraBase implements TwitterAuthSettin
   /**
    * {@inheritdoc}
    */
-  public static function getSocialNetworkKey() {
+  public function getSocialNetworkKey() {
     return 'twitter';
   }
 

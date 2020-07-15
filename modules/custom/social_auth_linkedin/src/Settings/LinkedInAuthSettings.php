@@ -48,7 +48,7 @@ class LinkedInAuthSettings extends SettingsExtraBase implements LinkedInAuthSett
   /**
    * {@inheritdoc}
    */
-  public static function getSocialNetworkKey() {
+  public function getSocialNetworkKey() {
     return 'linkedin';
   }
 

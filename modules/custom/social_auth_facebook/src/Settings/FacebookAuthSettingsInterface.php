@@ -33,12 +33,4 @@ interface FacebookAuthSettingsInterface extends SettingsExtraInterface {
    */
   public function getGraphVersion();
 
-  /**
-   * Returns key-name of a social network.
-   *
-   * @return string
-   *   The key-name of a social network.
-   */
-  public static function getSocialNetworkKey();
-
 }

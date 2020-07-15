@@ -80,13 +80,6 @@ class FacebookAuth extends NetworkExtraBase {
   }
 
   /**
-   * {@inheritdoc}
-   */
-  public function getSocialNetworkKey() {
-    return $this->settings->getSocialNetworkKey();
-  }
-
-  /**
    * Returns an instance of storage that handles data.
    *
    * @return object

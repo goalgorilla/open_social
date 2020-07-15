@@ -13,7 +13,14 @@ trait NetworkExtraTrait {
    * {@inheritdoc}
    */
   public function isActive() {
-    return (bool) $this->settings->isActive();
+    return $this->settings->isActive();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getSocialNetworkKey() {
+    return $this->settings->getSocialNetworkKey();
   }
 
 }

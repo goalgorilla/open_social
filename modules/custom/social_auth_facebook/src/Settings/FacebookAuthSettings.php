@@ -73,7 +73,7 @@ class FacebookAuthSettings extends SettingsExtraBase implements FacebookAuthSett
   /**
    * {@inheritdoc}
    */
-  public static function getSocialNetworkKey() {
+  public function getSocialNetworkKey() {
     return 'facebook';
   }
 

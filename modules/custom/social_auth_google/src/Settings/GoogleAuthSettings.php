@@ -48,7 +48,7 @@ class GoogleAuthSettings extends SettingsExtraBase implements GoogleAuthSettings
   /**
    * {@inheritdoc}
    */
-  public static function getSocialNetworkKey() {
+  public function getSocialNetworkKey() {
     return 'google';
   }
 

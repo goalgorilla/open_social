@@ -25,12 +25,4 @@ interface LinkedInAuthSettingsInterface extends SettingsExtraInterface {
    */
   public function getClientSecret();
 
-  /**
-   * Returns key-name of a social network.
-   *
-   * @return string
-   *   The key-name of a social network.
-   */
-  public static function getSocialNetworkKey();
-
 }
