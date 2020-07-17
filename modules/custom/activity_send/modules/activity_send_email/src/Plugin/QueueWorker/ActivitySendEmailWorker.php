@@ -2,10 +2,11 @@
 
 namespace Drupal\activity_send_email\Plugin\QueueWorker;
 
+use Drupal\activity_creator\Entity\Activity;
+use Drupal\activity_send\Plugin\QueueWorker\ActivitySendWorkerBase;
 use Drupal\activity_send_email\EmailFrequencyManager;
 use Drupal\activity_send_email\Plugin\ActivityDestination\EmailActivityDestination;
-use Drupal\activity_send\Plugin\QueueWorker\ActivitySendWorkerBase;
-use Drupal\activity_creator\Entity\Activity;
+use Drupal\Core\Database\Connection;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\message\Entity\Message;
 use Drupal\user\Entity\User;
@@ -32,11 +33,19 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase implements Containe
   protected $frequencyManager;
 
   /**
+   * Database services.
+   *
+   * @var \Drupal\Core\Database\Connection
+   */
+  protected $database;
+
+  /**
    * {@inheritdoc}
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EmailFrequencyManager $frequency_manager) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EmailFrequencyManager $frequency_manager, Connection $connection) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->frequencyManager = $frequency_manager;
+    $this->database = $connection;
   }
 
   /**
@@ -47,7 +56,8 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase implements Containe
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('plugin.manager.emailfrequency')
+      $container->get('plugin.manager.emailfrequency'),
+      $container->get('database')
     );
   }
 
@@ -57,6 +67,15 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase implements Containe
   public function processItem($data) {
     // First make sure it's an actual Activity entity.
     if (!empty($data['entity_id']) && $activity = Activity::load($data['entity_id'])) {
+      // Check if activity related entity exist.
+      if (!$activity->getRelatedEntity()) {
+        $activity->delete();
+        $this->database->delete('activity_notification_status')
+          ->condition('aid', $activity->id())
+          ->execute();
+        return;
+      }
+
       // Get Message Template id.
       $message = Message::load($activity->field_activity_message->target_id);
       $message_template_id = $message->getTemplate()->id();
