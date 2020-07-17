@@ -550,6 +550,9 @@ function social_event_form_alter(&$form, FormStateInterface $form_state, $form_i
       $form['#fieldgroups']['group_date_time']->children[] = 'event_all_day';
       $form['#group_children']['event_all_day'] = 'group_date_time';
       $form['#after_build'][] = 'social_event_date_after_build';
+
+      $form['#attached']['library'][] = 'social_event/admin';
+
       break;
 
     // Hide Enroll button if enrollment is disabled for this event.
