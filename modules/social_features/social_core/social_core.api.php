@@ -32,7 +32,7 @@ function hook_social_core_block_visibility_path() {
     'block_plugin_id_2' => [
       'path_1',
       'path_2',
-    ]
+    ],
   ];
 
   return $blocks;
