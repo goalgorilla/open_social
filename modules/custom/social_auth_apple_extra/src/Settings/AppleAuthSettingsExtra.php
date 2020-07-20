@@ -18,7 +18,7 @@ class AppleAuthSettingsExtra extends AppleAuthSettings implements AppleAuthSetti
    * {@inheritdoc}
    */
   public function getSocialNetworkKey() {
-    return 'apple';
+    return \Drupal::service('social_auth_apple.user_manager')->getSocialNetworkKey();
   }
 
 }

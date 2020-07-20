@@ -49,7 +49,7 @@ class LinkedInAuthSettings extends SettingsExtraBase implements LinkedInAuthSett
    * {@inheritdoc}
    */
   public function getSocialNetworkKey() {
-    return 'linkedin';
+    return \Drupal::service('social_auth_linkedin.user_manager')->getSocialNetworkKey();
   }
 
 }

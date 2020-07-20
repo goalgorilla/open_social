@@ -49,7 +49,7 @@ class GoogleAuthSettings extends SettingsExtraBase implements GoogleAuthSettings
    * {@inheritdoc}
    */
   public function getSocialNetworkKey() {
-    return 'google';
+    return \Drupal::service('social_auth_google.user_manager')->getSocialNetworkKey();
   }
 
 }
