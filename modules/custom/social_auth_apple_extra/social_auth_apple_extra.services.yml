@@ -6,3 +6,14 @@ services:
       - '@entity_field.manager'
       - '@logger.factory'
       - '@social_auth_apple.manager'
+
+  social_auth_apple.user_manager:
+    class: Drupal\social_auth_apple_extra\AppleUserManager
+    arguments:
+      - '@config.factory'
+      - '@entity_type.manager'
+      - '@language_manager'
+      - '@entity_field.manager'
+      - '@token'
+      - '@transliteration'
+      - '@logger.factory'

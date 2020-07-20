@@ -15,3 +15,12 @@ social_auth_apple.user_register:
     _role: 'anonymous'
   options:
     no_cache: TRUE
+
+social_auth_apple.user_link:
+  path: '/social-api/link/apple'
+  defaults:
+    _controller: '\Drupal\social_auth_apple_extra\Controller\AppleLinkController::linkAccount'
+  requirements:
+    _role: 'authenticated'
+  options:
+    no_cache: TRUE
