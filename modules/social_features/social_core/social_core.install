@@ -18,8 +18,6 @@ use Drupal\crop\Entity\CropType;
 use Drupal\node\Entity\Node;
 use Drupal\profile\Entity\Profile;
 use Drupal\group\Entity\Group;
-use Drupal\social_core\FeaturesRemoval\FeaturesInstallStorage;
-use Drupal\social_core\FeaturesRemoval\FeaturesManager;
 use Symfony\Component\Yaml\Yaml;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
@@ -31,15 +29,31 @@ use Drupal\field\FieldConfigInterface;
 function social_core_requirements($phase) {
   $requirements = [];
 
-  if ($phase === 'runtime') {
-    if (!\Drupal::service('module_handler')->moduleExists('social_file_private')) {
-      $requirements['social_file_private_module_check'] = [
-        'title' => 'Social Private Files',
-        'value' => t('All your uploaded files on the Open Social entities are potentially reachable by unauthorized users'),
-        'severity' => REQUIREMENT_WARNING,
-        'description' => t('It is strongly recommended to enable social_file_private module to make sure your file and image uploads on Open Social entities can not be accessed by unauthorized users. More info: https://www.drupal.org/docs/8/distributions/open-social/private-files'),
-      ];
-    }
+  switch ($phase) {
+    case 'runtime':
+      if (!\Drupal::service('module_handler')->moduleExists('social_file_private')) {
+        $requirements['social_file_private_module_check'] = [
+          'title' => 'Social Private Files',
+          'value' => t('All your uploaded files on the Open Social entities are potentially reachable by unauthorized users'),
+          'severity' => REQUIREMENT_WARNING,
+          'description' => t('It is strongly recommended to enable social_file_private module to make sure your file and image uploads on Open Social entities can not be accessed by unauthorized users. More info: https://www.drupal.org/docs/8/distributions/open-social/private-files'),
+        ];
+      }
+      break;
+
+    case 'update':
+      // From 9.0 on-wards a site must update to 8.1 first to ensure that the
+      // features removal update hooks have run that are no longer present in
+      // Open Social 9.0.
+      if (drupal_get_installed_schema_version('social_core') <= 8805) {
+        $requirements['social_core_update_version'] = [
+          'title' => t('Open Social Update Version'),
+          'description' => t('You must update Open Social to the latest version of 8.x before upgrading to 9.0 or later.'),
+          'severity' => REQUIREMENT_ERROR,
+        ];
+      }
+      break;
+
   }
 
   return $requirements;
@@ -73,54 +87,7 @@ function social_core_update_dependencies() {
     'profile' => 8001,
   ];
 
-  // Apply update hook positioning for features removal.
-  _social_core_dependencies_for_features_removal($dependencies);
-
   return $dependencies;
-}
-
-/**
- * Properly position the features removal update hook in between others.
- *
- * The features removal in 8.0 happened before Drupal core was updated to 8.8.0,
- * Group was updated to rc5 and pathauto was updated to 1.6. This means that our
- * features revert update hook needs to run before the update hooks from those
- * updates make configuration changes. We do want our updates to run directly
- * after the previous update hook however.
- *
- * Pathauto does not have new configuration changes in 1.5 or 1.6 so it has no
- * dependency on our features removal. Simply doing it after the 1.4 update hook
- * is fine.
- */
-function _social_core_dependencies_for_features_removal(&$dependencies) {
-  $dependencies['social_core'][8802] = [
-    // Make sure all Drupal core updates for 8.7 have run.
-    'system' => 8702,
-    // Make sure all group updates before rc5 have run.
-    'group' => 8016,
-    // We require all 7.x updates for Social Search to have run because
-    // configuration will be reverted that depends on the better exposed filters
-    // module that may still need to be enabled when coming from 6.x.
-    'social_search' => 8701,
-  ];
-
-  // Ensure we run before the update hook from Drupal core 8.8.
-  $dependencies['system'][8801] = [
-    'social_core' => 8802,
-  ];
-
-  // Ensure we run before the group updates from rc5.
-  $dependencies['group'][8017] = [
-    'social_core' => 8802,
-  ];
-
-  // If the pathauto module is enabled then all updates for that must have run
-  // before our feature revert is run. If the module isn't installed then we
-  // can't depend on that update because it will cause all dependent updates not
-  // to be executed.
-  if (\Drupal::moduleHandler()->moduleExists('pathauto')) {
-    $dependencies['social_core'][8802]['pathauto'] = 8107;
-  }
 }
 
 /**
@@ -943,59 +910,7 @@ function social_core_update_8801() {
  * Perform features revert for the last time.
  */
 function social_core_update_8802() {
-  // This function goes through all the installed modules and finds the
-  // `features_removal` folder. Any configuration inside of that folder will be
-  // imported as if `features-revert` was performed. This has to be done because
-  // configuration changes in 8.0 may not yet have an update hook at the time
-  // features was removed. This would cause required configuration changes not
-  // to be applied.
-  $removed_features = [];
-
-  // Go through the directories of enabled modules and find our special
-  // `config/features_removal` folder.
-  $drupal_root = \Drupal::root();
-  $active_modules = \Drupal::moduleHandler()->getModuleList();
-  foreach ($active_modules as $name => $module) {
-    $snapshot_dir = $drupal_root . DIRECTORY_SEPARATOR . $module->getPath() . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'features_removal';
-    if (is_dir($snapshot_dir)) {
-      $removed_features[] = $name;
-    }
-  }
-
-  $container = \Drupal::getContainer();
-
-  // Store the original services so they can be restored later.
-  $original_fm = $container->get('features.manager');
-  $original_fis = $container->get('features.extension_storage');
-
-  // Overwrite the services, we'll have to manually instantiate them.
-  // This is according to the original features.services.yml.
-  $container->set(
-    'features.manager',
-    new FeaturesManager(
-      $container->get('app.root'),
-      $container->get('entity.manager'),
-      $container->get('config.factory'),
-      $container->get('config.storage'),
-      $container->get('config.manager'),
-      $container->get('module_handler'),
-      $container->get('features.config_update')
-    )
-  );
-  $container->set(
-    'features.extension_storage',
-    new FeaturesInstallStorage($container->get('config.storage'))
-  );
-
-  // Let features import our modules one last time. We tell it to import
-  // non-features modules because the *.features.yaml file is already removed.
-  $updated_config = \Drupal::service('features.manager')->import($removed_features, TRUE);
-
-  // Restore the services in case other things in the request use them.
-  $container->set('features.manager', $original_fm);
-  $container->set('features.extension_storage', $original_fis);
-
-  // TODO: Output which config has been imported/updated?
+  // This update has been removed in 9.0.
 }
 
 /**
