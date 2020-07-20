@@ -14,7 +14,7 @@ class AppleAuthController extends AuthControllerBase {
   /**
    * {@inheritdoc}
    */
-  protected static function getModuleName() {
+  protected function getModuleName() {
     return 'social_auth_apple';
   }
 

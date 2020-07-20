@@ -2,12 +2,7 @@
 
 namespace Drupal\social_auth_extra\Controller;
 
-use Drupal\Core\Controller\ControllerBase;
-use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Routing\TrustedRedirectResponse;
-use Drupal\social_api\Plugin\NetworkManager;
-use Drupal\social_auth_extra\AuthManagerInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
@@ -15,62 +10,10 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
  *
  * @package Drupal\social_auth_extra\Controller
  */
-abstract class AuthControllerBase extends ControllerBase {
+abstract class AuthControllerBase extends SocialAuthExtraControllerBase {
 
   /**
-   * The network manager.
-   *
-   * @var \Drupal\social_api\Plugin\NetworkManager
-   */
-  protected $networkManager;
-
-  /**
-   * The auth manager.
-   *
-   * @var \Drupal\social_auth_extra\AuthManagerInterface
-   */
-  protected $authManager;
-
-  /**
-   * Contains instance of PHP Library.
-   *
-   * @var object
-   */
-  protected $sdk;
-
-  /**
-   * AuthControllerBase constructor.
-   *
-   * @param \Drupal\social_api\Plugin\NetworkManager $network_manager
-   *   The network manager.
-   * @param \Drupal\social_auth_extra\AuthManagerInterface $auth_manager
-   *   The auth manager.
-   * @param \Drupal\Core\Messenger\MessengerInterface $messenger
-   *   The messenger.
-   */
-  public function __construct(
-    NetworkManager $network_manager,
-    AuthManagerInterface $auth_manager,
-    MessengerInterface $messenger
-  ) {
-    $this->networkManager = $network_manager;
-    $this->authManager = $auth_manager;
-    $this->setMessenger($messenger);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function create(ContainerInterface $container) {
-    return new static(
-      $container->get('plugin.network.manager'),
-      $container->get(explode('\\', get_called_class())[1] . '.auth_manager'),
-      $container->get('messenger')
-    );
-  }
-
-  /**
-   * Response for path 'user/register/linkedin'.
+   * Response for path 'user/register/*'.
    *
    * Redirects the user to social network for registration.
    */
@@ -134,16 +77,6 @@ abstract class AuthControllerBase extends ControllerBase {
     }
 
     return $this->sdk;
-  }
-
-  /**
-   * Returns the module name.
-   *
-   * @return string
-   *   The module name.
-   */
-  protected static function getModuleName() {
-    return NULL;
   }
 
 }

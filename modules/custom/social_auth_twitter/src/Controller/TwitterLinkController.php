@@ -2,13 +2,8 @@
 
 namespace Drupal\social_auth_twitter\Controller;
 
-use Drupal\Core\Controller\ControllerBase;
-use Drupal\social_api\Plugin\NetworkManager;
-use Drupal\social_auth_twitter\TwitterAuthManager;
+use Drupal\social_auth_extra\Controller\SocialAuthExtraLinkControllerBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\user\Entity\User;
-use Drupal\Core\Routing\TrustedRedirectResponse;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
@@ -16,48 +11,25 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
  *
  * @package Drupal\social_auth_twitter\Controller
  */
-class TwitterLinkController extends ControllerBase {
-
-  protected $networkManager;
-  protected $authManager;
-  protected $request;
+class TwitterLinkController extends SocialAuthExtraLinkControllerBase {
 
   /**
-   * TwitterLinkController constructor.
+   * The current request.
+   *
+   * @var \Symfony\Component\HttpFoundation\Request
    */
-  public function __construct(NetworkManager $network_manager, TwitterAuthManager $auth_manager, RequestStack $request_stack) {
-    $this->networkManager = $network_manager;
-    $this->authManager = $auth_manager;
-    $this->request = $request_stack->getCurrentRequest();
-  }
+  private $request;
 
   /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
-    return new static(
-      $container->get('plugin.network.manager'),
-      $container->get('social_auth_twitter.auth_manager'),
-      $container->get('request_stack')
-    );
-  }
+    /** @var static $controller */
+    $controller = parent::create($container);
 
-  /**
-   * Response for path 'social-api/link/linkedin'.
-   *
-   * Redirects the user to Twitter for joining accounts.
-   */
-  public function linkAccount() {
-    $sdk = $this->getSdk();
+    $controller->request = $container->get('request_stack')->getCurrentRequest();
 
-    if ($sdk instanceof RedirectResponse) {
-      return $sdk;
-    }
-
-    $this->authManager->setSdk($sdk);
-    $url = $this->authManager->getAuthenticationUrl('link');
-
-    return new TrustedRedirectResponse($url);
+    return $controller;
   }
 
   /**
@@ -73,18 +45,25 @@ class TwitterLinkController extends ControllerBase {
       return $sdk;
     }
 
-    $network_manager = $this->networkManager->createInstance('social_auth_twitter');
+    /** @var \Drupal\social_auth_extra\Plugin\Network\NetworkExtraInterface $network_manager */
+    $network_manager = $this->networkManager->createInstance($this->getModuleName());
+
     $data_handler = $network_manager->getDataHandler();
 
     // Get the Twitter OAuth token from storage.
-    if (!($oauth_token = $data_handler->get('oauth_token')) || !($oauth_token_secret = $data_handler->get('oauth_token_secret'))) {
-      drupal_set_message($this->t('Twitter login failed. Token or Token Secret is not valid.'), 'error');
+    if (
+      !($oauth_token = $data_handler->get('oauth_token')) ||
+      !($oauth_token_secret = $data_handler->get('oauth_token_secret'))
+    ) {
+      $this->messenger()->addError($this->t('Twitter login failed. Token or Token Secret is not valid.'));
+
       return $this->redirect('entity.user.edit_form', [
         'user' => $this->currentUser()->id(),
       ]);
     }
 
     $this->authManager->setSdk($sdk);
+
     $this->authManager->setAccessToken([
       'oauth_token' => $oauth_token,
       'oauth_token_secret' => $oauth_token_secret,
@@ -102,70 +81,46 @@ class TwitterLinkController extends ControllerBase {
 
     // Get user's profile from Twitter API.
     if (!($this->authManager->getProfile()) || !($account_id = $this->authManager->getAccountId())) {
-      drupal_set_message($this->t('@network login failed, could not load @network profile. Contact site administrator.', [
+      $this->messenger()->addError($this->t('@network login failed, could not load @network profile. Contact site administrator.', [
         '@network' => $this->t('Twitter'),
-      ]), 'error');
+      ]));
+
       return $this->redirect('entity.user.edit_form', [
         'user' => $this->currentUser()->id(),
       ]);
     }
+
+    $storage = $this->entityTypeManager()->getStorage('user');
 
     // Check whether any another user account already connected.
-    $account = $this->entityTypeManager()
-      ->getStorage('user')
-      ->loadByProperties(['twitter_id' => $account_id]);
-    $account = current($account);
+    $accounts = $storage->loadByProperties(['twitter_id' => $account_id]);
 
-    // Check whether another account was connected to this Twitter account.
-    if ($account && (int) $account->id() !== (int) $this->currentUser()->id()) {
-      drupal_set_message($this->t('Your @network account has already connected to another account on this site.', [
-        '@network' => $this->t('Twitter'),
-      ]), 'warning');
-      return $this->redirect('entity.user.edit_form', [
-        'user' => $this->currentUser()->id(),
-      ]);
+    if ($accounts) {
+      $account = current($accounts);
+
+      // Check whether another account was connected to this Twitter account.
+      if ((int) $account->id() !== (int) $this->currentUser()->id()) {
+        $this->messenger()->addWarning($this->t('Your @network account has already connected to another account on this site.', [
+          '@network' => $this->t('Twitter'),
+        ]));
+
+        return $this->redirect('entity.user.edit_form', [
+          'user' => $this->currentUser()->id(),
+        ]);
+      }
     }
 
-    $account = User::load($this->currentUser()->id());
+    $account = $storage->load($this->currentUser()->id());
     $account->get('twitter_id')->setValue($account_id);
     $account->save();
 
-    drupal_set_message($this->t('You are now able to log in with @network', [
+    $this->messenger()->addStatus($this->t('You are now able to log in with @network', [
       '@network' => $this->t('Twitter'),
     ]));
+
     return $this->redirect('entity.user.edit_form', [
       'user' => $account->id(),
     ]);
-  }
-
-  /**
-   * Returns the SDK instance or RedirectResponse when error occurred.
-   *
-   * @return mixed|\Symfony\Component\HttpFoundation\RedirectResponse
-   *   Can return an SDK instance or a RedirectResponse to the user edit form.
-   */
-  public function getSdk() {
-    $network_manager = $this->networkManager->createInstance('social_auth_twitter');
-
-    if (!$network_manager->isActive()) {
-      drupal_set_message($this->t('@network is disallowed. Contact site administrator.', [
-        '@network' => $this->t('Twitter'),
-      ]), 'error');
-      return $this->redirect('entity.user.edit_form', [
-        'user' => $this->currentUser()->id(),
-      ]);
-    }
-
-    if (!$sdk = $network_manager->getSdk()) {
-      drupal_set_message($this->t('@network Auth not configured properly. Contact site administrator.', [
-        '@network' => $this->t('Twitter'),
-      ]), 'error');
-      return $this->redirect('entity.user.edit_form', [
-        'user' => $this->currentUser()->id(),
-      ]);
-    }
-
-    return $sdk;
   }
 
 }
