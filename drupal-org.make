@@ -123,6 +123,7 @@ projects[views_bulk_operations][version] = 3.4
 projects[views_bulk_operations][patch][] = "https://www.drupal.org/files/issues/2019-09-19/3042494-trigger-vbo-action-on-jquery-checkbox-change-5.patch"
 projects[views_infinite_scroll][type] = module
 projects[views_infinite_scroll][version] = 1.6
+projects[views_infinite_scroll][patch][] = "https://www.drupal.org/files/issues/2019-08-15/table_tbody_append-2899705-26.patch"
 projects[votingapi][type] = module
 projects[votingapi][version] = 3.0-beta1
 projects[votingapi][patch][] = "https://www.drupal.org/files/issues/2020-01-31/votingapi-3110353-2.patch"
