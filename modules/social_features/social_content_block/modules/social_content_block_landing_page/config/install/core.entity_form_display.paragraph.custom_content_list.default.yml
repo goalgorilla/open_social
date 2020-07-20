@@ -1,0 +1,24 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.custom_content_list.field_custom_content_list
+    - paragraphs.paragraphs_type.custom_content_list
+id: paragraph.custom_content_list.default
+targetEntityType: paragraph
+bundle: custom_content_list
+mode: default
+content:
+  field_custom_content_list:
+    weight: 0
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: entity_reference_autocomplete
+    region: content
+hidden:
+  created: true
+  status: true
