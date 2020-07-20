@@ -100,7 +100,7 @@ function social_event_invite_update_8004() {
 }
 
 /**
- * Update invite message in the message template
+ * Update invite message in the message template.
  */
 function social_event_invite_update_8005() {
   $config = \Drupal::configFactory()->getEditable('message.template.invite_event_enrollment');
@@ -116,7 +116,7 @@ function social_event_invite_update_8005() {
     ],
     2 => [
       'format' => 'full_html',
-      'value' => '<p>Hi,</p> ' . "\r\n\r\n" . '<p>I would like to invite you to join my event [social_event:event_iam_organizing] on [site:name].</p>' . "\r\n\r\n" . '<p>Kind regards,</p>'. "\r\n\r\n" . '<p>[message:author:display-name]</p>' . "\r\n\r\n" . '<table class="btn-wrap">' . "\r\n\t" . '<tbody>' . "\r\n\t\t" . '<tr>' . "\r\n\t\t\t" . '<td class="align-center"><a class="btn-link btn-link-bg btn-link-one" href="[social_event_invite:user_login_event_invites_overview]">View event</a></td>' . "\r\n\t\t\t" . '<td class="align-center"><a class="btn-link btn-link-bg btn-link-one" href="[site:url]">About [site:name]</a></td>' . "\r\n\t\t" . '</tr>' . "\r\n\t" . '</tbody>' . "\r\n" . '</table>' . "\r\n",
+      'value' => '<p>Hi,</p> ' . "\r\n\r\n" . '<p>I would like to invite you to join my event [social_event:event_iam_organizing] on [site:name].</p>' . "\r\n\r\n" . '<p>Kind regards,</p>' . "\r\n\r\n" . '<p>[message:author:display-name]</p>' . "\r\n\r\n" . '<table class="btn-wrap">' . "\r\n\t" . '<tbody>' . "\r\n\t\t" . '<tr>' . "\r\n\t\t\t" . '<td class="align-center"><a class="btn-link btn-link-bg btn-link-one" href="[social_event_invite:user_login_event_invites_overview]">View event</a></td>' . "\r\n\t\t\t" . '<td class="align-center"><a class="btn-link btn-link-bg btn-link-one" href="[site:url]">About [site:name]</a></td>' . "\r\n\t\t" . '</tr>' . "\r\n\t" . '</tbody>' . "\r\n" . '</table>' . "\r\n",
     ],
   ];
 
