@@ -1,0 +1,57 @@
+core.entity_view_display.comment.post_comment.default:
+  expected_config:
+    content:
+      field_comment_body:
+        type: basic_string
+  update_actions:
+    add:
+      content:
+        like_and_dislike:
+          region: content
+          settings: {  }
+          third_party_settings: {  }
+          weight: 2
+    change:
+      content:
+        field_comment_body:
+          type: text_default
+core.entity_view_display.post.post.activity:
+  expected_config:
+    content:
+      field_post_comments:
+        weight: 3
+  update_actions:
+    change:
+      content:
+        field_post_comments:
+          weight: 2
+        like_and_dislike:
+          region: content
+          settings: {  }
+          third_party_settings: {  }
+          weight: 3
+core.entity_view_display.post.post.activity_comment:
+  expected_config: {  }
+  update_actions:
+    add:
+      content:
+        like_and_dislike:
+          region: content
+          settings: {  }
+          third_party_settings: {  }
+          weight: 2
+core.entity_view_display.post.post.default:
+  expected_config:
+    content:
+      field_post_comments:
+        weight: 3
+  update_actions:
+    change:
+      content:
+        field_post_comments:
+          weight: 2
+        like_and_dislike:
+          region: content
+          settings: {  }
+          third_party_settings: {  }
+          weight: 3
