@@ -57,7 +57,6 @@ class SocialEventManagersAddEnrolleeForm extends FormBase {
    */
   protected $renderer;
 
-
   /**
    * Constructs a new GroupContentController.
    */
@@ -238,7 +237,7 @@ class SocialEventManagersAddEnrolleeForm extends FormBase {
       '#theme' => 'invite_email_preview',
       '#title' => $this->t('Message'),
       '#logo' => $logo,
-      '#subject' =>  t('Notification from %site_name', $variables),
+      '#subject' => $this->t('Notification from %site_name', $variables),
       '#body' => $body,
       '#helper' => $this->token->replace($invite_config->get('invite_helper'), $params),
     ];
