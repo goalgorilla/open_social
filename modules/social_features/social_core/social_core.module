@@ -558,8 +558,7 @@ function social_core_block_access(Block $block, $operation, AccountInterface $ac
 
     // Go through the request paths and see if they match.
     foreach ($blocks[$block->getPluginId()] as $page) {
-      if (\Drupal::service('path.matcher')
-          ->matchPath($current_path, $page) === TRUE) {
+      if (\Drupal::service('path.matcher')->matchPath($current_path, $page) === TRUE) {
         return AccessResult::forbidden();
       }
     }
