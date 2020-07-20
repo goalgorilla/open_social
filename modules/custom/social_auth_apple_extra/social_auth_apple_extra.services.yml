@@ -1,12 +1,4 @@
 services:
-  social_auth_apple_extra.auth_manager:
-    class: Drupal\social_auth_apple_extra\AppleAuthExtraManager
-    arguments:
-      - '@url_generator.non_bubbling'
-      - '@entity_field.manager'
-      - '@logger.factory'
-      - '@social_auth_apple.manager'
-
   social_auth_apple.user_manager:
     class: Drupal\social_auth_apple_extra\AppleUserManager
     arguments:
@@ -17,3 +9,29 @@ services:
       - '@token'
       - '@transliteration'
       - '@logger.factory'
+
+  social_auth_apple_extra.auth_manager:
+    class: Drupal\social_auth_apple_extra\AppleAuthExtraManager
+    arguments:
+      - '@url_generator.non_bubbling'
+      - '@entity_field.manager'
+      - '@logger.factory'
+      - '@social_auth_apple.manager'
+
+  social_auth_apple_extra.user_authenticator:
+    class: Drupal\social_auth_apple_extra\User\AppleUserAuthenticator
+    arguments:
+      - '@current_user'
+      - '@messenger'
+      - '@logger.factory'
+      - '@social_auth.user_manager'
+      - '@social_auth.data_handler'
+      - '@config.factory'
+      - '@router.route_provider'
+      - '@event_dispatcher'
+      - '@email.validator'
+
+  social_auth_apple_extra.route_subscriber:
+    class: Drupal\social_auth_apple_extra\Routing\RouteSubscriber
+    tags:
+      - { name: event_subscriber }
