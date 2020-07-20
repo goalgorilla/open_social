@@ -211,4 +211,24 @@ abstract class UserManager implements UserManagerInterface {
     $this->profileType = $profile_type;
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function setAccountId($account_id) {
+    $this->account->get($this->getSocialNetworkKey() . '_id')->setValue($account_id);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getAccountId() {
+    $field_name = $this->getSocialNetworkKey() . '_id';
+
+    if ($this->account->hasField($field_name)) {
+      return $this->account->get($field_name)->value;
+    }
+
+    return '';
+  }
+
 }
