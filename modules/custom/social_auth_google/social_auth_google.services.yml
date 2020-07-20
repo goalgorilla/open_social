@@ -1,6 +1,6 @@
 services:
   social_auth_google.auth_manager:
-    class: '\Drupal\social_auth_google\GoogleAuthManager'
+    class: Drupal\social_auth_google\GoogleAuthManager
     arguments:
       - '@url_generator.non_bubbling'
       - '@entity_field.manager'
@@ -8,7 +8,7 @@ services:
       - '@request_stack'
 
   social_auth_google.user_manager:
-    class: '\Drupal\social_auth_google\GoogleUserManager'
+    class: Drupal\social_auth_google\GoogleUserManager
     arguments:
       - '@config.factory'
       - '@entity_type.manager'
