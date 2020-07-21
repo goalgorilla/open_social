@@ -111,7 +111,7 @@ class InviteEmailBaseForm extends FormBase {
     $form['actions']['#type'] = 'actions';
     $form['actions']['submit'] = [
       '#type' => 'submit',
-      '#value' => $this->t('Send Invite(s)'),
+      '#value' => $this->t('Send your invite(s) by email'),
     ];
 
     return $form;
