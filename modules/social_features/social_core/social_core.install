@@ -1231,7 +1231,7 @@ function social_core_update_8811() {
 }
 
 /**
- * Install the Gin theme(as admin) and Install Gin Toolbar and Coffee modules.
+ * Install the Gin theme(as admin) and Install Gin Toolbar.
  */
 function social_core_update_8812(&$sandbox) {
   // Install Gin Admin Theme.
@@ -1240,6 +1240,6 @@ function social_core_update_8812(&$sandbox) {
   \Drupal::configFactory()->getEditable('system.theme')
     ->set('admin', 'gin')
     ->save();
-  // Install Gin Toolbar and Coffee modules.
-  \Drupal::service('module_installer')->install(['gin_toolbar', 'coffee']);
+  // Install Gin Toolbar module.
+  \Drupal::service('module_installer')->install(['gin_toolbar']);
 }
