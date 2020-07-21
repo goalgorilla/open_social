@@ -1,4 +1,15 @@
-.node-event-form {
+@mixin bg-block {
+  max-width: 500px;
+  background: #f3f3f3;
+  border-radius: 5px !important;
+
+  label {
+    margin-bottom: .5rem;
+  }
+}
+
+.node-event-form,
+.node-event-edit-form {
   .field--name-field-event-date,
   .field--name-field-event-date-end {
     .card {
@@ -14,13 +25,7 @@
     }
 
     .card__block {
-      max-width: 500px;
-      background: #f3f3f3;
-      border-radius: 5px !important;
-
-      label {
-        margin-bottom: .5rem;
-      }
+      @include bg-block;
 
       .form-inline {
         display: flex;
@@ -46,6 +51,20 @@
             }
           }
         }
+      }
+    }
+  }
+
+  .field--type-address {
+    .panel {
+      .panel-heading {
+        margin-bottom: .5rem;
+        font-size: .875rem;
+      }
+
+      [id*='address-ajax-wrapper'] {
+        @include bg-block;
+        padding: 1.25rem 1.25rem .25rem;
       }
     }
   }
