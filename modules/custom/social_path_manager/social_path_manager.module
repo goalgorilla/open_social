@@ -292,19 +292,15 @@ function social_path_manager_preprocess_block(&$variables) {
     if (!empty($variables['elements']['#plugin_id']) &&
       $variables['elements']['#plugin_id'] === 'social_page_title_block' &&
       $variables['elements']['#id'] === 'socialblue_pagetitleblock_content') {
-      $current_url = Url::fromRoute('<current>');
-      $current_path = $current_url->toString();
-
-      $paths_to_exclude = [
-        'edit',
-        'add',
-        'delete',
-      ];
-
-      $in_path = str_replace($paths_to_exclude, '', $current_path) !== $current_path;
 
       // We make sure there are no two heroes shown only page titles.
-      if ($in_path) {
+      $route_name = \Drupal::routeMatch()->getRouteName();
+      if (in_array($route_name, [
+        'entity.node.edit_form',
+        'entity.node.delete_form',
+        'entity.node.add_form',
+      ])) {
+
         $variables['content']['#type'] = 'page_title';
         if (!empty($variables['content']['#hero_node'])) {
           unset($variables['content']['#hero_node']);
