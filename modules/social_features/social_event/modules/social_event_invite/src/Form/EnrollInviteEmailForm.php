@@ -127,7 +127,7 @@ class EnrollInviteEmailForm extends InviteEmailBaseForm {
       '#type' => 'fieldset',
       '#title' => [
         'text' => [
-          '#markup' => t('Preview the email that the invitees will see.'),
+          '#markup' => t('Preview your email invite'),
         ],
         'icon' => [
           '#markup' => '<svg class="icon icon-expand_more"><use xlink:href="#icon-expand_more" /></svg>',

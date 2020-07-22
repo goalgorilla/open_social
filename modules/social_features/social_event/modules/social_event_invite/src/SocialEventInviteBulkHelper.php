@@ -231,8 +231,8 @@ class SocialEventInviteBulkHelper {
 
         // Clear the cache.
         $tags = [];
-        $tags[] = 'enrollment:' . $nid . '-' . $uid;
-        $tags[] = 'event_content_list:entity:' . $uid;
+        $tags[] = 'enrollment:' . $nid . '-' . $user->id();
+        $tags[] = 'event_content_list:entity:' . $user->id();
         Cache::invalidateTags($tags);
       }
 
@@ -268,7 +268,7 @@ class SocialEventInviteBulkHelper {
       drupal_set_message(t('There was an unexpected error.'), 'error');
     }
 
-    return new RedirectResponse(Url::fromRoute('social_event_invite.invite_email', ['node' => $nid])->toString());
+    return new RedirectResponse(Url::fromRoute('view.event_manage_enrollment_invites.page_manage_enrollment_invites', ['node' => $nid])->toString());
   }
 
   /**
@@ -288,7 +288,7 @@ class SocialEventInviteBulkHelper {
       drupal_set_message(t('There was an unexpected error.'), 'error');
     }
 
-    return new RedirectResponse(Url::fromRoute('social_event_invite.invite_email', ['node' => $nid])->toString());
+    return new RedirectResponse(Url::fromRoute('view.event_manage_enrollment_invites.page_manage_enrollment_invites', ['node' => $nid])->toString());
   }
 
   /**
@@ -308,7 +308,7 @@ class SocialEventInviteBulkHelper {
       drupal_set_message(t('There was an unexpected error.'), 'error');
     }
 
-    return new RedirectResponse(Url::fromRoute('social_event_invite.invite_email', ['node' => $nid])->toString());
+    return new RedirectResponse(Url::fromRoute('view.event_manage_enrollment_invites.page_manage_enrollment_invites', ['node' => $nid])->toString());
   }
 
 }

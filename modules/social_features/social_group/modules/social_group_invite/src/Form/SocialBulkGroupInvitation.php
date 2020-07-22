@@ -196,7 +196,7 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
 
     $form['preview'] = [
       '#theme' => 'invite_email_preview',
-      '#title' => $this->t('Message'),
+      '#title' => $this->t('Preview your email invite'),
       '#logo' => $logo,
       '#subject' => $this->token->replace($invitation_subject, $params),
       '#body' => $invitation_body,
@@ -207,7 +207,7 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
     unset($form['submit']);
     $form['actions']['submit'] = [
       '#type' => 'submit',
-      '#value' => $this->t('Send invite(s)'),
+      '#value' => $this->t('Send your invite(s) by email'),
     ];
 
     return $form;
