@@ -245,7 +245,22 @@ class EnrollInviteEmailForm extends InviteEmailBaseForm {
     $tempstore = $this->tempStoreFactory->get('event_invite_form_values');
     try {
       $tempstore->set('params', $params);
-      $form_state->setRedirect('social_event_invite.confirm_invite', ['node' => $form_state->getValue('event')]);
+
+      // Skip confirmation page.
+      $batch = [
+        'title' => $this->t('Sending invites...'),
+        'init_message' => $this->t("Preparing to send invites..."),
+        'operations' => [
+          [
+            '\Drupal\social_event_invite\SocialEventInviteBulkHelper::bulkInviteUsersEmails',
+            [$params['recipients'], $params['nid']],
+          ],
+        ],
+        'finished' => '\Drupal\social_event_invite\SocialEventInviteBulkHelper::bulkInviteUserEmailsFinished',
+      ];
+      batch_set($batch);
+      // @todo: create a setting to skip confirm page.
+      // $form_state->setRedirect('social_event_invite.confirm_invite', ['node' => $form_state->getValue('event')]);
     }
     catch (\Exception $error) {
       $this->loggerFactory->get('event_invite_form_values')->alert(t('@err', ['@err' => $error]));
