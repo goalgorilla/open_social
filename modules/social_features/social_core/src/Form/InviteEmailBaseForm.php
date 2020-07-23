@@ -91,8 +91,9 @@ class InviteEmailBaseForm extends FormBase {
     ];
 
     $form['users_fieldset']['user'] = [
+      '#title' => $this->t('Find people by name or enter email addresses'),
       '#type' => 'select2',
-      '#description' => $this->t('To add multiple members, separate each member with a comma ( , ) or semicolon ( ; ).'),
+      '#description' => $this->t('You can enter or paste email addresses separated by a comma.'),
       '#multiple' => TRUE,
       '#tags' => TRUE,
       '#autocomplete' => TRUE,
@@ -100,7 +101,7 @@ class InviteEmailBaseForm extends FormBase {
       '#target_type' => 'user',
       '#select2' => [
         'tags' => TRUE,
-        'placeholder' => t('Profile name, janedoe@email.com'),
+        'placeholder' => t('Jane Doe, johndoe@example.com'),
         'tokenSeparators' => [',', ';'],
         'autocomplete' => FALSE,
       ],
