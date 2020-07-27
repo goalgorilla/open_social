@@ -209,7 +209,7 @@ function social_profile_fields_social_user_export_plugin_info_alter(array &$plug
     $type = $profile_type->id();
 
     $profile_fields = \Drupal::service('social_profile_fields.helper')->getProfileFields($type);
-    if (key_exists('profile_profile_field_profile_address', $profile_fields)) {
+    if (array_key_exists('profile_profile_field_profile_address', $profile_fields)) {
       $profile_fields[] = ['id' => 'profile_address_field_city'];
       $profile_fields[] = ['id' => 'profile_address_field_address'];
     }
