@@ -45,6 +45,18 @@ function activity_creator_schema() {
 }
 
 /**
+ * Implements hook_update_dependencies().
+ */
+function activity_creator_update_dependencies() {
+  // New config changes should run after the Update Helper module is enabled.
+  $dependencies['activity_creator'][8801] = [
+    'social_core' => 8805,
+  ];
+
+  return $dependencies;
+}
+
+/**
  * Create new database table {activity_notification_status}.
  */
 function activity_creator_update_8001() {
@@ -106,4 +118,22 @@ function activity_creator_update_8002() {
     \Drupal::logger('default')->error($exception->getMessage());
     $txn->rollBack();
   }
+}
+
+/**
+ * Update cardinality for field_activity_recipient_user.
+ *
+ * After features removal accidentally the cardinality was set to 1 again,
+ * due to #3087083 it should be set to UNLIMITED so one activity can be
+ * send to multiple users. Noticed in #3125732.
+ */
+function activity_creator_update_8801() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('activity_creator', 'activity_creator_update_8801');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
 }

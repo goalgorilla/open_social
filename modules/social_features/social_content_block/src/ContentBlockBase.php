@@ -14,4 +14,17 @@ use Drupal\Component\Plugin\PluginBase;
  */
 abstract class ContentBlockBase extends PluginBase implements ContentBlockPluginInterface {
 
+  /**
+   * {@inheritdoc}
+   */
+  public function supportedSortOptions() : array {
+    return [
+      'created' => 'Creation date',
+      'changed' => 'Last updated',
+      'most_commented' => 'Most commented',
+      'most_liked' => 'Most liked',
+      'last_interacted' => 'Last interacted',
+    ];
+  }
+
 }

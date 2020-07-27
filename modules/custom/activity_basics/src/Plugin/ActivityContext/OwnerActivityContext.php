@@ -83,6 +83,13 @@ class OwnerActivityContext extends ActivityContextBase {
       $storage = $this->entityTypeManager->getStorage($original_related_object['target_type']);
       $original_related_entity = $storage->load($original_related_object['target_id']);
 
+      // In the case where a user is added by an event manager we'll need to
+      // check on the enrollment status. If the user is not really enrolled we
+      // should skip sending the notification.
+      if ($original_related_entity->get('field_enrollment_status')->value === '0') {
+        return $recipients;
+      }
+
       if (!empty($original_related_entity) && $original_related_entity->getAccount() !== NULL) {
         $recipients[] = [
           'target_type' => 'user',

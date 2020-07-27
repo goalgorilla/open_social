@@ -24,12 +24,22 @@
 <div class="card__block card__block--list">
 
   <a href="{{ profile_home }}" class="card__text list-item">
-    <span class="list-item__avatar">
+    <span class="list-item__avatar list-item__avatar--medium">
       {{ content.field_profile_image }}
     </span>
 
     <span class="list-item__text">
       {{ profile_name }} {{ profile_name_extra }}
+
+      {% if content.field_profile_function|render or content.field_profile_organization|render %}
+        <div class="list-item__text--small">
+          {% if content.field_profile_organization|render %}
+            {{ '@function @ @organization'|t({'@function': content.field_profile_function|render, '@organization': content.field_profile_organization|render}) }}
+          {% else %}
+            {{ content.field_profile_function }}
+          {% endif %}
+        </div>
+      {% endif %}
     </span>
 
   </a>

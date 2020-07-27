@@ -2,11 +2,13 @@
 
 namespace Drupal\socialbase\Plugin\Preprocess;
 
+use Drupal\block_content\Entity\BlockContent;
 use Drupal\bootstrap\Plugin\Preprocess\PreprocessBase;
 use Drupal\block\Entity\Block as BlockEntity;
 use Drupal\Component\Utility\Html;
 use Drupal\file\Entity\File;
 use Drupal\image\Entity\ImageStyle;
+use Drupal\image\Plugin\Field\FieldType\ImageItem;
 
 /**
  * Pre-processes variables for the "block" theme hook.
@@ -197,19 +199,27 @@ class Block extends PreprocessBase {
     // AN Homepage block.
     if (isset($variables['elements']['content']['#block_content'])) {
       if ($variables['elements']['content']['#block_content']->bundle() == 'hero_call_to_action_block') {
+        if (isset($variables['elements']['content']['field_hero_image']) && isset($variables['elements']['content']['field_hero_image'][0])) {
+          /** @var \Drupal\image\Plugin\Field\FieldType\ImageItem $image_item */
+          $image_item = $variables['elements']['content']['field_hero_image'][0]['#item'];
+          $file_id = NULL;
 
-        if (isset($variables['elements']['content']['field_hero_image'])) {
-          $imageitem = $variables['elements']['content']['field_hero_image'][0]['#item']->getEntity();
-          $imagestyle = $variables['elements']['content']['field_hero_image'][0]['#image_style'];
-          $file_id = $imageitem->get('field_hero_image')->target_id;
+          if ($image_item && $image_item instanceof ImageItem) {
+            /** @var \Drupal\block_content\Entity\BlockContent $block_content */
+            $block_content = $image_item->getEntity();
+            if ($block_content && $block_content instanceof BlockContent) {
+              $file_id = $block_content->get('field_hero_image')->target_id;
+            }
+          }
+          $image_style = $variables['elements']['content']['field_hero_image'][0]['#image_style'];
 
           // First filter out image_style,
           // So responsive image module doesn't break.
-          if (isset($imagestyle)) {
+          if (isset($image_style)) {
             // If it's an existing file.
             if ($file = File::load($file_id)) {
               // Style and set it in the content.
-              $styled_image_url = ImageStyle::load($imagestyle)
+              $styled_image_url = ImageStyle::load($image_style)
                 ->buildUrl($file->getFileUri());
               $variables['image_url'] = $styled_image_url;
 

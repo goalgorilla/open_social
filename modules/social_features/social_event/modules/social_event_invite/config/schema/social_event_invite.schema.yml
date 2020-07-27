@@ -1,0 +1,22 @@
+social_event_invite.settings:
+  type: config_object
+  label: 'Social Event Invite Settings'
+  mapping:
+    invite_enroll:
+      type: boolean
+      label: 'Allow event managers to invite users and external people.'
+    invite_group_types:
+      type: sequence
+      label: 'For which group type the invite feature is turned on.'
+      group_type:
+        type: string
+        label: 'Group Type'
+    invite_subject:
+      type: string
+      label: 'The invite email subject.'
+    invite_message:
+      type: text
+      label: 'The invite email message body.'
+    invite_helper:
+      type: text
+      label: 'The invite helper text.'
