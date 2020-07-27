@@ -247,8 +247,9 @@ class SocialProfileFieldsSettingsForm extends ConfigFormBase implements Containe
       }
     }
 
-    $config->set('profile_address_field_city', $form_state->getValue('profile_address_field_city'));
-    $config->set('profile_address_field_address', $form_state->getValue('profile_address_field_address'));
+    $main_address_value = $form_state->getValue('profile_profile_field_profile_address');
+    $config->set('profile_address_field_city', $main_address_value ? $form_state->getValue('profile_address_field_city') : FALSE);
+    $config->set('profile_address_field_address', $main_address_value ? $form_state->getValue('profile_address_field_address') : FALSE);
 
     $config->set('nickname_unique_validation', $form_state->getValue('nickname_unique_validation'));
     $config->save();
