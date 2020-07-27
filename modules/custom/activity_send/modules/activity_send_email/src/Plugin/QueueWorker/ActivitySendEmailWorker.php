@@ -2,6 +2,7 @@
 
 namespace Drupal\activity_send_email\Plugin\QueueWorker;
 
+use Drupal\activity_creator\ActivityNotifications;
 use Drupal\activity_creator\Entity\Activity;
 use Drupal\activity_send\Plugin\QueueWorker\ActivitySendWorkerBase;
 use Drupal\activity_send_email\EmailFrequencyManager;
@@ -40,12 +41,27 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase implements Containe
   protected $database;
 
   /**
+   * The activity notification service.
+   *
+   * @var \Drupal\activity_creator\ActivityNotifications
+   */
+  protected $activityNotifications;
+
+  /**
    * {@inheritdoc}
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EmailFrequencyManager $frequency_manager, Connection $connection) {
+  public function __construct(
+    array $configuration,
+    $plugin_id,
+    $plugin_definition,
+    EmailFrequencyManager $frequency_manager,
+    Connection $connection,
+    ActivityNotifications $activity_notifications
+  ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->frequencyManager = $frequency_manager;
     $this->database = $connection;
+    $this->activityNotifications = $activity_notifications;
   }
 
   /**
@@ -57,7 +73,8 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase implements Containe
       $plugin_id,
       $plugin_definition,
       $container->get('plugin.manager.emailfrequency'),
-      $container->get('database')
+      $container->get('database'),
+      $container->get('activity_creator.activity_notifications')
     );
   }
 
@@ -70,9 +87,7 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase implements Containe
       // Check if activity related entity exist.
       if (!$activity->getRelatedEntity()) {
         $activity->delete();
-        $this->database->delete('activity_notification_status')
-          ->condition('aid', $activity->id())
-          ->execute();
+        $this->activityNotifications->deleteNotificationsbyIds([$activity->id()]);
         return;
       }
 
