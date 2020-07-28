@@ -200,19 +200,15 @@ function social_activity_update_8802() {
 }
 
 /**
- * Revert and create "Explore Stream" views block.
+ * Add "Explore Stream" views block.
  */
-function social_activity_update_8803() {
-  $config_file = 'views.view.activity_stream';
-  $config = drupal_get_path('module', 'social_activity') . '/config/optional/' . $config_file . '.yml';
+function social_activity_update_8804() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
 
-  if (is_file($config)) {
-    $settings = Yaml::parse(file_get_contents($config));
-    if (is_array($settings)) {
-      $update_config = \Drupal::configFactory()
-        ->getEditable($config_file);
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_activity', 'social_activity_update_8801');
 
-      $update_config->setData($settings)->save(TRUE);
-    }
-  }
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
 }
