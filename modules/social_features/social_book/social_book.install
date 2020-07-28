@@ -5,6 +5,8 @@
  * Install, update and uninstall functions for the social_book module.
  */
 
+use Drupal\Core\Entity\EntityStorageException;
+use Drupal\search_api\Entity\Index;
 use Drupal\user\Entity\Role;
 use Symfony\Component\Yaml\Yaml;
 
@@ -166,4 +168,23 @@ function social_book_update_8802() {
 
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
+}
+
+/**
+ * Update search all with book pages.
+ */
+function social_book_update_8803() {
+  // If the search module is enabled trigger updating of the indexes affected
+  // by the book update in config override.
+  try {
+    $index = Index::load('social_all');
+    if ($index !== NULL && $index->status()) {
+      $index->save();
+      $index->clear();
+      $index->reindex();
+    }
+  }
+  catch (EntityStorageException $e) {
+    \Drupal::logger('social_book')->info($e->getMessage());
+  }
 }

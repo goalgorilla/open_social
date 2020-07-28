@@ -32,6 +32,18 @@ class SocialBookConfigOverride implements ConfigFactoryOverrideInterface {
         $overrides[$config_name] = ['visibility' => ['node_type' => ['bundles' => $bundles]]];
       }
     }
+
+    // Ensure book pages are added to social_all so search all
+    // and search autocomplete index and show book results correctly.
+    $config_names = [
+      'search_api.index.social_all',
+    ];
+    foreach ($config_names as $config_name) {
+      if (in_array($config_name, $names)) {
+        $overrides[$config_name]['field_settings']['rendered_item']['configuration']['view_mode']['book'] = 'search_index';
+      }
+    }
+
     return $overrides;
   }
 
