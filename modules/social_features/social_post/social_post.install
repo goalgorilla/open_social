@@ -146,15 +146,3 @@ function social_post_update_8802(&$sandbox) {
 
   $sandbox['#finished'] = $sandbox['processed'] / $sandbox['total'];
 }
-
-/**
- * Revoke access posts in group permission for outsiders.
- */
-function social_post_update_8803() {
-  /** @var \Drupal\group\Entity\GroupTypeInterface $flexible_group_type */
-  $flexible_group_type = \Drupal::entityTypeManager()->getStorage('group_type')->load('flexible_group');
-  /** @var \Drupal\group\Entity\GroupRoleInterface $outsider_role */
-  $outsider_role = $flexible_group_type->getOutsiderRole();
-  $outsider_role->revokePermission('access posts in group');
-  $outsider_role->save();
-}
