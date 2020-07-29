@@ -257,6 +257,7 @@ function social_event_preprocess_node(array &$variables) {
   if ($node->getType() === 'event') {
     $variables['event_date'] = _social_event_format_date($node, $view_mode);
     $variables['user_timezone'] = _social_event_user_timezone($node);
+    $variables['#cache']['contexts'][] = 'timezone';
 
     if ($view_mode === 'hero') {
       // Add Enroll button.
