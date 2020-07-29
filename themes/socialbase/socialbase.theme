@@ -155,3 +155,20 @@ function socialbase_preprocess_username(&$variables) {
   // so the whole name will be displayed.
   $variables['name'] = $account->getDisplayName();
 }
+
+/**
+ * Implements hook_theme().
+ */
+function socialbase_theme($existing, $type, $theme, $path) {
+  return [
+    'invite_email_preview' => [
+      'variables' => [
+        'title' => NULL,
+        'logo' => NULL,
+        'subject' => NULL,
+        'body' => NULL,
+        'helper' => NULL,
+      ],
+    ],
+  ];
+}

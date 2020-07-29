@@ -45,7 +45,9 @@
     {{ title_prefix }}
     {{ title }}
     {{ title_suffix }}
-    {{ rows }}
+    {% if not empty %}
+        {{ rows }}
+    {% endif %}
 
     {% if empty %}
       <div{{ content_attributes.addClass(error_classes) }}" role="alert">

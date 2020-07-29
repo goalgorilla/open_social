@@ -44,7 +44,7 @@ function social_node_statistics_preprocess_node(&$variables) {
     $variables['views_count'] = $views_count;
     $variables['views_label'] = \Drupal::translation()->formatPlural($views_count, 'view', 'views');
     $variables['#cache']['tags'][] = 'node:' . $variables['node']->id() . ':views_count';
-    $variables['#cache']['context'][] = 'url.path';
+    $variables['#cache']['contexts'][] = 'url.path';
   }
 }
 

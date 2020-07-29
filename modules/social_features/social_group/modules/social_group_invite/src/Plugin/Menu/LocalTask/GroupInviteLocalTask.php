@@ -87,7 +87,7 @@ class GroupInviteLocalTask extends LocalTaskDefault implements ContainerFactoryP
 
     // Add cache tags for group invite.
     // These are cleared based on entity:user->id
-    // fot he group content plugin group_invitation.
+    // for the group content plugin group_invitation.
     if ($user instanceof UserInterface) {
       $tags[] = 'group_content_list:entity:' . $user->id();
       $tags[] = 'group_content_list:plugin:group_invitation:entity:' . $user->id();
