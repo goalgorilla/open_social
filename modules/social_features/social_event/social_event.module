@@ -256,6 +256,7 @@ function social_event_preprocess_node(array &$variables) {
   $node = $variables['node'];
   if ($node->getType() === 'event') {
     $variables['event_date'] = _social_event_format_date($node, $view_mode);
+    $variables['user_timezone'] = _social_event_user_timezone($node);
 
     if ($view_mode === 'hero') {
       // Add Enroll button.
@@ -352,7 +353,7 @@ function _social_event_format_date($event, $view_mode) {
 
   // This will get the users timezone, which is either set by the user
   // or defaults back to the sites timezone if the user didn't select any.
-  $timezone = drupal_get_user_timezone();
+  $timezone = date_default_timezone_get();
   // Timezone that dates should be stored in.
   $utc_timezone = DateTimeItemInterface::STORAGE_TIMEZONE;
 
@@ -387,12 +388,22 @@ function _social_event_format_date($event, $view_mode) {
   $time_format = 'social_time';
 
   if (!empty($start_datetime)) {
-    $start_date = $date_formatter->format($start_datetime, $date_format);
+    if ($date_formatter->format($start_datetime, 'custom', 'i') === '01') {
+      $start_date = $date_formatter->format($start_datetime, $date_format, '', $utc_timezone);
+    }
+    else {
+      $start_date = $date_formatter->format($start_datetime, $date_format);
+    }
     // Default time should not be displayed.
     $start_time = $date_formatter->format($start_datetime, 'custom', 'i') === '01' ? '' : $date_formatter->format($start_datetime, $time_format);
 
     if (!empty($end_datetime)) {
-      $end_date = $date_formatter->format($end_datetime, $date_format);
+      if ($date_formatter->format($end_datetime, 'custom', 'i') === '01') {
+        $end_date = $date_formatter->format($end_datetime, $date_format, '', $utc_timezone);
+      }
+      else {
+        $end_date = $date_formatter->format($end_datetime, $date_format);
+      }
       // Default time should not be displayed.
       $end_time = $date_formatter->format($end_datetime, 'custom', 'i') === '01' ? '' : $date_formatter->format($end_datetime, $time_format);
     }
@@ -412,6 +423,28 @@ function _social_event_format_date($event, $view_mode) {
   }
 
   return $event_date;
+}
+
+/**
+ * Returns user timezone if needed.
+ *
+ * @param \Drupal\node\NodeInterface $event
+ *   The event content type.
+ *
+ * @return string
+ *   User timezone.
+ */
+function _social_event_user_timezone(NodeInterface $event) {
+  $timezone = '';
+
+  if (!$event->get('field_event_date')->isEmpty()) {
+    $date = new DateTime($event->get('field_event_date')->value);
+    if ($date->format('i') !== '01') {
+      $timezone = str_replace('_', ' ', date_default_timezone_get());
+    }
+  }
+
+  return $timezone;
 }
 
 /**
