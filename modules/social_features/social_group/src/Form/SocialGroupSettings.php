@@ -51,6 +51,15 @@ class SocialGroupSettings extends ConfigFormBase {
       '#options' => $this->getCropTypes(),
     ];
 
+    $form['address_visibility_settings'] = [
+      '#type' => 'checkboxes',
+      '#title' => $this->t('Address visibility settings'),
+      '#options' => [
+        'street_code_private' => $this->t('Only show street and postal code to group members'),
+      ],
+      '#default_value' => $config->get('address_visibility_settings'),
+    ];
+
     return parent::buildForm($form, $form_state);
   }
 
@@ -63,6 +72,7 @@ class SocialGroupSettings extends ConfigFormBase {
     $this->config('social_group.settings')
       ->set('allow_group_selection_in_node', $form_state->getValue('allow_group_selection_in_node'))
       ->set('default_hero', $form_state->getValue('default_hero'))
+      ->set('address_visibility_settings', $form_state->getValue('address_visibility_settings'))
       ->save();
 
     Cache::invalidateTags(['group_view']);

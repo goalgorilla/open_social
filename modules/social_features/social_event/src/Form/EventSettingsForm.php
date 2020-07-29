@@ -59,6 +59,15 @@ class EventSettingsForm extends ConfigFormBase {
       }
     }
 
+    $form['address_visibility_settings'] = [
+      '#type' => 'checkboxes',
+      '#title' => $this->t('Address visibility settings'),
+      '#options' => [
+        'street_code_private' => $this->t('Only show street and postal code to event enrolees'),
+      ],
+      '#default_value' => $social_event_config->get('address_visibility_settings'),
+    ];
+
     return parent::buildForm($form, $form_state);
   }
 
@@ -78,7 +87,11 @@ class EventSettingsForm extends ConfigFormBase {
 
     $this->configFactory->getEditable('social_event.settings')
       ->set('enroll', $group_type_ids)
+      ->set('address_visibility_settings', $form_state->getValue('address_visibility_settings'))
       ->save();
+
+    // Invalidate cache tags to refresh blocks of list of events.
+    \Drupal::service('cache_tags.invalidator')->invalidateTags(['node_list']);
   }
 
 }

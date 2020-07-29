@@ -7,6 +7,7 @@
 
 use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Render\BubbleableMetadata;
+use Drupal\mentions\Entity\Mentions;
 use Drupal\user\Entity\User;
 use Drupal\Core\Render\Markup;
 
@@ -112,7 +113,7 @@ function social_mentions_tokens($type, $tokens, array $data, array $options, Bub
               ->getStorage($target_type)
               ->load($target_id);
 
-            if ($mentioned_entity = $mention->getMentionedEntity()) {
+            if ($mention instanceof Mentions && $mentioned_entity = $mention->getMentionedEntity()) {
               if ($mentioned_entity->getEntityTypeId() === 'comment') {
                 $entity = $mentioned_entity->getCommentedEntity();
               }
