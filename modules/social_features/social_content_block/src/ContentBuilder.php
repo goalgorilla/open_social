@@ -472,7 +472,7 @@ class ContentBuilder implements ContentBuilderInterface {
 
       // Fall back by assuming the sorting option is a field.
       default:
-        $query->orderBy("base_table.${sort_by}");
+        $query->orderBy("base_table.${sort_by}", 'DESC');
     }
 
   }
