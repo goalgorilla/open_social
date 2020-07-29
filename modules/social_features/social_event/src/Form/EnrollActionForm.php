@@ -157,7 +157,9 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
       $enrollments = $this->entityStorage->loadByProperties($conditions);
 
       // Check if groups are not empty, or that the outsiders are able to join.
-      if (!empty($groups) && $node->field_event_enroll_outside_group->value !== '1' && empty($enrollments)) {
+      if (!empty($groups) && $node->field_event_enroll_outside_group->value !== '1'
+        && empty($enrollments)
+        && social_event_owner_or_organizer() === FALSE) {
 
         $group_type_ids = $this->configFactory->getEditable('social_event.settings')
           ->get('enroll');
@@ -177,10 +179,6 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
             return [];
           }
         }
-      }
-      // If the event is invite only, always return.
-      if ((int) $node->field_enroll_method->value === EventEnrollmentInterface::ENROLL_METHOD_INVITE) {
-        return [];
       }
     }
 
@@ -438,6 +436,11 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
           && (int) $enrollment->field_request_or_invite_status->value === EventEnrollmentInterface::INVITE_ACCEPTED_AND_JOINED) {
           // Mark this user his enrollment as declined.
           $enrollment->field_request_or_invite_status->value = EventEnrollmentInterface::REQUEST_OR_INVITE_DECLINED;
+          // If the user is cancelling, un-enroll.
+          $current_enrollment_status = $enrollment->field_enrollment_status->value;
+          if ($current_enrollment_status === '1') {
+            $enrollment->field_enrollment_status->value = '0';
+          }
           $enrollment->save();
         }
         // Else, the user simply wants to cancel his enrollment, so at

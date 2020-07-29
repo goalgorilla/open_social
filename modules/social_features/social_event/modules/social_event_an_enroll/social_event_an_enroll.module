@@ -74,7 +74,7 @@ function social_event_an_enroll_preprocess_views_view_field(&$variables) {
   /** @var \Drupal\views\ViewExecutable $view */
   $view = &$variables['view'];
 
-  if ($view->id() === 'event_manage_enrollments' && $variables['field']->field === 'rendered_entity') {
+  if ($view->id() === 'event_manage_enrollments' && $variables['field']->field === 'profile_entity_sortable') {
     $entity = &$variables['row']->_entity;
 
     /** @var \Drupal\social_event_an_enroll\EventAnEnrollManager $service */
@@ -116,6 +116,11 @@ function social_event_an_enroll_preprocess_node(array &$variables) {
       if (in_array(\Drupal::routeMatch()->getRouteName(), $an_enroll_routes)) {
         unset($variables['event_enrollment']);
       }
+
+      // Add caching context to anonymous users.
+      // This is custom context. We added it in order to vary page cache
+      // of routes given in $an_enroll_routes.
+      $variables['#cache']['contexts'][] = 'event_an_enroll_route';
     }
   }
 }

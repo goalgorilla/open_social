@@ -7,6 +7,7 @@
 
 use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\Url;
+use Drupal\user\Entity\User;
 
 /**
  * Implements hook_token_info().
@@ -27,6 +28,11 @@ function social_event_invite_token_info() {
     'description' => t('Url to the login page with event as destination.'),
   ];
 
+  $social_event_invite['user_login_event_invites_overview'] = [
+    'name' => t('Event link with login page'),
+    'description' => t('Url to the login page with event as destination.'),
+  ];
+
   return [
     'types' => ['social_event_invite' => $type],
     'tokens' => [
@@ -42,7 +48,7 @@ function social_event_invite_tokens($type, $tokens, array $data, array $options,
   $replacements = [];
   if ($type == 'social_event_invite') {
     foreach ($tokens as $name => $original) {
-      if ($name == 'register_link') {
+      if ($name == 'register_link' && !empty($data['event_enrollment'])) {
         // Load the current Event enrollments so we can check duplicates.
         $storage = \Drupal::entityTypeManager()->getStorage('event_enrollment');
         /** @var \Drupal\social_event\EventEnrollmentInterface $event_enrollment */
@@ -74,6 +80,21 @@ function social_event_invite_tokens($type, $tokens, array $data, array $options,
           $login_link = Url::fromRoute('user.login', ['destination' => $destination], ['absolute' => TRUE])
             ->toString();
           $replacements[$original] = $login_link;
+        }
+      }
+      if ($name == 'user_login_event_invites_overview') {
+        /** @var \Drupal\message\Entity\Message $message */
+        $message = $data['message'];
+
+        // Load the current Event enrollments so we can check duplicates.
+        $storage = \Drupal::entityTypeManager()->getStorage('event_enrollment');
+        /** @var \Drupal\social_event\EventEnrollmentInterface $event_enrollment */
+        $event_enrollment = $storage->load($message->field_message_related_object->target_id);
+
+        if ($event_enrollment) {
+          $user = User::load($event_enrollment->get('field_account')->getString());
+          $my_invitations_link = Url::fromRoute('view.user_event_invites.page_user_event_invites', ['user' => $user->id()], ['absolute' => TRUE])->toString();
+          $replacements[$original] = $my_invitations_link;
         }
       }
     }

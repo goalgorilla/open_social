@@ -69,6 +69,11 @@ class FlexibleGroupJoinPermissionAccessCheck implements AccessInterface {
       return AccessResult::allowedIf($condition1 || $condition2)->addCacheableDependency($group);
     }
 
+    // GM is allowed to go to Add Directly page, adding new members directly.
+    if ($permission === 'join added' && $group->hasPermission('administer members', $account)) {
+      return AccessResult::allowed()->addCacheableDependency($group);
+    }
+
     // A user with this access can definitely do everything.
     if ($account->hasPermission('manage all groups')) {
       return AccessResult::allowed()->addCacheableDependency($group);
