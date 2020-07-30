@@ -111,7 +111,7 @@ class PostAccessControlHandler extends EntityAccessControlHandler implements Ent
                 $permission = 'access posts in group';
                 if ($group->hasPermission($permission, $account) && $this->checkDefaultAccess($entity, $operation, $account)) {
                   if ($group->getGroupType()->id() === 'flexible_group') {
-                    // User has access if outsider with manager role or is member.
+                    // User has access if outsider with manager role or member.
                     $account_roles = $account->getRoles();
                     foreach (['sitemanager', 'contentmanager', 'administrator'] as $manager_role) {
                       if (in_array($manager_role, $account_roles)) {
