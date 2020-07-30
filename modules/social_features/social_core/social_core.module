@@ -418,6 +418,13 @@ function social_core_filter_process_format($element) {
     'edit-field-group-description-0',
   ];
 
+  $element_id = $element['#id'];
+
+  // Check if there is generated sub-id and cleanup it.
+  if (($sub_id = strpos($element_id, '--')) !== FALSE) {
+    $element_id = substr($element_id, 0, $sub_id);
+  }
+
   $full_html = FilterFormat::load('full_html');
   $permission_name = $full_html->getPermissionName();
   $account = \Drupal::currentUser();
@@ -435,7 +442,11 @@ function social_core_filter_process_format($element) {
       unset($element['value']['#pre_render'][$key]);
     }
   }
-  elseif ($element['#type'] == 'text_format' && $account->hasPermission($permission_name) && in_array($element['#id'], $full_html_field_ids)) {
+  elseif (
+    $element['#type'] === 'text_format' &&
+    $account->hasPermission($permission_name) &&
+    in_array($element_id, $full_html_field_ids)
+  ) {
     $element['#format'] = 'full_html';
     $element['format']['format']['#access'] = FALSE;
     $element['format']['format']['#value'] = 'full_html';
