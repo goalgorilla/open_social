@@ -4,6 +4,7 @@ namespace Drupal\social_tagging;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Url;
 use Drupal\taxonomy\TermInterface;
 
@@ -27,19 +28,29 @@ class SocialTaggingService {
   protected $configFactory;
 
   /**
+   * The language manager.
+   *
+   * @var \Drupal\Core\Language\LanguageManagerInterface
+   */
+  protected $languageManager;
+
+  /**
    * SocialTaggingService constructor.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
    *   Injection of the entityTypeManager.
    * @param \Drupal\Core\Config\ConfigFactoryInterface $configFactory
    *   Injection of the configFactory.
+   * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
+   *   Injection of the languageManager.
    *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  public function __construct(EntityTypeManagerInterface $entityTypeManager, ConfigFactoryInterface $configFactory) {
+  public function __construct(EntityTypeManagerInterface $entityTypeManager, ConfigFactoryInterface $configFactory, LanguageManagerInterface $language_manager) {
     $this->termStorage = $entityTypeManager->getStorage('taxonomy_term');
     $this->configFactory = $configFactory;
+    $this->languageManager = $language_manager;
   }
 
   /**
@@ -102,7 +113,7 @@ class SocialTaggingService {
     $options = [];
     // Fetch main categories.
     foreach ($this->termStorage->loadTree('social_tagging', 0, 1) as $category) {
-      $options[$category->tid] = $category->name;
+      $options[$category->tid] = $this->getTranslatedLabel($category->tid);
     }
     // Return array.
     return $options;
@@ -122,10 +133,27 @@ class SocialTaggingService {
     $options = [];
     // Fetch main categories.
     foreach ($this->termStorage->loadTree('social_tagging', $category, 1) as $category) {
-      $options[$category->tid] = $category->name;
+      $options[$category->tid] = $this->getTranslatedLabel($category->tid);
     }
     // Return array.
     return $options;
+  }
+
+  /**
+   * Returns the translated label of the taxonomy.
+   *
+   * @param int $tid
+   *   The term id.
+   *
+   * @return string
+   *   The translated label.
+   */
+  public function getTranslatedLabel($tid) {
+    $langcode = $this->languageManager->getCurrentLanguage()->getId();
+    $taxonomy_term = $this->termStorage->load($tid);
+    $taxonomy_term_trans = \Drupal::service('entity.repository')->getTranslationFromContext($taxonomy_term, $langcode);
+
+    return $taxonomy_term_trans->getName();
   }
 
   /**
@@ -174,7 +202,7 @@ class SocialTaggingService {
       // Get current terms parents.
       $parents = $this->termStorage->loadParents($current_term->id());
       $parent = reset($parents);
-      $category = $parent->getName();
+      $category = $this->getTranslatedLabel($parent->id());
 
       $parameter = 'tag';
       if ($this->allowSplit()) {
@@ -193,7 +221,7 @@ class SocialTaggingService {
       $tree[$parent->id()]['title'] = $category;
       $tree[$parent->id()]['tags'][$current_term->id()] = [
         'url' => $url->toString(),
-        'name' => $current_term->getName(),
+        'name' => $this->getTranslatedLabel($current_term->id()),
       ];
     }
     // Return the tree.
