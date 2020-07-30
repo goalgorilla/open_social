@@ -140,8 +140,7 @@
             mentionsInput = $textarea.data("mentionsInput"),
             editor = CKEDITOR.instances[$textarea.attr("id")];
 
-          $(".comments .comment__reply-btn a").on("click", function (e) {
-            e.preventDefault();
+          $(".comments .comment__reply-btn a").on("click", function () {
             $("html, body").animate({
               scrollTop: $("[data-drupal-selector=\"comment-form\"]").offset().top
             }, 1000)
@@ -154,8 +153,9 @@
 
             if (author) {
               if (!editor) {
-                $textarea.val(author.value);
+                $textarea.val(author.value + ' ');
 
+                mentionsInput.mentions.length = 0;
                 mentionsInput._updateMentions();
                 mentionsInput._addMention({
                   name: author.value,
