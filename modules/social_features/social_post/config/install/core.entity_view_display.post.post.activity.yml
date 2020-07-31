@@ -2,6 +2,7 @@ langcode: en
 status: true
 dependencies:
   config:
+    - core.entity_view_display.comment.post_comment.activity
     - core.entity_view_mode.post.activity
     - field.field.post.post.field_post
     - field.field.post.post.field_post_comments
@@ -32,6 +33,7 @@ content:
     settings:
       num_comments: '2'
       order: ASC
+      view_mode: activity
     third_party_settings: {  }
     region: content
   like_and_dislike:

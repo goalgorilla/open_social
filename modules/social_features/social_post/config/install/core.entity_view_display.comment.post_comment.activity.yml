@@ -1,0 +1,34 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - comment.type.post_comment
+    - core.entity_view_mode.comment.activity
+    - field.field.comment.post_comment.field_comment_body
+  module:
+    - text
+id: comment.post_comment.activity
+targetEntityType: comment
+bundle: post_comment
+mode: activity
+content:
+  field_comment_body:
+    weight: 1
+    label: hidden
+    settings:
+      trim_length: 600
+    third_party_settings: {  }
+    type: text_trimmed
+    region: content
+  like_and_dislike:
+    weight: 2
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  links:
+    weight: 0
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+hidden:
+  search_api_excerpt: true

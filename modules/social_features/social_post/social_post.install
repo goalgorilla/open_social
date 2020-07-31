@@ -7,6 +7,7 @@
 
 use Drupal\Core\Site\Settings;
 use Drupal\user\Entity\Role;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * PROCEED WITH CARE HERE!
@@ -156,6 +157,40 @@ function social_post_update_8901() {
 
   // Execute configuration update definitions with logging of success.
   $updateHelper->executeUpdate('social_post', 'social_post_update_8901');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Adds the activity view mode to post_comment comment type.
+ */
+function social_post_update_8902(&$sandbox) {
+  // Get the configuration file.
+  $config_file = drupal_get_path('module', 'social_post') . '/config/install/core.entity_view_display.comment.post_comment.activity.yml';
+
+  // Create the configuration.
+  if (is_file($config_file)) {
+    $settings = Yaml::parse(file_get_contents($config_file));
+    if (is_array($settings)) {
+      $config = \Drupal::configFactory()
+        ->getEditable($config_file);
+      $config->setData($settings)->save(TRUE);
+    }
+  }
+}
+
+/**
+ * Added activity view mode to field_comment_body in post_comment comment
+ * type to display trimmed comments in activity stream and full comment
+ * in full view mode.
+ */
+function social_post_update_8903() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_post', 'social_post_update_8902');
 
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
