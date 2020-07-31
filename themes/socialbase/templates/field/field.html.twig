@@ -39,6 +39,13 @@
 #}
 {# Fields in the event teaser need to render without a div, because it is a child element of a tag that cannot have a div such as an anchor or paragraph #}
 
+{%
+  set title_classes = [
+  'field--label',
+  label_display == 'visually_hidden' ? 'sr-only',
+]
+%}
+
 {% if bare %}
   {% if not label_hidden %}
     <div{{ title_attributes.addClass(title_classes) }}>{{ label }}</div>
@@ -59,12 +66,6 @@
     'field--name-' ~ field_name|clean_class,
     'field--type-' ~ field_type|clean_class,
     'field--label-' ~ label_display,
-  ]
-  %}
-  {%
-    set title_classes = [
-    'field--label',
-    label_display == 'visually_hidden' ? 'sr-only',
   ]
   %}
 
