@@ -174,7 +174,7 @@ function social_post_update_8902(&$sandbox) {
     $settings = Yaml::parse(file_get_contents($config_file));
     if (is_array($settings)) {
       $config = \Drupal::configFactory()
-        ->getEditable($config_file);
+        ->getEditable('core.entity_view_display.comment.post_comment.activity');
       $config->setData($settings)->save(TRUE);
     }
   }
