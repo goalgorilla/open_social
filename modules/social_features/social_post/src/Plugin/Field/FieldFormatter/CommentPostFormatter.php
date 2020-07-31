@@ -73,7 +73,7 @@ class CommentPostFormatter extends CommentDefaultFormatter {
           $mode = $comment_settings['default_mode'];
           $comments = $this->loadThread($entity, $field_name, $mode, $comments_per_page, FALSE);
           if ($comments) {
-            $build = $this->viewBuilder->viewMultiple($comments);
+            $build = $this->viewBuilder->viewMultiple($comments, $this->getSetting('view_mode'));
             $output['comments'] += $build;
           }
 
