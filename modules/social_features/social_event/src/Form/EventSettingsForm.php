@@ -71,9 +71,7 @@ class EventSettingsForm extends ConfigFormBase {
     $form['show_user_timezone'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Display user’s time zone in events'),
-      '#options' => [
-        'street_code_private' => $this->t('If enabled, user’s own time zone will be displayed after the event date and time.'),
-      ],
+      '#description' => $this->t('If enabled, user’s own time zone will be displayed after the event date and time.'),
       '#default_value' => $social_event_config->get('show_user_timezone'),
     ];
 
