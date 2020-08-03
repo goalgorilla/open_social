@@ -256,7 +256,6 @@ function social_event_preprocess_node(array &$variables) {
   $node = $variables['node'];
   if ($node->getType() === 'event') {
     $variables['event_date'] = _social_event_format_date($node, $view_mode);
-    $variables['user_timezone'] = _social_event_user_timezone($node);
     $variables['#cache']['contexts'][] = 'timezone';
 
     if ($view_mode === 'hero') {
@@ -351,10 +350,13 @@ function social_event_user_delete(EntityInterface $entity) {
 function _social_event_format_date($event, $view_mode) {
 
   $event_date = '';
+  $event_config = \Drupal::config('social_event.settings');
+  $add_timezone = $event_config->get('show_user_timezone');
 
   // This will get the users timezone, which is either set by the user
   // or defaults back to the sites timezone if the user didn't select any.
   $timezone = date_default_timezone_get();
+  $user_timezone = _social_event_user_timezone($timezone);
   // Timezone that dates should be stored in.
   $utc_timezone = DateTimeItemInterface::STORAGE_TIMEZONE;
 
@@ -391,6 +393,7 @@ function _social_event_format_date($event, $view_mode) {
   if (!empty($start_datetime)) {
     if ($date_formatter->format($start_datetime, 'custom', 'i') === '01') {
       $start_date = $date_formatter->format($start_datetime, $date_format, '', $utc_timezone);
+      $add_timezone = FALSE;
     }
     else {
       $start_date = $date_formatter->format($start_datetime, $date_format);
@@ -423,29 +426,28 @@ function _social_event_format_date($event, $view_mode) {
     }
   }
 
-  return $event_date;
+  return $add_timezone ? "$event_date ($user_timezone)" : $event_date;
 }
 
 /**
  * Returns user timezone if needed.
  *
- * @param \Drupal\node\NodeInterface $event
- *   The event content type.
+ * @param string $timezone
+ *   User's timezone.
  *
  * @return string
  *   User timezone.
  */
-function _social_event_user_timezone(NodeInterface $event) {
-  $timezone = '';
-
-  if (!$event->get('field_event_date')->isEmpty()) {
-    $date = new DateTime($event->get('field_event_date')->value);
-    if ($date->format('i') !== '01') {
-      $timezone = str_replace('_', ' ', date_default_timezone_get());
-    }
+function _social_event_user_timezone($timezone) {
+  if ($timezone !== DateTimeItemInterface::STORAGE_TIMEZONE) {
+    $zones = array_column(system_time_zones(NULL, TRUE), $timezone);
+    $user_timezone = reset($zones);
+  }
+  else {
+    $user_timezone = $timezone;
   }
 
-  return $timezone;
+  return t('@timezone Time', ['@timezone' => $user_timezone]);
 }
 
 /**
@@ -582,6 +584,24 @@ function social_event_form_alter(&$form, FormStateInterface $form_state, $form_i
       }
 
       $form['#fieldgroups']['group_date_time']->children[] = 'event_all_day';
+      $form['#fieldgroups']['group_date_time']->label = t('@label (@timezone @edit_link)', [
+        '@label' => $form['#fieldgroups']['group_date_time']->label,
+        '@timezone' => _social_event_user_timezone(date_default_timezone_get()),
+        '@edit_link' => Link::createFromRoute(
+          t('Change your time zone'),
+          'entity.user.edit_form',
+          ['user' => \Drupal::currentUser()->id()],
+          [
+            'attributes' => [
+              'class' => [
+                'text-primary',
+              ],
+              'target' => '_blank',
+            ],
+            'fragment' => 'edit-group-locale-settings',
+          ]
+        )->toString(),
+      ]);
       $form['#group_children']['event_all_day'] = 'group_date_time';
       $form['#after_build'][] = 'social_event_date_after_build';
       break;

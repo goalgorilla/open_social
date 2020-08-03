@@ -1555,3 +1555,13 @@ function social_event_update_8810() {
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
 }
+
+/**
+ * Show user time zone as default.
+ */
+function social_event_update_8811(&$sandbox) {
+  \Drupal::configFactory()
+    ->getEditable('social_event.settings')
+    ->set('show_user_timezone', TRUE)
+    ->save();
+}
