@@ -165,16 +165,6 @@ class SocialEventManagersAddEnrolleeForm extends FormBase {
       }
     }
 
-    // We check if the node is placed in a Group.
-    if (!empty($nid)) {
-      if (!is_object($nid) && !is_null($nid)) {
-        $node = $this->entityTypeManager
-          ->getStorage('node')
-          ->load($nid);
-      }
-      $groups = EnrollActionForm::getGroups($node);
-    }
-
     // Load the current Event enrollments so we can check duplicates.
     $storage = $this->entityTypeManager->getStorage('event_enrollment');
     $enrollments = $storage->loadByProperties(['field_event' => $nid]);
@@ -182,33 +172,6 @@ class SocialEventManagersAddEnrolleeForm extends FormBase {
     $enrollmentIds = [];
     foreach ($enrollments as $enrollment) {
       $enrollmentIds[] = $enrollment->getAccount();
-    }
-
-    // If the groups are not empty, give the option to pre-fill members.
-    if (!empty($groups)) {
-      $group_members_count = \Drupal::service('social_group.group_members_count');
-      $member_count = $group_members_count->getGroupMemberCount($groups[0]);
-
-      // Add the button to add all the current members of the group.
-      $enroll = $this->t('Select @count member(s) of the group this event belongs to', ['@count' => $member_count]);
-      $form['enroll_users'] = [
-        '#markup' => '<div class="btn-link control-label" id="enroll_users"><a href="#" class="enroll-form-submit">+ ' . $enroll . '</a></div>',
-      ];
-
-      if ($member_count > 100) {
-        $form['enroll_users']['#suffix'] = '<div class="help-block">' . $this->t('Notice: if you want to select all the members from the group which has more than 100 members it can take up to 1 minute to load.') . "</div>";
-      }
-      // Only 1 group per content is possible now.
-      foreach ($groups as $group) {
-        $group_id = $group->id();
-      }
-
-      // Attach a JS library so we can populate it with group members.
-      $form['#attached']['library'][] = 'social_event_managers/social_select2_populate';
-      $form['#attached']['drupalSettings']['populateEnrollmentsFromGroup'] = [
-        'nid' => $nid,
-        'group_id' => $group_id,
-      ];
     }
 
     $form['name'] = [

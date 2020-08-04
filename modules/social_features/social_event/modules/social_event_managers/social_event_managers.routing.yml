@@ -14,12 +14,5 @@ social_event_managers.add_enrollees:
   requirements:
     _enrollee_permission: 'manage everything enrollments'
 
-social_event_managers.populate_enrollees:
-  path: '/node/{node}/all-enrollments/add-enrollees/populate-from-group/{group}'
-  defaults:
-    _controller: '\Drupal\social_event_managers\Controller\Select2PopulateController::populate'
-  requirements:
-    _custom_access: '\Drupal\social_event_managers\Controller\Select2PopulateController::access'
-
 route_callbacks:
   - 'social_event_managers.route_subscriber:routes'
