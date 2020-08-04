@@ -4,8 +4,8 @@ dependencies:
   config:
     - comment.type.post_comment
     - field.field.comment.post_comment.field_comment_body
-_core:
-  default_config_hash: FofkEbCSl5bmiwsIkBnLEdy9UzgZh3vsNmwNyOVPshw
+  module:
+    - text
 id: comment.post_comment.default
 targetEntityType: comment
 bundle: post_comment
@@ -16,12 +16,17 @@ content:
     label: hidden
     settings: {  }
     third_party_settings: {  }
-    type: basic_string
+    type: text_default
     region: content
-  links:
-    weight: 0
+  like_and_dislike:
+    weight: 2
+    region: content
     settings: {  }
     third_party_settings: {  }
+  links:
+    weight: 0
     region: content
+    settings: {  }
+    third_party_settings: {  }
 hidden:
   search_api_excerpt: true

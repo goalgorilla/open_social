@@ -113,17 +113,30 @@ class SocialAdminMenuAdministratorMenuLinkTreeManipulators extends DefaultMenuLi
   public function renderForm() {
     $menu_tree = \Drupal::service('toolbar.menu_tree');
     $parameters = new MenuTreeParameters();
-    $parameters->setRoot('system.admin')->excludeRoot()->setMaxDepth(4)->onlyEnabledLinks();
+    $parameters->setRoot('system.admin')
+      ->excludeRoot()
+      ->setMaxDepth(4)
+      ->onlyEnabledLinks();
     $manipulators = [
-        ['callable' => 'menu.default_tree_manipulators:checkAccess'],
-        ['callable' => 'menu.default_tree_manipulators:generateIndexAndSort'],
-        ['callable' => 'toolbar_tools_menu_navigation_links'],
-        ['callable' => 'social_admin_menu.administrator_menu_tree_manipulators:checkAccess'],
+      ['callable' => 'menu.default_tree_manipulators:checkAccess'],
+      ['callable' => 'menu.default_tree_manipulators:generateIndexAndSort'],
+      ['callable' => 'toolbar_tools_menu_navigation_links'],
+      ['callable' => 'social_admin_menu.administrator_menu_tree_manipulators:checkAccess'],
     ];
     $tree = $menu_tree->load(NULL, $parameters);
     $tree = $menu_tree->transform($tree, $manipulators);
-    $element['administration_menu'] = $menu_tree->build($tree);
-    $element['administration_menu']['#cache']['contexts'][] = 'user.roles';
+    $element['toolbar_administration'] = [
+      '#type' => 'container',
+      '#attributes' => [
+        'class' => ['toolbar-menu-administration'],
+      ],
+      '#cache' => [
+        'contexts' => [
+          'user.roles',
+        ],
+      ],
+      'administration_menu' => $menu_tree->build($tree),
+    ];
     return $element;
   }
 
