@@ -1,9 +1,9 @@
-views.view.upcoming_events:
+views.view.group_events:
   expected_config: { }
   update_actions:
     delete:
       display:
-        page_community_events:
+        default:
           display_options:
             filters:
               field_event_date_value: { }
@@ -11,7 +11,7 @@ views.view.upcoming_events:
               event_passed_upcoming_sort: { }
     add:
       display:
-        page_community_events:
+        default:
           display_options:
             filters:
               event_date:
@@ -62,7 +62,7 @@ views.view.upcoming_events:
                 is_grouped: true
                 operator: in
                 plugin_id: social_event_date_filter
-                relationship: none
+                relationship: gc__node
                 table: node__field_event_date
                 value: {  }
             sorts:
@@ -77,5 +77,5 @@ views.view.upcoming_events:
                 id: event_date
                 order: ASC
                 plugin_id: social_event_date_sort
-                relationship: none
+                relationship: gc__node
                 table: node__field_event_date

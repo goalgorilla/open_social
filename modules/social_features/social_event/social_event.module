@@ -1053,3 +1053,31 @@ function _social_event_get_enrollment_status(NodeInterface $event) {
 
   return $status;
 }
+
+/**
+ * Change views filters order.
+ *
+ * @param string $view_config
+ *   The views config name.
+ * @param string $display
+ *   The views display id.
+ */
+function _social_event_views_update($view_config, $display) {
+  // Get views config.
+  $config = \Drupal::configFactory()
+    ->getEditable($view_config);
+
+  // Get views config array.
+  $data = $config->getRawData();
+
+  $filters = $data['display'][$display]['display_options']['filters'];
+
+  // Reorder filters.
+  $new_filters['event_date'] = $filters['event_date'];
+  unset($filters['event_date']);
+  $new_filters = array_merge($new_filters, $filters);
+
+  // Save new configs.
+  $data['display'][$display]['display_options']['filters'] = $new_filters;
+  $config->setData($data)->save();
+}

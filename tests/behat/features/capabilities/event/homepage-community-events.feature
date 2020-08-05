@@ -26,7 +26,7 @@ Feature: See upcoming events in the community
     Then I should see "All events"
     And I should see "Behat Event 1"
     And I should see "Behat Event 2"
-    And I should see "Upcoming events"
+    And I should see "Upcoming and ongoing events"
 
     Given I am logged in as an "authenticated user"
     Then I should see "Behat Event 1"

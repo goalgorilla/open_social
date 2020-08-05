@@ -17,7 +17,7 @@ class EventDate extends Date {
    */
   public function query() {
     $this->ensureMyTable();
-    $order = ($this->view->exposed_data[$this->field] == EventDateFilter::UPCOMING_EVENTS) ? 'ASC' : 'DESC';
+    $order = ($this->view->exposed_data[$this->realField] == EventDateFilter::UPCOMING_EVENTS) ? 'ASC' : 'DESC';
     $this->query->addOrderBy($this->tableAlias, $this->realField, $order);
   }
 
