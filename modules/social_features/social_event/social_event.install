@@ -1448,7 +1448,8 @@ function social_event_update_8805(&$sandbox) {
 
   switch ($parts[0] . '.' . $parts[1]) {
     case 'field.storage':
-      $entity_type = \Drupal::service('config.manager')->getEntityTypeIdByName($name);
+      $entity_type = \Drupal::service('config.manager')
+        ->getEntityTypeIdByName($name);
 
       /** @var \Drupal\Core\Config\Entity\ConfigEntityStorageInterface $storage */
       $storage = \Drupal::entityTypeManager()->getStorage($entity_type);
@@ -1554,4 +1555,43 @@ function social_event_update_8810() {
 
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
+}
+
+/**
+ * Configuration update.
+ */
+function social_event_update_8813() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_event', 'social_event_update_8813');
+
+  // Get views config.
+  $config = \Drupal::configFactory()
+    ->getEditable('views.view.upcoming_events');
+
+  // Get views config array.
+  $data = $config->getRawData();
+
+  $filters = $data['display']['page_community_events']['display_options']['filters'];
+
+  // Reorder and delete unused filters.
+  $new_filters = [];
+  foreach ($filters as $key => $filter) {
+    if ($key !== 'event_date') {
+      if ($key === 'field_event_date_value') {
+        $new_filters['event_date'] = $filters['event_date'];
+      }
+      else {
+        $new_filters[$key] = $filter;
+      }
+    }
+  }
+  $data['display']['page_community_events']['display_options']['filters'] = $new_filters;
+
+  // Delete unused sorting.
+  unset($data['display']['page_community_events']['display_options']['sorts']['event_passed_upcoming_sort']);
+
+  $config->setData($data)->save();
 }

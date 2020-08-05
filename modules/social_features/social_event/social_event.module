@@ -239,6 +239,21 @@ function social_event_node_view_alter(array &$build, EntityInterface $entity, En
       '#markup' => $enrollments_count,
     ];
 
+    // Check if ongoing.
+    $node_storage = \Drupal::entityTypeManager()->getStorage('node');
+    $ongoing = $node_storage->getQuery()
+      ->condition('field_event_date', date(DateTimeItemInterface::DATE_STORAGE_FORMAT), '<=')
+      ->condition('field_event_date_end', date(DateTimeItemInterface::DATE_STORAGE_FORMAT), '>=')
+      ->condition('nid', $nid)
+      ->count()
+      ->execute();
+    if ($ongoing) {
+      $build['ongoing'] = [
+        '#type' => '#text_field',
+        '#markup' => t('Ongoing'),
+      ];
+    }
+
   }
 }
 
@@ -290,6 +305,22 @@ function social_event_views_data_alter(array &$data) {
     'sort' => [
       'field' => 'field_event_date_value',
       'id' => 'event_passed_upcoming_sort',
+    ],
+  ];
+  $data['node__field_event_date']['event_date'] = [
+    'title' => t('Event date'),
+    'group' => t('Social'),
+    'filter' => [
+      'title' => t('Event date'),
+      'help' => t('Filter events by start date and end date'),
+      'id' => 'social_event_date_filter',
+      'field' => 'field_event_date_value',
+    ],
+    'sort' => [
+      'title' => t('Event sorting (passed and upcoming)'),
+      'help' => t('For upcoming events sort ASC by start date and for passed events change order to DESC.'),
+      'id' => 'social_event_date_sort',
+      'field' => 'field_event_date_value',
     ],
   ];
 }
