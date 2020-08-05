@@ -64,7 +64,7 @@ class GroupHeroBlock extends BlockBase implements ContainerFactoryPluginInterfac
   public function build() {
     $build = [];
 
-    $group = _social_group_get_current_group();
+    $group = _social_group_get_current_group(NULL, FALSE);
 
     if (!empty($group)) {
       // Content.

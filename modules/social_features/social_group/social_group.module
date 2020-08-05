@@ -275,15 +275,27 @@ function social_group_preprocess_group(array &$variables) {
     }
   }
   elseif ($group->hasPermission('join group', $account)) {
-    // @todo switch this to get URL from routes correctly.
-    $variables['group_operations_url'] = Url::fromRoute('entity.group.join', ['group' => $group->id()]);
+    // Always render the join link pointing towards the group/join url.
+    if ($group_type_id !== 'flexible_group') {
+      $variables['group_operations_url'] = Url::fromRoute('entity.group.join', ['group' => $group->id()]);
+    }
+    // Unless its flexible groups, we lets the join methods decide what
+    // the correct url is.
     if ($group_type_id === 'flexible_group') {
       $join_methods = $group->get('field_group_allowed_join_method')->getValue();
-      $direct_option = in_array('direct', array_column($join_methods, 'value'), FALSE);
-      if (!$direct_option) {
+      // We have more join methods now, so only when "added"
+      // is the chosen option (only can be chosen) we add the invitation only.
+      // otherwise we let others deal with it in their own preprocess.
+      // for example social_group_request.
+      $is_added = in_array('added', array_column($join_methods, 'value'), FALSE);
+      if ($is_added) {
         $variables['group_operations_url'] = Url::fromRoute('entity.group.join', ['group' => $group->id()]);
-        $variables['closed_group'] = TRUE;
         $variables['cta'] = t('Invitation only');
+      }
+      $is_direct = in_array('direct', array_column($join_methods, 'value'), FALSE);
+      if ($is_direct) {
+        $variables['group_operations_url'] = Url::fromRoute('entity.group.join', ['group' => $group->id()]);
+        $variables['cta'] = t('Join');
       }
     }
   }
@@ -320,6 +332,15 @@ function social_group_preprocess_group(array &$variables) {
 
   // Add group edit url for management.
   if ($group instanceof Group) {
+    // Ensure all groups get the group.type (differentiating labels in teasers
+    // hero's and full nodes.
+    // But also if the allowed join method is there, this should be added.
+    $variables['#cache']['contexts'][] = 'group.type';
+    if ($group->hasField('field_group_allowed_join_method') &&
+      !empty($group->getFieldValue('field_group_allowed_join_method', 'value'))) {
+      $variables['#cache']['contexts'][] = 'social_group_join_method';
+    }
+
     // Get the current route name to check if
     // the user is on the edit or delete page.
     $route = \Drupal::routeMatch()->getRouteName();
@@ -554,7 +575,15 @@ function social_group_entity_view_alter(array &$build, EntityInterface $entity, 
         // We need join / leave for the CTA and also update permissions
         // for the button to edit a group.
         $build['#cache']['contexts'][] = 'group.type';
-        $build['#cache']['contexts'][] = 'user.group_permissions';
+        // Add custom Join method context. Together with group.type we can
+        // base our cached hero on Open Group / Secret / Closed which has
+        // different join buttons. But also flexible_groups are now
+        // differentiated based on request to join, or invite optionally.
+        $build['#cache']['contexts'][] = 'social_group_join_method';
+        // If for a teaser we need the user context, we need it here too.
+        // Makes sense for permissions, group permissions and joined
+        // to take in to account.
+        $build['#cache']['contexts'][] = 'user';
         $build['#cache']['tags'][] = 'group_block:' . $entity->id();
         break;
 
@@ -1193,7 +1222,7 @@ function _social_group_get_member_profile(GroupContent $group_content) {
  * @return \Drupal\group\Entity\GroupInterface
  *   Returns the group object.
  */
-function _social_group_get_current_group($node = NULL) {
+function _social_group_get_current_group($node = NULL, $cache = FALSE) {
   $cache = &drupal_static(__FUNCTION__, []);
 
   // For the same $node input, within the same request the return is always
@@ -1207,7 +1236,8 @@ function _social_group_get_current_group($node = NULL) {
   }
 
   // If we have a cache key and it has a value, we're done early.
-  if (!is_null($nid) && isset($cache[$nid])) {
+  // Unless we don't want it served from cache.
+  if (!is_null($nid) && isset($cache[$nid]) && $cache) {
     // Translate FALSE (so isset works) back to NULL.
     return $cache[$nid] ?: NULL;
   }
