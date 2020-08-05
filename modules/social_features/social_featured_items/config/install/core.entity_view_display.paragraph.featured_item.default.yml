@@ -10,7 +10,7 @@ dependencies:
     - paragraphs.paragraphs_type.featured_item
   module:
     - image
-    - link
+    - social_core
     - text
 id: paragraph.featured_item.default
 targetEntityType: paragraph
@@ -37,13 +37,14 @@ content:
     weight: 1
     label: hidden
     settings:
-      trim_length: 80
+      trim_length: '80'
+      class: 'card__link btn btn-default'
       url_only: false
       url_plain: false
-      rel: ''
-      target: ''
+      rel: 0
+      target: 0
     third_party_settings: {  }
-    type: link
+    type: link_with_class
     region: content
   field_featured_item_title:
     weight: 0

@@ -158,8 +158,7 @@ class Node extends PreprocessBase {
       // comment count, and add the comment count to the node.
       if ($node->$comment_field_name->status != CommentItemInterface::HIDDEN) {
         $comment_count = _socialbase_node_get_comment_count($node, $comment_field_name);
-        $t_args = [':num_comments' => $comment_count];
-        $variables['below_content'][$comment_field_name]['#title'] = t('Comments (:num_comments)', $t_args);
+        $variables['below_content'][$comment_field_name]['#title'] = $comment_count === 0 ? t('Be the first one to comment') : t('Comments (:num_comments)', [':num_comments' => $comment_count]);
 
         // If it's closed, we only show the comment section when there are
         // comments placed. Closed means we show comments but you are not able
@@ -175,7 +174,7 @@ class Node extends PreprocessBase {
     // for this node, we can print the count even for Anonymous.
     $enabled_types = \Drupal::config('like_and_dislike.settings')->get('enabled_types');
     $variables['likes_count'] = NULL;
-    if (in_array($node->getType(), $enabled_types['node'])) {
+    if (isset($enabled_types['node']) && in_array($node->getType(), $enabled_types['node'])) {
       $variables['likes_count'] = _socialbase_node_get_like_count($node->getEntityTypeId(), $node->id());
     }
 

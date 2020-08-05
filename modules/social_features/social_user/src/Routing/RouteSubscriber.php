@@ -45,6 +45,19 @@ class RouteSubscriber extends RouteSubscriberBase {
       $route->setOption('_admin_route', FALSE);
     }
 
+    // Routes for which needs to disable access if the user is blocked.
+    $disable_access_for = [
+      'view.user_information.user_information',
+      'view.events.events_overview',
+      'view.topics.page_profile',
+    ];
+
+    // Add custom access to routes.
+    foreach ($disable_access_for as $route_name) {
+      if ($route = $collection->get($route_name)) {
+        $route->setRequirement('_custom_access', '\Drupal\social_user\Controller\SocialUserController::accessUsersPages');
+      }
+    }
   }
 
 }
