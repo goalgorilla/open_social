@@ -161,10 +161,12 @@ class SocialEventInviteBulkHelper {
     $results = [];
 
     foreach ($users as $user) {
+      // Todo: Should be merged with extractEmailsFrom from InviteEmailBaseForm.
       // Remove select2 ID parameter.
       $user = str_replace('$ID:', '', $user);
       preg_match_all("/[\._a-zA-Z0-9+-]+@[\._a-zA-Z0-9+-]+/i", $user, $email);
       $email = $email[0];
+
       // If the user is an email.
       if ($email) {
         $user = user_load_by_mail($email);
@@ -231,8 +233,8 @@ class SocialEventInviteBulkHelper {
 
         // Clear the cache.
         $tags = [];
-        $tags[] = 'enrollment:' . $nid . '-' . $user->id();
-        $tags[] = 'event_content_list:entity:' . $user->id();
+        $tags[] = 'enrollment:' . $nid . '-' . $user;
+        $tags[] = 'event_content_list:entity:' . $user;
         Cache::invalidateTags($tags);
       }
 
