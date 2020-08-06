@@ -37,7 +37,7 @@ Feature: See upcoming events in the community
     And I should see "Behat Event 1"
     And I should see "Behat Event 2"
 
-    When I click radio button "Upcoming events"
+    When I click radio button "Upcoming and ongoing events"
     And I press "Filter"
     And "Behat Event 1" should precede "Behat Event 2" for the query ".teaser__title"
 
@@ -46,5 +46,5 @@ Feature: See upcoming events in the community
       | Behat Event 1 | -10 minutes      | 1      | public                   |
       | Behat Event 2 | -20 minutes      | 1      | public                   |
 
-    When I click radio button "Events that have started or are finished"
+    When I click radio button "Past events"
     And "Behat Event 1" should precede "Behat Event 2" for the query ".teaser__title"
