@@ -68,8 +68,13 @@ class RedirectSubscriber implements EventSubscriberInterface {
     // First check if the current route is the group canonical.
     $routeMatch = $this->currentRoute->getRouteName();
 
+    // Set the already default redirect route.
+    $defaultRoute = 'social_group.stream';
+
     // Not group canonical, then we leave.
-    if ($routeMatch !== 'entity.group.canonical') {
+    // Sometimes the group canonical gets overriden by social_group.stream
+    // in a RouteSubscriber.
+    if ($routeMatch !== 'entity.group.canonical' && $routeMatch !== $defaultRoute) {
       return;
     }
 
@@ -80,8 +85,6 @@ class RedirectSubscriber implements EventSubscriberInterface {
       return;
     }
 
-    // Set the already default redirect route.
-    $defaultRoute = 'social_group.stream';
     $defaultClosedRoute = 'view.group_information.page_group_about';
 
     // Check if this group has a custom route set.
