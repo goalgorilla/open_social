@@ -698,9 +698,7 @@ function social_event_date_validate(&$element, FormStateInterface $form_state, &
     $storage_format = DrupalDateTime::FORMAT;
     $datetime = trim($input['date'] . ' ' . $input['time']);
     $storage_timezone = new DateTimeZone(DateTimeItemInterface::STORAGE_TIMEZONE);
-    $system_timezone = date_default_timezone_get();
-    $zone = !empty($system_timezone) ? new DateTimeZone($system_timezone) : $storage_timezone;
-    $input['object'] = DrupalDateTime::createFromFormat($storage_format, $datetime, $zone);
+    $input['object'] = DrupalDateTime::createFromFormat($storage_format, $datetime, $storage_timezone);
     if ($input['object'] instanceof DrupalDateTime) {
       $form_state->setValueForElement($element, $input);
     }
