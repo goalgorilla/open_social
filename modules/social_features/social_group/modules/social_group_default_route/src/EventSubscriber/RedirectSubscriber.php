@@ -1,3 +1,39 @@
+Skip to content
+Search or jump to…
+
+Pull requests
+Issues
+Marketplace
+Explore
+
+@ronaldtebrake
+goalgorilla
+/
+open_social
+26
+114
+119
+Code
+Pull requests
+53
+Actions
+Wiki
+Security
+9
+Insights
+Settings
+open_social/modules/social_features/social_group/modules/social_group_default_route/src/EventSubscriber/RedirectSubscriber.php /
+@ribel
+ribel Issue by ribel, Kingdutch, jochemvn, jaapjan, ronaldtebrake: Revert P…
+…
+Latest commit 331b234 on 10 Apr 2019
+History
+1 contributor
+We found potential security vulnerabilities in your dependencies.
+You can see this message because you have been granted access to Dependabot alerts for this repository.
+
+116 lines (98 sloc)  3.36 KB
+
 <?php
 
 namespace Drupal\social_group_default_route\EventSubscriber;
@@ -68,13 +104,8 @@ class RedirectSubscriber implements EventSubscriberInterface {
     // First check if the current route is the group canonical.
     $routeMatch = $this->currentRoute->getRouteName();
 
-    // Set the already default redirect route.
-    $defaultRoute = 'social_group.stream';
-
     // Not group canonical, then we leave.
-    // Sometimes the group canonical gets overriden by social_group.stream
-    // in a RouteSubscriber.
-    if ($routeMatch !== 'entity.group.canonical' && $routeMatch !== $defaultRoute) {
+    if ($routeMatch !== 'entity.group.canonical') {
       return;
     }
 
@@ -85,6 +116,8 @@ class RedirectSubscriber implements EventSubscriberInterface {
       return;
     }
 
+    // Set the already default redirect route.
+    $defaultRoute = 'social_group.stream';
     $defaultClosedRoute = 'view.group_information.page_group_about';
 
     // Check if this group has a custom route set.
