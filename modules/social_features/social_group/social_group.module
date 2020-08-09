@@ -1223,7 +1223,7 @@ function _social_group_get_member_profile(GroupContent $group_content) {
  * @return \Drupal\group\Entity\GroupInterface
  *   Returns the group object.
  */
-function _social_group_get_current_group($node = NULL, $cache = FALSE) {
+function _social_group_get_current_group($node = NULL) {
   $cache = &drupal_static(__FUNCTION__, []);
 
   // For the same $node input, within the same request the return is always
@@ -1238,7 +1238,7 @@ function _social_group_get_current_group($node = NULL, $cache = FALSE) {
 
   // If we have a cache key and it has a value, we're done early.
   // Unless we don't want it served from cache.
-  if (!is_null($nid) && isset($cache[$nid]) && $cache) {
+  if (!is_null($nid) && isset($cache[$nid])) {
     // Translate FALSE (so isset works) back to NULL.
     return $cache[$nid] ?: NULL;
   }
