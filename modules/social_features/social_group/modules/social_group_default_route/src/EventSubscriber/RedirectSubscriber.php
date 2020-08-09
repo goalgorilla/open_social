@@ -1,39 +1,3 @@
-Skip to content
-Search or jump to…
-
-Pull requests
-Issues
-Marketplace
-Explore
-
-@ronaldtebrake
-goalgorilla
-/
-open_social
-26
-114
-119
-Code
-Pull requests
-53
-Actions
-Wiki
-Security
-9
-Insights
-Settings
-open_social/modules/social_features/social_group/modules/social_group_default_route/src/EventSubscriber/RedirectSubscriber.php /
-@ribel
-ribel Issue by ribel, Kingdutch, jochemvn, jaapjan, ronaldtebrake: Revert P…
-…
-Latest commit 331b234 on 10 Apr 2019
-History
-1 contributor
-We found potential security vulnerabilities in your dependencies.
-You can see this message because you have been granted access to Dependabot alerts for this repository.
-
-116 lines (98 sloc)  3.36 KB
-
 <?php
 
 namespace Drupal\social_group_default_route\EventSubscriber;
