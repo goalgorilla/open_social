@@ -282,6 +282,7 @@ function social_group_preprocess_group(array &$variables) {
     // Unless its flexible groups, we lets the join methods decide what
     // the correct url is.
     if ($group_type_id === 'flexible_group') {
+      $variables['closed_group'] = TRUE;
       $join_methods = $group->get('field_group_allowed_join_method')->getValue();
       // We have more join methods now, so only when "added"
       // is the chosen option (only can be chosen) we add the invitation only.
