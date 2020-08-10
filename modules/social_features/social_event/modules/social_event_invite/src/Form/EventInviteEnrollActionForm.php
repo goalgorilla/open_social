@@ -114,6 +114,15 @@ class EventInviteEnrollActionForm extends EnrollActionForm {
       }
     }
 
+    // For AN users it can be rendered on a Public event with
+    // invite only as option. Let's make it similar to a Group experience
+    // where there is no button rendered.
+    // We unset it here because in the parent form and this form
+    // a lot of times this button get's overridden.
+    if ($current_user->isAnonymous()) {
+      unset($form['enroll_for_this_event']);
+    }
+
     return $form;
   }
 
