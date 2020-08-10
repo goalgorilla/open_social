@@ -363,7 +363,6 @@ function socialbase_form_alter(&$form, FormStateInterface $form_state, $form_id)
       'views_bulk_operations_configure_action',
       'views_bulk_operations_confirm_action',
       'bulk_group_invitation',
-      'social_bulk_group_invitation',
       'enroll_invite_user_form',
     ]
   );

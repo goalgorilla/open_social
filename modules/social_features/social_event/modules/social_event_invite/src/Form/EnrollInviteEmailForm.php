@@ -12,7 +12,6 @@ use Drupal\Core\Utility\Token;
 use Drupal\file\Entity\File;
 use Drupal\social_core\Form\InviteEmailBaseForm;
 use Drupal\social_event\EventEnrollmentInterface;
-use Drupal\user\UserInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 

@@ -2,7 +2,6 @@
 
 namespace Drupal\social_core\Form;
 
-use Drupal\Component\Render\FormattableMarkup;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
@@ -94,7 +93,7 @@ class InviteEmailBaseForm extends FormBase {
     $form['users_fieldset']['user'] = [
       '#title' => $this->t('Find people by name or email address'),
       '#type' => 'select2',
-      '#description' => $this->t('You can enter or paste multiple entries separated by comma or semicolon '),
+      '#description' => $this->t('You can enter or paste multiple entries separated by comma or semicolon'),
       '#multiple' => TRUE,
       '#tags' => TRUE,
       '#autocomplete' => TRUE,
@@ -117,13 +116,6 @@ class InviteEmailBaseForm extends FormBase {
     ];
 
     return $form;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function validateForm(array &$form, FormStateInterface $form_state) {
-    parent::validateForm($form, $form_state);
   }
 
   /**

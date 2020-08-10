@@ -148,8 +148,8 @@ class SocialEventInviteBulkHelper {
   /**
    * Send the invites to emails in a batch.
    *
-   * @param array $emails
-   *   Array containing emails.
+   * @param array $users
+   *   Array containing user ids or user emails.
    * @param string $nid
    *   The node id.
    * @param array $context
