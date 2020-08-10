@@ -73,7 +73,9 @@
     </div>
   {% endif %}
 
-  {{ rows }}
+  {% if not empty %}
+    {{ rows }}
+  {% endif %}
 
   {% if empty %}
 

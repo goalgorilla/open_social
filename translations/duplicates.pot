@@ -4,8 +4,15 @@
 # Copyright 2018 GoalGorilla <devel@goalgorilla.com>
 # Generated from files:
 #  translations.php: n/a
+#  modules/social_features/social_event/config/install/field.storage.node.field_enroll_method.yml: n/a
+#  modules/social_features/social_group/modules/social_group_request/social_group_request.module: n/a
+#  modules/social_features/social_group/social_group.module: n/a
+#  modules/social_features/social_user/social_user.module: n/a
 #  modules/social_features/social_tagging/config/install/taxonomy.vocabulary.social_tagging.yml: n/a
+#  modules/social_features/social_content_block/modules/social_event_content_block/config/optional/field.field.block_content.custom_content_list.field_event_type.yml: n/a
 #  modules/social_features/social_event/modules/social_event_type/config/install/taxonomy.vocabulary.event_types.yml: n/a
+#  themes/socialbase/templates/profile/profile--profile--default.html.twig: n/a
+#  themes/socialblue/templates/profile/profile--profile--default--sky.html.twig: n/a
 #  modules/social_features/social_profile/config/install/field.field.profile.profile.field_profile_expertise.yml: n/a
 #  modules/social_features/social_profile/config/install/taxonomy.vocabulary.expertise.yml: n/a
 #  modules/social_features/social_search/config/install/views.view.search_users.yml: n/a
@@ -24,10 +31,10 @@
 #  modules/custom/social_demo/src/Plugin/DemoContent/Event.php: n/a
 #  modules/social_features/social_event/config/install/field.field.event_enrollment.event_enrollment.field_event.yml: n/a
 #  modules/social_features/social_event/config/install/node.type.event.yml: n/a
+#  modules/social_features/social_event/modules/social_event_invite/config/install/views.view.user_event_invites.yml: n/a
 #  modules/social_features/social_user/social_user.links.menu.yml: n/a
 #  modules/social_features/social_user/social_user.routing.yml: n/a
 #  modules/social_features/social_user/src/Plugin/Action/SocialSendEmail.php: n/a
-#  modules/social_features/social_group/social_group.module: n/a
 #  social.profile: n/a
 #  modules/custom/social_auth_facebook/social_auth_facebook.install: n/a
 #  modules/custom/social_auth_google/social_auth_google.install: n/a
@@ -59,9 +66,12 @@
 #  modules/custom/social_tour/social_tour.info.yml: n/a
 #  modules/social_features/social_activity/social_activity.info.yml: n/a
 #  modules/social_features/social_book/social_book.info.yml: n/a
+#  modules/social_features/social_book/modules/social_book_featured/social_book_featured.info.yml: n/a
 #  modules/social_features/social_comment/social_comment.info.yml: n/a
 #  modules/social_features/social_comment_upload/social_comment_upload.info.yml: n/a
 #  modules/social_features/social_content_block/social_content_block.info.yml: n/a
+#  modules/social_features/social_content_block/modules/social_event_content_block/social_event_content_block.info.yml: n/a
+#  modules/social_features/social_content_block/modules/social_group_content_block/social_group_content_block.info.yml: n/a
 #  modules/social_features/social_content_report/social_content_report.info.yml: n/a
 #  modules/social_features/social_core/social_core.info.yml: n/a
 #  modules/social_features/social_download_count/social_download_count.info.yml: n/a
@@ -71,16 +81,22 @@
 #  modules/social_features/social_event/modules/social_event_an_enroll/social_event_an_enroll.info.yml: n/a
 #  modules/social_features/social_event/modules/social_event_an_enroll_enrolments_export/social_event_an_enroll_enrolments_export.info.yml: n/a
 #  modules/social_features/social_event/modules/social_event_enrolments_export/social_event_enrolments_export.info.yml: n/a
+#  modules/social_features/social_event/modules/social_event_invite/social_event_invite.info.yml: n/a
 #  modules/social_features/social_event/modules/social_event_managers/social_event_managers.info.yml: n/a
 #  modules/social_features/social_event/modules/social_event_max_enroll/social_event_max_enroll.info.yml: n/a
 #  modules/social_features/social_event/modules/social_event_type/social_event_type.info.yml: n/a
+#  modules/social_features/social_featured_content/social_featured_content.info.yml: n/a
+#  modules/social_features/social_featured_items/social_featured_items.info.yml: n/a
 #  modules/social_features/social_follow_content/social_follow_content.info.yml: n/a
 #  modules/social_features/social_group/social_group.info.yml: n/a
 #  modules/social_features/social_group/modules/social_group_default_route/social_group_default_route.info.yml: n/a
 #  modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.info.yml: n/a
+#  modules/social_features/social_group/modules/social_group_flexible_group/modules/social_flexible_group_featured/social_flexible_group_featured.info.yml: n/a
 #  modules/social_features/social_group/modules/social_group_gvbo/social_group_gvbo.info.yml: n/a
+#  modules/social_features/social_group/modules/social_group_invite/social_group_invite.info.yml: n/a
 #  modules/social_features/social_group/modules/social_group_members_export/social_group_members_export.info.yml: n/a
 #  modules/social_features/social_group/modules/social_group_quickjoin/social_group_quickjoin.info.yml: n/a
+#  modules/social_features/social_group/modules/social_group_request/social_group_request.info.yml: n/a
 #  modules/social_features/social_group/modules/social_group_secret/social_group_secret.info.yml: n/a
 #  modules/social_features/social_landing_page/social_landing_page.info.yml: n/a
 #  modules/social_features/social_like/social_like.info.yml: n/a
@@ -117,6 +133,7 @@
 #  modules/custom/activity_basics/src/Plugin/ActivityAction/UpdateActivityAction.php: n/a
 #  modules/custom/activity_basics/src/Plugin/ActivityContext/CommunityActivityContext.php: n/a
 #  modules/custom/activity_basics/src/Plugin/ActivityContext/ContentInMyGroupActivityContext.php: n/a
+#  modules/custom/activity_basics/src/Plugin/ActivityContext/EventRequestActivityContext.php: n/a
 #  modules/custom/activity_basics/src/Plugin/ActivityContext/GroupActivityContext.php: n/a
 #  modules/custom/activity_basics/src/Plugin/ActivityContext/GroupContentInMyGroupActivityContext.php: n/a
 #  modules/custom/activity_basics/src/Plugin/ActivityContext/OrganizerActivityContext.php: n/a
@@ -144,7 +161,6 @@
 #  modules/custom/social_font/social_font.links.task.yml: n/a
 #  modules/social_features/social_event/social_event.links.task.yml: n/a
 #  modules/social_features/social_group/src/Form/SocialGroupAddForm.php: n/a
-#  modules/social_features/social_user/social_user.module: n/a
 #  modules/custom/social_queue_storage/social_queue_storage.links.task.yml: n/a
 #  modules/social_features/social_comment/src/Form/SocialCommentAdminOverview.php: n/a
 #  modules/social_features/social_post/social_post.links.task.yml: n/a
@@ -204,6 +220,7 @@
 #  modules/social_features/social_event/modules/social_event_an_enroll_enrolments_export/src/Plugin/UserExportPlugin/EnrolmentUserEmail.php: n/a
 #  modules/social_features/social_user_export/src/Plugin/UserExportPlugin/UserEmail.php: n/a
 #  modules/custom/social_queue_storage/config/install/social_queue_storage.queue_storage_entity_type.email.yml: n/a
+#  modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_invitations.yml: n/a
 #  modules/custom/activity_send/modules/activity_send_email/src/Plugin/EmailFrequency/Daily.php: n/a
 #  modules/custom/activity_send/modules/activity_send_email/src/Plugin/EmailFrequency/Immediately.php: n/a
 #  modules/custom/activity_send/modules/activity_send_email/src/Plugin/QueueWorker/ActivityDigestWorker.php: n/a
@@ -234,6 +251,9 @@
 #  modules/custom/dropdown/src/Plugin/Field/FieldType/Dropdown.php: n/a
 #  modules/custom/entity_access_by_field/config/schema/entity_access_by_field.schema.yml: n/a
 #  modules/social_features/social_content_report/config/install/views.view.report_overview.yml: n/a
+#  modules/social_features/social_featured_content/config/install/field.field.paragraph.featured.field_featured_description.yml: n/a
+#  modules/social_features/social_featured_items/config/install/field.field.paragraph.featured_item.field_featured_item_description.yml: n/a
+#  modules/social_features/social_featured_items/config/install/field.field.paragraph.featured_items.field_featured_items_description.yml: n/a
 #  modules/social_features/social_group/config/install/field.field.group.closed_group.field_group_description.yml: n/a
 #  modules/social_features/social_group/config/install/field.field.group.open_group.field_group_description.yml: n/a
 #  modules/social_features/social_group/config/install/field.field.group.public_group.field_group_description.yml: n/a
@@ -241,9 +261,6 @@
 #  modules/social_features/social_group/modules/social_group_secret/config/install/field.field.group.secret_group.field_group_description.yml: n/a
 #  modules/social_features/social_landing_page/config/install/field.field.paragraph.accordion.field_accord_description.yml: n/a
 #  modules/social_features/social_landing_page/config/install/field.field.paragraph.accordion_item.field_accord_item_description.yml: n/a
-#  modules/social_features/social_landing_page/config/install/field.field.paragraph.featured.field_featured_description.yml: n/a
-#  modules/social_features/social_landing_page/config/install/field.field.paragraph.featured_item.field_featured_item_description.yml: n/a
-#  modules/social_features/social_landing_page/config/install/field.field.paragraph.featured_items.field_featured_items_description.yml: n/a
 #  modules/social_features/social_page/config/install/field.field.node.page.body.yml: n/a
 #  modules/social_features/social_topic/config/install/field.field.node.topic.body.yml: n/a
 #  modules/custom/dropdown/src/Element/Dropdown.php: n/a
@@ -273,9 +290,9 @@
 #  modules/custom/group_core_comments/src/Controller/GroupCoreCommentsController.php: n/a
 #  modules/custom/group_core_comments/src/Plugin/Field/FieldFormatter/CommentGroupContentFormatter.php: n/a
 #  modules/custom/group_core_comments/templates/comments-join-group.html.twig: n/a
-#  modules/social_features/social_landing_page/templates/group--featured.html.twig: n/a
-#  modules/social_features/social_landing_page/templates/node--featured.html.twig: n/a
-#  modules/social_features/social_landing_page/templates/profile--featured.html.twig: n/a
+#  modules/social_features/social_featured_content/templates/group--featured.html.twig: n/a
+#  modules/social_features/social_featured_content/templates/node--featured.html.twig: n/a
+#  modules/social_features/social_featured_content/templates/profile--featured.html.twig: n/a
 #  themes/socialbase/templates/group/group--teaser.html.twig: n/a
 #  themes/socialblue/templates/node/node--featured--sky.html.twig: n/a
 #  themes/socialblue/templates/node/event/node--event--featured--sky.html.twig: n/a
@@ -291,19 +308,20 @@
 #  modules/custom/mentions/mentions.permissions.yml: n/a
 #  modules/custom/mentions/src/Form/MentionsSettingsForm.php: n/a
 #  modules/custom/social_auth_extra/social_auth_extra.module: n/a
+#  modules/social_features/social_featured_content/config/install/field.field.paragraph.featured.field_featured_link.yml: n/a
+#  modules/social_features/social_featured_items/config/install/field.field.paragraph.featured_item.field_featured_item_link.yml: n/a
 #  modules/social_features/social_landing_page/config/install/field.field.paragraph.block.field_block_link.yml: n/a
-#  modules/social_features/social_landing_page/config/install/field.field.paragraph.featured.field_featured_link.yml: n/a
-#  modules/social_features/social_landing_page/config/install/field.field.paragraph.featured_item.field_featured_item_link.yml: n/a
 #  modules/custom/social_queue_storage/src/QueueStorageEntityTypeListBuilder.php: n/a
 #  modules/social_features/social_post/src/PostTypeListBuilder.php: n/a
 #  config/install/views.view.content.yml: n/a
+#  modules/social_features/social_featured_content/config/install/field.field.paragraph.featured.field_featured_title.yml: n/a
+#  modules/social_features/social_featured_items/config/install/field.field.paragraph.featured_item.field_featured_item_title.yml: n/a
+#  modules/social_features/social_featured_items/config/install/field.field.paragraph.featured_items.field_featured_items_title.yml: n/a
 #  modules/social_features/social_follow_content/config/install/views.view.following.yml: n/a
+#  modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_user_invitations.yml: n/a
 #  modules/social_features/social_landing_page/config/install/field.field.paragraph.accordion.field_accord_title.yml: n/a
 #  modules/social_features/social_landing_page/config/install/field.field.paragraph.accordion_item.field_accord_item_title.yml: n/a
 #  modules/social_features/social_landing_page/config/install/field.field.paragraph.block.field_block_title.yml: n/a
-#  modules/social_features/social_landing_page/config/install/field.field.paragraph.featured.field_featured_title.yml: n/a
-#  modules/social_features/social_landing_page/config/install/field.field.paragraph.featured_item.field_featured_item_title.yml: n/a
-#  modules/social_features/social_landing_page/config/install/field.field.paragraph.featured_items.field_featured_items_title.yml: n/a
 #  modules/social_features/social_landing_page/config/install/field.field.paragraph.hero.field_hero_title.yml: n/a
 #  modules/social_features/social_landing_page/config/install/field.field.paragraph.hero_small.field_hero_small_title.yml: n/a
 #  modules/social_features/social_landing_page/config/install/field.field.paragraph.introduction.field_introduction_title.yml: n/a
@@ -312,7 +330,6 @@
 #  modules/social_features/social_event/config/install/views.view.event_enrollments.yml: n/a
 #  modules/social_features/social_event/modules/social_event_managers/config/install/views.view.managers.yml: n/a
 #  modules/social_features/social_group/config/install/views.view.group_managers.yml: n/a
-#  modules/social_features/social_landing_page/config/install/views.view.featured_profile_reference.yml: n/a
 #  modules/social_features/social_profile/config/install/views.view.newest_users.yml: n/a
 #  modules/social_features/social_profile/config/install/views.view.user_information.yml: n/a
 #  modules/social_features/social_user_export/src/Plugin/UserExportPlugin/UserId.php: n/a
@@ -335,9 +352,13 @@
 #  modules/social_features/social_profile/modules/social_profile_manager_notes/social_profile_manager_notes.info.yml: n/a
 #  modules/custom/social_auth_extra/src/Form/AuthUnlinkForm.php: n/a
 #  modules/social_features/social_event/modules/social_event_an_enroll/src/Form/EventAnEnrollSettingsForm.php: n/a
-#  modules/social_features/social_book/config/install/field.field.node.book.body.yml: n/a
+#  modules/social_features/social_event/modules/social_event_invite/src/Form/EventInviteSettingsForm.php: n/a
+#  themes/socialbase/templates/email/invite-email-preview.html.twig: n/a
+#  config/optional/field.field.node.book.body.yml: n/a
 #  modules/social_features/social_event/config/install/field.field.node.event.body.yml: n/a
 #  modules/social_features/social_core/social_core.install: n/a
+#  modules/social_features/social_event/src/Form/EnrollRequestAnonymousForm.php: n/a
+#  modules/social_features/social_group/modules/social_group_request/src/Form/GroupRequestMembershipRequestAnonymousForm.php: n/a
 #  modules/social_features/social_user/src/Form/SocialUserLoginForm.php: n/a
 #  modules/social_features/social_user/src/Form/SocialUserPasswordForm.php: n/a
 #  modules/custom/social_auth_extra/src/Form/AuthLoginNoticeForm.php: n/a
@@ -384,13 +405,14 @@
 #  modules/custom/social_auth_twitter/src/Plugin/Network/TwitterAuth.php: n/a
 #  modules/custom/social_demo/social_demo.drush.inc: n/a
 #  modules/custom/social_demo/src/Plugin/DemoContent/Book.php: n/a
-#  modules/social_features/social_book/config/install/node.type.book.yml: n/a
+#  config/optional/node.type.book.yml: n/a
 #  modules/custom/social_demo/src/Plugin/DemoContent/Comment.php: n/a
 #  modules/social_features/social_comment/src/SocialCommentBreadcrumbBuilder.php: n/a
 #  modules/social_features/social_comment/config/install/comment.type.comment.yml: n/a
 #  modules/social_features/social_comment/config/install/field.field.comment.comment.field_comment_body.yml: n/a
 #  modules/social_features/social_comment/social_comment.module: n/a
 #  modules/custom/social_demo/src/Plugin/DemoContent/EventEnrollment.php: n/a
+#  modules/social_features/social_event/modules/social_event_invite/social_event_invite.module: n/a
 #  modules/social_features/social_event/src/Entity/EventEnrollmentViewsData.php: n/a
 #  modules/custom/social_demo/src/Plugin/DemoContent/EventType.php: n/a
 #  modules/social_features/social_event/modules/social_event_type/config/install/field.field.node.event.field_event_type.yml: n/a
@@ -420,6 +442,9 @@
 #  modules/custom/social_gdpr/src/Plugin/Block/AddDataPolicyRevision.php: n/a
 #  modules/custom/social_gdpr/src/Form/DataPolicyRevisionRevertForm.php: n/a
 #  modules/custom/social_gdpr/src/Controller/DataPolicy.php: n/a
+#  modules/social_features/social_event/modules/social_event_invite/src/Form/EnrollInviteConfirmForm.php: n/a
+#  modules/social_features/social_event/src/Form/EnrollRequestDeclineForm.php: n/a
+#  modules/social_features/social_group/modules/social_group_request/src/Form/GroupRequestMembershipRejectForm.php: n/a
 #  modules/custom/social_gdpr/config/optional/block.block.add_data_policy_revision.yml: n/a
 #  modules/custom/social_gdpr/config/optional/block.block.socialblue_add_data_policy_revision.yml: n/a
 #  modules/custom/social_language/social_language.module: n/a
@@ -483,6 +508,15 @@
 #  modules/social_features/social_activity/social_activity.install: n/a
 #  modules/social_features/social_group/modules/social_group_flexible_group/config/install/field.storage.group.field_group_allowed_visibility.yml: n/a
 #  modules/social_features/social_post/config/install/field.storage.post.field_visibility.yml: n/a
+#  modules/social_features/social_activity/config/optional/views.view.activity_stream_group.yml: n/a
+#  modules/social_features/social_activity/config/optional/views.view.activity_stream_profile.yml: n/a
+#  themes/socialbase/templates/node/node--full.html.twig: n/a
+#  modules/social_features/social_activity/config/install/core.entity_view_mode.activity.featured.yml: n/a
+#  modules/social_features/social_featured_content/config/install/core.entity_view_mode.group.featured.yml: n/a
+#  modules/social_features/social_featured_content/config/install/core.entity_view_mode.node.featured.yml: n/a
+#  modules/social_features/social_featured_content/config/install/core.entity_view_mode.profile.featured.yml: n/a
+#  modules/social_features/social_post/config/install/core.entity_view_mode.post.featured.yml: n/a
+#  modules/social_features/social_activity/src/Plugin/views/display/ModeBlock.php: n/a
 #  modules/social_features/social_activity/templates/message-node-teaser.html.twig: n/a
 #  modules/social_features/social_activity/templates/message-post-teaser.html.twig: n/a
 #  modules/social_features/social_book/social_book.module: n/a
@@ -503,6 +537,7 @@
 #  modules/social_features/social_search/src/SocialSearchBreadcrumbBuilder.php: n/a
 #  themes/socialbase/templates/block/block--system-branding-block.html.twig: n/a
 #  modules/social_features/social_comment/src/Controller/SocialCommentController.php: n/a
+#  modules/social_features/social_group/modules/social_group_request/src/SocialGroupRequestConfigOverride.php: n/a
 #  modules/social_features/social_post/social_post.admin.inc: n/a
 #  modules/social_features/social_comment/src/Routing/RouteSubscriber.php: n/a
 #  modules/social_features/social_comment_upload/social_comment_upload.module: n/a
@@ -514,6 +549,24 @@
 #  modules/social_features/social_comment_upload/src/Plugin/Field/FieldFormatter/FileAndImageTableFormatter.php: n/a
 #  modules/social_features/social_content_block/social_content_block.module: n/a
 #  modules/social_features/social_content_block/src/ContentBuilder.php: n/a
+#  modules/social_features/social_content_block/src/Plugin/Field/FieldWidget/ContentBlockPluginFieldWidget.php: n/a
+#  modules/social_features/social_search/social_search.links.task.yml: n/a
+#  modules/social_features/social_event/config/install/views.view.event_manage_enrollment_requests.yml: n/a
+#  modules/social_features/social_event/config/install/views.view.upcoming_events.yml: n/a
+#  modules/social_features/social_event/modules/social_event_invite/config/install/views.view.event_manage_enrollment_invites.yml: n/a
+#  modules/social_features/social_event/modules/social_event_managers/config/install/views.view.event_manage_enrollments.yml: n/a
+#  modules/social_features/social_group/config/install/views.view.group_events.yml: n/a
+#  modules/social_features/social_group/config/install/views.view.group_information.yml: n/a
+#  modules/social_features/social_group/config/install/views.view.group_manage_members.yml: n/a
+#  modules/social_features/social_group/config/install/views.view.group_members.yml: n/a
+#  modules/social_features/social_group/config/install/views.view.group_topics.yml: n/a
+#  modules/social_features/social_group/config/install/views.view.groups.yml: n/a
+#  modules/social_features/social_like/config/install/views.view.who_liked_this_entity.yml: n/a
+#  modules/social_features/social_private_message/config/install/views.view.inbox.yml: n/a
+#  modules/social_features/social_search/config/install/views.view.search_all.yml: n/a
+#  modules/social_features/social_topic/config/install/views.view.latest_topics.yml: n/a
+#  modules/social_features/social_topic/config/install/views.view.topics.yml: n/a
+#  modules/social_features/social_content_block/src/Plugin/Field/FieldWidget/ContentBlockPluginIdWidget.php: n/a
 #  modules/social_features/social_content_report/social_content_report.tokens.inc: n/a
 #  modules/social_features/social_content_report/social_content_report.views.inc: n/a
 #  modules/social_features/social_content_report/social_content_report.module: n/a
@@ -536,7 +589,11 @@
 #  modules/social_features/social_core/social_core.routing.yml: n/a
 #  modules/social_features/social_core/src/Controller/SocialCoreController.php: n/a
 #  modules/social_features/social_core/src/Entity/Element/EntityAutocomplete.php: n/a
+#  modules/social_features/social_core/src/EventSubscriber/SocialInviteSubscriber.php: n/a
 #  modules/social_features/social_core/src/FeaturesRemoval/FeaturesManager.php: n/a
+#  modules/social_features/social_core/src/Form/InviteEmailBaseForm.php: n/a
+#  modules/social_features/social_core/src/Form/InviteUserBaseForm.php: n/a
+#  modules/social_features/social_group/modules/social_group_invite/src/Form/SocialBulkGroupInvitation.php: n/a
 #  modules/social_features/social_core/src/Plugin/Block/SocialPageTitleBlock.php: n/a
 #  modules/social_features/social_core/config/optional/block.block.pagetitleblock_content.yml: n/a
 #  modules/social_features/social_core/config/optional/block.block.socialblue_pagetitleblock_content.yml: n/a
@@ -547,26 +604,33 @@
 #  modules/social_features/social_embed/social_embed.module: n/a
 #  modules/social_features/social_embed/src/Plugin/Filter/SocialEmbedUrlFilter.php: n/a
 #  modules/social_features/social_event/social_event.tokens.inc: n/a
+#  modules/social_features/social_event/src/Controller/EnrollRequestDialogController.php: n/a
+#  modules/social_features/social_event/src/Form/EnrollActionForm.php: n/a
+#  modules/social_features/social_event/src/Form/EnrollRequestModalForm.php: n/a
+#  modules/social_features/social_event/modules/social_event_invite/src/Form/EventInviteEnrollActionForm.php: n/a
+#  themes/socialbase/templates/group/group--hero.html.twig: n/a
+#  themes/socialblue/templates/group/group--statistic.html.twig: n/a
+#  modules/social_features/social_event/modules/social_event_invite/src/Form/EnrollInviteEmailForm.php: n/a
+#  modules/social_features/social_event/modules/social_event_invite/src/Form/EnrollInviteUserForm.php: n/a
+#  modules/social_features/social_group/modules/social_group_request/src/Plugin/Block/SocialGroupRequestMembershipNotification.php: n/a
 #  modules/social_features/social_event/social_event.install: n/a
-#  modules/social_features/social_event/config/install/views.view.upcoming_events.yml: n/a
 #  modules/social_features/social_event/social_event.group.permissions.yml: n/a
 #  modules/social_features/social_event/social_event.links.action.yml: n/a
 #  modules/social_features/social_event/social_event.links.menu.yml: n/a
 #  modules/social_features/social_event/social_event.routing.yml: n/a
 #  modules/social_features/social_event/social_event.permissions.yml: n/a
 #  modules/social_features/social_event/config/schema/social_event.schema.yml: n/a
+#  modules/social_features/social_event/modules/social_event_invite/config/schema/social_event_invite.schema.yml: n/a
 #  modules/social_features/social_event/modules/social_event_an_enroll/social_event_an_enroll.tokens.inc: n/a
 #  modules/social_features/social_event/modules/social_event_an_enroll/social_event_an_enroll.module: n/a
 #  modules/social_features/social_event/modules/social_event_an_enroll/social_event_an_enroll.links.menu.yml: n/a
 #  modules/social_features/social_event/modules/social_event_an_enroll/social_event_an_enroll.routing.yml: n/a
 #  modules/social_features/social_event/modules/social_event_an_enroll/social_event_an_enroll.permissions.yml: n/a
-#  modules/social_features/social_event/modules/social_event_managers/config/install/views.view.event_manage_enrollments.yml: n/a
 #  modules/social_features/social_event/modules/social_event_an_enroll/config/schema/social_event_an_enroll.schema.yml: n/a
 #  modules/social_features/social_event/modules/social_event_an_enroll/src/EventAnEnrollManager.php: n/a
 #  modules/social_features/social_event/modules/social_event_an_enroll_enrolments_export/src/Plugin/UserExportPlugin/EnrolmentUserDisplayName.php: n/a
 #  modules/social_features/social_event/modules/social_event_an_enroll/src/Controller/EventAnEnrollController.php: n/a
 #  modules/social_features/social_event/modules/social_event_an_enroll/src/Form/EventAnEnrollActionForm.php: n/a
-#  modules/social_features/social_event/src/Form/EnrollActionForm.php: n/a
 #  modules/social_features/social_event/config/install/field.storage.event_enrollment.field_enrollment_status.yml: n/a
 #  modules/social_features/social_event/modules/social_event_an_enroll/src/Form/EventAnEnrollForm.php: n/a
 #  modules/social_features/social_event/modules/social_event_an_enroll_enrolments_export/src/Plugin/UserExportPlugin/EnrolmentUserFirstName.php: n/a
@@ -577,7 +641,8 @@
 #  modules/social_features/social_user_export/src/Plugin/UserExportPlugin/UserLastName.php: n/a
 #  modules/social_features/social_event/modules/social_event_an_enroll/config/install/field.field.event_enrollment.event_enrollment.field_last_name.yml: n/a
 #  modules/social_features/social_profile/config/install/field.field.profile.profile.field_profile_last_name.yml: n/a
-#  modules/social_features/social_event/modules/social_event_an_enroll/config/install/field.field.event_enrollment.event_enrollment.field_email.yml: n/a
+#  modules/social_features/social_event/modules/social_event_an_enroll/config/optional/field.field.event_enrollment.event_enrollment.field_email.yml: n/a
+#  modules/social_features/social_event/modules/social_event_invite/config/optional/field.field.event_enrollment.event_enrollment.field_email.yml: n/a
 #  modules/social_features/social_event/modules/social_event_an_enroll/src/Plugin/views/access/ManageEnrollmentAccess.php: n/a
 #  modules/social_features/social_user/src/Plugin/views/access/PeopleAccess.php: n/a
 #  modules/social_features/social_event/modules/social_event_an_enroll_enrolments_export/src/Plugin/Action/ExportAllEnrolments.php: n/a
@@ -585,14 +650,31 @@
 #  modules/social_features/social_user_export/src/Plugin/UserExportPlugin/UserDisplayName.php: n/a
 #  modules/social_features/social_event/modules/social_event_an_enroll_enrolments_export/src/Plugin/UserExportPlugin/EnrolmentUserRegistration.php: n/a
 #  modules/social_features/social_user_export/src/Plugin/UserExportPlugin/UserRegistration.php: n/a
+#  modules/social_features/social_event/modules/social_event_invite/social_event_invite.tokens.inc: n/a
+#  modules/social_features/social_event/modules/social_event_invite/social_event_invite.links.menu.yml: n/a
+#  modules/social_features/social_event/modules/social_event_invite/social_event_invite.routing.yml: n/a
+#  modules/social_features/social_group/modules/social_group_invite/config/schema/social_group_invite.schema.yml: n/a
+#  modules/social_features/social_event/modules/social_event_invite/src/SocialEventInviteBulkHelper.php: n/a
+#  modules/social_features/social_group/src/Controller/DeleteGroup.php: n/a
+#  modules/social_features/social_event/modules/social_event_invite/src/Controller/CancelEnrollInviteController.php: n/a
+#  modules/social_features/social_event/src/Controller/UpdateEnrollRequestController.php: n/a
+#  modules/social_features/social_event/modules/social_event_invite/src/Controller/UserEnrollInviteController.php: n/a
+#  modules/social_features/social_event/modules/social_event_managers/src/Form/SocialEventManagersAddEnrolleeForm.php: n/a
+#  modules/social_features/social_profile/social_profile.module: n/a
+#  modules/social_features/social_group/modules/social_group_request/src/Form/GroupRequestMembershipRequestForm.php: n/a
+#  modules/social_features/social_group/modules/social_group_welcome_message/social_group_welcome_message.module: n/a
+#  modules/custom/activity_creator/config/install/field.field.activity.activity.field_activity_message.yml: n/a
+#  modules/social_features/social_event/modules/social_event_invite/src/Plugin/ActivityContext/EventInviteActivityContext.php: n/a
+#  modules/social_features/social_event/modules/social_event_invite/src/Plugin/Block/SocialEventInviteLocalActionsBlock.php: n/a
 #  modules/social_features/social_event/modules/social_event_managers/social_event_managers.links.action.yml: n/a
 #  modules/social_features/social_event/modules/social_event_managers/social_event_managers.routing.yml: n/a
+#  modules/social_features/social_group/modules/social_group_invite/src/Plugin/Block/SocialInviteLocalActionsBlock.php: n/a
+#  modules/social_features/social_event/modules/social_event_invite/config/optional/block.block.socialeventinviteblock.yml: n/a
+#  modules/social_features/social_event/modules/social_event_invite/src/Plugin/Menu/LocalTask/EventInviteLocalTask.php: n/a
 #  modules/social_features/social_event/modules/social_event_managers/social_event_managers.links.menu.yml: n/a
 #  modules/social_features/social_event/modules/social_event_managers/social_event_managers.permissions.yml: n/a
 #  modules/social_features/social_event/modules/social_event_managers/config/schema/social_event_managers.schema.yml: n/a
 #  modules/social_features/social_event/modules/social_event_managers/src/Element/SocialEnrollmentAutocomplete.php: n/a
-#  modules/social_features/social_event/modules/social_event_managers/src/Form/SocialEventManagersAddEnrolleeForm.php: n/a
-#  modules/social_features/social_profile/social_profile.module: n/a
 #  modules/social_features/social_event/modules/social_event_managers/src/Form/SocialEventManagersSettings.php: n/a
 #  modules/social_features/social_event/modules/social_event_managers/src/Form/SocialEventManagersViewsBulkOperationsConfirmAction.php: n/a
 #  modules/social_features/social_event/modules/social_event_managers/src/Plugin/Action/EventEnrollmentEntityDeleteAction.php: n/a
@@ -614,6 +696,8 @@
 #  modules/social_features/social_event/modules/social_event_type/src/SocialEventTypeConfigOverride.php: n/a
 #  modules/social_features/social_event/modules/social_event_type/src/Form/SocialEventTypeSettings.php: n/a
 #  modules/social_features/social_topic/src/Form/TopicSettingsForm.php: n/a
+#  modules/social_features/social_event/src/Controller/SocialEventController.php: n/a
+#  modules/social_features/social_event/config/install/field.storage.event_enrollment.field_request_or_invite_status.yml: n/a
 #  modules/social_features/social_event/src/Form/EventEnrollmentForm.php: n/a
 #  modules/social_features/social_event/src/Form/EventSettingsForm.php: n/a
 #  modules/social_features/social_event/src/Plugin/Block/EnrollActionBlock.php: n/a
@@ -621,13 +705,15 @@
 #  modules/social_features/social_group/src/Plugin/Block/GroupAddEventBlock.php: n/a
 #  modules/social_features/social_event/config/optional/block.block.event_add_block.yml: n/a
 #  modules/social_features/social_event/config/optional/block.block.socialblue_event_add_block.yml: n/a
+#  themes/socialbase/templates/node/node--teaser.html.twig: n/a
+#  themes/socialbase/templates/node/event/node--event--teaser.html.twig: n/a
 #  modules/social_features/social_follow_content/social_follow_content.module: n/a
 #  modules/social_features/social_follow_content/src/Plugin/ActivityContext/FollowContentActivityContext.php: n/a
 #  modules/social_features/social_group/social_group.tokens.inc: n/a
 #  modules/social_features/social_group/social_group.views.inc: n/a
 #  modules/social_features/social_group/src/Plugin/Action/ChangeGroupMembershipRole.php: n/a
+#  themes/socialblue/templates/profile/profile--profile--statistic.html.twig: n/a
 #  modules/social_features/social_group/social_group.install: n/a
-#  modules/social_features/social_group/config/install/views.view.groups.yml: n/a
 #  modules/social_features/social_group/config/install/views.view.newest_groups.yml: n/a
 #  modules/social_features/social_group/social_group.group.permissions.yml: n/a
 #  modules/social_features/social_group/social_group.permissions.yml: n/a
@@ -635,33 +721,49 @@
 #  modules/social_features/social_group/src/Controller/SocialGroupController.php: n/a
 #  modules/social_features/social_group/social_group.links.menu.yml: n/a
 #  modules/social_features/social_group/social_group.routing.yml: n/a
-#  modules/social_features/social_search/social_search.links.task.yml: n/a
+#  modules/social_features/social_content_block/modules/social_event_content_block/config/install/field.field.block_content.custom_content_list.field_event_group.yml: n/a
 #  modules/social_features/social_user/social_user.links.task.yml: n/a
 #  modules/social_features/social_user/src/Form/SocialUserSettingsForm.php: n/a
 #  modules/social_features/social_group/config/install/core.entity_view_mode.group.stream.yml: n/a
 #  modules/social_features/social_topic/social_topic.links.task.yml: n/a
-#  modules/social_features/social_topic/config/install/views.view.topics.yml: n/a
+#  themes/socialbase/templates/forum/forum-list.html.twig: n/a
 #  modules/social_features/social_search/social_search.permissions.yml: n/a
 #  modules/social_features/social_event/config/install/field.field.event_enrollment.event_enrollment.field_account.yml: n/a
 #  modules/social_features/social_group/config/schema/social_group.schema.yml: n/a
 #  modules/social_features/social_group/modules/social_group_default_route/social_group_default_route.module: n/a
 #  modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.module: n/a
+#  modules/social_features/social_group/modules/social_group_request/src/Controller/GroupRequestController.php: n/a
 #  modules/social_features/social_group/modules/social_group_flexible_group/src/FlexibleGroupContentVisibilityUpdate.php: n/a
 #  modules/social_features/social_group/src/GroupContentVisibilityUpdate.php: n/a
 #  modules/social_features/social_group/modules/social_group_gvbo/social_group_gvbo.routing.yml: n/a
 #  modules/social_features/social_group/modules/social_group_gvbo/src/Form/SocialGroupViewsBulkOperationsConfirmAction.php: n/a
+#  modules/social_features/social_group/modules/social_group_invite/social_group_invite.module: n/a
+#  modules/social_features/social_group/modules/social_group_invite/src/Plugin/ActivityContext/InvitedToGroupActivityContext.php: n/a
+#  modules/social_features/social_group/modules/social_group_invite/src/Plugin/Block/SocialGroupInviteNotificationBlock.php: n/a
+#  modules/social_features/social_group/modules/social_group_invite/config/optional/block.block.socialinviteactionsblock.yml: n/a
+#  modules/social_features/social_group/modules/social_group_invite/src/Plugin/Menu/LocalTask/GroupInviteLocalTask.php: n/a
 #  modules/social_features/social_group/modules/social_group_members_export/src/Plugin/Action/ExportMember.php: n/a
 #  modules/social_features/social_group/modules/social_group_quickjoin/social_group_quickjoin.links.menu.yml: n/a
 #  modules/social_features/social_group/modules/social_group_quickjoin/social_group_quickjoin.routing.yml: n/a
 #  modules/social_features/social_group/modules/social_group_quickjoin/social_group_quickjoin.permissions.yml: n/a
 #  modules/social_features/social_group/modules/social_group_quickjoin/src/Controller/SocialQuickJoinController.php: n/a
 #  modules/social_features/social_group/modules/social_group_quickjoin/src/Form/SocialGroupQuickjoinSettings.php: n/a
+#  modules/social_features/social_content_block/modules/social_group_content_block/config/install/field.field.block_content.custom_content_list.field_group_type.yml: n/a
+#  modules/social_features/social_group/modules/social_group_request/social_group_request.tokens.inc: n/a
+#  modules/social_features/social_group/modules/social_group_request/social_group_request.group.permissions.yml: n/a
+#  themes/socialblue/templates/profile/profile--featured--sky.html.twig: n/a
+#  themes/socialblue/templates/profile/profile--profile--teaser--sky.html.twig: n/a
+#  modules/social_features/social_group/config/install/group.role.closed_group-member.yml: n/a
+#  modules/social_features/social_group/config/install/group.role.open_group-member.yml: n/a
+#  modules/social_features/social_group/config/install/group.role.public_group-member.yml: n/a
+#  modules/social_features/social_group/modules/social_group_flexible_group/config/install/group.role.flexible_group-member.yml: n/a
+#  modules/social_features/social_group/modules/social_group_secret/config/install/group.role.secret_group-member.yml: n/a
+#  modules/social_features/social_group/modules/social_group_request/src/Plugin/ActivityContext/ApprovedRequestJoinGroupActivityContext.php: n/a
+#  modules/social_features/social_group/modules/social_group_request/config/optional/block.block.membershiprequestsnotification.yml: n/a
+#  modules/social_features/social_group/modules/social_group_request/config/optional/block.block.membershiprequestsnotification_2.yml: n/a
 #  modules/social_features/social_group/modules/social_group_secret/social_group_secret.module: n/a
 #  modules/social_features/social_group/modules/social_group_secret/config/install/group.type.secret_group.yml: n/a
-#  modules/social_features/social_group/modules/social_group_welcome_message/social_group_welcome_message.module: n/a
-#  modules/custom/activity_creator/config/install/field.field.activity.activity.field_activity_message.yml: n/a
 #  modules/social_features/social_group/modules/social_group_welcome_message/src/SocialGroupWelcomeMessageConfigOverride.php: n/a
-#  modules/social_features/social_group/src/Controller/DeleteGroup.php: n/a
 #  modules/social_features/social_group/src/Element/SocialGroupEntityAutocomplete.php: n/a
 #  modules/social_features/social_group/src/Form/SocialGroupSettings.php: n/a
 #  modules/social_features/social_group/src/Plugin/Action/GroupContentEntityDeleteAction.php: n/a
@@ -685,12 +787,9 @@
 #  modules/social_features/social_landing_page/social_landing_page.module: n/a
 #  modules/social_features/social_landing_page/src/Plugin/Field/FieldWidget/BlockFieldWidget.php: n/a
 #  modules/social_features/social_landing_page/src/Plugin/Field/FieldFormatter/BlockIdFormatter.php: n/a
-#  modules/social_features/social_topic/config/install/views.view.latest_topics.yml: n/a
-#  themes/socialbase/templates/node/node--full.html.twig: n/a
-#  themes/socialbase/templates/node/node--teaser.html.twig: n/a
-#  themes/socialbase/templates/node/event/node--event--teaser.html.twig: n/a
 #  themes/socialbase/src/Plugin/Preprocess/Node.php: n/a
 #  themes/socialbase/templates/activity/activity.html.twig: n/a
+#  themes/socialbase/templates/node/node--dashboard--full.html.twig: n/a
 #  themes/socialbase/templates/post/post.html.twig: n/a
 #  themes/socialblue/templates/node/node--full--sky.html.twig: n/a
 #  modules/social_features/social_like/social_like.module: n/a
@@ -724,24 +823,23 @@
 #  modules/social_features/social_post/src/Plugin/Block/PostProfileBlock.php: n/a
 #  modules/social_features/social_post/src/Plugin/Field/FieldFormatter/CommentPostActivityFormatter.php: n/a
 #  modules/social_features/social_post/src/Plugin/views/area/SocialPostPostForm.php: n/a
-#  modules/social_features/social_activity/config/optional/views.view.activity_stream_profile.yml: n/a
-#  modules/social_features/social_group/config/install/views.view.group_members.yml: n/a
 #  modules/social_features/social_landing_page/config/install/paragraphs.paragraphs_type.block.yml: n/a
 #  modules/social_features/social_post/src/Routing/RouteSubscriber.php: n/a
+#  modules/social_features/social_post/src/Service/PostPermissions.php: n/a
 #  modules/social_features/social_private_message/social_private_message.module: n/a
 #  modules/social_features/social_private_message/src/Plugin/Field/FieldFormatter/SocialPrivateMessageOwnerFormatter.php: n/a
 #  modules/social_features/social_private_message/src/Plugin/Field/FieldFormatter/SocialPrivateMessageThreadMemberFormatter.php: n/a
 #  modules/social_features/social_private_message/social_private_message.routing.yml: n/a
-#  modules/social_features/social_private_message/config/install/views.view.inbox.yml: n/a
 #  modules/social_features/social_private_message/src/Plugin/ActivityContext/PrivateMessageActivityContext.php: n/a
 #  modules/social_features/social_private_message/src/Plugin/Block/PmAddBlock.php: n/a
 #  modules/social_features/social_private_message/config/optional/block.block.pm_add_block.yml: n/a
 #  modules/social_features/social_private_message/config/optional/block.block.socialblue_pm_add_block.yml: n/a
 #  modules/social_features/social_private_message/src/Plugin/Field/FieldWidget/SocialPrivateMessageThreadMemberWidget.php: n/a
 #  modules/social_features/social_private_message/src/Plugin/UserExportPlugin/UserAnalyticsPrivateMessage.php: n/a
+#  modules/social_features/social_profile/social_profile.views.inc: n/a
 #  modules/social_features/social_profile/src/Form/SocialProfileSettingsForm.php: n/a
-#  themes/socialblue/templates/profile/profile--profile--statistic.html.twig: n/a
 #  modules/social_features/social_profile/social_profile.install: n/a
+#  modules/social_features/social_profile/config/install/core.entity_view_mode.profile.medium_teaser.yml: n/a
 #  modules/social_features/social_profile/social_profile.links.menu.yml: n/a
 #  modules/social_features/social_profile/social_profile.links.task.yml: n/a
 #  modules/social_features/social_profile/social_profile.permissions.yml: n/a
@@ -783,7 +881,6 @@
 #  modules/social_features/social_event/config/optional/block.block.socialblue_exposedformeventsevents_overview.yml: n/a
 #  modules/social_features/social_event/config/optional/block.block.socialblue_exposedformupcoming_eventspage_community_events.yml: n/a
 #  modules/social_features/social_follow_content/config/optional/block.block.exposedformfollowingfollowing.yml: n/a
-#  modules/social_features/social_group/config/install/views.view.group_topics.yml: n/a
 #  modules/social_features/social_group/config/optional/block.block.exposed_form_newest_groups_page_all_groups.yml: n/a
 #  modules/social_features/social_group/config/optional/block.block.exposedformgroup_eventspage_group_events.yml: n/a
 #  modules/social_features/social_group/config/optional/block.block.exposedformgroup_topicspage_group_topics.yml: n/a
@@ -799,14 +896,8 @@
 #  modules/social_features/social_topic/config/optional/block.block.socialblue_exposedformtopicspage_profile.yml: n/a
 #  modules/social_features/social_search/src/Form/SearchHeroForm.php: n/a
 #  themes/socialbase/templates/block/block--system-menu-block--main.html.twig: n/a
-#  modules/social_features/social_search/config/install/views.view.search_all.yml: n/a
 #  modules/social_features/social_search/config/optional/block.block.search_block_hero.yml: n/a
 #  modules/social_features/social_search/config/optional/block.block.socialblue_search_block_hero.yml: n/a
-#  modules/social_features/social_activity/config/optional/views.view.activity_stream_group.yml: n/a
-#  modules/social_features/social_group/config/install/views.view.group_events.yml: n/a
-#  modules/social_features/social_group/config/install/views.view.group_information.yml: n/a
-#  modules/social_features/social_group/config/install/views.view.group_manage_members.yml: n/a
-#  modules/social_features/social_like/config/install/views.view.who_liked_this_entity.yml: n/a
 #  modules/social_features/social_search/config/schema/social_search.views.schema.yml: n/a
 #  modules/social_features/social_search/src/Form/SearchContentForm.php: n/a
 #  modules/social_features/social_search/src/Plugin/Block/SearchContentBlock.php: n/a
@@ -839,6 +930,8 @@
 #  modules/social_features/social_user/src/ContextProvider/UserRouteContext.php: n/a
 #  modules/social_features/social_user/src/Form/SocialUserFloodForm.php: n/a
 #  modules/social_features/social_user/src/Form/SocialUserNavigationSettingsForm.php: n/a
+#  modules/social_features/social_user/src/Plugin/Action/SocialAddRoleUser.php: n/a
+#  modules/social_features/social_user/src/Plugin/Action/SocialRemoveRoleUser.php: n/a
 #  modules/social_features/social_user/src/Plugin/Block/AccountHeaderBlock.php: n/a
 #  modules/social_features/social_user/config/optional/block.block.accountheaderblock.yml: n/a
 #  modules/social_features/social_user/config/optional/block.block.socialblue_accountheaderblock.yml: n/a
@@ -880,8 +973,6 @@
 #  modules/social_features/social_user_export/src/Plugin/UserExportPlugin/UserSkills.php: n/a
 #  src/Installer/Form/ModuleConfigureForm.php: n/a
 #  themes/socialbase/socialbase.info.yml: n/a
-#  themes/socialbase/assets/js/select2.init.min.js: n/a
-#  themes/socialbase/components/03-molecules/form-elements/multiselect/select2.init.js: n/a
 #  themes/socialbase/assets/js/tabledrag.min.js: n/a
 #  themes/socialbase/components/03-molecules/tabledrag/tabledrag.js: n/a
 #  themes/socialbase/components/03-molecules/file/file-form.twig: n/a
@@ -901,9 +992,10 @@
 #  themes/socialbase/templates/data_policy/data-policy-data-policy-revision.html.twig: n/a
 #  themes/socialbase/templates/file/image-widget.html.twig: n/a
 #  themes/socialbase/templates/form/form-element-label--switch.html.twig: n/a
-#  modules/social_features/social_book/config/install/core.base_field_override.node.book.promote.yml: n/a
+#  config/optional/core.base_field_override.node.book.promote.yml: n/a
 #  modules/social_features/social_event/config/install/core.base_field_override.node.event.promote.yml: n/a
 #  modules/social_features/social_event/config/install/field.field.node.event.field_event_enroll.yml: n/a
+#  modules/social_features/social_event/config/install/field.field.node.event.field_event_enroll_outside_group.yml: n/a
 #  modules/social_features/social_event/modules/social_event_an_enroll/config/install/field.field.node.event.field_event_an_enroll.yml: n/a
 #  modules/social_features/social_event/modules/social_event_max_enroll/config/install/field.field.node.event.field_event_max_enroll.yml: n/a
 #  modules/social_features/social_landing_page/config/install/core.base_field_override.node.landing_page.promote.yml: n/a
@@ -911,34 +1003,29 @@
 #  modules/social_features/social_profile/config/install/field.field.profile.profile.field_profile_show_email.yml: n/a
 #  modules/social_features/social_topic/config/install/core.base_field_override.node.topic.promote.yml: n/a
 #  themes/socialbase/templates/form/input--button--split.html.twig: n/a
-#  themes/socialbase/templates/group/group--hero.html.twig: n/a
 #  themes/socialblue/templates/group/group--hero--sky.html.twig: n/a
-#  themes/socialblue/templates/group/group--statistic.html.twig: n/a
+#  themes/socialbase/templates/group/group--small-teaser.html.twig: n/a
 #  themes/socialbase/templates/like/like-and-dislike-icons.html.twig: n/a
 #  themes/socialbase/templates/navigation/menu--account.html.twig: n/a
 #  themes/socialbase/templates/navigation/menu-local-tasks.html.twig: n/a
 #  modules/social_features/social_core/config/optional/block.block.seven_primary_local_tasks.yml: n/a
 #  modules/social_features/social_core/config/optional/block.block.seven_secondary_local_tasks.yml: n/a
 #  themes/socialbase/templates/node/field--node--field-files.html.twig: n/a
-#  modules/social_features/social_book/config/install/field.field.node.book.field_files.yml: n/a
+#  modules/social_features/social_book/config/optional/field.field.node.book.field_files.yml: n/a
 #  modules/social_features/social_comment_upload/config/install/field.field.comment.comment.field_comment_files.yml: n/a
 #  modules/social_features/social_event/config/install/field.field.node.event.field_files.yml: n/a
 #  modules/social_features/social_page/config/install/field.field.node.page.field_files.yml: n/a
 #  modules/social_features/social_topic/config/install/field.field.node.topic.field_files.yml: n/a
 #  themes/socialbase/templates/node/event/node--event--full.html.twig: n/a
-#  modules/social_features/social_landing_page/config/install/core.entity_view_mode.group.featured.yml: n/a
-#  modules/social_features/social_landing_page/config/install/core.entity_view_mode.node.featured.yml: n/a
-#  modules/social_features/social_landing_page/config/install/core.entity_view_mode.profile.featured.yml: n/a
 #  themes/socialbase/templates/node/node-add-list.html.twig: n/a
 #  themes/socialbase/templates/node/book/book-navigation.html.twig: n/a
 #  themes/socialbase/templates/system/pager.html.twig: n/a
 #  themes/socialbase/templates/views/views-mini-pager.html.twig: n/a
 #  themes/socialbase/templates/views/views-infinite-scroll-pager.html.twig: n/a
 #  themes/socialblue/templates/node/event/node--event--hero--sky.html.twig: n/a
+#  modules/social_features/social_content_block/config/install/field.storage.block_content.field_sorting.yml: n/a
 #  themes/socialbase/templates/private_message/private-message-thread.html.twig: n/a
 #  themes/socialbase/templates/profile/profile--profile--compact_teaser.html.twig: n/a
-#  themes/socialbase/templates/profile/profile--profile--default.html.twig: n/a
-#  themes/socialblue/templates/profile/profile--profile--default--sky.html.twig: n/a
 #  modules/social_features/social_event/config/install/field.field.node.event.field_event_address.yml: n/a
 #  modules/social_features/social_group/config/install/field.field.group.closed_group.field_group_address.yml: n/a
 #  modules/social_features/social_group/config/install/field.field.group.open_group.field_group_address.yml: n/a
@@ -964,17 +1051,8 @@
 #  modules/social_features/social_landing_page/config/install/field.field.paragraph.button.field_button_style.yml: n/a
 #  themes/socialblue/socialblue.info.yml: n/a
 #  themes/socialblue/color/color.inc: n/a
-#  themes/socialblue/templates/group/group--default--sky.html.twig: n/a
-#  modules/social_features/social_landing_page/config/install/paragraphs.paragraphs_type.introduction.yml: n/a
 #  modules/social_features/social_sharing/config/optional/block.block.shariffsharebuttons.yml: n/a
 #  modules/social_features/social_sharing/config/optional/block.block.shariffsharebuttons_2.yml: n/a
-#  themes/socialblue/templates/profile/profile--featured--sky.html.twig: n/a
-#  themes/socialblue/templates/profile/profile--profile--teaser--sky.html.twig: n/a
-#  modules/social_features/social_group/config/install/group.role.closed_group-member.yml: n/a
-#  modules/social_features/social_group/config/install/group.role.open_group-member.yml: n/a
-#  modules/social_features/social_group/config/install/group.role.public_group-member.yml: n/a
-#  modules/social_features/social_group/modules/social_group_flexible_group/config/install/group.role.flexible_group-member.yml: n/a
-#  modules/social_features/social_group/modules/social_group_secret/config/install/group.role.secret_group-member.yml: n/a
 #  config/install/user.settings.yml: n/a
 #  modules/social_features/social_group/config/install/group.role.closed_group-anonymous.yml: n/a
 #  modules/social_features/social_group/config/install/group.role.open_group-anonymous.yml: n/a
@@ -982,8 +1060,6 @@
 #  modules/social_features/social_group/modules/social_group_flexible_group/config/install/group.role.flexible_group-anonymous.yml: n/a
 #  modules/social_features/social_group/modules/social_group_secret/config/install/group.role.secret_group-anonymous.yml: n/a
 #  modules/social_features/social_landing_page/config/install/views.view.community_activities.yml: n/a
-#  modules/social_features/social_landing_page/config/install/views.view.featured_content_reference.yml: n/a
-#  modules/social_features/social_landing_page/config/install/views.view.featured_group_reference.yml: n/a
 #  modules/social_features/social_post/config/install/views.view.recipient_group_reference.yml: n/a
 #  config/optional/block.block.seven_help.yml: n/a
 #  config/optional/block.block.socialbase_help.yml: n/a
@@ -1061,16 +1137,22 @@
 #  modules/social_features/social_activity/config/install/field.field.message.create_topic_group.field_message_related_object.yml: n/a
 #  modules/social_features/social_follow_content/config/install/field.field.message.create_comment_following_node.field_message_related_object.yml: n/a
 #  modules/social_features/social_activity/config/install/field.field.message.moved_content_between_groups.field_message_context.yml: n/a
+#  modules/social_features/social_group/modules/social_group_request/config/install/field.field.message.approve_request_join_group.field_message_context.yml: n/a
+#  modules/social_features/social_group/modules/social_group_request/config/install/field.field.message.request_to_join_a_group.field_message_context.yml: n/a
 #  modules/social_features/social_like/config/install/field.field.message.create_like_node_or_post.field_message_context.yml: n/a
 #  modules/social_features/social_mentions/config/install/field.field.message.create_comment_reply_mention.field_message_context.yml: n/a
 #  modules/social_features/social_mentions/config/install/field.field.message.create_mention_comment.field_message_context.yml: n/a
 #  modules/social_features/social_mentions/config/install/field.field.message.create_mention_post.field_message_context.yml: n/a
 #  modules/social_features/social_activity/config/install/field.field.message.moved_content_between_groups.field_message_destination.yml: n/a
+#  modules/social_features/social_group/modules/social_group_request/config/install/field.field.message.approve_request_join_group.field_message_destination.yml: n/a
+#  modules/social_features/social_group/modules/social_group_request/config/install/field.field.message.request_to_join_a_group.field_message_destination.yml: n/a
 #  modules/social_features/social_like/config/install/field.field.message.create_like_node_or_post.field_message_destination.yml: n/a
 #  modules/social_features/social_mentions/config/install/field.field.message.create_comment_reply_mention.field_message_destination.yml: n/a
 #  modules/social_features/social_mentions/config/install/field.field.message.create_mention_comment.field_message_destination.yml: n/a
 #  modules/social_features/social_mentions/config/install/field.field.message.create_mention_post.field_message_destination.yml: n/a
 #  modules/social_features/social_activity/config/install/field.field.message.moved_content_between_groups.field_message_related_object.yml: n/a
+#  modules/social_features/social_group/modules/social_group_request/config/install/field.field.message.approve_request_join_group.field_message_related_object.yml: n/a
+#  modules/social_features/social_group/modules/social_group_request/config/install/field.field.message.request_to_join_a_group.field_message_related_object.yml: n/a
 #  modules/social_features/social_like/config/install/field.field.message.create_like_node_or_post.field_message_related_object.yml: n/a
 #  modules/social_features/social_mentions/config/install/field.field.message.create_comment_reply_mention.field_message_related_object.yml: n/a
 #  modules/social_features/social_mentions/config/install/field.field.message.create_mention_comment.field_message_related_object.yml: n/a
@@ -1091,15 +1173,19 @@
 #  modules/social_features/social_activity/config/install/message.template.create_post_profile_stream.yml: n/a
 #  modules/social_features/social_activity/config/install/message.template.create_topic_community.yml: n/a
 #  modules/social_features/social_activity/config/install/message.template.create_topic_group.yml: n/a
+#  modules/social_features/social_activity/config/install/message.template.event_request_approved.yml: n/a
 #  modules/social_features/social_activity/config/install/message.template.join_to_group.yml: n/a
 #  modules/social_features/social_activity/config/install/message.template.moved_content_between_groups.yml: n/a
-#  modules/social_features/social_book/config/install/field.field.node.book.field_book_comments.yml: n/a
+#  modules/social_features/social_activity/config/install/message.template.request_event_enrollment.yml: n/a
+#  modules/social_features/social_book/config/optional/block.block.booknavigation.yml: n/a
+#  modules/social_features/social_book/config/optional/block.block.booknavigation_2.yml: n/a
+#  modules/social_features/social_book/config/optional/field.field.node.book.field_book_comments.yml: n/a
 #  modules/social_features/social_event/config/install/field.field.node.event.field_event_comments.yml: n/a
 #  modules/social_features/social_page/config/install/field.field.node.page.field_page_comments.yml: n/a
 #  modules/social_features/social_topic/config/install/field.field.node.topic.field_topic_comments.yml: n/a
-#  modules/social_features/social_book/config/install/field.field.node.book.field_book_image.yml: n/a
+#  modules/social_features/social_book/config/optional/field.field.node.book.field_book_image.yml: n/a
 #  modules/social_features/social_event/config/install/field.field.node.event.field_event_image.yml: n/a
-#  modules/social_features/social_landing_page/config/install/field.field.paragraph.featured_item.field_featured_item_image.yml: n/a
+#  modules/social_features/social_featured_items/config/install/field.field.paragraph.featured_item.field_featured_item_image.yml: n/a
 #  modules/social_features/social_landing_page/config/install/field.field.paragraph.hero.field_hero_image.yml: n/a
 #  modules/social_features/social_landing_page/config/install/field.field.paragraph.hero_small.field_hero_small_image.yml: n/a
 #  modules/social_features/social_page/config/install/field.field.node.page.field_page_image.yml: n/a
@@ -1110,27 +1196,31 @@
 #  modules/social_features/social_group/config/install/field.field.group.public_group.field_group_image.yml: n/a
 #  modules/social_features/social_group/modules/social_group_flexible_group/config/install/field.field.group.flexible_group.field_group_image.yml: n/a
 #  modules/social_features/social_group/modules/social_group_secret/config/install/field.field.group.secret_group.field_group_image.yml: n/a
-#  modules/social_features/social_book/config/install/field.field.node.book.field_content_visibility.yml: n/a
+#  modules/social_features/social_book/config/optional/field.field.node.book.field_content_visibility.yml: n/a
 #  modules/social_features/social_event/config/install/field.field.node.event.field_content_visibility.yml: n/a
 #  modules/social_features/social_landing_page/config/install/field.field.node.landing_page.field_content_visibility.yml: n/a
 #  modules/social_features/social_page/config/install/field.field.node.page.field_content_visibility.yml: n/a
 #  modules/social_features/social_post/config/install/field.field.post.post.field_visibility.yml: n/a
 #  modules/social_features/social_post/modules/social_post_photo/config/install/field.field.post.photo.field_visibility.yml: n/a
 #  modules/social_features/social_topic/config/install/field.field.node.topic.field_content_visibility.yml: n/a
-#  modules/social_features/social_book/config/optional/block.block.booknavigation.yml: n/a
-#  modules/social_features/social_book/config/optional/block.block.booknavigation_2.yml: n/a
 #  modules/social_features/social_comment/config/install/core.entity_view_mode.comment.activity_comment.yml: n/a
 #  modules/social_features/social_core/config/install/core.entity_view_mode.node.activity_comment.yml: n/a
 #  modules/social_features/social_post/config/install/core.entity_view_mode.post.activity_comment.yml: n/a
 #  modules/social_features/social_content_block/config/install/field.field.block_content.custom_content_list.field_content_tags.yml: n/a
+#  modules/social_features/social_content_block/modules/social_event_content_block/config/install/field.field.block_content.custom_content_list.field_event_content_tag.yml: n/a
+#  modules/social_features/social_content_block/modules/social_group_content_block/config/install/field.field.block_content.custom_content_list.field_group_content_tag.yml: n/a
 #  modules/social_features/social_content_block/config/install/field.field.block_content.custom_content_list.field_item_amount.yml: n/a
 #  modules/social_features/social_content_block/config/install/field.field.block_content.custom_content_list.field_link.yml: n/a
+#  modules/social_features/social_core/config/install/field.field.block_content.basic.field_basic_link.yml: n/a
+#  modules/social_features/social_content_block/config/install/field.field.block_content.custom_content_list.field_plugin_field.yml: n/a
+#  modules/social_features/social_content_block/config/install/field.field.block_content.custom_content_list.field_plugin_id.yml: n/a
 #  modules/social_features/social_content_block/config/install/field.field.block_content.custom_content_list.field_sorting.yml: n/a
 #  modules/social_features/social_content_block/config/install/field.field.block_content.custom_content_list.field_subtitle.yml: n/a
 #  modules/social_features/social_landing_page/config/install/field.field.paragraph.hero.field_hero_subtitle.yml: n/a
 #  modules/social_features/social_landing_page/config/install/field.field.paragraph.hero_small.field_hero_small_subtitle.yml: n/a
 #  modules/social_features/social_content_block/config/install/field.field.block_content.custom_content_list.field_topic_type.yml: n/a
-#  modules/social_features/social_content_block/config/install/field.storage.block_content.field_sorting.yml: n/a
+#  modules/social_features/social_content_block/modules/social_event_content_block/config/install/field.field.block_content.custom_content_list.field_event_date.yml: n/a
+#  modules/social_features/social_content_block/modules/social_event_content_block/config/install/field.storage.block_content.field_event_date.yml: n/a
 #  modules/social_features/social_content_report/config/install/field.field.flagging.report_comment.field_other_reason.yml: n/a
 #  modules/social_features/social_content_report/config/install/field.field.flagging.report_node.field_other_reason.yml: n/a
 #  modules/social_features/social_content_report/config/install/field.field.flagging.report_post.field_other_reason.yml: n/a
@@ -1158,10 +1248,11 @@
 #  modules/social_features/social_core/config/install/crop.type.profile_medium.yml: n/a
 #  modules/social_features/social_core/config/install/crop.type.profile_small.yml: n/a
 #  modules/social_features/social_core/config/install/crop.type.teaser.yml: n/a
-#  modules/social_features/social_core/config/install/field.field.block_content.hero_call_to_action_block.field_call_to_action_link.yml: n/a
-#  modules/social_features/social_core/config/install/field.field.block_content.hero_call_to_action_block.field_hero_image.yml: n/a
+#  modules/social_features/social_core/config/install/field.field.block_content.basic.field_text_block.yml: n/a
 #  modules/social_features/social_core/config/install/field.field.block_content.hero_call_to_action_block.field_text_block.yml: n/a
 #  modules/social_features/social_core/config/install/field.field.block_content.platform_intro.field_text_block.yml: n/a
+#  modules/social_features/social_core/config/install/field.field.block_content.hero_call_to_action_block.field_call_to_action_link.yml: n/a
+#  modules/social_features/social_core/config/install/field.field.block_content.hero_call_to_action_block.field_hero_image.yml: n/a
 #  modules/social_features/social_core/config/install/image.style.crop_thumbnail.yml: n/a
 #  modules/social_features/social_core/config/install/image.style.social_an_hero.yml: n/a
 #  modules/social_features/social_core/config/install/image.style.social_hero_small.yml: n/a
@@ -1223,6 +1314,9 @@
 #  modules/social_features/social_editor/config/install/filter.format.restricted_html.yml: n/a
 #  modules/social_features/social_editor/config/install/filter.format.simple_text.yml: n/a
 #  modules/social_features/social_event/config/install/field.field.event_enrollment.event_enrollment.field_enrollment_status.yml: n/a
+#  modules/social_features/social_event/config/install/field.field.event_enrollment.event_enrollment.field_request_message.yml: n/a
+#  modules/social_features/social_event/config/install/field.field.event_enrollment.event_enrollment.field_request_or_invite_status.yml: n/a
+#  modules/social_features/social_event/config/install/field.field.node.event.field_enroll_method.yml: n/a
 #  modules/social_features/social_event/config/install/field.field.node.event.field_event_date.yml: n/a
 #  modules/social_features/social_event/config/install/field.field.node.event.field_event_date_end.yml: n/a
 #  modules/social_features/social_event/config/install/field.field.node.event.field_event_location.yml: n/a
@@ -1231,14 +1325,32 @@
 #  modules/social_features/social_group/config/install/field.field.group.public_group.field_group_location.yml: n/a
 #  modules/social_features/social_group/modules/social_group_flexible_group/config/install/field.field.group.flexible_group.field_group_location.yml: n/a
 #  modules/social_features/social_group/modules/social_group_secret/config/install/field.field.group.secret_group.field_group_location.yml: n/a
+#  modules/social_features/social_group/modules/social_group_request/config/install/field.field.group_content.group_content_type_c8bae2527294c.grequest_status.yml: n/a
+#  modules/social_features/social_group/modules/social_group_request/config/optional/field.field.group_content.group_content_type_7fcb76fdf61a9.grequest_status.yml: n/a
+#  modules/social_features/social_profile/config/install/profile.type.profile.yml: n/a
 #  modules/social_features/social_event/config/optional/message.template.activity_on_events_im_organizing.yml: n/a
 #  modules/social_features/social_event/modules/social_event_an_enroll/config/install/field.field.event_enrollment.event_enrollment.field_token.yml: n/a
 #  modules/social_features/social_event/modules/social_event_an_enroll/config/install/social_event_an_enroll.settings.yml: n/a
+#  modules/social_features/social_event/modules/social_event_invite/config/install/message.template.invite_event_enrollment.yml: n/a
+#  modules/social_features/social_event/modules/social_event_invite/config/install/social_event_invite.settings.yml: n/a
+#  modules/social_features/social_group/modules/social_group_invite/config/optional/social_group_invite.settings.yml: n/a
 #  modules/social_features/social_event/modules/social_event_managers/config/install/field.field.node.event.field_event_managers.yml: n/a
-#  modules/social_features/social_profile/config/install/profile.type.profile.yml: n/a
 #  modules/social_features/social_event/modules/social_event_managers/config/optional/block.block.views_block__managers_event_managers.yml: n/a
 #  modules/social_features/social_event/modules/social_event_managers/config/optional/message.template.member_added_by_event_organiser.yml: n/a
 #  modules/social_features/social_event/modules/social_event_max_enroll/config/install/field.field.node.event.field_event_max_enroll_num.yml: n/a
+#  modules/social_features/social_featured_content/config/install/block_content.type.featured.yml: n/a
+#  modules/social_features/social_featured_content/config/install/field.field.block_content.featured.field_featured.yml: n/a
+#  modules/social_features/social_featured_content/config/install/paragraphs.paragraphs_type.featured.yml: n/a
+#  modules/social_features/social_featured_content/config/install/core.entity_form_display.block_content.featured.default.yml: n/a
+#  modules/social_features/social_featured_items/config/install/core.entity_form_display.block_content.featured_items.default.yml: n/a
+#  modules/social_features/social_landing_page/config/install/core.entity_form_display.paragraph.accordion.default.yml: n/a
+#  modules/social_features/social_featured_content/config/install/field.field.paragraph.featured.field_featured_items.yml: n/a
+#  modules/social_features/social_featured_items/config/install/core.entity_form_display.paragraph.featured_items.default.yml: n/a
+#  modules/social_features/social_featured_items/config/install/field.field.paragraph.featured_items.field_featured_items_items.yml: n/a
+#  modules/social_features/social_featured_items/config/install/block_content.type.featured_items.yml: n/a
+#  modules/social_features/social_featured_items/config/install/field.field.block_content.featured_items.field_featured_items.yml: n/a
+#  modules/social_features/social_featured_items/config/install/paragraphs.paragraphs_type.featured_items.yml: n/a
+#  modules/social_features/social_featured_items/config/install/paragraphs.paragraphs_type.featured_item.yml: n/a
 #  modules/social_features/social_follow_content/config/install/flag.flag.follow_content.yml: n/a
 #  modules/social_features/social_follow_content/config/install/message.template.create_comment_following_node.yml: n/a
 #  modules/social_features/social_group/config/install/core.entity_view_mode.group.statistic.yml: n/a
@@ -1283,9 +1395,33 @@
 #  modules/social_features/social_group/modules/social_group_flexible_group/config/install/field.field.group.flexible_group.field_group_allowed_visibility.yml: n/a
 #  modules/social_features/social_group/modules/social_group_flexible_group/config/install/field.storage.group.field_group_allowed_join_method.yml: n/a
 #  modules/social_features/social_group/modules/social_group_flexible_group/config/install/group.type.flexible_group.yml: n/a
+#  modules/social_features/social_group/modules/social_group_invite/config/optional/block.block.membershipinvitenotification.yml: n/a
+#  modules/social_features/social_group/modules/social_group_invite/config/optional/block.block.membershipinvitenotification_2.yml: n/a
+#  modules/social_features/social_group/modules/social_group_invite/config/optional/block.block.membershipinvitenotification_3.yml: n/a
+#  modules/social_features/social_group/modules/social_group_invite/config/optional/block.block.membershipinvitenotification_4.yml: n/a
+#  modules/social_features/social_group/modules/social_group_invite/config/optional/group.content_type.closed_group-group_invitation.yml: n/a
+#  modules/social_features/social_group/modules/social_group_invite/config/optional/group.content_type.flexible_group-group_invitation.yml: n/a
+#  modules/social_features/social_group/modules/social_group_invite/config/optional/group.content_type.open_group-group_invitation.yml: n/a
+#  modules/social_features/social_group/modules/social_group_invite/config/optional/group.content_type.public_group-group_invitation.yml: n/a
+#  modules/social_features/social_group/modules/social_group_invite/config/optional/group.content_type.secret_group-group_invitation.yml: n/a
+#  modules/social_features/social_group/modules/social_group_invite/config/optional/message.template.invited_to_join_group.yml: n/a
+#  modules/social_features/social_group/modules/social_group_request/config/install/field.field.group_content.group_content_type_c8bae2527294c.grequest_updated_by.yml: n/a
+#  modules/social_features/social_group/modules/social_group_request/config/optional/field.field.group_content.group_content_type_7fcb76fdf61a9.grequest_updated_by.yml: n/a
+#  modules/social_features/social_group/modules/social_group_request/config/install/group.content_type.group_content_type_c8bae2527294c.yml: n/a
+#  modules/social_features/social_group/modules/social_group_request/config/optional/group.content_type.group_content_type_7fcb76fdf61a9.yml: n/a
+#  modules/social_features/social_group/modules/social_group_request/config/install/message.template.approve_request_join_group.yml: n/a
+#  modules/social_features/social_group/modules/social_group_request/config/install/message.template.request_to_join_a_group.yml: n/a
+#  modules/social_features/social_landing_page/config/install/core.entity_form_display.node.landing_page.default.yml: n/a
+#  modules/social_features/social_landing_page/config/install/core.entity_form_display.paragraph.section.default.yml: n/a
+#  modules/social_features/social_landing_page/config/install/paragraphs.paragraphs_type.section.yml: n/a
+#  modules/social_features/social_landing_page/config/install/field.field.node.landing_page.field_landing_page_section.yml: n/a
+#  modules/social_features/social_landing_page/config/install/core.entity_form_display.paragraph.hero.default.yml: n/a
+#  modules/social_features/social_landing_page/config/install/core.entity_form_display.paragraph.hero_small.default.yml: n/a
+#  modules/social_features/social_landing_page/config/install/paragraphs.paragraphs_type.button.yml: n/a
+#  modules/social_features/social_landing_page/config/install/field.field.paragraph.hero.field_hero_buttons.yml: n/a
+#  modules/social_features/social_landing_page/config/install/field.field.paragraph.hero_small.field_hero_small_buttons.yml: n/a
 #  modules/social_features/social_landing_page/config/install/crop.type.hero_landing.yml: n/a
 #  modules/social_features/social_landing_page/config/install/crop.type.hero_small_landing.yml: n/a
-#  modules/social_features/social_landing_page/config/install/field.field.node.landing_page.field_landing_page_section.yml: n/a
 #  modules/social_features/social_landing_page/config/install/field.field.paragraph.accordion.field_accord_item.yml: n/a
 #  modules/social_features/social_landing_page/config/install/paragraphs.paragraphs_type.accordion_item.yml: n/a
 #  modules/social_features/social_landing_page/config/install/field.field.paragraph.block.field_block_reference.yml: n/a
@@ -1294,23 +1430,14 @@
 #  modules/social_features/social_landing_page/config/install/field.field.paragraph.introduction.field_introduction_link_an.yml: n/a
 #  modules/social_features/social_landing_page/config/install/field.field.paragraph.button.field_button_link_lu.yml: n/a
 #  modules/social_features/social_landing_page/config/install/field.field.paragraph.introduction.field_introduction_link_lu.yml: n/a
-#  modules/social_features/social_landing_page/config/install/field.field.paragraph.featured.field_featured_items.yml: n/a
-#  modules/social_features/social_landing_page/config/install/field.field.paragraph.featured_items.field_featured_items_items.yml: n/a
-#  modules/social_features/social_landing_page/config/install/field.field.paragraph.hero.field_hero_buttons.yml: n/a
-#  modules/social_features/social_landing_page/config/install/field.field.paragraph.hero_small.field_hero_small_buttons.yml: n/a
 #  modules/social_features/social_landing_page/config/install/field.field.paragraph.section.field_section_paragraph.yml: n/a
 #  modules/social_features/social_landing_page/config/install/field.storage.paragraph.field_button_style.yml: n/a
-#  modules/social_features/social_landing_page/config/install/image.style.social_featured.yml: n/a
 #  modules/social_features/social_landing_page/config/install/image.style.social_landing_hero.yml: n/a
 #  modules/social_features/social_landing_page/config/install/image.style.social_landing_hero_small.yml: n/a
 #  modules/social_features/social_landing_page/config/install/node.type.landing_page.yml: n/a
 #  modules/social_features/social_landing_page/config/install/paragraphs.paragraphs_type.accordion.yml: n/a
-#  modules/social_features/social_landing_page/config/install/paragraphs.paragraphs_type.button.yml: n/a
-#  modules/social_features/social_landing_page/config/install/paragraphs.paragraphs_type.featured.yml: n/a
-#  modules/social_features/social_landing_page/config/install/paragraphs.paragraphs_type.featured_item.yml: n/a
-#  modules/social_features/social_landing_page/config/install/paragraphs.paragraphs_type.featured_items.yml: n/a
 #  modules/social_features/social_landing_page/config/install/paragraphs.paragraphs_type.hero_small.yml: n/a
-#  modules/social_features/social_landing_page/config/install/paragraphs.paragraphs_type.section.yml: n/a
+#  modules/social_features/social_landing_page/config/install/paragraphs.paragraphs_type.introduction.yml: n/a
 #  modules/social_features/social_like/config/install/message.template.create_like_node_or_post.yml: n/a
 #  modules/social_features/social_mentions/config/install/core.entity_view_mode.profile.autocomplete_item.yml: n/a
 #  modules/social_features/social_mentions/config/install/message.template.create_comment_reply_mention.yml: n/a
@@ -1363,7 +1490,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Open Social\n"
-"POT-Creation-Date: 2020-02-06 00:27+0000\n"
+"POT-Creation-Date: 2020-07-08 08:49+0000\n"
 "PO-Revision-Date: YYYY-mm-DD HH:MM+ZZZZ\n"
 "Last-Translator: NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <EMAIL@ADDRESS>\n"
@@ -1372,15 +1499,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: themes/socialbase/src/Plugin/Preprocess/Node.php:124
-#: themes/socialblue/templates/profile/profile--profile--statistic.html.twig:28
-#, fuzzy
-msgid "group"
-msgstr ""
-"#-#-#-#-#  en.pot (Open Social)  #-#-#-#-#\n"
-"#-#-#-#-#  en.pot (Open Social)  #-#-#-#-#\n"
-
-#: themes/socialblue/templates/group/group--statistic.html.twig:5
+#: modules/social_features/social_group/social_group.module:343
 #: themes/socialblue/templates/profile/profile--profile--statistic.html.twig:20
 #: modules/social_features/social_group/config/install/group.content_type.closed_group-group_node-event.yml:0
 #: modules/social_features/social_group/config/install/group.content_type.open_group-group_node-event.yml:0
@@ -1395,7 +1514,7 @@ msgstr[0] ""
 "#-#-#-#-#  en.pot (Open Social)  #-#-#-#-#\n"
 msgstr[1] "#-#-#-#-#  en.pot (Open Social)  #-#-#-#-#\n"
 
-#: themes/socialblue/templates/group/group--statistic.html.twig:9
+#: modules/social_features/social_group/social_group.module:350
 #: themes/socialblue/templates/profile/profile--profile--statistic.html.twig:24
 #: modules/social_features/social_group/config/install/group.content_type.closed_group-group_node-topic.yml:0
 #: modules/social_features/social_group/config/install/group.content_type.open_group-group_node-topic.yml:0
@@ -1409,3 +1528,11 @@ msgstr[0] ""
 "#-#-#-#-#  en.pot (Open Social)  #-#-#-#-#\n"
 "#-#-#-#-#  en.pot (Open Social)  #-#-#-#-#\n"
 msgstr[1] "#-#-#-#-#  en.pot (Open Social)  #-#-#-#-#\n"
+
+#: themes/socialbase/src/Plugin/Preprocess/Node.php:124
+#: themes/socialblue/templates/profile/profile--profile--statistic.html.twig:28
+#, fuzzy
+msgid "group"
+msgstr ""
+"#-#-#-#-#  en.pot (Open Social)  #-#-#-#-#\n"
+"#-#-#-#-#  en.pot (Open Social)  #-#-#-#-#\n"

@@ -336,8 +336,8 @@ function social_group_preprocess_group(array &$variables) {
   // Prepare variables for statistic block.
   if ($variables['view_mode'] === 'statistic') {
     // Add context, since we render join / invite only etc links in the block.
-    $variables['#cache']['context'][] = 'group';
-    $variables['#cache']['context'][] = 'user';
+    $variables['#cache']['contexts'][] = 'group';
+    $variables['#cache']['contexts'][] = 'user';
     if ($group->getGroupType()->hasContentPlugin('group_node:event')) {
       $variables['group_events'] = $group_statistics->getGroupNodeCount($group, 'event');
       $variables['group_events_label'] = \Drupal::translation()->formatPlural($variables['group_events'],
@@ -2178,4 +2178,41 @@ function social_group_social_group_action_social_group_send_email_action_finish(
     'singular' => 'Your email has not been sent to 1 selected member successfully',
     'plural' => 'Your email has not been sent to @count selected members successfully',
   ];
+}
+
+/**
+ * Implements hook_preprocess_field().
+ */
+function social_group_preprocess_field(&$variables) {
+  $formatter = $variables['element']['#formatter'];
+  if (in_array($formatter, ['address_plain', 'address_default'])) {
+    $entity = $variables['element']['#object'];
+    if ($entity && $entity instanceof GroupInterface) {
+      $social_group_settings = \Drupal::config('social_group.settings');
+      $address_visibility_settings = $social_group_settings->get('address_visibility_settings');
+      if (isset($address_visibility_settings['street_code_private']) && !empty($address_visibility_settings['street_code_private'])) {
+        if (!$entity->getMember(\Drupal::currentUser())) {
+          switch ($formatter) {
+            case 'address_plain':
+              if (isset($variables['items'][0]['content']['#address_line1'])) {
+                $variables['items'][0]['content']['#address_line1'] = NULL;
+              }
+              if (isset($variables['items'][0]['content']['#postal_code'])) {
+                $variables['items'][0]['content']['#postal_code'] = NULL;
+              }
+              break;
+
+            case 'address_default':
+              if (isset($variables['items'][0]['content']['address_line1']['#value'])) {
+                $variables['items'][0]['content']['address_line1']['#value'] = '';
+              }
+              if (isset($variables['items'][0]['content']['postal_code']['#value'])) {
+                $variables['items'][0]['content']['postal_code']['#value'] = '';
+              }
+              break;
+          }
+        }
+      }
+    }
+  }
 }

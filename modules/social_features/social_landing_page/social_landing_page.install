@@ -639,3 +639,21 @@ function social_landing_page_update_8807() {
   $update_helper->executeUpdate('social_landing_page', 'social_landing_page_update_8807');
   return $update_helper->logger()->output();
 }
+
+/**
+ * Enable helper modules if flexible group and / or social_book are enabled.
+ */
+function social_landing_page_update_8808() {
+  // If we have flexible groups enabled, we want to enable the helper module
+  // social_flexible_group_featured which provides a featured view mode to be
+  // used on landing pages.
+  if (\Drupal::moduleHandler()->moduleExists('social_group_flexible_group')) {
+    \Drupal::service('module_installer')->install(['social_flexible_group_featured']);
+  }
+
+  // If social_book is enabled, we enable the helper module social_book_featured
+  // which provides a featured view mode to be used on landing pages.
+  if (\Drupal::moduleHandler()->moduleExists('social_book')) {
+    \Drupal::service('module_installer')->install(['social_book_featured']);
+  }
+}

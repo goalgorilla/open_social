@@ -146,3 +146,17 @@ function social_post_update_8802(&$sandbox) {
 
   $sandbox['#finished'] = $sandbox['processed'] / $sandbox['total'];
 }
+
+/**
+ * Update likes in post activity and comment view modes.
+ */
+function social_post_update_8901() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_post', 'social_post_update_8901');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}

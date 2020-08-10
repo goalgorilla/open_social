@@ -179,6 +179,10 @@ class SocialGroupController extends ControllerBase {
       }
     }
 
+    if ($user->isBlocked()) {
+      return AccessResult::allowedIfHasPermission($account, 'view blocked user');
+    }
+
     // Own profile?
     if ($user->id() === $account->id()) {
       return AccessResult::allowedIfHasPermission($account, 'view groups on my profile');
