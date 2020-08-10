@@ -205,7 +205,7 @@ function social_event_invite_preprocess_node(array &$variables) {
       $variables['event_enrollment'] = [
         'enroll_action_form' => $form,
       ];
-      // Vary per user, because one user can be enrolled or have more rights
+      // Vary per user, because one user can be enrolled or have more rights.
       // @TODO create a better cache context custom. Based on the enrollment
       // method OR the fact if a user is enrolled or not.
       $variables['#cache']['contexts'][] = 'user';
