@@ -962,3 +962,72 @@ function social_event_preprocess_page(array &$variables) {
     }
   }
 }
+
+/**
+ * Implements hook_preprocess_field().
+ */
+function social_event_preprocess_field(&$variables) {
+  $formatter = $variables['element']['#formatter'];
+  if (in_array($formatter, ['address_plain', 'address_default'])) {
+    $entity = $variables['element']['#object'];
+    if ($entity && $entity instanceof NodeInterface && $entity->getType() === 'event') {
+      $social_event_settings = \Drupal::config('social_event.settings');
+      $address_visibility_settings = $social_event_settings->get('address_visibility_settings');
+      if (isset($address_visibility_settings['street_code_private']) && !empty($address_visibility_settings['street_code_private'])) {
+        if (!_social_event_get_enrollment_status($entity)) {
+          switch ($formatter) {
+            case 'address_plain':
+              if (isset($variables['items'][0]['content']['#address_line1'])) {
+                $variables['items'][0]['content']['#address_line1'] = NULL;
+              }
+              if (isset($variables['items'][0]['content']['#postal_code'])) {
+                $variables['items'][0]['content']['#postal_code'] = NULL;
+              }
+              break;
+
+            case 'address_default':
+              if (isset($variables['items'][0]['content']['address_line1']['#value'])) {
+                $variables['items'][0]['content']['address_line1']['#value'] = '';
+              }
+              if (isset($variables['items'][0]['content']['postal_code']['#value'])) {
+                $variables['items'][0]['content']['postal_code']['#value'] = '';
+              }
+              break;
+          }
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Callback to get enrollment status from current user.
+ *
+ * @param \Drupal\node\NodeInterface $event
+ *   Event entity.
+ *
+ * @return bool
+ *   Enrolment status.
+ *
+ * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+ * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+ */
+function _social_event_get_enrollment_status(NodeInterface $event) {
+  $enrollments = \Drupal::entityTypeManager()->getStorage('event_enrollment')->loadByProperties([
+    'field_account' => \Drupal::currentUser()->id(),
+    'field_event' => $event->id(),
+  ]);
+
+  $status = TRUE;
+  if ($enrollment = array_pop($enrollments)) {
+    $enrollment_status = $enrollment->field_enrollment_status->value;
+    if ($enrollment_status === '0') {
+      $status = FALSE;
+    }
+  }
+  else {
+    $status = FALSE;
+  }
+
+  return $status;
+}
