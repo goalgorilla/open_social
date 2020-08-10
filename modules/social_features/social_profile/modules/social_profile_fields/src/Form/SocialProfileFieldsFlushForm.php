@@ -144,10 +144,27 @@ class SocialProfileFieldsFlushForm extends ConfirmFormBase {
 
     /** @var \Drupal\field\Entity\FieldConfig $value */
     foreach ($profile_fields as $key => $value) {
-      $sval = $settings->get(str_replace('.', '_', $key));
+      $setting_id = str_replace('.', '_', $key);
+      $sval = $settings->get($setting_id);
 
       if (isset($sval) && $sval == FALSE) {
         $empty[] = $value->getName();
+      }
+
+      if ($setting_id === 'profile_profile_field_profile_address') {
+        if (isset($sval) && $sval == FALSE) {
+          $empty[] = 'country';
+        }
+
+        $city_val = $settings->get('profile_address_field_city');
+        if (isset($city_val) && $city_val == FALSE) {
+          $empty[] = 'locality';
+        }
+
+        $address_val = $settings->get('profile_address_field_address');
+        if (isset($address_val) && $address_val == FALSE) {
+          $empty[] = 'addressLine1';
+        }
       }
     }
     return $empty;
