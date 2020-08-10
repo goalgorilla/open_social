@@ -780,34 +780,40 @@ function social_event_field_visibility(array &$form, $field_name, array $fields,
  *   Return TRUE if the user is the owner or organizer of this event.
  */
 function social_event_owner_or_organizer(NodeInterface $node = NULL, AccountInterface $current_user = NULL) {
-  if (!$current_user) {
-    $current_user = \Drupal::currentUser();
-  }
-  if (!$node) {
-    $node = social_event_get_current_event();
-  }
+  $event_owner_organizer = &drupal_static(__FUNCTION__);
 
-  if ($node instanceof NodeInterface && $current_user instanceof AccountInterface) {
-    // Get the event owner/author and it's organisers (if any).
-    $event_accountables['owner'] = $node->getOwnerId();
-    $event_accountables['organiser'] = FALSE;
-
-    // Also check whether the social_event_managers is enabled so we can
-    // check if the user might be an organiser/manager of this event.
-    if (\Drupal::moduleHandler()->moduleExists('social_event_managers')) {
-      $event_accountables['organiser'] = social_event_manager_or_organizer($node);
+  if (!isset($event_owner_organizer)) {
+    if (!$current_user) {
+      $current_user = \Drupal::currentUser();
     }
 
-    // If the user is organiser, the owner or has permission to manage the
-    // requests, return TRUE.
-    if ($event_accountables['organiser'] === TRUE
-      || $current_user->hasPermission('manage event enrollment requests')
-      || $event_accountables['owner'] === $current_user->id()) {
-      return TRUE;
+    if (!$node) {
+      $node = social_event_get_current_event();
     }
+
+    if ($node instanceof NodeInterface && $current_user instanceof AccountInterface) {
+      // Get the event owner/author and it's organisers (if any).
+      $event_accountables['owner'] = $node->getOwnerId();
+      $event_accountables['organiser'] = FALSE;
+
+      // Also check whether the social_event_managers is enabled so we can
+      // check if the user might be an organiser/manager of this event.
+      if (\Drupal::moduleHandler()->moduleExists('social_event_managers')) {
+        $event_accountables['organiser'] = social_event_manager_or_organizer($node);
+      }
+
+      // If the user is organiser, the owner or has permission to manage the
+      // requests, return TRUE.
+      if ($event_accountables['organiser'] === TRUE
+        || $current_user->hasPermission('manage event enrollment requests')
+        || $event_accountables['owner'] === $current_user->id()) {
+        $event_owner_organizer = TRUE;
+      }
+    }
+    $event_owner_organizer = FALSE;
   }
 
-  return FALSE;
+  return $event_owner_organizer;
 }
 
 /**
