@@ -713,8 +713,14 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
         ];
       }
 
+      // Add form element group type to include our element in form.
       $form['group_type'] = $group_type_element;
+      // Tell Drupal that it is under fieldset group settings.
+      $form['group_settings']['group_type'] = $form['group_type'];
+      // We also inform Drupal that group type is children of group_settings.
       $form['#group_children']['group_type'] = 'group_settings';
+      // Finally, add the group_type as fieldgroup children,
+      $form['#fieldgroups']['group_settings']->children[] = 'group_type';
 
       // Disable all group types that can't be edited. Because they don't have
       // a visibility.
