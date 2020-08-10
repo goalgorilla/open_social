@@ -8,6 +8,7 @@
 use Drupal\taxonomy\Entity\Term;
 use Drupal\menu_link_content\Entity\MenuLinkContent;
 use Drupal\user\Entity\Role;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Implements hook_install().
@@ -194,4 +195,21 @@ function social_topic_update_8801() {
 
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
+}
+
+/**
+ * Update like setting in small teaser style.
+ */
+function social_topic_update_8901() {
+  $config_file = drupal_get_path('module', 'social_topic') . '/config/static/core.entity_view_display.node.topic.small_teaser_8901.yml';
+
+  if (is_file($config_file)) {
+    $settings = Yaml::parse(file_get_contents($config_file));
+    if (is_array($settings)) {
+      $config = \Drupal::configFactory()
+        ->getEditable('core.entity_view_display.node.topic.small_teaser');
+
+      $config->setData($settings)->save(TRUE);
+    }
+  }
 }
