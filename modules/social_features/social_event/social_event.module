@@ -97,41 +97,62 @@ function social_event_form_views_exposed_form_alter(&$form, FormStateInterface $
  *   If the user is actually a manager or organizer.
  */
 function social_event_manager_or_organizer(NodeInterface $node = NULL, $skip_trusted_roles = FALSE) {
-  $account = \Drupal::currentUser();
+  $social_event_manager_or_organizer = &drupal_static(__FUNCTION__);
 
-  // Allow if user has the manage everything permission.
-  // We can skip this to make sure we truly only check organizer & managers
-  // used for context in notifications.
-  if ($skip_trusted_roles === FALSE && $account->hasPermission('manage everything enrollments')) {
-    return TRUE;
-  }
+  if (!isset($social_event_manager_or_organizer)) {
+    $account = \Drupal::currentUser();
 
-  if ($node === NULL) {
-    /** @var \Drupal\node\NodeInterface $node */
-    $node = \Drupal::routeMatch()->getParameter('node');
-
-    // Or if it's an organizer for the node.
-    if (!$node instanceof NodeInterface) {
-      $node = \Drupal::entityTypeManager()->getStorage('node')->load($node);
+    // Allow if user has the manage everything permission.
+    // We can skip this to make sure we truly only check organizer & managers
+    // used for context in notifications.
+    if ($skip_trusted_roles === FALSE && $account->hasPermission('manage everything enrollments')) {
+      $result = TRUE;
     }
 
-    // If we are altering / deleting an Event Enrollment check if user
-    // is manager or organizer from the referenced node.
-    $event_enrollment = \Drupal::routeMatch()->getParameter('event_enrollment');
+    if (!$node && !isset($result)) {
+      // Get the current event node.
+      $node = social_event_get_current_event();
 
-    if ($event_enrollment instanceof EventEnrollmentInterface) {
-      $node = $event_enrollment->field_event->entity;
-    }
-  }
-  if ($node !== NULL && $node->bundle() === 'event' && !$node->field_event_managers->isEmpty()) {
-    foreach ($node->field_event_managers->getValue() as $value) {
-      if ($value && $value['target_id'] === $account->id()) {
-        return TRUE;
+      // If there's no node, we might be looking at an event enrollment.
+      if (!$node) {
+        // If we are altering / deleting an Event Enrollment check if user
+        // is manager or organizer from the referenced node.
+        $event_enrollment = \Drupal::routeMatch()
+          ->getParameter('event_enrollment');
+
+        if ($event_enrollment instanceof EventEnrollmentInterface) {
+          $node = $event_enrollment->field_event->entity;
+        }
       }
     }
+
+    // If we now have a node we can check if there are event managers.
+    if ($node instanceof NodeInterface && !isset($result) && $node->bundle() === 'event') {
+      // The event owner has access.
+      if ($node->getOwnerId() === $account->id()) {
+        $result = TRUE;
+      }
+
+      // Check if the user is an event manager/organizer.
+      if (!isset($result) && !$node->field_event_managers->isEmpty()) {
+        foreach ($node->field_event_managers->getValue() as $value) {
+          if ($value && $value['target_id'] === $account->id()) {
+            $result = TRUE;
+            break;
+          }
+        }
+      }
+    }
+
+    // No result means the user does not have access.
+    if (!isset($result)) {
+      $result = FALSE;
+    }
+
+    $social_event_manager_or_organizer = $result;
   }
 
-  return FALSE;
+  return $social_event_manager_or_organizer;
 }
 
 /**
@@ -592,7 +613,7 @@ function social_event_show_pending_requests_message() {
     // Third, get the current node (if any) to perform an extra check
     // just to make sure that we are actually on an event node.
     $node = social_event_get_current_event();
-    if ($node instanceof NodeInterface && $node->field_enroll_method->value === '2' && social_event_owner_or_organizer($node, $current_user)) {
+    if ($node instanceof NodeInterface && $node->field_enroll_method->value === '2' && social_event_manager_or_organizer($node)) {
       // At this point we try to get the amount of pending requests.
       try {
         $query = \Drupal::entityTypeManager()
@@ -729,13 +750,14 @@ function social_event_social_follow_content_types_alter(array &$types) {
  *   The event or NULL if nothing found.
  */
 function social_event_get_current_event() {
+
   $node = \Drupal::service('current_route_match')->getParameter('node');
 
   if ($node !== NULL && (!$node instanceof NodeInterface)) {
     $node = Node::load($node);
   }
 
-  if (($node instanceof NodeInterface) && $node->getType() === 'event') {
+  if ($node instanceof NodeInterface && $node->getType() === 'event') {
     return $node;
   }
 
@@ -769,59 +791,11 @@ function social_event_field_visibility(array &$form, $field_name, array $fields,
 }
 
 /**
- * Determine if the user is an owner or organizer of a specific event node.
- *
- * @param \Drupal\node\NodeInterface|null $node
- *   The (optional) event node.
- * @param \Drupal\Core\Session\AccountInterface|null $current_user
- *   The (optional) user.
- *
- * @return bool
- *   Return TRUE if the user is the owner or organizer of this event.
- */
-function social_event_owner_or_organizer(NodeInterface $node = NULL, AccountInterface $current_user = NULL) {
-  $event_owner_organizer = &drupal_static(__FUNCTION__);
-
-  if (!isset($event_owner_organizer)) {
-    if (!$current_user) {
-      $current_user = \Drupal::currentUser();
-    }
-
-    if (!$node) {
-      $node = social_event_get_current_event();
-    }
-
-    if ($node instanceof NodeInterface && $current_user instanceof AccountInterface) {
-      // Get the event owner/author and it's organisers (if any).
-      $event_accountables['owner'] = $node->getOwnerId();
-      $event_accountables['organiser'] = FALSE;
-
-      // Also check whether the social_event_managers is enabled so we can
-      // check if the user might be an organiser/manager of this event.
-      if (\Drupal::moduleHandler()->moduleExists('social_event_managers')) {
-        $event_accountables['organiser'] = social_event_manager_or_organizer($node);
-      }
-
-      // If the user is organiser, the owner or has permission to manage the
-      // requests, return TRUE.
-      if ($event_accountables['organiser'] === TRUE
-        || $current_user->hasPermission('manage event enrollment requests')
-        || $event_accountables['owner'] === $current_user->id()) {
-        $event_owner_organizer = TRUE;
-      }
-    }
-    $event_owner_organizer = FALSE;
-  }
-
-  return $event_owner_organizer;
-}
-
-/**
  * Implements hook_entity_operation_alter().
  */
 function social_event_entity_operation_alter(array &$operations, EntityInterface $entity) {
   // Check access first.
-  if (!social_event_owner_or_organizer()) {
+  if (!social_event_manager_or_organizer()) {
     return;
   }
   // Get the node, so we can pass it as a parameter.

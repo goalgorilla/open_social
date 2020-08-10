@@ -133,14 +133,14 @@ class SocialEventInviteAccessHelper {
 
     // If the user is not an event owner or organizer don't give access.
     // Todo: can be combined with the next check into a service.
-    if (!social_event_owner_or_organizer()) {
+    if (!social_event_manager_or_organizer()) {
       return AccessResult::forbidden();
     }
 
     // If we've got this far we can be sure the user is allowed to see this
     // block.
     // @todo: move that function to a service.
-    return AccessResult::allowedIf(social_event_owner_or_organizer());
+    return AccessResult::allowedIf(social_event_manager_or_organizer());
   }
 
   /**

@@ -252,7 +252,7 @@ function social_event_invite_entity_operation_alter(array &$operations, EntityIn
     // Save the delete operation for later.
     $delete_operation = $operations['delete'] ?? [];
     // Build operations for the event invites overview for the owner/manager.
-    if (social_event_owner_or_organizer() && $route_name === 'view.event_manage_enrollment_invites.page_manage_enrollment_invites') {
+    if (social_event_manager_or_organizer() && $route_name === 'view.event_manage_enrollment_invites.page_manage_enrollment_invites') {
       // Empty the current operations.
       $operations = [];
       // Add the "Cancel invite" option.
