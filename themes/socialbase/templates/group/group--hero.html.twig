@@ -107,20 +107,20 @@
                 {% elseif closed_group or allow_request %}
                     {% if allow_request %}
                         {% if requested %}
-                            <button type="button" autocomplete="off" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-accent  btn-block btn-lg btn-raised dropdown-toggle">{% trans %}Request sent{% endtrans %}<span class="caret"></span></button>
+                            <button type="button" autocomplete="off" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-accent btn-block btn-lg btn-raised dropdown-toggle">{% trans %}Request sent{% endtrans %}<span class="caret"></span></button>
                             <ul class="dropdown-menu dropdown-menu-right">
                                 <li><a href="{{ group_operations_url }}">{% trans %}Cancel request{% endtrans %}</a></li>
                             </ul>
                         {% else %}
-                            <a href="{{ group_operations_url }}" class="btn btn-accent btn-block use-ajax" title="{% trans %}Request to join{% endtrans %}">{% trans %}Request to join{% endtrans %}</a>
+                            <a href="{{ group_operations_url }}" class="btn btn-accent btn-block btn-lg btn-raised use-ajax" title="{% trans %}Request to join{% endtrans %}">{% trans %}Request to join{% endtrans %}</a>
                         {% endif %}
                     {% else %}
-                        <a href="{{ group_operations_url }}" class="btn btn-accent btn-block disabled" title="{{ cta }}">{{ cta }}</a>
+                        <a href="{{ group_operations_url }}" class="btn btn-accent btn-block btn-lg  btn-raised disabled" title="{{ cta }}">{{ cta }}</a>
                     {% endif %}
                 {% elseif anonymous_request %}
-                    <a href="{{ group_operations_url }}" class="btn btn-accent btn-block use-ajax" title="{% trans %}Request to join{% endtrans %}">{% trans %}Request to join{% endtrans %}</a>
+                    <a href="{{ group_operations_url }}" class="btn btn-accent btn-block btn-lg btn-raised use-ajax" title="{% trans %}Request to join{% endtrans %}">{% trans %}Request to join{% endtrans %}</a>
                 {% else %}
-                    <a href="{{ group_operations_url }}" class="btn btn-accent btn-block" title="{% trans %}Join{% endtrans %}">{% trans %}Join{% endtrans %}</a>
+                    <a href="{{ group_operations_url }}" class="btn btn-accent btn-block btn-lg btn-raised" title="{% trans %}Join{% endtrans %}">{% trans %}Join{% endtrans %}</a>
                 {% endif %}
             </div>
         </div>

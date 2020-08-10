@@ -1158,3 +1158,17 @@ function social_core_update_8812(&$sandbox) {
   // Install Gin Toolbar module.
   \Drupal::service('module_installer')->install(['gin_toolbar']);
 }
+
+/**
+ * Block changes for the social_group_request feature.
+ */
+function social_core_update_8813() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_core', 'social_core_update_8813');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
