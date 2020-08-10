@@ -13,6 +13,8 @@ use Drupal\user\Entity\User;
  */
 function social_profile_fields_install() {
   // Set some default permissions.
+  // Clear the entity field manager cached field definitions as the address
+  // field overrides settings need to be applied.
   _social_profile_fields_set_permissions();
   _social_profile_fields_update_search_index();
   _social_profile_fields_update_search_index('social_all');

@@ -17,7 +17,7 @@ class RestrictedNameProcessorOverride implements ConfigFactoryOverrideInterface 
    */
   public function loadOverrides($names) {
     $overrides = [];
-    // Set hero title block for book content type.
+    // Set processor settings for social all and users.
     $config_names = [
       'search_api.index.social_all',
       'search_api.index.social_users',
