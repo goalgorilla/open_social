@@ -750,18 +750,26 @@ function social_event_social_follow_content_types_alter(array &$types) {
  *   The event or NULL if nothing found.
  */
 function social_event_get_current_event() {
+  $event = &drupal_static(__FUNCTION__);
 
-  $node = \Drupal::service('current_route_match')->getParameter('node');
+  if (!isset($event)) {
+    $node = \Drupal::service('current_route_match')->getParameter('node');
 
-  if ($node !== NULL && (!$node instanceof NodeInterface)) {
-    $node = Node::load($node);
+    if ($node !== NULL && (!$node instanceof NodeInterface)) {
+      $node = Node::load($node);
+    }
+
+    if ($node instanceof NodeInterface && $node->getType() === 'event') {
+      $event = $node;
+    }
+
+    // If we don't have an event then we can go back to NULL.
+    if (!isset($event)) {
+      $event = NULL;
+    }
   }
 
-  if ($node instanceof NodeInterface && $node->getType() === 'event') {
-    return $node;
-  }
-
-  return NULL;
+  return $event;
 }
 
 /**
