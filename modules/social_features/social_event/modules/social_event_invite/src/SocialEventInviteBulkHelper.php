@@ -157,7 +157,7 @@ class SocialEventInviteBulkHelper {
    *
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
-  public function bulkInviteUsersEmails(array $users, $nid, array &$context) {
+  public static function bulkInviteUsersEmails(array $users, $nid, array &$context) {
     $results = [];
 
     foreach ($users as $user) {
