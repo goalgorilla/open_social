@@ -333,7 +333,7 @@ function social_group_preprocess_group(array &$variables) {
 
   // Add group edit url for management.
   if ($group instanceof Group) {
-    // Ensure all groups get the group.type (differentiating labels in teasers
+    // Ensure all groups get the group.type differentiating labels in teasers
     // hero's and full nodes.
     // But also if the allowed join method is there, this should be added.
     $variables['#cache']['contexts'][] = 'group.type';
