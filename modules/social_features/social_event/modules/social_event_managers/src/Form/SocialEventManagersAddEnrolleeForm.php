@@ -14,6 +14,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Url;
 use Drupal\social_event\Entity\EventEnrollment;
 use Drupal\node\NodeInterface;
+use Drupal\social_event_managers\Element\SocialEnrollmentAutocomplete;
 
 /**
  * Class SocialEventTypeSettings.
@@ -149,7 +150,8 @@ class SocialEventManagersAddEnrolleeForm extends FormBase {
    *   Form definition array.
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    $form['#attributes']['class'][] = 'card card__block form--default form-wrapper form-group';
+    $form['#attributes']['class'][] = 'form--default';
+    $nid = $this->routeMatch->getRawParameter('node');
 
     if (empty($nid)) {
       $node = $this->routeMatch->getParameter('node');
@@ -163,38 +165,45 @@ class SocialEventManagersAddEnrolleeForm extends FormBase {
     }
 
     // Load the current Event enrollments so we can check duplicates.
-    $storage = \Drupal::entityTypeManager()->getStorage('event_enrollment');
+    $storage = $this->entityTypeManager->getStorage('event_enrollment');
     $enrollments = $storage->loadByProperties(['field_event' => $nid]);
 
     $enrollmentIds = [];
     foreach ($enrollments as $enrollment) {
       $enrollmentIds[] = $enrollment->getAccount();
     }
+    $form['users_fieldset'] = [
+      '#type' => 'fieldset',
+      '#tree' => TRUE,
+      '#collapsible' => FALSE,
+      '#collapsed' => FALSE,
+      '#attributes' => [
+        'class' => [
+          'form-horizontal',
+        ],
+      ],
+    ];
 
-    $form['name'] = [
-      '#type' => 'social_enrollment_entity_autocomplete',
+    // Todo: Validation should go on the element and return a nice list.
+    $form['users_fieldset']['user'] = [
+      '#title' => $this->t('Find people by name'),
+      '#type' => 'select2',
+      '#description' => $this->t('You can enter or paste multiple entries separated by comma or semicolon'),
+      '#multiple' => TRUE,
+      '#tags' => TRUE,
+      '#autocomplete' => TRUE,
+      '#select2' => [
+        'placeholder' => t('Jane Doe'),
+        'tokenSeparators' => [',', ';'],
+      ],
       '#selection_handler' => 'social',
       '#selection_settings' => [
         'skip_entity' => $enrollmentIds,
       ],
       '#target_type' => 'user',
-      '#tags' => TRUE,
-      '#description' => $this->t('To add multiple members, separate each member with a comma ( , ).'),
-      '#title' => $this->t('Select members to add'),
-    ];
-
-    $form['actions']['cancel'] = [
-      '#type' => 'link',
-      '#title' => t('Cancel'),
-      '#url' => Url::fromRoute('view.event_manage_enrollments.page_manage_enrollments', ['node' => $nid]),
-    ];
-
-    $form['actions']['submit'] = [
-      '#prefix' => '<div class="form-actions">',
-      '#suffix' => '</div>',
-      '#type' => 'submit',
-      '#value' => $this->t('Save'),
-      '#button_type' => 'primary',
+      '#element_validate' => [
+        [$this, 'uniqueMembers'],
+      ],
     ];
 
     // Add the params that the email preview needs.
@@ -233,7 +242,29 @@ class SocialEventManagersAddEnrolleeForm extends FormBase {
       }
     }
 
-    $form['preview'] = [
+    $form['email_preview'] = [
+      '#type' => 'fieldset',
+      '#title' => [
+        'text' => [
+          '#markup' => t('Preview your email'),
+        ],
+        'icon' => [
+          '#markup' => '<svg class="icon icon-expand_more"><use xlink:href="#icon-expand_more" /></svg>',
+          '#allowed_tags' => ['svg', 'use'],
+        ],
+      ],
+      '#tree' => TRUE,
+      '#collapsible' => TRUE,
+      '#collapsed' => TRUE,
+      '#attributes' => [
+        'class' => [
+          'form-horizontal',
+          'form-preview-email',
+        ],
+      ],
+    ];
+
+    $form['email_preview']['preview'] = [
       '#theme' => 'invite_email_preview',
       '#title' => $this->t('Message'),
       '#logo' => $logo,
@@ -242,9 +273,31 @@ class SocialEventManagersAddEnrolleeForm extends FormBase {
       '#helper' => $this->token->replace($invite_config->get('invite_helper'), $params),
     ];
 
+    $form['actions']['cancel'] = [
+      '#type' => 'link',
+      '#title' => t('Cancel'),
+      '#url' => Url::fromRoute('view.event_manage_enrollments.page_manage_enrollments', ['node' => $nid]),
+    ];
+
+    $form['actions']['submit'] = [
+      '#prefix' => '<div class="form-actions">',
+      '#suffix' => '</div>',
+      '#type' => 'submit',
+      '#value' => $this->t('Save'),
+      '#button_type' => 'primary',
+    ];
+
     $form['#cache']['contexts'][] = 'user';
 
     return $form;
+  }
+
+  /**
+   * Public function to validate members against enrollments.
+   */
+  public function uniqueMembers($element, &$form_state, $complete_form) {
+    // Call the autocomplete function to make sure enrollees are unique.
+    SocialEnrollmentAutocomplete::validateEntityAutocomplete($element, $form_state, $complete_form, TRUE);
   }
 
 }
