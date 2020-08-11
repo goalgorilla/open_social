@@ -88,7 +88,7 @@ class EventDate extends InOperator {
    */
   public function generateOptions() {
     return [
-      self::UPCOMING_EVENTS => $this->t('Ongoing and upgoing events'),
+      self::UPCOMING_EVENTS => $this->t('Ongoing and upcoming events'),
       self::PAST_EVENTS => $this->t('Past events'),
     ];
   }

@@ -14,7 +14,7 @@ Feature: Overview
     And I am on "/user"
     And I click "Events"
     And I should see "Filter" in the "Sidebar second"
-    And I should see "Ongoing and upgoing events"
+    And I should see "Ongoing and upcoming events"
     And I should see "Past events"
     And I should see text matching "Publish status"
 

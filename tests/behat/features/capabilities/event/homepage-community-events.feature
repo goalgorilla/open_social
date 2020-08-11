@@ -26,7 +26,7 @@ Feature: See upcoming events in the community
     Then I should see "All events"
     And I should see "Behat Event 1"
     And I should see "Behat Event 2"
-    And I should see "Ongoing and upgoing events"
+    And I should see "Ongoing and upcoming events"
 
     Given I am logged in as an "authenticated user"
     Then I should see "Behat Event 1"
@@ -37,7 +37,7 @@ Feature: See upcoming events in the community
     And I should see "Behat Event 1"
     And I should see "Behat Event 2"
 
-    When I click radio button "Ongoing and upgoing events"
+    When I click radio button "Ongoing and upcoming events"
     And I press "Filter"
     And "Behat Event 1" should precede "Behat Event 2" for the query ".teaser__title"
 
