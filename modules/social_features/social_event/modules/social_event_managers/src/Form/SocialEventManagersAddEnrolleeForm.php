@@ -10,7 +10,6 @@ use Drupal\Core\Utility\Token;
 use Drupal\file\Entity\File;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Render\RendererInterface;
-use Drupal\social_event\Form\EnrollActionForm;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Url;
 use Drupal\social_event\Entity\EventEnrollment;
@@ -151,7 +150,7 @@ class SocialEventManagersAddEnrolleeForm extends FormBase {
    *   Form definition array.
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    $form['#attributes']['class'][] = 'card card__block form--default form-wrapper form-group';
+    $form['#attributes']['class'][] = 'form--default';
     $nid = $this->routeMatch->getRawParameter('node');
 
     if (empty($nid)) {
@@ -173,14 +172,30 @@ class SocialEventManagersAddEnrolleeForm extends FormBase {
     foreach ($enrollments as $enrollment) {
       $enrollmentIds[] = $enrollment->getAccount();
     }
+    $form['users_fieldset'] = [
+      '#type' => 'fieldset',
+      '#tree' => TRUE,
+      '#collapsible' => FALSE,
+      '#collapsed' => FALSE,
+      '#attributes' => [
+        'class' => [
+          'form-horizontal',
+        ],
+      ],
+    ];
 
-    $form['name'] = [
+    // Todo: Validation should go on the element and return a nice list.
+    $form['users_fieldset']['user'] = [
+      '#title' => $this->t('Find people by name'),
       '#type' => 'select2',
-      '#title' => $this->t('Members'),
-      '#description' => $this->t('To add multiple members, separate each member with a comma ( , ).'),
+      '#description' => $this->t('You can enter or paste multiple entries separated by comma or semicolon'),
       '#multiple' => TRUE,
       '#tags' => TRUE,
       '#autocomplete' => TRUE,
+      '#select2' => [
+        'placeholder' => t('Jane Doe'),
+        'tokenSeparators' => [',', ';'],
+      ],
       '#selection_handler' => 'social',
       '#selection_settings' => [
         'skip_entity' => $enrollmentIds,
@@ -189,20 +204,6 @@ class SocialEventManagersAddEnrolleeForm extends FormBase {
       '#element_validate' => [
         [$this, 'uniqueMembers'],
       ],
-    ];
-
-    $form['actions']['cancel'] = [
-      '#type' => 'link',
-      '#title' => t('Cancel'),
-      '#url' => Url::fromRoute('view.event_manage_enrollments.page_manage_enrollments', ['node' => $nid]),
-    ];
-
-    $form['actions']['submit'] = [
-      '#prefix' => '<div class="form-actions">',
-      '#suffix' => '</div>',
-      '#type' => 'submit',
-      '#value' => $this->t('Save'),
-      '#button_type' => 'primary',
     ];
 
     // Add the params that the email preview needs.
@@ -241,13 +242,49 @@ class SocialEventManagersAddEnrolleeForm extends FormBase {
       }
     }
 
-    $form['preview'] = [
+    $form['email_preview'] = [
+      '#type' => 'fieldset',
+      '#title' => [
+        'text' => [
+          '#markup' => t('Preview your email'),
+        ],
+        'icon' => [
+          '#markup' => '<svg class="icon icon-expand_more"><use xlink:href="#icon-expand_more" /></svg>',
+          '#allowed_tags' => ['svg', 'use'],
+        ],
+      ],
+      '#tree' => TRUE,
+      '#collapsible' => TRUE,
+      '#collapsed' => TRUE,
+      '#attributes' => [
+        'class' => [
+          'form-horizontal',
+          'form-preview-email',
+        ],
+      ],
+    ];
+
+    $form['email_preview']['preview'] = [
       '#theme' => 'invite_email_preview',
       '#title' => $this->t('Message'),
       '#logo' => $logo,
       '#subject' => $this->t('Notification from %site_name', $variables),
       '#body' => $body,
       '#helper' => $this->token->replace($invite_config->get('invite_helper'), $params),
+    ];
+
+    $form['actions']['cancel'] = [
+      '#type' => 'link',
+      '#title' => t('Cancel'),
+      '#url' => Url::fromRoute('view.event_manage_enrollments.page_manage_enrollments', ['node' => $nid]),
+    ];
+
+    $form['actions']['submit'] = [
+      '#prefix' => '<div class="form-actions">',
+      '#suffix' => '</div>',
+      '#type' => 'submit',
+      '#value' => $this->t('Save'),
+      '#button_type' => 'primary',
     ];
 
     $form['#cache']['contexts'][] = 'user';

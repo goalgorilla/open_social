@@ -22,6 +22,7 @@ use Drupal\group\Entity\GroupType;
 use Drupal\node\NodeInterface;
 use Drupal\social_group\Controller\SocialGroupController;
 use Drupal\social_group\Controller\SocialGroupListBuilder;
+use Drupal\social_group\Element\SocialGroupEntityAutocomplete;
 use Drupal\social_group\Entity\Group;
 use Drupal\social_group\Form\SocialGroupAddForm;
 use Drupal\views\ViewExecutable;
@@ -665,9 +666,22 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
   }
 
   if (in_array($form_id, $membership_add_forms)) {
-    $form['entity_id']['widget'][0]['target_id']['#title'] = t('Select members to add');
-    $form['entity_id']['widget'][0]['target_id']['#description'] = t('To add multiple members, separate each member with a comma ( , ).');
-    $form['entity_id']['widget'][0]['target_id']['#type'] = 'social_group_entity_autocomplete';
+    $form['entity_id']['widget'][0]['target_id'] = [
+      '#title' => t('Find people by name'),
+      '#type' => 'select2',
+      '#description' => t('You can enter or paste multiple entries separated by comma or semicolon'),
+      '#multiple' => TRUE,
+      '#tags' => TRUE,
+      '#autocomplete' => TRUE,
+      '#select2' => [
+        'placeholder' => t('Jane Doe'),
+        'tokenSeparators' => [',', ';'],
+      ],
+      '#selection_handler' => 'social',
+      '#target_type' => 'user',
+      '#element_validate' => ['_social_group_unique_members'],
+    ];
+
   }
 
   // Check if form is group content create form.
@@ -783,6 +797,14 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
       }
     }
   }
+}
+
+/**
+ * Function to validate entries against group members.
+ */
+function _social_group_unique_members($element, &$form_state, $complete_form) {
+  // Call the autocomplete function to make sure enrollees are unique.
+  SocialGroupEntityAutocomplete::validateEntityAutocomplete($element, $form_state, $complete_form, TRUE);
 }
 
 /**
