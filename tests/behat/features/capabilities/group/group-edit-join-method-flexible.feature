@@ -15,14 +15,15 @@ Feature: Edit my group as a group manager
     And I press "Continue"
     And I wait for AJAX to finish
     When I fill in "Title" with "Test flexible group"
+    Then I click radio button "Open to join - users can join this group without approval" with the id "edit-field-group-allowed-join-method-direct"
     And I fill in the "edit-field-group-description-0-value" WYSIWYG editor with "Description text"
     And I press "Save"
     And I should see "Test flexible group" in the "Main content"
     And I should see "1 member"
-
-  # TB-4365 - As a Group Manager I want to change group join-method
     And I click "Manage members"
     Then I should see the link "Add members"
+
+  # TB-4365 - As a Group Manager I want to change group join-method
     When I click "Edit group"
     And I wait for AJAX to finish
     Then I click radio button "Invite-only - users can only join this group if they are added/invited by group managers" with the id "edit-field-group-allowed-join-method-added"
