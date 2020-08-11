@@ -104,7 +104,7 @@
                     <ul class="dropdown-menu dropdown-menu-right">
                         <li><a href="{{ group_operations_url }}">{% trans %}Leave group{% endtrans %}</a></li>
                     </ul>
-                {% elseif closed_group or allow_request %}
+                {% elseif closed_group %}
                     {% if allow_request %}
                         {% if requested %}
                             <button type="button" autocomplete="off" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-accent btn-block btn-lg btn-raised dropdown-toggle">{% trans %}Request sent{% endtrans %}<span class="caret"></span></button>
