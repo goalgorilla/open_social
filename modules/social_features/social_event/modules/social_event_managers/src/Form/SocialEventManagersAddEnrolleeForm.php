@@ -10,10 +10,12 @@ use Drupal\Core\Utility\Token;
 use Drupal\file\Entity\File;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Render\RendererInterface;
+use Drupal\social_event\Form\EnrollActionForm;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Url;
 use Drupal\social_event\Entity\EventEnrollment;
 use Drupal\node\NodeInterface;
+use Drupal\social_event_managers\Element\SocialEnrollmentAutocomplete;
 
 /**
  * Class SocialEventTypeSettings.
@@ -150,6 +152,7 @@ class SocialEventManagersAddEnrolleeForm extends FormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
     $form['#attributes']['class'][] = 'card card__block form--default form-wrapper form-group';
+    $nid = $this->routeMatch->getRawParameter('node');
 
     if (empty($nid)) {
       $node = $this->routeMatch->getParameter('node');
@@ -163,7 +166,7 @@ class SocialEventManagersAddEnrolleeForm extends FormBase {
     }
 
     // Load the current Event enrollments so we can check duplicates.
-    $storage = \Drupal::entityTypeManager()->getStorage('event_enrollment');
+    $storage = $this->entityTypeManager->getStorage('event_enrollment');
     $enrollments = $storage->loadByProperties(['field_event' => $nid]);
 
     $enrollmentIds = [];
@@ -172,15 +175,20 @@ class SocialEventManagersAddEnrolleeForm extends FormBase {
     }
 
     $form['name'] = [
-      '#type' => 'social_enrollment_entity_autocomplete',
+      '#type' => 'select2',
+      '#title' => $this->t('Members'),
+      '#description' => $this->t('To add multiple members, separate each member with a comma ( , ).'),
+      '#multiple' => TRUE,
+      '#tags' => TRUE,
+      '#autocomplete' => TRUE,
       '#selection_handler' => 'social',
       '#selection_settings' => [
         'skip_entity' => $enrollmentIds,
       ],
       '#target_type' => 'user',
-      '#tags' => TRUE,
-      '#description' => $this->t('To add multiple members, separate each member with a comma ( , ).'),
-      '#title' => $this->t('Select members to add'),
+      '#element_validate' => [
+        [$this, 'uniqueMembers'],
+      ],
     ];
 
     $form['actions']['cancel'] = [
@@ -245,6 +253,14 @@ class SocialEventManagersAddEnrolleeForm extends FormBase {
     $form['#cache']['contexts'][] = 'user';
 
     return $form;
+  }
+
+  /**
+   * Public function to validate members against enrollments.
+   */
+  public function uniqueMembers($element, &$form_state, $complete_form) {
+    // Call the autocomplete function to make sure enrollees are unique.
+    SocialEnrollmentAutocomplete::validateEntityAutocomplete($element, $form_state, $complete_form, TRUE);
   }
 
 }

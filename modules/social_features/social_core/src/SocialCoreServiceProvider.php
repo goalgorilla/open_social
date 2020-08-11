@@ -22,6 +22,9 @@ class SocialCoreServiceProvider extends ServiceProviderBase {
     $definition = $container->getDefinition('entity.autocomplete_matcher');
     $definition->setClass('Drupal\social_core\Entity\EntityAutocompleteMatcher');
 
+    $definition = $container->getDefinition('select2.autocomplete_matcher');
+    $definition->setClass('Drupal\social_core\Entity\Select2EntityAutocompleteMatcher');
+
     $modules = $container->getParameter('container.modules');
 
     // Check for installed layout_builder module.
