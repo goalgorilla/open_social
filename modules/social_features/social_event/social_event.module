@@ -181,8 +181,7 @@ function social_event_menu_local_tasks_alter(&$data, $route_name) {
       $node = Node::load($node);
     }
     if ($node instanceof Node) {
-      $can_show_enrollments_link = \Drupal::service('social_event.enroll')
-        ->isEnabled($node);
+      $can_show_enrollments_link = \Drupal::service('social_event.enroll')->isEnabled($node);
     }
 
   }
@@ -459,13 +458,13 @@ function _social_event_user_timezone($timezone) {
 function social_event_social_user_account_header_create_links($context) {
   return [
     'add_event' => [
-        '#type' => 'link',
-        '#attributes' => [
-          'title' => new TranslatableMarkup('Create New Event'),
-        ],
-        '#title' => new TranslatableMarkup('New Event'),
-        '#weight' => 100,
-      ] + Url::fromRoute('node.add', ['node_type' => 'event'])->toRenderArray(),
+      '#type' => 'link',
+      '#attributes' => [
+        'title' => new TranslatableMarkup('Create New Event'),
+      ],
+      '#title' => new TranslatableMarkup('New Event'),
+      '#weight' => 100,
+    ] + Url::fromRoute('node.add', ['node_type' => 'event'])->toRenderArray(),
   ];
 }
 
@@ -482,15 +481,15 @@ function social_event_social_user_account_header_account_links(array $context) {
 
   return [
     'my_events' => [
-        '#type' => 'link',
-        '#attributes' => [
-          'title' => new TranslatableMarkup('View my events'),
-        ],
-        '#title' => new TranslatableMarkup('My events'),
-        '#weight' => 600,
-      ] + Url::fromRoute('view.events.events_overview', [
-        'user' => $context['user']->id(),
-      ])->toRenderArray(),
+      '#type' => 'link',
+      '#attributes' => [
+        'title' => new TranslatableMarkup('View my events'),
+      ],
+      '#title' => new TranslatableMarkup('My events'),
+      '#weight' => 600,
+    ] + Url::fromRoute('view.events.events_overview', [
+      'user' => $context['user']->id(),
+    ])->toRenderArray(),
   ];
 }
 
@@ -587,13 +586,14 @@ function social_event_form_alter(&$form, FormStateInterface $form_state, $form_i
       // Get user timezone.
       $user_timezone = _social_event_user_timezone(date_default_timezone_get());
       $timezone_label = t('Time zone');
+      $markup = '<div class="control-label margin-bottom-s">' . $timezone_label . '</div>';
+      $markup .= '<div class="bg-gray-lighter btn btn-lg">' . $user_timezone . '</div>';
       $form['timezone_indication'] = [
         '#type' => 'container',
         '#weight' => 99,
         'content' => [
           '#type' => 'item',
-          '#markup' => "<div class='control-label margin-bottom-s'>$timezone_label</div>".
-            "<div class='bg-gray-lighter btn btn-lg'>$user_timezone</div>",
+          '#markup' => $markup,
           '#description' => t('The event date and time are set based on tour timezone. @change_timezone', [
             '@change_timezone' => Link::createFromRoute(
               t('Change your timezone here'),
@@ -627,8 +627,7 @@ function social_event_form_alter(&$form, FormStateInterface $form_state, $form_i
       }
 
       if ($node instanceof NodeInterface) {
-        $form['enroll_for_this_event']['#access'] = \Drupal::service('social_event.enroll')
-          ->isEnabled($node);
+        $form['enroll_for_this_event']['#access'] = \Drupal::service('social_event.enroll')->isEnabled($node);
       }
       break;
   }
@@ -672,16 +671,15 @@ function social_event_show_pending_requests_message() {
         $query->condition($condition_group);
         $pending_requests = $query->execute();
         if (!empty($pending_requests)) {
-          $plural = \Drupal::translation()
-            ->formatPlural(count($pending_requests), 'is (1) new request', 'are (@count) new requests');
-          $link = Link::createFromRoute(t('@amount', ['@amount' => $plural]), 'view.event_manage_enrollment_requests.page_manage_enrollment_requests', ['node' => $node->id()])
-            ->toString();
-          $message = \Drupal::messenger()
-            ->addWarning(t('There @link to enroll in this event.', ['@link' => $link]));
+          $plural = \Drupal::translation()->formatPlural(count($pending_requests), 'is (1) new request', 'are (@count) new requests');
+          $link = Link::createFromRoute(t('@amount', ['@amount' => $plural]), 'view.event_manage_enrollment_requests.page_manage_enrollment_requests', ['node' => $node->id()])->toString();
+          $message = \Drupal::messenger()->addWarning(t('There @link to enroll in this event.', ['@link' => $link]));
         }
-      } catch (InvalidPluginDefinitionException $e) {
+      }
+      catch (InvalidPluginDefinitionException $e) {
         \Drupal::logger('social_event')->error($e->getMessage());
-      } catch (PluginNotFoundException $e) {
+      }
+      catch (PluginNotFoundException $e) {
         \Drupal::logger('social_event')->error($e->getMessage());
       }
     }
@@ -888,8 +886,7 @@ function social_event_entity_operation_alter(array &$operations, EntityInterface
   $node = \Drupal::routeMatch()->getParameter('node');
   // Check if the entity type is one of event_enrollment and that we're on the
   // correct view. Otherwise it would update all actions across the platform.
-  if ($entity->getEntityTypeId() === 'event_enrollment' && \Drupal::routeMatch()
-      ->getRouteName() === 'view.event_manage_enrollment_requests.page_manage_enrollment_requests') {
+  if ($entity->getEntityTypeId() === 'event_enrollment' && \Drupal::routeMatch()->getRouteName() === 'view.event_manage_enrollment_requests.page_manage_enrollment_requests') {
     // Empty the current operations.
     $operations = [];
     // Add the "Approve" option.
@@ -915,8 +912,7 @@ function social_event_entity_operation_alter(array &$operations, EntityInterface
  */
 function social_event_node_update(EntityInterface $entity) {
   if ($entity->getType() === 'event') {
-    $enroll_state_original = $entity->original->get('field_enroll_method')
-      ->getString();
+    $enroll_state_original = $entity->original->get('field_enroll_method')->getString();
 
     // If the request to enroll was turned off then delete the request.
     if ((int) $enroll_state_original === 2) {
@@ -926,9 +922,7 @@ function social_event_node_update(EntityInterface $entity) {
       foreach ($enrollments->getAllEventEnrollments($entity->id(), TRUE) as $enrollment) {
         // Check if the field is not empty before getting the value,
         // Since (int) will otherwise return 0 and give false positives.
-        if (!$enrollment->get('field_request_or_invite_status')
-            ->isEmpty() && (int) $enrollment->get('field_request_or_invite_status')
-            ->getString() === EventEnrollmentInterface::REQUEST_PENDING) {
+        if (!$enrollment->get('field_request_or_invite_status')->isEmpty() && (int) $enrollment->get('field_request_or_invite_status')->getString() === EventEnrollmentInterface::REQUEST_PENDING) {
           $enrollment->delete();
         }
       }
@@ -1074,12 +1068,10 @@ function social_event_preprocess_field(&$variables) {
  * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
  */
 function _social_event_get_enrollment_status(NodeInterface $event) {
-  $enrollments = \Drupal::entityTypeManager()
-    ->getStorage('event_enrollment')
-    ->loadByProperties([
-      'field_account' => \Drupal::currentUser()->id(),
-      'field_event' => $event->id(),
-    ]);
+  $enrollments = \Drupal::entityTypeManager()->getStorage('event_enrollment')->loadByProperties([
+    'field_account' => \Drupal::currentUser()->id(),
+    'field_event' => $event->id(),
+  ]);
 
   $status = TRUE;
   if ($enrollment = array_pop($enrollments)) {
