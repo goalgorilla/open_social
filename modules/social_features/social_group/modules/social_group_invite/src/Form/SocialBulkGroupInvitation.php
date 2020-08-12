@@ -187,12 +187,7 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
         ],
       ],
     ];
-
-    // Get all group members for the current group fetched by
-    // _social_group_get_current_group().
-    $group_members = \Drupal::service('social_group.helper_service')->getCurrentGroupMembers();
-
-    // Todo: Validation should go on the element and return a nice list.
+    
     $form['users_fieldset']['user'] = [
       '#title' => $this->t('Find people by name or email address'),
       '#type' => 'select2',
@@ -201,9 +196,6 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
       '#tags' => TRUE,
       '#autocomplete' => TRUE,
       '#selection_handler' => 'social',
-      '#selection_settings' => [
-        'skip_entity' => $group_members,
-      ],
       '#target_type' => 'user',
       '#select2' => [
         'tags' => TRUE,
