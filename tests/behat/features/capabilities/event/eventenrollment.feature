@@ -16,7 +16,7 @@ Feature: Enroll for an event
 
     Then I should see "No one has enrolled for this event"
     And I should see the button "Enroll"
-    And I should see the link "Enrollments"
+    And I should see the link "Manage enrollments"
 
     When I press the "Enroll" button
     Then I should see the button "Enrolled"
