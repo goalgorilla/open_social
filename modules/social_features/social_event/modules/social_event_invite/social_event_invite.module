@@ -191,15 +191,24 @@ function social_event_invite_theme_registry_alter(&$theme_registry) {
  */
 function social_event_invite_preprocess_node(array &$variables) {
   if (!empty($variables['event_enrollment'])) {
+    /* @var $node \Drupal\node\Entity\Node */
     $node = $variables['node'];
 
-    if ($variables['view_mode'] === 'hero') {
+    // Since the Enroll action form for EventInviteEnrollActionForm doesn't
+    // support AN enrollments, don't add this. This will add the Enroll
+    // button to the Hero for AN on Public events with Invite enabled.
+    if ($variables['view_mode'] === 'hero' && $node->hasField('field_enroll_method') &&
+      (int) $node->getFieldValue('field_enroll_method', 'value') === EventEnrollmentInterface::ENROLL_METHOD_INVITE) {
       $form = \Drupal::formBuilder()
         ->getForm('Drupal\social_event_invite\Form\EventInviteEnrollActionForm', $node);
 
       $variables['event_enrollment'] = [
         'enroll_action_form' => $form,
       ];
+      // Vary per user, because one user can be enrolled or have more rights.
+      // @TODO create a better cache context custom. Based on the enrollment
+      // method OR the fact if a user is enrolled or not.
+      $variables['#cache']['contexts'][] = 'user';
     }
   }
 }
