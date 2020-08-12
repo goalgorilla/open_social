@@ -89,6 +89,6 @@ Feature: Group access roles
     And I am on the stream of group "Test closed group 3"
     And I click "Manage members"
     And I click "Add members"
-    And I fill in "Group User Two" for "Select members to add"
+    And I fill in "Group User Two" for "Find people by name"
     And I press "Save"
     Then I should see "Group Admin"

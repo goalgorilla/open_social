@@ -79,7 +79,7 @@ Feature: Create Secret Group
     When I click "Test secret group"
     And I click "Manage members"
     And I click "Add members"
-    And I fill in "SecretGroup User Two" for "Select members to add"
+    And I fill in "SecretGroup User Two" for "Find people by name"
     And I press "Save"
     Then I click "Members"
     And I should see "SecretGroup User Two"

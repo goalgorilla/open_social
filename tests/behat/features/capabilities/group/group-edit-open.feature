@@ -60,7 +60,7 @@ Feature: Edit my group as a group manager
   # DS-767 As a Group Manager I want to add a user to the group
     When I click "Add members"
     Then I should see "Add members"
-    And I fill in "Select members to add" with "Group Member Two"
+    And I fill in "Find people by name" with "Group Member Two"
     And I should see "Group roles"
     And I should see "Group Manager"
     And I should see the button "Cancel"
