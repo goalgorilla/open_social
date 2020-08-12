@@ -9,6 +9,7 @@ use Drupal\Core\Block\BlockBase;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Link;
+use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountInterface;
@@ -57,6 +58,13 @@ class EventRequestEnrollmentNotification extends BlockBase implements ContainerF
   protected $routeMatch;
 
   /**
+   * The logger factory.
+   *
+   * @var \Drupal\Core\Logger\LoggerChannelFactoryInterface
+   */
+  protected $loggerFactory;
+
+  /**
    * Constructs SocialGroupRequestMembershipNotification.
    *
    * @param array $configuration
@@ -71,6 +79,8 @@ class EventRequestEnrollmentNotification extends BlockBase implements ContainerF
    *   The translation manager.
    * @param \Drupal\Core\Routing\RouteMatchInterface $route_match
    *   Current route match.
+   * @param \Drupal\Core\Logger\LoggerChannelFactoryInterface $logger_factory
+   *   The logger factory service.
    */
   public function __construct(
     array $configuration,
@@ -78,13 +88,15 @@ class EventRequestEnrollmentNotification extends BlockBase implements ContainerF
     $plugin_definition,
     EntityTypeManagerInterface $entity_type_manager,
     TranslationManager $translation,
-    RouteMatchInterface $route_match
+    RouteMatchInterface $route_match,
+    LoggerChannelFactoryInterface $logger_factory
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->event = social_event_get_current_event();
     $this->entityTypeManager = $entity_type_manager;
     $this->translation = $translation;
     $this->routeMatch = $route_match;
+    $this->loggerFactory = $logger_factory;
   }
 
   /**
@@ -97,7 +109,8 @@ class EventRequestEnrollmentNotification extends BlockBase implements ContainerF
       $plugin_definition,
       $container->get('entity_type.manager'),
       $container->get('string_translation'),
-      $container->get('current_route_match')
+      $container->get('current_route_match'),
+      $container->get('logger.factory')
     );
   }
 
@@ -146,10 +159,10 @@ class EventRequestEnrollmentNotification extends BlockBase implements ContainerF
       ];
     }
     catch (InvalidPluginDefinitionException $e) {
-      \Drupal::logger('social_event')->error($e->getMessage());
+      $this->loggerFactory->get('social_event')->error($e->getMessage());
     }
     catch (PluginNotFoundException $e) {
-      \Drupal::logger('social_event')->error($e->getMessage());
+      $this->loggerFactory->get('social_event')->error($e->getMessage());
     }
 
     // Catch all.
