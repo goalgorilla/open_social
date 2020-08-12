@@ -409,7 +409,7 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
         $params = $tempstore->get('params')['gid'];
         // BulkGroupInvitationConfirm sends us to
         // $destination = new Url('view.group_invitations.page_1',
-        //   ['group' => $tempstore->get('params')['gid']]);
+        // ['group' => $tempstore->get('params')['gid']]);
         // however we want to go to the group canonical.
         $destination = new Url('entity.group.canonical', ['group' => $tempstore->get('params')['gid']]);
         $redirect = new RedirectResponse($destination->toString());
