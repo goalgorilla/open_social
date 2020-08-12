@@ -2,9 +2,13 @@
 
 namespace Drupal\social_core\Controller;
 
+use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\Routing\RouteMatch;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\TempStore\PrivateTempStoreFactory;
+use Drupal\user\UserInterface;
 use Drupal\views_bulk_operations\Form\ViewsBulkOperationsFormTrait;
 use Drupal\views_bulk_operations\Service\ViewsBulkOperationsActionProcessorInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -171,6 +175,29 @@ class SocialCoreController extends ControllerBase {
     $response = new AjaxResponse();
     $response->setData(['count' => $count]);
     return $response;
+  }
+
+  /**
+   * Redirects a user to the group or events invite page, or home if empty.
+   *
+   * @return \Symfony\Component\HttpFoundation\RedirectResponse
+   *   Returns a redirect to the events of the currently logged in user.
+   */
+  public function myInvitesUserPage() {
+    /** @var \Drupal\social_core\InviteService $core_invites */
+    $core_invites = \Drupal::service('social_core.invite');
+    // Only when there are actual Invite plugins enabled.
+    if (!empty($core_invites->getInviteData('name'))) {
+      return $this->redirect($core_invites->getInviteData('name'), [
+        'user' => $this->currentUser()->id(),
+      ]);
+    }
+
+    // If there are no invites found or no module enabled
+    // lets redirect user to their stream.
+    return $this->redirect('social_user.user_home', [
+      'user' => $this->currentUser()->id(),
+    ]);
   }
 
 }
