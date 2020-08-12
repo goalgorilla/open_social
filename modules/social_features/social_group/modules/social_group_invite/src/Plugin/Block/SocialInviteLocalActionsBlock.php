@@ -126,6 +126,7 @@ class SocialInviteLocalActionsBlock extends BlockBase implements ContainerFactor
       $links = [
         '#type' => 'dropbutton',
         '#attributes' => [
+          'class' => ['add-users-dropbutton'],
           'no-split' => [
             'title' => $this->t('Add members'),
             'alignment' => 'right',

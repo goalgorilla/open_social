@@ -58,11 +58,9 @@ Feature: Edit my group as a group manager
     And I should see "Member"
 
   # DS-767 As a Group Manager I want to add a user to the group
-    When I click "Add members"
-    Then I should see "Add members"
-    And I fill in "Find people by name" with "Group Member Two"
-    And I should see "Group roles"
-    And I should see "Group Manager"
+    When I click the group member dropdown
+    And I click "Add directly"
+    And I fill in select2 input ".form-type-select" with "Group User Two" and select "Group User Two"
     And I should see the button "Cancel"
     And I press "Save"
     Then I should see "Group Member Two"

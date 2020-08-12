@@ -101,6 +101,7 @@ class SocialEventInviteLocalActionsBlock extends BlockBase implements ContainerF
       $links = [
         '#type' => 'dropbutton',
         '#attributes' => [
+          'class' => ['add-users-dropbutton'],
           'no-split' => [
             'title' => $this->t('Add enrollees'),
             'alignment' => 'right',
