@@ -665,8 +665,12 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
     $form['path']['#type'] = 'hidden';
   }
 
-  // Lets add the new select 2 widget to add members to a group.
+  // Change the form when adding members directly in groups.
   if (in_array($form_id, $membership_add_forms)) {
+    // Get all group members for the current group fetched by
+    // _social_group_get_current_group().
+    $group_members = \Drupal::service('social_group.helper_service')->getCurrentGroupMembers();
+    // Lets add the new select 2 widget to add members to a group.
     $form['entity_id']['widget'][0]['target_id'] = [
       '#title' => t('Find people by name'),
       '#type' => 'select2',
@@ -679,6 +683,9 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
         'tokenSeparators' => [',', ';'],
       ],
       '#selection_handler' => 'social',
+      '#selection_settings' => [
+        'skip_entity' => $group_members,
+      ],
       '#target_type' => 'user',
       '#element_validate' => ['_social_group_unique_members'],
     ];
