@@ -27,12 +27,13 @@ class SocialGroupEntityAutocomplete extends EntityAutocomplete {
     // Load the current Group so we can see if there are existing members.
     $group = _social_group_get_current_group();
 
-    // Grab all the input values so we can get the ID's out of them.
-    $input_values = Tags::explode($element['#value']);
-
     // If we use the select 2 widget then we already got a nice array.
     if ($select2 === TRUE) {
       $input_values = $element['#value'];
+    }
+    else {
+      // Grab all the input values so we can get the ID's out of them.
+      $input_values = Tags::explode($element['#value']);
     }
 
     foreach ($input_values as $input) {
