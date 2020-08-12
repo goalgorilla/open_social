@@ -13,7 +13,7 @@
 /**
  * Provide a method to alter the default filter format for a content type.
  *
- * @param string _alter(
+ * @param string $filter_format
  *   The filter format that is default.
  *
  * @ingroup social_core_api

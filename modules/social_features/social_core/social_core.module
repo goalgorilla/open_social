@@ -517,12 +517,12 @@ function social_core_filter_process_format($element) {
 
   // Allow module to override default filter format because some content type
   // could require specific one.
-  \Drupal::moduleHandler()->alter('social_filter_format_default', $social_filter_format);
+  Drupal::moduleHandler()->alter('social_filter_format_default', $social_filter_format);
 
-  /** @var  $social_filter_format \Drupal\filter\Entity\FilterFormat */
+  /* @var \Drupal\filter\Entity\FilterFormat $social_filter_format */
   $social_filter_format = FilterFormat::load($social_filter_format);
   $permission_name = $social_filter_format->getPermissionName();
-  $account = \Drupal::currentUser();
+  $account = Drupal::currentUser();
 
   if (
     $element['#type'] === 'text_format' &&
@@ -552,7 +552,7 @@ function social_core_filter_process_format($element) {
     $element['format']['format']['#value'] = $social_filter_format->id();
     $element['format']['help']['#access'] = FALSE;
     $element['format']['format']['#options'] = [
-      $social_filter_format->id() => $social_filter_format->label()
+      $social_filter_format->id() => $social_filter_format->label(),
     ];
   }
 
