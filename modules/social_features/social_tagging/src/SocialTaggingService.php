@@ -177,7 +177,7 @@ class SocialTaggingService {
   /**
    * Returns a multilevel tree.
    *
-   * @param array $terms
+   * @param array $term_ids
    *   An array of items that are selected.
    * @param string $entity_type
    *   The entity type these tags are for.
@@ -185,45 +185,41 @@ class SocialTaggingService {
    * @return array
    *   An hierarchy array of items with their parent.
    */
-  public function buildHierarchy(array $terms, $entity_type) {
-
+  public function buildHierarchy(array $term_ids, $entity_type) {
     $tree = [];
-
-    foreach ($terms as $term) {
-      if (!isset($term['target_id'])) {
-        continue;
-      }
-
-      $current_term = $this->termStorage->load($term['target_id']);
-      // Must be a valid Term.
-      if (!$current_term instanceof TermInterface) {
-        continue;
-      }
-      // Get current terms parents.
-      $parents = $this->termStorage->loadParents($current_term->id());
-      $parent = reset($parents);
-      $category = $this->getTranslatedLabel($parent->id());
-
-      $parameter = 'tag';
-      if ($this->allowSplit()) {
-        $parameter = social_tagging_to_machine_name($category);
-      }
-
+    // Load all the terms together.
+    if (!empty($terms = $this->termStorage->loadMultiple($term_ids))) {
+      // Set the route.
       $route = 'view.search_content.page_no_value';
       if ($entity_type == 'group') {
         $route = 'view.search_groups.page_no_value';
       }
 
-      $url = Url::fromRoute($route, [
-        $parameter . '[]' => $current_term->id(),
-      ]);
+      // Build the hierarchy.
+      foreach ($terms as $current_term) {
+        // Must be a valid Term.
+        if (!$current_term instanceof TermInterface) {
+          continue;
+        }
+        // Get current terms parents.
+        $parents = $this->termStorage->loadParents($current_term->id());
+        $parent = reset($parents);
+        $category_label = $this->getTranslatedLabel($parent->id());
 
-      $tree[$parent->id()]['title'] = $category;
-      $tree[$parent->id()]['tags'][$current_term->id()] = [
-        'url' => $url->toString(),
-        'name' => $this->getTranslatedLabel($current_term->id()),
-      ];
+        $parameter = $this->allowSplit() ? social_tagging_to_machine_name($category_label) : 'tag';
+
+        $url = Url::fromRoute($route, [
+          $parameter . '[]' => $current_term->id(),
+        ])->toString();
+
+        $tree[$parent->id()]['title'] = $category_label;
+        $tree[$parent->id()]['tags'][$current_term->id()] = [
+          'url' => $url,
+          'name' => $this->getTranslatedLabel($current_term->id()),
+        ];
+      }
     }
+
     // Return the tree.
     return $tree;
   }
