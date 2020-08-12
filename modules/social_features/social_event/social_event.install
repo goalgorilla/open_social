@@ -1555,3 +1555,26 @@ function social_event_update_8810() {
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
 }
+
+/**
+ * Add a new block to display notifications for event requests.
+ *
+ * Load in a config file from an specific update hook that will never change.
+ */
+function social_event_update_8901() {
+  $config_files = [
+    'block.block.eventrequestsnotification' => drupal_get_path('module', 'social_event') . '/config/static/block.block.eventrequestsnotification_8901.yml',
+    'block.block.eventrequestsnotification_2' => drupal_get_path('module', 'social_event') . '/config/static/block.block.eventrequestsnotification_2_8901.yml',
+  ];
+
+  foreach ($config_files as $key => $config_file) {
+    if (is_file($config_file)) {
+      $settings = Yaml::parse(file_get_contents($config_file));
+      if (is_array($settings)) {
+        $config = \Drupal::configFactory()
+          ->getEditable($key);
+        $config->setData($settings)->save(TRUE);
+      }
+    }
+  }
+}
