@@ -8,7 +8,9 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\TempStore\PrivateTempStoreFactory;
+use Drupal\Core\Url;
 use Drupal\Core\Utility\Token;
 use Drupal\file\Entity\File;
 use Drupal\ginvite\GroupInvitationLoader;
@@ -18,6 +20,7 @@ use Drupal\user\Entity\User;
 use Drupal\user\UserInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\ginvite\Form\BulkGroupInvitation;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
  * Class SocialBulkGroupInvitation.
@@ -185,6 +188,10 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
       ],
     ];
 
+    // Get all group members for the current group fetched by
+    // _social_group_get_current_group().
+    $group_members = \Drupal::service('social_group.helper_service')->getCurrentGroupMembers();
+
     // Todo: Validation should go on the element and return a nice list.
     $form['users_fieldset']['user'] = [
       '#title' => $this->t('Find people by name or email address'),
@@ -194,6 +201,9 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
       '#tags' => TRUE,
       '#autocomplete' => TRUE,
       '#selection_handler' => 'social',
+      '#selection_settings' => [
+        'skip_entity' => $group_members,
+      ],
       '#target_type' => 'user',
       '#select2' => [
         'tags' => TRUE,
@@ -331,16 +341,20 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
    *
    * We override the source form submit, because we skip the confirm page to be
    * consistent with inviting for events.
+   *
+   * @throws \Drupal\Core\TempStore\TempStoreException
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-
+    // Override the Batch created in BulkGroupInvitation
+    // this so we can create a better message, use a new redirect in the
+    // finished argument but also update the correct emails etc.
     $batch = [
       'title' => $this->t('Inviting Members'),
       'operations' => [],
       'init_message'     => $this->t('Sending Invites'),
       'progress_message' => $this->t('Processed @current out of @total.'),
       'error_message'    => $this->t('An error occurred during processing'),
-      'finished' => 'Drupal\ginvite\Form\BulkGroupInvitationConfirm::batchFinished',
+      'finished' => 'Drupal\social_group_invite\Form\SocialBulkGroupInvitation::batchFinished',
     ];
 
     foreach ($form_state->getValue('users_fieldset')['user'] as $email) {
@@ -360,7 +374,60 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
       }
     }
 
+    // Prepare params to store them in tempstore.
+    $params = [];
+    $params['gid'] = $this->group->id();
+    $params['plugin'] = $this->group->getGroupType()->getContentPlugin('group_invitation')->getContentTypeConfigId();
+    $params['emails'] = $this->getSubmittedEmails($form_state);
+
+    $tempstore = $this->tempStoreFactory->get('ginvite_bulk_invitation');
+    $tempstore->set('params', $params);
+
     batch_set($batch);
+  }
+
+  /**
+   * Get array of submited emails.
+   *
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The current state of the form.
+   *
+   * @return array
+   *   List of emails to invite .
+   */
+  private function getSubmittedEmails(FormStateInterface $form_state) {
+    return array_map('trim', array_unique(explode("\r\n", trim($form_state->getValue('email_address')))));
+  }
+
+  /**
+   * Batch finished callback overridden from BulkGroupInvitationConfirm.
+   */
+  public static function batchFinished($success, $results, $operations) {
+    if ($success) {
+      try {
+        $tempstore = \Drupal::service('tempstore.private')->get('ginvite_bulk_invitation');
+        $params = $tempstore->get('params')['gid'];
+        // BulkGroupInvitationConfirm sends us to
+        // $destination = new Url('view.group_invitations.page_1',
+        //   ['group' => $tempstore->get('params')['gid']]);
+        // however we want to go to the group canonical.
+        $destination = new Url('entity.group.canonical', ['group' => $tempstore->get('params')['gid']]);
+        $redirect = new RedirectResponse($destination->toString());
+        $tempstore->delete('params');
+        $redirect->send();
+      }
+      catch (\Exception $error) {
+        \Drupal::service('logger.factory')->get('social_group_invite')->alert(new TranslatableMarkup('@err', ['@err' => $error]));
+      }
+
+    }
+    else {
+      $error_operation = reset($operations);
+      \Drupal::service('messenger')->addMessage(new TranslatableMarkup('An error occurred while processing @operation with arguments : @args', [
+        '@operation' => $error_operation[0],
+        '@args' => print_r($error_operation[0]),
+      ]));
+    }
   }
 
   /**
