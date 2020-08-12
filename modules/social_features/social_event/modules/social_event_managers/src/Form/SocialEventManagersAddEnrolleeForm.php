@@ -280,12 +280,16 @@ class SocialEventManagersAddEnrolleeForm extends FormBase {
     ];
 
     $form['actions']['submit'] = [
-      '#prefix' => '<div class="form-actions">',
-      '#suffix' => '</div>',
       '#type' => 'submit',
       '#value' => $this->t('Save'),
       '#button_type' => 'primary',
     ];
+    $form['actions']['#prefix'] = '<div class="form-actions">';
+    $form['actions']['#suffix'] = '</div>';
+
+    $form['actions']['submit']['#attributes']['class'] = ['button button--primary js-form-submit form-submit btn js-form-submit btn-raised btn-primary waves-effect waves-btn waves-light'];
+    $form['actions']['cancel']['#attributes']['class'] = ['button button--danger btn btn-flat waves-effect waves-btn'];
+
 
     $form['#cache']['contexts'][] = 'user';
 
