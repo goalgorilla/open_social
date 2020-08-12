@@ -463,7 +463,6 @@ function social_event_social_user_account_header_account_links(array $context) {
  * Implements hook_block_access().
  */
 function social_event_block_access(Block $block, $operation, AccountInterface $account) {
-
   if ($operation === 'view' && ($block->getPluginId() === 'views_exposed_filter_block:events-events_overview' || $block->getPluginId() === 'views_block:events-block_events_on_profile')) {
     // Here we're going to assume by default access is not granted.
     $eventController = SocialEventController::create(\Drupal::getContainer());
@@ -498,72 +497,73 @@ function social_event_block_access(Block $block, $operation, AccountInterface $a
  */
 function social_event_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   social_event_show_pending_requests_message();
-  switch ($form_id) {
-    case 'node_event_edit_form':
-      // Set allow event enrollment checked by default for existing events.
-      $entity = $form_state->getFormObject()->getEntity();
-      if ($entity->hasField('field_event_enroll') && $entity->field_event_enroll->isEmpty()) {
-        $form['field_event_enroll']['widget']['value']['#default_value'] = TRUE;
-      }
 
-    case 'node_event_form':
-      $form['event_all_day'] = [
-        '#type' => 'checkbox',
-        '#title' => t('All day'),
-      ];
+  // Form alters for the event add and edit forms.
+  if ($form_id === 'node_event_edit_form' || $form_id === 'node_event_form') {
+    // Hide the default checkbox in favor of new enrollment options.
+    $form['field_event_enroll']['#attributes']['class'][] = 'hidden';
+    $form['field_event_enroll']['#states'] = [
+      'unchecked' => [
+        ':input[name="field_enroll_method"]' => ['value' => '3'],
+      ],
+    ];
 
-      // Hide the default checkbox in favor of new enrollment options.
-      $form['field_event_enroll']['#attributes']['class'][] = 'hidden';
-      $form['field_event_enroll']['#states'] = [
-        'unchecked' => [
-          ':input[name="field_enroll_method"]' => ['value' => '3'],
-        ],
-      ];
-      // Alter visibility of enrollment methods.
-      $field_name = 'field_event_enroll';
+    // Alter visibility of enrollment methods.
+    social_event_field_visibility($form, 'field_event_enroll', ['field_event_enroll_outside_group']);
 
-      $fields = [
-        'field_event_enroll_outside_group',
-      ];
+    $form['field_event_enroll_outside_group']['#states'] = [
+      'visible' => [
+        ':input[name="groups"]' => ['!value' => '_none'],
+        ':input[name="field_enroll_method"]' => ['!value' => '3'],
+      ],
+    ];
 
-      social_event_field_visibility($form, $field_name, $fields);
+    // Hide invite enroll method if the submodule is not enabled.
+    $moduleHandler = \Drupal::service('module_handler');
+    if (!$moduleHandler->moduleExists('social_event_invite')) {
+      unset($form['field_enroll_method']['widget']['#options'][3]);
+    }
 
-      $form['field_event_enroll_outside_group']['#states'] = [
-        'visible' => [
-          ':input[name="groups"]' => ['!value' => '_none'],
-          ':input[name="field_enroll_method"]' => ['!value' => '3'],
-        ],
-      ];
+    // Add the all day event checkbox.
+    $form['event_all_day'] = [
+      '#type' => 'checkbox',
+      '#title' => t('All day'),
+    ];
 
-      // Hide invite enroll method if the submodule is not enabled.
-      $moduleHandler = \Drupal::service('module_handler');
-      if (!$moduleHandler->moduleExists('social_event_invite')) {
-        unset($form['field_enroll_method']['widget']['#options'][3]);
-      }
+    // Set default value and fieldgroup for all day checkbox.
+    if ($date = $form['field_event_date']['widget'][0]['value']['#default_value']) {
+      $all_day_value = $date instanceof DrupalDateTime && social_event_date_is_all_day($date);
+      $form['event_all_day']['#default_value'] = $all_day_value;
+    }
 
-      // Set default value and fieldgroup for all day checkbox.
-      if ($date = $form['field_event_date']['widget'][0]['value']['#default_value']) {
-        $all_day_value = $date instanceof DrupalDateTime && social_event_date_is_all_day($date);
-        $form['event_all_day']['#default_value'] = $all_day_value;
-      }
+    $form['#fieldgroups']['group_date_time']->children[] = 'event_all_day';
+    $form['#group_children']['event_all_day'] = 'group_date_time';
+    $form['#after_build'][] = 'social_event_date_after_build';
 
-      $form['#fieldgroups']['group_date_time']->children[] = 'event_all_day';
-      $form['#group_children']['event_all_day'] = 'group_date_time';
-      $form['#after_build'][] = 'social_event_date_after_build';
-      break;
+    // Attach styling for the event date fields.
+    $form['#attached']['library'][] = 'social_event/admin';
+  }
 
-    // Hide Enroll button if enrollment is disabled for this event.
-    case 'enroll_action_form':
-      $node = \Drupal::routeMatch()->getParameter('node');
+  // Specific alter for the event edit form.
+  if ($form_id === 'node_event_edit_form') {
+    // Set allow event enrollment checked by default for existing events.
+    $entity = $form_state->getFormObject()->getEntity();
+    if ($entity->hasField('field_event_enroll') && $entity->field_event_enroll->isEmpty()) {
+      $form['field_event_enroll']['widget']['value']['#default_value'] = TRUE;
+    }
+  }
 
-      if (!$node instanceof NodeInterface) {
-        $node = \Drupal::entityTypeManager()->getStorage('node')->load($node);
-      }
+  // Alters for the Enroll Action form.
+  if ($form_id === 'enroll_action_form') {
+    $node = \Drupal::routeMatch()->getParameter('node');
 
-      if ($node instanceof NodeInterface) {
-        $form['enroll_for_this_event']['#access'] = \Drupal::service('social_event.enroll')->isEnabled($node);
-      }
-      break;
+    if (!$node instanceof NodeInterface) {
+      $node = \Drupal::entityTypeManager()->getStorage('node')->load($node);
+    }
+
+    if ($node instanceof NodeInterface) {
+      $form['enroll_for_this_event']['#access'] = \Drupal::service('social_event.enroll')->isEnabled($node);
+    }
   }
 }
 
