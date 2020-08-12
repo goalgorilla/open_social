@@ -183,7 +183,7 @@ class SocialProfileFieldsSettingsForm extends ConfigFormBase implements Containe
 
           $form[$type]['profile_profile_field_profile_address_wrapper']['address_settings'] = [
             '#type' => 'details',
-            '#title' => $this->t('Address field settings'),
+            '#title' => $this->t('Individual address field settings'),
             '#open' => TRUE,
             '#states' => [
               'visible' => [
@@ -193,11 +193,10 @@ class SocialProfileFieldsSettingsForm extends ConfigFormBase implements Containe
           ];
 
           $form[$type]['profile_profile_field_profile_address_wrapper']['address_settings']['profile_address_field_country'] = [
-            '#type' => 'checkbox',
-            '#title' => $this->t('Country'),
-            '#description' => $this->t('To disable Country you need disable all Address field above'),
-            '#default_value' => TRUE,
-            '#disabled' => TRUE,
+            '#type' => 'html_tag',
+            '#tag' => 'p',
+            '#value' => $this->t('You can hide individual address fields, with the exception of the country field. <br/>
+            Disable the country field by disabling the whole address, using the checkbox <em>field_profile_address</em>.'),
           ];
           $form[$type]['profile_profile_field_profile_address_wrapper']['address_settings']['profile_address_field_city'] = [
             '#type' => 'checkbox',
