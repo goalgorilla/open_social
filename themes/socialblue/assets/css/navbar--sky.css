@@ -1,11 +1,13 @@
 .socialblue--sky .container--navbar {
   max-width: 100%;
+  padding: 0;
 }
 
 .socialblue--sky .navbar-secondary {
   width: 100%;
   min-height: 44px;
-  box-shadow: none;
+  -webkit-box-shadow: none;
+          box-shadow: none;
 }
 
 .socialblue--sky .navbar-secondary .navbar-scrollable {
@@ -35,17 +37,22 @@
     padding-right: 1.625rem;
   }
   .socialblue--sky.mode-search .navbar__open-search-block {
-    transform: scale(100);
+    -webkit-transform: scale(100);
+            transform: scale(100);
   }
   .socialblue--sky .navbar-secondary .navbar-scrollable {
     border-radius: 0 5px 0 0;
     overflow: visible;
   }
   .socialblue--sky.path-user .layout--with-complementary .navbar-secondary, .socialblue--sky.path-group .layout--with-complementary .navbar-secondary {
-    flex: 0 0 66.66667%;
+    -webkit-box-flex: 0;
+        -ms-flex: 0 0 66.66667%;
+            flex: 0 0 66.66667%;
     max-width: 66.66667%;
     border-radius: 5px 5px 0 0;
-    order: 1;
+    -webkit-box-ordinal-group: 2;
+        -ms-flex-order: 1;
+            order: 1;
   }
   .socialblue--sky.path-user .layout--with-complementary .navbar-secondary .navbar-nav, .socialblue--sky.path-group .layout--with-complementary .navbar-secondary .navbar-nav {
     width: 100%;
@@ -62,17 +69,25 @@
     right: 15px;
     border-width: 6px 6px 0;
     border-top-color: #fff;
-    transform: translateY(-50%);
+    -webkit-transform: translateY(-50%);
+            transform: translateY(-50%);
     cursor: pointer;
   }
   .socialblue--sky.path-user .layout--with-complementary .navbar-secondary .navbar-nav .caret.active, .socialblue--sky.path-group .layout--with-complementary .navbar-secondary .navbar-nav .caret.active {
-    transform: translateY(-50%) rotate(180deg);
+    -webkit-transform: translateY(-50%) rotate(180deg);
+            transform: translateY(-50%) rotate(180deg);
   }
   .socialblue--sky.path-user .layout--with-complementary .navbar-secondary .navbar-nav .visible-list, .socialblue--sky.path-group .layout--with-complementary .navbar-secondary .navbar-nav .visible-list {
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
     height: 44px;
-    align-items: center;
-    justify-content: center;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
     padding: 0 25px;
   }
   .socialblue--sky.path-user .layout--with-complementary .navbar-secondary .navbar-nav .visible-list a, .socialblue--sky.path-group .layout--with-complementary .navbar-secondary .navbar-nav .visible-list a {
