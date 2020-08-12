@@ -187,7 +187,7 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
         ],
       ],
     ];
-    
+
     $form['users_fieldset']['user'] = [
       '#title' => $this->t('Find people by name or email address'),
       '#type' => 'select2',
