@@ -65,7 +65,7 @@ class SocialGroupEntityAutocomplete extends EntityAutocomplete {
         // User is already a member, add it to an array for the Form element
         // to render an error after all checks are gone.
         if ($group->getMember($account)) {
-          $duplicated_values[] = $input;
+          $duplicated_values[] = $account->getDisplayName();
         }
 
         // Validate input for every single user. This way we make sure that

@@ -651,7 +651,7 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
 
   if (in_array($form_id, $membership_forms) && Drupal::currentUser()->id() != 1) {
     // Change titles on membership forms.
-    $form['entity_id']['widget'][0]['target_id']['#title'] = t('Select a member');
+    $form['entity_id']['widget'][0]['target_id']['#title'] = t('Find people by name');
     $form['group_roles']['widget']['#title'] = t('Group roles');
     // Remove the 'group_admin' role in a generic way
     // for all (future) group types.
@@ -665,6 +665,7 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
     $form['path']['#type'] = 'hidden';
   }
 
+  // Lets add the new select 2 widget to add members to a group.
   if (in_array($form_id, $membership_add_forms)) {
     $form['entity_id']['widget'][0]['target_id'] = [
       '#title' => t('Find people by name'),
@@ -681,7 +682,13 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
       '#target_type' => 'user',
       '#element_validate' => ['_social_group_unique_members'],
     ];
-
+    // Group roles and the automated URL alias don't make sense here.
+    if (isset($form['group_roles'])) {
+      unset($form['group_roles']);
+    }
+    if (isset($form['path'])) {
+      unset($form['path']);
+    }
   }
 
   // Check if form is group content create form.
