@@ -330,6 +330,15 @@ function social_group_preprocess_group(array &$variables) {
         $variables['#cache']['contexts'][] = 'route.name';
       }
     }
+
+    // Ensure all groups get the group.type differentiating labels in teasers
+    // hero's and full nodes.
+    // But also if the allowed join method is there, this should be added.
+    $variables['#cache']['contexts'][] = 'group.type';
+    if ($group->hasField('field_group_allowed_join_method') &&
+      !empty($group->getFieldValue('field_group_allowed_join_method', 'value'))) {
+      $variables['#cache']['contexts'][] = 'social_group_join_method';
+    }
   }
   // Count number of group members.
   $variables['group_members'] = $group_statistics->getGroupMemberCount($group);

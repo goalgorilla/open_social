@@ -311,3 +311,31 @@ span.form-required {
     }
   }
 }
+
+// Styles for the location block on the event/group/profile edit pages
+.field--type-address {
+
+  .node-event-form &,
+  .node-event-edit-form &,
+  .profile-form &,
+  .group-form & {
+
+    .panel {
+      .panel-heading {
+        margin-bottom: .5rem;
+        font-size: .875rem;
+      }
+
+      [id*='address-ajax-wrapper'] {
+        max-width: 500px;
+        padding: 1.25rem 1.25rem .25rem;
+        background: #f3f3f3;
+        border-radius: 5px !important;
+
+        label {
+          margin-bottom: .5rem;
+        }
+      }
+    }
+  }
+}

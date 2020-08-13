@@ -215,6 +215,7 @@ function social_profile_fields_social_user_export_plugin_info_alter(array &$plug
     if (!empty($filtered) || array_key_exists('profile_profile_field_profile_address', $profile_fields)) {
       $profile_fields[] = ['id' => 'profile_address_field_city'];
       $profile_fields[] = ['id' => 'profile_address_field_address'];
+      $profile_fields[] = ['id' => 'profile_address_field_postalcode'];
     }
 
     foreach ($profile_fields as $field) {
@@ -254,6 +255,7 @@ function social_profile_fields_entity_bundle_field_info_alter(&$fields, EntityTy
       if ($setting = $field_profile_address->getSetting('fields')) {
         $setting['locality'] = !$config->get('profile_address_field_city') ? '0' : 'locality';
         $setting['addressLine1'] = !$config->get('profile_address_field_address') ? '0' : 'addressLine1';
+        $setting['postalCode'] = !$config->get('profile_address_field_postalcode') ? '0' : 'postalCode';
 
         // Update the settings of address field.
         $fields['field_profile_address']->setSetting('fields', $setting);
@@ -271,6 +273,13 @@ function social_profile_fields_entity_bundle_field_info_alter(&$fields, EntityTy
         }
         else {
           unset($setting['addressLine1']);
+        }
+
+        if (!$config->get('profile_address_field_postalcode')) {
+          $setting['postalCode'] = ['override' => 'hidden'];
+        }
+        else {
+          unset($setting['postalCode']);
         }
 
         // Update the settings of address field.
@@ -297,6 +306,9 @@ function social_profile_fields_preprocess_field(&$variables) {
           if (isset($variables['items'][0]['content']['#address_line1']) && !$config->get('profile_address_field_address')) {
             $variables['items'][0]['content']['#address_line1'] = NULL;
           }
+          if (isset($variables['items'][0]['content']['#postal_code']) && !$config->get('profile_address_field_postalcode')) {
+            $variables['items'][0]['content']['#postal_code'] = NULL;
+          }
           break;
 
         case 'address_default':
@@ -305,6 +317,9 @@ function social_profile_fields_preprocess_field(&$variables) {
           }
           if (isset($variables['items'][0]['content']['address_line1']['#value']) && !$config->get('profile_address_field_address')) {
             $variables['items'][0]['content']['address_line1']['#value'] = '';
+          }
+          if (isset($variables['items'][0]['content']['postal_code']['#value']) && !$config->get('profile_address_field_postalcode')) {
+            $variables['items'][0]['content']['postal_code']['#value'] = '';
           }
           break;
       }
