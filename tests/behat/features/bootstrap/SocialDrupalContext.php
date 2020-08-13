@@ -57,9 +57,11 @@ class SocialDrupalContext extends DrupalContext {
    *
    * @beforeUserCreate
    */
-  public function alterNodeObject(EntityScope $scope) {
+  public function beforeUserCreateObject(EntityScope $scope) {
     $user = $scope->getEntity();
-    // Alter node object as needed.
+    // If we add a user, using the Given users:
+    // we can allow it not to have en email. However we use some
+    // contrib modules that need an email for hook_user_insert().
     if (!isset($user->mail)) {
       $user->mail = strtolower(trim($user->name)) . '@example.com';
     }
