@@ -1448,8 +1448,7 @@ function social_event_update_8805(&$sandbox) {
 
   switch ($parts[0] . '.' . $parts[1]) {
     case 'field.storage':
-      $entity_type = \Drupal::service('config.manager')
-        ->getEntityTypeIdByName($name);
+      $entity_type = \Drupal::service('config.manager')->getEntityTypeIdByName($name);
 
       /** @var \Drupal\Core\Config\Entity\ConfigEntityStorageInterface $storage */
       $storage = \Drupal::entityTypeManager()->getStorage($entity_type);
