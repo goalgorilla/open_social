@@ -60,7 +60,7 @@ Feature: Edit my group as a group manager
   # DS-767 As a Group Manager I want to add a user to the group
     When I click the group member dropdown
     And I click "Add directly"
-    And I fill in select2 input ".form-type-select" with "Group User Two" and select "Group User Two"
+    And I fill in select2 input ".form-type-select" with "Group Member Two" and select "Group Member Two"
     And I should see the button "Cancel"
     And I press "Save"
     Then I should see "Group Member Two"
