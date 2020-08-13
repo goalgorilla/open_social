@@ -162,7 +162,7 @@ Feature: Create Open Group
     Given I am logged in as "Outsider"
     When I am on "/community-events"
     And I click "Test group event"
-    And I should not see "Enroll" in the "Hero block"
+    And I should not see "Enroll" in the "Hero buttons"
 
   # Check for latest groups block on LU homepage
     When I am on "stream"
