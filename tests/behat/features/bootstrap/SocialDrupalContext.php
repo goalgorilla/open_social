@@ -8,8 +8,8 @@ use Behat\Mink\Element\Element;
 use Drupal\big_pipe\Render\Placeholder\BigPipeStrategy;
 use Behat\Mink\Exception\UnsupportedDriverActionException;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
-
 use Behat\Gherkin\Node\TableNode;
+use Drupal\DrupalExtension\Hook\Scope\EntityScope;
 
 /**
  * Provides pre-built step definitions for interacting with Open Social.
@@ -49,6 +49,19 @@ class SocialDrupalContext extends DrupalContext {
     }
     catch (\Exception $e) {
       // Mute exceptions.
+    }
+  }
+
+  /**
+   * Call this function before users are created.
+   *
+   * @beforeUserCreate
+   */
+  public function alterNodeObject(EntityScope $scope) {
+    $user = $scope->getEntity();
+    // Alter node object as needed.
+    if (!isset($user->mail)) {
+      $user->mail = strtolower(trim($user->name)) . '@example.com';
     }
   }
 
