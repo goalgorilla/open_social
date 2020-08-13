@@ -118,7 +118,7 @@ class UpdateEnrollRequestController extends ControllerBase {
    *   The access result.
    */
   public function access(AccountInterface $account) {
-    $hasPermissionIsOwnerOrOrganizer = social_event_owner_or_organizer();
+    $hasPermissionIsOwnerOrOrganizer = social_event_manager_or_organizer();
     return AccessResult::allowedIf($hasPermissionIsOwnerOrOrganizer === TRUE);
   }
 

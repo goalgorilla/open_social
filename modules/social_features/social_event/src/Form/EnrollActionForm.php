@@ -159,7 +159,7 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
       // Check if groups are not empty, or that the outsiders are able to join.
       if (!empty($groups) && $node->field_event_enroll_outside_group->value !== '1'
         && empty($enrollments)
-        && social_event_owner_or_organizer() === FALSE) {
+        && social_event_manager_or_organizer() === FALSE) {
 
         $group_type_ids = $this->configFactory->getEditable('social_event.settings')
           ->get('enroll');
