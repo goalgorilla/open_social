@@ -92,4 +92,5 @@ Feature: Group access roles
     And I click "Add directly"
     And I fill in select2 input ".form-type-select" with "Group User Two" and select "Group User Two"
     And I press "Save"
+    And I click "Manage members"
     Then I should see "Group Admin"
