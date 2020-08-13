@@ -101,7 +101,7 @@ class SocialTaggingService {
     // Define as array.
     $options = [];
     // Fetch main categories.
-    foreach ($this->termStorage->loadTree('social_tagging', 0, 1) as $category) {
+    foreach ($this->termStorage->loadTree('social_tagging', 0, 1, FALSE, \Drupal::languageManager()->getCurrentLanguage()->getId()) as $category) {
       $options[$category->tid] = $category->name;
     }
     // Return array.
@@ -121,7 +121,7 @@ class SocialTaggingService {
     // Define as array.
     $options = [];
     // Fetch main categories.
-    foreach ($this->termStorage->loadTree('social_tagging', $category, 1) as $category) {
+    foreach ($this->termStorage->loadTree('social_tagging', $category, 1, FALSE, \Drupal::languageManager()->getCurrentLanguage()->getId()) as $category) {
       $options[$category->tid] = $category->name;
     }
     // Return array.
