@@ -134,7 +134,7 @@ function social_event_manager_or_organizer(NodeInterface $node = NULL, $skip_tru
       }
 
       // Check if the user is an event manager/organizer.
-      if (!isset($result) && !$node->field_event_managers->isEmpty()) {
+      if (!isset($result) && $node->hasField('field_event_managers') && !$node->field_event_managers->isEmpty()) {
         foreach ($node->field_event_managers->getValue() as $value) {
           if ($value && $value['target_id'] === $account->id()) {
             $result = TRUE;
