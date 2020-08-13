@@ -7,6 +7,7 @@ use Drupal\Core\Block\BlockBase;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\group\Entity\GroupInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 
@@ -105,6 +106,42 @@ class GroupStatisticBlock extends BlockBase implements ContainerFactoryPluginInt
     }
 
     return AccessResult::forbidden();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getCacheTags() {
+    $group = _social_group_get_current_group();
+
+    if (!($group instanceof GroupInterface)) {
+      return parent::getCacheContexts();
+    }
+
+    return Cache::mergeTags(parent::getCacheTags(), [
+      'group_content_list:entity:' . \Drupal::currentUser()->id(),
+      'group_content_list:plugin:group_invitation:entity:' . \Drupal::currentUser()->id(),
+      'group:' . $group->id(),
+    ]);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getCacheContexts() {
+    $cache_contexts = parent::getCacheContexts();
+    $cache_contexts[] = 'user';
+    $cache_contexts[] = 'group';
+    $cache_contexts[] = 'route.group';
+    $cache_contexts[] = 'url';
+    return $cache_contexts;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getCacheMaxAge() {
+    return 0;
   }
 
 }
