@@ -38,19 +38,11 @@ function social_event_invite_event_enrollment_insert(EventEnrollmentInterface $e
   ];
 
   // Only set this message when the request status is pending.
-  if ((int) $eventEnrollment->get('field_request_or_invite_status')->value === EventEnrollmentInterface::INVITE_PENDING_REPLY) {
+  if ((int) $eventEnrollment->get('field_request_or_invite_status')->value === EventEnrollmentInterface::INVITE_PENDING_REPLY &&
+    empty($eventEnrollment->get('field_account')->getString())) {
     // Send a normal mail when the user has no account yet.
-    if (empty($eventEnrollment->get('field_account')->getString())) {
-      $params['existing_user'] = FALSE;
-      $mailManager->mail('social_event_invite', 'invite', $mail, $langcode, $params, NULL, TRUE);
-      $messenger->addMessage(t('Invite sent to %mail', ['%mail' => $mail]));
-    }
-    else {
-      $account = \Drupal::entityTypeManager()
-        ->getStorage('user')
-        ->load($eventEnrollment->get('field_account')->getString());
-      $messenger->addMessage(t('Invite sent to %user', ['%user' => $account->getEmail()]));
-    }
+    $params['existing_user'] = FALSE;
+    $mailManager->mail('social_event_invite', 'invite', $mail, $langcode, $params, NULL, TRUE);
   }
 }
 
@@ -62,7 +54,7 @@ function social_event_invite_event_enrollment_insert(EventEnrollmentInterface $e
  * the website in.
  */
 function social_event_invite_mail($key, &$message, $params) {
-  if ($key == 'invite') {
+  if ($key === 'invite') {
     $token_service = \Drupal::token();
     $language_manager = \Drupal::languageManager();
 
@@ -120,6 +112,18 @@ function social_event_invite_views_data() {
     ],
   ];
   return $data;
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function social_event_invite_preprocess_views_view_table(&$variables) {
+  if ($variables['view']->id() === 'event_manage_enrollment_invites' ||
+    $variables['view']->id() === 'user_event_invites') {
+    // Add this to ensure our overviews get rendered nicely
+    // even if VBO is not enabled (yet) we use the same look and feel.
+    $variables['attributes']['class'][] = 'vbo-table';
+  }
 }
 
 /**
@@ -258,8 +262,6 @@ function social_event_invite_entity_operation_alter(array &$operations, EntityIn
   // Check if the entity type is one of event_enrollment and that we're on the
   // correct view. Otherwise it would update all actions across the platform.
   if ($entity->getEntityTypeId() === 'event_enrollment') {
-    // Save the delete operation for later.
-    $delete_operation = $operations['delete'] ?? [];
     // Build operations for the event invites overview for the owner/manager.
     if (social_event_manager_or_organizer() && $route_name === 'view.event_manage_enrollment_invites.page_manage_enrollment_invites') {
       // Empty the current operations.
@@ -279,7 +281,12 @@ function social_event_invite_entity_operation_alter(array &$operations, EntityIn
       ];
       if (in_array((int) $entity->field_request_or_invite_status->value, $delete_statusses)) {
         $operations = [];
-        $operations['delete'] = $delete_operation;
+        // Add the "Delete invite" option.
+        $operations['delete']['title'] = t('Remove');
+        $operations['delete']['url'] = Url::fromRoute('social_event_invite.cancel_enrollment_invite', [
+          'node' => $node,
+          'event_enrollment' => $entity->id(),
+        ]);
       }
       if ((int) $entity->field_request_or_invite_status->value === EventEnrollmentInterface::INVITE_ACCEPTED_AND_JOINED) {
         $operations = [];

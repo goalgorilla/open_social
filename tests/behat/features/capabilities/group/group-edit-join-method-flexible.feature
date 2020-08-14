@@ -21,7 +21,7 @@ Feature: Edit my group as a group manager
     And I should see "Test flexible group" in the "Main content"
     And I should see "1 member"
     And I click "Manage members"
-    Then I should see the link "Add members"
+    Then I should see "Add members"
 
   # TB-4365 - As a Group Manager I want to change group join-method
     When I click "Edit group"
@@ -29,4 +29,4 @@ Feature: Edit my group as a group manager
     Then I click radio button "Invite-only - users can only join this group if they are added/invited by group managers" with the id "edit-field-group-allowed-join-method-added"
     And I press "Save"
     When I click "Manage members"
-    Then I should see the link "Add members"
+    Then I should see "Add members"
