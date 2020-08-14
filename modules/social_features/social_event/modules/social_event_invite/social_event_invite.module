@@ -250,8 +250,6 @@ function social_event_invite_entity_operation_alter(array &$operations, EntityIn
   // Check if the entity type is one of event_enrollment and that we're on the
   // correct view. Otherwise it would update all actions across the platform.
   if ($entity->getEntityTypeId() === 'event_enrollment') {
-    // Save the delete operation for later.
-    $delete_operation = $operations['delete'] ?? [];
     // Build operations for the event invites overview for the owner/manager.
     if (social_event_manager_or_organizer() && $route_name === 'view.event_manage_enrollment_invites.page_manage_enrollment_invites') {
       // Empty the current operations.
@@ -271,7 +269,12 @@ function social_event_invite_entity_operation_alter(array &$operations, EntityIn
       ];
       if (in_array((int) $entity->field_request_or_invite_status->value, $delete_statusses)) {
         $operations = [];
-        $operations['delete'] = $delete_operation;
+        // Add the "Delete invite" option.
+        $operations['delete']['title'] = t('Remove');
+        $operations['delete']['url'] = Url::fromRoute('social_event_invite.cancel_enrollment_invite', [
+          'node' => $node,
+          'event_enrollment' => $entity->id(),
+        ]);
       }
       if ((int) $entity->field_request_or_invite_status->value === EventEnrollmentInterface::INVITE_ACCEPTED_AND_JOINED) {
         $operations = [];
