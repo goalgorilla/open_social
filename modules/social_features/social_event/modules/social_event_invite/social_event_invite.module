@@ -38,19 +38,11 @@ function social_event_invite_event_enrollment_insert(EventEnrollmentInterface $e
   ];
 
   // Only set this message when the request status is pending.
-  if ((int) $eventEnrollment->get('field_request_or_invite_status')->value === EventEnrollmentInterface::INVITE_PENDING_REPLY) {
+  if ((int) $eventEnrollment->get('field_request_or_invite_status')->value === EventEnrollmentInterface::INVITE_PENDING_REPLY &&
+    empty($eventEnrollment->get('field_account')->getString())) {
     // Send a normal mail when the user has no account yet.
-    if (empty($eventEnrollment->get('field_account')->getString())) {
-      $params['existing_user'] = FALSE;
-      $mailManager->mail('social_event_invite', 'invite', $mail, $langcode, $params, NULL, TRUE);
-      $messenger->addMessage(t('Invite sent to %mail', ['%mail' => $mail]));
-    }
-    else {
-      $account = \Drupal::entityTypeManager()
-        ->getStorage('user')
-        ->load($eventEnrollment->get('field_account')->getString());
-      $messenger->addMessage(t('Invite sent to %user', ['%user' => $account->getEmail()]));
-    }
+    $params['existing_user'] = FALSE;
+    $mailManager->mail('social_event_invite', 'invite', $mail, $langcode, $params, NULL, TRUE);
   }
 }
 
@@ -62,7 +54,7 @@ function social_event_invite_event_enrollment_insert(EventEnrollmentInterface $e
  * the website in.
  */
 function social_event_invite_mail($key, &$message, $params) {
-  if ($key == 'invite') {
+  if ($key === 'invite') {
     $token_service = \Drupal::token();
     $language_manager = \Drupal::languageManager();
 

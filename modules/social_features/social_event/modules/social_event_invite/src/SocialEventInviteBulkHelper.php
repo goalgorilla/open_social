@@ -254,63 +254,37 @@ class SocialEventInviteBulkHelper {
   }
 
   /**
-   * Callback when the batch for inviting users for an event has finished.
-   */
-  public static function bulkInviteUserFinished($success, $results, $operations) {
-    $nid = NULL;
-    // We got the node event id in the results array so we will use that
-    // to provide the param in in redirect url.
-    foreach ($results as $key => $value) {
-      $nid = $key;
-    }
-    if ($success) {
-      drupal_set_message(t('Invites have been successfully sent.'));
-    }
-    else {
-      drupal_set_message(t('There was an unexpected error.'), 'error');
-    }
-
-    return new RedirectResponse(Url::fromRoute('entity.node.canonical', ['node' => $nid])->toString());
-  }
-
-  /**
-   * Callback when the batch for inviting emails for an event has finished.
-   */
-  public static function bulkInviteEmailFinished($success, $results, $operations) {
-    $nid = NULL;
-    // We got the node event id in the results array so we will use that
-    // to provide the param in in redirect url.
-    foreach ($results as $key => $value) {
-      $nid = $key;
-    }
-    if ($success) {
-      drupal_set_message(t('Invites have been successfully sent.'));
-    }
-    else {
-      drupal_set_message(t('There was an unexpected error.'), 'error');
-    }
-
-    return new RedirectResponse(Url::fromRoute('entity.node.canonical', ['node' => $nid])->toString());
-  }
-
-  /**
    * Callback when the batch for inviting emails for an event has finished.
    */
   public static function bulkInviteUserEmailsFinished($success, $results, $operations) {
     $nid = NULL;
+
     // We got the node event id in the results array so we will use that
     // to provide the param in in redirect url.
-    foreach ($results as $key => $value) {
-      $nid = $key;
+    if (!empty($results)) {
+      // We don't care about resetting the array first.
+      $nid = key($results);
     }
-    if ($success) {
-      drupal_set_message(t('Invites have been successfully sent.'));
+
+    if ($success && !empty($results)) {
+      drupal_set_message(t('Invite(s) have been successfully sent.'));
+    }
+    elseif ($success && empty($results)) {
+      drupal_set_message(t('No invites were sent, recipients already received one before.'), 'info');
     }
     else {
       drupal_set_message(t('There was an unexpected error.'), 'error');
     }
 
-    return new RedirectResponse(Url::fromRoute('entity.node.canonical', ['node' => $nid])->toString());
+    // Redirect back to the event if we found the node ID.
+    if ($nid) {
+      return new RedirectResponse(Url::fromRoute('entity.node.canonical', ['node' => $nid])
+        ->toString());
+    }
+
+    // If something went wrong, we have to redirect back to the frontpage.
+    return new RedirectResponse(Url::fromRoute('<front>')
+      ->toString());
   }
 
 }
