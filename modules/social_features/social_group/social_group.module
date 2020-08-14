@@ -22,6 +22,7 @@ use Drupal\group\Entity\GroupType;
 use Drupal\node\NodeInterface;
 use Drupal\social_group\Controller\SocialGroupController;
 use Drupal\social_group\Controller\SocialGroupListBuilder;
+use Drupal\social_group\Element\SocialGroupEntityAutocomplete;
 use Drupal\social_group\Entity\Group;
 use Drupal\social_group\Form\SocialGroupAddForm;
 use Drupal\views\ViewExecutable;
@@ -659,7 +660,7 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
 
   if (in_array($form_id, $membership_forms) && Drupal::currentUser()->id() != 1) {
     // Change titles on membership forms.
-    $form['entity_id']['widget'][0]['target_id']['#title'] = t('Select a member');
+    $form['entity_id']['widget'][0]['target_id']['#title'] = t('Find people by name');
     $form['group_roles']['widget']['#title'] = t('Group roles');
     // Remove the 'group_admin' role in a generic way
     // for all (future) group types.
@@ -673,10 +674,31 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
     $form['path']['#type'] = 'hidden';
   }
 
-  if (in_array($form_id, $membership_add_forms)) {
-    $form['entity_id']['widget'][0]['target_id']['#title'] = t('Select members to add');
-    $form['entity_id']['widget'][0]['target_id']['#description'] = t('To add multiple members, separate each member with a comma ( , ).');
-    $form['entity_id']['widget'][0]['target_id']['#type'] = 'social_group_entity_autocomplete';
+  // Change the form when adding members directly in groups.
+  if (in_array($form_id, $membership_add_forms, TRUE) && \Drupal::routeMatch()->getRouteName() !== 'grequest.group_request_membership_approve') {
+    // Lets add the new select 2 widget to add members to a group.
+    $form['entity_id']['widget'][0]['target_id'] = [
+      '#title' => t('Find people by name'),
+      '#type' => 'select2',
+      '#description' => t('You can enter or paste multiple entries separated by comma or semicolon'),
+      '#multiple' => TRUE,
+      '#tags' => TRUE,
+      '#autocomplete' => TRUE,
+      '#select2' => [
+        'placeholder' => t('Jane Doe'),
+        'tokenSeparators' => [',', ';'],
+      ],
+      '#selection_handler' => 'social',
+      '#target_type' => 'user',
+      '#element_validate' => ['_social_group_unique_members'],
+    ];
+    // Group roles and the automated URL alias don't make sense here.
+    if (isset($form['group_roles'])) {
+      unset($form['group_roles']);
+    }
+    if (isset($form['path'])) {
+      unset($form['path']);
+    }
   }
 
   // Check if form is group content create form.
@@ -795,6 +817,14 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
 }
 
 /**
+ * Function to validate entries against group members.
+ */
+function _social_group_unique_members($element, &$form_state, $complete_form) {
+  // Call the autocomplete function to make sure enrollees are unique.
+  SocialGroupEntityAutocomplete::validateEntityAutocomplete($element, $form_state, $complete_form, TRUE);
+}
+
+/**
  * Function that gives information to a CM+ when they edit a Group Type.
  *
  * @return \Drupal\Core\Ajax\AjaxResponse
@@ -870,22 +900,39 @@ function _social_group_action_form_submit($form, FormStateInterface $form_state)
 
     // Get form that was submitted.
     $complete_form = $form_state->getCompleteForm();
-    // For multiple Group Members that are valid we add multiple entities.
-    if ($complete_form['#form_id'] == 'group_content_' . $group->bundle() . '-group_membership_add_form') {
-      // We passed the validation.
-      // Let's create the Group Content for all our members just like
-      // Group does it for creating a Group and adding its creator as member.
-      $values = ['group_roles' => $form_state->getValue('group_roles')];
-      foreach ($form_state->getValue('entity_id_new') as $key => $uid) {
-        $group->addMember(User::load($uid['target_id']), $values);
-      }
-    }
     if (in_array($complete_form['#form_id'], ['group_content_' . $group->bundle() . '-group_membership_group-join_form', 'group_content_' . $group->bundle() . '-group_membership_add_form'])) {
-      // Set redirect to group home page.
+      // Set redirect to group home page for people joining the group.
       $form_state->setRedirect(
         'entity.group.canonical',
         ['group' => $group->id(), []]
       );
+
+      // For adding people we redirect to the manage members page.
+      if ($complete_form['#form_id'] == 'group_content_' . $group->bundle() . '-group_membership_add_form') {
+        // We passed the validation.
+        // Let's create the Group Content for all our members just like
+        // Group does it for creating a Group and adding its creator as member.
+        $values = ['group_roles' => $form_state->getValue('group_roles')];
+        $count = 0;
+        if (!empty($form_state->getValue('entity_id_new'))) {
+          // For multiple Group Members that are valid we add multiple entities.
+          foreach ($form_state->getValue('entity_id_new') as $key => $uid) {
+            $group->addMember(User::load($uid['target_id']), $values);
+            $count++;
+          }
+        }
+
+        // Add nice messages.
+        if (!empty($count)) {
+          $message = \Drupal::translation()->formatPlural($count, '@count new member joined the group.', '@count new members joined the group.');
+          \Drupal::messenger()->addMessage($message, 'status');
+        }
+
+        $form_state->setRedirect(
+          'view.group_manage_members.page_group_manage_members',
+          ['group' => $group->id(), []]
+        );
+      }
     }
     else {
       // Set redirect to the Group overview page
