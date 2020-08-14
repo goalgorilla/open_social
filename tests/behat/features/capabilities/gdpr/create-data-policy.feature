@@ -76,7 +76,7 @@ Feature: Create data policy and view new policy
     And I should see "Save"
 
     When I click "the account cancellation"
-    Then I should see the heading "Cancel account"
+    Then I should see the text "Are you sure you want to cancel your account?"
     When I click "Cancel"
     And I click "data policy"
     And I wait for AJAX to finish
