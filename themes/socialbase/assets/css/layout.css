@@ -1,7 +1,6 @@
 .container, .region--content-top,
 .region--content-bottom,
-.region--hero,
-.region--secondary-navigation {
+.region--hero {
   position: relative;
   margin-left: auto;
   margin-right: auto;
@@ -29,6 +28,10 @@
   -ms-flex-preferred-size: 100%;
       flex-basis: 100%;
   max-width: 100%;
+}
+
+.region--secondary-navigation {
+  max-width: 1200px;
 }
 
 .region--content,
@@ -83,8 +86,7 @@
 @media (min-width: 900px) {
   .container, .region--content-top,
   .region--content-bottom,
-  .region--hero,
-  .region--secondary-navigation {
+  .region--hero {
     max-width: calc(1200px - 2rem);
     padding: 0 1rem;
   }
