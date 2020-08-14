@@ -42,7 +42,7 @@ class EventInviteEnrollActionForm extends EnrollActionForm {
       // Unless you are the node owner or organizer.
       if (empty($enrollments)) {
         if ((int) $node->field_enroll_method->value === EventEnrollmentInterface::ENROLL_METHOD_INVITE
-          && social_event_owner_or_organizer() === FALSE) {
+          && social_event_manager_or_organizer() === FALSE) {
           return [];
         }
       }
@@ -112,6 +112,15 @@ class EventInviteEnrollActionForm extends EnrollActionForm {
 
         }
       }
+    }
+
+    // For AN users it can be rendered on a Public event with
+    // invite only as option. Let's make it similar to a Group experience
+    // where there is no button rendered.
+    // We unset it here because in the parent form and this form
+    // a lot of times this button get's overridden.
+    if ($current_user->isAnonymous()) {
+      unset($form['enroll_for_this_event']);
     }
 
     return $form;
