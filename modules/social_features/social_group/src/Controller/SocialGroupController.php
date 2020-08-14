@@ -133,7 +133,7 @@ class SocialGroupController extends ControllerBase {
     if ($group instanceof GroupInterface) {
       return $this->t('Add members to group: @group_name', ['@group_name' => $group->label()]);
     }
-        
+
     return $this->t('Add members');
   }
 
