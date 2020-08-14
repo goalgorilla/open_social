@@ -159,7 +159,7 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
       // Check if groups are not empty, or that the outsiders are able to join.
       if (!empty($groups) && $node->field_event_enroll_outside_group->value !== '1'
         && empty($enrollments)
-        && social_event_owner_or_organizer() === FALSE) {
+        && social_event_manager_or_organizer() === FALSE) {
 
         $group_type_ids = $this->configFactory->getEditable('social_event.settings')
           ->get('enroll');
@@ -199,7 +199,7 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
     $attributes = [
       'class' => [
         'btn',
-        'btn-accent brand-bg-accent',
+        'btn-default brand-bg-default',
         'btn-lg btn-raised',
         'dropdown-toggle',
         'waves-effect',
@@ -272,7 +272,7 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
               'js-form-submit',
               'form-submit',
               'btn',
-              'btn-accent',
+              'btn-default',
               'btn-lg',
             ],
             'data-dialog-type' => 'modal',
@@ -317,7 +317,7 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
       $form['enroll_for_this_event']['#attributes'] = [
         'class' => [
           'btn',
-          'btn-accent brand-bg-accent',
+          'btn-default brand-bg-default',
           'btn-lg btn-raised',
           'dropdown-toggle',
           'waves-effect',

@@ -5,8 +5,6 @@
  * The Social event module.
  */
 
-use Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException;
-use Drupal\Component\Plugin\Exception\PluginNotFoundException;
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultNeutral;
@@ -97,41 +95,62 @@ function social_event_form_views_exposed_form_alter(&$form, FormStateInterface $
  *   If the user is actually a manager or organizer.
  */
 function social_event_manager_or_organizer(NodeInterface $node = NULL, $skip_trusted_roles = FALSE) {
-  $account = \Drupal::currentUser();
+  $social_event_manager_or_organizer = &drupal_static(__FUNCTION__);
 
-  // Allow if user has the manage everything permission.
-  // We can skip this to make sure we truly only check organizer & managers
-  // used for context in notifications.
-  if ($skip_trusted_roles === FALSE && $account->hasPermission('manage everything enrollments')) {
-    return TRUE;
-  }
+  if (!isset($social_event_manager_or_organizer)) {
+    $account = \Drupal::currentUser();
 
-  if ($node === NULL) {
-    /** @var \Drupal\node\NodeInterface $node */
-    $node = \Drupal::routeMatch()->getParameter('node');
-
-    // Or if it's an organizer for the node.
-    if (!$node instanceof NodeInterface) {
-      $node = \Drupal::entityTypeManager()->getStorage('node')->load($node);
+    // Allow if user has the manage everything permission.
+    // We can skip this to make sure we truly only check organizer & managers
+    // used for context in notifications.
+    if ($skip_trusted_roles === FALSE && $account->hasPermission('manage everything enrollments')) {
+      $result = TRUE;
     }
 
-    // If we are altering / deleting an Event Enrollment check if user
-    // is manager or organizer from the referenced node.
-    $event_enrollment = \Drupal::routeMatch()->getParameter('event_enrollment');
+    if (!$node && !isset($result)) {
+      // Get the current event node.
+      $node = social_event_get_current_event();
 
-    if ($event_enrollment instanceof EventEnrollmentInterface) {
-      $node = $event_enrollment->field_event->entity;
-    }
-  }
-  if ($node !== NULL && $node->bundle() === 'event' && !$node->field_event_managers->isEmpty()) {
-    foreach ($node->field_event_managers->getValue() as $value) {
-      if ($value && $value['target_id'] === $account->id()) {
-        return TRUE;
+      // If there's no node, we might be looking at an event enrollment.
+      if (!$node) {
+        // If we are altering / deleting an Event Enrollment check if user
+        // is manager or organizer from the referenced node.
+        $event_enrollment = \Drupal::routeMatch()
+          ->getParameter('event_enrollment');
+
+        if ($event_enrollment instanceof EventEnrollmentInterface) {
+          $node = $event_enrollment->field_event->entity;
+        }
       }
     }
+
+    // If we now have a node we can check if there are event managers.
+    if ($node instanceof NodeInterface && !isset($result) && $node->bundle() === 'event') {
+      // The event owner has access.
+      if ($node->getOwnerId() === $account->id()) {
+        $result = TRUE;
+      }
+
+      // Check if the user is an event manager/organizer.
+      if (!isset($result) && $node->hasField('field_event_managers') && !$node->field_event_managers->isEmpty()) {
+        foreach ($node->field_event_managers->getValue() as $value) {
+          if ($value && $value['target_id'] === $account->id()) {
+            $result = TRUE;
+            break;
+          }
+        }
+      }
+    }
+
+    // No result means the user does not have access.
+    if (!isset($result)) {
+      $result = FALSE;
+    }
+
+    $social_event_manager_or_organizer = $result;
   }
 
-  return FALSE;
+  return $social_event_manager_or_organizer;
 }
 
 /**
@@ -463,7 +482,6 @@ function social_event_social_user_account_header_account_links(array $context) {
  * Implements hook_block_access().
  */
 function social_event_block_access(Block $block, $operation, AccountInterface $account) {
-
   if ($operation === 'view' && ($block->getPluginId() === 'views_exposed_filter_block:events-events_overview' || $block->getPluginId() === 'views_block:events-block_events_on_profile')) {
     // Here we're going to assume by default access is not granted.
     $eventController = SocialEventController::create(\Drupal::getContainer());
@@ -497,129 +515,73 @@ function social_event_block_access(Block $block, $operation, AccountInterface $a
  * Implements hook_form_alter().
  */
 function social_event_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-  social_event_show_pending_requests_message();
-  switch ($form_id) {
-    case 'node_event_edit_form':
-      // Set allow event enrollment checked by default for existing events.
-      $entity = $form_state->getFormObject()->getEntity();
-      if ($entity->hasField('field_event_enroll') && $entity->field_event_enroll->isEmpty()) {
-        $form['field_event_enroll']['widget']['value']['#default_value'] = TRUE;
-      }
+  // Form alters for the event add and edit forms.
+  if ($form_id === 'node_event_edit_form' || $form_id === 'node_event_form') {
+    // Hide the default checkbox in favor of new enrollment options.
+    $form['field_event_enroll']['#attributes']['class'][] = 'hidden';
+    $form['field_event_enroll']['#states'] = [
+      'unchecked' => [
+        ':input[name="field_enroll_method"]' => ['value' => '3'],
+      ],
+    ];
 
-    case 'node_event_form':
-      $form['event_all_day'] = [
-        '#type' => 'checkbox',
-        '#title' => t('All day'),
-      ];
+    // Alter visibility of enrollment methods.
+    social_event_field_visibility($form, 'field_event_enroll', ['field_event_enroll_outside_group']);
 
-      // Hide the default checkbox in favor of new enrollment options.
-      $form['field_event_enroll']['#attributes']['class'][] = 'hidden';
-      $form['field_event_enroll']['#states'] = [
-        'unchecked' => [
-          ':input[name="field_enroll_method"]' => ['value' => '3'],
-        ],
-      ];
-      // Alter visibility of enrollment methods.
-      $field_name = 'field_event_enroll';
+    $form['field_event_enroll_outside_group']['#states'] = [
+      'visible' => [
+        ':input[name="groups"]' => ['!value' => '_none'],
+        ':input[name="field_enroll_method"]' => ['!value' => '3'],
+      ],
+    ];
 
-      $fields = [
-        'field_event_enroll_outside_group',
-      ];
+    // Hide invite enroll method if the submodule is not enabled.
+    $moduleHandler = \Drupal::service('module_handler');
+    if (!$moduleHandler->moduleExists('social_event_invite')) {
+      unset($form['field_enroll_method']['widget']['#options'][3]);
+    }
 
-      social_event_field_visibility($form, $field_name, $fields);
+    // Add the all day event checkbox.
+    $form['event_all_day'] = [
+      '#type' => 'checkbox',
+      '#title' => t('All day'),
+    ];
 
-      $form['field_event_enroll_outside_group']['#states'] = [
-        'visible' => [
-          ':input[name="groups"]' => ['!value' => '_none'],
-          ':input[name="field_enroll_method"]' => ['!value' => '3'],
-        ],
-      ];
+    // Set default value and fieldgroup for all day checkbox.
+    if ($date = $form['field_event_date']['widget'][0]['value']['#default_value']) {
+      $all_day_value = $date instanceof DrupalDateTime && social_event_date_is_all_day($date);
+      $form['event_all_day']['#default_value'] = $all_day_value;
+    }
 
-      // Hide invite enroll method if the submodule is not enabled.
-      $moduleHandler = \Drupal::service('module_handler');
-      if (!$moduleHandler->moduleExists('social_event_invite')) {
-        unset($form['field_enroll_method']['widget']['#options'][3]);
-      }
+    $form['#fieldgroups']['group_date_time']->children[] = 'event_all_day';
+    $form['#group_children']['event_all_day'] = 'group_date_time';
+    $form['#after_build'][] = 'social_event_date_after_build';
 
-      // Set default value and fieldgroup for all day checkbox.
-      if ($date = $form['field_event_date']['widget'][0]['value']['#default_value']) {
-        $all_day_value = $date instanceof DrupalDateTime && social_event_date_is_all_day($date);
-        $form['event_all_day']['#default_value'] = $all_day_value;
-      }
-
-      $form['#fieldgroups']['group_date_time']->children[] = 'event_all_day';
-      $form['#group_children']['event_all_day'] = 'group_date_time';
-      $form['#after_build'][] = 'social_event_date_after_build';
-      break;
-
-    // Hide Enroll button if enrollment is disabled for this event.
-    case 'enroll_action_form':
-      $node = \Drupal::routeMatch()->getParameter('node');
-
-      if (!$node instanceof NodeInterface) {
-        $node = \Drupal::entityTypeManager()->getStorage('node')->load($node);
-      }
-
-      if ($node instanceof NodeInterface) {
-        $form['enroll_for_this_event']['#access'] = \Drupal::service('social_event.enroll')->isEnabled($node);
-      }
-      break;
+    // Attach styling for the event date fields.
+    $form['#attached']['library'][] = 'social_event/admin';
   }
-}
 
-/**
- * Determine if we need to show a message with pending requests on the page.
- */
-function social_event_show_pending_requests_message() {
-  $message = NULL;
-  $current_user = \Drupal::currentUser();
-  // Check the current routes vs what we need to check on.
-  $current_route = \Drupal::routeMatch()->getRouteName();
-  // Defined routes on which a message with amount
-  // of unattended pending enrollment requests.
-  $defined_routes = [
-    'view.event_enrollments.view_enrollments',
-    'entity.node.canonical',
-    'view.event_manage_enrollments.page_manage_enrollments',
-    'view.managers.view_managers',
-    'social_event_managers.add_enrollees',
-    'entity.event_enrollment.delete_form',
-    'social_event_managers.vbo.execute_configurable',
-    'social_event_managers.vbo.confirm',
-  ];
-  // If the route matches, proceed.
-  if (in_array($current_route, $defined_routes)) {
-    // Third, get the current node (if any) to perform an extra check
-    // just to make sure that we are actually on an event node.
-    $node = social_event_get_current_event();
-    if ($node instanceof NodeInterface && $node->field_enroll_method->value === '2' && social_event_owner_or_organizer($node, $current_user)) {
-      // At this point we try to get the amount of pending requests.
-      try {
-        $query = \Drupal::entityTypeManager()
-          ->getStorage('event_enrollment')
-          ->getQuery();
-        $condition_group = $query->andConditionGroup()
-          ->condition('field_event.target_id', $node->id())
-          ->condition('field_request_or_invite_status.value', EventEnrollmentInterface::REQUEST_PENDING)
-          ->condition('field_enrollment_status.value', '0');
-        $query->condition($condition_group);
-        $pending_requests = $query->execute();
-        if (!empty($pending_requests)) {
-          $plural = \Drupal::translation()->formatPlural(count($pending_requests), 'is (1) new request', 'are (@count) new requests');
-          $link = Link::createFromRoute(t('@amount', ['@amount' => $plural]), 'view.event_manage_enrollment_requests.page_manage_enrollment_requests', ['node' => $node->id()])->toString();
-          $message = \Drupal::messenger()->addWarning(t('There @link to enroll in this event.', ['@link' => $link]));
-        }
-      }
-      catch (InvalidPluginDefinitionException $e) {
-        \Drupal::logger('social_event')->error($e->getMessage());
-      }
-      catch (PluginNotFoundException $e) {
-        \Drupal::logger('social_event')->error($e->getMessage());
-      }
+  // Specific alter for the event edit form.
+  if ($form_id === 'node_event_edit_form') {
+    // Set allow event enrollment checked by default for existing events.
+    $entity = $form_state->getFormObject()->getEntity();
+    if ($entity->hasField('field_event_enroll') && $entity->field_event_enroll->isEmpty()) {
+      $form['field_event_enroll']['widget']['value']['#default_value'] = TRUE;
     }
   }
 
-  return $message;
+  // Alters for the Enroll Action form.
+  if ($form_id === 'enroll_action_form') {
+    $node = \Drupal::routeMatch()->getParameter('node');
+
+    if (!$node instanceof NodeInterface) {
+      $node = \Drupal::entityTypeManager()->getStorage('node')->load($node);
+    }
+
+    if ($node instanceof NodeInterface) {
+      $form['enroll_for_this_event']['#access'] = \Drupal::service('social_event.enroll')->isEnabled($node);
+    }
+  }
 }
 
 /**
@@ -729,17 +691,26 @@ function social_event_social_follow_content_types_alter(array &$types) {
  *   The event or NULL if nothing found.
  */
 function social_event_get_current_event() {
-  $node = \Drupal::service('current_route_match')->getParameter('node');
+  $event = &drupal_static(__FUNCTION__);
 
-  if ($node !== NULL && (!$node instanceof NodeInterface)) {
-    $node = Node::load($node);
+  if (!isset($event)) {
+    $node = \Drupal::service('current_route_match')->getParameter('node');
+
+    if ($node !== NULL && (!$node instanceof NodeInterface)) {
+      $node = Node::load($node);
+    }
+
+    if ($node instanceof NodeInterface && $node->getType() === 'event') {
+      $event = $node;
+    }
+
+    // If we don't have an event then we can go back to NULL.
+    if (!isset($event)) {
+      $event = NULL;
+    }
   }
 
-  if (($node instanceof NodeInterface) && $node->getType() === 'event') {
-    return $node;
-  }
-
-  return NULL;
+  return $event;
 }
 
 /**
@@ -769,53 +740,11 @@ function social_event_field_visibility(array &$form, $field_name, array $fields,
 }
 
 /**
- * Determine if the user is an owner or organizer of a specific event node.
- *
- * @param \Drupal\node\NodeInterface|null $node
- *   The (optional) event node.
- * @param \Drupal\Core\Session\AccountInterface|null $current_user
- *   The (optional) user.
- *
- * @return bool
- *   Return TRUE if the user is the owner or organizer of this event.
- */
-function social_event_owner_or_organizer(NodeInterface $node = NULL, AccountInterface $current_user = NULL) {
-  if (!$current_user) {
-    $current_user = \Drupal::currentUser();
-  }
-  if (!$node) {
-    $node = social_event_get_current_event();
-  }
-
-  if ($node instanceof NodeInterface && $current_user instanceof AccountInterface) {
-    // Get the event owner/author and it's organisers (if any).
-    $event_accountables['owner'] = $node->getOwnerId();
-    $event_accountables['organiser'] = FALSE;
-
-    // Also check whether the social_event_managers is enabled so we can
-    // check if the user might be an organiser/manager of this event.
-    if (\Drupal::moduleHandler()->moduleExists('social_event_managers')) {
-      $event_accountables['organiser'] = social_event_manager_or_organizer($node);
-    }
-
-    // If the user is organiser, the owner or has permission to manage the
-    // requests, return TRUE.
-    if ($event_accountables['organiser'] === TRUE
-      || $current_user->hasPermission('manage event enrollment requests')
-      || $event_accountables['owner'] === $current_user->id()) {
-      return TRUE;
-    }
-  }
-
-  return FALSE;
-}
-
-/**
  * Implements hook_entity_operation_alter().
  */
 function social_event_entity_operation_alter(array &$operations, EntityInterface $entity) {
   // Check access first.
-  if (!social_event_owner_or_organizer()) {
+  if (!social_event_manager_or_organizer()) {
     return;
   }
   // Get the node, so we can pass it as a parameter.
