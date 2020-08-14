@@ -72,6 +72,12 @@ class EventInviteEnrollActionForm extends EnrollActionForm {
             ],
           ];
 
+          // We need a hidden element for later usage.
+          $form['event_id'] = [
+            '#type' => 'hidden',
+            '#value' => $this->routeMatch->getRawParameter('node'),
+          ];
+
           $form['decline_invite'] = [
             '#type' => 'submit',
             '#value' => '',
@@ -87,6 +93,7 @@ class EventInviteEnrollActionForm extends EnrollActionForm {
               'btn-lg btn-raised',
               'dropdown-toggle',
               'waves-effect',
+              'margin-left-s',
             ],
             'autocomplete' => 'off',
             'data-toggle' => 'dropdown',
