@@ -47,9 +47,9 @@ function social_magic_login_tokens($type, $tokens, array $data, array $options, 
 
     foreach ($tokens as $token => $original) {
       // This is the default variation on the chained tokens handled below.
-      if ('group-destination' === $token) {
+      if ('group-destination' === $token && isset($data['group'])) {
         /** @var \Drupal\group\Entity\GroupInterface $group */
-        $group = &$data['group'];
+        $group = $data['group'];
 
         $destination = $group->toUrl('canonical', [
           'absolute' => FALSE,

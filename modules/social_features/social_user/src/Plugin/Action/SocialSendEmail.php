@@ -293,6 +293,7 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
       'field_reply_to' => $form_state->getValue('reply'),
       'field_subject' => $form_state->getValue('subject'),
       'field_message' => $form_state->getValue('message')['value'],
+      'field_group_id' => $form_state->getValue('group'),
     ]);
 
     // When the new entity is saved, get the ID and save it within the bulk
