@@ -1,0 +1,35 @@
+<?php
+
+use Drupal\Core\Config\FileStorage;
+use Drupal\field\Entity\FieldConfig;
+use Drupal\field\Entity\FieldStorageConfig;
+
+/**
+ * Add group_id field for queue_storage_entity email.
+ */
+function social_queue_storage_update_8001() {
+  $config_path = drupal_get_path('module', 'social_queue_storage') . '/config/install';
+  $storage = new FileStorage($config_path);
+
+// Note: .yml extension not needed.
+  $data = $storage->read('field.storage.queue_storage_entity.field_group_id');
+
+  if (!FieldStorageConfig::loadByName($data['entity_type'], $data['field_name'])) {
+    // Transform storage settings, if required.
+    $field_type_manager = \Drupal::service('plugin.manager.field.field_type');
+    $class = $field_type_manager->getPluginClass($data['type']);
+    $data['settings'] = $class::storageSettingsFromConfigData($data['settings']);
+
+    FieldStorageConfig::create($data)->save();
+  }
+  $data = $storage->read('field.field.queue_storage_entity.email.field_group_id');
+
+  if (!FieldConfig::loadByName($data['entity_type'], $data['bundle'], $data['field_name'])) {
+    // Transform storage settings, if required.
+    $field_type_manager = \Drupal::service('plugin.manager.field.field_type');
+    $class = $field_type_manager->getPluginClass($data['field_type']);
+    $data['settings'] = $class::storageSettingsFromConfigData($data['settings']);
+
+    FieldConfig::create($data)->save();
+  }
+}

@@ -1,0 +1,26 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.queue_storage_entity.field_group_id
+    - social_queue_storage.queue_storage_entity_type.email
+id: queue_storage_entity.email.field_group_id
+field_name: field_group_id
+entity_type: queue_storage_entity
+bundle: email
+label: group_id
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:group'
+  handler_settings:
+    target_bundles:
+      group: group
+    sort:
+      field: _none
+    auto_create: true
+    auto_create_bundle: ''
+field_type: entity_reference
