@@ -1407,6 +1407,18 @@ function social_group_preprocess_views_view(&$variables) {
 function social_group_block_access(Block $block, $operation, AccountInterface $account) {
   $block_id = $block->getPluginId();
 
+  // Lets hide the hero block when adding members directly, it doesnt
+  // add anything there.
+  if ($operation === 'view' && $block_id === 'group_hero_block') {
+    $route_name = \Drupal::routeMatch()->getRouteName();
+    $excluded_routes = [
+      'entity.group_content.add_form',
+    ];
+    if (in_array($route_name, $excluded_routes, TRUE)) {
+      return AccessResult::forbidden();
+    }
+  }
+
   // This is a list of the blocks that this function cares about, if we're being
   // called for a different block we exit early.
   $managed_blocks = [
