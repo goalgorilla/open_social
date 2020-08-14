@@ -675,7 +675,7 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
   }
 
   // Change the form when adding members directly in groups.
-  if (in_array($form_id, $membership_add_forms)) {
+  if (in_array($form_id, $membership_add_forms, TRUE) && \Drupal::routeMatch()->getRouteName() !== 'grequest.group_request_membership_approve') {
     // Lets add the new select 2 widget to add members to a group.
     $form['entity_id']['widget'][0]['target_id'] = [
       '#title' => t('Find people by name'),
@@ -914,10 +914,12 @@ function _social_group_action_form_submit($form, FormStateInterface $form_state)
         // Group does it for creating a Group and adding its creator as member.
         $values = ['group_roles' => $form_state->getValue('group_roles')];
         $count = 0;
-        // For multiple Group Members that are valid we add multiple entities.
-        foreach ($form_state->getValue('entity_id_new') as $key => $uid) {
-          $group->addMember(User::load($uid['target_id']), $values);
-          $count++;
+        if (!empty($form_state->getValue('entity_id_new'))) {
+          // For multiple Group Members that are valid we add multiple entities.
+          foreach ($form_state->getValue('entity_id_new') as $key => $uid) {
+            $group->addMember(User::load($uid['target_id']), $values);
+            $count++;
+          }
         }
 
         // Add nice messages.
