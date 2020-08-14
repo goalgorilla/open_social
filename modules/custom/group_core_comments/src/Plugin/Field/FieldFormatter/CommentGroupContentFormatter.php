@@ -136,14 +136,16 @@ class CommentGroupContentFormatter extends CommentDefaultFormatter {
     }
 
     if (!empty($output[0]['comments'])) {
+      $comment_settings = $this->getFieldSettings();
       $output[0]['comments'] = [
         '#lazy_builder' => [
           'social_comment.lazy_renderer:renderComments',
           [
             $entity->id(),
-            $this->getSetting('view_mode'),
+            $comment_settings['default_mode'],
             $items->getName(),
-            $this->getSetting('num_comments'),
+            $comment_settings['per_page'],
+            $this->getSetting('pager_id'),
           ],
         ],
         '#create_placeholder' => TRUE,
