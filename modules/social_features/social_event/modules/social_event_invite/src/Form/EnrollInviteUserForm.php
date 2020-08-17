@@ -119,7 +119,6 @@ class EnrollInviteUserForm extends InviteUserBaseForm {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     parent::submitForm($form, $form_state);
 
-    $params['invite_type'] = 'user';
     $params['recipients'] = $form_state->getValue('entity_id_new');
     $params['nid'] = $form_state->getValue('event');
     $tempstore = $this->tempStoreFactory->get('event_invite_form_values');

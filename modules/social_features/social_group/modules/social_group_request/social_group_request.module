@@ -111,6 +111,22 @@ function social_group_request_module_implements_alter(&$implementations, $hook) 
 }
 
 /**
+ * Implements hook_theme_registry_alter().
+ */
+function social_group_request_theme_registry_alter(&$theme_registry) {
+  // Unfortunately the preprocess functions aren't ordered by module weight.
+  // Changing module weight doesn't work, also with dependency set to
+  // social_group this should be dealt with but isn't.
+  // So we enforce our preprocess after social_group.
+  if (!empty($theme_registry['group']['preprocess functions'])) {
+    $current_key = array_search('social_group_request_preprocess_group', $theme_registry['group']['preprocess functions'], FALSE);
+    unset($theme_registry['group']['preprocess functions'][$current_key]);
+    // Give it a new key all the way at the end.
+    $theme_registry['group']['preprocess functions'][] = 'social_group_request_preprocess_group';
+  }
+}
+
+/**
  * Implements hook_preprocess_group().
  */
 function social_group_request_preprocess_group(&$variables) {
@@ -132,7 +148,7 @@ function social_group_request_preprocess_group(&$variables) {
   if (\Drupal::hasService('ginvite.invitation_loader')) {
     /** @var \Drupal\ginvite\GroupInvitationLoader $loader */
     $loader = \Drupal::service('ginvite.invitation_loader');
-    $group_invites = count($loader->loadByUser());
+    $group_invites = count($loader->loadByProperties(['gid' => $group->id(), 'uid' => $account->id()]));
     if (NULL !== $group_invites && $group_invites > 0) {
       return;
     }
@@ -230,15 +246,6 @@ function social_group_request_form_alter(array &$form, FormStateInterface $form_
 
   $route = \Drupal::routeMatch()->getRouteName();
   if (in_array($form_id, $group_membership_add_forms) && $route === 'grequest.group_request_membership_approve') {
-    // Remove possibility to select members to add to group.
-    if (isset($form['entity_id']['widget'][0]['target_id'])) {
-      $form['entity_id']['widget'][0]['target_id']['#access'] = FALSE;
-    }
-
-    if (isset($form['group_roles']['widget'])) {
-      $form['group_roles']['widget']['#title'] = t('Group role');
-    }
-
     // Name of user which we're adding to the group.
     $user_name = $form['entity_id']['widget'][0]['target_id']['#default_value']->getDisplayName();
     $form['question'] = [
@@ -247,6 +254,15 @@ function social_group_request_form_alter(array &$form, FormStateInterface $form_
       '#value' => t('Are you sure you want to approve the membership request for @name?', ['@name' => $user_name]),
       '#weight' => 1,
     ];
+
+    // Remove possibility to select members to add to group.
+    if (isset($form['entity_id']['widget'][0]['target_id'])) {
+      unset($form['entity_id']);
+    }
+
+    if (isset($form['group_roles']['widget'])) {
+      unset($form['group_roles']);
+    }
 
     $form['actions']['submit']['#value'] = t('Yes');
   }
