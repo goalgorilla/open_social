@@ -86,6 +86,21 @@ function social_event_managers_block_access(Block $block, $operation, AccountInt
       return AccessResult::forbidden();
     }
   }
+
+  $route_name = \Drupal::routeMatch()->getRouteName();
+  $excluded_routes = [
+    'social_event_managers.vbo.confirm',
+    'social_event_managers.vbo.execute_configurable',
+  ];
+
+  if (in_array($route_name, $excluded_routes)) {
+    if ($operation === 'view' &&
+      ($block->getPluginId() === 'social_page_title_block' ||
+      $block->getPluginId() === 'views_block:event_enrollments-event_enrollments')) {
+      return AccessResult::forbidden();
+    }
+  }
+
   // No opinion for other situations really.
   return AccessResult::neutral();
 }
@@ -571,15 +586,26 @@ function _social_event_managers_views_bulk_operations_bulk_form_submit($form, Fo
   /** @var \Drupal\Core\Url $url */
   $url = $form_state->getRedirect();
 
+  $node = '';
+  if ($form_state->get('node')) {
+    $node = $form_state->get('node');
+  }
+  if (empty($node)) {
+    $route = \Drupal::routeMatch()->getParameter('node');
+    $node = $route->id();
+  }
+
   $route_parameters = [
-    'node' => $form_state->get('node'),
+    'node' => $node,
   ];
 
-  if ($url->getRouteName() === 'views_bulk_operations.execute_configurable') {
-    $url = Url::fromRoute('social_event_managers.vbo.execute_configurable', $route_parameters);
-  }
-  if ($url->getRouteName() === 'social_event_managers.vbo.confirm') {
-    $url = Url::fromRoute('social_event_managers.vbo.confirm', $route_parameters);
+  if (!empty($node)) {
+    if ($url->getRouteName() === 'views_bulk_operations.execute_configurable') {
+      $url = Url::fromRoute('social_event_managers.vbo.execute_configurable', $route_parameters);
+    }
+    if ($url->getRouteName() === 'social_event_managers.vbo.confirm') {
+      $url = Url::fromRoute('social_event_managers.vbo.confirm', $route_parameters);
+    }
   }
 
   $form_state->setRedirectUrl($url);
