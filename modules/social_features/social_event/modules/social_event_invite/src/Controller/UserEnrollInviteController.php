@@ -47,12 +47,6 @@ class UserEnrollInviteController extends CancelEnrollInviteController {
         }
       }
 
-      // In order for the notifications to be sent correctly we're updating the
-      // owner here. The account is still linked to the actual enrollee.
-      // The owner is always used as the actor.
-      // @see activity_creator_message_insert().
-      $event_enrollment->setOwnerId($this->currentUser->id());
-
       // And finally save (update) this updated $event_enrollment.
       // @todo: maybe think of deleting approved/declined records from the db?
       $event_enrollment->save();

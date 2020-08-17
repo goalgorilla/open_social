@@ -1557,31 +1557,11 @@ function social_event_update_8810() {
 }
 
 /**
- * Update community events views.
+ * Install Event Invite module by default.
  */
-function social_event_update_8813() {
-  /** @var \Drupal\update_helper\Updater $updateHelper */
-  $updateHelper = \Drupal::service('update_helper.updater');
-
-  // Execute configuration update definitions with logging of success.
-  $updateHelper->executeUpdate('social_event', 'social_event_update_8813');
-
-  // Update views configuration.
-  _social_event_views_update('views.view.upcoming_events', 'page_community_events');
-}
-
-/**
- * Update user's events views.
- */
-function social_event_update_8814() {
-  /** @var \Drupal\update_helper\Updater $updateHelper */
-  $updateHelper = \Drupal::service('update_helper.updater');
-
-  // Execute configuration update definitions with logging of success.
-  $updateHelper->executeUpdate('social_event', 'social_event_update_8814');
-
-  // Update views configuration.
-  _social_event_views_update('views.view.events', 'events_overview');
+function social_event_update_8901() {
+  $modules = ['social_event_invite'];
+  \Drupal::service('module_installer')->install($modules);
 }
 
 /**
@@ -1589,7 +1569,7 @@ function social_event_update_8814() {
  *
  * Load in a config file from an specific update hook that will never change.
  */
-function social_event_update_8901() {
+function social_event_update_8902() {
   $config_files = [
     'block.block.eventrequestsnotification' => drupal_get_path('module', 'social_event') . '/config/static/block.block.eventrequestsnotification_8901.yml',
     'block.block.eventrequestsnotification_2' => drupal_get_path('module', 'social_event') . '/config/static/block.block.eventrequestsnotification_2_8901.yml',
@@ -1605,4 +1585,32 @@ function social_event_update_8901() {
       }
     }
   }
+}
+
+/**
+ * Update community events views.
+ */
+function social_event_update_8903() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_event', 'social_event_update_8813');
+
+  // Update views configuration.
+  _social_event_views_update('views.view.upcoming_events', 'page_community_events');
+}
+
+/**
+ * Update user's events views.
+ */
+function social_event_update_8904() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_event', 'social_event_update_8814');
+
+  // Update views configuration.
+  _social_event_views_update('views.view.events', 'events_overview');
 }

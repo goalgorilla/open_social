@@ -873,11 +873,9 @@ function social_event_preprocess_page(array &$variables) {
     return;
   }
 
-  $requested = \Drupal::request()->query->get('requested-enrollment');
-
   // Make sure we do the expensive checks only after we see that there's
-  // something in the url.
-  if ($requested) {
+  // something in the URL for nodes.
+  if (\Drupal::routeMatch()->getRouteName() === 'entity.node.canonical' && \Drupal::request()->query->get('requested-enrollment')) {
     // Get current event and user id.
     $node = social_event_get_current_event();
     $uid = \Drupal::currentUser()->id();
@@ -885,6 +883,15 @@ function social_event_preprocess_page(array &$variables) {
     // Only show the modal if the request method is set on this node
     // and if the 'requested-enrollment' parameter is TRUE.
     if ($node instanceof Node && (int) $node->get('field_enroll_method')->value === EventEnrollmentInterface::ENROLL_METHOD_REQUEST) {
+      // If there is a max of enrollments to this event and it's reached we
+      // don't want users to be able to use the modal dialog to request to
+      // enroll.
+      if (\Drupal::hasService('social_event_max_enroll.service') &&
+        \Drupal::service('social_event_max_enroll.service')->isEnabled($node) &&
+        !\Drupal::service('social_event_max_enroll.service')->getEnrollmentsLeft($node)) {
+        return;
+      }
+
       // Query to see if the user is already enrolled,
       // has already requested or is already invited.
       $query = \Drupal::entityTypeManager()

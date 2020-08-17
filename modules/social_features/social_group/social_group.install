@@ -553,9 +553,17 @@ function social_group_update_8802() {
 }
 
 /**
+ * Install Group Invite & Request modules by default.
+ */
+function social_group_update_8901() {
+  $modules = ['social_group_invite', 'social_group_request'];
+  \Drupal::service('module_installer')->install($modules);
+}
+
+/**
  * Update group's event views.
  */
-function social_group_update_8803() {
+function social_group_update_8902() {
   /** @var \Drupal\update_helper\Updater $updateHelper */
   $updateHelper = \Drupal::service('update_helper.updater');
 
