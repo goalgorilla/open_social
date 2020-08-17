@@ -39,3 +39,8 @@ services:
   social_group.group_statistics:
     class: Drupal\social_group\GroupStatistics
     arguments: ['@database']
+  cache_context.social_group_join_method:
+    class: Drupal\social_group\CacheContext\SocialGroupJoinMethodCacheContext
+    arguments: []
+    tags:
+      - { name: cache.context }

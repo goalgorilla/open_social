@@ -21,16 +21,27 @@ class SocialGroupEntityAutocomplete extends EntityAutocomplete {
   /**
    * Form element validation handler for entity_autocomplete elements.
    */
-  public static function validateEntityAutocomplete(array &$element, FormStateInterface $form_state, array &$complete_form) {
+  public static function validateEntityAutocomplete(array &$element, FormStateInterface $form_state, array &$complete_form, $select2 = FALSE) {
     $duplicated_values = $value = [];
 
     // Load the current Group so we can see if there are existing members.
     $group = _social_group_get_current_group();
 
-    // Grab all the input values so we can get the ID's out of them.
-    $input_values = Tags::explode($element['#value']);
+    // If we use the select 2 widget then we already got a nice array.
+    if ($select2 === TRUE) {
+      $input_values = $element['#value'];
+    }
+    else {
+      // Grab all the input values so we can get the ID's out of them.
+      $input_values = Tags::explode($element['#value']);
+    }
+
     foreach ($input_values as $input) {
       $match = static::extractEntityIdFromAutocompleteInput($input);
+      // If we use the select 2 widget then we already got a nice array.
+      if ($select2 === TRUE) {
+        $match = $input;
+      }
       if ($match === NULL) {
         $options = $element['#selection_settings'] + [
           'target_type' => $element['#target_type'],
@@ -55,7 +66,7 @@ class SocialGroupEntityAutocomplete extends EntityAutocomplete {
         // User is already a member, add it to an array for the Form element
         // to render an error after all checks are gone.
         if ($group->getMember($account)) {
-          $duplicated_values[] = $input;
+          $duplicated_values[] = $account->getDisplayName();
         }
 
         // Validate input for every single user. This way we make sure that
@@ -85,6 +96,12 @@ class SocialGroupEntityAutocomplete extends EntityAutocomplete {
     }
 
     if ($value) {
+      // Select2 gives us an array back, which errors the field even though we
+      // don't use it to perform the action, but we should mimic the behaviour
+      // as it would be without Select2.
+      if ($select2 === TRUE) {
+        $form_state->setValue(['entity_id', '0', 'target_id'], $match);
+      }
       $form_state->setValue('entity_id_new', $value);
     }
   }
