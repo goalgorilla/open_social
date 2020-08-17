@@ -363,6 +363,23 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
     }
 
     /**
+     * @When /^I click the group member dropdown/
+     */
+    public function iClickGroupMemberDropdown()
+    {
+      $locator = '.add-users-dropbutton .dropdown-toggle';
+      $session = $this->getSession();
+      $element = $session->getPage()->find('css', $locator);
+
+      if ($element === NULL) {
+        throw new \InvalidArgumentException(sprintf('Could not evaluate CSS selector: "%s"', $locator));
+      }
+
+      // Now click the element.
+      $element->click();
+    }
+
+    /**
      * @When I click radio button :label with the id :id
      * @When I click radio button :label
      */

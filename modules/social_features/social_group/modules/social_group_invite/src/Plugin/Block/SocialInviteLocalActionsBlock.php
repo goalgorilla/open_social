@@ -126,6 +126,7 @@ class SocialInviteLocalActionsBlock extends BlockBase implements ContainerFactor
       $links = [
         '#type' => 'dropbutton',
         '#attributes' => [
+          'class' => ['add-users-dropbutton'],
           'no-split' => [
             'title' => $this->t('Add members'),
             'alignment' => 'right',
@@ -137,7 +138,7 @@ class SocialInviteLocalActionsBlock extends BlockBase implements ContainerFactor
             'url' => Url::fromRoute('entity.group_content.add_form', ['plugin_id' => 'group_membership', 'group' => $group->id()]),
           ],
           'invite_by_mail' => [
-            'title' => $this->t('Invite by email'),
+            'title' => $this->t('Invite users'),
             'url' => Url::fromRoute('ginvite.invitation.bulk', ['group' => $group->id()]),
           ],
           'view_invites' => [
