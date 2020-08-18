@@ -206,6 +206,11 @@ function social_follow_taxonomy_token_info() {
     'description' => t('Taxonomy term I follow'),
   ];
 
+  $social_taxonomy['post_url'] = [
+    'name' => t('Post URL'),
+    'description' => t('Post absolute URL.'),
+  ];
+
   return [
     'types' => ['social_taxonomy' => $type],
     'tokens' => [
@@ -223,7 +228,11 @@ function social_follow_taxonomy_tokens($type, $tokens, array $data, array $optio
   $replacements = [];
   $display_name = '';
 
-  if ($type === 'social_taxonomy' && !empty($data['message'])) {
+  if (empty($data['message'])) {
+    return $replacements;
+  }
+
+  if ($type === 'social_taxonomy') {
     foreach ($tokens as $name => $original) {
       switch ($name) {
         case 'content_type':
@@ -301,6 +310,35 @@ function social_follow_taxonomy_tokens($type, $tokens, array $data, array $optio
           }
 
           break;
+      }
+    }
+  }
+
+  if ($type === 'message') {
+    /** @var \Drupal\message\MessageInterface $message */
+    $message = $data['message'];
+
+    foreach ($tokens as $name => $original) {
+      if ($name === 'post_url' && isset($message->field_message_related_object)) {
+        $replacements[$original] = '';
+
+        $target_type = $message->field_message_related_object->target_type;
+        $target_id = $message->field_message_related_object->target_id;
+
+        $entity = Drupal::entityTypeManager()
+          ->getStorage($target_type)
+          ->load($target_id);
+
+        if ($entity) {
+          if ($target_type === 'post') {
+            $post_link = Url::fromRoute('entity.post.canonical',
+              ['post' => $entity->id()],
+              ['absolute' => TRUE]
+            )->toString();
+
+            $replacements[$original] = $post_link;
+          }
+        }
       }
     }
   }
