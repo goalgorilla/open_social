@@ -258,6 +258,29 @@ function social_event_node_view_alter(array &$build, EntityInterface $entity, En
       '#markup' => $enrollments_count,
     ];
 
+    // Check if ongoing.
+    // Get user current date and time.
+    $user_time = new DateTime(
+      date(DateTimeItemInterface::DATETIME_STORAGE_FORMAT),
+      new DateTimeZone(date_default_timezone_get())
+    );
+    // Convert to UTC.
+    $user_time->setTimezone(new DateTimeZone(DateTimeItemInterface::STORAGE_TIMEZONE));
+    $date = $user_time->format(DateTimeItemInterface::DATETIME_STORAGE_FORMAT);
+    $node_storage = \Drupal::entityTypeManager()->getStorage('node');
+    $ongoing = $node_storage->getQuery()
+      ->condition('field_event_date', $date, '<=')
+      ->condition('field_event_date_end', $date, '>=')
+      ->condition('nid', $nid)
+      ->count()
+      ->execute();
+    if ($ongoing) {
+      $build['ongoing'] = [
+        '#type' => '#text_field',
+        '#markup' => t('Ongoing'),
+      ];
+    }
+
   }
 }
 
@@ -310,6 +333,22 @@ function social_event_views_data_alter(array &$data) {
     'sort' => [
       'field' => 'field_event_date_value',
       'id' => 'event_passed_upcoming_sort',
+    ],
+  ];
+  $data['node__field_event_date']['event_date'] = [
+    'title' => t('Event date'),
+    'group' => t('Social'),
+    'filter' => [
+      'title' => t('Event date'),
+      'help' => t('Filter events by start date and end date'),
+      'id' => 'social_event_date_filter',
+      'field' => 'field_event_date_value',
+    ],
+    'sort' => [
+      'title' => t('Event sorting (passed and upcoming)'),
+      'help' => t('For upcoming events sort ASC by start date and for passed events change order to DESC.'),
+      'id' => 'social_event_date_sort',
+      'field' => 'field_event_date_value',
     ],
   ];
 }
@@ -1020,4 +1059,32 @@ function _social_event_get_enrollment_status(NodeInterface $event) {
   }
 
   return $status;
+}
+
+/**
+ * Change views filters order.
+ *
+ * @param string $view_config
+ *   The views config name.
+ * @param string $display
+ *   The views display id.
+ */
+function _social_event_views_update($view_config, $display) {
+  // Get views config.
+  $config = \Drupal::configFactory()
+    ->getEditable($view_config);
+
+  // Get views config array.
+  $data = $config->getRawData();
+
+  $filters = $data['display'][$display]['display_options']['filters'];
+
+  // Reorder filters.
+  $new_filters['event_date'] = $filters['event_date'];
+  unset($filters['event_date']);
+  $new_filters = array_merge($new_filters, $filters);
+
+  // Save new configs.
+  $data['display'][$display]['display_options']['filters'] = $new_filters;
+  $config->setData($data)->save();
 }
