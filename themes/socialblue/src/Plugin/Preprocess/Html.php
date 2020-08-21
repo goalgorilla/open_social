@@ -37,14 +37,7 @@ class Html extends HtmlBase {
     // Add style class to html body.
     $style = theme_get_setting('style');
     if (!empty($style)) {
-      $route_match = \Drupal::routeMatch();
-      // For edit user and edit profile page
-      // we need to remove the socialblue--sky class,
-      // because we render it the old way. See #3166522.
-      if ($route_match->getRouteName() !== 'profile.user_page.single' &&
-        $route_match->getRouteName() !== 'entity.user.edit_form') {
-        $variables['attributes']['class'][] = 'socialblue--' . $style;
-      }
+      $variables['attributes']['class'][] = 'socialblue--' . $style;
     }
 
     parent::preprocessVariables($variables);
