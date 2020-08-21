@@ -4,6 +4,7 @@ namespace Drupal\social_group\Plugin\Block;
 
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Block\BlockBase;
+use Drupal\Core\Cache\Cache;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountInterface;
@@ -90,9 +91,6 @@ class GroupStatisticBlock extends BlockBase implements ContainerFactoryPluginInt
       $build['#cache']['tags'][] = 'group_block:' . $group->id();
     }
     // Cache contexts.
-    $build['#cache']['contexts'][] = 'url.path';
-    $build['#cache']['max-age'] = 0;
-
     return $build;
   }
 
