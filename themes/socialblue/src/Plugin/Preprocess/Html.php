@@ -40,8 +40,8 @@ class Html extends HtmlBase {
       $variables['attributes']['class'][] = 'socialblue--' . $style;
       $route_match = \Drupal::routeMatch();
       // For SKY when we are on edit user or edit profile
-      // we want to distinct the root_path with a better class name.
-      // this is used in html.html.twig
+      // we want to distinct the root_path with a better class name
+      // this is used in html.html.twig.
       if ($route_match->getParameter('user') &&
         $route_match->getRouteName() === 'profile.user_page.single' ||
         $route_match->getRouteName() === 'entity.user.edit_form') {
