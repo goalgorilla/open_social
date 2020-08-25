@@ -191,7 +191,7 @@ class SocialTaggingService {
         // Get current terms parents.
         $parents = $this->termStorage->loadParents($current_term->id());
         $parent = reset($parents);
-        $category_label = $parent->getTranslation($langcode)->getName();
+        $category_label = $parent->hasTranslation($langcode) ? $parent->getTranslation($langcode)->getName() : $parent->getName();
 
         // Prepare the parameter;.
         $parameter = $allowSplit ? social_tagging_to_machine_name($category_label) : 'tag';
@@ -205,7 +205,7 @@ class SocialTaggingService {
         $tree[$parent->id()]['title'] = $category_label;
         $tree[$parent->id()]['tags'][$current_term->id()] = [
           'url' => $url,
-          'name' => $current_term->getTranslation($langcode)->getName(),
+          'name' => $current_term->hasTranslation($langcode) ? $current_term->getTranslation($langcode)->getName() : $current_term->getName(),
         ];
       }
     }
