@@ -5,19 +5,19 @@
  * The Social event module.
  */
 
+use Drupal\block\Entity\Block;
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultNeutral;
 use Drupal\Core\Block\BlockPluginInterface;
 use Drupal\Core\Datetime\DrupalDateTime;
-use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
-use Drupal\block\Entity\Block;
 use Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface;
 use Drupal\group\Entity\GroupContent;
 use Drupal\group\GroupMembershipLoaderInterface;
@@ -258,6 +258,29 @@ function social_event_node_view_alter(array &$build, EntityInterface $entity, En
       '#markup' => $enrollments_count,
     ];
 
+    // Check if ongoing.
+    // Get user current date and time.
+    $user_time = new DateTime(
+      date(DateTimeItemInterface::DATETIME_STORAGE_FORMAT),
+      new DateTimeZone(date_default_timezone_get())
+    );
+    // Convert to UTC.
+    $user_time->setTimezone(new DateTimeZone(DateTimeItemInterface::STORAGE_TIMEZONE));
+    $date = $user_time->format(DateTimeItemInterface::DATETIME_STORAGE_FORMAT);
+    $node_storage = \Drupal::entityTypeManager()->getStorage('node');
+    $ongoing = $node_storage->getQuery()
+      ->condition('field_event_date', $date, '<=')
+      ->condition('field_event_date_end', $date, '>=')
+      ->condition('nid', $nid)
+      ->count()
+      ->execute();
+    if ($ongoing) {
+      $build['ongoing'] = [
+        '#type' => '#text_field',
+        '#markup' => t('Ongoing'),
+      ];
+    }
+
   }
 }
 
@@ -275,6 +298,7 @@ function social_event_preprocess_node(array &$variables) {
   $node = $variables['node'];
   if ($node->getType() === 'event') {
     $variables['event_date'] = _social_event_format_date($node, $view_mode);
+    $variables['#cache']['contexts'][] = 'timezone';
 
     if ($view_mode === 'hero') {
       // Add Enroll button.
@@ -309,6 +333,22 @@ function social_event_views_data_alter(array &$data) {
     'sort' => [
       'field' => 'field_event_date_value',
       'id' => 'event_passed_upcoming_sort',
+    ],
+  ];
+  $data['node__field_event_date']['event_date'] = [
+    'title' => t('Event date'),
+    'group' => t('Social'),
+    'filter' => [
+      'title' => t('Event date'),
+      'help' => t('Filter events by start date and end date'),
+      'id' => 'social_event_date_filter',
+      'field' => 'field_event_date_value',
+    ],
+    'sort' => [
+      'title' => t('Event sorting (passed and upcoming)'),
+      'help' => t('For upcoming events sort ASC by start date and for passed events change order to DESC.'),
+      'id' => 'social_event_date_sort',
+      'field' => 'field_event_date_value',
     ],
   ];
 }
@@ -368,10 +408,13 @@ function social_event_user_delete(EntityInterface $entity) {
 function _social_event_format_date($event, $view_mode) {
 
   $event_date = '';
+  $event_config = \Drupal::config('social_event.settings');
+  $add_timezone = $event_config->get('show_user_timezone');
 
   // This will get the users timezone, which is either set by the user
   // or defaults back to the sites timezone if the user didn't select any.
-  $timezone = drupal_get_user_timezone();
+  $timezone = date_default_timezone_get();
+  $user_timezone = _social_event_user_timezone($timezone);
   // Timezone that dates should be stored in.
   $utc_timezone = DateTimeItemInterface::STORAGE_TIMEZONE;
 
@@ -406,12 +449,23 @@ function _social_event_format_date($event, $view_mode) {
   $time_format = 'social_time';
 
   if (!empty($start_datetime)) {
-    $start_date = $date_formatter->format($start_datetime, $date_format);
+    if ($date_formatter->format($start_datetime, 'custom', 'i') === '01') {
+      $start_date = $date_formatter->format($start_datetime, $date_format, '', $utc_timezone);
+      $add_timezone = FALSE;
+    }
+    else {
+      $start_date = $date_formatter->format($start_datetime, $date_format);
+    }
     // Default time should not be displayed.
     $start_time = $date_formatter->format($start_datetime, 'custom', 'i') === '01' ? '' : $date_formatter->format($start_datetime, $time_format);
 
     if (!empty($end_datetime)) {
-      $end_date = $date_formatter->format($end_datetime, $date_format);
+      if ($date_formatter->format($end_datetime, 'custom', 'i') === '01') {
+        $end_date = $date_formatter->format($end_datetime, $date_format, '', $utc_timezone);
+      }
+      else {
+        $end_date = $date_formatter->format($end_datetime, $date_format);
+      }
       // Default time should not be displayed.
       $end_time = $date_formatter->format($end_datetime, 'custom', 'i') === '01' ? '' : $date_formatter->format($end_datetime, $time_format);
     }
@@ -430,7 +484,28 @@ function _social_event_format_date($event, $view_mode) {
     }
   }
 
-  return $event_date;
+  return $add_timezone ? "$event_date ($user_timezone)" : $event_date;
+}
+
+/**
+ * Returns user timezone if needed.
+ *
+ * @param string $timezone
+ *   User's timezone.
+ *
+ * @return string
+ *   User timezone.
+ */
+function _social_event_user_timezone($timezone) {
+  if ($timezone !== DateTimeItemInterface::STORAGE_TIMEZONE) {
+    $zones = array_column(system_time_zones(NULL, TRUE), $timezone);
+    $user_timezone = reset($zones);
+  }
+  else {
+    $user_timezone = $timezone;
+  }
+
+  return t('@timezone time', ['@timezone' => $user_timezone]);
 }
 
 /**
@@ -553,8 +628,37 @@ function social_event_form_alter(&$form, FormStateInterface $form_state, $form_i
       $form['event_all_day']['#default_value'] = $all_day_value;
     }
 
+    // Get user timezone.
+    $user_timezone = _social_event_user_timezone(date_default_timezone_get());
+    $timezone_label = t('Time zone');
+    $markup = '<div class="control-label margin-bottom-s">' . $timezone_label . '</div>';
+    $markup .= '<div class="bg-gray-lighter btn btn-lg">' . $user_timezone . '</div>';
+    $form['timezone_indication'] = [
+      '#type' => 'container',
+      '#weight' => 99,
+      'content' => [
+        '#type' => 'item',
+        '#markup' => $markup,
+        '#description' => t('The event date and time are set based on tour timezone. @change_timezone', [
+          '@change_timezone' => Link::createFromRoute(
+            t('Change your timezone here'),
+            'entity.user.edit_form',
+            ['user' => \Drupal::currentUser()->id()],
+            [
+              'attributes' => [
+                'target' => '_blank',
+              ],
+              'fragment' => 'edit-group-locale-settings',
+            ]
+          )->toString(),
+        ]),
+      ],
+    ];
+
     $form['#fieldgroups']['group_date_time']->children[] = 'event_all_day';
+    $form['#fieldgroups']['group_date_time']->children[] = 'timezone_indication';
     $form['#group_children']['event_all_day'] = 'group_date_time';
+    $form['#group_children']['timezone_indication'] = 'group_date_time';
     $form['#after_build'][] = 'social_event_date_after_build';
 
     // Attach styling for the event date fields.
@@ -606,9 +710,7 @@ function social_event_date_validate(&$element, FormStateInterface $form_state, &
     $storage_format = DrupalDateTime::FORMAT;
     $datetime = trim($input['date'] . ' ' . $input['time']);
     $storage_timezone = new DateTimeZone(DateTimeItemInterface::STORAGE_TIMEZONE);
-    $system_timezone = date_default_timezone_get();
-    $zone = !empty($system_timezone) ? new DateTimeZone($system_timezone) : $storage_timezone;
-    $input['object'] = DrupalDateTime::createFromFormat($storage_format, $datetime, $zone);
+    $input['object'] = DrupalDateTime::createFromFormat($storage_format, $datetime, $storage_timezone);
     if ($input['object'] instanceof DrupalDateTime) {
       $form_state->setValueForElement($element, $input);
     }
@@ -957,4 +1059,32 @@ function _social_event_get_enrollment_status(NodeInterface $event) {
   }
 
   return $status;
+}
+
+/**
+ * Change views filters order.
+ *
+ * @param string $view_config
+ *   The views config name.
+ * @param string $display
+ *   The views display id.
+ */
+function _social_event_views_update($view_config, $display) {
+  // Get views config.
+  $config = \Drupal::configFactory()
+    ->getEditable($view_config);
+
+  // Get views config array.
+  $data = $config->getRawData();
+
+  $filters = $data['display'][$display]['display_options']['filters'];
+
+  // Reorder filters.
+  $new_filters['event_date'] = $filters['event_date'];
+  unset($filters['event_date']);
+  $new_filters = array_merge($new_filters, $filters);
+
+  // Save new configs.
+  $data['display'][$display]['display_options']['filters'] = $new_filters;
+  $config->setData($data)->save();
 }
