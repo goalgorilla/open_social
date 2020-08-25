@@ -14,7 +14,9 @@ use Drupal\Core\Render\Markup;
  */
 function improved_theme_settings_form_system_theme_settings_alter(&$form, FormStateInterface $form_state, $form_id) {
 
-  $form['logo']['default_logo']['#description'] = t('This logo is shown in the platform header and on emails sent to your users. It can be overriden in the above E-mail setting');
+  if (isset($form['logo']['default_logo'])) {
+    $form['logo']['default_logo']['#description'] = t('This logo is shown in the platform header and on emails sent to your users. It can be overriden in the above E-mail setting');
+  }
 
   // If user has the improved settings, we don't alter nothing.
   if (\Drupal::currentUser()->hasPermission('administer improved theme settings')) {
@@ -78,7 +80,7 @@ function improved_theme_settings_page_attachments(array &$page) {
         .hero-canvas {
           border-radius: ' . $card_radius . 'px !important;
         }
-        
+
         .tabs-left .vertical-tabs-list {
           border-radius: ' . $card_radius . 'px 0 0 ' . $card_radius . 'px !important;
         }
@@ -93,24 +95,24 @@ function improved_theme_settings_page_attachments(array &$page) {
         .teaser--stream:last-child .teaser__image {
           border-bottom-left-radius: ' . $card_radius . 'px !important;
         }
-        
+
         .card__block:first-child {
           border-top-left-radius: ' . $card_radius . 'px !important;
           border-top-right-radius: ' . $card_radius . 'px !important;
         }
-        
+
         @media (min-width: 600px) {
           .teaser__teaser-type {
             border-radius: 0 0 ' . $card_radius . 'px 0 !important;
           }
         }
-        
+
         @media (min-width: 900px) {
           .off-canvas-xs-only {
             border-radius: ' . $card_radius . 'px !important;
           }
         }
-        
+
         .message__message-body {
           border-radius: ' . $card_radius / 2 . 'px !important;
         }
@@ -126,16 +128,16 @@ function improved_theme_settings_page_attachments(array &$page) {
           .form-control {
             border-radius: ' . $form_control_radius . 'px !important;
           }
-          
+
           .search-take-over .form-control {
             border-radius: 0 !important;
           }
-          
+
           .input-group .form-control:first-child, .input-group-addon:first-child {
             border-bottom-right-radius: 0 !important;
             border-top-right-radius: 0 !important;
           }
-          
+
           .input-group .form-control:last-child, .input-group-addon:last-child {
             border-bottom-left-radius: 0 !important;
             border-top-left-radius: 0 !important;
@@ -155,7 +157,7 @@ function improved_theme_settings_page_attachments(array &$page) {
           :not(.btn-group) > .btn {
             border-radius: ' . $button_radius . 'px !important;
           }
-          
+
           .btn.btn-floating,
           .btn.btn-icon-toggle {
             border-radius: 50% !important;

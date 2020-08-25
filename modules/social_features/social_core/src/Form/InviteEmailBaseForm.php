@@ -2,7 +2,6 @@
 
 namespace Drupal\social_core\Form;
 
-use Drupal\Component\Render\FormattableMarkup;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
@@ -78,36 +77,45 @@ class InviteEmailBaseForm extends FormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    $form['email_address'] = [
-      '#type' => 'textarea',
-      '#title' => $this->t('Add Recipients'),
-      '#description' => $this->t('You can copy/paste multiple emails, enter one email per line.'),
+    $form['users_fieldset'] = [
+      '#type' => 'fieldset',
+      '#tree' => TRUE,
+      '#collapsible' => FALSE,
+      '#collapsed' => FALSE,
+      '#attributes' => [
+        'class' => [
+          'form-horizontal',
+        ],
+      ],
+    ];
+
+    // Todo: Validation should go on the element and return a nice list.
+    $form['users_fieldset']['user'] = [
+      '#title' => $this->t('Find people by name or email address'),
+      '#type' => 'select2',
+      '#description' => $this->t('You can enter or paste multiple entries separated by comma or semicolon'),
+      '#multiple' => TRUE,
+      '#tags' => TRUE,
+      '#autocomplete' => TRUE,
+      '#selection_handler' => 'social',
+      '#target_type' => 'user',
+      '#select2' => [
+        'tags' => TRUE,
+        'placeholder' => t('Jane Doe, johndoe@example.com'),
+        'tokenSeparators' => [',', ';'],
+        'autocomplete' => FALSE,
+      ],
       '#required' => TRUE,
+      '#validated' => TRUE,
     ];
 
     $form['actions']['#type'] = 'actions';
     $form['actions']['submit'] = [
       '#type' => 'submit',
-      '#value' => $this->t('Send Invite(s)'),
+      '#value' => $this->t('Send your invite(s) by email'),
     ];
 
     return $form;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function validateForm(array &$form, FormStateInterface $form_state) {
-    foreach ($form_state->getValues() as $key => $value) {
-
-      switch ($key) {
-        case 'email_address':
-
-          $this->validateEmails($form_state);
-          break;
-      }
-    }
-    parent::validateForm($form, $form_state);
   }
 
   /**
@@ -117,80 +125,13 @@ class InviteEmailBaseForm extends FormBase {
   }
 
   /**
-   * Validate emails, display error message if not valid.
-   *
-   * @param \Drupal\Core\Form\FormStateInterface $form_state
-   *   The current state of the form.
-   */
-  private function validateEmails(FormStateInterface $form_state) {
-    $invalid_emails = [];
-    foreach ($this->getSubmittedEmails($form_state) as $line => $email) {
-      if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $invalid_emails[$line + 1] = $email;
-      }
-    }
-
-    if (!empty($invalid_emails)) {
-      $message_singular = "The @error_message is not a valid e-mail address.";
-      $message_plural = "The e-mails: @error_message are not valid e-mail addresses.";
-
-      $this->displayErrorMessage($invalid_emails, $message_singular, $message_plural, $form_state);
-    }
-  }
-
-  /**
-   * Get array of submitted emails.
-   *
-   * @param \Drupal\Core\Form\FormStateInterface $form_state
-   *   The current state of the form.
-   *
-   * @return array
-   *   List of emails to invite .
-   */
-  public function getSubmittedEmails(FormStateInterface $form_state) {
-    return array_map(
-      'trim',
-      array_unique(
-          $this->extractEmailsFrom(
-            $form_state->getValue('email_address')
-        )
-      )
-    );
-  }
-
-  /**
    * Custom function to extract email addresses from a string.
    */
-  private function extractEmailsFrom($string) {
+  public function extractEmailsFrom($string) {
+    // Remove select2 ID parameter.
+    $string = str_replace('$ID:', '', $string);
     preg_match_all("/[\._a-zA-Z0-9+-]+@[\._a-zA-Z0-9+-]+/i", $string, $matches);
     return $matches[0];
-  }
-
-  /**
-   * Prepares form error message if there is invalid emails.
-   *
-   * @param array $invalid_emails
-   *   List of invalid emails.
-   * @param string $message_singular
-   *   Error message for one invalid email.
-   * @param string $message_plural
-   *   Error message for multiple invalid emails.
-   * @param \Drupal\Core\Form\FormStateInterface $form_state
-   *   The current state of the form.
-   */
-  private function displayErrorMessage(array $invalid_emails, $message_singular, $message_plural, FormStateInterface $form_state) {
-    if (($count = count($invalid_emails)) > 1) {
-      $error_message = '<ul>';
-      foreach ($invalid_emails as $line => $invalid_email) {
-        $error_message .= "<li>{$invalid_email} on line {$line}</li>";
-      }
-      $error_message .= '</ul>';
-      $form_state->setErrorByName('email_address', $this->formatPlural($count, $message_singular, $message_plural, ['@error_message' => new FormattableMarkup($error_message, [])]));
-    }
-    elseif ($count == 1) {
-      $error_message = reset($invalid_emails);
-      $form_state->setErrorByName('email_address', $this->formatPlural($count, $message_singular, $message_plural, ['@error_message' => $error_message]));
-    }
   }
 
 }
