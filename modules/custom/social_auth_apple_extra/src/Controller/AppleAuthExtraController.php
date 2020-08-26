@@ -4,6 +4,7 @@ namespace Drupal\social_auth_apple_extra\Controller;
 
 use Drupal\social_auth_apple\Controller\AppleAuthController as AppleAuthControllerBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
  * Class AppleAuthExtraController.
@@ -25,6 +26,22 @@ class AppleAuthExtraController extends AppleAuthControllerBase {
       $container->get('social_auth.data_handler'),
       $container->get('renderer')
     );
+  }
+
+  /**
+   * Redirect to provider and back to the registration page on fail.
+   *
+   * @return \Drupal\Core\Routing\TrustedRedirectResponse|\Symfony\Component\HttpFoundation\RedirectResponse
+   *   The redirect response.
+   */
+  public function userRegister() {
+    $response = $this->redirectToProvider();
+
+    if ($response instanceof RedirectResponse) {
+      return $this->redirect('user.register');
+    }
+
+    return $response;
   }
 
 }
