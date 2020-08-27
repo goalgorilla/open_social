@@ -9,6 +9,7 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Template\Attribute;
 use Drupal\Core\Url;
+use Drupal\node\NodeInterface;
 use Drupal\views\ViewExecutable;
 
 /**
@@ -231,6 +232,44 @@ function social_activity_views_post_build(ViewExecutable $view) {
 
       // Attach and use featured styles for activity stream on dashboard.
       $view->element['#attached']['library'][] = 'social_featured_content/paragraph.featured';
+    }
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function social_activity_preprocess_block(&$variables) {
+  $allowed_routes = [
+    'entity.node.canonical',
+    'layout_builder.overrides.node.view',
+  ];
+  if (($node = \Drupal::routeMatch()->getParameter('node')) &&
+    $node instanceof NodeInterface) {
+    if (in_array(\Drupal::routeMatch()->getRouteName(), $allowed_routes) &&
+      ($node->bundle() === 'dashboard' ||
+        $node->bundle() === 'landing_page') &&
+      $variables['base_plugin_id'] === 'views_block' &&
+      isset($variables['content']['#name']) &&
+      ($variables['content']['#name'] === 'activity_stream' ||
+        $variables['content']['#name'] === 'community_activities' ||
+        $variables['content']['#name'] === 'activity_stream_profile' ||
+        $variables['content']['#name'] === 'activity_stream_group')
+    ) {
+      if ($node->bundle() === 'dashboard') {
+        $variables['attributes']['class'][] = 'block-dashboard-activity-stream card';
+      }
+      $variables['content'] = [
+        '#create_placeholder' => TRUE,
+        '#lazy_builder' => [
+          'social_activity.lazy_builder:viewsLazyBuild',
+          [
+            $variables['content']['#name'],
+            $variables['content']['#display_id'],
+            $node->bundle(),
+          ],
+        ],
+      ];
     }
   }
 }

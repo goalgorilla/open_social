@@ -86,7 +86,7 @@ class ContentBuilder implements ContentBuilderInterface {
    *
    * @param string|int $block_id
    *   The block id where we get the settings from.
-   * @param $entity_bundle
+   * @param string $entity_bundle
    *   The bundle of the entity.
    *
    * @return array
