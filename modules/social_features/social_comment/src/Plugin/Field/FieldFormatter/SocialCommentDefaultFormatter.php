@@ -4,6 +4,7 @@ namespace Drupal\social_comment\Plugin\Field\FieldFormatter;
 
 use Drupal\comment\Plugin\Field\FieldFormatter\CommentDefaultFormatter;
 use Drupal\Core\Field\FieldItemListInterface;
+use Drupal\node\NodeInterface;
 
 /**
  * Provides a default comment formatter.
@@ -27,7 +28,8 @@ class SocialCommentDefaultFormatter extends CommentDefaultFormatter {
    */
   public function viewElements(FieldItemListInterface $items, $langcode) {
     $elements = parent::viewElements($items, $langcode);
-    if (!empty($elements[0]['comments'])) {
+    if (!empty($elements[0]['comments']) &&
+      $items->getEntity() instanceof NodeInterface) {
       $comment_settings = $this->getFieldSettings();
       $elements[0]['comments'] = [
         '#lazy_builder' => [
