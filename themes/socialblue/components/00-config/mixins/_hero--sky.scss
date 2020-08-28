@@ -1,8 +1,15 @@
 @mixin full-with-inside-container {
-  width: 100vw;
   position: relative;
-  left: 50%;
-  right: 50%;
-  margin-left: -50vw;
-  margin-right: -50vw;
+  width: 100%;
+
+  @include for-desktop-up {
+    width: auto;
+    margin: 0 calc((-100vw + (1200px - 3rem)) / 2);
+  }
+}
+
+@mixin full-with-inside-container-gin-theme {
+  @include for-desktop-up {
+    margin: 0 calc((-100vw + (1200px + 2rem)) / 2);
+  }
 }
