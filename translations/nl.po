@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: node-gettext\n"
 "POT-Creation-Date: 2020-07-08 08:49+0000\n"
-"PO-Revision-Date: 2020-07-13 18:20+0000\n"
+"PO-Revision-Date: 2020-08-31 12:18+0000\n"
 "Last-Translator: Ronald te Brake <ronald@goalgorilla.com>\n"
 "Language-Team: Dutch <https://translate.getopensocial.com/projects/"
 "open-social/distribution/nl/>\n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 3.10.1\n"
+"X-Generator: Weblate 4.1.1\n"
 
 #: modules/social_features/social_user/src/Form/SocialUserLoginForm.php:253
 msgid ""
@@ -246,26 +246,26 @@ msgstr[1] ""
 #: translations.php:105
 msgid "1 selected member has been exported successfully"
 msgid_plural "@count selected members have been exported successfully"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "1 geselecteerd lid is succesvol geexporteerd"
+msgstr[1] "@count geselecteerde leden zijn succesvol geexporteerd"
 
 #: translations.php:107
 msgid "1 selected member has been removed successfully"
 msgid_plural "@count selected members have been removed successfully"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "1 geselecteerd lid is succesvol verwijderd"
+msgstr[1] "@count geselecteerde leden zijn succesvol verwijderd"
 
 #: translations.php:106
 msgid "1 selected member has not been exported"
 msgid_plural "@count selected members have not been exported"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "1 geselecteerd lid is niet geexporteerd"
+msgstr[1] "@count geselecteerde leden zijn niet geexporteerd"
 
 #: translations.php:108
 msgid "1 selected member has not been removed successfully"
 msgid_plural "@count selected members have been removed successfully"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "1 geselecteerd lid is niet verwijderd"
+msgstr[1] "@count geselecteerde leden zijn niet verwijderd"
 
 #: modules/custom/social_node_statistics/src/Form/NodeStatisticsSettingsForm.php:55
 msgid "10 minutes"
@@ -361,19 +361,23 @@ msgstr "<em>Accountinstellingen configureren:</em> @label"
 
 #: modules/social_features/social_event/modules/social_event_invite/config/install/views.view.user_event_invites.yml:0
 msgid "<h1 class=\"h4 section-title\">@total Event invites</h1>"
-msgstr ""
+msgstr "<h1 class=\"h4 section-title\">@total evenement uitnodigingen</h1>"
 
 #: modules/social_features/social_event/modules/social_event_invite/config/install/views.view.event_manage_enrollment_invites.yml:0
 msgid ""
 "<h1 class=\"h4 section-title\">[view:total-rows] Enroll invite(s) to event: "
 "{{ arguments.nid }}</h1>"
 msgstr ""
+"<h1 class=\"h4 section-title\">[view:total-rows] inschrijving(en) voor "
+"evenement: {{ arguments.nid }}</h1>"
 
 #: modules/social_features/social_event/config/install/views.view.event_manage_enrollment_requests.yml:0
 msgid ""
 "<h1 class=\"h4 section-title\">[view:total-rows] Enroll request(s) to event: "
 "{{ arguments.nid }}</h1>"
 msgstr ""
+"<h1 class=\"h4 section-title\">[view:total-rows] Aanvragen voor evenement: {{"
+" arguments.nid }}</h1>"
 
 #: modules/custom/sitewide_js/src/Form/SiteWideJSForm.php:37
 msgid ""
@@ -498,6 +502,9 @@ msgid ""
 "a> approved your request to enroll for the event [social_event:"
 "event_iam_organizing]</p>\r\n"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
+"a> heeft je aanmelding geaccepteerd voor het evenement "
+"[social_event:event_iam_organizing]</p>\n"
 
 #: modules/social_features/social_follow_content/config/install/message.template.create_comment_following_node.yml:0;0
 msgid ""
@@ -952,6 +959,9 @@ msgid ""
 "display-name]</a> has requested membership to the <a href=\"[message:gurl]\">"
 "[message:gtitle]</a> group</p>\r\n"
 msgstr ""
+"<p><a href=\"[message:recipient-user:url:absolute]\">[message:recipient-user"
+":display-name]</a> heeft lidmaatschap aangevraagd voor <a href=\""
+"[message:gurl]\">[message:gtitle]</a></p>\n"
 
 #: modules/social_features/social_group/modules/social_group_request/config/install/message.template.request_to_join_a_group.yml:0
 msgid ""
@@ -969,6 +979,19 @@ msgid ""
 "\t</tbody>\r\n"
 "</table>\r\n"
 msgstr ""
+"<p><a href=\"[message:recipient-user:url:absolute]\">[message:recipient-user"
+":display-name]</a> wil graag lid worden van de <a href=\"[message:gurl]\""
+">[message:gtitle]</a> group</p>\n"
+"\n"
+"<table class=\"btn-wrapp\">\n"
+"\t<tbody>\n"
+"\t\t<tr>\n"
+"\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-"
+"one\" href=\"[social_group_request:request_page_link]\">Bekijk "
+"aanvraag</a></td>\n"
+"\t\t</tr>\n"
+"\t</tbody>\n"
+"</table>\n"
 
 #: modules/social_features/social_activity/config/install/message.template.join_to_group.yml:0;0;0
 msgid ""
@@ -996,6 +1019,9 @@ msgid ""
 "</a> has requested enrollment to the event [social_event:"
 "event_iam_organizing] you are organizing</p>\r\n"
 msgstr ""
+"<p><a href=\"[social_event:enrolled_event_url]\""
+">[social_event:enrolled_user]</a> wil zich graag aanmelden voor het "
+"evenement [social_event:event_iam_organizing] die je organiseert</p>\n"
 
 #: modules/social_features/social_event/modules/social_event_an_enroll/config/install/views.view.manage_enrollments.yml:0
 msgid "<p>@total people have enrolled anonymously</p>"
@@ -1029,6 +1055,25 @@ msgid ""
 "\t</tbody>\r\n"
 "</table>\r\n"
 msgstr ""
+"<p>Hi,</p>\n"
+"\n"
+"<p>Graag zou ik je willen uitnodigen voor mijn evenement "
+"[social_event:event_iam_organizing] op [site:name].</p>\n"
+"\n"
+"<p>Met vriendelijke groet,<br />\n"
+"[message:author:display-name]</p>\n"
+"\n"
+"<table class=\"btn-wrap\">\n"
+"\t<tbody>\n"
+"\t\t<tr>\n"
+"\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-"
+"one\" href=\"[social_event_invite:user_login_event_destination]\""
+">Evenement</a></td>\n"
+"\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-"
+"one\" href=\"[site:url]\">Over [site:name]</a></td>\n"
+"\t\t</tr>\n"
+"\t</tbody>\n"
+"</table>\n"
 
 #: modules/social_features/social_group/modules/social_group_invite/config/optional/message.template.invited_to_join_group.yml:0
 msgid ""
@@ -1051,6 +1096,24 @@ msgid ""
 "\t</tbody>\r\n"
 "</table>\r\n"
 msgstr ""
+"<p>Hi,</p>\n"
+"\n"
+"<p>Graag wil ik je uitnodigen voor mijn groep [message:gtitle] op "
+"[site:name].</p>\n"
+"\n"
+"<p>Met vriendelijke groet,<br />\n"
+"[message:author:display-name]</p>\n"
+"\n"
+"<table class=\"btn-wrap\">\n"
+"\t<tbody>\n"
+"\t\t<tr>\n"
+"\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-"
+"one\" href=\"[message:gurl]\">Bekijk groep</a></td>\n"
+"\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-"
+"one\" href=\"[site:url]\">Over [site:name]</a></td>\n"
+"\t\t</tr>\n"
+"\t</tbody>\n"
+"</table>\n"
 
 #: modules/social_features/social_event/modules/social_event_invite/config/install/social_event_invite.settings.yml:0
 msgid ""
@@ -1062,6 +1125,13 @@ msgid ""
 "\"[social_event_invite:register_link]\">View event </a><a class=\"btn-link "
 "btn-link-bg btn-link-two\" href=\"[site:url]\">About [site:name]</a></p>"
 msgstr ""
+"<p>Hi,</p>\n"
+"<p>Graag wil ik je uitnodigen voor mijn evenement <strong>[node:title]</"
+"strong> op <strong>[site:name]</strong>.</p>\n"
+"<p>Met vriendelijke groet, [user:display-name]</p>\n"
+"<p><a class=\"btn-link btn-link-bg btn-link-two\" href=\""
+"[social_event_invite:register_link]\">Evenement </a><a class=\"btn-link btn-"
+"link-bg btn-link-two\" href=\"[site:url]\">Over [site:name]</a></p>"
 
 #: modules/social_features/social_event/modules/social_event_invite/config/install/social_event_invite.settings.yml:0
 #: modules/social_features/social_group/modules/social_group_invite/config/optional/social_group_invite.settings.yml:0
@@ -1069,24 +1139,32 @@ msgid ""
 "<p>The message above is edited by the community managers. Please contact "
 "them for questions and ideas</p>"
 msgstr ""
+"<p>Het bericht hierboven is aangepast door de community managers. Vooor "
+"vragen of ideeën kun je contact met ze opnemen.</p>"
 
 #: modules/social_features/social_event/modules/social_event_invite/config/install/message.template.invite_event_enrollment.yml:0
 msgid ""
 "<p>You have been invited for the even [social_event:event_iam_organizing] by "
 "[message:author:display-name]</p>\r\n"
 msgstr ""
+"<p>Je bent uitgenodigt voor het evenement [social_event:event_iam_organizing]"
+" door [message:author:display-name]</p>\n"
 
 #: modules/social_features/social_event/modules/social_event_invite/config/install/message.template.invite_event_enrollment.yml:0
 msgid ""
 "<p>You have been invited for the event [social_event:event_iam_organizing] "
 "by [message:author:display-name]</p>\r\n"
 msgstr ""
+"<p>Je bent uitgenodigd voor het evenement [social_event:event_iam_organizing]"
+" door [message:author:display-name]</p>\n"
 
 #: modules/social_features/social_group/modules/social_group_invite/config/optional/message.template.invited_to_join_group.yml:0;0
 msgid ""
 "<p>You have been invited to join the group <a href=\"gurl]\">[message:gtitle]"
 "</a></p>\r\n"
 msgstr ""
+"<p>Je bent uitgenodigd om lid te worden van de groep <a href=\"gurl]\""
+">[message:gtitle]</a></p>\n"
 
 #: modules/social_features/social_core/src/Controller/SocialCoreController.php:66
 msgid ""
@@ -1130,12 +1208,25 @@ msgid ""
 "\t</tbody>\r\n"
 "</table>\r\n"
 msgstr ""
+"<p>Je aanvraag om lid te worden van de groep <a href=\"[message:gurl]\""
+">[message:gtitle]</a> is goedgekeurd</p>\n"
+"\n"
+"<table class=\"btn-wrapp\">\n"
+"\t<tbody>\n"
+"\t\t<tr>\n"
+"\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-"
+"one\" href=\"[message:gurl]\">Bekijk groep</a></td>\n"
+"\t\t</tr>\n"
+"\t</tbody>\n"
+"</table>\n"
 
 #: modules/social_features/social_group/modules/social_group_request/config/install/message.template.approve_request_join_group.yml:0;0
 msgid ""
 "<p>Your membership request for the <a href=\"gurl]\">[message:gtitle]</a> "
 "group has been approved</p>\r\n"
 msgstr ""
+"<p> Je aanvraag om lid te worden van de groep <a href=\"gurl]\""
+">[message:gtitle]</a> is goedgekeurd</p>\n"
 
 #: modules/social_features/social_profile/modules/social_profile_fields/src/Form/SocialProfileFieldsFlushForm.php:131
 msgid ""
@@ -1157,7 +1248,7 @@ msgstr "@action met <b>Social Accounts</b>"
 
 #: modules/social_features/social_event/social_event.module:609
 msgid "@amount"
-msgstr ""
+msgstr "@amount"
 
 #: modules/social_features/social_like/social_like.module:35
 msgid "@amount like(s)"
@@ -1201,7 +1292,7 @@ msgstr ""
 
 #: translations.php:55
 msgid "@interval ago"
-msgstr ""
+msgstr "@interval geleden"
 
 #: translations.php:54
 msgid "@interval hence"
@@ -1283,7 +1374,7 @@ msgstr "@network login is mislukt. Token is niet juist."
 
 #: modules/social_features/social_event/modules/social_event_invite/src/Controller/UserEnrollInviteController.php:94
 msgid "@node"
-msgstr ""
+msgstr "@node"
 
 #: themes/socialbase/templates/profile/profile--profile--default.html.twig:129
 #: themes/socialblue/templates/profile/profile--profile--default--sky.html.twig:140
@@ -1324,8 +1415,9 @@ msgstr[1] "@usernames zijn al aangemeld, je kunt ze niet opnieuw toevoegen."
 msgid "@usernames is already invited or enrolled, you can't invite them again"
 msgid_plural ""
 "@usernames are already invited or enrolled, you can't invite them again"
-msgstr[0] ""
+msgstr[0] "@usernames is al uitgenodigd of aangemeld, je kan dit niet opnieuw doen"
 msgstr[1] ""
+"@usernames zijn al uitgenodigd of aangemeld, je kan dit niet opnieuw doen"
 
 #: modules/social_features/social_group/src/Element/SocialGroupEntityAutocomplete.php:74
 msgid "@usernames is already member of the group, you can't add them again"
@@ -1340,8 +1432,8 @@ msgstr[1] ""
 msgid "@users is already invited or enrolled, you can't invite them again"
 msgid_plural ""
 "@users are already invited or enrolled, you can't invite them again"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "@users is al uitgenodigd of aangemeld, je kan dit niet opnieuw doen"
+msgstr[1] "@users zijn al uitgenodigd of aangemeld, je kan dit niet opnieuw doen"
 
 #: translations.php:49;89
 msgid ""
@@ -1477,7 +1569,7 @@ msgstr "Iemand antwoordde op een reactie waarin ik vermeld word"
 
 #: modules/social_features/social_group/modules/social_group_request/config/install/message.template.request_to_join_a_group.yml:0
 msgid "A person requests membership to a group I manage"
-msgstr ""
+msgstr "Een gebruiker wil lid worden van een groep die ik manage"
 
 #: modules/social_features/social_landing_page/config/install/field.field.paragraph.block.field_block_reference_secondary.yml:0
 msgid ""
@@ -1552,7 +1644,7 @@ msgstr "Een gebruiker heeft een evenement aangemaakt in de community"
 
 #: modules/social_features/social_event/modules/social_event_invite/config/install/message.template.invite_event_enrollment.yml:0
 msgid "A user got an invite for an event"
-msgstr ""
+msgstr "Een gebruiker heeft een uitnodiging voor een evenement"
 
 #: modules/social_features/social_content_report/config/install/message.template.content_reported.yml:0
 msgid "A user reported inappropriate content"
@@ -1560,7 +1652,7 @@ msgstr "Een gebruiker heeft ongepaste inhoud gemeld"
 
 #: modules/social_features/social_activity/config/install/message.template.request_event_enrollment.yml:0
 msgid "A user request an enrollment for event"
-msgstr ""
+msgstr "Een gebruiker wil zich aanmelden voor een evenement"
 
 #: modules/social_features/social_private_message/config/install/message.template.create_private_message.yml:0
 msgid "A user sends a private message to me"
@@ -1628,7 +1720,7 @@ msgstr ""
 
 #: modules/social_features/social_event/modules/social_event_invite/social_event_invite.module:284
 msgid "Accept invite"
-msgstr ""
+msgstr "Uitnodiging accepteren"
 
 #: modules/social_features/social_group/modules/social_group_invite/social_group_invite.module:177
 #: modules/social_features/social_event/config/install/field.storage.event_enrollment.field_request_or_invite_status.yml:0
@@ -1679,7 +1771,7 @@ msgstr ""
 
 #: modules/social_features/social_event/social_event.permissions.yml:0
 msgid "Access to manage event enrollment requests."
-msgstr ""
+msgstr "Toegang om evenement inschrijvingen te managen."
 
 #: modules/social_features/social_event/modules/social_event_managers/src/Plugin/views/access/ManageByOrganizersOnlyAccess.php:9
 msgid "Access to the event manage all enrollment page."
@@ -1933,7 +2025,7 @@ msgstr ""
 
 #: modules/social_features/social_core/src/Form/InviteEmailBaseForm.php:83
 msgid "Add Recipients"
-msgstr ""
+msgstr "Ontvangers toevoegen"
 
 #: modules/social_features/social_comment/social_comment.module:81
 #: modules/social_features/social_comment/config/install/core.entity_form_display.comment.comment.default.yml:0
@@ -1963,7 +2055,7 @@ msgstr ""
 #: modules/social_features/social_event/modules/social_event_invite/src/Plugin/Block/SocialEventInviteLocalActionsBlock.php:111
 #: modules/social_features/social_group/modules/social_group_invite/src/Plugin/Block/SocialInviteLocalActionsBlock.php:136
 msgid "Add directly"
-msgstr ""
+msgstr "Direct toevoegen"
 
 #: modules/social_features/social_event/modules/social_event_invite/src/Plugin/Block/SocialEventInviteLocalActionsBlock.php:105
 #: modules/social_features/social_event/modules/social_event_managers/social_event_managers.links.action.yml:0
@@ -2436,6 +2528,8 @@ msgstr "Categorie splitsing toestaan."
 #: modules/social_features/social_event/modules/social_event_invite/config/schema/social_event_invite.schema.yml:0
 msgid "Allow event managers to invite users and external people."
 msgstr ""
+"Toestaan evenement managers bestaande leden en mensen buiten de community "
+"uit te nodigen."
 
 #: modules/social_features/social_comment_upload/config/schema/social_comment_upload.schema.yml:0
 msgid "Allow file uploads in comments"
@@ -2459,7 +2553,7 @@ msgstr ""
 
 #: modules/social_features/social_event/config/install/field.field.node.event.field_event_enroll_outside_group.yml:0
 msgid "Allow non-group members to enroll or request to enroll"
-msgstr ""
+msgstr "Aanmeldingen of inschrijvingen toestaan van niet-leden van een groep"
 
 #: modules/social_features/social_event/modules/social_event_max_enroll/social_event_max_enroll.info.yml:0
 msgid "Allow setting the maximum participant number for events."
@@ -2541,7 +2635,7 @@ msgstr "Leden toestaan zich in te schrijven voor een evenement"
 
 #: modules/social_features/social_event/modules/social_event_an_enroll/config/install/field.field.node.event.field_event_an_enroll.yml:0
 msgid "Allow users to enroll to this event without an account"
-msgstr ""
+msgstr "Aanmeldingen van gebruikers zonder account toestaan voor dit evenement"
 
 #: modules/social_features/social_group/modules/social_group_quickjoin/src/Form/SocialGroupQuickjoinSettings.php:46
 msgid "Allow users to join groups with a single click."
@@ -2549,7 +2643,7 @@ msgstr "Sta gebruikers toe om met een enkele klik lid te worden van groepen."
 
 #: modules/social_features/social_group/modules/social_group_request/social_group_request.module:50
 msgid "Allow users to request membership"
-msgstr ""
+msgstr "Gebruikers kunnen een aanvraag doen om lid te worden"
 
 #: modules/social_features/social_private_message/social_private_message.info.yml:0
 msgid "Allow users to send private messages to each other"
@@ -2742,7 +2836,7 @@ msgstr "Toepassen"
 
 #: modules/social_features/social_event/social_event.module:829
 msgid "Approve"
-msgstr ""
+msgstr "Goedkeuren"
 
 #: modules/social_features/social_group/modules/social_group_request/src/SocialGroupRequestConfigOverride.php:597
 msgid "Approve Membership"
@@ -2754,7 +2848,7 @@ msgstr ""
 
 #: modules/social_features/social_group/modules/social_group_request/src/Controller/GroupRequestController.php:91
 msgid "Approve membership request for the group @group_title"
-msgstr ""
+msgstr "Lidmaatschap goedkeuren voor de groep @group_title"
 
 #: modules/social_features/social_group/modules/social_group_request/config/install/message.template.approve_request_join_group.yml:0
 msgid "Approve request to join a group"
@@ -2762,7 +2856,7 @@ msgstr ""
 
 #: modules/social_features/social_event/config/install/field.storage.event_enrollment.field_request_or_invite_status.yml:0
 msgid "Approved"
-msgstr ""
+msgstr "Goedgekeurd"
 
 #: modules/social_features/social_group/modules/social_group_request/src/Plugin/ActivityContext/ApprovedRequestJoinGroupActivityContext.php:9
 msgid "Approved request to join a group activity context"
@@ -2778,6 +2872,8 @@ msgid ""
 "Are you sure to accept the invitation and join this group? You can leave "
 "this group at any time."
 msgstr ""
+"Weet je zeker dat je de uitnodiging wil accepteren en lid wil worden? Je kan "
+"de groep ten alle tijden verlaten."
 
 #: modules/custom/social_gdpr/social_gdpr.routing.yml:0
 #: modules/custom/social_gdpr/src/Form/DataPolicyRevisionRevertForm.php:33
@@ -2804,11 +2900,11 @@ msgstr[1] "Weet je zeker dat je de volgende %count leden wilt \"%action\"?"
 
 #: modules/social_features/social_group/modules/social_group_request/social_group_request.module:247
 msgid "Are you sure you want to approve the membership request for @name?"
-msgstr ""
+msgstr "Weet je zeker dat je het lidmaatschap wil goedkeuren voor @name?"
 
 #: modules/social_features/social_event/src/Form/EnrollRequestDeclineForm.php:117
 msgid "Are you sure you want to decline the enrollment request for @name?"
-msgstr ""
+msgstr "Weet je zeker dat je de aanmeldingen wil afwijzen voor @name?"
 
 #: modules/social_features/social_post/src/Form/PostTypeDeleteForm.php:18
 msgid "Are you sure you want to delete %name?"
@@ -2825,7 +2921,7 @@ msgstr ""
 
 #: modules/social_features/social_group/modules/social_group_request/src/Form/GroupRequestMembershipRejectForm.php:119
 msgid "Are you sure you want to reject the membership request for @name?"
-msgstr ""
+msgstr "Weet je zeker dat je het lidmaatschap wil afwijzen voor @name?"
 
 #: modules/social_features/social_group/social_group.module:614
 msgid "Are you sure you want to remove %name from %group?"
@@ -2836,6 +2932,8 @@ msgid ""
 "Are you sure you want to send an invitation to all @questionType listed "
 "below?"
 msgstr ""
+"Weet je zeker dat je een uitnodiging wilt sturen naar iedereen @questionType "
+"die je hierbeneden ziet?"
 
 #: modules/social_features/social_event/modules/social_event_managers/src/Form/SocialEventManagersViewsBulkOperationsConfirmAction.php:35
 msgid "Are you sure you want to send your email to the following enrollee?"
@@ -2968,12 +3066,12 @@ msgstr "Beschikbare inhoud zichtbaarheid"
 #: modules/social_features/social_event/modules/social_event_invite/src/Form/EnrollInviteEmailForm.php:141
 #: modules/social_features/social_event/modules/social_event_invite/src/Form/EnrollInviteUserForm.php:94
 msgid "Back to event"
-msgstr ""
+msgstr "Terug naar het evenement"
 
 #: modules/social_features/social_group/modules/social_group_invite/social_group_invite.module:138
 #: modules/social_features/social_group/modules/social_group_request/social_group_request.module:369
 msgid "Back to group"
-msgstr ""
+msgstr "Terug naar de groep"
 
 #: modules/custom/social_queue_storage/config/install/message.template.background_process_finished.yml:0
 msgid "Background process finished"
@@ -3054,6 +3152,9 @@ msgid ""
 "type, the outstanding invites in question <em>are cancelled</em>. Invitees "
 "will no longer be able to use their invite link."
 msgstr ""
+"Wees gewaarschuwd, als je uitnodigingen uitschakelt voor een specifieke "
+"groep type worden de bestaande uitnodigingen <em>geannuleerd</em>. "
+"Genodigden kunnen niet langer meer de link naar de uitnodiging gebruiken."
 
 #: modules/social_features/social_search/src/Plugin/views/filter/SocialDate.php:77
 #: modules/social_features/social_user/social_user.module:124
@@ -3220,7 +3321,7 @@ msgstr "Aanmelding annuleren"
 
 #: modules/social_features/social_event/modules/social_event_invite/social_event_invite.module:259
 msgid "Cancel invite"
-msgstr ""
+msgstr "Annuleer uitnodiging"
 
 #: themes/socialbase/templates/group/group--hero.html.twig:106
 #: themes/socialblue/templates/group/group--statistic.html.twig:44
@@ -3386,7 +3487,7 @@ msgstr ""
 
 #: modules/social_features/social_group/modules/social_group_request/config/install/group.content_type.group_content_type_c8bae2527294c.yml:0
 msgid "Closed group: Group membership request"
-msgstr ""
+msgstr "Gesloten groep: Lidmaatschap aanvraag"
 
 #: translations.php:94
 msgid "Collaboration Settings"
@@ -3574,7 +3675,7 @@ msgstr "Bevestig actie"
 
 #: modules/social_features/social_event/modules/social_event_invite/social_event_invite.routing.yml:0
 msgid "Confirm invite"
-msgstr ""
+msgstr "Bevestig uitnodiging"
 
 #: modules/custom/social_auth_twitter/src/Form/TwitterAuthSettingsForm.php:42
 msgid "Consumer Key"
@@ -4227,11 +4328,11 @@ msgstr ""
 
 #: modules/social_features/social_event/src/Controller/SocialEventController.php:101
 msgid "Decline enrollment request for the event @event_title"
-msgstr ""
+msgstr "Aanmelding afwijzen voor het evenement @event_title"
 
 #: modules/social_features/social_event/modules/social_event_invite/social_event_invite.module:291
 msgid "Decline invite"
-msgstr ""
+msgstr "Uitnodiging afwijzen"
 
 #: modules/social_features/social_group/modules/social_group_invite/social_group_invite.module:181
 #: modules/social_features/social_event/config/install/field.storage.event_enrollment.field_request_or_invite_status.yml:0
@@ -4721,6 +4822,9 @@ msgid ""
 "addresses. Please make sure the email address is entered correctly and try "
 "again."
 msgstr ""
+"Vanwege privacy-overwegingen wordt de identiteit van geregistreerde e-"
+"mailadressen niet bekendgemaakt. Zorg ervoor dat je het juiste e-mailadres "
+"hebt ingevoerd en probeer het nogmaals."
 
 #: themes/socialbase/templates/profile/profile--profile--default.html.twig:84
 #: themes/socialblue/theme-settings.php:85
@@ -4897,7 +5001,7 @@ msgstr "Anonieme gebruikers mogen zich aanmelden voor publieke evenementen"
 
 #: modules/social_features/social_event/modules/social_event_invite/src/Form/EventInviteSettingsForm.php:49
 msgid "Enable event invite per group type"
-msgstr ""
+msgstr "Evenement uitnodiging per groep type inschakelen"
 
 #: modules/social_features/social_event/social_event.module:282
 msgid "Enable events for on the user profiles."
@@ -4905,7 +5009,7 @@ msgstr ""
 
 #: modules/social_features/social_event/modules/social_event_invite/src/Form/EventInviteSettingsForm.php:36
 msgid "Enable invite enrollment to events"
-msgstr ""
+msgstr "Uitnodiging voor evenementen inschakelen"
 
 #: modules/social_features/social_event/modules/social_event_max_enroll/src/Form/EventMaxEnrollSettingsForm.php:37
 msgid "Enable maximum number of event enrollments"
@@ -4984,6 +5088,8 @@ msgid ""
 "Enabling this feature provides the possibility to let event managers to "
 "invite people to their events."
 msgstr ""
+"Het inschakelen van deze feature geeft evenement managers de mogelijkheid om "
+"mensen uit te nodigen voor hun evenement."
 
 #: modules/social_features/social_profile/modules/social_profile_privacy/social_profile_privacy.module:34
 msgid ""
@@ -5014,7 +5120,7 @@ msgstr "Aanmelden"
 #: modules/social_features/social_event/config/install/field.field.node.event.field_enroll_method.yml:0
 #: modules/social_features/social_event/config/install/views.view.upcoming_events.yml:0
 msgid "Enroll Method"
-msgstr ""
+msgstr "Inschrijfmethode"
 
 #: modules/social_features/social_event/src/Plugin/Block/EnrollActionBlock.php:14
 msgid "Enroll action block"
@@ -5290,19 +5396,19 @@ msgstr ""
 #: modules/social_features/social_event/modules/social_event_invite/social_event_invite.links.menu.yml:0
 #: modules/social_features/social_event/modules/social_event_invite/social_event_invite.routing.yml:0
 msgid "Event invite settings"
-msgstr ""
+msgstr "Evenement uitnodiging instellingen"
 
 #: modules/social_features/social_event/modules/social_event_invite/src/Plugin/Menu/LocalTask/EventInviteLocalTask.php:69
 msgid "Event invites"
-msgstr ""
+msgstr "Evenement uitnodigingen"
 
 #: modules/social_features/social_event/modules/social_event_invite/src/Plugin/Menu/LocalTask/EventInviteLocalTask.php:66
 msgid "Event invites (@count)"
-msgstr ""
+msgstr "Evenement uitnodigingen (@count)"
 
 #: modules/social_features/social_event/modules/social_event_invite/social_event_invite.tokens.inc:26
 msgid "Event link with login page"
-msgstr ""
+msgstr "Link naar evenement met login"
 
 #: themes/socialbase/templates/node/event/node--event--full.html.twig:47
 #: themes/socialblue/templates/node/event/node--event--hero--sky.html.twig:33
@@ -5771,7 +5877,7 @@ msgstr ""
 
 #: modules/social_features/social_event/modules/social_event_invite/config/schema/social_event_invite.schema.yml:0
 msgid "For which group type the invite feature is turned on."
-msgstr ""
+msgstr "Voor welke groep type de uitnodiging feature is aangezet."
 
 #: modules/social_features/social_swiftmail/src/Plugin/Mail/SocialSwiftMailer.php:9
 msgid "Forces the given body text to be HTML."
@@ -6219,7 +6325,7 @@ msgstr ""
 
 #: modules/social_features/social_event/modules/social_event_invite/src/Form/EventInviteSettingsForm.php:71
 msgid "Helper"
-msgstr ""
+msgstr "Hulpveld"
 
 #: modules/custom/social_tour/config/install/tour.tour.social_profile.yml:0
 msgid ""
@@ -6295,6 +6401,18 @@ msgid ""
 "\t</tbody>\r\n"
 "</table>"
 msgstr ""
+"Hi,<br /><br /> Graag zou ik je willen uitnodigen voor mijn groep "
+"[group:title] op [site:name].<br /><br />Met vriendelijke goret,<br "
+"/>[current-user:display-name]<br /><br /><table class=\"btn-wrapp\">\n"
+"\t<tbody>\n"
+"\t\t<tr>\n"
+"\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-"
+"one\" href=\"[group_content:register_link]\">Bekijk groep</a></td>\n"
+"\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-"
+"one\" href=\"[site:url]\">Over [site:name]</a></td>\n"
+"\t\t</tr>\n"
+"\t</tbody>\n"
+"</table>"
 
 #: modules/social_features/social_group/modules/social_group_invite/config/optional/group.content_type.closed_group-group_invitation.yml:0
 #: modules/social_features/social_group/modules/social_group_invite/config/optional/group.content_type.flexible_group-group_invitation.yml:0
@@ -6315,6 +6433,18 @@ msgid ""
 "\t</tbody>\r\n"
 "</table>"
 msgstr ""
+"Hi,<br /><br />Graag zou ik je willen uitnodigen voor mijn groep "
+"[group:title] op [site:name].<br /><br />Met vriendelijke groet,<br "
+"/>[current-user:display-name]<br /><br /><table class=\"btn-wrapp\">\n"
+"\t<tbody>\n"
+"\t\t<tr>\n"
+"\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-"
+"one\" href=\"[group_content:my_invitations_link]\">Bekijk groep</a></td>\n"
+"\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-"
+"one\" href=\"[site:url]\">Over [site:name]</a></td>\n"
+"\t\t</tr>\n"
+"\t</tbody>\n"
+"</table>"
 
 #: modules/social_features/social_comment/src/SocialCommentBreadcrumbBuilder.php:54;55
 #: modules/social_features/social_core/social_core.install:285
@@ -6504,7 +6634,7 @@ msgstr "Introductie"
 
 #: modules/social_features/social_event/config/install/field.storage.event_enrollment.field_request_or_invite_status.yml:0
 msgid "Invalid or expired"
-msgstr ""
+msgstr "Onjuist of verlopen"
 
 #: modules/custom/group_core_comments/src/Plugin/Field/FieldFormatter/CommentGroupContentFormatter.php:89
 #: modules/social_features/social_group/social_group.module:286;295
@@ -6513,7 +6643,7 @@ msgstr "Alleen op uitnodiging"
 
 #: modules/social_features/social_event/modules/social_event_invite/src/Form/EnrollInviteConfirmForm.php:186
 msgid "Invitation recipients: <br /> @recipients_list"
-msgstr ""
+msgstr "Genodigden: <br /> @recipients_list"
 
 #: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_invitations.yml:0
 msgid "Invitation status"
@@ -6526,35 +6656,35 @@ msgstr ""
 #: modules/social_features/social_event/modules/social_event_invite/src/Plugin/Block/SocialEventInviteLocalActionsBlock.php:115
 #: modules/social_features/social_group/modules/social_group_invite/src/Plugin/Block/SocialInviteLocalActionsBlock.php:140
 msgid "Invite by email"
-msgstr ""
+msgstr "Uitnodigen via email"
 
 #: modules/social_features/social_event/modules/social_event_invite/config/install/views.view.user_event_invites.yml:0
 msgid "Invite date"
-msgstr ""
+msgstr "Datum van uitnodigen"
 
 #: modules/social_features/social_event/modules/social_event_invite/config/install/message.template.invite_event_enrollment.yml:0
 msgid "Invite event enrollment"
-msgstr ""
+msgstr "Evenement uitnodigingen"
 
 #: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.module:75
 msgid "Invite only"
-msgstr ""
+msgstr "Alleen op uitnodiging"
 
 #: modules/social_features/social_event/modules/social_event_invite/social_event_invite.routing.yml:0;0
 msgid "Invite people"
-msgstr ""
+msgstr "Mensen uitnodigen"
 
 #: modules/social_features/social_event/modules/social_event_invite/social_event_invite.module:46
 msgid "Invite sent to %mail"
-msgstr ""
+msgstr "Uitnodiging verzonden naar %mail"
 
 #: modules/social_features/social_event/modules/social_event_invite/social_event_invite.module:52
 msgid "Invite sent to %user"
-msgstr ""
+msgstr "Uitnodiging verzonden naar %user"
 
 #: modules/social_features/social_event/social_event.module:82
 msgid "Invite-only"
-msgstr ""
+msgstr "Alleen op uitnodiging"
 
 #: translations.php:39
 #: modules/social_features/social_event/config/install/field.storage.node.field_enroll_method.yml:0
@@ -6562,6 +6692,8 @@ msgid ""
 "Invite-only - users can only enroll for this event if they are added/invited "
 "by event organisers"
 msgstr ""
+"Alleen op uitnodiging - gebruikers kunnen alleen toegevoegd of uitgenodigd "
+"worden door de organisatoren van het evenement"
 
 #: translations.php:41
 #: modules/social_features/social_group/social_group.module:752
@@ -6569,10 +6701,12 @@ msgid ""
 "Invite-only - users can only join this group if they are added/invited by "
 "group managers"
 msgstr ""
+"Alleen op uitnodiging - gebruikers kunnen alleen toegevoegd of uitgenodigd "
+"worden door de groep managers"
 
 #: modules/social_features/social_event/config/install/field.storage.event_enrollment.field_request_or_invite_status.yml:0
 msgid "Invited"
-msgstr ""
+msgstr "Uitgenodigd"
 
 #: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_user_invitations.yml:0
 msgid "Invited by"
@@ -6594,7 +6728,7 @@ msgstr ""
 
 #: modules/social_features/social_core/social_core.module:121;144;1
 msgid "Invites"
-msgstr ""
+msgstr "Uitnodigingen"
 
 #: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_user_invitations.yml:0
 msgid "Invites Overview"
@@ -6602,11 +6736,11 @@ msgstr ""
 
 #: modules/social_features/social_event/modules/social_event_invite/src/SocialEventInviteBulkHelper.php:159;179
 msgid "Invites have been successfully sent."
-msgstr ""
+msgstr "Uitnodigingen zijn succesvol verzonden."
 
 #: modules/social_features/social_event/modules/social_event_invite/config/install/views.view.user_event_invites.yml:0
 msgid "Invites overview"
-msgstr ""
+msgstr "Uitnodigingen overzicht"
 
 #: modules/custom/social_queue_storage/src/Entity/QueueStorageEntity.php:221
 msgid ""
@@ -7092,7 +7226,7 @@ msgstr ""
 
 #: modules/social_features/social_event/social_event.permissions.yml:0
 msgid "Manage Event Enrollment Requests"
-msgstr ""
+msgstr "Beheer aanmeldingen"
 
 #: modules/social_features/social_event/modules/social_event_managers/social_event_managers.permissions.yml:0
 msgid "Manage Everything Enrollments"
@@ -7116,11 +7250,11 @@ msgstr ""
 
 #: modules/social_features/social_event/modules/social_event_invite/config/install/views.view.event_manage_enrollment_invites.yml:0
 msgid "Manage enrollment invites"
-msgstr ""
+msgstr "Beheer inschrijvingen"
 
 #: modules/social_features/social_event/config/install/views.view.event_manage_enrollment_requests.yml:0
 msgid "Manage enrollment requests"
-msgstr ""
+msgstr "Beheer aanmeldingen"
 
 #: modules/social_features/social_event/modules/social_event_managers/config/install/views.view.event_manage_enrollments.yml:0;0
 msgid "Manage enrollments"
@@ -7128,11 +7262,11 @@ msgstr "Aanmeldingen beheren"
 
 #: modules/social_features/social_event/modules/social_event_invite/config/install/views.view.event_manage_enrollment_invites.yml:0
 msgid "Manage event enrollment invites"
-msgstr ""
+msgstr "Beheer uitnodigingen"
 
 #: modules/social_features/social_event/config/install/views.view.event_manage_enrollment_requests.yml:0
 msgid "Manage event enrollment requests"
-msgstr ""
+msgstr "Beheer aanmeldingen"
 
 #: modules/social_features/social_post/social_post.links.menu.yml:0
 msgid "Manage form and displays settings of posts"
@@ -7145,7 +7279,7 @@ msgstr "Leden beheren"
 #: modules/social_features/social_event/config/install/views.view.event_manage_enrollment_requests.yml:0
 #: modules/social_features/social_event/modules/social_event_invite/config/install/views.view.event_manage_enrollment_invites.yml:0
 msgid "Manage requests"
-msgstr ""
+msgstr "Beheer aanmeldingen"
 
 #: modules/social_features/social_user/config/install/views.view.user_admin_people.yml:0
 msgid "Manage user accounts, roles, and permissions."
@@ -7301,15 +7435,15 @@ msgstr ""
 
 #: modules/social_features/social_group/modules/social_group_request/social_group_request.module:92
 msgid "Membership request approved"
-msgstr ""
+msgstr "Aanvraag goedgekeurd"
 
 #: modules/social_features/social_group/modules/social_group_request/src/Form/GroupRequestMembershipRejectForm.php:164
 msgid "Membership request rejected"
-msgstr ""
+msgstr "Aanvraag afgewezen"
 
 #: modules/social_features/social_group/modules/social_group_request/src/SocialGroupRequestConfigOverride.php:233
 msgid "Membership requests"
-msgstr ""
+msgstr "Lidmaatschap aanvragen"
 
 #: modules/social_features/social_group/modules/social_group_request/src/Plugin/Block/SocialGroupRequestMembershipNotification.php:18
 #: modules/social_features/social_group/modules/social_group_request/config/optional/block.block.membershiprequestsnotification.yml:0
@@ -7449,7 +7583,7 @@ msgstr ""
 
 #: modules/social_features/social_activity/src/Plugin/views/display/ModeBlock.php:14;14
 msgid "Mode Block"
-msgstr ""
+msgstr "Mode Blok"
 
 #: modules/social_features/social_embed/social_embed.info.yml:0
 msgid ""
@@ -7756,7 +7890,7 @@ msgstr "Geen leden in deze groepen"
 
 #: modules/social_features/social_event/modules/social_event_invite/config/install/views.view.event_manage_enrollment_invites.yml:0
 msgid "No one has been invited for this event yet."
-msgstr ""
+msgstr "Niemand is nog uitgenodigd voor dit evenement."
 
 #: modules/social_features/social_event/config/install/views.view.event_enrollments.yml:0
 #: modules/social_features/social_event/modules/social_event_managers/config/install/views.view.event_manage_enrollments.yml:0
@@ -7769,7 +7903,7 @@ msgstr ""
 
 #: modules/social_features/social_event/config/install/views.view.event_manage_enrollment_requests.yml:0
 msgid "No one has requested to be enrolled for this event yet."
-msgstr ""
+msgstr "Niemand heeft zich ingeschreven voor dit evenement."
 
 #: modules/social_features/social_user/config/install/views.view.user_admin_people.yml:0
 msgid "No people available."
@@ -7813,7 +7947,7 @@ msgstr "Geen aankomende evenementen"
 
 #: modules/social_features/social_event/modules/social_event_invite/src/Plugin/Block/SocialEventInviteLocalActionsBlock.php:17
 msgid "Node"
-msgstr ""
+msgstr "Node"
 
 #: modules/social_features/social_search/modules/social_search_autocomplete/config/install/views.view.search_all_autocomplete.yml:0
 msgid "Node Path"
@@ -8111,21 +8245,25 @@ msgstr "Open of download bestand"
 
 #: modules/social_features/social_event/social_event.module:76
 msgid "Open to enroll"
-msgstr ""
+msgstr "Open inschrijving"
 
 #: translations.php:37
 #: modules/social_features/social_event/config/install/field.storage.node.field_enroll_method.yml:0
 msgid "Open to enroll - users can enroll for this event without approval"
 msgstr ""
+"Open inschrijving - gebruikers kunnen zich zonder goedkeuring aanmelden voor "
+"dit evenement"
 
 #: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.module:78
 msgid "Open to join"
-msgstr ""
+msgstr "Open aanmelding"
 
 #: translations.php:42
 #: modules/social_features/social_group/social_group.module:755
 msgid "Open to join - users can join this group without approval"
 msgstr ""
+"Open aanmelding - gebruikers kunnen zonder goedkeuring lid worden van deze "
+"groep"
 
 #: themes/socialblue/theme-settings.php:37
 msgid "Opensocial settings"
@@ -8356,7 +8494,7 @@ msgstr ""
 #: modules/social_features/social_event/src/Form/EnrollActionForm.php:258
 #: modules/social_features/social_event/config/install/field.storage.event_enrollment.field_request_or_invite_status.yml:0
 msgid "Pending"
-msgstr ""
+msgstr "In afwachting"
 
 #: modules/social_features/social_group/modules/social_group_invite/social_group_invite.module:173
 #: modules/social_features/social_event/config/install/field.storage.event_enrollment.field_request_or_invite_status.yml:0
@@ -8602,7 +8740,7 @@ msgstr ""
 
 #: modules/social_features/social_event/modules/social_event_invite/src/Form/EnrollInviteConfirmForm.php:226;240
 msgid "Preparing to send invites..."
-msgstr ""
+msgstr "We zijn de uitnodigingen aan het voorbereiden..."
 
 #: modules/social_features/social_post/src/Controller/PostCommentController.php:21
 msgid "Preview"
@@ -8829,7 +8967,7 @@ msgstr ""
 
 #: modules/social_features/social_profile/social_profile.views.inc:16
 msgid "Provide a correct sort alias"
-msgstr ""
+msgstr "Gebruik een correcte sorteer optie"
 
 #: modules/social_features/social_content_report/social_content_report.views.inc:17
 msgid "Provide a link to close the report"
@@ -8927,7 +9065,7 @@ msgstr ""
 
 #: modules/social_features/social_event/modules/social_event_invite/social_event_invite.info.yml:0
 msgid "Provides ability to invite enroll to an event."
-msgstr ""
+msgstr "Geeft de mogelijkheid om mensen uit te nodigen voor een evenement."
 
 #: modules/social_features/social_profile/modules/social_profile_privacy/social_profile_privacy.info.yml:0
 msgid "Provides ability to set visibility of profile fields"
@@ -9170,7 +9308,7 @@ msgstr "Onlangs aangesloten groepen"
 #: modules/social_features/social_event/modules/social_event_invite/social_event_invite.module:116
 #: modules/social_features/social_event/modules/social_event_invite/config/install/views.view.event_manage_enrollment_invites.yml:0
 msgid "Recipient"
-msgstr ""
+msgstr "Ontvanger"
 
 #: modules/social_features/social_post/config/install/field.field.post.post.field_recipient_group.yml:0
 #: modules/social_features/social_post/modules/social_post_photo/config/install/field.field.post.photo.field_recipient_group.yml:0
@@ -9241,7 +9379,7 @@ msgstr "Vernieuw interval in seconden"
 
 #: modules/social_features/social_event/modules/social_event_invite/social_event_invite.tokens.inc:21
 msgid "Register Link"
-msgstr ""
+msgstr "Registratie link"
 
 #: modules/social_features/social_search/src/Plugin/views/filter/SocialDate.php:108
 #: modules/social_features/social_search/config/install/views.view.search_users.yml:0
@@ -9260,7 +9398,7 @@ msgstr ""
 
 #: modules/social_features/social_group/modules/social_group_request/src/Controller/GroupRequestController.php:98
 msgid "Reject membership request for the group @group_title"
-msgstr ""
+msgstr "Lidmaatschap afwijzen voor de groep @group_title"
 
 #: modules/social_features/social_activity/config/install/field.field.message.create_comment_author_node_post.field_message_related_object.yml:0
 #: modules/social_features/social_activity/config/install/field.field.message.create_comment_community_node.field_message_related_object.yml:0
@@ -9445,7 +9583,7 @@ msgstr "Rapporten"
 
 #: modules/social_features/social_activity/config/install/message.template.event_request_approved.yml:0
 msgid "Request approved event enrollment"
-msgstr ""
+msgstr "Aanmelding voor evenement geaccepteerd"
 
 #: modules/social_features/social_group/modules/social_group_request/src/SocialGroupRequestConfigOverride.php:388
 msgid "Request date"
@@ -9453,31 +9591,31 @@ msgstr ""
 
 #: modules/social_features/social_event/src/Controller/EnrollRequestDialogController.php:111
 msgid "Request enrollment in @label Event"
-msgstr ""
+msgstr "Aanmelding in @label Evenement"
 
 #: modules/social_features/social_activity/config/install/message.template.request_event_enrollment.yml:0
 msgid "Request event enrollment"
-msgstr ""
+msgstr "Aanmelding voor evenement"
 
 #: modules/social_features/social_group/modules/social_group_request/social_group_request.group.permissions.yml:0
 msgid "Request group membership"
-msgstr ""
+msgstr "Lidmaatschap aanvragen voor een groep"
 
 #: modules/social_features/social_group/modules/social_group_request/src/SocialGroupRequestConfigOverride.php:116
 msgid "Request membership"
-msgstr ""
+msgstr "Lidmaatschap aanvragen"
 
 #: modules/social_features/social_event/config/install/field.field.event_enrollment.event_enrollment.field_request_message.yml:0
 msgid "Request message"
-msgstr ""
+msgstr "Bericht bij het aanmelden"
 
 #: modules/custom/group_core_comments/src/Plugin/Field/FieldFormatter/CommentGroupContentFormatter.php:81
 msgid "Request only"
-msgstr ""
+msgstr "Alleen op aanmelding"
 
 #: modules/social_features/social_event/config/install/field.field.event_enrollment.event_enrollment.field_request_or_invite_status.yml:0
 msgid "Request or invite status"
-msgstr ""
+msgstr "Status van aanmelding of uitnodiging"
 
 #: modules/social_features/social_group/modules/social_group_request/social_group_request.tokens.inc:22
 msgid "Request page link."
@@ -9499,19 +9637,23 @@ msgstr ""
 #: modules/social_features/social_event/src/Form/EnrollActionForm.php:211;226;280
 #: modules/social_features/social_event/src/Form/EnrollRequestModalForm.php:94
 msgid "Request to enroll"
-msgstr ""
+msgstr "Aanmelding"
 
 #: modules/social_features/social_event/config/install/field.storage.node.field_enroll_method.yml:0
 msgid ""
 "Request to enroll - users can \"request to enroll\" for this event which "
 "event organisers approve/decline"
 msgstr ""
+"Aanmelden - gebruikers moeten zich aanmelden voor dit evenement en de "
+"organisatoren moeten deze aanmeldingen eerst accepteren/afwijzen"
 
 #: translations.php:38
 msgid ""
 "Request to enroll - users can 'request to enroll' for this event which event "
 "organisers approve/decline"
 msgstr ""
+"Aanmelden - gebruikers moeten zich aanmelden voor dit evenement en de "
+"organisatoren moeten deze aanmeldingen eerst accepteren/afwijzen"
 
 #: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.module:81
 #: modules/social_features/social_group/modules/social_group_request/src/Controller/GroupRequestController.php:141;157
@@ -9526,6 +9668,8 @@ msgid ""
 "Request to join - users can \"request to join\" this group which group "
 "managers approve/decline"
 msgstr ""
+"Aanmelden - gebruikers moeten zich aanmelden voor deze groep en de groep "
+"managers moeten deze aanmeldingen accepteren/afwijzen"
 
 #: modules/social_features/social_group/modules/social_group_request/config/install/message.template.request_to_join_a_group.yml:0
 msgid "Request to join a group"
@@ -9533,7 +9677,7 @@ msgstr ""
 
 #: modules/social_features/social_event/config/install/views.view.event_manage_enrollment_requests.yml:0
 msgid "Requested on"
-msgstr ""
+msgstr "Aangevraagd op"
 
 #: config/install/views.view.content.yml:0
 #: modules/social_features/social_activity/config/install/views.view.activity_stream_notifications.yml:0
@@ -9638,7 +9782,7 @@ msgstr ""
 
 #: modules/social_features/social_event/modules/social_event_invite/src/Form/EventInviteSettingsForm.php:81
 msgid "Save configuration"
-msgstr ""
+msgstr "Instellingen opslaan"
 
 #: modules/custom/activity_creator/src/Form/ActivityForm.php:39
 msgid "Saved the %label Activity."
@@ -9915,6 +10059,8 @@ msgstr "Selecteer de velden die je wilt tonen op het profiel."
 msgid ""
 "Select the group types for which you want to enable the event invite feature."
 msgstr ""
+"Selecteer de groep types waar je de feature evenement uitnodigingen wil "
+"aanzetten."
 
 #: modules/custom/social_language/social_language.module:36
 msgid "Select the language you want to use this site in."
@@ -9973,7 +10119,7 @@ msgstr "Versturen"
 
 #: modules/social_features/social_core/src/Form/InviteEmailBaseForm.php:91
 msgid "Send Invite(s)"
-msgstr ""
+msgstr "Uitnodiging(en) verzenden"
 
 #: modules/social_features/social_group/modules/social_group_welcome_message/social_group_welcome_message.module:22
 msgid "Send a welcome message to new group members"
@@ -10002,7 +10148,7 @@ msgstr "Stuur je case in"
 #: modules/social_features/social_core/src/Form/InviteUserBaseForm.php:83
 #: modules/social_features/social_group/modules/social_group_invite/src/Form/SocialBulkGroupInvitation.php:210
 msgid "Send invite(s)"
-msgstr ""
+msgstr "Uitnodiging(en) verzenden"
 
 #: translations.php:34
 msgid "Send mail"
@@ -10023,7 +10169,7 @@ msgstr ""
 
 #: modules/social_features/social_event/modules/social_event_invite/src/Form/EnrollInviteConfirmForm.php:225;239
 msgid "Sending invites..."
-msgstr ""
+msgstr "Uitnodigingen worden verzonden..."
 
 #: translations.php:36
 msgid "Sent email to %recipient"
@@ -10061,7 +10207,7 @@ msgstr ""
 
 #: modules/social_features/social_event/modules/social_event_max_enroll/config/install/field.field.node.event.field_event_max_enroll.yml:0
 msgid "Set a limit to number of enrollees"
-msgstr ""
+msgstr "Configureer een maximaal aantal aanmeldingen"
 
 #: modules/custom/alternative_frontpage/alternative_frontpage.links.menu.yml:0
 msgid "Set an alternative frontpage for authenticated users."
@@ -10126,7 +10272,7 @@ msgstr ""
 
 #: modules/social_features/social_event/modules/social_event_invite/social_event_invite.links.menu.yml:0
 msgid "Settings for Social Event Invite module."
-msgstr ""
+msgstr "Instellingen voor de Social Event Invite module."
 
 #: modules/social_features/social_event/modules/social_event_max_enroll/social_event_max_enroll.links.menu.yml:0
 msgid "Settings for Social Event Max Enroll module."
@@ -10245,7 +10391,7 @@ msgstr ""
 
 #: modules/social_features/social_event/modules/social_event_invite/config/install/views.view.user_event_invites.yml:0
 msgid "Shows invites to events for a user."
-msgstr ""
+msgstr "Laat uitnodigingen voor evenementen zien aan een gebruiker."
 
 #: modules/social_features/social_user/social_user.module:669
 msgid "Sign Up"
@@ -10692,20 +10838,20 @@ msgstr "Evenement aanmeldingen Export"
 
 #: modules/social_features/social_event/modules/social_event_invite/social_event_invite.tokens.inc:16
 msgid "Social Event Invite"
-msgstr ""
+msgstr "Social Evenement Uitnodigingen"
 
 #: modules/social_features/social_event/modules/social_event_invite/social_event_invite.info.yml:0
 msgid "Social Event Invite Enrolments"
-msgstr ""
+msgstr "Social Evenement uitnodigingen"
 
 #: modules/social_features/social_event/modules/social_event_invite/config/schema/social_event_invite.schema.yml:0
 msgid "Social Event Invite Settings"
-msgstr ""
+msgstr "Instellingen voor Social Event Invite"
 
 #: modules/social_features/social_event/modules/social_event_invite/src/Plugin/Block/SocialEventInviteLocalActionsBlock.php:17
 #: modules/social_features/social_event/modules/social_event_invite/config/optional/block.block.socialeventinviteblock.yml:0
 msgid "Social Event Invite block"
-msgstr ""
+msgstr "Social Event Invite blok"
 
 #: modules/social_features/social_event/modules/social_event_managers/config/schema/social_event_managers.schema.yml:0
 msgid "Social Event Managers Settings"
@@ -10791,7 +10937,7 @@ msgstr ""
 
 #: modules/social_features/social_group/modules/social_group_invite/config/schema/social_group_invite.schema.yml:0
 msgid "Social Group Invite Settings"
-msgstr ""
+msgstr "Instellingen voor Social Group Invite"
 
 #: modules/social_features/social_group/modules/social_group_members_export/social_group_members_export.info.yml:0
 msgid "Social Group Members Export"
@@ -11214,7 +11360,7 @@ msgstr "Sorteer op"
 
 #: modules/social_features/social_profile/social_profile.views.inc:13;15
 msgid "Sort by profile entity"
-msgstr ""
+msgstr "Sorteer op profielen"
 
 #: modules/social_features/social_group/config/install/views.view.group_topics.yml:0
 #: modules/social_features/social_topic/config/install/views.view.latest_topics.yml:0
@@ -11651,7 +11797,7 @@ msgstr ""
 
 #: modules/social_features/social_event/src/Form/EnrollRequestDeclineForm.php:160
 msgid "The enrollment request of @name has been declined."
-msgstr ""
+msgstr "De aanmeldingen van @name is afgewezen."
 
 #: translations.php:44
 #: modules/social_features/social_user/social_user.module:260
@@ -11659,6 +11805,8 @@ msgid ""
 "The entered username already exists or has an incorrect format. Please try "
 "again."
 msgstr ""
+"De gebruikersnaam die je hebt ingevoerd bestaat al of heeft een verkeerd "
+"formaat. Probeer het gerust opnieuw."
 
 #: modules/custom/activity_logger/activity_logger.module:68
 #: modules/custom/activity_logger/config/schema/activity_logger.schema.yml:0
@@ -11683,12 +11831,12 @@ msgstr ""
 
 #: modules/social_features/social_event/src/Controller/UpdateEnrollRequestController.php:85
 msgid "The event enrollment request has been approved."
-msgstr ""
+msgstr "De aanmelding voor het evenement is goedgekeurd."
 
 #: modules/social_features/social_event/modules/social_event_invite/src/Controller/CancelEnrollInviteController.php:79
 #: modules/social_features/social_event/src/Controller/UpdateEnrollRequestController.php:91
 msgid "The event enrollment request has been declined."
-msgstr ""
+msgstr "De aanmelding voor het evenement is afgewezen."
 
 #: modules/custom/social_auth_extra/src/UserManager.php:155
 msgid "The file @filename could not downloaded."
@@ -11719,16 +11867,16 @@ msgstr ""
 
 #: modules/social_features/social_event/modules/social_event_invite/config/schema/social_event_invite.schema.yml:0
 msgid "The invite email message body."
-msgstr ""
+msgstr "De inhoud van de uitnodiging per e-mail."
 
 #: modules/social_features/social_event/modules/social_event_invite/config/schema/social_event_invite.schema.yml:0
 msgid "The invite email subject."
-msgstr ""
+msgstr "Het onderwerp van de uitnodiging per e-mail."
 
 #: modules/social_features/social_event/modules/social_event_invite/config/schema/social_event_invite.schema.yml:0
 #: modules/social_features/social_group/modules/social_group_invite/config/schema/social_group_invite.schema.yml:0
 msgid "The invite helper text."
-msgstr ""
+msgstr "De uitnodiging beschrijvings tekst."
 
 #: modules/custom/activity_creator/src/Entity/Activity.php:178
 msgid "The language code for the Activity entity."
@@ -11858,7 +12006,7 @@ msgstr ""
 
 #: modules/social_features/social_event/modules/social_event_invite/social_event_invite.module:117
 msgid "The recipient of an event invite."
-msgstr ""
+msgstr "De ontvanger van een uitnodiging."
 
 #: modules/custom/activity_creator/activity_creator.tokens.inc:22
 msgid "The recipient user entity display name."
@@ -11886,7 +12034,7 @@ msgstr "De gerelateerde node titel."
 
 #: modules/social_features/social_activity/config/install/message.template.event_request_approved.yml:0
 msgid "The request to enroll to an enrollment is approved"
-msgstr ""
+msgstr "De aanmelding voor het evenement is goedgekeurd"
 
 #: translations.php:109
 msgid "The role of 1 selected member has been changed successfully"
@@ -12059,7 +12207,7 @@ msgstr ""
 
 #: modules/social_features/social_event/social_event.module:610
 msgid "There @link to enroll in this event."
-msgstr ""
+msgstr "Daar @link om je aan te melden voor het evenement."
 
 #: modules/social_features/social_group/modules/social_group_request/src/Plugin/Block/SocialGroupRequestMembershipNotification.php:142
 msgid "There @link to join this group."
@@ -12292,12 +12440,16 @@ msgid ""
 "To allow users to enroll in this event without an account, this event must "
 "be visible to the public and open for all users."
 msgstr ""
+"Om aanmeldingen voor dit evenement te kunnen ontvangen van mensen zonder "
+"account moet deze publiek zichtbaar gemaakt worden voor iedereen."
 
 #: modules/social_features/social_event/config/install/field.field.node.event.field_event_enroll_outside_group.yml:0
 msgid ""
 "To allow users who have not join the group of this event to enroll or send "
 "request to enroll"
 msgstr ""
+"Om gebruikers die niet lid zijn van de groep waar dit evenement in wordt "
+"georganiseerd te laten aanmelden"
 
 #: modules/custom/download_count/src/Form/DownloadCountSettingsForm.php:42
 msgid ""
@@ -12334,7 +12486,7 @@ msgstr ""
 
 #: modules/social_features/social_event/modules/social_event_invite/social_event_invite.tokens.inc:17
 msgid "Tokens from the Social Event Invite module."
-msgstr ""
+msgstr "Tokens van de Social Event Invite module."
 
 #: modules/social_features/social_event/social_event.tokens.inc:19
 msgid "Tokens from the Social Event module."
@@ -12584,7 +12736,7 @@ msgstr "UUID"
 #: modules/social_features/social_event/modules/social_event_invite/src/Form/EnrollInviteEmailForm.php:244
 #: modules/social_features/social_event/modules/social_event_invite/src/Form/EnrollInviteUserForm.php:132
 msgid "Unable to proceed, please try again."
-msgstr ""
+msgstr "Het is niet mogelijk om verder te gaan, probeer het nogmaals."
 
 #: modules/social_features/social_follow_content/config/install/flag.flag.follow_content.yml:0
 msgid "Unfollow content"
@@ -12724,11 +12876,13 @@ msgstr "Url van het evenement waar een lid aanwezig is."
 
 #: modules/social_features/social_event/modules/social_event_invite/social_event_invite.tokens.inc:22
 msgid "Url to register page with prefilled email address."
-msgstr ""
+msgstr "Link naar de registratie pagine met het e-mailadres vooraf ingevuld."
 
 #: modules/social_features/social_event/modules/social_event_invite/social_event_invite.tokens.inc:27
 msgid "Url to the login page with event as destination."
 msgstr ""
+"Link naar de pagina om in te loggin waarna je wordt doorgestuurd naar het "
+"evenement."
 
 #: modules/custom/social_lets_connect/modules/social_lets_connect_usage/config/schema/social_lets_connect_usage.schema.yml:0
 msgid "Usage data shared with Open Social team"
@@ -12821,7 +12975,7 @@ msgstr ""
 
 #: modules/social_features/social_event/modules/social_event_invite/config/install/views.view.user_event_invites.yml:0
 msgid "User Event Invites"
-msgstr ""
+msgstr "Evenement uitnodigingen voor de gebruiker"
 
 #: modules/social_features/social_group/config/install/views.view.groups.yml:0;0
 msgid "User Groups"
@@ -13473,6 +13627,7 @@ msgstr "Je bent nu verbonden met @netwerk, ga door met registreren."
 #: modules/social_features/social_core/src/Form/InviteEmailBaseForm.php:84
 msgid "You can copy/paste multiple emails, enter one email per line."
 msgstr ""
+"Je kan meerdere e-mailadressen knippen/plakken, gebruik één e-mail per regel."
 
 #: modules/custom/mentions/mentions.module:23
 msgid ""
@@ -13485,6 +13640,8 @@ msgid ""
 "You can leave a message in your request. Once your request is approved, you "
 "will receive a notification via email and notification center."
 msgstr ""
+"Je kan een bericht achterlaten bij je aanmelding. Wanneer je bericht wordt "
+"geaccepteerd krijg je een notificatie."
 
 #: modules/social_features/social_event/src/Form/EnrollRequestModalForm.php:49
 #: modules/social_features/social_group/modules/social_group_request/src/Form/GroupRequestMembershipRequestForm.php:107
@@ -13511,7 +13668,7 @@ msgstr "Je hebt geen toegang om lid te worden van deze groep."
 
 #: modules/social_features/social_event/modules/social_event_invite/config/install/views.view.user_event_invites.yml:0
 msgid "You don't have any event invites yet."
-msgstr ""
+msgstr "Je hebt nog geen uitnodigingen voor een evenement."
 
 #: modules/social_features/social_core/src/EventSubscriber/SocialInviteSubscriber.php:125
 msgid ""
@@ -13521,11 +13678,15 @@ msgid_plural ""
 "You have @count pending invites <a href=\"@url\">visit your invite overview</"
 "a> to see them."
 msgstr[0] ""
+"Je hebt 1 uitnodiging <a href=\"@url\">bekijk het overzicht met "
+"uitnodigingen</a> om deze te bekijken."
 msgstr[1] ""
+"Je hebt @count uitnodigingen <a href=\"@url\">bekijk het overzicht met "
+"uitnodigingen</a> om deze te bekijken."
 
 #: modules/social_features/social_event/modules/social_event_invite/src/Controller/UserEnrollInviteController.php:98
 msgid "You have accepted the invitation for the @event event."
-msgstr ""
+msgstr "Je hebt de uitnodiging geaccepteerd voor het evenement @event."
 
 #: modules/social_features/social_event/modules/social_event_an_enroll/src/Form/EventAnEnrollForm.php:136
 msgid ""
@@ -13552,7 +13713,7 @@ msgstr ""
 
 #: modules/social_features/social_event/modules/social_event_invite/src/Controller/UserEnrollInviteController.php:102
 msgid "You have declined the invitation for the @event event."
-msgstr ""
+msgstr "Je hebt de uitnodiging afgewezen voor het evenement @event."
 
 #: modules/social_features/social_event/social_event.module:226
 msgid "You have enrolled"
