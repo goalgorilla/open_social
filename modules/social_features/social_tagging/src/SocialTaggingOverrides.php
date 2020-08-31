@@ -329,7 +329,7 @@ class SocialTaggingOverrides implements ConfigFactoryOverrideInterface {
     $metadata = new CacheableMetadata();
     // Calls to SocialTaggingService's methods active, groupActive, allowSplit
     // all depend on the settings under the hood.
-    $metadata->addCachetags(['config:social_tagging.settings']);
+    $metadata->addCacheTags(['config:social_tagging.settings']);
     // The loadOverrides method calls the getCategories and getChildren methods
     // to build the fields that are shown in the views and the values they have.
     // The output of these methods ultimately depends on the contents of the
