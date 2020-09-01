@@ -259,6 +259,8 @@ function social_activity_preprocess_block(&$variables) {
       if ($node->bundle() === 'dashboard') {
         $variables['attributes']['class'][] = 'block-dashboard-activity-stream card';
       }
+      /** @var \Drupal\views\ViewExecutable $view */
+      $view = $variables['content']['#view'];
       $variables['content'] = [
         '#create_placeholder' => TRUE,
         '#lazy_builder' => [
@@ -267,6 +269,7 @@ function social_activity_preprocess_block(&$variables) {
             $variables['content']['#name'],
             $variables['content']['#display_id'],
             $node->bundle(),
+            $view->getItemsPerPage(),
           ],
         ],
       ];
