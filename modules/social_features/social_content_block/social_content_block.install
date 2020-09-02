@@ -421,7 +421,7 @@ function social_content_block_update_8801(&$sandbox) {
   // Get allowed values.
   $allowed_values = $field_purchasers->getSetting('allowed_values');
   // Update label.
-  $allowed_values['created'] = 'Newest first';
+  $allowed_values['created'] = 'Last created';
   // Set updated allowed values and save.
   $field_purchasers->setSetting('allowed_values', $allowed_values);
   $field_purchasers->save();
