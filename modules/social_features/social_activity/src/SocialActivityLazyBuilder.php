@@ -56,9 +56,7 @@ class SocialActivityLazyBuilder {
    */
   public function viewsLazyBuild($view_id, $display_id, $node_type, $item_per_page) {
     // Get view.
-    $view_entity = $this->entityTypeManager
-      ->getStorage('view')
-      ->load($view_id);
+    $view_entity = $this->entityTypeManager->getStorage('view')->load($view_id);
     $view = $this->viewExecutable->get($view_entity);
     $view->setDisplay($display_id);
     $view->setItemsPerPage($item_per_page);

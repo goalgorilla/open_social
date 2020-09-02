@@ -240,21 +240,34 @@ function social_activity_views_post_build(ViewExecutable $view) {
  * Implements hook_preprocess_HOOK().
  */
 function social_activity_preprocess_block(&$variables) {
+  $route_match = \Drupal::routeMatch();
   $allowed_routes = [
     'entity.node.canonical',
     'layout_builder.overrides.node.view',
   ];
-  if (($node = \Drupal::routeMatch()->getParameter('node')) &&
-    $node instanceof NodeInterface) {
-    if (in_array(\Drupal::routeMatch()->getRouteName(), $allowed_routes) &&
-      ($node->bundle() === 'dashboard' ||
-        $node->bundle() === 'landing_page') &&
+  $allowed_bundles = [
+    'dashboard',
+    'landing_page',
+  ];
+  $allowed_content_names = [
+    'activity_stream',
+    'community_activities',
+    'activity_stream_profile',
+    'activity_stream_group',
+  ];
+
+  if (($node = $route_match->getParameter('node')) && $node instanceof NodeInterface) {
+    // Use lazy builder for stream blocks only if:
+    // 1. It on the node or landing builder page.
+    // 2. Node is a Dashboard or a Landing page
+    // 3. This block is from views.
+    // 4. View one of the stream views.
+    if (
+      in_array($route_match->getRouteName(), $allowed_routes) &&
+      in_array($node->bundle(), $allowed_bundles) &&
       $variables['base_plugin_id'] === 'views_block' &&
       isset($variables['content']['#name']) &&
-      ($variables['content']['#name'] === 'activity_stream' ||
-        $variables['content']['#name'] === 'community_activities' ||
-        $variables['content']['#name'] === 'activity_stream_profile' ||
-        $variables['content']['#name'] === 'activity_stream_group')
+      in_array($variables['content']['#name'], $allowed_content_names)
     ) {
       if ($node->bundle() === 'dashboard') {
         $variables['attributes']['class'][] = 'block-dashboard-activity-stream card';

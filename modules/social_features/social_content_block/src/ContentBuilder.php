@@ -97,8 +97,7 @@ class ContentBuilder implements ContentBuilderInterface {
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
   public function getEntities($block_id, $entity_bundle) {
-    $block_content = $this->entityTypeManager->getStorage('block_content')
-      ->load($block_id);
+    $block_content = $this->entityTypeManager->getStorage('block_content')->load($block_id);
 
     $plugin_id = $block_content->field_plugin_id->value;
     $definition = $this->contentBlockManager->getDefinition($plugin_id);
