@@ -27,10 +27,14 @@ class SocialCommentDefaultFormatter extends CommentDefaultFormatter {
    * {@inheritdoc}
    */
   public function viewElements(FieldItemListInterface $items, $langcode) {
+    // Elements from core comment formatter.
     $elements = parent::viewElements($items, $langcode);
-    if (!empty($elements[0]['comments']) &&
-      $items->getEntity() instanceof NodeInterface) {
+
+    // Check if comments exists and used in node entity.
+    if (!empty($elements[0]['comments']) && $items->getEntity() instanceof NodeInterface) {
       $comment_settings = $this->getFieldSettings();
+
+      // Replace comments with lazy builder.
       $elements[0]['comments'] = [
         '#lazy_builder' => [
           'social_comment.lazy_renderer:renderComments',
@@ -45,6 +49,7 @@ class SocialCommentDefaultFormatter extends CommentDefaultFormatter {
         '#create_placeholder' => TRUE,
       ];
     }
+
     return $elements;
   }
 

@@ -50,21 +50,15 @@ class SocialCommentLazyRenderer {
    */
   public function renderComments($entity_id, $view_mode, $field_name, $num_comments, $pager_id) {
     /** @var \Drupal\node\NodeInterface $node */
-    $node = $this->entityTypeManager
-      ->getStorage('node')
-      ->load($entity_id);
+    $node = $this->entityTypeManager->getStorage('node')->load($entity_id);
     /** @var \Drupal\comment\CommentInterface[] $comments */
-    $comments = $this->entityTypeManager
-      ->getStorage('comment')
-      ->loadThread($node, $field_name, $view_mode, $num_comments, $pager_id);
+    $comments = $this->entityTypeManager->getStorage('comment')->loadThread($node, $field_name, $view_mode, $num_comments, $pager_id);
 
     if (!$comments) {
       return [];
     }
 
-    return $this->entityTypeManager
-      ->getViewBuilder('comment')
-      ->viewMultiple($comments);
+    return $this->entityTypeManager->getViewBuilder('comment')->viewMultiple($comments);
   }
 
 }
