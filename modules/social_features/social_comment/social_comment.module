@@ -361,5 +361,9 @@ function social_comment_field_info_alter(&$info) {
  * Implements hook_field_formatter_info_alter().
  */
 function social_comment_field_formatter_info_alter(array &$info) {
-  $info['comment_default']['class'] = SocialCommentDefaultFormatter::class;
+  /** @var \Drupal\Core\Extension\ModuleHandlerInterface $moduleHandler */
+  $moduleHandler = \Drupal::service('module_handler');
+  if (!$moduleHandler->moduleExists('social_comment_extra')) {
+    $info['comment_default']['class'] = SocialCommentDefaultFormatter::class;
+  }
 }
