@@ -1,5 +1,6 @@
 <?php
 
+use Drupal\Core\Link;
 /**
  * @file
  * Helper methods for post administration actions.
@@ -57,7 +58,7 @@ function social_post_mass_update(array $posts, array $updates, $langcode = NULL,
     foreach ($posts as $post) {
       _social_post_mass_update_helper($post, $updates, $langcode);
     }
-    drupal_set_message(t('The update has been performed.'));
+    \Drupal::messenger()->addStatus(t('The update has been performed.'));
   }
 }
 
@@ -127,7 +128,9 @@ function _social_post_mass_update_batch_process(array $posts, array $updates, $l
     $post = _social_post_mass_update_helper($post, $updates, $langcode);
 
     // Store result for post-processing in the finished callback.
-    $context['results'][] = \Drupal::l($post->label(), $post->urlInfo());
+    // TODO: Drupal Rector Notice: Please delete the following comment after you've made any necessary changes.
+    // Please confirm that `$post` is an instance of `Drupal\Core\Entity\EntityInterface`. Only the method name and not the class name was checked for this replacement, so this may be a false positive.
+    $context['results'][] = Link::fromTextAndUrl($post->label(), $post->toUrl());
 
     // Update our progress information.
     $context['sandbox']['progress']++;
@@ -158,16 +161,16 @@ function _social_post_mass_update_batch_process(array $posts, array $updates, $l
  */
 function _social_post_mass_update_batch_finished($success, array $results, array $operations) {
   if ($success) {
-    drupal_set_message(t('The update has been performed.'));
+    \Drupal::messenger()->addStatus(t('The update has been performed.'));
   }
   else {
-    drupal_set_message(t('An error occurred and processing did not complete.'), 'error');
+    \Drupal::messenger()->addError(t('An error occurred and processing did not complete.'));
     $message = \Drupal::translation()->formatPlural(count($results), '1 item successfully processed:', '@count items successfully processed:');
     $item_list = [
       '#theme' => 'item_list',
       '#items' => $results,
     ];
     $message .= \Drupal::service('renderer')->render($item_list);
-    drupal_set_message($message);
+    \Drupal::messenger()->addStatus($message);
   }
 }

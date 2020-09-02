@@ -243,7 +243,7 @@ function social_group_update_8004(&$sandbox) {
 
   // Update entity view display.
   $display_id = "{$entity}.{$bundle}.$display_mode";
-  $view_display = \Drupal::entityManager()->getStorage('entity_view_display')->load($display_id);
+  $view_display = \Drupal::service('entity_type.manager')->getStorage('entity_view_display')->load($display_id);
   if ($component = $view_display->getComponent($field_name)) {
     $view_display->setComponent($field_name, [
       'type' => 'basic_string',

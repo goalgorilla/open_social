@@ -28,7 +28,9 @@ class SocialCommentController extends CommentController {
         throw new AccessDeniedHttpException();
       }
       /* @var \Drupal\Core\Url $url */
-      if ($url = $entity->urlInfo('canonical')) {
+      // TODO: Drupal Rector Notice: Please delete the following comment after you've made any necessary changes.
+      // Please confirm that `$entity` is an instance of `Drupal\Core\Entity\EntityInterface`. Only the method name and not the class name was checked for this replacement, so this may be a false positive.
+      if ($url = $entity->toUrl('canonical')) {
         // Redirect the user to the correct entity.
         return $this->redirectToOriginalEntity($url, $comment, $entity);
       }
@@ -81,7 +83,9 @@ class SocialCommentController extends CommentController {
         throw new AccessDeniedHttpException();
       }
       /* @var \Drupal\Core\Url $url */
-      if ($url = $entity->urlInfo('canonical')) {
+      // TODO: Drupal Rector Notice: Please delete the following comment after you've made any necessary changes.
+      // Please confirm that `$entity` is an instance of `Drupal\Core\Entity\EntityInterface`. Only the method name and not the class name was checked for this replacement, so this may be a false positive.
+      if ($url = $entity->toUrl('canonical')) {
         // Redirect the user to the correct entity.
         return $this->redirectToOriginalEntity($url, $comment, $entity);
       }

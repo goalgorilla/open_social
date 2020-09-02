@@ -73,9 +73,9 @@ class FacebookLinkController extends ControllerBase {
 
     // Get the OAuth token from Facebook.
     if (!$this->authManager->getAccessToken('link')) {
-      drupal_set_message($this->t('@network login failed. Token is not valid.', [
+      $this->messenger()->addError($this->t('@network login failed. Token is not valid.', [
         '@network' => $this->t('Facebook'),
-      ]), 'error');
+      ]));
       return $this->redirect('entity.user.edit_form', [
         'user' => $this->currentUser()->id(),
       ]);
@@ -83,9 +83,9 @@ class FacebookLinkController extends ControllerBase {
 
     // Get user's Facebook profile from Facebook API.
     if (!($profile = $this->authManager->getProfile()) || !($account_id = $profile->getField('id'))) {
-      drupal_set_message($this->t('@network login failed, could not load @network profile. Contact site administrator.', [
+      $this->messenger()->addError($this->t('@network login failed, could not load @network profile. Contact site administrator.', [
         '@network' => $this->t('Facebook'),
-      ]), 'error');
+      ]));
       return $this->redirect('entity.user.edit_form', [
         'user' => $this->currentUser()->id(),
       ]);
@@ -99,9 +99,9 @@ class FacebookLinkController extends ControllerBase {
 
     // Check whether another account was connected to this Facebook account.
     if ($account && (int) $account->id() !== (int) $this->currentUser()->id()) {
-      drupal_set_message($this->t('Your @network account has already connected to another account on this site.', [
+      $this->messenger()->addWarning($this->t('Your @network account has already connected to another account on this site.', [
         '@network' => $this->t('Facebook'),
-      ]), 'warning');
+      ]));
       return $this->redirect('entity.user.edit_form', [
         'user' => $this->currentUser()->id(),
       ]);
@@ -111,7 +111,7 @@ class FacebookLinkController extends ControllerBase {
     $account->get('facebook_id')->setValue($account_id);
     $account->save();
 
-    drupal_set_message($this->t('You are now able to log in with @network', [
+    $this->messenger()->addStatus($this->t('You are now able to log in with @network', [
       '@network' => $this->t('Facebook'),
     ]));
     return $this->redirect('entity.user.edit_form', [
@@ -129,18 +129,18 @@ class FacebookLinkController extends ControllerBase {
     $network_manager = $this->networkManager->createInstance('social_auth_facebook');
 
     if (!$network_manager->isActive()) {
-      drupal_set_message($this->t('@network is disallowed. Contact site administrator.', [
+      $this->messenger()->addError($this->t('@network is disallowed. Contact site administrator.', [
         '@network' => $this->t('Facebook'),
-      ]), 'error');
+      ]));
       return $this->redirect('entity.user.edit_form', [
         'user' => $this->currentUser()->id(),
       ]);
     }
 
     if (!$sdk = $network_manager->getSdk()) {
-      drupal_set_message($this->t('@network Auth not configured properly. Contact site administrator.', [
+      $this->messenger()->addError($this->t('@network Auth not configured properly. Contact site administrator.', [
         '@network' => $this->t('Facebook'),
-      ]), 'error');
+      ]));
       return $this->redirect('entity.user.edit_form', [
         'user' => $this->currentUser()->id(),
       ]);

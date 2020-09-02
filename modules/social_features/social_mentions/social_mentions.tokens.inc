@@ -127,7 +127,7 @@ function social_mentions_tokens($type, $tokens, array $data, array $options, Bub
             switch ($entity->getEntityTypeId()) {
               case 'node':
                 // Then get the bundle name.
-                $content_type_label = Unicode::strtolower(\Drupal::entityTypeManager()
+                $content_type_label = mb_strtolower(\Drupal::entityTypeManager()
                   ->getStorage('node_type')
                   ->load($entity->bundle())
                   ->label());
@@ -136,7 +136,7 @@ function social_mentions_tokens($type, $tokens, array $data, array $options, Bub
               case 'post':
               case 'photo':
               case 'comment':
-                $content_type_label = Unicode::strtolower($entity->getEntityType()->getLabel());
+                $content_type_label = mb_strtolower($entity->getEntityType()->getLabel());
                 break;
 
             }

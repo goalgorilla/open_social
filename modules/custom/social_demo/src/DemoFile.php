@@ -2,6 +2,7 @@
 
 namespace Drupal\social_demo;
 
+use Drupal\Core\File\FileSystemInterface;
 use Drupal\file\FileInterface;
 use Drupal\image_widget_crop\ImageWidgetCropManager;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -82,7 +83,7 @@ abstract class DemoFile extends DemoContent {
       $item['uri'] = file_unmanaged_copy(
         $this->parser->getPath($item['path'], $this->getModule(), $this->getProfile()),
         $item['uri'],
-        FILE_EXISTS_REPLACE
+        FileSystemInterface::EXISTS_REPLACE
       );
 
       $item['uid'] = NULL;

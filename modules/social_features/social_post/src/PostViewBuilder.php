@@ -207,18 +207,22 @@ class PostViewBuilder extends EntityViewBuilder {
     $links = [];
 
     if ($entity->access('update') && $entity->hasLinkTemplate('edit-form')) {
+      // TODO: Drupal Rector Notice: Please delete the following comment after you've made any necessary changes.
+      // Please confirm that `$entity` is an instance of `Drupal\Core\Entity\EntityInterface`. Only the method name and not the class name was checked for this replacement, so this may be a false positive.
       $links['edit'] = [
         'title' => t('Edit'),
         'weight' => 10,
-        'url' => $entity->urlInfo('edit-form'),
+        'url' => $entity->toUrl('edit-form'),
         'query' => ['destination' => \Drupal::destination()->get()],
       ];
     }
     if ($entity->access('delete') && $entity->hasLinkTemplate('delete-form')) {
+      // TODO: Drupal Rector Notice: Please delete the following comment after you've made any necessary changes.
+      // Please confirm that `$entity` is an instance of `Drupal\Core\Entity\EntityInterface`. Only the method name and not the class name was checked for this replacement, so this may be a false positive.
       $links['delete'] = [
         'title' => t('Delete'),
         'weight' => 100,
-        'url' => $entity->urlInfo('delete-form'),
+        'url' => $entity->toUrl('delete-form'),
         'query' => ['destination' => \Drupal::destination()->get()],
       ];
     }

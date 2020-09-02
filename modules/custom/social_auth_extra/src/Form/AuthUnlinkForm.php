@@ -87,16 +87,16 @@ class AuthUnlinkForm extends ConfirmFormBase {
     $account->save();
 
     if ($is_connected) {
-      drupal_set_message($this->t('Your @network account is unlinked. You can still log in with your @community_name account.', [
+      $this->messenger()->addStatus($this->t('Your @network account is unlinked. You can still log in with your @community_name account.', [
         '@network' => $this->socialNetwork['social_network'],
         '@community_name' => \Drupal::config('system.site')->get('name'),
       ]));
     }
     else {
-      drupal_set_message($this->t('Your @network account is unlinked. Make sure you set a password or connect another social platform. Please enter a password to be able to continue using @community_name.', [
+      $this->messenger()->addWarning($this->t('Your @network account is unlinked. Make sure you set a password or connect another social platform. Please enter a password to be able to continue using @community_name.', [
         '@network' => $this->socialNetwork['social_network'],
         '@community_name' => \Drupal::config('system.site')->get('name'),
-      ]), 'warning');
+      ]));
     }
 
     $form_state->setRedirect('entity.user.edit_form', [

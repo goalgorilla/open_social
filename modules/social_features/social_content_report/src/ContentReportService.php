@@ -165,7 +165,7 @@ class ContentReportService implements ContentReportServiceInterface {
       ),
       'attributes' => [
         'data-dialog-type' => 'modal',
-        'data-dialog-options' => JSON::encode([
+        'data-dialog-options' => Json::encode([
           'width' => 400,
           'dialogClass' => 'content-reporting-dialog',
         ]),

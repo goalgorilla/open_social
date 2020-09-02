@@ -52,7 +52,7 @@ class Node extends PreprocessBase {
         '#theme' => 'username',
         '#account' => $account,
       ];
-      $variables['author'] = drupal_render($username);
+      $variables['author'] = \Drupal::service('renderer')->render($username);
     }
 
     if (isset($variables['elements']['#node']) && !isset($variables['created_date_formatted'])) {

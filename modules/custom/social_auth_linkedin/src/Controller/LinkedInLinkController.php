@@ -73,9 +73,9 @@ class LinkedInLinkController extends ControllerBase {
 
     // Get the OAuth token from LinkedIn.
     if (!$this->authManager->getAccessToken('link')) {
-      drupal_set_message($this->t('@network login failed. Token is not valid.', [
+      $this->messenger()->addError($this->t('@network login failed. Token is not valid.', [
         '@network' => $this->t('LinkedIn'),
-      ]), 'error');
+      ]));
       return $this->redirect('entity.user.edit_form', [
         'user' => $this->currentUser()->id(),
       ]);
@@ -83,9 +83,9 @@ class LinkedInLinkController extends ControllerBase {
 
     // Get user's LinkedIn profile from LinkedIn API.
     if (!($profile = $this->authManager->getProfile()) || !isset($profile['id'])) {
-      drupal_set_message($this->t('@network login failed, could not load @network profile. Contact site administrator.', [
+      $this->messenger()->addError($this->t('@network login failed, could not load @network profile. Contact site administrator.', [
         '@network' => $this->t('LinkedIn'),
-      ]), 'error');
+      ]));
       return $this->redirect('entity.user.edit_form', [
         'user' => $this->currentUser()->id(),
       ]);
@@ -99,9 +99,9 @@ class LinkedInLinkController extends ControllerBase {
 
     // Check whether another account was connected to this LinkedIn account.
     if ($account && (int) $account->id() !== (int) $this->currentUser()->id()) {
-      drupal_set_message($this->t('Your @network account has already connected to another account on this site.', [
+      $this->messenger()->addWarning($this->t('Your @network account has already connected to another account on this site.', [
         '@network' => $this->t('LinkedIn'),
-      ]), 'warning');
+      ]));
       return $this->redirect('entity.user.edit_form', [
         'user' => $this->currentUser()->id(),
       ]);
@@ -111,7 +111,7 @@ class LinkedInLinkController extends ControllerBase {
     $account->get('linkedin_id')->setValue($profile['id']);
     $account->save();
 
-    drupal_set_message($this->t('You are now able to log in with @network', [
+    $this->messenger()->addStatus($this->t('You are now able to log in with @network', [
       '@network' => $this->t('LinkedIn'),
     ]));
     return $this->redirect('entity.user.edit_form', [
@@ -129,18 +129,18 @@ class LinkedInLinkController extends ControllerBase {
     $network_manager = $this->networkManager->createInstance('social_auth_linkedin');
 
     if (!$network_manager->isActive()) {
-      drupal_set_message($this->t('@network is disallowed. Contact site administrator.', [
+      $this->messenger()->addError($this->t('@network is disallowed. Contact site administrator.', [
         '@network' => $this->t('LinkedIn'),
-      ]), 'error');
+      ]));
       return $this->redirect('entity.user.edit_form', [
         'user' => $this->currentUser()->id(),
       ]);
     }
 
     if (!$sdk = $network_manager->getSdk()) {
-      drupal_set_message($this->t('@network Auth not configured properly. Contact site administrator.', [
+      $this->messenger()->addError($this->t('@network Auth not configured properly. Contact site administrator.', [
         '@network' => $this->t('LinkedIn'),
-      ]), 'error');
+      ]));
       return $this->redirect('entity.user.edit_form', [
         'user' => $this->currentUser()->id(),
       ]);
