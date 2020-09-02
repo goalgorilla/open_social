@@ -1,5 +1,6 @@
 <?php
 
+use Drupal\Core\File\FileSystemInterface;
 /**
  * @file
  * Install, update and uninstall functions for the social_core module.
@@ -178,7 +179,7 @@ function _social_core_create_an_homepage_block() {
   // Block image.
   $path = drupal_get_path('module', 'social_core');
   $image_path = $path . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . 'homepage-block.jpg';
-  $uri = file_unmanaged_copy($image_path, 'public://homepage-block.jpg', FILE_EXISTS_REPLACE);
+  $uri = file_unmanaged_copy($image_path, 'public://homepage-block.jpg', FileSystemInterface::EXISTS_REPLACE);
 
   $media = File::create([
     'langcode' => 'en',
@@ -509,10 +510,10 @@ function social_core_update_8009() {
     // @see _drupal_maintenance_theme()
     \Drupal::service('theme.manager')->resetActiveTheme();
 
-    drupal_set_message(t('Installed socialblue theme and made this the default. Please check release notes.'));
+    \Drupal::messenger()->addStatus(t('Installed socialblue theme and made this the default. Please check release notes.'));
   }
   else {
-    drupal_set_message(t('Skipped installing socialblue theme. Please check release notes.'));
+    \Drupal::messenger()->addStatus(t('Skipped installing socialblue theme. Please check release notes.'));
   }
 }
 
@@ -610,10 +611,10 @@ function social_core_update_8019() {
       'social_file_private',
     ];
     \Drupal::service('module_installer')->install($modules);
-    drupal_set_message(t('Installed the social_file_private module. Make sure to read: https://www.drupal.org/docs/8/distributions/open-social/private-files'));
+    \Drupal::messenger()->addStatus(t('Installed the social_file_private module. Make sure to read: https://www.drupal.org/docs/8/distributions/open-social/private-files'));
   }
   else {
-    drupal_set_message(t('Skipped installing the social_file_private module because your Private file system is not set. This could have some security implications. More info: https://www.drupal.org/docs/8/distributions/open-social/private-files'), 'warning');
+    \Drupal::messenger()->addWarning(t('Skipped installing the social_file_private module because your Private file system is not set. This could have some security implications. More info: https://www.drupal.org/docs/8/distributions/open-social/private-files'));
   }
 }
 

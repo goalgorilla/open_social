@@ -29,7 +29,9 @@ class CommentPostActivityFormatter extends CommentPostFormatter {
    */
   public function loadThread(EntityInterface $entity, $field_name, $mode, $comments_per_page = 0, $pager_id = 0) {
     // @TODO: Refactor this to use CommentDefaultFormatter->loadThread with dependency injection instead.
-    $query = db_select('comment_field_data', 'c');
+    // TODO: Drupal Rector Notice: Please delete the following comment after you've made any necessary changes.
+    // You will need to use `\Drupal\core\Database\Database::getConnection()` if you do not yet have access to the container here.
+    $query = \Drupal::database()->select('comment_field_data', 'c');
     $query->addField('c', 'cid');
     $query
       ->condition('c.entity_id', $entity->id())

@@ -33,7 +33,9 @@ function template_preprocess_post(array &$variables) {
   $created_time_ago = \Drupal::service('date.formatter')
     ->formatTimeDiffSince($post->getCreatedTime(), ['granularity' => 1, 'return_as_object' => TRUE]);
   $date = t('%time ago', ['%time' => $created_time_ago->getString()]);
-  $variables['date'] = Link::fromTextAndUrl($date, $post->urlInfo('canonical'));
+  // TODO: Drupal Rector Notice: Please delete the following comment after you've made any necessary changes.
+  // Please confirm that `$post` is an instance of `Drupal\Core\Entity\EntityInterface`. Only the method name and not the class name was checked for this replacement, so this may be a false positive.
+  $variables['date'] = Link::fromTextAndUrl($date, $post->toUrl('canonical'));
 
   // To change user picture settings (e.g. image style), edit the 'compact'
   // view mode on the User entity. Note that the 'compact' view mode might

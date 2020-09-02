@@ -72,7 +72,7 @@ class ActivityAccessControlHandler extends EntityAccessControlHandler {
     if (!empty($related_object)) {
       $ref_entity_type = $related_object['0']['target_type'];
       $ref_entity_id = $related_object['0']['target_id'];
-      $ref_entity = entity_load($ref_entity_type, $ref_entity_id);
+      $ref_entity = \Drupal::service('entity_type.manager')->getStorage($ref_entity_type)->load($ref_entity_id);
 
       return AccessResult::allowedIf($ref_entity->access($operation, $account));
     }

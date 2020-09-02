@@ -83,7 +83,7 @@ class EnrollActionBlock extends BlockBase implements ContainerFactoryPluginInter
     if (in_array($route_name, $routes_to_check)) {
       $node = $this->routeMatch->getParameter('node');
       if (!is_null($node) && !is_object($node)) {
-        $node = node_load($node);
+        $node = \Drupal::service('entity_type.manager')->getStorage('node')->load($node);
       }
 
       if (is_object($node) && $node->getType() === 'event') {

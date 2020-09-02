@@ -109,7 +109,7 @@ class GoogleAuthController extends ControllerBase {
     $account = current($account);
 
     if (!$account->get('status')->value) {
-      drupal_set_message($this->t('Your account is blocked. Contact the site administrator.'), 'error');
+      $this->messenger()->addError($this->t('Your account is blocked. Contact the site administrator.'));
       return $this->redirect('user.login');
     }
 
@@ -162,7 +162,7 @@ class GoogleAuthController extends ControllerBase {
       $account = current($account);
 
       if (!$account->get('status')->value) {
-        drupal_set_message($this->t('You already have account on this site, but your account is blocked. Contact the site administrator.'), 'error');
+        $this->messenger()->addError($this->t('You already have account on this site, but your account is blocked. Contact the site administrator.'));
         return $this->redirect('user.register');
       }
 
@@ -180,7 +180,7 @@ class GoogleAuthController extends ControllerBase {
     $data_handler->set('mail', $profile->getEmail());
     $data_handler->set('name', $profile->getName());
 
-    drupal_set_message($this->t('You are now connected with @network, please continue registration', [
+    $this->messenger()->addStatus($this->t('You are now connected with @network, please continue registration', [
       '@network' => $this->t('Google'),
     ]));
 
@@ -202,16 +202,16 @@ class GoogleAuthController extends ControllerBase {
     $network_manager = $this->networkManager->createInstance('social_auth_google');
 
     if (!$network_manager->isActive()) {
-      drupal_set_message($this->t('@network is disabled. Contact the site administrator', [
+      $this->messenger()->addError($this->t('@network is disabled. Contact the site administrator', [
         '@network' => $this->t('Google'),
-      ]), 'error');
+      ]));
       return $this->redirect('user.' . $type);
     }
 
     if (!$sdk = $network_manager->getSdk()) {
-      drupal_set_message($this->t('@network Auth not configured properly. Contact the site administrator.', [
+      $this->messenger()->addError($this->t('@network Auth not configured properly. Contact the site administrator.', [
         '@network' => $this->t('Google'),
-      ]), 'error');
+      ]));
       return $this->redirect('user.' . $type);
     }
 
@@ -230,17 +230,17 @@ class GoogleAuthController extends ControllerBase {
   public function getProfile($type) {
     // Get the OAuth token from Google.
     if (!$access_token = $this->authManager->getAccessToken($type)) {
-      drupal_set_message($this->t('@network login failed. Token is not valid.', [
+      $this->messenger()->addError($this->t('@network login failed. Token is not valid.', [
         '@network' => $this->t('Google'),
-      ]), 'error');
+      ]));
       return $this->redirect('user.' . $type);
     }
 
     // Get user's Google profile from Google API.
     if (!($profile = $this->authManager->getProfile()) || !($profile->getId())) {
-      drupal_set_message($this->t('@network login failed, could not load @network profile. Contact the site administrator.', [
+      $this->messenger()->addError($this->t('@network login failed, could not load @network profile. Contact the site administrator.', [
         '@network' => $this->t('Google'),
-      ]), 'error');
+      ]));
       return $this->redirect('user.' . $type);
     }
 

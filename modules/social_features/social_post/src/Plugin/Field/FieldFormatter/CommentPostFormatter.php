@@ -93,7 +93,9 @@ class CommentPostFormatter extends CommentDefaultFormatter {
             ];
 
             // Set path to post node.
-            $link_url = $entity->urlInfo('canonical');
+            // TODO: Drupal Rector Notice: Please delete the following comment after you've made any necessary changes.
+            // Please confirm that `$entity` is an instance of `Drupal\Core\Entity\EntityInterface`. Only the method name and not the class name was checked for this replacement, so this may be a false positive.
+            $link_url = $entity->toUrl('canonical');
 
             // Attach the attributes.
             $link_url->setOptions($more_link_options);
@@ -115,7 +117,7 @@ class CommentPostFormatter extends CommentDefaultFormatter {
         $group_id = $entity->field_recipient_group->target_id;
         if ($group_id) {
           /** @var \Drupal\group\Entity\Group $group */
-          $group = entity_load('group', $group_id);
+          $group = \Drupal::service('entity_type.manager')->getStorage('group')->load($group_id);
           if ($group->hasPermission('add post entities in group', $this->currentUser) && $this->currentUser->hasPermission('post comments')) {
             $add_comment_form = TRUE;
           }
@@ -189,7 +191,9 @@ class CommentPostFormatter extends CommentDefaultFormatter {
    */
   public function loadThread(EntityInterface $entity, $field_name, $mode, $comments_per_page = 0, $pager_id = 0) {
     // @TODO: Refactor this to use CommentDefaultFormatter->loadThread with dependency injection instead.
-    $query = db_select('comment_field_data', 'c');
+    // TODO: Drupal Rector Notice: Please delete the following comment after you've made any necessary changes.
+    // You will need to use `\Drupal\core\Database\Database::getConnection()` if you do not yet have access to the container here.
+    $query = \Drupal::database()->select('comment_field_data', 'c');
     $query->addField('c', 'cid');
     $query
       ->condition('c.entity_id', $entity->id())

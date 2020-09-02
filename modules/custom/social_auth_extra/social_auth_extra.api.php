@@ -1,5 +1,9 @@
 <?php
 
+use Drupal\user\UserInterface;
+use Drupal\social_auth_extra\AuthManagerInterface;
+use Drupal\social_auth_extra\UserManagerInterface;
+use Drupal\profile\Entity\ProfileInterface;
 /**
  * @file
  * Hooks specific to the Social Auth Extra module.
@@ -22,7 +26,7 @@
  * @param \Drupal\social_auth_extra\UserManagerInterface $user_manager
  *   The UserManagerInterface.
  */
-function hook_social_auth_extra_user_presave(\Drupal\user\UserInterface $account, \Drupal\social_auth_extra\AuthManagerInterface $auth_manager, \Drupal\social_auth_extra\UserManagerInterface $user_manager) {
+function hook_social_auth_extra_user_presave(UserInterface $account, AuthManagerInterface $auth_manager, UserManagerInterface $user_manager) {
 
 }
 
@@ -40,7 +44,7 @@ function hook_social_auth_extra_user_presave(\Drupal\user\UserInterface $account
  * @param \Drupal\social_auth_extra\UserManagerInterface $user_manager
  *   The UserManagerInterface.
  */
-function hook_social_auth_extra_profile_presave(\Drupal\user\UserInterface $account, \Drupal\profile\Entity\ProfileInterface $profile, \Drupal\social_auth_extra\AuthManagerInterface $auth_manager, \Drupal\social_auth_extra\UserManagerInterface $user_manager) {
+function hook_social_auth_extra_profile_presave(UserInterface $account, ProfileInterface $profile, AuthManagerInterface $auth_manager, UserManagerInterface $user_manager) {
 
 }
 

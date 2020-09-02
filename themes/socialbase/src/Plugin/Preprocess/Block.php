@@ -149,7 +149,7 @@ class Block extends PreprocessBase {
       $block = BlockEntity::load('search_content_block_header');
 
       if (!empty($block)) {
-        $block_output = \Drupal::entityManager()
+        $block_output = \Drupal::service('entity_type.manager')
           ->getViewBuilder('block')
           ->view($block);
 

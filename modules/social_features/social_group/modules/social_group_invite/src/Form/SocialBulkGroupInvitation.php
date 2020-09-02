@@ -309,7 +309,7 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
       }
       else {
         // Load the user by userId.
-        $account = user::load($user);
+        $account = User::load($user);
 
         if ($account instanceof UserInterface) {
           $membership = $this->groupMembershipLoader->load($this->group, $account);

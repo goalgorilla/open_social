@@ -78,7 +78,7 @@ class TwitterLinkController extends ControllerBase {
 
     // Get the Twitter OAuth token from storage.
     if (!($oauth_token = $data_handler->get('oauth_token')) || !($oauth_token_secret = $data_handler->get('oauth_token_secret'))) {
-      drupal_set_message($this->t('Twitter login failed. Token or Token Secret is not valid.'), 'error');
+      $this->messenger()->addError($this->t('Twitter login failed. Token or Token Secret is not valid.'));
       return $this->redirect('entity.user.edit_form', [
         'user' => $this->currentUser()->id(),
       ]);
@@ -102,9 +102,9 @@ class TwitterLinkController extends ControllerBase {
 
     // Get user's profile from Twitter API.
     if (!($this->authManager->getProfile()) || !($account_id = $this->authManager->getAccountId())) {
-      drupal_set_message($this->t('@network login failed, could not load @network profile. Contact site administrator.', [
+      $this->messenger()->addError($this->t('@network login failed, could not load @network profile. Contact site administrator.', [
         '@network' => $this->t('Twitter'),
-      ]), 'error');
+      ]));
       return $this->redirect('entity.user.edit_form', [
         'user' => $this->currentUser()->id(),
       ]);
@@ -118,9 +118,9 @@ class TwitterLinkController extends ControllerBase {
 
     // Check whether another account was connected to this Twitter account.
     if ($account && (int) $account->id() !== (int) $this->currentUser()->id()) {
-      drupal_set_message($this->t('Your @network account has already connected to another account on this site.', [
+      $this->messenger()->addWarning($this->t('Your @network account has already connected to another account on this site.', [
         '@network' => $this->t('Twitter'),
-      ]), 'warning');
+      ]));
       return $this->redirect('entity.user.edit_form', [
         'user' => $this->currentUser()->id(),
       ]);
@@ -130,7 +130,7 @@ class TwitterLinkController extends ControllerBase {
     $account->get('twitter_id')->setValue($account_id);
     $account->save();
 
-    drupal_set_message($this->t('You are now able to log in with @network', [
+    $this->messenger()->addStatus($this->t('You are now able to log in with @network', [
       '@network' => $this->t('Twitter'),
     ]));
     return $this->redirect('entity.user.edit_form', [
@@ -148,18 +148,18 @@ class TwitterLinkController extends ControllerBase {
     $network_manager = $this->networkManager->createInstance('social_auth_twitter');
 
     if (!$network_manager->isActive()) {
-      drupal_set_message($this->t('@network is disallowed. Contact site administrator.', [
+      $this->messenger()->addError($this->t('@network is disallowed. Contact site administrator.', [
         '@network' => $this->t('Twitter'),
-      ]), 'error');
+      ]));
       return $this->redirect('entity.user.edit_form', [
         'user' => $this->currentUser()->id(),
       ]);
     }
 
     if (!$sdk = $network_manager->getSdk()) {
-      drupal_set_message($this->t('@network Auth not configured properly. Contact site administrator.', [
+      $this->messenger()->addError($this->t('@network Auth not configured properly. Contact site administrator.', [
         '@network' => $this->t('Twitter'),
-      ]), 'error');
+      ]));
       return $this->redirect('entity.user.edit_form', [
         'user' => $this->currentUser()->id(),
       ]);

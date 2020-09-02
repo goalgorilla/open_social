@@ -230,14 +230,14 @@ class Activity extends ContentEntityBase implements ActivityInterface {
       // Make an exception for Votes.
       if ($target_type === 'vote') {
         /** @var \Drupal\votingapi\Entity\Vote $vote */
-        if ($vote = entity_load($target_type, $target_id)) {
+        if ($vote = \Drupal::service('entity_type.manager')->getStorage($target_type)->load($target_id)) {
           $target_type = $vote->getVotedEntityType();
           $target_id = $vote->getVotedEntityId();
         }
       }
       elseif ($target_type === 'group_content') {
         /** @var \Drupal\group\Entity\GroupContent $group_content */
-        if ($group_content = entity_load($target_type, $target_id)) {
+        if ($group_content = \Drupal::service('entity_type.manager')->getStorage($target_type)->load($target_id)) {
           $target_type = $group_content->getEntity()->getEntityTypeId();
           $target_id = $group_content->getEntity()->id();
         }
@@ -266,7 +266,9 @@ class Activity extends ContentEntityBase implements ActivityInterface {
       $entity = $entity_storage->load($target_id);
       if ($entity !== NULL) {
         /** @var \Drupal\Core\Url $link */
-        $link = $entity->urlInfo('canonical');
+        // TODO: Drupal Rector Notice: Please delete the following comment after you've made any necessary changes.
+        // Please confirm that `$entity` is an instance of `Drupal\Core\Entity\EntityInterface`. Only the method name and not the class name was checked for this replacement, so this may be a false positive.
+        $link = $entity->toUrl('canonical');
       }
     }
     return $link;

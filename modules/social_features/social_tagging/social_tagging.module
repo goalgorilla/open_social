@@ -277,8 +277,12 @@ function social_tagging_entity_delete(EntityInterface $entity) {
     /* @var Term $entity */
     if ($entity->getVocabularyId() == 'social_tagging') {
       /* @see: taxonomy_taxonomy_term_delete(), delete from node field. */
-      db_delete('node__social_tagging')->condition('social_tagging_target_id', $entity->id())->execute();
-      db_delete('node_revision__social_tagging')->condition('social_tagging_target_id', $entity->id())->execute();
+      // TODO: Drupal Rector Notice: Please delete the following comment after you've made any necessary changes.
+      // You will need to use `\Drupal\core\Database\Database::getConnection()` if you do not yet have access to the container here.
+      \Drupal::database()->delete('node__social_tagging')->condition('social_tagging_target_id', $entity->id())->execute();
+      // TODO: Drupal Rector Notice: Please delete the following comment after you've made any necessary changes.
+      // You will need to use `\Drupal\core\Database\Database::getConnection()` if you do not yet have access to the container here.
+      \Drupal::database()->delete('node_revision__social_tagging')->condition('social_tagging_target_id', $entity->id())->execute();
     }
   }
 }

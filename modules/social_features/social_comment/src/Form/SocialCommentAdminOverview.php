@@ -275,7 +275,7 @@ class SocialCommentAdminOverview extends FormBase {
         }
         $comment->save();
       }
-      drupal_set_message($this->t('The update has been performed.'));
+      $this->messenger()->addStatus($this->t('The update has been performed.'));
       $form_state->setRedirect('comment.admin');
     }
     else {

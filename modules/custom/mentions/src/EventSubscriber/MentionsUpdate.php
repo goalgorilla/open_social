@@ -28,7 +28,7 @@ class MentionsUpdate implements EventSubscriberInterface {
     if (empty($action_id)) {
       return;
     }
-    $entity_storage = \Drupal::entityManager()->getStorage('action');
+    $entity_storage = \Drupal::service('entity_type.manager')->getStorage('action');
     $action = $entity_storage->load($action_id);
     $action_plugin = $action->getPlugin();
     if (!empty($action_id)) {

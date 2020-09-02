@@ -73,9 +73,9 @@ class GoogleLinkController extends ControllerBase {
 
     // Get the OAuth token from Google.
     if (!$this->authManager->getAccessToken('link')) {
-      drupal_set_message($this->t('@network login failed. Token is not valid.', [
+      $this->messenger()->addError($this->t('@network login failed. Token is not valid.', [
         '@network' => $this->t('Google'),
-      ]), 'error');
+      ]));
       return $this->redirect('entity.user.edit_form', [
         'user' => $this->currentUser()->id(),
       ]);
@@ -83,9 +83,9 @@ class GoogleLinkController extends ControllerBase {
 
     // Get user's Google profile from Google API.
     if (!($profile = $this->authManager->getProfile()) || !($account_id = $profile->getId())) {
-      drupal_set_message($this->t('@network login failed, could not load @network profile. Contact site administrator.', [
+      $this->messenger()->addError($this->t('@network login failed, could not load @network profile. Contact site administrator.', [
         '@network' => $this->t('Google'),
-      ]), 'error');
+      ]));
       return $this->redirect('entity.user.edit_form', [
         'user' => $this->currentUser()->id(),
       ]);
@@ -99,9 +99,9 @@ class GoogleLinkController extends ControllerBase {
 
     // Check whether another account was connected to this Google account.
     if ($account && (int) $account->id() !== (int) $this->currentUser()->id()) {
-      drupal_set_message($this->t('Your @network account has already connected to another account on this site.', [
+      $this->messenger()->addWarning($this->t('Your @network account has already connected to another account on this site.', [
         '@network' => $this->t('Google'),
-      ]), 'warning');
+      ]));
       return $this->redirect('entity.user.edit_form', [
         'user' => $this->currentUser()->id(),
       ]);
@@ -111,7 +111,7 @@ class GoogleLinkController extends ControllerBase {
     $account->get('google_id')->setValue($account_id);
     $account->save();
 
-    drupal_set_message($this->t('You are now able to log in with @network', [
+    $this->messenger()->addStatus($this->t('You are now able to log in with @network', [
       '@network' => $this->t('Google'),
     ]));
     return $this->redirect('entity.user.edit_form', [
@@ -129,18 +129,18 @@ class GoogleLinkController extends ControllerBase {
     $network_manager = $this->networkManager->createInstance('social_auth_google');
 
     if (!$network_manager->isActive()) {
-      drupal_set_message($this->t('@network is disallowed. Contact site administrator.', [
+      $this->messenger()->addError($this->t('@network is disallowed. Contact site administrator.', [
         '@network' => $this->t('Google'),
-      ]), 'error');
+      ]));
       return $this->redirect('entity.user.edit_form', [
         'user' => $this->currentUser()->id(),
       ]);
     }
 
     if (!$sdk = $network_manager->getSdk()) {
-      drupal_set_message($this->t('@network Auth not configured properly. Contact site administrator.', [
+      $this->messenger()->addError($this->t('@network Auth not configured properly. Contact site administrator.', [
         '@network' => $this->t('Google'),
-      ]), 'error');
+      ]));
       return $this->redirect('entity.user.edit_form', [
         'user' => $this->currentUser()->id(),
       ]);

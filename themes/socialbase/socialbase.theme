@@ -48,7 +48,9 @@ function socialbase_group_link($node) {
       if ($group->isTranslatable() && $group->hasTranslation($curr_langcode)) {
         $group = $group->getTranslation($curr_langcode);
       }
-      $group_link = $group->link();
+      // TODO: Drupal Rector Notice: Please delete the following comment after you've made any necessary changes.
+      // Please confirm that `$group` is an instance of `\Drupal\Core\Entity\EntityInterface`. Only the method name and not the class name was checked for this replacement, so this may be a false positive.
+      $group_link = $group->toLink()->toString();
     }
   }
   return $group_link;
@@ -79,7 +81,7 @@ function _socialbase_get_visibility_icon($title) {
       break;
 
     default:
-      $icon = strtolower(HtmlUtility::escape($title));
+      $icon = strtolower(Html::escape($title));
   }
 
   return $icon;

@@ -2,6 +2,7 @@
 
 namespace Drupal\social_demo;
 
+use Drupal\Core\File\FileSystemInterface;
 use Drupal\block_content\Entity\BlockContent;
 use Drupal\Core\Asset\CssOptimizer;
 use Drupal\Core\Config\ConfigFactory;
@@ -179,7 +180,7 @@ abstract class DemoSystem extends DemoContent {
       $paths['target'] = $paths['color'] . '/' . $id;
 
       foreach ($paths as $path) {
-        file_prepare_directory($path, FILE_CREATE_DIRECTORY);
+        \Drupal::service('file_system')->prepareDirectory($path, FileSystemInterface::CREATE_DIRECTORY);
       }
 
       $paths['target'] = $paths['target'] . '/';

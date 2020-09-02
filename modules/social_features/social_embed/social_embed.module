@@ -1,5 +1,6 @@
 <?php
 
+use Drupal\Core\File\FileSystemInterface;
 /**
  * @file
  * The Social Embed module.
@@ -16,7 +17,7 @@ function social_embed_create_media_button() {
   // Create a File entity for the icon.
   $path = drupal_get_path('module', 'social_embed');
   $image_path = $path . DIRECTORY_SEPARATOR . 'icons' . DIRECTORY_SEPARATOR . 'urlembed.png';
-  $uri = file_unmanaged_copy($image_path, 'public://urlembed.png', FILE_EXISTS_REPLACE);
+  $uri = file_unmanaged_copy($image_path, 'public://urlembed.png', FileSystemInterface::EXISTS_REPLACE);
 
   $media = File::create([
     'langcode' => 'en',

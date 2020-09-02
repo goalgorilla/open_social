@@ -2,6 +2,7 @@
 
 namespace Drupal\social_event;
 
+use Drupal\Core\Link;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityListBuilder;
 use Drupal\Core\Routing\LinkGeneratorTrait;
@@ -30,14 +31,13 @@ class EventEnrollmentListBuilder extends EntityListBuilder {
   public function buildRow(EntityInterface $entity) {
     /* @var $entity \Drupal\social_event\Entity\EventEnrollment */
     $row['id'] = $entity->id();
-    $row['name'] = $this->l(
-      $entity->label(),
-      new Url(
-        'entity.event_enrollment.edit_form', [
-          'event_enrollment' => $entity->id(),
-        ]
-      )
-    );
+    // TODO: Drupal Rector Notice: Please delete the following comment after you've made any necessary changes.
+    // Please manually remove the `use LinkGeneratorTrait;` statement from this class.
+    $row['name'] = Link::fromTextAndUrl($entity->label(), new Url(
+      'entity.event_enrollment.edit_form', [
+        'event_enrollment' => $entity->id(),
+      ]
+    ));
     return $row + parent::buildRow($entity);
   }
 

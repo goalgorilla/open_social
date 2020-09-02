@@ -61,7 +61,9 @@ function socialbase_preprocess_form(&$variables) {
           ->formatTimeDiffSince($comment->getCreatedTime(), ['granularity' => 1, 'return_as_object' => TRUE]);
 
         $submitted = t('@time ago', ['@time' => $created_time_ago->getString()]);
-        $variables['submitted'] = Link::fromTextAndUrl($submitted, $comment->urlInfo('canonical'));
+        // TODO: Drupal Rector Notice: Please delete the following comment after you've made any necessary changes.
+        // Please confirm that `$comment` is an instance of `Drupal\Core\Entity\EntityInterface`. Only the method name and not the class name was checked for this replacement, so this may be a false positive.
+        $variables['submitted'] = Link::fromTextAndUrl($submitted, $comment->toUrl('canonical'));
         $variables['#cache']['max-age'] = $created_time_ago->getMaxAge();
 
         // Display author information.
@@ -84,7 +86,7 @@ function socialbase_preprocess_form(&$variables) {
             '#theme' => 'username',
             '#account' => $account,
           ];
-          $variables['author'] = drupal_render($username);
+          $variables['author'] = \Drupal::service('renderer')->render($username);
         }
       }
 
@@ -97,7 +99,7 @@ function socialbase_preprocess_form(&$variables) {
     if (\Drupal::routeMatch()->getRouteName() === 'entity.post.edit_form') {
       $post_id = $element['#post_id'];
       /** @var \Drupal\social_post\Entity\Post $post */
-      $post = entity_load('post', $post_id);
+      $post = \Drupal::service('entity_type.manager')->getStorage('post')->load($post_id);
 
       // Display post created date in format 'time ago'.
       $created_time_ago = \Drupal::service('date.formatter')

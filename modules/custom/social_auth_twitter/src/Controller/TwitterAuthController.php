@@ -136,12 +136,12 @@ class TwitterAuthController extends ControllerBase {
     $account = current($account);
 
     if (!$account->get('status')->value) {
-      drupal_set_message($this->t('Your account is blocked. Contact the site administrator.'), 'error');
+      $this->messenger()->addError($this->t('Your account is blocked. Contact the site administrator.'));
       return $this->redirect('user.login');
     }
 
     user_login_finalize($account);
-    drupal_set_message(t('You are logged in'));
+    $this->messenger()->addStatus(t('You are logged in'));
 
     return $this->redirect('entity.user.canonical', [
       'user' => $account->id(),
@@ -189,7 +189,7 @@ class TwitterAuthController extends ControllerBase {
       $account = current($account);
 
       if (!$account->get('status')->value) {
-        drupal_set_message($this->t('You already have account on this site, but your account is blocked. Contact the site administrator.'), 'error');
+        $this->messenger()->addError($this->t('You already have account on this site, but your account is blocked. Contact the site administrator.'));
         return $this->redirect('user.register');
       }
 
@@ -207,7 +207,7 @@ class TwitterAuthController extends ControllerBase {
     $data_handler->set('mail', NULL);
     $data_handler->set('name', $this->authManager->getUsername());
 
-    drupal_set_message($this->t('You are now connected with @network, please continue registration', [
+    $this->messenger()->addStatus($this->t('You are now connected with @network, please continue registration', [
       '@network' => $this->t('Twitter'),
     ]));
 
@@ -233,16 +233,16 @@ class TwitterAuthController extends ControllerBase {
     $network_manager = $this->networkManager->createInstance('social_auth_twitter');
 
     if (!$network_manager->isActive()) {
-      drupal_set_message($this->t('@network is disabled. Contact the site administrator', [
+      $this->messenger()->addError($this->t('@network is disabled. Contact the site administrator', [
         '@network' => $this->t('Twitter'),
-      ]), 'error');
+      ]));
       return $this->redirect('user.' . $type);
     }
 
     if (!$this->sdk = $network_manager->getSdk()) {
-      drupal_set_message($this->t('@network Auth not configured properly. Contact the site administrator.', [
+      $this->messenger()->addError($this->t('@network Auth not configured properly. Contact the site administrator.', [
         '@network' => $this->t('Twitter'),
-      ]), 'error');
+      ]));
       return $this->redirect('user.' . $type);
     }
 
@@ -264,9 +264,9 @@ class TwitterAuthController extends ControllerBase {
 
     // Get the OAuth token from Twitter.
     if (!($oauth_token = $data_handler->get('oauth_token')) || !($oauth_token_secret = $data_handler->get('oauth_token_secret'))) {
-      drupal_set_message($this->t('@network login failed. Token is not valid.', [
+      $this->messenger()->addError($this->t('@network login failed. Token is not valid.', [
         '@network' => $this->t('Twitter'),
-      ]), 'error');
+      ]));
       return $this->redirect('user.' . $type);
     }
 
@@ -287,9 +287,9 @@ class TwitterAuthController extends ControllerBase {
 
     // Get user's profile from Twitter API.
     if (!($profile = $this->authManager->getProfile()) || !$this->authManager->getAccountId()) {
-      drupal_set_message($this->t('@network login failed, could not load @network profile. Contact the site administrator.', [
+      $this->messenger()->addError($this->t('@network login failed, could not load @network profile. Contact the site administrator.', [
         '@network' => $this->t('Twitter'),
-      ]), 'error');
+      ]));
       return $this->redirect('user.' . $type);
     }
 

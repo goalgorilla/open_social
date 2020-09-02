@@ -408,7 +408,7 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
         ]);
       }
 
-      drupal_set_message($message);
+      $this->messenger()->addStatus($message);
       return;
     }
 

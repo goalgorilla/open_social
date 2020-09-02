@@ -127,7 +127,7 @@ function social_profile_form_profile_profile_edit_form_alter(array &$form, FormS
   // Check if the Social Profile Fields module is on.
   if (\Drupal::moduleHandler()->moduleExists('social_profile_fields')) {
     // Load the profile fields and check if at least one of them can be changed.
-    if ($profile_fields = \Drupal::entityManager()->getStorage('field_config')->loadByProperties(['entity_type' => 'profile', 'bundle' => 'profile'])) {
+    if ($profile_fields = \Drupal::service('entity_type.manager')->getStorage('field_config')->loadByProperties(['entity_type' => 'profile', 'bundle' => 'profile'])) {
       $empty_profile = TRUE;
 
       /** @var \Drupal\field\Entity\FieldConfig $field_config */

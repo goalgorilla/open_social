@@ -833,7 +833,7 @@ function _social_group_unique_members($element, &$form_state, $complete_form) {
 function _social_group_inform_group_type_selection() {
   $text = t('Please note that changing the group type will also change the
   visibility of the group content and the way users can join the group.');
-  drupal_set_message($text, 'info');
+  \Drupal::messenger()->addInfo($text);
   $alert = ['#type' => 'status_messages'];
   $ajax_response = new AjaxResponse();
   $ajax_response->addCommand(new HtmlCommand('#group-type-result', $alert));

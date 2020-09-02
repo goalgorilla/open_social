@@ -250,7 +250,7 @@ class SocialGroupSelectorWidget extends OptionsSelectWidget implements Container
     }
     $text = t('Changing the group may have impact on the <strong>visibility settings</strong>.');
 
-    drupal_set_message($text, 'info');
+    $this->messenger()->addInfo($text);
     $alert = ['#type' => 'status_messages'];
     $ajax_response->addCommand(new HtmlCommand('#group-selection-result', $alert));
 

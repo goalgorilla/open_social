@@ -267,13 +267,13 @@ class SocialEventInviteBulkHelper {
     }
 
     if ($success && !empty($results)) {
-      drupal_set_message(t('Invite(s) have been successfully sent.'));
+      \Drupal::messenger()->addStatus(t('Invite(s) have been successfully sent.'));
     }
     elseif ($success && empty($results)) {
-      drupal_set_message(t('No invites were sent, recipients already received one before.'), 'info');
+      \Drupal::messenger()->addInfo(t('No invites were sent, recipients already received one before.'));
     }
     else {
-      drupal_set_message(t('There was an unexpected error.'), 'error');
+      \Drupal::messenger()->addError(t('There was an unexpected error.'));
     }
 
     // Redirect back to the event if we found the node ID.

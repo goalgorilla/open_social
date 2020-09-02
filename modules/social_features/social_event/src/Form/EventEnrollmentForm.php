@@ -31,13 +31,13 @@ class EventEnrollmentForm extends ContentEntityForm {
 
     switch ($status) {
       case SAVED_NEW:
-        drupal_set_message($this->t('Created the %label Event enrollment.', [
+        $this->messenger()->addStatus($this->t('Created the %label Event enrollment.', [
           '%label' => $entity->label(),
         ]));
         break;
 
       default:
-        drupal_set_message($this->t('Saved the %label Event enrollment.', [
+        $this->messenger()->addStatus($this->t('Saved the %label Event enrollment.', [
           '%label' => $entity->label(),
         ]));
     }
