@@ -132,6 +132,12 @@
       {% block metaengage %}
         <div class="meta-engage">
 
+          {% if content.field_event_addtocal is not empty %}
+            <div class="meta-addtocal">
+              {{ content.field_event_addtocal }}
+            </div>
+          {% endif %}
+
           {% if content.flag_follow_content|render is not empty and logged_in %}
             <div class="meta-follow">
               {{ content.flag_follow_content }}

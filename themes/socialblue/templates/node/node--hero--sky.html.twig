@@ -207,6 +207,12 @@
                 </div>
               {% endif %}
 
+              {% if content.field_event_addtocal|render is not empty %}
+                <div class="meta-addtocal">
+                  {{ content.field_event_addtocal }}
+                </div>
+              {% endif %}
+
               {% if content.flag_follow_content|render is not empty %}
                 <div class="meta-follow">
                   {{ content.flag_follow_content }}
