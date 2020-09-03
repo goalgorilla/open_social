@@ -90,7 +90,7 @@ class SocialMinkContext extends MinkContext {
       throw new \Exception('No field found');
     }
 
-    $this->getSession()->wait(1000);
+    $this->getSession()->wait(2000);
 
     $choice = $inputField->getParent()->find('css', '.select2-selection');
     if (!$choice) {
@@ -104,7 +104,7 @@ class SocialMinkContext extends MinkContext {
     }
     $select2Input->setValue($value);
 
-    $this->getSession()->wait(1000);
+    $this->getSession()->wait(2000);
 
     $chosenResults = $page->findAll('css', '.select2-results li');
     foreach ($chosenResults as $result) {
