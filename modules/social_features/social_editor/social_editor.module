@@ -76,3 +76,20 @@ function social_editor_filter_process_format(array &$element, FormStateInterface
 
   return $element;
 }
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ *
+ * Removes class, id and rel attributes introduced by Editor Advanced Link.
+ *
+ * @see editor_advanced_link_form_editor_link_dialog_alter()
+ */
+function social_editor_form_editor_link_dialog_alter(&$form, FormStateInterface $form_state, $form_id) {
+  // Unset un-required attributes's form elements.
+  // This helps to keep the form clean and less confusing.
+  if (isset($form['attributes'])) {
+    unset($form['attributes']['class']);
+    unset($form['attributes']['id']);
+    unset($form['attributes']['rel']);
+  }
+}
