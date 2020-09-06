@@ -266,8 +266,7 @@ class Activity extends ContentEntityBase implements ActivityInterface {
       $entity = $entity_storage->load($target_id);
       if ($entity !== NULL) {
         /** @var \Drupal\Core\Url $link */
-        // TODO: Drupal Rector Notice: Please delete the following comment after you've made any necessary changes.
-        // Please confirm that `$entity` is an instance of `Drupal\Core\Entity\EntityInterface`. Only the method name and not the class name was checked for this replacement, so this may be a false positive.
+        /** @var \Drupal\Core\Entity\EntityInterface $entity */
         $link = $entity->toUrl('canonical');
       }
     }

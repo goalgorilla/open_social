@@ -5,7 +5,6 @@
  * Builds placeholder replacement tokens for Social Mentions module.
  */
 
-use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\mentions\Entity\Mentions;
 use Drupal\user\Entity\User;

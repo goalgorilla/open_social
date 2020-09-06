@@ -5,7 +5,6 @@ namespace Drupal\social_core\Controller;
 use Drupal\system\Controller\EntityAutocompleteController as EntityAutocompleteControllerBase;
 use Symfony\Component\HttpFoundation\Request;
 use Drupal\Component\Utility\Tags;
-use Drupal\Component\Utility\Unicode;
 use Drupal\Component\Utility\Crypt;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Drupal\Core\Site\Settings;

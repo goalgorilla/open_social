@@ -1,11 +1,11 @@
 <?php
 
-use Drupal\Core\Link;
 /**
  * @file
  * Helper methods for post administration actions.
  */
 
+use Drupal\Core\Link;
 use Drupal\social_post\Entity\PostInterface;
 
 /**

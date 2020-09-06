@@ -1,10 +1,11 @@
 <?php
 
-use Drupal\node\Entity\Node;
 /**
  * @file
  * Hooks provided by the Activity module.
  */
+
+use Drupal\node\Entity\Node;
 
 /**
  * @addtogroup hooks
