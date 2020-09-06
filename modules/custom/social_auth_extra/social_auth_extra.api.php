@@ -1,13 +1,14 @@
 <?php
 
-use Drupal\user\UserInterface;
-use Drupal\social_auth_extra\AuthManagerInterface;
-use Drupal\social_auth_extra\UserManagerInterface;
-use Drupal\profile\Entity\ProfileInterface;
 /**
  * @file
  * Hooks specific to the Social Auth Extra module.
  */
+
+use Drupal\user\UserInterface;
+use Drupal\social_auth_extra\AuthManagerInterface;
+use Drupal\social_auth_extra\UserManagerInterface;
+use Drupal\profile\Entity\ProfileInterface;
 
 /**
  * @addtogroup hooks

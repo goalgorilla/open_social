@@ -1,11 +1,12 @@
 <?php
 
-use Drupal\Core\Database\Driver\mysql\Select;
-use Drupal\block_content\BlockContentInterface;
 /**
  * @file
  * Hooks provided by the Social Content Block module.
  */
+
+use Drupal\Core\Database\Driver\mysql\Select;
+use Drupal\block_content\BlockContentInterface;
 
 /**
  * Provide a method to alter the query to get content.

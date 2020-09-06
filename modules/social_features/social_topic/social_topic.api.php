@@ -1,10 +1,11 @@
 <?php
 
-use Drupal\taxonomy\Entity\Term;
 /**
  * @file
  * Hooks provided by the Social_topic module.
  */
+
+use Drupal\taxonomy\Entity\Term;
 
 /**
  * @addtogroup hooks

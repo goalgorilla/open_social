@@ -5,7 +5,6 @@
  * Builds placeholder replacement tokens for Social Like module.
  */
 
-use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\votingapi\Entity\Vote;
 use Drupal\Core\Render\Markup;

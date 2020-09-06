@@ -7,7 +7,6 @@
 
 use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\Url;
-use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Render\Markup;
 
 /**
