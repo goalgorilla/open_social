@@ -128,8 +128,6 @@ function _social_post_mass_update_batch_process(array $posts, array $updates, $l
     $post = _social_post_mass_update_helper($post, $updates, $langcode);
 
     // Store result for post-processing in the finished callback.
-    // TODO: Drupal Rector Notice: Please delete the following comment after you've made any necessary changes.
-    // Please confirm that `$post` is an instance of `Drupal\Core\Entity\EntityInterface`. Only the method name and not the class name was checked for this replacement, so this may be a false positive.
     $context['results'][] = Link::fromTextAndUrl($post->label(), $post->toUrl());
 
     // Update our progress information.

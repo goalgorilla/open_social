@@ -42,12 +42,11 @@ function social_topic_preprocess_node(array &$variables) {
     $topic_type_entities = $topic_type->referencedEntities();
     if (count($topic_type_entities) === 1) {
       $curr_langcode = \Drupal::languageManager()->getCurrentLanguage(LanguageInterface::TYPE_CONTENT)->getId();
+      /* @var \Drupal\node\NodeInterface $topic */
       foreach ($topic_type_entities as $topic) {
         if ($topic->isTranslatable() && $topic->hasTranslation($curr_langcode)) {
           $topic = $topic->getTranslation($curr_langcode);
         }
-        // TODO: Drupal Rector Notice: Please delete the following comment after you've made any necessary changes.
-        // Please confirm that `$topic` is an instance of `\Drupal\Core\Entity\EntityInterface`. Only the method name and not the class name was checked for this replacement, so this may be a false positive.
         $variables['metadata'] = t('in @topic', ['@topic' => $topic->toLink()->toString()]);
         // Set topic type link.
         $topic_type_url = Url::fromRoute('view.latest_topics.page_latest_topics', ['field_topic_type_target_id' => $topic->id()]);

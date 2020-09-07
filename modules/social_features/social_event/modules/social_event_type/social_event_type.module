@@ -8,6 +8,7 @@
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 use Drupal\Core\Link;
+use Drupal\node\Entity\Node;
 
 /**
  * Implements hook_form_FORM_ID_alter().
@@ -67,23 +68,23 @@ function social_event_type_preprocess_node(array &$variables) {
     if (count($event_type_entities) === 1) {
       /** @var \Drupal\node\Entity\Node $event */
       foreach ($event_type_entities as $event) {
-        // TODO: Drupal Rector Notice: Please delete the following comment after you've made any necessary changes.
-        // Please confirm that `$event` is an instance of `\Drupal\Core\Entity\EntityInterface`. Only the method name and not the class name was checked for this replacement, so this may be a false positive.
-        $variables['metadata'] = t('in @event', ['@event' => $event->toLink()->toString()]);
-        // Set event type link.
-        $now = strtotime("now");
-        $end = strtotime($node->get('field_event_date_end')->getString());
-        // 1 are upcoming events.
-        // 2 are ones that have started or are finished.
-        $datetype = ($now > $end) ? 2 : 1;
+        if ($event instanceof Node) {
+          $variables['metadata'] = t('in @event', ['@event' => $event->toLink()->toString()]);
+          // Set event type link.
+          $now = strtotime("now");
+          $end = strtotime($node->get('field_event_date_end')->getString());
+          // 1 are upcoming events.
+          // 2 are ones that have started or are finished.
+          $datetype = ($now > $end) ? 2 : 1;
 
-        $event_type_url = Url::fromRoute('view.upcoming_events.page_community_events', [
-          'field_event_date_value' => $datetype,
-          'event_type_id' => $event->id(),
-        ]);
-        $event_type_link = Link::fromTextAndUrl($event->label(), $event_type_url)
-          ->toString();
-        $variables['event_type'] = $event_type_link;
+          $event_type_url = Url::fromRoute('view.upcoming_events.page_community_events', [
+            'field_event_date_value' => $datetype,
+            'event_type_id' => $event->id(),
+          ]);
+          $event_type_link = Link::fromTextAndUrl($event->label(), $event_type_url)
+            ->toString();
+          $variables['event_type'] = $event_type_link;
+        }
       }
     }
     else {

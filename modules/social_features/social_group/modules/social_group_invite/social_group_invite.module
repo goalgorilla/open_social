@@ -403,9 +403,7 @@ function social_group_invite_preprocess_activity(&$variables) {
     $related_entity instanceof GroupContent &&
     $related_entity->getGroupContentType()->getContentPluginId() === 'group_invitation') {
     $group = $related_entity->getGroup();
-    if ($group instanceof Group) {
-      // TODO: Drupal Rector Notice: Please delete the following comment after you've made any necessary changes.
-      // Please confirm that `$group` is an instance of `Drupal\Core\Entity\EntityInterface`. Only the method name and not the class name was checked for this replacement, so this may be a false positive.
+    if ($group instanceof GroupInterface) {
       $variables['full_url'] = $group->toUrl('canonical');
     }
   }
