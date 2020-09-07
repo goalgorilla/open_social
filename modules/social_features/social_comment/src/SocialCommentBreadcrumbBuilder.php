@@ -5,6 +5,7 @@ namespace Drupal\social_comment;
 use Drupal\Core\Breadcrumb\BreadcrumbBuilderInterface;
 use Drupal\Core\Breadcrumb\Breadcrumb;
 use Drupal\Core\Entity\EntityManagerInterface;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
@@ -76,10 +77,9 @@ class SocialCommentBreadcrumbBuilder implements BreadcrumbBuilderInterface {
     }
 
     // Add Entity path to Breadcrumb for Reply.
-    if ($route_match->getParameter('entity')) {
+    if ($route_match->getParameter('entity') &&
+      $route_match->getParameter('entity') instanceof EntityInterface) {
       $entity = $route_match->getParameter('entity');
-      // TODO: Drupal Rector Notice: Please delete the following comment after you've made any necessary changes.
-      // Please confirm that `$entity` is an instance of `Drupal\Core\Entity\EntityInterface`. Only the method name and not the class name was checked for this replacement, so this may be a false positive.
       $breadcrumb->addLink(new Link($entity->label(), $entity->toUrl()));
       $breadcrumb->addCacheableDependency($entity);
     }

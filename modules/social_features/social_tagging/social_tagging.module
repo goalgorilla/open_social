@@ -14,6 +14,7 @@ use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Url;
 use Drupal\taxonomy\Entity\Term;
+use Drupal\core\Database\Database;
 
 /**
  * Implements hook_help().
@@ -311,17 +312,14 @@ function social_tagging_entity_base_field_info(EntityTypeInterface $entity_type)
  */
 function social_tagging_entity_delete(EntityInterface $entity) {
   // When a term from the social_tagging vocbulary is deleted, remove from node.
-  if ($entity instanceof Term) {
-    /** @var \Drupal\taxonomy\Entity\Term $entity */
-    if ($entity->getVocabularyId() == 'social_tagging') {
-      /* @see: taxonomy_taxonomy_term_delete(), delete from node field. */
-      // TODO: Drupal Rector Notice: Please delete the following comment after you've made any necessary changes.
-      // You will need to use `\Drupal\core\Database\Database::getConnection()` if you do not yet have access to the container here.
-      \Drupal::database()->delete('node__social_tagging')->condition('social_tagging_target_id', $entity->id())->execute();
-      // TODO: Drupal Rector Notice: Please delete the following comment after you've made any necessary changes.
-      // You will need to use `\Drupal\core\Database\Database::getConnection()` if you do not yet have access to the container here.
-      \Drupal::database()->delete('node_revision__social_tagging')->condition('social_tagging_target_id', $entity->id())->execute();
-    }
+  /* @var Term $entity */
+  if ($entity instanceof Term &&
+    $entity->getVocabularyId() === 'social_tagging') {
+    /* @see: taxonomy_taxonomy_term_delete(), delete from node field. */
+    // We need to use `\Drupal\core\Database\Database::getConnection()`
+    // because we might not yet have access to the container here.
+    Database::getConnection()->delete('node__social_tagging')->condition('social_tagging_target_id', $entity->id())->execute();
+    Database::getConnection()->delete('node_revision__social_tagging')->condition('social_tagging_target_id', $entity->id())->execute();
   }
 }
 

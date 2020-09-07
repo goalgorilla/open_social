@@ -76,7 +76,7 @@ class CommentNodeFormatter extends CommentDefaultFormatter {
 
     $comments_per_page = $this->getSetting('num_comments');
 
-    if ($access_comments_in_group && $status != CommentItemInterface::HIDDEN && empty($entity->in_preview) &&
+    if ($access_comments_in_group && $status !== CommentItemInterface::HIDDEN && empty($entity->in_preview) &&
       // Comments are added to the search results and search index by
       // comment_node_update_index() instead of by this formatter, so don't
       // return anything if the view mode is search_index or search_result.
@@ -126,8 +126,6 @@ class CommentNodeFormatter extends CommentDefaultFormatter {
         ];
 
         // Set path to node.
-        // TODO: Drupal Rector Notice: Please delete the following comment after you've made any necessary changes.
-        // Please confirm that `$entity` is an instance of `Drupal\Core\Entity\EntityInterface`. Only the method name and not the class name was checked for this replacement, so this may be a false positive.
         $link_url = $entity->toUrl('canonical');
 
         // Attach the attributes.
@@ -205,8 +203,6 @@ class CommentNodeFormatter extends CommentDefaultFormatter {
    */
   public function loadThread(EntityInterface $entity, $field_name, $mode, $comments_per_page = 0, $pager_id = 0) {
     // @TODO: Refactor this to use CommentDefaultFormatter->loadThread with dependency injection instead.
-    // TODO: Drupal Rector Notice: Please delete the following comment after you've made any necessary changes.
-    // You will need to use `\Drupal\core\Database\Database::getConnection()` if you do not yet have access to the container here.
     $query = \Drupal::database()->select('comment_field_data', 'c');
     $query->addField('c', 'cid');
     $query

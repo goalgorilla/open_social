@@ -5,10 +5,10 @@
  * The primary PHP file for the Social base theme.
  */
 
-use Drupal\Component\Utility\Html as HtmlUtility;
-use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Session\AnonymousUserSession;
+use Drupal\Core\Language\LanguageInterface;
 use Drupal\node\NodeInterface;
+use Drupal\Component\Utility\Html;
 
 // Include all files from the includes directory.
 $includes_path = dirname(__FILE__) . '/includes/*.inc';
@@ -47,8 +47,6 @@ function socialbase_group_link($node) {
       if ($group->isTranslatable() && $group->hasTranslation($curr_langcode)) {
         $group = $group->getTranslation($curr_langcode);
       }
-      // TODO: Drupal Rector Notice: Please delete the following comment after you've made any necessary changes.
-      // Please confirm that `$group` is an instance of `\Drupal\Core\Entity\EntityInterface`. Only the method name and not the class name was checked for this replacement, so this may be a false positive.
       $group_link = $group->toLink()->toString();
     }
   }

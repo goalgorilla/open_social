@@ -224,8 +224,6 @@ function social_comment_preprocess_comment(&$variables) {
     ->formatTimeDiffSince($comment->getCreatedTime(), ['granularity' => 1, 'return_as_object' => TRUE]);
   $date = t('%time ago', ['%time' => $created_time_ago->getString()]);
 
-  // TODO: Drupal Rector Notice: Please delete the following comment after you've made any necessary changes.
-  // Please confirm that `$comment` is an instance of `Drupal\Core\Entity\EntityInterface`. Only the method name and not the class name was checked for this replacement, so this may be a false positive.
   $variables['submitted'] = Link::fromTextAndUrl($date, $comment->toUrl('canonical'));
   $variables['#cache']['max-age'] = $created_time_ago->getMaxAge();
 
@@ -274,6 +272,7 @@ function social_comment_comment_access(EntityInterface $entity, $operation, Acco
  */
 function social_comment_comment_view(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, $view_mode) {
   if ($view_mode === 'activity') {
+    /* @var \Drupal\comment\Entity\Comment $entity */
     $commented_entity = $entity->getCommentedEntity();
     if (is_object($commented_entity)) {
       $commented_entity_type = $commented_entity->getEntityTypeId();
@@ -335,8 +334,6 @@ function social_comment_comment_view(array &$build, EntityInterface $entity, Ent
         ];
 
         // Set path to post node.
-        // TODO: Drupal Rector Notice: Please delete the following comment after you've made any necessary changes.
-        // Please confirm that `$commented_entity` is an instance of `Drupal\Core\Entity\EntityInterface`. Only the method name and not the class name was checked for this replacement, so this may be a false positive.
         $link_url = $commented_entity->toUrl('canonical');
 
         // Attach the attributes.
