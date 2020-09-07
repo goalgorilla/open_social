@@ -32,12 +32,44 @@ class UserSelection extends UserSelectionBase {
   /**
    * {@inheritdoc}
    */
-  protected function buildEntityQuery($match = NULL, $match_operator = 'CONTAINS') {
-    $config_factory = \Drupal::service('config.factory');
-    $config = $config_factory->get('mentions.settings');
-    $suggestion_format = $config->get('suggestions_format');
-    $suggestion_amount = $config->get('suggestions_amount');
-    $ids = $this->getUserIdsFromName($match, $suggestion_amount, $suggestion_format);
+  public function validateReferenceableEntities(array $ids) {
+    $result = [];
+    if ($ids) {
+      $target_type = $this->configuration['target_type'];
+      $entity_type = $this->entityTypeManager->getDefinition($target_type);
+      $query = $this->buildEntityQuery(NULL, 'CONTAINS', $ids);
+      $result = $query
+        ->condition($entity_type->getKey('id'), $ids, 'IN')
+        ->execute();
+    }
+
+    return $result;
+  }
+
+  /**
+   * Builds an EntityQuery to get referenceable entities.
+   *
+   * @param string|null $match
+   *   (Optional) Text to match the label against. Defaults to NULL.
+   * @param string $match_operator
+   *   (Optional) The operation the matching should be done with. Defaults
+   *   to "CONTAINS".
+   * @param array $ids
+   *   (Optional) $ids that are coming from an earlier request.
+   *
+   * @return \Drupal\Core\Entity\Query\QueryInterface
+   *   The EntityQuery object with the basic conditions and sorting applied to
+   *   it.
+   */
+  protected function buildEntityQuery($match = NULL, $match_operator = 'CONTAINS', array $ids = []) {
+    // If an earlier request already had the ids don't query them again.
+    if (empty($ids)) {
+      $config_factory = \Drupal::service('config.factory');
+      $config = $config_factory->get('mentions.settings');
+      $suggestion_format = $config->get('suggestions_format');
+      $suggestion_amount = $config->get('suggestions_amount');
+      $ids = $this->getUserIdsFromName($match, $suggestion_amount, $suggestion_format);
+    }
 
     if (empty($ids)) {
       return parent::buildEntityQuery($match, $match_operator);
