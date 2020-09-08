@@ -411,3 +411,18 @@ function social_content_block_update_8005() {
 function social_content_block_update_8006() {
   _social_content_block_update_sorting_options();
 }
+
+/**
+ * Change allowed value label.
+ */
+function social_content_block_update_8801(&$sandbox) {
+  // Get content block sorting field.
+  $field_purchasers = FieldStorageConfig::loadByName('block_content', 'field_sorting');
+  // Get allowed values.
+  $allowed_values = $field_purchasers->getSetting('allowed_values');
+  // Update label.
+  $allowed_values['created'] = 'Last created';
+  // Set updated allowed values and save.
+  $field_purchasers->setSetting('allowed_values', $allowed_values);
+  $field_purchasers->save();
+}
