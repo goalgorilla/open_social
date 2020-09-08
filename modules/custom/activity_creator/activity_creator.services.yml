@@ -7,6 +7,7 @@ services:
     arguments: ['@plugin.manager.activity_destination.processor']
   activity_creator.activity_notifications:
     class: Drupal\activity_creator\ActivityNotifications
+    arguments: ['@database']
   plugin.manager.activity_destination.processor:
     class: Drupal\activity_creator\Plugin\ActivityDestinationManager
     parent: default_plugin_manager

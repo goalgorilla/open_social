@@ -217,12 +217,17 @@ class SocialCommentAdminOverview extends FormBase {
         'title' => $this->t('Delete'),
         'url' => $comment->toUrl('delete-form', $comment_uri_options),
       ];
-      if ($this->moduleHandler->moduleExists('content_translation') && $this->moduleHandler->invoke('content_translation', 'translate_access', [$comment])->isAllowed()) {
+
+      // Add a 'Translate' operations link if the comment is translatable.
+      if ($this->moduleHandler->moduleExists('content_translation') &&
+        $comment->getCommentedEntity() instanceof ContentEntityInterface &&
+        $this->moduleHandler->invoke('content_translation', 'translate_access', [$comment])->isAllowed()) {
         $links['translate'] = [
           'title' => $this->t('Translate'),
           'url' => $comment->toUrl('drupal:content-translation-overview', $comment_uri_options),
         ];
       }
+
       $options[$comment->id()]['operations']['data'] = [
         '#type' => 'operations',
         '#links' => $links,

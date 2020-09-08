@@ -136,9 +136,28 @@ function socialblue_form_system_theme_settings_alter(&$form, FormStateInterface 
         '#title' => t('Font'),
         '#options' => $fonts,
         '#default_value' => $config->get('font_primary'),
-        '#description' => t("The font family to use."),
+        '#description' => t('The font family to use.'),
       ];
 
+      $form['os_style_settings'] = [
+        '#type' => 'details',
+        '#group' => 'open_social_settings',
+        '#title' => t('Style'),
+        '#weight' => 40,
+        '#collapsible' => TRUE,
+        '#collapsed' => TRUE,
+        '#access' => \Drupal::currentUser()->hasPermission('administer improved theme settings'),
+      ];
+
+      $form['os_style_settings']['style'] = [
+        '#type' => 'select',
+        '#title' => t('Style'),
+        '#options' => [
+          '' => t('Default'),
+          'sky' => t('Sky (New)'),
+        ],
+        '#default_value' => $config->get('style'),
+      ];
     }
 
   }

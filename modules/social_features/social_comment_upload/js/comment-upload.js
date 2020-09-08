@@ -66,7 +66,6 @@
             .index($(this).parent());
           var options = {
             index: $index,
-            bgOpacity: 0.7,
             showHideOpacity: true,
             mainClass : 'pswp--minimal--dark',
             barsSize : {top: 0, bottom: 0},

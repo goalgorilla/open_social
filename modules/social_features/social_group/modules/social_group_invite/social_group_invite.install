@@ -1,0 +1,81 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the social_group_invite module.
+ */
+
+use Drupal\group\Entity\GroupType;
+
+/**
+ * Implements hook_install().
+ *
+ * @throws \Drupal\Core\Entity\EntityStorageException
+ */
+function social_group_invite_install() {
+  // Assign permissions by default to all group types
+  // that have group_invitation enabled.
+  foreach (GroupType::loadMultiple() as $group_type) {
+    if ($group_type->hasContentPlugin('group_invitation')) {
+      social_group_invite_set_default_permissions_for_group_type($group_type);
+    }
+  }
+}
+
+/**
+ * Set helper text of invite mail on the preview page for Groups.
+ */
+function social_group_invite_update_8001() {
+  $config = \Drupal::configFactory()->getEditable('social_group_invite.settings');
+  $config->set('invite_helper', "<p>The message above is edited by the community managers. Please contact them for questions and ideas</p>");
+  $config->save();
+}
+
+/**
+ * Update invite message in the message template.
+ */
+function social_group_invite_update_8002() {
+  $config = \Drupal::configFactory()->getEditable('message.template.invited_to_join_group');
+
+  $new_text = [
+    0 => [
+      'format' => 'full_html',
+      'value' => '<p>You have been invited to join the group <a href="[message:gurl]">[message:gtitle]</a></p>' . "\r\n",
+    ],
+    1 => [
+      'format' => 'full_html',
+      'value' => '<p>You have been invited to join the group <a href="[message:gurl]">[message:gtitle]</a></p>' . "\r\n",
+    ],
+    2 => [
+      'format' => 'full_html',
+      'value' => '<p>Hi,</p>' . "\r\n\r\n" . '<p>I would like to invite you to my group [message:gtitle] on [site:name].</p>' . "\r\n\r\n" . '<p>Kind regards,<br />' . "\r\n" . '[message:author:display-name]</p>' . "\r\n\r\n" . '<table class="btn-wrap">' . "\r\n\t" . '<tbody>' . "\r\n\t\t" . '<tr>' . "\r\n\t\t\t" . '<td class="align-center"><a class="btn-link btn-link-bg btn-link-one" href="[message:gurl]">View group</a></td>' . "\r\n\t\t\t" . '<td class="align-center"><a class="btn-link btn-link-bg btn-link-one" href="[site:url]">About [site:name]</a></td>' . "\r\n\t\t" . '</tr>' . "\r\n\t" . '</tbody>' . "\r\n" . '</table>' . "\r\n",
+    ],
+  ];
+
+  $config->set('text', $new_text);
+  $config->save();
+}
+
+/**
+ * Update invite message in group types.
+ */
+function social_group_invite_update_8005() {
+  $configs = [
+    'group.content_type.closed_group-group_invitation',
+    'group.content_type.flexible_group-group_invitation',
+    'group.content_type.open_group-group_invitation',
+    'group.content_type.public_group-group_invitation',
+    'group.content_type.secret_group-group_invitation',
+  ];
+
+  foreach ($configs as $config) {
+    $group_config = \Drupal::configFactory()->getEditable($config);
+
+    $invitation_body = 'Hi,<br/><br/> I would like to invite you to join my group [group:title] on [site:name].<br/><br/>Kind regards,<br/>[current-user:display-name]<br/><br/><table class="btn-wrapp">' . "\r\n\t" . '<tbody>' . "\r\n\t\t" . '<tr>' . "\r\n\t\t\t" . '<td class="align-center"><a class="btn-link btn-link-bg btn-link-one" href="[group_content:register_link]">View group</a></td>' . "\r\n\t\t\t" . '<td class="align-center"><a class="btn-link btn-link-bg btn-link-one" href="[site:url]">About [site:name]</a></td>' . "\r\n\t\t" . '</tr>' . "\r\n\t" . '</tbody>' . "\r\n" . '</table>';
+    $existing_user_invitation_body = 'Hi,<br/><br/>I would like to invite you to join my group [group:title] on [site:name].<br/><br/>Kind regards,<br/>[current-user:display-name]<br/><br/><table class="btn-wrapp">' . "\r\n\t" . '<tbody>' . "\r\n\t\t" . '<tr>' . "\r\n\t\t\t" . '<td class="align-center"><a class="btn-link btn-link-bg btn-link-one" href="[group_content:my_invitations_link]">View group</a></td>' . "\r\n\t\t\t" . '<td class="align-center"><a class="btn-link btn-link-bg btn-link-one" href="[site:url]">About [site:name]</a></td>' . "\r\n\t\t" . '</tr>' . "\r\n\t" . '</tbody>' . "\r\n" . '</table>';
+
+    $group_config->set('plugin_config.invitation_body', $invitation_body);
+    $group_config->set('plugin_config.existing_user_invitation_body', $existing_user_invitation_body);
+    $group_config->save();
+  }
+}

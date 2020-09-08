@@ -177,7 +177,8 @@ class MentionsFilter extends FilterBase implements ContainerFactoryPluginInterfa
       $mention = $this->mentionsManager->createInstance($mention_type);
 
       if ($mention instanceof MentionsPluginInterface) {
-        $pattern = '/(?:' . preg_quote($input_settings['prefix']) . ')([a-zA-Z0-9_]+)' . preg_quote($input_settings['suffix']) . '/';
+        $pattern = '/(?:' . preg_quote($input_settings['prefix']) . ')([ a-z0-9@+_.\'-]+)' . preg_quote($input_settings['suffix']) . '/';
+
         preg_match_all($pattern, $text, $matches, PREG_SET_ORDER);
 
         foreach ($matches as $match) {

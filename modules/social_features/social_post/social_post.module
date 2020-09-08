@@ -75,19 +75,24 @@ function social_post_form_comment_post_comment_form_alter(&$form, FormStateInter
   // Reset title display.
   $form['field_comment_body']['widget'][0]['#title_display'] = 'invisible';
 
-  // Set the action of the form to the current uri.
-  // This needs to be done, because we cannot override $form['#action']
-  // without breaking functionality.
-  $uri = Url::fromRoute('<current>')->toString();
-  // Store in a hidden field.
-  $form['redirect_after_save'] = [
-    '#type' => 'hidden',
-    '#title' => t('Redir'),
-    '#default_value' => $uri,
-  ];
+  // When ajax_comment is enabled, we need to
+  // redirect the form after save to the normal ajax comment
+  // included endpoint so the correct save and JS is triggered.
+  if (!\Drupal::moduleHandler()->moduleExists('ajax_comments')) {
+    // Set the action of the form to the current uri.
+    // This needs to be done, because we cannot override $form['#action']
+    // without breaking functionality.
+    $uri = Url::fromRoute('<current>')->toString();
+    // Store in a hidden field.
+    $form['redirect_after_save'] = [
+      '#type' => 'hidden',
+      '#title' => t('Redir'),
+      '#default_value' => $uri,
+    ];
 
-  // Submit function to retrieve the action uri and redirect to it.
-  $form['actions']['submit']['#submit'][] = '_social_post_comment_post_comment_form_submit';
+    // Submit function to retrieve the action uri and redirect to it.
+    $form['actions']['submit']['#submit'][] = '_social_post_comment_post_comment_form_submit';
+  }
 }
 
 /**
@@ -119,28 +124,25 @@ function _social_post_comment_post_comment_form_submit(array $form, FormStateInt
  * @param string $visibility
  *   The current field_visibility value for the post.
  * @param string $return_value
- *   Icon or Title depending on what we should return.
+ *   (optional) Icon or Title depending on what we should return.
+ *
+ * @return \Drupal\Core\StringTranslation\TranslatableMarkup|string
+ *   Post visibility detail.
  */
 function social_post_get_visibility_details($visibility, $return_value = 'icon') {
 
-  $return = &drupal_static(__FUNCTION__ . $visibility . $return_value);
+  $return = &drupal_static(__FUNCTION__ . $visibility);
 
-  if (!isset($return)) {
+  if (isset($return)) {
+    $icon = $return['icon'];
+    $title = $return['label'];
+  }
+  else {
     // Set the materialize icon.
     switch ($visibility) {
-      case '0':
-        $icon = 'community';
-        $title = t('Community');
-        break;
-
       case '1':
         $icon = 'public';
         $title = t('Public');
-        break;
-
-      case '2':
-        $icon = 'community';
-        $title = t('Community');
         break;
 
       case '3':
@@ -156,9 +158,14 @@ function social_post_get_visibility_details($visibility, $return_value = 'icon')
 
   \Drupal::moduleHandler()->alter('social_post_visibility_info_alter', $visibility, $icon, $title);
 
-  $return = ($return_value === 'icon') ? $icon : $title;
+  if (!isset($return)) {
+    $return = [
+      'icon' => $icon,
+      'label' => $title,
+    ];
+  }
 
-  return $return;
+  return $return[$return_value];
 }
 
 /**
@@ -204,8 +211,32 @@ function social_post_theme() {
       'file' => 'post.page.inc',
       'template' => 'post',
     ],
+    'post__featured' => [
+      'template' => 'post--featured',
+      'base hook' => 'post',
+    ],
   ];
   return $items;
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function social_post_preprocess_post(&$variables) {
+  if ($variables['elements']['#view_mode']) {
+    /** @var \Drupal\social_post\Entity\PostInterface $entity */
+    $entity = $variables['elements']['#post'];
+
+    if (
+      in_array($entity->bundle(), ['post', 'photo']) &&
+      \Drupal::routeMatch()->getRouteName() === 'entity.node.canonical' &&
+      \Drupal::routeMatch()->getParameter('node')->bundle() === 'dashboard'
+    ) {
+      $variables['dashboard'] = TRUE;
+      $variables['comment_count'] = $entity->get('field_post_comments')->comment_count;
+      $variables['comment_url'] = $entity->toUrl()->toString();
+    }
+  }
 }
 
 /**
@@ -216,14 +247,14 @@ function social_post_preprocess_activity(&$variables) {
   if (!empty($variables['elements']['field_activity_entity'][0]['#post'])) {
     $post = $variables['elements']['field_activity_entity'][0]['#post'];
 
-    $variables['visibility_icon'] = social_post_get_visibility_details($post->get('field_visibility')->value, 'icon');
-    $variables['visibility_label'] = social_post_get_visibility_details($post->get('field_visibility')->value, 'label');
-
+    $visibility = $post->field_visibility->value;
+    $variables['visibility_icon'] = social_post_get_visibility_details($visibility);
+    $variables['visibility_label'] = social_post_get_visibility_details($visibility, 'label');
   }
 
   $activity = $variables['elements']['#activity'];
   $post = $activity->getRelatedEntity();
-  if (!empty($post) && $post->getEntityTypeId() === "post") {
+  if (!empty($post) && $post->getEntityTypeId() === 'post') {
     $variables['post'] = TRUE;
     $variables['published'] = $post->isPublished();
   }

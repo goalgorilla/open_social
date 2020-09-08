@@ -22,3 +22,10 @@ social_group.stream:
     _entity_view: 'group.stream'
   requirements:
     _group_permission: 'view group stream page'
+
+social_group.my_groups:
+  path: '/my-groups'
+  defaults:
+    _controller: '\Drupal\social_group\Controller\SocialGroupController:redirectMyGroups'
+  requirements:
+    _user_is_logged_in: 'TRUE'

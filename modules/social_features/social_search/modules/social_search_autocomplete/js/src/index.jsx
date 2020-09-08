@@ -6,6 +6,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import SearchSuggestions from "./components/SearchSuggestions";
 import Spinner from './components/Spinner';
+import TranslationContext from './TranslationContext';
 
 (($, Drupal) => {
   /**
@@ -138,6 +139,14 @@ import Spinner from './components/Spinner';
     window.location.port ? `:${window.location.port}` : ""
   }`;
 
+  // Allows the Drupal translation functions to be passed around without leaking
+  // other functions. The bind ensures that the translation functions have
+  // access to Drupal when called.
+  const translationFuncs = {
+    t: Drupal.t.bind(Drupal),
+    formatPlural: Drupal.formatPlural.bind(Drupal),
+  };
+
   /**
    * Initialises the React rendering for the search suggestions.
    *
@@ -173,11 +182,13 @@ import Spinner from './components/Spinner';
         // Our React render function for this search suggestion box.
         const rerender = (query, suggestions) => {
           ReactDOM.render(
-            <SearchSuggestions
-              searchBase={settings.socialSearchAutocomplete.searchPath}
-              query={query}
-              suggestions={suggestions}
-            />,
+            <TranslationContext.Provider value={translationFuncs}>
+              <SearchSuggestions
+                searchBase={settings.socialSearchAutocomplete.searchPath}
+                query={query}
+                suggestions={suggestions}
+              />
+            </TranslationContext.Provider>,
             element
           );
         };

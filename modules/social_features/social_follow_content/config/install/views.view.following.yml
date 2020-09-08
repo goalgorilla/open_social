@@ -12,6 +12,8 @@ dependencies:
     - node
     - profile
     - user
+_core:
+  default_config_hash: 2UFxRhD62-Y1YVrzHK9eECIsh1QAWh_JmdzIi3fv030
 id: following
 label: 'Content I follow'
 module: views
@@ -19,7 +21,6 @@ description: ''
 tag: ''
 base_table: flagging
 base_field: id
-core: 8.x
 display:
   default:
     display_plugin: default
@@ -330,6 +331,8 @@ display:
               contentmanager: '0'
               sitemanager: '0'
             reduce: false
+            operator_limit_selection: false
+            operator_list: {  }
           is_grouped: false
           group_info:
             label: ''

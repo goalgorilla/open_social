@@ -5,6 +5,7 @@
  * The Social Event Max Enroll module.
  */
 
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\node\NodeInterface;
 use Drupal\views\Plugin\views\cache\CachePluginBase;
@@ -47,20 +48,20 @@ function social_event_max_enroll_form_alter(&$form, FormStateInterface $form_sta
       $form['field_event_max_enroll_num']['#access'] = $config->get('max_enroll');
 
       // Hide checkbox if event enrollment is disabled for event.
-      $state = [
-        ':input[name="field_event_enroll[value]"]' => ['checked' => TRUE],
+      $form['field_event_max_enroll']['#states'] = [
+        'visible' => [
+          ':input[name="field_event_enroll[value]"]' => ['checked' => TRUE],
+        ],
+        'invisible' => [
+          ':input[name="field_enroll_method"]' => ['value' => '3'],
+        ],
       ];
-
-      $fields = [
-        'field_event_max_enroll',
-        'field_event_max_enroll_num',
+      $form['field_event_max_enroll_num']['#states'] = [
+        'visible' => [
+          ':input[name="field_event_max_enroll[value]"]' => ['checked' => TRUE],
+          ':input[name="field_enroll_method"]' => ['!value' => '3'],
+        ],
       ];
-
-      foreach ($fields as $field) {
-        $form[$field]['#states'] = [
-          'visible' => $state,
-        ];
-      }
 
       // Show the checkbox only when max enroll is enabled.
       if ($config->get('max_enroll_required')) {
@@ -70,15 +71,20 @@ function social_event_max_enroll_form_alter(&$form, FormStateInterface $form_sta
         $form['field_event_max_enroll_num']['widget'][0]['value']['#required'] = TRUE;
       }
       else {
-        $form['field_event_max_enroll_num']['#states']['visible'][] = [
-          ':input[name="field_event_max_enroll[value]"]' => ['checked' => TRUE],
+        $form['field_event_max_enroll_num']['#states'] = [
+          'visible' => [
+            ':input[name="field_event_max_enroll[value]"]' => ['checked' => TRUE],
+            ':input[name="field_enroll_method"]' => ['!value' => '3'],
+          ],
         ];
       }
+
       break;
 
     // Alter the Event Enrollments forms.
     case 'enroll_action_form':
     case 'event_an_enroll_action_form':
+    case 'event_invite_enroll_action_form':
       // We can't use dependency injection, because service is optional.
       $event_max_enroll_service = \Drupal::service('social_event_max_enroll.service');
       $node = \Drupal::routeMatch()->getParameter('node');
@@ -94,7 +100,8 @@ function social_event_max_enroll_form_alter(&$form, FormStateInterface $form_sta
             $enrollments = \Drupal::entityTypeManager()->getStorage('event_enrollment')
               ->loadByProperties([
                 'field_event' => $node->id(),
-                'user_id' => \Drupal::currentUser()->id(),
+                'field_account' => \Drupal::currentUser()->id(),
+                'field_enrollment_status' => 1,
               ]);
           }
 
@@ -106,9 +113,10 @@ function social_event_max_enroll_form_alter(&$form, FormStateInterface $form_sta
           }
 
           // If this user or visitor is not enrolled to the event, show that
-          // there are no more spots left.
-          if (!$enrollments && !$an_enrollments) {
-            if ($form_id === 'enroll_action_form') {
+          // there are no more spots left, exception for the owner or organizer.
+          if (!$enrollments && !$an_enrollments && social_event_manager_or_organizer() === FALSE) {
+            if ($form_id === 'enroll_action_form' || $form_id === 'event_invite_enroll_action_form') {
+              $form['enroll_for_this_event']['#type'] = 'submit';
               $form['enroll_for_this_event']['#value'] = t('No spots left');
               $form['enroll_for_this_event']['#disabled'] = TRUE;
             }
@@ -137,6 +145,28 @@ function social_event_max_enroll_form_alter(&$form, FormStateInterface $form_sta
 }
 
 /**
+ * Implements hook_ENTITY_TYPE_presave().
+ *
+ * Set the correct value for AN enroll when enroll method is set to request.
+ */
+function social_event_max_enroll_node_presave(EntityInterface $entity) {
+  // If the enroll method is invite then max enrollment must be off.
+  if ($entity->getType() === 'event' && $entity->get('field_enroll_method')->value === '3') {
+    $entity->set('field_event_max_enroll', '0');
+  }
+}
+
+/**
+ * Implements hook_field_widget_form_alter().
+ */
+function social_event_max_enroll_field_widget_form_alter(&$element, FormStateInterface $form_state, $context) {
+  $field_definition = $context['items']->getFieldDefinition();
+  if ($field_definition->getName() === 'field_event_max_enroll_num') {
+    $element['value']['#title_display'] = 'none';
+  }
+}
+
+/**
  * Override variables for the social page hero data.
  */
 function social_event_max_enroll_preprocess_page_hero_data(array &$variables) {
@@ -144,7 +174,7 @@ function social_event_max_enroll_preprocess_page_hero_data(array &$variables) {
   $node = $variables['node'];
 
   // Add spots left counter to the hero block.
-  if ($event_max_enroll_service->isEnabled($node)) {
+  if ($node instanceof NodeInterface && $event_max_enroll_service->isEnabled($node)) {
     $total = $event_max_enroll_service->getEnrollmentsNumber($node);
     $left = $event_max_enroll_service->getEnrollmentsLeft($node);
 

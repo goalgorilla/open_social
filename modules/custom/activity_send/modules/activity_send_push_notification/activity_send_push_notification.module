@@ -1,0 +1,56 @@
+<?php
+
+/**
+ * @file
+ * The Activity Send Push Notification module.
+ */
+
+use Drupal\activity_send_push_notification\PushManager;
+use Drupal\Core\Form\FormStateInterface;
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function activity_send_push_notification_form_user_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  if ($form_id === 'user_register_form') {
+    return;
+  }
+
+  /** @var \Drupal\Component\Plugin\PluginManagerInterface $service */
+  $service = \Drupal::service('plugin.manager.push');
+
+  $plugin_forms = [];
+
+  foreach ($service->getDefinitions() as $plugin_id => $definition) {
+    /** @var \Drupal\activity_send_push_notification\PushInterface $plugin */
+    $plugin = $service->createInstance($plugin_id);
+
+    if ($plugin->access()) {
+      $plugin_forms[$plugin_id] = [
+        '#type' => 'details',
+        '#title' => '<h5>' . $definition['title'] . '</h5>',
+        '#attributes' => [
+          'class' => ['form-fieldset'],
+        ],
+        '#prefix' => $definition['description'],
+      ] + $plugin->buildForm();
+    }
+  }
+
+  if (!$plugin_forms) {
+    return;
+  }
+
+  $form['push_notifications'] = [
+    '#type' => 'fieldset',
+    '#title' => t('Push notifications'),
+    '#tree' => TRUE,
+    '#attributes' => [
+      'class' => ['form-horizontal'],
+    ],
+  ];
+
+  $form['push_notifications'] = $form['push_notifications'] + $plugin_forms;
+
+  $form['actions']['submit']['#submit'][] = [PushManager::class, 'submitForm'];
+}

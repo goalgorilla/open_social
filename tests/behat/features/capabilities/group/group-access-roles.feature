@@ -51,6 +51,7 @@ Feature: Group access roles
     Given I am logged in as a user with the "sitemanager" role
     Then I open and check the access of content in group "Test closed group 3" and I expect access "allowed"
     When I am on "stream"
+    # This should be present in the sidebar.
     Then I should see "Test closed group 3 topic"
     When I am on "/all-topics"
     Then I should see "Test closed group 3 topic"
@@ -63,8 +64,7 @@ Feature: Group access roles
     And I should see "Join group Test closed group 3"
     And I should see the button "Cancel"
     And I press "Join group"
-    And I click the xth "0" element with the css ".navbar-nav .profile"
-    And I click "My groups"
+    And I am on "/my-groups"
     Then I click "Test closed group 3"
     And I should see the button "Joined"
 

@@ -157,6 +157,34 @@ class SocialGroupSecretConfigOverride implements ConfigFactoryOverrideInterface 
       }
     }
 
+    $config_name = 'message.template.create_content_in_joined_group';
+
+    if (in_array($config_name, $names, FALSE)) {
+      $overrides[$config_name]['third_party_settings']['activity_logger']['activity_bundle_entities'] =
+        [
+          'group_content-secret_group-group_node-event' => 'group_content-secret_group-group_node-event',
+          'group_content-secret_group-group_node-topic' => 'group_content-secret_group-group_node-topic',
+        ];
+    }
+
+    $config_name = 'message.template.join_to_group';
+
+    if (in_array($config_name, $names, FALSE)) {
+      $overrides[$config_name]['third_party_settings']['activity_logger']['activity_bundle_entities'] =
+        [
+          'group_content-secret_group-group_membership' => 'group_content-secret_group-group_membership',
+        ];
+    }
+
+    $config_name = 'message.template.invited_to_join_group';
+
+    if (in_array($config_name, $names, FALSE)) {
+      $overrides[$config_name]['third_party_settings']['activity_logger']['activity_bundle_entities'] =
+        [
+          'group_content-secret_group-group_invitation' => 'group_content-secret_group-group_invitation',
+        ];
+    }
+
     $config_name = 'views.view.newest_groups';
 
     $displays = [

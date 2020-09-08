@@ -44,6 +44,9 @@ class EventMaxEnrollService implements EventMaxEnrollServiceInterface {
    *   Injection of the configFactory.
    * @param \Drupal\social_event\Service\SocialEventEnrollServiceInterface $social_event_enroll
    *   The social event enroll.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
   public function __construct(
     EntityTypeManagerInterface $entity_type_manager,

@@ -12,6 +12,7 @@ use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\profile\Entity\ProfileInterface;
 use Drupal\profile\Entity\ProfileType;
 
 /**
@@ -207,8 +208,17 @@ function social_profile_fields_social_user_export_plugin_info_alter(array &$plug
   foreach (ProfileType::loadMultiple() as $profile_type) {
     $type = $profile_type->id();
 
-    /** @var \Drupal\field\Entity\FieldConfig $field_config */
-    foreach (\Drupal::service('social_profile_fields.helper')->getProfileFields($type) as $field) {
+    $profile_fields = \Drupal::service('social_profile_fields.helper')->getProfileFields($type);
+    $filtered = array_filter($profile_fields, function ($arr) {
+      return $arr['id'] === 'profile_profile_field_profile_address';
+    });
+    if (!empty($filtered) || array_key_exists('profile_profile_field_profile_address', $profile_fields)) {
+      $profile_fields[] = ['id' => 'profile_address_field_city'];
+      $profile_fields[] = ['id' => 'profile_address_field_address'];
+      $profile_fields[] = ['id' => 'profile_address_field_postalcode'];
+    }
+
+    foreach ($profile_fields as $field) {
       $config = \Drupal::config('social_profile_fields.settings');
 
       $setting_value = $config->get($field['id']);
@@ -230,9 +240,89 @@ function social_profile_fields_social_user_export_plugin_info_alter(array &$plug
  * Implements hook_entity_bundle_field_info_alter().
  */
 function social_profile_fields_entity_bundle_field_info_alter(&$fields, EntityTypeInterface $entity_type, $bundle) {
-  // Add the unique nickname constraint.
-  if ($bundle === 'profile' && isset($fields['field_profile_nick_name']) && $entity_type->id() === 'profile'
-    && \Drupal::config('social_profile_fields.settings')->get('nickname_unique_validation')) {
-    $fields['field_profile_nick_name']->addConstraint('UniqueNickname', []);
+  if ($bundle === 'profile' && $entity_type->id() === 'profile') {
+    $config = \Drupal::config('social_profile_fields.settings');
+
+    // Add the unique nickname constraint.
+    if (isset($fields['field_profile_nick_name']) && $config->get('nickname_unique_validation')) {
+      $fields['field_profile_nick_name']->addConstraint('UniqueNickname', []);
+    }
+
+    // Change address fields override settings.
+    if (isset($fields['field_profile_address'])) {
+      $field_profile_address = $fields['field_profile_address'];
+
+      if ($setting = $field_profile_address->getSetting('fields')) {
+        $setting['locality'] = !$config->get('profile_address_field_city') ? '0' : 'locality';
+        $setting['addressLine1'] = !$config->get('profile_address_field_address') ? '0' : 'addressLine1';
+        $setting['postalCode'] = !$config->get('profile_address_field_postalcode') ? '0' : 'postalCode';
+
+        // Update the settings of address field.
+        $fields['field_profile_address']->setSetting('fields', $setting);
+      }
+      elseif ($setting = $field_profile_address->getSetting('field_overrides')) {
+        if (!$config->get('profile_address_field_city')) {
+          $setting['locality'] = ['override' => 'hidden'];
+        }
+        else {
+          unset($setting['locality']);
+        }
+
+        if (!$config->get('profile_address_field_address')) {
+          $setting['addressLine1'] = ['override' => 'hidden'];
+        }
+        else {
+          unset($setting['addressLine1']);
+        }
+
+        if (!$config->get('profile_address_field_postalcode')) {
+          $setting['postalCode'] = ['override' => 'hidden'];
+        }
+        else {
+          unset($setting['postalCode']);
+        }
+
+        // Update the settings of address field.
+        $fields['field_profile_address']->setSetting('field_overrides', $setting);
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_preprocess_field().
+ */
+function social_profile_fields_preprocess_field(&$variables) {
+  $formatter = $variables['element']['#formatter'];
+  if (in_array($formatter, ['address_plain', 'address_default'])) {
+    $entity = $variables['element']['#object'];
+    if ($entity && $entity instanceof ProfileInterface && $entity->bundle() === 'profile') {
+      $config = \Drupal::config('social_profile_fields.settings');
+      switch ($formatter) {
+        case 'address_plain':
+          if (isset($variables['items'][0]['content']['#locality']) && !$config->get('profile_address_field_city')) {
+            $variables['items'][0]['content']['#locality'] = NULL;
+          }
+          if (isset($variables['items'][0]['content']['#address_line1']) && !$config->get('profile_address_field_address')) {
+            $variables['items'][0]['content']['#address_line1'] = NULL;
+          }
+          if (isset($variables['items'][0]['content']['#postal_code']) && !$config->get('profile_address_field_postalcode')) {
+            $variables['items'][0]['content']['#postal_code'] = NULL;
+          }
+          break;
+
+        case 'address_default':
+          if (isset($variables['items'][0]['content']['locality']['#value']) && !$config->get('profile_address_field_city')) {
+            $variables['items'][0]['content']['locality']['#value'] = '';
+          }
+          if (isset($variables['items'][0]['content']['address_line1']['#value']) && !$config->get('profile_address_field_address')) {
+            $variables['items'][0]['content']['address_line1']['#value'] = '';
+          }
+          if (isset($variables['items'][0]['content']['postal_code']['#value']) && !$config->get('profile_address_field_postalcode')) {
+            $variables['items'][0]['content']['postal_code']['#value'] = '';
+          }
+          break;
+      }
+    }
   }
 }

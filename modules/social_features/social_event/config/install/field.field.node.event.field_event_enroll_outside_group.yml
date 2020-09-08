@@ -1,0 +1,23 @@
+uuid: a4fdb078-7110-4e34-989b-b357410e1314
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_event_enroll_outside_group
+    - node.type.event
+id: node.event.field_event_enroll_outside_group
+field_name: field_event_enroll_outside_group
+entity_type: node
+bundle: event
+label: 'Allow non-group members to enroll or request to enroll'
+description: 'To allow users who have not join the group of this event to enroll or send request to enroll'
+required: false
+translatable: false
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean

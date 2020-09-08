@@ -33,14 +33,14 @@ class EventSettingsForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    $group_type_ids = $this->configFactory->getEditable('social_event.settings')
-      ->get('enroll');
+    // Get the config.
+    $social_event_config = $this->configFactory->getEditable('social_event.settings');
 
     $form['enroll'] = [
       '#type' => 'checkboxes',
       '#title' => $this->t('Enroll user which is not group member'),
       '#description' => $this->t('Enroll button should be visible for users that are not in the group and automatic enroll people to groups when they enroll to events that are part of the group.'),
-      '#default_value' => $group_type_ids,
+      '#default_value' => $social_event_config->get('enroll'),
       '#states' => [
         'visible' => [
           ':input[name="enroll"]' => [
@@ -58,6 +58,15 @@ class EventSettingsForm extends ConfigFormBase {
         $form['enroll']['#options'][$group_type->id()] = $group_type->label();
       }
     }
+
+    $form['address_visibility_settings'] = [
+      '#type' => 'checkboxes',
+      '#title' => $this->t('Address visibility settings'),
+      '#options' => [
+        'street_code_private' => $this->t('Only show street and postal code to event enrolees'),
+      ],
+      '#default_value' => $social_event_config->get('address_visibility_settings'),
+    ];
 
     return parent::buildForm($form, $form_state);
   }
@@ -78,7 +87,11 @@ class EventSettingsForm extends ConfigFormBase {
 
     $this->configFactory->getEditable('social_event.settings')
       ->set('enroll', $group_type_ids)
+      ->set('address_visibility_settings', $form_state->getValue('address_visibility_settings'))
       ->save();
+
+    // Invalidate cache tags to refresh blocks of list of events.
+    \Drupal::service('cache_tags.invalidator')->invalidateTags(['node_list']);
   }
 
 }

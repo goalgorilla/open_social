@@ -39,6 +39,15 @@ class SocialProfileFieldsBatch {
           // Empty the field.
           $profile->set($field_name, '');
         }
+        elseif ($field_name === 'locality') {
+          $profile->field_profile_address->locality = '';
+        }
+        elseif ($field_name === 'addressLine1') {
+          $profile->field_profile_address->address_line1 = '';
+        }
+        elseif ($field_name === 'postalCode') {
+          $profile->field_profile_address->postal_code = '';
+        }
       }
       // Save the profile.
       $results[] = $profile->save();

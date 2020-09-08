@@ -18,7 +18,6 @@ description: 'Provides a REST endpoint for the Search API to be used for autocom
 tag: ''
 base_table: search_api_index_social_all
 base_field: search_api_id
-core: 8.x
 display:
   default:
     display_plugin: default
@@ -621,8 +620,8 @@ display:
           label: ''
           exclude: true
           alter:
-            alter_text: false
-            text: ''
+            alter_text: true
+            text: 'node/{{ nid }}'
             make_link: false
             path: '/node/{{ nid }}'
             absolute: false
@@ -683,7 +682,7 @@ display:
             separator: ''
             format_plural: false
             format_plural_string: !!binary MQNAY291bnQ=
-            prefix: node/
+            prefix: ''
             suffix: ''
             link_to_item: false
             use_highlighting: false
@@ -704,8 +703,8 @@ display:
           label: ''
           exclude: true
           alter:
-            alter_text: false
-            text: ''
+            alter_text: true
+            text: 'user/{{ uid }}'
             make_link: false
             path: '/user/{{ uid }}'
             absolute: false
@@ -766,7 +765,7 @@ display:
             separator: ''
             format_plural: false
             format_plural_string: !!binary MQNAY291bnQ=
-            prefix: user/
+            prefix: ''
             suffix: ''
             link_to_item: false
             use_highlighting: false
@@ -787,8 +786,8 @@ display:
           label: ''
           exclude: true
           alter:
-            alter_text: false
-            text: ''
+            alter_text: true
+            text: 'group/{{ id }}'
             make_link: false
             path: '/group/{{ id }}'
             absolute: false
@@ -849,7 +848,7 @@ display:
             separator: ''
             format_plural: false
             format_plural_string: !!binary MQNAY291bnQ=
-            prefix: group/
+            prefix: ''
             suffix: ''
             link_to_item: false
             use_highlighting: false

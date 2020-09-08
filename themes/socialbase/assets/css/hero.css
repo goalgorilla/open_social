@@ -34,36 +34,24 @@
   left: 0;
   bottom: 0;
   right: 0;
-  background: -webkit-gradient(linear, left top, left bottom, from(rgba(0, 0, 0, 0.1)), to(rgba(34, 34, 34, 0.7)));
   background: linear-gradient(rgba(0, 0, 0, 0.1) 0%, rgba(34, 34, 34, 0.7) 100%);
 }
 
 .cover-wrap {
   width: 100%;
-  display: -webkit-box;
-  display: -ms-flexbox;
   display: flex;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-      -ms-flex-direction: column;
-          flex-direction: column;
-  -webkit-box-pack: center;
-      -ms-flex-pack: center;
-          justify-content: center;
+  flex-direction: column;
+  justify-content: center;
   position: relative;
   z-index: 2;
   min-height: 300px;
-  -webkit-box-align: stretch;
-      -ms-flex-align: stretch;
-          align-items: stretch;
+  align-items: stretch;
 }
 
 /* IE11 */
 
 .cover-with-canvas .cover-wrap {
-  -webkit-box-pack: justify;
-      -ms-flex-pack: justify;
-          justify-content: space-between;
+  justify-content: space-between;
 }
 
 .node-unpublished .status:before {
@@ -75,7 +63,7 @@
   display: block;
 }
 
-.page-title {
+.cover .page-title {
   font-weight: 700;
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
   text-align: center;
@@ -95,17 +83,12 @@
 }
 
 .hero-footer__cta {
-  display: -webkit-box;
-  display: -ms-flexbox;
   display: flex;
-  -webkit-box-pack: end;
-      -ms-flex-pack: end;
-          justify-content: flex-end;
+  justify-content: flex-end;
 }
 
 .hero-avatar {
-  -webkit-box-shadow: 0 0 1px rgba(0, 0, 0, 0.11), 0 1px 2px rgba(0, 0, 0, 0.22);
-          box-shadow: 0 0 1px rgba(0, 0, 0, 0.11), 0 1px 2px rgba(0, 0, 0, 0.22);
+  box-shadow: 0 0 1px rgba(0, 0, 0, 0.11), 0 1px 2px rgba(0, 0, 0, 0.22);
   margin: auto;
   width: 128px;
   height: 128px;
@@ -121,9 +104,7 @@
 }
 
 .block-social-profile .hero-footer {
-  -webkit-box-pack: center;
-      -ms-flex-pack: center;
-          justify-content: center;
+  justify-content: center;
 }
 
 .block-social-profile .hero-footer__text {
@@ -131,12 +112,8 @@
 }
 
 .block-social-profile .hero-footer__cta {
-  display: -webkit-box;
-  display: -ms-flexbox;
   display: flex;
-  -webkit-box-pack: end;
-      -ms-flex-pack: end;
-          justify-content: flex-end;
+  justify-content: flex-end;
   padding-top: 1rem;
   padding-left: 1rem;
 }
@@ -201,7 +178,6 @@
   line-height: 38px;
   speak: none;
   pointer-events: none;
-  -webkit-transition: 0.3s;
   transition: 0.3s;
 }
 
@@ -216,35 +192,37 @@
     min-height: 410px;
   }
   .cover-wrap.small {
-    min-height: 206px;
+    height: 193px;
+    min-height: auto;
+  }
+  .cover-wrap.small .page-title h1 {
+    font-size: 2rem;
+    max-height: 70px;
+    overflow: hidden;
+  }
+  .cover-wrap.small > .hero-footer {
+    position: static;
+    margin-top: -2.5rem;
   }
   .cover-wrap > .hero-footer {
     position: absolute;
     bottom: 0;
   }
-  .page-title {
+  .cover .page-title {
     max-width: 900px;
   }
   .hero-footer {
-    display: -webkit-box;
-    display: -ms-flexbox;
     display: flex;
-    -webkit-box-align: center;
-        -ms-flex-align: center;
-            align-items: center;
+    align-items: center;
   }
   .hero-footer__text {
     padding-right: 1rem;
-    -webkit-box-flex: 0;
-        -ms-flex: 0 0 50%;
-            flex: 0 0 50%;
+    flex: 0 0 50%;
     max-width: 50%;
     margin-left: 25%;
   }
   .block-social-profile .hero-footer__text {
-    -webkit-box-flex: 0;
-        -ms-flex: 0 0 auto;
-            flex: 0 0 auto;
+    flex: 0 0 auto;
     max-width: unset;
     margin-left: 0;
   }
@@ -253,18 +231,14 @@
 @media (min-width: 900px) {
   .hero-footer__cta {
     padding-left: 1rem;
-    -webkit-box-flex: 0;
-        -ms-flex: 0 0 25%;
-            flex: 0 0 25%;
+    flex: 0 0 25%;
     max-width: 25%;
   }
   .block-social-profile .hero-footer__cta {
     padding: 0;
     position: absolute;
     right: 0;
-    -webkit-box-flex: 0;
-        -ms-flex: 0 0 auto;
-            flex: 0 0 auto;
+    flex: 0 0 auto;
     max-width: unset;
   }
   .hero-canvas {
@@ -274,15 +248,17 @@
 
 @media all and (-ms-high-contrast: none) {
   *::-ms-backdrop, .cover-wrap {
-    height: 410px;
+    min-height: 410px;
   }
   *::-ms-backdrop, .cover-wrap.small {
-    height: 206px;
+    height: 193px;
+    min-height: auto;
   }
   *::-ms-backdrop, .paragraph--hero .cover-wrap {
-    height: 350px;
+    min-height: 350px;
   }
   *::-ms-backdrop, .paragraph--hero-small .cover-wrap {
-    height: 206px;
+    min-height: 206px;
+    height: auto;
   }
 }

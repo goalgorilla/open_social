@@ -4,7 +4,6 @@ namespace Drupal\social_language;
 
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\DependencyInjection\ServiceProviderBase;
-use Symfony\Component\DependencyInjection\Reference;
 
 /**
  * Class SocialLanguageServiceProvider.
@@ -19,10 +18,6 @@ class SocialLanguageServiceProvider extends ServiceProviderBase {
   public function alter(ContainerBuilder $container) {
     $definition = $container->getDefinition('main_content_renderer.modal');
     $definition->setClass('Drupal\social_language\SocialLanguageModalRenderer');
-
-    $definition = $container->getDefinition('url_generator');
-    $definition->setClass('Drupal\social_language\SocialLanguageMetadataBubblingUrlGenerator')
-      ->addArgument(new Reference('language_manager'));
   }
 
 }

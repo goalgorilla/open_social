@@ -9,6 +9,8 @@ dependencies:
     - user
     - views_infinite_scroll
     - votingapi
+_core:
+  default_config_hash: 7jtDFqTgkAkBnIZ9y5SlE0yRujnCmwUExvLIF_KgoBU
 id: who_liked_this_entity
 label: 'Who liked this entity'
 module: views
@@ -16,7 +18,6 @@ description: ''
 tag: ''
 base_table: votingapi_vote
 base_field: id
-core: 8.x
 display:
   default:
     display_plugin: default
@@ -276,6 +277,8 @@ display:
             remember_roles:
               authenticated: authenticated
             reduce: false
+            operator_limit_selection: false
+            operator_list: {  }
           is_grouped: false
           group_info:
             label: ''

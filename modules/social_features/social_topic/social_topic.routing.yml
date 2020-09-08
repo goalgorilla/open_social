@@ -7,3 +7,9 @@ social_topic.settings:
     _permission: 'administer social_topic settings'
   options:
     _admin_route: TRUE
+social_topic.my_topics:
+  path: '/my-topics'
+  defaults:
+    _controller: '\Drupal\social_topic\Controller\SocialTopicController::redirectMyTopics'
+  requirements:
+    _user_is_logged_in: 'TRUE'

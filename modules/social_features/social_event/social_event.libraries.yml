@@ -1,6 +1,22 @@
 form_submit:
   js:
-    js/social_event_form_submit.js: {}
+    assets/js/social_event_form_submit.js: {}
   dependencies:
     - core/jquery
     - core/jquery.once
+
+modal:
+  js:
+    assets/js/social_event_request_modal.js: {}
+  css:
+    theme:
+      assets/css/social_event_popup.css: {}
+  dependencies:
+    - core/jquery
+    - core/drupal
+    - core/drupalSettings
+
+admin:
+  css:
+    theme:
+      assets/css/social-event--admin.css: {}

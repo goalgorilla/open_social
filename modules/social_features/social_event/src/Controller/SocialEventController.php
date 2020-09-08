@@ -43,9 +43,10 @@ class SocialEventController extends ControllerBase {
   }
 
   /**
-   * Redirectmyevents.
+   * Redirects users to their events page.
    *
-   * Redirect to a users events.
+   * @return \Symfony\Component\HttpFoundation\RedirectResponse
+   *   Returns a redirect to the events of the currently logged in user.
    */
   public function redirectMyEvents() {
     return $this->redirect('view.events.events_overview', [
@@ -85,6 +86,19 @@ class SocialEventController extends ControllerBase {
       return AccessResult::allowedIfHasPermission($account, 'view events on my profile');
     }
     return AccessResult::allowedIfHasPermission($account, 'view events on other profiles');
+  }
+
+  /**
+   * Function to get the decline request title.
+   *
+   * @return \Drupal\Core\StringTranslation\TranslatableMarkup
+   *   The decline title markup.
+   */
+  public function getTitleDeclineRequest() {
+    /** @var \Drupal\node\NodeInterface $node */
+    $node = $this->requestStack->getCurrentRequest()->get('node');
+
+    return $this->t('Decline enrollment request for the event @event_title', ['@event_title' => $node->getTitle()]);
   }
 
 }

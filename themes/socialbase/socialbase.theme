@@ -25,6 +25,7 @@ function socialbase_library_info_alter(&$libraries, $extension) {
   // photoswipe styling with the comment styling.
   if ($extension === 'socialbase' && isset($libraries['comment']) && \Drupal::moduleHandler()->moduleExists('social_comment_upload')) {
     $libraries['comment']['dependencies'][] = 'socialbase/photoswipe-gallery';
+    $libraries['comment']['dependencies'][] = 'socialbase/photoswipe.image';
   }
 }
 
@@ -153,4 +154,21 @@ function socialbase_preprocess_username(&$variables) {
   // Override the default drupal truncate function for all user names,
   // so the whole name will be displayed.
   $variables['name'] = $account->getDisplayName();
+}
+
+/**
+ * Implements hook_theme().
+ */
+function socialbase_theme($existing, $type, $theme, $path) {
+  return [
+    'invite_email_preview' => [
+      'variables' => [
+        'title' => NULL,
+        'logo' => NULL,
+        'subject' => NULL,
+        'body' => NULL,
+        'helper' => NULL,
+      ],
+    ],
+  ];
 }

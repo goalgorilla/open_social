@@ -78,7 +78,11 @@ function social_font_render($font_id = NULL) {
         }
       }
       $css .= social_font_fontfiles_render($fonts);
-      $css .= "} body { font-family: '" . $fontname . "', " . $fallback . " !important; }";
+      $css .= "} body { font-family: '" . $fontname . "', " . $fallback . " !important; } ";
+      // font-weight is reset because uploaded fonts don't yet support
+      // multiple font-weights which breaks strong tags.
+      // TODO: See issue #3045765.
+      $css .= "strong { font-weight: initial !important; }";
     }
   }
 

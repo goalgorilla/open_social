@@ -7,6 +7,8 @@ use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\TempStore\PrivateTempStoreFactory;
 use Drupal\group\Entity\Group;
+use Drupal\group\Entity\GroupContent;
+use Drupal\group\Entity\GroupInterface;
 use Drupal\user\Entity\User;
 use Drupal\views_bulk_operations\Form\ViewsBulkOperationsFormTrait;
 use Drupal\views_bulk_operations\Service\ViewsBulkOperationsActionProcessorInterface;
@@ -119,6 +121,15 @@ class SocialGroupController extends ControllerBase {
    *   The page title.
    */
   public function groupAddMemberTitle() {
+    $group_content = \Drupal::routeMatch()->getParameter('group_content');
+    if ($group_content instanceof GroupContent &&
+      $group_content->getGroupContentType()->getContentPluginId() === 'group_invitation') {
+      $group = \Drupal::routeMatch()->getParameter('group');
+      if ($group instanceof GroupInterface) {
+        return $this->t('Add invites to group: @group_name', ['@group_name' => $group->label()]);
+      }
+      return $this->t('Add invites');
+    }
     return $this->t('Add members');
   }
 
@@ -128,12 +139,21 @@ class SocialGroupController extends ControllerBase {
    * @return string
    *   The page title.
    */
-  public function groupRemoveContentTitle() {
+  public function groupRemoveContentTitle($group) {
+    $group_content = \Drupal::routeMatch()->getParameter('group_content');
+    if ($group_content instanceof GroupContent &&
+      $group_content->getGroupContentType()->getContentPluginId() === 'group_invitation') {
+      $group = \Drupal::routeMatch()->getParameter('group');
+      if ($group instanceof GroupInterface) {
+        return $this->t('Remove invitee from group: @group_name', ['@group_name' => $group->label()]);
+      }
+      return $this->t('Remove invitation');
+    }
     return $this->t('Remove a member');
   }
 
   /**
-   * Function that checks access on the my topic pages.
+   * Function that checks access on the my groups pages.
    *
    * @param \Drupal\Core\Session\AccountInterface $account
    *   The account we need to check access for.
@@ -159,6 +179,10 @@ class SocialGroupController extends ControllerBase {
       }
     }
 
+    if ($user->isBlocked()) {
+      return AccessResult::allowedIfHasPermission($account, 'view blocked user');
+    }
+
     // Own profile?
     if ($user->id() === $account->id()) {
       return AccessResult::allowedIfHasPermission($account, 'view groups on my profile');
@@ -167,9 +191,21 @@ class SocialGroupController extends ControllerBase {
   }
 
   /**
+   * Redirects users to their groups page.
+   *
+   * @return \Symfony\Component\HttpFoundation\RedirectResponse
+   *   Returns a redirect to the groups of the currently logged in user.
+   */
+  public function redirectMyGroups() {
+    return $this->redirect('view.groups.page_user_groups', [
+      'user' => $this->currentUser()->id(),
+    ]);
+  }
+
+  /**
    * OtherGroupPage.
    *
-   * @return RedirectResponse
+   * @return \Symfony\Component\HttpFoundation\RedirectResponse
    *   Return Redirect to the group account.
    */
   public function otherGroupPage($group) {

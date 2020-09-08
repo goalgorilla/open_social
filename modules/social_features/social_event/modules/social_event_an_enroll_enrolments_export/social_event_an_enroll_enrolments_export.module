@@ -11,3 +11,22 @@
 function social_event_an_enroll_enrolments_export_social_event_managers_action_social_event_an_enroll_enrolments_export_action_finish($success) {
   return social_event_enrolments_export_social_event_managers_action_social_event_enrolments_export_enrollments_action_finish($success);
 }
+
+/**
+ * Implements hook_social_user_export_plugin_info_alter().
+ */
+function social_event_an_enroll_enrolments_export_social_user_export_plugin_info_alter(array &$plugins) {
+  $plugins_overrides = [
+    'enrolment_display_name' => 'display_name',
+    'enrolment_user_email' => 'user_email',
+    'enrolment_user_first_name' => 'user_first_name',
+    'enrolment_user_last_name' => 'user_last_name',
+    'enrolment_user_registration' => 'user_registration',
+  ];
+
+  foreach ($plugins_overrides as $override => $plugin) {
+    if ($plugins[$plugin]) {
+      unset($plugins[$plugin]);
+    }
+  }
+}

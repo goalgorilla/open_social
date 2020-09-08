@@ -2,6 +2,7 @@
 
 namespace Drupal\activity_send\Plugin;
 
+use Drupal\activity_creator\Entity\Activity;
 use Drupal\activity_creator\Plugin\ActivityDestinationBase;
 
 /**
@@ -73,6 +74,28 @@ class SendActivityDestinationBase extends ActivityDestinationBase {
         ->load($target_id);
       return $target_account;
     }
+  }
+
+  /**
+   * Get one or multiple target user accounts.
+   *
+   * @param \Drupal\activity_creator\Entity\Activity $activity
+   *   The activity from which the users need to be targeted.
+   *
+   * @return \Drupal\Core\Entity\EntityInterface[]
+   *   Returns an array of target user accounts.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   */
+  public static function getSendTargetUsers(Activity $activity) {
+    $targets = [];
+    if (isset($activity->field_activity_recipient_user) && !empty($activity->field_activity_recipient_user)) {
+      $targets = \Drupal::entityTypeManager()
+        ->getStorage('user')
+        ->loadMultiple(array_column($activity->field_activity_recipient_user->getValue(), 'target_id'));
+    }
+    return $targets;
   }
 
   /**

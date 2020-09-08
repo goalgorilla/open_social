@@ -128,4 +128,16 @@ class SocialTopicController extends ControllerBase {
     return AccessResult::allowedIfHasPermission($account, 'view topics on other profiles');
   }
 
+  /**
+   * Redirects users to their topics page.
+   *
+   * @return \Symfony\Component\HttpFoundation\RedirectResponse
+   *   Returns a redirect to the topics of the currently logged in user.
+   */
+  public function redirectMyTopics() {
+    return $this->redirect('view.topics.page_profile', [
+      'user' => $this->currentUser()->id(),
+    ]);
+  }
+
 }

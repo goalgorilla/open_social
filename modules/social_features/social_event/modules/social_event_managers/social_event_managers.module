@@ -468,6 +468,8 @@ function _social_event_managers_action_batch_finish($success, array $results, ar
       }
 
       if ($fields === 2) {
+        // @todo: source strings will never be translatable when we use
+        // variables. This should be refactored.
         $message = \Drupal::translation()->formatPlural($results_count, $messages['singular'], $messages['plural']);
         $type = $success ? MessengerInterface::TYPE_STATUS : MessengerInterface::TYPE_WARNING;
         \Drupal::messenger()->addMessage($message, $type);
@@ -524,6 +526,15 @@ function _social_event_managers_get_action_id(array &$batch) {
  */
 function social_event_managers_social_event_managers_action_social_event_managers_send_email_action_finish($success) {
   if ($success) {
+    // When the queue storage module is enabled the email is send in the
+    // background.
+    if (\Drupal::moduleHandler()->moduleExists('social_queue_storage')) {
+      return [
+        'singular' => 'Your email will be send to 1 selected enrollee',
+        'plural' => 'Your email will be send to @count selected enrollees',
+      ];
+    }
+
     return [
       'singular' => 'Your email has been sent to 1 selected enrollee successfully',
       'plural' => 'Your email has been sent to @count selected enrollees successfully',

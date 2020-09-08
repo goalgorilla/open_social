@@ -6,6 +6,20 @@
  */
 
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Url;
+
+/**
+ * Implements hook_language_switch_links_alter().
+ */
+function social_language_language_switch_links_alter(array &$links, $type, Url $url) {
+  $currentLangcode = \Drupal::languageManager()->getCurrentLanguage()->getId();
+
+  foreach ($links as $langcode => &$link) {
+    $link['attributes']['title'] = $link['title'];
+    $link['title'] .= " (${langcode})";
+    $link['attributes']['class'][] = $langcode === $currentLangcode ? 'active' : NULL;
+  }
+}
 
 /**
  * Implements hook_form_FORM_ID_alter().

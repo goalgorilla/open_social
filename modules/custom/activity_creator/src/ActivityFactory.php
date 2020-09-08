@@ -9,6 +9,7 @@ use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\language\ConfigurableLanguageManagerInterface;
 use Drupal\message\Entity\Message;
 use Drupal\activity_creator\Plugin\ActivityDestinationManager;
+use Drupal\social_event\EventEnrollmentInterface;
 
 /**
  * Class ActivityFactory to create Activity items based on ActivityLogs.
@@ -57,6 +58,8 @@ class ActivityFactory extends ControllerBase {
    *
    * @return array
    *   An array of created activities.
+   *
+   * @throws \Drupal\Core\Entity\EntityStorageException
    */
   protected function buildActivities(array $data) {
     $activities = [];
@@ -314,7 +317,7 @@ class ActivityFactory extends ControllerBase {
         ->getStorage($related_object['target_type']);
       $entity = $entity_storage->load($related_object['target_id']);
 
-      if (!empty($entity)) {
+      if ($entity instanceof EventEnrollmentInterface) {
         /** @var \Drupal\social_event\Entity\EventEnrollment $entity */
         $event_id = $entity->getFieldValue('field_event', 'target_id');
         if (!empty($event_id)) {
@@ -354,11 +357,9 @@ class ActivityFactory extends ControllerBase {
    */
   protected function getFieldRecipientGroup($data) {
     $value = NULL;
-    if (isset($data['recipient'])) {
-      if ($data['recipient']['target_type'] === 'group') {
-        // Should be in an array for the field.
-        $value = [$data['recipient']];
-      }
+    if (isset($data['recipient']['target_type']) && $data['recipient']['target_type'] === 'group') {
+      // Should be in an array for the field.
+      $value = [$data['recipient']];
     }
     return $value;
   }
@@ -368,10 +369,18 @@ class ActivityFactory extends ControllerBase {
    */
   protected function getFieldRecipientUser($data) {
     $value = NULL;
+    $user_recipients = [];
     if (isset($data['recipient']) && is_array($data['recipient'])) {
-      if ($data['recipient']['target_type'] === 'user') {
-        // Should be in an array for the field.
-        $value = [$data['recipient']];
+      // Get activities by type and check when there are users entities.
+      $activity_by_type = array_column($data['recipient'], 'target_type');
+      foreach ($activity_by_type as $recipients_key => $target_type) {
+        if ($target_type === 'user') {
+          $user_recipients[] = $data['recipient'][$recipients_key];
+        }
+      }
+
+      if (!empty($user_recipients)) {
+        $value = $user_recipients;
       }
     }
     return $value;
