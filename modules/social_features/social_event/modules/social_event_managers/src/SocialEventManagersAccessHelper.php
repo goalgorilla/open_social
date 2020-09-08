@@ -21,6 +21,11 @@ class SocialEventManagersAccessHelper {
       if ($node->getType() === 'event') {
         // Only continue if the user has access to view the event.
         if ($node->access('view', $account)) {
+          // The owner has access.
+          if ($account->id() === $node->getOwnerId()) {
+            return 2;
+          }
+
           $event_managers = $node->get('field_event_managers')->getValue();
 
           foreach ($event_managers as $event_manager) {

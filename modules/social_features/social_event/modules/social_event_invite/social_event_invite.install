@@ -1,0 +1,125 @@
+<?php
+
+/**
+ * @file
+ * The Social event invite enroll install.
+ */
+
+use Drupal\field\Entity\FieldConfig;
+use Drupal\group\Entity\GroupType;
+
+/**
+ * Implements hook_install().
+ */
+function social_event_invite_install() {
+  // Set default settings for the group types invite feature is enabled for.
+  $group_types = [];
+  /** @var \Drupal\group\Entity\GroupType $group_type */
+  foreach (GroupType::loadMultiple() as $group_type) {
+    // We do not want to enable the invite feature for closed or secret groups.
+    if (in_array($group_type->id(), ['closed_group', 'secret_group'])) {
+      $group_types[$group_type->id()] = 0;
+    }
+    else {
+      $group_types[$group_type->id()] = $group_type->id();
+    }
+  }
+
+  \Drupal::configFactory()->getEditable('social_event_invite.settings')
+    ->set('invite_group_types', $group_types)
+    ->save();
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function social_event_invite_uninstall() {
+  $moduleHandler = \Drupal::service('module_handler');
+  // Delete the email field if social_event_an_enroll is not enabled.
+  // Todo:: is there a way to get field dependencies instead of manual?
+  if (!$moduleHandler->moduleExists('social_event_an_enroll')) {
+    $field = FieldConfig::loadByName('event_enrollment', 'event_enrollment', 'field_email');
+    if ($field) {
+      $field->delete();
+    }
+  }
+}
+
+/**
+ * Added node context to the social invite block to vary results.
+ */
+function social_event_invite_update_8001() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_event_invite', 'social_event_invite_update_8001');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Use display name instead of username for the event invite email.
+ */
+function social_event_invite_update_8002() {
+  // Get the config.
+  $config = \Drupal::configFactory()->getEditable('social_event_invite.settings');
+
+  // Change the value of the invite_subject.
+  $config->set('invite_subject', '[current-user:display-name] has invited you to the event [node:title] on [site:name]');
+  $config->save();
+}
+
+/**
+ * Set helper text of invite mail on the preview page for Events.
+ */
+function social_event_invite_update_8003() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_event_invite', 'social_event_invite_update_8002');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Update invite message in event invite settings.
+ */
+function social_event_invite_update_8004() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_event_invite', 'social_event_invite_update_8004');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Update invite message in the message template.
+ */
+function social_event_invite_update_8005() {
+  $config = \Drupal::configFactory()->getEditable('message.template.invite_event_enrollment');
+
+  $new_text = [
+    0 => [
+      'format' => 'full_html',
+      'value' => '<p>You have been invited to join the event [social_event:event_iam_organizing] by [message:author:display-name]</p>' . "\r\n",
+    ],
+    1 => [
+      'format' => 'full_html',
+      'value' => '<p>You have been invited to join the event [social_event:event_iam_organizing] by [message:author:display-name]</p>' . "\r\n",
+    ],
+    2 => [
+      'format' => 'full_html',
+      'value' => '<p>Hi,</p> ' . "\r\n\r\n" . '<p>I would like to invite you to join my event [social_event:event_iam_organizing] on [site:name].</p>' . "\r\n\r\n" . '<p>Kind regards,</p>' . "\r\n\r\n" . '<p>[message:author:display-name]</p>' . "\r\n\r\n" . '<table class="btn-wrap">' . "\r\n\t" . '<tbody>' . "\r\n\t\t" . '<tr>' . "\r\n\t\t\t" . '<td class="align-center"><a class="btn-link btn-link-bg btn-link-one" href="[social_event_invite:user_login_event_invites_overview]">View event</a></td>' . "\r\n\t\t\t" . '<td class="align-center"><a class="btn-link btn-link-bg btn-link-one" href="[site:url]">About [site:name]</a></td>' . "\r\n\t\t" . '</tr>' . "\r\n\t" . '</tbody>' . "\r\n" . '</table>' . "\r\n",
+    ],
+  ];
+
+  $config->set('text', $new_text);
+  $config->save();
+}

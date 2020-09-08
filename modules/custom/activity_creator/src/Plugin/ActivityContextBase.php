@@ -3,12 +3,11 @@
 namespace Drupal\activity_creator\Plugin;
 
 use Drupal\Component\Plugin\PluginBase;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\Query\Sql\QueryFactory;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
-use Drupal\social_post\Entity\PostInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\social_post\Entity\Post;
 
 /**
  * Base class for Activity context plugin plugins.
@@ -16,21 +15,32 @@ use Drupal\social_post\Entity\Post;
 abstract class ActivityContextBase extends PluginBase implements ActivityContextInterface, ContainerFactoryPluginInterface {
 
   /**
-   * Entity query.
+   * The entity query.
    *
    * @var \Drupal\Core\Entity\Query\Sql\QueryFactory
    */
   private $entityQuery;
 
   /**
-   * Entity type manager.
+   * The entity type manager.
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
   protected $entityTypeManager;
 
   /**
-   * {@inheritdoc}
+   * ActivityContextBase constructor.
+   *
+   * @param array $configuration
+   *   A configuration array containing information about the plugin instance.
+   * @param string $plugin_id
+   *   The plugin_id for the plugin instance.
+   * @param mixed $plugin_definition
+   *   The plugin implementation definition.
+   * @param \Drupal\Core\Entity\Query\Sql\QueryFactory $entity_query
+   *   The entity query.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition, QueryFactory $entity_query, EntityTypeManagerInterface $entity_type_manager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
@@ -56,34 +66,39 @@ abstract class ActivityContextBase extends PluginBase implements ActivityContext
    * {@inheritdoc}
    */
   public function getRecipients(array $data, $last_uid, $limit) {
-    $recipients = [];
-
-    return $recipients;
+    return [];
   }
 
   /**
    * {@inheritdoc}
    */
-  public function isValidEntity($entity) {
+  public function isValidEntity(EntityInterface $entity) {
     return TRUE;
   }
 
   /**
    * Returns recipients from post.
+   *
+   * @param array $referenced_entity
+   *   The referenced entity.
+   *
+   * @return array
+   *   An associative array of recipients, containing the following key-value
+   *   pairs:
+   *   - target_type: The entity type ID.
+   *   - target_id: The entity ID.
    */
   public function getRecipientsFromPost(array $referenced_entity) {
     $recipients = [];
 
-    $post = Post::load($referenced_entity['target_id']);
+    $post = $this->entityTypeManager->getStorage('post')
+      ->load($referenced_entity['target_id']);
 
-    if ($post instanceof PostInterface) {
-      $recipient_user = $post->get('field_recipient_user')->getValue();
-      if (!empty($recipient_user)) {
-        $recipients[] = [
-          'target_type' => 'user',
-          'target_id' => $recipient_user['0']['target_id'],
-        ];
-      }
+    if ($post !== NULL && !$post->field_recipient_user->isEmpty()) {
+      $recipients[] = [
+        'target_type' => 'user',
+        'target_id' => $post->field_recipient_user->target_id,
+      ];
     }
 
     return $recipients;

@@ -158,8 +158,7 @@ class Node extends PreprocessBase {
       // comment count, and add the comment count to the node.
       if ($node->$comment_field_name->status != CommentItemInterface::HIDDEN) {
         $comment_count = _socialbase_node_get_comment_count($node, $comment_field_name);
-        $t_args = [':num_comments' => $comment_count];
-        $variables['below_content'][$comment_field_name]['#title'] = t('Comments (:num_comments)', $t_args);
+        $variables['below_content'][$comment_field_name]['#title'] = $comment_count === 0 ? t('Be the first one to comment') : t('Comments (:num_comments)', [':num_comments' => $comment_count]);
 
         // If it's closed, we only show the comment section when there are
         // comments placed. Closed means we show comments but you are not able
@@ -175,35 +174,13 @@ class Node extends PreprocessBase {
     // for this node, we can print the count even for Anonymous.
     $enabled_types = \Drupal::config('like_and_dislike.settings')->get('enabled_types');
     $variables['likes_count'] = NULL;
-    if (in_array($node->getType(), $enabled_types['node'])) {
+    if (isset($enabled_types['node']) && in_array($node->getType(), $enabled_types['node'])) {
       $variables['likes_count'] = _socialbase_node_get_like_count($node->getEntityTypeId(), $node->id());
     }
 
     // Add styles for nodes in preview.
     if ($node->in_preview) {
       $variables['#attached']['library'][] = 'socialbase/preview';
-    }
-
-    // Add no_image flag if there are no image uploaded.
-    $variables['no_image'] = TRUE;
-    $image_field = "field_{$node->getType()}_image";
-
-    if (!empty($node->{$image_field}->entity)) {
-      $variables['no_image'] = FALSE;
-    }
-    else {
-      // If machine name too long or using another image field.
-      $node_fields = $node->getFields();
-      $image_fields = array_filter($node_fields, '_social_core_find_image_field');
-      // Get the first image field of all the fields.
-      $field = reset($image_fields);
-      if ($field !== NULL && $field !== FALSE) {
-        if ($field->getFieldDefinition()->get("field_type") === 'image') {
-          if (!empty(($node->get($field->getName())->entity))) {
-            $variables['no_image'] = FALSE;
-          }
-        }
-      }
     }
 
     // For full view modes we render the links outside of the lazy builder so
@@ -218,15 +195,6 @@ class Node extends PreprocessBase {
         )
       );
       unset($variables['content']['links']['#lazy_builder']);
-    }
-
-    // A landing page has a different way of determining this.
-    if ($node->getType() === 'landing_page') {
-      $variables['no_image'] = FALSE;
-      $image = _social_landing_page_get_hero_image($node);
-      if (empty($image)) {
-        $variables['no_image'] = TRUE;
-      }
     }
 
   }

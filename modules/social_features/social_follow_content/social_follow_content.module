@@ -15,6 +15,31 @@ use Drupal\flag\FlagInterface;
 use Drupal\node\NodeInterface;
 
 /**
+ * Implements hook_modules_installed().
+ */
+function social_follow_content_modules_installed($modules) {
+  // Check if the topic, flag or this module is being installed in which case
+  // the follow content field needs to be hidden for topic small teaser view
+  // modes. All these modules are checked because the order is not guaranteed
+  // and it's not quite known when the `flag_follow_content` field is added.
+  if (!empty(array_intersect(['social_topic', 'flag', 'social_follow_content'], $modules))) {
+    /** @var \Drupal\Core\Entity\EntityDisplayRepositoryInterface $entityDisplayRepository */
+    $entityDisplayRepository = \Drupal::service('entity_display.repository');
+    /** @var \Drupal\Core\Entity\Display\EntityViewDisplayInterface $view_mode */
+    $view_mode = $entityDisplayRepository->getViewDisplay('node', 'topic', 'small_teaser');
+    // The getViewDisplay returns a new view mode entity if one didn't already
+    // exist but only existing view modes should be edited.
+    if ($view_mode->isNew()) {
+      return;
+    }
+
+    // When a field gets moved to the hidden region its component just gets
+    // removed.
+    $view_mode->removeComponent('flag_follow_content')->save();
+  }
+}
+
+/**
  * Implements hook_ENTITY_TYPE_insert().
  */
 function social_follow_content_event_enrollment_insert(EntityInterface $entity) {
@@ -40,8 +65,15 @@ function social_follow_content_event_enrollment_follow(EntityInterface $entity) 
       return;
     }
 
+    $user_id = $account->id();
+
+    // If the user got enrolled by someone else, then use the target_id as user.
+    if ($account->id() !== $entity->field_account->target_id) {
+      $user_id = $entity->field_account->target_id;
+    }
+
     $properties = [
-      'uid' => $account->id(),
+      'uid' => $user_id,
       'entity_type' => 'node',
       'entity_id' => $entity->field_event->target_id,
       'flag_id' => 'follow_content',
@@ -55,8 +87,11 @@ function social_follow_content_event_enrollment_follow(EntityInterface $entity) 
       $flagging = Flagging::create($properties);
       if ($flagging) {
         $flagging->save();
-        $message = t('You have successfully enrolled to this event. Also you are now following the event, which means you will receive notifications when a new comment is placed.');
-        drupal_set_message($message);
+        // No need to set a message if the user got enrolled by someone else.
+        if ($account->id() === $entity->field_account->target_id) {
+          $message = t('You have successfully enrolled to this event. Also you are now following the event, which means you will receive notifications when a new comment is placed.');
+          drupal_set_message($message);
+        }
       }
     }
   }

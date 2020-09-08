@@ -3,14 +3,15 @@
 namespace Drupal\activity_basics\Plugin\ActivityContext;
 
 use Drupal\activity_creator\Plugin\ActivityContextBase;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\group\Entity\GroupContent;
 
 /**
- * Provides a 'CommunityActivityContext' acitivy context.
+ * Provides a 'CommunityActivityContext' activity context.
  *
  * @ActivityContext(
- *  id = "community_activity_context",
- *  label = @Translation("Community activity context"),
+ *   id = "community_activity_context",
+ *   label = @Translation("Community activity context"),
  * )
  */
 class CommunityActivityContext extends ActivityContextBase {
@@ -27,7 +28,7 @@ class CommunityActivityContext extends ActivityContextBase {
   /**
    * {@inheritdoc}
    */
-  public function isValidEntity($entity) {
+  public function isValidEntity(EntityInterface $entity) {
     // Special cases for comments.
     if ($entity->getEntityTypeId() === 'comment') {
       // Returns the entity to which the comment is attached.
@@ -42,14 +43,16 @@ class CommunityActivityContext extends ActivityContextBase {
     if (GroupContent::loadByEntity($entity)) {
       return FALSE;
     }
+
     if ($entity->getEntityTypeId() === 'post') {
-      if (!empty($entity->get('field_recipient_group')->getValue())) {
+      if (!$entity->field_recipient_group->isEmpty()) {
         return FALSE;
       }
-      elseif (!empty($entity->get('field_recipient_user')->getValue())) {
+      elseif (!$entity->field_recipient_user->isEmpty()) {
         return FALSE;
       }
     }
+
     return TRUE;
   }
 

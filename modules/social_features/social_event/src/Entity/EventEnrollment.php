@@ -9,6 +9,7 @@ use Drupal\Core\Entity\EntityChangedTrait;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\social_event\EventEnrollmentInterface;
 use Drupal\user\UserInterface;
+use Drupal\Core\Cache\Cache;
 
 /**
  * Defines the Event enrollment entity.
@@ -67,6 +68,34 @@ class EventEnrollment extends ContentEntityBase implements EventEnrollmentInterf
     $values += [
       'user_id' => \Drupal::currentUser()->id(),
     ];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function preSave(EntityStorageInterface $storage) {
+    $tags = [
+      'event_content_list:user:' . $this->getAccount(),
+      'event_enrollment_list:' . $this->getFieldValue('field_event', 'target_id'),
+    ];
+    Cache::invalidateTags($tags);
+    parent::preSave($storage);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function preDelete(EntityStorageInterface $storage, array $entities) {
+    if (!empty($entities)) {
+      $tags = [];
+      foreach ($entities as $enrollment) {
+        $tags = [
+          'event_content_list:user:' . $enrollment->getAccount(),
+          'event_enrollment_list:' . $enrollment->getFieldValue('field_event', 'target_id'),
+        ];
+      }
+      Cache::invalidateTags($tags);
+    }
   }
 
   /**

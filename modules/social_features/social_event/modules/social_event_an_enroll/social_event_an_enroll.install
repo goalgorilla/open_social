@@ -7,6 +7,7 @@
 
 use Drupal\user\Entity\Role;
 use Drupal\block\Entity\Block;
+use Drupal\field\Entity\FieldConfig;
 
 /**
  * Implements hook_install().
@@ -17,6 +18,21 @@ function social_event_an_enroll_install() {
   module_set_weight('social_event_an_enroll', 10);
   _social_event_an_enroll_set_permissions();
   _social_event_an_enroll_fix_blocks();
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function social_event_an_enroll_uninstall() {
+  $moduleHandler = \Drupal::service('module_handler');
+  // Delete the email field is social_event_invite is not enabled.
+  // Todo:: is there a way to get field dependencies instead of manual?
+  if (!$moduleHandler->moduleExists('social_event_invite')) {
+    $field = FieldConfig::loadByName('event_enrollment', 'event_enrollment', 'field_email');
+    if ($field) {
+      $field->delete();
+    }
+  }
 }
 
 /**
@@ -112,4 +128,18 @@ function social_event_an_enroll_update_8003() {
   $config->set('event_an_enroll_default_value', FALSE);
   $config->set('event_an_enroll_allow_edit', TRUE);
   $config->save();
+}
+
+/**
+ * Update description and label.
+ */
+function social_event_an_enroll_update_8004() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_event_an_enroll', 'social_event_an_enroll_update_8004');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
 }

@@ -32,7 +32,33 @@ class ThemeSuggestions extends BaseThemeSuggestions {
         }
 
         if (isset($variables['elements']['content']['#block_content'])) {
-          $suggestions[] = 'block__' . $variables['elements']['content']['#block_content']->bundle();
+          // Keep the theme suggestion before the most specific plugin based
+          // suggestion. This allows cases like layout builder blocks to take
+          // precedence over our generic theme based use of the block.
+          // See block_theme_suggestions_block() for how tis is constructed.
+          $parts = explode(':', $variables['elements']['#plugin_id']);
+          $insert_before = 'block__' . implode(
+            '__',
+            array_map(
+              static function ($part) {
+                return str_replace('-', '_', $part);
+              },
+              $parts
+            )
+          );
+          $new_suggestion = 'block__' . $variables['elements']['content']['#block_content']->bundle();
+          array_splice($suggestions, array_search($insert_before, $suggestions, TRUE), 0, $new_suggestion);
+        }
+
+        if (isset($variables['elements']['content']['#lazy_builder']) && $variables['elements']['content']['#lazy_builder'][0] === 'social_content_block.content_builder:build') {
+          // Add a block--block-type suggestion just above the layout builder so
+          // it can be shared with other places the block is shown. This works
+          // for properly designed blocks and gives plenty of opportunities for
+          // misbehaving blocks.
+          $block_content_bundle = $variables['elements']['content']['#lazy_builder'][1][2];
+          $new_suggestion = 'block__' . $block_content_bundle;
+          $insert_before = 'block__inline_block__' . $block_content_bundle;
+          array_splice($suggestions, array_search($insert_before, $suggestions, TRUE), 0, $new_suggestion);
         }
 
         $block_id = $variables['elements']['#derivative_plugin_id'];
@@ -92,7 +118,7 @@ class ThemeSuggestions extends BaseThemeSuggestions {
         }
 
         // Template suggestion for upload attachments in comments.
-        if (isset($variables['element']['#entity_type']) && $variables['element']['#entity_type'] == 'comment') {
+        if (isset($variables['element']['#id']) && strpos($variables['element']['#id'], 'edit-group-add-attachment') === 0) {
           $suggestions[] = 'details__comment';
         }
 

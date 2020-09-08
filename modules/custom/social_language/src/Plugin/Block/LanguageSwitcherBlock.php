@@ -19,6 +19,9 @@ use Drupal\Core\Url;
  *  id = "language_switcher_block",
  *  admin_label = @Translation("Language switcher block"),
  * )
+ *
+ * @deprecated in 8.x will be removed in 9.x.
+ * @see https://www.drupal.org/project/social/issues/3098046
  */
 class LanguageSwitcherBlock extends LanguageBlock {
 

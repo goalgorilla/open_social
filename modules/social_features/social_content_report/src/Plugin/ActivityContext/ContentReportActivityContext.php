@@ -3,14 +3,13 @@
 namespace Drupal\social_content_report\Plugin\ActivityContext;
 
 use Drupal\activity_creator\Plugin\ActivityContextBase;
-use Drupal\user\Entity\Role;
 
 /**
  * Provides a 'ContentReportActivityContext' activity context.
  *
  * @ActivityContext(
- *  id = "content_report_activity_context",
- *  label = @Translation("Content report activity context"),
+ *   id = "content_report_activity_context",
+ *   label = @Translation("Content report activity context"),
  * )
  */
 class ContentReportActivityContext extends ActivityContextBase {
@@ -49,7 +48,7 @@ class ContentReportActivityContext extends ActivityContextBase {
     $roles_with_perm = [];
 
     /* @var \Drupal\user\RoleInterface[] $roles */
-    $roles = Role::loadMultiple();
+    $roles = $this->entityTypeManager->getStorage('user_role')->loadMultiple();
 
     // Check for each role which one has permission to "view inappropriate
     // reports".

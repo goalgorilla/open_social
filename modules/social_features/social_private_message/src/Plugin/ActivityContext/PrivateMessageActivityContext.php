@@ -3,19 +3,80 @@
 namespace Drupal\social_private_message\Plugin\ActivityContext;
 
 use Drupal\activity_creator\Plugin\ActivityContextBase;
-use Drupal\private_message\Entity\PrivateMessage;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Entity\Query\Sql\QueryFactory;
+use Drupal\private_message\Entity\PrivateMessageInterface;
 use Drupal\private_message\Entity\PrivateMessageThreadInterface;
+use Drupal\private_message\Service\PrivateMessageServiceInterface;
 use Drupal\user\Entity\User;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Provides a 'PrivateMessageActivityContext' activity context.
  *
  * @ActivityContext(
- *  id = "private_message_activity_context",
- *  label = @Translation("Private message activity context"),
+ *   id = "private_message_activity_context",
+ *   label = @Translation("Private message activity context"),
  * )
  */
 class PrivateMessageActivityContext extends ActivityContextBase {
+
+  /**
+   * The private message service.
+   *
+   * @var \Drupal\private_message\Service\PrivateMessageServiceInterface
+   */
+  protected $privateMessageService;
+
+  /**
+   * PrivateMessageActivityContext constructor.
+   *
+   * @param array $configuration
+   *   A configuration array containing information about the plugin instance.
+   * @param string $plugin_id
+   *   The plugin_id for the plugin instance.
+   * @param mixed $plugin_definition
+   *   The plugin implementation definition.
+   * @param \Drupal\Core\Entity\Query\Sql\QueryFactory $entity_query
+   *   The entity query.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
+   * @param \Drupal\private_message\Service\PrivateMessageServiceInterface $private_message_service
+   *   The private message service.
+   */
+  public function __construct(
+    array $configuration,
+    $plugin_id,
+    $plugin_definition,
+    QueryFactory $entity_query,
+    EntityTypeManagerInterface $entity_type_manager,
+    PrivateMessageServiceInterface $private_message_service
+  ) {
+    parent::__construct(
+      $configuration,
+      $plugin_id,
+      $plugin_definition,
+      $entity_query,
+      $entity_type_manager
+    );
+
+    $this->privateMessageService = $private_message_service;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    return new static(
+      $configuration,
+      $plugin_id,
+      $plugin_definition,
+      $container->get('entity.query.sql'),
+      $container->get('entity_type.manager'),
+      $container->get('private_message.service')
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -26,22 +87,24 @@ class PrivateMessageActivityContext extends ActivityContextBase {
     // We only know the context if there is a related object.
     if (isset($data['related_object']) && !empty($data['related_object'])) {
       $related_object = $data['related_object'][0];
-      if ($related_object['target_type'] == 'private_message') {
 
+      if ($related_object['target_type'] === 'private_message') {
         $related_object = $data['related_object'][0];
 
         if ($related_object['target_type'] === 'private_message') {
-          $private_message = PrivateMessage::load($related_object['target_id']);
+          $private_message = $this->entityTypeManager->getStorage('private_message')
+            ->load($related_object['target_id']);
+
           // Must be a Private Message.
-          if ($private_message instanceof PrivateMessage) {
-            $pmService = \Drupal::service('private_message.service');
+          if ($private_message instanceof PrivateMessageInterface) {
             // Get the thread of this message.
-            $thread = $pmService->getThreadFromMessage($private_message);
+            $thread = $this->privateMessageService->getThreadFromMessage($private_message);
 
             if ($thread instanceof PrivateMessageThreadInterface) {
               // Get all members of this thread.
               /** @var \Drupal\private_message\Entity\PrivateMessageThreadInterface $members */
               $members = $thread->getMembers();
+
               // Loop over all PMT participants.
               foreach ($members as $member) {
                 if ($member instanceof User) {
@@ -49,6 +112,7 @@ class PrivateMessageActivityContext extends ActivityContextBase {
                   if ($member->id() == $data['actor']) {
                     continue;
                   }
+
                   // Create the recipients array.
                   $recipients[] = [
                     'target_type' => 'user',
@@ -61,18 +125,15 @@ class PrivateMessageActivityContext extends ActivityContextBase {
         }
       }
     }
+
     return $recipients;
   }
 
   /**
-   * Check if it's valid.
+   * {@inheritdoc}
    */
-  public function isValidEntity($entity) {
-    if ($entity->getEntityTypeId() === 'private_message') {
-      return TRUE;
-    }
-
-    return FALSE;
+  public function isValidEntity(EntityInterface $entity) {
+    return $entity->getEntityTypeId() === 'private_message';
   }
 
 }

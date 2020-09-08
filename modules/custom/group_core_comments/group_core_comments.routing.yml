@@ -1,0 +1,11 @@
+group_core_comments.quick_join_group:
+  path: '/group/{group}/quick-join-group'
+  defaults:
+    _controller: '\Drupal\group_core_comments\Controller\GroupCoreCommentsController::quickJoinGroup'
+  requirements:
+    _group_permission: 'join group'
+    _group_member: 'FALSE'
+  options:
+    parameters:
+      group:
+        type: 'entity:group'

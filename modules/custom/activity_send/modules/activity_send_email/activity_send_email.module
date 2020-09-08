@@ -169,6 +169,10 @@ function activity_send_email_form_user_form_alter(&$form, FormStateInterface $fo
         'create_content_in_joined_group',
       ],
     ],
+    'system_notifications' => [
+      'title' => t('System notifications'),
+      'templates' => [],
+    ],
   ];
 
   $email_message_templates = EmailActivityDestination::getSendEmailMessageTemplates();
@@ -192,6 +196,11 @@ function activity_send_email_form_user_form_alter(&$form, FormStateInterface $fo
   $user_email_settings = EmailActivityDestination::getSendEmailUserSettings($account);
 
   foreach ($items as $item_id => $item) {
+    // Don't render the fieldset when there are no templates.
+    if (empty($item['templates'])) {
+      continue;
+    }
+
     $form['email_notifications'][$item_id] = [
       '#type' => 'fieldset',
       '#title' => [
@@ -243,7 +252,8 @@ function _activity_send_email_form_user_form_submit(array $form, FormStateInterf
   $values = array_merge(
     $values['message_to_me'],
     $values['what_manage'],
-    $values['what_follow']
+    $values['what_follow'],
+    $values['system_notifications']
   );
 
   if (is_object($account) && !empty($values)) {

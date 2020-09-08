@@ -28,3 +28,18 @@ function hook_social_content_block_query_alter(\Drupal\Core\Database\Driver\mysq
     $query->condition('tt.field_topic_type_target_id', $topic_types, 'IN');
   }
 }
+
+/**
+ * Alter the list of content block plugin definitions.
+ *
+ * @param array $info
+ *   The content block plugin definitions to be altered.
+ *
+ * @see \Drupal\social_content_block\Annotation\ContentBlock
+ * @see \Drupal\social_content_block\ContentBlockManager
+ */
+function hook_social_content_block_info_alter(array &$info) {
+  if (isset($info['event_content_block'])) {
+    $info['event_content_block']['fields'][] = 'field_content_tags';
+  }
+}

@@ -61,7 +61,8 @@
   margin-right: auto;
 
   @include for-tablet-landscape-up {
-    max-width: 1200px;
+    max-width: calc(1200px - 2rem);
+    padding: 0 1rem
   }
 }
 
@@ -72,7 +73,6 @@
 }
 
 .main-container {
-  overflow: hidden;
   min-height: 100%;
   min-height: calc(100vh - 50px);
   padding-top: 50px;
@@ -217,10 +217,11 @@
   }
 }
 
-@include for-tablet-landscape-up {
 
-  .region--complementary-top {
+.region--complementary-top {
+  margin-top: 1rem;
+
+  @include for-tablet-landscape-up {
     margin-top: 0;
   }
-
 }

@@ -11,6 +11,7 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
 use Drupal\file\Entity\File;
@@ -225,6 +226,15 @@ function social_profile_local_tasks_alter(&$local_tasks) {
 }
 
 /**
+ * Implements hook_menu_local_tasks_alter().
+ */
+function social_profile_menu_local_tasks_alter(&$data, $route_name) {
+  if (isset($data['tabs'][0]['profile.user_page:profile'])) {
+    unset($data['tabs'][0]['profile.user_page:profile']);
+  }
+}
+
+/**
  * Implements hook_form_FORM_ID_alter().
  */
 function social_profile_form_views_exposed_form_alter(&$form, FormStateInterface $form_state, $form_id) {
@@ -343,15 +353,7 @@ function social_profile_preprocess_profile(array &$variables) {
     $variables['#cache']['contexts'][] = 'user';
   }
 
-  // Email field.
-  $global_show_email = \Drupal::config('social_profile.settings')->get('social_profile_show_email');
-  if (isset($profile->field_profile_show_email)) {
-    $profile_show_email = $profile->field_profile_show_email->value;
-  }
-  if ($global_show_email
-    || (!$global_show_email && !empty($profile_show_email))
-    || $current_user->hasPermission('view profile email')
-  ) {
+  if (social_profile_check_email_field_access($profile, $current_user)) {
     // Derived from MailToFormatter.php.
     $variables['user_mail'] = Link::fromTextAndUrl($user->getEmail(), Url::fromUri('mailto:' . $user->getEmail()));
   }
@@ -360,7 +362,7 @@ function social_profile_preprocess_profile(array &$variables) {
   // Get the current route name to check if the user is on the edit or delete
   // page.
   $route = \Drupal::routeMatch()->getRouteName();
-  if ($route !== 'entity.profile.type.user_profile_form' && $profile->access('update', $current_user)) {
+  if ($route !== 'profile.user_page.single' && $profile->access('update', $current_user)) {
     $variables['profile_edit_url'] = Url::fromUserInput('/user/' . $profile->getOwnerId() . '/profile');
     $variables['#cache']['contexts'][] = 'route.name';
   }
@@ -376,7 +378,49 @@ function social_profile_preprocess_profile(array &$variables) {
     $variables['profile_image_url'] = ImageStyle::load('social_medium')
       ->buildUrl($profile->field_profile_image->entity->getFileUri());
   }
+  // Profile information URL.
+  $variables['profile_info_url'] = Url::fromRoute('view.user_information.user_information', ['user' => $profile->getOwnerId()]);
 
+  // Prepare variables for statistic block.
+  if ($variables['elements']['#view_mode'] === 'statistic') {
+    /** @var \Drupal\social_profile\UserStatistics $user_statistics */
+    $user_statistics = \Drupal::service('social_profile.user_statistics');
+    $variables['profile_topics'] = $user_statistics->nodeCount($user->id(), 'topic');
+    $variables['profile_events'] = $user_statistics->nodeCount($user->id(), 'event');
+    $variables['profile_groups'] = count(\Drupal::service('social_group.helper_service')->getAllGroupsForUser($user->id()));
+  }
+}
+
+/**
+ * Helps determine if current user has access to view the email field.
+ *
+ * @param \Drupal\profile\Entity\Profile $profile
+ *   The profile the current user is viewing.
+ * @param \Drupal\Core\Session\AccountProxyInterface $current_user
+ *   The current user.
+ *
+ * @return bool
+ *   Return TRUE if current user is allowed to see the email, FALSE otherwise.
+ */
+function social_profile_check_email_field_access(Profile $profile, AccountProxyInterface $current_user) {
+  // If the current user has this permission, return true straight away.
+  if ($current_user->hasPermission('social profile privacy view hidden fields') || $current_user->hasPermission('view profile email')) {
+    return TRUE;
+  }
+
+  // Prepare some variables for checking on the email field.
+  $global_show_email = \Drupal::config('social_profile.settings')->get('social_profile_show_email');
+  if (isset($profile->field_profile_show_email)) {
+    $profile_show_email = $profile->field_profile_show_email->value ?? NULL;
+  }
+
+  // If the current user doesn't have the above permission, perform additional
+  // checks to see if the current user is still able to view this email field.
+  if ($global_show_email || (!$global_show_email && !empty($profile_show_email))) {
+    return TRUE;
+  }
+
+  return FALSE;
 }
 
 /**
@@ -674,7 +718,7 @@ function social_profile_social_user_account_header_account_links(array $context)
       ],
       '#title' => new TranslatableMarkup("Edit profile"),
       '#weight' => 1300,
-    ] + Url::fromRoute('entity.profile.type.user_profile_form', [
+    ] + Url::fromRoute('profile.user_page.single', [
       'user' => $context['user']->id(),
       'profile_type' => 'profile',
     ])->toRenderArray(),

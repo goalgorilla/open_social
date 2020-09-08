@@ -51,8 +51,7 @@ class GroupAddTopicBlock extends BlockBase {
     $group = _social_group_get_current_group();
 
     if (is_object($group)) {
-      $url = Url::fromUserInput("/group/{$group->id()}/content/create/group_node:topic");
-
+      $url = Url::fromRoute('entity.group_content.create_form', ['group' => $group->id(), 'plugin_id' => 'group_node:topic']);
       $link_options = [
         'attributes' => [
           'class' => [

@@ -2,9 +2,10 @@
 
 /**
  * @file
- * Install, update and uninstall functions for the social_comment module.
+ * Install, update and uninstall functions for the social_post module.
  */
 
+use Drupal\Core\Site\Settings;
 use Drupal\user\Entity\Role;
 
 /**
@@ -26,6 +27,9 @@ use Drupal\user\Entity\Role;
 function social_post_install() {
   // Set some default permissions.
   _social_post_set_permissions();
+
+  // Set the view mode for posts in activities.
+  activity_creator_set_entity_view_mode('post', 'activity');
 }
 
 /**
@@ -64,6 +68,7 @@ function _social_post_get_permissions($role) {
   // Authenticated.
   $permissions['authenticated'] = array_merge($permissions['anonymous'], [
     'add post entities',
+    'add post post entities',
     'delete own post entities',
     'edit own post entities',
     'view community posts',
@@ -85,4 +90,73 @@ function _social_post_get_permissions($role) {
     return $permissions[$role];
   }
   return [];
+}
+
+/**
+ * Implements hook_update_dependencies().
+ */
+function social_post_update_dependencies() {
+  // Run the activities view mode update after the final features removal ran.
+  $dependencies['social_post'][8801] = [
+    'social_core' => 8802,
+  ];
+
+  return $dependencies;
+}
+
+/**
+ * Set the view mode to use when shown in activities.
+ */
+function social_post_update_8801() {
+  activity_creator_set_entity_view_mode('post', 'activity');
+}
+
+/**
+ * Give access to creating posts of specific types.
+ */
+function social_post_update_8802(&$sandbox) {
+  if (!isset($sandbox['total'])) {
+    $sandbox['total'] = \Drupal::entityQuery('user_role')
+      ->condition('id', 'administrator', '<>')
+      ->count()
+      ->execute();
+
+    $sandbox['processed'] = 0;
+    $sandbox['limit'] = Settings::get('entity_update_batch_size', 50);
+    $sandbox['permissions'] = array_keys(\Drupal::service('social_post.permission_generator')->permissions());
+  }
+
+  $role_ids = \Drupal::entityQuery('user_role')
+    ->condition('id', 'administrator', '<>')
+    ->range($sandbox['processed'], $sandbox['limit'])
+    ->execute();
+
+  $storage = \Drupal::entityTypeManager()->getStorage('user_role');
+
+  foreach ($role_ids as $role_id) {
+    /** @var \Drupal\user\RoleInterface $role */
+    $role = $storage->load($role_id);
+
+    if ($role->hasPermission('add post entities')) {
+      user_role_grant_permissions($role_id, $sandbox['permissions']);
+    }
+  }
+
+  $sandbox['processed'] += count($role_ids);
+
+  $sandbox['#finished'] = $sandbox['processed'] / $sandbox['total'];
+}
+
+/**
+ * Update likes in post activity and comment view modes.
+ */
+function social_post_update_8901() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_post', 'social_post_update_8901');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
 }

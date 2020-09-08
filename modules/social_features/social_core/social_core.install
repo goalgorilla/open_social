@@ -19,6 +19,9 @@ use Drupal\node\Entity\Node;
 use Drupal\profile\Entity\Profile;
 use Drupal\group\Entity\Group;
 use Symfony\Component\Yaml\Yaml;
+use Drupal\field\Entity\FieldConfig;
+use Drupal\field\Entity\FieldStorageConfig;
+use Drupal\field\FieldConfigInterface;
 
 /**
  * Implements hook_requirements().
@@ -26,15 +29,31 @@ use Symfony\Component\Yaml\Yaml;
 function social_core_requirements($phase) {
   $requirements = [];
 
-  if ($phase === 'runtime') {
-    if (!\Drupal::service('module_handler')->moduleExists('social_file_private')) {
-      $requirements['social_file_private_module_check'] = [
-        'title' => 'Social Private Files',
-        'value' => t('All your uploaded files on the Open Social entities are potentially reachable by unauthorized users'),
-        'severity' => REQUIREMENT_WARNING,
-        'description' => t('It is strongly recommended to enable social_file_private module to make sure your file and image uploads on Open Social entities can not be accessed by unauthorized users. More info: https://www.drupal.org/docs/8/distributions/open-social/private-files'),
-      ];
-    }
+  switch ($phase) {
+    case 'runtime':
+      if (!\Drupal::service('module_handler')->moduleExists('social_file_private')) {
+        $requirements['social_file_private_module_check'] = [
+          'title' => 'Social Private Files',
+          'value' => t('All your uploaded files on the Open Social entities are potentially reachable by unauthorized users'),
+          'severity' => REQUIREMENT_WARNING,
+          'description' => t('It is strongly recommended to enable social_file_private module to make sure your file and image uploads on Open Social entities can not be accessed by unauthorized users. More info: https://www.drupal.org/docs/8/distributions/open-social/private-files'),
+        ];
+      }
+      break;
+
+    case 'update':
+      // From 9.0 on-wards a site must update to 8.1 first to ensure that the
+      // features removal update hooks have run that are no longer present in
+      // Open Social 9.0.
+      if (drupal_get_installed_schema_version('social_core') <= 8805) {
+        $requirements['social_core_update_version'] = [
+          'title' => t('Open Social Update Version'),
+          'description' => t('You must update Open Social to the latest version of 8.x before upgrading to 9.0 or later.'),
+          'severity' => REQUIREMENT_ERROR,
+        ];
+      }
+      break;
+
   }
 
   return $requirements;
@@ -53,8 +72,10 @@ function social_core_install() {
   _social_core_create_an_homepage_block();
   // Add menu items.
   _social_core_create_menu_links();
-  // Set jpeg quality.
-  _social_core_set_image_quality();
+
+  // Set image quality defaults.
+  $config = \Drupal::service('config.factory')->getEditable('system.image.gd');
+  $config->set('jpeg_quality', 90)->save();
 }
 
 /**
@@ -143,6 +164,7 @@ function _social_core_get_permissions($role) {
     'administer account settings',
     'administer themes',
     'administer blocks',
+    'access contextual links',
   ]);
 
   return $permissions[$role] ?? [];
@@ -451,13 +473,6 @@ function social_core_update_8006(&$sandbox) {
  * Set higher jpeg quality instead of default 75%.
  */
 function social_core_update_8007() {
-  _social_core_set_image_quality();
-}
-
-/**
- * Set image quality.
- */
-function _social_core_set_image_quality() {
   $config = \Drupal::service('config.factory')->getEditable('system.image.gd');
 
   $config->set('jpeg_quality', 90)->save();
@@ -877,8 +892,283 @@ function social_core_update_8501() {
   ];
   \Drupal::service('module_installer')->install($modules);
 
-  // Let's disable sharing data by default.
+  // Let's disable sharing data by default for existing sites because this
+  // changes behaviour. For new installs this will be enabled through settings.
   $config = \Drupal::configFactory()->getEditable('social_lets_connect_usage.settings');
   $config->set('usage_data_enabled', 0);
   $config->save();
+}
+
+/**
+ * Enable social_node module.
+ */
+function social_core_update_8801() {
+  \Drupal::service('module_installer')->install(['social_node']);
+}
+
+/**
+ * Perform features revert for the last time.
+ */
+function social_core_update_8802() {
+  // This update has been removed in 9.0.
+}
+
+/**
+ * Set the view mode for nodes to use when shown in activities.
+ */
+function social_core_update_8803() {
+  activity_creator_set_entity_view_mode('node', 'activity');
+}
+
+/**
+ * Allow site managers to use contextual links.
+ */
+function social_core_update_8804() {
+  user_role_grant_permissions('sitemanager', ['access contextual links']);
+}
+
+/**
+ * Install update helper for config update usage.
+ */
+function social_core_update_8805() {
+  \Drupal::service('module_installer')->install(['update_helper']);
+}
+
+/**
+ * Add new basic block config items.
+ */
+function social_core_update_8806(&$sandbox) {
+  if (!isset($sandbox['total'])) {
+    // Declare all the config render arrays,
+    // keyed by the config name.
+    $sandbox['configs'] = [
+      'field.storage.block_content.field_basic_link' => [
+        'id' => 'block_content.field_basic_link',
+        'field_name' => 'field_basic_link',
+        'entity_type' => 'block_content',
+        'type' => 'link',
+        'settings' => [],
+        'module' => 'link',
+        'locked' => FALSE,
+        'cardinality' => 1,
+        'translatable' => TRUE,
+      ],
+      'field.field.block_content.basic.field_basic_link' => [
+        'id' => 'block_content.basic.field_basic_link',
+        'field_name' => 'field_basic_link',
+        'entity_type' => 'block_content',
+        'bundle' => 'basic',
+        'label' => 'Read more link',
+        'description' => '',
+        'required' => FALSE,
+        'translatable' => TRUE,
+        'default_value' => [],
+        'default_value_callback' => '',
+        'settings' => [
+          'link_type' => 17,
+          'title' => 1,
+        ],
+        'field_type' => 'link',
+      ],
+      'field.field.block_content.basic.field_text_block' => [
+        'id' => 'block_content.basic.field_text_block',
+        'field_name' => 'field_text_block',
+        'entity_type' => 'block_content',
+        'bundle' => 'basic',
+        'label' => 'Text block',
+        'description' => '',
+        'required' => FALSE,
+        'translatable' => TRUE,
+        'default_value' => [],
+        'default_value_callback' => '',
+        'settings' => [],
+        'field_type' => 'text_long',
+      ],
+      'core.entity_form_display.block_content.basic.default' => [
+        'langcode' => 'en',
+        'status' => TRUE,
+        'dependencies' => [
+          'config' => [
+            'block_content.type.basic',
+            'field.field.block_content.basic.field_basic_link',
+            'field.field.block_content.basic.field_text_block',
+          ],
+          'module' => [
+            'text',
+            'link',
+          ],
+        ],
+        'id' => 'block_content.basic.default',
+        'targetEntityType' => 'block_content',
+        'bundle' => 'basic',
+        'mode' => 'default',
+        'content' => [
+          'info' => [
+            'region' => 'content',
+            'settings' => [
+              'placeholder' => '',
+              'size' => 60,
+            ],
+            'third_party_settings' => [],
+            'type' => 'string_textfield',
+            'weight' => -5,
+          ],
+        ],
+        'hidden' => [
+          'field_text_block' => TRUE,
+          'field_basic_link' => TRUE,
+        ],
+      ],
+      'core.entity_view_display.block_content.basic.default' => [
+        'langcode' => 'en',
+        'status' => TRUE,
+        'dependencies' => [
+          'config' => [
+            'block_content.type.basic',
+            'field.field.block_content.basic.field_basic_link',
+            'field.field.block_content.basic.field_text_block',
+          ],
+          'module' => [
+            'text',
+            'link',
+          ],
+        ],
+        'id' => 'block_content.basic.default',
+        'targetEntityType' => 'block_content',
+        'bundle' => 'basic',
+        'mode' => 'default',
+        'content' => [],
+        'hidden' => [
+          'field_basic_link' => TRUE,
+          'field_text_block' => TRUE,
+        ],
+      ],
+    ];
+
+    // Count the amount we need to add to cover batching..
+    $sandbox['total'] = count($sandbox['configs']);
+    $sandbox['current'] = 0;
+  }
+
+  $names = array_keys($sandbox['configs']);
+  $name = $names[$sandbox['current']++];
+  $data = $sandbox['configs'][$name];
+
+  $parts = explode('.', $name);
+
+  switch ($parts[0] . '.' . $parts[1]) {
+    case 'field.storage':
+      FieldStorageConfig::create($data)->save();
+      break;
+
+    case 'field.field':
+      $field_config = FieldConfig::loadByName($parts[2], $parts[3], $parts[4]);
+
+      if ($field_config instanceof FieldConfigInterface) {
+        $field_config->setDescription($data);
+      }
+      else {
+        $field_config = FieldConfig::create($data);
+      }
+
+      $field_config->save();
+      break;
+
+    default:
+      // Insert newly created config in the storage.
+      \Drupal::service('config.storage')->write($name, $data);
+  }
+
+  $sandbox['#finished'] = $sandbox['current'] / $sandbox['total'];
+}
+
+/**
+ * Basic block config changes.
+ */
+function social_core_update_8807() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_core', 'social_core_update_8807');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Hide tabs from /user/x/profile page.
+ */
+function social_core_update_8808() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_core', 'social_core_update_8808');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Hide primary admin actions from /user/x/edit and some other pages.
+ */
+function social_core_update_8809() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_core', 'social_core_update_8809');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Install the role delegation module.
+ */
+function social_core_update_8810() {
+  \Drupal::service('module_installer')->install(['role_delegation']);
+}
+
+/**
+ * Block changes for the social_event request enrollment feature.
+ */
+function social_core_update_8811() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_core', 'social_core_update_8811');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Install the Gin theme(as admin) and Install Gin Toolbar.
+ */
+function social_core_update_8812(&$sandbox) {
+  // Install Gin Admin Theme.
+  \Drupal::service('theme_installer')->install(['gin']);
+  // Set Gin Admin Theme as admin theme.
+  \Drupal::configFactory()->getEditable('system.theme')
+    ->set('admin', 'gin')
+    ->save();
+  // Install Gin Toolbar module.
+  \Drupal::service('module_installer')->install(['gin_toolbar']);
+}
+
+/**
+ * Block changes for the social_group_request feature.
+ */
+function social_core_update_8813() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_core', 'social_core_update_8813');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
 }

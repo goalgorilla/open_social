@@ -2,11 +2,13 @@
 
 namespace Drupal\socialbase\Plugin\Preprocess;
 
-use Drupal\bootstrap\Plugin\Preprocess\PreprocessBase;
 use Drupal\block_content\Entity\BlockContent;
+use Drupal\bootstrap\Plugin\Preprocess\PreprocessBase;
 use Drupal\block\Entity\Block as BlockEntity;
+use Drupal\Component\Utility\Html;
 use Drupal\file\Entity\File;
 use Drupal\image\Entity\ImageStyle;
+use Drupal\image\Plugin\Field\FieldType\ImageItem;
 
 /**
  * Pre-processes variables for the "block" theme hook.
@@ -23,6 +25,16 @@ class Block extends PreprocessBase {
   public function preprocess(array &$variables, $hook, array $info) {
     parent::preprocess($variables, $hook, $info);
 
+    $region = '';
+
+    // Blocks don't work well without an id. Unfortunately layout builder blocks
+    // don't have one by default, so we generate one.
+    if (empty($variables['elements']['#id']) && !empty($variables['content']['_layout_builder'])) {
+      $region = '_LAYOUT_BUILDER_DO_NOT_CHANGE';
+      $variables['elements']['#id'] = Html::getUniqueId('_LAYOUT_BUILDER_DO_NOT_CHANGE');
+      $variables['attributes']['id'] = $variables['elements']['#id'];
+    }
+
     // Early return because block missing ID, for example because
     // Rendered in panels display
     // https://www.drupal.org/node/2873726
@@ -36,7 +48,6 @@ class Block extends PreprocessBase {
     $route_name = \Drupal::routeMatch()->getRouteName();
 
     // Get the region of a block.
-    $region = '';
     $block_entity = BlockEntity::load($variables['elements']['#id']);
     if ($block_entity) {
       $region = $block_entity->getRegion();
@@ -101,6 +112,11 @@ class Block extends PreprocessBase {
           $variables['attributes']['class'][] = 'card__body';
         }
       }
+    }
+
+    // Show group tags block in a card.
+    if ($variables['elements']['#plugin_id'] == 'social_group_tags_block') {
+      $variables['card'] = TRUE;
     }
 
     // Show group managers block in a card.
@@ -183,20 +199,27 @@ class Block extends PreprocessBase {
     // AN Homepage block.
     if (isset($variables['elements']['content']['#block_content'])) {
       if ($variables['elements']['content']['#block_content']->bundle() == 'hero_call_to_action_block') {
+        if (isset($variables['elements']['content']['field_hero_image']) && isset($variables['elements']['content']['field_hero_image'][0])) {
+          /** @var \Drupal\image\Plugin\Field\FieldType\ImageItem $image_item */
+          $image_item = $variables['elements']['content']['field_hero_image'][0]['#item'];
+          $file_id = NULL;
 
-        if (isset($variables['elements']['content']['field_hero_image'])) {
-          $imageitem = $variables['elements']['content']['field_hero_image'][0]['#item']->getEntity();
-          $imagestyle = $variables['elements']['content']['field_hero_image'][0]['#image_style'];
-          $entity = BlockContent::load($imageitem->id());
-          $file_id = $entity->get('field_hero_image')->target_id;
+          if ($image_item && $image_item instanceof ImageItem) {
+            /** @var \Drupal\block_content\Entity\BlockContent $block_content */
+            $block_content = $image_item->getEntity();
+            if ($block_content && $block_content instanceof BlockContent) {
+              $file_id = $block_content->get('field_hero_image')->target_id;
+            }
+          }
+          $image_style = $variables['elements']['content']['field_hero_image'][0]['#image_style'];
 
           // First filter out image_style,
           // So responsive image module doesn't break.
-          if (isset($imagestyle)) {
+          if (isset($image_style)) {
             // If it's an existing file.
             if ($file = File::load($file_id)) {
               // Style and set it in the content.
-              $styled_image_url = ImageStyle::load($imagestyle)
+              $styled_image_url = ImageStyle::load($image_style)
                 ->buildUrl($file->getFileUri());
               $variables['image_url'] = $styled_image_url;
 
@@ -213,6 +236,14 @@ class Block extends PreprocessBase {
 
       }
 
+    }
+
+    // Remove our workaround ids so they aren't actually rendered.
+    if ($region === '_LAYOUT_BUILDER_DO_NOT_CHANGE') {
+      unset(
+        $variables['elements']['#id'],
+        $variables['attributes']['id']
+      );
     }
 
   }

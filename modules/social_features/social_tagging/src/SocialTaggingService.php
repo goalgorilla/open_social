@@ -43,20 +43,20 @@ class SocialTaggingService {
   }
 
   /**
-   * Returns wether the feature is turned on or not.
+   * Returns whether the feature is turned on or not.
    *
    * @return bool
-   *   Wether tagging is turnded on or not.
+   *   Whether tagging is turned on or not.
    */
   public function active() {
     return (bool) $this->configFactory->get('social_tagging.settings')->get('enable_content_tagging');
   }
 
   /**
-   * Returns wether the feature is turned on for groups or not.
+   * Returns whether the feature is turned on for groups or not.
    *
    * @return bool
-   *   Wether tagging is turnded on or not for groups.
+   *   Whether tagging is turned on or not for groups.
    */
   public function groupActive() {
     return (bool) $this->configFactory->get('social_tagging.settings')->get('tag_type_group');
@@ -82,10 +82,10 @@ class SocialTaggingService {
   }
 
   /**
-   * Returns wether splitting of fields is allowed.
+   * Returns whether splitting of fields is allowed.
    *
    * @return bool
-   *   Wether category split on field level is turnded on or not.
+   *   Whether category split on field level is turned on or not.
    */
   public function allowSplit() {
     return (bool) ($this->active() && $this->configFactory->get('social_tagging.settings')->get('allow_category_split'));

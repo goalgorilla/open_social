@@ -2,6 +2,7 @@
 
 namespace Drupal\socialblue\Plugin\Preprocess;
 
+use Drupal\bootstrap\Utility\Variables;
 use Drupal\socialbase\Plugin\Preprocess\Html as HtmlBase;
 
 /**
@@ -27,6 +28,19 @@ class Html extends HtmlBase {
       $variables['colors'][$key] = $value;
     }
 
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function preprocessVariables(Variables $variables) {
+    // Add style class to html body.
+    $style = theme_get_setting('style');
+    if (!empty($style)) {
+      $variables['attributes']['class'][] = 'socialblue--' . $style;
+    }
+
+    parent::preprocessVariables($variables);
   }
 
 }
