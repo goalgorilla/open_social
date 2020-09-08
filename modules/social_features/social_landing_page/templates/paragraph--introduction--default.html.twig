@@ -49,12 +49,14 @@
 <div{{ attributes.addClass(classes) }}>
 
   <div class="card__body">
-    <h2 class="card__title">{{ content.field_introduction_title }}</h2>
+    {% if content.field_introduction_title|render is not empty %}
+      <h2 class="card__title">{{ content.field_introduction_title }}</h2>
+    {% endif %}
     <div class="card__text">
       {{ content.field_introduction_text }}
     </div>
-    <footer class="card__actionbar">
-      {% if (logged_in and content.field_introduction_link_lu|render is not empty) or (not logged_in and content.field_introduction_link_an|render is not empty) %}
+    {% if (logged_in and content.field_introduction_link_lu|render is not empty) or (not logged_in and content.field_introduction_link_an|render is not empty) %}
+      <footer class="card__actionbar">
         <div class="card__link">
           {% if logged_in %}
             {{ content.field_introduction_link_lu }}
@@ -62,7 +64,7 @@
             {{ content.field_introduction_link_an }}
           {% endif %}
         </div>
-      {% endif %}
-    </footer>
+      </footer>
+    {% endif %}
   </div>
 </div>
