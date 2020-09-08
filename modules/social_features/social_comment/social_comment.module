@@ -14,11 +14,23 @@ use Drupal\comment\CommentInterface;
 use Drupal\Core\Url;
 use Drupal\group\Entity\GroupContent;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
+use Drupal\social_comment\Entity\Comment;
+use Drupal\social_comment\SocialCommentViewBuilder;
 
 /**
  * @file
  * The Social comment module.
  */
+
+/**
+ * Implements hook_entity_type_alter().
+ */
+function social_comment_entity_type_alter(array &$entity_types) {
+  if (isset($entity_types['comment'])) {
+    $entity_types['comment']->setClass(Comment::class);
+    $entity_types['comment']->setViewBuilderClass(SocialCommentViewBuilder::class);
+  }
+}
 
 /**
  * Implements hook_form_FORM_ID_alter().
@@ -142,11 +154,7 @@ function social_comment_form_reply_validate($form, FormStateInterface $form_stat
     switch ($bundle) {
       default:
         if (!empty($comment->getParentComment())) {
-          $items = explode(".", $comment->getThread());
-          $levels = \Drupal::config('social_comment.settings')->get('social_comment_level') ? \Drupal::config('social_comment.settings')->get('social_comment_level') : 1;
-          if (count($items) >= ++$levels) {
-            $form_state->setErrorByName('', t('Replies to comments deeper than threaded %level level(s) are not allowed', ['%level' => --$levels]));
-          }
+          $form_state->setErrorByName('', t('Replies to comments deeper than 1 is not allowed'));
         }
         break;
 
@@ -179,12 +187,15 @@ function social_comment_comment_links_alter(array &$links, CommentInterface $ent
     ];
   }
 
+  $items = explode(".", $entity->getThread());
+  $levels = \Drupal::config('social_comment.settings')->get('social_comment_level') ? \Drupal::config('social_comment.settings')->get('social_comment_level') : 1;
+
   if ($bundle === 'post_comment') {
     // For post comments remove the reply button.
     unset($links['comment']['#links']['comment-reply']);
   }
   // If it is not a post comment do some extra checks.
-  elseif ($entity->getParentComment() !== NULL || \Drupal::routeMatch()->getRouteName() === 'comment.reply') {
+  elseif (($entity->getParentComment() !== NULL && count($items) >= ++$levels) || \Drupal::routeMatch()->getRouteName() === 'comment.reply') {
     // If this is already on the second level, remove the reply button.
     unset($links['comment']['#links']['comment-reply']);
   }
@@ -260,14 +271,6 @@ function social_comment_comment_access(EntityInterface $entity, $operation, Acco
 }
 
 /**
- * Implements hook_entity_type_alter().
- */
-function social_comment_entity_type_alter(array &$entity_types) {
-  /* @var $entity_types \Drupal\Core\Entity\EntityTypeInterface[] */
-  $entity_types['comment']->setViewBuilderClass('Drupal\social_comment\SocialCommentViewBuilder');
-}
-
-/**
  * Implements hook_ENTITY_TYPE_view().
  */
 function social_comment_comment_view(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, $view_mode) {
@@ -275,10 +278,21 @@ function social_comment_comment_view(array &$build, EntityInterface $entity, Ent
     $commented_entity = $entity->getCommentedEntity();
     if (is_object($commented_entity)) {
       $commented_entity_type = $commented_entity->getEntityTypeId();
+
+      // Define which display mode should be used for commented_entity.
+      if (\Drupal::routeMatch()->getRouteName() === 'entity.node.canonical' &&
+        \Drupal::routeMatch()->getParameter('node')->bundle() === 'dashboard'
+      ) {
+        $node_view_display = 'featured';
+      }
+      else {
+        $node_view_display = 'activity_comment';
+      }
+
       // Teaser of commented entity.
       $build['commented_entity'] = \Drupal::entityTypeManager()
         ->getViewBuilder($commented_entity_type)
-        ->view($commented_entity, 'activity_comment');
+        ->view($commented_entity, $node_view_display);
 
       // Prepare the "Show all comments" link.
       if ($commented_entity_type === 'post') {
