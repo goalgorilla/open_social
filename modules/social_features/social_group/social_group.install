@@ -559,3 +559,17 @@ function social_group_update_8901() {
   $modules = ['social_group_invite', 'social_group_request'];
   \Drupal::service('module_installer')->install($modules);
 }
+
+/**
+ * Update group's event views.
+ */
+function social_group_update_8902() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_group', 'social_group_update_8803');
+
+  // Update views configuration.
+  _social_event_views_update('views.view.group_events', 'default');
+}

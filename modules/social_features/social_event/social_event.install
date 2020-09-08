@@ -1586,3 +1586,31 @@ function social_event_update_8902() {
     }
   }
 }
+
+/**
+ * Update community events views.
+ */
+function social_event_update_8903() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_event', 'social_event_update_8903');
+
+  // Update views configuration.
+  _social_event_views_update('views.view.upcoming_events', 'page_community_events');
+}
+
+/**
+ * Update user's events views.
+ */
+function social_event_update_8904() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_event', 'social_event_update_8904');
+
+  // Update views configuration.
+  _social_event_views_update('views.view.events', 'events_overview');
+}
