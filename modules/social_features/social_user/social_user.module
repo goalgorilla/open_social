@@ -18,6 +18,7 @@ use Drupal\social_user\Plugin\Action\SocialAddRoleUser;
 use Drupal\social_user\Plugin\Action\SocialBlockUser;
 use Drupal\social_user\Plugin\Action\SocialRemoveRoleUser;
 use Drupal\user\Plugin\Action\BlockUser;
+use Drupal\views\ViewExecutable;
 
 /**
  * Implements hook_entity_type_alter().
@@ -236,22 +237,29 @@ function social_user_form_user_register_form_alter(&$form, FormStateInterface $f
  * Validate function for the user register form.
  */
 function social_user_register_validate(&$form, FormStateInterface $form_state) {
-
   // Fetch input.
   $input = $form_state->getValues();
+  // Check if user data with the input can be found.
+  $mail_exists = user_load_by_mail($input['mail']);
+  $name_exists = user_load_by_name($input['name']);
 
   // Check if mail or username already exist.
-  if (user_load_by_mail($input['mail']) || user_load_by_name($input['name'])) {
+  if ($mail_exists || $name_exists) {
     // If either the username or mail already exists in the DB, we clear ALL
     // existing messages, making sure nothing about this is being disclosed.
     $form_state->clearErrors();
-    // Set a new more general error.
-    $site_config = \Drupal::config('system.site');
-    $site_mail = $site_config->get('mail');
-    $show_mail = $site_config->get('show_mail_in_messages');
-    $admin_link = ($site_mail && $show_mail) ? Link::fromTextAndUrl(t('site administrator'), Url::fromUri('mailto:' . $site_mail))->toString() : t('site administrator');
-    $form_state->setErrorByName('mail', t("Oops, there was an error with the email address or username you entered. Due to privacy concerns, we can't disclose the existence of already registered email addresses.
-    So, please try again! Contact the @admin_link if there are any problems.", ['@admin_link' => $admin_link]));
+
+    // Check if the email address already exist. Set a generic message
+    // regarding the problem.
+    if ($mail_exists) {
+      $form_state->setErrorByName('mail', t("Due to privacy concerns, we can't disclose the existence of registered email addresses. Please make sure the email address is entered correctly and try again."));
+    }
+
+    // Check if the username already exist. Set a generic message regarding
+    // the problem.
+    if ($name_exists) {
+      $form_state->setErrorByName('name', t('The entered username already exists or has an incorrect format. Please try again.'));
+    }
   }
 }
 
@@ -307,6 +315,8 @@ function social_user_form_user_form_alter(&$form, FormStateInterface $form_state
       $form_state->set('first_time_login', TRUE);
     }
   }
+
+  $form['timezone']['#title'] = '';
 }
 
 /**
@@ -316,7 +326,7 @@ function _social_user_pass_reset_submit($form, FormStateInterface $form_state) {
   $storage = $form_state->getValues();
   $submitted_user_id = isset($storage['uid']) ? $storage['uid'] : '';
 
-  // Only when there is actual user, and the actual user is changing his own
+  // Only when there is actual user, and the actual user is changing its own
   // account we redirect. When you're editing others you don't want this.
   if (!empty($submitted_user_id) && \Drupal::currentUser()->id() == $submitted_user_id) {
     $first_time_login = $form_state->get('first_time_login');
@@ -787,5 +797,26 @@ function social_user_user_format_name_alter(&$name, AccountInterface $account) {
       $name = $suggestion['name'];
       $lowest_weight = $suggestion['weight'];
     }
+  }
+}
+
+/**
+ * Implements hook_views_pre_render().
+ */
+function social_user_views_pre_render(ViewExecutable $view) {
+  if (isset($view) && ($view->storage->id() == 'user_admin_people')) {
+    $view->element['#attached']['library'][] = 'social_user/admin.people';
+  }
+}
+
+/**
+ * Implements hook_module_implements_alter().
+ */
+function social_user_module_implements_alter(&$implementations, $hook) {
+  if (isset($implementations['social_user']) &&
+    ($hook === 'form_user_form_alter' || $hook === 'form_alter')) {
+    $social_user = $implementations['social_user'];
+    unset($implementations['social_user']);
+    $implementations['social_user'] = $social_user;
   }
 }

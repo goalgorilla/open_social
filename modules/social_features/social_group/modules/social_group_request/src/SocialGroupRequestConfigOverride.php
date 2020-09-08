@@ -8,7 +8,6 @@ use Drupal\Core\Config\ConfigFactoryOverrideInterface;
 use Drupal\Core\Config\StorageInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-use Drupal\Core\StringTranslation\TranslationInterface;
 
 /**
  * Social Group request configuration override.
@@ -37,17 +36,13 @@ class SocialGroupRequestConfigOverride implements ConfigFactoryOverrideInterface
    *   The config factory.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    *   The module handler.
-   * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
-   *   The string translation.
    */
   public function __construct(
     ConfigFactoryInterface $config_factory,
-    ModuleHandlerInterface $module_handler,
-    TranslationInterface $string_translation
+    ModuleHandlerInterface $module_handler
   ) {
     $this->configFactory = $config_factory;
     $this->moduleHandler = $module_handler;
-    $this->setStringTranslation($string_translation);
   }
 
   /**
@@ -144,7 +139,84 @@ class SocialGroupRequestConfigOverride implements ConfigFactoryOverrideInterface
           'default' => [
             'display_options' => [
               'style' => [
+                'type' => 'table',
                 'options' => [
+                  'grouping' => [],
+                  'row_class' => '',
+                  'default_row_class' => TRUE,
+                  'override' => TRUE,
+                  'sticky' => FALSE,
+                  'caption' => '',
+                  'summary' => '',
+                  'description' => '',
+                  'columns' => [
+                    'name' => 'name',
+                    'created' => 'created',
+                    'gid' => 'gid',
+                    'id' => 'id',
+                    'nothing_1' => 'nothing_1',
+                    'nothing' => 'nothing',
+                    'dropbutton' => 'dropbutton',
+                  ],
+                  'info' => [
+                    'name' => [
+                      'sortable' => FALSE,
+                      'default_sort_order' => 'asc',
+                      'align' => '',
+                      'separator' => '',
+                      'empty_column' => FALSE,
+                      'responsive' => '',
+                    ],
+                    'created' => [
+                      'sortable' => TRUE,
+                      'default_sort_order' => 'asc',
+                      'align' => '',
+                      'separator' => '',
+                      'empty_column' => FALSE,
+                      'responsive' => '',
+                    ],
+                    'gid' => [
+                      'sortable' => FALSE,
+                      'default_sort_order' => 'asc',
+                      'align' => '',
+                      'separator' => '',
+                      'empty_column' => FALSE,
+                      'responsive' => '',
+                    ],
+                    'id' => [
+                      'sortable' => FALSE,
+                      'default_sort_order' => 'asc',
+                      'align' => '',
+                      'separator' => '',
+                      'empty_column' => FALSE,
+                      'responsive' => '',
+                    ],
+                    'nothing_1' => [
+                      'sortable' => FALSE,
+                      'default_sort_order' => 'asc',
+                      'align' => '',
+                      'separator' => '',
+                      'empty_column' => FALSE,
+                      'responsive' => '',
+                    ],
+                    'nothing' => [
+                      'sortable' => FALSE,
+                      'default_sort_order' => 'asc',
+                      'align' => '',
+                      'separator' => '',
+                      'empty_column' => FALSE,
+                      'responsive' => '',
+                    ],
+                    'dropbutton' => [
+                      'sortable' => FALSE,
+                      'default_sort_order' => 'asc',
+                      'align' => '',
+                      'separator' => '',
+                      'empty_column' => FALSE,
+                      'responsive' => '',
+                    ],
+                  ],
+                  'default' => '-1',
                   'empty_table' => TRUE,
                 ],
               ],

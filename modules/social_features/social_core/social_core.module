@@ -5,16 +5,19 @@
  * The Social core module.
  */
 
+use Drupal\Core\Field\FieldItemList;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\node\NodeInterface;
-use Drupal\image\Entity\ImageStyle;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\Core\Template\Attribute;
 use Drupal\Core\Url;
 use Drupal\filter\Entity\FilterFormat;
+use Drupal\group\Entity\Group;
+use Drupal\image\Entity\ImageStyle;
+use Drupal\node\NodeInterface;
 use Drupal\path\Plugin\Field\FieldWidget\PathWidget;
 use Drupal\user\Entity\User;
-use Drupal\group\Entity\Group;
 use Drupal\user\UserInterface;
-use Drupal\Core\Field\FieldItemList;
 
 /**
  * Implements hook_theme().
@@ -43,15 +46,20 @@ function social_core_modules_installed($modules) {
   // If either social_group_flexible_group or social_landing_page gets enabled
   // and the other is already enabled, we should import the the configuration
   // for the optional view mode by enabling social_flexible_group_featured.
-  if ((in_array('social_group_flexible_group', $modules, TRUE) && \Drupal::moduleHandler()->moduleExists('social_landing_page')) ||
-    (in_array('social_landing_page', $modules, TRUE) && \Drupal::moduleHandler()->moduleExists('social_group_flexible_group'))) {
-    \Drupal::service('module_installer')->install(['social_flexible_group_featured']);
+  if ((in_array('social_group_flexible_group', $modules, TRUE) && \Drupal::moduleHandler()
+    ->moduleExists('social_landing_page')) ||
+    (in_array('social_landing_page', $modules, TRUE) && \Drupal::moduleHandler()
+      ->moduleExists('social_group_flexible_group'))) {
+    \Drupal::service('module_installer')
+      ->install(['social_flexible_group_featured']);
   }
   // If either social_book or social_landing_page gets enabled and
   // the other is already enabled, we should import the the configuration
   // for the optional view mode by enabling social_book_featured.
-  if ((in_array('social_book', $modules, TRUE) && \Drupal::moduleHandler()->moduleExists('social_landing_page')) ||
-    (in_array('social_landing_page', $modules, TRUE) && \Drupal::moduleHandler()->moduleExists('social_book'))) {
+  if ((in_array('social_book', $modules, TRUE) && \Drupal::moduleHandler()
+    ->moduleExists('social_landing_page')) ||
+    (in_array('social_landing_page', $modules, TRUE) && \Drupal::moduleHandler()
+      ->moduleExists('social_book'))) {
     \Drupal::service('module_installer')->install(['social_book_featured']);
   }
 }
@@ -84,7 +92,10 @@ function social_core_preprocess_node(&$variables) {
     // Get the current route name to check if the user is on the
     // edit or delete page.
     $route = \Drupal::routeMatch()->getRouteName();
-    if (!in_array($route, ['entity.node.edit_form', 'entity.node.delete_form'])) {
+    if (!in_array($route, [
+      'entity.node.edit_form',
+      'entity.node.delete_form',
+    ])) {
       $account = \Drupal::currentUser();
       if ($node->access('update', $account)) {
         $variables['node_edit_url'] = $node->toUrl('edit-form')->toString();
@@ -98,6 +109,78 @@ function social_core_preprocess_node(&$variables) {
       $variables['hero_styled_image_url'] = ImageStyle::load('social_xx_large')
         ->buildUrl($node->{$image_field}->entity->getFileUri());
     }
+  }
+}
+
+/**
+ * Implements hook_social_user_account_header_account_links().
+ *
+ * Adds the "My invitations" link to the user menu.
+ */
+function social_core_social_user_account_header_account_links(array $context) {
+  // We require a user for this link.
+  if (empty($context['user']) || !($context['user'] instanceof AccountInterface)) {
+    return [];
+  }
+  /** @var \Drupal\social_core\InviteService $core_invites */
+  $core_invites = \Drupal::service('social_core.invite');
+  // Only when there are actual Invite plugins enabled.
+  if (!empty($core_invites->getInviteData('name'))) {
+    $title = new TranslatableMarkup('Invites');
+    // If we have invites show the number.
+    if (!empty($core_invites->getInviteData('amount'))) {
+      $title = [
+        '#type' => 'inline_template',
+        '#template' => '<span>{% trans %}Invites{% endtrans %}</span> <span{{ attributes }}>{{ icon }}</span>',
+        '#context' => [
+          'attributes' => new Attribute(['class' => 'margin-left-xs badge badge-accent badge--pill']),
+          'icon' => (string) $core_invites->getInviteData('amount'),
+        ],
+      ];
+    }
+
+    return [
+      'divider_no_mobile' => [
+        '#wrapper_attributes' => [
+          'class' => ['divider', 'hidden-for-phone-only'],
+          'role' => 'separator',
+        ],
+        '#weight' => 325,
+      ],
+      'my_invites' => [
+        '#type' => 'link',
+        '#attributes' => [
+          'title' => new TranslatableMarkup('Invites'),
+        ],
+        '#title' => $title,
+        '#weight' => 350,
+      ] + Url::fromRoute('social_core.my_invites')->toRenderArray(),
+    ];
+  }
+}
+
+/**
+ * Implements hook_social_user_account_header_items().
+ *
+ * Adds an indicator to the user account menu.
+ */
+function social_core_social_user_account_header_items_alter(array &$menu_links, array $context) {
+  // We require a logged in user for this indicator.
+  if (empty($context['user']) || !$context['user']->isAuthenticated()) {
+    return;
+  }
+
+  // If the account_box link was removed we have nothing to do.
+  if (!isset($menu_links['account_box'])) {
+    return;
+  }
+
+  // Get the total amount of notifications for the user.
+  /** @var \Drupal\social_core\InviteService $core_invites */
+  $core_invites = \Drupal::service('social_core.invite');
+  // Only when there are actual Invites.
+  if ($core_invites->getInviteData('amount') > 0) {
+    $menu_links['account_box']['#wrapper_attributes']['class'][] = 'has-alert has-alert--desktop';
   }
 }
 
@@ -138,7 +221,10 @@ function social_core_node_links_alter(array &$links, NodeInterface $entity, arra
   // Remove the comment links.
   unset($links['comment__field_topic_comments'], $links['comment__field_event_comments']);
 
-  if (isset($context['view_mode']) && in_array($context['view_mode'], ['activity', 'activity_comment'])) {
+  if (isset($context['view_mode']) && in_array($context['view_mode'], [
+    'activity',
+    'activity_comment',
+  ])) {
     // Add a readmore link.
     $node_title_stripped = strip_tags($entity->label());
     $links['node']['#links']['node-readmore'] = [
@@ -405,9 +491,9 @@ function social_core_element_info_alter(array &$info) {
 /**
  * Remove ability of selecting format if full_html is available.
  *
- * @todo Instead of defining the list of fields it would be better to add a separate
- * Setting to all text_format fields,
- * allowing to select whether to show format selector or not.
+ * @todo Instead of defining the list of fields it would be better to add a
+ *   separate Setting to all text_format fields, allowing to select whether to
+ *   show format selector or not.
  */
 function social_core_filter_process_format($element) {
 
@@ -417,6 +503,13 @@ function social_core_filter_process_format($element) {
     'edit-field-profile-self-introduction-0',
     'edit-field-group-description-0',
   ];
+
+  $element_id = $element['#id'];
+
+  // Check if there is generated sub-id and cleanup it.
+  if (($sub_id = strpos($element_id, '--')) !== FALSE) {
+    $element_id = substr($element_id, 0, $sub_id);
+  }
 
   $full_html = FilterFormat::load('full_html');
   $permission_name = $full_html->getPermissionName();
@@ -435,7 +528,11 @@ function social_core_filter_process_format($element) {
       unset($element['value']['#pre_render'][$key]);
     }
   }
-  elseif ($element['#type'] == 'text_format' && $account->hasPermission($permission_name) && in_array($element['#id'], $full_html_field_ids)) {
+  elseif (
+    $element['#type'] === 'text_format' &&
+    $account->hasPermission($permission_name) &&
+    in_array($element_id, $full_html_field_ids)
+  ) {
     $element['#format'] = 'full_html';
     $element['format']['format']['#access'] = FALSE;
     $element['format']['format']['#value'] = 'full_html';
@@ -541,4 +638,11 @@ function social_core_form_node_form_alter(&$form, FormStateInterface $form_state
     // Add the status field to the new vertical tab.
     $form['status']['#group'] = 'status_vertical_tab';
   }
+}
+
+/**
+ * Implements hook_theme_registry_alter().
+ */
+function social_core_theme_registry_alter(&$theme_registry) {
+  $theme_registry['menu__toolbar']['variables']['menu_name'] = NULL;
 }

@@ -6,6 +6,7 @@
  */
 
 use Drupal\user\Entity\Role;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Implements hook_install().
@@ -62,6 +63,26 @@ function social_event_managers_update_8003() {
       // Set permission.
       $role->grantPermission('manage everything enrollments');
       $role->trustData()->save();
+    }
+  }
+}
+
+/**
+ * Add new field for rendered profile entity so we can sort it.
+ *
+ * Load in a config file from an specific update hook that will never change.
+ * Update helper did not update all fields correctly.
+ */
+function social_event_managers_update_8004() {
+  $config_file = drupal_get_path('module', 'social_event_managers') . '/config/update/social_event_managers_update_8004.yml';
+
+  if (is_file($config_file)) {
+    $settings = Yaml::parse(file_get_contents($config_file));
+    if (is_array($settings)) {
+      $config = \Drupal::configFactory()
+        ->getEditable('views.view.event_manage_enrollments');
+
+      $config->setData($settings)->save(TRUE);
     }
   }
 }

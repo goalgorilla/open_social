@@ -140,6 +140,78 @@
 
   }
 
+  // Second level menu
+  > li > ul {
+    > li.expanded {
+      position: relative;
+
+      @media(min-width: 1025px) {
+        > a:hover:not(.is-active)  {
+
+          + .dropdown-menu {
+            display: block;
+          }
+        }
+      }
+
+      .caret {
+        transform: rotate(0);
+
+        @media(min-width: 1025px) {
+          position: absolute;
+          top: 44%;
+          right: 10px;
+          transform: rotate(-90deg) translateY(-50%);
+        }
+      }
+
+      > .dropdown-menu {
+        margin-top: 0;
+        padding-top: 5px;
+
+        @media(min-width: 1025px) {
+          display: none;
+          top: 0;
+          left: 100%;
+          padding-top: 0;
+        }
+
+        @media(max-width: 1024px) {
+          @include dropdown-open;
+        }
+
+        @include dropdown-Ipad;
+
+        > li > a {
+          @media(min-width: 768px) and (max-width: 1024px) {
+            @include dropdown-el;
+          }
+
+          @include dropdown-el-Ipad;
+
+          @include for-tablet-landscape-down {
+            padding-left: 45px;
+
+            &:hover,
+            &.is-active {
+              background: #e6e6e6;
+              color: #4d4d4d;
+            }
+          }
+        }
+
+        @media(min-width: 1025px) {
+          &:hover {
+            display: block;
+          }
+        }
+
+        &.open {
+          display: none;
+        }
+      }
+    }
+  }
 }
 
 .navbar-user > li > a,
@@ -209,6 +281,19 @@
   right: 0;
   left: 0;
   z-index: $zindex-navbar-fixed;
+
+  // Media query from Gin theme.
+  .toolbar-fixed[data-toolbar-menu='open'] & {
+    @media (min-width: 976px) {
+      left: 240px;
+    }
+  }
+
+  .gin--vertical-toolbar.user-logged-in & {
+    @media (min-width: 976px) {
+      left: 80px;
+    }
+  }
 
   .navbar-user .dropdown-menu {
     right: 0;

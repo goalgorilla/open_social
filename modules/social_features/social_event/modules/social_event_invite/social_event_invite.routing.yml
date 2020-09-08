@@ -1,0 +1,60 @@
+social_event_invite.invite_email:
+  path: '/node/{node}/invite/email'
+  defaults:
+    _form: '\Drupal\social_event_invite\Form\EnrollInviteEmailForm'
+    _title: 'Invite people'
+  options:
+    parameters:
+      node:
+        type: entity:node
+  requirements:
+    _permission: 'access content'
+
+social_event_invite.invite_user:
+  path: '/node/{node}/invite/user'
+  defaults:
+    _form: '\Drupal\social_event_invite\Form\EnrollInviteUserForm'
+    _title: 'Invite people'
+  options:
+    parameters:
+      node:
+        type: entity:node
+  requirements:
+    _permission: 'access content'
+
+social_event_invite.settings:
+  path: '/admin/config/opensocial/event-invite'
+  defaults:
+    _form: '\Drupal\social_event_invite\Form\EventInviteSettingsForm'
+    _title: 'Event invite settings'
+  requirements:
+    _permission: 'administer social_event settings'
+  options:
+    _admin_route: TRUE
+
+social_event_invite.cancel_enrollment_invite:
+  path: '/node/{node}/all-enrollment-invites/cancel-enrollment/{event_enrollment}'
+  defaults:
+    _controller: '\Drupal\social_event_invite\Controller\CancelEnrollInviteController::cancelEnrollmentInvite'
+  options:
+    parameters:
+      node:
+        type: entity:node
+      event_enrollment:
+        type: entity:event_enrollment
+  requirements:
+    _custom_access: '\Drupal\social_event_invite\Controller\CancelEnrollInviteController::access'
+
+social_event_invite.update_enrollment_invite:
+  path: '/user/{user}/event-invites/{event_enrollment}/{accept_decline}'
+  defaults:
+    _controller: '\Drupal\social_event_invite\Controller\UserEnrollInviteController::updateEnrollmentInvite'
+  options:
+    parameters:
+      node:
+        type: entity:user
+      event_enrollment:
+        type: entity:event_enrollment
+      accept_decline: '[0-1]+'
+  requirements:
+    _custom_access: '\Drupal\social_event_invite\Controller\UserEnrollInviteController::access'

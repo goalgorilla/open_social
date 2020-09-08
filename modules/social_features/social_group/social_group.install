@@ -12,6 +12,7 @@ use Drupal\Core\Database\Database;
 use Drupal\user\Entity\Role;
 use Drupal\social_post\Entity\Post;
 use Drupal\node\Entity\Node;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Implements hook_update_dependencies().
@@ -529,4 +530,46 @@ function social_group_update_8801() {
 
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
+}
+
+/**
+ * Add new field for rendered profile entity so we can sort it.
+ *
+ * Load in a config file from an specific update hook that will never change.
+ * Update helper did not update all fields correctly.
+ */
+function social_group_update_8802() {
+  $config_file = drupal_get_path('module', 'social_group') . '/config/update/social_group_update_8802.yml';
+
+  if (is_file($config_file)) {
+    $settings = Yaml::parse(file_get_contents($config_file));
+    if (is_array($settings)) {
+      $config = \Drupal::configFactory()
+        ->getEditable('views.view.group_manage_members');
+
+      $config->setData($settings)->save(TRUE);
+    }
+  }
+}
+
+/**
+ * Install Group Invite & Request modules by default.
+ */
+function social_group_update_8901() {
+  $modules = ['social_group_invite', 'social_group_request'];
+  \Drupal::service('module_installer')->install($modules);
+}
+
+/**
+ * Update group's event views.
+ */
+function social_group_update_8902() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_group', 'social_group_update_8803');
+
+  // Update views configuration.
+  _social_event_views_update('views.view.group_events', 'default');
 }

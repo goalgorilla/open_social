@@ -1,0 +1,351 @@
+<?php
+
+/**
+ * @file
+ * The Social event invite enroll module.
+ */
+
+use Drupal\Core\Access\AccessResultForbidden;
+use Drupal\Core\Cache\Cache;
+use Drupal\Core\Cache\RefinableCacheableDependencyInterface;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Url;
+use Drupal\node\Entity\Node;
+use Drupal\social_event\EventEnrollmentInterface;
+use Drupal\user\UserInterface;
+
+/**
+ * Sends email when invitation created for not registered user.
+ *
+ * Implements hook_ENTITY_TYPE_insert().
+ */
+function social_event_invite_event_enrollment_insert(EventEnrollmentInterface $eventEnrollment) {
+  $messenger = \Drupal::messenger();
+
+  $mail = $eventEnrollment->get('field_email')->getString();
+  $langcode = 'en';
+
+  $mailManager = \Drupal::service('plugin.manager.mail');
+  $from = $eventEnrollment->get('user_id')->first()->get('entity')->getTarget()->getValue();
+  $node = $eventEnrollment->get('field_event')->first()->get('entity')->getTarget()->getValue();
+
+  $params = [
+    'user' => $from,
+    'node' => $node,
+    'existing_user' => TRUE,
+    'event_enrollment' => $eventEnrollment->id(),
+  ];
+
+  // Only set this message when the request status is pending.
+  if ((int) $eventEnrollment->get('field_request_or_invite_status')->value === EventEnrollmentInterface::INVITE_PENDING_REPLY &&
+    empty($eventEnrollment->get('field_account')->getString())) {
+    // Send a normal mail when the user has no account yet.
+    $params['existing_user'] = FALSE;
+    $mailManager->mail('social_event_invite', 'invite', $mail, $langcode, $params, NULL, TRUE);
+  }
+}
+
+/**
+ * Implements hook_mail().
+ *
+ * This mail is sent when people who do not have an account on the website yet
+ * are invited into an event. It is sent in the language the inviter was using
+ * the website in.
+ */
+function social_event_invite_mail($key, &$message, $params) {
+  if ($key === 'invite') {
+    $token_service = \Drupal::token();
+    $language_manager = \Drupal::languageManager();
+
+    $langcode = $message['langcode'];
+
+    $language = $language_manager->getLanguage($langcode);
+    $original_language = $language_manager->getConfigOverrideLanguage();
+    $language_manager->setConfigOverrideLanguage($language);
+
+    // Load event invite configuration.
+    $invite_config = \Drupal::service('config.factory')->getEditable('social_event_invite.settings');
+
+    $invitation_subject = $invite_config->get('invite_subject');
+    $invitation_body = $invite_config->get('invite_message');
+
+    unset($params['existing_user']);
+
+    $body = $token_service->replace($invitation_body, $params);
+    $subject = $token_service->replace($invitation_subject, $params);
+
+    $message['subject'] = $subject;
+    $message['body'][] = $body;
+
+    $language_manager->setConfigOverrideLanguage($original_language);
+
+  }
+}
+
+/**
+ * Prefill email address on registration url.
+ *
+ * Implements hook_form_FORM_ID_alter().
+ */
+function social_event_invite_form_user_register_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  if (isset($_GET["invitee_mail"])) {
+    $invitee_mail = $_GET["invitee_mail"];
+    $invitee_mail = base64_decode(str_replace(['-', '_'], ['+', '/'], $invitee_mail));
+    if (\Drupal::service('email.validator')->isValid($invitee_mail)) {
+      $form["account"]["mail"]["#default_value"] = $invitee_mail;
+      $form["account"]["mail"]["#disabled"] = TRUE;
+    }
+  }
+}
+
+/**
+ * Implements hook_views_data().
+ */
+function social_event_invite_views_data() {
+  $data['views']['social_event_invite_recipient'] = [
+    'group' => t('Event enrollment'),
+    'title' => t('Recipient'),
+    'help' => t('The recipient of an event invite.'),
+    'field' => [
+      'id' => 'social_event_invite_recipient',
+    ],
+  ];
+  return $data;
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function social_event_invite_preprocess_views_view_table(&$variables) {
+  if ($variables['view']->id() === 'event_manage_enrollment_invites' ||
+    $variables['view']->id() === 'user_event_invites') {
+    // Add this to ensure our overviews get rendered nicely
+    // even if VBO is not enabled (yet) we use the same look and feel.
+    $variables['attributes']['class'][] = 'vbo-table';
+  }
+}
+
+/**
+ * Implements template_preprocess_views_view().
+ */
+function social_event_invite_preprocess_views_view(&$variables) {
+  if ($variables['view']->id() === 'event_manage_enrollment_invites') {
+    $node_id = \Drupal::routeMatch()->getParameter('node');
+    // Implement custom button to go back to the event.
+    $variables['more'] = [
+      '#title' => t('Back to event'),
+      '#type' => 'link',
+      '#url' => Url::fromRoute('entity.node.canonical', ['node' => (int) $node_id]),
+      '#attributes' => [
+        'class' => [
+          'btn',
+          'btn-default',
+          'btn-raised',
+          'waves-effect',
+        ],
+      ],
+    ];
+  }
+  // We have to override the local actions block.
+  // and render our own block instance in the view for placement.
+  // hook_theme_registry_alter will ensure our hooks is invoked later.
+  // That is also why hook_menu_local_actions_alter won't work.
+  if ($variables['view']->id() === 'event_manage_enrollments') {
+    /** @var \Drupal\social_event_invite\SocialEventInviteAccessHelper $access */
+    $access = \Drupal::service('social_event_invite.access_helper');
+    $access = $access->eventFeatureAccess();
+
+    if (!$access instanceof AccessResultForbidden) {
+      // Add the roster-link block to the build-array.
+      /** @var \Drupal\social_event_invite\Plugin\Block\SocialEventInviteLocalActionsBlock $block */
+      $block = \Drupal::service('plugin.manager.block')
+        ->createInstance('social_event_invite_block');
+
+      if (NULL !== $block) {
+        $block->setContextValue('node', Node::load(\Drupal::routeMatch()->getParameter('node')));
+        $block_content = $block->build();
+
+        if (!empty($block_content)) {
+          $variables['header']['actions'] = $block_content;
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_theme_registry_alter().
+ */
+function social_event_invite_theme_registry_alter(&$theme_registry) {
+  // Unfortunately the preprocess functions aren't ordered by module weight.
+  // Changing module weight doesn't work, also with dependency set to
+  // social_group this should be dealt with but isnt.
+  // So we enforce our preprocess after social_group.
+  if (!empty($theme_registry['views_view']['preprocess functions'])) {
+    $current_key = array_search('social_event_invite_preprocess_views_view', $theme_registry['views_view']['preprocess functions'], FALSE);
+    unset($theme_registry['views_view']['preprocess functions'][$current_key]);
+    // Give it a new key all the way at the end.
+    $theme_registry['views_view']['preprocess functions'][] = 'social_event_invite_preprocess_views_view';
+  }
+}
+
+/**
+ * Override variables for the social page hero data.
+ */
+function social_event_invite_preprocess_node(array &$variables) {
+  if (!empty($variables['event_enrollment'])) {
+    /* @var $node \Drupal\node\Entity\Node */
+    $node = $variables['node'];
+
+    // Since the Enroll action form for EventInviteEnrollActionForm doesn't
+    // support AN enrollments, don't add this. This will add the Enroll
+    // button to the Hero for AN on Public events with Invite enabled.
+    if ($variables['view_mode'] === 'hero' && $node->hasField('field_enroll_method') &&
+      (int) $node->getFieldValue('field_enroll_method', 'value') === EventEnrollmentInterface::ENROLL_METHOD_INVITE) {
+      $form = \Drupal::formBuilder()
+        ->getForm('Drupal\social_event_invite\Form\EventInviteEnrollActionForm', $node);
+
+      $variables['event_enrollment'] = [
+        'enroll_action_form' => $form,
+      ];
+      // Vary per user, because one user can be enrolled or have more rights.
+      // @TODO create a better cache context custom. Based on the enrollment
+      // method OR the fact if a user is enrolled or not.
+      $variables['#cache']['contexts'][] = 'user';
+    }
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_insert().
+ */
+function social_event_invite_user_insert(UserInterface $entity) {
+  // @todo: implement a better, more specific way to invalidate cache.
+  // - config:field.storage.event_enrollment.field_request_or_invite_status.
+  // - config:views.view.event_manage_enrollment_invites.
+  // - event_enrollment_list.
+  // - user_list.
+  // - profile_list.
+  // - profile_view.
+  // - event_enrollment:ID.
+  $tags = [
+    'config:field.storage.event_enrollment.field_request_or_invite_status',
+    'config:views.view.event_manage_enrollment_invites',
+  ];
+  Cache::invalidateTags($tags);
+
+  // After a user registers check if there are invites and convert them to uid.
+  /** @var \Drupal\social_event\EventEnrollmentStatusHelper $enrollments */
+  $enrollments = \Drupal::service('social_event.status_helper');
+
+  foreach ($enrollments->getAllUserEventEnrollments($entity->getEmail()) as $enrollment) {
+    /** @var \Drupal\social_event\EventEnrollmentInterface $enrollment */
+    $enrollment->set('field_email', '');
+    $enrollment->set('field_account', $entity->id());
+    $enrollment->set('user_id', $entity->id());
+    $enrollment->save();
+  }
+}
+
+/**
+ * Implements hook_entity_operation_alter().
+ */
+function social_event_invite_entity_operation_alter(array &$operations, EntityInterface $entity) {
+  // Get the node, so we can pass it as a parameter.
+  $node = \Drupal::routeMatch()->getParameter('node');
+  // Get the route name.
+  $route_name = \Drupal::routeMatch()->getRouteName();
+  // Get the current user.
+  $user_account = \Drupal::currentUser()->getAccount();
+
+  // Check if the entity type is one of event_enrollment and that we're on the
+  // correct view. Otherwise it would update all actions across the platform.
+  if ($entity->getEntityTypeId() === 'event_enrollment') {
+    // Build operations for the event invites overview for the owner/manager.
+    if (social_event_manager_or_organizer() && $route_name === 'view.event_manage_enrollment_invites.page_manage_enrollment_invites') {
+      // Empty the current operations.
+      $operations = [];
+      // Add the "Cancel invite" option.
+      $operations['cancel']['title'] = t('Cancel invite');
+      $operations['cancel']['url'] = Url::fromRoute('social_event_invite.cancel_enrollment_invite', [
+        'node' => $node,
+        'event_enrollment' => $entity->id(),
+      ]);
+      // If the user has declined or if the invite is invalid or expired,
+      // provide a delete button so that the event_enrollment can be
+      // deleted from this event.
+      $delete_statusses = [
+        EventEnrollmentInterface::REQUEST_OR_INVITE_DECLINED,
+        EventEnrollmentInterface::INVITE_INVALID_OR_EXPIRED,
+      ];
+      if (in_array((int) $entity->field_request_or_invite_status->value, $delete_statusses)) {
+        $operations = [];
+        // Add the "Delete invite" option.
+        $operations['delete']['title'] = t('Remove');
+        $operations['delete']['url'] = Url::fromRoute('social_event_invite.cancel_enrollment_invite', [
+          'node' => $node,
+          'event_enrollment' => $entity->id(),
+        ]);
+      }
+      if ((int) $entity->field_request_or_invite_status->value === EventEnrollmentInterface::INVITE_ACCEPTED_AND_JOINED) {
+        $operations = [];
+      }
+    }
+    // Build operations for the users overview for event invites.
+    if ($route_name === 'view.user_event_invites.page_user_event_invites') {
+      // Empty the current operations.
+      $operations = [];
+      // Add the "Accept invite" option.
+      $operations['accept']['title'] = t('Accept invite');
+      $operations['accept']['url'] = Url::fromRoute('social_event_invite.update_enrollment_invite', [
+        'user' => $user_account->id(),
+        'event_enrollment' => $entity->id(),
+        'accept_decline' => '1',
+      ]);
+      // Add the "Decline invite" option.
+      $operations['decline']['title'] = t('Decline invite');
+      $operations['decline']['url'] = Url::fromRoute('social_event_invite.update_enrollment_invite', [
+        'user' => $user_account->id(),
+        'event_enrollment' => $entity->id(),
+        'accept_decline' => '0',
+      ]);
+    }
+  }
+}
+
+/**
+ * Implements hook_menu_local_tasks_alter().
+ */
+function social_event_invite_menu_local_tasks_alter(&$data, $route_name, RefinableCacheableDependencyInterface $cacheability) {
+  // Add tasks on these route for invite Groups/Events.
+  if ($route_name === 'view.user_event_invites.page_user_event_invites') {
+    $tabs_to_remove = [
+      'social_user.groups',
+      'social_user.stream',
+      'social_user.topics',
+      'social_user.events',
+      'social_profile.information',
+      'profile.user_page:profile',
+      'entity.user.canonical',
+      'entity.user.edit_form',
+    ];
+    foreach ($tabs_to_remove as $task_name) {
+      if (!empty($data['tabs'][0][$task_name])) {
+        unset($data['tabs'][0][$task_name]);
+      }
+    }
+  }
+
+  if ($route_name !== 'view.user_event_invites.page_user_event_invites'
+    && $route_name !== 'view.social_group_user_invitations.page_1') {
+    $tabs_to_remove = [
+      'social_event_invite.user_events',
+    ];
+    foreach ($tabs_to_remove as $task_name) {
+      if (!empty($data['tabs'][0][$task_name])) {
+        unset($data['tabs'][0][$task_name]);
+      }
+    }
+  }
+}

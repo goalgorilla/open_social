@@ -13,6 +13,7 @@ use Drupal\Core\Utility\Token;
 use Drupal\language\ConfigurableLanguageManagerInterface;
 use Drupal\message\Entity\Message;
 use Drupal\activity_creator\Plugin\ActivityDestinationManager;
+use Drupal\social_event\EventEnrollmentInterface;
 
 /**
  * Class ActivityFactory to create Activity items based on ActivityLogs.
@@ -366,7 +367,7 @@ class ActivityFactory extends ControllerBase {
         ->getStorage($related_object['target_type']);
       $entity = $entity_storage->load($related_object['target_id']);
 
-      if (!empty($entity)) {
+      if ($entity instanceof EventEnrollmentInterface) {
         /** @var \Drupal\social_event\Entity\EventEnrollment $entity */
         $event_id = $entity->getFieldValue('field_event', 'target_id');
         if (!empty($event_id)) {

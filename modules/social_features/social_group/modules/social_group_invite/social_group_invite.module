@@ -452,8 +452,7 @@ function social_group_invite_preprocess_group(&$variables) {
         $variables['group_invite_decline_operations_url'] = Url::fromRoute('ginvite.invitation.decline', ['group_content' => $group_content->id()]);
         $variables['#cache']['tags'][] = 'group_content_list:entity:' . $account->id();
         $variables['#cache']['tags'][] = 'group_content_list:plugin:group_invitation:entity:' . $account->id();
-        $variables['#cache']['context'][] = 'group';
-        $variables['#cache']['context'][] = 'user';
+        $variables['#cache']['contexts'][] = 'user';
       }
     }
   }

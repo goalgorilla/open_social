@@ -8,6 +8,7 @@ use Drupal\Core\Cache\Cache;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\group\Entity\GroupInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 
@@ -110,6 +111,10 @@ class GroupStatisticBlock extends BlockBase implements ContainerFactoryPluginInt
    */
   public function getCacheTags() {
     $group = _social_group_get_current_group();
+
+    if (!($group instanceof GroupInterface)) {
+      return parent::getCacheContexts();
+    }
 
     return Cache::mergeTags(parent::getCacheTags(), [
       'group_content_list:entity:' . \Drupal::currentUser()->id(),
