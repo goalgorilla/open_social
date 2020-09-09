@@ -67,9 +67,26 @@ class RedirectSubscriber implements EventSubscriberInterface {
    */
   public function checkForRedirection(GetResponseEvent $event) {
     // Check if there is a group object on the current route.
-    $group = _social_group_get_current_group();
+    if (!($group = _social_group_get_current_group())) {
+      return;
+    }
+
+    // If a group type is flexible group.
+    if ($group->bundle() !== 'flexible_group') {
+      return;
+    }
+
+    // If the user can manage groups or the user is a member.
+    if (
+      $this->currentUser->hasPermission('manage all groups') ||
+      $group->getMember($this->currentUser)
+    ) {
+      return;
+    }
+
     // Get the current route name for the checks being performed below.
-    $routeMatch = $this->routeMatch->getRouteName();
+    $route_name = $this->routeMatch->getRouteName();
+
     // The array of forbidden routes.
     $routes = [
       'entity.group.canonical',
@@ -78,27 +95,19 @@ class RedirectSubscriber implements EventSubscriberInterface {
       'social_group.stream',
     ];
 
-    // If a group is set, and the type is flexible_group.
-    if ($group && $group->getGroupType()->id() === 'flexible_group') {
-      if ($this->currentUser->hasPermission('manage all groups')) {
-        return;
-      }
-      // If the user is not a member and if "Allowed join method" is not set to
-      // "Join directly" in this group.
-      elseif (
-        !$group->getMember($this->currentUser) &&
-        $routeMatch === 'entity.group.join' &&
-        !social_group_flexible_group_can_join_directly($group)
-      ) {
-        $this->doRedirect($event, $group);
-      }
-      elseif (
-        !$group->getMember($this->currentUser) && in_array($routeMatch, $routes, FALSE) &&
-        !social_group_flexible_group_community_enabled($group) &&
-        !social_group_flexible_group_public_enabled($group)
-      ) {
-        $this->doRedirect($event, $group);
-      }
+    // If "Allowed join method" is not set to "Join directly" in this group.
+    if (
+      $route_name === 'entity.group.join' &&
+      !social_group_flexible_group_can_join_directly($group)
+    ) {
+      $this->doRedirect($event, $group);
+    }
+    elseif (
+      in_array($route_name, $routes) &&
+      !social_group_flexible_group_community_enabled($group) &&
+      !social_group_flexible_group_public_enabled($group)
+    ) {
+      $this->doRedirect($event, $group);
     }
   }
 
