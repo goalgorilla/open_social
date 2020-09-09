@@ -1,0 +1,17 @@
+"""
+The base mutation type.
+"""
+type Mutation
+
+"""
+A violation indicates an error in the GraphQL query or other incorrect
+circumstances such as missing permissions.
+"""
+scalar Violation
+
+"""
+The base GraphQL Response class
+"""
+interface Response {
+  errors: [Violation]
+}
