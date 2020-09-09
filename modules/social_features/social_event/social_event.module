@@ -631,27 +631,35 @@ function social_event_form_alter(&$form, FormStateInterface $form_state, $form_i
     // Get user timezone.
     $user_timezone = _social_event_user_timezone(date_default_timezone_get());
     $timezone_label = t('Time zone');
-    $markup = '<div class="control-label margin-bottom-s form-wrapper__label">' . $timezone_label . '</div>';
+    $markup = '<div class="control-label margin-bottom-s">' . $timezone_label . '</div>';
     $markup .= '<div class="bg-gray-lightest btn btn-lg">' . $user_timezone . '</div>';
+    // Check if user has access to change his timezone.
+    $date_config = Drupal::config('system.date');
+    if ($date_config->get('timezone.user.configurable')) {
+      $description = t('The event date and time are set based on your timezone. @change_timezone.', [
+        '@change_timezone' => Link::createFromRoute(
+          t('Change your timezone here'),
+          'entity.user.edit_form',
+          ['user' => \Drupal::currentUser()->id()],
+          [
+            'attributes' => [
+              'target' => '_blank',
+            ],
+            'fragment' => 'edit-group-locale-settings',
+          ]
+        )->toString(),
+      ]);
+    }
+    else {
+      $description = t('The event date and time are set based on the site\'s default timezone.');
+    }
     $form['timezone_indication'] = [
       '#type' => 'container',
       '#weight' => 99,
       'content' => [
         '#type' => 'item',
         '#markup' => $markup,
-        '#description' => t('The event date and time are set based on your timezone. @change_timezone.', [
-          '@change_timezone' => Link::createFromRoute(
-            t('Change your timezone here'),
-            'entity.user.edit_form',
-            ['user' => \Drupal::currentUser()->id()],
-            [
-              'attributes' => [
-                'target' => '_blank',
-              ],
-              'fragment' => 'edit-group-locale-settings',
-            ]
-          )->toString(),
-        ]),
+        '#description' => $description,
       ],
     ];
 
