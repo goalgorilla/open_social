@@ -2,6 +2,8 @@
 
 namespace Drupal\social_group_flexible_group\EventSubscriber;
 
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\Url;
 use Drupal\group\Entity\GroupInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -15,6 +17,36 @@ use Symfony\Component\HttpKernel\KernelEvents;
  * @package Drupal\social_group_flexible_group\EventSubscriber
  */
 class RedirectSubscriber implements EventSubscriberInterface {
+
+  /**
+   * The current active user.
+   *
+   * @var \Drupal\Core\Session\AccountProxyInterface
+   */
+  protected $currentUser;
+
+  /**
+   * The currently active route match object.
+   *
+   * @var \Drupal\Core\Routing\RouteMatchInterface
+   */
+  protected $routeMatch;
+
+  /**
+   * RedirectSubscriber constructor.
+   *
+   * @param \Drupal\Core\Session\AccountProxyInterface $current_user
+   *   The current active user.
+   * @param \Drupal\Core\Routing\RouteMatchInterface $route_match
+   *   The currently active route match object.
+   */
+  public function __construct(
+    AccountProxyInterface $current_user,
+    RouteMatchInterface $route_match
+  ) {
+    $this->currentUser = $current_user;
+    $this->routeMatch = $route_match;
+  }
 
   /**
    * Get the request events.
@@ -37,9 +69,7 @@ class RedirectSubscriber implements EventSubscriberInterface {
     // Check if there is a group object on the current route.
     $group = _social_group_get_current_group();
     // Get the current route name for the checks being performed below.
-    $routeMatch = \Drupal::routeMatch()->getRouteName();
-    // Get the current user.
-    $user = \Drupal::currentUser();
+    $routeMatch = $this->routeMatch->getRouteName();
     // The array of forbidden routes.
     $routes = [
       'entity.group.canonical',
@@ -50,20 +80,20 @@ class RedirectSubscriber implements EventSubscriberInterface {
 
     // If a group is set, and the type is flexible_group.
     if ($group && $group->getGroupType()->id() === 'flexible_group') {
-      if ($user->hasPermission('manage all groups')) {
+      if ($this->currentUser->hasPermission('manage all groups')) {
         return;
       }
       // If the user is not a member and if "Allowed join method" is not set to
       // "Join directly" in this group.
       elseif (
-        !$group->getMember($user) &&
+        !$group->getMember($this->currentUser) &&
         $routeMatch === 'entity.group.join' &&
         !social_group_flexible_group_can_join_directly($group)
       ) {
         $this->doRedirect($event, $group);
       }
       elseif (
-        !$group->getMember($user) && in_array($routeMatch, $routes, FALSE) &&
+        !$group->getMember($this->currentUser) && in_array($routeMatch, $routes, FALSE) &&
         !social_group_flexible_group_community_enabled($group) &&
         !social_group_flexible_group_public_enabled($group)
       ) {
