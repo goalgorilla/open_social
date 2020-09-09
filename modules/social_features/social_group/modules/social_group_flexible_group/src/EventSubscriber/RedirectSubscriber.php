@@ -3,6 +3,7 @@
 namespace Drupal\social_group_flexible_group\EventSubscriber;
 
 use Drupal\Core\Url;
+use Drupal\group\Entity\GroupInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
@@ -59,18 +60,32 @@ class RedirectSubscriber implements EventSubscriberInterface {
         $routeMatch === 'entity.group.join' &&
         !social_group_flexible_group_can_join_directly($group)
       ) {
-        $event->setResponse(new RedirectResponse(Url::fromRoute('view.group_information.page_group_about', ['group' => $group->id()])
-          ->toString()));
+        $this->doRedirect($event, $group);
       }
       elseif (
         !$group->getMember($user) && in_array($routeMatch, $routes, FALSE) &&
         !social_group_flexible_group_community_enabled($group) &&
         !social_group_flexible_group_public_enabled($group)
       ) {
-        $event->setResponse(new RedirectResponse(Url::fromRoute('view.group_information.page_group_about', ['group' => $group->id()])
-          ->toString()));
+        $this->doRedirect($event, $group);
       }
     }
+  }
+
+  /**
+   * Makes redirect to the "About" group tab.
+   *
+   * @param \Symfony\Component\HttpKernel\Event\GetResponseEvent $event
+   *   The event.
+   * @param \Drupal\group\Entity\GroupInterface $group
+   *   The group.
+   */
+  protected function doRedirect(GetResponseEvent $event, GroupInterface $group) {
+    $url = Url::fromRoute('view.group_information.page_group_about', [
+      'group' => $group->id(),
+    ]);
+
+    $event->setResponse(new RedirectResponse($url->toString()));
   }
 
 }
