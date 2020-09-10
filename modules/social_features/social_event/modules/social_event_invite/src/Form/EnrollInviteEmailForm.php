@@ -12,7 +12,6 @@ use Drupal\Core\Utility\Token;
 use Drupal\file\Entity\File;
 use Drupal\social_core\Form\InviteEmailBaseForm;
 use Drupal\social_event\EventEnrollmentInterface;
-use Drupal\user\UserInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -96,6 +95,8 @@ class EnrollInviteEmailForm extends InviteEmailBaseForm {
   public function buildForm(array $form, FormStateInterface $form_state) {
     $form = parent::buildForm($form, $form_state);
 
+    $form['#attributes']['class'][] = 'form--default';
+
     $params = [
       'user' => $this->currentUser(),
       'node' => $this->routeMatch->getParameter('node'),
@@ -121,9 +122,30 @@ class EnrollInviteEmailForm extends InviteEmailBaseForm {
       }
     }
 
-    $form['preview'] = [
+    $form['email_preview'] = [
+      '#type' => 'fieldset',
+      '#title' => [
+        'text' => [
+          '#markup' => t('Preview your email invite'),
+        ],
+        'icon' => [
+          '#markup' => '<svg class="icon icon-expand_more"><use xlink:href="#icon-expand_more" /></svg>',
+          '#allowed_tags' => ['svg', 'use'],
+        ],
+      ],
+      '#tree' => TRUE,
+      '#collapsible' => TRUE,
+      '#collapsed' => TRUE,
+      '#attributes' => [
+        'class' => [
+          'form-horizontal',
+          'form-preview-email',
+        ],
+      ],
+    ];
+
+    $form['email_preview']['preview'] = [
       '#theme' => 'invite_email_preview',
-      '#title' => $this->t('Message'),
       '#logo' => $logo,
       '#subject' => $this->token->replace($invite_config->get('invite_subject'), $params),
       '#body' => $body,
@@ -165,29 +187,23 @@ class EnrollInviteEmailForm extends InviteEmailBaseForm {
    */
   public function validateForm(array &$form, FormStateInterface $form_state) {
     parent::validateForm($form, $form_state);
-    $duplicated_values = [];
-    $emails = $this->getSubmittedEmails($form_state);
     $nid = $form_state->getValue('event');
 
     // Check if the user is already enrolled.
-    foreach ($emails as $email) {
-      $user = user_load_by_mail($email);
-
-      if ($user instanceof UserInterface) {
-        $conditions = [
-          'field_account' => $user->id(),
-          'field_event' => $nid,
-        ];
-
-        $user = $user->getEmail();
-      }
-      else {
+    foreach ($form_state->getValue('users_fieldset')['user'] as $user) {
+      // Check if the user is a filled in email.
+      $email = $this->extractEmailsFrom($user);
+      if ($email) {
         $conditions = [
           'field_email' => $email,
           'field_event' => $nid,
         ];
-
-        $user = $email;
+      }
+      else {
+        $conditions = [
+          'field_account' => $user,
+          'field_event' => $nid,
+        ];
       }
 
       $enrollments = $this->entityStorage->loadByProperties($conditions);
@@ -209,20 +225,11 @@ class EnrollInviteEmailForm extends InviteEmailBaseForm {
 
       // If enrollments can be found this user is already invited or joined.
       if (!empty($enrollments)) {
-        $duplicated_values[] = $user;
+        // If the user is already enrolled, don't enroll them again.
+        $form_state->unsetValue(['users_fieldset', 'user', $user]);
       }
     }
-    if (!empty($duplicated_values)) {
-      $users = implode(', ', $duplicated_values);
 
-      $message = \Drupal::translation()->formatPlural(count($duplicated_values),
-        "@users is already invited or enrolled, you can't invite them again",
-        "@users are already invited or enrolled, you can't invite them again",
-        ['@users' => $users]
-      );
-
-      $form_state->setErrorByName('email_address', $message);
-    }
   }
 
   /**
@@ -231,13 +238,25 @@ class EnrollInviteEmailForm extends InviteEmailBaseForm {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     parent::submitForm($form, $form_state);
 
-    $params['invite_type'] = 'email';
-    $params['recipients'] = $this->getSubmittedEmails($form_state);
+    $params['recipients'] = $form_state->getValue('users_fieldset')['user'];
     $params['nid'] = $form_state->getValue('event');
     $tempstore = $this->tempStoreFactory->get('event_invite_form_values');
     try {
       $tempstore->set('params', $params);
-      $form_state->setRedirect('social_event_invite.confirm_invite', ['node' => $form_state->getValue('event')]);
+
+      // Create batch for sending out the invites.
+      $batch = [
+        'title' => $this->t('Sending invites...'),
+        'init_message' => $this->t("Preparing to send invites..."),
+        'operations' => [
+          [
+            '\Drupal\social_event_invite\SocialEventInviteBulkHelper::bulkInviteUsersEmails',
+            [$params['recipients'], $params['nid']],
+          ],
+        ],
+        'finished' => '\Drupal\social_event_invite\SocialEventInviteBulkHelper::bulkInviteUserEmailsFinished',
+      ];
+      batch_set($batch);
     }
     catch (\Exception $error) {
       $this->loggerFactory->get('event_invite_form_values')->alert(t('@err', ['@err' => $error]));

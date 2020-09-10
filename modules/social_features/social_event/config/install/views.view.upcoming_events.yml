@@ -592,38 +592,35 @@ display:
           expose:
             operator_limit_selection: false
             operator_list: {  }
-        field_event_date_value:
-          id: field_event_date_value
+        event_date:
+          id: event_date
           table: node__field_event_date
-          field: field_event_date_value
+          field: event_date
           relationship: none
           group_type: group
           admin_label: ''
-          operator: '='
-          value:
-            min: ''
-            max: ''
-            value: ''
-            type: date
+          operator: in
+          value: {  }
           group: 1
           exposed: true
           expose:
-            operator_id: field_event_date_value_op
-            label: 'Start date'
+            operator_id: event_date_op
+            label: 'Event date'
             description: null
             use_operator: false
-            operator: field_event_date_value_op
-            identifier: field_event_date_value
+            operator: event_date_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: event_date
             required: false
             remember: false
             multiple: false
             remember_roles:
               authenticated: authenticated
-            operator_limit_selection: false
-            operator_list: {  }
+            reduce: false
           is_grouped: true
           group_info:
-            label: 'Event status'
+            label: ''
             description: ''
             identifier: field_event_date_value
             optional: false
@@ -634,22 +631,18 @@ display:
             default_group_multiple: {  }
             group_items:
               1:
-                title: 'Upcoming events'
-                operator: '>='
-                value:
-                  type: offset
-                  value: now
-                  min: ''
-                  max: ''
+                title: 'Ongoing and upcoming events'
+                operator: in
+                value: '1'
               2:
-                title: 'Events that have started or are finished'
-                operator: '<'
-                value:
-                  type: offset
-                  value: now
-                  min: ''
-                  max: ''
-          plugin_id: datetime
+                title: 'Past events'
+                operator: in
+                value: '2'
+              3:
+                title: ''
+                operator: in
+                value: {  }
+          plugin_id: social_event_date_filter
         nid:
           id: nid
           table: node_access
@@ -744,10 +737,10 @@ display:
       exposed_block: true
       title: 'All events'
       sorts:
-        event_passed_upcoming_sort:
-          id: event_passed_upcoming_sort
-          table: node
-          field: event_passed_upcoming_sort
+        event_date:
+          id: event_date
+          table: node__field_event_date
+          field: event_date
           relationship: none
           group_type: group
           admin_label: ''
@@ -756,8 +749,7 @@ display:
           expose:
             label: ''
           granularity: minute
-          entity_type: node
-          plugin_id: event_passed_upcoming_sort
+          plugin_id: social_event_date_sort
     cache_metadata:
       max-age: -1
       contexts:

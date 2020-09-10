@@ -139,6 +139,7 @@ function social_core_social_user_account_header_account_links(array $context) {
         ],
       ];
     }
+
     return [
       'divider_no_mobile' => [
         '#wrapper_attributes' => [
@@ -154,9 +155,7 @@ function social_core_social_user_account_header_account_links(array $context) {
         ],
         '#title' => $title,
         '#weight' => 350,
-      ] + Url::fromRoute($core_invites->getInviteData('name'), [
-        'user' => $context['user']->id(),
-      ])->toRenderArray(),
+      ] + Url::fromRoute('social_core.my_invites')->toRenderArray(),
     ];
   }
 }

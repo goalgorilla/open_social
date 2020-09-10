@@ -73,20 +73,10 @@ class CancelEnrollInviteController extends ControllerBase {
   public function cancelEnrollmentInvite(NodeInterface $node, EventEnrollmentInterface $event_enrollment) {
     // Just some sanity checks.
     if ($node instanceof Node && !empty($event_enrollment)) {
-      // When the event owner/organizer cancelled the invite, update the status
-      // and set a message for the executor that it has been done.
-      $event_enrollment->field_request_or_invite_status->value = EventEnrollmentInterface::REQUEST_OR_INVITE_DECLINED;
-      $this->messenger()->addStatus(t('The event enrollment request has been declined.'));
-
-      // In order for the notifications to be sent correctly we're updating the
-      // owner here. The account is still linked to the actual enrollee.
-      // The owner is always used as the actor.
-      // @see activity_creator_message_insert().
-      $event_enrollment->setOwnerId($this->currentUser->id());
-
-      // And finally save (update) this updated $event_enrollment.
-      // @todo: maybe think of deleting approved/declined records from the db?
-      $event_enrollment->save();
+      // When the event owner/organizer cancelled the invite, simply remove the
+      // whole event enrollment.
+      $this->messenger()->addStatus(t('The invite has been removed.'));
+      $event_enrollment->delete();
     }
 
     // Get the redirect destination we're given in the request for the response.
@@ -105,7 +95,7 @@ class CancelEnrollInviteController extends ControllerBase {
    *   The access result.
    */
   public function access(AccountInterface $account) {
-    $hasPermissionIsOwnerOrOrganizer = social_event_owner_or_organizer();
+    $hasPermissionIsOwnerOrOrganizer = social_event_manager_or_organizer();
     return AccessResult::allowedIf($hasPermissionIsOwnerOrOrganizer === TRUE);
   }
 

@@ -42,7 +42,6 @@ class RedirectSubscriber implements EventSubscriberInterface {
     // The array of forbidden routes.
     $routes = [
       'entity.group.canonical',
-      'entity.group.join',
       'view.group_events.page_group_events',
       'view.group_topics.page_group_topics',
       'social_group.stream',
@@ -53,10 +52,21 @@ class RedirectSubscriber implements EventSubscriberInterface {
       if ($user->hasPermission('manage all groups')) {
         return;
       }
-      // If the user is not an member of this group.
-      elseif (!$group->getMember($user) && in_array($routeMatch, $routes, FALSE)
-        && !social_group_flexible_group_community_enabled($group)
-        && !social_group_flexible_group_public_enabled($group)) {
+      // If the user is not a member and if "Allowed join method" is not set to
+      // "Join directly" in this group.
+      elseif (
+        !$group->getMember($user) &&
+        $routeMatch === 'entity.group.join' &&
+        !social_group_flexible_group_can_join_directly($group)
+      ) {
+        $event->setResponse(new RedirectResponse(Url::fromRoute('view.group_information.page_group_about', ['group' => $group->id()])
+          ->toString()));
+      }
+      elseif (
+        !$group->getMember($user) && in_array($routeMatch, $routes, FALSE) &&
+        !social_group_flexible_group_community_enabled($group) &&
+        !social_group_flexible_group_public_enabled($group)
+      ) {
         $event->setResponse(new RedirectResponse(Url::fromRoute('view.group_information.page_group_about', ['group' => $group->id()])
           ->toString()));
       }
