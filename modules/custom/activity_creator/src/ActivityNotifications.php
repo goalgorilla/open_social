@@ -257,7 +257,7 @@ class ActivityNotifications extends ControllerBase {
       $txn = $this->database->startTransaction();
       try {
         $this->database->delete('activity_notification_status')
-          ->condition('aid', $activity_ids)
+          ->condition('aid', $activity_ids, 'IN')
           ->execute();
       }
       catch (\Exception $exception) {
