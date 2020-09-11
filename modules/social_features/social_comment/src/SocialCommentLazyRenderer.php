@@ -31,6 +31,8 @@ class SocialCommentLazyRenderer {
   /**
    * Render comments for lazy builder.
    *
+   * @param string $entity_type
+   *   The entity type.
    * @param string|int $entity_id
    *   The entity id.
    * @param string $view_mode
@@ -48,11 +50,11 @@ class SocialCommentLazyRenderer {
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  public function renderComments($entity_id, $view_mode, $field_name, $num_comments, $pager_id) {
-    /** @var \Drupal\node\NodeInterface $node */
-    $node = $this->entityTypeManager->getStorage('node')->load($entity_id);
+  public function renderComments($entity_type, $entity_id, $view_mode, $field_name, $num_comments, $pager_id) {
+    /** @var \Drupal\Core\Entity\EntityInterface $entity */
+    $entity = $this->entityTypeManager->getStorage($entity_type)->load($entity_id);
     /** @var \Drupal\comment\CommentInterface[] $comments */
-    $comments = $this->entityTypeManager->getStorage('comment')->loadThread($node, $field_name, $view_mode, $num_comments, $pager_id);
+    $comments = $this->entityTypeManager->getStorage('comment')->loadThread($entity, $field_name, $view_mode, $num_comments, $pager_id);
 
     if (!$comments) {
       return [];

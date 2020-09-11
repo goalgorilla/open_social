@@ -141,6 +141,7 @@ class CommentGroupContentFormatter extends CommentDefaultFormatter {
         '#lazy_builder' => [
           'social_comment.lazy_renderer:renderComments',
           [
+            $entity->getEntityTypeId(),
             $entity->id(),
             $comment_settings['default_mode'],
             $items->getName(),

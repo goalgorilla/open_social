@@ -99,6 +99,7 @@ class CommentNodeFormatter extends CommentDefaultFormatter {
             '#lazy_builder' => [
               'social_comment.lazy_renderer:renderComments',
               [
+                $items->getEntity()->getEntityTypeId(),
                 $items->getEntity()->id(),
                 $comment_settings['default_mode'],
                 $items->getName(),

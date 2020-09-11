@@ -10,9 +10,9 @@ use Drupal\node\NodeInterface;
  * Provides a default comment formatter.
  *
  * @FieldFormatter(
- *   id = "social_comment_default",
+ *   id = "social_lazy_comment_default",
  *   module = "social_comment",
- *   label = @Translation("Social comment list"),
+ *   label = @Translation("Social comment list(Lazy build)"),
  *   field_types = {
  *     "comment"
  *   },
@@ -21,7 +21,7 @@ use Drupal\node\NodeInterface;
  *   }
  * )
  */
-class SocialCommentDefaultFormatter extends CommentDefaultFormatter {
+class SocialLazyCommentDefaultFormatter extends CommentDefaultFormatter {
 
   /**
    * {@inheritdoc}
@@ -30,8 +30,8 @@ class SocialCommentDefaultFormatter extends CommentDefaultFormatter {
     // Elements from core comment formatter.
     $elements = parent::viewElements($items, $langcode);
 
-    // Check if comments exists and used in node entity.
-    if (!empty($elements[0]['comments']) && $items->getEntity() instanceof NodeInterface) {
+    // Check if comments exists.
+    if (!empty($elements[0]['comments'])) {
       $comment_settings = $this->getFieldSettings();
 
       // Replace comments with lazy builder.
@@ -39,6 +39,7 @@ class SocialCommentDefaultFormatter extends CommentDefaultFormatter {
         '#lazy_builder' => [
           'social_comment.lazy_renderer:renderComments',
           [
+            $items->getEntity()->getEntityTypeId(),
             $items->getEntity()->id(),
             $comment_settings['default_mode'],
             $items->getName(),

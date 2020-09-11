@@ -356,14 +356,3 @@ function social_comment_field_info_alter(&$info) {
     $info['comment']['list_class'] = '\Drupal\social_comment\SocialCommentFieldItemList';
   }
 }
-
-/**
- * Implements hook_field_formatter_info_alter().
- */
-function social_comment_field_formatter_info_alter(array &$info) {
-  /** @var \Drupal\Core\Extension\ModuleHandlerInterface $moduleHandler */
-  $moduleHandler = \Drupal::service('module_handler');
-  if (!$moduleHandler->moduleExists('social_comment_extra')) {
-    $info['comment_default']['class'] = SocialCommentDefaultFormatter::class;
-  }
-}
