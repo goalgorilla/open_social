@@ -4,7 +4,6 @@ namespace Drupal\social_comment\Plugin\Field\FieldFormatter;
 
 use Drupal\comment\Plugin\Field\FieldFormatter\CommentDefaultFormatter;
 use Drupal\Core\Field\FieldItemListInterface;
-use Drupal\node\NodeInterface;
 
 /**
  * Provides a default comment formatter.
