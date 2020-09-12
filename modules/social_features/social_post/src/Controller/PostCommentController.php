@@ -22,7 +22,7 @@ class PostCommentController extends SocialCommentController {
       // $pid indicates that this is a reply to a comment.
       if ($pid) {
         // Load the parent comment.
-        $comment = $this->entityManager()->getStorage('comment')->load($pid);
+        $comment = $this->entityTypeManager()->getStorage('comment')->load($pid);
       }
     }
 

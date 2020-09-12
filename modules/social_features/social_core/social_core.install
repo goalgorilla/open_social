@@ -179,7 +179,7 @@ function _social_core_create_an_homepage_block() {
   // Block image.
   $path = drupal_get_path('module', 'social_core');
   $image_path = $path . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . 'homepage-block.jpg';
-  $uri = file_unmanaged_copy($image_path, 'public://homepage-block.jpg', FileSystemInterface::EXISTS_REPLACE);
+  $uri = \Drupal::service('file_system')->copy($image_path, 'public://homepage-block.jpg', FileSystemInterface::EXISTS_REPLACE);
 
   $media = File::create([
     'langcode' => 'en',
@@ -705,7 +705,12 @@ function social_core_update_8021(&$sandbox) {
   }
 
   // Update definitions and schema.
-  \Drupal::entityDefinitionUpdateManager()->applyUpdates();
+  $list = \Drupal::entityDefinitionUpdateManager()->getChangeList();
+  if (!empty($list['post'])) {
+    foreach ($list['post'] as $post) {
+      \Drupal::entityDefinitionUpdateManager()->updateEntityType($post);
+    }
+  }
 
   // Update config post_type.
   $path = drupal_get_path('module', 'social_post') . '/config/install';
@@ -739,8 +744,7 @@ function social_core_update_8021(&$sandbox) {
   }
 
   // Unset default value for post entity.
-  $schema->fieldSetNoDefault($table_data, 'type');
-  $schema->fieldSetNoDefault($table_data, 'type');
+  $schema->changeField($table_data, 'type', 'type', $spec);
 }
 
 /**

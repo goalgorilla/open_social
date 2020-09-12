@@ -160,10 +160,10 @@ function social_event_views_query_alter(ViewExecutable $view, QueryPluginBase $q
   if ($view->id() == 'events' && $view->getDisplay()->display['id'] == 'events_overview') {
     $account_uid = \Drupal::routeMatch()->getParameter('user');
     $current_uid = \Drupal::currentUser()->id();
-    if ($view->exposed_raw_input['status'] == NODE_PUBLISHED || $account_uid !== $current_uid) {
+    if ($view->exposed_raw_input['status'] == NodeInterface::PUBLISHED || $account_uid !== $current_uid) {
       $query->where[1]['conditions'][] = [
         'field' => 'node_field_data.status',
-        'value' => NODE_PUBLISHED,
+        'value' => NodeInterface::PUBLISHED,
         'operator' => '=',
       ];
     }

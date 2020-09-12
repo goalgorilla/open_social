@@ -42,15 +42,23 @@ abstract class DemoSystem extends DemoContent {
   protected $fileStorage;
 
   /**
+   * The file storage.
+   *
+   * @var \Drupal\file\FileSystemInterface
+   */
+  protected $fileSystem;
+
+  /**
    * DemoComment constructor.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, DemoContentParserInterface $parser, EntityStorageInterface $block_storage, ConfigFactory $config_factory, FileStorageInterface $file_storage) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, DemoContentParserInterface $parser, EntityStorageInterface $block_storage, ConfigFactory $config_factory, FileStorageInterface $file_storage, FileSystemInterface $file_system) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
     $this->parser = $parser;
     $this->blockStorage = $block_storage;
     $this->configFactory = $config_factory;
     $this->fileStorage = $file_storage;
+    $this->fileSystem = $file_system;
   }
 
   /**
@@ -62,9 +70,10 @@ abstract class DemoSystem extends DemoContent {
       $plugin_id,
       $plugin_definition,
       $container->get('social_demo.yaml_parser'),
-      $container->get('entity.manager')->getStorage('block_content'),
+      $container->get('entity_type.manager')->getStorage('block_content'),
       $container->get('config.factory'),
-      $container->get('entity.manager')->getStorage('file')
+      $container->get('entity_type.manager')->getStorage('file'),
+      $container->get('file_system')
     );
   }
 
@@ -212,7 +221,7 @@ abstract class DemoSystem extends DemoContent {
           $style = preg_replace_callback('/url\([\'"]?(?![a-z]+:|\/+)([^\'")]+)[\'"]?\)/i', [$css_optimizer, 'rewriteFileURI'], $style);
           // Rewrite stylesheet with new colors.
           $style = _color_rewrite_stylesheet($active_theme, $info, $paths, $palette, $style);
-          $base_file = drupal_basename($file);
+          $base_file = $this->fileSystem->basename($file);
           $css[] = $paths['target'] . $base_file;
 
           _color_save_stylesheet($paths['target'] . $base_file, $style, $paths);

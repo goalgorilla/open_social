@@ -280,8 +280,8 @@ function social_group_update_8005() {
     $config_factory->getEditable("$module.settings")->delete();
 
     // Remove cache tables.
-    if (db_table_exists("cache_$module")) {
-      db_drop_table("cache_$module");
+    if (Database::getConnection()->schema()->tableExists("cache_$module")) {
+      Database::getConnection()->schema()->dropTable("cache_$module");
     }
 
     // Remove data from system.schema.

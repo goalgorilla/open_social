@@ -3,6 +3,7 @@
 namespace Drupal\social_auth_facebook\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\Render\MetadataBubblingUrlGenerator;
 use Drupal\social_api\Plugin\NetworkManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\social_auth_facebook\FacebookAuthManager;
@@ -18,6 +19,7 @@ class FacebookAuthController extends ControllerBase {
 
   protected $networkManager;
   protected $authManager;
+  protected $urlGenerator;
 
   /**
    * Contains access token to work with API.
@@ -28,10 +30,18 @@ class FacebookAuthController extends ControllerBase {
 
   /**
    * FacebookAuthController constructor.
+   *
+   * @param \Drupal\social_api\Plugin\NetworkManager $network_manager
+   *   The Social network manager.
+   * @param \Drupal\social_auth_facebook\FacebookAuthManager $auth_manager
+   *   The Facebook manager.
+   * @param \Drupal\Core\Render\MetadataBubblingUrlGenerator $url_generator
+   *   The URL generator.
    */
-  public function __construct(NetworkManager $network_manager, FacebookAuthManager $auth_manager) {
+  public function __construct(NetworkManager $network_manager, FacebookAuthManager $auth_manager, MetadataBubblingUrlGenerator $url_generator) {
     $this->networkManager = $network_manager;
     $this->authManager = $auth_manager;
+    $this->urlGenerator = $url_generator;
   }
 
   /**
@@ -40,7 +50,8 @@ class FacebookAuthController extends ControllerBase {
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('plugin.network.manager'),
-      $container->get('social_auth_facebook.auth_manager')
+      $container->get('social_auth_facebook.auth_manager'),
+      $container->get('url_generator')
     );
   }
 
@@ -116,7 +127,7 @@ class FacebookAuthController extends ControllerBase {
     // Authorize the user and redirect him to the edit account page.
     user_login_finalize($account);
 
-    $url = $this->getUrlGenerator()->getPathFromRoute('entity.user.canonical', [
+    $url = $this->urlGenerator->getPathFromRoute('entity.user.canonical', [
       'user' => $account->id(),
     ]);
 
