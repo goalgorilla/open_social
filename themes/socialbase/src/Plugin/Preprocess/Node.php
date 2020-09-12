@@ -141,7 +141,7 @@ class Node extends PreprocessBase {
         $variables['visibility_icon'] = 'public';
       }
     }
-    
+
     // Let's see if we can remove comments from the content and render them in a
     // separate content_below array.
     $comment_field_name = '';
