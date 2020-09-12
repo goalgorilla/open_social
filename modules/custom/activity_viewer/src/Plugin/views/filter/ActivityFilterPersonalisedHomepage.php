@@ -2,6 +2,7 @@
 
 namespace Drupal\activity_viewer\Plugin\views\filter;
 
+use Drupal\Core\Database\Query\Condition;
 use Drupal\views\Plugin\views\filter\FilterPluginBase;
 use Drupal\views\Views;
 
@@ -39,7 +40,7 @@ class ActivityFilterPersonalisedHomepage extends FilterPluginBase {
    */
   public function query() {
     $account = $this->view->getUser();
-    $group_memberships = social_group_get_all_group_members($account->id());
+    $group_memberships = \Drupal::service('social_group.helper_service')->getAllGroupsForUser($account->id());
 
     // Add tables and joins.
     $this->query->addTable('activity__field_activity_recipient_group');
@@ -95,17 +96,17 @@ class ActivityFilterPersonalisedHomepage extends FilterPluginBase {
     }
 
     // Add queries.
-    $and_wrapper = db_and();
-    $or = db_or();
+    $and_wrapper = new Condition('AND');
+    $or = new Condition('OR');
 
     // Nodes: retrieve all the nodes 'created' activity by node access grants.
-    $node_access = db_and();
+    $node_access = new Condition('AND');
     $node_access->condition('activity__field_activity_entity.field_activity_entity_target_type', 'node', '=');
     $node_access_grants = node_access_grants('view', $account);
-    $grants = db_or();
+    $grants = new Condition('OR');
     foreach ($node_access_grants as $realm => $gids) {
       if (!empty($gids)) {
-        $and = db_and();
+        $and = new Condition('AND');
 
         if ($account->isAnonymous() && strpos($realm, 'field_content_visibility_community') !== FALSE) {
           $and->condition('node_field_data.uid', 0, '!=');
@@ -120,7 +121,7 @@ class ActivityFilterPersonalisedHomepage extends FilterPluginBase {
     $node_access->condition($grants);
     // Get all nodes not posted in groups and in groups of user only.
     if ($account->isAuthenticated() && count($group_memberships) > 0) {
-      $na_or = db_or();
+      $na_or = new Condition('OR');
       $node_access->condition($na_or
         ->isNull('activity__field_activity_recipient_group.field_activity_recipient_group_target_id')
         ->condition('activity__field_activity_recipient_group.field_activity_recipient_group_target_id', $group_memberships, 'IN')
@@ -133,7 +134,7 @@ class ActivityFilterPersonalisedHomepage extends FilterPluginBase {
 
     // Posts: retrieve all the posts in groups the user is a member of.
     if ($account->isAuthenticated() && count($group_memberships) > 0) {
-      $posts_in_groups = db_and();
+      $posts_in_groups = new Condition('AND');
       $posts_in_groups->condition('activity__field_activity_entity.field_activity_entity_target_type', 'post', '=');
       $posts_in_groups->condition('activity__field_activity_recipient_group.field_activity_recipient_group_target_id', $group_memberships, 'IN');
 
@@ -141,7 +142,7 @@ class ActivityFilterPersonalisedHomepage extends FilterPluginBase {
     }
 
     // Posts: all the posts the user has access to and posted to community.
-    $post_access = db_and();
+    $post_access = new Condition('AND');
     $post_access->condition('activity__field_activity_entity.field_activity_entity_target_type', 'post', '=');
     $post_access->condition('post__field_visibility.field_visibility_value', '3', '!=');
 
@@ -157,7 +158,7 @@ class ActivityFilterPersonalisedHomepage extends FilterPluginBase {
 
     $or->condition($post_access);
 
-    $post_status = db_or();
+    $post_status = new Condition('OR');
     $post_status->condition('post.status', 1, '=');
 
     if ($account->hasPermission('view unpublished post entities')) {
@@ -170,13 +171,13 @@ class ActivityFilterPersonalisedHomepage extends FilterPluginBase {
     if ($account->hasPermission('access comments')) {
       // For comments in groups, the user must be a member of at least 1 group.
       if (count($group_memberships) > 0) {
-        $comments_on_content_in_groups = db_and();
+        $comments_on_content_in_groups = new Condition('AND');
         $comments_on_content_in_groups->condition('activity__field_activity_entity.field_activity_entity_target_type', 'comment', '=');
         $comments_on_content_in_groups->condition('activity__field_activity_recipient_group.field_activity_recipient_group_target_id', $group_memberships, 'IN');
         $or->condition($comments_on_content_in_groups);
       }
 
-      $comments_on_content = db_and();
+      $comments_on_content = new Condition('AND');
       $comments_on_content->condition('activity__field_activity_entity.field_activity_entity_target_type', 'comment', '=');
       $comments_on_content->isNull('activity__field_activity_recipient_group.field_activity_recipient_group_target_id');
       $or->condition($comments_on_content);

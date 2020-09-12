@@ -10,6 +10,7 @@ use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\activity_creator\ActivityInterface;
 use Drupal\flag\Entity\Flagging;
 use Drupal\user\UserInterface;
+use Drupal\node\NodeInterface;
 
 /**
  * Defines the Activity entity.
@@ -125,7 +126,7 @@ class Activity extends ContentEntityBase implements ActivityInterface {
    * {@inheritdoc}
    */
   public function setPublished($published) {
-    $this->set('status', $published ? NODE_PUBLISHED : NODE_NOT_PUBLISHED);
+    $this->set('status', $published ? NodeInterface::PUBLISHED : NodeInterface::NOT_PUBLISHED);
     return $this;
   }
 

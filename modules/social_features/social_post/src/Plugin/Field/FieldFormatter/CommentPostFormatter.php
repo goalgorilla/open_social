@@ -227,7 +227,7 @@ class CommentPostFormatter extends CommentDefaultFormatter {
 
     $comments = [];
     if ($cids) {
-      $comments = entity_load_multiple('comment', $cids);
+      $comments = $this->storage->loadMultiple($cids);
     }
 
     return $comments;

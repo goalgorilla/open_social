@@ -11,6 +11,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
 use Drupal\user\UserData;
 use Drupal\Core\Session\AccountProxy;
 use Drupal\Core\Config\ConfigFactory;
+use Drupal\Core\Installer\InstallerKernel;
 
 /**
  * Class RedirectHomepageSubscriber.
@@ -82,7 +83,7 @@ class RedirectHomepageSubscriber implements EventSubscriberInterface {
   public function checkForHomepageRedirect(Event $event) {
 
     // Make sure front page module is not run when using cli or doing install.
-    if (PHP_SAPI === 'cli' || drupal_installation_attempted()) {
+    if (PHP_SAPI === 'cli' || InstallerKernel::installationAttempted()) {
       return;
     }
     // Don't run when site is in maintenance mode.

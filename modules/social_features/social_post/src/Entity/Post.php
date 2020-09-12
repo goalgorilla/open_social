@@ -7,6 +7,7 @@ use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Entity\EntityChangedTrait;
 use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\node\NodeInterface;
 use Drupal\social_core\EntityUrlLanguageTrait;
 use Drupal\user\RoleInterface;
 use Drupal\user\UserInterface;
@@ -130,7 +131,7 @@ class Post extends ContentEntityBase implements PostInterface {
    * {@inheritdoc}
    */
   public function setPublished($published) {
-    $this->set('status', $published ? NODE_PUBLISHED : NODE_NOT_PUBLISHED);
+    $this->set('status', $published ? NodeInterface::PUBLISHED: NodeInterface::NOT_PUBLISHED);
     return $this;
   }
 

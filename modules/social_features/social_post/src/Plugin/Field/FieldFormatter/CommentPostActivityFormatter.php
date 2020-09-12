@@ -58,7 +58,7 @@ class CommentPostActivityFormatter extends CommentPostFormatter {
     $comments = [];
     if ($cids) {
       krsort($cids);
-      $comments = entity_load_multiple('comment', $cids);
+      $comments = $this->storage->loadMultiple($cids);
     }
 
     return $comments;

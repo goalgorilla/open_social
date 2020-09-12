@@ -12,12 +12,12 @@ use Drupal\Core\Routing\LinkGeneratorTrait;
  * @ingroup social_post
  */
 class PostListBuilder extends EntityListBuilder {
-  use LinkGeneratorTrait;
 
   /**
    * {@inheritdoc}
    */
   public function buildHeader() {
+    $header = [];
     $header['id'] = $this->t('Post ID');
     $header['post'] = $this->t('Post');
     $header['author'] = $this->t('Author');
@@ -31,6 +31,7 @@ class PostListBuilder extends EntityListBuilder {
    * {@inheritdoc}
    */
   public function buildRow(EntityInterface $entity) {
+    $row = [];
     /* @var $entity \Drupal\social_post\Entity\Post */
     $row['id'] = $entity->id();
     $row['post'] = '';

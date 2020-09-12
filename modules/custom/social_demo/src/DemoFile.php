@@ -80,7 +80,7 @@ abstract class DemoFile extends DemoContent {
       }
 
       // Copy file from module.
-      $item['uri'] = file_unmanaged_copy(
+      $item['uri'] = FileSystemInterface::copy(
         $this->parser->getPath($item['path'], $this->getModule(), $this->getProfile()),
         $item['uri'],
         FileSystemInterface::EXISTS_REPLACE
