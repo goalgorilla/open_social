@@ -32,7 +32,6 @@ matrix:
   - env: TEST_SUITE=install_stability_4
   - env: TEST_SUITE=install_update
   - env: TEST_SUITE=install_without_optional
-  - env: TEST_SUITE=drush_make
 #  - env: TEST_SUITE=accessibility
 
 services:
@@ -45,7 +44,6 @@ before_install:
 
   # Kill the install_update, drush_make and accessibility jobs if it is not a PR build.
   - if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TEST_SUITE" = "install_update" ]; then exit 0; fi
-  - if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TEST_SUITE" = "drush_make" ]; then exit 0; fi
   - if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TEST_SUITE" = "accessibility" ]; then exit 0; fi
   - phpenv config-rm xdebug.ini
   # Lets set-up our helper repository with all the docker config and use correct version in composer.json.
@@ -57,7 +55,7 @@ before_install:
   # Installing hirak/prestissimo allows composer to parallelise downloads which speeds up the composer install.
   - composer global require hirak/prestissimo
   - echo "TRAVIS_BRANCH=$TRAVIS_BRANCH, PR=$PR, BRANCH=$BRANCH, COMMIT=$COMMIT"
-  - if [ "$TEST_SUITE" = "install_update" ]; then composer require goalgorilla/open_social:dev-8.x-7.x --prefer-dist; fi
+  - if [ "$TEST_SUITE" = "install_update" ]; then composer require goalgorilla/open_social:dev-8.x-8.x --prefer-dist; fi
   - if [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ "$TRAVIS_PULL_REQUEST_SLUG" != "goalgorilla/open_social" ]; then composer config repositories.social git https://github.com/$TRAVIS_PULL_REQUEST_SLUG.git; fi
   - if [ "$TEST_SUITE" != "install_update" ]; then composer require goalgorilla/open_social:dev-${BRANCH}#${COMMIT} --prefer-dist; fi
 
@@ -69,7 +67,6 @@ install:
   - if [ "$TEST_SUITE" = "install_stability_1" ] || [ "$TEST_SUITE" = "install_stability_2" ] || [ "$TEST_SUITE" = "install_stability_3" ] || [ "$TEST_SUITE" = "install_stability_4" ]; then docker exec -i social_ci_web bash /var/www/scripts/social/install/install_script.sh --with-optional; fi
   - if [ "$TEST_SUITE" = "install_without_optional" ]; then docker exec -i social_ci_web bash /var/www/scripts/social/install/install_script.sh; fi
   - if [ "$TEST_SUITE" = "install_update" ]; then bash scripts/social/ci/build-install-update.sh $PR $BRANCH $COMMIT; fi
-  - if [ "$TEST_SUITE" = "drush_make" ]; then bash scripts/social/ci/build-social-make.sh; fi
 
 script:
   - set -e

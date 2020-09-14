@@ -176,12 +176,8 @@
 }
 
 .socialblue--sky .hero__banner--static {
-  width: 100vw;
   position: relative;
-  left: 50%;
-  right: 50%;
-  margin-left: -50vw;
-  margin-right: -50vw;
+  width: 100%;
   background: #fff;
   padding: 60px 1em 0;
 }
@@ -560,6 +556,16 @@
   .socialblue--sky.path-group .cover-wrap h1 {
     font-size: 2.25rem;
     line-height: 1.4;
+  }
+}
+
+@media (min-width: 1200px) {
+  .socialblue--sky .hero__banner--static {
+    width: auto;
+    margin: 0 calc((-100vw + (1200px - 3rem)) / 2);
+  }
+  .socialblue--sky.gin--vertical-toolbar .hero__banner--static {
+    margin: 0 calc((-100vw + (1200px + 2rem)) / 2);
   }
 }
 

@@ -1,6 +1,5 @@
 @import 'settings';
 
-
 // SocialBlue Sky.
 .socialblue--sky {
   .badge-status {
@@ -32,6 +31,7 @@
     text-transform: uppercase;
     margin-right: .5rem;
     margin-bottom: .5rem;
+    word-break: break-all;
 
     a {
       font-weight: 700;
@@ -40,12 +40,6 @@
 
     @include for-tablet-landscape-down {
       font-size: .75rem;
-    }
-  }
-
-  .teaser {
-    .badge__label {
-      color: $default-color;
     }
   }
 
@@ -73,9 +67,16 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    flex-wrap: wrap;
 
     .teaser__badge {
+      display: flex;
+      justify-content: flex-end;
       margin: 0 0 .5rem 3px;
+    }
+
+    .teaser__tag {
+      flex: 1;
     }
   }
 

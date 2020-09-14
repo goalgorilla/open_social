@@ -117,6 +117,12 @@ class ContentBuilder implements ContentBuilderInterface {
       $field_names = [$block_content->field_plugin_field->value];
     }
 
+    /** @var \Drupal\social_content_block\ContentBlockPluginInterface $plugin */
+    $plugin = $this->contentBlockManager->createInstance($plugin_id);
+
+    /** @var \Drupal\Core\Entity\EntityTypeInterface $entity_type */
+    $entity_type = $this->entityTypeManager->getDefinition($definition['entityTypeId']);
+
     $fields = [];
 
     foreach ($field_names as $field_name) {
@@ -197,15 +203,8 @@ class ContentBuilder implements ContentBuilderInterface {
 
     if (!$field->isEmpty()) {
       $url = Url::fromUri($field->uri);
-      $link_options = [
-        'attributes' => [
-          'class' => [
-            'btn',
-            'btn-flat',
-          ],
-        ],
-      ];
-      $url->setOptions($link_options);
+      $attributes = ['class' => ['btn', 'btn-flat']];
+      $url->setOption('attributes', $attributes);
 
       return Link::fromTextAndUrl($field->title, $url)->toRenderable();
     }
@@ -479,7 +478,7 @@ class ContentBuilder implements ContentBuilderInterface {
 
       // Fall back by assuming the sorting option is a field.
       default:
-        $query->orderBy("base_table.${sort_by}");
+        $query->orderBy("base_table.${sort_by}", 'DESC');
     }
 
   }

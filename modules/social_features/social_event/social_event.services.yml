@@ -3,10 +3,21 @@ services:
     class: Drupal\social_event\Routing\RouteSubscriber
     tags:
       - { name: event_subscriber }
+  social_event.enroll_request_overview_subscriber:
+    class: Drupal\social_event\Routing\EnrollRequestsOverviewSubscriber
+    tags:
+      - { name: event_subscriber }
+  social_event.status_helper:
+    class: Drupal\social_event\EventEnrollmentStatusHelper
+    arguments: ['@current_route_match', '@entity_type.manager', '@current_user', '@config.factory']
   social_event.translation_defaults:
     class: Drupal\social_event\ContentTranslationDefaultsConfigOverride
     tags:
       - { name: config.factory.override, priority: 5 }
       - { name: social_language_defaults }
+  social_event.overrider:
+    class: \Drupal\social_event\EventEnrollmentConfigOverride
+    tags:
+      - {name: config.factory.override, priority: 5}
   social_event.enroll:
     class: Drupal\social_event\Service\SocialEventEnrollService

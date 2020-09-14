@@ -57,6 +57,11 @@
     </div>
   {% endif %}
 
+  {% if content.ongoing %}
+    <span class="badge badge-primary teaser__badge">
+          {{ content.ongoing }}
+        </span>
+  {% endif %}
   {% if content.enrolled %}
     <span class="badge badge-default teaser__badge">
       {{ content.enrolled }}

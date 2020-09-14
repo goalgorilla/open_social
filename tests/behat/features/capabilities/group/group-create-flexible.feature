@@ -169,3 +169,37 @@ Feature: Create flexible Group
     When I fill in "search_input" with "Test group"
     Then I should see "Test group public topic" in the "Main content"
     And I should not see "Test group private topic" in the "Main content"
+
+    # Test flexible group with only public content visibility for LU.
+    Given I am logged in as "GivenUserOne"
+    And I am on "group/add"
+    Then I click radio button "Flexible group By choosing this option you can customize many group settings to your needs." with the id "edit-group-type-flexible-group"
+    And I press "Continue"
+    When I show hidden checkboxes
+    Then I uncheck the box "field_group_allowed_visibility[community]"
+    Then I uncheck the box "field_group_allowed_visibility[group]"
+    When I fill in "Title" with "Cheesy test of flexible group"
+    And I fill in the "edit-field-group-description-0-value" WYSIWYG editor with "Cheesy description text"
+    And I fill in "Location name" with "Cheese St"
+    And I select "US" from "Country"
+    Then I wait for AJAX to finish
+    And I press "Save"
+    # Check this group as an anonymous user.
+    And I logout
+    Then I am on "all-groups"
+    And I should see "Cheesy test of flexible group"
+    When I click "Cheesy test of flexible group"
+    Then I should see the link "Stream"
+    And I should see the link "About"
+    And I should see the link "Events"
+    And I should see the link "Topics"
+    And I should see the link "Members"
+    # Check this as an user with SM permissions.
+    Given I am logged in as an "authenticated user"
+    When I am on "all-groups"
+    And I click "Cheesy test of flexible group"
+    Then I should see the link "Stream"
+    And I should see the link "About"
+    And I should see the link "Events"
+    And I should see the link "Topics"
+    And I should see the link "Members"

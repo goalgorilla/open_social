@@ -105,7 +105,7 @@ function social_verify_custom_requirements(array &$install_state) {
     ];
   }
 
-  if (!class_exists('\Happyr\LinkedIn\LinkedIn')) {
+  if (!class_exists('\LinkedIn\Client')) {
     $requirements['social_auth_linkedin'] = [
       'title' => t('Social Auth LinkedIn module requirements'),
       'value' => t('Not installed'),

@@ -5,6 +5,7 @@
  * The Social event AN enroll module.
  */
 
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 use Drupal\views\ViewExecutable;
@@ -73,7 +74,7 @@ function social_event_an_enroll_preprocess_views_view_field(&$variables) {
   /** @var \Drupal\views\ViewExecutable $view */
   $view = &$variables['view'];
 
-  if ($view->id() === 'event_manage_enrollments' && $variables['field']->field === 'rendered_entity') {
+  if ($view->id() === 'event_manage_enrollments' && $variables['field']->field === 'profile_entity_sortable') {
     $entity = &$variables['row']->_entity;
 
     /** @var \Drupal\social_event_an_enroll\EventAnEnrollManager $service */
@@ -115,6 +116,11 @@ function social_event_an_enroll_preprocess_node(array &$variables) {
       if (in_array(\Drupal::routeMatch()->getRouteName(), $an_enroll_routes)) {
         unset($variables['event_enrollment']);
       }
+
+      // Add caching context to anonymous users.
+      // This is custom context. We added it in order to vary page cache
+      // of routes given in $an_enroll_routes.
+      $variables['#cache']['contexts'][] = 'event_an_enroll_route';
     }
   }
 }
@@ -223,10 +229,11 @@ function social_event_an_enroll_form_alter(&$form, FormStateInterface $form_stat
       'visible' => [
         ':input[name="field_content_visibility"]' => ['value' => 'public'],
         ':input[name="field_event_enroll[value]"]' => ['checked' => TRUE],
+        ':input[name="field_enroll_method"]' => ['value' => '1'],
       ],
     ];
     // Set default value on event creation form.
-    if ($form_id == 'node_event_form') {
+    if ($form_id === 'node_event_form') {
       $form['field_event_an_enroll']['widget']['value']['#default_value'] = $config->get('event_an_enroll_default_value');
     }
     // Set ability to change default value.
@@ -237,7 +244,7 @@ function social_event_an_enroll_form_alter(&$form, FormStateInterface $form_stat
 }
 
 /**
- * Implements hook_ENTIT_YTYPE_update().
+ * Implements hook_ENTITY_TYPE_update().
  *
  * Display warning if visibility was changed for already enabled AN enroll.
  */
@@ -250,6 +257,18 @@ function social_event_an_enroll_node_update(Node $node) {
     if ($is_event_an_enroll && $old_visibility === 'public' && $new_visibility !== 'public') {
       drupal_set_message(t('Enrollment without account can only be enabled when the visibility of the event is Public.'), 'warning');
     }
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_presave().
+ *
+ * Set the correct value for AN enroll when enroll method is set to request.
+ */
+function social_event_an_enroll_node_presave(EntityInterface $entity) {
+  // If the enroll method is request then anonymous must be off.
+  if ($entity->getType() === 'event' && $entity->get('field_enroll_method')->value === '2') {
+    $entity->set('field_event_an_enroll', '0');
   }
 }
 

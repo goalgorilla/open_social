@@ -8,6 +8,7 @@
 use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\Url;
 use Drupal\group\Entity\GroupContentInterface;
+use Drupal\node\NodeInterface;
 
 /**
  * Implements hook_token_info().
@@ -88,7 +89,7 @@ function social_activity_tokens($type, $tokens, array $data, array $options, Bub
                 /* @var \Drupal\node\NodeInterface $node */
                 $node = $entity->getEntity();
 
-                if (in_array($node->getType(), ['topic', 'event'])) {
+                if ($node instanceof NodeInterface) {
                   $link = Url::fromRoute('entity.node.canonical',
                     ['node' => $node->id()],
                     ['absolute' => TRUE]
