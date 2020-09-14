@@ -50,7 +50,7 @@ Feature: Create data policy and view new policy
     And I press "Save"
     Then I should be on "data-policy/revisions"
     And I should see the success message "Created new revision."
-    And I should see the link "behatsitemanager"
+    And I should see "behatsitemanager" in the "Main content" region
     And I should see the text "(current revision)"
     And I should see "View"
 
@@ -59,7 +59,7 @@ Feature: Create data policy and view new policy
     And I should see the text "Description"
     And I should see the text "First version of the data policy."
     And I should see the text "Authored by"
-    And I should see the link "behatsitemanager"
+    And I should see "behatsitemanager" in the "Main content" region
 
     When I am on "data-policy"
     Then I should not see the text "Data policy is not created."
@@ -76,7 +76,7 @@ Feature: Create data policy and view new policy
     And I should see "Save"
 
     When I click "the account cancellation"
-    Then I should see the heading "Cancel account" in the "Page title block" region
+    Then I should see the text "Are you sure you want to cancel your account?"
     When I click "Cancel"
     And I click "data policy"
     And I wait for AJAX to finish

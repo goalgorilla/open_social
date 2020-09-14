@@ -19,7 +19,7 @@ abstract class ContentBlockBase extends PluginBase implements ContentBlockPlugin
    */
   public function supportedSortOptions() : array {
     return [
-      'created' => 'Creation date',
+      'created' => 'Last created',
       'changed' => 'Last updated',
       'most_commented' => 'Most commented',
       'most_liked' => 'Most liked',
