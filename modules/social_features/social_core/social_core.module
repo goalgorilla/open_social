@@ -293,9 +293,8 @@ function social_core_preprocess_block(&$variables) {
       $variables['view_all_path'] = Url::fromRoute('view.events.events_overview', [
         'user' => \Drupal::currentUser()->id(),
       ]);
-      $variables['button_text'] = t('All @label', [
-        '@label' => $variables['label']['#markup'],
-      ]);
+      $variables['button_text'] = $more_link;
+      $link->setOption('use_more', FALSE);
       break;
 
     case 'upcoming_events-block_community_events':

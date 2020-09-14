@@ -187,8 +187,10 @@ function social_group_request_preprocess_group(&$variables) {
     return;
   }
 
+  $variables['closed_group'] = TRUE;
   $variables['allow_request'] = TRUE;
   $variables['group_operations_url'] = Url::fromRoute('grequest.request_membership', ['group' => $group->id()]);
+  $variables['cta'] = t('Request to join');
 
   $contentTypeConfigId = $group
     ->getGroupType()
