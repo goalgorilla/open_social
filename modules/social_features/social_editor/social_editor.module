@@ -98,5 +98,8 @@ function social_editor_form_editor_link_dialog_alter(&$form, FormStateInterface 
 
     // Add weight to target attribute to appear after title.
     $form['attributes']['target']['#weight'] = 2;
+
+    // Change the description text to make it more human-friendly.
+    $form['attributes']['title']['#description'] = t('Give a title that will appear when hovering over this link.');
   }
 }
