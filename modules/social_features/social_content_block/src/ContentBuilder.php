@@ -12,6 +12,7 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Field\EntityReferenceFieldItemListInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
@@ -54,6 +55,13 @@ class ContentBuilder implements ContentBuilderInterface {
   protected $contentBlockManager;
 
   /**
+   * The current user.
+   *
+   * @var \Drupal\Core\Session\AccountInterface
+   */
+  protected $currentUser;
+
+  /**
    * ContentBuilder constructor.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
@@ -66,19 +74,23 @@ class ContentBuilder implements ContentBuilderInterface {
    *   The string translation.
    * @param \Drupal\social_content_block\ContentBlockManagerInterface $content_block_manager
    *   The content block manager.
+   * @param \Drupal\Core\Session\AccountInterface $current_user
+   *   Current user.
    */
   public function __construct(
     EntityTypeManagerInterface $entity_type_manager,
     Connection $connection,
     ModuleHandlerInterface $module_handler,
     TranslationInterface $string_translation,
-    ContentBlockManagerInterface $content_block_manager
+    ContentBlockManagerInterface $content_block_manager,
+    AccountInterface $current_user
   ) {
     $this->entityTypeManager = $entity_type_manager;
     $this->connection = $connection;
     $this->moduleHandler = $module_handler;
     $this->setStringTranslation($string_translation);
     $this->contentBlockManager = $content_block_manager;
+    $this->currentUser = $current_user;
   }
 
   /**
@@ -178,6 +190,12 @@ class ContentBuilder implements ContentBuilderInterface {
       $entities = $this->entityTypeManager
         ->getStorage($definition['entityTypeId'])
         ->loadMultiple($entities);
+
+      foreach ($entities as $key => $entity) {
+        if (!$entity->access('view', $this->currentUser)) {
+          unset($entities[$key]);
+        }
+      }
 
       return $this->entityTypeManager
         ->getViewBuilder($definition['entityTypeId'])
