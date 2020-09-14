@@ -547,8 +547,7 @@ function social_core_block_access(Block $block, $operation, AccountInterface $ac
     $cache->set('social_core.block_visibility_cache', $blocks, $date->getTimestamp(), ['social_core.block_visibility_cache']);
   }
   else {
-    $blocks = $cache->get('social_core.block_visibility_cache');
-    $blocks = $blocks->data;
+    $blocks = $cache->get('social_core.block_visibility_cache')->data;
   }
 
   // Alter the access based on the blocks array.
