@@ -353,9 +353,17 @@ function social_profile_preprocess_profile(array &$variables) {
     $variables['#cache']['contexts'][] = 'user';
   }
 
-  if (social_profile_check_email_field_access($profile, $current_user)) {
+  if (_social_profile_check_property_access($profile, $current_user, 'email')) {
     // Derived from MailToFormatter.php.
     $variables['user_mail'] = Link::fromTextAndUrl($user->getEmail(), Url::fromUri('mailto:' . $user->getEmail()));
+  }
+
+  // Language field.
+  $language_manager = \Drupal::languageManager();
+  if ($language_manager->isMultilingual() &&
+    _social_profile_check_property_access($profile, $current_user, 'language')) {
+    // Add the user language.
+    $variables['user_lang'] = $language_manager->getLanguageName($user->getPreferredLangcode());
   }
 
   // Edit profile URL.
@@ -392,35 +400,61 @@ function social_profile_preprocess_profile(array &$variables) {
 }
 
 /**
- * Helps determine if current user has access to view the email field.
+ * Helps determine if current user has access to view the property of user.
  *
  * @param \Drupal\profile\Entity\Profile $profile
  *   The profile the current user is viewing.
  * @param \Drupal\Core\Session\AccountProxyInterface $current_user
  *   The current user.
+ * @param string $property
+ *   The property against we need to check the access.
  *
  * @return bool
- *   Return TRUE if current user is allowed to see the email, FALSE otherwise.
+ *   Return TRUE if current user is allowed to see the property else FALSE.
  */
-function social_profile_check_email_field_access(Profile $profile, AccountProxyInterface $current_user) {
-  // If the current user has this permission, return true straight away.
-  if ($current_user->hasPermission('social profile privacy view hidden fields') || $current_user->hasPermission('view profile email')) {
-    return TRUE;
-  }
+function _social_profile_check_property_access(Profile $profile, AccountProxyInterface $current_user, string $property) {
+  // Flag to set.
+  $flag = FALSE;
+  switch ($property) {
+    case 'email':
+      // If the current user has this permission, return true straight away.
+      if ($current_user->hasPermission('social profile privacy view hidden fields') || $current_user->hasPermission('view profile email')) {
+        $flag = TRUE;
+      }
 
-  // Prepare some variables for checking on the email field.
-  $global_show_email = \Drupal::config('social_profile.settings')->get('social_profile_show_email');
-  if (isset($profile->field_profile_show_email)) {
-    $profile_show_email = $profile->field_profile_show_email->value ?? NULL;
-  }
+      // Prepare some variables for checking on the email field.
+      $global_show_email = \Drupal::config('social_profile.settings')->get('social_profile_show_email');
+      $profile_show_email = isset($profile->field_profile_show_email) ? $profile->field_profile_show_email->value : NULL;
 
-  // If the current user doesn't have the above permission, perform additional
-  // checks to see if the current user is still able to view this email field.
-  if ($global_show_email || (!$global_show_email && !empty($profile_show_email))) {
-    return TRUE;
-  }
+      // If the current user doesn't have the above permission, perform
+      // additional checks to see if the current user is still able to view
+      // this email field.
+      if ($global_show_email || (!$global_show_email && !empty($profile_show_email))) {
+        $flag = TRUE;
+      }
+      break;
 
-  return FALSE;
+    case 'language':
+      // If the current user has this permission, return true straight away.
+      if ($current_user->hasPermission('view profile language')) {
+        $flag = TRUE;
+      }
+
+      // Prepare some variables for checking on the language access.
+      $global_show_lang = \Drupal::config('social_profile.settings')->get('social_profile_show_language');
+      $profile_show_lang = \Drupal::service('user.data')
+        ->get('social_profile_privacy',
+            $profile->get('uid')->target_id, 'lang_info') ?? NULL;
+
+      // If the current user doesn't have the above permission, perform
+      // additional checks to see if the current user is still able to view
+      // this preferred language.
+      if ($global_show_lang || (!$global_show_lang && !empty($profile_show_lang))) {
+        $flag = TRUE;
+      }
+      break;
+  }
+  return $flag;
 }
 
 /**
@@ -491,35 +525,53 @@ function social_profile_form_user_form_alter(&$form, FormStateInterface $form_st
   $profile = _social_profile_get_profile_from_route();
 
   if ($profile instanceof Profile) {
-    if (isset($profile->field_profile_show_email)) {
-      // Check what the global value is.
-      $global_show_email = \Drupal::config('social_profile.settings')->get('social_profile_show_email');
-      // Account value.
-      $show_email = $profile->field_profile_show_email->value;
-      $form['profile_privacy'] = [
-        '#type' => 'fieldset',
-        '#title' => t('Privacy settings'),
-        '#tree' => TRUE,
-      ];
-      $form['profile_privacy']['social_profile_show_email'] = [
+    // @TODO: Move privacy settings to a separate entity.
+    // Check what the global value is.
+    $social_profile_settings_config = \Drupal::config('social_profile.settings');
+    $global_values = [
+      'social_profile_show_email' => $social_profile_settings_config->get('social_profile_show_email'),
+    ];
+    // Account values.
+    $show_email = $profile->field_profile_show_email->value;
+    $form['profile_privacy'] = [
+      '#type' => 'fieldset',
+      '#title' => t('Privacy settings'),
+      '#tree' => TRUE,
+    ];
+    $form['profile_privacy']['social_profile_show_email'] = [
+      '#type' => 'checkbox',
+      '#title' => t('Show my email on my profile'),
+      '#default_value' => $show_email,
+      '#attributes' => [
+        'data-switch' => TRUE,
+      ],
+    ];
+    $is_multilingual = \Drupal::languageManager()->isMultilingual();
+    if ($is_multilingual) {
+      $user_data = \Drupal::service('user.data');
+      $lang_info = $user_data->get('social_profile_privacy', $profile->get('uid')->target_id, 'lang_info');
+      $global_values['social_profile_show_language'] = $social_profile_settings_config->get('social_profile_show_language');
+      $form['profile_privacy']['social_profile_show_language'] = [
         '#type' => 'checkbox',
-        '#title' => t('Show my email on my profile'),
-        '#default_value' => $show_email,
+        '#title' => t('Show my language on my profile'),
+        '#default_value' => $lang_info,
         '#attributes' => [
           'data-switch' => TRUE,
         ],
       ];
+    }
+    // If global setting is set, disable the setting and give a reason why.
+    foreach ($global_values as $key => $value) {
+      if ($value && (($key == 'social_profile_show_language' && $is_multilingual) || $key == 'social_profile_show_email')) {
+        $form['profile_privacy']["$key"]['#disabled'] = TRUE;
+        $form['profile_privacy']["$key"]['#value'] = TRUE;
+        $form['profile_privacy']["$key"]['#description'] = t('This setting is currently being controlled by a platform wide setting and cannot be changed. Please contact a sitemanager if you have questions.');
+      }
+    }
 
-      // If global setting is set, disable the setting and give a reason why.
-      if ($global_show_email == TRUE) {
-        $form['profile_privacy']['social_profile_show_email']['#disabled'] = TRUE;
-        $form['profile_privacy']['social_profile_show_email']['#value'] = TRUE;
-        $form['profile_privacy']['social_profile_show_email']['#description'] = t('This setting is currently being controlled by a platform wide setting and cannot be changed. Please contact a sitemanager if you have questions.');
-      }
-      else {
-        // Submit function only when the data is actually editable.
-        $form['actions']['submit']['#submit'][] = '_social_profile_form_user_form_submit';
-      }
+    // Add Submit function only when the data is actually editable.
+    if (empty($global_value['social_profile_show_email']) || empty($global_value['social_profile_show_language'])) {
+      $form['actions']['submit']['#submit'][] = '_social_profile_form_user_form_submit';
     }
   }
 
@@ -543,6 +595,14 @@ function _social_profile_form_user_form_submit(array $form, FormStateInterface $
       $profile->field_profile_show_email->value = $profile_privacy['social_profile_show_email'];
       $profile->save();
     }
+
+    $uid = $profile->get('uid')->target_id;
+    // Save language info in the user data.
+    // @TODO: Move privacy settings to a separate entity.
+    $user_data = \Drupal::service('user.data');
+    $user_data->set('social_profile_privacy', $uid, 'lang_info', $profile_privacy['social_profile_show_language']);
+    // Invalidate profile cache tags.
+    Cache::invalidateTags(['profile:' . $uid]);
   }
 }
 
@@ -589,7 +649,7 @@ function social_profile_profile_view_alter(array &$build, EntityInterface $entit
   /** @var \Drupal\Core\Session\AccountProxy $current_user */
   $current_user = \Drupal::currentUser();
 
-  // If the current user has no access to viewing user profiles, he might not
+  // If the current user has no access to viewing user profiles, it might not
   // have access to the users profile.
   if (!$current_user->hasPermission('view any profile profile') && isset($display->get('content')['field_profile_image'])) {
     // Try to load the profile picture.
