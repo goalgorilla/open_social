@@ -115,6 +115,7 @@ function _social_profile_get_permissions($role) {
     'edit terms in profile_tag',
     'administer profile settings',
     'view profile email',
+    'view profile language',
   ]);
 
   if (isset($permissions[$role])) {
@@ -395,4 +396,25 @@ function social_profile_update_8801() {
 
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
+}
+
+/**
+ * Update social_profile.settings config & permissions for authenticated role.
+ */
+function social_profile_update_8802(&$sandbox) {
+  $config = \Drupal::configFactory()->getEditable('social_profile.settings');
+  $config->set('social_profile_show_language', TRUE);
+  $config->save();
+
+  // Add permission to view profile language for authenticated role.
+  $roles = Role::loadMultiple();
+  $permissions = [
+    'view profile language',
+  ];
+  /** @var \Drupal\user\Entity\Role $role */
+  foreach ($roles as $role) {
+    if (in_array($role->id(), ['sitemanager', 'contentmanager'])) {
+      user_role_grant_permissions($role->id(), $permissions);
+    }
+  }
 }
