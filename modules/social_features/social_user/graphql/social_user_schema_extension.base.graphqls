@@ -1,0 +1,40 @@
+"""
+An Open Social user.
+"""
+type User implements NodeInterface {
+  uuid: ID!
+  display_name: String!
+  mail: Email
+  created_at: Int!
+  updated_at: Int!
+}
+
+"""
+The set of valid sort keys for the user query.
+"""
+enum UserSortKeys {
+  """Sort by the `first_name` value"""
+  FIRST_NAME
+  """Sort by the `last_name` value"""
+  LAST_NAME
+  """Sort by the `created_at` value"""
+  CREATED_AT
+}
+
+type UserEdge implements EdgeInterface {
+  cursor: Cursor!
+  node: User!
+}
+
+type UserConnection implements ConnectionInterface {
+  edges: [UserEdge!]!
+  pageInfo: PageInfo!
+}
+
+"""
+The response to a user create, update or delete mutation.
+"""
+type UserResponse implements Response {
+  errors: [Violation]
+  user: User
+}
