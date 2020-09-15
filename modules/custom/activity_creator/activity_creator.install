@@ -7,6 +7,7 @@
 
 use Drupal\activity_creator\ActivityInterface;
 use Drupal\Core\Database\Database;
+use Drupal\Core\Site\Settings;
 
 /**
  * Implements hook_schema().
@@ -153,7 +154,7 @@ function activity_creator_update_8802(&$sandbox) {
   }
 
   // Activities per one batch operation.
-  $activities_per_batch = 100;
+  $activities_per_batch = Settings::get('activity_update_batch_size', 100);
 
   // Get activity IDs.
   $aids = $database
