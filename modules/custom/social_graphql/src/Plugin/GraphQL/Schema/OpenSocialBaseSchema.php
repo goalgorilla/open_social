@@ -2,8 +2,10 @@
 
 namespace Drupal\social_graphql\Plugin\GraphQL\Schema;
 
-use Drupal\graphql\GraphQL\ResolverRegistry;
+use Drupal\graphql\GraphQL\ResolverBuilder;
+use Drupal\graphql\GraphQL\ResolverRegistryInterface;
 use Drupal\graphql\Plugin\GraphQL\Schema\SdlSchemaPluginBase;
+use Drupal\social_graphql\GraphQL\ResolverRegistry;
 
 /**
  * The provider of the schema base for the Open Social GraphQL API.
@@ -29,6 +31,51 @@ class OpenSocialBaseSchema extends SdlSchemaPluginBase {
    */
   public function getResolverRegistry() {
     return new ResolverRegistry();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getSchema(ResolverRegistryInterface $registry) {
+    // Add Open Social base types to the schema.
+    $this->getBaseSchema($registry);
+
+    // Instantiate the schema and add all extensions.
+    return parent::getSchema($registry);
+  }
+
+  /**
+   * Provides a base schema for Open Social.
+   *
+   * This ensures that other modules have common types available to them to
+   * build on.
+   *
+   * @param \Drupal\graphql\GraphQL\ResolverRegistryInterface $registry
+   *   The resolver registry.
+   */
+  protected function getBaseSchema(ResolverRegistryInterface $registry) {
+    $builder = new ResolverBuilder();
+
+    // ConnectionInterface fields.
+    $registry->addFieldResolver('ConnectionInterface', 'edges',
+      $builder->produce('connection_edges')
+        ->map('connection', $builder->fromParent())
+    );
+
+    $registry->addFieldResolver('ConnectionInterface', 'pageInfo',
+      $builder->produce('connection_page_info')
+        ->map('connection', $builder->fromParent())
+    );
+
+    // EdgeInterface fields.
+    $registry->addFieldResolver('EdgeInterface', 'cursor',
+      $builder->produce('edge_cursor')
+        ->map('edge', $builder->fromParent())
+    );
+    $registry->addFieldResolver('EdgeInterface', 'node',
+      $builder->produce('edge_node')
+        ->map('edge', $builder->fromParent())
+    );
   }
 
 }

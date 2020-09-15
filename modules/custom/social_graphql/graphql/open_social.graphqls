@@ -1,7 +1,114 @@
+################################################################################
+# The base Open Social schema                                                  #
+#                                                                              #
+# This file contains the basis of the Open Social GraphQL API Schema. It       #
+# provides base types that can be used by individual Open Social features.     #
+# Additionally it contains common interfaces for things such as pagination.    #
+#                                                                              #
+# Comments aimed at schema developers are prefixed with `#` and comments       #
+# exposed to schema consumers are contained in `"""`.                          #
+#                                                                              #
+# If you're new to GraphQL I recommend starting at: https://graphql.org/learn/ #
+################################################################################
+
 """
-The base mutation type.
+The schema's entry-point for queries. This acts as the public, top-level API
+from which all queries must start.
 """
-type Mutation
+type Query
+
+# The actual GraphQL schema
+schema {
+  query: Query
+}
+
+
+################################################################################
+#                                Basic Types                                   #
+################################################################################
+"""
+A valid email address.
+"""
+scalar Email
+
+################################################################################
+#                         Data Fetching Interfaces                             #
+#                                                                              #
+# All data fetching operations in Open Social should implement the Relay       #
+# Connection specification: https://relay.dev/graphql/connections.htm          #
+################################################################################
+"""
+A cursor for use in pagination.
+"""
+scalar Cursor
+
+"""
+A node on an edge.
+"""
+interface NodeInterface {
+  uuid: ID!
+}
+
+"""
+An edge in a connection.
+
+Provides the cursor to fetch data based on the position of the associated node.
+Specific edge implementations may provide more information about the
+relationship they represent.
+"""
+interface EdgeInterface {
+  cursor: Cursor!
+  node: NodeInterface!
+}
+
+# PageInfo deviates from the current Relay spec as in the spec the
+# start-/endCursor fields may not be null. However, this is impractical because
+# it does not account for empty results.
+# See: https://github.com/facebook/relay/pull/2655
+"""
+Information about the page in a connection.
+"""
+type PageInfo {
+  """
+  Whether there are more pages in this connection.
+  """
+  hasNextPage: Boolean!
+  """
+  Whether there  are previous pages in this connection.
+  """
+  hasPreviousPage: Boolean!
+  """
+  The cursor for the first element in this page
+  """
+  startCursor: Cursor
+  """
+  The cursor for the last element in this page
+  """
+  endCursor: Cursor
+}
+
+"""
+A paginated set of results.
+"""
+interface ConnectionInterface {
+  """
+  A list of edges
+  """
+  edges: [EdgeInterface!]!
+  """
+  Information to aid in pagination
+  """
+  pageInfo: PageInfo!
+}
+
+
+################################################################################
+#                         Data Creation Interfaces                             #
+################################################################################
+# """
+# The base mutation type.
+# """
+# type Mutation
 
 """
 A violation indicates an error in the GraphQL query or other incorrect
@@ -15,3 +122,4 @@ The base GraphQL Response class
 interface Response {
   errors: [Violation]
 }
+
