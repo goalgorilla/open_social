@@ -132,6 +132,7 @@ function _social_core_get_permissions($role) {
     'view own unpublished content',
     'use text format basic_html',
     'use text format simple_text',
+    'view the administration theme',
   ]);
 
   // Content manager.
@@ -147,7 +148,6 @@ function _social_core_get_permissions($role) {
     'delete all revisions',
     'create url aliases',
     'use text format full_html',
-    'view the administration theme',
   ]);
 
   // Site manager.
@@ -1171,4 +1171,21 @@ function social_core_update_8813() {
 
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
+}
+
+/**
+ * Add the administration theme to authenticated users for batch operations.
+ */
+function social_core_update_8901() {
+  $roles = \Drupal::entityQuery('user_role')
+    ->condition('id', ['authenticated'], 'IN')
+    ->execute();
+
+  $permissions = [
+    'view the administration theme',
+  ];
+
+  foreach ($roles as $role) {
+    user_role_grant_permissions($role, $permissions);
+  }
 }

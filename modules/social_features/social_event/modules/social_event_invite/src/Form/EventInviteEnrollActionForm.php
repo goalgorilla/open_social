@@ -42,7 +42,7 @@ class EventInviteEnrollActionForm extends EnrollActionForm {
       // Unless you are the node owner or organizer.
       if (empty($enrollments)) {
         if ((int) $node->field_enroll_method->value === EventEnrollmentInterface::ENROLL_METHOD_INVITE
-          && social_event_owner_or_organizer() === FALSE) {
+          && social_event_manager_or_organizer() === FALSE) {
           return [];
         }
       }
@@ -72,6 +72,12 @@ class EventInviteEnrollActionForm extends EnrollActionForm {
             ],
           ];
 
+          // We need a hidden element for later usage.
+          $form['event_id'] = [
+            '#type' => 'hidden',
+            '#value' => $this->routeMatch->getRawParameter('node'),
+          ];
+
           $form['decline_invite'] = [
             '#type' => 'submit',
             '#value' => '',
@@ -87,6 +93,7 @@ class EventInviteEnrollActionForm extends EnrollActionForm {
               'btn-lg btn-raised',
               'dropdown-toggle',
               'waves-effect',
+              'margin-left-s',
             ],
             'autocomplete' => 'off',
             'data-toggle' => 'dropdown',

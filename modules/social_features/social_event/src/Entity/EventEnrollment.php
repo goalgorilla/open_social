@@ -74,7 +74,10 @@ class EventEnrollment extends ContentEntityBase implements EventEnrollmentInterf
    * {@inheritdoc}
    */
   public function preSave(EntityStorageInterface $storage) {
-    $tags = ['event_content_list:user:' . $this->getAccount()];
+    $tags = [
+      'event_content_list:user:' . $this->getAccount(),
+      'event_enrollment_list:' . $this->getFieldValue('field_event', 'target_id'),
+    ];
     Cache::invalidateTags($tags);
     parent::preSave($storage);
   }
@@ -86,7 +89,10 @@ class EventEnrollment extends ContentEntityBase implements EventEnrollmentInterf
     if (!empty($entities)) {
       $tags = [];
       foreach ($entities as $enrollment) {
-        $tags = ['event_content_list:user:' . $enrollment->getAccount()];
+        $tags = [
+          'event_content_list:user:' . $enrollment->getAccount(),
+          'event_enrollment_list:' . $enrollment->getFieldValue('field_event', 'target_id'),
+        ];
       }
       Cache::invalidateTags($tags);
     }

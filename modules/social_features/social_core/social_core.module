@@ -5,6 +5,8 @@
  * The Social core module.
  */
 
+use Drupal\block\Entity\Block;
+use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Field\FieldItemList;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\filter\FilterFormatInterface;
@@ -139,6 +141,7 @@ function social_core_social_user_account_header_account_links(array $context) {
         ],
       ];
     }
+
     return [
       'divider_no_mobile' => [
         '#wrapper_attributes' => [
@@ -154,9 +157,7 @@ function social_core_social_user_account_header_account_links(array $context) {
         ],
         '#title' => $title,
         '#weight' => 350,
-      ] + Url::fromRoute($core_invites->getInviteData('name'), [
-        'user' => $context['user']->id(),
-      ])->toRenderArray(),
+      ] + Url::fromRoute('social_core.my_invites')->toRenderArray(),
     ];
   }
 }
@@ -295,9 +296,8 @@ function social_core_preprocess_block(&$variables) {
       $variables['view_all_path'] = Url::fromRoute('view.events.events_overview', [
         'user' => \Drupal::currentUser()->id(),
       ]);
-      $variables['button_text'] = t('All @label', [
-        '@label' => $variables['label']['#markup'],
-      ]);
+      $variables['button_text'] = $more_link;
+      $link->setOption('use_more', FALSE);
       break;
 
     case 'upcoming_events-block_community_events':
@@ -565,6 +565,49 @@ function social_core_filter_process_format($element) {
   }
 
   return $element;
+}
+
+/**
+ * Hide blocks on extendable visibility path.
+ *
+ * Implements hook_block_access().
+ */
+function social_core_block_access(Block $block, $operation, AccountInterface $account) {
+  $blocks = &drupal_static(__FUNCTION__);
+  $blocks = [];
+
+  // First check if we have it cached before we run the modulehandler alter.
+  /** @var \Drupal\Core\Cache\CacheBackendInterface $cache */
+  $cache = \Drupal::service('cache.default');
+  if ($cache->get('social_core.block_visibility_cache') === FALSE) {
+    // Allow other modules to change the block visibility.
+    $blocks = \Drupal::moduleHandler()->invokeAll('social_core_block_visibility_path');
+
+    // Set the cache expire to 1 week.
+    $date = new DateTime(date('Y-m-d'));
+    $date->modify('+7 day');
+
+    $cache->set('social_core.block_visibility_cache', $blocks, $date->getTimestamp(), ['social_core.block_visibility_cache']);
+  }
+  else {
+    $blocks = $cache->get('social_core.block_visibility_cache')->data;
+  }
+
+  // Alter the access based on the blocks array.
+  if ($operation === 'view' && isset($blocks[$block->getPluginId()])) {
+    // Get the current path.
+    $current_path = \Drupal::service('path.current')->getPath();
+
+    // Go through the request paths and see if they match.
+    foreach ($blocks[$block->getPluginId()] as $page) {
+      if (\Drupal::service('path.matcher')->matchPath($current_path, $page) === TRUE) {
+        return AccessResult::forbidden();
+      }
+    }
+  }
+
+  // No opinion.
+  return AccessResult::neutral();
 }
 
 /**
