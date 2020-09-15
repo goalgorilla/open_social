@@ -5,6 +5,9 @@
  * The Social core module.
  */
 
+use Drupal\block\Entity\Block;
+use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Field\FieldItemList;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\node\NodeInterface;
 use Drupal\image\Entity\ImageStyle;
@@ -14,7 +17,6 @@ use Drupal\path\Plugin\Field\FieldWidget\PathWidget;
 use Drupal\user\Entity\User;
 use Drupal\group\Entity\Group;
 use Drupal\user\UserInterface;
-use Drupal\Core\Field\FieldItemList;
 
 /**
  * Implements hook_theme().
@@ -454,6 +456,49 @@ function social_core_filter_process_format($element) {
   }
 
   return $element;
+}
+
+/**
+ * Hide blocks on extendable visibility path.
+ *
+ * Implements hook_block_access().
+ */
+function social_core_block_access(Block $block, $operation, AccountInterface $account) {
+  $blocks = &drupal_static(__FUNCTION__);
+  $blocks = [];
+
+  // First check if we have it cached before we run the modulehandler alter.
+  /** @var \Drupal\Core\Cache\CacheBackendInterface $cache */
+  $cache = \Drupal::service('cache.default');
+  if ($cache->get('social_core.block_visibility_cache') === FALSE) {
+    // Allow other modules to change the block visibility.
+    $blocks = \Drupal::moduleHandler()->invokeAll('social_core_block_visibility_path');
+
+    // Set the cache expire to 1 week.
+    $date = new DateTime(date('Y-m-d'));
+    $date->modify('+7 day');
+
+    $cache->set('social_core.block_visibility_cache', $blocks, $date->getTimestamp(), ['social_core.block_visibility_cache']);
+  }
+  else {
+    $blocks = $cache->get('social_core.block_visibility_cache')->data;
+  }
+
+  // Alter the access based on the blocks array.
+  if ($operation === 'view' && isset($blocks[$block->getPluginId()])) {
+    // Get the current path.
+    $current_path = \Drupal::service('path.current')->getPath();
+
+    // Go through the request paths and see if they match.
+    foreach ($blocks[$block->getPluginId()] as $page) {
+      if (\Drupal::service('path.matcher')->matchPath($current_path, $page) === TRUE) {
+        return AccessResult::forbidden();
+      }
+    }
+  }
+
+  // No opinion.
+  return AccessResult::neutral();
 }
 
 /**
