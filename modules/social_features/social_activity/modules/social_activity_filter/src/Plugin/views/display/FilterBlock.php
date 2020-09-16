@@ -143,6 +143,10 @@ class FilterBlock extends ModeBlock {
           break;
 
         case 'tags':
+          // Adds workaround to hide/display tags field due to "states" issue in
+          // block_field plugin.
+          $hidden = empty($opt) ? 'hidden' : '';
+
           $form['override']['tags'] = [
             '#type' => 'select',
             '#title' => $this->t('Tags'),
@@ -151,7 +155,7 @@ class FilterBlock extends ModeBlock {
             '#options' => $opt,
             '#multiple' => TRUE,
             '#required' => !empty($opt) ? TRUE : FALSE,
-            '#prefix' => '<div id="edit-block-term-wrapper">',
+            '#prefix' => '<div id="edit-block-term-wrapper" class="' . $hidden . '">',
             '#suffix' => '</div>',
           ];
           break;
