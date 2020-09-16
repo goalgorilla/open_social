@@ -249,7 +249,7 @@ function social_activity_update_8804() {
   $updateHelper = \Drupal::service('update_helper.updater');
 
   // Execute configuration update definitions with logging of success.
-  $updateHelper->executeUpdate('social_activity', 'c');
+  $updateHelper->executeUpdate('social_activity', 'social_activity_update_8804');
 
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
