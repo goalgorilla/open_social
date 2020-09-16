@@ -13,12 +13,9 @@
     <ini name="memory_limit" value="-1"/>
   </php>
   <testsuites>
-    <testsuite name="social">
+    <testsuite name="unit">
       <directory>modules/*/*/tests/src/Unit</directory>
-      <directory>modules/*/*/*/tests/src/Unit</directory>
-      <exclude>
-        <file>modules/contrib/address/tests/src/Unit/Plugin/Validation/Constraint/CountryConstraintValidatorTest.php</file>
-      </exclude>
+      <directory>modules/*/*/modules/*/tests/src/Unit</directory>
     </testsuite>
   </testsuites>
   <listeners>
