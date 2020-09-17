@@ -118,7 +118,7 @@ function activity_creator_post_update_8802_remove_activities_with_no_related_ent
     ->getStorage('activity');
 
   // Choose chunk of array to be processed.
-  $activity_ids = array_slice($sandbox['activities_id'], $sandbox['current'], $activities_per_batch);
+  $activity_ids = array_slice($sandbox['activities_id'], $sandbox['current'], $activities_per_batch, TRUE);
 
   // Prepare the array of ids for deletion.
   foreach ($activity_ids as $aid) {
