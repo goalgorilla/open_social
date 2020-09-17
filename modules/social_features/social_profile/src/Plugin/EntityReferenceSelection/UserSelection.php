@@ -32,40 +32,44 @@ class UserSelection extends UserSelectionBase {
   /**
    * {@inheritdoc}
    */
-  protected function buildEntityQuery($match = NULL, $match_operator = 'CONTAINS') {
-    $query = $this->connection->select('profile', 'p')
-      ->fields('p', ['uid']);
-
-    $addNickName = $this->moduleHandler->moduleExists('social_profile_fields');
-
-    // Give the query a tag to identify it for altering.
-    $query->addTag('social_entityreference');
-
-    $query->leftJoin('profile__field_profile_first_name', 'fn', 'fn.entity_id = p.profile_id');
-    $query->leftJoin('profile__field_profile_last_name', 'ln', 'ln.entity_id = p.profile_id');
-    $query->join('users_field_data', 'ufd', 'ufd.uid = p.uid');
-
-    if ($addNickName === TRUE) {
-      $query->leftJoin('profile__field_profile_nick_name', 'nn', 'nn.entity_id = p.profile_id');
+  public function validateReferenceableEntities(array $ids) {
+    $result = [];
+    if ($ids) {
+      $target_type = $this->configuration['target_type'];
+      $entity_type = $this->entityTypeManager->getDefinition($target_type);
+      $query = $this->buildEntityQuery(NULL, 'CONTAINS', $ids);
+      $result = $query
+        ->condition($entity_type->getKey('id'), $ids, 'IN')
+        ->execute();
     }
 
-    $name = $this->connection->escapeLike($match);
+    return $result;
+  }
 
-    $or = $query->orConditionGroup();
-    $or->condition('ufd.name', '%' . $name . '%', 'LIKE');
-    $or->condition('fn.field_profile_first_name_value', '%' . $name . '%', 'LIKE');
-    $or->condition('ln.field_profile_last_name_value', '%' . $name . '%', 'LIKE');
-
-    if ($addNickName === TRUE) {
-      $or->condition('nn.field_profile_nick_name_value', '%' . $name . '%', 'LIKE');
+  /**
+   * Builds an EntityQuery to get referenceable entities.
+   *
+   * @param string|null $match
+   *   (Optional) Text to match the label against. Defaults to NULL.
+   * @param string $match_operator
+   *   (Optional) The operation the matching should be done with. Defaults
+   *   to "CONTAINS".
+   * @param array $ids
+   *   (Optional) $ids that are coming from an earlier request.
+   *
+   * @return \Drupal\Core\Entity\Query\QueryInterface
+   *   The EntityQuery object with the basic conditions and sorting applied to
+   *   it.
+   */
+  protected function buildEntityQuery($match = NULL, $match_operator = 'CONTAINS', array $ids = []) {
+    // If an earlier request already had the ids don't query them again.
+    if (empty($ids)) {
+      $config_factory = \Drupal::service('config.factory');
+      $config = $config_factory->get('mentions.settings');
+      $suggestion_format = $config->get('suggestions_format');
+      $suggestion_amount = $config->get('suggestions_amount');
+      $ids = $this->getUserIdsFromName($match, $suggestion_amount, $suggestion_format);
     }
-
-    // Only allow searching when user has permission to view.
-    if ($this->currentUser->hasPermission('view profile email')) {
-      $or->condition('ufd.mail', '%' . $name . '%', 'LIKE');
-    }
-
-    $ids = $query->condition($or)->execute()->fetchCol();
 
     if (empty($ids)) {
       return parent::buildEntityQuery($match, $match_operator);

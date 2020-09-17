@@ -68,6 +68,13 @@ class EventSettingsForm extends ConfigFormBase {
       '#default_value' => $social_event_config->get('address_visibility_settings'),
     ];
 
+    $form['show_user_timezone'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Display user’s time zone in events'),
+      '#description' => $this->t('If enabled, user’s own time zone will be displayed after the event date and time.'),
+      '#default_value' => $social_event_config->get('show_user_timezone'),
+    ];
+
     return parent::buildForm($form, $form_state);
   }
 
@@ -88,6 +95,7 @@ class EventSettingsForm extends ConfigFormBase {
     $this->configFactory->getEditable('social_event.settings')
       ->set('enroll', $group_type_ids)
       ->set('address_visibility_settings', $form_state->getValue('address_visibility_settings'))
+      ->set('show_user_timezone', $form_state->getValue('show_user_timezone'))
       ->save();
 
     // Invalidate cache tags to refresh blocks of list of events.

@@ -199,7 +199,7 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
     $attributes = [
       'class' => [
         'btn',
-        'btn-default brand-bg-default',
+        'btn-accent brand-bg-accent',
         'btn-lg btn-raised',
         'dropdown-toggle',
         'waves-effect',
@@ -272,7 +272,7 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
               'js-form-submit',
               'form-submit',
               'btn',
-              'btn-default',
+              'btn-accent',
               'btn-lg',
             ],
             'data-dialog-type' => 'modal',
@@ -317,7 +317,7 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
       $form['enroll_for_this_event']['#attributes'] = [
         'class' => [
           'btn',
-          'btn-default brand-bg-default',
+          'btn-accent brand-bg-accent',
           'btn-lg btn-raised',
           'dropdown-toggle',
           'waves-effect',

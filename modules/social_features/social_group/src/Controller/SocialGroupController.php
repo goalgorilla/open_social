@@ -122,14 +122,18 @@ class SocialGroupController extends ControllerBase {
    */
   public function groupAddMemberTitle() {
     $group_content = \Drupal::routeMatch()->getParameter('group_content');
+    $group = \Drupal::routeMatch()->getParameter('group');
     if ($group_content instanceof GroupContent &&
       $group_content->getGroupContentType()->getContentPluginId() === 'group_invitation') {
-      $group = \Drupal::routeMatch()->getParameter('group');
       if ($group instanceof GroupInterface) {
         return $this->t('Add invites to group: @group_name', ['@group_name' => $group->label()]);
       }
       return $this->t('Add invites');
     }
+    if ($group instanceof GroupInterface) {
+      return $this->t('Add members to group: @group_name', ['@group_name' => $group->label()]);
+    }
+
     return $this->t('Add members');
   }
 

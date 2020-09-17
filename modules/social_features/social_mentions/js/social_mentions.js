@@ -140,16 +140,22 @@
             mentionsInput = $textarea.data("mentionsInput"),
             editor = CKEDITOR.instances[$textarea.attr("id")];
 
+          $(".comments .comment__reply-btn a").on("click", function () {
+            $("html, body").animate({
+              scrollTop: $("[data-drupal-selector=\"comment-form\"]").offset().top
+            }, 1000)
+          });
+
           $(".mention-reply").on("click", function (e) {
             e.preventDefault();
 
-            var author = $(this).data("author"),
-              empty = editor ? !editor.getData().length : !$textarea.val().length;
+            var author = $(this).data("author");
 
-            if (author && empty) {
+            if (author) {
               if (!editor) {
-                $textarea.val(author.value);
+                $textarea.val(author.value + ' ');
 
+                mentionsInput.mentions.length = 0;
                 mentionsInput._updateMentions();
                 mentionsInput._addMention({
                   name: author.value,
@@ -162,6 +168,14 @@
                 $textarea.focus();
               }
               else {
+                if(editor.getData().length) {
+                  $("[data-drupal-selector=\"comment-form\"]")
+                    .find('iframe')
+                    .contents()
+                    .find('body')
+                    .empty();
+                  editor.updateElement();
+                }
                 mentionsInput.handler.refreshMentions();
 
                 mentionsInput.handler.editor.focus();
