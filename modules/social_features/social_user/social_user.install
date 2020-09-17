@@ -175,6 +175,7 @@ function _social_user_get_permissions($role) {
     'administer social_user settings',
     'assign contentmanager role',
     'assign sitemanager role',
+    'view blocked user',
   ]);
 
   if (isset($permissions[$role])) {
@@ -194,4 +195,14 @@ function social_user_update_8809() {
   ]);
   // The administrator should be able to assign all roles.
   user_role_grant_permissions('administrator', ['assign all roles']);
+}
+
+/**
+ * Update permissions for the sitemanager role.
+ */
+function social_user_update_8810() {
+  // Grant the sitemanagers new permissions.
+  user_role_grant_permissions('sitemanager', [
+    'view blocked user',
+  ]);
 }

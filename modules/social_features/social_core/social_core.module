@@ -5,19 +5,22 @@
  * The Social core module.
  */
 
+use Drupal\block\Entity\Block;
+use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Field\FieldItemList;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\filter\FilterFormatInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Template\Attribute;
-use Drupal\node\NodeInterface;
-use Drupal\image\Entity\ImageStyle;
 use Drupal\Core\Url;
 use Drupal\filter\Entity\FilterFormat;
+use Drupal\group\Entity\Group;
+use Drupal\image\Entity\ImageStyle;
+use Drupal\node\NodeInterface;
 use Drupal\path\Plugin\Field\FieldWidget\PathWidget;
 use Drupal\user\Entity\User;
-use Drupal\group\Entity\Group;
 use Drupal\user\UserInterface;
-use Drupal\Core\Field\FieldItemList;
 
 /**
  * Implements hook_theme().
@@ -46,15 +49,20 @@ function social_core_modules_installed($modules) {
   // If either social_group_flexible_group or social_landing_page gets enabled
   // and the other is already enabled, we should import the the configuration
   // for the optional view mode by enabling social_flexible_group_featured.
-  if ((in_array('social_group_flexible_group', $modules, TRUE) && \Drupal::moduleHandler()->moduleExists('social_landing_page')) ||
-    (in_array('social_landing_page', $modules, TRUE) && \Drupal::moduleHandler()->moduleExists('social_group_flexible_group'))) {
-    \Drupal::service('module_installer')->install(['social_flexible_group_featured']);
+  if ((in_array('social_group_flexible_group', $modules, TRUE) && \Drupal::moduleHandler()
+    ->moduleExists('social_landing_page')) ||
+    (in_array('social_landing_page', $modules, TRUE) && \Drupal::moduleHandler()
+      ->moduleExists('social_group_flexible_group'))) {
+    \Drupal::service('module_installer')
+      ->install(['social_flexible_group_featured']);
   }
   // If either social_book or social_landing_page gets enabled and
   // the other is already enabled, we should import the the configuration
   // for the optional view mode by enabling social_book_featured.
-  if ((in_array('social_book', $modules, TRUE) && \Drupal::moduleHandler()->moduleExists('social_landing_page')) ||
-    (in_array('social_landing_page', $modules, TRUE) && \Drupal::moduleHandler()->moduleExists('social_book'))) {
+  if ((in_array('social_book', $modules, TRUE) && \Drupal::moduleHandler()
+    ->moduleExists('social_landing_page')) ||
+    (in_array('social_landing_page', $modules, TRUE) && \Drupal::moduleHandler()
+      ->moduleExists('social_book'))) {
     \Drupal::service('module_installer')->install(['social_book_featured']);
   }
 }
@@ -87,7 +95,10 @@ function social_core_preprocess_node(&$variables) {
     // Get the current route name to check if the user is on the
     // edit or delete page.
     $route = \Drupal::routeMatch()->getRouteName();
-    if (!in_array($route, ['entity.node.edit_form', 'entity.node.delete_form'])) {
+    if (!in_array($route, [
+      'entity.node.edit_form',
+      'entity.node.delete_form',
+    ])) {
       $account = \Drupal::currentUser();
       if ($node->access('update', $account)) {
         $variables['node_edit_url'] = $node->toUrl('edit-form')->toString();
@@ -126,10 +137,11 @@ function social_core_social_user_account_header_account_links(array $context) {
         '#template' => '<span>{% trans %}Invites{% endtrans %}</span> <span{{ attributes }}>{{ icon }}</span>',
         '#context' => [
           'attributes' => new Attribute(['class' => 'margin-left-xs badge badge-accent badge--pill']),
-          'icon' => (string) $core_invites->getInviteData('amount') ,
+          'icon' => (string) $core_invites->getInviteData('amount'),
         ],
       ];
     }
+
     return [
       'divider_no_mobile' => [
         '#wrapper_attributes' => [
@@ -145,9 +157,7 @@ function social_core_social_user_account_header_account_links(array $context) {
         ],
         '#title' => $title,
         '#weight' => 350,
-      ] + Url::fromRoute($core_invites->getInviteData('name'), [
-        'user' => $context['user']->id(),
-      ])->toRenderArray(),
+      ] + Url::fromRoute('social_core.my_invites')->toRenderArray(),
     ];
   }
 }
@@ -214,7 +224,10 @@ function social_core_node_links_alter(array &$links, NodeInterface $entity, arra
   // Remove the comment links.
   unset($links['comment__field_topic_comments'], $links['comment__field_event_comments']);
 
-  if (isset($context['view_mode']) && in_array($context['view_mode'], ['activity', 'activity_comment'])) {
+  if (isset($context['view_mode']) && in_array($context['view_mode'], [
+    'activity',
+    'activity_comment',
+  ])) {
     // Add a readmore link.
     $node_title_stripped = strip_tags($entity->label());
     $links['node']['#links']['node-readmore'] = [
@@ -283,9 +296,8 @@ function social_core_preprocess_block(&$variables) {
       $variables['view_all_path'] = Url::fromRoute('view.events.events_overview', [
         'user' => \Drupal::currentUser()->id(),
       ]);
-      $variables['button_text'] = t('All @label', [
-        '@label' => $variables['label']['#markup'],
-      ]);
+      $variables['button_text'] = $more_link;
+      $link->setOption('use_more', FALSE);
       break;
 
     case 'upcoming_events-block_community_events':
@@ -481,9 +493,9 @@ function social_core_element_info_alter(array &$info) {
 /**
  * Remove ability of selecting format if full_html is available.
  *
- * @todo Instead of defining the list of fields it would be better to add a separate
- * Setting to all text_format fields,
- * allowing to select whether to show format selector or not.
+ * @todo Instead of defining the list of fields it would be better to add a
+ *   separate Setting to all text_format fields, allowing to select whether to
+ *   show format selector or not.
  */
 function social_core_filter_process_format($element) {
 
@@ -494,10 +506,37 @@ function social_core_filter_process_format($element) {
     'edit-field-group-description-0',
   ];
 
-  $full_html = FilterFormat::load('full_html');
-  $permission_name = $full_html->getPermissionName();
-  $account = \Drupal::currentUser();
-  if ($element['#type'] == 'text_format' && $element['#format'] == 'full_html' && !$account->hasPermission($permission_name)) {
+  $element_id = $element['#id'];
+
+  // Check if there is generated sub-id and cleanup it.
+  if (($sub_id = strpos($element_id, '--')) !== FALSE) {
+    $element_id = substr($element_id, 0, $sub_id);
+  }
+
+  // Default filter format for text area fields.
+  $social_filter_format = 'full_html';
+
+  // Allow module to override default filter format because some content type
+  // could require specific one.
+  Drupal::moduleHandler()->alter('social_filter_format_default', $social_filter_format);
+
+  /* @var \Drupal\filter\Entity\FilterFormat $social_filter_format */
+  $social_filter_format = FilterFormat::load($social_filter_format);
+
+  // Check if filter format was loaded, to prevent fatal errors if wrong value
+  // was provided in the hook_social_filter_format_default_alter().
+  if (!$social_filter_format instanceof FilterFormatInterface) {
+    return $element;
+  }
+
+  $permission_name = $social_filter_format->getPermissionName();
+  $account = Drupal::currentUser();
+
+  if (
+    $element['#type'] === 'text_format' &&
+    $element['#format'] === $social_filter_format->id() &&
+    !$account->hasPermission($permission_name)
+  ) {
     $element['#format'] = 'basic_html';
     $element['value']['#format'] = 'basic_html';
     $element['format']['format']['#default_value'] = 'basic_html';
@@ -511,15 +550,64 @@ function social_core_filter_process_format($element) {
       unset($element['value']['#pre_render'][$key]);
     }
   }
-  elseif ($element['#type'] == 'text_format' && $account->hasPermission($permission_name) && in_array($element['#id'], $full_html_field_ids)) {
-    $element['#format'] = 'full_html';
+  elseif (
+    $element['#type'] === 'text_format' &&
+    $account->hasPermission($permission_name) &&
+    in_array($element_id, $full_html_field_ids)
+  ) {
+    $element['#format'] = $social_filter_format;
     $element['format']['format']['#access'] = FALSE;
-    $element['format']['format']['#value'] = 'full_html';
+    $element['format']['format']['#value'] = $social_filter_format->id();
     $element['format']['help']['#access'] = FALSE;
-    $element['format']['format']['#options'] = ['full_html' => 'Full HTML'];
+    $element['format']['format']['#options'] = [
+      $social_filter_format->id() => $social_filter_format->label(),
+    ];
   }
 
   return $element;
+}
+
+/**
+ * Hide blocks on extendable visibility path.
+ *
+ * Implements hook_block_access().
+ */
+function social_core_block_access(Block $block, $operation, AccountInterface $account) {
+  $blocks = &drupal_static(__FUNCTION__);
+  $blocks = [];
+
+  // First check if we have it cached before we run the modulehandler alter.
+  /** @var \Drupal\Core\Cache\CacheBackendInterface $cache */
+  $cache = \Drupal::service('cache.default');
+  if ($cache->get('social_core.block_visibility_cache') === FALSE) {
+    // Allow other modules to change the block visibility.
+    $blocks = \Drupal::moduleHandler()->invokeAll('social_core_block_visibility_path');
+
+    // Set the cache expire to 1 week.
+    $date = new DateTime(date('Y-m-d'));
+    $date->modify('+7 day');
+
+    $cache->set('social_core.block_visibility_cache', $blocks, $date->getTimestamp(), ['social_core.block_visibility_cache']);
+  }
+  else {
+    $blocks = $cache->get('social_core.block_visibility_cache')->data;
+  }
+
+  // Alter the access based on the blocks array.
+  if ($operation === 'view' && isset($blocks[$block->getPluginId()])) {
+    // Get the current path.
+    $current_path = \Drupal::service('path.current')->getPath();
+
+    // Go through the request paths and see if they match.
+    foreach ($blocks[$block->getPluginId()] as $page) {
+      if (\Drupal::service('path.matcher')->matchPath($current_path, $page) === TRUE) {
+        return AccessResult::forbidden();
+      }
+    }
+  }
+
+  // No opinion.
+  return AccessResult::neutral();
 }
 
 /**
@@ -617,4 +705,11 @@ function social_core_form_node_form_alter(&$form, FormStateInterface $form_state
     // Add the status field to the new vertical tab.
     $form['status']['#group'] = 'status_vertical_tab';
   }
+}
+
+/**
+ * Implements hook_theme_registry_alter().
+ */
+function social_core_theme_registry_alter(&$theme_registry) {
+  $theme_registry['menu__toolbar']['variables']['menu_name'] = NULL;
 }
