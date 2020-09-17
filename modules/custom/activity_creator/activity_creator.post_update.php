@@ -112,7 +112,7 @@ function activity_creator_post_update_8802_remove_activities_with_no_related_ent
   }
 
   // Activities per one batch operation.
-  $activities_per_batch = Settings::get('activity_update_batch_size', 10000);
+  $activities_per_batch = Settings::get('activity_update_batch_size', 5000);
   // Get activity storage.
   $activity_storage = $activity = \Drupal::entityTypeManager()
     ->getStorage('activity');
