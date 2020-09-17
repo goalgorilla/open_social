@@ -5,9 +5,7 @@
  * Installation code for the activity_creator module.
  */
 
-use Drupal\activity_creator\ActivityInterface;
 use Drupal\Core\Database\Database;
-use Drupal\Core\Site\Settings;
 
 /**
  * Implements hook_schema().
@@ -142,56 +140,9 @@ function activity_creator_update_8801() {
 
 /**
  * Remove activities notification status if related entity not exist.
+ *
+ * @see activity_creator_post_update_8802_remove_activities_with_no_related_entities()
  */
 function activity_creator_update_8802(&$sandbox) {
-  $database = Drupal::database();
-  if (!isset($sandbox['total'])) {
-    $query = $database->select('activity_notification_status', 'ans');
-    $query->addExpression('COUNT(*)');
-    $count = $query->execute()->fetchField();
-    $sandbox['total'] = $count;
-    $sandbox['current'] = 0;
-  }
-
-  // Activities per one batch operation.
-  $activities_per_batch = Settings::get('activity_update_batch_size', 100);
-
-  // Get activity IDs.
-  $aids = $database
-    ->select('activity_notification_status', 'ans')
-    ->fields('ans', ['aid'])
-    ->range($sandbox['current'], $sandbox['current'] + $activities_per_batch)
-    ->execute()
-    ->fetchCol();
-
-  // Get activity storage.
-  $activity_storage = $activity = Drupal::entityTypeManager()
-    ->getStorage('activity');
-
-  foreach ($aids as $aid) {
-    /** @var \Drupal\activity_creator\ActivityInterface $activity */
-    $activity = $activity_storage->load($aid);
-
-    if (!$activity instanceof ActivityInterface) {
-      $aids_for_delete[] = $aid;
-    }
-    elseif (is_null($activity->getRelatedEntity())) {
-      $activity_storage->delete([$activity]);
-      $aids_for_delete[] = $aid;
-    }
-
-    $sandbox['current']++;
-  }
-
-  if (!empty($aids_for_delete)) {
-    Drupal::service('activity_creator.activity_notifications')
-      ->deleteNotificationsbyIds($aids_for_delete);
-  }
-
-  if ($sandbox['total'] == 0) {
-    $sandbox['#finished'] = 1;
-  }
-  else {
-    $sandbox['#finished'] = ($sandbox['current'] / $sandbox['total']);
-  }
+  // Removed in https://www.drupal.org/project/social/issues/3171563.
 }
