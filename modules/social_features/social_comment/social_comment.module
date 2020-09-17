@@ -154,11 +154,7 @@ function social_comment_form_reply_validate($form, FormStateInterface $form_stat
     switch ($bundle) {
       default:
         if (!empty($comment->getParentComment())) {
-          $items = explode(".", $comment->getThread());
-          $levels = \Drupal::config('social_comment.settings')->get('social_comment_level') ? \Drupal::config('social_comment.settings')->get('social_comment_level') : 1;
-          if (count($items) >= ++$levels) {
-            $form_state->setErrorByName('', t('Replies to comments deeper than threaded %level level(s) are not allowed', ['%level' => --$levels]));
-          }
+          $form_state->setErrorByName('', t('Replies to comments deeper than 1 is not allowed'));
         }
         break;
 
@@ -191,12 +187,15 @@ function social_comment_comment_links_alter(array &$links, CommentInterface $ent
     ];
   }
 
+  $items = explode(".", $entity->getThread());
+  $levels = \Drupal::config('social_comment.settings')->get('social_comment_level') ? \Drupal::config('social_comment.settings')->get('social_comment_level') : 1;
+
   if ($bundle === 'post_comment') {
     // For post comments remove the reply button.
     unset($links['comment']['#links']['comment-reply']);
   }
   // If it is not a post comment do some extra checks.
-  elseif ($entity->getParentComment() !== NULL || \Drupal::routeMatch()->getRouteName() === 'comment.reply') {
+  elseif (($entity->getParentComment() !== NULL && count($items) >= ++$levels) || \Drupal::routeMatch()->getRouteName() === 'comment.reply') {
     // If this is already on the second level, remove the reply button.
     unset($links['comment']['#links']['comment-reply']);
   }
