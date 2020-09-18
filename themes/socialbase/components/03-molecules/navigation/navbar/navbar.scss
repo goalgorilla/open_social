@@ -282,6 +282,19 @@
   left: 0;
   z-index: $zindex-navbar-fixed;
 
+  // Media query from Gin theme.
+  .toolbar-fixed[data-toolbar-menu='open'] & {
+    @media (min-width: 976px) {
+      left: 240px;
+    }
+  }
+
+  .gin--vertical-toolbar.user-logged-in & {
+    @media (min-width: 976px) {
+      left: 80px;
+    }
+  }
+
   .navbar-user .dropdown-menu {
     right: 0;
     left: auto;

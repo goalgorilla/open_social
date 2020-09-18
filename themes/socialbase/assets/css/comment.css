@@ -9,6 +9,8 @@ a[id^="comment-"] {
   position: relative;
   margin-top: 1em;
   line-height: 1.2;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
   width: 100%;
 }
@@ -25,11 +27,14 @@ a[id^="comment-"] {
   margin-right: 8px;
   width: 38px;
   height: 38px;
-  flex-shrink: 0;
+  -ms-flex-negative: 0;
+      flex-shrink: 0;
 }
 
 .comment__content {
-  flex: 1;
+  -webkit-box-flex: 1;
+      -ms-flex: 1;
+          flex: 1;
 }
 
 .comment__author {
@@ -53,12 +58,15 @@ a[id^="comment-"] {
   line-height: 1.3;
 }
 
-.comment__text p {
-  word-break: break-word;
-}
-
 .comment__text p:last-of-type {
   margin-bottom: 0;
+}
+
+.comment__text p,
+.comment__text ul,
+.comment__text ul li,
+.comment__text a {
+  word-break: break-word;
 }
 
 .comment__text .badge {
@@ -117,7 +125,9 @@ a[id^="comment-"] {
  */
 
 .comment-attachments {
-  flex: 1 0 100%;
+  -webkit-box-flex: 1;
+      -ms-flex: 1 0 100%;
+          flex: 1 0 100%;
 }
 
 .comment-attachments .btn {

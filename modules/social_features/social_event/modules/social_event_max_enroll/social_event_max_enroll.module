@@ -114,7 +114,7 @@ function social_event_max_enroll_form_alter(&$form, FormStateInterface $form_sta
 
           // If this user or visitor is not enrolled to the event, show that
           // there are no more spots left, exception for the owner or organizer.
-          if (!$enrollments && !$an_enrollments && social_event_owner_or_organizer() === FALSE) {
+          if (!$enrollments && !$an_enrollments && social_event_manager_or_organizer() === FALSE) {
             if ($form_id === 'enroll_action_form' || $form_id === 'event_invite_enroll_action_form') {
               $form['enroll_for_this_event']['#type'] = 'submit';
               $form['enroll_for_this_event']['#value'] = t('No spots left');
