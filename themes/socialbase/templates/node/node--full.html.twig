@@ -133,7 +133,7 @@
         <div class="meta-engage">
 
           <div class="meta-engage--buttons">
-            {% if content.field_event_addtocal is not empty %}
+            {% if content.field_event_addtocal is not empty and logged_in %}
               <div class="meta-addtocal">
                 {{ content.field_event_addtocal }}
               </div>
