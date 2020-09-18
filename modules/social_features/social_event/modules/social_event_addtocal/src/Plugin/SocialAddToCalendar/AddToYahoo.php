@@ -4,7 +4,6 @@ namespace Drupal\social_event_addtocal\Plugin\SocialAddToCalendar;
 
 use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
-use Drupal\social_event_addtocal\Annotation\SocialAddToCalendar;
 use Drupal\social_event_addtocal\Plugin\SocialAddToCalendarBase;
 
 /**
