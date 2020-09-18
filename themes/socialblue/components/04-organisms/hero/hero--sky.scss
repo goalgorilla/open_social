@@ -126,7 +126,7 @@
         padding-left: 10px;
 
         @include for-tablet-landscape-up {
-          padding-left: 30px;
+          padding-left: 15px;
         }
 
         > * {
@@ -189,7 +189,7 @@
           }
 
           @include for-tablet-landscape-up {
-            padding-right: 35px;
+            padding-right: 15px;
 
             &:last-child {
               padding-right: 0;
@@ -200,18 +200,22 @@
         .hero-footer__list-left {
           position: relative;
 
+          @include for-tablet-landscape-up {
+            margin-bottom: 0;
+          }
+
+          > * {
+            margin-bottom: 0;
+          }
+
           &:before {
-            @include for-tablet-portrait-up {
+            @include for-tablet-landscape-up {
               content: '';
               position: absolute;
               height: 100%;
               width: 1px;
-              right: 4px;
+              right: 0;
               background-color: #adadad;
-            }
-
-            @include for-tablet-landscape-up {
-              right: 4px;
             }
           }
         }
