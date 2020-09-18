@@ -134,6 +134,7 @@ function activity_creator_post_update_8802_remove_activities_with_no_related_ent
       $aids_for_delete[] = $aid;
       $activities_for_delete[$aid] = $activity;
     }
+    $sandbox['current']++;
   }
 
   // Remove notifications.
@@ -145,16 +146,6 @@ function activity_creator_post_update_8802_remove_activities_with_no_related_ent
   // Delete not required activity entities.
   if (!empty($activities_for_delete)) {
     $activity_storage->delete($activities_for_delete);
-  }
-
-  // Increment currently processed entities.
-  // Check if current starting point is less than our range selection.
-  if ($sandbox['total'] - $sandbox['current'] > $activities_per_batch) {
-    $sandbox['current'] += $activities_per_batch;
-  }
-  else {
-    // If we have less number of results to process, we increment by difference.
-    $sandbox['current'] += ($sandbox['total'] - $sandbox['current']);
   }
 
   // The batch will finish when '#finished' will become '1'.
