@@ -210,7 +210,7 @@
 
               {% if content.field_event_addtocal|render is not empty or content.flag_follow_content|render is not empty %}
                 <div class="hero_btn-group">
-                  {% if content.field_event_addtocal|render is not empty %}
+                  {% if content.field_event_addtocal|render is not empty and logged_in %}
                     <div class="meta-addtocal">
                       {{ content.field_event_addtocal }}
                     </div>
