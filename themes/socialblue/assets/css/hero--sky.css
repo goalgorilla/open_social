@@ -131,7 +131,7 @@
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
-  margin: 0 -.5rem;
+  margin: 0 -10px;
   padding-left: 10px;
 }
 
@@ -194,6 +194,10 @@
 
 .socialblue--sky .hero__banner .hero-footer__list .meta-engage .hero-footer__list-left {
   position: relative;
+}
+
+.socialblue--sky .hero__banner .hero-footer__list .meta-engage .hero-footer__list-left > * {
+  margin-bottom: 0;
 }
 
 .socialblue--sky .hero__banner .hero-footer__list .meta-follow {
@@ -507,14 +511,6 @@
   .socialblue--sky .cover-wrap > .hero-footer {
     position: static;
   }
-  .socialblue--sky .hero__banner .hero-footer__list .meta-engage .hero-footer__list-left:before {
-    content: '';
-    position: absolute;
-    height: 100%;
-    width: 1px;
-    right: 4px;
-    background-color: #adadad;
-  }
   .socialblue--sky .hero__banner--static {
     padding-bottom: 25px;
   }
@@ -564,7 +560,7 @@
 
 @media (min-width: 900px) {
   .socialblue--sky .hero__banner .hero-footer__list .hero_btn-group {
-    padding-left: 30px;
+    padding-left: 15px;
   }
   .socialblue--sky .hero__banner .hero-footer__list .hero_btn-group .btn {
     font-size: 1rem;
@@ -575,14 +571,22 @@
   }
   .socialblue--sky .hero__banner .hero-footer__list .meta-engage .hero-footer__list-left > *,
   .socialblue--sky .hero__banner .hero-footer__list .meta-engage > * {
-    padding-right: 35px;
+    padding-right: 15px;
   }
   .socialblue--sky .hero__banner .hero-footer__list .meta-engage .hero-footer__list-left > *:last-child,
   .socialblue--sky .hero__banner .hero-footer__list .meta-engage > *:last-child {
     padding-right: 0;
   }
+  .socialblue--sky .hero__banner .hero-footer__list .meta-engage .hero-footer__list-left {
+    margin-bottom: 0;
+  }
   .socialblue--sky .hero__banner .hero-footer__list .meta-engage .hero-footer__list-left:before {
-    right: 4px;
+    content: '';
+    position: absolute;
+    height: 100%;
+    width: 1px;
+    right: 0;
+    background-color: #adadad;
   }
   .socialblue--sky .hero__banner--static .teaser__title {
     font-size: 2.25rem;
