@@ -86,6 +86,13 @@
       </div>
     {% endif %}
 
+    {% if user_lang %}
+      <div class="list-item list-item--withlabel">
+        <div class="list-item__label">{% trans %}Language{% endtrans %}</div>
+        <div class="list-item__text">{{ user_lang }}</a></div>
+      </div>
+    {% endif %}
+
     {% if content.field_profile_address|render %}
       <div class="list-item list-item--withlabel">
           <div class="list-item__label">{% trans %}Address{% endtrans %}</div>
@@ -123,9 +130,9 @@
 
     {{  content|without('field_profile_phone_number', 'user_mail', 'field_profile_address',
       'field_profile_self_introduction', 'field_profile_interests', 'field_profile_expertise',
-      'field_profile_profile_tag', 'field_manager_notes') }}
+      'field_profile_profile_tag', 'field_manager_notes', 'user_lang') }}
 
-    {% if (content|render is empty and user_mail is empty)%}
+    {% if (content|render is empty and user_mail is empty and user_lang is empty)%}
         {% trans %}{{ profile_name }} {{ profile_name_extra }} has not shared profile information.{% endtrans %}
     {% endif %}
 
