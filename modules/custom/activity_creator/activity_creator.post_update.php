@@ -122,7 +122,6 @@ function activity_creator_post_update_8802_remove_activities_with_no_related_ent
     // 'activities_id' will store the activity IDs from activity notification
     // table that we just queried for above during this initialization phase.
     $sandbox['activities_id'] = $activity_ids;
-
   }
 
   // Initialization code done. The following code will always run:
@@ -151,8 +150,16 @@ function activity_creator_post_update_8802_remove_activities_with_no_related_ent
     }
     // Add not required $activity.
     elseif (is_null($activity->getRelatedEntity())) {
-      $aids_for_delete[] = $activity_id;
+      $entity_ids[] = $activity_id;
       $activities_for_delete[$activity_id] = $activity;
+      $activity_storage->resetCache($entity_ids[]);
+    }
+    else {
+      // If the database has more than 100K of activities to be processed
+      // Drupal will generate a lot of static cache, as we are using load
+      // function above. So, it is necessary to reset cache in order to
+      // prevent memory outage.
+      $activity_storage->resetCache([$activity_id]);
     }
   }
 
@@ -165,6 +172,7 @@ function activity_creator_post_update_8802_remove_activities_with_no_related_ent
   // Delete not required activity entities.
   if (!empty($activities_for_delete)) {
     $activity_storage->delete($activities_for_delete);
+    $activity_storage->resetCache($entity_ids[]);
   }
 
   // Update the batch variables to track our progress.
