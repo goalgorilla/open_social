@@ -127,7 +127,7 @@ function activity_creator_post_update_8802_remove_activities_with_no_related_ent
   // Initialization code done. The following code will always run:
   // both during the first run AND during any subsequent batches.
   // Now let’s remove the  missing activity ids.
-  $activity_storage = $activity = \Drupal::entityTypeManager()->getStorage('activity');
+  $activity_storage = \Drupal::entityTypeManager()->getStorage('activity');
 
   // Calculates current batch range.
   $range_end = $sandbox['progress'] + $sandbox['activities_per_batch'];
