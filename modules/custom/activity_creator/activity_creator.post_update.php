@@ -152,7 +152,6 @@ function activity_creator_post_update_8802_remove_activities_with_no_related_ent
     elseif (is_null($activity->getRelatedEntity())) {
       $entity_ids[] = $activity_id;
       $activities_for_delete[$activity_id] = $activity;
-      $activity_storage->resetCache($entity_ids);
     }
     else {
       // If the database has more than 100K of activities to be processed
@@ -172,7 +171,6 @@ function activity_creator_post_update_8802_remove_activities_with_no_related_ent
   // Delete not required activity entities.
   if (!empty($activities_for_delete)) {
     $activity_storage->delete($activities_for_delete);
-    $activity_storage->resetCache($entity_ids);
   }
 
   // Update the batch variables to track our progress.
