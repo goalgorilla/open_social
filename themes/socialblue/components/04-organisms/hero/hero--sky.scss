@@ -129,8 +129,19 @@
           padding-left: 15px;
         }
 
+        @include for-phone-only {
+          width: 100%;
+          justify-content: space-between;
+          margin: 0 0 -10px;
+        }
+
         > * {
           padding: 0 10px;
+
+          @include for-phone-only {
+            padding: 0;
+            margin-bottom: 10px;
+          }
         }
 
         .btn {
@@ -141,6 +152,10 @@
 
           @include for-tablet-landscape-up {
             font-size: 1rem;
+          }
+
+          @include for-phone-only {
+            font-size: .75rem;
           }
         }
 
@@ -172,6 +187,14 @@
         align-items: center;
         margin-bottom: 0;
         flex-wrap: wrap;
+
+        @include for-tablet-landscape-down {
+          align-items: flex-start;
+
+          > * {
+            padding: 0;
+          }
+        }
 
         .badge--large {
           padding-left: 0;
