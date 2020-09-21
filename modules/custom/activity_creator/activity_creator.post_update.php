@@ -199,10 +199,16 @@ function activity_creator_post_update_8803_remove_activities_with_no_related_ent
     $sandbox['activities_per_batch'] = Settings::get('activity_update_batch_size', 100);;
   }
 
+  // Extract activity ids for deletion.
+  $aids_for_delete = array_splice($sandbox['activities_id'], 0, $sandbox['activities_per_batch']);
   // Now let’s remove the activities with no related entities.
   $storage = \Drupal::entityTypeManager()->getStorage('activity');
-  $activities = $storage->loadMultiple(array_splice($sandbox['activities_id'], 0, $sandbox['activities_per_batch']));
+  $activities = $storage->loadMultiple($aids_for_delete);
   $storage->delete($activities);
+
+  // Remove entries from activity_notification_table.
+  $activity_notification_service = \Drupal::service('activity_creator.activity_notifications');
+  $activity_notification_service->deleteNotificationsbyIds($aids_for_delete);
 
   // Calculates current batch range.
   $range_end = $sandbox['progress'] + $sandbox['activities_per_batch'];
