@@ -4,7 +4,6 @@
 namespace Drupal\social\Behat;
 
 use Behat\Behat\Context\Context;
-use Behat\Behat\Context\SnippetAcceptingContext;
 use Behat\Behat\Hook\Scope\AfterScenarioScope;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\TableNode;
@@ -12,12 +11,13 @@ use Behat\MinkExtension\Context\RawMinkContext;
 use Drupal\DrupalExtension\Hook\Scope\EntityScope;
 use Drupal\group\Entity\Group;
 use Drupal\locale\SourceString;
+use Behat\Mink\Selector\Xpath\Escaper;
 use PHPUnit\Framework\Assert as Assert;
 
 /**
  * Defines application features from the specific context.
  */
-class FeatureContext extends RawMinkContext implements Context, SnippetAcceptingContext
+class FeatureContext extends RawMinkContext implements Context
 {
 
     protected $minkContext;
@@ -398,7 +398,7 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
 
       $element = $session->getPage();
 
-      $radiobutton = $id ? $element->findById($id) : $element->find('named', array('radio', $this->getSession()->getSelectorsHandler()->xpathLiteral($label)));
+      $radiobutton = $id ? $element->findById($id) : $element->find('named', array('radio', Escaper::escapeLiteral($label)));
       if ($radiobutton === NULL) {
         throw new \Exception(sprintf('The radio button with "%s" was not found on the page %s', $id ? $id : $label, $this->getSession()->getCurrentUrl()));
       }
@@ -616,7 +616,7 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
         ->condition('label', $group_title);
 
       $group_ids = $query->execute();
-      $groups = entity_load_multiple('group', $group_ids);
+      $groups = \Drupal::entityTypeManager()->getStorage('group')->loadMultiple($group_ids);
 
       if (count($groups) > 1) {
         return NULL;
@@ -851,7 +851,7 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
      *  1 = YES access
      */
     public function openEntityAndExpectAccess($entity_type, $entity_id, $expected_access) {
-      $entity = entity_load($entity_type, $entity_id);
+      $entity = \Drupal::entityTypeManager()->getStorage($entity_type)->load($entity_id);
       /** @var \Drupal\Core\Url $url */
       $url = $entity->toUrl();
       $page = $url->toString();
