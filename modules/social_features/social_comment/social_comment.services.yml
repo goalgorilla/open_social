@@ -8,3 +8,7 @@ services:
     class: Drupal\social_comment\Routing\RouteSubscriber
     tags:
       - { name: event_subscriber }
+  social_comment.lazy_renderer:
+    class: Drupal\social_comment\SocialCommentLazyRenderer
+    arguments:
+      - '@entity_type.manager'

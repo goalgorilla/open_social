@@ -8,8 +8,8 @@ use Behat\Mink\Element\Element;
 use Drupal\big_pipe\Render\Placeholder\BigPipeStrategy;
 use Behat\Mink\Exception\UnsupportedDriverActionException;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
-
 use Behat\Gherkin\Node\TableNode;
+use Drupal\DrupalExtension\Hook\Scope\EntityScope;
 
 /**
  * Provides pre-built step definitions for interacting with Open Social.
@@ -49,6 +49,21 @@ class SocialDrupalContext extends DrupalContext {
     }
     catch (\Exception $e) {
       // Mute exceptions.
+    }
+  }
+
+  /**
+   * Call this function before users are created.
+   *
+   * @beforeUserCreate
+   */
+  public function beforeUserCreateObject(EntityScope $scope) {
+    $user = $scope->getEntity();
+    // If we add a user, using the Given users:
+    // we can allow it not to have en email. However we use some
+    // contrib modules that need an email for hook_user_insert().
+    if (!isset($user->mail)) {
+      $user->mail = strtolower(trim($user->name)) . '@example.com';
     }
   }
 
