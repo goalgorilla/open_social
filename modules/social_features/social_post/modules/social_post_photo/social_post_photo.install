@@ -97,3 +97,14 @@ function social_post_photo_uninstall() {
 function social_post_photo_update_8001() {
   \Drupal::service('config.installer')->installDefaultConfig('module', 'social_post_photo');
 }
+
+/**
+ * Update activity view display.
+ */
+function social_post_photo_update_8002() {
+  $config = \Drupal::configFactory()->getEditable('core.entity_view_display.post.photo.activity');
+  $config
+    ->set('content.field_post_image.settings.image_style', 'social_x_large')
+    ->set('content.field_post_image.type', 'file_image_default')
+    ->save();
+}

@@ -27,14 +27,6 @@ class SocialPostPhotoConfigOverride implements ConfigFactoryOverrideInterface {
     $overrides = [];
     $config_factory = \Drupal::service('config.factory');
 
-    // Temporary override to allow only 1 photo.
-    $config_name = 'field.storage.post.field_post_image';
-    if (in_array($config_name, $names)) {
-      $overrides[$config_name] = [
-        'cardinality' => 1,
-      ];
-    }
-
     // Override postblocks on activity streams.
     $config_names = [
       'block.block.postblock' => 'post_photo_block',
