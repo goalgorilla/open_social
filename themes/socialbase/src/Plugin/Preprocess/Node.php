@@ -130,6 +130,18 @@ class Node extends PreprocessBase {
       $variables['status_label'] = t('unpublished');
     }
 
+    // Content visibility for AN can be shown.
+    // This is also used to render the shariff links for example.
+    if ((isset($node->field_content_visibility)) &&
+      ($variables['view_mode'] === 'full' || $variables['view_mode'] === 'hero') &&
+      $currentuser->isAnonymous()) {
+      $node_visibility_value = $node->field_content_visibility->getValue();
+      $content_visibility = reset($node_visibility_value);
+      if ($content_visibility['value'] === 'public') {
+        $variables['visibility_icon'] = 'public';
+      }
+    }
+
     // Let's see if we can remove comments from the content and render them in a
     // separate content_below array.
     $comment_field_name = '';
