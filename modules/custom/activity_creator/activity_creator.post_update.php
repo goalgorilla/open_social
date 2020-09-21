@@ -94,13 +94,17 @@ function activity_creator_post_update_8802_remove_orphaned_activities(&$sandbox)
     // These variables will persist across the Batch API’s subsequent calls
     // to our update hook, without us needing to make those initial
     // expensive SELECT queries above ever again.
-    // We take store a diff of both the results which will contain the result
-    // of activity ids which doesn't have valid entities any more. We will
-    // remove them in batch later.
-    $sandbox['activities_id'] = array_diff($activity_notification_ids, $activity_ids);
-
     // 'count' is the number of total records we’ll be processing.
-    $sandbox['count'] = count($sandbox['activities_id']);
+    $sandbox['count'] = 0;
+
+    // We take store a diff of both the results which will contain the result
+    // of activity ids which are not present in system anymore. We will
+    // remove them in batch later.
+    if (!empty($activity_notification_ids) && !empty($activity_ids)) {
+      $sandbox['activities_id'] = array_diff($activity_notification_ids, $activity_ids);
+
+      $sandbox['count'] = count($sandbox['activities_id']);
+    }
 
     // If 'count' is empty, we have nothing to process.
     if (empty($sandbox['count'])) {
@@ -160,15 +164,24 @@ function activity_creator_post_update_8803_remove_activities_with_no_related_ent
     // Get activity ids from activity__field_activity_entity table.
     // This table contains data of field_activity_entity which tells us about
     // any related entity to an activity.
-    $afce_ids = $database->select('activity__field_activity_entity', 'afce')->fields('afce', ['entity_id'])->execute()->fetchCol();
-
-    // We take store a diff of both the results which will contain the result
-    // of activity ids which doesn't have valid entities any more. We will
-    // remove them in batch later.
-    $sandbox['activities_id'] = array_diff($activity_ids, $afce_ids);
+    $afce_ids = $database->select('activity__field_activity_entity', 'afce')
+      ->fields('afce', ['entity_id'])
+      ->execute()->fetchCol();
 
     // 'count' is the number of total records we’ll be processing.
-    $sandbox['count'] = count($sandbox['activities_id']);
+    $sandbox['count'] = 0;
+
+    // We take store a diff of both the results which will contain the result
+    // of activity ids which doesn't have valid referenced entities any more.
+    // We will remove them in batch later. Also, we are only checking
+    // $activity_id to be not empty because $afce_ids is null, that means we
+    // shall remove all activities as none of them will have valid referenced
+    // entity.
+    if (!empty($activity_ids)) {
+      $sandbox['activities_id'] = array_diff($activity_ids, $afce_ids);
+
+      $sandbox['count'] = count($sandbox['activities_id']);
+    }
 
     // If 'count' is empty, we have nothing to process.
     if (empty($sandbox['count'])) {
@@ -183,12 +196,13 @@ function activity_creator_post_update_8803_remove_activities_with_no_related_ent
     // 'activities_per_batch' is a custom amount that we’ll use to limit
     // how many activities we’re processing in each batch.
     // The variables value can be declared in settings file of Drupal.
-    $sandbox['activities_per_batch'] = Settings::get('activity_update_batch_size', 5000);;
+    $sandbox['activities_per_batch'] = Settings::get('activity_update_batch_size', 100);;
   }
 
   // Now let’s remove the activities with no related entities.
-  \Drupal::entityTypeManager()->getStorage('activity')
-    ->delete(array_splice($sandbox['activities_id'], 0, $sandbox['activities_per_batch']));
+  $storage = \Drupal::entityTypeManager()->getStorage('activity');
+  $activities = $storage->loadMultiple(array_splice($sandbox['activities_id'], 0, $sandbox['activities_per_batch']));
+  $storage->delete($activities);
 
   // Calculates current batch range.
   $range_end = $sandbox['progress'] + $sandbox['activities_per_batch'];
