@@ -1,0 +1,24 @@
+filter.format.basic_html:
+  expected_config:
+    filters:
+      filter_html:
+        settings:
+          allowed_html: '<a href hreflang> <em> <strong> <cite> <blockquote cite> <code> <ul type> <ol start type> <li> <dl> <dt> <dd> <h2 id> <h3 id> <h4 id> <h5 id> <h6 id> <p> <br> <span> <img src alt height width data-entity-type data-entity-uuid data-align data-caption> <mention id>'
+  update_actions:
+    change:
+      filters:
+        filter_html:
+          settings:
+            allowed_html: '<a href hreflang title id target rel class=""> <em> <strong> <cite> <blockquote cite> <code> <ul type> <ol start type> <li> <dl> <dt> <dd> <h2 id> <h3 id> <h4 id> <h5 id> <h6 id> <p> <br> <span> <img src alt height width data-entity-type data-entity-uuid data-align data-caption> <mention id>'
+filter.format.mail_html:
+  expected_config:
+    filters:
+      filter_html:
+        settings:
+          allowed_html: '<a href hreflang> <b> <br> <em> <i> <p> <strong> <u>'
+  update_actions:
+    change:
+      filters:
+        filter_html:
+          settings:
+            allowed_html: '<a href hreflang title id target rel class=""> <b> <br> <em> <i> <p> <strong> <u>'

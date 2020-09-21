@@ -262,6 +262,7 @@ function social_group_flexible_group_menu_local_actions_alter(&$local_actions) {
     && $group->getGroupType()->id() === 'flexible_group'
     && !social_group_flexible_group_can_be_added($group)
     && !$user->hasPermission('manage all groups')
+    && !$group->hasPermission('administer members', $user)
   ) {
     unset($local_actions['social_group.add_member']);
   }

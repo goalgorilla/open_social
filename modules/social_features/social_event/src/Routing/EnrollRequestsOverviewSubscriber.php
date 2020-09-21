@@ -47,7 +47,7 @@ class EnrollRequestsOverviewSubscriber implements EventSubscriberInterface {
       // - If the current user is the owner/creator of this event.
       // - If the current user is an organiser/manager of this event.
       // And then allow access.
-      if (social_event_owner_or_organizer()) {
+      if (social_event_manager_or_organizer()) {
         return;
       }
 
