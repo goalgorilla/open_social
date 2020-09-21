@@ -14,3 +14,158 @@
 .teaser--stream:last-child .card-image {
   border-bottom-left-radius: 10px;
 }
+
+.card--stream.card--stream--multiple-images form .tabledrag-toggle-weight {
+  display: none;
+}
+
+.card--stream.card--stream--multiple-images form .table-responsive + .image-widget:not(.hidden) {
+  padding: 0 1.25rem 1.25rem;
+  background: #f3f3f3;
+}
+
+.card--stream.card--stream--multiple-images form table {
+  display: block;
+  padding: 1.25rem 1.25rem 0;
+  background: #f3f3f3;
+  margin-bottom: 1rem;
+}
+
+.card--stream.card--stream--multiple-images form thead {
+  display: none;
+}
+
+.card--stream.card--stream--multiple-images form tbody {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: start;
+      -ms-flex-align: start;
+          align-items: flex-start;
+  margin: 0 -.5rem -1rem;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+}
+
+.card--stream.card--stream--multiple-images form tbody > tr {
+  position: relative;
+  display: block;
+  -webkit-box-flex: 0;
+      -ms-flex: 0 0 50%;
+          flex: 0 0 50%;
+  max-width: 50%;
+  margin-bottom: 1rem;
+  padding: 0 .5rem;
+  background: none;
+}
+
+.card--stream.card--stream--multiple-images form tbody > tr td {
+  padding: 0;
+}
+
+.card--stream.card--stream--multiple-images form tbody > tr .btn {
+  position: absolute;
+  top: .25rem;
+  right: .75rem;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border-radius: 50% !important;
+  background: rgba(173, 173, 173, 0.8);
+  font-size: 0;
+  -webkit-transition: background .2s linear;
+  transition: background .2s linear;
+}
+
+.card--stream.card--stream--multiple-images form tbody > tr .btn:hover, .card--stream.card--stream--multiple-images form tbody > tr .btn:focus {
+  background: #adadad;
+}
+
+.card--stream.card--stream--multiple-images form tbody > tr .btn:after, .card--stream.card--stream--multiple-images form tbody > tr .btn:before {
+  content: '';
+  position: absolute;
+  width: 16px;
+  height: 2px;
+  top: 10px;
+  left: 3px;
+  background: #fff;
+}
+
+.card--stream.card--stream--multiple-images form tbody > tr .btn:after {
+  -webkit-transform: rotate(45deg);
+          transform: rotate(45deg);
+}
+
+.card--stream.card--stream--multiple-images form tbody > tr .btn:before {
+  -webkit-transform: rotate(-45deg);
+          transform: rotate(-45deg);
+}
+
+.card--stream.card--stream--multiple-images form tbody > tr img {
+  border-radius: 8px;
+}
+
+.card--stream.card--stream--multiple-images form tbody > tr .image-widget {
+  padding: 0;
+}
+
+.card--stream.card--stream--multiple-images form tbody > tr .preview {
+  -webkit-box-shadow: none;
+          box-shadow: none;
+}
+
+.card--stream.card--stream--multiple-images form tbody > tr .image-widget-data,
+.card--stream.card--stream--multiple-images form tbody > tr .tabledrag-handle,
+.card--stream.card--stream--multiple-images form tbody > tr .btn--post-remove-image {
+  display: none;
+}
+
+.card--stream.card--stream--multiple-images .photoswipe-gallery {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: start;
+      -ms-flex-align: start;
+          align-items: flex-start;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+  margin: 0 -.5rem 1.25rem;
+}
+
+.card--stream.card--stream--multiple-images .photoswipe-gallery a {
+  display: block;
+  -webkit-box-flex: 0;
+      -ms-flex: 0 0 50%;
+          flex: 0 0 50%;
+  max-width: 50%;
+  margin-bottom: 1.25rem;
+  padding: 0 .5rem;
+}
+
+.card--stream.card--stream--multiple-images .photoswipe-gallery img {
+  border-radius: 8px;
+}
+
+@media (min-width: 600px) {
+  .card--stream.card--stream--multiple-images form tbody > tr {
+    -webkit-box-flex: 0;
+        -ms-flex: 0 0 calc(100% / 3);
+            flex: 0 0 calc(100% / 3);
+    max-width: calc(100% / 3);
+  }
+  .card--stream.card--stream--multiple-images .photoswipe-gallery a {
+    -webkit-box-flex: 0;
+        -ms-flex: 0 0 calc(100% / 3);
+            flex: 0 0 calc(100% / 3);
+    max-width: calc(100% / 3);
+  }
+}
+
+@media (min-width: 1200px) {
+  .card--stream.card--stream--multiple-images form tbody > tr {
+    -webkit-box-flex: 0;
+        -ms-flex: 0 0 25%;
+            flex: 0 0 25%;
+    max-width: 25%;
+  }
+}
