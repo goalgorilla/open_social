@@ -117,7 +117,7 @@ function activity_creator_post_update_8802_remove_activities_with_no_related_ent
     // 'activities_per_batch' is a custom amount that we’ll use to limit
     // how many activities we’re processing in each batch.
     // This is a large part of how we limit expensive batch operations.
-    $sandbox['activities_per_batch'] = Settings::get('activity_update_batch_size', 5000);;
+    $sandbox['activities_per_batch'] = Settings::get('activity_update_batch_size', 100);
 
     // 'activities_id' will store the activity IDs from activity notification
     // table that we just queried for above during this initialization phase.
