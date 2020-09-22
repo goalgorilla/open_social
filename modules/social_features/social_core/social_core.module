@@ -5,8 +5,11 @@
  * The Social core module.
  */
 
+use Drupal\block\Entity\Block;
+use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Field\FieldItemList;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\filter\FilterFormatInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Template\Attribute;
@@ -293,9 +296,8 @@ function social_core_preprocess_block(&$variables) {
       $variables['view_all_path'] = Url::fromRoute('view.events.events_overview', [
         'user' => \Drupal::currentUser()->id(),
       ]);
-      $variables['button_text'] = t('All @label', [
-        '@label' => $variables['label']['#markup'],
-      ]);
+      $variables['button_text'] = $more_link;
+      $link->setOption('use_more', FALSE);
       break;
 
     case 'upcoming_events-block_community_events':
@@ -511,10 +513,30 @@ function social_core_filter_process_format($element) {
     $element_id = substr($element_id, 0, $sub_id);
   }
 
-  $full_html = FilterFormat::load('full_html');
-  $permission_name = $full_html->getPermissionName();
-  $account = \Drupal::currentUser();
-  if ($element['#type'] == 'text_format' && $element['#format'] == 'full_html' && !$account->hasPermission($permission_name)) {
+  // Default filter format for text area fields.
+  $social_filter_format = 'full_html';
+
+  // Allow module to override default filter format because some content type
+  // could require specific one.
+  Drupal::moduleHandler()->alter('social_filter_format_default', $social_filter_format);
+
+  /* @var \Drupal\filter\Entity\FilterFormat $social_filter_format */
+  $social_filter_format = FilterFormat::load($social_filter_format);
+
+  // Check if filter format was loaded, to prevent fatal errors if wrong value
+  // was provided in the hook_social_filter_format_default_alter().
+  if (!$social_filter_format instanceof FilterFormatInterface) {
+    return $element;
+  }
+
+  $permission_name = $social_filter_format->getPermissionName();
+  $account = Drupal::currentUser();
+
+  if (
+    $element['#type'] === 'text_format' &&
+    $element['#format'] === $social_filter_format->id() &&
+    !$account->hasPermission($permission_name)
+  ) {
     $element['#format'] = 'basic_html';
     $element['value']['#format'] = 'basic_html';
     $element['format']['format']['#default_value'] = 'basic_html';
@@ -533,14 +555,59 @@ function social_core_filter_process_format($element) {
     $account->hasPermission($permission_name) &&
     in_array($element_id, $full_html_field_ids)
   ) {
-    $element['#format'] = 'full_html';
+    $element['#format'] = $social_filter_format;
     $element['format']['format']['#access'] = FALSE;
-    $element['format']['format']['#value'] = 'full_html';
+    $element['format']['format']['#value'] = $social_filter_format->id();
     $element['format']['help']['#access'] = FALSE;
-    $element['format']['format']['#options'] = ['full_html' => 'Full HTML'];
+    $element['format']['format']['#options'] = [
+      $social_filter_format->id() => $social_filter_format->label(),
+    ];
   }
 
   return $element;
+}
+
+/**
+ * Hide blocks on extendable visibility path.
+ *
+ * Implements hook_block_access().
+ */
+function social_core_block_access(Block $block, $operation, AccountInterface $account) {
+  $blocks = &drupal_static(__FUNCTION__);
+  $blocks = [];
+
+  // First check if we have it cached before we run the modulehandler alter.
+  /** @var \Drupal\Core\Cache\CacheBackendInterface $cache */
+  $cache = \Drupal::service('cache.default');
+  if ($cache->get('social_core.block_visibility_cache') === FALSE) {
+    // Allow other modules to change the block visibility.
+    $blocks = \Drupal::moduleHandler()->invokeAll('social_core_block_visibility_path');
+
+    // Set the cache expire to 1 week.
+    $date = new DateTime(date('Y-m-d'));
+    $date->modify('+7 day');
+
+    $cache->set('social_core.block_visibility_cache', $blocks, $date->getTimestamp(), ['social_core.block_visibility_cache']);
+  }
+  else {
+    $blocks = $cache->get('social_core.block_visibility_cache')->data;
+  }
+
+  // Alter the access based on the blocks array.
+  if ($operation === 'view' && isset($blocks[$block->getPluginId()])) {
+    // Get the current path.
+    $current_path = \Drupal::service('path.current')->getPath();
+
+    // Go through the request paths and see if they match.
+    foreach ($blocks[$block->getPluginId()] as $page) {
+      if (\Drupal::service('path.matcher')->matchPath($current_path, $page) === TRUE) {
+        return AccessResult::forbidden();
+      }
+    }
+  }
+
+  // No opinion.
+  return AccessResult::neutral();
 }
 
 /**
