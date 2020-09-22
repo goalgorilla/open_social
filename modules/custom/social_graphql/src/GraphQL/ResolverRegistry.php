@@ -27,11 +27,16 @@ class ResolverRegistry extends ResolverRegistryBase {
    * Attempts to find a resolver on an implemented interface.
    *
    * @param mixed $value
+   *   Value passed by getRuntimeFieldResolver.
    * @param string $args
+   *   Args passed by getRuntimeFieldResolver.
    * @param \Drupal\graphql\GraphQL\Execution\ResolveContext $context
+   *   Context passed by getRuntimeFieldResolver.
    * @param \GraphQL\Type\Definition\ResolveInfo $info
+   *   Info passed by getRuntimeFieldResolver.
    *
    * @return callable|null
+   *   The resolver for the field or null if none was found.
    */
   protected function getRuntimeFieldResolverOnInterface($value, $args, ResolveContext $context, ResolveInfo $info) {
     // Go through the interfaces implemented for the type on which this field is

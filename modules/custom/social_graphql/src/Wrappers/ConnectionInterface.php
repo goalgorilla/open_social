@@ -8,12 +8,18 @@ namespace Drupal\social_graphql\Wrappers;
 interface ConnectionInterface {
 
   /**
-   * @return PageInfo
+   * Get the page info from the connection.
+   *
+   * @return array
+   *   An array containing the fields of page info.
    */
   public function pageInfo();
 
   /**
-   * @return EdgeInterface[]|\GraphQL\Deferred
+   * Get the edges from the connection.
+   *
+   * @return \GraphQL\Deferred
+   *   A promise that resolves to an array of EntityEdge instances.
    */
   public function edges();
 }

@@ -55,11 +55,18 @@ class EntityConnection implements ConnectionInterface {
    * QueryConnection constructor.
    *
    * @param \GraphQL\Executor\Promise\Adapter\SyncPromise $promise
+   *   A promise resolving to a list of nodes.
    * @param int|null $first
+   *   The argument passed to the resolver for 'first'.
    * @param string|null $after
+   *   The argument passed to the resolver for 'after'.
    * @param int|null $last
+   *   The argument passed to the resolver for 'last'.
    * @param string|null $before
+   *   The argument passed to the resolver for 'before'.
    * @param bool $is_reversed
+   *   Whether the selected list of data is reversed from the order requested by
+   *   the API user.
    */
   public function __construct(SyncPromise $promise, ?int $first, ?string $after, ?int $last, ?string $before, bool $is_reversed) {
     // If a connection is created where we have a first and last that are null
@@ -78,7 +85,7 @@ class EntityConnection implements ConnectionInterface {
   }
 
   /**
-   * {@inheritDoc}
+   * {@inheritdoc}
    */
   public function pageInfo() {
     return $this->result->then(function ($edges) {
@@ -120,7 +127,7 @@ class EntityConnection implements ConnectionInterface {
   }
 
   /**
-   * {@inheritDoc}
+   * {@inheritdoc}
    */
   public function edges() {
     return $this->result->then(function ($edges) {
