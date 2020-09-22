@@ -1,0 +1,20 @@
+<?php
+
+/**
+ * @file
+ * The Social Album module.
+ */
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function social_album_preprocess_node(&$variables) {
+  if (
+    $variables['node']->bundle() === 'album' &&
+    $variables['view_mode'] === 'hero' &&
+    !$variables['no_image']
+  ) {
+    unset($variables['node_image']);
+    $variables['no_image'] = TRUE;
+  }
+}
