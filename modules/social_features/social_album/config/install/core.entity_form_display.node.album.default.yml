@@ -1,0 +1,79 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.album.field_album_comments
+    - field.field.node.album.field_album_images
+    - field.field.node.album.field_content_visibility
+    - node.type.album
+  module:
+    - field_group
+third_party_settings:
+  field_group:
+    group_album_visibility:
+      children:
+        - groups
+        - field_content_visibility
+      parent_name: ''
+      weight: 1
+      format_type: fieldset
+      region: content
+      format_settings:
+        id: ''
+        classes: ''
+        description: ''
+        required_fields: true
+      label: 'Group and visibility'
+    group_title:
+      children:
+        - title
+      parent_name: ''
+      weight: 0
+      format_type: fieldset
+      region: content
+      format_settings:
+        id: ''
+        classes: ''
+        description: ''
+        required_fields: true
+      label: Information
+id: node.album.default
+targetEntityType: node
+bundle: album
+mode: default
+content:
+  field_content_visibility:
+    weight: 7
+    settings: {  }
+    third_party_settings: {  }
+    type: options_buttons
+    region: content
+  groups:
+    type: options_select
+    settings: {  }
+    weight: 6
+    region: content
+    third_party_settings: {  }
+  status:
+    type: boolean_checkbox
+    weight: 2
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
+  title:
+    type: string_textfield
+    weight: 1
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+hidden:
+  created: true
+  field_album_comments: true
+  field_album_images: true
+  path: true
+  promote: true
+  sticky: true
+  uid: true
