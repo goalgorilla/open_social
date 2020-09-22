@@ -11,7 +11,6 @@ dependencies:
   module:
     - comment
     - image
-    - options
     - user
 id: node.album.default
 targetEntityType: node
@@ -36,17 +35,11 @@ content:
     third_party_settings: {  }
     type: image
     region: content
-  field_content_visibility:
-    weight: 0
-    label: hidden
-    settings: {  }
-    third_party_settings: {  }
-    type: list_default
-    region: content
   links:
     weight: 4
     region: content
     settings: {  }
     third_party_settings: {  }
 hidden:
+  field_content_visibility: true
   groups: true
