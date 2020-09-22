@@ -70,353 +70,95 @@ class GraphQLUsersEndpointTest extends GraphQLTestBase {
   }
 
   /**
-   * Expect the first three users in the dataset to be loaded.
+   * Test the filter for the users query.
    */
-  public function testUsersQueryFirst() {
-    $query = <<<GQL
-      query {
-        users(first: 3) {
-          edges {
-            cursor
-            node {
-              display_name
+  public function testUsersQueryFilter(): void {
+    // We call the test data in a single test because the source doesn't change.
+    // This is faster than having individual tests per query.
+    foreach ($this->provideUsersQueryFilterData() as [$filter, $users]) {
+      // Create a query for the filter under test. Include some data that allow
+      // verifying the results.
+      $query = "
+        query {
+          users(${filter}) {
+            edges {
+              cursor
+              node {
+                display_name
+              }
             }
           }
         }
-      }
-GQL;
-    $expected = [
-      "data" => [
-        "users" => [
-          "edges" => [
-            [
-              "cursor" => (new EntityEdge($this->users[0]))->getCursor(),
-              "node" => [
-                "display_name" => $this->users[0]->getDisplayName(),
-              ],
-            ],
-            [
-              "cursor" => (new EntityEdge($this->users[1]))->getCursor(),
-              "node" => [
-                "display_name" => $this->users[1]->getDisplayName(),
-              ],
-            ],
-            [
-              "cursor" => (new EntityEdge($this->users[2]))->getCursor(),
-              "node" => [
-                "display_name" => $this->users[2]->getDisplayName(),
-              ],
-            ],
+      ";
+      // Create our expectation array.
+      $expected = [
+        "data" => [
+          "users" => [
+            "edges" => array_map(
+              static function ($user) {
+                return [
+                  "cursor" => (new EntityEdge($user))->getCursor(),
+                  "node" => [
+                    "display_name" => $user->getDisplayName(),
+                  ],
+                ];
+              },
+              $users
+            ),
           ],
         ],
-      ],
-    ];
+      ];
 
-    $this->assertQuery($query, $expected);
+      $this->assertQuery($query, $expected, "users(${filter})");
+    }
   }
 
   /**
-   * Expect the last three users in the dataset to be loaded for reverse search.
+   * Provides filters and matching expected users.
    */
-  public function testUsersQueryFirstReverse() {
+  public function provideUsersQueryFilterData() {
     $last = count($this->users) - 1;
-    $query = <<<GQL
-      query {
-        users(first: 3, reverse: true) {
-          edges {
-            cursor
-            node {
-              display_name
-            }
-          }
-        }
-      }
-GQL;
-    $expected = [
-      "data" => [
-        "users" => [
-          "edges" => [
-            [
-              "cursor" => (new EntityEdge($this->users[$last]))->getCursor(),
-              "node" => [
-                "display_name" => $this->users[$last]->getDisplayName(),
-              ],
-            ],
-            [
-              "cursor" => (new EntityEdge($this->users[$last - 1]))->getCursor(),
-              "node" => [
-                "display_name" => $this->users[$last - 1]->getDisplayName(),
-              ],
-            ],
-            [
-              "cursor" => (new EntityEdge($this->users[$last - 2]))->getCursor(),
-              "node" => [
-                "display_name" => $this->users[$last - 2]->getDisplayName(),
-              ],
-            ],
-          ],
-        ],
-      ],
+
+    yield [
+      'first: 3',
+      [$this->users[0], $this->users[1], $this->users[2]],
     ];
 
-    $this->assertQuery($query, $expected);
-  }
-
-  /**
-   * Expect the last three users in the dataset to be loaded.
-   */
-  public function testUsersQueryLast() {
-    $last = count($this->users) - 1;
-    $query = <<<GQL
-      query {
-        users(last: 3) {
-          edges {
-            cursor
-            node {
-              display_name
-            }
-          }
-        }
-      }
-GQL;
-    $expected = [
-      "data" => [
-        "users" => [
-          "edges" => [
-            [
-              "cursor" => (new EntityEdge($this->users[$last - 2]))->getCursor(),
-              "node" => [
-                "display_name" => $this->users[$last - 2]->getDisplayName(),
-              ],
-            ],
-            [
-              "cursor" => (new EntityEdge($this->users[$last - 1]))->getCursor(),
-              "node" => [
-                "display_name" => $this->users[$last - 1]->getDisplayName(),
-              ],
-            ],
-            [
-              "cursor" => (new EntityEdge($this->users[$last]))->getCursor(),
-              "node" => [
-                "display_name" => $this->users[$last]->getDisplayName(),
-              ],
-            ],
-          ],
-        ],
-      ],
+    yield [
+      "first: 3, reverse: true",
+      [$this->users[$last], $this->users[$last - 1], $this->users[$last - 2]],
     ];
 
-    $this->assertQuery($query, $expected);
-  }
-
-  /**
-   * Expect the first three users to be loaded for reverse search.
-   */
-  public function testUsersQueryLastReverse() {
-    $query = <<<GQL
-      query {
-        users(last: 3, reverse: true) {
-          edges {
-            cursor
-            node {
-              display_name
-            }
-          }
-        }
-      }
-GQL;
-    $expected = [
-      "data" => [
-        "users" => [
-          "edges" => [
-            [
-              "cursor" => (new EntityEdge($this->users[2]))->getCursor(),
-              "node" => [
-                "display_name" => $this->users[2]->getDisplayName(),
-              ],
-            ],
-            [
-              "cursor" => (new EntityEdge($this->users[1]))->getCursor(),
-              "node" => [
-                "display_name" => $this->users[1]->getDisplayName(),
-              ],
-            ],
-            [
-              "cursor" => (new EntityEdge($this->users[0]))->getCursor(),
-              "node" => [
-                "display_name" => $this->users[0]->getDisplayName(),
-              ],
-            ],
-          ],
-        ],
-      ],
+    yield [
+      "last: 3",
+      [$this->users[$last - 2], $this->users[$last - 1], $this->users[$last]],
     ];
 
-    $this->assertQuery($query, $expected);
-  }
-
-  /**
-   * Expect the last two users before a cursor.
-   */
-  public function testUsersQueryLastBefore() {
-    $before = (new EntityEdge($this->users[4]))->getCursor();
-    $query = "
-      query {
-        users(last: 2, before: ${before}) {
-          edges {
-            cursor
-            node {
-              display_name
-            }
-          }
-        }
-      }
-    ";
-    $expected = [
-      "data" => [
-        "users" => [
-          "edges" => [
-            [
-              "cursor" => (new EntityEdge($this->users[2]))->getCursor(),
-              "node" => [
-                "display_name" => $this->users[2]->getDisplayName(),
-              ],
-            ],
-            [
-              "cursor" => (new EntityEdge($this->users[3]))->getCursor(),
-              "node" => [
-                "display_name" => $this->users[3]->getDisplayName(),
-              ],
-            ],
-          ],
-        ],
-      ],
+    yield [
+      "last: 3, reverse: true",
+      [$this->users[2], $this->users[1], $this->users[0]],
     ];
 
-    $this->assertQuery($query, $expected);
-  }
-
-  /**
-   * Expect the first two users after a cursor.
-   */
-  public function testUsersQueryFirstAfter() {
-    $after = (new EntityEdge($this->users[4]))->getCursor();
-    $query = "
-      query {
-        users(first: 2, after: ${after}) {
-          edges {
-            cursor
-            node {
-              display_name
-            }
-          }
-        }
-      }
-    ";
-    $expected = [
-      "data" => [
-        "users" => [
-          "edges" => [
-            [
-              "cursor" => (new EntityEdge($this->users[5]))->getCursor(),
-              "node" => [
-                "display_name" => $this->users[5]->getDisplayName(),
-              ],
-            ],
-            [
-              "cursor" => (new EntityEdge($this->users[6]))->getCursor(),
-              "node" => [
-                "display_name" => $this->users[6]->getDisplayName(),
-              ],
-            ],
-          ],
-        ],
-      ],
+    $cursor = (new EntityEdge($this->users[4]))->getCursor();
+    yield [
+      "last: 2, before: ${cursor}",
+      [$this->users[2], $this->users[3]],
     ];
 
-    $this->assertQuery($query, $expected);
-  }
-
-  /**
-   * Expect the last two users before a cursor in a reversed search.
-   */
-  public function testUsersQueryLastBeforeReversed() {
-    $before = (new EntityEdge($this->users[4]))->getCursor();
-    $query = "
-      query {
-        users(last: 2, before: ${before}, reverse: true) {
-          edges {
-            cursor
-            node {
-              display_name
-            }
-          }
-        }
-      }
-    ";
-    $expected = [
-      "data" => [
-        "users" => [
-          "edges" => [
-            [
-              "cursor" => (new EntityEdge($this->users[6]))->getCursor(),
-              "node" => [
-                "display_name" => $this->users[6]->getDisplayName(),
-              ],
-            ],
-            [
-              "cursor" => (new EntityEdge($this->users[5]))->getCursor(),
-              "node" => [
-                "display_name" => $this->users[5]->getDisplayName(),
-              ],
-            ],
-          ],
-        ],
-      ],
+    yield [
+      "first: 2, after: ${cursor}",
+      [$this->users[5], $this->users[6]],
     ];
 
-    $this->assertQuery($query, $expected);
-  }
-
-  /**
-   * Expect the first two users after a cursor in a reversed search.
-   */
-  public function testUsersQueryFirstAfterReversed() {
-    $after = (new EntityEdge($this->users[4]))->getCursor();
-    $query = "
-      query {
-        users(first: 2, after: ${after}, reverse: true) {
-          edges {
-            cursor
-            node {
-              display_name
-            }
-          }
-        }
-      }
-    ";
-    $expected = [
-      "data" => [
-        "users" => [
-          "edges" => [
-            [
-              "cursor" => (new EntityEdge($this->users[3]))->getCursor(),
-              "node" => [
-                "display_name" => $this->users[3]->getDisplayName(),
-              ],
-            ],
-            [
-              "cursor" => (new EntityEdge($this->users[2]))->getCursor(),
-              "node" => [
-                "display_name" => $this->users[2]->getDisplayName(),
-              ],
-            ],
-          ],
-        ],
-      ],
+    yield [
+      "last: 2, before: ${cursor}, reverse: true",
+      [$this->users[6], $this->users[5]],
     ];
 
-    $this->assertQuery($query, $expected);
+    yield [
+      "first: 2, after: ${cursor}, reverse: true",
+      [$this->users[3], $this->users[2]],
+    ];
   }
 
   /**
@@ -426,11 +168,13 @@ GQL;
    *   The GraphQL query to test.
    * @param array $expected
    *   The expected output.
+   * @param string $message
+   *   An optional message to provide context in case of assertion failure.
    */
-  protected function assertQuery(string $query, array $expected): void {
+  protected function assertQuery(string $query, array $expected, string $message = ''): void {
     $result = $this->query($query);
-    self::assertSame(200, $result->getStatusCode());
-    self::assertSame($expected, json_decode($result->getContent(), TRUE));
+    self::assertSame(200, $result->getStatusCode(), $message);
+    self::assertSame($expected, json_decode($result->getContent(), TRUE), $message);
   }
 
 }
