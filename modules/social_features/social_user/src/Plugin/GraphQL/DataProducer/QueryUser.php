@@ -5,7 +5,6 @@ namespace Drupal\social_user\Plugin\GraphQL\DataProducer;
 use Drupal\Core\Cache\RefinableCacheableDependencyInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\social_graphql\Plugin\GraphQL\DataProducer\QueryEntityBase;
-use Drupal\social_graphql\Wrappers\EntityConnection;
 
 /**
  * @DataProducer(
@@ -53,11 +52,24 @@ class QueryUser extends QueryEntityBase {
   const MAX_LIMIT = 100;
 
   /**
-   * @param $offset
-   * @param $limit
+   * @param int|null $first
+   *   Fetch the first X results.
+   * @param string|null $after
+   *   Cursor to fetch results after.
+   * @param int|null $last
+   *   Fetch the last X results.
+   * @param string|null $before
+   *   Cursor to fetch results before.
+   * @param bool $reverse
+   *   Reverses the order of the data.
+   * @param string $sortKey
+   *   Key to sort by.
    * @param \Drupal\Core\Cache\RefinableCacheableDependencyInterface $metadata
+   *   Cacheability metadata for this request.
    *
    * @return \Drupal\social_graphql\Wrappers\EntityConnection
+   *   An entity connection with results and data about the paginated results.
+   *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */

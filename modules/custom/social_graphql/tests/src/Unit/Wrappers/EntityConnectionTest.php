@@ -2,7 +2,6 @@
 
 namespace Drupal\Tests\social_graphql\Unit;
 
-use Drupal\Component\Uuid\Uuid;
 use Drupal\social_graphql\Wrappers\EntityConnection;
 use Drupal\social_graphql\Wrappers\EntityEdge;
 use Drupal\Tests\UnitTestCase;
@@ -14,13 +13,6 @@ use GraphQL\Deferred;
  * @group social_graphql
  */
 class EntityConnectionTest extends UnitTestCase {
-
-  /**
-   * {@inheritdoc}
-   */
-  protected function setUp() {
-    parent::setUp();
-  }
 
   /**
    * Tests that PageInfo is correctly generated for data sets.
@@ -110,7 +102,9 @@ class EntityConnectionTest extends UnitTestCase {
       [
         "Fetching the last 3 results while receiving more before a cursor shows a next page and a previous page.",
         new EntityConnection(
-          $this->deferValue([$_[$end - 1], $_[$end - 2], $_[$end - 3], $_[$end - 4]]),
+          $this->deferValue(
+            [$_[$end - 1], $_[$end - 2], $_[$end - 3], $_[$end - 4]]
+          ),
           NULL, NULL, 3, $_[$end]->getCursor(), TRUE
         ),
         [
@@ -215,4 +209,5 @@ class EntityConnectionTest extends UnitTestCase {
   protected function createFakeCursor() {
     return base64_encode(random_bytes(5));
   }
+
 }
