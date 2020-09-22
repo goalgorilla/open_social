@@ -79,8 +79,10 @@ abstract class DemoFile extends DemoContent {
         continue;
       }
 
+      /** @var \Drupal\Core\File\FileSystemInterface $file_system */
+      $file_system = \Drupal::service('file_system');
       // Copy file from module.
-      $item['uri'] = FileSystemInterface::copy(
+      $item['uri'] = $file_system->copy(
         $this->parser->getPath($item['path'], $this->getModule(), $this->getProfile()),
         $item['uri'],
         FileSystemInterface::EXISTS_REPLACE
