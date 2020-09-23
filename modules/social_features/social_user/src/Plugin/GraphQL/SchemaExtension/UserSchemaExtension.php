@@ -35,6 +35,13 @@ class UserSchemaExtension extends SdlSchemaExtensionPluginBase {
         ->map('sortKey', $builder->fromArgument('sortKey'))
     );
 
+    // User query.
+    $registry->addFieldResolver('Query', 'user',
+      $builder->produce('entity_load_by_uuid')
+        ->map('type', $builder->fromValue('user'))
+        ->map('uuid', $builder->fromArgument('uuid'))
+    );
+
     // User type fields.
     $registry->addFieldResolver('User', 'uuid',
       $builder->produce('entity_uuid')
@@ -47,15 +54,38 @@ class UserSchemaExtension extends SdlSchemaExtensionPluginBase {
     );
 
     $registry->addFieldResolver('User', 'mail',
-      $builder->fromPath('entity:user', 'mail.value')
+      // TODO: Replace with simplified form once
+      //   https://github.com/drupal-graphql/graphql/pull/1089 lands.
+      // $builder->fromPath('entity:user', 'mail.value')
+      $builder->produce('property_path')
+        ->map('type', $builder->fromValue('entity:user'))
+        ->map('path', $builder->fromValue('mail.value'))
+        ->map('value', $builder->fromParent())
     );
 
     $registry->addFieldResolver('User', 'created_at',
-      $builder->fromPath('entity:user', 'created.value')
+      // TODO: Replace with simplified form once
+      //   https://github.com/drupal-graphql/graphql/pull/1089 lands.
+      // $builder->fromPath('entity:user', 'created.value')
+      $builder->produce('property_path')
+        ->map('type', $builder->fromValue('entity:user'))
+        ->map('path', $builder->fromValue('created.value'))
+        ->map('value', $builder->fromParent())
     );
 
     $registry->addFieldResolver('User', 'updated_at',
-      $builder->fromPath('entity:user', 'changed.value')
+      // TODO: Replace with simplified form once
+      //   https://github.com/drupal-graphql/graphql/pull/1089 lands.
+      // $builder->fromPath('entity:user', 'changed.value')
+      $builder->produce('property_path')
+        ->map('type', $builder->fromValue('entity:user'))
+        ->map('path', $builder->fromValue('changed.value'))
+        ->map('value', $builder->fromParent())
+    );
+
+    $registry->addFieldResolver('User', 'status',
+      $builder->produce('user_status')
+        ->map('user', $builder->fromParent())
     );
   }
 

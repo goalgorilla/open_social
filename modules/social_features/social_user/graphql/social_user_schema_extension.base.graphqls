@@ -2,11 +2,51 @@
 An Open Social user.
 """
 type User implements NodeInterface {
+  """
+  The Universally Unique Identifier for the user.
+  """
   uuid: ID!
+  """
+  The display name of the user.
+
+  The specific format of the display name could depend on permissions of the
+  requesting user or application.
+  """
   display_name: String!
+  """
+  The e-mail of the user.
+
+  Can be null if the user has not filled in an e-mail or if the user/application
+  making the request is not allowed to view this user's e-mail.
+  """
   mail: Email
+  """
+  The timestamp indicating when the user was created.
+  """
   created_at: Int!
+  """
+  The timestamp indicating when the user was last updated.
+  """
   updated_at: Int!
+  """
+  The status of the user account.
+  """
+  status: UserStatus!
+}
+
+"""
+The status of a user on a platform.
+"""
+enum UserStatus {
+  """
+  An active user is able to login on the platform and view content
+  """
+  ACTIVE
+  """
+  A blocked user is unable to access the platform, although their content will
+  still be visible until it's deleted.
+  """
+  BLOCKED
 }
 
 """
