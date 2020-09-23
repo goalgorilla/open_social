@@ -40,10 +40,10 @@ class OrganizerActivityContext extends ActivityContextBase {
    *   The query factory.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity type manager.
-   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
-   *   The module handler.
    * @param \Drupal\activity_creator\ActivityFactory $activity_factory
    *   The activity factory service.
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
+   *   The module handler.
    */
   public function __construct(
     array $configuration,
