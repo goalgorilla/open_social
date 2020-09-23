@@ -6,6 +6,7 @@
  */
 
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\social_post\Entity\PostInterface;
 
 /**
  * Implements hook_form_FORM_ID_alter().
@@ -47,5 +48,17 @@ function _social_post_photo_settype($from, $to) {
   /** @var \Drupal\social_post\Entity\Post $post */
   foreach ($posts as $post) {
     $post->set('type', $to)->save();
+  }
+}
+
+/**
+ * @param $variables
+ */
+function social_post_photo_preprocess_field__field_post_image(&$variables) {
+  $post = $variables['element']['#object'];
+
+  if ($post instanceof PostInterface && $post->hasField('field_post')) {
+    $view_builder = Drupal::entityTypeManager()->getViewBuilder('post')->view($post, 'album');
+    $variables['post'] = $view_builder;
   }
 }
