@@ -4,12 +4,9 @@ dependencies:
   config:
     - core.entity_view_mode.node.teaser
     - field.field.node.album.field_album_comments
-    - field.field.node.album.field_album_images
     - field.field.node.album.field_content_visibility
-    - image.style.social_x_large
     - node.type.album
   module:
-    - image
     - options
     - user
 id: node.album.teaser
@@ -17,15 +14,6 @@ targetEntityType: node
 bundle: album
 mode: teaser
 content:
-  field_album_images:
-    type: image
-    weight: 0
-    region: content
-    label: hidden
-    settings:
-      image_style: social_x_large
-      image_link: ''
-    third_party_settings: {  }
   field_content_visibility:
     type: list_default
     weight: 1

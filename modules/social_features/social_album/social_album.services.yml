@@ -1,0 +1,5 @@
+services:
+  social_album.overrider:
+    class: Drupal\social_album\SocialAlbumConfigOverride
+    tags:
+      - { name: config.factory.override, priority: 5 }
