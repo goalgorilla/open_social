@@ -79,8 +79,14 @@ function social_core_preprocess_node(&$variables) {
   if (!$node->hasField($image_field)) {
     $node_fields = $node->getFields();
     $image_fields = array_filter($node_fields, '_social_core_find_image_field');
+
     // Get the first image field of all the fields.
-    $image_field = reset($image_fields)->getName();
+    if ($image_fields) {
+      $image_field = reset($image_fields)->getName();
+    }
+    else {
+      $image_field = NULL;
+    }
   }
   if (!empty($variables['content'][$image_field]['#theme'])) {
     $variables['node_image'] = $variables['content'][$image_field];
