@@ -20,13 +20,18 @@ class Node extends NodeBase {
    */
   protected function preprocessElement(Element $element, Variables $variables) {
     parent::preprocessElement($element, $variables);
-    /** @var \Drupal\node\Entity\Node $node */
+
+    if (theme_get_setting('style') !== 'sky') {
+      return;
+    }
+
+    /** @var \Drupal\node\NodeInterface $node */
     $node = $variables['node'];
-    $style = theme_get_setting('style');
+
     $view_modes = ['teaser', 'activity', 'activity_comment', 'featured', 'hero'];
 
     // Add teaser tag as title prefix to node teasers and hero view modes.
-    if ($style === 'sky' && in_array($variables['view_mode'], $view_modes)) {
+    if (in_array($variables['view_mode'], $view_modes)) {
       if (!empty($variables['topic_type'])) {
         $teaser_tag = $variables['topic_type'];
       }
@@ -42,6 +47,9 @@ class Node extends NodeBase {
         '#template' => '<div class="teaser__tag">{{ teaser_tag }}</div>',
         '#context' => ['teaser_tag' => $teaser_tag],
       ];
+    }
+    elseif ($variables['view_mode'] === 'full' && $node->bundle() === 'album') {
+      $variables['content_attributes']['class'][] = 'text-center';
     }
 
   }

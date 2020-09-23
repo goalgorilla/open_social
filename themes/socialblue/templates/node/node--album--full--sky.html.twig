@@ -1,0 +1,8 @@
+{% extends "node--full--sky.html.twig" %}
+
+{% if content.field_album_images is empty %}
+  {% block nodefull_body %}
+    <p>{{ 'No images added to this album yet'|t }}</p>
+    <a href="#" class="btn btn-default btn-sm">{{ 'Post images to this album'|t }}</a>
+  {% endblock %}
+{% endif %}
