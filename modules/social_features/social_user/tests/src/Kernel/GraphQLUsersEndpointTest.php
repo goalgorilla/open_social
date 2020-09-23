@@ -65,4 +65,43 @@ class GraphQLUsersEndpointTest extends SocialGraphQLTestBase {
     $this->assertEndpointSupportsPagination('users', $this->users);
   }
 
+  /**
+   * Ensure that the fields for the user endpoint properly resolve.
+   *
+   * This test does not test the validity of the resolved data but merely that
+   * the API contract is adhered to.
+   */
+  public function testUserFieldsPresence() : void {
+    // Test as the admin users, this allows us to test all the fields that are
+    // available in an all-access scenario.
+    $this->setCurrentUser(User::load(1));
+    $test_user = $this->createUser();
+    $query = "
+      query {
+        user(uuid: \"{$test_user->uuid()}\") {
+          uuid
+          display_name
+          mail
+          created_at
+          updated_at
+          status
+        }
+      }
+    ";
+    $expected_data = [
+      'data' => [
+        'user' => [
+          'uuid' => $test_user->uuid(),
+          'display_name' => $test_user->getDisplayName(),
+          'mail' => $test_user->getEmail(),
+          'created_at' => $test_user->getCreatedTime(),
+          'updated_at' => $test_user->getChangedTime(),
+          'status' => 'ACTIVE',
+        ],
+      ],
+    ];
+
+    $this->assertQuery($query, $expected_data, 'user fields are present');
+  }
+
 }

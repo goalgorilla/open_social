@@ -18,4 +18,13 @@ extend type Query {
     """Sort the underlying list by the given key."""
     sortKey: UserSortKeys = CREATED_AT
   ): UserConnection!
+  """
+  Fetch data for a specific user.
+  """
+  user(
+    """
+    The uuid of the user to load.
+    """
+    uuid: ID!
+  ) : User
 }
