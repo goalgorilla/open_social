@@ -82,7 +82,7 @@ class EventRequestActivityContext extends ActivityContextBase {
 
     // We only know the context if there is a related object.
     if (isset($data['related_object']) && !empty($data['related_object'])) {
-      $related_entity = ActivityFactory::getActivityRelatedEntity($data);
+      $related_entity = $this->activityFactory->getActivityRelatedEntity($data);
 
       if ($data['related_object'][0]['target_type'] === 'event_enrollment') {
         // Get the enrollment id.
