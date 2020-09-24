@@ -115,7 +115,10 @@ class Block extends PreprocessBase {
     }
 
     // Show group tags block in a card.
-    if ($variables['elements']['#plugin_id'] == 'social_group_tags_block') {
+    if (in_array($variables['elements']['#plugin_id'], [
+      'social_group_tags_block',
+      'views_block:albums-block_album',
+    ])) {
       $variables['card'] = TRUE;
     }
 
