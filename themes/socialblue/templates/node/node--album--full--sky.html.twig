@@ -1,3 +1,14 @@
 {% extends "node--full--sky.html.twig" %}
 
-{% block nodefull_body_wrapper %}{% endblock %}
+{% block nodefull_body %}
+  {% if no_images %}
+    <div class="text-center">
+      <p>No images added to this album yet</p>
+      <a href="#" class="btn btn-default btn-sm">Post images to this album</a>
+    </div>
+  {% else %}
+    {# Delete the "like_and_dislike" field from the list of excluded fields
+       provided by the parent template. #}
+    {{ content|without('field_event_address', 'field_event_location', 'field_event_type', 'book_navigation', 'flag_follow_content', 'field_event_an_enroll', 'field_enrollment_status', 'enrolled', 'enrollments_count', 'links', 'ongoing') }}
+  {% endif %}
+{% endblock %}

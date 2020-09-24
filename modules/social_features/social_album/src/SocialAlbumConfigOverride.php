@@ -61,6 +61,18 @@ class SocialAlbumConfigOverride implements ConfigFactoryOverrideInterface {
       }
     }
 
+    $config_name = 'like_and_dislike.settings';
+
+    if (in_array($config_name, $names)) {
+      $overrides[$config_name] = [
+        'enabled_types' => [
+          'node' => [
+            'album' => 'album',
+          ],
+        ],
+      ];
+    }
+
     return $overrides;
   }
 

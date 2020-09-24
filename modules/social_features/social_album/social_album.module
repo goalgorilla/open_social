@@ -1,0 +1,36 @@
+<?php
+
+/**
+ * @file
+ * The Social Album module.
+ */
+
+use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
+use Drupal\Core\Entity\EntityInterface;
+
+/**
+ * Implements hook_entity_extra_field_info().
+ */
+function social_album_entity_extra_field_info() {
+  return [
+    'node' => [
+      'album' => [
+        'display' => [
+          'images' => [
+            'label' => t('Images'),
+            'visible' => FALSE,
+          ],
+        ],
+      ],
+    ],
+  ];
+}
+
+/**
+ * Implements hook_entity_view().
+ */
+function social_album_entity_view(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, $view_mode) {
+  if ($display->getComponent('images')) {
+    $build['images'] = views_embed_view('albums', 'embed_album');
+  }
+}

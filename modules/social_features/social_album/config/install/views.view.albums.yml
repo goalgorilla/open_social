@@ -218,20 +218,7 @@ display:
       title: Album
       header: {  }
       footer: {  }
-      empty:
-        area:
-          id: area
-          table: views
-          field: area
-          relationship: none
-          group_type: group
-          admin_label: ''
-          empty: true
-          tokenize: false
-          content:
-            value: "<center>\r\n  <p>No images added to this album yet</p>\r\n  <a href=\"#\" class=\"btn btn-default btn-sm\">Post images to this album</a>\r\n</center>"
-            format: full_html
-          plugin_id: text
+      empty: {  }
       relationships:
         field_album:
           id: field_album
@@ -280,7 +267,7 @@ display:
           entity_field: nid
           plugin_id: node_nid
       display_extenders: {  }
-      css_class: card__body
+      css_class: ''
     cache_metadata:
       max-age: -1
       contexts:
@@ -290,15 +277,13 @@ display:
         - url.query_args
       tags:
         - 'config:field.storage.post.field_post_image'
-  block_album:
-    display_plugin: block
-    id: block_album
-    display_title: Block
+  embed_album:
+    display_plugin: embed
+    id: embed_album
+    display_title: Embed
     position: 1
     display_options:
       display_extenders: {  }
-      block_category: 'Social Album'
-      block_description: Album
     cache_metadata:
       max-age: -1
       contexts:
