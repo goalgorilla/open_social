@@ -3,8 +3,8 @@
 {% block nodefull_body %}
   {% if no_images %}
     <div class="text-center">
-      <p>No images added to this album yet</p>
-      <a href="#" class="btn btn-default btn-sm">Post images to this album</a>
+      <p>{{ 'No images added to this album yet'|t }}</p>
+      <a href="#" class="btn btn-default btn-sm">{{ 'Post images to this album'|t }}</a>
     </div>
   {% else %}
     {# Delete the "like_and_dislike" field from the list of excluded fields
