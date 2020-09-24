@@ -3,16 +3,17 @@
 namespace Drupal\activity_creator;
 
 use Drupal\activity_creator\Entity\Activity;
+use Drupal\activity_creator\Plugin\ActivityDestinationManager;
 use Drupal\Component\Render\FormattableMarkup;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\Utility\Token;
 use Drupal\language\ConfigurableLanguageManagerInterface;
 use Drupal\message\Entity\Message;
-use Drupal\activity_creator\Plugin\ActivityDestinationManager;
 use Drupal\social_event\EventEnrollmentInterface;
 
 /**
@@ -58,6 +59,13 @@ class ActivityFactory extends ControllerBase {
   protected $token;
 
   /**
+   * The module handler.
+   *
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface
+   */
+  protected $moduleHandler;
+
+  /**
    * ActivityFactory constructor.
    *
    * @param \Drupal\activity_creator\Plugin\ActivityDestinationManager $activityDestinationManager
@@ -70,19 +78,23 @@ class ActivityFactory extends ControllerBase {
    *   The new language manager.
    * @param \Drupal\Core\Utility\Token $token
    *   The token replacement instance.
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
+   *   The module handler.
    */
   public function __construct(
     ActivityDestinationManager $activityDestinationManager,
     EntityTypeManagerInterface $entity_type_manager,
     Connection $database,
     LanguageManagerInterface $language_manager,
-    Token $token
+    Token $token,
+    ModuleHandlerInterface $module_handler
   ) {
     $this->activityDestinationManager = $activityDestinationManager;
     $this->entityTypeManager = $entity_type_manager;
     $this->database = $database;
     $this->languageManager = $language_manager;
     $this->token = $token;
+    $this->moduleHandler = $module_handler;
   }
 
   /**
@@ -378,6 +390,9 @@ class ActivityFactory extends ControllerBase {
         }
       }
     }
+
+    $this->moduleHandler->alter('activity_creator_related_entity_object', $related_object, $data);
+
     return $related_object;
   }
 
