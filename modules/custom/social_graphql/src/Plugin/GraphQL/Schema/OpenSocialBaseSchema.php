@@ -56,6 +56,38 @@ class OpenSocialBaseSchema extends SdlSchemaPluginBase {
   protected function getBaseSchema(ResolverRegistryInterface $registry) {
     $builder = new ResolverBuilder();
 
+    // FormattedText fields.
+    $registry->addFieldResolver('FormattedText', 'format',
+      // TODO: Replace with simplified form once
+      //   https://github.com/drupal-graphql/graphql/pull/1089 lands.
+      // $builder->fromPath('text', 'format')
+      $builder->produce('property_path')
+        ->map('type', $builder->fromValue('text'))
+        ->map('path', $builder->fromValue('format'))
+        ->map('value', $builder->fromParent())
+    );
+
+    $registry->addFieldResolver('FormattedText', 'raw',
+      // TODO: Replace with simplified form once
+      //   https://github.com/drupal-graphql/graphql/pull/1089 lands.
+      // $builder->fromPath('text', 'value')
+      $builder->produce('property_path')
+        ->map('type', $builder->fromValue('text'))
+        ->map('path', $builder->fromValue('value'))
+        ->map('value', $builder->fromParent())
+    );
+
+    // TODO: Implement text processing based on configured format.
+    $registry->addFieldResolver('FormattedText', 'processed',
+      // TODO: Replace with simplified form once
+      //   https://github.com/drupal-graphql/graphql/pull/1089 lands.
+      // $builder->fromPath('text', 'processed')
+      $builder->produce('property_path')
+        ->map('type', $builder->fromValue('text'))
+        ->map('path', $builder->fromValue('processed'))
+        ->map('value', $builder->fromParent())
+    );
+
     // ConnectionInterface fields.
     $registry->addFieldResolver('ConnectionInterface', 'edges',
       $builder->produce('connection_edges')

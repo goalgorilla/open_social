@@ -22,14 +22,143 @@ schema {
   query: Query
 }
 
-
 ################################################################################
 #                                Basic Types                                   #
 ################################################################################
 """
+An access role for a user
+
+Roles are used to assign groups of permissions to users on the platform.
+"""
+scalar UserRole
+
+"""
 A valid email address.
 """
 scalar Email
+
+"""
+A phone number.
+"""
+# For now we treat PhoneNumber as a special string but we may want to build it
+# out to a proper type containing an country code and local number separately.
+scalar PhoneNumber
+
+# TODO: Add descriptions.
+scalar TimeZone
+scalar Language
+
+"""
+An address that provides information about a location.
+
+The fields in an address depend on the country.
+"""
+type Address {
+  """
+  The two-letter contry code.
+
+  This is a CLDR country code, since CLDR includes additional countries
+  for addressing purposes, such as Canary Islands (IC).
+  """
+  country_code: String!
+  """
+  The administrative area.
+
+  Called the "state" in the United States, "province" in France and Italy
+  "county" in Great Britain, "prefecture" in Japan, etc.
+  """
+  administrative_area: String
+  """
+  The locality (i.e city).
+
+  Some countries do not use this field; their address lines are sufficient
+  to locate an address within a sub-administrative area.
+  """
+  locality: String
+  """
+  The dependent locality (i.e neighbourhood).
+
+  When representing a double-dependent locality in Great Britain, includes
+  both the double-dependent locality and the dependent locality,
+  e.g. "Whaley, Langwith".
+  """
+  dependent_locality: String
+  """
+  The postal code.
+
+  The value is often alphanumeric.
+  """
+  postal_code: String
+  """
+  The sorting code.
+
+  For example, CEDEX in France.
+  """
+  sorting_code: String
+  """
+  The first line of address block.
+  """
+  address_line_1: String
+  """
+  The second line of the address block.
+  """
+  address_line_2: String
+  """
+  The organization.
+  """
+  organization: String
+}
+
+"""
+A locale object contains internationalisation settings.
+
+Think about things such as language, timezone and country preferences. This is
+used in user preferences but can also be used in data or platform settings.
+"""
+type Locale {
+  country: String
+  language: Language
+  timezone: TimeZone
+}
+
+"""
+A longer string of text that may contain markup.
+"""
+type FormattedText {
+  """
+  The text format used by Open Social to process the input text.
+
+  A text format provides information about what markup is allowed in the text.
+  """
+  format: String!
+  """
+  The raw string as used by an editor.
+  """
+  raw: String!
+  """
+  The string processed according to the text format.
+
+  For a properly configured text format this string should be save to display
+  to users.
+  """
+  processed: String!
+}
+
+"""
+An Open Social text format.
+"""
+# Declared as separate type so that individual configurations may be exposed
+# in the future if needed.
+type TextFormat {
+  """
+  The machine name of the text format.
+  """
+  name: String!
+#  """
+#  The human readable name of the text format.
+#  """
+#  label: String!
+}
 
 ################################################################################
 #                         Data Fetching Interfaces                             #

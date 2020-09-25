@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\social_graphql\Plugin\GraphQL\DataProducer;
+namespace Drupal\social_graphql\Plugin\GraphQL\DataProducer\Entity;
 
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -157,6 +157,8 @@ abstract class QueryEntityBase extends DataProducerPluginBase implements Contain
    *   Whether to select the last N results.
    * @param string|null $before
    *   The cursor to select elements before.
+   * @param bool|null $reverse
+   *   Whether sorting should happen in reverse order before filtering.
    * @param string $sortKey
    *   The field used for sorting.
    *

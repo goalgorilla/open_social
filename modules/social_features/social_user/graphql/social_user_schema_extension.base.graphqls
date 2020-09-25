@@ -1,3 +1,6 @@
+################################################################################
+#                              Type Information                                #
+################################################################################
 """
 An Open Social user.
 """
@@ -32,6 +35,18 @@ type User implements NodeInterface {
   The status of the user account.
   """
   status: UserStatus!
+  """
+  The roles that the user has.
+  """
+  roles: [UserRole!]!
+  """
+  Platform settings for the user.
+  """
+  settings: UserSettings!
+  """
+  Locale settings for the user.
+  """
+  locale: Locale!
 }
 
 """
@@ -49,6 +64,153 @@ enum UserStatus {
   BLOCKED
 }
 
+"""
+User Settings
+
+Contains information about things such as email notification preferences and
+privacy settings.
+"""
+# The different types of settings are split into subtypes which allows other
+# modules to add their own settings as needed. For example, push notification
+# settings or privacy controls for cross-platform data sharing.
+type UserSettings {
+  """
+  Privacy settings for the user.
+
+  Will be empty if the application or user does not have access.
+  """
+  privacy: UserPrivacySettings
+  """
+  Notification settings for the user.
+
+  Will be empty if the application or user does not have access.
+  """
+  notifications: UserNotificationSettings
+}
+
+"""
+User Privacy Settings
+"""
+# TODO: Move (part of) this to social_profile.
+type UserPrivacySettings {
+  """
+  Whether their phone number should be shown on their profile.
+  """
+  show_phone: Boolean!
+  """
+  Whether their location information should be shown on their profile.
+  """
+  show_location: Boolean!
+  """
+  Whether their email address should be shown on their profile.
+  """
+  show_email: Boolean!
+}
+
+# TODO: Move this to another module?
+# TODO: Does this make sense for non-email notifications?
+enum NotificationFrequency {
+  """
+  Never send me notifications.
+  """
+  None
+  """
+  Send a notification as things happen.
+  """
+  Immediately
+  """
+  Send an overview of notifications in a day once per day.
+  """
+  Daily
+  """
+  Send an overview of notifications in a week once per week.
+  """
+  Weekly
+}
+
+"""
+Notification settings for a user.
+
+Setting descriptions as seen from the user.
+"""
+# TODO: There is quite a bit of overlap and unclarity in which setting is for
+#    what. This is a good moment to re-evaluate each setting and redefine them.
+#    A mapping can be created between new and old settings for the
+#    transition/migration.
+type UserNotificationSettings {
+  """
+  A person created a post on my profile
+  """
+  profile_post: NotificationFrequency!
+  """
+  A person mentioned me in a post
+  """
+  mention_post: NotificationFrequency!
+  """
+  A person mentioned me in a comment
+  """
+  mention_comment: NotificationFrequency!
+  """
+  A person replied to a comment where I am mentioned
+  """
+  mention_comment_reply: NotificationFrequency!
+  """
+  A person replied on my comments
+  """
+  comment_reply: NotificationFrequency!
+  """
+  A person commented on a post on my profile
+  """
+  profile_post_comment: NotificationFrequency!
+  """
+  A person likes a post, topic, comment or event created by me
+  """
+  like: NotificationFrequency!
+  """
+  A organizer added me to a Event
+  """
+  event_add: NotificationFrequency!
+  """
+  A user sends a private message to me
+  """
+  private_message: NotificationFrequency!
+  """
+  My group membership request is approved
+  """
+  group_membership_request_approval: NotificationFrequency!
+  """
+  A person commented on content created or organised by me
+  """
+  comment_content: NotificationFrequency!
+  """
+  A person joins a group I am managing
+  """
+  group_join: NotificationFrequency!
+  """
+  Activity on events I am organizing
+  """
+  event_activity: NotificationFrequency!
+  """
+  A person requests membership to a group I manage
+  """
+  group_membership_request_received: NotificationFrequency!
+  """
+  A person commented on content I am following
+  """
+  comment_follow: NotificationFrequency!
+  """
+  A person created a post, event or topic in a group I joined
+  """
+  group_content_created: NotificationFrequency!
+  """
+  A background process (e.g. sending bulk emails) has finished
+  """
+  background_process_complete: NotificationFrequency!
+}
+
+################################################################################
+#                                Query Types                                   #
+################################################################################
 """
 The set of valid sort keys for the user query.
 """
@@ -71,6 +233,9 @@ type UserConnection implements ConnectionInterface {
   pageInfo: PageInfo!
 }
 
+################################################################################
+#                               Mutation Types                                 #
+################################################################################
 """
 The response to a user create, update or delete mutation.
 """

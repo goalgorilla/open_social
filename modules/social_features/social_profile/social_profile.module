@@ -495,9 +495,9 @@ function social_profile_user_insert(UserInterface $account) {
   if (!empty($account->id())) {
     /** @var \Drupal\profile\Entity\ProfileType $profile_type */
     $profile_type = ProfileType::load('profile');
-    // Sometimes profile fields are already requested during registrataion.
+    // Sometimes profile fields are already requested during registration.
     // In those cases, the profile will already be created from that.
-    if ($profile_type->getRegistration() === FALSE) {
+    if ($profile_type !== NULL && $profile_type->getRegistration() === FALSE) {
       $default_values = [
         'type' => $profile_type->id(),
         'uid' => $account->id(),
