@@ -131,7 +131,7 @@ class Post extends ContentEntityBase implements PostInterface {
    * {@inheritdoc}
    */
   public function setPublished($published) {
-    $this->set('status', $published ? NodeInterface::PUBLISHED: NodeInterface::NOT_PUBLISHED);
+    $this->set('status', $published ? NodeInterface::PUBLISHED : NodeInterface::NOT_PUBLISHED);
     return $this;
   }
 

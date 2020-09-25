@@ -49,10 +49,10 @@ class MentionsFilter extends FilterBase implements ContainerFactoryPluginInterfa
    *
    * @param array $configuration
    *   Config array.
-   * @param $plugin_id
-   *   Plugin_id.
-   * @param $plugin_definition
-   *   The definition.
+   * @param string $plugin_id
+   *   The plugin_id for the plugin instance.
+   * @param mixed $plugin_definition
+   *   The plugin implementation definition.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_manager
    *   The entity type manager.
    * @param \Drupal\Core\Render\RendererInterface $render
