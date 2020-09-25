@@ -2,6 +2,7 @@
 
 namespace Drupal\socialblue\Plugin\Preprocess;
 
+use Drupal\Core\Url;
 use Drupal\socialbase\Plugin\Preprocess\Node as NodeBase;
 use Drupal\bootstrap\Utility\Element;
 use Drupal\bootstrap\Utility\Variables;
@@ -61,7 +62,13 @@ class Node extends NodeBase {
     ) {
       $view = Views::getView('albums');
       $view->execute('embed_album');
-      $variables['no_images'] = empty($view->result);
+
+      if (empty($view->result)) {
+        $variables['link'] = Url::fromRoute(
+          'entity.post.add_form',
+          ['post_type' => 'photo']
+        );
+      }
     }
   }
 
