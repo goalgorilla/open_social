@@ -7,14 +7,14 @@ use Drupal\graphql\Plugin\GraphQL\DataProducer\DataProducerPluginBase;
 use Drupal\user\UserInterface;
 
 /**
- * Returns the status for a user.
+ * Returns the roles for a user.
  *
  * @DataProducer(
- *   id = "user_status",
- *   name = @Translation("User status"),
- *   description = @Translation("Returns the status of the user."),
- *   produces = @ContextDefinition("string",
- *     label = @Translation("User status")
+ *   id = "user_roles",
+ *   name = @Translation("User roles"),
+ *   description = @Translation("Returns the roles that a user has."),
+ *   produces = @ContextDefinition("array",
+ *     label = @Translation("User roles")
  *   ),
  *   consumes = {
  *     "user" = @ContextDefinition("entity:user",
@@ -23,19 +23,19 @@ use Drupal\user\UserInterface;
  *   }
  * )
  */
-class UserStatus extends DataProducerPluginBase implements DataProducerPluginCachingInterface {
+class UserRoles extends DataProducerPluginBase implements DataProducerPluginCachingInterface {
 
   /**
    * Resolves the value for this data producer.
    *
    * @param \Drupal\user\UserInterface $user
-   *   The user to get the status from.
+   *   The user to get the roles for.
    *
-   * @return string
-   *   The status of the user ("ACTIVE" or "BLOCKED").
+   * @return string[]
+   *   The roles the user has.
    */
   public function resolve(UserInterface $user) {
-    return $user->isActive() ? "ACTIVE" : "BLOCKED";
+    return $user->getRoles();
   }
 
 }

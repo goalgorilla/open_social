@@ -4,7 +4,7 @@ namespace Drupal\social_user\Plugin\GraphQL\DataProducer;
 
 use Drupal\Core\Cache\RefinableCacheableDependencyInterface;
 use Drupal\Core\Entity\EntityInterface;
-use Drupal\social_graphql\Plugin\GraphQL\DataProducer\QueryEntityBase;
+use Drupal\social_graphql\Plugin\GraphQL\DataProducer\Entity\QueryEntityBase;
 
 /**
  * @DataProducer(

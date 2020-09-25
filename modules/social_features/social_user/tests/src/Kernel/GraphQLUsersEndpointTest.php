@@ -85,6 +85,7 @@ class GraphQLUsersEndpointTest extends SocialGraphQLTestBase {
           created_at
           updated_at
           status
+          roles
         }
       }
     ";
@@ -97,6 +98,7 @@ class GraphQLUsersEndpointTest extends SocialGraphQLTestBase {
           'created_at' => $test_user->getCreatedTime(),
           'updated_at' => $test_user->getChangedTime(),
           'status' => 'ACTIVE',
+          'roles' => ['authenticated'],
         ],
       ],
     ];

@@ -87,6 +87,11 @@ class UserSchemaExtension extends SdlSchemaExtensionPluginBase {
       $builder->produce('user_status')
         ->map('user', $builder->fromParent())
     );
+
+    $registry->addFieldResolver('User', 'roles',
+      $builder->produce('user_roles')
+        ->map('user', $builder->fromParent())
+    );
   }
 
 }

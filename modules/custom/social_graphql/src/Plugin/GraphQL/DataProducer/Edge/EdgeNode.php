@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\social_graphql\Plugin\GraphQL\DataProducer;
+namespace Drupal\social_graphql\Plugin\GraphQL\DataProducer\Edge;
 
 use Drupal\graphql\Plugin\DataProducerPluginCachingInterface;
 use Drupal\graphql\Plugin\GraphQL\DataProducer\DataProducerPluginBase;
