@@ -31,6 +31,23 @@ function social_album_entity_extra_field_info() {
  */
 function social_album_entity_view(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, $view_mode) {
   if ($display->getComponent('images')) {
-    $build['images'] = views_embed_view('albums', 'embed_album');
+    $build['images'] = views_embed_view('album', 'embed_overview');
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function social_album_preprocess_node(&$variables) {
+  /** @var \Drupal\node\NodeInterface $node */
+  $node = $variables['node'];
+
+  if (
+    $node->bundle() === 'album' &&
+    $variables['view_mode'] === 'teaser' &&
+    views_get_view_result('album', 'embed_cover', $node->id())
+  ) {
+    $variables['node_image'] = views_embed_view('album', 'embed_cover', $node->id());
+    $variables['no_image'] = FALSE;
   }
 }

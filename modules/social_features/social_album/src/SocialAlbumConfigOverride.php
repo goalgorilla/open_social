@@ -3,6 +3,7 @@
 namespace Drupal\social_album;
 
 use Drupal\Core\Cache\CacheableMetadata;
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Config\ConfigFactoryOverrideInterface;
 use Drupal\Core\Config\StorageInterface;
 
@@ -12,6 +13,23 @@ use Drupal\Core\Config\StorageInterface;
  * @package Drupal\social_album
  */
 class SocialAlbumConfigOverride implements ConfigFactoryOverrideInterface {
+
+  /**
+   * The config factory.
+   *
+   * @var \Drupal\Core\Config\ConfigFactoryInterface
+   */
+  protected $configFactory;
+
+  /**
+   * Constructs the configuration override.
+   *
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *   The Drupal configuration factory.
+   */
+  public function __construct(ConfigFactoryInterface $config_factory) {
+    $this->configFactory = $config_factory;
+  }
 
   /**
    * {@inheritdoc}
@@ -71,6 +89,24 @@ class SocialAlbumConfigOverride implements ConfigFactoryOverrideInterface {
           ],
         ],
       ];
+    }
+
+    $config_names = [
+      'block.block.socialblue_profile_hero_block',
+      'block.block.socialblue_pagetitleblock_content',
+      'block.block.socialblue_profile_statistic_block',
+    ];
+
+    foreach ($config_names as $config_name) {
+      if (in_array($config_name, $names)) {
+        $overrides[$config_name] = [
+          'visibility' => [
+            'request_path' => [
+              'pages' => $this->configFactory->getEditable($config_name)->get('visibility.request_path.pages') . "\r\n/user/*/albums",
+            ],
+          ],
+        ];
+      }
     }
 
     return $overrides;

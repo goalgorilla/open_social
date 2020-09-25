@@ -20,8 +20,8 @@ class SocialAlbumCountAndAddBlock extends BlockBase {
    * {@inheritdoc}
    */
   public function build() {
-    $view = Views::getView('albums');
-    $view->execute('embed_album');
+    $view = Views::getView('album');
+    $view->execute('embed_overview');
 
     return [
       'count' => [

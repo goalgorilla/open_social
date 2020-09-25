@@ -2,20 +2,17 @@ langcode: en
 status: true
 dependencies:
   config:
-    - field.storage.post.field_post_image
-    - image.style.social_x_large
-    - social_post.post_type.photo
+    - core.entity_view_mode.node.teaser
+    - node.type.album
   module:
-    - image
     - node
-    - social_post
 id: albums
 label: Albums
 module: views
 description: ''
 tag: ''
-base_table: post_field_data
-base_field: id
+base_table: node_field_data
+base_field: nid
 display:
   default:
     display_plugin: default
@@ -70,133 +67,56 @@ display:
           quantity: 9
       style:
         type: default
-      row:
-        type: fields
         options:
-          default_field_elements: false
-          inline: {  }
-          separator: ''
-          hide_empty: false
-      fields:
-        field_post_image_1:
-          id: field_post_image_1
-          table: post__field_post_image
-          field: field_post_image
+          row_class: ''
+          default_row_class: true
+          uses_fields: false
+      row:
+        type: 'entity:node'
+        options:
           relationship: none
-          group_type: group
-          admin_label: 'Post: Image (URL)'
+          view_mode: teaser
+      fields:
+        title:
+          id: title
+          table: node_field_data
+          field: title
+          entity_type: node
+          entity_field: title
           label: ''
-          exclude: false
           alter:
             alter_text: false
-            text: ''
             make_link: false
-            path: ''
             absolute: false
-            external: false
-            replace_spaces: false
-            path_case: none
-            trim_whitespace: false
-            alt: ''
-            rel: ''
-            link_class: ''
-            prefix: ''
-            suffix: ''
-            target: ''
-            nl2br: false
-            max_length: 0
-            word_boundary: true
-            ellipsis: true
-            more_link: false
-            more_link_text: ''
-            more_link_path: ''
-            strip_tags: false
             trim: false
-            preserve_tags: ''
+            word_boundary: false
+            ellipsis: false
+            strip_tags: false
             html: false
-          element_type: ''
-          element_class: ''
-          element_label_type: ''
-          element_label_class: ''
-          element_label_colon: false
-          element_wrapper_type: ''
-          element_wrapper_class: ''
-          element_default_classes: false
-          empty: ''
           hide_empty: false
           empty_zero: false
-          hide_alter_empty: true
-          click_sort_column: target_id
-          type: image_url
           settings:
-            image_style: ''
-          group_column: ''
-          group_columns: {  }
-          group_rows: false
-          delta_limit: 0
-          delta_offset: 0
-          delta_reversed: false
-          delta_first_last: false
-          multi_type: separator
-          separator: ', '
-          field_api_classes: false
+            link_to_entity: true
           plugin_id: field
-        field_post_image:
-          id: field_post_image
-          table: post__field_post_image
-          field: field_post_image
           relationship: none
           group_type: group
           admin_label: ''
-          label: ''
           exclude: false
-          alter:
-            alter_text: false
-            text: ''
-            make_link: false
-            path: ''
-            absolute: false
-            external: false
-            replace_spaces: false
-            path_case: none
-            trim_whitespace: false
-            alt: ''
-            rel: ''
-            link_class: ''
-            prefix: ''
-            suffix: ''
-            target: ''
-            nl2br: false
-            max_length: 0
-            word_boundary: true
-            ellipsis: true
-            more_link: false
-            more_link_text: ''
-            more_link_path: ''
-            strip_tags: false
-            trim: false
-            preserve_tags: ''
-            html: false
           element_type: ''
           element_class: ''
           element_label_type: ''
           element_label_class: ''
-          element_label_colon: false
+          element_label_colon: true
           element_wrapper_type: ''
           element_wrapper_class: ''
-          element_default_classes: false
+          element_default_classes: true
           empty: ''
-          hide_empty: false
-          empty_zero: false
           hide_alter_empty: true
-          click_sort_column: target_id
-          type: image
-          settings:
-            image_style: social_x_large
-            image_link: ''
-          group_column: ''
+          click_sort_column: value
+          type: string
+          group_column: value
           group_columns: {  }
-          group_rows: false
+          group_rows: true
           delta_limit: 0
           delta_offset: 0
           delta_reversed: false
@@ -204,100 +124,46 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-          plugin_id: field
       filters:
         type:
           id: type
-          table: post_field_data
+          table: node_field_data
           field: type
           value:
-            photo: photo
-          entity_type: post
+            album: album
+          entity_type: node
           entity_field: type
           plugin_id: bundle
           expose:
             operator_limit_selection: false
             operator_list: {  }
-        field_album_target_id:
-          id: field_album_target_id
-          table: post__field_album
-          field: field_album_target_id
-          relationship: none
-          group_type: group
-          admin_label: ''
-          operator: 'not empty'
-          value:
-            min: ''
-            max: ''
-            value: ''
-          group: 1
-          exposed: false
-          expose:
-            operator_id: ''
-            label: ''
-            description: ''
-            use_operator: false
-            operator: ''
-            operator_limit_selection: false
-            operator_list: {  }
-            identifier: ''
-            required: false
-            remember: false
-            multiple: false
-            remember_roles:
-              authenticated: authenticated
-            placeholder: ''
-            min_placeholder: ''
-            max_placeholder: ''
-          is_grouped: false
-          group_info:
-            label: ''
-            description: ''
-            identifier: ''
-            optional: true
-            widget: select
-            multiple: false
-            remember: false
-            default_group: All
-            default_group_multiple: {  }
-            group_items: {  }
-          plugin_id: numeric
       sorts:
         created:
           id: created
-          table: post_field_data
+          table: node_field_data
           field: created
+          order: DESC
+          entity_type: node
+          entity_field: created
+          plugin_id: date
           relationship: none
           group_type: group
           admin_label: ''
-          order: ASC
           exposed: false
           expose:
             label: ''
           granularity: second
-          entity_type: post
-          entity_field: created
-          plugin_id: date
-      title: Album
+      title: Albums
       header: {  }
       footer: {  }
       empty: {  }
-      relationships:
-        field_album:
-          id: field_album
-          table: post__field_album
-          field: field_album
-          relationship: none
-          group_type: group
-          admin_label: 'field_album: Content'
-          required: true
-          plugin_id: standard
+      relationships: {  }
       arguments:
-        nid:
-          id: nid
+        uid:
+          id: uid
           table: node_field_data
-          field: nid
-          relationship: field_album
+          field: uid
+          relationship: none
           group_type: group
           admin_label: ''
           default_action: default
@@ -307,8 +173,9 @@ display:
             title: All
           title_enable: false
           title: ''
-          default_argument_type: node
-          default_argument_options: {  }
+          default_argument_type: user
+          default_argument_options:
+            user: false
           default_argument_skip_url: false
           summary_options:
             base_path: ''
@@ -327,10 +194,9 @@ display:
           break_phrase: false
           not: false
           entity_type: node
-          entity_field: nid
-          plugin_id: node_nid
+          entity_field: uid
+          plugin_id: numeric
       display_extenders: {  }
-      css_class: ''
     cache_metadata:
       max-age: -1
       contexts:
@@ -338,15 +204,16 @@ display:
         - 'languages:language_interface'
         - url
         - url.query_args
-      tags:
-        - 'config:field.storage.post.field_post_image'
-  embed_album:
-    display_plugin: embed
-    id: embed_album
-    display_title: Embed
+        - 'user.node_grants:view'
+      tags: {  }
+  page_overview:
+    display_plugin: page
+    id: page_overview
+    display_title: Page
     position: 1
     display_options:
       display_extenders: {  }
+      path: user/%user/albums
     cache_metadata:
       max-age: -1
       contexts:
@@ -354,5 +221,5 @@ display:
         - 'languages:language_interface'
         - url
         - url.query_args
-      tags:
-        - 'config:field.storage.post.field_post_image'
+        - 'user.node_grants:view'
+      tags: {  }
