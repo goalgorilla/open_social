@@ -7,7 +7,6 @@
 
 use Drupal\search_api\Entity\Index;
 use Drupal\social\Installer\Form\ModuleConfigureForm;
-use Drupal\Core\Messenger\MessengerInterface;
 
 /**
  * Implements hook_install_tasks().

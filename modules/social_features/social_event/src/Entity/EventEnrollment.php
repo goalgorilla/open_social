@@ -10,7 +10,7 @@ use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\social_event\EventEnrollmentInterface;
 use Drupal\user\UserInterface;
 use Drupal\Core\Cache\Cache;
-Use Drupal\node\NodeInterface;
+use Drupal\node\NodeInterface;
 
 /**
  * Defines the Event enrollment entity.
