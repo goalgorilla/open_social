@@ -4,7 +4,7 @@
 """
 An Open Social user.
 """
-type User implements NodeInterface {
+type User implements Node {
   """
   The Universally Unique Identifier for the user.
   """
@@ -223,12 +223,12 @@ enum UserSortKeys {
   CREATED_AT
 }
 
-type UserEdge implements EdgeInterface {
+type UserEdge implements Edge {
   cursor: Cursor!
   node: User!
 }
 
-type UserConnection implements ConnectionInterface {
+type UserConnection implements Connection {
   edges: [UserEdge!]!
   pageInfo: PageInfo!
 }

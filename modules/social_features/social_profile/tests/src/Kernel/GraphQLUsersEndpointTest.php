@@ -105,7 +105,9 @@ class GraphQLUsersEndpointTest extends SocialGraphQLTestBase {
             first_name
             last_name
             introduction {
-              format
+              format {
+                name
+              }
               raw
               processed
             }
@@ -123,7 +125,9 @@ class GraphQLUsersEndpointTest extends SocialGraphQLTestBase {
             'first_name' => $profile->get('field_profile_first_name')->first()->getString(),
             'last_name' => $profile->get('field_profile_last_name')->first()->getString(),
             'introduction' => [
-              'format' => $profile->get('field_profile_self_introduction')->first()->get('format')->getString(),
+              'format' => [
+                'name' => $profile->get('field_profile_self_introduction')->first()->get('format')->getString(),
+              ],
               'raw' => $profile->get('field_profile_self_introduction')->first()->get('value')->getString(),
               'processed' => $profile->get('field_profile_self_introduction')->first()->get('processed')->getString(),
             ],
