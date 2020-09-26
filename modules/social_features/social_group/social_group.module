@@ -1294,7 +1294,7 @@ function _social_group_get_current_group($node = NULL) {
   // If we have a cache key we store the value.
   if (!is_null($nid)) {
     // Translate NULL to FALSE so that isset works.
-    $cache[$nid] = isset($group) ? $group : FALSE;
+    $cache[$nid] = isset($group) ? $group : NULL;
   }
 
   return $group;
