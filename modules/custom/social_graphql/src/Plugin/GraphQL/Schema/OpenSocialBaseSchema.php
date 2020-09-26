@@ -88,23 +88,23 @@ class OpenSocialBaseSchema extends SdlSchemaPluginBase {
         ->map('value', $builder->fromParent())
     );
 
-    // ConnectionInterface fields.
-    $registry->addFieldResolver('ConnectionInterface', 'edges',
+    // Connection fields.
+    $registry->addFieldResolver('Connection', 'edges',
       $builder->produce('connection_edges')
         ->map('connection', $builder->fromParent())
     );
 
-    $registry->addFieldResolver('ConnectionInterface', 'pageInfo',
+    $registry->addFieldResolver('Connection', 'pageInfo',
       $builder->produce('connection_page_info')
         ->map('connection', $builder->fromParent())
     );
 
-    // EdgeInterface fields.
-    $registry->addFieldResolver('EdgeInterface', 'cursor',
+    // Edge fields.
+    $registry->addFieldResolver('Edge', 'cursor',
       $builder->produce('edge_cursor')
         ->map('edge', $builder->fromParent())
     );
-    $registry->addFieldResolver('EdgeInterface', 'node',
+    $registry->addFieldResolver('Edge', 'node',
       $builder->produce('edge_node')
         ->map('edge', $builder->fromParent())
     );

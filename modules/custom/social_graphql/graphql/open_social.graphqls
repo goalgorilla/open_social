@@ -38,6 +38,11 @@ A valid email address.
 scalar Email
 
 """
+A valid URL
+"""
+scalar Url
+
+"""
 A phone number.
 """
 # For now we treat PhoneNumber as a special string but we may want to build it
@@ -130,7 +135,7 @@ type FormattedText {
 
   A text format provides information about what markup is allowed in the text.
   """
-  format: String!
+  format: TextFormat!
   """
   The raw string as used by an editor.
   """
@@ -174,7 +179,7 @@ scalar Cursor
 """
 A node on an edge.
 """
-interface NodeInterface {
+interface Node {
   uuid: ID!
 }
 
@@ -185,9 +190,9 @@ Provides the cursor to fetch data based on the position of the associated node.
 Specific edge implementations may provide more information about the
 relationship they represent.
 """
-interface EdgeInterface {
+interface Edge {
   cursor: Cursor!
-  node: NodeInterface!
+  node: Node!
 }
 
 # PageInfo deviates from the current Relay spec as in the spec the
@@ -219,11 +224,11 @@ type PageInfo {
 """
 A paginated set of results.
 """
-interface ConnectionInterface {
+interface Connection {
   """
   A list of edges
   """
-  edges: [EdgeInterface!]!
+  edges: [Edge!]!
   """
   Information to aid in pagination
   """
