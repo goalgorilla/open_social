@@ -48,7 +48,7 @@ class FlexibleGroupJoinPermissionAccessCheck implements AccessInterface {
     // Don't interfere if the group isn't a real group.
     $group = $parameters->get('group');
     if (!$group instanceof GroupInterface) {
-      $group = Group:load($group);
+      $group = Group::load($group);
       if (!$group instanceof GroupInterface) {
         return AccessResult::neutral();
       }
