@@ -51,3 +51,12 @@ function social_album_preprocess_node(&$variables) {
     $variables['no_image'] = FALSE;
   }
 }
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function social_album_preprocess_views_view(&$variables) {
+  if ($variables['view']->id() === 'albums') {
+    $variables['#attached']['library'][] = 'social_resource_library/page-resource-search';
+  }
+}

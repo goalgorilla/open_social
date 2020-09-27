@@ -55,20 +55,31 @@ class Node extends NodeBase {
         '#template' => '<div class="teaser__tag">{{ teaser_tag }}</div>',
         '#context' => ['teaser_tag' => $teaser_tag],
       ];
+
+      if (
+        $variables['view_mode'] === 'teaser' &&
+        $node->bundle() === 'album'
+      ) {
+        $variables['label'] = render($variables['label']);
+        $variables['card_link_label'] = $this->t('View album');
+
+        if (views_get_view_result('album', 'embed_cover', $node->id())) {
+          $view = Views::getView('album');
+          $view->setArguments([$node->id()]);
+          $view->execute('embed_overview');
+          $variables['images_count'] = $view->total_rows;
+        }
+      }
     }
     elseif (
       $variables['view_mode'] === 'full' &&
-      $node->bundle() === 'album'
+      $node->bundle() === 'album' &&
+      !views_get_view_result('album', 'embed_cover')
     ) {
-      $view = Views::getView('album');
-      $view->execute('embed_overview');
-
-      if (empty($view->result)) {
-        $variables['link'] = Url::fromRoute(
-          'entity.post.add_form',
-          ['post_type' => 'photo']
-        );
-      }
+      $variables['link'] = Url::fromRoute(
+        'entity.post.add_form',
+        ['post_type' => 'photo']
+      );
     }
   }
 
