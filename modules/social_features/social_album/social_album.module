@@ -57,6 +57,7 @@ function social_album_preprocess_node(&$variables) {
  */
 function social_album_preprocess_views_view(&$variables) {
   if ($variables['view']->id() === 'albums') {
-    $variables['#attached']['library'][] = 'social_resource_library/page-resource-search';
+//    $variables['#attached']['library'][] = 'social_resource_library/page-resource-search';
+    $variables['#attached']['library'][] = 'social_album/social_album_teaser';
   }
 }
