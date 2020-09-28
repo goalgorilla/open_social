@@ -56,19 +56,32 @@ class Node extends NodeBase {
         '#context' => ['teaser_tag' => $teaser_tag],
       ];
 
-      if (
-        $variables['view_mode'] === 'teaser' &&
-        $node->bundle() === 'album'
-      ) {
-        $variables['label'] = render($variables['label']);
-        $variables['card_link_label'] = $this->t('View album');
+      if ($node->bundle() !== 'album') {
+        return;
+      }
 
-        if (views_get_view_result('albums', 'embed_album_cover', $node->id())) {
-          $view = Views::getView('albums');
-          $view->setArguments([$node->id()]);
-          $view->execute('embed_album_overview');
-          $variables['images_count'] = $view->total_rows;
-        }
+      switch ($variables['view_mode']) {
+        case 'hero':
+          $variables['albums'] = Url::fromRoute(
+            'view.albums.page_albums_overview',
+            ['user' => $node->getOwnerId()]
+          );
+
+          $variables['owner'] = $node->getOwner()->getDisplayName();
+          break;
+
+        case 'teaser':
+          $variables['label'] = render($variables['label']);
+          $variables['card_link_label'] = $this->t('View album');
+
+          if (views_get_view_result('albums', 'embed_album_cover', $node->id())) {
+            $view = Views::getView('albums');
+            $view->setArguments([$node->id()]);
+            $view->execute('embed_album_overview');
+            $variables['images_count'] = $view->total_rows;
+          }
+
+          break;
       }
     }
     elseif (
