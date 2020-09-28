@@ -16,7 +16,7 @@ function social_album_entity_extra_field_info() {
     'node' => [
       'album' => [
         'display' => [
-          'images' => [
+          'social_album_images' => [
             'label' => t('Images'),
             'visible' => FALSE,
           ],
@@ -30,8 +30,8 @@ function social_album_entity_extra_field_info() {
  * Implements hook_entity_view().
  */
 function social_album_entity_view(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, $view_mode) {
-  if ($display->getComponent('images')) {
-    $build['images'] = views_embed_view('album', 'embed_overview');
+  if ($display->getComponent('social_album_images')) {
+    $build['social_album_images'] = views_embed_view('album', 'embed_overview');
   }
 }
 

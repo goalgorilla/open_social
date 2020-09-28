@@ -74,7 +74,7 @@ class Node extends NodeBase {
     elseif (
       $variables['view_mode'] === 'full' &&
       $node->bundle() === 'album' &&
-      !views_get_view_result('album', 'embed_cover')
+      !views_get_view_result('album', 'embed_cover', $node->id())
     ) {
       $variables['link'] = Url::fromRoute(
         'entity.post.add_form',
