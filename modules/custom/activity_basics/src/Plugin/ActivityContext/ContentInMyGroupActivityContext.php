@@ -2,7 +2,6 @@
 
 namespace Drupal\activity_basics\Plugin\ActivityContext;
 
-use Drupal\activity_creator\ActivityFactory;
 use Drupal\activity_creator\Plugin\ActivityContextBase;
 use Drupal\Component\Plugin\Exception\PluginNotFoundException;
 use Drupal\Core\Entity\EntityInterface;
@@ -27,7 +26,7 @@ class ContentInMyGroupActivityContext extends ActivityContextBase {
 
     // We only know the context if there is a related object.
     if (isset($data['related_object']) && !empty($data['related_object'])) {
-      $referenced_entity = ActivityFactory::getActivityRelatedEntity($data);
+      $referenced_entity = $this->activityFactory->getActivityRelatedEntity($data);
       $owner_id = '';
 
       if (isset($referenced_entity['target_type']) && $referenced_entity['target_type'] === 'post') {
