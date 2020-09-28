@@ -71,13 +71,13 @@ class SocialAlbumCountAndAddBlock extends BlockBase implements ContainerFactoryP
       return [];
     }
 
-    $view = Views::getView($properties['view']['id']);
+    $view = Views::getView('albums');
 
-    if ($this->routeMatch->getRouteName() === 'view.albums.page_overview') {
+    if ($this->routeMatch->getRouteName() === 'view.albums.page_albums_overview') {
       $view->setArguments([$this->routeMatch->getRawParameter('user')]);
     }
 
-    $view->execute($properties['view']['display']);
+    $view->execute($properties['display']);
 
     return [
       'count' => [
@@ -104,11 +104,7 @@ class SocialAlbumCountAndAddBlock extends BlockBase implements ContainerFactoryP
    * {@inheritdoc}
    */
   protected function blockAccess(AccountInterface $account) {
-    if ($this->getProperties()) {
-      return AccessResult::allowed();
-    }
-
-    return AccessResult::forbidden();
+    return AccessResult::allowedIf($this->getProperties() !== NULL);
   }
 
   /**
@@ -121,10 +117,7 @@ class SocialAlbumCountAndAddBlock extends BlockBase implements ContainerFactoryP
   protected function getProperties() {
     $items = [
       'entity.node.canonical' => [
-        'view' => [
-          'id' => 'album',
-          'display' => 'embed_overview',
-        ],
+        'display' => 'embed_album_overview',
         'count' => [
           'singular' => '@count image',
           'plural' => '@count images',
@@ -137,11 +130,8 @@ class SocialAlbumCountAndAddBlock extends BlockBase implements ContainerFactoryP
           ],
         ],
       ],
-      'view.albums.page_overview' => [
-        'view' => [
-          'id' => 'albums',
-          'display' => 'page_overview',
-        ],
+      'view.albums.page_albums_overview' => [
+        'display' => 'page_albums_overview',
         'count' => [
           'singular' => '@count album',
           'plural' => '@count albums',

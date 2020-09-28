@@ -63,10 +63,10 @@ class Node extends NodeBase {
         $variables['label'] = render($variables['label']);
         $variables['card_link_label'] = $this->t('View album');
 
-        if (views_get_view_result('album', 'embed_cover', $node->id())) {
-          $view = Views::getView('album');
+        if (views_get_view_result('albums', 'embed_album_cover', $node->id())) {
+          $view = Views::getView('albums');
           $view->setArguments([$node->id()]);
-          $view->execute('embed_overview');
+          $view->execute('embed_album_overview');
           $variables['images_count'] = $view->total_rows;
         }
       }
@@ -74,7 +74,7 @@ class Node extends NodeBase {
     elseif (
       $variables['view_mode'] === 'full' &&
       $node->bundle() === 'album' &&
-      !views_get_view_result('album', 'embed_cover', $node->id())
+      !views_get_view_result('albums', 'embed_album_cover', $node->id())
     ) {
       $variables['link'] = Url::fromRoute(
         'entity.post.add_form',

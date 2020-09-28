@@ -31,7 +31,7 @@ function social_album_entity_extra_field_info() {
  */
 function social_album_entity_view(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, $view_mode) {
   if ($display->getComponent('social_album_images')) {
-    $build['social_album_images'] = views_embed_view('album', 'embed_overview');
+    $build['social_album_images'] = views_embed_view('albums', 'embed_album_overview');
   }
 }
 
@@ -45,9 +45,9 @@ function social_album_preprocess_node(&$variables) {
   if (
     $node->bundle() === 'album' &&
     $variables['view_mode'] === 'teaser' &&
-    views_get_view_result('album', 'embed_cover', $node->id())
+    views_get_view_result('albums', 'embed_album_cover', $node->id())
   ) {
-    $variables['node_image'] = views_embed_view('album', 'embed_cover', $node->id());
+    $variables['node_image'] = views_embed_view('albums', 'embed_album_cover', $node->id());
     $variables['no_image'] = FALSE;
   }
 }
@@ -56,8 +56,13 @@ function social_album_preprocess_node(&$variables) {
  * Implements hook_preprocess_HOOK().
  */
 function social_album_preprocess_views_view(&$variables) {
-  if ($variables['view']->id() === 'albums') {
-//    $variables['#attached']['library'][] = 'social_resource_library/page-resource-search';
+  /** @var \Drupal\views\ViewExecutable $view */
+  $view = $variables['view'];
+
+  if (
+    $view->id() === 'albums' &&
+    $view->current_display === 'page_albums_overview'
+  ) {
     $variables['#attached']['library'][] = 'social_album/social_album_teaser';
   }
 }
