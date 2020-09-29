@@ -51,6 +51,15 @@ class ProfileSchemaExtension extends SdlSchemaExtensionPluginBase {
         ->map('value', $builder->fromParent())
     );
 
+    $registry->addFieldResolver('Profile', 'avatar',
+      // TODO: Replace with simplified form once
+      //   https://github.com/drupal-graphql/graphql/pull/1089 lands.
+      // $builder->fromPath('entity:profile', 'field_profile_image.value')
+      $builder->produce('field')
+        ->map('entity', $builder->fromParent())
+        ->map('field', $builder->fromValue('field_profile_image'))
+    );
+
     $registry->addFieldResolver('Profile', 'nickname',
       // TODO: Replace with simplified form once
       //   https://github.com/drupal-graphql/graphql/pull/1089 lands.

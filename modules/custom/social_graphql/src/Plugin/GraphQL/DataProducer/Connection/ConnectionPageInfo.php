@@ -7,6 +7,8 @@ use Drupal\graphql\Plugin\GraphQL\DataProducer\DataProducerPluginBase;
 use Drupal\social_graphql\Wrappers\EntityConnection;
 
 /**
+ * Produces the page info from a connection object.
+ *
  * @DataProducer(
  *   id = "connection_page_info",
  *   name = @Translation("Connection page info"),
@@ -24,9 +26,13 @@ use Drupal\social_graphql\Wrappers\EntityConnection;
 class ConnectionPageInfo extends DataProducerPluginBase implements DataProducerPluginCachingInterface {
 
   /**
+   * Resolves the request.
+   *
    * @param \Drupal\social_graphql\Wrappers\EntityConnection $connection
+   *   The connection to return the page info for.
    *
    * @return mixed
+   *   The page info for the connection.
    */
   public function resolve(EntityConnection $connection) {
     return $connection->pageInfo();

@@ -91,6 +91,8 @@ class GraphQLUsersEndpointTest extends SocialGraphQLTestBase {
    *
    * This test does not test the validity of the resolved data but merely that
    * the API contract is adhered to.
+   *
+   * TODO: This test does not test the profile image functionality.
    */
   public function testUserProfileFieldsPresence() : void {
     // Test as the admin users, this allows us to test all the fields that are

@@ -166,6 +166,55 @@ type TextFormat {
 }
 
 ################################################################################
+#                                Media Types                                   #
+#                                                                              #
+# Media types provide the tools needed to manage media such as (video, image,  #
+# audio and files).                                                            #
+################################################################################
+"""
+Media managed by the Open Social platform.
+"""
+# Unfortunately webonyx/graphql-php does not yet support interfaces implementing
+# other interfaces which was added to v15 of the GraphQL.
+# See https://github.com/webonyx/graphql-php/issues/728.
+interface Media { #}implements NodeInterface {
+  uuid: ID!
+  """
+  The url at which the original media can be downloaded.
+  """
+  url: Url!
+}
+
+type Image implements Media & Node {
+  uuid: ID!
+  """
+  The url at which the original image can be downloaded.
+
+  Applications requesting the image for display to users should use one of the
+  dedicated selectors to select a suitable image format instead.
+  """
+  url: Url!
+  """
+  Image Title
+  """
+  title: String!
+  """
+  Alt-text
+
+  A description of the image that can be displayed as alternative when the image
+  can't be loaded or to users who are unable to see the image itself.
+  """
+  alt: String!
+  # TODO: Implement proper resizing support based on the requests from the
+  #   client. Ideally implement something like imageSharp which is used for
+  #   Gatsby.js. A good background explanation is can be found at:
+  #   https://dev.to/alexabruck/understanding-gatsby-image-part-1-graphql-generated-files-markup-2ehd
+}
+
+# TODO: File and Video can be implemented here if and when we get support for
+#   these using the Drupal media module or another 3rd party service.
+
+################################################################################
 #                         Data Fetching Interfaces                             #
 #                                                                              #
 # All data fetching operations in Open Social should implement the Relay       #
