@@ -12,6 +12,10 @@ use GraphQL\Deferred;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
+ * Loads the default profile for a user.
+ *
+ * On many Open Social platforms there is only one profile.
+ *
  * @DataProducer(
  *   id = "default_profile_load",
  *   name = @Translation("Load default profile"),
@@ -93,7 +97,9 @@ class DefaultProfileLoad extends DataProducerPluginBase implements ContainerFact
    * @param \Drupal\Core\Cache\RefinableCacheableDependencyInterface $metadata
    *   Cacheability metadata.
    *
-   * @return \GraphQL\Deferred|array
+   * @return \GraphQL\Deferred|null
+   *   A promise that resolves to the loaded profile or null if the user does
+   *   not have a published profile.
    */
   public function resolve(AccountInterface $account, RefinableCacheableDependencyInterface $metadata) {
     $storage = $this->entityTypeManager->getStorage('profile');
@@ -114,7 +120,7 @@ class DefaultProfileLoad extends DataProducerPluginBase implements ContainerFact
     $result = $query->execute();
 
     if (empty($result)) {
-      return [];
+      return NULL;
     }
 
     $resolver = $this->entityBuffer->add('profile', reset($result));

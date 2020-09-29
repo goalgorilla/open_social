@@ -22,4 +22,5 @@ interface ConnectionInterface {
    *   A promise that resolves to an array of EntityEdge instances.
    */
   public function edges();
+
 }

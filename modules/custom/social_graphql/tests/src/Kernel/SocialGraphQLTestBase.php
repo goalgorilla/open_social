@@ -122,11 +122,11 @@ abstract class SocialGraphQLTestBase extends GraphQLTestBase {
    *   The class used to create Edge objects from nodes (EntityEdge by
    *   default).
    *
-   * @return \Iterator
-   *   An iterator that yields to arrays with two values: a filter query for the
-   *   GraphQL endpoint under test and the expected nodes that are selected.
+   * @return \Generator
+   *   Yields arrays with two values: a filter query for the GraphQL endpoint
+   *   under test and the expected nodes that are selected.
    */
-  protected function getPaginationTestCasesFor(array $nodes, string $edgeClass = EntityEdge::class) {
+  protected function getPaginationTestCasesFor(array $nodes, string $edgeClass = EntityEdge::class): ?\Generator {
     assert(count($nodes) >= 10, "The array of nodes provided to " . __FUNCTION__ . " must have at least 10 entries to perform pagination testing.");
 
     $last = count($nodes) - 1;

@@ -56,6 +56,13 @@ class OpenSocialBaseSchema extends SdlSchemaPluginBase {
   protected function getBaseSchema(ResolverRegistryInterface $registry) {
     $builder = new ResolverBuilder();
 
+    // TextFormat fields.
+    $registry->addFieldResolver('TextFormat', 'name',
+      // We currently receive the name of the text format from other resolvers
+      // so we can pass that along.
+      $builder->fromParent()
+    );
+
     // FormattedText fields.
     $registry->addFieldResolver('FormattedText', 'format',
       // TODO: Replace with simplified form once
@@ -86,6 +93,40 @@ class OpenSocialBaseSchema extends SdlSchemaPluginBase {
         ->map('type', $builder->fromValue('text'))
         ->map('path', $builder->fromValue('processed'))
         ->map('value', $builder->fromParent())
+    );
+
+    // Media fields.
+    // TODO: Solve this:
+    // An issue is that we would like to get the media item from the parent in
+    // a generic way so that we can get the URL both from direct media queries
+    // e.g. for a media overview, as well as through an association in a field
+    // of an entity.
+    // The problem comes where the image field as association is an entity
+    // reference with metadata, so for the alt text is stored on this field.
+    // Entities loaded for an overview would not have this information.
+    $registry->addFieldResolver('Media', 'uuid',
+      $builder->produce('media_bridge')
+        ->map('value', $builder->fromParent())
+        ->map('field', $builder->fromValue('uuid'))
+    );
+
+    $registry->addFieldResolver('Media', 'url',
+      $builder->produce('media_bridge')
+        ->map('value', $builder->fromParent())
+        ->map('field', $builder->fromValue('url'))
+    );
+
+    // Image fields.
+    $registry->addFieldResolver('Image', 'title',
+      $builder->produce('media_bridge')
+        ->map('value', $builder->fromParent())
+        ->map('field', $builder->fromValue('title'))
+    );
+
+    $registry->addFieldResolver('Image', 'alt',
+      $builder->produce('media_bridge')
+        ->map('value', $builder->fromParent())
+        ->map('field', $builder->fromValue('alt'))
     );
 
     // Connection fields.

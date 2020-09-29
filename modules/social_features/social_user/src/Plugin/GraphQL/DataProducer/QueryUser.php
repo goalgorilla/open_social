@@ -7,6 +7,8 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\social_graphql\Plugin\GraphQL\DataProducer\Entity\QueryEntityBase;
 
 /**
+ * Queries the users on the platform.
+ *
  * @DataProducer(
  *   id = "query_user",
  *   name = @Translation("Query a list of users"),
@@ -52,6 +54,8 @@ class QueryUser extends QueryEntityBase {
   const MAX_LIMIT = 100;
 
   /**
+   * Resolves the request to the requested values.
+   *
    * @param int|null $first
    *   Fetch the first X results.
    * @param string|null $after
