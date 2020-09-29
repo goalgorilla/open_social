@@ -66,3 +66,14 @@ function social_album_preprocess_views_view(&$variables) {
     $variables['#attached']['library'][] = 'social_album/social_album_teaser';
   }
 }
+
+/**
+ * Implements hook_ENTITY_TYPE_insert().
+ */
+function social_album_post_insert(EntityInterface $entity) {
+  if ($entity->bundle() === 'photo' && !$entity->field_album->isEmpty()) {
+    \Drupal::service('cache_tags.invalidator')->invalidateTags([
+      'node:' . $entity->field_album->entity->id(),
+    ]);
+  }
+}
