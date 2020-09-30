@@ -23,8 +23,16 @@
 {% block rows %}
   {{ attach_library('socialbase/photoswipe.image') }}
 
-  <div class="photoswipe-gallery" itemscope itemtype="http://schema.org/ImageGallery">
-    {{ parent() }}
+  <div class="photoswipe-gallery" itemscope itemtype="http://schema.org/ImageGallery" data-item-class="photoswipe-gallery-item">
+    {% for index, row in rows %}
+      <div{{ row.attributes }}>
+        {{ row.content }}
+
+        {% if index == 0 %}
+          <div class="badge badge-secondary">{{ 'Cover image'|t }}</div>
+        {% endif %}
+      </div>
+    {% endfor %}
   </div>
 
   <div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
