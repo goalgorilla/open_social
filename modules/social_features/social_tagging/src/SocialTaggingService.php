@@ -111,10 +111,25 @@ class SocialTaggingService {
   public function getCategories() {
     // Define as array.
     $options = [];
+
+    // Get the site's current language.
+    $current_lang = $this->languageManager->getCurrentLanguage()->getId();
+
     // Fetch main categories.
-    foreach ($this->termStorage->loadTree('social_tagging', 0, 1, FALSE, $this->languageManager->getCurrentLanguage()->getId()) as $category) {
-      $options[$category->tid] = $category->name;
+    // If the website is multilingual, we want to first check for the terms
+    // in current language. At the moment, users do not add proper language to
+    // vocabulary terms which may result in return of empty array on loadTree()
+    // function. So, we want to check for the terms also in default language if
+    // we don't find terms in current language.
+    if (!empty($current_lang_terms = $this->termStorage->loadTree('social_tagging', 0, 1, FALSE, $current_lang))) {
+      $options = $this->prepareTermOptions($current_lang_terms);
     }
+    // Add a fallback to default language of the website if the current
+    // language has no terms.
+    elseif (!empty($default_lang_terms = $this->termStorage->loadTree('social_tagging', 0, 1, FALSE))) {
+      $options = $this->prepareTermOptions($default_lang_terms);
+    }
+
     // Return array.
     return $options;
   }
@@ -131,10 +146,19 @@ class SocialTaggingService {
   public function getChildren($category) {
     // Define as array.
     $options = [];
-    // Fetch main categories.
-    foreach ($this->termStorage->loadTree('social_tagging', $category, 1, FALSE, $this->languageManager->getCurrentLanguage()->getId()) as $category) {
-      $options[$category->tid] = $category->name;
+
+    // Get the site's current language.
+    $current_lang = $this->languageManager->getCurrentLanguage()->getId();
+
+    if (!empty($current_lang_terms = $this->termStorage->loadTree('social_tagging', $category, 1, FALSE, $current_lang))) {
+      $options = $this->prepareTermOptions($current_lang_terms);
     }
+    // Add a fallback to default language of the website if the current
+    // language has no terms.
+    elseif (!empty($default_lang_terms = $this->termStorage->loadTree('social_tagging', $category, 1, FALSE))) {
+      $options = $this->prepareTermOptions($default_lang_terms);
+    }
+
     // Return array.
     return $options;
   }
@@ -212,6 +236,24 @@ class SocialTaggingService {
 
     // Return the tree.
     return $tree;
+  }
+
+  /**
+   * Helper function to prepare term options.
+   *
+   * @param array $terms
+   *   Array of terms.
+   *
+   * @return array
+   *   Returns a list of terms options.
+   */
+  private function prepareTermOptions(array $terms) {
+    $options = [];
+    foreach ($terms as $category) {
+      $options[$category->tid] = $category->name;
+    }
+
+    return $options;
   }
 
 }
