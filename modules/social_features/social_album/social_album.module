@@ -71,9 +71,23 @@ function social_album_preprocess_views_view(&$variables) {
  * Implements hook_ENTITY_TYPE_insert().
  */
 function social_album_post_insert(EntityInterface $entity) {
+  /** @var \Drupal\social_post\Entity\PostInterface $entity */
   if ($entity->bundle() === 'photo' && !$entity->field_album->isEmpty()) {
     \Drupal::service('cache_tags.invalidator')->invalidateTags([
       'node:' . $entity->field_album->entity->id(),
+      'user:' . $entity->getOwnerId(),
+    ]);
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_insert().
+ */
+function social_album_node_insert(EntityInterface $entity) {
+  /** @var \Drupal\node\NodeInterface $entity */
+  if ($entity->bundle() === 'album') {
+    \Drupal::service('cache_tags.invalidator')->invalidateTags([
+      'user:' . $entity->getOwnerId(),
     ]);
   }
 }

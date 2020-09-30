@@ -4,6 +4,7 @@ namespace Drupal\social_album\Plugin\Block;
 
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Block\BlockBase;
+use Drupal\Core\Cache\Cache;
 use Drupal\Core\Link;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
@@ -72,11 +73,7 @@ class SocialAlbumCountAndAddBlock extends BlockBase implements ContainerFactoryP
     }
 
     $view = Views::getView('albums');
-
-    if ($this->routeMatch->getRouteName() === 'view.albums.page_albums_overview') {
-      $view->setArguments([$this->routeMatch->getRawParameter('user')]);
-    }
-
+    $view->setArguments([$this->routeMatch->getRawParameter($properties['type'])]);
     $view->execute($properties['display']);
 
     return [
@@ -108,6 +105,33 @@ class SocialAlbumCountAndAddBlock extends BlockBase implements ContainerFactoryP
   }
 
   /**
+   * {@inheritdoc}
+   */
+  public function getCacheContexts() {
+    $cache_contexts = parent::getCacheContexts();
+
+    if ($this->getProperties()) {
+      $cache_contexts = Cache::mergeContexts($cache_contexts, ['url']);
+    }
+
+    return $cache_contexts;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getCacheTags() {
+    $tags = parent::getCacheTags();
+
+    if ($properties = $this->getProperties()) {
+      $type = $properties['type'];
+      $tags = Cache::mergeTags($tags, [$type . ':' . $this->routeMatch->getRawParameter($type)]);
+    }
+
+    return $tags;
+  }
+
+  /**
    * Returns block properties for the current route.
    *
    * @return array|null
@@ -117,6 +141,7 @@ class SocialAlbumCountAndAddBlock extends BlockBase implements ContainerFactoryP
   protected function getProperties() {
     $items = [
       'entity.node.canonical' => [
+        'type' => 'node',
         'display' => 'embed_album_overview',
         'count' => [
           'singular' => '@count image',
@@ -131,6 +156,7 @@ class SocialAlbumCountAndAddBlock extends BlockBase implements ContainerFactoryP
         ],
       ],
       'view.albums.page_albums_overview' => [
+        'type' => 'user',
         'display' => 'page_albums_overview',
         'count' => [
           'singular' => '@count album',
