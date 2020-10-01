@@ -40,16 +40,31 @@
 {# Fields in the event teaser need to render without a div, because it is a child element of a tag that cannot have a div such as an anchor or paragraph #}
 {{ attach_library('socialbase/photoswipe.image') }}
 
-<div class="photoswipe-gallery" itemscope itemtype="http://schema.org/ImageGallery">
-  {% for item in items %}
-    <a href="{{ file_url(item.content['#item'].entity.uri.value) }}"
-       data-med="{{ file_url(item.content['#item'].entity.uri.value) }}"
-       data-med-size="{{ item.content['#item'].width }}x{{ item.content['#item'].height }}"
-       data-size="{{ item.content['#item'].width }}x{{ item.content['#item'].height }}">
-      {{ item.content }}
-    </a>
+<div class="photoswipe-gallery" itemscope itemtype="http://schema.org/ImageGallery" data-item-class="photoswipe-gallery-item">
+  {% for index, item in items %}
+    <div class="post-with-image">
+      <a href="{{ file_url(item.content['#item'].entity.uri.value) }}"
+         class="post-index-{{ index }} photoswipe-gallery-item"
+         data-med="{{ file_url(item.content['#item'].entity.uri.value) }}"
+         data-med-size="{{ item.content['#item'].width }}x{{ item.content['#item'].height }}"
+         data-size="{{ item.content['#item'].width }}x{{ item.content['#item'].height }}">
+        {{ item.content }}
+      </a>
+
+      <div class="post-photoswipe-wrapper post-index-{{ index }}">
+        <div class="wrapper">
+          <div class="post_message">
+            <div class="post_header">
+              {{ 'Images posted in album' }} <b>{{ 'Trip to Amsterdam' }}</b>
+            </div>
+            {{ post }}
+          </div>
+        </div>
+      </div>
+    </div>
   {% endfor %}
 </div>
+
 {% if post %}
   <div class="pswp pswp--with-gallery" tabindex="-1" role="dialog" aria-hidden="true">
 {% else %}
@@ -81,17 +96,6 @@
         <div class="pswp__caption">
           <div class="pswp__caption__center">
           </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="post-photoswipe-wrapper">
-      <div class="wrapper">
-        <div class="post_message">
-          <div class="post_header">
-            {{ 'Images posted in album' }} <b>{{ 'Trip to Amsterdam' }}</b>
-          </div>
-          {{ post }}
         </div>
       </div>
     </div>
