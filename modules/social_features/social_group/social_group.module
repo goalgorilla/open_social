@@ -1244,9 +1244,12 @@ function _social_group_get_member_profile(GroupContent $group_content) {
 }
 
 /**
- * Get current Group entity from the route.
+ * Gets current Group entity from the route.
  *
- * @return \Drupal\group\Entity\GroupInterface
+ * @param \Drupal\node\NodeInterface|null $node
+ *   (optional) The node object or NULL.
+ *
+ * @return \Drupal\group\Entity\GroupInterface|null
  *   Returns the group object.
  */
 function _social_group_get_current_group($node = NULL) {
@@ -1277,7 +1280,7 @@ function _social_group_get_current_group($node = NULL) {
   }
   else {
     $node = is_object($node) ? $node : \Drupal::routeMatch()->getParameter('node');
-    if (is_object($node) && !is_null($node)) {
+    if (is_object($node)) {
       $node_entity = [
         'target_type' => 'node',
         'target_id' => $node->id(),
@@ -1294,7 +1297,7 @@ function _social_group_get_current_group($node = NULL) {
   // If we have a cache key we store the value.
   if (!is_null($nid)) {
     // Translate NULL to FALSE so that isset works.
-    $cache[$nid] = isset($group) ? $group : FALSE;
+    $cache[$nid] = $group ?? FALSE;
   }
 
   return $group;

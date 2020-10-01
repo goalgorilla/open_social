@@ -156,13 +156,13 @@ function social_group_flexible_group_form_social_group_add_alter(&$form, FormSta
 /**
  * Check if a user can join the group directly.
  *
- * @param \Drupal\group\Entity\Group $group
+ * @param \Drupal\group\Entity\GroupInterface $group
  *   The group we are checking.
  *
  * @return bool
  *   TRUE when users can join.
  */
-function social_group_flexible_group_can_join_directly(Group $group) {
+function social_group_flexible_group_can_join_directly(GroupInterface $group) {
   $join_methods = $group->get('field_group_allowed_join_method')->getValue();
 
   if (!in_array('direct', array_column($join_methods, 'value'), FALSE)) {
@@ -194,13 +194,13 @@ function social_group_flexible_group_can_be_added(Group $group) {
 /**
  * Check if public is enabled as visibility options.
  *
- * @param \Drupal\group\Entity\Group $group
+ * @param \Drupal\group\Entity\GroupInterface $group
  *   The group we are checking.
  *
  * @return bool
  *   TRUE when users can join.
  */
-function social_group_flexible_group_public_enabled(Group $group) {
+function social_group_flexible_group_public_enabled(GroupInterface $group) {
   $visibility_options = $group->get('field_group_allowed_visibility')->getValue();
 
   if (!in_array('public', array_column($visibility_options, 'value'), FALSE)) {
@@ -213,13 +213,13 @@ function social_group_flexible_group_public_enabled(Group $group) {
 /**
  * Check if community is enabled as visibility options.
  *
- * @param \Drupal\group\Entity\Group $group
+ * @param \Drupal\group\Entity\GroupInterface $group
  *   The group we are checking.
  *
  * @return bool
  *   TRUE when users can join.
  */
-function social_group_flexible_group_community_enabled(Group $group) {
+function social_group_flexible_group_community_enabled(GroupInterface $group) {
   $visibility_options = $group->get('field_group_allowed_visibility')->getValue();
 
   if (!in_array('community', array_column($visibility_options, 'value'), FALSE)) {

@@ -72,6 +72,7 @@ function _social_landing_page_get_permissions($role) {
     'override landing_page revision option',
     'override landing_page sticky option',
     'view node.landing_page.field_content_visibility:group content',
+    'link to any page',
   ]);
 
   // Site manager.
@@ -655,5 +656,14 @@ function social_landing_page_update_8808() {
   // which provides a featured view mode to be used on landing pages.
   if (\Drupal::moduleHandler()->moduleExists('social_book')) {
     \Drupal::service('module_installer')->install(['social_book_featured']);
+  }
+}
+
+/**
+ * Allow using any URLs in link fields by CM+.
+ */
+function social_landing_page_update_8809() {
+  foreach (['contentmanager', 'sitemanager'] as $role) {
+    user_role_grant_permissions($role, ['link to any page']);
   }
 }
