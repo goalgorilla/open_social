@@ -34,18 +34,22 @@ function social_event_addtocal_node_view(array &$build, NodeInterface $node, Ent
     return;
   }
 
-  // Update the 'Add to calendar' field rendering.
-  $build['field_event_addtocal'] = [
-    '#type' => 'dropbutton',
-    '#attributes' => [
-      'class' => ['add-to-calendar'],
-      'no-split' => [
-        'title' => t('Add to Calendar'),
-        'alignment' => 'right',
+  // Get 'Add to calendar' configuration.
+  $addtocal_config = Drupal::config('social_event_addtocal.settings');
+  if ($addtocal_config->get('enable_add_to_calendar')) {
+    // Update the 'Add to calendar' field rendering.
+    $build['field_event_addtocal'] = [
+      '#type' => 'dropbutton',
+      '#attributes' => [
+        'class' => ['add-to-calendar'],
+        'no-split' => [
+          'title' => t('Add to Calendar'),
+          'alignment' => 'right',
+        ],
       ],
-    ],
-    '#links' => _social_event_addtocal_get_links($node),
-  ];
+      '#links' => _social_event_addtocal_get_links($node),
+    ];
+  }
 }
 
 /**
@@ -61,28 +65,34 @@ function _social_event_addtocal_get_links(NodeInterface $node) {
   // Links for Add to calendar button.
   $links = [];
 
+  // Get 'Add to calendar' configuration.
+  $addtocal_config = Drupal::config('social_event_addtocal.settings');
+
   // Get plugin instance and set links array.
   /** @var \Drupal\social_event_addtocal\Plugin\SocialAddToCalendarManager $social_add_to_calendar */
   $social_add_to_calendar = Drupal::service('plugin.manager.social_add_to_calendar');
 
-  // Get all calendar plugins.
-  $addtocal_definitions = $social_add_to_calendar->getDefinitions();
+  // Get allowed calendars.
+  $allowed_calendars = $addtocal_config->get('allowed_calendars');
 
   // Set links for dropdown.
-  foreach ($addtocal_definitions as $addtocal_definition) {
-    /** @var \Drupal\social_event_addtocal\Plugin\SocialAddToCalendarInterface $calendar */
-    $calendar = $social_add_to_calendar->createInstance($addtocal_definition['id']);
+  foreach ($allowed_calendars as $allowed_calendar) {
+    // Check if calendar plugin enabled in config.
+    if ($allowed_calendar) {
+      /** @var \Drupal\social_event_addtocal\Plugin\SocialAddToCalendarInterface $calendar */
+      $calendar = $social_add_to_calendar->createInstance($allowed_calendar);
 
-    // Exit if calendar plugin nor exist.
-    if (!$calendar instanceof SocialAddToCalendarInterface) {
-      continue;
+      // Exit if calendar plugin nor exist.
+      if (!$calendar instanceof SocialAddToCalendarInterface) {
+        continue;
+      }
+
+      // Set link for plugin instance.
+      $links[$allowed_calendar] = [
+        'title' => $calendar->getName(),
+        'url' => $calendar->generateUrl($node),
+      ];
     }
-
-    // Set link for plugin instance.
-    $links[$addtocal_definition['id']] = [
-      'title' => $calendar->getName(),
-      'url' => $calendar->generateUrl($node),
-    ];
   }
 
   return $links;
