@@ -87,6 +87,8 @@ class SocialAlbumOptionsSelectWidget extends OptionsSelectWidget {
         $node->save();
 
         $element['#value'] = $node->id();
+
+        $form_state->set('album', TRUE);
       }
       else {
         $element['#value'] = '_none';

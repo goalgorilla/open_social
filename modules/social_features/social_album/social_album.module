@@ -7,6 +7,8 @@
 
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 
 /**
  * Implements hook_entity_extra_field_info().
@@ -89,5 +91,20 @@ function social_album_node_insert(EntityInterface $entity) {
     \Drupal::service('cache_tags.invalidator')->invalidateTags([
       'user:' . $entity->getOwnerId(),
     ]);
+  }
+}
+
+/**
+ * Implements hook_social_post_message_alter().
+ */
+function social_album_social_post_message_alter(TranslatableMarkup &$message, FormStateInterface $form_state) {
+  if ($form_state->has('album')) {
+    $post = $form_state->getFormObject()->getEntity();
+
+    if (!$post->field_album->isEmpty()) {
+      $message = t('You have posted successfully in your new album @link', [
+        '@link' => $post->field_album->entity->toLink()->toString(),
+      ]);
+    }
   }
 }
