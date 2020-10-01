@@ -58,7 +58,16 @@ function social_post_photo_preprocess_field__field_post_image(&$variables) {
   $post = $variables['element']['#object'];
 
   if ($post instanceof PostInterface && $post->hasField('field_post')) {
-    $view_builder = Drupal::entityTypeManager()->getViewBuilder('post')->view($post, 'album');
-    $variables['post'] = $view_builder;
+    $variables['post'] = [
+      '#create_placeholder' => TRUE,
+      '#lazy_builder' => [
+        'social_post_photo.lazy_renderer:getPost',
+        [
+          $post->getEntityTypeId(),
+          $post->id(),
+          'album',
+        ],
+      ],
+    ];
   }
 }

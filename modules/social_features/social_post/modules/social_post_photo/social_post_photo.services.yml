@@ -1,5 +1,9 @@
 services:
   social_post_photo.override:
-    class: \Drupal\social_post_photo\SocialPostPhotoConfigOverride
+    class: Drupal\social_post_photo\SocialPostPhotoConfigOverride
     tags:
       - {name: config.factory.override, priority: 5}
+
+  social_post_photo.lazy_renderer:
+    class: Drupal\social_post_photo\LazyRenderer
+    arguments: ['@entity_type.manager']
