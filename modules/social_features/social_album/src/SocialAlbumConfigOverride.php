@@ -51,7 +51,7 @@ class SocialAlbumConfigOverride implements ConfigFactoryOverrideInterface {
             'weight' => 2,
             'settings' => [],
             'third_party_settings' => [],
-            'type' => 'options_select',
+            'type' => 'social_album_options_select',
             'region' => 'content',
           ],
         ],
