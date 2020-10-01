@@ -78,14 +78,19 @@ class SocialAlbumOptionsSelectWidget extends OptionsSelectWidget {
       $element['#value'] === '_add' &&
       ($title = $form_state->getValue([$field, 'title']))
     ) {
-      $node = \Drupal::entityTypeManager()->getStorage('node')->create([
-        'type' => 'album',
-        'title' => $title,
-      ]);
+      if ($form_state->getTriggeringElement()['#name'] === 'op') {
+        $node = \Drupal::entityTypeManager()->getStorage('node')->create([
+          'type' => 'album',
+          'title' => $title,
+        ]);
 
-      $node->save();
+        $node->save();
 
-      $element['#value'] = $node->id();
+        $element['#value'] = $node->id();
+      }
+      else {
+        $element['#value'] = '_none';
+      }
     }
 
     parent::validateElement($element, $form_state);
