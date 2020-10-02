@@ -99,7 +99,7 @@ function social_group_group_type_permission_check() {
   }
 
   // Otherwise return true when we are able to edit the current group type.
-  return TRUE;
+  return ($group instanceof GroupInterface && $user->hasPermission('edit group types'));
 }
 
 /**
