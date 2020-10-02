@@ -538,6 +538,7 @@
 @include for-tablet-landscape-up {
 
   .search-take-over {
+    display: none;
     height: 50px;
     position: fixed;
     top: 20%;
@@ -545,7 +546,6 @@
     width: 100%;
     z-index: $zindex-modal;
     pointer-events: none;
-    opacity: 0;
     transition: all 0.3s ease-in-out;
 
     .form-group {
@@ -623,7 +623,7 @@
     overflow: hidden;
 
     .search-take-over {
-      opacity: 1;
+      display: initial;
       pointer-events: all;
     }
 
