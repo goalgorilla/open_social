@@ -9,6 +9,7 @@ use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\social_album\Form\SocialAlbumPostForm;
 
 /**
  * Implements hook_entity_extra_field_info().
@@ -106,5 +107,36 @@ function social_album_social_post_message_alter(TranslatableMarkup &$message, Fo
         '@link' => $post->field_album->entity->toLink()->toString(),
       ]);
     }
+  }
+}
+
+/**
+ * Implements hook_entity_type_alter().
+ */
+function social_album_entity_type_alter(array &$entity_types) {
+  /** @var \Drupal\Core\Entity\EntityTypeInterface[] $entity_types */
+  $entity_types['post']->setFormClass('album', SocialAlbumPostForm::class);
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function social_album_form_node_album_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  $form['actions']['submit']['#submit'][] = '_social_album_create_post';
+}
+
+/**
+ * Open post creation form after saving the album node.
+ *
+ * @param array $form
+ *   An associative array containing the structure of the form.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   The current state of the form.
+ */
+function _social_album_create_post(array $form, FormStateInterface $form_state) {
+  if ($form_state->getRedirect()) {
+    $form_state->setRedirect('social_album.post', [
+      'node' => $form_state->getFormObject()->getEntity()->id(),
+    ]);
   }
 }
