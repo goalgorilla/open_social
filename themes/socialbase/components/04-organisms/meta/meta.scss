@@ -51,30 +51,46 @@
 
 .meta-engage {
   display: flex;
-  margin-bottom: 1rem;
   flex-wrap: wrap;
+  justify-content: space-between;
 
-  .badge {
+  @include for-tablet-landscape-down {
+    flex-direction: column;
+  }
+
+  .badge + .badge,
+  .meta-engage--buttons > * + * {
+    margin-left: 5px;
+  }
+  .meta-engage--buttons {
     margin-right: 5px;
   }
 
-  @include for-tablet-portrait-up {
-    flex-wrap: nowrap;
-    margin-bottom: 2rem;
+  .btn {
+    margin-bottom: 3px;
+
+    @include for-tablet-landscape-down {
+      .btn:first-child {
+        margin-left: 0;
+      }
+    }
   }
-}
 
-// put the button on the right side
-.meta-follow {
-  margin-right: 0;
-  margin-left: auto;
-  flex-basis: 100%;
-  margin-bottom: 1rem;
+  > * {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+
+  .meta-engage--buttons {
+    @include for-tablet-landscape-up {
+      order: 1;
+    }
+  }
 
   @include for-tablet-portrait-up {
-    flex-basis: auto;
-    order: 10;
-    margin-bottom: 0;
+    margin-bottom: 1.5rem;
   }
 }
 
