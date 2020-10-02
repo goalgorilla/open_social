@@ -816,9 +816,11 @@ function _social_group_inform_group_type_selection() {
  */
 function _social_group_type_edit_submit($form, FormStateInterface $form_state) {
   // Check if the group_type changed.
-  // Can be empty for flexible groups.
+  // Visibility be empty for flexible groups.
   $group = _social_group_get_current_group();
-  if (!empty($form['group_type'])) {
+  if (!empty($form['group_type'])
+  && (\Drupal::service('social_group.helper_service')->getDefaultGroupVisibility($group->getGroupType()->id()) != NULL)
+  ) {
     $default_type = $form['group_type']['widget']['#default_value'];
     $new_type = $form_state->getValue('group_type')[0]['value'];
 

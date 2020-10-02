@@ -50,9 +50,13 @@ function social_group_flexible_group_views_data_alter(array &$data) {
  */
 function social_group_flexible_group_form_group_flexible_group_edit_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   // Lets remove group type from flexible group.
-  // Editting is useless since the options are all in there.
+  // Editing is useless since the options are all in there.
   if ($form['group_type']['#disabled']) {
+    // Remove all the options.
+    // @see social_group_form_alter().
     unset($form['group_type']);
+    unset($form['#fieldgroups']['group_settings']->children['group_type']);
+    unset($form['#group_children']['group_type']);
   }
   $form['field_group_allowed_visibility']['#prefix'] =
     t('Altering the visibility options could result in changes in access for content within this group.');
@@ -285,7 +289,7 @@ function social_group_flexible_group_can_view_flexible_groups(Group $group, Acco
     return TRUE;
   }
 
-  // If User is a member he can see it.
+  // If User is a member it can see it.
   if ($group->getMember($account) !== FALSE) {
     return TRUE;
   }
