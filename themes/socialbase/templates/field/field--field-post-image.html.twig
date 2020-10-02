@@ -51,16 +51,19 @@
         {{ item.content }}
       </a>
 
-      <div class="post-photoswipe-wrapper post-index-{{ index }}">
-        <div class="wrapper">
-          <div class="post_message">
-            <div class="post_header">
-              {{ 'Images posted in album' }} <b>{{ 'Trip to Amsterdam' }}</b>
+      {% if post %}
+        <div class="post-photoswipe-wrapper post-index-{{ index }}">
+          <div class="wrapper">
+            <div class="post_message">
+              <div class="post_header">
+                {{ 'Images posted in album' }} <b>{{ 'Trip to Amsterdam' }}</b>
+              </div>
+              {{ post }}
             </div>
-            {{ post }}
           </div>
         </div>
-      </div>
+      {% endif %}
+
     </div>
   {% endfor %}
 </div>
