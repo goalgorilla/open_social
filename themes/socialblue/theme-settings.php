@@ -203,7 +203,6 @@ function socialblue_update_gin_color_settings(array $form, FormStateInterface $f
   }
 }
 
-
 /**
  * Marks the e-mail logo file as permanent.
  *
