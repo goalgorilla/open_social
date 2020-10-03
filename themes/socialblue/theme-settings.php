@@ -180,14 +180,23 @@ function socialblue_form_system_theme_settings_alter(&$form, FormStateInterface 
  * @throws \Drupal\Core\Entity\EntityStorageException
  */
 function socialblue_update_gin_color_settings(array $form, FormStateInterface $form_state) {
+  // Grab the default socialblue colors, these are set if the color settings
+  // aren't overridden yet.
+  $default_colors = \Drupal::configFactory()->getEditable('socialblue.settings')->getRawData();
   // Unfortunately the color module doesnt add the color details to the
-  // $form_state. So we need to grab it from the config.
+  // $form_state. So we need to grab it from the config once overridden.
   // luckily color does set their submit function as first, so we can
   // safely assume the config uses the updated colors.
-  $socialblue_colors = \Drupal::configFactory()->getEditable('socialblue.settings')->getRawData();
+  $socialblue_colors = \Drupal::configFactory()->getEditable('color.theme.socialblue')->getRawData();
+
+  // The brand colors are first of all coming from the overridden color
+  // settings. But if that is not set, we will grab them from the
+  // default Social Blue settings.
+  $brand_primary = !empty($socialblue_colors) ? $socialblue_colors['palette']['brand-primary'] : $default_colors['color_primary'];
+  $brand_secondary = !empty($socialblue_colors) ? $socialblue_colors['palette']['brand-secondary'] : $default_colors['color_secondary'];
 
   // See if we can update GIN settings with our brand colors.
-  if (isset($socialblue_colors['color_primary'], $socialblue_colors['color_secondary'])) {
+  if (isset($brand_primary, $brand_secondary)) {
     $config = \Drupal::configFactory()->getEditable('gin.settings');
     if (!empty($config->getRawData())) {
       $gin_config = $config->getRawData();
@@ -195,8 +204,8 @@ function socialblue_update_gin_color_settings(array $form, FormStateInterface $f
       $gin_config['preset_accent_color'] = 'custom';
       $gin_config['preset_focus_color'] = 'custom';
       // Update the accent and focus with our branded colors.
-      $gin_config['accent_color'] = $socialblue_colors['color_primary'];
-      $gin_config['focus_color'] = $socialblue_colors['color_secondary'];
+      $gin_config['accent_color'] = $brand_primary;
+      $gin_config['focus_color'] = $brand_secondary;
       $config->setData($gin_config);
       $config->save();
     }
