@@ -1388,16 +1388,18 @@ function social_group_preprocess_profile(&$variables) {
  * Implements hook_preprocess_HOOK().
  */
 function social_group_preprocess_views_view(&$variables) {
-  /** @var \Drupal\views\ViewExecutable $view */
-  $view = &$variables['view'];
+  if (!\Drupal::moduleHandler()->moduleExists('social_group_invite')) {
+    /** @var \Drupal\views\ViewExecutable $view */
+    $view = &$variables['view'];
 
-  if ($view->id() === 'group_manage_members') {
-    $entity = \Drupal::entityTypeManager()->getStorage('block')
-      ->load('socialblue_local_actions');
+    if ($view->id() === 'group_manage_members') {
+      $entity = \Drupal::entityTypeManager()->getStorage('block')
+        ->load('socialblue_local_actions');
 
-    $variables['header']['actions'] = \Drupal::entityTypeManager()
-      ->getViewBuilder('block')
-      ->view($entity);
+      $variables['header']['actions'] = \Drupal::entityTypeManager()
+        ->getViewBuilder('block')
+        ->view($entity);
+    }
   }
 }
 
