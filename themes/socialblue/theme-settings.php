@@ -123,12 +123,10 @@ function socialblue_form_system_theme_settings_alter(&$form, FormStateInterface 
       // Font tab.
       $fonts = [];
       if (\Drupal::service('module_handler')->moduleExists('social_font')) {
-
         /** @var \Drupal\social_font\Entity\Font $font_entities */
         foreach (Font::loadMultiple() as $font_entities) {
           $fonts[$font_entities->id()] = $font_entities->get('name')->value;
         }
-
       }
 
       $form['os_font_settings']['font_primary'] = [
@@ -158,11 +156,53 @@ function socialblue_form_system_theme_settings_alter(&$form, FormStateInterface 
         ],
         '#default_value' => $config->get('style'),
       ];
+
+      // When GIN is our admin theme, update the GIN colors.
+      if (\Drupal::configFactory()->get('system.theme')->get('admin') === 'gin') {
+        $form['#submit'][] = 'socialblue_update_gin_color_settings';
+      }
     }
 
   }
 
 }
+
+/**
+ * Updates the gin color settings from socialblue it's config.
+ *
+ * This ensures the brand color also applies to GIN.
+ *
+ * @param array $form
+ *   The submitted form structure.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   The state of the submitted form.
+ *
+ * @throws \Drupal\Core\Entity\EntityStorageException
+ */
+function socialblue_update_gin_color_settings(array $form, FormStateInterface $form_state) {
+  // Unfortunately the color module doesnt add the color details to the
+  // $form_state. So we need to grab it from the config.
+  // luckily color does set their submit function as first, so we can
+  // safely assume the config uses the updated colors.
+  $socialblue_colors = \Drupal::configFactory()->getEditable('socialblue.settings')->getRawData();
+
+  // See if we can update GIN settings with our brand colors.
+  if (isset($socialblue_colors['color_primary'], $socialblue_colors['color_secondary'])) {
+    $config = \Drupal::configFactory()->getEditable('gin.settings');
+    if (!empty($config->getRawData())) {
+      $gin_config = $config->getRawData();
+      // Override preset colors as custom so we can fill in the hex colors.
+      $gin_config['preset_accent_color'] = 'custom';
+      $gin_config['preset_focus_color'] = 'custom';
+      // Update the accent and focus with our branded colors.
+      $gin_config['accent_color'] = $socialblue_colors['color_primary'];
+      $gin_config['focus_color'] = $socialblue_colors['color_secondary'];
+      $config->setData($gin_config);
+      $config->save();
+    }
+  }
+}
+
 
 /**
  * Marks the e-mail logo file as permanent.
