@@ -6,12 +6,15 @@
 
   "use strict";
 
-  var CKEDITOR = window.CKEDITOR || {
-    on: function(event, callback) {
-      callback();
-    },
-    instances: {}
-  };
+  // Get CKEditor object.
+  var getCkeditor = function (){
+    return window.CKEDITOR || {
+      on: function(event, callback) {
+        callback();
+      },
+      instances: {}
+    };
+  }
 
   // Render Mention Item.
   var renderMentionItem = function (ul, item) {
@@ -42,6 +45,7 @@
           return renderMentionItem(ul, item);
         },
         open: function(event, ui) {
+          var CKEDITOR = getCkeditor();
           if (!CKEDITOR.instances[this.id]) {
 
             if (window.matchMedia("(min-width: 600px)").matches) {
@@ -81,6 +85,7 @@
           return renderMentionItem(ul, item);
         },
         open: function(event, ui) {
+          var CKEDITOR = getCkeditor();
           if (!CKEDITOR.instances[this.id]) {
             var menu = $(this).data("ui-mentionsAutocomplete").menu;
             menu.focus(null, $("li", menu.element).eq(0));
@@ -114,7 +119,7 @@
   Drupal.behaviors.socialMentions = {
     attach: function(context, settings) {
       var formIds = ".comment-form, #social-post-entity-form";
-
+      var CKEDITOR = getCkeditor();
       CKEDITOR.on("instanceReady", function () {
         $(formIds).once("socialMentions").each(function (i, element) {
           $.each($(".form-textarea", element), function (i, textarea) {
@@ -133,6 +138,7 @@
   // Adds a custom behaviour for clicking on the reply button.
   Drupal.behaviors.socialMentionsReply = {
     attach: function (context, settings) {
+      var CKEDITOR = getCkeditor();
       CKEDITOR.on("instanceReady", function () {
         $(".comment-form").once("socialMentionsReply").each(function (i, e) {
           var form = e,
