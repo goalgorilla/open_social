@@ -51,6 +51,9 @@ function social_event_addtocal_node_view(array &$build, NodeInterface $node, Ent
       '#links' => $links,
     ];
 
+    // Make sure we clear the cache if the settings is submitted.
+    $build['#cache']['tags'][] = 'config:social_event_addtocal.settings';
+
     // Split links if there is more than one.
     if (count($links) > 1) {
       $build['field_event_addtocal']['#attributes']['no-split'] = [
