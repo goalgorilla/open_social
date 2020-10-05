@@ -14,9 +14,18 @@ use Drupal\social_post\Form\PostForm;
 class SocialAlbumPostForm extends PostForm {
 
   /**
+   * The node object or NULL.
+   *
+   * @var \Drupal\node\NodeInterface|null
+   */
+  protected $node;
+
+  /**
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state, NodeInterface $node = NULL) {
+    $this->node = $node;
+
     $form = parent::buildForm($form, $form_state);
 
     if ($node) {
@@ -25,6 +34,19 @@ class SocialAlbumPostForm extends PostForm {
     }
 
     return $form;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function actionsElement(array $form, FormStateInterface $form_state) {
+    $element = parent::actionsElement($form, $form_state);
+
+    if ($this->node) {
+      $element['cancel'] = $this->node->toLink($this->t('Go to album'))->toRenderable();
+    }
+
+    return $element;
   }
 
 }
