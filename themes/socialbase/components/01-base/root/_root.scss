@@ -41,3 +41,22 @@ body {
   }
 
 }
+
+// Provide accessible positioning for skip links.
+// The visibility will be handled by the links themselves.
+#skip-link {
+  text-align: center;
+  position: absolute;
+  left: 0;
+  right: 0;
+  z-index: 15000;
+
+  a {
+    background: $gray-darker;
+    @include z-depth-3;
+    color: $gray-lightest;
+    padding: 3px 20px 8px;
+    text-decoration: none;
+    border-radius: 0 0 10px 10px;
+  }
+}
