@@ -145,6 +145,23 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+#skip-link {
+  text-align: center;
+  position: absolute;
+  left: 0;
+  right: 0;
+  z-index: 15000;
+}
+
+#skip-link a {
+  background: #222222;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.14), 0 4px 8px rgba(0, 0, 0, 0.28);
+  color: #f3f3f3;
+  padding: 3px 20px 8px;
+  text-decoration: none;
+  border-radius: 0 0 10px 10px;
+}
+
 .fade {
   opacity: 0;
   -webkit-transition: opacity .15s linear;
@@ -459,8 +476,14 @@ a:active, a:hover {
 }
 
 a:focus {
-  outline: 5px auto -webkit-focus-ring-color;
-  outline-offset: -2px;
+  -webkit-box-shadow: 0 0 1px 3px rgba(59, 153, 252, 0.7);
+          box-shadow: 0 0 1px 3px rgba(59, 153, 252, 0.7);
+  -webkit-box-shadow: 0 0 0 3px activeborder;
+          box-shadow: 0 0 0 3px activeborder;
+  /* Blink, Chrome */
+  box-shadow: 0 0 0 3px -moz-mac-focusring;
+  /* Firefox */
+  outline: auto 1px -webkit-focus-ring-color;
 }
 
 a:active:not(.btn) {
