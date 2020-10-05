@@ -1304,7 +1304,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Open Social\n"
 "POT-Creation-Date: 2020-10-03 00:14+0000\n"
-"PO-Revision-Date: 2020-10-05 10:24+0000\n"
+"PO-Revision-Date: 2020-10-05 13:41+0000\n"
 "Last-Translator: Benjamin Lemesle <blemesle@greenpeace.org>\n"
 "Language-Team: Greenpeace French <https://translate.getopensocial.com/"
 "projects/open-social/distribution/fr_GPI/>\n"
@@ -2234,6 +2234,9 @@ msgid ""
 "display-name]</a> has requested membership to the <a href=\"[message:gurl]\">"
 "[message:gtitle]</a> group</p>\r\n"
 msgstr ""
+"<p><a href=\"[message:recipient-user:url:absolute]\">[message:recipient-user"
+":display-name]</a> a demandé à devenir membre du groupe <a href=\""
+"[message:gurl]\">[message:gtitle]</a></p>\n"
 
 #: modules/social_features/social_group/modules/social_group_request/config/install/message.template.request_to_join_a_group.yml:0
 msgid ""
@@ -2251,6 +2254,19 @@ msgid ""
 "\t</tbody>\r\n"
 "</table>\r\n"
 msgstr ""
+"<p><a href=\"[message:recipient-user:url:absolute]\">[message:recipient-user"
+":display-name]</a> a demandé à devenir membre du groupe <a href=\""
+"[message:gurl]\">[message:gtitle]</a></p>\n"
+"\n"
+"<table class=\"btn-wrapp\">\n"
+"\t<tbody>\n"
+"\t\t<tr>\n"
+"\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-"
+"one\" href=\"[social_group_request:request_page_link]\">Voir la "
+"demande</a></td>\n"
+"\t\t</tr>\n"
+"\t</tbody>\n"
+"</table>\n"
 
 #: modules/social_features/social_activity/config/install/message.template.join_to_group.yml:0;0;0
 msgid ""
@@ -2278,6 +2294,9 @@ msgid ""
 "</a> has requested enrollment to the event [social_event:"
 "event_iam_organizing] you are organizing</p>\r\n"
 msgstr ""
+"<p><a href=\"[social_event:enrolled_event_url]\""
+">[social_event:enrolled_user]</a> a demandé à s'inscrire à l'événement "
+"[social_event:event_iam_organizing] que vous organisez</p>\n"
 
 #: modules/social_features/social_event/modules/social_event_an_enroll/config/install/views.view.manage_enrollments.yml:0
 msgid "<p>@total people have enrolled anonymously</p>"
@@ -2313,6 +2332,25 @@ msgid ""
 "\t</tbody>\r\n"
 "</table>\r\n"
 msgstr ""
+"<p>Bonjour,</p>\n"
+"\n"
+"<p>Je souhaite t'inviter à mon événement [social_event:event_iam_organizing] "
+"sur [site:name].</p>\n"
+"\n"
+"<p>À bientôt !<br />\n"
+"[message:author:display-name]</p>\n"
+"\n"
+"<table class=\"btn-wrap\">\n"
+"\t<tbody>\n"
+"\t\t<tr>\n"
+"\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-"
+"one\" href=\"[social_event_invite:user_login_event_destination]\">Voir "
+"l'événement</a></td>\n"
+"\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-"
+"one\" href=\"[site:url]\">À propos de [site:name]</a></td>\n"
+"\t\t</tr>\n"
+"\t</tbody>\n"
+"</table>\n"
 
 #: modules/social_features/social_group/modules/social_group_invite/config/optional/message.template.invited_to_join_group.yml:0
 msgid ""
@@ -2335,6 +2373,23 @@ msgid ""
 "\t</tbody>\r\n"
 "</table>\r\n"
 msgstr ""
+"<p>Bonjour,</p>\n"
+"\n"
+"<p>Je souhaite t'inviter à mon groupe [message:gtitle] sur[site:name].</p>\n"
+"\n"
+"<p>À bientôt !<br />\n"
+"[message:author:display-name]</p>\n"
+"\n"
+"<table class=\"btn-wrap\">\n"
+"\t<tbody>\n"
+"\t\t<tr>\n"
+"\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-"
+"one\" href=\"[message:gurl]\">Voir le groupe</a></td>\n"
+"\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-"
+"one\" href=\"[site:url]\">À propos de [site:name]</a></td>\n"
+"\t\t</tr>\n"
+"\t</tbody>\n"
+"</table>\n"
 
 #: modules/social_features/social_event/modules/social_event_invite/config/install/social_event_invite.settings.yml:0
 msgid ""
@@ -2354,10 +2409,10 @@ msgid ""
 "\t</tbody>\r\n"
 "</table>\r\n"
 msgstr ""
-"<p>Salut,</p>\n"
-"<p>J'aimerais t'inviter à mon événement <strong>[node:title]</strong> sur "
+"<p>Bonjour,</p>\n"
+"<p>Je souhaite t'inviter à mon événement <strong>[node:title]</strong> sur "
 "<strong>[site:name]</strong>.</p>\n"
-"<p>A bientôt ! [user:display-name]</p>\n"
+"<p>À bientôt ! [user:display-name]</p>\n"
 "\n"
 "<table class=\"btn-wrap\">\n"
 "\t<tbody>\n"
@@ -2366,7 +2421,7 @@ msgstr ""
 "one\" href=\"[social_event_invite:register_link]\">Voir l'événement</a></td>"
 "\n"
 "\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-"
-"one\" href=\"[site:url]\">A propos de [site:name]</a></td>\n"
+"one\" href=\"[site:url]\">À propos de [site:name]</a></td>\n"
 "\t\t</tr>\n"
 "\t</tbody>\n"
 "</table>\n"
@@ -2927,11 +2982,11 @@ msgstr ""
 #: themes/socialblue/templates/group/group--statistic.html.twig:29
 #: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_user_invitations.yml:0;0
 msgid "Accept"
-msgstr ""
+msgstr "Accepter"
 
 #: modules/social_features/social_event/modules/social_event_invite/social_event_invite.module:300
 msgid "Accept invite"
-msgstr ""
+msgstr "Accepter l'invitation"
 
 #: modules/social_features/social_group/modules/social_group_invite/social_group_invite.module:177
 #: modules/social_features/social_event/config/install/field.storage.event_enrollment.field_request_or_invite_status.yml:0
@@ -3260,7 +3315,7 @@ msgstr ""
 #: modules/social_features/social_event/modules/social_event_invite/src/Plugin/Block/SocialEventInviteLocalActionsBlock.php:112
 #: modules/social_features/social_group/modules/social_group_invite/src/Plugin/Block/SocialInviteLocalActionsBlock.php:137
 msgid "Add directly"
-msgstr ""
+msgstr "Ajouter directement"
 
 #: modules/social_features/social_event/modules/social_event_invite/src/Plugin/Block/SocialEventInviteLocalActionsBlock.php:106
 #: modules/social_features/social_event/modules/social_event_managers/social_event_managers.links.action.yml:0
@@ -4055,7 +4110,7 @@ msgstr ""
 
 #: modules/social_features/social_group/modules/social_group_request/src/SocialGroupRequestConfigOverride.php:592
 msgid "Approve Membership"
-msgstr ""
+msgstr "Approuver la demande"
 
 #: modules/social_features/social_group/modules/social_group_request/src/SocialGroupRequestConfigOverride.php:588;600
 msgid "Approve membership"
@@ -4063,7 +4118,7 @@ msgstr ""
 
 #: modules/social_features/social_group/modules/social_group_request/src/Controller/GroupRequestController.php:91
 msgid "Approve membership request for the group @group_title"
-msgstr ""
+msgstr "Approuver la demande d'inscription au groupe @group_title"
 
 #: modules/social_features/social_group/modules/social_group_request/config/install/message.template.approve_request_join_group.yml:0
 msgid "Approve request to join a group"
@@ -4087,6 +4142,8 @@ msgid ""
 "Are you sure to accept the invitation and join this group? You can leave "
 "this group at any time."
 msgstr ""
+"Êtes-vous sûr d'accepter l'invitation et de rejoindre ce groupe ? Vous "
+"pourrez le quitter à tout moment."
 
 #: modules/custom/social_gdpr/social_gdpr.routing.yml:0
 #: modules/custom/social_gdpr/src/Form/DataPolicyRevisionRevertForm.php:33
@@ -4135,7 +4192,7 @@ msgstr ""
 
 #: modules/social_features/social_group/modules/social_group_request/src/Form/GroupRequestMembershipRejectForm.php:119
 msgid "Are you sure you want to reject the membership request for @name?"
-msgstr ""
+msgstr "Êtes-vous sûr de vouloir rejeter la demande d'inscription de @name ?"
 
 #: modules/social_features/social_group/social_group.module:624
 msgid "Are you sure you want to remove %name from %group?"
@@ -4272,7 +4329,7 @@ msgstr ""
 #: modules/social_features/social_group/modules/social_group_invite/social_group_invite.module:138
 #: modules/social_features/social_group/modules/social_group_request/social_group_request.module:387
 msgid "Back to group"
-msgstr ""
+msgstr "Retour au groupe"
 
 #: modules/custom/social_queue_storage/config/install/message.template.background_process_finished.yml:0
 msgid "Background process finished"
@@ -5523,15 +5580,15 @@ msgstr ""
 #: themes/socialblue/templates/group/group--statistic.html.twig:32
 #: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_user_invitations.yml:0;0
 msgid "Decline"
-msgstr ""
+msgstr "Refuser"
 
 #: modules/social_features/social_event/src/Controller/SocialEventController.php:101
 msgid "Decline enrollment request for the event @event_title"
-msgstr ""
+msgstr "Refuser la demande d'inscription à l'événement @event_title"
 
 #: modules/social_features/social_event/modules/social_event_invite/social_event_invite.module:307
 msgid "Decline invite"
-msgstr ""
+msgstr "Refuser l'invitation"
 
 #: modules/social_features/social_group/modules/social_group_invite/social_group_invite.module:181
 #: modules/social_features/social_event/config/install/field.storage.event_enrollment.field_request_or_invite_status.yml:0
@@ -6886,12 +6943,12 @@ msgstr "Trouver et gérer les personnes interagissant avec votre site."
 #: modules/social_features/social_event/modules/social_event_managers/src/Form/SocialEventManagersAddEnrolleeForm.php:189
 #: modules/social_features/social_group/social_group.module:663;681
 msgid "Find people by name"
-msgstr ""
+msgstr "Recherchez quelqu'un par son nom ou prénom"
 
 #: modules/social_features/social_core/src/Form/InviteEmailBaseForm.php:94
 #: modules/social_features/social_group/modules/social_group_invite/src/Form/SocialBulkGroupInvitation.php:192
 msgid "Find people by name or email address"
-msgstr ""
+msgstr "Recherchez quelqu'un par son nom, prénom ou adresse mail"
 
 #: modules/custom/social_queue_storage/src/Entity/QueueStorageEntity.php:220
 msgid "Finished"
@@ -7583,6 +7640,18 @@ msgid ""
 "\t</tbody>\r\n"
 "</table>"
 msgstr ""
+"Bonjour,<br /><br /> Je souhaite t'inviter à rejoindre mon groupe "
+"[group:title] sur [site:name].<br /><br />À bientôt !<br />[current-user"
+":display-name]<br /><br /><table class=\"btn-wrapp\">\n"
+"\t<tbody>\n"
+"\t\t<tr>\n"
+"\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-"
+"one\" href=\"[group_content:register_link]\">Voir le groupe</a></td>\n"
+"\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-"
+"one\" href=\"[site:url]\">À propos de [site:name]</a></td>\n"
+"\t\t</tr>\n"
+"\t</tbody>\n"
+"</table>"
 
 #: modules/social_features/social_group/modules/social_group_invite/config/optional/group.content_type.closed_group-group_invitation.yml:0
 #: modules/social_features/social_group/modules/social_group_invite/config/optional/group.content_type.flexible_group-group_invitation.yml:0
@@ -7603,6 +7672,18 @@ msgid ""
 "\t</tbody>\r\n"
 "</table>"
 msgstr ""
+"Bonjour,<br /><br />Je souhaite t'inviter à rejoindre mon groupe "
+"[group:title] sur [site:name].<br /><br />À bientôt !<br />[current-user"
+":display-name]<br /><br /><table class=\"btn-wrapp\">\n"
+"\t<tbody>\n"
+"\t\t<tr>\n"
+"\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-"
+"one\" href=\"[group_content:my_invitations_link]\">Voir mon groupe</a></td>\n"
+"\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-"
+"one\" href=\"[site:url]\">À propos de [site:name]</a></td>\n"
+"\t\t</tr>\n"
+"\t</tbody>\n"
+"</table>"
 
 #: modules/social_features/social_comment/src/SocialCommentBreadcrumbBuilder.php:54;55
 #: modules/social_features/social_core/social_core.install:252
@@ -7816,7 +7897,7 @@ msgstr "Seulement sur invitation"
 
 #: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_invitations.yml:0
 msgid "Invitation status"
-msgstr ""
+msgstr "Statut"
 
 #: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_invitations.yml:0;0
 msgid "Invitations"
@@ -7824,7 +7905,7 @@ msgstr ""
 
 #: modules/social_features/social_event/modules/social_event_invite/config/install/views.view.user_event_invites.yml:0
 msgid "Invite date"
-msgstr ""
+msgstr "Date d'invitation"
 
 #: modules/social_features/social_event/modules/social_event_invite/config/install/message.template.invite_event_enrollment.yml:0
 msgid "Invite event enrollment"
@@ -7841,7 +7922,7 @@ msgstr ""
 #: modules/social_features/social_event/modules/social_event_invite/src/Plugin/Block/SocialEventInviteLocalActionsBlock.php:116
 #: modules/social_features/social_group/modules/social_group_invite/src/Plugin/Block/SocialInviteLocalActionsBlock.php:141
 msgid "Invite users"
-msgstr ""
+msgstr "Inviter un utilisateur"
 
 #: modules/social_features/social_event/modules/social_event_invite/src/SocialEventInviteBulkHelper.php:270
 msgid "Invite(s) have been successfully sent."
@@ -7858,7 +7939,7 @@ msgid ""
 "by event organisers"
 msgstr ""
 "Sur invitation - Les utilisateurs ne peuvent s'inscrire à l'événement que "
-"s'ils y sont invités"
+"s'ils y sont invités par le créateur de l'événement ou un organisateur"
 
 #: translations.php:41
 #: modules/social_features/social_group/social_group.module:783
@@ -7867,7 +7948,7 @@ msgid ""
 "group managers"
 msgstr ""
 "Sur invitation - Les utilisateurs ne peuvent s'inscrire au groupe que s'ils "
-"y sont invités"
+"y sont invités par un gestionnaire du groupe"
 
 #: modules/social_features/social_event/config/install/field.storage.event_enrollment.field_request_or_invite_status.yml:0
 msgid "Invited"
@@ -7881,7 +7962,7 @@ msgstr ""
 #: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_invitations.yml:0
 #: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_user_invitations.yml:0
 msgid "Invited on"
-msgstr ""
+msgstr "Invitation envoyée le"
 
 #: modules/social_features/social_group/modules/social_group_invite/config/optional/message.template.invited_to_join_group.yml:0
 msgid "Invited to join a group"
@@ -7905,7 +7986,7 @@ msgstr "Récapitulatif des invitations"
 
 #: modules/social_features/social_group/modules/social_group_invite/src/Form/SocialBulkGroupInvitation.php:344
 msgid "Inviting Members"
-msgstr ""
+msgstr "Envoi de l'invitation"
 
 #: modules/custom/social_queue_storage/src/Entity/QueueStorageEntity.php:221
 msgid ""
@@ -7979,12 +8060,12 @@ msgstr ""
 #: modules/social_features/social_event/modules/social_event_managers/src/Form/SocialEventManagersAddEnrolleeForm.php:196
 #: modules/social_features/social_group/social_group.module:688
 msgid "Jane Doe"
-msgstr ""
+msgstr "Nicolas Hulot"
 
 #: modules/social_features/social_core/src/Form/InviteEmailBaseForm.php:104
 #: modules/social_features/social_group/modules/social_group_invite/src/Form/SocialBulkGroupInvitation.php:202
 msgid "Jane Doe, johndoe@example.com"
-msgstr ""
+msgstr "Nicolas Hulot, nico@exemple.fr"
 
 #: modules/custom/sitewide_js/src/Form/SiteWideJSForm.php:68
 msgid "Javascript"
@@ -8001,11 +8082,11 @@ msgstr "Inscription libre"
 
 #: modules/custom/group_core_comments/src/Plugin/Field/FieldFormatter/CommentGroupContentFormatter.php:69
 msgid "Join group"
-msgstr ""
+msgstr "Rejoindre le groupe"
 
 #: modules/social_features/social_activity/config/install/message.template.join_to_group.yml:0
 msgid "Join to group"
-msgstr ""
+msgstr "Rejoindre le groupe"
 
 #: themes/socialbase/templates/group/group--hero.html.twig:97
 #: themes/socialblue/templates/group/group--statistic.html.twig:35
@@ -8619,11 +8700,11 @@ msgstr ""
 
 #: modules/social_features/social_group/modules/social_group_request/social_group_request.module:92
 msgid "Membership request approved"
-msgstr ""
+msgstr "Demande d'inscription approuvée"
 
 #: modules/social_features/social_group/modules/social_group_request/src/Form/GroupRequestMembershipRejectForm.php:164
 msgid "Membership request rejected"
-msgstr ""
+msgstr "Demande d'inscription au groupe rejetée"
 
 #: modules/social_features/social_group/modules/social_group_request/src/SocialGroupRequestConfigOverride.php:228
 msgid "Membership requests"
@@ -8835,7 +8916,7 @@ msgstr "Mes événements"
 
 #: modules/social_features/social_group/modules/social_group_request/config/install/message.template.approve_request_join_group.yml:0
 msgid "My group membership request is approved"
-msgstr ""
+msgstr "Ma demande d'inscription au groupe a été approuvée"
 
 #: modules/social_features/social_group/social_group.module:1954
 msgid "My groups"
@@ -9055,7 +9136,7 @@ msgstr "Inscription à aucun groupe à ce jour"
 #: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_invitations.yml:0
 #: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_user_invitations.yml:0
 msgid "No invitations available."
-msgstr ""
+msgstr "Aucune nouvelle invitation à rejoindre un groupe pour l'instant."
 
 #: modules/social_features/social_event/modules/social_event_invite/src/SocialEventInviteBulkHelper.php:273
 msgid "No invites were sent, recipients already received one before."
@@ -9696,12 +9777,12 @@ msgstr ""
 #: modules/social_features/social_event/src/Form/EnrollActionForm.php:258
 #: modules/social_features/social_event/config/install/field.storage.event_enrollment.field_request_or_invite_status.yml:0
 msgid "Pending"
-msgstr ""
+msgstr "En attente"
 
 #: modules/social_features/social_group/modules/social_group_invite/social_group_invite.module:173
 #: modules/social_features/social_event/config/install/field.storage.event_enrollment.field_request_or_invite_status.yml:0
 msgid "Pending reply"
-msgstr ""
+msgstr "En attente d'une réponse"
 
 #: modules/social_features/social_user/config/install/views.view.user_admin_people.yml:0;0;0
 msgid "People"
@@ -9944,12 +10025,12 @@ msgstr "Aperçu"
 
 #: modules/social_features/social_event/modules/social_event_managers/src/Form/SocialEventManagersAddEnrolleeForm.php:249
 msgid "Preview your email"
-msgstr ""
+msgstr "Prévisualisez votre mail"
 
 #: modules/social_features/social_event/modules/social_event_invite/src/Form/EnrollInviteEmailForm.php:129
 #: modules/social_features/social_group/modules/social_group_invite/src/Form/SocialBulkGroupInvitation.php:241
 msgid "Preview your email invite"
-msgstr ""
+msgstr "Prévisualisez votre invitation"
 
 #: themes/socialbase/templates/system/pager.html.twig:56
 msgid "Previous page"
@@ -10063,7 +10144,7 @@ msgstr ""
 
 #: modules/social_features/social_group/modules/social_group_invite/src/Form/SocialBulkGroupInvitation.php:347
 msgid "Processed @current out of @total."
-msgstr ""
+msgstr "@current élément(s) traité(s) sur @total."
 
 #: modules/social_features/social_post/social_post.admin.inc:41
 msgid "Processing"
@@ -10560,7 +10641,7 @@ msgstr ""
 
 #: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_invitations.yml:0
 msgid "Recipients"
-msgstr ""
+msgstr "Membres"
 
 #: modules/custom/mentions/mentions.info.yml:0
 msgid "Record, render and react to specified patterns within content."
@@ -10615,11 +10696,11 @@ msgstr "Date d'inscription"
 
 #: modules/social_features/social_group/modules/social_group_request/src/SocialGroupRequestConfigOverride.php:639;643;651
 msgid "Reject Membership"
-msgstr ""
+msgstr "Rejeter la demande"
 
 #: modules/social_features/social_group/modules/social_group_request/src/Controller/GroupRequestController.php:98
 msgid "Reject membership request for the group @group_title"
-msgstr ""
+msgstr "Rejeter la demande d'inscription au groupe @group_title"
 
 #: modules/social_features/social_activity/config/install/field.field.message.create_comment_author_node_post.field_message_related_object.yml:0
 #: modules/social_features/social_activity/config/install/field.field.message.create_comment_community_node.field_message_related_object.yml:0
@@ -10700,7 +10781,7 @@ msgstr "Retirer l'invitation"
 
 #: modules/social_features/social_group/src/Controller/SocialGroupController.php:152
 msgid "Remove invitee from group: @group_name"
-msgstr ""
+msgstr "Annuler une invitation à rejoindre le groupe : @group_name"
 
 #: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_invitations.yml:0
 msgid "Remove member link"
@@ -10809,7 +10890,7 @@ msgstr ""
 
 #: modules/social_features/social_group/modules/social_group_request/src/SocialGroupRequestConfigOverride.php:383
 msgid "Request date"
-msgstr ""
+msgstr "Date de demande"
 
 #: modules/social_features/social_event/src/Controller/EnrollRequestDialogController.php:111
 msgid "Request enrollment in @label Event"
@@ -10846,7 +10927,7 @@ msgstr ""
 #: themes/socialbase/templates/group/group--hero.html.twig:104
 #: themes/socialblue/templates/group/group--statistic.html.twig:42
 msgid "Request sent"
-msgstr ""
+msgstr "Demande envoyée"
 
 #: modules/social_features/social_event/config/install/views.view.event_manage_enrollment_requests.yml:0
 #: modules/social_features/social_group/modules/social_group_request/config/install/field.field.group_content.group_content_type_c8bae2527294c.grequest_status.yml:0
@@ -10859,23 +10940,23 @@ msgstr ""
 #: modules/social_features/social_event/src/Form/EnrollActionForm.php:211;226;280
 #: modules/social_features/social_event/src/Form/EnrollRequestModalForm.php:94
 msgid "Request to enroll"
-msgstr "Sur demande"
+msgstr "Demander à s'inscrire"
 
 #: modules/social_features/social_event/config/install/field.storage.node.field_enroll_method.yml:0
 msgid ""
 "Request to enroll - users can \"request to enroll\" for this event which "
 "event organisers approve/decline"
 msgstr ""
-"Sur demande - Le créateur et les organisateurs de l'événement reçoivent les "
-"demandes des utilisateurs souhaitant le rejoindre"
+"Sur demande - Le créateur ou les organisateurs de l'événement doivent "
+"approuver la demande d'inscription envoyée par un utilisateur"
 
 #: translations.php:38
 msgid ""
 "Request to enroll - users can 'request to enroll' for this event which event "
 "organisers approve/decline"
 msgstr ""
-"Sur demande - Le créateur et les organisateurs de l'événement reçoivent les "
-"demandes des utilisateurs souhaitant le rejoindre"
+"Sur demande - Le créateur ou les organisateurs de l'événement doivent "
+"approuver la demande d'inscription envoyée par un utilisateur"
 
 #: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.module:81
 #: modules/social_features/social_group/modules/social_group_request/social_group_request.module:193
@@ -10883,7 +10964,7 @@ msgstr ""
 #: themes/socialbase/templates/group/group--hero.html.twig:109;109;115;115
 #: themes/socialblue/templates/group/group--statistic.html.twig:47;47;53;53
 msgid "Request to join"
-msgstr "Sur demande"
+msgstr "Demander à s'inscrire"
 
 #: translations.php:40
 #: modules/social_features/social_group/modules/social_group_request/social_group_request.module:369
@@ -10891,8 +10972,8 @@ msgid ""
 "Request to join - users can \"request to join\" this group which group "
 "managers approve/decline"
 msgstr ""
-"Sur demande - Les gestionnaires du groupe reçoivent les demandes des "
-"utilisateurs souhaitant le rejoindre"
+"Sur demande - Les gestionnaires du groupe doivent approuver la demande "
+"d'inscription envoyée par un utilisateur"
 
 #: modules/social_features/social_group/modules/social_group_request/config/install/message.template.request_to_join_a_group.yml:0
 msgid "Request to join a group"
@@ -11312,7 +11393,7 @@ msgstr ""
 
 #: modules/social_features/social_user_export/src/Plugin/UserExportPlugin/UserSelfIntroduction.php:8
 msgid "Self Introduction"
-msgstr "A propos de moi"
+msgstr "À propos de moi"
 
 #: modules/social_features/social_user_export/src/Plugin/UserExportPlugin/UserSelfIntroduction.php:23
 #: modules/social_features/social_profile/config/install/field.field.profile.profile.field_profile_self_introduction.yml:0
@@ -11375,15 +11456,15 @@ msgstr ""
 #: modules/social_features/social_core/src/Form/InviteEmailBaseForm.php:115
 #: modules/social_features/social_group/modules/social_group_invite/src/Form/SocialBulkGroupInvitation.php:271
 msgid "Send your invite(s) by email"
-msgstr ""
+msgstr "Envoyer cette invitation par mail"
 
 #: modules/social_features/social_group/modules/social_group_invite/src/Form/SocialBulkGroupInvitation.php:346
 msgid "Sending Invites"
-msgstr ""
+msgstr "Envoi en cours"
 
 #: modules/social_features/social_event/modules/social_event_invite/src/Form/EnrollInviteEmailForm.php:249
 msgid "Sending invites..."
-msgstr ""
+msgstr "Envoi en cours..."
 
 #: translations.php:36
 msgid "Sent email to %recipient"
@@ -11583,7 +11664,7 @@ msgstr "Montrer mon adresse mail sur ma page de profil"
 
 #: modules/social_features/social_profile/social_profile.module:556
 msgid "Show my language on my profile"
-msgstr ""
+msgstr "Montrer mon choix de langue sur mon profil (français par défaut)"
 
 #: modules/social_features/social_profile/modules/social_profile_privacy/social_profile_privacy.module:161
 msgid "Show on my profile"
@@ -13008,7 +13089,7 @@ msgstr ""
 
 #: modules/social_features/social_event/src/Form/EnrollRequestDeclineForm.php:160
 msgid "The enrollment request of @name has been declined."
-msgstr ""
+msgstr "La demande d'inscription de @name a été rejetée."
 
 #: translations.php:44
 #: modules/social_features/social_user/social_user.module:261
@@ -13053,7 +13134,7 @@ msgstr ""
 
 #: modules/social_features/social_event/src/Controller/UpdateEnrollRequestController.php:91
 msgid "The event enrollment request has been declined."
-msgstr ""
+msgstr "La demande d'inscription à l'événement a été rejetée."
 
 #: modules/custom/social_auth_extra/src/UserManager.php:155
 msgid "The file @filename could not downloaded."
@@ -13422,11 +13503,11 @@ msgstr ""
 
 #: modules/social_features/social_event/src/Plugin/Block/EventRequestEnrollmentNotification.php:147
 msgid "There @link to enroll in this event."
-msgstr ""
+msgstr "Vous avez reçu @link pour rejoindre cet événement."
 
 #: modules/social_features/social_group/modules/social_group_request/src/Plugin/Block/SocialGroupRequestMembershipNotification.php:142
 msgid "There @link to join this group."
-msgstr ""
+msgstr "Vous avez reçu @link pour rejoindre ce groupe."
 
 #: modules/social_features/social_group/src/Controller/SocialGroupListBuilder.php:154
 msgid "There are no groups yet."
@@ -14381,7 +14462,7 @@ msgstr ""
 #: modules/social_features/social_event/modules/social_event_invite/src/Plugin/Block/SocialEventInviteLocalActionsBlock.php:120
 #: modules/social_features/social_group/modules/social_group_invite/src/Plugin/Block/SocialInviteLocalActionsBlock.php:145
 msgid "View invites"
-msgstr ""
+msgstr "Voir les invitations"
 
 #: modules/social_features/social_like/social_like.permissions.yml:0
 msgid "View like widget"
@@ -14822,6 +14903,8 @@ msgstr ""
 #: modules/social_features/social_group/modules/social_group_invite/src/Form/SocialBulkGroupInvitation.php:194
 msgid "You can enter or paste multiple entries separated by comma or semicolon"
 msgstr ""
+"Pour ajouter plusieurs utilisateurs, séparez-les par une virgule ou un point-"
+"virgule"
 
 #: modules/social_features/social_profile/modules/social_profile_fields/src/Form/SocialProfileFieldsSettingsForm.php:198
 msgid ""
@@ -14864,7 +14947,7 @@ msgstr ""
 
 #: modules/social_features/social_event/modules/social_event_invite/config/install/views.view.user_event_invites.yml:0
 msgid "You don't have any event invites yet."
-msgstr ""
+msgstr "Aucune nouvelle invitation à rejoindre un événement pour l'instant."
 
 #: modules/social_features/social_core/src/EventSubscriber/SocialInviteSubscriber.php:125
 msgid ""
@@ -14878,7 +14961,7 @@ msgstr[1] ""
 
 #: modules/social_features/social_event/modules/social_event_invite/src/Controller/UserEnrollInviteController.php:92
 msgid "You have accepted the invitation for the @event event."
-msgstr ""
+msgstr "Vous avez accepté l'invitation pour l'événement @event."
 
 #: modules/social_features/social_event/modules/social_event_an_enroll/src/Form/EventAnEnrollForm.php:136
 msgid ""
@@ -14908,7 +14991,7 @@ msgstr ""
 
 #: modules/social_features/social_event/modules/social_event_invite/src/Controller/UserEnrollInviteController.php:96
 msgid "You have declined the invitation for the @event event."
-msgstr ""
+msgstr "Vous avez rejeté l'invitation pour l'événement @event."
 
 #: modules/social_features/social_event/social_event.module:272
 msgid "You have enrolled"
@@ -15057,8 +15140,8 @@ msgstr[1] ""
 #: translations.php:111
 msgid "Your email has been sent to 1 selected member successfully"
 msgid_plural "Your email has been sent to @count selected members successfully"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Votre mail a été envoyé à l'utilisateur sélectionné"
+msgstr[1] "Votre mail a été envoyé aux @count utilisateurs sélectionnés"
 
 #: translations.php:102
 msgid "Your email has not been sent to 1 selected enrollee successfully"
@@ -15071,8 +15154,10 @@ msgstr[1] ""
 msgid "Your email has not been sent to 1 selected member successfully"
 msgid_plural ""
 "Your email has not been sent to @count selected members successfully"
-msgstr[0] ""
+msgstr[0] "Votre mail n'a pas été correctement envoyé à l'utilisateur sélectionné"
 msgstr[1] ""
+"Votre mail n'a pas été correctement envoyé aux @count utilisateurs "
+"sélectionnés"
 
 #: translations.php:113
 msgid "Your email will be send to 1 selected enrollee"
@@ -15083,8 +15168,8 @@ msgstr[1] ""
 #: translations.php:114
 msgid "Your email will be send to 1 selected member"
 msgid_plural "Your email will be send to @count selected members"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Votre mail sera envoyé à l'utilisateur sélectionné"
+msgstr[1] "Votre mail sera envoyé aux @count utilisateurs sélectionnés"
 
 #: modules/social_features/social_group/src/Controller/DeleteGroup.php:50
 msgid "Your group and all of its topics, events and posts have been deleted."
@@ -15147,6 +15232,8 @@ msgstr ""
 msgid ""
 "[current-user:display-name] has invited you to join a group on [site:name]."
 msgstr ""
+"[current-user:display-name] vous invite à rejoindre un groupe sur "
+"[site:name]."
 
 #: modules/custom/social_metatag/config/install/metatag.metatag_defaults.group.yml:0
 msgid "[group:field_group_address:address_line1]"
@@ -15515,8 +15602,8 @@ msgstr ""
 #: modules/social_features/social_group/modules/social_group_request/src/Plugin/Block/SocialGroupRequestMembershipNotification.php:144
 msgid "is (1) new request"
 msgid_plural "are (@count) new requests"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "une nouvelle demande"
+msgstr[1] "@count nouvelles demandes"
 
 #: modules/social_features/social_group/config/install/views.view.group_topics.yml:0
 #: modules/social_features/social_topic/config/install/views.view.latest_topics.yml:0
