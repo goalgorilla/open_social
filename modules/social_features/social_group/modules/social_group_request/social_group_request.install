@@ -21,8 +21,11 @@ function social_group_request_install() {
  * Assign group request permission for closed and flexible group types.
  */
 function _social_group_request_set_permissions() {
-  $group_type = GroupType::load('flexible_group');
-  $group_type->getOutsiderRole()->grantPermissions(['request group membership'])->save();
+
+  if (\Drupal::moduleHandler()->moduleExists('social_group_flexible_group')) {
+    $group_type = GroupType::load('flexible_group');
+    $group_type->getOutsiderRole()->grantPermissions(['request group membership'])->save();
+  }
 
   $group_type = GroupType::load('closed_group');
   $group_type->getOutsiderRole()->grantPermissions(['request group membership'])->save();
