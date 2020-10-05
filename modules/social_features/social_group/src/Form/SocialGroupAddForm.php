@@ -113,7 +113,7 @@ class SocialGroupAddForm extends FormBase {
    * Note this element is also used in the edit group form.
    *
    * @param bool $container
-   *  Make this a containered radio element.
+   *   Make this a containered radio element.
    *
    * @return array
    *   Returns an array containing the group type element and descriptions.
@@ -192,7 +192,7 @@ class SocialGroupAddForm extends FormBase {
           '#after_build' => [
             [
               'Drupal\Core\Field\Plugin\Field\FieldWidget\OptionsButtonsWidget',
-              'afterBuild'
+              'afterBuild',
             ],
           ],
           '#field_name' => "group_type",
