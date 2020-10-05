@@ -49,11 +49,6 @@ use Drupal\social_graphql\Plugin\GraphQL\DataProducer\Entity\QueryEntityBase;
 class QueryUser extends QueryEntityBase {
 
   /**
-   * The highest limit a client is allowed to specify.
-   */
-  const MAX_LIMIT = 100;
-
-  /**
    * Resolves the request to the requested values.
    *
    * @param int|null $first
