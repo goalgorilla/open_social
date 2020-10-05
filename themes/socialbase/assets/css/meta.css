@@ -1,6 +1,9 @@
 .metainfo {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  flex-wrap: wrap;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
   position: relative;
   margin-bottom: 30px;
   line-height: 1.4;
@@ -16,7 +19,9 @@
 }
 
 .metainfo__content {
-  flex: 1;
+  -webkit-box-flex: 1;
+      -ms-flex: 1;
+          flex: 1;
   font-size: 0.875rem;
 }
 
@@ -41,24 +46,45 @@
 }
 
 .metainfo__properties {
-  flex: 1 1 100%;
+  -webkit-box-flex: 1;
+      -ms-flex: 1 1 100%;
+          flex: 1 1 100%;
   margin: 20px 0 40px;
 }
 
 .meta-engage {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  margin-bottom: 1rem;
-  flex-wrap: wrap;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
 }
 
-.meta-engage .badge {
+.meta-engage .badge + .badge,
+.meta-engage .meta-engage--buttons > * + * {
+  margin-left: 5px;
+}
+
+.meta-engage .meta-engage--buttons {
   margin-right: 5px;
 }
 
-.meta-follow {
-  margin-right: 0;
-  margin-left: auto;
-  flex-basis: 100%;
+.meta-engage .btn {
+  margin-bottom: 3px;
+}
+
+.meta-engage > * {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
   margin-bottom: 1rem;
 }
 
@@ -102,12 +128,26 @@
 
 @media (min-width: 600px) {
   .meta-engage {
-    flex-wrap: nowrap;
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
   }
-  .meta-follow {
-    flex-basis: auto;
-    order: 10;
-    margin-bottom: 0;
+}
+
+@media (min-width: 900px) {
+  .meta-engage .meta-engage--buttons {
+    -webkit-box-ordinal-group: 2;
+        -ms-flex-order: 1;
+            order: 1;
+  }
+}
+
+@media (max-width: 899px) {
+  .meta-engage {
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column;
+  }
+  .meta-engage .btn .btn:first-child {
+    margin-left: 0;
   }
 }
