@@ -123,12 +123,10 @@ function socialblue_form_system_theme_settings_alter(&$form, FormStateInterface 
       // Font tab.
       $fonts = [];
       if (\Drupal::service('module_handler')->moduleExists('social_font')) {
-
         /** @var \Drupal\social_font\Entity\Font $font_entities */
         foreach (Font::loadMultiple() as $font_entities) {
           $fonts[$font_entities->id()] = $font_entities->get('name')->value;
         }
-
       }
 
       $form['os_font_settings']['font_primary'] = [
@@ -158,10 +156,60 @@ function socialblue_form_system_theme_settings_alter(&$form, FormStateInterface 
         ],
         '#default_value' => $config->get('style'),
       ];
+
+      // When GIN is our admin theme, update the GIN colors.
+      if (\Drupal::configFactory()->get('system.theme')->get('admin') === 'gin') {
+        $form['#submit'][] = 'socialblue_update_gin_color_settings';
+      }
     }
 
   }
 
+}
+
+/**
+ * Updates the gin color settings from socialblue it's config.
+ *
+ * This ensures the brand color also applies to GIN.
+ *
+ * @param array $form
+ *   The submitted form structure.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   The state of the submitted form.
+ *
+ * @throws \Drupal\Core\Entity\EntityStorageException
+ */
+function socialblue_update_gin_color_settings(array $form, FormStateInterface $form_state) {
+  // Grab the default socialblue colors, these are set if the color settings
+  // aren't overridden yet.
+  $default_colors = \Drupal::configFactory()->getEditable('socialblue.settings')->getRawData();
+  // Unfortunately the color module doesnt add the color details to the
+  // $form_state. So we need to grab it from the config once overridden.
+  // luckily color does set their submit function as first, so we can
+  // safely assume the config uses the updated colors.
+  $socialblue_colors = \Drupal::configFactory()->getEditable('color.theme.socialblue')->getRawData();
+
+  // The brand colors are first of all coming from the overridden color
+  // settings. But if that is not set, we will grab them from the
+  // default Social Blue settings.
+  $brand_primary = !empty($socialblue_colors) ? $socialblue_colors['palette']['brand-primary'] : $default_colors['color_primary'];
+  $brand_secondary = !empty($socialblue_colors) ? $socialblue_colors['palette']['brand-secondary'] : $default_colors['color_secondary'];
+
+  // See if we can update GIN settings with our brand colors.
+  if (isset($brand_primary, $brand_secondary)) {
+    $config = \Drupal::configFactory()->getEditable('gin.settings');
+    if (!empty($config->getRawData())) {
+      $gin_config = $config->getRawData();
+      // Override preset colors as custom so we can fill in the hex colors.
+      $gin_config['preset_accent_color'] = 'custom';
+      $gin_config['preset_focus_color'] = 'custom';
+      // Update the accent and focus with our branded colors.
+      $gin_config['accent_color'] = $brand_primary;
+      $gin_config['focus_color'] = $brand_secondary;
+      $config->setData($gin_config);
+      $config->save();
+    }
+  }
 }
 
 /**
