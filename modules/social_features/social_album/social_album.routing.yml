@@ -1,10 +1,11 @@
 social_album.post:
   path: '/node/{node}/post'
   defaults:
-    _entity_form: 'post.album'
-    _title: 'Add images to album'
+    _entity_form: 'post.first_in_album'
+    _title_callback: '\Drupal\social_album\Controller\SocialAlbumController::title'
     type: photo
   requirements:
+    _custom_access: '\Drupal\social_album\Controller\SocialAlbumController::checkAccess'
     _permission: 'add post entities'
     node: \d+
   options:
