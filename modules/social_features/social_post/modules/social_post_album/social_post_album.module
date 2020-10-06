@@ -31,9 +31,14 @@ function social_post_album_preprocess_field__post__type__image__album(&$variable
 function social_post_album_preprocess_image_popup_details(&$variables) {
   $post = \Drupal::entityTypeManager()->getStorage('post')->load($variables['pid']);;
 
-  $variables['post'] = \Drupal::entityTypeManager()
-    ->getViewBuilder('post')
-    ->view($post, 'album');
+  $variables['post'] = [
+    '#lazy_builder' => ['social_post_album.lazy_renderer:getPost', [
+      $post->getEntityTypeId(),
+      $post->id(),
+      'album',
+    ]],
+    '#create_placeholder' => TRUE,
+  ];
 }
 
 /**
