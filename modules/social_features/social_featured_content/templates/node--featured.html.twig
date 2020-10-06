@@ -90,7 +90,7 @@
       {% endblock %}
 
       {% block card_teaser_type %}
-        <a href="{{ url }}">
+        <a href="{{ url }}" aria-hidden="true">
           <div class="teaser__teaser-type">
             <svg class="teaser__teaser-type-icon">
               <use xlink:href="#icon-{{- node.bundle|clean_class -}}"></use>
@@ -108,7 +108,7 @@
       {% block card_title %}
         {{ title_prefix }}
         <h4{{ title_attributes }} class="teaser__title">
-          <a href="{{ url }}" rel="bookmark">{{ label }}</a>
+          <a href="{{ url }}" rel="bookmark" title="{{ label }}">{{ label }}</a>
         </h4>
         {{ title_suffix }}
       {% endblock %}
@@ -158,7 +158,7 @@
       {% block card_link %}
         {% if not hide_card_link %}
           <div class="card__link">
-            <a href="{{ url }}" rel="bookmark">{{ 'Read more'|t }}
+            <a href="{{ url }}" rel="bookmark" aria-hidden="true">{{ 'Read more'|t }}
               <span class="visually-hidden">{% trans %}about {{ label }}{% endtrans %} </span>
             </a>
           </div>
