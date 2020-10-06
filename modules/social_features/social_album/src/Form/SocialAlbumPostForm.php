@@ -31,6 +31,8 @@ class SocialAlbumPostForm extends PostForm {
     if ($node) {
       $form['field_album']['widget']['value']['#default_value'] = $node->id();
       $form['field_album']['#access'] = FALSE;
+
+      $form_state->set('nid', $node->id());
     }
 
     return $form;
@@ -47,6 +49,19 @@ class SocialAlbumPostForm extends PostForm {
     }
 
     return $element;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function save(array $form, FormStateInterface $form_state) {
+    parent::save($form, $form_state);
+
+    if ($form_state->has('nid')) {
+      $form_state->setRedirect('entity.node.canonical', [
+        'node' => $form_state->get('nid'),
+      ]);
+    }
   }
 
 }
