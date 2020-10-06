@@ -14,6 +14,21 @@ use Drupal\social_post\Form\PostForm;
 class SocialAlbumPostForm extends PostForm {
 
   /**
+   * The visibility options mapping.
+   *
+   * The associative array where keys are node options and values are the
+   * corresponding post options.
+   *
+   * @see field.storage.node.field_content_visibility.yml
+   * @see field.storage.post.field_visibility.yml
+   */
+  const VISIBILITY_MAPPING = [
+    'public' => '1',
+    'community' => '2',
+    'group' => '3',
+  ];
+
+  /**
    * The node object or NULL.
    *
    * @var \Drupal\node\NodeInterface|null
@@ -63,6 +78,19 @@ class SocialAlbumPostForm extends PostForm {
       $form_state->setRedirect('entity.node.canonical', [
         'node' => $this->node->id(),
       ]);
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function configureVisibilityField(array &$form, FormStateInterface $form_state) {
+    parent::configureVisibilityField($form, $form_state);
+
+    if ($this->node) {
+      $field = &$form['field_visibility']['widget'][0];
+      $field['#default_value'] = self::VISIBILITY_MAPPING[$this->node->field_content_visibility->value];
+      $field['#edit_mode'] = TRUE;
     }
   }
 
