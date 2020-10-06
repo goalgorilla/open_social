@@ -29,10 +29,12 @@ class SocialAlbumPostForm extends PostForm {
     $form = parent::buildForm($form, $form_state);
 
     if ($node) {
+      $form['#disable_inline_form_errors'] = TRUE;
+
       $form['field_album']['widget']['value']['#default_value'] = $node->id();
       $form['field_album']['#access'] = FALSE;
 
-      $form_state->set('nid', $node->id());
+      $form['field_post_image']['widget'][0]['#required'] = TRUE;
     }
 
     return $form;
@@ -57,9 +59,9 @@ class SocialAlbumPostForm extends PostForm {
   public function save(array $form, FormStateInterface $form_state) {
     parent::save($form, $form_state);
 
-    if ($form_state->has('nid')) {
+    if ($this->node) {
       $form_state->setRedirect('entity.node.canonical', [
-        'node' => $form_state->get('nid'),
+        'node' => $this->node->id(),
       ]);
     }
   }
