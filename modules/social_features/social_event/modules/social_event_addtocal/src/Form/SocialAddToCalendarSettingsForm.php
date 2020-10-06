@@ -92,7 +92,7 @@ class SocialAddToCalendarSettingsForm extends ConfigFormBase {
           ':input[name="enable_add_to_calendar"]' => ['checked' => TRUE],
         ],
       ],
-      '#default_value' => $config->get('allowed_calendars'),
+      '#default_value' => $config->get('allowed_calendars') ?: [],
     ];
 
     return parent::buildForm($form, $form_state);
