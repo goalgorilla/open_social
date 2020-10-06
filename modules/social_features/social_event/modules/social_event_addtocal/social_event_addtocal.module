@@ -36,19 +36,31 @@ function social_event_addtocal_node_view(array &$build, NodeInterface $node, Ent
 
   // Get 'Add to calendar' configuration.
   $addtocal_config = Drupal::config('social_event_addtocal.settings');
+
+  // Set render array if the 'Add to calendar' feature enabled.
   if ($addtocal_config->get('enable_add_to_calendar')) {
+    // Get calendar links.
+    $links = _social_event_addtocal_get_links($node);
+
     // Update the 'Add to calendar' field rendering.
     $build['field_event_addtocal'] = [
       '#type' => 'dropbutton',
       '#attributes' => [
         'class' => ['add-to-calendar'],
-        'no-split' => [
-          'title' => t('Add to Calendar'),
-          'alignment' => 'right',
-        ],
       ],
-      '#links' => _social_event_addtocal_get_links($node),
+      '#links' => $links,
     ];
+
+    // Make sure we clear the cache if the settings is submitted.
+    $build['#cache']['tags'][] = 'config:social_event_addtocal.settings';
+
+    // Split links if there is more than one.
+    if (count($links) > 1) {
+      $build['field_event_addtocal']['#attributes']['no-split'] = [
+        'title' => t('Add to Calendar'),
+        'alignment' => 'right',
+      ];
+    }
   }
 }
 
@@ -88,11 +100,16 @@ function _social_event_addtocal_get_links(NodeInterface $node) {
       }
 
       // Set link for plugin instance.
-      $links[$allowed_calendar] = [
+      $links[] = [
         'title' => $calendar->getName(),
         'url' => $calendar->generateUrl($node),
       ];
     }
+  }
+
+  // Change title if only one calendar enabled.
+  if (count($links) === 1) {
+    $links[0]['title'] = t('Add to Calendar');
   }
 
   return $links;
