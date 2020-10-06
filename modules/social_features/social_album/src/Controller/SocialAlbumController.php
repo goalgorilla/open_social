@@ -36,10 +36,7 @@ class SocialAlbumController extends ControllerBase {
    *   The access result.
    */
   public function checkAccess(NodeInterface $node) {
-    return AccessResult::allowedIf(
-      $node->bundle() === 'album' &&
-      !views_get_view_result('albums', 'embed_album_cover')
-    );
+    return AccessResult::allowedIf($node->bundle() === 'album');
   }
 
 }

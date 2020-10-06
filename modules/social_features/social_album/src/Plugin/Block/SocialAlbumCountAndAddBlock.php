@@ -150,8 +150,10 @@ class SocialAlbumCountAndAddBlock extends BlockBase implements ContainerFactoryP
         'link' => [
           'text' => $this->t('Add images'),
           'route' => [
-            'name' => 'entity.post.add_form',
-            'parameters' => ['post_type' => 'photo'],
+            'name' => 'social_album.post',
+            'parameters' => [
+              'node' => $this->routeMatch->getRawParameter('node'),
+            ],
           ],
         ],
       ],

@@ -89,10 +89,9 @@ class Node extends NodeBase {
       $node->bundle() === 'album' &&
       !views_get_view_result('albums', 'embed_album_cover', $node->id())
     ) {
-      $variables['link'] = Url::fromRoute(
-        'entity.post.add_form',
-        ['post_type' => 'photo']
-      );
+      $variables['link'] = Url::fromRoute('social_album.post', [
+        'node' => $node->id(),
+      ]);
     }
   }
 
