@@ -1,0 +1,16 @@
+{{ attach_library('socialbase/photoswipe.image') }}
+
+{# @see field--field-post-image.html.twig #}
+<div class=" asdasdasd" itemscope itemtype="http://schema.org/ImageGallery"
+     data-item-class="photoswipe-gallery-item">
+  {% for index, item in items %}
+    <div class="post-with-image">
+      <a class="use-ajax"
+         href="/open/images/{{ fids }}/{{ pid }}"
+         data-dialog-type="modal"
+         data-dialog-options='{"width":"80%"}'>
+        {{ item.content }}
+      </a>
+    </div>
+  {% endfor %}
+</div>

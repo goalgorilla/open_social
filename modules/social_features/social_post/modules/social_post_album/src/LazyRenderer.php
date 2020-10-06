@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\social_post_photo;
+namespace Drupal\social_post_album;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 

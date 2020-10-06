@@ -1,0 +1,72 @@
+<?php
+
+/**
+ * @file
+ * The Social post album module.
+ */
+
+use Drupal\social_post\Entity\PostInterface;
+
+/**
+ * @param $variables
+ */
+function social_post_album_preprocess_field__post__type__image__album(&$variables) {
+  $post = $variables['element']['#object'];
+
+  if ($post instanceof PostInterface && $post->hasField('field_post')) {
+    $fids = [];
+    $items = $variables['items'];
+    foreach ($items as $item) {
+      $fids[] = $item['content']['#item']->entity->fid->value;
+    }
+
+    $variables['fids'] = implode($fids, ',');
+    $variables['pid'] = $post->id();
+  }
+}
+
+/**
+ * @param $variables
+ */
+function social_post_album_preprocess_image_popup_details(&$variables) {
+  $post = \Drupal::entityTypeManager()->getStorage('post')->load($variables['pid']);;
+
+  $variables['post'] = \Drupal::entityTypeManager()
+    ->getViewBuilder('post')
+    ->view($post, 'album');
+}
+
+/**
+ * Implements hook_theme().
+ */
+function social_post_album_theme($existing, $type, $theme, $path) {
+  return [
+    'image_popup_details' => [
+      'variables' => [
+        'url_popup' => NULL,
+        'pid' => NULL,
+      ],
+      'path' => $path . '/templates',
+      'template' => 'image-popup-formatter',
+    ],
+    'field__post__type__image__album' => [
+      'base hook' => 'field',
+      'render element' => 'element',
+      'path' => $path . '/templates',
+      'template' => 'field--post--type--image--album',
+    ],
+  ];
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK_alter().
+ */
+function social_post_album_theme_suggestions_field_alter(array &$suggestions, array $variables) {
+  $element = $variables['element'];
+
+  if ($element['#field_name'] === 'field_post_image') {
+    $suggestions[] = 'field__' . $element['#entity_type'] . '__type__' . $element['#field_type'] . '__album';
+  }
+
+  return $suggestions;
+}

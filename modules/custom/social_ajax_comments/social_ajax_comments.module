@@ -45,9 +45,14 @@ function social_ajax_comments_entity_display_build_alter(&$build, $context) {
 
         $html_id = $field['#entity_type'] . '_' . $field['#bundle'] . '_' . $field['#field_name'];
         if ($context['entity'] instanceof Post) {
+          $view_mode = $context['display']->getMode();
+          if ($view_mode === '_custom') {
+            $view_mode = 'activity';
+          }
           // It will also run on AJAX commands so cant do a .=
           // otherwise it will keep on adding the id.
-          $html_id = $field['#entity_type'] . '_' . $field['#bundle'] . '_' . $field['#field_name'] . '_' . $context['entity']->id();
+
+          $html_id = $field['#entity_type'] . '_' . $field['#bundle'] . '_' . $field['#field_name'] . '_' . $context['entity']->id() . '_' . $view_mode;
         }
         if (isset($build[$field_name])) {
           $build['#cache']['contexts'][] = 'url';
@@ -164,8 +169,16 @@ function social_ajax_comments_ajax_comments_wrapper_id_alter(&$wrapper_html_id, 
     );
   }
   if ($commented_entity instanceof Post && $field_name === 'field_post_comments') {
+    /** @var \Drupal\ajax_comments\TempStore $tempStore */
+    $tempStore = \Drupal::service('ajax_comments.temp_store');
+    $view_mode = $tempStore->getViewMode($commented_entity->getEntityType()->getLabel());
+
+    if ($view_mode === '_custom') {
+      $view_mode = 'activity';
+    }
+
     $wrapper_html_id = Html::getId(
-      $commented_entity->getEntityTypeId() . '-' . $commented_entity->bundle() . '-' . 'field_post_comments' . '-' . $commented_entity->id()
+      $commented_entity->getEntityTypeId() . '-' . $commented_entity->bundle() . '-' . 'field_post_comments' . '-' . $commented_entity->id() . '_' . $view_mode
     );
   }
 }

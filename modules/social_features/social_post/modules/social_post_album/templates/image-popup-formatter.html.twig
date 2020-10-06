@@ -1,0 +1,24 @@
+{{ attach_library('core/drupal.dialog.ajax') }}
+
+<div class="row">
+  {% for url in url_popup %}
+    <a href="{{ url }}"
+       class="post-index-{{ index }} photoswipe-gallery-item"
+       data-med="{{ url }}">
+      {# data-med-size="{{ item.content['#item'].width }}x{{ item.content['#item'].height }}" #}
+      {# data-size="{{ item.content['#item'].width }}x{{ item.content['#item'].height }}"> #}
+      <img src="{{ url }}">
+    </a>
+  {% endfor %}
+
+  <div class="post-wrapper post-index-{{ index }}">
+    <div class="post_message">
+      <div class="post_header">
+        {{ 'Images posted in album' }} <b>{{ 'Trip to Amsterdam' }}</b>
+      </div>
+      {{ post }}
+    </div>
+  </div>
+
+</div>
+</div>
