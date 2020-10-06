@@ -8,6 +8,28 @@
 use Drupal\social_post\Entity\PostInterface;
 
 /**
+ * Implements hook_theme().
+ */
+function social_post_album_theme($existing, $type, $theme, $path) {
+  return [
+    'image_popup_details' => [
+      'variables' => [
+        'url_popup' => NULL,
+        'pid' => NULL,
+      ],
+      'path' => $path . '/templates',
+      'template' => 'image-popup-formatter',
+    ],
+    'field__post__type__image__album' => [
+      'base hook' => 'field',
+      'render element' => 'element',
+      'path' => $path . '/templates',
+      'template' => 'field--post--type--image--album',
+    ],
+  ];
+}
+
+/**
  * @param $variables
  */
 function social_post_album_preprocess_field__post__type__image__album(&$variables) {
@@ -42,25 +64,17 @@ function social_post_album_preprocess_image_popup_details(&$variables) {
 }
 
 /**
- * Implements hook_theme().
+ * Implements hook_preprocess().
  */
-function social_post_album_theme($existing, $type, $theme, $path) {
-  return [
-    'image_popup_details' => [
-      'variables' => [
-        'url_popup' => NULL,
-        'pid' => NULL,
-      ],
-      'path' => $path . '/templates',
-      'template' => 'image-popup-formatter',
-    ],
-    'field__post__type__image__album' => [
-      'base hook' => 'field',
-      'render element' => 'element',
-      'path' => $path . '/templates',
-      'template' => 'field--post--type--image--album',
-    ],
-  ];
+function social_post_album_preprocess_activity(&$variables, $hook) {
+  $variables['extra_stream_class'] = 'card--stream--multiple-images';
+}
+
+/**
+ * Implements hook_preprocess().
+ */
+function social_post_album_preprocess_block__social_post(&$variables, $hook) {
+  $variables['extra_stream_class'] = 'card--stream--multiple-images';
 }
 
 /**
