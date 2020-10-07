@@ -1,0 +1,116 @@
+<?php
+
+/**
+ * @file
+ * Contains Social Add To Calendar module.
+ */
+
+use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
+use Drupal\node\NodeInterface;
+use Drupal\social_event_addtocal\Plugin\SocialAddToCalendarInterface;
+
+/**
+ * Implements hook_entity_extra_field_info().
+ */
+function social_event_addtocal_entity_extra_field_info() {
+  // Add the 'Add to Calendar' field.
+  $extra['node']['event']['display']['field_event_addtocal'] = [
+    'label' => t('Add to Calendar'),
+    'description' => t('Allow users to add the event to the calendar'),
+    'weight' => 100,
+    'visible' => FALSE,
+  ];
+
+  return $extra;
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_view().
+ *
+ * Uses for node entity type.
+ */
+function social_event_addtocal_node_view(array &$build, NodeInterface $node, EntityViewDisplayInterface $display, $view_mode) {
+  if ($node->bundle() !== 'event') {
+    return;
+  }
+
+  // Get 'Add to calendar' configuration.
+  $addtocal_config = Drupal::config('social_event_addtocal.settings');
+
+  // Set render array if the 'Add to calendar' feature enabled.
+  if ($addtocal_config->get('enable_add_to_calendar')) {
+    // Get calendar links.
+    $links = _social_event_addtocal_get_links($node);
+
+    // Update the 'Add to calendar' field rendering.
+    $build['field_event_addtocal'] = [
+      '#type' => 'dropbutton',
+      '#attributes' => [
+        'class' => ['add-to-calendar'],
+      ],
+      '#links' => $links,
+    ];
+
+    // Make sure we clear the cache if the settings is submitted.
+    $build['#cache']['tags'][] = 'config:social_event_addtocal.settings';
+
+    // Split links if there is more than one.
+    if (count($links) > 1) {
+      $build['field_event_addtocal']['#attributes']['no-split'] = [
+        'title' => t('Add to Calendar'),
+        'alignment' => 'right',
+      ];
+    }
+  }
+}
+
+/**
+ * Adds links for the 'Add to Calendar' button.
+ *
+ * @param \Drupal\node\NodeInterface $node
+ *   The node entity.
+ *
+ * @return array[]
+ *   Array of links for render.
+ */
+function _social_event_addtocal_get_links(NodeInterface $node) {
+  // Links for Add to calendar button.
+  $links = [];
+
+  // Get 'Add to calendar' configuration.
+  $addtocal_config = Drupal::config('social_event_addtocal.settings');
+
+  // Get plugin instance and set links array.
+  /** @var \Drupal\social_event_addtocal\Plugin\SocialAddToCalendarManager $social_add_to_calendar */
+  $social_add_to_calendar = Drupal::service('plugin.manager.social_add_to_calendar');
+
+  // Get allowed calendars.
+  $allowed_calendars = $addtocal_config->get('allowed_calendars');
+
+  // Set links for dropdown.
+  foreach ($allowed_calendars as $allowed_calendar) {
+    // Check if calendar plugin enabled in config.
+    if ($allowed_calendar) {
+      /** @var \Drupal\social_event_addtocal\Plugin\SocialAddToCalendarInterface $calendar */
+      $calendar = $social_add_to_calendar->createInstance($allowed_calendar);
+
+      // Exit if calendar plugin nor exist.
+      if (!$calendar instanceof SocialAddToCalendarInterface) {
+        continue;
+      }
+
+      // Set link for plugin instance.
+      $links[] = [
+        'title' => $calendar->getName(),
+        'url' => $calendar->generateUrl($node),
+      ];
+    }
+  }
+
+  // Change title if only one calendar enabled.
+  if (count($links) === 1) {
+    $links[0]['title'] = t('Add to Calendar');
+  }
+
+  return $links;
+}
