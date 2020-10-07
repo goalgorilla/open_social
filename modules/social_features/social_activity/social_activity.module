@@ -41,6 +41,7 @@ function social_activity_social_user_account_header_items(array $context) {
       '#title' => new TranslatableMarkup('Notification Centre'),
       '#icon' => $num_notifications > 0 ? 'notifications' : 'notifications_none',
       '#label' => new TranslatableMarkup('Notifications'),
+      '#url' => Url::fromRoute('view.activity_stream_notifications.page_1'),
       '#notification_count' => $num_notifications,
       '#weight' => 800,
       'header' => [
