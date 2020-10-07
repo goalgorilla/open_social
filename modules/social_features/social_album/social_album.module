@@ -141,11 +141,19 @@ function social_album_entity_type_alter(array &$entity_types) {
  * Implements hook_form_FORM_ID_alter().
  */
 function social_album_form_post_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-  if (
-    \Drupal::routeMatch()->getRouteName() === 'social_album.post' &&
-    isset($form['current_user_image'])
-  ) {
-    unset($form['current_user_image']);
+  if (\Drupal::routeMatch()->getRouteName() === 'social_album.post') {
+    if (isset($form['current_user_image'])) {
+      unset($form['current_user_image']);
+    }
+  }
+  elseif (isset($form['field_album'])) {
+    $form['field_album']['#states'] = [
+      'visible' => [
+        ':input[name="field_post_image[0][fids]"]' => [
+          'filled' => TRUE,
+        ],
+      ],
+    ];
   }
 }
 
