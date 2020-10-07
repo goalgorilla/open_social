@@ -254,3 +254,24 @@ function social_activity_update_8804() {
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
 }
+
+/**
+ * Added a new activity entity condition to message templates.
+ */
+function social_activity_update_8805() {
+  $message_templates = [
+    'message.template.create_content_in_joined_group',
+    'message.template.create_event_community',
+    'message.template.create_event_group',
+    'message.template.create_topic_community',
+    'message.template.create_topic_group',
+    'message.template.moved_content_between_groups',
+  ];
+
+  // Add new condition to these templates.
+  foreach ($message_templates as $message_template) {
+    \Drupal::configFactory()->getEditable($message_template)
+      ->set('third_party_settings.activity_logger.activity_entity_condition', 'node_published')
+      ->save();
+  }
+}
