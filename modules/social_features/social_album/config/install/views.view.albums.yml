@@ -549,13 +549,13 @@ display:
           destination: true
           entity_type: post
           plugin_id: social_album_post_operations
-        field_post_image_1:
-          id: field_post_image_1
-          table: post__field_post_image
-          field: field_post_image
+        id:
+          id: id
+          table: post_field_data
+          field: id
           relationship: reverse__post__field_album
           group_type: group
-          admin_label: '(field_album) Post: Image (URL)'
+          admin_label: ''
           label: ''
           exclude: true
           alter:
@@ -592,18 +592,17 @@ display:
           element_label_colon: false
           element_wrapper_type: ''
           element_wrapper_class: ''
-          element_default_classes: false
+          element_default_classes: true
           empty: ''
           hide_empty: false
           empty_zero: false
           hide_alter_empty: true
-          click_sort_column: target_id
-          type: image_url
-          settings:
-            image_style: ''
-          group_column: ''
+          click_sort_column: value
+          type: number_unformatted
+          settings: {  }
+          group_column: value
           group_columns: {  }
-          group_rows: false
+          group_rows: true
           delta_limit: 0
           delta_offset: 0
           delta_reversed: false
@@ -611,6 +610,8 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
+          entity_type: post
+          entity_field: id
           plugin_id: field
         field_post_image:
           id: field_post_image
@@ -623,7 +624,7 @@ display:
           exclude: false
           alter:
             alter_text: true
-            text: '<a href="{{ field_post_image_1 }}" data-med="{{ field_post_image_1 }}" data-med-size="{{ field_post_image__width }}x{{ field_post_image__height }}" data-size="{{ field_post_image__width }}x{{ field_post_image__height }}" class="photoswipe-gallery-item">{{ field_post_image }}</a>'
+            text: '<a href="/open/images/{{ field_post_image__target_id }}/{{ id }}" class="use-ajax" data-dialog-type="modal" data-dialog-options=''{"width":"80%"}''>{{ field_post_image }}</a>'
             make_link: false
             path: ''
             absolute: false
