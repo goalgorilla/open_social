@@ -9,6 +9,7 @@ use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\social_album\Form\SocialAlbumImageForm;
 use Drupal\social_album\Form\SocialAlbumPostForm;
 
 /**
@@ -134,7 +135,9 @@ function social_album_social_post_message_alter(TranslatableMarkup &$message, Fo
  */
 function social_album_entity_type_alter(array &$entity_types) {
   /** @var \Drupal\Core\Entity\EntityTypeInterface[] $entity_types */
-  $entity_types['post']->setFormClass('first_in_album', SocialAlbumPostForm::class);
+  $entity_types['post']
+    ->setFormClass('first_in_album', SocialAlbumPostForm::class)
+    ->setFormClass('delete_image', SocialAlbumImageForm::class);
 }
 
 /**

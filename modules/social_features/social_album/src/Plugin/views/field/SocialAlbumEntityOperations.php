@@ -2,6 +2,7 @@
 
 namespace Drupal\social_album\Plugin\views\field;
 
+use Drupal\Core\Url;
 use Drupal\views\Plugin\views\field\EntityOperations;
 use Drupal\views\ResultRow;
 
@@ -18,22 +19,55 @@ class SocialAlbumEntityOperations extends EntityOperations {
    * {@inheritdoc}
    */
   public function render(ResultRow $values) {
-    $entity = $this->getEntityTranslation($this->getEntity($values), $values);
+    foreach (get_object_vars($values) as $key => $value) {
+      if (preg_match('/_delta$/', $key)) {
+        break;
+      }
+    }
 
     return [
       '#lazy_builder' => [
+        [$this, 'renderLinks'],
         [
-          $this->entityTypeManager->getViewBuilder($entity->getEntityTypeId()),
-          'renderLinks',
-        ],
-        [
-          $entity->id(),
-          'default',
-          $entity->language()->getId(),
-          !empty($entity->in_preview),
+          $values->_entity->id(),
+          $this->getEntity($values)->id(),
+          $value,
         ],
       ],
     ];
+  }
+
+  /**
+   * Lazy_builder callback; builds a post's links.
+   *
+   * @param int $node_id
+   *   The post entity ID.
+   * @param int $post_id
+   *   The post entity ID.
+   * @param int $delta
+   *   The place of the image in the field.
+   *
+   * @return array
+   *   A renderable array representing the post links.
+   */
+  public static function renderLinks($node_id, $post_id, $delta) {
+    $entity = \Drupal::entityTypeManager()->getStorage('post')->load($post_id);
+
+    $links = call_user_func(
+      [\Drupal::entityTypeManager()->getViewBuilder('post'), __FUNCTION__],
+      $post_id,
+      'default',
+      $entity->language()->getId(),
+      !empty($entity->in_preview)
+    );
+
+    $links['post']['#links']['delete']['url'] = Url::fromRoute('social_album.image', [
+      'node' => $node_id,
+      'post' => $post_id,
+      'delta' => $delta,
+    ]);
+
+    return $links;
   }
 
 }

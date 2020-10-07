@@ -12,3 +12,20 @@ social_album.post:
     parameters:
       node:
         type: 'entity:node'
+
+social_album.image:
+  path: '/node/{node}/image/{post}/{delta}'
+  defaults:
+    _entity_form: 'post.delete_image'
+    _title: 'Delete image'
+  requirements:
+    _custom_access: '\Drupal\social_album\Controller\SocialAlbumController::checkAccess'
+    node: \d+
+    post: \d+
+    delta: \d+
+  options:
+    parameters:
+      node:
+        type: 'entity:node'
+      post:
+        type: 'entity:post'
