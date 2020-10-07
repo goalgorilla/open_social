@@ -73,12 +73,13 @@ class SocialAlbumOptionsSelectWidget extends OptionsSelectWidget {
    */
   public static function validateElement(array $element, FormStateInterface $form_state) {
     $field = $element['#parents'][0];
+    $has_images = $form_state->hasValue(['field_post_image', 0, 'fids', 0]);
 
     if (
       $element['#value'] === '_add' &&
       ($title = $form_state->getValue([$field, 'title']))
     ) {
-      if ($form_state->getTriggeringElement()['#name'] === 'op') {
+      if ($form_state->getTriggeringElement()['#name'] === 'op' && $has_images) {
         $node = \Drupal::entityTypeManager()->getStorage('node')->create([
           'type' => 'album',
           'title' => $title,
@@ -93,6 +94,9 @@ class SocialAlbumOptionsSelectWidget extends OptionsSelectWidget {
       else {
         $element['#value'] = '_none';
       }
+    }
+    elseif ($element['#value'] !== '_none' && !$has_images) {
+      $element['#value'] = '_none';
     }
 
     parent::validateElement($element, $form_state);
