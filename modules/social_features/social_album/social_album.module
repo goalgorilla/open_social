@@ -77,11 +77,15 @@ function social_album_preprocess_views_view(&$variables) {
   /** @var \Drupal\views\ViewExecutable $view */
   $view = $variables['view'];
 
-  if (
-    $view->id() === 'albums' &&
-    $view->current_display === 'page_albums_overview'
-  ) {
-    $variables['#attached']['library'][] = 'social_album/social_album_teaser';
+  if ($view->id() === 'albums') {
+    $library = [
+      'embed_album_overview' => 'socialbase/stream',
+      'page_albums_overview' => 'social_album/social_album_teaser',
+    ];
+
+    if (isset($library[$view->current_display])) {
+      $variables['#attached']['library'][] = $library[$view->current_display];
+    }
   }
 }
 
@@ -150,6 +154,23 @@ function social_album_form_post_form_alter(&$form, FormStateInterface $form_stat
  */
 function social_album_form_node_album_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   $form['actions']['submit']['#submit'][] = '_social_album_create_post';
+}
+
+/**
+ * Implements hook_views_data().
+ */
+function social_album_views_data() {
+  return [
+    \Drupal::entityTypeManager()->getStorage('post')->getEntityType()->getBaseTable() => [
+      'post_operations' => [
+        'field' => [
+          'title' => t('Post operations links'),
+          'help' => t('Provides links to perform post operations.'),
+          'id' => 'social_album_post_operations',
+        ],
+      ],
+    ],
+  ];
 }
 
 /**

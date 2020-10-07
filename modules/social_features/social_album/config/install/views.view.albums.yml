@@ -10,6 +10,7 @@ dependencies:
   module:
     - image
     - node
+    - social_album
     - social_post
 id: albums
 label: Albums
@@ -486,9 +487,9 @@ display:
       style:
         type: default
         options:
-          row_class: ''
+          grouping: {  }
+          row_class: stream-item
           default_row_class: true
-          uses_fields: false
       row:
         type: fields
         options:
@@ -497,10 +498,10 @@ display:
           separator: ''
           hide_empty: false
       fields:
-        operations:
-          id: operations
+        post_operations:
+          id: post_operations
           table: post
-          field: operations
+          field: post_operations
           relationship: reverse__post__field_album
           group_type: group
           admin_label: ''
@@ -547,7 +548,7 @@ display:
           hide_alter_empty: true
           destination: true
           entity_type: post
-          plugin_id: entity_operations
+          plugin_id: social_album_post_operations
         field_post_image_1:
           id: field_post_image_1
           table: post__field_post_image
