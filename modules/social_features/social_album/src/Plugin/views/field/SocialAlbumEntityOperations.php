@@ -25,13 +25,15 @@ class SocialAlbumEntityOperations extends EntityOperations {
       }
     }
 
+    $entity = $this->getEntity($values);
+
     return [
       '#lazy_builder' => [
         [$this, 'renderLinks'],
         [
           $values->_entity->id(),
-          $this->getEntity($values)->id(),
-          $value,
+          $entity->id(),
+          $entity->field_post_image->get($value)->target_id,
         ],
       ],
     ];
@@ -44,13 +46,13 @@ class SocialAlbumEntityOperations extends EntityOperations {
    *   The post entity ID.
    * @param int $post_id
    *   The post entity ID.
-   * @param int $delta
-   *   The place of the image in the field.
+   * @param int $file_id
+   *   The file entity ID.
    *
    * @return array
    *   A renderable array representing the post links.
    */
-  public static function renderLinks($node_id, $post_id, $delta) {
+  public static function renderLinks($node_id, $post_id, $file_id) {
     $entity = \Drupal::entityTypeManager()->getStorage('post')->load($post_id);
 
     $links = call_user_func(
@@ -64,7 +66,7 @@ class SocialAlbumEntityOperations extends EntityOperations {
     $links['post']['#links']['delete']['url'] = Url::fromRoute('social_album.image', [
       'node' => $node_id,
       'post' => $post_id,
-      'delta' => $delta,
+      'fid' => $file_id,
     ]);
 
     return $links;
