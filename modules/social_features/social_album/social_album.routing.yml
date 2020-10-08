@@ -5,7 +5,7 @@ social_album.post:
     _title_callback: '\Drupal\social_album\Controller\SocialAlbumController::title'
     type: photo
   requirements:
-    _custom_access: '\Drupal\social_album\Controller\SocialAlbumController::checkAccess'
+    _custom_access: '\Drupal\social_album\Controller\SocialAlbumController::checkAlbumAccess'
     _permission: 'add post entities'
     node: \d+
   options:
@@ -19,7 +19,7 @@ social_album.image:
     _entity_form: 'post.delete_image'
     _title: 'Delete image'
   requirements:
-    _custom_access: '\Drupal\social_album\Controller\SocialAlbumController::checkAccess'
+    _custom_access: '\Drupal\social_album\Controller\SocialAlbumController::checkImageAccess'
     node: \d+
     post: \d+
     fid: \d+
