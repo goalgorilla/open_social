@@ -9,6 +9,7 @@ use Drupal\Core\Link;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Url;
 use Drupal\views\Views;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -68,33 +69,39 @@ class SocialAlbumCountAndAddBlock extends BlockBase implements ContainerFactoryP
    * {@inheritdoc}
    */
   public function build() {
+    $build = [];
+
     if (!($properties = $this->getProperties())) {
-      return [];
+      return $build;
     }
 
     $view = Views::getView('albums');
     $view->setArguments([$this->routeMatch->getRawParameter($properties['type'])]);
     $view->execute($properties['display']);
 
-    return [
-      'count' => [
-        '#markup' => $this->formatPlural(
-          $view->total_rows,
-          $properties['count']['singular'],
-          $properties['count']['plural']
-        ),
-      ],
-      'link' => Link::createFromRoute(
-        $properties['link']['text'],
-        $properties['link']['route']['name'],
-        $properties['link']['route']['parameters'],
-        [
-          'attributes' => [
-            'class' => ['btn', 'btn-primary'],
-          ],
-        ]
-      )->toRenderable(),
+    $build['count'] = [
+      '#markup' => $this->formatPlural(
+        $view->total_rows,
+        $properties['count']['singular'],
+        $properties['count']['plural']
+      ),
     ];
+
+    $url = Url::fromRoute(
+      $properties['link']['route']['name'],
+      $properties['link']['route']['parameters'],
+      [
+        'attributes' => [
+          'class' => ['btn', 'btn-primary'],
+        ],
+      ]
+    );
+
+    if ($url->access()) {
+      $build['link'] = Link::fromTextAndUrl($properties['link']['text'], $url)->toRenderable();
+    }
+
+    return $build;
   }
 
   /**

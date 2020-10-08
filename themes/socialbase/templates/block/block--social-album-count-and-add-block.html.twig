@@ -49,10 +49,14 @@
 {% extends "block.html.twig" %}
 
 {% block content %}
-  <div class="row form-group-inline--right">
-    <div class="col-sm-6 right-auto">
-      <h4>{{ content.count }}</h4>
+  {% if content.link %}
+    <div class="row form-group-inline--right">
+      <div class="col-sm-6 right-auto">
+        <h4>{{ content.count }}</h4>
+      </div>
+      <div class="col-sm-6">{{ content.link }}</div>
     </div>
-    <div class="col-sm-6">{{ content.link }}</div>
-  </div>
+  {% else %}
+    <h4>{{ content.count }}</h4>
+  {% endif %}
 {% endblock %}
