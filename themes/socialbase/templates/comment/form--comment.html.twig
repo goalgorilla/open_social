@@ -13,7 +13,16 @@
  */
 #}
 {{ attach_library('socialbase/comment')}}
-<div class="js-comment comment comment-form__wrapper">
+
+{%
+    set classes = [
+        'js-comment',
+        'comment',
+        'comment-form__wrapper',
+    ]
+%}
+
+<div {{ comment_wrapper.addClass(classes) }}>
   <div class="comment__avatar">{{ current_user_picture }}</div>
   <div class="comment__content">
     <form{{ attributes }}>

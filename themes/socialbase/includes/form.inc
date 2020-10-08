@@ -7,6 +7,7 @@
 
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
+use Drupal\Core\Template\Attribute;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 
 /**
@@ -47,6 +48,18 @@ function socialbase_preprocess_form(&$variables) {
             ->getViewBuilder('profile')
             ->view($user_profile, 'compact');
           $variables['current_user_picture'] = $content;
+          // Used for example for ajax comments in form--comment.html.twig, see
+          // Drupal\social_ajax_comments\Controller::socialCancel().
+          if (!empty($element['form_html_id']['#value'])) {
+            $variables['comment_wrapper'] = new Attribute();
+            $variables['comment_wrapper']->addClass('social_' . $element['form_html_id']['#value']);
+            // Only on reply ajax call add another class.
+            // we need this class so ajax_comments understand to remove this
+            // element so there wont be multiple reply forms opened.
+            if (!empty($element['#action']) && strpos($element['#action'], 'ajax_comments/reply') !== FALSE) {
+              $variables['comment_wrapper']->addClass('ajax-comments-form-reply');
+            }
+          }
         }
       }
     }
