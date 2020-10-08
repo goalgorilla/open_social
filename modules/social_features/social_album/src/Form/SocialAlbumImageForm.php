@@ -78,6 +78,10 @@ class SocialAlbumImageForm extends PostDeleteForm {
 
     $field->removeItem($index);
 
+    if ($field->isEmpty()) {
+      $entity->set('field_album', NULL);
+    }
+
     $entity->save();
   }
 
