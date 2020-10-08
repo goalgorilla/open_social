@@ -36,7 +36,17 @@ class SocialAlbumPostForm extends PostForm {
   protected $node;
 
   /**
-   * {@inheritdoc}
+   * Form constructor.
+   *
+   * @param array $form
+   *   An associative array containing the structure of the form.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The current state of the form.
+   * @param \Drupal\node\NodeInterface|null $node
+   *   (optional) The node entity object. Defaults to NULL.
+   *
+   * @return array
+   *   The form structure.
    */
   public function buildForm(array $form, FormStateInterface $form_state, NodeInterface $node = NULL) {
     $this->node = $node;
