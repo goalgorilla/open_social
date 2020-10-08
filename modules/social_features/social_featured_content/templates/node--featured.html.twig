@@ -75,7 +75,7 @@
 <div{{ attributes.addClass(classes) }}>
 
   {% block card_image %}
-    <div class="teaser__image">
+    <div class="teaser__image" aria-hidden="true">
 
       {% block card_hero_image %}
 
@@ -108,7 +108,10 @@
       {% block card_title %}
         {{ title_prefix }}
         <h4{{ title_attributes }} class="teaser__title">
-          <a href="{{ url }}" rel="bookmark">{{ label }}</a>
+          <a href="{{ url }}" rel="bookmark">
+            <span class="sr-only">{{ node.type.0.entity.label() -}}: </span>
+            {{ label }}
+          </a>
         </h4>
         {{ title_suffix }}
       {% endblock %}
@@ -157,11 +160,10 @@
 
       {% block card_link %}
         {% if not hide_card_link %}
-          <div class="card__link">
-            <a href="{{ url }}" rel="bookmark">{{ 'Read more'|t }}
-              <span class="visually-hidden">{% trans %}about {{ label }}{% endtrans %} </span>
-            </a>
-          </div>
+          <a href="{{ url }}" class="card__link" rel="bookmark">
+            {{ 'Read more'|t }}
+            <span class="visually-hidden">{% trans %}about {{ label }}{% endtrans %} </span>
+          </a>
         {% endif %}
       {% endblock %}
 
