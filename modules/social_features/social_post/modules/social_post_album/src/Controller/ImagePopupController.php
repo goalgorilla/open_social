@@ -2,13 +2,13 @@
 
 namespace Drupal\social_post_album\Controller;
 
-use Drupal\ajax_comments\Controller\AjaxCommentsController as ContribController;
+use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Url;
 
 /**
  * Controller routines for AJAX comments routes.
  */
-class ImagePopupController extends ContribController {
+class ImagePopupController extends ControllerBase  {
 
   /**
    * Render images and post in pop-up.

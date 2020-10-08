@@ -5,6 +5,7 @@
  * The Social post album module.
  */
 
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\social_post\Entity\PostInterface;
 
 /**
@@ -67,14 +68,14 @@ function social_post_album_preprocess_image_popup_details(&$variables) {
  * Implements hook_preprocess().
  */
 function social_post_album_preprocess_activity(&$variables, $hook) {
-  $variables['extra_stream_class'] = 'card--stream--multiple-images';
+  $variables['extra_stream_class'] = 'social-post-album--post';
 }
 
 /**
  * Implements hook_preprocess().
  */
 function social_post_album_preprocess_block__social_post(&$variables, $hook) {
-  $variables['extra_stream_class'] = 'card--stream--multiple-images';
+  $variables['extra_stream_class'] = 'social-post-album--form';
 }
 
 /**
@@ -88,4 +89,13 @@ function social_post_album_theme_suggestions_field_alter(array &$suggestions, ar
   }
 
   return $suggestions;
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function social_post_album_form_alter(array &$form, FormStateInterface $form_state, $form_id) {
+  if (in_array($form_id, ['social_post_entity_form'])) {
+    $form['#attached']['library'][] = 'social_post_album/social-post-album--form';
+  }
 }
