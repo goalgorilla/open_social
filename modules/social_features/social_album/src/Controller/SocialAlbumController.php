@@ -37,7 +37,10 @@ class SocialAlbumController extends ControllerBase {
    *   The access result.
    */
   public function checkAlbumAccess(NodeInterface $node) {
-    return AccessResult::allowedIf($node->bundle() === 'album');
+    return AccessResult::allowedIf(
+      $node->bundle() === 'album' &&
+      $node->getOwnerId() === $this->currentUser()->id()
+    );
   }
 
   /**
