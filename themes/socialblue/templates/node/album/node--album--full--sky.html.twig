@@ -1,10 +1,12 @@
 {% extends "node--full--sky.html.twig" %}
 
 {% block nodefull_body %}
-  {% if link is not empty %}
+  {% if no_images %}
     <div class="text-center">
       <p>{{ 'No images added to this album yet'|t }}</p>
-      <a href="{{ link }}" class="btn btn-default btn-sm">{{ 'Add images'|t }}</a>
+      {% if link is not empty %}
+        <a href="{{ link }}" class="btn btn-default btn-sm">{{ 'Add images'|t }}</a>
+      {% endif %}
     </div>
   {% else %}
     {# Delete the "like_and_dislike" field from the list of excluded fields
