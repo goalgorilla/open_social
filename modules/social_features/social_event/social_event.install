@@ -1614,3 +1614,10 @@ function social_event_update_8904() {
   // Update views configuration.
   _social_event_views_update('views.view.events', 'events_overview');
 }
+
+/**
+ * Install Event Add To Calendar module.
+ */
+function social_event_update_8905() {
+  \Drupal::service('module_installer')->install(['social_event_addtocal']);
+}

@@ -358,4 +358,23 @@ class SocialEventManagersViewsBulkOperationsBulkForm extends ViewsBulkOperations
     return $label->getArguments()['@name'];
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  protected function getTempstoreData($view_id = NULL, $display_id = NULL) {
+    $data = parent::getTempstoreData($view_id, $display_id);
+
+    if (is_array($data) && $data) {
+      if ($view_id && !isset($data['view_id'])) {
+        $data['view_id'] = $view_id;
+      }
+
+      if ($display_id && !isset($data['display_id'])) {
+        $data['display_id'] = $display_id;
+      }
+    }
+
+    return $data;
+  }
+
 }
