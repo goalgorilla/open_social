@@ -74,4 +74,15 @@ class SocialAlbumController extends ControllerBase {
     return AccessResult::forbidden();
   }
 
+  /**
+   * Checks access to the albums page.
+   *
+   * @return \Drupal\Core\Access\AccessResultInterface
+   *   The access result.
+   */
+  public function checkAlbumsAccess() {
+    $status = $this->config('social_album.settings')->get('status');
+    return AccessResult::allowedIf(!empty($status));
+  }
+
 }

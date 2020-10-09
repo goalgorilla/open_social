@@ -29,3 +29,13 @@ social_album.image:
         type: 'entity:node'
       post:
         type: 'entity:post'
+
+social_album.settings:
+  path: '/admin/config/opensocial/album'
+  defaults:
+    _form: '\Drupal\social_album\Form\SocialAlbumSettingsForm'
+    _title: 'Album settings'
+  requirements:
+    _permission: 'administer social_album settings'
+  options:
+    _admin_route: TRUE
