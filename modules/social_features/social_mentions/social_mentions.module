@@ -218,3 +218,19 @@ function social_mentions_js_alter(&$javascript, AttachedAssetsInterface $assets)
     $javascript[$path]['weight'] += $javascript['core/assets/vendor/ckeditor/ckeditor.js']['weight'];
   }
 }
+
+/**
+ * @param $variables
+ */
+function social_mentions_preprocess_page(&$variables)
+{
+  $class = ".comments ";
+  $levels = \Drupal::config('social_comment.settings')->get('social_comment_level') ? \Drupal::config('social_comment.settings')->get('social_comment_level') : 1;
+  for ($i = 2; $i <= $levels; $i++) {
+    $class .= ".comments ";
+  }
+  //Add a JS library
+  $variables['#attached']['library'][] = 'social_mentions/social_mentions-js';
+  // pass variable to Drupal.Settings
+  $variables['#attached']['drupalSettings']['social_mentions']['levels'] = $class;
+}

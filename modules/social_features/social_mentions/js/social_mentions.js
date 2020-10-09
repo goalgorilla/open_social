@@ -140,7 +140,7 @@
             mentionsInput = $textarea.data("mentionsInput"),
             editor = CKEDITOR.instances[$textarea.attr("id")];
 
-          $(".comments .comment__reply-btn a").on("click", function () {
+          $(drupalSettings.social_mentions.levels + ".comment__reply-btn a").on("click", function () {
             $("html, body").animate({
               scrollTop: $("[data-drupal-selector=\"comment-form\"]").offset().top
             }, 1000)

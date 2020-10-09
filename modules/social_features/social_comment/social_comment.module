@@ -153,8 +153,10 @@ function social_comment_form_reply_validate($form, FormStateInterface $form_stat
     $bundle = $comment->bundle();
     switch ($bundle) {
       default:
-        if (!empty($comment->getParentComment())) {
-          $form_state->setErrorByName('', t('Replies to comments deeper than 1 is not allowed'));
+        $items = explode(".", $comment->getThread());
+        $levels = \Drupal::config('social_comment.settings')->get('social_comment_level') ? \Drupal::config('social_comment.settings')->get('social_comment_level') : 1;
+        if (count($items) >= ++$levels) {
+          $form_state->setErrorByName('', t('Replies to comments deeper than !levels is not allowed',['!levels' => $levels]));
         }
         break;
 
