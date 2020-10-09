@@ -5,9 +5,58 @@
  * Install, update and uninstall functions for the social_album module.
  */
 
+use Drupal\user\RoleInterface;
+
 /**
  * Implements hook_install().
  */
 function social_album_install() {
+  // Set some default permissions.
+  _social_album_set_permissions();
+
   module_set_weight('social_album', 5);
+}
+
+/**
+ * Function to set permissions.
+ */
+function _social_album_set_permissions() {
+  $roles = \Drupal::entityQuery('user_role')
+    ->condition('id', 'administrator', '<>')
+    ->execute();
+
+  foreach ($roles as $role) {
+    $permissions = _social_album_get_permissions($role);
+    user_role_grant_permissions($role, $permissions);
+  }
+}
+
+/**
+ * Return the permissions per role.
+ *
+ * @param string $role
+ *   The role to get the permissions for.
+ *
+ * @return array
+ *   A list of permissions.
+ */
+function _social_album_get_permissions($role) {
+  // Anonymous.
+  $permissions[RoleInterface::ANONYMOUS_ID] = [];
+
+  // Authenticated.
+  $permissions[RoleInterface::AUTHENTICATED_ID] = array_merge($permissions[RoleInterface::ANONYMOUS_ID], [
+    'create album content',
+    'delete own album content',
+    'edit own album content',
+    'override album published option',
+  ]);
+
+  // Content manager.
+  $permissions['contentmanager'] = array_merge($permissions[RoleInterface::AUTHENTICATED_ID], []);
+
+  // Site manager.
+  $permissions['sitemanager'] = array_merge($permissions['contentmanager'], []);
+
+  return $permissions[$role] ?? [];
 }
