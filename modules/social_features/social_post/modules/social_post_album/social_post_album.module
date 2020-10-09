@@ -27,6 +27,9 @@ function social_post_album_theme($existing, $type, $theme, $path) {
       'path' => $path . '/templates',
       'template' => 'field--post--type--image--album',
     ],
+    'image_widget__album' => [
+      'render element' => 'element',
+    ],
   ];
 }
 
@@ -86,6 +89,19 @@ function social_post_album_theme_suggestions_field_alter(array &$suggestions, ar
 
   if ($element['#field_name'] === 'field_post_image') {
     $suggestions[] = 'field__' . $element['#entity_type'] . '__type__' . $element['#field_type'] . '__album';
+  }
+
+  return $suggestions;
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK_alter().
+ */
+function social_post_album_theme_suggestions_image_widget_alter(array &$suggestions, array $variables) {
+  $element = $variables['element'];
+
+  if ($element['#field_name'] === 'field_post_image') {
+    $suggestions[] = 'image_widget__album';
   }
 
   return $suggestions;
