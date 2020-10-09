@@ -31,16 +31,6 @@
   margin-top: -0.875rem
 }
 
-
-// This is kind of a hack. The upload field op on the post needs to display inline, but the image should not. Since this library is only loaded when the preview is there, the following line overrides the style from form-post-create.
-.form--post-create .field--name-field-post-image.container-post-image {
-
-  @include for-tablet-portrait-up {
-    flex-basis: 100%;
-  }
-
-}
-
 .btn--post-remove-image {
   position: absolute;
   top: -1px;
@@ -56,6 +46,10 @@
     .btn-icon {
       transform: rotate(90deg);
     }
+  }
+
+  &:focus {
+    outline: none;
   }
 
   .btn-icon {
