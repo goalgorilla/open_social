@@ -25,7 +25,7 @@ class FollowTaxonomyActivityContext extends ActivityContextBase {
 
     // We only know the context if there is a related object.
     if (isset($data['related_object']) && !empty($data['related_object'])) {
-      $related_entity = ActivityFactory::getActivityRelatedEntity($data);
+      $related_entity = $this->activityFactory->getActivityRelatedEntity($data);
 
       if ($related_entity['target_type'] == 'node' || $related_entity['target_type'] == 'post') {
         $recipients += $this->getRecipientsWhoFollowTaxonomy($related_entity, $data);
