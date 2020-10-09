@@ -20,25 +20,32 @@
     width: calc(25% - 1.5rem);
   }
 }
-.card--stream.social-post-album--form form .table-responsive + .image-widget:not(.hidden):before, .card--stream.social-post-album--form form .table-responsive + .image-widget:not(.hidden):after {
-  content: "";
+.card--stream.social-post-album--form form .table-responsive + .image-widget:not(.hidden) input[type=file],
+.card--stream.social-post-album--form form .table-responsive + .image-widget:not(.hidden) .add-image-help {
   position: absolute;
-  top: 47%;
-  left: 50%;
-  background: #4d4d4d;
-  transform: translate(-50%);
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
 }
-.card--stream.social-post-album--form form .table-responsive + .image-widget:not(.hidden):before {
-  height: 6px;
-  width: 26px;
+.card--stream.social-post-album--form form .table-responsive + .image-widget:not(.hidden) .add-image-help {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
 }
-.card--stream.social-post-album--form form .table-responsive + .image-widget:not(.hidden):after {
-  height: 26px;
-  width: 6px;
-  top: 40%;
+.card--stream.social-post-album--form form .table-responsive + .image-widget:not(.hidden) .add-image-help svg {
+  width: 30px;
+  height: 30px;
+  margin-bottom: 0.5rem;
+}
+.card--stream.social-post-album--form form .table-responsive + .image-widget:not(.hidden) .add-image-help .text {
+  font-size: 0.75rem;
 }
 .card--stream.social-post-album--form form .table-responsive + .image-widget:not(.hidden) input[type=file] {
   opacity: 0;
+  z-index: 2;
 }
 .card--stream.social-post-album--form form table {
   display: block;

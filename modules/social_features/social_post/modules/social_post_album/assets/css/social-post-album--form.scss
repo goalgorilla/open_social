@@ -21,31 +21,36 @@
         width: calc(25% - 1.5rem);
       }
 
-      &:before,
-      &:after {
-        content: '';
+      input[type='file'],
+      .add-image-help {
         position: absolute;
-        top: 47%;
-        left: 50%;
-        background: #4d4d4d;
-        transform: translate(-50%);
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
       }
 
-      &:before {
-        height: 6px;
-        width: 26px;
-        //top: 41%;
-      }
+      .add-image-help {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 1;
 
-      &:after {
-        height: 26px;
-        width: 6px;
-        //top: 35%;
-        top: 40%;
+        svg {
+          width: 30px;
+          height: 30px;
+          margin-bottom: .5rem;
+        }
+
+        .text {
+          font-size: .75rem;
+        }
       }
 
       input[type='file'] {
         opacity: 0;
+        z-index: 2;
       }
     }
 
