@@ -1,0 +1,85 @@
+{#
+/**
+ * @file
+ * Default theme implementation for an image field widget.
+ *
+ * Available variables:
+ * - attributes: HTML attributes for the containing element.
+ * - data: Render elements of the image widget.
+ *
+ * @see template_preprocess_image_widget()
+ *
+ * @ingroup themeable
+ */
+#}
+
+{% if data.upload['#id'] starts with "edit-field-post-image-0-upload" %}
+  {% set in_post = true %}
+{% else %}
+  {% set in_post = false %}
+{% endif %}
+
+{% if data.preview %}
+  {{ attach_library('socialbase/image-widget') }}
+  <div{{ attributes.addClass('image-widget').removeClass('clearfix') }}>
+    <div class="preview">
+      {{ data.preview }}
+    </div>
+    <div class="data image-widget-data">
+
+      {% if in_post %}
+        {# Render widget data for photo's in posts without the file fields, image preview and remove button. #}
+        {{ data|without('preview', 'image_crop', 'file_' ~ data.fids['#value'][0], 'remove_button' ) }}
+      {% else %}
+        {# Render widget data without the image preview that was output already. #}
+        {{ data|without('preview', 'image_crop') }}
+      {% endif %}
+
+    </div>
+  </div>
+
+  {% if in_post %}
+    {# Render a "fake" remove button that triggers the actual (hidden) remove button. #}
+    <div class="hidden">{{ data.remove_button }}</div>
+    <button type="button" id="post-photo-remove" class="btn--post-remove-image">
+      <svg class="btn-icon">
+        <use id="btnicon" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#icon-close"></use>
+      </svg>
+      <span class="sr-only">
+        {% trans %}Remove image{% endtrans %}
+      </span>
+    </button>
+
+  {% else %}
+
+    {{ attach_library('image_widget_crop/cropper') }}
+    {{ data.image_crop }}
+
+  {% endif %}
+
+{% else %}
+
+  {% if in_post %}
+
+    {# Render a "fake" image add button that triggers the actual (hidden) upload field. #}
+    <div{{ attributes.addClass(classes, 'hidden') }}>
+      {{ data }}
+    </div>
+    <button type="button" id="post-photo-add" class="btn btn-default">
+      <svg class="btn-icon">
+        <use id="btnicon" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#icon-plus"></use>
+      </svg>
+      <span>
+        {% trans %}Add image{% endtrans %}
+      </span>
+    </button>
+
+  {% else %}
+
+    <div{{ attributes.addClass(classes) }}>
+      {{ data }}
+    </div>
+
+  {% endif %}
+
+{% endif %}
