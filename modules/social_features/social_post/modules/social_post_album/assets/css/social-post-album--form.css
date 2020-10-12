@@ -6,7 +6,6 @@
   top: 1.25rem;
   left: 1.25rem;
   width: calc(50% - 1.75rem);
-  height: 140px;
   border: 1px dashed #adadad;
   z-index: 1;
 }
@@ -40,12 +39,28 @@
   height: 30px;
   margin-bottom: 0.5rem;
 }
+@media (max-width: 599px) {
+  .card--stream.social-post-album--form form .table-responsive + .image-widget:not(.hidden) .add-image-help svg {
+    width: 24px;
+    height: 24px;
+    margin-bottom: 0;
+  }
+}
 .card--stream.social-post-album--form form .table-responsive + .image-widget:not(.hidden) .add-image-help .text {
   font-size: 0.75rem;
+}
+@media (max-width: 599px) {
+  .card--stream.social-post-album--form form .table-responsive + .image-widget:not(.hidden) .add-image-help .text {
+    display: none;
+  }
 }
 .card--stream.social-post-album--form form .table-responsive + .image-widget:not(.hidden) input[type=file] {
   opacity: 0;
   z-index: 2;
+}
+.card--stream.social-post-album--form form .table-responsive + .image-widget:not(.hidden) img {
+  visibility: hidden;
+  max-height: 220px;
 }
 .card--stream.social-post-album--form form table {
   display: block;
