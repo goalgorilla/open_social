@@ -6,7 +6,9 @@ use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Url;
 
 /**
- * Controller routines for AJAX comments routes.
+ * Class ImagePopupController.
+ *
+ * @package Drupal\social_post_album\Controller
  */
 class ImagePopupController extends ControllerBase  {
 
