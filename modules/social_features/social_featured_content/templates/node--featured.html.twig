@@ -93,7 +93,6 @@
         <a href="{{ url }}">
           <div class="teaser__teaser-type">
             <svg class="teaser__teaser-type-icon">
-              <title>{{ label }}</title>
               <use xlink:href="#icon-{{- node.bundle|clean_class -}}"></use>
             </svg>
           </div>
@@ -125,7 +124,9 @@
               {%- block field_icon -%} account_circle {%- endblock -%}
               {%- block field_value %}
                 <div class="teaser__published">
-                  <div class="teaser__published-date"> {{ date }} &bullet;</div>
+                  <span class="sr-only">{% trans %}Created on{% endtrans %}</span>
+                  <div class="teaser__published-date"> {{ date }} <span class="sr-only">&bullet;</span></div>
+                  <span class="sr-only">{% trans %}by{% endtrans %}</span>
                   <div class="teaser__published-author"> {{ author_name }} </div>
                 </div>
               {%- endblock -%}
@@ -134,7 +135,10 @@
             {% if topic_type %}
               {% embed "node--teaser__field.html.twig" %}
                 {%- block field_icon -%} label {%- endblock -%}
-                {%- block field_value -%} {{ topic_type }} {%- endblock -%}
+                {%- block field_value -%}
+                  <span class="sr-only">{% trans %}Topic type:{% endtrans %}</span>
+                  {{ topic_type }}
+                {%- endblock -%}
               {% endembed %}
             {% endif %}
 
@@ -149,11 +153,12 @@
 
       {% if visibility_icon and visibility_label %}
         <div class="badge teaser__badge no-padding"
-             title="{% trans %}The visibility of this content is set to {{ visibility_label }}{% endtrans %} ">
+             title="{% trans %}The visibility of this content is set to {{ visibility_label }}{% endtrans %}">
         <span class="badge__container">
-          <svg class="badge__icon">
+          <svg class="badge__icon" aria-hidden="true">
             <use xlink:href="#icon-{{ visibility_icon }}"></use>
           </svg>
+          <span class="sr-only">{% trans %}The visibility of this content is set to {{ visibility_label }}{% endtrans %}</span>
           <span class="badge__label text-gray">{{ visibility_label|capitalize }}</span>
         </span>
         </div>
