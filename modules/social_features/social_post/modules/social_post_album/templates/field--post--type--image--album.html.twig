@@ -6,7 +6,7 @@
   {% for index, item in items %}
     <div class="post-with-image">
       <a class="use-ajax"
-         href="/open/images/{{ fids }}/{{ pid }}"
+         href="/open/images/{{ fids }}/{{ pid }}/{{ item.content['#item'].entity.fid.value }}"
          data-dialog-type="modal"
          data-dialog-options='{"width":"100%"}'>
         {{ item.content }}
