@@ -51,10 +51,11 @@
   <small class="text-muted">
 
     <div class="teaser__content-line">
-      <svg class="teaser__content-type-icon">
+      <svg class="teaser__content-type-icon" aria-hidden="true">
         <use xlink:href="#icon-label"></use>
       </svg>
       <span class="teaser__content-text">
+        <span class="sr-only">{% trans %}The group type{% endtrans %}</span>
         {{ group_type }}
         {{ group_settings_help }}
       </span>
@@ -62,10 +63,11 @@
 
     {% if content.field_group_location|render or content.field_group_address|render %}
       <div class="teaser__content-line">
-        <svg class="teaser__content-type-icon">
+        <svg class="teaser__content-type-icon" aria-hidden="true">
           <use xlink:href="#icon-location"></use>
         </svg>
         <span class="teaser__content-text">
+          <span class="sr-only">{% trans %}The group will take place at the{% endtrans %}</span>
           {{ content.field_group_location }}
             {% if content.field_group_location|render is not empty and content.field_group_address|render is not empty %} &bullet;{% endif %}
           {{ content.field_group_address }}
@@ -81,10 +83,11 @@
   {% if group_members is not empty %}
     <div class="badge teaser__badge" title="{% trans %}Total amount of group members{% endtrans %}">
       <span class="badge__container">
-        <svg class="badge__icon">
+        <svg class="badge__icon" aria-hidden="true">
           <use xlink:href="#icon-group"></use>
         </svg>
         <span class="badge__label">
+          <span class="sr-only">{% trans %}The group has{% endtrans %}</span>
           {{ group_members }}
         </span>
       </span>
