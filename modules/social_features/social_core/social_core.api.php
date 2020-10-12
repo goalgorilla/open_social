@@ -71,7 +71,7 @@ function hook_social_core_block_visibility_path() {
  */
 
 /**
- * Provide a method to alter array of CT where need to hide default title.
+ * Provide a method to alter array on content types used in open social.
  *
  * @param array $page_to_exclude
  *   Array of content types.
