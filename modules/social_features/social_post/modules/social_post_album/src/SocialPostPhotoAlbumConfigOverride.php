@@ -29,7 +29,7 @@ class SocialPostPhotoAlbumConfigOverride implements ConfigFactoryOverrideInterfa
     $config_name = 'core.entity_form_display.post.photo.group';
 
     if (in_array($config_name, $names)) {
-      $overrides[$config_name]['content']['field_post_image']['settings']['preview_image_style'] = 'large';
+      $overrides[$config_name]['content']['field_post_image']['settings']['preview_image_style'] = 'social_x_large';
     }
 
     return $overrides;

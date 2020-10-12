@@ -117,6 +117,6 @@ function social_post_album_form_alter(array &$form, FormStateInterface $form_sta
  */
 function social_post_album_preprocess_image_formatter(&$variables) {
   if ($variables['image_style'] == "social_post_photo") {
-    $variables['image']['#style_name'] = 'large';
+    $variables['image']['#style_name'] = 'social_x_large';
   }
 }

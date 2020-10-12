@@ -5,7 +5,7 @@
 
       // Init slick slider.
       albumSlider.slick({
-        infinite: false,
+        infinite: true,
         nextArrow: '<button type="button" data-role="none" class="slick-next slick-arrow" aria-label="Next" role="button">' +
           '<svg><use xlink:href="#arrow-forward"></use></svg>' +
           '</button>',
