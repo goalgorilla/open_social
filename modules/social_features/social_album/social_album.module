@@ -13,6 +13,20 @@ use Drupal\social_album\Form\SocialAlbumImageForm;
 use Drupal\social_album\Form\SocialAlbumPostForm;
 
 /**
+ * Implements hook_theme().
+ */
+function social_album_theme($existing, $type, $theme, $path) {
+  return [
+    'social_album_image_popup_formatter' => [
+      'variables' => [
+        'items' => NULL,
+        'album' => NULL,
+      ],
+    ],
+  ];
+}
+
+/**
  * Implements hook_entity_extra_field_info().
  */
 function social_album_entity_extra_field_info() {
@@ -88,6 +102,25 @@ function social_album_preprocess_views_view(&$variables) {
       $variables['#attached']['library'][] = $library[$view->current_display];
     }
   }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function social_album_preprocess_social_album_image_popup_formatter(&$variables) {
+  $items = [];
+
+  foreach ($variables['items'] as $item) {
+    if (!isset($items[$pid = $item['pid']])) {
+      $parent_variables = ['pid' => $pid];
+      social_post_album_preprocess_image_popup_formatter($parent_variables);
+      $items[$pid] = ['post' => $parent_variables['post']];
+    }
+
+    $items[$pid]['urls'][] = $item['url'];
+  }
+
+  $variables['items'] = $items;
 }
 
 /**

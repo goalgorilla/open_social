@@ -64,7 +64,7 @@ class SocialAlbumEntityOperations extends EntityOperations {
     );
 
     if (isset($links['post']['#links']['delete'])) {
-      $links['post']['#links']['delete']['url'] = Url::fromRoute('social_album.image', [
+      $links['post']['#links']['delete']['url'] = Url::fromRoute('social_album.image.delete', [
         'node' => $node_id,
         'post' => $post_id,
         'fid' => $file_id,

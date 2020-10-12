@@ -4,6 +4,7 @@ namespace Drupal\social_album\Controller;
 
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
 use Drupal\social_post\Entity\PostInterface;
 
@@ -25,6 +26,59 @@ class SocialAlbumController extends ControllerBase {
    */
   public function title(NodeInterface $node) {
     return $this->t('Add images to album @name', ['@name' => $node->label()]);
+  }
+
+  /**
+   * Provides a page with images slider.
+   *
+   * @param \Drupal\node\NodeInterface $node
+   *   The node object.
+   * @param \Drupal\social_post\Entity\PostInterface $post
+   *   The post entity object.
+   * @param int $fid
+   *   The file entity ID.
+   *
+   * @return array
+   *   The renderable array.
+   */
+  public function viewImage(NodeInterface $node, PostInterface $post, $fid) {
+    $query = \Drupal::database()->select('post__field_post_image', 'i')
+      ->fields('i', ['field_post_image_target_id']);
+
+    $query->innerJoin('post__field_album', 'a', 'a.entity_id = i.entity_id');
+    $query->condition('a.field_album_target_id', $node->id());
+
+    $query->innerJoin('post_field_data', 'p', 'p.id = a.entity_id');
+    $query->fields('p', ['id']);
+    $query->orderBy('p.created');
+
+    $query->orderBy('i.delta');
+
+    $items = [FALSE => [], TRUE => []];
+    $found = FALSE;
+
+    /** @var \Drupal\file\FileStorageInterface $storage */
+    $storage = $this->entityTypeManager()->getStorage('file');
+
+    foreach ($query->execute()->fetchAllKeyed() as $file_id => $post_id) {
+      if (!$found && $file_id == $fid) {
+        $found = TRUE;
+      }
+
+      /** @var \Drupal\file\FileInterface $file */
+      $file = $storage->load($file_id);
+
+      $items[$found][] = [
+        'url' => Url::fromUri(file_create_url($file->getFileUri()))->setAbsolute()->toString(),
+        'pid' => $post_id,
+      ];
+    }
+
+    return [
+      '#theme' => 'social_album_image_popup_formatter',
+      '#items' => array_merge($items[TRUE], $items[FALSE]),
+      '#album' => $node->label(),
+    ];
   }
 
   /**
