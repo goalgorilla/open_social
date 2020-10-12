@@ -28,6 +28,26 @@ class SocialAlbumController extends ControllerBase {
   }
 
   /**
+   * Provides a page with a form for deleting image from post and post view.
+   *
+   * @param \Drupal\node\NodeInterface $node
+   *   The node object.
+   * @param \Drupal\social_post\Entity\PostInterface $post
+   *   The post entity object.
+   * @param int $fid
+   *   The file entity ID.
+   *
+   * @return array
+   *   The renderable array.
+   */
+  public function deleteImage(NodeInterface $node, PostInterface $post, $fid) {
+    return [
+      'form' => $this->entityFormBuilder()->getForm($post, 'delete_image', ['fid' => $fid]),
+      'view' => $this->entityTypeManager()->getViewBuilder('post')->view($post, 'featured'),
+    ];
+  }
+
+  /**
    * Checks access to the form of a post which will be linked to the album.
    *
    * @param \Drupal\node\NodeInterface $node

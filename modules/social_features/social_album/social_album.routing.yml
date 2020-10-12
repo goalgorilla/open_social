@@ -16,7 +16,7 @@ social_album.post:
 social_album.image:
   path: '/node/{node}/image/{post}/{fid}'
   defaults:
-    _entity_form: 'post.delete_image'
+    _controller: '\Drupal\social_album\Controller\SocialAlbumController::deleteImage'
     _title: 'Delete image'
   requirements:
     _custom_access: '\Drupal\social_album\Controller\SocialAlbumController::checkImageAccess'

@@ -3,8 +3,6 @@
 namespace Drupal\social_album\Form;
 
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\node\NodeInterface;
-use Drupal\social_post\Entity\PostInterface;
 use Drupal\social_post\Form\PostDeleteForm;
 
 /**
@@ -15,38 +13,9 @@ use Drupal\social_post\Form\PostDeleteForm;
 class SocialAlbumImageForm extends PostDeleteForm {
 
   /**
-   * The file entity ID.
-   *
-   * @var int|null
+   * {@inheritdoc}
    */
-  protected $fid = NULL;
-
-  /**
-   * Form constructor.
-   *
-   * @param array $form
-   *   An associative array containing the structure of the form.
-   * @param \Drupal\Core\Form\FormStateInterface $form_state
-   *   The current state of the form.
-   * @param \Drupal\node\NodeInterface|null $node
-   *   (optional) The node entity object. Defaults to NULL.
-   * @param \Drupal\social_post\Entity\PostInterface|null $post
-   *   (optional) The post entity object. Defaults to NULL.
-   * @param int|null $fid
-   *   (optional) The file entity ID. Defaults to NULL.
-   *
-   * @return array
-   *   The form structure.
-   */
-  public function buildForm(
-    array $form,
-    FormStateInterface $form_state,
-    NodeInterface $node = NULL,
-    PostInterface $post = NULL,
-    $fid = NULL
-  ) {
-    $this->fid = $fid;
-
+  public function buildForm(array $form, FormStateInterface $form_state) {
     $form = parent::buildForm($form, $form_state);
 
     unset($form['#title']);
@@ -60,7 +29,7 @@ class SocialAlbumImageForm extends PostDeleteForm {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $form_state->setRedirectUrl($this->getRedirectUrl());
 
-    if (!$this->fid) {
+    if (!$fid = $form_state->get('fid')) {
       return;
     }
 
@@ -71,7 +40,7 @@ class SocialAlbumImageForm extends PostDeleteForm {
     $field = $entity->field_post_image;
 
     foreach ($field->getValue() as $index => $item) {
-      if ($item['target_id'] === $this->fid) {
+      if ($item['target_id'] === $fid) {
         break;
       }
     }
