@@ -40,6 +40,9 @@ class ImagePopupController extends ControllerBase {
     }
     list($before, $after) = $fids;
     $fids = array_merge($after, $before);
+    if (!$before) {
+      $fids = $after;
+    }
 
     $urls = [];
     foreach ($fids as $fid) {
