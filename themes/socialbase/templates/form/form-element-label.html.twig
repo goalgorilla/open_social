@@ -33,7 +33,7 @@
   <label{{ attributes.addClass(classes) }}>
     {{ title }}
     {%- if required and title_display != 'invisible' -%}
-        <span class="form-required">*</span>
+        <span class="form-required" title="{% trans %}This field is required{% endtrans %}">*</span>
     {%- endif -%}
     {%- if description -%}
       <p class="help-block">{{ description }}</p>
