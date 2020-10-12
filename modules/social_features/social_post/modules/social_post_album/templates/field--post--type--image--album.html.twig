@@ -5,8 +5,8 @@
      data-item-class="photoswipe-gallery-item">
   {% for index, item in items %}
     <div class="post-with-image">
-      <a class="use-ajax"
-         href="/open/images/{{ fids }}/{{ pid }}/{{ item.content['#item'].entity.fid.value }}"
+      <a href="{{ path('social_post_album.image_popup_render_original', {'post': pid, 'first_fid': item.content['#item'].entity.fid.value}) }}"
+         class="use-ajax"
          data-dialog-type="modal"
          data-dialog-options='{"width":"100%"}'>
         {{ item.content }}

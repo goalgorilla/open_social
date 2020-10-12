@@ -13,9 +13,9 @@ use Drupal\social_post\Entity\PostInterface;
  */
 function social_post_album_theme($existing, $type, $theme, $path) {
   return [
-    'image_popup_details' => [
+    'image_popup_formatter' => [
       'variables' => [
-        'url_popup' => NULL,
+        'urls' => NULL,
         'pid' => NULL,
       ],
       'path' => $path . '/templates',
@@ -40,13 +40,6 @@ function social_post_album_preprocess_field__post__type__image__album(&$variable
   $post = $variables['element']['#object'];
 
   if ($post instanceof PostInterface && $post->hasField('field_post')) {
-    $fids = [];
-    $items = $variables['items'];
-    foreach ($items as $item) {
-      $fids[] = $item['content']['#item']->entity->fid->value;
-    }
-
-    $variables['fids'] = implode($fids, ',');
     $variables['pid'] = $post->id();
   }
 }
@@ -54,7 +47,7 @@ function social_post_album_preprocess_field__post__type__image__album(&$variable
 /**
  * Implements hook_preprocess().
  */
-function social_post_album_preprocess_image_popup_details(&$variables) {
+function social_post_album_preprocess_image_popup_formatter(&$variables) {
   $post = \Drupal::entityTypeManager()->getStorage('post')->load($variables['pid']);;
 
   $variables['post'] = [

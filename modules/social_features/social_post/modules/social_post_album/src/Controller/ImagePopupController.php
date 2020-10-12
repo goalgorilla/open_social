@@ -15,10 +15,8 @@ class ImagePopupController extends ControllerBase {
   /**
    * Render images and post in pop-up.
    *
-   * @param string $fids
-   *   Ids of images.
-   * @param string $pid
-   *   The post ID.
+   * @param \Drupal\social_post\Entity\PostInterface $post
+   *   The post entity.
    * @param string $first_fid
    *   The first file ID.
    *
@@ -27,29 +25,35 @@ class ImagePopupController extends ControllerBase {
    *
    * @see https://git.drupalcode.org/project/image_popup/-/blob/2.x/src/Controller/ImagePopup.php
    */
-  public function render($fids, $pid, $first_fid) {
-    $absolute_path = [];
-    $fids = explode(',', $fids);
+  public function render($post, $first_fid) {
+    /** @var \Drupal\file\Plugin\Field\FieldType\FileFieldItemList $post_image */
+    $post_image = $post->field_post_image;
+    $files = $post_image->referencedEntities();
 
-    foreach ($fids as $fid) {
-      if ($fid == $first_fid) {
-        continue;
+    $fids = [];
+    $index = 0;
+    foreach ($files as $file) {
+      if ($file->id() == $first_fid) {
+        $index++;
       }
+      $fids[$index][] = $file->id();
+    }
+    list($before, $after) = $fids;
+    $fids = array_merge($after, $before);
+
+    $urls = [];
+    foreach ($fids as $fid) {
       $file = $this->entityTypeManager()->getStorage('file')->load($fid);
       $image_uri = $file->getFileUri();
 
       // Get absolute path for original image.
-      $absolute_path[] = Url::fromUri(file_create_url($image_uri))->getUri();
+      $urls[] = Url::fromUri(file_create_url($image_uri))->getUri();
     }
 
-    $first_file = $this->entityTypeManager()->getStorage('file')->load($first_fid);
-    $first_image_uri = $first_file->getFileUri();
-    array_unshift($absolute_path, Url::fromUri(file_create_url($first_image_uri))->getUri());
-
     return [
-      '#theme' => 'image_popup_details',
-      '#url_popup' => $absolute_path,
-      '#pid' => $pid,
+      '#theme' => 'image_popup_formatter',
+      '#urls' => $urls,
+      '#pid' => $post->id(),
     ];
   }
 
