@@ -10,7 +10,7 @@ use Drupal\Core\Url;
  *
  * @package Drupal\social_post_album\Controller
  */
-class ImagePopupController extends ControllerBase  {
+class ImagePopupController extends ControllerBase {
 
   /**
    * Render images and post in pop-up.
@@ -23,7 +23,7 @@ class ImagePopupController extends ControllerBase  {
    * @return array
    *   Return render array.
    *
-   * @see https://git.drupalcode.org/project/image_popup/-/blob/2.x/src/Controller/ImagePopup.php.
+   * @see https://git.drupalcode.org/project/image_popup/-/blob/2.x/src/Controller/ImagePopup.php
    */
   public function render($fids, $pid) {
     $absolute_path = [];
