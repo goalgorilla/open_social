@@ -81,40 +81,6 @@ function template_preprocess_group_settings_help(array &$variables) {
 }
 
 /**
- * Implements hook_form_FORM_ID_alter().
- */
-function social_group_form_group_public_group_edit_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-  $group = $form_state->getFormObject()->getEntity();
-  $form['group_type'] = SocialGroupAddForm::create(\Drupal::getContainer())->getGroupTypeElement();
-  $form['group_type']['#default_value'] = $group->bundle();
-
-  // If user doesn't have permission to change group types disable it.
-  // Or if group types can't be edited due to visibility issues.
-  if (!social_group_group_type_permission_check()) {
-    $form['group_type']['#disabled'] = TRUE;
-  }
-  else {
-    $form['group_type']['#prefix'] = '<div id="group-type-result"></div>';
-    $group_type_element['#ajax'] = [
-      'callback' => '_social_group_inform_group_type_selection',
-      'effect' => 'fade',
-      'event' => 'change',
-    ];
-  }
-
-  // Disable all group types that can't be edited. Because they don't have
-  // a visibility.
-  foreach ($form['group_type']['#options'] as $type => $label) {
-    if (\Drupal::service('social_group.helper_service')->getDefaultGroupVisibility($type) === NULL) {
-      $form['group_type'][$type] = [
-        '#disabled' => TRUE,
-      ];
-    }
-  }
-  $form['#group_children']['group_type'] = 'group_content';
-}
-
-/**
  * Check if a User is able to edit a Group's GroupType.
  *
  * @return bool
@@ -133,7 +99,7 @@ function social_group_group_type_permission_check() {
   }
 
   // Otherwise return true when we are able to edit the current group type.
-  return TRUE;
+  return ($group instanceof GroupInterface && $user->hasPermission('edit group types'));
 }
 
 /**
@@ -727,11 +693,11 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
 
     if (in_array($form_id, $group_forms['edit'])) {
       $social_group_form = SocialGroupAddForm::create(\Drupal::getContainer());
-      $group_type_element = $social_group_form->getGroupTypeElement();
+      $group_type_element = $social_group_form->getGroupTypeElement(TRUE);
       // Get the current group.
       $group = _social_group_get_current_group();
       // Set the default value in the form.
-      $group_type_element['#default_value'] = $group->getGroupType()->id();
+      $group_type_element['widget']['#default_value'] = $group->getGroupType()->id();
 
       // If user doesn't have permission to change group types disable it.
       // Or if group types can't be edited due to visibility issues.
@@ -740,7 +706,7 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
       }
       else {
         $group_type_element['#prefix'] = '<div id="group-type-result"></div>';
-        $group_type_element['#ajax'] = [
+        $group_type_element['widget']['#ajax'] = [
           'callback' => '_social_group_inform_group_type_selection',
           'effect' => 'fade',
           'event' => 'change',
@@ -748,17 +714,19 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
       }
 
       $form['group_type'] = $group_type_element;
-      $form['#group_children']['group_type'] = 'group_settings';
 
       // Disable all group types that can't be edited. Because they don't have
       // a visibility.
-      foreach (array_keys($form['group_type']['#options']) as $type) {
+      foreach (array_keys($form['group_type']['widget']['#options']) as $type) {
         if (\Drupal::service('social_group.helper_service')->getDefaultGroupVisibility($type) === NULL) {
-          $form['group_type'][$type] = [
+          $form['group_type']['widget'][$type] = [
             '#disabled' => TRUE,
           ];
         }
       }
+
+      $form['#fieldgroups']['group_settings']->children[] = 'group_type';
+      $form['#group_children']['group_type'] = 'group_settings';
 
       $form['actions']['submit']['#submit'][] = '_social_group_type_edit_submit';
     }
@@ -848,11 +816,13 @@ function _social_group_inform_group_type_selection() {
  */
 function _social_group_type_edit_submit($form, FormStateInterface $form_state) {
   // Check if the group_type changed.
-  // Can be empty for flexible groups.
+  // Visibility be empty for flexible groups.
   $group = _social_group_get_current_group();
-  if (!empty($form['group_type'])) {
-    $default_type = $form['group_type']['#default_value'];
-    $new_type = $form_state->getValue('group_type');
+  if (!empty($form['group_type'])
+  && (\Drupal::service('social_group.helper_service')->getDefaultGroupVisibility($group->getGroupType()->id()) != NULL)
+  ) {
+    $default_type = $form['group_type']['widget']['#default_value'];
+    $new_type = $form_state->getValue('group_type')[0]['value'];
 
     // Update the Group entity and all it's content when the type changed.
     if ($new_type !== $default_type) {
@@ -1244,9 +1214,12 @@ function _social_group_get_member_profile(GroupContent $group_content) {
 }
 
 /**
- * Get current Group entity from the route.
+ * Gets current Group entity from the route.
  *
- * @return \Drupal\group\Entity\GroupInterface
+ * @param \Drupal\node\NodeInterface|null $node
+ *   (optional) The node object or NULL.
+ *
+ * @return \Drupal\group\Entity\GroupInterface|null
  *   Returns the group object.
  */
 function _social_group_get_current_group($node = NULL) {
@@ -1277,7 +1250,7 @@ function _social_group_get_current_group($node = NULL) {
   }
   else {
     $node = is_object($node) ? $node : \Drupal::routeMatch()->getParameter('node');
-    if (is_object($node) && !is_null($node)) {
+    if (is_object($node)) {
       $node_entity = [
         'target_type' => 'node',
         'target_id' => $node->id(),
@@ -1294,7 +1267,7 @@ function _social_group_get_current_group($node = NULL) {
   // If we have a cache key we store the value.
   if (!is_null($nid)) {
     // Translate NULL to FALSE so that isset works.
-    $cache[$nid] = isset($group) ? $group : FALSE;
+    $cache[$nid] = $group ?? FALSE;
   }
 
   return $group;
@@ -1385,16 +1358,18 @@ function social_group_preprocess_profile(&$variables) {
  * Implements hook_preprocess_HOOK().
  */
 function social_group_preprocess_views_view(&$variables) {
-  /** @var \Drupal\views\ViewExecutable $view */
-  $view = &$variables['view'];
+  if (!\Drupal::moduleHandler()->moduleExists('social_group_invite')) {
+    /** @var \Drupal\views\ViewExecutable $view */
+    $view = &$variables['view'];
 
-  if ($view->id() === 'group_manage_members') {
-    $entity = \Drupal::entityTypeManager()->getStorage('block')
-      ->load('socialblue_local_actions');
+    if ($view->id() === 'group_manage_members') {
+      $entity = \Drupal::entityTypeManager()->getStorage('block')
+        ->load('socialblue_local_actions');
 
-    $variables['header']['actions'] = \Drupal::entityTypeManager()
-      ->getViewBuilder('block')
-      ->view($entity);
+      $variables['header']['actions'] = \Drupal::entityTypeManager()
+        ->getViewBuilder('block')
+        ->view($entity);
+    }
   }
 }
 

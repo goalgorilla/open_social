@@ -27,19 +27,21 @@
 {% endblock %}
 
 {% block card_title %}
-  {{ title_prefix }}
 
+  {{ title_prefix }}
   <h4{{ title_attributes }} class="teaser__title">
     {% if closed_group_lock %}
-      <svg class="icon-gray icon-small">
+      <svg class="icon-gray icon-small" aria-hidden="true">
         <use xlink:href="#icon-lock"></use>
       </svg>
     {% elseif secret_group_shield %}
-      <svg class="icon-gray icon-small">
+      <svg class="icon-gray icon-small" aria-hidden="true">
         <use xlink:href="#icon-shield"></use>
       </svg>
     {% endif %}
-    <a href="{{ url }}" rel="bookmark">{{ label }}</a>
+    <a href="{{ url }}" rel="bookmark">
+      <span class="sr-only">{% trans%}Group{% endtrans %}: </span>{{ label }}
+    </a>
   </h4>
 
   {{ title_suffix }}
@@ -96,8 +98,9 @@
   {% endif %}
 
   {% if not hide_card_link %}
-    <a href="{{ url }}" class="card__link" title="{{ label }}">
-      {% trans %}Read more{% endtrans %}
+    <a href="{{ url }}" class="card__link" rel="bookmark">
+      {{ 'Read more'|t }}
+      <span class="visually-hidden">{% trans %}about {{ label }}{% endtrans %} </span>
     </a>
   {% endif %}
 {% endblock %}

@@ -65,7 +65,9 @@
     </div>
     <div class="margin-top-s iframe-container">
 
-      {{ content|without('links', 'field_post_comments', 'like_and_dislike', 'field_post_image', 'user_id') }}
+        <div class="body-text">
+            {{ content|without('links', 'field_post_comments', 'like_and_dislike', 'field_post_image', 'user_id') }}
+        </div>
 
       {% if content.field_post_image|render %}
         <p>{{ content.field_post_image }}</p>
