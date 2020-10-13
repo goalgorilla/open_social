@@ -2,67 +2,29 @@
 
 /**
  * @file
- * Contains social_follow_tag.module.
+ * Contains social_follow_landing_page.module.
  */
 
 use Drupal\Core\Entity\ContentEntityInterface;
-use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
-use Drupal\node\NodeInterface;
-use Drupal\taxonomy\TermInterface;
 
 /**
  * Implements hook_theme().
  */
-function social_follow_tag_theme() {
+function social_follow_landing_page_theme() {
   return [
     'paragraph__tag__default' => [
       'base hook' => 'paragraph',
-    ],
-    'social_tagging_nosplit' => [
-      'base hook' => 'social_tagging_nosplit',
-    ],
-    'social_tagging_split' => [
-      'base hook' => 'social_tagging_split',
-    ],
-    'block__inline_block__follow_tags' => [
-      'base hook' => 'block',
-    ],
-    'search_follow_tag' => [
-      'variables' => ['tags' => NULL],
     ],
   ];
 
 }
 
 /**
- * Implements hook_social_follow_taxonomy_terms_list_alter().
- *
- * {@inheritdoc}
- */
-function social_follow_tag_social_follow_taxonomy_terms_list_alter(array &$term_ids, $entity) {
-  /** @var \Drupal\node\Entity\Node $entity */
-  if ($entity instanceof NodeInterface && $entity->hasField('social_tagging')) {
-    if (!empty($entity->get('social_tagging')->getValue())) {
-      $tags = $entity->get('social_tagging')->getValue();
-
-      foreach ($tags as $tag) {
-        $term_ids[] = $tag['target_id'];
-      }
-    }
-  }
-
-  return $term_ids;
-}
-
-/**
- * Prepares variables for the Tag paragraph template.
- *
  * Implements hook_preprocess_HOOK().
- * {@inheritdoc}
  */
-function social_follow_tag_preprocess_paragraph(&$variables) {
+function social_follow_landing_page_preprocess_paragraph(&$variables) {
   $terms = [];
   /** @var \Drupal\paragraphs\Entity\Paragraph $entity */
   $entity = $variables['elements']['#paragraph'];
@@ -113,143 +75,9 @@ function social_follow_tag_preprocess_paragraph(&$variables) {
 }
 
 /**
- * Extends variables for social_tagging_split template.
- *
- * Implements hook_preprocess_HOOK().
- * {@inheritdoc}
- */
-function social_follow_tag_preprocess_social_tagging_split(&$variables) {
-  if (!isset($variables['taghierarchy'])) {
-    return;
-  }
-
-  // Iterate over an array with parent terms (category).
-  foreach ($variables['taghierarchy'] as $parent_tag) {
-    if (!isset($parent_tag['tags'])) {
-      continue;
-    }
-    // Iterate over an array with terms in each category.
-    foreach ($parent_tag['tags'] as $tag_id => $tag_info) {
-      /** @var \Drupal\taxonomy\TermStorageInterface $term_storage */
-      $term_storage = \Drupal::entityTypeManager()->getStorage('taxonomy_term');
-      $current_term = $term_storage->load($tag_id);
-      // Must be a valid Term.
-      if (!$current_term instanceof TermInterface) {
-        continue;
-      }
-      // Get current term parent.
-      $parents = $term_storage->loadParents($current_term->id());
-      if (!empty($parents)) {
-        $parent = reset($parents);
-
-        // Adding additional data to the term variable to extend the template.
-        $variables['taghierarchy'][$parent->id()]['tags'][$current_term->id()] = [
-          'url' => $tag_info['url'],
-          'name' => $tag_info['name'],
-          'flag' => social_follow_taxonomy_flag_link($current_term),
-          'related_nodes_count' => social_follow_taxonomy_related_nodes_count($current_term, 'social_tagging'),
-          'followers_count' => social_follow_taxonomy_term_followers_count($current_term),
-          'follow' => social_follow_taxonomy_term_followed($current_term),
-        ];
-      }
-    }
-  }
-}
-
-/**
- * Extends variables for social_tagging_nosplit template.
- *
- * Implements hook_preprocess_HOOK().
- * {@inheritdoc}
- */
-function social_follow_tag_preprocess_social_tagging_nosplit(&$variables) {
-  if (!isset($variables['tags'])) {
-    return;
-  }
-
-  $term_storage = \Drupal::entityTypeManager()->getStorage('taxonomy_term');
-
-  foreach ($variables['tags'] as $tag_name => $tag_info) {
-    // Get term id from the transmitted url string.
-    $term_id_from_string = explode('/search/content?tag%5B%5D=', $tag_info);
-    if (isset($term_id_from_string[1])) {
-      $current_term = $term_storage->load($term_id_from_string[1]);
-    }
-
-    // Must be a valid Term.
-    if (!isset($current_term) || !$current_term instanceof TermInterface) {
-      continue;
-    }
-
-    // Adding additional data to the term variable to extend the template.
-    $variables['tags'][$tag_name] = [
-      'url' => $tag_info,
-      'name' => $tag_name,
-      'flag' => social_follow_taxonomy_flag_link($current_term),
-      'related_nodes_count' => social_follow_taxonomy_related_nodes_count($current_term, 'social_tagging'),
-      'followers_count' => social_follow_taxonomy_term_followers_count($current_term),
-      'follow' => social_follow_taxonomy_term_followed($current_term),
-    ];
-  }
-}
-
-/**
- * Create a notification when tags followed by a user are added to the node.
- *
- * Implements hook_entity_update().
- * {@inheritdoc}
- */
-function social_follow_tag_entity_update(EntityInterface $entity) {
-  $taxonomy_ids = [];
-  $original_taxonomy_ids = [];
-
-  /** @var \Drupal\social_queue_storage\Entity\QueueStorageEntity $entity */
-  if ($entity->getEntityTypeId() === 'node') {
-    // Prepare list of tags before update node.
-    if ($original_entity = $entity->original) {
-      if ($original_entity->hasField('social_tagging')) {
-        if (!empty($original_entity->get('social_tagging')->getValue())) {
-          $original_tags = $original_entity->get('social_tagging')->getValue();
-
-          foreach ($original_tags as $original_tag) {
-            $original_taxonomy_ids[] = $original_tag['target_id'];
-          }
-        }
-      }
-    }
-
-    // Prepare list of tags after update node.
-    if ($entity->hasField('social_tagging')) {
-      if (!empty($entity->get('social_tagging')->getValue())) {
-        $tags = $entity->get('social_tagging')->getValue();
-
-        foreach ($tags as $tag) {
-          // Check if new tags have been added after the update.
-          if (!in_array($tag['target_id'], $original_taxonomy_ids)) {
-            $taxonomy_ids[] = $tag['target_id'];
-          }
-        }
-      }
-    }
-
-    // Set the creation time because it is used as notification creation time.
-    $entity->setCreatedTime($entity->getChangedTime());
-    // Set the owner id because it is used as the id of the notification author.
-    $entity->setOwnerId(\Drupal::currentUser()->id());
-
-    // Create activity notification.
-    if (!empty($taxonomy_ids)) {
-      \Drupal::service('plugin.manager.activity_action.processor')
-        ->createInstance('update_entity_action')
-        ->create($entity);
-    }
-  }
-}
-
-/**
  * Implements hook_field_widget_WIDGET_TYPE_form_alter().
  */
-function social_follow_tag_field_widget_entity_reference_paragraphs_form_alter(&$element, FormStateInterface $form_state, $context) {
+function social_follow_landing_page_field_widget_entity_reference_paragraphs_form_alter(&$element, FormStateInterface $form_state, $context) {
   if (isset($element['subform']['field_section_paragraph']['widget'][0]['subform']['field_tag'])) {
     $subform = &$element['subform']['field_section_paragraph']['widget'][0]['subform'];
     /** @var \Drupal\Core\Entity\EntityBase $form_entity */
@@ -337,7 +165,7 @@ function social_follow_tag_field_widget_entity_reference_paragraphs_form_alter(&
 /**
  * Validate function that overrides the tagging field with new values.
  */
-function _social_follow_tag_entity_validate($element, FormStateInterface $form_state) {
+function _social_follow_landing_page_entity_validate($element, FormStateInterface $form_state) {
   $parents = $element['#parents'];
   if (!empty($parents[0]) && !empty($form_state->getValue($parents[0]))) {
     $parent_value = $form_state->getValue($parents[0]);
@@ -347,7 +175,7 @@ function _social_follow_tag_entity_validate($element, FormStateInterface $form_s
     ) {
       $tag_value = $parent_value[$parents[1]]['subform']['field_section_paragraph'][0]['subform']['tagging'];
 
-      // Get the taggingservice.
+      // Get the tagging service.
       $tag_service = Drupal::getContainer()->get('social_tagging.tag_service');
       // Get the main categories.
       $categories = $tag_service->getCategories();

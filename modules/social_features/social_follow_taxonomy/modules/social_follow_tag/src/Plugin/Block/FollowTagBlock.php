@@ -171,7 +171,7 @@ class FollowTagBlock extends BlockBase implements ContainerFactoryPluginInterfac
       $term = Term::load($term_id);
 
       // Show only tags followed by user.
-      if (social_follow_taxonomy_term_followed($term)) {
+      if ($term && social_follow_taxonomy_term_followed($term)) {
         $tags[$term_id] = [
           'name' => $term->getName(),
           'flag' => social_follow_taxonomy_flag_link($term),

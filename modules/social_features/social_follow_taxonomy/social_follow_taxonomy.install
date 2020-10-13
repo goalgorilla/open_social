@@ -16,6 +16,11 @@ function social_follow_taxonomy_install() {
 
   // Set default permissions.
   _social_follow_taxonomy_set_permissions();
+
+  // Enable Social Follow Tag module if Social Tagging module installed.
+  if (\Drupal::moduleHandler()->moduleExists('social_tagging')) {
+    \Drupal::service('module_installer')->install(['social_follow_tag']);
+  }
 }
 
 /**
@@ -63,4 +68,13 @@ function _social_follow_taxonomy_get_permissions($role) {
   $permissions['sitemanager'] = array_merge($permissions['contentmanager'], []);
 
   return isset($permissions[$role]) ? $permissions[$role] : [];
+}
+
+/**
+ * Enable Social Follow Tag module if Social Tagging module installed.
+ */
+function social_follow_taxonomy_update_8801() {
+  if (\Drupal::moduleHandler()->moduleExists('social_tagging')) {
+    \Drupal::service('module_installer')->install(['social_follow_tag']);
+  }
 }

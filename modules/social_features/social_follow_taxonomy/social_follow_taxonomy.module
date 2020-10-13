@@ -64,8 +64,8 @@ function social_follow_taxonomy_page_attachments(array &$page) {
  * Add new activity stream message template for nodes with a term followed by
  * the user to make it possible to override the default template.
  */
-function social_follow_taxonomy_theme_suggestions_activity(array $variables) {
-  $suggestions = [];
+function social_follow_taxonomy_theme_suggestions_activity_alter(array &$suggestions, array $variables) {
+//  $suggestions = [];
 
   $activity = $variables['elements']['#activity'];
   // Get a message entity from the activity.
@@ -94,7 +94,19 @@ function social_follow_taxonomy_theme_suggestions_activity(array $variables) {
     }
   }
 
-  return $suggestions;
+//  return $suggestions;
+}
+
+function social_follow_taxonomy_preprocess_activity__followed(&$variables) {
+  $test = $variables;
+
+  $variables['#cache']['max-age'] = 0;
+}
+
+function social_follow_taxonomy_preprocess_activity__node__followed(&$variables) {
+  $test = $variables;
+
+  $variables['#cache']['max-age'] = 0;
 }
 
 /**
@@ -179,6 +191,8 @@ function social_follow_taxonomy_preprocess_activity(&$variables) {
       }
     }
   }
+
+  $variables['#cache']['max-age'] = 0;
 }
 
 /**
