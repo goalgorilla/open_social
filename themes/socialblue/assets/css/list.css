@@ -18,20 +18,29 @@
   color: #777;
 }
 
+.dropdown-menu--visibility .list-item--active > a,
+.dropdown-menu--visibility .list-item--active:hover > a {
+  color: inherit;
+  border-color: inherit;
+}
+
 .list-item--active,
-.list-item--active:hover {
+.list-item--active:hover,
+.list-item--active:focus-within {
   color: white;
   background-color: #1f80aa;
   border-color: #1f80aa;
 }
 
 .list-item--active .icon-small,
-.list-item--active:hover .icon-small {
+.list-item--active:hover .icon-small,
+.list-item--active:focus-within .icon-small {
   fill: white;
 }
 
 .list-item--active .help-block,
-.list-item--active:hover .help-block {
+.list-item--active:hover .help-block,
+.list-item--active:focus-within .help-block {
   color: white;
   font-weight: 300;
 }
