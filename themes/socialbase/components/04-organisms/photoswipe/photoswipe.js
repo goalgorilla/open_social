@@ -1,17 +1,9 @@
 (function ($) {
   var initPhotoSwipeFromDOM = function (gallerySelector) {
-    function getGalleryItems(galleryElement) {
-      var itemClass = galleryElement.getAttribute('data-item-class');
 
-      if (itemClass == null) {
-        return galleryElement.childNodes;
-      }
-
-      return galleryElement.getElementsByClassName(itemClass);
-    }
 
     var parseThumbnailElements = function (el) {
-      var thumbElements = getGalleryItems(el),
+      var thumbElements = el.childNodes,
         numNodes = thumbElements.length,
         items = [],
         el,
@@ -92,11 +84,9 @@
         return;
       }
 
-      var clickedGallery = closest(clickedListItem, function (el) {
-        return el.matches(gallerySelector);
-      });
+      var clickedGallery = clickedListItem.parentNode;
 
-      var childNodes = getGalleryItems(clickedGallery),
+      var childNodes = clickedListItem.parentNode.childNodes,
         numChildNodes = childNodes.length,
         nodeIndex = 0,
         index;
