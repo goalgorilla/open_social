@@ -138,11 +138,14 @@ function social_search_update_8902() {
  * Change weight of search index processors().
  */
 function social_search_update_8903() {
+  // Config factory.
+  $config_factory = Drupal::configFactory();
+
   // Get search API index configs.
-  $search_all = Drupal::configFactory()->getEditable('search_api.index.social_all');
-  $search_content = Drupal::configFactory()->getEditable('search_api.index.social_content');
-  $search_groups = Drupal::configFactory()->getEditable('search_api.index.social_groups');
-  $search_users = Drupal::configFactory()->getEditable('search_api.index.social_users');
+  $search_all = $config_factory->getEditable('search_api.index.social_all');
+  $search_content = $config_factory->getEditable('search_api.index.social_content');
+  $search_groups = $config_factory->getEditable('search_api.index.social_groups');
+  $search_users = $config_factory->getEditable('search_api.index.social_users');
 
   // Setting that need to be changed.
   $setting = 'processor_settings.html_filter.weights.preprocess_index';
