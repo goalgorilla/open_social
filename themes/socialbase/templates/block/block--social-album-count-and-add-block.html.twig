@@ -49,14 +49,17 @@
 {% extends "block.html.twig" %}
 
 {% block content %}
-  {% if content.link %}
-    <div class="row form-group-inline--right">
-      <div class="col-sm-6 right-auto">
-        <h4>{{ content.count }}</h4>
+  {{ attach_library('social_album/social_album_block') }}
+  <div class="social-album--block">
+    {% if content.link %}
+      <div class="row form-group-inline--right">
+        <div class="col-sm-6 right-auto">
+          <h4>{{ content.count }}</h4>
+        </div>
+        <div class="col-sm-6 add-album-btn">{{ content.link }}</div>
       </div>
-      <div class="col-sm-6">{{ content.link }}</div>
-    </div>
-  {% else %}
-    <h4>{{ content.count }}</h4>
-  {% endif %}
+    {% else %}
+      <h4>{{ content.count }}</h4>
+    {% endif %}
+  </div>
 {% endblock %}

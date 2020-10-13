@@ -21,13 +21,17 @@
 {% extends "views-view-unformatted.html.twig" %}
 
 {% block rows %}
-  {% for index, row in rows %}
-    <div{{ row.attributes }}>
-      {{ row.content }}
+  {{ attach_library('social_album/social_album_post') }}
 
-      {% if index == 0 %}
-        <div class="badge badge-secondary">{{ 'Cover image'|t }}</div>
-      {% endif %}
-    </div>
-  {% endfor %}
+  <div class="social-post-album--post-gallery">
+    {% for index, row in rows %}
+      <div class="post-with-image">
+        {{ row.content }}
+
+        {% if index == 0 %}
+          <div class="badge badge-secondary">{{ 'Cover image'|t }}</div>
+        {% endif %}
+      </div>
+    {% endfor %}
+  </div>
 {% endblock %}
