@@ -10,6 +10,10 @@
          data-dialog-type="modal"
          data-dialog-options='{"width":"100%"}'>
         {{ item.content }}
+
+        {% if loop.last and more_posts_count > 0 %}
+          <span class="plus-count">{{ more_posts_count }}</span>
+        {% endif %}
       </a>
     </div>
   {% endfor %}

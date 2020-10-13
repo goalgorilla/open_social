@@ -7,7 +7,9 @@ use Drupal\Core\Config\ConfigFactoryOverrideInterface;
 use Drupal\Core\Config\StorageInterface;
 
 /**
- * Example configuration override.
+ * Class SocialPostPhotoAlbumConfigOverride.
+ *
+ * @package Drupal\social_post_album
  */
 class SocialPostPhotoAlbumConfigOverride implements ConfigFactoryOverrideInterface {
 
@@ -30,6 +32,12 @@ class SocialPostPhotoAlbumConfigOverride implements ConfigFactoryOverrideInterfa
 
     if (in_array($config_name, $names)) {
       $overrides[$config_name]['content']['field_post_image']['settings']['preview_image_style'] = 'social_x_large';
+    }
+
+    $config_name = 'core.entity_view_display.post.photo.activity';
+
+    if (in_array($config_name, $names)) {
+      $overrides[$config_name]['content']['field_post_image']['type'] = 'album_image';
     }
 
     return $overrides;
