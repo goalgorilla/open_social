@@ -18,7 +18,7 @@
     <div class="post-comment-wrapper post-index-{{ index }}">
       <div class="post-message">
         <div class="post-header">
-          {% trans %}Images posted in album <b>{{ album }}</b>{% endtrans %}
+          {% trans %}Images posted in album {{ album|placeholder }}{% endtrans %}
         </div>
         {{ item.post }}
       </div>

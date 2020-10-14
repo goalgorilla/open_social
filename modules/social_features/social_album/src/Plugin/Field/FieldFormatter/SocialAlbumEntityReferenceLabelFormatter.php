@@ -36,16 +36,16 @@ class SocialAlbumEntityReferenceLabelFormatter extends EntityReferenceLabelForma
 
       if (isset($elements[$delta]['#title'])) {
         $elements[$delta] = [
-          '#markup' => $this->t('Images posted in album @url', [
-            '@url' => Link::fromTextAndUrl($elements[$delta]['#title'], $elements[$delta]['#url'])
+          '#markup' => $this->t('Images posted in album %album', [
+            '%album' => Link::fromTextAndUrl($elements[$delta]['#title'], $elements[$delta]['#url'])
               ->toString(),
           ]),
         ];
       }
       else {
         $elements[$delta] = [
-          '#plain_text' => $this->t('Images posted in album @title', [
-            '@title' => $elements[$delta]['#plain_text'],
+          '#plain_text' => $this->t('Images posted in album %album', [
+            '%album' => $elements[$delta]['#plain_text'],
           ]),
         ];
       }
