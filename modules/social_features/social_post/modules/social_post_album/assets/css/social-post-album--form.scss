@@ -20,6 +20,19 @@
         width: calc(25% - 1.5rem);
       }
 
+      .js-hide.form-submit[disabled] {
+        position: absolute;
+
+        .ajax-throbber {
+          top: 5px;
+          left: 15px;
+        }
+      }
+
+      input[type='file'] {
+        cursor: pointer;
+      }
+
       input[type='file'],
       .add-image-help {
         position: absolute;
@@ -110,6 +123,10 @@
           padding: 0;
         }
 
+        .image-widget {
+          margin-bottom: 0;
+        }
+
         .btn {
           position: absolute;
           top: .25rem;
@@ -149,6 +166,7 @@
 
         img {
           border-radius: .5rem;
+          margin-bottom: -6px;
         }
 
         .image-widget {
