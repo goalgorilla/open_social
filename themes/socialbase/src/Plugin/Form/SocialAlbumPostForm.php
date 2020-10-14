@@ -18,7 +18,7 @@ class SocialAlbumPostForm extends SocialAlbumImageForm {
    * {@inheritdoc}
    */
   public function alterFormElement(Element $form, FormStateInterface $form_state, $form_id = NULL) {
-    if ($form_state->get('form_display')->getOriginalMode() === 'first_in_album') {
+    if ($form_state->get('form_display')->getOriginalMode() === 'album') {
       parent::alterFormElement($form, $form_state, $form_id);
     }
   }

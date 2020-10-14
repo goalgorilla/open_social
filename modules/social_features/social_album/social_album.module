@@ -169,7 +169,7 @@ function social_album_social_post_message_alter(TranslatableMarkup &$message, Fo
 function social_album_entity_type_alter(array &$entity_types) {
   /** @var \Drupal\Core\Entity\EntityTypeInterface[] $entity_types */
   $entity_types['post']
-    ->setFormClass('first_in_album', SocialAlbumPostForm::class)
+    ->setFormClass('album', SocialAlbumPostForm::class)
     ->setFormClass('delete_image', SocialAlbumImageForm::class);
 }
 
