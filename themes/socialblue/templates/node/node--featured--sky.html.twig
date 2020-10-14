@@ -8,11 +8,12 @@
 
     {% if visibility_icon and visibility_label %}
       <div class="badge teaser__badge no-padding"
-           title="{% trans %}The visibility of this content is set to {{ visibility_label }}{% endtrans %} ">
+           title="{% trans %}The visibility of this content is set to {{ visibility_label }}{% endtrans %}">
         <span class="badge__container">
-          <svg class="badge__icon">
+          <svg class="badge__icon" aria-hidden="true">
             <use xlink:href="#icon-{{ visibility_icon }}"></use>
           </svg>
+          <span class="sr-only">{% trans %}The visibility of this content is set to {{ visibility_label }}{% endtrans %} </span>
           <span class="badge__label text-gray">{{ visibility_label|capitalize }}</span>
         </span>
       </div>
@@ -35,8 +36,10 @@
         {%- block field_icon -%} account_circle {%- endblock -%}
         {%- block field_value %}
           <div class="teaser__published">
-            <div class="teaser__published-date"> {{ date }} &bullet;</div>
-            <div class="teaser__published-author"> {{ author_name }} </div>
+            <span class="sr-only">{% trans %}Created on{% endtrans %} </span>
+            <div class="teaser__published-date">{{ date }} <span aria-hidden="true">&bullet;</span></div>
+            <span class="sr-only"> {% trans %}by{% endtrans %} </span>
+            <div class="teaser__published-author">{{ author_name }}</div>
           </div>
         {%- endblock -%}
       {% endembed %}
@@ -51,7 +54,7 @@
     <a href="{{ url }}#section-comments" class="badge teaser__badge"
        title="{% trans %}Total amount of comments{% endtrans %}">
       <span class="badge__container">
-        <svg class="badge__icon">
+        <svg class="badge__icon" aria-hidden="true">
           <use xlink:href="#icon-comment"></use>
         </svg>
         <span class="badge__label">{{ comment_count }}</span>
@@ -62,7 +65,7 @@
   {% if likes_count is not empty %}
     <div class="badge teaser__badge" title="{% trans %}Total amount of likes{% endtrans %}">
       <span class="badge__container">
-        <svg class="badge__icon">
+        <svg class="badge__icon" aria-hidden="true">
           <use xlink:href="#icon-like"></use>
         </svg>
         <span class="badge__label">
