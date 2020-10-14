@@ -40,11 +40,9 @@
 {# Fields in the event teaser need to render without a div, because it is a child element of a tag that cannot have a div such as an anchor or paragraph #}
 {{ attach_library('socialbase/photoswipe.image') }}
 
-<div class="photoswipe-gallery" itemscope itemtype="http://schema.org/ImageGallery"
-     data-item-class="photoswipe-gallery-item">
-  {% for index, item in items %}
+<div class="photoswipe-gallery" itemscope itemtype="http://schema.org/ImageGallery">
+  {% for item in items %}
     <a href="{{ file_url(item.content['#item'].entity.uri.value) }}"
-       class="post-index-{{ index }} photoswipe-gallery-item"
        data-med="{{ file_url(item.content['#item'].entity.uri.value) }}"
        data-med-size="{{ item.content['#item'].width }}x{{ item.content['#item'].height }}"
        data-size="{{ item.content['#item'].width }}x{{ item.content['#item'].height }}">
@@ -52,7 +50,6 @@
     </a>
   {% endfor %}
 </div>
-
 <div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="pswp__bg"></div>
   <div class="pswp__scroll-wrap">
@@ -83,5 +80,4 @@
       </div>
     </div>
   </div>
-
 </div>

@@ -9,10 +9,10 @@ dependencies:
     - field.field.post.photo.field_recipient_group
     - field.field.post.photo.field_recipient_user
     - field.field.post.photo.field_visibility
-    - image.style.social_x_large
+    - image.style.social_post_photo
     - social_post.post_type.photo
   module:
-    - social_comment_upload
+    - image
     - social_post
     - text
     - user
@@ -41,10 +41,10 @@ content:
     weight: 1
     label: hidden
     settings:
-      image_style: social_x_large
+      image_style: social_post_photo
       image_link: ''
     third_party_settings: {  }
-    type: file_image_default
+    type: image
     region: content
   user_id:
     label: hidden

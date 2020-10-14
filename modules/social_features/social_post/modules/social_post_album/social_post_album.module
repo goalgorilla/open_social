@@ -13,19 +13,15 @@ use Drupal\social_post\Entity\PostInterface;
  */
 function social_post_album_theme($existing, $type, $theme, $path) {
   return [
-    'image_popup_formatter' => [
+    'album_post_popup' => [
       'variables' => [
         'urls' => NULL,
         'pid' => NULL,
       ],
-      'path' => $path . '/templates',
-      'template' => 'image-popup-formatter',
     ],
     'field__post__type__image__album' => [
       'base hook' => 'field',
       'render element' => 'element',
-      'path' => $path . '/templates',
-      'template' => 'field--post--type--image--album',
     ],
     'image_widget__album' => [
       'render element' => 'element',
@@ -57,15 +53,13 @@ function social_post_album_preprocess_field__post__type__image__album(&$variable
 /**
  * Implements hook_preprocess().
  */
-function social_post_album_preprocess_image_popup_formatter(&$variables) {
-  $post = \Drupal::entityTypeManager()->getStorage('post')->load($variables['pid']);;
-
+function social_post_album_preprocess_album_post_popup(&$variables) {
   $variables['post'] = [
     '#lazy_builder' => [
       'social_post_album.lazy_renderer:getPost',
       [
-        $post->getEntityTypeId(),
-        $post->id(),
+        'post',
+        $variables['pid'],
         'album',
       ],
     ],
@@ -116,10 +110,8 @@ function social_post_album_theme_suggestions_image_widget_alter(array &$suggesti
 /**
  * Implements hook_form_alter().
  */
-function social_post_album_form_alter(array &$form, FormStateInterface $form_state, $form_id) {
-  if (in_array($form_id, ['social_post_entity_form'])) {
-    $form['#attached']['library'][] = 'social_post_album/social-post-album--form';
-  }
+function social_post_album_form_social_post_entity_form_alter(array &$form, FormStateInterface $form_state, $form_id) {
+  $form['#attached']['library'][] = 'social_post_album/social-post-album--form';
 }
 
 /**

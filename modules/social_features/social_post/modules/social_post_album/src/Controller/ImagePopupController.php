@@ -32,6 +32,7 @@ class ImagePopupController extends ControllerBase {
 
     $fids = [];
     $index = 0;
+    // Show images in the correct order.
     foreach ($files as $file) {
       if ($file->id() == $first_fid) {
         $index++;
@@ -54,7 +55,7 @@ class ImagePopupController extends ControllerBase {
     }
 
     return [
-      '#theme' => 'image_popup_formatter',
+      '#theme' => 'album_post_popup',
       '#urls' => $urls,
       '#pid' => $post->id(),
     ];
