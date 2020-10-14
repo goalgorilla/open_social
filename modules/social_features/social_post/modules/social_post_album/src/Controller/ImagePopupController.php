@@ -4,6 +4,7 @@ namespace Drupal\social_post_album\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Url;
+use Drupal\social_post\Entity\PostInterface;
 
 /**
  * Class ImagePopupController.
@@ -25,7 +26,7 @@ class ImagePopupController extends ControllerBase {
    *
    * @see https://git.drupalcode.org/project/image_popup/-/blob/2.x/src/Controller/ImagePopup.php
    */
-  public function render($post, $first_fid) {
+  public function render(PostInterface $post, $first_fid) {
     /** @var \Drupal\file\Plugin\Field\FieldType\FileFieldItemList $post_image */
     $post_image = $post->field_post_image;
     $files = $post_image->referencedEntities();
@@ -39,7 +40,7 @@ class ImagePopupController extends ControllerBase {
       }
       $fids[$index][] = $file->id();
     }
-    list($before, $after) = $fids;
+    [$before, $after] = $fids;
     $fids = array_merge($after, $before);
     if (!$before) {
       $fids = $after;
