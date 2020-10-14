@@ -1229,3 +1229,10 @@ function social_core_update_8902() {
     }
   }
 }
+
+/**
+ * Install the redirect module to prevent index.php from being accessed.
+ */
+function social_core_update_8903() {
+  \Drupal::service('module_installer')->install(['redirect']);
+}
