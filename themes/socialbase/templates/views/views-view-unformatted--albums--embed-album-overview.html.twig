@@ -26,7 +26,7 @@
       <div{{ row.attributes }}>
         {{ row.content }}
 
-        {% if index == 0 %}
+        {% if view.pager.current_page == 0 and index == 0 %}
           <div class="badge badge-secondary">{{ 'Cover image'|t }}</div>
         {% endif %}
       </div>
