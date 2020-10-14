@@ -27,7 +27,7 @@ class AlbumImageFormatter extends ImageFormatter {
   public function viewElements(FieldItemListInterface $items, $langcode) {
     $files = $items->referencedEntities();
     $files = array_reverse($files, true);
-    $limit = 5;
+    $limit = 11;
 
     if (!empty($files)) {
       foreach ($files as $key => $file) {

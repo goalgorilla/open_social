@@ -12,7 +12,12 @@
         {{ item.content }}
 
         {% if loop.last and more_posts_count > 0 %}
-          <span class="plus-count">{{ more_posts_count }}</span>
+          <span class="plus-count">
+            <span class="plus-count--wrapper">
+              <span class="text-plus">+</span>
+              {{ more_posts_count }}
+            </span>
+          </span>
         {% endif %}
       </a>
     </div>
