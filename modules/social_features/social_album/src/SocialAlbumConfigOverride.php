@@ -15,6 +15,17 @@ use Drupal\Core\Config\StorageInterface;
 class SocialAlbumConfigOverride implements ConfigFactoryOverrideInterface {
 
   /**
+   * Dependency to the field with reference to the album entity.
+   */
+  const DEPENDENCY = [
+    'dependencies' => [
+      'config' => [
+        'field.field.post.photo.field_album' => 'field.field.post.photo.field_album',
+      ],
+    ],
+  ];
+
+  /**
    * The config factory.
    *
    * @var \Drupal\Core\Config\ConfigFactoryInterface
@@ -40,12 +51,7 @@ class SocialAlbumConfigOverride implements ConfigFactoryOverrideInterface {
     $config_name = 'core.entity_form_display.post.photo.default';
 
     if (in_array($config_name, $names)) {
-      $overrides[$config_name] = [
-        'dependencies' => [
-          'config' => [
-            'field.field.post.photo.field_album' => 'field.field.post.photo.field_album',
-          ],
-        ],
+      $overrides[$config_name] = self::DEPENDENCY + [
         'content' => [
           'field_album' => [
             'weight' => 2,
@@ -66,17 +72,36 @@ class SocialAlbumConfigOverride implements ConfigFactoryOverrideInterface {
 
     foreach ($config_names as $config_name) {
       if (in_array($config_name, $names)) {
-        $overrides[$config_name] = [
-          'dependencies' => [
-            'config' => [
-              'field.field.post.photo.field_album' => 'field.field.post.photo.field_album',
-            ],
-          ],
+        $overrides[$config_name] = self::DEPENDENCY + [
           'hidden' => [
             'field_album' => TRUE,
           ],
         ];
       }
+    }
+
+    $config_name = 'core.entity_view_display.post.photo.activity';
+
+    if (in_array($config_name, $names)) {
+      $overrides[$config_name] = self::DEPENDENCY + [
+        'dependencies' => [
+          'module' => [
+            'social_album' => 'social_album',
+          ],
+        ],
+        'content' => [
+          'field_album' => [
+            'type' => 'social_album_entity_reference_label',
+            'weight' => 5,
+            'region' => 'content',
+            'label' => 'hidden',
+            'settings' => [
+              'link' => TRUE,
+            ],
+            'third_party_settings' => [],
+          ],
+        ],
+      ];
     }
 
     $config_name = 'like_and_dislike.settings';
