@@ -2,6 +2,7 @@
 
 namespace Drupal\socialbase\Plugin\Form;
 
+use Drupal\bootstrap\Plugin\Form\FormBase;
 use Drupal\bootstrap\Utility\Element;
 use Drupal\Core\Form\FormStateInterface;
 
@@ -10,17 +11,15 @@ use Drupal\Core\Form\FormStateInterface;
  *
  * @ingroup plugins_form
  *
- * @BootstrapForm("social_post_entity_form")
+ * @BootstrapForm("post_photo_delete_image_form")
  */
-class SocialAlbumPostForm extends SocialAlbumImageForm {
+class SocialAlbumImageForm extends FormBase {
 
   /**
    * {@inheritdoc}
    */
   public function alterFormElement(Element $form, FormStateInterface $form_state, $form_id = NULL) {
-    if ($form_state->get('form_display')->getOriginalMode() === 'first_in_album') {
-      parent::alterFormElement($form, $form_state, $form_id);
-    }
+    $form->actions->cancel->addClass(['btn', 'btn-default']);
   }
 
 }
