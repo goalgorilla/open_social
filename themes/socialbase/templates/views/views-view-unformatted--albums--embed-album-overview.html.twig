@@ -21,11 +21,9 @@
 {% extends "views-view-unformatted.html.twig" %}
 
 {% block rows %}
-  {{ attach_library('social_album/social_album_post') }}
-
   <div class="social-post-album--post-gallery">
     {% for index, row in rows %}
-      <div class="post-with-image">
+      <div{{ row.attributes }}>
         {{ row.content }}
 
         {% if index == 0 %}
