@@ -92,7 +92,7 @@
       {% block card_teaser_type %}
         <a href="{{ url }}">
           <div class="teaser__teaser-type">
-            <svg class="teaser__teaser-type-icon">
+            <svg class="teaser__teaser-type-icon" title="{{- node.type.0.entity.label() -}}">
               <use xlink:href="#icon-{{- node.bundle|clean_class -}}"></use>
             </svg>
           </div>
@@ -124,10 +124,10 @@
               {%- block field_icon -%} account_circle {%- endblock -%}
               {%- block field_value %}
                 <div class="teaser__published">
-                  <span class="sr-only">{% trans %}Created on{% endtrans %}</span>
-                  <div class="teaser__published-date"> {{ date }} <span class="sr-only">&bullet;</span></div>
-                  <span class="sr-only">{% trans %}by{% endtrans %}</span>
-                  <div class="teaser__published-author"> {{ author_name }} </div>
+                  <span class="sr-only">{% trans %}Created on{% endtrans %} </span>
+                  <div class="teaser__published-date">{{ date }} <span aria-hidden="true">&bullet;</span></div>
+                  <span class="sr-only"> {% trans %}by{% endtrans %} </span>
+                  <div class="teaser__published-author">{{ author_name }}</div>
                 </div>
               {%- endblock -%}
             {% endembed %}
@@ -158,7 +158,7 @@
           <svg class="badge__icon" aria-hidden="true">
             <use xlink:href="#icon-{{ visibility_icon }}"></use>
           </svg>
-          <span class="sr-only">{% trans %}The visibility of this content is set to {{ visibility_label }}{% endtrans %}</span>
+          <span class="sr-only">{% trans %}The visibility of this content is set to {{ visibility_label }}{% endtrans %} </span>
           <span class="badge__label text-gray">{{ visibility_label|capitalize }}</span>
         </span>
         </div>
