@@ -4,27 +4,39 @@
 
   {% embed "node--teaser__field.html.twig" %}
     {%- block field_icon -%} event {%- endblock -%}
-    {%- block field_value %} {{ event_date }} {%- endblock -%}
+    {%- block field_value %}
+      <span class="sr-only">{% trans %}Event date{% endtrans %} </span>
+      {{ event_date }}
+    {%- endblock -%}
   {% endembed %}
 
   {% if content.field_event_location|render is not empty %}
     {% embed "node--teaser__field.html.twig" %}
       {%- block field_icon -%} location {%- endblock -%}
-      {%- block field_value -%} {{ content.field_event_location }} {%- endblock -%}
+      {%- block field_value -%}
+        <span class="sr-only">{% trans %}The event will take place at the{% endtrans %} </span>
+        {{ content.field_event_location }}
+      {%- endblock -%}
     {% endembed %}
   {% endif %}
 
   {% if event_type %}
     {% embed "node--teaser__field.html.twig" %}
       {%- block field_icon -%} label {%- endblock -%}
-      {%- block field_value -%} {{ event_type }} {%- endblock -%}
+      {%- block field_value -%}
+        <span class="sr-only">{% trans %}This event has type{% endtrans %} </span>
+        {{ event_type }}
+      {%- endblock -%}
     {% endembed %}
   {% endif %}
 
   {% if content.group_name %}
     {% embed "node--teaser__field.html.twig" %}
       {%- block field_icon -%} group {%- endblock -%}
-      {%- block field_value -%} {{ content.group_name }} {%- endblock -%}
+      {%- block field_value -%}
+        <span class="sr-only">{% trans %}This event is posted in{% endtrans %} </span>
+        {{ content.group_name }}
+      {%- endblock -%}
     {% endembed %}
   {% endif %}
 
@@ -47,7 +59,7 @@
   {% if content.enrollments_count is not empty %}
     <div class="badge teaser__badge" title="{% trans %}Total amount of enrollments{% endtrans %}">
       <span class="badge__container">
-        <svg class="badge__icon">
+        <svg class="badge__icon" aria-hidden="true">
           <use xlink:href="#icon-person"></use>
         </svg>
         <span class="badge__label text-gray">

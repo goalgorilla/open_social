@@ -3,7 +3,6 @@
 namespace Drupal\social_follow_content\Plugin\ActivityContext;
 
 use Drupal\activity_creator\Plugin\ActivityContextBase;
-use Drupal\activity_creator\ActivityFactory;
 use Drupal\social_comment\Entity\Comment;
 use Drupal\social_node\Entity\Node;
 use Drupal\user\UserInterface;
@@ -26,7 +25,7 @@ class FollowContentActivityContext extends ActivityContextBase {
 
     // We only know the context if there is a related object.
     if (isset($data['related_object']) && !empty($data['related_object'])) {
-      $related_entity = ActivityFactory::getActivityRelatedEntity($data);
+      $related_entity = $this->activityFactory->getActivityRelatedEntity($data);
 
       if ($related_entity['target_type'] == 'node') {
         $recipients += $this->getRecipientsWhoFollowContent($related_entity, $data);

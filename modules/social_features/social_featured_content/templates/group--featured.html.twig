@@ -27,19 +27,21 @@
 {% endblock %}
 
 {% block card_title %}
-  {{ title_prefix }}
 
+  {{ title_prefix }}
   <h4{{ title_attributes }} class="teaser__title">
     {% if closed_group_lock %}
-      <svg class="icon-gray icon-small">
+      <svg class="icon-gray icon-small" aria-hidden="true">
         <use xlink:href="#icon-lock"></use>
       </svg>
     {% elseif secret_group_shield %}
-      <svg class="icon-gray icon-small">
+      <svg class="icon-gray icon-small" aria-hidden="true">
         <use xlink:href="#icon-shield"></use>
       </svg>
     {% endif %}
-    <a href="{{ url }}" rel="bookmark">{{ label }}</a>
+    <a href="{{ url }}" rel="bookmark">
+      <span class="sr-only">{% trans%}Group{% endtrans %}: </span>{{ label }}
+    </a>
   </h4>
 
   {{ title_suffix }}
@@ -49,10 +51,11 @@
   <small class="text-muted">
 
     <div class="teaser__content-line">
-      <svg class="teaser__content-type-icon">
+      <svg class="teaser__content-type-icon" aria-hidden="true" title="{% trans %}Group type{% endtrans %}">
         <use xlink:href="#icon-label"></use>
       </svg>
       <span class="teaser__content-text">
+        <span class="sr-only">{% trans %}The group type is{% endtrans %} </span>
         {{ group_type }}
         {{ group_settings_help }}
       </span>
@@ -60,12 +63,16 @@
 
     {% if content.field_group_location|render or content.field_group_address|render %}
       <div class="teaser__content-line">
-        <svg class="teaser__content-type-icon">
+        <svg class="teaser__content-type-icon" aria-hidden="true" title="{% trans %}Event location{% endtrans %}">
           <use xlink:href="#icon-location"></use>
         </svg>
         <span class="teaser__content-text">
+          <span class="sr-only">{% trans %}located at: {% endtrans %} </span>
           {{ content.field_group_location }}
-            {% if content.field_group_location|render is not empty and content.field_group_address|render is not empty %} &bullet;{% endif %}
+          {% if content.field_group_location|render is not empty and content.field_group_address|render is not empty %}
+            <span class="sr-only">, </span>
+            <span aria-hidden="true"> &bullet; </span>
+          {% endif %}
           {{ content.field_group_address }}
         </span>
       </div>
@@ -77,13 +84,14 @@
 {% block card_actionbar %}
 
   {% if group_members is not empty %}
-    <div class="badge teaser__badge" title="{% trans %}Total amount of group members{% endtrans %}">
+    <div class="badge teaser__badge">
       <span class="badge__container">
-        <svg class="badge__icon">
+        <svg class="badge__icon" aria-hidden="true" title="{% trans %}Number of group members{% endtrans %}">
           <use xlink:href="#icon-group"></use>
         </svg>
         <span class="badge__label">
           {{ group_members }}
+          <span class="sr-only"> {% trans %}group members{% endtrans %} </span>
         </span>
       </span>
     </div>
@@ -96,8 +104,9 @@
   {% endif %}
 
   {% if not hide_card_link %}
-    <a href="{{ url }}" class="card__link" title="{{ label }}">
-      {% trans %}Read more{% endtrans %}
+    <a href="{{ url }}" class="card__link" rel="bookmark">
+      {{ 'Read more'|t }}
+      <span class="visually-hidden">{% trans %}about {{ label }}{% endtrans %} </span>
     </a>
   {% endif %}
 {% endblock %}

@@ -59,6 +59,7 @@ class SocialUserLoginForm extends UserLoginForm {
         'autocapitalize' => 'none',
         'spellcheck' => 'false',
         'autofocus' => 'autofocus',
+        'autocomplete' => 'username',
       ],
     ];
 
@@ -72,6 +73,9 @@ class SocialUserLoginForm extends UserLoginForm {
       '#size' => 60,
       '#description' => $pass_description,
       '#required' => TRUE,
+      '#attributes' => [
+        'autocomplete' => 'current-password',
+      ],
     ];
 
     $link_options = [];
@@ -251,11 +255,13 @@ class SocialUserLoginForm extends UserLoginForm {
    */
   protected function setGeneralErrorMessage(array &$form, FormStateInterface $form_state) {
     $form_state->setErrorByName('name_or_mail', $this->t('
-        Oops, there was an error. This may have happened for the following reasons: <br>
-        - Invalid username/email and password combination. <br>
-        - There has been more than one failed login attempt for this account. It is temporarily blocked. <br>
-        - Too many failed login attempts from your computer (IP address). This IP address is temporarily blocked. <br> <br>
-        To solve the issue, try using different login information, try again later, or <a href=":url">request a new password</a>',
+        <p>Oops, there was an error. This may have happened for the following reasons:</p>
+        <ul>
+          <li>Invalid username/email and password combination. </li>
+          <li>There has been more than one failed login attempt for this account. It is temporarily blocked. </li>
+          <li>Too many failed login attempts from your computer (IP address). This IP address is temporarily blocked. </li>
+        </ul>
+        <p>To solve the issue, try using different login information, try again later, or <a href=":url">request a new password</a></p>',
       ['%name_or_email' => $form_state->getValue('name_or_mail'), ':url' => $this->url('user.pass')]));
   }
 

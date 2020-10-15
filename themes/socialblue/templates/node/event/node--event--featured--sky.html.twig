@@ -32,12 +32,18 @@
 
     {% embed "node--teaser__field.html.twig" %}
       {%- block field_icon -%} schedule {%- endblock -%}
-      {%- block field_value %} {{ event_date }} {%- endblock -%}
+      {%- block field_value %}
+        <span class="sr-only">{% trans %}Event date{% endtrans %} </span>
+        {{ event_date }}
+      {%- endblock -%}
     {% endembed %}
 
     {% embed "node--teaser__field.html.twig" %}
       {%- block field_icon -%} location {%- endblock -%}
-      {%- block field_value -%} {{ content.field_event_location }} {%- endblock -%}
+      {%- block field_value -%}
+        <span class="sr-only">{% trans %}The event will take place at the{% endtrans %} </span>
+        {{ content.field_event_location }}
+      {%- endblock -%}
     {% endembed %}
 
     {% if content.ongoing %}
@@ -60,7 +66,7 @@
     <a href="{{ url }}#section-comments" class="badge teaser__badge"
        title="{% trans %}Total amount of comments{% endtrans %}">
       <span class="badge__container">
-        <svg class="badge__icon">
+        <svg class="badge__icon" aria-hidden="true">
           <use xlink:href="#icon-comment"></use>
         </svg>
         <span class="badge__label">{{ comment_count }}</span>
@@ -71,7 +77,7 @@
   {% if content.enrollments_count is not empty %}
     <div class="badge teaser__badge" title="{% trans %}Total amount of enrollments{% endtrans %}">
       <span class="badge__container">
-        <svg class="badge__icon">
+        <svg class="badge__icon" aria-hidden="true">
           <use xlink:href="#icon-person"></use>
         </svg>
         <span class="badge__label">

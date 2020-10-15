@@ -3,11 +3,13 @@
 {% set attributes = attributes.addClass('teaser-profile') %}
 
 {% block card_image %}
+  <div
   {% if profile_hero_styled_image_url %}
-    <div style="background-image: url('{{ profile_hero_styled_image_url }}')" class="teaser__image">
-  {% else %}
-    <div class="teaser__image">
+    style="background-image: url('{{ profile_hero_styled_image_url }}')"
   {% endif %}
+    class="teaser__image"
+    aria-hidden="true"
+    >
       {% block card_hero_image %}
         <div class="img_wrapper">
           <a href="{{ profile_home }}">
@@ -31,6 +33,7 @@
 {% block card_title %}
   <h4 class="teaser__title">
     <a href="{{ profile_home }}">
+      <span class="sr-only">{% trans%}User{% endtrans %}: </span>
       {{ profile_name }} {{ profile_name_extra }}
     </a>
   </h4>
@@ -49,10 +52,9 @@
 
 {% block card_link %}
   {% if not hide_card_link %}
-    <div class="card__link">
-      <a href="{{ profile_stream_url }}" rel="bookmark">{{ 'Read more'|t }}
-        <span class="visually-hidden">{% trans %}about {{ label }}{% endtrans %} </span>
-      </a>
-    </div>
+    <a href="{{ profile_stream_url }}" class="card__link" rel="bookmark">
+      {{ 'Read more'|t }}
+      <span class="visually-hidden">{% trans %}about {{ profile_name }} {{ profile_name_extra }}{% endtrans %} </span>
+    </a>
   {% endif %}
 {% endblock %}
