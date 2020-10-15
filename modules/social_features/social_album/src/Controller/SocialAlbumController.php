@@ -3,10 +3,17 @@
 namespace Drupal\social_album\Controller;
 
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\Database\Connection;
+use Drupal\Core\Entity\EntityFormBuilderInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
 use Drupal\social_post\Entity\PostInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Class SocialAlbumController.
@@ -14,6 +21,59 @@ use Drupal\social_post\Entity\PostInterface;
  * @package Drupal\social_album\Controller
  */
 class SocialAlbumController extends ControllerBase {
+
+  /**
+   * The current active database's master connection.
+   *
+   * @var \Drupal\Core\Database\Connection
+   */
+  protected $database;
+
+  /**
+   * SocialAlbumController constructor.
+   *
+   * @param \Drupal\Core\StringTranslation\TranslationInterface $translation
+   *   The string translation service.
+   * @param \Drupal\Core\Database\Connection $database
+   *   The current active database's master connection.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
+   * @param \Drupal\Core\Entity\EntityFormBuilderInterface $entity_form_builder
+   *   The entity form builder.
+   * @param \Drupal\Core\Session\AccountInterface $current_user
+   *   The current user.
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *   The configuration factory service.
+   */
+  public function __construct(
+    TranslationInterface $translation,
+    Connection $database,
+    EntityTypeManagerInterface $entity_type_manager,
+    EntityFormBuilderInterface $entity_form_builder,
+    AccountInterface $current_user,
+    ConfigFactoryInterface $config_factory
+  ) {
+    $this->setStringTranslation($translation);
+    $this->database = $database;
+    $this->entityTypeManager = $entity_type_manager;
+    $this->entityFormBuilder = $entity_form_builder;
+    $this->currentUser = $current_user;
+    $this->configFactory = $config_factory;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('string_translation'),
+      $container->get('database'),
+      $container->get('entity_type.manager'),
+      $container->get('entity.form_builder'),
+      $container->get('current_user'),
+      $container->get('config.factory')
+    );
+  }
 
   /**
    * Provides a generic title callback for the first post of the album.
@@ -42,7 +102,7 @@ class SocialAlbumController extends ControllerBase {
    *   The renderable array.
    */
   public function viewImage(NodeInterface $node, PostInterface $post, $fid) {
-    $query = \Drupal::database()->select('post__field_post_image', 'i')
+    $query = $this->database->select('post__field_post_image', 'i')
       ->fields('i', ['field_post_image_target_id']);
 
     $query->innerJoin('post__field_album', 'a', 'a.entity_id = i.entity_id');
