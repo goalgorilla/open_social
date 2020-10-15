@@ -60,14 +60,8 @@ class AddToCalendarIcsController extends ControllerBase {
     // Event dates.
     $dates = $this->request->get('dates');
 
-    // Array for serialization.
-    $serialize = [
-      'nid' => $this->request->get('nid'),
-      'date' => $dates['both'],
-    ];
-
     // Create ICS filename.
-    $name = md5(serialize($serialize));
+    $name = md5(serialize($this->request->query->all()));
     $filename = $name . '.ics';
 
     // ICS file destination.
@@ -85,7 +79,7 @@ class AddToCalendarIcsController extends ControllerBase {
         'SUMMARY:' . $this->request->get('title'),
       ];
 
-      // Set dates.
+      // Set start and end datetime for event.
       if ($dates['all_day']) {
         $file_data[] = 'DTSTART:' . $dates['start'];
         $file_data[] = 'DTEND:' . $dates['end'];
