@@ -97,8 +97,10 @@
 
   {% if errors %}
     <div class="form-item--error-message alert alert-danger alert-sm alert-dismissible form-control-radius">
-      <a href="#" role="button" class="close" data-dismiss="alert" aria-label="{{ 'Close'|t }}"><span aria-hidden="true">&times;</span></a>
       {{ errors }}
+      <button type="button" class="close" data-dismiss="alert" aria-label="{{ "Close"|t }}">
+        <span aria-hidden="true">&times;</span>
+      </button>
     </div>
   {% endif %}
 

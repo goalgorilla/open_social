@@ -36,9 +36,9 @@
     ]
   %}
   {#  Always wrap fieldset legends in a SPAN for CSS positioning. #}
-  <label{{ legend.attributes.addClass(label_classes) }}>
+  <legend{{ legend.attributes.addClass(label_classes) }}>
     <span{{ legend_span.attributes }}>{{ legend.title }}</span>
-  </label>
+  </legend>
   <div class="fieldset-wrapper">
     {% if errors %}
       <div>

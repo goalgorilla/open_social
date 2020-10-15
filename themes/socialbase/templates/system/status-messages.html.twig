@@ -50,8 +50,7 @@
     'card-radius',
   ]
 %}
-<div{{ attributes.addClass(classes) }} role="alert">
-  <a href="#" role="button" class="close" data-dismiss="alert" aria-label="{{ 'Close'|t }}"><span aria-hidden="true">&times;</span></a>
+<div{{ attributes.addClass(classes) }}>
   {% if status_headings[type] %}
     <h4 class="sr-only">{{ status_headings[type] }}</h4>
   {% endif %}
@@ -66,5 +65,9 @@
   {% endif %}
   {# Remove type specific classes. #}
   {% set attributes = attributes.removeClass(classes) %}
+
+  <button type="button" class="close" data-dismiss="alert" aria-label="{{ "Close"|t }}">
+    <span aria-hidden="true">&times;</span>
+  </button>
 </div>
 {% endfor %}

@@ -8,7 +8,8 @@
   font-weight: normal;
   text-align: center;
   vertical-align: middle;
-  touch-action: manipulation;
+  -ms-touch-action: manipulation;
+      touch-action: manipulation;
   cursor: pointer;
   background-image: none;
   border: 1px solid transparent;
@@ -19,6 +20,7 @@
      -moz-user-select: none;
       -ms-user-select: none;
           user-select: none;
+  -webkit-transition: .3s ease-out;
   transition: .3s ease-out;
   outline: 0;
 }
@@ -48,7 +50,8 @@
 fieldset[disabled] .btn {
   cursor: not-allowed;
   opacity: .65;
-  box-shadow: none;
+  -webkit-box-shadow: none;
+          box-shadow: none;
 }
 
 .btn a {
@@ -75,7 +78,8 @@ a.btn {
 fieldset[disabled] .btn-link {
   background-color: transparent;
   border-color: transparent;
-  box-shadow: none;
+  -webkit-box-shadow: none;
+          box-shadow: none;
 }
 
 .btn-link[disabled]:hover, .btn-link[disabled]:focus,
@@ -154,16 +158,22 @@ input[type="button"].btn-block {
 }
 
 .btn-raised {
-  box-shadow: 0 0 2px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.24);
+  -webkit-box-shadow: 0 0 2px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.24);
+          box-shadow: 0 0 2px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.24);
+  -webkit-transition: .15s ease-out, -webkit-box-shadow;
+  transition: .15s ease-out, -webkit-box-shadow;
   transition: box-shadow, .15s ease-out;
+  transition: box-shadow, .15s ease-out, -webkit-box-shadow;
 }
 
 .btn-raised:active, .btn-raised.active, .btn-raised:hover {
-  box-shadow: 0 0 6px rgba(0, 0, 0, 0.16), 0 6px 12px rgba(0, 0, 0, 0.32);
+  -webkit-box-shadow: 0 0 6px rgba(0, 0, 0, 0.16), 0 6px 12px rgba(0, 0, 0, 0.32);
+          box-shadow: 0 0 6px rgba(0, 0, 0, 0.16), 0 6px 12px rgba(0, 0, 0, 0.32);
 }
 
 .btn-raised.disabled, .btn-raised[disabled] {
-  box-shadow: 0 -1px 0 #e0e0e0, 0 0 2px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.24);
+  -webkit-box-shadow: 0 -1px 0 #e0e0e0, 0 0 2px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.24);
+          box-shadow: 0 -1px 0 #e0e0e0, 0 0 2px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.24);
 }
 
 .btn-icon-toggle {
@@ -207,11 +217,13 @@ input[type="button"].btn-block {
   padding: 7px;
   border-radius: 50%;
   border: 0;
-  box-shadow: 0 0 4px rgba(0, 0, 0, 0.14), 0 4px 8px rgba(0, 0, 0, 0.28);
+  -webkit-box-shadow: 0 0 4px rgba(0, 0, 0, 0.14), 0 4px 8px rgba(0, 0, 0, 0.28);
+          box-shadow: 0 0 4px rgba(0, 0, 0, 0.14), 0 4px 8px rgba(0, 0, 0, 0.28);
 }
 
 .btn-floating:active, .btn-floating.active, .btn-floating:hover {
-  box-shadow: 0 0 6px rgba(0, 0, 0, 0.16), 0 6px 12px rgba(0, 0, 0, 0.32);
+  -webkit-box-shadow: 0 0 6px rgba(0, 0, 0, 0.16), 0 6px 12px rgba(0, 0, 0, 0.32);
+          box-shadow: 0 0 6px rgba(0, 0, 0, 0.16), 0 6px 12px rgba(0, 0, 0, 0.32);
 }
 
 .btn-floating.btn-lg, .btn-group-lg > .btn-floating.btn {
@@ -220,7 +232,8 @@ input[type="button"].btn-block {
 }
 
 .btn-floating.disabled, .btn-floating[disabled] {
-  box-shadow: 0 0 4px rgba(0, 0, 0, 0.14), 0 4px 8px rgba(0, 0, 0, 0.28);
+  -webkit-box-shadow: 0 0 4px rgba(0, 0, 0, 0.14), 0 4px 8px rgba(0, 0, 0, 0.28);
+          box-shadow: 0 0 4px rgba(0, 0, 0, 0.14), 0 4px 8px rgba(0, 0, 0, 0.28);
 }
 
 .btn-group,
@@ -340,7 +353,8 @@ input[type="button"].btn-block {
 }
 
 .btn-group.open .dropdown-toggle.btn-link {
-  box-shadow: none;
+  -webkit-box-shadow: none;
+          box-shadow: none;
 }
 
 .btn-lg .caret, .btn-group-lg > .btn .caret {
@@ -383,8 +397,12 @@ input[type="button"].btn-block {
 
 .btn-group--operations {
   width: 100%;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  justify-content: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
 }
 
 .block-group-add-event-block,
@@ -397,6 +415,15 @@ input[type="button"].btn-block {
 
 .shariff-button {
   text-align: center;
+}
+
+.contextual .trigger {
+  background-image: url("../../components/06-libraries/icons/source/icon-edit.svg");
+}
+
+.contextual .trigger:focus, .contextual .trigger:active, .contextual .trigger:hover {
+  background-color: #e6e6e6;
+  background-image: url("../../components/06-libraries/icons/source/icon-edit.svg");
 }
 
 @media (min-width: 900px) {
