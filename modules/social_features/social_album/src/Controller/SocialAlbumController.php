@@ -75,7 +75,7 @@ class SocialAlbumController extends ControllerBase {
     }
 
     return [
-      '#theme' => 'social_album_image_popup_formatter',
+      '#theme' => 'social_album_post',
       '#items' => array_merge($items[TRUE], $items[FALSE]),
       '#album' => $node->label(),
     ];
