@@ -120,18 +120,32 @@ class SocialAlbumConfigOverride implements ConfigFactoryOverrideInterface {
       'block.block.socialblue_profile_hero_block',
       'block.block.socialblue_pagetitleblock_content',
       'block.block.socialblue_profile_statistic_block',
+      'block.block.socialblue_groupheroblock',
+      'block.block.socialblue_group_statistic_block',
     ];
 
-    foreach ($config_names as $config_name) {
+    foreach ($config_names as $delta => $config_name) {
       if (in_array($config_name, $names)) {
+        $pages = $this->configFactory->getEditable($config_name)
+          ->get('visibility.request_path.pages');
+
         $overrides[$config_name] = [
           'visibility' => [
             'request_path' => [
-              'pages' => $this->configFactory->getEditable($config_name)->get('visibility.request_path.pages') . "\r\n/user/*/albums",
+              'pages' => sprintf(
+                "$pages\r\n/%s/*/albums",
+                $delta > 2 ? 'group' : 'user'
+              ),
             ],
           ],
         ];
       }
+    }
+
+    $config_name = $config_names[1];
+
+    if (isset($overrides[$config_name])) {
+      $overrides[$config_name]['visibility']['request_path']['pages'] .= "\r\n/group/*/albums";
     }
 
     return $overrides;

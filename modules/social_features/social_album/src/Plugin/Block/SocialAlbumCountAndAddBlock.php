@@ -146,6 +146,20 @@ class SocialAlbumCountAndAddBlock extends BlockBase implements ContainerFactoryP
    *   NULL.
    */
   protected function getProperties() {
+    $item = [
+      'count' => [
+        'singular' => '@count album',
+        'plural' => '@count albums',
+      ],
+      'link' => [
+        'text' => $this->t('Create new album'),
+        'route' => [
+          'name' => 'node.add',
+          'parameters' => ['node_type' => 'album'],
+        ],
+      ],
+    ];
+
     $items = [
       'entity.node.canonical' => [
         'type' => 'node',
@@ -167,18 +181,11 @@ class SocialAlbumCountAndAddBlock extends BlockBase implements ContainerFactoryP
       'view.albums.page_albums_overview' => [
         'type' => 'user',
         'display' => 'page_albums_overview',
-        'count' => [
-          'singular' => '@count album',
-          'plural' => '@count albums',
-        ],
-        'link' => [
-          'text' => $this->t('Create new album'),
-          'route' => [
-            'name' => 'node.add',
-            'parameters' => ['node_type' => 'album'],
-          ],
-        ],
-      ],
+      ] + $item,
+      'view.albums.page_group_albums_overview' => [
+        'type' => 'group',
+        'display' => 'page_group_albums_overview',
+      ] + $item,
     ];
 
     return $items[$this->routeMatch->getRouteName()] ?? NULL;
