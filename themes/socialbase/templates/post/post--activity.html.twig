@@ -38,16 +38,25 @@
     {{ content|without('links', 'field_post_comments', 'like_and_dislike', 'field_post_image', 'user_id') }}
   </div>
 
-  {% if content.field_post_image|render %}
-    {% if post_image_wrapper %}
-      {{ content.field_post_image }}
-    {% else %}
-      <p>{{ content.field_post_image }}</p>
-    {% endif %}
+  {{ content.field_post_image }}
+
+  {% if post_image_wrapper %}
+    {{ content.field_post_image }}
+  {% else %}
+    <p>{{ content.field_post_image }}</p>
   {% endif %}
 
+
   <div class="clearfix"></div>
-  {{ content.like_and_dislike }}
+
+  <div class="footer-post">
+    {{ content.like_and_dislike }}
+
+    <div class="album-name">
+      {{ content.field_album }}
+      Images posted in album Trip to Amsterdam
+    </div>
+  </div>
 
 </div>
 

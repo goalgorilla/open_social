@@ -11,6 +11,7 @@
       width: calc(50% - 1.75rem);
       border: 1px dashed #adadad;
       z-index: 1;
+      border-radius: .5rem;
 
       @media (min-width: 600px) {
         width: calc((100% / 3) - 1.5rem);
@@ -84,10 +85,14 @@
 
     table {
       display: block;
-      padding: 1.25rem 1.25rem 0;
+      padding: 1rem 1rem 0;
       background: #f3f3f3;
       margin-bottom: 1rem;
       min-height: 176px;
+
+      @media(min-width: 600px) {
+        padding: 1.25rem 1.25rem 0;
+      }
     }
 
     thead {
@@ -193,6 +198,52 @@
           @media (min-width: 1200px) {
             margin-left: 25%;
           }
+        }
+      }
+    }
+
+    #edit-field-album-wrapper {
+      display: flex;
+      width: 100%;
+      margin-top: -1rem;
+      padding: 0 1.25rem .25rem;
+      background: #f3f3f3;
+      border-radius: 0;
+
+      @media(max-width: 599px) {
+        flex-wrap: wrap;
+      }
+
+      > * {
+        flex: 0 0 100%;
+        max-width: 100%;
+
+        @media(min-width: 600px) {
+          flex: 0 0 50%;
+          max-width: 50%;
+          padding: 0.5rem;
+
+          &:nth-child(1) {
+            padding-left: 0;
+          }
+
+          &:nth-child(2){
+            padding-right: 0;
+
+            .help-block {
+              position: relative;
+              width: 200%;
+              left: calc(-100% - 1rem);
+            }
+          }
+        }
+      }
+
+      .select-wrapper,
+      select,
+      .form-control {
+        @media(max-width: 599px) {
+          max-width: 100%;
         }
       }
     }
