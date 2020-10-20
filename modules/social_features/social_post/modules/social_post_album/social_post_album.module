@@ -35,7 +35,7 @@ function social_post_album_theme($existing, $type, $theme, $path) {
 function social_post_album_preprocess_field__post__type__image__album(&$variables) {
   $post = $variables['element']['#object'];
 
-  if ($post instanceof PostInterface && $post->hasField('field_post')) {
+  if ($post instanceof PostInterface) {
     $variables['pid'] = $post->id();
 
     $all_post_fids = \Drupal::database()
@@ -51,7 +51,7 @@ function social_post_album_preprocess_field__post__type__image__album(&$variable
 }
 
 /**
- * Implements hook_preprocess().
+ * Implements hook_preprocess_HOOK().
  */
 function social_post_album_preprocess_album_post_popup(&$variables) {
   $variables['post'] = [
@@ -68,14 +68,21 @@ function social_post_album_preprocess_album_post_popup(&$variables) {
 }
 
 /**
- * Implements hook_preprocess().
+ * Implements hook_preprocess_HOOK().
  */
 function social_post_album_preprocess_activity(&$variables, $hook) {
   $variables['extra_stream_class'] = 'social-post-album--post';
 }
 
 /**
- * Implements hook_preprocess().
+ * Implements hook_preprocess_HOOK().
+ */
+function social_post_album_preprocess_post__activity(&$variables, $hook) {
+  $variables['post_image_wrapper'] = TRUE;
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
  */
 function social_post_album_preprocess_block__social_post(&$variables, $hook) {
   $variables['extra_stream_class'] = 'social-post-album--form';
@@ -115,10 +122,10 @@ function social_post_album_form_social_post_entity_form_alter(array &$form, Form
 }
 
 /**
- * Implements hook_photo_preprocess_image_formatter().
+ * Implements hook_preprocess_HOOK().
  */
 function social_post_album_preprocess_image_formatter(&$variables) {
-  if ($variables['image_style'] == "social_post_photo") {
+  if ($variables['image_style'] === 'social_post_photo') {
     $variables['image']['#style_name'] = 'social_x_large';
   }
 }

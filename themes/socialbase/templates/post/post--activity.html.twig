@@ -39,7 +39,11 @@
   </div>
 
   {% if content.field_post_image|render %}
-    <p>{{ content.field_post_image }}</p>
+    {% if post_image_wrapper %}
+      {{ content.field_post_image }}
+    {% else %}
+      <p>{{ content.field_post_image }}</p>
+    {% endif %}
   {% endif %}
 
   <div class="clearfix"></div>

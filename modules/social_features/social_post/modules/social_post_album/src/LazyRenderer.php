@@ -5,7 +5,9 @@ namespace Drupal\social_post_album;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 
 /**
- * {@inheritdoc}
+ * Class LazyRenderer.
+ *
+ * @package Drupal\social_post_album
  */
 class LazyRenderer {
 
