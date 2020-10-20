@@ -216,6 +216,22 @@ function social_album_form_post_form_alter(&$form, FormStateInterface $form_stat
 /**
  * Implements hook_form_FORM_ID_alter().
  */
+function social_album_form_social_post_entity_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  /** @var \Drupal\social_post\Entity\PostInterface $post */
+  $post = $form_state->getFormObject()->getEntity();
+
+  if (
+    $post->bundle() === 'photo' &&
+    $post->isNew() &&
+    $form_state->get('form_display')->getMode() === 'group'
+  ) {
+    $form['actions']['submit']['#submit'][] = '_social_album_post_submit';
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
 function social_album_form_node_album_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   $form['actions']['submit']['#submit'][] = '_social_album_create_post';
 }
@@ -251,4 +267,38 @@ function _social_album_create_post(array $form, FormStateInterface $form_state) 
       'node' => $form_state->getFormObject()->getEntity()->id(),
     ]);
   }
+}
+
+/**
+ * Add post to an album and add the album to a group.
+ *
+ * @param array $form
+ *   An associative array containing the structure of the form.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   The current state of the form.
+ */
+function _social_album_post_submit(array $form, FormStateInterface $form_state) {
+  if ($form_state->hasValue('field_album')) {
+    return;
+  }
+
+  $input = $form_state->getUserInput()['field_album'];
+
+  if ($input['value'] !== '_add' || empty($input['title'])) {
+    return;
+  }
+
+  $node = \Drupal::entityTypeManager()->getStorage('node')->create([
+    'type' => 'album',
+    'title' => $input['title'],
+  ]);
+
+  $node->save();
+
+  /** @var \Drupal\social_post\Entity\PostInterface $post */
+  $post = $form_state->getFormObject()->getEntity();
+
+  $post->set('field_album', $node->id())->save();
+
+  \Drupal::service('social_group.set_groups_for_node_service')->addGroupContent($node, $post->field_recipient_group->entity);
 }
