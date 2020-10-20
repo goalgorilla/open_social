@@ -38,14 +38,11 @@
     {{ content|without('links', 'field_post_comments', 'like_and_dislike', 'field_post_image', 'user_id') }}
   </div>
 
-  {{ content.field_post_image }}
-
-  {% if post_image_wrapper %}
+  {% if post_image_without_wrapper %}
     {{ content.field_post_image }}
   {% else %}
     <p>{{ content.field_post_image }}</p>
   {% endif %}
-
 
   <div class="clearfix"></div>
 
