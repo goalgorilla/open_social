@@ -30,6 +30,16 @@ class LazyRenderer {
 
   /**
    * Get post with specific view mode via lazy builder.
+   *
+   * @param string $entity_type
+   *   The entity type ID.
+   * @param string|int $post_id
+   *   The post ID.
+   * @param string $view_mode
+   *   The view mode.
+   *
+   * @return array
+   *   The render array of post.
    */
   public function getPost($entity_type, $post_id, $view_mode) {
     $post = $this->entityTypeManager->getStorage($entity_type)->load($post_id);

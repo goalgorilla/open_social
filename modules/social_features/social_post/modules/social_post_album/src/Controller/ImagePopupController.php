@@ -27,18 +27,18 @@ class ImagePopupController extends ControllerBase {
    * @see https://git.drupalcode.org/project/image_popup/-/blob/2.x/src/Controller/ImagePopup.php
    */
   public function render(PostInterface $post, $first_fid) {
-    /** @var \Drupal\file\Plugin\Field\FieldType\FileFieldItemList $post_image */
+    /** @var \Drupal\Core\Field\EntityReferenceFieldItemListInterface $post_image */
     $post_image = $post->field_post_image;
-    $files = $post_image->referencedEntities();
+    $files = $post_image->getValue();
 
     $fids = [];
     $index = 0;
     // Show images in the correct order.
     foreach ($files as $file) {
-      if ($file->id() == $first_fid) {
+      if ($file['target_id'] == $first_fid) {
         $index++;
       }
-      $fids[$index][] = $file->id();
+      $fids[$index][] = $file['target_id'];
     }
     [$before, $after] = $fids;
     $fids = array_merge($after, $before);

@@ -5,7 +5,7 @@
   <div class="social-post-album--popup-slider">
     <div class="social-post-album--popup-slider-wrapper">
       {% for url in urls %}
-        <div class="social-post-album--popup-item" data-med="{{ url }}">
+        <div class="social-post-album--popup-item">
           <img src="{{ url }}">
         </div>
       {% endfor %}
@@ -14,9 +14,6 @@
 
   <div class="post-comment-wrapper">
     <div class="post-message">
-      <div class="post-header">
-        {{ 'Images posted in album' }} <b>{{ 'Trip to Amsterdam' }}</b>
-      </div>
       {{ post }}
     </div>
   </div>

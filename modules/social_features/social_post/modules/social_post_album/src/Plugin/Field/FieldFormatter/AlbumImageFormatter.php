@@ -22,16 +22,17 @@ use Drupal\image\Plugin\Field\FieldFormatter\ImageFormatter;
 class AlbumImageFormatter extends ImageFormatter {
 
   /**
+   * The limit of images that displayed in the post.
+   */
+  const LIMIT = 11;
+
+  /**
    * {@inheritdoc}
    */
   public function viewElements(FieldItemListInterface $items, $langcode) {
-    $files = $items->referencedEntities();
-    $files = array_reverse($files, TRUE);
-    $limit = 11;
-
-    if (!empty($files)) {
-      foreach ($files as $key => $file) {
-        if ($limit < $key) {
+    if (!$items->isEmpty()) {
+      foreach (array_reverse($items->referencedEntities(), TRUE) as $key => $file) {
+        if (self::LIMIT < $key) {
           if ($items->get($key)) {
             $items->removeItem($key);
           }
