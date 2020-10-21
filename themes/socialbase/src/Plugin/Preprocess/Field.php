@@ -5,6 +5,7 @@ namespace Drupal\socialbase\Plugin\Preprocess;
 use Drupal\bootstrap\Plugin\Preprocess\PreprocessBase;
 use Drupal\bootstrap\Utility\Element;
 use Drupal\bootstrap\Utility\Variables;
+use Drupal\node\Entity\Node;
 
 /**
  * Pre-processes variables for the "field" theme hook.
@@ -54,6 +55,21 @@ class Field extends PreprocessBase {
         }
         break;
 
+      // Adds the comment title with the amount of comments, done in here
+      // so Ajax can also update this title. Node preprocess doesn't get called
+      // when Ajax updates the below fields.
+      case 'field_topic_comments':
+      case 'field_event_comments':
+        // Grab the attached Event or Topic.
+        $attached = $element->getArray();
+        $node = !empty($attached['#object']) ? $attached['#object'] : NULL;
+        // Count the amount of comments placed on a Node..
+        if ($node instanceof Node) {
+          $comment_count = _socialbase_node_get_comment_count($node, $element['#field_name']);
+          // Add it to the title.
+          $variables['comment_count'] = $comment_count;
+        }
+        break;
     }
 
     if ($element['#view_mode'] == 'teaser') {
