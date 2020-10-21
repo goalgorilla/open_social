@@ -39,14 +39,6 @@ class SocialFollowTagOverrides implements ConfigFactoryOverrideInterface {
   public function loadOverrides($names) {
     $overrides = [];
 
-    // Add tag paragraph to bundle list in section paragraph config.
-    $config_name = 'field.field.paragraph.section.field_section_paragraph';
-
-    if (in_array($config_name, $names)) {
-      $overrides[$config_name]['settings']['handler_settings']['target_bundles']['tag'] = 'tag';
-      $overrides[$config_name]['settings']['handler_settings']['target_bundles_drag_drop']['tag']['enabled'] = TRUE;
-    }
-
     // Add social_tagging taxonomy bundle to follow_term flag config.
     $config_name = 'flag.flag.follow_term';
     $config = $this->configFactory->getEditable($config_name);

@@ -150,7 +150,7 @@ function social_follow_landing_page_field_widget_entity_reference_paragraphs_for
       // Deny access the social_tagging field altogether.
       $subform['field_tag']['#access'] = FALSE;
       // Add a custom submithandler.
-      $element['#element_validate'][] = '_social_follow_tag_entity_validate';
+      $element['#element_validate'][] = '_social_follow_landing_page_entity_validate';
     }
     else {
       $options = [];
