@@ -5,10 +5,7 @@
  * Contains social_follow_tag.module.
  */
 
-use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityInterface;
-use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
 use Drupal\taxonomy\TermInterface;
 
@@ -61,7 +58,7 @@ function social_follow_tag_social_follow_taxonomy_terms_list_alter(array &$term_
 function social_follow_tag_social_follow_taxonomy_related_items_alter(array &$items, $entity) {
   $user = \Drupal::entityTypeManager()->getStorage('user')->load(\Drupal::currentUser()->id());
 
-  $items = array_filter($items, function($item) use ($user) {
+  $items = array_filter($items, function ($item) use ($user) {
     return $item instanceof NodeInterface && $item->access('view', $user);
   });
 }

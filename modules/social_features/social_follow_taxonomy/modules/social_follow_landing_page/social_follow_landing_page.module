@@ -184,7 +184,7 @@ function _social_follow_landing_page_entity_validate($element, FormStateInterfac
       $counter = 0;
 
       // Loop over the categories.
-      foreach ($categories as $tid => $category) {
+      foreach ($categories as $category) {
         if (!empty($tag_value['social_tagging_' . social_tagging_to_machine_name($category)])) {
           foreach ($tag_value['social_tagging_' . social_tagging_to_machine_name($category)] as $selected) {
             $tagging_values[] = [

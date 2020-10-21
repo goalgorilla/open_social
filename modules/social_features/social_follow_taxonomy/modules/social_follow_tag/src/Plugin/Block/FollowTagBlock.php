@@ -11,7 +11,6 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\flag\FlagLinkBuilderInterface;
 use Drupal\flag\FlagServiceInterface;
 use Drupal\social_tagging\SocialTaggingService;
-use Drupal\taxonomy\Entity\Term;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -168,7 +167,7 @@ class FollowTagBlock extends BlockBase implements ContainerFactoryPluginInterfac
     $tags = [];
     foreach ($term_ids as $term_id) {
       /** @var \Drupal\taxonomy\Entity\Term $term */
-      $term = Term::load($term_id);
+      $term = $this->entityTypeManager->getStorage('taxonomy_term')->load($term_id);
 
       // Show only tags followed by user.
       if ($term && social_follow_taxonomy_term_followed($term)) {
