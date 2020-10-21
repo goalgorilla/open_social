@@ -1,0 +1,22 @@
+{{ attach_library('core/drupal.dialog.ajax') }}
+{{ attach_library('social_post_album/social-post-album--popup') }}
+
+<div class="row social-post-album--popup">
+  <div class="social-post-album--popup-slider">
+    <div class="social-post-album--popup-slider-wrapper">
+      {% for url in urls %}
+        <div class="social-post-album--popup-item">
+          <img src="{{ url }}">
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="post-comment-wrapper">
+    <div class="post-message">
+      {{ post }}
+    </div>
+  </div>
+
+</div>
+</div>

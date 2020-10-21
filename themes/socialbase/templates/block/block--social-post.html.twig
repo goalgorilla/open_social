@@ -45,7 +45,14 @@
  * @ingroup templates
  */
 #}
-<div class="card card--stream">
+{%
+  set classes = [
+  'card',
+  'card--stream',
+  extra_stream_class,
+]
+%}
+<div {{ attributes.addClass(classes) }}>
   <div class="card__block">
     <div class="media">
       <div class="media-left avatar hidden-for-phone-only">

@@ -1,0 +1,9 @@
+services:
+  social_post_album.lazy_renderer:
+    class: Drupal\social_post_album\LazyRenderer
+    arguments: ['@entity_type.manager']
+
+  social_post_album.override:
+    class: Drupal\social_post_album\SocialPostPhotoAlbumConfigOverride
+    tags:
+      - {name: config.factory.override, priority: 5}
