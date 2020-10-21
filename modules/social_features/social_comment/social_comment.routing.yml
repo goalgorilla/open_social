@@ -8,3 +8,11 @@ social_comment.unpublish:
     _permission: 'administer comments'
     _csrf_token: 'TRUE'
     comment: \d+
+social_comment.settings:
+  path: '/admin/config/opensocial/socialcomment'
+  defaults:
+    _form: 'Drupal\social_comment\Form\SocialCommentSettings'
+    _title: 'Comment settings'
+  requirements:
+    _permission: 'manage comments'
+

@@ -18,6 +18,10 @@ function social_comment_install() {
 
   // Set the view mode to use when shown in activities.
   activity_creator_set_entity_view_mode('comment', 'activity');
+  // Set default reply level settings.
+  $config = \Drupal::configFactory()->getEditable('social_comment.settings');
+  $config->set('social_comment_level', 1);
+  $config->save();
 }
 
 /**
