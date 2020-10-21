@@ -167,14 +167,75 @@ class SocialAlbumController extends ControllerBase {
    * @param \Drupal\node\NodeInterface $node
    *   The node object.
    *
+   * @return bool
+   *   TRUE if it's an album node.
+   */
+  protected function checkAlbumAccess(NodeInterface $node) {
+    return $node->bundle() === 'album';
+  }
+
+  /**
+   * Checks access to the page for adding an image to an album.
+   *
+   * @param \Drupal\node\NodeInterface $node
+   *   The node entity object.
+   *
    * @return \Drupal\Core\Access\AccessResultInterface
    *   The access result.
    */
-  public function checkAlbumAccess(NodeInterface $node) {
-    return AccessResult::allowedIf(
-      $node->bundle() === 'album' &&
-      $node->getOwnerId() === $this->currentUser()->id()
-    );
+  public function checkAddImageAccess(NodeInterface $node) {
+    if ($this->checkAlbumAccess($node)) {
+      if ($node->getOwnerId() === $this->currentUser()->id()) {
+        return AccessResult::allowed();
+      }
+      elseif (
+        !$node->field_album_creators->isEmpty() &&
+        $node->field_album_creators->value
+      ) {
+        /** @var \Drupal\group\Entity\Storage\GroupContentStorageInterface $storage */
+        $storage = $this->entityTypeManager()->getStorage('group_content');
+
+        if ($group_content = $storage->loadByEntity($node)) {
+          /** @var \Drupal\group\Entity\GroupInterface $group */
+          $group = reset($group_content)->getGroup();
+
+          return AccessResult::allowedIf($group->getMember($this->currentUser) !== FALSE);
+        }
+      }
+    }
+
+    return AccessResult::forbidden();
+  }
+
+  /**
+   * Checks access to the page for viewing the image from the post.
+   *
+   * @param \Drupal\node\NodeInterface $node
+   *   The node entity object.
+   * @param \Drupal\social_post\Entity\PostInterface $post
+   *   The post entity object.
+   * @param int $fid
+   *   The file entity ID.
+   *
+   * @return \Drupal\Core\Access\AccessResultInterface
+   *   The access result.
+   */
+  public function checkViewImageAccess(NodeInterface $node, PostInterface $post, $fid) {
+    if (
+      $this->checkAlbumAccess($node) &&
+      $post->bundle() === 'photo' &&
+      !$post->field_album->isEmpty() &&
+      $post->field_album->target_id === $node->id() &&
+      !$post->field_post_image->isEmpty()
+    ) {
+      foreach ($post->field_post_image->getValue() as $item) {
+        if ($item['target_id'] === $fid) {
+          return AccessResult::allowed();
+        }
+      }
+    }
+
+    return AccessResult::forbidden();
   }
 
   /**
@@ -190,22 +251,9 @@ class SocialAlbumController extends ControllerBase {
    * @return \Drupal\Core\Access\AccessResultInterface
    *   The access result.
    */
-  public function checkImageAccess(NodeInterface $node, PostInterface $post, $fid) {
-    if (
-      $this->checkAlbumAccess($node)->isAllowed() &&
-      $post->bundle() === 'photo' &&
-      !$post->field_album->isEmpty() &&
-      $post->field_album->target_id === $node->id() &&
-      !$post->field_post_image->isEmpty()
-    ) {
-      foreach ($post->field_post_image->getValue() as $item) {
-        if ($item['target_id'] === $fid) {
-          return AccessResult::allowed();
-        }
-      }
-    }
-
-    return AccessResult::forbidden();
+  public function checkDeleteImageAccess(NodeInterface $node, PostInterface $post, $fid) {
+    return $this->checkViewImageAccess($node, $post, $fid)
+      ->andIf(AccessResult::allowedIf($post->getOwnerId() === $this->currentUser()->id()));
   }
 
   /**

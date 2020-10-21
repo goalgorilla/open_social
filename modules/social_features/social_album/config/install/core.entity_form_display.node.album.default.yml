@@ -3,6 +3,7 @@ status: true
 dependencies:
   config:
     - field.field.node.album.field_album_comments
+    - field.field.node.album.field_album_creators
     - field.field.node.album.field_content_visibility
     - node.type.album
   module:
@@ -14,7 +15,7 @@ third_party_settings:
         - groups
         - field_content_visibility
       parent_name: ''
-      weight: 1
+      weight: 2
       format_type: fieldset
       region: content
       format_settings:
@@ -36,13 +37,33 @@ third_party_settings:
         description: ''
         required_fields: true
       label: Information
+    group_album_settings:
+      children:
+        - field_album_creators
+      parent_name: ''
+      weight: 5
+      format_type: fieldset
+      region: content
+      format_settings:
+        id: ''
+        classes: ''
+        description: ''
+        required_fields: true
+      label: 'Album settings'
 id: node.album.default
 targetEntityType: node
 bundle: album
 mode: default
 content:
+  field_album_creators:
+    weight: 6
+    settings:
+      display_label: true
+    third_party_settings: {  }
+    type: boolean_checkbox
+    region: content
   field_content_visibility:
-    weight: 7
+    weight: 4
     settings: {  }
     third_party_settings: {  }
     type: options_buttons
@@ -50,12 +71,12 @@ content:
   groups:
     type: options_select
     settings: {  }
-    weight: 6
+    weight: 3
     region: content
     third_party_settings: {  }
   status:
     type: boolean_checkbox
-    weight: 2
+    weight: 7
     region: content
     settings:
       display_label: true

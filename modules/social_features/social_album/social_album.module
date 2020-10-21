@@ -237,6 +237,21 @@ function social_album_form_node_album_form_alter(&$form, FormStateInterface $for
 }
 
 /**
+ * Implements hook_field_group_form_process_alter().
+ */
+function social_album_field_group_form_process_alter(array &$element, &$group, &$complete_form) {
+  if ($group->group_name === 'group_album_settings') {
+    $element['#states'] = [
+      'visible' => [
+        ':input[name="groups"]' => [
+          '!value' => '_none',
+        ],
+      ],
+    ];
+  }
+}
+
+/**
  * Implements hook_views_data().
  */
 function social_album_views_data() {
