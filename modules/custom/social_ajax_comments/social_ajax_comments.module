@@ -5,15 +5,16 @@
  * Social AJAX comments module file.
  */
 
-use Drupal\ajax_comments\Utility;
-use Drupal\comment\CommentInterface;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Entity\ContentEntityInterface;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
+use Drupal\ajax_comments\Utility;
+use Drupal\comment\CommentInterface;
 use Drupal\node\Entity\Node;
 use Drupal\social_post\Entity\Post;
-use Drupal\Core\Entity\EntityInterface;
+use Drupal\social_post\Entity\PostInterface;
 
 /**
  * Implements hook_entity_display_build_alter().
@@ -44,14 +45,13 @@ function social_ajax_comments_entity_display_build_alter(&$build, $context) {
         }
 
         $html_id = $field['#entity_type'] . '_' . $field['#bundle'] . '_' . $field['#field_name'];
-        if ($context['entity'] instanceof Post) {
+        if ($context['entity'] instanceof PostInterface) {
           $view_mode = $context['display']->getMode();
           if ($view_mode === '_custom') {
             $view_mode = 'activity';
           }
           // It will also run on AJAX commands so cant do a .=
           // otherwise it will keep on adding the id.
-
           $html_id = $field['#entity_type'] . '_' . $field['#bundle'] . '_' . $field['#field_name'] . '_' . $context['entity']->id() . '_' . $view_mode;
         }
         if (isset($build[$field_name])) {
