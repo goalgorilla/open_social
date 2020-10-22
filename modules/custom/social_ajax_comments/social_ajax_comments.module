@@ -82,7 +82,7 @@ function social_ajax_comments_form_comment_comment_form_alter(&$form, FormStateI
     /** @var \Drupal\comment\CommentInterface $comment */
     $comment = $form_state->getFormObject()->getEntity();
     // For viewing comments the prefix is added in SocialCommentViewBuilder.
-    if (!empty($comment->getParentComment())) {
+    if ($comment->hasParentComment()) {
       $form['#prefix'] = '<div class="comments">';
       $form['#suffix'] = '<div>';
     }

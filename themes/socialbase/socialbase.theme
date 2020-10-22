@@ -105,11 +105,11 @@ function _socialbase_node_get_comment_count(Node $node, $comment_field_name) {
 
     foreach ($comments as $comment) {
       /* @var \Drupal\comment\Entity\Comment $comment */
+      // Published main comments or published replies on published main comments
+      // are counted for users without 'administer comments' permission.
       if ($comment->isPublished()) {
-        // Published main comments or published replies on published main comments
-        // are counted for users without 'administer comments' permission.
-        if (!$comment->hasParentComment() || ($comment->hasParentComment() && $comment->getParentComment()
-              ->isPublished())) {
+        if (!$comment->hasParentComment() ||
+          ($comment->hasParentComment() && $comment->getParentComment()->isPublished())) {
           $count++;
         }
         elseif (\Drupal::currentUser()->hasPermission('administer comments')) {
