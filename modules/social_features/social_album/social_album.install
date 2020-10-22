@@ -17,8 +17,8 @@ function social_album_install() {
 
   module_set_weight('social_album', 5);
 
-  _social_album_blocks(function ($pages) {
-    return "$pages\r\n/user/*/albums";
+  _social_album_blocks(function ($pages, array $paths) {
+    return $pages . "\r\n" . implode("\r\n", $paths);
   });
 }
 
@@ -26,13 +26,12 @@ function social_album_install() {
  * Implements hook_uninstall().
  */
 function social_album_uninstall() {
-  _social_album_blocks(function ($pages) {
+  _social_album_blocks(function ($pages, array $paths) {
     $pages = explode("\r\n", $pages);
 
     foreach ($pages as $delta => $page) {
-      if ($page === '/user/*/albums') {
+      if (in_array($page, $paths)) {
         unset($pages[$delta]);
-        break;
       }
     }
 
@@ -94,15 +93,20 @@ function _social_album_get_permissions($role) {
  *   The function which updates the pages set.
  */
 function _social_album_blocks(callable $function) {
-  $ids = [
-    'socialblue_profile_hero_block',
-    'socialblue_pagetitleblock_content',
-    'socialblue_profile_statistic_block',
+  $items = [
+    'socialblue_profile_hero_block' => '/user/*/albums',
+    'socialblue_pagetitleblock_content' => [
+      '/user/*/albums',
+      '/group/*/albums',
+    ],
+    'socialblue_profile_statistic_block' => '/user/*/albums',
+    'block.block.socialblue_groupheroblock' => '/group/*/albums',
+    'block.block.socialblue_group_statistic_block' => '/group/*/albums',
   ];
 
   $storage = \Drupal::entityTypeManager()->getStorage('block');
 
-  foreach ($ids as $id) {
+  foreach ($items as $id => $paths) {
     $block = $storage->load($id);
 
     if (!$block instanceof BlockInterface) {
@@ -113,7 +117,7 @@ function _social_album_blocks(callable $function) {
     $visibility = $block->getVisibilityCondition('request_path');
 
     $configuration = $visibility->getConfiguration();
-    $pages = $function($configuration['pages']);
+    $pages = $function($configuration['pages'], (array) $paths);
 
     if ($configuration['pages'] !== $pages) {
       $configuration['pages'] = $pages;
