@@ -160,6 +160,7 @@
           // socialbase/includes/form.inc.
           $(".js-comment .comment__reply-btn a").on("click", function () {
             $(".ajax-comments-form-reply").once("socialMentionsReplyFormClose").each(function (i, e) {
+              $(this).parent('.comments').remove();
               $(this).remove();
             });
           });

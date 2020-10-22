@@ -47,7 +47,7 @@ class AjaxCommentsController extends ContribController {
 
     // Replace the # from the form_html_id selector and add .social_ so we know
     // that we are sure we are just removing our specific form class.
-    $social_form_id = str_replace('#', '.social_', $form_html_id);
+    $social_form_id = str_replace('#', '.social_reply_form_wrapper_', $form_html_id);
     // Remove the form, based on $variables['comment_wrapper'] in form.inc.
     $response->addCommand(new RemoveCommand($social_form_id));
 
