@@ -28,21 +28,15 @@ function social_album_install() {
 function social_album_uninstall() {
   _social_album_blocks(function ($pages) {
     $pages = explode("\r\n", $pages);
-    $found = FALSE;
 
     foreach ($pages as $delta => $page) {
       if ($page === '/user/*/albums') {
         unset($pages[$delta]);
-        $found = TRUE;
         break;
       }
     }
 
-    if ($found) {
-      $pages = implode("\r\n", $pages);
-    }
-
-    return $pages;
+    return implode("\r\n", $pages);
   });
 }
 
