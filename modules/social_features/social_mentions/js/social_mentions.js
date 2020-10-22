@@ -150,9 +150,19 @@
             $(".comments .comment__reply-btn a").on("click", function () {
               $("html, body").animate({
                 scrollTop: $("[data-drupal-selector=\"comment-form\"]").offset().top
-              }, 1000)
+              }, 1000);
             });
           }
+
+          // Make sure we remove any open reply comment forms,
+          // we want to add "replying" to main comment form.
+          // we ensure this class is only added to reply forms in
+          // socialbase/includes/form.inc.
+          $(".js-comment .comment__reply-btn a").on("click", function () {
+            $(".ajax-comments-form-reply").once("socialMentionsReplyFormClose").each(function (i, e) {
+              $(this).remove();
+            });
+          });
 
           $(".mention-reply").on("click", function (e) {
             e.preventDefault();
@@ -160,7 +170,7 @@
             // we want to add "replying" to main comment form.
             // we ensure this class is only added to reply forms in
             // socialbase/includes/form.inc.
-            $(".ajax-comments-form-reply").once("socialMentionsReplyFormClose").each(function (i, e) {
+            $(".ajax-comments-form-reply").once("socialMentionsReplyOnReplyFormClose").each(function (i, e) {
               $(this).remove();
             });
 
