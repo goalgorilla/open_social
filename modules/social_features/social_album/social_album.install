@@ -5,6 +5,7 @@
  * Install, update and uninstall functions for the social_album module.
  */
 
+use Drupal\block\BlockInterface;
 use Drupal\user\RoleInterface;
 
 /**
@@ -15,6 +16,34 @@ function social_album_install() {
   _social_album_set_permissions();
 
   module_set_weight('social_album', 5);
+
+  _social_album_blocks(function ($pages) {
+    return "$pages\r\n/user/*/albums";
+  });
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function social_album_uninstall() {
+  _social_album_blocks(function ($pages) {
+    $pages = explode("\r\n", $pages);
+    $found = FALSE;
+
+    foreach ($pages as $delta => $page) {
+      if ($page === '/user/*/albums') {
+        unset($pages[$delta]);
+        $found = TRUE;
+        break;
+      }
+    }
+
+    if ($found) {
+      $pages = implode("\r\n", $pages);
+    }
+
+    return $pages;
+  });
 }
 
 /**
@@ -62,4 +91,39 @@ function _social_album_get_permissions($role) {
   ]);
 
   return $permissions[$role] ?? [];
+}
+
+/**
+ * Process list of pages where chosen blocks should be shown.
+ *
+ * @param callable $function
+ *   The function which updates the pages set.
+ */
+function _social_album_blocks(callable $function) {
+  $ids = [
+    'socialblue_profile_hero_block',
+    'socialblue_pagetitleblock_content',
+    'socialblue_profile_statistic_block',
+  ];
+
+  $storage = \Drupal::entityTypeManager()->getStorage('block');
+
+  foreach ($ids as $id) {
+    $block = $storage->load($id);
+
+    if (!$block instanceof BlockInterface) {
+      continue;
+    }
+
+    /** @var \Drupal\system\Plugin\Condition\RequestPath $visibility */
+    $visibility = $block->getVisibilityCondition('request_path');
+
+    $configuration = $visibility->getConfiguration();
+    $pages = $function($configuration['pages']);
+
+    if ($configuration['pages'] !== $pages) {
+      $configuration['pages'] = $pages;
+      $block->setVisibilityConfig('request_path', $configuration)->save();
+    }
+  }
 }
