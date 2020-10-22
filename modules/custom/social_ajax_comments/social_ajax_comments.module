@@ -72,6 +72,24 @@ function social_ajax_comments_form_comment_post_comment_delete_form_alter(&$form
 }
 
 /**
+ * Implements hook_form_alter().
+ */
+function social_ajax_comments_form_comment_comment_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  // If AJAX is enabled on the form.
+  if ($form_state->getUserInput()['_drupal_ajax']) {
+    // Grab the Comment from the Form Object to see if it has a parent.
+    // this means its a reply so we can add proper classes.
+    /** @var \Drupal\comment\CommentInterface $comment */
+    $comment = $form_state->getFormObject()->getEntity();
+    // For viewing comments the prefix is added in SocialCommentViewBuilder.
+    if (!empty($comment->getParentComment())) {
+      $form['#prefix'] = '<div class="comments">';
+      $form['#suffix'] = '<div>';
+    }
+  }
+}
+
+/**
  * Implements hook_form_FORM_ID_alter().
  *
  * Triggers on form for deleting a comment on a node.
