@@ -253,5 +253,58 @@
         position: relative;
       }
     }
+
+    .form-submit {
+      .post-loading {
+        display: none;
+      }
+
+      &.post-loading-active {
+        .text {
+          visibility: hidden;
+        }
+        
+        .post-loading {
+          position: absolute;
+          display: block;
+          width: 40px;
+          height: 40px;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          z-index: 1;
+
+          .loader {
+            width: 40px;
+            height: 40px;
+            transform: rotate(-90deg);
+            stroke-linecap: round;
+            stroke-width: 6;
+            fill: none;
+
+            .internal-circle {
+              stroke: #fff;
+              stroke-dashoffset: 0;
+              transform-origin: center;
+              stroke-dasharray: 187;
+              animation: internal 1s ease-in-out infinite;
+            }
+          }
+
+          @keyframes internal {
+            0% {
+              stroke-dashoffset: 187;
+            }
+            25% {
+              stroke-dashoffset: 80;
+            }
+            100% {
+              stroke-dashoffset: 187;
+              transform: rotate(360deg);
+            }
+          }
+        }
+      }
+    }
   }
 }
