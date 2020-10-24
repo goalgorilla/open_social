@@ -27,6 +27,7 @@ class Dropdown extends FieldItemBase {
   public static function defaultStorageSettings() {
     return [
       'allowed_values' => [],
+      'use_slick' => [],
     ] + parent::defaultStorageSettings();
   }
 
@@ -76,6 +77,16 @@ class Dropdown extends FieldItemBase {
       '#field_name' => $this->getFieldDefinition()->getName(),
       '#entity_type' => $this->getEntity()->getEntityTypeId(),
       '#allowed_values' => $allowed_values,
+    ];
+
+    $element['use_slick'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Do you want to render this as slick dropdown'),
+      '#description' => $this->t('The slick dropdown uses a jQuery based library called 
+<a href="https://designwithpc.com/Plugins/ddSlick" target="_blank">ddSlick</a>
+to render the field as dropdown list, instead of a dropbutton with radio 
+elements.'),
+      '#default_value' => $this->getSetting('use_slick'),
     ];
 
     $element['allowed_values']['#description'] = $this->allowedValuesDescription();

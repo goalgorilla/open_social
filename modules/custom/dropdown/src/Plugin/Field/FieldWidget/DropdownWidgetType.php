@@ -31,6 +31,13 @@ class DropdownWidgetType extends WidgetBase {
   protected $column;
 
   /**
+   * Allow different theme logic.
+   *
+   * @var bool
+   */
+  protected $useSlick;
+
+  /**
    * {@inheritdoc}
    */
   public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, array $third_party_settings) {
@@ -72,6 +79,7 @@ class DropdownWidgetType extends WidgetBase {
     $this->required = $element['#required'];
     $this->multiple = $this->fieldDefinition->getFieldStorageDefinition()->isMultiple();
     $this->has_value = isset($items[$delta]->{$this->column});
+    $this->useSlick = $this->fieldDefinition->getFieldStorageDefinition()->getSetting('use_slick');
 
     // Add our custom validator.
     $element['#element_validate'][] = [get_class($this), 'validateElement'];
@@ -83,6 +91,7 @@ class DropdownWidgetType extends WidgetBase {
       '#type' => 'dropdown',
       '#default_value' => (isset($items[$delta]->value) && isset($options[$items[$delta]->value])) ? $items[$delta]->value : NULL,
       '#options' => $options,
+      '#use_slick' => $this->useSlick,
     ];
 
     return $element;

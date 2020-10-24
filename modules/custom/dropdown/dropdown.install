@@ -1,0 +1,38 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the dropdown module.
+ */
+
+use Drupal\field\Entity\FieldStorageConfig;
+
+/**
+ * Update dropdown with new use_slick.
+ *
+ * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+ * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+ * @throws \Drupal\Core\Entity\EntityStorageException
+ */
+function dropdown_update_9001() {
+  // Grab all dropdown field storage config objects.
+  if (!$field_storage_configs = \Drupal::entityTypeManager()
+    ->getStorage('field_storage_config')
+    ->loadByProperties(['type' => 'dropdown'])) {
+    return;
+  }
+
+  foreach ($field_storage_configs as $field_storage) {
+    // Grab the current storage.
+    $new_field_storage = $field_storage->toArray();
+    // Leave it as is, just add the new use_slick checkbox
+    // which is a boolean, and make sure we set it to the default
+    // FALSE so it's not used.
+    $new_field_storage['settings']['use_slick'] = FALSE;
+
+    // Update the config.
+    $new_field_storage = FieldStorageConfig::create($new_field_storage);
+    $new_field_storage->enforceIsNew(FALSE);
+    $new_field_storage->save();
+  }
+}

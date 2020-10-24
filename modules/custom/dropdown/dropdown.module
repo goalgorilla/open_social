@@ -32,8 +32,26 @@ function dropdown_theme() {
     'dropdown' => [
       'render element' => 'element',
     ],
+    'dropdown_slick' => [
+      'render element' => 'element',
+    ],
   ];
   return $items;
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK().
+ */
+function dropdown_theme_suggestions_dropdown(array $variables) {
+  $suggestions = [];
+  // Field name consists of field_machine_name[0] with a potential array added.
+  // we want to split this.
+  $name_parts = explode('[', $variables['element']['#name']);
+  $field_name = $name_parts[0];
+
+  $suggestions[] = 'dropdown__' . $field_name;
+
+  return $suggestions;
 }
 
 /**
@@ -67,6 +85,13 @@ function template_preprocess_dropdown(array &$variables) {
         $active = $key;
       }
     }
+    if (is_array($el) && isset($el['#type']) && $el['#type'] === 'radio') {
+      $items[$key] = $el;
+      // Set public as default.
+      if ($el['#return_value'] === 'public') {
+        $selected = HtmlUtility::escape($el['#title']);
+      }
+    }
   }
 
   if (isset($element['#edit_mode'])) {
@@ -75,6 +100,29 @@ function template_preprocess_dropdown(array &$variables) {
   $variables['items'] = $items;
   $variables['label'] = HtmlUtility::escape($element['#title']);
   $variables['selected'] = isset($selected) ? $selected : $variables['label'];
-  $variables['active'] = isset($active) ? $active : 0;
-  $variables['children'] = $element['#children'];
+  $variables['active'] = isset($active) ? $active : '';
+  $variables['options'] = $element['#options'];
+}
+
+/**
+ * Prepares variables for dropdown_slick templates.
+ *
+ * Default template: dropdown-slick.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - element: An associative array containing the properties of the element.
+ *     Properties used: #title, #value, #options, #description, #required,
+ *     #attributes, #children.
+ */
+function template_preprocess_dropdown_slick(array &$variables) {
+  $element = $variables['element'];
+  $variables['attributes'] = [];
+  if (isset($element['#id'])) {
+    $variables['attributes']['id'] = $element['#id'];
+  }
+  if (isset($element['#attributes']['title'])) {
+    $variables['attributes']['title'] = $element['#attributes']['title'];
+  }
+  $variables['options'] = $element['#options'];
 }
