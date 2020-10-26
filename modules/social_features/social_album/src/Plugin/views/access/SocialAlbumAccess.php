@@ -30,7 +30,9 @@ class SocialAlbumAccess extends AccessPluginBase {
    * {@inheritdoc}
    */
   public function alterRouteDefinition(Route $route) {
-    $route->setRequirement('_custom_access', SocialAlbumController::class . '::checkAlbumsAccess');
+    $route
+      ->setRequirement('_custom_access', SocialAlbumController::class . '::checkAlbumsAccess')
+      ->setRequirement('_permission', 'access user profiles');
   }
 
 }
