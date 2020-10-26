@@ -35,7 +35,12 @@
 
     {% if not label_hidden %}
       {{ title_prefix }}
-      <h4{{ title_attributes.addClass('section-title') }}>{{ label }}</h4>
+      {# extra condition to add the count when Ajax is used see src/Plugin/Preprocess/Field.php #}
+      {% if comment_count is not empty and comment_count > 0 %}
+        <h4{{ title_attributes.addClass('section-title') }}>{{ label }} ({{ comment_count }})</h4>
+      {% else %}
+        <h4{{ title_attributes.addClass('section-title') }}>{{ label }}</h4>
+      {% endif %}
       {{ title_suffix }}
     {% endif %}
 
