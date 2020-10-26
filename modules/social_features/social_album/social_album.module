@@ -5,9 +5,11 @@
  * The Social Album module.
  */
 
+use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\social_album\Form\SocialAlbumImageForm;
 use Drupal\social_album\Form\SocialAlbumPostForm;
@@ -154,6 +156,21 @@ function social_album_post_insert(EntityInterface $entity) {
       'user:' . $entity->getOwnerId(),
     ]);
   }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_create_access().
+ */
+function social_album_node_create_access(AccountInterface $account, array $context, $entity_bundle) {
+  if (
+    $entity_bundle === 'album' &&
+    \Drupal::routeMatch()->getRouteName() === 'view.albums.page_albums_overview' &&
+    \Drupal::routeMatch()->getRawParameter('user') !== $account->id()
+  ) {
+    return AccessResult::forbidden();
+  }
+
+  return AccessResult::neutral();
 }
 
 /**
