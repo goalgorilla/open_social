@@ -80,6 +80,7 @@ class DropdownWidgetType extends WidgetBase {
     $this->multiple = $this->fieldDefinition->getFieldStorageDefinition()->isMultiple();
     $this->has_value = isset($items[$delta]->{$this->column});
     $this->useSlick = $this->fieldDefinition->getFieldStorageDefinition()->getSetting('use_slick');
+    $settings = $this->fieldDefinition->getFieldStorageDefinition()->getSettings();
 
     // Add our custom validator.
     $element['#element_validate'][] = [get_class($this), 'validateElement'];

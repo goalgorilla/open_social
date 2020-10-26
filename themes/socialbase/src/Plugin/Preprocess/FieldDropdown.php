@@ -23,7 +23,7 @@ class FieldDropdown extends PreprocessBase {
       $title = $variables['element'][$variables['active']]['#title'];
       $selected_icon = _socialbase_get_visibility_icon($title);
     }
-    if ($variables['element']['#use_slick'] && !empty($variables['selected'])) {
+    if ($variables['element']['#use_slick']) {
       $selected_icon = _socialbase_get_visibility_icon($variables['selected']);
     }
 
