@@ -170,9 +170,7 @@ class Node extends PreprocessBase {
       // comment count, and add the comment count to the node.
       if ($node->$comment_field_name->status != CommentItemInterface::HIDDEN) {
         $comment_count = _socialbase_node_get_comment_count($node, $comment_field_name);
-        $t_args = [':num_comments' => $comment_count];
-        $variables['below_content'][$comment_field_name]['#title'] = t('Comments (:num_comments)', $t_args);
-
+        $variables['below_content'][$comment_field_name]['#title'] = $comment_count === 0 ? t('Be the first one to comment') : t('Comments');
         // If it's closed, we only show the comment section when there are
         // comments placed. Closed means we show comments but you are not able
         // to add any comments.
