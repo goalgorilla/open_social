@@ -226,6 +226,10 @@ class ThemeSuggestions extends BaseThemeSuggestions {
           $suggestions[] = $variables['theme_hook_original'] . '__' . $hook;
         }
 
+        if ($variables['element']['#is_dropdown'] === TRUE) {
+          $suggestions[] = $variables['theme_hook_original'] . '__' . 'dropdown';
+        }
+
         if (!empty($variables['element']['#attributes']['data-switch'])) {
           $suggestions[] = $variables['theme_hook_original'] . '__switch';
         }
@@ -235,7 +239,7 @@ class ThemeSuggestions extends BaseThemeSuggestions {
       case 'form_element_label':
 
         if (isset($variables['element']['#id'])) {
-          if (strpos($variables['element']['#id'], 'field-visibility') !== FALSE) {
+          if ($variables['element']['#is_dropdown'] === TRUE) {
             $suggestions[] = $variables['theme_hook_original'] . '__' . 'dropdown';
           }
         }
@@ -250,7 +254,7 @@ class ThemeSuggestions extends BaseThemeSuggestions {
 
         // Add the form element parent to the theme suggestions.
         if (isset($variables['element']['#id'])) {
-          if (strpos($variables['element']['#id'], 'field-visibility') !== FALSE) {
+          if ($variables['element']['#is_dropdown'] === TRUE) {
             $suggestions[] = $variables['theme_hook_original'] . '__' . 'dropdown';
           }
         }

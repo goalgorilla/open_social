@@ -13,7 +13,7 @@
       var $context = $(context);
 
       function selectVisibility(e) {
-        var dropDown = $(this).parentsUntil('.slick-select-wrapper').find('.dropdown-toggle');
+        var dropDown = $(this).closest('.slick-select-wrapper').find('.dropdown-toggle');
         var label = $('label > span', this).first().text();
         var icon = $('svg use', this).first().attr('xlink:href');
 
@@ -42,25 +42,9 @@
           }
         }
       }
-
-      // $(dropDown + ' + .dropdown-menu > .list-item')
-      //   .keydown(withConfirmationKeys(selectVisibility))
-      //   .click(selectVisibility);
-
-
-
-      $context.find('.slick-select-wrapper .dropdown-menu > .list-item').each(function () {
-        // $(this).on('keydown', function () {
-        //   withConfirmationKeys(selectVisibility)
-        // });
-        // $(this).on('click', function () {
-        //   selectVisibility();
-        // });
-
-        $('.slick-select-wrapper + .dropdown-menu > .list-item')
+        $('.slick-select-wrapper .dropdown-menu > .list-item')
           .keydown(withConfirmationKeys(selectVisibility))
           .click(selectVisibility);
-      });
     }
   };
 

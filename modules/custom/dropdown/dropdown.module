@@ -96,8 +96,9 @@ function template_preprocess_dropdown(array &$variables) {
     if (is_array($el) && isset($el['#type']) && $el['#type'] === 'radio') {
       $items[$key] = $el;
       // Set public as default.
-      if ($el['#return_value'] === 'public') {
+      if ($el['#return_value'] === $el['#value']) {
         $selected = HtmlUtility::escape($el['#title']);
+        $active = $key;
       }
     }
   }
@@ -110,4 +111,19 @@ function template_preprocess_dropdown(array &$variables) {
   $variables['selected'] = isset($selected) ? $selected : $variables['label'];
   $variables['active'] = isset($active) ? $active : '';
   $variables['children'] = $element['#children'];
+}
+
+/**
+ * Implements template_preprocess_form_element().
+ */
+function dropdown_preprocess_form_element(&$variables) {
+  // If we have added the is_dropdown tag to our radio form element,
+  // also pass it along to our label so our label can also render correctly
+  // #is_dropdown is rendered as part of processDropdown, so we know for sure it
+  // is our custom element.
+  if ($variables['element']['#type'] === 'radio' &&
+    $variables['element']['#is_dropdown'] &&
+    !empty($variables['label'])) {
+    $variables['label']['#is_dropdown'] = TRUE;
+  }
 }

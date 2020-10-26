@@ -21,7 +21,7 @@ class FormElementLabel extends BaseFormElementLabel {
   public function preprocessElement(Element $element, Variables $variables) {
 
     if (isset($element['#id'])) {
-      if (strpos($element['#id'], 'field-visibility') !== FALSE) {
+      if ($variables['element']['#is_dropdown'] === TRUE) {
         if (isset($element['#attributes']['title'])) {
           $description = $element['#attributes']['title'];
           $element['#attributes'] = [];

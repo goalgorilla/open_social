@@ -67,6 +67,9 @@ class Dropdown extends FormElement {
           '#type' => 'radio',
           '#title' => $label,
           '#description' => $description,
+          // This will tell our theme layer this radio item is rendered
+          // as part of a Dropdown element and we can style it accordingly.
+          '#is_dropdown' => TRUE,
           // The key is sanitized in Drupal\Core\Template\Attribute during
           // output from the theme function.
           '#return_value' => $value,
