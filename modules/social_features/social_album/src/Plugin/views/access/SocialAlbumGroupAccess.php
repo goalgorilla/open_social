@@ -8,16 +8,16 @@ use Drupal\views\Plugin\views\access\AccessPluginBase;
 use Symfony\Component\Routing\Route;
 
 /**
- * Access plugin that provides access control to albums page.
+ * Access plugin that provides access control to the group albums page.
  *
  * @ingroup views_access_plugins
  *
  * @ViewsAccess(
- *   id = "social_album",
- *   title = @Translation("Album")
+ *   id = "social_album_group",
+ *   title = @Translation("Group albums")
  * )
  */
-class SocialAlbumAccess extends AccessPluginBase {
+class SocialAlbumGroupAccess extends AccessPluginBase {
 
   /**
    * {@inheritdoc}
@@ -30,9 +30,7 @@ class SocialAlbumAccess extends AccessPluginBase {
    * {@inheritdoc}
    */
   public function alterRouteDefinition(Route $route) {
-    $route
-      ->setRequirement('_custom_access', SocialAlbumController::class . '::checkAlbumsAccess')
-      ->setRequirement('_permission', 'access user profiles');
+    $route->setRequirement('_custom_access', SocialAlbumController::class . '::checkAlbumsAccess');
   }
 
 }
