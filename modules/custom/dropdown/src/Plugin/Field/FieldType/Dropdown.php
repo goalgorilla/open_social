@@ -82,10 +82,7 @@ class Dropdown extends FieldItemBase {
     $element['use_slick'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Do you want to render this as slick dropdown'),
-      '#description' => $this->t('The slick dropdown uses a jQuery based library called 
-<a href="https://designwithpc.com/Plugins/ddSlick" target="_blank">ddSlick</a>
-to render the field as dropdown list, instead of a dropbutton with radio 
-elements.'),
+      '#description' => $this->t('The slick dropdown uses a more regular dropdown list look and feel.'),
       '#default_value' => $this->getSetting('use_slick'),
     ];
 

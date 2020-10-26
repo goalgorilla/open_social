@@ -47,14 +47,6 @@ class Dropdown extends FormElement {
    * Expands a radios element into individual radio elements.
    */
   public static function processDropdown(&$element, FormStateInterface $form_state, &$complete_form) {
-    // Add an extra theme_wrapper for rendering slick lists.
-    if ($element['#use_slick']) {
-      $element['#theme_wrappers'][] = 'dropdown_slick';
-      // We can return straight away, because we don't need any radio element
-      // to be rendered. 
-      return $element;
-    }
-
     if (count($element['#options']) > 0) {
       $weight = 0;
       foreach ($element['#options'] as $key => $option) {
@@ -72,7 +64,7 @@ class Dropdown extends FormElement {
         // unique id for each radio button.
         $parents_for_id = array_merge($element['#parents'], [$key]);
         $element[$key] += [
-          '#type' => 'item',
+          '#type' => 'radio',
           '#title' => $label,
           '#description' => $description,
           // The key is sanitized in Drupal\Core\Template\Attribute during

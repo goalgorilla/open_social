@@ -32,9 +32,6 @@ function dropdown_theme() {
     'dropdown' => [
       'render element' => 'element',
     ],
-    'dropdown_slick' => [
-      'render element' => 'element',
-    ],
   ];
   return $items;
 }
@@ -42,16 +39,22 @@ function dropdown_theme() {
 /**
  * Implements hook_theme_suggestions_HOOK().
  */
-function dropdown_theme_suggestions_dropdown(array $variables) {
-  $suggestions = [];
+function dropdown_theme_suggestions_dropdown_alter(array &$suggestions, array $variables) {
   // Field name consists of field_machine_name[0] with a potential array added.
   // we want to split this.
-  $name_parts = explode('[', $variables['element']['#name']);
-  $field_name = $name_parts[0];
+  if (!empty($variables['element']['#name'])) {
+    $name_parts = explode('[', $variables['element']['#name']);
+    $field_name = $name_parts[0];
 
-  $suggestions[] = 'dropdown__' . $field_name;
-
-  return $suggestions;
+    $suggestions[] = 'dropdown__' . $field_name;
+  }
+  // Add a new suggestion for those who use the slick option.
+  if ($variables['element']['#use_slick']) {
+    $suggestions[] = 'dropdown__slick';
+    if (!empty($field_name)) {
+      $suggestions[] = 'dropdown__' . $field_name . '__slick';
+    }
+  }
 }
 
 /**
@@ -73,6 +76,11 @@ function template_preprocess_dropdown(array &$variables) {
   }
   if (isset($element['#attributes']['title'])) {
     $variables['attributes']['title'] = $element['#attributes']['title'];
+  }
+  if (!empty($variables['element']['#name'])) {
+    $name_parts = explode('[', $variables['element']['#name']);
+    $field_name = $name_parts[0];
+    $variables['attributes']['class'] = $field_name;
   }
 
   $items = [];
@@ -101,28 +109,5 @@ function template_preprocess_dropdown(array &$variables) {
   $variables['label'] = HtmlUtility::escape($element['#title']);
   $variables['selected'] = isset($selected) ? $selected : $variables['label'];
   $variables['active'] = isset($active) ? $active : '';
-  $variables['options'] = $element['#options'];
-}
-
-/**
- * Prepares variables for dropdown_slick templates.
- *
- * Default template: dropdown-slick.html.twig.
- *
- * @param array $variables
- *   An associative array containing:
- *   - element: An associative array containing the properties of the element.
- *     Properties used: #title, #value, #options, #description, #required,
- *     #attributes, #children.
- */
-function template_preprocess_dropdown_slick(array &$variables) {
-  $element = $variables['element'];
-  $variables['attributes'] = [];
-  if (isset($element['#id'])) {
-    $variables['attributes']['id'] = $element['#id'];
-  }
-  if (isset($element['#attributes']['title'])) {
-    $variables['attributes']['title'] = $element['#attributes']['title'];
-  }
-  $variables['options'] = $element['#options'];
+  $variables['children'] = $element['#children'];
 }
