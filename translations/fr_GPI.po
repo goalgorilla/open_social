@@ -1303,7 +1303,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Open Social\n"
-"POT-Creation-Date: 2020-10-18 00:13+0000\n"
+"POT-Creation-Date: 2020-10-27 00:14+0000\n"
 "PO-Revision-Date: 2020-10-26 18:06+0000\n"
 "Last-Translator: Benjamin Lemesle <blemesle@greenpeace.org>\n"
 "Language-Team: Greenpeace French <https://translate.getopensocial.com/"
@@ -1338,8 +1338,8 @@ msgstr ""
 "incorrecte. </li>\n"
 "          <li>Il y a eu plus d'un échec d'authentification pour ce compte. "
 "Il est temporairement bloqué. </li>\n"
-"          <li>Trop d'échecs d'authentifications depuis votre ordinateur ("
-"adresse IP). Cette adresse IP est temporairement bloquée. </li>\n"
+"          <li>Trop d'échecs d'authentifications depuis votre ordinateur "
+"(adresse IP). Cette adresse IP est temporairement bloquée. </li>\n"
 "        </ul>\n"
 "        <p>Pour résoudre ce problème, essayez d'autres combinaisons "
 "d'identification, essayez plus tard, ou <a href=\":url\">demandez un nouveau "
@@ -1372,7 +1372,7 @@ msgstr ""
 
 #: modules/social_features/social_comment/social_comment.module:225
 #: modules/social_features/social_post/post.page.inc:35
-#: themes/socialbase/includes/form.inc:105
+#: themes/socialbase/includes/form.inc:121
 msgid "%time ago"
 msgstr "Il y a %time"
 
@@ -1651,13 +1651,15 @@ msgid "<b><em class=\"placeholder\">@count</em> Member</b> is selected"
 msgid_plural ""
 "<b><em class=\"placeholder\">@count</em> Members</b> are selected"
 msgstr[0] "<b><em class=\"placeholder\">@count</em> Membre</b> est sélectionné"
-msgstr[1] "<b><em class=\"placeholder\">@count</em> Membres</b> sont sélectionnés"
+msgstr[1] ""
+"<b><em class=\"placeholder\">@count</em> Membres</b> sont sélectionnés"
 
 #: modules/social_features/social_event/modules/social_event_managers/src/Plugin/views/field/SocialEventManagersViewsBulkOperationsBulkForm.php:204
 msgid "<b><em class=\"placeholder\">@count</em> enrollee</b> is selected"
 msgid_plural ""
 "<b><em class=\"placeholder\">@count</em> enrollees</b> are selected"
-msgstr[0] "<b><em class=\"placeholder\">@count</em> inscrit </b> est sélectionné"
+msgstr[0] ""
+"<b><em class=\"placeholder\">@count</em> inscrit </b> est sélectionné"
 msgstr[1] ""
 "<b><em class=\"placeholder\">@count</em> inscrits </b> sont sélectionnés"
 
@@ -2689,7 +2691,7 @@ msgstr ""
 "profil."
 
 #: modules/custom/activity_creator/activity.page.inc:45
-#: themes/socialbase/includes/form.inc:63
+#: themes/socialbase/includes/form.inc:79
 msgid "@time ago"
 msgstr "il y a @time"
 
@@ -4846,16 +4848,13 @@ msgstr ""
 msgid "Comment upload settings"
 msgstr ""
 
+#: themes/socialbase/src/Plugin/Preprocess/Node.php:173
 #: modules/social_features/social_book/config/optional/field.field.node.book.field_book_comments.yml:0
 #: modules/social_features/social_event/config/install/field.field.node.event.field_event_comments.yml:0
 #: modules/social_features/social_page/config/install/field.field.node.page.field_page_comments.yml:0
 #: modules/social_features/social_topic/config/install/field.field.node.topic.field_topic_comments.yml:0
 msgid "Comments"
 msgstr "Commentaires"
-
-#: themes/socialbase/src/Plugin/Preprocess/Node.php:173
-msgid "Comments (:num_comments)"
-msgstr "Commentaires (:num_comments)"
 
 #: modules/social_features/social_user_export/src/Plugin/UserExportPlugin/UserAnalyticsCommentsCreated.php:23;8
 msgid "Comments created"
@@ -11915,6 +11914,7 @@ msgstr ""
 #: modules/custom/activity_send/modules/activity_send_push_notification/activity_send_push_notification.info.yml:0
 #: modules/custom/activity_viewer/activity_viewer.info.yml:0
 #: modules/custom/social_admin_menu/social_admin_menu.info.yml:0
+#: modules/custom/social_ajax_comments/social_ajax_comments.info.yml:0
 #: modules/custom/social_auth_extra/social_auth_extra.info.yml:0
 #: modules/custom/social_auth_facebook/social_auth_facebook.info.yml:0
 #: modules/custom/social_auth_google/social_auth_google.info.yml:0
@@ -11990,7 +11990,6 @@ msgstr ""
 msgid "Social"
 msgstr ""
 
-#: modules/custom/social_ajax_comments/social_ajax_comments.info.yml:0
 #: modules/custom/social_language/modules/social_content_translation/social_content_translation.info.yml:0
 #: modules/custom/social_magic_login/social_magic_login.info.yml:0
 #: modules/custom/social_path_manager/social_path_manager.info.yml:0
@@ -14948,7 +14947,7 @@ msgstr ""
 "Va générer des fichiers, utilisateurs, groupes, événements, sujets, "
 "commentaires et posts."
 
-#: themes/socialbase/includes/form.inc:157
+#: themes/socialbase/includes/form.inc:173
 msgid "Write a comment..."
 msgstr "Écrire un commentaire..."
 
@@ -15323,7 +15322,8 @@ msgstr[1] "Votre mail sera envoyé aux @count utilisateurs sélectionnés"
 
 #: modules/social_features/social_group/src/Controller/DeleteGroup.php:50
 msgid "Your group and all of its topics, events and posts have been deleted."
-msgstr "Votre groupe et tous ses sujets, événements et posts ont été supprimés."
+msgstr ""
+"Votre groupe et tous ses sujets, événements et posts ont été supprimés."
 
 #: modules/social_features/social_private_message/social_private_message.module:190
 msgid "Your message has been created."
@@ -16198,6 +16198,9 @@ msgstr ""
 #~ msgstr ""
 #~ "Autoriser l'inscription à cet événement pour les internautes n'ayant pas "
 #~ "de compte WeGreen"
+
+#~ msgid "Comments (:num_comments)"
+#~ msgstr "Commentaires (:num_comments)"
 
 #~ msgid "Creation date"
 #~ msgstr "Date de création"
