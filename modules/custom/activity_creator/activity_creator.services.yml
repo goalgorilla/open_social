@@ -4,7 +4,7 @@ services:
     parent: default_plugin_manager
   activity_creator.activity_factory:
     class: Drupal\activity_creator\ActivityFactory
-    arguments: ['@plugin.manager.activity_destination.processor']
+    arguments: ['@plugin.manager.activity_destination.processor', '@entity_type.manager', '@database', '@language_manager', '@token', '@module_handler']
   activity_creator.activity_notifications:
     class: Drupal\activity_creator\ActivityNotifications
     arguments: ['@database']

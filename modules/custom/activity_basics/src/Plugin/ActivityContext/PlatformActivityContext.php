@@ -23,7 +23,7 @@ class PlatformActivityContext extends ActivityContextBase {
 
     // We only know the context if there is a related object.
     if (isset($data['related_object']) && !empty($data['related_object'])) {
-      $related_entity = ActivityFactory::getActivityRelatedEntity($data);
+      $related_entity = $this->activityFactory->getActivityRelatedEntity($data);
       // Load the related entity.
       $entity_storage = \Drupal::entityTypeManager()
         ->getStorage($related_entity['target_type']);

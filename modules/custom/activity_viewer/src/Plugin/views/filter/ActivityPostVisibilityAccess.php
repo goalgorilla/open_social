@@ -113,7 +113,6 @@ class ActivityPostVisibilityAccess extends FilterPluginBase {
     $node_access->condition('activity__field_activity_entity.field_activity_entity_target_type', 'node', '=');
     $node_access_grants = node_access_grants('view', $account);
     $grants = db_or();
-
     foreach ($node_access_grants as $realm => $gids) {
       if (!empty($gids)) {
         $and = db_and();
@@ -129,6 +128,17 @@ class ActivityPostVisibilityAccess extends FilterPluginBase {
       }
     }
     $node_access->condition($grants);
+    // Get all nodes not posted in groups and in groups of user only.
+    if ($account->isAuthenticated() && count($groups_unique) > 0) {
+      $na_or = db_or();
+      $node_access->condition($na_or
+        ->isNull('activity__field_activity_recipient_group.field_activity_recipient_group_target_id')
+        ->condition('activity__field_activity_recipient_group.field_activity_recipient_group_target_id', $groups_unique, 'IN')
+      );
+    }
+    else {
+      $node_access->isNull('activity__field_activity_recipient_group.field_activity_recipient_group_target_id');
+    }
     $or->condition($node_access);
 
     // Posts: retrieve all the posts in groups the user is a member of.

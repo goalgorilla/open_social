@@ -25,7 +25,7 @@
 <div class="card teaser">
 
   {% block card_image %}
-    <div class="teaser__image">
+    <div class="teaser__image" aria-hidden="true">
       <a href="{{ profile_home }}">
         {{ content.field_profile_image }}
       </a>
@@ -33,7 +33,7 @@
   {% endblock %}
 
   {% block card_teaser_type %}
-    <a href="{{ profile_home }}">
+    <a href="{{ profile_home }}" aria-hidden="true">
       <div class="teaser__teaser-type">
         <svg class="teaser__teaser-type-icon">
           <use xlink:href="#icon-account_circle"></use>
@@ -56,7 +56,7 @@
       {% block card_body %}
         {% if content.field_profile_function|render or content.field_profile_organization|render %}
         <div class="teaser__content-line">
-          <svg class="teaser__content-type-icon">
+          <svg class="teaser__content-type-icon" aria-hidden="true">
             <use xlink:href="#icon-business_center"></use>
           </svg>
           <span class="teaser__content-text">
