@@ -130,6 +130,18 @@ class Node extends PreprocessBase {
       $variables['status_label'] = t('unpublished');
     }
 
+    // Content visibility for AN can be shown.
+    // This is also used to render the shariff links for example.
+    if ((isset($node->field_content_visibility)) &&
+      ($variables['view_mode'] === 'full' || $variables['view_mode'] === 'hero') &&
+      $currentuser->isAnonymous()) {
+      $node_visibility_value = $node->field_content_visibility->getValue();
+      $content_visibility = reset($node_visibility_value);
+      if ($content_visibility['value'] === 'public') {
+        $variables['visibility_icon'] = 'public';
+      }
+    }
+
     // Let's see if we can remove comments from the content and render them in a
     // separate content_below array.
     $comment_field_name = '';
@@ -158,7 +170,7 @@ class Node extends PreprocessBase {
       // comment count, and add the comment count to the node.
       if ($node->$comment_field_name->status != CommentItemInterface::HIDDEN) {
         $comment_count = _socialbase_node_get_comment_count($node, $comment_field_name);
-        $variables['below_content'][$comment_field_name]['#title'] = $comment_count === 0 ? t('Be the first one to comment') : t('Comments (:num_comments)', [':num_comments' => $comment_count]);
+        $variables['below_content'][$comment_field_name]['#title'] = $comment_count === 0 ? t('Be the first one to comment') : t('Comments');
 
         // If it's closed, we only show the comment section when there are
         // comments placed. Closed means we show comments but you are not able

@@ -1,7 +1,13 @@
 .teaser {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  flex-wrap: wrap;
-  flex-direction: row;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
 }
 
 .teaser__image {
@@ -23,8 +29,12 @@
   background: none;
   width: 100%;
   height: 100%;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  align-items: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
 }
 
 .teaser__teaser-type-icon {
@@ -43,24 +53,36 @@
 .teaser__title {
   margin-top: 0;
   margin-bottom: 20px;
-  max-height: 2.3em;
+  max-height: 2.4em;
+  line-height: 1.2;
   overflow: hidden;
 }
 
 .teaser__body {
-  flex: 1;
+  -webkit-box-flex: 1;
+      -ms-flex: 1;
+          flex: 1;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
   overflow: hidden;
-  flex-direction: column;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
 }
 
 .teaser__content {
-  flex: 1;
+  -webkit-box-flex: 1;
+      -ms-flex: 1;
+          flex: 1;
   padding: 20px;
   position: relative;
 }
 
 .teaser__content-line {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
   max-width: 100%;
   font-size: 0.875rem;
@@ -69,7 +91,9 @@
 .teaser__content-type-icon {
   width: 14px;
   height: 14px;
-  flex: 0 0 14px;
+  -webkit-box-flex: 0;
+      -ms-flex: 0 0 14px;
+          flex: 0 0 14px;
   line-height: 21px;
   margin-top: 3px;
   fill: #555555;
@@ -78,26 +102,33 @@
 
 .teaser__content-text {
   line-height: 21px;
-  flex-grow: 1;
+  -webkit-box-flex: 1;
+      -ms-flex-positive: 1;
+          flex-grow: 1;
   text-overflow: ellipsis;
   overflow-x: hidden;
   white-space: nowrap;
 }
 
 .teaser__published {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
   min-width: 0;
 }
 
 .teaser__published-author {
-  flex-grow: 1;
+  -webkit-box-flex: 1;
+      -ms-flex-positive: 1;
+          flex-grow: 1;
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
 }
 
 .teaser__published-date {
-  flex-shrink: 0;
+  -ms-flex-negative: 0;
+      flex-shrink: 0;
   margin-right: 4px;
 }
 
@@ -117,7 +148,9 @@
 }
 
 .teaser--tile.teaser-profile .teaser__image {
-  flex: 0 0 100px;
+  -webkit-box-flex: 0;
+      -ms-flex: 0 0 100px;
+          flex: 0 0 100px;
   height: 100px;
   margin-bottom: 70px;
   border-radius: 0;
@@ -144,12 +177,16 @@
 }
 
 .teaser--small {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
   padding: 1.5rem 1.25rem 0;
 }
 
 .teaser--small .teaser--small__media {
-  flex: none;
+  -webkit-box-flex: 0;
+      -ms-flex: none;
+          flex: none;
 }
 
 .teaser--small .teaser--small__media img {
@@ -170,8 +207,13 @@
 }
 
 .teaser--small .teaser--small__details {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  flex-direction: column;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
   margin-left: 1rem;
 }
 
@@ -197,13 +239,16 @@
 
 @media (min-width: 600px) {
   .teaser {
-    flex-wrap: nowrap;
+    -ms-flex-wrap: nowrap;
+        flex-wrap: nowrap;
     height: 220px;
   }
   .teaser__image {
     display: block;
     height: 220px;
-    flex: 0 0 220px;
+    -webkit-box-flex: 0;
+        -ms-flex: 0 0 220px;
+            flex: 0 0 220px;
     position: relative;
     overflow: hidden;
     width: auto;
@@ -234,6 +279,7 @@
     display: block;
     position: absolute;
     content: '';
+    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(40%, rgba(0, 0, 0, 0)), color-stop(70%, rgba(0, 0, 0, 0.1)), to(rgba(34, 34, 34, 0.5)));
     background-image: linear-gradient(rgba(0, 0, 0, 0) 40%, rgba(0, 0, 0, 0.1) 70%, rgba(34, 34, 34, 0.5) 100%);
     height: 100%;
     width: 100%;
@@ -245,5 +291,14 @@
   }
   .teaser--unpublished .teaser__title {
     padding-right: 130px;
+  }
+}
+
+@media (max-width: 599px) {
+  .teaser__body {
+    -webkit-box-flex: 0;
+        -ms-flex: 0 0 100%;
+            flex: 0 0 100%;
+    max-width: 100%;
   }
 }

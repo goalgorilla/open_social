@@ -5,6 +5,8 @@
  * Contains post update hook implementations.
  */
 
+use Drupal\Core\Site\Settings;
+
 /**
  * Migrate all the activity status information to new table.
  *
@@ -66,4 +68,163 @@ function activity_creator_post_update_8001_one_to_many_activities(&$sandbox) {
   $sandbox['#finished'] = ($sandbox['current'] / $sandbox['total']);
   // Print some progress.
   return t('@count activities data has been migrated to activity_notification_table.', ['@count' => $sandbox['current']]);
+}
+
+/**
+ * Remove orphaned activities notification status.
+ */
+function activity_creator_post_update_8802_remove_orphaned_activities(&$sandbox) {
+  $database = \Drupal::database();
+
+  // On the first run, we gather all of our initial
+  // data as well as initialize all of our sandbox variables to be used in
+  // managing the future batch requests.
+  if (!isset($sandbox['activities_id'])) {
+    // We start the batch by running some SELECT queries up front
+    // as concisely as possible. The results of these expensive queries
+    // will be cached by the Batch API so we do not have to look up
+    // this data again during each iteration of the batch.
+    // Get all the activity ids from our notification table.
+    $activity_notification_ids = $database->select('activity_notification_status', 'ans')->fields('ans', ['aid'])->execute()->fetchCol();
+
+    // Get activity ids from entity table.
+    $activity_ids = $database->select('activity', 'aid')->fields('aid', ['id'])->execute()->fetchCol();
+
+    // Now we initialize the sandbox variables.
+    // These variables will persist across the Batch API’s subsequent calls
+    // to our update hook, without us needing to make those initial
+    // expensive SELECT queries above ever again.
+    // 'count' is the number of total records we’ll be processing.
+    $sandbox['count'] = 0;
+
+    // We take store a diff of both the results which will contain the result
+    // of activity ids which are not present in system anymore. We will
+    // remove them in batch later.
+    if (!empty($activity_notification_ids) && !empty($activity_ids)) {
+      $sandbox['activities_id'] = array_diff($activity_notification_ids, $activity_ids);
+
+      $sandbox['count'] = count($sandbox['activities_id']);
+    }
+
+    // If 'count' is empty, we have nothing to process.
+    if (empty($sandbox['count'])) {
+      $sandbox['#finished'] = 1;
+      drush_print("No entities to be processed.");
+      return;
+    }
+
+    // 'progress' will represent the current progress of our processing.
+    $sandbox['progress'] = 0;
+
+    // 'activities_per_batch' is a custom amount that we’ll use to limit
+    // how many activities we’re processing in each batch.
+    // The variables value can be declared in settings file of Drupal.
+    $sandbox['activities_per_batch'] = Settings::get('activity_update_batch_size', 5000);;
+  }
+
+  // Initialization code done.
+  // The following code will always run:
+  // both during the first run AND during any subsequent batches.
+  // Remove the entries from activity_notification_status table which have
+  // activity id that doest not exists any more.
+  \Drupal::service('activity_creator.activity_notifications')
+    ->deleteNotificationsbyIds(array_splice($sandbox['activities_id'], 0, 5000));
+
+  // Calculates current batch range.
+  $range_end = $sandbox['progress'] + $sandbox['activities_per_batch'];
+  if ($range_end > $sandbox['count']) {
+    $range_end = $sandbox['count'];
+  }
+
+  // Update the batch variables to track our progress.
+  $sandbox['progress'] = $range_end;
+
+  // We can calculate our current progress via a mathematical fraction.
+  $progress_fraction = $sandbox['progress'] / $sandbox['count'];
+
+  // While processing our batch requests, we can send a helpful message
+  // to the command line, so developers can track the batch progress.
+  drush_print('Progress: ' . (round($progress_fraction * 100)) . '% (' . $sandbox['progress'] . ' of ' . $sandbox['count'] . ' activities processed)');
+
+  // Drupal’s Batch API will stop executing our update hook as soon as
+  // $sandbox['#finished'] == 1 (viz., it evaluates to TRUE).
+  $sandbox['#finished'] = empty($sandbox['activities_id']) ? 1 : ($sandbox['count'] - count($sandbox['activities_id'])) / $sandbox['count'];
+}
+
+/**
+ * Remove activities notification status if it's related entity not exist.
+ */
+function activity_creator_post_update_8803_remove_activities_with_no_related_entities(&$sandbox) {
+  $database = \Drupal::database();
+
+  if (!isset($sandbox['activities_id'])) {
+    // Get activity ids from entity table.
+    $activity_ids = $database->select('activity', 'aid')->fields('aid', ['id'])->execute()->fetchCol();
+
+    // Get activity ids from activity__field_activity_entity table.
+    // This table contains data of field_activity_entity which tells us about
+    // any related entity to an activity.
+    $afce_ids = $database->select('activity__field_activity_entity', 'afce')
+      ->fields('afce', ['entity_id'])
+      ->execute()->fetchCol();
+
+    // 'count' is the number of total records we’ll be processing.
+    $sandbox['count'] = 0;
+
+    // We take store a diff of both the results which will contain the result
+    // of activity ids which doesn't have valid referenced entities any more.
+    // We will remove them in batch later. Also, we are only checking
+    // $activity_id to be not empty because $afce_ids is null, that means we
+    // shall remove all activities as none of them will have valid referenced
+    // entity.
+    if (!empty($activity_ids)) {
+      $sandbox['activities_id'] = array_diff($activity_ids, $afce_ids);
+
+      $sandbox['count'] = count($sandbox['activities_id']);
+    }
+
+    // If 'count' is empty, we have nothing to process.
+    if (empty($sandbox['count'])) {
+      $sandbox['#finished'] = 1;
+      drush_print("No entities to be processed.");
+      return;
+    }
+
+    // 'progress' will represent the current progress of our processing.
+    $sandbox['progress'] = 0;
+
+    // 'activities_per_batch' is a custom amount that we’ll use to limit
+    // how many activities we’re processing in each batch.
+    // The variables value can be declared in settings file of Drupal.
+    $sandbox['activities_per_batch'] = Settings::get('activity_update_batch_size', 100);;
+  }
+
+  // Extract activity ids for deletion.
+  $aids_for_delete = array_splice($sandbox['activities_id'], 0, $sandbox['activities_per_batch']);
+  // Now let’s remove the activities with no related entities.
+  $storage = \Drupal::entityTypeManager()->getStorage('activity');
+  $activities = $storage->loadMultiple($aids_for_delete);
+  $storage->delete($activities);
+
+  // Remove entries from activity_notification_table.
+  $activity_notification_service = \Drupal::service('activity_creator.activity_notifications');
+  $activity_notification_service->deleteNotificationsbyIds($aids_for_delete);
+
+  // Calculates current batch range.
+  $range_end = $sandbox['progress'] + $sandbox['activities_per_batch'];
+  if ($range_end > $sandbox['count']) {
+    $range_end = $sandbox['count'];
+  }
+
+  // Update the batch variables to track our progress.
+  $sandbox['progress'] = $range_end;
+
+  // We can calculate our current progress via a mathematical fraction.
+  $progress_fraction = $sandbox['progress'] / $sandbox['count'];
+
+  // Send a helpful message to the command line.
+  drush_print('Progress: ' . (round($progress_fraction * 100)) . '% (' . $sandbox['progress'] . ' of ' . $sandbox['count'] . ' activities processed)');
+
+  // Tell the Batch API about status of this process.
+  $sandbox['#finished'] = empty($sandbox['activities_id']) ? 1 : ($sandbox['count'] - count($sandbox['activities_id'])) / $sandbox['count'];
 }

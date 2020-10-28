@@ -29,6 +29,33 @@ use Drupal\views\Plugin\views\query\QueryPluginBase;
 use Drupal\views\ViewExecutable;
 
 /**
+ * Alter the visibility of blocks coming from the event module.
+ */
+function social_event_social_core_block_visibility_path() {
+  $blocks = [
+    'social_page_title_block' => [
+      '*/all-enrollment-requests/confirm-decline/*',
+      '*/invite/email',
+      '*/invite/confirm',
+      '*/event-invites',
+      '*/all-enrollments/add-enrollees',
+    ],
+    'views_block:managers-event_managers' => [
+      '*/all-enrollment-requests/confirm-decline/*',
+      '*/invite/email',
+      '*/invite/confirm',
+    ],
+    'views_block:event_enrollments-event_enrollments' => [
+      '*/all-enrollment-requests/confirm-decline/*',
+      '*/invite/email',
+      '*/invite/confirm',
+    ],
+  ];
+
+  return $blocks;
+}
+
+/**
  * Implements hook_form_form_ID_alter().
  *
  * Enhance the exposed filter form of the event overview.
@@ -414,7 +441,10 @@ function _social_event_format_date($event, $view_mode) {
   // This will get the users timezone, which is either set by the user
   // or defaults back to the sites timezone if the user didn't select any.
   $timezone = date_default_timezone_get();
-  $user_timezone = _social_event_user_timezone($timezone);
+  $user_timezone = date('T');
+  if (in_array($user_timezone[0], ['+', '-'])) {
+    $user_timezone = 'UTC' . $user_timezone;
+  }
   // Timezone that dates should be stored in.
   $utc_timezone = DateTimeItemInterface::STORAGE_TIMEZONE;
 
@@ -632,26 +662,34 @@ function social_event_form_alter(&$form, FormStateInterface $form_state, $form_i
     $user_timezone = _social_event_user_timezone(date_default_timezone_get());
     $timezone_label = t('Time zone');
     $markup = '<div class="control-label margin-bottom-s">' . $timezone_label . '</div>';
-    $markup .= '<div class="bg-gray-lighter btn btn-lg">' . $user_timezone . '</div>';
+    $markup .= '<div class="bg-gray-lightest btn btn-lg">' . $user_timezone . '</div>';
+    // Check if user has access to change his timezone.
+    $date_config = Drupal::config('system.date');
+    if ($date_config->get('timezone.user.configurable')) {
+      $description = t('The event date and time are set based on your timezone. @change_timezone.', [
+        '@change_timezone' => Link::createFromRoute(
+          t('Change your timezone here'),
+          'entity.user.edit_form',
+          ['user' => \Drupal::currentUser()->id()],
+          [
+            'attributes' => [
+              'target' => '_blank',
+            ],
+            'fragment' => 'edit-group-locale-settings',
+          ]
+        )->toString(),
+      ]);
+    }
+    else {
+      $description = t("The event date and time are set based on the site's default timezone.");
+    }
     $form['timezone_indication'] = [
       '#type' => 'container',
       '#weight' => 99,
       'content' => [
         '#type' => 'item',
         '#markup' => $markup,
-        '#description' => t('The event date and time are set based on tour timezone. @change_timezone', [
-          '@change_timezone' => Link::createFromRoute(
-            t('Change your timezone here'),
-            'entity.user.edit_form',
-            ['user' => \Drupal::currentUser()->id()],
-            [
-              'attributes' => [
-                'target' => '_blank',
-              ],
-              'fragment' => 'edit-group-locale-settings',
-            ]
-          )->toString(),
-        ]),
+        '#description' => $description,
       ],
     ];
 

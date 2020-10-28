@@ -3,12 +3,12 @@
 namespace Drupal\group_core_comments\Plugin\Field\FieldFormatter;
 
 use Drupal\comment\Plugin\Field\FieldFormatter\CommentDefaultFormatter;
+use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Field\FieldItemListInterface;
+use Drupal\Core\Link;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Drupal\group\Entity\GroupContent;
-use Drupal\Core\Session\AccountInterface;
-use Drupal\Core\Access\AccessResult;
-use Drupal\Core\Link;
 
 /**
  * Plugin implementation of the 'comment_group_content' formatter.
@@ -133,6 +133,24 @@ class CommentGroupContentFormatter extends CommentDefaultFormatter {
         ];
       }
 
+    }
+
+    if (!empty($output[0]['comments'])) {
+      $comment_settings = $this->getFieldSettings();
+      $output[0]['comments'] = [
+        '#lazy_builder' => [
+          'social_comment.lazy_renderer:renderComments',
+          [
+            $entity->getEntityTypeId(),
+            $entity->id(),
+            $comment_settings['default_mode'],
+            $items->getName(),
+            $comment_settings['per_page'],
+            $this->getSetting('pager_id'),
+          ],
+        ],
+        '#create_placeholder' => TRUE,
+      ];
     }
     return $output;
   }
