@@ -480,6 +480,7 @@ display:
         arguments: false
         sorts: false
         title: false
+        pager: false
       relationships:
         reverse__post__field_album:
           id: reverse__post__field_album
@@ -756,6 +757,27 @@ display:
           plugin_id: standard
       title: Album
       display_description: ''
+      pager:
+        type: full
+        options:
+          items_per_page: 12
+          offset: 0
+          id: 1
+          total_pages: null
+          tags:
+            previous: ‹‹
+            next: ››
+            first: '« First'
+            last: 'Last »'
+          expose:
+            items_per_page: false
+            items_per_page_label: 'Items per page'
+            items_per_page_options: '5, 10, 25, 50'
+            items_per_page_options_all: false
+            items_per_page_options_all_label: '- All -'
+            offset: false
+            offset_label: Offset
+          quantity: 9
     cache_metadata:
       max-age: -1
       contexts:
