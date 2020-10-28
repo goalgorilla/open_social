@@ -11,6 +11,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
+use Drupal\group\Entity\GroupInterface;
 use Drupal\node\NodeInterface;
 use Drupal\social_post\Entity\PostInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -162,6 +163,24 @@ class SocialAlbumController extends ControllerBase {
   }
 
   /**
+   * Set the current group as the default value of the group field.
+   *
+   * @param \Drupal\group\Entity\GroupInterface $group
+   *   The group object.
+   *
+   * @return array
+   *   The renderable array.
+   */
+  public function add(GroupInterface $group) {
+    $node = $this->entityTypeManager()->getStorage('node')->create([
+      'type' => 'album',
+      'groups' => $group,
+    ]);
+
+    return $this->entityFormBuilder()->getForm($node);
+  }
+
+  /**
    * Checks access to the form of a post which will be linked to the album.
    *
    * @param \Drupal\node\NodeInterface $node
@@ -265,6 +284,19 @@ class SocialAlbumController extends ControllerBase {
   public function checkAlbumsAccess() {
     $status = $this->config('social_album.settings')->get('status');
     return AccessResult::allowedIf(!empty($status));
+  }
+
+  /**
+   * Checks access to the group album creation page.
+   *
+   * @param \Drupal\group\Entity\GroupInterface $group
+   *   The group object.
+   *
+   * @return \Drupal\Core\Access\AccessResultInterface
+   *   The access result.
+   */
+  public function checkGroupAccess(GroupInterface $group) {
+    return AccessResult::allowedIf($group->getGroupType()->hasContentPlugin('group_node:album'));
   }
 
 }
