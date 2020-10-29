@@ -108,7 +108,14 @@ function template_preprocess_dropdown(array &$variables) {
   }
   $variables['items'] = $items;
   $variables['label'] = HtmlUtility::escape($element['#title']);
+  // Grab the default selected icon, or the one from the value selected.
+  // The default is in this case the field label or the first element.
   $variables['selected'] = isset($selected) ? $selected : $variables['label'];
+  if ($variables['element']['#use_slick'] && !isset($selected)) {
+    $first_option = reset($items);
+    $variables['selected'] = $first_option['#title'];
+  }
+
   $variables['active'] = isset($active) ? $active : '';
   $variables['children'] = $element['#children'];
 }
