@@ -112,10 +112,8 @@ function template_preprocess_dropdown(array &$variables) {
   // The default is in this case the field label or the first element.
   $variables['selected'] = isset($selected) ? $selected : $variables['label'];
   if ($variables['element']['#use_slick'] && !isset($selected)) {
-    $first_option = reset($items);
-    $variables['selected'] = $first_option['#title'];
+    $variables['selected'] = t('Please choose');
   }
-
   $variables['active'] = isset($active) ? $active : '';
   $variables['children'] = $element['#children'];
 }

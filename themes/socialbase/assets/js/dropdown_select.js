@@ -19,6 +19,7 @@
 
         // Show the currently selected text and icon on the button.
         $('.text', dropDown).text(label);
+        $('.icon-small', dropDown).removeClass('hidden');
         $('.btnicon', dropDown).attr('xlink:href', icon);
 
         // Find all the inputs and uncheck them.

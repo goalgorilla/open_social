@@ -15,9 +15,15 @@
 {{ label }}
 <div{{ attributes.addClass('dropdown slick-select-wrapper') }}>
   <button id="{{ attributes.id }}" type="button" data-toggle="dropdown" aria-expanded="false" aria-haspopup="true" class="btn btn-default dropdown-toggle">
+    {% if selected_icon is not empty  %}
     <svg class="icon-small">
       <use class="btnicon" xlink:href="#icon-{{ selected_icon }}"></use>
     </svg>
+    {% else %}
+    <svg class="icon-small hidden">
+      <use class="btnicon" xlink:href="#icon-{{ selected_icon }}"></use>
+    </svg>
+    {% endif %}
     <span class="text">{{ selected }} </span>
     <span class="caret"></span>
   </button>

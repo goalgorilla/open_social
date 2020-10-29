@@ -79,6 +79,10 @@ function _socialbase_get_visibility_icon($title) {
       $icon = 'lock';
       break;
 
+    case 'Please choose':
+      $icon = '';
+      break;
+
     default:
       $icon = strtolower(HtmlUtility::escape($title));
   }
