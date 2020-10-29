@@ -6,7 +6,6 @@
  */
 
 use Drupal\Core\Entity\EntityInterface;
-use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
 use Drupal\taxonomy\TermInterface;
 
@@ -15,9 +14,6 @@ use Drupal\taxonomy\TermInterface;
  */
 function social_follow_tag_theme() {
   return [
-    'paragraph__tag__default' => [
-      'base hook' => 'paragraph',
-    ],
     'social_tagging_nosplit' => [
       'base hook' => 'social_tagging_nosplit',
     ],
@@ -55,59 +51,16 @@ function social_follow_tag_social_follow_taxonomy_terms_list_alter(array &$term_
 }
 
 /**
- * Prepares variables for the Tag paragraph template.
+ * Implements hook_social_follow_taxonomy_related_items_alter().
  *
- * Implements hook_preprocess_HOOK().
  * {@inheritdoc}
  */
-function social_follow_tag_preprocess_paragraph(&$variables) {
-  $terms = [];
-  /** @var \Drupal\paragraphs\Entity\Paragraph $entity */
-  $entity = $variables['elements']['#paragraph'];
-  $bundle = $entity->bundle();
+function social_follow_tag_social_follow_taxonomy_related_items_alter(array &$items, $entity) {
+  $user = \Drupal::entityTypeManager()->getStorage('user')->load(\Drupal::currentUser()->id());
 
-  switch ($bundle) {
-    case 'tag':
-      if ($entity->hasField('field_tag') && !empty($entity->field_tag)) {
-        foreach ($entity->field_tag as $term_reference) {
-          /** @var \Drupal\taxonomy\TermInterface $term */
-          $term = $term_reference->entity;
-
-          if (!empty($term)) {
-            // Creates a link to a search page with a tag as a filter parameter.
-            $parameter = 'tag';
-            $route = 'view.search_content.page_no_value';
-            // Override filter parameter id if split option is enabled.
-            if (Drupal::getContainer()->get('social_tagging.tag_service')->allowSplit()) {
-              if (isset($term->parent)) {
-                $parent = $term->parent->entity;
-                if (!empty($parent)) {
-                  $category = $parent->getName();
-                  // Use the name of parent term as id of the filter parameter.
-                  $parameter = social_tagging_to_machine_name($category);
-                }
-              }
-            }
-            $url = Url::fromRoute($route, [
-              $parameter . '[]' => $term->id(),
-            ]);
-
-            // Prepare additional data for the term variables.
-            $terms[] = [
-              'url' => $url->toString(),
-              'name' => $term->getName(),
-              'flag' => social_follow_taxonomy_flag_link($term),
-              'related_nodes_count' => social_follow_taxonomy_related_nodes_count($term, 'social_tagging'),
-              'followers_count' => social_follow_taxonomy_term_followers_count($term),
-            ];
-          }
-        }
-
-        // Adding data to the terms variable to extend the template.
-        $variables['terms'] = $terms;
-      }
-      break;
-  }
+  $items = array_filter($items, function ($item) use ($user) {
+    return $item instanceof NodeInterface && $item->access('view', $user);
+  });
 }
 
 /**
@@ -149,9 +102,12 @@ function social_follow_tag_preprocess_social_tagging_split(&$variables) {
           'followers_count' => social_follow_taxonomy_term_followers_count($current_term),
           'follow' => social_follow_taxonomy_term_followed($current_term),
         ];
+
       }
     }
   }
+
+  $variables['#cache']['tags'][] = 'flagging_list';
 }
 
 /**
@@ -189,6 +145,8 @@ function social_follow_tag_preprocess_social_tagging_nosplit(&$variables) {
       'follow' => social_follow_taxonomy_term_followed($current_term),
     ];
   }
+
+  $variables['#cache']['tags'][] = 'flagging_list';
 }
 
 /**

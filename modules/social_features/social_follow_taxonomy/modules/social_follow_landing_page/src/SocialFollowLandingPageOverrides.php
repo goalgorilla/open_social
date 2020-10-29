@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\social_follow_tag;
+namespace Drupal\social_follow_landing_page;
 
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Config\ConfigFactoryInterface;
@@ -8,13 +8,13 @@ use Drupal\Core\Config\ConfigFactoryOverrideInterface;
 use Drupal\Core\Config\StorageInterface;
 
 /**
- * Class SocialFollowTagOverrides.
+ * Class SocialFollowLandingPageOverrides.
  *
  * Override section paragraph settings.
  *
- * @package Drupal\social_follow_tag
+ * @package Drupal\social_follow_landing_page
  */
-class SocialFollowTagOverrides implements ConfigFactoryOverrideInterface {
+class SocialFollowLandingPageOverrides implements ConfigFactoryOverrideInterface {
 
   /**
    * The config factory.
@@ -39,18 +39,12 @@ class SocialFollowTagOverrides implements ConfigFactoryOverrideInterface {
   public function loadOverrides($names) {
     $overrides = [];
 
-    // Add social_tagging taxonomy bundle to follow_term flag config.
-    $config_name = 'flag.flag.follow_term';
-    $config = $this->configFactory->getEditable($config_name);
-    $bundles = $config->get('bundles');
-    if (!empty($bundles) && !in_array('social_tagging', $bundles)) {
-      array_push($bundles, 'social_tagging');
+    // Add tag paragraph to bundle list in section paragraph config.
+    $config_name = 'field.field.paragraph.section.field_section_paragraph';
 
-      if (in_array($config_name, $names)) {
-        $overrides[$config_name] = [
-          'bundles' => $bundles,
-        ];
-      }
+    if (in_array($config_name, $names)) {
+      $overrides[$config_name]['settings']['handler_settings']['target_bundles']['tag'] = 'tag';
+      $overrides[$config_name]['settings']['handler_settings']['target_bundles_drag_drop']['tag']['enabled'] = TRUE;
     }
 
     return $overrides;
@@ -60,7 +54,7 @@ class SocialFollowTagOverrides implements ConfigFactoryOverrideInterface {
    * {@inheritdoc}
    */
   public function getCacheSuffix() {
-    return 'SocialFollowTagOverrides';
+    return 'SocialFollowLandingPageOverrides';
   }
 
   /**

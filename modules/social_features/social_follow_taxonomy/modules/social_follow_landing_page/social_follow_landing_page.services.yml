@@ -1,0 +1,6 @@
+services:
+  social_follow_landing_page.overrider:
+    class: Drupal\social_follow_landing_page\SocialFollowLandingPageOverrides
+    arguments: ['@config.factory']
+    tags:
+      - {name: config.factory.override, priority: 10}
