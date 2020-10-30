@@ -349,14 +349,14 @@ function social_album_social_user_account_header_account_links(array $context) {
 
   return [
     'my_albums' => [
-        '#type' => 'link',
-        '#attributes' => [
-          'title' => new TranslatableMarkup('View my albums'),
-        ],
-        '#title' => new TranslatableMarkup('My albums'),
-        '#weight' => 550,
-      ] + Url::fromRoute('view.albums.page_albums_overview', [
-        'user' => $context['user']->id(),
-      ])->toRenderArray(),
+      '#type' => 'link',
+      '#attributes' => [
+        'title' => new TranslatableMarkup('View my albums'),
+      ],
+      '#title' => new TranslatableMarkup('My albums'),
+      '#weight' => 550,
+    ] + Url::fromRoute('view.albums.page_albums_overview', [
+      'user' => $context['user']->id(),
+    ])->toRenderArray(),
   ];
 }
