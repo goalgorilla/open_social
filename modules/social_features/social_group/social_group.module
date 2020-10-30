@@ -725,7 +725,7 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
         }
       }
 
-      $form['#fieldgroups']['group_settings']->children[] = 'group_type';
+      $form['#fieldgroups']['group_content']->children[] = 'group_type';
       $form['#group_children']['group_type'] = 'group_settings';
 
       $form['actions']['submit']['#submit'][] = '_social_group_type_edit_submit';
