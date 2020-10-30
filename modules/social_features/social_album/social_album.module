@@ -11,6 +11,7 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\Core\Url;
 use Drupal\social_album\Form\SocialAlbumImageForm;
 use Drupal\social_album\Form\SocialAlbumPostForm;
 
@@ -333,4 +334,29 @@ function _social_album_post_submit(array $form, FormStateInterface $form_state) 
   $post->set('field_album', $node->id())->save();
 
   \Drupal::service('social_group.set_groups_for_node_service')->addGroupContent($node, $post->field_recipient_group->entity);
+}
+
+/**
+ * Implements hook_social_user_account_header_account_links().
+ *
+ * Adds the "View my albums" link to the user menu.
+ */
+function social_album_social_user_account_header_account_links(array $context) {
+  // We require a user for this link.
+  if (empty($context['user']) || !($context['user'] instanceof AccountInterface)) {
+    return [];
+  }
+
+  return [
+    'my_albums' => [
+      '#type' => 'link',
+      '#attributes' => [
+        'title' => new TranslatableMarkup('View my albums'),
+      ],
+      '#title' => new TranslatableMarkup('My albums'),
+      '#weight' => 550,
+    ] + Url::fromRoute('view.albums.page_albums_overview', [
+      'user' => $context['user']->id(),
+    ])->toRenderArray(),
+  ];
 }
