@@ -194,6 +194,45 @@ function social_album_entity_type_alter(array &$entity_types) {
 /**
  * Implements hook_form_FORM_ID_alter().
  */
+function social_album_form_comment_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  if (!(
+    !\Drupal::moduleHandler()->moduleExists('social_ajax_comments') ||
+    !\Drupal::moduleHandler()->moduleExists('ajax_comments')
+  )) {
+    return;
+  }
+
+  $route_name = \Drupal::routeMatch()->getRouteName();
+  $allow = FALSE;
+
+  if ($route_name === 'social_album.image.view') {
+    $allow = TRUE;
+  }
+  elseif (
+    $route_name === 'comment.reply' &&
+    \Drupal::routeMatch()->getRawParameter('entity_type') === 'post'
+  ) {
+    /** @var \Drupal\social_post\Entity\PostInterface $post */
+    $post = \Drupal::routeMatch()->getParameter('entity');
+
+    if (!$post->field_album->isEmpty()) {
+      /** @var \Drupal\node\NodeInterface $album */
+      $album = $post->field_album->entity;
+
+      if ($album->toUrl()->setAbsolute()->toString() === \Drupal::request()->headers->get('referer')) {
+        $allow = TRUE;
+      }
+    }
+  }
+
+  if ($allow) {
+    $form['actions']['submit']['#submit'][] = '_social_album_comment_submit';
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
 function social_album_form_post_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   if (\Drupal::routeMatch()->getRouteName() === 'social_album.post') {
     if (isset($form['current_user_image'])) {
@@ -233,6 +272,26 @@ function social_album_views_data() {
       ],
     ],
   ];
+}
+
+/**
+ * Open the page of a post after adding a comment to the post on the album page.
+ *
+ * @param array $form
+ *   An associative array containing the structure of the form.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   The current state of the form.
+ */
+function _social_album_comment_submit(array $form, FormStateInterface $form_state) {
+  /** @var \Drupal\comment\CommentInterface $comment */
+  $comment = $form_state->getFormObject()->getEntity();
+
+  $url = $comment
+    ->getCommentedEntity()
+    ->toUrl()
+    ->setOption('fragment', 'comment-' . $comment->id());
+
+  $form_state->setRedirectUrl($url);
 }
 
 /**
