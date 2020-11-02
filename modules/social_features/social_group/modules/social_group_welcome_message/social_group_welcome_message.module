@@ -129,6 +129,14 @@ function social_group_welcome_message_group_content_insert(GroupContentInterface
       $owner = $group->getOwner();
     }
 
+    // Check if user have permission to create private message.
+    if (
+      !$owner->hasPermission('use private messaging system') ||
+      !$owner->hasPermission('create private messages thread')
+    ) {
+      return;
+    }
+
     // Merge all managers of the group to recipients array.
     $recipients = array_merge($g_admins_users, $g_managers_users, [$group->getOwner()]);
 
