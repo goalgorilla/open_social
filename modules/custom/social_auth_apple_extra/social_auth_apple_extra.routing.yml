@@ -24,3 +24,12 @@ social_auth_apple.user_link:
     _role: 'authenticated'
   options:
     no_cache: TRUE
+
+social_auth_apple.user_unlink:
+  path: '/social-api/unlink/apple'
+  defaults:
+    _title: 'Unlink Apple'
+    _form: '\Drupal\social_auth_extra\Form\AuthUnlinkForm'
+    network: 'apple'
+  requirements:
+    _role: 'authenticated'

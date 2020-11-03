@@ -18,4 +18,19 @@ class AppleUserManager extends UserManager {
     return 'apple';
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function getAccountId() {
+    $entities = $this->entityTypeManager->getStorage('social_auth')->loadByProperties([
+      'user_id' => $this->account->id(),
+    ]);
+
+    if ($entities) {
+      return reset($entities)->provider_user_id->value;
+    }
+
+    return parent::getAccountId();
+  }
+
 }
