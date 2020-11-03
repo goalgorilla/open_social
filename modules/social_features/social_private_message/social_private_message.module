@@ -642,22 +642,16 @@ function social_private_message_views_query_alter(ViewExecutable $view, QueryPlu
  * Implements hook_private_message_thread_access().
  */
 function social_private_message_private_message_thread_access(PrivateMessageThreadInterface $entity, $operation, AccountInterface $account) {
-  if ($account->hasPermission('use private messaging system')) {
-    switch ($operation) {
-      case 'delete':
-        if (
-          $account->hasPermission('use private messaging system') &&
-          $account->hasPermission('delete private messages thread')
-        ) {
-          return AccessResult::allowed();
-        }
-
-        break;
+  if ($operation === 'delete') {
+    if (
+      $account->hasPermission('use private messaging system') &&
+      $account->hasPermission('delete private messages thread')
+    ) {
+      return AccessResult::allowed();
     }
 
+    return AccessResult::forbidden();
   }
-
-  return AccessResult::forbidden();
 }
 
 /**
