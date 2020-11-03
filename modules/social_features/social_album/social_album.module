@@ -376,23 +376,30 @@ function _social_album_post_submit(array $form, FormStateInterface $form_state) 
 
   $input = $form_state->getUserInput()['field_album'];
 
-  if ($input['value'] !== '_add' || empty($input['title'])) {
-    return;
-  }
-
-  $node = \Drupal::entityTypeManager()->getStorage('node')->create([
-    'type' => 'album',
-    'title' => $input['title'],
-  ]);
-
-  $node->save();
-
   /** @var \Drupal\social_post\Entity\PostInterface $post */
   $post = $form_state->getFormObject()->getEntity();
 
-  $post->set('field_album', $node->id())->save();
+  if ($input['value'] === '_add') {
+    if (empty($input['title'])) {
+      return;
+    }
 
-  \Drupal::service('social_group.set_groups_for_node_service')->addGroupContent($node, $post->field_recipient_group->entity);
+    $node = \Drupal::entityTypeManager()->getStorage('node')->create([
+      'type' => 'album',
+      'title' => $input['title'],
+    ]);
+
+    $node->save();
+
+    \Drupal::service('social_group.set_groups_for_node_service')->addGroupContent($node, $post->field_recipient_group->entity);
+
+    $post->set('field_album', $node->id());
+  }
+  else {
+    $post->set('field_album', $input['value']);
+  }
+
+  $post->save();
 }
 
 /**
