@@ -195,6 +195,17 @@ function social_album_entity_type_alter(array &$entity_types) {
  * Implements hook_form_FORM_ID_alter().
  */
 function social_album_form_comment_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  $route_name = \Drupal::routeMatch()->getRouteName();
+
+  if ($is_image_view = $route_name === 'social_album.image.view') {
+    if ($first = &drupal_static(__FUNCTION__, TRUE)) {
+      $first = FALSE;
+    }
+    else {
+      $form['actions']['submit']['#attributes']['class'][] = 'hide';
+    }
+  }
+
   if (!(
     !\Drupal::moduleHandler()->moduleExists('social_ajax_comments') ||
     !\Drupal::moduleHandler()->moduleExists('ajax_comments')
@@ -202,10 +213,9 @@ function social_album_form_comment_form_alter(&$form, FormStateInterface $form_s
     return;
   }
 
-  $route_name = \Drupal::routeMatch()->getRouteName();
   $allow = FALSE;
 
-  if ($route_name === 'social_album.image.view') {
+  if ($is_image_view) {
     $allow = TRUE;
   }
   elseif (
