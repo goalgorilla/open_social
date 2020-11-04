@@ -75,12 +75,11 @@ class SocialInviteLocalActionsBlock extends BlockBase implements ContainerFactor
   protected function blockAccess(AccountInterface $account) {
     $group = _social_group_get_current_group();
     if ($group instanceof GroupInterface) {
-      // If group allows Group Invites by content plugin.
-      if (_social_group_invite_current_type_enabled_invites()) {
-        return AccessResult::forbidden();
-      }
-      // Only when user has correct access.
-      if ($group->hasPermission('invite users to group', $account)) {
+      // If group allows Group Invites by content plugin and user has access.
+      if (
+        _social_group_invite_current_type_enabled_invites() &&
+        $group->hasPermission('invite users to group', $account)
+      ) {
         return AccessResult::allowed();
       }
     }
@@ -152,6 +151,13 @@ class SocialInviteLocalActionsBlock extends BlockBase implements ContainerFactor
     }
 
     return $build;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getCacheMaxAge() {
+    return 0;
   }
 
 }
