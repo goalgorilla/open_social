@@ -44,4 +44,27 @@ class AppleAuthExtraController extends AppleAuthControllerBase {
     return $response;
   }
 
+  /**
+   * Makes joining between account on this site and account on social network.
+   *
+   * @return \Symfony\Component\HttpFoundation\RedirectResponse
+   *   The redirect response.
+   */
+  public function linkAccountCallback() {
+    $response = $this->callback();
+
+    if ($this->currentUser()->isAuthenticated()) {
+      $this->messenger()->addStatus($this->t(
+        'You are now able to log in with @network',
+        ['@network' => 'Apple']
+      ));
+
+      return $this->redirect('entity.user.edit_form', [
+        'user' => $this->currentUser()->id(),
+      ]);
+    }
+
+    return $response;
+  }
+
 }

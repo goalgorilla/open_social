@@ -19,9 +19,18 @@ social_auth_apple.user_register:
 social_auth_apple.user_link:
   path: '/social-api/link/apple'
   defaults:
-    _controller: '\Drupal\social_auth_apple_extra\Controller\AppleLinkController::linkAccount'
+    _controller: '\Drupal\social_auth_apple\Controller\AppleAuthController::redirectToProvider'
   requirements:
     _role: 'authenticated'
+  options:
+    no_cache: TRUE
+
+social_auth_apple_extra.user_link_callback:
+  path: '/social-api/link/apple/callback'
+  defaults:
+    _controller: '\Drupal\social_auth_apple_extra\Controller\AppleAuthExtraController::linkAccountCallback'
+  requirements:
+    _access: 'TRUE'
   options:
     no_cache: TRUE
 
