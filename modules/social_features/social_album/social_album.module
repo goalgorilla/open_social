@@ -218,6 +218,11 @@ function social_album_form_comment_form_alter(&$form, FormStateInterface $form_s
   $route_name = \Drupal::routeMatch()->getRouteName();
 
   if ($is_image_view = $route_name === 'social_album.image.view') {
+    /** @var \Drupal\comment\CommentInterface $comment */
+    $comment = $form_state->getFormObject()->getEntity();
+
+    $form['actions']['submit']['#attributes']['class'][] = 'post-index-' . $comment->getCommentedEntityId();
+
     if ($first = &drupal_static(__FUNCTION__, TRUE)) {
       $first = FALSE;
     }
