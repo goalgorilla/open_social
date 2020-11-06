@@ -70,7 +70,7 @@ class SocialAuthExtraLinkControllerBase extends SocialAuthExtraControllerBase {
     }
 
     $storage = $this->entityTypeManager()->getStorage('user');
-    $field_name = explode('_', $definition['id']) . '_id';
+    $field_name = explode('_', $definition['id'])[0] . '_id';
 
     // Check whether any another user account already connected.
     $accounts = $storage->loadByProperties([$field_name => $profile['id']]);
