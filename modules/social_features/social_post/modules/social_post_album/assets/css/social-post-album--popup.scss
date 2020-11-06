@@ -206,27 +206,35 @@
       }
 
       > .js-comment.comment-form__wrapper {
-        position: fixed;
-        bottom: 1rem;
-        left: 1rem;
-        right: 1rem;
-
-        @media (min-width: 900px) {
-          flex: 0 0 360px;
-          max-width: 360px;
-          bottom: 1.25rem;
-          left: auto;
-          right: 0;
-          padding-right: 1.25rem;
+        .card__nested-section {
+          border: none;
+          background: transparent;
         }
 
-        .card__nested-section {
-          margin-top: 0;
-          border-radius: 0 !important;
+        .comment-post-comment-form {
+          position: fixed;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          padding: 1.25rem;
+          border-top: 1px solid #e6e6e6;
+          background: #f3f3f3;
 
-          @media (max-width: 899px) {
-            margin: .625rem -1rem -1rem;
-            padding: .5rem 1rem;
+          @media (min-width: 900px) {
+            flex: 0 0 380px;
+            max-width: 380px;
+            left: auto;
+            right: 0;
+          }
+
+          .card__nested-section {
+            margin-top: 0;
+            border-radius: 0 !important;
+
+            @media (max-width: 899px) {
+              margin: .625rem -1rem -1rem;
+              padding: .5rem 1rem;
+            }
           }
         }
       }
@@ -264,6 +272,10 @@
 }
 
 .social-post-album--popup-slider {
+  @media(min-width: 900px) {
+    padding: 60px;
+  }
+
   &-wrapper {
     height: 100%;
 
@@ -286,10 +298,18 @@
 
       .slick-prev {
         left: 0;
+
+        @media(min-width: 900px) {
+          left: -60px;
+        }
       }
 
       .slick-next {
         right: 0;
+
+        @media(min-width: 900px) {
+          right: -60px;
+        }
       }
 
       .slick-arrow {
