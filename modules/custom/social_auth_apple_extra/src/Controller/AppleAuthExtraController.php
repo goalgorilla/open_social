@@ -4,14 +4,23 @@ namespace Drupal\social_auth_apple_extra\Controller;
 
 use Drupal\social_auth_apple\Controller\AppleAuthController;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
- * Class AppleAuthExtraController.
+ * Provides the main controller of the module.
  *
  * @package Drupal\social_auth_apple_extra\Controller
  */
 class AppleAuthExtraController extends AppleAuthController {
+
+  /**
+   * The redirect route overriding option.
+   *
+   * TRUE if route name in redirecting method should be replaced by a route to a
+   * sign-up page.
+   *
+   * @var bool
+   */
+  protected $isSignUp = FALSE;
 
   /**
    * {@inheritdoc}
@@ -35,18 +44,7 @@ class AppleAuthExtraController extends AppleAuthController {
    *   The redirect response.
    */
   public function userRegister() {
-    drupal_static(
-      'social_auth_apple_extra',
-      'social_auth_apple_extra.user_link_callback'
-    );
-
-    $response = $this->redirectToProvider();
-
-    if ($response instanceof RedirectResponse) {
-      return $this->redirect('user.register');
-    }
-
-    return $response;
+    return $this->userRegisterAction('redirectToProvider');
   }
 
   /**
@@ -56,12 +54,27 @@ class AppleAuthExtraController extends AppleAuthController {
    *   The redirect response.
    */
   public function userRegisterCallback() {
+    return $this->userRegisterAction('callback');
+  }
+
+  /**
+   * Provides action for all routes based on the sign-up route.
+   *
+   * @param string $method
+   *   The method name.
+   *
+   * @return \Symfony\Component\HttpFoundation\RedirectResponse
+   *   The redirect response.
+   */
+  protected function userRegisterAction($method) {
     drupal_static(
       'social_auth_apple_extra',
-      'social_auth_apple_extra.user_link_callback'
+      'social_auth_apple_extra.user_register_callback'
     );
 
-    return $this->callback();
+    $this->isSignUp = TRUE;
+
+    return $this->$method();
   }
 
   /**
@@ -107,6 +120,17 @@ class AppleAuthExtraController extends AppleAuthController {
     }
 
     return $response;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function redirect($route_name, array $route_parameters = [], array $options = [], $status = 302) {
+    if ($this->isSignUp) {
+      $route_name = 'user.register';
+    }
+
+    return parent::redirect($route_name, $route_parameters, $options, $status);
   }
 
 }
