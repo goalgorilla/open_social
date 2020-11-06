@@ -35,6 +35,11 @@ class AppleAuthExtraController extends AppleAuthController {
    *   The redirect response.
    */
   public function userRegister() {
+    drupal_static(
+      'social_auth_apple_extra',
+      'social_auth_apple_extra.user_link_callback'
+    );
+
     $response = $this->redirectToProvider();
 
     if ($response instanceof RedirectResponse) {
@@ -42,6 +47,21 @@ class AppleAuthExtraController extends AppleAuthController {
     }
 
     return $response;
+  }
+
+  /**
+   * Registers the new account after redirect from Apple.
+   *
+   * @return \Symfony\Component\HttpFoundation\RedirectResponse
+   *   The redirect response.
+   */
+  public function userRegisterCallback() {
+    drupal_static(
+      'social_auth_apple_extra',
+      'social_auth_apple_extra.user_link_callback'
+    );
+
+    return $this->callback();
   }
 
   /**

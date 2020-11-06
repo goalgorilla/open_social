@@ -16,6 +16,15 @@ social_auth_apple.user_register:
   options:
     no_cache: TRUE
 
+social_auth_apple_extra.user_register_callback:
+  path: '/user/register/apple/callback'
+  defaults:
+    _controller: '\Drupal\social_auth_apple_extra\Controller\AppleAuthExtraController::userRegisterCallback'
+  requirements:
+    _access: 'TRUE'
+  options:
+    no_cache: TRUE
+
 social_auth_apple.user_link:
   path: '/social-api/link/apple'
   defaults:
