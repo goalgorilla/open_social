@@ -19,7 +19,7 @@ social_auth_apple.user_register:
 social_auth_apple.user_link:
   path: '/social-api/link/apple'
   defaults:
-    _controller: '\Drupal\social_auth_apple\Controller\AppleAuthController::redirectToProvider'
+    _controller: '\Drupal\social_auth_apple_extra\Controller\AppleAuthExtraController::linkAccount'
   requirements:
     _role: 'authenticated'
   options:

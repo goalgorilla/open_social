@@ -2,7 +2,7 @@
 
 namespace Drupal\social_auth_apple_extra\Controller;
 
-use Drupal\social_auth_apple\Controller\AppleAuthController as AppleAuthControllerBase;
+use Drupal\social_auth_apple\Controller\AppleAuthController;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
  *
  * @package Drupal\social_auth_apple_extra\Controller
  */
-class AppleAuthExtraController extends AppleAuthControllerBase {
+class AppleAuthExtraController extends AppleAuthController {
 
   /**
    * {@inheritdoc}
@@ -45,12 +45,34 @@ class AppleAuthExtraController extends AppleAuthControllerBase {
   }
 
   /**
+   * Response for path 'social-api/link/*'.
+   *
+   * Redirects the user to Apple for joining accounts.
+   *
+   * @return \Drupal\Core\Routing\TrustedRedirectResponse|\Symfony\Component\HttpFoundation\RedirectResponse
+   *   The redirect response.
+   */
+  public function linkAccount() {
+    drupal_static(
+      'social_auth_apple_extra',
+      'social_auth_apple_extra.user_link_callback'
+    );
+
+    return $this->redirectToProvider();
+  }
+
+  /**
    * Makes joining between account on this site and account on social network.
    *
    * @return \Symfony\Component\HttpFoundation\RedirectResponse
    *   The redirect response.
    */
   public function linkAccountCallback() {
+    drupal_static(
+      'social_auth_apple_extra',
+      'social_auth_apple_extra.user_link_callback'
+    );
+
     $response = $this->callback();
 
     if ($this->currentUser()->isAuthenticated()) {
