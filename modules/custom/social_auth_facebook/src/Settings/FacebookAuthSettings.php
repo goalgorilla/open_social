@@ -73,7 +73,7 @@ class FacebookAuthSettings extends SettingsExtraBase implements FacebookAuthSett
   /**
    * {@inheritdoc}
    */
-  public function getSocialNetworkKey() {
+  public static function getSocialNetworkKey() {
     return \Drupal::service('social_auth_facebook.user_manager')->getSocialNetworkKey();
   }
 

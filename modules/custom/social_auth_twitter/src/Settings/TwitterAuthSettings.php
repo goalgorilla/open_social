@@ -48,7 +48,7 @@ class TwitterAuthSettings extends SettingsExtraBase implements TwitterAuthSettin
   /**
    * {@inheritdoc}
    */
-  public function getSocialNetworkKey() {
+  public static function getSocialNetworkKey() {
     return \Drupal::service('social_auth_twitter.user_manager')->getSocialNetworkKey();
   }
 

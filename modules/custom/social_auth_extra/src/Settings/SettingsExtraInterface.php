@@ -25,6 +25,6 @@ interface SettingsExtraInterface extends SettingsInterface {
    * @return string
    *   The key-name of a social network.
    */
-  public function getSocialNetworkKey();
+  public static function getSocialNetworkKey();
 
 }
