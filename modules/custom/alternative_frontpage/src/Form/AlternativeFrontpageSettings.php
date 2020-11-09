@@ -82,6 +82,14 @@ class AlternativeFrontpageSettings extends ConfigFormBase {
       '#size' => 64,
       '#default_value' => $config->get('frontpage_for_authenticated_user'),
     ];
+    $form['redirect_after_signup'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Redirect new users to specific page'),
+      '#description' => $this->t('The page where we want to redirect new signed-up users towards. Enter the path starting with a forward slash. Default: /stream.'),
+      '#maxlength' => 64,
+      '#size' => 64,
+      '#default_value' => $config->get('redirect_after_signup'),
+    ];
     return parent::buildForm($form, $form_state);
   }
 
@@ -91,6 +99,7 @@ class AlternativeFrontpageSettings extends ConfigFormBase {
   public function validateForm(array &$form, FormStateInterface $form_state) {
     $frontpage_for_anonymous_user = $form_state->getValue('frontpage_for_anonymous_users');
     $frontpage_for_authenticated_user = $form_state->getValue('frontpage_for_authenticated_user');
+    $redirect_after_signup = $form_state->getValue('redirect_after_signup');
 
     if ($frontpage_for_anonymous_user) {
       if (!$this->pathValidator->getUrlIfValidWithoutAccessCheck($frontpage_for_anonymous_user)) {
@@ -115,6 +124,18 @@ class AlternativeFrontpageSettings extends ConfigFormBase {
       }
       elseif (!$this->isAllowedPath($frontpage_for_authenticated_user)) {
         $form_state->setErrorByName('frontpage_for_authenticated_user', $this->t('The path for the authenticated frontpage is not allowed.'));
+      }
+    }
+
+    if ($redirect_after_signup) {
+      if (!$this->pathValidator->getUrlIfValidWithoutAccessCheck($redirect_after_signup)) {
+        $form_state->setErrorByName('redirect_after_signup', $this->t('The path for the redirect after signup is not valid.'));
+      }
+      elseif (substr($redirect_after_signup, 0, 1) !== '/') {
+        $form_state->setErrorByName('redirect_after_signup', $this->t('The path for the redirect after signup should start with a forward slash.'));
+      }
+      elseif (!$this->isAllowedPath($redirect_after_signup)) {
+        $form_state->setErrorByName('redirect_after_signup', $this->t('The path for the redirect after signup is not allowed.'));
       }
     }
   }
@@ -154,6 +175,9 @@ class AlternativeFrontpageSettings extends ConfigFormBase {
       ->save();
 
     $this->configFactory->getEditable('system.site')->set('page.front', $form_state->getValue('frontpage_for_anonymous_users'))->save();
+    $this->config('alternative_frontpage.settings')
+      ->set('redirect_after_signup', $form_state->getValue('redirect_after_signup'))
+      ->save();
   }
 
 }

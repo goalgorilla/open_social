@@ -339,9 +339,9 @@ function _social_user_pass_reset_submit($form, FormStateInterface $form_state) {
         [
           'user' => $submitted_user_id,
           'profile_type' => 'profile',
+          'first_time_login' => TRUE,
           [],
         ]);
-      $form_state->set('first_time_login', FALSE);
     }
     else {
       // We redirect them to the home page stream.
