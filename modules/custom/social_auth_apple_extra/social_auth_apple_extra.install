@@ -1,0 +1,15 @@
+<?php
+
+/**
+ * @file
+ * Install function for the social_auth_apple_extra module.
+ */
+
+/**
+ * Implements hook_install().
+ */
+function social_auth_apple_extra_install() {
+  \Drupal::configFactory()->getEditable('social_auth.settings')
+    ->set('post_login', '/')
+    ->save();
+}
