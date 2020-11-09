@@ -214,8 +214,10 @@ function _social_profile_profile_edit_form_submit(array $form, FormStateInterfac
     $first_time_login = \Drupal::request()->get('first_time_login');
     if ($first_time_login && \Drupal::moduleHandler()->moduleExists('alternative_frontpage')) {
       $redirect_after_signup = \Drupal::configFactory()->get('alternative_frontpage.settings')->get('redirect_after_signup');
-      $redirect = Url::fromUserInput($redirect_after_signup);
-      $form_state->setRedirectUrl($redirect);
+      if (isset($redirect_after_signup)) {
+        $redirect = Url::fromUserInput($redirect_after_signup);
+        $form_state->setRedirectUrl($redirect);
+      }
     }
   }
 }
