@@ -1,0 +1,32 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - dropdown
+    - group
+id: group.field_group_content_visibility
+field_name: field_group_content_visibility
+entity_type: group
+type: dropdown
+settings:
+  allowed_values:
+    public:
+      value: public
+      label: Public
+      description: 'Content in this group can be made visible to all visitors to the platform, logged-in users, or only group members.'
+    community:
+      value: community
+      label: Community
+      description: 'Content in this group can be made visible to all logged-in users, or only group members.'
+    group:
+      value: group
+      label: 'Group members'
+      description: 'Content in this group can be made visible to only group members.'
+  use_slick: true
+module: dropdown
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

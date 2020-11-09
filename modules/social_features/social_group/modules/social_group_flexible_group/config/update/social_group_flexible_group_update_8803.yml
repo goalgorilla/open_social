@@ -1,0 +1,50 @@
+core.entity_form_display.group.flexible_group.default:
+  expected_config:
+    content:
+      field_group_allowed_visibility:
+        region: content
+        settings: {  }
+        third_party_settings: {  }
+        type: options_select
+        weight: 6
+    third_party_settings:
+      field_group:
+        group_settings:
+          children:
+            - field_group_allowed_visibility
+  update_actions:
+    delete:
+      content:
+        field_group_allowed_visibility:
+          region: content
+          settings: {  }
+          third_party_settings: {  }
+          type: options_select
+          weight: 6
+      third_party_settings:
+        field_group:
+          group_settings:
+            children:
+              - field_group_allowed_visibility
+    add:
+      hidden:
+        field_group_allowed_visibility: true
+core.entity_view_display.group.flexible_group.default:
+  expected_config:
+    content:
+      field_group_allowed_visibility:
+        label: above
+      field_group_description:
+        type: basic_string
+    hidden:
+      field_group_description: true
+  update_actions:
+    delete:
+      hidden:
+        field_group_description: true
+    change:
+      content:
+        field_group_allowed_visibility:
+          label: hidden
+        field_group_description:
+          type: text_default

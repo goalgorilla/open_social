@@ -98,3 +98,17 @@ function social_group_flexible_group_update_8802() {
     $index->reindex();
   }
 }
+
+/**
+ * Add new fields for flexible group.
+ */
+function social_group_flexible_group_update_8803() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_group_flexible_group', 'social_group_flexible_group_update_8803');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
