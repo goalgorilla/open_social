@@ -5,7 +5,6 @@
  * The Social Auth Apple Extra module.
  */
 
-use Drupal\Core\Form\FormStateInterface;
 use Drupal\social_auth_apple_extra\Plugin\Network\AppleAuthExtra;
 use Drupal\social_auth_apple_extra\Settings\AppleAuthSettingsExtra;
 
@@ -18,24 +17,8 @@ function social_auth_apple_extra_social_api_network_info_alter(array &$info) {
 }
 
 /**
- * Implements hook_form_FORM_ID_alter().
+ * Implements hook_local_tasks_alter().
  */
-function social_auth_apple_extra_form_social_auth_apple_settings_alter(&$form, FormStateInterface $form_state, $form_id) {
-  $form['apple_settings']['status'] = [
-    '#type' => 'checkbox',
-    '#title' => t('Active'),
-    '#default_value' => \Drupal::config('social_auth_apple.settings')->get('status'),
-    '#description' => t('Determines whether this social network can be used.'),
-  ];
-
-  $form['#submit'][] = '_social_auth_apple_extra_settings_submit';
-}
-
-/**
- * Form submission handler for social_auth_apple_settings().
- */
-function _social_auth_apple_extra_settings_submit(array $form, FormStateInterface $form_state) {
-  \Drupal::configFactory()->getEditable('social_auth_apple.settings')
-    ->set('status', $form_state->getValue('status'))
-    ->save();
+function social_auth_apple_extra_local_tasks_alter(&$local_tasks) {
+  $local_tasks['social_auth_apple.settings.tab']['title'] = 'Apple';
 }
