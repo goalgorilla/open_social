@@ -226,7 +226,7 @@ class ThemeSuggestions extends BaseThemeSuggestions {
           $suggestions[] = $variables['theme_hook_original'] . '__' . $hook;
         }
 
-        if ($variables['element']['#is_dropdown'] === TRUE) {
+        if (isset($variables['element']['#is_dropdown']) && ($variables['element']['#is_dropdown'] === TRUE)) {
           $suggestions[] = $variables['theme_hook_original'] . '__' . 'dropdown';
         }
 
@@ -238,10 +238,8 @@ class ThemeSuggestions extends BaseThemeSuggestions {
 
       case 'form_element_label':
 
-        if (isset($variables['element']['#id'])) {
-          if ($variables['element']['#is_dropdown'] === TRUE) {
-            $suggestions[] = $variables['theme_hook_original'] . '__' . 'dropdown';
-          }
+        if (isset($variables['element']['#id']) && isset($variables['element']['#is_dropdown']) && ($variables['element']['#is_dropdown'] === TRUE)) {
+          $suggestions[] = $variables['theme_hook_original'] . '__' . 'dropdown';
         }
 
         if (isset($variables['element']['#switch']) && $variables['element']['#switch'] == TRUE) {
@@ -253,10 +251,8 @@ class ThemeSuggestions extends BaseThemeSuggestions {
       case 'input':
 
         // Add the form element parent to the theme suggestions.
-        if (isset($variables['element']['#id'])) {
-          if ($variables['element']['#is_dropdown'] === TRUE) {
-            $suggestions[] = $variables['theme_hook_original'] . '__' . 'dropdown';
-          }
+        if (isset($variables['element']['#id']) && isset($variables['element']['#is_dropdown']) && ($variables['element']['#is_dropdown'] === TRUE)) {
+          $suggestions[] = $variables['theme_hook_original'] . '__' . 'dropdown';
         }
 
         if (isset($variables['element']['#comment_button'])) {

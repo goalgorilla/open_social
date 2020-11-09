@@ -126,9 +126,9 @@ function dropdown_preprocess_form_element(&$variables) {
   // also pass it along to our label so our label can also render correctly
   // #is_dropdown is rendered as part of processDropdown, so we know for sure it
   // is our custom element.
-  if ($variables['element']['#type'] === 'radio' &&
-    $variables['element']['#is_dropdown'] &&
-    !empty($variables['label'])) {
+  if ($variables['element']['#type'] === 'radio'
+    && isset($variables['element']['#is_dropdown'])
+    && !empty($variables['label'])) {
     $variables['label']['#is_dropdown'] = TRUE;
   }
 }

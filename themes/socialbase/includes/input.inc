@@ -12,7 +12,7 @@ function socialbase_preprocess_input(&$variables) {
 
   if (isset($variables['element']['#type']) && $variables['element']['#type'] === 'radio') {
     // Only reaction on the visibility field.
-    if ($variables['element']['#is_dropdown'] === TRUE) {
+    if (isset($variables['element']['#is_dropdown']) && ($variables['element']['#is_dropdown'] === TRUE)) {
       $title = $variables['element']['#title'];
       $variables['selected_material_icon'] = _socialbase_get_visibility_icon($title);
       if (isset($variables['element']['#return_value']) && isset($variables['element']['#default_value'])) {
