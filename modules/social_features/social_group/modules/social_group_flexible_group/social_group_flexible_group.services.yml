@@ -24,3 +24,6 @@ services:
     arguments: ['@current_user', '@current_route_match']
     tags:
       - { name: event_subscriber }
+
+  social_group_flexible_group.helper:
+    class: Drupal\social_group_flexible_group\FlexibleGroupHelper
