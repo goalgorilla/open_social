@@ -445,7 +445,7 @@ function _social_group_get_allowed_visibility(GroupInterface $group) {
 
     case 'flexible_group':
       // Try to retrieve allowed visibility from Group directly.
-      $allowed_options = $group->get('field_group_allowed_visibility')
+      $allowed_options = $group->get('field_group_content_visibility')
         ->getValue();
       foreach ($allowed_options as $option) {
         $value = $option['value'];
@@ -1588,7 +1588,7 @@ function social_group_entity_base_field_info_alter(&$fields, EntityTypeInterface
   $entity_types = ['node'];
   if (in_array($entity_type->id(), $entity_types)) {
     if (isset($fields['groups'])) {
-      /* @var \Drupal\Core\Field\BaseFieldDefinition $fields['groups'] */
+      /** @var \Drupal\Core\Field\BaseFieldDefinition $fields['groups'] */
       $fields['groups']->setLabel(t('Group'));
       $fields['groups']->setDisplayOptions('form', [
         'type' => 'options_select',
@@ -1626,7 +1626,7 @@ function social_group_form_node_form_alter(&$form, FormStateInterface $form_stat
         }
       }
 
-      /* @var \Drupal\node\Entity\Node $node */
+      /** @var \Drupal\node\Entity\Node $node */
       $node = $form_state->getFormObject()->getEntity();
       // Store if the node is new or not.
       $form['is_new'] = [
@@ -1648,7 +1648,7 @@ function social_group_form_node_form_alter(&$form, FormStateInterface $form_stat
  *   Form state interface.
  */
 function social_group_save_group_from_node(array $form, FormStateInterface $form_state) {
-  /* @var \Drupal\node\Entity\Node $node */
+  /** @var \Drupal\node\Entity\Node $node */
   $node = $form_state->getFormObject()->getEntity();
 
   // Check if the created node is new or updated.
@@ -1730,7 +1730,8 @@ function social_group_get_allowed_visibility_options_per_group_type($group_type_
       if (empty($group)) {
         $group = _social_group_get_current_group();
       }
-      if ($group !== NULL) {
+      if ($group !== NULL && $group->hasField('field_group_allowed_visibility')
+        && empty($group->get('field_group_content_visibility')->getValue()[0])) {
         $visibility_options['public'] = FALSE;
         $visibility_options['community'] = FALSE;
         $visibility_options['group'] = FALSE;
@@ -1739,6 +1740,28 @@ function social_group_get_allowed_visibility_options_per_group_type($group_type_
         foreach ($allowed_options as $option) {
           $value = $option['value'];
           $visibility_options[$value] = TRUE;
+        }
+      }
+      else {
+        $current_visibility = $group->get('field_group_content_visibility')->getValue()[0];
+        switch ($current_visibility) {
+          case 'public':
+            $visibility_options['public'] = TRUE;
+            $visibility_options['community'] = TRUE;
+            $visibility_options['group'] = TRUE;
+            break;
+
+          case 'community':
+            $visibility_options['public'] = FALSE;
+            $visibility_options['community'] = TRUE;
+            $visibility_options['group'] = TRUE;
+            break;
+
+          case 'group':
+            $visibility_options['public'] = FALSE;
+            $visibility_options['community'] = FALSE;
+            $visibility_options['group'] = TRUE;
+            break;
         }
       }
       break;
