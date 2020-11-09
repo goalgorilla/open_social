@@ -12,7 +12,7 @@ use Drupal\node\Entity\Node;
 use Drupal\user\RoleInterface;
 
 /**
- * Class FlexibleGroupContentVisibilityUpdate.
+ * Contains the functions for updating content visibility.
  *
  * @package Drupal\social_group_flexible_group
  */
@@ -52,14 +52,14 @@ class FlexibleGroupContentVisibilityUpdate {
    *
    * @param \Drupal\group\Entity\Group $group
    *   The Group we've updated.
-   * @param array $changed_visibility
+   * @param string $changed_visibility
    *   The Group's old visibility.
-   * @param array $new_options
+   * @param string $new_visiblity
    *   The Group's new visibility options.
    *
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
-  public static function batchUpdateGroupContentVisibility(Group $group, array $changed_visibility, array $new_options) {
+  public static function batchUpdateGroupContentVisibility(Group $group, $changed_visibility, $new_visiblity) {
     // Set it up as a batch. We need to update visibility.
     // Load all the GroupContentEntities from Post to content.
     // Memberships don't need an update.
@@ -86,7 +86,7 @@ class FlexibleGroupContentVisibilityUpdate {
         '\Drupal\social_group_flexible_group\FlexibleGroupContentVisibilityUpdate::updateVisibility',
         [
           $entities[$i],
-          $new_options,
+          $new_visiblity,
         ],
       ];
     }
@@ -106,25 +106,23 @@ class FlexibleGroupContentVisibilityUpdate {
    *
    * @param \Drupal\node\Entity\Node|\Drupal\social_post\Entity\Post|\Drupal\group\GroupMembership|\Drupal\group\Entity\GroupContentInterface $entity
    *   The content we are updating.
-   * @param array $new_options
+   * @param string $new_visiblity
    *   The Group's new visibility options.
    * @param array $context
    *   Passed on by reference.
    *
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
-  public function updateVisibility($entity, array $new_options, array &$context) {
+  public function updateVisibility($entity, $new_visiblity, array &$context) {
     // Store some results for post-processing in the 'finished' callback.
     // The contents of 'results' will be available as $results in the
     // 'finished' function updateVisibilityFinishedCallback().
     if ($entity instanceof Post) {
-      $default_visibility = self::calculateVisibility($entity->getVisibility(), $new_options);
-      $entity->setVisibility($default_visibility);
+      $entity->setVisibility($new_visiblity);
       $entity->save();
     }
     if ($entity instanceof Node) {
-      $default_visibility = self::calculateVisibility($entity->getFieldValue('field_content_visibility', 'value'), $new_options);
-      $entity->set('field_content_visibility', $default_visibility);
+      $entity->set('field_content_visibility', $new_visiblity);
       $entity->save();
     }
 
@@ -210,6 +208,11 @@ class FlexibleGroupContentVisibilityUpdate {
    *
    * @return string
    *   The new visibility.
+   *
+   * @deprecated in social:10.0.0 and is removed from social:11.0.0.
+   * This function is not longer needed due to data model changes.
+   *
+   * @see https://www.drupal.org/project/social/issues/3178408
    */
   public static function calculateVisibility($current_visibility, array $new_options) {
     // If there is only one option just return that one.

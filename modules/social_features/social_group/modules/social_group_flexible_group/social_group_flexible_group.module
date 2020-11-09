@@ -58,7 +58,13 @@ function social_group_flexible_group_form_group_flexible_group_edit_form_alter(&
     unset($form['#fieldgroups']['group_settings']->children['group_type']);
     unset($form['#group_children']['group_type']);
   }
-  $form['field_group_allowed_visibility']['#prefix'] =
+
+  if ($form['field_group_visibility'] && !empty($value = \Drupal::service('social_group_flexible_group.helper')->getHighestContentVisibility())) {
+    $form['field_group_content_visibility']['widget'][0]['#default_value'] = $value;
+
+  }
+
+  $form['field_group_content_visibility']['#prefix'] =
     t('Altering the visibility options could result in changes in access for content within this group.');
 
   $form['actions']['submit']['#submit'][] = '_social_flexible_group_edit_submit';
@@ -113,27 +119,22 @@ function social_group_flexible_group_form_alter(&$form, FormStateInterface $form
  */
 function _social_flexible_group_edit_submit(array $form, FormStateInterface $form_state) {
   // Check if the visibility changed.
-  $default_visibility = $form['field_group_allowed_visibility']['widget']['#default_value'];
-  $new_visibility = $form_state->getValue('field_group_allowed_visibility');
+  $default_visibility = $form['field_group_content_visibility']['widget'][0]['#default_value'];
+  $new_visibility = $form_state->getValue('field_group_content_visibility')['0']['value'];
 
-  $changed_visibility = [];
-  // If there was a visibility that we don't have anymore after editting
-  // all the content that was inside the group with this visibility
-  // will get the lowest visibility that is still checked.
-  foreach ($default_visibility as $key => $option) {
-    if (array_search($option, array_column($new_visibility, 'value')) === FALSE) {
-      $changed_visibility[] = $option;
-    }
+  $changed_visibility = NULL;
+  if ($default_visibility != $new_visibility) {
+    $changed_visibility = $new_visibility;
   }
 
   // So there is now a visibility setting we don't support anymore
   // after editing. Make sure we update all the content that has this
-  // to the next best optin.
+  // to the next best option.
   if (!empty($changed_visibility)) {
     $group = _social_group_get_current_group();
 
     // Update the default visibility of all the content.
-    FlexibleGroupContentVisibilityUpdate::batchUpdateGroupContentVisibility($group, $changed_visibility, $new_visibility);
+    FlexibleGroupContentVisibilityUpdate::batchUpdateGroupContentVisibility($group, $default_visibility, $new_visibility);
 
     // Make sure we clear cache tags accordingly.
     $cache_tags = _social_group_cache_tags($group);
@@ -205,7 +206,7 @@ function social_group_flexible_group_can_be_added(Group $group) {
  *   TRUE when users can join.
  */
 function social_group_flexible_group_public_enabled(GroupInterface $group) {
-  $visibility_options = $group->get('field_group_allowed_visibility')->getValue();
+  $visibility_options = $group->get('field_group_content_visibility')->getValue();
 
   if (!in_array('public', array_column($visibility_options, 'value'), FALSE)) {
     return FALSE;
@@ -224,7 +225,7 @@ function social_group_flexible_group_public_enabled(GroupInterface $group) {
  *   TRUE when users can join.
  */
 function social_group_flexible_group_community_enabled(GroupInterface $group) {
-  $visibility_options = $group->get('field_group_allowed_visibility')->getValue();
+  $visibility_options = $group->get('field_group_content_visibility')->getValue();
 
   if (!in_array('community', array_column($visibility_options, 'value'), FALSE)) {
     return FALSE;
@@ -243,7 +244,7 @@ function social_group_flexible_group_community_enabled(GroupInterface $group) {
  *   TRUE when users can join.
  */
 function social_group_flexible_group_members_enabled(Group $group) {
-  $visibility_options = $group->get('field_group_allowed_visibility')->getValue();
+  $visibility_options = $group->get('field_group_content_visibility')->getValue();
 
   if (!in_array('group', array_column($visibility_options, 'value'), FALSE)) {
     return FALSE;
@@ -332,7 +333,7 @@ function social_group_flexible_group_views_query_alter(ViewExecutable $view, Que
   // Let's build our join with the allowed visibility data.
   $configuration = [
     'type'       => 'LEFT',
-    'table'      => 'group__field_group_allowed_visibility',
+    'table'      => 'group__field_group_content_visibility',
     'field'      => 'entity_id',
     'left_table' => 'groups_field_data',
     'left_field' => 'id',
@@ -344,7 +345,7 @@ function social_group_flexible_group_views_query_alter(ViewExecutable $view, Que
   /** @var \Drupal\views\Plugin\views\query\Sql $query */
   $join = Views::pluginManager('join')->createInstance('standard', $configuration);
   $rel = $query->addRelationship($alias, $join, 'groups_field_data');
-  $query->addTable('group__field_group_allowed_visibility', $rel, $join, $alias);
+  $query->addTable('group__field_group_content_visibility', $rel, $join, $alias);
 
   /** @var \Drupal\views\Plugin\views\query\Sql $query */
   $current_where = count($query->where);
@@ -370,7 +371,7 @@ function social_group_flexible_group_views_query_alter(ViewExecutable $view, Que
         'closed_group',
         'open_group',
       ], 'NOT IN');
-      $query->addWhere($new_where, 'field_group_allowed_visibility_value', ['public'], 'IN');
+      $query->addWhere($new_where, 'field_group_content_visibility_value', 'public');
       $query->addWhere($new_where, 'groups_field_data.type', ['flexible_group'], 'IN');
       return;
     }
@@ -382,7 +383,7 @@ function social_group_flexible_group_views_query_alter(ViewExecutable $view, Que
     // OR it is a flexible group but than we only want groups
     // that have the public content visibility for AN users.
     $query->setWhereGroup('AND', $new_where);
-    $query->addWhere($new_where, 'field_group_allowed_visibility_value', ['public'], 'IN');
+    $query->addWhere($new_where, 'field_group_content_visibility_value', 'public');
     $query->addWhere($new_where, 'groups_field_data.type', ['flexible_group'], 'IN');
     return;
   }
