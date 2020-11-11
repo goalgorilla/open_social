@@ -64,9 +64,8 @@ function social_group_flexible_group_form_group_flexible_group_edit_form_alter(&
 
   }
 
-  $form['field_group_content_visibility']['#prefix'] =
-    t('Altering the visibility options could result in changes in access for content within this group.');
-
+  // $form['field_group_content_visibility']['#prefix'] =
+  //    t('Altering the visibility options could result in changes in access for content within this group.');
   $form['actions']['submit']['#submit'][] = '_social_flexible_group_edit_submit';
 }
 
@@ -104,6 +103,19 @@ function social_group_flexible_group_form_alter(&$form, FormStateInterface $form
         ],
       ];
     }
+  }
+
+  if ($form_id == 'group_flexible_group_add_form' || $form_id == 'group_flexible_group_edit_form') {
+    $form['field_group_visibility']['widget'][0]['#ajax'] = [
+      'effect' => 'fade',
+      'event' => 'change',
+      'wrapper' => 'edit-field-group-content-visibility-wrapper',
+      'callback' => 'social_flexible_group_content_visibility_ajax_callback',
+      'progress' => [
+        'type' => 'throbber',
+        'message' => NULL,
+      ],
+    ];
   }
 }
 
@@ -451,3 +463,45 @@ function social_group_flexible_group_block_access(Block $block, $operation, Acco
 
   return AccessResult::neutral();
 }
+
+/**
+ *
+ */
+function social_flexible_group_content_visibility_ajax_callback(array $form, FormStateInterface $form_state) {
+  $triggering = $form_state->getTriggeringElement();
+  $value = $form_state->getValue($triggering['#parents']);
+  $group_visibility = $form_state->getValue('field_group_visibility')[0]['value'];
+  if (!empty($group_visibility)) {
+    switch ($group_visibility) {
+      case 'community':
+        unset($form['field_group_content_visibility']['widget'][0]['#option']['public']);
+        break;
+
+      case 'group':
+        unset($form['field_group_content_visibility']['widget'][0]['#option']['public']);
+        unset($form['field_group_content_visibility']['widget'][0]['#option']['community']);
+        $form['field_group_content_visibility']['widget'][0]['##default_value'] = 'group';
+        $form['field_group_content_visibility']['#disabled'];
+        break;
+    }
+  }
+
+  return $form['field_group_content_visibility'];
+}
+
+// **
+// * Implements hook_field_widget_form_alter().
+// */
+// function social_group_flexible_group_field_widget_form_alter(&$element, FormStateInterface $form_state, $context) {
+//  if ($context['items']->getName() == 'field_group_visibility') {
+//    $element['#ajax'] = [
+//      'event' => 'change',
+//      'wrapper' => 'edit-field-group-content-visibility-wrapper',
+//      'callback' => 'social_flexible_group_content_visibility_ajax_callback',
+//      'progress' => [
+//        'type' => 'throbber',
+//        'message' => NULL,
+//      ],
+//    ];
+//  }
+// }
