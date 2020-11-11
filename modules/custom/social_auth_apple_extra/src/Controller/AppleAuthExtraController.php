@@ -38,6 +38,17 @@ class AppleAuthExtraController extends AppleAuthController {
   }
 
   /**
+   * {@inheritdoc}
+   */
+  public function callback() {
+    if (!$this->request->getCurrentRequest()->get('code')) {
+      return $this->redirect('user.login');
+    }
+
+    return parent::callback();
+  }
+
+  /**
    * Redirect to provider and back to the registration page on fail.
    *
    * @return \Drupal\Core\Routing\TrustedRedirectResponse|\Symfony\Component\HttpFoundation\RedirectResponse
