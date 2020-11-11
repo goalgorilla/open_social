@@ -3,6 +3,7 @@
 namespace Drupal\social_group\Routing;
 
 use Drupal\Core\Routing\RouteSubscriberBase;
+use Drupal\social_group\Controller\SocialGroupController;
 use Symfony\Component\Routing\RouteCollection;
 
 /**
@@ -52,6 +53,7 @@ class RouteSubscriber extends RouteSubscriberBase {
       unset($defaults['_controller']);
       $defaults['_form'] = '\Drupal\social_group\Form\SocialGroupAddForm';
       $route->setDefaults($defaults);
+      $route->setRequirement('_custom_access', SocialGroupController::class . '::addPageAccess');
     }
 
     if ($route = $collection->get('view.groups.page_user_groups')) {

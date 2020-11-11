@@ -36,6 +36,12 @@ class SocialGroupSettings extends ConfigFormBase {
   public function buildForm(array $form, FormStateInterface $form_state) {
     $config = $this->config('social_group.settings');
 
+    $form['create'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Create'),
+      '#default_value' => $config->get('create'),
+    ];
+
     $form['allow_group_selection_in_node'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Allow logged-in users to change or remove a group when editing content'),
@@ -57,7 +63,7 @@ class SocialGroupSettings extends ConfigFormBase {
       '#options' => [
         'street_code_private' => $this->t('Only show street and postal code to group members'),
       ],
-      '#default_value' => $config->get('address_visibility_settings'),
+      '#default_value' => (array) $config->get('address_visibility_settings'),
     ];
 
     return parent::buildForm($form, $form_state);
@@ -70,6 +76,7 @@ class SocialGroupSettings extends ConfigFormBase {
     parent::submitForm($form, $form_state);
 
     $this->config('social_group.settings')
+      ->set('create', $form_state->getValue('create'))
       ->set('allow_group_selection_in_node', $form_state->getValue('allow_group_selection_in_node'))
       ->set('default_hero', $form_state->getValue('default_hero'))
       ->set('address_visibility_settings', $form_state->getValue('address_visibility_settings'))
