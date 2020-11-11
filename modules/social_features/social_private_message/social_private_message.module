@@ -401,7 +401,6 @@ function social_private_message_thread_view_alter(array &$build, EntityInterface
 
   if (
     !$current_user->hasPermission('use private messaging system') ||
-    !$current_user->hasPermission('create private messages thread') ||
     !$current_user->hasPermission('reply to private messages thread')
   ) {
     unset($build['private_message_form']);
