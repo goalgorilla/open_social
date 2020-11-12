@@ -34,7 +34,7 @@
 @media (max-width: 899px) {
   .ui-widget.ui-dialog .ui-dialog-buttonpane .btn--comment-submit {
     right: 9px;
-    bottom: 8px;
+    bottom: 19px;
   }
 }
 .ui-widget.ui-dialog .ui-dialog-buttonpane .btn--comment-submit .label {
@@ -169,21 +169,28 @@
   box-shadow: none;
   margin-bottom: 0;
   border-radius: 0 !important;
+  overflow-x: hidden;
 }
 .social-post-album--popup .post-comment-wrapper .card__block {
-  padding: 1rem 1rem 55px;
   height: 150px;
+  margin-bottom: 80px;
+  padding: 1rem 1rem 0;
   overflow-y: auto;
 }
 @media (min-width: 900px) {
   .social-post-album--popup .post-comment-wrapper .card__block {
-    height: calc(100% - 100px);
+    max-height: calc(100% - 80px);
+    height: auto;
+    margin-bottom: 0;
     overflow-y: auto;
-    padding: 55px 1.25rem 80px;
+    padding: 55px 1.25rem 0;
   }
 }
 .social-post-album--popup .post-comment-wrapper .card__block .margin-top-s {
   margin-bottom: 0.5rem;
+}
+.social-post-album--popup .post-comment-wrapper .card__block > .js-comment.comment-form__wrapper {
+  overflow: hidden;
 }
 .social-post-album--popup .post-comment-wrapper .card__block > .js-comment.comment-form__wrapper .card__nested-section {
   border: none;
