@@ -23,6 +23,7 @@ use Drupal\node\NodeInterface;
 use Drupal\social_group\Controller\SocialGroupController;
 use Drupal\social_group\Controller\SocialGroupListBuilder;
 use Drupal\social_group\Element\SocialGroupEntityAutocomplete;
+use Drupal\social_group\Entity\Access\SocialGroupAccessControlHandler;
 use Drupal\social_group\Entity\Group;
 use Drupal\social_group\Form\SocialGroupAddForm;
 use Drupal\views\ViewExecutable;
@@ -60,9 +61,12 @@ function social_group_theme() {
  * Implements hook_entity_type_alter().
  */
 function social_group_entity_type_alter(array &$entity_types) {
+  /** @var \Drupal\Core\Entity\EntityTypeInterface[] $entity_types */
   if (isset($entity_types['group'])) {
-    $entity_types['group']->setClass(Group::class);
-    $entity_types['group']->setListBuilderClass(SocialGroupListBuilder::class);
+    $entity_types['group']
+      ->setClass(Group::class)
+      ->setListBuilderClass(SocialGroupListBuilder::class)
+      ->setAccessClass(SocialGroupAccessControlHandler::class);
   }
 }
 

@@ -216,14 +216,4 @@ class SocialGroupController extends ControllerBase {
     return $this->redirect('entity.group.canonical', ['group' => $group]);
   }
 
-  /**
-   * Check access to the group add page.
-   *
-   * @return \Drupal\Core\Access\AccessResultInterface
-   *   The access result.
-   */
-  public function addPageAccess() {
-    return AccessResult::allowedIf($this->config('social_group.settings')->get('create'));
-  }
-
 }
