@@ -26,9 +26,19 @@ class ThemeSuggestions extends BaseThemeSuggestions {
 
       case 'block':
 
-        if (isset($variables['elements']['#base_plugin_id']) && $variables['elements']['#base_plugin_id'] == 'system_menu_block') {
-          $menu_name = $variables['elements']['content']['#menu_name'];
-          $suggestions[] = 'block__block_menu__' . $menu_name;
+        if (isset($variables['elements']['#base_plugin_id'])) {
+          switch ($variables['elements']['#base_plugin_id']) {
+            case 'system_menu_block':
+              $menu_name = $variables['elements']['content']['#menu_name'];
+              $suggestions[] = 'block__block_menu__' . $menu_name;
+              break;
+
+            case 'system_main_block':
+              if (\Drupal::routeMatch()->getRouteName() === 'social_album.post') {
+                $suggestions[] = 'block__social_post';
+              }
+              break;
+          }
         }
 
         if (isset($variables['elements']['content']['#block_content'])) {

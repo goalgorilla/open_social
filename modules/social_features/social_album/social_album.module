@@ -1,0 +1,443 @@
+<?php
+
+/**
+ * @file
+ * The Social Album module.
+ */
+
+use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\Core\Url;
+use Drupal\social_album\Form\SocialAlbumImageForm;
+use Drupal\social_album\Form\SocialAlbumPostForm;
+
+/**
+ * Implements hook_theme().
+ */
+function social_album_theme($existing, $type, $theme, $path) {
+  return [
+    'social_album_post' => [
+      'variables' => [
+        'items' => NULL,
+        'album' => NULL,
+      ],
+    ],
+  ];
+}
+
+/**
+ * Implements hook_entity_extra_field_info().
+ */
+function social_album_entity_extra_field_info() {
+  return [
+    'node' => [
+      'album' => [
+        'display' => [
+          'social_album_images' => [
+            'label' => t('Images'),
+            'visible' => FALSE,
+          ],
+        ],
+      ],
+    ],
+  ];
+}
+
+/**
+ * Implements hook_entity_view().
+ */
+function social_album_entity_view(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, $view_mode) {
+  if ($display->getComponent('social_album_images')) {
+    $build['social_album_images'] = views_embed_view('albums', 'embed_album_overview');
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function social_album_preprocess_block__social_post(&$variables) {
+  if (
+    \Drupal::routeMatch()->getRouteName() === 'social_album.post' &&
+    ($content = \Drupal::service('social_post.helper')->buildCurrentUserImage())
+  ) {
+    $variables['content'] = [
+      'form' => $variables['content'],
+      'current_user_image' => $content,
+    ];
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function social_album_preprocess_node(&$variables) {
+  /** @var \Drupal\node\NodeInterface $node */
+  $node = $variables['node'];
+
+  if (
+    $node->bundle() === 'album' &&
+    $variables['view_mode'] === 'teaser' &&
+    views_get_view_result('albums', 'embed_album_cover', $node->id())
+  ) {
+    $variables['node_image'] = views_embed_view('albums', 'embed_album_cover', $node->id());
+    $variables['no_image'] = FALSE;
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function social_album_preprocess_views_view(&$variables) {
+  /** @var \Drupal\views\ViewExecutable $view */
+  $view = $variables['view'];
+
+  if ($view->id() === 'albums') {
+    $library = [
+      'embed_album_overview' => 'social_album/social_album_post',
+      'page_albums_overview' => 'social_album/social_album_teaser',
+      'page_group_albums_overview' => 'social_album/social_album_teaser',
+    ];
+
+    if (isset($library[$view->current_display])) {
+      $variables['#attached']['library'][] = $library[$view->current_display];
+    }
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function social_album_preprocess_social_album_post(&$variables) {
+  $items = [];
+
+  foreach ($variables['items'] as $item) {
+    if (!isset($items[$pid = $item['pid']])) {
+      $parent_variables = ['pid' => $pid];
+      social_post_album_preprocess_album_post_popup($parent_variables);
+      $items[$pid] = ['post' => $parent_variables['post']];
+    }
+
+    $items[$pid]['urls'][] = $item['url'];
+  }
+
+  $variables['items'] = $items;
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_presave().
+ */
+function social_album_post_presave(EntityInterface $entity) {
+  if (
+    $entity->isNew() &&
+    $entity->bundle() === 'photo' &&
+    !$entity->field_album->isEmpty() &&
+    $entity->field_recipient_group->isEmpty()
+  ) {
+    $group_content = \Drupal::entityTypeManager()->getStorage('group_content')
+      ->loadByEntity($entity->field_album->entity);
+
+    if ($group_content) {
+      $entity->field_recipient_group->setValue(reset($group_content)->getGroup());
+    }
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_insert().
+ */
+function social_album_post_insert(EntityInterface $entity) {
+  /** @var \Drupal\social_post\Entity\PostInterface $entity */
+  if ($entity->bundle() === 'photo' && !$entity->field_album->isEmpty()) {
+    \Drupal::service('cache_tags.invalidator')->invalidateTags([
+      'node:' . $entity->field_album->entity->id(),
+      'user:' . $entity->getOwnerId(),
+    ]);
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_create_access().
+ */
+function social_album_node_create_access(AccountInterface $account, array $context, $entity_bundle) {
+  if (
+    $entity_bundle === 'album' &&
+    \Drupal::routeMatch()->getRouteName() === 'view.albums.page_albums_overview' &&
+    \Drupal::routeMatch()->getRawParameter('user') !== $account->id()
+  ) {
+    return AccessResult::forbidden();
+  }
+
+  return AccessResult::neutral();
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_insert().
+ */
+function social_album_node_insert(EntityInterface $entity) {
+  /** @var \Drupal\node\NodeInterface $entity */
+  if ($entity->bundle() === 'album') {
+    \Drupal::service('cache_tags.invalidator')->invalidateTags([
+      'user:' . $entity->getOwnerId(),
+    ]);
+  }
+}
+
+/**
+ * Implements hook_social_post_message_alter().
+ */
+function social_album_social_post_message_alter(TranslatableMarkup &$message, FormStateInterface $form_state) {
+  if ($form_state->has('album')) {
+    $post = $form_state->getFormObject()->getEntity();
+
+    if (!$post->field_album->isEmpty()) {
+      $message = t('You have posted successfully in your new album @link', [
+        '@link' => $post->field_album->entity->toLink()->toString(),
+      ]);
+    }
+  }
+}
+
+/**
+ * Implements hook_entity_type_alter().
+ */
+function social_album_entity_type_alter(array &$entity_types) {
+  /** @var \Drupal\Core\Entity\EntityTypeInterface[] $entity_types */
+  $entity_types['post']
+    ->setFormClass('album', SocialAlbumPostForm::class)
+    ->setFormClass('delete_image', SocialAlbumImageForm::class);
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function social_album_form_comment_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  $route_name = \Drupal::routeMatch()->getRouteName();
+
+  if ($is_image_view = $route_name === 'social_album.image.view') {
+    /** @var \Drupal\comment\CommentInterface $comment */
+    $comment = $form_state->getFormObject()->getEntity();
+
+    $form['actions']['submit']['#attributes']['class'][] = 'post-index-' . $comment->getCommentedEntityId();
+
+    if ($first = &drupal_static(__FUNCTION__, TRUE)) {
+      $first = FALSE;
+    }
+    else {
+      $form['actions']['submit']['#attributes']['class'][] = 'hide';
+    }
+  }
+
+  if (!(
+    !\Drupal::moduleHandler()->moduleExists('social_ajax_comments') ||
+    !\Drupal::moduleHandler()->moduleExists('ajax_comments')
+  )) {
+    return;
+  }
+
+  $allow = FALSE;
+
+  if ($is_image_view) {
+    $allow = TRUE;
+  }
+  elseif (
+    $route_name === 'comment.reply' &&
+    \Drupal::routeMatch()->getRawParameter('entity_type') === 'post'
+  ) {
+    /** @var \Drupal\social_post\Entity\PostInterface $post */
+    $post = \Drupal::routeMatch()->getParameter('entity');
+
+    if (!$post->field_album->isEmpty()) {
+      /** @var \Drupal\node\NodeInterface $album */
+      $album = $post->field_album->entity;
+
+      if ($album->toUrl()->setAbsolute()->toString() === \Drupal::request()->headers->get('referer')) {
+        $allow = TRUE;
+      }
+    }
+  }
+
+  if ($allow) {
+    $form['actions']['submit']['#submit'][] = '_social_album_comment_submit';
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function social_album_form_post_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  if (\Drupal::routeMatch()->getRouteName() === 'social_album.post') {
+    if (isset($form['current_user_image'])) {
+      unset($form['current_user_image']);
+    }
+  }
+  elseif (isset($form['field_album'])) {
+    $form['field_album']['#states'] = [
+      'visible' => [
+        ':input[name="field_post_image[0][fids]"]' => [
+          'filled' => TRUE,
+        ],
+      ],
+    ];
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function social_album_form_social_post_entity_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  /** @var \Drupal\social_post\Entity\PostInterface $post */
+  $post = $form_state->getFormObject()->getEntity();
+
+  if (
+    $post->bundle() === 'photo' &&
+    $post->isNew() &&
+    $form_state->get('form_display')->getMode() === 'group'
+  ) {
+    $form['actions']['submit']['#submit'][] = '_social_album_post_submit';
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function social_album_form_node_album_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  $form['actions']['submit']['#submit'][] = '_social_album_create_post';
+}
+
+/**
+ * Implements hook_field_group_form_process_alter().
+ */
+function social_album_field_group_form_process_alter(array &$element, &$group, &$complete_form) {
+  if ($group->group_name === 'group_album_settings') {
+    $element['#states'] = [
+      'visible' => [
+        ':input[name="groups"]' => [
+          '!value' => '_none',
+        ],
+      ],
+    ];
+  }
+}
+
+/**
+ * Implements hook_views_data().
+ */
+function social_album_views_data() {
+  return [
+    \Drupal::entityTypeManager()->getStorage('post')->getEntityType()->getBaseTable() => [
+      'post_operations' => [
+        'field' => [
+          'title' => t('Post operations links'),
+          'help' => t('Provides links to perform post operations.'),
+          'id' => 'social_album_post_operations',
+        ],
+      ],
+    ],
+  ];
+}
+
+/**
+ * Open the page of a post after adding a comment to the post on the album page.
+ *
+ * @param array $form
+ *   An associative array containing the structure of the form.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   The current state of the form.
+ */
+function _social_album_comment_submit(array $form, FormStateInterface $form_state) {
+  /** @var \Drupal\comment\CommentInterface $comment */
+  $comment = $form_state->getFormObject()->getEntity();
+
+  $url = $comment
+    ->getCommentedEntity()
+    ->toUrl()
+    ->setOption('fragment', 'comment-' . $comment->id());
+
+  $form_state->setRedirectUrl($url);
+}
+
+/**
+ * Open post creation form after saving the album node.
+ *
+ * @param array $form
+ *   An associative array containing the structure of the form.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   The current state of the form.
+ */
+function _social_album_create_post(array $form, FormStateInterface $form_state) {
+  if ($form_state->getRedirect()) {
+    $form_state->setRedirect('social_album.post', [
+      'node' => $form_state->getFormObject()->getEntity()->id(),
+    ]);
+  }
+}
+
+/**
+ * Add post to an album and add the album to a group.
+ *
+ * @param array $form
+ *   An associative array containing the structure of the form.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   The current state of the form.
+ */
+function _social_album_post_submit(array $form, FormStateInterface $form_state) {
+  if ($form_state->hasValue('field_album')) {
+    return;
+  }
+
+  $input = $form_state->getUserInput()['field_album'];
+
+  /** @var \Drupal\social_post\Entity\PostInterface $post */
+  $post = $form_state->getFormObject()->getEntity();
+
+  if ($input['value'] === '_add') {
+    if (empty($input['title'])) {
+      return;
+    }
+
+    $node = \Drupal::entityTypeManager()->getStorage('node')->create([
+      'type' => 'album',
+      'title' => $input['title'],
+    ]);
+
+    $node->save();
+
+    \Drupal::service('social_group.set_groups_for_node_service')->addGroupContent($node, $post->field_recipient_group->entity);
+
+    $post->set('field_album', $node->id());
+  }
+  else {
+    $post->set('field_album', $input['value']);
+  }
+
+  $post->save();
+}
+
+/**
+ * Implements hook_social_user_account_header_account_links().
+ *
+ * Adds the "View my albums" link to the user menu.
+ */
+function social_album_social_user_account_header_account_links(array $context) {
+  // We require a user for this link.
+  if (empty($context['user']) || !($context['user'] instanceof AccountInterface)) {
+    return [];
+  }
+
+  return [
+    'my_albums' => [
+      '#type' => 'link',
+      '#attributes' => [
+        'title' => new TranslatableMarkup('View my albums'),
+      ],
+      '#title' => new TranslatableMarkup('My albums'),
+      '#weight' => 550,
+    ] + Url::fromRoute('view.albums.page_albums_overview', [
+      'user' => $context['user']->id(),
+    ])->toRenderArray(),
+  ];
+}

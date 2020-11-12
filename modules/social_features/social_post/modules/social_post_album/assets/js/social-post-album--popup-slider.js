@@ -27,6 +27,65 @@
         postCommentBlock.removeClass('post-comment-block--active');
         postCommentBlock.filter('[data-active-post='+ activeIdPost +']').addClass('post-comment-block--active');
       });
+
+      var albumPopup = $('.social-post-album--popup');
+
+      if (albumPopup.length) {
+
+
+        // Disabled scroll when slider popup is opened.
+        var $docEl = $('html, body');
+        var $wrap = $('.dialog-off-canvas-main-canvas');
+        var scrollTop;
+
+        function lockBody() {
+          scrollTop = $docEl.scrollTop();
+
+          $wrap.css({
+            top: -(scrollTop),
+            position: 'relative' });
+
+          $docEl.css({
+            height: '100%',
+            overflow: 'hidden' });
+        }
+        function unlockBody() {
+          $docEl.css({
+            height: '',
+            overflow: '' });
+
+          $wrap.css({ top: '', position: '' });
+
+          window.scrollTo(0, scrollTop);
+          window.setTimeout(() => {
+            scrollTop = null;
+          }, 0);
+        }
+        function popupClose() {
+          unlockBody();
+        }
+        function popupOpen() {
+          lockBody();
+        }
+
+        popupOpen();
+
+        setTimeout(function () {
+
+          var closeBtn = $('.ui-dialog-titlebar-close');
+
+          closeBtn.on('click', function () {
+            popupClose();
+          });
+        }, 3000);
+
+        $('.social-post-album--popup-slider').on('click', function(event) {
+          if ($(event.target).closest('.social-post-album--popup-slider-wrapper, .post-comment-wrapper').length) return;
+          popupClose();
+          $('.ui-dialog, .ui-widget-overlay').remove();
+          event.stopPropagation();
+        });
+      }
     }
   };
 })(jQuery);

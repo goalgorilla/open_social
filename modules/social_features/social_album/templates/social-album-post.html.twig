@@ -1,0 +1,27 @@
+{{ attach_library('social_album/image') }}
+
+<div class="row social-post-album--popup">
+  <div class="social-post-album--popup-slider">
+    <div class="social-post-album--popup-slider-wrapper">
+      {% for index, item in items %}
+        {% for url in item.urls %}
+          <div class="social-post-album--popup-item" data-med="{{ url }}" data-active-post="post-index-{{ index }}">
+            <img src="{{ url }}">
+          </div>
+        {% endfor %}
+      {% endfor %}
+    </div>
+  </div>
+
+  {% for index, item in items %}
+    <div class="post-comment-wrapper" data-active-post="post-index-{{ index }}">
+      <div class="post-message">
+        <div class="post-header">
+          {% trans %}Images posted in album {{ album|placeholder }}{% endtrans %}
+        </div>
+        {{ item.post }}
+      </div>
+    </div>
+  {% endfor %}
+
+</div>
