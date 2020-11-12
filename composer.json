@@ -17,9 +17,8 @@
     ],
     "scripts": {
         "post-install-cmd": [
-            "@composer drupal-scaffold"
+            "@composer drupal:scaffold"
         ],
-        "drupal-scaffold": "DrupalComposer\\DrupalScaffold\\Plugin::scaffold",
         "enable-asset-packagist": "Drupal\\social\\Composer\\AssetPackagist::execute"
     },
     "autoload": {
@@ -116,10 +115,10 @@
     },
     "require": {
         "cweagans/composer-patches": "^1.6.0",
-        "composer/installers": "^1.6",
+        "composer/installers": "^1.9",
         "oomphinc/composer-installers-extender": "^1.1",
-        "drupal-composer/drupal-scaffold": "^2.5.0",
         "drupal/core": "~8.8.8",
+        "drupal/core-composer-scaffold": "~8.8.8",
         "drupal/address": "1.7",
         "drupal/admin_toolbar": "1.27",
         "drupal/ajax_comments": "^1.0",
