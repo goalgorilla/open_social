@@ -311,3 +311,55 @@ span.form-required {
     }
   }
 }
+
+// The location block styles on the event/group/profile edit pages
+.field--type-address {
+
+  .node-event-form &,
+  .node-event-edit-form &,
+  .profile-form &,
+  .group-form & {
+
+    .panel {
+      .panel-heading {
+        margin-bottom: .5rem;
+        font-size: .875rem;
+      }
+
+      [id*='address-ajax-wrapper'] {
+        max-width: 500px;
+        padding: 1.25rem 1.25rem .25rem;
+        background: #f3f3f3;
+        border-radius: 5px !important;
+
+        label {
+          margin-bottom: .5rem;
+        }
+      }
+    }
+  }
+}
+
+// The time zone block on the event edit pages
+#edit-timezone-indication {
+
+  .node-event-form &,
+  .node-event-edit-form & {
+    .btn {
+      cursor: auto;
+    }
+  }
+}
+
+// Fieldset and fieldset elemenets styles.
+fieldset.card {
+  legend.card__title {
+    width: 100%;
+    top: 1.5rem;
+    margin-bottom: 1.25rem;
+  }
+}
+
+legend.control-label {
+  margin-bottom: 5px;
+}

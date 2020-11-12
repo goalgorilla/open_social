@@ -282,6 +282,19 @@
   left: 0;
   z-index: $zindex-navbar-fixed;
 
+  // Media query from Gin theme.
+  .toolbar-fixed[data-toolbar-menu='open'] & {
+    @media (min-width: 976px) {
+      left: 240px;
+    }
+  }
+
+  .gin--vertical-toolbar.user-logged-in & {
+    @media (min-width: 976px) {
+      left: 80px;
+    }
+  }
+
   .navbar-user .dropdown-menu {
     right: 0;
     left: auto;
@@ -538,6 +551,7 @@
 @include for-tablet-landscape-up {
 
   .search-take-over {
+    display: none;
     height: 50px;
     position: fixed;
     top: 20%;
@@ -545,7 +559,6 @@
     width: 100%;
     z-index: $zindex-modal;
     pointer-events: none;
-    opacity: 0;
     transition: all 0.3s ease-in-out;
 
     .form-group {
@@ -623,7 +636,7 @@
     overflow: hidden;
 
     .search-take-over {
-      opacity: 1;
+      display: initial;
       pointer-events: all;
     }
 

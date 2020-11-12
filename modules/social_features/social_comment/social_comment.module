@@ -277,7 +277,12 @@ function social_comment_comment_view(array &$build, EntityInterface $entity, Ent
       $commented_entity_type = $commented_entity->getEntityTypeId();
 
       // Define which display mode should be used for commented_entity.
-      if (\Drupal::routeMatch()->getRouteName() === 'entity.node.canonical' &&
+      $allowed_routes = [
+        'entity.node.canonical',
+        'layout_builder.overrides.node.view',
+      ];
+      if (
+        in_array(\Drupal::routeMatch()->getRouteName(), $allowed_routes) &&
         \Drupal::routeMatch()->getParameter('node')->bundle() === 'dashboard'
       ) {
         $node_view_display = 'featured';

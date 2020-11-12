@@ -13,7 +13,6 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 use Drupal\node\Entity\Node;
 use Drupal\social_post\Entity\Post;
-use Drupal\Core\Entity\EntityInterface;
 
 /**
  * Implements hook_entity_display_build_alter().
@@ -83,45 +82,6 @@ function social_ajax_comments_form_comment_comment_delete_form_alter(&$form, For
   if (\Drupal::request()->isXmlHttpRequest()) {
     $form['#attributes']['class'][] = 'is_modal';
   }
-}
-
-/**
- * Implements hook_entity_view_mode_alter().
- */
-function social_ajax_comments_entity_view_mode_alter(&$view_mode, EntityInterface $entity, $context) {
-  // We need this to alter the view modes for Nodes as ajax_comments
-  // doesn't handle this correctly. And will add it as activity.
-  /** @var \Drupal\ajax_comments\FieldSettingsHelper $field_settings_helper */
-  $field_settings_helper = \Drupal::service('ajax_comments.field_settings_helper');
-
-  // We lookup through the node fields
-  // and check out that the attached file was provided.
-  $nodeFields = \Drupal::service('entity_field.manager')->getFieldDefinitions($entity->getEntityTypeId(), $entity->bundle());
-  foreach ($nodeFields as $nodeField) {
-    if ($nodeField->getType() === 'comment') {
-      // Load the configuration entity for the entity's view display settings.
-      /** @var \Drupal\Core\Entity\Display\EntityDisplayInterface $view_display */
-      $view_display = \Drupal::service('entity_type.manager')
-        ->getStorage('entity_view_display')
-        ->load($entity->getEntityTypeId() . '.' . $entity->bundle() . '.' . $view_mode);
-
-      if (empty($view_display)) {
-        continue;
-      }
-      $comment_formatter = $field_settings_helper->getFieldFormatter($view_display, $nodeField->getName(), $nodeField, $view_mode);
-
-      if (!empty($comment_formatter) && $field_settings_helper->isEnabled($comment_formatter)) {
-        /** @var \Drupal\ajax_comments\TempStore $tempStore */
-        $tempStore = \Drupal::service('ajax_comments.temp_store');
-        $route_match = \Drupal::routeMatch();
-        if ($entity instanceof Node && $route_match->getRouteName() === 'entity.node.canonical') {
-          $view_mode = 'default';
-        }
-        $tempStore->setViewMode($entity->getEntityType()->getLabel(), $view_mode);
-      }
-    }
-  }
-
 }
 
 /**

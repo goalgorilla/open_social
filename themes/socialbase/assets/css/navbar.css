@@ -346,6 +346,7 @@
     display: none;
   }
   .search-take-over {
+    display: none;
     height: 50px;
     position: fixed;
     top: 20%;
@@ -353,7 +354,6 @@
     width: 100%;
     z-index: 1050;
     pointer-events: none;
-    opacity: 0;
     -webkit-transition: all 0.3s ease-in-out;
     transition: all 0.3s ease-in-out;
   }
@@ -438,7 +438,7 @@
     overflow: hidden;
   }
   .mode-search .search-take-over {
-    opacity: 1;
+    display: initial;
     pointer-events: all;
   }
   .mode-search .navbar__open-search-block {
@@ -460,6 +460,15 @@
             transform: none;
     opacity: 1;
     pointer-events: all;
+  }
+}
+
+@media (min-width: 976px) {
+  .toolbar-fixed[data-toolbar-menu='open'] .navbar-fixed-top {
+    left: 240px;
+  }
+  .gin--vertical-toolbar.user-logged-in .navbar-fixed-top {
+    left: 80px;
   }
 }
 

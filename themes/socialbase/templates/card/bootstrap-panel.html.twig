@@ -50,66 +50,69 @@
     collapsible and errors ? 'panel-danger' : 'panel-' ~ panel_type|clean_class,
   ]
 %}
-<fieldset {{ attributes.addClass(classes) }}>
 
-  {# Heading #}
-  {% if heading %}
-    {% block heading %}
-      <h4 class="card__title card__title--underline">
+{% if body|render %}
+  <fieldset {{ attributes.addClass(classes) }}>
+
+    {# Heading #}
+    {% if heading %}
+      {% block heading %}
+        <legend class="card__title card__title--underline">
           {% if collapsible %}
             <a{{ heading_attributes }} href="{{ target }}">{{ heading }}</a>
           {% else %}
-            <div{{ heading_attributes }}>{{ heading }}</div>
+            <span{{ heading_attributes }}>{{ heading }}</span>
           {% endif %}
-      </h4>
-    {% endblock %}
-  {% endif %}
+        </legend>
+      {% endblock %}
+    {% endif %}
 
-  {# Body #}
-  {% block body %}
-    {%
-      set body_classes = [
-      'card__block',
-      collapsible ? 'panel-collapse',
-      collapsible ? 'collapse',
-      collapsible ? 'fade',
-      errors or collapsible and not collapsed ? 'in',
+    {# Body #}
+    {% block body %}
+      {%
+        set body_classes = [
+        'card__block',
+        collapsible ? 'panel-collapse',
+        collapsible ? 'collapse',
+        collapsible ? 'fade',
+        errors or collapsible and not collapsed ? 'in',
       ]
-    %}
-    {%
-      set description_classes = [
+      %}
+      {%
+        set description_classes = [
         'help-block',
         description and description.position == 'invisible' ? 'sr-only',
       ]
-    %}
+      %}
 
-    {% if errors %}
-      <div class="alert alert-danger" role="alert">
-        <strong>{{ errors }}</strong>
+      {% if errors %}
+        <div class="alert alert-danger" role="alert">
+          <strong>{{ errors }}</strong>
+        </div>
+      {% endif %}
+
+      <div{{ body_attributes.addClass(body_classes) }}>
+        {% if description and description.position == 'before' %}
+          <p{{ description.attributes.addClass(description_classes) }}>{{ description.content }}</p>
+        {% endif %}
+        {{ body }}
+        {% if description and description.position == 'after' or description.position == 'invisible' %}
+          <p{{ description.attributes.addClass(description_classes) }}>{{ description.content }}</p>
+        {% endif %}
       </div>
-    {% endif %}
+    {% endblock %}
 
-    <div{{ body_attributes.addClass(body_classes) }}>
-      {% if description and description.position == 'before' %}
-        <p{{ description.attributes.addClass(description_classes) }}>{{ description.content }}</p>
-      {% endif %}
-      {{ body }}
-      {% if description and description.position == 'after' or description.position == 'invisible' %}
-        <p{{ description.attributes.addClass(description_classes) }}>{{ description.content }}</p>
-      {% endif %}
-    </div>
-  {% endblock %}
-
-  {# Footer #}
-  {% if footer %}
-    {% block footer %}
-      {%
-        set footer_classes = [
+    {# Footer #}
+    {% if footer %}
+      {% block footer %}
+        {%
+          set footer_classes = [
           'card__actionbar',
         ]
-      %}
-      <div{{ footer_attributes.addClass(footer_classes) }}>{{ footer }}</div>
-    {% endblock %}
-  {% endif %}
+        %}
+        <div{{ footer_attributes.addClass(footer_classes) }}>{{ footer }}</div>
+      {% endblock %}
+    {% endif %}
 
-</fieldset>
+  </fieldset>
+{% endif %}

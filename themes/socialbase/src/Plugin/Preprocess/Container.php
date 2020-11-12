@@ -56,6 +56,13 @@ class Container extends PreprocessBase {
       $variables['exposed_form'] = TRUE;
     }
 
+    // When we are dealing with the administration toolbar, we should not
+    // set bare to TRUE because it will remove necessary classes from the admin
+    // toolbar.
+    if (isset($variables['element']['administration_menu'])) {
+      $variables['bare'] = FALSE;
+    }
+
   }
 
 }

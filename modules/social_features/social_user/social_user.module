@@ -18,6 +18,7 @@ use Drupal\social_user\Plugin\Action\SocialAddRoleUser;
 use Drupal\social_user\Plugin\Action\SocialBlockUser;
 use Drupal\social_user\Plugin\Action\SocialRemoveRoleUser;
 use Drupal\user\Plugin\Action\BlockUser;
+use Drupal\views\ViewExecutable;
 
 /**
  * Implements hook_entity_type_alter().
@@ -314,6 +315,8 @@ function social_user_form_user_form_alter(&$form, FormStateInterface $form_state
       $form_state->set('first_time_login', TRUE);
     }
   }
+
+  $form['timezone']['#title'] = '';
 }
 
 /**
@@ -794,5 +797,26 @@ function social_user_user_format_name_alter(&$name, AccountInterface $account) {
       $name = $suggestion['name'];
       $lowest_weight = $suggestion['weight'];
     }
+  }
+}
+
+/**
+ * Implements hook_views_pre_render().
+ */
+function social_user_views_pre_render(ViewExecutable $view) {
+  if (isset($view) && ($view->storage->id() == 'user_admin_people')) {
+    $view->element['#attached']['library'][] = 'social_user/admin.people';
+  }
+}
+
+/**
+ * Implements hook_module_implements_alter().
+ */
+function social_user_module_implements_alter(&$implementations, $hook) {
+  if (isset($implementations['social_user']) &&
+    ($hook === 'form_user_form_alter' || $hook === 'form_alter')) {
+    $social_user = $implementations['social_user'];
+    unset($implementations['social_user']);
+    $implementations['social_user'] = $social_user;
   }
 }
