@@ -1,3 +1,22 @@
+social_album.add:
+  path: '/group/{group}/albums/add'
+  defaults:
+    _controller: '\Drupal\social_album\Controller\SocialAlbumController::add'
+    _title_callback: '\Drupal\node\Controller\NodeController::addPageTitle'
+    node_type: album
+  requirements:
+    _custom_access: '\Drupal\social_album\Controller\SocialAlbumController::checkGroupAccess'
+    _node_add_access: 'node:{node_type}'
+    group: \d+
+  options:
+    _node_operation_route: TRUE
+    parameters:
+      group:
+        type: 'entity:group'
+      node_type:
+        type: 'entity:node_type'
+        with_config_overrides: TRUE
+
 social_album.post:
   path: '/node/{node}/post'
   defaults:
@@ -5,7 +24,7 @@ social_album.post:
     _title_callback: '\Drupal\social_album\Controller\SocialAlbumController::title'
     type: photo
   requirements:
-    _custom_access: '\Drupal\social_album\Controller\SocialAlbumController::checkAlbumAccess'
+    _custom_access: '\Drupal\social_album\Controller\SocialAlbumController::checkAddImageAccess'
     _permission: 'add post entities'
     node: \d+
   options:
@@ -19,7 +38,7 @@ social_album.image.view:
     _controller: '\Drupal\social_album\Controller\SocialAlbumController::viewImage'
     _title: 'View image'
   requirements:
-    _custom_access: '\Drupal\social_album\Controller\SocialAlbumController::checkImageAccess'
+    _custom_access: '\Drupal\social_album\Controller\SocialAlbumController::checkViewImageAccess'
     node: \d+
     post: \d+
     fid: \d+
@@ -36,7 +55,7 @@ social_album.image.delete:
     _controller: '\Drupal\social_album\Controller\SocialAlbumController::deleteImage'
     _title: 'Delete image'
   requirements:
-    _custom_access: '\Drupal\social_album\Controller\SocialAlbumController::checkImageAccess'
+    _custom_access: '\Drupal\social_album\Controller\SocialAlbumController::checkDeleteImageAccess'
     node: \d+
     post: \d+
     fid: \d+

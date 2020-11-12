@@ -1,0 +1,25 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - social_core
+    - system
+  theme:
+    - socialblue
+id: socialblue_group_album_creation_page_title
+theme: socialblue
+region: title
+weight: 0
+provider: null
+plugin: social_page_title_block
+settings:
+  id: social_page_title_block
+  label: 'Group album creation page title'
+  provider: social_core
+  label_display: '0'
+visibility:
+  request_path:
+    id: request_path
+    pages: '/group/*/albums/add'
+    negate: false
+    context_mapping: {  }

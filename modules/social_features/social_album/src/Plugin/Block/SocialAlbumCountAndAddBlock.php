@@ -24,6 +24,16 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class SocialAlbumCountAndAddBlock extends BlockBase implements ContainerFactoryPluginInterface {
 
   /**
+   * The templates for labels with the number of entities.
+   */
+  const ITEM = [
+    'count' => [
+      'singular' => '@count album',
+      'plural' => '@count albums',
+    ],
+  ];
+
+  /**
    * The currently active route match object.
    *
    * @var \Drupal\Core\Routing\RouteMatchInterface
@@ -167,10 +177,6 @@ class SocialAlbumCountAndAddBlock extends BlockBase implements ContainerFactoryP
       'view.albums.page_albums_overview' => [
         'type' => 'user',
         'display' => 'page_albums_overview',
-        'count' => [
-          'singular' => '@count album',
-          'plural' => '@count albums',
-        ],
         'link' => [
           'text' => $this->t('Create new album'),
           'route' => [
@@ -178,7 +184,20 @@ class SocialAlbumCountAndAddBlock extends BlockBase implements ContainerFactoryP
             'parameters' => ['node_type' => 'album'],
           ],
         ],
-      ],
+      ] + self::ITEM,
+      'view.albums.page_group_albums_overview' => [
+        'type' => 'group',
+        'display' => 'page_group_albums_overview',
+        'link' => [
+          'text' => $this->t('Create new album'),
+          'route' => [
+            'name' => 'social_album.add',
+            'parameters' => [
+              'group' => $this->routeMatch->getRawParameter('group'),
+            ],
+          ],
+        ],
+      ] + self::ITEM,
     ];
 
     return $items[$this->routeMatch->getRouteName()] ?? NULL;
