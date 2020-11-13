@@ -46,7 +46,11 @@ function social_profile_field_widget_form_alter(&$element, FormStateInterface $f
   }
   // This replaces all user entity references with our EntityReferenceSelection.
   if ($field_definition->getType() === 'entity_reference') {
-    if (isset($element['target_id']['#target_type']) && $element['target_id']['#target_type'] === 'user') {
+    if (
+      isset($element['target_id']['#target_type']) &&
+      $element['target_id']['#target_type'] === 'user' &&
+      $element['target_id']['#type'] !== 'social_private_message_entity_autocomplete'
+    ) {
       $element['target_id']['#selection_handler'] = 'social';
     }
   }

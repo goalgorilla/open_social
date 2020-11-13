@@ -17,7 +17,10 @@ class PrivateMessageMailer extends PrivateMessageMailerBase {
    */
   public function send(PrivateMessageInterface $message, PrivateMessageThreadInterface $thread, array $members = []) {
     foreach ($members as $id => $member) {
-      if (!($member instanceof UserInterface)) {
+      if (
+        !($member instanceof UserInterface) ||
+        !$member->hasPermission('use private messaging system')
+      ) {
         unset($members[$id]);
       }
     }
