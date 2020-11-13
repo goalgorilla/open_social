@@ -17,6 +17,9 @@ function social_follow_landing_page_theme() {
     'paragraph__tag__default' => [
       'base hook' => 'paragraph',
     ],
+    'block__inline_block__follow_tags' => [
+      'base hook' => 'block',
+    ],
   ];
 
 }
@@ -78,8 +81,15 @@ function social_follow_landing_page_preprocess_paragraph(&$variables) {
  * Implements hook_field_widget_WIDGET_TYPE_form_alter().
  */
 function social_follow_landing_page_field_widget_entity_reference_paragraphs_form_alter(&$element, FormStateInterface $form_state, $context) {
+  $subform = FALSE;
   if (isset($element['subform']['field_section_paragraph']['widget'][0]['subform']['field_tag'])) {
     $subform = &$element['subform']['field_section_paragraph']['widget'][0]['subform'];
+  }
+  elseif (isset($element['subform']['field_tag'])) {
+    $subform = &$element['subform'];
+  }
+
+  if ($subform) {
     /** @var \Drupal\Core\Entity\EntityBase $form_entity */
     $form_entity = $form_state->getFormObject()->getEntity();
 
@@ -169,11 +179,17 @@ function _social_follow_landing_page_entity_validate($element, FormStateInterfac
   $parents = $element['#parents'];
   if (!empty($parents[0]) && !empty($form_state->getValue($parents[0]))) {
     $parent_value = $form_state->getValue($parents[0]);
-    if (
-      isset($parents[1]) &&
-      isset($parent_value[$parents[1]]['subform']['field_section_paragraph'][0]['subform']['tagging'])
-    ) {
-      $tag_value = $parent_value[$parents[1]]['subform']['field_section_paragraph'][0]['subform']['tagging'];
+
+    $subform = FALSE;
+    if (isset($parents[1]) && isset($parent_value[$parents[1]]['subform']['field_section_paragraph'][0]['subform']['tagging'])) {
+      $subform = &$parent_value[$parents[1]]['subform']['field_section_paragraph'][0]['subform'];
+    }
+    elseif (isset($parents[1]) && isset($parent_value[$parents[1]]['subform']['tagging'])) {
+      $subform = &$parent_value[$parents[1]]['subform'];
+    }
+
+    if ($subform) {
+      $tag_value = $subform['tagging'];
 
       // Get the tagging service.
       $tag_service = Drupal::getContainer()->get('social_tagging.tag_service');
@@ -196,7 +212,7 @@ function _social_follow_landing_page_entity_validate($element, FormStateInterfac
         }
       }
 
-      $parent_value[$parents[1]]['subform']['field_section_paragraph'][0]['subform']['field_tag'] = $tagging_values;
+      $subform['field_tag'] = $tagging_values;
       // Set the values in the field_tag field.
       $form_state->setValue($parents[0], $parent_value);
     }

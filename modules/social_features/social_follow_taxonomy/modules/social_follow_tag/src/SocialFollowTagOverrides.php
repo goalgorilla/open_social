@@ -10,8 +10,6 @@ use Drupal\Core\Config\StorageInterface;
 /**
  * Class SocialFollowTagOverrides.
  *
- * Override section paragraph settings.
- *
  * @package Drupal\social_follow_tag
  */
 class SocialFollowTagOverrides implements ConfigFactoryOverrideInterface {
