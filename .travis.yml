@@ -63,8 +63,8 @@ before_install:
   - if [ "$TEST_SUITE" != "install_update" ]; then composer require goalgorilla/open_social:dev-${BRANCH}#${COMMIT} --prefer-dist; fi
 
   #Composer test
-  - composer global require squizlabs/php_codesniffer --prefer-source
-  - composer global require drupal/coder --prefer-source
+  - composer global require drupal/coder:^8.3.1
+  - composer global require dealerdirect/phpcodesniffer-composer-installer
 
   # Install docker and our docker containers.
   - sh scripts/social/ci/install-docker.sh
