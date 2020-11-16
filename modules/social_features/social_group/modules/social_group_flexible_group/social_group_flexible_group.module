@@ -99,7 +99,32 @@ function social_group_flexible_group_form_alter(&$form, FormStateInterface $form
       ];
     }
   }
+  // For adding or editing a flexible group, we alter the visibility fields.
+  if ($form['#id'] === 'group-flexible-group-add-form' ||
+    $form['#id'] === 'group-flexible-group-edit-form') {
+    // Change the group visibility on flexible groups.
+    if (!empty($form['field_flexible_group_group_visibility'])) {
+      // @TODO implement Ajax logic in here when other fields are available.
+    }
+  }
 }
+
+/**
+ * Implements template_preprocess_form_element().
+ */
+function social_group_flexible_group_preprocess_form_element(&$variables) {
+  // Make sure our flexible group visibility field renders icons in the radio
+  // labels. We add a new property to the form element label render array.
+  // This is used in FormElementLabel.php to add data for templating.
+  if ($variables['element']['#type'] === 'radio' &&
+    !empty($variables['name']) &&
+    $variables['name'] === 'field_flexible_group_visibility') {
+    $variables['label']['#render_icon'] = TRUE;
+    $variables['attributes']['class'][] = 'inline-item';
+  }
+}
+
+
 
 /**
  * Custom form submit handler for editing a flexible group.
