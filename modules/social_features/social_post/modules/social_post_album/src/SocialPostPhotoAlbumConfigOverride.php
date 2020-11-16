@@ -5,7 +5,6 @@ namespace Drupal\social_post_album;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Config\ConfigFactoryOverrideInterface;
 use Drupal\Core\Config\StorageInterface;
-use Drupal\Core\Routing\RouteMatchInterface;
 
 /**
  * Class SocialPostPhotoAlbumConfigOverride.
@@ -15,22 +14,12 @@ use Drupal\Core\Routing\RouteMatchInterface;
 class SocialPostPhotoAlbumConfigOverride implements ConfigFactoryOverrideInterface {
 
   /**
-   * The current route match.
-   *
-   * @var \Drupal\Core\Routing\RouteMatchInterface
+   * Field widget or formatter type per configuration.
    */
-  protected $routeMatch;
-
-
-  /**
-   * Constructs the configuration override.
-   *
-   * @param \Drupal\Core\Routing\RouteMatchInterface $route_match
-   *   The current route match.
-   */
-  public function __construct(RouteMatchInterface $route_match) {
-    $this->routeMatch = $route_match;
-  }
+  const TYPES = [
+    'core.entity_form_display.post.photo.default' => 'social_post_album_image',
+    'core.entity_view_display.post.photo.activity' => 'album_image',
+  ];
 
   /**
    * {@inheritdoc}
@@ -39,17 +28,10 @@ class SocialPostPhotoAlbumConfigOverride implements ConfigFactoryOverrideInterfa
     // @codingStandardsIgnoreEnd
     $overrides = [];
 
-    $config_name = 'core.entity_form_display.post.photo.default';
-    $route_name = $this->routeMatch->getRouteName();
-
-    if (in_array($config_name, $names) && $route_name !== 'entity.post.edit_form') {
-      $overrides[$config_name]['content']['field_post_image']['settings']['preview_image_style'] = 'social_x_large';
-    }
-
-    $config_name = 'core.entity_view_display.post.photo.activity';
-
-    if (in_array($config_name, $names)) {
-      $overrides[$config_name]['content']['field_post_image']['type'] = 'album_image';
+    foreach (self::TYPES as $config_name => $type) {
+      if (in_array($config_name, $names)) {
+        $overrides[$config_name]['content']['field_post_image']['type'] = $type;
+      }
     }
 
     return $overrides;
