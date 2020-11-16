@@ -25,7 +25,6 @@ class SocialPostPhotoAlbumConfigOverride implements ConfigFactoryOverrideInterfa
    * {@inheritdoc}
    */
   public function loadOverrides($names) {
-    // @codingStandardsIgnoreEnd
     $overrides = [];
 
     foreach (self::TYPES as $config_name => $type) {
