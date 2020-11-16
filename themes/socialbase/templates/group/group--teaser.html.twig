@@ -52,7 +52,7 @@
 
 <div{{ attributes.addClass(classes) }}>
 
-  <div class='teaser__image'>
+  <div class='teaser__image' aria-hidden="true">
     {% block card_image %}
       {{ content.field_group_image }}
     {% endblock %}
@@ -90,22 +90,27 @@
 
       {% block card_body %}
         <div class="teaser__content-line">
-          <svg class="teaser__content-type-icon">
+          <svg class="teaser__content-type-icon" aria-hidden="true" title="{% trans %}Group type{% endtrans %}">
             <use xlink:href="#icon-label"></use>
           </svg>
           <span class="teaser__content-text">
+            <span class="sr-only">{% trans %}The group type is{% endtrans %} </span>
             {{ group_type }}
             {{ group_settings_help }}
           </span>
         </div>
         {% if content.field_group_location|render or content.field_group_address|render %}
           <div class="teaser__content-line">
-              <svg class="teaser__content-type-icon">
+              <svg class="teaser__content-type-icon" aria-hidden="true" title="{% trans %}Event location{% endtrans %}">
                   <use xlink:href="#icon-location"></use>
               </svg>
             <span class="teaser__content-text">
-              {{ content.field_group_location }}
-              {% if content.field_group_location|render is not empty and content.field_group_address|render is not empty %} &bullet;{% endif %}
+          <span class="sr-only">{% trans %}located at: {% endtrans %} </span>
+          {{ content.field_group_location }}
+              {% if content.field_group_location|render is not empty and content.field_group_address|render is not empty %}
+                <span class="sr-only">, </span>
+                <span aria-hidden="true"> &bullet; </span>
+              {% endif %}
               {{ content.field_group_address }}
             </span>
           </div>
@@ -117,13 +122,14 @@
       {% block card_actionbar %}
 
         {% if group_members is not empty %}
-          <div class="badge teaser__badge" title="{% trans %}Total amount of group members{% endtrans %}">
+          <div class="badge teaser__badge">
             <span class="badge__container">
-              <svg class="badge__icon">
+              <svg class="badge__icon" aria-hidden="true" title="{% trans %}Number of group members{% endtrans %}">
                 <use xlink:href="#icon-group"></use>
               </svg>
               <span class="badge__label">
                 {{ group_members }}
+                <span class="sr-only"> {% trans %}group members{% endtrans %} </span>
               </span>
             </span>
           </div>
@@ -137,6 +143,7 @@
 
         <a href="{{ url }}" class="card__link" title="{{ label }}">
           {% trans %}Read more{% endtrans %}
+          <span class="visually-hidden">{% trans %}about {{ label }}{% endtrans %} </span>
         </a>
 
       {% endblock %}
