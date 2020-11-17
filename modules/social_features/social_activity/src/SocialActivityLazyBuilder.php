@@ -52,13 +52,13 @@ class SocialActivityLazyBuilder {
    *   Items to display.
    * @param string|null $vocabulary
    *   Vocabulary ID.
-   * @param array $tags
+   * @param array|int $tags
    *   List of tags IDs.
    *
    * @return array|null
    *   Render array.
    */
-  public function viewsLazyBuild($view_id, $display_id, $node_type, $item_per_page, $vocabulary = NULL, array ...$tags) {
+  public function viewsLazyBuild($view_id, $display_id, $node_type, $item_per_page, $vocabulary = NULL, ...$tags) {
     // Get view.
     $view_entity = $this->entityTypeManager->getStorage('view')->load($view_id);
     $view = $this->viewExecutable->get($view_entity);
