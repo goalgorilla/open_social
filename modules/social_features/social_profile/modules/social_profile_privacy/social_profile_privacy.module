@@ -7,6 +7,7 @@
 
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Config\ImmutableConfig;
+use Drupal\Core\Field\FieldConfigInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Session\AccountInterface;
@@ -20,6 +21,32 @@ use Drupal\user\Entity\User;
  */
 function social_profile_privacy_form_social_profile_admin_settings_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   $config = \Drupal::config('social_profile_privacy.settings');
+
+  /** @var \Drupal\Core\Entity\Display\EntityFormDisplayInterface $display */
+  $display = \Drupal::entityTypeManager()->getStorage('entity_form_display')
+    ->load('profile.profile.default');
+
+  /** @var \Drupal\Core\Config\Entity\ConfigEntityStorageInterface $storage */
+  $storage = \Drupal::entityTypeManager()->getStorage('field_config');
+
+  foreach (array_keys($display->getComponents()) as $field) {
+    $entity = $storage->load('profile.profile.' . $field);
+
+    if (!$entity instanceof FieldConfigInterface) {
+      continue;
+    }
+
+    $form[$field] = [
+      '#type' => 'radios',
+      '#title' => $entity->label(),
+      '#options' => [
+        t('Always show for everyone'),
+        t('Show, but can be hidden by each user'),
+        t('Hide for everyone'),
+      ],
+      '#default_value' => $config->get($field) ?: 0,
+    ];
+  }
 
   $form['privacy'] += [
     '#prefix' => '<div id="privacy-settings">',
