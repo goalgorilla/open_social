@@ -50,11 +50,15 @@ class SocialActivityLazyBuilder {
    *   Node bundle.
    * @param int $item_per_page
    *   Items to display.
+   * @param string|null $vocabulary
+   *   Vocabulary ID.
+   * @param array $tags
+   *   List of tags IDs.
    *
    * @return array|null
    *   Render array.
    */
-  public function viewsLazyBuild($view_id, $display_id, $node_type, $item_per_page) {
+  public function viewsLazyBuild($view_id, $display_id, $node_type, $item_per_page, $vocabulary = NULL, array ...$tags) {
     // Get view.
     $view_entity = $this->entityTypeManager->getStorage('view')->load($view_id);
     $view = $this->viewExecutable->get($view_entity);
@@ -62,6 +66,12 @@ class SocialActivityLazyBuilder {
     $view->setItemsPerPage($item_per_page);
     $view->preExecute();
     $view->execute($display_id);
+
+    // Add filtration if tags and vocabulary exists.
+    if ($vocabulary && $vocabulary !== '_none' && !empty($tags)) {
+      $view->filter_tags = $tags;
+      $view->filter_vocabulary = $vocabulary;
+    }
 
     // Change entity display and add attachments if views block in dashboard.
     if ($view->id() == "activity_stream" && $node_type === 'dashboard') {

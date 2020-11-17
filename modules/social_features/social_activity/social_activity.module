@@ -285,9 +285,17 @@ function social_activity_preprocess_block(&$variables) {
             $variables['content']['#display_id'],
             $node->bundle(),
             $view->getItemsPerPage(),
+            $variables['configuration']['vocabulary'],
           ],
         ],
       ];
+
+      if (is_array($variables['configuration']['tags'])) {
+        $variables['content']['#lazy_builder'][1] = array_merge(
+          $variables['content']['#lazy_builder'][1],
+          array_keys($variables['configuration']['tags'])
+        );
+      }
     }
   }
 }
