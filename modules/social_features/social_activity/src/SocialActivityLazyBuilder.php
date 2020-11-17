@@ -64,14 +64,15 @@ class SocialActivityLazyBuilder {
     $view = $this->viewExecutable->get($view_entity);
     $view->setDisplay($display_id);
     $view->setItemsPerPage($item_per_page);
-    $view->preExecute();
-    $view->execute($display_id);
 
     // Add filtration if tags and vocabulary exists.
     if ($vocabulary && $vocabulary !== '_none' && !empty($tags)) {
       $view->filter_tags = $tags;
       $view->filter_vocabulary = $vocabulary;
     }
+
+    $view->preExecute();
+    $view->execute($display_id);
 
     // Change entity display and add attachments if views block in dashboard.
     if ($view->id() == "activity_stream" && $node_type === 'dashboard') {
