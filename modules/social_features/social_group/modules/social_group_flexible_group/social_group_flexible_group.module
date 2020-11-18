@@ -116,8 +116,11 @@ function social_group_flexible_group_form_alter(&$form, FormStateInterface $form
  * Returns a new popover tooltip based on a descriptive text and field name.
  *
  * @param string $field_name
+ *   The field name to create a unique id for.
  * @param string $data_title
- * @param array $description
+ *   The title of the pop-up.
+ * @param string $description
+ *   A string containing the description, this needs to be rendered markup.
  *
  * @return array
  *   The render array containing the tooltip.
@@ -136,7 +139,6 @@ function social_group_flexible_group_render_tooltip($field_name, $data_title, $d
       'data-html' => 'true',
       'data-placement' => 'bottom',
       'data-title' => $data_title ?: '',
-      'data-content' => $description,
     ],
   ];
   $build['requirements'] = [
@@ -148,17 +150,24 @@ function social_group_flexible_group_render_tooltip($field_name, $data_title, $d
       'aria-hidden' => 'true',
     ],
   ];
-//  $build['requirements']['descriptions'] = [
-//    '#markup' => Html::escape($description),
-//    '#allowed_tags' => ['strong', 'em', 'a', 'br', 'svg', 'use'],
-//  ];
-//  $build['requirements']['descriptions'] = [
-//    '#type' => 'inline_template',
-//    '#template' => '{{ somecontent }}',
-//    '#context' => [
-//      'somecontent' => $description,
-//    ]
-//  ];
+  // As documented in Render API, Note that the value is passed through
+  // \Drupal\Component\Utility\Xss::filterAdmin(), which strips known XSS
+  // vectors while allowing a permissive list of HTML tags.
+  $build['requirements']['descriptions'] = [
+    '#markup' => $description,
+    '#allowed_tags' => [
+      'strong',
+      'span',
+      'svg',
+      'p',
+      'div',
+      'em',
+      'img',
+      'a',
+      'span',
+      'use',
+    ],
+  ];
 
   $variables['popover'] = $build;
 
@@ -189,15 +198,13 @@ function social_group_flexible_group_preprocess_fieldset(&$variables) {
   // we need to do it in this preprocess.
   $element = $variables['element'];
   if ($element['#field_name'] === 'field_flexible_group_visibility') {
-    $description = [];
+    $description = '';
     foreach ($element['#options'] as $key => $label) {
-      $description[] = social_group_flexible_group_group_visibility_description($key);
+      $description .= social_group_flexible_group_group_visibility_description($key);
     }
 
-    $description = '<b>Public 2</b> - <div style="width: 50px; height: 50px; background-color:yellow;"><img src="/profiles/contrib/social/themes/socialblue/logo.svg" alt="Open Social"></div> - <em>test</em>';
-
-    // Render a specifict tooltip based on a fieldname and description.
-    // This is done in the fieldset, next to the <legend>
+    // Render a specific tooltip based on a field name and description.
+    // This is done in the fieldset, next to the <legend>.
     $variables['popover'] = social_group_flexible_group_render_tooltip('field_flexible_group_visibility', t('Group Visibility'), $description);
   }
 }
@@ -205,7 +212,7 @@ function social_group_flexible_group_preprocess_fieldset(&$variables) {
 /**
  * Returns a description array for the field_flexible_group_visibility options.
  *
- * @return string $description
+ * @return string
  *   The render array containing the description.
  */
 function social_group_flexible_group_group_visibility_description($key) {
@@ -216,27 +223,33 @@ function social_group_flexible_group_group_visibility_description($key) {
     return $description;
   }
 
-  // Lets start with the icon.
-  $description = '<svg class="icon-small"><use xlink:href="#icon-' . $key . '"></use></svg>';
-
   // Add explanatory descriptive text after the icon.
   switch ($key) {
     case 'public':
+      $description = '<p><strong><svg class="icon-small"><use xlink:href="#icon-public"></use></svg></strong>';
       $description .= '<strong>' . t('Public')->render() . '</strong>';
-      $description .= t('All visitors of the platform can see this group')->render();
+      $description .= ' - ' . t('All visitors of the platform can see this group')->render();
+      $description .= '</p>';
       break;
 
     case 'community':
+      $description = '<p><strong><svg class="icon-small"><use xlink:href="#icon-community"></use></svg></strong>';
       $description .= '<strong>' . t('Community')->render() . '</strong>';
-      $description .= t('Only members who are logged in can see this group')->render();
+      $description .= ' - ' . t('Only members who are logged in can see this group')->render();
+      $description .= '</p>';
       break;
 
     case 'members':
+      $description = '<p><strong><svg class="icon-small"><use xlink:href="#icon-lock"></use></svg></strong>';
       $description .= '<strong>' . t('Group members only (Secret)')->render() . '</strong>';
-      $description .= t('Only group members can see this group')->render();
+      $description .= ' - ' . t('Only group members can see this group')->render();
+      $description .= '</p>';
       break;
-
   }
+
+  // Allow modules to provide their own markup for a given key in the
+  // group_visibility #options array.
+  \Drupal::moduleHandler()->alter('social_group_flexible_group_group_visibility_description', $key, $description);
 
   return $description;
 }
