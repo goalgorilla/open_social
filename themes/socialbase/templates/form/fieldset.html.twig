@@ -45,6 +45,10 @@
     {%- if required -%}
       <span class="form-required">*</span>
     {%- endif -%}
+
+    {% if popover is not empty %}
+      {{ popover }}
+    {% endif %}
   </legend>
 
   {% if description.content %}

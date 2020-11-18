@@ -121,7 +121,7 @@ function social_group_flexible_group_update_8901(&$sandbox) {
     $data = $sandbox['configs'][$name];
 
     $parts = explode('.', $name);
-    
+
     switch ($parts[0] . '.' . $parts[1]) {
       case 'field.storage':
         $entity_type = \Drupal::service('config.manager')
@@ -152,7 +152,7 @@ function social_group_flexible_group_update_8901(&$sandbox) {
 }
 
 /**
- * Add the new group visibility field
+ * Add the new group visibility field.
  */
 function social_group_flexible_group_update_8902() {
   /** @var \Drupal\update_helper\Updater $updateHelper */

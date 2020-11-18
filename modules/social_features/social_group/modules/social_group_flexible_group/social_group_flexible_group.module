@@ -6,10 +6,13 @@
  */
 
 use Drupal\block\Entity\Block;
+use Drupal\bootstrap\Bootstrap;
+use Drupal\Component\Utility\Html;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Url;
 use Drupal\group\Entity\Group;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\social_group_flexible_group\FlexibleGroupContentVisibilityUpdate;
@@ -103,10 +106,63 @@ function social_group_flexible_group_form_alter(&$form, FormStateInterface $form
   if ($form['#id'] === 'group-flexible-group-add-form' ||
     $form['#id'] === 'group-flexible-group-edit-form') {
     // Change the group visibility on flexible groups.
-    if (!empty($form['field_flexible_group_group_visibility'])) {
+    if (!empty($form['field_flexible_group_visibility'])) {
       // @TODO implement Ajax logic in here when other fields are available.
     }
   }
+}
+
+/**
+ * Returns a new popover tooltip based on a descriptive text and field name.
+ *
+ * @param string $field_name
+ * @param string $data_title
+ * @param array $description
+ *
+ * @return array
+ *   The render array containing the tooltip.
+ */
+function social_group_flexible_group_render_tooltip($field_name, $data_title, $description) {
+  $build = [];
+  $id = Html::getUniqueId('tooltip-' . $field_name);
+  $build['toggle'] = [
+    '#type' => 'link',
+    '#url' => Url::fromUserInput("#$id"),
+    '#icon' => Bootstrap::glyphicon('question-sign'),
+    '#attributes' => [
+      'class' => ['icon-before'],
+      'data-toggle' => 'popover',
+      'data-container' => 'body',
+      'data-html' => 'true',
+      'data-placement' => 'bottom',
+      'data-title' => $data_title ?: '',
+      'data-content' => $description,
+    ],
+  ];
+  $build['requirements'] = [
+    '#type' => 'container',
+    '#theme_wrappers' => ['container__file_upload_help'],
+    '#attributes' => [
+      'id' => $id,
+      'class' => ['hidden', 'help-block'],
+      'aria-hidden' => 'true',
+    ],
+  ];
+//  $build['requirements']['descriptions'] = [
+//    '#markup' => Html::escape($description),
+//    '#allowed_tags' => ['strong', 'em', 'a', 'br', 'svg', 'use'],
+//  ];
+//  $build['requirements']['descriptions'] = [
+//    '#type' => 'inline_template',
+//    '#template' => '{{ somecontent }}',
+//    '#context' => [
+//      'somecontent' => $description,
+//    ]
+//  ];
+
+  $variables['popover'] = $build;
+
+  return $build;
 }
 
 /**
@@ -122,6 +178,67 @@ function social_group_flexible_group_preprocess_form_element(&$variables) {
     $variables['label']['#render_icon'] = TRUE;
     $variables['attributes']['class'][] = 'inline-item';
   }
+}
+
+/**
+ * Implements template_preprocess_form_element().
+ */
+function social_group_flexible_group_preprocess_fieldset(&$variables) {
+  // Make sure our flexible group visibility field renders a tooltip, since
+  // this field is rendered as fieldset with legend and radios as children
+  // we need to do it in this preprocess.
+  $element = $variables['element'];
+  if ($element['#field_name'] === 'field_flexible_group_visibility') {
+    $description = [];
+    foreach ($element['#options'] as $key => $label) {
+      $description[] = social_group_flexible_group_group_visibility_description($key);
+    }
+
+    $description = '<b>Public 2</b> - <div style="width: 50px; height: 50px; background-color:yellow;"><img src="/profiles/contrib/social/themes/socialblue/logo.svg" alt="Open Social"></div> - <em>test</em>';
+
+    // Render a specifict tooltip based on a fieldname and description.
+    // This is done in the fieldset, next to the <legend>
+    $variables['popover'] = social_group_flexible_group_render_tooltip('field_flexible_group_visibility', t('Group Visibility'), $description);
+  }
+}
+
+/**
+ * Returns a description array for the field_flexible_group_visibility options.
+ *
+ * @return string $description
+ *   The render array containing the description.
+ */
+function social_group_flexible_group_group_visibility_description($key) {
+  $description = '';
+
+  // We need it to be specified otherwise we can't build the markup.
+  if (empty($key)) {
+    return $description;
+  }
+
+  // Lets start with the icon.
+  $description = '<svg class="icon-small"><use xlink:href="#icon-' . $key . '"></use></svg>';
+
+  // Add explanatory descriptive text after the icon.
+  switch ($key) {
+    case 'public':
+      $description .= '<strong>' . t('Public')->render() . '</strong>';
+      $description .= t('All visitors of the platform can see this group')->render();
+      break;
+
+    case 'community':
+      $description .= '<strong>' . t('Community')->render() . '</strong>';
+      $description .= t('Only members who are logged in can see this group')->render();
+      break;
+
+    case 'members':
+      $description .= '<strong>' . t('Group members only (Secret)')->render() . '</strong>';
+      $description .= t('Only group members can see this group')->render();
+      break;
+
+  }
+
+  return $description;
 }
 
 /**
