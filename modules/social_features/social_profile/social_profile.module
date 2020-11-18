@@ -596,11 +596,19 @@ function _social_profile_form_user_form_submit(array $form, FormStateInterface $
       $profile->save();
     }
 
-    $uid = $profile->get('uid')->target_id;
-    // Save language info in the user data.
-    // @TODO: Move privacy settings to a separate entity.
-    $user_data = \Drupal::service('user.data');
-    $user_data->set('social_profile_privacy', $uid, 'lang_info', $profile_privacy['social_profile_show_language']);
+    $uid = $profile->getOwnerId();
+
+    if (isset($profile_privacy['social_profile_show_language'])) {
+      // Save language info in the user data.
+      // @TODO: Move privacy settings to a separate entity.
+      \Drupal::service('user.data')->set(
+        'social_profile_privacy',
+        $uid,
+        'lang_info',
+        $profile_privacy['social_profile_show_language']
+      );
+    }
+
     // Invalidate profile cache tags.
     Cache::invalidateTags(['profile:' . $uid]);
   }
