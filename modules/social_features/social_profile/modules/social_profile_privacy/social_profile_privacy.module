@@ -20,6 +20,21 @@ use Drupal\user\Entity\User;
 use Drupal\user\UserInterface;
 
 /**
+ * Always show profile field for everyone.
+ */
+const SOCIAL_PROFILE_PRIVACY_SHOW_VISIBILITY = 0;
+
+/**
+ * Show profile field, but it can be hidden by a user.
+ */
+const SOCIAL_PROFILE_PRIVACY_CONFIGURABLE_VISIBILITY = 1;
+
+/**
+ * Hide profile field for everyone.
+ */
+const SOCIAL_PROFILE_PRIVACY_HIDE_VISIBILITY = 2;
+
+/**
  * Implements hook_form_FORM_ID_alter().
  */
 function social_profile_privacy_form_social_profile_admin_settings_form_alter(&$form, FormStateInterface $form_state, $form_id) {
@@ -129,11 +144,11 @@ function social_profile_privacy_form_social_profile_admin_settings_form_alter(&$
       '#type' => 'radios',
       '#title' => $entity->label(),
       '#options' => [
-        t('Always show for everyone'),
-        t('Show, but can be hidden by each user'),
-        t('Hide for everyone'),
+        SOCIAL_PROFILE_PRIVACY_SHOW_VISIBILITY => t('Always show for everyone'),
+        SOCIAL_PROFILE_PRIVACY_CONFIGURABLE_VISIBILITY => t('Show, but can be hidden by each user'),
+        SOCIAL_PROFILE_PRIVACY_HIDE_VISIBILITY => t('Hide for everyone'),
       ],
-      '#default_value' => $config->get('fields.' . $field) ?: 0,
+      '#default_value' => $config->get('fields.' . $field) ?: SOCIAL_PROFILE_PRIVACY_SHOW_VISIBILITY,
     ];
   }
 
@@ -266,7 +281,7 @@ function social_profile_privacy_form_alter(&$form, FormStateInterface $form_stat
   $form['actions']['submit']['#submit'][] = 'social_profile_privacy_profile_form_submit';
 
   $global_states = array_filter($config->get('fields') ?: [], function ($value) {
-    return $value === '1';
+    return $value === (string) SOCIAL_PROFILE_PRIVACY_CONFIGURABLE_VISIBILITY;
   });
 
   if (!$global_states) {
@@ -277,11 +292,14 @@ function social_profile_privacy_form_alter(&$form, FormStateInterface $form_stat
 
   $user_states = $user_data->get('social_profile_privacy', $uid, 'fields');
 
+  /** @var \Drupal\Core\Config\Entity\ConfigEntityStorageInterface $storage */
+  $storage = \Drupal::entityTypeManager()->getStorage('field_config');
+
   foreach ($global_states as $field => $state) {
     $form['profile_privacy']['fields'][$field] = [
       '#type' => 'checkbox',
       '#title' => t('Show "@field_group" on my profile', [
-        '@field_group' => $field,
+        '@field_group' => $storage->load('profile.profile.' . $field)->label(),
       ]),
       '#default_value' => $user_states[$field] ?? TRUE,
       '#attributes' => ['data-switch' => TRUE],
@@ -378,10 +396,6 @@ function social_profile_privacy_private_fields_list($uid) {
     return $fields[$uid];
   }
 
-  $user_data = \Drupal::service('user.data');
-  $values = $user_data->get('social_profile_privacy', $uid, 'private_info');
-  $config = \Drupal::config('social_profile_privacy.settings');
-
   $form_display = \Drupal::entityTypeManager()
     ->getStorage('entity_form_display')
     ->load('profile.profile.default');
@@ -392,28 +406,67 @@ function social_profile_privacy_private_fields_list($uid) {
 
   $third_party_settings = $form_display->get('third_party_settings');
 
-  $field_groups_privacy_configurable = [];
-  $settings_forms = social_profile_privacy_get_settings_forms();
-  foreach ($settings_forms as $settings_form_id => $settings) {
-    $field_groups_in_settings_form = $config->get($settings_form_id . '_field_groups');
-    if ($field_groups_in_settings_form !== NULL) {
-      foreach ($field_groups_in_settings_form as $field_group_id => $field_group_value) {
-        if ($field_group_value != FALSE) {
-          $field_groups_privacy_configurable[$field_group_id] = $field_group_value;
+  if (!isset($third_party_settings['field_group'])) {
+    return $fields[$uid];
+  }
+
+  $config = \Drupal::config('social_profile_privacy.settings');
+  $global_visibility = $config->get('fields') ?: [];
+
+  $field_groups_privacy_configurable = $fields[$uid] = [];
+  $settings_forms = array_keys(social_profile_privacy_get_settings_forms());
+  $field_groups = $third_party_settings['field_group'];
+
+  /** @var \Drupal\user\UserDataInterface $user_data */
+  $user_data = \Drupal::service('user.data');
+
+  $values = $user_data->get('social_profile_privacy', $uid, 'private_info');
+  $user_visibility = $user_data->get('social_profile_privacy', $uid, 'fields') ?: [];
+
+  foreach ($settings_forms as $settings_form_id) {
+    $field_groups_in_settings_form = array_filter($config->get($settings_form_id . '_field_groups') ?: []);
+
+    if (!$field_groups_in_settings_form) {
+      continue;
+    }
+
+    foreach ($field_groups_in_settings_form as $field_group_value) {
+      $field_groups_privacy_configurable[] = $field_group_value;
+
+      if (
+        !isset($values[$field_group_value]) ||
+        !$values[$field_group_value] ||
+        !isset($field_groups[$field_group_value])
+      ) {
+        continue;
+      }
+
+      foreach ($field_groups[$field_group_value]['children'] as $field) {
+        if (!isset($global_visibility[$field])) {
+          continue;
+        }
+
+        $visibility = (int) $global_visibility[$field];
+
+        if (
+          $visibility === SOCIAL_PROFILE_PRIVACY_HIDE_VISIBILITY ||
+          (
+            $visibility === SOCIAL_PROFILE_PRIVACY_CONFIGURABLE_VISIBILITY &&
+            isset($user_visibility[$field]) &&
+            !$user_visibility[$field]
+          )
+        ) {
+          $fields[$uid][] = $field;
         }
       }
     }
   }
 
-  if (isset($third_party_settings['field_group'])) {
-    $fields[$uid] = [];
-
-    foreach ($third_party_settings['field_group'] as $id => $data) {
-      if (isset($values[$id]) && empty($values[$id])) {
-        // Only add field if it is enabled in one of the configurations.
-        if (in_array($id, $field_groups_privacy_configurable)) {
-          $fields[$uid] = array_merge($fields[$uid], $data['children']);
-        }
+  foreach ($field_groups as $id => $data) {
+    if (isset($values[$id]) && empty($values[$id])) {
+      // Only add field if it is enabled in one of the configurations.
+      if (in_array($id, $field_groups_privacy_configurable)) {
+        $fields[$uid] = array_merge($fields[$uid], $data['children']);
       }
     }
   }
