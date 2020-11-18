@@ -52,7 +52,7 @@ class SocialActivityLazyBuilder {
    *   Items to display.
    * @param string|null $vocabulary
    *   Vocabulary ID.
-   * @param array|int $tags
+   * @param mixed $tags
    *   List of tags IDs.
    *
    * @return array|null
