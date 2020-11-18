@@ -22,32 +22,6 @@ use Drupal\user\Entity\User;
 function social_profile_privacy_form_social_profile_admin_settings_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   $config = \Drupal::config('social_profile_privacy.settings');
 
-  /** @var \Drupal\Core\Entity\Display\EntityFormDisplayInterface $display */
-  $display = \Drupal::entityTypeManager()->getStorage('entity_form_display')
-    ->load('profile.profile.default');
-
-  /** @var \Drupal\Core\Config\Entity\ConfigEntityStorageInterface $storage */
-  $storage = \Drupal::entityTypeManager()->getStorage('field_config');
-
-  foreach (array_keys($display->getComponents()) as $field) {
-    $entity = $storage->load('profile.profile.' . $field);
-
-    if (!$entity instanceof FieldConfigInterface) {
-      continue;
-    }
-
-    $form[$field] = [
-      '#type' => 'radios',
-      '#title' => $entity->label(),
-      '#options' => [
-        t('Always show for everyone'),
-        t('Show, but can be hidden by each user'),
-        t('Hide for everyone'),
-      ],
-      '#default_value' => $config->get($field) ?: 0,
-    ];
-  }
-
   $form['privacy'] += [
     '#prefix' => '<div id="privacy-settings">',
     '#suffix' => '</div>',
@@ -128,6 +102,38 @@ function social_profile_privacy_form_social_profile_admin_settings_form_alter(&$
     }
   }
 
+  $form['privacy']['fields'] = [
+    '#type' => 'fieldset',
+    '#title' => t('Fields'),
+    '#tree' => TRUE,
+  ];
+
+  /** @var \Drupal\Core\Entity\Display\EntityFormDisplayInterface $display */
+  $display = \Drupal::entityTypeManager()->getStorage('entity_form_display')
+    ->load('profile.profile.default');
+
+  /** @var \Drupal\Core\Config\Entity\ConfigEntityStorageInterface $storage */
+  $storage = \Drupal::entityTypeManager()->getStorage('field_config');
+
+  foreach (array_keys($display->getComponents()) as $field) {
+    $entity = $storage->load('profile.profile.' . $field);
+
+    if (!$entity instanceof FieldConfigInterface) {
+      continue;
+    }
+
+    $form['privacy']['fields'][$field] = [
+      '#type' => 'radios',
+      '#title' => $entity->label(),
+      '#options' => [
+        t('Always show for everyone'),
+        t('Show, but can be hidden by each user'),
+        t('Hide for everyone'),
+      ],
+      '#default_value' => $config->get('fields.' . $field) ?: 0,
+    ];
+  }
+
   $form['#submit'][] = 'social_profile_privacy_admin_settings_form_submit';
 }
 
@@ -139,6 +145,7 @@ function social_profile_privacy_form_social_profile_admin_settings_form_alter(&$
 function social_profile_privacy_admin_settings_form_submit($form, FormStateInterface $form_state) {
   $data = [
     'limit_search_and_mention' => $form_state->getValue('limit_search_and_mention'),
+    'fields' => $form_state->getValue('fields'),
   ];
 
   $settings_forms = social_profile_privacy_get_settings_forms();
