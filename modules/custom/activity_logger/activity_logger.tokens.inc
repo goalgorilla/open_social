@@ -28,6 +28,10 @@ function activity_logger_token_info() {
     'description' => t("The related node title."),
   ];
 
+  $message['gtrimmed-title'] = [
+    'name' => t("Groups trimmed title"),
+    'description' => t("The related group trimmed title."),
+  ];
   $message['gtitle'] = [
     'name' => t("Groups title"),
     'description' => t("The related group title."),
@@ -77,6 +81,7 @@ function activity_logger_tokens($type, $tokens, array $data, array $options, Bub
 
         case 'node-title':
         case 'gtitle':
+        case 'gtrimmed-title':
         case 'gurl':
         case 'recipient-user':
         case 'recipient-user-url':
@@ -146,12 +151,18 @@ function activity_logger_tokens($type, $tokens, array $data, array $options, Bub
 
               // If it's a group.. add it in the arguments.
               if (isset($group) && $group instanceof Group) {
-                if ($name === 'gtitle') {
+                if ($name === 'gtitle' || $name === 'gtrimmed-title') {
                   $curr_langcode = \Drupal::languageManager()->getCurrentLanguage(LanguageInterface::TYPE_CONTENT)->getId();
+
                   if ($group->isTranslatable() && $group->hasTranslation($curr_langcode)) {
                     $group = $group->getTranslation($curr_langcode);
                   }
-                  $replacements[$original] = $group->label();
+
+                  if ($name === 'gtrimmed-title' && strlen($group->label()) > 40) {
+                    $label = substr($group->label(),0,40) . ' ...';
+                  }
+
+                  $replacements[$original] = $label ?? $group->label();
                 }
                 if ($name === 'gurl') {
                   $gurl = Url::fromRoute('entity.group.canonical',
