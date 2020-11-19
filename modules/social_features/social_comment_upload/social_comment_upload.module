@@ -9,6 +9,7 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\file\Entity\File;
 use Drupal\Core\Link;
+use Drupal\node\NodeInterface;
 
 /**
  * Implements hook_form_FORM_ID_alter().
@@ -71,13 +72,17 @@ function social_comment_upload_preprocess_comment(&$variables) {
 
         // Add the amount of attachments to the comment.
         if (!empty($count_arr)) {
-          $text = \Drupal::translation()->formatPlural(count($count_arr),
-            '1 attachment.',
-            '@count attachments.'
-          );
-          $variables['comment_attachments_count'] = Link::fromTextAndUrl($text, $comment->permalink());
+          $variables['comment_attachments_count'] = count($count_arr);
         }
       }
+
+      if (($topic = $comment->getCommentedEntity()) instanceof NodeInterface) {
+        $variables['comment_count'] = ($topic->field_topic_comments) ? $topic->field_topic_comments->comment_count : 0;
+        $variables['comment_url'] = $topic->toUrl()->toString();
+      }
+
+      $more_button = $comment->toLink('Read more')->toString();
+      $variables['more_link'] = $more_button;
     }
   }
 }
