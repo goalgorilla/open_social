@@ -134,3 +134,17 @@ function social_comment_update_8901() {
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
 }
+
+/**
+ * Use smart trimmed format for the activity comment
+ */
+function social_comment_update_8902() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_comment', 'social_comment_update_8902');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}

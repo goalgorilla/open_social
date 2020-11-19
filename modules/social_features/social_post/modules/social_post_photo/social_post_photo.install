@@ -97,3 +97,17 @@ function social_post_photo_uninstall() {
 function social_post_photo_update_8001() {
   \Drupal::service('config.installer')->installDefaultConfig('module', 'social_post_photo');
 }
+
+/**
+ * Use smart trimmed format for the social post photo featured view mode
+ */
+function social_post_photo_update_8003() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_post_photo', 'social_post_photo_update_8003');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
