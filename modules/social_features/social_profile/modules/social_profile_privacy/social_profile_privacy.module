@@ -203,16 +203,17 @@ function social_profile_privacy_form_alter(&$form, FormStateInterface $form_stat
   $entity = $form_object->getEntity();
 
   if ($entity instanceof ProfileInterface) {
-    $uid = $entity->getOwnerId();
+    $profile = $entity;
+    $account = $profile->getOwner();
   }
   elseif ($entity instanceof UserInterface) {
-    $uid = $entity->id();
+    $account = $entity;
   }
   else {
     return;
   }
 
-  $form_state->set('account_id', $uid);
+  $form_state->set('account_id', $uid = $account->id());
 
   $field_groups_labels = social_profile_privacy_form_field_group_options();
   $settings_form_id = $field_groups['settings_form_id'];
@@ -280,26 +281,38 @@ function social_profile_privacy_form_alter(&$form, FormStateInterface $form_stat
 
   $form['actions']['submit']['#submit'][] = 'social_profile_privacy_profile_form_submit';
 
-  $global_states = array_filter($config->get('fields') ?: [], function ($value) {
-    return $value === (string) SOCIAL_PROFILE_PRIVACY_CONFIGURABLE_VISIBILITY;
-  });
-
-  if (!$global_states) {
+  if (!$global_states = $config->get('fields')) {
     return;
   }
 
   $form['profile_privacy']['fields'] = ['#type' => 'container'];
 
   $user_states = $user_data->get('social_profile_privacy', $uid, 'fields');
+  $definitions = \Drupal::service('entity_field.manager')->getFieldDefinitions('profile', 'profile');
+  $handler = \Drupal::entityTypeManager()->getAccessControlHandler('profile');
 
-  /** @var \Drupal\Core\Config\Entity\ConfigEntityStorageInterface $storage */
-  $storage = \Drupal::entityTypeManager()->getStorage('field_config');
+  if (!isset($profile)) {
+    /** @var \Drupal\profile\ProfileStorageInterface $storage */
+    $storage = \Drupal::entityTypeManager()->getStorage('profile');
 
-  foreach ($global_states as $field => $state) {
+    $profile = $storage->loadByUser($account, 'profile');
+  }
+
+  foreach ((array) $global_states as $field => $state) {
+    if ($state !== SOCIAL_PROFILE_PRIVACY_CONFIGURABLE_VISIBILITY) {
+      continue;
+    }
+
+    $definition = $definitions[$field];
+
+    if (!$handler->fieldAccess('edit', $definition, $entity, $profile->get($field))) {
+      return;
+    }
+
     $form['profile_privacy']['fields'][$field] = [
       '#type' => 'checkbox',
       '#title' => t('Show "@field_group" on my profile', [
-        '@field_group' => $storage->load('profile.profile.' . $field)->label(),
+        '@field_group' => $definition->getLabel(),
       ]),
       '#default_value' => $user_states[$field] ?? TRUE,
       '#attributes' => ['data-switch' => TRUE],
@@ -446,7 +459,7 @@ function social_profile_privacy_private_fields_list($uid) {
           continue;
         }
 
-        $visibility = (int) $global_visibility[$field];
+        $visibility = $global_visibility[$field];
 
         if (
           $visibility === SOCIAL_PROFILE_PRIVACY_HIDE_VISIBILITY ||
