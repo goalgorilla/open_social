@@ -239,35 +239,37 @@ function social_group_flexible_group_preprocess_fieldset(&$variables) {
   // this field is rendered as fieldset with legend and radios as children
   // we need to do it in this preprocess.
   $element = $variables['element'];
-  if ($element['#field_name'] === 'field_flexible_group_visibility') {
-    $description = '';
-    foreach ($element['#options'] as $key => $label) {
-      $description .= social_group_flexible_group_group_visibility_description($key);
-    }
+  if (!empty($element['#field_name'])) {
+    if ($element['#field_name'] === 'field_flexible_group_visibility') {
+      $description = '';
+      foreach ($element['#options'] as $key => $label) {
+        $description .= social_group_flexible_group_group_visibility_description($key);
+      }
 
-    // Render a specific tooltip based on a field name and description.
-    // This is done in the fieldset, next to the <legend>.
-    $variables['popover'] = social_group_flexible_group_render_tooltip('field_flexible_group_visibility', t('Group Visibility'), $description);
-  }
-  if ($element['#field_name'] === 'field_group_allowed_visibility') {
-    $description = '';
-    foreach ($element['#options'] as $key => $label) {
-      $description .= social_group_flexible_group_allowed_visibility_description($key);
+      // Render a specific tooltip based on a field name and description.
+      // This is done in the fieldset, next to the <legend>.
+      $variables['popover'] = social_group_flexible_group_render_tooltip('field_flexible_group_visibility', t('Group Visibility'), $description);
     }
+    if ($element['#field_name'] === 'field_group_allowed_visibility') {
+      $description = '';
+      foreach ($element['#options'] as $key => $label) {
+        $description .= social_group_flexible_group_allowed_visibility_description($key);
+      }
 
-    // Render a specific tooltip based on a field name and description.
-    // This is done in the fieldset, next to the <legend>.
-    $variables['popover'] = social_group_flexible_group_render_tooltip('field_group_allowed_visibility', t('Group content visibility'), $description);
-  }
-  if ($element['#field_name'] === 'field_group_allowed_join_method') {
-    $description = '';
-    foreach ($element['#options'] as $key => $label) {
-      $description .= social_group_flexible_group_allowed_join_method_description($key);
+      // Render a specific tooltip based on a field name and description.
+      // This is done in the fieldset, next to the <legend>.
+      $variables['popover'] = social_group_flexible_group_render_tooltip('field_group_allowed_visibility', t('Group content visibility'), $description);
     }
+    if ($element['#field_name'] === 'field_group_allowed_join_method') {
+      $description = '';
+      foreach ($element['#options'] as $key => $label) {
+        $description .= social_group_flexible_group_allowed_join_method_description($key);
+      }
 
-    // Render a specific tooltip based on a field name and description.
-    // This is done in the fieldset, next to the <legend>.
-    $variables['popover'] = social_group_flexible_group_render_tooltip('field_group_allowed_join_method', t('Join methods'), $description);
+      // Render a specific tooltip based on a field name and description.
+      // This is done in the fieldset, next to the <legend>.
+      $variables['popover'] = social_group_flexible_group_render_tooltip('field_group_allowed_join_method', t('Join methods'), $description);
+    }
   }
 }
 
