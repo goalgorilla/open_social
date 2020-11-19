@@ -130,25 +130,31 @@ function social_profile_privacy_form_social_profile_admin_settings_form_alter(&$
   $display = \Drupal::entityTypeManager()->getStorage('entity_form_display')
     ->load('profile.profile.default');
 
-  /** @var \Drupal\Core\Config\Entity\ConfigEntityStorageInterface $storage */
-  $storage = \Drupal::entityTypeManager()->getStorage('field_config');
+  $definitions = \Drupal::service('entity_field.manager')->getFieldDefinitions('profile', 'profile');
+  $handler = \Drupal::entityTypeManager()->getAccessControlHandler('profile');
 
   foreach (array_keys($display->getComponents()) as $field) {
-    $entity = $storage->load('profile.profile.' . $field);
-
-    if (!$entity instanceof FieldConfigInterface) {
+    if (!($definition = $definitions[$field]) instanceof FieldConfigInterface) {
       continue;
+    }
+
+    if ($available = $handler->fieldAccess('edit', $definition)) {
+      $value = $config->get('fields.' . $field) ?: SOCIAL_PROFILE_PRIVACY_SHOW_VISIBILITY;
+    }
+    else {
+      $value = SOCIAL_PROFILE_PRIVACY_HIDE_VISIBILITY;
     }
 
     $form['privacy']['fields'][$field] = [
       '#type' => 'radios',
-      '#title' => $entity->label(),
+      '#title' => $definition->label(),
       '#options' => [
         SOCIAL_PROFILE_PRIVACY_SHOW_VISIBILITY => t('Always show for everyone'),
         SOCIAL_PROFILE_PRIVACY_CONFIGURABLE_VISIBILITY => t('Show, but can be hidden by each user'),
         SOCIAL_PROFILE_PRIVACY_HIDE_VISIBILITY => t('Hide for everyone'),
       ],
-      '#default_value' => $config->get('fields.' . $field) ?: SOCIAL_PROFILE_PRIVACY_SHOW_VISIBILITY,
+      '#default_value' => $value,
+      '#disabled' => !$available,
     ];
   }
 
@@ -161,25 +167,35 @@ function social_profile_privacy_form_social_profile_admin_settings_form_alter(&$
  * To save configuration of fields groups available to hiding.
  */
 function social_profile_privacy_admin_settings_form_submit($form, FormStateInterface $form_state) {
-  $data = [
-    'limit_search_and_mention' => $form_state->getValue('limit_search_and_mention'),
-    'fields' => $form_state->getValue('fields'),
-  ];
+  $config = \Drupal::configFactory()->getEditable('social_profile_privacy.settings');
+  $config->set('limit_search_and_mention', $form_state->getValue('limit_search_and_mention'));
 
-  $settings_forms = social_profile_privacy_get_settings_forms();
-  foreach ($settings_forms as $settings_form_id => $settings_form) {
-    $data[$settings_form_id] = $form_state->getValue($settings_form_id);
+  $settings_forms = array_keys(social_profile_privacy_get_settings_forms());
 
-    if ($form_state->getValue($settings_form_id) !== NULL) {
-      $data[$settings_form_id . '_field_groups'] = $form_state->getValue(['groups', $settings_form_id . '_field_groups']);
-      $data[$settings_form_id . '_disclaimer'] = $form_state->getValue($settings_form_id . '_disclaimer');
+  foreach ($settings_forms as $settings_form_id) {
+    $value = $form_state->getValue($settings_form_id);
+    $config->set($settings_form_id, $value);
+
+    if ($value !== NULL) {
+      $config->set(
+        $key = $settings_form_id . '_field_groups',
+        $form_state->getValue(['groups', $key])
+      );
+
+      $config->set(
+        $key = $settings_form_id . '_disclaimer',
+        $form_state->getValue($key)
+      );
     }
   }
 
-  \Drupal::configFactory()
-    ->getEditable('social_profile_privacy.settings')
-    ->setData($data)
-    ->save();
+  foreach ($form_state->getValue('fields') as $field => $state) {
+    if (!$form['privacy']['fields'][$field]['#disabled']) {
+      $config->set('fields.' . $field, $state);
+    }
+  }
+
+  $config->save();
 }
 
 /**
