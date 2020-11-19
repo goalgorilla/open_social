@@ -92,7 +92,7 @@ Feature: Create flexible Group
       | edit-field-event-date-end-0-value-date | 2025-01-01 |
       | edit-field-event-date-end-0-value-time | 11:00:00 |
       | Location name | Technopark |
-    And I click radio button "Public - visible to everyone including people who are not a member" with the id "edit-field-content-visibility-public"
+    And I click radio button "Public" with the id "edit-field-content-visibility-public"
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text."
     And I press "Save"
     And I should see "Test group event"
@@ -110,7 +110,7 @@ Feature: Create flexible Group
     And I click "Create Topic"
     When I fill in "Title" with "Test group public topic"
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text"
-    And I click radio button "Public - visible to everyone including people who are not a member" with the id "edit-field-content-visibility-public"
+    And I click radio button "Public" with the id "edit-field-content-visibility-public"
     And I click radio button "Discussion"
     And I press "Save"
 
@@ -121,7 +121,7 @@ Feature: Create flexible Group
     And I click "Create Topic"
     When I fill in "Title" with "Test group private topic"
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text"
-    And I click radio button "Group members - visible only to group members" with the id "edit-field-content-visibility-group"
+    And I click radio button "Group members" with the id "edit-field-content-visibility-group"
     And I click radio button "Discussion"
     And I press "Save"
 
@@ -176,7 +176,8 @@ Feature: Create flexible Group
     And I am on "group/add"
     Then I click radio button "Flexible group By choosing this option you can customize many group settings to your needs." with the id "edit-group-type-flexible-group"
     And I press "Continue"
-    When I show hidden checkboxes
+    When I click radio button "Community" with the id "edit-field-flexible-group-visibility-community"
+    And I show hidden checkboxes
     Then I uncheck the box "field_group_allowed_visibility[community]"
     Then I uncheck the box "field_group_allowed_visibility[group]"
     When I fill in "Title" with "Cheesy test of flexible group"
