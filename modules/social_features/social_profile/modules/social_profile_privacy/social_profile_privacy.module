@@ -312,23 +312,36 @@ function social_profile_privacy_form_alter(&$form, FormStateInterface $form_stat
   }
 
   foreach ((array) $global_states as $field => $state) {
-    if ($state !== SOCIAL_PROFILE_PRIVACY_CONFIGURABLE_VISIBILITY) {
-      continue;
+    $value = $status = TRUE;
+
+    switch ($state) {
+      case SOCIAL_PROFILE_PRIVACY_SHOW_VISIBILITY:
+        $status = FALSE;
+        break;
+
+      case SOCIAL_PROFILE_PRIVACY_CONFIGURABLE_VISIBILITY:
+        if (isset($user_states[$field])) {
+          $value = $user_states[$field];
+        }
+        break;
+
+      case SOCIAL_PROFILE_PRIVACY_HIDE_VISIBILITY:
+        $value = $status = FALSE;
+        break;
     }
 
     $definition = $definitions[$field];
 
     if (!$handler->fieldAccess('edit', $definition, $entity, $profile->get($field))) {
-      return;
+      $value = $status = FALSE;
     }
 
     $form['profile_privacy']['fields'][$field] = [
       '#type' => 'checkbox',
-      '#title' => t('Show "@field_group" on my profile', [
-        '@field_group' => $definition->getLabel(),
-      ]),
-      '#default_value' => $user_states[$field] ?? TRUE,
+      '#title' => $definition->getLabel(),
+      '#default_value' => $value,
       '#attributes' => ['data-switch' => TRUE],
+      '#disabled' => !$status,
     ];
   }
 
@@ -398,12 +411,16 @@ function _social_profile_privacy_fields_submit($form, FormStateInterface $form_s
   /** @var \Drupal\user\UserDataInterface $user_data */
   $user_data = \Drupal::service('user.data');
 
-  $user_data->set(
-    'social_profile_privacy',
-    $form_state->get('account_id'),
-    'fields',
-    $form_state->getValue(['profile_privacy', 'fields'])
-  );
+  $uid = $form_state->get('account_id');
+  $values = (array) $user_data->get('social_profile_privacy', $uid, 'fields');
+
+  foreach ($form_state->getValue(['profile_privacy', 'fields']) as $field => $value) {
+    if (!$form['profile_privacy']['fields'][$field]['#disabled']) {
+      $values[$field] = $value;
+    }
+  }
+
+  $user_data->set('social_profile_privacy', $uid, 'fields', $values);
 }
 
 /**
