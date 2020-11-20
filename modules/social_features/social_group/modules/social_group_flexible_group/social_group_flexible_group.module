@@ -171,6 +171,13 @@ function social_group_flexible_group_form_alter(&$form, FormStateInterface $form
       $form['#after_build'][] = 'social_group_flexible_group_flexible_group_add_after_build';
     }
   }
+
+  if (in_array($form_id, [
+    'group_flexible_group_add_form',
+    'group_flexible_group_edit_form',
+  ])) {
+    $form['#attached']['library'][] = 'social_group_flexible_group/admin';
+  }
 }
 
 /**
