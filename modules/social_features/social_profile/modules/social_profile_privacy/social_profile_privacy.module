@@ -202,14 +202,6 @@ function social_profile_privacy_admin_settings_form_submit($form, FormStateInter
  * Implements hook_form_alter().
  */
 function social_profile_privacy_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-  $config = \Drupal::config('social_profile_privacy.settings');
-
-  $field_groups = social_profile_privacy_get_field_groups_for_form_state($form_state, $config);
-
-  if (empty($field_groups)) {
-    return;
-  }
-
   $form_object = $form_state->getFormObject();
 
   if (!$form_object instanceof ContentEntityFormInterface) {
@@ -231,71 +223,76 @@ function social_profile_privacy_form_alter(&$form, FormStateInterface $form_stat
 
   $form_state->set('account_id', $uid = $account->id());
 
-  $field_groups_labels = social_profile_privacy_form_field_group_options();
-  $settings_form_id = $field_groups['settings_form_id'];
+  $config = \Drupal::config('social_profile_privacy.settings');
+
+  $field_groups = social_profile_privacy_get_field_groups_for_form_state($form_state, $config);
 
   /** @var \Drupal\user\UserDataInterface $user_data */
   $user_data = \Drupal::service('user.data');
 
-  $values = $user_data->get('social_profile_privacy', $uid, 'private_info');
+  if ($field_groups) {
+    $field_groups_labels = social_profile_privacy_form_field_group_options();
+    $settings_form_id = $field_groups['settings_form_id'];
+    $values = $user_data->get('social_profile_privacy', $uid, 'private_info');
 
-  foreach ($field_groups['field_groups'] as $id) {
-    if (array_key_exists($id, $form['#fieldgroups'])) {
-      $form[$id . '_visible'] = [
-        '#type' => 'checkbox',
-        '#title' => t('Show on my profile'),
-        '#weight' => -100,
-        '#default_value' => isset($values[$id]) ? $values[$id] : TRUE,
-        '#attributes' => [
-          'data-switch' => TRUE,
-        ],
-      ];
-      $form['#group_children'][$id . '_visible'] = $id;
-      $disclaimer_weight = $form['#fieldgroups'][$id]->weight + 1;
-    }
-    elseif (isset($form['profile_privacy'])) {
-      if (array_key_exists($id, $field_groups_labels)) {
-        $form['profile_privacy'][$id . '_visible'] = [
+    foreach ($field_groups['field_groups'] as $id) {
+      if (array_key_exists($id, $form['#fieldgroups'])) {
+        $form[$id . '_visible'] = [
           '#type' => 'checkbox',
-          '#title' => t('Show "@field_group" on my profile', ['@field_group' => $field_groups_labels[$id]]),
-          '#weight' => -10,
-          '#default_value' => $values[$id] ?? TRUE,
+          '#title' => t('Show on my profile'),
+          '#weight' => -100,
+          '#default_value' => isset($values[$id]) ? $values[$id] : TRUE,
           '#attributes' => [
             'data-switch' => TRUE,
           ],
         ];
+        $form['#group_children'][$id . '_visible'] = $id;
+        $disclaimer_weight = $form['#fieldgroups'][$id]->weight + 1;
+      }
+      elseif (isset($form['profile_privacy'])) {
+        if (array_key_exists($id, $field_groups_labels)) {
+          $form['profile_privacy'][$id . '_visible'] = [
+            '#type' => 'checkbox',
+            '#title' => t('Show "@field_group" on my profile', ['@field_group' => $field_groups_labels[$id]]),
+            '#weight' => -10,
+            '#default_value' => $values[$id] ?? TRUE,
+            '#attributes' => [
+              'data-switch' => TRUE,
+            ],
+          ];
+        }
       }
     }
-  }
 
-  if ($value = $config->get($settings_form_id . '_disclaimer.text.value')) {
-    if (isset($form['profile_privacy'])) {
-      if (!empty($config->get($settings_form_id . '_disclaimer.title'))) {
-        $title = '<strong>' . $config->get($settings_form_id . '_disclaimer.title') . ':</strong> ';
+    if ($value = $config->get($settings_form_id . '_disclaimer.text.value')) {
+      if (isset($form['profile_privacy'])) {
+        if (!empty($config->get($settings_form_id . '_disclaimer.title'))) {
+          $title = '<strong>' . $config->get($settings_form_id . '_disclaimer.title') . ':</strong> ';
+        }
+        else {
+          $title = '';
+        }
+        $form['profile_privacy']['disclaimer'] = [
+          '#type' => 'markup',
+          '#markup' => $title . check_markup($value, $config->get($settings_form_id . '_disclaimer.text.format')),
+          '#weight' => -100,
+        ];
       }
       else {
-        $title = '';
+        $form['disclaimer'] = [
+          '#type' => 'fieldset',
+          '#title' => $config->get($settings_form_id . '_disclaimer.title'),
+          'text' => [
+            '#type' => 'markup',
+            '#markup' => check_markup($value, $config->get($settings_form_id . '_disclaimer.text.format')),
+          ],
+          '#weight' => $disclaimer_weight ?? 99,
+        ];
       }
-      $form['profile_privacy']['disclaimer'] = [
-        '#type' => 'markup',
-        '#markup' => $title . check_markup($value, $config->get($settings_form_id . '_disclaimer.text.format')),
-        '#weight' => -100,
-      ];
     }
-    else {
-      $form['disclaimer'] = [
-        '#type' => 'fieldset',
-        '#title' => $config->get($settings_form_id . '_disclaimer.title'),
-        'text' => [
-          '#type' => 'markup',
-          '#markup' => check_markup($value, $config->get($settings_form_id . '_disclaimer.text.format')),
-        ],
-        '#weight' => $disclaimer_weight ?? 99,
-      ];
-    }
-  }
 
-  $form['actions']['submit']['#submit'][] = 'social_profile_privacy_profile_form_submit';
+    $form['actions']['submit']['#submit'][] = 'social_profile_privacy_profile_form_submit';
+  }
 
   if (!$global_states = $config->get('fields')) {
     return;
