@@ -7,6 +7,7 @@ use Drupal\Core\Ajax\HtmlCommand;
 use Drupal\Core\Ajax\InvokeCommand;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\Core\Extension\ModuleHandler;
 use Drupal\Core\Field\FieldDefinitionInterface;
@@ -41,18 +42,22 @@ class SocialGroupSelectorWidget extends OptionsSelectWidget implements Container
   protected $moduleHander;
   protected $currentUser;
   protected $pluginManager;
+  protected $entityTypeManager;
+  protected $userManager;
 
   /**
    * Creates a SocialGroupSelectorWidget instance.
    *
    * {@inheritdoc}
    */
-  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, array $third_party_settings, ConfigFactoryInterface $configFactory, AccountProxyInterface $currentUser, ModuleHandler $moduleHandler, GroupContentEnablerManager $pluginManager) {
+  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, array $third_party_settings, ConfigFactoryInterface $configFactory, AccountProxyInterface $currentUser, ModuleHandler $moduleHandler, GroupContentEnablerManager $pluginManager, EntityTypeManagerInterface $entity_type_manager) {
     parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $third_party_settings);
     $this->configFactory = $configFactory;
     $this->moduleHander = $moduleHandler;
     $this->currentUser = $currentUser;
     $this->pluginManager = $pluginManager;
+    $this->entityTypeManager = $entity_type_manager;
+    $this->userManager = $entity_type_manager->getStorage('user');
   }
 
   /**
@@ -68,7 +73,8 @@ class SocialGroupSelectorWidget extends OptionsSelectWidget implements Container
       $container->get('config.factory'),
       $container->get('current_user'),
       $container->get('module_handler'),
-      $container->get('plugin.manager.group_content_enabler')
+      $container->get('plugin.manager.group_content_enabler'),
+      $container->get('entity_type.manager')
     );
   }
 
@@ -94,7 +100,9 @@ class SocialGroupSelectorWidget extends OptionsSelectWidget implements Container
       // Get the bundle fron the node.
       $entity_type = $entity->bundle();
 
-      $account = $entity->getOwner();
+      /** @var \Drupal\user\Entity\User $account */
+      $account = $this->userManager->load($this->currentUser->id());
+
       // Limit the settable options for the current user account.
       $options = $this->fieldDefinition
         ->getFieldStorageDefinition()
