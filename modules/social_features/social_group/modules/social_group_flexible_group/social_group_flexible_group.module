@@ -312,6 +312,11 @@ function social_group_flexible_group_group_access(EntityInterface $entity, $oper
   if ($operation !== 'view' && !$entity->hasField('field_flexible_group_visibility')) {
     return $result;
   }
+  // If user has administer groups access we can skip this.
+  if ($account->hasPermission('administer group')) {
+    return $result;
+  }
+
   // If group visibility value doesn't exist we can skip.
   if (empty($entity->getFieldValue('field_flexible_group_visibility', 'value'))) {
     return $result;
