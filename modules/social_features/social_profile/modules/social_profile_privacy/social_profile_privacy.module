@@ -248,6 +248,7 @@ function social_profile_privacy_form_alter(&$form, FormStateInterface $form_stat
         ];
         $form['#group_children'][$id . '_visible'] = $id;
         $disclaimer_weight = $form['#fieldgroups'][$id]->weight + 1;
+        $form['#fieldgroups'][$id]->children[] = $id . '_visible';
       }
       elseif (isset($form['profile_privacy'])) {
         if (array_key_exists($id, $field_groups_labels)) {
