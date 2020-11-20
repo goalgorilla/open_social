@@ -61,8 +61,8 @@ function social_group_flexible_group_form_group_flexible_group_edit_form_alter(&
     unset($form['#fieldgroups']['group_settings']->children['group_type']);
     unset($form['#group_children']['group_type']);
   }
-  $form['field_group_allowed_visibility']['#prefix'] =
-    t('Altering the visibility options could result in changes in access for content within this group.');
+  $form['field_flexible_group_visibility']['#prefix'] =
+    t('Altering the visibility options could result in changes in access for content within this group and the group itself.');
 
   $form['actions']['submit']['#submit'][] = '_social_flexible_group_edit_submit';
 }
@@ -168,8 +168,8 @@ function social_group_flexible_group_form_alter(&$form, FormStateInterface $form
       if (!empty($form['field_group_allowed_visibility']['widget']['#default_value'])) {
         $form['field_group_allowed_visibility']['widget']['#default_value'] = [];
       }
-      $form['#after_build'][] = 'social_group_flexible_group_flexible_group_add_after_build';
     }
+    $form['#after_build'][] = 'social_group_flexible_group_flexible_group_add_after_build';
   }
 
   if (in_array($form_id, [
@@ -193,12 +193,21 @@ function social_group_flexible_group_form_alter(&$form, FormStateInterface $form
  */
 function social_group_flexible_group_flexible_group_add_after_build(array $form, FormStateInterface $form_state) {
   // Add states for content visibility based on group visibility.
-  if (isset($form['field_flexible_group_visibility']['widget']['#options'], $form['field_group_allowed_visibility']['widget']['#options'])) {
+  // Only on the add page. On edit we want users to be able to consciously
+  // decide what allowed visibility to select.
+  if ($form['#id'] === 'group-flexible-group-add-form' &&
+    isset($form['field_flexible_group_visibility']['widget']['#options'], $form['field_group_allowed_visibility']['widget']['#options'])) {
     // If group visibility is public. All content visibility is selected.
     $form['field_group_allowed_visibility']['widget']['public']['#states'] = [
       'checked' => [
         ':input[name="field_flexible_group_visibility"]' => [
           ['value' => 'public'],
+        ],
+      ],
+      'unchecked' => [
+        ':input[name="field_flexible_group_visibility"]' => [
+          ['value' => 'community'],
+          ['value' => 'members'],
         ],
       ],
     ];
@@ -208,6 +217,11 @@ function social_group_flexible_group_flexible_group_add_after_build(array $form,
         ':input[name="field_flexible_group_visibility"]' => [
           ['value' => 'public'],
           ['value' => 'community'],
+        ],
+      ],
+      'unchecked' => [
+        ':input[name="field_flexible_group_visibility"]' => [
+          ['value' => 'members'],
         ],
       ],
     ];
@@ -223,6 +237,10 @@ function social_group_flexible_group_flexible_group_add_after_build(array $form,
     ];
   }
   // Add states for join method based on group visibility.
+  // We do this for add and edit, we want to make sure if users make the
+  // decision to choose to only show a group to it's Members, the
+  // join method is selected to Invite only. Because there is no way
+  // for users to join or request to join in that case.
   if (isset($form['field_flexible_group_visibility']['widget']['#options'], $form['field_group_allowed_join_method']['widget']['#options'])) {
     // If group visibility is members. Select invite-only.
     if (!empty($form['field_group_allowed_join_method']['widget']['added'])) {
