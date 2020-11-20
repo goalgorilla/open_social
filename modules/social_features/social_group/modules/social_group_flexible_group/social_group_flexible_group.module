@@ -21,6 +21,7 @@ use Drupal\views\Plugin\views\row\EntityRow;
 use Drupal\views\ViewExecutable;
 use Drupal\views\Views;
 use Drupal\Core\Database\Query\AlterableInterface;
+use Drupal\Core\Entity\EntityInterface;
 
 /**
  * Provide a method to alter array of group types used in open social.
@@ -169,6 +170,20 @@ function social_group_flexible_group_form_alter(&$form, FormStateInterface $form
         $form['field_group_allowed_visibility']['widget']['#default_value'] = [];
       }
     }
+
+    // On the edit form, if there is no value set for the group_visibility
+    // it means it was an already existing flexible group and we need to add a
+    // default value so people can save it.
+    if ($form['#id'] === 'group-flexible-group-edit-form' &&
+      empty($form['field_flexible_group_visibility']['widget']['#value'])) {
+      // The default is always community because we used to only have closed
+      // groups (which is visible for the community) or public if the
+      // content visibility has public as an option.
+      $form['field_flexible_group_visibility']['widget']['#default_value'] = 'community';
+      if (in_array('public', $form['field_group_allowed_visibility']['widget']['#default_value'])) {
+        $form['field_flexible_group_visibility']['widget']['#default_value'] = 'public';
+      }
+    }
     $form['#after_build'][] = 'social_group_flexible_group_flexible_group_add_after_build';
   }
 
@@ -284,6 +299,46 @@ function social_group_flexible_group_flexible_group_add_after_build(array $form,
     }
   }
   return $form;
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_access().
+ */
+function social_group_flexible_group_group_access(EntityInterface $entity, $operation, AccountInterface $account) {
+  $result = AccessResult::neutral();
+  // Write custom access checks based on the new group visibility field.
+  // If group visibility doesn't exist we can skip this.
+  /** @var \Drupal\group\Entity\GroupInterface $entity */
+  if ($operation !== 'view' && !$entity->hasField('field_flexible_group_visibility')) {
+    return $result;
+  }
+  // If group visibility value doesn't exist we can skip.
+  if (empty($entity->getFieldValue('field_flexible_group_visibility', 'value'))) {
+    return $result;
+  }
+  $group_visibility = $entity->getFieldValue('field_flexible_group_visibility', 'value');
+
+  // If group visibility exists and public is selected, we can skip.
+  if ($group_visibility === 'public') {
+    return $result;
+  }
+
+  // If group visibility exists and community or members is selected, check
+  // if user is logged.
+  if ($group_visibility === 'community' || $group_visibility === 'members') {
+    return AccessResult::forbiddenIf($account->isAnonymous())
+      ->addCacheableDependency($entity)
+      ->addCacheContexts(['user']);
+  }
+  // If group visibility exists and members only is selected, we need to check
+  // if user is logged in and is a member of the group.
+  if ($group_visibility === 'members') {
+    return AccessResult::forbiddenIf(!$entity->getMember($account))
+      ->addCacheableDependency($entity)
+      ->addCacheContexts(['user', 'group']);
+  }
+
+  return $result;
 }
 
 /**
