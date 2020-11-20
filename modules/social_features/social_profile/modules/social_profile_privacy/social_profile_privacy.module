@@ -295,7 +295,7 @@ function social_profile_privacy_form_alter(&$form, FormStateInterface $form_stat
     $form['actions']['submit']['#submit'][] = 'social_profile_privacy_profile_form_submit';
   }
 
-  if (!$global_states = $config->get('fields')) {
+  if (isset($profile) || !$global_states = $config->get('fields')) {
     return;
   }
 
@@ -305,12 +305,10 @@ function social_profile_privacy_form_alter(&$form, FormStateInterface $form_stat
   $definitions = \Drupal::service('entity_field.manager')->getFieldDefinitions('profile', 'profile');
   $handler = \Drupal::entityTypeManager()->getAccessControlHandler('profile');
 
-  if (!isset($profile)) {
-    /** @var \Drupal\profile\ProfileStorageInterface $storage */
-    $storage = \Drupal::entityTypeManager()->getStorage('profile');
+  /** @var \Drupal\profile\ProfileStorageInterface $storage */
+  $storage = \Drupal::entityTypeManager()->getStorage('profile');
 
-    $profile = $storage->loadByUser($account, 'profile');
-  }
+  $profile = $storage->loadByUser($account, 'profile');
 
   foreach ((array) $global_states as $field => $state) {
     $value = $status = TRUE;
@@ -333,7 +331,7 @@ function social_profile_privacy_form_alter(&$form, FormStateInterface $form_stat
 
     $definition = $definitions[$field];
 
-    if (!$handler->fieldAccess('edit', $definition, $entity, $profile->get($field))) {
+    if (!$handler->fieldAccess('edit', $definition, $account, $profile->get($field))) {
       $value = $status = FALSE;
     }
 
