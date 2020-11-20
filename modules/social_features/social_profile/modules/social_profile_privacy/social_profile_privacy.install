@@ -5,6 +5,7 @@
  * The social profile privacy install file.
  */
 
+use Drupal\Core\Site\Settings;
 use Drupal\user\Entity\Role;
 
 /**
@@ -62,4 +63,102 @@ function _social_profile_privacy_get_permissions($role) {
   }
 
   return $permissions[$role];
+}
+
+/**
+ * Define visibility options of separate fields per user.
+ */
+function social_profile_privacy_update_8001(&$sandbox) {
+  if (!isset($sandbox['total'])) {
+    /** @var \Drupal\Core\Entity\Display\EntityFormDisplayInterface $display */
+    $display = \Drupal::entityTypeManager()->getStorage('entity_form_display')
+      ->load('profile.profile.default');
+
+    foreach ($display->getThirdPartySettings('field_group') as $fields_group => $settings) {
+      $states = [];
+
+      foreach ($settings['children'] as $field) {
+        $states[$field] = SOCIAL_PROFILE_PRIVACY_HIDE_VISIBILITY;
+      }
+
+      $sandbox['fields'][$fields_group] = serialize($states);
+    }
+
+    $sandbox['total'] = \Drupal::database()->select('users_data', 'ud')
+      ->fields('ud')
+      ->condition('module', 'social_profile_privacy')
+      ->condition('name', 'private_info')
+      ->countQuery()
+      ->execute()
+      ->fetchField();
+
+    if (!$sandbox['total']) {
+      $output = t('User profiles privacy data not found.');
+
+      if (PHP_SAPI === 'cli') {
+        drush_print($output);
+      }
+
+      return $output;
+    }
+
+    $sandbox['uid'] = $sandbox['processed'] = 0;
+    $sandbox['limit'] = Settings::get('entity_update_batch_size', 50);
+  }
+
+  $items = \Drupal::database()->select('users_data', 'ud')
+    ->fields('ud', ['uid', 'value'])
+    ->condition('uid', $sandbox['uid'], '>')
+    ->condition('module', 'social_profile_privacy')
+    ->condition('name', 'private_info')
+    ->orderBy('uid')
+    ->range(0, $sandbox['limit'])
+    ->execute()
+    ->fetchAllKeyed();
+
+  foreach ($items as $uid => $value) {
+    $query = \Drupal::database()->insert('users_data')->fields([
+      'uid',
+      'module',
+      'name',
+      'value',
+      'serialized',
+    ]);
+
+    foreach (array_keys(array_filter(unserialize($value))) as $fields_group) {
+      $query->values([
+        $uid,
+        'social_profile_privacy',
+        'fields',
+        $sandbox['fields'][$fields_group],
+        1,
+      ]);
+    }
+
+    $query->execute();
+
+    $sandbox['uid'] = $uid;
+  }
+
+  $sandbox['processed'] += count($items);
+
+  if ($sandbox['processed'] < $sandbox['total']) {
+    $sandbox['#finished'] = $sandbox['processed'] / $sandbox['total'];
+  }
+  else {
+    \Drupal::database()->delete('users_data')
+      ->condition('module', 'social_profile_privacy')
+      ->condition('name', 'private_info')
+      ->execute();
+  }
+
+  $output = t('Profile privacy data has been processed for the following users: @list', [
+    '@list' => implode(', ', array_keys($items)),
+  ]);
+
+  if (PHP_SAPI === 'cli') {
+    drush_print($output);
+  }
+
+  return $output;
 }
