@@ -192,6 +192,11 @@ function improved_theme_settings_page_attachments(array &$page) {
         }
       ';
 
+      // Add any styles from modules that define selector with configurable
+      // styles.
+      $module_styles = \Drupal::moduleHandler()->invokeAll('improved_theme_settings_add', [$system_theme_settings]);
+      $style_to_add .= implode("\n", $module_styles);
+
       if (!empty($style_to_add)) {
         $page['#attached']['html_head'][] = [
           [
