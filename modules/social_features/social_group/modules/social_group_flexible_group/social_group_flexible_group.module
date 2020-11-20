@@ -127,6 +127,18 @@ function social_group_flexible_group_form_alter(&$form, FormStateInterface $form
     }
     // Change the allowed join method on flexible groups.
     if (!empty($form['field_group_allowed_join_method'])) {
+      // First we reorder the elmements, if invite only is part of it
+      // we always want to show this last.
+      if (!empty($form['field_group_allowed_join_method']['widget']['#options'])) {
+        if (array_key_exists('added', $form['field_group_allowed_join_method']['widget']['#options'])) {
+          $option = $form['field_group_allowed_join_method']['widget']['#options']['added'];
+          // Unset it.
+          unset($form['field_group_allowed_join_method']['widget']['#options']['added']);
+          // Add it at the end.
+          $form['field_group_allowed_join_method']['widget']['#options']['added'] = $option;
+        }
+      }
+
       if (!empty($form['field_group_allowed_join_method']['widget']['#title'])) {
         $form['field_group_allowed_join_method']['widget']['#title'] = t('Join methods');
       }
@@ -145,7 +157,108 @@ function social_group_flexible_group_form_alter(&$form, FormStateInterface $form
         ],
       ];
     }
+    // Only when adding a flexible group, we need to predefine the
+    // content visibility and join method based on the group visibility.
+    if ($form['#id'] === 'group-flexible-group-add-form') {
+      // Reset default_values on the add form only.
+      // So we can use state management to check / select.
+      if (!empty($form['field_group_allowed_join_method']['widget']['#default_value'])) {
+        $form['field_group_allowed_join_method']['widget']['#default_value'] = [];
+      }
+      if (!empty($form['field_group_allowed_visibility']['widget']['#default_value'])) {
+        $form['field_group_allowed_visibility']['widget']['#default_value'] = [];
+      }
+      $form['#after_build'][] = 'social_group_flexible_group_flexible_group_add_after_build';
+    }
   }
+}
+
+/**
+ * After_build function for the flexible group add form to add default states.
+ *
+ * @param array $form
+ *   The form element.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   The form state.
+ *
+ * @return mixed
+ *   The form array containing the default values & states.
+ */
+function social_group_flexible_group_flexible_group_add_after_build(array $form, FormStateInterface $form_state) {
+  // Add states for content visibility based on group visibility.
+  if (isset($form['field_flexible_group_visibility']['widget']['#options'], $form['field_group_allowed_visibility']['widget']['#options'])) {
+    // If group visibility is public. All content visibility is selected.
+    $form['field_group_allowed_visibility']['widget']['public']['#states'] = [
+      'checked' => [
+        ':input[name="field_flexible_group_visibility"]' => [
+          ['value' => 'public'],
+        ],
+      ],
+    ];
+    // If group visibility is community. Communit & Group members are selected.
+    $form['field_group_allowed_visibility']['widget']['community']['#states'] = [
+      'checked' => [
+        ':input[name="field_flexible_group_visibility"]' => [
+          ['value' => 'public'],
+          ['value' => 'community'],
+        ],
+      ],
+    ];
+    // If group visibility is group. Only group members are selected.
+    $form['field_group_allowed_visibility']['widget']['group']['#states'] = [
+      'checked' => [
+        ':input[name="field_flexible_group_visibility"]' => [
+          ['value' => 'public'],
+          ['value' => 'community'],
+          ['value' => 'members'],
+        ],
+      ],
+    ];
+  }
+  // Add states for join method based on group visibility.
+  if (isset($form['field_flexible_group_visibility']['widget']['#options'], $form['field_group_allowed_join_method']['widget']['#options'])) {
+    // If group visibility is members. Select invite-only.
+    if (!empty($form['field_group_allowed_join_method']['widget']['added'])) {
+      $form['field_group_allowed_join_method']['widget']['added']['#states'] = [
+        'checked' => [
+          ':input[name="field_flexible_group_visibility"]' => [
+            ['value' => 'members'],
+          ],
+        ],
+      ];
+    }
+    // If group visibility is members. Disable and uncheck open to join.
+    if (!empty($form['field_group_allowed_join_method']['widget']['direct'])) {
+      $form['field_group_allowed_join_method']['widget']['direct']['#states'] = [
+        'disabled' => [
+          ':input[name="field_flexible_group_visibility"]' => [
+            ['value' => 'members'],
+          ],
+        ],
+        'unchecked' => [
+          ':input[name="field_flexible_group_visibility"]' => [
+            ['value' => 'members'],
+          ],
+        ],
+      ];
+    }
+    // If group visibility is members. Disable and uncheck open to join.
+    if (!empty($form['field_group_allowed_join_method']['widget']['request'])) {
+      $form['field_group_allowed_join_method']['widget']['request']['#states'] = [
+        'disabled' => [
+          ':input[name="field_flexible_group_visibility"]' => [
+            ['value' => 'members'],
+          ],
+        ],
+        'unchecked' => [
+          ':input[name="field_flexible_group_visibility"]' => [
+            ['value' => 'members'],
+          ],
+        ],
+      ];
+    }
+  }
+  return $form;
 }
 
 /**
