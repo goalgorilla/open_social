@@ -175,7 +175,7 @@ function social_group_flexible_group_form_alter(&$form, FormStateInterface $form
     // it means it was an already existing flexible group and we need to add a
     // default value so people can save it.
     if ($form['#id'] === 'group-flexible-group-edit-form' &&
-      empty($form['field_flexible_group_visibility']['widget']['#value'])) {
+      empty($form['field_flexible_group_visibility']['widget']['#default_value'])) {
       // The default is always community because we used to only have closed
       // groups (which is visible for the community) or public if the
       // content visibility has public as an option.
@@ -309,7 +309,8 @@ function social_group_flexible_group_group_access(EntityInterface $entity, $oper
   // Write custom access checks based on the new group visibility field.
   // If group visibility doesn't exist we can skip this.
   /** @var \Drupal\group\Entity\GroupInterface $entity */
-  if ($operation !== 'view' && !$entity->hasField('field_flexible_group_visibility')) {
+//  if ($operation !== 'view' || !$entity->hasField('field_flexible_group_visibility')) {
+  if (!$entity->hasField('field_flexible_group_visibility')) {
     return $result;
   }
   // If user has administer groups access we can skip this.
@@ -330,7 +331,7 @@ function social_group_flexible_group_group_access(EntityInterface $entity, $oper
 
   // If group visibility exists and community or members is selected, check
   // if user is logged.
-  if ($group_visibility === 'community' || $group_visibility === 'members') {
+  if ($group_visibility === 'community') {
     return AccessResult::forbiddenIf($account->isAnonymous())
       ->addCacheableDependency($entity)
       ->addCacheContexts(['user']);
@@ -338,8 +339,10 @@ function social_group_flexible_group_group_access(EntityInterface $entity, $oper
   // If group visibility exists and members only is selected, we need to check
   // if user is logged in and is a member of the group.
   if ($group_visibility === 'members') {
-    return AccessResult::forbiddenIf(!$entity->getMember($account))
+    $lu_and_member = !$entity->getMember($account) && $account->isAnonymous();
+    return AccessResult::forbiddenIf($lu_and_member)
       ->addCacheableDependency($entity)
+      ->addCacheableDependency($account)
       ->addCacheContexts(['user', 'group']);
   }
 
