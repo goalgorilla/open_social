@@ -164,11 +164,12 @@ function social_profile_privacy_update_8001(&$sandbox) {
 }
 
 /**
- * Prepare visibility of fields based on the visibility of groups of fields.
+ * Prepare settings of fields based on settings of groups of fields.
  */
 function social_profile_privacy_update_8002() {
   $config = \Drupal::configFactory()->getEditable('social_profile_privacy.settings');
   $fields_groups = [];
+  $disclaimer = array_fill_keys(['title', 'text.value', 'text.format'], NULL);
 
   foreach (array_keys(social_profile_privacy_get_settings_forms()) as $form) {
     if ($config->get($form)) {
@@ -177,7 +178,32 @@ function social_profile_privacy_update_8002() {
       }
     }
 
-    $config->clear($form)->clear($form . '_field_groups');
+    foreach ($disclaimer as $key => &$value) {
+      if ($form_value = $config->get($form . '_disclaimer.' . $key)) {
+        $value = $form_value;
+      }
+    }
+
+    foreach (['', '_field_groups', '_disclaimer'] as $suffix) {
+      $config->clear($form . $suffix);
+    }
+  }
+
+  $text = '';
+
+  if ($disclaimer['title']) {
+    $text .= '<p><strong>' . $disclaimer['title'] . ':</strong></p>';
+  }
+
+  if ($disclaimer['text.value']) {
+    $text .= ($text ? "\r\n" : '') . $disclaimer['text.value'];
+  }
+
+  if ($text) {
+    $config->set('disclaimer', [
+      'value' => $text,
+      'format' => $disclaimer['text.format'] ?: 'basic_html',
+    ]);
   }
 
   if ($fields_groups) {

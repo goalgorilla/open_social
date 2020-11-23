@@ -13,23 +13,6 @@ social_profile_privacy.settings:
       sequence:
         type: string
         label: 'Field group'
-    user_form_display_disclaimer:
-      type: mapping
-      label: 'Disclaimer of user form'
-      mapping:
-        title:
-          type: label
-          label: 'Title'
-        text:
-          type: mapping
-          label: 'Text format'
-          mapping:
-            value:
-              type: label
-              label: 'Value'
-            format:
-              type: string
-              label: 'Format'
     profile_form_display:
       type: string
       label: 'Privacy settings on display of profile form'
@@ -39,23 +22,6 @@ social_profile_privacy.settings:
       sequence:
         type: string
         label: 'Field group'
-    profile_form_display_disclaimer:
-      type: mapping
-      label: 'Disclaimer of profile form'
-      mapping:
-        title:
-          type: label
-          label: 'Title'
-        text:
-          type: mapping
-          label: 'Text format'
-          mapping:
-            value:
-              type: text
-              label: 'Value'
-            format:
-              type: string
-              label: 'Format'
     limit_search_and_mention:
       type: boolean
       label: 'Limit search and mention'
@@ -65,3 +31,13 @@ social_profile_privacy.settings:
       sequence:
         type: integer
         label: 'State'
+    disclaimer:
+      type: mapping
+      label: 'Disclaimer'
+      mapping:
+        value:
+          type: text
+          label: 'Value'
+        format:
+          type: string
+          label: 'Format'

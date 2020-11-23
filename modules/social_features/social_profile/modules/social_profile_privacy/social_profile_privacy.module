@@ -6,7 +6,6 @@
  */
 
 use Drupal\Core\Access\AccessResult;
-use Drupal\Core\Config\ImmutableConfig;
 use Drupal\Core\Field\FieldConfigInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
@@ -92,25 +91,6 @@ function social_profile_privacy_form_social_profile_admin_settings_form_alter(&$
           '#markup' => t("This form mode doesn't contain any field groups."),
         ];
       }
-
-      $form['privacy'][$settings_form_id . '_disclaimer'] = [
-        '#type' => 'fieldset',
-        '#title' => t('Disclaimer'),
-        '#description' => t('Fieldset with this title and text will be displayed in the profile form.'),
-        '#tree' => TRUE,
-      ];
-
-      $form['privacy'][$settings_form_id . '_disclaimer']['title'] = [
-        '#type' => 'textfield',
-        '#title' => t('Title'),
-        '#default_value' => $config->get($settings_form_id . '_disclaimer.title'),
-      ];
-
-      $form['privacy'][$settings_form_id . '_disclaimer']['text'] = [
-        '#type' => 'text_format',
-        '#default_value' => $config->get($settings_form_id . '_disclaimer.text.value'),
-        '#format' => $config->get($settings_form_id . '_disclaimer.text.format'),
-      ];
     }
   }
 
@@ -152,6 +132,13 @@ function social_profile_privacy_form_social_profile_admin_settings_form_alter(&$
     ];
   }
 
+  $form['privacy']['fields']['disclaimer'] = [
+    '#type' => 'text_format',
+    '#title' => t('Disclaimer'),
+    '#default_value' => $config->get('disclaimer.value'),
+    '#format' => $config->get('disclaimer.format'),
+  ];
+
   $form['#submit'][] = 'social_profile_privacy_admin_settings_form_submit';
 }
 
@@ -175,15 +162,16 @@ function social_profile_privacy_admin_settings_form_submit($form, FormStateInter
         $key = $settings_form_id . '_field_groups',
         $form_state->getValue(['groups', $key])
       );
-
-      $config->set(
-        $key = $settings_form_id . '_disclaimer',
-        $form_state->getValue($key)
-      );
     }
   }
 
-  foreach ($form_state->getValue('fields') as $field => $state) {
+  $fields = $form_state->getValue('fields');
+
+  $config->set('disclaimer', $fields['disclaimer']);
+
+  unset($fields['disclaimer']);
+
+  foreach ($fields as $field => $state) {
     if (!$form['privacy']['fields'][$field]['#disabled']) {
       $config->set('fields.' . $field, $state);
     }
@@ -196,6 +184,12 @@ function social_profile_privacy_admin_settings_form_submit($form, FormStateInter
  * Implements hook_form_FORM_ID_alter().
  */
 function social_profile_privacy_form_user_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  $config = \Drupal::config('social_profile_privacy.settings');
+
+  if (!$global_states = $config->get('fields')) {
+    return;
+  }
+
   /** @var \Drupal\Core\Entity\ContentEntityFormInterface $form_object */
   $form_object = $form_state->getFormObject();
 
@@ -204,43 +198,12 @@ function social_profile_privacy_form_user_form_alter(&$form, FormStateInterface 
 
   $form_state->set('account_id', $uid = $account->id());
 
-  $config = \Drupal::config('social_profile_privacy.settings');
-
-  $field_groups = social_profile_privacy_get_field_groups_for_form_state($form_state, $config);
-
-  if ($field_groups) {
-    $settings_form_id = $field_groups['settings_form_id'];
-
-    if ($value = $config->get($settings_form_id . '_disclaimer.text.value')) {
-      if (isset($form['profile_privacy'])) {
-        if (!empty($config->get($settings_form_id . '_disclaimer.title'))) {
-          $title = '<strong>' . $config->get($settings_form_id . '_disclaimer.title') . ':</strong> ';
-        }
-        else {
-          $title = '';
-        }
-        $form['profile_privacy']['disclaimer'] = [
-          '#type' => 'markup',
-          '#markup' => $title . check_markup($value, $config->get($settings_form_id . '_disclaimer.text.format')),
-          '#weight' => -100,
-        ];
-      }
-      else {
-        $form['disclaimer'] = [
-          '#type' => 'fieldset',
-          '#title' => $config->get($settings_form_id . '_disclaimer.title'),
-          'text' => [
-            '#type' => 'markup',
-            '#markup' => check_markup($value, $config->get($settings_form_id . '_disclaimer.text.format')),
-          ],
-          '#weight' => $disclaimer_weight ?? 99,
-        ];
-      }
-    }
-  }
-
-  if (!$global_states = $config->get('fields')) {
-    return;
+  if ($value = $config->get('disclaimer.value')) {
+    $form['profile_privacy']['disclaimer'] = [
+      '#type' => 'markup',
+      '#markup' => check_markup($value, $config->get('disclaimer.format')),
+      '#weight' => -100,
+    ];
   }
 
   $form['profile_privacy']['fields'] = ['#type' => 'container'];
@@ -468,41 +431,6 @@ function social_profile_privacy_get_settings_forms() {
       'bundle' => 'profile',
     ],
   ];
-}
-
-/**
- * Get the list of privacy field groups enabled for the given form state.
- *
- * @param \Drupal\Core\Form\FormStateInterface $form_state
- *   The form state.
- * @param \Drupal\Core\Config\ImmutableConfig $config
- *   The config.
- *
- * @return array|null
- *   Returns an array with the settings form id and field groups or NULL.
- */
-function social_profile_privacy_get_field_groups_for_form_state(FormStateInterface $form_state, ImmutableConfig $config) {
-  $storage = $form_state->getStorage();
-  if (isset($storage['form_display'])) {
-
-    /** @var \Drupal\Core\Entity\Entity\EntityFormDisplay $form_display */
-    $form_display = $storage['form_display'];
-    $active_form_display_id = $form_display->getOriginalId();
-
-    $settings_forms = social_profile_privacy_get_settings_forms();
-    foreach ($settings_forms as $settings_form_id => $settings_form) {
-      if ($config->get($settings_form_id) === $active_form_display_id) {
-        $field_groups = $config->get($settings_form_id . '_field_groups');
-        if (!empty($field_groups)) {
-          return [
-            'settings_form_id' => $settings_form_id,
-            'field_groups' => $field_groups,
-          ];
-        }
-      }
-    }
-  }
-  return NULL;
 }
 
 /**
