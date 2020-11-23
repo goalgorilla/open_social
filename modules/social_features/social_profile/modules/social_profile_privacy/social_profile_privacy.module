@@ -7,17 +7,14 @@
 
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Config\ImmutableConfig;
-use Drupal\Core\Entity\ContentEntityFormInterface;
 use Drupal\Core\Field\FieldConfigInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Access\AccessResult;
-use Drupal\profile\Entity\ProfileInterface;
 use Drupal\profile\Entity\ProfileType;
 use Drupal\user\Entity\User;
-use Drupal\user\UserInterface;
 
 /**
  * Always show profile field for everyone.
@@ -199,27 +196,14 @@ function social_profile_privacy_admin_settings_form_submit($form, FormStateInter
 }
 
 /**
- * Implements hook_form_alter().
+ * Implements hook_form_FORM_ID_alter().
  */
-function social_profile_privacy_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+function social_profile_privacy_form_user_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  /** @var \Drupal\Core\Entity\ContentEntityFormInterface $form_object */
   $form_object = $form_state->getFormObject();
 
-  if (!$form_object instanceof ContentEntityFormInterface) {
-    return;
-  }
-
-  $entity = $form_object->getEntity();
-
-  if ($entity instanceof ProfileInterface) {
-    $profile = $entity;
-    $account = $profile->getOwner();
-  }
-  elseif ($entity instanceof UserInterface) {
-    $account = $entity;
-  }
-  else {
-    return;
-  }
+  /** @var \Drupal\user\UserInterface $account */
+  $account = $form_object->getEntity();
 
   $form_state->set('account_id', $uid = $account->id());
 
@@ -236,21 +220,7 @@ function social_profile_privacy_form_alter(&$form, FormStateInterface $form_stat
     $values = $user_data->get('social_profile_privacy', $uid, 'private_info');
 
     foreach ($field_groups['field_groups'] as $id) {
-      if (array_key_exists($id, $form['#fieldgroups'])) {
-        $form[$id . '_visible'] = [
-          '#type' => 'checkbox',
-          '#title' => t('Show on my profile'),
-          '#weight' => -100,
-          '#default_value' => isset($values[$id]) ? $values[$id] : TRUE,
-          '#attributes' => [
-            'data-switch' => TRUE,
-          ],
-        ];
-        $form['#group_children'][$id . '_visible'] = $id;
-        $disclaimer_weight = $form['#fieldgroups'][$id]->weight + 1;
-        $form['#fieldgroups'][$id]->children[] = $id . '_visible';
-      }
-      elseif (isset($form['profile_privacy'])) {
+      if (isset($form['profile_privacy'])) {
         if (array_key_exists($id, $field_groups_labels)) {
           $form['profile_privacy'][$id . '_visible'] = [
             '#type' => 'checkbox',
@@ -295,7 +265,7 @@ function social_profile_privacy_form_alter(&$form, FormStateInterface $form_stat
     $form['actions']['submit']['#submit'][] = 'social_profile_privacy_profile_form_submit';
   }
 
-  if (isset($profile) || !$global_states = $config->get('fields')) {
+  if (!$global_states = $config->get('fields')) {
     return;
   }
 
