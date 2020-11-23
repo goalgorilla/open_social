@@ -439,6 +439,27 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
     }
 
     /**
+     * Shows hidden inputs.
+     *
+     * @When /^(?:|I )show hidden inputs/
+     */
+    public function showHiddenInputs()
+    {
+      $session = $this->getSession();
+
+      $session->executeScript(
+        "var inputs = document.getElementsByClassName('input');
+            for(var i = 0; i < inputs.length; i++) {
+            inputs[i].style.opacity = 1;
+            inputs[i].style.left = 0;
+            inputs[i].style.position = 'relative';
+            inputs[i].style.display = 'block';
+            }
+            ");
+    }
+
+
+  /**
      * Opens specified page.
      *
      * @Given /^(?:|I )am on the profile of "(?P<username>[^"]+)"$/

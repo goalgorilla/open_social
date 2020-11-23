@@ -342,7 +342,6 @@ function social_group_flexible_group_group_access(EntityInterface $entity, $oper
     return AccessResult::forbiddenIf($not_a_member)
       ->cachePerPermissions()
       ->cachePerUser()
-      ->addCacheContexts(['group'])
       ->addCacheableDependency($entity)
       ->addCacheableDependency($account);
   }
@@ -911,11 +910,12 @@ function social_group_flexible_group_views_query_alter(ViewExecutable $view, Que
   $view->element['#cache']['contexts'][] = 'user';
   // Make sure this block gets refreshed for a user if the group membership
   // changed for this user.
-  $view->element['#cache']['tags'][] = 'group_content_list:plugin:group_membership:entity:' . $account->id();
-  $query->setWhereGroup('AND', $new_where);
-  $query->addWhere($new_where, 'field_flexible_group_visibility_value', ['members'], 'IN');
-  $query->addWhere($new_where, 'groups_field_data.id', $my_groups, 'IN');
-
+  if (!empty($my_groups)) {
+    $view->element['#cache']['tags'][] = 'group_content_list:plugin:group_membership:entity:' . $account->id();
+    $query->setWhereGroup('AND', $new_where);
+    $query->addWhere($new_where, 'field_flexible_group_visibility_value', ['members'], 'IN');
+    $query->addWhere($new_where, 'groups_field_data.id', $my_groups, 'IN');
+  }
   $extra_where = $new_where + 1;
   // OR we add a new Where clause for any community group visibility related
   // groups. Because any LU can see those for the community, regardless of
