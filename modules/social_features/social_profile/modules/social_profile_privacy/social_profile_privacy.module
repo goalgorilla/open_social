@@ -5,16 +5,13 @@
  * The Social profile privacy module file.
  */
 
-use Drupal\Core\Cache\Cache;
+use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Config\ImmutableConfig;
 use Drupal\Core\Field\FieldConfigInterface;
-use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
-use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Field\FieldItemListInterface;
-use Drupal\Core\Access\AccessResult;
-use Drupal\profile\Entity\ProfileType;
-use Drupal\user\Entity\User;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Session\AccountInterface;
 
 /**
  * Always show profile field for everyone.
@@ -211,29 +208,8 @@ function social_profile_privacy_form_user_form_alter(&$form, FormStateInterface 
 
   $field_groups = social_profile_privacy_get_field_groups_for_form_state($form_state, $config);
 
-  /** @var \Drupal\user\UserDataInterface $user_data */
-  $user_data = \Drupal::service('user.data');
-
   if ($field_groups) {
-    $field_groups_labels = social_profile_privacy_form_field_group_options();
     $settings_form_id = $field_groups['settings_form_id'];
-    $values = $user_data->get('social_profile_privacy', $uid, 'private_info');
-
-    foreach ($field_groups['field_groups'] as $id) {
-      if (isset($form['profile_privacy'])) {
-        if (array_key_exists($id, $field_groups_labels)) {
-          $form['profile_privacy'][$id . '_visible'] = [
-            '#type' => 'checkbox',
-            '#title' => t('Show "@field_group" on my profile', ['@field_group' => $field_groups_labels[$id]]),
-            '#weight' => -10,
-            '#default_value' => $values[$id] ?? TRUE,
-            '#attributes' => [
-              'data-switch' => TRUE,
-            ],
-          ];
-        }
-      }
-    }
 
     if ($value = $config->get($settings_form_id . '_disclaimer.text.value')) {
       if (isset($form['profile_privacy'])) {
@@ -261,8 +237,6 @@ function social_profile_privacy_form_user_form_alter(&$form, FormStateInterface 
         ];
       }
     }
-
-    $form['actions']['submit']['#submit'][] = 'social_profile_privacy_profile_form_submit';
   }
 
   if (!$global_states = $config->get('fields')) {
@@ -270,6 +244,9 @@ function social_profile_privacy_form_user_form_alter(&$form, FormStateInterface 
   }
 
   $form['profile_privacy']['fields'] = ['#type' => 'container'];
+
+  /** @var \Drupal\user\UserDataInterface $user_data */
+  $user_data = \Drupal::service('user.data');
 
   $user_states = $user_data->get('social_profile_privacy', $uid, 'fields');
   $definitions = \Drupal::service('entity_field.manager')->getFieldDefinitions('profile', 'profile');
@@ -325,55 +302,6 @@ function social_profile_privacy_admin_settings_form_ajax($form, FormStateInterfa
 }
 
 /**
- * Additional submit function to save settings of hidden fields.
- */
-function social_profile_privacy_profile_form_submit($form, FormStateInterface $form_state) {
-  if (!empty($form_state->getValue('uid'))) {
-    $uid = $form_state->getValue('uid');
-  }
-  if (!isset($uid)) {
-    $uid = $form_state->getFormObject()->getEntity()->get('uid')->target_id;
-  }
-  $config = \Drupal::config('social_profile_privacy.settings');
-  $field_groups = social_profile_privacy_get_field_groups_for_form_state($form_state, $config);
-
-  $user_data = \Drupal::service('user.data');
-  $existing_user_data = $user_data->get('social_profile_privacy', $uid, 'private_info');
-  $data = $existing_user_data ? $existing_user_data : [];
-  foreach ($field_groups['field_groups'] as $group => $group_setting) {
-    if (!empty($form_state->getValue('profile_privacy'))) {
-      $profile_privacy_values = $form_state->getValue('profile_privacy');
-      if (isset($profile_privacy_values[$group . '_visible'])) {
-        $data[$group] = (bool) $profile_privacy_values[$group . '_visible'];
-      }
-    }
-    else {
-      if ($form_state->getValue($group . '_visible') !== NULL) {
-        $data[$group] = (bool) $form_state->getValue($group . '_visible');
-      }
-    }
-  }
-
-  // We need to clear caches for a user and the profile entity
-  // this to ensure the information block data gets invalidated.
-  $entity_type_manager = \Drupal::entityTypeManager();
-  $storage = $entity_type_manager->getStorage('profile');
-  if ($storage !== NULL) {
-    /** @var \Drupal\user\Entity\User $account */
-    $account = User::load($uid);
-
-    $profile = \Drupal::entityTypeManager()->getStorage('profile')->loadByUser($account, ProfileType::load('profile')->id(), TRUE);
-    if ($profile !== NULL) {
-      Cache::invalidateTags(['entity_view:profile:' . $profile->id()]);
-      Cache::invalidateTags(['profile:' . $profile->id()]);
-      Cache::invalidateTags(['user:' . $uid]);
-    }
-  }
-
-  $user_data->set('social_profile_privacy', $uid, 'private_info', $data);
-}
-
-/**
  * Save fields visibility options for a user.
  */
 function _social_profile_privacy_fields_submit($form, FormStateInterface $form_state) {
@@ -390,6 +318,19 @@ function _social_profile_privacy_fields_submit($form, FormStateInterface $form_s
   }
 
   $user_data->set('social_profile_privacy', $uid, 'fields', $values);
+
+  $tags = ['user:' . $uid];
+
+  $profile = \Drupal::entityQuery('profile')
+    ->condition('uid', $uid)
+    ->execute();
+
+  if ($profile) {
+    $tags[] = 'profile:' . $profile;
+    $tags[] = 'entity_view:profile:' . $profile;
+  }
+
+  \Drupal::service('cache_tags.invalidator')->invalidateTags($tags);
 }
 
 /**
