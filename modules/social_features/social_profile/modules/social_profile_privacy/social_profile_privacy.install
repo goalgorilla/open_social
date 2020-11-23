@@ -162,3 +162,54 @@ function social_profile_privacy_update_8001(&$sandbox) {
 
   return $output;
 }
+
+/**
+ * Prepare visibility of fields based on the visibility of groups of fields.
+ */
+function social_profile_privacy_update_8002() {
+  $config = \Drupal::configFactory()->getEditable('social_profile_privacy.settings');
+  $fields_groups = [];
+
+  foreach (array_keys(social_profile_privacy_get_settings_forms()) as $form) {
+    if ($config->get($form)) {
+      foreach (array_filter((array) $config->get($form . '_field_groups')) as $fields_group) {
+        $fields_groups[] = $fields_group;
+      }
+    }
+
+    $config->clear($form)->clear($form . '_field_groups');
+  }
+
+  if ($fields_groups) {
+    /** @var \Drupal\Core\Entity\Display\EntityFormDisplayInterface $display */
+    $display = \Drupal::entityTypeManager()->getStorage('entity_form_display')
+      ->load('profile.profile.default');
+
+    $states = [];
+
+    foreach (array_unique($fields_groups) as $fields_group) {
+      $settings = $display->getThirdPartySetting('field_group', $fields_group);
+
+      foreach ($settings['children'] as $field) {
+        $states[$field] = SOCIAL_PROFILE_PRIVACY_CONFIGURABLE_VISIBILITY;
+      }
+    }
+
+    $config->set('fields', $states);
+
+    $output = t('The visibility option has been changed to configurable for the following fields: @list', [
+      '@list' => implode(', ', array_keys($states)),
+    ]);
+  }
+  else {
+    $output = t('The visibility option for no one field has been changed.');
+  }
+
+  $config->save();
+
+  if (PHP_SAPI === 'cli') {
+    drush_print($output);
+  }
+
+  return $output;
+}
