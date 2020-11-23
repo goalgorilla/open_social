@@ -259,7 +259,7 @@ function social_comment_tokens($type, $tokens, array $data, array $options, Bubb
  *   The processed text.
  */
 function _social_comment_get_summary($text) {
-  $summary = strip_tags($text);
+  $summary = html_entity_decode(strip_tags($text));
   $max_length = 280;
 
   if (mb_strlen($summary) > $max_length) {

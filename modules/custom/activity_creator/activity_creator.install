@@ -137,3 +137,13 @@ function activity_creator_update_8801() {
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
 }
+
+/**
+ * Remove activities notification status if related entity not exist.
+ *
+ * @see activity_creator_post_update_8802_remove_orphaned_activities()
+ * @see activity_creator_post_update_8803_remove_activities_with_no_related_entities()
+ */
+function activity_creator_update_8802(&$sandbox) {
+  // Removed in https://www.drupal.org/project/social/issues/3171563.
+}

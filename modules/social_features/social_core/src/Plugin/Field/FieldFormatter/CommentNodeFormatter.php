@@ -94,13 +94,21 @@ class CommentNodeFormatter extends CommentDefaultFormatter {
         $output['comments'] = [];
 
         if ($comment_count || $this->currentUser->hasPermission('administer comments')) {
-          $mode = $comment_settings['default_mode'];
-          $comments = $this->loadThread($entity, $field_name, $mode, $comments_per_page, FALSE);
-          if ($comments) {
-            $build = $this->viewBuilder->viewMultiple($comments);
-            $output['comments'] += $build;
-          }
-
+          $comment_settings = $this->getFieldSettings();
+          $output['comments'] = [
+            '#lazy_builder' => [
+              'social_comment.lazy_renderer:renderComments',
+              [
+                $items->getEntity()->getEntityTypeId(),
+                $items->getEntity()->id(),
+                $comment_settings['default_mode'],
+                $items->getName(),
+                $comment_settings['per_page'],
+                $this->getSetting('pager_id'),
+              ],
+            ],
+            '#create_placeholder' => TRUE,
+          ];
         }
 
         // Prepare the show all comments link.

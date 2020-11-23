@@ -1,0 +1,27 @@
+<?php
+
+/**
+ * @file
+ * Contains install and update hooks.
+ */
+
+/**
+ * Enable editor advanced link module.
+ */
+function social_editor_update_8901() {
+  \Drupal::service('module_installer')->install(['editor_advanced_link']);
+}
+
+/**
+ * Added editor advanced link html attributes.
+ */
+function social_editor_update_8903() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_editor', 'social_editor_update_8903');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}

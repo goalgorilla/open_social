@@ -30,8 +30,17 @@
 
 }
 
+// The visibility list contains anchor elements to fix keyboard support so we
+// must clear the default anchor list styling from dropdown.scss.
+.dropdown-menu--visibility .list-item--active > a,
+.dropdown-menu--visibility .list-item--active:hover > a {
+  color: inherit;
+  border-color: inherit;
+}
+
 .list-item--active,
-.list-item--active:hover {
+.list-item--active:hover,
+.list-item--active:focus-within {
   color: $list-group-active-color;
   background-color: $list-group-active-bg;
   border-color: $list-group-active-border;

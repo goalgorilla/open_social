@@ -84,16 +84,21 @@ class ContentBuilder implements ContentBuilderInterface {
   /**
    * Function to get all the entities based on the filters.
    *
-   * @param \Drupal\block_content\BlockContentInterface $block_content
-   *   The block content where we get the settings from.
+   * @param string|int $block_id
+   *   The block id where we get the settings from.
+   * @param string $entity_bundle
+   *   The bundle of the entity.
    *
    * @return array
    *   Returns the entities found.
    *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  protected function getEntities(BlockContentInterface $block_content) {
+  public function getEntities($block_id, $entity_bundle) {
+    $block_content = $this->entityTypeManager->getStorage('block_content')->load($block_id);
+
     $plugin_id = $block_content->field_plugin_id->value;
     $definition = $this->contentBlockManager->getDefinition($plugin_id);
 
@@ -186,6 +191,8 @@ class ContentBuilder implements ContentBuilderInterface {
 
     return [
       '#markup' => '<div class="card__block">' . $this->t('No matching content found') . '</div>',
+      '#prefix' => '<div class="content-list__items">',
+      '#suffix' => '</div>',
     ];
   }
 
@@ -232,12 +239,13 @@ class ContentBuilder implements ContentBuilderInterface {
 
     $build['content'] = [];
 
-    $build['content']['entities'] = $this->getEntities($block_content);
-    // If it's not an empty list, add a helper wrapper for theming.
-    if (!isset($build['content']['entities']['#markup'])) {
-      $build['content']['entities']['#prefix'] = '<div class="content-list__items">';
-      $build['content']['entities']['#suffix'] = '</div>';
-    }
+    $build['content']['entities'] = [
+      '#lazy_builder' => [
+        'social_content_block.content_builder:getEntities',
+        [$entity_id, $entity_bundle],
+      ],
+      '#create_placeholder' => TRUE,
+    ];
 
     $link = $this->getLink($block_content);
     if (!empty($link)) {
