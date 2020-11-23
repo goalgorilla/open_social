@@ -309,12 +309,11 @@ function social_group_flexible_group_group_access(EntityInterface $entity, $oper
   // Write custom access checks based on the new group visibility field.
   // If group visibility doesn't exist we can skip this.
   /** @var \Drupal\group\Entity\GroupInterface $entity */
-//  if ($operation !== 'view' || !$entity->hasField('field_flexible_group_visibility')) {
-  if (!$entity->hasField('field_flexible_group_visibility')) {
+  if ($operation !== 'view' || !$entity->hasField('field_flexible_group_visibility')) {
     return $result;
   }
   // If user has administer groups access we can skip this.
-  if ($account->hasPermission('administer group')) {
+  if ($account->hasPermission('manage all groups')) {
     return $result;
   }
 
@@ -322,9 +321,9 @@ function social_group_flexible_group_group_access(EntityInterface $entity, $oper
   if (empty($entity->getFieldValue('field_flexible_group_visibility', 'value'))) {
     return $result;
   }
-  $group_visibility = $entity->getFieldValue('field_flexible_group_visibility', 'value');
 
   // If group visibility exists and public is selected, we can skip.
+  $group_visibility = $entity->getFieldValue('field_flexible_group_visibility', 'value');
   if ($group_visibility === 'public') {
     return $result;
   }
@@ -333,17 +332,19 @@ function social_group_flexible_group_group_access(EntityInterface $entity, $oper
   // if user is logged.
   if ($group_visibility === 'community') {
     return AccessResult::forbiddenIf($account->isAnonymous())
-      ->addCacheableDependency($entity)
-      ->addCacheContexts(['user']);
+      ->cachePerUser()
+      ->addCacheableDependency($entity);
   }
   // If group visibility exists and members only is selected, we need to check
   // if user is logged in and is a member of the group.
   if ($group_visibility === 'members') {
-    $lu_and_member = !$entity->getMember($account) && $account->isAnonymous();
-    return AccessResult::forbiddenIf($lu_and_member)
+    $not_a_member = !$entity->getMember($account) || $account->isAnonymous();
+    return AccessResult::forbiddenIf($not_a_member)
+      ->cachePerPermissions()
+      ->cachePerUser()
+      ->addCacheContexts(['group'])
       ->addCacheableDependency($entity)
-      ->addCacheableDependency($account)
-      ->addCacheContexts(['user', 'group']);
+      ->addCacheableDependency($account);
   }
 
   return $result;
@@ -837,19 +838,19 @@ function social_group_flexible_group_views_query_alter(ViewExecutable $view, Que
   // Let's build our join with the allowed visibility data.
   $configuration = [
     'type'       => 'LEFT',
-    'table'      => 'group__field_group_allowed_visibility',
+    'table'      => 'group__field_flexible_group_visibility',
     'field'      => 'entity_id',
     'left_table' => 'groups_field_data',
     'left_field' => 'id',
     'operator'   => '=',
   ];
 
-  $alias = 'groups_field_data_allowed_visibility';
+  $alias = 'groups_field_flexible_group_visibility';
 
   /** @var \Drupal\views\Plugin\views\query\Sql $query */
   $join = Views::pluginManager('join')->createInstance('standard', $configuration);
   $rel = $query->addRelationship($alias, $join, 'groups_field_data');
-  $query->addTable('group__field_group_allowed_visibility', $rel, $join, $alias);
+  $query->addTable('group__field_flexible_group_visibility', $rel, $join, $alias);
 
   /** @var \Drupal\views\Plugin\views\query\Sql $query */
   $current_where = count($query->where);
@@ -875,7 +876,7 @@ function social_group_flexible_group_views_query_alter(ViewExecutable $view, Que
         'closed_group',
         'open_group',
       ], 'NOT IN');
-      $query->addWhere($new_where, 'field_group_allowed_visibility_value', ['public'], 'IN');
+      $query->addWhere($new_where, 'field_flexible_group_visibility_value', ['public'], 'IN');
       $query->addWhere($new_where, 'groups_field_data.type', ['flexible_group'], 'IN');
       return;
     }
@@ -887,10 +888,40 @@ function social_group_flexible_group_views_query_alter(ViewExecutable $view, Que
     // OR it is a flexible group but than we only want groups
     // that have the public content visibility for AN users.
     $query->setWhereGroup('AND', $new_where);
-    $query->addWhere($new_where, 'field_group_allowed_visibility_value', ['public'], 'IN');
+    $query->addWhere($new_where, 'field_flexible_group_visibility_value', ['public'], 'IN');
     $query->addWhere($new_where, 'groups_field_data.type', ['flexible_group'], 'IN');
     return;
   }
+
+  // We need to render this as an OR operator now.
+  // Because we want to allow the other filters to still take place.
+  $query->setGroupOperator('OR');
+
+  // First we remove flexible groups from the existing where clause.
+  // We need this, otherwise there won't be any open, closed, public groups
+  // showed.
+  $query->addWhere($current_where, 'groups_field_data.type', ['flexible_group'], 'NOT IN');
+
+  // In this case we are LU, we already checked if we have the manage groups
+  // permission. So lets add a check to remove flexible groups
+  // that have the group_visibility set to members for groups we are a
+  // member of.
+  $my_groups = \Drupal::service('social_group.helper_service')
+    ->getAllGroupsForUser($account->id());
+  $view->element['#cache']['contexts'][] = 'user';
+  // Make sure this block gets refreshed for a user if the group membership
+  // changed for this user.
+  $view->element['#cache']['tags'][] = 'group_content_list:plugin:group_membership:entity:' . $account->id();
+  $query->setWhereGroup('AND', $new_where);
+  $query->addWhere($new_where, 'field_flexible_group_visibility_value', ['members'], 'IN');
+  $query->addWhere($new_where, 'groups_field_data.id', $my_groups, 'IN');
+
+  $extra_where = $new_where + 1;
+  // OR we add a new Where clause for any community group visibility related
+  // groups. Because any LU can see those for the community, regardless of
+  // their memberships.
+  $query->setWhereGroup('AND', $extra_where);
+  $query->addWhere($extra_where, 'field_flexible_group_visibility_value', ['public', 'community'], 'IN');
 }
 
 /**
