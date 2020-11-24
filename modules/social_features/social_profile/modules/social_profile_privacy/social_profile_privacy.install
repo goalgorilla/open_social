@@ -6,6 +6,7 @@
  */
 
 use Drupal\Core\Site\Settings;
+use Drupal\social_profile_privacy\Service\SocialProfilePrivacyHelperInterface;
 use Drupal\user\Entity\Role;
 
 /**
@@ -78,7 +79,7 @@ function social_profile_privacy_update_8001(&$sandbox) {
       $states = [];
 
       foreach ($settings['children'] as $field) {
-        $states[$field] = SOCIAL_PROFILE_PRIVACY_HIDE_VISIBILITY;
+        $states[$field] = SocialProfilePrivacyHelperInterface::HIDE;
       }
 
       $sandbox['fields'][$fields_group] = serialize($states);
@@ -217,7 +218,7 @@ function social_profile_privacy_update_8002() {
       $settings = $display->getThirdPartySetting('field_group', $fields_group);
 
       foreach ($settings['children'] as $field) {
-        $states[$field] = SOCIAL_PROFILE_PRIVACY_CONFIGURABLE_VISIBILITY;
+        $states[$field] = SocialProfilePrivacyHelperInterface::CONFIGURABLE;
       }
     }
 
