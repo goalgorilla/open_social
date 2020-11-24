@@ -47,8 +47,21 @@ function social_profile_privacy_form_social_profile_admin_settings_form_alter(&$
 
   $form['privacy']['fields'] = [
     '#type' => 'fieldset',
-    '#title' => t('Fields'),
+    '#title' => t('Profile fields visibility'),
+    '#description' => t('Please choose which profile fields can be displayed in user profiles. Site managers can always see all the filled-in profile information.'),
     '#tree' => TRUE,
+  ];
+
+  $actions = [
+    SOCIAL_PROFILE_PRIVACY_SHOW_VISIBILITY => t('Always show for everyone'),
+    SOCIAL_PROFILE_PRIVACY_CONFIGURABLE_VISIBILITY => t('Show, but can be hidden by each user'),
+    SOCIAL_PROFILE_PRIVACY_HIDE_VISIBILITY => t('Hide for others'),
+  ];
+
+  $form['privacy']['fields']['list'] = [
+    '#type' => 'table',
+    '#caption' => t('Profile fields overview'),
+    '#header' => array_merge([t('Field name')], $actions),
   ];
 
   /** @var \Drupal\Core\Entity\Display\EntityFormDisplayInterface $display */
@@ -63,6 +76,8 @@ function social_profile_privacy_form_social_profile_admin_settings_form_alter(&$
       continue;
     }
 
+    $row = [['#plain_text' => $definition->label()]];
+
     if ($available = $handler->fieldAccess('edit', $definition)) {
       $value = $config->get('fields.' . $field) ?: SOCIAL_PROFILE_PRIVACY_SHOW_VISIBILITY;
     }
@@ -70,17 +85,18 @@ function social_profile_privacy_form_social_profile_admin_settings_form_alter(&$
       $value = SOCIAL_PROFILE_PRIVACY_HIDE_VISIBILITY;
     }
 
-    $form['privacy']['fields'][$field] = [
-      '#type' => 'radios',
-      '#title' => $definition->label(),
-      '#options' => [
-        SOCIAL_PROFILE_PRIVACY_SHOW_VISIBILITY => t('Always show for everyone'),
-        SOCIAL_PROFILE_PRIVACY_CONFIGURABLE_VISIBILITY => t('Show, but can be hidden by each user'),
-        SOCIAL_PROFILE_PRIVACY_HIDE_VISIBILITY => t('Hide for others'),
-      ],
-      '#default_value' => $value,
-      '#disabled' => !$available,
-    ];
+    foreach ($actions as $state => $label) {
+      $row[] = [
+        '#type' => 'radio',
+        '#title' => $label,
+        '#return_value' => $state,
+        '#default_value' => $value === $state ? $state : NULL,
+        '#disabled' => !$available,
+        '#parents' => ['fields', $field],
+      ];
+    }
+
+    $form['privacy']['fields']['list'][] = $row;
   }
 
   $form['privacy']['fields']['disclaimer'] = [
@@ -106,10 +122,10 @@ function social_profile_privacy_admin_settings_form_submit($form, FormStateInter
 
   $config->set('disclaimer', $fields['disclaimer']);
 
-  unset($fields['disclaimer']);
+  unset($fields['disclaimer'], $fields['list']);
 
   foreach ($fields as $field => $state) {
-    if (!$form['privacy']['fields'][$field]['#disabled']) {
+    if ($state !== '') {
       $config->set('fields.' . $field, $state);
     }
   }
