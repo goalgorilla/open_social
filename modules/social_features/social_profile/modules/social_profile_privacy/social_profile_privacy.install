@@ -171,8 +171,8 @@ function social_profile_privacy_update_8002() {
   $fields_groups = [];
   $disclaimer = array_fill_keys(['title', 'text.value', 'text.format'], NULL);
 
-  foreach (array_keys(social_profile_privacy_get_settings_forms()) as $form) {
-    if ($config->get($form)) {
+  foreach (['user', 'profile'] as $entity_type_id) {
+    if ($config->get($form = $entity_type_id . '_form_display')) {
       foreach (array_filter((array) $config->get($form . '_field_groups')) as $fields_group) {
         $fields_groups[] = $fields_group;
       }
