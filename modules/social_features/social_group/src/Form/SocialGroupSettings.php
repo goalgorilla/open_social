@@ -37,27 +37,20 @@ class SocialGroupSettings extends ConfigFormBase {
     $config = $this->config('social_group.settings');
 
     $form['permissions'] = [
-      '#type' => 'fieldset',
+      '#type' => 'checkboxes',
       '#title' => $this->t('Group permissions'),
+      '#options' => [
+        'allow_group_create' => $this->t('Allow regular users to create new groups'),
+        'allow_group_selection_in_node' => $this->t('Allow regular users to change the group their content belong to'),
+        'address_visibility_settings' => $this->t('Only show the group address to the group members'),
+      ],
     ];
 
-    $form['permissions']['allow_group_create'] = [
-      '#type' => 'checkbox',
-      '#title' => $this->t('Allow regular users to create new groups'),
-      '#default_value' => $config->get('allow_group_create'),
-    ];
-
-    $form['permissions']['allow_group_selection_in_node'] = [
-      '#type' => 'checkbox',
-      '#title' => $this->t('Allow regular users to change the group their content belong to'),
-      '#default_value' => $config->get('allow_group_selection_in_node'),
-    ];
-
-    $form['permissions']['address_visibility_settings'] = [
-      '#type' => 'checkbox',
-      '#title' => $this->t('Only show the group address to the group members'),
-      '#default_value' => $config->get('address_visibility_settings'),
-    ];
+    foreach (array_keys($form['permissions']['#options']) as $permission) {
+      if ($config->get($permission)) {
+        $form['permissions']['#default_value'][] = $permission;
+      }
+    }
 
     $form['default_hero'] = [
       '#type' => 'radios',
@@ -76,12 +69,13 @@ class SocialGroupSettings extends ConfigFormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     parent::submitForm($form, $form_state);
 
-    $this->config('social_group.settings')
-      ->set('allow_group_create', $form_state->getValue('allow_group_create'))
-      ->set('allow_group_selection_in_node', $form_state->getValue('allow_group_selection_in_node'))
-      ->set('default_hero', $form_state->getValue('default_hero'))
-      ->set('address_visibility_settings', $form_state->getValue('address_visibility_settings'))
-      ->save();
+    $config = $this->config('social_group.settings');
+
+    foreach ($form_state->getValue('permissions') as $key => $value) {
+      $config->set($key, !empty($value));
+    }
+
+    $config->set('default_hero', $form_state->getValue('default_hero'))->save();
 
     Cache::invalidateTags(['group_view']);
   }
