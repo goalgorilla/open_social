@@ -39,7 +39,7 @@ class SocialGroupSettings extends ConfigFormBase {
     $form['create'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Create'),
-      '#default_value' => $config->get('create'),
+      '#default_value' => $config->get('allow_group_create'),
     ];
 
     $form['allow_group_selection_in_node'] = [
@@ -76,7 +76,7 @@ class SocialGroupSettings extends ConfigFormBase {
     parent::submitForm($form, $form_state);
 
     $this->config('social_group.settings')
-      ->set('create', $form_state->getValue('create'))
+      ->set('allow_group_create', $form_state->getValue('create'))
       ->set('allow_group_selection_in_node', $form_state->getValue('allow_group_selection_in_node'))
       ->set('default_hero', $form_state->getValue('default_hero'))
       ->set('address_visibility_settings', $form_state->getValue('address_visibility_settings'))

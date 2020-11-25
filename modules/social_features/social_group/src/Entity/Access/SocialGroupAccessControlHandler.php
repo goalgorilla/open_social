@@ -55,7 +55,7 @@ class SocialGroupAccessControlHandler extends GroupAccessControlHandler implemen
     if (
       !$account->hasPermission('bypass group access') &&
       !$account->hasPermission('bypass create group access') &&
-      !$this->configFactory->get('social_group.settings')->get('create')
+      !$this->configFactory->get('social_group.settings')->get('allow_group_create')
     ) {
       return AccessResult::forbidden();
     }

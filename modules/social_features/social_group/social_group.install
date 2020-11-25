@@ -580,7 +580,7 @@ function social_group_update_8902() {
  */
 function social_group_update_8903() {
   \Drupal::configFactory()->getEditable('social_group.settings')
-    ->set('create', TRUE)
+    ->set('allow_group_create', TRUE)
     ->save();
 
   foreach (['contentmanager', 'sitemanager'] as $role) {
