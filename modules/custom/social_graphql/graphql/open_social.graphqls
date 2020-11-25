@@ -11,16 +11,26 @@
 # If you're new to GraphQL I recommend starting at: https://graphql.org/learn/ #
 ################################################################################
 
+# The actual GraphQL schema
+schema {
+  query: Query
+  mutation: Mutation
+  subscription: Subscription
+}
+
 """
 The schema's entry-point for queries. This acts as the public, top-level API
 from which all queries must start.
 """
 type Query
 
-# The actual GraphQL schema
-schema {
-  query: Query
-}
+"""
+The schema's entry-point for subscriptions. This acts as the public, top-level
+API from which all subscriptions must start.
+
+A real-time process must be implemented and deployed to support subscriptions.
+"""
+type Subscription
 
 ################################################################################
 #                                Basic Types                                   #
@@ -288,10 +298,10 @@ interface Connection {
 ################################################################################
 #                         Data Creation Interfaces                             #
 ################################################################################
-# """
-# The base mutation type.
-# """
-# type Mutation
+"""
+The base mutation type.
+"""
+type Mutation
 
 """
 A violation indicates an error in the GraphQL query or other incorrect
