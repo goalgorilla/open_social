@@ -72,6 +72,9 @@ function social_follow_landing_page_preprocess_paragraph(&$variables) {
 
         // Adding data to the terms variable to extend the template.
         $variables['terms'] = $terms;
+
+        // Adding cache tag.
+        $variables['#cache']['tags'][] = 'flagging_list';
       }
       break;
   }
