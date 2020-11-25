@@ -21,6 +21,12 @@ class FollowTaxonomyActivityContext extends ActivityContextBase {
    * {@inheritdoc}
    */
   public function getRecipients(array $data, $last_uid, $limit) {
+    // It could happen that a notification has been queued but the account has
+    // since been deleted and message author is anonymous.
+    if (!empty($data['actor']) && $data['actor'] === 0) {
+      return [];
+    }
+
     $recipients = [];
 
     // We only know the context if there is a related object.

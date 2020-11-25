@@ -379,7 +379,9 @@ function social_follow_taxonomy_term_followed(TermInterface $term) {
  */
 function social_follow_taxonomy_term_followers_count(TermInterface $term) {
   $count = 0;
-  $term_followers_count = \Drupal::service('flag.count')->getEntityFlagCounts($term);
+  /** @var \Drupal\flag\FlagCountManagerInterface $flag_count_manager */
+  $flag_count_manager = \Drupal::service('flag.count');
+  $term_followers_count = $flag_count_manager->getEntityFlagCounts($term);
 
   if (isset($term_followers_count['follow_term'])) {
     $count = $term_followers_count['follow_term'];
@@ -422,7 +424,12 @@ function social_follow_taxonomy_flag_link(TermInterface $term) {
 function social_follow_taxonomy_related_nodes_count(TermInterface $term, $field_id) {
   $items = \Drupal::entityTypeManager()
     ->getStorage('node')
-    ->loadByProperties([$field_id => $term->id()]);
+    ->getQuery()
+    ->condition($field_id, $term->id())
+    ->addTag('node_access')
+    ->addMetaData('base_table', 'node')
+    ->addMetaData('op', 'view')
+    ->execute();
 
   \Drupal::moduleHandler()->alter('social_follow_taxonomy_related_items', $items, $term);
 

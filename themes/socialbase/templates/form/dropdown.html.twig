@@ -24,7 +24,9 @@
       <li class="dropdown-header">{{ label }}</li>
       {% for key, child in items %}
         <li class="list-item list-item--visibility {% if key == active %}list-item--active{% endif %}">
-          {{ child }}
+          <a href="" role="button">
+            {{ child }}
+          </a>
         </li>
       {% endfor %}
     </ul>

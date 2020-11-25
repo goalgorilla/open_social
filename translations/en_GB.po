@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: node-gettext\n"
-"POT-Creation-Date: 2020-10-09 00:13+0000\n"
+"POT-Creation-Date: 2020-10-27 00:14+0000\n"
 "PO-Revision-Date: 2019-10-09 14:56+0000\n"
 "Last-Translator: Sebastian Seeney <sebastian.seeney@greenpeace.org>\n"
 "Language-Team: English (United Kingdom) <https://translate.getopensocial.com/"
@@ -13,7 +13,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Generator: Weblate 3.5.1\n"
 
-#: modules/social_features/social_user/src/Form/SocialUserLoginForm.php:253
+#: modules/social_features/social_user/src/Form/SocialUserLoginForm.php:257
 msgid ""
 "\n"
 "        <p>Oops, there was an error. This may have happened for the "
@@ -55,7 +55,7 @@ msgstr ""
 
 #: modules/social_features/social_comment/social_comment.module:225
 #: modules/social_features/social_post/post.page.inc:35
-#: themes/socialbase/includes/form.inc:105
+#: themes/socialbase/includes/form.inc:121
 msgid "%time ago"
 msgstr "%time ago"
 
@@ -1218,7 +1218,7 @@ msgid "@profile_name @profile_name_extra has not shared profile information."
 msgstr "@profile_name @profile_name_extra has not shared profile information."
 
 #: modules/custom/activity_creator/activity.page.inc:45
-#: themes/socialbase/includes/form.inc:63
+#: themes/socialbase/includes/form.inc:79
 msgid "@time ago"
 msgstr "@time ago"
 
@@ -1686,6 +1686,10 @@ msgstr ""
 #: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_user_invitations.yml:0
 msgid "Actions"
 msgstr "Actions"
+
+#: themes/socialbase/templates/private_message/private-message-thread.html.twig:59
+msgid "Actions for this thread"
+msgstr ""
 
 #: modules/custom/social_auth_facebook/src/Form/FacebookAuthSettingsForm.php:64
 #: modules/custom/social_auth_google/src/Form/GoogleAuthSettingsForm.php:64
@@ -3343,10 +3347,12 @@ msgstr "Client Secret"
 #: modules/custom/social_language/src/SocialLanguageModalRenderer.php:22
 #: modules/social_features/social_content_report/src/Plugin/views/field/LinkReportClose.php:34
 #: themes/socialbase/components/02-atoms/alert/alert.twig:3
-#: themes/socialbase/templates/form/datetime-wrapper.html.twig:41
-#: themes/socialbase/templates/form/fieldset.html.twig:66
-#: themes/socialbase/templates/form/form-element.html.twig:100
-#: themes/socialbase/templates/system/status-messages.html.twig:54
+#: themes/socialbase/components/03-molecules/form-elements/inline-form-error.twig:6
+#: themes/socialbase/templates/form/datetime-wrapper.html.twig:42
+#: themes/socialbase/templates/form/fieldset.html.twig:67
+#: themes/socialbase/templates/form/form-element.html.twig:101
+#: themes/socialbase/templates/form/form.html.twig:47
+#: themes/socialbase/templates/system/status-messages.html.twig:69
 msgid "Close"
 msgstr "Close"
 
@@ -3423,16 +3429,13 @@ msgstr "Comment unpublished."
 msgid "Comment upload settings"
 msgstr "Comment upload settings"
 
+#: themes/socialbase/src/Plugin/Preprocess/Node.php:173
 #: modules/social_features/social_book/config/optional/field.field.node.book.field_book_comments.yml:0
 #: modules/social_features/social_event/config/install/field.field.node.event.field_event_comments.yml:0
 #: modules/social_features/social_page/config/install/field.field.node.page.field_page_comments.yml:0
 #: modules/social_features/social_topic/config/install/field.field.node.topic.field_topic_comments.yml:0
 msgid "Comments"
 msgstr "Comments"
-
-#: themes/socialbase/src/Plugin/Preprocess/Node.php:173
-msgid "Comments (:num_comments)"
-msgstr "Comments (:num_comments)"
 
 #: modules/social_features/social_user_export/src/Plugin/UserExportPlugin/UserAnalyticsCommentsCreated.php:23;8
 msgid "Comments created"
@@ -4083,6 +4086,13 @@ msgstr "Created Date Filter by Open Social"
 msgid "Created date"
 msgstr "Created date"
 
+#: modules/social_features/social_featured_content/templates/node--featured.html.twig:127
+#: themes/socialbase/templates/node/node--teaser.html.twig:132
+#: themes/socialblue/templates/node/node--featured--sky.html.twig:39
+#: themes/socialblue/templates/node/node--teaser--sky.html.twig:11
+msgid "Created on"
+msgstr ""
+
 #: modules/social_features/social_profile/social_profile.install:294
 msgid "Created profiles for @count users"
 msgstr "Created profiles for @count users"
@@ -4654,7 +4664,7 @@ msgstr "Do not count downloads for users with this role."
 msgid "Do not show threads a user deleted."
 msgstr "Do not show threads a user deleted."
 
-#: modules/social_features/social_user/src/Form/SocialUserLoginForm.php:91
+#: modules/social_features/social_user/src/Form/SocialUserLoginForm.php:95
 #: modules/social_features/social_user/src/Form/SocialUserPasswordForm.php:47
 msgid "Don't have an account yet? @link"
 msgstr "Don't have an account yet? @link"
@@ -5285,8 +5295,12 @@ msgid "Event add block"
 msgstr "Event add block"
 
 #: modules/social_features/social_event/social_event.module:366;369
+#: modules/social_features/social_featured_content/templates/node--event--featured.html.twig:8
 #: themes/socialbase/templates/node/event/node--event--full.html.twig:39
+#: themes/socialbase/templates/node/event/node--event--teaser.html.twig:8
+#: themes/socialblue/templates/node/event/node--event--featured--sky.html.twig:36
 #: themes/socialblue/templates/node/event/node--event--hero--sky.html.twig:24
+#: themes/socialblue/templates/node/event/node--event--teaser--sky.html.twig:8
 #: modules/social_features/social_content_block/config/install/field.storage.block_content.field_sorting.yml:0
 #: modules/social_features/social_event/config/install/views.view.events.yml:0
 #: modules/social_features/social_event/config/install/views.view.upcoming_events.yml:0
@@ -5348,6 +5362,8 @@ msgstr ""
 msgid "Event link with login page"
 msgstr ""
 
+#: modules/social_features/social_featured_content/templates/group--featured.html.twig:66
+#: themes/socialbase/templates/group/group--teaser.html.twig:104
 #: themes/socialbase/templates/node/event/node--event--full.html.twig:47
 #: themes/socialblue/templates/node/event/node--event--hero--sky.html.twig:33
 msgid "Event location"
@@ -5836,7 +5852,7 @@ msgstr ""
 msgid "Forces the given body text to be HTML."
 msgstr "Forces the given body text to be HTML."
 
-#: modules/social_features/social_user/src/Form/SocialUserLoginForm.php:65
+#: modules/social_features/social_user/src/Form/SocialUserLoginForm.php:66
 msgid "Forgot password?"
 msgstr "Forgot password?"
 
@@ -6202,7 +6218,9 @@ msgstr ""
 msgid "Group title"
 msgstr "Group title"
 
+#: modules/social_features/social_featured_content/templates/group--featured.html.twig:54
 #: modules/social_features/social_group/src/Form/SocialGroupAddForm.php:128;176
+#: themes/socialbase/templates/group/group--teaser.html.twig:93
 #: modules/social_features/social_group/config/install/views.view.newest_groups.yml:0
 #: modules/social_features/social_search/modules/social_search_autocomplete/config/install/views.view.search_all_autocomplete.yml:0
 msgid "Group type"
@@ -7104,7 +7122,7 @@ msgstr "Log In"
 #: modules/social_features/social_event/src/Form/EnrollRequestAnonymousForm.php:52
 #: modules/social_features/social_group/modules/social_group_request/src/Form/GroupRequestMembershipRequestAnonymousForm.php:98
 #: modules/social_features/social_user/social_user.module:220
-#: modules/social_features/social_user/src/Form/SocialUserLoginForm.php:100
+#: modules/social_features/social_user/src/Form/SocialUserLoginForm.php:104
 #: modules/social_features/social_user/src/Routing/RouteSubscriber.php:24
 msgid "Log in"
 msgstr "Log in"
@@ -7130,11 +7148,11 @@ msgstr "Login"
 msgid "Login and Registration help texts"
 msgstr "Login and Registration help texts"
 
-#: modules/social_features/social_user/src/Form/SocialUserLoginForm.php:233
+#: modules/social_features/social_user/src/Form/SocialUserLoginForm.php:237
 msgid "Login attempt failed for %user."
 msgstr "Login attempt failed for %user."
 
-#: modules/social_features/social_user/src/Form/SocialUserLoginForm.php:238
+#: modules/social_features/social_user/src/Form/SocialUserLoginForm.php:242
 msgid "Login attempt failed from %ip."
 msgstr "Login attempt failed from %ip."
 
@@ -8039,6 +8057,11 @@ msgstr "Number of Private messages"
 msgid "Number of comments"
 msgstr "Number of comments"
 
+#: modules/social_features/social_featured_content/templates/group--featured.html.twig:89
+#: themes/socialbase/templates/group/group--teaser.html.twig:127
+msgid "Number of group members"
+msgstr ""
+
 #: modules/social_features/social_content_block/config/install/field.field.block_content.custom_content_list.field_item_amount.yml:0
 msgid "Number of items"
 msgstr ""
@@ -8501,7 +8524,7 @@ msgstr ""
 msgid "Paragraphs"
 msgstr ""
 
-#: modules/social_features/social_user/src/Form/SocialUserLoginForm.php:71
+#: modules/social_features/social_user/src/Form/SocialUserLoginForm.php:72
 msgid "Password"
 msgstr "Password"
 
@@ -9335,12 +9358,12 @@ msgid "Re-order rows by numerical weight instead of dragging."
 msgstr "Re-order rows by numerical weight instead of dragging."
 
 #: modules/custom/group_core_comments/templates/comments-join-group.html.twig:45
-#: modules/social_features/social_featured_content/templates/group--featured.html.twig:102
-#: modules/social_features/social_featured_content/templates/node--featured.html.twig:164
+#: modules/social_features/social_featured_content/templates/group--featured.html.twig:108
+#: modules/social_features/social_featured_content/templates/node--featured.html.twig:170
 #: modules/social_features/social_featured_content/templates/profile--featured.html.twig:56
-#: themes/socialbase/templates/group/group--teaser.html.twig:139
-#: themes/socialblue/templates/node/node--featured--sky.html.twig:78
-#: themes/socialblue/templates/node/event/node--event--featured--sky.html.twig:87
+#: themes/socialbase/templates/group/group--teaser.html.twig:145
+#: themes/socialblue/templates/node/node--featured--sky.html.twig:81
+#: themes/socialblue/templates/node/event/node--event--featured--sky.html.twig:93
 msgid "Read more"
 msgstr "Read more"
 
@@ -10481,7 +10504,7 @@ msgstr "Sign Up"
 #: modules/social_features/social_event/src/Form/EnrollRequestAnonymousForm.php:38
 #: modules/social_features/social_group/modules/social_group_request/src/Form/GroupRequestMembershipRequestAnonymousForm.php:82
 #: modules/social_features/social_user/social_user.links.menu.yml:0
-#: modules/social_features/social_user/src/Form/SocialUserLoginForm.php:88
+#: modules/social_features/social_user/src/Form/SocialUserLoginForm.php:92
 #: modules/social_features/social_user/src/Form/SocialUserPasswordForm.php:44
 msgid "Sign up"
 msgstr "Sign up"
@@ -10609,6 +10632,7 @@ msgstr "Snow White"
 #: modules/custom/activity_send/modules/activity_send_push_notification/activity_send_push_notification.info.yml:0
 #: modules/custom/activity_viewer/activity_viewer.info.yml:0
 #: modules/custom/social_admin_menu/social_admin_menu.info.yml:0
+#: modules/custom/social_ajax_comments/social_ajax_comments.info.yml:0
 #: modules/custom/social_auth_extra/social_auth_extra.info.yml:0
 #: modules/custom/social_auth_facebook/social_auth_facebook.info.yml:0
 #: modules/custom/social_auth_google/social_auth_google.info.yml:0
@@ -10684,7 +10708,6 @@ msgstr "Snow White"
 msgid "Social"
 msgstr "Social"
 
-#: modules/custom/social_ajax_comments/social_ajax_comments.info.yml:0
 #: modules/custom/social_language/modules/social_content_translation/social_content_translation.info.yml:0
 #: modules/custom/social_magic_login/social_magic_login.info.yml:0
 #: modules/custom/social_path_manager/social_path_manager.info.yml:0
@@ -11946,6 +11969,13 @@ msgstr ""
 msgid "The event enrollment request has been declined."
 msgstr ""
 
+#: modules/social_features/social_featured_content/templates/node--event--featured.html.twig:15
+#: themes/socialbase/templates/node/event/node--event--teaser.html.twig:17
+#: themes/socialblue/templates/node/event/node--event--featured--sky.html.twig:44
+#: themes/socialblue/templates/node/event/node--event--teaser--sky.html.twig:17
+msgid "The event will take place at the"
+msgstr ""
+
 #: modules/custom/social_auth_extra/src/UserManager.php:155
 msgid "The file @filename could not downloaded."
 msgstr "The file @filename could not downloaded."
@@ -11961,6 +11991,11 @@ msgstr "The group content type."
 #: modules/social_features/social_group/social_group.tokens.inc:29
 msgid "The group content url."
 msgstr "The group content url."
+
+#: modules/social_features/social_featured_content/templates/group--featured.html.twig:58
+#: themes/socialbase/templates/group/group--teaser.html.twig:97
+msgid "The group type is"
+msgstr ""
 
 #: modules/custom/mentions/src/Form/MentionsTypeForm.php:125
 msgid ""
@@ -12303,7 +12338,7 @@ msgstr "The user that authored the mention"
 msgid "The user that is mentioned"
 msgstr "The user that is mentioned"
 
-#: modules/social_features/social_user/src/Form/SocialUserLoginForm.php:144
+#: modules/social_features/social_user/src/Form/SocialUserLoginForm.php:148
 msgid "The username %name has not been activated or is blocked."
 msgstr "The username %name has not been activated or is blocked."
 
@@ -12319,11 +12354,11 @@ msgstr ""
 "The value is the stored value. The label and description will be used in "
 "displayed values and edit forms."
 
-#: modules/social_features/social_featured_content/templates/node--featured.html.twig:151
+#: modules/social_features/social_featured_content/templates/node--featured.html.twig:156;161
 #: themes/socialbase/templates/node/node--full.html.twig:195
-#: themes/socialbase/templates/node/node--teaser.html.twig:165
-#: themes/socialbase/templates/node/event/node--event--teaser.html.twig:37
-#: themes/socialblue/templates/node/node--featured--sky.html.twig:11
+#: themes/socialbase/templates/node/node--teaser.html.twig:173
+#: themes/socialbase/templates/node/event/node--event--teaser.html.twig:49
+#: themes/socialblue/templates/node/node--featured--sky.html.twig:11;16
 #: themes/socialblue/templates/node/node--hero--sky.html.twig:133
 #: themes/socialblue/templates/node/event/node--event--featured--sky.html.twig:11
 msgid "The visibility of this content is set to @visibility_label"
@@ -12384,6 +12419,25 @@ msgid ""
 msgstr ""
 "These fields allow you to configure various help texts that are shown to "
 "users during signup and login"
+
+#: themes/socialbase/templates/node/node--teaser.html.twig:155
+#: themes/socialblue/templates/node/node--teaser--sky.html.twig:25
+msgid "This content is posted in"
+msgstr ""
+
+#: themes/socialbase/templates/node/event/node--event--teaser.html.twig:27
+msgid "This event has type"
+msgstr ""
+
+#: themes/socialbase/templates/node/event/node--event--teaser.html.twig:37
+#: themes/socialblue/templates/node/event/node--event--teaser--sky.html.twig:27
+msgid "This event is posted in"
+msgstr ""
+
+#: themes/socialbase/templates/form/form-element-label--switch.html.twig:25
+#: themes/socialbase/templates/form/form-element-label.html.twig:36
+msgid "This field is required"
+msgstr ""
 
 #: modules/custom/dropdown/src/Plugin/Field/FieldType/Dropdown.php:10
 msgid ""
@@ -12678,6 +12732,11 @@ msgstr "Topic settings"
 msgid "Topic type"
 msgstr ""
 
+#: modules/social_features/social_featured_content/templates/node--featured.html.twig:139
+#: themes/socialbase/templates/node/node--teaser.html.twig:145
+msgid "Topic type:"
+msgstr ""
+
 #: translations.php:88
 #: modules/social_features/social_topic/config/install/taxonomy.vocabulary.topic_types.yml:0;0
 msgid "Topic types"
@@ -12700,25 +12759,21 @@ msgid "Topics of type @type"
 msgstr "Topics of type @type"
 
 #: themes/socialbase/templates/node/node--full.html.twig:155
-#: themes/socialblue/templates/node/node--featured--sky.html.twig:52
+#: themes/socialbase/templates/node/node--teaser.html.twig:199
+#: themes/socialblue/templates/node/node--featured--sky.html.twig:55
 #: themes/socialblue/templates/node/node--hero--sky.html.twig:175
-#: themes/socialblue/templates/node/event/node--event--featured--sky.html.twig:61
+#: themes/socialblue/templates/node/event/node--event--featured--sky.html.twig:67
 msgid "Total amount of comments"
 msgstr "Total amount of comments"
 
-#: themes/socialbase/templates/node/event/node--event--teaser.html.twig:48
-#: themes/socialblue/templates/node/event/node--event--featured--sky.html.twig:72
+#: themes/socialbase/templates/node/event/node--event--teaser.html.twig:60
+#: themes/socialblue/templates/node/event/node--event--featured--sky.html.twig:78
 msgid "Total amount of enrollments"
 msgstr ""
 
-#: modules/social_features/social_featured_content/templates/group--featured.html.twig:82
-#: themes/socialbase/templates/group/group--teaser.html.twig:120
-msgid "Total amount of group members"
-msgstr ""
-
 #: themes/socialbase/templates/node/node--full.html.twig:175
-#: themes/socialbase/templates/node/node--teaser.html.twig:177
-#: themes/socialblue/templates/node/node--featured--sky.html.twig:63
+#: themes/socialbase/templates/node/node--teaser.html.twig:185
+#: themes/socialblue/templates/node/node--featured--sky.html.twig:66
 msgid "Total amount of likes"
 msgstr "Total amount of likes"
 
@@ -13700,7 +13755,7 @@ msgid "Will generate files, users, groups, events, topics, comments and posts."
 msgstr ""
 "Will generate files, users, groups, events, topics, comments and posts."
 
-#: themes/socialbase/includes/form.inc:157
+#: themes/socialbase/includes/form.inc:173
 msgid "Write a comment..."
 msgstr "Write a comment..."
 
@@ -13891,8 +13946,8 @@ msgstr "You have enrolled for this event."
 msgid "You have insufficient permissions to delete this vocabulary"
 msgstr "You have insufficient permissions to delete this vocabulary"
 
-#: modules/social_features/social_featured_content/templates/group--featured.html.twig:96
-#: themes/socialbase/templates/group/group--teaser.html.twig:134
+#: modules/social_features/social_featured_content/templates/group--featured.html.twig:102
+#: themes/socialbase/templates/group/group--teaser.html.twig:140
 msgctxt "Is a member"
 msgid "You have joined"
 msgstr ""
@@ -14237,10 +14292,11 @@ msgstr ""
 "span.badge.badge-secondary|Secondary badge\r\n"
 "span.badge.badge--pill.badge-default|Pill badge"
 
-#: modules/social_features/social_featured_content/templates/group--featured.html.twig:103
-#: modules/social_features/social_featured_content/templates/node--featured.html.twig:165
-#: themes/socialblue/templates/node/node--featured--sky.html.twig:79
-#: themes/socialblue/templates/node/event/node--event--featured--sky.html.twig:88
+#: modules/social_features/social_featured_content/templates/group--featured.html.twig:109
+#: modules/social_features/social_featured_content/templates/node--featured.html.twig:171
+#: themes/socialbase/templates/group/group--teaser.html.twig:146
+#: themes/socialblue/templates/node/node--featured--sky.html.twig:82
+#: themes/socialblue/templates/node/event/node--event--featured--sky.html.twig:94
 msgid "about @label"
 msgstr ""
 
@@ -14278,6 +14334,13 @@ msgstr "author"
 #: modules/social_features/social_search/config/install/views.view.search_content.yml:0
 msgid "basic_html"
 msgstr "basic_html"
+
+#: modules/social_features/social_featured_content/templates/node--featured.html.twig:129
+#: themes/socialbase/templates/node/node--teaser.html.twig:134
+#: themes/socialblue/templates/node/node--featured--sky.html.twig:41
+#: themes/socialblue/templates/node/node--teaser--sky.html.twig:13
+msgid "by"
+msgstr ""
 
 #: themes/socialbase/templates/node/node--full.html.twig:164
 #: themes/socialblue/templates/node/node--hero--sky.html.twig:184
@@ -14451,6 +14514,11 @@ msgstr "from @org"
 msgid "group"
 msgstr "group"
 
+#: modules/social_features/social_featured_content/templates/group--featured.html.twig:94
+#: themes/socialbase/templates/group/group--teaser.html.twig:132
+msgid "group members"
+msgstr ""
+
 #: modules/social_features/social_search/modules/social_search_autocomplete/config/install/views.view.search_all_autocomplete.yml:0
 msgid "group/{{ id }}"
 msgstr ""
@@ -14558,6 +14626,11 @@ msgstr[1] "likes"
 #: social.profile:166
 msgid "likes"
 msgstr "likes"
+
+#: modules/social_features/social_featured_content/templates/group--featured.html.twig:70
+#: themes/socialbase/templates/group/group--teaser.html.twig:108
+msgid "located at:"
+msgstr ""
 
 #: modules/social_features/social_event/src/Form/EnrollActionForm.php:395;405
 msgid "log in"
@@ -14974,6 +15047,9 @@ msgstr "››"
 
 #~ msgid "Checking profile status for @count profiles"
 #~ msgstr "Checking profile status for @count profiles"
+
+#~ msgid "Comments (:num_comments)"
+#~ msgstr "Comments (:num_comments)"
 
 #~ msgid ""
 #~ "Could not get LinkedIn access token. User cancelled the dialog in "

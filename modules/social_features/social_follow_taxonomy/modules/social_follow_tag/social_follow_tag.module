@@ -48,19 +48,6 @@ function social_follow_tag_social_follow_taxonomy_terms_list_alter(array &$term_
 }
 
 /**
- * Implements hook_social_follow_taxonomy_related_items_alter().
- *
- * {@inheritdoc}
- */
-function social_follow_tag_social_follow_taxonomy_related_items_alter(array &$items, $entity) {
-  $user = \Drupal::entityTypeManager()->getStorage('user')->load(\Drupal::currentUser()->id());
-
-  $items = array_filter($items, function ($item) use ($user) {
-    return $item instanceof NodeInterface && $item->access('view', $user);
-  });
-}
-
-/**
  * Extends variables for social_tagging_split template.
  *
  * Implements hook_preprocess_HOOK().

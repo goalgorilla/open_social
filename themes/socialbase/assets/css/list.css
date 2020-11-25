@@ -1,13 +1,7 @@
 .list-item {
-  display: -webkit-box;
-  display: -ms-flexbox;
   display: flex;
-  -webkit-box-pack: center;
-      -ms-flex-pack: center;
-          justify-content: center;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
+  justify-content: center;
+  align-items: center;
   width: 100%;
   padding-top: 0.625rem;
   padding-bottom: 0.625rem;
@@ -17,9 +11,7 @@
 .list-item__avatar {
   width: 24px;
   height: 24px;
-  -webkit-box-flex: 0;
-      -ms-flex: 0 0 24px;
-          flex: 0 0 24px;
+  flex: 0 0 24px;
   margin-right: 10px;
   border-radius: 50%;
   margin-top: 2px;
@@ -28,31 +20,23 @@
 .list-item__avatar--medium {
   width: 44px;
   height: 44px;
-  -ms-flex-preferred-size: 44px;
-      flex-basis: 44px;
+  flex-basis: 44px;
 }
 
 .list-item--withlabel {
-  -ms-flex-wrap: wrap;
-      flex-wrap: wrap;
-  -webkit-box-pack: start;
-      -ms-flex-pack: start;
-          justify-content: flex-start;
+  flex-wrap: wrap;
+  justify-content: flex-start;
 }
 
 .list-item__label {
   margin-right: 20px;
   font-weight: 500;
-  -ms-flex-preferred-size: 100%;
-      flex-basis: 100%;
-  -ms-flex-item-align: start;
-      align-self: flex-start;
+  flex-basis: 100%;
+  align-self: flex-start;
 }
 
 .list-item__text {
-  -webkit-box-flex: 1;
-      -ms-flex-positive: 1;
-          flex-grow: 1;
+  flex-grow: 1;
   max-width: 100%;
   margin: 0;
   font-size: .875rem;
@@ -73,9 +57,7 @@
   padding-left: 1rem;
   padding-right: 1rem;
   margin-bottom: -1px;
-  -webkit-box-pack: start;
-      -ms-flex-pack: start;
-          justify-content: flex-start;
+  justify-content: flex-start;
 }
 
 .list-item--visibility .form-group label {
@@ -83,9 +65,19 @@
   cursor: pointer;
 }
 
-.list-item--visibility:hover {
+.list-item--visibility:hover, .list-item--visibility:focus-within {
   background-color: #e6e6e6;
   cursor: pointer;
+}
+
+.dropdown-menu--visibility > .list-item--visibility > a {
+  padding: 0;
+}
+
+.dropdown-menu--visibility > .list-item--visibility > a, .dropdown-menu--visibility > .list-item--visibility > a:hover, .dropdown-menu--visibility > .list-item--visibility > a:focus {
+  background-color: inherit;
+  box-shadow: none;
+  outline: none;
 }
 
 .list-item--visibility .icon-small {
@@ -121,7 +113,6 @@
 
 @media (min-width: 600px) {
   .list-item__label {
-    -ms-flex-preferred-size: 180px;
-        flex-basis: 180px;
+    flex-basis: 180px;
   }
 }

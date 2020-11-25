@@ -11,7 +11,7 @@
       attach: function (context, settings) {
         var dropDown = '#post-visibility';
 
-        $(dropDown + ' + .dropdown-menu > .list-item').click(function() {
+        function selectVisibility(e) {
           var label = $('label > span', this).first().text();
           var icon = $('svg use', this).first().attr('xlink:href');
 
@@ -27,8 +27,23 @@
           $(this).siblings('li').removeClass('list-item--active');
           $(this).addClass('list-item--active');
 
-        });
+          // Ensure selecting a visibility with they keyboard doesn't submit the
+          // form.
+          e.preventDefault();
+        }
 
+        // Limit keyboard selection to return.
+        function withConfirmationKeys(fn) {
+          return function (e) {
+            if (e && e.keyCode === 32) {
+              return fn.apply(this, e);
+            }
+          }
+        }
+
+        $(dropDown + ' + .dropdown-menu > .list-item')
+          .keydown(withConfirmationKeys(selectVisibility))
+          .click(selectVisibility);
       }
   };
 
