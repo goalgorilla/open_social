@@ -175,6 +175,19 @@ type TextFormat {
 #  label: String!
 }
 
+"""
+A date and time.
+"""
+type DateTime {
+  """
+  The date and time as UNIX timestamp.
+
+  A UNIX timestamp is the number of seconds since the Unix Epoch
+  on January 1st, 1970 at UTC.
+  """
+  timestamp: Int!
+}
+
 ################################################################################
 #                                Media Types                                   #
 #                                                                              #
