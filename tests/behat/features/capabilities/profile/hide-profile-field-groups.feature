@@ -1,4 +1,4 @@
-@account @profile @AN @perfect @api @DS-3440 @stability @stability-4 @hide-profile-field-groups
+@account @profile @AN @perfect @api @DS-3440 @YANG-4105 @stability @stability-4 @hide-profile-field-groups
 Feature: I want to be able to hide certain profile information
   Benefit: In order to have better privacy
   Role: LU
@@ -6,7 +6,6 @@ Feature: I want to be able to hide certain profile information
 
   Scenario: Successfully hide certain profile information
     Given I enable the module "social_profile_privacy"
-    And I set the configuration item "social_profile_privacy.settings" with key "user_form_display_field_groups.group_profile_contact_info" to "group_profile_contact_info"
     And users:
       | name          | mail                  | status | pass   |
       | user_1        | user_1@example.com    | 1      | user_1 |
@@ -16,8 +15,7 @@ Feature: I want to be able to hide certain profile information
     When I am logged in as "user_1"
     And I am on "/user"
     And I click "Edit profile information"
-    And I fill in the following:
-      | Phone number | +1-202-555-0150 |
+    And I fill in "Phone number" with "+1-202-555-0150"
 
     And I select "UA" from "Country"
     And I wait for AJAX to finish
@@ -30,11 +28,8 @@ Feature: I want to be able to hide certain profile information
     And I press "Save"
     And I click the xth "0" element with the css ".navbar-nav .profile"
     And I click "Settings"
-    Then I should see "Show \"Phone number and location\" on my profile"
-    And I show hidden checkboxes
-    # This means other users can view this information.
-    And I check the box "edit-profile-privacy-group-profile-contact-info-visible"
-    And I press "Save"
+    Then I should see "Address" in the "#edit-profile-privacy" element
+    And I should see "Phone number" in the "#edit-profile-privacy" element
 
     Given I am logged in as "user_2"
     And I am on the profile of "user_1"
@@ -48,10 +43,12 @@ Feature: I want to be able to hide certain profile information
     Given I am logged in as "user_1"
     And I click the xth "0" element with the css ".navbar-nav .profile"
     And I click "Settings"
-    Then I should see "Show \"Phone number and location\" on my profile"
+    Then I should see "Address" in the "#edit-profile-privacy" element
+    And I should see "Phone number" in the "#edit-profile-privacy" element
     And I show hidden checkboxes
     # This means other users can not view this information.
-    And I uncheck the box "edit-profile-privacy-group-profile-contact-info-visible"
+    And I uncheck the box "edit-profile-privacy-fields-field-profile-address"
+    And I uncheck the box "edit-profile-privacy-fields-field-profile-phone-number"
     And I press "Save"
 
     Given I am logged in as "user_2"
