@@ -24,7 +24,18 @@ class UserSchemaExtension extends SdlSchemaExtensionPluginBase {
   public function registerResolvers(ResolverRegistryInterface $registry) {
     $builder = new ResolverBuilder();
 
-    // Users query.
+    // Root Query fields.
+    $registry->addFieldResolver('Query', 'currentUser',
+      $builder->compose(
+        $builder->produce('current_user'),
+        $builder->produce('account_id')
+          ->map('account', $builder->fromParent()),
+        $builder->produce('entity_load')
+          ->map('type', $builder->fromValue('user'))
+          ->map('id', $builder->fromParent())
+      )
+    );
+
     $registry->addFieldResolver('Query', 'users',
       $builder->produce('query_user')
         ->map('after', $builder->fromArgument('after'))
@@ -35,7 +46,6 @@ class UserSchemaExtension extends SdlSchemaExtensionPluginBase {
         ->map('sortKey', $builder->fromArgument('sortKey'))
     );
 
-    // User query.
     $registry->addFieldResolver('Query', 'user',
       $builder->produce('entity_load_by_uuid')
         ->map('type', $builder->fromValue('user'))
