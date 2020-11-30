@@ -19,7 +19,9 @@ jobs:
           php-version: ${{ matrix.php_version }}
 
       - name: Install dependencies
-        run: composer install --dev
+        run: >
+        composer self-update --1
+        composer update
 
       - name: Run phpcs with Drupal coding standards.
         run: >
