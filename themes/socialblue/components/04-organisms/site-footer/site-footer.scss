@@ -3,6 +3,11 @@
 .site-footer {
   background-color: $brand-secondary;
   color: white;
+  padding: 25px 0;
+
+  @include for-tablet-landscape-up {
+    padding: 0;
+  }
 
   // Links within the dropdown menu
   .dropdown-menu > li > a {
@@ -12,7 +17,24 @@
     &:focus {
       background-color: $dropdown-link-hover-bg;
     }
-    
+
   }
 
+  .container {
+    justify-content: space-between;
+
+    @include for-phone-only {
+      flex-direction: column;
+    }
+
+    > * {
+      padding: 0 1rem;
+
+      @include for-phone-only {
+        + * {
+          margin-top: 20px;
+        }
+      }
+    }
+  }
 }
