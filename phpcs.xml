@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ruleset name="drupal">
+    <description>PHP CodeSniffer configuration for Drupal coding standards in Open Social.</description>
+    <file>./web/profiles/contrib/social</file>
+    <arg name="extensions" value="php,module,inc,install,test,profile,theme" />
+    <arg name="report" value="full"/>
+
+    <exclude-pattern>*/node_modules/*</exclude-pattern>
+    <exclude-pattern>*.css</exclude-pattern>
+    <exclude-pattern>*social.info.yml</exclude-pattern>
+    <exclude-pattern>*.md</exclude-pattern>
+    <exclude-pattern>PULL_REQUEST_TEMPLATE\.md</exclude-pattern>
+
+    <config name="drupal_core_version" value="8" />
+    <rule ref="Drupal" />
+    <rule ref="DrupalPractice" />
+</ruleset>
