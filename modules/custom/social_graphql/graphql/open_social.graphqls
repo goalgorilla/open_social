@@ -197,10 +197,7 @@ type DateTime {
 """
 Media managed by the Open Social platform.
 """
-# Unfortunately webonyx/graphql-php does not yet support interfaces implementing
-# other interfaces which was added to v15 of the GraphQL.
-# See https://github.com/webonyx/graphql-php/issues/728.
-interface Media { #}implements NodeInterface {
+interface Media implements Node {
   uuid: ID!
   """
   The url at which the original media can be downloaded.
