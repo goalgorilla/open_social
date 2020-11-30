@@ -92,29 +92,3 @@ form:not(.layout-builder-configure-block) {
   @import 'select';
 
 }
-
-// Placeholder color for the search overlay form.
-.search-take-over {
-  .form-control {
-    // Placeholder chrome
-    &::placeholder {
-      color: #fff !important;
-    }
-
-    // Placeholder Firefox
-    &::-moz-placeholder {
-      color: #fff !important;
-      opacity: 1; // Override Firefox's unusual default opacity; see https://github.com/twbs/bootstrap/pull/11526
-    }
-
-    // Placeholder Internet Explorer 10-11
-    :-ms-input-placeholder {
-      color: #fff !important;
-    }
-
-    // Placeholder Microsoft Edge
-    ::-ms-input-placeholder {
-      color: #fff !important;
-    }
-  }
-}
