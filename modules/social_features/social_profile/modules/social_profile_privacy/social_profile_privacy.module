@@ -31,9 +31,10 @@ function social_profile_privacy_form_social_profile_admin_settings_form_alter(&$
   ];
 
   $form['privacy']['fields'] = [
-    '#type' => 'fieldset',
+    '#type' => 'details',
     '#title' => t('Profile fields visibility'),
     '#description' => t('Please choose which profile fields can be displayed in user profiles. Site managers can always see all the filled-in profile information.'),
+    '#open' => TRUE,
     '#tree' => TRUE,
   ];
 
@@ -45,7 +46,6 @@ function social_profile_privacy_form_social_profile_admin_settings_form_alter(&$
 
   $form['privacy']['fields']['list'] = [
     '#type' => 'table',
-    '#caption' => t('Profile fields overview'),
     '#header' => array_merge([t('Field name')], $actions),
   ];
 
