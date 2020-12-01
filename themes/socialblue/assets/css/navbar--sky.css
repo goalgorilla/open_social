@@ -6,8 +6,7 @@
 .socialblue--sky .navbar-secondary {
   width: 100%;
   min-height: 44px;
-  -webkit-box-shadow: none;
-          box-shadow: none;
+  box-shadow: none;
 }
 
 .socialblue--sky .navbar-secondary .navbar-scrollable {
@@ -15,19 +14,19 @@
   height: 44px;
 }
 
-.socialblue--sky .navbar-secondary .navbar-nav li a {
+.socialblue--sky .navbar-secondary .navbar-nav li a, .socialblue--sky .navbar-secondary .navbar-nav li button {
   padding: 9px 20px 8px;
   opacity: 1;
   border-bottom-width: 3px;
 }
 
-.socialblue--sky .navbar-secondary .navbar-nav li a:hover, .socialblue--sky .navbar-secondary .navbar-nav li a:active, .socialblue--sky .navbar-secondary .navbar-nav li a:focus {
+.socialblue--sky .navbar-secondary .navbar-nav li a:hover, .socialblue--sky .navbar-secondary .navbar-nav li a:active, .socialblue--sky .navbar-secondary .navbar-nav li a:focus, .socialblue--sky .navbar-secondary .navbar-nav li button:hover, .socialblue--sky .navbar-secondary .navbar-nav li button:active, .socialblue--sky .navbar-secondary .navbar-nav li button:focus {
   background: transparent;
   border-bottom-color: #fff;
   color: #fff;
 }
 
-.socialblue--sky .navbar-secondary .navbar-nav li.active a {
+.socialblue--sky .navbar-secondary .navbar-nav li.active a, .socialblue--sky .navbar-secondary .navbar-nav li.active button {
   color: #fff;
   border-bottom-color: #fff;
 }
@@ -37,22 +36,17 @@
     padding-right: 1.625rem;
   }
   .socialblue--sky.mode-search .navbar__open-search-block {
-    -webkit-transform: scale(100);
-            transform: scale(100);
+    transform: scale(100);
   }
   .socialblue--sky .navbar-secondary .navbar-scrollable {
     border-radius: 0 5px 0 0;
     overflow: visible;
   }
   .socialblue--sky.path-user .layout--with-complementary .navbar-secondary, .socialblue--sky.path-group .layout--with-complementary .navbar-secondary {
-    -webkit-box-flex: 0;
-        -ms-flex: 0 0 66.66667%;
-            flex: 0 0 66.66667%;
+    flex: 0 0 66.66667%;
     max-width: 66.66667%;
     border-radius: 5px 5px 0 0;
-    -webkit-box-ordinal-group: 2;
-        -ms-flex-order: 1;
-            order: 1;
+    order: 1;
   }
   .socialblue--sky.path-user .layout--with-complementary .navbar-secondary .navbar-nav, .socialblue--sky.path-group .layout--with-complementary .navbar-secondary .navbar-nav {
     width: 100%;
@@ -69,25 +63,17 @@
     right: 15px;
     border-width: 6px 6px 0;
     border-top-color: #fff;
-    -webkit-transform: translateY(-50%);
-            transform: translateY(-50%);
+    transform: translateY(-50%);
     cursor: pointer;
   }
   .socialblue--sky.path-user .layout--with-complementary .navbar-secondary .navbar-nav .caret.active, .socialblue--sky.path-group .layout--with-complementary .navbar-secondary .navbar-nav .caret.active {
-    -webkit-transform: translateY(-50%) rotate(180deg);
-            transform: translateY(-50%) rotate(180deg);
+    transform: translateY(-50%) rotate(180deg);
   }
   .socialblue--sky.path-user .layout--with-complementary .navbar-secondary .navbar-nav .visible-list, .socialblue--sky.path-group .layout--with-complementary .navbar-secondary .navbar-nav .visible-list {
-    display: -webkit-box;
-    display: -ms-flexbox;
     display: flex;
     height: 44px;
-    -webkit-box-align: center;
-        -ms-flex-align: center;
-            align-items: center;
-    -webkit-box-pack: center;
-        -ms-flex-pack: center;
-            justify-content: center;
+    align-items: center;
+    justify-content: center;
     padding: 0 25px;
   }
   .socialblue--sky.path-user .layout--with-complementary .navbar-secondary .navbar-nav .visible-list a, .socialblue--sky.path-group .layout--with-complementary .navbar-secondary .navbar-nav .visible-list a {
@@ -108,13 +94,13 @@
     display: block;
     text-align: left;
   }
-  .socialblue--sky.path-user .layout--with-complementary .navbar-secondary .navbar-nav .hidden-list li a, .socialblue--sky.path-group .layout--with-complementary .navbar-secondary .navbar-nav .hidden-list li a {
+  .socialblue--sky.path-user .layout--with-complementary .navbar-secondary .navbar-nav .hidden-list li a, .socialblue--sky.path-user .layout--with-complementary .navbar-secondary .navbar-nav .hidden-list li button, .socialblue--sky.path-group .layout--with-complementary .navbar-secondary .navbar-nav .hidden-list li a, .socialblue--sky.path-group .layout--with-complementary .navbar-secondary .navbar-nav .hidden-list li button {
     display: block;
     width: 100%;
     padding: .5rem 2rem;
     color: #9b9b9b;
   }
-  .socialblue--sky.path-user .layout--with-complementary .navbar-secondary .navbar-nav .hidden-list li a:focus, .socialblue--sky.path-group .layout--with-complementary .navbar-secondary .navbar-nav .hidden-list li a:focus {
+  .socialblue--sky.path-user .layout--with-complementary .navbar-secondary .navbar-nav .hidden-list li a:focus, .socialblue--sky.path-user .layout--with-complementary .navbar-secondary .navbar-nav .hidden-list li button:focus, .socialblue--sky.path-group .layout--with-complementary .navbar-secondary .navbar-nav .hidden-list li a:focus, .socialblue--sky.path-group .layout--with-complementary .navbar-secondary .navbar-nav .hidden-list li button:focus {
     background: transparent;
   }
 }
