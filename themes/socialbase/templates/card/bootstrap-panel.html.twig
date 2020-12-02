@@ -57,13 +57,13 @@
     {# Heading #}
     {% if heading %}
       {% block heading %}
-        <h4 class="card__title card__title--underline">
+        <legend class="card__title card__title--underline">
           {% if collapsible %}
             <a{{ heading_attributes }} href="{{ target }}">{{ heading }}</a>
           {% else %}
-            <div{{ heading_attributes }}>{{ heading }}</div>
+            <span{{ heading_attributes }}>{{ heading }}</span>
           {% endif %}
-        </h4>
+        </legend>
       {% endblock %}
     {% endif %}
 

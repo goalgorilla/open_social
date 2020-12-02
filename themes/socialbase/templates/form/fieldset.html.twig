@@ -39,13 +39,13 @@
     ]
   %}
   {#  Always wrap fieldset legends in a SPAN for CSS positioning. #}
-  <label{{ legend.attributes.addClass(label_classes) }}>
+  <legend{{ legend.attributes.addClass(label_classes) }}>
     <span{{ legend_span.attributes }}>{{ legend.title }}</span>
-  </label>
 
-  {%- if required -%}
-    <span class="form-required">*</span>
-  {%- endif -%}
+    {%- if required -%}
+      <span class="form-required">*</span>
+    {%- endif -%}
+  </legend>
 
   {% if description.content %}
     <div{{ description.attributes.addClass('help-block') }}>{{ description.content }}</div>
@@ -63,8 +63,10 @@
 
   {% if errors %}
     <div class="form-item--error-message alert alert-danger alert-sm alert-dismissible form-control-radius">
-      <a href="#" role="button" class="close" data-dismiss="alert" aria-label="{{ 'Close'|t }}"><span aria-hidden="true">&times;</span></a>
       {{ errors }}
+      <button type="button" class="close" data-dismiss="alert" aria-label="{{ "Close"|t }}">
+        <span aria-hidden="true">×</span>
+      </button>
     </div>
   {% endif %}
 

@@ -187,6 +187,9 @@
 .nav-tabs > li.active > a,
 .nav-tabs > li.active > a:hover,
 .nav-tabs > li.active > a:focus,
+.nav-tabs > li.active > button,
+.nav-tabs > li.active > button:hover,
+.nav-tabs > li.active > button:focus,
 .card__link,
 .card__link:focus,
 .card__link:hover,
@@ -242,11 +245,11 @@ blockquote {
 
   .navbar-nav {
 
-    a {
+    a, button {
       color: #f9f9f9;
     }
 
-    li.active a {
+    li.active a, li.active button {
       border-bottom-color: #f9f9f9;
     }
 
@@ -275,7 +278,8 @@ blockquote {
   }
 
   .navbar-nav {
-    > li > a {
+    > li > a,
+    > li > button {
       color: $navbar-default-link-color;
       fill: $navbar-default-link-color;
 
@@ -290,7 +294,8 @@ blockquote {
       }
     }
 
-    > .open > a {
+    > .open > a,
+    > .open > button {
       &,
       &:hover,
       &:focus {
@@ -300,7 +305,9 @@ blockquote {
     }
 
     > li > a.is-active,
-    > .active > a {
+    > li > button.is-active,
+    > .active > a,
+    > .active > button {
       &,
       &:hover,
       &:focus {
@@ -334,7 +341,8 @@ html:not(.js) .navbar-default {
     &:focus,
     &:hover {
 
-      > a {
+      > a,
+      > button {
         color: $navbar-default-link-active-color;
         background-color: $navbar-default-link-active-bg;
 
