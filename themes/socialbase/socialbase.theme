@@ -7,9 +7,9 @@
 
 use Drupal\comment\Entity\Comment;
 use Drupal\Component\Utility\Html as HtmlUtility;
-use Drupal\Core\Session\AnonymousUserSession;
-use Drupal\node\Entity\Node;
 use Drupal\Core\Language\LanguageInterface;
+use Drupal\Core\Session\AnonymousUserSession;
+use Drupal\node\NodeInterface;
 
 // Include all files from the includes directory.
 $includes_path = dirname(__FILE__) . '/includes/*.inc';
@@ -88,14 +88,15 @@ function _socialbase_get_visibility_icon($title) {
 /**
  * Get comment count for a node.
  */
-function _socialbase_node_get_comment_count(Node $node, $comment_field_name) {
+function _socialbase_node_get_comment_count(NodeInterface $node, $use_static = TRUE) {
   $comment_count = &drupal_static(__FUNCTION__);
 
   // Calculate the comment_count for this page request.
-  if (is_null($comment_count)) {
+  if (is_null($comment_count) || $use_static === FALSE) {
     $count = 0;
+    $comment_storage = \Drupal::entityTypeManager()->getStorage('comment');
 
-    $cids = \Drupal::entityQuery('comment')
+    $cids = $comment_storage->getQuery()
       ->condition('entity_id', $node->id())
       ->condition('entity_type', 'node')
       ->sort('cid', 'DESC')
