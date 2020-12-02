@@ -1555,3 +1555,69 @@ function social_event_update_8810() {
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
 }
+
+/**
+ * Install Event Invite module by default.
+ */
+function social_event_update_8901() {
+  $modules = ['social_event_invite'];
+  \Drupal::service('module_installer')->install($modules);
+}
+
+/**
+ * Add a new block to display notifications for event requests.
+ *
+ * Load in a config file from an specific update hook that will never change.
+ */
+function social_event_update_8902() {
+  $config_files = [
+    'block.block.eventrequestsnotification' => drupal_get_path('module', 'social_event') . '/config/static/block.block.eventrequestsnotification_8901.yml',
+    'block.block.eventrequestsnotification_2' => drupal_get_path('module', 'social_event') . '/config/static/block.block.eventrequestsnotification_2_8901.yml',
+  ];
+
+  foreach ($config_files as $key => $config_file) {
+    if (is_file($config_file)) {
+      $settings = Yaml::parse(file_get_contents($config_file));
+      if (is_array($settings)) {
+        $config = \Drupal::configFactory()
+          ->getEditable($key);
+        $config->setData($settings)->save(TRUE);
+      }
+    }
+  }
+}
+
+/**
+ * Update community events views.
+ */
+function social_event_update_8903() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_event', 'social_event_update_8903');
+
+  // Update views configuration.
+  _social_event_views_update('views.view.upcoming_events', 'page_community_events');
+}
+
+/**
+ * Update user's events views.
+ */
+function social_event_update_8904() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_event', 'social_event_update_8904');
+
+  // Update views configuration.
+  _social_event_views_update('views.view.events', 'events_overview');
+}
+
+/**
+ * Install Event Add To Calendar module.
+ */
+function social_event_update_8905() {
+  \Drupal::service('module_installer')->install(['social_event_addtocal']);
+}

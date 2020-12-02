@@ -91,6 +91,7 @@
           <a href="{{ node_edit_url }}" title="{% trans %}Edit content{% endtrans %}"
              class="btn btn-raised btn-default btn-floating">
             <svg class="icon-gray icon-medium">
+              <title>{% trans %}Edit content{% endtrans %}</title>
               <use xlink:href="#icon-edit"></use>
             </svg>
           </a>
@@ -168,48 +169,59 @@
 
           {% block metaengage %}
             <div class="meta-engage">
+              <div class="hero-footer__list-left">
+                {% if comment_field_status is not empty %}
+                  <a href="#section-comments" class="badge badge--large"
+                     title="{% trans %}Total amount of comments{% endtrans %}">
+                    <span class="badge__container">
+                      <svg class="badge__icon">
+                        <use xlink:href="#icon-comment"></use>
+                      </svg>
+                      <span class="badge__label">
+                        {{ comment_count }}
+                      </span>
+                      <span class="badge__label badge__label--description">
+                        {% trans %}
+                          comment
+                        {% plural comment_count %}
+                          comments
+                        {% endtrans %}
+                      </span>
+                    </span>
+                  </a>
+                {% endif %}
 
-              {% if comment_field_status is not empty %}
-                <a href="#section-comments" class="badge badge--large"
-                   title="{% trans %}Total amount of comments{% endtrans %}">
+                {{ content.like_and_dislike }}
+
+                {% if views_count is not empty and views_label %}
+                  <div class="badge badge--large"
+                       title="{% trans %}Total amount of views{% endtrans %}">
                   <span class="badge__container">
                     <svg class="badge__icon">
-                      <use xlink:href="#icon-comment"></use>
+                      <use xlink:href="#icon-views"></use>
                     </svg>
                     <span class="badge__label">
-                      {{ comment_count }}
+                      {{ views_count }}
                     </span>
-                    <span class="badge__label badge__label--description">
-                      {% trans %}
-                        comment
-                      {% plural comment_count %}
-                        comments
-                      {% endtrans %}
-                    </span>
+                    <span class="badge__label badge__label--description">{{ views_label }}</span>
                   </span>
-                </a>
-              {% endif %}
+                  </div>
+                {% endif %}
+              </div>
 
-              {{ content.like_and_dislike }}
+              {% if content.field_event_addtocal|render is not empty or content.flag_follow_content|render is not empty %}
+                <div class="hero_btn-group">
+                  {% if content.field_event_addtocal|render is not empty and logged_in %}
+                    <div class="meta-addtocal">
+                      {{ content.field_event_addtocal }}
+                    </div>
+                  {% endif %}
 
-              {% if views_count is not empty and views_label %}
-                <div class="badge badge--large"
-                     title="{% trans %}Total amount of views{% endtrans %}">
-                <span class="badge__container">
-                  <svg class="badge__icon">
-                    <use xlink:href="#icon-views"></use>
-                  </svg>
-                  <span class="badge__label">
-                    {{ views_count }}
-                  </span>
-                  <span class="badge__label badge__label--description">{{ views_label }}</span>
-                </span>
-                </div>
-              {% endif %}
-
-              {% if content.flag_follow_content|render is not empty %}
-                <div class="meta-follow">
-                  {{ content.flag_follow_content }}
+                  {% if content.flag_follow_content|render is not empty %}
+                    <div class="meta-follow">
+                      {{ content.flag_follow_content }}
+                    </div>
+                  {% endif %}
                 </div>
               {% endif %}
 

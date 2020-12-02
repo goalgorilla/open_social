@@ -89,23 +89,34 @@ function _socialbase_get_visibility_icon($title) {
  * Get comment count for a node.
  */
 function _socialbase_node_get_comment_count(Node $node, $comment_field_name) {
-  $count = 0;
+  $comment_count = &drupal_static(__FUNCTION__);
 
-  $cids = \Drupal::entityQuery('comment')
-    ->condition('entity_id', $node->id())
-    ->condition('entity_type', 'node')
-    ->sort('cid', 'DESC')
-    ->execute();
+  // Calculate the comment_count for this page request.
+  if (is_null($comment_count)) {
+    $count = 0;
 
-  $comments = Comment::loadMultiple($cids);
+    $cids = \Drupal::entityQuery('comment')
+      ->condition('entity_id', $node->id())
+      ->condition('entity_type', 'node')
+      ->sort('cid', 'DESC')
+      ->execute();
 
-  foreach ($comments as $comment) {
-    /* @var \Drupal\comment\Entity\Comment $comment */
-    if ($comment->isPublished()) {
+    $comments = Comment::loadMultiple($cids);
+
+    foreach ($comments as $comment) {
+      /* @var \Drupal\comment\Entity\Comment $comment */
       // Published main comments or published replies on published main comments
       // are counted for users without 'administer comments' permission.
-      if (!$comment->hasParentComment() || ($comment->hasParentComment() && $comment->getParentComment()->isPublished())) {
-        $count++;
+      if ($comment->isPublished()) {
+        if (!$comment->hasParentComment() ||
+          ($comment->hasParentComment() && $comment->getParentComment()->isPublished())) {
+          $count++;
+        }
+        elseif (\Drupal::currentUser()->hasPermission('administer comments')) {
+          // User with 'administer comments' permission can also see the comment
+          // as being unpublished, so let's count it.
+          $count++;
+        }
       }
       elseif (\Drupal::currentUser()->hasPermission('administer comments')) {
         // User with 'administer comments' permission can also see the comment
@@ -113,14 +124,13 @@ function _socialbase_node_get_comment_count(Node $node, $comment_field_name) {
         $count++;
       }
     }
-    elseif (\Drupal::currentUser()->hasPermission('administer comments')) {
-      // User with 'administer comments' permission can also see the comment
-      // as being unpublished, so let's count it.
-      $count++;
-    }
+
+    // Make sure our static cache knows it doesnt have to recalculate it this
+    // request.
+    $comment_count = $count;
   }
 
-  return $count;
+  return $comment_count;
 }
 
 /**

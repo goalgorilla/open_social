@@ -187,6 +187,9 @@
 .nav-tabs > li.active > a,
 .nav-tabs > li.active > a:hover,
 .nav-tabs > li.active > a:focus,
+.nav-tabs > li.active > button,
+.nav-tabs > li.active > button:hover,
+.nav-tabs > li.active > button:focus,
 .card__link,
 .card__link:focus,
 .card__link:hover,
@@ -229,17 +232,22 @@ blockquote {
   box-shadow: 0 2px 0 0 $brand-primary;
 }
 
+#skip-link a {
+  background-color: $navbar-default-link-active-bg;
+  color: $navbar-default-link-active-color;
+}
+
 .navbar-secondary {
   color: #f9f9f9;
   background-color: #1f7ea7;
 
   .navbar-nav {
 
-    a {
+    a, button {
       color: #f9f9f9;
     }
 
-    li.active a {
+    li.active a, li.active button {
       border-bottom-color: #f9f9f9;
     }
 
@@ -268,7 +276,8 @@ blockquote {
   }
 
   .navbar-nav {
-    > li > a {
+    > li > a,
+    > li > button {
       color: $navbar-default-link-color;
       fill: $navbar-default-link-color;
 
@@ -283,7 +292,8 @@ blockquote {
       }
     }
 
-    > .open > a {
+    > .open > a,
+    > .open > button {
       &,
       &:hover,
       &:focus {
@@ -293,7 +303,9 @@ blockquote {
     }
 
     > li > a.is-active,
-    > .active > a {
+    > li > button.is-active,
+    > .active > a,
+    > .active > button {
       &,
       &:hover,
       &:focus {
@@ -327,7 +339,8 @@ html:not(.js) .navbar-default {
     &:focus,
     &:hover {
 
-      > a {
+      > a,
+      > button {
         color: $navbar-default-link-active-color;
         background-color: $navbar-default-link-active-bg;
 

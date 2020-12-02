@@ -2,6 +2,7 @@
 
 namespace Drupal\activity_creator\Plugin;
 
+use Drupal\activity_creator\ActivityFactory;
 use Drupal\Component\Plugin\PluginBase;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -29,6 +30,13 @@ abstract class ActivityContextBase extends PluginBase implements ActivityContext
   protected $entityTypeManager;
 
   /**
+   * The activity factory service.
+   *
+   * @var \Drupal\activity_creator\ActivityFactory
+   */
+  protected $activityFactory;
+
+  /**
    * ActivityContextBase constructor.
    *
    * @param array $configuration
@@ -41,12 +49,22 @@ abstract class ActivityContextBase extends PluginBase implements ActivityContext
    *   The entity query.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity type manager.
+   * @param \Drupal\activity_creator\ActivityFactory $activity_factory
+   *   The activity factory service.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, QueryFactory $entity_query, EntityTypeManagerInterface $entity_type_manager) {
+  public function __construct(
+    array $configuration,
+    $plugin_id,
+    $plugin_definition,
+    QueryFactory $entity_query,
+    EntityTypeManagerInterface $entity_type_manager,
+    ActivityFactory $activity_factory
+  ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
     $this->entityQuery = $entity_query;
     $this->entityTypeManager = $entity_type_manager;
+    $this->activityFactory = $activity_factory;
   }
 
   /**
@@ -58,7 +76,8 @@ abstract class ActivityContextBase extends PluginBase implements ActivityContext
       $plugin_id,
       $plugin_definition,
       $container->get('entity.query.sql'),
-      $container->get('entity_type.manager')
+      $container->get('entity_type.manager'),
+      $container->get('activity_creator.activity_factory')
     );
   }
 

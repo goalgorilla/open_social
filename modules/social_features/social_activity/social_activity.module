@@ -9,6 +9,7 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Template\Attribute;
 use Drupal\Core\Url;
+use Drupal\node\NodeInterface;
 use Drupal\views\ViewExecutable;
 
 /**
@@ -41,6 +42,7 @@ function social_activity_social_user_account_header_items(array $context) {
       '#title' => new TranslatableMarkup('Notification Centre'),
       '#icon' => $num_notifications > 0 ? 'notifications' : 'notifications_none',
       '#label' => new TranslatableMarkup('Notifications'),
+      '#url' => Url::fromRoute('view.activity_stream_notifications.page_1'),
       '#notification_count' => $num_notifications,
       '#weight' => 800,
       'header' => [
@@ -219,6 +221,7 @@ function social_activity_social_account_notifications_counter(AccountInterface $
  */
 function social_activity_views_post_build(ViewExecutable $view) {
   $override_displays = [
+    'block_stream_explore',
     'block_stream_homepage',
     'block_stream_homepage_without_post',
   ];
@@ -231,6 +234,60 @@ function social_activity_views_post_build(ViewExecutable $view) {
 
       // Attach and use featured styles for activity stream on dashboard.
       $view->element['#attached']['library'][] = 'social_featured_content/paragraph.featured';
+    }
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function social_activity_preprocess_block(&$variables) {
+  $route_match = \Drupal::routeMatch();
+  $allowed_routes = [
+    'entity.node.canonical',
+    'layout_builder.overrides.node.view',
+  ];
+  $allowed_bundles = [
+    'dashboard',
+    'landing_page',
+  ];
+  $allowed_content_names = [
+    'activity_stream',
+    'community_activities',
+    'activity_stream_profile',
+    'activity_stream_group',
+  ];
+
+  if (($node = $route_match->getParameter('node')) && $node instanceof NodeInterface) {
+    // Use lazy builder for stream blocks only if:
+    // 1. It on the node or landing builder page.
+    // 2. Node is a Dashboard or a Landing page
+    // 3. This block is from views.
+    // 4. View one of the stream views.
+    if (
+      in_array($route_match->getRouteName(), $allowed_routes) &&
+      in_array($node->bundle(), $allowed_bundles) &&
+      $variables['base_plugin_id'] === 'views_block' &&
+      isset($variables['content']['#name']) &&
+      in_array($variables['content']['#name'], $allowed_content_names)
+    ) {
+      if ($node->bundle() === 'dashboard') {
+        $variables['attributes']['class'][] = 'block-dashboard-activity-stream card';
+      }
+      /** @var \Drupal\views\ViewExecutable $view */
+      $view = $variables['content']['#view'];
+      $variables['content'] = [
+        '#create_placeholder' => TRUE,
+        '#lazy_builder' => [
+          'social_activity.lazy_builder:viewsLazyBuild',
+          [
+            $variables['content']['#name'],
+            $variables['content']['#display_id'],
+            $node->bundle(),
+            $view->getItemsPerPage(),
+          ],
+        ],
+      ];
     }
   }
 }
