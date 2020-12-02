@@ -1244,7 +1244,7 @@ function social_core_update_8904() {
   $config = \Drupal::configFactory()->getEditable('color.theme.socialblue');
   if (!empty($config->getRawData())) {
     $socialblue_colors = $config->getRawData();
-    $socialblue_colors['palette']['brand-accent'] = '#4d4d4d';
+    $socialblue_colors['palette']['brand-accent-text'] = '#4d4d4d';
     $config->setData($socialblue_colors);
     $config->save();
   }
