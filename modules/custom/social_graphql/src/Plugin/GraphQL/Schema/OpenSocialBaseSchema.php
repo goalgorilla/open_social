@@ -10,9 +10,14 @@ use Drupal\social_graphql\GraphQL\ResolverRegistry;
 /**
  * The provider of the schema base for the Open Social GraphQL API.
  *
- * Doesn't do anything itself but provides a target for GraphQL Schema
- * extensions. Schema Extensions should implement `SdlSchemaExtensionPluginBase`
- * and should not subclass this class.
+ * Provides a target schema for GraphQL Schema extensions. Schema Extensions
+ * should implement `SdlSchemaExtensionPluginBase` and should not subclass this
+ * class.
+ *
+ * This class implements the resolver mapping for common data types and
+ * interfaces. It uses a modified resolver registry that allows falling back to
+ * an interface's field mapping reducing duplication for common object types
+ * (such as Connections and Edges).
  *
  * This class borrows from the ComposableSchema example but intentionally does
  * not implement the extension configuration that that schema provides. Instead
