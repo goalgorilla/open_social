@@ -1,0 +1,60 @@
+"""
+Post information for an Open Social post.
+"""
+type Post implements Node {
+  """
+  The Universally Unique Identifier for the post.
+  """
+  uuid: ID!
+
+  """
+  The created & updated times. On creation, always set the updated_at as the
+  same as created_at.
+  """
+  created_at: DateTime!
+  updated_at: DateTime!
+
+  body: FormattedText
+
+  """
+  We always know the author of the post.
+  """
+  author: User!
+
+  """
+  A recipient is a User, a Group or Null (the community)
+  """
+  recipient: Recipient
+
+  """
+  Handy for multi-language platforms.
+  """
+  locale: Language!
+
+  """
+  Visibility is used to show a user what the visibility of this post is.
+  """
+  visibility: Visibility
+
+  """
+  The attachments property is always an array, but can be empty.
+  Attachments will always be of type Image.
+  """
+  attachments: [Media!]!
+  # Uncomment when Tag type has been created.
+  # tags: [Tag!]!
+}
+
+# Change this into User | Group once the Group type has been created.
+union Recipient =  User
+
+type Visibility {
+  type: VisibilityType!
+}
+
+enum VisibilityType {
+  COMMUNITY
+  PUBLIC
+  GROUP
+  ROLE
+}
