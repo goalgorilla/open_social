@@ -9,7 +9,8 @@ form:not(.layout-builder-configure-block) {
   /* Disabled style */
 }
 
-form:not(.layout-builder-configure-block) .form-control {
+form:not(.layout-builder-configure-block) .form-control,
+form:not(.layout-builder-configure-block) .select2-container .select2-selection {
   display: block;
   width: 100%;
   max-width: 23rem;
@@ -24,18 +25,35 @@ form:not(.layout-builder-configure-block) .form-control {
   transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
 }
 
-form:not(.layout-builder-configure-block) .form-control::-moz-placeholder {
+form:not(.layout-builder-configure-block) .form-control::-moz-placeholder,
+form:not(.layout-builder-configure-block) .select2-container .select2-selection::-moz-placeholder {
   opacity: 1;
 }
 
-form:not(.layout-builder-configure-block) .form-control::-ms-expand {
+form:not(.layout-builder-configure-block) .form-control::-ms-expand,
+form:not(.layout-builder-configure-block) .select2-container .select2-selection::-ms-expand {
   border: 0;
   background-color: transparent;
 }
 
+form:not(.layout-builder-configure-block) .form-control .select2-selection__arrow,
+form:not(.layout-builder-configure-block) .select2-container .select2-selection .select2-selection__arrow {
+  display: none;
+}
+
+form:not(.layout-builder-configure-block) .form-control .select2-selection__placeholder,
+form:not(.layout-builder-configure-block) .select2-container .select2-selection .select2-selection__placeholder {
+  color: #555555;
+}
+
 form:not(.layout-builder-configure-block) .form-control:disabled,
 fieldset[disabled] form:not(.layout-builder-configure-block) .form-control,
-.form-disabled form:not(.layout-builder-configure-block) .form-control {
+.form-disabled form:not(.layout-builder-configure-block) .form-control,
+form:not(.layout-builder-configure-block) .select2-container .select2-selection:disabled,
+fieldset[disabled]
+form:not(.layout-builder-configure-block) .select2-container .select2-selection,
+.form-disabled
+form:not(.layout-builder-configure-block) .select2-container .select2-selection {
   cursor: not-allowed;
   color: rgba(0, 0, 0, 0.26);
 }
@@ -439,13 +457,15 @@ form:not(.layout-builder-configure-block) .form-disabled .select-wrapper::after 
 }
 
 @media (min-width: 900px) {
-  form:not(.layout-builder-configure-block) .form-control {
+  form:not(.layout-builder-configure-block) .form-control,
+  form:not(.layout-builder-configure-block) .select2-container .select2-selection {
     font-size: 16px;
   }
 }
 
 @media screen and (-webkit-min-device-pixel-ratio: 0) {
-  form:not(.layout-builder-configure-block) .form-control {
+  form:not(.layout-builder-configure-block) .form-control,
+  form:not(.layout-builder-configure-block) .select2-container .select2-selection {
     font-size: 16px;
   }
   form:not(.layout-builder-configure-block) input[type="time"].form-control,

@@ -32,7 +32,8 @@
  */
 form:not(.layout-builder-configure-block) {
 
-  .form-control {
+  .form-control,
+  .select2-container .select2-selection {
     display: block;
     width: 100%;
     max-width: $form-control-max-width;
@@ -60,6 +61,14 @@ form:not(.layout-builder-configure-block) {
 
     @include for-tablet-landscape-up {
       font-size: $font-size-base;
+    }
+
+    .select2-selection__arrow {
+      display: none;
+    }
+
+    .select2-selection__placeholder {
+      color: $gray;
     }
 
     &:disabled,
