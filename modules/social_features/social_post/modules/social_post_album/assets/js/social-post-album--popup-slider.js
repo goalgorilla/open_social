@@ -80,7 +80,7 @@
         }, 3000);
 
         $('.social-post-album--popup-slider, .social-post-album--popup-item').on('click', function(event) {
-          if ($(event.target).closest('.social-post-album--popup-item > img, .post-comment-wrapper').length) return;
+          if ($(event.target).closest('.social-post-album--popup-item > img, .post-comment-wrapper, .slick-arrow').length) return;
           popupClose();
           $('.ui-dialog, .ui-widget-overlay').remove();
           event.stopPropagation();
