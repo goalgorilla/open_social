@@ -4,7 +4,19 @@
   [data-class='exposed-filter-block'] {
     @include for-tablet-landscape-down {
       position: static;
-      margin: 1rem 0;
+
+      &.views-exposed-form {
+        margin: 1rem 0;
+        padding: 0 1rem;
+      }
+    }
+  }
+
+  &[class*='path-all'] {
+    [data-class='exposed-filter-block'] {
+      @include for-tablet-landscape-down {
+        padding: 0;
+      }
     }
   }
 }
