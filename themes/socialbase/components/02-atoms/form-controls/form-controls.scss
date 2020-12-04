@@ -81,6 +81,39 @@ form:not(.layout-builder-configure-block) {
     // [converter] extracted textarea& to textarea.form-control
   }
 
+  .select2-container .select2-selection {
+    &.select2-selection--multiple {
+      height: auto;
+      min-height: 38px;
+      padding-top: 1px;
+      padding-bottom: 1px;
+
+      .select2-search__field {
+        padding: 0;
+        color: $gray;
+
+        // Placeholder Firefox
+        &::-moz-placeholder {
+          color: $gray;
+        }
+
+        // Edge
+        &::-webkit-input-placeholder {
+          color: $gray;
+        }
+
+        // Internet Explorer 10-11
+        &:-ms-input-placeholder {
+          color: $gray;
+        }
+
+        &::placeholder {
+          color: $gray;
+        }
+      }
+    }
+  }
+
   .form-control--autogrow {
     resize: none;
     min-height: 38px;
