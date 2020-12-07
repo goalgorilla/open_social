@@ -14,7 +14,9 @@ Feature: Edit my group as a group manager
     Then I click radio button "Flexible group By choosing this option you can customize many group settings to your needs." with the id "edit-group-type-flexible-group"
     And I press "Continue"
     And I wait for AJAX to finish
-    When I fill in "Title" with "Test flexible group"
+    When I click radio button "Community" with the id "edit-field-flexible-group-visibility-community"
+    And I fill in "Title" with "Test flexible group"
+    And I show hidden inputs
     Then I click radio button "Open to join - users can join this group without approval" with the id "edit-field-group-allowed-join-method-direct"
     And I fill in the "edit-field-group-description-0-value" WYSIWYG editor with "Description text"
     And I press "Save"
