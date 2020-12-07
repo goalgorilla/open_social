@@ -131,6 +131,7 @@ class PostViewBuilder extends EntityViewBuilder {
 
         $replacements['[message:gurl]'] = $group->toLink()->getUrl()->toString();
         $replacements['[message:gtitle]'] = $group->label();
+        $replacements['[message:gtrimmed-title]'] = $group->label();
       }
       else {
         $query = \Drupal::database()->select('activity__field_activity_recipient_user', 'r')
