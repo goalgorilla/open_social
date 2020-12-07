@@ -17,7 +17,7 @@ Feature: Edit my group as a group manager
     When I click radio button "Community" with the id "edit-field-flexible-group-visibility-community"
     And I fill in "Title" with "Test flexible group"
     And I show hidden inputs
-    Then I click radio button "Open to join - users can join this group without approval" with the id "edit-field-group-allowed-join-method-direct"
+    Then I click radio button "Open to join" with the id "edit-field-group-allowed-join-method-direct"
     And I fill in the "edit-field-group-description-0-value" WYSIWYG editor with "Description text"
     And I press "Save"
     And I should see "Test flexible group" in the "Main content"
