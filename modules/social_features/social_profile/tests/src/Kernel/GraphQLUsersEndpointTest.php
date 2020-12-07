@@ -104,8 +104,8 @@ class GraphQLUsersEndpointTest extends SocialGraphQLTestBase {
       query {
         user(uuid: \"{$test_user->uuid()}\") {
           profile {
-            first_name
-            last_name
+            firstName
+            lastName
             introduction {
               format {
                 name
@@ -124,8 +124,8 @@ class GraphQLUsersEndpointTest extends SocialGraphQLTestBase {
       'data' => [
         'user' => [
           'profile' => [
-            'first_name' => $profile->get('field_profile_first_name')->first()->getString(),
-            'last_name' => $profile->get('field_profile_last_name')->first()->getString(),
+            'firstName' => $profile->get('field_profile_first_name')->first()->getString(),
+            'lastName' => $profile->get('field_profile_last_name')->first()->getString(),
             'introduction' => [
               'format' => [
                 'name' => $profile->get('field_profile_self_introduction')->first()->get('format')->getString(),

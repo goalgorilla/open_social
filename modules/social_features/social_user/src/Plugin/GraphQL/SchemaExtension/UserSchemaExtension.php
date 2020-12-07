@@ -64,33 +64,15 @@ class UserSchemaExtension extends SdlSchemaExtensionPluginBase {
     );
 
     $registry->addFieldResolver('User', 'mail',
-      // TODO: Replace with simplified form once
-      //   https://github.com/drupal-graphql/graphql/pull/1089 lands.
-      // $builder->fromPath('entity:user', 'mail.value')
-      $builder->produce('property_path')
-        ->map('type', $builder->fromValue('entity:user'))
-        ->map('path', $builder->fromValue('mail.value'))
-        ->map('value', $builder->fromParent())
+      $builder->fromPath('entity:user', 'mail.value')
     );
 
-    $registry->addFieldResolver('User', 'created_at',
-      // TODO: Replace with simplified form once
-      //   https://github.com/drupal-graphql/graphql/pull/1089 lands.
-      // $builder->fromPath('entity:user', 'created.value')
-      $builder->produce('property_path')
-        ->map('type', $builder->fromValue('entity:user'))
-        ->map('path', $builder->fromValue('created.value'))
-        ->map('value', $builder->fromParent())
+    $registry->addFieldResolver('User', 'created',
+      $builder->fromPath('entity:user', 'created.value')
     );
 
-    $registry->addFieldResolver('User', 'updated_at',
-      // TODO: Replace with simplified form once
-      //   https://github.com/drupal-graphql/graphql/pull/1089 lands.
-      // $builder->fromPath('entity:user', 'changed.value')
-      $builder->produce('property_path')
-        ->map('type', $builder->fromValue('entity:user'))
-        ->map('path', $builder->fromValue('changed.value'))
-        ->map('value', $builder->fromParent())
+    $registry->addFieldResolver('User', 'updated',
+      $builder->fromPath('entity:user', 'changed.value')
     );
 
     $registry->addFieldResolver('User', 'status',

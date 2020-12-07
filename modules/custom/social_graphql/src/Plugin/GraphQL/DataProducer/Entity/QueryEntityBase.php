@@ -2,6 +2,7 @@
 
 namespace Drupal\social_graphql\Plugin\GraphQL\DataProducer\Entity;
 
+use Drupal\Core\Cache\RefinableCacheableDependencyInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\Query\QueryInterface;
@@ -109,11 +110,13 @@ abstract class QueryEntityBase extends DataProducerPluginBase implements Contain
    *   Whether the sorting is in reversed order.
    * @param string $sortKey
    *   The key to sort by (resolved to a field with ::getSortField).
+   * @param \Drupal\Core\Cache\RefinableCacheableDependencyInterface $metadata
+   *   Cacheability metadata for this request.
    *
    * @return \Drupal\social_graphql\Wrappers\ConnectionInterface
    *   The connection that provides information about the fetched entities.
    */
-  protected function resolvePaginatedQuery(QueryInterface $query, ?int $first, ?string $after, ?int $last, ?string $before, bool $reverse, string $sortKey) {
+  protected function resolvePaginatedQuery(QueryInterface $query, ?int $first, ?string $after, ?int $last, ?string $before, bool $reverse, string $sortKey, RefinableCacheableDependencyInterface $metadata) {
     // Apply pagination to the query. The return value tells us if the order is
     // reversed or not which can help us determine if the connection needs to
     // reverse the result to get the user requested order.

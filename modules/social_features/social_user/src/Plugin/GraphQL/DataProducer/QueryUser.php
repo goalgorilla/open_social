@@ -66,7 +66,7 @@ class QueryUser extends QueryEntityBase {
    * @param \Drupal\Core\Cache\RefinableCacheableDependencyInterface $metadata
    *   Cacheability metadata for this request.
    *
-   * @return \Drupal\social_graphql\Wrappers\EntityConnection
+   * @return \Drupal\social_graphql\Wrappers\ConnectionInterface
    *   An entity connection with results and data about the paginated results.
    *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
@@ -86,7 +86,7 @@ class QueryUser extends QueryEntityBase {
     $metadata->addCacheTags($type->getListCacheTags());
     $metadata->addCacheContexts($type->getListCacheContexts());
 
-    return $this->resolvePaginatedQuery($query, $first, $after, $last, $before, $reverse, $sortKey);
+    return $this->resolvePaginatedQuery($query, $first, $after, $last, $before, $reverse, $sortKey, $metadata);
   }
 
   /**

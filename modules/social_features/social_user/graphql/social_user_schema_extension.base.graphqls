@@ -15,7 +15,7 @@ type User implements Node {
   The specific format of the display name could depend on permissions of the
   requesting user or application.
   """
-  display_name: String!
+  displayName: String!
   """
   The e-mail of the user.
 
@@ -26,11 +26,11 @@ type User implements Node {
   """
   The timestamp indicating when the user was created.
   """
-  created_at: Int!
+  created: Int!
   """
   The timestamp indicating when the user was last updated.
   """
-  updated_at: Int!
+  updated: Int!
   """
   The status of the user account.
   """
@@ -96,15 +96,15 @@ type UserPrivacySettings {
   """
   Whether their phone number should be shown on their profile.
   """
-  show_phone: Boolean!
+  showPhone: Boolean!
   """
   Whether their location information should be shown on their profile.
   """
-  show_location: Boolean!
+  showLocation: Boolean!
   """
   Whether their email address should be shown on their profile.
   """
-  show_email: Boolean!
+  showEmail: Boolean!
 }
 
 # TODO: Move this to another module?
@@ -113,19 +113,19 @@ enum NotificationFrequency {
   """
   Never send me notifications.
   """
-  None
+  NONE
   """
   Send a notification as things happen.
   """
-  Immediately
+  IMMEDIATELY
   """
   Send an overview of notifications in a day once per day.
   """
-  Daily
+  DAILY
   """
   Send an overview of notifications in a week once per week.
   """
-  Weekly
+  WEEKLY
 }
 
 """
@@ -141,27 +141,27 @@ type UserNotificationSettings {
   """
   A person created a post on my profile
   """
-  profile_post: NotificationFrequency!
+  profilePost: NotificationFrequency!
   """
   A person mentioned me in a post
   """
-  mention_post: NotificationFrequency!
+  mentionPost: NotificationFrequency!
   """
   A person mentioned me in a comment
   """
-  mention_comment: NotificationFrequency!
+  mentionComment: NotificationFrequency!
   """
   A person replied to a comment where I am mentioned
   """
-  mention_comment_reply: NotificationFrequency!
+  mentionCommentReply: NotificationFrequency!
   """
   A person replied on my comments
   """
-  comment_reply: NotificationFrequency!
+  commentReply: NotificationFrequency!
   """
   A person commented on a post on my profile
   """
-  profile_post_comment: NotificationFrequency!
+  profilePostComment: NotificationFrequency!
   """
   A person likes a post, topic, comment or event created by me
   """
@@ -169,43 +169,43 @@ type UserNotificationSettings {
   """
   A organizer added me to a Event
   """
-  event_add: NotificationFrequency!
+  eventAdd: NotificationFrequency!
   """
   A user sends a private message to me
   """
-  private_message: NotificationFrequency!
+  privateMessage: NotificationFrequency!
   """
   My group membership request is approved
   """
-  group_membership_request_approval: NotificationFrequency!
+  groupMembershipRequestApproval: NotificationFrequency!
   """
   A person commented on content created or organised by me
   """
-  comment_content: NotificationFrequency!
+  commentContent: NotificationFrequency!
   """
   A person joins a group I am managing
   """
-  group_join: NotificationFrequency!
+  groupJoin: NotificationFrequency!
   """
   Activity on events I am organizing
   """
-  event_activity: NotificationFrequency!
+  eventActivity: NotificationFrequency!
   """
   A person requests membership to a group I manage
   """
-  group_membership_request_received: NotificationFrequency!
+  groupMembershipRequestReceived: NotificationFrequency!
   """
   A person commented on content I am following
   """
-  comment_follow: NotificationFrequency!
+  commentFollow: NotificationFrequency!
   """
   A person created a post, event or topic in a group I joined
   """
-  group_content_created: NotificationFrequency!
+  groupContentCreated: NotificationFrequency!
   """
   A background process (e.g. sending bulk emails) has finished
   """
-  background_process_complete: NotificationFrequency!
+  backgroundProcessComplete: NotificationFrequency!
 }
 
 ################################################################################

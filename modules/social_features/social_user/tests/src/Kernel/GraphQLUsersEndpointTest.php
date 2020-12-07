@@ -80,10 +80,10 @@ class GraphQLUsersEndpointTest extends SocialGraphQLTestBase {
       query {
         user(uuid: \"{$test_user->uuid()}\") {
           uuid
-          display_name
+          displayName
           mail
-          created_at
-          updated_at
+          created
+          updated
           status
           roles
         }
@@ -93,10 +93,10 @@ class GraphQLUsersEndpointTest extends SocialGraphQLTestBase {
       'data' => [
         'user' => [
           'uuid' => $test_user->uuid(),
-          'display_name' => $test_user->getDisplayName(),
+          'displayName' => $test_user->getDisplayName(),
           'mail' => $test_user->getEmail(),
-          'created_at' => $test_user->getCreatedTime(),
-          'updated_at' => $test_user->getChangedTime(),
+          'created' => $test_user->getCreatedTime(),
+          'updated' => $test_user->getChangedTime(),
           'status' => 'ACTIVE',
           'roles' => ['authenticated'],
         ],

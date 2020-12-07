@@ -31,43 +31,22 @@ class ProfileSchemaExtension extends SdlSchemaExtensionPluginBase {
     );
 
     // Profile type fields.
-    $registry->addFieldResolver('Profile', 'first_name',
-      // TODO: Replace with simplified form once
-      //   https://github.com/drupal-graphql/graphql/pull/1089 lands.
-      // $builder->fromPath('entity:profile', 'field_profile_first_name.0.value')
-      $builder->produce('property_path')
-        ->map('type', $builder->fromValue('entity:profile'))
-        ->map('path', $builder->fromValue('field_profile_first_name.0.value'))
-        ->map('value', $builder->fromParent())
+    $registry->addFieldResolver('Profile', 'firstName',
+      $builder->fromPath('entity:profile', 'field_profile_first_name.0.value')
     );
 
-    $registry->addFieldResolver('Profile', 'last_name',
-      // TODO: Replace with simplified form once
-      //   https://github.com/drupal-graphql/graphql/pull/1089 lands.
-      // $builder->fromPath('entity:profile', 'field_profile_last_name.0.value')
-      $builder->produce('property_path')
-        ->map('type', $builder->fromValue('entity:profile'))
-        ->map('path', $builder->fromValue('field_profile_last_name.0.value'))
-        ->map('value', $builder->fromParent())
+    $registry->addFieldResolver('Profile', 'lastName',
+      $builder->fromPath('entity:profile', 'field_profile_last_name.0.value')
     );
 
     $registry->addFieldResolver('Profile', 'avatar',
-      // TODO: Replace with simplified form once
-      //   https://github.com/drupal-graphql/graphql/pull/1089 lands.
-      // $builder->fromPath('entity:profile', 'field_profile_image.value')
       $builder->produce('field')
         ->map('entity', $builder->fromParent())
         ->map('field', $builder->fromValue('field_profile_image'))
     );
 
     $registry->addFieldResolver('Profile', 'nickname',
-      // TODO: Replace with simplified form once
-      //   https://github.com/drupal-graphql/graphql/pull/1089 lands.
-      // $builder->fromPath('entity:profile', 'field_profile_nick_name.0.value')
-      $builder->produce('property_path')
-        ->map('type', $builder->fromValue('entity:profile'))
-        ->map('path', $builder->fromValue('field_profile_nick_name.0.value'))
-        ->map('value', $builder->fromParent())
+      $builder->fromPath('entity:profile', 'field_profile_nick_name.0.value')
     );
 
     // $value->getEntity()->get('field_profile_self_introduction')->first()->get('processed')->getString()
@@ -78,33 +57,15 @@ class ProfileSchemaExtension extends SdlSchemaExtensionPluginBase {
     );
 
     $registry->addFieldResolver('Profile', 'phone',
-      // TODO: Replace with simplified form once
-      //   https://github.com/drupal-graphql/graphql/pull/1089 lands.
-      // $builder->fromPath('entity:profile', 'field_profile_phone_number.0.value')
-      $builder->produce('property_path')
-        ->map('type', $builder->fromValue('entity:profile'))
-        ->map('path', $builder->fromValue('field_profile_phone_number.0.value'))
-        ->map('value', $builder->fromParent())
+      $builder->fromPath('entity:profile', 'field_profile_phone_number.0.value')
     );
 
     $registry->addFieldResolver('Profile', 'function',
-      // TODO: Replace with simplified form once
-      //   https://github.com/drupal-graphql/graphql/pull/1089 lands.
-      // $builder->fromPath('entity:profile', 'field_profile_function.0.value')
-      $builder->produce('property_path')
-        ->map('type', $builder->fromValue('entity:profile'))
-        ->map('path', $builder->fromValue('field_profile_function.0.value'))
-        ->map('value', $builder->fromParent())
+      $builder->fromPath('entity:profile', 'field_profile_function.0.value')
     );
 
     $registry->addFieldResolver('Profile', 'organization',
-      // TODO: Replace with simplified form once
-      //   https://github.com/drupal-graphql/graphql/pull/1089 lands.
-      // $builder->fromPath('entity:profile', 'field_profile_organization.0.value')
-      $builder->produce('property_path')
-        ->map('type', $builder->fromValue('entity:profile'))
-        ->map('path', $builder->fromValue('field_profile_organization.0.value'))
-        ->map('value', $builder->fromParent())
+      $builder->fromPath('entity:profile', 'field_profile_organization.0.value')
     );
   }
 
