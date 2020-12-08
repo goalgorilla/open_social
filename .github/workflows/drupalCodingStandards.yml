@@ -8,4 +8,6 @@ jobs:
       runs-on: ubuntu-latest
       steps:
         - uses: actions/checkout@v2
+        - name: Install dependencies
+          run: composer install --dev --prefer-dist --no-progress --no-suggest
         - uses: guix77/phpcs-drupal-action@v1.0.0
