@@ -58,7 +58,7 @@ class UserSchemaExtension extends SdlSchemaExtensionPluginBase {
         ->map('entity', $builder->fromParent())
     );
 
-    $registry->addFieldResolver('User', 'display_name',
+    $registry->addFieldResolver('User', 'displayName',
       $builder->produce('entity_label')
         ->map('entity', $builder->fromParent())
     );

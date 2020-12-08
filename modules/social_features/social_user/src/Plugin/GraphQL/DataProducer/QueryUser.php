@@ -3,8 +3,9 @@
 namespace Drupal\social_user\Plugin\GraphQL\DataProducer;
 
 use Drupal\Core\Cache\RefinableCacheableDependencyInterface;
-use Drupal\Core\Entity\EntityInterface;
-use Drupal\social_graphql\Plugin\GraphQL\DataProducer\Entity\QueryEntityBase;
+use Drupal\social_graphql\GraphQL\EntityConnection;
+use Drupal\social_graphql\GraphQL\QueryHelper\UserQueryHelper;
+use Drupal\social_graphql\Plugin\GraphQL\DataProducer\Entity\EntityDataProducerPluginBase;
 
 /**
  * Queries the users on the platform.
@@ -46,7 +47,7 @@ use Drupal\social_graphql\Plugin\GraphQL\DataProducer\Entity\QueryEntityBase;
  *   }
  * )
  */
-class QueryUser extends QueryEntityBase {
+class QueryUser extends EntityDataProducerPluginBase {
 
   /**
    * Resolves the request to the requested values.
@@ -68,63 +69,17 @@ class QueryUser extends QueryEntityBase {
    *
    * @return \Drupal\social_graphql\Wrappers\ConnectionInterface
    *   An entity connection with results and data about the paginated results.
-   *
-   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
-   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
   public function resolve(?int $first, ?string $after, ?int $last, ?string $before, bool $reverse, string $sortKey, RefinableCacheableDependencyInterface $metadata) {
-    $storage = $this->entityTypeManager->getStorage('user');
-    $type = $storage->getEntityType();
-    $query = $storage->getQuery()
-      ->currentRevision()
-      ->accessCheck();
+    $query_helper = new UserQueryHelper($this->entityTypeManager, $sortKey);
 
-    // Exclude the anonymous user from listings because it doesn't make sense
-    // in overview pages.
-    $query->condition('uid', 0, '!=');
+    // TODO: This no longer works and is missing in this implementation.
+    //    $metadata->addCacheTags($type->getListCacheTags());
+    //    $metadata->addCacheContexts($type->getListCacheContexts());
 
-    $metadata->addCacheTags($type->getListCacheTags());
-    $metadata->addCacheContexts($type->getListCacheContexts());
-
-    return $this->resolvePaginatedQuery($query, $first, $after, $last, $before, $reverse, $sortKey, $metadata);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  protected function getSortField(string $sortKey) : string {
-    switch ($sortKey) {
-      case 'FIRST_NAME':
-        return 'field_first_name';
-
-      case 'LAST_NAME':
-        return 'field_last_name';
-
-      case 'CREATED_AT':
-        return 'created';
-
-      default:
-        throw new \InvalidArgumentException("Unsupported sortKey for sorting '${$sortKey}'");
-    }
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  protected function getEntityValue(EntityInterface $entity, string $sortKey) {
-    switch ($sortKey) {
-//      case 'FIRST_NAME':
-//        // TODO: Profile data not available for users.
-//        break;
-//      case 'LAST_NAME':
-//        // TODO: Profile data not available for users.
-//        break;
-      case 'CREATED_AT':
-        return $entity->getCreatedTime();
-
-      default:
-        throw new \InvalidArgumentException("Unsupported sortKey for pagination '${$sortKey}'");
-    }
+    $connection = new EntityConnection($query_helper);
+    $connection->setPagination($first, $after, $last, $before, $reverse);
+    return $connection;
   }
 
 }
