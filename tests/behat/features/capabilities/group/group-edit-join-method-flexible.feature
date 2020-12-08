@@ -28,7 +28,7 @@ Feature: Edit my group as a group manager
   # TB-4365 - As a Group Manager I want to change group join-method
     When I click "Edit group"
     And I wait for AJAX to finish
-    Then I click radio button "Invite-only" with the id "edit-field-group-allowed-join-method-added"
+    Then I click radio button "Invite only" with the id "edit-field-group-allowed-join-method-added"
     And I press "Save"
     When I click "Manage members"
     Then I should see "Add members"
