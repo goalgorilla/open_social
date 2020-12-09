@@ -22,5 +22,12 @@
     <exclude-pattern>PULL_REQUEST_TEMPLATE\.md</exclude-pattern>
 
     <config name="drupal_core_version" value="8" />
+    <!--  Include all Drupal related rules but exclude some so we can gradually fix these. -->
     <rule ref="Drupal" />
+        <exclude name="Drupal.Commenting.GenderNeutralComment.GenderNeutral"/>
+        <exclude name="Drupal.Commenting.VariableComment.Missing"/>
+        <exclude name="Drupal.Commenting.Deprecated.IncorrectTextLayout"/>
+    </rule>
+
+
 </ruleset>
