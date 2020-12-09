@@ -11,19 +11,7 @@ jobs:
       - name: Install dependencies
         run: composer install --prefer-dist --no-progress --no-suggest
 
-      - name: Composer home directory
-        run: composer config home
-
-      - name: Path of phpcs
-        run: which phpcs
-
-      - name: Verify Registered Standards
-        run: phpcs -i
-
-      - name: Manually Set Installed Paths
-        run: phpcs --config-set installed_paths ~/.composer/vendor/drupal/coder/coder_sniffer
-
       - name: PHPCS check
         uses: chekalsky/phpcs-action@v1
         with:
-          installed_paths: '${{ github.workspace }}/vendor/bin/phpcs'
+          installed_paths: '${{ github.workspace }}/.composer/vendor/drupal/coder/coder_sniffer'
