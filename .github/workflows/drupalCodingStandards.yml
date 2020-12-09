@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      # Install composer depdencies so we have drupal/coder which adds our codesniffer, the bin/phpcs file
+      # Install composer dependencies so we have drupal/coder which adds our codesniffer, the bin/phpcs file
       # and dealerdirect/phpcodesniffer-composer-installer which changes the installer_path configuring all sniffs.
       - name: Install dependencies
         run: composer install --dev --prefer-dist --no-progress --no-suggest
