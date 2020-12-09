@@ -1639,15 +1639,12 @@ function social_event_update_8906() {
         // we alter it.
         // This to ensure any custom added values are not affected.
         if (strpos($value['label'], 'Public -') !== FALSE) {
-          var_dump("1");
           $config_data['settings']['allowed_values'][$key]['label'] = 'Public';
         }
         if (strpos($value['label'], 'Community -') !== FALSE) {
-          var_dump("2");
           $config_data['settings']['allowed_values'][$key]['label'] = 'Community';
         }
         if (strpos($value['label'], 'Group members -') !== FALSE) {
-          var_dump("3");
           $config_data['settings']['allowed_values'][$key]['label'] = 'Group members';
         }
       }
