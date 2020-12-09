@@ -135,3 +135,20 @@ function social_page_update_8903() {
     }
   }
 }
+
+/**
+ * Add image file extensions to be added as attachments.
+ */
+function social_page_update_8904() {
+  $config_file = drupal_get_path('module', 'social_page') . '/config/static/field.field.node.page.field_files_8904.yml';
+
+  if (is_file($config_file)) {
+    $settings = Yaml::parse(file_get_contents($config_file));
+    if (is_array($settings)) {
+      $config = \Drupal::configFactory()
+        ->getEditable('field.field.node.page.field_files');
+
+      $config->setData($settings)->save(TRUE);
+    }
+  }
+}

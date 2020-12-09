@@ -230,3 +230,20 @@ function social_topic_update_8902() {
     }
   }
 }
+
+/**
+ * Add image file extensions to be added as attachments.
+ */
+function social_topic_update_8903() {
+  $config_file = drupal_get_path('module', 'social_topic') . '/config/static/field.field.node.topic.field_files_8903.yml';
+
+  if (is_file($config_file)) {
+    $settings = Yaml::parse(file_get_contents($config_file));
+    if (is_array($settings)) {
+      $config = \Drupal::configFactory()
+        ->getEditable('field.field.node.topic.field_files');
+
+      $config->setData($settings)->save(TRUE);
+    }
+  }
+}
