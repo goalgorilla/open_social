@@ -10,6 +10,19 @@ jobs:
       - uses: actions/checkout@v2
       - name: Install dependencies
         run: composer install --dev --prefer-dist --no-progress --no-suggest
+        
+      - name: Composer home directory
+        run: composer config home
+
+      - name: Path of phpcs
+        run: which phpcs
+
+      - name: Verify Registered Standards
+        run: phpcs -i
+
+      - name: Manually Set Installed Paths
+        run: phpcs --config-set installed_paths ~/.composer/vendor/drupal/coder/coder_sniffer
+
       - name: PHPCS check
         uses: chekalsky/phpcs-action@v1
         with:
