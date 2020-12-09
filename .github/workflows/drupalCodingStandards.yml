@@ -3,13 +3,14 @@ name: Drupal coding standards
 on: [pull_request]
 
 jobs:
-  phpcs-drupal:
-      name: Drupal coding standards
-      runs-on: ubuntu-latest
-      steps:
-        - uses: actions/checkout@v2
-        - name: Install v1
-          run: composer self-update --1
-        - name: Install dependencies
-          run: composer install --dev --prefer-dist --no-progress --no-suggest
-        - uses: guix77/phpcs-drupal-action@v1.0.0
+  phpcs:
+    name: PHPCS
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install dependencies
+        run: composer install --dev --prefer-dist --no-progress --no-suggest
+      - name: PHPCS check
+        uses: chekalsky/phpcs-action@v1
+        with:
+          installed_paths: '${{ github.workspace }}/vendor/drupal/coder/coder_sniffer'
