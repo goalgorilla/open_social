@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ruleset name="drupal">
     <description>PHP CodeSniffer configuration for Drupal coding standards in Open Social.</description>
-    <file>./</file>
+    <file>./modules/custom</file>
+    <file>./modules/social_features</file>
+    <file>./social.profile</file>
+    <file>./social.install</file>
+    <file>./themes/socialbase</file>
+    <file>./themes/socialblue</file>
     <config name="ignore_errors_on_exit" value="0"/>
     <config name="ignore_warnings_on_exit" value="0"/>
-    <!--  Overrides https://github.com/guix77/docker-phpcs-drupal/blob/master/Dockerfile  -->
     <config name="default_standard" value="Drupal"/>
 
     <arg name="extensions" value="php,module,inc,install,test,profile,theme" />
