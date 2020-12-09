@@ -29,7 +29,11 @@
         <exclude name="Drupal.Commenting.Deprecated.IncorrectTextLayout"/>
         <exclude name="Drupal.Arrays.Array.LongLineDeclaration"/>
         <exclude name="Drupal.Semantics.FunctionTriggerError.TriggerErrorTextLayoutStrict"/>
+    </rule>
 
+    <!-- We need to fix the DateTime and DateTimeZone in this class. -->
+    <rule ref="Drupal.Classes.UseGlobalClass.RedundantUseStatement">
+        <exclude-pattern>SocialAddToCalendarBase\.php</exclude-pattern>
     </rule>
 
 </ruleset>
