@@ -11,7 +11,10 @@ jobs:
       - name: Install dependencies
         run: composer install --prefer-dist --no-progress --no-suggest
 
+      - name: Check phpcs info
+        run: /vendor/bin/phpcs -i
+
       - name: PHPCS check
         uses: chekalsky/phpcs-action@v1
         with:
-          installed_paths: '/root/.composer/vendor/drupal/coder/coder_sniffer/'
+          phpcs_bin_path: '/vendor/bin/phpcs'
