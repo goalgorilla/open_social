@@ -112,7 +112,7 @@ class MediaBridgeFileTest extends FieldKernelTestBase {
     $file_field = $entity->get('image_test')->first();
 
     // The uuid of the image.
-    $resolved_uuid = $this->await($data_producer->resolve($file_field, 'uuid'));
+    $resolved_uuid = $this->await($data_producer->resolve($file_field, 'id'));
     self::assertEquals($this->image->uuid(), $resolved_uuid);
 
     // The URL should be produced.

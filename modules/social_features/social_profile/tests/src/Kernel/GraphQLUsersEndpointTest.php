@@ -102,7 +102,7 @@ class GraphQLUsersEndpointTest extends SocialGraphQLTestBase {
     $profile = $this->ensureTestProfile($test_user, 'profile');
     $query = "
       query {
-        user(uuid: \"{$test_user->uuid()}\") {
+        user(id: \"{$test_user->uuid()}\") {
           profile {
             firstName
             lastName

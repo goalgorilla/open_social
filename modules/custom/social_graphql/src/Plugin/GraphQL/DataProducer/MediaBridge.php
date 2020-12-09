@@ -136,7 +136,7 @@ class MediaBridge extends DataProducerPluginBase implements ContainerFactoryPlug
    */
   protected function resolveFileItem(FileItem $file, $field) {
     switch ($field) {
-      case 'uuid':
+      case 'id':
         if ($file->isEmpty()) {
           return NULL;
         }
@@ -189,7 +189,7 @@ class MediaBridge extends DataProducerPluginBase implements ContainerFactoryPlug
    */
   protected function resolveMediaEntity(MediaInterface $value, $field) {
     switch ($field) {
-      case 'uuid':
+      case 'id':
         return $value->uuid();
 
       case 'url':

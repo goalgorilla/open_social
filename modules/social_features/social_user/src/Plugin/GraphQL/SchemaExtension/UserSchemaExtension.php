@@ -49,11 +49,11 @@ class UserSchemaExtension extends SdlSchemaExtensionPluginBase {
     $registry->addFieldResolver('Query', 'user',
       $builder->produce('entity_load_by_uuid')
         ->map('type', $builder->fromValue('user'))
-        ->map('uuid', $builder->fromArgument('uuid'))
+        ->map('uuid', $builder->fromArgument('id'))
     );
 
     // User type fields.
-    $registry->addFieldResolver('User', 'uuid',
+    $registry->addFieldResolver('User', 'id',
       $builder->produce('entity_uuid')
         ->map('entity', $builder->fromParent())
     );

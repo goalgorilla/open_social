@@ -198,7 +198,7 @@ type DateTime {
 Media managed by the Open Social platform.
 """
 interface Media implements Node {
-  uuid: ID!
+  id: ID!
   """
   The url at which the original media can be downloaded.
   """
@@ -206,7 +206,7 @@ interface Media implements Node {
 }
 
 type Image implements Media & Node {
-  uuid: ID!
+  id: ID!
   """
   The url at which the original image can be downloaded.
 
@@ -249,7 +249,7 @@ scalar Cursor
 A node on an edge.
 """
 interface Node {
-  uuid: ID!
+  id: ID!
 }
 
 """

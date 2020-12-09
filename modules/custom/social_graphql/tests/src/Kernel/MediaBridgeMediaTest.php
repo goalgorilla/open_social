@@ -86,7 +86,7 @@ class MediaBridgeMediaTest extends MediaKernelTestBase {
     $data_producer = $this->dataProducerPluginManager->createInstance('media_bridge');
 
     // The uuid of the Media entity.
-    $resolved_uuid = $this->await($data_producer->resolve($entity, 'uuid'));
+    $resolved_uuid = $this->await($data_producer->resolve($entity, 'id'));
     self::assertEquals($entity->uuid(), $resolved_uuid);
 
     // The URL should be produced.

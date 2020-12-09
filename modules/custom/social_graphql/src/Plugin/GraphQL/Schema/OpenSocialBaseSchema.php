@@ -91,10 +91,10 @@ class OpenSocialBaseSchema extends SdlSchemaPluginBase {
     // The problem comes where the image field as association is an entity
     // reference with metadata, so for the alt text is stored on this field.
     // Entities loaded for an overview would not have this information.
-    $registry->addFieldResolver('Media', 'uuid',
+    $registry->addFieldResolver('Media', 'id',
       $builder->produce('media_bridge')
         ->map('value', $builder->fromParent())
-        ->map('field', $builder->fromValue('uuid'))
+        ->map('field', $builder->fromValue('id'))
     );
 
     $registry->addFieldResolver('Media', 'url',

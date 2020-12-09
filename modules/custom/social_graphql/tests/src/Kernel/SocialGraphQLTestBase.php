@@ -80,7 +80,7 @@ abstract class SocialGraphQLTestBase extends GraphQLTestBase {
             edges {
               cursor
               node {
-                uuid
+                id
               }
             }
           }
@@ -95,7 +95,7 @@ abstract class SocialGraphQLTestBase extends GraphQLTestBase {
                 return [
                   "cursor" => (new $edgeClass($node))->getCursor(),
                   "node" => [
-                    "uuid" => $node->uuid(),
+                    "id" => $node->uuid(),
                   ],
                 ];
               },

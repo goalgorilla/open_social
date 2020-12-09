@@ -78,8 +78,8 @@ class GraphQLUsersEndpointTest extends SocialGraphQLTestBase {
     $test_user = $this->createUser();
     $query = "
       query {
-        user(uuid: \"{$test_user->uuid()}\") {
-          uuid
+        user(id: \"{$test_user->uuid()}\") {
+          id
           displayName
           mail
           created
@@ -92,7 +92,7 @@ class GraphQLUsersEndpointTest extends SocialGraphQLTestBase {
     $expected_data = [
       'data' => [
         'user' => [
-          'uuid' => $test_user->uuid(),
+          'id' => $test_user->uuid(),
           'displayName' => $test_user->getDisplayName(),
           'mail' => $test_user->getEmail(),
           'created' => $test_user->getCreatedTime(),
