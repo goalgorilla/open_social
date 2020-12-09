@@ -1,0 +1,39 @@
+field.field.node.event.field_enroll_method:
+  expected_config:
+    label: 'Enroll Method'
+  update_actions:
+    change:
+      label: 'Enroll method'
+field.storage.node.field_enroll_method:
+  expected_config:
+    settings:
+      allowed_values:
+        -1:
+          label: 'Open to enroll - users can enroll for this event without approval'
+        0:
+          label: 'Invite-only - users can only enroll for this event if they are added/invited by event organisers'
+        1:
+          value: 3
+        2: {  }
+        3:
+          label: 'Request to enroll - users can "request to enroll" for this event which event organisers approve/decline'
+  update_actions:
+    delete:
+      settings:
+        allowed_values:
+          -1:
+            value: 3
+          0: {  }
+    add:
+      settings:
+        allowed_values:
+          -
+            label: Invite-only
+            value: 3
+    change:
+      settings:
+        allowed_values:
+          -1:
+            label: 'Open to enroll'
+          0:
+            label: 'Request to enroll'

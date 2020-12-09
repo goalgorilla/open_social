@@ -1621,3 +1621,17 @@ function social_event_update_8904() {
 function social_event_update_8905() {
   \Drupal::service('module_installer')->install(['social_event_addtocal']);
 }
+
+/**
+ * Updated field_enroll_method text and labels.
+ */
+function social_event_update_8906() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_event', 'social_event_update_8906');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
