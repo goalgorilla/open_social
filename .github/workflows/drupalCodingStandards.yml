@@ -12,9 +12,9 @@ jobs:
         run: composer install --prefer-dist --no-progress --no-suggest
 
       - name: Check phpcs info
-        run: /vendor/bin/phpcs -i
+        run: phpcs -i
 
       - name: PHPCS check
         uses: chekalsky/phpcs-action@v1
         with:
-          phpcs_bin_path: '/vendor/bin/phpcs'
+          phpcs_bin_path: './vendor/bin/phpcs'
