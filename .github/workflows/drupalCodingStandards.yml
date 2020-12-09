@@ -9,8 +9,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Install dependencies
-        run: composer install --dev --prefer-dist --no-progress --no-suggest
-        
+        run: composer install --prefer-dist --no-progress --no-suggest
+
       - name: Composer home directory
         run: composer config home
 
