@@ -9,10 +9,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Install dependencies
-        run: composer install --prefer-dist --no-progress --no-suggest
-
-      - name: Check phpcs info
-        run: phpcs -i
+        run: composer install --dev --prefer-dist --no-progress --no-suggest
 
       - name: PHPCS check
         uses: chekalsky/phpcs-action@v1
