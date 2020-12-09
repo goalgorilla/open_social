@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\social_graphql\GraphQL;
 
-use GraphQL\Deferred;
+use Drupal\social_graphql\Wrappers\EdgeInterface;
 use GraphQL\Error\UserError;
 use GraphQL\Executor\Promise\Adapter\SyncPromise;
 
@@ -148,6 +148,22 @@ class EntityConnection implements ConnectionInterface {
 
       return $edges;
     });
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function nodes() : SyncPromise {
+    // Just loop over the edges and get the node. If this turns out not to be
+    // performant enough then we'll have to change the return value for
+    // QueryHelper's.
+    return $this->getResult()
+      ->then(
+        static fn ($edges) => array_map(
+          static fn (EdgeInterface $edge) => $edge->getNode(),
+          $edges
+        )
+      );
   }
 
   /**

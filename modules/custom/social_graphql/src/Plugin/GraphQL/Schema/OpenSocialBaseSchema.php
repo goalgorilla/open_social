@@ -122,6 +122,11 @@ class OpenSocialBaseSchema extends SdlSchemaPluginBase {
         ->map('connection', $builder->fromParent())
     );
 
+    $registry->addFieldResolver('Connection', 'nodes',
+      $builder->produce('connection_nodes')
+        ->map('connection', $builder->fromParent())
+    );
+
     $registry->addFieldResolver('Connection', 'pageInfo',
       $builder->produce('connection_page_info')
         ->map('connection', $builder->fromParent())

@@ -295,9 +295,16 @@ A paginated set of results.
 """
 interface Connection {
   """
-  A list of edges
+  The edges of this connection.
   """
   edges: [Edge!]!
+  """
+  The nodes of the edges of this connection.
+
+  Provides direct access to the nodes in case other edge information
+  isn't needed.
+  """
+  nodes: [Node!]!
   """
   Information to aid in pagination
   """

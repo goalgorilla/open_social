@@ -46,4 +46,14 @@ interface ConnectionInterface {
    */
   public function edges() : SyncPromise;
 
+  /**
+   * Get hte nodes for this connection.
+   *
+   * This allows bypassing of the edges in case edge information isn't needed.
+   *
+   * @return \GraphQL\Executor\Promise\Adapter\SyncPromise
+   *   A promise that resolves to an array of entities.
+   */
+  public function nodes() : SyncPromise;
+
 }
