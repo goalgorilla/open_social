@@ -92,7 +92,7 @@ Feature: Enroll for an event without an account
       | Time          | 11:00:00 |
       | Location name | GG HQ |
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text."
-    And I click radio button "Public - visible to everyone including people who are not a member"
+    And I click radio button "Public"
     And I press "Save"
 
     Given I am an anonymous user
