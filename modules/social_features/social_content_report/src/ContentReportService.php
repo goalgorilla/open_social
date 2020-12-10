@@ -57,6 +57,7 @@ class ContentReportService implements ContentReportServiceInterface {
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    *   The module handler.
    * @param \Symfony\Component\HttpFoundation\RequestStack $requestStack
+   *   The request stack.
    */
   public function __construct(
     FlagServiceInterface $flag_service,
@@ -90,6 +91,7 @@ class ContentReportService implements ContentReportServiceInterface {
 
   /**
    * {@inheritdoc}
+   *
    * @throws \Drupal\Core\Entity\EntityMalformedException
    */
   public function getModalLink(EntityInterface $entity, $flag_id, $is_button = FALSE): ?array {
@@ -135,10 +137,11 @@ class ContentReportService implements ContentReportServiceInterface {
     $currentUrl = Url::fromRoute('<current>')->toString();
 
     $currentRequest = $this->requestStack->getCurrentRequest();
-    // If there's a request and it's an ajax request, we need to do something different.
-    // Current url will now be determined based on something else.
+    // If there's a request and it's an ajax request, we need to do something
+    // different. Current url will now be determined based on something else.
     if ($entity instanceof CommentInterface && $currentRequest !== NULL && $currentRequest->isXmlHttpRequest() === TRUE) {
-      // Determine the parent entity, so we can reditect to the entity the comment was added to.
+      // Determine the parent entity, so we can redirect to the entity
+      // the comment was added to.
       $parentEntity = $entity->getCommentedEntity();
 
       if ($parentEntity !== NULL) {
