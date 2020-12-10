@@ -1623,7 +1623,7 @@ function social_event_update_8905() {
 }
 
 /**
- * Updated field_enroll_method text and labels.
+ * Updated field_enroll_method field label.
  */
 function social_event_update_8906() {
   /** @var \Drupal\update_helper\Updater $updateHelper */
@@ -1638,19 +1638,34 @@ function social_event_update_8906() {
 
 /**
  * Update the enrollment method text of an event on event add form.
- *
- * Load in a config file from an specific update hook that will never change.
- * Update helper did not update all fields correctly.
  */
 function social_event_update_8907() {
-  $config_file = drupal_get_path('module', 'social_event') . '/config/update/social_event_update_8907.yml';
+  // Load the existing configuration.
+  $config_name = 'field.storage.node.field_enroll_method';
+  $config = \Drupal::configFactory()->getEditable($config_name);
+  $config_data = $config->getRawData();
 
-  if (is_file($config_file)) {
-    $settings = Yaml::parse(file_get_contents($config_file));
-    if (is_array($settings)) {
-      $config = \Drupal::configFactory()
-        ->getEditable('field.storage.node.field_enroll_method');
-      $config->setData($settings)->save(TRUE);
+  if (!empty($config_data['settings']['allowed_values'])) {
+    foreach ($config_data['settings']['allowed_values'] as $key => $value) {
+      if (!empty($value['label'])) {
+        // Since we are not sure about the array keys for the allowed values
+        // we loop over them, and whenever there is a possible label match
+        // we alter it.
+        // This to ensure any custom added values are not affected.
+        if (strpos($value['label'], 'Open') !== FALSE) {
+          $config_data['settings']['allowed_values'][$key]['label'] = 'Open to enroll';
+        }
+        if (strpos($value['label'], 'Request') !== FALSE) {
+          $config_data['settings']['allowed_values'][$key]['label'] = 'Request to enroll';
+        }
+        if (strpos($value['label'], 'Invite-only') !== FALSE) {
+          $config_data['settings']['allowed_values'][$key]['label'] = 'Invite-only';
+        }
+      }
     }
+
+    $config->setData($config_data)->save();
+    // Make sure we clear cached definitions for the fields.
+    \Drupal::service('entity_field.manager')->clearCachedFieldDefinitions();
   }
 }
