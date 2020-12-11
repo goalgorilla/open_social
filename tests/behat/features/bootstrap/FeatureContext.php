@@ -7,6 +7,7 @@ use Behat\Behat\Context\Context;
 use Behat\Behat\Hook\Scope\AfterScenarioScope;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\TableNode;
+use Behat\Mink\Exception\ElementNotFoundException;
 use Behat\MinkExtension\Context\RawMinkContext;
 use Drupal\DrupalExtension\Hook\Scope\EntityScope;
 use Drupal\group\Entity\Group;
@@ -212,33 +213,19 @@ class FeatureContext extends RawMinkContext implements Context
      * @When I select post visibility :visibility
      */
     public function iSelectPostVisibility($visibility) {
-      $allowed_visibility = array(
-        '0' => 'Recipient', // Is displayed as Community in front-end.
-        '1' => 'Public',
-        '2' => 'Community',
-        '3' => 'Group members',
-      );
-
-      if (!in_array($visibility, $allowed_visibility)) {
-        throw new \InvalidArgumentException(sprintf('This visibility option is not allowed: "%s"', $visibility));
-      }
-
       // First make post visibility setting visible.
       $this->iClickPostVisibilityDropdown();
 
-      // Click the radio button.
-      $key = array_search($visibility, $allowed_visibility);
-      if (!empty($key)) {
-        $id = 'edit-field-visibility-0-' . $key;
-        $this->clickRadioButton('', $id);
-      }
-      else {
-        throw new \InvalidArgumentException(sprintf('Could not find key for visibility option: "%s"', $visibility));
+      // Click the label of the readio button with the visibility. The radio
+      // button itself can't be clicked because it's invisible.
+      $page = $this->getSession()->getPage();
+      $field = $page->findField($visibility);
+
+      if (null === $field) {
+        throw new ElementNotFoundException($this->getDriver(), 'form field', 'id|name|label|value|placeholder', $visibility);
       }
 
-      // Hide post visibility setting.
-      $this->iClickPostVisibilityDropdown();
-
+      $field->getParent()->click();
     }
 
     /**
@@ -452,6 +439,27 @@ class FeatureContext extends RawMinkContext implements Context
     }
 
     /**
+     * Shows hidden inputs.
+     *
+     * @When /^(?:|I )show hidden inputs/
+     */
+    public function showHiddenInputs()
+    {
+      $session = $this->getSession();
+
+      $session->executeScript(
+        "var inputs = document.getElementsByClassName('input');
+            for(var i = 0; i < inputs.length; i++) {
+            inputs[i].style.opacity = 1;
+            inputs[i].style.left = 0;
+            inputs[i].style.position = 'relative';
+            inputs[i].style.display = 'block';
+            }
+            ");
+    }
+
+
+  /**
      * Opens specified page.
      *
      * @Given /^(?:|I )am on the profile of "(?P<username>[^"]+)"$/

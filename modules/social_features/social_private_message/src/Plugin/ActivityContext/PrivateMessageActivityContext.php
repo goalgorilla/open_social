@@ -2,6 +2,7 @@
 
 namespace Drupal\social_private_message\Plugin\ActivityContext;
 
+use Drupal\activity_creator\ActivityFactory;
 use Drupal\activity_creator\Plugin\ActivityContextBase;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -42,6 +43,8 @@ class PrivateMessageActivityContext extends ActivityContextBase {
    *   The entity query.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity type manager.
+   * @param \Drupal\activity_creator\ActivityFactory $activity_factory
+   *   The activity factory service.
    * @param \Drupal\private_message\Service\PrivateMessageServiceInterface $private_message_service
    *   The private message service.
    */
@@ -51,15 +54,10 @@ class PrivateMessageActivityContext extends ActivityContextBase {
     $plugin_definition,
     QueryFactory $entity_query,
     EntityTypeManagerInterface $entity_type_manager,
+    ActivityFactory $activity_factory,
     PrivateMessageServiceInterface $private_message_service
   ) {
-    parent::__construct(
-      $configuration,
-      $plugin_id,
-      $plugin_definition,
-      $entity_query,
-      $entity_type_manager
-    );
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_query, $entity_type_manager, $activity_factory);
 
     $this->privateMessageService = $private_message_service;
   }
@@ -74,6 +72,7 @@ class PrivateMessageActivityContext extends ActivityContextBase {
       $plugin_definition,
       $container->get('entity.query.sql'),
       $container->get('entity_type.manager'),
+      $container->get('activity_creator.activity_factory'),
       $container->get('private_message.service')
     );
   }

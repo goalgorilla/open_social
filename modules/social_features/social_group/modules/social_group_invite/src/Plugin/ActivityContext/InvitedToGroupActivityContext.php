@@ -2,7 +2,6 @@
 
 namespace Drupal\social_group_invite\Plugin\ActivityContext;
 
-use Drupal\activity_creator\ActivityFactory;
 use Drupal\activity_creator\Plugin\ActivityContextBase;
 use Drupal\ginvite\Plugin\GroupContentEnabler\GroupInvitation;
 
@@ -24,7 +23,7 @@ class InvitedToGroupActivityContext extends ActivityContextBase {
 
     if (!empty($data['related_object'])) {
       // Grab the group_content which holds the user and the group_invitation.
-      $referenced_entity = ActivityFactory::getActivityRelatedEntity($data);
+      $referenced_entity = $this->activityFactory->getActivityRelatedEntity($data);
       $storage = $this->entityTypeManager->getStorage('group_content');
 
       /** @var \Drupal\group\Entity\GroupContentInterface $group_content */

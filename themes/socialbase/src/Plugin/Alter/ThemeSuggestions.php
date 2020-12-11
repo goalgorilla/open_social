@@ -122,6 +122,11 @@ class ThemeSuggestions extends BaseThemeSuggestions {
           $suggestions[] = 'details__comment';
         }
 
+        // Template suggestion for upload attachments in comments.
+        if (isset($variables['element']['#attributes']['class']) && in_array('social-collapsible-fieldset', $variables['element']['#attributes']['class'])) {
+          $suggestions[] = 'details__collapsible';
+        }
+
         break;
 
       case 'file_link':

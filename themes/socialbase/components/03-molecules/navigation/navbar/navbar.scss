@@ -17,18 +17,26 @@
 
   > li {
 
-    > a {
+    > a,
+    > button {
       position: relative;
       display: block;
       padding: $nav-link-padding;
+      border: none;
+
       &:hover,
       &:focus {
         text-decoration: none;
       }
     }
 
+    > button {
+      background-color: transparent;
+    }
+
     // Disabled state sets text to gray and nukes hover/tab effects
-    &.disabled > a {
+    &.disabled > a,
+    &.disabled > button {
 
       &:hover,
       &:focus {
@@ -124,7 +132,7 @@
   display: flex;
   flex-wrap: wrap;
 
-  > li > a {
+  > li > a, > li > button {
     padding-top: 10px;
     padding-bottom: 10px;
     line-height: $line-height-computed;
@@ -133,7 +141,7 @@
   // Uncollapse the nav
   @include for-tablet-landscape-up {
 
-    > li > a {
+    > li > a, > li > button {
       padding-top: $navbar-padding-vertical;
       padding-bottom: $navbar-padding-vertical;
     }
@@ -182,7 +190,7 @@
 
         @include dropdown-Ipad;
 
-        > li > a {
+        > li > a, > li > button {
           @media(min-width: 768px) and (max-width: 1024px) {
             @include dropdown-el;
           }
@@ -215,7 +223,9 @@
 }
 
 .navbar-user > li > a,
-.navbar-user .navbar-nav > li > a {
+.navbar-user > li > button,
+.navbar-user .navbar-nav > li > a,
+.navbar-user .navbar-nav > li > button {
   padding: 13px 10px 8px;
   height: 50px;
 }
@@ -438,7 +448,8 @@
       padding-top: 0;
       box-shadow: none;
 
-      li a {
+      li a,
+      li button {
         padding: 5px 15px 5px 30px;
       }
 
@@ -448,10 +459,12 @@
 
 }
 
-.navbar-default .navbar-nav > .open > a,
-.navbar-default .navbar-nav > .open > a:focus,
-.navbar-default .navbar-nav > .open > a:hover {
-  transition: color .2s ease, background-color .2s ease;
+.navbar-default .navbar-nav > .open {
+  > a, > button {
+    &, &:focus, &:hover {
+      transition: color .2s ease, background-color .2s ease;
+    }
+  }
 }
 
 // Display profile dropdown links inline when larger than tab portrait
@@ -551,6 +564,7 @@
 @include for-tablet-landscape-up {
 
   .search-take-over {
+    display: none;
     height: 50px;
     position: fixed;
     top: 20%;
@@ -558,7 +572,6 @@
     width: 100%;
     z-index: $zindex-modal;
     pointer-events: none;
-    opacity: 0;
     transition: all 0.3s ease-in-out;
 
     .form-group {
@@ -636,7 +649,7 @@
     overflow: hidden;
 
     .search-take-over {
-      opacity: 1;
+      display: initial;
       pointer-events: all;
     }
 
@@ -686,14 +699,14 @@
     flex-wrap: nowrap;
     font-size: $font-size-base;
 
-    a {
+    a, button {
       transition: all 0.3s;
       white-space: nowrap;
       opacity: 0.75;
       border-bottom: 2px solid transparent;
     }
 
-    li.active a {
+    li.active a, li.active button {
       border-bottom: 2px solid transparent;
       opacity: 1;
 

@@ -103,9 +103,23 @@
     cursor: pointer;
   }
 
-  &:hover {
+  &:hover, &:focus-within {
     background-color: $gray-lighter;
     cursor: pointer;
+  }
+
+  // The visibility list contains anchor elements to fix keyboard support so we
+  // must clear the default anchor list styling from dropdown.scss.
+  .dropdown-menu--visibility > & > a {
+    padding: 0;
+
+    // :hover, :focus for the required specificity.
+    // Removes the outline for links since the background indicates focus.
+    &, &:hover, &:focus {
+      background-color: inherit;
+      box-shadow: none;
+      outline: none;
+    }
   }
 
   .icon-small {

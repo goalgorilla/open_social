@@ -13,7 +13,21 @@
  */
 #}
 {{ attach_library('socialbase/comment')}}
-<div class="js-comment comment comment-form__wrapper">
+
+{%
+    set classes = [
+        'js-comment',
+        'comment',
+        'comment-form__wrapper',
+    ]
+%}
+
+{# wrap our form for reply forms with indentation classes added in form.inc #}
+{% if comment_reply_form_wrapper is not empty %}
+<div {{ comment_reply_form_wrapper }}>
+{% endif %}
+
+<div {{ comment_wrapper.addClass(classes) }}>
   <div class="comment__avatar">{{ current_user_picture }}</div>
   <div class="comment__content">
     <form{{ attributes }}>
@@ -23,3 +37,7 @@
     </form>
   </div>
 </div>
+
+{% if comment_reply_form_wrapper is not empty %}
+</div>
+{% endif %}

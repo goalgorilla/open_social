@@ -46,9 +46,11 @@
     {% block custom_css %} {% endblock %}
   </head>
   <body{{ attributes.addClass(body_classes) }}>
-    <a href="#main-content" class="sr-only sr-only-focusable">
-      {{ 'Skip to main content'|t }}
-    </a>
+    <div id="skip-link">
+      <a href="#main-content" class="sr-only-focusable">
+        {{ 'Skip to main content'|t }}
+      </a>
+    </div>
     {% if is_front %}
       <h1 class="visually-hidden">{{ head_title|safe_join(' | ') }}</h1>
     {% endif %}

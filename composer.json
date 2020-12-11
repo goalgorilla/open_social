@@ -17,9 +17,8 @@
     ],
     "scripts": {
         "post-install-cmd": [
-            "@composer drupal-scaffold"
+            "@composer drupal:scaffold"
         ],
-        "drupal-scaffold": "DrupalComposer\\DrupalScaffold\\Plugin::scaffold",
         "enable-asset-packagist": "Drupal\\social\\Composer\\AssetPackagist::execute"
     },
     "autoload": {
@@ -42,7 +41,8 @@
                 "Multiple usages of FieldPluginBase::getEntity do not check for NULL, leading to WSOD": "https://www.drupal.org/files/issues/2019-11-14/3007424-68.patch",
                 "Default role id causes issues with validation on VBO": "https://www.drupal.org/files/issues/2018-05-24/2974925-default-rid-config-causes-illegal-error.patch",
                 "Ensure views exposed form in a form block keeps contextual arguments": "https://www.drupal.org/files/issues/2020-04-17/views-exposed-form-block-args-2821962-30-8.8-notest.patch",
-                "Display Bug when using #states (Forms API) with Ajax Request": "https://www.drupal.org/files/issues/2019-11-19/1091852-104.patch"
+                "Display Bug when using #states (Forms API) with Ajax Request": "https://www.drupal.org/files/issues/2019-11-19/1091852-104.patch",
+                "Can't specify the language in TermStorage::loadTree": "https://www.drupal.org/files/issues/2020-09-08/drupal-termstorage-loadTree-lang-3123561-6-d8.patch"
             },
             "drupal/flag": {
                 "Add relationship to flagged entities when Flagging is base table": "https://www.drupal.org/files/issues/2723703_31.patch"
@@ -101,7 +101,7 @@
                 "Make sure lazy doesnt do anything on cron": "https://www.drupal.org/files/issues/2019-07-30/3071331-lazy-cron-empty-path-2.patch"
             },
             "drupal/ajax_comments": {
-                "Fix display mode issue": "https://www.drupal.org/files/issues/2019-11-05/ajax_comments-ajax_not_working_when_using_non_default_view_mode-2896916-22.patch"
+                "Fix display mode issue": "https://www.drupal.org/files/issues/2020-10-19/ajax_comments-ajax_not_working_when_using_non_default_view_mode-2896916-37-beta1.patch"
             },
             "drupal/field_group": {
                 "Undefined property: stdClass::$region in field_group_form_process().": "https://www.drupal.org/files/issues/2020-06-15/3059614-37.patch"
@@ -120,10 +120,10 @@
     },
     "require": {
         "cweagans/composer-patches": "^1.6.0",
-        "composer/installers": "^1.6",
-        "oomphinc/composer-installers-extender": "^1.1",
-        "drupal-composer/drupal-scaffold": "^2.5.0",
+        "composer/installers": "~1.0 || ~2.0",
+        "oomphinc/composer-installers-extender": "~1.0 || ~2.0",
         "drupal/core": "8.8 - 9.1",
+        "drupal/core-composer-scaffold": "~8.9",
         "drupal/address": "1.7",
         "drupal/admin_toolbar": "1.27",
         "drupal/ajax_comments": "^1.0",
@@ -202,5 +202,11 @@
         "npm-asset/react": "^16.7.0",
         "npm-asset/react-dom": "^16.7.0",
         "zaporylie/composer-drupal-optimizations": "^1.0"
+    },
+    "require-dev": {
+        "dealerdirect/phpcodesniffer-composer-installer": "~0.6 || ~0.7",
+        "mglaman/drupal-check": "^1.0",
+        "palantirnet/drupal-rector": "^0.5.6",
+        "drupal/coder": "8.3.11"
     }
 }
