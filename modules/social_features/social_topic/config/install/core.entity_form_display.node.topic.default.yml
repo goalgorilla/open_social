@@ -16,6 +16,7 @@ dependencies:
     - file
     - image_widget_crop
     - path
+    - social_group
     - text
 third_party_settings:
   field_group:
@@ -26,13 +27,14 @@ third_party_settings:
         - field_topic_image
       parent_name: ''
       weight: 0
-      label: Content
+      label: 'Basic details'
       format_type: fieldset
       format_settings:
-        label: Content
+        description: ''
         required_fields: true
         id: content
         classes: 'card '
+      region: hidden
     group_topic_description:
       children:
         - body
@@ -41,37 +43,51 @@ third_party_settings:
       label: Description
       format_type: fieldset
       format_settings:
-        label: Description
         required_fields: true
         id: description
         classes: 'card '
+      region: hidden
     group_topic_visibility:
       children:
         - groups
         - field_content_visibility
       parent_name: ''
       weight: 1
-      label: Visibility
+      label: 'Access permissions'
       format_type: fieldset
       format_settings:
-        label: Visibility
+        description: ''
         required_fields: true
         id: visibility
         classes: 'card '
+      region: hidden
     group_attachments:
       children:
         - field_files
       parent_name: ''
       weight: 5
-      label: Attachments
-      format_type: fieldset
+      label: 'Additional details'
+      format_type: details
       format_settings:
-        label: Attachments
+        description: ''
         required_fields: true
         id: attachments
-        classes: 'card '
-_core:
-  default_config_hash: 7gp9MbxXU7HOGmCzXk8LMVCxpLv_WPYpnFy49fW_2os
+        classes: social-collapsible-fieldset
+        open: false
+      region: hidden
+    group_settings:
+      children: {  }
+      parent_name: ''
+      weight: 20
+      format_type: details
+      region: hidden
+      format_settings:
+        description: ''
+        required_fields: true
+        id: ''
+        classes: social-collapsible-fieldset
+        open: false
+      label: Settings
 id: node.topic.default
 targetEntityType: node
 bundle: topic
@@ -84,6 +100,7 @@ content:
       rows: 9
       summary_rows: 3
       placeholder: ''
+      show_summary: false
     third_party_settings: {  }
     region: content
   created:
@@ -123,6 +140,7 @@ content:
         - teaser
       progress_indicator: throbber
       warn_multiple_usages: true
+      crop_types_required: {  }
     third_party_settings: {  }
     type: image_widget_crop
     region: content
@@ -133,7 +151,7 @@ content:
     type: options_buttons
     region: content
   groups:
-    type: options_select
+    type: social_group_selector_widget
     settings: {  }
     weight: 16
     region: content
