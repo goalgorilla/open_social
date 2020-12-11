@@ -33,7 +33,7 @@
 
 .dropdown-menu {
   position: absolute;
-  top: 100%;
+  top: 0;
   left: 0;
   z-index: 1000;
   display: none;
@@ -301,6 +301,9 @@ html:not(.js) .dropdown .dropdown-toggle {
 }
 
 @media (min-width: 900px) {
+  .dropdown-menu {
+    top: 100%;
+  }
   .navbar-right .dropdown-menu {
     right: 0;
     left: auto;
