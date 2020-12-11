@@ -27,7 +27,7 @@ class ActivityGroupArgument extends ArgumentPluginBase {
     $this->query->addTable('activity__field_activity_entity');
     $this->query->addTable('activity__field_activity_destinations');
 
-    $or_condition = new Condition('OR');;
+    $or_condition = new Condition('OR');
 
     // Group is a recipient.
     $or_condition->condition('activity__field_activity_recipient_group.field_activity_recipient_group_target_id', $this->argument, '=');
