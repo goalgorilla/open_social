@@ -82,6 +82,13 @@ class OpenSocialBaseSchema extends SdlSchemaPluginBase {
       $builder->fromPath('text', 'processed')
     );
 
+    // DateTime fields.
+    // TODO: Standardise on what we pass around in PHP and create a
+    //   dataproducer.
+    $registry->addFieldResolver('DateTime', 'timestamp',
+      $builder->fromParent()
+    );
+
     // Media fields.
     // TODO: Solve this:
     // An issue is that we would like to get the media item from the parent in
