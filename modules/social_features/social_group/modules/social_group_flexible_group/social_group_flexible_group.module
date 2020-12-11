@@ -6,13 +6,10 @@
  */
 
 use Drupal\block\Entity\Block;
-use Drupal\bootstrap\Bootstrap;
-use Drupal\Component\Utility\Html;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\Core\Url;
 use Drupal\group\Entity\Group;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\social_group_flexible_group\FlexibleGroupContentVisibilityUpdate;
@@ -350,68 +347,6 @@ function social_group_flexible_group_group_access(EntityInterface $entity, $oper
 }
 
 /**
- * Returns a new popover tooltip based on a descriptive text and field name.
- *
- * @param string $field_name
- *   The field name to create a unique id for.
- * @param string $data_title
- *   The title of the pop-up.
- * @param string $description
- *   A string containing the description, this needs to be rendered markup.
- *
- * @return array
- *   The render array containing the tooltip.
- */
-function social_group_flexible_group_render_tooltip($field_name, $data_title, $description) {
-  $build = [];
-  $id = Html::getUniqueId('tooltip-' . $field_name);
-  $build['toggle'] = [
-    '#type' => 'link',
-    '#url' => Url::fromUserInput("#$id"),
-    '#icon' => Bootstrap::glyphicon('question-sign'),
-    '#attributes' => [
-      'class' => ['icon-before'],
-      'data-toggle' => 'popover',
-      'data-container' => 'body',
-      'data-html' => 'true',
-      'data-placement' => 'bottom',
-      'data-title' => $data_title ?: '',
-    ],
-  ];
-  $build['requirements'] = [
-    '#type' => 'container',
-    '#theme_wrappers' => ['container__file_upload_help'],
-    '#attributes' => [
-      'id' => $id,
-      'class' => ['hidden', 'help-block'],
-      'aria-hidden' => 'true',
-    ],
-  ];
-  // As documented in Render API, Note that the value is passed through
-  // \Drupal\Component\Utility\Xss::filterAdmin(), which strips known XSS
-  // vectors while allowing a permissive list of HTML tags.
-  $build['requirements']['descriptions'] = [
-    '#markup' => $description,
-    '#allowed_tags' => [
-      'strong',
-      'span',
-      'svg',
-      'p',
-      'div',
-      'em',
-      'img',
-      'a',
-      'span',
-      'use',
-    ],
-  ];
-
-  $variables['popover'] = $build;
-
-  return $build;
-}
-
-/**
  * Implements template_preprocess_form_element().
  */
 function social_group_flexible_group_preprocess_form_element(&$variables) {
@@ -449,7 +384,7 @@ function social_group_flexible_group_preprocess_fieldset(&$variables) {
 
       // Render a specific tooltip based on a field name and description.
       // This is done in the fieldset, next to the <legend>.
-      $variables['popover'] = social_group_flexible_group_render_tooltip('field_flexible_group_visibility', t('Group Visibility'), $description);
+      $variables['popover'] = social_group_render_tooltip('field_flexible_group_visibility', t('Group Visibility'), $description);
     }
     if ($element['#field_name'] === 'field_group_allowed_visibility') {
       $description = '';
@@ -459,7 +394,7 @@ function social_group_flexible_group_preprocess_fieldset(&$variables) {
 
       // Render a specific tooltip based on a field name and description.
       // This is done in the fieldset, next to the <legend>.
-      $variables['popover'] = social_group_flexible_group_render_tooltip('field_group_allowed_visibility', t('Group content visibility'), $description);
+      $variables['popover'] = social_group_render_tooltip('field_group_allowed_visibility', t('Group content visibility'), $description);
     }
     if ($element['#field_name'] === 'field_group_allowed_join_method') {
       $description = '';
@@ -469,7 +404,7 @@ function social_group_flexible_group_preprocess_fieldset(&$variables) {
 
       // Render a specific tooltip based on a field name and description.
       // This is done in the fieldset, next to the <legend>.
-      $variables['popover'] = social_group_flexible_group_render_tooltip('field_group_allowed_join_method', t('Join methods'), $description);
+      $variables['popover'] = social_group_render_tooltip('field_group_allowed_join_method', t('Join methods'), $description);
     }
   }
 }
