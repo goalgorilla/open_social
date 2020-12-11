@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\social_graphql\GraphQL\QueryHelper;
+namespace Drupal\social_user\GraphQL\QueryHelper;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\Query\QueryInterface;

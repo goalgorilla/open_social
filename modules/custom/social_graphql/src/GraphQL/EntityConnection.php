@@ -130,6 +130,34 @@ class EntityConnection implements ConnectionInterface {
    * {@inheritdoc}
    */
   public function edges() : SyncPromise {
+    return $this->getOrderedResult();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function nodes() : SyncPromise {
+    // Just loop over the edges and get the node. If this turns out not to be
+    // performant enough then we'll have to change the return value for
+    // QueryHelper's and apply the edges in ::getEdges.
+    return $this->getOrderedResult()
+      ->then(
+        static fn ($edges) => array_map(
+          static fn (EdgeInterface $edge) => $edge->getNode(),
+          $edges
+        )
+      );
+  }
+
+  /**
+   * Applies slicing and reordering to the result so that it can be transmitted.
+   *
+   * The result from the database may be out of order and have overfetched. When
+   * returning edges or nodes, this needs to be compensated in the same way.
+   * This function removes the overfetching and ensures the results are in the
+   * requested order.
+   */
+  protected function getOrderedResult() : SyncPromise {
     return $this->getResult()->then(function ($edges) {
       // To allow for pagination we over-fetch results by one above the limits
       // so we must fix that now.
@@ -148,22 +176,6 @@ class EntityConnection implements ConnectionInterface {
 
       return $edges;
     });
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function nodes() : SyncPromise {
-    // Just loop over the edges and get the node. If this turns out not to be
-    // performant enough then we'll have to change the return value for
-    // QueryHelper's.
-    return $this->getResult()
-      ->then(
-        static fn ($edges) => array_map(
-          static fn (EdgeInterface $edge) => $edge->getNode(),
-          $edges
-        )
-      );
   }
 
   /**

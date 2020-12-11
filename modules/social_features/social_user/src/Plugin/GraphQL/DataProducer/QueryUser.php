@@ -4,8 +4,8 @@ namespace Drupal\social_user\Plugin\GraphQL\DataProducer;
 
 use Drupal\Core\Cache\RefinableCacheableDependencyInterface;
 use Drupal\social_graphql\GraphQL\EntityConnection;
-use Drupal\social_graphql\GraphQL\QueryHelper\UserQueryHelper;
 use Drupal\social_graphql\Plugin\GraphQL\DataProducer\Entity\EntityDataProducerPluginBase;
+use Drupal\social_user\GraphQL\QueryHelper\UserQueryHelper;
 
 /**
  * Queries the users on the platform.
