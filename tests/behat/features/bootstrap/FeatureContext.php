@@ -385,7 +385,7 @@ class FeatureContext extends RawMinkContext implements Context
 
       $element = $session->getPage();
 
-      $radiobutton = $id ? $element->findById($id) : $element->find('named', array('radio', Escaper::escapeLiteral($label)));
+      $radiobutton = $id ? $element->findById($id) : $element->find('named', array('radio', new Escaper())->escapeLiteral($label)));
       if ($radiobutton === NULL) {
         throw new \Exception(sprintf('The radio button with "%s" was not found on the page %s', $id ? $id : $label, $this->getSession()->getCurrentUrl()));
       }
