@@ -132,7 +132,7 @@ class ActivityPostVisibilityAccess extends FilterPluginBase {
     $node_access->condition($grants);
     // Get all nodes not posted in groups and in groups of user only.
     if ($account->isAuthenticated() && count($groups_unique) > 0) {
-      $na_or = db_or();
+      $na_or = new Condition('OR');
       $node_access->condition($na_or
         ->isNull('activity__field_activity_recipient_group.field_activity_recipient_group_target_id')
         ->condition('activity__field_activity_recipient_group.field_activity_recipient_group_target_id', $groups_unique, 'IN')

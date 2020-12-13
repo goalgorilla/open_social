@@ -6,6 +6,7 @@ use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\InvokeCommand;
 use Drupal\Core\Ajax\RemoveCommand;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Messenger\MessengerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Drupal\ajax_comments\Controller\AjaxCommentsController as ContribController;
 
@@ -119,7 +120,7 @@ class AjaxCommentsController extends ContribController {
     $form = $this->entityFormBuilder()->getForm($comment);
 
     // Check for errors.
-    if (empty(drupal_get_messages('error', FALSE))) {
+    if (empty($this->messenger()->messagesByType(MessengerInterface::TYPE_ERROR))) {
       // If there are no errors, set the ajax-updated
       // selector value for the form.
       $this->tempStore->setSelector('form_html_id', $form['#attributes']['id']);
