@@ -691,19 +691,12 @@ function social_core_path_validate(array &$element, FormStateInterface $form_sta
  * Implements hook_form_FORM_ID_alter().
  */
 function social_core_form_node_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  // We want to move all the fields from $form['advanced'] to our new fieldset.
+  if (!empty($form['advanced']) && !empty($form['#fieldgroups']['group_settings'])) {
+    $form['advanced']['#type'] = 'details';
+    $form['#fieldgroups']['group_settings']->children[] = 'advanced';
+    $form['#group_children']['advanced'] = 'group_settings';
 
-  if (isset($form['status']) && isset($form['advanced'])) {
-    // Add an extra vertical tab.
-    $form['status_vertical_tab'] = [
-      '#type' => 'details',
-      '#title' => t('Publish status'),
-      '#description' => '',
-      '#group' => 'advanced',
-      '#open' => TRUE,
-      '#weight' => 1000,
-    ];
-    // Add the status field to the new vertical tab.
-    $form['status']['#group'] = 'status_vertical_tab';
   }
 }
 

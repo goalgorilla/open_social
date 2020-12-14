@@ -22,8 +22,9 @@ third_party_settings:
   field_group:
     group_topic_content:
       children:
-        - field_topic_type
         - title
+        - field_topic_type
+        - body
         - field_topic_image
       parent_name: ''
       weight: 0
@@ -33,18 +34,6 @@ third_party_settings:
         description: ''
         required_fields: true
         id: content
-        classes: 'card '
-      region: hidden
-    group_topic_description:
-      children:
-        - body
-      parent_name: ''
-      weight: 2
-      label: Description
-      format_type: fieldset
-      format_settings:
-        required_fields: true
-        id: description
         classes: 'card '
       region: hidden
     group_topic_visibility:
@@ -76,7 +65,13 @@ third_party_settings:
         open: false
       region: hidden
     group_settings:
-      children: {  }
+      children:
+        - uid
+        - created
+        - field_topic_comments
+        - path
+        - url_redirects
+        - status
       parent_name: ''
       weight: 20
       format_type: details
@@ -95,7 +90,7 @@ mode: default
 content:
   body:
     type: text_textarea_with_summary
-    weight: 1
+    weight: 3
     settings:
       rows: 9
       summary_rows: 3
@@ -171,7 +166,7 @@ content:
     third_party_settings: {  }
   title:
     type: string_textfield
-    weight: 3
+    weight: 1
     settings:
       size: 60
       placeholder: ''

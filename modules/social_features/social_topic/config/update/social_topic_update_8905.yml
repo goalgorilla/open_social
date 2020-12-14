@@ -1,0 +1,63 @@
+core.entity_form_display.node.topic.default:
+  expected_config:
+    third_party_settings:
+      field_group:
+        group_settings:
+          children: {  }
+        group_topic_content:
+          children:
+            - field_topic_type
+        group_topic_description:
+          children:
+            - body
+          format_settings:
+            classes: 'card '
+            id: description
+            required_fields: true
+          format_type: fieldset
+          label: Description
+          parent_name: ''
+          region: hidden
+          weight: 2
+  update_actions:
+    delete:
+      third_party_settings:
+        field_group:
+          group_topic_content:
+            children:
+              - field_topic_type
+          group_topic_description:
+            children:
+              - body
+            format_settings:
+              classes: 'card '
+              id: description
+              required_fields: true
+            format_type: fieldset
+            label: Description
+            parent_name: ''
+            region: hidden
+            weight: 2
+    add:
+      third_party_settings:
+        field_group:
+          group_topic_content:
+            children:
+              - field_topic_type
+              - body
+    change:
+      content:
+        body:
+          weight: 3
+        title:
+          weight: 1
+      third_party_settings:
+        field_group:
+          group_settings:
+            children:
+              - uid
+              - created
+              - field_topic_comments
+              - path
+              - url_redirects
+              - status
