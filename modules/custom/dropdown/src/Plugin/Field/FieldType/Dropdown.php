@@ -148,7 +148,7 @@ class Dropdown extends FieldItemBase {
     $lines = [];
     foreach ($values as $key => $value) {
       if (is_array($value)) {
-        $lines[$key] = implode("|", $value);;
+        $lines[$key] = implode("|", $value);
       }
     }
     return implode("\n", $lines);
