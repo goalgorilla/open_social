@@ -9,4 +9,4 @@ namespace Drupal\socialbase\Plugin\Preprocess;
  * @deprecated
  * @see \Drupal\socialbase\Plugin\Preprocess\ImageWidget
  */
-class SocialbaseImageWidget extends ImageWidget {}
+class SocialBaseImageWidget extends ImageWidget {}
