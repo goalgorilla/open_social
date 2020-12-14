@@ -103,6 +103,12 @@ class SocialGroupSelectorWidget extends OptionsSelectWidget implements Container
       /** @var \Drupal\user\Entity\User $account */
       $account = $this->userManager->load($this->currentUser->id());
 
+      // If the user can administer content and groups, we allow them to
+      // override this. Otherwise we stick to the original owner.
+      if (!$account->hasPermission('administer nodes') && !$account->hasPermission('manage all groups')) {
+        $account = $entity->getOwner();
+      }
+
       // Limit the settable options for the current user account.
       $options = $this->fieldDefinition
         ->getFieldStorageDefinition()
