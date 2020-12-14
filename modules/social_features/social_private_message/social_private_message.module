@@ -654,7 +654,7 @@ function social_private_message_private_message_thread_access(PrivateMessageThre
 }
 
 /**
- * Implements hook_private_message_access().
+ * Implements hook_private_message_create_access().
  */
 function social_private_message_private_message_create_access(AccountInterface $account, array $context, $entity_bundle) {
   return AccessResult::forbiddenIf(!($account->hasPermission('use private messaging system') && $account->hasPermission('create private messages thread')));
