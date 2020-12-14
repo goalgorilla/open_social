@@ -59,6 +59,7 @@ class SocialUserLoginForm extends UserLoginForm {
         'autocapitalize' => 'none',
         'spellcheck' => 'false',
         'autofocus' => 'autofocus',
+        'autocomplete' => 'username',
       ],
     ];
 
@@ -72,6 +73,9 @@ class SocialUserLoginForm extends UserLoginForm {
       '#size' => 60,
       '#description' => $pass_description,
       '#required' => TRUE,
+      '#attributes' => [
+        'autocomplete' => 'current-password',
+      ],
     ];
 
     $link_options = [];
