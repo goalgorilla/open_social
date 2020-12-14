@@ -29,6 +29,9 @@
     not form_group ? 'form-wrapper',
   ]
 %}
+
+{{ attach_library('socialbase/popover')}}
+
 <fieldset{{ attributes.addClass(classes) }}>
   {%
     set label_classes = [
@@ -45,6 +48,10 @@
     {%- if required -%}
       <span class="form-required">*</span>
     {%- endif -%}
+
+    {% if popover is not empty %}
+      {{ popover }}
+    {% endif %}
   </legend>
 
   {% if description.content %}
