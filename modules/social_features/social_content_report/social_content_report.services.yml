@@ -10,7 +10,7 @@ services:
       - { name: event_subscriber }
   social_content_report.content_report_service:
     class: Drupal\social_content_report\ContentReportService
-    arguments: ['@flag', '@current_user', '@module_handler']
+    arguments: ['@flag', '@current_user', '@module_handler', '@request_stack']
   social_content_report.route_subscriber:
     class: Drupal\social_content_report\Routing\RouteSubscriber
     tags:
