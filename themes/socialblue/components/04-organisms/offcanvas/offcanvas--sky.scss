@@ -1,9 +1,23 @@
 @import "settings";
 
 .socialblue--sky {
-  .views-exposed-form {
+  [data-class='exposed-filter-block'] {
     @include for-tablet-landscape-down {
-      top: -3rem;
+      position: static;
+
+      &.views-exposed-form {
+        margin: 1rem 0;
+        padding: 0 1rem;
+      }
+    }
+  }
+
+  &[class*='path-all'] {
+    [data-class='exposed-filter-block'] {
+      @include for-tablet-landscape-down {
+        padding: 0;
+        margin: 0;
+      }
     }
   }
 }
