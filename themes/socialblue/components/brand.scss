@@ -381,6 +381,33 @@ html:not(.js) .navbar-default {
   }
 }
 
+// Placeholder color for the search overlay form.
+.search-take-over {
+  .form-control {
+    // Placeholder chrome
+    &::placeholder {
+      color: $navbar-default-link-color !important;
+    }
+
+    // Placeholder Firefox
+    &::-moz-placeholder {
+      color: $navbar-default-link-color !important;
+      opacity: 1; // Override Firefox's unusual default opacity; see https://github.com/twbs/bootstrap/pull/11526
+    }
+
+    // Placeholder Internet Explorer 10-11
+    :-ms-input-placeholder {
+      color: $navbar-default-link-color !important;
+    }
+
+    // Placeholder Microsoft Edge
+    ::-ms-input-placeholder {
+      color: $navbar-default-link-color !important;
+    }
+  }
+}
+
+
 .navbar-nav__icon {
   fill: $navbar-default-link-color;
 }
