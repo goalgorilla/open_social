@@ -289,6 +289,7 @@ function social_activity_preprocess_block(&$variables) {
         ],
       ];
 
+      // Set vocabulary ID from views filter.
       if (isset($view->filter_vocabulary)) {
         $variables['content']['#lazy_builder'][1] = array_merge(
           $variables['content']['#lazy_builder'][1],
@@ -296,6 +297,7 @@ function social_activity_preprocess_block(&$variables) {
         );
       }
 
+      // Set taxonomy IDs from views filter.
       if (isset($view->filter_tags) && is_array($view->filter_tags)) {
         $variables['content']['#lazy_builder'][1] = array_merge(
           $variables['content']['#lazy_builder'][1],
