@@ -14,8 +14,10 @@ Feature: Edit my group as a group manager
     Then I click radio button "Flexible group By choosing this option you can customize many group settings to your needs." with the id "edit-group-type-flexible-group"
     And I press "Continue"
     And I wait for AJAX to finish
-    When I fill in "Title" with "Test flexible group"
-    Then I click radio button "Open to join - users can join this group without approval" with the id "edit-field-group-allowed-join-method-direct"
+    When I click radio button "Community" with the id "edit-field-flexible-group-visibility-community"
+    And I fill in "Title" with "Test flexible group"
+    And I show hidden inputs
+    Then I click radio button "Open to join" with the id "edit-field-group-allowed-join-method-direct"
     And I fill in the "edit-field-group-description-0-value" WYSIWYG editor with "Description text"
     And I press "Save"
     And I should see "Test flexible group" in the "Main content"
@@ -26,7 +28,7 @@ Feature: Edit my group as a group manager
   # TB-4365 - As a Group Manager I want to change group join-method
     When I click "Edit group"
     And I wait for AJAX to finish
-    Then I click radio button "Invite-only - users can only join this group if they are added/invited by group managers" with the id "edit-field-group-allowed-join-method-added"
+    Then I click radio button "Invite only" with the id "edit-field-group-allowed-join-method-added"
     And I press "Save"
     When I click "Manage members"
     Then I should see "Add members"
