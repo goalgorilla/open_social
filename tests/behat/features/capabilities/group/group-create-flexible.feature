@@ -96,7 +96,7 @@ Feature: Create flexible Group
       | edit-field-event-date-end-0-value-date | 2025-01-01 |
       | edit-field-event-date-end-0-value-time | 11:00:00 |
       | Location name | Technopark |
-    And I click radio button "Community - visible only to logged in members" with the id "edit-field-content-visibility-community"
+    And I click radio button "Community" with the id "edit-field-content-visibility-community"
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text."
     And I press "Save"
     And I should see "Test group event"
@@ -114,7 +114,7 @@ Feature: Create flexible Group
     And I click "Create Topic"
     When I fill in "Title" with "Test group community topic"
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text"
-    And I click radio button "Community - visible only to logged in members" with the id "edit-field-content-visibility-community"
+    And I click radio button "Community" with the id "edit-field-content-visibility-community"
     And I click radio button "Discussion"
     And I press "Save"
 
@@ -125,7 +125,7 @@ Feature: Create flexible Group
     And I click "Create Topic"
     When I fill in "Title" with "Test group private topic"
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text"
-    And I click radio button "Group members - visible only to group members" with the id "edit-field-content-visibility-group"
+    And I click radio button "Group members" with the id "edit-field-content-visibility-group"
     And I click radio button "Discussion"
     And I press "Save"
 
