@@ -275,3 +275,12 @@ function social_topic_update_8905() {
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
 }
+
+/**
+ * Remove group_topic_description fieldgroup from topic content type.
+ */
+function social_topic_update_8906() {
+  if ($group = field_group_load_field_group('group_topic_description', 'node', 'topic', 'form', 'default')) {
+    field_group_delete_field_group($group);
+  }
+}
