@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\social_comment_upload\Plugin\Field\FieldFormatter;
+namespace Drupal\social_core\Plugin\Field\FieldFormatter;
 
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\image\Plugin\Field\FieldFormatter\ImageFormatter;
