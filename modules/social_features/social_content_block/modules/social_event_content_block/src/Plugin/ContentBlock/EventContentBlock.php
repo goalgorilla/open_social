@@ -78,12 +78,10 @@ class EventContentBlock extends ContentBlockBase {
               break;
 
             case 'ongoing':
-              $today = new \DateTime();
               $range['start'] = new \DateTime('-30 days');
-              $range['end'] = $today;
+              $range['end'] = new \DateTime();
               $end_operator = '>';
-              $query->condition('nfed.field_event_date_value', $today->format(DateTimeItemInterface::DATETIME_STORAGE_FORMAT), '<');
-
+              $query->condition('nfed.field_event_date_value', (new \DateTime())->format(DateTimeItemInterface::DATETIME_STORAGE_FORMAT), '<');
               break;
 
             case 'last_30':
