@@ -3,7 +3,7 @@
   Drupal.behaviors.tooltip = {
     attach: function (context, settings) {
 
-      let tag = $('.profile-organization-tag');
+      var tag = $('.profile-organization-tag');
 
       tag.on('mouseenter', (event) => {
         $(event.currentTarget).addClass('open');
