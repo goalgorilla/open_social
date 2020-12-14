@@ -273,15 +273,20 @@ class EntityConnection implements ConnectionInterface {
         $sort_field,
         $query_order
       );
-    }
 
-    // To ensure a consistent sorting for duplicate fields we add a secondary
-    // sort based on the ID.
-    if ($sort_field !== $id_field) {
-      $query->sort(
-        $id_field,
-        $query_order
-      );
+      // TODO: This is only done when we're not sorting based on an aggregate
+      // clause, which may be slightly problematic. However, this is our only
+      // option until https://www.drupal.org/project/drupal/issues/3188253 is
+      // fixed at which point we should also add this sort again in case of
+      // aggregate queries.
+      // To ensure a consistent sorting for duplicate fields we add a secondary
+      // sort based on the ID.
+      if ($sort_field !== $id_field) {
+        $query->sort(
+          $id_field,
+          $query_order
+        );
+      }
     }
 
     // Fetch the result for the query.
