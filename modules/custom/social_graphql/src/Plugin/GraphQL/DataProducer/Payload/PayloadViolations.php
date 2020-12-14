@@ -5,7 +5,6 @@ namespace Drupal\social_graphql\Plugin\GraphQL\DataProducer\Payload;
 use Drupal\graphql\Plugin\DataProducerPluginCachingInterface;
 use Drupal\graphql\Plugin\GraphQL\DataProducer\DataProducerPluginBase;
 use Drupal\social_graphql\GraphQL\Payload\PayloadInterface;
-use Drupal\social_graphql\Wrappers\EdgeInterface;
 
 /**
  * Returns the violations in a payload.
