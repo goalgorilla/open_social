@@ -58,7 +58,7 @@
 // The dropdown menu (ul)
 .dropdown-menu {
   position: absolute;
-  top: 100%;
+  top: 0;
   left: 0;
   z-index: $zindex-dropdown;
   display: none; // none by default, but block on "open" of the menu
@@ -73,6 +73,10 @@
   background-color: $dropdown-bg;
   @include z-depth-4;
   background-clip: padding-box;
+
+  @include for-tablet-landscape-up {
+    top: 100%;
+  }
 
   // Aligns the dropdown menu to right
   //

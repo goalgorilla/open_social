@@ -6,6 +6,8 @@
  */
 
 use Drupal\block\Entity\Block;
+use Drupal\bootstrap\Bootstrap;
+use Drupal\Component\Utility\Html;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultNeutral;
 use Drupal\Core\Ajax\AjaxResponse;
@@ -748,10 +750,10 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
     $join_method_default_value = 'added';
     // Ensure we have a better descriptive label.
     if (array_key_exists('added', $form['field_group_allowed_join_method']['widget']['#options'])) {
-      $form['field_group_allowed_join_method']['widget']['#options']['added'] = t('Invite-only - users can only join this group if they are added/invited by group managers');
+      $form['field_group_allowed_join_method']['widget']['#options']['added'] = t('Invite only');
     }
     if (array_key_exists('direct', $form['field_group_allowed_join_method']['widget']['#options'])) {
-      $form['field_group_allowed_join_method']['widget']['#options']['direct'] = t('Open to join - users can join this group without approval');
+      $form['field_group_allowed_join_method']['widget']['#options']['direct'] = t('Open to join');
     }
     // If directly exists it's becoming the default.
     if (in_array('direct', $form['field_group_allowed_join_method']['widget']['#default_value'])) {
@@ -2258,4 +2260,131 @@ function social_group_preprocess_field(&$variables) {
       }
     }
   }
+}
+
+/**
+ * Returns a new popover tooltip based on a descriptive text and field name.
+ *
+ * @param string $field_name
+ *   The field name to create a unique id for.
+ * @param string $data_title
+ *   The title of the pop-up.
+ * @param string $description
+ *   A string containing the description, this needs to be rendered markup.
+ *
+ * @return array
+ *   The render array containing the tooltip.
+ */
+function social_group_render_tooltip($field_name, $data_title, $description) {
+  $build = [];
+  $id = Html::getUniqueId('tooltip-' . $field_name);
+  $build['toggle'] = [
+    '#type' => 'link',
+    '#url' => Url::fromUserInput("#$id"),
+    '#icon' => Bootstrap::glyphicon('question-sign'),
+    '#attributes' => [
+      'class' => ['icon-before'],
+      'data-toggle' => 'popover',
+      'data-container' => 'body',
+      'data-html' => 'true',
+      'data-placement' => 'bottom',
+      'data-title' => $data_title ?: '',
+    ],
+  ];
+  $build['requirements'] = [
+    '#type' => 'container',
+    '#theme_wrappers' => ['container__file_upload_help'],
+    '#attributes' => [
+      'id' => $id,
+      'class' => ['hidden', 'help-block'],
+      'aria-hidden' => 'true',
+    ],
+  ];
+  // As documented in Render API, Note that the value is passed through
+  // \Drupal\Component\Utility\Xss::filterAdmin(), which strips known XSS
+  // vectors while allowing a permissive list of HTML tags.
+  $build['requirements']['descriptions'] = [
+    '#markup' => $description,
+    '#allowed_tags' => [
+      'strong',
+      'span',
+      'svg',
+      'p',
+      'div',
+      'em',
+      'img',
+      'a',
+      'span',
+      'use',
+    ],
+  ];
+
+  $variables['popover'] = $build;
+
+  return $build;
+}
+
+/**
+ * Implements template_preprocess_form_element().
+ */
+function social_group_preprocess_fieldset(&$variables) {
+  // Make sure our flexible group visibility field renders a tooltip, since
+  // this field is rendered as fieldset with legend and radios as children
+  // we need to do it in this preprocess.
+  $element = $variables['element'];
+  if (!empty($element['#field_name']) && $element['#field_name'] === 'field_content_visibility') {
+    $description = '';
+    foreach ($element['#options'] as $key => $label) {
+      $description .= social_group_allowed_visibility_description($key);
+    }
+
+    // Render a specific tooltip based on a field name and description.
+    // This is done in the fieldset, next to the <legend>.
+    $variables['popover'] = social_group_render_tooltip('field_content_visibility', t('Visibility'), $description);
+  }
+}
+
+/**
+ * Returns a description array for the field_flexible_group_visibility options.
+ *
+ * @return string
+ *   The render array containing the description.
+ */
+function social_group_allowed_visibility_description($key) {
+  $description = '';
+
+  // We need it to be specified otherwise we can't build the markup.
+  if (empty($key)) {
+    return $description;
+  }
+
+  // Add explanatory descriptive text after the icon.
+  switch ($key) {
+    case 'public':
+      $description = '<p><strong><svg class="icon-small"><use xlink:href="#icon-public"></use></svg></strong>';
+      $description .= '<strong>' . t('Public')->render() . '</strong>';
+      $description .= ' - ' . t('visible to all visitors to the platform.')->render();
+      $description .= '</p>';
+      break;
+
+    case 'community':
+      $description = '<p><strong><svg class="icon-small"><use xlink:href="#icon-community"></use></svg></strong>';
+      $description .= '<strong>' . t('Community')->render() . '</strong>';
+      $description .= ' - ' . t('only visible to all logged-in users.')->render();
+      $description .= '</p>';
+      break;
+
+    case 'group':
+      $description = '<p><strong><svg class="icon-small"><use xlink:href="#icon-lock"></use></svg></strong>';
+      $description .= '<strong>' . t('Group members only')->render() . '</strong>';
+      $description .= ' - ' . t('only visible to logged-in group members.')->render();
+      $description .= '</p>';
+      break;
+  }
+
+  // Allow modules to provide their own markup for a given key in the
+  // group_visibility #options array.
+  \Drupal::moduleHandler()->alter('social_group_content_visibility_description', $key, $description);
+
+  return $description;
 }
