@@ -106,12 +106,9 @@ function social_landing_page_preprocess_page(&$variables) {
     $variables['node'] instanceof NodeInterface &&
     $variables['node']->bundle() === 'landing_page'
   ) {
-    if ($variables['content_attributes'] instanceof Attribute) {
-      $variables['content_attributes']->removeClass('layout--with-complementary');
-    }
-    else {
-      $variables['content_attributes'] = new Attribute();
-      $variables['content_attributes']->addClass('container');
+    if (\Drupal::routeMatch()->getRouteName() === 'entity.node.edit_form') {
+      $variables['attributes'] = new Attribute();
+      $variables['attributes']->addClass('container');
     }
   }
 }
