@@ -127,15 +127,33 @@ class AccountHeaderElement extends RenderElement {
       ],
     ];
 
-    $element = [
-      "#type" => "unwrapped_container",
-      "link" => [
-        "#type" => "link",
-        "#attributes" => $link_attributes,
-        "#url" => $item["#url"],
-        "#title" => $link_text,
-      ],
-    ];
+    // If the URL is empty then we use a button instead.
+    if ($item['#url'] === "") {
+      // A custom button is rendered because the Drupal built in button element
+      // is not meant to be used outside of forms.
+      $element = [
+        "#type" => "unwrapped_container",
+        "link" => [
+          "#type" => "inline_template",
+          '#template' => "<button {{ attributes }}>{{ label }}</button>",
+          '#context' => [
+            "attributes" => new Attribute($link_attributes),
+            "label" => $link_text,
+          ],
+        ],
+      ];
+    }
+    else {
+      $element = [
+        "#type" => "unwrapped_container",
+        "link" => [
+          "#type" => "link",
+          "#attributes" => $link_attributes,
+          "#url" => $item["#url"],
+          "#title" => $link_text,
+        ],
+      ];
+    }
 
     // If there are children we add them to a sublist.
     if (!empty($children)) {
