@@ -1621,3 +1621,71 @@ function social_event_update_8904() {
 function social_event_update_8905() {
   \Drupal::service('module_installer')->install(['social_event_addtocal']);
 }
+
+/**
+ * Show thumbnail on File fields when attachment is an image.
+ */
+function social_event_update_8906() {
+  $config_file = drupal_get_path('module', 'social_event') . '/config/static/core.entity_view_display.node.event.default_8906.yml';
+
+  if (is_file($config_file)) {
+    $settings = Yaml::parse(file_get_contents($config_file));
+    if (is_array($settings)) {
+      $config = \Drupal::configFactory()
+        ->getEditable('core.entity_view_display.node.event.default');
+
+      $config->setData($settings)->save(TRUE);
+    }
+  }
+}
+
+/**
+ * Add image file extensions to be added as attachments.
+ */
+function social_event_update_8907() {
+  $config_file = drupal_get_path('module', 'social_topic') . '/config/static/field.field.node.event.field_files_8907.yml';
+
+  if (is_file($config_file)) {
+    $settings = Yaml::parse(file_get_contents($config_file));
+    if (is_array($settings)) {
+      $config = \Drupal::configFactory()
+        ->getEditable('field.field.node.event.field_files');
+
+      $config->setData($settings)->save(TRUE);
+    }
+  }
+}
+
+/**
+ * Update labels for content visibility.
+ */
+function social_event_update_8908() {
+  // Load the existing configuration.
+  $config_name = 'field.storage.node.field_content_visibility';
+  $config = \Drupal::configFactory()->getEditable($config_name);
+  $config_data = $config->getRawData();
+
+  if (!empty($config_data['settings']['allowed_values'])) {
+    foreach ($config_data['settings']['allowed_values'] as $key => $value) {
+      if (!empty($value['label'])) {
+        // Since we are not sure about the array keys for the allowed values
+        // we loop over them, and whenever there is a possible label match
+        // we alter it.
+        // This to ensure any custom added values are not affected.
+        if (strpos($value['label'], 'Public -') !== FALSE) {
+          $config_data['settings']['allowed_values'][$key]['label'] = 'Public';
+        }
+        if (strpos($value['label'], 'Community -') !== FALSE) {
+          $config_data['settings']['allowed_values'][$key]['label'] = 'Community';
+        }
+        if (strpos($value['label'], 'Group members -') !== FALSE) {
+          $config_data['settings']['allowed_values'][$key]['label'] = 'Group members';
+        }
+      }
+    }
+
+    $config->setData($config_data)->save();
+    // Make sure we clear cached definitions for the fields.
+    \Drupal::service('entity_field.manager')->clearCachedFieldDefinitions();
+  }
+}
