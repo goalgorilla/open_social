@@ -262,7 +262,7 @@ class SocialGroupSelectorWidget extends OptionsSelectWidget implements Container
 
       $ajax_response->addCommand(new InvokeCommand('#edit-field-content-visibility-' . $visibility, 'change'));
     }
-    $text = t('Changing the group may have impact on the <strong>visibility settings</strong>.');
+    $text = t('Changing the group may have impact on the <strong>visibility settings</strong> and <strong>access</strong> for <strong>author/co-authors</strong> of the current page.');
 
     drupal_set_message($text, 'info');
     $alert = ['#type' => 'status_messages'];
