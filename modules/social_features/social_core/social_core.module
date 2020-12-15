@@ -694,13 +694,22 @@ function social_core_form_node_form_alter(&$form, FormStateInterface $form_state
   // We want to move all the fields from $form['advanced'] to our new fieldset.
   if (!empty($form['advanced']) && !empty($form['#fieldgroups']['group_settings'])) {
     // Let's remove the unrequired form elements.
-    unset($form['author']['#group']);
     unset($form['advanced']);
     unset($form['revision']);
     unset($form['revision_information']);
     unset($form['revision_log']);
-    unset($form['status']);
     unset($form['meta']);
+
+    // Add an details element to status.
+    $form['status_label'] = [
+      '#type' => 'details',
+      '#title' => t('Publish status'),
+      '#description' => '',
+      '#open' => TRUE,
+      '#weight' => 110,
+      '#group' => 'group_settings',
+    ];
+    $form['status']['#group'] = 'status_label';
   }
 }
 
