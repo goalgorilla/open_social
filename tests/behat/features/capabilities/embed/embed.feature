@@ -24,4 +24,4 @@ Feature: Embed
     And I wait for "3" seconds
     And I press "Save"
     Then I should see "Topic Embed WYSIWYG has been created."
-    And The iframe in the body description should have the src "https://www.youtube.com/embed/kgE9QNX8f3c?feature=oembed"
+    And The iframe in the body description should have the src "https://www.youtube.com/embed/kgE9QNX8f3c"
