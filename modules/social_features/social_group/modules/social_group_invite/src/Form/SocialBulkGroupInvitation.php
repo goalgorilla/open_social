@@ -211,8 +211,12 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
     $group_plugin_collection = $this->pluginManager->getInstalled($group->getGroupType());
     $group_invite_config = $group_plugin_collection->getConfiguration()['group_invitation'];
 
-    $invitation_subject = $group_invite_config['invitation_subject'];
-    $invitation_body = $group_invite_config['invitation_body'];
+    // Get invite settings.
+    $invite_settings = $this->configFactory->get('social_group.settings')->get('group_invite');
+
+    // Set preview subject and message.
+    $invitation_subject = $invite_settings['invite_subject'] ?? $group_invite_config['invitation_subject'];
+    $invitation_body = $invite_settings['invite_message'] ?? $group_invite_config['invitation_body'];
 
     // Cleanup message body and replace any links on preview page.
     $invitation_body = $this->token->replace($invitation_body, $params);
