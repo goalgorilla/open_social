@@ -1300,7 +1300,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Open Social\n"
 "POT-Creation-Date: 2020-12-15 00:14+0000\n"
-"PO-Revision-Date: 2020-12-03 19:14+0000\n"
+"PO-Revision-Date: 2020-12-15 11:14+0000\n"
 "Last-Translator: V Rabal <vrabal@greenpeace.org>\n"
 "Language-Team: Greenpeace Spanish <https://translate.getopensocial.com/"
 "projects/open-social/distribution/es_GPI/>\n"
@@ -1520,8 +1520,8 @@ msgstr[1] "@count personas"
 #: modules/social_features/social_group/modules/social_group_invite/social_group_invite.module:283
 msgid "1 membership invite for group: @group_name"
 msgid_plural "@count membership invites for group: @group_name"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "1 invitación de adhesión al grupo: @group_name"
+msgstr[1] "@count invitaciones de adhesión al grupo: @group_name"
 
 #: modules/custom/social_node_statistics/src/Form/NodeStatisticsSettingsForm.php:52
 msgid "1 minute"
@@ -2264,6 +2264,9 @@ msgid ""
 "display-name]</a> has requested membership to the <a href=\"[message:gurl]\">"
 "[message:gtitle]</a> group</p>\r\n"
 msgstr ""
+"<p><a href=\"[message:recipient-user:url:absolute]\">[message:recipient-user"
+":display-name]</a> ha solicitado adhesión al grupo <a href=\"[message:gurl]\""
+">[message:gtitle]</a></p>\n"
 
 #: modules/social_features/social_group/modules/social_group_request/config/install/message.template.request_to_join_a_group.yml:0
 msgid ""
@@ -2281,6 +2284,19 @@ msgid ""
 "\t</tbody>\r\n"
 "</table>\r\n"
 msgstr ""
+"<p><a href=\"[message:recipient-user:url:absolute]\">[message:recipient-user"
+":display-name]</a> ha solicitado unirse al grupo <a href=\"[message:gurl]\""
+">[message:gtitle]</a> </p>\n"
+"\n"
+"<table class=\"btn-wrapp\">\n"
+"\t<tbody>\n"
+"\t\t<tr>\n"
+"\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-"
+"one\" href=\"[social_group_request:request_page_link]\">Ver "
+"solicitud</a></td>\n"
+"\t\t</tr>\n"
+"\t</tbody>\n"
+"</table>\n"
 
 #: modules/social_features/social_activity/config/install/message.template.join_to_group.yml:0;0;0
 msgid ""
@@ -2488,12 +2504,25 @@ msgid ""
 "\t</tbody>\r\n"
 "</table>\r\n"
 msgstr ""
+"<p>Tu solicitud para unirte al grupo <a href=\"[message:gurl]\""
+">[message:gtitle]</a> ha sido aprobada</p>\n"
+"\n"
+"<table class=\"btn-wrapp\">\n"
+"\t<tbody>\n"
+"\t\t<tr>\n"
+"\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-"
+"one\" href=\"[message:gurl]\">Visita el grupo</a></td>\n"
+"\t\t</tr>\n"
+"\t</tbody>\n"
+"</table>\n"
 
 #: modules/social_features/social_group/modules/social_group_request/config/install/message.template.approve_request_join_group.yml:0;0
 msgid ""
 "<p>Your membership request for the <a href=\"gurl]\">[message:gtitle]</a> "
 "group has been approved</p>\r\n"
 msgstr ""
+"<p>Tu solicitud de adhesión al grupo <a href=\"gurl]\">[message:gtitle]</a> "
+"ha sido aprobada</p>\n"
 
 #: modules/social_features/social_profile/modules/social_profile_fields/src/Form/SocialProfileFieldsFlushForm.php:131
 msgid ""
@@ -2825,7 +2854,7 @@ msgstr "Una persona respondió a un comentario en el que se me mencionó"
 
 #: modules/social_features/social_group/modules/social_group_request/config/install/message.template.request_to_join_a_group.yml:0
 msgid "A person requests membership to a group I manage"
-msgstr ""
+msgstr "Una persona solicita adhesión a un grupo que administro"
 
 #: modules/social_features/social_landing_page/config/install/field.field.paragraph.block.field_block_reference_secondary.yml:0
 msgid ""
@@ -3955,7 +3984,7 @@ msgstr "Permitir a las personas unirse a grupos con un solo clic."
 
 #: modules/social_features/social_group/modules/social_group_request/social_group_request.module:50
 msgid "Allow users to request membership"
-msgstr ""
+msgstr "Permitir a las personas solicitar adhesión"
 
 #: modules/social_features/social_private_message/social_private_message.info.yml:0
 msgid "Allow users to send private messages to each other"
@@ -4153,19 +4182,19 @@ msgstr "Aplicar"
 
 #: modules/social_features/social_event/social_event.module:898
 msgid "Approve"
-msgstr ""
+msgstr "Aprobar"
 
 #: modules/social_features/social_group/modules/social_group_request/src/SocialGroupRequestConfigOverride.php:592
 msgid "Approve Membership"
-msgstr ""
+msgstr "Aprobar adhesión"
 
 #: modules/social_features/social_group/modules/social_group_request/src/SocialGroupRequestConfigOverride.php:588;600
 msgid "Approve membership"
-msgstr ""
+msgstr "Aprobar adhesión"
 
 #: modules/social_features/social_group/modules/social_group_request/src/Controller/GroupRequestController.php:91
 msgid "Approve membership request for the group @group_title"
-msgstr ""
+msgstr "Aprobar solicitud de adhesión al grupo @group_title"
 
 #: modules/social_features/social_group/modules/social_group_request/config/install/message.template.approve_request_join_group.yml:0
 msgid "Approve request to join a group"
@@ -4173,7 +4202,7 @@ msgstr "Aprobar solicitud de unirse a grupo"
 
 #: modules/social_features/social_event/config/install/field.storage.event_enrollment.field_request_or_invite_status.yml:0
 msgid "Approved"
-msgstr ""
+msgstr "Aprobado"
 
 #: modules/social_features/social_group/modules/social_group_request/src/Plugin/ActivityContext/ApprovedRequestJoinGroupActivityContext.php:8
 msgid "Approved request to join a group activity context"
@@ -4182,7 +4211,7 @@ msgstr "Solicitud aprobada para unirse a un contexto de actividad grupal"
 #: modules/social_features/social_group/modules/social_group_request/config/install/field.field.group_content.group_content_type_c8bae2527294c.grequest_updated_by.yml:0
 #: modules/social_features/social_group/modules/social_group_request/config/optional/field.field.group_content.group_content_type_7fcb76fdf61a9.grequest_updated_by.yml:0
 msgid "Approved/Rejected by"
-msgstr ""
+msgstr "Aprobado/Rechazado por"
 
 #: modules/social_features/social_group/social_group.module:605
 msgid ""
@@ -4195,7 +4224,7 @@ msgstr ""
 #: modules/custom/social_gdpr/social_gdpr.routing.yml:0
 #: modules/custom/social_gdpr/src/Form/DataPolicyRevisionRevertForm.php:33
 msgid "Are you sure to revert this revision"
-msgstr ""
+msgstr "Estás seguro de revertir esta revisión?"
 
 #: modules/custom/social_gdpr/social_gdpr.routing.yml:0
 msgid "Are you sure to revert this revision of a translation"
@@ -4219,7 +4248,7 @@ msgstr[1] ""
 
 #: modules/social_features/social_group/modules/social_group_request/social_group_request.module:256
 msgid "Are you sure you want to approve the membership request for @name?"
-msgstr ""
+msgstr "¿Seguro que deseas aprobar la petición de adhesión para @name?"
 
 #: modules/social_features/social_event/src/Form/EnrollRequestDeclineForm.php:117
 msgid "Are you sure you want to decline the enrollment request for @name?"
@@ -4229,7 +4258,7 @@ msgstr ""
 
 #: modules/social_features/social_post/src/Form/PostTypeDeleteForm.php:18
 msgid "Are you sure you want to delete %name?"
-msgstr "¿Seguro que deseas borrar a %name ?"
+msgstr "¿Seguro que deseas borrar a %name?"
 
 #: modules/social_features/social_group/social_group.module:739
 msgid ""
@@ -4242,7 +4271,7 @@ msgstr ""
 
 #: modules/social_features/social_group/modules/social_group_request/src/Form/GroupRequestMembershipRejectForm.php:119
 msgid "Are you sure you want to reject the membership request for @name?"
-msgstr ""
+msgstr "¿Seguro que deseas rechazar la solicitud de adhesión para @name?"
 
 #: modules/social_features/social_group/social_group.module:592
 msgid "Are you sure you want to remove %name from %group?"
@@ -4389,11 +4418,11 @@ msgstr "Volver al evento"
 #: modules/social_features/social_group/modules/social_group_invite/social_group_invite.module:138
 #: modules/social_features/social_group/modules/social_group_request/social_group_request.module:387
 msgid "Back to group"
-msgstr ""
+msgstr "Volver al grupo"
 
 #: modules/custom/social_queue_storage/config/install/message.template.background_process_finished.yml:0
 msgid "Background process finished"
-msgstr ""
+msgstr "Proceso en segundo plano finalizado"
 
 #: modules/social_features/social_profile/config/install/field.field.profile.profile.field_profile_banner_image.yml:0
 msgid "Banner Image"
@@ -8962,13 +8991,13 @@ msgstr ""
 
 #: modules/social_features/social_group/modules/social_group_request/src/SocialGroupRequestConfigOverride.php:228
 msgid "Membership requests"
-msgstr ""
+msgstr "Solicitudes de adhesión"
 
 #: modules/social_features/social_group/modules/social_group_request/src/Plugin/Block/SocialGroupRequestMembershipNotification.php:18
 #: modules/social_features/social_group/modules/social_group_request/config/optional/block.block.membershiprequestsnotification.yml:0
 #: modules/social_features/social_group/modules/social_group_request/config/optional/block.block.membershiprequestsnotification_2.yml:0
 msgid "Membership requests notification"
-msgstr ""
+msgstr "Notificación de solicitudes de adhesión"
 
 #: modules/custom/mentions/mentions.routing.yml:0
 #: modules/custom/mentions/config/schema/mentions.schema.yml:0
@@ -11223,11 +11252,11 @@ msgstr ""
 
 #: modules/social_features/social_group/modules/social_group_request/social_group_request.group.permissions.yml:0
 msgid "Request group membership"
-msgstr ""
+msgstr "Solicitud de adhesión a grupo"
 
 #: modules/social_features/social_group/modules/social_group_request/src/SocialGroupRequestConfigOverride.php:111
 msgid "Request membership"
-msgstr ""
+msgstr "Solicitud de adhesión"
 
 #: modules/social_features/social_event/config/install/field.field.event_enrollment.event_enrollment.field_request_message.yml:0
 msgid "Request message"
