@@ -162,6 +162,8 @@ function activity_logger_tokens($type, $tokens, array $data, array $options, Bub
                     $label = substr($group->label(), 0, 40) . ' ...';
                   }
 
+                  // If we have "gtrimmed-title" token, then we will display a
+                  // trimmed group label, if no, then a normal group label.
                   $replacements[$original] = $label ?? $group->label();
                 }
                 if ($name === 'gurl') {

@@ -81,7 +81,7 @@ function social_comment_upload_preprocess_comment(&$variables) {
         $variables['comment_url'] = $topic->toUrl()->toString();
       }
 
-      $more_button = $comment->toLink('Read more')->toString();
+      $more_button = $comment->toLink(t('Read more'))->toString();
       $variables['more_link'] = $more_button;
     }
   }
