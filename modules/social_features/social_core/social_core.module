@@ -520,7 +520,7 @@ function social_core_filter_process_format($element) {
   // could require specific one.
   Drupal::moduleHandler()->alter('social_filter_format_default', $social_filter_format);
 
-  /* @var \Drupal\filter\Entity\FilterFormat $social_filter_format */
+  /** @var \Drupal\filter\Entity\FilterFormat $social_filter_format */
   $social_filter_format = FilterFormat::load($social_filter_format);
 
   // Check if filter format was loaded, to prevent fatal errors if wrong value
@@ -617,9 +617,6 @@ function social_core_field_widget_form_alter(&$element, FormStateInterface $form
   $field_definition = $context['items']->getFieldDefinition();
 
   if ($field_definition->getType() == 'path') {
-    // Set the correct title.
-    $element['#title'] = t('URL path settings');
-
     $url = Url::fromRoute('<front>', [], [
       'absolute' => TRUE,
     ]);
@@ -642,7 +639,10 @@ function social_core_field_widget_form_alter(&$element, FormStateInterface $form
     // Put the protocoless, truncated URL in the addon.
     $element['alias']['#field_prefix'] = '<div class="input-group input-group-expanded"><span class="input-group-addon">' . $truncate_url . '</span>';
     $element['alias']['#field_suffix'] = '</div>';
-    $element['alias']['#description'] = t('The URL alias allows you to customise the link to this page.');
+
+    // Unset description and title.
+    unset($element['alias']['#description']);
+    unset($element['alias']['#title']);
 
     // URLs are stored with a leading slash but our display includes that slash
     // in the prefix so we remove it here.
@@ -693,10 +693,14 @@ function social_core_path_validate(array &$element, FormStateInterface $form_sta
 function social_core_form_node_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   // We want to move all the fields from $form['advanced'] to our new fieldset.
   if (!empty($form['advanced']) && !empty($form['#fieldgroups']['group_settings'])) {
-    $form['advanced']['#type'] = 'details';
-    $form['#fieldgroups']['group_settings']->children[] = 'advanced';
-    $form['#group_children']['advanced'] = 'group_settings';
-
+    // Let's remove the unrequired form elements.
+    unset($form['author']['#group']);
+    unset($form['advanced']);
+    unset($form['revision']);
+    unset($form['revision_information']);
+    unset($form['revision_log']);
+    unset($form['status']);
+    unset($form['meta']);
   }
 }
 

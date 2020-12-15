@@ -22,19 +22,19 @@ third_party_settings:
   field_group:
     group_topic_content:
       children:
-        - title
         - field_topic_type
-        - body
+        - title
         - field_topic_image
+        - body
       parent_name: ''
       weight: 0
       label: 'Basic details'
       format_type: fieldset
       format_settings:
-        description: ''
         required_fields: true
         id: content
         classes: 'card '
+        description: ''
       region: hidden
     group_topic_visibility:
       children:
@@ -45,10 +45,10 @@ third_party_settings:
       label: 'Access permissions'
       format_type: fieldset
       format_settings:
-        description: ''
         required_fields: true
         id: visibility
         classes: 'card '
+        description: ''
       region: hidden
     group_attachments:
       children:
@@ -58,31 +58,31 @@ third_party_settings:
       label: 'Additional details'
       format_type: details
       format_settings:
-        description: ''
         required_fields: true
         id: attachments
         classes: social-collapsible-fieldset
+        description: ''
         open: false
       region: hidden
     group_settings:
       children:
-        - uid
-        - created
         - field_topic_comments
         - path
+        - uid
+        - created
         - url_redirects
         - status
-      parent_name: ''
-      weight: 20
-      format_type: details
-      region: hidden
       format_settings:
-        description: ''
-        required_fields: true
-        id: ''
         classes: social-collapsible-fieldset
+        description: ''
+        id: ''
         open: false
+        required_fields: true
+      format_type: details
       label: Settings
+      parent_name: ''
+      region: hidden
+      weight: 20
 id: node.topic.default
 targetEntityType: node
 bundle: topic
@@ -90,7 +90,7 @@ mode: default
 content:
   body:
     type: text_textarea_with_summary
-    weight: 3
+    weight: 4
     settings:
       rows: 9
       summary_rows: 3
@@ -100,7 +100,7 @@ content:
     region: content
   created:
     type: datetime_timestamp
-    weight: 4
+    weight: 7
     settings: {  }
     third_party_settings: {  }
     region: content
@@ -118,13 +118,13 @@ content:
     type: file_generic
     region: content
   field_topic_comments:
-    weight: 6
+    weight: 3
     settings: {  }
     third_party_settings: {  }
     type: comment_default
     region: content
   field_topic_image:
-    weight: 4
+    weight: 3
     settings:
       show_crop_area: true
       show_default_crop: true
@@ -140,7 +140,7 @@ content:
     type: image_widget_crop
     region: content
   field_topic_type:
-    weight: 2
+    weight: 1
     settings: {  }
     third_party_settings: {  }
     type: options_buttons
@@ -153,7 +153,7 @@ content:
     third_party_settings: {  }
   path:
     type: path
-    weight: 7
+    weight: 4
     settings: {  }
     third_party_settings: {  }
     region: content
@@ -166,7 +166,7 @@ content:
     third_party_settings: {  }
   title:
     type: string_textfield
-    weight: 1
+    weight: 2
     settings:
       size: 60
       placeholder: ''
@@ -174,7 +174,7 @@ content:
     region: content
   uid:
     type: entity_reference_autocomplete
-    weight: 3
+    weight: 6
     settings:
       match_operator: CONTAINS
       size: 60

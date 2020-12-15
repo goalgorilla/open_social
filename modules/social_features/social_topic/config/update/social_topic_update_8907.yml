@@ -1,0 +1,85 @@
+core.entity_form_display.node.topic.default:
+  expected_config:
+    content:
+      body:
+        weight: 3
+      created:
+        weight: 4
+      field_topic_comments:
+        weight: 6
+      field_topic_image:
+        weight: 4
+      field_topic_type:
+        weight: 2
+      path:
+        weight: 7
+      title:
+        weight: 1
+      uid:
+        weight: 3
+    third_party_settings:
+      field_group:
+        group_settings:
+          children:
+            - uid
+            - created
+        group_topic_content:
+          children:
+            - title
+            - body
+  update_actions:
+    delete:
+      third_party_settings:
+        field_group:
+          group_settings:
+            children:
+              - uid
+              - created
+          group_topic_content:
+            children:
+              - title
+              - body
+    add:
+      third_party_settings:
+        field_group:
+          group_settings:
+            children:
+              - uid
+              - created
+          group_topic_content:
+            children:
+              - body
+    change:
+      content:
+        body:
+          weight: 4
+        created:
+          weight: 7
+        field_topic_comments:
+          weight: 3
+        field_topic_image:
+          weight: 3
+        field_topic_type:
+          weight: 1
+        path:
+          weight: 4
+        title:
+          weight: 2
+        uid:
+          weight: 6
+        url_redirects:
+          region: content
+          settings: {  }
+          third_party_settings: {  }
+          weight: 50
+      third_party_settings:
+        field_group:
+          group_topic_content:
+            children:
+              - title
+field.field.node.topic.field_files:
+  expected_config:
+    label: Files
+  update_actions:
+    change:
+      label: Attachment
