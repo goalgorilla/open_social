@@ -466,9 +466,9 @@
       }
 
       .btn-group,
-      .btn {
+      .btn:not(#edit-decline-invite) {
         @include for-phone-only {
-          width: 100%;
+          flex: 1;
         }
       }
 
@@ -488,6 +488,10 @@
           text-align: center;
           text-transform: uppercase;
         }
+      }
+
+      form {
+        display: flex;
       }
     }
   }
@@ -576,7 +580,7 @@
     }
 
     .hero-footer__cta {
-      .btn {
+      .btn:not(#edit-decline-invite) {
         min-width: 195px;
         color: inherit;
       }

@@ -156,7 +156,7 @@ class PostAccessControlHandler extends EntityAccessControlHandler implements Ent
         elseif ($account->hasPermission('edit own post entities', $account) && ($account->id() == $entity->getOwnerId())) {
           return AccessResult::allowed();
         }
-        return AccessResult::forbidden();
+        return AccessResult::neutral();
 
       case 'delete':
         // Check if the user has permission to delete any or own post entities.

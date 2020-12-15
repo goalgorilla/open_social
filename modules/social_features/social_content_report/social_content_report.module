@@ -14,6 +14,12 @@ use Drupal\social_post\Entity\PostInterface;
  * Implements hook_form_alter().
  */
 function social_content_report_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+
+  // No need to do anything here, if it's not a flagging related form.
+  if (strpos($form_id, 'flagging_') === FALSE) {
+    return;
+  }
+
   // Get all 'report_' flags.
   $report_types = \Drupal::service('social_content_report.content_report_service')->getReportFlagTypes();
 

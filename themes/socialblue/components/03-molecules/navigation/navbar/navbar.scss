@@ -7,7 +7,8 @@
     background-color: $nav-link-hover-bg;
   }
 
-  &.disabled > a {
+  &.disabled > a,
+  &.disabled > button {
     color: $nav-disabled-link-color;
 
     &:hover,
@@ -24,7 +25,8 @@
   background-color: $navbar-default-bg;
 
   .navbar-nav {
-    > li > a {
+    > li > a,
+    > li > button {
       color: $navbar-default-link-color;
       fill: $navbar-default-link-color;
 
@@ -37,17 +39,20 @@
     }
 
     > .active > a,
-    > .active > a:hover,
-    > .active > a:focus,
+    > .active > button,
     > li > a.is-active,
-    > li > a.is-active:hover,
-    > li > a.is-active:focus {
-      color: $navbar-default-link-active-color;
-      fill: $navbar-default-link-active-color;
-      background-color: $navbar-default-link-active-bg;
+    > li > button.is-active {
+      &,
+      &:hover,
+      &:focus {
+        color: $navbar-default-link-active-color;
+        fill: $navbar-default-link-active-color;
+        background-color: $navbar-default-link-active-bg;
+      }
     }
 
-    > .disabled > a {
+    > .disabled > a,
+    > .disabled > button {
       &,
       &:hover,
       &:focus {
@@ -63,7 +68,8 @@
     border-top-left-radius: 0;
     border-top-right-radius: 0;
 
-    > li > a {
+    > li > a,
+    > li > button {
 
       &:hover,
       &:focus {
@@ -101,7 +107,8 @@
   // Dropdown menu items
   .navbar-nav {
     // Remove background color from open dropdown
-    > .open > a {
+    > .open > a,
+    > .open > button {
       &,
       &:hover,
       &:focus {
@@ -113,7 +120,8 @@
     @include for-phone-only {
       // Dropdowns get custom display when collapsed
       .open .dropdown-menu {
-        > li > a {
+        > li > a,
+        > li > button {
           color: $navbar-default-link-color;
           &:hover,
           &:focus {
@@ -121,7 +129,8 @@
             background-color: $navbar-default-link-hover-bg;
           }
         }
-        > .active > a {
+        > .active > a,
+        > .active > button {
           &,
           &:hover,
           &:focus {
@@ -129,7 +138,8 @@
             background-color: $navbar-default-link-active-bg;
           }
         }
-        > .disabled > a {
+        > .disabled > a,
+        > .disabled > button {
           &,
           &:hover,
           &:focus {
@@ -144,7 +154,8 @@
 }
 
 @include for-tablet-landscape-down {
-  .navbar-collapse .dropdown-menu li a {
+  .navbar-collapse .dropdown-menu li a,
+  .navbar-collapse .dropdown-menu li button {
     color: #ffffff;
 
     &:hover,
@@ -156,7 +167,8 @@
 
   .navbar-default .navbar-nav .open .dropdown-menu {
 
-    > li > a {
+    > li > a,
+    > li > button {
       color: $dropdown-link-color;
       &:hover,
       &:focus {
@@ -164,7 +176,8 @@
         background-color: $dropdown-link-hover-bg;
       }
     }
-    > .active > a {
+    > .active > a,
+    > .active > button {
       &,
       &:hover,
       &:focus {
@@ -172,7 +185,8 @@
         background-color: $dropdown-link-active-bg;
       }
     }
-    > .disabled > a {
+    > .disabled > a,
+    > .disabled > button {
       &,
       &:hover,
       &:focus {
@@ -237,16 +251,18 @@
 
   .navbar-nav {
 
-    a {
+    a, button {
       color: #fff;
     }
 
-    li.active a {
+    li.active a, li.active button {
       border-bottom-color: #fff;
     }
 
     li:not(.active) a:hover,
-    li:not(.active) a:focus {
+    li:not(.active) button:hover,
+    li:not(.active) a:focus,
+    li:not(.active) button:focus {
       outline: none;
       background-color: rgba(0,0,0,0.3);
       border-bottom-color: rgba(0,0,0,0.3);
