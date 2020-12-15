@@ -171,6 +171,13 @@ function social_landing_page_preprocess_node(&$variables) {
     if ($node instanceof NodeInterface && $node->access('update', $account)) {
       $variables['node_edit_url'] = $node->toUrl('edit-form')->toString();
     }
+
+    // A landing page has a different way of determining this.
+    $variables['no_image'] = FALSE;
+    $image = _social_landing_page_get_hero_image($node);
+    if (empty($image)) {
+      $variables['no_image'] = TRUE;
+    }
   }
 }
 
