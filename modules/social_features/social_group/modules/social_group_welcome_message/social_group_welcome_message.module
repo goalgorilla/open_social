@@ -116,11 +116,18 @@ function social_group_welcome_message_group_content_insert(GroupContentInterface
     $g_type_id = $group->getGroupType()->id();
 
     // Load the account of the user who just joined.
+    /** @var \Drupal\user\UserInterface $account */
     $account = $group_content->getEntity();
 
     // Skip sending notifications to the owner of the group. They probably know
     // they created the group a second ago.
     if ($group->getOwnerId() === $account->id()) {
+      return;
+    }
+
+    // Do not send mail for user that don't have permission to view private
+    // message.
+    if (!$account->hasPermission('use private messaging system')) {
       return;
     }
 
