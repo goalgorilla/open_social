@@ -113,15 +113,10 @@ class FacebookAuthController extends ControllerBase {
       return $this->redirect('user.login');
     }
 
-    // Authorize the user and redirect him to the edit account page.
+    // Authorize the user and redirect him to the front page.
     user_login_finalize($account);
 
-    $url = $this->getUrlGenerator()->getPathFromRoute('entity.user.canonical', [
-      'user' => $account->id(),
-    ]);
-
-    \Drupal::request()->query->set('destination', $url);
-    return new RedirectResponse($url);
+    return $this->redirect('<front>');
   }
 
   /**
