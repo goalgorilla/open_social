@@ -6,12 +6,12 @@
  */
 
 use Drupal\Core\Entity\FieldableEntityInterface;
+use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\Url;
 use Drupal\group\Entity\Group;
 use Drupal\group\Entity\GroupContent;
 use Drupal\node\Entity\Node;
-use Drupal\Core\Language\LanguageInterface;
 
 /**
  * Implements hook_token_info().
@@ -159,7 +159,7 @@ function activity_logger_tokens($type, $tokens, array $data, array $options, Bub
                   }
 
                   if ($name === 'gtrimmed-title' && strlen($group->label()) > 40) {
-                    $label = substr($group->label(),0,40) . ' ...';
+                    $label = substr($group->label(), 0, 40) . ' ...';
                   }
 
                   $replacements[$original] = $label ?? $group->label();
