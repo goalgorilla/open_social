@@ -93,6 +93,13 @@ class SocialSwiftmailSettingsForm extends ConfigFormBase {
       '#open' => FALSE,
     ];
 
+    // Settings helper for admins.
+    $form['notification']['helper'] = [
+      '#type' => 'html_tag',
+      '#tag' => 'p',
+      '#value' => $this->t('<b>Please note:</b> the change below will not impact the users who have changed their default email notification settings.'),
+    ];
+
     // Get grouped default templates.
     $items = _activity_send_email_default_template_items();
 
