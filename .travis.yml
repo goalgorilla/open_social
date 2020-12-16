@@ -73,7 +73,6 @@ install:
 
 script:
   - set -e
-#  - if [ "$TEST_SUITE" = "install_stability_1" ]; then docker exec -i social_ci_web bash /var/www/scripts/social/check-coding-standards.sh full; fi @TODO fix this so the \Drupal::register issue doesn't occur
   - if [ "$TEST_SUITE" = "install_stability_1" ]; then docker exec -i social_ci_web_scripts /var/www/scripts/social/unit-tests.sh; fi
   - if [ "$TEST_SUITE" = "install_stability_1" ]; then docker exec -it social_ci_behat sh /var/www/scripts/social/behatstability.sh "stability-1 --stop-on-failure --strict"; fi
   - if [ "$TEST_SUITE" = "install_stability_2" ]; then docker exec -it social_ci_behat sh /var/www/scripts/social/behatstability.sh "notifications --stop-on-failure --strict"; fi

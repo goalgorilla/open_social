@@ -10,7 +10,7 @@ use Drupal\Core\Entity\Query\Sql\QueryFactory;
 use Drupal\private_message\Entity\PrivateMessageInterface;
 use Drupal\private_message\Entity\PrivateMessageThreadInterface;
 use Drupal\private_message\Service\PrivateMessageServiceInterface;
-use Drupal\user\Entity\User;
+use Drupal\user\UserInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -106,9 +106,14 @@ class PrivateMessageActivityContext extends ActivityContextBase {
 
               // Loop over all PMT participants.
               foreach ($members as $member) {
-                if ($member instanceof User) {
+                if ($member instanceof UserInterface) {
                   // Filter out the author of this message.
                   if ($member->id() == $data['actor']) {
+                    continue;
+                  }
+
+                  // Continue if member have permission to view private message.
+                  if (!$member->hasPermission('use private messaging system')) {
                     continue;
                   }
 

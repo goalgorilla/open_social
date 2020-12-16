@@ -1,5 +1,39 @@
 {% extends "node--hero--sky.html.twig" %}
 
+{% block metainfo %}
+  <header class="metainfo">
+
+    <div class="metainfo__avatar">
+      {{ author_picture }}
+    </div>
+
+    <div class="metainfo__content">
+      {{ author }}
+
+      {% if visibility_icon and visibility_label %}
+        &bullet;
+        <div class="badge badge--large"
+             title="{% trans %}The visibility of this content is set to {{ visibility_label }}{% endtrans %} ">
+            <span class="badge__container">
+              <svg class="badge__icon">
+                <use xlink:href="#icon-{{ visibility_icon }}"></use>
+              </svg>
+              <span class="badge__label">&nbsp;</span>
+              <span class="badge__label badge__label--description">{{ visibility_label|capitalize }}</span>
+            </span>
+        </div>
+      {% endif %}
+
+      <div>
+        {% if group_link %}
+          {% trans %} in group {{ group_link }}{% endtrans %}
+        {% endif %}
+      </div>
+    </div>
+
+  </header>
+{% endblock %}
+
 {% block card_prefix %}
   {% if node_image %}
     <div class="hero-image">
