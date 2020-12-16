@@ -283,22 +283,8 @@ function social_topic_update_8906() {
   // There can be possibility that someone might have added fields in
   // fieldgroup we are removing. So, we want to skip removal if there are any
   // children present in fieldgroup.
-  if ($group = field_group_load_field_group('group_topic_description', 'node', 'topic', 'form', 'default')
-    && !empty($group->children)) {
+  $group = field_group_load_field_group('group_topic_description', 'node', 'topic', 'form', 'default');
+  if ($group && empty($group->children)) {
     field_group_delete_field_group($group);
   }
-}
-
-/**
- * Updated field weights and labels .
- */
-function social_topic_update_8907() {
-  /** @var \Drupal\update_helper\Updater $updateHelper */
-  $updateHelper = \Drupal::service('update_helper.updater');
-
-  // Execute configuration update definitions with logging of success.
-  $updateHelper->executeUpdate('social_topic', 'social_topic_update_8907');
-
-  // Output logged messages to related channel of update execution.
-  return $updateHelper->logger()->output();
 }

@@ -23,8 +23,8 @@ third_party_settings:
       children:
         - field_topic_type
         - title
-        - field_topic_image
         - body
+        - field_topic_image
       parent_name: ''
       weight: 0
       label: 'Basic details'
@@ -69,7 +69,6 @@ third_party_settings:
         - path
         - uid
         - created
-        - url_redirects
         - status
       format_settings:
         classes: social-collapsible-fieldset
@@ -97,6 +96,20 @@ content:
       show_summary: false
     third_party_settings: {  }
     region: content
+    created:
+      weight: 7
+    field_topic_comments:
+      weight: 3
+    field_topic_image:
+      weight: 3
+    field_topic_type:
+      weight: 1
+    path:
+      weight: 4
+    title:
+      weight: 2
+    uid:
+      weight: 6
   created:
     type: datetime_timestamp
     weight: 7
@@ -123,7 +136,7 @@ content:
     type: comment_default
     region: content
   field_topic_image:
-    weight: 3
+    weight: 4
     settings:
       show_crop_area: true
       show_default_crop: true
@@ -139,7 +152,7 @@ content:
     type: image_widget_crop
     region: content
   field_topic_type:
-    weight: 1
+    weight: 2
     settings: {  }
     third_party_settings: {  }
     type: options_buttons
@@ -165,7 +178,7 @@ content:
     third_party_settings: {  }
   title:
     type: string_textfield
-    weight: 2
+    weight: 3
     settings:
       size: 60
       placeholder: ''
