@@ -9,6 +9,7 @@ jobs:
     # ubuntu-latest uses php 8.0 by default so checks will fail.
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v2
       - uses: php-actions/composer@v4
         with:
           php_version: '7.4'
@@ -16,7 +17,7 @@ jobs:
       # Install composer dependencies so we have drupal/coder which adds our codesniffer, the bin/phpcs file
       # and dealerdirect/phpcodesniffer-composer-installer which changes the installer_path configuring all sniffs.
       - name: Install dependencies
-        run: composer install --dev --prefer-dist --no-progress --no-suggest
+        run: composer install --dev --prefer-dist --no-progress
 
       - name: PHPCS check
         uses: chekalsky/phpcs-action@v1
