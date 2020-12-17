@@ -1145,19 +1145,19 @@ function social_event_enroll_method_description($key) {
 
   // Add explanatory descriptive text.
   switch ($key) {
-    case '1':
+    case EventEnrollmentInterface::ENROLL_METHOD_JOIN:
       $description = '<p><strong>' . t('Open to enroll')->render() . '</strong>';
       $description .= ' - ' . t('users can enroll for this event without approval')->render();
       $description .= '</p>';
       break;
 
-    case '2':
+    case EventEnrollmentInterface::ENROLL_METHOD_REQUEST:
       $description = '<p><strong>' . t('Request to enroll')->render() . '</strong>';
       $description .= ' - ' . t('users can "request to enroll" for this event which event organisers approve/decline')->render();
       $description .= '</p>';
       break;
 
-    case '3':
+    case EventEnrollmentInterface::ENROLL_METHOD_INVITE:
       $description = '<strong>' . t('Invite-only')->render() . '</strong>';
       $description .= ' - ' . t('users can only enroll for this event if they are added/invited by event organisers')->render();
       $description .= '</p>';
