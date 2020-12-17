@@ -23,6 +23,14 @@ use Drupal\user\Entity\User;
 use Drupal\user\UserInterface;
 
 /**
+ * Implements hook_page_attachments().
+ */
+function social_core_page_attachments(array &$attachments) {
+  // Unconditionally attach library to the page.
+  $attachments['#attached']['library'][] = 'social_core/accessibility';
+}
+
+/**
  * Implements hook_theme().
  */
 function social_core_theme() {
