@@ -71,6 +71,13 @@ class UserSelection extends UserSelectionBase {
       $ids = $this->getUserIdsFromName($match, $suggestion_amount, $suggestion_format);
     }
 
+    // Add the ability to search users also by mail.
+    if (empty($ids)) {
+      $query = parent::buildEntityQuery(NULL, $match_operator);
+      $query->condition('mail', $match, $match_operator)->execute();
+      $ids = $query->execute();
+    }
+
     if (empty($ids)) {
       return parent::buildEntityQuery($match, $match_operator);
     }
