@@ -16,8 +16,8 @@ jobs:
           composer_version: '2'
       # Install composer dependencies so we have drupal/coder which adds our codesniffer, the bin/phpcs file
       # and dealerdirect/phpcodesniffer-composer-installer which changes the installer_path configuring all sniffs.
-      - name: Install dependencies
-        run: composer install --dev --prefer-dist --no-progress
+#      - name: Install dependencies
+#        run: composer install --dev --prefer-dist --no-progress
 
       - name: PHPCS check
         uses: chekalsky/phpcs-action@v1
