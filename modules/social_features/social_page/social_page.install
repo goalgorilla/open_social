@@ -6,6 +6,7 @@
  */
 
 use Drupal\user\Entity\Role;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Implements hook_install().
@@ -116,4 +117,38 @@ function social_page_update_8002() {
 
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
+}
+
+/**
+ * Show thumbnail on File fields when attachment is an image.
+ */
+function social_page_update_8903() {
+  $config_file = drupal_get_path('module', 'social_page') . '/config/static/core.entity_view_display.node.page.default_8903.yml';
+
+  if (is_file($config_file)) {
+    $settings = Yaml::parse(file_get_contents($config_file));
+    if (is_array($settings)) {
+      $config = \Drupal::configFactory()
+        ->getEditable('core.entity_view_display.node.page.default');
+
+      $config->setData($settings)->save(TRUE);
+    }
+  }
+}
+
+/**
+ * Add image file extensions to be added as attachments.
+ */
+function social_page_update_8904() {
+  $config_file = drupal_get_path('module', 'social_page') . '/config/static/field.field.node.page.field_files_8904.yml';
+
+  if (is_file($config_file)) {
+    $settings = Yaml::parse(file_get_contents($config_file));
+    if (is_array($settings)) {
+      $config = \Drupal::configFactory()
+        ->getEditable('field.field.node.page.field_files');
+
+      $config->setData($settings)->save(TRUE);
+    }
+  }
 }

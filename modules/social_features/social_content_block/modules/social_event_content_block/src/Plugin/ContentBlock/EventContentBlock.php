@@ -49,6 +49,9 @@ class EventContentBlock extends ContentBlockBase {
         case 'field_event_date':
           $query->innerJoin('node__field_event_date', 'nfed', "nfed.entity_id = base_table.nid AND nfed.bundle = 'event'");
           $range = ['start' => NULL, 'end' => NULL];
+
+          $start_operator = '>=';
+          $end_operator = '<';
           // Apply a range based on a value.
           switch ($field_value[0]['value']) {
             case 'future':
@@ -72,6 +75,13 @@ class EventContentBlock extends ContentBlockBase {
             case 'next_month':
               $range['start'] = new \DateTime('first day of next month 00:00');
               $range['end'] = new \DateTime('last day of next month 23:59');
+              break;
+
+            case 'ongoing':
+              $range['start'] = new \DateTime('-30 days');
+              $range['end'] = new \DateTime();
+              $end_operator = '>';
+              $query->condition('nfed.field_event_date_value', (new \DateTime())->format(DateTimeItemInterface::DATETIME_STORAGE_FORMAT), '<');
               break;
 
             case 'last_30':
@@ -110,10 +120,11 @@ class EventContentBlock extends ContentBlockBase {
           }
           // Only apply range constraints if any were actually set.
           if (isset($range['start'])) {
-            $query->condition('nfed.field_event_date_value', $range['start'] instanceof \DateTime ? $range['start']->format(DateTimeItemInterface::DATETIME_STORAGE_FORMAT) : $range['stat'], '>=');
+            $query->condition('nfed.field_event_date_value', $range['start'] instanceof \DateTime ? $range['start']->format(DateTimeItemInterface::DATETIME_STORAGE_FORMAT) : $range['start'], $start_operator);
           }
           if (isset($range['end'])) {
-            $query->condition('nfed.field_event_date_value', $range['end'] instanceof \DateTime ? $range['end']->format(DateTimeItemInterface::DATETIME_STORAGE_FORMAT) : $range['end'], '<');
+            $query->innerJoin('node__field_event_date_end', 'nfede', "nfede.entity_id = base_table.nid AND nfede.bundle = 'event'");
+            $query->condition('nfede.field_event_date_end_value', $range['end'] instanceof \DateTime ? $range['end']->format(DateTimeItemInterface::DATETIME_STORAGE_FORMAT) : $range['end'], $end_operator);
           }
           break;
       }

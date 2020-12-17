@@ -259,7 +259,7 @@ function _social_search_retrigger_profile(User $user) {
   // Loop over the indexes that need to be updated.
   foreach ($indexes as $index_id) {
     $index = Index::load($index_id);
-    if ($index instanceof  Index) {
+    if ($index instanceof Index) {
       // Init.
       $profile_ids = [];
       /** @var \Drupal\user\Entity\User $original_user */
