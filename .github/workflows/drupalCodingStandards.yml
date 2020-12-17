@@ -5,9 +5,13 @@ on: [pull_request]
 jobs:
   phpcs:
     name: PHPCS
+    # Need to define php version as per https://github.com/actions/virtual-environments/issues/1816
+    # ubuntu-latest uses php 8.0 by default so checks will fail.
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+        with:
+          php-version: '7.4'
       # Install composer dependencies so we have drupal/coder which adds our codesniffer, the bin/phpcs file
       # and dealerdirect/phpcodesniffer-composer-installer which changes the installer_path configuring all sniffs.
       - name: Install dependencies
