@@ -82,7 +82,7 @@ function social_profile_privacy_update_8001(&$sandbox) {
         $states[$field] = SocialProfilePrivacyHelperInterface::HIDE;
       }
 
-      $sandbox['fields'][$fields_group] = serialize($states);
+      $sandbox['fields'][$fields_group] = \Drupal::service('serialization.phpserialize')->encode($states);
     }
 
     $sandbox['total'] = \Drupal::database()->select('users_data', 'ud')
