@@ -71,6 +71,32 @@ function _social_profile_privacy_get_permissions($role) {
  */
 function social_profile_privacy_update_8001(&$sandbox) {
   if (!isset($sandbox['total'])) {
+    $sandbox['users'] = \Drupal::database()->select('users_data', 'ud')
+      ->fields('ud', ['uid'])
+      ->condition('module', 'social_profile_privacy')
+      ->condition('name', 'fields')
+      ->execute()
+      ->fetchCol();
+
+    $query = \Drupal::database()->select('users_data', 'ud')
+      ->fields('ud')
+      ->condition('module', 'social_profile_privacy')
+      ->condition('name', 'private_info');
+
+    if ($sandbox['users']) {
+      $query->condition('uid', $sandbox['users'], 'NOT IN');
+    }
+
+    if (!($sandbox['total'] = $query->countQuery()->execute()->fetchField())) {
+      $output = t('User profiles privacy data not found.');
+
+      if (PHP_SAPI === 'cli') {
+        drush_print($output);
+      }
+
+      return $output;
+    }
+
     /** @var \Drupal\Core\Entity\Display\EntityFormDisplayInterface $display */
     $display = \Drupal::entityTypeManager()->getStorage('entity_form_display')
       ->load('profile.profile.default');
@@ -82,42 +108,49 @@ function social_profile_privacy_update_8001(&$sandbox) {
         $states[$field] = SocialProfilePrivacyHelperInterface::HIDE;
       }
 
-      $sandbox['fields'][$fields_group] = \Drupal::service('serialization.phpserialize')->encode($states);
-    }
-
-    $sandbox['total'] = \Drupal::database()->select('users_data', 'ud')
-      ->fields('ud')
-      ->condition('module', 'social_profile_privacy')
-      ->condition('name', 'private_info')
-      ->countQuery()
-      ->execute()
-      ->fetchField();
-
-    if (!$sandbox['total']) {
-      $output = t('User profiles privacy data not found.');
-
-      if (PHP_SAPI === 'cli') {
-        drush_print($output);
-      }
-
-      return $output;
+      $sandbox['fields'][$fields_group] = $states;
     }
 
     $sandbox['uid'] = $sandbox['processed'] = 0;
     $sandbox['limit'] = Settings::get('entity_update_batch_size', 50);
   }
 
-  $items = \Drupal::database()->select('users_data', 'ud')
+  $query = \Drupal::database()->select('users_data', 'ud')
     ->fields('ud', ['uid', 'value'])
     ->condition('uid', $sandbox['uid'], '>')
     ->condition('module', 'social_profile_privacy')
-    ->condition('name', 'private_info')
+    ->condition('name', 'private_info');
+
+  if ($sandbox['users']) {
+    $query->condition('uid', $sandbox['users'], 'NOT IN');
+  }
+
+  $items = $query
     ->orderBy('uid')
     ->range(0, $sandbox['limit'])
     ->execute()
     ->fetchAllKeyed();
 
+  /** @var \Drupal\Component\Serialization\SerializationInterface $serialization */
+  $serialization = \Drupal::service('serialization.phpserialize');
+
+  $user_fields = [];
+
   foreach ($items as $uid => $value) {
+    if ($fields_groups = array_filter($serialization->decode($value))) {
+      $fields = [];
+
+      foreach (array_keys($fields_groups) as $fields_group) {
+        $fields = array_merge($fields, $sandbox['fields'][$fields_group]);
+      }
+
+      $user_fields[$uid] = $serialization->encode($fields);
+    }
+  }
+
+  $sandbox['uid'] = $uid;
+
+  if ($user_fields) {
     $query = \Drupal::database()->insert('users_data')->fields([
       'uid',
       'module',
@@ -126,19 +159,11 @@ function social_profile_privacy_update_8001(&$sandbox) {
       'serialized',
     ]);
 
-    foreach (array_keys(array_filter(unserialize($value))) as $fields_group) {
-      $query->values([
-        $uid,
-        'social_profile_privacy',
-        'fields',
-        $sandbox['fields'][$fields_group],
-        1,
-      ]);
+    foreach ($user_fields as $uid => $fields) {
+      $query->values([$uid, 'social_profile_privacy', 'fields', $fields, 1]);
     }
 
     $query->execute();
-
-    $sandbox['uid'] = $uid;
   }
 
   $sandbox['processed'] += count($items);
