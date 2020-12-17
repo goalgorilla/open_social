@@ -8,7 +8,7 @@ use Drupal\Core\Field\FieldConfigInterface;
 use Drupal\Core\Session\AccountInterface;
 
 /**
- * Class SocialProfilePrivacyHelper.
+ * Defines the helper service.
  *
  * @package Drupal\social_profile_privacy\Service
  */

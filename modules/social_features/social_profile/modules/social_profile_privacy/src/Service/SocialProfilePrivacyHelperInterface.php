@@ -5,7 +5,7 @@ namespace Drupal\social_profile_privacy\Service;
 use Drupal\Core\Session\AccountInterface;
 
 /**
- * Interface SocialProfilePrivacyHelperInterface.
+ * Defines the helper service interface.
  *
  * @package Drupal\social_profile_privacy\Service
  */
