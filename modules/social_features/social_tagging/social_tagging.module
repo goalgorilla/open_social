@@ -117,6 +117,7 @@ function social_tagging_form_alter(&$form, FormStateInterface $form_state, $form
         break;
 
       case 'group':
+      case 'profile':
         $type = $form_entity->getEntityTypeId();
         $tag_enabled = $tag_settings->get('tag_type_' . $type);
         break;
@@ -185,6 +186,16 @@ function social_tagging_form_alter(&$form, FormStateInterface $form_state, $form
         unset($form['social_tagging']);
         $form['tagging']['social_tagging']['#group'] = 'group_tagging';
       }
+
+      if ($form_entity->getEntityTypeId() === 'profile') {
+        if (isset($form['#fieldgroups']['group_tags'])) {
+          $form['tagging']['#type'] = 'container';
+          $form['tagging']['#group'] = 'group_tags';
+        }
+        else {
+          $form['tagging']['#title'] = t('Tags');
+        }
+      }
     }
   }
 }
@@ -201,7 +212,7 @@ function _social_tagging_entity_validate($form, FormStateInterface $form_state) 
   $tagging_values = [];
   $counter = 0;
   // Loop over the categories.
-  foreach ($categories as $tid => $category) {
+  foreach ($categories as $category) {
     if (!empty($form_state->getValue('social_tagging_' . social_tagging_to_machine_name($category)))) {
       foreach ($form_state->getValue('social_tagging_' . social_tagging_to_machine_name($category)) as $selected) {
         $tagging_values[] = [
@@ -225,7 +236,7 @@ function _social_tagging_node_form_defaults_values(EntityInterface $entity) {
   $default_value = [];
   // If the node exists, we need to get the default value.
   if ($entity instanceof EntityInterface && $entity->id() !== NULL) {
-    foreach ($entity->get('social_tagging')->getValue() as $key => $value) {
+    foreach ($entity->get('social_tagging')->getValue() as $value) {
       if (isset($value['target_id'])) {
         $default_value[] = $value['target_id'];
       }
@@ -240,8 +251,14 @@ function _social_tagging_node_form_defaults_values(EntityInterface $entity) {
 function social_tagging_entity_base_field_info(EntityTypeInterface $entity_type) {
   $fields = [];
 
-  // Add a 'Highlight' base field to all node types.
-  if ($entity_type->id() === 'node' || $entity_type->id() === 'group') {
+  $entity_types = [
+    'node',
+    'group',
+    'profile',
+  ];
+
+  // Add a Tagging base field.
+  if (in_array($entity_type->id(), $entity_types)) {
     $fields['social_tagging'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Tagging'))
       ->setDescription(t('Tagging field.'))
@@ -364,6 +381,8 @@ function social_tagging_form_views_exposed_form_alter(&$form, FormStateInterface
     'views-exposed-form-search-content-page',
     'views-exposed-form-search-groups-page-no-value',
     'views-exposed-form-search-groups-page',
+    'views-exposed-form-search-users-page-no-value',
+    'views-exposed-form-search-users-page',
     'views-exposed-form-latest-topics-page-latest-topics',
     'views-exposed-form-upcoming-events-page-community-events',
     'views-exposed-form-topics-page-profile',
@@ -440,4 +459,27 @@ function social_tagging_to_machine_name($text) {
   $text = str_replace(' ', '', $text);
 
   return $text;
+}
+
+/**
+ * Implements hook_preprocess_profile().
+ */
+function social_tagging_preprocess_profile(array &$variables) {
+  /** @var \Drupal\social_tagging\SocialTaggingService $tag_service */
+  $tag_service = \Drupal::service('social_tagging.tag_service');
+
+  $variables['social_tagging_profile_active'] = FALSE;
+  if ($tag_service->active() && $tag_service->profileActive()) {
+    $variables['social_tagging_profile_active'] = TRUE;
+
+    /** @var \Drupal\profile\Entity\ProfileInterface $profile */
+    $profile = $variables['profile'];
+
+    if (!$profile->get('social_tagging')->isEmpty()) {
+      $tags = $profile->get('social_tagging')->getValue();
+
+      $variables['social_tagging_allow_split'] = $tag_service->allowSplit();
+      $variables['social_tagging_hierarchy'] = $tag_service->buildHierarchy($tags, 'profile');
+    }
+  }
 }
