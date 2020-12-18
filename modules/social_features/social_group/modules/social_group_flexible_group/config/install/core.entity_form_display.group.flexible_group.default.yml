@@ -22,17 +22,17 @@ third_party_settings:
     group_content:
       children:
         - label
-        - field_group_description
         - field_group_image
+        - field_group_description
       parent_name: ''
-      weight: 1
-      label: Content
+      weight: 0
+      label: 'Basic details'
       format_type: fieldset
       format_settings:
         description: ''
-        classes: ''
-        id: ''
         required_fields: true
+        id: ''
+        classes: ''
       region: content
     group_location:
       children:
@@ -50,19 +50,34 @@ third_party_settings:
       region: content
     group_settings:
       children:
+        - path
+      parent_name: ''
+      weight: 3
+      format_type: details
+      format_settings:
+        description: ''
+        required_fields: true
+        id: ''
+        classes: social-collapsible-fieldset
+        open: false
+      label: Settings
+      region: content
+    group_access_permissions:
+      children:
         - field_flexible_group_visibility
         - field_group_allowed_visibility
         - field_group_allowed_join_method
+        - allow_request
       parent_name: ''
-      weight: 0
+      weight: 1
       format_type: fieldset
+      region: content
       format_settings:
         id: ''
         classes: ''
         description: ''
         required_fields: true
-      label: Settings
-      region: content
+      label: 'Access permissions'
 id: group.flexible_group.default
 targetEntityType: group
 bundle: flexible_group
@@ -93,7 +108,7 @@ content:
     type: options_buttons
     region: content
   field_group_description:
-    weight: 102
+    weight: 103
     settings:
       rows: 5
       placeholder: ''
@@ -101,7 +116,7 @@ content:
     type: text_textarea
     region: content
   field_group_image:
-    weight: 103
+    weight: 102
     settings:
       show_crop_area: true
       show_default_crop: true
@@ -135,7 +150,7 @@ content:
     region: content
   path:
     type: path
-    weight: 3
+    weight: 4
     settings: {  }
     third_party_settings: {  }
     region: content
