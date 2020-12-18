@@ -45,18 +45,18 @@ class SocialProfileOrgTagConfigOverride implements ConfigFactoryOverrideInterfac
       $overrides[$config_name] = [
         'third_party_settings' => [
           'field_group' => [
-            'group_organization_tag' => [
+            'group_tags' => [
               'children' => [
                 'field_profile_organization_tag',
               ],
               'parent_name' => '',
               'weight' => 99,
-              'label' => t('Organization tag')->render(),
+              'label' => t('Tags')->render(),
               'format_type' => 'fieldset',
               'format_settings' => [
-                'label' => t('Organization tag')->render(),
+                'label' => t('Tags')->render(),
                 'required_fields' => FALSE,
-                'id' => 'organization_tag',
+                'id' => 'group_tags',
                 'classes' => 'scrollspy',
               ],
             ],
