@@ -1,0 +1,76 @@
+core.entity_form_display.node.event.default:
+  expected_config: {  }
+  update_actions:
+    delete:
+      third_party_settings:
+        field_group:
+          group_description:
+            children:
+              - body
+          group_enrollment:
+            children:
+              - field_event_enroll
+              - group_enrollment_methods
+          group_enrollment_methods:
+            children:
+              - field_enroll_method
+              - field_event_enroll_outside_group
+    add:
+      third_party_settings:
+        field_group:
+          group_event_managers:
+            children:
+              - field_event_managers
+            format_settings:
+              classes: card
+              id: event-managers
+              required_fields: false
+            format_type: fieldset
+            label: 'Event organisers'
+            parent_name: ''
+            region: hidden
+            weight: 9
+          group_event_visibility:
+            children:
+              - field_enroll_method
+              - field_event_enroll
+              - field_event_enroll_outside_group
+          group_title_image:
+            children:
+              - body
+    change:
+      content:
+        field_enroll_method:
+          weight: 121
+        field_event_address:
+          settings: {  }
+        field_event_enroll:
+          weight: 122
+      third_party_settings:
+        field_group:
+          group_description:
+            children: {  }
+          group_enrollment:
+            children: {  }
+          group_enrollment_methods:
+            children: {  }
+            parent_name: ''
+          group_settings:
+            children:
+              - uid
+              - created
+              - path
+              - field_event_comments
+              - status
+field.field.node.event.body:
+  expected_config:
+    label: Body
+  update_actions:
+    change:
+      label: Description
+field.field.node.event.field_files:
+  expected_config:
+    label: Files
+  update_actions:
+    change:
+      label: Attachment

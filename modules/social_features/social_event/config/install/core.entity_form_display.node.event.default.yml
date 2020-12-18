@@ -31,15 +31,16 @@ third_party_settings:
       children:
         - title
         - field_event_image
+        - body
       parent_name: ''
       weight: 0
       label: 'Basic details'
       format_type: fieldset
       format_settings:
         description: ''
-        required_fields: true
-        id: ''
         classes: ''
+        id: ''
+        required_fields: true
       region: hidden
     group_date_time:
       children:
@@ -69,32 +70,22 @@ third_party_settings:
         id: ''
         required_fields: true
       region: hidden
-    group_description:
-      children:
-        - body
-      parent_name: ''
-      weight: 7
-      label: Description
-      format_type: fieldset
-      format_settings:
-        description: ''
-        classes: ''
-        id: ''
-        required_fields: true
-      region: hidden
     group_event_visibility:
       children:
         - groups
         - field_content_visibility
+        - field_enroll_method
+        - field_event_enroll
+        - field_event_enroll_outside_group
       parent_name: ''
       weight: 2
       label: 'Access permissions'
       format_type: fieldset
       format_settings:
-        description: ''
         required_fields: true
         id: visibility
         classes: 'card '
+        description: ''
       region: hidden
     group_attachments:
       children:
@@ -104,57 +95,30 @@ third_party_settings:
       label: 'Additional details'
       format_type: details
       format_settings:
-        description: ''
         required_fields: true
         id: attachments
         classes: social-collapsible-fieldset
-        open: false
-      region: hidden
-    group_enrollment:
-      children:
-        - field_event_enroll
-        - group_enrollment_methods
-      parent_name: ''
-      weight: 3
-      label: 'Enrollment options'
-      format_type: fieldset
-      format_settings:
-        required_fields: true
-        id: enrollment
-        classes: card
-      region: hidden
-    group_enrollment_methods:
-      children:
-        - field_enroll_method
-        - field_event_enroll_outside_group
-      parent_name: group_enrollment
-      weight: 20
-      format_type: html_element
-      format_settings:
-        element: div
-        show_label: false
-        label_element: h3
-        attributes: ''
-        effect: none
-        speed: fast
-        id: ''
-        classes: enrollment-methods
-        required_fields: false
-      label: 'Enrollment options fieldset'
-      region: hidden
-    group_settings:
-      children: {  }
-      parent_name: ''
-      weight: 20
-      format_type: details
-      region: hidden
-      format_settings:
-        id: ''
-        classes: social-collapsible-fieldset
         description: ''
         open: false
+      region: hidden
+    group_settings:
+      children:
+        - field_event_comments
+        - path
+        - uid
+        - created
+        - status
+      format_settings:
+        classes: social-collapsible-fieldset
+        description: ''
+        id: ''
+        open: false
         required_fields: true
+      format_type: details
       label: Settings
+      parent_name: ''
+      region: hidden
+      weight: 20
 id: node.event.default
 targetEntityType: node
 bundle: event
@@ -183,7 +147,7 @@ content:
     type: options_buttons
     region: content
   field_enroll_method:
-    weight: 122
+    weight: 121
     settings: {  }
     third_party_settings: {  }
     type: options_buttons
@@ -218,7 +182,7 @@ content:
     settings:
       display_label: true
     type: boolean_checkbox
-    weight: 12
+    weight: 122
     third_party_settings: {  }
   field_event_enroll_outside_group:
     weight: 123
