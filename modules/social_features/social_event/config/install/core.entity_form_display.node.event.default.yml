@@ -33,13 +33,14 @@ third_party_settings:
         - field_event_image
       parent_name: ''
       weight: 0
-      label: 'Title & image'
+      label: 'Basic details'
       format_type: fieldset
       format_settings:
         description: ''
-        classes: ''
-        id: ''
         required_fields: true
+        id: ''
+        classes: ''
+      region: hidden
     group_date_time:
       children:
         - field_event_date
@@ -53,6 +54,7 @@ third_party_settings:
         classes: ''
         id: ''
         required_fields: true
+      region: hidden
     group_location:
       children:
         - field_event_location
@@ -66,6 +68,7 @@ third_party_settings:
         classes: ''
         id: ''
         required_fields: true
+      region: hidden
     group_description:
       children:
         - body
@@ -78,31 +81,35 @@ third_party_settings:
         classes: ''
         id: ''
         required_fields: true
+      region: hidden
     group_event_visibility:
       children:
         - groups
         - field_content_visibility
       parent_name: ''
       weight: 2
-      label: Visibility
+      label: 'Access permissions'
       format_type: fieldset
       format_settings:
-        label: Visibility
+        description: ''
         required_fields: true
         id: visibility
         classes: 'card '
+      region: hidden
     group_attachments:
       children:
         - field_files
       parent_name: ''
       weight: 8
-      label: Attachments
-      format_type: fieldset
+      label: 'Additional details'
+      format_type: details
       format_settings:
-        label: Attachments
+        description: ''
         required_fields: true
         id: attachments
-        classes: card
+        classes: social-collapsible-fieldset
+        open: false
+      region: hidden
     group_enrollment:
       children:
         - field_event_enroll
@@ -112,10 +119,10 @@ third_party_settings:
       label: 'Enrollment options'
       format_type: fieldset
       format_settings:
-        label: 'Enrollment options'
         required_fields: true
         id: enrollment
         classes: card
+      region: hidden
     group_enrollment_methods:
       children:
         - field_enroll_method
@@ -124,7 +131,6 @@ third_party_settings:
       weight: 20
       format_type: html_element
       format_settings:
-        label: 'Enrollment options fieldset'
         element: div
         show_label: false
         label_element: h3
@@ -136,8 +142,19 @@ third_party_settings:
         required_fields: false
       label: 'Enrollment options fieldset'
       region: hidden
-_core:
-  default_config_hash: xj2qT9ti-krrpsSuXqyN1Qifab5o3gteM8uYIWwCPf0
+    group_settings:
+      children: {  }
+      parent_name: ''
+      weight: 20
+      format_type: details
+      region: hidden
+      format_settings:
+        id: ''
+        classes: social-collapsible-fieldset
+        description: ''
+        open: false
+        required_fields: true
+      label: Settings
 id: node.event.default
 targetEntityType: node
 bundle: event
@@ -150,6 +167,7 @@ content:
       rows: 9
       summary_rows: 3
       placeholder: ''
+      show_summary: false
     third_party_settings: {  }
     region: content
   created:
@@ -221,6 +239,7 @@ content:
         - teaser
       progress_indicator: throbber
       warn_multiple_usages: true
+      crop_types_required: {  }
     third_party_settings: {  }
     type: image_widget_crop
     region: content
