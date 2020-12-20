@@ -1255,8 +1255,7 @@ function social_core_update_8904() {
  */
 function social_core_update_8905() {
   // Only when socialblue is default we set this.
-  if (\Drupal::service('theme.manager')
-      ->getActiveTheme()->getName() === 'socialblue') {
+  if (\Drupal::service('theme.manager')->getActiveTheme()->getName() === 'socialblue') {
     try {
       // Sets it to Open Social.
       $config = \Drupal::configFactory()->getEditable('socialblue.settings');
