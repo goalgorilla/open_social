@@ -743,6 +743,8 @@ function social_core_form_node_form_alter(&$form, FormStateInterface $form_state
           '#group' => 'group_settings',
         ];
 
+        // Move author uid to the new author info fieldset,
+        // and remove descriptive text.
         if (isset($form['uid'])) {
           $form['uid']['#group'] = 'author_info';
           $form['uid']['widget']['#description'] = '';
@@ -753,6 +755,8 @@ function social_core_form_node_form_alter(&$form, FormStateInterface $form_state
           unset($form['uid']);
         }
 
+        // Move created to the new author info fieldset,
+        // and remove descriptive text.
         if (isset($form['created'])) {
           $form['created']['#group'] = 'author_info';
           $form['created']['widget']['#description'] = '';
