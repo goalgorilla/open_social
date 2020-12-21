@@ -1737,3 +1737,52 @@ function social_event_update_8910() {
     \Drupal::service('entity_field.manager')->clearCachedFieldDefinitions();
   }
 }
+
+/**
+ * Updated fieldsets labels and added a new fieldset called "Settings".
+ */
+function social_event_update_8911() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_event', 'social_event_update_8911');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Re-arranged fields in new fieldsets.
+ */
+function social_event_update_8912() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_event', 'social_event_update_8912');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Remove un-required fieldgroups from event content type.
+ */
+function social_event_update_8914() {
+  // There can be possibility that someone might have added fields in
+  // fieldgroups we are removing. So, we want to skip removal if there are any
+  // children present in fieldgroup.
+  $field_groups = [
+    'group_description',
+    'group_enrollment',
+    'group_enrollment_methods',
+  ];
+
+  foreach ($field_groups as $field_group) {
+    $group = field_group_load_field_group($field_group, 'node', 'event', 'form', 'default');
+    if ($group && empty($group->children)) {
+      field_group_delete_field_group($group);
+    }
+  }
+}

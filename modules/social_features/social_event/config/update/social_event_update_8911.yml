@@ -1,0 +1,103 @@
+core.entity_form_display.node.event.default:
+  expected_config: { }
+  update_actions:
+    delete:
+      third_party_settings:
+        field_group:
+          group_attachments:
+            format_settings:
+              label: Attachments
+          group_enrollment:
+            format_settings:
+              label: 'Enrollment options'
+          group_enrollment_methods:
+            format_settings:
+              label: 'Enrollment options fieldset'
+          group_event_visibility:
+            format_settings:
+              label: Visibility
+    add:
+      content:
+        body:
+          settings:
+            show_summary: false
+        field_event_image:
+          settings:
+            crop_types_required: {  }
+        field_event_managers:
+          region: content
+          settings:
+            match_limit: 10
+            match_operator: CONTAINS
+            placeholder: ''
+            size: 60
+          third_party_settings: {  }
+          type: entity_reference_autocomplete
+          weight: 0
+        url_redirects:
+          region: content
+          settings: {  }
+          third_party_settings: {  }
+          weight: 50
+      third_party_settings:
+        field_group:
+          group_attachments:
+            region: hidden
+          group_date_time:
+            region: hidden
+          group_description:
+            region: hidden
+          group_enrollment:
+            region: hidden
+          group_event_managers:
+            children:
+              - field_event_managers
+            format_settings:
+              classes: card
+              id: event-managers
+              required_fields: false
+            format_type: fieldset
+            label: 'Event organisers'
+            parent_name: ''
+            region: hidden
+            weight: 9
+          group_event_visibility:
+            format_settings:
+              description: ''
+            region: hidden
+          group_location:
+            region: hidden
+          group_settings:
+            children: {  }
+            format_settings:
+              classes: social-collapsible-fieldset
+              description: ''
+              id: ''
+              open: false
+              required_fields: true
+            format_type: details
+            label: Settings
+            parent_name: ''
+            region: hidden
+            weight: 20
+          group_title_image:
+            region: hidden
+    change:
+      content:
+        field_event_address:
+          settings: {  }
+        groups:
+          type: social_group_selector_widget
+      third_party_settings:
+        field_group:
+          group_attachments:
+            format_settings:
+              classes: social-collapsible-fieldset
+              description: ''
+              open: false
+            format_type: details
+            label: 'Additional details'
+          group_event_visibility:
+            label: 'Access permissions'
+          group_title_image:
+            label: 'Basic details'
