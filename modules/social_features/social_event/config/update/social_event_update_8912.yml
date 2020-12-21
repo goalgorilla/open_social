@@ -2,6 +2,21 @@ core.entity_form_display.node.event.default:
   expected_config: {  }
   update_actions:
     delete:
+      content:
+        promote:
+          region: content
+          settings:
+            display_label: true
+          third_party_settings: { }
+          type: boolean_checkbox
+          weight: 6
+        sticky:
+          region: content
+          settings:
+            display_label: true
+          third_party_settings: { }
+          type: boolean_checkbox
+          weight: 9
       third_party_settings:
         field_group:
           group_description:
@@ -47,6 +62,9 @@ core.entity_form_display.node.event.default:
               - uid
               - created
               - status
+      hidden:
+        promote: true
+        sticky: true
 field.field.node.event.body:
   expected_config:
     label: Body

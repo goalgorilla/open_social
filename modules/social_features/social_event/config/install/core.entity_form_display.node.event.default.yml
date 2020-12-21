@@ -108,10 +108,10 @@ third_party_settings:
       label: Enrollment
       format_type: details
       format_settings:
-        description: ''
         required_fields: true
         id: enrollment
         classes: ''
+        description: ''
         open: false
       region: content
     group_enrollment_methods:
@@ -266,13 +266,6 @@ content:
     settings: {  }
     third_party_settings: {  }
     region: content
-  promote:
-    type: boolean_checkbox
-    settings:
-      display_label: true
-    weight: 6
-    third_party_settings: {  }
-    region: content
   status:
     region: content
     settings:
@@ -280,13 +273,6 @@ content:
     type: boolean_checkbox
     weight: 120
     third_party_settings: {  }
-  sticky:
-    type: boolean_checkbox
-    settings:
-      display_label: true
-    weight: 9
-    third_party_settings: {  }
-    region: content
   title:
     type: string_textfield
     weight: 2
@@ -305,4 +291,6 @@ content:
       match_limit: 10
     third_party_settings: {  }
     region: content
-hidden: {  }
+hidden:
+  promote: true
+  sticky: true
