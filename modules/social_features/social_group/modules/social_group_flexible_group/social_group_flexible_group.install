@@ -178,3 +178,31 @@ function social_group_flexible_group_update_8903() {
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
 }
+
+/**
+ * Renamed fieldsets for flexible groups and re-ordered them according to new designs.
+ */
+function social_group_flexible_group_update_8904() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_group_flexible_group', 'social_group_flexible_group_update_8904');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Added "Additional details" fieldset to flexible groups.
+ */
+function social_group_flexible_group_update_8905() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_group_flexible_group', 'social_group_flexible_group_update_8905');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
