@@ -11,7 +11,7 @@ use League\OAuth2\Client\Provider\Apple;
 use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 
 /**
- * Class AppleAuthExtraManager.
+ * Defines the auth manager service.
  *
  * @package Drupal\social_auth_apple_extra
  */
@@ -51,7 +51,7 @@ class AppleAuthExtraManager extends AuthManager {
    * {@inheritdoc}
    */
   public function getSocialNetworkKey() {
-    // TODO: Implement getSocialNetworkKey() method.
+    // @todo Implement getSocialNetworkKey() method.
   }
 
   /**
@@ -77,49 +77,49 @@ class AppleAuthExtraManager extends AuthManager {
    * {@inheritdoc}
    */
   public function getAccessToken($type) {
-    // TODO: Implement getAccessToken() method.
+    // @todo Implement getAccessToken() method.
   }
 
   /**
    * {@inheritdoc}
    */
   public function getProfile() {
-    // TODO: Implement getProfile() method.
+    // @todo Implement getProfile() method.
   }
 
   /**
    * {@inheritdoc}
    */
   public function getProfilePicture() {
-    // TODO: Implement getProfilePicture() method.
+    // @todo Implement getProfilePicture() method.
   }
 
   /**
    * {@inheritdoc}
    */
   public function setAccessToken($access_token) {
-    // TODO: Implement setAccessToken() method.
+    // @todo Implement setAccessToken() method.
   }
 
   /**
    * {@inheritdoc}
    */
   public function getAccountId() {
-    // TODO: Implement getAccountId() method.
+    // @todo Implement getAccountId() method.
   }
 
   /**
    * {@inheritdoc}
    */
   public function getFirstName() {
-    // TODO: Implement getFirstName() method.
+    // @todo Implement getFirstName() method.
   }
 
   /**
    * {@inheritdoc}
    */
   public function getLastName() {
-    // TODO: Implement getLastName() method.
+    // @todo Implement getLastName() method.
   }
 
 }

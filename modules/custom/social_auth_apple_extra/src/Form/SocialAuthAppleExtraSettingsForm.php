@@ -7,7 +7,7 @@ use Drupal\Core\Url;
 use Drupal\social_auth_apple\Form\AppleAuthSettingsForm;
 
 /**
- * Class SocialAuthAppleExtraSettingsForm.
+ * Extends settings form for Social Auth Apple.
  *
  * @package Drupal\social_auth_apple_extra\Form
  */

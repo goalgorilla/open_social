@@ -14,7 +14,7 @@ use Drupal\social_auth\User\UserManager;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
- * Class AppleUserAuthenticator.
+ * Manages Drupal authentication tasks for Social Auth Apple Extra.
  *
  * @package Drupal\social_auth_apple_extra\User
  */

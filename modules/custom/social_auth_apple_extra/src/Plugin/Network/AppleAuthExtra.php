@@ -9,7 +9,7 @@ use Drupal\social_auth_extra\Plugin\Network\NetworkExtraInterface;
 use Drupal\social_auth_extra\Plugin\Network\NetworkExtraTrait;
 
 /**
- * Class AppleAuthExtra.
+ * Extends Social Auth Apple Network Plugin.
  *
  * @package Drupal\social_auth_apple_extra\Plugin\Network
  */

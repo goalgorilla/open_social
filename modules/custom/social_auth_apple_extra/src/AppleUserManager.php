@@ -5,7 +5,7 @@ namespace Drupal\social_auth_apple_extra;
 use Drupal\social_auth_extra\UserManager;
 
 /**
- * Class AppleUserManager.
+ * Defines the user manager service.
  *
  * @package Drupal\social_auth_apple_extra
  */

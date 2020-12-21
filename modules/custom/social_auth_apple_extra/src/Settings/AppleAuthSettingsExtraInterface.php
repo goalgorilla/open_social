@@ -6,7 +6,7 @@ use Drupal\social_auth_apple\Settings\AppleAuthSettingsInterface;
 use Drupal\social_auth_extra\Settings\SettingsExtraInterface;
 
 /**
- * Interface AppleAuthSettingsExtraInterface.
+ * Defines an interface for Social Auth Apple Extra settings.
  *
  * @package Drupal\social_auth_apple_extra\Settings
  */

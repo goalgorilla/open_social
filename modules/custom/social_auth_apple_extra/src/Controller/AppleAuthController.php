@@ -5,7 +5,7 @@ namespace Drupal\social_auth_apple_extra\Controller;
 use Drupal\social_auth_extra\Controller\AuthControllerBase;
 
 /**
- * Class AppleAuthController.
+ * Returns responses for auth routes.
  *
  * @package Drupal\social_auth_apple_extra\Controller
  */

@@ -6,7 +6,7 @@ use Drupal\social_auth_apple\Settings\AppleAuthSettings;
 use Drupal\social_auth_extra\Settings\SettingsExtraTrait;
 
 /**
- * Class AppleAuthSettingsExtra.
+ * Returns the client information.
  *
  * @package Drupal\social_auth_apple_extra\Settings
  */

@@ -8,7 +8,7 @@ use Drupal\social_auth_apple_extra\Form\SocialAuthAppleExtraSettingsForm;
 use Symfony\Component\Routing\RouteCollection;
 
 /**
- * Class RouteSubscriber.
+ * Subscriber for Social Auth Apple routes.
  *
  * @package Drupal\social_auth_apple_extra\Routing
  */
