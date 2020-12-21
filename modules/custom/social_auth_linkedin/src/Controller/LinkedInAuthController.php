@@ -66,12 +66,10 @@ class LinkedInAuthController extends AuthControllerBase {
       return $this->redirect('user.login');
     }
 
-    // Authorize the user and redirect him to the account page.
+    // Authorize the user and redirect him to the front page.
     user_login_finalize($account);
 
-    return $this->redirect('entity.user.canonical', [
-      'user' => $account->id(),
-    ]);
+    return $this->redirect('<front>');
   }
 
   /**

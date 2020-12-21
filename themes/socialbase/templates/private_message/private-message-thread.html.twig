@@ -53,17 +53,19 @@
           </div>
           {{ content.members }}
 
-          <div class="message__thread-actions btn-group">
-            <button type="button" data-toggle="dropdown" aria-expanded="false" aria-haspopup="true" class="btn btn-icon-toggle dropdown-toggle">
-              <svg class="btn-icon icon-gray">
-                <title>{% trans %}Actions for this thread{% endtrans %}</title>
-                <use xlink:href="#icon-expand_more"></use>
-              </svg>
-            </button>
-            <ul class="dropdown-menu dropdown-menu-right">
-              <li>{{ content.delete_link }}</li>
-            </ul>
-          </div>
+          {% if content.delete_link %}
+            <div class="message__thread-actions btn-group">
+              <button type="button" data-toggle="dropdown" aria-expanded="false" aria-haspopup="true" class="btn btn-icon-toggle dropdown-toggle">
+                <svg class="btn-icon icon-gray">
+                  <title>{% trans %}Actions for this thread{% endtrans %}</title>
+                  <use xlink:href="#icon-expand_more"></use>
+                </svg>
+              </button>
+              <ul class="dropdown-menu dropdown-menu-right">
+                <li>{{ content.delete_link }}</li>
+              </ul>
+            </div>
+          {% endif %}
 
         </div>
       </div>

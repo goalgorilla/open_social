@@ -17,6 +17,7 @@
 [type="checkbox"]:checked:not(:disabled) + label,
 [type="radio"]:checked:not(:disabled) + label {
   color: $brand-primary;
+  fill: $brand-primary;
 }
 
 .tabs-left .nav-tabs > li.active > a,
@@ -137,11 +138,13 @@
 }
 
 .badge-accent {
+  color: $brand-accent-text;
   background-color: $brand-accent;
   border-color: $brand-accent;
 }
 
 .btn-accent {
+  color: $brand-accent-text;
   background-color: $brand-accent;
   border-color: $brand-accent;
 
@@ -152,6 +155,7 @@
   &.active,
   .open > &.dropdown-toggle,
   &.dropdown-toggle:hover {
+    color: $brand-accent-text;
     background-color: $brand-accent;
     border-color: $brand-accent;
     background-image: linear-gradient(to bottom, rgba(black, 0.2) 0%, rgba(black, 0.2) 100%);
@@ -163,6 +167,7 @@
     &:hover,
     &:focus,
     &.focus {
+      color: $brand-accent-text;
       background-color: $brand-accent;
       border-color: $brand-accent;
       background-image: linear-gradient(to bottom, rgba(black, 0.2) 0%, rgba(black, 0.2) 100%);
@@ -218,6 +223,8 @@
 .field--name-field-featured-description a:not(.btn):hover,
 .field--name-field-accord-description a:not(.btn),
 .field--name-field-accord-description a:not(.btn):hover,
+.field--name-field-text a:not(.btn),
+.field--name-field-text a:not(.btn):hover,
 .body-text a:not(.btn),
 .body-text a:not(.btn):hover {
   color: #33b5e5;
@@ -355,6 +362,7 @@ html:not(.js) .navbar-default {
 .dropdown {
   @include for-phone-only {
     &.has-alert > a:before {
+      color: $brand-accent-text;
       background-color: $brand-accent;
     }
   }
@@ -362,6 +370,7 @@ html:not(.js) .navbar-default {
   // There are now items that don't have their own top level icon so these
   // should show notifications in the user menu also on desktop.
   &.has-alert.has-alert--desktop > a:before {
+    color: $brand-accent-text;
     background-color: $brand-accent;
   }
 }
@@ -379,6 +388,33 @@ html:not(.js) .navbar-default {
 
   }
 }
+
+// Placeholder color for the search overlay form.
+.search-take-over {
+  .form-control {
+    // Placeholder chrome
+    &::placeholder {
+      color: $navbar-default-link-color !important;
+    }
+
+    // Placeholder Firefox
+    &::-moz-placeholder {
+      color: $navbar-default-link-color !important;
+      opacity: 1; // Override Firefox's unusual default opacity; see https://github.com/twbs/bootstrap/pull/11526
+    }
+
+    // Placeholder Internet Explorer 10-11
+    :-ms-input-placeholder {
+      color: $navbar-default-link-color !important;
+    }
+
+    // Placeholder Microsoft Edge
+    ::-ms-input-placeholder {
+      color: $navbar-default-link-color !important;
+    }
+  }
+}
+
 
 .navbar-nav__icon {
   fill: $navbar-default-link-color;
@@ -422,6 +458,7 @@ html:not(.js) .navbar-default {
 }
 
 .vote-widget--social-vote .vote-vote {
+  color: $brand-accent-text;
   background-color: $brand-accent;
 }
 
@@ -556,12 +593,14 @@ html:not(.js) .navbar-default {
 }
 
 .badge.badge-active {
+  color: $brand-accent-text;
   background-color: $brand-accent;
 }
 
 .phase {
   &.phase-past {
     &:not(:last-child):before {
+      color: $brand-accent-text;
       background-color: $brand-accent;
     }
 
@@ -572,6 +611,7 @@ html:not(.js) .navbar-default {
 
   &.phase-active {
     &:before {
+      color: $brand-accent-text;
       background-color: $brand-accent;
     }
   }
@@ -657,4 +697,8 @@ html:not(.js) .navbar-default {
       color: $brand-primary;
     }
   }
+}
+
+.block-data-policy .card__title {
+  background: $brand-secondary;
 }

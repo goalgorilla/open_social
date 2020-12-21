@@ -2,6 +2,7 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.field.group.flexible_group.field_flexible_group_visibility
     - field.field.group.flexible_group.field_group_address
     - field.field.group.flexible_group.field_group_allowed_join_method
     - field.field.group.flexible_group.field_group_allowed_visibility
@@ -49,6 +50,7 @@ third_party_settings:
       region: content
     group_settings:
       children:
+        - field_flexible_group_visibility
         - field_group_allowed_visibility
         - field_group_allowed_join_method
       parent_name: ''
@@ -61,13 +63,17 @@ third_party_settings:
         required_fields: true
       label: Settings
       region: content
-_core:
-  default_config_hash: jxUlnDLygWdcUhk-I8XiFfSgY9hiJqWYgkx60agyfxc
 id: group.flexible_group.default
 targetEntityType: group
 bundle: flexible_group
 mode: default
 content:
+  field_flexible_group_visibility:
+    weight: 100
+    settings: {  }
+    third_party_settings: {  }
+    type: options_buttons
+    region: content
   field_group_address:
     weight: 6
     settings: {  }
@@ -75,19 +81,19 @@ content:
     type: address_default
     region: content
   field_group_allowed_join_method:
-    weight: 5
+    weight: 102
     settings: {  }
     third_party_settings: {  }
     type: options_buttons
     region: content
   field_group_allowed_visibility:
-    weight: 4
+    weight: 101
     settings: {  }
     third_party_settings: {  }
     type: options_buttons
     region: content
   field_group_description:
-    weight: 2
+    weight: 102
     settings:
       rows: 5
       placeholder: ''
@@ -95,7 +101,7 @@ content:
     type: text_textarea
     region: content
   field_group_image:
-    weight: 3
+    weight: 103
     settings:
       show_crop_area: true
       show_default_crop: true
@@ -121,7 +127,7 @@ content:
     region: content
   label:
     type: string_textfield
-    weight: 1
+    weight: 101
     settings:
       size: 60
       placeholder: ''

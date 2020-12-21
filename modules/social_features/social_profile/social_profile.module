@@ -27,8 +27,6 @@ define('SOCIAL_PROFILE_SUGGESTIONS_ALL', 'all');
 
 /**
  * Implements hook_field_widget_form_alter().
- *
- * Fix theme issues in profile fields.
  */
 function social_profile_field_widget_form_alter(&$element, FormStateInterface $form_state, $context) {
   /** @var \Drupal\Core\Field\FieldDefinitionInterface $field_definition */
@@ -46,7 +44,11 @@ function social_profile_field_widget_form_alter(&$element, FormStateInterface $f
   }
   // This replaces all user entity references with our EntityReferenceSelection.
   if ($field_definition->getType() === 'entity_reference') {
-    if (isset($element['target_id']['#target_type']) && $element['target_id']['#target_type'] === 'user') {
+    if (
+      isset($element['target_id']['#target_type']) &&
+      $element['target_id']['#target_type'] === 'user' &&
+      $element['target_id']['#type'] !== 'social_private_message_entity_autocomplete'
+    ) {
       $element['target_id']['#selection_handler'] = 'social';
     }
   }
@@ -812,6 +814,6 @@ function social_profile_social_user_account_header_items_alter(array &$menu_item
   // Provide a render array as image which will overrule the user icon.
   $menu_items['account_box']['#image'] = \Drupal::entityTypeManager()
     ->getViewBuilder('profile')
-    ->view($profile, 'small');;
+    ->view($profile, 'small');
 
 }

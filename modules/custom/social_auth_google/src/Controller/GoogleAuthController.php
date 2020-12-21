@@ -111,11 +111,10 @@ class GoogleAuthController extends AuthControllerBase {
         return $this->redirect('user.register');
       }
 
+      // Authorize the user and redirect him to the front page.
       user_login_finalize($account);
 
-      return $this->redirect('entity.user.canonical', [
-        'user' => $account->id(),
-      ]);
+      return $this->redirect('<front>');
     }
 
     // Save email and name to session to use for auto fill the registration
