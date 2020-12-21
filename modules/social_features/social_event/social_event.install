@@ -1783,8 +1783,6 @@ function social_event_update_8914() {
     $group = field_group_load_field_group($field_group, 'node', 'event', 'form', 'default');
     if ($group && empty($group->children)) {
       field_group_delete_field_group($group);
-      var_dump($group);
     }
   }
-  die;
 }
