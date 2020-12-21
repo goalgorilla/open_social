@@ -5,6 +5,7 @@ namespace Drupal\social_core\Controller;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\TempStore\PrivateTempStoreFactory;
+use Drupal\node\NodeTypeInterface;
 use Drupal\views_bulk_operations\Form\ViewsBulkOperationsFormTrait;
 use Drupal\views_bulk_operations\Service\ViewsBulkOperationsActionProcessorInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -194,6 +195,27 @@ class SocialCoreController extends ControllerBase {
     return $this->redirect('social_user.user_home', [
       'user' => $this->currentUser()->id(),
     ]);
+  }
+
+  /**
+   * The _title_callback for the node.add route.
+   *
+   * @param \Drupal\node\NodeTypeInterface $node_type
+   *   The current node.
+   *
+   * @return string
+   *   The page title.
+   */
+  public function addPageTitle(NodeTypeInterface $node_type) {
+    $articles = [
+      'event' => 'an',
+    ];
+
+    if (array_key_exists($node_type->id(), $articles)) {
+      return $this->t('Create @article @name', ['@article' => $articles[$node_type->id()] , '@name' => $node_type->label()]);
+    }
+
+    return $this->t('Create a @name', ['@name' => $node_type->label()]);
   }
 
 }
