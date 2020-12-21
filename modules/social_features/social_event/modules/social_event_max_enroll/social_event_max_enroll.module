@@ -79,6 +79,23 @@ function social_event_max_enroll_form_alter(&$form, FormStateInterface $form_sta
         ];
       }
 
+      if (!empty($form['field_event_max_enroll'])) {
+        // Add an details element to status.
+        $form['field_event_max_enroll_wrapper'] = [
+          '#type' => 'details',
+          '#title' => t('Enrollment limit'),
+          '#description' => '',
+          '#weight' => 100,
+          '#group' => 'group_enrollment',
+          '#open' => TRUE,
+          '#tree' => TRUE,
+        ];
+
+        $form['field_event_max_enroll_wrapper']['field_event_max_enroll'] = $form['field_event_max_enroll'];
+        $form['field_event_max_enroll_wrapper']['field_event_max_enroll_num'] = $form['field_event_max_enroll_num'];
+        unset($form['field_event_max_enroll'], $form['field_event_max_enroll_num']);
+      }
+
       break;
 
     // Alter the Event Enrollments forms.
