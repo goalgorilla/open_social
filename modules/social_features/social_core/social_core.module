@@ -732,9 +732,13 @@ function social_core_form_node_form_alter(&$form, FormStateInterface $form_state
         unset($form['meta']);
       }
 
-      // Hide the automatic URL alias.
-      if (isset($form['path']['widget'][0]['pathauto'], $form['path']['widget'][0]['alias'])) {
+      // Add descriptive text to URL Alias field.
+      if (isset($form['path']['widget'][0]['alias'])) {
         $form['path']['widget'][0]['alias']['#description'] = t('The URL alias allows you to customise the link to this page.');
+      }
+
+      // Hide the automatic URL alias.
+      if (isset($form['path']['widget'][0]['pathauto'])) {
         $form['path']['widget'][0]['pathauto']['#type'] = 'hidden';
         // Path uses the above checkbox to decide whether or not to save
         // the automatically generated alias, or use a custom one.
