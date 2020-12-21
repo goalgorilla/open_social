@@ -1618,7 +1618,7 @@ function social_group_form_node_form_alter(&$form, FormStateInterface $form_stat
       ];
       foreach ($change_fieldgroup_titles as $fieldgroup_title) {
         if (isset($form['#fieldgroups'][$fieldgroup_title])) {
-          $form['#fieldgroups'][$fieldgroup_title]->label = (string) t('Group and visibility');
+          $form['#fieldgroups'][$fieldgroup_title]->label = t('Access permissions')->render();
         }
       }
       // Lets remove the original submit function in favor of this submit.

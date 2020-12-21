@@ -31,7 +31,7 @@ function social_tagging_help($route_name, RouteMatchInterface $route_match) {
       $tag_service = Drupal::getContainer()->get('social_tagging.tag_service');
 
       if ($tag_service->allowSplit()) {
-        /* @var \Drupal\taxonomy\Entity\Vocabulary $vocabulary */
+        /** @var \Drupal\taxonomy\Entity\Vocabulary $vocabulary */
         $vocabulary = $route_match->getParameter('taxonomy_vocabulary');
         if ($vocabulary->id() === 'social_tagging' && $tag_service->allowSplit()) {
           return '<p><strong>' . t('Notice: Drag and drop has intentionally been disabled for this vocabulary.') . '</strong></p>';
@@ -78,7 +78,7 @@ function social_tagging_form_taxonomy_overview_terms_alter(&$form, FormStateInte
 
   if (Drupal::getContainer()->get('social_tagging.tag_service')->allowSplit()) {
     $storage = $form_state->getStorage();
-    /* @var \Drupal\taxonomy\Entity\Vocabulary $vocabulary */
+    /** @var \Drupal\taxonomy\Entity\Vocabulary $vocabulary */
     $vocabulary = $storage['taxonomy']['vocabulary'];
 
     if ($vocabulary->id() === 'social_tagging') {
@@ -145,6 +145,12 @@ function social_tagging_form_alter(&$form, FormStateInterface $form_state, $form
         '#open' => TRUE,
         '#weight' => 50,
       ];
+
+      // We want to move the tagging field in new fieldset "Additional details".
+      if (isset($form['#fieldgroups']['group_attachments'])) {
+        $form['#fieldgroups']['group_attachments']->children[] = 'tagging';
+        $form['#group_children']['tagging'] = 'group_attachments';
+      }
 
       if ($tag_service->allowSplit()) {
         // Get the default value.
@@ -274,7 +280,7 @@ function social_tagging_entity_base_field_info(EntityTypeInterface $entity_type)
 function social_tagging_entity_delete(EntityInterface $entity) {
   // When a term from the social_tagging vocbulary is deleted, remove from node.
   if ($entity instanceof Term) {
-    /* @var Term $entity */
+    /** @var \Drupal\taxonomy\Entity\Term $entity */
     if ($entity->getVocabularyId() == 'social_tagging') {
       /* @see: taxonomy_taxonomy_term_delete(), delete from node field. */
       db_delete('node__social_tagging')->condition('social_tagging_target_id', $entity->id())->execute();

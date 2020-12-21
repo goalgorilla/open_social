@@ -157,6 +157,20 @@ function socialblue_form_system_theme_settings_alter(&$form, FormStateInterface 
         '#default_value' => $config->get('style'),
       ];
 
+      $form['os_style_settings']['content_entity_form_style'] = [
+        '#type' => 'select',
+        '#title' => t('Render Content Entity forms in Open Social style'),
+        '#description' => t('Allows you to render the Content Entity Forms in Open Social style. This means we remove a lot of Drupal look and feel and logic.
+        Buttons on the create content are changed from Save to Create. The advanced details, e.g. the vertical tabs added in Drupal core
+        are not rendered anymore, instead we use a collapsible fieldset. 
+        Fields like revision, URL Redirect are unset. The preview button is removed and more.'),
+        '#options' => [
+          'drupal' => t('Default Drupal'),
+          'open_social' => t('Open Social'),
+        ],
+        '#default_value' => $config->get('entity_forms') ?: 'open_social',
+      ];
+
       // When GIN is our admin theme, update the GIN colors.
       if (\Drupal::configFactory()->get('system.theme')->get('admin') === 'gin') {
         $form['#submit'][] = 'socialblue_update_gin_color_settings';
