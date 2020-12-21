@@ -37,7 +37,7 @@ class SocialEventManagersConfigOverride implements ConfigFactoryOverrideInterfac
       $content['field_event_managers']['settings']['placeholder'] = '';
       $content['field_event_managers']['settings']['size'] = '60';
       $content['field_event_managers']['type'] = 'entity_reference_autocomplete';
-      $content['field_event_managers']['weight'] = 13;
+      $content['field_event_managers']['weight'] = 100;
       if (!isset($content['field_event_managers']['third_party_settings'])) {
         $content['field_event_managers']['third_party_settings'] = [];
       }
