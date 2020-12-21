@@ -732,6 +732,11 @@ function social_core_form_node_form_alter(&$form, FormStateInterface $form_state
         unset($form['meta']);
       }
 
+      // Add descriptive text to URL Alias field.
+      if (isset($form['path']['widget'][0]['alias'])) {
+        $form['path']['widget'][0]['alias']['#description'] = t('The URL alias allows you to customise the link to this page.');
+      }
+
       // Hide the automatic URL alias.
       if (isset($form['path']['widget'][0]['pathauto'])) {
         $form['path']['widget'][0]['pathauto']['#type'] = 'hidden';
@@ -742,12 +747,6 @@ function social_core_form_node_form_alter(&$form, FormStateInterface $form_state
         // So we need to check this in our custom submit handler.
         // It should perform before path auto runs.
         array_unshift($form['actions']['submit']['#submit'], '_social_core_path_widget_submit');
-      }
-
-      // For now we hide the menu outline as well, regardless of the
-      // Drupal settings.
-      if (isset($form['menu'])) {
-        unset($form['menu']);
       }
 
       // Move the fields from advanced to group_settings.
@@ -762,8 +761,12 @@ function social_core_form_node_form_alter(&$form, FormStateInterface $form_state
           // Grab the Entity to see if books are enabled for this one.
           $entity = $form_state->getFormObject()->getEntity();
           if (!empty($entity->getType()) && is_string($entity->getType())) {
+            // Move it to our new fieldset on book pages either on its own
+            // or in the group_settings.
+            $form['book']['#type'] = 'fieldset';
+            $form['book']['#attributes']['class'][] = 'card';
+            $form['book']['#weight'] = isset($form['#fieldgroups']['group_visibility']->weight) ? $form['#fieldgroups']['group_visibility']->weight + 1 : '3';
             $enabled = book_type_is_allowed($entity->getType());
-            $form['book']['#group'] = 'group_settings';
             // If it's not enabled we can just safely unset it.
             if (!$enabled) {
               unset($form['book']);
@@ -774,7 +777,15 @@ function social_core_form_node_form_alter(&$form, FormStateInterface $form_state
         // Move the node Menu settings to group_settings.
         if (!empty($form['menu'])) {
           $form['menu']['#group'] = 'group_settings';
-          $form['menu']['#weight'] = 200;
+          $form['menu']['#weight'] = -20;
+          $form['menu']['#title'] = t('Menu link');
+          if (!empty($form['menu']['link']['title'])) {
+            $form['menu']['link']['title']['#title'] = t('Title');
+            $form['menu']['link']['title']['#description'] = t('This title will be displayed in the menu.');
+          }
+          if (!empty($form['menu']['link']['description'])) {
+            $form['menu']['link']['title']['#description'] = t('This description will be displayed when hovering over the menu link.');
+          }
         }
 
         // Move the Published status to group settings with a new wrapper.
