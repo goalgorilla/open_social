@@ -125,7 +125,7 @@ class GroupAddBlock extends BlockBase implements BlockPluginInterface, Container
    */
   public function build() {
     $build = [];
-    // TODO: Add caching when closed groups will be added.
+    // @todo Add caching when closed groups will be added.
     $url = $this->getUrl();
     $link_options = [
       'attributes' => [

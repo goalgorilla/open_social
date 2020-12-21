@@ -8,7 +8,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\crop\Entity\CropType;
 
 /**
- * Class SocialGroupSettings.
+ * Configures group settings.
  *
  * @package Drupal\social_event_managers\Form
  */

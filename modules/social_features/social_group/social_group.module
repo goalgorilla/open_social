@@ -478,7 +478,7 @@ function _social_group_get_allowed_visibility(GroupInterface $group) {
  * open_group or closed_group the Owner gets the group manager role by default.
  */
 function social_group_group_insert(GroupInterface $group) {
-  // @Todo remove this when https://www.drupal.org/node/2702743 lands and make
+  // @todo Remove this when https://www.drupal.org/node/2702743 lands and make.
   // sure the settings will be implemented accordingly.
   if ($group->getGroupType()->id() === 'open_group' ||
     $group->getGroupType()->id() === 'closed_group' ||
@@ -501,7 +501,12 @@ function social_group_group_insert(GroupInterface $group) {
       // Delete the initial created membership.
       $content->delete();
       $plugin = $group->getGroupType()->getContentPlugin('group_membership');
-      $values = ['group_roles' => [$group->bundle() . '-group_admin', $group->bundle() . '-group_manager']];
+      $values = [
+        'group_roles' => [
+          $group->bundle() . '-group_admin',
+          $group->bundle() . '-group_manager',
+        ],
+      ];
       $group_content = GroupContent::create([
         'type' => $plugin->getContentTypeConfigId(),
         'gid' => $group->id(),
@@ -585,7 +590,7 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
   if (in_array($form_id, $membership_delete_forms)) {
     $form['actions']['submit']['#submit'][] = '_social_membership_delete_form_submit';
 
-    list($name, $group) = _social_group_get_group_labels();
+    [$name, $group] = _social_group_get_group_labels();
 
     // Give a better title, description and submit button value.
     $form['#title'] = t('Remove %name from %group', [
@@ -750,7 +755,10 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
       array_unshift($form['actions']['submit']['#submit'], '_social_group_delete_group');
     }
   }
-  if (in_array($form_id, ['group_flexible_group_edit_form', 'group_flexible_group_add_form'])) {
+  if (in_array($form_id, [
+    'group_flexible_group_edit_form',
+    'group_flexible_group_add_form',
+  ])) {
     $join_method_default_value = 'added';
     // Ensure we have a better descriptive label.
     if (array_key_exists('added', $form['field_group_allowed_join_method']['widget']['#options'])) {
@@ -876,7 +884,10 @@ function _social_group_action_form_submit($form, FormStateInterface $form_state)
 
     // Get form that was submitted.
     $complete_form = $form_state->getCompleteForm();
-    if (in_array($complete_form['#form_id'], ['group_content_' . $group->bundle() . '-group_membership_group-join_form', 'group_content_' . $group->bundle() . '-group_membership_add_form'])) {
+    if (in_array($complete_form['#form_id'], [
+      'group_content_' . $group->bundle() . '-group_membership_group-join_form',
+      'group_content_' . $group->bundle() . '-group_membership_add_form',
+    ])) {
       // Set redirect to group home page for people joining the group.
       $form_state->setRedirect(
         'entity.group.canonical',
@@ -1546,17 +1557,14 @@ function social_group_get_all_groups() {
  * @return array
  *   List of group IDs the user is member of.
  *
- * @deprecated in Open Social 4.2 and will be removed in one of the next major
- *   updates.
+ * @deprecated in social:8.x-4.2 and is removed from social:8.x-9.6.
  *   This function is moved to the service social_group.helper_service, use
  *   getAllGroupsForUser() instead.
  *
  * @see https://www.drupal.org/node/3026220
  */
 function social_group_get_all_group_members($uid) {
-  @trigger_error('social_group_get_all_group_members() is deprecated in Open Social 4.2 and will be removed in
-  one of the next major updates. This function is moved to the service social_group.helper_service, use
-  getAllGroupsForUser() instead. See https://www.drupal.org/node/3026220.', E_USER_DEPRECATED);
+  @trigger_error(__FUNCTION__ . ' is deprecated in social:8.x-4.2 and is removed from social:8.x-9.6. This function is moved to the service social_group.helper_service, use getAllGroupsForUser() instead. See https://www.drupal.org/node/3026220', E_USER_DEPRECATED);
 
   $groups = &drupal_static(__FUNCTION__);
 
@@ -1594,7 +1602,7 @@ function social_group_entity_base_field_info_alter(&$fields, EntityTypeInterface
   $entity_types = ['node'];
   if (in_array($entity_type->id(), $entity_types)) {
     if (isset($fields['groups'])) {
-      /* @var \Drupal\Core\Field\BaseFieldDefinition $fields['groups'] */
+      /** @var \Drupal\Core\Field\FieldDefinitionInterface $fields['groups'] */
       $fields['groups']->setLabel(t('Group'));
       $fields['groups']->setDisplayOptions('form', [
         'type' => 'options_select',
@@ -1632,7 +1640,7 @@ function social_group_form_node_form_alter(&$form, FormStateInterface $form_stat
         }
       }
 
-      /* @var \Drupal\node\Entity\Node $node */
+      /** @var \Drupal\node\NodeInterface $node */
       $node = $form_state->getFormObject()->getEntity();
       // Store if the node is new or not.
       $form['is_new'] = [
@@ -1654,7 +1662,7 @@ function social_group_form_node_form_alter(&$form, FormStateInterface $form_stat
  *   Form state interface.
  */
 function social_group_save_group_from_node(array $form, FormStateInterface $form_state) {
-  /* @var \Drupal\node\Entity\Node $node */
+  /** @var \Drupal\node\NodeInterface $node */
   $node = $form_state->getFormObject()->getEntity();
 
   // Check if the created node is new or updated.
