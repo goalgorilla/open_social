@@ -70,10 +70,6 @@ class EventMaxEnrollOverride implements ConfigFactoryOverrideInterface {
         $content = $config->get('content');
       }
 
-      // Add a field group.
-      $children[] = 'field_event_max_enroll';
-      $children[] = 'field_event_max_enroll_num';
-
       // Add the field to the content.
       $content['field_event_max_enroll'] = [
         'weight' => 100,
