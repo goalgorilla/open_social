@@ -63,6 +63,9 @@ function socialblue_preprocess_group(array &$variables) {
   }
 }
 
+/**
+ * Implements hook_preprocess_file_upload_help().
+ */
 function socialblue_preprocess_file_upload_help(array &$variables) {
   if (!empty($variables['description']) &&
     !empty($variables['popover']) &&
