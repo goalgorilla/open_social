@@ -709,17 +709,75 @@ function social_core_form_node_form_alter(&$form, FormStateInterface $form_state
     // We want to move all the fields from $form['advanced'] to our new
     // field sets which are created as part of #3186003.
     if (!empty($form['advanced'])) {
-      unset(
-        $form['advanced'],
-        $form['revision'],
-        $form['revision_information'],
-        $form['revision_log'],
-        $form['meta'],
-        $form['url_redirects']
-      );
+      unset($form['advanced']);
 
-      // Move the status label to group_settings.
+      // Unset optional fields.
+      if (isset($form['revision'])) {
+        unset($form['revision']);
+      }
+
+      if (isset($form['revision_log'])) {
+        unset($form['revision_log']);
+      }
+
+      if (isset($form['revision_information'])) {
+        unset($form['revision_information']);
+      }
+
+      if (isset($form['url_redirects'])) {
+        unset($form['url_redirects']);
+      }
+
+      if (isset($form['meta'])) {
+        unset($form['meta']);
+      }
+
+      // Hide the automatic URL alias.
+      if (isset($form['path']['widget'][0]['pathauto'])) {
+        $form['path']['widget'][0]['pathauto']['#type'] = 'hidden';
+        // Path uses the above checkbox to decide whether or not to save
+        // the automatically generated alias, or use a custom one.
+        // since we hide the element, and the default is checked,
+        // the path will never be overridden if someone updates it.
+        // So we need to check this in our custom submit handler.
+        // It should perform before path auto runs.
+        array_unshift($form['actions']['submit']['#submit'], '_social_core_path_widget_submit');
+      }
+
+      // For now we hide the menu outline as well, regardless of the
+      // Drupal settings.
+      if (isset($form['menu'])) {
+        unset($form['menu']);
+      }
+
+      // Move the fields from advanced to group_settings.
       if (!empty($form['#fieldgroups']['group_settings'])) {
+        // Move the book outline fields to the group settings.
+        // #502430 we need to remove this ourselves, users with permission
+        // can see the book outline even when not configured as part
+        // of the book settings.
+        if (!empty($form['book']) &&
+          $form_state->getFormObject() !== NULL &&
+          \Drupal::moduleHandler()->moduleExists('book')) {
+          // Grab the Entity to see if books are enabled for this one.
+          $entity = $form_state->getFormObject()->getEntity();
+          if (!empty($entity->getType()) && is_string($entity->getType())) {
+            $enabled = book_type_is_allowed($entity->getType());
+            $form['book']['#group'] = 'group_settings';
+            // If it's not enabled we can just safely unset it.
+            if (!$enabled) {
+              unset($form['book']);
+            }
+          }
+        }
+
+        // Move the node Menu settings to group_settings.
+        if (!empty($form['menu'])) {
+          $form['menu']['#group'] = 'group_settings';
+          $form['menu']['#weight'] = 200;
+        }
+
+        // Move the Published status to group settings with a new wrapper.
         if (!empty($form['status'])) {
           // Add an details element to status.
           $form['status_label'] = [
@@ -808,6 +866,35 @@ function social_core_form_node_form_alter(&$form, FormStateInterface $form_state
         unset($form['actions']['preview']);
       }
     }
+  }
+}
+
+/**
+ * Custom form submit handler for handling an path alias update.
+ *
+ * @param array $form
+ *   The form array.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   Form state.
+ *
+ * @throws \Drupal\Core\Entity\EntityStorageException
+ */
+function _social_core_path_widget_submit(array $form, FormStateInterface $form_state) {
+  // Path uses the pathauto checkbox to decide whether or not to save
+  // the automatically generated alias, or use a custom one.
+  // since we hide the element, and the default is checked,
+  // the path will never be overridden if someone updates it.
+  // So we need to check this in our custom submit handler.
+  $default_path = $form['path']['widget'][0]['alias']['#default_value'];
+  $input = $form_state->getUserInput();
+  $updated_path = isset($input['path'][0]['alias']) ? $input['path'][0]['alias'] : '';
+  // If we don't have a match, make sure we override the checkbox as well.
+  if ($updated_path !== $default_path) {
+    // Override the User input, act as if this was changed.
+    $input['path'][0]['pathauto'] = "0";
+    $form_state->setUserInput($input);
+    // Override the value.
+    $form_state->setValue(['path', '0', 'pathauto'], "0");
   }
 }
 
