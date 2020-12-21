@@ -733,7 +733,8 @@ function social_core_form_node_form_alter(&$form, FormStateInterface $form_state
       }
 
       // Hide the automatic URL alias.
-      if (isset($form['path']['widget'][0]['pathauto'])) {
+      if (isset($form['path']['widget'][0]['pathauto'], $form['path']['widget'][0]['alias'])) {
+        $form['path']['widget'][0]['alias']['#description'] = t('The URL alias allows you to customise the link to this page.');
         $form['path']['widget'][0]['pathauto']['#type'] = 'hidden';
         // Path uses the above checkbox to decide whether or not to save
         // the automatically generated alias, or use a custom one.
@@ -742,12 +743,6 @@ function social_core_form_node_form_alter(&$form, FormStateInterface $form_state
         // So we need to check this in our custom submit handler.
         // It should perform before path auto runs.
         array_unshift($form['actions']['submit']['#submit'], '_social_core_path_widget_submit');
-      }
-
-      // For now we hide the menu outline as well, regardless of the
-      // Drupal settings.
-      if (isset($form['menu'])) {
-        unset($form['menu']);
       }
 
       // Move the fields from advanced to group_settings.
@@ -774,7 +769,15 @@ function social_core_form_node_form_alter(&$form, FormStateInterface $form_state
         // Move the node Menu settings to group_settings.
         if (!empty($form['menu'])) {
           $form['menu']['#group'] = 'group_settings';
-          $form['menu']['#weight'] = 200;
+          $form['menu']['#weight'] = -20;
+          $form['menu']['#title'] = t('Menu link');
+          if (!empty($form['menu']['link']['title'])) {
+            $form['menu']['link']['title']['#title'] = t('Title');
+            $form['menu']['link']['title']['#description'] = t('This title will be displayed in the menu.');
+          }
+          if (!empty($form['menu']['link']['description'])) {
+            $form['menu']['link']['title']['#description'] = t('This description will be displayed when hovering over the menu link.');
+          }
         }
 
         // Move the Published status to group settings with a new wrapper.

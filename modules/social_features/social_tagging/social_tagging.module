@@ -146,7 +146,7 @@ function social_tagging_form_alter(&$form, FormStateInterface $form_state, $form
         '#weight' => 50,
       ];
 
-      // We want to move the tagging field in new fieldset "Additional details".
+      // We want to move the tagging field in new fieldset "Additional information".
       // Only when the theme settings are updated.
       $use_social_content_forms = theme_get_setting('content_entity_form_style');
       if (isset($form['#fieldgroups']['group_attachments']) &&
