@@ -207,12 +207,19 @@ class SocialCoreController extends ControllerBase {
    *   The page title.
    */
   public function addPageTitle(NodeTypeInterface $node_type) {
-    $articles = [
+    // The node_types that have a different article than a.
+    $node_types = [
       'event' => 'an',
     ];
 
-    if (array_key_exists($node_type->id(), $articles)) {
-      return $this->t('Create @article @name', ['@article' => $articles[$node_type->id()] , '@name' => $node_type->label()]);
+    // Make sure extensions can change this as well.
+    \Drupal::moduleHandler()->alter('social_node_title_prefix_articles', $node_types);
+
+    if ($node_type !== NULL && array_key_exists($node_type->id(), $node_types)) {
+      return $this->t('Create @article @name', [
+        '@article' => $node_types[$node_type->id()],
+        '@name' => $node_type->label()
+      ]);
     }
 
     return $this->t('Create a @name', ['@name' => $node_type->label()]);
