@@ -757,8 +757,12 @@ function social_core_form_node_form_alter(&$form, FormStateInterface $form_state
           // Grab the Entity to see if books are enabled for this one.
           $entity = $form_state->getFormObject()->getEntity();
           if (!empty($entity->getType()) && is_string($entity->getType())) {
+            // Move it to our new fieldset on book pages either on its own
+            // or in the group_settings.
+            $form['book']['#type'] = 'fieldset';
+            $form['book']['#attributes']['class'][] = 'card';
+            $form['book']['#weight'] = isset($form['#fieldgroups']['group_visibility']->weight) ? $form['#fieldgroups']['group_visibility']->weight + 1 : '3';
             $enabled = book_type_is_allowed($entity->getType());
-            $form['book']['#group'] = 'group_settings';
             // If it's not enabled we can just safely unset it.
             if (!$enabled) {
               unset($form['book']);
