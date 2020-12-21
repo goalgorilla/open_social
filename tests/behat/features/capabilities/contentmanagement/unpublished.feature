@@ -13,7 +13,6 @@ Feature: Un/publish a node
       And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text"
       And I click radio button "Discussion"
       Then I should see "Publish status"
-      And I click "Publish status"
       And I should see "Published"
       And I uncheck the box "Published"
       And I press "Save"
@@ -24,7 +23,6 @@ Feature: Un/publish a node
 
     When I click "Edit content"
       Then I should see "Publish status"
-      And I click "Publish status"
       And I should see "Published"
       And I show hidden checkboxes
       And I check the box "Published"
