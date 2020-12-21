@@ -1767,7 +1767,7 @@ function social_event_update_8912() {
 }
 
 /**
- * Remove un-required fieldgroups from event content type.
+ * Remove un-required fieldgroup 'group_description' from event content type.
  */
 function social_event_update_8914() {
   // There can be possibility that someone might have added fields in
@@ -1775,8 +1775,6 @@ function social_event_update_8914() {
   // children present in fieldgroup.
   $field_groups = [
     'group_description',
-    'group_enrollment',
-    'group_enrollment_methods',
   ];
 
   foreach ($field_groups as $field_group) {
@@ -1785,4 +1783,12 @@ function social_event_update_8914() {
       field_group_delete_field_group($group);
     }
   }
+}
+
+/**
+ * Remove custom fieldgroup 'group_event_managers' from event content type.
+ */
+function social_event_update_8915() {
+  $group = field_group_load_field_group('group_event_managers', 'node', 'event', 'form', 'default');
+  field_group_delete_field_group($group);
 }

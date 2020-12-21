@@ -74,9 +74,7 @@ third_party_settings:
       children:
         - groups
         - field_content_visibility
-        - field_enroll_method
-        - field_event_enroll
-        - field_event_enroll_outside_group
+        - group_enrollment
       parent_name: ''
       weight: 2
       label: 'Access permissions'
@@ -101,6 +99,40 @@ third_party_settings:
         description: ''
         open: false
       region: hidden
+    group_enrollment:
+      children:
+        - group_enrollment_methods
+        - field_event_enroll
+      parent_name: group_event_visibility
+      weight: 18
+      label: Enrollment
+      format_type: details
+      format_settings:
+        description: ''
+        required_fields: true
+        id: enrollment
+        classes: ''
+        open: false
+      region: content
+    group_enrollment_methods:
+      children:
+        - field_enroll_method
+        - field_event_enroll_outside_group
+      parent_name: group_enrollment
+      weight: 20
+      format_type: html_element
+      format_settings:
+        element: div
+        show_label: false
+        label_element: h3
+        attributes: ''
+        effect: none
+        speed: fast
+        id: ''
+        classes: enrollment-methods
+        required_fields: false
+      label: 'Enrollment options fieldset'
+      region: content
     group_settings:
       children:
         - field_event_comments
