@@ -711,7 +711,7 @@ function social_core_form_node_form_alter(&$form, FormStateInterface $form_state
     if (!empty($form['advanced'])) {
       unset($form['advanced']);
 
-      // Unset optional fields
+      // Unset optional fields.
       if (isset($form['revision'])) {
         unset($form['revision']);
       }
@@ -771,7 +771,7 @@ function social_core_form_node_form_alter(&$form, FormStateInterface $form_state
           }
         }
 
-        // Move the node Menu settings to group_settings
+        // Move the node Menu settings to group_settings.
         if (!empty($form['menu'])) {
           $form['menu']['#group'] = 'group_settings';
           $form['menu']['#weight'] = 200;
