@@ -146,8 +146,8 @@ function social_tagging_form_alter(&$form, FormStateInterface $form_state, $form
         '#weight' => 50,
       ];
 
-      // We want to move the tagging field in new fieldset "Additional information".
-      // Only when the theme settings are updated.
+      // We want to move the tagging field in new fieldset
+      // "Additional information". Only when the theme settings are updated.
       $use_social_content_forms = theme_get_setting('content_entity_form_style');
       if (isset($form['#fieldgroups']['group_attachments']) &&
         $use_social_content_forms === 'open_social') {
@@ -155,6 +155,16 @@ function social_tagging_form_alter(&$form, FormStateInterface $form_state, $form
         $form['tagging']['#title'] = t('Tags');
         $form['#fieldgroups']['group_attachments']->children[] = 'tagging';
         $form['#group_children']['tagging'] = 'group_attachments';
+      }
+
+      // Add Tags in flexible groups if enabled.
+      if (\Drupal::moduleHandler()->moduleExists('social_group_flexible_group') &&
+        isset($form['#fieldgroups']['group_additional_details']) &&
+        $use_social_content_forms === 'open_social') {
+        $form['tagging']['#type'] = 'details';
+        $form['tagging']['#title'] = t('Tags');
+        $form['#fieldgroups']['group_additional_details']->children[] = 'tagging';
+        $form['#group_children']['tagging'] = 'group_additional_details';
       }
 
       if ($tag_service->allowSplit()) {
