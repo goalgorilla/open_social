@@ -51,15 +51,17 @@
 %}
 {% block paragraph %}
   <div{{ attributes.addClass(classes) }}>
-    {% block content %}
+    <div class="container">
+      {% block content %}
 
-    <h1 class="card__title">{{ content.field_accord_title }}</h1>
-    <div class="card__text">
-      {{ content.field_accord_description }}
+      <h1 class="card__title">{{ content.field_accord_title }}</h1>
+      <div class="card__text">
+        {{ content.field_accord_description }}
+      </div>
+
+      {{ content|without('field_accord_title', 'field_accord_description') }}
+
+      {% endblock %}
     </div>
-
-    {{ content|without('field_accord_title', 'field_accord_description') }}
-
-    {% endblock %}
   </div>
 {% endblock paragraph %}
