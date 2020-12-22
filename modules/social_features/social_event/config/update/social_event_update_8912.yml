@@ -37,8 +37,20 @@ core.entity_form_display.node.event.default:
           weight: 121
         field_event_enroll:
           weight: 122
+        field_event_comments:
+          weight: 10
+        path:
+          weight: 11
       third_party_settings:
         field_group:
+          group_attachments:
+            weight: 4
+          group_date_time:
+            weight: 1
+          group_event_visibility:
+            weight: 3
+          group_location:
+            weight: 2
           group_description:
             children: {  }
           group_enrollment:
@@ -55,10 +67,10 @@ core.entity_form_display.node.event.default:
             region: content
           group_settings:
             children:
-              - field_event_comments
-              - path
               - uid
               - created
+              - field_event_comments
+              - path
               - status
       hidden:
         promote: true

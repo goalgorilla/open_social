@@ -47,7 +47,7 @@ third_party_settings:
         - field_event_date
         - field_event_date_end
       parent_name: ''
-      weight: 4
+      weight: 1
       label: 'Date & time'
       format_type: fieldset
       format_settings:
@@ -61,7 +61,7 @@ third_party_settings:
         - field_event_location
         - field_event_address
       parent_name: ''
-      weight: 5
+      weight: 2
       label: Location
       format_type: fieldset
       format_settings:
@@ -76,7 +76,7 @@ third_party_settings:
         - field_content_visibility
         - group_enrollment
       parent_name: ''
-      weight: 2
+      weight: 3
       label: 'Access permissions'
       format_type: fieldset
       format_settings:
@@ -89,7 +89,7 @@ third_party_settings:
       children:
         - field_files
       parent_name: ''
-      weight: 8
+      weight: 4
       label: 'Additional information'
       format_type: details
       format_settings:
@@ -135,10 +135,10 @@ third_party_settings:
       region: content
     group_settings:
       children:
-        - field_event_comments
-        - path
         - uid
         - created
+        - field_event_comments
+        - path
         - status
       format_settings:
         classes: social-collapsible-fieldset
@@ -192,7 +192,7 @@ content:
     type: address_default
     region: content
   field_event_comments:
-    weight: 11
+    weight: 10
     settings: {  }
     third_party_settings: {  }
     type: comment_default
@@ -262,7 +262,7 @@ content:
     third_party_settings: {  }
   path:
     type: path
-    weight: 10
+    weight: 11
     settings: {  }
     third_party_settings: {  }
     region: content
