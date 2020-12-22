@@ -3,6 +3,16 @@ core.entity_form_display.node.event.default:
   update_actions:
     delete:
       content:
+        field_event_managers:
+          region: content
+          settings:
+            match_limit: 10
+            match_operator: CONTAINS
+            placeholder: ''
+            size: 60
+          third_party_settings: { }
+          type: entity_reference_autocomplete
+          weight: 10
         promote:
           region: content
           settings:
