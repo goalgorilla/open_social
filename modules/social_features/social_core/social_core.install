@@ -1236,3 +1236,16 @@ function social_core_update_8902() {
 function social_core_update_8903() {
   \Drupal::service('module_installer')->install(['redirect']);
 }
+
+/**
+ * Update Social Blue theme with new accent text color.
+ */
+function social_core_update_8904() {
+  $config = \Drupal::configFactory()->getEditable('color.theme.socialblue');
+  if (!empty($config->getRawData())) {
+    $socialblue_colors = $config->getRawData();
+    $socialblue_colors['palette']['brand-accent-text'] = '#4d4d4d';
+    $config->setData($socialblue_colors);
+    $config->save();
+  }
+}
