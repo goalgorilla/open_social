@@ -9,6 +9,7 @@ use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\group\Entity\GroupContentInterface;
+use Drupal\group\Entity\GroupInterface;
 
 /**
  * Implements hook_entity_base_field_info().
@@ -69,11 +70,32 @@ function social_group_welcome_message_form_alter(array &$form, FormStateInterfac
     isset($form['private_message_body']) &&
     isset($form['private_message_send'])
   ) {
-    $form['private_message_body']['#states'] = [
-      'visible' => [
-        ':input[name="private_message_send[value]"]' => ['checked' => TRUE],
-      ],
-    ];
+
+    // Get group owner.
+    $group = $form_state->getFormObject()->getEntity();
+    if ($group instanceof GroupInterface) {
+      $owner = $group->getOwner();
+    }
+    else {
+      $owner = \Drupal::currentUser();
+    }
+
+    // Deny access to welcome message if owner don't have permission to create it.
+    if (
+      !$owner->hasPermission('use private messaging system') ||
+      !$owner->hasPermission('create private messages thread')
+    ) {
+      foreach ($form['#fieldgroups']['group_welcome_message']->children as $form_element_id) {
+        $form[$form_element_id]['#access'] = FALSE;
+      }
+    }
+    else {
+      $form['private_message_body']['#states'] = [
+        'visible' => [
+          ':input[name="private_message_send[value]"]' => ['checked' => TRUE],
+        ],
+      ];
+    }
   }
 }
 
@@ -94,11 +116,18 @@ function social_group_welcome_message_group_content_insert(GroupContentInterface
     $g_type_id = $group->getGroupType()->id();
 
     // Load the account of the user who just joined.
+    /** @var \Drupal\user\UserInterface $account */
     $account = $group_content->getEntity();
 
     // Skip sending notifications to the owner of the group. They probably know
     // they created the group a second ago.
     if ($group->getOwnerId() === $account->id()) {
+      return;
+    }
+
+    // Do not send mail for user that don't have permission to view private
+    // message.
+    if (!$account->hasPermission('use private messaging system')) {
       return;
     }
 
@@ -127,6 +156,14 @@ function social_group_welcome_message_group_content_insert(GroupContentInterface
     }
     else {
       $owner = $group->getOwner();
+    }
+
+    // Check if user have permission to create private message.
+    if (
+      !$owner->hasPermission('use private messaging system') ||
+      !$owner->hasPermission('create private messages thread')
+    ) {
+      return;
     }
 
     // Merge all managers of the group to recipients array.
