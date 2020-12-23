@@ -1784,11 +1784,3 @@ function social_event_update_8914() {
     }
   }
 }
-
-/**
- * Remove custom fieldgroup 'group_event_managers' from event content type.
- */
-function social_event_update_8915() {
-  $group = field_group_load_field_group('group_event_managers', 'node', 'event', 'form', 'default');
-  field_group_delete_field_group($group);
-}
