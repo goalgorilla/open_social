@@ -370,7 +370,7 @@ function social_comment_preprocess_pager(&$variables) {
 
   // Change href for all pager items except "pages"
   // (E.G. first, previous, next, last, etc.).
-  foreach ($items as $key => $item) {
+  foreach ($items ?? [] as $key => $item) {
     if (isset($item['href'])) {
       $items[$key]['href'] = preg_replace($pattern, '', $item['href']);
     }
