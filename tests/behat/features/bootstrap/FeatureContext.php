@@ -145,8 +145,11 @@ class FeatureContext extends RawMinkContext implements Context, SnippetAccepting
 
       $iframe_source = $element->getAttribute('src');
 
-      if ($iframe_source !== $src) {
-        throw new \InvalidArgumentException(sprintf('The iframe does not have the src: "%s"', $src));
+      // the sources could contain certain metadata making it hard to test
+      // if it matches the given source. So we don't strict check rather
+      // check if part of the source matches.
+      if (strpos($iframe_source, $src) === FALSE) {
+        throw new \InvalidArgumentException(sprintf('The iframe source does not contain the src: "%s" it is however: "%s"', $src, $iframe_source));
       }
     }
 
