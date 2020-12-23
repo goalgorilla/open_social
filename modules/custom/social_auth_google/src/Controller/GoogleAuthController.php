@@ -7,6 +7,7 @@ use Drupal\social_api\Plugin\NetworkManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\social_auth_google\GoogleAuthManager;
 use Drupal\Core\Routing\TrustedRedirectResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
  * Class GoogleAuthController.
@@ -166,11 +167,10 @@ class GoogleAuthController extends ControllerBase {
         return $this->redirect('user.register');
       }
 
+      // Authorize the user and redirect him to the front page.
       user_login_finalize($account);
 
-      return $this->redirect('entity.user.canonical', [
-        'user' => $account->id(),
-      ]);
+      return $this->redirect('<front>');
     }
 
     // Save email and name to session to use for auto fill the registration

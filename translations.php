@@ -130,3 +130,6 @@ new TranslatableMarkup('To make the list of topics more specific you can additio
 new TranslatableMarkup('Autocomplete field with items from taxonomy list topic types.');
 new TranslatableMarkup('Autocomplete field with items from taxonomy list content tags.');
 new TranslatableMarkup('Autocomplete field with group names.');
+
+// String added because original one was changed due to #3183708 issue.
+new TranslatableMarkup('Changing the group may have impact on the <strong>visibility settings</strong>.');
