@@ -169,7 +169,7 @@ class Node extends PreprocessBase {
       // OPEN or CLOSED we can render icon for
       // comment count, and add the comment count to the node.
       if ($node->$comment_field_name->status != CommentItemInterface::HIDDEN) {
-        $comment_count = _socialbase_node_get_comment_count($node, FALSE);
+        $comment_count = _socialbase_node_get_comment_count($node);
         $variables['below_content'][$comment_field_name]['#title'] = $comment_count === 0 ? t('Be the first one to comment') : t('Comments');
 
         // If it's closed, we only show the comment section when there are

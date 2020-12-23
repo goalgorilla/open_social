@@ -88,11 +88,11 @@ function _socialbase_get_visibility_icon($title) {
 /**
  * Get comment count for a node.
  */
-function _socialbase_node_get_comment_count(NodeInterface $node, $use_static = TRUE) {
-  $comment_count = &drupal_static(__FUNCTION__);
+function _socialbase_node_get_comment_count(NodeInterface $node) {
+  $comment_count = &drupal_static(__FUNCTION__ . $node->id());
 
   // Calculate the comment_count for this page request.
-  if (is_null($comment_count) || $use_static === FALSE) {
+  if (is_null($comment_count)) {
     $count = 0;
     $comment_query = \Drupal::entityTypeManager()
       ->getStorage('comment')
