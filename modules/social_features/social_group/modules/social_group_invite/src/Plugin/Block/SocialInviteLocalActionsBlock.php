@@ -103,10 +103,15 @@ class SocialInviteLocalActionsBlock extends BlockBase implements ContainerFactor
    */
   public function getCacheTags() {
     $cache_tags = parent::getCacheTags();
-    $group = $this->routeMatch->getParameter('group');
 
-    if ($group instanceof GroupInterface) {
-      $cache_tags[] = 'group:' . $group->id();
+    // Add cache tags only for group page.
+    if ($group = $this->routeMatch->getParameter('group')) {
+      if ($group instanceof GroupInterface) {
+        $cache_tags[] = 'group:' . $group->id();
+      }
+      else {
+        $cache_tags[] = 'group:' . $group;
+      }
       $cache_tags[] = 'group_content_type_list';
     }
 
@@ -151,13 +156,6 @@ class SocialInviteLocalActionsBlock extends BlockBase implements ContainerFactor
     }
 
     return $build;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getCacheMaxAge() {
-    return 0;
   }
 
 }
