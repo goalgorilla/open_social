@@ -1,0 +1,10 @@
+includes:
+	- vendor/mglaman/phpstan-drupal/extension.neon
+	- vendor/phpstan/phpstan-deprecation-rules/rules.neon
+
+parameters:
+    level: 5
+    paths:
+        - src
+    drupal:
+        drupal_root: %currentWorkingDirectory%/core
