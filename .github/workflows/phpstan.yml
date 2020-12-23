@@ -16,5 +16,6 @@ jobs:
         uses: docker://oskarstark/phpstan-ga
         env:
           CHECK_PLATFORM_REQUIREMENTS: false
+          REQUIRE_DEV: true
         with:
-          args: analyse src/ modules/
+          args: analyse .
