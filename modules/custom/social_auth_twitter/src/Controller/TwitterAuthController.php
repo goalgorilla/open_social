@@ -140,12 +140,10 @@ class TwitterAuthController extends ControllerBase {
       return $this->redirect('user.login');
     }
 
+    // Authorize the user and redirect him to the front page.
     user_login_finalize($account);
-    drupal_set_message(t('You are logged in'));
 
-    return $this->redirect('entity.user.canonical', [
-      'user' => $account->id(),
-    ]);
+    return $this->redirect('<front>');
   }
 
   /**

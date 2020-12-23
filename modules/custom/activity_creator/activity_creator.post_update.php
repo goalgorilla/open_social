@@ -119,7 +119,7 @@ function activity_creator_post_update_8802_remove_orphaned_activities(&$sandbox)
     // 'activities_per_batch' is a custom amount that we’ll use to limit
     // how many activities we’re processing in each batch.
     // The variables value can be declared in settings file of Drupal.
-    $sandbox['activities_per_batch'] = Settings::get('activity_update_batch_size', 5000);;
+    $sandbox['activities_per_batch'] = Settings::get('activity_update_batch_size', 5000);
   }
 
   // Initialization code done.
@@ -196,7 +196,7 @@ function activity_creator_post_update_8803_remove_activities_with_no_related_ent
     // 'activities_per_batch' is a custom amount that we’ll use to limit
     // how many activities we’re processing in each batch.
     // The variables value can be declared in settings file of Drupal.
-    $sandbox['activities_per_batch'] = Settings::get('activity_update_batch_size', 100);;
+    $sandbox['activities_per_batch'] = Settings::get('activity_update_batch_size', 100);
   }
 
   // Extract activity ids for deletion.
