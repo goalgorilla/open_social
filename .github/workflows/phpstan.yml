@@ -14,5 +14,7 @@ jobs:
 
       - name: PHPStan
         uses: docker://oskarstark/phpstan-ga
+        env:
+          CHECK_PLATFORM_REQUIREMENTS: false
         with:
           args: analyse src/ modules/
