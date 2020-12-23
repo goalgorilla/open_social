@@ -7,11 +7,15 @@ jobs:
     name: PHPCS
     runs-on: ubuntu-latest
     steps:
+      # Checks out to current workspace.
       - uses: actions/checkout@v2
-      # Install composer dependencies so we have drupal/coder which adds our codesniffer, the bin/phpcs file
-      # and dealerdirect/phpcodesniffer-composer-installer which changes the installer_path configuring all sniffs.
-      - name: Install dependencies
-        run: composer install --dev --prefer-dist --no-progress --no-suggest
+      # Ensures to run composer install, also makes sure we have impact on the version of PHP / composer as we
+      # need to define php version as per https://github.com/actions/virtual-environments/issues/1816
+      # ubuntu-latest uses php 8.0 by default so checks will fail.
+      - uses: php-actions/composer@v4
+        with:
+          php_version: '7.4'
+          composer_version: '2'
 
       - name: PHPCS check
         uses: chekalsky/phpcs-action@v1
