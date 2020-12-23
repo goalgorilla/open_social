@@ -4,6 +4,7 @@ namespace Drupal\social_comment;
 
 use Drupal\ajax_comments\Utility;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Routing\RouteMatchInterface;
 
 /**
  * Class SocialCommentLazyRenderer.
@@ -20,13 +21,23 @@ class SocialCommentLazyRenderer {
   private $entityTypeManager;
 
   /**
+   * The current route match.
+   *
+   * @var \Drupal\Core\Routing\RouteMatchInterface
+   */
+  private $routeMatch;
+
+  /**
    * SocialCommentLazyRenderer constructor.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity type manager.
+   * @param \Drupal\Core\Routing\RouteMatchInterface $route_match
+   *   The current route match.
    */
-  public function __construct(EntityTypeManagerInterface $entity_type_manager) {
+  public function __construct(EntityTypeManagerInterface $entity_type_manager, RouteMatchInterface $route_match) {
     $this->entityTypeManager = $entity_type_manager;
+    $this->routeMatch = $route_match;
   }
 
   /**
@@ -44,6 +55,8 @@ class SocialCommentLazyRenderer {
    *   The number of comments.
    * @param int $pager_id
    *   Pager id to use in case of multiple pagers on the one page.
+   * @param string $build_view_mode
+   *   The build view mode.
    *
    * @return mixed
    *   The render array.
@@ -51,7 +64,7 @@ class SocialCommentLazyRenderer {
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  public function renderComments($entity_type, $entity_id, $view_mode, $field_name, $num_comments, $pager_id) {
+  public function renderComments($entity_type, $entity_id, $view_mode, $field_name, $num_comments, $pager_id, $build_view_mode = 'default') {
     /** @var \Drupal\Core\Entity\EntityInterface $entity */
     $entity = $this->entityTypeManager->getStorage($entity_type)->load($entity_id);
     /** @var \Drupal\comment\CommentInterface[] $comments */
@@ -61,7 +74,17 @@ class SocialCommentLazyRenderer {
       return [];
     }
 
-    $build_comments = $this->entityTypeManager->getViewBuilder('comment')->viewMultiple($comments);
+    $build_comments = $this->entityTypeManager->getViewBuilder('comment')->viewMultiple($comments, $build_view_mode);
+
+    if ($build_comments) {
+      $build_comments['pager']['#type'] = 'pager';
+      $build_comments['pager']['#route_name'] = $this->routeMatch->getRouteObject();
+      $build_comments['pager']['#route_parameters'] = $this->routeMatch->getRawParameters()->all();
+      if ($pager_id) {
+        $build_comments['pager']['#element'] = $pager_id;
+      }
+    }
+
     // Since we are rendering it as lazy builder, make sure we attach classes
     // required by ajax_comments. In order to render reply forms etc.
     if (!empty($build_comments) && \Drupal::moduleHandler()->moduleExists('ajax_comments')) {

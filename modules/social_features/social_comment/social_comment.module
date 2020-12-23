@@ -360,3 +360,24 @@ function social_comment_field_info_alter(&$info) {
     $info['comment']['list_class'] = '\Drupal\social_comment\SocialCommentFieldItemList';
   }
 }
+
+/**
+ * Implements hook_preprocess_pager().
+ */
+function social_comment_preprocess_pager(&$variables) {
+  $items = &$variables['items'];
+  $pattern = '/%2C.$/';
+
+  // Change href for all pager items except "pages"
+  // (E.G. first, previous, next, last, etc.).
+  foreach ($items as $key => $item) {
+    if (isset($item['href'])) {
+      $items[$key]['href'] = preg_replace($pattern, '', $item['href']);
+    }
+  }
+
+  // Change href for pager "pages" items.
+  foreach ($items['pages'] ?? [] as $key => &$item) {
+    $items['pages'][$key]['href'] = preg_replace($pattern, '', $item['href']);
+  }
+}
