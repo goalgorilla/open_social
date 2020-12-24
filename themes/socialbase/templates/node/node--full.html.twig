@@ -132,81 +132,91 @@
       {% block metaengage %}
         <div class="meta-engage">
 
-          {% if content.flag_follow_content|render is not empty and logged_in %}
-            <div class="meta-follow">
-              {{ content.flag_follow_content }}
-            </div>
-          {% endif %}
+          <div class="meta-engage--buttons">
+            {% if content.field_event_addtocal is not empty and logged_in %}
+              <div class="meta-addtocal">
+                {{ content.field_event_addtocal }}
+              </div>
+            {% endif %}
 
-          {% if node.isSticky() %}
-            <span class="badge badge-accent badge--large">{% trans %}Featured{% endtrans %}</span>
-          {% endif %}
+            {% if content.flag_follow_content|render is not empty and logged_in %}
+              <div class="meta-follow">
+                {{ content.flag_follow_content }}
+              </div>
+            {% endif %}
 
-          {% if comment_field_status is not empty %}
-            <a href="#section-comments" class="badge badge-default badge--large badge--pill badge--comment-count" title="{% trans %}Total amount of comments{% endtrans %}">
+            {% if node.isSticky() %}
+              <span class="badge badge-accent badge--large">{% trans %}Featured{% endtrans %}</span>
+            {% endif %}
+          </div>
+
+          <div class="meta-engage--badges">
+            {% if comment_field_status is not empty %}
+              <a href="#section-comments" class="badge badge-default badge--large badge--pill badge--comment-count" title="{% trans %}Total amount of comments{% endtrans %}">
+                <span class="badge__container">
+                  <svg class="badge__icon">
+                    <use xlink:href="#icon-comment"></use>
+                  </svg>
+                  <span class="badge__label">
+                    {{ comment_count }}
+                  </span>
+                  <span class="badge__label badge__label--description">
+                    {% trans %}
+                        comment
+                    {% plural comment_count %}
+                        comments
+                    {% endtrans %}
+                  </span>
+                </span>
+              </a>
+            {% endif %}
+
+            {% if likes_count is not empty %}
+              <div class="badge badge-default badge--large badge--pill" title="{% trans %}Total amount of likes{% endtrans %}">
+                <span class="badge__container">
+                  <svg class="badge__icon">
+                    <use xlink:href="#icon-like"></use>
+                  </svg>
+                  <span class="badge__label">
+                    {{ likes_count }}
+                  </span>
+                  <span class="badge__label badge__label--description">
+                    {% trans %}
+                        like
+                    {% plural likes_count %}
+                        likes
+                    {% endtrans %}
+                  </span>
+                </span>
+              </div>
+            {% endif %}
+
+            {% if visibility_icon and visibility_label %}
+              <div class="badge badge-default badge--large badge--pill" title="{% trans %}The visibility of this content is set to {{ visibility_label }}{% endtrans %} ">
+                <span class="badge__container">
+                  <svg class="badge__icon">
+                    <use xlink:href="#icon-{{ visibility_icon }}"></use>
+                  </svg>
+                  <span class="badge__label">&nbsp;</span>
+                  <span class="badge__label badge__label--description">{{ visibility_label }}</span>
+                </span>
+              </div>
+            {% endif %}
+
+            {% if views_count is not empty and views_label %}
+              <div class="badge badge-default badge--large badge--pill" title="{% trans %}Total amount of views{% endtrans %}">
               <span class="badge__container">
                 <svg class="badge__icon">
-                  <use xlink:href="#icon-comment"></use>
+                  <use xlink:href="#icon-views"></use>
                 </svg>
                 <span class="badge__label">
-                  {{ comment_count }}
+                  {{ views_count }}
                 </span>
-                <span class="badge__label badge__label--description">
-                  {% trans %}
-                      comment
-                  {% plural comment_count %}
-                      comments
-                  {% endtrans %}
-                </span>
+                <span class="badge__label badge__label--description">{{ views_label }}</span>
               </span>
-            </a>
-          {% endif %}
-
-          {% if likes_count is not empty %}
-            <div class="badge badge-default badge--large badge--pill" title="{% trans %}Total amount of likes{% endtrans %}">
-              <span class="badge__container">
-                <svg class="badge__icon">
-                  <use xlink:href="#icon-like"></use>
-                </svg>
-                <span class="badge__label">
-                  {{ likes_count }}
-                </span>
-                <span class="badge__label badge__label--description">
-                  {% trans %}
-                      like
-                  {% plural likes_count %}
-                      likes
-                  {% endtrans %}
-                </span>
-              </span>
-            </div>
-          {% endif %}
-
-          {% if visibility_icon and visibility_label %}
-            <div class="badge badge-default badge--large badge--pill" title="{% trans %}The visibility of this content is set to {{ visibility_label }}{% endtrans %} ">
-              <span class="badge__container">
-                <svg class="badge__icon">
-                  <use xlink:href="#icon-{{ visibility_icon }}"></use>
-                </svg>
-                <span class="badge__label">&nbsp;</span>
-                <span class="badge__label badge__label--description">{{ visibility_label }}</span>
-              </span>
-            </div>
-          {% endif %}
-
-          {% if views_count is not empty and views_label %}
-            <div class="badge badge-default badge--large badge--pill" title="{% trans %}Total amount of views{% endtrans %}">
-            <span class="badge__container">
-              <svg class="badge__icon">
-                <use xlink:href="#icon-views"></use>
-              </svg>
-              <span class="badge__label">
-                {{ views_count }}
-              </span>
-              <span class="badge__label badge__label--description">{{ views_label }}</span>
-            </span>
-            </div>
-          {% endif %}
+              </div>
+            {% endif %}
+          </div>
 
         </div>
         {% endblock %}

@@ -45,24 +45,27 @@
       <div class="media-wrapper">
         <div class="media message__heading">
           <div class="message__back-btn">
-            <a href="{{ content.back_to_inbox }}" class="btn btn-icon-toggle">
-              <svg class="btn-icon icon-gray">
+            <a href="{{ content.back_to_inbox }}" class="btn btn-icon-toggle" title="{{ 'Go back to your inbox'|t }}">
+              <svg class="btn-icon icon-gray" aria-hidden="true">
                 <use xlink:href="#icon-navigate_before"></use>
               </svg>
             </a>
           </div>
           {{ content.members }}
 
-          <div class="message__thread-actions btn-group">
-            <button type="button" data-toggle="dropdown" aria-expanded="false" aria-haspopup="true" class="btn btn-icon-toggle dropdown-toggle">
-              <svg class="btn-icon icon-gray">
-                <use xlink:href="#icon-expand_more"></use>
-              </svg>
-            </button>
-            <ul class="dropdown-menu dropdown-menu-right">
-              <li>{{ content.delete_link }}</li>
-            </ul>
-          </div>
+          {% if content.delete_link %}
+            <div class="message__thread-actions btn-group">
+              <button type="button" data-toggle="dropdown" aria-expanded="false" aria-haspopup="true" class="btn btn-icon-toggle dropdown-toggle">
+                <svg class="btn-icon icon-gray">
+                  <title>{% trans %}Actions for this thread{% endtrans %}</title>
+                  <use xlink:href="#icon-expand_more"></use>
+                </svg>
+              </button>
+              <ul class="dropdown-menu dropdown-menu-right">
+                <li>{{ content.delete_link }}</li>
+              </ul>
+            </div>
+          {% endif %}
 
         </div>
       </div>

@@ -3,12 +3,17 @@
 namespace Drupal\activity_creator;
 
 use Drupal\activity_creator\Entity\Activity;
+use Drupal\activity_creator\Plugin\ActivityDestinationManager;
 use Drupal\Component\Render\FormattableMarkup;
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\Database\Connection;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Render\BubbleableMetadata;
+use Drupal\Core\Utility\Token;
 use Drupal\language\ConfigurableLanguageManagerInterface;
 use Drupal\message\Entity\Message;
-use Drupal\activity_creator\Plugin\ActivityDestinationManager;
 use Drupal\social_event\EventEnrollmentInterface;
 
 /**
@@ -26,13 +31,70 @@ class ActivityFactory extends ControllerBase {
   protected $activityDestinationManager;
 
   /**
+   * The entity type manager.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  protected $entityTypeManager;
+
+  /**
+   * The connection to the database.
+   *
+   * @var \Drupal\Core\Database\Connection
+   */
+  protected $database;
+
+  /**
+   * The language manager.
+   *
+   * @var \Drupal\Core\Language\LanguageManagerInterface
+   */
+  protected $languageManager;
+
+  /**
+   * The token replacement instance.
+   *
+   * @var \Drupal\Core\Utility\Token
+   */
+  protected $token;
+
+  /**
+   * The module handler.
+   *
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface
+   */
+  protected $moduleHandler;
+
+  /**
    * ActivityFactory constructor.
    *
    * @param \Drupal\activity_creator\Plugin\ActivityDestinationManager $activityDestinationManager
    *   The activity destination manager.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
+   * @param \Drupal\Core\Database\Connection $database
+   *   The connection to the database.
+   * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
+   *   The new language manager.
+   * @param \Drupal\Core\Utility\Token $token
+   *   The token replacement instance.
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
+   *   The module handler.
    */
-  public function __construct(ActivityDestinationManager $activityDestinationManager) {
+  public function __construct(
+    ActivityDestinationManager $activityDestinationManager,
+    EntityTypeManagerInterface $entity_type_manager,
+    Connection $database,
+    LanguageManagerInterface $language_manager,
+    Token $token,
+    ModuleHandlerInterface $module_handler
+  ) {
     $this->activityDestinationManager = $activityDestinationManager;
+    $this->entityTypeManager = $entity_type_manager;
+    $this->database = $database;
+    $this->languageManager = $language_manager;
+    $this->token = $token;
+    $this->moduleHandler = $module_handler;
   }
 
   /**
@@ -247,17 +309,17 @@ class ActivityFactory extends ControllerBase {
     if (!empty($related_object['target_id']) && !empty($related_object['target_type'])) {
       if ($related_object['target_type'] === 'comment') {
         // Get commented entity.
-        $comment_storage = \Drupal::entityTypeManager()->getStorage('comment');
+        $comment_storage = $this->entityTypeManager->getStorage('comment');
         $comment = $comment_storage->load($related_object['target_id']);
         $commented_entity = $comment->getCommentedEntity();
         // Get all comments of commented entity.
-        $comment_query = \Drupal::entityQuery('comment');
+        $comment_query = $this->entityTypeManager->getStorage('comment')->getQuery();
         $comment_query->condition('entity_id', $commented_entity->id(), '=');
         $comment_query->condition('entity_type', $commented_entity->getEntityTypeId(), '=');
         $comment_ids = $comment_query->execute();
         // Get all activities provided by comments of commented entity.
         if (!empty($comment_ids)) {
-          $activity_query = \Drupal::entityQuery('activity');
+          $activity_query = $this->entityTypeManager->getStorage('activity')->getQuery();
           $activity_query->condition('field_activity_entity.target_id', $comment_ids, 'IN');
           $activity_query->condition('field_activity_entity.target_type', $related_object['target_type'], '=');
           // We exclude activities with email, platform_email and notifications
@@ -277,13 +339,13 @@ class ActivityFactory extends ControllerBase {
   /**
    * Get related entity for activity aggregation.
    */
-  public static function getActivityRelatedEntity($data) {
+  public function getActivityRelatedEntity($data) {
     $related_object = $data['related_object'][0];
 
     // We return parent comment as related object as comment
     // for create_comment_reply messages.
     if ($data['message_template'] === 'create_comment_reply') {
-      $comment_storage = \Drupal::entityTypeManager()->getStorage('comment');
+      $comment_storage = $this->entityTypeManager->getStorage('comment');
       // @TODO: Check if comment published?
       $comment = $comment_storage->load($related_object['target_id']);
       if ($comment) {
@@ -298,7 +360,7 @@ class ActivityFactory extends ControllerBase {
     }
     // We return commented entity as related object for all other comments.
     elseif (isset($related_object['target_type']) && $related_object['target_type'] === 'comment') {
-      $comment_storage = \Drupal::entityTypeManager()->getStorage('comment');
+      $comment_storage = $this->entityTypeManager->getStorage('comment');
       // @todo: Check if comment published?
       $comment = $comment_storage->load($related_object['target_id']);
       if ($comment) {
@@ -313,7 +375,7 @@ class ActivityFactory extends ControllerBase {
     }
     // We return Event as related object for all Event Enrollments.
     elseif (isset($related_object['target_type']) && $related_object['target_type'] === 'event_enrollment') {
-      $entity_storage = \Drupal::entityTypeManager()
+      $entity_storage = $this->entityTypeManager
         ->getStorage($related_object['target_type']);
       $entity = $entity_storage->load($related_object['target_id']);
 
@@ -328,6 +390,9 @@ class ActivityFactory extends ControllerBase {
         }
       }
     }
+
+    $this->moduleHandler->alter('activity_creator_related_entity_object', $related_object, $data);
+
     return $related_object;
   }
 
@@ -341,7 +406,7 @@ class ActivityFactory extends ControllerBase {
       // Get related entity.
       $related_entity = $this->getActivityRelatedEntity($data);
       if (!empty($related_entity['target_id']) && !empty($related_entity['target_type'])) {
-        $query = \Drupal::database()->select('comment_field_data', 'cfd');
+        $query = $this->database->select('comment_field_data', 'cfd');
         $query->addExpression('COUNT(DISTINCT cfd.uid)');
         $query->condition('cfd.status', 1);
         $query->condition('cfd.entity_type', $related_entity['target_type']);
@@ -423,7 +488,7 @@ class ActivityFactory extends ControllerBase {
 
     // If we have a language code here we can try to get a translated text.
     if (!empty($langcode)) {
-      $language_manager = \Drupal::languageManager();
+      $language_manager = $this->languageManager;
       if ($language_manager instanceof ConfigurableLanguageManagerInterface) {
         // Load the language override for the message template.
         $config_translation = $language_manager->getLanguageConfigOverride($langcode, 'message.template.' . $message_template->id());
@@ -511,12 +576,12 @@ class ActivityFactory extends ControllerBase {
     $bubbleable_metadata = new BubbleableMetadata();
     foreach ($output as $key => $value) {
       if (is_string($value)) {
-        $output[$key] = \Drupal::token()
+        $output[$key] = $this->token
           ->replace($value, ['message' => $message], $options, $bubbleable_metadata);
       }
       else {
         if (isset($value['value'])) {
-          $output[$key] = \Drupal::token()
+          $output[$key] = $this->token
             ->replace($value['value'], ['message' => $message], $options, $bubbleable_metadata);
         }
       }

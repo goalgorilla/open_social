@@ -5,13 +5,16 @@
  * The Social Privagte Message module.
  */
 
+use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Asset\AttachedAssetsInterface;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Template\Attribute;
 use Drupal\Core\Url;
+use Drupal\private_message\Entity\PrivateMessageThreadInterface;
 use Drupal\social_private_message\DeletedUser;
 use Drupal\user\Entity\User;
 use Drupal\user\UserInterface;
@@ -377,7 +380,12 @@ function social_private_message_entity_view_alter(array &$build, EntityInterface
  * Implements hook_thread_view_alter().
  */
 function social_private_message_thread_view_alter(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display) {
-  if ($display->getComponent('delete_link')) {
+  $current_user = Drupal::currentUser();
+  if (
+    $display->getComponent('delete_link') &&
+    $current_user->hasPermission('use private messaging system') &&
+    $current_user->hasPermission('delete private messages thread')
+  ) {
     $url = Url::fromRoute('entity.private_message_thread.delete_form', ['private_message_thread' => $entity->id()]);
     $build['delete_link'] = [
       '#prefix' => '',
@@ -386,6 +394,16 @@ function social_private_message_thread_view_alter(array &$build, EntityInterface
       '#url' => $url,
       '#title' => t('Delete thread'),
     ];
+  }
+  else {
+    unset($build['delete_link']);
+  }
+
+  if (
+    !$current_user->hasPermission('use private messaging system') ||
+    !$current_user->hasPermission('reply to private messages thread')
+  ) {
+    unset($build['private_message_form']);
   }
   // Also add the back to inbox link
   // but just the link since it's a drop down with icon.
@@ -617,4 +635,27 @@ function social_private_message_views_query_alter(ViewExecutable $view, QueryPlu
     $query->addWhere(NULL, 'private_message_thread__members.members_target_id', $current_user_id, '=');
     $query->addWhere(NULL, 'pm_thread_delete_time.owner', $current_user_id, '=');
   }
+}
+
+/**
+ * Implements hook_private_message_thread_access().
+ */
+function social_private_message_private_message_thread_access(PrivateMessageThreadInterface $entity, $operation, AccountInterface $account) {
+  if ($operation === 'delete') {
+    if (
+      $account->hasPermission('use private messaging system') &&
+      $account->hasPermission('delete private messages thread')
+    ) {
+      return AccessResult::allowed();
+    }
+
+    return AccessResult::forbidden();
+  }
+}
+
+/**
+ * Implements hook_private_message_create_access().
+ */
+function social_private_message_private_message_create_access(AccountInterface $account, array $context, $entity_bundle) {
+  return AccessResult::forbiddenIf(!($account->hasPermission('use private messaging system') && $account->hasPermission('create private messages thread')));
 }

@@ -3,6 +3,7 @@ status: true
 dependencies:
   module:
     - profile
+    - taxonomy
     - user
     - search_api
     - social_search
@@ -14,8 +15,6 @@ dependencies:
     - field.storage.profile.field_profile_profile_tag
     - search_api.server.social_database
     - core.entity_view_mode.profile.search_index
-_core:
-  default_config_hash: DISMSpL3sN3hwLfwzea6p8b8ZCaZnjde0lx5MYXnYhs
 id: social_users
 name: 'Social Users'
 description: 'Default users index created for the Social distribution.'
@@ -37,6 +36,17 @@ field_settings:
     dependencies:
       config:
         - field.storage.profile.field_profile_expertise
+  field_profile_expertise_name:
+    label: 'Expertise » Taxonomy term » Name'
+    datasource_id: 'entity:profile'
+    property_path: 'field_profile_expertise:entity:name'
+    type: text
+    dependencies:
+      config:
+        - field.storage.profile.field_profile_expertise
+      module:
+        - taxonomy
+        - taxonomy
   field_profile_first_name:
     label: 'First name'
     datasource_id: 'entity:profile'
@@ -54,6 +64,17 @@ field_settings:
     dependencies:
       config:
         - field.storage.profile.field_profile_interests
+  field_profile_interests_name:
+    label: 'Interests » Taxonomy term » Name'
+    datasource_id: 'entity:profile'
+    property_path: 'field_profile_interests:entity:name'
+    type: text
+    dependencies:
+      config:
+        - field.storage.profile.field_profile_interests
+      module:
+        - taxonomy
+        - taxonomy
   field_profile_last_name:
     label: 'Last name'
     datasource_id: 'entity:profile'
@@ -118,11 +139,6 @@ datasource_settings:
       default: true
       selected: {  }
 processor_settings:
-  rendered_item:
-    plugin_id: rendered_item
-    weights:
-      add_properties: 0
-      pre_index_save: -10
   add_url:
     plugin_id: add_url
     weights:
@@ -131,20 +147,47 @@ processor_settings:
     plugin_id: aggregated_field
     weights:
       add_properties: 20
-  tokenizer:
-    plugin_id: tokenizer
+  blocked_users:
+    weights:
+      preprocess_query: -30
+  html_filter:
+    plugin_id: html_filter
+    all_fields: false
+    fields:
+      - name
+      - rendered_item
+    title: true
+    alt: true
+    tags:
+      b: 2
+      em: 1
+      h1: 5
+      h2: 3
+      h3: 2
+      strong: 2
+      u: 1
+    weights:
+      preprocess_index: -10
+      preprocess_query: -10
+  ignorecase:
+    plugin_id: ignorecase
     all_fields: true
     fields:
+      - field_profile_expertise_name
       - field_profile_first_name
+      - field_profile_interests_name
       - field_profile_last_name
       - name
       - rendered_item
-    spaces: ''
-    overlap_cjk: 1
-    minimum_word_size: '3'
     weights:
-      preprocess_index: -6
-      preprocess_query: -6
+      preprocess_index: -15
+      preprocess_query: -10
+  language_with_fallback: {  }
+  rendered_item:
+    plugin_id: rendered_item
+    weights:
+      add_properties: 0
+      pre_index_save: -10
   stopwords:
     plugin_id: stopwords
     all_fields: false
@@ -190,53 +233,38 @@ processor_settings:
     weights:
       preprocess_index: -5
       preprocess_query: -2
-  ignorecase:
-    plugin_id: ignorecase
+  super_user:
+    weights:
+      preprocess_query: 30
+  tokenizer:
+    plugin_id: tokenizer
     all_fields: true
     fields:
+      - field_profile_expertise_name
       - field_profile_first_name
+      - field_profile_interests_name
       - field_profile_last_name
       - name
       - rendered_item
+    spaces: ''
+    overlap_cjk: 1
+    minimum_word_size: '3'
     weights:
-      preprocess_index: -10
-      preprocess_query: -10
+      preprocess_index: -6
+      preprocess_query: -6
   transliteration:
     plugin_id: transliteration
     all_fields: true
     fields:
+      - field_profile_expertise_name
       - field_profile_first_name
+      - field_profile_interests_name
       - field_profile_last_name
       - name
       - rendered_item
     weights:
       preprocess_index: -10
       preprocess_query: -10
-  html_filter:
-    plugin_id: html_filter
-    all_fields: false
-    fields:
-      - name
-      - rendered_item
-    title: true
-    alt: true
-    tags:
-      b: 2
-      em: 1
-      h1: 5
-      h2: 3
-      h3: 2
-      strong: 2
-      u: 1
-    weights:
-      preprocess_index: -10
-      preprocess_query: -10
-  blocked_users:
-    weights:
-      preprocess_query: -30
-  super_user:
-    weights:
-      preprocess_query: 30
 tracker_settings:
   default:
     indexing_order: fifo

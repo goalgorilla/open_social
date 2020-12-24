@@ -25,6 +25,14 @@ die('This file should not be run directly.');
 // new TranslatableMarkup('Example');
 // new PluralTranslatableMarkup($count, '1 example', '@count examples');.
 
+// Changed in version 8.7, 9.4, 10.0
+new TranslatableMarkup('
+        Oops, there was an error. This may have happened for the following reasons: <br>
+        - Invalid username/email and password combination. <br>
+        - There has been more than one failed login attempt for this account. It is temporarily blocked. <br>
+        - Too many failed login attempts from your computer (IP address). This IP address is temporarily blocked. <br> <br>
+        To solve the issue, try using different login information, try again later, or <a href=":url">request a new password</a>');
+
 // Change in version 8.3.
 new TranslatableMarkup("Set wether event types field is required or not.");
 new TranslatableMarkup("Determine wether users can upload documents to comments.");
@@ -122,3 +130,6 @@ new TranslatableMarkup('To make the list of topics more specific you can additio
 new TranslatableMarkup('Autocomplete field with items from taxonomy list topic types.');
 new TranslatableMarkup('Autocomplete field with items from taxonomy list content tags.');
 new TranslatableMarkup('Autocomplete field with group names.');
+
+// String added because original one was changed due to #3183708 issue.
+new TranslatableMarkup('Changing the group may have impact on the <strong>visibility settings</strong>.');

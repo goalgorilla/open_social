@@ -7,6 +7,7 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Drupal\group\Entity\GroupContent;
 use Drupal\group\Entity\GroupContentType;
+use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupType;
 use Drupal\node\Entity\Node;
 use Drupal\social_post\Entity\Post;
@@ -142,6 +143,30 @@ class SocialGroupHelperService {
     }
 
     return $visibility;
+  }
+
+  /**
+   * Returns the statically cached group members form the current group.
+   *
+   * @return array
+   *   All group members as array with value user->id().
+   */
+  public static function getCurrentGroupMembers() {
+    $cache = &drupal_static(__FUNCTION__, []);
+
+    if (!empty($cache)) {
+      return $cache;
+    }
+
+    $group = _social_group_get_current_group();
+    if ($group instanceof GroupInterface) {
+      $memberships = $group->getMembers();
+      foreach ($memberships as $member) {
+        $cache[] = $member->getUser()->id();
+      }
+    }
+
+    return $cache;
   }
 
   /**

@@ -27,7 +27,11 @@
   // The vertical or fixed toolbar is already fixed so the navbar needs to be
   // made to just sit on the page.
   .navbar-default {
-    position: relative;
+
+    // Media query from Gin theme.
+    @media (max-width: 975px) {
+      position: relative;
+    }
   }
 
   // The admin toolbar needs to have a higher z-index than the normal menu.
@@ -39,5 +43,20 @@
 
 .toolbar-fixed .main-container,
 .toolbar-vertical .main-container {
-  padding-top: 0;
+
+  // Media query from Gin theme.
+  @media (max-width: 975px) {
+    padding-top: 0;
+  }
+}
+
+.toolbar-horizontal .toolbar-tray {
+  .menu-item {
+    &:hover,
+    &:focus {
+      .toolbar-icon.toolbar-icon-social-lets-connect-main:before {
+        background-color: transparent;
+      }
+    }
+  }
 }

@@ -52,6 +52,9 @@ function social_landing_page_theme() {
   $theme_templates['node__landing_page'] = [
     'base hook' => 'node',
   ];
+  $theme_templates['node__landing_page__featured'] = [
+    'base hook' => 'node',
+  ];
   // Paragraphs.
   $theme_templates['paragraph__block__default'] = [
     'base hook' => 'paragraph',
@@ -106,12 +109,9 @@ function social_landing_page_preprocess_page(&$variables) {
     $variables['node'] instanceof NodeInterface &&
     $variables['node']->bundle() === 'landing_page'
   ) {
-    if ($variables['content_attributes'] instanceof Attribute) {
-      $variables['content_attributes']->removeClass('layout--with-complementary');
-    }
-    else {
-      $variables['content_attributes'] = new Attribute();
-      $variables['content_attributes']->addClass('container');
+    if (\Drupal::routeMatch()->getRouteName() === 'entity.node.edit_form') {
+      $variables['attributes'] = new Attribute();
+      $variables['attributes']->addClass('container');
     }
   }
 }
@@ -170,6 +170,13 @@ function social_landing_page_preprocess_node(&$variables) {
     // Add node edit url for management.
     if ($node instanceof NodeInterface && $node->access('update', $account)) {
       $variables['node_edit_url'] = $node->toUrl('edit-form')->toString();
+    }
+
+    // A landing page has a different way of determining this.
+    $variables['no_image'] = FALSE;
+    $image = _social_landing_page_get_hero_image($node);
+    if (empty($image)) {
+      $variables['no_image'] = TRUE;
     }
   }
 }

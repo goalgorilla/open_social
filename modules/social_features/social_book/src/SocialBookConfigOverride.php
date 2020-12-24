@@ -40,7 +40,7 @@ class SocialBookConfigOverride implements ConfigFactoryOverrideInterface {
     ];
     foreach ($config_names as $config_name) {
       if (in_array($config_name, $names)) {
-        $overrides[$config_name]['datasource_settings']['entity:node']['bundles']['selected']['book'] = 'book';
+        $overrides[$config_name]['field_settings']['rendered_item']['configuration']['view_mode']['book'] = 'search_index';
       }
     }
 

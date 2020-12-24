@@ -16,7 +16,7 @@ Feature: Enroll for an event
 
     Then I should see "No one has enrolled for this event"
     And I should see the button "Enroll"
-    And I should see the link "Enrollments"
+    And I should see the link "Manage enrollments"
 
     When I press the "Enroll" button
     Then I should see the button "Enrolled"
@@ -40,7 +40,7 @@ Feature: Enroll for an event
       | Time          | 11:00:00 |
       | Location name | GG HQ |
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text."
-    And I click radio button "Public - visible to everyone including people who are not a member"
+    And I click radio button "Public"
     And I press "Save"
     And I logout
     Given I open the "event" node with title "Enrollment redirect test event"
@@ -72,7 +72,7 @@ Feature: Enroll for an event
 
     Then I should see "No one has enrolled for this event"
     And I should see the button "Enroll"
-    And I should see the link "Enrollments"
+    And I should see the link "Manage enrollments"
 
     When I press the "Enroll" button
     Then I should see the button "Enrolled"
@@ -83,7 +83,7 @@ Feature: Enroll for an event
     And I click "Cancel enrollment"
     Then I should see "No one has enrolled for this event"
     And I should see the button "Enroll"
-    And I should see the link "Enrollments"
+    And I should see the link "Manage enrollments"
 
     # Enroll again, since this is technically something different.
     When I press the "Enroll" button
@@ -122,7 +122,7 @@ Feature: Enroll for an event
 
     Then I should see "No one has enrolled for this event"
     And I should see the button "Event has passed"
-    And I should see the link "Enrollments"
+    And I should see the link "Manage enrollments"
     When I am viewing my event:
       | title                    | My Behat Event created |
       | field_event_date         | -3 days                |
@@ -132,4 +132,3 @@ Feature: Enroll for an event
 
     Then I should see "No one has enrolled for this event"
     And I should see the button "Event has passed"
-    And I should see the link "Enrollments"

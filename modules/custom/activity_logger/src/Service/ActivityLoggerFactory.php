@@ -246,7 +246,11 @@ class ActivityLoggerFactory {
     }
 
     $ids = $query->execute();
-    if (!empty($ids) && $message_type != 'moved_content_between_groups') {
+
+    $allowed_duplicates = ['moved_content_between_groups'];
+    \Drupal::moduleHandler()->alter('activity_allowed_duplicates', $allowed_duplicates);
+
+    if (!empty($ids) && !in_array($message_type, $allowed_duplicates)) {
       $exists = TRUE;
     }
     return $exists;

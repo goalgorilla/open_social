@@ -47,7 +47,7 @@
 #}
 {{ attach_library('socialbase/offcanvas')}}
 
-<div{{ attributes }}>
+<div{{ attributes }} data-class="exposed-filter-block">
   <div class="btn--offcanvas-trigger">
     <a href="#block-filter" class="btn btn-default btn-raised ">
       <svg class="btn-icon">
@@ -61,7 +61,7 @@
 
     {{ title_prefix }}
     {% if label %}
-      <header{{ title_attributes.addClass('complementary-title') }}>{{ label }}</header>
+      <h2 {{ title_attributes.addClass('complementary-title', 'no-margin') }}>{{ label }}</h2>
     {% endif %}
     {{ title_suffix }}
 
