@@ -12,7 +12,7 @@ Feature: Use a landing page as 404 page
     When I am on "node/add/landing_page"
     And I fill in the following:
       | Title | Page not found |
-    And I click radio button "Public - visible to everyone including people who are not a member" with the id "edit-field-content-visibility-public"
+    And I click radio button "Public" with the id "edit-field-content-visibility-public"
     And I press "Add Section"
     And I wait for AJAX to finish
     And I press "Add Hero"

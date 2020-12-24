@@ -69,7 +69,7 @@ class Field extends PreprocessBase {
       $node = !empty($attached['#object']) ? $attached['#object'] : NULL;
       // Count the amount of comments placed on a Node..
       if ($node instanceof Node) {
-        $comment_count = _socialbase_node_get_comment_count($node, $element['#field_name']);
+        $comment_count = _socialbase_node_get_comment_count($node);
         // Add it to the title.
         $variables['comment_count'] = $comment_count;
       }

@@ -68,6 +68,9 @@ class Page extends PreprocessBase {
         'book',
       ];
 
+      // Alter list of content types where need to hide the default page title.
+      \Drupal::moduleHandler()->alter('social_content_type', $page_to_exclude);
+
       $paths_to_exclude = [
         'edit',
         'add',

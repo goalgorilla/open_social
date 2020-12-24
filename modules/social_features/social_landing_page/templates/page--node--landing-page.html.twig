@@ -27,6 +27,12 @@
  */
 #}
 
+{%
+  set classes = [
+  'row',
+]
+%}
+
 {% if page.header %}
   {{ page.header }}
 {% endif %}
@@ -43,7 +49,7 @@
     {{ page.content_top }}
   {% endif %}
   {# Clear section class #}
-  <section{{ content_attributes.removeClass('with-title-region', 'layout--with-complementary') }}>
+  <section{{ attributes.addClass(classes) }}>
     {# Page title printed in a section #}
     {# No side blocks #}
     {% block content %}
