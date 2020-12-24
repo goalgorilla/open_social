@@ -12,4 +12,45 @@
  */
 function social_activity_filter_install() {
   user_role_grant_permissions('sitemanager', ['administer social_activity_filter']);
+  social_activity_filter_update_8001();
+}
+
+/**
+ * Set default filter settings for activities blocks.
+ */
+function social_activity_filter_update_8001() {
+
+  $config_factory = \Drupal::service('config.factory');
+  $config_names = [
+    'activity_stream' => [
+      'block_stream_explore',
+      'block_stream_homepage',
+      'block_stream_homepage_without_post',
+    ],
+    'community_activities' => [
+      'block_stream_landing',
+    ],
+  ];
+
+  // Add tag filter for activity views blocks.
+  foreach ($config_names as $config_name => $display_ids) {
+    $views_config = $config_factory->getEditable("views.view.{$config_name}");
+    foreach ($display_ids as $display_id) {
+      $views_config->set("display.{$display_id}.display_options.override_tags_filter", 1);
+      $views_config->set("display.{$display_id}.display_options.filters.activity_filter_tags", social_activity_get_tag_filter_data());
+    }
+    $views_config->save();
+  }
+
+  // Update activity filter settings.
+  $social_activity_filter_config = $config_factory->getEditable('social_activity_filter.settings');
+
+  $blocks = [];
+  foreach ($config_names as $config_name => $display_ids) {
+    foreach ($display_ids as $display_id) {
+      $blocks["{$config_name}__{$display_id}"] = "{$config_name}__{$display_id}";
+    }
+  }
+  $social_activity_filter_config->set('blocks', $blocks);
+  $social_activity_filter_config->save();
 }

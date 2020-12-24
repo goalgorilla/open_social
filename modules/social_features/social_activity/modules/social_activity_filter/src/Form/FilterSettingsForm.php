@@ -12,7 +12,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Class FilterSettingsForm.
+ * Provides a settings form of activity filter.
  *
  * @package Drupal\social_activity_filter\Form
  */
@@ -82,11 +82,23 @@ class FilterSettingsForm extends ConfigFormBase implements ContainerInjectionInt
 
     // Get the configuration file.
     $config = $this->config('social_activity_filter.settings');
-    $taxonomyFields = $config->get('taxonomy_fields');
 
     $form['social_activity_filter'] = [
       '#type' => 'fieldset',
-      '#title' => $this->t('Filter options list'),
+    ];
+
+    $displays = [];
+    foreach (social_activity_default_views_list() as $views_id) {
+      $displays = array_merge($displays, $this->getDisplayBlocks($views_id));
+    }
+
+    $form['social_activity_filter']['blocks'] = [
+      '#type' => 'checkboxes',
+      '#markup' => '<div class="fieldset__description">' . $this->t('Please select the blocks in which the taxonomy filters can be used.') . '</div>',
+      '#title' => $this->t('Select blocks'),
+      '#options' => $displays,
+      '#default_value' => $config->get('blocks'),
+      '#required' => TRUE,
     ];
 
     $storage = $this->entityTypeManager->getStorage('taxonomy_vocabulary');
@@ -96,18 +108,16 @@ class FilterSettingsForm extends ConfigFormBase implements ContainerInjectionInt
 
     /** @var \Drupal\taxonomy\Entity\Vocabulary $vocabulary */
     foreach ($taxonomy_vocabularies as $vid => $vocabulary) {
-      $referencedField = isset($taxonomyFields[$vid]) ? $taxonomyFields[$vid] : $this->t('none');
-      $vocabulariesList[$vid] = $vocabulary->get('name') . " (field: $referencedField)";
+      $vocabulariesList[$vid] = $vocabulary->get('name');
     }
 
     $form['social_activity_filter']['vocabulary'] = [
       '#type' => 'checkboxes',
-      '#title' => $this->t('Taxonomy vocabularies'),
+      '#markup' => '<div class="fieldset__description">' . $this->t('Please select the taxonomy vocabularies that can be used in the taxonomy filters.') . '</div>',
+      '#title' => $this->t('Select taxonomy vocabularies'),
       '#options' => $vocabulariesList,
       '#default_value' => $config->get('vocabulary'),
       '#required' => TRUE,
-      '#description' => $this->t('Select vocabulary which should be displayed in the "Activity filter block". Note, for selected vocabulary will be automatically added a  taxonomy field that is referenced to the content type of activity.
-       Also, this field will be used to filter items in the list. If both content types have the same taxonomy but with different fields then only the first matched field be selected.'),
     ];
 
     return parent::buildForm($form, $form_state);
@@ -124,9 +134,18 @@ class FilterSettingsForm extends ConfigFormBase implements ContainerInjectionInt
     $vocabularies = array_filter($form_state->getValue('vocabulary'));
     $fields = $this->getReferencedTaxonomyFields($vocabularies);
 
+    $blocks = $form_state->getValue('blocks');
+
     $config->set('vocabulary', $vocabularies);
     $config->set('taxonomy_fields', $fields);
+    $config->set('blocks', $blocks);
     $config->save();
+
+    foreach ($blocks as $id => $block) {
+      $tag_filter = $block ? TRUE : FALSE;
+      [$viws_id, $display_id] = explode('__', $id);
+      $this->updateDisplayBlock($viws_id, $display_id, $tag_filter);
+    }
 
     parent::submitForm($form, $form_state);
   }
@@ -169,6 +188,54 @@ class FilterSettingsForm extends ConfigFormBase implements ContainerInjectionInt
       }
     }
     return $field_names;
+  }
+
+  /**
+   * Gets all displays blocks of views.
+   *
+   * @param string $views_id
+   *   Views ID.
+   *
+   * @return array
+   *   Mapped array of views displays.
+   */
+  public function getDisplayBlocks($views_id) {
+    $view = $this->entityTypeManager->getStorage('view')->load($views_id);
+
+    $blocks = [];
+    foreach ($view->get('display') as $display) {
+      if ($display['display_plugin'] === 'block') {
+        $blocks["{$views_id}__{$display['id']}"] = $display['display_title'];
+      }
+    }
+    return $blocks;
+  }
+
+  /**
+   * Update settings of displays views blocks.
+   *
+   * @param string $views_id
+   *   Views ID.
+   * @param string $display_id
+   *   Display ID.
+   * @param bool $enabled
+   *   Flag to update/cleanup values.
+   */
+  public function updateDisplayBlock($views_id, $display_id, $enabled = FALSE) {
+    $config = $this->configFactory->getEditable("views.view.{$views_id}");
+    $override_tags_filter = "display.{$display_id}.display_options.override_tags_filter";
+    $activity_filter_tags = "display.{$display_id}.display_options.filters.activity_filter_tags";
+
+    if ($enabled) {
+      $config->set($override_tags_filter, 1);
+      $config->set($activity_filter_tags, social_activity_get_tag_filter_data());
+    }
+    else {
+      $config->clear($override_tags_filter);
+      $config->clear($activity_filter_tags);
+    }
+
+    $config->save();
   }
 
 }
