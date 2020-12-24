@@ -47,7 +47,7 @@ third_party_settings:
         - field_event_date
         - field_event_date_end
       parent_name: ''
-      weight: 4
+      weight: 1
       label: 'Date & time'
       format_type: fieldset
       format_settings:
@@ -61,7 +61,7 @@ third_party_settings:
         - field_event_location
         - field_event_address
       parent_name: ''
-      weight: 5
+      weight: 2
       label: Location
       format_type: fieldset
       format_settings:
@@ -74,11 +74,9 @@ third_party_settings:
       children:
         - groups
         - field_content_visibility
-        - field_enroll_method
-        - field_event_enroll
-        - field_event_enroll_outside_group
+        - group_enrollment
       parent_name: ''
-      weight: 2
+      weight: 3
       label: 'Access permissions'
       format_type: fieldset
       format_settings:
@@ -91,7 +89,7 @@ third_party_settings:
       children:
         - field_files
       parent_name: ''
-      weight: 8
+      weight: 4
       label: 'Additional information'
       format_type: details
       format_settings:
@@ -101,12 +99,46 @@ third_party_settings:
         description: ''
         open: false
       region: hidden
+    group_enrollment:
+      children:
+        - group_enrollment_methods
+        - field_event_enroll
+      parent_name: group_event_visibility
+      weight: 18
+      label: Enrollment
+      format_type: details
+      format_settings:
+        required_fields: true
+        id: enrollment
+        classes: ''
+        description: ''
+        open: false
+      region: content
+    group_enrollment_methods:
+      children:
+        - field_enroll_method
+        - field_event_enroll_outside_group
+      parent_name: group_enrollment
+      weight: 20
+      format_type: html_element
+      format_settings:
+        element: div
+        show_label: false
+        label_element: h3
+        attributes: ''
+        effect: none
+        speed: fast
+        id: ''
+        classes: enrollment-methods
+        required_fields: false
+      label: 'Enrollment options fieldset'
+      region: content
     group_settings:
       children:
-        - field_event_comments
-        - path
         - uid
         - created
+        - field_event_comments
+        - path
         - status
       format_settings:
         classes: social-collapsible-fieldset
@@ -160,7 +192,7 @@ content:
     type: address_default
     region: content
   field_event_comments:
-    weight: 11
+    weight: 10
     settings: {  }
     third_party_settings: {  }
     type: comment_default
@@ -230,15 +262,8 @@ content:
     third_party_settings: {  }
   path:
     type: path
-    weight: 10
+    weight: 11
     settings: {  }
-    third_party_settings: {  }
-    region: content
-  promote:
-    type: boolean_checkbox
-    settings:
-      display_label: true
-    weight: 6
     third_party_settings: {  }
     region: content
   status:
@@ -248,13 +273,6 @@ content:
     type: boolean_checkbox
     weight: 120
     third_party_settings: {  }
-  sticky:
-    type: boolean_checkbox
-    settings:
-      display_label: true
-    weight: 9
-    third_party_settings: {  }
-    region: content
   title:
     type: string_textfield
     weight: 2
@@ -273,4 +291,6 @@ content:
       match_limit: 10
     third_party_settings: {  }
     region: content
-hidden: {  }
+hidden:
+  promote: true
+  sticky: true

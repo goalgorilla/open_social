@@ -800,6 +800,8 @@ function social_core_form_node_form_alter(&$form, FormStateInterface $form_state
             '#group' => 'group_settings',
           ];
           $form['status']['#group'] = 'status_label';
+          $form['status_label']['status'] = $form['status'];
+          unset($form['status']);
         }
 
         // Node author information for administrators.

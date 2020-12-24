@@ -2,39 +2,22 @@ core.entity_form_display.node.event.default:
   expected_config: {  }
   update_actions:
     delete:
-      third_party_settings:
-        field_group:
-          group_description:
-            children:
-              - body
-          group_enrollment:
-            children:
-              - field_event_enroll
-              - group_enrollment_methods
-          group_enrollment_methods:
-            children:
-              - field_enroll_method
-              - field_event_enroll_outside_group
-    add:
+      content:
+        field_event_managers:
+        promote:
+        sticky:
       third_party_settings:
         field_group:
           group_event_managers:
+          group_description:
             children:
-              - field_event_managers
-            format_settings:
-              classes: card
-              id: event-managers
-              required_fields: false
-            format_type: fieldset
-            label: 'Event organisers'
-            parent_name: ''
-            region: hidden
-            weight: 9
+              - body
+    add:
+      third_party_settings:
+        field_group:
           group_event_visibility:
             children:
-              - field_enroll_method
-              - field_event_enroll
-              - field_event_enroll_outside_group
+              - group_enrollment
           group_title_image:
             children:
               - body
@@ -42,26 +25,46 @@ core.entity_form_display.node.event.default:
       content:
         field_enroll_method:
           weight: 121
-        field_event_address:
-          settings: {  }
         field_event_enroll:
           weight: 122
+        field_event_comments:
+          weight: 10
+        path:
+          weight: 11
       third_party_settings:
         field_group:
+          group_attachments:
+            weight: 4
+          group_date_time:
+            weight: 1
+          group_event_visibility:
+            weight: 3
+          group_location:
+            weight: 2
           group_description:
             children: {  }
           group_enrollment:
-            children: {  }
+            format_settings:
+              classes: ''
+              description: ''
+              open: false
+            format_type: details
+            label: Enrollment
+            parent_name: group_event_visibility
+            region: content
+            weight: 18
           group_enrollment_methods:
-            children: {  }
-            parent_name: ''
+            region: content
           group_settings:
             children:
               - uid
               - created
-              - path
               - field_event_comments
+              - path
               - status
+      hidden:
+        promote: true
+        sticky: true
 field.field.node.event.body:
   expected_config:
     label: Body
