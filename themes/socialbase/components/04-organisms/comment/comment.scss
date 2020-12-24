@@ -245,3 +245,28 @@ details[open] .details__close-icon {
 .comment .photoswipe-gallery-custom {
   margin-top: .5rem;
 }
+
+/* Loading-throbber when comments are loading. */
+@keyframes glyphicon-spin {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(359deg);
+    transform: rotate(359deg);
+  }
+}
+
+.card__comment_section {
+  [data-big-pipe-placeholder-id] {
+    &:first-child {
+      display: block;
+      width: 20px;
+      height: 20px;
+      margin: auto;
+      background: url('../images/icons/icon-autorenew.svg') no-repeat center center/auto 100%;
+      animation: glyphicon-spin 1s infinite linear;
+    }
+  }
+}
