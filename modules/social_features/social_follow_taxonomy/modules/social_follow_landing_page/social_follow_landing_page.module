@@ -5,9 +5,12 @@
  * Contains social_follow_landing_page.module.
  */
 
+use Drupal\block_content\BlockContentInterface;
+use Drupal\Core\Entity\ContentEntityFormInterface;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
+use Drupal\paragraphs\ParagraphInterface;
 
 /**
  * Implements hook_theme().
@@ -93,9 +96,6 @@ function social_follow_landing_page_field_widget_entity_reference_paragraphs_for
   }
 
   if ($subform) {
-    /** @var \Drupal\Core\Entity\EntityBase $form_entity */
-    $form_entity = $form_state->getFormObject()->getEntity();
-
     /** @var \Drupal\social_tagging\SocialTaggingService $tag_service */
     $tag_service = Drupal::getContainer()->get('social_tagging.tag_service');
     // Check if tagging is turned on/off.
@@ -118,19 +118,57 @@ function social_follow_landing_page_field_widget_entity_reference_paragraphs_for
     if ($tag_service->allowSplit()) {
       // Get the default value.
       $default_value = [];
-      // If the node exists, we need to get the default value.
-      if ($form_entity instanceof ContentEntityInterface && $form_entity->id() !== NULL) {
-        $parents = $subform['#parents'];
+
+      $form_object = $form_state->getFormObject();
+      if ($form_object instanceof ContentEntityFormInterface) {
+        /** @var \Drupal\Core\Entity\EntityBase $form_entity */
+        $form_entity = $form_object->getEntity();
+
+        // If the node exists, we need to get the default value.
         if (
-          !empty($parents[0]) &&
-          $form_entity->hasField($parents[0]) &&
-          !$form_entity->get($parents[0])->isEmpty()
+          ($form_entity instanceof BlockContentInterface || $form_entity instanceof ContentEntityInterface) &&
+          $form_entity->id() !== NULL
         ) {
-          $parent_value = $form_entity->get($parents[0])->getValue();
-          if (isset($parents[1]) && isset($parent_value[$parents[1]]['entity'])) {
-            /** @var \Drupal\paragraphs\ParagraphInterface $paragraph_entity */
-            $paragraph_entity = $parent_value[$parents[1]]['entity'];
-            $tag_value = $paragraph_entity->get('field_section_paragraph')->entity->get('field_tag')->getValue();
+          $parents = $subform['#parents'];
+          if (
+            !empty($parents[0]) &&
+            $form_entity->hasField($parents[0]) &&
+            !$form_entity->get($parents[0])->isEmpty()
+          ) {
+            $parent_value = $form_entity->get($parents[0])->getValue();
+            if (isset($parents[1])) {
+              $tag_value = NULL;
+
+              if (isset($parent_value[$parents[1]]['entity'])) {
+                /** @var \Drupal\paragraphs\ParagraphInterface $paragraph_entity */
+                $paragraph_entity = $parent_value[$parents[1]]['entity'];
+                $tag_value = $paragraph_entity->get('field_section_paragraph')->entity->get('field_tag')->getValue();
+              }
+              elseif (isset($parent_value[$parents[1]]['target_id'])) {
+                /** @var \Drupal\paragraphs\ParagraphInterface $paragraph_entity */
+                $paragraph_entity = \Drupal::entityTypeManager()->getStorage('paragraph')->load($parent_value[$parents[1]]['target_id']);
+                $tag_value = $paragraph_entity->get('field_tag')->getValue();
+              }
+
+              if ($tag_value) {
+                foreach ($tag_value as $key => $value) {
+                  if (isset($value['target_id'])) {
+                    $default_value[] = $value['target_id'];
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+
+      if (empty($default_value) && isset($context['items'])) {
+        $items_value = $context['items']->getValue();
+        if (isset($items_value[0]['entity']) && $items_value[0]['entity'] instanceof ParagraphInterface) {
+          $paragraph_entity = $items_value[0]['entity'];
+          $tag_value = $paragraph_entity->get('field_tag')->getValue();
+
+          if ($tag_value) {
             foreach ($tag_value as $key => $value) {
               if (isset($value['target_id'])) {
                 $default_value[] = $value['target_id'];
@@ -189,6 +227,9 @@ function _social_follow_landing_page_entity_validate($element, FormStateInterfac
     }
     elseif (isset($parents[1]) && isset($parent_value[$parents[1]]['subform']['tagging'])) {
       $subform = &$parent_value[$parents[1]]['subform'];
+    }
+    elseif (isset($parents[1]) && isset($parent_value[$parents[1]]['field_tags'][0]['subform']['tagging'])) {
+      $subform = &$parent_value[$parents[1]]['field_tags'][0]['subform'];
     }
 
     if ($subform) {
