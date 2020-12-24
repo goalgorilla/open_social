@@ -54,7 +54,9 @@ function hook_social_follow_taxonomy_terms_list_alter(array &$term_ids, EntityIn
 function hook_social_follow_taxonomy_related_items_alter(array &$items, TermInterface $term) {
   $items = \Drupal::entityTypeManager()
     ->getStorage('node')
-    ->loadByProperties(['field_terms' => $term->id()]);
+    ->getQuery()
+    ->condition('field_terms', $term->id())
+    ->execute();
 
   return $items;
 }

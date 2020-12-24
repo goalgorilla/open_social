@@ -2,6 +2,7 @@
 
 namespace Drupal\social_comment;
 
+use Drupal\ajax_comments\Utility;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 
 /**
@@ -60,7 +61,14 @@ class SocialCommentLazyRenderer {
       return [];
     }
 
-    return $this->entityTypeManager->getViewBuilder('comment')->viewMultiple($comments);
+    $build_comments = $this->entityTypeManager->getViewBuilder('comment')->viewMultiple($comments);
+    // Since we are rendering it as lazy builder, make sure we attach classes
+    // required by ajax_comments. In order to render reply forms etc.
+    if (!empty($build_comments) && \Drupal::moduleHandler()->moduleExists('ajax_comments')) {
+      Utility::addCommentClasses($build_comments);
+    }
+
+    return $build_comments;
   }
 
 }
