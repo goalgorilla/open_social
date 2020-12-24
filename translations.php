@@ -133,3 +133,7 @@ new TranslatableMarkup('Autocomplete field with group names.');
 
 // String added because original one was changed due to #3183708 issue.
 new TranslatableMarkup('Changing the group may have impact on the <strong>visibility settings</strong>.');
+
+// String added because activity view modes will display attachment count
+// instead of links.
+new PluralTranslatableMarkup(0, '1 attachment.', '@count attachments.');
