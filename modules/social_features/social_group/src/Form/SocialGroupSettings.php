@@ -47,7 +47,7 @@ class SocialGroupSettings extends ConfigFormBase {
     ];
 
     foreach (array_keys($form['permissions']['#options']) as $permission) {
-      if ($config->get($permission)) {
+      if ($this->hasPermission($permission)) {
         $form['permissions']['#default_value'][] = $permission;
       }
     }
@@ -102,6 +102,19 @@ class SocialGroupSettings extends ConfigFormBase {
     }
 
     return $options;
+  }
+
+  /**
+   * Check if permission is granted.
+   *
+   * @param string $name
+   *   The permission name.
+   *
+   * @return bool
+   *   TRUE if permission is granted.
+   */
+  protected function hasPermission($name) {
+    return !empty($this->config('social_group.settings')->get($name));
   }
 
 }
