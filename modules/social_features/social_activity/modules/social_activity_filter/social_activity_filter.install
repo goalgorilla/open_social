@@ -51,6 +51,13 @@ function social_activity_filter_update_8001() {
       $blocks["{$config_name}__{$display_id}"] = "{$config_name}__{$display_id}";
     }
   }
+  // Enable activity filter for blocks.
   $social_activity_filter_config->set('blocks', $blocks);
+
+  // Set default taxonomy vocabularies for activity filter in blocks.
+  if (\Drupal::moduleHandler()->moduleExists('social_tagging')) {
+    $social_activity_filter_config->set('vocabulary', ['social_tagging' => 'social_tagging']);
+    $social_activity_filter_config->set('taxonomy_fields', ['social_tagging' => 'social_tagging']);
+  }
   $social_activity_filter_config->save();
 }
