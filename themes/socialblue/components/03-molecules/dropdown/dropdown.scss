@@ -24,6 +24,7 @@
 .dropdown {
   @include for-phone-only {
     &.has-alert > a:before {
+      color: $brand-accent-text;
       background-color: $brand-accent;
     }
   }
@@ -31,6 +32,7 @@
   // There are now items that don't have their own top level icon so these
   // should show notifications in the user menu also on desktop.
   &.has-alert.has-alert--desktop > a:before {
+    color: $brand-accent-text;
     background-color: $brand-accent;
   }
 }

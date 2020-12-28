@@ -62,3 +62,26 @@ function hook_social_core_block_visibility_path() {
 /**
  * @} End of "denyaccesstoblock hooks".
  */
+
+/**
+ * Hooks to alter excluded CT for default title.
+ *
+ * @hidedefaultitle hooks
+ * @{
+ */
+
+/**
+ * Provide a method to alter array on content types used in open social.
+ *
+ * @param array $page_to_exclude
+ *   Array of content types.
+ *
+ * @ingroup social_core_api
+ */
+function hook_social_content_type_alter(array &$page_to_exclude) {
+  $page_to_exclude[] = 'article';
+}
+
+/**
+ * @} End of "hidedefaultitle hooks".
+ */

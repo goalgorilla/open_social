@@ -32,7 +32,8 @@
  */
 form:not(.layout-builder-configure-block) {
 
-  .form-control {
+  .form-control,
+  .select2-container .select2-selection {
     display: block;
     width: 100%;
     max-width: $form-control-max-width;
@@ -62,6 +63,14 @@ form:not(.layout-builder-configure-block) {
       font-size: $font-size-base;
     }
 
+    .select2-selection__arrow {
+      display: none;
+    }
+
+    .select2-selection__placeholder {
+      color: $gray;
+    }
+
     &:disabled,
     fieldset[disabled] &,
     .form-disabled & {
@@ -70,6 +79,39 @@ form:not(.layout-builder-configure-block) {
     }
 
     // [converter] extracted textarea& to textarea.form-control
+  }
+
+  .select2-container .select2-selection {
+    &.select2-selection--multiple {
+      height: auto;
+      min-height: 38px;
+      padding-top: 1px;
+      padding-bottom: 1px;
+
+      .select2-search__field {
+        padding: 0;
+        color: $gray;
+
+        // Placeholder Firefox
+        &::-moz-placeholder {
+          color: $gray;
+        }
+
+        // Edge
+        &::-webkit-input-placeholder {
+          color: $gray;
+        }
+
+        // Internet Explorer 10-11
+        &:-ms-input-placeholder {
+          color: $gray;
+        }
+
+        &::placeholder {
+          color: $gray;
+        }
+      }
+    }
   }
 
   .form-control--autogrow {
