@@ -2,9 +2,11 @@
 
 namespace Drupal\social_footer\Plugin\Block;
 
+use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Drupal\file\FileStorageInterface;
 use Drupal\system\Plugin\Block\SystemPoweredByBlock;
@@ -115,7 +117,6 @@ class SocialFooterPoweredByBlock extends SystemPoweredByBlock implements Contain
       '#title' => $this->t('Text'),
       '#default_value' => $config['text']['value'],
       '#format' => $config['text']['format'],
-      '#required' => TRUE,
     ];
 
     $form['link'] = [
@@ -214,6 +215,16 @@ class SocialFooterPoweredByBlock extends SystemPoweredByBlock implements Contain
       ],
       'content' => $build,
     ];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function blockAccess(AccountInterface $account) {
+    return AccessResult::allowedIf(
+      !empty($this->configuration['text']['value']) ||
+      !empty($this->configuration['logo'])
+    );
   }
 
 }
