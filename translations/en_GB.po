@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: node-gettext\n"
-"POT-Creation-Date: 2020-12-16 00:13+0000\n"
+"POT-Creation-Date: 2020-12-25 00:12+0000\n"
 "PO-Revision-Date: 2019-10-09 14:56+0000\n"
 "Last-Translator: Sebastian Seeney <sebastian.seeney@greenpeace.org>\n"
 "Language-Team: English (United Kingdom) <https://translate.getopensocial.com/"
@@ -362,6 +362,12 @@ msgstr "<b>@action</b> selected enrollees"
 #: modules/social_features/social_group/src/Plugin/views/field/SocialGroupViewsBulkOperationsBulkForm.php:40
 msgid "<b>@action</b> selected members"
 msgstr "<b>@action</b> selected members"
+
+#: modules/social_features/social_swiftmail/src/Form/SocialSwiftmailSettingsForm.php:100
+msgid ""
+"<b>Please note:</b> the change below will not impact the users who have "
+"changed their default email notification settings."
+msgstr ""
 
 #: config/optional/node.type.book.yml:0
 msgid ""
@@ -1125,7 +1131,7 @@ msgstr ""
 
 #: modules/social_features/social_event/modules/social_event_invite/src/Form/EnrollInviteEmailForm.php:262
 #: modules/social_features/social_event/modules/social_event_invite/src/Form/EnrollInviteUserForm.php:130
-#: modules/social_features/social_group/modules/social_group_invite/src/Form/SocialBulkGroupInvitation.php:412
+#: modules/social_features/social_group/modules/social_group_invite/src/Form/SocialBulkGroupInvitation.php:416
 msgid "@err"
 msgstr ""
 
@@ -2641,12 +2647,12 @@ msgstr "Amount of users added to group"
 msgid "An error occurred and processing did not complete."
 msgstr "An error occurred and processing did not complete."
 
-#: modules/social_features/social_group/modules/social_group_invite/src/Form/SocialBulkGroupInvitation.php:348
+#: modules/social_features/social_group/modules/social_group_invite/src/Form/SocialBulkGroupInvitation.php:352
 msgid "An error occurred during processing"
 msgstr ""
 
 #: modules/social_features/social_group/modules/social_group_flexible_group/src/FlexibleGroupContentVisibilityUpdate.php:164
-#: modules/social_features/social_group/modules/social_group_invite/src/Form/SocialBulkGroupInvitation.php:418
+#: modules/social_features/social_group/modules/social_group_invite/src/Form/SocialBulkGroupInvitation.php:422
 #: modules/social_features/social_group/src/GroupContentVisibilityUpdate.php:171
 msgid "An error occurred while processing @operation with arguments : @args"
 msgstr "An error occurred while processing @operation with arguments : @args"
@@ -4296,6 +4302,10 @@ msgstr "Default content index created for the Social distribution."
 msgid "Default database server created for the Social distribution."
 msgstr "Default database server created for the Social distribution."
 
+#: modules/social_features/social_swiftmail/src/Form/SocialSwiftmailSettingsForm.php:92
+msgid "Default email notification settings"
+msgstr ""
+
 #: modules/social_features/social_search/config/install/search_api.index.social_groups.yml:0
 msgid "Default group index created for the Social distribution."
 msgstr "Default group index created for the Social distribution."
@@ -4781,10 +4791,6 @@ msgid "E-mail"
 msgstr "E-mail"
 
 #: modules/social_features/social_swiftmail/social_swiftmail.links.menu.yml:0
-msgid "E-mail settings"
-msgstr "E-mail settings"
-
-#: modules/social_features/social_swiftmail/social_swiftmail.links.menu.yml:0
 msgid "E-mail template settings."
 msgstr "E-mail template settings."
 
@@ -4924,6 +4930,11 @@ msgstr "Email address"
 #: modules/social_features/social_event/modules/social_event_an_enroll/src/Form/EventAnEnrollSettingsForm.php:81
 msgid "Email notification"
 msgstr "Email notification"
+
+#: modules/social_features/social_swiftmail/social_swiftmail.links.menu.yml:0
+#: modules/social_features/social_swiftmail/social_swiftmail.routing.yml:0
+msgid "Email notification settings"
+msgstr ""
 
 #: modules/custom/activity_send/modules/activity_send_email/activity_send_email.module:121
 msgid "Email notifications"
@@ -5183,11 +5194,11 @@ msgstr "Enrolments"
 msgid "Enrollments Block"
 msgstr "Enrolments Block"
 
-#: modules/social_features/social_swiftmail/src/Form/SocialSwiftmailSettingsForm.php:71
+#: modules/social_features/social_swiftmail/src/Form/SocialSwiftmailSettingsForm.php:166
 msgid "Enter information you want to show in the email notifications footer"
 msgstr "Enter information you want to show in the email notifications footer"
 
-#: modules/social_features/social_swiftmail/src/Form/SocialSwiftmailSettingsForm.php:59
+#: modules/social_features/social_swiftmail/src/Form/SocialSwiftmailSettingsForm.php:154
 msgid "Enter information you want to show in the email notifications header"
 msgstr "Enter information you want to show in the email notifications header"
 
@@ -6198,6 +6209,10 @@ msgstr "Group hero block"
 msgid "Group invitations"
 msgstr ""
 
+#: modules/social_features/social_group/modules/social_group_invite/social_group_invite.module:469
+msgid "Group invite settings"
+msgstr ""
+
 #: modules/social_features/social_group/modules/social_group_invite/src/Plugin/Menu/LocalTask/GroupInviteLocalTask.php:78
 msgid "Group invites"
 msgstr ""
@@ -6774,7 +6789,7 @@ msgstr ""
 msgid "Invites overview"
 msgstr ""
 
-#: modules/social_features/social_group/modules/social_group_invite/src/Form/SocialBulkGroupInvitation.php:344
+#: modules/social_features/social_group/modules/social_group_invite/src/Form/SocialBulkGroupInvitation.php:348
 msgid "Inviting Members"
 msgstr ""
 
@@ -7023,6 +7038,8 @@ msgstr ""
 #: modules/social_features/social_group/config/install/views.view.group_manage_members.yml:0
 #: modules/social_features/social_group/config/install/views.view.group_members.yml:0
 #: modules/social_features/social_group/config/install/views.view.newest_groups.yml:0
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_invitations.yml:0
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_user_invitations.yml:0
 #: modules/social_features/social_private_message/config/install/views.view.inbox.yml:0
 #: modules/social_features/social_profile/config/install/views.view.newest_users.yml:0
 #: modules/social_features/social_search/config/install/views.view.search_all.yml:0
@@ -7034,11 +7051,6 @@ msgstr ""
 #: modules/social_features/social_user/config/install/views.view.user_admin_people.yml:0
 msgid "Last »"
 msgstr "Last »"
-
-#: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_invitations.yml:0
-#: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_user_invitations.yml:0
-msgid "Last Â»"
-msgstr ""
 
 #: modules/social_features/social_topic/config/install/views.view.latest_topics.yml:0
 msgid "Latest group topics"
@@ -7624,6 +7636,7 @@ msgstr "Menu link"
 #: modules/social_features/social_event/modules/social_event_invite/src/Form/EventInviteSettingsForm.php:64
 #: modules/social_features/social_event/modules/social_event_managers/src/Form/SocialEventManagersAddEnrolleeForm.php:269
 #: modules/social_features/social_event/src/Form/EnrollRequestModalForm.php:54
+#: modules/social_features/social_group/modules/social_group_invite/social_group_invite.module:483
 #: modules/social_features/social_group/modules/social_group_request/social_group_request.module:33
 #: modules/social_features/social_group/modules/social_group_request/src/Form/GroupRequestMembershipRequestForm.php:112
 #: modules/social_features/social_group/modules/social_group_welcome_message/social_group_welcome_message.module:37
@@ -7637,7 +7650,7 @@ msgstr "Message"
 msgid "Message template activity settings"
 msgstr "Message template activity settings"
 
-#: modules/custom/activity_send/modules/activity_send_email/activity_send_email.module:147
+#: modules/custom/activity_send/modules/activity_send_email/activity_send_email.module:315
 msgid "Message to me"
 msgstr "Message to me"
 
@@ -7907,6 +7920,8 @@ msgstr "Next page"
 #: modules/social_features/social_event/modules/social_event_managers/config/install/views.view.event_manage_enrollments.yml:0
 #: modules/social_features/social_event/modules/social_event_managers/config/install/views.view.managers.yml:0
 #: modules/social_features/social_group/config/install/views.view.group_manage_members.yml:0
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_invitations.yml:0
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_user_invitations.yml:0
 #: modules/social_features/social_like/config/install/views.view.who_liked_this_entity.yml:0
 #: modules/social_features/social_search/config/install/views.view.search_all.yml:0
 #: modules/social_features/social_search/config/install/views.view.search_content.yml:0
@@ -8090,7 +8105,7 @@ msgstr "Notification Centre"
 msgid "Notification archive"
 msgstr "Notification archive"
 
-#: modules/custom/activity_send/modules/activity_send_email/activity_send_email.module:309
+#: modules/custom/activity_send/modules/activity_send_email/activity_send_email.module:282
 #: modules/social_features/social_event/modules/social_event_managers/src/Form/SocialEventManagersAddEnrolleeForm.php:271
 msgid "Notification from %site_name"
 msgstr "Notification from %site_name"
@@ -8299,7 +8314,7 @@ msgid "Open Social"
 msgstr "Open Social"
 
 #: modules/social_features/social_swiftmail/config/schema/social_swiftmail.schema.yml:0
-#: modules/social_features/social_swiftmail/src/Form/SocialSwiftmailSettingsForm.php:40
+#: modules/social_features/social_swiftmail/src/Form/SocialSwiftmailSettingsForm.php:172
 msgid ""
 "Open Social Branding will be replaced by site name (and slogan if available)."
 msgstr ""
@@ -8881,7 +8896,7 @@ msgid "Preview your email"
 msgstr ""
 
 #: modules/social_features/social_event/modules/social_event_invite/src/Form/EnrollInviteEmailForm.php:129
-#: modules/social_features/social_group/modules/social_group_invite/src/Form/SocialBulkGroupInvitation.php:241
+#: modules/social_features/social_group/modules/social_group_invite/src/Form/SocialBulkGroupInvitation.php:245
 msgid "Preview your email invite"
 msgstr ""
 
@@ -8982,7 +8997,7 @@ msgstr "Process activity_digest_worker queue."
 msgid "Process activity_logger_message queue."
 msgstr "Process activity_logger_message queue."
 
-#: modules/custom/activity_send/modules/activity_send_email/src/Plugin/QueueWorker/ActivitySendEmailWorker.php:16
+#: modules/custom/activity_send/modules/activity_send_email/src/Plugin/QueueWorker/ActivitySendEmailWorker.php:17
 msgid "Process activity_send_email queue."
 msgstr "Process activity_send_email queue."
 
@@ -9000,7 +9015,7 @@ msgid ""
 msgstr ""
 "Process enrolments returned by the view with Views Bulk Operations' actions."
 
-#: modules/social_features/social_group/modules/social_group_invite/src/Form/SocialBulkGroupInvitation.php:347
+#: modules/social_features/social_group/modules/social_group_invite/src/Form/SocialBulkGroupInvitation.php:351
 msgid "Processed @current out of @total."
 msgstr ""
 
@@ -9628,7 +9643,7 @@ msgstr "Remove"
 msgid "Remove %name from %group"
 msgstr "Remove %name from %group"
 
-#: modules/social_features/social_swiftmail/src/Form/SocialSwiftmailSettingsForm.php:39
+#: modules/social_features/social_swiftmail/src/Form/SocialSwiftmailSettingsForm.php:171
 msgid "Remove Open Social Branding"
 msgstr "Remove Open Social Branding"
 
@@ -10332,11 +10347,11 @@ msgid "Send usage data."
 msgstr "Send usage data."
 
 #: modules/social_features/social_core/src/Form/InviteEmailBaseForm.php:115
-#: modules/social_features/social_group/modules/social_group_invite/src/Form/SocialBulkGroupInvitation.php:271
+#: modules/social_features/social_group/modules/social_group_invite/src/Form/SocialBulkGroupInvitation.php:275
 msgid "Send your invite(s) by email"
 msgstr ""
 
-#: modules/social_features/social_group/modules/social_group_invite/src/Form/SocialBulkGroupInvitation.php:346
+#: modules/social_features/social_group/modules/social_group_invite/src/Form/SocialBulkGroupInvitation.php:350
 msgid "Sending Invites"
 msgstr ""
 
@@ -11363,10 +11378,6 @@ msgstr "Social Swift Mailer"
 msgid "Social Swiftmail Settings"
 msgstr "Social Swiftmail Settings"
 
-#: modules/social_features/social_swiftmail/social_swiftmail.routing.yml:0
-msgid "Social Swiftmail settings"
-msgstr "Social Swiftmail settings"
-
 #: modules/social_features/social_swiftmail/social_swiftmail.info.yml:0
 msgid "Social Swiftmailer"
 msgstr "Social Swiftmailer"
@@ -11658,6 +11669,7 @@ msgstr ""
 #: modules/custom/social_auth_extra/social_auth_extra.module:371
 #: modules/social_features/social_event/modules/social_event_an_enroll/src/Form/EventAnEnrollSettingsForm.php:94
 #: modules/social_features/social_event/modules/social_event_invite/src/Form/EventInviteSettingsForm.php:57
+#: modules/social_features/social_group/modules/social_group_invite/social_group_invite.module:475
 #: modules/social_features/social_user/src/Plugin/Action/SocialSendEmail.php:227
 #: themes/socialbase/templates/email/invite-email-preview.html.twig:39
 msgid "Subject"
@@ -11710,7 +11722,7 @@ msgstr "System data"
 msgid "System data (operating system, PHP version, and extensions)"
 msgstr "System data (operating system, PHP version, and extensions)"
 
-#: modules/custom/activity_send/modules/activity_send_email/activity_send_email.module:173
+#: modules/custom/activity_send/modules/activity_send_email/activity_send_email.module:341
 msgid "System notifications"
 msgstr ""
 
@@ -11764,17 +11776,17 @@ msgstr "Teaser"
 msgid "Teaser image in overviews"
 msgstr "Teaser image in overviews"
 
-#: modules/social_features/social_swiftmail/src/Form/SocialSwiftmailSettingsForm.php:46
+#: modules/social_features/social_swiftmail/src/Form/SocialSwiftmailSettingsForm.php:141
 msgid "Template configuration"
 msgstr "Template configuration"
 
 #: modules/social_features/social_swiftmail/config/schema/social_swiftmail.schema.yml:0
-#: modules/social_features/social_swiftmail/src/Form/SocialSwiftmailSettingsForm.php:64
+#: modules/social_features/social_swiftmail/src/Form/SocialSwiftmailSettingsForm.php:159
 msgid "Template footer"
 msgstr "Template footer"
 
 #: modules/social_features/social_swiftmail/config/schema/social_swiftmail.schema.yml:0
-#: modules/social_features/social_swiftmail/src/Form/SocialSwiftmailSettingsForm.php:52
+#: modules/social_features/social_swiftmail/src/Form/SocialSwiftmailSettingsForm.php:147
 msgid "Template header"
 msgstr "Template header"
 
@@ -13682,11 +13694,11 @@ msgstr "Welcome on your profile stream!"
 msgid "Welcome!"
 msgstr "Welcome!"
 
-#: modules/custom/activity_send/modules/activity_send_email/activity_send_email.module:166
+#: modules/custom/activity_send/modules/activity_send_email/activity_send_email.module:334
 msgid "What I follow"
 msgstr "What I follow"
 
-#: modules/custom/activity_send/modules/activity_send_email/activity_send_email.module:159
+#: modules/custom/activity_send/modules/activity_send_email/activity_send_email.module:327
 msgid "What I manage"
 msgstr "What I manage"
 
@@ -15040,6 +15052,8 @@ msgstr ""
 #: modules/social_features/social_group/config/install/views.view.group_manage_members.yml:0
 #: modules/social_features/social_group/config/install/views.view.group_members.yml:0
 #: modules/social_features/social_group/config/install/views.view.newest_groups.yml:0
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_invitations.yml:0
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_user_invitations.yml:0
 #: modules/social_features/social_private_message/config/install/views.view.inbox.yml:0
 #: modules/social_features/social_profile/config/install/views.view.newest_users.yml:0
 #: modules/social_features/social_search/config/install/views.view.search_all.yml:0
@@ -15052,21 +15066,6 @@ msgstr ""
 msgid "« First"
 msgstr "« First"
 
-#: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_invitations.yml:0
-#: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_user_invitations.yml:0
-msgid "Â« First"
-msgstr ""
-
-#: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_invitations.yml:0
-#: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_user_invitations.yml:0
-msgid "â€¹â€¹"
-msgstr ""
-
-#: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_invitations.yml:0
-#: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_user_invitations.yml:0
-msgid "â€ºâ€º"
-msgstr ""
-
 #: config/install/views.view.content.yml:0
 #: modules/social_features/social_event/config/install/views.view.event_enrollments.yml:0
 #: modules/social_features/social_event/config/install/views.view.event_manage_enrollment_requests.yml:0
@@ -15076,6 +15075,8 @@ msgstr ""
 #: modules/social_features/social_event/modules/social_event_managers/config/install/views.view.event_manage_enrollments.yml:0
 #: modules/social_features/social_event/modules/social_event_managers/config/install/views.view.managers.yml:0
 #: modules/social_features/social_group/config/install/views.view.group_manage_members.yml:0
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_invitations.yml:0
+#: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_user_invitations.yml:0
 #: modules/social_features/social_like/config/install/views.view.who_liked_this_entity.yml:0
 #: modules/social_features/social_search/config/install/views.view.search_all.yml:0
 #: modules/social_features/social_search/config/install/views.view.search_content.yml:0
@@ -15203,6 +15204,9 @@ msgstr "››"
 #~ msgid "Dislike vote"
 #~ msgstr "Dislike vote"
 
+#~ msgid "E-mail settings"
+#~ msgstr "E-mail settings"
+
 #~ msgid "Event status"
 #~ msgstr "Event status"
 
@@ -15296,6 +15300,9 @@ msgstr "››"
 
 #~ msgid "Shares usage data to the Open Social team."
 #~ msgstr "Shares usage data to the Open Social team."
+
+#~ msgid "Social Swiftmail settings"
+#~ msgstr "Social Swiftmail settings"
 
 #~ msgid "Start date"
 #~ msgstr "Start date"
