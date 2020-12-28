@@ -467,6 +467,7 @@ function social_group_invite_form_social_group_form_alter(&$form, FormStateInter
   $form['group_invite'] = [
     '#type' => 'details',
     '#title' => t('Group invite settings'),
+    '#weight' => 30,
   ];
 
   $default_subject = '[current-user:display-name] has invited you to join a group on [site:name].';

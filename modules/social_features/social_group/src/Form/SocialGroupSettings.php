@@ -44,6 +44,7 @@ class SocialGroupSettings extends ConfigFormBase {
         'allow_group_selection_in_node' => $this->t('Allow regular users to change the group their content belong to'),
         'address_visibility_settings' => $this->t('Only show the group address to the group members'),
       ],
+      '#weight' => 10,
     ];
 
     foreach (array_keys($form['permissions']['#options']) as $permission) {
@@ -58,6 +59,7 @@ class SocialGroupSettings extends ConfigFormBase {
       '#description' => $this->t('The default hero size used on this platform. Only applicable when logged-in users cannot choose a different hero size on each group.'),
       '#default_value' => $config->get('default_hero'),
       '#options' => $this->getCropTypes(),
+      '#weight' => 20,
     ];
 
     return parent::buildForm($form, $form_state);
