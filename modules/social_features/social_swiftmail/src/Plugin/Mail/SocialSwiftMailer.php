@@ -27,30 +27,10 @@ class SocialSwiftMailer extends SwiftMailer {
    * {@inheritdoc}
    */
   protected function massageMessageBody(array &$message, $is_html) {
-    $text_format = $message['params']['text_format'] ?? $this->config['message']['text_format'] ?: NULL;
     $line_endings = Settings::get('mail_line_endings', PHP_EOL);
-    $body = [];
-
-    foreach ($message['body'] as $part) {
-      if (!($part instanceof MarkupInterface)) {
-        if ($is_html) {
-          // Convert to HTML. The default 'plain_text' format escapes markup,
-          // converts new lines to <br> and converts URLs to links.
-          $body[] = check_markup($part, $text_format);
-        }
-        else {
-          // The body will be plain text. However we need to convert to HTML
-          // to render the template then convert back again. Use a fixed
-          // conversion because we don't want to convert URLs to links.
-          $body[] = preg_replace("|\n|", "<br />\n", HTML::escape($part)) . "<br />\n";
-        }
-      }
-      else {
-        $body[] = $part . $line_endings;
-      }
-    }
-
-    // Merge all lines in the e-mail body and treat the result as safe markup.
+    // Overwrite the Markup::Create of SwiftMailer.php.
+    // This to take in to account our tables / <br> and basically
+    // the custom HTML that is added within open social.
     $message['body'] = Markup::create(implode($line_endings, array_map(function ($body) {
       // If the field contains no html tags we can assume newlines will need be
       // converted to <br>.
@@ -60,7 +40,8 @@ class SocialSwiftMailer extends SwiftMailer {
       }
       return check_markup($body, 'full_html');
     }, $message['body'])));
-    
+
+    // @see: SwiftMailer::massageMessageBody()
     // Attempt to use the mail theme defined in MailSystem.
     if ($this->mailManager instanceof MailsystemManager) {
       $mail_theme = $this->mailManager->getMailTheme();
