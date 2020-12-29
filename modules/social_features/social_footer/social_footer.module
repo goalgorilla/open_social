@@ -1,0 +1,23 @@
+<?php
+
+/**
+ * @file
+ * The Social Footer module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function social_footer_help($route_name, RouteMatchInterface $route_match) {
+  $output = '';
+
+  // Main module help for the social_footer module.
+  if ($route_name === 'help.page.social_footer') {
+    $output .= '<h3>' . t('About') . '</h3>';
+    $output .= '<p>' . t('Provides block based on the "Powered by Drupal" block from Drupal core.') . '</p>';
+  }
+
+  return $output;
+}
