@@ -6,6 +6,16 @@
  */
 
 /**
+ * Implements hook_update_dependencies().
+ */
+function social_activity_filter_update_dependencies() {
+  $dependencies['social_activity_filter'][8002] = [
+    'social_core' => 8805,
+  ];
+  return $dependencies;
+}
+
+/**
  * Implements hook_install().
  *
  * Perform actions related to the installation of social_activity_filter module.
