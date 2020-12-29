@@ -72,7 +72,7 @@ Feature: Create Secret Group
       | Time  | 11:00:00    |
       | Location name       | Technopark |
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text."
-    And I press "Save"
+    And I press "Create event"
     And I should see "Test secret group event"
 
   # Lets add another user on the Manage members tab.
