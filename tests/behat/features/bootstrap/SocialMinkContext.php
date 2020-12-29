@@ -192,7 +192,6 @@ class SocialMinkContext extends MinkContext {
     }
   }
 
-
   /**
    * Wait for AJAX to finish.
    *

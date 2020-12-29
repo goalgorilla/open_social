@@ -57,7 +57,7 @@ Feature: Create Secret Group
       | Title | Test secret group topic |
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text"
     And I click radio button "Discussion"
-    And I press "Save"
+    And I press "Create topic"
     And I should see "Test secret group topic"
 
   # Create an event inside the secret group
