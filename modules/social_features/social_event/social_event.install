@@ -1643,7 +1643,7 @@ function social_event_update_8906() {
  * Add image file extensions to be added as attachments.
  */
 function social_event_update_8907() {
-  $config_file = drupal_get_path('module', 'social_topic') . '/config/static/field.field.node.event.field_files_8907.yml';
+  $config_file = drupal_get_path('module', 'social_event') . '/config/static/field.field.node.event.field_files_8907.yml';
 
   if (is_file($config_file)) {
     $settings = Yaml::parse(file_get_contents($config_file));
