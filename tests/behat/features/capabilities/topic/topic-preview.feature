@@ -14,7 +14,7 @@ Feature: Preview Topic
       | Title | This is a test topic |
      And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text"
     And I click radio button "Discussion"
-    And I attach the file "/files/humans.txt" to "Add a new file"
+    And I attach the file "/files/humans.txt" to "Attachments"
     And I press "Preview"
     And I wait for AJAX to finish
     And I should see "This is a test topic"
