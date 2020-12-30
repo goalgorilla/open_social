@@ -4,6 +4,7 @@ namespace Drupal\social_group_request\Plugin\ActivityContext;
 
 use Drupal\activity_creator\Plugin\ActivityContextBase;
 use Drupal\grequest\Plugin\GroupContentEnabler\GroupMembershipRequest;
+use Drupal\Core\Entity\EntityInterface;
 
 /**
  * Provides a 'ApprovedRequestJoinGroupActivityContext' activity context.
@@ -49,7 +50,7 @@ class ApprovedRequestJoinGroupActivityContext extends ActivityContextBase {
   /**
    * {@inheritdoc}
    */
-  public function isValidEntity($entity) {
+  public function isValidEntity(EntityInterface $entity) {
     /** @var \Drupal\Core\Entity\EntityInterface $entity */
     return $entity->getEntityTypeId() === 'group_content';
   }
