@@ -15,6 +15,7 @@ use Drupal\Core\Url;
 use Drupal\ginvite\GroupInvitation as GroupInvitationWrapper;
 use Drupal\ginvite\Plugin\GroupContentEnabler\GroupInvitation;
 use Drupal\group\Entity\GroupContent;
+use Drupal\group\Entity\GroupContentInterface;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupRoleInterface;
 use Drupal\group\Entity\GroupTypeInterface;
@@ -337,17 +338,25 @@ function social_group_invite_form_alter(&$form, FormStateInterface $form_state, 
 function _social_group_invite_action_form_submit($form, FormStateInterface $form_state) {
   $invite_content = \Drupal::routeMatch()->getParameter('group_content');
   $group = '';
-  if ($invite_content instanceof GroupContent) {
+
+  if ($invite_content instanceof GroupContentInterface) {
     $group = $invite_content->getGroup();
   }
-  if (is_string($invite_content)) {
-    $group_content = GroupContent::load($invite_content);
-    $group = $group_content->getGroup();
+  elseif (is_string($invite_content)) {
+    $group_content = \Drupal::entityTypeManager()->getStorage('group_content')
+      ->load($invite_content);
+
+    if ($group_content instanceof GroupContentInterface) {
+      $group = $group_content->getGroup();
+    }
   }
 
   // Redirect user back to the group they joined.
-  if ($group instanceof Group) {
-    $form_state->setRedirect('entity.group.canonical', ['group' => $group->id(), []]);
+  if ($group instanceof GroupInterface) {
+    $form_state->setRedirect('entity.group.canonical', [
+      'group' => $group->id(),
+      [],
+    ]);
   }
 }
 
@@ -467,6 +476,7 @@ function social_group_invite_form_social_group_form_alter(&$form, FormStateInter
   $form['group_invite'] = [
     '#type' => 'details',
     '#title' => t('Group invite settings'),
+    '#weight' => 30,
   ];
 
   $default_subject = '[current-user:display-name] has invited you to join a group on [site:name].';
@@ -485,7 +495,7 @@ function social_group_invite_form_social_group_form_alter(&$form, FormStateInter
     '#required' => TRUE,
   ];
 
-  $form['actions']['submit']['#submit'][] = '_social_group_invite_settings_submit';
+  $form['#submit'][] = '_social_group_invite_settings_submit';
 }
 
 /**
