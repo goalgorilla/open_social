@@ -130,3 +130,6 @@ new TranslatableMarkup('To make the list of topics more specific you can additio
 new TranslatableMarkup('Autocomplete field with items from taxonomy list topic types.');
 new TranslatableMarkup('Autocomplete field with items from taxonomy list content tags.');
 new TranslatableMarkup('Autocomplete field with group names.');
+
+// String added because it was removed from the Group Join Confirmation Page.
+new TranslatableMarkup('By submitting this form you will become a member of the group. Please fill out any available fields to complete your membership information.');
