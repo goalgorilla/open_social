@@ -15,14 +15,6 @@
           $(this).addClass('post-loading-active');
         }
       });
-
-      var postPhotoAdd = $('#post-photo-add');
-
-      postPhotoAdd.on('click', function () {
-        var parent = $(this).closest('.field--name-field-post-image');
-
-        parent.addClass('post-images-loaded');
-      });
     }
   };
 })(jQuery);
