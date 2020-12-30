@@ -187,6 +187,9 @@ function _social_private_message_get_permissions($role) {
   // Authenticated.
   $permissions['authenticated'] = array_merge($permissions['anonymous'], [
     'use private messaging system',
+    'create private messages thread',
+    'reply to private messages thread',
+    'delete private messages thread',
   ]);
 
   // Content manager.
@@ -273,6 +276,30 @@ function _social_private_message_features_removal_config_revert_helper(array $co
           ->getEditable($config_file);
 
         $update_config->setData($settings)->save(TRUE);
+      }
+    }
+  }
+}
+
+/**
+ * Update permissions for private messages.
+ */
+function social_private_message_update_8803() {
+  $roles_storage = Drupal::entityTypeManager()->getStorage('user_role');
+  $roles = $roles_storage->loadMultiple();
+  if (!empty($roles)) {
+    /** @var \Drupal\user\RoleInterface $role */
+    foreach ($roles as $role) {
+      if ($role->id() === 'administrator') {
+        continue;
+      }
+
+      if ($role->hasPermission('use private messaging system')) {
+        user_role_grant_permissions($role->id(), [
+          'create private messages thread',
+          'reply to private messages thread',
+          'delete private messages thread',
+        ]);
       }
     }
   }

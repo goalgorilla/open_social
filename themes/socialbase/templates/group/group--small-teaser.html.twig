@@ -1,7 +1,7 @@
 {% extends "node--small-teaser.html.twig" %}
 
 {% block teaser_image %}
-  <div class="teaser--small__media">
+  <div class="teaser--small__media" aria-hidden="true">
     {% if content['field_group_image'] | render | striptags('<img>') is not empty %}
       {{ content['field_group_image'] }}
     {% else %}

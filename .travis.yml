@@ -38,6 +38,10 @@ services:
   - docker
 
 before_install:
+  - echo 'DOCKER_OPTS="$DOCKER_OPTS --registry-mirror=https://mirror.gcr.io"'
+  - sudo service docker restart
+  - docker system info
+
   # Composer Configurations.
   - export COMPOSER_MEMORY_LIMIT=-1 # Set php memory limit to -1 so composer update will not fail
   - export COMPOSER_EXIT_ON_PATCH_FAILURE=1 # To enforce throwing an error and stopping package installation/update immediately
@@ -73,7 +77,6 @@ install:
 
 script:
   - set -e
-  - if [ "$TEST_SUITE" = "install_stability_1" ]; then docker exec -i social_ci_web bash /var/www/scripts/social/check-coding-standards.sh full; fi
   - if [ "$TEST_SUITE" = "install_stability_1" ]; then docker exec -i social_ci_web_scripts /var/www/scripts/social/unit-tests.sh; fi
   - if [ "$TEST_SUITE" = "install_stability_1" ]; then docker exec -it social_ci_behat sh /var/www/scripts/social/behatstability.sh "stability-1 --stop-on-failure --strict"; fi
   - if [ "$TEST_SUITE" = "install_stability_2" ]; then docker exec -it social_ci_behat sh /var/www/scripts/social/behatstability.sh "notifications --stop-on-failure --strict"; fi

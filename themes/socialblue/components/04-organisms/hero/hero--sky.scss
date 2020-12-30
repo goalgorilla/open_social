@@ -193,6 +193,10 @@
         margin-bottom: 0;
         flex-wrap: wrap;
 
+        > *:first-child {
+          padding-left: 0;
+        }
+
         @include for-tablet-landscape-down {
           align-items: flex-start;
 
@@ -251,7 +255,6 @@
 
       .meta-follow {
         margin-left: 0;
-        margin-bottom: 0;
         flex-basis: auto;
         order: initial;
       }
@@ -466,9 +469,9 @@
       }
 
       .btn-group,
-      .btn {
+      .btn:not(#edit-decline-invite) {
         @include for-phone-only {
-          width: 100%;
+          flex: 1;
         }
       }
 
@@ -488,6 +491,10 @@
           text-align: center;
           text-transform: uppercase;
         }
+      }
+
+      form {
+        display: flex;
       }
     }
   }
@@ -576,7 +583,7 @@
     }
 
     .hero-footer__cta {
-      .btn {
+      .btn:not(#edit-decline-invite) {
         min-width: 195px;
         color: inherit;
       }

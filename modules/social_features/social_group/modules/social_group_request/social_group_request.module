@@ -366,7 +366,7 @@ function social_group_request_preprocess_page_title(&$variables) {
  */
 function social_group_request_allowed_join_method_values(FieldStorageConfig $definition, ContentEntityInterface $entity = NULL, $cacheable) {
   $allowed_values = $definition->getSetting('allowed_values');
-  $allowed_values['request'] = t('Request to join - users can "request to join" this group which group managers approve/decline');
+  $allowed_values['request'] = t('Request to join');
   return $allowed_values;
 }
 

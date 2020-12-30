@@ -31,7 +31,15 @@
 {{ element }}
 {%- if title is not empty -%}
   <label{{ attributes.addClass(classes) }}>
-    {{ title }}
+    {%- if icon is not empty -%}
+      <svg class="icon-small">
+        <use xlink:href="#icon-{{ icon }}"></use>
+      </svg>
+      <span>{{ title }}</span>
+    {%- else -%}
+      {{ title }}
+    {%- endif -%}
+
     {%- if required and title_display != 'invisible' -%}
         <span class="form-required" title="{% trans %}This field is required{% endtrans %}">*</span>
     {%- endif -%}
