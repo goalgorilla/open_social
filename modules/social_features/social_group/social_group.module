@@ -2023,6 +2023,17 @@ function social_group_social_group_default_route_tabs_alter(&$tabs) {
 }
 
 /**
+ * Implements hook_social_path_manager_group_tabs_alter().
+ */
+function social_group_social_path_manager_group_tabs_alter(array &$tabs) {
+  // Unset some tabs created by group.
+  unset($tabs['group.view'], $tabs['group.edit_form'], $tabs['group.content']);
+
+  // Add manage members tab.
+  $tabs['social_group.membership'] = 'view.group_manage_members.page_group_manage_members';
+}
+
+/**
  * Implements hook_batch_alter().
  */
 function social_group_batch_alter(&$batch) {
