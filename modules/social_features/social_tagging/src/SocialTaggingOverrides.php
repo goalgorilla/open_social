@@ -322,8 +322,8 @@ class SocialTaggingOverrides implements ConfigFactoryOverrideInterface {
       return new CacheableMetadata();
     }
 
-    // We could dinstinguish between the various configurations that we override
-    // in how granular we cache. However, for simplicty just cache based on all
+    // We could distinguish between the various configurations that we override
+    // in how granular we cache. However, for simplicity just cache based on all
     // the calls that are made in the loadOverrides method and assume this is
     // the same for any config that's overridden.
     $metadata = new CacheableMetadata();
