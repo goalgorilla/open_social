@@ -47,7 +47,11 @@ class SocialTaggingService {
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  public function __construct(EntityTypeManagerInterface $entityTypeManager, ConfigFactoryInterface $configFactory, LanguageManagerInterface $language_manager) {
+  public function __construct(
+    EntityTypeManagerInterface $entityTypeManager,
+    ConfigFactoryInterface $configFactory,
+    LanguageManagerInterface $language_manager
+  ) {
     $this->termStorage = $entityTypeManager->getStorage('taxonomy_term');
     $this->configFactory = $configFactory;
     $this->languageManager = $language_manager;
@@ -71,6 +75,16 @@ class SocialTaggingService {
    */
   public function groupActive() {
     return (bool) $this->configFactory->get('social_tagging.settings')->get('tag_type_group');
+  }
+
+  /**
+   * Returns whether the feature is turned on for profiles or not.
+   *
+   * @return bool
+   *   Whether tagging is turned on or not for profiles.
+   */
+  public function profileActive() {
+    return (bool) $this->configFactory->get('social_tagging.settings')->get('tag_type_profile');
   }
 
   /**
@@ -205,6 +219,9 @@ class SocialTaggingService {
 
       // Set the route.
       $route = ($entity_type == 'group') ? 'view.search_groups.page_no_value' : 'view.search_content.page_no_value';
+      if ($entity_type == 'profile') {
+        $route = 'view.search_users.page_no_value';
+      }
 
       // Build the hierarchy.
       foreach ($terms as $current_term) {
@@ -220,10 +237,15 @@ class SocialTaggingService {
         // Prepare the parameter;.
         $parameter = $allowSplit ? social_tagging_to_machine_name($category_label) : 'tag';
 
-        // Prepare the URL for the search by term.
-        $url = Url::fromRoute($route, [
+        $route_parameters = [
           $parameter . '[]' => $current_term->id(),
-        ])->toString();
+        ];
+        if ($entity_type == 'profile') {
+          $route_parameters['created_op'] = '<';
+        }
+
+        // Prepare the URL for the search by term.
+        $url = Url::fromRoute($route, $route_parameters)->toString();
 
         // Finally, prepare the hierarchy.
         $tree[$parent->id()]['title'] = $category_label;
