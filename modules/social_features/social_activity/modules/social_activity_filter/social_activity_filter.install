@@ -22,15 +22,28 @@ function social_activity_filter_update_dependencies() {
  */
 function social_activity_filter_install() {
   user_role_grant_permissions('sitemanager', ['administer social_activity_filter']);
-  social_activity_filter_update_8001();
-  social_activity_filter_update_8002();
+  _social_activity_filter_set_default_settings();
+  _social_activity_filter_enable_filters();
 }
 
 /**
  * Set default filter settings for activities blocks.
  */
 function social_activity_filter_update_8001() {
+  _social_activity_filter_set_default_settings();
+}
 
+/**
+ * Add & enable tag filter in the stream blocks.
+ */
+function social_activity_filter_update_8002() {
+  _social_activity_filter_enable_filters();
+}
+
+/**
+ * Helper function to set default tag filter settings.
+ */
+function _social_activity_filter_set_default_settings() {
   $config_factory = \Drupal::service('config.factory');
   $config_names = [
     'activity_stream' => [
@@ -64,9 +77,9 @@ function social_activity_filter_update_8001() {
 }
 
 /**
- * Add & enable tag filter in the stream blocks.
+ * Helper function to enable tag filters for activities blocks.
  */
-function social_activity_filter_update_8002() {
+function _social_activity_filter_enable_filters() {
   /** @var \Drupal\update_helper\Updater $updateHelper */
   $updateHelper = \Drupal::service('update_helper.updater');
 
