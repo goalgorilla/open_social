@@ -133,3 +133,6 @@ new TranslatableMarkup('Autocomplete field with group names.');
 
 // String added because original one was changed due to #3183708 issue.
 new TranslatableMarkup('Changing the group may have impact on the <strong>visibility settings</strong>.');
+
+// String added because it was removed from the Group Join Confirmation Page.
+new TranslatableMarkup('By submitting this form you will become a member of the group. Please fill out any available fields to complete your membership information.');

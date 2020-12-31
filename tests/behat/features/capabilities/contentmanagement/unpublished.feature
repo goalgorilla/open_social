@@ -15,7 +15,7 @@ Feature: Un/publish a node
       Then I should see "Publish status"
       And I should see "Published"
       And I uncheck the box "Published"
-      And I press "Save"
+      And I press "Create topic"
     Then I should see "Topic This is a test topic has been created."
       And I should see "This is a test topic" in the "Hero block"
       And I should see "Discussion"
