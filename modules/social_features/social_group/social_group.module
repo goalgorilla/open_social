@@ -225,6 +225,16 @@ function social_group_preprocess_group(array &$variables) {
   $variables['group_type_id'] = $group_type_id;
   $variables['group_type'] = $group->getGroupType()->label();
 
+  // From 10.0.0 onwards, we want to show group types differently.
+  // It will be the value chosen while adding the group instead of saying
+  // 'Flexible group'.
+  if ($group_type_id == 'flexible_group'
+    && $group->hasField('field_group_type')
+    && !empty($term = $group->get('field_group_type')->entity)
+  ) {
+    $variables['group_type'] = $term->getName();
+  }
+
   $group_settings_help = [
     '#theme' => 'group_settings_help',
     '#group_type' => $group->getGroupType()->label(),
@@ -1590,7 +1600,7 @@ function social_group_entity_base_field_info_alter(&$fields, EntityTypeInterface
   $entity_types = ['node'];
   if (in_array($entity_type->id(), $entity_types)) {
     if (isset($fields['groups'])) {
-      /* @var \Drupal\Core\Field\BaseFieldDefinition $fields['groups'] */
+      /** @var \Drupal\Core\Field\BaseFieldDefinition $fields['groups'] */
       $fields['groups']->setLabel(t('Group'));
       $fields['groups']->setDisplayOptions('form', [
         'type' => 'options_select',
@@ -1628,7 +1638,7 @@ function social_group_form_node_form_alter(&$form, FormStateInterface $form_stat
         }
       }
 
-      /* @var \Drupal\node\Entity\Node $node */
+      /** @var \Drupal\node\Entity\Node $node */
       $node = $form_state->getFormObject()->getEntity();
       // Store if the node is new or not.
       $form['is_new'] = [
@@ -1650,7 +1660,7 @@ function social_group_form_node_form_alter(&$form, FormStateInterface $form_stat
  *   Form state interface.
  */
 function social_group_save_group_from_node(array $form, FormStateInterface $form_state) {
-  /* @var \Drupal\node\Entity\Node $node */
+  /** @var \Drupal\node\Entity\Node $node */
   $node = $form_state->getFormObject()->getEntity();
 
   // Check if the created node is new or updated.
