@@ -8,6 +8,7 @@
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\FieldConfigInterface;
 use Drupal\search_api\Entity\Index;
+use Drupal\taxonomy\Entity\Vocabulary;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -226,4 +227,34 @@ function social_group_flexible_group_update_8906() {
     // Make sure we clear cached definitions for the fields.
     \Drupal::service('entity_field.manager')->clearCachedFieldDefinitions();
   }
+}
+
+/**
+ * Create new vocabulary called 'Group types'.
+ */
+function social_group_flexible_group_update_8907() {
+  $vid = 'group_type';
+  $vocabularies = Vocabulary::loadMultiple();
+  if (!isset($vocabularies[$vid])) {
+    $vocabulary = Vocabulary::create([
+      'vid' => $vid,
+      'description' => 'Group types',
+      'name' => 'Group type',
+    ]);
+    $vocabulary->save();
+  }
+}
+
+/**
+ * Added a new entity reference field called 'Type' in Flexible groups.
+ */
+function social_group_flexible_group_update_8908() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_group_flexible_group', 'social_group_flexible_group_update_8908');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
 }
