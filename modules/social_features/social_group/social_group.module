@@ -232,10 +232,10 @@ function social_group_preprocess_group(array &$variables) {
   // From 10.0.0 onwards, we want to show group types differently.
   // It will be the value chosen while adding the group instead of saying
   // 'Flexible group'.
-  if ($group_type_id == 'flexible_group'
+  if ($group_type_id === 'flexible_group'
     && $group->hasField('field_group_type')
     && !empty($term = $group->get('field_group_type')->entity)
-  ) {
+    && \Drupal::config('social_group.settings')->get('social_group_type_required')) {
     $variables['group_type'] = $term->getName();
   }
 

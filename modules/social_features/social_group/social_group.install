@@ -591,3 +591,11 @@ function social_group_update_8903() {
     user_role_grant_permissions($role, ['bypass create group access']);
   }
 }
+
+/**
+ * Make sure flexible group, group type is not required by default.
+ */
+function social_group_update_8904() {
+  $config = \Drupal::configFactory()->getEditable('social_group.settings');
+  $config->set('social_group_type_required', FALSE)->save();
+}

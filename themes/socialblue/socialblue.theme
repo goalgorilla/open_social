@@ -58,7 +58,7 @@ function socialblue_preprocess_group(array &$variables) {
     $variables['title_prefix']['teaser_tag'] = [
       '#type' => 'inline_template',
       '#template' => '<div class="teaser__tag">{{ teaser_tag }}</div>',
-      '#context' => ['teaser_tag' => t('Group')],
+      '#context' => ['teaser_tag' => $variables['group_type']],
     ];
   }
 }

@@ -69,9 +69,12 @@ class SocialGroupSettings extends ConfigFormBase {
     if (\Drupal::moduleHandler()->moduleExists('social_group_flexible_group')) {
       $form['social_group_type_required'] = [
         '#type' => 'checkbox',
-        '#title' => $this->t('Group types'),
-        '#description' => $this->t('When checked, a new option will appear on the group add form on flexible groups to select group type. Please see available @link.', [
-          '@link' => Link::fromTextAndUrl('group types', Url::fromUserInput('/admin/structure/taxonomy/manage/group_type/overview'))->toString(),
+        '#title' => $this->t('Require group types'),
+        '#description' => $this->t('When checked, a new option will appear on 
+          the flexible group form which requires group creators to select a 
+          group type, this allows for a better categorisation of groups in your 
+          community. You can add or edit the available group types @link', [
+          '@link' => Link::fromTextAndUrl('here.', Url::fromUserInput('/admin/structure/taxonomy/manage/group_type/overview'))->toString(),
         ]),
         '#default_value' => $config->get('social_group_type_required'),
       ];
@@ -93,6 +96,7 @@ class SocialGroupSettings extends ConfigFormBase {
     }
 
     $config->set('default_hero', $form_state->getValue('default_hero'))->save();
+    $config->set('social_group_type_required', $form_state->getValue('social_group_type_required'))->save();
 
     Cache::invalidateTags(['group_view']);
   }
