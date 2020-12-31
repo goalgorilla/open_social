@@ -246,14 +246,63 @@ function social_group_flexible_group_update_8907() {
 }
 
 /**
+ * Create new field & field storage configuration for new group type field.
+ */
+function social_group_flexible_group_update_8908(&$sandbox) {
+  $config_file = drupal_get_path('module', 'social_group_flexible_group') . '/config/update/social_group_flexible_group_update_8908.yml';
+
+  if (is_file($config_file)) {
+    $sandbox['configs'] = Yaml::parse(file_get_contents($config_file));
+    if (!isset($sandbox['total'])) {
+      // Count the amount we need to add to cover batching..
+      $sandbox['total'] = count($sandbox['configs']);
+      $sandbox['current'] = 0;
+    }
+
+    $names = array_keys($sandbox['configs']);
+    $name = $names[$sandbox['current']++];
+    $data = $sandbox['configs'][$name];
+
+    $parts = explode('.', $name);
+
+    switch ($parts[0] . '.' . $parts[1]) {
+      case 'field.storage':
+        $entity_type = \Drupal::service('config.manager')
+          ->getEntityTypeIdByName($name);
+
+        /** @var \Drupal\Core\Config\Entity\ConfigEntityStorageInterface $storage */
+        $storage = \Drupal::entityTypeManager()->getStorage($entity_type);
+        $entity = $storage->createFromStorageRecord($data);
+        $entity->save();
+        break;
+
+      case 'field.field':
+        $field_config = FieldConfig::loadByName($parts[2], $parts[3], $parts[4]);
+
+        if ($field_config instanceof FieldConfigInterface) {
+          $field_config->setDescription($data);
+        }
+        else {
+          $field_config = FieldConfig::create($data);
+        }
+
+        $field_config->save();
+        break;
+    }
+
+    $sandbox['#finished'] = $sandbox['current'] / $sandbox['total'];
+  }
+}
+
+/**
  * Added a new entity reference field called 'Type' in Flexible groups.
  */
-function social_group_flexible_group_update_8908() {
+function social_group_flexible_group_update_8909() {
   /** @var \Drupal\update_helper\Updater $updateHelper */
   $updateHelper = \Drupal::service('update_helper.updater');
 
   // Execute configuration update definitions with logging of success.
-  $updateHelper->executeUpdate('social_group_flexible_group', 'social_group_flexible_group_update_8908');
+  $updateHelper->executeUpdate('social_group_flexible_group', 'social_group_flexible_group_update_8909');
 
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
