@@ -74,8 +74,8 @@ class SocialGroupSettings extends ConfigFormBase {
           the flexible group form which requires group creators to select a 
           group type, this allows for a better categorisation of groups in your 
           community. You can add or edit the available group types @link', [
-          '@link' => Link::fromTextAndUrl('here.', Url::fromUserInput('/admin/structure/taxonomy/manage/group_type/overview'))->toString(),
-        ]),
+            '@link' => Link::fromTextAndUrl('here.', Url::fromUserInput('/admin/structure/taxonomy/manage/group_type/overview'))->toString(),
+          ]),
         '#default_value' => $config->get('social_group_type_required'),
       ];
     }
