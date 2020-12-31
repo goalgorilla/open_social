@@ -72,10 +72,10 @@ class SocialGroupWelcomeMessageConfigOverride implements ConfigFactoryOverrideIn
                   'private_message_body',
                   'private_message_send',
                 ],
-                'parent_name' => '',
-                'weight' => 99,
+                'parent_name' => 'group_settings',
+                'weight' => 1,
                 'label' => t('Welcome message')->render(),
-                'format_type' => 'fieldset',
+                'format_type' => 'details',
                 'format_settings' => [
                   'description' => '',
                   'classes' => '',

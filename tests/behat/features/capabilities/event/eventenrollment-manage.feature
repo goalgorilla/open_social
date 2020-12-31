@@ -15,7 +15,7 @@ Feature: Manage event enrollment
     Given event content:
       | title           | field_event_date | field_event_date_end | status | field_content_visibility | alias         |
       | My Behat Event  | +8 days          | +9 days              | 1      | community                | /mybehatevent |
-    
+
     When I am logged in as "event_organiser"
     And I wait for "3" seconds
     And I am on "mybehatevent"

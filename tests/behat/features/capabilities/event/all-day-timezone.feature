@@ -27,7 +27,7 @@ Feature: All day event for different timezones
       | Oblast | Lviv oblast |
     And I show hidden checkboxes
     And I check the box "edit-event-all-day"
-    And I press "Save"
+    And I press "Create event"
     Then I should see "This is a timezone test for all day events has been created."
     And I should see "1 Jan '25"
     And I should not see "31 Dec '24"

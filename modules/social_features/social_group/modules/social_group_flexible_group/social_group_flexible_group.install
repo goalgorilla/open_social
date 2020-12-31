@@ -178,3 +178,52 @@ function social_group_flexible_group_update_8903() {
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
 }
+
+/**
+ * Updated fieldsets labels and re-arranged existing fields.
+ */
+function social_group_flexible_group_update_8904() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_group_flexible_group', 'social_group_flexible_group_update_8904');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Added "Additional information" fieldset to flexible groups.
+ */
+function social_group_flexible_group_update_8905() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_group_flexible_group', 'social_group_flexible_group_update_8905');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Update label for field_group_image field.
+ */
+function social_group_flexible_group_update_8906() {
+  // Load the existing configuration.
+  $config_name = 'field.field.group.flexible_group.field_group_image';
+  $config = \Drupal::configFactory()->getEditable($config_name);
+  $config_data = $config->getRawData();
+
+  if (!empty($config_data['label'])) {
+    // This to ensure any custom added values are not affected.
+    if (strpos($config_data['label'], 'Group Image') !== FALSE) {
+      $config_data['label'] = 'Image';
+    }
+
+    $config->setData($config_data)->save();
+    // Make sure we clear cached definitions for the fields.
+    \Drupal::service('entity_field.manager')->clearCachedFieldDefinitions();
+  }
+}

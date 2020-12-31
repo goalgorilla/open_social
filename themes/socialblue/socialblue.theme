@@ -62,3 +62,15 @@ function socialblue_preprocess_group(array &$variables) {
     ];
   }
 }
+
+/**
+ * Implements hook_preprocess_file_upload_help().
+ */
+function socialblue_preprocess_file_upload_help(array &$variables) {
+  if (!empty($variables['description']) &&
+    !empty($variables['popover']) &&
+    theme_get_setting('content_entity_form_style') === 'open_social' &&
+    strpos($variables['description'], 'Crop your image to select') !== FALSE) {
+    $variables['description'] = '';
+  }
+}

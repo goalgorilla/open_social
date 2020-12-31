@@ -13,10 +13,9 @@ Feature: Un/publish a node
       And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text"
       And I click radio button "Discussion"
       Then I should see "Publish status"
-      And I click "Publish status"
       And I should see "Published"
       And I uncheck the box "Published"
-      And I press "Save"
+      And I press "Create topic"
     Then I should see "Topic This is a test topic has been created."
       And I should see "This is a test topic" in the "Hero block"
       And I should see "Discussion"
@@ -24,7 +23,6 @@ Feature: Un/publish a node
 
     When I click "Edit content"
       Then I should see "Publish status"
-      And I click "Publish status"
       And I should see "Published"
       And I show hidden checkboxes
       And I check the box "Published"
