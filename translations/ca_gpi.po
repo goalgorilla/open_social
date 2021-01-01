@@ -1299,7 +1299,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Open Social\n"
-"POT-Creation-Date: 2020-12-31 00:14+0000\n"
+"POT-Creation-Date: 2021-01-01 00:12+0000\n"
 "PO-Revision-Date: 2020-11-25 09:01+0000\n"
 "Last-Translator: Sjoerd van der Vis <sjoerdvandervis@getopensocial.com>\n"
 "Language-Team: Greenpeace Catalan <https://translate.getopensocial.com/"
@@ -1363,7 +1363,7 @@ msgstr "fa %time"
 msgid "%type_name: Create new Post entities"
 msgstr ""
 
-#: modules/social_features/social_event/modules/social_event_max_enroll/social_event_max_enroll.module:29;182
+#: modules/social_features/social_event/modules/social_event_max_enroll/social_event_max_enroll.module:29;199
 msgid "(1 spot left)"
 msgid_plural "(@count spots left)"
 msgstr[0] "(queda 1 punt)"
@@ -1449,12 +1449,12 @@ msgid "- All -"
 msgstr "- Tot -"
 
 #: modules/social_features/social_search/social_search.module:78
-#: modules/social_features/social_tagging/social_tagging.module:412;430
+#: modules/social_features/social_tagging/social_tagging.module:433;451
 #: modules/social_features/social_user/social_user.module:132
 msgid "- Any -"
 msgstr "- Qualsevol -"
 
-#: modules/social_features/social_group/modules/social_group_default_route/social_group_default_route.module:42
+#: modules/social_features/social_group/modules/social_group_default_route/social_group_default_route.module:44
 msgid "- Default -"
 msgstr "- Per defecte -"
 
@@ -2417,7 +2417,7 @@ msgid ""
 "</a></p>\r\n"
 msgstr ""
 
-#: modules/social_features/social_core/src/Controller/SocialCoreController.php:66
+#: modules/social_features/social_core/src/Controller/SocialCoreController.php:67
 msgid ""
 "<p>You have insufficient permissions to view the page you're trying to "
 "access. There could be several reasons for this:</p><ul><li>You are trying "
@@ -2632,7 +2632,7 @@ msgstr ""
 msgid "@time ago"
 msgstr "fa @time"
 
-#: modules/social_features/social_event/social_event.module:538
+#: modules/social_features/social_event/social_event.module:540
 msgid "@timezone time"
 msgstr ""
 
@@ -2648,7 +2648,7 @@ msgstr "@total membres"
 msgid "@total people have enrolled"
 msgstr "@total persones que s'han inscrit"
 
-#: modules/social_features/social_event/modules/social_event_max_enroll/social_event_max_enroll.module:187
+#: modules/social_features/social_event/modules/social_event_max_enroll/social_event_max_enroll.module:204
 msgid "@total person has enrolled @spots_left"
 msgid_plural "@total people have enrolled @spots_left"
 msgstr[0] "@total persona que s'ha inscrit @spots_left"
@@ -3004,6 +3004,10 @@ msgstr "Accés només per a persones gestores del grup."
 msgid "Access group search"
 msgstr "Accés a la cerca de grups"
 
+#: modules/social_features/social_group/social_group.module:1633
+msgid "Access permissions"
+msgstr ""
+
 #: modules/social_features/social_post/social_post.group.permissions.yml:0
 msgid "Access posts in group"
 msgstr "Accés a les publicacions del grup"
@@ -3299,6 +3303,10 @@ msgstr "Afegeix una resposta"
 msgid "Add a role to the selected users"
 msgstr ""
 
+#: modules/social_features/social_event/modules/social_event_managers/social_event_managers.module:379
+msgid "Add another organizer"
+msgstr ""
+
 #: translations.php:73
 msgid "Add attachment"
 msgstr "Afegeix un arxiu adjunt"
@@ -3331,17 +3339,17 @@ msgstr "Afegeix més suggeriments útil de plantilla"
 msgid "Add image"
 msgstr "Afegeix una imatge"
 
-#: modules/social_features/social_group/src/Controller/SocialGroupController.php:131
+#: modules/social_features/social_group/src/Controller/SocialGroupController.php:132
 msgid "Add invites"
 msgstr ""
 
-#: modules/social_features/social_group/src/Controller/SocialGroupController.php:129
+#: modules/social_features/social_group/src/Controller/SocialGroupController.php:130
 msgid "Add invites to group: @group_name"
 msgstr ""
 
 #: modules/social_features/social_group/social_group.links.action.yml:0
 #: modules/social_features/social_group/modules/social_group_invite/src/Plugin/Block/SocialInviteLocalActionsBlock.php:135
-#: modules/social_features/social_group/src/Controller/SocialGroupController.php:137
+#: modules/social_features/social_group/src/Controller/SocialGroupController.php:138
 msgid "Add members"
 msgstr "Afegeix membres"
 
@@ -3349,7 +3357,7 @@ msgstr "Afegeix membres"
 msgid "Add members to group"
 msgstr "Afegeix membres al grup"
 
-#: modules/social_features/social_group/src/Controller/SocialGroupController.php:134
+#: modules/social_features/social_group/src/Controller/SocialGroupController.php:135
 msgid "Add members to group: @group_name"
 msgstr ""
 
@@ -3709,7 +3717,7 @@ msgstr "Tots els comentaris"
 msgid "All content index created for the Social distribution."
 msgstr "Tots els índexs de contingut creats per la distribució social."
 
-#: modules/social_features/social_event/social_event.module:652
+#: modules/social_features/social_event/social_event.module:654
 msgid "All day"
 msgstr "Tot el dia"
 
@@ -4042,6 +4050,17 @@ msgstr ""
 msgid "Allows users to skip confirmation when joining a group."
 msgstr "Permet als perfils saltar-se la confirmació quan s’uneixen a un grup."
 
+#: themes/socialblue/theme-settings.php:163
+msgid ""
+"Allows you to render the Content Entity Forms in Open Social style. This "
+"means we remove a lot of Drupal look and feel and logic.\n"
+"        Buttons on the create content are changed from Save to Create. The "
+"advanced details, e.g. the vertical tabs added in Drupal core\n"
+"        are not rendered anymore, instead we use a collapsible fieldset. \n"
+"        Fields like revision, URL Redirect are unset. The preview button is "
+"removed and more."
+msgstr ""
+
 #: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.module:63
 msgid ""
 "Altering the visibility options could result in changes in access for "
@@ -4155,7 +4174,7 @@ msgstr "Sol·licitud secreta"
 msgid "Apply"
 msgstr "Aplica"
 
-#: modules/social_features/social_event/social_event.module:898
+#: modules/social_features/social_event/social_event.module:900
 msgid "Approve"
 msgstr ""
 
@@ -4324,7 +4343,14 @@ msgid ""
 "At what number of event types to switch from radio buttons to select widget."
 msgstr ""
 
+#: modules/social_features/social_event/config/install/field.field.node.event.field_files.yml:0
+#: modules/social_features/social_page/config/install/field.field.node.page.field_files.yml:0
+#: modules/social_features/social_topic/config/install/field.field.node.topic.field_files.yml:0
+msgid "Attachment"
+msgstr ""
+
 #: translations.php:72
+#: modules/social_features/social_core/social_core.module:843
 msgid "Attachments"
 msgstr "Arxius adjunts"
 
@@ -4334,6 +4360,10 @@ msgstr "Arxius adjunts"
 #: modules/social_features/social_content_report/config/install/views.view.report_overview.yml:0
 msgid "Author"
 msgstr "Autor/a"
+
+#: modules/social_features/social_core/social_core.module:810
+msgid "Author Information"
+msgstr ""
 
 #: modules/social_features/social_event/modules/social_event_managers/src/Form/SocialEventManagersSettings.php:39
 msgid "Author as event organiser"
@@ -4379,7 +4409,7 @@ msgstr "Inici de sessió automàtic"
 msgid "Available content visibility"
 msgstr "Visibilitat del contingut disponible"
 
-#: modules/social_features/social_event/social_event.module:946
+#: modules/social_features/social_event/social_event.module:948
 #: modules/social_features/social_event/modules/social_event_invite/social_event_invite.module:137
 #: modules/social_features/social_event/modules/social_event_invite/src/Form/EnrollInviteEmailForm.php:163
 #: modules/social_features/social_event/modules/social_event_invite/src/Form/EnrollInviteUserForm.php:94
@@ -4537,8 +4567,6 @@ msgstr "Blog"
 
 #: modules/custom/social_auth_extra/social_auth_extra.module:378
 #: modules/social_features/social_event/modules/social_event_an_enroll/src/Form/EventAnEnrollSettingsForm.php:101
-#: config/optional/field.field.node.book.body.yml:0
-#: modules/social_features/social_event/config/install/field.field.node.event.body.yml:0
 msgid "Body"
 msgstr "Cos"
 
@@ -4643,6 +4671,7 @@ msgstr "Enllaç de crida a l'acció"
 msgid "Can not send e-mail for %entity"
 msgstr "No es pot enviar el correu electrònic per %entity"
 
+#: modules/social_features/social_core/social_core.module:869
 #: modules/social_features/social_event/modules/social_event_managers/src/Form/SocialEventManagersAddEnrolleeForm.php:278
 #: modules/social_features/social_event/src/Form/EnrollRequestDeclineForm.php:128
 #: modules/social_features/social_group/social_group.module:630;751
@@ -4713,7 +4742,7 @@ msgstr[1] "Canvia el rol als membres seleccionats %count"
 msgid "Change which profile fields are used / not used"
 msgstr "Canvia quins camps del perfil s'utilitzen / no s'utilitzen"
 
-#: modules/social_features/social_event/social_event.module:671
+#: modules/social_features/social_event/social_event.module:673
 msgid "Change your timezone here"
 msgstr ""
 
@@ -5288,6 +5317,12 @@ msgid ""
 "or return URL was not valid."
 msgstr ""
 
+#: modules/social_features/social_core/social_core.install:1265
+msgid ""
+"Could not install Content Entity forms as Open Social please do so manually "
+"in the Socialblue settings."
+msgstr ""
+
 #: modules/custom/social_auth_facebook/src/FacebookAuthManager.php:143
 msgid ""
 "Could not load Facebook profile picture: FacebookResponseException: @message"
@@ -5338,6 +5373,15 @@ msgstr ""
 "Compta descàrregues de fitxers per a camps i fitxers de nucli privat i\n"
 "      registra un missatge a la taula de vigilància."
 
+#: modules/social_features/social_core/src/Controller/SocialCoreController.php:219
+#: modules/social_features/social_group/src/Controller/SocialGroupController.php:245
+msgid "Create @article @name"
+msgstr ""
+
+#: modules/social_features/social_core/social_core.module:861
+msgid "Create @entity"
+msgstr ""
+
 #: modules/social_features/social_event/src/Plugin/Block/EventAddBlock.php:94
 #: modules/social_features/social_group/src/Plugin/Block/GroupAddEventBlock.php:68
 msgid "Create Event"
@@ -5351,7 +5395,7 @@ msgstr "Crea una pàgina de llibre nova"
 msgid "Create New Content"
 msgstr "Crea contingut nou"
 
-#: modules/social_features/social_event/social_event.module:551
+#: modules/social_features/social_event/social_event.module:553
 msgid "Create New Event"
 msgstr "Crea un esdeveniment nou"
 
@@ -5375,6 +5419,11 @@ msgstr "Crear un tema nou"
 #: modules/social_features/social_topic/src/Plugin/Block/TopicAddBlock.php:94
 msgid "Create Topic"
 msgstr "Crear un tema"
+
+#: modules/social_features/social_core/src/Controller/SocialCoreController.php:225
+#: modules/social_features/social_group/src/Controller/SocialGroupController.php:251
+msgid "Create a @name"
+msgstr ""
 
 #: modules/social_features/social_user/src/Plugin/Block/SocialUserLoginBlock.php:49
 msgid "Create a new user account."
@@ -5723,7 +5772,7 @@ msgstr "Dia Mes"
 msgid "Day Month Time"
 msgstr "Dia Mes Hora"
 
-#: modules/social_features/social_event/social_event.module:905
+#: modules/social_features/social_event/social_event.module:907
 #: modules/social_features/social_event/modules/social_event_invite/src/Form/EventInviteEnrollActionForm.php:105
 #: themes/socialbase/templates/group/group--hero.html.twig:94
 #: themes/socialblue/templates/group/group--statistic.html.twig:35
@@ -5748,6 +5797,10 @@ msgstr ""
 #: themes/socialblue/theme-settings.php:154
 msgid "Default"
 msgstr "Per defecte"
+
+#: themes/socialblue/theme-settings.php:168
+msgid "Default Drupal"
+msgstr ""
 
 #: modules/social_features/social_comment/config/install/comment.type.comment.yml:0
 msgid "Default comment type."
@@ -5983,7 +6036,9 @@ msgstr "Descriu aquest tipus de menció."
 #: modules/custom/mentions/config/schema/mentions.schema.yml:0
 #: modules/custom/mentions/src/Form/MentionsTypeForm.php:138
 #: modules/custom/social_queue_storage/src/QueueStorageEntityListBuilder.php:23
+#: config/optional/field.field.node.book.body.yml:0
 #: modules/social_features/social_content_report/config/install/views.view.report_overview.yml:0
+#: modules/social_features/social_event/config/install/field.field.node.event.body.yml:0
 #: modules/social_features/social_featured_content/config/install/field.field.paragraph.featured.field_featured_description.yml:0
 #: modules/social_features/social_featured_items/config/install/field.field.paragraph.featured_item.field_featured_item_description.yml:0
 #: modules/social_features/social_featured_items/config/install/field.field.paragraph.featured_items.field_featured_items_description.yml:0
@@ -6434,7 +6489,7 @@ msgstr "Activa la inscripció a l'esdeveniment per a perfils anònims"
 msgid "Enable event invite per group type"
 msgstr ""
 
-#: modules/social_features/social_event/social_event.module:352
+#: modules/social_features/social_event/social_event.module:354
 msgid "Enable events for on the user profiles."
 msgstr "Activa els esdeveniments per als perfils."
 
@@ -6567,7 +6622,6 @@ msgstr ""
 msgid "Enroll"
 msgstr "Inscriure's"
 
-#: modules/social_features/social_event/config/install/field.field.node.event.field_enroll_method.yml:0
 #: modules/social_features/social_event/config/install/views.view.upcoming_events.yml:0
 msgid "Enroll Method"
 msgstr ""
@@ -6606,6 +6660,11 @@ msgstr "Inscriure's a l'esdeveniment @label"
 msgid "Enroll in event"
 msgstr "Inscriure's a l'esdeveniment"
 
+#: modules/social_features/social_event/social_event.module:1253
+#: modules/social_features/social_event/config/install/field.field.node.event.field_enroll_method.yml:0
+msgid "Enroll method"
+msgstr ""
+
 #: modules/social_features/social_event/social_event.group.permissions.yml:0
 msgid "Enroll to events posted inside this group"
 msgstr "Inscriure's als esdeveniments publicats dins d'aquest grup"
@@ -6632,6 +6691,10 @@ msgstr "Inscrit"
 #: modules/social_features/social_event/modules/social_event_managers/config/install/views.view.event_manage_enrollments.yml:0
 msgid "Enrollee"
 msgstr "Persona inscrita"
+
+#: modules/social_features/social_event/modules/social_event_max_enroll/social_event_max_enroll.module:78
+msgid "Enrollment limit"
+msgstr ""
 
 #: translations.php:90
 msgid "Enrollment options"
@@ -6807,7 +6870,7 @@ msgstr "Funcionalitat de la visió general de l'esdeveniment."
 msgid "Event add block"
 msgstr "Bloc afegit d'esdeveniment"
 
-#: modules/social_features/social_event/social_event.module:366;369
+#: modules/social_features/social_event/social_event.module:368;371
 #: modules/social_features/social_featured_content/templates/node--event--featured.html.twig:8
 #: themes/socialbase/templates/node/event/node--event--full.html.twig:39
 #: themes/socialbase/templates/node/event/node--event--teaser.html.twig:8
@@ -6821,7 +6884,7 @@ msgstr "Bloc afegit d'esdeveniment"
 msgid "Event date"
 msgstr "Data de l'esdeveniment"
 
-#: modules/social_features/social_event/social_event.module:349;351
+#: modules/social_features/social_event/social_event.module:351;353
 msgid "Event enrolled or created"
 msgstr "S'ha creat o s'ha inscrit a un esdeveniment"
 
@@ -6886,7 +6949,6 @@ msgstr "Configuració de les persones gestores de l'esdeveniment"
 msgid "Event organiser settings"
 msgstr "Configuració de les persones organitzadores de l'esdeveniment"
 
-#: modules/social_features/social_event/modules/social_event_managers/config/install/field.field.node.event.field_event_managers.yml:0
 #: modules/social_features/social_event/modules/social_event_managers/config/install/views.view.managers.yml:0
 msgid "Event organisers"
 msgstr "Persones que organitzen l'esdeveniment"
@@ -6906,7 +6968,7 @@ msgstr ""
 msgid "Event settings"
 msgstr "Configuració de l'esdeveniment"
 
-#: modules/social_features/social_event/social_event.module:358;375
+#: modules/social_features/social_event/social_event.module:360;377
 msgid "Event sorting (passed and upcoming)"
 msgstr "Ordenació d'esdeveniments (passats i propers)"
 
@@ -6915,7 +6977,6 @@ msgid "Event time"
 msgstr "Hora de l'esdeveniment"
 
 #: modules/custom/social_demo/src/Plugin/DemoContent/EventType.php:8
-#: modules/social_features/social_event/modules/social_event_type/config/install/field.field.node.event.field_event_type.yml:0
 msgid "Event type"
 msgstr "Tipus d'esdeveniment"
 
@@ -7098,9 +7159,6 @@ msgstr "Fitxer i imatge en una taula"
 #: themes/socialbase/templates/node/field--node--field-files.html.twig:3
 #: modules/social_features/social_book/config/optional/field.field.node.book.field_files.yml:0
 #: modules/social_features/social_comment_upload/config/install/field.field.comment.comment.field_comment_files.yml:0
-#: modules/social_features/social_event/config/install/field.field.node.event.field_files.yml:0
-#: modules/social_features/social_page/config/install/field.field.node.page.field_files.yml:0
-#: modules/social_features/social_topic/config/install/field.field.node.topic.field_files.yml:0
 msgid "Files"
 msgstr "Fitxers"
 
@@ -7142,7 +7200,7 @@ msgstr "Filtra les activitats per pàgina d'inici personalitzada"
 msgid "Filter deleted threads"
 msgstr "Filtra els fils de conversa eliminats"
 
-#: modules/social_features/social_event/social_event.module:370
+#: modules/social_features/social_event/social_event.module:372
 msgid "Filter events by start date and end date"
 msgstr ""
 
@@ -7343,7 +7401,7 @@ msgstr ""
 "per correu electrònic només s'enviaran quan hom no estigui actiu a la "
 "plataforma."
 
-#: modules/social_features/social_event/social_event.module:359;376
+#: modules/social_features/social_event/social_event.module:361;378
 msgid ""
 "For upcoming events sort ASC by start date and for passed events change "
 "order to DESC."
@@ -7539,7 +7597,6 @@ msgstr "Esdeveniments del grup"
 #: modules/social_features/social_group/config/install/field.field.group.closed_group.field_group_image.yml:0
 #: modules/social_features/social_group/config/install/field.field.group.open_group.field_group_image.yml:0
 #: modules/social_features/social_group/config/install/field.field.group.public_group.field_group_image.yml:0
-#: modules/social_features/social_group/modules/social_group_flexible_group/config/install/field.field.group.flexible_group.field_group_image.yml:0
 #: modules/social_features/social_group/modules/social_group_secret/config/install/field.field.group.secret_group.field_group_image.yml:0
 msgid "Group Image"
 msgstr "Imatge del grup"
@@ -7632,10 +7689,6 @@ msgstr "Bloc d'esdeveniment per afegir al grup"
 msgid "Group add topic block"
 msgstr "Bloc de tema per afegir al grup"
 
-#: modules/social_features/social_group/social_group.module:1633
-msgid "Group and visibility"
-msgstr "Grup i visibilitat"
-
 #: modules/social_features/social_group/config/install/views.view.group_events.yml:0
 #: modules/social_features/social_group/config/install/views.view.group_topics.yml:0
 msgid "Group content Content"
@@ -7711,7 +7764,7 @@ msgstr "Persones que gestionen el grup"
 msgid "Group members"
 msgstr "Membres del grup"
 
-#: modules/social_features/social_group/modules/social_group_default_route/social_group_default_route.module:58
+#: modules/social_features/social_group/modules/social_group_default_route/social_group_default_route.module:60
 msgid "Group members landing tab"
 msgstr "Pestanya de destinació dels membres del grup"
 
@@ -8045,6 +8098,7 @@ msgstr ""
 #: modules/social_features/social_book/config/optional/field.field.node.book.field_book_image.yml:0
 #: modules/social_features/social_event/config/install/field.field.node.event.field_event_image.yml:0
 #: modules/social_features/social_featured_items/config/install/field.field.paragraph.featured_item.field_featured_item_image.yml:0
+#: modules/social_features/social_group/modules/social_group_flexible_group/config/install/field.field.group.flexible_group.field_group_image.yml:0
 #: modules/social_features/social_landing_page/config/install/field.field.paragraph.hero.field_hero_image.yml:0
 #: modules/social_features/social_landing_page/config/install/field.field.paragraph.hero_small.field_hero_small_image.yml:0
 #: modules/social_features/social_page/config/install/field.field.node.page.field_page_image.yml:0
@@ -8224,12 +8278,12 @@ msgstr ""
 msgid "Invite(s) have been successfully sent."
 msgstr ""
 
-#: modules/social_features/social_event/social_event.module:107
+#: modules/social_features/social_event/social_event.module:109;1161
+#: modules/social_features/social_event/config/install/field.storage.node.field_enroll_method.yml:0
 msgid "Invite-only"
 msgstr ""
 
 #: translations.php:47
-#: modules/social_features/social_event/config/install/field.storage.node.field_enroll_method.yml:0
 msgid ""
 "Invite-only - users can only enroll for this event if they are added/invited "
 "by event organisers"
@@ -8416,11 +8470,11 @@ msgstr "Categoria pel tipus d'entitat d'emmagatzematge en cua."
 msgid "Landing page"
 msgstr "Pàgina de destinació"
 
-#: modules/social_features/social_group/modules/social_group_default_route/social_group_default_route.module:84
+#: modules/social_features/social_group/modules/social_group_default_route/social_group_default_route.module:86
 msgid "Landing tab for members"
 msgstr "Pestanya de destinació pels membres"
 
-#: modules/social_features/social_group/modules/social_group_default_route/social_group_default_route.module:95
+#: modules/social_features/social_group/modules/social_group_default_route/social_group_default_route.module:97
 msgid "Landing tab for non-members"
 msgstr "Pestanya de destinació pels no membres"
 
@@ -8985,7 +9039,7 @@ msgstr "Membres"
 msgid "Members excluded on other pages:"
 msgstr "Membres exclosos en altres pàgines:"
 
-#: modules/social_features/social_group/src/Controller/SocialGroupController.php:88
+#: modules/social_features/social_group/src/Controller/SocialGroupController.php:89
 msgid "Members of @name"
 msgstr "Membres de @name"
 
@@ -9126,6 +9180,7 @@ msgid "Menu"
 msgstr "Menú"
 
 #: modules/custom/social_demo/src/Plugin/DemoContent/MenuLink.php:7
+#: modules/social_features/social_core/social_core.module:781
 msgid "Menu link"
 msgstr "Enllaç del menú"
 
@@ -9237,7 +9292,7 @@ msgstr "Els meus grups"
 msgid "My Invitations"
 msgstr ""
 
-#: modules/social_features/social_event/social_event.module:576
+#: modules/social_features/social_event/social_event.module:578
 msgid "My events"
 msgstr "Els meus esdeveniments"
 
@@ -9315,7 +9370,7 @@ msgstr "Nova pàgina de llibre"
 msgid "New Content"
 msgstr "Contingut nou"
 
-#: modules/social_features/social_event/social_event.module:553
+#: modules/social_features/social_event/social_event.module:555
 msgid "New Event"
 msgstr "Esdeveniment nou"
 
@@ -9515,7 +9570,7 @@ msgstr "No hi ha informes disponibles."
 msgid "No results found."
 msgstr "No s'ha trobat cap resultat."
 
-#: modules/social_features/social_event/modules/social_event_max_enroll/social_event_max_enroll.module:120;126
+#: modules/social_features/social_event/modules/social_event_max_enroll/social_event_max_enroll.module:137;143
 msgid "No spots left"
 msgstr "No hi queda cap lloc"
 
@@ -9569,7 +9624,7 @@ msgstr "Tipus de node"
 msgid "Node types views should be tracked for"
 msgstr "S’ha de rastrejar les visualitzacions dels tipus de node per"
 
-#: modules/social_features/social_group/modules/social_group_default_route/social_group_default_route.module:66
+#: modules/social_features/social_group/modules/social_group_default_route/social_group_default_route.module:68
 msgid "Non members landing tab"
 msgstr "Pestanya de destinació no membre"
 
@@ -9772,7 +9827,7 @@ msgstr[0] "Un perfil descarregat."
 msgstr[1] "@count perfils descarregats."
 
 #: modules/social_features/social_content_block/modules/social_event_content_block/social_event_content_block.install:148
-#: modules/social_features/social_event/social_event.module:307
+#: modules/social_features/social_event/social_event.module:309
 #: modules/social_features/social_content_block/modules/social_event_content_block/config/install/field.storage.block_content.field_event_date.yml:0
 msgid "Ongoing"
 msgstr ""
@@ -9813,6 +9868,7 @@ msgstr "Només nom de perfil"
 #: modules/custom/social_lets_connect/social_lets_connect.links.menu.yml:0
 #: modules/custom/social_lets_connect/social_lets_connect.routing.yml:0
 #: modules/social_features/social_swiftmail/social_swiftmail.module:56
+#: themes/socialblue/theme-settings.php:169
 msgid "Open Social"
 msgstr "Open Social"
 
@@ -9877,12 +9933,12 @@ msgstr "Grup obert: membres del grup"
 msgid "Open or download file"
 msgstr "Obre o descarrega el fitxer"
 
-#: modules/social_features/social_event/social_event.module:101
+#: modules/social_features/social_event/social_event.module:103;1149
+#: modules/social_features/social_event/config/install/field.storage.node.field_enroll_method.yml:0
 msgid "Open to enroll"
 msgstr ""
 
 #: translations.php:45
-#: modules/social_features/social_event/config/install/field.storage.node.field_enroll_method.yml:0
 msgid "Open to enroll - users can enroll for this event without approval"
 msgstr ""
 
@@ -9967,6 +10023,10 @@ msgstr ""
 #: modules/custom/activity_basics/src/Plugin/ActivityContext/OrganizerActivityContext.php:13
 msgid "Organizer activity context"
 msgstr "Context d'activitat d'organització"
+
+#: modules/social_features/social_event/modules/social_event_managers/config/install/field.field.node.event.field_event_managers.yml:0
+msgid "Organizers"
+msgstr ""
 
 #: modules/social_features/social_content_report/config/install/field.field.flagging.report_comment.field_other_reason.yml:0
 #: modules/social_features/social_content_report/config/install/field.field.flagging.report_node.field_other_reason.yml:0
@@ -10912,7 +10972,7 @@ msgstr ""
 msgid "Public group: Group membership"
 msgstr "Grup públic: membres del grup"
 
-#: modules/social_features/social_core/social_core.module:707
+#: modules/social_features/social_core/social_core.module:796
 #: modules/social_features/social_event/config/install/views.view.events.yml:0;0;0
 msgid "Publish status"
 msgstr "Estat de publicació"
@@ -10922,7 +10982,7 @@ msgid "Publish the selected comments"
 msgstr "Publica els comentaris seleccionats"
 
 #: modules/social_features/social_comment/social_comment.module:137
-#: modules/social_features/social_event/social_event.module:67
+#: modules/social_features/social_event/social_event.module:69
 #: modules/social_features/social_post/src/Entity/Post.php:342
 #: modules/social_features/social_topic/social_topic.module:75;105
 #: config/install/views.view.content.yml:0;0
@@ -11190,7 +11250,7 @@ msgstr "Elimina a %name del %group"
 msgid "Remove Open Social Branding"
 msgstr "Elimina la marca d'Open Social"
 
-#: modules/social_features/social_group/src/Controller/SocialGroupController.php:156
+#: modules/social_features/social_group/src/Controller/SocialGroupController.php:157
 msgid "Remove a member"
 msgstr "Elimina un membre"
 
@@ -11206,12 +11266,12 @@ msgstr "Elimina contingut demo."
 msgid "Remove image"
 msgstr "Elimina la imatge"
 
-#: modules/social_features/social_group/src/Controller/SocialGroupController.php:154
+#: modules/social_features/social_group/src/Controller/SocialGroupController.php:155
 #: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_invitations.yml:0
 msgid "Remove invitation"
 msgstr ""
 
-#: modules/social_features/social_group/src/Controller/SocialGroupController.php:152
+#: modules/social_features/social_group/src/Controller/SocialGroupController.php:153
 msgid "Remove invitee from group: @group_name"
 msgstr ""
 
@@ -11237,6 +11297,10 @@ msgstr ""
 #: modules/social_features/social_post/social_post.post_update.php:33
 msgid "Removing @count orphaned posts for deleted users"
 msgstr "Eliminant @count publicacions orfes per a perfils suprimits"
+
+#: themes/socialblue/theme-settings.php:162
+msgid "Render Content Entity forms in Open Social style"
+msgstr ""
 
 #: modules/custom/mentions/config/schema/mentions.schema.yml:0
 msgid "Render as link"
@@ -11372,17 +11436,12 @@ msgstr ""
 msgid "Request status"
 msgstr ""
 
-#: modules/social_features/social_event/social_event.module:104
+#: modules/social_features/social_event/social_event.module:106;1155
 #: modules/social_features/social_event/src/Controller/EnrollRequestDialogController.php:88;95
 #: modules/social_features/social_event/src/Form/EnrollActionForm.php:211;226;280
 #: modules/social_features/social_event/src/Form/EnrollRequestModalForm.php:94
-msgid "Request to enroll"
-msgstr ""
-
 #: modules/social_features/social_event/config/install/field.storage.node.field_enroll_method.yml:0
-msgid ""
-"Request to enroll - users can \"request to enroll\" for this event which "
-"event organisers approve/decline"
+msgid "Request to enroll"
 msgstr ""
 
 #: translations.php:46
@@ -12321,7 +12380,7 @@ msgstr "Blancaneus"
 #: modules/social_features/social_download_count/social_download_count.info.yml:0
 #: modules/social_features/social_editor/social_editor.info.yml:0
 #: modules/social_features/social_embed/social_embed.info.yml:0
-#: modules/social_features/social_event/social_event.module:367
+#: modules/social_features/social_event/social_event.module:369
 #: modules/social_features/social_event/social_event.info.yml:0
 #: modules/social_features/social_event/modules/social_event_an_enroll/social_event_an_enroll.info.yml:0
 #: modules/social_features/social_event/modules/social_event_an_enroll_enrolments_export/social_event_an_enroll_enrolments_export.info.yml:0
@@ -13321,18 +13380,18 @@ msgstr "Etiqueta contingut"
 msgid "Tag settings"
 msgstr "Configuració de les etiquetes"
 
-#: modules/social_features/social_tagging/social_tagging.module:263
+#: modules/social_features/social_tagging/social_tagging.module:284
 #: modules/social_features/social_tagging/social_tagging.install:88
 msgid "Tagging"
 msgstr "Etiquetar"
 
-#: modules/social_features/social_tagging/social_tagging.module:264
+#: modules/social_features/social_tagging/social_tagging.module:285
 #: modules/social_features/social_tagging/social_tagging.install:89
 msgid "Tagging field."
 msgstr "Camp d'etiquetatge."
 
 #: modules/social_features/social_profile/modules/social_profile_organization_tag/src/SocialProfileOrgTagConfigOverride.php:54;57
-#: modules/social_features/social_tagging/social_tagging.module:196;353
+#: modules/social_features/social_tagging/social_tagging.module:156;166;217;374
 #: themes/socialbase/templates/profile/profile--profile--default.html.twig:142
 #: themes/socialblue/templates/profile/profile--profile--default--sky.html.twig:151
 #: modules/social_features/social_tagging/config/optional/block.block.socialtagsblock.yml:0
@@ -13455,7 +13514,7 @@ msgstr "El JS per afegir a la plataforma."
 msgid "The Post ID."
 msgstr "L'ID de la publicació."
 
-#: modules/social_features/social_core/social_core.module:653
+#: modules/social_features/social_core/social_core.module:737
 msgid "The URL alias allows you to customise the link to this page."
 msgstr "L’àlies de l’URL et permet personalitzar l’enllaç a aquesta pàgina."
 
@@ -13626,11 +13685,11 @@ msgstr "El tipus d'entitat"
 msgid "The entity type to which this mention is attached."
 msgstr "El tipus d'entitat a la qual s’adjunta aquesta menció."
 
-#: modules/social_features/social_event/social_event.module:684
+#: modules/social_features/social_event/social_event.module:686
 msgid "The event date and time are set based on the site's default timezone."
 msgstr ""
 
-#: modules/social_features/social_event/social_event.module:669
+#: modules/social_features/social_event/social_event.module:671
 msgid ""
 "The event date and time are set based on your timezone. @change_timezone."
 msgstr ""
@@ -13882,11 +13941,11 @@ msgid_plural ""
 msgstr[0] "El rol d'1 membre seleccionat no s'ha canviat amb èxit"
 msgstr[1] "El rol de @count membres seleccionats no s'ha canviat amb èxit"
 
-#: modules/social_features/social_group/modules/social_group_default_route/social_group_default_route.module:85
+#: modules/social_features/social_group/modules/social_group_default_route/social_group_default_route.module:87
 msgid "The route (tab) a member lands on when going to a group."
 msgstr "La ruta (fitxa) que un membre segueix quan es dirigeix a un grup."
 
-#: modules/social_features/social_group/modules/social_group_default_route/social_group_default_route.module:96
+#: modules/social_features/social_group/modules/social_group_default_route/social_group_default_route.module:98
 msgid "The route (tab) a non-member lands on when going to a group."
 msgstr ""
 "La ruta (fitxa) que una persona no registrada segueix quan es dirigeix a un "
@@ -14110,6 +14169,10 @@ msgstr ""
 msgid "This content is posted in"
 msgstr ""
 
+#: modules/social_features/social_core/social_core.module:787
+msgid "This description will be displayed when hovering over the menu link."
+msgstr ""
+
 #: themes/socialbase/templates/node/event/node--event--teaser.html.twig:27
 msgid "This event has type"
 msgstr ""
@@ -14247,6 +14310,10 @@ msgstr ""
 "plataforma i no es pot canviar. Si us plau, posa't en contacte amb la "
 "persona que administra la plataforma en cas de dubte."
 
+#: modules/social_features/social_core/social_core.module:784
+msgid "This title will be displayed in the menu."
+msgstr ""
+
 #: modules/social_features/social_event/modules/social_event_an_enroll/src/Form/EventAnEnrollSettingsForm.php:58
 msgid ""
 "This will provide event organisers with the permission to decide whether "
@@ -14263,11 +14330,12 @@ msgstr ""
 "Marqueu la casella per especificar quina informació vols compartir. Si no "
 "vols compartir dades, deixa'l desmarcat."
 
-#: modules/social_features/social_event/social_event.module:663
+#: modules/social_features/social_event/social_event.module:665
 msgid "Time zone"
 msgstr ""
 
 #: modules/custom/mentions/src/MentionsViewsData.php:50
+#: modules/social_features/social_core/social_core.module:783
 #: modules/social_features/social_footer/config/schema/social_footer.schema.yml:0
 #: modules/social_features/social_footer/src/Plugin/Block/SocialFooterPoweredByBlock.php:135
 #: modules/social_features/social_profile/modules/social_profile_privacy/social_profile_privacy.module:92
@@ -14559,6 +14627,7 @@ msgstr "ID del perfil de Twitter"
 #: modules/custom/social_queue_storage/src/QueueStorageEntityTypeListBuilder.php:17
 #: modules/social_features/social_group/src/Controller/SocialGroupListBuilder.php:93
 #: config/install/views.view.content.yml:0
+#: modules/social_features/social_event/modules/social_event_type/config/install/field.field.node.event.field_event_type.yml:0
 #: modules/social_features/social_follow_content/config/install/views.view.following.yml:0
 #: modules/social_features/social_search/config/install/views.view.search_groups.yml:0
 #: modules/social_features/social_topic/config/install/field.field.node.topic.field_topic_type.yml:0
@@ -14607,10 +14676,6 @@ msgstr "Adreça URL de l'entitat que t'agrada."
 #: modules/social_features/social_content_report/social_content_report.tokens.inc:15
 msgid "URL of the reported content."
 msgstr "Adreça URL del contingut reportat."
-
-#: modules/social_features/social_core/social_core.module:629
-msgid "URL path settings"
-msgstr "Paràmetres del camí URL"
 
 #: modules/custom/social_lets_connect/modules/social_lets_connect_usage/config/schema/social_lets_connect_usage.schema.yml:0
 msgid "URL to send the usage data to"
@@ -14687,7 +14752,7 @@ msgstr "Retira el comentari"
 msgid "Unpublish the selected comments"
 msgstr "Retira els comentaris seleccionats"
 
-#: modules/social_features/social_event/social_event.module:66
+#: modules/social_features/social_event/social_event.module:68
 #: modules/social_features/social_topic/social_topic.module:74;104
 #: config/install/views.view.content.yml:0;0
 msgid "Unpublished"
@@ -15114,7 +15179,7 @@ msgstr "Veure les notes del gestor al perfil d'un perfil"
 msgid "View mode"
 msgstr "Mode de visualització"
 
-#: modules/social_features/social_event/social_event.module:574
+#: modules/social_features/social_event/social_event.module:576
 msgid "View my events"
 msgstr "Veure els meus esdeveniments"
 
@@ -15654,7 +15719,7 @@ msgstr ""
 msgid "You have declined the invitation for the @event event."
 msgstr ""
 
-#: modules/social_features/social_event/social_event.module:272
+#: modules/social_features/social_event/social_event.module:274
 msgid "You have enrolled"
 msgstr "T'has inscrit"
 
@@ -16600,14 +16665,30 @@ msgstr "user/{{ uid }}"
 msgid "users"
 msgstr "perfils"
 
+#: modules/social_features/social_event/social_event.module:1156
+msgid ""
+"users can \"request to enroll\" for this event which event organisers "
+"approve/decline"
+msgstr ""
+
 #: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.module:442
 msgid ""
 "users can \"request to join\" this group which group managers approve/"
 "decline."
 msgstr ""
 
+#: modules/social_features/social_event/social_event.module:1150
+msgid "users can enroll for this event without approval"
+msgstr ""
+
 #: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.module:436
 msgid "users can join this group without approval."
+msgstr ""
+
+#: modules/social_features/social_event/social_event.module:1162
+msgid ""
+"users can only enroll for this event if they are added/invited by event "
+"organisers"
 msgstr ""
 
 #: modules/social_features/social_group/modules/social_group_flexible_group/social_group_flexible_group.module:430
@@ -16884,6 +16965,9 @@ msgstr "››"
 #~ msgid "Full comment"
 #~ msgstr "Comentari complet"
 
+#~ msgid "Group and visibility"
+#~ msgstr "Grup i visibilitat"
+
 #~ msgid "Group members - visible only to group members"
 #~ msgstr "Membres del grup - només visibles per a membres del grup"
 
@@ -16983,6 +17067,9 @@ msgstr "››"
 
 #~ msgid "The visibility of this content is set to"
 #~ msgstr "La visibilitat d'aquest contingut s'estableix en"
+
+#~ msgid "URL path settings"
+#~ msgstr "Paràmetres del camí URL"
 
 #~ msgid "Unpublish comment"
 #~ msgstr "Retira el comentari"
