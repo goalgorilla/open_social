@@ -11,7 +11,7 @@ Feature: Social Sharing
     And I fill in the "edit-body-0-value" WYSIWYG editor with "This is a topic for community"
     And I click radio button "Community"
     And I click radio button "Discussion"
-    And I press "Save"
+    And I press "Create topic"
     Then I should see "Topic This is a topic for community has been created."
     And I should not see "Facebook"
     And I am on "node/add/topic"
@@ -19,7 +19,7 @@ Feature: Social Sharing
     And I fill in the "edit-body-0-value" WYSIWYG editor with "This is a topic for public"
     And I click radio button "Public"
     And I click radio button "Discussion"
-    And I press "Save"
+    And I press "Create topic"
     Then I should see "Topic This is a topic for public has been created."
     And I should see "Facebook"
 

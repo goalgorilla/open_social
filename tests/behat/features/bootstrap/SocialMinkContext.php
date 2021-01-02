@@ -191,12 +191,11 @@ class SocialMinkContext extends MinkContext {
       }
     }
   }
-  
-  
+
   /**
    * Wait for AJAX to finish.
    *
-   * Overwrites the default iWaitForAjaxToFinish step to increase the time-out to 
+   * Overwrites the default iWaitForAjaxToFinish step to increase the time-out to
    * allow tests to pass with longer running ajax requests.
    *
    * @see \Drupal\FunctionalJavascriptTests\JSWebAssert::assertWaitOnAjaxRequest()
@@ -242,7 +241,7 @@ JS;
       $this->getSession()->getPage()->uncheckField($option);
     }
     // Fill in "URL alias" field with given value
-    $field = $this->fixStepArgument('URL alias');
+    $field = $this->fixStepArgument('path[0][alias]');
     $value = $this->fixStepArgument($value);
     $this->getSession()->getPage()->fillField($field, $value);
   }

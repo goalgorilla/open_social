@@ -259,9 +259,50 @@ function social_topic_update_8903() {
 }
 
 /**
- * Add icons to default topic types.
+ * Updated fieldset labels and added new fieldset called Settings.
  */
 function social_topic_update_8904() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_topic', 'social_topic_update_8904');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Added fields to their new respective fieldsets.
+ */
+function social_topic_update_8905() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_topic', 'social_topic_update_8905');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Remove group_topic_description fieldgroup from topic content type.
+ */
+function social_topic_update_8906() {
+  // There can be possibility that someone might have added fields in
+  // fieldgroup we are removing. So, we want to skip removal if there are any
+  // children present in fieldgroup.
+  $group = field_group_load_field_group('group_topic_description', 'node', 'topic', 'form', 'default');
+  if ($group && empty($group->children)) {
+    field_group_delete_field_group($group);
+  }
+}
+
+/**
+ * Add icons to default topic types.
+ */
+function social_topic_update_8907() {
   // Default topic types.
   $topic_types = [
     [
@@ -291,10 +332,12 @@ function social_topic_update_8904() {
  * Find topic type term by name.
  */
 function _social_topic_get_term_id_by_name($term_name) {
-  $terms = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadByProperties([
-    'name' => $term_name,
-    'vid' => 'topic_types',
-  ]);
+  $terms = \Drupal::entityTypeManager()
+    ->getStorage('taxonomy_term')
+    ->loadByProperties([
+      'name' => $term_name,
+      'vid' => 'topic_types',
+    ]);
   $term = reset($terms);
 
   return !empty($term) ? $term : FALSE;

@@ -59,7 +59,7 @@
       | Title | This is a test topic |
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text"
     And I click radio button "Discussion"
-    And I press "Save"
+    And I press "Create topic"
     And I should see "Topic This is a test topic has been created."
     And I should see "This is a test topic" in the "Hero block"
     And I should see "Discussion" in the "Main content"
