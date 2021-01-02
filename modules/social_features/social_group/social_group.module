@@ -229,6 +229,16 @@ function social_group_preprocess_group(array &$variables) {
   $variables['group_type_id'] = $group_type_id;
   $variables['group_type'] = $group->getGroupType()->label();
 
+  // From 10.0.0 onwards, we want to show group types differently.
+  // It will be the value chosen while adding the group instead of saying
+  // 'Flexible group'.
+  if ($group_type_id === 'flexible_group'
+    && $group->hasField('field_group_type')
+    && !empty($term = $group->get('field_group_type')->entity)
+    && \Drupal::config('social_group.settings')->get('social_group_type_required')) {
+    $variables['group_type'] = $term->getName();
+  }
+
   $group_settings_help = [
     '#theme' => 'group_settings_help',
     '#group_type' => $group->getGroupType()->label(),
@@ -296,7 +306,10 @@ function social_group_preprocess_group(array &$variables) {
     // Get the current route name to check if
     // the user is on the edit or delete page.
     $route = \Drupal::routeMatch()->getRouteName();
-    if (!in_array($route, ['entity.group.edit_form', 'entity.group.delete_form'])) {
+    if (!in_array($route, [
+      'entity.group.edit_form',
+      'entity.group.delete_form',
+    ])) {
       if ($group->access('update', $account)) {
         $variables['group_edit_url'] = $group->toUrl('edit-form')->toString();
         $variables['#cache']['contexts'][] = 'route.name';

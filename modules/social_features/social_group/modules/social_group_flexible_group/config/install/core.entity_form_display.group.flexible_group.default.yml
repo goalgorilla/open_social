@@ -9,6 +9,7 @@ dependencies:
     - field.field.group.flexible_group.field_group_description
     - field.field.group.flexible_group.field_group_image
     - field.field.group.flexible_group.field_group_location
+    - field.field.group.flexible_group.field_group_type
     - group.type.flexible_group
     - image.style.social_x_large
   module:
@@ -21,6 +22,7 @@ third_party_settings:
   field_group:
     group_content:
       children:
+        - field_group_type
         - label
         - field_group_image
         - field_group_description
@@ -151,6 +153,12 @@ content:
       placeholder: ''
     third_party_settings: {  }
     type: string_textfield
+    region: content
+  field_group_type:
+    weight: 100
+    settings: {  }
+    third_party_settings: {  }
+    type: categorized_options_buttons
     region: content
   label:
     type: string_textfield
