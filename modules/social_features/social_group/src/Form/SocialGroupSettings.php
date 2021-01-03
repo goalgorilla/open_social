@@ -5,10 +5,12 @@ namespace Drupal\social_group\Form;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Link;
+use Drupal\Core\Url;
 use Drupal\crop\Entity\CropType;
 
 /**
- * Configures group settings.
+ * Settings form which enables site managers to configure different options.
  *
  * @package Drupal\social_event_managers\Form
  */
@@ -62,6 +64,22 @@ class SocialGroupSettings extends ConfigFormBase {
       '#weight' => 20,
     ];
 
+    // Add an option for site manager to enable/disable option to choose group
+    // type on page to add flexible groups.
+    if (\Drupal::moduleHandler()->moduleExists('social_group_flexible_group')) {
+      $form['social_group_type_required'] = [
+        '#type' => 'checkbox',
+        '#title' => $this->t('Require group types'),
+        '#description' => $this->t('When checked, a new option will appear on 
+          the flexible group form which requires group creators to select a 
+          group type, this allows for a better categorisation of groups in your 
+          community. You can add or edit the available group types @link', [
+            '@link' => Link::fromTextAndUrl('here.', Url::fromUserInput('/admin/structure/taxonomy/manage/group_type/overview'))->toString(),
+          ]),
+        '#default_value' => $config->get('social_group_type_required'),
+      ];
+    }
+
     return parent::buildForm($form, $form_state);
   }
 
@@ -78,6 +96,7 @@ class SocialGroupSettings extends ConfigFormBase {
     }
 
     $config->set('default_hero', $form_state->getValue('default_hero'))->save();
+    $config->set('social_group_type_required', $form_state->getValue('social_group_type_required'))->save();
 
     Cache::invalidateTags(['group_view']);
   }
