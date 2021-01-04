@@ -204,7 +204,9 @@ class SocialAlbumController extends ControllerBase {
    */
   public function checkAddImageAccess(NodeInterface $node) {
     if ($this->checkAlbumAccess($node)) {
-      if ($node->getOwnerId() === $this->currentUser()->id()) {
+      $account = $this->currentUser();
+
+      if ($node->getOwnerId() === $account->id()) {
         return AccessResult::allowed();
       }
       elseif (
@@ -218,7 +220,7 @@ class SocialAlbumController extends ControllerBase {
           /** @var \Drupal\group\Entity\GroupInterface $group */
           $group = reset($group_content)->getGroup();
 
-          return AccessResult::allowedIf($group->getMember($this->currentUser) !== FALSE);
+          return AccessResult::allowedIf($group->getMember($account) !== FALSE);
         }
       }
     }
@@ -235,13 +237,16 @@ class SocialAlbumController extends ControllerBase {
    *   The post entity object.
    * @param int $fid
    *   The file entity ID.
+   * @param string $operation
+   *   (optional) The operation to be performed. Defaults to view.
    *
    * @return \Drupal\Core\Access\AccessResultInterface
    *   The access result.
    */
-  public function checkViewImageAccess(NodeInterface $node, PostInterface $post, $fid) {
+  public function checkViewImageAccess(NodeInterface $node, PostInterface $post, $fid, $operation = 'view') {
     if (
       $this->checkAlbumAccess($node) &&
+      $post->access($operation) &&
       $post->bundle() === 'photo' &&
       !$post->field_album->isEmpty() &&
       $post->field_album->target_id === $node->id() &&
@@ -271,8 +276,13 @@ class SocialAlbumController extends ControllerBase {
    *   The access result.
    */
   public function checkDeleteImageAccess(NodeInterface $node, PostInterface $post, $fid) {
-    return $this->checkViewImageAccess($node, $post, $fid)
-      ->andIf(AccessResult::allowedIf($post->getOwnerId() === $this->currentUser()->id()));
+    $access = $this->checkViewImageAccess($node, $post, $fid, 'delete');
+
+    if ($access->isAllowed()) {
+      $access = $access->andIf(AccessResult::allowedIf($post->getOwnerId() === $this->currentUser()->id()));
+    }
+
+    return $access;
   }
 
   /**
