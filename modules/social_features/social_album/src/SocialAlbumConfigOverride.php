@@ -8,7 +8,7 @@ use Drupal\Core\Config\ConfigFactoryOverrideInterface;
 use Drupal\Core\Config\StorageInterface;
 
 /**
- * Class SocialAlbumConfigOverride.
+ * Provides an overridden elements.
  *
  * @package Drupal\social_album
  */

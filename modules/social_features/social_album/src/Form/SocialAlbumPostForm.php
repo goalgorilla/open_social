@@ -7,7 +7,7 @@ use Drupal\node\NodeInterface;
 use Drupal\social_post\Form\PostForm;
 
 /**
- * Class SocialAlbumPostForm.
+ * Provides form for creating a post in an album.
  *
  * @package Drupal\social_album\Form
  */

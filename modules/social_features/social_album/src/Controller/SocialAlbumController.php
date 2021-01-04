@@ -17,7 +17,7 @@ use Drupal\social_post\Entity\PostInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Class SocialAlbumController.
+ * Returns responses for Album routes.
  *
  * @package Drupal\social_album\Controller
  */

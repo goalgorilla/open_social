@@ -6,7 +6,7 @@ use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
- * Class SocialAlbumSettingsForm.
+ * Provides a form to configure Album settings.
  *
  * @package Drupal\social_album\Form
  */

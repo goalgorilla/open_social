@@ -6,7 +6,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\social_post\Form\PostDeleteForm;
 
 /**
- * Class SocialAlbumImageForm.
+ * Provides a form for deleting album post entities.
  *
  * @package Drupal\social_album\Form
  */
