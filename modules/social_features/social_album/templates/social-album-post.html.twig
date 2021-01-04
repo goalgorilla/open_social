@@ -15,10 +15,10 @@
 
   {% for index, item in items %}
     <div class="post-comment-wrapper" data-active-post="post-index-{{ index }}">
+      <div class="post-header">
+        {% trans %}Images posted in album {{ album|placeholder }}{% endtrans %}
+      </div>
       <div class="post-message">
-        <div class="post-header">
-          {% trans %}Images posted in album {{ album|placeholder }}{% endtrans %}
-        </div>
         {{ item.post }}
       </div>
     </div>

@@ -8,8 +8,15 @@
         var activeIdPost = $('.slick-active').attr('data-active-post');
         var postCommentBlock = $('.post-comment-wrapper');
 
+
         postCommentBlock.removeClass('post-comment-block--active');
         postCommentBlock.filter('[data-active-post='+ activeIdPost +']').addClass('post-comment-block--active');
+
+        setTimeout(function () {
+          var postHeaderHeight = postCommentBlock.find('.post-header').outerHeight() + 10;
+
+          postCommentBlock.find('.card .card__block').css('padding-top', postHeaderHeight);
+        }, 0);
       });
 
       albumSlider.slick({

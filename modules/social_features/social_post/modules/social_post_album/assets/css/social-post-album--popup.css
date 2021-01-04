@@ -17,7 +17,7 @@
   box-shadow: none;
   z-index: 10000 !important;
 }
-.ui-widget.ui-dialog .ui-dialog-content {
+.ui-widget.ui-dialog .ui-dialog-content.ui-widget-content {
   height: 100% !important;
   min-height: 100% !important;
   padding: 0;
@@ -58,6 +58,7 @@
   background: #fff;
   opacity: 1;
   z-index: 10000;
+  border-color: #fff;
 }
 @media (max-width: 899px) {
   .ui-widget.ui-dialog .ui-dialog-titlebar-close {
@@ -67,6 +68,7 @@
 }
 .ui-widget.ui-dialog .ui-dialog-titlebar-close:hover, .ui-widget.ui-dialog .ui-dialog-titlebar-close:focus, .ui-widget.ui-dialog .ui-dialog-titlebar-close:active {
   background: #000;
+  border-color: #fff;
 }
 .ui-widget.ui-dialog .ui-dialog-titlebar-close:hover:before, .ui-widget.ui-dialog .ui-dialog-titlebar-close:hover:after, .ui-widget.ui-dialog .ui-dialog-titlebar-close:focus:before, .ui-widget.ui-dialog .ui-dialog-titlebar-close:focus:after, .ui-widget.ui-dialog .ui-dialog-titlebar-close:active:before, .ui-widget.ui-dialog .ui-dialog-titlebar-close:active:after {
   background: #fff;
@@ -77,8 +79,8 @@
 .ui-widget.ui-dialog .ui-dialog-titlebar-close:before, .ui-widget.ui-dialog .ui-dialog-titlebar-close:after {
   content: "";
   position: absolute;
-  top: 21px;
-  left: 14px;
+  top: 18px;
+  left: 10px;
   width: 18px;
   height: 2px;
   background: #777;
@@ -118,6 +120,7 @@
   }
 }
 .social-post-album--popup .post-comment-wrapper {
+  position: relative;
   height: 100%;
   flex: 0 0 380px;
   max-width: 380px;

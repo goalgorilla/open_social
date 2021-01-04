@@ -18,7 +18,7 @@
   box-shadow: none;
   z-index: 10000 !important;
 
-  .ui-dialog-content {
+  .ui-dialog-content.ui-widget-content {
     height: 100% !important;
     min-height: 100% !important;
     padding: 0;
@@ -64,6 +64,7 @@
     background: #fff;
     opacity: 1;
     z-index: 10000;
+    border-color: #fff;
 
     @media (max-width: 899px) {
       width: 38px;
@@ -74,6 +75,7 @@
     &:focus,
     &:active {
       background: #000;
+      border-color: #fff;
 
       &:before,
       &:after {
@@ -89,8 +91,8 @@
     &:after {
       content: '';
       position: absolute;
-      top: 21px;
-      left: 14px;
+      top: 18px;
+      left: 10px;
       width: 18px;
       height: 2px;
       background: #777;
@@ -135,6 +137,7 @@
   }
 
   .post-comment-wrapper {
+    position: relative;
     height: 100%;
     flex: 0 0 380px;
     max-width: 380px;
