@@ -87,7 +87,7 @@ Feature: Create Open Group
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text."
   # TODO: Change title of this button when we will have one step
     And I click radio button "Community" with the id "edit-field-content-visibility-community"
-    And I press "Save"
+    And I press "Create event"
     And I should see "Test group event"
     And I should see "Body description text" in the "Main content"
     And I should see the button "Enroll"
@@ -110,7 +110,7 @@ Feature: Create Open Group
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text"
     And I click radio button "Discussion"
     And I click radio button "Community" with the id "edit-field-content-visibility-community"
-    And I press "Save"
+    And I press "Create topic"
     And I should see "Test group topic"
     And I should see "Body description text" in the "Main content"
    # DS-639 As a LU I want to see which group the content belongs to, on the detail page

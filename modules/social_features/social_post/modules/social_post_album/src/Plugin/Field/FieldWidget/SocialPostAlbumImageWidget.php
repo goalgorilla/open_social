@@ -3,6 +3,8 @@
 namespace Drupal\social_post_album\Plugin\Field\FieldWidget;
 
 use Drupal\Core\Field\FieldDefinitionInterface;
+use Drupal\Core\Field\FieldItemListInterface;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Image\ImageFactory;
 use Drupal\Core\Render\ElementInfoManagerInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
@@ -87,7 +89,7 @@ class SocialPostAlbumImageWidget extends ImageWidget {
       $configuration['field_definition'],
       $configuration['settings'],
       $configuration['third_party_settings'],
-      $container->get('element_info'),
+      $container->get('social_post_album.element_info'),
       $container->get('image.factory'),
       $container->get('current_route_match')
     );
@@ -106,6 +108,17 @@ class SocialPostAlbumImageWidget extends ImageWidget {
     }
 
     return parent::getSetting($key);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
+    $element = parent::formElement($items, $delta, $element, $form, $form_state);
+
+    $element['#type'] = 'social_post_album_managed_file';
+
+    return $element;
   }
 
 }

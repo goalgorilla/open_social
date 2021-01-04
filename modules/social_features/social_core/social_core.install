@@ -1249,3 +1249,20 @@ function social_core_update_8904() {
     $config->save();
   }
 }
+
+/**
+ * Sets the Content Entity Forms to Open Social style.
+ */
+function social_core_update_8905() {
+  // Only when socialblue is default we set this.
+  if (\Drupal::service('theme.manager')->getActiveTheme()->getName() === 'socialblue') {
+    try {
+      // Sets it to Open Social.
+      $config = \Drupal::configFactory()->getEditable('socialblue.settings');
+      $config->set('content_entity_form_style', 'open_social')->save();
+    }
+    catch (Exception $e) {
+      \Drupal::logger('social_core')->error('Could not install Content Entity forms as Open Social please do so manually in the Socialblue settings.');
+    }
+  }
+}

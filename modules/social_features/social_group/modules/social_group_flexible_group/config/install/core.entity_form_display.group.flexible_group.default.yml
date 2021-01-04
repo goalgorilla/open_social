@@ -9,6 +9,7 @@ dependencies:
     - field.field.group.flexible_group.field_group_description
     - field.field.group.flexible_group.field_group_image
     - field.field.group.flexible_group.field_group_location
+    - field.field.group.flexible_group.field_group_type
     - group.type.flexible_group
     - image.style.social_x_large
   module:
@@ -21,12 +22,13 @@ third_party_settings:
   field_group:
     group_content:
       children:
+        - field_group_type
         - label
-        - field_group_description
         - field_group_image
+        - field_group_description
       parent_name: ''
-      weight: 1
-      label: Content
+      weight: 0
+      label: 'Basic information'
       format_type: fieldset
       format_settings:
         description: ''
@@ -50,19 +52,46 @@ third_party_settings:
       region: content
     group_settings:
       children:
+        - path
+      parent_name: ''
+      weight: 4
+      format_type: details
+      format_settings:
+        id: ''
+        classes: social-collapsible-fieldset
+        description: ''
+        required_fields: true
+        open: false
+      label: Settings
+      region: content
+    group_access_permissions:
+      children:
         - field_flexible_group_visibility
         - field_group_allowed_visibility
         - field_group_allowed_join_method
-      parent_name: ''
-      weight: 0
-      format_type: fieldset
       format_settings:
-        id: ''
         classes: ''
         description: ''
+        id: ''
         required_fields: true
-      label: Settings
+      format_type: fieldset
+      label: 'Access permissions'
+      parent_name: ''
       region: content
+      weight: 1
+    group_additional_details:
+      children: {  }
+      format_settings:
+        classes: social-collapsible-fieldset
+        description: ''
+        id: ''
+        open: false
+        required_fields: true
+      format_type: details
+      label: 'Additional information'
+      parent_name: ''
+      region: content
+      weight: 3
 id: group.flexible_group.default
 targetEntityType: group
 bundle: flexible_group
@@ -93,7 +122,7 @@ content:
     type: options_buttons
     region: content
   field_group_description:
-    weight: 102
+    weight: 103
     settings:
       rows: 5
       placeholder: ''
@@ -101,7 +130,7 @@ content:
     type: text_textarea
     region: content
   field_group_image:
-    weight: 103
+    weight: 102
     settings:
       show_crop_area: true
       show_default_crop: true
@@ -125,6 +154,12 @@ content:
     third_party_settings: {  }
     type: string_textfield
     region: content
+  field_group_type:
+    weight: 100
+    settings: {  }
+    third_party_settings: {  }
+    type: categorized_options_buttons
+    region: content
   label:
     type: string_textfield
     weight: 101
@@ -135,7 +170,7 @@ content:
     region: content
   path:
     type: path
-    weight: 3
+    weight: 4
     settings: {  }
     third_party_settings: {  }
     region: content
