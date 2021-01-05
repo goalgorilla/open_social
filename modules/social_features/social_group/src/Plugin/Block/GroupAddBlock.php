@@ -97,6 +97,10 @@ class GroupAddBlock extends BlockBase implements BlockPluginInterface, Container
    * Custom access logic to display the block.
    */
   public function blockAccess(AccountInterface $account) {
+    if (!$this->getUrl()->access($account)) {
+      return AccessResult::forbidden();
+    }
+
     $route_user_id = $this->routeMatch->getParameter('user');
 
     // Show this block only on current user Groups page.
@@ -121,8 +125,8 @@ class GroupAddBlock extends BlockBase implements BlockPluginInterface, Container
    */
   public function build() {
     $build = [];
-    // TODO: Add caching when closed groups will be added.
-    $url = $this->socialGroupHelper->getGroupsToAddUrl($this->currentUser) ?? Url::fromRoute('entity.group.add_page');
+    // @todo Add caching when closed groups will be added.
+    $url = $this->getUrl();
     $link_options = [
       'attributes' => [
         'class' => [
@@ -155,6 +159,16 @@ class GroupAddBlock extends BlockBase implements BlockPluginInterface, Container
    */
   public function getCacheTags() {
     return Cache::mergeTags(parent::getCacheTags(), ['social_group_add_block:uid:' . $this->currentUser->id()]);
+  }
+
+  /**
+   * Returns the URL of the button.
+   *
+   * @return \Drupal\Core\Url
+   *   The URL object.
+   */
+  protected function getUrl() {
+    return $this->socialGroupHelper->getGroupsToAddUrl($this->currentUser) ?? Url::fromRoute('entity.group.add_page');
   }
 
 }

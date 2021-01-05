@@ -181,13 +181,24 @@ function social_group_flexible_group_form_alter(&$form, FormStateInterface $form
         $form['field_flexible_group_visibility']['widget']['#default_value'] = 'public';
       }
     }
-    $form['#after_build'][] = 'social_group_flexible_group_flexible_group_add_after_build';
-  }
 
-  if (in_array($form_id, [
-    'group_flexible_group_add_form',
-    'group_flexible_group_edit_form',
-  ])) {
+    // Disable type field if there are no terms added in 'Group type' vocab.
+    // Also, check for settings by SM for enabling this field.
+    $group_type_settings = \Drupal::config('social_group.settings')->get('social_group_type_required');
+    if ($group_type_settings
+      && isset($form['field_group_type'])
+      && !empty(\Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadTree('group_type'))) {
+      $form['field_group_type']['widget']['#required'] = TRUE;
+      // Unset the group type label for none.
+      if (isset($form['field_group_type']['widget']['#options']['_none'])) {
+        unset($form['field_group_type']['widget']['#options']['_none']);
+      }
+    }
+    else {
+      $form['field_group_type']['#access'] = FALSE;
+    }
+
+    $form['#after_build'][] = 'social_group_flexible_group_flexible_group_add_after_build';
     $form['#attached']['library'][] = 'social_group_flexible_group/admin';
   }
 }
@@ -856,7 +867,10 @@ function social_group_flexible_group_views_query_alter(ViewExecutable $view, Que
   // groups. Because any LU can see those for the community, regardless of
   // their memberships.
   $query->setWhereGroup('AND', $extra_where);
-  $query->addWhere($extra_where, 'field_flexible_group_visibility_value', ['public', 'community'], 'IN');
+  $query->addWhere($extra_where, 'field_flexible_group_visibility_value', [
+    'public',
+    'community',
+  ], 'IN');
 }
 
 /**

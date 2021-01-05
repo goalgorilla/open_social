@@ -23,6 +23,20 @@ function hook_social_filter_format_default_alter(&$filter_format) {
 }
 
 /**
+ * Provide a method to alter the article for a node. If it's a, or an or the.
+ *
+ * @param array $node_types
+ *   The filter format that is default.
+ *
+ * @ingroup social_core_api
+ */
+function hook_social_node_title_prefix_articles_alter(array &$node_types) {
+  // The default is set to a.
+  // See SocialCoreController::addPageTitle for example.
+  $node_types['discussions'] = 'an';
+}
+
+/**
  * @} End of "addtogroup hooks".
  */
 

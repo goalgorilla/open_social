@@ -18,7 +18,7 @@ Feature: Create topic like
       | Title | Topic for likes |
      And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text."
      And I click radio button "Discussion"
-     And I press "Save"
+     And I press "Create topic"
     Then I should see "Topic for likes has been created."
 
    Given I am logged in as "user_2"

@@ -22,6 +22,6 @@ Feature: Embed
     And I click the xth "0" element with the css ".url-select-dialog .form-actions .ui-button"
     And I wait for AJAX to finish
     And I wait for "3" seconds
-    And I press "Save"
+    And I press "Create topic"
     Then I should see "Topic Embed WYSIWYG has been created."
     And The iframe in the body description should have the src "https://www.youtube.com/embed/kgE9QNX8f3c"
