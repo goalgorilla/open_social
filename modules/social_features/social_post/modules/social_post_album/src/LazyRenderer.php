@@ -5,7 +5,7 @@ namespace Drupal\social_post_album;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 
 /**
- * Class LazyRenderer.
+ * Provides lazy builder for content inside modal window.
  *
  * @package Drupal\social_post_album
  */

@@ -7,7 +7,7 @@ use Drupal\Core\Url;
 use Drupal\social_post\Entity\PostInterface;
 
 /**
- * Class ImagePopupController.
+ * Returns responses for Post Album routes.
  *
  * @package Drupal\social_post_album\Controller
  */
