@@ -444,9 +444,8 @@ function social_tagging_form_views_exposed_form_alter(&$form, FormStateInterface
       }
     }
   }
-  // Only remove all top level items.
   else {
-    // Remove main items and just insert child options.
+    // Cleanup and display hierarchical structure of tags.
     $form['tag']['#options'] = [];
     $form['tag']['#options'][''] = t('- Any -');
     $form['tag']['#type'] = 'select2';
@@ -459,7 +458,9 @@ function social_tagging_form_views_exposed_form_alter(&$form, FormStateInterface
     }
 
     foreach ($tag_service->getCategories() as $tid => $label) {
-      if (!empty($options = $tag_service->getChildren($tid))) {
+      if (!empty($tag_service->getChildren($tid))) {
+        $options = [$tid => $label];
+        $options += $tag_service->getChildren($tid);
         $form['tag']['#options'][$label] = $options;
       }
     }
