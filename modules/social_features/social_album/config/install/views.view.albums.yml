@@ -905,6 +905,21 @@ display:
         options: {  }
       defaults:
         access: false
+        empty: false
+      empty:
+        area:
+          id: area
+          table: views
+          field: area
+          relationship: none
+          group_type: group
+          admin_label: ''
+          empty: true
+          tokenize: false
+          content:
+            value: 'No albums found for this user'
+            format: basic_html
+          plugin_id: text
     cache_metadata:
       max-age: -1
       contexts:
@@ -936,6 +951,7 @@ display:
         access: false
         relationships: false
         arguments: false
+        empty: false
       relationships:
         group_content:
           id: group_content
@@ -989,6 +1005,20 @@ display:
           entity_type: group_content
           entity_field: gid
           plugin_id: group_id
+      empty:
+        area:
+          id: area
+          table: views
+          field: area
+          relationship: none
+          group_type: group
+          admin_label: ''
+          empty: true
+          tokenize: false
+          content:
+            value: 'No albums in this group'
+            format: basic_html
+          plugin_id: text
     cache_metadata:
       max-age: -1
       contexts:
