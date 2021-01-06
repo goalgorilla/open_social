@@ -102,13 +102,7 @@ function social_profile_privacy_update_8001(&$sandbox) {
       ->load('profile.profile.default');
 
     foreach ($display->getThirdPartySettings('field_group') as $fields_group => $settings) {
-      $states = [];
-
-      foreach ($settings['children'] as $field) {
-        $states[$field] = SocialProfilePrivacyHelperInterface::HIDE;
-      }
-
-      $sandbox['fields'][$fields_group] = $states;
+      $sandbox['fields'][$fields_group] = $settings['children'];
     }
 
     $sandbox['uid'] = $sandbox['processed'] = 0;
@@ -137,11 +131,15 @@ function social_profile_privacy_update_8001(&$sandbox) {
   $user_fields = [];
 
   foreach ($items as $uid => $value) {
-    if ($fields_groups = array_filter($serialization->decode($value))) {
+    if ($fields_groups = $serialization->decode($value)) {
       $fields = [];
 
-      foreach (array_keys($fields_groups) as $fields_group) {
-        $fields = array_merge($fields, $sandbox['fields'][$fields_group]);
+      foreach ($fields_groups as $fields_group => $visible) {
+        foreach ($sandbox['fields'][$fields_group] as $field) {
+          $fields[$field] = $visible
+            ? SocialProfilePrivacyHelperInterface::SHOW
+            : SocialProfilePrivacyHelperInterface::HIDE;
+        }
       }
 
       $user_fields[$uid] = $serialization->encode($fields);
