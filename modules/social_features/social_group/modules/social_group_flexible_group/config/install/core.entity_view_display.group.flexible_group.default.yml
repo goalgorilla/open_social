@@ -9,6 +9,7 @@ dependencies:
     - field.field.group.flexible_group.field_group_description
     - field.field.group.flexible_group.field_group_image
     - field.field.group.flexible_group.field_group_location
+    - field.field.group.flexible_group.field_group_type
     - group.type.flexible_group
   module:
     - options
@@ -37,6 +38,14 @@ content:
     label: hidden
     settings: {  }
     third_party_settings: {  }
+    region: content
+  field_group_type:
+    weight: 3
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    type: entity_reference_label
     region: content
 hidden:
   changed: true

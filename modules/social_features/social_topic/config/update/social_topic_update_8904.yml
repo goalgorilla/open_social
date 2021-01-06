@@ -1,0 +1,62 @@
+core.entity_form_display.node.topic.default:
+  expected_config: { }
+  update_actions:
+    delete:
+      third_party_settings:
+        field_group:
+          group_attachments:
+            format_settings:
+              label: Attachments
+          group_topic_content:
+            format_settings:
+              label: Content
+          group_topic_visibility:
+            format_settings:
+              label: Visibility
+    add:
+      content:
+        body:
+          settings:
+            show_summary: false
+        field_topic_image:
+          settings:
+            crop_types_required: {  }
+      third_party_settings:
+        field_group:
+          group_attachments:
+            region: hidden
+          group_settings:
+            children: {  }
+            format_settings:
+              classes: social-collapsible-fieldset
+              description: ''
+              id: ''
+              open: false
+              required_fields: true
+            format_type: details
+            label: Settings
+            parent_name: ''
+            region: hidden
+            weight: 20
+          group_topic_content:
+            format_settings:
+              description: ''
+            region: hidden
+          group_topic_visibility:
+            format_settings:
+              description: ''
+            region: hidden
+    change:
+      third_party_settings:
+        field_group:
+          group_attachments:
+            format_settings:
+              classes: social-collapsible-fieldset
+              description: ''
+              open: false
+            format_type: details
+            label: 'Additional information'
+          group_topic_content:
+            label: 'Basic information'
+          group_topic_visibility:
+            label: 'Access permissions'
