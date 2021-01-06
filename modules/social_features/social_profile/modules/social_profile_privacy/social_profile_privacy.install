@@ -136,9 +136,7 @@ function social_profile_privacy_update_8001(&$sandbox) {
 
       foreach ($fields_groups as $fields_group => $visible) {
         foreach ($sandbox['fields'][$fields_group] as $field) {
-          $fields[$field] = $visible
-            ? SocialProfilePrivacyHelperInterface::SHOW
-            : SocialProfilePrivacyHelperInterface::HIDE;
+          $fields[$field] = $visible;
         }
       }
 
