@@ -26,10 +26,10 @@ class GroupSettingsHelp extends PreprocessBase implements PreprocessInterface {
   public function preprocessVariables(Variables $variables) {
     $build = [];
     $unique_id = Html::getUniqueId('group-settings-help');
-    $icon = Bootstrap::glyphicon('info-sign');
+    $icon = Bootstrap::glyphicon('cog');
     $build['toggle'] = [
       '#type' => 'link',
-      '#title' => '',
+      '#title' => $this->t('Access permissions'),
       '#url' => Url::fromUserInput("#$unique_id"),
       '#icon' => $icon,
       '#attributes' => [
@@ -37,23 +37,34 @@ class GroupSettingsHelp extends PreprocessBase implements PreprocessInterface {
         'data-toggle' => 'popover',
         'data-html' => 'true',
         'data-placement' => 'bottom',
-        'data-title' => $variables['group_type'],
+        'data-title' => $this->t('Access permissions'),
       ],
     ];
     $build['settings'] = [
       '#type' => 'container',
       '#theme_wrappers' => ['container__group_settings_help'],
     ];
-    $build['settings']['join_method'] = [
-      '#theme' => 'item_list__group_settings_help',
-      '#items' => $variables['join_method'],
-      '#title' => $this->t('Method to join'),
-    ];
-    $build['settings']['allowed_visibility'] = [
-      '#theme' => 'item_list__group_settings_help',
-      '#items' => $variables['allowed_visibility'],
-      '#title' => $this->t('Content visibility'),
-    ];
+    if (!empty($variables['group_visibility'])) {
+      $build['settings']['group_visibility'] = [
+        '#theme' => 'item_list__group_settings_help',
+        '#items' => $variables['group_visibility'],
+        '#title' => $this->t('Group visibility'),
+      ];
+    }
+    if (!empty($variables['join_method'])) {
+      $build['settings']['join_method'] = [
+        '#theme' => 'item_list__group_settings_help',
+        '#items' => $variables['join_method'],
+        '#title' => $this->t('Join method'),
+      ];
+    }
+    if (!empty($variables['allowed_visibility'])) {
+      $build['settings']['allowed_visibility'] = [
+        '#theme' => 'item_list__group_settings_help',
+        '#items' => $variables['allowed_visibility'],
+        '#title' => $this->t('Group content visibility'),
+      ];
+    }
     $variables['popover'] = $build;
     $variables['popover_id'] = $unique_id;
     $variables['popover_toggle'] = $build['toggle'];
