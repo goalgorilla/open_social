@@ -173,10 +173,13 @@ function social_profile_privacy_form_user_form_alter(&$form, FormStateInterface 
     }
 
     $form['profile_privacy']['fields'][$field] = [
-      '#type' => 'checkbox',
+      '#type' => 'radios',
       '#title' => $options['label'],
-      '#default_value' => $value,
-      '#attributes' => ['data-switch' => TRUE],
+      '#options' => [
+        1 => t('Show'),
+        0 => t('Hide'),
+      ],
+      '#default_value' => (int) $value,
       '#disabled' => !$status,
     ];
   }
