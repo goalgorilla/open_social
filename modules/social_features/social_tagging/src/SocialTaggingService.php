@@ -117,6 +117,16 @@ class SocialTaggingService {
   }
 
   /**
+   * Returns whether using a parent of categories is allowed.
+   *
+   * @return bool
+   *   Whether using categories parent is turned on or not..
+   */
+  public function useCategoryParent() {
+    return (bool) ($this->active() && $this->configFactory->get('social_tagging.settings')->get('use_category_parent'));
+  }
+
+  /**
    * Returns all the top level term items, that are considered categories.
    *
    * @return array

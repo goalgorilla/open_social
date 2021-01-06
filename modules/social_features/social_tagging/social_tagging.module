@@ -178,6 +178,12 @@ function social_tagging_form_alter(&$form, FormStateInterface $form_state, $form
           $field_name = 'social_tagging_' . social_tagging_to_machine_name($category);
           // Get the corresponding items.
           $options = $tag_service->getChildren($tid);
+
+          // Display parent item in the tags list.
+          if ($tag_service->useCategoryParent()) {
+            $options = [$tid => $category] + $options;
+          }
+
           // Only add a field if the category has any options.
           if (count($options) > 0) {
             // Add a field.
@@ -458,11 +464,9 @@ function social_tagging_form_views_exposed_form_alter(&$form, FormStateInterface
     }
 
     foreach ($tag_service->getCategories() as $tid => $label) {
-      if (!empty($tag_service->getChildren($tid))) {
-        $options = [$tid => $label];
-        $options += $tag_service->getChildren($tid);
-        $form['tag']['#options'][$label] = $options;
-      }
+      $options = [$tid => $label];
+      $options += $tag_service->getChildren($tid);
+      $form['tag']['#options'][$label] = $options;
     }
   }
 }
