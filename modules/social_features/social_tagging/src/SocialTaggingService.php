@@ -240,9 +240,10 @@ class SocialTaggingService {
           continue;
         }
         // Get current terms parents.
-        if($parents = $this->termStorage->loadParents($current_term->id())) {
+        if ($parents = $this->termStorage->loadParents($current_term->id())) {
           $parent = reset($parents);
-          $category_label = $parent->hasTranslation($langcode) ? $parent->getTranslation($langcode)->getName() : $parent->getName();
+          $category_label = $parent->hasTranslation($langcode) ? $parent->getTranslation($langcode)
+            ->getName() : $parent->getName();
         }
         // Or add the parent term itself if it connected to the content.
         else {
