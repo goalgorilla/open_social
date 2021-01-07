@@ -237,6 +237,7 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
       '#default_value' => $form_state->getValue('message'),
       '#cols' => '80',
       '#rows' => '20',
+      '#description' => $this->t("You can use the token [social_user:recipient] for a personalized salutation, to add the users name in your email"),
     ];
 
     if ($this->allowTextFormat) {
