@@ -16,7 +16,7 @@ function social_user_token_info() {
     'description' => t('Tokens from the social user module.'),
   ];
 
-  $social_user['recepient'] = [
+  $social_user['recipient'] = [
     'name' => t('The display name of the Receiver of the email.'),
     'description' => t('The individual display name of a user, when receiving an email.'),
   ];
@@ -42,7 +42,7 @@ function social_user_tokens($type, $tokens, array $data, array $options, Bubblea
     foreach ($tokens as $name => $original) {
       switch ($name) {
 
-        case 'recepient':
+        case 'recipient':
 
           if (isset($data['display_name'])) {
             $replacements[$original] = $data['display_name'];
