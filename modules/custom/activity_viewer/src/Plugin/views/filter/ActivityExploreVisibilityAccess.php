@@ -83,13 +83,13 @@ class ActivityExploreVisibilityAccess extends FilterPluginBase {
           ->condition('activity__field_activity_recipient_group.field_activity_recipient_group_target_id', $my_groups, 'NOT IN')
           ->condition('node__field_content_visibility.field_content_visibility_value', 'group', '!='));
       }
-      else {
-        // Include all the content which is posted in groups but with
-        // visibility either community or public.
-        $nodes_not_in_groups->condition(db_and()
-          ->isNotNull('activity__field_activity_recipient_group.field_activity_recipient_group_target_id')
-          ->condition('node__field_content_visibility.field_content_visibility_value', 'group', '!='));
-      }
+
+      // Include all the content which is posted in groups but with
+      // visibility either community or public.
+      $nodes_not_in_groups->condition(db_and()
+        ->isNotNull('activity__field_activity_recipient_group.field_activity_recipient_group_target_id')
+        ->condition('node__field_content_visibility.field_content_visibility_value', 'group', '!='));
+
       // This will include the nodes that has not been posted in any group.
       $nodes_not_in_groups->condition(db_and()
         ->isNull('activity__field_activity_recipient_group.field_activity_recipient_group_target_id')
