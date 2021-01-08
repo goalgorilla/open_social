@@ -67,15 +67,14 @@ class QueryUser extends EntityDataProducerPluginBase {
    * @param \Drupal\Core\Cache\RefinableCacheableDependencyInterface $metadata
    *   Cacheability metadata for this request.
    *
-   * @return \Drupal\social_graphql\Wrappers\ConnectionInterface
+   * @return \Drupal\social_graphql\GraphQL\ConnectionInterface
    *   An entity connection with results and data about the paginated results.
+   *
+   * @todo https://www.drupal.org/project/social/issues/3191622
+   * @todo https://www.drupal.org/project/social/issues/3191637
    */
   public function resolve(?int $first, ?string $after, ?int $last, ?string $before, bool $reverse, string $sortKey, RefinableCacheableDependencyInterface $metadata) {
     $query_helper = new UserQueryHelper($this->entityTypeManager, $sortKey);
-
-    // TODO: This no longer works and is missing in this implementation.
-    //    $metadata->addCacheTags($type->getListCacheTags());
-    //    $metadata->addCacheContexts($type->getListCacheContexts());
 
     $connection = new EntityConnection($query_helper);
     $connection->setPagination($first, $after, $last, $before, $reverse);

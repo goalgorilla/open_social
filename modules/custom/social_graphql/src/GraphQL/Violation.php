@@ -6,6 +6,8 @@ namespace Drupal\social_graphql\GraphQL;
 
 /**
  * A violation in some GraphQL input.
+ *
+ * @todo https://www.drupal.org/project/social/issues/3191621
  */
 class Violation implements ViolationInterface {
 
@@ -28,8 +30,6 @@ class Violation implements ViolationInterface {
    * {@inheritdoc}
    */
   public function jsonSerialize() {
-    // TODO: Ideally Violation is changed from Scalar to a type so we can add
-    //   more details.
     return $this->id;
   }
 

@@ -23,7 +23,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * should make it easier for Open Social to switch out to a Media based
  * implementation behind the scenes.
  *
- * TODO: This solution is implemented to allow relatively transparent resolving
+ * @todo This solution is implemented to allow relatively transparent resolving
  *   of Media related typs. It serves as a way to allow us to move towards the
  *   Media library while being stuck with traditional File fields. This is not
  *   necessarily an elegant solution. It should not be used as examples for
@@ -176,9 +176,6 @@ class MediaBridge extends DataProducerPluginBase implements ContainerFactoryPlug
   /**
    * Resolve field for media entity.
    *
-   * TODO: This currently assumes mostly images but should be adjusted for other
-   *   media types.
-   *
    * @param \Drupal\media\MediaInterface $value
    *   The media source or file item.
    * @param string $field
@@ -186,6 +183,8 @@ class MediaBridge extends DataProducerPluginBase implements ContainerFactoryPlug
    *
    * @return mixed
    *   The resolved value for a Media entity.
+   *
+   * @todo https://www.drupal.org/project/social/issues/3191642
    */
   protected function resolveMediaEntity(MediaInterface $value, $field) {
     switch ($field) {

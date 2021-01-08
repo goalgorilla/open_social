@@ -2,15 +2,9 @@
 
 namespace Drupal\Tests\social_graphql\Kernel;
 
-use Drupal\Core\Field\FieldStorageDefinitionInterface;
-use Drupal\entity_test\Entity\EntityTest;
-use Drupal\field\Entity\FieldConfig;
-use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\file\Entity\File;
 use Drupal\media\Entity\Media;
-use Drupal\Tests\field\Kernel\FieldKernelTestBase;
 use Drupal\Tests\media\Kernel\MediaKernelTestBase;
-use Drupal\user\Entity\Role;
 use GraphQL\Executor\Promise\Adapter\SyncPromise;
 
 /**
@@ -55,7 +49,6 @@ class MediaBridgeMediaTest extends MediaKernelTestBase {
     // Ensure we can access our data provider.
     $this->dataProducerPluginManager = $this->container->get('plugin.manager.graphql.data_producer');
   }
-
 
   /**
    * Tests that the MediaBridge class works for Media entities.

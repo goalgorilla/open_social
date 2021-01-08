@@ -61,9 +61,10 @@ class EntityEdge implements EdgeInterface {
    *
    * @throws \Drupal\Core\Entity\EntityStorageException
    *   If an entity type does not support uuids.
+   *
+   * @todo https://www.drupal.org/project/social/issues/3191632
    */
   public static function nodeFromCursor(string $cursor, string $entity_type) : ?EntityInterface {
-    // TODO: Move cursor encoding and decoding into plugins/services.
     return \Drupal::service('entity.repository')
       ->loadEntityByUuid(
         $entity_type,

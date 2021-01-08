@@ -17,11 +17,15 @@ class UserQueryHelper implements ConnectionQueryHelperInterface {
 
   /**
    * The Drupal entity type manager.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
   protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * The key that is used for sorting.
+   *
+   * @var string
    */
   protected string $sortKey;
 
@@ -53,23 +57,20 @@ class UserQueryHelper implements ConnectionQueryHelperInterface {
 
   /**
    * {@inheritdoc}
+   *
+   * @todo https://www.drupal.org/project/social/issues/3191632
    */
   public function getCursorObject(string $cursor) {
-    // TODO: This doesn't work.
     return EntityEdge::nodeFromCursor($cursor, 'user');
   }
 
   /**
    * {@inheritdoc}
+   *
+   * @todo https://www.drupal.org/project/social/issues/3191637
    */
   public function getCursorValue($entity) {
     switch ($this->sortKey) {
-      //      case 'FIRST_NAME':
-      //        // TODO: Profile data not available for users.
-      //        break;
-      //      case 'LAST_NAME':
-      //        // TODO: Profile data not available for users.
-      //        break;
       case 'CREATED_AT':
         return $entity->getCreatedTime();
 
@@ -87,15 +88,11 @@ class UserQueryHelper implements ConnectionQueryHelperInterface {
 
   /**
    * {@inheritdoc}
+   *
+   * @todo https://www.drupal.org/project/social/issues/3191637
    */
   public function getSortField() : string {
     switch ($this->sortKey) {
-      case 'FIRST_NAME':
-        return 'field_first_name';
-
-      case 'LAST_NAME':
-        return 'field_last_name';
-
       case 'CREATED_AT':
         return 'created';
 

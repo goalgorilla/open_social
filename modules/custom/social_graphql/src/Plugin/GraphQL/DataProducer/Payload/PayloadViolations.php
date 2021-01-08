@@ -36,7 +36,7 @@ class PayloadViolations extends DataProducerPluginBase implements DataProducerPl
    */
   public function resolve(PayloadInterface $payload) {
     // Explicitly turn empty arrays into NULL so that clients can perform an
-    //   is_null check to figure out if there are errors.
+    // is_null check to figure out if there are errors.
     $violations = $payload->getViolations();
     return empty($violations) ? NULL : $violations;
   }

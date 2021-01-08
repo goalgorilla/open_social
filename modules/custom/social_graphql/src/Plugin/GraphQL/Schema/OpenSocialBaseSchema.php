@@ -77,27 +77,19 @@ class OpenSocialBaseSchema extends SdlSchemaPluginBase {
       $builder->fromPath('text', 'value')
     );
 
-    // TODO: Implement text processing based on configured format.
+    // @todo https://www.drupal.org/project/social/issues/3191613
     $registry->addFieldResolver('FormattedText', 'processed',
       $builder->fromPath('text', 'processed')
     );
 
     // DateTime fields.
-    // TODO: Standardise on what we pass around in PHP and create a
-    //   dataproducer.
+    // @todo https://www.drupal.org/project/social/issues/3191615
     $registry->addFieldResolver('DateTime', 'timestamp',
       $builder->fromParent()
     );
 
     // Media fields.
-    // TODO: Solve this:
-    // An issue is that we would like to get the media item from the parent in
-    // a generic way so that we can get the URL both from direct media queries
-    // e.g. for a media overview, as well as through an association in a field
-    // of an entity.
-    // The problem comes where the image field as association is an entity
-    // reference with metadata, so for the alt text is stored on this field.
-    // Entities loaded for an overview would not have this information.
+    // @todo https://www.drupal.org/project/social/issues/3191617
     $registry->addFieldResolver('Media', 'id',
       $builder->produce('media_bridge')
         ->map('value', $builder->fromParent())

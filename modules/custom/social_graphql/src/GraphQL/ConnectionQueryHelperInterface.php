@@ -41,7 +41,9 @@ interface ConnectionQueryHelperInterface {
    * @return mixed|null
    *   An object with the cursor information or null if it was an invalid
    *   cursor.
-   * TODO: A cursor can be put into a separate class!
+   *
+   * @todo A cursor can be put into a separate class!
+   *   https://www.drupal.org/project/social/issues/3191632
    */
   public function getCursorObject(string $cursor);
 
@@ -85,7 +87,8 @@ interface ConnectionQueryHelperInterface {
    *   used.
    *
    * @see \Drupal\Core\Entity\Query\QueryAggregateInterface::sortAggregate
-   * TODO: Move this to a separate interface.
+   *
+   * @todo Move this to a separate interface.
    */
   public function getAggregateSortFunction() : ?string;
 
