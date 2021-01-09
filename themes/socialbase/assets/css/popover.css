@@ -110,7 +110,8 @@
   word-wrap: normal;
   font-size: 0.875rem;
   background-clip: padding-box;
-  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+  -webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+          box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
 }
 
 .popover.top {
@@ -215,4 +216,13 @@
 
 [data-toggle="popover"].icon-before:before {
   margin-right: 0.3em;
+}
+
+@media (min-width: 976px) {
+  .gin--vertical-toolbar .popover {
+    margin-left: 90px;
+  }
+  .gin--vertical-toolbar .popover > .arrow {
+    margin-left: -103px;
+  }
 }
