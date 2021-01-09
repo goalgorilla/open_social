@@ -158,5 +158,29 @@ function hook_social_group_group_visibility_description_alter($key, &$descriptio
 }
 
 /**
+ * Provide a description for a given key from the content visibility #options.
+ *
+ * @param string $description
+ *   The descriptive.
+ *
+ * @ingroup social_group_api
+ */
+function hook_social_group_allowed_join_method_description_alter($key, &$description) {
+  switch ($key) {
+    case 'join_method_extra':
+      $description = '<strong>' . t('QR Code')->render() . '</strong>';
+      $description .= '-' . t('All users can join by scanning a QR code')->render();
+      $description .= '</p>';
+      break;
+
+    case 'single_sign_on':
+      $description = '<strong>' . t('Single Sign on')->render() . '</strong>';
+      $description .= '-' . t('All users can join by SSO')->render();
+      $description .= '</p>';
+      break;
+  }
+}
+
+/**
  * @} End of "addtogroup hooks".
  */

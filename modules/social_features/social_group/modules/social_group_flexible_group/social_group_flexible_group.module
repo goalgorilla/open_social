@@ -410,7 +410,7 @@ function social_group_flexible_group_preprocess_fieldset(&$variables) {
     if ($element['#field_name'] === 'field_group_allowed_join_method') {
       $description = '';
       foreach ($element['#options'] as $key => $label) {
-        $description .= social_group_flexible_group_allowed_join_method_description($key);
+        $description .= social_group_allowed_join_method_description($key);
       }
 
       // Render a specific tooltip based on a field name and description.
@@ -418,48 +418,6 @@ function social_group_flexible_group_preprocess_fieldset(&$variables) {
       $variables['popover'] = social_group_render_tooltip('field_group_allowed_join_method', t('Join methods'), $description);
     }
   }
-}
-
-/**
- * Returns a description array for the field_group_allowed_join_method options.
- *
- * @return string
- *   The render array containing the description.
- */
-function social_group_flexible_group_allowed_join_method_description($key) {
-  $description = '';
-
-  // We need it to be specified otherwise we can't build the markup.
-  if (empty($key)) {
-    return $description;
-  }
-
-  // Add explanatory descriptive text after the icon.
-  switch ($key) {
-    case 'added':
-      $description = '<strong>' . t('Invite only')->render() . '</strong>';
-      $description .= ' - ' . t('users can only join this group if they are added/invited by group managers.')->render();
-      $description .= '</p>';
-      break;
-
-    case 'direct':
-      $description = '<strong>' . t('Open to join')->render() . '</strong>';
-      $description .= ' - ' . t('users can join this group without approval.')->render();
-      $description .= '</p>';
-      break;
-
-    case 'request':
-      $description = '<strong>' . t('Request to join')->render() . '</strong>';
-      $description .= ' - ' . t('users can "request to join" this group which group managers approve/decline.')->render();
-      $description .= '</p>';
-      break;
-  }
-
-  // Allow modules to provide their own markup for a given key in the
-  // join method #options array.
-  \Drupal::moduleHandler()->alter('social_group_flexible_group_allowed_join_method_description', $key, $description);
-
-  return $description;
 }
 
 /**

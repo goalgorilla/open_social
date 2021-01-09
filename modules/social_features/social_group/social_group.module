@@ -397,17 +397,13 @@ function _social_group_get_join_methods(GroupInterface $group) {
   switch ($group_type_id) {
     case 'secret_group':
     case 'closed_group':
-      $join_methods = [
-        'added' => t('Be added by group managers'),
-      ];
+      $join_methods['added'] = social_group_allowed_join_method_description('added');
       break;
 
     case 'public_group':
     case 'open_group':
-      $join_methods = [
-        'direct' => t('Free to join'),
-        'added' => t('Be added by group managers'),
-      ];
+      $join_methods['direct'] = social_group_allowed_join_method_description('direct');
+      $join_methods['added'] = social_group_allowed_join_method_description('added');
       break;
 
     case 'flexible_group':
@@ -415,12 +411,9 @@ function _social_group_get_join_methods(GroupInterface $group) {
       $allowed_options = $group->get('field_group_allowed_join_method')
         ->getValue();
       foreach ($allowed_options as $option) {
-        $value = $option['value'];
-        if ($value === 'direct') {
-          $join_methods['direct'] = t('Free to join');
-        }
-        if ($value === 'added') {
-          $join_methods['added'] = t('Be added by group managers');
+        // lets grab the value from the selected radio item.
+        if (!empty($option['value']) && is_string($option['value'])) {
+          $join_methods[$option['value']] = social_group_allowed_join_method_description($option['value']);
         }
       }
       break;
@@ -437,13 +430,13 @@ function _social_group_get_join_methods(GroupInterface $group) {
  * @param string $field_name
  *   The field name of the visibility field for a group type.
  *
- * @return string
- *   Returns the visibility of a group.
+ * @return array
+ *   Returns the visibility options of a group.
  */
 function _social_group_get_group_visibility(GroupInterface $group, $field_name = NULL) {
   $group_type = $group->getGroupType();
   $group_type_id = $group_type->id();
-  $group_visibility = "";
+  $group_visibility = [];
 
   // Get join method based on group type.
   switch ($group_type_id) {
@@ -457,11 +450,30 @@ function _social_group_get_group_visibility(GroupInterface $group, $field_name =
       break;
 
     case 'flexible_group':
-      if ($field_name !== NULL && $group->hasField('field_flexible_group_visibility')) {
-        $group_visibility = $group->get('field_flexible_group_visibility')->getValue();
+      // By default we ship with the below field, lets grab its value(s).
+      if ($group->hasField('field_flexible_group_visibility')) {
+        $visibility_values = $group->get('field_flexible_group_visibility')->getValue();
         // Lets grab the rendered description for the group visibility.
-        if (method_exists('social_group_flexible_group_group_visibility_description')) {
-          $group_visibility = social_group_flexible_group_group_visibility_description($group_visibility);
+        if (!empty($visibility_values)) {
+          foreach ($visibility_values as $visibility_value) {
+            if (!empty($visibility_value['value']) && is_string($visibility_value['value'])) {
+              $group_visibility[$visibility_value['value']] = social_group_allowed_visibility_description($visibility_value['value']);
+            }
+          }
+        }
+        return $group_visibility;
+      }
+      // If the above field doesn't exist the user might have a different one
+      // so lets see if it's given as argument and get it's description.
+      if ($field_name !== NULL && $group->hasField($field_name)) {
+        $visibility_values = $group->get($field_name)->getValue();
+        // Lets grab the rendered description for the group visibility.
+        if (!empty($visibility_values)) {
+          foreach ($visibility_values as $visibility_value) {
+            if (!empty($visibility_value['value']) && is_string($visibility_value['value'])) {
+              $group_visibility[$visibility_value['value']] = social_group_allowed_visibility_description($visibility_value['value']);
+            }
+          }
         }
         return $group_visibility;
       }
@@ -498,21 +510,15 @@ function _social_group_get_allowed_visibility(GroupInterface $group) {
   switch ($group_type_id) {
     case 'secret_group':
     case 'closed_group':
-      $allowed_visibility = [
-        'group' => t('Group members'),
-      ];
+      $allowed_visibility['group'] = social_group_allowed_visibility_description('group');
       break;
 
     case 'open_group':
-      $allowed_visibility = [
-        'community' => t('Community'),
-      ];
+      $allowed_visibility['community'] = social_group_allowed_visibility_description('community');
       break;
 
     case 'public_group':
-      $allowed_visibility = [
-        'public' => t('Public'),
-      ];
+      $allowed_visibility['public'] = social_group_allowed_visibility_description('public');
       break;
 
     case 'flexible_group':
@@ -520,15 +526,8 @@ function _social_group_get_allowed_visibility(GroupInterface $group) {
       $allowed_options = $group->get('field_group_allowed_visibility')
         ->getValue();
       foreach ($allowed_options as $option) {
-        $value = $option['value'];
-        if ($value === 'public') {
-          $allowed_visibility['public'] = t('Public');
-        }
-        if ($value === 'community') {
-          $allowed_visibility['community'] = t('Community');
-        }
-        if ($value === 'group') {
-          $allowed_visibility['group'] = t('Group members');
+        if (!empty($option['value']) && is_string($option['value'])) {
+          $allowed_visibility[$option['value']] = social_group_allowed_visibility_description($option['value']);
         }
       }
       break;
@@ -637,6 +636,48 @@ function social_group_group_insert(GroupInterface $group) {
       $group_content->save();
     }
   }
+}
+
+/**
+ * Returns a description array for the field_group_allowed_join_method options.
+ *
+ * @return string
+ *   The render array containing the description.
+ */
+function social_group_allowed_join_method_description($key) {
+  $description = '';
+
+  // We need it to be specified otherwise we can't build the markup.
+  if (empty($key)) {
+    return $description;
+  }
+
+  // Add explanatory descriptive text after the icon.
+  switch ($key) {
+    case 'added':
+      $description = '<strong>' . t('Invite only')->render() . '</strong>';
+      $description .= ' - ' . t('users can only join this group if they are added/invited by group managers.')->render();
+      $description .= '</p>';
+      break;
+
+    case 'direct':
+      $description = '<strong>' . t('Open to join')->render() . '</strong>';
+      $description .= ' - ' . t('users can join this group without approval.')->render();
+      $description .= '</p>';
+      break;
+
+    case 'request':
+      $description = '<strong>' . t('Request to join')->render() . '</strong>';
+      $description .= ' - ' . t('users can "request to join" this group which group managers approve/decline.')->render();
+      $description .= '</p>';
+      break;
+  }
+
+  // Allow modules to provide their own markup for a given key in the
+  // join method #options array.
+  \Drupal::moduleHandler()->alter('social_group_allowed_join_method_description', $key, $description);
+
+  return $description;
 }
 
 /**
