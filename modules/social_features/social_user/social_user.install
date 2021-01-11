@@ -44,8 +44,8 @@ function social_user_update_8001(&$sandbox) {
 function social_user_update_8002() {
   /** @var \Drupal\Core\Config\Config|\Drupal\Core\Config\ImmutableConfig $config */
   $config = \Drupal::getContainer()->get('config.factory')->getEditable('social_user_navigation.settings');
-  $config->set('display_social_private_message_icon', 1)->save();
-  $config->set('display_my_groups_icon', 1)->save();
+  $config->set('display_social_private_message_icon', TRUE)->save();
+  $config->set('display_my_groups_icon', TRUE)->save();
 }
 
 /**

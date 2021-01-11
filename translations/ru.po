@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: node-gettext\n"
-"POT-Creation-Date: 2021-01-03 00:15+0000\n"
+"POT-Creation-Date: 2021-01-11 00:13+0000\n"
 "PO-Revision-Date: 2020-12-10 18:14+0000\n"
 "Last-Translator: Anna Kopytova <anna.kopytova@greenpeace.org>\n"
 "Language-Team: Russian <https://translate.getopensocial.com/projects/open-"
@@ -1500,6 +1500,12 @@ msgid ""
 "a post."
 msgstr ""
 
+#: modules/social_features/social_user/config/install/social_user.settings.yml:0
+msgid ""
+"A welcome message with further instructions will be sent to your email "
+"address after you successfully enter your email address and a username."
+msgstr ""
+
 #: modules/social_features/social_core/config/optional/block.block.anhomepageheroblock.yml:0
 #: modules/social_features/social_core/config/optional/block.block.socialblue_anhomepageheroblock.yml:0
 msgid "AN homepage hero block"
@@ -1647,9 +1653,17 @@ msgstr "Учётная запись"
 msgid "Account header block"
 msgstr ""
 
+#: modules/social_features/social_user/src/Plugin/GraphQL/DataProducer/AccountId.php:8
+msgid "Account identifier"
+msgstr ""
+
 #: translations.php:77
 msgid "Account information"
 msgstr "Информация об учетной записи"
+
+#: modules/social_features/social_user/src/Plugin/GraphQL/DataProducer/AccountId.php:8
+msgid "AccountInterface instance"
+msgstr ""
 
 #: modules/social_features/social_comment/src/Form/SocialCommentAdminOverview.php:140
 #: modules/social_features/social_group/modules/social_group_request/src/SocialGroupRequestConfigOverride.php:690
@@ -2232,6 +2246,7 @@ msgstr ""
 
 #: modules/social_features/social_search/src/Plugin/views/filter/SocialDate.php:78
 #: modules/social_features/social_user/social_user.module:124
+#: modules/social_features/social_user/src/Plugin/GraphQL/DataProducer/QueryUser.php:10
 #: modules/social_features/social_search/config/install/views.view.search_content.yml:0
 msgid "After"
 msgstr "После"
@@ -2323,7 +2338,7 @@ msgstr "Все мои предстоящие события"
 msgid "All notifications"
 msgstr "Все уведомления"
 
-#: modules/social_features/social_topic/social_topic.module:103
+#: modules/social_features/social_topic/social_topic.module:114
 msgid "All statuses"
 msgstr "Все статусы"
 
@@ -2343,14 +2358,14 @@ msgstr ""
 "импортированы. Вы можете выбрать дополнительные функции или генерируемые "
 "демо-материалы."
 
-#: modules/social_features/social_topic/social_topic.install:125
+#: modules/social_features/social_topic/social_topic.install:137
 #: modules/social_features/social_topic/src/Controller/SocialTopicController.php:74
 #: modules/social_features/social_topic/config/install/views.view.latest_topics.yml:0;0;0
 #: modules/social_features/social_topic/config/install/views.view.topics.yml:0
 msgid "All topics"
 msgstr "Все посты"
 
-#: modules/social_features/social_topic/social_topic.module:72;114
+#: modules/social_features/social_topic/social_topic.module:83;125
 msgid "All types"
 msgstr "Все типы"
 
@@ -3035,6 +3050,7 @@ msgstr ""
 
 #: modules/social_features/social_search/src/Plugin/views/filter/SocialDate.php:77
 #: modules/social_features/social_user/social_user.module:125
+#: modules/social_features/social_user/src/Plugin/GraphQL/DataProducer/QueryUser.php:10
 #: modules/social_features/social_search/config/install/views.view.search_content.yml:0
 msgid "Before"
 msgstr "До"
@@ -3086,7 +3102,7 @@ msgstr ""
 msgid "Blocked"
 msgstr "Заблокировано"
 
-#: modules/social_features/social_topic/social_topic.install:26
+#: modules/social_features/social_topic/social_topic.install:29;367
 msgid "Blog"
 msgstr "Блог"
 
@@ -3356,6 +3372,10 @@ msgstr ""
 msgid "Client ID"
 msgstr "ID клиента"
 
+#: modules/custom/social_graphql/src/Plugin/GraphQL/DataProducer/Payload/PayloadClientMutationId.php:9
+msgid "Client Mutation ID"
+msgstr ""
+
 #: modules/custom/social_auth_google/src/Form/GoogleAuthSettingsForm.php:57
 #: modules/custom/social_auth_linkedin/src/Form/LinkedInAuthSettingsForm.php:54
 msgid "Client Secret"
@@ -3591,6 +3611,18 @@ msgstr ""
 
 #: modules/social_features/social_group/modules/social_group_gvbo/social_group_gvbo.routing.yml:0
 msgid "Confirm action"
+msgstr ""
+
+#: modules/custom/social_graphql/src/Plugin/GraphQL/DataProducer/Connection/ConnectionEdges.php:9
+msgid "Connection edges"
+msgstr ""
+
+#: modules/custom/social_graphql/src/Plugin/GraphQL/DataProducer/Connection/ConnectionNodes.php:9
+msgid "Connection nodes"
+msgstr ""
+
+#: modules/custom/social_graphql/src/Plugin/GraphQL/DataProducer/Connection/ConnectionPageInfo.php:9
+msgid "Connection page info"
 msgstr ""
 
 #: modules/custom/social_auth_twitter/src/Form/TwitterAuthSettingsForm.php:42
@@ -3902,7 +3934,7 @@ msgstr "Создать Новую Целевую Страницу"
 msgid "Create New Page"
 msgstr "Создать Новую Страницу"
 
-#: modules/social_features/social_topic/social_topic.module:188
+#: modules/social_features/social_topic/social_topic.module:199
 msgid "Create New Topic"
 msgstr "Создать новую публикацию"
 
@@ -4111,7 +4143,7 @@ msgid "Created date"
 msgstr ""
 
 #: modules/social_features/social_featured_content/templates/node--featured.html.twig:127
-#: themes/socialbase/templates/node/node--teaser.html.twig:132
+#: themes/socialbase/templates/node/node--teaser.html.twig:136
 #: themes/socialblue/templates/node/node--featured--sky.html.twig:39
 #: themes/socialblue/templates/node/node--teaser--sky.html.twig:11
 msgid "Created on"
@@ -4188,6 +4220,10 @@ msgstr "Обрезать изображение, чтобы выбрать, ка
 #: modules/social_features/social_follow_content/config/install/views.view.following.yml:0
 msgid "Current User"
 msgstr "Текущий пользователь"
+
+#: modules/custom/social_graphql/src/Plugin/GraphQL/DataProducer/Edge/EdgeCursor.php:9
+msgid "Cursor"
+msgstr ""
 
 #: modules/custom/activity_basics/activity_basics.info.yml:0
 #: modules/custom/activity_creator/activity_creator.info.yml:0
@@ -4611,7 +4647,7 @@ msgstr ""
 msgid "Disclaimer"
 msgstr "Отказ"
 
-#: modules/social_features/social_topic/social_topic.install:27
+#: modules/social_features/social_topic/social_topic.install:33;371
 msgid "Discussion"
 msgstr "Дискуссия"
 
@@ -4636,6 +4672,10 @@ msgstr ""
 msgid "Display the <b>Social Private Message</b> (envelope) icon."
 msgstr ""
 
+#: modules/social_features/social_user/config/schema/social_user.schema.yml:0
+msgid "Display the groups icon in the navigation bar"
+msgstr ""
+
 #: modules/social_features/social_private_message/src/Plugin/Field/FieldFormatter/SocialPrivateMessageOwnerFormatter.php:8
 msgid ""
 "Display the label of the referenced entities even if based entity type is "
@@ -4644,6 +4684,10 @@ msgstr ""
 
 #: modules/social_features/social_mentions/social_mentions.tokens.inc:26
 msgid "Display the mentioned user in a post"
+msgstr ""
+
+#: modules/social_features/social_user/config/schema/social_user.schema.yml:0
+msgid "Display the private message icon in the navigation bar"
 msgstr ""
 
 #: modules/social_features/social_activity/modules/social_activity_filter/src/Plugin/views/display/FilterBlock.php:12
@@ -4791,6 +4835,23 @@ msgstr ""
 
 #: modules/social_features/social_swiftmail/social_swiftmail.links.menu.yml:0
 msgid "E-mail template settings."
+msgstr ""
+
+#: modules/custom/social_graphql/src/Plugin/GraphQL/DataProducer/Edge/EdgeCursor.php:9
+msgid "Edge cursor"
+msgstr ""
+
+#: modules/custom/social_graphql/src/Plugin/GraphQL/DataProducer/Edge/EdgeNode.php:9
+msgid "Edge node"
+msgstr ""
+
+#: modules/custom/social_graphql/src/Plugin/GraphQL/DataProducer/Edge/EdgeCursor.php:9
+#: modules/custom/social_graphql/src/Plugin/GraphQL/DataProducer/Edge/EdgeNode.php:9
+msgid "EdgeInterface"
+msgstr ""
+
+#: modules/custom/social_graphql/src/Plugin/GraphQL/DataProducer/Connection/ConnectionEdges.php:9
+msgid "Edges"
 msgstr ""
 
 #: modules/custom/activity_creator/activity_creator.links.task.yml:0
@@ -5007,6 +5068,10 @@ msgstr ""
 
 #: modules/custom/social_tour/src/Form/SocialTourSettings.php:39
 msgid "Enable the social tour"
+msgstr ""
+
+#: modules/custom/social_graphql/social_graphql.info.yml:0
+msgid "Enables GraphQL support for Open Social features."
 msgstr ""
 
 #: modules/custom/group_core_comments/group_core_comments.info.yml:0
@@ -5270,6 +5335,10 @@ msgstr "Тип сущности"
 msgid "Entity type of entity that contains mention"
 msgstr ""
 
+#: modules/custom/social_graphql/src/Plugin/GraphQL/DataProducer/Connection/ConnectionNodes.php:9
+msgid "EntityConnection"
+msgstr ""
+
 #: modules/social_features/social_group/modules/social_group_request/social_group_request.module:95
 #: modules/social_features/social_group/modules/social_group_request/src/Form/GroupRequestMembershipRejectForm.php:167
 msgid "Error updating Request"
@@ -5308,7 +5377,7 @@ msgstr ""
 #: modules/social_features/social_event/social_event.module:368;371
 #: modules/social_features/social_featured_content/templates/node--event--featured.html.twig:8
 #: themes/socialbase/templates/node/event/node--event--full.html.twig:39
-#: themes/socialbase/templates/node/event/node--event--teaser.html.twig:8
+#: themes/socialbase/templates/node/event/node--event--teaser.html.twig:22
 #: themes/socialblue/templates/node/event/node--event--featured--sky.html.twig:36
 #: themes/socialblue/templates/node/event/node--event--hero--sky.html.twig:58
 #: themes/socialblue/templates/node/event/node--event--teaser--sky.html.twig:8
@@ -5569,9 +5638,18 @@ msgstr ""
 msgid "Featured Items"
 msgstr ""
 
+#: modules/custom/social_graphql/src/Plugin/GraphQL/DataProducer/Field/Field.php:10;10
+msgid "Field"
+msgstr ""
+
 #: modules/social_features/social_profile/modules/social_profile_privacy/social_profile_privacy.module:62
 msgid "Field groups"
 msgstr "Группы полей"
+
+#: modules/custom/social_graphql/src/Plugin/GraphQL/DataProducer/MediaBridge.php:14
+#: modules/custom/social_graphql/src/Plugin/GraphQL/DataProducer/Field/Field.php:10
+msgid "Field name"
+msgstr ""
 
 #: modules/custom/dropdown/dropdown.info.yml:0
 #: modules/custom/sitewide_js/sitewide_js.info.yml:0
@@ -5635,6 +5713,10 @@ msgstr ""
 msgid "Filter activities by tags"
 msgstr ""
 
+#: modules/custom/activity_viewer/activity_viewer.module:24
+msgid "Filter activities for Explore page"
+msgstr ""
+
 #: modules/custom/activity_viewer/activity_viewer.module:15
 msgid "Filter activities for personalised homepage"
 msgstr ""
@@ -5654,6 +5736,10 @@ msgstr ""
 
 #: modules/custom/activity_viewer/activity_viewer.module:16
 msgid "Filter on activities for personalised homepage."
+msgstr ""
+
+#: modules/custom/activity_viewer/activity_viewer.module:22
+msgid "Filter on activities for the Explore page."
 msgstr ""
 
 #: modules/custom/activity_viewer/activity_viewer.module:13
@@ -5693,6 +5779,10 @@ msgstr ""
 #: modules/custom/social_queue_storage/src/Entity/QueueStorageEntity.php:220
 msgid "Finished"
 msgstr "Закончен"
+
+#: modules/social_features/social_user/src/Plugin/GraphQL/DataProducer/QueryUser.php:10
+msgid "First"
+msgstr ""
 
 #: modules/social_features/social_mentions/social_mentions.tokens.inc:31
 msgid "First and last name or username, depends on settings."
@@ -6486,6 +6576,15 @@ msgstr "IP лимит"
 msgid "IP window"
 msgstr ""
 
+#: modules/social_features/social_event/modules/social_event_type/config/install/field.field.taxonomy_term.event_types.field_event_type_icon.yml:0
+#: modules/social_features/social_topic/config/install/field.field.taxonomy_term.topic_types.field_topic_type_icon.yml:0
+msgid "Icon"
+msgstr ""
+
+#: modules/social_features/social_user/src/Plugin/GraphQL/DataProducer/AccountId.php:8
+msgid "Identifier"
+msgstr ""
+
 #: modules/social_features/social_event/modules/social_event_addtocal/src/Form/SocialAddToCalendarSettingsForm.php:73
 msgid ""
 "If enabled, logged-in users are allowed to add the event to own calendar"
@@ -6922,6 +7021,10 @@ msgstr "Большой"
 msgid "Large sized profile image"
 msgstr ""
 
+#: modules/social_features/social_user/src/Plugin/GraphQL/DataProducer/QueryUser.php:10
+msgid "Last"
+msgstr ""
+
 #: modules/social_features/social_content_block/modules/social_event_content_block/config/install/field.storage.block_content.field_event_date.yml:0
 msgid "Last 14 days"
 msgstr ""
@@ -7136,8 +7239,16 @@ msgstr ""
 msgid "Lists (Views)"
 msgstr "Списки (Представления)"
 
+#: modules/social_features/social_profile/src/Plugin/GraphQL/DataProducer/DefaultProfileLoad.php:14
+msgid "Load default profile"
+msgstr ""
+
 #: modules/social_features/social_profile/modules/social_profile_fields/social_profile_fields.install:55
 msgid "Loaded search index"
+msgstr ""
+
+#: modules/social_features/social_profile/src/Plugin/GraphQL/DataProducer/DefaultProfileLoad.php:14
+msgid "Loads the default profile for a user."
 msgstr ""
 
 #: modules/social_features/social_event/config/install/field.field.node.event.field_event_location.yml:0
@@ -7408,6 +7519,10 @@ msgstr ""
 #: modules/social_features/social_embed/social_embed.module:32
 msgid "Media"
 msgstr "Мультимедиа"
+
+#: modules/custom/social_graphql/src/Plugin/GraphQL/DataProducer/MediaBridge.php:14
+msgid "Media bridge"
+msgstr ""
 
 #: modules/social_features/social_profile/social_profile.install:352
 #: modules/social_features/social_profile/config/install/core.entity_view_mode.profile.medium_teaser.yml:0
@@ -7707,7 +7822,7 @@ msgstr "Группы"
 msgid "My profile"
 msgstr "Мой профиль"
 
-#: modules/social_features/social_topic/social_topic.module:213
+#: modules/social_features/social_topic/social_topic.module:224
 msgid "My topics"
 msgstr "Мои посты"
 
@@ -7785,7 +7900,7 @@ msgstr "Новая Целевая Страница"
 msgid "New Page"
 msgstr "Новая Страница"
 
-#: modules/social_features/social_topic/social_topic.module:190
+#: modules/social_features/social_topic/social_topic.module:201
 msgid "New Topic"
 msgstr "Новый пост"
 
@@ -7839,7 +7954,7 @@ msgstr "Блок последних зарегистрировавшихся"
 msgid "Newest users page"
 msgstr ""
 
-#: modules/social_features/social_topic/social_topic.install:28
+#: modules/social_features/social_topic/social_topic.install:37;375
 msgid "News"
 msgstr "Новости"
 
@@ -7994,6 +8109,7 @@ msgstr "Нет предстоящих событий в этой группе"
 msgid "No upcoming events you have enrolled for"
 msgstr "Нет предстоящих событий, на которые вы были бы зарегистрированы"
 
+#: modules/custom/social_graphql/src/Plugin/GraphQL/DataProducer/Edge/EdgeNode.php:9
 #: modules/social_features/social_event/modules/social_event_invite/src/Plugin/Block/SocialEventInviteLocalActionsBlock.php:17
 msgid "Node"
 msgstr ""
@@ -8021,6 +8137,10 @@ msgstr "Тип материала"
 
 #: modules/custom/social_node_statistics/config/schema/social_node_statistics.schema.yml:0
 msgid "Node types views should be tracked for"
+msgstr ""
+
+#: modules/custom/social_graphql/src/Plugin/GraphQL/DataProducer/Connection/ConnectionNodes.php:9
+msgid "Nodes"
 msgstr ""
 
 #: modules/social_features/social_group/modules/social_group_default_route/social_group_default_route.module:68
@@ -8531,6 +8651,11 @@ msgstr "Страница"
 msgid "Page (no value)"
 msgstr ""
 
+#: modules/custom/social_graphql/src/Plugin/DataType/PageInfo.php:7
+#: modules/custom/social_graphql/src/Plugin/GraphQL/DataProducer/Connection/ConnectionPageInfo.php:9
+msgid "Page Info"
+msgstr ""
+
 #: modules/social_features/social_core/config/optional/block.block.seven_page_title.yml:0
 msgid "Page title"
 msgstr "Заголовок страницы"
@@ -8574,6 +8699,10 @@ msgstr ""
 msgid "Paragraphs"
 msgstr ""
 
+#: modules/custom/social_graphql/src/Plugin/GraphQL/DataProducer/Field/Field.php:10
+msgid "Parent entity"
+msgstr ""
+
 #: modules/social_features/social_user/src/Form/SocialUserLoginForm.php:72
 msgid "Password"
 msgstr "Пароль"
@@ -8593,6 +8722,19 @@ msgstr ""
 #: modules/social_features/social_event/config/install/views.view.upcoming_events.yml:0
 #: modules/social_features/social_group/config/install/views.view.group_events.yml:0
 msgid "Past events"
+msgstr ""
+
+#: modules/custom/social_graphql/src/Plugin/GraphQL/DataProducer/Payload/PayloadClientMutationId.php:9
+#: modules/custom/social_graphql/src/Plugin/GraphQL/DataProducer/Payload/PayloadViolations.php:9
+msgid "Payload"
+msgstr ""
+
+#: modules/custom/social_graphql/src/Plugin/GraphQL/DataProducer/Payload/PayloadViolations.php:9
+msgid "Payload Violations"
+msgstr ""
+
+#: modules/custom/social_graphql/src/Plugin/GraphQL/DataProducer/Payload/PayloadClientMutationId.php:9
+msgid "Payload client mutation id"
 msgstr ""
 
 #: modules/social_features/social_event/src/Form/EnrollActionForm.php:258
@@ -8988,6 +9130,7 @@ msgstr ""
 msgid "Processing"
 msgstr "Обработка"
 
+#: modules/social_features/social_profile/src/Plugin/GraphQL/DataProducer/DefaultProfileLoad.php:14
 #: modules/social_features/social_tagging/src/Form/SocialTaggingSettingsForm.php:141
 #: modules/social_features/social_event/config/install/views.view.event_manage_enrollment_requests.yml:0
 #: modules/social_features/social_event/modules/social_event_invite/config/install/views.view.event_manage_enrollment_invites.yml:0
@@ -9166,6 +9309,10 @@ msgid ""
 "Provides a REST endpoint for the Search API to be used for autocomplete."
 msgstr ""
 
+#: modules/social_features/social_group/modules/social_group_secret/modules/social_secret_group_featured/social_secret_group_featured.info.yml:0
+msgid "Provides a Secret Group featured view mode for use on landing pages."
+msgstr ""
+
 #: modules/social_features/social_book/modules/social_book_featured/social_book_featured.info.yml:0
 msgid "Provides a book featured view mode for use on landing pages."
 msgstr ""
@@ -9247,6 +9394,10 @@ msgstr ""
 
 #: modules/social_features/social_node/social_node.info.yml:0
 msgid "Provides core functionality around Nodes."
+msgstr ""
+
+#: modules/custom/social_graphql/src/Plugin/GraphQL/DataProducer/MediaBridge.php:14
+msgid "Provides data about image fields and media sources."
 msgstr ""
 
 #: modules/social_features/social_comment/social_comment.info.yml:0
@@ -9345,7 +9496,7 @@ msgstr "Опубликовать отмеченные комментарии"
 #: modules/social_features/social_comment/social_comment.module:137
 #: modules/social_features/social_event/social_event.module:69
 #: modules/social_features/social_post/src/Entity/Post.php:342
-#: modules/social_features/social_topic/social_topic.module:75;105
+#: modules/social_features/social_topic/social_topic.module:86;116
 #: config/install/views.view.content.yml:0;0
 msgid "Published"
 msgstr "Опубликовано"
@@ -9367,6 +9518,15 @@ msgstr ""
 
 #: modules/custom/activity_send/modules/activity_send_push_notification/activity_send_push_notification.module:46
 msgid "Push notifications"
+msgstr ""
+
+#: modules/social_features/social_user/src/Plugin/GraphQL/DataProducer/QueryUser.php:10
+msgid "Query a list of users"
+msgstr ""
+
+#: modules/custom/social_graphql/src/Plugin/GraphQL/DataProducer/Connection/ConnectionEdges.php:9
+#: modules/custom/social_graphql/src/Plugin/GraphQL/DataProducer/Connection/ConnectionPageInfo.php:9
+msgid "QueryConnection"
 msgstr ""
 
 #: modules/custom/social_queue_storage/social_queue_storage.links.menu.yml:0
@@ -9890,6 +10050,54 @@ msgstr "Ограниченный HTML"
 msgid "Restricted Name"
 msgstr ""
 
+#: modules/social_features/social_user/src/Plugin/GraphQL/DataProducer/QueryUser.php:10
+msgid "Retrieves a list of teas."
+msgstr ""
+
+#: modules/social_features/social_user/src/Plugin/GraphQL/DataProducer/AccountId.php:8
+msgid "Returns the account identifier."
+msgstr ""
+
+#: modules/custom/social_graphql/src/Plugin/GraphQL/DataProducer/Payload/PayloadClientMutationId.php:9
+msgid "Returns the client mutation id from a payload."
+msgstr ""
+
+#: modules/custom/social_graphql/src/Plugin/GraphQL/DataProducer/Edge/EdgeCursor.php:9
+msgid "Returns the cursor of an edge."
+msgstr ""
+
+#: modules/custom/social_graphql/src/Plugin/GraphQL/DataProducer/Connection/ConnectionEdges.php:9
+msgid "Returns the edges of a connection."
+msgstr ""
+
+#: modules/custom/social_graphql/src/Plugin/GraphQL/DataProducer/Edge/EdgeNode.php:9
+msgid "Returns the node associated with an edge."
+msgstr ""
+
+#: modules/custom/social_graphql/src/Plugin/GraphQL/DataProducer/Connection/ConnectionNodes.php:9
+msgid "Returns the nodes of a connection."
+msgstr ""
+
+#: modules/custom/social_graphql/src/Plugin/GraphQL/DataProducer/Connection/ConnectionPageInfo.php:9
+msgid "Returns the page info of a connection."
+msgstr ""
+
+#: modules/social_features/social_user/src/Plugin/GraphQL/DataProducer/UserRoles.php:9
+msgid "Returns the roles that a user has."
+msgstr ""
+
+#: modules/social_features/social_user/src/Plugin/GraphQL/DataProducer/UserStatus.php:9
+msgid "Returns the status of the user."
+msgstr ""
+
+#: modules/custom/social_graphql/src/Plugin/GraphQL/DataProducer/Payload/PayloadViolations.php:9
+msgid "Returns the violations from a payload."
+msgstr ""
+
+#: modules/social_features/social_user/src/Plugin/GraphQL/DataProducer/QueryUser.php:10
+msgid "Reverse"
+msgstr ""
+
 #: modules/custom/social_gdpr/src/Controller/DataPolicy.php:38
 msgid "Revision from %date"
 msgstr "Редакция с %date"
@@ -10254,6 +10462,10 @@ msgstr ""
 msgid "Selected @count entities:"
 msgstr ""
 
+#: modules/custom/social_graphql/src/Plugin/GraphQL/DataProducer/Field/Field.php:10
+msgid "Selects a field from an entity."
+msgstr ""
+
 #: modules/social_features/social_user_export/src/Plugin/UserExportPlugin/UserSelfIntroduction.php:8
 msgid "Self Introduction"
 msgstr "Самопрезентация"
@@ -10275,11 +10487,11 @@ msgstr "Отправить"
 msgid "Send a welcome message to new group members"
 msgstr ""
 
-#: modules/social_features/social_user/src/Plugin/Action/SocialSendEmail.php:250
+#: modules/social_features/social_user/src/Plugin/Action/SocialSendEmail.php:251
 msgid "Send an email to :selected_count members"
 msgstr ""
 
-#: modules/social_features/social_user/src/Plugin/Action/SocialSendEmail.php:258;19
+#: modules/social_features/social_user/src/Plugin/Action/SocialSendEmail.php:259;19
 msgid "Send email"
 msgstr "Отправить письмо"
 
@@ -10745,6 +10957,7 @@ msgstr ""
 #: modules/social_features/social_group/modules/social_group_quickjoin/social_group_quickjoin.info.yml:0
 #: modules/social_features/social_group/modules/social_group_request/social_group_request.info.yml:0
 #: modules/social_features/social_group/modules/social_group_secret/social_group_secret.info.yml:0
+#: modules/social_features/social_group/modules/social_group_secret/modules/social_secret_group_featured/social_secret_group_featured.info.yml:0
 #: modules/social_features/social_landing_page/social_landing_page.info.yml:0
 #: modules/social_features/social_like/social_like.info.yml:0
 #: modules/social_features/social_mentions/social_mentions.info.yml:0
@@ -10767,6 +10980,10 @@ msgstr ""
 #: modules/social_features/social_user/social_user.info.yml:0
 #: modules/social_features/social_user_export/social_user_export.info.yml:0
 msgid "Social"
+msgstr ""
+
+#: modules/custom/social_graphql/social_graphql.info.yml:0
+msgid "Social (Experimental)"
 msgstr ""
 
 #: modules/custom/social_language/modules/social_content_translation/social_content_translation.info.yml:0
@@ -11100,6 +11317,10 @@ msgstr ""
 msgid "Social GDPR"
 msgstr ""
 
+#: modules/custom/social_graphql/social_graphql.info.yml:0
+msgid "Social GraphQL"
+msgstr ""
+
 #: modules/social_features/social_group/social_group.tokens.inc:19
 #: modules/social_features/social_group/social_group.info.yml:0
 msgid "Social Group"
@@ -11327,6 +11548,10 @@ msgstr ""
 msgid "Social Secret Group"
 msgstr ""
 
+#: modules/social_features/social_group/modules/social_group_secret/modules/social_secret_group_featured/social_secret_group_featured.info.yml:0
+msgid "Social Secret Group on Landing pages"
+msgstr ""
+
 #: modules/social_features/social_sharing/social_sharing.info.yml:0
 msgid "Social Sharing"
 msgstr ""
@@ -11379,12 +11604,17 @@ msgstr ""
 msgid "Social Tour settings"
 msgstr ""
 
+#: modules/social_features/social_user/social_user.tokens.inc:15
 #: modules/social_features/social_user/social_user.info.yml:0
 msgid "Social User"
 msgstr ""
 
 #: modules/social_features/social_user_export/social_user_export.info.yml:0
 msgid "Social User Export"
+msgstr ""
+
+#: modules/social_features/social_user/config/schema/social_user.schema.yml:0
+msgid "Social User Navigation Bar Settings"
 msgstr ""
 
 #: modules/custom/social_auth_extra/config/schema/social_auth_extra.schema.yml:0
@@ -11554,6 +11784,10 @@ msgstr "Сортировать по дате публикации"
 #: themes/socialbase/templates/system/tablesort-indicator.html.twig:26
 msgid "Sort descending"
 msgstr "Сортировать по убыванию"
+
+#: modules/social_features/social_user/src/Plugin/GraphQL/DataProducer/QueryUser.php:10
+msgid "Sort key"
+msgstr ""
 
 #: modules/social_features/social_content_block/config/install/field.field.block_content.custom_content_list.field_sorting.yml:0
 msgid "Sorting"
@@ -11958,6 +12192,10 @@ msgid ""
 "will not be shown."
 msgstr ""
 
+#: modules/social_features/social_user/social_user.tokens.inc:20
+msgid "The display name of the Receiver of the email."
+msgstr ""
+
 #: modules/social_features/social_profile/modules/social_profile_privacy/src/Plugin/search_api/processor/RestrictedNameProcessor.php:59
 msgid "The display name that is visible for unpriviliged users."
 msgstr ""
@@ -12029,10 +12267,16 @@ msgid "The event enrollment request has been declined."
 msgstr ""
 
 #: modules/social_features/social_featured_content/templates/node--event--featured.html.twig:15
-#: themes/socialbase/templates/node/event/node--event--teaser.html.twig:17
+#: themes/socialbase/templates/node/event/node--event--teaser.html.twig:31
 #: themes/socialblue/templates/node/event/node--event--featured--sky.html.twig:44
 #: themes/socialblue/templates/node/event/node--event--teaser--sky.html.twig:17
 msgid "The event will take place at the"
+msgstr ""
+
+#: modules/custom/activity_viewer/activity_viewer.module:25
+msgid ""
+"The explore page shows content not directly related to you, \n"
+"      so placed in a groups you are not a member of."
 msgstr ""
 
 #: modules/custom/social_auth_extra/src/UserManager.php:155
@@ -12065,6 +12309,10 @@ msgstr ""
 
 #: modules/custom/social_auth_extra/src/UserManager.php:142
 msgid "The image could not be saved, the directory @directory is not valid."
+msgstr ""
+
+#: modules/social_features/social_user/social_user.tokens.inc:21
+msgid "The individual display name of a user, when receiving an email."
 msgstr ""
 
 #: modules/social_features/social_event/modules/social_event_invite/config/schema/social_event_invite.schema.yml:0
@@ -12401,8 +12649,8 @@ msgstr ""
 
 #: modules/social_features/social_featured_content/templates/node--featured.html.twig:156;161
 #: themes/socialbase/templates/node/node--full.html.twig:195
-#: themes/socialbase/templates/node/node--teaser.html.twig:173
-#: themes/socialbase/templates/node/event/node--event--teaser.html.twig:49
+#: themes/socialbase/templates/node/node--teaser.html.twig:177
+#: themes/socialbase/templates/node/event/node--event--teaser.html.twig:63
 #: themes/socialblue/templates/node/node--featured--sky.html.twig:11;16
 #: themes/socialblue/templates/node/node--hero--sky.html.twig:133
 #: themes/socialblue/templates/node/event/node--event--featured--sky.html.twig:11
@@ -12461,7 +12709,7 @@ msgstr ""
 "Эти поля позволяют вам настроить различные тексты помощи, которые будут "
 "показаны пользователям во время регистрации и входа."
 
-#: themes/socialbase/templates/node/node--teaser.html.twig:155
+#: themes/socialbase/templates/node/node--teaser.html.twig:159
 #: themes/socialblue/templates/node/node--teaser--sky.html.twig:25
 msgid "This content is posted in"
 msgstr ""
@@ -12470,11 +12718,11 @@ msgstr ""
 msgid "This description will be displayed when hovering over the menu link."
 msgstr ""
 
-#: themes/socialbase/templates/node/event/node--event--teaser.html.twig:27
+#: themes/socialbase/templates/node/event/node--event--teaser.html.twig:41
 msgid "This event has type"
 msgstr ""
 
-#: themes/socialbase/templates/node/event/node--event--teaser.html.twig:37
+#: themes/socialbase/templates/node/event/node--event--teaser.html.twig:51
 #: themes/socialblue/templates/node/event/node--event--teaser--sky.html.twig:27
 msgid "This event is posted in"
 msgstr ""
@@ -12740,6 +12988,10 @@ msgstr ""
 msgid "Tokens from the social mentions module."
 msgstr ""
 
+#: modules/social_features/social_user/social_user.tokens.inc:16
+msgid "Tokens from the social user module."
+msgstr ""
+
 #: translations.php:95
 #: modules/custom/social_demo/src/Plugin/DemoContent/Topic.php:13
 #: modules/social_features/social_topic/config/install/node.type.topic.yml:0
@@ -12766,7 +13018,7 @@ msgid "Topic type"
 msgstr ""
 
 #: modules/social_features/social_featured_content/templates/node--featured.html.twig:139
-#: themes/socialbase/templates/node/node--teaser.html.twig:145
+#: themes/socialbase/templates/node/node--teaser.html.twig:149
 msgid "Topic type:"
 msgstr ""
 
@@ -12792,20 +13044,20 @@ msgid "Topics of type @type"
 msgstr ""
 
 #: themes/socialbase/templates/node/node--full.html.twig:155
-#: themes/socialbase/templates/node/node--teaser.html.twig:199
+#: themes/socialbase/templates/node/node--teaser.html.twig:203
 #: themes/socialblue/templates/node/node--featured--sky.html.twig:55
 #: themes/socialblue/templates/node/node--hero--sky.html.twig:175
 #: themes/socialblue/templates/node/event/node--event--featured--sky.html.twig:67
 msgid "Total amount of comments"
 msgstr ""
 
-#: themes/socialbase/templates/node/event/node--event--teaser.html.twig:60
+#: themes/socialbase/templates/node/event/node--event--teaser.html.twig:74
 #: themes/socialblue/templates/node/event/node--event--featured--sky.html.twig:78
 msgid "Total amount of enrollments"
 msgstr ""
 
 #: themes/socialbase/templates/node/node--full.html.twig:175
-#: themes/socialbase/templates/node/node--teaser.html.twig:185
+#: themes/socialbase/templates/node/node--teaser.html.twig:189
 #: themes/socialblue/templates/node/node--featured--sky.html.twig:66
 msgid "Total amount of likes"
 msgstr ""
@@ -13015,7 +13267,7 @@ msgid "Unpublish the selected comments"
 msgstr "Снять отмеченные комментарии с публикации"
 
 #: modules/social_features/social_event/social_event.module:68
-#: modules/social_features/social_topic/social_topic.module:74;104
+#: modules/social_features/social_topic/social_topic.module:85;115
 #: config/install/views.view.content.yml:0;0
 msgid "Unpublished"
 msgstr "Снято с публикации"
@@ -13170,6 +13422,9 @@ msgstr ""
 #: modules/custom/mentions/src/MentionsViewsData.php:81;93
 #: modules/custom/social_demo/src/Plugin/DemoContent/User.php:7
 #: modules/social_features/social_featured_content/templates/profile--featured.html.twig:36
+#: modules/social_features/social_profile/src/Plugin/GraphQL/DataProducer/DefaultProfileLoad.php:14
+#: modules/social_features/social_user/src/Plugin/GraphQL/DataProducer/UserRoles.php:9
+#: modules/social_features/social_user/src/Plugin/GraphQL/DataProducer/UserStatus.php:9
 #: modules/social_features/social_event/config/install/views.view.event_enrollments.yml:0
 #: modules/social_features/social_event/modules/social_event_managers/config/install/views.view.managers.yml:0
 #: modules/social_features/social_follow_content/config/install/views.view.following.yml:0
@@ -13230,6 +13485,10 @@ msgstr ""
 msgid "User account menu"
 msgstr "Меню учётной записи пользователя"
 
+#: modules/social_features/social_user/src/Plugin/GraphQL/DataProducer/QueryUser.php:10
+msgid "User connection"
+msgstr ""
+
 #: modules/social_features/social_user/src/Plugin/QueueWorker/UserMailQueueProcessor.php:19
 msgid "User email processor"
 msgstr ""
@@ -13276,11 +13535,19 @@ msgstr "Меню пользователя"
 msgid "User name"
 msgstr "Имя пользователя"
 
+#: modules/social_features/social_user/src/Plugin/GraphQL/DataProducer/UserRoles.php:9;9
+msgid "User roles"
+msgstr ""
+
 #: translations.php:98
 #: modules/social_features/social_user/social_user.links.menu.yml:0;0
 #: modules/social_features/social_user/social_user.routing.yml:0
 msgid "User settings"
 msgstr "Настройки пользователя"
+
+#: modules/social_features/social_user/src/Plugin/GraphQL/DataProducer/UserStatus.php:9;9
+msgid "User status"
+msgstr ""
 
 #: modules/social_features/social_search/modules/social_search_autocomplete/config/install/views.view.search_all_autocomplete.yml:0
 msgid "User type (rewritten User ID)"
@@ -13326,8 +13593,13 @@ msgstr ""
 #: modules/custom/entity_access_by_field/config/schema/entity_access_by_field.schema.yml:0;0
 #: modules/custom/mentions/config/schema/mentions.schema.yml:0;0
 #: modules/custom/mentions/src/Form/MentionsTypeForm.php:195;211
+#: modules/custom/social_graphql/src/Plugin/GraphQL/DataProducer/MediaBridge.php:14
 msgid "Value"
 msgstr "Значение"
+
+#: modules/custom/social_graphql/src/Plugin/GraphQL/DataProducer/MediaBridge.php:14
+msgid "Value (Media source or FileItem)"
+msgstr ""
 
 #: modules/custom/activity_creator/activity_creator.links.task.yml:0
 #: modules/custom/social_font/social_font.links.task.yml:0
@@ -13438,7 +13710,7 @@ msgstr ""
 msgid "View my profile"
 msgstr ""
 
-#: modules/social_features/social_topic/social_topic.module:211
+#: modules/social_features/social_topic/social_topic.module:222
 msgid "View my topics"
 msgstr "Посмотреть мои посты"
 
@@ -13538,6 +13810,10 @@ msgstr ""
 
 #: modules/social_features/social_activity/modules/social_activity_filter/config/schema/social_activity_filter.settings.yml:0
 msgid "Views blocks"
+msgstr ""
+
+#: modules/custom/social_graphql/src/Plugin/GraphQL/DataProducer/Payload/PayloadViolations.php:9
+msgid "Violations"
 msgstr ""
 
 #: modules/social_features/social_group/social_group.module:2379
@@ -13883,6 +14159,12 @@ msgstr ""
 msgid ""
 "You can leave a message in your request. Only when your request is approved, "
 "you will receive a notification via email and notification center."
+msgstr ""
+
+#: modules/social_features/social_user/src/Plugin/Action/SocialSendEmail.php:240
+msgid ""
+"You can use the token [social_user:recipient] for a personalized salutation, "
+"to add the users name in your email"
 msgstr ""
 
 #: modules/social_features/social_activity/config/install/views.view.activity_stream_notifications.yml:0
@@ -14342,7 +14624,7 @@ msgid "basic_html"
 msgstr ""
 
 #: modules/social_features/social_featured_content/templates/node--featured.html.twig:129
-#: themes/socialbase/templates/node/node--teaser.html.twig:134
+#: themes/socialbase/templates/node/node--teaser.html.twig:138
 #: themes/socialblue/templates/node/node--featured--sky.html.twig:41
 #: themes/socialblue/templates/node/node--teaser--sky.html.twig:13
 msgid "by"
@@ -14559,11 +14841,11 @@ msgstr "здесь"
 msgid "iCal"
 msgstr ""
 
-#: modules/social_features/social_event/modules/social_event_type/social_event_type.module:70
+#: modules/social_features/social_event/modules/social_event_type/social_event_type.module:75
 msgid "in @event"
 msgstr ""
 
-#: modules/social_features/social_topic/social_topic.module:49
+#: modules/social_features/social_topic/social_topic.module:54
 msgid "in @topic"
 msgstr ""
 
