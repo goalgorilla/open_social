@@ -368,16 +368,20 @@ function social_comment_preprocess_pager(&$variables) {
   $items = &$variables['items'];
   $pattern = '/%2C.$/';
 
+  if (empty($items)) {
+    return;
+  }
+
   // Change href for all pager items except "pages"
   // (E.G. first, previous, next, last, etc.).
-  foreach ($items ?? [] as $key => $item) {
+  foreach ($items as $key => $item) {
     if (isset($item['href'])) {
       $items[$key]['href'] = preg_replace($pattern, '', $item['href']);
     }
   }
 
   // Change href for pager "pages" items.
-  foreach ($items['pages'] ?? [] as $key => &$item) {
+  foreach ($items['pages'] as $key => &$item) {
     $items['pages'][$key]['href'] = preg_replace($pattern, '', $item['href']);
   }
 }
