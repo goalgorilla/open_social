@@ -376,7 +376,7 @@ function social_group_preprocess_group__hero(array &$variables) {
  *   the Group interface.
  *
  * @return array
- *  the actual tooltip render array.
+ *   the actual tooltip render array.
  */
 function _social_group_render_group_settings_hero(GroupInterface $group) {
   $description = '';
@@ -446,7 +446,7 @@ function _social_group_get_join_methods(GroupInterface $group) {
       $allowed_options = $group->get('field_group_allowed_join_method')
         ->getValue();
       foreach ($allowed_options as $option) {
-        // lets grab the value from the selected radio item.
+        // Lets grab the value from the selected radio item.
         if (!empty($option['value']) && is_string($option['value'])) {
           $join_methods[$option['value']] = social_group_allowed_join_method_description($option['value']);
         }
@@ -479,10 +479,7 @@ function _social_group_get_group_visibility(GroupInterface $group, $field_name =
     case 'closed_group':
     case 'public_group':
     case 'open_group':
-      // We don't have this set for anything else than flexible groups right
-      // now.
       return $group_visibility;
-      break;
 
     case 'flexible_group':
       // By default we ship with the below field, lets grab its value(s).
@@ -521,7 +518,7 @@ function _social_group_get_group_visibility(GroupInterface $group, $field_name =
         $group_visibility = $group->get($field_name)->getValue();
       }
       return $group_visibility;
-      break;
+
   }
 
   return $group_visibility;
