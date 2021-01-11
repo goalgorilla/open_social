@@ -27,6 +27,8 @@ function social_profile_install() {
   _social_profile_create_menu_links();
   // Add default profile image.
   _social_profile_add_default_profile_image();
+  // Add genders.
+  _social_profile_create_genders();
 
   // Create a profile for user 1.
   Profile::create([
@@ -146,6 +148,23 @@ function _social_profile_create_menu_links() {
       'weight' => 50,
       'parent' => $parent,
     ])->save();
+  }
+}
+
+/**
+ * Create genders.
+ */
+function _social_profile_create_genders() {
+  $storage = \Drupal::entityTypeManager()->getStorage('taxonomy_term');
+
+  foreach (['Male', 'Female', 'Other'] as $weight => $gender) {
+    $term = $storage->create([
+      'vid' => 'gender',
+      'name' => $gender,
+      'weight' => $weight,
+    ]);
+
+    $term->save();
   }
 }
 
@@ -431,4 +450,122 @@ function social_profile_update_8803() {
 
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
+}
+
+/**
+ * Add a field for gender.
+ */
+function social_profile_update_8901() {
+  \Drupal::entityTypeManager()->getStorage('taxonomy_vocabulary')
+    ->create([
+      'vid' => 'gender',
+      'name' => 'Gender',
+    ])
+    ->save();
+
+  _social_profile_create_genders();
+
+  $configs = [
+    'field_storage_config' => [
+      'langcode' => 'en',
+      'status' => TRUE,
+      'dependencies' => [
+        'module' => [
+          'profile',
+          'taxonomy',
+        ],
+      ],
+      'id' => 'profile.field_profile_gender',
+      'field_name' => 'field_profile_gender',
+      'entity_type' => 'profile',
+      'type' => 'entity_reference',
+      'settings' => [
+        'target_type' => 'taxonomy_term',
+      ],
+      'module' => 'core',
+      'locked' => FALSE,
+      'cardinality' => 1,
+      'translatable' => FALSE,
+      'indexes' => [],
+      'persist_with_no_fields' => FALSE,
+      'custom_storage' => FALSE,
+    ],
+    'field_config' => [
+      'langcode' => 'en',
+      'status' => TRUE,
+      'dependencies' => [
+        'config' => [
+          'field.storage.profile.field_profile_gender',
+          'profile.type.profile',
+          'taxonomy.vocabulary.gender',
+        ],
+      ],
+      'id' => 'profile.profile.field_profile_gender',
+      'field_name' => 'field_profile_gender',
+      'entity_type' => 'profile',
+      'bundle' => 'profile',
+      'label' => 'Gender',
+      'description' => '',
+      'required' => FALSE,
+      'translatable' => FALSE,
+      'default_value' => [],
+      'default_value_callback' => '',
+      'settings' => [
+        'handler' => 'default:taxonomy_term',
+        'handler_settings' => [
+          'target_bundles' => [
+            'gender' => 'gender',
+          ],
+          'sort' => [
+            'field' => 'weight',
+            'direction' => 'asc',
+          ],
+          'auto_create' => FALSE,
+          'auto_create_bundle' => '',
+        ],
+      ],
+      'field_type' => 'entity_reference',
+    ],
+  ];
+
+  foreach ($configs as $entity_type_id => $data) {
+    /** @var \Drupal\Core\Config\Entity\ConfigEntityStorageInterface $storage */
+    $storage = \Drupal::entityTypeManager()->getStorage($entity_type_id);
+
+    $storage->createFromStorageRecord($data)->save();
+  }
+
+  /** @var \Drupal\Core\Entity\EntityDisplayRepositoryInterface $entity_display_repository */
+  $entity_display_repository = \Drupal::service('entity_display.repository');
+
+  $display = $entity_display_repository->getFormDisplay('profile', 'profile')
+    ->setComponent('field_profile_gender', [
+      'type' => 'options_select',
+      'weight' => 12,
+      'settings' => [],
+      'third_party_settings' => [],
+      'region' => 'content',
+    ]);
+
+  $settings = $display->getThirdPartySetting('field_group', 'group_profile_names_image');
+
+  if (!in_array('field_profile_gender', $settings['children'])) {
+    $settings['children'][] = 'field_profile_gender';
+
+    $display
+      ->setThirdPartySetting('field_group', 'group_profile_names_image', $settings)
+      ->save();
+  }
+
+  $entity_display_repository->getViewDisplay('profile', 'profile')
+    ->setComponent('field_profile_gender', [
+      'type' => 'entity_reference_label',
+      'weight' => 6,
+      'settings' => [
+        'link' => FALSE,
+      ],
+      'third_party_settings' => [],
+      'region' => 'content',
+    ])
+    ->save();
 }

@@ -7,6 +7,7 @@ dependencies:
     - field.field.profile.profile.field_profile_expertise
     - field.field.profile.profile.field_profile_first_name
     - field.field.profile.profile.field_profile_function
+    - field.field.profile.profile.field_profile_gender
     - field.field.profile.profile.field_profile_image
     - field.field.profile.profile.field_profile_interests
     - field.field.profile.profile.field_profile_last_name
@@ -31,6 +32,7 @@ third_party_settings:
         - field_profile_last_name
         - field_profile_banner_image
         - field_profile_image
+        - field_profile_gender
       parent_name: ''
       weight: 0
       label: 'Names and profile image'
@@ -132,6 +134,12 @@ content:
       placeholder: ''
     third_party_settings: {  }
     type: string_textfield
+    region: content
+  field_profile_gender:
+    weight: 12
+    settings: {  }
+    third_party_settings: {  }
+    type: options_select
     region: content
   field_profile_image:
     weight: 11

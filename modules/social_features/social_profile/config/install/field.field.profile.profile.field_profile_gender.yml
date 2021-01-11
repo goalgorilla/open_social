@@ -1,0 +1,28 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.profile.field_profile_gender
+    - profile.type.profile
+    - taxonomy.vocabulary.gender
+id: profile.profile.field_profile_gender
+field_name: field_profile_gender
+entity_type: profile
+bundle: profile
+label: Gender
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      gender: gender
+    sort:
+      field: weight
+      direction: asc
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference
