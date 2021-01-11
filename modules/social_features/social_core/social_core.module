@@ -855,10 +855,10 @@ function social_core_form_node_form_alter(&$form, FormStateInterface $form_state
       // Change the button text from Save to Create topic / event etc.
       // Only on node add pages.
       if ($form_state->getFormObject()->getOperation() !== 'edit') {
-        /** @var \Drupal\Core\Entity\EntityInterface $entity */
+        /** @var \Drupal\Node\NodeInterface $entity */
         $entity = $form_state->getFormObject()->getEntity();
-        if (!empty($entity->getType()) && is_string($entity->getType())) {
-          $form['actions']['submit']['#value'] = t('Create @entity', ['@entity' => $entity->getType()]);
+        if (!empty(node_get_type_label($entity)) && is_string(node_get_type_label($entity))) {
+          $form['actions']['submit']['#value'] = t('Create @entity', ['@entity' => node_get_type_label($entity)]);
         }
       }
 
