@@ -667,3 +667,15 @@ function social_landing_page_update_8809() {
     user_role_grant_permissions($role, ['link to any page']);
   }
 }
+
+/**
+ * Enable helper modules if secret group is enabled.
+ */
+function social_landing_page_update_8810() {
+  // If we have secret groups enabled, we want to enable the helper module
+  // social_secret_group_featured which provides a featured view mode to be
+  // used on landing pages.
+  if (\Drupal::moduleHandler()->moduleExists('social_group_secret')) {
+    \Drupal::service('module_installer')->install(['social_secret_group_featured']);
+  }
+}
