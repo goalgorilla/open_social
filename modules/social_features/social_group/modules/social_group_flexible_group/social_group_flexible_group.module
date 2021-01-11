@@ -400,7 +400,7 @@ function social_group_flexible_group_preprocess_fieldset(&$variables) {
     if ($element['#field_name'] === 'field_group_allowed_visibility') {
       $description = '';
       foreach ($element['#options'] as $key => $label) {
-        $description .= social_group_flexible_group_allowed_visibility_description($key);
+        $description .= social_group_allowed_visibility_description($key);
       }
 
       // Render a specific tooltip based on a field name and description.
@@ -418,51 +418,6 @@ function social_group_flexible_group_preprocess_fieldset(&$variables) {
       $variables['popover'] = social_group_render_tooltip('field_group_allowed_join_method', t('Join methods'), $description);
     }
   }
-}
-
-/**
- * Returns a description array for the field_flexible_group_visibility options.
- *
- * @return string
- *   The render array containing the description.
- */
-function social_group_flexible_group_allowed_visibility_description($key) {
-  $description = '';
-
-  // We need it to be specified otherwise we can't build the markup.
-  if (empty($key)) {
-    return $description;
-  }
-
-  // Add explanatory descriptive text after the icon.
-  switch ($key) {
-    case 'public':
-      $description = '<p><strong><svg class="icon-small"><use xlink:href="#icon-public"></use></svg></strong>';
-      $description .= '<strong>' . t('Public')->render() . '</strong>';
-      $description .= ' - ' . t('visible to all visitors to the platform.')->render();
-      $description .= '</p>';
-      break;
-
-    case 'community':
-      $description = '<p><strong><svg class="icon-small"><use xlink:href="#icon-community"></use></svg></strong>';
-      $description .= '<strong>' . t('Community')->render() . '</strong>';
-      $description .= ' - ' . t('only visible to all logged-in users.')->render();
-      $description .= '</p>';
-      break;
-
-    case 'group':
-      $description = '<p><strong><svg class="icon-small"><use xlink:href="#icon-lock"></use></svg></strong>';
-      $description .= '<strong>' . t('Group members only')->render() . '</strong>';
-      $description .= ' - ' . t('only visible to logged-in group members.')->render();
-      $description .= '</p>';
-      break;
-  }
-
-  // Allow modules to provide their own markup for a given key in the
-  // group_visibility #options array.
-  \Drupal::moduleHandler()->alter('social_group_flexible_group_allowed_visibility_description', $key, $description);
-
-  return $description;
 }
 
 /**

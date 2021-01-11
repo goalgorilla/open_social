@@ -239,13 +239,8 @@ function social_group_preprocess_group(array &$variables) {
     $variables['group_type'] = $term->getName();
   }
 
-  $group_settings_help = [
-    '#theme' => 'group_settings_help',
-    '#group_type' => $group->getGroupType()->label(),
-    '#join_method' => _social_group_get_join_methods($group),
-    '#allowed_visibility' => _social_group_get_allowed_visibility($group),
-    '#group_visibility' => _social_group_get_group_visibility($group),
-  ];
+  // Render the group settings help, gear icon with popover.
+  $group_settings_help = _social_group_render_group_settings_hero($group);
   $variables['group_settings_help'] = \Drupal::service('renderer')->renderPlain($group_settings_help);
 
   $account = \Drupal::currentUser();
@@ -369,14 +364,54 @@ function social_group_preprocess_group__hero(array &$variables) {
     ])->toString();
   }
 
-  $group_settings_help = [
-    '#theme' => 'group_settings_help',
-    '#group_type' => $group->getGroupType()->label(),
-    '#join_method' => _social_group_get_join_methods($group),
-    '#allowed_visibility' => _social_group_get_allowed_visibility($group),
-    '#group_visibility' => _social_group_get_group_visibility($group),
-  ];
+  // Render the group settings help, gear icon with popover.
+  $group_settings_help = _social_group_render_group_settings_hero($group);
   $variables['group_settings_help'] = \Drupal::service('renderer')->renderPlain($group_settings_help);
+}
+
+/**
+ * Renders the group settings based on available fields for the hero.
+ *
+ * @param \Drupal\group\Entity\GroupInterface $group
+ *   the Group interface.
+ *
+ * @return array
+ *  the actual tooltip render array.
+ */
+function _social_group_render_group_settings_hero(GroupInterface $group) {
+  $description = '';
+  // Optional after 10.0.x we can render the group visibility.
+  if ($group_visibility_option = _social_group_get_group_visibility($group)) {
+    // Wrap our chosen description in a container.
+    $description .= '<span class="title">' . t('Group visibility') . '</span>';
+    $description .= '<div class="group-visibility-details container-background">';
+    foreach ($group_visibility_option as $key => $group_visibility_string) {
+      $description .= $group_visibility_string;
+    }
+    $description .= '</div>';
+  }
+  // Optional after 9.x we can render the allowed content visibility.
+  if ($allowed_visibility_option = _social_group_get_allowed_visibility($group)) {
+    // Wrap our chosen description in a container.
+    $description .= '<span class="title">' . t('Group content visibility') . '</span>';
+    $description .= '<div class="group-visibility-details container-background">';
+    foreach ($allowed_visibility_option as $key => $allowed_visibility_string) {
+      $description .= $allowed_visibility_string;
+    }
+    $description .= '</div>';
+  }
+  // Optional after 9.x we can render the join methods.
+  if ($join_methods_option = _social_group_get_join_methods($group)) {
+    // Wrap our chosen description in a container.
+    $description .= '<span class="title">' . t('Join method') . '</span>';
+    $description .= '<div class="group-visibility-details container-background">';
+    foreach ($join_methods_option as $key => $join_methods_string) {
+      $description .= $join_methods_string;
+    }
+    $description .= '</div>';
+  }
+
+  return social_group_render_tooltip('group_hero', t('Access permissions'), $description);
 }
 
 /**
@@ -457,7 +492,7 @@ function _social_group_get_group_visibility(GroupInterface $group, $field_name =
         if (!empty($visibility_values)) {
           foreach ($visibility_values as $visibility_value) {
             if (!empty($visibility_value['value']) && is_string($visibility_value['value'])) {
-              $group_visibility[$visibility_value['value']] = social_group_allowed_visibility_description($visibility_value['value']);
+              $group_visibility[$visibility_value['value']] = social_group_group_visibility_description($visibility_value['value']);
             }
           }
         }
@@ -471,7 +506,7 @@ function _social_group_get_group_visibility(GroupInterface $group, $field_name =
         if (!empty($visibility_values)) {
           foreach ($visibility_values as $visibility_value) {
             if (!empty($visibility_value['value']) && is_string($visibility_value['value'])) {
-              $group_visibility[$visibility_value['value']] = social_group_allowed_visibility_description($visibility_value['value']);
+              $group_visibility[$visibility_value['value']] = social_group_group_visibility_description($visibility_value['value']);
             }
           }
         }
@@ -553,21 +588,24 @@ function social_group_group_visibility_description($key) {
   // Add explanatory descriptive text after the icon.
   switch ($key) {
     case 'public':
-      $description = '<p><strong><svg class="icon-small"><use xlink:href="#icon-public"></use></svg></strong>';
+      $description = '<p>';
+      $description .= '<p><strong><svg class="icon-small"><use xlink:href="#icon-public"></use></svg></strong>';
       $description .= '<strong>' . t('Public')->render() . '</strong>';
       $description .= ' - ' . t('All visitors of the platform can see this group')->render();
       $description .= '</p>';
       break;
 
     case 'community':
-      $description = '<p><strong><svg class="icon-small"><use xlink:href="#icon-community"></use></svg></strong>';
+      $description = '<p>';
+      $description .= '<strong><svg class="icon-small"><use xlink:href="#icon-community"></use></svg></strong>';
       $description .= '<strong>' . t('Community')->render() . '</strong>';
       $description .= ' - ' . t('Only members who are logged in can see this group')->render();
       $description .= '</p>';
       break;
 
     case 'members':
-      $description = '<p><strong><svg class="icon-small"><use xlink:href="#icon-lock"></use></svg></strong>';
+      $description = '<p>';
+      $description .= '<p><strong><svg class="icon-small"><use xlink:href="#icon-lock"></use></svg></strong>';
       $description .= '<strong>' . t('Group members only (Secret)')->render() . '</strong>';
       $description .= ' - ' . t('Only group members can see this group')->render();
       $description .= '</p>';
@@ -583,9 +621,6 @@ function social_group_group_visibility_description($key) {
 
 /**
  * Implements hook_entity_insert().
- *
- * On a new group insert, from the type
- * open_group or closed_group the Owner gets the group manager role by default.
  */
 function social_group_group_insert(GroupInterface $group) {
   // @todo Remove this when https://www.drupal.org/node/2702743 lands and make.
@@ -640,6 +675,9 @@ function social_group_group_insert(GroupInterface $group) {
 
 /**
  * Returns a description array for the field_group_allowed_join_method options.
+ *
+ * @param string $key
+ *   the join method key.
  *
  * @return string
  *   The render array containing the description.
@@ -2442,7 +2480,7 @@ function social_group_preprocess_field(&$variables) {
  *
  * @param string $field_name
  *   The field name to create a unique id for.
- * @param string $data_title
+ * @param string|TranslatableMarkup $data_title
  *   The title of the pop-up.
  * @param string $description
  *   A string containing the description, this needs to be rendered markup.
@@ -2453,10 +2491,36 @@ function social_group_preprocess_field(&$variables) {
 function social_group_render_tooltip($field_name, $data_title, $description) {
   $build = [];
   $id = Html::getUniqueId('tooltip-' . $field_name);
+  $icon = Bootstrap::glyphicon('question-sign');
+  $title = '';
+
+  // If it's a string, lets translate it first.
+  if (!$data_title instanceof TranslatableMarkup) {
+    t($data_title);
+  }
+
+  // We special case this for the hero.
+  if ($field_name === 'group_hero') {
+    $data_title = t('Access permissions');
+
+    // For SKY we can render a bigger icon.
+    $icon_size = 'icon-small';
+    if (theme_get_setting('style') === 'sky') {
+      $icon_size = 'icon-medium';
+      $title = t('Access permissions');
+    }
+
+    $icon = [
+      '#type' => "inline_template",
+      '#template' => '<svg class="icon-white ' . $icon_size . '"><use xlink:href="#icon-cog"></use></svg>',
+    ];
+  }
+
   $build['toggle'] = [
     '#type' => 'link',
     '#url' => Url::fromUserInput("#$id"),
-    '#icon' => Bootstrap::glyphicon('question-sign'),
+    '#icon' => $icon,
+    '#title' => $title,
     '#attributes' => [
       'class' => ['icon-before'],
       'data-toggle' => 'popover',
@@ -2522,6 +2586,9 @@ function social_group_preprocess_fieldset(&$variables) {
 /**
  * Returns a description array for the field_flexible_group_visibility options.
  *
+ * @param string $key
+ *   the join method key.
+ *
  * @return string
  *   The render array containing the description.
  */
@@ -2536,21 +2603,30 @@ function social_group_allowed_visibility_description($key) {
   // Add explanatory descriptive text after the icon.
   switch ($key) {
     case 'public':
-      $description = '<p><strong><svg class="icon-small"><use xlink:href="#icon-public"></use></svg></strong>';
+      // If we want to have the title, lets start with it, otherwise open our
+      // paragraph.
+      $description = '<p>';
+      $description .= '<strong><svg class="icon-small"><use xlink:href="#icon-public"></use></svg></strong>';
       $description .= '<strong>' . t('Public')->render() . '</strong>';
       $description .= ' - ' . t('visible to all visitors to the platform.')->render();
       $description .= '</p>';
       break;
 
     case 'community':
-      $description = '<p><strong><svg class="icon-small"><use xlink:href="#icon-community"></use></svg></strong>';
+      // If we want to have the title, lets start with it, otherwise open our
+      // paragraph.
+      $description = '<p>';
+      $description .= '<strong><svg class="icon-small"><use xlink:href="#icon-community"></use></svg></strong>';
       $description .= '<strong>' . t('Community')->render() . '</strong>';
       $description .= ' - ' . t('only visible to all logged-in users.')->render();
       $description .= '</p>';
       break;
 
     case 'group':
-      $description = '<p><strong><svg class="icon-small"><use xlink:href="#icon-lock"></use></svg></strong>';
+      // If we want to have the title, lets start with it, otherwise open our
+      // paragraph.
+      $description = '<p>';
+      $description .= '<strong><svg class="icon-small"><use xlink:href="#icon-lock"></use></svg></strong>';
       $description .= '<strong>' . t('Group members only')->render() . '</strong>';
       $description .= ' - ' . t('only visible to logged-in group members.')->render();
       $description .= '</p>';
