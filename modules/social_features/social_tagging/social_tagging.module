@@ -431,8 +431,8 @@ function social_tagging_form_views_exposed_form_alter(&$form, FormStateInterface
     return;
   }
   if ($tag_service->allowSplit()) {
-    foreach ($tag_service->getCategories() as $tid => $label) {
-      $label = social_tagging_to_machine_name($label);
+    foreach ($tag_service->getCategories() as $tid => $term_name) {
+      $label = social_tagging_to_machine_name($term_name);
 
       if (isset($form[$label])) {
         $form[$label]['#options'] = [];
@@ -440,7 +440,7 @@ function social_tagging_form_views_exposed_form_alter(&$form, FormStateInterface
 
         // Display parent of tags.
         if ($tag_service->useCategoryParent()) {
-          $form[$label]['#options'] += [$tid => $label];
+          $form[$label]['#options'] += [$tid => $term_name];
         }
 
         $form[$label]['#options'] += $tag_service->getChildren($tid);
