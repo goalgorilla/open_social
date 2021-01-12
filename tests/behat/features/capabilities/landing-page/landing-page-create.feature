@@ -80,7 +80,7 @@ Feature: Create Landing Page
       | field_landing_page_section[3][subform][field_section_paragraph][0][subform][field_block_link][0][title] | Block Link |
     # Set URL Alias
     And I set alias as "landingpage"
-    And I press "Create landing_page"
+    And I press "Create landing page"
     # Ses as LU
     Then I should see "Landing page This is a dynamic page has been created."
     And I should see "Hero title"
