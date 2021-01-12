@@ -47,8 +47,8 @@ Feature: I want to be able to hide certain profile information
     And I should see "Phone number" in the "#edit-profile-privacy" element
     And I show hidden checkboxes
     # This means other users can not view this information.
-    And I uncheck the box "edit-profile-privacy-fields-field-profile-address"
-    And I uncheck the box "edit-profile-privacy-fields-field-profile-phone-number"
+    And I click radio button "Hide" with the id "edit-profile-privacy-fields-field-profile-address-0"
+    And I click radio button "Hide" with the id "edit-profile-privacy-fields-field-profile-phone-number-0"
     And I press "Save"
 
     Given I am logged in as "user_2"
