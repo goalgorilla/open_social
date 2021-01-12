@@ -12,6 +12,7 @@ dependencies:
     - field.field.profile.profile.field_profile_interests
     - field.field.profile.profile.field_profile_last_name
     - field.field.profile.profile.field_profile_organization
+    - field.field.profile.profile.field_profile_organization_type
     - field.field.profile.profile.field_profile_phone_number
     - field.field.profile.profile.field_profile_profile_tag
     - field.field.profile.profile.field_profile_self_introduction
@@ -46,6 +47,7 @@ third_party_settings:
       children:
         - field_profile_function
         - field_profile_organization
+        - field_profile_organization_type
       parent_name: ''
       weight: 1
       label: 'Function and organization'
@@ -182,6 +184,16 @@ content:
       placeholder: ''
     third_party_settings: {  }
     type: string_textfield
+    region: content
+  field_profile_organization_type:
+    weight: 18
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: entity_reference_autocomplete_tags
     region: content
   field_profile_phone_number:
     weight: 6
