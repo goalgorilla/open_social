@@ -33,12 +33,12 @@ function social_profile_field_widget_form_alter(&$element, FormStateInterface $f
   $field_definition = $context['items']->getFieldDefinition();
   switch ($field_definition->getName()) {
     case 'field_profile_phone_number':
-      // @todo: remove this when rule for .form-tel elements will be added.
+      // @todo Remove this when rule for .form-tel elements will be added.
       $element['value']['#attributes']['class'][] = 'form-text';
       break;
 
     case 'field_profile_address':
-      // @todo: remove this when script for custom selects will be added.
+      // @todo Remove this when script for custom selects will be added.
       $element['country_code']['#attributes']['class'][] = 'browser-default';
       break;
   }
@@ -129,7 +129,12 @@ function social_profile_form_profile_profile_edit_form_alter(array &$form, FormS
   // Check if the Social Profile Fields module is on.
   if (\Drupal::moduleHandler()->moduleExists('social_profile_fields')) {
     // Load the profile fields and check if at least one of them can be changed.
-    if ($profile_fields = \Drupal::entityManager()->getStorage('field_config')->loadByProperties(['entity_type' => 'profile', 'bundle' => 'profile'])) {
+    $profile_fields = \Drupal::entityTypeManager()->getStorage('field_config')->loadByProperties([
+      'entity_type' => 'profile',
+      'bundle' => 'profile',
+    ]);
+
+    if ($profile_fields) {
       $empty_profile = TRUE;
 
       /** @var \Drupal\field\Entity\FieldConfig $field_config */
@@ -527,7 +532,7 @@ function social_profile_form_user_form_alter(&$form, FormStateInterface $form_st
   $profile = _social_profile_get_profile_from_route();
 
   if ($profile instanceof Profile) {
-    // @TODO: Move privacy settings to a separate entity.
+    // @todo Move privacy settings to a separate entity.
     // Check what the global value is.
     $social_profile_settings_config = \Drupal::config('social_profile.settings');
     $global_values = [
@@ -598,11 +603,19 @@ function _social_profile_form_user_form_submit(array $form, FormStateInterface $
       $profile->save();
     }
 
-    $uid = $profile->get('uid')->target_id;
-    // Save language info in the user data.
-    // @TODO: Move privacy settings to a separate entity.
-    $user_data = \Drupal::service('user.data');
-    $user_data->set('social_profile_privacy', $uid, 'lang_info', $profile_privacy['social_profile_show_language']);
+    $uid = $profile->getOwnerId();
+
+    if (isset($profile_privacy['social_profile_show_language'])) {
+      // Save language info in the user data.
+      // @todo Move privacy settings to a separate entity.
+      \Drupal::service('user.data')->set(
+        'social_profile_privacy',
+        $uid,
+        'lang_info',
+        $profile_privacy['social_profile_show_language']
+      );
+    }
+
     // Invalidate profile cache tags.
     Cache::invalidateTags(['profile:' . $uid]);
   }
