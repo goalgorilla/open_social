@@ -1,0 +1,246 @@
+################################################################################
+#                              Type Information                                #
+################################################################################
+"""
+An Open Social user.
+"""
+type User implements Node {
+  """
+  The Universally Unique Identifier for the user.
+  """
+  id: ID!
+  """
+  The display name of the user.
+
+  The specific format of the display name could depend on permissions of the
+  requesting user or application.
+  """
+  displayName: String!
+  """
+  The e-mail of the user.
+
+  Can be null if the user has not filled in an e-mail or if the user/application
+  making the request is not allowed to view this user's e-mail.
+  """
+  mail: Email
+  """
+  The timestamp indicating when the user was created.
+  """
+  created: Int!
+  """
+  The timestamp indicating when the user was last updated.
+  """
+  updated: Int!
+  """
+  The status of the user account.
+  """
+  status: UserStatus!
+  """
+  The roles that the user has.
+  """
+  roles: [UserRole!]!
+  """
+  Platform settings for the user.
+  """
+  settings: UserSettings!
+  """
+  Locale settings for the user.
+  """
+  locale: Locale!
+}
+
+"""
+The status of a user on a platform.
+"""
+enum UserStatus {
+  """
+  An active user is able to login on the platform and view content
+  """
+  ACTIVE
+  """
+  A blocked user is unable to access the platform, although their content will
+  still be visible until it's deleted.
+  """
+  BLOCKED
+}
+
+"""
+User Settings
+
+Contains information about things such as email notification preferences and
+privacy settings.
+"""
+# The different types of settings are split into subtypes which allows other
+# modules to add their own settings as needed. For example, push notification
+# settings or privacy controls for cross-platform data sharing.
+type UserSettings {
+  """
+  Privacy settings for the user.
+
+  Will be empty if the application or user does not have access.
+  """
+  privacy: UserPrivacySettings
+  """
+  Notification settings for the user.
+
+  Will be empty if the application or user does not have access.
+  """
+  notifications: UserNotificationSettings
+}
+
+"""
+User Privacy Settings
+"""
+# TODO: Move (part of) this to social_profile.
+type UserPrivacySettings {
+  """
+  Whether their phone number should be shown on their profile.
+  """
+  showPhone: Boolean!
+  """
+  Whether their location information should be shown on their profile.
+  """
+  showLocation: Boolean!
+  """
+  Whether their email address should be shown on their profile.
+  """
+  showEmail: Boolean!
+}
+
+# TODO: Move this to another module?
+# TODO: Does this make sense for non-email notifications?
+enum NotificationFrequency {
+  """
+  Never send me notifications.
+  """
+  NONE
+  """
+  Send a notification as things happen.
+  """
+  IMMEDIATELY
+  """
+  Send an overview of notifications in a day once per day.
+  """
+  DAILY
+  """
+  Send an overview of notifications in a week once per week.
+  """
+  WEEKLY
+}
+
+"""
+Notification settings for a user.
+
+Setting descriptions as seen from the user.
+"""
+# TODO: There is quite a bit of overlap and unclarity in which setting is for
+#    what. This is a good moment to re-evaluate each setting and redefine them.
+#    A mapping can be created between new and old settings for the
+#    transition/migration.
+type UserNotificationSettings {
+  """
+  A person created a post on my profile
+  """
+  profilePost: NotificationFrequency!
+  """
+  A person mentioned me in a post
+  """
+  mentionPost: NotificationFrequency!
+  """
+  A person mentioned me in a comment
+  """
+  mentionComment: NotificationFrequency!
+  """
+  A person replied to a comment where I am mentioned
+  """
+  mentionCommentReply: NotificationFrequency!
+  """
+  A person replied on my comments
+  """
+  commentReply: NotificationFrequency!
+  """
+  A person commented on a post on my profile
+  """
+  profilePostComment: NotificationFrequency!
+  """
+  A person likes a post, topic, comment or event created by me
+  """
+  like: NotificationFrequency!
+  """
+  A organizer added me to a Event
+  """
+  eventAdd: NotificationFrequency!
+  """
+  A user sends a private message to me
+  """
+  privateMessage: NotificationFrequency!
+  """
+  My group membership request is approved
+  """
+  groupMembershipRequestApproval: NotificationFrequency!
+  """
+  A person commented on content created or organised by me
+  """
+  commentContent: NotificationFrequency!
+  """
+  A person joins a group I am managing
+  """
+  groupJoin: NotificationFrequency!
+  """
+  Activity on events I am organizing
+  """
+  eventActivity: NotificationFrequency!
+  """
+  A person requests membership to a group I manage
+  """
+  groupMembershipRequestReceived: NotificationFrequency!
+  """
+  A person commented on content I am following
+  """
+  commentFollow: NotificationFrequency!
+  """
+  A person created a post, event or topic in a group I joined
+  """
+  groupContentCreated: NotificationFrequency!
+  """
+  A background process (e.g. sending bulk emails) has finished
+  """
+  backgroundProcessComplete: NotificationFrequency!
+}
+
+################################################################################
+#                                Query Types                                   #
+################################################################################
+"""
+The set of valid sort keys for the user query.
+"""
+enum UserSortKeys {
+  """Sort by the `first_name` value"""
+  FIRST_NAME
+  """Sort by the `last_name` value"""
+  LAST_NAME
+  """Sort by the `created_at` value"""
+  CREATED_AT
+}
+
+type UserEdge implements Edge {
+  cursor: Cursor!
+  node: User!
+}
+
+type UserConnection implements Connection {
+  edges: [UserEdge!]!
+  nodes: [User!]!
+  pageInfo: PageInfo!
+}
+
+################################################################################
+#                               Mutation Types                                 #
+################################################################################
+"""
+The response to a user create, update or delete mutation.
+"""
+type UserResponse implements Response {
+  errors: [Violation]
+  user: User
+}

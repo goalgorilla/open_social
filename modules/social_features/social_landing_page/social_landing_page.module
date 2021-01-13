@@ -288,3 +288,11 @@ function social_landing_page_theme_suggestions_page_alter(array &$suggestions, a
     }
   }
 }
+
+/**
+ * Implements hook_social_core_compatible_content_forms_alter().
+ */
+function social_landing_page_social_core_compatible_content_forms_alter(&$compatible_content_type_forms) {
+  $compatible_content_type_forms[] = 'node_landing_page_form';
+  $compatible_content_type_forms[] = 'node_landing_page_edit_form';
+}

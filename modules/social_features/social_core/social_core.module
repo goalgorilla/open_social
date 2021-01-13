@@ -705,13 +705,31 @@ function social_core_path_validate(array &$element, FormStateInterface $form_sta
  * Implements hook_form_FORM_ID_alter().
  */
 function social_core_form_node_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  // Array of node types, which have the new group_settings fieldset,
+  // these nodes can use the new content style, and have $form['advanced']
+  // removed.
+  // if we remove it for nodes which don't have that fieldset, fields will be
+  // rendered outside of a card.
+  $compatible_content_type_forms = [
+    'node_event_form',
+    'node_event_edit_form',
+    'node_topic_form',
+    'node_topic_edit_form',
+    'node_page_form',
+    'node_page_edit_form',
+  ];
+
+  // Create new alter hook which allows extensions to add nodes
+  // to this list once they have added the group_settings.
+  \Drupal::moduleHandler()->alter('social_core_compatible_content_forms', $compatible_content_type_forms);
+
   // Let's remove the form elements not needed by Open Social.
   // We understand this is quite BC breaking, url_redirects / revision info
   // we don't use as Open Social, you might use. So by
   // changing the theme setting in social blue, you can go back to the
   // old settings and use Field UI to change the other fields.
   $use_social_content_forms = theme_get_setting('content_entity_form_style');
-  if ($use_social_content_forms === 'open_social') {
+  if ($use_social_content_forms === 'open_social' && in_array($form_id, $compatible_content_type_forms)) {
     // We want to move all the fields from $form['advanced'] to our new
     // field sets which are created as part of #3186003.
     if (!empty($form['advanced'])) {
@@ -861,10 +879,10 @@ function social_core_form_node_form_alter(&$form, FormStateInterface $form_state
       // Change the button text from Save to Create topic / event etc.
       // Only on node add pages.
       if ($form_state->getFormObject()->getOperation() !== 'edit') {
-        /** @var \Drupal\Core\Entity\EntityInterface $entity */
+        /** @var \Drupal\Node\NodeInterface $entity */
         $entity = $form_state->getFormObject()->getEntity();
-        if (!empty($entity->getType()) && is_string($entity->getType())) {
-          $form['actions']['submit']['#value'] = t('Create @entity', ['@entity' => $entity->getType()]);
+        if (!empty(node_get_type_label($entity)) && is_string(node_get_type_label($entity))) {
+          $form['actions']['submit']['#value'] = t('Create @entity', ['@entity' => strtolower(node_get_type_label($entity))]);
         }
       }
 
