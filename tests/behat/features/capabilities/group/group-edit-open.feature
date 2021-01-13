@@ -85,7 +85,7 @@ Feature: Edit my group as a group manager
       | Title | Test group topic |
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text"
     And I click radio button "Discussion"
-    And I press "Save"
+    And I press "Create topic"
     Then I should see "Test group topic"
     Given I logout
     And I am logged in as "Group Manager One"

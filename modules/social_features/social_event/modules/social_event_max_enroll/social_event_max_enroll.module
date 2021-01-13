@@ -42,41 +42,58 @@ function social_event_max_enroll_form_alter(&$form, FormStateInterface $form_sta
     // Alter the Node Event forms.
     case 'node_event_form':
     case 'node_event_edit_form':
-      $config = \Drupal::config('social_event_max_enroll.settings');
-      // Hide checkbox if feature is disabled globally.
-      $form['field_event_max_enroll']['#access'] = $config->get('max_enroll');
-      $form['field_event_max_enroll_num']['#access'] = $config->get('max_enroll');
+      if (!empty($form['field_event_max_enroll'])) {
+        $config = \Drupal::config('social_event_max_enroll.settings');
+        $form['field_event_max_enroll']['#access'] = $config->get('max_enroll');
+        $form['field_event_max_enroll_num']['#access'] = $config->get('max_enroll');
 
-      // Hide checkbox if event enrollment is disabled for event.
-      $form['field_event_max_enroll']['#states'] = [
-        'visible' => [
-          ':input[name="field_event_enroll[value]"]' => ['checked' => TRUE],
-        ],
-        'invisible' => [
-          ':input[name="field_enroll_method"]' => ['value' => '3'],
-        ],
-      ];
-      $form['field_event_max_enroll_num']['#states'] = [
-        'visible' => [
-          ':input[name="field_event_max_enroll[value]"]' => ['checked' => TRUE],
-          ':input[name="field_enroll_method"]' => ['!value' => '3'],
-        ],
-      ];
-
-      // Show the checkbox only when max enroll is enabled.
-      if ($config->get('max_enroll_required')) {
-        $form['field_event_max_enroll']['widget']['value']['#default_value'] = TRUE;
-        $form['field_event_max_enroll']['widget']['value']['#disabled'] = TRUE;
-        $form['field_event_max_enroll']['widget']['value']['#required'] = TRUE;
-        $form['field_event_max_enroll_num']['widget'][0]['value']['#required'] = TRUE;
-      }
-      else {
+        // Hide checkbox if event enrollment is disabled for event.
         $form['field_event_max_enroll_num']['#states'] = [
           'visible' => [
             ':input[name="field_event_max_enroll[value]"]' => ['checked' => TRUE],
             ':input[name="field_enroll_method"]' => ['!value' => '3'],
           ],
         ];
+
+        // Show the checkbox only when max enroll is enabled.
+        if ($config->get('max_enroll_required')) {
+          $form['field_event_max_enroll']['widget']['value']['#default_value'] = TRUE;
+          $form['field_event_max_enroll']['widget']['value']['#disabled'] = TRUE;
+          $form['field_event_max_enroll']['widget']['value']['#required'] = TRUE;
+          $form['field_event_max_enroll_num']['widget'][0]['value']['#required'] = TRUE;
+        }
+        else {
+          $form['field_event_max_enroll_num']['#states'] = [
+            'visible' => [
+              ':input[name="field_event_max_enroll[value]"]' => ['checked' => TRUE],
+              ':input[name="field_enroll_method"]' => ['!value' => '3'],
+            ],
+          ];
+        }
+
+        // Add an details element to status.
+        // Also hide checkbox if feature is disabled globally.
+        $form['field_event_max_enroll_wrapper'] = [
+          '#type' => 'details',
+          '#title' => t('Enrollment limit'),
+          '#description' => '',
+          '#weight' => 100,
+          '#group' => 'group_enrollment',
+          '#open' => TRUE,
+          '#tree' => TRUE,
+          '#states' => [
+            'visible' => [
+              ':input[name="field_event_enroll[value]"]' => ['checked' => TRUE],
+            ],
+            'invisible' => [
+              ':input[name="field_enroll_method"]' => ['value' => '3'],
+            ],
+          ],
+        ];
+
+        $form['field_event_max_enroll_wrapper']['field_event_max_enroll'] = $form['field_event_max_enroll'];
+        $form['field_event_max_enroll_wrapper']['field_event_max_enroll_num'] = $form['field_event_max_enroll_num'];
+        unset($form['field_event_max_enroll'], $form['field_event_max_enroll_num']);
       }
 
       break;

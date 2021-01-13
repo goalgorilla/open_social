@@ -122,6 +122,20 @@ function social_comment_update_8801() {
 }
 
 /**
+ * Set trimmed format for comment body in activity comment view mode.
+ */
+function social_comment_update_8802() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_comment', 'social_comment_update_8803');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
  * Ensure like_and_dislike widget is rendered correctly.
  */
 function social_comment_update_8901() {

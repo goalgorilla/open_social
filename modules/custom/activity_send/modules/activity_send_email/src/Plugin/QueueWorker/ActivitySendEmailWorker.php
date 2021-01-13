@@ -7,6 +7,7 @@ use Drupal\activity_creator\Entity\Activity;
 use Drupal\activity_send\Plugin\QueueWorker\ActivitySendWorkerBase;
 use Drupal\activity_send_email\EmailFrequencyManager;
 use Drupal\activity_send_email\Plugin\ActivityDestination\EmailActivityDestination;
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\message\Entity\Message;
@@ -48,6 +49,13 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase implements Containe
   protected $activityNotifications;
 
   /**
+   * Social mail settings.
+   *
+   * @var \Drupal\Core\Config\ImmutableConfig
+   */
+  protected $swiftmailSettings;
+
+  /**
    * {@inheritdoc}
    */
   public function __construct(
@@ -56,12 +64,14 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase implements Containe
     $plugin_definition,
     EmailFrequencyManager $frequency_manager,
     Connection $connection,
-    ActivityNotifications $activity_notifications
+    ActivityNotifications $activity_notifications,
+    ConfigFactoryInterface $config_factory
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->frequencyManager = $frequency_manager;
     $this->database = $connection;
     $this->activityNotifications = $activity_notifications;
+    $this->swiftmailSettings = $config_factory->get('social_swiftmail.settings');
   }
 
   /**
@@ -74,7 +84,8 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase implements Containe
       $plugin_definition,
       $container->get('plugin.manager.emailfrequency'),
       $container->get('database'),
-      $container->get('activity_creator.activity_notifications')
+      $container->get('activity_creator.activity_notifications'),
+      $container->get('config.factory')
     );
   }
 
@@ -134,7 +145,8 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase implements Containe
 
           // Determine email frequency to use, defaults to immediately.
           // @todo make these frequency constants?
-          $frequency = 'immediately';
+          $template_frequencies = $this->swiftmailSettings->get('template_frequencies') ?: [];
+          $frequency = isset($template_frequencies[$message_template_id]) ? $template_frequencies[$message_template_id] : 'immediately';
           if (!empty($user_email_settings[$message_template_id])) {
             $frequency = $user_email_settings[$message_template_id];
           }

@@ -1,0 +1,469 @@
+<?php
+
+/**
+ * @file
+ * Contains social_follow_taxonomy.module.
+ */
+
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Render\BubbleableMetadata;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\Core\Url;
+use Drupal\flag\Entity\Flag;
+use Drupal\flag\FlagInterface;
+use Drupal\message\Entity\Message;
+use Drupal\node\NodeInterface;
+use Drupal\social_post\Entity\PostInterface;
+use Drupal\taxonomy\TermInterface;
+
+/**
+ * Implements hook_theme().
+ */
+function social_follow_taxonomy_theme($existing, $type, $theme, $path) {
+  return [
+    'flag__follow_term' => [
+      'base hook' => 'flag',
+    ],
+    'activity__followed' => [
+      'base hook' => 'activity',
+    ],
+    'activity__node__followed' => [
+      'base hook' => 'activity',
+    ],
+  ];
+}
+
+/**
+ * Implements hook_social_user_account_header_account_links().
+ *
+ * Adds the "Following tags" link to the user menu.
+ */
+function social_follow_taxonomy_social_user_account_header_account_links(array $context) {
+  return [
+    'my_tags' => [
+      '#type' => 'link',
+      '#attributes' => [
+        'title' => new TranslatableMarkup("View tags I'm following"),
+      ],
+      '#title' => new TranslatableMarkup('Following tags'),
+      '#weight' => 1001,
+    ] + Url::fromRoute('view.following_tags.following_tags')->toRenderArray(),
+  ];
+}
+
+/**
+ * Implements hook_page_attachments().
+ */
+function social_follow_taxonomy_page_attachments(array &$page) {
+  $page['#attached']['library'][] = 'social_follow_taxonomy/social_follow_taxonomy';
+}
+
+/**
+ * Implements hook_theme_suggestions_alter().
+ *
+ * Add new activity stream message template for nodes with a term followed by
+ * the user to make it possible to override the default template.
+ */
+function social_follow_taxonomy_theme_suggestions_activity_alter(array &$suggestions, array $variables) {
+  $activity = $variables['elements']['#activity'];
+  // Get a message entity from the activity.
+  $message = Message::load($activity->field_activity_message->target_id);
+
+  $message_template = [
+    'create_discussion',
+    'create_event_community',
+    'create_topic_community',
+    'create_discussion_group',
+    'create_event_group',
+    'create_idea_group',
+    'create_topic_group',
+    'update_node_following_tag',
+    'create_post_group',
+    'update_post_following_tag',
+  ];
+  // Get the name of the template from the data of the message entity.
+  if (in_array($message->getTemplate()->id(), $message_template)) {
+    $entity_type = $activity->field_activity_entity->first()->target_type;
+    if (isset($activity->view) && $activity->view->current_display == 'block_stream_homepage') {
+      if ($entity_type === 'node' || $entity_type === 'post') {
+        $suggestions[] = 'activity__followed';
+        $suggestions[] = 'activity__' . $entity_type . '__followed';
+      }
+    }
+  }
+}
+
+/**
+ * Extends variables for activity template.
+ *
+ * Implements hook_preprocess_activity().
+ * {@inheritdoc}
+ */
+function social_follow_taxonomy_preprocess_activity(&$variables) {
+  $activity = $variables['elements']['#activity'];
+  $message_template = [
+    'create_discussion',
+    'create_event_community',
+    'create_topic_community',
+    'create_discussion_group',
+    'create_event_group',
+    'create_idea_group',
+    'create_topic_group',
+    'update_node_following_tag',
+    'create_post_group',
+    'update_post_following_tag',
+  ];
+
+  $message = Message::load($activity->field_activity_message->target_id);
+  $message_template_id = $message->getTemplate()->id();
+
+  if (in_array($message_template_id, $message_template)) {
+    $entity = $activity->getRelatedEntity();
+
+    if ($entity->getEntityTypeId() === 'node') {
+      $storage = \Drupal::entityTypeManager()->getStorage('flagging');
+
+      if ($entity instanceof NodeInterface) {
+        $term_ids = social_follow_taxonomy_terms_list($entity);
+
+        foreach ($term_ids as $term_id) {
+          $flag = $storage->loadByProperties([
+            'flag_id' => 'follow_term',
+            'entity_type' => 'taxonomy_term',
+            'entity_id' => $term_id,
+            'uid' => \Drupal::currentUser()->id(),
+          ]);
+          $flag = reset($flag);
+
+          if (!empty($flag)) {
+            /** @var \Drupal\taxonomy\TermInterface $term */
+            $term = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->load($term_id);
+            $variables['content_type'] = $entity->type->entity->label();
+            $variables['followed_tags'][$term_id] = [
+              'name' => $term->getName(),
+              'flag' => social_follow_taxonomy_flag_link($term),
+            ];
+          }
+        }
+      }
+    }
+    if ($entity->getEntityTypeId() === 'post') {
+      $storage = \Drupal::entityTypeManager()->getStorage('flagging');
+
+      if ($entity instanceof PostInterface) {
+        $term_ids = social_follow_taxonomy_terms_list($entity);
+
+        foreach ($term_ids as $term_id) {
+          $flag = $storage->loadByProperties([
+            'flag_id' => 'follow_term',
+            'entity_type' => 'taxonomy_term',
+            'entity_id' => $term_id,
+            'uid' => \Drupal::currentUser()->id(),
+          ]);
+          $flag = reset($flag);
+
+          if (!empty($flag)) {
+            /** @var \Drupal\taxonomy\TermInterface $term */
+            $term = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->load($term_id);
+            $variables['content_type'] = $entity->getEntityType()->getLabel();
+            $variables['followed_tags'][$term_id] = [
+              'name' => $term->getName(),
+              'flag' => social_follow_taxonomy_flag_link($term),
+            ];
+          }
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_token_info().
+ */
+function social_follow_taxonomy_token_info() {
+
+  $type = [
+    'name' => t('Social Follow Taxonomy'),
+    'description' => t('Tokens from the Social Follow Taxonomy module.'),
+  ];
+
+  $social_taxonomy['content_type'] = [
+    'name' => t('The content type.'),
+    'description' => t('The type of the content that is related to following term.'),
+  ];
+
+  $social_taxonomy['indefinite_article'] = [
+    'name' => t('A/an article.'),
+    'description' => t('Adds an article before the content label.'),
+  ];
+
+  $social_taxonomy['taxonomy_i_follow'] = [
+    'name' => t('Taxonomy I follow.'),
+    'description' => t('Taxonomy term I follow'),
+  ];
+
+  $social_taxonomy['post_url'] = [
+    'name' => t('Post URL'),
+    'description' => t('Post absolute URL.'),
+  ];
+
+  return [
+    'types' => ['social_taxonomy' => $type],
+    'tokens' => [
+      'social_taxonomy' => $social_taxonomy,
+    ],
+  ];
+}
+
+/**
+ * Implements hook_tokens().
+ *
+ * { @inheritdoc }
+ */
+function social_follow_taxonomy_tokens($type, $tokens, array $data, array $options, BubbleableMetadata $bubbleable_metadata) {
+  $replacements = [];
+  $display_name = '';
+
+  if (empty($data['message'])) {
+    return $replacements;
+  }
+
+  if ($type === 'social_taxonomy') {
+    foreach ($tokens as $name => $original) {
+      switch ($name) {
+        case 'content_type':
+        case 'indefinite_article':
+        case 'taxonomy_i_follow':
+          /** @var \Drupal\message\Entity\Message $message */
+          $message = $data['message'];
+          // Get the related entity.
+          if (isset($message->field_message_related_object)) {
+            $target_type = $message->field_message_related_object->target_type;
+            $target_id = $message->field_message_related_object->target_id;
+            $entity = \Drupal::entityTypeManager()
+              ->getStorage($target_type)
+              ->load($target_id);
+
+            if (is_object($entity)) {
+              switch ($target_type) {
+                case 'node':
+                  /** @var \Drupal\node\Entity\Node $entity */
+                  if ($entity instanceof NodeInterface) {
+                    // Get the name of the content.
+                    $display_name = strtolower($entity->type->entity->label());
+
+                    // Get the names of terms related to the content.
+                    $term_ids = social_follow_taxonomy_terms_list($entity);
+                    $term_names = [];
+                    foreach ($term_ids as $term_id) {
+                      /** @var \Drupal\taxonomy\TermInterface $term */
+                      $term = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->load($term_id);
+                      if ($term instanceof TermInterface) {
+                        if (social_follow_taxonomy_term_followed($term)) {
+                          $term_names[] = $term->getName();
+                        }
+                      }
+                    }
+                  }
+
+                  break;
+
+                case 'post':
+                  // Get the name of the entity type.
+                  $display_name = strtolower($entity->getEntityType()->getLabel());
+                  break;
+              }
+            }
+          }
+
+          if ($name === 'content_type') {
+            $replacements[$original] = $display_name;
+          }
+
+          if ($name === 'indefinite_article') {
+            if (!empty($display_name)) {
+              // Prepares a replacement token: content name.
+              // When a name of content name starts from a vowel letter then
+              // will be added "an" before this name. For example "an event".
+              if (preg_match('/^[aeiou]/', $display_name)) {
+                $indefinite_article = t('an');
+              }
+              else {
+                $indefinite_article = t('a');
+              }
+              $replacements[$original] = $indefinite_article;
+            }
+            else {
+              $replacements[$original] = '';
+            }
+          }
+
+          if ($name === 'taxonomy_i_follow' && !empty($term_names)) {
+            // Prepares a replacement token: a string with term names.
+            // Wrap the names in quotation marks and separate it with commas.
+            $replacement_string = "'" . implode("', '", $term_names) . "'";
+            $replacements[$original] = $replacement_string;
+          }
+
+          break;
+      }
+    }
+  }
+
+  if ($type === 'message') {
+    /** @var \Drupal\message\MessageInterface $message */
+    $message = $data['message'];
+
+    foreach ($tokens as $name => $original) {
+      if ($name === 'post_url' && isset($message->field_message_related_object)) {
+        $replacements[$original] = '';
+
+        $target_type = $message->field_message_related_object->target_type;
+        $target_id = $message->field_message_related_object->target_id;
+
+        $entity = Drupal::entityTypeManager()
+          ->getStorage($target_type)
+          ->load($target_id);
+
+        if ($entity) {
+          if ($target_type === 'post') {
+            $post_link = Url::fromRoute('entity.post.canonical',
+              ['post' => $entity->id()],
+              ['absolute' => TRUE]
+            )->toString();
+
+            $replacements[$original] = $post_link;
+          }
+        }
+      }
+    }
+  }
+
+  return $replacements;
+}
+
+/**
+ * Function to check if term is followed.
+ *
+ * @param \Drupal\taxonomy\TermInterface $term
+ *   Term entity.
+ *
+ * @return bool
+ *   Follow result.
+ */
+function social_follow_taxonomy_term_followed(TermInterface $term) {
+  $follow = FALSE;
+
+  if (!\Drupal::currentUser()->isAnonymous()) {
+    $flag = Flag::load('follow_term');
+    if ($flag instanceof FlagInterface) {
+      /** @var \Drupal\flag\FlagService $service */
+      $service = \Drupal::service('flag');
+      if (!empty($service->getFlagging($flag, $term, \Drupal::currentUser()))) {
+        $follow = TRUE;
+      }
+    }
+  }
+
+  return $follow;
+}
+
+/**
+ * Function for counting the number of followers of the term.
+ *
+ * @param \Drupal\taxonomy\TermInterface $term
+ *   Term entity.
+ *
+ * @return int
+ *   Count of followers.
+ */
+function social_follow_taxonomy_term_followers_count(TermInterface $term) {
+  $count = 0;
+  /** @var \Drupal\flag\FlagCountManagerInterface $flag_count_manager */
+  $flag_count_manager = \Drupal::service('flag.count');
+  $term_followers_count = $flag_count_manager->getEntityFlagCounts($term);
+
+  if (isset($term_followers_count['follow_term'])) {
+    $count = $term_followers_count['follow_term'];
+  }
+
+  return $count;
+}
+
+/**
+ * A function that prepares a flag link for a taxonomy term.
+ *
+ * @param \Drupal\taxonomy\TermInterface $term
+ *   Term entity.
+ *
+ * @return string
+ *   Link button to flag/unflag current term.
+ */
+function social_follow_taxonomy_flag_link(TermInterface $term) {
+  $flag_link = '';
+
+  if (!\Drupal::currentUser()->isAnonymous()) {
+    $flag_link_service = \Drupal::service('flag.link_builder');
+    $flag_link = $flag_link_service->build($term->getEntityTypeId(), $term->id(), 'follow_term');
+  }
+
+  return $flag_link;
+}
+
+/**
+ * Function for counting the number of nodes related to the term.
+ *
+ * @param \Drupal\taxonomy\TermInterface $term
+ *   Term entity.
+ * @param string $field_id
+ *   Taxonomy term reference field id.
+ *
+ * @return int
+ *   Count of related nodes.
+ */
+function social_follow_taxonomy_related_nodes_count(TermInterface $term, $field_id) {
+  $items = \Drupal::entityTypeManager()
+    ->getStorage('node')
+    ->getQuery()
+    ->condition($field_id, $term->id())
+    ->addTag('node_access')
+    ->addMetaData('base_table', 'node')
+    ->addMetaData('op', 'view')
+    ->execute();
+
+  \Drupal::moduleHandler()->alter('social_follow_taxonomy_related_items', $items, $term);
+
+  return count($items);
+}
+
+/**
+ * Provide an array of terms related to entity.
+ *
+ * @param Drupal\Core\Entity\EntityInterface $entity
+ *   Related entity.
+ *
+ * @return array
+ *   List of term ids.
+ */
+function social_follow_taxonomy_terms_list(EntityInterface $entity) {
+  $term_ids = [];
+
+  \Drupal::moduleHandler()->alter('social_follow_taxonomy_terms_list', $term_ids, $entity);
+
+  return $term_ids;
+}
+
+/**
+ * Implements hook_activity_send_email_notifications_alter().
+ */
+function social_follow_tag_activity_send_email_notifications_alter(array &$items, array $email_message_templates) {
+  if (isset($email_message_templates['create_node_following_tag_stream'])) {
+    $items['what_follow']['templates'][] = 'create_node_following_tag_stream';
+  }
+  if (isset($email_message_templates['create_node_following_tag'])) {
+    $items['what_follow']['templates'][] = 'create_node_following_tag';
+  }
+  if (isset($email_message_templates['update_node_following_tag'])) {
+    $items['what_follow']['templates'][] = 'update_node_following_tag';
+  }
+}

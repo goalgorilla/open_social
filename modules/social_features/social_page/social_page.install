@@ -152,3 +152,30 @@ function social_page_update_8904() {
     }
   }
 }
+
+/**
+ * Updated fieldsets and field arrangement in entity form view of basic page.
+ */
+function social_page_update_8905() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_page', 'social_page_update_8905');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Remove group_topic_description fieldgroup from topic content type.
+ */
+function social_page_update_8906() {
+  // There can be possibility that someone might have added fields in
+  // fieldgroup we are removing. So, we want to skip removal if there are any
+  // children present in fieldgroup.
+  $group = field_group_load_field_group('group_page_description', 'node', 'page', 'form', 'default');
+  if ($group && empty($group->children)) {
+    field_group_delete_field_group($group);
+  }
+}

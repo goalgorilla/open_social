@@ -31,21 +31,23 @@ third_party_settings:
       children:
         - title
         - field_event_image
+        - body
       parent_name: ''
       weight: 0
-      label: 'Title & image'
+      label: 'Basic information'
       format_type: fieldset
       format_settings:
         description: ''
         classes: ''
         id: ''
         required_fields: true
+      region: hidden
     group_date_time:
       children:
         - field_event_date
         - field_event_date_end
       parent_name: ''
-      weight: 4
+      weight: 1
       label: 'Date & time'
       format_type: fieldset
       format_settings:
@@ -53,12 +55,13 @@ third_party_settings:
         classes: ''
         id: ''
         required_fields: true
+      region: hidden
     group_location:
       children:
         - field_event_location
         - field_event_address
       parent_name: ''
-      weight: 5
+      weight: 2
       label: Location
       format_type: fieldset
       format_settings:
@@ -66,56 +69,51 @@ third_party_settings:
         classes: ''
         id: ''
         required_fields: true
-    group_description:
-      children:
-        - body
-      parent_name: ''
-      weight: 7
-      label: Description
-      format_type: fieldset
-      format_settings:
-        description: ''
-        classes: ''
-        id: ''
-        required_fields: true
+      region: hidden
     group_event_visibility:
       children:
         - groups
         - field_content_visibility
+        - group_enrollment
       parent_name: ''
-      weight: 2
-      label: Visibility
+      weight: 3
+      label: 'Access permissions'
       format_type: fieldset
       format_settings:
-        label: Visibility
         required_fields: true
         id: visibility
         classes: 'card '
+        description: ''
+      region: hidden
     group_attachments:
       children:
         - field_files
       parent_name: ''
-      weight: 8
-      label: Attachments
-      format_type: fieldset
+      weight: 4
+      label: 'Additional information'
+      format_type: details
       format_settings:
-        label: Attachments
         required_fields: true
         id: attachments
-        classes: card
+        classes: social-collapsible-fieldset
+        description: ''
+        open: false
+      region: hidden
     group_enrollment:
       children:
-        - field_event_enroll
         - group_enrollment_methods
-      parent_name: ''
-      weight: 3
-      label: 'Enrollment options'
-      format_type: fieldset
+        - field_event_enroll
+      parent_name: group_event_visibility
+      weight: 18
+      label: Enrollment
+      format_type: details
       format_settings:
-        label: 'Enrollment options'
         required_fields: true
         id: enrollment
-        classes: card
+        classes: ''
+        description: ''
+        open: false
+      region: content
     group_enrollment_methods:
       children:
         - field_enroll_method
@@ -124,7 +122,6 @@ third_party_settings:
       weight: 20
       format_type: html_element
       format_settings:
-        label: 'Enrollment options fieldset'
         element: div
         show_label: false
         label_element: h3
@@ -135,9 +132,25 @@ third_party_settings:
         classes: enrollment-methods
         required_fields: false
       label: 'Enrollment options fieldset'
+      region: content
+    group_settings:
+      children:
+        - uid
+        - created
+        - field_event_comments
+        - path
+        - status
+      format_settings:
+        classes: social-collapsible-fieldset
+        description: ''
+        id: ''
+        open: false
+        required_fields: true
+      format_type: details
+      label: Settings
+      parent_name: ''
       region: hidden
-_core:
-  default_config_hash: xj2qT9ti-krrpsSuXqyN1Qifab5o3gteM8uYIWwCPf0
+      weight: 20
 id: node.event.default
 targetEntityType: node
 bundle: event
@@ -150,6 +163,7 @@ content:
       rows: 9
       summary_rows: 3
       placeholder: ''
+      show_summary: false
     third_party_settings: {  }
     region: content
   created:
@@ -165,7 +179,7 @@ content:
     type: options_buttons
     region: content
   field_enroll_method:
-    weight: 122
+    weight: 121
     settings: {  }
     third_party_settings: {  }
     type: options_buttons
@@ -178,7 +192,7 @@ content:
     type: address_default
     region: content
   field_event_comments:
-    weight: 11
+    weight: 10
     settings: {  }
     third_party_settings: {  }
     type: comment_default
@@ -200,7 +214,7 @@ content:
     settings:
       display_label: true
     type: boolean_checkbox
-    weight: 12
+    weight: 122
     third_party_settings: {  }
   field_event_enroll_outside_group:
     weight: 123
@@ -221,6 +235,7 @@ content:
         - teaser
       progress_indicator: throbber
       warn_multiple_usages: true
+      crop_types_required: {  }
     third_party_settings: {  }
     type: image_widget_crop
     region: content
@@ -247,15 +262,8 @@ content:
     third_party_settings: {  }
   path:
     type: path
-    weight: 10
+    weight: 11
     settings: {  }
-    third_party_settings: {  }
-    region: content
-  promote:
-    type: boolean_checkbox
-    settings:
-      display_label: true
-    weight: 6
     third_party_settings: {  }
     region: content
   status:
@@ -265,13 +273,6 @@ content:
     type: boolean_checkbox
     weight: 120
     third_party_settings: {  }
-  sticky:
-    type: boolean_checkbox
-    settings:
-      display_label: true
-    weight: 9
-    third_party_settings: {  }
-    region: content
   title:
     type: string_textfield
     weight: 2
@@ -290,4 +291,6 @@ content:
       match_limit: 10
     third_party_settings: {  }
     region: content
-hidden: {  }
+hidden:
+  promote: true
+  sticky: true

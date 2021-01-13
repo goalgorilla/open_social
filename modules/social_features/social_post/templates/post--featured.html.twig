@@ -42,8 +42,11 @@
         {% endblock %}
 
         <div class="margin-top-s iframe-container">
-
-          {{ content|without('links', 'like_and_dislike', 'field_post_comments', 'field_post_image', 'user_id') }}
+          <div class="post-body--stream">
+            <div class="post-body--stream-body">
+              {{ content|without('links', 'like_and_dislike', 'field_post_comments', 'field_post_image', 'user_id') }}
+            </div>
+          </div>
 
           {% if content.field_post_image|render %}
             <p>{{ content.field_post_image }}</p>
