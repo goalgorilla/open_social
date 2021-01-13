@@ -55,13 +55,6 @@ class Route extends RouteSubscriberBase {
         $route->addRequirements($requirements);
       }
     }
-
-    // If this is the canonical URL, change it to point the user to the about
-    // page of this group.
-    if ($route = $collection->get('entity.group.canonical')) {
-      $route->setPath('/group/{group}');
-      $route->setDefault('_controller', '\Drupal\social_group_flexible_group\Controller\FlexibleGroupController::canonical');
-    }
   }
 
 }
