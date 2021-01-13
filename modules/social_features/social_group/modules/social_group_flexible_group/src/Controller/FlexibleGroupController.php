@@ -4,9 +4,6 @@ namespace Drupal\social_group_flexible_group\Controller;
 
 use Drupal\Core\Entity\Controller\EntityController;
 use Drupal\group\Entity\GroupInterface;
-use Drupal\Core\Access\AccessResult;
-use Drupal\Core\Url;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
  * Class FlexibleGroupController.
