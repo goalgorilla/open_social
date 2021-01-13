@@ -10,7 +10,7 @@ Feature: Create Book page
     When I fill in the following:
       | Title | This is my first novel |
     And I fill in the "edit-body-0-value" WYSIWYG editor with "This is a book all about me. An autobiography so to speak!"
-    And I press "Save"
+    And I press "Create book"
     Then I should see "Book page This is my first novel has been created."
     And I should see "This is my first novel" in the "Hero block"
     And I should see "This is a book all about me. An autobiography so to speak!" in the "Main content"

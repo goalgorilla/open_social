@@ -93,7 +93,7 @@ Feature: Enroll for an event without an account
       | Location name | GG HQ |
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Body description text."
     And I click radio button "Public"
-    And I press "Save"
+    And I press "Create event"
 
     Given I am an anonymous user
     And I open the "event" node with title "Anonymous event enrollment"

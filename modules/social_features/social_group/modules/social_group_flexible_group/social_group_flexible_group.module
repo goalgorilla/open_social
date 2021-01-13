@@ -181,13 +181,24 @@ function social_group_flexible_group_form_alter(&$form, FormStateInterface $form
         $form['field_flexible_group_visibility']['widget']['#default_value'] = 'public';
       }
     }
-    $form['#after_build'][] = 'social_group_flexible_group_flexible_group_add_after_build';
-  }
 
-  if (in_array($form_id, [
-    'group_flexible_group_add_form',
-    'group_flexible_group_edit_form',
-  ])) {
+    // Disable type field if there are no terms added in 'Group type' vocab.
+    // Also, check for settings by SM for enabling this field.
+    $group_type_settings = \Drupal::config('social_group.settings')->get('social_group_type_required');
+    if ($group_type_settings
+      && isset($form['field_group_type'])
+      && !empty(\Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadTree('group_type'))) {
+      $form['field_group_type']['widget']['#required'] = TRUE;
+      // Unset the group type label for none.
+      if (isset($form['field_group_type']['widget']['#options']['_none'])) {
+        unset($form['field_group_type']['widget']['#options']['_none']);
+      }
+    }
+    else {
+      $form['field_group_type']['#access'] = FALSE;
+    }
+
+    $form['#after_build'][] = 'social_group_flexible_group_flexible_group_add_after_build';
     $form['#attached']['library'][] = 'social_group_flexible_group/admin';
   }
 }
@@ -379,7 +390,7 @@ function social_group_flexible_group_preprocess_fieldset(&$variables) {
     if ($element['#field_name'] === 'field_flexible_group_visibility') {
       $description = '';
       foreach ($element['#options'] as $key => $label) {
-        $description .= social_group_flexible_group_group_visibility_description($key);
+        $description .= social_group_group_visibility_description($key);
       }
 
       // Render a specific tooltip based on a field name and description.
@@ -389,7 +400,7 @@ function social_group_flexible_group_preprocess_fieldset(&$variables) {
     if ($element['#field_name'] === 'field_group_allowed_visibility') {
       $description = '';
       foreach ($element['#options'] as $key => $label) {
-        $description .= social_group_flexible_group_allowed_visibility_description($key);
+        $description .= social_group_allowed_visibility_description($key);
       }
 
       // Render a specific tooltip based on a field name and description.
@@ -399,7 +410,7 @@ function social_group_flexible_group_preprocess_fieldset(&$variables) {
     if ($element['#field_name'] === 'field_group_allowed_join_method') {
       $description = '';
       foreach ($element['#options'] as $key => $label) {
-        $description .= social_group_flexible_group_allowed_join_method_description($key);
+        $description .= social_group_allowed_join_method_description($key);
       }
 
       // Render a specific tooltip based on a field name and description.
@@ -407,138 +418,6 @@ function social_group_flexible_group_preprocess_fieldset(&$variables) {
       $variables['popover'] = social_group_render_tooltip('field_group_allowed_join_method', t('Join methods'), $description);
     }
   }
-}
-
-/**
- * Returns a description array for the field_group_allowed_join_method options.
- *
- * @return string
- *   The render array containing the description.
- */
-function social_group_flexible_group_allowed_join_method_description($key) {
-  $description = '';
-
-  // We need it to be specified otherwise we can't build the markup.
-  if (empty($key)) {
-    return $description;
-  }
-
-  // Add explanatory descriptive text after the icon.
-  switch ($key) {
-    case 'added':
-      $description = '<strong>' . t('Invite only')->render() . '</strong>';
-      $description .= ' - ' . t('users can only join this group if they are added/invited by group managers.')->render();
-      $description .= '</p>';
-      break;
-
-    case 'direct':
-      $description = '<strong>' . t('Open to join')->render() . '</strong>';
-      $description .= ' - ' . t('users can join this group without approval.')->render();
-      $description .= '</p>';
-      break;
-
-    case 'request':
-      $description = '<strong>' . t('Request to join')->render() . '</strong>';
-      $description .= ' - ' . t('users can "request to join" this group which group managers approve/decline.')->render();
-      $description .= '</p>';
-      break;
-  }
-
-  // Allow modules to provide their own markup for a given key in the
-  // join method #options array.
-  \Drupal::moduleHandler()->alter('social_group_flexible_group_allowed_join_method_description', $key, $description);
-
-  return $description;
-}
-
-/**
- * Returns a description array for the field_flexible_group_visibility options.
- *
- * @return string
- *   The render array containing the description.
- */
-function social_group_flexible_group_allowed_visibility_description($key) {
-  $description = '';
-
-  // We need it to be specified otherwise we can't build the markup.
-  if (empty($key)) {
-    return $description;
-  }
-
-  // Add explanatory descriptive text after the icon.
-  switch ($key) {
-    case 'public':
-      $description = '<p><strong><svg class="icon-small"><use xlink:href="#icon-public"></use></svg></strong>';
-      $description .= '<strong>' . t('Public')->render() . '</strong>';
-      $description .= ' - ' . t('visible to all visitors to the platform.')->render();
-      $description .= '</p>';
-      break;
-
-    case 'community':
-      $description = '<p><strong><svg class="icon-small"><use xlink:href="#icon-community"></use></svg></strong>';
-      $description .= '<strong>' . t('Community')->render() . '</strong>';
-      $description .= ' - ' . t('only visible to all logged-in users.')->render();
-      $description .= '</p>';
-      break;
-
-    case 'group':
-      $description = '<p><strong><svg class="icon-small"><use xlink:href="#icon-lock"></use></svg></strong>';
-      $description .= '<strong>' . t('Group members only')->render() . '</strong>';
-      $description .= ' - ' . t('only visible to logged-in group members.')->render();
-      $description .= '</p>';
-      break;
-  }
-
-  // Allow modules to provide their own markup for a given key in the
-  // group_visibility #options array.
-  \Drupal::moduleHandler()->alter('social_group_flexible_group_allowed_visibility_description', $key, $description);
-
-  return $description;
-}
-
-/**
- * Returns a description array for the field_flexible_group_visibility options.
- *
- * @return string
- *   The render array containing the description.
- */
-function social_group_flexible_group_group_visibility_description($key) {
-  $description = '';
-
-  // We need it to be specified otherwise we can't build the markup.
-  if (empty($key)) {
-    return $description;
-  }
-
-  // Add explanatory descriptive text after the icon.
-  switch ($key) {
-    case 'public':
-      $description = '<p><strong><svg class="icon-small"><use xlink:href="#icon-public"></use></svg></strong>';
-      $description .= '<strong>' . t('Public')->render() . '</strong>';
-      $description .= ' - ' . t('All visitors of the platform can see this group')->render();
-      $description .= '</p>';
-      break;
-
-    case 'community':
-      $description = '<p><strong><svg class="icon-small"><use xlink:href="#icon-community"></use></svg></strong>';
-      $description .= '<strong>' . t('Community')->render() . '</strong>';
-      $description .= ' - ' . t('Only members who are logged in can see this group')->render();
-      $description .= '</p>';
-      break;
-
-    case 'members':
-      $description = '<p><strong><svg class="icon-small"><use xlink:href="#icon-lock"></use></svg></strong>';
-      $description .= '<strong>' . t('Group members only (Secret)')->render() . '</strong>';
-      $description .= ' - ' . t('Only group members can see this group')->render();
-      $description .= '</p>';
-      break;
-  }
-
-  // Allow modules to provide their own markup for a given key in the
-  // group_visibility #options array.
-  \Drupal::moduleHandler()->alter('social_group_flexible_group_group_visibility_description', $key, $description);
-
-  return $description;
 }
 
 /**
@@ -856,7 +735,10 @@ function social_group_flexible_group_views_query_alter(ViewExecutable $view, Que
   // groups. Because any LU can see those for the community, regardless of
   // their memberships.
   $query->setWhereGroup('AND', $extra_where);
-  $query->addWhere($extra_where, 'field_flexible_group_visibility_value', ['public', 'community'], 'IN');
+  $query->addWhere($extra_where, 'field_flexible_group_visibility_value', [
+    'public',
+    'community',
+  ], 'IN');
 }
 
 /**
