@@ -1,0 +1,69 @@
+{#
+/**
+ * @file post.html.twig
+ * Default theme implementation to present Post data.
+ *
+ * This template is used when viewing Post pages.
+ *
+ *
+ * Available variables:
+ * - content: A list of content items. Use 'content' to print all content, or
+ * - attributes: HTML attributes for the container element.
+ *
+ * @see template_preprocess_post()
+ *
+ * @ingroup themeable
+ */
+#}
+<div class="card__block social_follow_tax">
+  <p><strong>{{ tagstitle }}</strong></p>
+
+  <div class="group-action-wrapper">
+    {% for tag in tags %}
+      <div class="group-action">
+        <a class="badge badge-default badge--large badge--pill btn-action__term{% if(tag.follow) %} term-followed{% endif %}" href="#">
+          {{ tag.name }}
+          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="11" viewBox="0 0 12 11">
+            <g>
+              <g>
+                <path fill="#4d4d4d" d="M6.003 9.078l3.605 2.175-.956-4.1 3.185-2.76-4.194-.356L6.003.17 4.364 4.037.17 4.393l3.185 2.76-.957 4.1z"/>
+              </g>
+            </g>
+          </svg>
+        </a>
+        <div class="popup-info">
+          <div class="card teaser">
+            <div class="teaser__body">
+              <div class="teaser__content">
+                <div class="teaser__tag">{% trans %}TAG{% endtrans %}</div>
+
+                <h4 class="teaser__title">
+                  {{ tag.name }}
+                </h4>
+
+                <div class="teaser__related-content">
+                  {% trans %} 1 item {% plural tag.related_nodes_count %} @count items{% endtrans %}
+                  {% if term.followers_count %}
+                    |
+                    <span class="teaser__followers-count">
+                    {% trans %} 1 follower {% plural tag.followers_count %} @count followers{% endtrans %}
+                    </span>
+                  {% endif %}
+                </div>
+
+                <div class="actions">
+                  {{ tag.flag }}
+                  {% if(tag.url) %}
+                    <a href="{{ tag.url }}" class="btn btn-default">
+                      {% trans %}See related content{% endtrans %}
+                    </a>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</div>
