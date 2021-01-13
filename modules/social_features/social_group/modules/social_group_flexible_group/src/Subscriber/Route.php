@@ -55,6 +55,11 @@ class Route extends RouteSubscriberBase {
         $route->addRequirements($requirements);
       }
     }
+
+    if ($route = $collection->get('entity.group.canonical')) {
+      $route->setPath('/group/{group}');
+      $route->setDefault('_controller', '\Drupal\social_group_flexible_group\Controller\FlexibleGroupController::canonical');
+    }
   }
 
 }
