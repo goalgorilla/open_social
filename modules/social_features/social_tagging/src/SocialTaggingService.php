@@ -117,6 +117,16 @@ class SocialTaggingService {
   }
 
   /**
+   * Returns whether using a parent of categories is allowed.
+   *
+   * @return bool
+   *   Whether using categories parent is turned on or not..
+   */
+  public function useCategoryParent() {
+    return (bool) ($this->active() && $this->configFactory->get('social_tagging.settings')->get('use_category_parent'));
+  }
+
+  /**
    * Returns all the top level term items, that are considered categories.
    *
    * @return array
@@ -230,10 +240,16 @@ class SocialTaggingService {
           continue;
         }
         // Get current terms parents.
-        $parents = $this->termStorage->loadParents($current_term->id());
-        $parent = reset($parents);
-        $category_label = $parent->hasTranslation($langcode) ? $parent->getTranslation($langcode)->getName() : $parent->getName();
-
+        if ($parents = $this->termStorage->loadParents($current_term->id())) {
+          $parent = reset($parents);
+          $category_label = $parent->hasTranslation($langcode) ? $parent->getTranslation($langcode)
+            ->getName() : $parent->getName();
+        }
+        // Or add the parent term itself if it connected to the content.
+        else {
+          $category_label = $current_term->getTranslation($langcode)->getName();
+          $parent = $current_term;
+        }
         // Prepare the parameter;.
         $parameter = $allowSplit ? social_tagging_to_machine_name($category_label) : 'tag';
 
