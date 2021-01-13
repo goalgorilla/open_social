@@ -116,6 +116,27 @@ class SocialAlbumConfigOverride implements ConfigFactoryOverrideInterface {
       ];
     }
 
+    $config_names = [
+      'search_api.index.social_all',
+      'search_api.index.social_content',
+    ];
+
+    foreach ($config_names as $config_name) {
+      if (in_array($config_name, $names)) {
+        $overrides[$config_name] = [
+          'datasource_settings' => [
+            'entity:node' => [
+              'bundles' => [
+                'selected' => [
+                  'album' => 'album',
+                ],
+              ],
+            ],
+          ],
+        ];
+      }
+    }
+
     return $overrides;
   }
 
