@@ -86,8 +86,6 @@ class ContentBuilder implements ContentBuilderInterface {
    *
    * @param string|int $block_id
    *   The block id where we get the settings from.
-   * @param string $entity_bundle
-   *   The bundle of the entity.
    *
    * @return array
    *   Returns the entities found.
@@ -96,7 +94,7 @@ class ContentBuilder implements ContentBuilderInterface {
    * @throws \Drupal\Component\Plugin\Exception\PluginException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  public function getEntities($block_id, $entity_bundle) {
+  public function getEntities($block_id) {
     $block_content = $this->entityTypeManager->getStorage('block_content')->load($block_id);
 
     $plugin_id = $block_content->field_plugin_id->value;
