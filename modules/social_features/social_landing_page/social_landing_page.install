@@ -679,3 +679,17 @@ function social_landing_page_update_8810() {
     \Drupal::service('module_installer')->install(['social_secret_group_featured']);
   }
 }
+
+/**
+ * Added a new fieldset 'group_settings' to landing page & move fields to it.
+ */
+function social_landing_page_update_8811() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_landing_page', 'social_landing_page_update_8811');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
