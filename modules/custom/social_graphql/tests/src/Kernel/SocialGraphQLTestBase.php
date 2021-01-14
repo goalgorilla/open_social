@@ -36,22 +36,6 @@ abstract class SocialGraphQLTestBase extends GraphQLTestBase {
   }
 
   /**
-   * Asserts that a GQL query executes correctly and matches an expected result.
-   *
-   * @param string $query
-   *   The GraphQL query to test.
-   * @param array $expected
-   *   The expected output.
-   * @param string $message
-   *   An optional message to provide context in case of assertion failure.
-   */
-  protected function assertQuery(string $query, array $expected, string $message = ''): void {
-    $result = $this->query($query);
-    self::assertSame(200, $result->getStatusCode(), $message);
-    self::assertSame($expected, json_decode($result->getContent(), TRUE), $message);
-  }
-
-  /**
    * Asserts that a specific endpoint properly implements pagination.
    *
    * Uses the standardised pagination test cases to validate that pagination
