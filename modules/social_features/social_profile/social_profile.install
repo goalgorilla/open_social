@@ -157,7 +157,14 @@ function _social_profile_create_menu_links() {
 function _social_profile_create_genders() {
   $storage = \Drupal::entityTypeManager()->getStorage('taxonomy_term');
 
-  foreach (['Male', 'Female', 'Other'] as $weight => $gender) {
+  $genders = [
+    'Male',
+    'Female',
+    'Other',
+    'Prefer not to tell',
+  ];
+
+  foreach ($genders as $weight => $gender) {
     $term = $storage->create([
       'vid' => 'gender',
       'name' => $gender,
