@@ -62,7 +62,10 @@ class GraphQLUsersEndpointTest extends SocialGraphQLTestBase {
    * Test the filter for the users query.
    */
   public function testUsersQueryFilter(): void {
-    $this->assertEndpointSupportsPagination('users', $this->users);
+    $this->assertEndpointSupportsPagination(
+      'users',
+      array_map(static fn ($user) => $user->uuid(), $this->users)
+    );
   }
 
   /**
