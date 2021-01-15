@@ -2,7 +2,7 @@
 
 /**
  * @file
- * The social profile fields install file.
+ * Install, update and uninstall functions for the social_profile_fields module.
  */
 
 use Drupal\search_api\Entity\Index;
@@ -51,7 +51,7 @@ function _social_profile_fields_set_permissions() {
  *   The search index ID.
  */
 function _social_profile_fields_update_search_index($index_id = 'social_users') {
-  /* @var \Drupal\search_api\IndexInterface $index */
+  /** @var \Drupal\search_api\IndexInterface $index */
   $index = Index::load($index_id);
 
   $logger = \Drupal::logger('social_profile_fields');
