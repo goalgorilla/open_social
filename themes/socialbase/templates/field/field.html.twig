@@ -32,6 +32,8 @@
  * - field_name: The name of the field.
  * - field_type: The type of the field.
  * - label_display: The display settings for the label.
+ * - label_tag: The HTML tag for the label wrapper.
+ * - items_attributes: HTML attributes for the items wrapper.
  *
  *
  * @see template_preprocess_field()
@@ -48,7 +50,7 @@
 
 {% if bare %}
   {% if not label_hidden %}
-    <div{{ title_attributes.addClass(title_classes) }}>{{ label }}</div>
+    <{{ label_tag }}{{ title_attributes.addClass(title_classes) }}>{{ label }}</{{ label_tag }}>
   {% endif %}
   {% for item in items %}
     {% if entity_type == "node" and field_name == "body" and part_of_teaser %}
@@ -83,9 +85,9 @@
     {% endif %}
   {% else %}
     <div{{ attributes.addClass(classes) }}>
-      <div{{ title_attributes.addClass(title_classes) }}>{{ label }}</div>
+      <{{ label_tag }}{{ title_attributes.addClass(title_classes) }}>{{ label }}</{{ label_tag }}>
       {% if multiple %}
-      <div class="field__items">
+      <div{{ items_attributes.addClass('field__items') }}>
         {% endif %}
         {% for item in items %}
           <div{{ item.attributes.addClass('field--item') }}>{{ item.content }}</div>

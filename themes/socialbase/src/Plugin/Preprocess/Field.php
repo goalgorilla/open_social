@@ -5,6 +5,7 @@ namespace Drupal\socialbase\Plugin\Preprocess;
 use Drupal\bootstrap\Plugin\Preprocess\PreprocessBase;
 use Drupal\bootstrap\Utility\Element;
 use Drupal\bootstrap\Utility\Variables;
+use Drupal\Core\Template\Attribute;
 use Drupal\node\Entity\Node;
 
 /**
@@ -19,9 +20,19 @@ use Drupal\node\Entity\Node;
 class Field extends PreprocessBase {
 
   /**
+   * The wrapper class.
+   *
+   * @var string
+   */
+  protected $wrapperClass = 'list-item--withlabel';
+
+  /**
    * {@inheritdoc}
    */
   protected function preprocessElement(Element $element, Variables $variables) {
+    $variables->label_tag = 'div';
+    $variables->items_attributes = new Attribute();
+
     // For each field that doesn't need a div to wrap the content in.
     switch ($element['#field_name']) {
       case 'field_profile_image':
@@ -52,6 +63,30 @@ class Field extends PreprocessBase {
         ];
         if (isset($element[1])) {
           $element[1]['#url']->setOptions($url_options_1);
+        }
+        break;
+
+      case 'field_profile_gender':
+        $variables->addClass(['list-item', $this->wrapperClass]);
+        $variables->title_attributes['class'][] = 'list-item__label';
+
+        foreach ($variables->items as $item) {
+          $item['attributes']->addClass('list-item__text');
+        }
+        break;
+
+      case 'field_profile_organization_type':
+        $variables->addClass($this->wrapperClass);
+        $variables->label_tag = 'h5';
+        $variables->items_attributes->addClass('list-item__text');
+
+        foreach ($variables->items as $item) {
+          $item['attributes']->addClass([
+            'badge',
+            'badge--pill',
+            'badge--large',
+            'badge-default',
+          ]);
         }
         break;
     }
