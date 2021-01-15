@@ -41,12 +41,6 @@ function social_profile_field_widget_form_alter(&$element, FormStateInterface $f
       // @todo Remove this when script for custom selects will be added.
       $element['country_code']['#attributes']['class'][] = 'browser-default';
       break;
-
-    case 'field_profile_organization_type':
-      if (isset($element['target_id'])) {
-        $element['target_id']['#selection_settings']['hide_id'] = TRUE;
-      }
-      break;
   }
   // This replaces all user entity references with our EntityReferenceSelection.
   if ($field_definition->getType() === 'entity_reference') {

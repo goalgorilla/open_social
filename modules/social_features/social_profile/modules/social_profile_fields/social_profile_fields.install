@@ -18,6 +18,9 @@ function social_profile_fields_install() {
   _social_profile_fields_set_permissions();
   _social_profile_fields_update_search_index();
   _social_profile_fields_update_search_index('social_all');
+
+  // Add genders.
+  _social_profile_fields_create_genders();
 }
 
 /**
@@ -71,5 +74,143 @@ function _social_profile_fields_update_search_index($index_id = 'social_users') 
 
     // Restore user account.
     $accountSwitcher->switchBack();
+  }
+}
+
+/**
+ * Add fields for gender and organization type.
+ */
+function social_profile_fields_update_8901() {
+  $items = [
+    'gender' => [
+      'vocabulary' => 'Gender',
+      'cardinality' => 1,
+      'sort' => 'weight',
+    ],
+    'organization_type' => [
+      'vocabulary' => 'Types of organization',
+      'cardinality' => -1,
+      'sort' => 'name',
+    ],
+  ];
+
+  $entity_type_ids = [
+    'taxonomy_vocabulary',
+    'field_storage_config',
+    'field_config',
+  ];
+
+  $storages = [];
+
+  foreach ($entity_type_ids as $entity_type_id) {
+    $storages[$entity_type_id] = \Drupal::entityTypeManager()
+      ->getStorage($entity_type_id);
+  }
+
+  /** @var \Drupal\Core\Entity\EntityDisplayRepositoryInterface $entity_display_repository */
+  $entity_display_repository = \Drupal::service('entity_display.repository');
+
+  foreach ($items as $id => $item) {
+    $storages['taxonomy_vocabulary']
+      ->create([
+        'vid' => $id,
+        'name' => $item['vocabulary'],
+      ])
+      ->save();
+
+    $field = 'field_profile_' . $id;
+
+    /** @var \Drupal\Core\Config\Entity\ConfigEntityStorageInterface $storage */
+    $storage = $storages['field_storage_config'];
+
+    $storage->createFromStorageRecord([
+      'langcode' => 'en',
+      'status' => TRUE,
+      'dependencies' => [
+        'module' => [
+          'profile',
+          'taxonomy',
+        ],
+      ],
+      'id' => 'profile.' . $field,
+      'field_name' => $field,
+      'entity_type' => 'profile',
+      'type' => 'entity_reference',
+      'settings' => [
+        'target_type' => 'taxonomy_term',
+      ],
+      'module' => 'core',
+      'locked' => FALSE,
+      'cardinality' => $item['cardinality'],
+      'translatable' => FALSE,
+      'indexes' => [],
+      'persist_with_no_fields' => FALSE,
+      'custom_storage' => FALSE,
+    ])->save();
+
+    $storage = $storages['field_config'];
+
+    $storage->createFromStorageRecord([
+      'langcode' => 'en',
+      'status' => TRUE,
+      'dependencies' => [
+        'config' => [
+          'field.storage.profile.' . $field,
+          'profile.type.profile',
+          'taxonomy.vocabulary.' . $id,
+        ],
+      ],
+      'id' => 'profile.profile.' . $field,
+      'field_name' => $field,
+      'entity_type' => 'profile',
+      'bundle' => 'profile',
+      'label' => $item['vocabulary'],
+      'description' => '',
+      'required' => FALSE,
+      'translatable' => FALSE,
+      'default_value' => [],
+      'default_value_callback' => '',
+      'settings' => [
+        'handler' => 'default:taxonomy_term',
+        'handler_settings' => [
+          'target_bundles' => [
+            $id => $id,
+          ],
+          'sort' => [
+            'field' => $item['sort'],
+            'direction' => 'asc',
+          ],
+          'auto_create' => FALSE,
+          'auto_create_bundle' => '',
+        ],
+      ],
+      'field_type' => 'entity_reference',
+    ])->save();
+  }
+
+  _social_profile_fields_create_genders();
+}
+
+/**
+ * Create genders.
+ */
+function _social_profile_fields_create_genders() {
+  $storage = \Drupal::entityTypeManager()->getStorage('taxonomy_term');
+
+  $genders = [
+    'Male',
+    'Female',
+    'Other',
+    'Prefer not to tell',
+  ];
+
+  foreach ($genders as $weight => $gender) {
+    $term = $storage->create([
+      'vid' => 'gender',
+      'name' => $gender,
+      'weight' => $weight,
+    ]);
+
+    $term->save();
   }
 }
