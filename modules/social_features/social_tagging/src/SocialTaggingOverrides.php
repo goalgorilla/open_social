@@ -112,6 +112,13 @@ class SocialTaggingOverrides implements ConfigFactoryOverrideInterface {
             'label' => $value,
           ];
         }
+        // Display parent of tags.
+        elseif ($tag_service->useCategoryParent()) {
+          $fields['social_tagging_' . $tid] = [
+            'identifier' => social_tagging_to_machine_name($value),
+            'label' => $value,
+          ];
+        }
       }
     }
 
