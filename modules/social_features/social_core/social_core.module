@@ -8,7 +8,9 @@
 use Drupal\block\Entity\Block;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Field\FieldItemList;
+use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\file\Entity\File;
 use Drupal\filter\FilterFormatInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
@@ -961,4 +963,44 @@ function _social_core_node_cancel(array &$form, FormStateInterface $form_state) 
  */
 function social_core_theme_registry_alter(&$theme_registry) {
   $theme_registry['menu__toolbar']['variables']['menu_name'] = NULL;
+}
+
+/**
+ * Function to set default email logo if not set already for OS.
+ */
+function _social_core_set_default_email_logo_for_socialblue() {
+  // Only when socialblue is default we continue.
+  if (\Drupal::configFactory()->get('system.theme')->get('default') === 'socialblue') {
+    $logo = theme_get_setting('logo.url', 'socialblue');
+    $basetheme_url = drupal_get_path('theme', 'socialblue');
+    // Only if the theme setting for the logo, is still the socialblue
+    // default logo, we can update our default logo.
+    // If someone changed it to their own branding, let's not update it
+    // because that would create regression.
+    // that will be /profile/contrib/social/themes/socialblue/logo.svg.
+    if (!empty($basetheme_url) && $logo === DIRECTORY_SEPARATOR . $basetheme_url . DIRECTORY_SEPARATOR . 'logo.svg') {
+      // Add default image.
+      $config_factory = \Drupal::configFactory();
+      // Lets get the email logo settings.
+      $socialblue_settings = $config_factory->getEditable('socialblue.settings');
+      $default_image = $socialblue_settings->get('email_logo');
+
+      // Only if there is no default image, or if its the same as the
+      // socialblue logo we can continue.
+      if (empty($default_image) || $default_image === $basetheme_url . DIRECTORY_SEPARATOR . 'logo.svg') {
+        $file_system = \Drupal::service('file_system');
+        $uri = $file_system->copy($basetheme_url . DIRECTORY_SEPARATOR . 'logo_email.png', 'public://logo_email.png', FileSystemInterface::EXISTS_REPLACE);
+
+        $media = File::create([
+          'uri' => $uri,
+        ]);
+        $media->setPermanent();
+        $media->save();
+
+        $default_image[0] = $media->id();
+        // We just save the file id.
+        $socialblue_settings->set('email_logo', $default_image)->save();
+      }
+    }
+  }
 }
