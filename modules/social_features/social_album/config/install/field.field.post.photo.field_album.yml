@@ -1,0 +1,25 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.post.field_album
+    - node.type.album
+    - social_post.post_type.photo
+id: post.photo.field_album
+field_name: field_album
+entity_type: post
+bundle: photo
+label: 'Add image(s) to an album'
+description: 'The album visibility will be the same as the visibility of this post'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: views
+  handler_settings:
+    view:
+      view_name: albums
+      display_name: entity_reference
+      arguments: {  }
+field_type: entity_reference

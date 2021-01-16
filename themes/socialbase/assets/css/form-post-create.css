@@ -1,11 +1,18 @@
 .form--post-create {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-end;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+  -webkit-box-pack: end;
+      -ms-flex-pack: end;
+          justify-content: flex-end;
 }
 
 .form--post-create .field--name-field-post {
-  flex: 1 0 100%;
+  -webkit-box-flex: 1;
+      -ms-flex: 1 0 100%;
+          flex: 1 0 100%;
 }
 
 .form--post-create .field--name-field-post .filter-wrapper {
@@ -17,7 +24,9 @@
 }
 
 .form--post-create .field--name-field-post-image {
-  flex: 1 1 100%;
+  -webkit-box-flex: 1;
+      -ms-flex: 1 1 100%;
+          flex: 1 1 100%;
   position: relative;
 }
 
@@ -28,13 +37,18 @@
 
 .form--post-create .field--name-field-post-image .preview {
   display: inline-block;
-  box-shadow: 0 0 4px rgba(0, 0, 0, 0.14), 0 4px 8px rgba(0, 0, 0, 0.28);
+  -webkit-box-shadow: 0 0 4px rgba(0, 0, 0, 0.14), 0 4px 8px rgba(0, 0, 0, 0.28);
+          box-shadow: 0 0 4px rgba(0, 0, 0, 0.14), 0 4px 8px rgba(0, 0, 0, 0.28);
   width: auto;
 }
 
 .form--post-create .field--name-field-post-image .image-widget {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  justify-content: flex-end;
+  -webkit-box-pack: end;
+      -ms-flex-pack: end;
+          justify-content: flex-end;
   position: relative;
   margin-bottom: 1rem;
 }
@@ -55,14 +69,24 @@
 }
 
 .form--post-create .field--name-field-post-visibility {
-  flex: 1 1 auto;
-  align-self: flex-end;
+  -webkit-box-flex: 1;
+      -ms-flex: 1 1 auto;
+          flex: 1 1 auto;
+  -ms-flex-item-align: end;
+      align-self: flex-end;
 }
 
 .form--post-create .btn-primary {
-  flex: 0 1 auto;
-  margin-left: 0.5rem;
-  align-self: flex-end;
+  -webkit-box-flex: 0;
+      -ms-flex: 0 1 auto;
+          flex: 0 1 auto;
+  margin-left: .5rem;
+  -ms-flex-item-align: end;
+      align-self: flex-end;
+}
+
+.page-node-type-album .form--post-create #edit-cancel {
+  margin-left: .5rem;
 }
 
 @media (min-width: 600px) {
@@ -73,7 +97,8 @@
     right: auto;
   }
   .form--post-create .field--name-field-post-image {
-    flex-basis: auto;
+    -ms-flex-preferred-size: auto;
+        flex-basis: auto;
     margin-bottom: 0;
   }
   .form--post-create .field--name-field-post-image .btn-default {
@@ -81,10 +106,14 @@
     margin-bottom: 0;
   }
   .form--post-create .field--name-field-post-visibility {
-    flex-grow: 0;
+    -webkit-box-flex: 0;
+        -ms-flex-positive: 0;
+            flex-grow: 0;
   }
   .form--post-create .btn-primary {
-    flex-grow: 0;
+    -webkit-box-flex: 0;
+        -ms-flex-positive: 0;
+            flex-grow: 0;
   }
 }
 

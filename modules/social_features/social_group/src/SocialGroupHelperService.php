@@ -66,7 +66,7 @@ class SocialGroupHelperService {
     $cache_type = $entity['target_type'];
     $cache_id = $entity['target_id'];
 
-    if ($read_cache && is_array($this->cache[$cache_type]) && isset($this->cache[$cache_type][$cache_id])) {
+    if ($read_cache && is_array($this->cache) && is_array($this->cache[$cache_type]) && isset($this->cache[$cache_type][$cache_id])) {
       return $this->cache[$cache_type][$cache_id];
     }
 

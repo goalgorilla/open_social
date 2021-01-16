@@ -352,6 +352,20 @@ form:not(.layout-builder-configure-block) .form-inline {
   margin-bottom: 1rem;
 }
 
+form:not(.layout-builder-configure-block).group-form .field--widget-options-buttons .fieldgroup .fieldset-wrapper, form:not(.layout-builder-configure-block).node-form .field--widget-options-buttons .fieldgroup .fieldset-wrapper {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+  margin: 5px -13px 0;
+}
+
+form:not(.layout-builder-configure-block).group-form .field--widget-options-buttons .fieldgroup .fieldset-wrapper > .radio, form:not(.layout-builder-configure-block).node-form .field--widget-options-buttons .fieldgroup .fieldset-wrapper > .radio {
+  padding: 0 13px;
+  margin-top: -5px;
+}
+
 form:not(.layout-builder-configure-block) .switch * {
   -webkit-user-select: none;
      -moz-user-select: none;

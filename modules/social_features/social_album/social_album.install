@@ -1,0 +1,128 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the social_album module.
+ */
+
+use Drupal\block\BlockInterface;
+use Drupal\user\RoleInterface;
+
+/**
+ * Implements hook_install().
+ */
+function social_album_install() {
+  // Set some default permissions.
+  _social_album_set_permissions();
+
+  module_set_weight('social_album', 5);
+
+  _social_album_blocks(function ($pages, array $paths) {
+    return $pages . "\r\n" . implode("\r\n", $paths);
+  });
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function social_album_uninstall() {
+  _social_album_blocks(function ($pages, array $paths) {
+    $pages = explode("\r\n", $pages);
+
+    foreach ($pages as $delta => $page) {
+      if (in_array($page, $paths)) {
+        unset($pages[$delta]);
+      }
+    }
+
+    return implode("\r\n", $pages);
+  });
+}
+
+/**
+ * Function to set permissions.
+ */
+function _social_album_set_permissions() {
+  $roles = \Drupal::entityQuery('user_role')
+    ->condition('id', 'administrator', '<>')
+    ->execute();
+
+  foreach ($roles as $role) {
+    $permissions = _social_album_get_permissions($role);
+    user_role_grant_permissions($role, $permissions);
+  }
+}
+
+/**
+ * Return the permissions per role.
+ *
+ * @param string $role
+ *   The role to get the permissions for.
+ *
+ * @return array
+ *   A list of permissions.
+ */
+function _social_album_get_permissions($role) {
+  // Anonymous.
+  $permissions[RoleInterface::ANONYMOUS_ID] = [];
+
+  // Authenticated.
+  $permissions[RoleInterface::AUTHENTICATED_ID] = array_merge($permissions[RoleInterface::ANONYMOUS_ID], [
+    'create album content',
+    'delete own album content',
+    'edit own album content',
+    'override album published option',
+    'view node.album.field_content_visibility:public content',
+    'view node.album.field_content_visibility:community content',
+  ]);
+
+  // Content manager.
+  $permissions['contentmanager'] = array_merge($permissions[RoleInterface::AUTHENTICATED_ID], []);
+
+  // Site manager.
+  $permissions['sitemanager'] = array_merge($permissions['contentmanager'], [
+    'administer social_album settings',
+  ]);
+
+  return $permissions[$role] ?? [];
+}
+
+/**
+ * Process list of pages where chosen blocks should be shown.
+ *
+ * @param callable $function
+ *   The function which updates the pages set.
+ */
+function _social_album_blocks(callable $function) {
+  $items = [
+    'socialblue_profile_hero_block' => '/user/*/albums',
+    'socialblue_pagetitleblock_content' => [
+      '/user/*/albums',
+      '/group/*/albums',
+    ],
+    'socialblue_profile_statistic_block' => '/user/*/albums',
+    'socialblue_groupheroblock' => '/group/*/albums',
+    'socialblue_group_statistic_block' => '/group/*/albums',
+  ];
+
+  $storage = \Drupal::entityTypeManager()->getStorage('block');
+
+  foreach ($items as $id => $paths) {
+    $block = $storage->load($id);
+
+    if (!$block instanceof BlockInterface) {
+      continue;
+    }
+
+    /** @var \Drupal\system\Plugin\Condition\RequestPath $visibility */
+    $visibility = $block->getVisibilityCondition('request_path');
+
+    $configuration = $visibility->getConfiguration();
+    $pages = $function($configuration['pages'], (array) $paths);
+
+    if ($configuration['pages'] !== $pages) {
+      $configuration['pages'] = $pages;
+      $block->setVisibilityConfig('request_path', $configuration)->save();
+    }
+  }
+}

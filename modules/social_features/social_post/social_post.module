@@ -11,7 +11,6 @@ use Drupal\Component\Utility\Html;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 use Drupal\Core\Access\AccessResult;
-use Drupal\user\Entity\User;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\Group;
 
@@ -20,23 +19,11 @@ use Drupal\group\Entity\Group;
  */
 function social_post_form_post_form_alter(&$form, FormStateInterface $form_state, $form_id) {
 
-  if ($form_state->getFormObject()->getEntity()->isNew()) {
-    // Load current user.
-    $account = User::load(Drupal::currentUser()->id());
-    // Load compact notification view mode of the attached profile.
-    if ($account) {
-      $storage = \Drupal::entityTypeManager()->getStorage('profile');
-      if (!empty($storage)) {
-        $user_profile = $storage->loadByUser($account, 'profile');
-        if ($user_profile) {
-          $content = \Drupal::entityTypeManager()
-            ->getViewBuilder('profile')
-            ->view($user_profile, 'compact_notification');
-          // Add to a new field, so twig can render it.
-          $form['current_user_image'] = $content;
-        }
-      }
-    }
+  if (
+    $form_state->getFormObject()->getEntity()->isNew() &&
+    ($content = \Drupal::service('social_post.helper')->buildCurrentUserImage())
+  ) {
+    $form['current_user_image'] = $content;
   }
 
   // Reset title display.
