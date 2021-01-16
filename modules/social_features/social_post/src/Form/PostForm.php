@@ -266,13 +266,17 @@ class PostForm extends ContentEntityForm {
 
     switch ($status) {
       case SAVED_NEW:
-        drupal_set_message($this->t('Your post %label has been posted.', [
+        $message = $this->t('Your post %label has been posted.', [
           '%label' => $this->entity->label(),
-        ]));
+        ]);
+
+        $this->moduleHandler->alter('social_post_message', $message, $form_state);
+
+        $this->messenger()->addStatus($message);
         break;
 
       default:
-        drupal_set_message($this->t('Your post %label has been saved.', [
+        $this->messenger()->addStatus($this->t('Your post %label has been saved.', [
           '%label' => $this->entity->label(),
         ]));
     }
