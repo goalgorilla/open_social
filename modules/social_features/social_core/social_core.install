@@ -1277,3 +1277,13 @@ function social_core_update_8905() {
 function social_core_update_8906() {
   _social_core_set_default_email_logo_for_socialblue();
 }
+
+/**
+ * Adds social_post_album.
+ */
+function social_core_update_8907() {
+  $modules = [
+    'social_post_album',
+  ];
+  \Drupal::service('module_installer')->install($modules);
+}
