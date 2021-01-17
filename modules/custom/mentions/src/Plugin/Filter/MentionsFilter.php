@@ -82,7 +82,7 @@ class MentionsFilter extends FilterBase implements ContainerFactoryPluginInterfa
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
-    $entity_manager = $container->get('entity.manager');
+    $entity_manager = $container->get('entity_type.manager');
     $renderer = $container->get('renderer');
     $config = $container->get('config.factory');
     $mentions_manager = $container->get('plugin.manager.mentions');

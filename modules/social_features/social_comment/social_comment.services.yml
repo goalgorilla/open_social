@@ -1,6 +1,6 @@
 services:
   social_comment.breadcrumb:
-    arguments: ['@entity.manager']
+    arguments: ['@entity_type.manager']
     class: Drupal\social_comment\SocialCommentBreadcrumbBuilder
     tags:
       - { name: breadcrumb_builder, priority: 101 }
