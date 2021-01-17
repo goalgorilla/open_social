@@ -78,22 +78,24 @@ class ActivityExploreVisibilityAccess extends FilterPluginBase {
     if ($account->isAuthenticated()) {
       // Remove all content from groups I am a member of.
       $nodes_not_in_groups = new Condition('OR');
-      $nodes_not_in_groups_and = new Condition('AND');
+      $new_and = new Condition('AND');
       if ($my_groups = \Drupal::service('social_group.helper_service')
         ->getAllGroupsForUser($account->id())) {
-        $nodes_not_in_groups->condition($nodes_not_in_groups_and
+        $nodes_not_in_groups->condition($new_and
           ->condition('activity__field_activity_recipient_group.field_activity_recipient_group_target_id', $my_groups, 'NOT IN')
           ->condition('node__field_content_visibility.field_content_visibility_value', 'group', '!='));
       }
 
       // Include all the content which is posted in groups but with
       // visibility either community or public.
-      $nodes_not_in_groups->condition($nodes_not_in_groups_and
+      $new_and = new Condition('AND');
+      $nodes_not_in_groups->condition($new_and
         ->isNotNull('activity__field_activity_recipient_group.field_activity_recipient_group_target_id')
         ->condition('node__field_content_visibility.field_content_visibility_value', 'group', '!='));
 
       // This will include the nodes that has not been posted in any group.
-      $nodes_not_in_groups->condition($nodes_not_in_groups_and
+      $new_and = new Condition('AND');
+      $nodes_not_in_groups->condition($new_and
         ->isNull('activity__field_activity_recipient_group.field_activity_recipient_group_target_id')
         ->condition('node__field_content_visibility.field_content_visibility_value', 'group', '!='));
 
@@ -103,8 +105,8 @@ class ActivityExploreVisibilityAccess extends FilterPluginBase {
       // OR we remove activities related to nodes with community and group
       // visibility for AN.
       $nodes_not_in_groups = new Condition('OR');
-      $nodes_not_in_groups_and = new Condition('AND');
-      $nodes_not_in_groups->condition($nodes_not_in_groups_and
+      $new_and = new Condition('AND');
+      $nodes_not_in_groups->condition($new_and
         ->condition('node__field_content_visibility.field_content_visibility_value', 'community', '!=')
         ->condition('node__field_content_visibility.field_content_visibility_value', 'group', '!='));
       $nodes_not_in_groups->condition($node_condition);
