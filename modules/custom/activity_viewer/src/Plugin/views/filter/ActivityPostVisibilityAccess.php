@@ -113,7 +113,7 @@ class ActivityPostVisibilityAccess extends FilterPluginBase {
     $node_access = new Condition('AND');
     $node_access->condition('activity__field_activity_entity.field_activity_entity_target_type', 'node', '=');
     $node_access_grants = node_access_grants('view', $account);
-    $grants = db_or();
+    $grants = new Condition('OR')();
     $grants = new Condition('OR');
 
     foreach ($node_access_grants as $realm => $gids) {
