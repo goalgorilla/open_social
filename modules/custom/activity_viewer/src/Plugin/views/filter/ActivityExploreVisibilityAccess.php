@@ -70,7 +70,7 @@ class ActivityExploreVisibilityAccess extends FilterPluginBase {
     // Let's build our condition.
     // Either it's not a node so we don't care, the other filters will
     // take care of it. Look at ActivityPostVisibilityAccess.
-    $node_condition = new Condition('OR')();
+    $node_condition = new Condition('OR');
     $node_condition->condition('activity__field_activity_entity.field_activity_entity_target_type', 'node', '!=');
 
     // OR for LU it's a node and it doesn't have group member visibility.
@@ -80,19 +80,19 @@ class ActivityExploreVisibilityAccess extends FilterPluginBase {
       $nodes_not_in_groups = new Condition('OR')();
       if ($my_groups = \Drupal::service('social_group.helper_service')
         ->getAllGroupsForUser($account->id())) {
-        $nodes_not_in_groups->condition(new Condition('AND')()
+        $nodes_not_in_groups->condition(new Condition('AND')
           ->condition('activity__field_activity_recipient_group.field_activity_recipient_group_target_id', $my_groups, 'NOT IN')
           ->condition('node__field_content_visibility.field_content_visibility_value', 'group', '!='));
       }
 
       // Include all the content which is posted in groups but with
       // visibility either community or public.
-      $nodes_not_in_groups->condition(new Condition('AND')()
+      $nodes_not_in_groups->condition(new Condition('AND')
         ->isNotNull('activity__field_activity_recipient_group.field_activity_recipient_group_target_id')
         ->condition('node__field_content_visibility.field_content_visibility_value', 'group', '!='));
 
       // This will include the nodes that has not been posted in any group.
-      $nodes_not_in_groups->condition(new Condition('AND')()
+      $nodes_not_in_groups->condition(new Condition('AND')
         ->isNull('activity__field_activity_recipient_group.field_activity_recipient_group_target_id')
         ->condition('node__field_content_visibility.field_content_visibility_value', 'group', '!='));
 
@@ -101,8 +101,8 @@ class ActivityExploreVisibilityAccess extends FilterPluginBase {
     else {
       // OR we remove activities related to nodes with community and group
       // visibility for AN.
-      $nodes_not_in_groups = new Condition('OR')();
-      $nodes_not_in_groups->condition(new Condition('AND')()
+      $nodes_not_in_groups = new Condition('OR');
+      $nodes_not_in_groups->condition(new Condition('AND')
         ->condition('node__field_content_visibility.field_content_visibility_value', 'community', '!=')
         ->condition('node__field_content_visibility.field_content_visibility_value', 'group', '!='));
       $nodes_not_in_groups->condition($node_condition);
