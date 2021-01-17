@@ -298,7 +298,7 @@ function social_topic_social_follow_content_types_alter(array &$types) {
  */
 function social_topic_allowed_values_function(FieldStorageConfig $definition, ContentEntityInterface $entity = NULL, $cacheable) {
   $theme_path = drupal_get_path('theme', 'socialbase');
-  $icon_files = file_scan_directory(DRUPAL_ROOT . '/' . $theme_path . '/components/06-libraries/icons/source', '/^icon-.*\.svg$/', ['recurse' => FALSE]);
+  $icon_files = \Drupal::service('file_system')->scanDirectory(DRUPAL_ROOT . '/' . $theme_path . '/components/06-libraries/icons/source', '/^icon-.*\.svg$/', ['recurse' => FALSE]);
 
   $options = [];
   foreach ($icon_files as $file) {
