@@ -6,8 +6,9 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Plugin\Context\ContextProviderInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Routing\RouteMatchInterface;
-use Drupal\Core\Plugin\Context\ContextDefinition;
 use Drupal\Core\Cache\CacheableMetadata;
+use Drupal\Core\Plugin\Context\EntityContextDefinition;
+use Drupal\Core\Plugin\Context\Context;
 use Drupal\Core\Plugin\Context\EntityContext;
 use Drupal\user\UserInterface;
 
@@ -51,12 +52,16 @@ class UserRouteContext implements ContextProviderInterface {
    * {@inheritdoc}
    */
   public function getRuntimeContexts(array $unqualified_context_ids) {
-    // Cache this context on the route.
+    // Create an optional context definition for group entities.
+    $context_definition = EntityContextDefinition::fromEntityTypeId('user')
+      ->setRequired(FALSE);
+
+    // Cache this context per group on the route.
     $cacheability = new CacheableMetadata();
     $cacheability->setCacheContexts(['route']);
 
-    // Create a context from the definition and retrieved user.
-    $context = EntityContext::fromEntityType(\Drupal::entityTypeManager()->getDefinition('user'));
+    // Create a context from the definition and retrieved or created group.
+    $context = new Context($context_definition, $this->getUserFromRoute());
     $context->addCacheableDependency($cacheability);
 
     return [
@@ -94,7 +99,9 @@ class UserRouteContext implements ContextProviderInterface {
    * {@inheritdoc}
    */
   public function getAvailableContexts() {
-    return $this->getRuntimeContexts([]);
+    return [
+      'social_user' => EntityContext::fromEntityTypeId('user', $this->t('Social User entity from URL')),
+    ];
   }
 
 }
