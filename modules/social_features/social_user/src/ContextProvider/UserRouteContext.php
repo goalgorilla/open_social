@@ -8,7 +8,7 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Plugin\Context\ContextDefinition;
 use Drupal\Core\Cache\CacheableMetadata;
-use Drupal\Core\Plugin\Context\Context;
+use Drupal\Core\Plugin\Context\EntityContext;
 use Drupal\user\UserInterface;
 
 /**
@@ -51,15 +51,12 @@ class UserRouteContext implements ContextProviderInterface {
    * {@inheritdoc}
    */
   public function getRuntimeContexts(array $unqualified_context_ids) {
-    // Create an optional context definition for user entities.
-    $context_definition = new ContextDefinition('entity:user', $this->t('User from URL'), FALSE);
-
     // Cache this context on the route.
     $cacheability = new CacheableMetadata();
     $cacheability->setCacheContexts(['route']);
 
     // Create a context from the definition and retrieved user.
-    $context = new Context($context_definition, $this->getUserFromRoute());
+    $context = EntityContext::fromEntityType(\Drupal::entityTypeManager()->getDefinition('user'));
     $context->addCacheableDependency($cacheability);
 
     return [
