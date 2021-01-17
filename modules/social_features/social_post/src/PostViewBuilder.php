@@ -6,6 +6,7 @@ use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\EntityRepositoryInterface;
 use Drupal\Core\Entity\EntityViewBuilder;
 use Drupal\Core\Language\LanguageManagerInterface;
+use Drupal\Core\Render\Element\Link;
 use Drupal\Core\Theme\Registry;
 use Drupal\group\Entity\Group;
 use Drupal\message\Entity\MessageTemplate;
@@ -174,7 +175,7 @@ class PostViewBuilder extends EntityViewBuilder {
   public static function renderLinks($post_entity_id, $view_mode, $langcode, $is_in_preview) {
     $links = [
       '#theme' => 'links',
-      '#pre_render' => ['drupal_pre_render_links'],
+      '#pre_render' => [Link::class, 'preRenderLink'],
       '#attributes' => ['class' => ['links', 'inline']],
     ];
 

@@ -5,13 +5,14 @@ namespace Drupal\social_comment;
 use Drupal\ajax_comments\Utility;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Security\TrustedCallbackInterface;
 
 /**
  * Class SocialCommentLazyRenderer.
  *
  * @package Drupal\social_comment
  */
-class SocialCommentLazyRenderer {
+class SocialCommentLazyRenderer implements TrustedCallbackInterface {
 
   /**
    * The entity type manager.
@@ -19,6 +20,13 @@ class SocialCommentLazyRenderer {
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
   private $entityTypeManager;
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function trustedCallbacks() {
+    return ['renderComments'];
+  }
 
   /**
    * The current route match.

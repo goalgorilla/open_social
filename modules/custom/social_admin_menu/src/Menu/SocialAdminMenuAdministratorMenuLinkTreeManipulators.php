@@ -4,6 +4,7 @@ namespace Drupal\social_admin_menu\Menu;
 
 use Drupal\Core\Menu\DefaultMenuLinkTreeManipulators;
 use Drupal\Core\Menu\MenuTreeParameters;
+use Drupal\Core\Security\TrustedCallbackInterface;
 
 /**
  * Provides a couple of menu link tree manipulators.
@@ -14,7 +15,7 @@ use Drupal\Core\Menu\MenuTreeParameters;
  * - generate a unique index for the elements in a tree and sorting by it
  * - flatten a tree (i.e. a 1-dimensional tree)
  */
-class SocialAdminMenuAdministratorMenuLinkTreeManipulators extends DefaultMenuLinkTreeManipulators {
+class SocialAdminMenuAdministratorMenuLinkTreeManipulators extends DefaultMenuLinkTreeManipulators implements TrustedCallbackInterface {
 
   /**
    * Performs access checks of a menu tree.
@@ -138,6 +139,13 @@ class SocialAdminMenuAdministratorMenuLinkTreeManipulators extends DefaultMenuLi
       'administration_menu' => $menu_tree->build($tree),
     ];
     return $element;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function trustedCallbacks() {
+    return ['renderForm'];
   }
 
 }

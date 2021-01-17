@@ -20,6 +20,7 @@ use Drupal\profile\Entity\Profile;
 use Drupal\profile\Entity\ProfileType;
 use Drupal\user\Entity\User;
 use Drupal\user\UserInterface;
+use Drupal\social_profile\SocialProfileUserFormAlter;
 
 define('SOCIAL_PROFILE_SUGGESTIONS_USERNAME', 'username');
 define('SOCIAL_PROFILE_SUGGESTIONS_FULL_NAME', 'full_name');
@@ -583,7 +584,7 @@ function social_profile_form_user_form_alter(&$form, FormStateInterface $form_st
     }
   }
 
-  $form['#pre_render'][] = '_social_profile_form_pre_render';
+  $form['#pre_render'][] = [SocialProfileUserFormAlter::class, 'preRender'];
 }
 
 /**

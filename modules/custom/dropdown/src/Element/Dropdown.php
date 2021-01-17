@@ -6,15 +6,23 @@ use Drupal\Core\Render\Element\FormElement;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Component\Utility\Html as HtmlUtility;
 use Drupal\Core\Render\Element\CompositeFormElementTrait;
+use Drupal\Core\Security\TrustedCallbackInterface;
 
 /**
  * Provides an dropdown element.
  *
  * @RenderElement("dropdown")
  */
-class Dropdown extends FormElement {
+class Dropdown extends FormElement implements TrustedCallbackInterface {
 
   use CompositeFormElementTrait;
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function trustedCallbacks() {
+    return ['preRenderDropdown'];
+  }
 
   /**
    * {@inheritdoc}
