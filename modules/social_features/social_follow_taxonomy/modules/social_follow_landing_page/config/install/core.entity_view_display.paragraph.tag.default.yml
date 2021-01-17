@@ -1,0 +1,21 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.tag.field_tag
+    - paragraphs.paragraphs_type.tag
+id: paragraph.tag.default
+targetEntityType: paragraph
+bundle: tag
+mode: default
+content:
+  field_tag:
+    weight: 0
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    type: entity_reference_label
+    region: content
+hidden:
+  search_api_excerpt: true

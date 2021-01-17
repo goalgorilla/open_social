@@ -132,5 +132,55 @@ function hook_social_group_content_visibility_description_alter($key, &$descript
 }
 
 /**
+ * Provide a description for a given key from the group_visibility #options.
+ *
+ * @param string $description
+ *   The descriptive.
+ *
+ * @ingroup social_group_api
+ */
+function hook_social_group_group_visibility_description_alter($key, &$description) {
+  switch ($key) {
+    case 'custom_role_1':
+      $description = '<p><strong><svg class="icon-small"><use xlink:href="#icon-lock"></use></svg></strong>';
+      $description .= '<strong>' . t('Custom role 1')->render() . '</strong>';
+      $description .= '-' . t('All users with this role can see it')->render();
+      $description .= '</p>';
+      break;
+
+    case 'custom_role_2':
+      $description = '<p><strong><svg class="icon-small"><use xlink:href="#icon-community"></use></svg></strong>';
+      $description .= '<strong>' . t('Custom role 2')->render() . '</strong>';
+      $description .= '-' . t('All users with this role can change it')->render();
+      $description .= '</p>';
+      break;
+  }
+}
+
+/**
+ * Provide a description for a given key from the content visibility #options.
+ *
+ * @param string $description
+ *   The descriptive.
+ *
+ * @ingroup social_group_api
+ */
+function hook_social_group_allowed_join_method_description_alter($key, &$description) {
+  switch ($key) {
+    case 'join_method_extra':
+      $description = '<strong>' . t('QR Code')->render() . '</strong>';
+      $description .= '-' . t('All users can join by scanning a QR code')->render();
+      $description .= '</p>';
+      break;
+
+    case 'single_sign_on':
+      $description = '<strong>' . t('Single Sign on')->render() . '</strong>';
+      $description .= '-' . t('All users can join by SSO')->render();
+      $description .= '</p>';
+      break;
+  }
+}
+
+/**
  * @} End of "addtogroup hooks".
  */

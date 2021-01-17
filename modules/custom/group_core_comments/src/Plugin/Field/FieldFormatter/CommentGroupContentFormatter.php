@@ -147,6 +147,7 @@ class CommentGroupContentFormatter extends CommentDefaultFormatter {
             $items->getName(),
             $comment_settings['per_page'],
             $this->getSetting('pager_id'),
+            $this->getSetting('view_mode'),
           ],
         ],
         '#create_placeholder' => TRUE,

@@ -77,6 +77,10 @@ function social_core_install() {
   // Set image quality defaults.
   $config = \Drupal::service('config.factory')->getEditable('system.image.gd');
   $config->set('jpeg_quality', 90)->save();
+
+  // If social blue is enabled, and default image is still Open Social.
+  // Lets add the default e-mail logo for open social aswell.
+  _social_core_set_default_email_logo_for_socialblue();
 }
 
 /**
@@ -1270,4 +1274,21 @@ function social_core_update_8905() {
       \Drupal::logger('social_core')->error('Could not install Content Entity forms as Open Social please do so manually in the Socialblue settings.');
     }
   }
+}
+
+/**
+ * Sets the Default E-mail logo to the rebranded version, if possible.
+ */
+function social_core_update_8906() {
+  _social_core_set_default_email_logo_for_socialblue();
+}
+
+/**
+ * Adds social_post_album.
+ */
+function social_core_update_8907() {
+  $modules = [
+    'social_post_album',
+  ];
+  \Drupal::service('module_installer')->install($modules);
 }

@@ -96,26 +96,27 @@ class Block extends PreprocessBase {
       $variables['card'] = TRUE;
     }
 
-    // Wrap the group/membership table in a card element.
+    // Wrap the main content block of some pages in a card element.
     if (isset($variables['elements']['#plugin_id']) && $variables['elements']['#plugin_id'] == 'system_main_block') {
       $route_names = [
-        'entity.group_content.collection',
-        'data_policy.data_policy',
-        'social_gdpr.data_policy.revision',
-        'social_gdpr.data_policy.revisions',
+        'entity.group_content.collection' => FALSE,
+        'data_policy.data_policy' => FALSE,
+        'social_gdpr.data_policy.revision' => TRUE,
+        'social_gdpr.data_policy.revisions' => FALSE,
+        'social_album.post' => TRUE,
       ];
 
-      if (in_array($route_name, $route_names)) {
+      if (isset($route_names[$route_name])) {
         $variables['card'] = TRUE;
 
-        if ($route_name == 'social_gdpr.data_policy.revision') {
+        if ($route_names[$route_name]) {
           $variables['attributes']['class'][] = 'card__body';
         }
       }
     }
 
     // Show group tags block in a card.
-    if ($variables['elements']['#plugin_id'] == 'social_group_tags_block') {
+    if ($variables['elements']['#plugin_id'] === 'social_group_tags_block') {
       $variables['card'] = TRUE;
     }
 

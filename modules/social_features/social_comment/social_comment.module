@@ -5,15 +5,16 @@
  * The Social comment module.
  */
 
+use Drupal\comment\CommentInterface;
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\Core\Form\FormStateInterface;
-use Drupal\comment\CommentInterface;
+use Drupal\Core\Template\Attribute;
 use Drupal\Core\Url;
 use Drupal\group\Entity\GroupContent;
-use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\social_comment\Entity\Comment;
 use Drupal\social_comment\SocialCommentViewBuilder;
 
@@ -359,5 +360,34 @@ function social_comment_comment_view(array &$build, EntityInterface $entity, Ent
 function social_comment_field_info_alter(&$info) {
   if (isset($info['comment'])) {
     $info['comment']['list_class'] = '\Drupal\social_comment\SocialCommentFieldItemList';
+  }
+}
+
+/**
+ * Implements hook_preprocess_pager().
+ */
+function social_comment_preprocess_pager(&$variables) {
+  $items = &$variables['items'];
+  $pattern = '/%2C.$/';
+
+  if (empty($items)) {
+    return;
+  }
+
+  $attributes = Drupal::moduleHandler()->moduleExists('ajax_comments') ? new Attribute(['class' => ['use-ajax']]) : new Attribute();
+
+  // Change href for all pager items except "pages"
+  // (E.G. first, previous, next, last, etc.).
+  foreach ($items as $key => $item) {
+    if (isset($item['href'])) {
+      $items[$key]['href'] = preg_replace($pattern, '', $item['href']);
+      $items[$key]['attributes'] = $attributes;
+    }
+  }
+
+  // Change href for pager "pages" items.
+  foreach ($items['pages'] as $key => &$item) {
+    $items['pages'][$key]['href'] = preg_replace($pattern, '', $item['href']);
+    $items['pages'][$key]['attributes'] = $attributes;
   }
 }

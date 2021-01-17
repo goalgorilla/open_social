@@ -8,7 +8,9 @@
 use Drupal\block\Entity\Block;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Field\FieldItemList;
+use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\file\Entity\File;
 use Drupal\filter\FilterFormatInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
@@ -87,8 +89,14 @@ function social_core_preprocess_node(&$variables) {
   if (!$node->hasField($image_field)) {
     $node_fields = $node->getFields();
     $image_fields = array_filter($node_fields, '_social_core_find_image_field');
+
     // Get the first image field of all the fields.
-    $image_field = reset($image_fields);
+    if ($image_fields) {
+      $image_field = reset($image_fields)->getName();
+    }
+    else {
+      $image_field = NULL;
+    }
   }
   if (!empty($variables['content'][$image_field]['#theme'])) {
     $variables['node_image'] = $variables['content'][$image_field];
@@ -699,13 +707,31 @@ function social_core_path_validate(array &$element, FormStateInterface $form_sta
  * Implements hook_form_FORM_ID_alter().
  */
 function social_core_form_node_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  // Array of node types, which have the new group_settings fieldset,
+  // these nodes can use the new content style, and have $form['advanced']
+  // removed.
+  // if we remove it for nodes which don't have that fieldset, fields will be
+  // rendered outside of a card.
+  $compatible_content_type_forms = [
+    'node_event_form',
+    'node_event_edit_form',
+    'node_topic_form',
+    'node_topic_edit_form',
+    'node_page_form',
+    'node_page_edit_form',
+  ];
+
+  // Create new alter hook which allows extensions to add nodes
+  // to this list once they have added the group_settings.
+  \Drupal::moduleHandler()->alter('social_core_compatible_content_forms', $compatible_content_type_forms);
+
   // Let's remove the form elements not needed by Open Social.
   // We understand this is quite BC breaking, url_redirects / revision info
   // we don't use as Open Social, you might use. So by
   // changing the theme setting in social blue, you can go back to the
   // old settings and use Field UI to change the other fields.
   $use_social_content_forms = theme_get_setting('content_entity_form_style');
-  if ($use_social_content_forms === 'open_social') {
+  if ($use_social_content_forms === 'open_social' && in_array($form_id, $compatible_content_type_forms)) {
     // We want to move all the fields from $form['advanced'] to our new
     // field sets which are created as part of #3186003.
     if (!empty($form['advanced'])) {
@@ -855,10 +881,10 @@ function social_core_form_node_form_alter(&$form, FormStateInterface $form_state
       // Change the button text from Save to Create topic / event etc.
       // Only on node add pages.
       if ($form_state->getFormObject()->getOperation() !== 'edit') {
-        /** @var \Drupal\Core\Entity\EntityInterface $entity */
+        /** @var \Drupal\Node\NodeInterface $entity */
         $entity = $form_state->getFormObject()->getEntity();
-        if (!empty($entity->getType()) && is_string($entity->getType())) {
-          $form['actions']['submit']['#value'] = t('Create @entity', ['@entity' => $entity->getType()]);
+        if (!empty(node_get_type_label($entity)) && is_string(node_get_type_label($entity))) {
+          $form['actions']['submit']['#value'] = t('Create @entity', ['@entity' => strtolower(node_get_type_label($entity))]);
         }
       }
 
@@ -943,4 +969,44 @@ function _social_core_node_cancel(array &$form, FormStateInterface $form_state) 
  */
 function social_core_theme_registry_alter(&$theme_registry) {
   $theme_registry['menu__toolbar']['variables']['menu_name'] = NULL;
+}
+
+/**
+ * Function to set default email logo if not set already for OS.
+ */
+function _social_core_set_default_email_logo_for_socialblue() {
+  // Only when socialblue is default we continue.
+  if (\Drupal::configFactory()->get('system.theme')->get('default') === 'socialblue') {
+    $logo = theme_get_setting('logo.url', 'socialblue');
+    $basetheme_url = drupal_get_path('theme', 'socialblue');
+    // Only if the theme setting for the logo, is still the socialblue
+    // default logo, we can update our default logo.
+    // If someone changed it to their own branding, let's not update it
+    // because that would create regression.
+    // that will be /profile/contrib/social/themes/socialblue/logo.svg.
+    if (!empty($basetheme_url) && $logo === DIRECTORY_SEPARATOR . $basetheme_url . DIRECTORY_SEPARATOR . 'logo.svg') {
+      // Add default image.
+      $config_factory = \Drupal::configFactory();
+      // Lets get the email logo settings.
+      $socialblue_settings = $config_factory->getEditable('socialblue.settings');
+      $default_image = $socialblue_settings->get('email_logo');
+
+      // Only if there is no default image, or if its the same as the
+      // socialblue logo we can continue.
+      if (empty($default_image) || $default_image === $basetheme_url . DIRECTORY_SEPARATOR . 'logo.svg') {
+        $file_system = \Drupal::service('file_system');
+        $uri = $file_system->copy($basetheme_url . DIRECTORY_SEPARATOR . 'logo_email.png', 'public://logo_email.png', FileSystemInterface::EXISTS_REPLACE);
+
+        $media = File::create([
+          'uri' => $uri,
+        ]);
+        $media->setPermanent();
+        $media->save();
+
+        $default_image[0] = $media->id();
+        // We just save the file id.
+        $socialblue_settings->set('email_logo', $default_image)->save();
+      }
+    }
+  }
 }

@@ -97,5 +97,18 @@ function hook_social_content_type_alter(array &$page_to_exclude) {
 }
 
 /**
+ * Provide method to allows extensions to use the new content style on a node.
+ *
+ * @param array $compatible_content_type_forms
+ *   Array of the nodes.
+ *
+ * @see social_core_form_node_form_alter()
+ * @ingroup social_core_api
+ */
+function hook_social_core_compatible_content_forms(array &$compatible_content_type_forms) {
+  $compatible_content_type_forms[] = 'node_landing_page_form';
+}
+
+/**
  * @} End of "hidedefaultitle hooks".
  */

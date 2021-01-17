@@ -124,6 +124,19 @@ class SocialTaggingSettingsForm extends ConfigFormBase implements ContainerInjec
       '#description' => $this->t("Determine if the main categories of the vocabury will be used as seperate tag fields or as a single tag field when using tags on content."),
     ];
 
+    $form['use_category_parent'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Allow use a parent of category.'),
+      '#default_value' => $config->get('use_category_parent'),
+      '#required' => FALSE,
+      '#description' => $this->t("Determine if the parent of categories will be used with children tags."),
+      '#states' => [
+        'visible' => [
+          ':input[name="allow_category_split"]' => ['checked' => TRUE],
+        ],
+      ],
+    ];
+
     $form['node_type_settings'] = [
       '#type' => 'fieldset',
       '#title' => $this->t('Type configuration'),
@@ -170,6 +183,13 @@ class SocialTaggingSettingsForm extends ConfigFormBase implements ContainerInjec
     $config->set('allow_category_split', $form_state->getValue('allow_category_split'))->save();
     $config->set('tag_type_group', $form_state->getValue('tag_type_group'))->save();
     $config->set('tag_type_profile', $form_state->getValue('tag_type_profile'))->save();
+
+    if ($form_state->getValue('allow_category_split')) {
+      $config->set('use_category_parent', $form_state->getValue('use_category_parent'))->save();
+    }
+    else {
+      $config->clear('use_category_parent')->save();
+    }
 
     // Clear cache tags of profiles.
     $query = $this->database->select('cachetags', 'ct');

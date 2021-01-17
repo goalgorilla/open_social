@@ -1,0 +1,40 @@
+{{ attach_library('social_follow_taxonomy/paragraph_tag') }}
+
+{% if tags %}
+<div class="paragraph paragraph--featured social_follow_tax">
+  <div class="container">
+    <div class="card teaser">
+      <div class="teaser__body">
+        {% for tag in tags %}
+          <div class="teaser__content">
+            <div class="teaser__left">
+              <div class="teaser__tag">
+                {% trans %}Tag{% endtrans %}
+              </div>
+
+              <div class="teaser__title">
+                <h5>{{ tag.name }}</h5>
+              </div>
+
+              <div class="teaser__related-content">
+                {% trans %} 1 item {% plural tag.related_nodes_count %} @count items{% endtrans %}
+                {% if term.followers_count %}
+                  |
+                  <span class="teaser__followers-count">
+                  {% trans %} 1 follower {% plural tag.followers_count %} @count followers{% endtrans %}
+                  </span>
+                {% endif %}
+              </div>
+            </div>
+
+
+            <div class="actions">
+              {{ tag.flag }}
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}

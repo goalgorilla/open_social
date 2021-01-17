@@ -32,12 +32,12 @@ class PageTitle extends PreprocessBase {
       }
 
       if (!empty($profile_type['@label'])) {
-        $variables['title'] = t('Edit @label', ['@label' => $profile_type['@label']]);
+        $variables['title'] = $this->t('Edit @label', ['@label' => $profile_type['@label']]);
       }
     }
 
     if ($route_name === 'entity.user.edit_form' && isset($variables['title']['#markup'])) {
-      $variables['title'] = t('<em>Configure account settings:</em> @label', ['@label' => $variables['title']['#markup']]);
+      $variables['title'] = $this->t('<em>Configure account settings:</em> @label', ['@label' => $variables['title']['#markup']]);
     }
 
     if (strpos($current_path, 'stream') !== FALSE || strpos($current_path, 'explore') !== FALSE) {
@@ -45,7 +45,7 @@ class PageTitle extends PreprocessBase {
     }
 
     // Check if it is a node.
-    if (strpos($current_path, 'node') !== FALSE) {
+    if (strpos($current_path, 'node') !== FALSE || $route_name === 'social_album.add') {
       $variables['node'] = TRUE;
     }
 

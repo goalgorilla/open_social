@@ -52,7 +52,7 @@
 label {
   display: inline-block;
   max-width: 100%; // Force IE8 to wrap long content (see https://github.com/twbs/bootstrap/issues/13141)
-  margin-bottom: 5px;
+  margin-bottom: .5rem;
 }
 
 .control-label {
@@ -171,9 +171,12 @@ span.form-required {
   color: $help-block;
 
   .radio & {
-    padding-left: $radio-width;
     max-width: none;
     margin-top: 0;
+  }
+
+  > a {
+    font-weight: 700;
   }
 
 }
