@@ -391,7 +391,7 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
       $form_state->setRedirect('user.login', [], ['query' => ['destination' => $destination]]);
 
       // Check if user can register accounts.
-      if ($this->configFactory->get('user.settings')->get('register') !== UserInterface::USER_REGISTER_ADMINISTRATORS_ONLY) {
+      if ($this->configFactory->get('user.settings')->get('register') !== UserInterface::REGISTER_ADMINISTRATORS_ONLY) {
         $log_in_url = Url::fromUserInput('/user/login');
         $log_in_link = Link::fromTextAndUrl($this->t('log in'), $log_in_url)->toString();
         $create_account_url = Url::fromUserInput('/user/register');
