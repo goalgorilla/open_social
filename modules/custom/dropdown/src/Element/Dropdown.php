@@ -13,16 +13,9 @@ use Drupal\Core\Security\TrustedCallbackInterface;
  *
  * @RenderElement("dropdown")
  */
-class Dropdown extends FormElement implements TrustedCallbackInterface {
+class Dropdown extends FormElement {
 
   use CompositeFormElementTrait;
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function trustedCallbacks() {
-    return ['preRenderDropdown'];
-  }
 
   /**
    * {@inheritdoc}

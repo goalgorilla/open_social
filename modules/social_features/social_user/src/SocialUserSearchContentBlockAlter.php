@@ -2,14 +2,14 @@
 
 namespace Drupal\social_user;
 
-use Drupal\Core\Render\Element\RenderCallbackInterface;
+use Drupal\Core\Security\TrustedCallbackInterface;
 
 /**
  * Provides a trusted callback to alter the system branding block.
  *
  * @see social_user_block_view_search_content_block_alter()
  */
-class SocialUserSearchContentBlockAlter implements RenderCallbackInterface {
+class SocialUserSearchContentBlockAlter implements TrustedCallbackInterface {
 
   /**
    * Pre render for the search content in the header. This will add javascript.
@@ -23,6 +23,13 @@ class SocialUserSearchContentBlockAlter implements RenderCallbackInterface {
     ];
 
     return $build;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function trustedCallbacks() {
+    return ['preRender'];
   }
 
 }

@@ -22,14 +22,7 @@ use Drupal\Core\Url;
  *
  * @RenderElement("account_header_element")
  */
-class AccountHeaderElement extends RenderElement implements TrustedCallbackInterface {
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function trustedCallbacks() {
-    return ['preRenderAccountHeaderElement'];
-  }
+class AccountHeaderElement extends RenderElement {
 
   /**
    * {@inheritdoc}
