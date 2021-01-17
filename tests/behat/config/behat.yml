@@ -52,3 +52,12 @@ default:
           'Main content front': '.region--content'
           'Sidebar second': 'aside[role=complementary]'
           'Modal footer': '.modal-footer'
+      Drupal\MinkExtension:
+        ajax_timeout: 15
+        default_session: 'selenium2'
+        base_url: 'http://web/'
+        files_path: '/root/files/'
+        goutte: ~
+        selenium2:
+          wd_host: 'http://selenium:4444/wd/hub/'
+          browser: 'firefox'

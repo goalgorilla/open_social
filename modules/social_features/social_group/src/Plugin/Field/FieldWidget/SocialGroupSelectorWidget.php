@@ -5,6 +5,7 @@ namespace Drupal\social_group\Plugin\Field\FieldWidget;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\HtmlCommand;
 use Drupal\Core\Ajax\InvokeCommand;
+use Drupal\Core\Ajax\MessageCommand;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -262,11 +263,13 @@ class SocialGroupSelectorWidget extends OptionsSelectWidget implements Container
 
       $ajax_response->addCommand(new InvokeCommand('#edit-field-content-visibility-' . $visibility, 'change'));
     }
+
     $text = t('Changing the group may have impact on the <strong>visibility settings</strong> and may cause <strong>author/co-authors</strong> to lose access.');
 
-    $this->messenger()->addInfo($text);
-    $alert = ['#type' => 'status_messages'];
-    $ajax_response->addCommand(new HtmlCommand('#group-selection-result', $alert));
+    \Drupal::messenger()->addStatus($text);
+    $ajax_response->addCommand(
+      new HtmlCommand('#group-selection-result', $text)
+    );
 
     return $ajax_response;
   }

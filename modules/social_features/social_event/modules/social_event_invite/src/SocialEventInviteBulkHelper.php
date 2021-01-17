@@ -270,7 +270,7 @@ class SocialEventInviteBulkHelper {
       \Drupal::messenger()->addStatus(t('Invite(s) have been successfully sent.'));
     }
     elseif ($success && empty($results)) {
-      \Drupal::messenger()->addInfo(t('No invites were sent, recipients already received one before.'));
+      \Drupal::messenger()->AddStatus(t('No invites were sent, recipients already received one before.'));
     }
     else {
       \Drupal::messenger()->addError(t('There was an unexpected error.'));

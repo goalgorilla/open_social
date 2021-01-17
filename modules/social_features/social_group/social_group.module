@@ -1001,10 +1001,8 @@ function _social_group_unique_members($element, &$form_state, $complete_form) {
 function _social_group_inform_group_type_selection() {
   $text = t('Please note that changing the group type will also change the
   visibility of the group content and the way users can join the group.');
-  \Drupal::messenger()->addInfo($text);
-  $alert = ['#type' => 'status_messages'];
   $ajax_response = new AjaxResponse();
-  $ajax_response->addCommand(new HtmlCommand('#group-type-result', $alert));
+  $ajax_response->addCommand(new HtmlCommand('#group-type-result', $text));
 
   return $ajax_response;
 }
