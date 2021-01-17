@@ -81,7 +81,7 @@ class SocialTopicController extends ControllerBase {
       if (is_numeric($topic_type_id)) {
         $term = $this->entityTypeManager->getStorage('taxonomy_term')->load($topic_type_id);
 
-        if ($term->access('view') && $term->getVocabularyId() === 'topic_types') {
+        if ($term->access('view') && $term->bundle() === 'topic_types') {
           $term_title = $term->getName();
           $title = $this->t('Topics of type @type', ['@type' => $term_title]);
         }

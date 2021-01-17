@@ -320,7 +320,7 @@ function social_tagging_entity_delete(EntityInterface $entity) {
   // When a term from the social_tagging vocbulary is deleted, remove from node.
   /* @var Term $entity */
   if ($entity instanceof Term &&
-    $entity->getVocabularyId() === 'social_tagging') {
+    $entity->bundle() === 'social_tagging') {
     /* @see: taxonomy_taxonomy_term_delete(), delete from node field. */
     // We need to use `\Drupal\core\Database\Database::getConnection()`
     // because we might not yet have access to the container here.
