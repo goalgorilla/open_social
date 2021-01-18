@@ -1,0 +1,24 @@
+{{ attach_library('social_post_album/social-post-album--post') }}
+
+{# @see field--field-post-image.html.twig #}
+<div class="social-post-album--post-gallery">
+  {% for index, item in items %}
+    <div class="post-with-image">
+      <a href="{{ path('social_post_album.image_popup_render_original', {'post': pid, 'first_fid': item.content['#item'].entity.fid.value}) }}"
+         class="use-ajax"
+         data-dialog-type="modal"
+         data-dialog-options='{"width":"100%"}'>
+        {{ item.content }}
+
+        {% if loop.last and more_posts_count > 0 %}
+          <span class="plus-count">
+            <span class="plus-count--wrapper">
+              <span class="text-plus">+</span>
+              {{ more_posts_count }}
+            </span>
+          </span>
+        {% endif %}
+      </a>
+    </div>
+  {% endfor %}
+</div>

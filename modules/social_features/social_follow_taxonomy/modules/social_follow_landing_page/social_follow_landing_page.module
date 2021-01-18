@@ -1,0 +1,264 @@
+<?php
+
+/**
+ * @file
+ * Contains social_follow_landing_page.module.
+ */
+
+use Drupal\block_content\BlockContentInterface;
+use Drupal\Core\Entity\ContentEntityFormInterface;
+use Drupal\Core\Entity\ContentEntityInterface;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Url;
+use Drupal\paragraphs\ParagraphInterface;
+
+/**
+ * Implements hook_theme().
+ */
+function social_follow_landing_page_theme() {
+  return [
+    'paragraph__tag__default' => [
+      'base hook' => 'paragraph',
+    ],
+    'block__inline_block__follow_tags' => [
+      'base hook' => 'block',
+    ],
+  ];
+
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function social_follow_landing_page_preprocess_paragraph(&$variables) {
+  $terms = [];
+  /** @var \Drupal\paragraphs\Entity\Paragraph $entity */
+  $entity = $variables['elements']['#paragraph'];
+  $bundle = $entity->bundle();
+
+  switch ($bundle) {
+    case 'tag':
+      if ($entity->hasField('field_tag') && !empty($entity->field_tag)) {
+        foreach ($entity->field_tag as $term_reference) {
+          /** @var \Drupal\taxonomy\TermInterface $term */
+          $term = $term_reference->entity;
+
+          if (!empty($term)) {
+            // Creates a link to a search page with a tag as a filter parameter.
+            $parameter = 'tag';
+            $route = 'view.search_content.page_no_value';
+            // Override filter parameter id if split option is enabled.
+            if (Drupal::getContainer()->get('social_tagging.tag_service')->allowSplit()) {
+              if (isset($term->parent)) {
+                $parent = $term->parent->entity;
+                if (!empty($parent)) {
+                  $category = $parent->getName();
+                  // Use the name of parent term as id of the filter parameter.
+                  $parameter = social_tagging_to_machine_name($category);
+                }
+              }
+            }
+            $url = Url::fromRoute($route, [
+              $parameter . '[]' => $term->id(),
+            ]);
+
+            // Prepare additional data for the term variables.
+            $terms[] = [
+              'url' => $url->toString(),
+              'name' => $term->getName(),
+              'flag' => social_follow_taxonomy_flag_link($term),
+              'related_nodes_count' => social_follow_taxonomy_related_nodes_count($term, 'social_tagging'),
+              'followers_count' => social_follow_taxonomy_term_followers_count($term),
+            ];
+          }
+        }
+
+        // Adding data to the terms variable to extend the template.
+        $variables['terms'] = $terms;
+
+        // Adding cache tag.
+        $variables['#cache']['tags'][] = 'flagging_list';
+      }
+      break;
+  }
+}
+
+/**
+ * Implements hook_field_widget_WIDGET_TYPE_form_alter().
+ */
+function social_follow_landing_page_field_widget_entity_reference_paragraphs_form_alter(&$element, FormStateInterface $form_state, $context) {
+  $subform = FALSE;
+  if (isset($element['subform']['field_section_paragraph']['widget'][0]['subform']['field_tag'])) {
+    $subform = &$element['subform']['field_section_paragraph']['widget'][0]['subform'];
+  }
+  elseif (isset($element['subform']['field_tag'])) {
+    $subform = &$element['subform'];
+  }
+
+  if ($subform) {
+    /** @var \Drupal\social_tagging\SocialTaggingService $tag_service */
+    $tag_service = Drupal::getContainer()->get('social_tagging.tag_service');
+    // Check if tagging is turned on/off.
+    if (!$tag_service->active() || !$tag_service->hasContent()) {
+      // Remove the field from the form.
+      $subform['field_tag']['#access'] = FALSE;
+      return;
+    }
+
+    // Add an extra vertical tab.
+    $subform['tagging'] = [
+      '#type' => 'fieldset',
+      '#title' => t('Tag content'),
+      '#description' => '',
+      '#group' => 'group_tagging',
+      '#open' => TRUE,
+      '#weight' => 50,
+    ];
+
+    if ($tag_service->allowSplit()) {
+      // Get the default value.
+      $default_value = [];
+
+      $form_object = $form_state->getFormObject();
+      if ($form_object instanceof ContentEntityFormInterface) {
+        /** @var \Drupal\Core\Entity\EntityBase $form_entity */
+        $form_entity = $form_object->getEntity();
+
+        // If the node exists, we need to get the default value.
+        if (
+          ($form_entity instanceof BlockContentInterface || $form_entity instanceof ContentEntityInterface) &&
+          $form_entity->id() !== NULL
+        ) {
+          $parents = $subform['#parents'];
+          if (
+            !empty($parents[0]) &&
+            $form_entity->hasField($parents[0]) &&
+            !$form_entity->get($parents[0])->isEmpty()
+          ) {
+            $parent_value = $form_entity->get($parents[0])->getValue();
+            if (isset($parents[1])) {
+              $tag_value = NULL;
+
+              if (isset($parent_value[$parents[1]]['entity'])) {
+                /** @var \Drupal\paragraphs\ParagraphInterface $paragraph_entity */
+                $paragraph_entity = $parent_value[$parents[1]]['entity'];
+                $tag_value = $paragraph_entity->get('field_section_paragraph')->entity->get('field_tag')->getValue();
+              }
+              elseif (isset($parent_value[$parents[1]]['target_id'])) {
+                /** @var \Drupal\paragraphs\ParagraphInterface $paragraph_entity */
+                $paragraph_entity = \Drupal::entityTypeManager()->getStorage('paragraph')->load($parent_value[$parents[1]]['target_id']);
+                $tag_value = $paragraph_entity->get('field_tag')->getValue();
+              }
+
+              if ($tag_value) {
+                foreach ($tag_value as $key => $value) {
+                  if (isset($value['target_id'])) {
+                    $default_value[] = $value['target_id'];
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+
+      if (empty($default_value) && isset($context['items'])) {
+        $items_value = $context['items']->getValue();
+        if (isset($items_value[0]['entity']) && $items_value[0]['entity'] instanceof ParagraphInterface) {
+          $paragraph_entity = $items_value[0]['entity'];
+          $tag_value = $paragraph_entity->get('field_tag')->getValue();
+
+          if ($tag_value) {
+            foreach ($tag_value as $key => $value) {
+              if (isset($value['target_id'])) {
+                $default_value[] = $value['target_id'];
+              }
+            }
+          }
+        }
+      }
+
+      // Get the main categories.
+      $categories = $tag_service->getCategories();
+      // Loop over the categories.
+      foreach ($categories as $tid => $category) {
+        $field_name = 'social_tagging_' . social_tagging_to_machine_name($category);
+        // Get the corresponding items.
+        $options = $tag_service->getChildren($tid);
+        // Only add a field if the category has any options.
+        if (count($options) > 0) {
+          // Add a field.
+          $subform['tagging'][$field_name] = [
+            '#type' => 'select2',
+            '#title' => $category,
+            '#multiple' => TRUE,
+            '#default_value' => $default_value,
+            '#options' => $options,
+            '#group' => 'group_tagging',
+          ];
+        }
+      }
+      // Deny access the social_tagging field altogether.
+      $subform['field_tag']['#access'] = FALSE;
+      // Add a custom submithandler.
+      $element['#element_validate'][] = '_social_follow_landing_page_entity_validate';
+    }
+    else {
+      $options = [];
+      foreach ($tag_service->getCategories() as $key => $value) {
+        $options[$value] = $tag_service->getChildren($key);
+      }
+      $subform['field_tag']['widget']['#options'] = $options;
+    }
+  }
+}
+
+/**
+ * Validate function that overrides the tagging field with new values.
+ */
+function _social_follow_landing_page_entity_validate($element, FormStateInterface $form_state) {
+  $parents = $element['#parents'];
+  if (!empty($parents[0]) && !empty($form_state->getValue($parents[0]))) {
+    $parent_value = $form_state->getValue($parents[0]);
+
+    $subform = FALSE;
+    if (isset($parents[1]) && isset($parent_value[$parents[1]]['subform']['field_section_paragraph'][0]['subform']['tagging'])) {
+      $subform = &$parent_value[$parents[1]]['subform']['field_section_paragraph'][0]['subform'];
+    }
+    elseif (isset($parents[1]) && isset($parent_value[$parents[1]]['subform']['tagging'])) {
+      $subform = &$parent_value[$parents[1]]['subform'];
+    }
+    elseif (isset($parents[1]) && isset($parent_value[$parents[1]]['field_tags'][0]['subform']['tagging'])) {
+      $subform = &$parent_value[$parents[1]]['field_tags'][0]['subform'];
+    }
+
+    if ($subform) {
+      $tag_value = $subform['tagging'];
+
+      // Get the tagging service.
+      $tag_service = Drupal::getContainer()->get('social_tagging.tag_service');
+      // Get the main categories.
+      $categories = $tag_service->getCategories();
+      // Init categories.
+      $tagging_values = [];
+      $counter = 0;
+
+      // Loop over the categories.
+      foreach ($categories as $category) {
+        if (!empty($tag_value['social_tagging_' . social_tagging_to_machine_name($category)])) {
+          foreach ($tag_value['social_tagging_' . social_tagging_to_machine_name($category)] as $selected) {
+            $tagging_values[] = [
+              'target_id' => $selected,
+              '_weight' => (string) $counter,
+            ];
+            $counter++;
+          }
+        }
+      }
+
+      $subform['field_tag'] = $tagging_values;
+      // Set the values in the field_tag field.
+      $form_state->setValue($parents[0], $parent_value);
+    }
+  }
+}

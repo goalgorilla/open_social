@@ -116,12 +116,10 @@ class EntityConnection implements ConnectionInterface {
         // calling code has validated the cursor) or if N last results were
         // requested and we have more.
         'hasPreviousPage' => $this->after !== NULL || ($this->last !== NULL && $this->last < $count),
-        // The start cursor is always the first cursor in the result-set
-        // independent of the result-set order.
-        'startCursor' => $edges[0]->getCursor(),
-        // The end cursor is always the last cursor in the result-set
-        // independent of the result-set order.
-        'endCursor' => $edges[$last_index]->getCursor(),
+        // The start cursor is always the first cursor in the result-set..
+        'startCursor' => $this->shouldReverseResultEdges() ? $edges[$last_index]->getCursor() : $edges[0]->getCursor(),
+        // The end cursor is always the last cursor in the result-set..
+        'endCursor' => $this->shouldReverseResultEdges() ? $edges[0]->getCursor() : $edges[$last_index]->getCursor(),
       ];
     });
   }
@@ -163,19 +161,30 @@ class EntityConnection implements ConnectionInterface {
       // so we must fix that now.
       $edges = array_slice($edges, 0, $this->first ?? $this->last);
 
-      // To compensate for the ordering needed for the range selector we must
-      // sometimes flip the result. The first 3 results of a non-reverse query
-      // are the same as the last 3 results of a reversed query but they are in
-      // reverse order.
-      // The results must be flipped if
-      // - we want the last results in a reversed query
-      // - we want the last results in a non reversed query.
-      if (!is_null($this->last)) {
+      if ($this->shouldReverseResultEdges()) {
         $edges = array_reverse($edges);
       }
 
       return $edges;
     });
+  }
+
+  /**
+   * Whether the edges from our result should be reversed.
+   *
+   * To compensate for the ordering needed for the range selector we must
+   * sometimes flip the result. The first 3 results of a non-reverse query
+   * are the same as the last 3 results of a reversed query but they are in
+   * reverse order.
+   * The results must be flipped if
+   * - we want the last results in a reversed query
+   * - we want the last results in a non reversed query.
+   *
+   * @return bool
+   *   Whether the edges returned from `getResult()` as in reverse order.
+   */
+  protected function shouldReverseResultEdges() : bool {
+    return !is_null($this->last);
   }
 
   /**
