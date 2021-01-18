@@ -1,0 +1,10 @@
+social_post_album.image_popup_render_original:
+  path: '/open/images/{post}/{first_fid}'
+  defaults:
+    _controller: '\Drupal\social_post_album\Controller\ImagePopupController::render'
+  requirements:
+    _entity_access: 'post.view'
+  options:
+    parameters:
+      post:
+        type: entity:post

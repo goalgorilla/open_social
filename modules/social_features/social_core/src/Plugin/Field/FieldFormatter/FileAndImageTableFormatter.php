@@ -13,7 +13,8 @@ use Drupal\file\FileInterface;
  *   id = "file_image_default",
  *   label = @Translation("File and Image in a table"),
  *   field_types = {
- *     "file"
+ *     "file",
+ *     "image"
  *   }
  * )
  */
