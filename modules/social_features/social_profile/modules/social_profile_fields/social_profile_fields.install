@@ -100,6 +100,7 @@ function social_profile_fields_update_8901() {
     'field_config',
   ];
 
+  /** @var \Drupal\Core\Config\Entity\ConfigEntityStorageInterface[] $storages */
   $storages = [];
 
   foreach ($entity_type_ids as $entity_type_id) {
@@ -108,25 +109,36 @@ function social_profile_fields_update_8901() {
   }
 
   foreach ($items as $id => $item) {
-    $storages['taxonomy_vocabulary']
-      ->create([
-        'vid' => $id,
-        'name' => $item['vocabulary'],
-      ])
-      ->save();
+    $storages['taxonomy_vocabulary']->createFromStorageRecord([
+      'langcode' => 'en',
+      'status' => TRUE,
+      'dependencies' => [
+        'enforced' => [
+          'module' => [
+            'social_profile_fields',
+          ],
+        ],
+      ],
+      'name' => $item['vocabulary'],
+      'vid' => $id,
+      'description' => '',
+      'weight' => 0,
+    ])->save();
 
     $field = 'field_profile_' . $id;
 
-    /** @var \Drupal\Core\Config\Entity\ConfigEntityStorageInterface $storage */
-    $storage = $storages['field_storage_config'];
-
-    $storage->createFromStorageRecord([
+    $storages['field_storage_config']->createFromStorageRecord([
       'langcode' => 'en',
       'status' => TRUE,
       'dependencies' => [
         'module' => [
           'profile',
           'taxonomy',
+        ],
+        'enforced' => [
+          'module' => [
+            'social_profile_fields',
+          ],
         ],
       ],
       'id' => 'profile.' . $field,
@@ -145,9 +157,7 @@ function social_profile_fields_update_8901() {
       'custom_storage' => FALSE,
     ])->save();
 
-    $storage = $storages['field_config'];
-
-    $storage->createFromStorageRecord([
+    $storages['field_config']->createFromStorageRecord([
       'langcode' => 'en',
       'status' => TRUE,
       'dependencies' => [
@@ -155,6 +165,11 @@ function social_profile_fields_update_8901() {
           'field.storage.profile.' . $field,
           'profile.type.profile',
           'taxonomy.vocabulary.' . $id,
+        ],
+        'enforced' => [
+          'module' => [
+            'social_profile_fields',
+          ],
         ],
       ],
       'id' => 'profile.profile.' . $field,
