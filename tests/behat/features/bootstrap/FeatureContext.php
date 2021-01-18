@@ -807,7 +807,8 @@ class FeatureContext extends RawMinkContext implements Context
       }
 
       $query = \Drupal::entityQuery('group')
-        ->condition('label', $groupname);
+        ->condition('label', $groupname)
+        ->accessCheck(FALSE);
       $gid = $query->execute();
 
       if (!empty($gid) && count($gid) === 1) {
