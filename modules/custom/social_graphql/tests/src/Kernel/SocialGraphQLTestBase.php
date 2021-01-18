@@ -3,8 +3,8 @@
 namespace Drupal\Tests\social_graphql\Kernel;
 
 use Drupal\graphql\Entity\Server;
-use Drupal\social_graphql\Wrappers\EntityEdge;
 use Drupal\Tests\graphql\Kernel\GraphQLTestBase;
+use GraphQL\Server\OperationParams;
 
 /**
  * Bass class for Open Social GraphQL tests.
@@ -36,47 +36,119 @@ abstract class SocialGraphQLTestBase extends GraphQLTestBase {
   }
 
   /**
-   * Asserts that a GQL query executes correctly and matches an expected result.
-   *
-   * @param string $query
-   *   The GraphQL query to test.
-   * @param array $expected
-   *   The expected output.
-   * @param string $message
-   *   An optional message to provide context in case of assertion failure.
-   */
-  protected function assertQuery(string $query, array $expected, string $message = ''): void {
-    $result = $this->query($query);
-    self::assertSame(200, $result->getStatusCode(), $message);
-    self::assertSame($expected, json_decode($result->getContent(), TRUE), $message);
-  }
-
-  /**
    * Asserts that a specific endpoint properly implements pagination.
    *
    * Uses the standardised pagination test cases to validate that pagination
    * is implemented for the endpoint according to the Relay Connection
    * specification.
    *
-   * Validation of a correct pagination selection uses validation by uuid. If
-   * your endpoint produces content that does not support UUIDs then you must
-   * implement your own assertions.
+   * TODO: Add ability to test pagination for a specific sort order.
    *
    * @param string $endpoint
    *   The name of the GraphQL endpoint to test.
-   * @param array $test_nodes
-   *   The array of nodes that should be used as data source.
-   * @param string $edgeClass
-   *   The class used to create Edge objects from nodes (EntityEdge by
-   *   default).
+   * @param array $uuids
+   *   The array of uuids of all source data for the endpoint in the
+   *   non-reversed sorted order.
    */
-  protected function assertEndpointSupportsPagination(string $endpoint, array $test_nodes, string $edgeClass = EntityEdge::class): void {
-    foreach ($this->getPaginationTestCasesFor($test_nodes, $edgeClass) as [$filter, $result_nodes]) {
-      // Create a query for the filter under test. Include some data that allow
-      // verifying the results.
-      $query = "
+  protected function assertEndpointSupportsPagination(string $endpoint, array $uuids): void {
+    assert(count($uuids) >= 10, "The array of uuids provided to " . __FUNCTION__ . " must have at least 10 entries to perform pagination testing.");
+
+    $last = count($uuids) - 1;
+
+    $this->assertPaginationPage(
+      $endpoint,
+      'first',
+      NULL,
+      NULL,
+      TRUE,
+      FALSE,
+      [$uuids[0], $uuids[1], $uuids[2]],
+      [$uuids[3], $uuids[4]],
+    );
+
+    $this->assertPaginationPage(
+      $endpoint,
+      'first',
+      TRUE,
+      NULL,
+      TRUE,
+      FALSE,
+      [$uuids[$last], $uuids[$last - 1], $uuids[$last - 2]],
+      [$uuids[$last - 3], $uuids[$last - 4]],
+    );
+
+    $this->assertPaginationPage(
+      $endpoint,
+      'last',
+      NULL,
+      NULL,
+      FALSE,
+      TRUE,
+      [$uuids[$last - 2], $uuids[$last - 1], $uuids[$last]],
+      [$uuids[$last - 4], $uuids[$last - 3]],
+    );
+
+    $this->assertPaginationPage(
+      $endpoint,
+      'last',
+      TRUE,
+      NULL,
+      FALSE,
+      TRUE,
+      [$uuids[2], $uuids[1], $uuids[0]],
+      [$uuids[4], $uuids[3]],
+    );
+  }
+
+  /**
+   * Asserts a single page of results of an endpoint for the given inputs.
+   *
+   * @param string $field
+   *   The field to test.
+   * @param string $side
+   *   The side of the data to test. Either 'first' or 'last'.
+   * @param bool|null $reverse
+   *   Whether the request is reversed.
+   * @param string|null $cursor
+   *   A cursor to use as offset in the form of 'before: "cursor"' or
+   *   'after: "cursor"'.
+   * @param bool $hasNextPage
+   *   The expected pageInfo.hasNextPage value.
+   * @param bool $hasPreviousPage
+   *   The expected pageInfo.hasPreviousPage value.
+   * @param array $first_page
+   *   The uuids that are expected to be in the page's results.
+   * @param array|null $second_page
+   *   A second page of results that is expected. If provided the first request
+   *   will use a cursor based on $side to assert a second request with this
+   *   array as $result_nodes.
+   */
+  protected function assertPaginationPage(string $field, string $side, ?bool $reverse, ?string $cursor, bool $hasNextPage, bool $hasPreviousPage, array $first_page, array $second_page = NULL): void {
+    $count = count($first_page);
+    // Construct the filter as a string. We do this instead of variables since
+    // it makes our function signature a bit easier.
+    $filter = "${side}: ${count}";
+    if ($reverse) {
+      $filter .= ", reverse: true";
+    }
+    if ($cursor) {
+      $filter .= ", ${cursor}";
+    }
+
+    // Create a query for the filter under test. Include some data that allow
+    // verifying the results.
+    $query = "
         query {
-          ${endpoint}(${filter}) {
+          ${field}(${filter}) {
+            pageInfo {
+              hasPreviousPage
+              hasNextPage
+              startCursor
+              endCursor
+            }
+            nodes {
+              id
+            }
             edges {
               cursor
               node {
@@ -86,91 +158,70 @@ abstract class SocialGraphQLTestBase extends GraphQLTestBase {
           }
         }
       ";
-      // Create our expectation array.
-      $expected = [
-        "data" => [
-          $endpoint => [
-            "edges" => array_map(
-              static function ($node) use ($edgeClass) {
-                return [
-                  "cursor" => (new $edgeClass($node))->getCursor(),
-                  "node" => [
-                    "id" => $node->uuid(),
-                  ],
-                ];
-              },
-              $result_nodes
-            ),
-          ],
-        ],
-      ];
 
-      $this->assertQuery($query, $expected, "${endpoint}(${filter})");
+    $result = $this->server->executeOperation(
+      OperationParams::create([
+        'query' => $query,
+      ])
+    )->toArray();
+
+    self::assertArrayHasKey('data', $result, "No result data for ${field}(${filter})");
+
+    $data = $result['data'][$field];
+    $startCursor = $data['edges'][0]['cursor'];
+    $endCursor = $data['edges'][count($first_page) - 1]['cursor'];
+
+    $expected_page_info = [
+      'hasPreviousPage' => $hasPreviousPage,
+      'hasNextPage' => $hasNextPage,
+      'startCursor' => $startCursor,
+      'endCursor' => $endCursor,
+    ];
+
+    self::assertNotEquals(NULL, $data['pageInfo']['startCursor'], "Missing startCursor for ${field}(${filter})");
+    self::assertNotEquals(NULL, $data['pageInfo']['endCursor'], "Missing endCursor for ${field}(${filter})");
+    self::assertEquals($expected_page_info, $data['pageInfo'], "Incorrect pageInfo for ${field}(${filter})");
+
+    $expected_nodes = array_map(
+      static fn ($uuid) => ['id' => $uuid],
+      $first_page
+    );
+
+    self::assertEquals($expected_nodes, $data['nodes'], "Incorrect nodes for ${field}(${filter})");
+
+    // The cursor is ignored as it's an implementation detail and we have no
+    // good way of predicting its value for comparison. It's usefulness is
+    // tested using the $second_page in a test.
+    $expected_edge_data = array_map(
+      static fn ($uuid) => ['node' => ['id' => $uuid]],
+      $first_page
+    );
+    $actual_edge_data = array_map(
+      static function ($edge) {
+        // Unset the cursor instead of mapping to an array with only the edge to
+        // ensure that our test fails if more data than a node and cursor was
+        // provided.
+        unset($edge['cursor']);
+        return $edge;
+      },
+      $data['edges']
+    );
+
+    self::assertEquals($expected_edge_data, $actual_edge_data, "Incorrect edges for ${field}(${filter}) (cursors omitted from check)");
+
+    // If we've been given a second page then we can test with a cursor.
+    if (!empty($second_page)) {
+      $cursor = $side === 'first' ? "after: \"${endCursor}\"" : "before: \"${startCursor}\"";
+      $this->assertPaginationPage(
+        $field,
+        $side,
+        $reverse,
+        $cursor,
+        TRUE,
+        TRUE,
+        $second_page
+      );
     }
-  }
-
-  /**
-   * Generate standardised pagination test cases.
-   *
-   * Pagination should be implemented according to the Relay Connection
-   * specification. This means that any endpoint that supports pagination should
-   * be able to pass a standardised set of test cases.
-   *
-   * @param array $nodes
-   *   The array of nodes that should be used as data source.
-   * @param string $edgeClass
-   *   The class used to create Edge objects from nodes (EntityEdge by
-   *   default).
-   *
-   * @return \Generator
-   *   Yields arrays with two values: a filter query for the GraphQL endpoint
-   *   under test and the expected nodes that are selected.
-   */
-  protected function getPaginationTestCasesFor(array $nodes, string $edgeClass = EntityEdge::class): ?\Generator {
-    assert(count($nodes) >= 10, "The array of nodes provided to " . __FUNCTION__ . " must have at least 10 entries to perform pagination testing.");
-
-    $last = count($nodes) - 1;
-
-    yield [
-      'first: 3',
-      [$nodes[0], $nodes[1], $nodes[2]],
-    ];
-
-    yield [
-      "first: 3, reverse: true",
-      [$nodes[$last], $nodes[$last - 1], $nodes[$last - 2]],
-    ];
-
-    yield [
-      "last: 3",
-      [$nodes[$last - 2], $nodes[$last - 1], $nodes[$last]],
-    ];
-
-    yield [
-      "last: 3, reverse: true",
-      [$nodes[2], $nodes[1], $nodes[0]],
-    ];
-
-    $cursor = (new $edgeClass($nodes[4]))->getCursor();
-    yield [
-      "last: 2, before: ${cursor}",
-      [$nodes[2], $nodes[3]],
-    ];
-
-    yield [
-      "first: 2, after: ${cursor}",
-      [$nodes[5], $nodes[6]],
-    ];
-
-    yield [
-      "last: 2, before: ${cursor}, reverse: true",
-      [$nodes[6], $nodes[5]],
-    ];
-
-    yield [
-      "first: 2, after: ${cursor}, reverse: true",
-      [$nodes[3], $nodes[2]],
-    ];
   }
 
 }

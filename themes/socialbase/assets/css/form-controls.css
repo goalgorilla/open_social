@@ -141,7 +141,7 @@ form:not(.layout-builder-configure-block) .radio,
 form:not(.layout-builder-configure-block) .checkbox {
   position: relative;
   display: block;
-  margin-bottom: 5px;
+  margin-bottom: 8px;
 }
 
 form:not(.layout-builder-configure-block) .radio + .radio,
@@ -180,6 +180,7 @@ form:not(.layout-builder-configure-block) .radio label {
      -moz-user-select: none;
       -ms-user-select: none;
           user-select: none;
+  margin-bottom: 0;
 }
 
 form:not(.layout-builder-configure-block) .radio label:before,
@@ -207,6 +208,10 @@ form:not(.layout-builder-configure-block) [type="radio"]:not(:checked) + label:a
   z-index: -1;
   -webkit-transform: scale(0);
           transform: scale(0);
+}
+
+form:not(.layout-builder-configure-block) [type="radio"]:checked + label {
+  font-weight: 700;
 }
 
 form:not(.layout-builder-configure-block) [type="radio"]:checked + label:before {
@@ -280,6 +285,10 @@ form:not(.layout-builder-configure-block) [type="checkbox"]:not(:checked) + labe
   z-index: 0;
 }
 
+form:not(.layout-builder-configure-block) [type="checkbox"]:checked + label {
+  font-weight: 700;
+}
+
 form:not(.layout-builder-configure-block) [type="checkbox"]:checked + label:before {
   top: 0;
   left: 1px;
@@ -341,6 +350,20 @@ form:not(.layout-builder-configure-block) [type="checkbox"]:disabled:checked + l
 
 form:not(.layout-builder-configure-block) .form-inline {
   margin-bottom: 1rem;
+}
+
+form:not(.layout-builder-configure-block).group-form .field--widget-options-buttons .fieldgroup .fieldset-wrapper, form:not(.layout-builder-configure-block).node-form .field--widget-options-buttons .fieldgroup .fieldset-wrapper {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+  margin: 5px -13px 0;
+}
+
+form:not(.layout-builder-configure-block).group-form .field--widget-options-buttons .fieldgroup .fieldset-wrapper > .radio, form:not(.layout-builder-configure-block).node-form .field--widget-options-buttons .fieldgroup .fieldset-wrapper > .radio {
+  padding: 0 13px;
+  margin-top: -5px;
 }
 
 form:not(.layout-builder-configure-block) .switch * {
