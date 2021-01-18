@@ -42,6 +42,8 @@ function _social_footer_set_default_footer_logo_for_socialblue() {
     $media->setPermanent();
     $media->save();
     // We just save the file id.
-    $block_config->set('settings.logo', $media->id());
+    $settings = $block_config->get('settings');
+    $settings['logo'] = $media->id();
+    $block_config->set('settings', $settings)->save();
   }
 }

@@ -8,7 +8,7 @@ use Drupal\file\FileStorageInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- *
+ * Creates a form for configuring footer block.
  */
 class FooterSettingsForm extends FormBase {
 
@@ -17,16 +17,16 @@ class FooterSettingsForm extends FormBase {
    *
    * @var \Drupal\file\FileStorageInterface
    */
-  protected FileStorageInterface $storage;
+  protected FileStorageInterface $fileStorage;
 
   /**
    * Creates a FooterSettingsForm instance.
    *
-   * @param \Drupal\file\FileStorageInterface $storage
+   * @param \Drupal\file\FileStorageInterface $file_storage
    *   The file storage.
    */
-  public function __construct(FileStorageInterface $storage) {
-    $this->storage = $storage;
+  public function __construct(FileStorageInterface $file_storage) {
+    $this->fileStorage = $file_storage;
   }
 
   /**
@@ -109,7 +109,7 @@ class FooterSettingsForm extends FormBase {
 
     if ($values['logo'] = $form_state->getValue('logo')) {
       /** @var \Drupal\file\FileInterface $file */
-      $file = $this->storage->load($logo = $values['logo'][0]);
+      $file = $this->fileStorage->load($logo = $values['logo'][0]);
 
       $file->setPermanent();
       $file->save();
