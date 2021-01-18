@@ -5,7 +5,9 @@
  * The Social Footer module.
  */
 
+use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\file\Entity\File;
 
 /**
  * Implements hook_help().
@@ -20,4 +22,26 @@ function social_footer_help($route_name, RouteMatchInterface $route_match) {
   }
 
   return $output;
+}
+
+/**
+ * Function to set default footer block.
+ */
+function _social_footer_set_default_footer_logo_for_socialblue() {
+  // Only when socialblue is default we continue.
+  $config_factory = \Drupal::configFactory();
+  if ($config_factory->get('system.theme')->get('default') === 'socialblue') {
+    // Add default image.
+    $block_config = $config_factory->getEditable('block.block.socialblue_footer_powered');
+    $file_path = drupal_get_path('module', 'social_footer') . DIRECTORY_SEPARATOR . 'open_social_logo.png';
+    $file_system = \Drupal::service('file_system');
+    $uri = $file_system->copy($file_path, 'public://open_social_logo.png', FileSystemInterface::EXISTS_REPLACE);
+    $media = File::create([
+      'uri' => $uri,
+    ]);
+    $media->setPermanent();
+    $media->save();
+    // We just save the file id.
+    $block_config->set('settings.logo', $media->id());
+  }
 }
