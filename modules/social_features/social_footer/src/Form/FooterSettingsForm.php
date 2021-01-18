@@ -17,7 +17,7 @@ class FooterSettingsForm extends FormBase {
    *
    * @var \Drupal\file\FileStorageInterface
    */
-  protected FileStorageInterface $fileStorage;
+  protected $fileStorage;
 
   /**
    * Creates a FooterSettingsForm instance.
