@@ -1,0 +1,90 @@
+.view-albums .social-post-album--post-gallery {
+  display: flex;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  margin: 0 -0.5rem;
+}
+.view-albums .social-post-album--post-gallery .post-with-image {
+  position: relative;
+  display: block;
+  flex: 0 0 50%;
+  max-width: 50%;
+  margin-bottom: 0.5rem;
+  padding: 0 0.5rem;
+}
+@media (min-width: 600px) {
+  .view-albums .social-post-album--post-gallery .post-with-image {
+    flex: 0 0 25%;
+    max-width: 25%;
+    margin-bottom: 1.25rem;
+  }
+}
+.view-albums .social-post-album--post-gallery .post-with-image .badge-secondary {
+  position: absolute;
+  bottom: 0.5rem;
+  left: 50%;
+  margin: 0;
+  padding: 4px 10px;
+  white-space: nowrap;
+  transform: translateX(-50%);
+}
+@media (min-width: 900px) {
+  .view-albums .social-post-album--post-gallery .post-with-image .badge-secondary {
+    bottom: 0.875rem;
+  }
+}
+.view-albums .social-post-album--post-gallery .post-with-image .comment__actions {
+  top: 0.75rem;
+  right: 1.25rem;
+}
+.view-albums .social-post-album--post-gallery .post-with-image .comment__actions .btn {
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  background: rgba(173, 173, 173, 0.8);
+  transition: background 0.2s linear;
+}
+@media (min-width: 900px) {
+  .view-albums .social-post-album--post-gallery .post-with-image .comment__actions .btn {
+    width: 32px;
+    height: 32px;
+  }
+}
+.view-albums .social-post-album--post-gallery .post-with-image .comment__actions .btn:hover, .view-albums .social-post-album--post-gallery .post-with-image .comment__actions .btn:focus {
+  background: #adadad;
+}
+.view-albums .social-post-album--post-gallery .post-with-image .comment__actions .btn .btn-icon {
+  fill: #fff;
+}
+@media (min-width: 900px) {
+  .view-albums .social-post-album--post-gallery .post-with-image .comment__actions .btn .btn-icon {
+    width: 24px;
+    height: 24px;
+  }
+}
+@media (max-width: 599px) {
+  .view-albums .social-post-album--post-gallery .post-with-image .comment__actions .dropdown-menu {
+    min-width: 100px;
+  }
+}
+.view-albums .social-post-album--post-gallery .post-with-image .ajax-throbber {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-top: -10px;
+  margin-left: -0.5rem;
+  transform: translate(-50%, -50%);
+}
+.view-albums .social-post-album--post-gallery img {
+  width: 100%;
+  border-radius: 0.5rem;
+  object-fit: cover;
+}
+
+@media (min-width: 900px) {
+  #section-comments + section {
+    width: 66.66667%;
+  }
+}
+
+/*# sourceMappingURL=social-album--post.css.map */

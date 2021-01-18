@@ -1,0 +1,98 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.album.field_album_comments
+    - field.field.node.album.field_album_creators
+    - field.field.node.album.field_content_visibility
+    - node.type.album
+  module:
+    - field_group
+third_party_settings:
+  field_group:
+    group_album_visibility:
+      children:
+        - groups
+        - field_content_visibility
+      parent_name: ''
+      weight: 2
+      format_type: fieldset
+      region: content
+      format_settings:
+        id: ''
+        classes: ''
+        description: ''
+        required_fields: true
+      label: 'Group and visibility'
+    group_title:
+      children:
+        - title
+      parent_name: ''
+      weight: 0
+      format_type: fieldset
+      region: content
+      format_settings:
+        id: ''
+        classes: ''
+        description: ''
+        required_fields: true
+      label: Information
+    group_album_settings:
+      children:
+        - field_album_creators
+      parent_name: ''
+      weight: 5
+      format_type: fieldset
+      region: content
+      format_settings:
+        id: ''
+        classes: ''
+        description: ''
+        required_fields: true
+      label: 'Album settings'
+id: node.album.default
+targetEntityType: node
+bundle: album
+mode: default
+content:
+  field_album_creators:
+    weight: 6
+    settings:
+      display_label: true
+    third_party_settings: {  }
+    type: boolean_checkbox
+    region: content
+  field_content_visibility:
+    weight: 4
+    settings: {  }
+    third_party_settings: {  }
+    type: options_buttons
+    region: content
+  groups:
+    type: options_select
+    settings: {  }
+    weight: 3
+    region: content
+    third_party_settings: {  }
+  status:
+    type: boolean_checkbox
+    weight: 7
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
+  title:
+    type: string_textfield
+    weight: 1
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+hidden:
+  created: true
+  field_album_comments: true
+  path: true
+  promote: true
+  sticky: true
+  uid: true

@@ -34,7 +34,8 @@
   height: 8px;
   position: absolute;
   background: #777777;
-  box-shadow: 0 0 1px rgba(0, 0, 0, 0.11), 0 1px 2px rgba(0, 0, 0, 0.22);
+  -webkit-box-shadow: 0 0 1px rgba(0, 0, 0, 0.11), 0 1px 2px rgba(0, 0, 0, 0.22);
+          box-shadow: 0 0 1px rgba(0, 0, 0, 0.11), 0 1px 2px rgba(0, 0, 0, 0.22);
   border-radius: 50%;
   border: 1px solid #fff;
 }
@@ -80,6 +81,8 @@
 .card--stream .comment {
   font-size: 0.875rem;
   position: relative;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
   width: 100%;
 }
@@ -87,7 +90,8 @@
 .card--stream .comment__avatar {
   margin-right: 8px;
   width: 44px;
-  flex-shrink: 0;
+  -ms-flex-negative: 0;
+      flex-shrink: 0;
 }
 
 .teaser.teaser--stream {
@@ -115,6 +119,18 @@
 
 .post-unpublished * {
   color: #9b9b9b;
+}
+
+.footer-post {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
 }
 
 @media (min-width: 600px) {
@@ -150,6 +166,8 @@
   }
   .teaser.teaser--stream .teaser__image {
     height: 200px;
-    flex: 0 0 200px;
+    -webkit-box-flex: 0;
+        -ms-flex: 0 0 200px;
+            flex: 0 0 200px;
   }
 }
