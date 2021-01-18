@@ -123,6 +123,7 @@ class FooterSettingsForm extends FormBase {
       $settings['link']['title'] = $values['title'];
       $block->set('settings', $settings)->save();
     }
+    $this->messenger()->addStatus(t('Your footer settings have been updated'));
   }
 
 }
