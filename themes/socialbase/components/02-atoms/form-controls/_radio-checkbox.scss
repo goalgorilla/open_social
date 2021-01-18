@@ -40,7 +40,7 @@
 .checkbox {
   position: relative;
   display: block;
-  margin-bottom: 5px;
+  margin-bottom: 8px;
 }
 
 .radio + .radio,
@@ -78,6 +78,7 @@
   font-size: 0.875rem;
   transition: .28s ease;
   user-select: none;
+  margin-bottom: 0;
 }
 
 
@@ -108,14 +109,20 @@
 }
 
 // Checked styles
-[type="radio"]:checked + label:before {
-  border-radius: 50%;
-}
+[type="radio"]:checked {
+  + label {
+    font-weight: 700;
 
-[type="radio"]:checked + label:after {
-  border-radius: 50%;
-  z-index: 0;
-  transform: scale(.5);
+    &:before {
+      border-radius: 50%;
+    }
+
+    &:after {
+       border-radius: 50%;
+       z-index: 0;
+       transform: scale(.5);
+    }
+  }
 }
 
 /* Disabled style */
@@ -182,19 +189,23 @@
 
   // Checked style
   &:checked {
-    + label:before {
-      top: 0;
-      left: 1px;
-      width: 8px;
-      height: 13px;
-      border-top: 2px solid transparent;
-      border-left: 2px solid transparent;
-      border-right: 2px solid $input-bg-color;
-      border-bottom: 2px solid $input-bg-color;
-      transform: rotateZ(37deg);
-      margin-top: 2px;
-      transition: .2s;
-      transform-origin: 100% 100%;
+    + label {
+      font-weight: 700;
+
+      &:before {
+        top: 0;
+        left: 1px;
+        width: 8px;
+        height: 13px;
+        border-top: 2px solid transparent;
+        border-left: 2px solid transparent;
+        border-right: 2px solid $input-bg-color;
+        border-bottom: 2px solid $input-bg-color;
+        transform: rotateZ(37deg);
+        margin-top: 2px;
+        transition: .2s;
+        transform-origin: 100% 100%;
+      }
     }
 
     + label:after {
@@ -260,4 +271,23 @@
 
   }
 
+}
+
+// Radio buttons for the group and node create pages.
+&.group-form,
+&.node-form {
+  .field--widget-options-buttons {
+    .fieldgroup {
+      .fieldset-wrapper {
+        display: flex;
+        flex-wrap: wrap;
+        margin: 5px -13px 0;
+
+        > .radio {
+          padding: 0 13px;
+          margin-top: -5px;
+        }
+      }
+    }
+  }
 }
