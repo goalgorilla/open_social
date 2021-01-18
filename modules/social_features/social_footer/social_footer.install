@@ -5,9 +5,39 @@
  * Hook install and update functions for social_footer.
  */
 
+use Drupal\Core\File\FileSystemInterface;
+use Drupal\file\Entity\File;
+use Symfony\Component\Yaml\Yaml;
+
 /**
  * Implements hook_install().
  */
 function social_footer_install() {
-  _social_footer_set_default_footer_logo_for_socialblue();
+  $config_factory = \Drupal::configFactory();
+  // Only when socialblue is default we continue.
+  if ($config_factory->get('system.theme')->get('default') === 'socialblue') {
+    $config_file = drupal_get_path('module', 'social_footer') . '/config/static/block.block.socialblue_footer_powered.yml';
+    if (is_file($config_file)) {
+      // Add default image.
+      $file_path = drupal_get_path('module', 'social_footer') . DIRECTORY_SEPARATOR . 'open_social_logo.png';
+      $file_system = \Drupal::service('file_system');
+      $uri = $file_system->copy($file_path, 'public://open_social_logo.png', FileSystemInterface::EXISTS_REPLACE);
+
+      // Create a file media.
+      $media = File::create([
+        'uri' => $uri,
+      ]);
+      $media->setPermanent();
+      $media->save();
+
+      // Parse the yaml content from the configuration file.
+      $data = Yaml::parse(file_get_contents($config_file));
+      if (is_array($data)) {
+        // Update the configuration settings to contain the file ID.
+        $data['settings']['logo'] = $media->id();
+        $config = $config_factory->getEditable('block.block.socialblue_footer_powered');
+        $config->setData($data)->save(TRUE);
+      }
+    }
+  }
 }
