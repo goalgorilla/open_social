@@ -73,3 +73,96 @@ function _social_profile_fields_update_search_index($index_id = 'social_users') 
     $accountSwitcher->switchBack();
   }
 }
+
+/**
+ * Add fields for social links.
+ */
+function social_profile_fields_update_8901() {
+  $titles = [
+    'Website',
+    'Twitter',
+    'LinkedIn',
+    'Facebook',
+    'Instagram',
+    'Other',
+  ];
+
+  $entity_type_ids = [
+    'field_storage_config',
+    'field_config',
+  ];
+
+  /** @var \Drupal\Core\Config\Entity\ConfigEntityStorageInterface[] $storages */
+  $storages = [];
+
+  foreach ($entity_type_ids as $entity_type_id) {
+    $storages[$entity_type_id] = \Drupal::entityTypeManager()
+      ->getStorage($entity_type_id);
+  }
+
+  foreach ($titles as $title) {
+    $field = 'field_profile_' . strtolower($title);
+
+    $storages['field_storage_config']->createFromStorageRecord([
+      'langcode' => 'en',
+      'status' => TRUE,
+      'dependencies' => [
+        'enforced' => [
+          'module' => [
+            'social_profile_fields',
+          ],
+        ],
+        'module' => [
+          'link',
+          'profile',
+        ],
+      ],
+      'id' => 'profile.' . $field,
+      'field_name' => $field,
+      'entity_type' => 'profile',
+      'type' => 'link',
+      'settings' => [],
+      'module' => 'link',
+      'locked' => FALSE,
+      'cardinality' => 1,
+      'translatable' => FALSE,
+      'indexes' => [],
+      'persist_with_no_fields' => FALSE,
+      'custom_storage' => FALSE,
+    ])->save();
+
+    $storages['field_config']->createFromStorageRecord([
+      'langcode' => 'en',
+      'status' => TRUE,
+      'dependencies' => [
+        'config' => [
+          'field.storage.profile.' . $field,
+          'profile.type.profile',
+        ],
+        'enforced' => [
+          'module' => [
+            'social_profile_fields',
+          ],
+        ],
+        'module' => [
+          'link',
+        ],
+      ],
+      'id' => 'profile.profile.' . $field,
+      'field_name' => $field,
+      'entity_type' => 'profile',
+      'bundle' => 'profile',
+      'label' => $title,
+      'description' => '',
+      'required' => FALSE,
+      'translatable' => FALSE,
+      'default_value' => [],
+      'default_value_callback' => '',
+      'settings' => [
+        'link_type' => 16,
+        'title' => 0,
+      ],
+      'field_type' => 'link',
+    ])->save();
+  }
+}

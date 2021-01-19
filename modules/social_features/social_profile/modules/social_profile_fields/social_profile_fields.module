@@ -6,7 +6,10 @@
  */
 
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Entity\Display\EntityFormDisplayInterface;
+use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\Entity\EntityViewDisplay;
+use Drupal\Core\Entity\EntityDisplayRepositoryInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
@@ -41,6 +44,77 @@ function social_profile_fields_entity_field_access($operation, FieldDefinitionIn
   }
 
   return $access_result;
+}
+
+/**
+ * Implements hook_entity_form_display_alter().
+ */
+function social_profile_fields_entity_form_display_alter(EntityFormDisplayInterface $form_display, array $context) {
+  if ($context['entity_type'] !== 'profile' || $context['form_mode'] !== 'edit') {
+    return;
+  }
+
+  $names = [
+    'field_profile_website',
+    'field_profile_twitter',
+    'field_profile_linkedin',
+    'field_profile_facebook',
+    'field_profile_instagram',
+    'field_profile_other',
+  ];
+
+  foreach ($names as $name) {
+    $form_display->setComponent($name, [
+      'weight' => 0,
+      'settings' => [
+        'placeholder_url' => '',
+        'placeholder_title' => '',
+      ],
+      'third_party_settings' => [],
+      'type' => 'link_default',
+      'region' => 'content',
+    ]);
+  }
+
+  $form_display->save();
+}
+
+/**
+ * Implements hook_entity_view_display_alter().
+ */
+function social_profile_fields_entity_view_display_alter(EntityViewDisplayInterface $display, array $context) {
+  if (
+    $context['entity_type'] !== 'profile' ||
+    $context['view_mode'] !== EntityDisplayRepositoryInterface::DEFAULT_DISPLAY_MODE
+  ) {
+    return;
+  }
+
+  $names = [
+    'field_profile_website',
+    'field_profile_twitter',
+    'field_profile_linkedin',
+    'field_profile_facebook',
+    'field_profile_instagram',
+    'field_profile_other',
+  ];
+
+  foreach ($names as $name) {
+    $display->setComponent($name, [
+      'weight' => 0,
+      'label' => 'above',
+      'settings' => [
+        'trim_length' => 80,
+        'url_only' => TRUE,
+        'target' => '_blank',
+        'url_plain' => FALSE,
+        'rel' => '0',
+      ],
+      'third_party_settings' => [],
+      'type' => 'link',
+      'region' => 'content',
+    ]);
+  }
 }
 
 /**
