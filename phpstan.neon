@@ -1,6 +1,6 @@
 includes:
-	- vendor/mglaman/phpstan-drupal/extension.neon
-	- vendor/phpstan/phpstan-deprecation-rules/rules.neon
+	- /var/www/vendor/mglaman/phpstan-drupal/extension.neon
+	- /var/www/vendor/phpstan/phpstan-deprecation-rules/rules.neon
 
 parameters:
     level: 0
@@ -10,3 +10,5 @@ parameters:
         - modules/social_features
     drupal:
         drupal_root: %currentWorkingDirectory%/core
+    ignoreErrors:
+      - '#Plugin manager has cache backend specified but does not declare cache tags.#' # See - https://github.com/mglaman/phpstan-drupal/issues/112#issue-557001157
