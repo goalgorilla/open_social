@@ -179,7 +179,7 @@ function _social_core_get_permissions($role) {
  * Custom function to create the homepage block for AN users.
  */
 function _social_core_create_an_homepage_block() {
-  // TODO: use a better image from the theme.
+  // @todo use a better image from the theme.
   // Block image.
   $path = drupal_get_path('module', 'social_core');
   $image_path = $path . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . 'homepage-block.jpg';
@@ -653,7 +653,7 @@ function social_core_update_8020() {
   $repo->setLastInstalledFieldStorageDefinition($storage_definition);
 
   // Update the stored field schema.
-  // @todo: There has to be a better way to do this.
+  // @todo There has to be a better way to do this.
   $kv_collection = 'entity.storage_schema.sql';
   $kv_name = 'flagging.field_schema_data.flag_id';
   $field_schema = $kv->get($kv_collection)->get($kv_name);

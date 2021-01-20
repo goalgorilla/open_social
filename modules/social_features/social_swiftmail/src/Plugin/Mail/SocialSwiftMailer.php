@@ -2,8 +2,6 @@
 
 namespace Drupal\social_swiftmail\Plugin\Mail;
 
-use Drupal\Component\Render\MarkupInterface;
-use Drupal\Component\Utility\Html;
 use Drupal\Core\Asset\AttachedAssets;
 use Drupal\Core\Render\Markup;
 use Drupal\Core\Site\Settings;

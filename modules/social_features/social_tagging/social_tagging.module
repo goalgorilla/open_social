@@ -318,7 +318,7 @@ function social_tagging_entity_base_field_info(EntityTypeInterface $entity_type)
  */
 function social_tagging_entity_delete(EntityInterface $entity) {
   // When a term from the social_tagging vocbulary is deleted, remove from node.
-  /* @var Term $entity */
+  /** @var \Drupal\taxonomy\Entity\Term $entity */
   if ($entity instanceof Term &&
     $entity->bundle() === 'social_tagging') {
     /* @see: taxonomy_taxonomy_term_delete(), delete from node field. */

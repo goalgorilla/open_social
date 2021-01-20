@@ -5,7 +5,6 @@ namespace Drupal\social_group\Plugin\Field\FieldWidget;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\HtmlCommand;
 use Drupal\Core\Ajax\InvokeCommand;
-use Drupal\Core\Ajax\MessageCommand;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -184,7 +183,7 @@ class SocialGroupSelectorWidget extends OptionsSelectWidget implements Container
 
     $change_group_node = $this->configFactory->get('social_group.settings')
       ->get('allow_group_selection_in_node');
-    /* @var \Drupal\Core\Entity\EntityInterface $entity */
+    /** @var \Drupal\Core\Entity\EntityInterface $entity */
     $entity = $form_state->getFormObject()->getEntity();
 
     // If it is a new node lets add the current group.
@@ -231,7 +230,7 @@ class SocialGroupSelectorWidget extends OptionsSelectWidget implements Container
         $group_type_id = $group->getGroupType()->id();
 
         $allowed_visibility_options = social_group_get_allowed_visibility_options_per_group_type($group_type_id, NULL, $entity, $group);
-        // TODO Add support for multiple groups, for now just process 1 group.
+        // @todo Add support for multiple groups, for now just process 1 group.
         break;
       }
     }

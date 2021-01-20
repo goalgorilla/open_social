@@ -100,7 +100,7 @@ class AddMembersToGroup extends ViewsBulkOperationsActionBase implements Contain
     // There is no permission to check if a user is able to be "added" to a
     // group. Joining doesn't cover it since we also want people to be able
     // to be added to a Secret/Closed group.
-    // @Todo when Invite people to a group or Add members to a group permission
+    // @todo when Invite people to a group or Add members to a group permission
     // lands add it.
     if ($object instanceof User) {
       $access = AccessResult::allowed();

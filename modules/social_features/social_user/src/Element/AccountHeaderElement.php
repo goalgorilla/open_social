@@ -4,7 +4,6 @@ namespace Drupal\social_user\Element;
 
 use Drupal\Core\Render\Element;
 use Drupal\Core\Render\Element\RenderElement;
-use Drupal\Core\Security\TrustedCallbackInterface;
 use Drupal\Core\Template\Attribute;
 use Drupal\Core\Url;
 

@@ -114,7 +114,7 @@ class Page extends PreprocessBase {
     // restrains for TB-4116 I've added an additional rule to this quick-fix
     // solution.
     // @see https://www.drupal.org/project/social/issues/3119191
-    // @todo: remove the if statement below and fix logic mentioned above.
+    // @todo remove the if statement below and fix logic mentioned above.
     $route = \Drupal::routeMatch()->getRouteName();
 
     $routes_remove_complementary_class = [

@@ -3,7 +3,6 @@
 namespace Drupal\social_follow_taxonomy\Plugin\ActivityContext;
 
 use Drupal\activity_creator\Plugin\ActivityContextBase;
-use Drupal\activity_creator\ActivityFactory;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\user\UserInterface;
 
@@ -75,7 +74,7 @@ class FollowTaxonomyActivityContext extends ActivityContextBase {
     ]);
 
     foreach ($flaggings as $flagging) {
-      /* @var $flagging \Drupal\flag\FlaggingInterface */
+      /** @var \Drupal\flag\FlaggingInterface $flagging */
       $recipient = $flagging->getOwner();
 
       // It could happen that a notification has been queued but the content or
@@ -120,7 +119,7 @@ class FollowTaxonomyActivityContext extends ActivityContextBase {
         ]);
 
         foreach ($flaggings as $flagging) {
-          /* @var $flagging \Drupal\flag\FlaggingInterface */
+          /** @var \Drupal\flag\FlaggingInterface $flagging */
           $recipient = $flagging->getOwner();
 
           if (!$recipient instanceof UserInterface) {

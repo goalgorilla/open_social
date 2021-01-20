@@ -80,7 +80,7 @@ class TwitterAuth extends SocialAuthNetwork {
       throw new SocialApiException(sprintf('The PHP SDK for Twitter Client could not be found. Class: %s.', $class_name));
     }
 
-    /* @var \Drupal\social_auth_twitter\Settings\TwitterAuthSettings $settings */
+    /** @var \Drupal\social_auth_twitter\Settings\TwitterAuthSettings $settings */
     $settings = $this->settings;
 
     if (!$this->validateConfig($settings)) {

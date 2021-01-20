@@ -9,7 +9,7 @@ use Drupal\Core\Form\FormStateInterface;
 /**
  * Plugin implementation of the 'categorized_options_buttons' widget.
  *
- * TODO: Handle submit to add categories also as tags on user profile.
+ * @todo Handle submit to add categories also as tags on user profile.
  *
  * @FieldWidget(
  *   id = "categorized_options_buttons",

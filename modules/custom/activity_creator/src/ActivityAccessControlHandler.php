@@ -105,10 +105,11 @@ class ActivityAccessControlHandler extends EntityAccessControlHandler implements
       $ref_entity_type = $related_object['0']['target_type'];
       $ref_entity_id = $related_object['0']['target_id'];
       try {
-        /** @var EntityInterface $ref_entity */
+        /** @var \Drupal\Core\Entity\EntityInterface $ref_entity */
         $ref_entity = $this->entityTypeManager->getStorage($ref_entity_type)
           ->load($ref_entity_id);
-      } catch (InvalidPluginDefinitionException | PluginNotFoundException $e) {
+      }
+      catch (InvalidPluginDefinitionException | PluginNotFoundException $e) {
         return AccessResult::neutral(sprintf('No opinion on access due to: %s', $e->getMessage()));
       }
 

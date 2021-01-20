@@ -28,7 +28,7 @@ class PostCommentController extends SocialCommentController {
 
     if ($entity->getEntityTypeId() === 'post') {
       // Check if the post has been posted in a group.
-      /* @var \Drupal\social_post\Entity\Post $entity */
+      /** @var \Drupal\social_post\Entity\Post $entity */
       $group_id = $entity->field_recipient_group->target_id;
       if ($group_id) {
         /** @var \Drupal\group\Entity\Group $group */
@@ -37,7 +37,7 @@ class PostCommentController extends SocialCommentController {
           if (!isset($comment)) {
             $comment = NULL;
           }
-          /* @var \Drupal\Core\Url $url*/
+          /** @var \Drupal\Core\Url $url*/
           if ($url = $entity->toUrl('canonical')) {
             // Redirect the user to the correct entity.
             return $this->redirectToOriginalEntity($url, $comment, $entity);

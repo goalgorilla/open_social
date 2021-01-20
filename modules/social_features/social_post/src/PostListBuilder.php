@@ -31,7 +31,7 @@ class PostListBuilder extends EntityListBuilder {
    */
   public function buildRow(EntityInterface $entity) {
     $row = [];
-    /* @var $entity \Drupal\social_post\Entity\Post */
+    /** @var \Drupal\social_post\Entity\Post $entity */
     $row['id'] = $entity->id();
     $row['post'] = '';
     if ($entity->hasField('field_post')) {
