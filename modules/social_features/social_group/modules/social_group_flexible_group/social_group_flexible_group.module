@@ -5,11 +5,16 @@
  * The Social Group Flexible Group module.
  */
 
-use Drupal\block\Entity\Block;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Cache\Cache;
+use Drupal\Core\Database\Query\AlterableInterface;
+use Drupal\Core\Entity\ContentEntityInterface;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\block\Entity\Block;
+use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\group\Entity\Group;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\social_group_flexible_group\FlexibleGroupContentVisibilityUpdate;
@@ -17,8 +22,6 @@ use Drupal\views\Plugin\views\query\QueryPluginBase;
 use Drupal\views\Plugin\views\row\EntityRow;
 use Drupal\views\ViewExecutable;
 use Drupal\views\Views;
-use Drupal\Core\Database\Query\AlterableInterface;
-use Drupal\Core\Entity\EntityInterface;
 
 /**
  * Provide a method to alter array of group types used in open social.
@@ -802,4 +805,28 @@ function social_group_flexible_group_block_access(Block $block, $operation, Acco
   }
 
   return AccessResult::neutral();
+}
+
+/**
+ * Sets dynamic allowed values for the group type icon field.
+ */
+function social_group_flexible_group_type_allowed_values_function(FieldStorageConfig $definition, ContentEntityInterface $entity = NULL, $cacheable) {
+  $theme_path = drupal_get_path('theme', 'socialbase');
+  $icon_files = file_scan_directory(DRUPAL_ROOT . '/' . $theme_path . '/components/06-libraries/icons/source', '/^icon-.*\.svg$/', ['recurse' => FALSE]);
+
+  $options = [];
+  foreach ($icon_files as $file) {
+    $options[$file->name] = $file->name;
+  }
+
+  return $options;
+}
+
+/**
+ * Sets the default value for the group type icon field.
+ */
+function social_group_flexible_group_type_default_value_function(ContentEntityInterface $entity, FieldDefinitionInterface $definition) {
+  return [
+    ['value' => 'icon-event'],
+  ];
 }
