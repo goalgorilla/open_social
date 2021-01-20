@@ -18,7 +18,7 @@ abstract class ActivitySendWorkerBase extends QueueWorkerBase {
    *   The $data which should be stored in the queue item.
    */
   protected function createQueueItem($queue_name, $data) {
-    /** @phpstan-ignore-next-line: cannot inject the QueueFactory, since the plugins below already override the QueueWorkerBase constructor. */
+    /* @phpstan-ignore-next-line: cannot inject the QueueFactory, since the plugins below already override the QueueWorkerBase constructor. */
     $queue = \Drupal::queue($queue_name);
     $queue->createItem($data);
   }

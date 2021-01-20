@@ -29,7 +29,7 @@ class FontListBuilder extends EntityListBuilder {
    */
   public function buildRow(EntityInterface $entity) {
     $row = [];
-    /* @var $entity \Drupal\social_font\Entity\Font */
+    /** @var \Drupal\social_font\Entity\Font $entity */
     $row['id'] = $entity->id();
     $row['name'] = Link::fromTextAndUrl($entity->label(), new Url(
       'entity.font.edit_form', [

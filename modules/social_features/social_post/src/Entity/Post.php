@@ -289,7 +289,7 @@ class Post extends ContentEntityBase implements PostInterface {
   public function getCacheContexts() {
     $defaults = parent::getCacheContexts();
 
-    // @TODO Change this to custom cache context, may edit/delete post.
+    // @todo Change this to custom cache context, may edit/delete post.
     if (!in_array('user', $defaults)) {
       $defaults[] = 'user';
     }

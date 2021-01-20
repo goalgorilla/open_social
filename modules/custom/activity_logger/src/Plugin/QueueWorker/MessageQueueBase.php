@@ -15,6 +15,9 @@ abstract class MessageQueueBase extends QueueWorkerBase {
    */
   protected $queue;
 
+  /**
+   *
+   */
   public function __construct(array $configuration, $plugin_id, array $plugin_definition, QueueFactory $queue) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 

@@ -76,7 +76,7 @@ class EntityAccessByFieldPermissions implements ContainerInjectionInterface {
       /** @var \Drupal\field\Entity\FieldConfig $field */
       foreach ($fields as $field) {
         $field_storage = $field->getFieldStorageDefinition();
-        // @TODO Add support for allowed_values_function.
+        // @todo Add support for allowed_values_function.
         $allowed_values = $field_storage->getSetting('allowed_values');
         if (!empty($allowed_values)) {
           foreach ($allowed_values as $field_key => $field_label) {
@@ -112,7 +112,7 @@ class EntityAccessByFieldPermissions implements ContainerInjectionInterface {
       /** @var \Drupal\field\Entity\FieldConfig $field */
       foreach ($fields as $field) {
         $field_storage = $field->getFieldStorageDefinition();
-        // @TODO Add support for allowed_values_function.
+        // @todo Add support for allowed_values_function.
         $allowed_values = $field_storage->getSetting('allowed_values');
         if (!empty($allowed_values)) {
           foreach ($allowed_values as $field_key => $field_label) {

@@ -23,11 +23,11 @@ class SocialCommentController extends CommentController {
   public function commentPermalink(Request $request, CommentInterface $comment) {
     if ($entity = $comment->getCommentedEntity()) {
       // Check access permissions for the entity.
-      /* @var \Drupal\Core\Entity\EntityBase $entity */
+      /** @var \Drupal\Core\Entity\EntityBase $entity */
       if (!$entity->access('view')) {
         throw new AccessDeniedHttpException();
       }
-      /* @var \Drupal\Core\Url $url */
+      /** @var \Drupal\Core\Url $url */
       if ($url = $entity->toUrl('canonical')) {
         // Redirect the user to the correct entity.
         return $this->redirectToOriginalEntity($url, $comment, $entity);
@@ -76,11 +76,11 @@ class SocialCommentController extends CommentController {
 
     if ($entity = $comment->getCommentedEntity()) {
       // Check access permissions for the entity.
-      /* @var \Drupal\Core\Entity\EntityInterface $entity */
+      /** @var \Drupal\Core\Entity\EntityInterface $entity */
       if (!$entity->access('view')) {
         throw new AccessDeniedHttpException();
       }
-      /* @var \Drupal\Core\Url $url */
+      /** @var \Drupal\Core\Url $url */
       if ($url = $entity->toUrl('canonical')) {
         // Redirect the user to the correct entity.
         return $this->redirectToOriginalEntity($url, $comment, $entity);

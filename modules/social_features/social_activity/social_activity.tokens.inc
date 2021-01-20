@@ -86,7 +86,7 @@ function social_activity_tokens($type, $tokens, array $data, array $options, Bub
                   $display_name = mb_strtolower($group_content_type->label());
                 }
 
-                /* @var \Drupal\node\NodeInterface $node */
+                /** @var \Drupal\node\NodeInterface $node */
                 $node = $entity->getEntity();
 
                 if ($node instanceof NodeInterface) {

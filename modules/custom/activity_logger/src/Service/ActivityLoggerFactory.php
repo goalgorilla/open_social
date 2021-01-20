@@ -29,7 +29,7 @@ class ActivityLoggerFactory {
   protected $activityEntityConditionManager;
 
   /**
-   * @var \Drupal\activity_creator\Plugin\ActivityContextManager;
+   * @var \Drupal\activity_creator\Plugin\ActivityContextManager
    */
   protected $activityContextManager;
 
@@ -50,14 +50,12 @@ class ActivityLoggerFactory {
     EntityTypeManagerInterface $entityTypeManager,
     ActivityEntityConditionManager $activityEntityConditionManager,
     ActivityContextManager $activityContextManager,
-    ModuleHandlerInterface $moduleHandler)
-  {
+    ModuleHandlerInterface $moduleHandler) {
     $this->entityTypeManager = $entityTypeManager;
     $this->activityEntityConditionManager = $activityEntityConditionManager;
     $this->activityContextManager = $activityContextManager;
     $this->moduleHandler = $moduleHandler;
   }
-
 
   /**
    * Create message entities.

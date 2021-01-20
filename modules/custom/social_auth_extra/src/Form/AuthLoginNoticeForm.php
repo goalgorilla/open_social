@@ -5,6 +5,8 @@ namespace Drupal\social_auth_extra\Form;
 use Drupal\Core\Form\ConfirmFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
+use Drupal\social_api\Plugin\NetworkManager;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Class AuthLoginNoticeForm.
@@ -19,6 +21,30 @@ class AuthLoginNoticeForm extends ConfirmFormBase {
    * @var array
    */
   protected $socialNetwork;
+
+  /**
+   * @var \Drupal\social_api\Plugin\NetworkManager
+   */
+  protected $networkManager;
+
+
+  /**
+   * AuthLoginNoticeForm constructor.
+   *
+   * @param \Drupal\social_api\Plugin\NetworkManager $network_manager
+   */
+  public function __construct(NetworkManager $network_manager) {
+    $this->networkManager = $network_manager;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('plugin.network.manager')
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -68,11 +94,10 @@ class AuthLoginNoticeForm extends ConfirmFormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state, $network = NULL) {
-    $network_manager = \Drupal::service('plugin.network.manager');
-    $definitions = $network_manager->getDefinitions();
+    $definitions = $this->networkManager->getDefinitions();
 
     foreach ($definitions as $definition) {
-      $instance = $network_manager->createInstance($definition['id']);
+      $instance = $this->networkManager->createInstance($definition['id']);
 
       if ($network == $instance->getSocialNetworkKey()) {
         $this->socialNetwork = $definition;

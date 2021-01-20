@@ -9,7 +9,7 @@ use Drupal\views\Plugin\views\filter\FilterPluginBase;
 /**
  * Filters post on a group stream.
  *
- * @TODO Perhaps we should create an PostEntityStream instead.
+ * @todo Perhaps we should create an PostEntityStream instead.
  *
  * @ingroup views_filter_handlers
  *

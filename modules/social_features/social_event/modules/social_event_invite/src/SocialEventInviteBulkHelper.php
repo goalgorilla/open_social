@@ -161,7 +161,7 @@ class SocialEventInviteBulkHelper {
     $results = [];
 
     foreach ($users as $user) {
-      // Todo: Should be merged with extractEmailsFrom from InviteEmailBaseForm.
+      // @todo Should be merged with extractEmailsFrom from InviteEmailBaseForm.
       // Remove select2 ID parameter.
       $user = str_replace('$ID:', '', $user);
       preg_match_all("/[\._a-zA-Z0-9+-]+@[\._a-zA-Z0-9+-]+/i", $user, $email);

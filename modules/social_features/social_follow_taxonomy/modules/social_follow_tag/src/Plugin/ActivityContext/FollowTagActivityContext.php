@@ -42,7 +42,7 @@ class FollowTagActivityContext extends FollowTaxonomyActivityContext {
     ]);
 
     foreach ($flaggings as $flagging) {
-      /* @var $flagging \Drupal\flag\FlaggingInterface */
+      /** @var \Drupal\flag\FlaggingInterface $flagging */
       $recipient = $flagging->getOwner();
 
       // It could happen that a notification has been queued but the content or
@@ -91,7 +91,7 @@ class FollowTagActivityContext extends FollowTaxonomyActivityContext {
         ]);
 
         foreach ($flaggings as $flagging) {
-          /* @var $flagging \Drupal\flag\FlaggingInterface */
+          /** @var \Drupal\flag\FlaggingInterface $flagging */
           $recipient = $flagging->getOwner();
 
           if (!$recipient instanceof UserInterface) {

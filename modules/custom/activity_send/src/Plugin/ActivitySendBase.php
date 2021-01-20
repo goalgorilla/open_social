@@ -15,9 +15,13 @@ abstract class ActivitySendBase extends PluginBase implements ActivitySendInterf
    */
   protected $queue;
 
+  /**
+   *
+   */
   public function __construct(array $configuration, $plugin_id, $plugin_definition, QueueFactory $queue) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
     $this->queue = $queue;
   }
+
 }

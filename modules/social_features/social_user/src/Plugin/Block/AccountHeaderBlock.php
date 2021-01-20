@@ -196,7 +196,7 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
           ],
           '#weight' => 0,
         ],
-        // TODO: Figure out how move these dividers to the right modules.
+        // @todo Figure out how move these dividers to the right modules.
         'divider_mobile' => [
           "#wrapper_attributes" => [
             "class" => ["divider", "mobile"],

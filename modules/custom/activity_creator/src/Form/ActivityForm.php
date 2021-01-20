@@ -16,7 +16,7 @@ class ActivityForm extends ContentEntityForm {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    /* @var $entity \Drupal\activity_creator\Entity\Activity */
+    /** @var \Drupal\activity_creator\Entity\Activity $entity */
     $form = parent::buildForm($form, $form_state);
     return $form;
   }

@@ -36,14 +36,14 @@ class EntityAccessTest extends UnitTestCase {
   /**
    * The account id.
    *
-   * @var integer
+   * @var int
    */
   protected $accountId = 5;
 
   /**
    * The account id.
    *
-   * @var integer
+   * @var int
    */
   protected $nodeOwnerId;
 

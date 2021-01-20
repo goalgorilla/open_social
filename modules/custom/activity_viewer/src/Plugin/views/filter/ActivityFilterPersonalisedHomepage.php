@@ -18,7 +18,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class ActivityFilterPersonalisedHomepage extends FilterPluginBase {
 
   /**
-   * @var SocialGroupHelperService
+   * @var \Drupal\social_group\SocialGroupHelperService
    */
   protected $groupHelper;
 
