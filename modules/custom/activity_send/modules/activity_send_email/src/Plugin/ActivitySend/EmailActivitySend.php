@@ -19,7 +19,7 @@ class EmailActivitySend extends ActivitySendBase {
    */
   public function create($entity) {
     $data['entity_id'] = $entity->id();
-    $queue = \Drupal::queue('activity_send_email_worker');
+    $queue = $this->queue->get('activity_send_email_worker');
     $queue->createItem($data);
   }
 
