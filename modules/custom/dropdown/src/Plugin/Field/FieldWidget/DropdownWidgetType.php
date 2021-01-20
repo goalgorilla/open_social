@@ -3,6 +3,7 @@
 namespace Drupal\dropdown\Plugin\Field\FieldWidget;
 
 use Drupal\Core\Entity\FieldableEntityInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\FieldFilteredMarkup;
@@ -38,13 +39,20 @@ class DropdownWidgetType extends WidgetBase {
   protected $options;
 
   /**
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface
+   */
+  private $moduleHandler;
+
+  /**
    * {@inheritdoc}
    */
-  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, array $third_party_settings) {
+  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, array $third_party_settings, ModuleHandlerInterface $module_handler) {
     parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $third_party_settings);
     $property_names = $this->fieldDefinition->getFieldStorageDefinition()->getPropertyNames();
     $this->column = $property_names[0];
     $this->options = [];
+
+    $this->moduleHandler = $module_handler;
   }
 
   /**
@@ -107,12 +115,11 @@ class DropdownWidgetType extends WidgetBase {
         ->getFieldStorageDefinition()
         ->getSetting('allowed_values');
 
-      $module_handler = \Drupal::moduleHandler();
       $context = [
         'fieldDefinition' => $this->fieldDefinition,
         'entity' => $entity,
       ];
-      $module_handler->alter('dropdown_list', $options, $context);
+      $this->moduleHandler->alter('dropdown_list', $options, $context);
 
       array_walk_recursive($options, [$this, 'sanitizeLabel']);
 
