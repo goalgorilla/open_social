@@ -4,11 +4,12 @@ namespace Drupal\social_comment;
 
 use Drupal\ajax_comments\Utility;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Security\TrustedCallbackInterface;
 
 /**
- * Class SocialCommentLazyRenderer.
+ * Render comments for the lazy builder.
  *
  * @package Drupal\social_comment
  */
@@ -36,16 +37,26 @@ class SocialCommentLazyRenderer implements TrustedCallbackInterface {
   private $routeMatch;
 
   /**
+   * The module handler.
+   *
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface
+   */
+  protected $moduleHandler;
+
+  /**
    * SocialCommentLazyRenderer constructor.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity type manager.
    * @param \Drupal\Core\Routing\RouteMatchInterface $route_match
    *   The current route match.
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
+   *   The module handler.
    */
-  public function __construct(EntityTypeManagerInterface $entity_type_manager, RouteMatchInterface $route_match) {
+  public function __construct(EntityTypeManagerInterface $entity_type_manager, RouteMatchInterface $route_match, ModuleHandlerInterface $module_handler) {
     $this->entityTypeManager = $entity_type_manager;
     $this->routeMatch = $route_match;
+    $this->moduleHandler = $module_handler;
   }
 
   /**
@@ -95,7 +106,7 @@ class SocialCommentLazyRenderer implements TrustedCallbackInterface {
 
     // Since we are rendering it as lazy builder, make sure we attach classes
     // required by ajax_comments. In order to render reply forms etc.
-    if (!empty($build_comments) && \Drupal::moduleHandler()->moduleExists('ajax_comments')) {
+    if (!empty($build_comments) && $this->moduleHandler->moduleExists('ajax_comments')) {
       Utility::addCommentClasses($build_comments);
     }
 
