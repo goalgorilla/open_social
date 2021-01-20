@@ -41,9 +41,9 @@ class GroupAddBookBlock extends BlockBase implements ContainerFactoryPluginInter
    *
    * @param array $configuration
    *   The given configuration.
-   * @param $plugin_id
+   * @param string $plugin_id
    *   The given plugin id.
-   * @param $plugin_definition
+   * @param mixed $plugin_definition
    *   The given plugin definition.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    *   Module handler.
