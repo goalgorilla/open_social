@@ -235,6 +235,7 @@ class ActivityNotifications extends ControllerBase {
       catch (\Exception $exception) {
         // Log the exception to watchdog.
         $this->getLogger('default')->error($exception->getMessage());
+        return [];
       }
     }
     return [];

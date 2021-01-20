@@ -13,6 +13,41 @@ use Drupal\entity_access_by_field\EntityAccessHelper;
 class EntityAccessTest extends UnitTestCase {
 
   /**
+   * The field type random machinename.
+   *
+   * @var string
+   */
+  protected $fieldType;
+
+  /**
+   * The visibility value.
+   *
+   * @var string
+   */
+  protected $fieldValue;
+
+  /**
+   * The field id.
+   *
+   * @var string
+   */
+  protected $fieldId = 'node.article.field_content_visibility';
+
+  /**
+   * The account id.
+   *
+   * @var integer
+   */
+  protected $accountId = 5;
+
+  /**
+   * The account id.
+   *
+   * @var integer
+   */
+  protected $nodeOwnerId;
+
+  /**
    * Tests the EntityAccessHelper::nodeAccessCheck for Neutral Access.
    */
   public function testNeutralAccess() {
@@ -44,10 +79,8 @@ class EntityAccessTest extends UnitTestCase {
 
     $node = $this->prophesize(NodeInterface::class);
 
-    $this->fieldId = 'node.article.field_content_visibility';
     $this->fieldValue = 'public';
     $this->fieldType = 'entity_access_field';
-    $this->accountId = 5;
     $this->nodeOwnerId = 3;
     $fieldDefinitionInterface = $this->createMock('Drupal\Core\Field\FieldConfigInterface');
     $fieldDefinitionInterface->expects($this->once())
@@ -135,10 +168,8 @@ class EntityAccessTest extends UnitTestCase {
 
     $node = $this->prophesize(NodeInterface::class);
 
-    $this->fieldId = 'node.article.field_content_visibility';
     $this->fieldValue = 'nonexistant';
     $this->fieldType = 'entity_access_field';
-    $this->accountId = 5;
     $this->nodeOwnerId = 5;
 
     $fieldDefinitionInterface = $this->createMock('Drupal\Core\Field\FieldConfigInterface');

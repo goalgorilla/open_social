@@ -31,12 +31,20 @@ class DropdownWidgetType extends WidgetBase {
   protected $column;
 
   /**
+   * Widget options.
+   *
+   * @var array
+   */
+  protected $options;
+
+  /**
    * {@inheritdoc}
    */
   public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, array $third_party_settings) {
     parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $third_party_settings);
     $property_names = $this->fieldDefinition->getFieldStorageDefinition()->getPropertyNames();
     $this->column = $property_names[0];
+    $this->options = [];
   }
 
   /**
@@ -68,11 +76,6 @@ class DropdownWidgetType extends WidgetBase {
    * {@inheritdoc}
    */
   public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
-
-    $this->required = $element['#required'];
-    $this->multiple = $this->fieldDefinition->getFieldStorageDefinition()->isMultiple();
-    $this->has_value = isset($items[$delta]->{$this->column});
-
     // Add our custom validator.
     $element['#element_validate'][] = [get_class($this), 'validateElement'];
     $element['#key_column'] = $this->column;
@@ -169,7 +172,7 @@ class DropdownWidgetType extends WidgetBase {
   /**
    * Sanitizes a string label to display as an option.
    *
-   * @param string $label
+   * @param \Drupal\Component\Render\MarkupInterface|string $label
    *   The label to sanitize.
    */
   protected function sanitizeLabel(&$label) {
