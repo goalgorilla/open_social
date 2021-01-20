@@ -3,8 +3,10 @@
 namespace Drupal\activity_viewer\Plugin\views\filter;
 
 use Drupal\Core\Database\Query\Condition;
+use Drupal\social_group\SocialGroupHelperService;
 use Drupal\views\Plugin\views\filter\FilterPluginBase;
 use Drupal\views\Views;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Filters activity based on visibility settings for Explore.
@@ -14,6 +16,38 @@ use Drupal\views\Views;
  * @ViewsFilter("activity_explore_visibility_access")
  */
 class ActivityExploreVisibilityAccess extends FilterPluginBase {
+
+  /**
+   * @var SocialGroupHelperService
+   */
+  protected $groupHelper;
+
+  /**
+   * Constructs a Handler object.
+   *
+   * @param array $configuration
+   *   A configuration array containing information about the plugin instance.
+   * @param string $plugin_id
+   *   The plugin_id for the plugin instance.
+   * @param mixed $plugin_definition
+   *   The plugin implementation definition.
+   * @param \Drupal\social_group\SocialGroupHelperService $group_helper
+   */
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, SocialGroupHelperService $group_helper) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition);
+
+    $this->groupHelper = $group_helper;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    return new static(
+      $configuration, $plugin_id, $plugin_definition,
+      $container->get('social_group.helper_service')
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -79,7 +113,7 @@ class ActivityExploreVisibilityAccess extends FilterPluginBase {
       // Remove all content from groups I am a member of.
       $nodes_not_in_groups = new Condition('OR');
       $new_and = new Condition('AND');
-      if ($my_groups = \Drupal::service('social_group.helper_service')
+      if ($my_groups = $this->groupHelper
         ->getAllGroupsForUser($account->id())) {
         $nodes_not_in_groups->condition($new_and
           ->condition('activity__field_activity_recipient_group.field_activity_recipient_group_target_id', $my_groups, 'NOT IN')
