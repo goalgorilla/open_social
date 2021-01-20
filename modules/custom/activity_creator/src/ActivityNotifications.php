@@ -237,9 +237,7 @@ class ActivityNotifications extends ControllerBase {
         $this->getLogger('default')->error($exception->getMessage());
       }
     }
-    else {
-      return [];
-    }
+    return [];
   }
 
   /**
