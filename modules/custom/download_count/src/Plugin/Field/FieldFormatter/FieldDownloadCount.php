@@ -26,19 +26,42 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class FieldDownloadCount extends GenericFileFormatter {
 
   /**
+   * The current user.
+   *
    * @var \Drupal\Core\Session\AccountProxyInterface
    */
   private $currentUser;
 
   /**
+   * The theme manager.
+   *
    * @var \Drupal\Core\Theme\ThemeManagerInterface
    */
   private $themeManager;
 
   /**
+   * FieldDownloadCount constructor.
    *
+   * @param string $plugin_id
+   *   The plugin id.
+   * @param array $plugin_definition
+   *   The plugin definition.
+   * @param \Drupal\Core\Field\FieldDefinitionInterface $field_definition
+   *   The field definition.
+   * @param array $settings
+   *   The settings array.
+   * @param string $label
+   *   The formatter label display setting.
+   * @param string $view_mode
+   *   The view mode.
+   * @param array $third_party_settings
+   *   Any third party settings.
+   * @param \Drupal\Core\Session\AccountProxyInterface $current_user
+   *   The current user.
+   * @param \Drupal\Core\Theme\ThemeManagerInterface $theme_manager
+   *   The theme manager.
    */
-  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, $label, $view_mode, array $third_party_settings, AccountProxyInterface $current_user, ThemeManagerInterface $theme_manager) {
+  public function __construct($plugin_id, array $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, $label, $view_mode, array $third_party_settings, AccountProxyInterface $current_user, ThemeManagerInterface $theme_manager) {
     parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $label, $view_mode, $third_party_settings);
 
     $this->currentUser = $current_user;

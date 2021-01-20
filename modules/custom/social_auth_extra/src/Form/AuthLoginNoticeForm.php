@@ -23,15 +23,17 @@ class AuthLoginNoticeForm extends ConfirmFormBase {
   protected $socialNetwork;
 
   /**
+   * The network manager.
+   *
    * @var \Drupal\social_api\Plugin\NetworkManager
    */
   protected $networkManager;
-
 
   /**
    * AuthLoginNoticeForm constructor.
    *
    * @param \Drupal\social_api\Plugin\NetworkManager $network_manager
+   *   The network manager.
    */
   public function __construct(NetworkManager $network_manager) {
     $this->networkManager = $network_manager;

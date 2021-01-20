@@ -19,21 +19,29 @@ use Drupal\user\EntityOwnerInterface;
 class ActivityLoggerFactory {
 
   /**
+   * The entity type manager.
+   *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
   protected $entityTypeManager;
 
   /**
+   * The condition manager.
+   *
    * @var \Drupal\activity_creator\Plugin\ActivityEntityConditionManager
    */
   protected $activityEntityConditionManager;
 
   /**
+   * The context manager.
+   *
    * @var \Drupal\activity_creator\Plugin\ActivityContextManager
    */
   protected $activityContextManager;
 
   /**
+   * The module handler.
+   *
    * @var \Drupal\Core\Extension\ModuleHandlerInterface
    */
   protected $moduleHandler;
@@ -42,9 +50,13 @@ class ActivityLoggerFactory {
    * ActivityLoggerFactory constructor.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
+   *   The entity type manager.
    * @param \Drupal\activity_creator\Plugin\ActivityEntityConditionManager $activityEntityConditionManager
+   *   The condition manager.
    * @param \Drupal\activity_creator\Plugin\ActivityContextManager $activityContextManager
+   *   The context manager.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $moduleHandler
+   *   The module handler.
    */
   public function __construct(
     EntityTypeManagerInterface $entityTypeManager,

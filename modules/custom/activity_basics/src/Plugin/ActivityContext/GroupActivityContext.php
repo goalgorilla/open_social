@@ -22,6 +22,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class GroupActivityContext extends ActivityContextBase {
 
   /**
+   * The group helper service.
+   *
    * @var \Drupal\social_group\SocialGroupHelperService
    */
   protected $grouphelperService;
@@ -42,6 +44,7 @@ class GroupActivityContext extends ActivityContextBase {
    * @param \Drupal\activity_creator\ActivityFactory $activity_factory
    *   The activity factory service.
    * @param \Drupal\social_group\SocialGroupHelperService $grouphelper_service
+   *   The group helper service.
    */
   public function __construct(
     array $configuration,

@@ -18,6 +18,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class ActivityPostVisibilityAccess extends FilterPluginBase {
 
   /**
+   * The group helper.
+   *
    * @var \Drupal\social_group\SocialGroupHelperService
    */
   protected $groupHelper;
@@ -32,6 +34,7 @@ class ActivityPostVisibilityAccess extends FilterPluginBase {
    * @param mixed $plugin_definition
    *   The plugin implementation definition.
    * @param \Drupal\social_group\SocialGroupHelperService $group_helper
+   *   The group helper.
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition, SocialGroupHelperService $group_helper) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);

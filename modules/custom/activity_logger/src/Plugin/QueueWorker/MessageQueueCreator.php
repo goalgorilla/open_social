@@ -20,12 +20,25 @@ use Drupal\node\Entity\Node;
 class MessageQueueCreator extends MessageQueueBase {
 
   /**
+   * The action manager.
+   *
    * @var \Drupal\activity_creator\Plugin\ActivityActionManager
    */
   protected $actionManager;
 
   /**
+   * MessageQueueCreator constructor.
    *
+   * @param array $configuration
+   *   The configuration.
+   * @param string $plugin_id
+   *   The plugin id.
+   * @param array $plugin_definition
+   *   The plugin definition.
+   * @param \Drupal\Core\Queue\QueueFactory $queue
+   *   The queue.
+   * @param \Drupal\activity_creator\Plugin\ActivityActionManager $actionManager
+   *   The action manager.
    */
   public function __construct(array $configuration, $plugin_id, array $plugin_definition, QueueFactory $queue, ActivityActionManager $actionManager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $queue);

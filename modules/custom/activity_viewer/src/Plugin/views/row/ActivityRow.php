@@ -22,6 +22,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class ActivityRow extends EntityRow {
 
   /**
+   * Activity destination manager.
+   *
    * @var \Drupal\activity_creator\Plugin\ActivityDestinationManager
    */
   protected $activityDestinationManager;
@@ -30,13 +32,21 @@ class ActivityRow extends EntityRow {
    * ActivityRow constructor.
    *
    * @param array $configuration
-   * @param $plugin_id
+   *   The config.
+   * @param string $plugin_id
+   *   The plugin id.
    * @param array $plugin_definition
+   *   The plugin definition.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
    * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
+   *   The language manager.
    * @param \Drupal\Core\Entity\EntityRepositoryInterface|null $entity_repository
+   *   The entity repository.
    * @param \Drupal\Core\Entity\EntityDisplayRepositoryInterface|null $entity_display_repository
+   *   The entity display repository.
    * @param \Drupal\activity_creator\Plugin\ActivityDestinationManager $activity_destination_manager
+   *   The activity destination manager.
    */
   public function __construct(array $configuration, $plugin_id, array $plugin_definition, EntityTypeManagerInterface $entity_type_manager, LanguageManagerInterface $language_manager, EntityRepositoryInterface $entity_repository, EntityDisplayRepositoryInterface $entity_display_repository, ActivityDestinationManager $activity_destination_manager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_type_manager, $language_manager, $entity_repository, $entity_display_repository);
