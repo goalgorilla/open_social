@@ -238,9 +238,7 @@ class ActivityNotifications extends ControllerBase {
         return [];
       }
     }
-    else {
-      return [];
-    }
+    return [];
   }
 
   /**
