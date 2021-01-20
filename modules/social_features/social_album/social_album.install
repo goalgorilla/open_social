@@ -14,6 +14,7 @@ use Drupal\user\RoleInterface;
 function social_album_install() {
   // Set some default permissions.
   _social_album_set_permissions();
+  _social_album_set_group_permissions();
 
   module_set_weight('social_album', 5);
 
@@ -88,6 +89,95 @@ function _social_album_get_permissions($role) {
 }
 
 /**
+ * Function to set group permissions.
+ */
+function _social_album_set_group_permissions() {
+  $common_permissions = [
+    'anonymous' => [],
+    'outsider' => [
+      'update own group_node:album entity',
+    ],
+    'member' => [
+      'create group_node:album entity',
+      'delete own group_node:album entity',
+      'view group_node:album entity',
+      'view group_node:album content',
+    ],
+    'group_manager' => [
+      'delete any group_node:album entity',
+    ],
+    'group_admin' => [
+      'update any group_node:album entity',
+      'view unpublished group_node:album entity',
+      'create group_node:album content',
+      'delete any group_node:album content',
+      'delete own group_node:album content',
+      'update any group_node:album content',
+      'update own group_node:album content',
+    ],
+  ];
+
+  $previous = [];
+
+  foreach ($common_permissions as &$current) {
+    $previous = array_merge($previous, $current);
+    $current = $previous;
+  }
+
+  $permissions = [
+    'open_group' => [
+      'outsider' => [
+        'view group_node:album entity',
+        'view group_node:album content',
+      ],
+    ],
+    'public_group' => [
+      'anonymous' => [
+        'view group_node:album entity',
+        'view group_node:album content',
+      ],
+    ],
+  ];
+
+  foreach ($permissions as &$type_permissions) {
+    $all_type_permissions = $previous = [];
+
+    foreach ($common_permissions as $role_id => $common_permissions_list) {
+      if (isset($type_permissions[$role_id])) {
+        $previous = array_merge($previous, $type_permissions[$role_id]);
+      }
+
+      $all_type_permissions[$role_id] = array_unique(array_merge($common_permissions_list, $previous));
+    }
+
+    $type_permissions = $all_type_permissions;
+  }
+
+  $type_storage = \Drupal::entityTypeManager()->getStorage('group_type');
+
+  /** @var \Drupal\group\Entity\Storage\GroupRoleStorageInterface $role_storage */
+  $role_storage = \Drupal::entityTypeManager()->getStorage('group_role');
+
+  foreach (\Drupal::entityQuery('group_type')->execute() as $type_id) {
+    /** @var \Drupal\group\Entity\GroupTypeInterface $type */
+    $type = $type_storage->load($type_id);
+
+    foreach ($type->getRoleIds() as $type_role_id) {
+      $role_id = explode('-', $type_role_id)[1];
+
+      if (isset($common_permissions[$role_id])) {
+        /** @var \Drupal\group\Entity\GroupRoleInterface $role */
+        $role = $role_storage->load($type_role_id);
+
+        $role
+          ->grantPermissions($permissions[$type_id][$role_id] ?? $common_permissions[$role_id])
+          ->save();
+      }
+    }
+  }
+}
+
+/**
  * Process list of pages where chosen blocks should be shown.
  *
  * @param callable $function
@@ -125,4 +215,11 @@ function _social_album_blocks(callable $function) {
       $block->setVisibilityConfig('request_path', $configuration)->save();
     }
   }
+}
+
+/**
+ * Set some default group permissions.
+ */
+function social_album_update_8901() {
+  _social_album_set_group_permissions();
 }
