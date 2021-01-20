@@ -4,6 +4,7 @@ namespace Drupal\social_book;
 
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Config\ConfigFactoryOverrideInterface;
+use Drupal\Core\Config\StorageInterface;
 
 /**
  * Class SocialBookConfigOverride.
