@@ -7,6 +7,8 @@ use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Config\ConfigFactoryOverrideInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Config\StorageInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Entity\Query\QueryFactoryInterface;
 
 /**
  * Class SocialContentBlockOverride.
@@ -25,6 +27,13 @@ class SocialContentBlockOverride implements ConfigFactoryOverrideInterface {
   protected $configFactory;
 
   /**
+   * The entity type manager.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  protected $entityTypeManager;
+
+  /**
    * The content block plugin definitions.
    *
    * @var array
@@ -36,11 +45,16 @@ class SocialContentBlockOverride implements ConfigFactoryOverrideInterface {
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The configuration factory.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
    */
-  public function __construct(ConfigFactoryInterface $config_factory) {
+  public function __construct(ConfigFactoryInterface $config_factory, EntityTypeManagerInterface $entity_type_manager) {
     $this->configFactory = $config_factory;
+    $this->entityTypeManager = $entity_type_manager;
 
+    /* @phpstan-ignore-next-line: there's a chance the service isn't available yet. */
     if (\Drupal::hasService('plugin.manager.content_block')) {
+      /* @phpstan-ignore-next-line: there's a chance the service isn't available yet. */
       $this->definitions = \Drupal::service('plugin.manager.content_block')->getDefinitions();
     }
   }
@@ -58,7 +72,8 @@ class SocialContentBlockOverride implements ConfigFactoryOverrideInterface {
       $settings = $config->getOriginal('settings', FALSE)['plugin_ids'];
 
       // Get all the blocks from this custom block type.
-      $query = \Drupal::entityQuery('block_content')
+      $storage = $this->entityTypeManager->getStorage('block_content');
+      $query = $storage->getQuery()
         ->condition('type', 'custom_content_list');
       $ids = $query->execute();
 
