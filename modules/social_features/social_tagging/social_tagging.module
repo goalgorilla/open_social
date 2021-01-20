@@ -14,7 +14,7 @@ use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Url;
 use Drupal\taxonomy\Entity\Term;
-use Drupal\core\Database\Database;
+use Drupal\Core\Database\Database;
 
 /**
  * Implements hook_help().
@@ -322,7 +322,7 @@ function social_tagging_entity_delete(EntityInterface $entity) {
   if ($entity instanceof Term &&
     $entity->bundle() === 'social_tagging') {
     /* @see: taxonomy_taxonomy_term_delete(), delete from node field. */
-    // We need to use `\Drupal\core\Database\Database::getConnection()`
+    // We need to use `\Drupal\Core\Database\Database::getConnection()`
     // because we might not yet have access to the container here.
     Database::getConnection()->delete('node__social_tagging')->condition('social_tagging_target_id', $entity->id())->execute();
     Database::getConnection()->delete('node_revision__social_tagging')->condition('social_tagging_target_id', $entity->id())->execute();
