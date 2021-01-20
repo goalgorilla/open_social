@@ -2,6 +2,8 @@
 
 namespace Drupal\activity_logger\Plugin\QueueWorker;
 
+use Drupal\activity_creator\Plugin\ActivityActionManager;
+use Drupal\Core\Queue\QueueFactory;
 use Drupal\node\Entity\Node;
 
 /**
@@ -16,6 +18,17 @@ use Drupal\node\Entity\Node;
  * This QueueWorker is responsible for creating message items from the queue
  */
 class MessageQueueCreator extends MessageQueueBase {
+
+  /**
+   * @var \Drupal\activity_creator\Plugin\ActivityActionManager
+   */
+  protected $actionManager;
+
+  public function __construct(array $configuration, $plugin_id, array $plugin_definition, QueueFactory $queue, ActivityActionManager $actionManager) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $queue);
+
+    $this->actionManager = $actionManager;
+  }
 
   /**
    * {@inheritdoc}
@@ -35,13 +48,11 @@ class MessageQueueCreator extends MessageQueueBase {
         // Wait for 100 milliseconds.
         // We don't want to flood the DB with unprocessable queue items.
         usleep(100000);
-        $queue = \Drupal::queue('activity_logger_message');
-        $queue->createItem($data);
+        $this->createQueueItem('activity_logger_message', $data);
       }
       else {
-        $activity_logger_factory = \Drupal::service('plugin.manager.activity_action.processor');
         // Trigger the create action for enttites.
-        $create_action = $activity_logger_factory->createInstance('create_entitiy_action');
+        $create_action = $this->actionManager->createInstance('create_entitiy_action');
         $create_action->createMessage($entity);
       }
     }
