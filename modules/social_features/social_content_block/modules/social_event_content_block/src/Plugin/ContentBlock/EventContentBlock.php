@@ -5,7 +5,6 @@ namespace Drupal\social_event_content_block\Plugin\ContentBlock;
 use Drupal\Core\Database\Query\SelectInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
-use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface;
 use Drupal\social_content_block\ContentBlockBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
