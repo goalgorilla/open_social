@@ -175,7 +175,7 @@ class SocialCommentAdminOverview extends FormBase {
       ->pager(50)
       ->execute();
 
-    /* @var $comments \Drupal\comment\CommentInterface[] */
+    /** @var \Drupal\comment\CommentInterface[] $comments */
     $comments = $this->commentStorage->loadMultiple($cids);
 
     // Build a table listing the appropriate comments.

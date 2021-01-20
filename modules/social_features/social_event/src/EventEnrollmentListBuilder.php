@@ -29,7 +29,7 @@ class EventEnrollmentListBuilder extends EntityListBuilder {
    */
   public function buildRow(EntityInterface $entity) {
     $row = [];
-    /* @var $entity \Drupal\social_event\Entity\EventEnrollment */
+    /** @var \Drupal\social_event\Entity\EventEnrollment $entity */
     $row['id'] = $entity->id();
     $row['name'] = Link::fromTextAndUrl($entity->label(), new Url(
       'entity.event_enrollment.edit_form', [

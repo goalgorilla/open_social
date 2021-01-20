@@ -22,7 +22,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class ActivityRow extends EntityRow {
 
   /**
-   * @var ActivityDestinationManager
+   * @var \Drupal\activity_creator\Plugin\ActivityDestinationManager
    */
   protected $activityDestinationManager;
 
@@ -73,7 +73,7 @@ class ActivityRow extends EntityRow {
         $entity = $row->_entity;
 
         foreach ($entity->field_activity_destinations as $destination) {
-          /* @var $plugin \Drupal\activity_creator\Plugin\ActivityDestinationBase */
+          /** @var \Drupal\activity_creator\Plugin\ActivityDestinationBase $plugin */
           $plugin = $this->activityDestinationManager->createInstance($destination->value);
           if ($plugin->isActiveInView($this->view)) {
             $this->options['view_mode'] = $plugin->getViewMode($view_mode, $entity);

@@ -497,9 +497,9 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
     // Only react if it is actually posted inside a group.
     if (!empty($groupcontents)) {
       foreach ($groupcontents as $groupcontent) {
-        /* @var \Drupal\group\Entity\GroupContent $groupcontent */
+        /** @var \Drupal\group\Entity\GroupContent $groupcontent */
         $group = $groupcontent->getGroup();
-        /* @var \Drupal\group\Entity\Group $group */
+        /** @var \Drupal\group\Entity\Group $group */
         $groups[] = $group;
       }
     }

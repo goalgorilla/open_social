@@ -243,7 +243,7 @@ abstract class DemoSystem extends DemoContent {
    * {@inheritdoc}
    */
   public function getEntry(array $item) {
-    // TODO: Implement getEntry() method.
+    // @todo Implement getEntry() method.
   }
 
   /**
@@ -286,7 +286,7 @@ abstract class DemoSystem extends DemoContent {
     }
 
     // Ok, so it doesn't exist.
-    /* @var Font $font */
+    /** @var \Drupal\social_font\Entity\Font $font */
     $font = Font::create([
       'name' => $fontName,
       'user_id' => 1,
@@ -314,7 +314,7 @@ abstract class DemoSystem extends DemoContent {
       'format' => 'full_html',
     ];
 
-    /* @var \Drupal\file\Entity\File $file */
+    /** @var \Drupal\file\Entity\File $file */
     $block_image = $this->prepareImage($data['image'], 'Anonymous front page image homepage');
     // Insert is in the hero image field.
     $block->field_hero_image = $block_image;

@@ -2474,7 +2474,7 @@ function social_group_preprocess_field(&$variables) {
  *
  * @param string $field_name
  *   The field name to create a unique id for.
- * @param string|TranslatableMarkup $data_title
+ * @param TranslatableMarkup $data_title
  *   The title of the pop-up.
  * @param string $description
  *   A string containing the description, this needs to be rendered markup.
@@ -2487,11 +2487,6 @@ function social_group_render_tooltip($field_name, $data_title, $description) {
   $id = Html::getUniqueId('tooltip-' . $field_name);
   $icon = Bootstrap::glyphicon('question-sign');
   $title = '';
-
-  // If it's a string, lets translate it first.
-  if (!$data_title instanceof TranslatableMarkup) {
-    t($data_title);
-  }
 
   // We special case this for the hero.
   if ($field_name === 'group_hero') {

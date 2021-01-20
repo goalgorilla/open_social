@@ -24,6 +24,9 @@ class MessageQueueCreator extends MessageQueueBase {
    */
   protected $actionManager;
 
+  /**
+   *
+   */
   public function __construct(array $configuration, $plugin_id, array $plugin_definition, QueueFactory $queue, ActivityActionManager $actionManager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $queue);
 

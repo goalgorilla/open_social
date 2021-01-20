@@ -42,7 +42,7 @@ abstract class SocialGraphQLTestBase extends GraphQLTestBase {
    * is implemented for the endpoint according to the Relay Connection
    * specification.
    *
-   * TODO: Add ability to test pagination for a specific sort order.
+   * @todo Add ability to test pagination for a specific sort order.
    *
    * @param string $endpoint
    *   The name of the GraphQL endpoint to test.

@@ -294,7 +294,7 @@ class Activity extends ContentEntityBase implements ActivityInterface {
    *
    * Assume that activity can't have recipient group and user at the same time.
    *
-   * @todo: Split it to two separate functions.
+   * @todo Split it to two separate functions.
    */
   public function getRecipient() {
     $value = NULL;

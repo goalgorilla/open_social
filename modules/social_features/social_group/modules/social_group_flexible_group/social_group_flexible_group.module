@@ -89,7 +89,7 @@ function social_group_flexible_group_form_alter(&$form, FormStateInterface $form
 
     // Add states so this is only available when flexible groups is checked.
     // Could be hidden when only flexible groups is enabled, so check that.
-    // @TODO remove this once everything is migrated to flexible groups.
+    // @todo remove this once everything is migrated to flexible groups.
     if (!empty($form['field_group_allowed_join_method']) &&
       !empty($form['type']['#options']) &&
       $form['type']['#type'] !== 'hidden') {

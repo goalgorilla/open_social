@@ -103,7 +103,7 @@ class PostAccessControlHandler extends EntityAccessControlHandler implements Ent
               $group_id = $entity->field_recipient_group->target_id;
 
               if ($group_id !== NULL) {
-                /* @var \Drupal\group\Entity\Group $group */
+                /** @var \Drupal\group\Entity\Group $group */
                 $group = \Drupal::service('entity_type.manager')->getStorage('group')->load($group_id);
               }
 

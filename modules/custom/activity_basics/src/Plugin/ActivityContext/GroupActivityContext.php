@@ -22,7 +22,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class GroupActivityContext extends ActivityContextBase {
 
   /**
-   * @var SocialGroupHelperService
+   * @var \Drupal\social_group\SocialGroupHelperService
    */
   protected $grouphelperService;
 

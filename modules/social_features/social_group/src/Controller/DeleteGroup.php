@@ -48,7 +48,7 @@ class DeleteGroup {
       );
       // Provide some feedback when its a success.
       \Drupal::messenger()->addStatus(t('Your group and all of its topics, events and posts have been deleted.'));
-      // TODO: log to the database.
+      // @todo log to the database.
     }
     else {
       $message = t('There was an unexpected error.');

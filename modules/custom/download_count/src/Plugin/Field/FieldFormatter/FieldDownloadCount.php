@@ -35,6 +35,9 @@ class FieldDownloadCount extends GenericFileFormatter {
    */
   private $themeManager;
 
+  /**
+   *
+   */
   public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, $label, $view_mode, array $third_party_settings, AccountProxyInterface $current_user, ThemeManagerInterface $theme_manager) {
     parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $label, $view_mode, $third_party_settings);
 

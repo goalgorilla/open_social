@@ -167,7 +167,7 @@ class ExportUser extends ViewsBulkOperationsActionBase implements ContainerFacto
    */
   public function access($object, AccountInterface $account = NULL, $return_as_object = FALSE) {
     /** @var \Drupal\user\UserInterface $object */
-    // TODO Check for export access instead.
+    // @todo Check for export access instead.
     return $object->access('view', $account, $return_as_object);
   }
 

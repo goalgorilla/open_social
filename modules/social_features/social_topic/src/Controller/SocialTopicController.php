@@ -73,7 +73,7 @@ class SocialTopicController extends ControllerBase {
   public function latestTopicsPageTitle() {
     $title = $this->t('All topics');
 
-    // TODO This might change depending on the view exposed filter settings.
+    // @todo This might change depending on the view exposed filter settings.
     $topic_type_id = $this->requestStack->getCurrentRequest()->get('field_topic_type_target_id');
     $term = NULL;
     if ($topic_type_id !== NULL) {

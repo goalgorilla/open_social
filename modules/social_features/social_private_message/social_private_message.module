@@ -251,7 +251,7 @@ function social_private_message_js_alter(&$javascript, AttachedAssetsInterface $
 function social_private_message_entity_view_alter(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display) {
   // Threads.
   if ($entity->getEntityTypeId() === 'private_message_thread') {
-    /* @var \Drupal\private_message\Entity\PrivateMessageThread $thread */
+    /** @var \Drupal\private_message\Entity\PrivateMessageThread $thread */
     $thread = &$entity;
 
     $only_exist_members = $thread->getMembers();
@@ -358,7 +358,7 @@ function social_private_message_entity_view_alter(array &$build, EntityInterface
     elseif ($build['#view_mode'] === 'full') {
       $wrapper_class = NULL;
 
-      /* @var \Drupal\private_message\Entity\PrivateMessage $entity */
+      /** @var \Drupal\private_message\Entity\PrivateMessage $entity */
       if (\Drupal::currentUser()->id() === $entity->getOwnerId()) {
         $wrapper_class = 'message__by-me';
         // Current user is 'You'.

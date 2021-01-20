@@ -29,7 +29,7 @@ class ActivityListBuilder extends EntityListBuilder {
    */
   public function buildRow(EntityInterface $entity) {
     $row = [];
-    /* @var $entity \Drupal\activity_creator\Entity\Activity */
+    /** @var \Drupal\activity_creator\Entity\Activity $entity */
     $row['id'] = $entity->id();
     $row['name'] = Link::fromTextAndUrl($entity->label(), new Url(
       'entity.activity.edit_form', [
