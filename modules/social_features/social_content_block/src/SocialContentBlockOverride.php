@@ -8,7 +8,6 @@ use Drupal\Core\Config\ConfigFactoryOverrideInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Config\StorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Entity\Query\QueryFactoryInterface;
 
 /**
  * Class SocialContentBlockOverride.
