@@ -1,6 +1,8 @@
-services:
+vservices:
   social_book.overrider:
     class: \Drupal\social_book\SocialBookConfigOverride
+    arguments:
+      - '@config.factory'
     tags:
       - {name: config.factory.override, priority: 5}
   social_book.translation_defaults:
