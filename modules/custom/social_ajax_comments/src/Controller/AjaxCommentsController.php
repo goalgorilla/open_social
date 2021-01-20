@@ -151,7 +151,7 @@ class AjaxCommentsController extends ContribController {
       $errors = $this->messenger->messagesByType('error');
 
       // Try to insert the message above the new comment.
-      if (!empty($cid) && empty($errors) && \Drupal::currentUser()->hasPermission('skip comment approval')) {
+      if (!empty($cid) && empty($errors) && $this->currentUser->hasPermission('skip comment approval')) {
         $selector = static::getCommentSelectorPrefix() . $cid;
         $response = $this->addMessages(
           $request,

@@ -43,6 +43,11 @@ abstract class UserManager implements UserManagerInterface {
   protected $fieldPicture;
 
   /**
+   * @var FileSystemInterface
+   */
+  protected $fileSystem;
+
+  /**
    * Contains the profile type.
    *
    * @var string
@@ -60,7 +65,7 @@ abstract class UserManager implements UserManagerInterface {
   /**
    * UserManager constructor.
    */
-  public function __construct(ConfigFactoryInterface $config_factory, EntityTypeManagerInterface $entity_type_manager, LanguageManagerInterface $language_manager, EntityFieldManagerInterface $entity_field_manager, Token $token, TransliterationInterface $transliteration, LoggerChannelFactoryInterface $logger_factory) {
+  public function __construct(ConfigFactoryInterface $config_factory, EntityTypeManagerInterface $entity_type_manager, LanguageManagerInterface $language_manager, EntityFieldManagerInterface $entity_field_manager, Token $token, TransliterationInterface $transliteration, LoggerChannelFactoryInterface $logger_factory, FileSystemInterface $file_system) {
     $this->configFactory = $config_factory;
     $this->entityTypeManager = $entity_type_manager;
     $this->languageManager = $language_manager;
@@ -68,6 +73,7 @@ abstract class UserManager implements UserManagerInterface {
     $this->token = $token;
     $this->transliteration = $transliteration;
     $this->loggerFactory = $logger_factory;
+    $this->fileSystem = $file_system;
   }
 
   /**
@@ -137,7 +143,7 @@ abstract class UserManager implements UserManagerInterface {
       return FALSE;
     }
 
-    if (!\Drupal::service('file_system')->prepareDirectory($directory, FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS)) {
+    if (!$this->fileSystem->prepareDirectory($directory, FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS)) {
       $this->loggerFactory
         ->get('social_auth_' . $key)
         ->error('The image could not be saved, the directory @directory is not valid.', [
