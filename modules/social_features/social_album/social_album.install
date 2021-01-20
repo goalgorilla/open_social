@@ -222,8 +222,18 @@ function _social_album_blocks(callable $function) {
 }
 
 /**
- * Set some default group permissions.
+ * Set some default group permissions and check them on the group albums page.
  */
 function social_album_update_8901() {
+  // Set some default group permissions.
   _social_album_set_group_permissions();
+
+  /** @var \Drupal\update_helper\UpdaterInterface $update_helper */
+  $update_helper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $update_helper->executeUpdate('social_album', 'social_album_update_8901');
+
+  // Output logged messages to related channel of update execution.
+  return $update_helper->logger()->output();
 }
