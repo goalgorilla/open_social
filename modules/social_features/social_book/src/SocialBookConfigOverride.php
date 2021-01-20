@@ -3,6 +3,7 @@
 namespace Drupal\social_book;
 
 use Drupal\Core\Cache\CacheableMetadata;
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Config\ConfigFactoryOverrideInterface;
 use Drupal\Core\Config\StorageInterface;
 
@@ -16,6 +17,23 @@ use Drupal\Core\Config\StorageInterface;
 class SocialBookConfigOverride implements ConfigFactoryOverrideInterface {
 
   /**
+   * Configuration Factory.
+   *
+   * @var \Drupal\Core\Config\ConfigFactoryInterface
+   */
+  protected ConfigFactoryInterface $configFactory;
+
+  /**
+   * SocialBookConfigOverride constructor.
+   *
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $configFactory
+   *   Configuration Factory.
+   */
+  public function __construct(ConfigFactoryInterface $configFactory) {
+    $this->configFactory = $configFactory;
+  }
+
+  /**
    * Load overrides.
    */
   public function loadOverrides($names) {
@@ -27,7 +45,7 @@ class SocialBookConfigOverride implements ConfigFactoryOverrideInterface {
     ];
     foreach ($config_names as $config_name) {
       if (in_array($config_name, $names)) {
-        $config = \Drupal::service('config.factory')->getEditable($config_name);
+        $config = $this->configFactory->getEditable($config_name);
         $bundles = $config->get('visibility.node_type.bundles');
         $bundles['book'] = 'book';
         $overrides[$config_name] = ['visibility' => ['node_type' => ['bundles' => $bundles]]];
