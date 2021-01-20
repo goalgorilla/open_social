@@ -3,8 +3,10 @@
 namespace Drupal\activity_viewer\Plugin\views\filter;
 
 use Drupal\Core\Database\Query\Condition;
+use Drupal\social_group\SocialGroupHelperService;
 use Drupal\views\Plugin\views\filter\FilterPluginBase;
 use Drupal\views\Views;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Filters activity based on visibility settings.
@@ -14,6 +16,38 @@ use Drupal\views\Views;
  * @ViewsFilter("activity_post_visibility_access")
  */
 class ActivityPostVisibilityAccess extends FilterPluginBase {
+
+  /**
+   * @var SocialGroupHelperService
+   */
+  protected $groupHelper;
+
+  /**
+   * Constructs a Handler object.
+   *
+   * @param array $configuration
+   *   A configuration array containing information about the plugin instance.
+   * @param string $plugin_id
+   *   The plugin_id for the plugin instance.
+   * @param mixed $plugin_definition
+   *   The plugin implementation definition.
+   * @param \Drupal\social_group\SocialGroupHelperService $group_helper
+   */
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, SocialGroupHelperService $group_helper) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition);
+
+    $this->groupHelper = $group_helper;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    return new static(
+      $configuration, $plugin_id, $plugin_definition,
+      $container->get('social_group.helper_service')
+    );
+  }
 
   /**
    * Not exposable.
@@ -43,11 +77,12 @@ class ActivityPostVisibilityAccess extends FilterPluginBase {
 
     $open_groups = [];
     $group_memberships = [];
-    if (\Drupal::moduleHandler()->moduleExists('social_group')) {
+
+    if ($this->moduleHandler->moduleExists('social_group')) {
       // TODO: This creates a dependency on Social Group which shouldn't exist,
       // this access logic should be in that module instead.
       $open_groups = social_group_get_all_open_groups();
-      $group_memberships = \Drupal::service('social_group.helper_service')->getAllGroupsForUser($account->id());
+      $group_memberships = $this->groupHelper->getAllGroupsForUser($account->id());
     }
     $groups = array_merge($open_groups, $group_memberships);
     $groups_unique = array_unique($groups);
