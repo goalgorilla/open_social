@@ -5,6 +5,7 @@ namespace Drupal\alternative_frontpage\EventSubscriber;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Cache\CacheableRedirectResponse;
 use Drupal\Core\Path\PathMatcher;
+use Drupal\Core\State\State;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\HttpKernel\KernelEvents;
@@ -54,15 +55,27 @@ class RedirectHomepageSubscriber implements EventSubscriberInterface {
   protected $pathMatcher;
 
   /**
-   * Constructor for the RedirectHomepageSubscriber.
+   * @var \Drupal\Core\State\State
    */
-  public function __construct(UserData $user_data, ConfigFactory $config_factory, AccountProxy $current_user, PathMatcher $path_matcher) {
+  protected $state;
+
+  /**
+   * Constructor for the RedirectHomepageSubscriber.
+   *
+   * @param \Drupal\user\UserData $user_data
+   * @param \Drupal\Core\Config\ConfigFactory $config_factory
+   * @param \Drupal\Core\Session\AccountProxy $current_user
+   * @param \Drupal\Core\Path\PathMatcher $path_matcher
+   * @param \Drupal\Core\State\State $state
+   */
+  public function __construct(UserData $user_data, ConfigFactory $config_factory, AccountProxy $current_user, PathMatcher $path_matcher, State $state) {
     // We needs it.
     $this->userData = $user_data;
     $this->alternativeFrontpageSettings = $config_factory->get('alternative_frontpage.settings');
     $this->siteSettings = $config_factory->get('system.site');
     $this->currentUser = $current_user;
     $this->pathMatcher = $path_matcher;
+    $this->state = $state;
   }
 
   /**
@@ -87,7 +100,7 @@ class RedirectHomepageSubscriber implements EventSubscriberInterface {
       return;
     }
     // Don't run when site is in maintenance mode.
-    if (\Drupal::state()->get('system.maintenance_mode')) {
+    if ($this->state->get('system.maintenance_mode')) {
       return;
     }
 
