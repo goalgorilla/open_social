@@ -2,6 +2,10 @@
 
 namespace Drupal\social_auth_twitter;
 
+use Drupal\Core\Entity\EntityFieldManagerInterface;
+use Drupal\Core\Logger\LoggerChannelFactoryInterface;
+use Drupal\Core\Routing\UrlGeneratorInterface;
+use Drupal\social_api\Plugin\NetworkManager;
 use Drupal\social_auth_extra\AuthManager;
 use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 use Abraham\TwitterOAuth\TwitterOAuth;
@@ -12,6 +16,17 @@ use Drupal\social_auth_twitter\Settings\TwitterAuthSettings;
  * Manages the authorization process before getting a long lived access token.
  */
 class TwitterAuthManager extends AuthManager {
+
+  /**
+   * @var \Drupal\social_api\Plugin\NetworkManager
+   */
+  protected $networkManager;
+
+  public function __construct(UrlGeneratorInterface $urlGenerator, EntityFieldManagerInterface $entity_field_manager, LoggerChannelFactoryInterface $logger_factory, NetworkManager $network_manager) {
+    parent::__construct($urlGenerator, $entity_field_manager, $logger_factory);
+
+    $this->networkManager = $network_manager;
+  }
 
   /**
    * {@inheritdoc}
@@ -40,7 +55,7 @@ class TwitterAuthManager extends AuthManager {
       'x_auth_access_type' => current($scope),
     ]);
 
-    $data_handler = \Drupal::service('plugin.network.manager')
+    $data_handler = $this->networkManager
       ->createInstance('social_auth_twitter')
       ->getDataHandler();
 

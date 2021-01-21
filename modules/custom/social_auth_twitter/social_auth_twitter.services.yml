@@ -1,13 +1,14 @@
 services:
   social_auth_twitter.auth_manager:
-    class: '\Drupal\social_auth_twitter\TwitterAuthManager'
+    class: Drupal\social_auth_twitter\TwitterAuthManager
     arguments:
       - '@url_generator.non_bubbling'
       - '@entity_field.manager'
       - '@logger.factory'
+      - '@plugin.network.manager'
 
   social_auth_twitter.user_manager:
-    class: '\Drupal\social_auth_twitter\TwitterUserManager'
+    class: Drupal\social_auth_twitter\TwitterUserManager
     arguments:
       - '@config.factory'
       - '@entity_type.manager'
@@ -16,3 +17,4 @@ services:
       - '@token'
       - '@transliteration'
       - '@logger.factory'
+      - '@file_system'
