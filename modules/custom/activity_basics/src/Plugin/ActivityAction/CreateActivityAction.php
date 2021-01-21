@@ -26,6 +26,7 @@ class CreateActivityAction extends ActivityActionBase {
       // groups, which we cannot know here yet.
       if ($entity instanceof NodeInterface) {
         $data['entity_id'] = $entity->id();
+        /* @phpstan-ignore-next-line: fix when ActivityActionBase 'create' function is renamed. */
         $queue = \Drupal::queue('activity_logger_message');
         $queue->createItem($data);
       }
