@@ -12,11 +12,15 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 class MentionsDelete implements EventSubscriberInterface {
 
   /**
+   * The entity type manager interface.
+   *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
   protected $entityTypeManager;
 
   /**
+   * The config factory.
+   *
    * @var \Drupal\Core\Config\ConfigFactory
    */
   protected $configFactory;
@@ -25,7 +29,9 @@ class MentionsDelete implements EventSubscriberInterface {
    * MentionsDelete constructor.
    *
    * @param \Drupal\Core\Config\ConfigFactory $config_factory
+   *   The config factory.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager interface.
    */
   public function __construct(ConfigFactory $config_factory, EntityTypeManagerInterface $entity_type_manager) {
     $this->configFactory = $config_factory;

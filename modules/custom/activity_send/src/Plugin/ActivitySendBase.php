@@ -11,12 +11,14 @@ use Drupal\Core\Queue\QueueFactory;
 abstract class ActivitySendBase extends PluginBase implements ActivitySendInterface {
 
   /**
+   * The queue.
+   *
    * @var \Drupal\Core\Queue\QueueFactory
    */
   protected $queue;
 
   /**
-   *
+   * {@inheritdoc}
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition, QueueFactory $queue) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);

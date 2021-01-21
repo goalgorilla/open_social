@@ -43,7 +43,9 @@ abstract class UserManager implements UserManagerInterface {
   protected $fieldPicture;
 
   /**
-   * @var FileSystemInterface
+   * The file system.
+   *
+   * @var \Drupal\Core\File\FileSystemInterface
    */
   protected $fileSystem;
 

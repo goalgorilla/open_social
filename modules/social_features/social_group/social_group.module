@@ -2474,7 +2474,7 @@ function social_group_preprocess_field(&$variables) {
  *
  * @param string $field_name
  *   The field name to create a unique id for.
- * @param TranslatableMarkup $data_title
+ * @param \Drupal\Core\StringTranslation\TranslatableMarkup $data_title
  *   The title of the pop-up.
  * @param string $description
  *   A string containing the description, this needs to be rendered markup.
@@ -2482,7 +2482,7 @@ function social_group_preprocess_field(&$variables) {
  * @return array
  *   The render array containing the tooltip.
  */
-function social_group_render_tooltip($field_name, $data_title, $description) {
+function social_group_render_tooltip($field_name, TranslatableMarkup $data_title, $description) {
   $build = [];
   $id = Html::getUniqueId('tooltip-' . $field_name);
   $icon = Bootstrap::glyphicon('question-sign');

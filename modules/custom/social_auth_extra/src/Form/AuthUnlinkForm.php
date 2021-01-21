@@ -25,11 +25,20 @@ class AuthUnlinkForm extends ConfirmFormBase {
   protected $socialNetwork;
 
   /**
+   * The network manager.
+   *
    * @var \Drupal\social_api\Plugin\NetworkManager
    */
   protected $networkManager;
 
-
+  /**
+   * AuthUnlinkForm constructor.
+   *
+   * @param \Drupal\Core\Config\ConfigFactory $config_factory
+   *   The config factory.
+   * @param \Drupal\social_api\Plugin\NetworkManager $network_manager
+   *   The network manager.
+   */
   public function __construct(ConfigFactory $config_factory, NetworkManager $network_manager) {
     $this->networkManager = $network_manager;
   }
@@ -43,7 +52,6 @@ class AuthUnlinkForm extends ConfirmFormBase {
       $container->get('plugin.network.manager')
     );
   }
-
 
   /**
    * {@inheritdoc}
@@ -105,7 +113,7 @@ class AuthUnlinkForm extends ConfirmFormBase {
       }
     }
 
-    /** @phpstan-ignore-next-line: Set these service up as factory. */
+    /* @phpstan-ignore-next-line: Set these service up as factory. */
     $user_manager = \Drupal::service($this->socialNetwork['id'] . '.user_manager');
     $user_manager->setAccount($account);
     $user_manager->setAccountId(NULL);

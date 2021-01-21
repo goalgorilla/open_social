@@ -40,6 +40,8 @@ class DropdownWidgetType extends WidgetBase {
   protected $options;
 
   /**
+   * The module handler.
+   *
    * @var \Drupal\Core\Extension\ModuleHandlerInterface
    */
   private $moduleHandler;

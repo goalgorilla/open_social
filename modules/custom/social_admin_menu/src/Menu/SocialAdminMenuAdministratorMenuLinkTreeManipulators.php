@@ -9,7 +9,6 @@ use Drupal\Core\Menu\MenuTreeParameters;
 use Drupal\Core\Security\TrustedCallbackInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\toolbar\Menu\ToolbarMenuLinkTree;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Provides a couple of menu link tree manipulators.
@@ -23,6 +22,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class SocialAdminMenuAdministratorMenuLinkTreeManipulators extends DefaultMenuLinkTreeManipulators implements TrustedCallbackInterface {
 
   /**
+   * The toolbar menu link tree.
+   *
    * @var \Drupal\toolbar\Menu\ToolbarMenuLinkTree
    */
   protected $toolbarMenuLinkTree;
@@ -37,6 +38,7 @@ class SocialAdminMenuAdministratorMenuLinkTreeManipulators extends DefaultMenuLi
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity type manager.
    * @param \Drupal\toolbar\Menu\ToolbarMenuLinkTree $toolnar_menu_link_tree
+   *   The toolbar menu link tree.
    */
   public function __construct(AccessManagerInterface $access_manager, AccountInterface $account, EntityTypeManagerInterface $entity_type_manager, ToolbarMenuLinkTree $toolnar_menu_link_tree) {
     parent::__construct($access_manager, $account, $entity_type_manager);
