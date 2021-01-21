@@ -75,19 +75,21 @@ function social_follow_tag_preprocess_social_tagging_split(&$variables) {
       // Get current term parent.
       $parents = $term_storage->loadParents($current_term->id());
       if (!empty($parents)) {
-        $parent = reset($parents);
-
-        // Adding additional data to the term variable to extend the template.
-        $variables['taghierarchy'][$parent->id()]['tags'][$current_term->id()] = [
-          'url' => $tag_info['url'],
-          'name' => $tag_info['name'],
-          'flag' => social_follow_taxonomy_flag_link($current_term),
-          'related_nodes_count' => social_follow_taxonomy_related_nodes_count($current_term, 'social_tagging'),
-          'followers_count' => social_follow_taxonomy_term_followers_count($current_term),
-          'follow' => social_follow_taxonomy_term_followed($current_term),
-        ];
-
+        $wrapped_term = reset($parents);
       }
+      else {
+        $wrapped_term = $current_term;
+      }
+
+      // Adding additional data to the term variable to extend the template.
+      $variables['taghierarchy'][$wrapped_term->id()]['tags'][$current_term->id()] = [
+        'url' => $tag_info['url'],
+        'name' => $tag_info['name'],
+        'flag' => social_follow_taxonomy_flag_link($current_term),
+        'related_nodes_count' => social_follow_taxonomy_related_nodes_count($current_term, 'social_tagging'),
+        'followers_count' => social_follow_taxonomy_term_followers_count($current_term),
+        'follow' => social_follow_taxonomy_term_followed($current_term),
+      ];
     }
   }
 
