@@ -126,7 +126,7 @@ class DropdownWidgetType extends WidgetBase {
    *   The array of options for the widget.
    */
   protected function getOptions(FieldableEntityInterface $entity) {
-    if (!isset($this->options)) {
+    if (empty($this->options)) {
       // Limit the settable options for the current user account.
       $options = $this->fieldDefinition
         ->getFieldStorageDefinition()
