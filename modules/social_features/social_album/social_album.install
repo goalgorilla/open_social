@@ -126,3 +126,12 @@ function _social_album_blocks(callable $function) {
     }
   }
 }
+
+/**
+ * Delete references to not exists albums in posts.
+ */
+function social_album_update_8901() {
+  \Drupal::database()->delete('post__field_album')
+    ->condition('field_album_target_id', 0)
+    ->execute();
+}
