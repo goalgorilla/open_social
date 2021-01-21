@@ -115,13 +115,18 @@ function _social_album_set_group_permissions() {
       'update any group_node:album content',
       'update own group_node:album content',
     ],
+    // Content manager.
+    '83776d798' => [],
+    // Site manager.
+    'ba5854c29' => [],
+    // Administrator.
+    'a416e6833' => [],
   ];
 
   $previous = [];
 
   foreach ($common_permissions as &$current) {
-    $previous = array_merge($previous, $current);
-    $current = $previous;
+    $current = $previous = array_merge($previous, $current);
   }
 
   $permissions = [
