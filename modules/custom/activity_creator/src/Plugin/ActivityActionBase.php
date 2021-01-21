@@ -24,6 +24,7 @@ abstract class ActivityActionBase extends PluginBase implements ActivityActionIn
    */
   public function createMessage($entity) {
     // Use the queue logger.
+    /* @phpstan-ignore-next-line: fix this once 'create' in ActivityActionBase function has been renamed. */
     $activity_logger_factory = \Drupal::service('activity_logger.activity_factory');
     // Create messages for all other types of content.
     $activity_logger_factory->createMessages($entity, $this->pluginId);

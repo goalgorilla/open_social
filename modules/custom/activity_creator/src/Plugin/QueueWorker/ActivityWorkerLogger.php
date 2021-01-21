@@ -39,7 +39,7 @@ class ActivityWorkerLogger extends ActivityWorkerBase {
     // Get 100 Recipients at a time.
     $limit = 0;
     // @todo Move all this logic to a service.
-    // @todo Change this to use dependency injection.
+    /* @phpstan-ignore-next-line: fix this once 'create' in ActivityActionBase function has been renamed. */
     $context_plugin_manager = \Drupal::service('plugin.manager.activity_context.processor');
 
     /** @var \Drupal\activity_creator\Plugin\ActivityContextBase $plugin */

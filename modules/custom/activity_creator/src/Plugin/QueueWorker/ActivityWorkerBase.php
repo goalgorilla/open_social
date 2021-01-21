@@ -21,6 +21,7 @@ abstract class ActivityWorkerBase extends QueueWorkerBase {
    *   The $data which should be stored in the queue item.
    */
   protected function createQueueItem($queue_name, $data) {
+    /* @phpstan-ignore-next-line: fix this once 'create' in ActivityActionBase function has been renamed. */
     $queue = \Drupal::queue($queue_name);
     $queue->createItem($data);
   }
