@@ -7,6 +7,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\social_auth\Plugin\Network\SocialAuthNetwork;
 use Drupal\social_api\SocialApiException;
+use Drupal\social_auth_extra\AuthSessionDataHandler;
 use Drupal\social_auth_google\Settings\GoogleAuthSettings;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -37,6 +38,11 @@ class GoogleAuth extends SocialAuthNetwork {
   protected $loggerFactory;
 
   /**
+   * @var \Drupal\social_auth_extra\AuthSessionDataHandler
+   */
+  protected $sessionHandler;
+
+  /**
    * GoogleAuth constructor.
    *
    * @param array $configuration
@@ -51,10 +57,13 @@ class GoogleAuth extends SocialAuthNetwork {
    *   The configuration factory object.
    * @param \Drupal\Core\Logger\LoggerChannelFactoryInterface $logger_factory
    *   The logger factory.
+   * @param \Drupal\social_auth_extra\AuthSessionDataHandler $auth_session_handler
+   *   The session handler.
    */
-  public function __construct(array $configuration, $plugin_id, array $plugin_definition, EntityTypeManagerInterface $entity_type_manager, ConfigFactoryInterface $config_factory, LoggerChannelFactoryInterface $logger_factory) {
-    $this->loggerFactory = $logger_factory;
+  public function __construct(array $configuration, $plugin_id, array $plugin_definition, EntityTypeManagerInterface $entity_type_manager, ConfigFactoryInterface $config_factory, LoggerChannelFactoryInterface $logger_factory, AuthSessionDataHandler $auth_session_handler) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_type_manager, $config_factory);
+    $this->loggerFactory = $logger_factory;
+    $this->sessionHandler = $auth_session_handler;
   }
 
   /**
@@ -67,7 +76,8 @@ class GoogleAuth extends SocialAuthNetwork {
       $plugin_definition,
       $container->get('entity_type.manager'),
       $container->get('config.factory'),
-      $container->get('logger.factory')
+      $container->get('logger.factory'),
+      $container->get('social_auth_extra.session_persistent_data_handler')
     );
   }
 
@@ -146,10 +156,9 @@ class GoogleAuth extends SocialAuthNetwork {
    *   An instance of the storage that handles the data.
    */
   public function getDataHandler() {
-    $data_handler = \Drupal::service('social_auth_extra.session_persistent_data_handler');
-    $data_handler->setPrefix('social_auth_google_');
+    $this->sessionHandler->setPrefix('social_auth_google_');
 
-    return $data_handler;
+    return $this->sessionHandler;
   }
 
 }
