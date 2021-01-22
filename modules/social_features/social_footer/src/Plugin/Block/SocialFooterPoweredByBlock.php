@@ -4,10 +4,12 @@ namespace Drupal\social_footer\Plugin\Block;
 
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
+use Drupal\file\Entity\File;
 use Drupal\file\FileStorageInterface;
 use Drupal\system\Plugin\Block\SystemPoweredByBlock;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -177,6 +179,26 @@ class SocialFooterPoweredByBlock extends SystemPoweredByBlock implements Contain
       $build['logo'] = [
         '#theme' => 'image',
         '#uri' => $file->getFileUri(),
+      ];
+    }
+    elseif ($this->configFactory->get('system.theme')
+      ->get('default') === 'socialblue') {
+      // Add default image.
+      // Only when socialblue is default we continue.
+      $file_path = drupal_get_path('module', 'social_footer') . DIRECTORY_SEPARATOR . 'open_social_logo.png';
+      $file_system = \Drupal::service('file_system');
+      $uri = $file_system->copy($file_path, 'public://open_social_logo.png', FileSystemInterface::EXISTS_REPLACE);
+
+      // Create a file media.
+      /** @var \Drupal\file\FileInterface $file */
+      $media = File::create([
+        'uri' => $uri,
+      ]);
+      $media->setPermanent();
+      $media->save();
+      $build['logo'] = [
+        '#theme' => 'image',
+        '#uri' => $media->getFileUri(),
       ];
     }
 
