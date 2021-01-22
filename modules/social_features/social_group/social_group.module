@@ -690,19 +690,19 @@ function social_group_allowed_join_method_description($key) {
   // Add explanatory descriptive text after the icon.
   switch ($key) {
     case 'added':
-      $description = '<strong>' . t('Invite only')->render() . '</strong>';
+      $description = '<p><strong>' . t('Invite only')->render() . '</strong>';
       $description .= ' - ' . t('users can only join this group if they are added/invited by group managers.')->render();
       $description .= '</p>';
       break;
 
     case 'direct':
-      $description = '<strong>' . t('Open to join')->render() . '</strong>';
+      $description = '<p><strong>' . t('Open to join')->render() . '</strong>';
       $description .= ' - ' . t('users can join this group without approval.')->render();
       $description .= '</p>';
       break;
 
     case 'request':
-      $description = '<strong>' . t('Request to join')->render() . '</strong>';
+      $description = '<p><strong>' . t('Request to join')->render() . '</strong>';
       $description .= ' - ' . t('users can "request to join" this group which group managers approve/decline.')->render();
       $description .= '</p>';
       break;
