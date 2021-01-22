@@ -119,7 +119,7 @@ class AjaxCommentsController extends ContribController {
     $form = $this->entityFormBuilder()->getForm($comment);
 
     // Check for errors.
-    if (empty(drupal_get_messages('error', FALSE))) {
+    if (!($errors = count($this->messenger()->messagesByType('error')))) {
       // If there are no errors, set the ajax-updated
       // selector value for the form.
       $this->tempStore->setSelector('form_html_id', $form['#attributes']['id']);
