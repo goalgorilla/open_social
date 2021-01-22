@@ -1236,6 +1236,211 @@ parameters:
 			path: modules/custom/social_auth_twitter/src/TwitterUserManager.php
 
 		-
+			message: "#^Variable \\$num_content_types might not be defined\\.$#"
+			count: 1
+			path: modules/custom/social_demo/social_demo.drush.inc
+
+		-
+			message: "#^Method Drupal\\\\social_demo\\\\DemoContentInterface\\:\\:createContent\\(\\) invoked with 2 parameters, 0 required\\.$#"
+			count: 1
+			path: modules/custom/social_demo/social_demo.drush.inc
+
+		-
+			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
+			count: 2
+			path: modules/custom/social_demo/src/DemoComment.php
+
+		-
+			message: "#^Method Drupal\\\\social_demo\\\\DemoContent\\:\\:setProfile\\(\\) should return string but return statement is missing\\.$#"
+			count: 1
+			path: modules/custom/social_demo/src/DemoContent.php
+
+		-
+			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
+			count: 1
+			path: modules/custom/social_demo/src/DemoContent.php
+
+		-
+			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
+			count: 1
+			path: modules/custom/social_demo/src/DemoContentManager.php
+
+		-
+			message: "#^Method Drupal\\\\social_demo\\\\DemoEntity\\:\\:createContent\\(\\) should return array but return statement is missing\\.$#"
+			count: 1
+			path: modules/custom/social_demo/src/DemoEntity.php
+
+		-
+			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
+			count: 1
+			path: modules/custom/social_demo/src/DemoFile.php
+
+		-
+			message: "#^Parameter \\#2 \\$entity of method Drupal\\\\social_demo\\\\DemoFile\\:\\:applyCrops\\(\\) expects Drupal\\\\file\\\\FileInterface, Drupal\\\\Core\\\\Entity\\\\EntityInterface given\\.$#"
+			count: 1
+			path: modules/custom/social_demo/src/DemoFile.php
+
+		-
+			message: "#^Parameter \\#3 \\$entity of method Drupal\\\\social_demo\\\\DemoGroup\\:\\:addMembers\\(\\) expects Drupal\\\\group\\\\Entity\\\\GroupInterface, Drupal\\\\Core\\\\Entity\\\\EntityInterface given\\.$#"
+			count: 1
+			path: modules/custom/social_demo/src/DemoGroup.php
+
+		-
+			message: "#^Parameter \\#1 \\$account of method Drupal\\\\group\\\\Entity\\\\GroupInterface\\:\\:getMember\\(\\) expects Drupal\\\\Core\\\\Session\\\\AccountInterface, Drupal\\\\Core\\\\Entity\\\\EntityInterface given\\.$#"
+			count: 1
+			path: modules/custom/social_demo/src/DemoGroup.php
+
+		-
+			message: "#^Parameter \\#1 \\$account of method Drupal\\\\group\\\\Entity\\\\GroupInterface\\:\\:addMember\\(\\) expects Drupal\\\\user\\\\UserInterface, Drupal\\\\Core\\\\Entity\\\\EntityInterface given\\.$#"
+			count: 1
+			path: modules/custom/social_demo/src/DemoGroup.php
+
+		-
+			message: "#^Argument of an invalid type string supplied for foreach, only iterables are supported\\.$#"
+			count: 1
+			path: modules/custom/social_demo/src/DemoGroup.php
+
+		-
+			message: "#^Interface Drupal\\\\Core\\\\Entity\\\\EntityStorageInterface referenced with incorrect case\\: Drupal\\\\Core\\\\entity\\\\EntityStorageInterface\\.$#"
+			count: 1
+			path: modules/custom/social_demo/src/DemoNode.php
+
+		-
+			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
+			count: 2
+			path: modules/custom/social_demo/src/DemoNode.php
+
+		-
+			message: "#^Parameter \\#1 \\$entity of method Drupal\\\\social_demo\\\\DemoNode\\:\\:createGroupContent\\(\\) expects Drupal\\\\node\\\\NodeInterface, Drupal\\\\Core\\\\Entity\\\\EntityInterface given\\.$#"
+			count: 1
+			path: modules/custom/social_demo/src/DemoNode.php
+
+		-
+			message: "#^Parameter \\#1 \\$entity of method Drupal\\\\social_demo\\\\DemoNode\\:\\:createFollow\\(\\) expects Drupal\\\\Core\\\\Entity\\\\EntityBase, Drupal\\\\Core\\\\Entity\\\\EntityInterface given\\.$#"
+			count: 1
+			path: modules/custom/social_demo/src/DemoNode.php
+
+		-
+			message: "#^Call to an undefined method Drupal\\\\Core\\\\Entity\\\\EntityInterface\\:\\:getGroupType\\(\\)\\.$#"
+			count: 1
+			path: modules/custom/social_demo/src/DemoNode.php
+
+		-
+			message: "#^If condition is always true\\.$#"
+			count: 1
+			path: modules/custom/social_demo/src/DemoNode.php
+
+		-
+			message: "#^Property Drupal\\\\social_demo\\\\DemoSystem\\:\\:\\$fileSystem has unknown class Drupal\\\\file\\\\FileSystemInterface as its type\\.$#"
+			count: 1
+			path: modules/custom/social_demo/src/DemoSystem.php
+
+		-
+			message: "#^Property Drupal\\\\social_demo\\\\DemoSystem\\:\\:\\$fileSystem \\(Drupal\\\\file\\\\FileSystemInterface\\) does not accept Drupal\\\\Core\\\\File\\\\FileSystemInterface\\.$#"
+			count: 1
+			path: modules/custom/social_demo/src/DemoSystem.php
+
+		-
+			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
+			count: 3
+			path: modules/custom/social_demo/src/DemoSystem.php
+
+		-
+			message: "#^Instanceof between array and Drupal\\\\file\\\\Entity\\\\File will always evaluate to false\\.$#"
+			count: 1
+			path: modules/custom/social_demo/src/DemoSystem.php
+
+		-
+			message: "#^Call to method basename\\(\\) on an unknown class Drupal\\\\file\\\\FileSystemInterface\\.$#"
+			count: 1
+			path: modules/custom/social_demo/src/DemoSystem.php
+
+		-
+			message: "#^Method Drupal\\\\social_demo\\\\DemoSystem\\:\\:getEntry\\(\\) should return array but return statement is missing\\.$#"
+			count: 1
+			path: modules/custom/social_demo/src/DemoSystem.php
+
+		-
+			message: "#^Method Drupal\\\\social_demo\\\\DemoSystem\\:\\:fetchImage\\(\\) should return array but returns Drupal\\\\Core\\\\Entity\\\\EntityInterface\\.$#"
+			count: 1
+			path: modules/custom/social_demo/src/DemoSystem.php
+
+		-
+			message: "#^Method Drupal\\\\social_demo\\\\DemoSystem\\:\\:fetchImage\\(\\) should return array but returns null\\.$#"
+			count: 1
+			path: modules/custom/social_demo/src/DemoSystem.php
+
+		-
+			message: "#^Access to an undefined property Drupal\\\\Core\\\\Field\\\\FieldItemListInterface\\:\\:\\$value\\.$#"
+			count: 1
+			path: modules/custom/social_demo/src/DemoSystem.php
+
+		-
+			message: "#^Property Drupal\\\\block_content\\\\Entity\\\\BlockContent\\:\\:\\$field_text_block \\(Drupal\\\\Core\\\\Field\\\\FieldItemListInterface\\) does not accept array\\<string, mixed\\>\\.$#"
+			count: 1
+			path: modules/custom/social_demo/src/DemoSystem.php
+
+		-
+			message: "#^Variable \\$file in PHPDoc tag @var does not match assigned variable \\$block_image\\.$#"
+			count: 1
+			path: modules/custom/social_demo/src/DemoSystem.php
+
+		-
+			message: "#^Property Drupal\\\\block_content\\\\Entity\\\\BlockContent\\:\\:\\$field_hero_image \\(Drupal\\\\Core\\\\Field\\\\FieldItemListInterface\\) does not accept array\\.$#"
+			count: 1
+			path: modules/custom/social_demo/src/DemoSystem.php
+
+		-
+			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
+			count: 1
+			path: modules/custom/social_demo/src/DemoTaxonomyTerm.php
+
+		-
+			message: "#^Call to an undefined method Drupal\\\\Core\\\\Entity\\\\EntityInterface\\:\\:setPassword\\(\\)\\.$#"
+			count: 1
+			path: modules/custom/social_demo/src/DemoUser.php
+
+		-
+			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
+			count: 2
+			path: modules/custom/social_demo/src/DemoUser.php
+
+		-
+			message: "#^Method Drupal\\\\social_demo\\\\Messenger\\:\\:addMessage\\(\\) should return \\$this\\(Drupal\\\\social_demo\\\\Messenger\\) but returns Drupal\\\\Core\\\\Messenger\\\\Messenger\\.$#"
+			count: 1
+			path: modules/custom/social_demo/src/Messenger.php
+
+		-
+			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
+			count: 2
+			path: modules/custom/social_demo/src/Plugin/DemoContent/Event.php
+
+		-
+			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
+			count: 1
+			path: modules/custom/social_demo/src/Plugin/DemoContent/EventEnrollment.php
+
+		-
+			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
+			count: 2
+			path: modules/custom/social_demo/src/Plugin/DemoContent/EventType.php
+
+		-
+			message: "#^Method Drupal\\\\social_demo\\\\Plugin\\\\DemoContent\\\\EventType\\:\\:createContent\\(\\) should return array but empty return statement found\\.$#"
+			count: 1
+			path: modules/custom/social_demo/src/Plugin/DemoContent/EventType.php
+
+		-
+			message: "#^Method Drupal\\\\social_demo\\\\Plugin\\\\DemoContent\\\\EventType\\:\\:count\\(\\) should return int but returns false\\.$#"
+			count: 1
+			path: modules/custom/social_demo/src/Plugin/DemoContent/EventType.php
+
+		-
+			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
+			count: 1
+			path: modules/custom/social_demo/src/Plugin/DemoContent/Like.php
+
+		-
 			message: "#^Strict comparison using \\=\\=\\= between string and null will always evaluate to false\\.$#"
 			count: 1
 			path: modules/custom/social_file_private/social_file_private.install
@@ -3051,6 +3256,21 @@ parameters:
 			path: modules/social_features/social_follow_taxonomy/src/Plugin/ActivityContext/FollowTaxonomyActivityContext.php
 
 		-
+			message: "#^If condition is always true\\.$#"
+			count: 2
+			path: modules/social_features/social_footer/src/Form/FooterSettingsForm.php
+
+		-
+			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
+			count: 1
+			path: modules/social_features/social_footer/src/Plugin/Block/SocialFooterPoweredByBlock.php
+
+		-
+			message: "#^Variable \\$file in PHPDoc tag @var does not match assigned variable \\$media\\.$#"
+			count: 1
+			path: modules/social_features/social_footer/src/Plugin/Block/SocialFooterPoweredByBlock.php
+
+		-
 			message: "#^Call to an undefined method Drupal\\\\Core\\\\Form\\\\FormInterface\\:\\:getEntity\\(\\)\\.$#"
 			count: 1
 			path: modules/social_features/social_group/modules/social_group_default_route/social_group_default_route.module
@@ -4436,27 +4656,7 @@ parameters:
 			path: modules/social_features/social_tagging/src/SocialTaggingOverrides.php
 
 		-
-			message: "#^Property Drupal\\\\social_tagging\\\\SocialTaggingService\\:\\:\\$termStorage has unknown class Drupal\\\\Taxonomy\\\\TermStorageInterface as its type\\.$#"
-			count: 1
-			path: modules/social_features/social_tagging/src/SocialTaggingService.php
-
-		-
-			message: "#^Property Drupal\\\\social_tagging\\\\SocialTaggingService\\:\\:\\$termStorage \\(Drupal\\\\Taxonomy\\\\TermStorageInterface\\) does not accept Drupal\\\\taxonomy\\\\TermStorage\\.$#"
-			count: 1
-			path: modules/social_features/social_tagging/src/SocialTaggingService.php
-
-		-
-			message: "#^Call to method loadTree\\(\\) on an unknown class Drupal\\\\Taxonomy\\\\TermStorageInterface\\.$#"
-			count: 4
-			path: modules/social_features/social_tagging/src/SocialTaggingService.php
-
-		-
-			message: "#^Call to method loadMultiple\\(\\) on an unknown class Drupal\\\\Taxonomy\\\\TermStorageInterface\\.$#"
-			count: 1
-			path: modules/social_features/social_tagging/src/SocialTaggingService.php
-
-		-
-			message: "#^Call to method loadParents\\(\\) on an unknown class Drupal\\\\Taxonomy\\\\TermStorageInterface\\.$#"
+			message: "#^Interface Drupal\\\\taxonomy\\\\TermStorageInterface referenced with incorrect case\\: Drupal\\\\Taxonomy\\\\TermStorageInterface\\.$#"
 			count: 1
 			path: modules/social_features/social_tagging/src/SocialTaggingService.php
 
