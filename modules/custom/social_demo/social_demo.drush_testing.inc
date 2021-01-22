@@ -51,4 +51,3 @@ if (!function_exists('drush_get_option')) {
   }
 
 }
-
