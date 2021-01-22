@@ -7,7 +7,9 @@ dependencies:
     - field.field.node.album.field_content_visibility
     - node.type.album
   module:
+    - comment
     - field_group
+    - path
 third_party_settings:
   field_group:
     group_album_visibility:
@@ -19,11 +21,11 @@ third_party_settings:
       format_type: fieldset
       region: content
       format_settings:
-        id: ''
-        classes: ''
         description: ''
         required_fields: true
-      label: 'Group and visibility'
+        id: visibility
+        classes: card
+      label: 'Access permissions'
     group_title:
       children:
         - title
@@ -32,29 +34,60 @@ third_party_settings:
       format_type: fieldset
       region: content
       format_settings:
-        id: ''
-        classes: ''
         description: ''
         required_fields: true
-      label: Information
+        id: ''
+        classes: ''
+      label: 'Basic information'
     group_album_settings:
       children:
         - field_album_creators
       parent_name: ''
       weight: 5
-      format_type: fieldset
+      format_type: details
+      region: content
+      format_settings:
+        description: ''
+        required_fields: true
+        id: ''
+        classes: social-collapsible-fieldset
+        open: false
+      label: 'Additional information'
+    group_settings:
+      children:
+        - created
+        - uid
+        - path
+        - field_album_comments
+        - status
+      parent_name: ''
+      weight: 20
+      format_type: details
       region: content
       format_settings:
         id: ''
-        classes: ''
+        classes: social-collapsible-fieldset
         description: ''
+        open: false
         required_fields: true
-      label: 'Album settings'
+      label: Settings
 id: node.album.default
 targetEntityType: node
 bundle: album
 mode: default
 content:
+  created:
+    type: datetime_timestamp
+    weight: 8
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_album_comments:
+    type: comment_default
+    weight: 9
+    region: content
+    settings: {  }
+    third_party_settings: {  }
   field_album_creators:
     weight: 6
     settings:
@@ -74,9 +107,15 @@ content:
     weight: 3
     region: content
     third_party_settings: {  }
+  path:
+    type: path
+    weight: 10
+    region: content
+    settings: {  }
+    third_party_settings: {  }
   status:
     type: boolean_checkbox
-    weight: 7
+    weight: 11
     region: content
     settings:
       display_label: true
@@ -89,10 +128,21 @@ content:
       size: 60
       placeholder: ''
     third_party_settings: {  }
+  uid:
+    type: entity_reference_autocomplete
+    weight: 7
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  url_redirects:
+    weight: 50
+    region: content
+    settings: {  }
+    third_party_settings: {  }
 hidden:
-  created: true
-  field_album_comments: true
-  path: true
   promote: true
   sticky: true
-  uid: true
