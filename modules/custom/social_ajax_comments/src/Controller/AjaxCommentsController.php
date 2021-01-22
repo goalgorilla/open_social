@@ -38,11 +38,18 @@ class AjaxCommentsController extends ContribController {
     $form_html_id = $selectors['form_html_id'];
 
     if ($cid != 0) {
-      // Show the hidden anchor.
-      $response->addCommand(new InvokeCommand('a#comment-' . $cid, 'show', [200, 'linear']));
+      $prefixes = [
+        // Show the hidden anchor.
+        'a#comment-',
 
-      // Show the hidden comment.
-      $response->addCommand(new InvokeCommand(static::getCommentSelectorPrefix() . $cid, 'show', [200, 'linear']));
+        // Show the hidden comment.
+        static::getCommentSelectorPrefix(),
+      ];
+
+      foreach ($prefixes as $prefix) {
+        $command = new InvokeCommand($prefix . $cid, 'show', [200, 'linear']);
+        $response->addCommand($command);
+      }
     }
 
     // Replace the # from the form_html_id selector and add .social_ so we know
