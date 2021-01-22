@@ -4,18 +4,19 @@ includes:
   - phpstan-baseline.neon
 
 parameters:
-    level: 5
-    paths:
-        - src
-        - modules/custom
-        - modules/social_features
-    drupal:
-        drupal_root: %currentWorkingDirectory%/core
-    excludes_analyse:
-      - */GraphQL*
-      - */social_graphql/*
-    ignoreErrors:
-      - '#Plugin manager has cache backend specified but does not declare cache tags.#' # See - https://github.com/mglaman/phpstan-drupal/issues/112#issue-557001157
-      - '#Unsafe usage of new static\(\)#' # See - https://github.com/mglaman/drupal-check/pull/187
-      - '#Class PHPUnit\Framework\TestCase#'
-    reportUnmatchedIgnoredErrors: false
+  level: 5
+  paths:
+      - src
+      - modules/custom
+      - modules/social_features
+  drupal:
+      drupal_root: %currentWorkingDirectory%/core
+  excludes_analyse:
+    - */GraphQL*
+    - */social_graphql/*
+    - */social_demo/*
+  ignoreErrors:
+    - '#Plugin manager has cache backend specified but does not declare cache tags.#' # See - https://github.com/mglaman/phpstan-drupal/issues/112#issue-557001157
+    - '#Unsafe usage of new static\(\)#' # See - https://github.com/mglaman/drupal-check/pull/187
+    - '#Class PHPUnit\Framework\TestCase#'
+  reportUnmatchedIgnoredErrors: false
