@@ -36,6 +36,8 @@ class TwitterAuth extends SocialAuthNetwork {
   protected $loggerFactory;
 
   /**
+   * The session handler.
+   *
    * @var \Drupal\social_auth_extra\AuthSessionDataHandler
    */
   protected $sessionHandler;
@@ -55,6 +57,8 @@ class TwitterAuth extends SocialAuthNetwork {
    *   The configuration factory object.
    * @param \Drupal\Core\Logger\LoggerChannelFactoryInterface $logger_factory
    *   The logger factory.
+   * @param \Drupal\social_auth_extra\AuthSessionDataHandler $session_handler
+   *   The session handler.
    */
   public function __construct(array $configuration, $plugin_id, array $plugin_definition, EntityTypeManagerInterface $entity_type_manager, ConfigFactoryInterface $config_factory, LoggerChannelFactoryInterface $logger_factory, AuthSessionDataHandler $session_handler) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_type_manager, $config_factory);

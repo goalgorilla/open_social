@@ -38,6 +38,8 @@ class GoogleAuth extends SocialAuthNetwork {
   protected $loggerFactory;
 
   /**
+   * The session handler.
+   *
    * @var \Drupal\social_auth_extra\AuthSessionDataHandler
    */
   protected $sessionHandler;

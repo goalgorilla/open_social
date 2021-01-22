@@ -18,10 +18,24 @@ use Drupal\social_auth_twitter\Settings\TwitterAuthSettings;
 class TwitterAuthManager extends AuthManager {
 
   /**
+   * The network manager.
+   *
    * @var \Drupal\social_api\Plugin\NetworkManager
    */
   protected $networkManager;
 
+  /**
+   * TwitterAuthManager constructor.
+   *
+   * @param \Drupal\Core\Routing\UrlGeneratorInterface $urlGenerator
+   *   The url generator.
+   * @param \Drupal\Core\Entity\EntityFieldManagerInterface $entity_field_manager
+   *   The entity field manager.
+   * @param \Drupal\Core\Logger\LoggerChannelFactoryInterface $logger_factory
+   *   The logger factory.
+   * @param \Drupal\social_api\Plugin\NetworkManager $network_manager
+   *   The network manager.
+   */
   public function __construct(UrlGeneratorInterface $urlGenerator, EntityFieldManagerInterface $entity_field_manager, LoggerChannelFactoryInterface $logger_factory, NetworkManager $network_manager) {
     parent::__construct($urlGenerator, $entity_field_manager, $logger_factory);
 

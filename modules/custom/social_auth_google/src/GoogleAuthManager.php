@@ -25,11 +25,24 @@ class GoogleAuthManager extends AuthManager {
   private $googleService;
 
   /**
+   * The request stack.
+   *
    * @var \Symfony\Component\HttpFoundation\RequestStack
    */
   protected $requestStack;
 
-
+  /**
+   * GoogleAuthManager constructor.
+   *
+   * @param \Drupal\Core\Routing\UrlGeneratorInterface $urlGenerator
+   *   The url generator.
+   * @param \Drupal\Core\Entity\EntityFieldManagerInterface $entity_field_manager
+   *   The entity field manager.
+   * @param \Drupal\Core\Logger\LoggerChannelFactoryInterface $logger_factory
+   *   The logger factory.
+   * @param \Symfony\Component\HttpFoundation\RequestStack $request_stack
+   *   The request stack.
+   */
   public function __construct(UrlGeneratorInterface $urlGenerator, EntityFieldManagerInterface $entity_field_manager, LoggerChannelFactoryInterface $logger_factory, RequestStack $request_stack) {
     parent::__construct($urlGenerator, $entity_field_manager, $logger_factory);
 
