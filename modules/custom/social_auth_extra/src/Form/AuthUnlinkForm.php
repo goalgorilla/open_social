@@ -103,7 +103,6 @@ class AuthUnlinkForm extends ConfirmFormBase {
 
     foreach ($this->networkManager->getDefinitions() as $definition) {
       /** @var \Drupal\social_auth_extra\UserManagerInterface $user_manager */
-      /* @phpstan-ignore-next-line: Set these service up as factory. */
       $user_manager = \Drupal::service($definition['id'] . '.user_manager');
       $user_manager->setAccount($account);
 
@@ -113,7 +112,6 @@ class AuthUnlinkForm extends ConfirmFormBase {
       }
     }
 
-    /* @phpstan-ignore-next-line: Set these service up as factory. */
     $user_manager = \Drupal::service($this->socialNetwork['id'] . '.user_manager');
     $user_manager->setAccount($account);
     $user_manager->setAccountId(NULL);

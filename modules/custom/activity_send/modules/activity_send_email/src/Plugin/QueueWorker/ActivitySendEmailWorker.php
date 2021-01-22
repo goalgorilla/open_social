@@ -121,7 +121,6 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase implements Containe
               'recipients' => $batch_recipients,
             ];
 
-            /* @phpstan-ignore-next-line: Should be fixed when fixing parent ActivitySendWorkerBase. */
             $queue = \Drupal::queue('activity_send_email_worker');
             $queue->createItem($batch_data);
           }

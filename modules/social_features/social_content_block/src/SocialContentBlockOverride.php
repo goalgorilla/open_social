@@ -51,9 +51,7 @@ class SocialContentBlockOverride implements ConfigFactoryOverrideInterface {
     $this->configFactory = $config_factory;
     $this->entityTypeManager = $entity_type_manager;
 
-    /* @phpstan-ignore-next-line: there's a chance the service isn't available yet. */
     if (\Drupal::hasService('plugin.manager.content_block')) {
-      /* @phpstan-ignore-next-line: there's a chance the service isn't available yet. */
       $this->definitions = \Drupal::service('plugin.manager.content_block')->getDefinitions();
     }
   }

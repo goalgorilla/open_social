@@ -67,11 +67,10 @@ class Immediately extends EmailFrequencyBase {
       ],
       ['langcode' => $langcode]),
     ];
-    /* @phpstan-ignore-next-line: Should be fixed when fixing parent EmailFrequencyBase. */
+
     $params['body'] = \Drupal::service('renderer')->renderRoot($notification);
 
     // Send the email.
-    /* @phpstan-ignore-next-line: Should be fixed when fixing parent EmailFrequencyBase. */
     $mail_manager = \Drupal::service('plugin.manager.mail');
     $mail_manager->mail(
       'activity_send_email',
