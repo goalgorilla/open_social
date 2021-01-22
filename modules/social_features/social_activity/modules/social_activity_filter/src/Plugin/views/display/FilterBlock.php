@@ -120,7 +120,7 @@ class FilterBlock extends ModeBlock {
     }
     else {
       $triggered = $form_state->getTriggeringElement();
-      $delta = $triggered["#parents"][1];
+      $delta = is_int($triggered['#parents'][1]) ? $triggered['#parents'][1] : '';
     }
 
     if ($vid = $form_state->get('new_options_tags_' . $delta)) {
@@ -218,7 +218,7 @@ class FilterBlock extends ModeBlock {
 
     // Check if there is triggered parent of element.
     if ($triggered = $form_state->getTriggeringElement()) {
-      $delta = $triggered["#parents"][1];
+      $delta = is_int($triggered['#parents'][1]) ? $triggered['#parents'][1] : '';
 
       // Build array of parents for triggered child element.
       $parents = $triggered['#array_parents'];
