@@ -7,3 +7,7 @@ services:
   social_post.permission_generator:
     class: Drupal\social_post\Service\PostPermissions
     arguments: ['@entity_type.manager', '@string_translation']
+
+  social_post.helper:
+    class: Drupal\social_post\Service\SocialPostHelper
+    arguments: ['@entity_type.manager', '@current_user']

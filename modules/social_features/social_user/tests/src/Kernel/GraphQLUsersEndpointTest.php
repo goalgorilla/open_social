@@ -62,7 +62,10 @@ class GraphQLUsersEndpointTest extends SocialGraphQLTestBase {
    * Test the filter for the users query.
    */
   public function testUsersQueryFilter(): void {
-    $this->assertEndpointSupportsPagination('users', $this->users);
+    $this->assertEndpointSupportsPagination(
+      'users',
+      array_map(static fn ($user) => $user->uuid(), $this->users)
+    );
   }
 
   /**
@@ -103,7 +106,10 @@ class GraphQLUsersEndpointTest extends SocialGraphQLTestBase {
       ],
     ];
 
-    $this->assertQuery($query, $expected_data, 'user fields are present');
+    // TODO: Move to QueryResultAssertionTrait::assertResults and add metadata.
+    $result = $this->query($query);
+    self::assertSame(200, $result->getStatusCode(), 'user fields are present');
+    self::assertSame($expected_data, json_decode($result->getContent(), TRUE), 'user fields are present');
   }
 
 }
