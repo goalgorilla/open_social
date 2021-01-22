@@ -3,7 +3,7 @@
 namespace Drupal\social_tagging;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\taxonomy\TermStorageInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Url;
 use Drupal\taxonomy\TermInterface;
@@ -14,9 +14,9 @@ use Drupal\taxonomy\TermInterface;
 class SocialTaggingService {
 
   /**
-   * The taxonomy storage.
+   * The term storage.
    *
-   * @var \Drupal\Taxonomy\TermStorageInterface
+   * @var \Drupal\taxonomy\TermStorageInterface
    */
   protected $termStorage;
 
@@ -37,22 +37,19 @@ class SocialTaggingService {
   /**
    * SocialTaggingService constructor.
    *
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
-   *   Injection of the entityTypeManager.
+   * @param \Drupal\taxonomy\TermStorageInterface $term_storage
+   *   The term storage.
    * @param \Drupal\Core\Config\ConfigFactoryInterface $configFactory
    *   Injection of the configFactory.
    * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
    *   Injection of the languageManager.
-   *
-   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
-   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
   public function __construct(
-    EntityTypeManagerInterface $entityTypeManager,
+    TermStorageInterface $term_storage,
     ConfigFactoryInterface $configFactory,
     LanguageManagerInterface $language_manager
   ) {
-    $this->termStorage = $entityTypeManager->getStorage('taxonomy_term');
+    $this->termStorage = $term_storage;
     $this->configFactory = $configFactory;
     $this->languageManager = $language_manager;
   }
