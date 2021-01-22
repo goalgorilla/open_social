@@ -4,7 +4,7 @@ includes:
   - phpstan-baseline.neon
 
 parameters:
-    level: 0
+    level: 5
     paths:
         - src
         - modules/custom
@@ -17,5 +17,5 @@ parameters:
     ignoreErrors:
       - '#Plugin manager has cache backend specified but does not declare cache tags.#' # See - https://github.com/mglaman/phpstan-drupal/issues/112#issue-557001157
       - '#Unsafe usage of new static\(\)#' # See - https://github.com/mglaman/drupal-check/pull/187
-      - '#Class PHPUnit\Framework\TestCase'
+      - '#Class PHPUnit\Framework\TestCase#'
     reportUnmatchedIgnoredErrors: false
