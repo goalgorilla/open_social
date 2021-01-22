@@ -266,7 +266,7 @@ function social_auth_extra_form_user_register_form_submit($form, FormStateInterf
     }
     catch (EntityStorageException $e) {
       \Drupal::messenger()->addError(t('Creation of user account failed. Please contact site administrator.'));
-      $logger_factory = \Drupal::service('logger.fatory');
+      $logger_factory = \Drupal::service('logger.factory');
       $logger_factory
         ->get($id)
         ->error('Could not create new user. Exception: @message', [

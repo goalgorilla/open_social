@@ -5,13 +5,14 @@
  * Contains social_demo.drush.inc.
  */
 
-use Drush\Log\LogLevel;
+use Psr\Log\LogLevel;
 use Drupal\user\Entity\User;
 
 /**
  * Implements hook_drush_command().
  */
 function social_demo_drush_command() {
+  module_load_include('inc', 'social_demo', 'social_demo.drush_testing');
   $items['demo-content-add'] = [
     'description' => dt('Create demo content.'),
     'arguments' => [
@@ -88,6 +89,7 @@ function social_demo_drush_command() {
  * Creates demo content.
  */
 function drush_social_demo_demo_content_add() {
+  module_load_include('inc', 'social_demo', 'social_demo.drush_testing');
   \Drupal::currentUser()->setAccount(User::load(1));
   $content_types = func_get_args();
   $profile = drush_get_option('profile', '');
@@ -102,7 +104,7 @@ function drush_social_demo_demo_content_add() {
     $count = $plugin->count();
 
     if ($count !== FALSE) {
-      drush_log("{$count} {$definition['label']}(s) created", LogLevel::SUCCESS);
+      drush_log("{$count} {$definition['label']}(s) created", LogLevel::INFO);
     }
   }
 }
@@ -111,6 +113,7 @@ function drush_social_demo_demo_content_add() {
  * Removes demo content.
  */
 function drush_social_demo_demo_content_remove() {
+  module_load_include('inc', 'social_demo', 'social_demo.drush_testing');
   \Drupal::currentUser()->setAccount(User::load(1));
   $content_types = func_get_args();
   $profile = drush_get_option('profile', '');
@@ -122,7 +125,7 @@ function drush_social_demo_demo_content_remove() {
     $definition = $plugin->getPluginDefinition();
     $plugin->setProfile($profile);
     $plugin->removeContent();
-    drush_log("{$definition['label']}(s) removed", LogLevel::SUCCESS);
+    drush_log("{$definition['label']}(s) removed", LogLevel::INFO);
   }
 }
 
@@ -130,6 +133,7 @@ function drush_social_demo_demo_content_remove() {
  * Add demo content.
  */
 function drush_social_demo_add() {
+  module_load_include('inc', 'social_demo', 'social_demo.drush_testing');
   $content_types = func_get_args();
   _social_demo_convert_content_types($content_types);
   call_user_func_array('drush_social_demo_demo_content_add', $content_types);
@@ -139,6 +143,7 @@ function drush_social_demo_add() {
  * Remove demo content.
  */
 function drush_social_demo_remove() {
+  module_load_include('inc', 'social_demo', 'social_demo.drush_testing');
   $content_types = func_get_args();
   _social_demo_convert_content_types($content_types);
   call_user_func_array('drush_social_demo_demo_content_remove', $content_types);
@@ -168,6 +173,7 @@ function _social_demo_convert_content_types(array &$content_types = []) {
  * Creates demo content.
  */
 function drush_social_demo_generate() {
+  module_load_include('inc', 'social_demo', 'social_demo.drush_testing');
   \Drupal::currentUser()->setAccount(User::load(1));
   $input_args = func_get_args();
   $content_types = [];
@@ -189,7 +195,7 @@ function drush_social_demo_generate() {
     $count = $plugin->count();
 
     if ($count !== FALSE) {
-      drush_log("{$count} {$definition['label']}(s) created", LogLevel::SUCCESS);
+      drush_log("{$count} {$definition['label']}(s) created", LogLevel::INFO);
     }
   }
 }
