@@ -93,12 +93,10 @@ function _socialbase_node_get_comment_count(NodeInterface $node) {
   // Calculate the comment_count for this page request.
   if (is_null($comment_count)) {
     $count = 0;
-    $comment_query = \Drupal::entityTypeManager()
-      ->getStorage('comment')
-      ->getQuery();
+    $comment_storage = \Drupal::entityTypeManager()->getStorage('comment');
     $current_user = \Drupal::currentUser();
 
-    $cids = $comment_query
+    $cids = $comment_storage->getQuery()
       ->condition('entity_id', $node->id())
       ->condition('entity_type', 'node')
       ->sort('cid', 'DESC')
@@ -109,7 +107,7 @@ function _socialbase_node_get_comment_count(NodeInterface $node) {
     foreach ($cids as $cid) {
       // Published main comments or published replies on published main comments
       // are counted for users without 'administer comments' permission.
-      $query = $comment_query->condition('cid', $cid)->condition('status', TRUE);
+      $query = $comment_storage->getQuery()->condition('cid', $cid)->condition('status', TRUE);
       // Check if comment is published.
       if (!empty($query->execute())) {
         $comment_field_data_query->addField('cfd', 'pid');
