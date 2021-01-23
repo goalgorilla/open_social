@@ -5,7 +5,7 @@ services:
 
   social_content_block.override:
     class: Drupal\social_content_block\SocialContentBlockOverride
-    arguments: ['@config.factory', '@entity_type.manager']
+    arguments: ['@config.factory']
     tags:
       - { name: config.factory.override, priority: 5 }
 

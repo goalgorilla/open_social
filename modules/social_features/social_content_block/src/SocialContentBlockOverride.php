@@ -7,7 +7,6 @@ use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Config\ConfigFactoryOverrideInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Config\StorageInterface;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
 
 /**
  * Class SocialContentBlockOverride.
@@ -26,13 +25,6 @@ class SocialContentBlockOverride implements ConfigFactoryOverrideInterface {
   protected $configFactory;
 
   /**
-   * The entity type manager.
-   *
-   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
-   */
-  protected $entityTypeManager;
-
-  /**
    * The content block plugin definitions.
    *
    * @var array
@@ -44,12 +36,9 @@ class SocialContentBlockOverride implements ConfigFactoryOverrideInterface {
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The configuration factory.
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
-   *   The entity type manager.
    */
-  public function __construct(ConfigFactoryInterface $config_factory, EntityTypeManagerInterface $entity_type_manager) {
+  public function __construct(ConfigFactoryInterface $config_factory) {
     $this->configFactory = $config_factory;
-    $this->entityTypeManager = $entity_type_manager;
 
     if (\Drupal::hasService('plugin.manager.content_block')) {
       $this->definitions = \Drupal::service('plugin.manager.content_block')->getDefinitions();
@@ -69,7 +58,7 @@ class SocialContentBlockOverride implements ConfigFactoryOverrideInterface {
       $settings = $config->getOriginal('settings', FALSE)['plugin_ids'];
 
       // Get all the blocks from this custom block type.
-      $storage = $this->entityTypeManager->getStorage('block_content');
+      $storage = self::getBlockContent();
       $query = $storage->getQuery()
         ->condition('type', 'custom_content_list');
       $ids = $query->execute();
@@ -167,6 +156,24 @@ class SocialContentBlockOverride implements ConfigFactoryOverrideInterface {
 
     return $overrides;
   }
+
+  /**
+   * Load the config pages that exist.
+   *
+   * Use a static method instead of dependency injection to avoid circular
+   * dependencies.
+   *
+   * @return \Drupal\Core\Entity\EntityStorageInterface
+   *   Keyed array of block_content.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   */
+  protected static function getBlockContent() {
+    return \Drupal::entityTypeManager()
+      ->getStorage('block_content');
+  }
+
 
   /**
    * {@inheritdoc}
