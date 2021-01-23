@@ -406,6 +406,11 @@ parameters:
 			path: modules/custom/activity_send/modules/activity_send_email/src/Plugin/ActivityDestination/EmailActivityDestination.php
 
 		-
+			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
+			count: 1
+			path: modules/custom/activity_send/modules/activity_send_email/src/Plugin/ActivitySend/EmailActivitySend.php
+
+		-
 			message: "#^Cannot call method getUntranslatedString\\(\\) on string\\.$#"
 			count: 1
 			path: modules/custom/activity_send/modules/activity_send_email/src/Plugin/EmailFrequency/Immediately.php
