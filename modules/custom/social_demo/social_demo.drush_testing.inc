@@ -36,7 +36,7 @@ if (!function_exists('drush_log')) {
    * Stub for drush_log() function for testing.
    */
   function drush_log($text, $level) {
-    return \Drupal::logger('social_book')->info($text));
+    return \Drupal::logger('social_book')->info($text);
   }
 
 }

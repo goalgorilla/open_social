@@ -3,8 +3,10 @@
 namespace Drupal\activity_logger\Plugin\QueueWorker;
 
 use Drupal\activity_creator\Plugin\ActivityActionManager;
+use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Queue\QueueFactory;
 use Drupal\node\Entity\Node;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * A report worker.
@@ -17,7 +19,7 @@ use Drupal\node\Entity\Node;
  *
  * This QueueWorker is responsible for creating message items from the queue
  */
-class MessageQueueCreator extends MessageQueueBase {
+class MessageQueueCreator extends MessageQueueBase implements ContainerFactoryPluginInterface {
 
   /**
    * The action manager.
@@ -42,8 +44,20 @@ class MessageQueueCreator extends MessageQueueBase {
    */
   public function __construct(array $configuration, $plugin_id, array $plugin_definition, QueueFactory $queue, ActivityActionManager $actionManager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $queue);
-
     $this->actionManager = $actionManager;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    return new static(
+      $configuration,
+      $plugin_id,
+      $plugin_definition,
+      $container->get('queue'),
+      $container->get('plugin.manager.activity_action.processor')
+    );
   }
 
   /**

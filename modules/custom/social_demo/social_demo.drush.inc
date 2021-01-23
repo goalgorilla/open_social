@@ -12,7 +12,7 @@ use Drupal\user\Entity\User;
  * Implements hook_drush_command().
  */
 function social_demo_drush_command() {
-  module_load_include('inc', 'social_demo', 'social_demo.drush_testing');
+  social_demo_drush_require();
   $items['demo-content-add'] = [
     'description' => dt('Create demo content.'),
     'arguments' => [
@@ -89,7 +89,7 @@ function social_demo_drush_command() {
  * Creates demo content.
  */
 function drush_social_demo_demo_content_add() {
-  module_load_include('inc', 'social_demo', 'social_demo.drush_testing');
+  social_demo_drush_require();
   \Drupal::currentUser()->setAccount(User::load(1));
   $content_types = func_get_args();
   $profile = drush_get_option('profile', '');
@@ -113,7 +113,7 @@ function drush_social_demo_demo_content_add() {
  * Removes demo content.
  */
 function drush_social_demo_demo_content_remove() {
-  module_load_include('inc', 'social_demo', 'social_demo.drush_testing');
+  social_demo_drush_require();
   \Drupal::currentUser()->setAccount(User::load(1));
   $content_types = func_get_args();
   $profile = drush_get_option('profile', '');
@@ -133,7 +133,7 @@ function drush_social_demo_demo_content_remove() {
  * Add demo content.
  */
 function drush_social_demo_add() {
-  module_load_include('inc', 'social_demo', 'social_demo.drush_testing');
+  social_demo_drush_require();
   $content_types = func_get_args();
   _social_demo_convert_content_types($content_types);
   call_user_func_array('drush_social_demo_demo_content_add', $content_types);
@@ -143,7 +143,7 @@ function drush_social_demo_add() {
  * Remove demo content.
  */
 function drush_social_demo_remove() {
-  module_load_include('inc', 'social_demo', 'social_demo.drush_testing');
+  social_demo_drush_require();
   $content_types = func_get_args();
   _social_demo_convert_content_types($content_types);
   call_user_func_array('drush_social_demo_demo_content_remove', $content_types);
@@ -173,7 +173,7 @@ function _social_demo_convert_content_types(array &$content_types = []) {
  * Creates demo content.
  */
 function drush_social_demo_generate() {
-  module_load_include('inc', 'social_demo', 'social_demo.drush_testing');
+  social_demo_drush_require();
   \Drupal::currentUser()->setAccount(User::load(1));
   $input_args = func_get_args();
   $content_types = [];
@@ -198,4 +198,11 @@ function drush_social_demo_generate() {
       drush_log("{$count} {$definition['label']}(s) created", LogLevel::INFO);
     }
   }
+}
+
+/**
+ * Load the Drush stub class.
+ */
+function social_demo_drush_require() {
+  require_once DRUPAL_ROOT . '/profiles/contrib/social/modules/custom/social_demo/social_demo.drush_testing.inc';
 }
