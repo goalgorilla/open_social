@@ -7,8 +7,6 @@
  * @see \Drupal\social_demo\drush.inc
  */
 
-use Drupal\Core\StringTranslation\TranslatableMarkup;
-
 if (!function_exists('drush_print')) {
 
   /**

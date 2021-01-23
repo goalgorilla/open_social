@@ -174,7 +174,6 @@ class SocialContentBlockOverride implements ConfigFactoryOverrideInterface {
       ->getStorage('block_content');
   }
 
-
   /**
    * {@inheritdoc}
    */
