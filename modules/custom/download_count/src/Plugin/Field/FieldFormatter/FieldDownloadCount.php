@@ -93,6 +93,7 @@ class FieldDownloadCount extends GenericFileFormatter {
     $entity = $items->getEntity();
     $entity_type = $entity->getEntityTypeId();
     $access = $this->currentUser->hasPermission('view download counts');
+    $download = 0;
 
     foreach ($this->getEntitiesToView($items, $langcode) as $delta => $file) {
       $item = $file->_referringItem;
@@ -105,7 +106,7 @@ class FieldDownloadCount extends GenericFileFormatter {
             ':id' => $entity->id(),
           ])
           ->fetchField();
-        $file->download = $download;
+        $file->download = (int) $download;
       }
 
       $link_url = file_create_url($file->getFileUri());
@@ -142,9 +143,8 @@ class FieldDownloadCount extends GenericFileFormatter {
       $link = Link::fromTextAndUrl($link_text, Url::fromUri($link_url, $options))
         ->toString();
 
-      if (isset($file->download) && $file->download > 0) {
-        $count = $this->stringTranslation
-          ->formatPlural($file->download, '1 download', '@count downloads');
+      if (isset($file->download) && $file->download > 0 && $file->download !== NULL) {
+        $count = $this->formatPlural($download, '1 download', '@count downloads');
       }
       else {
         $count = $this->t('0 downloads');
