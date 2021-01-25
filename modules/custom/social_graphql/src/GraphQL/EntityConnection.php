@@ -89,7 +89,7 @@ class EntityConnection implements ConnectionInterface {
    */
   public function pageInfo() : SyncPromise {
     return $this->getResult()->then(function ($edges) {
-      /** @var \Drupal\social_graphql\Wrappers\EntityEdge[] $edges */
+      /** @var \Drupal\social_graphql\Wrappers\Edge[] $edges */
       // If we don't have any results then we won't have any other pages either.
       if (empty($edges)) {
         return [
@@ -247,7 +247,7 @@ class EntityConnection implements ConnectionInterface {
       $pagination_condition = $query->orConditionGroup();
 
       $operator = (!is_null($this->before) && !$this->reverse) || (!is_null($this->after) && $this->reverse) ? '<' : '>';
-      $cursor_value = $this->queryHelper->getCursorValue($cursor_object);
+      $cursor_value = $cursor_object->getSortValue();
       $pagination_condition->condition($sort_field, $cursor_value, $operator);
       // If the sort field is different than the ID then it's not guaranteed to
       // be unique. However, above we exclude values that are the same as those
@@ -257,7 +257,7 @@ class EntityConnection implements ConnectionInterface {
         $pagination_condition->condition(
           $query->andConditionGroup()
             ->condition($sort_field, $cursor_value, '=')
-            ->condition($id_field, $cursor_object->id(), $operator)
+            ->condition($id_field, $cursor_object->getBackingId(), $operator)
         );
       }
 
