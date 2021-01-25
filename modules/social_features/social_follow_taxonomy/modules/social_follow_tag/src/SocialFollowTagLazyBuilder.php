@@ -149,11 +149,18 @@ class SocialFollowTagLazyBuilder {
     }
 
     if (!empty($tags)) {
-      return [
+      $build =  [
         '#theme' => 'search_follow_tag',
         '#tagstitle' => $this->t('Tags'),
         '#tags' => $tags,
       ];
+
+      // Generate cache tags.
+      foreach ($tags as $tag_id => $tag) {
+        $build['#cache']['tags'][] = "node_tagging:$tag_id";
+      }
+
+      return $build;
     }
 
     return [];

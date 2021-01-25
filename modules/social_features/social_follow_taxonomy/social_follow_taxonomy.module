@@ -41,13 +41,13 @@ function social_follow_taxonomy_theme($existing, $type, $theme, $path) {
 function social_follow_taxonomy_social_user_account_header_account_links(array $context) {
   return [
     'my_tags' => [
-      '#type' => 'link',
-      '#attributes' => [
-        'title' => new TranslatableMarkup("View tags I'm following"),
-      ],
-      '#title' => new TranslatableMarkup('Following tags'),
-      '#weight' => 1001,
-    ] + Url::fromRoute('view.following_tags.following_tags')->toRenderArray(),
+        '#type' => 'link',
+        '#attributes' => [
+          'title' => new TranslatableMarkup("View tags I'm following"),
+        ],
+        '#title' => new TranslatableMarkup('Following tags'),
+        '#weight' => 1001,
+      ] + Url::fromRoute('view.following_tags.following_tags')->toRenderArray(),
   ];
 }
 
@@ -137,7 +137,9 @@ function social_follow_taxonomy_preprocess_activity(&$variables) {
 
           if (!empty($flag)) {
             /** @var \Drupal\taxonomy\TermInterface $term */
-            $term = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->load($term_id);
+            $term = \Drupal::entityTypeManager()
+              ->getStorage('taxonomy_term')
+              ->load($term_id);
             $variables['content_type'] = $entity->type->entity->label();
             $variables['followed_tags'][$term_id] = [
               'name' => $term->getName(),
@@ -164,7 +166,9 @@ function social_follow_taxonomy_preprocess_activity(&$variables) {
 
           if (!empty($flag)) {
             /** @var \Drupal\taxonomy\TermInterface $term */
-            $term = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->load($term_id);
+            $term = \Drupal::entityTypeManager()
+              ->getStorage('taxonomy_term')
+              ->load($term_id);
             $variables['content_type'] = $entity->getEntityType()->getLabel();
             $variables['followed_tags'][$term_id] = [
               'name' => $term->getName(),
@@ -257,7 +261,9 @@ function social_follow_taxonomy_tokens($type, $tokens, array $data, array $optio
                     $term_names = [];
                     foreach ($term_ids as $term_id) {
                       /** @var \Drupal\taxonomy\TermInterface $term */
-                      $term = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->load($term_id);
+                      $term = \Drupal::entityTypeManager()
+                        ->getStorage('taxonomy_term')
+                        ->load($term_id);
                       if ($term instanceof TermInterface) {
                         if (social_follow_taxonomy_term_followed($term)) {
                           $term_names[] = $term->getName();
@@ -270,7 +276,8 @@ function social_follow_taxonomy_tokens($type, $tokens, array $data, array $optio
 
                 case 'post':
                   // Get the name of the entity type.
-                  $display_name = strtolower($entity->getEntityType()->getLabel());
+                  $display_name = strtolower($entity->getEntityType()
+                    ->getLabel());
                   break;
               }
             }
@@ -431,7 +438,8 @@ function social_follow_taxonomy_related_nodes_count(TermInterface $term, $field_
     ->addMetaData('op', 'view')
     ->execute();
 
-  \Drupal::moduleHandler()->alter('social_follow_taxonomy_related_items', $items, $term);
+  \Drupal::moduleHandler()
+    ->alter('social_follow_taxonomy_related_items', $items, $term);
 
   return count($items);
 }
@@ -448,7 +456,8 @@ function social_follow_taxonomy_related_nodes_count(TermInterface $term, $field_
 function social_follow_taxonomy_terms_list(EntityInterface $entity) {
   $term_ids = [];
 
-  \Drupal::moduleHandler()->alter('social_follow_taxonomy_terms_list', $term_ids, $entity);
+  \Drupal::moduleHandler()
+    ->alter('social_follow_taxonomy_terms_list', $term_ids, $entity);
 
   return $term_ids;
 }
@@ -465,5 +474,75 @@ function social_follow_tag_activity_send_email_notifications_alter(array &$items
   }
   if (isset($email_message_templates['update_node_following_tag'])) {
     $items['what_follow']['templates'][] = 'update_node_following_tag';
+  }
+}
+
+/**
+ * Implements hook_node_insert().
+ */
+function social_follow_taxonomy_node_insert(NodeInterface $node) {
+  _social_follow_taxonomy_invalidate_node_tagging_cache($node);
+}
+
+/**
+ * Implements hook_node_update().
+ */
+function social_follow_taxonomy_node_update(NodeInterface $node) {
+  _social_follow_taxonomy_invalidate_node_tagging_cache($node);
+}
+
+/**
+ * Implements hook_node_delete().
+ */
+function social_follow_taxonomy_node_delete(NodeInterface $node) {
+  _social_follow_taxonomy_invalidate_node_tagging_cache($node);
+}
+
+/**
+ * Invalidates cache for added/removed tags to node.
+ *
+ * @param \Drupal\node\NodeInterface $node
+ *   The node entity.
+ */
+function _social_follow_taxonomy_invalidate_node_tagging_cache(NodeInterface $node) {
+  // Only for nodes that has the 'social_tagging' field.
+  if (!$node->hasField('social_tagging')) {
+    return;
+  }
+
+  if ($node->isNew()) {
+    if ($node->get('social_tagging')->isEmpty()) {
+      return;
+    }
+    $tags = array_column($node->get('social_tagging')->getValue(), 'target_id');
+  }
+  else {
+    $tags = [];
+    /** @var \Drupal\node\NodeInterface $old_node */
+    $old_node = $node->original;
+    if (!is_null($old_node)) {
+      $old_tags = $old_node->get('social_tagging')->getValue();
+      $new_tags = $node->get('social_tagging')->getValue();
+      $tags_removed = array_diff(array_column($old_tags, 'target_id'), array_column($new_tags, 'target_id'));
+      $tags_added = array_diff(array_column($new_tags, 'target_id'), array_column($old_tags, 'target_id'));
+      if (!empty($tags_removed)) {
+        $tags = array_merge($tags, $tags_removed);
+      }
+      if (!empty($tags_added)) {
+        $tags = array_merge($tags, $tags_added);
+      }
+    }
+    else {
+      $tags = array_column($node->get('social_tagging')->getValue(), 'target_id');
+    }
+  }
+
+  // Invalidate cache for specific tags.
+  if (!empty($tags)) {
+    foreach ($tags as $tag) {
+      $invalidate_tag[] = "node_tagging:$tag";
+    }
+
+    \Drupal::service('cache_tags.invalidator')->invalidateTags($invalidate_tag);
   }
 }

@@ -71,6 +71,9 @@ function social_follow_landing_page_preprocess_paragraph(&$variables) {
               'followers_count' => social_follow_taxonomy_term_followers_count($term),
             ];
           }
+
+          $tag_id = $term->id();
+          $variables['#cache']['tags'][] = "node_tagging:$tag_id";
         }
 
         // Adding data to the terms variable to extend the template.

@@ -93,6 +93,8 @@ function social_follow_tag_preprocess_social_tagging_split(&$variables) {
         'followers_count' => social_follow_taxonomy_term_followers_count($current_term),
         'follow' => social_follow_taxonomy_term_followed($current_term),
       ];
+
+      $variables['#cache']['tags'][] = "node_tagging:$tag_id";
     }
   }
 
@@ -133,6 +135,9 @@ function social_follow_tag_preprocess_social_tagging_nosplit(&$variables) {
       'followers_count' => social_follow_taxonomy_term_followers_count($current_term),
       'follow' => social_follow_taxonomy_term_followed($current_term),
     ];
+
+    $tag_id = $current_term->id();
+    $variables['#cache']['tags'][] = "node_tagging:$tag_id";
   }
 
   $variables['#cache']['tags'][] = 'flagging_list';
