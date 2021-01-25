@@ -5,6 +5,7 @@
  * Install, update functions for the social_follow_tag module.
  */
 
+use Drupal\Core\Config\FileStorage;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -41,4 +42,15 @@ function social_follow_tag_update_8801() {
       }
     }
   }
+}
+
+/**
+ * Update followtag block.
+ */
+function social_follow_tag_update_8802() {
+  $config_path = drupal_get_path('module', 'social_follow_tag') . '/config/optional';
+  $source = new FileStorage($config_path);
+  /** @var \Drupal\Core\Config\StorageCacheInterface $config_storage */
+  $config_storage = \Drupal::service('config.storage');
+  $config_storage->write('block.block.followtag', $source->read('block.block.followtag'));
 }
