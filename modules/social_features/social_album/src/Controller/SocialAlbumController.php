@@ -306,7 +306,15 @@ class SocialAlbumController extends ControllerBase {
    *   The access result.
    */
   public function checkGroupAccess(GroupInterface $group) {
-    return AccessResult::allowedIf($group->getGroupType()->hasContentPlugin('group_node:album'));
+    $type = $group->getGroupType();
+
+    if ($type->hasContentPlugin('group_node:album')) {
+      return $type->getContentPlugin('group_node:album')
+        ->createEntityAccess($group, $this->currentUser())
+        ->andIf($this->checkAlbumsAccess());
+    }
+
+    return AccessResult::forbidden();
   }
 
 }
