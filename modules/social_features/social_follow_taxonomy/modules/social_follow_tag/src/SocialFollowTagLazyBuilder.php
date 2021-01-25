@@ -149,7 +149,7 @@ class SocialFollowTagLazyBuilder {
     }
 
     if (!empty($tags)) {
-      $build =  [
+      $build = [
         '#theme' => 'search_follow_tag',
         '#tagstitle' => $this->t('Tags'),
         '#tags' => $tags,

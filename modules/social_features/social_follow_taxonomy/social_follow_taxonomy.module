@@ -41,13 +41,13 @@ function social_follow_taxonomy_theme($existing, $type, $theme, $path) {
 function social_follow_taxonomy_social_user_account_header_account_links(array $context) {
   return [
     'my_tags' => [
-        '#type' => 'link',
-        '#attributes' => [
-          'title' => new TranslatableMarkup("View tags I'm following"),
-        ],
-        '#title' => new TranslatableMarkup('Following tags'),
-        '#weight' => 1001,
-      ] + Url::fromRoute('view.following_tags.following_tags')->toRenderArray(),
+      '#type' => 'link',
+      '#attributes' => [
+        'title' => new TranslatableMarkup("View tags I'm following"),
+      ],
+      '#title' => new TranslatableMarkup('Following tags'),
+      '#weight' => 1001,
+    ] + Url::fromRoute('view.following_tags.following_tags')->toRenderArray(),
   ];
 }
 
