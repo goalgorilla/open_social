@@ -5,6 +5,8 @@
  * Install, update and uninstall functions for social_activity_filter module.
  */
 
+use Drupal\Core\Database\Database;
+
 /**
  * Implements hook_update_dependencies().
  */
@@ -106,7 +108,7 @@ function social_activity_filter_update_8003() {
   $query->fields('nflps', ['delta']);
   $query->condition('nflps.bundle', 'landing_page');
 
-  $referenced_blocks = $query->execute()->fetchAssoc('entity_id');
+  $referenced_blocks = $query->execute()->fetchAll();
 
   foreach ($referenced_blocks as $referenced_block) {
     $settings = unserialize($referenced_block->field_block_reference_settings);
