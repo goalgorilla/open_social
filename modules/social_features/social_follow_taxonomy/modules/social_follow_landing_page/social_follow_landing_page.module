@@ -166,12 +166,17 @@ function social_follow_landing_page_field_widget_entity_reference_paragraphs_for
         $items_value = $context['items']->getValue();
         if (isset($items_value[0]['entity']) && $items_value[0]['entity'] instanceof ParagraphInterface) {
           $paragraph_entity = $items_value[0]['entity'];
-          $tag_value = $paragraph_entity->get('field_tag')->getValue();
+          if (
+            $paragraph_entity->hasField('field_tag') &&
+            !$paragraph_entity->get('field_tag')->isEmpty()
+          ) {
+            $tag_value = $paragraph_entity->get('field_tag')->getValue();
 
-          if ($tag_value) {
-            foreach ($tag_value as $key => $value) {
-              if (isset($value['target_id'])) {
-                $default_value[] = $value['target_id'];
+            if ($tag_value) {
+              foreach ($tag_value as $key => $value) {
+                if (isset($value['target_id'])) {
+                  $default_value[] = $value['target_id'];
+                }
               }
             }
           }
