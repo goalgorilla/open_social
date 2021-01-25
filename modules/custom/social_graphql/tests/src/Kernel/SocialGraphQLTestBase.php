@@ -159,15 +159,17 @@ abstract class SocialGraphQLTestBase extends GraphQLTestBase {
         }
       ";
 
-    $result = $this->server->executeOperation(
+    $executionResult = $this->server->executeOperation(
       OperationParams::create([
         'query' => $query,
       ])
-    )->toArray();
+    );
 
-    self::assertArrayHasKey('data', $result, "No result data for ${field}(${filter})");
+    self::assertEmpty($executionResult->errors, "Errors for ${field}(${filter})");
+    self::assertEmpty($executionResult->extensions, "Unexpected extensions for ${field}(${filter})");
+    self::assertNotNull($executionResult->data, "No data for ${field}(${filter})");
 
-    $data = $result['data'][$field];
+    $data = $executionResult->data[$field];
     $startCursor = $data['edges'][0]['cursor'];
     $endCursor = $data['edges'][count($first_page) - 1]['cursor'];
 
