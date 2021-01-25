@@ -54,3 +54,24 @@ function social_follow_tag_update_8802() {
   $config_storage = \Drupal::service('config.storage');
   $config_storage->write('block.block.followtag', $source->read('block.block.followtag'));
 }
+
+/**
+ * Use enforced social_follow_tag module for configuration.
+ */
+function social_follow_tag_update_8803() {
+  $config_path = drupal_get_path('module', 'social_follow_tag') . '/config/install';
+  $source = new FileStorage($config_path);
+  /** @var \Drupal\Core\Config\StorageCacheInterface $config_storage */
+  $config_storage = \Drupal::service('config.storage');
+
+  // List of configs.
+  $configs = [
+    'message.template.create_node_following_tag',
+    'message.template.create_node_following_tag_stream',
+    'message.template.update_node_following_tag',
+  ];
+
+  foreach ($configs as $config) {
+    $config_storage->write($config, $source->read($config));
+  }
+}

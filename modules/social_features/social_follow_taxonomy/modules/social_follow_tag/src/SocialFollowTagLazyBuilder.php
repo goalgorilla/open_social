@@ -12,7 +12,7 @@ use Drupal\flag\FlagServiceInterface;
 use Drupal\social_tagging\SocialTaggingService;
 
 /**
- * Class SocialFollowTagLazyBuilder.
+ * Provide service for lazy rendering.
  *
  * @package Drupal\social_follow_tag
  */
