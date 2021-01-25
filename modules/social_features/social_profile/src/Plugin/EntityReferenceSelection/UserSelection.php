@@ -72,7 +72,7 @@ class UserSelection extends UserSelectionBase {
     }
 
     // Add the ability to search users also by mail.
-    if (empty($ids)) {
+    if (empty($ids) && $this->currentUser->hasPermission('view profile email')) {
       $query = parent::buildEntityQuery(NULL, $match_operator);
       $query->condition('mail', $match, $match_operator);
       $ids = $query->execute();
