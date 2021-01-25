@@ -148,13 +148,15 @@ class SocialFollowTagLazyBuilder {
       }
     }
 
-    $renderable = [
-      '#theme' => 'search_follow_tag',
-      '#tagstitle' => $this->t('Tags'),
-      '#tags' => $tags,
-    ];
+    if (!empty($tags)) {
+      return [
+        '#theme' => 'search_follow_tag',
+        '#tagstitle' => $this->t('Tags'),
+        '#tags' => $tags,
+      ];
+    }
 
-    return ['#markup' => $this->renderer->render($renderable)];
+    return [];
   }
 
 }
