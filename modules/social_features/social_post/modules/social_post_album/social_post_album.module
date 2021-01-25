@@ -5,7 +5,9 @@
  * The Social post album module.
  */
 
+use Drupal\Component\Serialization\Json;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Url;
 use Drupal\social_post\Entity\PostInterface;
 
 /**
@@ -36,8 +38,6 @@ function social_post_album_preprocess_field__post__type__image__album(&$variable
   $post = $variables['element']['#object'];
 
   if ($post instanceof PostInterface) {
-    $variables['pid'] = $post->id();
-
     $all_post_fids = \Drupal::database()
       ->select('post__field_post_image', 'fpi')
       ->fields('fpi', ['field_post_image_target_id'])
@@ -48,6 +48,25 @@ function social_post_album_preprocess_field__post__type__image__album(&$variable
 
     $visible_fids_count = $post->field_post_image->count();
     $variables['more_posts_count'] = $all_post_fids - $visible_fids_count;
+
+    foreach ($variables['items'] as $item) {
+      /** @var \Drupal\Core\Template\Attribute $attributes */
+      $attributes = $item['attributes'];
+
+      $url = Url::fromRoute('social_post_album.image_popup_render_original', [
+        'post' => $post->id(),
+        'first_fid' => $item['content']['#item']->entity->fid->value,
+      ]);
+
+      $attributes
+        ->setAttribute('href', $url->toString())
+        ->setAttribute('data-dialog-type', 'modal')
+        ->setAttribute('data-dialog-options', JSON::encode([
+          'width' => '100%',
+          'dialogClass' => 'post',
+        ]))
+        ->addClass('use-ajax');
+    }
   }
 }
 
