@@ -946,7 +946,8 @@ display:
             enabled: '1'
       access:
         type: social_album_group
-        options: {  }
+        options:
+          group_permission: 'view group_node:album content'
       defaults:
         access: false
         relationships: false
@@ -1025,7 +1026,9 @@ display:
         - 'languages:language_content'
         - 'languages:language_interface'
         - route
+        - route.group
         - url
         - url.query_args
+        - user.group_permissions
         - 'user.node_grants:view'
       tags: {  }
