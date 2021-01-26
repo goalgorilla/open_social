@@ -5,6 +5,7 @@
  * Install, update and uninstall functions for the social_event_type module.
  */
 
+use Drupal\Core\Config\FileStorage;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\FieldConfigInterface;
 use Drupal\user\Entity\Role;
@@ -77,54 +78,17 @@ function social_event_type_update_8901() {
  * Create new field & field storage configuration for new event type icon field.
  */
 function social_event_type_update_8902(&$sandbox) {
-  $config_file = drupal_get_path('module', 'social_event_type') . '/config/static/social_event_type_update_8902.yml';
+  $configs = [
+    'field.storage.taxonomy_term.field_event_type_icon',
+    'field.field.taxonomy_term.event_types.field_event_type_icon',
+    'core.entity_form_display.taxonomy_term.event_types.default',
+  ];
 
-  if (is_file($config_file)) {
-    $sandbox['configs'] = Yaml::parse(file_get_contents($config_file));
-    if (!isset($sandbox['total'])) {
-      // Count the amount we need to add to cover batching..
-      $sandbox['total'] = count($sandbox['configs']);
-      $sandbox['current'] = 0;
-    }
+  $config_path = drupal_get_path('module', 'social_event_type') . '/config/install';
+  $source = new FileStorage($config_path);
+  $config_storage = \Drupal::service('config.storage');
 
-    $names = array_keys($sandbox['configs']);
-    $name = $names[$sandbox['current']++];
-    $data = $sandbox['configs'][$name];
-
-    $parts = explode('.', $name);
-
-    switch ($parts[0] . '.' . $parts[1]) {
-      case 'field.storage':
-        $entity_type = \Drupal::service('config.manager')
-          ->getEntityTypeIdByName($name);
-
-        /** @var \Drupal\Core\Config\Entity\ConfigEntityStorageInterface $storage */
-        $storage = \Drupal::entityTypeManager()->getStorage($entity_type);
-        $entity = $storage->createFromStorageRecord($data);
-        $entity->save();
-        break;
-
-      case 'field.field':
-        $field_config = FieldConfig::loadByName($parts[2], $parts[3], $parts[4]);
-
-        if ($field_config instanceof FieldConfigInterface) {
-          $field_config->setDescription($data);
-        }
-        else {
-          $field_config = FieldConfig::create($data);
-        }
-
-        $field_config->save();
-        break;
-
-      default:
-        // Fallback similar to before.
-        \Drupal::configFactory()
-          ->getEditable($name)
-          ->setData($data)
-          ->save(TRUE);
-    }
-
-    $sandbox['#finished'] = $sandbox['current'] / $sandbox['total'];
+  foreach ($configs as $config) {
+    $config_storage->write($config, $source->read($config));
   }
 }
