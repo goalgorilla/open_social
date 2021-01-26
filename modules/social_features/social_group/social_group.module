@@ -237,6 +237,7 @@ function social_group_preprocess_group(array &$variables) {
     && !empty($term = $group->get('field_group_type')->entity)
     && \Drupal::config('social_group.settings')->get('social_group_type_required')) {
     $variables['group_type'] = $term->getName();
+    $variables['group_type_icon'] = $term->get('field_group_type_icon')->value;
   }
 
   // Render the group settings help, gear icon with popover.
