@@ -237,6 +237,7 @@ function social_group_preprocess_group(array &$variables) {
     && !empty($term = $group->get('field_group_type')->entity)
     && \Drupal::config('social_group.settings')->get('social_group_type_required')) {
     $variables['group_type'] = $term->getName();
+    $variables['group_type_icon'] = $term->get('field_group_type_icon')->value;
   }
 
   // Render the group settings help, gear icon with popover.
@@ -329,6 +330,10 @@ function social_group_preprocess_group(array &$variables) {
     // Add context, since we render join / invite only etc links in the block.
     $variables['#cache']['contexts'][] = 'group';
     $variables['#cache']['contexts'][] = 'user';
+    $about_url = Url::fromRoute('view.group_information.page_group_about', [
+      'group' => $group->id(),
+    ]);
+    $variables['about_url'] = $about_url;
     if ($group->getGroupType()->hasContentPlugin('group_node:event')) {
       $variables['group_events'] = $group_statistics->getGroupNodeCount($group, 'event');
       $variables['group_events_label'] = \Drupal::translation()->formatPlural($variables['group_events'],

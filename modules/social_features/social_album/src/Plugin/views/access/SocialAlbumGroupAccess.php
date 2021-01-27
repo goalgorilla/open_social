@@ -2,9 +2,8 @@
 
 namespace Drupal\social_album\Plugin\views\access;
 
-use Drupal\Core\Session\AccountInterface;
+use Drupal\group\Plugin\views\access\GroupPermission;
 use Drupal\social_album\Controller\SocialAlbumController;
-use Drupal\views\Plugin\views\access\AccessPluginBase;
 use Symfony\Component\Routing\Route;
 
 /**
@@ -17,19 +16,14 @@ use Symfony\Component\Routing\Route;
  *   title = @Translation("Group albums")
  * )
  */
-class SocialAlbumGroupAccess extends AccessPluginBase {
-
-  /**
-   * {@inheritdoc}
-   */
-  public function access(AccountInterface $account) {
-    return $account->isAuthenticated();
-  }
+class SocialAlbumGroupAccess extends GroupPermission {
 
   /**
    * {@inheritdoc}
    */
   public function alterRouteDefinition(Route $route) {
+    parent::alterRouteDefinition($route);
+
     $route->setRequirement('_custom_access', SocialAlbumController::class . '::checkAlbumsAccess');
   }
 
