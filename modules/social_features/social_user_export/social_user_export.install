@@ -1,0 +1,21 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the social_user_export module.
+ */
+
+/**
+ * Set the default export plugins normal users can use.
+ */
+function social_user_export_update_8001() {
+  $plugins = [
+    'display_name' => 'display_name',
+    'user_first_name' => 'user_first_name',
+    'user_last_name' => 'user_last_name',
+  ];
+
+  // Set the default export plugins normal users can use.
+  $config = \Drupal::getContainer()->get('config.factory')->getEditable('social_user_export.settings');
+  $config->set('plugins', $plugins)->save();
+}

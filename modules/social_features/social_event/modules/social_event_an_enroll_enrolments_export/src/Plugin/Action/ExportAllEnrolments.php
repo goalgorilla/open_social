@@ -3,7 +3,9 @@
 namespace Drupal\social_event_an_enroll_enrolments_export\Plugin\Action;
 
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\social_event\EventEnrollmentInterface;
 use Drupal\social_event_an_enroll\EventAnEnrollManager;
 use Drupal\social_event_enrolments_export\Plugin\Action\ExportEnrolments;
@@ -46,6 +48,10 @@ class ExportAllEnrolments extends ExportEnrolments {
    *   The user export plugin manager.
    * @param \Psr\Log\LoggerInterface $logger
    *   A logger instance.
+   * @param \Drupal\Core\Session\AccountProxyInterface $currentUser
+   *   The current user account.
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $configFactory
+   *   Config factory for the export plugin access.
    * @param \Drupal\social_event_an_enroll\EventAnEnrollManager $social_event_an_enroll_manager
    *   The event an enroll manager.
    */
@@ -55,9 +61,11 @@ class ExportAllEnrolments extends ExportEnrolments {
     $plugin_definition,
     UserExportPluginManager $userExportPlugin,
     LoggerInterface $logger,
+    AccountProxyInterface $currentUser,
+    ConfigFactoryInterface $configFactory,
     EventAnEnrollManager $social_event_an_enroll_manager
   ) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition, $userExportPlugin, $logger);
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $userExportPlugin, $logger, $currentUser, $configFactory);
 
     $this->socialEventAnEnrollManager = $social_event_an_enroll_manager;
 
@@ -85,6 +93,8 @@ class ExportAllEnrolments extends ExportEnrolments {
     return new static($configuration, $plugin_id, $plugin_definition,
       $container->get('plugin.manager.user_export_plugin'),
       $container->get('logger.factory')->get('action'),
+      $container->get('current_user'),
+      $container->get('config.factory'),
       $container->get('social_event_an_enroll.manager')
     );
   }
@@ -124,8 +134,11 @@ class ExportAllEnrolments extends ExportEnrolments {
     $configuration = parent::getPluginConfiguration($plugin_id, $entity_id);
     $plugin_definition = &$this->pluginDefinitions[$plugin_id];
 
-    if ($plugin_definition['provider'] === 'social_event_an_enroll_enrolments_export') {
-      $configuration['entity'] = $this->entities[$entity_id];
+    foreach ($this->pluginDefinitions as $plugin_definition) {
+      if (($plugin_definition['id'] === $plugin_id) && $plugin_definition['provider'] === 'social_event_an_enroll_enrolments_export') {
+        $configuration['entity'] = $this->entities[$entity_id];
+        break;
+      }
     }
 
     return $configuration;
