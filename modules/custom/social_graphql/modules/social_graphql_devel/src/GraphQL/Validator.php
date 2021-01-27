@@ -8,6 +8,7 @@ use Drupal\graphql\GraphQL\ResolverRegistryInterface;
 use Drupal\graphql\Plugin\SchemaPluginInterface;
 use Drupal\graphql\Plugin\SchemaPluginManager;
 use GraphQL\Error\InvariantViolation;
+use GraphQL\Type\Definition\FieldDefinition;
 use GraphQL\Type\Definition\InputObjectType;
 use GraphQL\Type\Definition\InterfaceType;
 use GraphQL\Type\Definition\ObjectType;
@@ -63,7 +64,7 @@ class Validator implements ValidatorInterface {
       // We only care about concrete fieldable types. Resolvers may be defined
       // for interfaces to be available for all implementing types, but only the
       // actual resolved types need resolvers for their fields.
-      if (!$type instanceof ObjectType && !$type instanceof InputObjectType) {
+      if (!$type instanceof ObjectType) {
         continue;
       }
 
@@ -141,13 +142,13 @@ class Validator implements ValidatorInterface {
    *   The registry to find a resolver in.
    * @param \GraphQL\Type\Definition\Type $type
    *   The type definition to find a resolver for.
-   * @param \GraphQL\Type\Definition\FieldDefinition|\GraphQL\Type\Definition\InputObjectType $field
+   * @param \GraphQL\Type\Definition\FieldDefinition $field
    *   The field on the type to find a resolver for.
    *
    * @return bool
    *   Whether the registry has a registered resolver.
    */
-  protected function hasResolver(ResolverRegistryInterface $registry, Type $type, $field) : bool {
+  protected function hasResolver(ResolverRegistryInterface $registry, Type $type, FieldDefinition $field) : bool {
     // Skip hidden/internal/introspection types since they're handled by GraphQL
     // itself.
     if (strpos($type->name, "__") === 0) {
