@@ -91,7 +91,9 @@ class ValidationController implements ContainerInjectionInterface {
     $metrics = [
       'orphaned' => $this->validator->getOrphanedResolvers($graphql_server),
       // Ignore PageInfo since it's implemented as typed data.
-      'missing' => $this->validator->getMissingResolvers($graphql_server, ['PageInfo']),
+      // Ignore Subscription fields since they're handled by an external
+      // program.
+      'missing' => $this->validator->getMissingResolvers($graphql_server, ['PageInfo', 'Subscription']),
     ];
 
     foreach ($metrics as $metric_type => $data) {
