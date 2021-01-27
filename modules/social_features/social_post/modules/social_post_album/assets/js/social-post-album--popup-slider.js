@@ -42,7 +42,6 @@
       var albumPopup = $('.social-post-album--popup');
 
       if (albumPopup.length) {
-        console.log('here');
 
         // Disabled scroll when slider popup is opened.
         var $docEl = $('html, body');
@@ -84,10 +83,8 @@
         setTimeout(function () {
 
           var closeBtn = $('.ui-dialog-titlebar-close');
-          console.log(closeBtn);
 
           closeBtn.on('click', function () {
-            console.log(123);
             popupClose();
           });
         }, 500);
