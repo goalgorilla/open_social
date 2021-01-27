@@ -285,7 +285,7 @@ class SocialTaggingService {
    * @return array
    *   Returns a list of terms options.
    */
-  private function prepareTermOptions(array $terms) {
+  public function prepareTermOptions(array $terms) {
     $options = [];
     foreach ($terms as $category) {
       $options[$category->tid] = $category->name;
