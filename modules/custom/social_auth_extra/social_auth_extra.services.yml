@@ -3,3 +3,8 @@ services:
     class: '\Drupal\social_auth_extra\AuthSessionDataHandler'
     arguments:
       - '@session'
+
+  social_auth_extra.route_subscriber:
+    class: '\Drupal\social_auth_extra\Routing\RouteSubscriber'
+    tags:
+    - { name: event_subscriber }
