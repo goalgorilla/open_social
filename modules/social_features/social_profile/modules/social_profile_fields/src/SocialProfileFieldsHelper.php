@@ -3,6 +3,7 @@
 namespace Drupal\social_profile_fields;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 
 /**
  * Class SocialProfileFieldsHelper.
@@ -10,17 +11,30 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 class SocialProfileFieldsHelper {
 
   /**
-   * Drupal\Core\Entity\EntityTypeManagerInterface definition.
+   * Entity type manager for loading entities.
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
   protected $entityTypeManager;
 
   /**
-   * Constructs a new SocialProfileFieldsHelper object.
+   * Module handler service.
+   *
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface
    */
-  public function __construct(EntityTypeManagerInterface $entity_type_manager) {
+  protected $moduleHandler;
+
+  /**
+   * Constructs a new SocialProfileFieldsHelper object.
+   *
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   Entity type manager for loading entities.
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
+   *   Module handler service.
+   */
+  public function __construct(EntityTypeManagerInterface $entity_type_manager, ModuleHandlerInterface $module_handler) {
     $this->entityTypeManager = $entity_type_manager;
+    $this->moduleHandler = $module_handler;
   }
 
   /**
@@ -81,7 +95,7 @@ class SocialProfileFieldsHelper {
    *   An array of fields and user export plugins.
    */
   public function mapProfileFieldsToUserExportPlugin() {
-    return [
+    $mapping = [
       'user_first_name' => 'profile_profile_field_profile_first_name',
       'user_last_name' => 'profile_profile_field_profile_last_name',
       'user_address_country_code' => 'profile_profile_field_profile_address',
@@ -98,6 +112,11 @@ class SocialProfileFieldsHelper {
       'user_profile_tag' => 'profile_profile_field_profile_profile_tag',
       'user_nickname' => 'profile_profile_field_profile_nick_name',
     ];
+
+    // Allow other modules to alter the mapping.
+    $this->moduleHandler->alter('profile_field_export_mapping', $mapping);
+
+    return $mapping;
   }
 
 }
