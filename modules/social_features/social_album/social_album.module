@@ -187,6 +187,13 @@ function social_album_node_insert(EntityInterface $entity) {
 }
 
 /**
+ * Implements hook_social_core_node_default_title_route().
+ */
+function social_album_social_core_node_default_title_route() {
+  return 'social_album.post';
+}
+
+/**
  * Implements hook_social_post_message_alter().
  */
 function social_album_social_post_message_alter(TranslatableMarkup &$message, FormStateInterface $form_state) {

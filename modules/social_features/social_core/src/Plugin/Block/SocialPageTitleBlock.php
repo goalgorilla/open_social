@@ -81,7 +81,16 @@ class SocialPageTitleBlock extends PageTitleBlock implements ContainerFactoryPlu
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity type manager.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, RouteMatchInterface $route_match, RequestStack $request_stack, EntityRepositoryInterface $entity_repository, TitleResolverInterface $title_resolver, EntityTypeManagerInterface $entity_type_manager) {
+  public function __construct(
+    array $configuration,
+    $plugin_id,
+    $plugin_definition,
+    RouteMatchInterface $route_match,
+    RequestStack $request_stack,
+    EntityRepositoryInterface $entity_repository,
+    TitleResolverInterface $title_resolver,
+    EntityTypeManagerInterface $entity_type_manager
+  ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->routeMatch = $route_match;
     $this->requestStack = $request_stack;
@@ -145,11 +154,12 @@ class SocialPageTitleBlock extends PageTitleBlock implements ContainerFactoryPlu
       }
 
       $name = $this->routeMatch->getRouteName();
-      if (!in_array($name, [
+      $names = \Drupal::moduleHandler()->invokeAll('social_core_node_default_title_route');
+      if (!in_array($name, array_merge([
         'entity.node.edit_form',
         'entity.node.delete_form',
         'entity.node.add_form',
-      ])) {
+      ], $names))) {
 
         $title = $node->getTitle();
 
