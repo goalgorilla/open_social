@@ -9,6 +9,7 @@ use Drupal\block_content\BlockContentInterface;
 use Drupal\Core\Entity\ContentEntityFormInterface;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Render\Element;
 use Drupal\Core\Url;
 use Drupal\paragraphs\ParagraphInterface;
 
@@ -91,11 +92,15 @@ function social_follow_landing_page_preprocess_paragraph(&$variables) {
  */
 function social_follow_landing_page_field_widget_entity_reference_paragraphs_form_alter(&$element, FormStateInterface $form_state, $context) {
   $subform = FALSE;
-  if (isset($element['subform']['field_section_paragraph']['widget'][0]['subform']['field_tag'])) {
-    $subform = &$element['subform']['field_section_paragraph']['widget'][0]['subform'];
-  }
-  elseif (isset($element['subform']['field_tag'])) {
+  if (isset($element['subform']['field_tag'])) {
     $subform = &$element['subform'];
+  }
+  elseif (isset($element['subform']['field_section_paragraph']['widget'])) {
+    $child_keys = Element::children($element['subform']['field_section_paragraph']['widget']);
+    $child_key = reset($child_keys);
+    if (isset($element['subform']['field_section_paragraph']['widget'][$child_key]['subform'])){
+      $subform = &$element['subform']['field_section_paragraph']['widget'][$child_key]['subform'];
+    }
   }
 
   if ($subform) {
@@ -105,6 +110,14 @@ function social_follow_landing_page_field_widget_entity_reference_paragraphs_for
     if (!$tag_service->active() || !$tag_service->hasContent()) {
       // Remove the field from the form.
       $subform['field_tag']['#access'] = FALSE;
+      return;
+    }
+
+    // Update view for landing pages.
+    if ($element['#paragraph_type'] === 'section') {
+      $subform['field_tag']['widget']['#title'] = t('Select a tag');
+      $subform['field_tag']['widget']['#multiple'] = FALSE;
+      $subform['field_tag']['widget']['#description'] = t('Selected tag will be displayed in a block with the options to follow this tag and see content relates to this tag.');
       return;
     }
 
