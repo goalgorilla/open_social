@@ -1,0 +1,12 @@
+social_graphql_devel.validate_resolvers:
+  path: '/admin/config/graphql/servers/manage/{graphql_server}/validate_resolvers'
+  defaults:
+    _controller: '\Drupal\social_graphql_devel\Controller\ValidateResolversController::validateResolvers'
+    _title: 'Validate Resolvers'
+  requirements:
+    _permission: 'administer graphql configuration'
+  options:
+    _admin_route: TRUE
+    parameters:
+      graphql_server:
+        type: entity:graphql_server
