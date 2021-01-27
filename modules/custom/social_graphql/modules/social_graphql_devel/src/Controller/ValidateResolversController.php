@@ -92,10 +92,10 @@ class ValidateResolversController implements ContainerInjectionInterface {
 
     $missing_resolvers = [];
     foreach ($schema->getTypeMap() as $type) {
-      // We only care about fieldable types.
-      if (!$type instanceof InterfaceType &&
-        !$type instanceof ObjectType &&
-        !$type instanceof InputObjectType) {
+      // We only care about concrete fieldable types. Resolvers may be defined
+      // for interfaces to be available for all implementing types, but only the
+      // actual resolved types need resolvers for their fields.
+      if (!$type instanceof ObjectType && !$type instanceof InputObjectType) {
         continue;
       }
       foreach ($type->getFields() as $field) {
