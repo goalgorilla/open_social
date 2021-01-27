@@ -98,7 +98,7 @@ function social_follow_landing_page_field_widget_entity_reference_paragraphs_for
   elseif (isset($element['subform']['field_section_paragraph']['widget'])) {
     $child_keys = Element::children($element['subform']['field_section_paragraph']['widget']);
     $child_key = reset($child_keys);
-    if (isset($element['subform']['field_section_paragraph']['widget'][$child_key]['subform'])){
+    if (isset($element['subform']['field_section_paragraph']['widget'][$child_key]['subform'])) {
       $subform = &$element['subform']['field_section_paragraph']['widget'][$child_key]['subform'];
     }
   }
