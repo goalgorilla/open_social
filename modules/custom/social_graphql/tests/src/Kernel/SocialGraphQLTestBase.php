@@ -191,8 +191,21 @@ abstract class SocialGraphQLTestBase extends GraphQLTestBase {
       ])
     );
 
-    self::assertEmpty($executionResult->errors, "Errors for ${open_path}${field}(${filter})${close_path}");
-    self::assertEmpty($executionResult->extensions, "Unexpected extensions for ${open_path}${field}(${filter})${close_path}");
+    // If an exception was thrown during execution then we re-throw the
+    // exception here since a developer's next step after such a failing test is
+    // almost always to find the location of the error. This makes debugging
+    // test failures a lot easier.
+    if (!empty($executionResult->extensions)) {
+      foreach ($executionResult->extensions as $maybeException) {
+        if ($maybeException instanceof \Throwable) {
+          throw $maybeException;
+        }
+      }
+    }
+
+    // Matching to an empty array causes a diff to show more information to
+    // developers than simply an assertEmpty check.
+    self::assertEquals([], $executionResult->errors, "Errors for ${open_path}${field}(${filter})${close_path}");
     self::assertNotNull($executionResult->data, "No data for ${open_path}${field}(${filter})${close_path}");
 
     $parent_fields = array_map(static fn ($f) => explode('(', $f)[0], $parents);
