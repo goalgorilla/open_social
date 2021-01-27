@@ -1298,7 +1298,7 @@ function social_core_update_8908() {
     $settings = Yaml::parse(file_get_contents($config_file));
     if (is_array($settings)) {
       $config = \Drupal::configFactory()
-        ->getEditable('image.style.social_file_thumbnails_8908');
+        ->getEditable('image.style.social_file_thumbnails');
 
       $config->setData($settings)->save(TRUE);
     }

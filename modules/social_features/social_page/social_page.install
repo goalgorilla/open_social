@@ -88,6 +88,11 @@ function social_page_update_dependencies() {
     'social_core' => 8805,
   ];
 
+  // New image style change should run after the new image style is imported.
+  $dependencies['social_page'][8903] = [
+    'social_core' => 8908,
+  ];
+
   return $dependencies;
 }
 

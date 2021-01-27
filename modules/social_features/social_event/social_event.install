@@ -129,6 +129,11 @@ function social_event_update_dependencies() {
     'social_core' => 8805,
   ];
 
+  // New image style change should run after the new image style is imported.
+  $dependencies['social_event'][8906] = [
+    'social_core' => 8908,
+  ];
+
   return $dependencies;
 }
 
