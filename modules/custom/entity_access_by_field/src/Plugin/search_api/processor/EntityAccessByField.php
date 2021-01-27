@@ -131,12 +131,12 @@ class EntityAccessByField extends ProcessorPluginBase {
 
     if (!$datasource) {
       $definition = [
-          'label' => $this->t('Node access information'),
-          'description' => $this->t('Data needed to apply node access.'),
-          'type' => 'string',
-          'processor_id' => $this->getPluginId(),
-          'hidden' => TRUE,
-          'is_list' => TRUE,
+        'label' => $this->t('Node access information'),
+        'description' => $this->t('Data needed to apply node access.'),
+        'type' => 'string',
+        'processor_id' => $this->getPluginId(),
+        'hidden' => TRUE,
+        'is_list' => TRUE,
       ];
       $properties['search_api_entity_access_by_field'] = new ProcessorProperty($definition);
     }
@@ -175,10 +175,10 @@ class EntityAccessByField extends ProcessorPluginBase {
       // Lets get a node access realm if the field is implemented.
       if ($field_definition->getType() === 'entity_access_field') {
         $realm = [
-            'view',
-            'node',
-            $node->getType(),
-            $field_name,
+          'view',
+          'node',
+          $node->getType(),
+          $field_name,
         ];
         $realm = implode('_', $realm);
 
