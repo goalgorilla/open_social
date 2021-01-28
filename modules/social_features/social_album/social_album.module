@@ -429,7 +429,7 @@ function _social_album_post_submit(array $form, FormStateInterface $form_state) 
 
     $post->set('field_album', $node->id());
   }
-  else {
+  elseif ($input['value'] !== '_none') {
     $post->set('field_album', $input['value']);
   }
 

@@ -15,6 +15,16 @@ use GraphQL\Type\Definition\ResolveInfo;
 class ResolverRegistry extends ResolverRegistryBase {
 
   /**
+   * Return all field resolvers in the registry.
+   *
+   * @return callable[]
+   *   A nested list of callables, keyed by type and field name.
+   */
+  public function getAllFieldResolvers() : array {
+    return $this->fieldResolvers;
+  }
+
+  /**
    * {@inheritdoc}
    */
   protected function getRuntimeFieldResolver($value, $args, ResolveContext $context, ResolveInfo $info) {
