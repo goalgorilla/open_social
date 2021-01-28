@@ -184,13 +184,13 @@ class EntityAccessByField extends ProcessorPluginBase {
 
         $fields = $item->getFields();
         $fields = $this->getFieldsHelper()
-            ->filterForPropertyPath($fields, NULL, 'search_api_entity_access_by_field');
+          ->filterForPropertyPath($fields, NULL, 'search_api_entity_access_by_field');
         foreach ($fields as $field) {
           // Collect grant records for the node.
           $sql = 'SELECT gid, realm FROM {node_access} WHERE (nid = 0 OR nid = :nid) AND grant_view = 1 AND realm LIKE :realm';
           $args = [
-              ':nid' => $node->id(),
-              ':realm' => $this->getDatabase()->escapeLike($realm) . '%',
+            ':nid' => $node->id(),
+            ':realm' => $this->getDatabase()->escapeLike($realm) . '%',
           ];
           $grant_records = $this->getDatabase()->query($sql, $args)->fetchAll();
           if ($grant_records) {
