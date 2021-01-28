@@ -170,6 +170,7 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
       }
 
       $account_name = $account->getDisplayName();
+      $account_id = $account->id();
 
       $menu_items['account_box'] = [
         '#type' => 'account_header_element',
@@ -189,7 +190,7 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
             'class' => ['dropdown-header', 'header-nav-current-user'],
           ],
           '#type' => 'inline_template',
-          '#template' => '{{ tagline }} <strong class="text-truncate">{{ object }} </strong>',
+          '#template' => '{{ tagline }} <a href="' . "{{ path('entity.user.canonical', {'user': $account_id }) }}" . '"><strong class="text-truncate">{{ object }} </strong></a>',
           '#context' => [
             'tagline' => $this->t('Signed in as'),
             'object'  => $account_name,
