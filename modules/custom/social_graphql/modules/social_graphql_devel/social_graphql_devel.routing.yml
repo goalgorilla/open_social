@@ -1,0 +1,12 @@
+social_graphql_devel.validate:
+  path: '/admin/config/graphql/servers/manage/{graphql_server}/validate'
+  defaults:
+    _controller: '\Drupal\social_graphql_devel\Controller\ValidationController::report'
+    _title: 'Validate GraphQL Server'
+  requirements:
+    _permission: 'administer graphql configuration'
+  options:
+    _admin_route: TRUE
+    parameters:
+      graphql_server:
+        type: entity:graphql_server

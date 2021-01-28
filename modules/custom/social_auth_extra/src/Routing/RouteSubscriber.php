@@ -8,7 +8,7 @@ use Symfony\Component\Routing\RouteCollection;
 /**
  * Remove cache for user/register. so AN doesn't have social issues.
  */
-class RouteSubscriber extends RouteSubscriberBase  {
+class RouteSubscriber extends RouteSubscriberBase {
 
   /**
    * {@inheritdoc}
