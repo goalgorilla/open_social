@@ -242,3 +242,12 @@ function social_album_update_8901() {
   // Output logged messages to related channel of update execution.
   return $update_helper->logger()->output();
 }
+
+/**
+ * Delete references to not exists albums in posts.
+ */
+function social_album_update_8902() {
+  \Drupal::database()->delete('post__field_album')
+    ->condition('field_album_target_id', 0)
+    ->execute();
+}
