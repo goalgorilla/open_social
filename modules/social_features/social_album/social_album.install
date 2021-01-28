@@ -251,3 +251,17 @@ function social_album_update_8902() {
     ->condition('field_album_target_id', 0)
     ->execute();
 }
+
+/**
+ * Limitate styling for modal windows only by post modal windows.
+ */
+function social_album_update_8903() {
+  /** @var \Drupal\update_helper\UpdaterInterface $update_helper */
+  $update_helper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $update_helper->executeUpdate('social_album', 'social_album_update_8902');
+
+  // Output logged messages to related channel of update execution.
+  return $update_helper->logger()->output();
+}
