@@ -100,8 +100,8 @@ class SocialUserNavigationSettingsForm extends ConfigFormBase implements Contain
 
     // Get the configuration file.
     $config = $this->config('social_user.navigation.settings');
-    $config->set('display_social_private_message_icon', $form_state->getValue('display_social_private_message_icon'))
-      ->set('display_my_groups_icon', $form_state->getValue('display_my_groups_icon'))
+    $config->set('display_social_private_message_icon', (bool) $form_state->getValue('display_social_private_message_icon'))
+      ->set('display_my_groups_icon', (bool) $form_state->getValue('display_my_groups_icon'))
       ->save();
 
     parent::submitForm($form, $form_state);

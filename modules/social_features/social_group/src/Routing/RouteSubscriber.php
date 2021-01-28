@@ -26,6 +26,13 @@ class RouteSubscriber extends RouteSubscriberBase {
       $route->setDefaults($defaults);
     }
 
+    // Override the node creation page.
+    if ($route = $collection->get('entity.group_content.create_form')) {
+      $defaults = $route->getDefaults();
+      $defaults['_title_callback'] = '\Drupal\social_group\Controller\SocialGroupController::createFormTitle';
+      $route->setDefaults($defaults);
+    }
+
     // Override default title for Group Members page.
     if ($route = $collection->get('view.group_members.page_group_members')) {
       $defaults = $route->getDefaults();

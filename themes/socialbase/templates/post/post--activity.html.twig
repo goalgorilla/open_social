@@ -35,15 +35,20 @@
 
   {# body-text is necessary for theme colors to be applied #}
   <div class="body-text">
-    {{ content|without('links', 'field_post_comments', 'like_and_dislike', 'field_post_image', 'user_id') }}
+    {{ content|without('links', 'field_post_comments', 'like_and_dislike', 'field_post_image', 'user_id', 'field_album') }}
   </div>
 
-  {% if content.field_post_image|render %}
-    <p>{{ content.field_post_image }}</p>
-  {% endif %}
+  {{ content.field_post_image }}
 
   <div class="clearfix"></div>
-  {{ content.like_and_dislike }}
+
+  <div class="footer-post">
+    {{ content.like_and_dislike }}
+
+    <div class="album-name">
+      {{ content.field_album }}
+    </div>
+  </div>
 
 </div>
 

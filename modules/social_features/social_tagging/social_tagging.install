@@ -6,6 +6,8 @@
  */
 
 use Drupal\Core\Entity\EntityStorageException;
+use Drupal\Core\Field\BaseFieldDefinition;
+use Drupal\Core\Field\FieldStorageDefinitionInterface;
 
 /**
  * Install the module.
@@ -76,4 +78,52 @@ function _social_tagging_field_definitions_update() {
   // Create field storage for the 'Highlight' base field.
   \Drupal::entityTypeManager()->clearCachedDefinitions();
   \Drupal::service('entity.definition_update_manager')->applyUpdates();
+}
+
+/**
+ * Install Tagging base field to profile entity type.
+ */
+function social_tagging_update_8003() {
+  $field_storage_definition = BaseFieldDefinition::create('entity_reference')
+    ->setLabel(t('Tagging'))
+    ->setDescription(t('Tagging field.'))
+    ->setSetting('target_type', 'taxonomy_term')
+    ->setSetting('handler', 'default:taxonomy_term')
+    ->setSetting('handler_settings', [
+      'target_bundles' => [
+        'social_tagging' => 'social_tagging',
+      ],
+    ])
+    ->setCardinality(FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED)
+    ->setDisplayOptions('view', [
+      'type' => 'hidden',
+    ])
+    ->setDisplayOptions('form', [
+      'type' => 'options_select',
+      'weight' => 3,
+      'settings' => [],
+    ])
+    ->setDisplayConfigurable('form', TRUE)
+    ->setDisplayConfigurable('view', TRUE);
+
+  \Drupal::entityDefinitionUpdateManager()
+    ->installFieldStorageDefinition('social_tagging', 'profile', 'social_tagging', $field_storage_definition);
+}
+
+/**
+ * Toggle user index.
+ */
+function social_tagging_update_8004() {
+  // Update field definitions.
+  _social_tagging_field_definitions_update();
+  // Toggle the index users.
+  try {
+    // If the search module is enabled we need to update the group index.
+    if (\Drupal::moduleHandler()->moduleExists('social_search')) {
+      social_search_resave_search_indexes(['social_users']);
+    }
+  }
+  catch (EntityStorageException $e) {
+    \Drupal::logger('social_tagging')->info($e->getMessage());
+  }
 }

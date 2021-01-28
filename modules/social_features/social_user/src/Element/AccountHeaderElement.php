@@ -46,6 +46,8 @@ class AccountHeaderElement extends RenderElement {
       // The number of notifications for this menu item.
       // Will be rendered as a visual indicator if greater than 0.
       "#notification_count" => NULL,
+      // Allows attaching libraries to the account header item.
+      "#attached" => NULL,
     ];
   }
 
@@ -153,6 +155,11 @@ class AccountHeaderElement extends RenderElement {
           "#title" => $link_text,
         ],
       ];
+    }
+
+    // If there are libraries specified, add them to the element.
+    if (!empty($item['#attached'])) {
+      $element['#attached'] = $item['#attached'];
     }
 
     // If there are children we add them to a sublist.

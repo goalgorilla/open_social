@@ -1,0 +1,36 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.album.field_album_comments
+    - field.field.node.album.field_album_creators
+    - field.field.node.album.field_content_visibility
+    - node.type.album
+  module:
+    - options
+    - user
+id: node.album.teaser
+targetEntityType: node
+bundle: album
+mode: teaser
+content:
+  field_content_visibility:
+    type: list_default
+    weight: 1
+    region: content
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+  links:
+    weight: 2
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+hidden:
+  field_album_comments: true
+  field_album_creators: true
+  flag_follow_content: true
+  groups: true
+  like_and_dislike: true
+  social_album_images: true

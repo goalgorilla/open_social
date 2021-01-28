@@ -61,7 +61,11 @@
       <a href="{{ url }}">
         <div class="teaser__teaser-type">
           <svg class="teaser__teaser-type-icon">
-            <use xlink:href="#icon-group-white"></use>
+            {% if group_type_icon %}
+              <use xlink:href="#{{- group_type_icon -}}"></use>
+            {% else %}
+              <use xlink:href="#icon-group-white"></use>
+            {% endif %}
           </svg>
         </div>
       </a>
@@ -96,7 +100,6 @@
           <span class="teaser__content-text">
             <span class="sr-only">{% trans %}The group type is{% endtrans %} </span>
             {{ group_type }}
-            {{ group_settings_help }}
           </span>
         </div>
         {% if content.field_group_location|render or content.field_group_address|render %}

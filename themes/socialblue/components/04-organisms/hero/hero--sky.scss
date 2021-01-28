@@ -193,6 +193,10 @@
         margin-bottom: 0;
         flex-wrap: wrap;
 
+        > *:first-child {
+          padding-left: 0;
+        }
+
         @include for-tablet-landscape-down {
           align-items: flex-start;
 
@@ -251,7 +255,6 @@
 
       .meta-follow {
         margin-left: 0;
-        margin-bottom: 0;
         flex-basis: auto;
         order: initial;
       }
@@ -688,6 +691,16 @@
 
         &:hover {
           color: #fff;
+        }
+      }
+
+      a[data-toggle='popover'].icon-before {
+        display: inline-block;
+        margin-top: 1rem;
+        font-weight: 700;
+
+        svg {
+          margin-right: .5rem;
         }
       }
 

@@ -14,31 +14,50 @@ use Drupal\socialbase\Plugin\Preprocess\Page as PageBase;
 class Page extends PageBase {
 
   /**
+   * Display merged sidebar on the left side of the following pages...
+   */
+  const ROUTE_NAMES = [
+    // ...profile pages, except edit.
+    'user' => [
+      'profile.user_page.single',
+      'entity.user.edit_form',
+    ],
+    // ...group pages, except edit and create an album.
+    'group' => [
+      'entity.group.edit_form',
+      'social_album.add',
+    ],
+  ];
+
+  /**
    * {@inheritdoc}
    */
   public function preprocess(array &$variables, $hook, array $info) {
     parent::preprocess($variables, $hook, $info);
 
-    if (theme_get_setting('style') === 'sky') {
+    if (theme_get_setting('style') !== 'sky') {
+      return;
+    }
 
-      // Display merged sidebar on the left side of profile pages, except edit.
-      $route_match = \Drupal::routeMatch();
-      if ($route_match->getParameter('user') &&
-        $route_match->getRouteName() !== 'profile.user_page.single' &&
-        $route_match->getRouteName() !== 'entity.user.edit_form') {
-        $variables['content_attributes']->addClass('sidebar-left', 'content-merged--sky');
+    $route_match = \Drupal::routeMatch();
+
+    foreach (self::ROUTE_NAMES as $parameter_name => $route_names) {
+      if (
+        $route_match->getParameter($parameter_name) &&
+        !in_array($route_match->getRouteName(), $route_names)
+      ) {
+        $variables['content_attributes']->addClass(
+          'sidebar-left',
+          'content-merged--sky'
+        );
+
+        break;
       }
+    }
 
-      // Display merged sidebar on the left side of group pages, except edit.
-      if ($route_match->getParameter('group') && $route_match->getRouteName() !== 'entity.group.edit_form') {
-        $variables['content_attributes']->addClass('sidebar-left', 'content-merged--sky');
-      }
-
-      // Add extra class if we have blocks in both complementary regions.
-      if ($variables['page']['complementary_top'] && $variables['page']['complementary_bottom']) {
-        $variables['content_attributes']->addClass('complementary-both');
-      }
-
+    // Add extra class if we have blocks in both complementary regions.
+    if ($variables['page']['complementary_top'] && $variables['page']['complementary_bottom']) {
+      $variables['content_attributes']->addClass('complementary-both');
     }
 
   }

@@ -1,0 +1,43 @@
+"""
+Profile information for an Open Social user.
+
+Unless noted otherwise profile information can be filled out by a user.
+"""
+type Profile {
+  """
+  The first name of the user
+
+  Can be null if the user has not filled in the field or if the user/application
+  making the request is not allowed to view this field.
+  """
+  firstName: String
+  """
+  The last name of the user
+
+  Can be null if the user has not filled in the field or if the user/application
+  making the request is not allowed to view this field.
+  """
+  lastName: String
+  """
+  Avatar
+
+  A profile image for the user.
+  """
+  avatar: Image
+  """
+  An introduction for the user
+  """
+  introduction: FormattedText
+  """
+  A phone number for the user
+  """
+  phone: PhoneNumber
+  """
+  The function the user has at their organization.
+  """
+  function: String
+  """
+  The name of the organization a user belongs to.
+  """
+  organization: String
+}
