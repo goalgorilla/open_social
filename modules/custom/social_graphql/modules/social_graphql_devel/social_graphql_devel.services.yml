@@ -1,0 +1,5 @@
+services:
+  # Validator service.
+  graphql.validator:
+    class: Drupal\social_graphql_devel\GraphQL\Validator
+    arguments: ['@plugin.manager.graphql.schema', '@logger.channel.graphql']

@@ -2,8 +2,10 @@
 
 namespace Drupal\social_user_export\Plugin\Action;
 
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Messenger\MessengerTrait;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\views_bulk_operations\Action\ViewsBulkOperationsActionBase;
 use Drupal\Core\Session\AccountInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -51,6 +53,20 @@ class ExportUser extends ViewsBulkOperationsActionBase implements ContainerFacto
   protected $logger;
 
   /**
+   * The current user account.
+   *
+   * @var \Drupal\Core\Session\AccountProxyInterface
+   */
+  protected $currentUser;
+
+  /**
+   * The user export plugin config object.
+   *
+   * @var \Drupal\Core\Config\ImmutableConfig
+   */
+  protected $config;
+
+  /**
    * Constructs a ExportUser object.
    *
    * @param array $configuration
@@ -63,13 +79,23 @@ class ExportUser extends ViewsBulkOperationsActionBase implements ContainerFacto
    *   The user export plugin manager.
    * @param \Psr\Log\LoggerInterface $logger
    *   A logger instance.
+   * @param \Drupal\Core\Session\AccountProxyInterface $currentUser
+   *   The current user account.
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $configFactory
+   *   Config factory for the export plugin access.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, UserExportPluginManager $userExportPlugin, LoggerInterface $logger) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, UserExportPluginManager $userExportPlugin, LoggerInterface $logger, AccountProxyInterface $currentUser, ConfigFactoryInterface $configFactory) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
     $this->userExportPlugin = $userExportPlugin;
-    $this->pluginDefinitions = $this->userExportPlugin->getDefinitions();
     $this->logger = $logger;
+    $this->currentUser = $currentUser;
+    $this->config = $configFactory->get('social_user_export.settings');
+
+    // Get the definitions, check for access and and sort them by weight.
+    $definitions = $this->userExportPlugin->getDefinitions();
+    $this->pluginDefinitions = $this->pluginAccess($definitions);
+    usort($this->pluginDefinitions, [$this, 'sortDefinitions']);
   }
 
   /**
@@ -78,7 +104,9 @@ class ExportUser extends ViewsBulkOperationsActionBase implements ContainerFacto
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
     return new static($configuration, $plugin_id, $plugin_definition,
       $container->get('plugin.manager.user_export_plugin'),
-      $container->get('logger.factory')->get('action')
+      $container->get('logger.factory')->get('action'),
+      $container->get('current_user'),
+      $container->get('config.factory')
     );
   }
 
@@ -91,8 +119,8 @@ class ExportUser extends ViewsBulkOperationsActionBase implements ContainerFacto
     if (empty($this->context['sandbox']['results']['headers'])) {
       $headers = [];
       /** @var \Drupal\social_user_export\Plugin\UserExportPluginBase $instance */
-      foreach ($this->pluginDefinitions as $plugin_id => $plugin_definition) {
-        $instance = $this->userExportPlugin->createInstance($plugin_id);
+      foreach ($this->pluginDefinitions as $plugin) {
+        $instance = $this->userExportPlugin->createInstance($plugin['id']);
         $headers[] = $instance->getHeader();
       }
       $this->context['sandbox']['results']['headers'] = $headers;
@@ -126,9 +154,9 @@ class ExportUser extends ViewsBulkOperationsActionBase implements ContainerFacto
     foreach ($entities as $entity_id => $entity) {
       $row = [];
       /** @var \Drupal\social_user_export\Plugin\UserExportPluginBase $instance */
-      foreach ($this->pluginDefinitions as $plugin_id => $plugin_definition) {
-        $configuration = $this->getPluginConfiguration($plugin_id, $entity_id);
-        $instance = $this->userExportPlugin->createInstance($plugin_id, $configuration);
+      foreach ($this->pluginDefinitions as $plugin) {
+        $configuration = $this->getPluginConfiguration($plugin['id'], $entity_id);
+        $instance = $this->userExportPlugin->createInstance($plugin['id'], $configuration);
         $row[] = $instance->getValue($entity);
       }
       $csv->insertOne($row);
@@ -224,6 +252,52 @@ class ExportUser extends ViewsBulkOperationsActionBase implements ContainerFacto
    */
   public function getPluginConfiguration($plugin_id, $entity_id) {
     return [];
+  }
+
+  /**
+   * Check the access of export plugins based on config and permission.
+   *
+   * @param array $definitions
+   *   The plugin definitions.
+   *
+   * @return array
+   *   Returns only the plugins the user has access to.
+   */
+  protected function pluginAccess(array $definitions) :array {
+    // When the user has access to administer users we know they may export all
+    // the available data.
+    if ($this->currentUser->hasPermission('administer users')) {
+      return $definitions;
+    }
+
+    // Now we go through all the definitions and check if they should be removed
+    // or not based upon the config set by the site manager.
+    $allowed_plugins = $this->config->get('plugins');
+    foreach ($definitions as $key => $definition) {
+      if (!array_key_exists($definition['id'], $allowed_plugins) || empty($allowed_plugins[$definition['id']])) {
+        unset($definitions[$key]);
+      }
+    }
+
+    return $definitions;
+  }
+
+  /**
+   * Order by weight.
+   *
+   * @param array $a
+   *   First parameter.
+   * @param array $b
+   *   Second parameter.
+   *
+   * @return int
+   *   The weight to be used for the usort function.
+   */
+  protected function sortDefinitions(array $a, array $b) :int {
+    if (isset($a['weight'], $b['weight'])) {
+      return $a['weight'] < $b['weight'] ? -1 : 1;
+    }
+    return 0;
   }
 
 }

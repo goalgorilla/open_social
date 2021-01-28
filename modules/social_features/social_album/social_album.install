@@ -244,9 +244,18 @@ function social_album_update_8901() {
 }
 
 /**
- * Limitate styling for modal windows only by post modal windows.
+ * Delete references to not exists albums in posts.
  */
 function social_album_update_8902() {
+  \Drupal::database()->delete('post__field_album')
+    ->condition('field_album_target_id', 0)
+    ->execute();
+}
+
+/**
+ * Limitate styling for modal windows only by post modal windows.
+ */
+function social_album_update_8903() {
   /** @var \Drupal\update_helper\UpdaterInterface $update_helper */
   $update_helper = \Drupal::service('update_helper.updater');
 
