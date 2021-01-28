@@ -721,3 +721,63 @@ function social_core_form_node_form_alter(&$form, FormStateInterface $form_state
 function social_core_theme_registry_alter(&$theme_registry) {
   $theme_registry['menu__toolbar']['variables']['menu_name'] = NULL;
 }
+
+/**
+ * Function to set default email logo if not set already for OS.
+ */
+function _social_core_set_default_email_logo_for_socialblue() {
+  // Only when socialblue is default we continue.
+  if (\Drupal::configFactory()->get('system.theme')->get('default') === 'socialblue') {
+    $logo = theme_get_setting('logo.url', 'socialblue');
+    $basetheme_url = drupal_get_path('theme', 'socialblue');
+    // Only if the theme setting for the logo, is still the socialblue
+    // default logo, we can update our default logo.
+    // If someone changed it to their own branding, let's not update it
+    // because that would create regression.
+    // that will be /profile/contrib/social/themes/socialblue/logo.svg.
+    if (!empty($basetheme_url) && $logo === DIRECTORY_SEPARATOR . $basetheme_url . DIRECTORY_SEPARATOR . 'logo.svg') {
+      // Add default image.
+      $config_factory = \Drupal::configFactory();
+      // Lets get the email logo settings.
+      $socialblue_settings = $config_factory->getEditable('socialblue.settings');
+      $default_image = $socialblue_settings->get('email_logo');
+
+      // Only if there is no default image, or if its the same as the
+      // socialblue logo we can continue.
+      if (empty($default_image) || $default_image === $basetheme_url . DIRECTORY_SEPARATOR . 'logo.svg') {
+        $file_system = \Drupal::service('file_system');
+        $uri = $file_system->copy($basetheme_url . DIRECTORY_SEPARATOR . 'logo_email.png', 'public://logo_email.png', FileSystemInterface::EXISTS_REPLACE);
+
+        $media = File::create([
+          'uri' => $uri,
+        ]);
+        $media->setPermanent();
+        $media->save();
+
+        $default_image[0] = $media->id();
+        // We just save the file id.
+        $socialblue_settings->set('email_logo', $default_image)->save();
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for status_messages.
+ */
+function social_core_preprocess_status_messages(&$variables) {
+  // We want to remove stratus messages coming form image_widget_crop module.
+  // These notifications are technical in nature and add no value for the user.
+  // @see: \Drupal\image_widget_crop\ImageWidgetCropManager::saveCrop().
+  if (isset($variables['message_list']['status'])) {
+    // Get all the status messages.
+    $status_messages = $variables['message_list']['status'];
+    // Loop through them to find the relevant messages we are looking for.
+    foreach ($status_messages as $delta => $message) {
+      // Unset them finally.
+      if (strpos((string) $message, 'The crop') !== FALSE) {
+        unset($variables['message_list']['status'][$delta]);
+      }
+    }
+  }
+}
