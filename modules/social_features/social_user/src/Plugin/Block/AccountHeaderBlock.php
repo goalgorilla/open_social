@@ -190,7 +190,7 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
             'class' => ['dropdown-header', 'header-nav-current-user'],
           ],
           '#type' => 'inline_template',
-          '#template' => '{{ tagline }} <a href="' . "{{ path('entity.user.canonical', {'user': $account_id }) }}" . '"><strong class="text-truncate">{{ object }} </strong></a>',
+          '#template' => '<a href="/user">{{ tagline }}<strong class="text-truncate">{{ object }} </strong></a>',
           '#context' => [
             'tagline' => $this->t('Signed in as'),
             'object'  => $account_name,
