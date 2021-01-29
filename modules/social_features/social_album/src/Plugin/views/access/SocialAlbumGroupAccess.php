@@ -24,7 +24,10 @@ class SocialAlbumGroupAccess extends GroupPermission {
   public function alterRouteDefinition(Route $route) {
     parent::alterRouteDefinition($route);
 
-    $route->setRequirement('_custom_access', SocialAlbumController::class . '::checkAlbumsAccess');
+    $route->setRequirement(
+      '_custom_access',
+      SocialAlbumController::class . '::checkGroupAlbumsAccess'
+    );
   }
 
 }
