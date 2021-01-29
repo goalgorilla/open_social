@@ -64,6 +64,30 @@
       border-left-color: $popover-arrow-color;
     }
   }
+
+  &.bottom {
+    max-width: 525px !important;
+    width: 100%;
+
+    .popover-content {
+      [id*='visibility'] {
+        svg {
+          margin-right: 10px;
+        }
+
+        p {
+          margin-bottom: 1.25rem;
+          font-size: 14px;
+          font-weight: 300;
+          line-height: 21px;
+
+          &:last-child {
+            margin-bottom: 0;
+          }
+        }
+      }
+    }
+  }
 }
 
 // Styles for the popover on the group page.
