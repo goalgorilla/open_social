@@ -10,8 +10,8 @@ use Drupal\Core\Ajax\ReplaceCommand;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Url;
 use Drupal\Core\Link;
+use Drupal\Core\Url;
 use Drupal\field\Entity\FieldStorageConfig;
 
 /**
@@ -88,7 +88,10 @@ function social_event_type_preprocess_node(array &$variables) {
           ->toString();
         $variables['event_type'] = $event_type_link;
 
-        if (!$event->get('field_event_type_icon')->isEmpty()) {
+        if (
+          $event->hasField('field_event_type_icon') &&
+          !$event->get('field_event_type_icon')->isEmpty()
+        ) {
           $variables['event_type_icon'] = $event->get('field_event_type_icon')->value;
         }
 

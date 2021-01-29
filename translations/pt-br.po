@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: node-gettext\n"
-"POT-Creation-Date: 2021-01-28 00:13+0000\n"
-"PO-Revision-Date: 2021-01-27 14:16+0000\n"
+"POT-Creation-Date: 2021-01-29 00:15+0000\n"
+"PO-Revision-Date: 2021-01-28 16:16+0000\n"
 "Last-Translator: Henrique Ciolfi <henrique.ciolfi@greenpeace.org>\n"
 "Language-Team: Portuguese (Brazil) <https://translate.getopensocial.com/"
 "projects/open-social/distribution/pt_BR/>\n"
@@ -360,8 +360,8 @@ msgstr ""
 msgid ""
 "<a href=\"/node/{{ raw_arguments.nid }}/image/{{ id }}/"
 "{{ field_post_image__target_id }}\" class=\"use-ajax\" data-dialog-type="
-"\"modal\" data-dialog-options='{\"width\":\"80%\"}'>{{ field_post_image }}</"
-"a>"
+"\"modal\" data-dialog-options='{\"width\":\"100%\",\"dialogClass\":\"post"
+"\"}'>{{ field_post_image }}</a>"
 msgstr ""
 
 #: modules/social_features/social_group/src/Plugin/views/field/SocialGroupViewsBulkOperationsBulkForm.php:124
@@ -1519,7 +1519,7 @@ msgid ""
 "specific filters."
 msgstr ""
 
-#: modules/social_features/social_content_report/social_content_report.module:71
+#: modules/social_features/social_content_report/social_content_report.module:79
 msgid "A description of your report is mandatory."
 msgstr ""
 
@@ -2131,7 +2131,7 @@ msgstr ""
 #: modules/social_features/social_event/modules/social_event_invite/src/Plugin/Block/SocialEventInviteLocalActionsBlock.php:112
 #: modules/social_features/social_group/modules/social_group_invite/src/Plugin/Block/SocialInviteLocalActionsBlock.php:141
 msgid "Add directly"
-msgstr ""
+msgstr "Adicionar diretamente"
 
 #: modules/social_features/social_event/modules/social_event_invite/src/Plugin/Block/SocialEventInviteLocalActionsBlock.php:106
 #: modules/social_features/social_event/modules/social_event_managers/social_event_managers.links.action.yml:0
@@ -2186,7 +2186,7 @@ msgstr "Adicionar membros ao grupo"
 
 #: modules/social_features/social_group/src/Controller/SocialGroupController.php:135
 msgid "Add members to group: @group_name"
-msgstr ""
+msgstr "Adicionar membros ao grupo: @group_name"
 
 #: modules/social_features/social_post/src/Routing/RouteSubscriber.php:21
 msgid "Add new comment"
@@ -2372,7 +2372,7 @@ msgstr ""
 #: modules/social_features/social_group/modules/social_group_flexible_group/config/install/group.content_type.flexible_group-group_membership.yml:0
 #: modules/social_features/social_group/modules/social_group_secret/config/install/group.content_type.secret_group-group_membership.yml:0
 msgid "Adds users to groups as members."
-msgstr "Adicionar usuários aos grupos como membros."
+msgstr "Adicionar pessoas ao grupo como membros."
 
 #: modules/custom/activity_creator/activity_creator.permissions.yml:0
 msgid "Administer Activity entities"
@@ -4193,6 +4193,12 @@ msgid ""
 "or return URL was not valid."
 msgstr ""
 
+#: modules/custom/social_graphql/modules/social_graphql_devel/src/GraphQL/Validator.php:97
+msgid ""
+"Could not get orphaned resolvers for @server_name as it's registry class "
+"(@klass) does not implement getAllFieldResolvers."
+msgstr ""
+
 #: modules/social_features/social_core/social_core.install:1269
 msgid ""
 "Could not install Content Entity forms as Open Social please do so manually "
@@ -5015,6 +5021,10 @@ msgstr ""
 #: modules/custom/social_auth_linkedin/src/Form/LinkedInAuthSettingsForm.php:63
 #: modules/custom/social_auth_twitter/src/Form/TwitterAuthSettingsForm.php:59
 msgid "Determines whether this social network can be used."
+msgstr ""
+
+#: modules/custom/social_graphql/modules/social_graphql_devel/social_graphql_devel.info.yml:0
+msgid "Development tools for Open Social's GraphQL API."
 msgstr ""
 
 #: modules/custom/download_count/download_count.module:65
@@ -6038,6 +6048,7 @@ msgstr "item"
 msgid "Featured Items"
 msgstr "itens"
 
+#: modules/custom/social_graphql/modules/social_graphql_devel/src/Controller/ValidationController.php:57
 #: modules/custom/social_graphql/src/Plugin/GraphQL/DataProducer/Field/Field.php:10;10
 msgid "Field"
 msgstr ""
@@ -6053,8 +6064,13 @@ msgstr ""
 msgid "Field types"
 msgstr "Tipos de campo"
 
+#: modules/custom/social_graphql/modules/social_graphql_devel/src/Controller/ValidationController.php:63;69
 #: modules/social_features/social_profile/modules/social_profile_privacy/config/schema/social_profile_privacy.schema.yml:0
 msgid "Fields"
+msgstr ""
+
+#: modules/custom/social_graphql/modules/social_graphql_devel/src/Controller/ValidationController.php:68
+msgid "Fields without resolvers"
 msgstr ""
 
 #: modules/custom/social_demo/src/Plugin/DemoContent/File.php:7
@@ -7030,6 +7046,8 @@ msgid ""
 "How can people join this group. Group managers can always add members "
 "directly, regardless of the chosen join method."
 msgstr ""
+"Como pessoas podem entrar neste grupo? Os administradores podem adicionar "
+"membros diretamente, independente da configuração de entrada do grupo."
 
 #: modules/custom/mentions/src/Form/MentionsSettingsForm.php:82
 msgid "How many suggestions do you want to show when mentioning."
@@ -7288,7 +7306,7 @@ msgstr ""
 #: modules/social_features/social_event/modules/social_event_invite/src/Plugin/Block/SocialEventInviteLocalActionsBlock.php:116
 #: modules/social_features/social_group/modules/social_group_invite/src/Plugin/Block/SocialInviteLocalActionsBlock.php:145
 msgid "Invite users"
-msgstr ""
+msgstr "Convidar membros"
 
 #: modules/social_features/social_event/modules/social_event_invite/src/SocialEventInviteBulkHelper.php:270
 msgid "Invite(s) have been successfully sent."
@@ -8219,6 +8237,7 @@ msgstr ""
 msgid "Menu link"
 msgstr "Link de menu"
 
+#: modules/custom/social_graphql/modules/social_graphql_devel/src/Controller/ValidationController.php:57
 #: modules/social_features/social_event/modules/social_event_invite/src/Form/EventInviteSettingsForm.php:64
 #: modules/social_features/social_event/modules/social_event_managers/src/Form/SocialEventManagersAddEnrolleeForm.php:269
 #: modules/social_features/social_event/src/Form/EnrollRequestModalForm.php:54
@@ -8581,6 +8600,10 @@ msgstr "Nenhum conteúdo relacionado encontrado"
 msgid "No members in this group"
 msgstr "Nenhum membro neste grupo"
 
+#: modules/custom/social_graphql/modules/social_graphql_devel/src/Controller/ValidationController.php:70
+msgid "No missing resolvers."
+msgstr ""
+
 #: modules/social_features/social_event/modules/social_event_invite/config/install/views.view.event_manage_enrollment_invites.yml:0
 msgid "No one has been invited for this event yet."
 msgstr "Ninguém foi convidado para este evento ainda."
@@ -8597,6 +8620,10 @@ msgstr "Ninguém se inscreveu neste evento de forma anônima"
 #: modules/social_features/social_event/config/install/views.view.event_manage_enrollment_requests.yml:0
 msgid "No one has requested to be enrolled for this event yet."
 msgstr "Ninguém solicitou inscrição neste evento ainda."
+
+#: modules/custom/social_graphql/modules/social_graphql_devel/src/Controller/ValidationController.php:64
+msgid "No orphaned resolvers."
+msgstr ""
 
 #: modules/social_features/social_user/config/install/views.view.user_admin_people.yml:0
 msgid "No people available."
@@ -8637,6 +8664,10 @@ msgstr "Sem eventos futuros neste grupo"
 #: modules/social_features/social_event/config/install/views.view.upcoming_events.yml:0
 msgid "No upcoming events you have enrolled for"
 msgstr "Você não se inscreveu em nenhum futuro evento"
+
+#: modules/custom/social_graphql/modules/social_graphql_devel/src/Controller/ValidationController.php:58
+msgid "No validation errors."
+msgstr ""
 
 #: modules/custom/social_graphql/src/Plugin/GraphQL/DataProducer/Edge/EdgeNode.php:9
 #: modules/social_features/social_event/modules/social_event_invite/src/Plugin/Block/SocialEventInviteLocalActionsBlock.php:17
@@ -8910,7 +8941,7 @@ msgstr ""
 #: modules/social_features/social_group/config/schema/social_group.schema.yml:0
 #: modules/social_features/social_group/src/Form/SocialGroupSettings.php:47
 msgid "Only show the group address to the group members"
-msgstr ""
+msgstr "Exibir o endereço do grupo apenas aos membros"
 
 #: modules/social_features/social_mentions/social_mentions.module:179
 msgid "Only username"
@@ -10445,7 +10476,7 @@ msgstr ""
 msgid "Reply-to"
 msgstr "E-mail para respostas"
 
-#: modules/social_features/social_content_report/src/ContentReportService.php:154
+#: modules/social_features/social_content_report/src/ContentReportService.php:159
 #: modules/social_features/social_content_report/config/install/flag.flag.report_comment.yml:0
 #: modules/social_features/social_content_report/config/install/flag.flag.report_node.yml:0
 #: modules/social_features/social_content_report/config/install/flag.flag.report_post.yml:0
@@ -10643,6 +10674,10 @@ msgstr "Resete sua senha com <b>usuário</b> ou <b>e-mail</b>"
 #: modules/social_features/social_user/src/Routing/RouteSubscriber.php:30
 msgid "Reset your password"
 msgstr "Resetar senha"
+
+#: modules/custom/social_graphql/modules/social_graphql_devel/src/Controller/ValidationController.php:62
+msgid "Resolvers without schema"
+msgstr ""
 
 #: modules/social_features/social_editor/config/install/filter.format.restricted_html.yml:0
 msgid "Restricted HTML"
@@ -11604,6 +11639,7 @@ msgid "Social"
 msgstr "Social"
 
 #: modules/custom/social_graphql/social_graphql.info.yml:0
+#: modules/custom/social_graphql/modules/social_graphql_devel/social_graphql_devel.info.yml:0
 msgid "Social (Experimental)"
 msgstr ""
 
@@ -11968,6 +12004,10 @@ msgstr ""
 
 #: modules/custom/social_graphql/social_graphql.info.yml:0
 msgid "Social GraphQL"
+msgstr ""
+
+#: modules/custom/social_graphql/modules/social_graphql_devel/social_graphql_devel.info.yml:0
+msgid "Social GraphQL Devel"
 msgstr ""
 
 #: modules/social_features/social_group/social_group.tokens.inc:19
@@ -13878,6 +13918,7 @@ msgstr ""
 msgid "Twitter user ID"
 msgstr ""
 
+#: modules/custom/social_graphql/modules/social_graphql_devel/src/Controller/ValidationController.php:57;63;69
 #: modules/custom/social_queue_storage/src/QueueStorageEntityListBuilder.php:21
 #: modules/custom/social_queue_storage/src/QueueStorageEntityTypeListBuilder.php:17
 #: modules/social_features/social_group/src/Controller/SocialGroupListBuilder.php:93
@@ -14343,6 +14384,18 @@ msgstr "Perfil dos usuários"
 msgid ""
 "Users with this permission will see a user's full name even when the Social "
 "Profile Privacy module is configured to hide it."
+msgstr ""
+
+#: modules/custom/social_graphql/modules/social_graphql_devel/social_graphql_devel.links.task.yml:0
+msgid "Validate"
+msgstr ""
+
+#: modules/custom/social_graphql/modules/social_graphql_devel/social_graphql_devel.routing.yml:0
+msgid "Validate GraphQL Server"
+msgstr ""
+
+#: modules/custom/social_graphql/modules/social_graphql_devel/src/Controller/ValidationController.php:56
+msgid "Validation errors"
 msgstr ""
 
 #: modules/custom/dropdown/config/schema/dropdown.schema.yml:0;0
