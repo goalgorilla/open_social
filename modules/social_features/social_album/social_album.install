@@ -18,9 +18,22 @@ function social_album_install() {
 
   module_set_weight('social_album', 5);
 
-  _social_album_blocks(function ($pages, array $paths) {
-    return $pages . "\r\n" . implode("\r\n", $paths);
-  });
+  _social_album_blocks('_social_album_install_blocks');
+}
+
+/**
+ * Add new paths where blocks should be displayed.
+ *
+ * @param string $pages
+ *   The current sequence of block paths.
+ * @param array $paths
+ *   List of blocks which should be updated and paths which should be added.
+ *
+ * @return string
+ *   List of block paths with new paths.
+ */
+function _social_album_install_blocks($pages, array $paths) {
+  return $pages . "\r\n" . implode("\r\n", $paths);
 }
 
 /**
@@ -191,19 +204,20 @@ function _social_album_set_group_permissions() {
  *
  * @param callable $function
  *   The function which updates the pages set.
+ * @param array $items
+ *   Paths of blocks.
  */
-function _social_album_blocks(callable $function) {
-  $items = [
-    'socialblue_profile_hero_block' => '/user/*/albums',
-    'socialblue_pagetitleblock_content' => [
-      '/user/*/albums',
-      '/group/*/albums',
-    ],
-    'socialblue_profile_statistic_block' => '/user/*/albums',
-    'socialblue_groupheroblock' => '/group/*/albums',
-    'socialblue_group_statistic_block' => '/group/*/albums',
-  ];
-
+function _social_album_blocks(callable $function, array $items = [
+  'socialblue_profile_hero_block' => '/user/*/albums',
+  'socialblue_pagetitleblock_content' => [
+    '/user/*/albums',
+    '/group/*/albums',
+    '/group/*/albums/add',
+  ],
+  'socialblue_profile_statistic_block' => '/user/*/albums',
+  'socialblue_groupheroblock' => '/group/*/albums',
+  'socialblue_group_statistic_block' => '/group/*/albums',
+]) {
   $storage = \Drupal::entityTypeManager()->getStorage('block');
 
   foreach ($items as $id => $paths) {
@@ -250,4 +264,29 @@ function social_album_update_8902() {
   \Drupal::database()->delete('post__field_album')
     ->condition('field_album_target_id', 0)
     ->execute();
+}
+
+/**
+ * Limitate styling for modal windows only by post modal windows.
+ */
+function social_album_update_8903() {
+  /** @var \Drupal\update_helper\UpdaterInterface $update_helper */
+  $update_helper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $update_helper->executeUpdate('social_album', 'social_album_update_8902');
+
+  // Output logged messages to related channel of update execution.
+  return $update_helper->logger()->output();
+}
+
+/**
+ * Delete duplicate of title from the group album creation page.
+ */
+function social_album_update_8904() {
+  _social_album_blocks('_social_album_install_blocks', [
+    'socialblue_pagetitleblock_content' => [
+      '/group/*/albums/add',
+    ],
+  ]);
 }
