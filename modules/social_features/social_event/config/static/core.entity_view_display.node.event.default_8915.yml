@@ -15,15 +15,14 @@ dependencies:
     - field.field.node.event.field_event_image
     - field.field.node.event.field_event_location
     - field.field.node.event.field_files
+    - image.style.social_file_thumbnails
     - node.type.event
   module:
     - address
-    - file
     - group_core_comments
+    - social_core
     - text
     - user
-_core:
-  default_config_hash: wa-Fywd3Q-rIzT9o4Rn2NC0Jm2Q3QEhNjMJ_hqzfga4
 id: node.event.default
 targetEntityType: node
 bundle: event
@@ -64,16 +63,16 @@ content:
     weight: 4
     label: above
     settings:
-      image_style: thumbnail
+      image_style: social_file_thumbnails
       image_link: file
     third_party_settings: {  }
     type: file_image_default
     region: content
   flag_follow_content:
     weight: 5
+    region: content
     settings: {  }
     third_party_settings: {  }
-    region: content
   groups_type_public_group:
     label: above
     weight: -5
@@ -84,9 +83,9 @@ content:
     type: entity_reference_label
   like_and_dislike:
     weight: 6
+    region: content
     settings: {  }
     third_party_settings: {  }
-    region: content
   links:
     weight: 7
     region: content
