@@ -170,7 +170,6 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
       }
 
       $account_name = $account->getDisplayName();
-      $account_id = $account->id();
 
       $menu_items['account_box'] = [
         '#type' => 'account_header_element',
