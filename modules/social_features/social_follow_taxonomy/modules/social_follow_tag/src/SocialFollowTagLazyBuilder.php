@@ -142,7 +142,7 @@ class SocialFollowTagLazyBuilder {
         $tags[$term_id] = [
           'name' => $term->getName(),
           'flag' => social_follow_taxonomy_flag_link($term),
-          'related_nodes_count' => social_follow_taxonomy_related_nodes_count($term, 'social_tagging'),
+          'related_entity_count' => social_follow_taxonomy_related_entity_count($term, 'social_tagging'),
           'followers_count' => social_follow_taxonomy_term_followers_count($term),
         ];
       }
@@ -157,7 +157,7 @@ class SocialFollowTagLazyBuilder {
 
       // Generate cache tags.
       foreach ($tags as $tag_id => $tag) {
-        $build['#cache']['tags'][] = "node_tagging:$tag_id";
+        $build['#cache']['tags'][] = "follow_tag_node:$tag_id";
       }
 
       return $build;

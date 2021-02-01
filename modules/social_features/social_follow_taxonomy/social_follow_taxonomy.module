@@ -5,6 +5,7 @@
  * Contains social_follow_taxonomy.module.
  */
 
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
@@ -424,19 +425,36 @@ function social_follow_taxonomy_flag_link(TermInterface $term) {
  *   Term entity.
  * @param string $field_id
  *   Taxonomy term reference field id.
+ * @param string $entity_type
+ *   Entity type ID.
  *
  * @return int
  *   Count of related nodes.
  */
-function social_follow_taxonomy_related_nodes_count(TermInterface $term, $field_id) {
-  $items = \Drupal::entityTypeManager()
-    ->getStorage('node')
-    ->getQuery()
-    ->condition($field_id, $term->id())
-    ->addTag('node_access')
-    ->addMetaData('base_table', 'node')
-    ->addMetaData('op', 'view')
-    ->execute();
+function social_follow_taxonomy_related_entity_count(TermInterface $term, $field_id, $entity_type = 'node') {
+  switch ($entity_type) {
+    case 'node':
+      $items = \Drupal::entityTypeManager()
+        ->getStorage('node')
+        ->getQuery()
+        ->condition($field_id, $term->id())
+        ->addTag('node_access')
+        ->addMetaData('base_table', 'node')
+        ->addMetaData('op', 'view')
+        ->execute();
+      break;
+
+    case 'group':
+      $items = \Drupal::entityTypeManager()
+        ->getStorage('group')
+        ->getQuery()
+        ->condition($field_id, $term->id())
+        ->execute();
+      break;
+
+    default:
+      break;
+  }
 
   \Drupal::moduleHandler()
     ->alter('social_follow_taxonomy_related_items', $items, $term);
@@ -478,51 +496,51 @@ function social_follow_tag_activity_send_email_notifications_alter(array &$items
 }
 
 /**
- * Implements hook_node_insert().
+ * Implements hook_entity_presave().
  */
-function social_follow_taxonomy_node_insert(NodeInterface $node) {
-  _social_follow_taxonomy_invalidate_node_tagging_cache($node);
+function social_follow_taxonomy_entity_presave(EntityInterface $entity) {
+  _social_follow_taxonomy_invalidate_follow_tag_cache($entity);
 }
 
 /**
- * Implements hook_node_update().
+ * Implements hook_entity_delete().
  */
-function social_follow_taxonomy_node_update(NodeInterface $node) {
-  _social_follow_taxonomy_invalidate_node_tagging_cache($node);
+function social_follow_taxonomy_entity_delete(EntityInterface $entity) {
+  _social_follow_taxonomy_invalidate_follow_tag_cache($entity);
 }
 
 /**
- * Implements hook_node_delete().
- */
-function social_follow_taxonomy_node_delete(NodeInterface $node) {
-  _social_follow_taxonomy_invalidate_node_tagging_cache($node);
-}
-
-/**
- * Invalidates cache for added/removed tags to node.
+ * Invalidates cache for added/removed tags to entity.
  *
- * @param \Drupal\node\NodeInterface $node
- *   The node entity.
+ * @param \Drupal\Core\Entity\EntityInterface $entity
+ *   The entity.
  */
-function _social_follow_taxonomy_invalidate_node_tagging_cache(NodeInterface $node) {
-  // Only for nodes that has the 'social_tagging' field.
-  if (!$node->hasField('social_tagging')) {
+function _social_follow_taxonomy_invalidate_follow_tag_cache(EntityInterface $entity) {
+  if (
+    !$entity instanceof ContentEntityInterface ||
+    !$entity->hasField('social_tagging')
+  ) {
     return;
   }
 
-  if ($node->isNew()) {
-    if ($node->get('social_tagging')->isEmpty()) {
+  if ($entity->isNew()) {
+    if ($entity->get('social_tagging')->isEmpty()) {
       return;
     }
-    $tags = array_column($node->get('social_tagging')->getValue(), 'target_id');
+
+    // Added tags.
+    $tags = array_column($entity->get('social_tagging')->getValue(), 'target_id');
   }
   else {
     $tags = [];
-    /** @var \Drupal\node\NodeInterface $old_node */
-    $old_node = $node->original;
-    if (!is_null($old_node)) {
-      $old_tags = $old_node->get('social_tagging')->getValue();
-      $new_tags = $node->get('social_tagging')->getValue();
+    /** @var \Drupal\node\NodeInterface $old_entity */
+    $old_entity = $entity->original;
+    if (!is_null($old_entity)) {
+      // Tags before save.
+      $old_tags = $old_entity->get('social_tagging')->getValue();
+      // Tags after save.
+      $new_tags = $entity->get('social_tagging')->getValue();
+      // Get removed/added tags.
       $tags_removed = array_diff(array_column($old_tags, 'target_id'), array_column($new_tags, 'target_id'));
       $tags_added = array_diff(array_column($new_tags, 'target_id'), array_column($old_tags, 'target_id'));
       if (!empty($tags_removed)) {
@@ -533,14 +551,17 @@ function _social_follow_taxonomy_invalidate_node_tagging_cache(NodeInterface $no
       }
     }
     else {
-      $tags = array_column($node->get('social_tagging')->getValue(), 'target_id');
+      $tags = array_column($entity->get('social_tagging')->getValue(), 'target_id');
     }
   }
+
+  // Get entity type.
+  $entity_type = $entity->getEntityTypeId();
 
   // Invalidate cache for specific tags.
   if (!empty($tags)) {
     foreach ($tags as $tag) {
-      $invalidate_tag[] = "node_tagging:$tag";
+      $invalidate_tag[] = "follow_tag_$entity_type:$tag";
     }
 
     \Drupal::service('cache_tags.invalidator')->invalidateTags($invalidate_tag);
