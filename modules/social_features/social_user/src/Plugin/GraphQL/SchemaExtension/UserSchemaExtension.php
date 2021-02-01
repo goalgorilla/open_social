@@ -26,14 +26,7 @@ class UserSchemaExtension extends SdlSchemaExtensionPluginBase {
 
     // Root Query fields.
     $registry->addFieldResolver('Query', 'currentUser',
-      $builder->compose(
-        $builder->produce('current_user'),
-        $builder->produce('account_id')
-          ->map('account', $builder->fromParent()),
-        $builder->produce('entity_load')
-          ->map('type', $builder->fromValue('user'))
-          ->map('id', $builder->fromParent())
-      )
+      $builder->produce('viewer')
     );
 
     $registry->addFieldResolver('Query', 'users',
