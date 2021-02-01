@@ -460,23 +460,38 @@ function social_album_social_user_account_header_account_links(array $context) {
  * Implements hook_views_query_alter().
  */
 function social_album_views_query_alter(ViewExecutable $view, QueryPluginBase $query) {
-  // If the we are in the public streams,
-  // only show albums that are not in groups.
-  if (empty(\Drupal::routeMatch()->getParameter('group')) &&
-    _social_group_get_current_group() === NULL &&
-    $view->id() === 'albums' &&
+  // Alter the album select options based on following:
+  // - When on the public stream, only see public albums.
+  // - When on a group stream, only see album from that specific group.
+  if ($view->id() === 'albums' &&
     $view->getDisplay()->display['id'] === 'entity_reference') {
 
-    // Get all the node ids from albums that are in a group.
-    $nids = \Drupal::database()->select('group_content_field_data', 'gcfd')
-      ->fields('gcfd', ['entity_id'])
-      ->condition('type', 'flexible_group-group_node-album')
-      ->execute()
-      ->fetchCol();
+    // Check if we on a group page.
+    $group = _social_group_get_current_group();
 
-    if ($nids) {
-      // Exclude albums in groups from  the options.
-      $query->addWhere(max(array_keys($query->where)) + 1, 'node_field_data.nid', $nids, 'NOT IN');
+    // Get all the node ids from albums that are in a group.
+    $content_query = \Drupal::database()->select('group_content_field_data', 'gcfd');
+    $content_query->fields('gcfd', ['entity_id']);
+    $content_query->condition('type', 'flexible_group-group_node-album');
+
+    // Default condition to alter the query with.
+    $condition = 'NOT IN';
+
+    // If we have a group, then search more specific.
+    if ($group !== NULL) {
+      $content_query->condition('gid', $group->id());
+      $condition = 'IN';
     }
+
+    // Execute the query.
+    $nids = $content_query->execute()->fetchCol();
+
+    // If we don't have any nids use NULL so we can still run the query.
+    if (empty($nids)) {
+      $nids = NULL;
+    }
+
+    // Alter the view query based on the criteria at top.
+    $query->addWhere(max(array_keys($query->where)) + 1, 'node_field_data.nid', $nids, $condition);
   }
 }
