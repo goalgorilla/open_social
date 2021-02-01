@@ -102,7 +102,7 @@ function socialblue_form_system_theme_settings_alter(&$form, FormStateInterface 
         '#type' => 'details',
         '#group' => 'open_social_settings',
         '#title' => t('E-mail'),
-        '#weight' => 30,
+        '#weight' => 40,
         '#collapsible' => TRUE,
         '#collapsed' => TRUE,
       ];
@@ -124,7 +124,7 @@ function socialblue_form_system_theme_settings_alter(&$form, FormStateInterface 
         '#type' => 'details',
         '#group' => 'open_social_settings',
         '#title' => t('Hero'),
-        '#weight' => 30,
+        '#weight' => 50,
         '#collapsible' => TRUE,
         '#collapsed' => TRUE,
       ];
@@ -143,7 +143,7 @@ function socialblue_form_system_theme_settings_alter(&$form, FormStateInterface 
         '#type' => 'details',
         '#group' => 'open_social_settings',
         '#title' => t('Style'),
-        '#weight' => 40,
+        '#weight' => 60,
         '#collapsible' => TRUE,
         '#collapsed' => TRUE,
         '#access' => \Drupal::currentUser()->hasPermission('administer improved theme settings'),
