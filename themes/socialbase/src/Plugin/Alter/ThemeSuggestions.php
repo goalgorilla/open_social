@@ -4,6 +4,7 @@ namespace Drupal\socialbase\Plugin\Alter;
 
 use Drupal\Component\Utility\Html;
 use Drupal\bootstrap\Plugin\Alter\ThemeSuggestions as BaseThemeSuggestions;
+use Drupal\node\NodeInterface;
 
 /**
  * Implements hook_theme_suggestions_alter().
@@ -23,6 +24,19 @@ class ThemeSuggestions extends BaseThemeSuggestions {
     $variables = $this->variables;
 
     switch ($hook) {
+
+      case 'comment':
+
+        $node = \Drupal::routeMatch()->getParameter('node');
+        if (
+          $node instanceof NodeInterface &&
+          $node->bundle() === 'dashboard' &&
+          $variables['elements']['#view_mode'] === 'activity_comment'
+        ) {
+          $suggestions[] = 'comment__' . $variables['elements']['#view_mode'] . '__' . $node->bundle();
+        }
+
+        break;
 
       case 'block':
 

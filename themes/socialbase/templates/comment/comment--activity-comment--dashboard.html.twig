@@ -1,0 +1,60 @@
+{{ attach_library('socialbase/comment')}}
+
+{%
+  set classes = [
+  'comment',
+  'js-comment',
+  status ? 'comment-' ~ status,
+]
+%}
+
+<article{{ attributes.addClass(classes) }}>
+
+  <div class="comment__content">
+    <div class="comment__text iframe-container post-body--stream">
+      <div class="post-body--stream-body">
+        {{ content|without('like_and_dislike') }}
+      </div>
+
+      {% if comment_attachments_count %}
+        <div class="attachments">
+
+          <svg class="icon-gray">
+            <title>{% trans %}Attachments{% endtrans %}</title>
+            <use xlink:href="#icon-attachment"></use>
+          </svg>
+          {% trans %}
+            {{ comment_attachments_count }} attachment
+          {% plural comment_attachments_count %}
+            {{ comment_attachments_count }} attachments
+          {% endtrans %}
+        </div>
+      {% endif %}
+
+      <div class="clearfix"></div>
+      <div class="media-post-social">
+        {{ content.like_and_dislike }}
+
+        {% if comment_count > 0 %}
+          <a href="{{ comment_url }}" class="badge badge--pill badge--post">
+            <span class="badge__container">
+              <svg class="badge__icon">
+                <use xlink:href="#icon-comment"></use>
+              </svg>
+              <span class="badge__label">
+                {{ comment_count }}
+              </span>
+            </span>
+          </a>
+        {% endif %}
+
+        <div class="card__link">
+          {{ more_link }}
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+</article>
