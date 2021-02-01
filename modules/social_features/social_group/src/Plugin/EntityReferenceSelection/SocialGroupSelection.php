@@ -24,10 +24,24 @@ class SocialGroupSelection extends DefaultSelection {
     $query = parent::buildEntityQuery($match, $match_operator);
 
     $configuration = $this->getConfiguration();
+    $all_group_types = [];
+
+    if (is_array($configuration['target_bundles'])) {
+      if ($configuration['target_bundles'] === []) {
+        return $query;
+      }
+      else {
+        $all_group_types = $configuration['target_bundles'];
+      }
+    }
+
     $plugin_id = 'group_node:' . $configuration['entity']->bundle();
     $storage = $this->entityTypeManager->getStorage('group_type');
 
-    $all_group_types = $storage->getQuery()->execute();
+    if (!$all_group_types) {
+      $all_group_types = $storage->getQuery()->execute();
+    }
+
     $excluded_group_types = [];
 
     foreach ($all_group_types as $group_type_id) {
