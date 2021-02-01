@@ -16,3 +16,8 @@ services:
     class: Drupal\social_post_album\SocialPostPhotoAlbumConfigOverride
     tags:
       - { name: config.factory.override, priority: 5 }
+
+  social_post_album.route_subscriber:
+    class: Drupal\social_post_album\Routing\RouteSubscriber
+    tags:
+      - { name: event_subscriber }

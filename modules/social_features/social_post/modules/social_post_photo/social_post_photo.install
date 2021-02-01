@@ -116,9 +116,23 @@ function social_post_photo_update_8002() {
 }
 
 /**
+ * Change placeholder text of the post text field.
+ */
+function social_post_photo_update_8901() {
+  /** @var \Drupal\update_helper\UpdaterInterface $update_helper */
+  $update_helper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $update_helper->executeUpdate('social_post_photo', 'social_post_photo_update_8901');
+
+  // Output logged messages to related channel of update execution.
+  return $update_helper->logger()->output();
+}
+
+/**
  * Use smart trimmed format for the social post photo featured view mode.
  */
-function social_post_photo_update_8003() {
+function social_post_photo_update_8902() {
   /** @var \Drupal\update_helper\Updater $updateHelper */
   $updateHelper = \Drupal::service('update_helper.updater');
 
