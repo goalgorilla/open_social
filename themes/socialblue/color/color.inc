@@ -38,7 +38,7 @@ $info = [
         'navbar-bg' => '#333333',
         'navbar-text' => '#ffffff',
         'navbar-active-bg' => '#1f1f1f',
-        'navbar-active-text' => '#f3f3f3',
+        'navbar-active-text' => '#f4f4f4',
         'navbar-sec-bg' => '#1f7ea7',
         'navbar-sec-text' => '#f9f9f9',
       ],

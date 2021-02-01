@@ -16,6 +16,7 @@
   height: 30px;
   text-align: left;
   border-radius: 5px 5px 0 0;
+  background: -webkit-gradient(linear, left top, left bottom, from(#f3f3f3), to(#e6e6e6));
   background: linear-gradient(#f3f3f3, #e6e6e6);
 }
 
@@ -140,7 +141,8 @@
   max-height: none;
   -o-object-fit: contain;
      object-fit: contain;
-  transform: none;
+  -webkit-transform: none;
+          transform: none;
   overflow: auto;
   padding: 20px;
   background-color: #f3f3f3;
@@ -205,7 +207,8 @@
 }
 
 #kss-node .kss-toolbar a {
-  box-sizing: content-box;
+  -webkit-box-sizing: content-box;
+          box-sizing: content-box;
   display: inline-block;
   width: 16px;
   height: 16px;
@@ -244,12 +247,14 @@
   margin-bottom: 5px;
   border: solid 1px #666;
   padding: 8px 10px 6px;
-  box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.25);
+  -webkit-box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.25);
+          box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.25);
   white-space: nowrap;
   color: #000;
   background: #fff;
   cursor: help;
   opacity: 0;
+  -webkit-transition: opacity 0.25s;
   transition: opacity 0.25s;
   height: 1px;
   width: 1px;
@@ -404,7 +409,8 @@
 #kss-node.kss-guides-mode .kss-modifier__example-footer:before,
 #kss-node.kss-guides-mode .kss-modifier__example-footer:after {
   z-index: -1;
-  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
   content: '';
   position: absolute;
   width: 5px;
@@ -517,6 +523,7 @@
   display: inline-block;
   font-size: 14px;
   color: #555555;
+  -webkit-transition: color 0.5s;
   transition: color 0.5s;
   padding-top: 0;
   padding-bottom: 0;
@@ -530,6 +537,7 @@
   width: 3px;
   height: 100%;
   background-color: #f3f3f3;
+  -webkit-transition: background-color .3s, width .3s;
   transition: background-color .3s, width .3s;
 }
 
