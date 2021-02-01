@@ -460,9 +460,12 @@ function social_album_social_user_account_header_account_links(array $context) {
  * Implements hook_views_query_alter().
  */
 function social_album_views_query_alter(ViewExecutable $view, QueryPluginBase $query) {
-  if ($view->id() == 'albums' && $view->getDisplay()->display['id'] == 'entity_reference') {
-    // Unset the old condition to filter on the group.
-    unset($query->where[0]["conditions"][0]);
+  // If the we are in the public streams,
+  // only show albums that are not in groups.
+  if (empty(\Drupal::routeMatch()->getParameter('group')) &&
+    _social_group_get_current_group() === NULL &&
+    $view->id() === 'albums' &&
+    $view->getDisplay()->display['id'] === 'entity_reference') {
 
     // Get all the nids
     $nids = \Drupal::database()->select('group_content_field_data', 'gcfd')
@@ -473,7 +476,7 @@ function social_album_views_query_alter(ViewExecutable $view, QueryPluginBase $q
 
     if ($nids) {
       // Add the condition to exclude nids that are in groups.
-      $query->addWhere(2, 'node_field_data.nid', $nids, 'NOT IN');
+      $query->addWhere(max(array_keys($query->where)) + 1, 'node_field_data.nid', $nids, 'NOT IN');
     }
   }
 }
