@@ -40,20 +40,38 @@ function socialblue_form_system_theme_settings_alter(&$form, FormStateInterface 
         '#collapsed' => TRUE,
       ];
 
-      $form['os_border_radius_settings'] = [
-        '#type' => 'details',
-        '#group' => 'open_social_settings',
-        '#title' => t('Border radius'),
-        '#weight' => 20,
-        '#collapsible' => TRUE,
-        '#collapsed' => TRUE,
-      ];
-
+      // Font Tab.
       $form['os_font_settings'] = [
         '#type' => 'details',
         '#group' => 'open_social_settings',
         '#title' => t('Fonts'),
         '#weight' => 10,
+        '#collapsible' => TRUE,
+        '#collapsed' => TRUE,
+      ];
+
+      $fonts = [];
+      if (\Drupal::service('module_handler')->moduleExists('social_font')) {
+        /** @var \Drupal\social_font\Entity\Font $font_entities */
+        foreach (Font::loadMultiple() as $font_entities) {
+          $fonts[$font_entities->id()] = $font_entities->get('name')->value;
+        }
+      }
+
+      $form['os_font_settings']['font_primary'] = [
+        '#type' => 'select',
+        '#title' => t('Font'),
+        '#options' => $fonts,
+        '#default_value' => $config->get('font_primary'),
+        '#description' => t('The font family to use.'),
+      ];
+
+      // Border radius tab.
+      $form['os_border_radius_settings'] = [
+        '#type' => 'details',
+        '#group' => 'open_social_settings',
+        '#title' => t('Border radius'),
+        '#weight' => 20,
         '#collapsible' => TRUE,
         '#collapsed' => TRUE,
       ];
@@ -79,6 +97,7 @@ function socialblue_form_system_theme_settings_alter(&$form, FormStateInterface 
         '#description' => t('Define the roundness of buttons corners.'),
       ];
 
+      // Email Tab.
       $form['os_email_settings'] = [
         '#type' => 'details',
         '#group' => 'open_social_settings',
@@ -99,9 +118,8 @@ function socialblue_form_system_theme_settings_alter(&$form, FormStateInterface 
           'file_validate_extensions' => ['gif png jpg jpeg'],
         ],
       ];
-      // Ensure we save the file permanently.
-      $form['#submit'][] = 'socialblue_save_email_logo';
 
+      // Hero tab.
       $form['os_hero_settings'] = [
         '#type' => 'details',
         '#group' => 'open_social_settings',
@@ -120,23 +138,7 @@ function socialblue_form_system_theme_settings_alter(&$form, FormStateInterface 
         '#max' => 100,
       ];
 
-      // Font tab.
-      $fonts = [];
-      if (\Drupal::service('module_handler')->moduleExists('social_font')) {
-        /** @var \Drupal\social_font\Entity\Font $font_entities */
-        foreach (Font::loadMultiple() as $font_entities) {
-          $fonts[$font_entities->id()] = $font_entities->get('name')->value;
-        }
-      }
-
-      $form['os_font_settings']['font_primary'] = [
-        '#type' => 'select',
-        '#title' => t('Font'),
-        '#options' => $fonts,
-        '#default_value' => $config->get('font_primary'),
-        '#description' => t('The font family to use.'),
-      ];
-
+      // Styles tab.
       $form['os_style_settings'] = [
         '#type' => 'details',
         '#group' => 'open_social_settings',
@@ -161,6 +163,10 @@ function socialblue_form_system_theme_settings_alter(&$form, FormStateInterface 
       if (\Drupal::configFactory()->get('system.theme')->get('admin') === 'gin') {
         $form['#submit'][] = 'socialblue_update_gin_color_settings';
       }
+
+      // Ensure we save the file permanently.
+      $form['#submit'][] = 'socialblue_save_email_logo';
+
     }
 
   }
