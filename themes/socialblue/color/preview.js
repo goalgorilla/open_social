@@ -67,6 +67,9 @@
       // Brand link color.
       $colorPreview.find('.body-text a:not(.btn)').css('color', $colorPalette.find('input[name="palette[brand-link]"]').val());
 
+      // Body background color.
+      $colorPreview.css('backgroundColor', $colorPalette.find('input[name="palette[body-bg]"]').val());
+
       // Hero toggle background.
       var localStorage =  window.localStorage;
       var colorPreviewLever = $('.color-preview-hero .switch .lever');
