@@ -40,7 +40,7 @@ function socialblue_form_system_theme_settings_alter(&$form, FormStateInterface 
         '#collapsed' => TRUE,
       ];
 
-      $form['os_color_settings'] = [
+      $form['os_border_radius_settings'] = [
         '#type' => 'details',
         '#group' => 'open_social_settings',
         '#title' => t('Border radius'),
@@ -58,21 +58,21 @@ function socialblue_form_system_theme_settings_alter(&$form, FormStateInterface 
         '#collapsed' => TRUE,
       ];
 
-      $form['os_color_settings']['card_radius'] = [
+      $form['os_border_radius_settings']['card_radius'] = [
         '#type' => 'number',
         '#title' => t('Card border radius (px)'),
         '#default_value' => $config->get('card_radius'),
         '#description' => t('Define the roundness of cards corners.'),
       ];
 
-      $form['os_color_settings']['form_control_radius'] = [
+      $form['os_border_radius_settings']['form_control_radius'] = [
         '#type' => 'number',
         '#title' => t('Form control border radius (px)'),
         '#default_value' => $config->get('form_control_radius'),
         '#description' => t('Define the roundness of the corners of form-controls, like <code>input</code>, <code>textarea</code> and <code>select</code>'),
       ];
 
-      $form['os_color_settings']['button_radius'] = [
+      $form['os_border_radius_settings']['button_radius'] = [
         '#type' => 'number',
         '#title' => t('Button border radius (px)'),
         '#default_value' => $config->get('button_radius'),
