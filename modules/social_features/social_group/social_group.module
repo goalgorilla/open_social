@@ -1793,7 +1793,7 @@ function social_group_entity_base_field_info_alter(&$fields, EntityTypeInterface
   $entity_types = ['node'];
   if (in_array($entity_type->id(), $entity_types)) {
     if (isset($fields['groups'])) {
-      /** @var \Drupal\Core\Field\FieldDefinitionInterface $fields['groups'] */
+      /** @var \Drupal\Core\Field\FieldDefinitionInterface[] $fields */
       $fields['groups']->setLabel(t('Group'));
       $fields['groups']->setDisplayOptions('form', [
         'type' => 'options_select',
@@ -1802,7 +1802,7 @@ function social_group_entity_base_field_info_alter(&$fields, EntityTypeInterface
       ]);
       $fields['groups']->setDisplayConfigurable('form', TRUE);
       $fields['groups']->setDescription('');
-
+      $fields['groups']->setSetting('handler', 'social');
     }
   }
 }
