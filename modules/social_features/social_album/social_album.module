@@ -467,7 +467,7 @@ function social_album_views_query_alter(ViewExecutable $view, QueryPluginBase $q
     $view->id() === 'albums' &&
     $view->getDisplay()->display['id'] === 'entity_reference') {
 
-    // Get all the nids
+    // Get all the node ids from albums that are in a group.
     $nids = \Drupal::database()->select('group_content_field_data', 'gcfd')
       ->fields('gcfd', ['entity_id'])
       ->condition('type', 'flexible_group-group_node-album')
@@ -475,7 +475,7 @@ function social_album_views_query_alter(ViewExecutable $view, QueryPluginBase $q
       ->fetchCol();
 
     if ($nids) {
-      // Add the condition to exclude nids that are in groups.
+      // Exclude albums in groups from  the options.
       $query->addWhere(max(array_keys($query->where)) + 1, 'node_field_data.nid', $nids, 'NOT IN');
     }
   }
