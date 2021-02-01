@@ -5,6 +5,8 @@
  * Install, update and uninstall functions for social_activity_filter module.
  */
 
+use Drupal\Core\Database\Database;
+
 /**
  * Implements hook_update_dependencies().
  */
@@ -88,4 +90,34 @@ function _social_activity_filter_enable_filters() {
 
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
+}
+
+/**
+ * Update and set delta of referenced blocks for existing landing page items.
+ */
+function social_activity_filter_update_8003() {
+  $connection = Database::getConnection();
+  $query = $connection->select('paragraph__field_block_reference', 'pfbr');
+  $query->fields('pfbr', ['entity_id', 'field_block_reference_settings']);
+  $query->condition('pfbr.bundle', 'block');
+
+  $query->join('paragraph__field_section_paragraph', 'pfsp', 'pfsp.field_section_paragraph_target_id = pfbr.entity_id');
+  $query->condition('pfsp.bundle', 'section');
+
+  $query->join('node__field_landing_page_section', 'nflps', 'nflps.field_landing_page_section_target_id = pfsp.entity_id');
+  $query->fields('nflps', ['delta']);
+  $query->condition('nflps.bundle', 'landing_page');
+
+  $referenced_blocks = $query->execute()->fetchAll();
+
+  foreach ($referenced_blocks as $referenced_block) {
+    $settings = unserialize($referenced_block->field_block_reference_settings);
+    $settings['delta'] = $referenced_block->delta;
+
+    $connection->update('paragraph__field_block_reference')
+      ->fields(['field_block_reference_settings' => serialize($settings)])
+      ->condition('entity_id', $referenced_block->entity_id)
+      ->condition('bundle', 'block')
+      ->execute();
+  }
 }

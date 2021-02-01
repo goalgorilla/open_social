@@ -424,7 +424,7 @@ function _social_album_post_submit(array $form, FormStateInterface $form_state) 
 
     $post->set('field_album', $node->id());
   }
-  else {
+  elseif ($input['value'] !== '_none') {
     $post->set('field_album', $input['value']);
   }
 
@@ -470,7 +470,8 @@ function social_album_views_query_alter(ViewExecutable $view, QueryPluginBase $q
     $group = _social_group_get_current_group();
 
     // Get all the node ids from albums that are in a group.
-    $content_query = \Drupal::database()->select('group_content_field_data', 'gcfd');
+    $content_query = \Drupal::database()
+      ->select('group_content_field_data', 'gcfd');
     $content_query->fields('gcfd', ['entity_id']);
     $content_query->condition('type', 'flexible_group-group_node-album');
 
@@ -494,4 +495,12 @@ function social_album_views_query_alter(ViewExecutable $view, QueryPluginBase $q
     // Alter the view query based on the criteria at top.
     $query->addWhere(max(array_keys($query->where)) + 1, 'node_field_data.nid', $nids, $condition);
   }
+}
+
+/**
+ * Implements hook_social_core_compatible_content_forms_alter().
+ */
+function social_album_social_core_compatible_content_forms_alter(&$compatible_content_type_forms) {
+  $compatible_content_type_forms[] = 'node_album_form';
+  $compatible_content_type_forms[] = 'node_album_edit_form';
 }
