@@ -25,7 +25,7 @@ abstract class SocialGraphQLTestBase extends GraphQLTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp() : void {
     parent::setUp();
 
     // We need the configuration for social_graphql module to be loaded as it
