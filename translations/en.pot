@@ -936,6 +936,8 @@
 #  themes/socialbase/templates/file/image-widget.html.twig: n/a
 #  modules/social_features/social_post/modules/social_post_photo/js/post-widget.js: n/a
 #  modules/social_features/social_post/modules/social_post_photo/config/install/core.entity_form_display.post.photo.default.yml: n/a
+#  modules/social_features/social_post/modules/social_post_photo/config/install/core.entity_form_display.post.photo.group.yml: n/a
+#  modules/social_features/social_post/modules/social_post_photo/config/install/core.entity_form_display.post.photo.profile.yml: n/a
 #  modules/social_features/social_post/modules/social_post_photo/src/Plugin/Block/PostPhotoBlock.php: n/a
 #  modules/social_features/social_post/modules/social_post_photo/src/Plugin/Block/PostPhotoGroupBlock.php: n/a
 #  modules/social_features/social_post/modules/social_post_photo/src/Plugin/Block/PostPhotoProfileBlock.php: n/a
@@ -1390,6 +1392,7 @@
 #  modules/social_features/social_core/config/install/field.field.block_content.hero_call_to_action_block.field_hero_image.yml: n/a
 #  modules/social_features/social_core/config/install/image.style.crop_thumbnail.yml: n/a
 #  modules/social_features/social_core/config/install/image.style.social_an_hero.yml: n/a
+#  modules/social_features/social_core/config/install/image.style.social_file_thumbnails.yml: n/a
 #  modules/social_features/social_core/config/install/image.style.social_hero_small.yml: n/a
 #  modules/social_features/social_core/config/install/image.style.social_large.yml: n/a
 #  modules/social_features/social_core/config/install/image.style.social_medium.yml: n/a
@@ -1599,8 +1602,6 @@
 #  modules/social_features/social_post/modules/social_post_photo/config/install/field.field.post.photo.field_recipient_user.yml: n/a
 #  modules/social_features/social_post/config/optional/block.block.postonprofileblock.yml: n/a
 #  modules/social_features/social_post/config/optional/block.block.socialblue_postonprofileblock.yml: n/a
-#  modules/social_features/social_post/modules/social_post_photo/config/install/core.entity_form_display.post.photo.group.yml: n/a
-#  modules/social_features/social_post/modules/social_post_photo/config/install/core.entity_form_display.post.photo.profile.yml: n/a
 #  modules/social_features/social_post/modules/social_post_photo/config/install/image.style.social_post_photo.yml: n/a
 #  modules/social_features/social_post/modules/social_post_photo/config/install/social_post.post_type.photo.yml: n/a
 #  modules/social_features/social_private_message/config/install/core.entity_view_mode.profile.compact_private_message.yml: n/a
@@ -1635,7 +1636,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Open Social\n"
-"POT-Creation-Date: 2021-01-29 00:15+0000\n"
+"POT-Creation-Date: 2021-01-31 00:16+0000\n"
 "PO-Revision-Date: YYYY-mm-DD HH:MM+ZZZZ\n"
 "Last-Translator: NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <EMAIL@ADDRESS>\n"
@@ -4725,7 +4726,7 @@ msgstr ""
 msgid "Blocked"
 msgstr ""
 
-#: modules/social_features/social_topic/social_topic.install:29;367
+#: modules/social_features/social_topic/social_topic.install:29;362
 msgid "Blog"
 msgstr ""
 
@@ -6317,7 +6318,7 @@ msgstr ""
 msgid "Disclaimer"
 msgstr ""
 
-#: modules/social_features/social_topic/social_topic.install:33;371
+#: modules/social_features/social_topic/social_topic.install:33;366
 msgid "Discussion"
 msgstr ""
 
@@ -9708,7 +9709,7 @@ msgstr ""
 msgid "Newest users page"
 msgstr ""
 
-#: modules/social_features/social_topic/social_topic.install:37;375
+#: modules/social_features/social_topic/social_topic.install:37;370
 msgid "News"
 msgstr ""
 
@@ -9925,7 +9926,7 @@ msgstr ""
 msgid "Non members landing tab"
 msgstr ""
 
-#: modules/social_features/social_activity/modules/social_activity_filter/src/Plugin/views/display/FilterBlock.php:136
+#: modules/social_features/social_activity/modules/social_activity_filter/src/Plugin/views/display/FilterBlock.php:144
 msgid "None"
 msgstr ""
 
@@ -11997,12 +11998,9 @@ msgstr ""
 
 #: modules/social_features/social_post/modules/social_post_photo/js/post-widget.js:0
 #: modules/social_features/social_post/modules/social_post_photo/config/install/core.entity_form_display.post.photo.default.yml:0
-msgid "Say something about this photo"
-msgstr ""
-
 #: modules/social_features/social_post/modules/social_post_photo/config/install/core.entity_form_display.post.photo.group.yml:0
 #: modules/social_features/social_post/modules/social_post_photo/config/install/core.entity_form_display.post.photo.profile.yml:0
-msgid "Say something about this photo "
+msgid "Say something about these image(s)"
 msgstr ""
 
 #: modules/social_features/social_post/social_post.module:49
@@ -12273,7 +12271,7 @@ msgstr ""
 msgid "Select the order used to show the list of comments."
 msgstr ""
 
-#: modules/social_features/social_activity/modules/social_activity_filter/src/Plugin/views/display/FilterBlock.php:153
+#: modules/social_features/social_activity/modules/social_activity_filter/src/Plugin/views/display/FilterBlock.php:165
 msgid "Select the tags to filter items in the stream."
 msgstr ""
 
@@ -13858,7 +13856,7 @@ msgstr ""
 msgid "Tagging field."
 msgstr ""
 
-#: modules/social_features/social_activity/modules/social_activity_filter/src/Plugin/views/display/FilterBlock.php:152
+#: modules/social_features/social_activity/modules/social_activity_filter/src/Plugin/views/display/FilterBlock.php:164
 #: modules/social_features/social_follow_taxonomy/modules/social_follow_tag/src/SocialFollowTagLazyBuilder.php:153
 #: modules/social_features/social_profile/modules/social_profile_organization_tag/src/SocialProfileOrgTagConfigOverride.php:54;57
 #: modules/social_features/social_tagging/social_tagging.module:156;166;223;380
@@ -15801,7 +15799,7 @@ msgstr ""
 msgid "Visible to all visitors of the site"
 msgstr ""
 
-#: modules/social_features/social_activity/modules/social_activity_filter/src/Plugin/views/display/FilterBlock.php:133
+#: modules/social_features/social_activity/modules/social_activity_filter/src/Plugin/views/display/FilterBlock.php:141
 msgid "Vocabulary"
 msgstr ""
 
@@ -16981,6 +16979,10 @@ msgstr ""
 
 #: modules/social_features/social_core/config/install/image.style.social_x_large.yml:0
 msgid "social extra large (220 x 220)"
+msgstr ""
+
+#: modules/social_features/social_core/config/install/image.style.social_file_thumbnails.yml:0
+msgid "social file thumbnails (145x145)"
 msgstr ""
 
 #: modules/social_features/social_core/config/install/image.style.social_hero_small.yml:0
