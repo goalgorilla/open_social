@@ -66,12 +66,85 @@ function socialblue_form_system_theme_settings_alter(&$form, FormStateInterface 
         '#description' => t('The font family to use.'),
       ];
 
+      // Box shadow tab.
+      $form['os_box_shadow_settings'] = [
+        '#type' => 'details',
+        '#group' => 'open_social_settings',
+        '#title' => t('Cards box shadow'),
+        '#weight' => 20,
+        '#collapsible' => TRUE,
+        '#collapsed' => TRUE,
+      ];
+
+      $form['os_box_shadow_settings']['enable_box_shadow'] = [
+        '#type' => 'checkbox',
+        '#title' => t('Enable Box Shadow for cards'),
+        '#default_value' => $config->get('enable_box_shadow'),
+        '#description' => t('Unselect this to disable box shadow.'),
+      ];
+
+      $form['os_box_shadow_settings']['details'] = [
+        '#type' => 'details',
+        '#title' => t('Card box shadow details'),
+        '#collapsible' => TRUE,
+        '#collapsed' => TRUE,
+        '#states' => [
+          'invisible' => [
+            ':input[name="enable_box_shadow"]' => ['checked' => FALSE],
+          ],
+        ],
+      ];
+
+      $form['os_box_shadow_settings']['details']['box_shadow_color'] = [
+        '#type' => 'color',
+        '#title' => t('Box shadow color'),
+        '#description' => t('Select box shadow color.'),
+        '#default_value' => $config->get('box_shadow_color'),
+      ];
+
+      $form['os_box_shadow_settings']['details']['box_shadow_opacity'] = [
+        '#type' => 'range',
+        '#title' => t('Box shadow opacity'),
+        '#default_value' => $config->get('box_shadow_opacity'),
+        '#description' => t('Define the percentage of darkness of the hero gradient from 0 to 100.'),
+        '#min' => 0,
+        '#max' => 100,
+      ];
+
+      $form['os_box_shadow_settings']['details']['box_shadow_x_offset'] = [
+        '#type' => 'number',
+        '#title' => t('Box shadow X offset'),
+        '#default_value' => $config->get('box_shadow_x_offset'),
+        '#description' => t('Define the X offset for the box shadow.'),
+      ];
+
+      $form['os_box_shadow_settings']['details']['box_shadow_y_offset'] = [
+        '#type' => 'number',
+        '#title' => t('Box shadow Y offset'),
+        '#default_value' => $config->get('box_shadow_y_offset'),
+        '#description' => t('Define the Y offset for the box shadow.'),
+      ];
+
+      $form['os_box_shadow_settings']['details']['box_shadow_spread'] = [
+        '#type' => 'number',
+        '#title' => t('Box shadow spread value (px)'),
+        '#default_value' => $config->get('box_shadow_spread'),
+        '#description' => t('Define the spread value of the box shadow.'),
+      ];
+
+      $form['os_box_shadow_settings']['details']['box_shadow_blur'] = [
+        '#type' => 'number',
+        '#title' => t('Box shadow Y offset'),
+        '#default_value' => $config->get('box_shadow_blur'),
+        '#description' => t('Define the blue value of the box shadow.'),
+      ];
+
       // Border radius tab.
       $form['os_border_radius_settings'] = [
         '#type' => 'details',
         '#group' => 'open_social_settings',
         '#title' => t('Border radius'),
-        '#weight' => 20,
+        '#weight' => 30,
         '#collapsible' => TRUE,
         '#collapsed' => TRUE,
       ];
