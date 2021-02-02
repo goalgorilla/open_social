@@ -50,11 +50,17 @@ function social_follow_landing_page_preprocess_paragraph(&$variables) {
             $route = 'view.search_content.page_no_value';
             // Override filter parameter id if split option is enabled.
             if (Drupal::getContainer()->get('social_tagging.tag_service')->allowSplit()) {
+              $tag_service = Drupal::getContainer()->get('social_tagging.tag_service');
+
               if (isset($term->parent)) {
                 $parent = $term->parent->entity;
                 if (!empty($parent)) {
                   $category = $parent->getName();
                   // Use the name of parent term as id of the filter parameter.
+                  $parameter = social_tagging_to_machine_name($category);
+                }
+                elseif ($tag_service->useCategoryParent()) {
+                  $category = $term->getName();
                   $parameter = social_tagging_to_machine_name($category);
                 }
               }
