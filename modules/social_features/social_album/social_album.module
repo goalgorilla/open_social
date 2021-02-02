@@ -340,6 +340,19 @@ function social_album_form_social_post_entity_form_alter(&$form, FormStateInterf
 /**
  * Implements hook_form_FORM_ID_alter().
  */
+function social_album_form_node_album_edit_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  // We don't allow changing albums group as the post and comments inside
+  // won't be updated.
+  // @todo update the content within the album if an album changes group types
+  if (!empty($form['groups'])) {
+    $form['groups']['#disabled'] = TRUE;
+    $form['groups']['widget']['#description'] = t("Changing groups and visibility isn't allowed for Albums yet, consider creating a new Album instead.");
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
 function social_album_form_node_album_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   $form['actions']['submit']['#submit'][] = '_social_album_create_post';
 }
