@@ -57,6 +57,30 @@ function social_album_entity_view(array &$build, EntityInterface $entity, Entity
 }
 
 /**
+ * Implements hook_social_user_account_header_create_links().
+ *
+ * Adds the "Create Album" link to the content creation menu.
+ */
+function social_album_social_user_account_header_create_links($context) {
+  // We require a user for this link with the permission to create albums.
+  if (empty($context['user']) || !($context['user'] instanceof AccountInterface)
+    || !$context['user']->hasPermission('create album content')) {
+    return [];
+  }
+  // Lets add the new create album button to the + dropdown.
+  return [
+    'add_personal_album' => [
+      '#type' => 'link',
+      '#attributes' => [
+        'title' => new TranslatableMarkup('Create New Album'),
+      ],
+      '#title' => new TranslatableMarkup('New Album'),
+      '#weight' => 400,
+    ] + Url::fromRoute('node.add', ['node_type' => 'album'])->toRenderArray(),
+  ];
+}
+
+/**
  * Implements hook_preprocess_HOOK().
  */
 function social_album_preprocess_block__social_post(&$variables) {

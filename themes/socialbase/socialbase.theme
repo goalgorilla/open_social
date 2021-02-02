@@ -189,3 +189,14 @@ function socialbase_theme($existing, $type, $theme, $path) {
     ],
   ];
 }
+
+/**
+ * Implements hook_theme_suggestions_HOOK_alter().
+ */
+function socialbase_theme_suggestions_image_formatter_alter(array &$suggestions, array $variables) {
+  // We wanted to add our classes to default template.
+  // @see image-formatter--node--field-files.html.twig
+  $entity = $variables['item']->getEntity();
+  $field_name = $variables['item']->getParent()->getName();
+  $suggestions[] = 'image_formatter__' . $entity->getEntityTypeId() . '__' . $field_name;
+}

@@ -9,14 +9,13 @@ dependencies:
     - field.field.node.topic.field_topic_comments
     - field.field.node.topic.field_topic_image
     - field.field.node.topic.field_topic_type
+    - image.style.social_file_thumbnails
     - node.type.topic
   module:
-    - file
     - group_core_comments
+    - social_core
     - text
     - user
-_core:
-  default_config_hash: _rfdDQ708wrytrUXs9o6sYeh1KEqmRUlDcNOEW0NfX0
 id: node.topic.default
 targetEntityType: node
 bundle: topic
@@ -33,7 +32,7 @@ content:
     weight: 3
     label: above
     settings:
-      image_style: thumbnail
+      image_style: social_file_thumbnails
       image_link: file
     third_party_settings: {  }
     region: content
@@ -43,18 +42,20 @@ content:
     label: above
     settings:
       pager_id: 0
+      view_mode: default
     third_party_settings: {  }
     region: content
     type: comment_group_content
   flag_follow_content:
     weight: 10
-    third_party_settings: {  }
     region: content
-  like_and_dislike:
-    weight: 2
     settings: {  }
     third_party_settings: {  }
+  like_and_dislike:
+    weight: 2
     region: content
+    settings: {  }
+    third_party_settings: {  }
   links:
     weight: 6
     region: content
