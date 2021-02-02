@@ -126,7 +126,7 @@ function social_follow_landing_page_field_widget_entity_reference_paragraphs_for
       $subform['field_tag']['widget']['#description'] = t('Selected tag will be displayed in a block with the options to follow this tag and see content relates to this tag.');
 
       // Remove parent terms if they not allowed to follow.
-      if (!$tag_service->useCategoryParent()) {
+      if ($tag_service->allowSplit() && !$tag_service->useCategoryParent()) {
         $tag_options = &$subform['field_tag']['widget']['#options'];
         foreach ($tag_options as $tid => $tag_option) {
           if ($tid === '_none') {
