@@ -1,13 +1,17 @@
 .card--stream.social-post-album--form form .tabledrag-toggle-weight {
   display: none; }
-.card--stream.social-post-album--form form .field--name-field-post-image.post-images-loaded {
+.card--stream.social-post-album--form form .form--post-create .field--name-field-post-image {
+  width: 100%; }
+.card--stream.social-post-album--form form > .field--name-field-post-image.post-images-loaded {
   width: 100%; }
 .card--stream.social-post-album--form form .table-responsive + .image-widget:not(.hidden) {
   position: absolute;
-  top: 1.25rem;
+  display: block;
+  top: calc(1.25rem + 1px);
   left: 1.25rem;
   width: calc(50% - 1.75rem);
   border: 1px dashed #adadad;
+  margin: -1px 0;
   z-index: 1;
   border-radius: .5rem; }
   @media (min-width: 600px) {
@@ -56,6 +60,8 @@
   .card--stream.social-post-album--form form .table-responsive + .image-widget:not(.hidden) img {
     visibility: hidden;
     max-height: 220px; }
+  .card--stream.social-post-album--form form .table-responsive + .image-widget:not(.hidden) > .messages {
+    display: none; }
 .card--stream.social-post-album--form form table {
   display: block;
   padding: 1rem 1rem 0;
@@ -167,7 +173,7 @@
     .card--stream.social-post-album--form form #edit-field-album-wrapper select,
     .card--stream.social-post-album--form form #edit-field-album-wrapper .form-control {
       max-width: 100%; } }
-.card--stream.social-post-album--form form .container-post-image > [id*='edit-field-post-image'] {
+.card--stream.social-post-album--form form .container-post-image > [id*='edit-field-post-image'] > [id*='edit-field-post-image'] {
   position: relative; }
 .card--stream.social-post-album--form form .form-submit {
   position: relative; }
