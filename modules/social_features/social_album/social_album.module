@@ -443,7 +443,7 @@ function _social_album_post_submit(array $form, FormStateInterface $form_state) 
     // Add default content visibility based on post visibility.
     // @todo ensure this is more flexible.
     $post_visibility = $form_state->getValue('field_visibility');
-    // lets try and map it if possible
+    // Lets try and map it if possible.
     if (!empty($post_visibility)) {
       $default_visibility = $mapping[$post_visibility[0]['value']];
       $node = \Drupal::entityTypeManager()->getStorage('node')->create([

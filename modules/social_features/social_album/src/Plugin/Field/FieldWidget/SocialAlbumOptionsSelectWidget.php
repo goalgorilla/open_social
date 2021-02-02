@@ -38,10 +38,7 @@ class SocialAlbumOptionsSelectWidget extends OptionsSelectWidget {
     // imagine a user on the home stream, selecting an existing album in a
     // close group, the visibility needs to be updated to Group members, which
     // it doesn't, so for now we're not rendering any other option.
-    // return [
-    //   '_none' => $option,
-    //   '_add' => $this->t('Create new album'),
-    // ] + $options;
+    // Return [...] + $options.
     return [
       '_none' => $option,
       '_add' => $this->t('Create new album'),
@@ -97,7 +94,7 @@ class SocialAlbumOptionsSelectWidget extends OptionsSelectWidget {
         // Add default content visibility based on post visibility.
         $post_visibility = $form_state->getValue('field_visibility');
         $default_visibility = 'community';
-        // lets try and map it if possible
+        // Lets try and map it if possible.
         if (!empty($post_visibility)) {
           $default_visibility = $mapping[$post_visibility[0]];
         }
