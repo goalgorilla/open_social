@@ -143,8 +143,16 @@ class FollowTaxonomyActivityContext extends ActivityContextBase {
         continue;
       }
 
+      // Do not send notification for inactive user.
+      if (
+        $recipient->isBlocked() ||
+        !$recipient->getLastLoginTime()
+      ) {
+        continue;
+      }
+
       // We don't send notifications to content creator.
-      if ($recipient->id() !== $entity->getOwnerId() && $entity->access('view', $recipient)) {
+      if ($recipient->id() !== $entity->getOwnerId()) {
         if (!in_array($recipient->id(), array_column($recipients, 'target_id'))) {
           $recipients[] = [
             'target_type' => 'user',
@@ -168,7 +176,6 @@ class FollowTaxonomyActivityContext extends ActivityContextBase {
     // Check entity type.
     switch ($entity->getEntityTypeId()) {
       case 'node':
-      case 'post':
         foreach ($this->getListOfTagsFields() as $field_name) {
           if ($entity->hasField($field_name)) {
             return TRUE;

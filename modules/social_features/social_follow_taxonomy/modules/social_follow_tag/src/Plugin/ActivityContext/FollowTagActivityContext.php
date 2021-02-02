@@ -52,11 +52,19 @@ class FollowTagActivityContext extends FollowTaxonomyActivityContext {
         continue;
       }
 
+      // Do not send notification for inactive user.
+      if (
+        $recipient->isBlocked() ||
+        !$recipient->getLastLoginTime()
+      ) {
+        continue;
+      }
+
       $group = _social_group_get_current_group($entity);
       if ($group instanceof GroupInterface) {
         if (!$group->getMember($recipient)) {
           // We don't send notifications to content creator.
-          if ($recipient->id() !== $entity->getOwnerId() && $entity->access('view', $recipient)) {
+          if ($recipient->id() !== $entity->getOwnerId()) {
             if (!in_array($recipient->id(), array_column($recipients, 'target_id'))) {
               $recipients[] = [
                 'target_type' => 'user',
@@ -69,28 +77,6 @@ class FollowTagActivityContext extends FollowTaxonomyActivityContext {
     }
 
     return $recipients;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function isValidEntity(EntityInterface $entity) {
-    if (!$entity instanceof ContentEntityInterface) {
-      return FALSE;
-    }
-
-    // Check entity type.
-    switch ($entity->getEntityTypeId()) {
-      case 'node':
-      case 'post':
-        foreach ($this->getListOfTagsFields() as $field_name) {
-          if ($entity->hasField($field_name)) {
-            return TRUE;
-          }
-        }
-        return FALSE;
-    }
-    return FALSE;
   }
 
 }
