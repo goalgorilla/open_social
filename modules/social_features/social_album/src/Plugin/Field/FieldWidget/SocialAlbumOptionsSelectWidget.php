@@ -33,10 +33,19 @@ class SocialAlbumOptionsSelectWidget extends OptionsSelectWidget {
 
     unset($options['_none']);
 
+    // @todo FIX issues with options, if user selects an option
+    // we need to update the Post visibility accordingly with ajax.
+    // imagine a user on the home stream, selecting an existing album in a
+    // close group, the visibility needs to be updated to Group members, which
+    // it doesn't, so for now we're not rendering any other option.
+    // return [
+    //   '_none' => $option,
+    //   '_add' => $this->t('Create new album'),
+    // ] + $options;
     return [
       '_none' => $option,
       '_add' => $this->t('Create new album'),
-    ] + $options;
+    ];
   }
 
   /**
@@ -80,9 +89,22 @@ class SocialAlbumOptionsSelectWidget extends OptionsSelectWidget {
       ($title = $form_state->getValue([$field, 'title']))
     ) {
       if ($form_state->getTriggeringElement()['#name'] === 'op' && $has_images) {
+        $mapping = [
+          '1' => 'public',
+          '2' => 'community',
+          '3' => 'group',
+        ];
+        // Add default content visibility based on post visibility.
+        $post_visibility = $form_state->getValue('field_visibility');
+        $default_visibility = 'community';
+        // lets try and map it if possible
+        if (!empty($post_visibility)) {
+          $default_visibility = $mapping[$post_visibility[0]];
+        }
         $node = \Drupal::entityTypeManager()->getStorage('node')->create([
           'type' => 'album',
           'title' => $title,
+          'field_content_visibility' => $default_visibility,
         ]);
 
         $node->save();
