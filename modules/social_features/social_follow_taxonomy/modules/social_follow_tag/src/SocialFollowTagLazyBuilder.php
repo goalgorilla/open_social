@@ -133,9 +133,11 @@ class SocialFollowTagLazyBuilder {
     }
 
     $tags = [];
+    /** @var \Drupal\taxonomy\TermStorageInterface $term_storage */
+    $term_storage = $this->entityTypeManager->getStorage('taxonomy_term');
     foreach ($term_ids as $term_id) {
       /** @var \Drupal\taxonomy\Entity\Term $term */
-      $term = $this->entityTypeManager->getStorage('taxonomy_term')->load($term_id);
+      $term = $term_storage->load($term_id);
 
       // Show only tags followed by user.
       if ($term && social_follow_taxonomy_term_followed($term)) {
