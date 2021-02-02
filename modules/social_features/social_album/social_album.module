@@ -12,6 +12,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
+use Drupal\node\NodeInterface;
 use Drupal\social_album\Form\SocialAlbumImageForm;
 use Drupal\social_album\Form\SocialAlbumPostForm;
 
@@ -208,6 +209,26 @@ function social_album_node_insert(EntityInterface $entity) {
       'user:' . $entity->getOwnerId(),
     ]);
   }
+}
+
+/**
+ * Implements hook_social_core_node_default_title_route().
+ */
+function social_album_social_core_node_default_title_route() {
+  return 'social_album.post';
+}
+
+/**
+ * Implements hook_social_node_message().
+ */
+function social_album_social_node_message(NodeInterface $node) {
+  if ($node->bundle() === 'album' && $node->isNew()) {
+    return t('Album @title is successfully created. Now you can add images to this album.', [
+      '@title' => $node->label(),
+    ]);
+  }
+
+  return NULL;
 }
 
 /**
