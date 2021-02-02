@@ -71,7 +71,7 @@ function improved_theme_settings_page_attachments(array &$page) {
         $style_to_add .= social_font_render();
       }
 
-      $card_box_shadow_enabled = improved_theme_settings_get_setting('enable_box_shadow', $system_theme_settings);
+      $card_box_shadow_enabled = improved_theme_settings_get_setting('override_box_shadow', $system_theme_settings);
       $card_box_shadow_color = theme_get_setting('box_shadow_color',  $system_theme_settings);
       $card_box_shadow_opacity = improved_theme_settings_get_setting('box_shadow_opacity', $system_theme_settings);
       $card_box_shadow_x_offset = improved_theme_settings_get_setting('box_shadow_x_offset', $system_theme_settings);
@@ -79,7 +79,7 @@ function improved_theme_settings_page_attachments(array &$page) {
       $card_box_shadow_spread = improved_theme_settings_get_setting('box_shadow_spread', $system_theme_settings);
       $card_box_shadow_blur = improved_theme_settings_get_setting('box_shadow_blur', $system_theme_settings);
 
-      if($card_box_shadow_enabled == '1') {
+      if($card_box_shadow_enabled) {
         $rgb = join(array_map('hexdec', str_split(ltrim($card_box_shadow_color, '#'), 2)), ', ');
         $card_box_shadow_color = 'rgba(' . $rgb . ', ' . ($card_box_shadow_opacity / 100) . ')';
         $card_box_shadow = $card_box_shadow_x_offset . 'px '

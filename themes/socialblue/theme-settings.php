@@ -76,10 +76,10 @@ function socialblue_form_system_theme_settings_alter(&$form, FormStateInterface 
         '#collapsed' => TRUE,
       ];
 
-      $form['os_box_shadow_settings']['enable_box_shadow'] = [
+      $form['os_box_shadow_settings']['override_box_shadow'] = [
         '#type' => 'checkbox',
-        '#title' => t('Enable Box Shadow for cards'),
-        '#default_value' => $config->get('enable_box_shadow'),
+        '#title' => t('Override default Box Shadow for cards'),
+        '#default_value' => $config->get('override_box_shadow'),
         '#description' => t('Unselect this to disable box shadow.'),
       ];
 
@@ -90,7 +90,7 @@ function socialblue_form_system_theme_settings_alter(&$form, FormStateInterface 
         '#collapsed' => TRUE,
         '#states' => [
           'invisible' => [
-            ':input[name="enable_box_shadow"]' => ['checked' => FALSE],
+            ':input[name="override_box_shadow"]' => ['checked' => FALSE],
           ],
         ],
       ];
@@ -134,9 +134,9 @@ function socialblue_form_system_theme_settings_alter(&$form, FormStateInterface 
 
       $form['os_box_shadow_settings']['details']['box_shadow_blur'] = [
         '#type' => 'number',
-        '#title' => t('Box shadow Y offset'),
+        '#title' => t('Box shadow blur value'),
         '#default_value' => $config->get('box_shadow_blur'),
-        '#description' => t('Define the blue value of the box shadow.'),
+        '#description' => t('Define the blur value of the box shadow.'),
       ];
 
       // Border radius tab.
