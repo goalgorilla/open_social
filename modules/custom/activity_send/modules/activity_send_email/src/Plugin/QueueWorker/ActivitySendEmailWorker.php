@@ -134,27 +134,31 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase implements Containe
         $recipients = $data['recipients'];
       }
 
-      // Load the user accounts.
+      /** @var \Drupal\user\UserInterface[] $target_accounts */
       $target_accounts = User::loadMultiple($recipients);
 
       foreach ($target_accounts as $target_account) {
-        if ($target_account instanceof User) {
-
-          // Retrieve the users email settings.
-          $user_email_settings = EmailActivityDestination::getSendEmailUserSettings($target_account);
-
-          // Determine email frequency to use, defaults to immediately.
-          // @todo make these frequency constants?
-          $template_frequencies = $this->swiftmailSettings->get('template_frequencies') ?: [];
-          $frequency = isset($template_frequencies[$message_template_id]) ? $template_frequencies[$message_template_id] : 'immediately';
-          if (!empty($user_email_settings[$message_template_id])) {
-            $frequency = $user_email_settings[$message_template_id];
-          }
-
-          // Send item to EmailFrequency instance.
-          $instance = $this->frequencyManager->createInstance($frequency);
-          $instance->processItem($activity, $message, $target_account);
+        if (
+          $this->swiftmailSettings->get('do_not_send_emails_new_users') &&
+          $target_account->getLastAccessedTime() == 0
+        ) {
+          continue;
         }
+
+        // Retrieve the users email settings.
+        $user_email_settings = EmailActivityDestination::getSendEmailUserSettings($target_account);
+
+        // Determine email frequency to use, defaults to immediately.
+        // @todo make these frequency constants?
+        $template_frequencies = $this->swiftmailSettings->get('template_frequencies') ?: [];
+        $frequency = isset($template_frequencies[$message_template_id]) ? $template_frequencies[$message_template_id] : 'immediately';
+        if (!empty($user_email_settings[$message_template_id])) {
+          $frequency = $user_email_settings[$message_template_id];
+        }
+
+        // Send item to EmailFrequency instance.
+        $instance = $this->frequencyManager->createInstance($frequency);
+        $instance->processItem($activity, $message, $target_account);
       }
     }
   }

@@ -343,3 +343,29 @@ function _activity_send_email_default_template_items() {
     ],
   ];
 }
+
+/**
+ * Implements hook_form_FORM_ID_alter() for user_form().
+ */
+function activity_send_email_form_social_swiftmail_form_alter(&$form, FormStateInterface $form_state) {
+  $config = \Drupal::config('social_swiftmail.settings');
+
+  $form['do_not_send_emails_new_users'] = [
+    '#type' => 'checkbox',
+    '#title' => t("Don't send email notifications to new users who have never logged in"),
+    '#description' => t('When this setting is enabled, new users who have never logged in will still receive notification via the notification centre within the platform'),
+    '#default_value' => $config->get('do_not_send_emails_new_users'),
+  ];
+
+  $form['#submit'][] = '_activity_send_email_social_swiftmail_form_submit';
+}
+
+/**
+ * Custom submit function for social_swiftmail settings.
+ */
+function _activity_send_email_social_swiftmail_form_submit($form, FormStateInterface $form_state) {
+  \Drupal::service('config.factory')
+    ->getEditable('social_swiftmail.settings')
+    ->set('do_not_send_emails_new_users', $form_state->getValue('do_not_send_emails_new_users'))
+    ->save();
+}
