@@ -16,12 +16,17 @@
           // the type of message to display ("status" or "warning") and message
           // is the message to display.
           // @todo: Add/remove classes via jQuery.
-          $('#like-container-' + entity_type + '-' + entity_id + ' a').get(0).className = response.operation.like;
-          $('#dislike-container-' + entity_type + '-' + entity_id + ' a').get(0).className = response.operation.dislike;
-
+          // Like can occur more than once, for example in a modal, so we need to traverse each.
           // Updates the likes and dislikes count.
           var likeText = Drupal.formatPlural(response.likes, "@count like", "@count likes");
-          $('#like-container-' + entity_type + '-' + entity_id).nextAll('.vote__count').find('a').html(likeText).attr('data-dialog-options', '{"title":"' + likeText + '", "width":"auto"}');
+          $($('#like-container-' + entity_type + '-' + entity_id + ' a')).each(function( index ) {
+            $(this).get(0).className = response.operation.like;
+            $(this).parent().nextAll('.vote__count').find('a').html(likeText).attr('data-dialog-options', '{"title":"' + likeText + '", "width":"auto"}');
+          });
+
+          $($('#dislike-container-' + entity_type + '-' + entity_id + ' a')).each(function( index ) {
+            $(this).get(0).className = response.operation.dislike;
+          });
         }
       });
     };
