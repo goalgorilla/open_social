@@ -15,6 +15,11 @@ use Symfony\Component\HttpFoundation\Request;
 class SocialPostAlbumManagedFile extends ManagedFile {
 
   /**
+   * The CSS class which adding to wrapper when at least one image was loaded.
+   */
+  const CLASS_NAME = 'post-images-loaded';
+
+  /**
    * {@inheritdoc}
    */
   public static function uploadAjaxCallback(&$form, FormStateInterface &$form_state, Request $request) {
@@ -24,8 +29,19 @@ class SocialPostAlbumManagedFile extends ManagedFile {
     return $response->addCommand(new InvokeCommand(
       '#edit-' . str_replace('_', '-', $parents[0]) . '-wrapper',
       'addClass',
-      ['post-images-loaded']
+      [self::CLASS_NAME]
     ));
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function processManagedFile(&$element, FormStateInterface $form_state, &$complete_form) {
+    if (!empty($element['#value']['fids'])) {
+      $complete_form[$element['#field_name']]['#attributes']['class'][] = self::CLASS_NAME;
+    }
+
+    return parent::processManagedFile($element, $form_state, $complete_form);
   }
 
 }

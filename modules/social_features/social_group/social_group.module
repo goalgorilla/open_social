@@ -237,6 +237,7 @@ function social_group_preprocess_group(array &$variables) {
     && !empty($term = $group->get('field_group_type')->entity)
     && \Drupal::config('social_group.settings')->get('social_group_type_required')) {
     $variables['group_type'] = $term->getName();
+    $variables['group_type_icon'] = $term->get('field_group_type_icon')->value;
   }
 
   // Render the group settings help, gear icon with popover.
@@ -329,6 +330,10 @@ function social_group_preprocess_group(array &$variables) {
     // Add context, since we render join / invite only etc links in the block.
     $variables['#cache']['contexts'][] = 'group';
     $variables['#cache']['contexts'][] = 'user';
+    $about_url = Url::fromRoute('view.group_information.page_group_about', [
+      'group' => $group->id(),
+    ]);
+    $variables['about_url'] = $about_url;
     if ($group->getGroupType()->hasContentPlugin('group_node:event')) {
       $variables['group_events'] = $group_statistics->getGroupNodeCount($group, 'event');
       $variables['group_events_label'] = \Drupal::translation()->formatPlural($variables['group_events'],
@@ -841,9 +846,8 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
   if (in_array($form_id, $membership_add_forms, TRUE) && \Drupal::routeMatch()->getRouteName() !== 'grequest.group_request_membership_approve') {
     // Lets add the new select 2 widget to add members to a group.
     $form['entity_id']['widget'][0]['target_id'] = [
-      '#title' => t('Find people by name'),
+      '#title' => t('Find people by name or email address'),
       '#type' => 'select2',
-      '#description' => t('You can enter or paste multiple entries separated by comma or semicolon'),
       '#multiple' => TRUE,
       '#tags' => TRUE,
       '#autocomplete' => TRUE,
@@ -1785,20 +1789,18 @@ function social_group_field_info_alter(&$info) {
  * Implements hook_entity_base_field_info_alter().
  */
 function social_group_entity_base_field_info_alter(&$fields, EntityTypeInterface $entity_type) {
-  $entity_types = ['node'];
-  if (in_array($entity_type->id(), $entity_types)) {
-    if (isset($fields['groups'])) {
-      /** @var \Drupal\Core\Field\FieldDefinitionInterface $fields['groups'] */
-      $fields['groups']->setLabel(t('Group'));
-      $fields['groups']->setDisplayOptions('form', [
+  if ($entity_type->id() === 'node' && isset($fields['groups'])) {
+    /** @var \Drupal\Core\Field\FieldDefinitionInterface[] $fields */
+    $fields['groups']
+      ->setLabel(t('Group'))
+      ->setDescription('')
+      ->setSetting('handler', 'social')
+      ->setDisplayOptions('form', [
         'type' => 'options_select',
         'settings' => [],
         'weight' => 16,
-      ]);
-      $fields['groups']->setDisplayConfigurable('form', TRUE);
-      $fields['groups']->setDescription('');
-
-    }
+      ])
+      ->setDisplayConfigurable('form', TRUE);
   }
 }
 

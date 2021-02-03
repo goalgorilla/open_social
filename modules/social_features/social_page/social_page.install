@@ -89,6 +89,11 @@ function social_page_update_dependencies() {
     'social_core' => 8805,
   ];
 
+  // New image style change should run after the new image style is imported.
+  $dependencies['social_page'][8907] = [
+    'social_core' => 8908,
+  ];
+
   return $dependencies;
 }
 
@@ -121,20 +126,10 @@ function social_page_update_8002() {
 }
 
 /**
- * Show thumbnail on File fields when attachment is an image.
+ * Empty, moved to social_page_update_8907().
  */
 function social_page_update_8903() {
-  $config_file = drupal_get_path('module', 'social_page') . '/config/static/core.entity_view_display.node.page.default_8903.yml';
-
-  if (is_file($config_file)) {
-    $settings = Yaml::parse(file_get_contents($config_file));
-    if (is_array($settings)) {
-      $config = \Drupal::configFactory()
-        ->getEditable('core.entity_view_display.node.page.default');
-
-      $config->setData($settings)->save(TRUE);
-    }
-  }
+  // Code has been moved to social_page_update_8907().
 }
 
 /**
@@ -182,9 +177,26 @@ function social_page_update_8906() {
 }
 
 /**
- * Add small_teaser view mode for page.
+ * Show thumbnail on File fields when attachment is an image.
  */
 function social_page_update_8907() {
+  $config_file = drupal_get_path('module', 'social_page') . '/config/static/core.entity_view_display.node.page.default_8907.yml';
+
+  if (is_file($config_file)) {
+    $settings = Yaml::parse(file_get_contents($config_file));
+    if (is_array($settings)) {
+      $config = \Drupal::configFactory()
+        ->getEditable('core.entity_view_display.node.page.default');
+
+      $config->setData($settings)->save(TRUE);
+    }
+  }
+}
+
+/**
+ * Add small_teaser view mode for page.
+ */
+function social_page_update_8908() {
   $config_path = drupal_get_path('module', 'social_page') . '/config/install';
   $source = new FileStorage($config_path);
   /** @var \Drupal\Core\Config\StorageCacheInterface $config_storage */
