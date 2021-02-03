@@ -9,6 +9,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Template\Attribute;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
+use Drupal\comment\CommentInterface;
 
 /**
  * Implements template_preprocess_form().
@@ -71,13 +72,13 @@ function socialbase_preprocess_form(&$variables) {
     if (\Drupal::routeMatch()->getRouteName() === 'entity.comment.edit_form') {
       $comment = \Drupal::routeMatch()->getParameter('comment');
 
-      if (is_object($comment)) {
+      if ($comment instanceof CommentInterface) {
         // Display comment created date in format 'time ago'.
         $created_time_ago = \Drupal::service('date.formatter')
           ->formatTimeDiffSince($comment->getCreatedTime(), ['granularity' => 1, 'return_as_object' => TRUE]);
 
         $submitted = t('@time ago', ['@time' => $created_time_ago->getString()]);
-        $variables['submitted'] = Link::fromTextAndUrl($submitted, $comment->urlInfo('canonical'));
+        $variables['submitted'] = Link::fromTextAndUrl($submitted, $comment->toUrl('canonical'));
         $variables['#cache']['max-age'] = $created_time_ago->getMaxAge();
 
         // Display author information.
@@ -100,7 +101,7 @@ function socialbase_preprocess_form(&$variables) {
             '#theme' => 'username',
             '#account' => $account,
           ];
-          $variables['author'] = drupal_render($username);
+          $variables['author'] = \Drupal::service('renderer')->render($username);
         }
       }
 
@@ -113,7 +114,7 @@ function socialbase_preprocess_form(&$variables) {
     if (\Drupal::routeMatch()->getRouteName() === 'entity.post.edit_form') {
       $post_id = $element['#post_id'];
       /** @var \Drupal\social_post\Entity\Post $post */
-      $post = entity_load('post', $post_id);
+      $post = \Drupal::service('entity_type.manager')->getStorage('post')->load($post_id);
 
       // Display post created date in format 'time ago'.
       $created_time_ago = \Drupal::service('date.formatter')

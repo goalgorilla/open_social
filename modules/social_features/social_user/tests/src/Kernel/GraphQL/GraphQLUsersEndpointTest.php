@@ -24,7 +24,7 @@ class GraphQLUsersEndpointTest extends SocialGraphQLTestBase {
   public static $modules = [
     "social_user",
     // User creation in social_user requires a service in role_delegation.
-    // TODO: Possibly untangle this?
+    // @todo Possibly untangle this?
     "role_delegation",
   ];
 

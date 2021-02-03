@@ -68,7 +68,7 @@ class InviteService {
     // invites available, but we need to determine defaults so we can
     // render the Invite accountheader block link pointing to the overview
     // that is available by the plugins.
-    // @TODO make this more pretty and generic.
+    // @todo make this more pretty and generic.
     if ($this->moduleHandler->moduleExists('social_event_invite')) {
       $route['name'] = 'view.user_event_invites.page_user_event_invites';
     }

@@ -55,7 +55,7 @@ class Block extends PreprocessBase {
 
     $prefix = '';
     // If socialbase is one of the basetheme, we need a prefix for block ids.
-    if (array_key_exists('socialbase', $theme->getBaseThemes())) {
+    if (array_key_exists('socialbase', $theme->getBaseThemeExtensions())) {
       $prefix = $theme->getName();
     }
 
@@ -73,7 +73,7 @@ class Block extends PreprocessBase {
     if (in_array($region, $regions_card)) {
       $variables['card'] = TRUE;
 
-      if (array_key_exists('socialbase', $theme->getBaseThemes())) {
+      if (array_key_exists('socialbase', $theme->getBaseThemeExtensions())) {
         $prefix = $theme->getName() . '_';
       }
 
@@ -150,7 +150,7 @@ class Block extends PreprocessBase {
       $block = BlockEntity::load('search_content_block_header');
 
       if (!empty($block)) {
-        $block_output = \Drupal::entityManager()
+        $block_output = \Drupal::service('entity_type.manager')
           ->getViewBuilder('block')
           ->view($block);
 

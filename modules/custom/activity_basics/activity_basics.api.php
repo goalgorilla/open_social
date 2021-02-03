@@ -5,6 +5,8 @@
  * Hooks provided by the Activity module.
  */
 
+use Drupal\node\Entity\Node;
+
 /**
  * @addtogroup hooks
  * @{
@@ -22,7 +24,7 @@
  *
  * @ingroup activity_basics_api
  */
-function hook_activity_recipient_organizer_alter(array &$recipients, \Drupal\node\Entity\Node $event, array $data) {
+function hook_activity_recipient_organizer_alter(array &$recipients, Node $event, array $data) {
   $organizers = $event->getOwnerId();
 
   if ($data['target_type'] !== 'event_enrollment') {

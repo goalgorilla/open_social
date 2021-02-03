@@ -18,8 +18,7 @@
     "scripts": {
         "post-install-cmd": [
             "@composer drupal:scaffold"
-        ],
-        "enable-asset-packagist": "Drupal\\social\\Composer\\AssetPackagist::execute"
+        ]
     },
     "autoload": {
         "psr-4": {
@@ -121,8 +120,8 @@
         "cweagans/composer-patches": "^1.6.0",
         "composer/installers": "~1.0 || ~2.0",
         "oomphinc/composer-installers-extender": "~1.0 || ~2.0",
-        "drupal/core": "~8.9.9",
-        "drupal/core-composer-scaffold": "~8.9",
+        "drupal/core": "8.8 - 9.1",
+        "drupal/core-composer-scaffold": "8.8 - 9.1",
         "drupal/address": "1.7",
         "drupal/admin_toolbar": "1.27",
         "drupal/ajax_comments": "^1.0",
@@ -207,8 +206,8 @@
     },
     "require-dev": {
         "dealerdirect/phpcodesniffer-composer-installer": "~0.6 || ~0.7",
-        "mglaman/drupal-check": "^1.0",
-        "palantirnet/drupal-rector": "^0.5.6",
-        "drupal/coder": "8.3.11"
+        "drupal/coder": "8.3.11",
+        "mglaman/phpstan-drupal": "0.12",
+        "mglaman/drupal-check": "^1.0"
     }
 }

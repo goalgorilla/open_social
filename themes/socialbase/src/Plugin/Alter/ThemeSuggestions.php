@@ -147,7 +147,7 @@ class ThemeSuggestions extends BaseThemeSuggestions {
 
           // For comments in activities we show the amount of attachments.
           if ($file->_referringItem !== NULL) {
-            /* @var $item \Drupal\file\Plugin\Field\FieldType\FileItem  */
+            /** @var \Drupal\file\Plugin\Field\FieldType\FileItem $item  */
             $item = $file->_referringItem;
             $name = $item->getFieldDefinition()->getName();
             // For field comment files we add a new suggestion.

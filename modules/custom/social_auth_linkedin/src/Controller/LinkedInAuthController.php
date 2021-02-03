@@ -109,7 +109,7 @@ class LinkedInAuthController extends ControllerBase {
     $account = current($account);
 
     if (!$account->get('status')->value) {
-      drupal_set_message($this->t('Your account is blocked. Contact the site administrator.'), 'error');
+      $this->messenger()->addError($this->t('Your account is blocked. Contact the site administrator.'));
       return $this->redirect('user.login');
     }
 
@@ -160,7 +160,7 @@ class LinkedInAuthController extends ControllerBase {
       $account = current($account);
 
       if (!$account->get('status')->value) {
-        drupal_set_message($this->t('You already have account on this site, but your account is blocked. Contact the site administrator.'), 'error');
+        $this->messenger()->addError($this->t('You already have account on this site, but your account is blocked. Contact the site administrator.'));
         return $this->redirect('user.register');
       }
 
@@ -178,7 +178,7 @@ class LinkedInAuthController extends ControllerBase {
     $data_handler->set('mail', $this->authManager->getEmailAddress());
     $data_handler->set('name', $this->authManager->getFirstName() . ' ' . $this->authManager->getLastName());
 
-    drupal_set_message($this->t('You are now connected with @network, please continue registration', [
+    $this->messenger()->addStatus($this->t('You are now connected with @network, please continue registration', [
       '@network' => $this->t('LinkedIn'),
     ]));
 
@@ -200,16 +200,16 @@ class LinkedInAuthController extends ControllerBase {
     $network_manager = $this->networkManager->createInstance('social_auth_linkedin');
 
     if (!$network_manager->isActive()) {
-      drupal_set_message($this->t('@network is disabled. Contact the site administrator', [
+      $this->messenger()->addError($this->t('@network is disabled. Contact the site administrator', [
         '@network' => $this->t('LinkedIn'),
-      ]), 'error');
+      ]));
       return $this->redirect('user.' . $type);
     }
 
     if (!$sdk = $network_manager->getSdk()) {
-      drupal_set_message($this->t('@network Auth not configured properly. Contact the site administrator.', [
+      $this->messenger()->addError($this->t('@network Auth not configured properly. Contact the site administrator.', [
         '@network' => $this->t('LinkedIn'),
-      ]), 'error');
+      ]));
       return $this->redirect('user.' . $type);
     }
 
@@ -228,17 +228,17 @@ class LinkedInAuthController extends ControllerBase {
   public function getProfile($type) {
     // Get the OAuth token from LinkedIn.
     if (!$access_token = $this->authManager->getAccessToken($type)) {
-      drupal_set_message($this->t('@network login failed. Token is not valid.', [
+      $this->messenger()->addError($this->t('@network login failed. Token is not valid.', [
         '@network' => $this->t('LinkedIn'),
-      ]), 'error');
+      ]));
       return $this->redirect('user.' . $type);
     }
 
     // Get user's LinkedIn profile from LinkedIn API.
     if (!($profile = $this->authManager->getProfile()) || empty($profile['id'])) {
-      drupal_set_message($this->t('@network login failed, could not load @network profile. Contact the site administrator.', [
+      $this->messenger()->addError($this->t('@network login failed, could not load @network profile. Contact the site administrator.', [
         '@network' => $this->t('LinkedIn'),
-      ]), 'error');
+      ]));
       return $this->redirect('user.' . $type);
     }
 

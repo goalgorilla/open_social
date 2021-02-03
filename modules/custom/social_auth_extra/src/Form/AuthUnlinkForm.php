@@ -2,10 +2,13 @@
 
 namespace Drupal\social_auth_extra\Form;
 
+use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Form\ConfirmFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
+use Drupal\social_api\Plugin\NetworkManager;
 use Drupal\user\Entity\User;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Class AuthUnlinkForm.
@@ -20,6 +23,35 @@ class AuthUnlinkForm extends ConfirmFormBase {
    * @var array
    */
   protected $socialNetwork;
+
+  /**
+   * The network manager.
+   *
+   * @var \Drupal\social_api\Plugin\NetworkManager
+   */
+  protected $networkManager;
+
+  /**
+   * AuthUnlinkForm constructor.
+   *
+   * @param \Drupal\Core\Config\ConfigFactory $config_factory
+   *   The config factory.
+   * @param \Drupal\social_api\Plugin\NetworkManager $network_manager
+   *   The network manager.
+   */
+  public function __construct(ConfigFactory $config_factory, NetworkManager $network_manager) {
+    $this->networkManager = $network_manager;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('config.factory'),
+      $container->get('plugin.network.manager')
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -67,10 +99,9 @@ class AuthUnlinkForm extends ConfirmFormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $account = User::load($this->currentUser()->id());
-    $network_manager = \Drupal::service('plugin.network.manager');
     $is_connected = FALSE;
 
-    foreach ($network_manager->getDefinitions() as $definition) {
+    foreach ($this->networkManager->getDefinitions() as $definition) {
       /** @var \Drupal\social_auth_extra\UserManagerInterface $user_manager */
       $user_manager = \Drupal::service($definition['id'] . '.user_manager');
       $user_manager->setAccount($account);
@@ -87,16 +118,16 @@ class AuthUnlinkForm extends ConfirmFormBase {
     $account->save();
 
     if ($is_connected) {
-      drupal_set_message($this->t('Your @network account is unlinked. You can still log in with your @community_name account.', [
+      $this->messenger()->addStatus($this->t('Your @network account is unlinked. You can still log in with your @community_name account.', [
         '@network' => $this->socialNetwork['social_network'],
-        '@community_name' => \Drupal::config('system.site')->get('name'),
+        '@community_name' => $this->configFactory->get('system.site')->get('name'),
       ]));
     }
     else {
-      drupal_set_message($this->t('Your @network account is unlinked. Make sure you set a password or connect another social platform. Please enter a password to be able to continue using @community_name.', [
+      $this->messenger()->addWarning($this->t('Your @network account is unlinked. Make sure you set a password or connect another social platform. Please enter a password to be able to continue using @community_name.', [
         '@network' => $this->socialNetwork['social_network'],
-        '@community_name' => \Drupal::config('system.site')->get('name'),
-      ]), 'warning');
+        '@community_name' => $this->configFactory->get('system.site')->get('name'),
+      ]));
     }
 
     $form_state->setRedirect('entity.user.edit_form', [
@@ -108,11 +139,10 @@ class AuthUnlinkForm extends ConfirmFormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state, $network = NULL) {
-    $network_manager = \Drupal::service('plugin.network.manager');
-    $definitions = $network_manager->getDefinitions();
+    $definitions = $this->networkManager->getDefinitions();
 
     foreach ($definitions as $definition) {
-      $instance = $network_manager->createInstance($definition['id']);
+      $instance = $this->networkManager->createInstance($definition['id']);
 
       if ($network == $instance->getSocialNetworkKey()) {
         $this->socialNetwork = $definition;

@@ -7,6 +7,7 @@ use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 use LinkedIn\Client;
 use LinkedIn\Scope;
 use Drupal\social_auth_linkedin\Settings\LinkedInAuthSettings;
+use LinkedIn\Exception;
 
 /**
  * Class LinkedInAuthManager.
@@ -14,6 +15,13 @@ use Drupal\social_auth_linkedin\Settings\LinkedInAuthSettings;
  * @package Drupal\social_auth_linkedin
  */
 class LinkedInAuthManager extends AuthManager {
+
+  /**
+   * Holds the LinkedIn SDK.
+   *
+   * @var \LinkedIn\Client
+   */
+  protected $sdk;
 
   /**
    * {@inheritdoc}
@@ -29,8 +37,6 @@ class LinkedInAuthManager extends AuthManager {
     if (!$sdk instanceof Client) {
       throw new InvalidArgumentException('SDK object should be instance of \LinkedIn\Client class');
     }
-
-    $this->sdk = $sdk;
   }
 
   /**
@@ -59,7 +65,7 @@ class LinkedInAuthManager extends AuthManager {
       $access_token = $this->sdk->getAccessToken($_GET['code']);
       return $access_token;
     }
-    catch (LinkedInException $e) {
+    catch (Exception $e) {
       $this->loggerFactory
         ->get('social_auth_linkedin')
         ->error('Could not get LinkedIn access token. LinkedInException: @message', [

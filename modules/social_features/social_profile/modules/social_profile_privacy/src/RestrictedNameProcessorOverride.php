@@ -4,6 +4,7 @@ namespace Drupal\social_profile_privacy;
 
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Config\ConfigFactoryOverrideInterface;
+use Drupal\Core\Config\StorageInterface;
 
 /**
  * Adds the Restricted Name field to our required processors.

@@ -38,7 +38,7 @@ class FormElementLabel extends BaseFormElementLabel {
 
       // Date fields that need labels to distinguish date from time fields
       // These include daterange fields already as well.
-      // @TODO update date fields of event to daterange fields and remove
+      // @todo update date fields of event to daterange fields and remove
       // the last 4 variables of this array.
       $date_fields = [
         'edit-field-date-0-value-time',

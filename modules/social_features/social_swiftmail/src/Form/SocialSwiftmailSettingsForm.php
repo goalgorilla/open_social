@@ -33,6 +33,13 @@ class SocialSwiftmailSettingsForm extends ConfigFormBase {
   protected $moduleHandler;
 
   /**
+   * The batch builder.
+   *
+   * @var \Drupal\Core\Batch\BatchBuilder
+   */
+  protected $batchBuilder;
+
+  /**
    * SocialSwiftmailSettingsForm constructor.
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory

@@ -10,7 +10,7 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
 use Drupal\social_api\Plugin\NetworkBase;
 use Drupal\Component\Render\PlainTextOutput;
-use Drupal\bootstrap\Utility\Unicode;
+use Drupal\Core\Entity\EntityStorageException;
 
 /**
  * Implements hook_form_FORM_ID_alter().
@@ -45,7 +45,7 @@ function social_auth_extra_form_user_register_form_alter(&$form, FormStateInterf
         // first name and last name.
         if (empty($name)) {
           // Translate to lowercase and remove unnecessary symbols.
-          $name = Unicode::strtolower($data_handler->get('name'));
+          $name = mb_strtolower($data_handler->get('name'));
           $name = \Drupal::transliteration()->transliterate($name);
           $name = str_replace('  ', ' ', $name);
           $name = preg_replace('/[^0-9a-z]/si', '_', $name);
@@ -146,7 +146,7 @@ function _social_auth_extra_get_buttons($type = 'login') {
  * This function is using for registration via social network.
  */
 function social_auth_extra_form_user_register_form_submit($form, FormStateInterface $form_state) {
-  /* @var $instance NetworkBase */
+  /** @var \Drupal\social_api\Plugin\NetworkBase $instance */
   if (($instance = $form_state->get('network_instance')) && $instance instanceof NetworkBase) {
     $id = $instance->getPluginId();
     $user_manager = \Drupal::service($id . '.user_manager');
@@ -230,12 +230,12 @@ function social_auth_extra_form_user_register_form_submit($form, FormStateInterf
 
       if ($account->get('status')->value === 0) {
         _user_mail_notify('register_pending_approval', $account);
-        drupal_set_message(t('Thank you for applying for an account. Your account is currently pending approval by the site administrator.<br />In the meantime, a welcome message with further instructions has been sent to your email address.'));
+        \Drupal::messenger()->addStatus(t('Thank you for applying for an account. Your account is currently pending approval by the site administrator.<br />In the meantime, a welcome message with further instructions has been sent to your email address.'));
         $form_state->setRedirect('<front>');
       }
       else {
         user_login_finalize($account);
-        drupal_set_message(t('Your account is created. We have sent an email with your account details. You can now start exploring @community_name.', [
+        \Drupal::messenger()->addStatus(t('Your account is created. We have sent an email with your account details. You can now start exploring @community_name.', [
           '@community_name' => \Drupal::config('system.site')->get('name'),
         ]));
 
@@ -265,8 +265,8 @@ function social_auth_extra_form_user_register_form_submit($form, FormStateInterf
       }
     }
     catch (EntityStorageException $e) {
-      drupal_set_message(t('Creation of user account failed. Please contact site administrator.'), 'error');
-      $logger_factory = \Drupal::service('logger.fatory');
+      \Drupal::messenger()->addError(t('Creation of user account failed. Please contact site administrator.'));
+      $logger_factory = \Drupal::service('logger.factory');
       $logger_factory
         ->get($id)
         ->error('Could not create new user. Exception: @message', [

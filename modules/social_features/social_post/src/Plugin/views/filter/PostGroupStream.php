@@ -2,13 +2,14 @@
 
 namespace Drupal\social_post\Plugin\views\filter;
 
+use Drupal\Core\Database\Query\Condition;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\views\Plugin\views\filter\FilterPluginBase;
 
 /**
  * Filters post on a group stream.
  *
- * @TODO Perhaps we should create an PostEntityStream instead.
+ * @todo Perhaps we should create an PostEntityStream instead.
  *
  * @ingroup views_filter_handlers
  *
@@ -49,7 +50,7 @@ class PostGroupStream extends FilterPluginBase {
     $this->query->addTable('post__field_recipient_group');
 
     // Or posted to the group by the community.
-    $recipient_condition = db_and();
+    $recipient_condition = new Condition('AND');
     $recipient_condition->condition('post__field_visibility.field_visibility_value', '0', '=');
     $recipient_condition->condition('post__field_recipient_group.field_recipient_group_target_id', $group->id(), '=');
 

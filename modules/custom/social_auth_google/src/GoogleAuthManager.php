@@ -2,9 +2,13 @@
 
 namespace Drupal\social_auth_google;
 
+use Drupal\Core\Entity\EntityFieldManagerInterface;
+use Drupal\Core\Logger\LoggerChannelFactoryInterface;
+use Drupal\Core\Routing\UrlGeneratorInterface;
 use Drupal\social_auth_extra\AuthManager;
 use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 use Drupal\social_auth_google\Settings\GoogleAuthSettings;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Class GoogleAuthManager.
@@ -19,6 +23,31 @@ class GoogleAuthManager extends AuthManager {
    * @var \Google_Service_Oauth2
    */
   private $googleService;
+
+  /**
+   * The request stack.
+   *
+   * @var \Symfony\Component\HttpFoundation\RequestStack
+   */
+  protected $requestStack;
+
+  /**
+   * GoogleAuthManager constructor.
+   *
+   * @param \Drupal\Core\Routing\UrlGeneratorInterface $urlGenerator
+   *   The url generator.
+   * @param \Drupal\Core\Entity\EntityFieldManagerInterface $entity_field_manager
+   *   The entity field manager.
+   * @param \Drupal\Core\Logger\LoggerChannelFactoryInterface $logger_factory
+   *   The logger factory.
+   * @param \Symfony\Component\HttpFoundation\RequestStack $request_stack
+   *   The request stack.
+   */
+  public function __construct(UrlGeneratorInterface $urlGenerator, EntityFieldManagerInterface $entity_field_manager, LoggerChannelFactoryInterface $logger_factory, RequestStack $request_stack) {
+    parent::__construct($urlGenerator, $entity_field_manager, $logger_factory);
+
+    $this->requestStack = $request_stack;
+  }
 
   /**
    * {@inheritdoc}
@@ -61,7 +90,7 @@ class GoogleAuthManager extends AuthManager {
   public function getAccessToken($type) {
     $redirect_url = $this->getRedirectUrl($type);
     $this->sdk->setRedirectUri($redirect_url);
-    return $this->sdk->authenticate(\Drupal::request()->get('code'));
+    return $this->sdk->authenticate($this->requestStack->getCurrentRequest()->get('code'));
   }
 
   /**

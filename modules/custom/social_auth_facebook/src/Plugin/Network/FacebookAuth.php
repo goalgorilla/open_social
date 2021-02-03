@@ -4,6 +4,7 @@ namespace Drupal\social_auth_facebook\Plugin\Network;
 
 use Drupal\social_auth\Plugin\Network\SocialAuthNetwork;
 use Drupal\social_api\SocialApiException;
+use Drupal\social_auth_facebook\FacebookAuthPersistentDataHandler;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\social_auth_facebook\Settings\FacebookAuthSettings;
 use Drupal\Core\Config\ConfigFactoryInterface;
@@ -29,13 +30,41 @@ use Drupal\Core\Logger\LoggerChannelFactoryInterface;
  */
 class FacebookAuth extends SocialAuthNetwork {
 
+  /**
+   * The logger factory.
+   *
+   * @var \Drupal\Core\Logger\LoggerChannelFactoryInterface
+   */
   protected $loggerFactory;
 
   /**
-   * FacebookAuth constructor.
+   * The persistent data handler.
+   *
+   * @var \Drupal\social_auth_facebook\FacebookAuthPersistentDataHandler
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager, ConfigFactoryInterface $config_factory, LoggerChannelFactoryInterface $logger_factory) {
+  protected $persistentDataHandler;
+
+  /**
+   * FacebookAuth constructor.
+   *
+   * @param array $configuration
+   *   A configuration array containing information about the plugin instance.
+   * @param string $plugin_id
+   *   The plugin_id for the plugin instance.
+   * @param array $plugin_definition
+   *   The plugin implementation definition.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *   The configuration factory object.
+   * @param \Drupal\Core\Logger\LoggerChannelFactoryInterface $logger_factory
+   *   The logger factory.
+   * @param \Drupal\social_auth_facebook\FacebookAuthPersistentDataHandler $persistent_data_handler
+   *   The persistent data handler.
+   */
+  public function __construct(array $configuration, $plugin_id, array $plugin_definition, EntityTypeManagerInterface $entity_type_manager, ConfigFactoryInterface $config_factory, LoggerChannelFactoryInterface $logger_factory, FacebookAuthPersistentDataHandler $persistent_data_handler) {
     $this->loggerFactory = $logger_factory;
+    $this->persistentDataHandler = $persistent_data_handler;
 
     parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_type_manager, $config_factory);
   }
@@ -50,7 +79,8 @@ class FacebookAuth extends SocialAuthNetwork {
       $plugin_definition,
       $container->get('entity_type.manager'),
       $container->get('config.factory'),
-      $container->get('logger.factory')
+      $container->get('logger.factory'),
+      $container->get('social_auth_facebook.persistent_data_handler')
     );
   }
 
@@ -132,10 +162,9 @@ class FacebookAuth extends SocialAuthNetwork {
    *   An instance of the storage that handles the data.
    */
   public function getDataHandler() {
-    $data_handler = \Drupal::service('social_auth_facebook.persistent_data_handler');
-    $data_handler->setPrefix('social_auth_facebook_');
+    $this->persistentDataHandler->setPrefix('social_auth_facebook_');
 
-    return $data_handler;
+    return $this->persistentDataHandler;
   }
 
 }

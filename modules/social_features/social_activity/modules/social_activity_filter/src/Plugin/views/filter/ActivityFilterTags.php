@@ -3,6 +3,7 @@
 namespace Drupal\social_activity_filter\Plugin\views\filter;
 
 use Drupal\Core\Database\Connection;
+use Drupal\Core\Database\Query\Condition;
 use Drupal\views\Plugin\views\filter\FilterPluginBase;
 use Drupal\views\Views;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -52,8 +53,8 @@ class ActivityFilterTags extends FilterPluginBase {
     $tags = isset($this->view->filter_tags) ? $this->view->filter_tags : '';
     $taxonomy_field = isset($this->view->filter_vocabulary) ? $this->view->filter_vocabulary : '';
 
-    $or = db_or();
-    $and_wrapper = db_and();
+    $or = new Condition('OR');
+    $and_wrapper = new Condition('AND');
 
     $taxonomy_node_table = "node__{$taxonomy_field}";
     $taxonomy_post_table = "post__field_{$taxonomy_field}";
@@ -81,7 +82,7 @@ class ActivityFilterTags extends FilterPluginBase {
         ->createInstance('standard', $configuration);
       $this->query->addRelationship('filtered_nodes', $join, $taxonomy_node_table);
 
-      $and_node_wrapper = db_and();
+      $and_node_wrapper = new Condition('AND');
       $and_node_wrapper->condition("filtered_nodes.{$taxonomy_field}_target_id", $tags, 'IN');
 
       $or->condition($and_node_wrapper);
@@ -107,7 +108,7 @@ class ActivityFilterTags extends FilterPluginBase {
         ->createInstance('standard', $configuration);
       $this->query->addRelationship($comment_table, $join, $comment_table);
 
-      $and_comment_wrapper = db_and();
+      $and_comment_wrapper = new Condition('AND');
       $and_comment_wrapper->condition("{$comment_table}.comment_type", 'comment');
 
       $configuration = [
@@ -146,7 +147,7 @@ class ActivityFilterTags extends FilterPluginBase {
         ->createInstance('standard', $configuration);
       $this->query->addRelationship('filtered_posts', $join, $taxonomy_post_table);
 
-      $and_post_wrapper = db_and();
+      $and_post_wrapper = new Condition('AND');
       $and_post_wrapper->condition("filtered_posts.field_{$taxonomy_field}_target_id", $tags, 'IN');
       $or->condition($and_post_wrapper);
     }

@@ -218,14 +218,14 @@ function social_comment_comment_links_alter(array &$links, CommentInterface $ent
  * Implements hook_preprocess_comment().
  */
 function social_comment_preprocess_comment(&$variables) {
-  /* @var \Drupal\comment\Entity\Comment $comment */
+  /** @var \Drupal\comment\Entity\Comment $comment */
   $comment = $variables['elements']['#comment'];
   // Display comment created date in format 'time ago'.
   $created_time_ago = \Drupal::service('date.formatter')
     ->formatTimeDiffSince($comment->getCreatedTime(), ['granularity' => 1, 'return_as_object' => TRUE]);
   $date = t('%time ago', ['%time' => $created_time_ago->getString()]);
 
-  $variables['submitted'] = Link::fromTextAndUrl($date, $comment->urlInfo('canonical'));
+  $variables['submitted'] = Link::fromTextAndUrl($date, $comment->toUrl('canonical'));
   $variables['#cache']['max-age'] = $created_time_ago->getMaxAge();
 
   $account = $comment->getOwner();
@@ -273,6 +273,7 @@ function social_comment_comment_access(EntityInterface $entity, $operation, Acco
  */
 function social_comment_comment_view(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, $view_mode) {
   if ($view_mode === 'activity') {
+    /** @var \Drupal\comment\Entity\Comment $entity */
     $commented_entity = $entity->getCommentedEntity();
     if (is_object($commented_entity)) {
       $commented_entity_type = $commented_entity->getEntityTypeId();
@@ -334,7 +335,7 @@ function social_comment_comment_view(array &$build, EntityInterface $entity, Ent
         ];
 
         // Set path to post node.
-        $link_url = $commented_entity->urlInfo('canonical');
+        $link_url = $commented_entity->toUrl('canonical');
 
         // Attach the attributes.
         $link_url->setOptions($more_link_options);

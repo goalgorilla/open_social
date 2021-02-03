@@ -2,6 +2,7 @@
 
 namespace Drupal\social_auth_extra;
 
+use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
@@ -42,6 +43,13 @@ abstract class UserManager implements UserManagerInterface {
   protected $fieldPicture;
 
   /**
+   * The file system.
+   *
+   * @var \Drupal\Core\File\FileSystemInterface
+   */
+  protected $fileSystem;
+
+  /**
    * Contains the profile type.
    *
    * @var string
@@ -59,7 +67,7 @@ abstract class UserManager implements UserManagerInterface {
   /**
    * UserManager constructor.
    */
-  public function __construct(ConfigFactoryInterface $config_factory, EntityTypeManagerInterface $entity_type_manager, LanguageManagerInterface $language_manager, EntityFieldManagerInterface $entity_field_manager, Token $token, TransliterationInterface $transliteration, LoggerChannelFactoryInterface $logger_factory) {
+  public function __construct(ConfigFactoryInterface $config_factory, EntityTypeManagerInterface $entity_type_manager, LanguageManagerInterface $language_manager, EntityFieldManagerInterface $entity_field_manager, Token $token, TransliterationInterface $transliteration, LoggerChannelFactoryInterface $logger_factory, FileSystemInterface $file_system) {
     $this->configFactory = $config_factory;
     $this->entityTypeManager = $entity_type_manager;
     $this->languageManager = $language_manager;
@@ -67,6 +75,7 @@ abstract class UserManager implements UserManagerInterface {
     $this->token = $token;
     $this->transliteration = $transliteration;
     $this->loggerFactory = $logger_factory;
+    $this->fileSystem = $file_system;
   }
 
   /**
@@ -136,7 +145,7 @@ abstract class UserManager implements UserManagerInterface {
       return FALSE;
     }
 
-    if (!file_prepare_directory($directory, FILE_CREATE_DIRECTORY | FILE_MODIFY_PERMISSIONS)) {
+    if (!$this->fileSystem->prepareDirectory($directory, FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS)) {
       $this->loggerFactory
         ->get('social_auth_' . $key)
         ->error('The image could not be saved, the directory @directory is not valid.', [
@@ -149,7 +158,7 @@ abstract class UserManager implements UserManagerInterface {
     $filename = $this->transliteration->transliterate($key . '_' . $account_id . '.jpg', 'en', '_', 50);
     $destination = "{$directory}/{$filename}";
 
-    if (!$file = system_retrieve_file($url, $destination, TRUE, FILE_EXISTS_REPLACE)) {
+    if (!$file = system_retrieve_file($url, $destination, TRUE, FileSystemInterface::EXISTS_REPLACE)) {
       $this->loggerFactory
         ->get('social_auth_' . $key)
         ->error('The file @filename could not downloaded.', [

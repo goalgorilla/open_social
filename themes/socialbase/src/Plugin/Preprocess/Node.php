@@ -7,6 +7,7 @@ use Drupal\bootstrap\Utility\Element;
 use Drupal\bootstrap\Utility\Variables;
 use Drupal\comment\Plugin\Field\FieldType\CommentItemInterface;
 use Drupal\group\Entity\GroupContent;
+use Drupal\node\NodeInterface;
 
 /**
  * Pre-processes variables for the "node" theme hook.
@@ -52,7 +53,7 @@ class Node extends PreprocessBase {
         '#theme' => 'username',
         '#account' => $account,
       ];
-      $variables['author'] = drupal_render($username);
+      $variables['author'] = \Drupal::service('renderer')->render($username);
     }
 
     if (isset($variables['elements']['#node']) && !isset($variables['created_date_formatted'])) {
@@ -126,7 +127,7 @@ class Node extends PreprocessBase {
       }
     }
 
-    if ($node->status->value == NODE_NOT_PUBLISHED) {
+    if ($node->status->value == NodeInterface::NOT_PUBLISHED) {
       $variables['status_label'] = t('unpublished');
     }
 
