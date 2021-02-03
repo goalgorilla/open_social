@@ -87,6 +87,7 @@ class SocialAlbumOptionsSelectWidget extends OptionsSelectWidget {
     ) {
       if ($form_state->getTriggeringElement()['#name'] === 'op' && $has_images) {
         $mapping = [
+          '0' => 'community',
           '1' => 'public',
           '2' => 'community',
           '3' => 'group',
