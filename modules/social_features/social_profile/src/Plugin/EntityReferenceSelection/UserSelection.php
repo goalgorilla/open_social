@@ -13,7 +13,8 @@ use Drupal\user\Plugin\EntityReferenceSelection\UserSelection as UserSelectionBa
  *   label = @Translation("Social user selection"),
  *   entity_types = {"user"},
  *   group = "social",
- *   weight = 1
+ *   weight = 1,
+ *   base_plugin_label = @Translation("Social user selection")
  * )
  */
 class UserSelection extends UserSelectionBase {
