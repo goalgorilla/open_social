@@ -72,7 +72,8 @@ function improved_theme_settings_page_attachments(array &$page) {
       }
 
       $card_box_shadow_enabled = improved_theme_settings_get_setting('override_box_shadow', $system_theme_settings);
-      $card_box_shadow_color = theme_get_setting('box_shadow_color',  $system_theme_settings);
+      // Get raw value for box_shadow_color
+      $card_box_shadow_color = improved_theme_settings_get_setting('box_shadow_color', $system_theme_settings, TRUE);
       $card_box_shadow_opacity = improved_theme_settings_get_setting('box_shadow_opacity', $system_theme_settings);
       $card_box_shadow_x_offset = improved_theme_settings_get_setting('box_shadow_x_offset', $system_theme_settings);
       $card_box_shadow_y_offset = improved_theme_settings_get_setting('box_shadow_y_offset', $system_theme_settings);
@@ -244,16 +245,19 @@ function improved_theme_settings_page_attachments(array &$page) {
  *   The setting to retrieve.
  * @param string $themename
  *   The theme to retrieve the setting from.
+ * @param bool $raw
+ *   To retrieve the raw value of the setting.
  *
  * @return bool|string
  *   The value of the settings.
  */
-function improved_theme_settings_get_setting($setting, $themename) {
+function improved_theme_settings_get_setting($setting, $themename, $raw = FALSE) {
   // Fetch setting from the theme.
   $themevar = Xss::filter(theme_get_setting($setting, $themename));
   // In this case '' is something different than 0.
-  if ($themevar !== trim((int) $themevar)) {
+  if ($themevar !== trim((int) $themevar) && !$raw) {
     return FALSE;
   }
+
   return $themevar;
 }

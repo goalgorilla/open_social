@@ -78,7 +78,7 @@ function socialblue_form_system_theme_settings_alter(&$form, FormStateInterface 
 
       $form['os_box_shadow_settings']['override_box_shadow'] = [
         '#type' => 'checkbox',
-        '#title' => t('Override default Box Shadow for cards'),
+        '#title' => t('Override default box shadow for cards'),
         '#default_value' => $config->get('override_box_shadow'),
         '#description' => t('Unselect this to disable box shadow.'),
       ];
