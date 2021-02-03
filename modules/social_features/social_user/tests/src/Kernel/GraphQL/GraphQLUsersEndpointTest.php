@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\Tests\social_user\Kernel;
+namespace Drupal\Tests\social_user\Kernel\GraphQL;
 
 use Drupal\Tests\social_graphql\Kernel\SocialGraphQLTestBase;
 use Drupal\user\Entity\User;
@@ -79,9 +79,9 @@ class GraphQLUsersEndpointTest extends SocialGraphQLTestBase {
     // available in an all-access scenario.
     $this->setCurrentUser(User::load(1));
     $test_user = $this->createUser();
-    $query = "
-      query {
-        user(id: \"{$test_user->uuid()}\") {
+    $query = '
+      query ($id: ID!) {
+        user(id: $id) {
           id
           displayName
           mail
@@ -91,25 +91,28 @@ class GraphQLUsersEndpointTest extends SocialGraphQLTestBase {
           roles
         }
       }
-    ";
+    ';
     $expected_data = [
-      'data' => [
-        'user' => [
-          'id' => $test_user->uuid(),
-          'displayName' => $test_user->getDisplayName(),
-          'mail' => $test_user->getEmail(),
-          'created' => $test_user->getCreatedTime(),
-          'updated' => $test_user->getChangedTime(),
-          'status' => 'ACTIVE',
-          'roles' => ['authenticated'],
-        ],
+      'user' => [
+        'id' => $test_user->uuid(),
+        'displayName' => $test_user->getDisplayName(),
+        'mail' => $test_user->getEmail(),
+        'created' => $test_user->getCreatedTime(),
+        'updated' => $test_user->getChangedTime(),
+        'status' => 'ACTIVE',
+        'roles' => ['authenticated'],
       ],
     ];
 
-    // @todo Move to QueryResultAssertionTrait::assertResults and add metadata.
-    $result = $this->query($query);
-    self::assertSame(200, $result->getStatusCode(), 'user fields are present');
-    self::assertSame($expected_data, json_decode($result->getContent(), TRUE), 'user fields are present');
+    $this->assertResults(
+      $query,
+      ['id' => $test_user->uuid()],
+      $expected_data,
+      $this->defaultCacheMetaData()
+        ->addCacheableDependency($test_user)
+        // @todo It's unclear why this cache context is added.
+        ->addCacheContexts(['languages:language_interface'])
+    );
   }
 
 }
