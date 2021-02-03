@@ -6,42 +6,42 @@ views.view.activity_stream_notifications:
         default:
           display_options:
             filters:
-              activity_post_visibility_access_filter:
+              activity_notification_visibility_access_filter:
+                id: activity_notification_visibility_access_filter
+                table: activity
+                field: activity_notification_visibility_access_filter
+                relationship: none
+                group_type: group
                 admin_label: ''
-                entity_type: activity
+                operator: '='
+                value: ''
+                group: 1
+                exposed: false
                 expose:
-                  description: ''
-                  identifier: ''
-                  label: ''
-                  multiple: false
-                  operator: ''
                   operator_id: ''
+                  label: ''
+                  description: ''
+                  use_operator: false
+                  operator: ''
                   operator_limit_selection: false
                   operator_list: {  }
+                  identifier: ''
+                  required: false
                   remember: false
+                  multiple: false
                   remember_roles:
                     authenticated: authenticated
-                  required: false
-                  use_operator: false
-                exposed: false
-                field: activity_post_visibility_access_filter
-                group: 1
+                is_grouped: false
                 group_info:
+                  label: ''
+                  description: ''
+                  identifier: ''
+                  optional: true
+                  widget: select
+                  multiple: false
+                  remember: false
                   default_group: All
                   default_group_multiple: {  }
-                  description: ''
                   group_items: {  }
-                  identifier: ''
-                  label: ''
-                  multiple: false
-                  optional: true
-                  remember: false
-                  widget: select
-                group_type: group
-                id: activity_post_visibility_access_filter
-                is_grouped: false
-                operator: '='
-                plugin_id: activity_post_visibility_access
-                relationship: none
-                table: activity
-                value: ''
+                entity_type: activity
+                plugin_id: activity_notification_visibility_access
