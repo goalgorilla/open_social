@@ -158,8 +158,11 @@ class PostForm extends ContentEntityForm {
       else {
         $form['field_visibility']['widget'][0]['#default_value'] = '2';
       }
-
-      unset($form['field_visibility']['widget'][0]['#options'][3]);
+      $current_group = _social_group_get_current_group();
+      // We unset the group visibility if we don't have a group.
+      if (empty($current_group)) {
+        unset($form['field_visibility']['widget'][0]['#options'][3]);
+      }
     }
     // If we're not posting to the community then the visibility depends on the
     // group type (if it's a group post) or it's simply limited to the community
@@ -266,13 +269,17 @@ class PostForm extends ContentEntityForm {
 
     switch ($status) {
       case SAVED_NEW:
-        drupal_set_message($this->t('Your post %label has been posted.', [
+        $message = $this->t('Your post %label has been posted.', [
           '%label' => $this->entity->label(),
-        ]));
+        ]);
+
+        $this->moduleHandler->alter('social_post_message', $message, $form_state);
+
+        $this->messenger()->addStatus($message);
         break;
 
       default:
-        drupal_set_message($this->t('Your post %label has been saved.', [
+        $this->messenger()->addStatus($this->t('Your post %label has been saved.', [
           '%label' => $this->entity->label(),
         ]));
     }

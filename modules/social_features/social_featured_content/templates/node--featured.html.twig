@@ -167,7 +167,11 @@
       {% block card_link %}
         {% if not hide_card_link %}
           <a href="{{ url }}" class="card__link" rel="bookmark">
-            {{ 'Read more'|t }}
+            {% if card_link_label %}
+              {{ card_link_label }}
+            {% else %}
+              {{ 'Read more'|t }}
+            {% endif %}
             <span class="visually-hidden">{% trans %}about {{ label }}{% endtrans %} </span>
           </a>
         {% endif %}

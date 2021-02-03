@@ -1,0 +1,77 @@
+<?php
+
+/**
+ * @file
+ * Install, update functions for the social_follow_tag module.
+ */
+
+use Drupal\Core\Config\FileStorage;
+use Symfony\Component\Yaml\Yaml;
+
+/**
+ * Implements hook_install().
+ *
+ * Perform actions related to the installation of social_follow_tag.
+ */
+function social_follow_tag_install() {
+  // Set a higher weight to overlap templates.
+  module_set_weight('social_follow_tag', 10);
+  // Clear cache so that overlapped templates are used after module enabling.
+  drupal_flush_all_caches();
+}
+
+/**
+ * Revert configs.
+ */
+function social_follow_tag_update_8801() {
+  $config_files = [
+    'message.template.create_node_following_tag_stream',
+    'message.template.update_node_following_tag',
+  ];
+
+  foreach ($config_files as $config_file) {
+    $config = drupal_get_path('module', 'social_follow_tag') . '/config/install/' . $config_file . '.yml';
+
+    if (is_file($config)) {
+      $settings = Yaml::parse(file_get_contents($config));
+      if (is_array($settings)) {
+        $update_config = \Drupal::configFactory()
+          ->getEditable($config_file);
+
+        $update_config->setData($settings)->save(TRUE);
+      }
+    }
+  }
+}
+
+/**
+ * Update followtag block.
+ */
+function social_follow_tag_update_8802() {
+  $config_path = drupal_get_path('module', 'social_follow_tag') . '/config/optional';
+  $source = new FileStorage($config_path);
+  /** @var \Drupal\Core\Config\StorageCacheInterface $config_storage */
+  $config_storage = \Drupal::service('config.storage');
+  $config_storage->write('block.block.followtag', $source->read('block.block.followtag'));
+}
+
+/**
+ * Use enforced social_follow_tag module for configuration.
+ */
+function social_follow_tag_update_8803() {
+  $config_path = drupal_get_path('module', 'social_follow_tag') . '/config/install';
+  $source = new FileStorage($config_path);
+  /** @var \Drupal\Core\Config\StorageCacheInterface $config_storage */
+  $config_storage = \Drupal::service('config.storage');
+
+  // List of configs.
+  $configs = [
+    'message.template.create_node_following_tag',
+    'message.template.create_node_following_tag_stream',
+    'message.template.update_node_following_tag',
+  ];
+
+  foreach ($configs as $config) {
+    $config_storage->write($config, $source->read($config));
+  }
+}

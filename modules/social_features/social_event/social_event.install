@@ -129,6 +129,11 @@ function social_event_update_dependencies() {
     'social_core' => 8805,
   ];
 
+  // New image style change should run after the new image style is imported.
+  $dependencies['social_event'][8915] = [
+    'social_core' => 8908,
+  ];
+
   return $dependencies;
 }
 
@@ -1623,27 +1628,17 @@ function social_event_update_8905() {
 }
 
 /**
- * Show thumbnail on File fields when attachment is an image.
+ * Empty, moved to social_event_update_8915().
  */
 function social_event_update_8906() {
-  $config_file = drupal_get_path('module', 'social_event') . '/config/static/core.entity_view_display.node.event.default_8906.yml';
-
-  if (is_file($config_file)) {
-    $settings = Yaml::parse(file_get_contents($config_file));
-    if (is_array($settings)) {
-      $config = \Drupal::configFactory()
-        ->getEditable('core.entity_view_display.node.event.default');
-
-      $config->setData($settings)->save(TRUE);
-    }
-  }
+  // Code has been moved to social_event_update_8915().
 }
 
 /**
  * Add image file extensions to be added as attachments.
  */
 function social_event_update_8907() {
-  $config_file = drupal_get_path('module', 'social_topic') . '/config/static/field.field.node.event.field_files_8907.yml';
+  $config_file = drupal_get_path('module', 'social_event') . '/config/static/field.field.node.event.field_files_8907.yml';
 
   if (is_file($config_file)) {
     $settings = Yaml::parse(file_get_contents($config_file));
@@ -1687,5 +1682,117 @@ function social_event_update_8908() {
     $config->setData($config_data)->save();
     // Make sure we clear cached definitions for the fields.
     \Drupal::service('entity_field.manager')->clearCachedFieldDefinitions();
+  }
+}
+
+/**
+ * Updated field_enroll_method field label.
+ */
+function social_event_update_8909() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_event', 'social_event_update_8909');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Update the enrollment method text of an event on event add form.
+ */
+function social_event_update_8910() {
+  // Load the existing configuration.
+  $config_name = 'field.storage.node.field_enroll_method';
+  $config = \Drupal::configFactory()->getEditable($config_name);
+  $config_data = $config->getRawData();
+
+  if (!empty($config_data['settings']['allowed_values'])) {
+    foreach ($config_data['settings']['allowed_values'] as $key => $value) {
+      if (!empty($value['label'])) {
+        // Since we are not sure about the array keys for the allowed values
+        // we loop over them, and whenever there is a possible label match
+        // we alter it.
+        // This to ensure any custom added values are not affected.
+        if (strpos($value['label'], 'Open') !== FALSE) {
+          $config_data['settings']['allowed_values'][$key]['label'] = 'Open to enroll';
+        }
+        if (strpos($value['label'], 'Request') !== FALSE) {
+          $config_data['settings']['allowed_values'][$key]['label'] = 'Request to enroll';
+        }
+        if (strpos($value['label'], 'Invite-only') !== FALSE) {
+          $config_data['settings']['allowed_values'][$key]['label'] = 'Invite-only';
+        }
+      }
+    }
+
+    $config->setData($config_data)->save();
+    // Make sure we clear cached definitions for the fields.
+    \Drupal::service('entity_field.manager')->clearCachedFieldDefinitions();
+  }
+}
+
+/**
+ * Updated fieldsets labels and added a new fieldset called "Settings".
+ */
+function social_event_update_8911() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_event', 'social_event_update_8911');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Re-arranged fields in new fieldsets.
+ */
+function social_event_update_8912() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_event', 'social_event_update_8912');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Remove un-required fieldgroup 'group_description' from event content type.
+ */
+function social_event_update_8914() {
+  // There can be possibility that someone might have added fields in
+  // fieldgroups we are removing. So, we want to skip removal if there are any
+  // children present in fieldgroup.
+  $field_groups = [
+    'group_description',
+  ];
+
+  foreach ($field_groups as $field_group) {
+    $group = field_group_load_field_group($field_group, 'node', 'event', 'form', 'default');
+    if ($group && empty($group->children)) {
+      field_group_delete_field_group($group);
+    }
+  }
+}
+
+/**
+ * Show thumbnail on File fields when attachment is an image.
+ */
+function social_event_update_8915() {
+  $config_file = drupal_get_path('module', 'social_event') . '/config/static/core.entity_view_display.node.event.default_8915.yml';
+
+  if (is_file($config_file)) {
+    $settings = Yaml::parse(file_get_contents($config_file));
+    if (is_array($settings)) {
+      $config = \Drupal::configFactory()
+        ->getEditable('core.entity_view_display.node.event.default');
+
+      $config->setData($settings)->save(TRUE);
+    }
   }
 }

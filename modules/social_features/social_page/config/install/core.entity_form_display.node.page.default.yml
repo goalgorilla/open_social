@@ -22,53 +22,62 @@ third_party_settings:
       children:
         - title
         - field_page_image
+        - body
       parent_name: ''
       weight: 0
-      label: Content
+      label: 'Basic information'
       format_type: fieldset
       format_settings:
-        label: Content
+        description: ''
         required_fields: true
         id: content
         classes: 'card '
-    group_page_description:
-      children:
-        - body
-      parent_name: ''
-      weight: 2
-      label: 'Page description'
-      format_type: fieldset
-      format_settings:
-        label: 'Page description'
-        required_fields: true
-        id: description
-        classes: 'card '
+      region: hidden
     group_attachments:
       children:
         - field_files
       parent_name: ''
       weight: 3
-      label: Attachments
-      format_type: fieldset
+      label: 'Additional information'
+      format_type: details
       format_settings:
-        label: Attachments
+        description: ''
         required_fields: true
         id: attachments
-        classes: 'card '
+        classes: social-collapsible-fieldset
+        open: false
+      region: hidden
     group_page_visibility:
       children:
         - field_content_visibility
       parent_name: ''
       weight: 1
-      label: Visibility
+      label: 'Access permissions'
       format_type: fieldset
       format_settings:
-        label: Visibility
+        description: ''
         required_fields: true
         id: visibility
         classes: 'card '
-_core:
-  default_config_hash: 3Z-1RH4Ygf-ZS11i1tHHb08h_tsEQ6BwTPx3gUUH3Wo
+      region: hidden
+    group_settings:
+      children:
+        - uid
+        - created
+        - field_page_comments
+        - path
+        - status
+      parent_name: ''
+      weight: 20
+      format_type: details
+      region: hidden
+      format_settings:
+        id: ''
+        classes: social-collapsible-fieldset
+        description: ''
+        open: false
+        required_fields: true
+      label: Settings
 id: node.page.default
 targetEntityType: node
 bundle: page
@@ -76,16 +85,17 @@ mode: default
 content:
   body:
     type: text_textarea_with_summary
-    weight: 2
+    weight: 3
     settings:
       rows: 9
       summary_rows: 3
       placeholder: ''
+      show_summary: false
     third_party_settings: {  }
     region: content
   created:
     type: datetime_timestamp
-    weight: 5
+    weight: 8
     settings: {  }
     third_party_settings: {  }
     region: content
@@ -103,7 +113,7 @@ content:
     type: file_generic
     region: content
   field_page_comments:
-    weight: 6
+    weight: 5
     settings: {  }
     third_party_settings: {  }
     type: comment_default
@@ -119,12 +129,14 @@ content:
         - hero
         - teaser
       progress_indicator: throbber
+      crop_types_required: {  }
+      warn_multiple_usages: true
     third_party_settings: {  }
     type: image_widget_crop
     region: content
   path:
     type: path
-    weight: 7
+    weight: 6
     settings: {  }
     third_party_settings: {  }
     region: content
@@ -145,7 +157,7 @@ content:
     region: content
   uid:
     type: entity_reference_autocomplete
-    weight: 4
+    weight: 7
     settings:
       match_operator: CONTAINS
       size: 60

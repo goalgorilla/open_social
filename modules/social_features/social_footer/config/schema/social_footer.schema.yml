@@ -1,0 +1,29 @@
+# Schema for the configuration files of the Social Footer module.
+
+block.settings.social_footer_powered_by_block:*:
+  type: block_settings
+  label: 'Powered by block'
+  mapping:
+    logo:
+      type: integer
+      label: 'Logo'
+    text:
+      type: mapping
+      label: 'Text'
+      mapping:
+        value:
+          type: text
+          label: 'Markup'
+        format:
+          type: string
+          label: 'Text format'
+    link:
+      type: mapping
+      label: 'Link'
+      mapping:
+        url:
+          type: uri
+          label: 'URL'
+        title:
+          type: label
+          label: 'Title'

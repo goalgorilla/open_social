@@ -5,6 +5,7 @@
  * The Social post photo installation.
  */
 
+use Drupal\Core\Entity\Entity\EntityViewDisplay;
 use Drupal\user\RoleInterface;
 
 /**
@@ -96,4 +97,34 @@ function social_post_photo_uninstall() {
  */
 function social_post_photo_update_8001() {
   \Drupal::service('config.installer')->installDefaultConfig('module', 'social_post_photo');
+}
+
+/**
+ * Create "Featured" view display for photo post.
+ */
+function social_post_photo_update_8002() {
+  if (!EntityViewDisplay::load('post.photo.featured')) {
+    $display = EntityViewDisplay::load('post.photo.default')->toArray();
+    $display = array_merge($display, [
+      'uuid' => NULL,
+      '_core' => NULL,
+      'targetEntityType' => 'post',
+      'mode' => 'featured',
+    ]);
+    EntityViewDisplay::create($display)->save();
+  }
+}
+
+/**
+ * Change placeholder text of the post text field.
+ */
+function social_post_photo_update_8901() {
+  /** @var \Drupal\update_helper\UpdaterInterface $update_helper */
+  $update_helper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $update_helper->executeUpdate('social_post_photo', 'social_post_photo_update_8901');
+
+  // Output logged messages to related channel of update execution.
+  return $update_helper->logger()->output();
 }

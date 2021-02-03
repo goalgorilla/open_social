@@ -28,7 +28,7 @@ Feature: Move content after creation
     And I select group "Kayaking"
     And I wait for AJAX to finish
     Then I should see "Changing the group may have impact on the visibility settings and may cause author/co-authors to lose access."
-    And I press "Save"
+    And I press "Create topic"
     And I should see "Kayaking"
     And I wait for "2" seconds
 

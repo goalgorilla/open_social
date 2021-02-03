@@ -1,0 +1,77 @@
+social_album.add:
+  path: '/group/{group}/albums/add'
+  defaults:
+    _controller: '\Drupal\social_album\Controller\SocialAlbumController::add'
+    _title_callback: '\Drupal\node\Controller\NodeController::addPageTitle'
+    node_type: album
+  requirements:
+    _custom_access: '\Drupal\social_album\Controller\SocialAlbumController::checkGroupAlbumAccess'
+    _node_add_access: 'node:{node_type}'
+    group: \d+
+  options:
+    _node_operation_route: TRUE
+    parameters:
+      group:
+        type: 'entity:group'
+      node_type:
+        type: 'entity:node_type'
+        with_config_overrides: TRUE
+
+social_album.post:
+  path: '/node/{node}/post'
+  defaults:
+    _entity_form: 'post.album'
+    _title_callback: '\Drupal\social_album\Controller\SocialAlbumController::title'
+    type: photo
+  requirements:
+    _custom_access: '\Drupal\social_album\Controller\SocialAlbumController::checkAddImageAccess'
+    _permission: 'add post entities'
+    node: \d+
+  options:
+    parameters:
+      node:
+        type: 'entity:node'
+
+social_album.image.view:
+  path: '/node/{node}/image/{post}/{fid}'
+  defaults:
+    _controller: '\Drupal\social_album\Controller\SocialAlbumController::viewImage'
+    _title: 'View image'
+  requirements:
+    _custom_access: '\Drupal\social_album\Controller\SocialAlbumController::checkViewImageAccess'
+    node: \d+
+    post: \d+
+    fid: \d+
+  options:
+    parameters:
+      node:
+        type: 'entity:node'
+      post:
+        type: 'entity:post'
+
+social_album.image.delete:
+  path: '/node/{node}/image/{post}/{fid}/delete'
+  defaults:
+    _controller: '\Drupal\social_album\Controller\SocialAlbumController::deleteImage'
+    _title: 'Delete image'
+  requirements:
+    _custom_access: '\Drupal\social_album\Controller\SocialAlbumController::checkDeleteImageAccess'
+    node: \d+
+    post: \d+
+    fid: \d+
+  options:
+    parameters:
+      node:
+        type: 'entity:node'
+      post:
+        type: 'entity:post'
+
+social_album.settings:
+  path: '/admin/config/opensocial/album'
+  defaults:
+    _form: '\Drupal\social_album\Form\SocialAlbumSettingsForm'
+    _title: 'Album settings'
+  requirements:
+    _permission: 'administer social_album settings'
+  options:
+    _admin_route: TRUE

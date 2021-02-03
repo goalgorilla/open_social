@@ -4,6 +4,7 @@ namespace Drupal\social_group_invite\Plugin\ActivityContext;
 
 use Drupal\activity_creator\Plugin\ActivityContextBase;
 use Drupal\ginvite\Plugin\GroupContentEnabler\GroupInvitation;
+use Drupal\Core\Entity\EntityInterface;
 
 /**
  * Provides a 'InvitedToGroupActivityContext' activity context.
@@ -51,7 +52,7 @@ class InvitedToGroupActivityContext extends ActivityContextBase {
   /**
    * {@inheritdoc}
    */
-  public function isValidEntity($entity) {
+  public function isValidEntity(EntityInterface $entity) {
     /** @var \Drupal\Core\Entity\EntityInterface $entity */
     return $entity->getEntityTypeId() === 'group_content';
   }

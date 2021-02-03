@@ -5,6 +5,8 @@
  * Install, update and uninstall functions for the social_post module.
  */
 
+use Drupal\Core\Entity\Entity\EntityViewDisplay;
+use Drupal\Core\Entity\Entity\EntityViewMode;
 use Drupal\Core\Site\Settings;
 use Drupal\user\Entity\Role;
 
@@ -145,6 +147,41 @@ function social_post_update_8802(&$sandbox) {
   $sandbox['processed'] += count($role_ids);
 
   $sandbox['#finished'] = $sandbox['processed'] / $sandbox['total'];
+}
+
+/**
+ * Create "Featured" view mode/display for post.
+ */
+function social_post_update_8804() {
+  // Create a new post featured entity view mode.
+  if (!EntityViewMode::load('post.featured')) {
+    EntityViewMode::create([
+      'targetEntityType' => 'post',
+      'id' => 'post.featured',
+      'status' => TRUE,
+      'label' => t('Featured'),
+    ])->save();
+  }
+
+  // Create view display for post bundle of Post entity.
+  if (!EntityViewDisplay::load('post.post.featured')) {
+    $display = EntityViewDisplay::load('post.post.default')->toArray();
+    unset(
+      $display['content']['field_post_comments'],
+      $display['hidden']['like_and_dislike']
+    );
+    $display['content']['like_and_dislike'] = [
+      'weight' => 3,
+      'region' => 'content',
+    ];
+    $display = array_merge($display, [
+      'uuid' => NULL,
+      '_core' => NULL,
+      'targetEntityType' => 'post',
+      'mode' => 'featured',
+    ]);
+    EntityViewDisplay::create($display)->save();
+  }
 }
 
 /**

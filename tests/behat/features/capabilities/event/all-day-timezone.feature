@@ -25,9 +25,19 @@ Feature: All day event for different timezones
       | Street address | Fedkovycha 60a |
       | Postal code | 79000 |
       | Oblast | Lviv oblast |
+    And I press "Create event"
+    Then I should see "This is a timezone test for all day events has been created."
+    And I should see "1 Jan '25"
+    And I should not see "31 Dec '24"
+
+    Given I click "Edit content"
+    When I fill in the following:
+      | Title | This is a test event - edit |
     And I show hidden checkboxes
     And I check the box "edit-event-all-day"
     And I press "Save"
-    Then I should see "This is a timezone test for all day events has been created."
+    Then I should see "Event This is a test event - edit has been updated"
     And I should see "1 Jan '25"
+    And I should see "THIS IS A TEST EVENT - EDIT"
+    And I should not see "11:00"
     And I should not see "31 Dec '24"
