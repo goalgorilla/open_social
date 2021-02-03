@@ -441,6 +441,36 @@ parameters:
 			path: modules/custom/activity_send/modules/activity_send_email/src/Plugin/QueueWorker/ActivityDigestWorker.php
 
 		-
+			message: "#^Call to an undefined method Drupal\\\\Core\\\\Entity\\\\EntityInterface\\:\\:isActive\\(\\)\\.$#"
+			count: 1
+			path: modules/custom/activity_send/modules/activity_send_email/src/Plugin/QueueWorker/ActivityDigestWorker.php
+
+		-
+			message: "#^Call to an undefined method Drupal\\\\Core\\\\Entity\\\\EntityInterface\\:\\:getPreferredLangcode\\(\\)\\.$#"
+			count: 1
+			path: modules/custom/activity_send/modules/activity_send_email/src/Plugin/QueueWorker/ActivityDigestWorker.php
+
+		-
+			message: "#^Call to an undefined method Drupal\\\\Core\\\\Entity\\\\EntityInterface\\:\\:getRelatedEntity\\(\\)\\.$#"
+			count: 2
+			path: modules/custom/activity_send/modules/activity_send_email/src/Plugin/QueueWorker/ActivityDigestWorker.php
+
+		-
+			message: "#^Access to an undefined property Drupal\\\\Core\\\\Entity\\\\EntityInterface\\:\\:\\$field_activity_message\\.$#"
+			count: 1
+			path: modules/custom/activity_send/modules/activity_send_email/src/Plugin/QueueWorker/ActivityDigestWorker.php
+
+		-
+			message: "#^Parameter \\#1 \\$message of static method Drupal\\\\activity_send_email\\\\Plugin\\\\ActivityDestination\\\\EmailActivityDestination\\:\\:getSendEmailOutputText\\(\\) expects Drupal\\\\message\\\\Entity\\\\Message, Drupal\\\\Core\\\\Entity\\\\EntityInterface\\|null given\\.$#"
+			count: 1
+			path: modules/custom/activity_send/modules/activity_send_email/src/Plugin/QueueWorker/ActivityDigestWorker.php
+
+		-
+			message: "#^Call to an undefined method Drupal\\\\Core\\\\Entity\\\\EntityInterface\\:\\:getEmail\\(\\)\\.$#"
+			count: 1
+			path: modules/custom/activity_send/modules/activity_send_email/src/Plugin/QueueWorker/ActivityDigestWorker.php
+
+		-
 			message: "#^Negated boolean expression is always false\\.$#"
 			count: 1
 			path: modules/custom/activity_send/modules/activity_send_email/src/Plugin/QueueWorker/ActivitySendEmailWorker.php
@@ -452,6 +482,31 @@ parameters:
 
 		-
 			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
+			count: 1
+			path: modules/custom/activity_send/modules/activity_send_email/src/Plugin/QueueWorker/ActivitySendEmailWorker.php
+
+		-
+			message: "#^Call to an undefined method Drupal\\\\Core\\\\Entity\\\\EntityInterface\\:\\:getRelatedEntity\\(\\)\\.$#"
+			count: 3
+			path: modules/custom/activity_send/modules/activity_send_email/src/Plugin/QueueWorker/ActivitySendEmailWorker.php
+
+		-
+			message: "#^Access to an undefined property Drupal\\\\Core\\\\Entity\\\\EntityInterface\\:\\:\\$field_activity_message\\.$#"
+			count: 1
+			path: modules/custom/activity_send/modules/activity_send_email/src/Plugin/QueueWorker/ActivitySendEmailWorker.php
+
+		-
+			message: "#^Call to an undefined method Drupal\\\\Core\\\\Entity\\\\EntityInterface\\:\\:getTemplate\\(\\)\\.$#"
+			count: 1
+			path: modules/custom/activity_send/modules/activity_send_email/src/Plugin/QueueWorker/ActivitySendEmailWorker.php
+
+		-
+			message: "#^Access to an undefined property Drupal\\\\Core\\\\Entity\\\\EntityInterface\\:\\:\\$field_activity_recipient_user\\.$#"
+			count: 1
+			path: modules/custom/activity_send/modules/activity_send_email/src/Plugin/QueueWorker/ActivitySendEmailWorker.php
+
+		-
+			message: "#^Call to function is_null\\(\\) with Drupal\\\\Core\\\\Entity\\\\EntityInterface will always evaluate to false\\.$#"
 			count: 1
 			path: modules/custom/activity_send/modules/activity_send_email/src/Plugin/QueueWorker/ActivitySendEmailWorker.php
 
@@ -519,6 +574,31 @@ parameters:
 			message: "#^Call to an undefined method Drupal\\\\views\\\\Plugin\\\\views\\\\query\\\\QueryPluginBase\\:\\:addWhere\\(\\)\\.$#"
 			count: 1
 			path: modules/custom/activity_viewer/src/Plugin/views/filter/ActivityFilterPersonalisedHomepage.php
+
+		-
+			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
+			count: 2
+			path: modules/custom/activity_viewer/src/Plugin/views/filter/ActivityNotificationVisibilityAccess.php
+
+		-
+			message: "#^Call to an undefined method Drupal\\\\views\\\\Plugin\\\\views\\\\query\\\\QueryPluginBase\\:\\:addTable\\(\\)\\.$#"
+			count: 3
+			path: modules/custom/activity_viewer/src/Plugin/views/filter/ActivityNotificationVisibilityAccess.php
+
+		-
+			message: "#^Call to an undefined method Drupal\\\\views\\\\Plugin\\\\views\\\\query\\\\QueryPluginBase\\:\\:addRelationship\\(\\)\\.$#"
+			count: 4
+			path: modules/custom/activity_viewer/src/Plugin/views/filter/ActivityNotificationVisibilityAccess.php
+
+		-
+			message: "#^Parameter \\#2 \\$value of method Drupal\\\\Core\\\\Database\\\\Query\\\\Condition\\:\\:condition\\(\\) expects array\\|Drupal\\\\Core\\\\Database\\\\Query\\\\SelectInterface\\|string\\|null, int given\\.$#"
+			count: 4
+			path: modules/custom/activity_viewer/src/Plugin/views/filter/ActivityNotificationVisibilityAccess.php
+
+		-
+			message: "#^Call to an undefined method Drupal\\\\views\\\\Plugin\\\\views\\\\query\\\\QueryPluginBase\\:\\:addWhere\\(\\)\\.$#"
+			count: 1
+			path: modules/custom/activity_viewer/src/Plugin/views/filter/ActivityNotificationVisibilityAccess.php
 
 		-
 			message: "#^Call to an undefined method Drupal\\\\views\\\\Plugin\\\\views\\\\query\\\\QueryPluginBase\\:\\:addTable\\(\\)\\.$#"
