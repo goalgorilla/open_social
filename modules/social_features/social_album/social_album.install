@@ -262,7 +262,7 @@ function social_album_update_8901() {
  */
 function social_album_update_8902() {
   \Drupal::database()->delete('post__field_album')
-    ->condition('field_album_target_id', 0)
+    ->condition('field_album_target_id', "0")
     ->execute();
 }
 
