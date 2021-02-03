@@ -1866,6 +1866,11 @@ parameters:
 			path: modules/social_features/social_album/social_album.module
 
 		-
+			message: "#^Variable \\$node might not be defined\\.$#"
+			count: 2
+			path: modules/social_features/social_album/social_album.module
+
+		-
 			message: "#^Call to an undefined method Drupal\\\\Core\\\\Form\\\\FormInterface\\:\\:getEntity\\(\\)\\.$#"
 			count: 6
 			path: modules/social_features/social_album/social_album.module
@@ -1912,6 +1917,11 @@ parameters:
 
 		-
 			message: "#^Method Drupal\\\\social_album\\\\SocialAlbumConfigOverride\\:\\:createConfigObject\\(\\) should return Drupal\\\\Core\\\\Config\\\\StorableConfigBase but returns null\\.$#"
+			count: 1
+			path: modules/social_features/social_album/src/SocialAlbumConfigOverride.php
+
+		-
+			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
 			count: 1
 			path: modules/social_features/social_album/src/SocialAlbumConfigOverride.php
 
@@ -3211,7 +3221,37 @@ parameters:
 			path: modules/social_features/social_follow_taxonomy/modules/social_follow_landing_page/src/SocialFollowLandingPageOverrides.php
 
 		-
+			message: "#^Call to an undefined method Drupal\\\\Core\\\\Config\\\\StorageCacheInterface\\:\\:write\\(\\)\\.$#"
+			count: 2
+			path: modules/social_features/social_follow_taxonomy/modules/social_follow_tag/social_follow_tag.install
+
+		-
 			message: "#^If condition is always true\\.$#"
+			count: 1
+			path: modules/social_features/social_follow_taxonomy/modules/social_follow_tag/social_follow_tag.module
+
+		-
+			message: "#^Parameter \\#1 \\$term of function social_follow_taxonomy_flag_link expects Drupal\\\\taxonomy\\\\TermInterface, Drupal\\\\Core\\\\Entity\\\\EntityInterface given\\.$#"
+			count: 1
+			path: modules/social_features/social_follow_taxonomy/modules/social_follow_tag/social_follow_tag.module
+
+		-
+			message: "#^Parameter \\#1 \\$term of function social_follow_taxonomy_related_entity_count expects Drupal\\\\taxonomy\\\\TermInterface, Drupal\\\\Core\\\\Entity\\\\EntityInterface given\\.$#"
+			count: 1
+			path: modules/social_features/social_follow_taxonomy/modules/social_follow_tag/social_follow_tag.module
+
+		-
+			message: "#^Parameter \\#1 \\$term of function social_follow_taxonomy_term_followers_count expects Drupal\\\\taxonomy\\\\TermInterface, Drupal\\\\Core\\\\Entity\\\\EntityInterface given\\.$#"
+			count: 1
+			path: modules/social_features/social_follow_taxonomy/modules/social_follow_tag/social_follow_tag.module
+
+		-
+			message: "#^Parameter \\#1 \\$term of function social_follow_taxonomy_term_followed expects Drupal\\\\taxonomy\\\\TermInterface, Drupal\\\\Core\\\\Entity\\\\EntityInterface given\\.$#"
+			count: 1
+			path: modules/social_features/social_follow_taxonomy/modules/social_follow_tag/social_follow_tag.module
+
+		-
+			message: "#^Call to function is_null\\(\\) with Drupal\\\\Core\\\\Entity\\\\ContentEntityInterface will always evaluate to false\\.$#"
 			count: 1
 			path: modules/social_features/social_follow_taxonomy/modules/social_follow_tag/social_follow_tag.module
 
@@ -3253,6 +3293,16 @@ parameters:
 		-
 			message: "#^Access to an undefined property Drupal\\\\Core\\\\Field\\\\FieldItemListInterface\\:\\:\\$target_id\\.$#"
 			count: 2
+			path: modules/social_features/social_follow_taxonomy/social_follow_taxonomy.module
+
+		-
+			message: "#^Access to an undefined property Drupal\\\\Core\\\\Entity\\\\ContentEntityInterface\\:\\:\\$original\\.$#"
+			count: 1
+			path: modules/social_features/social_follow_taxonomy/social_follow_taxonomy.module
+
+		-
+			message: "#^Call to function is_null\\(\\) with Drupal\\\\node\\\\NodeInterface will always evaluate to false\\.$#"
+			count: 1
 			path: modules/social_features/social_follow_taxonomy/social_follow_taxonomy.module
 
 		-
@@ -3582,6 +3632,11 @@ parameters:
 
 		-
 			message: "#^Call to an undefined method Drupal\\\\Core\\\\Entity\\\\EntityStorageInterface\\:\\:loadByUser\\(\\)\\.$#"
+			count: 1
+			path: modules/social_features/social_group/social_group.module
+
+		-
+			message: "#^Call to an undefined method Drupal\\\\Core\\\\Field\\\\FieldDefinitionInterface\\:\\:setLabel\\(\\)\\.$#"
 			count: 1
 			path: modules/social_features/social_group/social_group.module
 
@@ -3991,6 +4046,21 @@ parameters:
 			path: modules/social_features/social_mentions/src/SocialMentionsConfigOverride.php
 
 		-
+			message: "#^Method Drupal\\\\social_node\\\\SocialNodeForm\\:\\:save\\(\\) should return int but return statement is missing\\.$#"
+			count: 1
+			path: modules/social_features/social_node/src/SocialNodeForm.php
+
+		-
+			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
+			count: 1
+			path: modules/social_features/social_node/src/SocialNodeForm.php
+
+		-
+			message: "#^Method Drupal\\\\social_node\\\\SocialNodeForm\\:\\:messenger\\(\\) should return Drupal\\\\social_node\\\\Service\\\\SocialNodeMessengerInterface but returns Drupal\\\\Core\\\\Messenger\\\\MessengerInterface\\.$#"
+			count: 1
+			path: modules/social_features/social_node/src/SocialNodeForm.php
+
+		-
 			message: "#^\\\\Drupal calls should be avoided in classes, use dependency injection instead$#"
 			count: 1
 			path: modules/social_features/social_page/src/ContentTranslationDefaultsConfigOverride.php
@@ -4002,6 +4072,11 @@ parameters:
 
 		-
 			message: "#^Call to an undefined method Drupal\\\\Core\\\\Field\\\\FieldItemListInterface\\:\\:referencedEntities\\(\\)\\.$#"
+			count: 1
+			path: modules/social_features/social_post/modules/social_post_album/src/Plugin/Field/FieldFormatter/AlbumImageFormatter.php
+
+		-
+			message: "#^Parameter \\#1 \\$items of method Drupal\\\\image\\\\Plugin\\\\Field\\\\FieldFormatter\\\\ImageFormatterBase\\:\\:getEntitiesToView\\(\\) expects Drupal\\\\Core\\\\Field\\\\EntityReferenceFieldItemListInterface, Drupal\\\\Core\\\\Field\\\\FieldItemListInterface given\\.$#"
 			count: 1
 			path: modules/social_features/social_post/modules/social_post_album/src/Plugin/Field/FieldFormatter/AlbumImageFormatter.php
 
@@ -4852,6 +4927,11 @@ parameters:
 
 		-
 			message: "#^Variable \\$instance in PHPDoc tag @var does not match any variable in the foreach loop\\: \\$plugin_id, \\$plugin_definition$#"
+			count: 2
+			path: modules/social_features/social_user_export/src/Plugin/Action/ExportUser.php
+
+		-
+			message: "#^Variable \\$instance in PHPDoc tag @var does not match any variable in the foreach loop\\: \\$plugin$#"
 			count: 2
 			path: modules/social_features/social_user_export/src/Plugin/Action/ExportUser.php
 
