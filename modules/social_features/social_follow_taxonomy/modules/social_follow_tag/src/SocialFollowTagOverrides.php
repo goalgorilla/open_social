@@ -8,7 +8,7 @@ use Drupal\Core\Config\ConfigFactoryOverrideInterface;
 use Drupal\Core\Config\StorageInterface;
 
 /**
- * Class SocialFollowTagOverrides.
+ * Provide config overrides for the 'social_follow_tag' module.
  *
  * @package Drupal\social_follow_tag
  */

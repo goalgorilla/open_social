@@ -30,3 +30,15 @@ function social_event_an_enroll_enrolments_export_social_user_export_plugin_info
     }
   }
 }
+
+/**
+ * Implements hook_profile_field_export_mapping_alter().
+ */
+function social_event_an_enroll_enrolments_export_profile_field_export_mapping_alter(array &$mapping) {
+  // Replace the default plugins with our own.
+  $mapping['enrolment_user_first_name'] = $mapping['user_first_name'];
+  $mapping['enrolment_user_last_name'] = $mapping['user_last_name'];
+
+  // And unset the defaults.
+  unset($mapping['user_first_name'], $mapping['user_last_name']);
+}

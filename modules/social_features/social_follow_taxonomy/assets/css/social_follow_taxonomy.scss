@@ -19,20 +19,20 @@
   }
 
   .dropdown-menu {
-    min-width: auto;
-    margin-top: 8px;
-    padding: 0;
-    left: 0;
-    right: auto;
-    background-color: transparent;
-    box-shadow: none;
+    top: 100%;
+    border-radius: 0;
 
     .btn {
-      background-color: #fff;
+      background-color: transparent;
+      padding: 4px 10px 4px 15px;
       border: 0;
-      text-align: center;
-      padding: 6px 12px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, .5);
+      text-align: left;
+    }
+
+    li > a {
+      &:hover {
+        background-color: #f3f3f3;
+      }
     }
   }
 
@@ -165,6 +165,7 @@
 
   .teaser {
     height: auto;
+    padding: 0;
   }
 
   .teaser__tag {
@@ -239,6 +240,17 @@
           flex: 0 0 100%;
           max-width: 100%;
         }
+      }
+    }
+  }
+}
+
+.socialblue--sky .block-social-group-tags-block {
+  .social_follow_tax {
+    .popup-info {
+      > .card,
+      > .teaser {
+        padding: 0;
       }
     }
   }

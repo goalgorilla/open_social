@@ -6,7 +6,6 @@ use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\InvokeCommand;
 use Drupal\Core\Ajax\RemoveCommand;
 use Drupal\Core\Entity\EntityInterface;
-use Drupal\Core\Messenger\MessengerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Drupal\ajax_comments\Controller\AjaxCommentsController as ContribController;
 
@@ -14,6 +13,20 @@ use Drupal\ajax_comments\Controller\AjaxCommentsController as ContribController;
  * Controller routines for AJAX comments routes.
  */
 class AjaxCommentsController extends ContribController {
+
+  /**
+   * The number of errors.
+   *
+   * @var int|null
+   */
+  protected $errors = NULL;
+
+  /**
+   * TRUE if temporary storage should be cleared.
+   *
+   * @var bool
+   */
+  protected $clearTempStore = TRUE;
 
   /**
    * Cancel handler for the cancel form.
@@ -34,16 +47,23 @@ class AjaxCommentsController extends ContribController {
     $response = new AjaxResponse();
 
     // Get the selectors.
-    $selectors = $this->tempStore->getSelectors($request, $overwrite = TRUE);
+    $selectors = $this->tempStore->getSelectors($request, TRUE);
     $wrapper_html_id = $selectors['wrapper_html_id'];
     $form_html_id = $selectors['form_html_id'];
 
     if ($cid != 0) {
-      // Show the hidden anchor.
-      $response->addCommand(new InvokeCommand('a#comment-' . $cid, 'show', [200, 'linear']));
+      $prefixes = [
+        // Show the hidden anchor.
+        'a#comment-',
 
-      // Show the hidden comment.
-      $response->addCommand(new InvokeCommand(static::getCommentSelectorPrefix() . $cid, 'show', [200, 'linear']));
+        // Show the hidden comment.
+        static::getCommentSelectorPrefix(),
+      ];
+
+      foreach ($prefixes as $prefix) {
+        $command = new InvokeCommand($prefix . $cid, 'show', [200, 'linear']);
+        $response->addCommand($command);
+      }
     }
 
     // Replace the # from the form_html_id selector and add .social_ so we know
@@ -91,7 +111,7 @@ class AjaxCommentsController extends ContribController {
     // Store the selectors from the incoming request, if applicable.
     // If the selectors are not in the request, the stored ones will
     // not be overwritten.
-    $this->tempStore->getSelectors($request, $overwrite = TRUE);
+    $this->tempStore->getSelectors($request, TRUE);
 
     // Check the user's access to reply.
     // The user should not have made it this far without proper permission,
@@ -120,7 +140,7 @@ class AjaxCommentsController extends ContribController {
     $form = $this->entityFormBuilder()->getForm($comment);
 
     // Check for errors.
-    if (empty($this->messenger()->messagesByType(MessengerInterface::TYPE_ERROR))) {
+    if (!($this->errors = count($this->messenger()->messagesByType('error')))) {
       // If there are no errors, set the ajax-updated
       // selector value for the form.
       $this->tempStore->setSelector('form_html_id', $form['#attributes']['id']);
@@ -136,7 +156,7 @@ class AjaxCommentsController extends ContribController {
     }
     else {
       // Retrieve the selector values for use in building the response.
-      $selectors = $this->tempStore->getSelectors($request, $overwrite = TRUE);
+      $selectors = $this->tempStore->getSelectors($request, TRUE);
       $wrapper_html_id = $selectors['wrapper_html_id'];
 
       // If there are errors, remove old messages.
@@ -148,32 +168,35 @@ class AjaxCommentsController extends ContribController {
       // Retrieve the comment id of the new comment, which was saved in
       // AjaxCommentsForm::save() during the previous HTTP request.
       $cid = $this->tempStore->getCid();
-      $errors = $this->messenger->messagesByType('error');
 
       // Try to insert the message above the new comment.
-      if (!empty($cid) && empty($errors) && $this->currentUser->hasPermission('skip comment approval')) {
-        $selector = static::getCommentSelectorPrefix() . $cid;
-        $response = $this->addMessages(
-          $request,
-          $response,
-          $selector,
-          'before'
-        );
+      if (
+        !empty($cid) &&
+        !$this->errors &&
+        $this->currentUser()->hasPermission('skip comment approval')
+      ) {
+        $selector = $cid;
+        $position = 'before';
       }
       // If the new comment is not to be shown immediately, or if there are
       // errors, insert the message directly below the parent comment.
       else {
-        $response = $this->addMessages(
-          $request,
-          $response,
-          static::getCommentSelectorPrefix() . $comment->get('pid')->target_id,
-          'after'
-        );
+        $selector = $comment->get('pid')->target_id;
+        $position = 'after';
       }
+
+      $response = $this->addMessages(
+        $request,
+        $response,
+        static::getCommentSelectorPrefix() . $selector,
+        $position
+      );
     }
 
     // Clear out the tempStore variables.
-    $this->tempStore->deleteAll();
+    if ($this->clearTempStore) {
+      $this->tempStore->deleteAll();
+    }
 
     // Remove the libraries from the response, otherwise when
     // core/misc/drupal.js is reinserted into the DOM, the following line of

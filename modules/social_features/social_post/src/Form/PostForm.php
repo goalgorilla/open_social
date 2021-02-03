@@ -158,8 +158,11 @@ class PostForm extends ContentEntityForm {
       else {
         $form['field_visibility']['widget'][0]['#default_value'] = '2';
       }
-
-      unset($form['field_visibility']['widget'][0]['#options'][3]);
+      $current_group = _social_group_get_current_group();
+      // We unset the group visibility if we don't have a group.
+      if (empty($current_group)) {
+        unset($form['field_visibility']['widget'][0]['#options'][3]);
+      }
     }
     // If we're not posting to the community then the visibility depends on the
     // group type (if it's a group post) or it's simply limited to the community

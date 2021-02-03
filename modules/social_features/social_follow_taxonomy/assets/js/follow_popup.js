@@ -39,6 +39,27 @@
         });
       });
 
+      $(context).ajaxSuccess(function (event, xhr, settings) {
+        if (settings.url.startsWith('/flag/flag/follow_term')) {
+          var add = true;
+        }
+        else if (settings.url.startsWith('/flag/unflag/follow_term')) {
+          var add = false;
+        }
+
+        if (add !== undefined) {
+          var response = xhr.responseJSON[0];
+          var $selector = $(response.selector);
+          var $badge = $selector.closest('.group-action').find('.btn-action__term')
+          if (add) {
+            $badge.addClass('term-followed');
+          }
+          else {
+            $badge.removeClass('term-followed');
+          }
+        }
+      });
+
     }
   };
 })(jQuery, Drupal);

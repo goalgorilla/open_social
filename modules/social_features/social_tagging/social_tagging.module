@@ -384,6 +384,8 @@ function social_tagging_process_tags(EntityInterface $entity) {
     ];
   }
 
+  $renderable['#entity_type'] = $entity->getEntityTypeId();
+
   return \Drupal::service('renderer')->render($renderable);
 }
 
@@ -393,10 +395,17 @@ function social_tagging_process_tags(EntityInterface $entity) {
 function social_tagging_theme($existing, $type, $theme, $path) {
   return [
     'social_tagging_nosplit' => [
-      'variables' => ['tagstitle' => NULL, 'tags' => NULL],
+      'variables' => [
+        'tagstitle' => NULL,
+        'tags' => NULL,
+        'entity_type' => NULL,
+      ],
     ],
     'social_tagging_split' => [
-      'variables' => ['taghierarchy' => NULL],
+      'variables' => [
+        'taghierarchy' => NULL,
+        'entity_type' => NULL,
+      ],
     ],
   ];
 }

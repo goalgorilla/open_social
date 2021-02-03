@@ -62,7 +62,7 @@ class GraphQLUsersEndpointTest extends SocialGraphQLTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp() : void {
     parent::setUp();
 
     $this->installEntitySchema('profile_type');

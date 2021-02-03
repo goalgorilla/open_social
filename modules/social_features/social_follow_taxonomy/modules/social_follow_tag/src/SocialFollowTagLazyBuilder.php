@@ -13,7 +13,7 @@ use Drupal\flag\FlagServiceInterface;
 use Drupal\social_tagging\SocialTaggingService;
 
 /**
- * Class SocialFollowTagLazyBuilder.
+ * Provide service for lazy rendering.
  *
  * @package Drupal\social_follow_tag
  */
@@ -134,28 +134,39 @@ class SocialFollowTagLazyBuilder implements TrustedCallbackInterface {
     }
 
     $tags = [];
+    /** @var \Drupal\taxonomy\TermStorageInterface $term_storage */
+    $term_storage = $this->entityTypeManager->getStorage('taxonomy_term');
     foreach ($term_ids as $term_id) {
       /** @var \Drupal\taxonomy\Entity\Term $term */
-      $term = $this->entityTypeManager->getStorage('taxonomy_term')->load($term_id);
+      $term = $term_storage->load($term_id);
 
       // Show only tags followed by user.
       if ($term && social_follow_taxonomy_term_followed($term)) {
         $tags[$term_id] = [
           'name' => $term->getName(),
           'flag' => social_follow_taxonomy_flag_link($term),
-          'related_nodes_count' => social_follow_taxonomy_related_nodes_count($term, 'social_tagging'),
+          'related_entity_count' => social_follow_taxonomy_related_entity_count($term, 'social_tagging'),
           'followers_count' => social_follow_taxonomy_term_followers_count($term),
         ];
       }
     }
 
-    $renderable = [
-      '#theme' => 'search_follow_tag',
-      '#tagstitle' => $this->t('Tags'),
-      '#tags' => $tags,
-    ];
+    if (!empty($tags)) {
+      $build = [
+        '#theme' => 'search_follow_tag',
+        '#tagstitle' => $this->t('Tags'),
+        '#tags' => $tags,
+      ];
 
-    return ['#markup' => $this->renderer->render($renderable)];
+      // Generate cache tags.
+      foreach ($tags as $tag_id => $tag) {
+        $build['#cache']['tags'][] = "follow_tag_node:$tag_id";
+      }
+
+      return $build;
+    }
+
+    return [];
   }
 
   /**

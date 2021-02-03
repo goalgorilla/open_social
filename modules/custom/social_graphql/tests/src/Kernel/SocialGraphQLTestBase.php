@@ -2,6 +2,7 @@
 
 namespace Drupal\Tests\social_graphql\Kernel;
 
+use Drupal\Component\Utility\NestedArray;
 use Drupal\graphql\Entity\Server;
 use Drupal\Tests\graphql\Kernel\GraphQLTestBase;
 use GraphQL\Server\OperationParams;
@@ -24,7 +25,7 @@ abstract class SocialGraphQLTestBase extends GraphQLTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp() : void {
     parent::setUp();
 
     // We need the configuration for social_graphql module to be loaded as it
@@ -42,15 +43,19 @@ abstract class SocialGraphQLTestBase extends GraphQLTestBase {
    * is implemented for the endpoint according to the Relay Connection
    * specification.
    *
-   * @todo Add ability to test pagination for a specific sort order.
-   *
    * @param string $endpoint
    *   The name of the GraphQL endpoint to test.
    * @param array $uuids
    *   The array of uuids of all source data for the endpoint in the
    *   non-reversed sorted order.
+   * @param string|null $sortKey
+   *   The GraphQL value of the sortKey field in the query or NULL to use the
+   *   default sort order.
+   * @param array $parents
+   *   The parent fields from the query root to the pagination field. Can
+   *   contain filters (e.g. `['user(id: "0000-001")', 'friend']`).
    */
-  protected function assertEndpointSupportsPagination(string $endpoint, array $uuids): void {
+  protected function assertEndpointSupportsPagination(string $endpoint, array $uuids, string $sortKey = NULL, array $parents = []): void {
     assert(count($uuids) >= 10, "The array of uuids provided to " . __FUNCTION__ . " must have at least 10 entries to perform pagination testing.");
 
     $last = count($uuids) - 1;
@@ -60,8 +65,10 @@ abstract class SocialGraphQLTestBase extends GraphQLTestBase {
       'first',
       NULL,
       NULL,
+      $sortKey,
       TRUE,
       FALSE,
+      $parents,
       [$uuids[0], $uuids[1], $uuids[2]],
       [$uuids[3], $uuids[4]],
     );
@@ -71,8 +78,10 @@ abstract class SocialGraphQLTestBase extends GraphQLTestBase {
       'first',
       TRUE,
       NULL,
+      $sortKey,
       TRUE,
       FALSE,
+      $parents,
       [$uuids[$last], $uuids[$last - 1], $uuids[$last - 2]],
       [$uuids[$last - 3], $uuids[$last - 4]],
     );
@@ -82,8 +91,10 @@ abstract class SocialGraphQLTestBase extends GraphQLTestBase {
       'last',
       NULL,
       NULL,
+      $sortKey,
       FALSE,
       TRUE,
+      $parents,
       [$uuids[$last - 2], $uuids[$last - 1], $uuids[$last]],
       [$uuids[$last - 4], $uuids[$last - 3]],
     );
@@ -93,8 +104,10 @@ abstract class SocialGraphQLTestBase extends GraphQLTestBase {
       'last',
       TRUE,
       NULL,
+      $sortKey,
       FALSE,
       TRUE,
+      $parents,
       [$uuids[2], $uuids[1], $uuids[0]],
       [$uuids[4], $uuids[3]],
     );
@@ -112,10 +125,15 @@ abstract class SocialGraphQLTestBase extends GraphQLTestBase {
    * @param string|null $cursor
    *   A cursor to use as offset in the form of 'before: "cursor"' or
    *   'after: "cursor"'.
+   * @param string|null $sortKey
+   *   The value for the sortKey or null to use the default value.
    * @param bool $hasNextPage
    *   The expected pageInfo.hasNextPage value.
    * @param bool $hasPreviousPage
    *   The expected pageInfo.hasPreviousPage value.
+   * @param array $parents
+   *   The parent fields from the query root to the pagination field. Can
+   *   contain filters (e.g. `['user(id: "0000-001")', 'friend']`).
    * @param array $first_page
    *   The uuids that are expected to be in the page's results.
    * @param array|null $second_page
@@ -123,7 +141,7 @@ abstract class SocialGraphQLTestBase extends GraphQLTestBase {
    *   will use a cursor based on $side to assert a second request with this
    *   array as $result_nodes.
    */
-  protected function assertPaginationPage(string $field, string $side, ?bool $reverse, ?string $cursor, bool $hasNextPage, bool $hasPreviousPage, array $first_page, array $second_page = NULL): void {
+  protected function assertPaginationPage(string $field, string $side, ?bool $reverse, ?string $cursor, ?string $sortKey, bool $hasNextPage, bool $hasPreviousPage, array $parents, array $first_page, array $second_page = NULL): void {
     $count = count($first_page);
     // Construct the filter as a string. We do this instead of variables since
     // it makes our function signature a bit easier.
@@ -134,11 +152,17 @@ abstract class SocialGraphQLTestBase extends GraphQLTestBase {
     if ($cursor) {
       $filter .= ", ${cursor}";
     }
+    if ($sortKey) {
+      $filter .= ", sortKey: ${sortKey}";
+    }
 
     // Create a query for the filter under test. Include some data that allow
     // verifying the results.
+    $open_path = empty($parents) ? "" : implode(" {", $parents) . " { ";
+    $close_path = empty($parents) ? "" : " } " . implode("}", array_map(static fn () => "", $parents));
     $query = "
         query {
+          ${open_path}
           ${field}(${filter}) {
             pageInfo {
               hasPreviousPage
@@ -156,18 +180,38 @@ abstract class SocialGraphQLTestBase extends GraphQLTestBase {
               }
             }
           }
+          ${close_path}
         }
+
       ";
 
-    $result = $this->server->executeOperation(
+    $executionResult = $this->server->executeOperation(
       OperationParams::create([
         'query' => $query,
       ])
-    )->toArray();
+    );
 
-    self::assertArrayHasKey('data', $result, "No result data for ${field}(${filter})");
+    // If an exception was thrown during execution then we re-throw the
+    // exception here since a developer's next step after such a failing test is
+    // almost always to find the location of the error. This makes debugging
+    // test failures a lot easier.
+    if (!empty($executionResult->extensions)) {
+      foreach ($executionResult->extensions as $maybeException) {
+        if ($maybeException instanceof \Throwable) {
+          throw $maybeException;
+        }
+      }
+    }
 
-    $data = $result['data'][$field];
+    // Matching to an empty array causes a diff to show more information to
+    // developers than simply an assertEmpty check.
+    self::assertEquals([], $executionResult->errors, "Errors for ${open_path}${field}(${filter})${close_path}");
+    self::assertNotNull($executionResult->data, "No data for ${open_path}${field}(${filter})${close_path}");
+
+    $parent_fields = array_map(static fn ($f) => explode('(', $f)[0], $parents);
+    $data = NestedArray::getValue($executionResult->data, [...$parent_fields, $field]);
+    self::assertNotNull($data, "No data for ${open_path}${field}(${filter})${close_path}");
+
     $startCursor = $data['edges'][0]['cursor'];
     $endCursor = $data['edges'][count($first_page) - 1]['cursor'];
 
@@ -217,9 +261,11 @@ abstract class SocialGraphQLTestBase extends GraphQLTestBase {
         $side,
         $reverse,
         $cursor,
+        $sortKey,
         TRUE,
         TRUE,
-        $second_page
+        $parents,
+        $second_page,
       );
     }
   }

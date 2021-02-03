@@ -186,9 +186,8 @@ class SocialEventManagersAddEnrolleeForm extends FormBase {
 
     // @todo Validation should go on the element and return a nice list.
     $form['users_fieldset']['user'] = [
-      '#title' => $this->t('Find people by name'),
+      '#title' => $this->t('Find people by name or email address'),
       '#type' => 'select2',
-      '#description' => $this->t('You can enter or paste multiple entries separated by comma or semicolon'),
       '#multiple' => TRUE,
       '#tags' => TRUE,
       '#autocomplete' => TRUE,

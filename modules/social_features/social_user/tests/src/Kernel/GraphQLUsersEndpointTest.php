@@ -38,7 +38,7 @@ class GraphQLUsersEndpointTest extends SocialGraphQLTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp() : void {
     parent::setUp();
 
     // Load the existing non-anonymous users as they're part of the dataset that

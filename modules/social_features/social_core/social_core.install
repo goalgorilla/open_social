@@ -1292,3 +1292,20 @@ function social_core_update_8907() {
   ];
   \Drupal::service('module_installer')->install($modules);
 }
+
+/**
+ * Add a new image thumbnail 'social_file_thumbnail' files field.
+ */
+function social_core_update_8908() {
+  $config_file = drupal_get_path('module', 'social_core') . '/config/static/image.style.social_file_thumbnails_8908.yml';
+
+  if (is_file($config_file)) {
+    $settings = Yaml::parse(file_get_contents($config_file));
+    if (is_array($settings)) {
+      $config = \Drupal::configFactory()
+        ->getEditable('image.style.social_file_thumbnails');
+
+      $config->setData($settings)->save(TRUE);
+    }
+  }
+}

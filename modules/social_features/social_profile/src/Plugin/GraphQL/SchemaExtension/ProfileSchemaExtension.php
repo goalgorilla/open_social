@@ -45,10 +45,6 @@ class ProfileSchemaExtension extends SdlSchemaExtensionPluginBase {
         ->map('field', $builder->fromValue('field_profile_image'))
     );
 
-    $registry->addFieldResolver('Profile', 'nickname',
-      $builder->fromPath('entity:profile', 'field_profile_nick_name.0.value')
-    );
-
     // $value->getEntity()->get('field_profile_self_introduction')->first()->get('processed')->getString()
     $registry->addFieldResolver('Profile', 'introduction',
       $builder->produce('field')
