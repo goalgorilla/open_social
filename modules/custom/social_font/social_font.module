@@ -55,6 +55,8 @@ function social_font_render($font_id = NULL) {
 
   $font = Font::load($font_id);
 
+  // kint(Font::load());
+  // exit;
   if ($font instanceof Font) {
     // Fontname.
     $fontname = $font->getName();
@@ -115,23 +117,42 @@ function social_font_fallback_render($fallback_value) {
  *   Returns a string.
  */
 function social_font_fontfiles_render(array $fonts) {
-  $fontstring = '';
-  foreach ($fonts as $key => $font) {
-    if (pathinfo($font, PATHINFO_EXTENSION) == 'eot') {
-      $fontstring .= "src: url('" . $font . "'), url('" . $font . "#iefix') format('embedded-opentype');";
-      // Remove EOT.
-      unset($fonts[$key]);
-    }
-  }
+  $fontStringArray = [];
 
-  // Loop 2.
   foreach ($fonts as $key => $font) {
     $format = pathinfo($font, PATHINFO_EXTENSION);
-    if (pathinfo($font, PATHINFO_EXTENSION) == 'ttf') {
-      $format = 'truetype';
+    // Add weight key as per the format.
+    switch($format) {
+      case 'woff2':
+        $weight = 1;
+        break;
+      case 'woff':
+        $weight = 2;
+        break;
+      default:
+        $weight = 10;
     }
-    $fontstring .= "src: url('" . $font . "') format('" . $format . "');";
-  }
-  return $fontstring;
 
+    $fontStringArray[] = [
+      'weight' => $weight,
+      'val' => "url('" . $font . "') format('" . $format . "')",
+    ];
+  }
+
+  // Sort on basis of weight key.
+  usort($fontStringArray, function ($f1, $f2) {
+    if ($f1['weight'] == $f2['weight']) {
+      return 0;
+    }
+
+    return ($f1['weight'] < $f2['weight']) ? -1 : 1;
+  });
+
+  // Reduce the array to remove the weight key.
+  foreach ($fontStringArray as $key => $font) {
+    $fontStringArray[$key] =  $font['val'];
+  }
+
+  // Pass a single source attribute.
+  return 'src: ' . implode(', ', $fontStringArray) . ';';
 }
