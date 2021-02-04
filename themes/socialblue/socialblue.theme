@@ -1,4 +1,6 @@
 <?php
+use Drupal\social_font\Entity\Font;
+use Drupal\file\Entity\File;
 
 /**
  * @file
@@ -60,5 +62,60 @@ function socialblue_preprocess_group(array &$variables) {
       '#template' => '<div class="teaser__tag">{{ teaser_tag }}</div>',
       '#context' => ['teaser_tag' => t('Group')],
     ];
+  }
+}
+
+/**
+ * Implements hook_preprocess_html().
+ */
+function socialblue_preprocess_html (array &$variables) {
+  $system_theme_settings = \Drupal::configFactory()->get('system.theme')->get('default');
+  $fonts_to_preload = [];
+  $font_formats_to_preload = ['woff2'];
+
+  // Fetch font files
+  if (!array_key_exists('socialbase', \Drupal::service('theme.manager')->getActiveTheme()->getBaseThemes())) {
+    return;
+  }
+  $config = \Drupal::config($system_theme_settings . '.settings');
+  $font_id = $config->get('font_primary');
+
+  if (!isset($font_id)) {
+    return;
+  }
+
+  $font = Font::load($font_id);
+  if (!($font instanceof Font)) {
+    return;
+  }
+
+  foreach ($font->get('field_fonts')->getValue() as $files) {
+    /** @var \Drupal\file\Entity\File $file */
+    if ($file = File::load($files['target_id'])) {
+      $url = file_create_url($file->get('uri')->value);
+      $format = pathinfo($url, PATHINFO_EXTENSION);
+      if (!in_array($format, $font_formats_to_preload)) {
+        continue;
+      }
+
+      $fonts_to_preload[] = [
+        'url' => $url,
+        'format' => $format,
+      ];
+    }
+  }
+
+  // Preload all woff2 fonts
+  foreach ($fonts_to_preload as $font) {
+    $variables['page']['#attached']['html_head'][] = [[
+      '#tag' => 'link',
+      '#attributes' => [
+        'rel' => 'preload',
+        'href' => $font['url'],
+        'as' => 'font',
+        'type' => 'font/' . $font['format'],
+        'crossorigin' => 'anonymous'
+      ],
+    ], $font['url']];
   }
 }
