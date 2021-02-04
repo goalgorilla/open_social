@@ -60,6 +60,9 @@ before_install:
   # if its not a PR build, we need to composer require goalgorilla/open_social 10.0.x-dev#commithash instead of dev-10.0.x#commithash
   - if [ "$TEST_SUITE" != "install_update" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then composer require goalgorilla/open_social:${BRANCH}-dev#${COMMIT} --prefer-dist; fi
 
+  # This lets us test PHPUnit 8.5 without changing goalgorilla/drupal_social
+  - if [ "$TEST_SUITE" != "install_update" ]; then composer require --update-with-all-dependencies phpunit/phpunit:^8.5; fi
+
   # Install docker and our docker containers.
   - sh scripts/social/ci/install-docker.sh
   - docker-compose -f docker-compose-ci.yml up -d
