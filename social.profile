@@ -87,42 +87,6 @@ function social_verify_custom_requirements(array &$install_state) {
     ];
   }
 
-  if (!class_exists('\Facebook\Facebook')) {
-    $requirements['social_auth_facebook'] = [
-      'title' => t('Social Auth Facebook module requirements'),
-      'value' => t('Not installed'),
-      'description' => t('Social Auth Facebook requires Facebook PHP Library. Make sure the library is installed via Composer.'),
-      'severity' => REQUIREMENT_ERROR,
-    ];
-  }
-
-  if (!class_exists('\Google_Client')) {
-    $requirements['social_auth_google'] = [
-      'title' => t('Social Auth Google module requirements'),
-      'value' => t('Not installed'),
-      'description' => t('Social Auth Google requires Google_Client PHP Library. Make sure the library is installed via Composer.'),
-      'severity' => REQUIREMENT_ERROR,
-    ];
-  }
-
-  if (!class_exists('\LinkedIn\Client')) {
-    $requirements['social_auth_linkedin'] = [
-      'title' => t('Social Auth LinkedIn module requirements'),
-      'value' => t('Not installed'),
-      'description' => t('Social Auth LinkedIn requires LinkedIn PHP Library. Make sure the library is installed via Composer.'),
-      'severity' => REQUIREMENT_ERROR,
-    ];
-  }
-
-  if (!class_exists('\Abraham\TwitterOAuth\TwitterOAuth')) {
-    $requirements['social_auth_twitter'] = [
-      'title' => t('Social Auth Twitter module requirements'),
-      'value' => t('Not installed'),
-      'description' => t('Social Auth Twitter requires TwitterOAuth PHP Library. Make sure the library is installed via Composer.'),
-      'severity' => REQUIREMENT_ERROR,
-    ];
-  }
-
   return install_display_requirements($install_state, $requirements);
 }
 
