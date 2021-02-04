@@ -55,8 +55,6 @@ function social_font_render($font_id = NULL) {
 
   $font = Font::load($font_id);
 
-  // kint(Font::load());
-  // exit;
   if ($font instanceof Font) {
     // Fontname.
     $fontname = $font->getName();
@@ -67,7 +65,13 @@ function social_font_render($font_id = NULL) {
 
     // Amount of files 0.
     if (count($font->get('field_fonts')) === 0) {
-      $css = "@font-face { font-family: '" . $fontname . "'; } body { font-family: '" . $fontname . "', " . $fallback . " !important; }";
+      $css = "@font-face {
+          font-family: '" . $fontname . "';
+        }
+
+        body {
+          font-family: '" . $fontname . "', " . $fallback . " !important;
+        }";
     }
     else {
       $css = "@font-face { font-family: '" . $fontname . "'; ";
@@ -80,7 +84,13 @@ function social_font_render($font_id = NULL) {
         }
       }
       $css .= social_font_fontfiles_render($fonts);
-      $css .= "} body { font-family: '" . $fontname . "', " . $fallback . " !important; } ";
+      $css .= "
+      font-display: swap;
+      }
+
+      body {
+        font-family: '" . $fontname . "', " . $fallback . " !important;
+      } ";
       // font-weight is reset because uploaded fonts don't yet support
       // multiple font-weights which breaks strong tags.
       // TODO: See issue #3045765.
