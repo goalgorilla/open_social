@@ -69,6 +69,7 @@
 .card__body iframe {
   max-width: 100% !important;
   width: 100% !important;
+  min-height: 300px;
 }
 
 .card__nested-section {
@@ -132,5 +133,15 @@
 @media (min-width: 900px) {
   .card__body {
     padding: 2.5rem;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .card__body .twitter-tweet,
+  .card__body .fb_iframe_widget,
+  .card__body iframe {
+    max-width: 100% !important;
+    width: 100% !important;
+    min-height: 200px;
   }
 }
