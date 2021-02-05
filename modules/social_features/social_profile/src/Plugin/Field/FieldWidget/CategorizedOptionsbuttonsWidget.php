@@ -9,7 +9,7 @@ use Drupal\Core\Form\FormStateInterface;
 /**
  * Plugin implementation of the 'categorized_options_buttons' widget.
  *
- * TODO: Handle submit to add categories also as tags on user profile.
+ * @todo Handle submit to add categories also as tags on user profile.
  *
  * @FieldWidget(
  *   id = "categorized_options_buttons",
@@ -35,7 +35,7 @@ class CategorizedOptionsbuttonsWidget extends OptionsButtonsWidget {
     // We can only overwrite the default behaviour if the user is allowed to
     // select multiple elements and we have something to choose from.
     // Otherwise we just default back to default behaviour.
-    if ($this->multiple && !empty($element['#options'])) {
+    if ($this->fieldDefinition->getFieldStorageDefinition()->isMultiple() && !empty($element['#options'])) {
       $grouped_options = $this->getGroupedOptions($element['#options'], $element['#default_value']);
 
       // Change the parent type.

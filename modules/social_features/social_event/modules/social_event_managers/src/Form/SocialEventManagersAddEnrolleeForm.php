@@ -184,7 +184,7 @@ class SocialEventManagersAddEnrolleeForm extends FormBase {
       ],
     ];
 
-    // Todo: Validation should go on the element and return a nice list.
+    // @todo Validation should go on the element and return a nice list.
     $form['users_fieldset']['user'] = [
       '#title' => $this->t('Find people by name or email address'),
       '#type' => 'select2',

@@ -82,7 +82,7 @@ class EnrollInviteEmailForm extends InviteEmailBaseForm {
       $container->get('current_route_match'),
       $container->get('entity_type.manager'),
       $container->get('logger.factory'),
-      $container->get('entity.manager')->getStorage('event_enrollment'),
+      $container->get('entity_type.manager')->getStorage('event_enrollment'),
       $container->get('tempstore.private'),
       $container->get('config.factory'),
       $container->get('token')

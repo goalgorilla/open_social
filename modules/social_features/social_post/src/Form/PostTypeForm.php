@@ -51,13 +51,13 @@ class PostTypeForm extends EntityForm {
 
     switch ($status) {
       case SAVED_NEW:
-        drupal_set_message($this->t('Created the %label Post type.', [
+        $this->messenger()->addStatus($this->t('Created the %label Post type.', [
           '%label' => $post_type->label(),
         ]));
         break;
 
       default:
-        drupal_set_message($this->t('Saved the %label Post type.', [
+        $this->messenger()->addStatus($this->t('Saved the %label Post type.', [
           '%label' => $post_type->label(),
         ]));
     }
