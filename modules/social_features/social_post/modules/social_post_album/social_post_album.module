@@ -48,6 +48,7 @@ function social_post_album_preprocess_field__post__type__image__album(&$variable
 
     $visible_fids_count = $post->field_post_image->count();
     $variables['more_posts_count'] = $all_post_fids - $visible_fids_count;
+    $variables['total_post_image_count'] = $all_post_fids;
 
     foreach ($variables['items'] as $item) {
       /** @var \Drupal\Core\Template\Attribute $attributes */
@@ -158,15 +159,6 @@ function social_post_album_theme_suggestions_image_widget_alter(array &$suggesti
  */
 function social_post_album_form_social_post_entity_form_alter(array &$form, FormStateInterface $form_state, $form_id) {
   $form['#attached']['library'][] = 'social_post_album/social-post-album--form';
-}
-
-/**
- * Implements hook_preprocess_HOOK().
- */
-function social_post_album_preprocess_image_formatter(&$variables) {
-  if ($variables['image_style'] === 'social_post_photo') {
-    $variables['image']['#style_name'] = 'social_x_large';
-  }
 }
 
 /**

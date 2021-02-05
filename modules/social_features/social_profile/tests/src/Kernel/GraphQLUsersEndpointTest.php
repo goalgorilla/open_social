@@ -20,7 +20,7 @@ class GraphQLUsersEndpointTest extends SocialGraphQLTestBase {
   public static $modules = [
     "social_user",
     // User creation in social_user requires a service in role_delegation.
-    // TODO: Possibly untangle this?
+    // @todo Possibly untangle this?
     "role_delegation",
     // Profile is needed for the profile storage.
     "profile",
@@ -92,7 +92,7 @@ class GraphQLUsersEndpointTest extends SocialGraphQLTestBase {
    * This test does not test the validity of the resolved data but merely that
    * the API contract is adhered to.
    *
-   * TODO: This test does not test the profile image functionality.
+   * @todo This test does not test the profile image functionality.
    */
   public function testUserProfileFieldsPresence() : void {
     // Test as the admin users, this allows us to test all the fields that are
@@ -141,7 +141,7 @@ class GraphQLUsersEndpointTest extends SocialGraphQLTestBase {
       ],
     ];
 
-    // TODO: Move to QueryResultAssertionTrait::assertResults and add metadata.
+    // @todo Move to QueryResultAssertionTrait::assertResults and add metadata.
     $result = $this->query($query);
     self::assertSame(200, $result->getStatusCode(), 'user fields are present');
     self::assertSame($expected_data, json_decode($result->getContent(), TRUE), 'user fields are present');

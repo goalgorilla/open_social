@@ -21,7 +21,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * @Block(
  *   id = "account_header_block",
  *   admin_label = @Translation("Account header block"),
- *   context = {
+ *   context_definitions = {
  *     "user" = @ContextDefinition("entity:user")
  *   }
  * )
@@ -196,7 +196,7 @@ class AccountHeaderBlock extends BlockBase implements ContainerFactoryPluginInte
           ],
           '#weight' => 0,
         ],
-        // TODO: Figure out how move these dividers to the right modules.
+        // @todo Figure out how move these dividers to the right modules.
         'divider_mobile' => [
           "#wrapper_attributes" => [
             "class" => ["divider", "mobile"],

@@ -286,14 +286,42 @@ class SocialAlbumController extends ControllerBase {
   }
 
   /**
-   * Checks access to the albums page.
+   * Checks access to the user albums page.
    *
    * @return \Drupal\Core\Access\AccessResultInterface
    *   The access result.
    */
-  public function checkAlbumsAccess() {
+  public function checkUserAlbumsAccess() {
     $status = $this->config('social_album.settings')->get('status');
     return AccessResult::allowedIf(!empty($status));
+  }
+
+  /**
+   * Checks access to create an album in a group.
+   *
+   * @param \Drupal\group\Entity\GroupInterface $group
+   *   The group object.
+   *
+   * @return \Drupal\Core\Access\AccessResultInterface
+   *   The access result.
+   */
+  protected function checkGroupAccess(GroupInterface $group) {
+    $is_allow = $group->getGroupType()->hasContentPlugin('group_node:album');
+    return AccessResult::allowedIf($is_allow);
+  }
+
+  /**
+   * Checks access to the group albums page.
+   *
+   * @param \Drupal\group\Entity\GroupInterface $group
+   *   The group object.
+   *
+   * @return \Drupal\Core\Access\AccessResultInterface
+   *   The access result.
+   */
+  public function checkGroupAlbumsAccess(GroupInterface $group) {
+    $access = $this->checkUserAlbumsAccess();
+    return $access->isForbidden() ? $access : $this->checkGroupAccess($group);
   }
 
   /**
@@ -305,16 +333,18 @@ class SocialAlbumController extends ControllerBase {
    * @return \Drupal\Core\Access\AccessResultInterface
    *   The access result.
    */
-  public function checkGroupAccess(GroupInterface $group) {
-    $type = $group->getGroupType();
+  public function checkGroupAlbumAccess(GroupInterface $group) {
+    $access = $this->checkGroupAccess($group);
 
-    if ($type->hasContentPlugin('group_node:album')) {
-      return $type->getContentPlugin('group_node:album')
+    if ($access->isAllowed()) {
+      return $group
+        ->getGroupType()
+        ->getContentPlugin('group_node:album')
         ->createEntityAccess($group, $this->currentUser())
-        ->andIf($this->checkAlbumsAccess());
+        ->andIf($this->checkUserAlbumsAccess());
     }
 
-    return AccessResult::forbidden();
+    return $access;
   }
 
 }

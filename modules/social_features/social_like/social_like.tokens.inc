@@ -5,7 +5,6 @@
  * Builds placeholder replacement tokens for Social Like module.
  */
 
-use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\votingapi\Entity\Vote;
 use Drupal\Core\Render\Markup;
@@ -73,13 +72,13 @@ function social_like_tokens($type, $tokens, array $data, array $options, Bubblea
             // Check if the content type is node.
             if ($content_type === 'node') {
               // Then get the bundle name.
-              $content_type_label = Unicode::strtolower(\Drupal::entityTypeManager()
+              $content_type_label = mb_strtolower(\Drupal::entityTypeManager()
                 ->getStorage('node_type')
                 ->load($entity->bundle())
                 ->label());
             }
             if ($content_type === 'post' || $content_type === 'photo' || $content_type === 'comment') {
-              $content_type_label = Unicode::strtolower($entity->getEntityType()->getLabel());
+              $content_type_label = mb_strtolower($entity->getEntityType()->getLabel());
             }
             if ($name === 'liked_content_type') {
               $replacements[$original] = $content_type_label;
@@ -112,7 +111,7 @@ function social_like_tokens($type, $tokens, array $data, array $options, Bubblea
                     $liked_entity_link_html .= ' ' . t('on the') . ' ' . $commented_content_type . ' <a href="' . $ref_link . '">' . $ref_link_label . '</a>';
                   }
                   else {
-                    $commented_content_type = Unicode::strtolower($commented_entity->getEntityType()->getLabel());
+                    $commented_content_type = mb_strtolower($commented_entity->getEntityType()->getLabel());
                     $liked_entity_link_html .= ' ' . t('on a') . ' <a href="' . $ref_link . '">' . $commented_content_type . '</a>';
                   }
                 }

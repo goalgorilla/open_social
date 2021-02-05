@@ -51,7 +51,7 @@ Feature: Create Secret Group
 
   # Create a topic inside the secret group
     When I click "Topics"
-    And I should see the link "Create Topic" in the "Sidebar second"
+    And I should see the link "Create Topic"
     And I click "Create Topic"
     When I fill in the following:
       | Title | Test secret group topic |
@@ -63,7 +63,7 @@ Feature: Create Secret Group
   # Create an event inside the secret group
     And I click "Test secret group"
     When I click "Events"
-    And I should see the link "Create Event" in the "Sidebar second"
+    And I should see the link "Create Event"
     And I click "Create Event"
     And I fill in the following:
       | Title | Test secret group event |

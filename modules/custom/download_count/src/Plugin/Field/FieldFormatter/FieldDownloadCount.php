@@ -2,13 +2,17 @@
 
 namespace Drupal\download_count\Plugin\Field\FieldFormatter;
 
+use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
+use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\Core\Theme\ThemeManagerInterface;
 use Drupal\file\Plugin\Field\FieldFormatter\GenericFileFormatter;
 use Drupal\Core\Database\Database;
 use Drupal\Core\Link;
 use Drupal\Core\Url;
 use Drupal\Core\Template\Attribute;
 use Drupal\Component\Utility\Html;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * The FieldDownloadCount class.
@@ -22,13 +26,74 @@ use Drupal\Component\Utility\Html;
 class FieldDownloadCount extends GenericFileFormatter {
 
   /**
+   * The current user.
+   *
+   * @var \Drupal\Core\Session\AccountProxyInterface
+   */
+  private $currentUser;
+
+  /**
+   * The theme manager.
+   *
+   * @var \Drupal\Core\Theme\ThemeManagerInterface
+   */
+  private $themeManager;
+
+  /**
+   * FieldDownloadCount constructor.
+   *
+   * @param string $plugin_id
+   *   The plugin id.
+   * @param array $plugin_definition
+   *   The plugin definition.
+   * @param \Drupal\Core\Field\FieldDefinitionInterface $field_definition
+   *   The field definition.
+   * @param array $settings
+   *   The settings array.
+   * @param string $label
+   *   The formatter label display setting.
+   * @param string $view_mode
+   *   The view mode.
+   * @param array $third_party_settings
+   *   Any third party settings.
+   * @param \Drupal\Core\Session\AccountProxyInterface $current_user
+   *   The current user.
+   * @param \Drupal\Core\Theme\ThemeManagerInterface $theme_manager
+   *   The theme manager.
+   */
+  public function __construct($plugin_id, array $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, $label, $view_mode, array $third_party_settings, AccountProxyInterface $current_user, ThemeManagerInterface $theme_manager) {
+    parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $label, $view_mode, $third_party_settings);
+
+    $this->currentUser = $current_user;
+    $this->themeManager = $theme_manager;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    return new static(
+      $plugin_id,
+      $plugin_definition,
+      $configuration['field_definition'],
+      $configuration['settings'],
+      $configuration['label'],
+      $configuration['view_mode'],
+      $configuration['third_party_settings'],
+      $container->get('current_user'),
+      $container->get('theme.manager')
+    );
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function viewElements(FieldItemListInterface $items, $langcode) {
     $element = [];
     $entity = $items->getEntity();
     $entity_type = $entity->getEntityTypeId();
-    $access = \Drupal::currentUser()->hasPermission('view download counts');
+    $access = $this->currentUser->hasPermission('view download counts');
+    $download = 0;
 
     foreach ($this->getEntitiesToView($items, $langcode) as $delta => $file) {
       $item = $file->_referringItem;
@@ -41,7 +106,7 @@ class FieldDownloadCount extends GenericFileFormatter {
             ':id' => $entity->id(),
           ])
           ->fetchField();
-        $file->download = $download;
+        $file->download = (int) $download;
       }
 
       $link_url = file_create_url($file->getFileUri());
@@ -78,21 +143,20 @@ class FieldDownloadCount extends GenericFileFormatter {
       $link = Link::fromTextAndUrl($link_text, Url::fromUri($link_url, $options))
         ->toString();
 
-      if (isset($file->download) && $file->download > 0) {
-        $count = \Drupal::translation()
-          ->formatPlural($file->download, '1 download', '@count downloads');
+      if (isset($file->download) && $file->download > 0 && $file->download !== NULL) {
+        $count = $this->formatPlural($download, '1 download', '@count downloads');
       }
       else {
         $count = $this->t('0 downloads');
       }
 
-      $theme = \Drupal::theme()->getActiveTheme();
+      $theme = $this->themeManager->getActiveTheme();
 
       // Check if socialbase is one of the base themes.
       // Then get the path to socialbase theme and provide a variable
       // that can be used in the template for a path to the icons.
-      if (array_key_exists('socialbase', $theme->getBaseThemes())) {
-        $basethemes = $theme->getBaseThemes();
+      if (array_key_exists('socialbase', $theme->getBaseThemeExtensions())) {
+        $basethemes = $theme->getBaseThemeExtensions();
         $path_to_socialbase = $basethemes['socialbase']->getPath();
       }
 

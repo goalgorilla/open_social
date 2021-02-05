@@ -20,7 +20,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * @Block(
  *  id = "social_event_invite_block",
  *  admin_label = @Translation("Social Event Invite block"),
- *   context = {
+ *   context_definitions = {
  *     "node" = @ContextDefinition("entity:node", label = @Translation("Node"), required = FALSE)
  *   }
  * )

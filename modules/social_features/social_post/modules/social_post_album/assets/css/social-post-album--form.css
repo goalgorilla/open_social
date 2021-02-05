@@ -175,32 +175,34 @@
       max-width: 100%; } }
 .card--stream.social-post-album--form form .container-post-image > [id*='edit-field-post-image'] > [id*='edit-field-post-image'] {
   position: relative; }
-.card--stream.social-post-album--form form .form-submit .post-loading {
-  display: none; }
-.card--stream.social-post-album--form form .form-submit.post-loading-active .text {
-  visibility: hidden; }
-.card--stream.social-post-album--form form .form-submit.post-loading-active .post-loading {
-  position: absolute;
-  display: block;
-  width: 40px;
-  height: 40px;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 1; }
-  .card--stream.social-post-album--form form .form-submit.post-loading-active .post-loading .loader {
+.card--stream.social-post-album--form form .form-submit {
+  position: relative; }
+  .card--stream.social-post-album--form form .form-submit .post-loading {
+    display: none; }
+  .card--stream.social-post-album--form form .form-submit.post-loading-active .text {
+    visibility: hidden; }
+  .card--stream.social-post-album--form form .form-submit.post-loading-active .post-loading {
+    position: absolute;
+    display: block;
     width: 40px;
     height: 40px;
-    transform: rotate(-90deg);
-    stroke-linecap: round;
-    stroke-width: 6;
-    fill: none; }
-    .card--stream.social-post-album--form form .form-submit.post-loading-active .post-loading .loader .internal-circle {
-      stroke: #fff;
-      stroke-dashoffset: 0;
-      transform-origin: center;
-      stroke-dasharray: 187;
-      animation: internal 1s ease-in-out infinite; }
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1; }
+    .card--stream.social-post-album--form form .form-submit.post-loading-active .post-loading .loader {
+      width: 40px;
+      height: 40px;
+      transform: rotate(-90deg);
+      stroke-linecap: round;
+      stroke-width: 6;
+      fill: none; }
+      .card--stream.social-post-album--form form .form-submit.post-loading-active .post-loading .loader .internal-circle {
+        stroke: #fff;
+        stroke-dashoffset: 0;
+        transform-origin: center;
+        stroke-dasharray: 187;
+        animation: internal 1s ease-in-out infinite; }
 @keyframes internal {
   0% {
     stroke-dashoffset: 187; }

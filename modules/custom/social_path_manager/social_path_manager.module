@@ -219,7 +219,7 @@ function _social_path_manager_update_alias(EntityInterface $entity, $op, $bulk =
       case 'update':
       case 'create':
         /** @var \Drupal\Core\Path\AliasManager $pam */
-        $pam = \Drupal::service('path.alias_manager');
+        $pam = \Drupal::service('path_alias.manager');
 
         // If disabled generate automatic link.
         if (

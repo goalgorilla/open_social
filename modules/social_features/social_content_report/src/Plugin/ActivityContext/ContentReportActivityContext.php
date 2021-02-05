@@ -47,7 +47,7 @@ class ContentReportActivityContext extends ActivityContextBase {
   protected function getRolesWithPermission() {
     $roles_with_perm = [];
 
-    /* @var \Drupal\user\RoleInterface[] $roles */
+    /** @var \Drupal\user\RoleInterface[] $roles */
     $roles = $this->entityTypeManager->getStorage('user_role')->loadMultiple();
 
     // Check for each role which one has permission to "view inappropriate

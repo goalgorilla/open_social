@@ -14,6 +14,7 @@ use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Url;
 use Drupal\taxonomy\Entity\Term;
+use Drupal\Core\Database\Database;
 
 /**
  * Implements hook_help().
@@ -317,13 +318,14 @@ function social_tagging_entity_base_field_info(EntityTypeInterface $entity_type)
  */
 function social_tagging_entity_delete(EntityInterface $entity) {
   // When a term from the social_tagging vocbulary is deleted, remove from node.
-  if ($entity instanceof Term) {
-    /** @var \Drupal\taxonomy\Entity\Term $entity */
-    if ($entity->getVocabularyId() == 'social_tagging') {
-      /* @see: taxonomy_taxonomy_term_delete(), delete from node field. */
-      db_delete('node__social_tagging')->condition('social_tagging_target_id', $entity->id())->execute();
-      db_delete('node_revision__social_tagging')->condition('social_tagging_target_id', $entity->id())->execute();
-    }
+  /** @var \Drupal\taxonomy\Entity\Term $entity */
+  if ($entity instanceof Term &&
+    $entity->bundle() === 'social_tagging') {
+    /* @see: taxonomy_taxonomy_term_delete(), delete from node field. */
+    // We need to use `\Drupal\Core\Database\Database::getConnection()`
+    // because we might not yet have access to the container here.
+    Database::getConnection()->delete('node__social_tagging')->condition('social_tagging_target_id', $entity->id())->execute();
+    Database::getConnection()->delete('node_revision__social_tagging')->condition('social_tagging_target_id', $entity->id())->execute();
   }
 }
 
@@ -382,6 +384,8 @@ function social_tagging_process_tags(EntityInterface $entity) {
     ];
   }
 
+  $renderable['#entity_type'] = $entity->getEntityTypeId();
+
   return \Drupal::service('renderer')->render($renderable);
 }
 
@@ -391,10 +395,17 @@ function social_tagging_process_tags(EntityInterface $entity) {
 function social_tagging_theme($existing, $type, $theme, $path) {
   return [
     'social_tagging_nosplit' => [
-      'variables' => ['tagstitle' => NULL, 'tags' => NULL],
+      'variables' => [
+        'tagstitle' => NULL,
+        'tags' => NULL,
+        'entity_type' => NULL,
+      ],
     ],
     'social_tagging_split' => [
-      'variables' => ['taghierarchy' => NULL],
+      'variables' => [
+        'taghierarchy' => NULL,
+        'entity_type' => NULL,
+      ],
     ],
   ];
 }

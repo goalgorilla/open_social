@@ -19,7 +19,6 @@ use Drupal\group\Entity\GroupContentInterface;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupRoleInterface;
 use Drupal\group\Entity\GroupTypeInterface;
-use Drupal\social_group\Entity\Group;
 
 /**
  * Implements hook_menu_local_actions_alter().
@@ -412,8 +411,8 @@ function social_group_invite_preprocess_activity(&$variables) {
     $related_entity instanceof GroupContent &&
     $related_entity->getGroupContentType()->getContentPluginId() === 'group_invitation') {
     $group = $related_entity->getGroup();
-    if ($group instanceof Group) {
-      $variables['full_url'] = $group->urlInfo('canonical');
+    if ($group instanceof GroupInterface) {
+      $variables['full_url'] = $group->toUrl('canonical');
     }
   }
 }

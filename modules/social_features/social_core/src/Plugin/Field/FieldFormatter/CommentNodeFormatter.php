@@ -76,7 +76,7 @@ class CommentNodeFormatter extends CommentDefaultFormatter {
 
     $comments_per_page = $this->getSetting('num_comments');
 
-    if ($access_comments_in_group && $status != CommentItemInterface::HIDDEN && empty($entity->in_preview) &&
+    if ($access_comments_in_group && $status !== CommentItemInterface::HIDDEN && empty($entity->in_preview) &&
       // Comments are added to the search results and search index by
       // comment_node_update_index() instead of by this formatter, so don't
       // return anything if the view mode is search_index or search_result.
@@ -126,7 +126,7 @@ class CommentNodeFormatter extends CommentDefaultFormatter {
         ];
 
         // Set path to node.
-        $link_url = $entity->urlInfo('canonical');
+        $link_url = $entity->toUrl('canonical');
 
         // Attach the attributes.
         $link_url->setOptions($more_link_options);
@@ -202,8 +202,8 @@ class CommentNodeFormatter extends CommentDefaultFormatter {
    * @see Drupal\comment\CommentStorage::loadThead()
    */
   public function loadThread(EntityInterface $entity, $field_name, $mode, $comments_per_page = 0, $pager_id = 0) {
-    // @TODO: Refactor this to use CommentDefaultFormatter->loadThread with dependency injection instead.
-    $query = db_select('comment_field_data', 'c');
+    // @todo Refactor this to use CommentDefaultFormatter->loadThread with dependency injection instead.
+    $query = \Drupal::database()->select('comment_field_data', 'c');
     $query->addField('c', 'cid');
     $query
       ->condition('c.entity_id', $entity->id())
@@ -240,7 +240,7 @@ class CommentNodeFormatter extends CommentDefaultFormatter {
 
     $comments = [];
     if ($cids) {
-      $comments = entity_load_multiple('comment', $cids);
+      $comments = $this->storage->loadMultiple($cids);
     }
 
     return $comments;

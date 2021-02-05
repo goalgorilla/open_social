@@ -25,7 +25,7 @@ class UserSchemaExtension extends SdlSchemaExtensionPluginBase {
     $builder = new ResolverBuilder();
 
     // Root Query fields.
-    $registry->addFieldResolver('Query', 'currentUser',
+    $registry->addFieldResolver('Query', 'viewer',
       $builder->produce('viewer')
     );
 
