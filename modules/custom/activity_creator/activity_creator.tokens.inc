@@ -63,7 +63,7 @@ function activity_creator_tokens($type, $tokens, array $data, array $options, Bu
                     ->load($target_id);
 
                   if (!empty($recipient_user)) {
-                    /** @var \Drupal\user\Entity\User $recipient_user_entity */
+                    /** @var \Drupal\user\UserInterface $recipient_user */
                     $replacements[$original] = $recipient_user->getDisplayName();
                   }
                 }
