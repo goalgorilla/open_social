@@ -5,6 +5,7 @@
  * The Social profile module.
  */
 
+use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
@@ -831,4 +832,20 @@ function social_profile_social_user_account_header_items_alter(array &$menu_item
     ->getViewBuilder('profile')
     ->view($profile, 'small');
 
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_access().
+ */
+function social_profile_profile_access(EntityInterface $entity, $operation, AccountInterface $account) {
+
+  // Provides access only to viewing user profile info, like referenced data in
+  // featured items, if the current user has no permissions.
+  if (
+    $operation === 'view' &&
+    !$account->hasPermission('view any profile profile') &&
+    \Drupal::routeMatch()->getRouteName() !== 'entity.profile.canonical'
+  ) {
+    return AccessResult::allowed();
+  }
 }
