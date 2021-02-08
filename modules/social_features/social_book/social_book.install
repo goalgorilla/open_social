@@ -249,7 +249,7 @@ function social_book_update_8902() {
 function social_book_update_8903() {
   $config_path = drupal_get_path('module', 'social_book') . '/config/optional';
   $source = new FileStorage($config_path);
-  /** @var \Drupal\Core\Config\StorageCacheInterface $config_storage */
+  /** @var \Drupal\Core\Config\StorageInterface $config_storage */
   $config_storage = \Drupal::service('config.storage');
   $config_storage->write(
     'core.entity_view_display.node.book.small_teaser',

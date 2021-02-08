@@ -199,7 +199,7 @@ function social_page_update_8907() {
 function social_page_update_8908() {
   $config_path = drupal_get_path('module', 'social_page') . '/config/install';
   $source = new FileStorage($config_path);
-  /** @var \Drupal\Core\Config\StorageCacheInterface $config_storage */
+  /** @var \Drupal\Core\Config\StorageInterface $config_storage */
   $config_storage = \Drupal::service('config.storage');
   $config_storage->write(
     'core.entity_view_display.node.page.small_teaser',
