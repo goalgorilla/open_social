@@ -149,8 +149,9 @@ class SocialMinkContext extends MinkContext {
    */
   public function attachFileToHiddenField($field, $path) {
     $field = $this->fixStepArgument($field);
+    $id = $this->getSession()->getPage()->findField($field)->getAttribute('id');
 
-    $javascript = "jQuery('#".$field."').parent().removeClass('hidden')";
+    $javascript = "jQuery('#$id').parent().removeClass('hidden')";
     $this->getSession()->executeScript($javascript);
 
     $this->attachFileToField($field, $path);
