@@ -3,8 +3,7 @@
 namespace Drupal\mentions\Plugin\Mentions;
 
 use Drupal\Core\Entity\EntityInterface;
-use Drupal\Core\Entity\EntityManager;
-use Drupal\Core\Entity\Query\QueryFactory;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Utility\Token;
@@ -21,16 +20,19 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class Entity implements MentionsPluginInterface {
   private $tokenService;
-  private $entityManager;
-  private $entityQueryService;
+  private $entityTypeManager;
 
   /**
    * Entity constructor.
+   *
+   * @param \Drupal\Core\Utility\Token $token
+   *   The token service.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
    */
-  public function __construct(Token $token, EntityManager $entity_manager, QueryFactory $entity_query) {
+  public function __construct(Token $token, EntityTypeManagerInterface $entity_type_manager) {
     $this->tokenService = $token;
-    $this->entityManager = $entity_manager;
-    $this->entityQueryService = $entity_query;
+    $this->entityTypeManager = $entity_type_manager;
   }
 
   /**
@@ -38,12 +40,10 @@ class Entity implements MentionsPluginInterface {
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
     $token = $container->get('token');
-    $entity_manager = $container->get('entity.manager');
-    $entity_query = $container->get('entity.query');
+    $entity_type_manager = $container->get('entity_type.manager');
     return new static(
       $token,
-      $entity_manager,
-      $entity_query
+      $entity_type_manager
     );
   }
 
@@ -51,8 +51,9 @@ class Entity implements MentionsPluginInterface {
    * {@inheritdoc}
    */
   public function outputCallback($mention, $settings) {
-    $entity = $this->entityManager->getStorage($mention['target']['entity_type'])
+    $entity = $this->entityTypeManager->getStorage($mention['target']['entity_type'])
       ->load($mention['target']['entity_id']);
+    $output = [];
     $output['value'] = $this->tokenService->replace($settings['value'], [$mention['target']['entity_type'] => $entity]);
     if ($settings['renderlink']) {
       $output['link'] = $this->tokenService->replace($settings['rendertextbox'], [$mention['target']['entity_type'] => $entity]);
@@ -66,19 +67,19 @@ class Entity implements MentionsPluginInterface {
   public function targetCallback($value, $settings) {
     $entity_type = $settings['entity_type'];
     $input_value = $settings['value'];
-    $query = $this->entityQueryService->get($entity_type);
+    $query = $this->entityTypeManager->getStorage($entity_type)->getQuery();
     $result = $query->condition($input_value, $value)->execute();
 
     if (!empty($result)) {
       $result = reset($result);
+      $target = [];
       $target['entity_type'] = $entity_type;
       $target['entity_id'] = $result;
 
       return $target;
     }
-    else {
-      return FALSE;
-    }
+
+    return FALSE;
   }
 
   /**

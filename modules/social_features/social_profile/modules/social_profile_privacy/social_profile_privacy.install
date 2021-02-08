@@ -89,11 +89,6 @@ function social_profile_privacy_update_8001(&$sandbox) {
 
     if (!($sandbox['total'] = $query->countQuery()->execute()->fetchField())) {
       $output = t('User profiles privacy data not found.');
-
-      if (PHP_SAPI === 'cli') {
-        drush_print($output);
-      }
-
       return $output;
     }
 
@@ -178,10 +173,6 @@ function social_profile_privacy_update_8001(&$sandbox) {
     '@list' => implode(', ', array_keys($items)),
   ]);
 
-  if (PHP_SAPI === 'cli') {
-    drush_print($output);
-  }
-
   return $output;
 }
 
@@ -254,10 +245,6 @@ function social_profile_privacy_update_8002() {
   }
 
   $config->save();
-
-  if (PHP_SAPI === 'cli') {
-    drush_print($output);
-  }
 
   return $output;
 }

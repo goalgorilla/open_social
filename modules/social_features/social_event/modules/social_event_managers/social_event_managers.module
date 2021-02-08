@@ -244,8 +244,8 @@ function social_event_managers_node_grants(AccountInterface $account, $op) {
 
   $grants = [];
 
-  // TODO:
-  // Fetch all nodes this user has access to and add a grant for each of those!
+  // @todo Fetch all nodes this user has access to
+  // and add a grant for each of those.
   $query = \Drupal::database()->select('node__field_event_managers', 'em');
   $query->fields('em', ['entity_id']);
   $query->condition('em.field_event_managers_target_id', $account->id());
@@ -487,7 +487,7 @@ function _social_event_managers_action_batch_finish($success, array $results, ar
       }
 
       if ($fields === 2) {
-        // @todo: source strings will never be translatable when we use
+        // @todo source strings will never be translatable when we use
         // variables. This should be refactored.
         $message = \Drupal::translation()->formatPlural($results_count, $messages['singular'], $messages['plural']);
         $type = $success ? MessengerInterface::TYPE_STATUS : MessengerInterface::TYPE_WARNING;

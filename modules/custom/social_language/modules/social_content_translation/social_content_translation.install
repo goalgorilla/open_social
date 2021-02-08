@@ -70,6 +70,6 @@ function social_content_translation_disable_field_translations() {
   }
 
   // Ensure entity and menu router information are correctly rebuilt.
-  \Drupal::entityManager()->clearCachedDefinitions();
+  \Drupal::service('entity_type.manager')->clearCachedDefinitions();
   \Drupal::service('router.builder')->setRebuildNeeded();
 }

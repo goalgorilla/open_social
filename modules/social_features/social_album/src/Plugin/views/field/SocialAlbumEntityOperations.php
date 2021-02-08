@@ -2,6 +2,7 @@
 
 namespace Drupal\social_album\Plugin\views\field;
 
+use Drupal\Core\Security\TrustedCallbackInterface;
 use Drupal\Core\Url;
 use Drupal\views\Plugin\views\field\EntityOperations;
 use Drupal\views\ResultRow;
@@ -13,7 +14,7 @@ use Drupal\views\ResultRow;
  *
  * @ViewsField("social_album_post_operations")
  */
-class SocialAlbumEntityOperations extends EntityOperations {
+class SocialAlbumEntityOperations extends EntityOperations implements TrustedCallbackInterface {
 
   /**
    * {@inheritdoc}
@@ -79,6 +80,13 @@ class SocialAlbumEntityOperations extends EntityOperations {
     }
 
     return $links;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function trustedCallbacks() {
+    return ['renderLinks'];
   }
 
 }

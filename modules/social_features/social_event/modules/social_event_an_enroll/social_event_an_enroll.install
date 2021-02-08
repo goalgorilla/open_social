@@ -26,7 +26,7 @@ function social_event_an_enroll_install() {
 function social_event_an_enroll_uninstall() {
   $moduleHandler = \Drupal::service('module_handler');
   // Delete the email field is social_event_invite is not enabled.
-  // Todo:: is there a way to get field dependencies instead of manual?
+  // @todo is there a way to get field dependencies instead of manual?
   if (!$moduleHandler->moduleExists('social_event_invite')) {
     $field = FieldConfig::loadByName('event_enrollment', 'event_enrollment', 'field_email');
     if ($field) {

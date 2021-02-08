@@ -5,6 +5,7 @@ namespace Drupal\social_follow_tag;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Render\RendererInterface;
+use Drupal\Core\Security\TrustedCallbackInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\flag\FlagLinkBuilderInterface;
@@ -16,7 +17,7 @@ use Drupal\social_tagging\SocialTaggingService;
  *
  * @package Drupal\social_follow_tag
  */
-class SocialFollowTagLazyBuilder {
+class SocialFollowTagLazyBuilder implements TrustedCallbackInterface {
 
   use StringTranslationTrait;
 
@@ -166,6 +167,13 @@ class SocialFollowTagLazyBuilder {
     }
 
     return [];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function trustedCallbacks() {
+    return ['lazyBuild'];
   }
 
 }

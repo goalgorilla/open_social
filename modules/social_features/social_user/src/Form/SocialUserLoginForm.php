@@ -6,6 +6,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\user\Form\UserLoginForm;
 use Drupal\Core\Url;
 use Drupal\Core\Link;
+use Drupal\user\UserInterface;
 
 /**
  * Class SocialUserLoginForm.
@@ -51,7 +52,7 @@ class SocialUserLoginForm extends UserLoginForm {
       '#type' => 'textfield',
       '#title' => $this->t('Username or email address'),
       '#size' => 60,
-      '#maxlength' => USERNAME_MAX_LENGTH,
+      '#maxlength' => UserInterface::USERNAME_MAX_LENGTH,
       '#description' => $this->t('Enter your @s username or email.', ['@s' => $config->get('name')]),
       '#required' => TRUE,
       '#attributes' => [
@@ -123,7 +124,7 @@ class SocialUserLoginForm extends UserLoginForm {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $account = $this->userStorage->load($form_state->get('uid'));
     // A destination was set, probably on an exception controller,.
-    // @TODO: Add validation if route exists.
+    // @todo Add validation if route exists.
     if (!$this->getRequest()->request->has('destination')) {
       $form_state->setRedirect('<front>');
     }
@@ -262,7 +263,7 @@ class SocialUserLoginForm extends UserLoginForm {
           <li>Too many failed login attempts from your computer (IP address). This IP address is temporarily blocked. </li>
         </ul>
         <p>To solve the issue, try using different login information, try again later, or <a href=":url">request a new password</a></p>',
-      ['%name_or_email' => $form_state->getValue('name_or_mail'), ':url' => $this->url('user.pass')]));
+      ['%name_or_email' => $form_state->getValue('name_or_mail'), ':url' => Url::fromRoute('user.pass')]));
   }
 
 }

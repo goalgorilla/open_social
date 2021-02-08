@@ -16,7 +16,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * @Block(
  *   id = "profile_statistic_block",
  *   admin_label = @Translation("Profile statistic block"),
- *   context = {
+ *   context_definitions = {
  *     "user" = @ContextDefinition("entity:user")
  *   }
  * )

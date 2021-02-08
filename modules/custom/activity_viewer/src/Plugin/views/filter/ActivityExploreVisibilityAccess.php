@@ -2,8 +2,11 @@
 
 namespace Drupal\activity_viewer\Plugin\views\filter;
 
+use Drupal\Core\Database\Query\Condition;
+use Drupal\social_group\SocialGroupHelperService;
 use Drupal\views\Plugin\views\filter\FilterPluginBase;
 use Drupal\views\Views;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Filters activity based on visibility settings for Explore.
@@ -13,6 +16,41 @@ use Drupal\views\Views;
  * @ViewsFilter("activity_explore_visibility_access")
  */
 class ActivityExploreVisibilityAccess extends FilterPluginBase {
+
+  /**
+   * The group helper.
+   *
+   * @var \Drupal\social_group\SocialGroupHelperService
+   */
+  protected $groupHelper;
+
+  /**
+   * Constructs a Handler object.
+   *
+   * @param array $configuration
+   *   A configuration array containing information about the plugin instance.
+   * @param string $plugin_id
+   *   The plugin_id for the plugin instance.
+   * @param mixed $plugin_definition
+   *   The plugin implementation definition.
+   * @param \Drupal\social_group\SocialGroupHelperService $group_helper
+   *   The group helper.
+   */
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, SocialGroupHelperService $group_helper) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition);
+
+    $this->groupHelper = $group_helper;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    return new static(
+      $configuration, $plugin_id, $plugin_definition,
+      $container->get('social_group.helper_service')
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -36,8 +74,8 @@ class ActivityExploreVisibilityAccess extends FilterPluginBase {
   public function query() {
     // Create defaults.
     $account = $this->view->getUser();
-    $explore_wrapper = db_and();
-    $explore_or = db_or();
+    $explore_wrapper = new Condition('AND');
+    $explore_or = new Condition('OR');
 
     // Joins from activity to node.
     $configuration = [
@@ -69,29 +107,32 @@ class ActivityExploreVisibilityAccess extends FilterPluginBase {
     // Let's build our condition.
     // Either it's not a node so we don't care, the other filters will
     // take care of it. Look at ActivityPostVisibilityAccess.
-    $node_condition = db_or();
+    $node_condition = new Condition('OR');
     $node_condition->condition('activity__field_activity_entity.field_activity_entity_target_type', 'node', '!=');
 
     // OR for LU it's a node and it doesn't have group member visibility.
     // so only Community and Public is shown.
     if ($account->isAuthenticated()) {
       // Remove all content from groups I am a member of.
-      $nodes_not_in_groups = db_or();
-      if ($my_groups = \Drupal::service('social_group.helper_service')
+      $nodes_not_in_groups = new Condition('OR');
+      $new_and = new Condition('AND');
+      if ($my_groups = $this->groupHelper
         ->getAllGroupsForUser($account->id())) {
-        $nodes_not_in_groups->condition(db_and()
+        $nodes_not_in_groups->condition($new_and
           ->condition('activity__field_activity_recipient_group.field_activity_recipient_group_target_id', $my_groups, 'NOT IN')
           ->condition('node__field_content_visibility.field_content_visibility_value', 'group', '!='));
       }
 
       // Include all the content which is posted in groups but with
       // visibility either community or public.
-      $nodes_not_in_groups->condition(db_and()
+      $new_and = new Condition('AND');
+      $nodes_not_in_groups->condition($new_and
         ->isNotNull('activity__field_activity_recipient_group.field_activity_recipient_group_target_id')
         ->condition('node__field_content_visibility.field_content_visibility_value', 'group', '!='));
 
       // This will include the nodes that has not been posted in any group.
-      $nodes_not_in_groups->condition(db_and()
+      $new_and = new Condition('AND');
+      $nodes_not_in_groups->condition($new_and
         ->isNull('activity__field_activity_recipient_group.field_activity_recipient_group_target_id')
         ->condition('node__field_content_visibility.field_content_visibility_value', 'group', '!='));
 
@@ -100,8 +141,9 @@ class ActivityExploreVisibilityAccess extends FilterPluginBase {
     else {
       // OR we remove activities related to nodes with community and group
       // visibility for AN.
-      $nodes_not_in_groups = db_or();
-      $nodes_not_in_groups->condition(db_and()
+      $nodes_not_in_groups = new Condition('OR');
+      $new_and = new Condition('AND');
+      $nodes_not_in_groups->condition($new_and
         ->condition('node__field_content_visibility.field_content_visibility_value', 'community', '!=')
         ->condition('node__field_content_visibility.field_content_visibility_value', 'group', '!='));
       $nodes_not_in_groups->condition($node_condition);

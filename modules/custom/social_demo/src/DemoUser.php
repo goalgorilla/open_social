@@ -60,9 +60,9 @@ abstract class DemoUser extends DemoContent {
       $plugin_id,
       $plugin_definition,
       $container->get('social_demo.yaml_parser'),
-      $container->get('entity.manager')->getStorage('profile'),
-      $container->get('entity.manager')->getStorage('file'),
-      $container->get('entity.manager')->getStorage('taxonomy_term')
+      $container->get('entity_type.manager')->getStorage('profile'),
+      $container->get('entity_type.manager')->getStorage('file'),
+      $container->get('entity_type.manager')->getStorage('taxonomy_term')
     );
   }
 

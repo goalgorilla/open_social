@@ -244,7 +244,7 @@ class SocialGroupController extends ControllerBase {
     if ($group_content_type !== NULL && array_key_exists($group_content_type->label(), $node_types)) {
       return $this->t('Create @article @name', [
         '@article' => $node_types[$group_content_type->label()],
-        '@name' => $group_content_type->label()
+        '@name' => $group_content_type->label(),
       ]);
     }
 

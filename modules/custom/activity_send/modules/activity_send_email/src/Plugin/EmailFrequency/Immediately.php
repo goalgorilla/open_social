@@ -67,6 +67,7 @@ class Immediately extends EmailFrequencyBase {
       ],
       ['langcode' => $langcode]),
     ];
+
     $params['body'] = \Drupal::service('renderer')->renderRoot($notification);
 
     // Send the email.

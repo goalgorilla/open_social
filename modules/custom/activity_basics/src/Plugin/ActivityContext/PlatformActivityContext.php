@@ -2,7 +2,6 @@
 
 namespace Drupal\activity_basics\Plugin\ActivityContext;
 
-use Drupal\activity_creator\ActivityFactory;
 use Drupal\activity_creator\Plugin\ActivityContextBase;
 
 /**
@@ -25,7 +24,7 @@ class PlatformActivityContext extends ActivityContextBase {
     if (isset($data['related_object']) && !empty($data['related_object'])) {
       $related_entity = $this->activityFactory->getActivityRelatedEntity($data);
       // Load the related entity.
-      $entity_storage = \Drupal::entityTypeManager()
+      $entity_storage = $this->entityTypeManager
         ->getStorage($related_entity['target_type']);
       $entity = $entity_storage->load($related_entity['target_id']);
 
