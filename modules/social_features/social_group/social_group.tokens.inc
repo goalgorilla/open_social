@@ -7,7 +7,6 @@
 
 use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\Url;
-use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Render\Markup;
 
 /**
@@ -92,7 +91,7 @@ function social_group_tokens($type, $tokens, array $data, array $options, Bubble
                 // When it's a post or photo post.
                 case 'photo':
                 case 'post':
-                  $display_name = Unicode::strtolower($entity->getEntityType()->getLabel());
+                  $display_name = mb_strtolower($entity->getEntityType()->getLabel());
                   $content_url = Url::fromRoute('entity.post.canonical',
                     ['post' => $entity->id()],
                     ['absolute' => TRUE]

@@ -21,12 +21,15 @@
     <exclude-pattern>*.md</exclude-pattern>
     <exclude-pattern>PULL_REQUEST_TEMPLATE\.md</exclude-pattern>
 
-    <config name="drupal_core_version" value="8" />
+    <config name="drupal_core_version" value="9" />
     <!--  Include all Drupal related rules but exclude some so we can gradually fix these. -->
     <rule ref="Drupal">
         <exclude name="Drupal.Commenting.GenderNeutralComment.GenderNeutral"/>
         <exclude name="Drupal.Commenting.VariableComment.Missing"/>
+        <exclude name="Drupal.Commenting.ClassComment.Short"/>
         <exclude name="Drupal.Commenting.Deprecated.IncorrectTextLayout"/>
+        <exclude name="Drupal.Commenting.Deprecated.DeprecatedPeriodAfterSeeUrl"/>
+        <exclude name="Drupal.Commenting.Deprecated.DeprecatedWrongSeeUrlFormat"/>
         <exclude name="Drupal.Arrays.Array.LongLineDeclaration"/>
         <exclude name="Drupal.Semantics.FunctionTriggerError.TriggerErrorTextLayoutStrict"/>
     </rule>

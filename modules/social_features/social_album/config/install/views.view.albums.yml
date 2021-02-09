@@ -638,7 +638,7 @@ display:
           exclude: false
           alter:
             alter_text: true
-            text: '<a href="/node/{{ raw_arguments.nid }}/image/{{ id }}/{{ field_post_image__target_id }}" class="use-ajax" data-dialog-type="modal" data-dialog-options=''{"width":"80%"}''>{{ field_post_image }}</a>'
+            text: '<a href="/node/{{ raw_arguments.nid }}/image/{{ id }}/{{ field_post_image__target_id }}" class="use-ajax" data-dialog-type="modal" data-dialog-options=''{"width":"100%","dialogClass":"post"}''>{{ field_post_image }}</a>'
             make_link: false
             path: ''
             absolute: false
@@ -946,7 +946,8 @@ display:
             enabled: '1'
       access:
         type: social_album_group
-        options: {  }
+        options:
+          group_permission: 'view group_node:album content'
       defaults:
         access: false
         relationships: false
@@ -1025,7 +1026,9 @@ display:
         - 'languages:language_content'
         - 'languages:language_interface'
         - route
+        - route.group
         - url
         - url.query_args
+        - user.group_permissions
         - 'user.node_grants:view'
       tags: {  }

@@ -218,7 +218,7 @@ class SocialCoreController extends ControllerBase {
     if ($node_type !== NULL && array_key_exists($node_type->id(), $node_types)) {
       return $this->t('Create @article @name', [
         '@article' => $node_types[$node_type->id()],
-        '@name' => $node_type->label()
+        '@name' => $node_type->label(),
       ]);
     }
 

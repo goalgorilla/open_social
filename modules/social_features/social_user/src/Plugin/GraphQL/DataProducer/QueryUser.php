@@ -75,6 +75,7 @@ class QueryUser extends EntityDataProducerPluginBase {
    */
   public function resolve(?int $first, ?string $after, ?int $last, ?string $before, bool $reverse, string $sortKey, RefinableCacheableDependencyInterface $metadata) {
     $query_helper = new UserQueryHelper($this->entityTypeManager, $sortKey);
+    $metadata->addCacheableDependency($query_helper);
 
     $connection = new EntityConnection($query_helper);
     $connection->setPagination($first, $after, $last, $before, $reverse);

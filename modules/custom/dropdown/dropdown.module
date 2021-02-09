@@ -6,7 +6,7 @@
  */
 
 use Drupal\Core\Routing\RouteMatchInterface;
-use Drupal\Component\Utility\Html as HtmlUtility;
+use Drupal\Component\Utility\Html;
 
 /**
  * Implements hook_help().
@@ -62,8 +62,8 @@ function template_preprocess_dropdown(array &$variables) {
     if (is_numeric($key) && isset($el['#type']) && $el['#type'] === 'radio') {
       $items[$key] = $el;
       if ($el['#return_value'] === $el['#value']) {
-        // @TODO Do we need to check for default_value also
-        $selected = HtmlUtility::escape($el['#title']);
+        // @todo Do we need to check for default_value also
+        $selected = Html::escape($el['#title']);
         $active = $key;
       }
     }
@@ -73,7 +73,7 @@ function template_preprocess_dropdown(array &$variables) {
     $variables['edit_mode'] = $element['#edit_mode'];
   }
   $variables['items'] = $items;
-  $variables['label'] = HtmlUtility::escape($element['#title']);
+  $variables['label'] = Html::escape($element['#title']);
   $variables['selected'] = isset($selected) ? $selected : $variables['label'];
   $variables['active'] = isset($active) ? $active : 0;
   $variables['children'] = $element['#children'];

@@ -17,6 +17,7 @@ use Drupal\Core\Link;
 use Drupal\node\Entity\Node;
 use Drupal\social_event\Entity\EventEnrollment;
 use Drupal\social_event\EventEnrollmentInterface;
+use Drupal\user\UserInterface;
 use Drupal\user\UserStorageInterface;
 use Drupal\group\Entity\GroupContent;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -119,8 +120,8 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('current_route_match'),
-      $container->get('entity.manager')->getStorage('event_enrollment'),
-      $container->get('entity.manager')->getStorage('user'),
+      $container->get('entity_type.manager')->getStorage('event_enrollment'),
+      $container->get('entity_type.manager')->getStorage('user'),
       $container->get('entity_type.manager'),
       $container->get('current_user'),
       $container->get('config.factory'),
@@ -390,7 +391,7 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
       $form_state->setRedirect('user.login', [], ['query' => ['destination' => $destination]]);
 
       // Check if user can register accounts.
-      if ($this->configFactory->get('user.settings')->get('register') != USER_REGISTER_ADMINISTRATORS_ONLY) {
+      if ($this->configFactory->get('user.settings')->get('register') !== UserInterface::REGISTER_ADMINISTRATORS_ONLY) {
         $log_in_url = Url::fromUserInput('/user/login');
         $log_in_link = Link::fromTextAndUrl($this->t('log in'), $log_in_url)->toString();
         $create_account_url = Url::fromUserInput('/user/register');
@@ -408,7 +409,7 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
         ]);
       }
 
-      drupal_set_message($message);
+      $this->messenger()->addStatus($message);
       return;
     }
 
@@ -496,9 +497,9 @@ class EnrollActionForm extends FormBase implements ContainerInjectionInterface {
     // Only react if it is actually posted inside a group.
     if (!empty($groupcontents)) {
       foreach ($groupcontents as $groupcontent) {
-        /* @var \Drupal\group\Entity\GroupContent $groupcontent */
+        /** @var \Drupal\group\Entity\GroupContent $groupcontent */
         $group = $groupcontent->getGroup();
-        /* @var \Drupal\group\Entity\Group $group */
+        /** @var \Drupal\group\Entity\Group $group */
         $groups[] = $group;
       }
     }

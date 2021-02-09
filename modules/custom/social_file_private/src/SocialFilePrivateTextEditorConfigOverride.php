@@ -37,7 +37,7 @@ class SocialFilePrivateTextEditorConfigOverride implements ConfigFactoryOverride
   /**
    * Get all the editors/input formats we need to protect.
    *
-   * @TODO Retrieve the input formats programmatically.
+   * @todo Retrieve the input formats programmatically.
    *
    * Note: this list is now fixed, but an error will be shown in the status
    * report when there are text editors using public scheme.

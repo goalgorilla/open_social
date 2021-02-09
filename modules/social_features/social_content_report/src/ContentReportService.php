@@ -139,13 +139,18 @@ class ContentReportService implements ContentReportServiceInterface {
     $currentRequest = $this->requestStack->getCurrentRequest();
     // If there's a request and it's an ajax request, we need to do something
     // different. Current url will now be determined based on something else.
-    if ($entity instanceof CommentInterface && $currentRequest !== NULL && $currentRequest->isXmlHttpRequest() === TRUE) {
-      // Determine the parent entity, so we can redirect to the entity
-      // the comment was added to.
-      $parentEntity = $entity->getCommentedEntity();
+    if ($currentRequest !== NULL && $currentRequest->isXmlHttpRequest() === TRUE) {
+      if ($entity instanceof CommentInterface) {
+        // Determine the parent entity, so we can redirect to the entity
+        // the comment was added to.
+        $parentEntity = $entity->getCommentedEntity();
 
-      if ($parentEntity !== NULL) {
-        $currentUrl = $parentEntity->toUrl()->toString();
+        if ($parentEntity !== NULL) {
+          $currentUrl = $parentEntity->toUrl()->toString();
+        }
+      }
+      elseif ($currentRequest->headers->has('referer')) {
+        $currentUrl = $currentRequest->headers->get('referer');
       }
     }
 
@@ -165,7 +170,7 @@ class ContentReportService implements ContentReportServiceInterface {
       ),
       'attributes' => [
         'data-dialog-type' => 'modal',
-        'data-dialog-options' => JSON::encode([
+        'data-dialog-options' => Json::encode([
           'width' => 400,
           'dialogClass' => 'content-reporting-dialog',
         ]),

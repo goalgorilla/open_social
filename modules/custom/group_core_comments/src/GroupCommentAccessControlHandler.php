@@ -14,7 +14,7 @@ use Drupal\Core\Session\AccountInterface;
  *
  * @see \Drupal\comment\Entity\Comment
  *
- * @todo: Implement setting to make it possible overridden on per-group basis.
+ * @todo Implement setting to make it possible overridden on per-group basis.
  */
 class GroupCommentAccessControlHandler extends CommentAccessControlHandler {
 
@@ -46,7 +46,7 @@ class GroupCommentAccessControlHandler extends CommentAccessControlHandler {
       return ($operation != 'view') ? $access : $access->andIf($entity->getCommentedEntity()->access($operation, $account, TRUE));
     }
 
-    // @todo: Only react on if $parent === allowed Is this good/safe enough?
+    // @todo Only react on if $parent === allowed Is this good/safe enough?
     if ($parent_access->isAllowed()) {
       // Only react if it is actually posted inside a group.
       if (!empty($group_contents)) {

@@ -9,7 +9,9 @@ use Drupal\activity_send_email\EmailFrequencyManager;
 use Drupal\activity_send_email\Plugin\ActivityDestination\EmailActivityDestination;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Database\Connection;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\Core\Queue\QueueFactory;
 use Drupal\message\Entity\Message;
 use Drupal\user\Entity\User;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -56,6 +58,20 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase implements Containe
   protected $swiftmailSettings;
 
   /**
+   * The entity type manager.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  protected $entityTypeManager;
+
+  /**
+   * The queue service.
+   *
+   * @var \Drupal\Core\Queue\QueueFactory
+   */
+  protected $queueFactory;
+
+  /**
    * {@inheritdoc}
    */
   public function __construct(
@@ -65,13 +81,17 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase implements Containe
     EmailFrequencyManager $frequency_manager,
     Connection $connection,
     ActivityNotifications $activity_notifications,
-    ConfigFactoryInterface $config_factory
+    ConfigFactoryInterface $config_factory,
+    EntityTypeManagerInterface $entity_type_manager,
+    QueueFactory $queue_factory
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->frequencyManager = $frequency_manager;
     $this->database = $connection;
     $this->activityNotifications = $activity_notifications;
     $this->swiftmailSettings = $config_factory->get('social_swiftmail.settings');
+    $this->entityTypeManager = $entity_type_manager;
+    $this->queueFactory = $queue_factory;
   }
 
   /**
@@ -85,7 +105,9 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase implements Containe
       $container->get('plugin.manager.emailfrequency'),
       $container->get('database'),
       $container->get('activity_creator.activity_notifications'),
-      $container->get('config.factory')
+      $container->get('config.factory'),
+      $container->get('entity_type.manager'),
+      $container->get('queue')
     );
   }
 
@@ -94,7 +116,9 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase implements Containe
    */
   public function processItem($data) {
     // First make sure it's an actual Activity entity.
-    if (!empty($data['entity_id']) && $activity = Activity::load($data['entity_id'])) {
+    $activity_storage = $this->entityTypeManager->getStorage('activity');
+    $activity = $activity_storage->load($data['entity_id']);
+    if (!empty($data['entity_id']) && !is_null($activity)) {
       // Check if activity related entity exist.
       if (!$activity->getRelatedEntity()) {
         $activity->delete();
@@ -103,10 +127,12 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase implements Containe
       }
 
       // Get Message Template id.
-      $message = Message::load($activity->field_activity_message->target_id);
+      $message_storage = $this->entityTypeManager->getStorage('message');
+      $message = $message_storage->load($activity->field_activity_message->target_id);
       $message_template_id = $message->getTemplate()->id();
 
       // Get target account.
+      $user_storage = $this->entityTypeManager->getStorage('user');
       if (empty($data['recipients'])) {
         $recipients = array_column($activity->field_activity_recipient_user->getValue(), 'target_id');
 
@@ -114,14 +140,24 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase implements Containe
           // Split up by 50.
           $batches = array_chunk($recipients, 50);
 
-          foreach ($batches as $batch_recipients) {
+          foreach ($batches as $key => $batch_recipients) {
+            // Only for users that have access to related content.
+            foreach ($batch_recipients as $key => $batch_recipient) {
+              $recipient = $user_storage->load($batch_recipient);
+              if (
+                !is_null($activity->getRelatedEntity()) &&
+                !$activity->getRelatedEntity()->access('view', $recipient)
+              ) {
+                unset($batch_recipients[$key]);
+              }
+            }
             // Create same queue item, but with IDs of just 50 users.
             $batch_data = [
               'entity_id' => $data['entity_id'],
               'recipients' => $batch_recipients,
             ];
 
-            $queue = \Drupal::queue('activity_send_email_worker');
+            $queue = $this->queueFactory->get('activity_send_email_worker');
             $queue->createItem($batch_data);
           }
 
@@ -135,11 +171,10 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase implements Containe
       }
 
       // Load the user accounts.
-      $target_accounts = User::loadMultiple($recipients);
+      $target_accounts = $user_storage->loadMultiple($recipients);
 
       foreach ($target_accounts as $target_account) {
-        if ($target_account instanceof User) {
-
+        if (!is_null($target_account)) {
           // Retrieve the users email settings.
           $user_email_settings = EmailActivityDestination::getSendEmailUserSettings($target_account);
 

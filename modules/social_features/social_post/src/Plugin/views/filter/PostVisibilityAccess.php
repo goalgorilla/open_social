@@ -2,6 +2,7 @@
 
 namespace Drupal\social_post\Plugin\views\filter;
 
+use Drupal\Core\Database\Query\Condition;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\views\Plugin\views\filter\FilterPluginBase;
 
@@ -44,7 +45,7 @@ class PostVisibilityAccess extends FilterPluginBase {
     $account = $this->view->getUser();
     $this->query->addTable('post__field_visibility');
 
-    $and_condition = db_and();
+    $and_condition = new Condition('AND');
     $should_add_where_clause = FALSE;
     if (!$account->hasPermission('view public posts')) {
       $and_condition->condition('post__field_visibility.field_visibility_value', '1', '!=');

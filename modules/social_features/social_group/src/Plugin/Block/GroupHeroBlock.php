@@ -15,7 +15,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * @Block(
  *  id = "group_hero_block",
  *  admin_label = @Translation("Group hero block"),
- *  context = {
+ *  context_definitions = {
  *    "group" = @ContextDefinition("entity:group", required = FALSE)
  *  }
  * )

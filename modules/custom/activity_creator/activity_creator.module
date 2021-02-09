@@ -4,7 +4,7 @@
  * @file
  * Activity Creator module file.
  *
- * @todo: Move entity_type hooks (insert/update/delete) to services after
+ * @todo Move entity_type hooks (insert/update/delete) to services after
  *        Drupal core has event for entities.
  * @see https://www.drupal.org/project/drupal/issues/2551893
  */
@@ -64,7 +64,7 @@ function activity_creator_field_activity_destinations_allowed_values() {
  */
 function activity_creator_message_insert(Message $entity) {
   if ($entity) {
-    // TODO Move all this logic to services (also in Queue).
+    // @todo Move all this logic to services (also in Queue).
     $mid = $entity->id();
     $message_template_id = $entity->getTemplate()->id();
     $actor = $entity->getOwner()->id();
@@ -91,7 +91,7 @@ function activity_creator_message_insert(Message $entity) {
 
       $context_plugin_manager = \Drupal::service('plugin.manager.activity_context.processor');
 
-      /* @var $plugin \Drupal\activity_creator\Plugin\ActivityContextBase */
+      /** @var \Drupal\activity_creator\Plugin\ActivityContextBase $plugin */
       $plugin = $context_plugin_manager->createInstance($data['context']);
       $recipients = $plugin->getRecipients($data, $data['last_uid'], 0);
       $user_recipients = [];
@@ -203,6 +203,15 @@ function activity_creator_views_data() {
       'help' => t('Enable activity access control for related post entities.'),
       'field' => 'field_visibility',
       'id' => 'activity_post_visibility_access',
+    ],
+  ];
+  $data['activity']['activity_notification_visibility_access_filter'] = [
+    'title' => t('Activity notification visibility access'),
+    'filter' => [
+      'title' => t('Activity notification visibility access'),
+      'help' => t('Enable activity access control for notifications.'),
+      'field' => 'field_visibility',
+      'id' => 'activity_notification_visibility_access',
     ],
   ];
   $data['activity']['activity_profile_argument'] = [
@@ -363,7 +372,7 @@ function activity_creator_empty_queue() {
   // The workermanager.
   $workerManager = \Drupal::service('plugin.manager.queue_worker');
 
-  /* @var Drupal\Core\Queue\QueueFactory $queue */
+  /** @var Drupal\Core\Queue\QueueFactory $queue */
   $queue = \Drupal::service('queue');
 
   for ($i = 0; $i < 5; $i++) {

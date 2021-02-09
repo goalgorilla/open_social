@@ -137,6 +137,27 @@ class SocialAlbumConfigOverride implements ConfigFactoryOverrideInterface {
       }
     }
 
+    $config_names = [
+      'core.entity_form_display.node.album.default',
+    ];
+    foreach ($config_names as $config_name) {
+      if (in_array($config_name, $names)) {
+        $config = \Drupal::service('config.factory')->getEditable($config_name);
+        // Add the field to the content.
+        $content = $config->get('content');
+        $content['groups'] = [];
+        $content['groups']['type'] = 'social_group_selector_widget';
+        $content['groups']['settings'] = [];
+        $content['groups']['region'] = 'content';
+        $content['groups']['third_party_settings'] = [];
+
+        $overrides[$config_name] = [
+          'content' => $content,
+        ];
+
+      }
+    }
+
     return $overrides;
   }
 

@@ -5,8 +5,10 @@ namespace Drupal\social_user\GraphQL\QueryHelper;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\Query\QueryInterface;
 use Drupal\social_graphql\GraphQL\ConnectionQueryHelperInterface;
-use Drupal\social_graphql\Wrappers\EntityEdge;
+use Drupal\social_graphql\Wrappers\Cursor;
+use Drupal\social_graphql\Wrappers\Edge;
 use Drupal\user\Entity\User;
+use Drupal\user\UserInterface;
 use GraphQL\Deferred;
 use GraphQL\Executor\Promise\Adapter\SyncPromise;
 
@@ -57,26 +59,13 @@ class UserQueryHelper implements ConnectionQueryHelperInterface {
 
   /**
    * {@inheritdoc}
-   *
-   * @todo https://www.drupal.org/project/social/issues/3191632
    */
-  public function getCursorObject(string $cursor) {
-    return EntityEdge::nodeFromCursor($cursor, 'user');
-  }
+  public function getCursorObject(string $cursor) : ?Cursor {
+    $cursor_object = Cursor::fromCursorString($cursor);
 
-  /**
-   * {@inheritdoc}
-   *
-   * @todo https://www.drupal.org/project/social/issues/3191637
-   */
-  public function getCursorValue($entity) {
-    switch ($this->sortKey) {
-      case 'CREATED_AT':
-        return $entity->getCreatedTime();
-
-      default:
-        throw new \InvalidArgumentException("Unsupported sortKey for pagination '{$this->sortKey}'");
-    }
+    return !is_null($cursor_object) && $cursor_object->isValidFor($this->sortKey, 'user')
+      ? $cursor_object
+      : NULL;
   }
 
   /**
@@ -127,11 +116,33 @@ class UserQueryHelper implements ConnectionQueryHelperInterface {
     return new Deferred(
       function () use ($callback) {
         return array_map(
-          static fn (User $entity) => new EntityEdge($entity),
+          fn (User $entity) => new Edge(
+            $entity,
+            new Cursor('user', $entity->id(), $this->sortKey, $this->getSortValue($entity))
+          ),
           $callback()
         );
       }
     );
+  }
+
+  /**
+   * Get the value for an entity based on the sort key for this connection.
+   *
+   * @param \Drupal\user\UserInterface $user
+   *   The user to get the value for.
+   *
+   * @return mixed
+   *   The sort value.
+   */
+  protected function getSortValue(UserInterface $user) {
+    switch ($this->sortKey) {
+      case 'CREATED_AT':
+        return $user->getCreatedTime();
+
+      default:
+        throw new \InvalidArgumentException("Unsupported sortKey for pagination '{$this->sortKey}'");
+    }
   }
 
 }

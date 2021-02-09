@@ -10,9 +10,10 @@ use Drupal\Core\Ajax\ReplaceCommand;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Url;
 use Drupal\Core\Link;
+use Drupal\Core\Url;
 use Drupal\field\Entity\FieldStorageConfig;
+use Drupal\node\Entity\Node;
 
 /**
  * Implements hook_form_FORM_ID_alter().
@@ -35,7 +36,6 @@ function social_event_type_form_node_event_edit_form_alter(&$form, FormStateInte
  *   Form array.
  */
 function social_event_type_widget_alter(array &$form) {
-  /** @var \Drupal\Core\Config\ImmutableConfig $config */
   $config = \Drupal::config('social_event_type.settings');
 
   // Check if the field is set to mandatory.
@@ -64,31 +64,37 @@ function social_event_type_widget_alter(array &$form) {
  *   Array with variables of a node.
  */
 function social_event_type_preprocess_node(array &$variables) {
-  /* @var \Drupal\node\NodeInterface $node */
+  /** @var \Drupal\node\Entity\NodeInterface $node */
   $node = $variables['node'];
+
   if ($node->getType() === 'event') {
     $event_type = $node->get('field_event_type');
     $event_type_entities = $event_type->referencedEntities();
     if (count($event_type_entities) === 1) {
       /** @var \Drupal\node\Entity\Node $event */
       foreach ($event_type_entities as $event) {
-        $variables['metadata'] = t('in @event', ['@event' => $event->link()]);
-        // Set event type link.
-        $now = strtotime("now");
-        $end = strtotime($node->get('field_event_date_end')->getString());
-        // 1 are upcoming events.
-        // 2 are ones that have started or are finished.
-        $datetype = ($now > $end) ? 2 : 1;
+        if ($event instanceof Node) {
+          $variables['metadata'] = t('in @event', ['@event' => $event->toLink()->toString()]);
+          // Set event type link.
+          $now = strtotime("now");
+          $end = strtotime($node->get('field_event_date_end')->getString());
+          // 1 are upcoming events.
+          // 2 are ones that have started or are finished.
+          $datetype = ($now > $end) ? 2 : 1;
 
-        $event_type_url = Url::fromRoute('view.upcoming_events.page_community_events', [
-          'field_event_date_value' => $datetype,
-          'event_type_id' => $event->id(),
-        ]);
-        $event_type_link = Link::fromTextAndUrl($event->label(), $event_type_url)
-          ->toString();
-        $variables['event_type'] = $event_type_link;
+          $event_type_url = Url::fromRoute('view.upcoming_events.page_community_events', [
+            'field_event_date_value' => $datetype,
+            'event_type_id' => $event->id(),
+          ]);
+          $event_type_link = Link::fromTextAndUrl($event->label(), $event_type_url)
+            ->toString();
+          $variables['event_type'] = $event_type_link;
+        }
 
-        if (!$event->get('field_event_type_icon')->isEmpty()) {
+        if (
+          $event->hasField('field_event_type_icon') &&
+          !$event->get('field_event_type_icon')->isEmpty()
+        ) {
           $variables['event_type_icon'] = $event->get('field_event_type_icon')->value;
         }
 
@@ -107,7 +113,7 @@ function social_event_type_preprocess_node(array &$variables) {
  */
 function social_event_type_allowed_values_function(FieldStorageConfig $definition, ContentEntityInterface $entity = NULL, $cacheable) {
   $theme_path = drupal_get_path('theme', 'socialbase');
-  $icon_files = file_scan_directory(DRUPAL_ROOT . '/' . $theme_path . '/components/06-libraries/icons/source', '/^icon-.*\.svg$/', ['recurse' => FALSE]);
+  $icon_files = \Drupal::service('file_system')->scanDirectory(DRUPAL_ROOT . '/' . $theme_path . '/components/06-libraries/icons/source', '/^icon-.*\.svg$/', ['recurse' => FALSE]);
 
   $options = [];
   foreach ($icon_files as $file) {

@@ -16,9 +16,9 @@ class SocialTaggingService {
   /**
    * The taxonomy storage.
    *
-   * @var \Drupal\Taxonomy\TermStorageInterface
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $termStorage;
+  protected $entityTypeManager;
 
   /**
    * The configuration factory.
@@ -43,16 +43,13 @@ class SocialTaggingService {
    *   Injection of the configFactory.
    * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
    *   Injection of the languageManager.
-   *
-   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
-   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
   public function __construct(
     EntityTypeManagerInterface $entityTypeManager,
     ConfigFactoryInterface $configFactory,
     LanguageManagerInterface $language_manager
   ) {
-    $this->termStorage = $entityTypeManager->getStorage('taxonomy_term');
+    $this->entityTypeManager = $entityTypeManager;
     $this->configFactory = $configFactory;
     $this->languageManager = $language_manager;
   }
@@ -145,12 +142,12 @@ class SocialTaggingService {
     // vocabulary terms which may result in return of empty array on loadTree()
     // function. So, we want to check for the terms also in default language if
     // we don't find terms in current language.
-    if (!empty($current_lang_terms = $this->termStorage->loadTree('social_tagging', 0, 1, FALSE, $current_lang))) {
+    if (!empty($current_lang_terms = $this->entityTypeManager->getStorage('taxonomy_term')->loadTree('social_tagging', 0, 1, FALSE, $current_lang))) {
       $options = $this->prepareTermOptions($current_lang_terms);
     }
     // Add a fallback to default language of the website if the current
     // language has no terms.
-    elseif (!empty($default_lang_terms = $this->termStorage->loadTree('social_tagging', 0, 1, FALSE))) {
+    elseif (!empty($default_lang_terms = $this->entityTypeManager->getStorage('taxonomy_term')->loadTree('social_tagging', 0, 1, FALSE))) {
       $options = $this->prepareTermOptions($default_lang_terms);
     }
 
@@ -174,12 +171,12 @@ class SocialTaggingService {
     // Get the site's current language.
     $current_lang = $this->languageManager->getCurrentLanguage()->getId();
 
-    if (!empty($current_lang_terms = $this->termStorage->loadTree('social_tagging', $category, 1, FALSE, $current_lang))) {
+    if (!empty($current_lang_terms = $this->entityTypeManager->getStorage('taxonomy_term')->loadTree('social_tagging', $category, 1, FALSE, $current_lang))) {
       $options = $this->prepareTermOptions($current_lang_terms);
     }
     // Add a fallback to default language of the website if the current
     // language has no terms.
-    elseif (!empty($default_lang_terms = $this->termStorage->loadTree('social_tagging', $category, 1, FALSE))) {
+    elseif (!empty($default_lang_terms = $this->entityTypeManager->getStorage('taxonomy_term')->loadTree('social_tagging', $category, 1, FALSE))) {
       $options = $this->prepareTermOptions($default_lang_terms);
     }
 
@@ -219,7 +216,7 @@ class SocialTaggingService {
   public function buildHierarchy(array $term_ids, $entity_type) {
     $tree = [];
     // Load all the terms together.
-    if (!empty($terms = $this->termStorage->loadMultiple(array_column($term_ids, 'target_id')))) {
+    if (!empty($terms = $this->entityTypeManager->getStorage('taxonomy_term')->loadMultiple(array_column($term_ids, 'target_id')))) {
       // Get current language.
       // This is used to get the translated term, if available.
       $langcode = $this->languageManager->getCurrentLanguage()->getId();
@@ -240,7 +237,7 @@ class SocialTaggingService {
           continue;
         }
         // Get current terms parents.
-        if ($parents = $this->termStorage->loadParents($current_term->id())) {
+        if ($parents = $this->entityTypeManager->getStorage('taxonomy_term')->loadParents($current_term->id())) {
           $parent = reset($parents);
           $category_label = $parent->hasTranslation($langcode) ? $parent->getTranslation($langcode)
             ->getName() : $parent->getName();

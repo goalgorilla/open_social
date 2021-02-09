@@ -11,7 +11,7 @@ use Drupal\social_event_managers\Plugin\views\field\SocialEventManagersViewsBulk
 use Drupal\Core\TempStore\PrivateTempStoreFactory;
 use Drupal\views_bulk_operations\Service\ViewsBulkOperationsActionManager;
 use Drupal\views_bulk_operations\Service\ViewsBulkOperationsActionProcessorInterface;
-use Drupal\views_bulk_operations\Service\ViewsbulkOperationsViewDataInterface;
+use Drupal\views_bulk_operations\Service\ViewsBulkOperationsViewDataInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -36,7 +36,7 @@ class SocialEventAnEnrollViewsBulkOperationsBulkForm extends SocialEventManagers
    *   The plugin ID for the plugin instance.
    * @param mixed $plugin_definition
    *   The plugin implementation definition.
-   * @param \Drupal\views_bulk_operations\Service\ViewsbulkOperationsViewDataInterface $viewData
+   * @param \Drupal\views_bulk_operations\Service\ViewsBulkOperationsViewDataInterface $viewData
    *   The VBO View Data provider service.
    * @param \Drupal\views_bulk_operations\Service\ViewsBulkOperationsActionManager $actionManager
    *   Extended action manager object.
@@ -57,7 +57,7 @@ class SocialEventAnEnrollViewsBulkOperationsBulkForm extends SocialEventManagers
     array $configuration,
     $plugin_id,
     $plugin_definition,
-    ViewsbulkOperationsViewDataInterface $viewData,
+    ViewsBulkOperationsViewDataInterface $viewData,
     ViewsBulkOperationsActionManager $actionManager,
     ViewsBulkOperationsActionProcessorInterface $actionProcessor,
     PrivateTempStoreFactory $tempStoreFactory,

@@ -80,7 +80,7 @@ class SocialEmbedConfigOverride implements ConfigFactoryOverrideInterface {
    */
   protected function addFilterOverride($text_format, $convert_url, array &$overrides) {
     $config_name = 'filter.format.' . $text_format;
-    /* @var \Drupal\Core\Config\Config $config */
+    /** @var \Drupal\Core\Config\Config $config */
     $config = $this->configFactory->getEditable($config_name);
     $filters = $config->get('filters');
 
@@ -123,7 +123,7 @@ class SocialEmbedConfigOverride implements ConfigFactoryOverrideInterface {
    */
   protected function addEditorOverride($text_format, array &$overrides) {
     $config_name = 'editor.editor.' . $text_format;
-    /* @var \Drupal\Core\Config\Config $config */
+    /** @var \Drupal\Core\Config\Config $config */
     $config = $this->configFactory->getEditable($config_name);
     $settings = $config->get('settings');
 

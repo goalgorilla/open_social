@@ -8,12 +8,12 @@ namespace Drupal\social_graphql\Wrappers;
 interface EdgeInterface {
 
   /**
-   * Return the cursor for the node associated with this edge.
+   * Return the cursor for this edge.
    */
-  public function getCursor();
+  public function getCursor() : string;
 
   /**
-   * Return the node for associated with this edge.
+   * Return the node for this edge.
    */
   public function getNode();
 

@@ -3,6 +3,7 @@
 namespace Drupal\social_graphql\GraphQL;
 
 use Drupal\Core\Entity\Query\QueryInterface;
+use Drupal\social_graphql\Wrappers\Cursor;
 use GraphQL\Executor\Promise\Adapter\SyncPromise;
 
 /**
@@ -28,35 +29,14 @@ interface ConnectionQueryHelperInterface {
   /**
    * Returns a cursor object for a given cursor string.
    *
-   * The cursor is used to find the current position in the connection result
-   * set.
-   *
-   * A critical feature of the cursor is that you can continue to paginate even
-   * if the node that you grabbed the cursor from ceases to exist (or is
-   * modified), so effectively it details the "value" it's sorted by.
-   *
    * @param string $cursor
    *   A cursor string created obtained from an edge for the connection.
    *
-   * @return mixed|null
+   * @return \Drupal\social_graphql\Wrappers\Cursor|null
    *   An object with the cursor information or null if it was an invalid
    *   cursor.
-   *
-   * @todo A cursor can be put into a separate class!
-   *   https://www.drupal.org/project/social/issues/3191632
    */
-  public function getCursorObject(string $cursor);
-
-  /**
-   * Returns the value for the field that we sort by based on the cursor.
-   *
-   * @param mixed $cursorObject
-   *   The decoded cursor object.
-   *
-   * @return mixed
-   *   The value that should be used in the offset condition.
-   */
-  public function getCursorValue($cursorObject);
+  public function getCursorObject(string $cursor) : ?Cursor;
 
   /**
    * Returns the name of the ID field of this query.

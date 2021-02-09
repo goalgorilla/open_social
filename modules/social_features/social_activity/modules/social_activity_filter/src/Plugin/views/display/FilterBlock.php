@@ -2,7 +2,7 @@
 
 namespace Drupal\social_activity_filter\Plugin\views\display;
 
-use Drupal\Console\Core\Utils\NestedArray;
+use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\ReplaceCommand;
 use Drupal\Core\Form\FormStateInterface;
@@ -115,7 +115,15 @@ class FilterBlock extends ModeBlock {
     $allow_settings += array_filter($this->getOption('allow'));
     $block_configuration = $block->getConfiguration();
 
-    if ($vid = $form_state->get('new_options_tags')) {
+    if (isset($block_configuration['delta'])) {
+      $delta = $block_configuration['delta'];
+    }
+    else {
+      $triggered = $form_state->getTriggeringElement();
+      $delta = is_int($triggered['#parents'][1]) ? $triggered['#parents'][1] : '';
+    }
+
+    if ($vid = $form_state->get('new_options_tags_' . $delta)) {
       $opt = $this->getTermOptionslist($vid);
     }
     else {
@@ -137,8 +145,12 @@ class FilterBlock extends ModeBlock {
             '#empty_value' => '_none',
             '#ajax' => [
               'callback' => [static::class, 'updateTagsOptions'],
-              'wrapper' => 'edit-block-term-wrapper',
+              'wrapper' => 'edit-block-term-wrapper-' . $delta,
             ],
+          ];
+          $form['override']['delta'] = [
+            '#type' => 'hidden',
+            '#value' => $delta,
           ];
           break;
 
@@ -155,7 +167,7 @@ class FilterBlock extends ModeBlock {
             '#options' => $opt,
             '#multiple' => TRUE,
             '#required' => !empty($opt) ? TRUE : FALSE,
-            '#prefix' => '<div id="edit-block-term-wrapper" class="' . $hidden . '">',
+            '#prefix' => '<div id="edit-block-term-wrapper-' . $delta . '" class="' . $hidden . '">',
             '#suffix' => '</div>',
           ];
           break;
@@ -194,7 +206,7 @@ class FilterBlock extends ModeBlock {
 
     // Save it & use to build new_options list tags.
     if (isset($values['vocabulary'])) {
-      $form_state->set('new_options_tags', $values['vocabulary']);
+      $form_state->set('new_options_tags_' . $values['delta'], $values['vocabulary']);
     }
     return $element;
   }
@@ -206,6 +218,7 @@ class FilterBlock extends ModeBlock {
 
     // Check if there is triggered parent of element.
     if ($triggered = $form_state->getTriggeringElement()) {
+      $delta = is_int($triggered['#parents'][1]) ? $triggered['#parents'][1] : '';
 
       // Build array of parents for triggered child element.
       $parents = $triggered['#array_parents'];
@@ -217,7 +230,7 @@ class FilterBlock extends ModeBlock {
 
       // Return child element.
       $response = new AjaxResponse();
-      $response->addCommand(new ReplaceCommand('#edit-block-term-wrapper', $element));
+      $response->addCommand(new ReplaceCommand('#edit-block-term-wrapper-' . $delta, $element));
 
       return $response;
     }
@@ -229,15 +242,19 @@ class FilterBlock extends ModeBlock {
   public function blockSubmit(ViewsBlock $block, $form, FormStateInterface $form_state) {
     parent::blockSubmit($block, $form, $form_state);
 
-    if ($items_per_page = $form_state->getValue(['override', 'tags'])) {
-      $block->setConfigurationValue('tags', $items_per_page);
+    if ($tags = $form_state->getValue(['override', 'tags'])) {
+      $block->setConfigurationValue('tags', $tags);
     }
     $form_state->unsetValue(['override', 'tags']);
 
-    if ($items_per_page = $form_state->getValue(['override', 'vocabulary'])) {
-      $block->setConfigurationValue('vocabulary', $items_per_page);
+    if ($vocabulary = $form_state->getValue(['override', 'vocabulary'])) {
+      $block->setConfigurationValue('vocabulary', $vocabulary);
     }
     $form_state->unsetValue(['override', 'vocabulary']);
+
+    // Always save delta of element.
+    $delta = $form_state->getValue(['override', 'delta']);
+    $block->setConfigurationValue('delta', $delta);
 
     $form_state->setRebuild();
   }

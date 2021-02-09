@@ -3,8 +3,11 @@
 namespace Drupal\social_event_content_block\Plugin\ContentBlock;
 
 use Drupal\Core\Database\Query\SelectInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface;
 use Drupal\social_content_block\ContentBlockBase;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Provides a content block for events.
@@ -21,7 +24,43 @@ use Drupal\social_content_block\ContentBlockBase;
  *   },
  * )
  */
-class EventContentBlock extends ContentBlockBase {
+class EventContentBlock extends ContentBlockBase implements ContainerFactoryPluginInterface {
+
+  /**
+   * Module handler.
+   *
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface
+   */
+  protected $moduleHandler;
+
+  /**
+   * BookAddBlock constructor.
+   *
+   * @param array $configuration
+   *   The given configuration.
+   * @param string $plugin_id
+   *   The given plugin id.
+   * @param mixed $plugin_definition
+   *   The given plugin definition.
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
+   *   Module handler.
+   */
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, ModuleHandlerInterface $module_handler) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition);
+    $this->moduleHandler = $module_handler;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    return new static(
+      $configuration,
+      $plugin_id,
+      $plugin_definition,
+      $container->get('module_handler')
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -116,7 +155,7 @@ class EventContentBlock extends ContentBlockBase {
 
             default:
               // If we can't handle it allow other modules a chance.
-              \Drupal::moduleHandler()->alter('social_event_content_block_date_range', $range, $field_value);
+              $this->moduleHandler->alter('social_event_content_block_date_range', $range, $field_value);
           }
           // Only apply range constraints if any were actually set.
           if (isset($range['start'])) {
