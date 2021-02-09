@@ -36,9 +36,10 @@ Feature: Create Landing Page and add Featured Content section with user profile
 
     # Open stream/profile pages as LU
     When I click "Read more"
-    Then I should see the link "See full profile"
-    When I click "See full profile"
-    Then I should see "Open teaser profile has not shared profile information."
+    Then I should see the link "Information"
+    When I click "Information"
+    Then I should see "Contact information"
+    And I should see "user_profile_1@example.localhost"
 
     # See as AN
     Given I logout
