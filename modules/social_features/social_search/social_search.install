@@ -156,3 +156,41 @@ function social_search_update_8903() {
   $search_groups->set($setting, -15)->save();
   $search_users->set($setting, -15)->save();
 }
+
+/**
+ * Configuration update: Enable Entity Access By Field processor.
+ */
+function social_search_update_8904() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_search', 'social_search_update_8904');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Update Search index.
+ */
+function social_search_update_8905() {
+  try {
+    $indexes = [
+      'social_all',
+      'social_content',
+    ];
+
+    foreach ($indexes as $index) {
+      $index = Index::load($index);
+      if ($index !== NULL && $index->status()) {
+        $index->save();
+        $index->clear();
+        $index->reindex();
+      }
+    }
+  }
+  catch (EntityStorageException $e) {
+    \Drupal::logger('social_search')->info($e->getMessage());
+  }
+}
