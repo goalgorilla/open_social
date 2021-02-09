@@ -15,10 +15,10 @@ default:
       contexts:
         - Drupal\social\Behat\FeatureContext
         - Drupal\social\Behat\SocialDrupalContext
+        - Drupal\social\Behat\SocialMessageContext
         - Drupal\social\Behat\SocialMinkContext
         - Drupal\DrupalExtension\Context\BatchContext
         - Drupal\DrupalExtension\Context\ConfigContext
-        - Drupal\DrupalExtension\Context\MessageContext
         - Drupal\social\Behat\PostContext
         - Drupal\social\Behat\EmailContext
   extensions:
@@ -51,4 +51,5 @@ default:
           'Main content': '.region--content'
           'Main content front': '.region--content'
           'Sidebar second': 'aside[role=complementary]'
+          'Modal': '#drupal-modal'
           'Modal footer': '.modal-footer'
