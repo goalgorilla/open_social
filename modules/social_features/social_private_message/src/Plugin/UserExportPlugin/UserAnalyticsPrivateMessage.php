@@ -2,6 +2,7 @@
 
 namespace Drupal\social_private_message\Plugin\UserExportPlugin;
 
+use Drupal\Core\Entity\ContentEntityStorageInterface;
 use Drupal\social_user_export\Plugin\UserExportPluginBase;
 use Drupal\user\UserInterface;
 
@@ -31,9 +32,9 @@ class UserAnalyticsPrivateMessage extends UserExportPluginBase {
 
     try {
       $storage = $this->entityTypeManager->getStorage('private_message');
-      if (!empty($storage)) {
-        $query = $storage->getQuery();
-        $value = (int) $query->condition('owner', $entity->id())
+      if ($storage instanceof ContentEntityStorageInterface) {
+        $value = (int) $storage->getQuery()
+          ->condition('owner', $entity->id())
           ->count()
           ->execute();
       }

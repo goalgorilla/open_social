@@ -13,6 +13,11 @@ use Symfony\Component\HttpFoundation\Request;
 class SocialPostAlbumAjaxCommentsController extends AjaxCommentsController {
 
   /**
+   * The suffix for wrapper identifier of the comments section.
+   */
+  const WRAPPER_ID_SUFFIX = '-modal';
+
+  /**
    * {@inheritdoc}
    */
   public function socialAdd(Request $request, EntityInterface $entity, $field_name, $pid = NULL) {
@@ -38,9 +43,14 @@ class SocialPostAlbumAjaxCommentsController extends AjaxCommentsController {
     $form = $this->entityFormBuilder()->getForm($comment);
     $this->tempStore->setSelector('form_html_id', $form['#attributes']['id']);
 
+    $field = $this->renderCommentField($entity, $field_name);
+    $field['#attributes']['id'] .= self::WRAPPER_ID_SUFFIX;
+
+    $selectors = $this->tempStore->getSelectors($request);
+
     $response->addCommand(new ReplaceCommand(
-      $this->tempStore->getSelectors($request)['wrapper_html_id'] . '-modal',
-      $this->renderCommentField($entity, $field_name)
+      $selectors['wrapper_html_id'] . self::WRAPPER_ID_SUFFIX,
+      $field
     ), TRUE);
 
     $this->tempStore->deleteAll();

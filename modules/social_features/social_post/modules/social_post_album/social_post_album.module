@@ -9,6 +9,7 @@ use Drupal\Component\Serialization\Json;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 use Drupal\social_post\Entity\PostInterface;
+use Drupal\social_post_album\Controller\SocialPostAlbumAjaxCommentsController;
 
 /**
  * Implements hook_theme().
@@ -75,17 +76,12 @@ function social_post_album_preprocess_field__post__type__image__album(&$variable
  * Implements hook_preprocess_HOOK().
  */
 function social_post_album_preprocess_field__field_post_comments(&$variables) {
-  $route_names = [
-    'social_post_album.ajax_comments.add',
-    'social_post_album.image_popup_render_original',
-  ];
-
   if (
-    in_array($variables['element']['#view_mode'], ['_custom', 'album']) &&
-    in_array(\Drupal::routeMatch()->getRouteName(), $route_names) &&
+    $variables['element']['#view_mode'] === 'album' &&
+    \Drupal::routeMatch()->getRouteName() === 'social_post_album.image_popup_render_original' &&
     \Drupal::moduleHandler()->moduleExists('social_ajax_comments')
   ) {
-    $variables['attributes']['id'] .= '-modal';
+    $variables['attributes']['id'] .= SocialPostAlbumAjaxCommentsController::WRAPPER_ID_SUFFIX;
   }
 }
 

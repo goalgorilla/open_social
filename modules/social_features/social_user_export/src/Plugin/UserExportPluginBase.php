@@ -9,6 +9,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\profile\Entity\ProfileInterface;
+use Drupal\profile\ProfileStorageInterface;
 use Drupal\taxonomy\TermInterface;
 use Drupal\user\UserInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -128,13 +129,8 @@ abstract class UserExportPluginBase extends PluginBase implements UserExportPlug
 
     try {
       $storage = $this->entityTypeManager->getStorage('profile');
-      if (!empty($storage)) {
-        $user_profile = $storage->loadByUser($entity, 'profile', TRUE);
-
-        // @todo Remove once #3005113 is fixed in the profile module.
-        if ($user_profile === FALSE) {
-          $user_profile = NULL;
-        }
+      if ($storage instanceof ProfileStorageInterface) {
+        $user_profile = $storage->loadByUser($entity, 'profile');
       }
     }
     catch (\Exception $e) {
