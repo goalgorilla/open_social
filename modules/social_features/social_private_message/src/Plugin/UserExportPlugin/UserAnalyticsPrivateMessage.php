@@ -29,7 +29,6 @@ class UserAnalyticsPrivateMessage extends UserExportPluginBase {
   public function getValue(UserInterface $entity) {
     $value = '';
 
-    /** @var \Drupal\private_message\Entity\PrivateMessage $storage */
     try {
       $storage = $this->entityTypeManager->getStorage('private_message');
       if (!empty($storage)) {
