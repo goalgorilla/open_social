@@ -26,9 +26,8 @@ Feature: Create Landing Page and add Featured Content section with user profile
     And I wait for AJAX to finish
 
     # Set URL Alias
-    And I click "URL path settings"
     And I set alias as "landingpage-teaser-profile"
-    And I press "Save"
+    And I press "Create landing page"
 
     # Ses as LU
     Then I should see "Landing page This is a dynamic page has been created."
