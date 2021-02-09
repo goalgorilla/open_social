@@ -31,7 +31,6 @@ Feature: Create Landing Page and add Featured Content section with user profile
 
     # Ses as LU
     Then I should see "Landing page This is a dynamic page has been created."
-    And I should see "Member"
     And I should see the link "Open teaser profile"
     And I should see the link "Read more"
 
@@ -44,7 +43,6 @@ Feature: Create Landing Page and add Featured Content section with user profile
     # See as AN
     Given I logout
     And I go to "landingpage-teaser-profile"
-    Then I should see "Member"
     And I should see the link "Open teaser profile"
     And I should see the link "Read more"
 
