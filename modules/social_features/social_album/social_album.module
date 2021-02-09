@@ -15,6 +15,7 @@ use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
 use Drupal\social_album\Form\SocialAlbumImageForm;
 use Drupal\social_album\Form\SocialAlbumPostForm;
+use Drupal\social_album\Plugin\Field\FieldWidget\SocialAlbumOptionsSelectWidget;
 
 /**
  * Implements hook_theme().
@@ -469,25 +470,22 @@ function _social_album_post_submit(array $form, FormStateInterface $form_state) 
       return;
     }
 
-    $mapping = [
-      '1' => 'public',
-      '2' => 'community',
-      '3' => 'group',
-    ];
     // Add default content visibility based on post visibility.
-    // @todo ensure this is more flexible.
-    $post_visibility = $form_state->getValue('field_visibility');
-    // Lets try and map it if possible.
-    if (!empty($post_visibility)) {
-      $default_visibility = $mapping[$post_visibility[0]['value']];
-      $node = \Drupal::entityTypeManager()->getStorage('node')->create([
-        'type' => 'album',
-        'title' => $input['title'],
-        'field_content_visibility' => $default_visibility,
-      ]);
-
-      $node->save();
+    if ($form_state->hasValue('field_visibility')) {
+      $post_visibility = $form_state->getValue(['field_visibility', 0, 'value']);
+      $default_visibility = SocialAlbumOptionsSelectWidget::VISIBILITY_MAPPING[$post_visibility];
     }
+    else {
+      $default_visibility = 'community';
+    }
+
+    $node = \Drupal::entityTypeManager()->getStorage('node')->create([
+      'type' => 'album',
+      'title' => $input['title'],
+      'field_content_visibility' => $default_visibility,
+    ]);
+
+    $node->save();
 
     \Drupal::service('social_group.set_groups_for_node_service')->addGroupContent($node, $post->field_recipient_group->entity);
 

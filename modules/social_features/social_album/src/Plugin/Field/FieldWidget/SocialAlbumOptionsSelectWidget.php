@@ -25,6 +25,22 @@ use Drupal\Core\Form\FormStateInterface;
 class SocialAlbumOptionsSelectWidget extends OptionsSelectWidget {
 
   /**
+   * The visibility options mapping.
+   *
+   * The associative array where keys are node options and values are the
+   * corresponding post options.
+   *
+   * @see field.storage.node.field_content_visibility.yml
+   * @see field.storage.post.field_visibility.yml
+   */
+  const VISIBILITY_MAPPING = [
+    '0' => 'community',
+    '1' => 'public',
+    '2' => 'community',
+    '3' => 'group',
+  ];
+
+  /**
    * {@inheritdoc}
    */
   protected function getOptions(FieldableEntityInterface $entity) {
@@ -86,18 +102,17 @@ class SocialAlbumOptionsSelectWidget extends OptionsSelectWidget {
       ($title = $form_state->getValue([$field, 'title']))
     ) {
       if ($form_state->getTriggeringElement()['#name'] === 'op' && $has_images) {
-        $mapping = [
-          '1' => 'public',
-          '2' => 'community',
-          '3' => 'group',
-        ];
         // Add default content visibility based on post visibility.
-        $post_visibility = $form_state->getValue('field_visibility');
-        $default_visibility = 'community';
-        // Lets try and map it if possible.
-        if (!empty($post_visibility)) {
-          $default_visibility = $mapping[$post_visibility[0]];
+        if ($form_state->hasValue('field_visibility')) {
+          $post_visibility = $form_state->getValue(['field_visibility', 0]);
+
+          // Lets try and map it if possible.
+          $default_visibility = self::VISIBILITY_MAPPING[$post_visibility];
         }
+        else {
+          $default_visibility = 'community';
+        }
+
         $node = \Drupal::entityTypeManager()->getStorage('node')->create([
           'type' => 'album',
           'title' => $title,
