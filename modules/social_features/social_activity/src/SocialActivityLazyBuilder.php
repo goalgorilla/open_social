@@ -3,6 +3,7 @@
 namespace Drupal\social_activity;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Security\TrustedCallbackInterface;
 use Drupal\views\ViewExecutableFactory;
 
 /**
@@ -10,7 +11,7 @@ use Drupal\views\ViewExecutableFactory;
  *
  * @package Drupal\social_activity
  */
-class SocialActivityLazyBuilder {
+class SocialActivityLazyBuilder implements TrustedCallbackInterface {
 
   /**
    * The entity type manager.
@@ -37,6 +38,13 @@ class SocialActivityLazyBuilder {
   public function __construct(EntityTypeManagerInterface $entity_type_manager, ViewExecutableFactory $view_executable) {
     $this->entityTypeManager = $entity_type_manager;
     $this->viewExecutable = $view_executable;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function trustedCallbacks() {
+    return ['viewsLazyBuild'];
   }
 
   /**

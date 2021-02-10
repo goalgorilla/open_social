@@ -2,10 +2,10 @@
 
 namespace Drupal\social_post;
 
-use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\EntityViewBuilder;
 use Drupal\Core\Language\LanguageManagerInterface;
+use Drupal\Core\Entity\EntityRepositoryInterface;
 use Drupal\Core\Theme\Registry;
 use Drupal\group\Entity\Group;
 use Drupal\message\Entity\MessageTemplate;
@@ -31,8 +31,8 @@ class PostViewBuilder extends EntityViewBuilder {
    *
    * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
    *   The entity type definition.
-   * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
-   *   The entity manager service.
+   * @param \Drupal\Core\Entity\EntityRepositoryInterface $entity_repository
+   *   The entity repository service.
    * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
    *   The language manager.
    * @param \Drupal\Core\Theme\Registry $theme_registry
@@ -40,8 +40,8 @@ class PostViewBuilder extends EntityViewBuilder {
    * @param \Drupal\social_group\SocialGroupHelperService $social_group_helper_service
    *   The social group helper service.
    */
-  public function __construct(EntityTypeInterface $entity_type, EntityManagerInterface $entity_manager, LanguageManagerInterface $language_manager, Registry $theme_registry = NULL, SocialGroupHelperService $social_group_helper_service) {
-    parent::__construct($entity_type, $entity_manager, $language_manager, $theme_registry);
+  public function __construct(EntityTypeInterface $entity_type, EntityRepositoryInterface $entity_repository, LanguageManagerInterface $language_manager, Registry $theme_registry = NULL, SocialGroupHelperService $social_group_helper_service) {
+    parent::__construct($entity_type, $entity_repository, $language_manager, $theme_registry);
 
     $this->socialGroupHelperService = $social_group_helper_service;
   }
@@ -52,7 +52,7 @@ class PostViewBuilder extends EntityViewBuilder {
   public static function createInstance(ContainerInterface $container, EntityTypeInterface $entity_type) {
     return new static(
       $entity_type,
-      $container->get('entity.manager'),
+      $container->get('entity.repository'),
       $container->get('language_manager'),
       $container->get('theme.registry'),
       $container->get('social_group.helper_service')
@@ -210,7 +210,7 @@ class PostViewBuilder extends EntityViewBuilder {
       $links['edit'] = [
         'title' => t('Edit'),
         'weight' => 10,
-        'url' => $entity->urlInfo('edit-form'),
+        'url' => $entity->toUrl('edit-form'),
         'query' => ['destination' => \Drupal::destination()->get()],
       ];
     }
@@ -218,7 +218,7 @@ class PostViewBuilder extends EntityViewBuilder {
       $links['delete'] = [
         'title' => t('Delete'),
         'weight' => 100,
-        'url' => $entity->urlInfo('delete-form'),
+        'url' => $entity->toUrl('delete-form'),
         'query' => ['destination' => \Drupal::destination()->get()],
       ];
     }

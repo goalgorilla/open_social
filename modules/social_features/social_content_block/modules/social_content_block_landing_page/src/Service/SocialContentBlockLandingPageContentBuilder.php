@@ -4,6 +4,7 @@ namespace Drupal\social_content_block_landing_page\Service;
 
 use Drupal\block_content\BlockContentInterface;
 use Drupal\Core\Render\Element;
+use Drupal\Core\Security\TrustedCallbackInterface;
 use Drupal\social_content_block\ContentBuilder;
 
 /**
@@ -11,7 +12,7 @@ use Drupal\social_content_block\ContentBuilder;
  *
  * @package Drupal\social_content_block_landing_page\Service
  */
-class SocialContentBlockLandingPageContentBuilder extends ContentBuilder {
+class SocialContentBlockLandingPageContentBuilder extends ContentBuilder implements TrustedCallbackInterface {
 
   /**
    * {@inheritdoc}
@@ -83,6 +84,13 @@ class SocialContentBlockLandingPageContentBuilder extends ContentBuilder {
     }
 
     return $link;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function trustedCallbacks() {
+    return ['build'];
   }
 
 }

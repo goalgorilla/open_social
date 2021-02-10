@@ -21,7 +21,10 @@ function social_follow_tag_theme() {
       'base hook' => 'social_tagging_split',
     ],
     'search_follow_tag' => [
-      'variables' => ['tags' => NULL],
+      'variables' => [
+        'tagstitle' => NULL,
+        'tags' => NULL,
+      ],
     ],
   ];
 
@@ -63,13 +66,18 @@ function social_follow_tag_preprocess_social_tagging_split(&$variables) {
     if (!isset($parent_tag['tags'])) {
       continue;
     }
+
+    // Get entity type for rendered tags.
+    $entity_type = $variables['entity_type'];
+
+    /** @var \Drupal\taxonomy\TermStorageInterface $term_storage */
+    $term_storage = \Drupal::entityTypeManager()->getStorage('taxonomy_term');
+
     // Iterate over an array with terms in each category.
     foreach ($parent_tag['tags'] as $tag_id => $tag_info) {
-      /** @var \Drupal\taxonomy\TermStorageInterface $term_storage */
-      $term_storage = \Drupal::entityTypeManager()->getStorage('taxonomy_term');
       $current_term = $term_storage->load($tag_id);
       // Must be a valid Term.
-      if (!$current_term instanceof TermInterface) {
+      if (is_null($current_term)) {
         continue;
       }
       // Get current term parent.
@@ -86,10 +94,12 @@ function social_follow_tag_preprocess_social_tagging_split(&$variables) {
         'url' => $tag_info['url'],
         'name' => $tag_info['name'],
         'flag' => social_follow_taxonomy_flag_link($current_term),
-        'related_nodes_count' => social_follow_taxonomy_related_nodes_count($current_term, 'social_tagging'),
+        'related_entity_count' => social_follow_taxonomy_related_entity_count($current_term, 'social_tagging', $entity_type),
         'followers_count' => social_follow_taxonomy_term_followers_count($current_term),
         'follow' => social_follow_taxonomy_term_followed($current_term),
       ];
+
+      $variables['#cache']['tags'][] = "follow_tag_$entity_type:$tag_id";
     }
   }
 
@@ -109,6 +119,8 @@ function social_follow_tag_preprocess_social_tagging_nosplit(&$variables) {
 
   $term_storage = \Drupal::entityTypeManager()->getStorage('taxonomy_term');
 
+  // Get entity type for rendered tags.
+  $entity_type = $variables['entity_type'];
   foreach ($variables['tags'] as $tag_name => $tag_info) {
     // Get term id from the transmitted url string.
     $term_id_from_string = explode('/search/content?tag%5B%5D=', $tag_info);
@@ -126,10 +138,13 @@ function social_follow_tag_preprocess_social_tagging_nosplit(&$variables) {
       'url' => $tag_info,
       'name' => $tag_name,
       'flag' => social_follow_taxonomy_flag_link($current_term),
-      'related_nodes_count' => social_follow_taxonomy_related_nodes_count($current_term, 'social_tagging'),
+      'related_entity_count' => social_follow_taxonomy_related_entity_count($current_term, 'social_tagging', $entity_type),
       'followers_count' => social_follow_taxonomy_term_followers_count($current_term),
       'follow' => social_follow_taxonomy_term_followed($current_term),
     ];
+
+    $tag_id = $current_term->id();
+    $variables['#cache']['tags'][] = "follow_tag_$entity_type:$tag_id";
   }
 
   $variables['#cache']['tags'][] = 'flagging_list';
@@ -148,7 +163,8 @@ function social_follow_tag_entity_update(EntityInterface $entity) {
   /** @var \Drupal\social_queue_storage\Entity\QueueStorageEntity $entity */
   if ($entity->getEntityTypeId() === 'node') {
     // Prepare list of tags before update node.
-    if ($original_entity = $entity->original) {
+    if (!is_null($entity->original)) {
+      $original_entity = $entity->original;
       if ($original_entity->hasField('social_tagging')) {
         if (!empty($original_entity->get('social_tagging')->getValue())) {
           $original_tags = $original_entity->get('social_tagging')->getValue();

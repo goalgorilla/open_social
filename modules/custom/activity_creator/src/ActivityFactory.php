@@ -141,7 +141,7 @@ class ActivityFactory extends ControllerBase {
     ];
 
     // Check if aggregation is enabled for this message type.
-    // @TODO: Consider if we should put aggregation to separate service.
+    // @todo Consider if we should put aggregation to separate service.
     if ($this->getAggregationSettings($message)) {
       $activities = $this->buildAggregatedActivites($data, $activity_fields);
     }
@@ -263,7 +263,7 @@ class ActivityFactory extends ControllerBase {
         // If user already have related activity we remove it and create new.
         // And we also remove related activities from common streams.
         if ($related_activity->getOwnerId() == $this->getActor($data) || in_array($destination, $common_destinations)) {
-          // @TODO: Consider if need to delete or unpublish old activites.
+          // @todo Consider if need to delete or unpublish old activites.
           $related_activity->delete();
         }
         else {
@@ -346,7 +346,7 @@ class ActivityFactory extends ControllerBase {
     // for create_comment_reply messages.
     if ($data['message_template'] === 'create_comment_reply') {
       $comment_storage = $this->entityTypeManager->getStorage('comment');
-      // @TODO: Check if comment published?
+      // @todo Check if comment published?
       $comment = $comment_storage->load($related_object['target_id']);
       if ($comment) {
         $parent_comment = $comment->getParentComment();
@@ -361,7 +361,7 @@ class ActivityFactory extends ControllerBase {
     // We return commented entity as related object for all other comments.
     elseif (isset($related_object['target_type']) && $related_object['target_type'] === 'comment') {
       $comment_storage = $this->entityTypeManager->getStorage('comment');
-      // @todo: Check if comment published?
+      // @todo Check if comment published?
       $comment = $comment_storage->load($related_object['target_id']);
       if ($comment) {
         $commented_entity = $comment->getCommentedEntity();

@@ -1,7 +1,16 @@
 {{ attach_library('social_post_album/social-post-album--post') }}
 
+{# Add class if we have only 1 image #}
+{% if total_post_image_count == 1 %}
+{%
+  set classes = [
+    'single-image',
+  ]
+%}
+{% endif %}
+
 {# @see field--field-post-image.html.twig #}
-<div class="social-post-album--post-gallery">
+<div{{ attributes.addClass(classes, 'social-post-album--post-gallery') }}>
   {% for index, item in items %}
     <div class="post-with-image">
       <a{{ item.attributes }}">

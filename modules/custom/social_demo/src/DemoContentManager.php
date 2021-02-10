@@ -24,6 +24,8 @@ class DemoContentManager extends DefaultPluginManager {
       'Drupal\social_demo\DemoContentInterface',
       'Drupal\social_demo\Annotation\DemoContent'
     );
+    $this->alterInfo('demo_content_plugin_info');
+    $this->setCacheBackend($cache_backend, 'demo_content_plugins');
   }
 
   /**

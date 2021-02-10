@@ -29,7 +29,7 @@ class Page extends DemoNode {
   protected $fileStorage;
 
   /**
-   * Page constructor.
+   * {@inheritdoc}
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition, DemoContentParserInterface $parser, UserStorageInterface $user_storage, EntityStorageInterface $group_storage, FileStorageInterface $file_storage) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $parser, $user_storage, $group_storage);
@@ -46,9 +46,9 @@ class Page extends DemoNode {
       $plugin_id,
       $plugin_definition,
       $container->get('social_demo.yaml_parser'),
-      $container->get('entity.manager')->getStorage('user'),
-      $container->get('entity.manager')->getStorage('group'),
-      $container->get('entity.manager')->getStorage('file')
+      $container->get('entity_type.manager')->getStorage('user'),
+      $container->get('entity_type.manager')->getStorage('group'),
+      $container->get('entity_type.manager')->getStorage('file')
     );
   }
 

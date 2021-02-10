@@ -846,9 +846,8 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
   if (in_array($form_id, $membership_add_forms, TRUE) && \Drupal::routeMatch()->getRouteName() !== 'grequest.group_request_membership_approve') {
     // Lets add the new select 2 widget to add members to a group.
     $form['entity_id']['widget'][0]['target_id'] = [
-      '#title' => t('Find people by name'),
+      '#title' => t('Find people by name or email address'),
       '#type' => 'select2',
-      '#description' => t('You can enter or paste multiple entries separated by comma or semicolon'),
       '#multiple' => TRUE,
       '#tags' => TRUE,
       '#autocomplete' => TRUE,
@@ -1006,10 +1005,8 @@ function _social_group_unique_members($element, &$form_state, $complete_form) {
 function _social_group_inform_group_type_selection() {
   $text = t('Please note that changing the group type will also change the
   visibility of the group content and the way users can join the group.');
-  drupal_set_message($text, 'info');
-  $alert = ['#type' => 'status_messages'];
   $ajax_response = new AjaxResponse();
-  $ajax_response->addCommand(new HtmlCommand('#group-type-result', $alert));
+  $ajax_response->addCommand(new HtmlCommand('#group-type-result', $text));
 
   return $ajax_response;
 }
@@ -1790,20 +1787,18 @@ function social_group_field_info_alter(&$info) {
  * Implements hook_entity_base_field_info_alter().
  */
 function social_group_entity_base_field_info_alter(&$fields, EntityTypeInterface $entity_type) {
-  $entity_types = ['node'];
-  if (in_array($entity_type->id(), $entity_types)) {
-    if (isset($fields['groups'])) {
-      /** @var \Drupal\Core\Field\FieldDefinitionInterface $fields['groups'] */
-      $fields['groups']->setLabel(t('Group'));
-      $fields['groups']->setDisplayOptions('form', [
+  if ($entity_type->id() === 'node' && isset($fields['groups'])) {
+    /** @var \Drupal\Core\Field\FieldDefinitionInterface[] $fields */
+    $fields['groups']
+      ->setLabel(t('Group'))
+      ->setDescription('')
+      ->setSetting('handler', 'social')
+      ->setDisplayOptions('form', [
         'type' => 'options_select',
         'settings' => [],
         'weight' => 16,
-      ]);
-      $fields['groups']->setDisplayConfigurable('form', TRUE);
-      $fields['groups']->setDescription('');
-
-    }
+      ])
+      ->setDisplayConfigurable('form', TRUE);
   }
 }
 
@@ -2481,7 +2476,7 @@ function social_group_preprocess_field(&$variables) {
  *
  * @param string $field_name
  *   The field name to create a unique id for.
- * @param string|TranslatableMarkup $data_title
+ * @param \Drupal\Core\StringTranslation\TranslatableMarkup $data_title
  *   The title of the pop-up.
  * @param string $description
  *   A string containing the description, this needs to be rendered markup.
@@ -2489,16 +2484,11 @@ function social_group_preprocess_field(&$variables) {
  * @return array
  *   The render array containing the tooltip.
  */
-function social_group_render_tooltip($field_name, $data_title, $description) {
+function social_group_render_tooltip($field_name, TranslatableMarkup $data_title, $description) {
   $build = [];
   $id = Html::getUniqueId('tooltip-' . $field_name);
   $icon = Bootstrap::glyphicon('question-sign');
   $title = '';
-
-  // If it's a string, lets translate it first.
-  if (!$data_title instanceof TranslatableMarkup) {
-    t($data_title);
-  }
 
   // We special case this for the hero.
   if ($field_name === 'group_hero') {
