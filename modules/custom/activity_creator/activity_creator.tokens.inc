@@ -6,6 +6,7 @@
  */
 
 use Drupal\Core\Render\BubbleableMetadata;
+use Drupal\user\UserInterface;
 
 /**
  * Implements hook_token_info().
@@ -62,8 +63,7 @@ function activity_creator_tokens($type, $tokens, array $data, array $options, Bu
                     ->getStorage('user')
                     ->load($target_id);
 
-                  if (!empty($recipient_user)) {
-                    /** @var \Drupal\user\Entity\User $recipient_user_entity */
+                  if ($recipient_user instanceof UserInterface) {
                     $replacements[$original] = $recipient_user->getDisplayName();
                   }
                 }
