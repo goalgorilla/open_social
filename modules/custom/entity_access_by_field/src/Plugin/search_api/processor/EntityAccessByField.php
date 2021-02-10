@@ -72,7 +72,7 @@ class EntityAccessByField extends ProcessorPluginBase {
    *   The database connection.
    */
   public function getDatabase() {
-    return $this->database ?: \Drupal::database();
+    return $this->database;
   }
 
   /**
@@ -95,7 +95,7 @@ class EntityAccessByField extends ProcessorPluginBase {
    *   The current user.
    */
   public function getCurrentUser() {
-    return $this->currentUser ?: \Drupal::currentUser();
+    return $this->currentUser;
   }
 
   /**
