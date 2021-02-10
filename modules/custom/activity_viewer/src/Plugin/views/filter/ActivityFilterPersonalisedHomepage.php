@@ -5,7 +5,7 @@ namespace Drupal\activity_viewer\Plugin\views\filter;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Database\Query\Condition;
 use Drupal\Core\Extension\ModuleHandlerInterface;
-use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\social_group\SocialGroupHelperService;
 use Drupal\views\Plugin\views\filter\FilterPluginBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -176,15 +176,15 @@ class ActivityFilterPersonalisedHomepage extends FilterPluginBase {
   /**
    * Gets list of node IDs to which user has access.
    *
-   * @param \Drupal\Core\Session\AccountProxyInterface $user
-   *  The current user.
+   * @param \Drupal\Core\Session\AccountInterface $user
+   *   The current user.
    * @param array $memberships
-   *  List of user memberships.
+   *   List of user memberships.
    *
    * @return array
    *   List of node IDs.
    */
-  protected function getAvailableNodeIds(AccountProxyInterface $user, array $memberships) {
+  protected function getAvailableNodeIds(AccountInterface $user, array $memberships) {
     $query = $this->connection->select('node_field_data', 'nfd');
     $query->fields('nfd', ['nid']);
     $query->leftJoin('node__field_content_visibility', 'nfcv', 'nfcv.entity_id = nfd.nid');
@@ -227,15 +227,15 @@ class ActivityFilterPersonalisedHomepage extends FilterPluginBase {
   /**
    * Gets list of post IDs to which user has access.
    *
-   * @param \Drupal\Core\Session\AccountProxyInterface $user
-   *  The current user.
+   * @param \Drupal\Core\Session\AccountInterface $user
+   *   The current user.
    * @param array $memberships
-   *  List of user memberships.
+   *   List of user memberships.
    *
    * @return array
    *   List of post IDs.
    */
-  protected function getAvailablePostIds(AccountProxyInterface $user, array $memberships) {
+  protected function getAvailablePostIds(AccountInterface $user, array $memberships) {
     $query = $this->connection->select('post_field_data', 'pfd');
     $query->fields('pfd', ['id']);
     $query->leftJoin('post__field_visibility', 'pfv', 'pfv.entity_id = pfd.id');
