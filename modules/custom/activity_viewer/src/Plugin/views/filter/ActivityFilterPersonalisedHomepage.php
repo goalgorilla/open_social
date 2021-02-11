@@ -113,7 +113,7 @@ class ActivityFilterPersonalisedHomepage extends FilterPluginBase {
       'contentmanager',
       'sitemanager',
     ];
-    $nids = $pids = $cids = [];
+    $hide_from_view = $nids = $pids = $cids = [];
 
     // Skip filter for users that have full access to the site content.
     if (!empty(array_intersect($skip_roles, $account->getRoles()))) {
@@ -132,52 +132,53 @@ class ActivityFilterPersonalisedHomepage extends FilterPluginBase {
     // Nodes: retrieve all the nodes to which the user has access.
     if ($account->hasPermission('access content')) {
       $nids = $this->getAvailableNodeIds($account, $group_memberships);
-      $node_access = $or->andConditionGroup();
-      if (!empty($nids) && count($group_memberships) > 0) {
-        $node_access
+      if (!empty($nids)) {
+        $node_access = $or->andConditionGroup()
           ->condition('activity__field_activity_entity.field_activity_entity_target_type', 'node')
-          ->condition('activity__field_activity_entity.field_activity_entity_target_id', $nids, 'IN')
-          ->condition('activity__field_activity_recipient_group.field_activity_recipient_group_target_id', $group_memberships, 'IN');
+          ->condition('activity__field_activity_entity.field_activity_entity_target_id', $nids, 'IN');
+        $or->condition($node_access);
       }
       else {
-        $node_access->isNull('activity__field_activity_recipient_group.field_activity_recipient_group_target_id');
+        $hide_from_view[] = 'node';
       }
-      $or->condition($node_access);
     }
 
     // Posts: retrieve all the posts to which the user has access.
     $pids = $this->getAvailablePostIds($account, $group_memberships);
-    $post_access = $or->andConditionGroup();
-    if (!empty($pids) && count($group_memberships) > 0) {
-      $post_access
+    if (!empty($pids)) {
+      $post_access = $or->andConditionGroup()
         ->condition('activity__field_activity_entity.field_activity_entity_target_type', 'post')
-        ->condition('activity__field_activity_entity.field_activity_entity_target_id', $pids, 'IN')
-        ->condition('activity__field_activity_recipient_group.field_activity_recipient_group_target_id', $group_memberships, 'IN');
+        ->condition('activity__field_activity_entity.field_activity_entity_target_id', $pids, 'IN');
+      $or->condition($post_access);
     }
     else {
-      $post_access->isNull('activity__field_activity_recipient_group.field_activity_recipient_group_target_id');
+      $hide_from_view[] = 'post';
     }
-    $or->condition($post_access);
 
     // Comments: retrieve comments the user has access to.
     if ($account->hasPermission('access comments')) {
       $cids = $this->getAvailableCommentIds($nids, $pids);
-      $comments_access = $or->andConditionGroup();
-      if (!empty($cids) && count($group_memberships) > 0) {
-        $comments_access
+      if (!empty($cids)) {
+        $comments_access = $or->andConditionGroup()
           ->condition('activity__field_activity_entity.field_activity_entity_target_type', 'comment')
-          ->condition('activity__field_activity_entity.field_activity_entity_target_id', $cids, 'IN')
-          ->condition('activity__field_activity_recipient_group.field_activity_recipient_group_target_id', $group_memberships, 'IN');
+          ->condition('activity__field_activity_entity.field_activity_entity_target_id', $cids, 'IN');
+        $or->condition($comments_access);
       }
       else {
-        $comments_access->isNull('activity__field_activity_recipient_group.field_activity_recipient_group_target_id');
+        $hide_from_view[] = 'comment';
       }
-      $or->condition($comments_access);
+    }
+
+    if (!empty($hide_from_view)) {
+      $and_wrapper->condition('activity__field_activity_entity.field_activity_entity_target_type', $hide_from_view, 'NOT IN');
     }
 
     // Lets add all the or conditions to the Views query.
     if (!empty($or->conditions()[0])) {
       $and_wrapper->condition($or);
+    }
+
+    if (!empty($and_wrapper->conditions()[0])) {
       $this->query->addWhere('visibility', $and_wrapper);
     }
   }
@@ -208,24 +209,31 @@ class ActivityFilterPersonalisedHomepage extends FilterPluginBase {
     $query = $this->connection->select('node_field_data', 'nfd');
     $query->fields('nfd', ['nid']);
     $query->leftJoin('node__field_content_visibility', 'nfcv', 'nfcv.entity_id = nfd.nid');
+    $query->leftJoin('group_content_field_data', 'gcfd', 'gcfd.entity_id = nfd.nid');
     $or = $query->orConditionGroup();
     if ($user->isAuthenticated()) {
-      // Nodes for authenticated users.
-      $or->condition('nfcv.field_content_visibility_value', 'community');
+      // Nodes community visibility;
+      $community_access = $or->andConditionGroup()
+        ->condition('nfcv.field_content_visibility_value', ['community', 'public',], 'IN')
+        ->isNull('gcfd.entity_id');
+      $or->condition($community_access);
 
-      // Nodes related to the group where the user is a member.
+      // Node visibility by group.
       if (count($memberships) > 0) {
-        $query->leftJoin('group_content_field_data', 'gcfd', 'gcfd.entity_id = nfd.nid');
         $access_by_group = $or->andConditionGroup();
-        $access_by_group->condition('nfcv.field_content_visibility_value', 'group');
+        $access_by_group->condition('nfcv.field_content_visibility_value', ['group', 'community', 'public',], 'IN');
         $access_by_group->condition('gcfd.type', '%-group_node-%', 'LIKE');
         $access_by_group->condition('gcfd.gid', $memberships, 'IN');
         $or->condition($access_by_group);
       }
     }
-
-    // Public nodes or do not have visibility settings.
-    $or->condition('nfcv.field_content_visibility_value', 'public');
+    else {
+      // Public nodes without group.
+      $anonymous_access = $or->andConditionGroup()
+        ->condition('nfcv.field_content_visibility_value', 'public')
+        ->isNull('gcfd.entity_id');
+      $or->condition($anonymous_access);
+    }
     $or->isNull('nfcv.entity_id');
     $query->condition($or);
 
@@ -238,7 +246,6 @@ class ActivityFilterPersonalisedHomepage extends FilterPluginBase {
       $node_status[] = '0';
     }
     $query->condition('nfd.status', $node_status, 'IN');
-
     $nids = $query->execute()->fetchCol();
 
     return array_unique($nids);
@@ -259,26 +266,34 @@ class ActivityFilterPersonalisedHomepage extends FilterPluginBase {
     $query = $this->connection->select('post_field_data', 'pfd');
     $query->fields('pfd', ['id']);
     $query->leftJoin('post__field_visibility', 'pfv', 'pfv.entity_id = pfd.id');
+    $query->leftJoin('post__field_recipient_group', 'pfrg', 'pfrg.entity_id = pfd.id');
     $or = $query->orConditionGroup();
     if ($user->isAuthenticated()) {
       // Posts for authenticated users if has permission.
       if ($user->hasPermission('view community posts')) {
-        $or->condition('pfv.field_visibility_value', ['0', '2'], 'IN');
+        // Posts community visibility;
+        $community_access = $or->andConditionGroup()
+          ->condition('pfv.field_visibility_value', ['0', '2'], 'IN')
+          ->isNull('pfrg.entity_id');
+        $or->condition($community_access);
       }
 
       // Posts related to the group where the user is a member.
       if (count($memberships) > 0) {
-        $query->leftJoin('post__field_recipient_group', 'pfrg', 'pfrg.entity_id = pfd.id');
         $access_by_group = $or->andConditionGroup();
-        $access_by_group->condition('pfv.field_visibility_value', '3');
+        $access_by_group->condition('pfv.field_visibility_value', ['0', '1', '2', '3'], 'IN');
         $access_by_group->condition('pfrg.field_recipient_group_target_id', $memberships, 'IN');
         $or->condition($access_by_group);
       }
     }
-
-    // Public posts or do not have visibility settings.
-    if ($user->hasPermission('view public posts')) {
-      $or->condition('pfv.field_visibility_value', '1');
+    else {
+      // Public posts or do not have visibility settings.
+      if ($user->hasPermission('view public posts')) {
+        $anonymous_access = $or->andConditionGroup()
+          ->condition('pfv.field_visibility_value', '1')
+          ->isNull('pfrg.entity_id');
+        $or->condition($anonymous_access);
+      }
     }
     $or->isNull('pfv.entity_id');
     $query->condition($or);
