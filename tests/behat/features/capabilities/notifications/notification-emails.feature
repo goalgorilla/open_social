@@ -137,3 +137,11 @@ Feature: Receive email notifications and choose frequency
     And I press "Post"
     And I wait for the queue to be empty
     Then I should not have an email with subject "Notification from Open Social" and "Cathy Willis mentioned you" in the body
+
+    Given I set the configuration item "social_swiftmail.settings" with key "do_not_send_emails_new_users" to 1
+    And I am logged in as "user2"
+    And I am on the homepage
+    And I fill in "Say something to the Community" with "You're going to be notified of this [~user1]!"
+    And I press "Post"
+    And I wait for the queue to be empty
+    Then I should have an email with subject "Notification from Open Social" and "Cathy Willis mentioned you" in the body
