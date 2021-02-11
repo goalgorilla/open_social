@@ -12,6 +12,11 @@ use Drupal\Core\Entity\EntityInterface;
 class SocialCommentViewBuilder extends CommentViewBuilder {
 
   /**
+   * The pager tag.
+   */
+  const PAGER_TAG = 'comments';
+
+  /**
    * {@inheritdoc}
    */
   protected function alterBuild(array &$build, EntityInterface $comment, EntityViewDisplayInterface $display, $view_mode) {
@@ -59,6 +64,19 @@ class SocialCommentViewBuilder extends CommentViewBuilder {
       }
 
     }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function buildMultiple(array $build_list) {
+    $build_list = parent::buildMultiple($build_list);
+
+    $tags = $build_list['pager']['#tags'] ?? [];
+    $tags[] = self::PAGER_TAG;
+    $build_list['pager']['#tags'] = $tags;
+
+    return $build_list;
   }
 
 }

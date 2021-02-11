@@ -5,13 +5,15 @@
  * Social AJAX comments module file.
  */
 
-use Drupal\ajax_comments\Utility;
-use Drupal\comment\CommentInterface;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Template\Attribute;
 use Drupal\Core\Url;
+use Drupal\ajax_comments\Utility;
+use Drupal\comment\CommentInterface;
 use Drupal\node\Entity\Node;
+use Drupal\social_comment\SocialCommentViewBuilder;
 use Drupal\social_post\Entity\Post;
 
 /**
@@ -127,5 +129,35 @@ function social_ajax_comments_ajax_comments_wrapper_id_alter(&$wrapper_html_id, 
     $wrapper_html_id = Html::getId(
       $commented_entity->getEntityTypeId() . '-' . $commented_entity->bundle() . '-' . 'field_post_comments' . '-' . $commented_entity->id()
     );
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function social_ajax_comments_preprocess_pager(&$variables) {
+  if (
+    isset($variables['pager']['#tags']) &&
+    in_array(SocialCommentViewBuilder::PAGER_TAG, $variables['pager']['#tags']) &&
+    ($items = &$variables['items'])
+  ) {
+    _social_ajax_comments_pager($items);
+    _social_ajax_comments_pager($items['pages']);
+  }
+}
+
+/**
+ * Add the CSS class to each element of a pager.
+ *
+ * @param array $items
+ *   The pager sub-elements.
+ */
+function _social_ajax_comments_pager(array &$items) {
+  foreach ($items as &$item) {
+    if (isset($item['href'])) {
+      $attributes = $item['attributes'] ?? new Attribute([]);
+      $attributes->addClass('use-ajax');
+      $item['attributes'] = $attributes;
+    }
   }
 }
