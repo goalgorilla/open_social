@@ -48,36 +48,45 @@ class SocialAlbumConfigOverride implements ConfigFactoryOverrideInterface {
   public function loadOverrides($names) {
     $overrides = [];
 
-    $config_name = 'core.entity_form_display.post.photo.default';
-
-    if (in_array($config_name, $names)) {
-      $overrides[$config_name] = self::DEPENDENCY + [
-        'content' => [
-          'field_album' => [
-            'weight' => 2,
-            'settings' => [],
-            'third_party_settings' => [],
-            'type' => 'social_album_options_select',
-            'region' => 'content',
-          ],
-        ],
-      ];
-    }
-
     $config_names = [
+      'core.entity_form_display.post.photo.default',
       'core.entity_form_display.post.photo.group',
       'core.entity_form_display.post.photo.profile',
-      'core.entity_view_display.post.photo.default',
     ];
 
     foreach ($config_names as $config_name) {
       if (in_array($config_name, $names)) {
-        $overrides[$config_name] = self::DEPENDENCY + [
-          'hidden' => [
-            'field_album' => TRUE,
-          ],
+        $fields = $this->configFactory->getEditable($config_name)
+          ->get('content');
+
+        $weight = $fields['field_post_image']['weight'] + 1;
+
+        foreach ($fields as &$field) {
+          if ($field['weight'] >= $weight) {
+            $field['weight']++;
+          }
+        }
+
+        $fields['field_album'] = [
+          'weight' => $weight,
+          'settings' => [],
+          'third_party_settings' => [],
+          'type' => 'social_album_options_select',
+          'region' => 'content',
         ];
+
+        $overrides[$config_name] = self::DEPENDENCY + ['content' => $fields];
       }
+    }
+
+    $config_name = 'core.entity_view_display.post.photo.default';
+
+    if (in_array($config_name, $names)) {
+      $overrides[$config_name] = self::DEPENDENCY + [
+        'hidden' => [
+          'field_album' => TRUE,
+        ],
+      ];
     }
 
     $config_name = 'core.entity_view_display.post.photo.activity';
