@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Social AJAX comments module file.
+ * The Social AJAX comments module.
  */
 
 use Drupal\Component\Utility\Html;
@@ -13,8 +13,10 @@ use Drupal\Core\Url;
 use Drupal\ajax_comments\Utility;
 use Drupal\comment\CommentInterface;
 use Drupal\node\Entity\Node;
+use Drupal\node\NodeInterface;
 use Drupal\social_comment\SocialCommentViewBuilder;
 use Drupal\social_post\Entity\Post;
+use Drupal\social_post\Entity\PostInterface;
 
 /**
  * Implements hook_entity_display_build_alter().
@@ -120,15 +122,28 @@ function social_ajax_comments_comment_links_alter(array &$links, CommentInterfac
  * Implements hook_ajax_comments_wrapper_id_alter().
  */
 function social_ajax_comments_ajax_comments_wrapper_id_alter(&$wrapper_html_id, ContentEntityInterface $commented_entity, $field_name) {
-  if ($commented_entity instanceof Node && $field_name === 'field_topic_comments') {
-    $wrapper_html_id = Html::getId(
-      $commented_entity->getEntityTypeId() . '-' . $commented_entity->bundle() . '-' . $field_name
-    );
+  if (
+    $commented_entity instanceof NodeInterface &&
+    $field_name === 'field_topic_comments'
+  ) {
+    $wrapper_html_id = Html::getId(sprintf(
+      '%s-%s-%s',
+      $commented_entity->getEntityTypeId(),
+      $commented_entity->bundle(),
+      $field_name
+    ));
   }
-  if ($commented_entity instanceof Post && $field_name === 'field_post_comments') {
-    $wrapper_html_id = Html::getId(
-      $commented_entity->getEntityTypeId() . '-' . $commented_entity->bundle() . '-' . 'field_post_comments' . '-' . $commented_entity->id()
-    );
+  elseif (
+    $commented_entity instanceof PostInterface &&
+    $field_name === 'field_post_comments'
+  ) {
+    $wrapper_html_id = Html::getId(sprintf(
+      '%s-%s-%s-%s',
+      $commented_entity->getEntityTypeId(),
+      $commented_entity->bundle(),
+      $field_name,
+      $commented_entity->id()
+    ));
   }
 }
 
