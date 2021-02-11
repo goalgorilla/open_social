@@ -123,6 +123,7 @@ class ActivityFilterPersonalisedHomepage extends FilterPluginBase {
     $this->ensureMyTable();
     $group_memberships = $this->groupHelper->getAllGroupsForUser($account->id());
     $this->query->addTable('activity__field_activity_entity');
+    $this->query->addTable('activity__field_activity_recipient_group');
 
     // Add queries.
     $and_wrapper = new Condition('AND');
@@ -131,32 +132,47 @@ class ActivityFilterPersonalisedHomepage extends FilterPluginBase {
     // Nodes: retrieve all the nodes to which the user has access.
     if ($account->hasPermission('access content')) {
       $nids = $this->getAvailableNodeIds($account, $group_memberships);
-      if (!empty($nids)) {
-        $node_access = $or->andConditionGroup()
+      $node_access = $or->andConditionGroup();
+      if (!empty($nids) && count($group_memberships) > 0) {
+        $node_access
           ->condition('activity__field_activity_entity.field_activity_entity_target_type', 'node')
-          ->condition('activity__field_activity_entity.field_activity_entity_target_id', $nids, 'IN');
-        $or->condition($node_access);
+          ->condition('activity__field_activity_entity.field_activity_entity_target_id', $nids, 'IN')
+          ->condition('activity__field_activity_recipient_group.field_activity_recipient_group_target_id', $group_memberships, 'IN');
       }
+      else {
+        $node_access->isNull('activity__field_activity_recipient_group.field_activity_recipient_group_target_id');
+      }
+      $or->condition($node_access);
     }
 
     // Posts: retrieve all the posts to which the user has access.
     $pids = $this->getAvailablePostIds($account, $group_memberships);
-    if (!empty($pids)) {
-      $post_access = $or->andConditionGroup()
+    $post_access = $or->andConditionGroup();
+    if (!empty($pids) && count($group_memberships) > 0) {
+      $post_access
         ->condition('activity__field_activity_entity.field_activity_entity_target_type', 'post')
-        ->condition('activity__field_activity_entity.field_activity_entity_target_id', $pids, 'IN');
-      $or->condition($post_access);
+        ->condition('activity__field_activity_entity.field_activity_entity_target_id', $pids, 'IN')
+        ->condition('activity__field_activity_recipient_group.field_activity_recipient_group_target_id', $group_memberships, 'IN');
     }
+    else {
+      $post_access->isNull('activity__field_activity_recipient_group.field_activity_recipient_group_target_id');
+    }
+    $or->condition($post_access);
 
     // Comments: retrieve comments the user has access to.
     if ($account->hasPermission('access comments')) {
       $cids = $this->getAvailableCommentIds($nids, $pids);
-      if (!empty($cids)) {
-        $comments_access = $or->andConditionGroup()
+      $comments_access = $or->andConditionGroup();
+      if (!empty($cids) && count($group_memberships) > 0) {
+        $comments_access
           ->condition('activity__field_activity_entity.field_activity_entity_target_type', 'comment')
-          ->condition('activity__field_activity_entity.field_activity_entity_target_id', $cids, 'IN');
-        $or->condition($comments_access);
+          ->condition('activity__field_activity_entity.field_activity_entity_target_id', $cids, 'IN')
+          ->condition('activity__field_activity_recipient_group.field_activity_recipient_group_target_id', $group_memberships, 'IN');
       }
+      else {
+        $comments_access->isNull('activity__field_activity_recipient_group.field_activity_recipient_group_target_id');
+      }
+      $or->condition($comments_access);
     }
 
     // Lets add all the or conditions to the Views query.
@@ -313,7 +329,9 @@ class ActivityFilterPersonalisedHomepage extends FilterPluginBase {
       $post_access->condition('entity_id', $post_ids, 'IN');
       $or->condition($post_access);
     }
-    $query->condition($or);
+    if (!empty($or->conditions()[0])) {
+      $query->condition($or);
+    }
     $query->condition('cfd.status', '1');
 
     $cids = $query->execute()->fetchCol();
