@@ -113,7 +113,7 @@ class ActivityFilterPersonalisedHomepage extends FilterPluginBase {
       'contentmanager',
       'sitemanager',
     ];
-    $nids = $pids = [];
+    $nids = $pids = $cids = [];
 
     // Skip filter for users that have full access to the site content.
     if (!empty(array_intersect($skip_roles, $account->getRoles()))) {
@@ -151,15 +151,19 @@ class ActivityFilterPersonalisedHomepage extends FilterPluginBase {
     // Comments: retrieve comments the user has access to.
     if ($account->hasPermission('access comments')) {
       $cids = $this->getAvailableCommentIds($nids, $pids);
-      $comments_access = $or->andConditionGroup()
-        ->condition('activity__field_activity_entity.field_activity_entity_target_type', 'comment')
-        ->condition('activity__field_activity_entity.field_activity_entity_target_id', $cids, 'IN');
-      $or->condition($comments_access);
+      if (!empty($cids)) {
+        $comments_access = $or->andConditionGroup()
+          ->condition('activity__field_activity_entity.field_activity_entity_target_type', 'comment')
+          ->condition('activity__field_activity_entity.field_activity_entity_target_id', $cids, 'IN');
+        $or->condition($comments_access);
+      }
     }
 
     // Lets add all the or conditions to the Views query.
-    $and_wrapper->condition($or);
-    $this->query->addWhere('visibility', $and_wrapper);
+    if (!empty($or->conditions()[0])) {
+      $and_wrapper->condition($or);
+      $this->query->addWhere('visibility', $and_wrapper);
+    }
   }
 
   /**
