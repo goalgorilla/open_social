@@ -212,16 +212,16 @@ class ActivityFilterPersonalisedHomepage extends FilterPluginBase {
     $query->leftJoin('group_content_field_data', 'gcfd', 'gcfd.entity_id = nfd.nid');
     $or = $query->orConditionGroup();
     if ($user->isAuthenticated()) {
-      // Nodes community visibility;
+      // Nodes community visibility.
       $community_access = $or->andConditionGroup()
-        ->condition('nfcv.field_content_visibility_value', ['community', 'public',], 'IN')
+        ->condition('nfcv.field_content_visibility_value', ['community', 'public'], 'IN')
         ->isNull('gcfd.entity_id');
       $or->condition($community_access);
 
       // Node visibility by group.
       if (count($memberships) > 0) {
         $access_by_group = $or->andConditionGroup();
-        $access_by_group->condition('nfcv.field_content_visibility_value', ['group', 'community', 'public',], 'IN');
+        $access_by_group->condition('nfcv.field_content_visibility_value', ['group', 'community', 'public'], 'IN');
         $access_by_group->condition('gcfd.type', '%-group_node-%', 'LIKE');
         $access_by_group->condition('gcfd.gid', $memberships, 'IN');
         $or->condition($access_by_group);
@@ -271,9 +271,9 @@ class ActivityFilterPersonalisedHomepage extends FilterPluginBase {
     if ($user->isAuthenticated()) {
       // Posts for authenticated users if has permission.
       if ($user->hasPermission('view community posts')) {
-        // Posts community visibility;
+        // Posts community visibility.
         $community_access = $or->andConditionGroup()
-          ->condition('pfv.field_visibility_value', ['0', '2'], 'IN')
+          ->condition('pfv.field_visibility_value', ['0', '1', '2'], 'IN')
           ->isNull('pfrg.entity_id');
         $or->condition($community_access);
       }
