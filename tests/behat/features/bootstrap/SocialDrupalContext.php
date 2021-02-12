@@ -153,6 +153,67 @@ class SocialDrupalContext extends DrupalContext {
   }
 
   /**
+   * Creates topics.
+   *
+   * @Given :count topics with title :title by :username
+   */
+  public function createTopics($count, $title, $username) {
+    /** @var \Drupal\user\UserInterface[] $accounts */
+    $accounts = \Drupal::entityTypeManager()->getStorage('user')
+      ->loadByProperties(['name' => $username]);
+
+    if (!$accounts) {
+      return;
+    }
+
+    $account = reset($accounts);
+
+    for ($index = 1; $index <= $count; $index++) {
+      $node = (object) [
+        'type' => 'topic',
+        'title' => str_replace('[id]', $index, $title),
+        'uid' => $account->id(),
+      ];
+
+      $this->nodeCreate($node);
+    }
+  }
+
+  /**
+   * Creates comments.
+   *
+   * @Given :count comments with text :text for :topic
+   */
+  public function createComments($count, $text, $topic) {
+    /** @var \Drupal\node\NodeInterface[] $nodes */
+    $nodes = \Drupal::entityTypeManager()->getStorage('node')
+      ->loadByProperties(['title' => $topic]);
+
+    if (!$nodes) {
+      return;
+    }
+
+    $node = reset($nodes);
+
+    if ($node->bundle() !== 'topic') {
+      return;
+    }
+
+    /** @var \Drupal\comment\CommentStorageInterface $storage */
+    $storage = \Drupal::entityTypeManager()->getStorage('comment');
+
+    for ($index = 1; $index <= $count; $index++) {
+      $storage->create([
+        'entity_id' => $node->id(),
+        'entity_type' => $node->getEntityTypeId(),
+        'field_name' => 'field_topic_comments',
+        'field_comment_body' => str_replace('[id]', $index, $text),
+        'uid' => $node->getOwnerId(),
+      ])->save();
+    }
+  }
+
+  /**
    * @Given Search indexes are up to date
    */
   public function updateSearchIndexes() {
