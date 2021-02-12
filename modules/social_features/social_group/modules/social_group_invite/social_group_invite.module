@@ -19,6 +19,7 @@ use Drupal\group\Entity\GroupContentInterface;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupRoleInterface;
 use Drupal\group\Entity\GroupTypeInterface;
+use Drupal\Core\Render\BubbleableMetadata;
 
 /**
  * Implements hook_menu_local_actions_alter().
@@ -543,5 +544,21 @@ function social_group_invite_mail_alter(&$message) {
       $message['body'][0] = $body;
     }
     $language_manager->setConfigOverrideLanguage($original_language);
+  }
+}
+
+/**
+ * Implements hook_tokens_alter().
+ */
+function social_group_invite_tokens_alter(array &$replacements, array $context, BubbleableMetadata $bubbleable_metadata) {
+  if (
+    !empty($replacements) &&
+    $context["type"] === 'group_content' &&
+    isset($context["tokens"]["register_link"]) &&
+    $context["tokens"]["register_link"] === '[group_content:register_link]'
+  ) {
+    $group = $context["data"]["group"];
+    $link = $replacements["[group_content:register_link]"];
+    $replacements["[group_content:register_link]"] = $link . '&destination=/group/' . $group->id();
   }
 }
