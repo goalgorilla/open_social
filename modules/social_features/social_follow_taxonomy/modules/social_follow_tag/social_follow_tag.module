@@ -26,6 +26,15 @@ function social_follow_tag_theme() {
         'tags' => NULL,
       ],
     ],
+    'social_tagging_popup' => [
+      'variables' => [
+        'url' => NULL,
+        'name' => NULL,
+        'flag' => NULL,
+        'followers_count' => NULL,
+        'related_entity_count' => NULL,
+      ],
+    ],
   ];
 
 }
@@ -91,11 +100,20 @@ function social_follow_tag_preprocess_social_tagging_split(&$variables) {
 
       // Adding additional data to the term variable to extend the template.
       $variables['taghierarchy'][$wrapped_term->id()]['tags'][$current_term->id()] = [
-        'url' => $tag_info['url'],
+        'popup' => [
+          '#create_placeholder' => TRUE,
+          '#lazy_builder' => [
+            'social_follow_tag.lazy_builder:popupLazyBuild',
+            [
+              $tag_info['url'],
+              $tag_info['name'],
+              $current_term->id(),
+              'social_tagging',
+              $entity_type,
+            ],
+          ],
+        ],
         'name' => $tag_info['name'],
-        'flag' => social_follow_taxonomy_flag_link($current_term),
-        'related_entity_count' => social_follow_taxonomy_related_entity_count($current_term, 'social_tagging', $entity_type),
-        'followers_count' => social_follow_taxonomy_term_followers_count($current_term),
         'follow' => social_follow_taxonomy_term_followed($current_term),
       ];
 
@@ -135,11 +153,20 @@ function social_follow_tag_preprocess_social_tagging_nosplit(&$variables) {
 
     // Adding additional data to the term variable to extend the template.
     $variables['tags'][$tag_name] = [
-      'url' => $tag_info,
+      'popup' => [
+        '#create_placeholder' => TRUE,
+        '#lazy_builder' => [
+          'social_follow_tag.lazy_builder:popupLazyBuild',
+          [
+            $tag_info['url'],
+            $tag_info['name'],
+            $current_term->id(),
+            'social_tagging',
+            $entity_type,
+          ],
+        ],
+      ],
       'name' => $tag_name,
-      'flag' => social_follow_taxonomy_flag_link($current_term),
-      'related_entity_count' => social_follow_taxonomy_related_entity_count($current_term, 'social_tagging', $entity_type),
-      'followers_count' => social_follow_taxonomy_term_followers_count($current_term),
       'follow' => social_follow_taxonomy_term_followed($current_term),
     ];
 
