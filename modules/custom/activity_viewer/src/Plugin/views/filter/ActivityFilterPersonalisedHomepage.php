@@ -124,6 +124,7 @@ class ActivityFilterPersonalisedHomepage extends FilterPluginBase {
     $group_memberships = $this->groupHelper->getAllGroupsForUser($account->id());
     $this->query->addTable('activity__field_activity_entity');
     $this->query->addTable('activity__field_activity_recipient_group');
+    $this->query->addTable('activity__field_activity_recipient_user');
 
     // Add queries.
     $and_wrapper = new Condition('AND');
@@ -176,6 +177,14 @@ class ActivityFilterPersonalisedHomepage extends FilterPluginBase {
     // Lets add all the or conditions to the Views query.
     if (!empty($or->conditions()[0])) {
       $and_wrapper->condition($or);
+    }
+
+    // For anonymous show only activities which don't have direct user.
+    if ($account->isAnonymous()) {
+      $anonymous_access = new Condition('OR');
+      $anonymous_access->condition('activity__field_activity_recipient_user.field_activity_recipient_user_target_id', 0);
+      $anonymous_access->isNull('activity__field_activity_recipient_user.field_activity_recipient_user_target_id');
+      $and_wrapper->condition($anonymous_access);
     }
 
     if (!empty($and_wrapper->conditions()[0])) {
