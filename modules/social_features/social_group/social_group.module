@@ -945,10 +945,17 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
       array_unshift($form['actions']['submit']['#submit'], '_social_group_delete_group');
     }
   }
-  if (in_array($form_id, [
-    'group_flexible_group_edit_form',
-    'group_flexible_group_add_form',
-  ])) {
+
+  $group_types = ['flexible_group'];
+  \Drupal::moduleHandler()->alter('social_group_request', $group_types);
+
+  $group_form_ids = [];
+  foreach ($group_types as $group_type) {
+    $group_form_ids[] = 'group_' . $group_type . '_edit_form';
+    $group_form_ids[] = 'group_' . $group_type . '_add_form';
+  }
+
+  if (in_array($form_id, $group_form_ids)) {
     $join_method_default_value = 'added';
     // Ensure we have a better descriptive label.
     if (array_key_exists('added', $form['field_group_allowed_join_method']['widget']['#options'])) {
