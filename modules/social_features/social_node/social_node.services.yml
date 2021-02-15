@@ -1,0 +1,7 @@
+services:
+  social_node.messenger:
+    class: Drupal\social_node\Service\SocialNodeMessenger
+    arguments:
+      - '@session.flash_bag'
+      - '@page_cache_kill_switch'
+      - '@module_handler'

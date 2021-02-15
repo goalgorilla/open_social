@@ -9,6 +9,7 @@ use Drupal\Component\Serialization\Json;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 use Drupal\social_post\Entity\PostInterface;
+use Drupal\social_post_album\Controller\SocialPostAlbumAjaxCommentsController;
 
 /**
  * Implements hook_theme().
@@ -48,6 +49,7 @@ function social_post_album_preprocess_field__post__type__image__album(&$variable
 
     $visible_fids_count = $post->field_post_image->count();
     $variables['more_posts_count'] = $all_post_fids - $visible_fids_count;
+    $variables['total_post_image_count'] = $all_post_fids;
 
     foreach ($variables['items'] as $item) {
       /** @var \Drupal\Core\Template\Attribute $attributes */
@@ -74,17 +76,12 @@ function social_post_album_preprocess_field__post__type__image__album(&$variable
  * Implements hook_preprocess_HOOK().
  */
 function social_post_album_preprocess_field__field_post_comments(&$variables) {
-  $route_names = [
-    'social_post_album.ajax_comments.add',
-    'social_post_album.image_popup_render_original',
-  ];
-
   if (
-    in_array($variables['element']['#view_mode'], ['_custom', 'album']) &&
-    in_array(\Drupal::routeMatch()->getRouteName(), $route_names) &&
+    $variables['element']['#view_mode'] === 'album' &&
+    \Drupal::routeMatch()->getRouteName() === 'social_post_album.image_popup_render_original' &&
     \Drupal::moduleHandler()->moduleExists('social_ajax_comments')
   ) {
-    $variables['attributes']['id'] .= '-modal';
+    $variables['attributes']['id'] .= SocialPostAlbumAjaxCommentsController::WRAPPER_ID_SUFFIX;
   }
 }
 
@@ -158,15 +155,6 @@ function social_post_album_theme_suggestions_image_widget_alter(array &$suggesti
  */
 function social_post_album_form_social_post_entity_form_alter(array &$form, FormStateInterface $form_state, $form_id) {
   $form['#attached']['library'][] = 'social_post_album/social-post-album--form';
-}
-
-/**
- * Implements hook_preprocess_HOOK().
- */
-function social_post_album_preprocess_image_formatter(&$variables) {
-  if ($variables['image_style'] === 'social_post_photo') {
-    $variables['image']['#style_name'] = 'social_x_large';
-  }
 }
 
 /**

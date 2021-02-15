@@ -31,7 +31,7 @@ class SocialCommentViewBuilder extends CommentViewBuilder {
 
           // If the parent comment is unpublished, hide the thread for users
           // who may not see unpublished comments.
-          if (!$comment->getParentComment()->isPublished() && !\Drupal::currentUser()->hasPermission('administer comments')) {
+          if (!$comment->getParentComment()->isPublished() && !$this->currentUser->hasPermission('administer comments')) {
             $div_class .= ' hidden';
           }
 

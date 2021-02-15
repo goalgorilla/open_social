@@ -23,7 +23,7 @@ function activity_send_email_cron() {
   // Fill a sortable array with the data about the email frequency.
   foreach ($plugins as $frequency) {
     $instance = $emailfrequencymanager->createInstance($frequency['id']);
-    /* @var \Drupal\activity_send_email\EmailFrequencyInterface $instance */
+    /** @var \Drupal\activity_send_email\EmailFrequencyInterface $instance */
     $interval = $instance->getInterval();
 
     // If the interval of the EmailFrequency plugin is more than 0, we should
@@ -249,7 +249,7 @@ function sort_email_frequency_options() {
 
   // Fill a sortable array with the data about the email frequency.
   foreach ($plugins as $frequency) {
-    /* @var \Drupal\activity_send_email\EmailFrequencyInterface $instance */
+    /** @var \Drupal\activity_send_email\EmailFrequencyInterface $instance */
     $instance = $emailfrequencymanager->createInstance($frequency['id']);
     $emailfrequencies[] = [
       'id' => $frequency['id'],
@@ -294,11 +294,11 @@ function activity_send_email_activity_insert(ActivityInterface $activity) {
     return;
   }
 
-  /* @var \Drupal\activity_send\Plugin\ActivitySendManager $activity_send_factory */
+  /** @var \Drupal\activity_send\Plugin\ActivitySendManager $activity_send_factory */
   $activity_send_factory = \Drupal::service('plugin.manager.activity_send.processor');
 
   // Trigger the create action for entities.
-  /* @var \Drupal\activity_send_email\Plugin\ActivitySend\EmailActivitySend $create_action */
+  /** @var \Drupal\activity_send_email\Plugin\ActivitySend\EmailActivitySend $create_action */
   $create_action = $activity_send_factory->createInstance('email_activity_send');
   $create_action->create($activity);
 }

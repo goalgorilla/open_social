@@ -57,7 +57,7 @@ class SocialEnrollmentAutocomplete extends EntityAutocomplete {
           'handler' => $element['#selection_handler'],
         ];
 
-        /* @var /Drupal\Core\Entity\EntityReferenceSelection\SelectionInterface $handler */
+        /** @var /Drupal\Core\Entity\EntityReferenceSelection\SelectionInterface $handler */
         $handler = \Drupal::service('plugin.manager.entity_reference_selection')->getInstance($options);
         $autocreate = (bool) $element['#autocreate'] && $handler instanceof SelectionWithAutocreateInterface;
         // Try to get a match from the input string when the user didn't use

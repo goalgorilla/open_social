@@ -34,11 +34,11 @@ function social_file_private_requirements($phase) {
       ];
     }
 
-    $image_fields = \Drupal::entityManager()->getStorage('field_storage_config')->loadByProperties(['type' => 'image']);
-    $file_fields = \Drupal::entityManager()->getStorage('field_storage_config')->loadByProperties(['type' => 'file']);
+    $image_fields = \Drupal::service('entity_type.manager')->getStorage('field_storage_config')->loadByProperties(['type' => 'image']);
+    $file_fields = \Drupal::service('entity_type.manager')->getStorage('field_storage_config')->loadByProperties(['type' => 'file']);
     $all_fields = array_merge($image_fields, $file_fields);
 
-    /* @var $plugin \Drupal\social_file_private\SocialFilePrivateFieldsConfigOverride */
+    /** @var \Drupal\social_file_private\SocialFilePrivateFieldsConfigOverride $plugin */
     $file_private_fields_config_override = \Drupal::service('social_file_private_fields.overrider');
     $protected_fields = $file_private_fields_config_override->getFileImageFieldsToProtect();
 

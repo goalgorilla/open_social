@@ -2,6 +2,7 @@
 
 namespace Drupal\social_demo;
 
+use Drupal\Core\File\FileSystemInterface;
 use Drupal\block_content\Entity\BlockContent;
 use Drupal\Core\Asset\CssOptimizer;
 use Drupal\Core\Config\ConfigFactory;
@@ -41,15 +42,23 @@ abstract class DemoSystem extends DemoContent {
   protected $fileStorage;
 
   /**
+   * The file storage.
+   *
+   * @var \Drupal\file\FileSystemInterface
+   */
+  protected $fileSystem;
+
+  /**
    * DemoComment constructor.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, DemoContentParserInterface $parser, EntityStorageInterface $block_storage, ConfigFactory $config_factory, FileStorageInterface $file_storage) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, DemoContentParserInterface $parser, EntityStorageInterface $block_storage, ConfigFactory $config_factory, FileStorageInterface $file_storage, FileSystemInterface $file_system) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
     $this->parser = $parser;
     $this->blockStorage = $block_storage;
     $this->configFactory = $config_factory;
     $this->fileStorage = $file_storage;
+    $this->fileSystem = $file_system;
   }
 
   /**
@@ -61,9 +70,10 @@ abstract class DemoSystem extends DemoContent {
       $plugin_id,
       $plugin_definition,
       $container->get('social_demo.yaml_parser'),
-      $container->get('entity.manager')->getStorage('block_content'),
+      $container->get('entity_type.manager')->getStorage('block_content'),
       $container->get('config.factory'),
-      $container->get('entity.manager')->getStorage('file')
+      $container->get('entity_type.manager')->getStorage('file'),
+      $container->get('file_system')
     );
   }
 
@@ -179,7 +189,7 @@ abstract class DemoSystem extends DemoContent {
       $paths['target'] = $paths['color'] . '/' . $id;
 
       foreach ($paths as $path) {
-        file_prepare_directory($path, FILE_CREATE_DIRECTORY);
+        \Drupal::service('file_system')->prepareDirectory($path, FileSystemInterface::CREATE_DIRECTORY);
       }
 
       $paths['target'] = $paths['target'] . '/';
@@ -211,7 +221,7 @@ abstract class DemoSystem extends DemoContent {
           $style = preg_replace_callback('/url\([\'"]?(?![a-z]+:|\/+)([^\'")]+)[\'"]?\)/i', [$css_optimizer, 'rewriteFileURI'], $style);
           // Rewrite stylesheet with new colors.
           $style = _color_rewrite_stylesheet($active_theme, $info, $paths, $palette, $style);
-          $base_file = drupal_basename($file);
+          $base_file = $this->fileSystem->basename($file);
           $css[] = $paths['target'] . $base_file;
 
           _color_save_stylesheet($paths['target'] . $base_file, $style, $paths);
@@ -233,7 +243,7 @@ abstract class DemoSystem extends DemoContent {
    * {@inheritdoc}
    */
   public function getEntry(array $item) {
-    // TODO: Implement getEntry() method.
+    // @todo Implement getEntry() method.
   }
 
   /**
@@ -276,7 +286,7 @@ abstract class DemoSystem extends DemoContent {
     }
 
     // Ok, so it doesn't exist.
-    /* @var Font $font */
+    /** @var \Drupal\social_font\Entity\Font $font */
     $font = Font::create([
       'name' => $fontName,
       'user_id' => 1,
@@ -304,7 +314,7 @@ abstract class DemoSystem extends DemoContent {
       'format' => 'full_html',
     ];
 
-    /* @var \Drupal\file\Entity\File $file */
+    /** @var \Drupal\file\Entity\File $file */
     $block_image = $this->prepareImage($data['image'], 'Anonymous front page image homepage');
     // Insert is in the hero image field.
     $block->field_hero_image = $block_image;

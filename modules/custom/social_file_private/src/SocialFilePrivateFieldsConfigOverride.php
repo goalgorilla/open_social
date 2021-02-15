@@ -19,7 +19,7 @@ class SocialFilePrivateFieldsConfigOverride implements ConfigFactoryOverrideInte
   /**
    * Get all the file and image fields to protect.
    *
-   * @TODO Retrieve the file and image fields programmatically.
+   * @todo Retrieve the file and image fields programmatically.
    *
    * Note: this list is now fixed, but an error will be shown in the status
    * report when there are fields of type image, file using public uri_scheme.

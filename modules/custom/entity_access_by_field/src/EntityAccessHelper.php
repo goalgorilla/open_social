@@ -32,7 +32,7 @@ class EntityAccessHelper {
   public static function nodeAccessCheck(NodeInterface $node, $op, AccountInterface $account) {
     if ($op === 'view') {
       // Check published status.
-      if (isset($node->status) && $node->status->value == NODE_NOT_PUBLISHED) {
+      if (isset($node->status) && $node->status->value === NodeInterface::NOT_PUBLISHED) {
         $unpublished_own = $account->hasPermission('view own unpublished content');
         if (($node->getOwnerId() !== $account->id()) || ($node->getOwnerId() === $account->id() && !$unpublished_own)) {
           return 1;
@@ -41,7 +41,7 @@ class EntityAccessHelper {
 
       $field_definitions = $node->getFieldDefinitions();
 
-      /* @var \Drupal\Core\Field\FieldConfigInterface $field_definition */
+      /** @var \Drupal\Core\Field\FieldConfigInterface $field_definition */
       foreach ($field_definitions as $field_name => $field_definition) {
         if ($field_definition->getType() === 'entity_access_field') {
           $field_values = $node->get($field_name)->getValue();
@@ -106,7 +106,7 @@ class EntityAccessHelper {
     $moduleHandler = \Drupal::service('module_handler');
     // If the social_event_invite module is enabled and a person got invited
     // then allow access to view the node.
-    // Todo:: Come up with a better solution for this code.
+    // @todo Come up with a better solution for this code.
     if ($moduleHandler->moduleExists('social_event_invite')) {
       if ($op == 'view') {
         $conditions = [

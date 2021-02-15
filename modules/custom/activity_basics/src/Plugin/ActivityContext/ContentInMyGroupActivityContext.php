@@ -50,7 +50,7 @@ class ContentInMyGroupActivityContext extends ActivityContextBase {
         $owner_id = $post->getOwnerId();
       }
       else {
-        /* @var \Drupal\group\Entity\GroupContentInterface $group_content */
+        /** @var \Drupal\group\Entity\GroupContentInterface $group_content */
         $group_content = $this->entityTypeManager->getStorage('group_content')
           ->load($referenced_entity['target_id']);
 

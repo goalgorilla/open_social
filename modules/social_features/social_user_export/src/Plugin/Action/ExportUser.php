@@ -2,6 +2,7 @@
 
 namespace Drupal\social_user_export\Plugin\Action;
 
+use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Messenger\MessengerTrait;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
@@ -167,7 +168,7 @@ class ExportUser extends ViewsBulkOperationsActionBase implements ContainerFacto
       $name = basename($this->context['sandbox']['results']['file_path']);
       $path = 'private://csv';
 
-      if (file_prepare_directory($path, FILE_CREATE_DIRECTORY | FILE_MODIFY_PERMISSIONS) && (file_save_data($data, $path . '/' . $name))) {
+      if (\Drupal::service('file_system')->prepareDirectory($path, FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS) && (file_save_data($data, $path . '/' . $name))) {
         $url = Url::fromUri(file_create_url($path . '/' . $name));
         $link = Link::fromTextAndUrl($this->t('Download file'), $url);
 
@@ -194,7 +195,7 @@ class ExportUser extends ViewsBulkOperationsActionBase implements ContainerFacto
    */
   public function access($object, AccountInterface $account = NULL, $return_as_object = FALSE) {
     /** @var \Drupal\user\UserInterface $object */
-    // TODO Check for export access instead.
+    // @todo Check for export access instead.
     return $object->access('view', $account, $return_as_object);
   }
 
@@ -216,7 +217,7 @@ class ExportUser extends ViewsBulkOperationsActionBase implements ContainerFacto
    *   The path to the Drupal directory that should be used for this export.
    */
   protected function getBaseOutputDirectory() : string {
-    return file_directory_temp();
+    return \Drupal::service('file_system')->getTempDirectory();
   }
 
   /**

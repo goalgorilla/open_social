@@ -80,7 +80,8 @@ function social_group_welcome_message_form_alter(array &$form, FormStateInterfac
       $owner = \Drupal::currentUser();
     }
 
-    // Deny access to welcome message if owner don't have permission to create it.
+    // Deny access to welcome message if owner doesn't
+    // have permission to create it.
     if (
       !$owner->hasPermission('use private messaging system') ||
       !$owner->hasPermission('create private messages thread')
@@ -194,7 +195,7 @@ function social_group_welcome_message_group_content_insert(GroupContentInterface
     // and adding messages to it, for the recipient the $last_message and
     // $thread_last_check get the same timestamp. Showing no new messages badge.
     // https://www.drupal.org/project/private_message/issues/3043898
-    // TODO:: Update to the correct version when issue has been solved.
+    // @todo Update to the correct version when issue has been solved.
     /** @var UserDataInterface $userData */
     $userData = \Drupal::service('user.data');
     $userData->set('private_message', $account->id(), 'private_message_thread:' . $thread->id(), 0);

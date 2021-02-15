@@ -177,7 +177,7 @@ class Dropdown extends FieldItemBase {
     foreach ($list as $position => $text) {
       // Check for an explicit key.
       $matches = [];
-      // @TODO Explicit key is necessary !
+      // @todo Explicit key is necessary !
       if (preg_match('/(.*)\|(.*)\|(.*)/', $text, $matches)) {
         // Trim key and value to avoid unwanted spaces issues.
         $value = trim($matches[1]);

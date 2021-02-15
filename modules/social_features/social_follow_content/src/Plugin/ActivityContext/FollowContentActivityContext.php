@@ -65,7 +65,7 @@ class FollowContentActivityContext extends ActivityContextBase {
     $original_related_entity = $storage->load($original_related_object['target_id']);
 
     foreach ($flaggings as $flagging) {
-      /* @var $flagging \Drupal\flag\FlaggingInterface */
+      /** @var \Drupal\flag\FlaggingInterface $flagging */
       $recipient = $flagging->getOwner();
 
       // It could happen that a notification has been queued but the content or

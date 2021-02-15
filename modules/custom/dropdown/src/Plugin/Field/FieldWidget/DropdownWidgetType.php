@@ -3,11 +3,13 @@
 namespace Drupal\dropdown\Plugin\Field\FieldWidget;
 
 use Drupal\Core\Entity\FieldableEntityInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\FieldFilteredMarkup;
 use Drupal\Core\Field\WidgetBase;
 use Drupal\Core\Form\FormStateInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Plugin implementation of the 'dropdown_widget_type' widget.
@@ -31,12 +33,43 @@ class DropdownWidgetType extends WidgetBase {
   protected $column;
 
   /**
+   * Widget options.
+   *
+   * @var array
+   */
+  protected $options;
+
+  /**
+   * The module handler.
+   *
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface
+   */
+  private $moduleHandler;
+
+  /**
    * {@inheritdoc}
    */
-  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, array $third_party_settings) {
+  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, array $third_party_settings, ModuleHandlerInterface $module_handler) {
     parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $third_party_settings);
     $property_names = $this->fieldDefinition->getFieldStorageDefinition()->getPropertyNames();
     $this->column = $property_names[0];
+    $this->options = [];
+
+    $this->moduleHandler = $module_handler;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    return new static(
+      $plugin_id,
+      $plugin_definition,
+      $configuration['field_definition'],
+      $configuration['settings'],
+      $configuration['third_party_settings'],
+      $container->get('module_handler')
+    );
   }
 
   /**
@@ -68,11 +101,6 @@ class DropdownWidgetType extends WidgetBase {
    * {@inheritdoc}
    */
   public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
-
-    $this->required = $element['#required'];
-    $this->multiple = $this->fieldDefinition->getFieldStorageDefinition()->isMultiple();
-    $this->has_value = isset($items[$delta]->{$this->column});
-
     // Add our custom validator.
     $element['#element_validate'][] = [get_class($this), 'validateElement'];
     $element['#key_column'] = $this->column;
@@ -98,18 +126,17 @@ class DropdownWidgetType extends WidgetBase {
    *   The array of options for the widget.
    */
   protected function getOptions(FieldableEntityInterface $entity) {
-    if (!isset($this->options)) {
+    if (empty($this->options)) {
       // Limit the settable options for the current user account.
       $options = $this->fieldDefinition
         ->getFieldStorageDefinition()
         ->getSetting('allowed_values');
 
-      $module_handler = \Drupal::moduleHandler();
       $context = [
         'fieldDefinition' => $this->fieldDefinition,
         'entity' => $entity,
       ];
-      $module_handler->alter('dropdown_list', $options, $context);
+      $this->moduleHandler->alter('dropdown_list', $options, $context);
 
       array_walk_recursive($options, [$this, 'sanitizeLabel']);
 
@@ -169,7 +196,7 @@ class DropdownWidgetType extends WidgetBase {
   /**
    * Sanitizes a string label to display as an option.
    *
-   * @param string $label
+   * @param \Drupal\Component\Render\MarkupInterface|string $label
    *   The label to sanitize.
    */
   protected function sanitizeLabel(&$label) {
