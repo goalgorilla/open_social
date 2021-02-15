@@ -2,14 +2,15 @@
 
 namespace Drupal\social_group_invite;
 
+use Drupal\Component\Utility\EmailValidatorInterface;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Config\ConfigFactoryOverrideInterface;
 use Drupal\Core\Config\StorageInterface;
-use Drupal\ginvite\Plugin\GroupContentEnabler\GroupInvitation;
+use Drupal\Core\Database\Connection;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
- * Class SocialGroupInviteConfigOverride.
+ * Provides an overridden block for Settings Tray testing.
  *
  * @package Drupal\social_group_invite
  */
@@ -18,18 +19,42 @@ class SocialGroupInviteConfigOverride implements ConfigFactoryOverrideInterface 
   /**
    * The current request.
    *
-   * @var \Symfony\Component\HttpFoundation\Request
+   * @var \Symfony\Component\HttpFoundation\RequestStack
    */
   protected $requestStack;
+
+  /**
+   * Email validator.
+   *
+   * @var \Drupal\Component\Utility\EmailValidatorInterface
+   */
+  protected $emailValidator;
+
+  /**
+   * The current active database's master connection.
+   *
+   * @var \Drupal\Core\Database\Connection
+   */
+  protected $database;
 
   /**
    * Constructs the configuration override.
    *
    * @param \Symfony\Component\HttpFoundation\RequestStack $request_stack
    *   The request stack.
+   * @param \Drupal\Component\Utility\EmailValidatorInterface $email_validator
+   *   The email validator.
+   * @param \Drupal\Core\Database\Connection $database
+   *   The current active database's master connection.
    */
-  public function __construct(RequestStack $request_stack) {
+  public function __construct(
+    RequestStack $request_stack,
+    EmailValidatorInterface $email_validator,
+    Connection $database
+  ) {
     $this->requestStack = $request_stack;
+    $this->emailValidator = $email_validator;
+    $this->database = $database;
   }
 
   /**
@@ -78,7 +103,7 @@ class SocialGroupInviteConfigOverride implements ConfigFactoryOverrideInterface 
       '/',
     ], $invitee_mail));
 
-    if (!\Drupal::service('email.validator')->isValid($invitee_mail)) {
+    if (!$this->emailValidator->isValid($invitee_mail)) {
       return FALSE;
     }
 
@@ -90,15 +115,18 @@ class SocialGroupInviteConfigOverride implements ConfigFactoryOverrideInterface 
     }
 
     // Verify is it really was requested invite and it still is actual.
-    $properties = [
-      'gid' => $gid,
-      'invitee_mail' => $invitee_mail,
-      'invitation_status' => GroupInvitation::INVITATION_PENDING,
-    ];
+    $query = $this->database->select('group_content__invitee_mail', 'gcim');
 
-    /** @var \Drupal\ginvite\GroupInvitationLoaderInterface $invitations */
-    $invitations = \Drupal::service('ginvite.invitation_loader')
-      ->loadByProperties($properties);
+    $query->fields('gcim', ['entity_id']);
+    $query->condition('invitee_mail_value', $invitee_mail);
+
+    $query->join('group_content__invitation_status', 'gcis', 'gcim.entity_id = gcis.entity_id');
+    $query->condition('gcis.invitation_status_value', '0');
+
+    $query->join('group_content_field_data', 'gcfd', 'gcis.entity_id = gcfd.id');
+    $query->condition('gcfd.gid', $gid);
+
+    $invitations = $query->execute()->fetchField();
 
     if (empty($invitations)) {
       return FALSE;
@@ -126,6 +154,7 @@ class SocialGroupInviteConfigOverride implements ConfigFactoryOverrideInterface 
    * {@inheritdoc}
    */
   public function createConfigObject($name, $collection = StorageInterface::DEFAULT_COLLECTION) {
+    // @phpstan-ignore-next-line
     return NULL;
   }
 
