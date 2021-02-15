@@ -323,7 +323,8 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
         else {
           // If the invitation has already been send, unset it from the list.
           if ($this->groupInvitationLoader->loadByGroup($this->group, NULL, $email)) {
-            $form_state->unsetValue(['users_fieldset', 'user', $user]);
+            // @todo: commented next line to prevent issue for new users.
+            // $form_state->unsetValue(['users_fieldset', 'user', $user]);
           }
         }
       }

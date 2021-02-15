@@ -673,6 +673,55 @@ class FeatureContext extends RawMinkContext implements Context
     }
 
     /**
+     * Opens register page with specified url params.
+     *
+     * @Given /^(?:|I )open register page with prefilled "(?P<mail>[^"]+)" and destination to invited group "(?P<group_title>[^"]+)"$/
+     */
+    public function openRegisterPage($mail, $group_title)
+    {
+      $group_id = $this->getGroupIdFromTitle($group_title);
+      $mail_encoded = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($mail));
+      $page = '/user/register?invitee_mail=' . $mail_encoded . '&destination=/group/' . $group_id;
+
+      $this->visitPath($page);
+    }
+
+    /**
+     * Keep track of intended user names so they can be cleaned up.
+     *
+     * @var array
+     */
+    protected $intended_user_names = [];
+
+    /**
+     * Stores the user's name in $this->intended_user_names.
+     *
+     * This goes before a register form manipulation and submission.
+     *
+     * @Given I intend to create a user named :name
+     *
+     * @see cleanUsers()
+     */
+    public function intendUserName($name) {
+      $this->intended_user_names[] = $name;
+    }
+
+    /**
+     * Remove any groups that were created.
+     *
+     * @AfterScenario
+     */
+    public function cleanupUser(AfterScenarioScope $scope)
+    {
+      if (!empty($this->intended_user_names)) {
+        foreach ($this->intended_user_names as $name) {
+          $user_obj = user_load_by_name($name);
+          \Drupal::entityTypeManager()->getStorage('user')->load($user_obj->id())->delete();
+        }
+      }
+    }
+
+    /**
      * Checks if correct amount of uploaded files by user are private.
      *
      * @Then /User "(?P<username>[^"]+)" should have uploaded "(?P<private>[^"]+)" private files and "(?P<public>[^"]+)" public files$/
