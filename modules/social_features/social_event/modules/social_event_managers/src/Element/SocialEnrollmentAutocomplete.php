@@ -37,12 +37,13 @@ class SocialEnrollmentAutocomplete extends EntityAutocomplete {
       $nid = $node;
     }
 
-    // Grab all the input values so we can get the ID's out of them.
-    $input_values = Tags::explode($element['#value']);
-
     // If we use the select 2 widget then we already got a nice array.
     if ($select2 === TRUE) {
       $input_values = $element['#value'];
+    }
+    else {
+      // Grab all the input values so we can get the ID's out of them.
+      $input_values = Tags::explode($element['#value']);
     }
 
     foreach ($input_values as $input) {
@@ -95,6 +96,13 @@ class SocialEnrollmentAutocomplete extends EntityAutocomplete {
         // to render an error after all checks are gone.
         if (!empty($enrollments)) {
           $duplicated_values[] = $input;
+        }
+
+        // We need set "validate_reference" for element to prevent
+        // receive the following notice:
+        // Undefined index: #validate_reference
+        if (!isset($element['#validate_reference'])) {
+          $element['#validate_reference'] = FALSE;
         }
 
         // Validate input for every single user. This way we make sure that
