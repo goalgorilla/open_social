@@ -551,14 +551,23 @@ function social_group_invite_mail_alter(&$message) {
  * Implements hook_tokens_alter().
  */
 function social_group_invite_tokens_alter(array &$replacements, array $context, BubbleableMetadata $bubbleable_metadata) {
-  if (
-    !empty($replacements) &&
-    $context["type"] === 'group_content' &&
-    isset($context["tokens"]["register_link"]) &&
-    $context["tokens"]["register_link"] === '[group_content:register_link]'
-  ) {
+  if (!empty($replacements) && $context["type"] === 'group_content') {
     $group = $context["data"]["group"];
-    $link = $replacements["[group_content:register_link]"];
-    $replacements["[group_content:register_link]"] = $link . '&destination=/group/' . $group->id();
+    $destination = 'destination=/group/' . $group->id();
+
+    if (
+      isset($context["tokens"]["register_link"]) &&
+      $context["tokens"]["register_link"] === '[group_content:register_link]'
+    ) {
+      $link = $replacements["[group_content:register_link]"];
+      $replacements["[group_content:register_link]"] = "{$link}&{$destination}";
+    }
+    if (
+      isset($context["tokens"]["my_invitations_link"]) &&
+      $context["tokens"]["my_invitations_link"] === '[group_content:my_invitations_link]'
+    ) {
+      $group_invitations_link = Url::fromRoute('user.login', [], ['absolute' => TRUE])->toString();
+      $replacements["[group_content:my_invitations_link]"] = "{$group_invitations_link}?{$destination}";
+    }
   }
 }
