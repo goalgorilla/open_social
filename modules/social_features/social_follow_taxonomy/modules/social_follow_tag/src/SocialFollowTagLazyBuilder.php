@@ -184,7 +184,8 @@ class SocialFollowTagLazyBuilder implements TrustedCallbackInterface {
    * @return array
    *   Render array.
    */
-  public function popupLazyBuild($url, $term_id, $field, $entity_type){
+  public function popupLazyBuild($url, $term_id, $field, $entity_type) {
+    /** @var \Drupal\taxonomy\TermInterface $term */
     $term = $this->entityTypeManager->getStorage('taxonomy_term')->load($term_id);
     return [
       '#theme' => 'social_tagging_popup',
