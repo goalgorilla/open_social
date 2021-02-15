@@ -99,8 +99,7 @@ class SocialEnrollmentAutocomplete extends EntityAutocomplete {
         }
 
         // We need set "validate_reference" for element to prevent
-        // receive the following notice:
-        // Undefined index: #validate_reference
+        // receive notice Undefined index #validate_reference.
         if (!isset($element['#validate_reference'])) {
           $element['#validate_reference'] = FALSE;
         }
