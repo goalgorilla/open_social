@@ -143,6 +143,9 @@ function social_follow_tag_preprocess_social_tagging_nosplit(&$variables) {
   foreach ($variables['tags'] as $tag_name => $tag_info) {
     // Get term id from the transmitted url string.
     $term_id_from_string = explode('/search/content?tag%5B%5D=', $tag_info);
+    if($entity_type === 'group') {
+      $term_id_from_string = explode('/search/groups?tag%5B%5D=', $tag_info);
+    }
     if (isset($term_id_from_string[1])) {
       $current_term = $term_storage->load($term_id_from_string[1]);
     }
@@ -159,7 +162,7 @@ function social_follow_tag_preprocess_social_tagging_nosplit(&$variables) {
         '#lazy_builder' => [
           'social_follow_tag.lazy_builder:popupLazyBuild',
           [
-            $tag_info['url'],
+            $tag_info,
             $current_term->id(),
             'social_tagging',
             $entity_type,
