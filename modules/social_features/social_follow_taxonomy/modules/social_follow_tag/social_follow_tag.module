@@ -70,17 +70,17 @@ function social_follow_tag_preprocess_social_tagging_split(&$variables) {
     return;
   }
 
+  // Get entity type for rendered tags.
+  $entity_type = $variables['entity_type'];
+
+  /** @var \Drupal\taxonomy\TermStorageInterface $term_storage */
+  $term_storage = \Drupal::entityTypeManager()->getStorage('taxonomy_term');
+
   // Iterate over an array with parent terms (category).
   foreach ($variables['taghierarchy'] as $parent_tag) {
     if (!isset($parent_tag['tags'])) {
       continue;
     }
-
-    // Get entity type for rendered tags.
-    $entity_type = $variables['entity_type'];
-
-    /** @var \Drupal\taxonomy\TermStorageInterface $term_storage */
-    $term_storage = \Drupal::entityTypeManager()->getStorage('taxonomy_term');
 
     // Iterate over an array with terms in each category.
     foreach ($parent_tag['tags'] as $tag_id => $tag_info) {
@@ -134,10 +134,12 @@ function social_follow_tag_preprocess_social_tagging_nosplit(&$variables) {
     return;
   }
 
-  $term_storage = \Drupal::entityTypeManager()->getStorage('taxonomy_term');
-
   // Get entity type for rendered tags.
   $entity_type = $variables['entity_type'];
+
+  /** @var \Drupal\taxonomy\TermStorageInterface $term_storage */
+  $term_storage = \Drupal::entityTypeManager()->getStorage('taxonomy_term');
+
   foreach ($variables['tags'] as $tag_name => $tag_info) {
     // Get term id from the transmitted url string.
     $term_id_from_string = explode('/search/content?tag%5B%5D=', $tag_info);
