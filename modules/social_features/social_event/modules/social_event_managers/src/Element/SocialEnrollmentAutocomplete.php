@@ -37,11 +37,9 @@ class SocialEnrollmentAutocomplete extends EntityAutocomplete {
       $nid = $node;
     }
 
-    // If we use the select 2 widget then we already got a nice array.
-    if ($select2 === TRUE) {
-      $input_values = $element['#value'];
-    }
-    else {
+    $input_values = $element['#value'];
+
+    if ($select2 !== TRUE) {
       // Grab all the input values so we can get the ID's out of them.
       $input_values = Tags::explode($element['#value']);
     }
