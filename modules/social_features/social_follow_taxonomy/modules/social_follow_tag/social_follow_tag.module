@@ -106,7 +106,6 @@ function social_follow_tag_preprocess_social_tagging_split(&$variables) {
             'social_follow_tag.lazy_builder:popupLazyBuild',
             [
               $tag_info['url'],
-              $tag_info['name'],
               $current_term->id(),
               'social_tagging',
               $entity_type,
@@ -159,7 +158,6 @@ function social_follow_tag_preprocess_social_tagging_nosplit(&$variables) {
           'social_follow_tag.lazy_builder:popupLazyBuild',
           [
             $tag_info['url'],
-            $tag_info['name'],
             $current_term->id(),
             'social_tagging',
             $entity_type,
