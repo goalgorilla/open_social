@@ -3,13 +3,14 @@
 namespace Drupal\social_post_album;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Security\TrustedCallbackInterface;
 
 /**
  * Provides lazy builder for content inside modal window.
  *
  * @package Drupal\social_post_album
  */
-class LazyRenderer {
+class LazyRenderer implements TrustedCallbackInterface {
 
   /**
    * The entity type manager.
@@ -44,6 +45,13 @@ class LazyRenderer {
   public function getPost($entity_type, $post_id, $view_mode) {
     $post = $this->entityTypeManager->getStorage($entity_type)->load($post_id);
     return $this->entityTypeManager->getViewBuilder($entity_type)->view($post, $view_mode);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function trustedCallbacks() {
+    return ['getPost'];
   }
 
 }

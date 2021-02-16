@@ -10,6 +10,7 @@ use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\activity_creator\ActivityInterface;
 use Drupal\flag\Entity\Flagging;
 use Drupal\user\UserInterface;
+use Drupal\node\NodeInterface;
 
 /**
  * Defines the Activity entity.
@@ -125,7 +126,7 @@ class Activity extends ContentEntityBase implements ActivityInterface {
    * {@inheritdoc}
    */
   public function setPublished($published) {
-    $this->set('status', $published ? NODE_PUBLISHED : NODE_NOT_PUBLISHED);
+    $this->set('status', $published ? NodeInterface::PUBLISHED : NodeInterface::NOT_PUBLISHED);
     return $this;
   }
 
@@ -148,7 +149,7 @@ class Activity extends ContentEntityBase implements ActivityInterface {
       ->setRevisionable(TRUE)
       ->setSetting('target_type', 'user')
       ->setSetting('handler', 'default')
-      ->setDefaultValueCallback('Drupal\node\Entity\Node::getCurrentUserId')
+      ->setDefaultValueCallback('Drupal\node\Entity\Node::getDefaultEntityOwner')
       ->setTranslatable(TRUE)
       ->setDisplayOptions('view', [
         'label' => 'hidden',
@@ -230,14 +231,14 @@ class Activity extends ContentEntityBase implements ActivityInterface {
       // Make an exception for Votes.
       if ($target_type === 'vote') {
         /** @var \Drupal\votingapi\Entity\Vote $vote */
-        if ($vote = entity_load($target_type, $target_id)) {
+        if ($vote = \Drupal::service('entity_type.manager')->getStorage($target_type)->load($target_id)) {
           $target_type = $vote->getVotedEntityType();
           $target_id = $vote->getVotedEntityId();
         }
       }
       elseif ($target_type === 'group_content') {
         /** @var \Drupal\group\Entity\GroupContent $group_content */
-        if ($group_content = entity_load($target_type, $target_id)) {
+        if ($group_content = \Drupal::service('entity_type.manager')->getStorage($target_type)->load($target_id)) {
           $target_type = $group_content->getEntity()->getEntityTypeId();
           $target_id = $group_content->getEntity()->id();
         }
@@ -266,7 +267,8 @@ class Activity extends ContentEntityBase implements ActivityInterface {
       $entity = $entity_storage->load($target_id);
       if ($entity !== NULL) {
         /** @var \Drupal\Core\Url $link */
-        $link = $entity->urlInfo('canonical');
+        /** @var \Drupal\Core\Entity\EntityInterface $entity */
+        $link = $entity->toUrl('canonical');
       }
     }
     return $link;
@@ -292,7 +294,7 @@ class Activity extends ContentEntityBase implements ActivityInterface {
    *
    * Assume that activity can't have recipient group and user at the same time.
    *
-   * @todo: Split it to two separate functions.
+   * @todo Split it to two separate functions.
    */
   public function getRecipient() {
     $value = NULL;

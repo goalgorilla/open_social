@@ -12,6 +12,7 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Field\EntityReferenceFieldItemListInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
+use Drupal\Core\Security\TrustedCallbackInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
@@ -21,7 +22,7 @@ use Drupal\Core\Url;
  *
  * @package Drupal\social_content_block
  */
-class ContentBuilder implements ContentBuilderInterface {
+class ContentBuilder implements ContentBuilderInterface, TrustedCallbackInterface {
 
   use StringTranslationTrait;
 
@@ -79,6 +80,13 @@ class ContentBuilder implements ContentBuilderInterface {
     $this->moduleHandler = $module_handler;
     $this->setStringTranslation($string_translation);
     $this->contentBlockManager = $content_block_manager;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function trustedCallbacks() {
+    return ['getEntities', 'build'];
   }
 
   /**

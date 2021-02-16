@@ -18,8 +18,7 @@
     "scripts": {
         "post-install-cmd": [
             "@composer drupal:scaffold"
-        ],
-        "enable-asset-packagist": "Drupal\\social\\Composer\\AssetPackagist::execute"
+        ]
     },
     "autoload": {
         "psr-4": {
@@ -45,7 +44,7 @@
                 "Can't specify the language in TermStorage::loadTree": "https://www.drupal.org/files/issues/2020-09-08/drupal-termstorage-loadTree-lang-3123561-6-d8.patch",
                 "Issue #3188258: Aggregation queries fail across entity references": "https://www.drupal.org/files/issues/2020-12-18/drupal-3188258-aggregation-across-entity-reference-fail-2.patch",
                 "Pagination does not work correctly for comment fields that are rendered using #lazy_builder": "https://www.drupal.org/files/issues/2020-12-22/pagination-does-not-work-with-lazy-builder-3189538-2.patch",
-              "Providing default route value for entity forms is not possible": "https://www.drupal.org/files/issues/2020-12-29/2921093-18.patch"
+                "Providing default route value for entity forms is not possible": "https://www.drupal.org/files/issues/2020-12-29/2921093-18.patch"
             },
             "drupal/flag": {
                 "Add relationship to flagged entities when Flagging is base table": "https://www.drupal.org/files/issues/2723703_31.patch"
@@ -63,7 +62,8 @@
                 "Group: Don't try to re-save deleted entities": "https://www.drupal.org/files/issues/2018-11-01/3010896-02.patch",
                 "Request membership feature": "https://www.drupal.org/files/issues/2019-07-04/group-request_membership_feature_grequest_module-2752603-110.patch",
                 "Rely on toUrl defaults for Entity url link": "https://www.drupal.org/files/issues/2019-12-04/group-3098675-2.patch",
-                "Group Invite": "https://www.drupal.org/files/issues/2020-03-26/ginvite_module_port-2801603-112.patch"
+                "Group Invite": "https://www.drupal.org/files/issues/2020-03-26/ginvite_module_port-2801603-112.patch",
+                "Cache context update": "https://www.drupal.org/files/issues/2018-05-04/group-cache-context-2882102-2.patch"
             },
             "drupal/image_widget_crop": {
                 "Remove theme function override for verticalTabs": "https://www.drupal.org/files/issues/2019-02-13/3032584-verticaltabs-theme-override-removal-2.patch"
@@ -88,10 +88,8 @@
                 "Add pre-render hooks to be able to alter content": "https://www.drupal.org/files/issues/2018-06-11/block_field-add-proper-alter-hooks-for-field-rendering-2978883-2.patch"
             },
             "drupal/url_embed": {
-                "WSOD if wrong url or network unavailable": "https://www.drupal.org/files/issues/url_embed_WSOD_convert_url_to_embed-2871744-5.patch",
                 "Translate dialog title": "https://www.drupal.org/files/issues/2018-03-16/url_embed_translate_dialog_title-2953591-2.patch",
-                "Improve performance for embeds": "https://www.drupal.org/files/issues/2020-04-08/url_embed-n2867668-23.patch",
-                "Improve how the module deals with non-embeddable URLs (See: https://www.drupal.org/project/social/issues/2930457#comment-13790581)": "https://www.drupal.org/files/issues/2020-08-26/urlembed-non-embeddable-urls-2761187-opensocial-combined-15.patch"
+                "Improve how the module deals with non-embeddable URLs & WSODs (See: https://www.drupal.org/project/social/issues/2930457#comment-13973067)": "https://www.drupal.org/files/issues/2021-01-22/urlembed-non-embeddable-urls-2761187-opensocial-combined-21.patch"
             },
             "drupal/bootstrap": {
                 "Dropdown toggle variable ignored when using links__dropbutton": "https://www.drupal.org/files/issues/2018-12-19/dropdown-without-default-button-3021413-2.patch"
@@ -115,9 +113,6 @@
             },
             "drupal/views_infinite_scroll" : {
                 "Headers in table format repeat on load more instead of adding rows": "https://www.drupal.org/files/issues/2019-08-15/table_tbody_append-2899705-26.patch"
-            },
-            "webonyx/graphql-php": {
-                "GitHub PR 740 Support interfaces implementing interfaces": "https://www.drupal.org/files/issues/2021-01-08/webonyx-graphql-php-pr-740_0.diff"
             }
         }
     },
@@ -125,8 +120,8 @@
         "cweagans/composer-patches": "^1.6.0",
         "composer/installers": "~1.0 || ~2.0",
         "oomphinc/composer-installers-extender": "~1.0 || ~2.0",
-        "drupal/core": "~8.9.9",
-        "drupal/core-composer-scaffold": "~8.9",
+        "drupal/core": "8.8 - 9.1",
+        "drupal/core-composer-scaffold": "8.8 - 9.1",
         "drupal/address": "1.7",
         "drupal/admin_toolbar": "1.27",
         "drupal/ajax_comments": "^1.0",
@@ -165,8 +160,7 @@
         "drupal/role_delegation": "^1.1",
         "drupal/search_api": "1.15",
         "drupal/shariff": "1.5",
-        "drupal/social_api": "1.1",
-        "drupal/social_auth": "1.0",
+        "drupal/socialblue": "^1.0",
         "drupal/swiftmailer" : "2.0-beta1",
         "drupal/select2": "1.8",
         "drupal/token": "1.5",
@@ -175,18 +169,10 @@
         "drupal/views_bulk_operations": "3.4",
         "drupal/views_infinite_scroll": "1.6",
         "drupal/votingapi": "3.0-beta1",
-        "drupal/bootstrap": "3.20",
         "drupal/pathauto": "1.6",
         "drupal/redirect": "1.4",
         "drupal/ctools": "3.2",
         "league/csv": "^9.3",
-        "facebook/graph-sdk": "^5.6",
-        "google/apiclient": "^2.1",
-        "php-http/curl-client": "^1.7",
-        "guzzlehttp/psr7": "^1.3",
-        "php-http/message": "^1.7",
-        "zoonman/linkedin-api-php-client": "dev-master#d06531c48d5efc8aaf7dc074a5320f5ba3f906c9",
-        "abraham/twitteroauth": "^0.7.4",
         "swiftmailer/swiftmailer" : "6.2.4",
         "npm-asset/autosize": "~4.0.2",
         "npm-asset/blazy": "~1.8.2",
@@ -206,12 +192,13 @@
         "npm-asset/slick-carousel": "~1.8.1",
         "npm-asset/tablesaw": "~3.1.0",
         "npm-asset/timepicker": "~1.11.14",
+        "webonyx/graphql-php": ">=14.5.0",
         "zaporylie/composer-drupal-optimizations": "^1.0"
     },
     "require-dev": {
         "dealerdirect/phpcodesniffer-composer-installer": "~0.6 || ~0.7",
-        "mglaman/drupal-check": "^1.0",
-        "palantirnet/drupal-rector": "^0.5.6",
-        "drupal/coder": "8.3.11"
+        "drupal/coder": "8.3.11",
+        "mglaman/phpstan-drupal": "0.12",
+        "mglaman/drupal-check": "^1.0"
     }
 }

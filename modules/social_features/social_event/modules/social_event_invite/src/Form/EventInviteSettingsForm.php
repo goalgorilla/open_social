@@ -107,7 +107,7 @@ class EventInviteSettingsForm extends ConfigFormBase {
    * Gets the configuration names that will be editable.
    */
   protected function getEditableConfigNames() {
-    // TODO: Implement getEditableConfigNames() method.
+    // @todo Implement getEditableConfigNames() method.
   }
 
 }

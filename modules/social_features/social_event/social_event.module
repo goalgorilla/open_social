@@ -189,10 +189,10 @@ function social_event_views_query_alter(ViewExecutable $view, QueryPluginBase $q
   if ($view->id() == 'events' && $view->getDisplay()->display['id'] == 'events_overview') {
     $account_uid = \Drupal::routeMatch()->getParameter('user');
     $current_uid = \Drupal::currentUser()->id();
-    if ($view->exposed_raw_input['status'] == NODE_PUBLISHED || $account_uid !== $current_uid) {
+    if ($view->exposed_raw_input['status'] == NodeInterface::PUBLISHED || $account_uid !== $current_uid) {
       $query->where[1]['conditions'][] = [
         'field' => 'node_field_data.status',
-        'value' => NODE_PUBLISHED,
+        'value' => NodeInterface::PUBLISHED,
         'operator' => '=',
       ];
     }
@@ -868,7 +868,7 @@ function social_event_get_current_event() {
  *   Which state do you want for the form field. Defaults to visibility.
  */
 function social_event_field_visibility(array &$form, $field_name, array $fields, $state = 'visible') {
-  // Todo: Refactor outside of an alter when going to React.
+  // @todo Refactor outside of an alter when going to React.
   // Hide fields if event enrollment is disabled for event.
   $trigger = [
     ':input[name="' . $field_name . '[value]"]' => ['checked' => TRUE],

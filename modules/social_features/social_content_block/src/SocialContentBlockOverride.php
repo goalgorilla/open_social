@@ -58,7 +58,8 @@ class SocialContentBlockOverride implements ConfigFactoryOverrideInterface {
       $settings = $config->getOriginal('settings', FALSE)['plugin_ids'];
 
       // Get all the blocks from this custom block type.
-      $query = \Drupal::entityQuery('block_content')
+      $storage = self::getBlockContent();
+      $query = $storage->getQuery()
         ->condition('type', 'custom_content_list');
       $ids = $query->execute();
 
@@ -154,6 +155,23 @@ class SocialContentBlockOverride implements ConfigFactoryOverrideInterface {
     }
 
     return $overrides;
+  }
+
+  /**
+   * Load the config pages that exist.
+   *
+   * Use a static method instead of dependency injection to avoid circular
+   * dependencies.
+   *
+   * @return \Drupal\Core\Entity\EntityStorageInterface
+   *   Keyed array of block_content.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   */
+  protected static function getBlockContent() {
+    return \Drupal::entityTypeManager()
+      ->getStorage('block_content');
   }
 
   /**

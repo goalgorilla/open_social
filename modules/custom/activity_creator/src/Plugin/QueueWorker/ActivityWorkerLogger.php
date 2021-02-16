@@ -38,12 +38,11 @@ class ActivityWorkerLogger extends ActivityWorkerBase {
 
     // Get 100 Recipients at a time.
     $limit = 0;
-    // TODO: Move all this logic to a service.
-    // TODO: Change this to use dependency injection.
+    // @todo Move all this logic to a service.
     $context_plugin_manager = \Drupal::service('plugin.manager.activity_context.processor');
 
-    /* @var $plugin \Drupal\activity_creator\Plugin\ActivityContextBase */
-    // @TODO Do we need multiple context plugins? If so should we call Manager?
+    /** @var \Drupal\activity_creator\Plugin\ActivityContextBase $plugin */
+    // @todo Do we need multiple context plugins? If so should we call Manager?
     $plugin = $context_plugin_manager->createInstance($data['context']);
     $recipients = $plugin->getRecipients($data, $data['last_uid'], $limit);
 

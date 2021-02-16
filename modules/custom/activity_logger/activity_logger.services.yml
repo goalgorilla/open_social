@@ -1,3 +1,5 @@
 services:
   activity_logger.activity_factory:
     class: Drupal\activity_logger\Service\ActivityLoggerFactory
+    arguments:
+      [ '@entity_type.manager', '@plugin.manager.activity_entity_condition.processor', '@plugin.manager.activity_context.processor', '@module_handler' ]

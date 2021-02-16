@@ -10,7 +10,7 @@ use Drupal\Core\Block\BlockManagerInterface;
 /**
  * Provides an area handler which renders a block entity in a certain view mode.
  *
- * TODO Replace with code from views_block_area when module is ported.
+ * @todo Replace with code from views_block_area when module is ported.
  *
  * @ingroup views_area_handlers
  *
@@ -153,7 +153,7 @@ class SocialPostPostForm extends AreaPluginBase {
     // Don't return broken block content instances.
     if ($plugin_definition['id'] == 'block_content') {
       $uuid = $block_instance->getDerivativeId();
-      if (!\Drupal::entityManager()->loadEntityByUuid('block_content', $uuid)) {
+      if (!\Drupal::service('entity.repository')->loadEntityByUuid('block_content', $uuid)) {
         return NULL;
       }
     }

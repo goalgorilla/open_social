@@ -37,6 +37,18 @@ function hook_social_node_title_prefix_articles_alter(array &$node_types) {
 }
 
 /**
+ * Provides route for node page where should be displayed simple title.
+ *
+ * @return string
+ *   The route name.
+ *
+ * @see \Drupal\social_core\Plugin\Block\SocialPageTitleBlock::build()
+ */
+function hook_social_core_node_default_title_route() {
+  return 'entity.node.edit_form';
+}
+
+/**
  * @} End of "addtogroup hooks".
  */
 

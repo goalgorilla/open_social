@@ -78,6 +78,20 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
   protected $configFactory;
 
   /**
+   * The Membership Loader.
+   *
+   * @var \Drupal\group\GroupMembershipLoaderInterface
+   */
+  protected $groupMembershipLoader;
+
+  /**
+   * The Config factory.
+   *
+   * @var \Drupal\ginvite\GroupInvitationLoader
+   */
+  protected $groupInvitationLoader;
+
+  /**
    * The token service.
    *
    * @var \Drupal\Core\Utility\Token
@@ -132,6 +146,8 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
     $this->pluginManager = $plugin_manager;
     $this->configFactory = $config_factory;
     $this->token = $token;
+    $this->groupInvitationLoader = $group_membership_loader;
+    $this->groupMembershipLoader = $invitation_loader;
   }
 
   /**
@@ -313,7 +329,7 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
       }
       else {
         // Load the user by userId.
-        $account = user::load($user);
+        $account = User::load($user);
 
         if ($account instanceof UserInterface) {
           $membership = $this->groupMembershipLoader->load($this->group, $account);

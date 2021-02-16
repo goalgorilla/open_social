@@ -255,7 +255,7 @@ function social_event_an_enroll_node_update(Node $node) {
     $old_visibility = $node->original->get('field_content_visibility')->getString();
 
     if ($is_event_an_enroll && $old_visibility === 'public' && $new_visibility !== 'public') {
-      drupal_set_message(t('Enrollment without account can only be enabled when the visibility of the event is Public.'), 'warning');
+      \Drupal::messenger()->addWarning(t('Enrollment without account can only be enabled when the visibility of the event is Public.'));
     }
   }
 }

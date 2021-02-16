@@ -16,6 +16,15 @@ function social_post_photo_form_post_form_alter(&$form, FormStateInterface $form
   $form['field_post_image']['widget'][0]['#description'] = '';
   // Add JS to change the placeholder. @TODO: Improve this.
   $form['#attached']['library'][] = 'social_post_photo/widget';
+
+  if ($form_state->hasValue(['field_post_image', 0, 'fids', 0])) {
+    /** @var \Drupal\Core\Entity\Display\EntityFormDisplayInterface $display */
+    $display = $form_state->get('form_display');
+
+    $field = $display->getComponent('field_post');
+
+    $form['field_post']['widget'][0]['#placeholder'] = $field['settings']['placeholder'];
+  }
 }
 
 /**

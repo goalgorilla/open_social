@@ -2,7 +2,6 @@
 
 namespace Drupal\social_demo\Plugin\DemoContent;
 
-use Drupal\book\BookManager;
 use Drupal\node\Entity\Node;
 use Drupal\social_demo\DemoNode;
 use Drupal\social_demo\DemoContentParserInterface;
@@ -31,20 +30,12 @@ class Book extends DemoNode {
   protected $fileStorage;
 
   /**
-   * The book manager.
-   *
-   * @var \Drupal\book\BookManager
+   * {@inheritdoc}
    */
-  protected $bookManager;
-
-  /**
-   * Page constructor.
-   */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, DemoContentParserInterface $parser, UserStorageInterface $user_storage, EntityStorageInterface $group_storage, FileStorageInterface $file_storage, BookManager $book_manager) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition, $parser, $user_storage, $group_storage, $book_manager);
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, DemoContentParserInterface $parser, UserStorageInterface $user_storage, EntityStorageInterface $group_storage, FileStorageInterface $file_storage) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $parser, $user_storage, $group_storage);
 
     $this->fileStorage = $file_storage;
-    $this->bookManager = $book_manager;
   }
 
   /**
@@ -56,10 +47,9 @@ class Book extends DemoNode {
       $plugin_id,
       $plugin_definition,
       $container->get('social_demo.yaml_parser'),
-      $container->get('entity.manager')->getStorage('user'),
-      $container->get('entity.manager')->getStorage('group'),
-      $container->get('entity.manager')->getStorage('file'),
-      $container->get('book.manager')
+      $container->get('entity_type.manager')->getStorage('user'),
+      $container->get('entity_type.manager')->getStorage('group'),
+      $container->get('entity_type.manager')->getStorage('file')
     );
   }
 
@@ -115,6 +105,45 @@ class Book extends DemoNode {
       }
     }
     return $entry;
+  }
+
+  /**
+   * Returns reference to attachment, possibly with a description.
+   *
+   * @param array $files
+   *   Array with UUIDs of files.
+   *
+   * @return array|null
+   *   Array containing related files or NULL.
+   */
+  protected function prepareAttachment(array $files) {
+    $attachments = NULL;
+
+    foreach ($files as $file) {
+      $description = '';
+
+      // If it is an array, this means we also have a description.
+      $uuid = $file;
+      if (is_array($file)) {
+        $uuid = key($file);
+        $description = current($file);
+      }
+
+      $object = $this->fileStorage->loadByProperties([
+        'uuid' => $uuid,
+      ]);
+
+      if ($object) {
+        $properties = [
+          'target_id' => current($object)->id(),
+          'description' => $description,
+        ];
+
+        $attachments[] = $properties;
+      }
+    }
+
+    return $attachments;
   }
 
 }

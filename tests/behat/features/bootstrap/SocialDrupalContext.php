@@ -4,7 +4,7 @@
 namespace Drupal\social\Behat;
 
 use Drupal\DrupalExtension\Context\DrupalContext;
-use Behat\Mink\Element\Element;
+use Drupal\user\Entity\User;
 use Drupal\big_pipe\Render\Placeholder\BigPipeStrategy;
 use Behat\Mink\Exception\UnsupportedDriverActionException;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
@@ -71,7 +71,7 @@ class SocialDrupalContext extends DrupalContext {
    * @beforeScenario @api
    */
   public function bootstrapWithAdminUser(BeforeScenarioScope $scope) {
-    $admin_user = user_load('1');
+    $admin_user = User::load('1');
     $current_user = \Drupal::getContainer()->get('current_user');
     $current_user->setAccount($admin_user);
   }

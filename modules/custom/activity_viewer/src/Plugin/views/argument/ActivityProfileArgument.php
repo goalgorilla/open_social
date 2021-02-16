@@ -2,6 +2,7 @@
 
 namespace Drupal\activity_viewer\Plugin\views\argument;
 
+use Drupal\Core\Database\Query\Condition;
 use Drupal\views\Plugin\views\argument\ArgumentPluginBase;
 
 /**
@@ -26,17 +27,17 @@ class ActivityProfileArgument extends ArgumentPluginBase {
     $this->query->addTable('activity__field_activity_entity');
     $this->query->addTable('activity__field_activity_destinations');
 
-    $or_condition = db_or();
+    $or_condition = new Condition('OR');
 
     // User is a recipient.
     $or_condition->condition('activity__field_activity_recipient_user.field_activity_recipient_user_target_id', $this->argument, '=');
 
     // Or posted by the user, but not on someone else his profile..
-    // TODO Because of this set-up we have to use distinct. Not perfect.
-    $by_user = db_and();
+    // @todo Because of this set-up we have to use distinct. Not perfect.
+    $by_user = new Condition('AND');
     $by_user->condition('activity_field_data.user_id', $this->argument, '=');
     $by_user->condition('activity__field_activity_recipient_user.field_activity_recipient_user_target_id', NULL, 'IS NULL');
-    // TODO Add condition for posts in a group as well (do not show them).
+    // @todo Add condition for posts in a group as well (do not show them).
     $or_condition->condition($by_user);
 
     $this->query->addWhere('activity_profile_argument', $or_condition);

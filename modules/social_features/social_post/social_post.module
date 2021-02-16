@@ -13,6 +13,7 @@ use Drupal\Core\Url;
 use Drupal\Core\Access\AccessResult;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\Group;
+use Drupal\user\UserInterface;
 
 /**
  * Implements hook_form_FORM_ID_alter().
@@ -319,7 +320,7 @@ function social_post_comment_create_access(AccountInterface $account, array $con
 /**
  * Implements hook_user_cancel().
  */
-function social_post_user_cancel($edit, $account, $method) {
+function social_post_user_cancel($edit, AccountInterface $account, $method) {
   $update = NULL;
 
   switch ($method) {
@@ -344,13 +345,21 @@ function social_post_user_cancel($edit, $account, $method) {
 }
 
 /**
- * Implements hook_ENTITY_TYPE_predelete() for user entities.
+ * Implements hook_ENTITY_TYPE_predelete().
  */
 function social_post_user_predelete($account) {
   // Delete posts.
-  $pids = \Drupal::entityQuery('post')
-    ->condition('user_id', $account->id())
-    ->accessCheck(FALSE)
-    ->execute();
-  entity_delete_multiple('post', $pids);
+  if ($account instanceof UserInterface) {
+    $pids = \Drupal::entityQuery('post')
+      ->condition('user_id', $account->id())
+      ->accessCheck(FALSE)
+      ->execute();
+
+    $storage_handler = \Drupal::entityTypeManager()
+      ->getStorage('post');
+    $entities = $storage_handler
+      ->loadMultiple($pids);
+    $storage_handler
+      ->delete($entities);
+  }
 }

@@ -161,7 +161,7 @@ class ActivityNotifications extends ControllerBase {
    *   \Drupal\activity_creator\ActivityNotifications
    * ::markEntityNotificationsAsSeen() instead.
    *
-   * TODO: Change @see to point to a change record.
+   * @todo Change @see to point to a change record.
    * @see https://www.drupal.org/project/social/issues/3087083
    */
   public function markEntityAsRead(AccountInterface $account, EntityBase $entity) {
@@ -235,11 +235,10 @@ class ActivityNotifications extends ControllerBase {
       catch (\Exception $exception) {
         // Log the exception to watchdog.
         $this->getLogger('default')->error($exception->getMessage());
+        return [];
       }
     }
-    else {
-      return [];
-    }
+    return [];
   }
 
   /**

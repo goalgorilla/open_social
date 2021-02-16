@@ -62,5 +62,19 @@ function hook_social_follow_taxonomy_related_items_alter(array &$items, TermInte
 }
 
 /**
+ * Alter list of fields that need to check in activity context.
+ *
+ * @param array $fields_to_check
+ *   List of field names.
+ *
+ * @see \Drupal\social_follow_taxonomy\Plugin\ActivityContext\FollowTaxonomyActivityContext
+ *
+ * @ingroup social_follow_taxonomy_api
+ */
+function hook_social_follow_taxonomy_fields_alter(array &$fields_to_check) {
+  $fields_to_check[] = 'social_tagging';
+}
+
+/**
  * @} End of "addtogroup hooks".
  */
