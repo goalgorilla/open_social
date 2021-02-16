@@ -155,8 +155,9 @@ function social_group_request_preprocess_group(&$variables) {
   }
 
   $group_types = ['flexible_group'];
+  \Drupal::moduleHandler()->alter('social_group_request', $group_types);
 
-  if (in_array($group_type->id(), \Drupal::moduleHandler()->alter('social_group_request', $group_types))) {
+  if (in_array($group_type->id(), $group_types)) {
     $join_methods = $group->get('field_group_allowed_join_method')->getValue();
 
     $request_option = in_array('request', array_column($join_methods, 'value'), FALSE);
