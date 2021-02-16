@@ -7,6 +7,7 @@
 
 use Drupal\search_api\Entity\Index;
 use Drupal\user\Entity\User;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Implements hook_install().
@@ -81,123 +82,29 @@ function _social_profile_fields_update_search_index($index_id = 'social_users') 
  * Add fields for gender and organization type.
  */
 function social_profile_fields_update_8901() {
-  $items = [
-    'gender' => [
-      'vocabulary' => 'Gender',
-      'cardinality' => 1,
-      'sort' => 'weight',
-    ],
-    'organization_type' => [
-      'vocabulary' => 'Types of organization',
-      'cardinality' => -1,
-      'sort' => 'name',
-    ],
+  $names = [
+    'gender',
+    'organization_type',
   ];
 
   $entity_type_ids = [
-    'taxonomy_vocabulary',
-    'field_storage_config',
-    'field_config',
+    'taxonomy.vocabulary.' => 'taxonomy_vocabulary',
+    'field.storage.profile.field_profile_' => 'field_storage_config',
+    'field.field.profile.profile.field_profile_' => 'field_config',
   ];
 
-  /** @var \Drupal\Core\Config\Entity\ConfigEntityStorageInterface[] $storages */
-  $storages = [];
+  $path = drupal_get_path('module', 'social_profile_fields') . '/config/install/';
 
-  foreach ($entity_type_ids as $entity_type_id) {
-    $storages[$entity_type_id] = \Drupal::entityTypeManager()
-      ->getStorage($entity_type_id);
-  }
+  foreach ($names as $name) {
+    foreach ($entity_type_ids as $prefix => $entity_type_id) {
+      $config_file = $path . $prefix . $name . '.yml';
+      $settings = Yaml::parse(file_get_contents($config_file));
 
-  foreach ($items as $id => $item) {
-    $storages['taxonomy_vocabulary']->createFromStorageRecord([
-      'langcode' => 'en',
-      'status' => TRUE,
-      'dependencies' => [
-        'enforced' => [
-          'module' => [
-            'social_profile_fields',
-          ],
-        ],
-      ],
-      'name' => $item['vocabulary'],
-      'vid' => $id,
-      'description' => '',
-      'weight' => 0,
-    ])->save();
+      /** @var \Drupal\Core\Config\Entity\ConfigEntityStorageInterface $storage */
+      $storage = \Drupal::entityTypeManager()->getStorage($entity_type_id);
 
-    $field = 'field_profile_' . $id;
-
-    $storages['field_storage_config']->createFromStorageRecord([
-      'langcode' => 'en',
-      'status' => TRUE,
-      'dependencies' => [
-        'module' => [
-          'profile',
-          'taxonomy',
-        ],
-        'enforced' => [
-          'module' => [
-            'social_profile_fields',
-          ],
-        ],
-      ],
-      'id' => 'profile.' . $field,
-      'field_name' => $field,
-      'entity_type' => 'profile',
-      'type' => 'entity_reference',
-      'settings' => [
-        'target_type' => 'taxonomy_term',
-      ],
-      'module' => 'core',
-      'locked' => FALSE,
-      'cardinality' => $item['cardinality'],
-      'translatable' => FALSE,
-      'indexes' => [],
-      'persist_with_no_fields' => FALSE,
-      'custom_storage' => FALSE,
-    ])->save();
-
-    $storages['field_config']->createFromStorageRecord([
-      'langcode' => 'en',
-      'status' => TRUE,
-      'dependencies' => [
-        'config' => [
-          'field.storage.profile.' . $field,
-          'profile.type.profile',
-          'taxonomy.vocabulary.' . $id,
-        ],
-        'enforced' => [
-          'module' => [
-            'social_profile_fields',
-          ],
-        ],
-      ],
-      'id' => 'profile.profile.' . $field,
-      'field_name' => $field,
-      'entity_type' => 'profile',
-      'bundle' => 'profile',
-      'label' => $item['vocabulary'],
-      'description' => '',
-      'required' => FALSE,
-      'translatable' => FALSE,
-      'default_value' => [],
-      'default_value_callback' => '',
-      'settings' => [
-        'handler' => 'default:taxonomy_term',
-        'handler_settings' => [
-          'target_bundles' => [
-            $id => $id,
-          ],
-          'sort' => [
-            'field' => $item['sort'],
-            'direction' => 'asc',
-          ],
-          'auto_create' => FALSE,
-          'auto_create_bundle' => '',
-        ],
-      ],
-      'field_type' => 'entity_reference',
-    ])->save();
+      $storage->createFromStorageRecord($settings)->save();
+    }
   }
 
   _social_profile_fields_create_genders();
