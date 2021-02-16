@@ -21,7 +21,7 @@ Feature: Private files
     And I fill in the "edit-body-0-value" WYSIWYG editor with "Private: topic text"
     And I attach the file "/files/opensocial.jpg" to "Image"
     And I wait for AJAX to finish
-    And I attach the file "/files/humans.txt" to "Attachments"
+    And I attach the file "/files/humans.txt" to "edit-field-files-0-upload"
     And I wait for AJAX to finish
     And I press "Create topic"
     Then I should see "Topic Private: topic has been created."
