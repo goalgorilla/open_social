@@ -229,10 +229,10 @@ function social_group_preprocess_group(array &$variables) {
   $variables['group_type_id'] = $group_type_id;
   $variables['group_type'] = $group->getGroupType()->label();
 
-  // From 10.0.0 onwards, we want to show group types differently.
-  // It will be the value chosen while adding the group instead of saying
-  // 'Flexible group'.
-  if ($group_type_id === 'flexible_group'
+  $group_types = ['flexible_group'];
+  \Drupal::moduleHandler()->alter('social_group_request', $group_types);
+
+  if (in_array($group_type_id, $group_types)
     && $group->hasField('field_group_type')
     && !empty($term = $group->get('field_group_type')->entity)
     && \Drupal::config('social_group.settings')->get('social_group_type_required')) {
@@ -257,7 +257,8 @@ function social_group_preprocess_group(array &$variables) {
   elseif ($group->hasPermission('join group', $account)) {
     // @todo switch this to get URL from routes correctly.
     $variables['group_operations_url'] = Url::fromRoute('entity.group.join', ['group' => $group->id()]);
-    if ($group_type_id === 'flexible_group') {
+
+    if (in_array($group_type_id, $group_types)) {
       $join_methods = $group->get('field_group_allowed_join_method')->getValue();
       $direct_option = in_array('direct', array_column($join_methods, 'value'), FALSE);
       if (!$direct_option) {
