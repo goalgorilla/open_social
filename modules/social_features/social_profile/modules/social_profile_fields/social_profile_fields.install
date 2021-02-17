@@ -79,14 +79,9 @@ function _social_profile_fields_update_search_index($index_id = 'social_users') 
 }
 
 /**
- * Add fields for gender and organization type.
+ * Add a field for gender.
  */
 function social_profile_fields_update_8901() {
-  $names = [
-    'gender',
-    'organization_type',
-  ];
-
   $entity_type_ids = [
     'taxonomy.vocabulary.' => 'taxonomy_vocabulary',
     'field.storage.profile.field_profile_' => 'field_storage_config',
@@ -95,16 +90,14 @@ function social_profile_fields_update_8901() {
 
   $path = drupal_get_path('module', 'social_profile_fields') . '/config/install/';
 
-  foreach ($names as $name) {
-    foreach ($entity_type_ids as $prefix => $entity_type_id) {
-      $config_file = $path . $prefix . $name . '.yml';
-      $settings = Yaml::parse(file_get_contents($config_file));
+  foreach ($entity_type_ids as $prefix => $entity_type_id) {
+    $config_file = $path . $prefix . 'gender.yml';
+    $settings = Yaml::parse(file_get_contents($config_file));
 
-      /** @var \Drupal\Core\Config\Entity\ConfigEntityStorageInterface $storage */
-      $storage = \Drupal::entityTypeManager()->getStorage($entity_type_id);
+    /** @var \Drupal\Core\Config\Entity\ConfigEntityStorageInterface $storage */
+    $storage = \Drupal::entityTypeManager()->getStorage($entity_type_id);
 
-      $storage->createFromStorageRecord($settings)->save();
-    }
+    $storage->createFromStorageRecord($settings)->save();
   }
 
   _social_profile_fields_create_genders();

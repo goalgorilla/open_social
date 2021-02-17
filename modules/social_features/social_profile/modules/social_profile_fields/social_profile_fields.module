@@ -55,43 +55,19 @@ function social_profile_fields_entity_form_display_alter(EntityFormDisplayInterf
     return;
   }
 
-  $fields = [
-    'field_profile_gender' => [
-      'options' => [
-        'weight' => 12,
-        'settings' => [],
-        'third_party_settings' => [],
-        'type' => 'options_select',
-        'region' => 'content',
-      ],
-      'group' => 'group_profile_names_image',
-    ],
-    'field_profile_organization_type' => [
-      'options' => [
-        'weight' => 18,
-        'settings' => [
-          'match_operator' => 'CONTAINS',
-          'match_limit' => 10,
-          'size' => 60,
-          'placeholder' => '',
-        ],
-        'third_party_settings' => [],
-        'type' => 'entity_reference_autocomplete_tags',
-        'region' => 'content',
-      ],
-      'group' => 'group_profile_funct_organization',
-    ],
-  ];
+  $form_display->setComponent('field_profile_gender', [
+    'weight' => 12,
+    'settings' => [],
+    'third_party_settings' => [],
+    'type' => 'options_select',
+    'region' => 'content',
+  ]);
 
-  foreach ($fields as $name => $field) {
-    $form_display->setComponent($name, $field['options']);
+  $settings = $form_display->getThirdPartySetting('field_group', 'group_profile_names_image');
 
-    $settings = $form_display->getThirdPartySetting('field_group', $field['group']);
-
-    if (!in_array($name, $settings['children'])) {
-      $settings['children'][] = $name;
-      $form_display->setThirdPartySetting('field_group', $field['group'], $settings);
-    }
+  if (!in_array('field_profile_gender', $settings['children'])) {
+    $settings['children'][] = 'field_profile_gender';
+    $form_display->setThirdPartySetting('field_group', 'group_profile_names_image', $settings);
   }
 
   $form_display->save();
@@ -102,14 +78,10 @@ function social_profile_fields_entity_form_display_alter(EntityFormDisplayInterf
  */
 function social_profile_fields_entity_view_display_alter(EntityViewDisplayInterface $display, array $context) {
   if (
-    $context['entity_type'] !== 'profile' ||
-    $context['view_mode'] !== EntityDisplayRepositoryInterface::DEFAULT_DISPLAY_MODE
+    $context['entity_type'] === 'profile' &&
+    $context['view_mode'] === EntityDisplayRepositoryInterface::DEFAULT_DISPLAY_MODE
   ) {
-    return;
-  }
-
-  $fields = [
-    'field_profile_gender' => [
+    $display->setComponent('field_profile_gender', [
       'weight' => 6,
       'label' => 'above',
       'settings' => [
@@ -118,36 +90,7 @@ function social_profile_fields_entity_view_display_alter(EntityViewDisplayInterf
       'third_party_settings' => [],
       'type' => 'entity_reference_label',
       'region' => 'content',
-    ],
-    'field_profile_organization_type' => [
-      'weight' => 7,
-      'label' => 'above',
-      'settings' => [
-        'link' => FALSE,
-      ],
-      'third_party_settings' => [],
-      'type' => 'entity_reference_label',
-      'region' => 'content',
-    ],
-  ];
-
-  foreach ($fields as $name => $options) {
-    $display->setComponent($name, $options);
-  }
-}
-
-/**
- * Implements hook_field_widget_form_alter().
- */
-function social_profile_fields_field_widget_form_alter(&$element, FormStateInterface $form_state, $context) {
-  /** @var \Drupal\Core\Field\FieldDefinitionInterface $field_definition */
-  $field_definition = $context['items']->getFieldDefinition();
-
-  if (
-    $field_definition->getName() === 'field_profile_organization_type' &&
-    isset($element['target_id'])
-  ) {
-    $element['target_id']['#selection_settings']['hide_id'] = TRUE;
+    ]);
   }
 }
 
