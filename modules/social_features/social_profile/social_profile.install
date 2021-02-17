@@ -446,7 +446,6 @@ function social_profile_update_8901() {
     'block.block.socialblue_exposedformnewest_userspage_newest_users' => drupal_get_path('module', 'social_profile') . '/config/static/block.block.socialblue_exposedformnewest_userspage_newest_users_8901.yml',
   ];
 
-
   foreach ($config_files as $key => $config_file) {
     if (is_file($config_file)) {
       $settings = Yaml::parse(file_get_contents($config_file));
