@@ -2,18 +2,17 @@ langcode: en
 status: true
 dependencies:
   module:
+    - gender
     - profile
-    - taxonomy
   enforced:
     module:
       - social_profile_fields
 id: profile.field_profile_gender
 field_name: field_profile_gender
 entity_type: profile
-type: entity_reference
-settings:
-  target_type: taxonomy_term
-module: core
+type: gender
+settings: {  }
+module: gender
 locked: false
 cardinality: 1
 translatable: false

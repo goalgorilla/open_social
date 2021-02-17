@@ -19,9 +19,6 @@ function social_profile_fields_install() {
   _social_profile_fields_set_permissions();
   _social_profile_fields_update_search_index();
   _social_profile_fields_update_search_index('social_all');
-
-  // Add genders.
-  _social_profile_fields_create_genders();
 }
 
 /**
@@ -82,16 +79,17 @@ function _social_profile_fields_update_search_index($index_id = 'social_users') 
  * Add a field for gender.
  */
 function social_profile_fields_update_8901() {
+  \Drupal::service('module_installer')->install(['gender']);
+
   $entity_type_ids = [
-    'taxonomy.vocabulary.' => 'taxonomy_vocabulary',
-    'field.storage.profile.field_profile_' => 'field_storage_config',
-    'field.field.profile.profile.field_profile_' => 'field_config',
+    'field.storage' => 'field_storage_config',
+    'field.field' => 'field_config',
   ];
 
   $path = drupal_get_path('module', 'social_profile_fields') . '/config/install/';
 
   foreach ($entity_type_ids as $prefix => $entity_type_id) {
-    $config_file = $path . $prefix . 'gender.yml';
+    $config_file = $path . $prefix . '.profile.field_profile_gender.yml';
     $settings = Yaml::parse(file_get_contents($config_file));
 
     /** @var \Drupal\Core\Config\Entity\ConfigEntityStorageInterface $storage */
@@ -100,29 +98,7 @@ function social_profile_fields_update_8901() {
     $storage->createFromStorageRecord($settings)->save();
   }
 
-  _social_profile_fields_create_genders();
-}
-
-/**
- * Create genders.
- */
-function _social_profile_fields_create_genders() {
-  $storage = \Drupal::entityTypeManager()->getStorage('taxonomy_term');
-
-  $genders = [
-    'Male',
-    'Female',
-    'Other',
-    'Prefer not to tell',
-  ];
-
-  foreach ($genders as $weight => $gender) {
-    $term = $storage->create([
-      'vid' => 'gender',
-      'name' => $gender,
-      'weight' => $weight,
-    ]);
-
-    $term->save();
-  }
+  \Drupal::configFactory()->getEditable('social_profile_fields.settings')
+    ->set('profile_profile_field_profile_gender', TRUE)
+    ->save();
 }

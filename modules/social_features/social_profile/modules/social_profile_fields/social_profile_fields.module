@@ -58,7 +58,7 @@ function social_profile_fields_entity_form_display_alter(EntityFormDisplayInterf
     'weight' => 12,
     'settings' => [],
     'third_party_settings' => [],
-    'type' => 'options_select',
+    'type' => 'gender_default',
     'region' => 'content',
   ]);
 
@@ -83,11 +83,9 @@ function social_profile_fields_entity_view_display_alter(EntityViewDisplayInterf
     $display->setComponent('field_profile_gender', [
       'weight' => 6,
       'label' => 'above',
-      'settings' => [
-        'link' => FALSE,
-      ],
+      'settings' => [],
       'third_party_settings' => [],
-      'type' => 'entity_reference_label',
+      'type' => 'list_default',
       'region' => 'content',
     ]);
   }
