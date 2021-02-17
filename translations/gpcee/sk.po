@@ -1487,7 +1487,7 @@ msgstr ""
 "Project-Id-Version: Open Social\n"
 "POT-Creation-Date: 2021-02-10 00:16+0000\n"
 "PO-Revision-Date: 2021-02-17 18:16+0000\n"
-"Last-Translator: Ivana Daubnerova <ivana.daubnerova@gmail.com>\n"
+"Last-Translator: Lucia Sumegova <lucia.sumegova@greenpeace.org>\n"
 "Language-Team: Slovak <https://translate.getopensocial.com/projects/gpcee/"
 "distribution/sk/>\n"
 "Language: sk\n"
@@ -1537,6 +1537,15 @@ msgid ""
 "        To solve the issue, try using different login information, try again "
 "later, or <a href=\":url\">request a new password</a>"
 msgstr ""
+"\n"
+"        Oops, stala sa chyba. Dôvodom môže byť: <br>\n"
+"        -Neplatný používateľský email/meno a heslo. <br>\n"
+"        -Účet je dočasne zablokovaný z dôvodu opakovaných pokusov o "
+"prihlásenie so zlým heslom. <br>\n"
+"        - Nastalo príliš veľa zlyhaných pokusov o prihlásenie z tejto IP "
+"adresy. Vaša IP adresa je dočasne zablokovaná.. <br> <br>\n"
+"        Pokúste sa prihlásiť nekôr alebo <a href=\":url\">požiadajte o nové "
+"heslo</a>"
 
 #: modules/social_features/social_swiftmail/social_swiftmail.module:72
 msgid "#madetoshare"
@@ -1783,7 +1792,7 @@ msgstr[2] ""
 msgid "1 selected member has not been removed successfully"
 msgid_plural "@count selected members have been removed successfully"
 msgstr[0] "1 vybraný člen/ka nebola úspešne odstránený/á"
-msgstr[1] ""
+msgstr[1] "@count vybraní/é členovia/ky neboli úspešne odstránení/é"
 msgstr[2] ""
 
 #: modules/social_features/social_core/src/Plugin/Field/FieldFormatter/CommentNodeFormatter.php:139
@@ -1904,7 +1913,7 @@ msgstr ""
 msgid ""
 "<i>Disabling this will simply hide the 'My Groups' button from the main "
 "navigation.</i>"
-msgstr ""
+msgstr "<i>Tento úkon skryje z hlavného panelu položku \"Moje Skupiny\".</i>"
 
 #: modules/social_features/social_user/src/Form/SocialUserNavigationSettingsForm.php:79
 msgid ""
@@ -1936,6 +1945,8 @@ msgid ""
 "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
 "a> added you to the event [social_event:event_iam_organizing]</p>"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
+"a> ťa pridal/a do udalosťi [social_event:event_iam_organizing]</p>"
 
 #: modules/social_features/social_activity/config/install/message.template.create_comment_group_node.yml:0
 msgid ""
@@ -1964,6 +1975,8 @@ msgid ""
 "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
 "a> and @count others commented on a post</p>"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
+"a> and @count ďalších komentujúcich osôb príspevku</p>"
 
 #: modules/social_features/social_activity/config/install/message.template.event_request_approved.yml:0;0;0
 msgid ""
@@ -1971,6 +1984,9 @@ msgid ""
 "a> approved your request to enroll for the event [social_event:"
 "event_iam_organizing]</p>\r\n"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
+"a> schválil/a tvoju žiadosť zapísať sa na udalosť "
+"[social_event:event_iam_organizing]</p>\n"
 
 #: modules/social_features/social_follow_content/config/install/message.template.create_comment_following_node.yml:0;0
 msgid ""
@@ -2013,6 +2029,10 @@ msgid ""
 "commented_content_type] in <a href=\"[message:gurl]\">[message:gtitle]</a></"
 "p>\n"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
+"a> komentoval/a [social_comment:parent_entity_author]'s "
+"[social_comment:commented_content_type] in <a href=\"[message:gurl]\""
+">[message:gtitle]</a></p>\n"
 
 #: modules/social_features/social_activity/config/install/message.template.create_comment_community_node.yml:0
 msgid ""
@@ -2020,12 +2040,18 @@ msgid ""
 "a> commented on [social_comment:parent_entity_author]'s [social_comment:"
 "commented_content_type]</p>\n"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
+"a> komentoval/a [social_comment:parent_entity_author]'s "
+"[social_comment:commented_content_type]</p>\n"
 
 #: modules/social_features/social_activity/config/install/message.template.create_comment_group_post.yml:0
 msgid ""
 "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
 "a> commented on a post in <a href=\"[message:gurl]\">[message:gtitle]</a></p>"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
+"a> komentoval/a príspevok v <a href=\"[message:gurl]\""
+">[message:gtitle]</a></p>"
 
 #: modules/social_features/social_activity/config/install/message.template.create_comment_post_profile.yml:0;0
 msgid ""
@@ -2033,6 +2059,9 @@ msgid ""
 "a> commented on a post on your <a href=\"[message:recipient-user-"
 "url]\">profile</a></p>\r\n"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
+"a> komentoval/a príspevok v tvojej <a href=\"[message:recipient-user-url]\""
+">profile</a></p>\n"
 
 #: modules/social_features/social_activity/config/install/message.template.create_comment_post_profile.yml:0
 msgid ""
@@ -2057,18 +2086,42 @@ msgid ""
 "\t</tbody>\r\n"
 "</table>"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
+"a> komentoval/a príspevok v tvojej <a href=\"[message:recipient-user-url]\""
+">profile</a></p>\n"
+"<table class=\"comments\">\n"
+"<tr>\n"
+"<td class=\"post\"><strong>[social_comment:comment_author]</strong> <small>• "
+"[social_comment:comment_date]</small>\n"
+"<p>[social_comment:comment_text]</p>\n"
+"</td>\n"
+"</tr>\n"
+"</table>\n"
+"<table class=\"btn-wrapp\">\n"
+"\t<tbody>\n"
+"\t\t<tr>\n"
+"\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-"
+"one\" href=\"[social_comment:comment_reply_link_html]\">Reply to this "
+"comment </a></td>\n"
+"\t\t</tr>\n"
+"\t</tbody>\n"
+"</table>"
 
 #: modules/social_features/social_activity/config/install/message.template.create_comment_community_post.yml:0
 msgid ""
 "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
 "a> commented on a post</p>"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
+"a> komentoval/a príspevok</p>"
 
 #: modules/social_features/social_activity/config/install/message.template.create_comment_author_node_post.yml:0;0
 msgid ""
 "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
 "a> commented on your [social_comment:commented_entity_link_html]</p>\r\n"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
+"a> komentoval/a v tvojom [social_comment:commented_entity_link_html]</p>\n"
 
 #: modules/social_features/social_activity/config/install/message.template.create_comment_author_node_post.yml:0
 msgid ""
@@ -2092,6 +2145,25 @@ msgid ""
 "\t</tbody>\r\n"
 "</table>"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
+"a> komentoval/a v tvojom [social_comment:commented_entity_link_html]</p>\n"
+"<table class=\"comments\">\n"
+"<tr>\n"
+"<td class=\"post\"><strong>[social_comment:comment_author]</strong> <small>• "
+"[social_comment:comment_date]</small>\n"
+"<p>[social_comment:comment_text]</p>\n"
+"</td>\n"
+"</tr>\n"
+"</table>\n"
+"<table class=\"btn-wrapp\">\n"
+"\t<tbody>\n"
+"\t\t<tr>\n"
+"\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-"
+"one\" href=\"[social_comment:comment_reply_link_html]\">Reply to this "
+"comment </a></td>\n"
+"\t\t</tr>\n"
+"\t</tbody>\n"
+"</table>"
 
 #: modules/social_features/social_activity/config/install/message.template.moved_content_between_groups.yml:0
 msgid ""
@@ -2099,6 +2171,9 @@ msgid ""
 "a> created [social_group:content_type] in <a href=\"[message:gurl]\">"
 "[message:gtitle]</a></p>"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
+"a> vytvoril/a [social_group:content_type] v <a href=\"[message:gurl]\""
+">[message:gtitle]</a></p>"
 
 #: modules/social_features/social_activity/config/install/message.template.create_content_in_joined_group.yml:0;0
 msgid ""
@@ -2106,6 +2181,9 @@ msgid ""
 "a> created [social_group:created_entity_link_html] in the <a href=\"[message:"
 "gurl]\">[message:gtitle]</a> group</p>"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
+"a> vytvoril/a [social_group:created_entity_link_html] v <a href=\""
+"[message:gurl]\">[message:gtitle]</a> skupine</p>"
 
 #: modules/social_features/social_activity/config/install/message.template.create_content_in_joined_group.yml:0
 msgid ""
@@ -2113,6 +2191,10 @@ msgid ""
 "a> created [social_group:created_entity_link_html] in the <a href=\"[message:"
 "gurl]\">[message:gtitle]</a> group</p><p>[message:additional_information]</p>"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
+"a> vytvorilPa [social_group:created_entity_link_html] v <a href=\""
+"[message:gurl]\">[message:gtitle]</a> "
+"skupine</p><p>[message:additional_information]</p>"
 
 #: modules/social_features/social_follow_taxonomy/modules/social_follow_tag/config/install/message.template.create_node_following_tag.yml:0
 msgid ""
@@ -2127,30 +2209,40 @@ msgid ""
 "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
 "a> created a topic in <a href=\"[message:gurl]\">[message:gtitle]</a></p>"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
+"a> vytvoril/a tému v <a href=\"[message:gurl]\">[message:gtitle]</a></p>"
 
 #: modules/social_features/social_activity/config/install/message.template.create_topic_community.yml:0
 msgid ""
 "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
 "a> created a topic</p>"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
+"a> vytvoril/a tému</p>"
 
 #: modules/social_features/social_activity/config/install/message.template.create_event_group.yml:0
 msgid ""
 "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
 "a> created an event in <a href=\"[message:gurl]\">[message:gtitle]</a></p>"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
+"a> vytvoril/a udalosť <a href=\"[message:gurl]\">[message:gtitle]</a></p>"
 
 #: modules/social_features/social_activity/config/install/message.template.create_event_community.yml:0
 msgid ""
 "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
 "a> created an event</p>"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
+"a> vytvoril/a udalosť</p>"
 
 #: modules/social_features/social_like/config/install/message.template.create_like_node_or_post.yml:0;0;0
 msgid ""
 "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
 "a> likes your [social_like:liked_entity_link_html]</p>"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
+"a> sa páči tvoj [social_like:liked_entity_link_html]</p>"
 
 #: modules/social_features/social_mentions/config/install/message.template.create_mention_comment.yml:0;0;0
 msgid ""
@@ -2159,6 +2251,10 @@ msgid ""
 "url:absolute]\">comment</a> on [social_mentions:commented_entity_link_html]</"
 "p>"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
+"a> ťa spomenul/a v <a href=\""
+"[message:field_message_related_object:entity:url:absolute]\">komentári</a> v "
+"[social_mentions:commented_entity_link_html]</p>"
 
 #: modules/social_features/social_mentions/config/install/message.template.create_mention_post.yml:0
 msgid ""
@@ -2166,24 +2262,35 @@ msgid ""
 "a> mentioned you in a <a href=\"[message:field_message_related_object:entity:"
 "url:absolute]\">post</a></p>"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
+"a> ťa spomenul v <a href=\""
+"[message:field_message_related_object:entity:url:absolute]\""
+">príspevku</a></p>"
 
 #: modules/social_features/social_mentions/config/install/message.template.create_mention_post.yml:0;0
 msgid ""
 "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
 "a> mentioned you in a post</p>"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
+"a> ťa spomenul/a v príspevku</p>"
 
 #: modules/social_features/social_activity/config/install/message.template.create_post_group.yml:0
 msgid ""
 "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
 "a> posted in <a href=\"[message:gurl]\">[message:gtitle]</a></p>"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
+"a> pridal/a príspevok v <a href=\"[message:gurl]\">[message:gtitle]</a></p>"
 
 #: modules/social_features/social_activity/config/install/message.template.create_post_profile_stream.yml:0
 msgid ""
 "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
 "a> posted on your <a href=\"[message:recipient-user-url]\">profile</a></p>"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
+"a> pridal/a príspevok na tvojom <a href=\"[message:recipient-user-url]\""
+">profile</a></p>"
 
 #: modules/social_features/social_activity/config/install/message.template.create_post_profile.yml:0
 msgid ""
@@ -2191,6 +2298,9 @@ msgid ""
 "a> posted on your <a href=\"[message:recipient-user-url]\">profile</a></p><p>"
 "[message:additional_information]</p>"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
+"a> pridal/a príspevok na tvojom <a href=\"[message:recipient-user-url]\""
+">profile</a></p><p>[message:additional_information]</p>"
 
 #: modules/social_features/social_activity/config/install/message.template.create_post_profile.yml:0;0
 #: modules/social_features/social_activity/config/install/message.template.create_post_profile_stream.yml:0
@@ -2198,12 +2308,16 @@ msgid ""
 "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
 "a> posted on your profile</p>\n"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
+"a> pridal/a príspevok na tvojom profile</p>\n"
 
 #: modules/social_features/social_activity/config/install/message.template.create_post_community.yml:0
 msgid ""
 "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
 "a> posted</p>"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
+"a> pridal/a príspevok</p>"
 
 #: modules/social_features/social_activity/config/install/message.template.create_comment_reply.yml:0;0
 msgid ""
@@ -2212,6 +2326,10 @@ msgid ""
 "url:absolute]\">comment</a> in [social_comment:commented_entity_link_html]</"
 "p>\r\n"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
+"a> odpovedal/a na tvoj<a href=\""
+"[message:field_message_related_object:entity:url:absolute]\">komentár</a> in "
+"[social_comment:commented_entity_link_html]</p>\n"
 
 #: modules/social_features/social_activity/config/install/message.template.create_comment_reply.yml:0
 msgid ""
@@ -2242,6 +2360,32 @@ msgid ""
 "\t</tbody>\r\n"
 "</table>\r\n"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
+"a> odpovedal/a na tvoj <a href=\""
+"[message:field_message_related_object:entity:url:absolute]\">comment</a> in "
+"[social_comment:commented_entity_link_html]</p>\n"
+"<table class=\"comments\">\n"
+"<tr>\n"
+"<td class=\"comment\"><strong>[social_comment:parent_comment_author]</"
+"strong> <small>• [social_comment:parent_comment_date]</small>\n"
+"<p>[social_comment:parent_comment_text]</p>\n"
+"</td>\n"
+"</tr><tr>\n"
+"<td class=\"comment reply\"><strong>[social_comment:comment_author]</strong> "
+"<small>• [social_comment:comment_date]</small>\n"
+"<p>[social_comment:comment_text]</p>\n"
+"</td>\n"
+"</tr>\n"
+"</table>\n"
+"<table class=\"btn-wrapp\">\n"
+"\t<tbody>\n"
+"\t\t<tr>\n"
+"\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-"
+"one\" href=\"[social_comment:commented_entity_link]\">Odpovedať na komentár "
+"</a></td>\n"
+"\t\t</tr>\n"
+"\t</tbody>\n"
+"</table>\n"
 
 #: modules/social_features/social_mentions/config/install/message.template.create_comment_reply_mention.yml:0
 msgid ""
@@ -2249,12 +2393,18 @@ msgid ""
 "a> replied to a <a href=\"[message:field_message_related_object:entity:url:"
 "absolute]\">comment</a> where you are mentioned</p>"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
+"a> odpovedal/a na <a href=\""
+"[message:field_message_related_object:entity:url:absolute]\">komentár</a> v "
+"ktorom si spomenutý/á</p>"
 
 #: modules/social_features/social_mentions/config/install/message.template.create_comment_reply_mention.yml:0;0
 msgid ""
 "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
 "a> replied to a comment where you are mentioned</p>"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
+"a> odpovedal/a na komentár, v ktorom si spomenutý/á</p>"
 
 #: modules/social_features/social_content_report/config/install/message.template.content_reported.yml:0;0;0
 msgid ""
@@ -2262,6 +2412,9 @@ msgid ""
 "a> reported <a href=\"[social_content_report:content_url]\">content</a> as "
 "inappropriate</p>\n"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
+"a> nahlásil/a <a href=\"[social_content_report:content_url]\">obsah</a> ako "
+"nevhodný</p>\n"
 
 #: modules/social_features/social_group/modules/social_group_request/config/install/message.template.request_to_join_a_group.yml:0;0
 msgid ""
@@ -2269,6 +2422,9 @@ msgid ""
 "display-name]</a> has requested membership to the <a href=\"[message:gurl]\">"
 "[message:gtitle]</a> group</p>\r\n"
 msgstr ""
+"<p><a href=\"[message:recipient-user:url:absolute]\">[message:recipient-user"
+":display-name]</a> požiadal/a o členstvo v <a href=\"[message:gurl]\""
+">[message:gtitle]</a> skupine</p>\n"
 
 #: modules/social_features/social_group/modules/social_group_request/config/install/message.template.request_to_join_a_group.yml:0
 msgid ""
@@ -2286,6 +2442,19 @@ msgid ""
 "\t</tbody>\r\n"
 "</table>\r\n"
 msgstr ""
+"<p><a href=\"[message:recipient-user:url:absolute]\">[message:recipient-user"
+":display-name]</a> požiadal/a o členstvo v <a href=\"[message:gurl]\""
+">[message:gtitle]</a> skupine</p>\n"
+"\n"
+"<table class=\"btn-wrapp\">\n"
+"\t<tbody>\n"
+"\t\t<tr>\n"
+"\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-"
+"one\" href=\"[social_group_request:request_page_link]\">View request</a></td>"
+"\n"
+"\t\t</tr>\n"
+"\t</tbody>\n"
+"</table>\n"
 
 #: modules/social_features/social_activity/config/install/message.template.join_to_group.yml:0;0;0
 msgid ""
@@ -2293,6 +2462,9 @@ msgid ""
 "display-name]</a> joined the <a href=\"[message:gurl]\">[message:gtitle]</a> "
 "group</p>"
 msgstr ""
+"<p><a href=\"[message:recipient-user:url:absolute]\">[message:recipient-user"
+":display-name]</a> sa pridal/a do <a href=\"[message:gurl]\""
+">[message:gtitle]</a> skupiny</p>"
 
 #: modules/social_features/social_event/config/optional/message.template.activity_on_events_im_organizing.yml:0;0;0
 msgid ""
@@ -2300,6 +2472,9 @@ msgid ""
 "</a> has enrolled to the event [social_event:event_iam_organizing] you are "
 "organizing</p>"
 msgstr ""
+"<p><a href=\"[social_event:enrolled_event_url]\""
+">[social_event:enrolled_user]</a> sa zapísal/a na udalosť "
+"[social_event:event_iam_organizing] ktorú organizuješ</p>"
 
 #: modules/social_features/social_activity/config/install/message.template.request_event_enrollment.yml:0;0;0
 msgid ""
@@ -2307,16 +2482,20 @@ msgid ""
 "</a> has requested enrollment to the event [social_event:"
 "event_iam_organizing] you are organizing</p>\r\n"
 msgstr ""
+"<p><a href=\"[social_event:enrolled_event_url]\""
+">[social_event:enrolled_user]</a> požiadal/a o zapísanie da "
+"udalosť[social_event:event_iam_organizing] ktorú organizuješ</p>\n"
 
 #: modules/social_features/social_event/modules/social_event_an_enroll/config/install/views.view.manage_enrollments.yml:0
 msgid "<p>@total people have enrolled anonymously</p>"
-msgstr ""
+msgstr "<p>@total people sa zapísalo anonymne</p>"
 
 #: modules/custom/social_queue_storage/config/install/message.template.background_process_finished.yml:0;0;0
 msgid ""
 "<p>Background process \"[queue_storage_entity:mail_task_subject]\" has "
 "finished.</p>"
 msgstr ""
+"<p>Proces v pozadá \"[queue_storage_entity:mail_task_subject]\" skončil.</p>"
 
 #: modules/social_features/social_event/modules/social_event_invite/config/install/message.template.invite_event_enrollment.yml:0
 msgid ""
@@ -2340,6 +2519,25 @@ msgid ""
 "\t</tbody>\r\n"
 "</table>\r\n"
 msgstr ""
+"<p>Ahoj,</p>\n"
+"\n"
+"<p> Rád/a by som ťa pozvala na moju udalosť "
+"[social_event:event_iam_organizing] na [site:name].</p>\n"
+"\n"
+"<p>Pozdravujem,<br />\n"
+"[message:author:display-name]</p>\n"
+"\n"
+"<table class=\"btn-wrap\">\n"
+"\t<tbody>\n"
+"\t\t<tr>\n"
+"\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-"
+"one\" href=\"[social_event_invite:user_login_event_destination]\">See "
+"event</a></td>\n"
+"\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-"
+"one\" href=\"[site:url]\">About [site:name]</a></td>\n"
+"\t\t</tr>\n"
+"\t</tbody>\n"
+"</table>\n"
 
 #: modules/social_features/social_group/modules/social_group_invite/config/optional/message.template.invited_to_join_group.yml:0
 msgid ""
@@ -2362,6 +2560,24 @@ msgid ""
 "\t</tbody>\r\n"
 "</table>\r\n"
 msgstr ""
+"<p>Ahoj,</p>\n"
+"\n"
+"<p>Rád/a by som ťa pozvala na moju udalosť [message:gtitle] v "
+"[site:name].</p>\n"
+"\n"
+"<p>Pozdravujem,<br />\n"
+"[message:author:display-name]</p>\n"
+"\n"
+"<table class=\"btn-wrap\">\n"
+"\t<tbody>\n"
+"\t\t<tr>\n"
+"\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-"
+"one\" href=\"[message:gurl]\">View group</a></td>\n"
+"\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-"
+"one\" href=\"[site:url]\">About [site:name]</a></td>\n"
+"\t\t</tr>\n"
+"\t</tbody>\n"
+"</table>\n"
 
 #: modules/social_features/social_event/modules/social_event_invite/config/install/social_event_invite.settings.yml:0
 msgid ""
@@ -2381,6 +2597,21 @@ msgid ""
 "\t</tbody>\r\n"
 "</table>\r\n"
 msgstr ""
+"<p>Ahoj,</p>\n"
+"<p>Rád/a by som ťa pozvala na moju udalosť <strong>[node:title]</strong> v "
+"<strong>[site:name]</strong>.</p>\n"
+"<p>Pozdravujem, [user:display-name]</p>\n"
+"\n"
+"<table class=\"btn-wrap\">\n"
+"\t<tbody>\n"
+"\t\t<tr>\n"
+"\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-"
+"one\" href=\"[social_event_invite:register_link]\">See event</a></td>\n"
+"\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-"
+"one\" href=\"[site:url]\">About [site:name]</a></td>\n"
+"\t\t</tr>\n"
+"\t</tbody>\n"
+"</table>\n"
 
 #: modules/social_features/social_event/modules/social_event_invite/config/install/social_event_invite.settings.yml:0
 #: modules/social_features/social_group/modules/social_group_invite/config/optional/social_group_invite.settings.yml:0
@@ -2388,24 +2619,32 @@ msgid ""
 "<p>The message above is edited by the community managers. Please contact "
 "them for questions and ideas</p>"
 msgstr ""
+"<p>Vyššie napísaná správa je upravovaná správcami portálu. V prípade otázok "
+"alebo nápadov ich prosím kontaktujte.</p>"
 
 #: modules/social_features/social_event/modules/social_event_invite/config/install/message.template.invite_event_enrollment.yml:0
 msgid ""
 "<p>You have been invited for the even [social_event:event_iam_organizing] by "
 "[message:author:display-name]</p>\r\n"
 msgstr ""
+"<p>Máš novú pozvánku na udalosť [social_event:event_iam_organizing] od "
+"[message:author:display-name]</p>\n"
 
 #: modules/social_features/social_event/modules/social_event_invite/config/install/message.template.invite_event_enrollment.yml:0
 msgid ""
 "<p>You have been invited for the event [social_event:event_iam_organizing] "
 "by [message:author:display-name]</p>\r\n"
 msgstr ""
+"<p>Máš novú pozvánku na udalosť [social_event:event_iam_organizing] od "
+"[message:author:display-name]</p>\n"
 
 #: modules/social_features/social_group/modules/social_group_invite/config/optional/message.template.invited_to_join_group.yml:0;0
 msgid ""
 "<p>You have been invited to join the group <a href=\"gurl]\">[message:gtitle]"
 "</a></p>\r\n"
 msgstr ""
+"<p>Bol/a si pozváný/a pridať sa do skupiny <a href=\"gurl]\""
+">[message:gtitle]</a></p>\n"
 
 #: modules/social_features/social_core/src/Controller/SocialCoreController.php:67
 msgid ""
@@ -2417,12 +2656,19 @@ msgid ""
 "browser to go back where you came from or click <a href=\":url\">here</a> to "
 "go to the homepage</p>"
 msgstr ""
+"<p>Na prehliadanie tejto stránky nemáš povolený prístup. Dôvodom môže byť:</"
+"p><ul><li>Snažíš sa zmeniť obsah, ku ktorému nemáš editovacie práva.</"
+"li><li>Snažíš sa pozrieť si obsah, ku ktorému nemáš prístup.</li><li>Snažíš "
+"sa vstúpiť do zóny administrátora/ky.</li></ul><p>Klikli na tlačidlo späť "
+"alebo klikni <a href=\":url\">tu</a> a dotaneš sa na domovskú stránku</p>"
 
 #: modules/social_features/social_private_message/config/install/message.template.create_private_message.yml:0;0;0
 msgid ""
 "<p>You have received a <a href=\"[message:pmt-url]\">message</a> from <a "
 "href=\"[message:author:url:absolute]\">[message:author:display-name]</a></p>"
 msgstr ""
+"<p>Dostal/a si správu <a href=\"[message:pmt-url]\">message</a> od <a href=\""
+"[message:author:url:absolute]\">[message:author:display-name]</a></p>"
 
 #: modules/social_features/social_group/modules/social_group_request/config/install/message.template.approve_request_join_group.yml:0
 msgid ""
@@ -2438,12 +2684,25 @@ msgid ""
 "\t</tbody>\r\n"
 "</table>\r\n"
 msgstr ""
+"<p>Tvoja žiadosť o členstvo do <a href=\"[message:gurl]\">[message:gtitle]</"
+"a> skupiny bola schválená</p>\n"
+"\n"
+"<table class=\"btn-wrapp\">\n"
+"\t<tbody>\n"
+"\t\t<tr>\n"
+"\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-"
+"one\" href=\"[message:gurl]\">Visit group</a></td>\n"
+"\t\t</tr>\n"
+"\t</tbody>\n"
+"</table>\n"
 
 #: modules/social_features/social_group/modules/social_group_request/config/install/message.template.approve_request_join_group.yml:0;0
 msgid ""
 "<p>Your membership request for the <a href=\"gurl]\">[message:gtitle]</a> "
 "group has been approved</p>\r\n"
 msgstr ""
+"<p>Tvoja žiadosť o členstvo do <a href=\"gurl]\">[message:gtitle]</a> "
+"skupiny bola schválená</p>\n"
 
 #: modules/social_features/social_profile/modules/social_profile_privacy/config/install/social_profile_privacy.settings.yml:0
 msgid ""
@@ -2454,6 +2713,11 @@ msgid ""
 "also possible that some of the options below are disabled by the managers of "
 "this site.</p>\r\n"
 msgstr ""
+"<strong>Poznámka:</strong>\n"
+"<p>.Ďalší ľudia vás stále budú môcť vyhľadať, ak zadajú vyhľadávanie pre "
+"niektoré z týchto polí (npr. Bratislava ako mesto). Informácie, ktoré "
+"skryješ budú stále viditeľné pre správcov stránky. Taktiež je možné, že "
+"niektoré z týchto možností budú zablokované správcami stránky.</p>\n"
 
 #: modules/social_features/social_profile/modules/social_profile_fields/src/Form/SocialProfileFieldsFlushForm.php:131
 msgid ""
@@ -2463,41 +2727,48 @@ msgid ""
 "indexing. This <strong>cannot be undone</strong>. Are you sure you want to "
 "continue?"
 msgstr ""
+"<strong>WARNING</strong>: Vymazanie údajov profilu natrvalo<strong>vymaže "
+"všetky údaje</strong> z nasledovných polí databázy: %fields. Vyhľadávací "
+"index môže byť taktiež vymazaný a bude potrebovať pre-indexovanie. Tento "
+"úkon <strong>nebude môcť byť vrátený</strong>. Si si istý/á, že chceš "
+"pokračovať?"
 
 #: modules/social_features/social_like/social_like.module:35
 msgid "@amount like(s)"
-msgstr ""
+msgstr "@amount like/ov"
 
 #: modules/custom/activity_creator/activity_creator.post_update.php:70
 msgid ""
 "@count activities data has been migrated to activity_notification_table."
-msgstr ""
+msgstr "@count aktivít bolo presunutých do activity_notification_table."
 
 #: modules/social_features/social_event/modules/social_event_managers/src/Form/SocialEventManagersAddEnrolleeForm.php:124
 msgid "@count new member is enrolled to this event."
 msgid_plural "@count new members are enrolled to this event."
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "@count nový člen/ka sa zapísal/a na udalosť."
+msgstr[1] "@count noví členovia/ky sa zapísali na udalosť."
+msgstr[2] "@count nových členov/iek sa zapísalo na udalosť."
 
 #: modules/social_features/social_event/modules/social_event_managers/src/Form/SocialEventManagersAddEnrolleeForm.php:127
 msgid "@count new member is enrolled to your event."
 msgid_plural "@count new members are enrolled to your event."
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "@count nový člen/ka sa zapísal/a na udalosť."
+msgstr[1] "@count noví členovia/ky sa zapísali na udalosť."
+msgstr[2] "@count nových členov/iek sa zapísalo na udalosť."
 
 #: modules/social_features/social_group/social_group.module:1102
 msgid "@count new member joined the group."
 msgid_plural "@count new members joined the group."
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "@count nový člen/ka sa pridal/a do skupiny."
+msgstr[1] "@count noví členovia/ky sa pridali do skupiny."
+msgstr[2] "@count nových členov/iek sa pridalo do skupiny."
 
 #: modules/social_features/social_content_report/src/EventSubscriber/FlagSubscriber.php:116
 msgid ""
 "@entity_type @entity_id could not be unpublished after a user reported it."
 msgstr ""
+"@entity_type @entity_id nemôže byť neuverejnený potom, ako bol nahlásaný "
+"používateľom/kou."
 
 #: modules/social_features/social_event/modules/social_event_invite/src/Form/EnrollInviteEmailForm.php:262
 #: modules/social_features/social_event/modules/social_event_invite/src/Form/EnrollInviteUserForm.php:130
@@ -2507,11 +2778,11 @@ msgstr ""
 
 #: translations.php:63
 msgid "@interval ago"
-msgstr ""
+msgstr "pred @interval"
 
 #: translations.php:62
 msgid "@interval hence"
-msgstr ""
+msgstr "od @interval"
 
 #: modules/custom/dropdown/src/Plugin/Field/FieldWidget/DropdownWidgetType.php:158
 msgid "@name field is required."
@@ -2527,75 +2798,78 @@ msgstr "pred @time"
 
 #: modules/social_features/social_event/social_event.module:540
 msgid "@timezone time"
-msgstr ""
+msgstr "@timezone čas"
 
 #: modules/social_features/social_event/modules/social_event_managers/config/install/views.view.event_manage_enrollments.yml:0
 msgid "@total Enrollees"
-msgstr ""
+msgstr "@total Zapísaných osôb"
 
 #: modules/social_features/social_group/config/install/views.view.group_manage_members.yml:0
 msgid "@total members"
-msgstr ""
+msgstr "@total členov/niek"
 
 #: modules/social_features/social_event/config/install/views.view.event_enrollments.yml:0
 msgid "@total people have enrolled"
-msgstr ""
+msgstr "@total osôb sa zapísalo"
 
 #: modules/social_features/social_event/modules/social_event_max_enroll/social_event_max_enroll.module:204
 msgid "@total person has enrolled @spots_left"
 msgid_plural "@total people have enrolled @spots_left"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "@total osoba sa zapísala @spots_left"
+msgstr[1] "@total osoby sa zapísali @spots_left"
+msgstr[2] "@total ľudí sa zapísalo @spots_left"
 
 #: modules/social_features/social_event/modules/social_event_managers/src/Element/SocialEnrollmentAutocomplete.php:113
 msgid "@usernames is already enrolled, you can't add them again"
 msgid_plural "@usernames are already enrolled, you can't add them again"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "@usernames je už zapísaný/á, nie je možné pridať ho/ju znova"
+msgstr[1] "@usernames sú už zapísaní/é, nie je možné pridať ich znova"
+msgstr[2] "@usernames sú už zapísaní/é, nie je možné pridať ich znova"
 
 #: modules/social_features/social_event/modules/social_event_managers/src/Element/SocialEnrollmentAutocomplete.php:120
 msgid "@usernames is already invited or enrolled, you can't invite them again"
 msgid_plural ""
 "@usernames are already invited or enrolled, you can't invite them again"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "@usernames je už pozvaný/á, nie je možné pozvať ho/ju znova"
+msgstr[1] "@usernames sú už pozvaní/é, nie je možné pozvať ich znova"
+msgstr[2] "@usernames sú už pozvaní/é, nie je možné pozvať ich znova"
 
 #: modules/social_features/social_group/src/Element/SocialGroupEntityAutocomplete.php:85
 msgid "@usernames is already member of the group, you can't add them again"
 msgid_plural ""
 "@usernames are already members of the group, you can't add them again"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "@usernames je už členom/kou skupiny, nie je možné pridať ho/ju znova"
+msgstr[1] "@usernames sú už členmi/kami skupiny, nie je možné pridať ich znova"
+msgstr[2] "@usernames sp už členmi/kami skupiny, nie je možné pridať ich znova"
 
 #: translations.php:57;97
 msgid ""
 "A Reply-To address is the email address that receives messages sent from "
 "those who select Reply in their email clients."
 msgstr ""
+"Emailová adresa na odpoveď prijíma správy, pri ktorých bolo pri odoslaní "
+"vybrané \"odpovedať\"."
 
 #: modules/custom/social_queue_storage/config/install/message.template.background_process_finished.yml:0
 msgid "A background process (e.g. sending bulk emails) has finished"
-msgstr ""
+msgstr "Procesy v pozadí (npr. posielanie veľkých emailov) sa skončili"
 
 #: modules/social_features/social_core/config/install/block_content.type.basic.yml:0
 msgid "A basic block contains a title and a body."
-msgstr ""
+msgstr "Základný blok obsahuje názov a telo."
 
 #: modules/social_features/social_landing_page/config/install/paragraphs.paragraphs_type.section.yml:0
 msgid "A block section where can be selected a block or a paragraph"
-msgstr ""
+msgstr "Blok, v ktorom môže byť vybraný odsek alebo paragraf"
 
 #: modules/custom/activity_creator/src/Entity/Activity.php:174
 msgid "A boolean indicating whether the Activity is published."
 msgstr ""
 
 #: modules/social_features/social_event/src/Entity/EventEnrollment.php:245
+#, fuzzy
 msgid "A boolean indicating whether the Event enrollment is published."
-msgstr ""
+msgstr "A boolean indicating whether the Event enrollment is published."
 
 #: modules/custom/social_font/src/Entity/Font.php:198
 msgid "A boolean indicating whether the Font is published."
@@ -2607,42 +2881,46 @@ msgid ""
 "A custom block to generate a list of content dynamically according to "
 "specific filters."
 msgstr ""
+"Vlastný blok na vytvorenie zoznamu obsahu dynamicky podľa špecifických "
+"filtrov."
 
 #: modules/social_features/social_content_report/social_content_report.module:79
 msgid "A description of your report is mandatory."
-msgstr ""
+msgstr "Opis reportu je povinný."
 
 #: modules/social_features/social_featured_content/config/install/block_content.type.featured.yml:0
 msgid ""
 "A list of featured content that can have a title, link, group/node/profile, "
 "and description."
 msgstr ""
+"Zoznam obsahu, ktorý môže obsahovať názov, link, skupinu/node/profil a opis."
 
 #: modules/social_features/social_featured_items/config/install/block_content.type.featured_items.yml:0
 msgid ""
 "A list of featured items that can have a title, link, image/icon, and "
 "description."
 msgstr ""
+"Zoznam položiek, ktorý môže obsahovať názov, link, obrázok/ikonku a opis."
 
 #: modules/social_features/social_content_report/config/install/taxonomy.vocabulary.report_reasons.yml:0
 msgid "A list of reasons users can choose from for reporting content."
-msgstr ""
+msgstr "Zoznam dôvodov na výber na nahlásenie obsahu."
 
 #: modules/social_features/social_event/modules/social_event_managers/config/optional/message.template.member_added_by_event_organiser.yml:0;0
 msgid "A organizer added me to a Event"
-msgstr ""
+msgstr "Organizátor/ka ma pridal/a do udalosti"
 
 #: modules/social_features/social_activity/config/install/message.template.create_comment_post_profile.yml:0
 msgid "A person commented on a post on my profile"
-msgstr ""
+msgstr "Niekto napísal komentáro na príspevok na mojom profile"
 
 #: modules/social_features/social_follow_content/config/install/message.template.create_comment_following_node.yml:0
 msgid "A person commented on content I am following"
-msgstr ""
+msgstr "Niekto komentoval obsah, ktorý sledujem"
 
 #: modules/social_features/social_activity/config/install/message.template.create_comment_author_node_post.yml:0
 msgid "A person commented on content created or organised by me"
-msgstr ""
+msgstr "Niekto komentoval obsah, ktorý bol vytvorený alebo manažovaný mnou"
 
 #: modules/social_features/social_follow_taxonomy/modules/social_follow_tag/config/install/message.template.create_node_following_tag.yml:0
 msgid "A person create content with tag I am following"
@@ -2650,61 +2928,63 @@ msgstr ""
 
 #: modules/social_features/social_activity/config/install/message.template.create_post_profile.yml:0
 msgid "A person created a post on my profile"
-msgstr ""
+msgstr "Niekto vytvoril príspevok na mojom profile"
 
 #: modules/social_features/social_activity/config/install/message.template.create_post_profile_stream.yml:0
 msgid "A person created a post on my profile and I see it on the stream"
-msgstr ""
+msgstr "Niekto vytvoril príspevok na mojom progile a vidím to na streame"
 
 #: modules/social_features/social_activity/config/install/message.template.create_content_in_joined_group.yml:0
 msgid "A person created a post, event or topic in a group I joined"
-msgstr ""
+msgstr "Niekto vytvoril príspevok, udalosť alebo tému v skupine, v ktorej som"
 
 #: modules/social_features/social_activity/config/install/message.template.join_to_group.yml:0
 msgid "A person joins a group I am managing"
-msgstr ""
+msgstr "Niekto sa pridal do skupiny, ktorú spravujem"
 
 #: modules/social_features/social_like/config/install/message.template.create_like_node_or_post.yml:0
 msgid "A person likes a post, topic, comment or event created by me"
 msgstr ""
+"Niekto označil \"páči sa mi to\" na príspevok, tému, komentár alebo udalosť, "
+"ktorý/ú si vytvoril/a"
 
 #: modules/social_features/social_mentions/config/install/message.template.create_mention_comment.yml:0
 msgid "A person mentioned me in a comment"
-msgstr ""
+msgstr "Niekto ťa spomenul v komentári"
 
 #: modules/social_features/social_mentions/config/install/message.template.create_mention_comment_stream.yml:0
 msgid "A person mentioned me in a comment (stream: profile)"
-msgstr ""
+msgstr "Niekto ťa spomenul v komentári (stream: profil)"
 
 #: modules/social_features/social_mentions/config/install/message.template.create_mention_post.yml:0
 msgid "A person mentioned me in a post"
-msgstr ""
+msgstr "Niekto ťa spomenul v príspevku"
 
 #: modules/social_features/social_mentions/config/install/message.template.create_mention_post_stream.yml:0
 msgid "A person mentioned me in a post (stream: profile)"
-msgstr ""
+msgstr "Niekto ťa spomenul v príspevku (stream: profil)"
 
 #: modules/social_features/social_activity/config/install/message.template.moved_content_between_groups.yml:0
 msgid "A person moved event or topic to other group"
-msgstr ""
+msgstr "Niekto presunul udalosť alebo tému do inej skupiny"
 
 #: modules/social_features/social_activity/config/install/message.template.create_comment_reply.yml:0
 msgid "A person replied on my comments"
-msgstr ""
+msgstr "Niekto odpovedal na moje komentáre"
 
 #: modules/social_features/social_mentions/config/install/message.template.create_comment_reply_mention.yml:0
 msgid "A person replied to a comment where I am mentioned"
-msgstr ""
+msgstr "Niekto odpovedal na komentár, v ktorom som spomenutý/á"
 
 #: modules/social_features/social_group/modules/social_group_request/config/install/message.template.request_to_join_a_group.yml:0
 msgid "A person requests membership to a group I manage"
-msgstr ""
+msgstr "Niekto sa chce stať členom/kou skupiny, ktorú spravujem"
 
 #: modules/social_features/social_landing_page/config/install/field.field.paragraph.block.field_block_reference_secondary.yml:0
 msgid ""
 "A secondary block will be printed in a side column, keep in mind it will "
 "take 1/3"
-msgstr ""
+msgstr "Druhotný blok bude vytlačený v bočnom spĺpci, bude to trvať 1/3"
 
 #: modules/social_features/social_landing_page/config/install/paragraphs.paragraphs_type.hero_small.yml:0
 msgid ""
@@ -2717,84 +2997,86 @@ msgid ""
 "A section with a background image and buttons (optional). Looks good on top "
 "of each page. Also nice as a seperator."
 msgstr ""
+"Sekcia s obrázkom v pozadí a tlačidlami (nepovinné). Vyzerá dobre na vrchu "
+"každej strany a aj ako oddeľovať."
 
 #: modules/social_features/social_core/config/install/crop.type.hero_small.yml:0
 msgid "A smaller variant for the hero region"
-msgstr ""
+msgstr "Menšia verzia pre \"hero\" oblasť"
 
 #: modules/custom/social_demo/social_demo.drush.inc:77
 msgid "A space-separated list of content types with info on amount."
-msgstr ""
+msgstr "Zoznam typov s info o množstve oddelený medzerami."
 
 #: modules/custom/social_demo/social_demo.drush.inc:19;32;45;61
 msgid "A space-separated list of content types."
-msgstr ""
+msgstr "Zoznam typov obsahu oddelený medzerami."
 
 #: modules/social_features/social_activity/config/install/message.template.create_comment_community_node.yml:0
 msgid "A user add a comment to content in the community"
-msgstr ""
+msgstr "Používateľ/ka pridal/a komentár na obsah v komunite"
 
 #: modules/social_features/social_activity/config/install/message.template.create_comment_group_node.yml:0
 msgid "A user add a comment to content in the group"
-msgstr ""
+msgstr "Používateľ/ka pridal/a komentár k obshau v skupine"
 
 #: modules/social_features/social_activity/config/install/message.template.create_comment_community_post.yml:0
 msgid "A user add a comment to post in the community"
-msgstr ""
+msgstr "Používateľ/ka pridal/a príspevok v komunite"
 
 #: modules/social_features/social_activity/config/install/message.template.create_comment_group_post.yml:0
 msgid "A user add a comment to post in the group"
-msgstr ""
+msgstr "Používateľ/ka pridal/a príspevok do skupiny"
 
 #: modules/social_features/social_activity/config/install/message.template.create_post_group.yml:0
 msgid "A user created a post in a group"
-msgstr ""
+msgstr "Používateľ/ka pridal/a príspevok do skupiny"
 
 #: modules/social_features/social_activity/config/install/message.template.create_post_community.yml:0
 msgid "A user created a post in the community"
-msgstr ""
+msgstr "Používateľ/ka pridal/a príspevok v komunite"
 
 #: modules/social_features/social_activity/config/install/message.template.create_topic_group.yml:0
 msgid "A user created a topic in a group"
-msgstr ""
+msgstr "Používateľ/ka vytvoril/a tému v skupine"
 
 #: modules/social_features/social_activity/config/install/message.template.create_topic_community.yml:0
 msgid "A user created a topic in the community"
-msgstr ""
+msgstr "Používateľ/ka vytvoril/a tému v skupine"
 
 #: modules/social_features/social_activity/config/install/message.template.create_event_group.yml:0
 msgid "A user created an event in a group"
-msgstr ""
+msgstr "Používateľ/ka vytvoril/a udalosť v skupiny"
 
 #: modules/social_features/social_activity/config/install/message.template.create_event_community.yml:0
 msgid "A user created an event in the community"
-msgstr ""
+msgstr "Používateľ/ka vytvoril/a udalosť v komunite"
 
 #: modules/social_features/social_event/modules/social_event_invite/config/install/message.template.invite_event_enrollment.yml:0
 msgid "A user got an invite for an event"
-msgstr ""
+msgstr "Používateľ/ka dostal/a pozvánku na udalosť"
 
 #: modules/social_features/social_content_report/config/install/message.template.content_reported.yml:0
 msgid "A user reported inappropriate content"
-msgstr ""
+msgstr "Používateľ/ka nahlásil/a nevhodný obsah"
 
 #: modules/social_features/social_activity/config/install/message.template.request_event_enrollment.yml:0
 msgid "A user request an enrollment for event"
-msgstr ""
+msgstr "Používateľ/ka požiadal/a o zapísanie do skupiny"
 
 #: modules/social_features/social_private_message/config/install/message.template.create_private_message.yml:0
 msgid "A user sends a private message to me"
-msgstr ""
+msgstr "Používateľ/ka mi poslal/a súkromnú správu"
 
 #: translations.php:81
 #: modules/social_features/social_profile/config/install/taxonomy.vocabulary.expertise.yml:0
 msgid "A users expertises"
-msgstr ""
+msgstr "Kvalifikácia používateľa/ky"
 
 #: translations.php:83
 #: modules/social_features/social_profile/config/install/taxonomy.vocabulary.interests.yml:0
 msgid "A users interests for their profile."
-msgstr ""
+msgstr "Záujmy používateľov/iek pre ich profil."
 
 #: modules/social_features/social_user/config/schema/social_user.schema.yml:0
 msgid "A valid route name that is used as default user profile page"
@@ -2811,10 +3093,12 @@ msgid ""
 "A welcome message with further instructions will be sent to your email "
 "address after you successfully enter your email address and a username."
 msgstr ""
+"Welcome správa s ďalšími inštrukciami bude poslaná to tvoju emailovú adresu "
+"po tom, ako uspešne vložíš emailovú adresu a používateľské meno."
 
 #: modules/social_features/social_follow_taxonomy/social_follow_taxonomy.module:201
 msgid "A/an article."
-msgstr ""
+msgstr "Článok."
 
 #: modules/social_features/social_core/config/optional/block.block.anhomepageheroblock.yml:0
 #: modules/social_features/social_core/config/optional/block.block.socialblue_anhomepageheroblock.yml:0
@@ -2836,37 +3120,37 @@ msgstr "Informácie o"
 
 #: modules/social_features/social_group/config/install/views.view.group_information.yml:0
 msgid "About Group"
-msgstr ""
+msgstr "O skupine"
 
 #: modules/social_features/social_group/config/install/views.view.group_information.yml:0
 msgid "About {{ arguments.id }}"
-msgstr ""
+msgstr "O {{ arguments.id }}"
 
 #: modules/social_features/social_landing_page/config/install/field.storage.paragraph.field_button_style.yml:0
 msgid "Accent style"
-msgstr ""
+msgstr "Zvýraznený štýl"
 
 #: modules/social_features/social_event/modules/social_event_invite/src/Form/EventInviteEnrollActionForm.php:55
 #: modules/social_features/social_group/modules/social_group_invite/config/optional/views.view.social_group_user_invitations.yml:0;0
 msgid "Accept"
-msgstr ""
+msgstr "Prijať"
 
 #: modules/social_features/social_event/modules/social_event_invite/social_event_invite.module:300
 msgid "Accept invite"
-msgstr ""
+msgstr "Prijať pozvánku"
 
 #: modules/social_features/social_group/modules/social_group_invite/social_group_invite.module:177
 #: modules/social_features/social_event/config/install/field.storage.event_enrollment.field_request_or_invite_status.yml:0
 msgid "Accepted and joined"
-msgstr ""
+msgstr "Prijatý/á a pridaný/á"
 
 #: modules/social_features/social_core/social_core.routing.yml:0
 msgid "Access Denied"
-msgstr ""
+msgstr "Prístup zamietnutý"
 
 #: modules/custom/social_lets_connect/social_lets_connect.permissions.yml:0
 msgid "Access Open Social Connect"
-msgstr ""
+msgstr "Vstúpiť do obsahu Open Social"
 
 #: modules/social_features/social_search/social_search.permissions.yml:0
 msgid "Access content search"
@@ -2945,21 +3229,21 @@ msgstr ""
 #: modules/social_features/social_user/social_user.routing.yml:0
 #: modules/social_features/social_event/config/install/field.field.event_enrollment.event_enrollment.field_account.yml:0
 msgid "Account"
-msgstr ""
+msgstr "Účet"
 
 #: modules/social_features/social_user/src/Plugin/Block/AccountHeaderBlock.php:18
 #: modules/social_features/social_user/config/optional/block.block.accountheaderblock.yml:0
 #: modules/social_features/social_user/config/optional/block.block.socialblue_accountheaderblock.yml:0
 msgid "Account header block"
-msgstr ""
+msgstr "Účet - hlavička"
 
 #: modules/social_features/social_user/src/Plugin/GraphQL/DataProducer/AccountId.php:8
 msgid "Account identifier"
-msgstr ""
+msgstr "Účet - identifier"
 
 #: translations.php:77
 msgid "Account information"
-msgstr ""
+msgstr "Účet - informácie"
 
 #: modules/social_features/social_user/src/Plugin/GraphQL/DataProducer/AccountId.php:8
 msgid "AccountInterface instance"
@@ -2975,15 +3259,15 @@ msgstr "Akcia"
 #: modules/custom/activity_basics/src/Plugin/ActivityAction/CreateActivityAction.php:8
 #: modules/custom/activity_send/modules/activity_send_email/src/Plugin/ActivitySend/EmailActivitySend.php:7
 msgid "Action that is triggered when a entity is created"
-msgstr ""
+msgstr "Akcia, ktorá sa spustí po vytvorení entity"
 
 #: modules/custom/activity_basics/src/Plugin/ActivityAction/MoveActivityAction.php:7
 msgid "Action that is triggered when a entity is moved"
-msgstr ""
+msgstr "Akcia, ktorá sa spustí po presunutí entity"
 
 #: modules/custom/activity_basics/src/Plugin/ActivityAction/UpdateActivityAction.php:7
 msgid "Action that is triggered when a entity is updated"
-msgstr ""
+msgstr "Akcia, ktorá sa spustí po updatnutí entity"
 
 #: modules/social_features/social_event/modules/social_event_managers/src/Plugin/views/field/SocialEventManagersViewsBulkOperationsBulkForm.php:233
 #: modules/social_features/social_group/src/Plugin/views/field/SocialGroupViewsBulkOperationsBulkForm.php:163
@@ -3012,19 +3296,19 @@ msgstr "Aktivita"
 
 #: modules/custom/activity_basics/activity_basics.info.yml:0
 msgid "Activity Basics"
-msgstr ""
+msgstr "Základné aktivity"
 
 #: modules/custom/activity_creator/activity_creator.info.yml:0
 msgid "Activity Creator"
-msgstr ""
+msgstr "Tvorca aktivity"
 
 #: modules/custom/activity_creator/activity_creator.tokens.inc:15
 msgid "Activity Entity tokens"
-msgstr ""
+msgstr "Tokeny entity aktivity"
 
 #: modules/custom/activity_creator/src/ActivityListBuilder.php:22
 msgid "Activity ID"
-msgstr ""
+msgstr "Aktivita ID"
 
 #: modules/custom/activity_logger/activity_logger.info.yml:0
 msgid "Activity Logger"
@@ -3149,42 +3433,42 @@ msgstr ""
 
 #: modules/custom/activity_creator/activity_creator.links.action.yml:0
 msgid "Add Activity"
-msgstr ""
+msgstr "Pridať aktivitu"
 
 #: modules/custom/social_gdpr/src/Plugin/Block/AddDataPolicyRevision.php:10
 #: modules/custom/social_gdpr/config/optional/block.block.add_data_policy_revision.yml:0
 #: modules/custom/social_gdpr/config/optional/block.block.socialblue_add_data_policy_revision.yml:0
 msgid "Add Data Policy Revision"
-msgstr ""
+msgstr "Pridať réviziu údajov"
 
 #: modules/social_features/social_event/social_event.links.action.yml:0
 msgid "Add Event enrollment"
-msgstr ""
+msgstr "Pridať zapísanie sa na udalosť"
 
 #: modules/custom/social_font/social_font.links.action.yml:0
 msgid "Add Font"
-msgstr ""
+msgstr "Pridať typ písma"
 
 #: modules/custom/mentions/mentions.links.action.yml:0
 msgid "Add Mentions Type"
-msgstr ""
+msgstr "Pridať typ spomenutia/zmienky"
 
 #: modules/custom/social_queue_storage/social_queue_storage.links.action.yml:0
 msgid "Add Queue Storage type"
-msgstr ""
+msgstr "Pridať typ queue storage"
 
 #: modules/social_features/social_comment/social_comment.module:82
 #: modules/social_features/social_comment/config/install/core.entity_form_display.comment.comment.default.yml:0
 msgid "Add a comment"
-msgstr ""
+msgstr "Pridať komentár"
 
 #: modules/social_features/social_group/src/Plugin/Block/GroupAddBlock.php:143
 msgid "Add a group"
-msgstr ""
+msgstr "Pridať skupinu"
 
 #: modules/social_features/social_comment/social_comment.module:63
 msgid "Add a reply"
-msgstr ""
+msgstr "Pridať odpoveď"
 
 #: modules/social_features/social_user/src/Plugin/Action/SocialAddRoleUser.php:14
 msgid "Add a role to the selected users"
@@ -3192,70 +3476,70 @@ msgstr "Pridať kategóriu vybraným používateľom"
 
 #: modules/social_features/social_event/modules/social_event_managers/social_event_managers.module:379
 msgid "Add another organizer"
-msgstr ""
+msgstr "Pridať ďalšieho organizátora/ku"
 
 #: translations.php:73
 msgid "Add attachment"
-msgstr ""
+msgstr "Pridať prílohu"
 
 #: modules/custom/social_demo/social_demo.drush.inc:43
 msgid "Add demo content."
-msgstr ""
+msgstr "Pridať demo obsah."
 
 #: modules/social_features/social_event/modules/social_event_invite/src/Plugin/Block/SocialEventInviteLocalActionsBlock.php:112
 #: modules/social_features/social_group/modules/social_group_invite/src/Plugin/Block/SocialInviteLocalActionsBlock.php:141
 msgid "Add directly"
-msgstr ""
+msgstr "Pridať priamo"
 
 #: modules/social_features/social_event/modules/social_event_invite/src/Plugin/Block/SocialEventInviteLocalActionsBlock.php:106
 #: modules/social_features/social_event/modules/social_event_managers/social_event_managers.links.action.yml:0
 #: modules/social_features/social_event/modules/social_event_managers/social_event_managers.routing.yml:0
 msgid "Add enrollees"
-msgstr ""
+msgstr "Pridať zapísané osoby"
 
 #: modules/social_features/social_event/modules/social_event_addtocal/social_event_addtocal.routing.yml:0
 msgid "Add event to Calendar"
-msgstr ""
+msgstr "Pridať udalosť do Kalendára"
 
 #: modules/custom/template_suggestions_extra/template_suggestions_extra.module:19
 #: modules/custom/template_suggestions_extra/template_suggestions_extra.info.yml:0
 msgid "Add extra useful template suggestsions"
-msgstr ""
+msgstr "Pridať extra návrhy na predlohu"
 
 #: modules/social_features/social_album/config/install/field.field.post.photo.field_album.yml:0
 msgid "Add image(s) to an album"
-msgstr ""
+msgstr "Pridať obrázok(ky) do albumu"
 
 #: modules/social_features/social_album/src/Plugin/Block/SocialAlbumCountAndAddBlock.php:168
 #: modules/social_features/social_post/modules/social_post_album/templates/image-widget--album.html.twig:73;83
 msgid "Add images"
-msgstr ""
+msgstr "Pridať obrázky"
 
 #: modules/social_features/social_album/src/Controller/SocialAlbumController.php:89
 msgid "Add images to album @name"
-msgstr ""
+msgstr "Pridať obrázky do albumu @name"
 
 #: modules/social_features/social_group/src/Controller/SocialGroupController.php:132
 msgid "Add invites"
-msgstr ""
+msgstr "Pridať pozvánky"
 
 #: modules/social_features/social_group/src/Controller/SocialGroupController.php:130
 msgid "Add invites to group: @group_name"
-msgstr ""
+msgstr "Pridať pozvánky do skupiny: @group_name"
 
 #: modules/social_features/social_group/social_group.links.action.yml:0
 #: modules/social_features/social_group/modules/social_group_invite/src/Plugin/Block/SocialInviteLocalActionsBlock.php:135
 #: modules/social_features/social_group/src/Controller/SocialGroupController.php:138
 msgid "Add members"
-msgstr ""
+msgstr "Pridať členov/ky"
 
 #: modules/social_features/social_group/src/Plugin/Action/AddMembersToGroup.php:16
 msgid "Add members to group"
-msgstr ""
+msgstr "Pridať členov/ky do skupiny"
 
 #: modules/social_features/social_group/src/Controller/SocialGroupController.php:135
 msgid "Add members to group: @group_name"
-msgstr ""
+msgstr "Pridať členov do skupiny: @group_name"
 
 #: modules/social_features/social_post/src/Routing/RouteSubscriber.php:21
 msgid "Add new comment"
@@ -3263,35 +3547,35 @@ msgstr "Pridať nový komentár"
 
 #: modules/social_features/social_comment/src/Routing/RouteSubscriber.php:50
 msgid "Add new reply"
-msgstr ""
+msgstr "Pridať novú odpoveď"
 
 #: modules/custom/social_gdpr/social_gdpr.routing.yml:0
 #: modules/custom/social_gdpr/src/Plugin/Block/AddDataPolicyRevision.php:27
 msgid "Add new revision"
-msgstr ""
+msgstr "Pridať novú revíziu"
 
 #: modules/social_features/social_post/social_post.links.action.yml:0
 msgid "Add post"
-msgstr ""
+msgstr "Pridať príspevok"
 
 #: modules/social_features/social_post/social_post.links.action.yml:0
 msgid "Add post type"
-msgstr ""
+msgstr "Pridať typ príspevku"
 
 #: modules/social_features/social_group/src/Plugin/Action/AddMembersToGroup.php:119
 msgid "Add selected member to a group"
 msgid_plural "Add @count selected members to a group"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "Priadť vybraného člena/ku do skupiny"
+msgstr[1] "Pridať @count vybraných členok/iek do skupiny"
+msgstr[2] "Pridať @count vybraných členok/iek do skupiny"
 
 #: modules/social_features/social_event/modules/social_event_addtocal/social_event_addtocal.module:18;60;112
 msgid "Add to Calendar"
-msgstr ""
+msgstr "Pridať do Kalendára"
 
 #: modules/social_features/social_group/src/Plugin/Action/AddMembersToGroup.php:149
 msgid "Add to Group"
-msgstr ""
+msgstr "Pridať do Skupiny"
 
 #: modules/social_features/social_event/modules/social_event_addtocal/social_event_addtocal.links.menu.yml:0
 #: modules/social_features/social_event/modules/social_event_addtocal/social_event_addtocal.routing.yml:0
@@ -6609,7 +6893,7 @@ msgstr ""
 #: modules/social_features/social_group/social_group.links.task.yml:0
 #: modules/social_features/social_event/config/install/views.view.events.yml:0
 msgid "Events"
-msgstr ""
+msgstr "Udalosti"
 
 #: modules/social_features/social_event/config/install/views.view.events.yml:0
 msgid "Events Profile"
@@ -15690,6 +15974,8 @@ msgid ""
 "{{ invitation_status }} == Invitation status\r\n"
 "{{ invitation_status__value }} == Raw value"
 msgstr ""
+"{{ invitation_status }} == Status pozvánky\n"
+"{{ invitation_status__value }} == Raw hodnota"
 
 #: modules/social_features/social_follow_content/config/install/views.view.following.yml:0
 msgid "{{ link_flag }}"
