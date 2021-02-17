@@ -1838,6 +1838,23 @@ function social_group_entity_base_field_info_alter(&$fields, EntityTypeInterface
 function social_group_form_node_form_alter(&$form, FormStateInterface $form_state) {
   if (isset($form['#entity_type']) && $form['#entity_type'] === 'node') {
     if (isset($form['groups'])) {
+      // Check if we are adding a translation or it's the default being editted.
+      /** @var \Drupal\Core\Entity\EntityForm $form_object */
+      $form_object = $form_state->getFormObject();
+      /** @var \Drupal\social_node\Entity\Node $node */
+      $node = $form_object->getEntity();
+      $is_original_language = (bool) $node->getFieldValue('default_langcode', 'value');
+      // If it's not the original, we can safely say its a translation being
+      // added or editted. In that case we don't want users to override the
+      // group or visibility. We only allow those changes on the default as
+      // these can not change per language for now.
+      if (!$is_original_language) {
+        $form['field_content_visibility']['widget']['#disabled'] = TRUE;
+        $form['field_content_visibility']['widget']['#description'] = t('Changing visibility is disabled when translating.');
+        $form['groups']['widget']['#disabled'] = TRUE;
+        $form['groups']['widget']['#description'] = t('Changing groups is disabled when translating.');
+      }
+
       $change_fieldgroup_titles = [
         'group_topic_visibility',
         'group_event_visibility',
@@ -1876,8 +1893,12 @@ function social_group_form_node_form_alter(&$form, FormStateInterface $form_stat
  *   Form state interface.
  */
 function social_group_save_group_from_node(array $form, FormStateInterface $form_state) {
-  /** @var \Drupal\node\NodeInterface $node */
-  $node = $form_state->getFormObject()->getEntity();
+  // Check if we are adding a translation or it's the default being editted.
+  /** @var \Drupal\Core\Entity\EntityForm $form_object */
+  $form_object = $form_state->getFormObject();
+  /** @var \Drupal\social_node\Entity\Node $node */
+  $node = $form_object->getEntity();
+  $is_original_language = (bool) $node->getFieldValue('default_langcode', 'value');
 
   // Check if the created node is new or updated.
   $is_new = NULL !== $form_state->getValue('is_new') ? $form_state->getValue('is_new') : FALSE;
@@ -1904,8 +1925,13 @@ function social_group_save_group_from_node(array $form, FormStateInterface $form
   }
 
   // Now make sure the relevant GroupContent is removed or added.
-  $setGroupsForNodeService = \Drupal::service('social_group.set_groups_for_node_service');
-  $setGroupsForNodeService->setGroupsForNode($node, $groups_to_remove, $groups_to_add, $original_groups, $is_new);
+  // But only when we are on the original language, we don't want to update
+  // this when translating. The field is disabled for that scenario so no
+  // need to run this.
+  if ($is_original_language) {
+    $setGroupsForNodeService = \Drupal::service('social_group.set_groups_for_node_service');
+    $setGroupsForNodeService->setGroupsForNode($node, $groups_to_remove, $groups_to_add, $original_groups, $is_new);
+  }
 }
 
 /**
