@@ -5,6 +5,7 @@
  * The Social profile module.
  */
 
+use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
@@ -16,6 +17,7 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
 use Drupal\file\Entity\File;
 use Drupal\image\Entity\ImageStyle;
+use Drupal\node\Entity\Node;
 use Drupal\profile\Entity\Profile;
 use Drupal\profile\Entity\ProfileType;
 use Drupal\user\Entity\User;
@@ -139,7 +141,6 @@ function social_profile_form_profile_profile_edit_form_alter(array &$form, FormS
     if ($profile_fields) {
       $empty_profile = TRUE;
 
-      /** @var \Drupal\field\Entity\FieldConfig $field_config */
       foreach ($profile_fields as $field) {
         if (isset($form[$field->get('field_name')]) && $form[$field->get('field_name')]['#access'] === TRUE) {
           $empty_profile = FALSE;
@@ -831,4 +832,39 @@ function social_profile_social_user_account_header_items_alter(array &$menu_item
     ->getViewBuilder('profile')
     ->view($profile, 'small');
 
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_access().
+ */
+function social_profile_profile_access(EntityInterface $entity, $operation, AccountInterface $account) {
+
+  $display_profile_teaser = FALSE;
+  $route_match = \Drupal::service('current_route_match');
+  $allowed_node_types = [
+    'landing_page',
+    'dashboard',
+  ];
+
+  if ($route_match->getRouteName() === 'entity.node.canonical') {
+    $node = $route_match->getParameter('node');
+
+    if (!is_null($node) && !$node instanceof Node) {
+      $node = Node::load($node);
+    }
+    if ($node instanceof Node && in_array($node->getType(), $allowed_node_types)) {
+      $display_profile_teaser = TRUE;
+    }
+  }
+
+  // Provides access only to viewing user profile info, like referenced data in
+  // featured items for landing & dashboard pages, if the current user has no
+  // permissions.
+  if (
+    $operation === 'view' &&
+    $display_profile_teaser &&
+    !$account->hasPermission('view any profile profile')
+  ) {
+    return AccessResult::allowed();
+  }
 }
