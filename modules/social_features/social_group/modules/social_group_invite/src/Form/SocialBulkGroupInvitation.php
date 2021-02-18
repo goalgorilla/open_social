@@ -321,6 +321,7 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
           }
         }
         else {
+          /** @var \Drupal\group\Entity\Storage\GroupContentStorageInterface $group_content_storage */
           $group_content_storage = $this->entityTypeManager->getStorage('group_content');
           // If the invitation has already been send, unset it from the list.
           // For some reason groupInvitationLoader service doesn't work
