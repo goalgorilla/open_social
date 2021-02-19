@@ -29,3 +29,5 @@ Feature: See Comments
     When I click "next"
     Then I should not see the link "Behat Topic 15"
     And I should see the link "Behat Topic 5"
+    And I disable the module "social_ajax_comments"
+    And I disable the module "ajax_comments"
