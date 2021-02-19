@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\social_group_invite;
+namespace Drupal\social_event_invite;
 
 use Drupal\Component\Utility\EmailValidatorInterface;
 use Drupal\Core\Cache\CacheableMetadata;
@@ -12,9 +12,9 @@ use Symfony\Component\HttpFoundation\RequestStack;
 /**
  * Provides an overridden block for Settings Tray testing.
  *
- * @package Drupal\social_group_invite
+ * @package Drupal\social_event_invite
  */
-class SocialGroupInviteConfigOverride implements ConfigFactoryOverrideInterface {
+class SocialEventInviteConfigOverride implements ConfigFactoryOverrideInterface {
 
   /**
    * The current request.
@@ -108,23 +108,23 @@ class SocialGroupInviteConfigOverride implements ConfigFactoryOverrideInterface 
     }
 
     $destination = explode('/', $destination);
-    $gid = array_pop($destination);
+    $id = array_pop($destination);
 
-    if (empty($gid) || !is_numeric($gid)) {
+    if (empty($id) || !is_numeric($id)) {
       return FALSE;
     }
 
     // Verify is it really was requested invite and it still is actual.
-    $query = $this->database->select('group_content__invitee_mail', 'gcim');
+    $query = $this->database->select('event_enrollment__field_email', 'eefe');
 
-    $query->fields('gcim', ['entity_id']);
-    $query->condition('invitee_mail_value', $invitee_mail);
+    $query->fields('eefe', ['entity_id']);
+    $query->condition('eefe.field_email_value', $invitee_mail);
 
-    $query->join('group_content__invitation_status', 'gcis', 'gcim.entity_id = gcis.entity_id');
-    $query->condition('gcis.invitation_status_value', '0');
+    $query->join('event_enrollment__field_request_or_invite_status', 'enfroi', 'eefe.entity_id = enfroi.entity_id');
+    $query->condition('enfroi.field_request_or_invite_status_value', ['4', '5'], 'IN');
 
-    $query->join('group_content_field_data', 'gcfd', 'gcis.entity_id = gcfd.id');
-    $query->condition('gcfd.gid', $gid);
+    $query->join('event_enrollment__field_event', 'eefev', 'eefe.entity_id = eefev.entity_id');
+    $query->condition('eefev.field_event_target_id', $id);
 
     $invitations = $query->execute()->fetchField();
 

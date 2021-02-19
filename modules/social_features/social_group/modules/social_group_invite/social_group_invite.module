@@ -551,7 +551,11 @@ function social_group_invite_mail_alter(&$message) {
  * Implements hook_tokens_alter().
  */
 function social_group_invite_tokens_alter(array &$replacements, array $context, BubbleableMetadata $bubbleable_metadata) {
-  if (!empty($replacements) && $context["type"] === 'group_content') {
+  if (
+    !empty($replacements) &&
+    isset($context["data"]["group"]) &&
+    $context["type"] === 'group_content'
+  ) {
     $group = $context["data"]["group"];
     $destination = 'destination=/group/' . $group->id();
 
