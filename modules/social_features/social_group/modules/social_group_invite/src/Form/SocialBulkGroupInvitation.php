@@ -321,8 +321,12 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
           }
         }
         else {
+          /** @var \Drupal\group\Entity\Storage\GroupContentStorageInterface $group_content_storage */
+          $group_content_storage = $this->entityTypeManager->getStorage('group_content');
           // If the invitation has already been send, unset it from the list.
-          if ($this->groupInvitationLoader->loadByGroup($this->group, NULL, $email)) {
+          // For some reason groupInvitationLoader service doesn't work
+          // properly.
+          if (!empty($group_content_storage->loadByGroup($this->group, 'group_invitation', ['invitee_mail' => $email]))) {
             $form_state->unsetValue(['users_fieldset', 'user', $user]);
           }
         }
@@ -449,6 +453,11 @@ class SocialBulkGroupInvitation extends BulkGroupInvitation {
     // Remove select2 ID parameter.
     $string = str_replace('$ID:', '', $string);
     preg_match_all("/[\._a-zA-Z0-9+-]+@[\._a-zA-Z0-9+-]+/i", $string, $matches);
+
+    if (is_array($matches[0]) && count($matches[0]) === 1) {
+      return reset($matches[0]);
+    }
+
     return $matches[0];
   }
 
