@@ -54,6 +54,13 @@ class SocialGroupRequestMembershipNotification extends BlockBase implements Cont
   protected $translation;
 
   /**
+   * The module handler.
+   *
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface
+   */
+  protected $moduleHandler;
+
+  /**
    * Constructs SocialGroupRequestMembershipNotification.
    *
    * @param array $configuration
@@ -68,6 +75,8 @@ class SocialGroupRequestMembershipNotification extends BlockBase implements Cont
    *   The entity type manager.
    * @param \Drupal\Core\StringTranslation\TranslationManager $translation
    *   The translation manager.
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
+   *   The module handler.
    */
   public function __construct(
     array $configuration,
@@ -75,13 +84,15 @@ class SocialGroupRequestMembershipNotification extends BlockBase implements Cont
     $plugin_definition,
     AccountInterface $account,
     EntityTypeManagerInterface $entity_type_manager,
-    TranslationManager $translation
+    TranslationManager $translation,
+    ModuleHandlerInterface $module_handler
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->account = $account;
     $this->group = _social_group_get_current_group();
     $this->entityTypeManager = $entity_type_manager;
     $this->translation = $translation;
+    $this->moduleHandler = $module_handler;
   }
 
   /**
@@ -94,7 +105,8 @@ class SocialGroupRequestMembershipNotification extends BlockBase implements Cont
       $plugin_definition,
       $container->get('current_user'),
       $container->get('entity_type.manager'),
-      $container->get('string_translation')
+      $container->get('string_translation'),
+      $container->get('module_handler')
     );
   }
 
@@ -106,7 +118,10 @@ class SocialGroupRequestMembershipNotification extends BlockBase implements Cont
       return [];
     }
 
-    if ($this->group->getGroupType()->id() === 'flexible_group') {
+    $group_types = ['flexible_group'];
+    $this->moduleHandler->alter('social_group_request', $group_types);
+
+    if (in_array($this->group->getGroupType()->id(), $group_types)) {
       $join_methods = $this->group->get('field_group_allowed_join_method')->getValue();
       $request_option = in_array('request', array_column($join_methods, 'value'), FALSE);
       if (!$request_option) {
