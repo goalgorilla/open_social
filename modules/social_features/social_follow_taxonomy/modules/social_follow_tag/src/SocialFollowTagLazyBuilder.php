@@ -170,10 +170,41 @@ class SocialFollowTagLazyBuilder implements TrustedCallbackInterface {
   }
 
   /**
+   * Returns render array for tag follow popup.
+   *
+   * @param string $url
+   *   ULR of related content.
+   * @param string|int $term_id
+   *   Taxonomy term ID.
+   * @param string $field
+   *   Entity field name related to taxonomy.
+   * @param string $entity_type
+   *   Entity type for related content counter.
+   *
+   * @return array
+   *   Render array.
+   */
+  public function popupLazyBuild($url, $term_id, $field, $entity_type) {
+    /** @var \Drupal\taxonomy\TermInterface $term */
+    $term = $this->entityTypeManager->getStorage('taxonomy_term')->load($term_id);
+    return [
+      '#theme' => 'social_tagging_popup',
+      '#url' => $url,
+      '#name' => $term->label(),
+      '#flag' => social_follow_taxonomy_flag_link($term),
+      '#followers_count' => social_follow_taxonomy_term_followers_count($term),
+      '#related_entity_count' => social_follow_taxonomy_related_entity_count($term, $field, $entity_type),
+    ];
+  }
+
+  /**
    * {@inheritdoc}
    */
   public static function trustedCallbacks() {
-    return ['lazyBuild'];
+    return [
+      'lazyBuild',
+      'popupLazyBuild',
+    ];
   }
 
 }
