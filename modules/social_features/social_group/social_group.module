@@ -447,7 +447,7 @@ function _social_group_get_join_methods(GroupInterface $group) {
       $join_methods['added'] = social_group_allowed_join_method_description('added');
       break;
 
-    case 'flexible_group':
+    default:
       // Try to retrieve join methods from Group directly.
       $allowed_options = $group->get('field_group_allowed_join_method')
         ->getValue();
@@ -487,7 +487,7 @@ function _social_group_get_group_visibility(GroupInterface $group, $field_name =
     case 'open_group':
       return $group_visibility;
 
-    case 'flexible_group':
+    default:
       // By default we ship with the below field, lets grab its value(s).
       if ($group->hasField('field_flexible_group_visibility')) {
         $visibility_values = $group->get('field_flexible_group_visibility')->getValue();
@@ -516,15 +516,6 @@ function _social_group_get_group_visibility(GroupInterface $group, $field_name =
         return $group_visibility;
       }
       break;
-
-    default:
-      // For non Open Social group types, we can allow developers to pass
-      // a field name to return a label instead.
-      if ($field_name !== NULL && $group->hasField($field_name)) {
-        $group_visibility = $group->get($field_name)->getValue();
-      }
-      return $group_visibility;
-
   }
 
   return $group_visibility;
@@ -559,7 +550,7 @@ function _social_group_get_allowed_visibility(GroupInterface $group) {
       $allowed_visibility['public'] = social_group_allowed_visibility_description('public');
       break;
 
-    case 'flexible_group':
+    default:
       // Try to retrieve allowed visibility from Group directly.
       $allowed_options = $group->get('field_group_allowed_visibility')
         ->getValue();
