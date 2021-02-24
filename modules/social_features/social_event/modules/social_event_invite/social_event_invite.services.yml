@@ -9,11 +9,12 @@ services:
     class: Drupal\social_event_invite\Routing\RouteSubscriber
     tags:
       - { name: event_subscriber }
-  social_group_invite.override:
-    class: \Drupal\social_group_invite\SocialGroupInviteConfigOverride
+  social_event_invite.override:
+    class: \Drupal\social_event_invite\SocialEventInviteConfigOverride
     arguments:
       - '@request_stack'
       - '@email.validator'
       - '@database'
+      - '@path_alias.manager'
     tags:
       - {name: config.factory.override, priority: 10}

@@ -7,6 +7,7 @@ use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Config\ConfigFactoryOverrideInterface;
 use Drupal\Core\Config\StorageInterface;
 use Drupal\Core\Database\Connection;
+use Drupal\path_alias\AliasManagerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
@@ -38,6 +39,13 @@ class SocialEventInviteConfigOverride implements ConfigFactoryOverrideInterface 
   protected $database;
 
   /**
+   * An alias manager to find the alias for the current system path.
+   *
+   * @var \Drupal\path_alias\AliasManagerInterface
+   */
+  protected $aliasManager;
+
+  /**
    * Constructs the configuration override.
    *
    * @param \Symfony\Component\HttpFoundation\RequestStack $request_stack
@@ -46,15 +54,19 @@ class SocialEventInviteConfigOverride implements ConfigFactoryOverrideInterface 
    *   The email validator.
    * @param \Drupal\Core\Database\Connection $database
    *   The current active database's master connection.
+   * @param \Drupal\path_alias\AliasManagerInterface $alias_manager
+   *   An alias manager to find the alias for the current system path.
    */
   public function __construct(
     RequestStack $request_stack,
     EmailValidatorInterface $email_validator,
-    Connection $database
+    Connection $database,
+    AliasManagerInterface $alias_manager
   ) {
     $this->requestStack = $request_stack;
     $this->emailValidator = $email_validator;
     $this->database = $database;
+    $this->aliasManager = $alias_manager;
   }
 
   /**
@@ -107,8 +119,9 @@ class SocialEventInviteConfigOverride implements ConfigFactoryOverrideInterface 
       return FALSE;
     }
 
-    $destination = explode('/', $destination);
-    $id = array_pop($destination);
+    $path = $this->aliasManager->getPathByAlias($destination);
+    $path = explode('/', $path);
+    $id = array_pop($path);
 
     if (empty($id) || !is_numeric($id)) {
       return FALSE;
