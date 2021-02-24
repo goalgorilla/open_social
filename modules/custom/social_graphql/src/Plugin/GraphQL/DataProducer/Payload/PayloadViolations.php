@@ -5,6 +5,7 @@ namespace Drupal\social_graphql\Plugin\GraphQL\DataProducer\Payload;
 use Drupal\graphql\Plugin\DataProducerPluginCachingInterface;
 use Drupal\graphql\Plugin\GraphQL\DataProducer\DataProducerPluginBase;
 use Drupal\social_graphql\GraphQL\Payload\PayloadInterface;
+use Drupal\social_graphql\GraphQL\ViolationInterface;
 
 /**
  * Returns the violations in a payload.
@@ -38,7 +39,7 @@ class PayloadViolations extends DataProducerPluginBase implements DataProducerPl
     // Explicitly turn empty arrays into NULL so that clients can perform an
     // is_null check to figure out if there are errors.
     $violations = $payload->getViolations();
-    return empty($violations) ? NULL : $violations;
+    return empty($violations) ? NULL : array_map(fn (ViolationInterface $v) => $v->jsonSerialize(), $violations);
   }
 
 }
