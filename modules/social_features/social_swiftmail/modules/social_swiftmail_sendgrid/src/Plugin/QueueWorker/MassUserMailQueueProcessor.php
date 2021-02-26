@@ -178,7 +178,7 @@ class MassUserMailQueueProcessor extends QueueWorkerBase implements ContainerFac
     $from = $queue_storage->get('field_reply_to')->value;
 
     try {
-      $this->mailManager->mail('social_swiftmail_sendgrid', 'action_send_email', $valid_user_addresses, $langcode, $params, $from);
+      $this->mailManager->mail('sendgrid_integration', 'action_send_mass_email', $valid_user_addresses, $langcode, $params, $from);
 
       // Try to save a the storage entity to update the finished status.
       // to let our queue storage know we're golden.
