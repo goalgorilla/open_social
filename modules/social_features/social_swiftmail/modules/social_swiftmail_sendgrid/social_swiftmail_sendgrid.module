@@ -5,9 +5,18 @@
  * Module file for  Social Swiftmailer Sendgrid integration.
  */
 
+use Drupal\user\UserInterface;
+
 /**
  * Implements hook_tokens_alter().
  */
 function social_swiftmail_sendgrid_tokens_alter(array &$replacements, array $context, \Drupal\Core\Render\BubbleableMetadata $bubbleable_metadata) {
-
+  // If the [social_user:recipient] is set, we can replace it by
+  // a string {{social_user:recipient}}, this is the substitution tag used in
+  // Sendgrid to ensure Sendgrid can do the salutation correctly.
+  // We will send a list of all recipients in JSON format from our SendEmail
+  // plugin.
+  if (isset($replacements['[social_user:recipient]'])) {
+    $replacements['[social_user:recipient]'] = "{{social_user:recipient}}";
+  }
 }
