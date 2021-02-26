@@ -5,6 +5,8 @@
  * Module file for  Social Swiftmailer Sendgrid integration.
  */
 
+use Drupal\social_swiftmail_sendgrid\Plugin\QueueWorker\MassUserMailQueueProcessor;
+
 /**
  * Implements hook_tokens_alter().
  */
@@ -16,5 +18,19 @@ function social_swiftmail_sendgrid_tokens_alter(array &$replacements, array $con
   // plugin.
   if (isset($replacements['[social_user:recipient]'])) {
     $replacements['[social_user:recipient]'] = "{{social_user:recipient}}";
+  }
+}
+
+/**
+ * Implements hook_queue_info_alter().
+ */
+function social_swiftmail_sendgrid_queue_info_alter(&$queues) {
+  // We override the user_email_queue class, by now providing our custom
+  // MassUserMailQueueProcessor which doesn't processes items one by one
+  // sending each individual emails.
+  // It rather collects all users from a batch, and sends one mail
+  // to Sendgrid using its substitution system to increase performance.
+  if (!empty($queues['user_email_queue'])) {
+    $queues['user_email_queue']['class'] = MassUserMailQueueProcessor::class;
   }
 }

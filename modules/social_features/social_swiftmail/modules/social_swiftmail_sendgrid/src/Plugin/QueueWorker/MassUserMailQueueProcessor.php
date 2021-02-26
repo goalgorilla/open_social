@@ -2,96 +2,14 @@
 
 namespace Drupal\social_swiftmail_sendgrid\Plugin\QueueWorker;
 
-use Drupal\Component\Utility\EmailValidatorInterface;
-use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityStorageException;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Language\LanguageManagerInterface;
-use Drupal\Core\Logger\LoggerChannelTrait;
-use Drupal\Core\Mail\MailManagerInterface;
-use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
-use Drupal\Core\Queue\QueueWorkerBase;
-use Drupal\Core\StringTranslation\StringTranslationTrait;
-use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\social_queue_storage\Entity\QueueStorageEntity;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\social_user\Plugin\QueueWorker\UserMailQueueProcessor;
 
 /**
- * Queue worker to process email to users by using the Sendgrid Substitions.
- *
- * @QueueWorker(
- *   id = "mass_user_email_queue",
- *   title = @Translation("Mass user email processor based on placeholders"),
- *   cron = {"time" = 60}
- * )
+ * Queue worker for direct emails to users by using the Sendgrid Substitions.
  */
-class MassUserMailQueueProcessor extends QueueWorkerBase implements ContainerFactoryPluginInterface {
-
-  use LoggerChannelTrait;
-  use StringTranslationTrait;
-
-  /**
-   * The mail manager.
-   *
-   * @var \Drupal\Core\Mail\MailManagerInterface
-   */
-  protected $mailManager;
-
-  /**
-   * The entity storage.
-   *
-   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
-   */
-  protected $storage;
-
-  /**
-   * The database connection.
-   *
-   * @var \Drupal\Core\Database\Connection
-   */
-  protected $connection;
-
-  /**
-   * The language manager interface.
-   *
-   * @var \Drupal\Core\Language\LanguageManagerInterface
-   */
-  protected $languageManager;
-
-  /**
-   * The Email validator service.
-   *
-   * @var \Drupal\Component\Utility\EmailValidatorInterface
-   */
-  protected $emailValidator;
-
-  /**
-   * {@inheritdoc}
-   */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, MailManagerInterface $mail_manager, EntityTypeManagerInterface $entity_type_manager, TranslationInterface $string_translation, LanguageManagerInterface $language_manager, EmailValidatorInterface $email_validator) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition);
-    $this->mailManager = $mail_manager;
-    $this->storage = $entity_type_manager;
-    $this->setStringTranslation($string_translation);
-    $this->languageManager = $language_manager;
-    $this->emailValidator = $email_validator;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
-    return new static(
-      $configuration,
-      $plugin_id,
-      $plugin_definition,
-      $container->get('plugin.manager.mail'),
-      $container->get('entity_type.manager'),
-      $container->get('string_translation'),
-      $container->get('language_manager'),
-      $container->get('email.validator')
-    );
-  }
+class MassUserMailQueueProcessor extends UserMailQueueProcessor {
 
   /**
    * {@inheritdoc}
