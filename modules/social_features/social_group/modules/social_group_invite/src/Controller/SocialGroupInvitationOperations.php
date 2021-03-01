@@ -2,7 +2,7 @@
 
 namespace Drupal\social_group_invite\Controller;
 
-use Drupal\Core\Url;
+use Drupal\group\Entity\GroupContent;
 use Drupal\group\Entity\GroupContentInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,8 +21,8 @@ class SocialGroupInvitationOperations extends InvitationOperations {
    * @param \Drupal\group\Entity\GroupContentInterface $group_content
    *   Invitation entity.
    *
-   * @return array
-   *   The processed form for the given entity and operation.
+   * @return \Symfony\Component\HttpFoundation\RedirectResponse
+   *   A redirect response object.
    */
   public function accepted(Request $request, GroupContentInterface $group_content) {
     $group = $group_content->getGroup();
@@ -31,7 +31,7 @@ class SocialGroupInvitationOperations extends InvitationOperations {
       ->getContentPlugin('group_membership')
       ->getContentTypeConfigId();
 
-    // Pre-populate a group membership with the current user.
+    /** @var \Drupal\group\Entity\GroupContentInterface $group_content */
     $group_content = GroupContent::create([
       'type' => $contentTypeConfigId,
       'entity_id' => $group_content->get('entity_id')->getString(),
@@ -43,7 +43,7 @@ class SocialGroupInvitationOperations extends InvitationOperations {
 
     $group_content->save();
 
-    return new RedirectResponse($group->url());
+    return new RedirectResponse($group->toUrl()->toString());
   }
 
 }

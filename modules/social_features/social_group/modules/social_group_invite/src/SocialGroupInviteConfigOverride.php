@@ -107,24 +107,20 @@ class SocialGroupInviteConfigOverride implements ConfigFactoryOverrideInterface 
       return FALSE;
     }
 
-    $destination = explode('/', $destination);
-    $gid = array_pop($destination);
+    preg_match('/\/social-group-invite\/(\d+)+\/accepted/', $destination, $matches);
+    $entity_id = array_pop($matches);
 
-    if (empty($gid) || !is_numeric($gid)) {
+    if (empty($entity_id) || !is_numeric($entity_id)) {
       return FALSE;
     }
 
     // Verify is it really was requested invite and it still is actual.
     $query = $this->database->select('group_content__invitee_mail', 'gcim');
-
     $query->fields('gcim', ['entity_id']);
-    $query->condition('invitee_mail_value', $invitee_mail);
-
+    $query->condition('gcim.invitee_mail_value', $invitee_mail);
+    $query->condition('gcim.entity_id', $entity_id);
     $query->join('group_content__invitation_status', 'gcis', 'gcim.entity_id = gcis.entity_id');
     $query->condition('gcis.invitation_status_value', '0');
-
-    $query->join('group_content_field_data', 'gcfd', 'gcis.entity_id = gcfd.id');
-    $query->condition('gcfd.gid', $gid);
 
     $invitations = $query->execute()->fetchField();
 
