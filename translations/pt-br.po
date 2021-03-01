@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: node-gettext\n"
 "POT-Creation-Date: 2021-02-20 00:32+0000\n"
-"PO-Revision-Date: 2021-02-24 20:16+0000\n"
+"PO-Revision-Date: 2021-03-01 20:16+0000\n"
 "Last-Translator: Henrique Ciolfi <henrique.ciolfi@greenpeace.org>\n"
 "Language-Team: Portuguese (Brazil) <https://translate.getopensocial.com/"
 "projects/open-social/distribution/pt_BR/>\n"
@@ -226,8 +226,8 @@ msgstr[1] "@count seguidores"
 #: modules/social_features/social_group/modules/social_group_invite/social_group_invite.module:294
 msgid "1 group invite"
 msgid_plural "@count group invites"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "1 convite para o grupo"
+msgstr[1] "@count convites para o grupo"
 
 #: modules/social_features/social_follow_taxonomy/modules/social_follow_landing_page/templates/paragraph--tag--default.html.twig:20
 #: modules/social_features/social_follow_taxonomy/modules/social_follow_tag/templates/search-follow-tag.html.twig:20
@@ -248,8 +248,8 @@ msgstr[1] "@count itens processados com sucesso:"
 #: modules/social_features/social_group/modules/social_group_invite/social_group_invite.module:283
 msgid "1 membership invite for group: @group_name"
 msgid_plural "@count membership invites for group: @group_name"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "1 convite para entrar no grupo: @group_name"
+msgstr[1] "@count convites para entrar no grupo: @group_name"
 
 #: translations.php:107
 msgid "1 selected enrollee has been exported successfully"
@@ -317,12 +317,17 @@ msgstr ""
 "inscrições</a>"
 
 #: modules/social_features/social_album/config/install/views.view.albums.yml:0
+#, fuzzy
 msgid ""
 "<a href=\"/node/{{ raw_arguments.nid }}/image/{{ id }}/"
 "{{ field_post_image__target_id }}\" class=\"use-ajax\" data-dialog-type="
 "\"modal\" data-dialog-options='{\"width\":\"100%\",\"dialogClass\":\"post"
 "\"}'>{{ field_post_image }}</a>"
 msgstr ""
+"<a href=\"/node/{{ raw_arguments.nid }}/image/{{ id }}/{{ "
+"field_post_image__target_id }}\" class=\"use-ajax\" data-dialog-type=\"modal"
+"\" data-dialog-options='{\"width\":\"100%\",\"dialogClass\":\"post\"}'>{{ "
+"field_post_image }}</a>"
 
 #: modules/social_features/social_group/src/Plugin/views/field/SocialGroupViewsBulkOperationsBulkForm.php:124
 msgid "<b><em class=\"placeholder\">@count</em> Member</b> is selected"
@@ -373,7 +378,7 @@ msgstr ""
 
 #: modules/social_features/social_event/modules/social_event_invite/config/install/views.view.user_event_invites.yml:0
 msgid "<h1 class=\"h4 section-title\">@total Event invites</h1>"
-msgstr ""
+msgstr "<h1 class=\"h4 section-title\">@total convites para o evento</h1>"
 
 #: modules/social_features/social_event/modules/social_event_invite/config/install/views.view.event_manage_enrollment_invites.yml:0
 msgid ""
@@ -425,6 +430,8 @@ msgid ""
 "<i>Disabling this won't disable the Social Private Message feature, but only "
 "hide the icon from the navigation.</i>"
 msgstr ""
+"<i>Desativar esta opção não irá remover a ferramenta de mensagens privadas, "
+"apenas irá esconder o ícone da navegação principal.</i>"
 
 #: modules/social_features/social_mentions/config/install/message.template.create_mention_post_stream.yml:0
 msgid ""
@@ -506,6 +513,9 @@ msgid ""
 "a> approved your request to enroll for the event [social_event:"
 "event_iam_organizing]</p>\r\n"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
+"a> aprovou seu pedido de inscrição no evento "
+"[social_event:event_iam_organizing]</p>\n"
 
 #: modules/social_features/social_follow_content/config/install/message.template.create_comment_following_node.yml:0;0
 msgid ""
@@ -747,6 +757,9 @@ msgid ""
 "content_type] with the tag(s) [social_taxonomy:taxonomy_i_follow] that you "
 "follow.</p>"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
+"a> criou [social_taxonomy:indefinite_article] [social_taxonomy:content_type] "
+"com as tag(s) [social_taxonomy:taxonomy_i_follow] que você segue.</p>"
 
 #: modules/social_features/social_activity/config/install/message.template.create_topic_group.yml:0
 msgid ""
@@ -962,6 +975,9 @@ msgid ""
 "display-name]</a> has requested membership to the <a href=\"[message:gurl]\">"
 "[message:gtitle]</a> group</p>\r\n"
 msgstr ""
+"<p><a href=\"[message:recipient-user:url:absolute]\">[message:recipient-user"
+":display-name]</a> solicitou inscrição no grupo <a href=\"[message:gurl]\""
+">[message:gtitle]</a></p>\n"
 
 #: modules/social_features/social_group/modules/social_group_request/config/install/message.template.request_to_join_a_group.yml:0
 msgid ""
@@ -1019,6 +1035,9 @@ msgid ""
 "</a> has requested enrollment to the event [social_event:"
 "event_iam_organizing] you are organizing</p>\r\n"
 msgstr ""
+"<p><a href=\"[social_event:enrolled_event_url]\""
+">[social_event:enrolled_user]</a> pediu para se inscrever no evento "
+"[social_event:event_iam_organizing] que você está organizando</p>\n"
 
 #: modules/social_features/social_event/modules/social_event_an_enroll/config/install/views.view.manage_enrollments.yml:0
 msgid "<p>@total people have enrolled anonymously</p>"
@@ -1162,18 +1181,24 @@ msgid ""
 "<p>You have been invited for the even [social_event:event_iam_organizing] by "
 "[message:author:display-name]</p>\r\n"
 msgstr ""
+"<p>Você recebeu um convite para o evento [social_event:event_iam_organizing] "
+"de [message:author:display-name]</p>\n"
 
 #: modules/social_features/social_event/modules/social_event_invite/config/install/message.template.invite_event_enrollment.yml:0
 msgid ""
 "<p>You have been invited for the event [social_event:event_iam_organizing] "
 "by [message:author:display-name]</p>\r\n"
 msgstr ""
+"<p>Você recebeu um convite para o evento [social_event:event_iam_organizing] "
+"de [message:author:display-name]</p>\n"
 
 #: modules/social_features/social_group/modules/social_group_invite/config/optional/message.template.invited_to_join_group.yml:0;0
 msgid ""
 "<p>You have been invited to join the group <a href=\"gurl]\">[message:gtitle]"
 "</a></p>\r\n"
 msgstr ""
+"<p>Você recebeu um convite para entrar no grupo <a href=\"gurl]\""
+">[message:gtitle]</a></p>\n"
 
 #: modules/social_features/social_core/src/Controller/SocialCoreController.php:67
 msgid ""
@@ -1216,12 +1241,25 @@ msgid ""
 "\t</tbody>\r\n"
 "</table>\r\n"
 msgstr ""
+"<p>Seu pedido de inscrição no grupo<a href=\"[message:gurl]\""
+">[message:gtitle]</a> foi aprovado</p>\n"
+"\n"
+"<table class=\"btn-wrapp\">\n"
+"\t<tbody>\n"
+"\t\t<tr>\n"
+"\t\t\t<td class=\"align-center\"><a class=\"btn-link btn-link-bg btn-link-"
+"one\" href=\"[message:gurl]\">Visitar o grupo</a></td>\n"
+"\t\t</tr>\n"
+"\t</tbody>\n"
+"</table>\n"
 
 #: modules/social_features/social_group/modules/social_group_request/config/install/message.template.approve_request_join_group.yml:0;0
 msgid ""
 "<p>Your membership request for the <a href=\"gurl]\">[message:gtitle]</a> "
 "group has been approved</p>\r\n"
 msgstr ""
+"<p>Seu pedido de inscrição no grupo <a href=\"gurl]\">[message:gtitle]</a> "
+"foi aprovado</p>\n"
 
 #: modules/social_features/social_profile/modules/social_profile_privacy/config/install/social_profile_privacy.settings.yml:0
 msgid ""
@@ -1246,6 +1284,10 @@ msgid ""
 "indexing. This <strong>cannot be undone</strong>. Are you sure you want to "
 "continue?"
 msgstr ""
+"<strong>ATENÇÃO</strong>: Flushing profile data will permanently "
+"<strong>remove all data</strong> from the following fields from the database:"
+" %fields. The search indexes may also be cleared and will need re-indexing. "
+"This <strong>cannot be undone</strong>. Are you sure you want to continue?"
 
 #: modules/social_features/social_like/social_like.module:35
 msgid "@amount like(s)"
@@ -1273,8 +1315,8 @@ msgstr[1] "@count novos membros se inscreveram no seu evento."
 #: modules/social_features/social_group/social_group.module:1102
 msgid "@count new member joined the group."
 msgid_plural "@count new members joined the group."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "@count nova pessoa entrou no grupo."
+msgstr[1] "@count novas pessoas entraram no grupo."
 
 #: modules/social_features/social_content_report/src/EventSubscriber/FlagSubscriber.php:116
 msgid ""
@@ -1286,8 +1328,9 @@ msgstr ""
 #: modules/social_features/social_event/modules/social_event_invite/src/Form/EnrollInviteEmailForm.php:262
 #: modules/social_features/social_event/modules/social_event_invite/src/Form/EnrollInviteUserForm.php:130
 #: modules/social_features/social_group/modules/social_group_invite/src/Form/SocialBulkGroupInvitation.php:432
+#, fuzzy
 msgid "@err"
-msgstr ""
+msgstr "@err"
 
 #: translations.php:63
 msgid "@interval ago"
@@ -1302,8 +1345,9 @@ msgid "@name field is required."
 msgstr "O campo @name é obrigatório."
 
 #: modules/social_features/social_event/modules/social_event_invite/src/Controller/UserEnrollInviteController.php:88
+#, fuzzy
 msgid "@node"
-msgstr ""
+msgstr "@node"
 
 #: modules/custom/activity_creator/activity.page.inc:45
 msgid "@time ago"
@@ -1487,7 +1531,7 @@ msgstr "Alguém respondeu a um comentário em que fui mencionado"
 
 #: modules/social_features/social_group/modules/social_group_request/config/install/message.template.request_to_join_a_group.yml:0
 msgid "A person requests membership to a group I manage"
-msgstr ""
+msgstr "Uma pessoa solicitou entrada no grupo que eu gerencio"
 
 #: modules/social_features/social_landing_page/config/install/field.field.paragraph.block.field_block_reference_secondary.yml:0
 msgid ""
