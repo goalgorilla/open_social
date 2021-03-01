@@ -25,7 +25,7 @@ class MassUserMailQueueProcessor extends UserMailQueueProcessor {
       // Check if it's from the configured email bundle type.
       if ($queue_storage->bundle() === 'email') {
         // When there are user ID's configured.
-        if ($data['users']) {
+        if (!empty($data['users'])) {
           // Load the users that are in the batch.
           $users = $this->storage->getStorage('user')->loadMultiple($data['users']);
 
@@ -43,7 +43,7 @@ class MassUserMailQueueProcessor extends UserMailQueueProcessor {
         }
 
         // When there are email addresses configured.
-        if ($data['user_mail_addresses']) {
+        if (!empty($data['user_mail_addresses'])) {
           foreach ($data['user_mail_addresses'] as $mail_address) {
             if ($this->emailValidator->isValid($mail_address['email_address'])) {
               // Instead of sending the email, we add the address to a list
@@ -59,7 +59,7 @@ class MassUserMailQueueProcessor extends UserMailQueueProcessor {
         if (!empty($valid_user_addresses)) {
           $all_valid_emails = implode(",", $valid_user_addresses);
           // All data is processed, lets send the email.
-          $this->sendMail($all_valid_emails, $this->languageManager->getDefaultLanguage()
+          $this->sendMassMail($all_valid_emails, $this->languageManager->getDefaultLanguage()
             ->getId(), $queue_storage, $valid_user_names);
         }
       }
@@ -78,11 +78,11 @@ class MassUserMailQueueProcessor extends UserMailQueueProcessor {
    * @param array $valid_user_names
    *   The recipients including email address and display name if available.
    */
-  protected function sendMail(string $valid_user_addresses, string $langcode, QueueStorageEntity $queue_storage, array $valid_user_names) {
+  protected function sendMassMail(string $valid_user_addresses, string $langcode, QueueStorageEntity $queue_storage, array $valid_user_names) {
     // Lets build the mail for SendGrid.
     $params = [
       'subject' => $queue_storage->get('field_subject')->value,
-      'message' => $queue_storage->get('field_message')->value,
+      'message' => check_markup($queue_storage->get('field_message')->value, 'mail_html'),
     ];
 
     // Add sendgrid specific data to the params.
@@ -90,13 +90,21 @@ class MassUserMailQueueProcessor extends UserMailQueueProcessor {
       // The key of the array is the needle in the haystack of the substitution.
       // also see social_swiftmail_sendgrid_token_alter.
       $params['sendgrid']['substitutions']['{{social_user:recipient}}'] = $valid_user_names;
+      // Send it as context so Drupal understands we want to token_replace it.
+      $params['social_user:recipient'] = $valid_user_names;
     }
 
     // The from address.
     $from = $queue_storage->get('field_reply_to')->value;
 
+    // Lets treat our users as BCC so we can send all emails in one go.
+    $params['headers']['bcc'] = $valid_user_addresses;
+    // Lets pass along our context as requested in the message / hook_mail
+    // functions.
+    $context = ['context' => $params];
     try {
-      $this->mailManager->mail('sendgrid_integration', 'action_send_mass_email', $valid_user_addresses, $langcode, $params, $from);
+      // Use the this modules mail function for better token replacements.
+      $this->mailManager->mail('social_swiftmail_sendgrid', 'action_send_mass_email', $valid_user_addresses, $langcode, $context, $from);
 
       // Try to save a the storage entity to update the finished status.
       // to let our queue storage know we're golden.
