@@ -182,13 +182,13 @@ class GroupContentVisibilityUpdate {
   /**
    * Load all Posts based on a certain group.
    *
-   * @param \Drupal\group\Entity\Group $group
+   * @param \Drupal\group\Entity\GroupInterface $group
    *   The Group where we should check our posts for.
    *
    * @return \Drupal\Core\Entity\EntityInterface[]|\Drupal\social_post\Entity\Post[]
    *   Returning the Posts that are part of a Group.
    */
-  public static function getPostsFromGroup(Group $group) {
+  public static function getPostsFromGroup(GroupInterface $group) {
     $posts = &drupal_static(__FUNCTION__);
     if (!isset($posts)) {
       // Posts aren't marked as group content so we load them separately.
