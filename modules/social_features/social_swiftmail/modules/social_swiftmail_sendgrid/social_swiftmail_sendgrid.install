@@ -1,0 +1,22 @@
+<?php
+
+/**
+ * @file
+ * Install and update hooks for Social Swiftmailer.
+ */
+
+/**
+ * Implements hook_install().
+ *
+ * Perform actions related to the installation of social_swiftmail.
+ */
+function social_swiftmail_sendgrid_install() {
+  // Get swift and mailsystem config.
+  $mailsystem_settings = \Drupal::configFactory()->getEditable('mailsystem.settings');
+
+  // Alter mailsystem settings to ensure for our VBO bulk operations send
+  // email we use sendgrid as the sender and swiftmailer as the formatter
+  // this allows for nice branded emails using substitutions.
+  $mailsystem_settings->set('modules.social_swiftmail_sendgrid.action_send_mass_email.formatter', 'social_swiftmailer')->save();
+  $mailsystem_settings->set('modules.social_swiftmail_sendgrid.action_send_mass_email.sender', 'sendgrid_integration')->save();
+}
