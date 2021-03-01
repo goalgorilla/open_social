@@ -456,13 +456,15 @@ function _social_flexible_group_edit_submit(array $form, FormStateInterface $for
   if (!empty($changed_visibility)) {
     $group = _social_group_get_current_group();
 
-    // Update the default visibility of all the content.
-    FlexibleGroupContentVisibilityUpdate::batchUpdateGroupContentVisibility($group, $changed_visibility, $new_visibility);
+    if ($group instanceof GroupInterface) {
+      // Update the default visibility of all the content.
+      FlexibleGroupContentVisibilityUpdate::batchUpdateGroupContentVisibility($group, $changed_visibility, $new_visibility);
 
-    // Make sure we clear cache tags accordingly.
-    $cache_tags = _social_group_cache_tags($group);
-    foreach ($cache_tags as $cache_tag) {
-      Cache::invalidateTags([$cache_tag]);
+      // Make sure we clear cache tags accordingly.
+      $cache_tags = _social_group_cache_tags($group);
+      foreach ($cache_tags as $cache_tag) {
+        Cache::invalidateTags([$cache_tag]);
+      }
     }
   }
 }
