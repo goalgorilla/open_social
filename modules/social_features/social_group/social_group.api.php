@@ -182,5 +182,18 @@ function hook_social_group_allowed_join_method_description_alter($key, &$descrip
 }
 
 /**
+ * Adds extra group types with visibility fields that should work the same as
+ * flexible groups.
+ *
+ * @param string $social_group_types
+ *   The group type id.
+ *
+ * @ingroup social_group_api
+ */
+function hook_social_group_settings_alter(&$social_group_types) {
+  $social_group_types[] = 'flexible_group';
+}
+
+/**
  * @} End of "addtogroup hooks".
  */
