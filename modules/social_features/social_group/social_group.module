@@ -449,12 +449,13 @@ function _social_group_get_join_methods(GroupInterface $group) {
 
     default:
       // Try to retrieve join methods from Group directly.
-      $allowed_options = $group->get('field_group_allowed_join_method')
-        ->getValue();
-      foreach ($allowed_options as $option) {
-        // Lets grab the value from the selected radio item.
-        if (!empty($option['value']) && is_string($option['value'])) {
-          $join_methods[$option['value']] = social_group_allowed_join_method_description($option['value']);
+      if ($group->hasField('field_group_allowed_join_method')) {
+        $allowed_options = $group->get('field_group_allowed_join_method')->getValue();
+        foreach ($allowed_options as $option) {
+          // Lets grab the value from the selected radio item.
+          if (!empty($option['value']) && is_string($option['value'])) {
+            $join_methods[$option['value']] = social_group_allowed_join_method_description($option['value']);
+          }
         }
       }
       break;
