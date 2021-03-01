@@ -187,6 +187,22 @@ class SocialDrupalContext extends DrupalContext {
   }
 
   /**
+   * @When I check if queue items processed :item_name
+   *
+   * @param $item_name
+   */
+  public function iCheckIFQueueItemsProcessed($item_name = "") {
+    $query = \Drupal::database()->select('queue', 'q');
+    $query->addField('q', 'item_id');
+    $query->condition('q.name', $item_name);
+    $item = $query->execute()->fetchField();
+
+    if (!empty($item)) {
+      throw new \Exception('There are exist stuck items in queue.');
+    }
+  }
+
+  /**
    * Process queue items.
    *
    * @param bool $just_delete
