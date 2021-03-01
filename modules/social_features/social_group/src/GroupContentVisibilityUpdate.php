@@ -6,6 +6,7 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\group\Entity\Group;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\group\Entity\GroupInterface;
 use Drupal\group\GroupMembership;
 use Drupal\Core\Cache\Cache;
 use Drupal\social_post\Entity\Post;
