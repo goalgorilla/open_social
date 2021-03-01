@@ -948,7 +948,7 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
     $group_form_ids[] = 'group_' . $group_type . '_add_form';
   }
 
-  if (in_array($form_id, $group_form_ids)) {
+  if (isset($form['field_group_allowed_join_method']) && in_array($form_id, $group_form_ids)) {
     $join_method_default_value = 'added';
     // Ensure we have a better descriptive label.
     if (array_key_exists('added', $form['field_group_allowed_join_method']['widget']['#options'])) {
@@ -1020,8 +1020,10 @@ function _social_group_type_edit_submit($form, FormStateInterface $form_state) {
   // Check if the group_type changed.
   // Visibility be empty for flexible groups.
   $group = _social_group_get_current_group();
-  if (!empty($form['group_type'])
-  && (\Drupal::service('social_group.helper_service')->getDefaultGroupVisibility($group->getGroupType()->id()) != NULL)
+  if (
+    $group instanceof GroupInterface &&
+    !empty($form['group_type']) &&
+    (\Drupal::service('social_group.helper_service')->getDefaultGroupVisibility($group->getGroupType()->id()) != NULL)
   ) {
     $default_type = $form['group_type']['widget']['#default_value'];
     $new_type = $form_state->getValue('group_type')[0]['value'];

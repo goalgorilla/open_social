@@ -122,7 +122,7 @@ class FlexibleGroupContentVisibilityUpdate {
       $entity->setVisibility($default_visibility);
       $entity->save();
     }
-    if ($entity instanceof Node) {
+    if ($entity instanceof Node && $entity->hasField('field_content_visibility')) {
       $default_visibility = self::calculateVisibility($entity->getFieldValue('field_content_visibility', 'value'), $new_options);
       $entity->set('field_content_visibility', $default_visibility);
       $entity->save();
