@@ -25,3 +25,17 @@ function social_editor_update_8903() {
   // Output logged messages to related channel of update execution.
   return $updateHelper->logger()->output();
 }
+
+/**
+ * Added editor table widget for basic_html format.
+ */
+function social_editor_update_8904() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('social_editor', 'social_editor_update_8904');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
