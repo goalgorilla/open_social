@@ -260,6 +260,7 @@ function social_comment_tokens($type, $tokens, array $data, array $options, Bubb
  */
 function _social_comment_get_summary($text) {
   $summary = html_entity_decode(strip_tags($text));
+  $summary = preg_replace('/\n|\r|\t/m', ' ', $summary);
   $max_length = 280;
 
   if (mb_strlen($summary) > $max_length) {
