@@ -20,3 +20,13 @@ function social_swiftmail_sendgrid_install() {
   $mailsystem_settings->set('modules.social_swiftmail_sendgrid.action_send_mass_email.formatter', 'social_swiftmailer')->save();
   $mailsystem_settings->set('modules.social_swiftmail_sendgrid.action_send_mass_email.sender', 'sendgrid_integration')->save();
 }
+
+/**
+ * Implements hook_uninstall().
+ */
+function social_swiftmail_sendgrid_uninstall() {
+  // Remove our config.
+  $mailsystem_settings = \Drupal::configFactory()->getEditable('mailsystem.settings');
+  $mailsystem_settings->set('modules.social_swiftmail_sendgrid.action_send_mass_email.formatter', '')->save();
+  $mailsystem_settings->set('modules.social_swiftmail_sendgrid.action_send_mass_email.sender', '')->save();
+}
