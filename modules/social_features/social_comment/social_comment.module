@@ -247,6 +247,17 @@ function social_comment_preprocess_comment(&$variables) {
     $variables['attributes']['data-history-node-id'] = $comment->getCommentedEntityId();
   }
 
+  $allowed_routes = [
+    'entity.node.canonical',
+    'layout_builder.overrides.node.view',
+  ];
+
+  /** @var \Drupal\node\NodeInterface $node */
+  $node = \Drupal::routeMatch()->getParameter('node');
+  $view_mode = $variables['elements']['#view_mode'];
+  if (in_array(\Drupal::routeMatch()->getRouteName(), $allowed_routes) && $node->bundle() === 'dashboard' && $view_mode === 'activity_comment') {
+    $variables['content']['links'] = [];
+  }
 }
 
 /**
@@ -304,7 +315,7 @@ function social_comment_comment_view(array &$build, EntityInterface $entity, Ent
       if ($commented_entity_type === 'post') {
         $comment_field_name = 'field_post_comments';
       }
-      elseif ($commented_entity_type === 'node') {
+      elseif ($commented_entity_type === 'node' && $node->bundle() !== 'dashboard') {
         $comment_field_name = 'field_' . $commented_entity->bundle() . '_comments';
         // Prepare the "Comments" link.
         $link_options = [
