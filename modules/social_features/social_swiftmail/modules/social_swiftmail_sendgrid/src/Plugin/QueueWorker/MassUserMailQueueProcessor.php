@@ -98,7 +98,7 @@ class MassUserMailQueueProcessor extends UserMailQueueProcessor {
     $from = $queue_storage->get('field_reply_to')->value;
 
     // Lets treat our users as BCC so we can send all emails in one go.
-    $params['headers']['bcc'] = $valid_user_addresses;
+    $params['sendgrid']['smtpapito']['bcc'] = TRUE;
     // Lets pass along our context as requested in the message / hook_mail
     // functions.
     $context = ['context' => $params];

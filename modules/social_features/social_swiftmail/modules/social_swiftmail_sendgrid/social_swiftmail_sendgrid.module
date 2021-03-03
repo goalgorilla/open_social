@@ -42,6 +42,7 @@ function social_swiftmail_sendgrid_queue_info_alter(&$queues) {
  */
 function social_swiftmail_sendgrid_mail($key, &$message, $params) {
   $token_service = \Drupal::token();
+  // See protected function sendMassMail in our MassUserMailQueueProcessor.
   $context = $params['context'];
   $subject = PlainTextOutput::renderFromHtml($token_service->replace($context['subject'], $context));
   $body = $token_service->replace($context['message'], $context);
@@ -53,8 +54,14 @@ function social_swiftmail_sendgrid_mail($key, &$message, $params) {
   if ($key === 'action_send_mass_email') {
     $message['headers']['Content-Type'] = 'text/html; charset=utf-8';
   }
+  // Lets ensure we pass along context data to our substitutions, so it knows
+  // what display name to render later in the process.
   if (!empty($context['sendgrid']['substitutions'])) {
     $message['sendgrid']['substitutions'] = $context['sendgrid']['substitutions'];
   }
-
+  // Also ensure we can use the BCC related function, as we want to send
+  // mass emails to users individually without showing the other emails.
+  if (isset($context['sendgrid']['smtpapito']['bcc'])) {
+    $message['sendgrid']['smtpapito']['bcc'] = TRUE;
+  }
 }
