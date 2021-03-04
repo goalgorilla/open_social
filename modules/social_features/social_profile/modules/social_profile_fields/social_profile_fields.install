@@ -7,6 +7,7 @@
 
 use Drupal\search_api\Entity\Index;
 use Drupal\user\Entity\User;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Implements hook_install().
@@ -71,5 +72,28 @@ function _social_profile_fields_update_search_index($index_id = 'social_users') 
 
     // Restore user account.
     $accountSwitcher->switchBack();
+  }
+}
+
+/**
+ * Add a field for nationality.
+ */
+function social_profile_fields_update_8003() {
+  $entity_type_ids = [
+    'taxonomy.vocabulary.' => 'taxonomy_vocabulary',
+    'field.storage.profile.field_profile_' => 'field_storage_config',
+    'field.field.profile.profile.field_profile_' => 'field_config',
+  ];
+
+  $path = drupal_get_path('module', 'social_profile_fields') . '/config/install/';
+
+  foreach ($entity_type_ids as $prefix => $entity_type_id) {
+    $config_file = $path . $prefix . 'nationality.yml';
+    $settings = Yaml::parseFile($config_file);
+
+    /** @var \Drupal\Core\Config\Entity\ConfigEntityStorageInterface $storage */
+    $storage = \Drupal::entityTypeManager()->getStorage($entity_type_id);
+
+    $storage->createFromStorageRecord($settings)->save();
   }
 }
