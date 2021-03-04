@@ -333,7 +333,7 @@ function social_comment_comment_view(array &$build, EntityInterface $entity, Ent
         }
       }
 
-      $comment_count = $commented_entity->{$comment_field_name}->comment_count;
+      $comment_count = isset($comment_field_name) ? $commented_entity->{$comment_field_name}->comment_count : '';
       $t_args = [':num_comments' => $comment_count];
 
       if ($comment_count > 1) {
