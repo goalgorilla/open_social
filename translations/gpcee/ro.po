@@ -1486,8 +1486,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Open Social\n"
 "POT-Creation-Date: 2021-02-20 00:32+0000\n"
-"PO-Revision-Date: 2021-03-04 21:16+0000\n"
-"Last-Translator: Andreea Diana <andreea.diana420@gmail.com>\n"
+"PO-Revision-Date: 2021-03-05 17:16+0000\n"
+"Last-Translator: Denis Blidariu <denis.blidariu@greenpeace.org>\n"
 "Language-Team: Romanian <https://translate.getopensocial.com/projects/gpcee/"
 "distribution/ro/>\n"
 "Language: ro\n"
@@ -1513,6 +1513,20 @@ msgid ""
 "        <p>To solve the issue, try using different login information, try "
 "again later, or <a href=\":url\">request a new password</a></p>"
 msgstr ""
+"\n"
+"        <p>Hopa, a apărut o eroare. Este posibil să se fi întâmplat din "
+"următoarele motive:</p>\n"
+"        <ul>\n"
+"          <li>Combinație de nume de utilizator / e-mail și parolă nevalidă. "
+"</li>\n"
+"          <li>Au existat mai multe încercări de conectare nereușite pentru "
+"acest cont. Este blocat temporar.</li>\n"
+"          <li>Prea multe încercări de conectare eșuate de pe computerul tău ("
+"adresa IP). Această adresă IP este blocată temporar.</li>\n"
+"        </ul>\n"
+"        <p>Pentru a rezolva problema, încearcă să utilizezi diferite "
+"informații de conectare, încearcă din nou mai târziu sau <a href=\":url\""
+">solicită o nouă parolă </a></p>"
 
 #: translations.php:29
 msgid ""
@@ -1668,11 +1682,12 @@ msgid "0 downloads"
 msgstr "0 descărcări"
 
 #: modules/social_features/social_follow_taxonomy/config/install/views.view.following_tags.yml:0
+#, fuzzy
 msgid "1"
 msgid_plural "@count"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "1"
+msgstr[1] "@count"
+msgstr[2] "@count"
 
 #: modules/social_features/social_comment_upload/social_comment_upload.module:74
 msgid "1 attachment."
@@ -1740,52 +1755,59 @@ msgstr[2] "@count persoane înscrise selectate au fost exportate cu succes"
 msgid "1 selected enrollee has been removed from the event successfully"
 msgid_plural ""
 "@count selected enrollees have been removed from the event successfully"
-msgstr[0] ""
+msgstr[0] "1 persoană înscrisă selectată a fost eliminată cu succes din eveniment"
 msgstr[1] ""
+"@count persoane înscrise selectate au fost eliminate cu succes din eveniment"
 msgstr[2] ""
+"@count persoane înscrise selectate au fost eliminate cu succes din eveniment"
 
 #: translations.php:108
 msgid "1 selected enrollee has not been exported successfully"
 msgid_plural "@count selected enrollees have not been exported successfully"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "1 persoană înscrisă selectată nu a fost exportată cu succes"
+msgstr[1] "@count persoane înscrise selectate nu au fost exportate cu succes"
+msgstr[2] "@count persoane înscrise selectate nu au fost exportate cu succes"
 
 #: translations.php:112
 msgid "1 selected enrollee has not been removed from the event successfully"
 msgid_plural ""
 "@count selected enrollees have not been removed from the event successfully"
 msgstr[0] ""
+"1 persoană înscrisă selectată nu a fost eliminată cu succes din eveniment"
 msgstr[1] ""
+"@count persoane înscrise selectate nu au fost eliminate cu succes din "
+"eveniment"
 msgstr[2] ""
+"@count persoane înscrise selectate nu au fost eliminate cu succes din "
+"eveniment"
 
 #: translations.php:113
 msgid "1 selected member has been exported successfully"
 msgid_plural "@count selected members have been exported successfully"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "1 membru selectat a fost exportat cu succes"
+msgstr[1] "@count membri selectați au fost exportați cu succes"
+msgstr[2] "@count membri selectați au fost exportați cu succes"
 
 #: translations.php:115
 msgid "1 selected member has been removed successfully"
 msgid_plural "@count selected members have been removed successfully"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "1 membru selectat a fost eliminat cu succes"
+msgstr[1] "@count membri selectați au fost eliminați cu succes"
+msgstr[2] "@count membri selectați au fost eliminați cu succes"
 
 #: translations.php:114
 msgid "1 selected member has not been exported"
 msgid_plural "@count selected members have not been exported"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "1 membru selectat nu a fost exportat"
+msgstr[1] "@count membri selectați nu au fost exportați"
+msgstr[2] "@count membri selectați nu au fost exportați"
 
 #: translations.php:116
 msgid "1 selected member has not been removed successfully"
 msgid_plural "@count selected members have been removed successfully"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "1 membru selectat nu a fost eliminat cu succes"
+msgstr[1] "@count membri selectați au fost eliminați cu succes"
+msgstr[2] "@count membri selectați au fost eliminați cu succes"
 
 #: modules/social_features/social_core/src/Plugin/Field/FieldFormatter/CommentNodeFormatter.php:139
 msgid ":num_comments comment"
@@ -1793,20 +1815,27 @@ msgstr ":num_comments comentariu"
 
 #: modules/social_features/social_core/src/Plugin/Field/FieldFormatter/CommentNodeFormatter.php:135
 msgid ":num_comments comments"
-msgstr ""
+msgstr ":num_comments comentarii"
 
 #: modules/social_features/social_event/config/install/views.view.event_enrollments.yml:0
 msgid ""
 "<a href=\"/node/{{ raw_arguments.nid }}/enrollments\">See all enrollments</a>"
 msgstr ""
+"<a href=\"/node/{{ raw_arguments.nid }}/enrollments\">Vezi toate "
+"înscrierile</a>"
 
 #: modules/social_features/social_album/config/install/views.view.albums.yml:0
+#, fuzzy
 msgid ""
 "<a href=\"/node/{{ raw_arguments.nid }}/image/{{ id }}/"
 "{{ field_post_image__target_id }}\" class=\"use-ajax\" data-dialog-type="
 "\"modal\" data-dialog-options='{\"width\":\"100%\",\"dialogClass\":\"post"
 "\"}'>{{ field_post_image }}</a>"
 msgstr ""
+"<a href=\"/node/{{ raw_arguments.nid }}/image/{{ id }}/{{ "
+"field_post_image__target_id }}\" class=\"use-ajax\" data-dialog-type=\"modal"
+"\" data-dialog-options='{\"width\":\"100%\",\"dialogClass\":\"post\"}'>{{ "
+"field_post_image }}</a>"
 
 #: modules/social_features/social_group/src/Plugin/views/field/SocialGroupViewsBulkOperationsBulkForm.php:124
 msgid "<b><em class=\"placeholder\">@count</em> Member</b> is selected"
@@ -1821,30 +1850,37 @@ msgid "<b><em class=\"placeholder\">@count</em> enrollee</b> is selected"
 msgid_plural ""
 "<b><em class=\"placeholder\">@count</em> enrollees</b> are selected"
 msgstr[0] ""
+"<b><em class=\"placeholder\">@count</em> persoană înscrisă</b> este selectată"
 msgstr[1] ""
+"<b><em class=\"placeholder\">@count</em> persoane înscrise</b> sunt selectate"
 msgstr[2] ""
+"<b><em class=\"placeholder\">@count</em> persoane înscrise</b> sunt selectate"
 
 #: modules/social_features/social_group/src/Plugin/views/field/SocialGroupViewsBulkOperationsBulkForm.php:47
+#, fuzzy
 msgid "<b>@action</b>"
-msgstr ""
+msgstr "<b>@action</b>"
 
 #: modules/social_features/social_group/src/Plugin/views/field/SocialGroupViewsBulkOperationsBulkForm.php:54
 msgid "<b>@action</b> of selected members"
-msgstr ""
+msgstr "<b>@action</b> dintre membrii selectați"
 
 #: modules/social_features/social_event/modules/social_event_managers/src/Plugin/views/field/SocialEventManagersViewsBulkOperationsBulkForm.php:113
 msgid "<b>@action</b> selected enrollees"
-msgstr ""
+msgstr "<b>@action</b> persoane înscrise selectate"
 
 #: modules/social_features/social_group/src/Plugin/views/field/SocialGroupViewsBulkOperationsBulkForm.php:40
 msgid "<b>@action</b> selected members"
-msgstr ""
+msgstr "<b>@action</b> membrii selectați"
 
 #: modules/social_features/social_swiftmail/src/Form/SocialSwiftmailSettingsForm.php:107
 msgid ""
 "<b>Please note:</b> the change below will not impact the users who have "
 "changed their default email notification settings."
 msgstr ""
+"<b>Please note:</b> modificarea de mai jos nu va avea impact asupra "
+"utilizatorilor care și-au modificat setările implicite de notificare prin "
+"e-mail."
 
 #: config/optional/node.type.book.yml:0
 msgid ""
@@ -1856,7 +1892,7 @@ msgstr ""
 
 #: modules/social_features/social_event/modules/social_event_invite/config/install/views.view.user_event_invites.yml:0
 msgid "<h1 class=\"h4 section-title\">@total Event invites</h1>"
-msgstr ""
+msgstr "<h1 class=\"h4 section-title\">@total Invitații la eveniment</h1>"
 
 #: modules/social_features/social_event/modules/social_event_invite/config/install/views.view.event_manage_enrollment_invites.yml:0
 msgid ""
@@ -1879,19 +1915,19 @@ msgstr ""
 
 #: modules/social_features/social_search/config/install/views.view.search_users.yml:0;0
 msgid "<h4 class=\"section-title\">Member results</h4>"
-msgstr ""
+msgstr "<h4 class=\"section-title\">Rezultatele membrilor</h4>"
 
 #: modules/social_features/social_search/config/install/views.view.search_all.yml:0
 msgid "<h4>All results</h4>"
-msgstr ""
+msgstr "<h4>Toate rezultatele</h4>"
 
 #: modules/social_features/social_search/config/install/views.view.search_content.yml:0;0
 msgid "<h4>Content results</h4>"
-msgstr ""
+msgstr "<h4>Rezultatele conținutului</h4>"
 
 #: modules/social_features/social_search/config/install/views.view.search_groups.yml:0;0
 msgid "<h4>Group results</h4>"
-msgstr ""
+msgstr "<h4>Rezultatele grupului</h4>"
 
 #: modules/social_features/social_user/src/Form/SocialUserNavigationSettingsForm.php:89
 msgid ""
@@ -1929,6 +1965,8 @@ msgid ""
 "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
 "a> added you to the event [social_event:event_iam_organizing]</p>"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
+"a> te-a adăugat la evenimentul [social_event:event_iam_organizing]</p>"
 
 #: modules/social_features/social_activity/config/install/message.template.create_comment_group_node.yml:0
 msgid ""
@@ -4782,7 +4820,7 @@ msgstr ""
 #: modules/social_features/social_group/modules/social_group_flexible_group/config/install/field.storage.group.field_group_allowed_visibility.yml:0
 #: modules/social_features/social_post/config/install/field.storage.post.field_visibility.yml:0;0
 msgid "Community"
-msgstr ""
+msgstr "Comunitate"
 
 #: modules/custom/entity_access_by_field/src/Form/EntityVisibilityForm.php:51
 msgid "Community - visible only to logged in members"
@@ -7499,7 +7537,7 @@ msgstr ""
 
 #: modules/social_features/social_swiftmail/config/schema/social_swiftmail.schema.yml:0
 msgid "Header markup"
-msgstr ""
+msgstr "Marcare antet"
 
 #: config/optional/block.block.seven_help.yml:0
 #: config/optional/block.block.socialbase_help.yml:0
@@ -7509,7 +7547,7 @@ msgstr "Ajutor"
 
 #: modules/social_features/social_event/modules/social_event_invite/src/Form/EventInviteSettingsForm.php:71
 msgid "Helper"
-msgstr ""
+msgstr "Asistent"
 
 #: modules/custom/social_tour/config/install/tour.tour.social_profile.yml:0
 msgid ""
@@ -7520,14 +7558,14 @@ msgstr ""
 
 #: modules/custom/social_tour/config/install/tour.tour.social_group.yml:0
 msgid "Here you can see all the activity in this group and join it."
-msgstr ""
+msgstr "Aici poți vedea toată activitatea din acest grup și te poți alătura."
 
 #: modules/social_features/social_core/config/install/core.entity_view_mode.node.hero.yml:0
 #: modules/social_features/social_group/config/install/core.entity_view_mode.group.hero.yml:0
 #: modules/social_features/social_landing_page/config/install/paragraphs.paragraphs_type.hero.yml:0
 #: modules/social_features/social_profile/config/install/core.entity_view_mode.profile.hero.yml:0
 msgid "Hero"
-msgstr ""
+msgstr "Erou"
 
 #: modules/social_features/social_core/config/install/crop.type.hero_an.yml:0
 msgid "Hero AN"
@@ -7551,15 +7589,15 @@ msgstr ""
 
 #: modules/social_features/social_core/config/install/field.field.block_content.hero_call_to_action_block.field_hero_image.yml:0
 msgid "Hero image"
-msgstr ""
+msgstr "Imagine erou"
 
 #: modules/social_features/social_landing_page/config/install/paragraphs.paragraphs_type.hero_small.yml:0
 msgid "Hero small"
-msgstr ""
+msgstr "Erou mic"
 
 #: modules/social_features/social_swiftmail/social_swiftmail.module:122
 msgid "Hi <strong>@display_name</strong>"
-msgstr ""
+msgstr "Salutare <strong>@display_name</strong>"
 
 #: modules/social_features/social_group/modules/social_group_invite/config/optional/group.content_type.closed_group-group_invitation.yml:0
 #: modules/social_features/social_group/modules/social_group_invite/config/optional/group.content_type.flexible_group-group_invitation.yml:0
@@ -7607,7 +7645,7 @@ msgstr "Ascundere"
 
 #: modules/social_features/social_profile/modules/social_profile_privacy/social_profile_privacy.module:55
 msgid "Hide for others"
-msgstr ""
+msgstr "Ascunde pentru alții"
 
 #: modules/social_features/social_comment/src/SocialCommentBreadcrumbBuilder.php:58;59
 #: modules/social_features/social_core/social_core.install:257
@@ -13041,15 +13079,15 @@ msgstr ""
 
 #: modules/social_features/social_event/src/Controller/UpdateEnrollRequestController.php:85
 msgid "The event enrollment request has been approved."
-msgstr ""
+msgstr "Solicitarea de înscriere la eveniment a fost aprobată."
 
 #: modules/social_features/social_event/src/Controller/UpdateEnrollRequestController.php:91
 msgid "The event enrollment request has been declined."
-msgstr ""
+msgstr "Solicitarea de înscriere la eveniment a fost respinsă."
 
 #: modules/social_features/social_featured_content/templates/node--event--featured.html.twig:15
 msgid "The event will take place at the"
-msgstr ""
+msgstr "Evenimentul va avea loc la"
 
 #: modules/custom/activity_viewer/activity_viewer.module:25
 msgid ""
@@ -13059,15 +13097,15 @@ msgstr ""
 
 #: modules/social_features/social_group/social_group.tokens.inc:23
 msgid "The group content type."
-msgstr ""
+msgstr "Tipul de conținut al grupului."
 
 #: modules/social_features/social_group/social_group.tokens.inc:28
 msgid "The group content url."
-msgstr ""
+msgstr "Adresa URL a conținutului grupului."
 
 #: modules/social_features/social_featured_content/templates/group--featured.html.twig:58
 msgid "The group type is"
-msgstr ""
+msgstr "Tipul grupului este"
 
 #: modules/custom/mentions/src/Form/MentionsTypeForm.php:125
 msgid ""
@@ -13078,24 +13116,24 @@ msgstr ""
 
 #: modules/social_features/social_user/social_user.tokens.inc:21
 msgid "The individual display name of a user, when receiving an email."
-msgstr ""
+msgstr "Numele de afișare al unui utilizator, la primirea unui e-mail."
 
 #: modules/social_features/social_event/modules/social_event_invite/config/schema/social_event_invite.schema.yml:0
 msgid "The invite email message body."
-msgstr ""
+msgstr "Corpul mesajului din e-mailul de invitație."
 
 #: modules/social_features/social_event/modules/social_event_invite/config/schema/social_event_invite.schema.yml:0
 msgid "The invite email subject."
-msgstr ""
+msgstr "Subiectul e-mailului"
 
 #: modules/social_features/social_event/modules/social_event_invite/src/Controller/CancelEnrollInviteController.php:78
 msgid "The invite has been removed."
-msgstr ""
+msgstr "Invitația a fost eliminată."
 
 #: modules/social_features/social_event/modules/social_event_invite/config/schema/social_event_invite.schema.yml:0
 #: modules/social_features/social_group/modules/social_group_invite/config/schema/social_group_invite.schema.yml:0
 msgid "The invite helper text."
-msgstr ""
+msgstr "Textul de asistență pentru invitații."
 
 #: modules/custom/activity_creator/src/Entity/Activity.php:179
 msgid "The language code for the Activity entity."
@@ -13111,11 +13149,12 @@ msgstr ""
 
 #: modules/social_features/social_like/social_like.tokens.inc:29
 msgid "The liked content type."
-msgstr ""
+msgstr "Tipul de conținut apreciat."
 
 #: modules/social_features/social_comment/social_comment.tokens.inc:73
 msgid "The link (button) to reply to the comment, will include raw HTML."
 msgstr ""
+"Link-ul (butonul) pentru a răspunde la comentariu va include HTML-ul brut."
 
 #: modules/social_features/social_comment/social_comment.tokens.inc:53
 #: modules/social_features/social_mentions/social_mentions.tokens.inc:35
@@ -15312,7 +15351,7 @@ msgstr ""
 #: social.profile:124
 #: modules/social_features/social_landing_page/src/Plugin/Block/ActivityOverviewBlock.php:156
 msgid "groups"
-msgstr ""
+msgstr "grupuri"
 
 #: modules/social_features/social_topic/config/install/views.view.topics.yml:0
 msgid "has the publish status of"
@@ -15659,8 +15698,9 @@ msgid ""
 msgstr ""
 
 #: modules/social_features/social_follow_content/config/install/views.view.following.yml:0
+#, fuzzy
 msgid "{{ link_flag }}"
-msgstr ""
+msgstr "{{ link_flag }}"
 
 #: modules/social_features/social_content_report/config/install/views.view.report_overview.yml:0
 msgid ""
@@ -15668,6 +15708,9 @@ msgid ""
 "{{ uid_1 }}\r\n"
 "{{ uid_2 }}"
 msgstr ""
+"{{ user_id }}\n"
+"{{ uid_1 }}\n"
+"{{ uid_2 }}"
 
 #: config/install/views.view.content.yml:0
 #: modules/social_features/social_album/config/install/views.view.albums.yml:0;0
