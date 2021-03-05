@@ -8,7 +8,9 @@
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Entity\ContentEntityFormInterface;
 use Drupal\Core\Entity\Display\EntityFormDisplayInterface;
+use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\Entity\EntityViewDisplay;
+use Drupal\Core\Entity\EntityDisplayRepositoryInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
@@ -75,6 +77,27 @@ function social_profile_fields_entity_form_display_alter(EntityFormDisplayInterf
   }
 
   $form_display->save();
+}
+
+/**
+ * Implements hook_entity_view_display_alter().
+ */
+function social_profile_fields_entity_view_display_alter(EntityViewDisplayInterface $display, array $context) {
+  if (
+    $context['entity_type'] === 'profile' &&
+    $context['view_mode'] === EntityDisplayRepositoryInterface::DEFAULT_DISPLAY_MODE
+  ) {
+    $display->setComponent('field_profile_nationality', [
+      'weight' => 0,
+      'label' => 'above',
+      'settings' => [
+        'link' => FALSE,
+      ],
+      'third_party_settings' => [],
+      'type' => 'entity_reference_label',
+      'region' => 'content',
+    ]);
+  }
 }
 
 /**
@@ -336,6 +359,20 @@ function social_profile_fields_entity_bundle_field_info_alter(&$fields, EntityTy
       }
     }
   }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function social_profile_fields_theme() {
+  return [
+    'field__field_profile_nationality' => [
+      'base hook' => 'field',
+    ],
+    'field__field_profile_nationality__sky' => [
+      'base hook' => 'field',
+    ],
+  ];
 }
 
 /**
