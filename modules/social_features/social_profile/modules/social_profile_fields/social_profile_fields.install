@@ -19,6 +19,7 @@ function social_profile_fields_install() {
   _social_profile_fields_set_permissions();
   _social_profile_fields_update_search_index();
   _social_profile_fields_update_search_index('social_all');
+  _social_profile_fields_countries();
 }
 
 /**
@@ -95,5 +96,22 @@ function social_profile_fields_update_8003() {
     $storage = \Drupal::entityTypeManager()->getStorage($entity_type_id);
 
     $storage->createFromStorageRecord($settings)->save();
+  }
+
+  _social_profile_fields_countries();
+}
+
+/**
+ * Create taxonomy terms for countries in the "Nationality" vocabulary.
+ */
+function _social_profile_fields_countries() {
+  $countries = \Drupal::service('address.country_repository')->getList();
+  $storage = \Drupal::entityTypeManager()->getStorage('taxonomy_term');
+
+  foreach ($countries as $country) {
+    /** @var \Drupal\taxonomy\TermInterface $term */
+    $term = $storage->create(['vid' => 'nationality']);
+
+    $term->setName($country)->save();
   }
 }
