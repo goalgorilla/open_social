@@ -5,6 +5,7 @@ namespace Drupal\social_event_an_enroll\Plugin\Action;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Queue\QueueFactory;
+use Drupal\Core\Site\Settings;
 use Drupal\Core\Utility\Token;
 use Drupal\social_event\EventEnrollmentInterface;
 use Drupal\social_event_an_enroll\EventAnEnrollManager;
@@ -129,7 +130,8 @@ class SocialEventAnEnrollSendEmail extends SocialEventManagersSendEmail {
 
     if (!empty($guests)) {
       // Create some chunks and then make queue items.
-      $chunks = array_chunk($guests, 10);
+      $chunk_size = Settings::get('social_mail_chunk_size', 10);
+      $chunks = array_chunk($guests, $chunk_size);
       foreach ($chunks as $chunk) {
         // Get the entity ID of the email that is send.
         $data['mail'] = $this->configuration['queue_storage_id'];
