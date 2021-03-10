@@ -57,7 +57,7 @@ function social_group_default_route_form_alter(&$form, FormStateInterface $form_
     // The default route field.
     $form['tab_settings']['default_route'] = [
       '#type' => 'select',
-      '#title' => t('Group members landing tab'),
+      '#title' => t('@group members landing tab', ['@group' => $group->getGroupType()->label()]),
       '#default_value' => $default_route,
       '#options' => $options,
     ];
