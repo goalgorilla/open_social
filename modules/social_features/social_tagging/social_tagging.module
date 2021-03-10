@@ -137,14 +137,14 @@ function social_tagging_form_alter(&$form, FormStateInterface $form_state, $form
  * @param \Drupal\Core\Entity\EntityInterface $form_entity
  *   Entity object.
  */
-function social_tagging_social_tagging_field_form_alter(&$form, FormStateInterface &$form_state, EntityInterface $form_entity) {
+function social_tagging_social_tagging_field_form_alter(array &$form, FormStateInterface &$form_state, EntityInterface $form_entity) {
   if (!empty($form['social_tagging'])) {
     // Load tag config..
     $tag_settings = \Drupal::getContainer()->get('config.factory')->getEditable('social_tagging.settings');
     // Switch for the entity_type.
     switch ($form_entity->getEntityTypeId()) {
       case 'node':
-        $type = $form_entity->type->entity->id();
+        $type = $form_entity->bundle();
         $tag_enabled = $tag_settings->get('tag_node_type_' . $type);
         break;
 
