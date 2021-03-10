@@ -700,15 +700,32 @@ class FeatureContext extends RawMinkContext implements Context
     }
 
     /**
-     * Opens register page with specified url params.
+     * Opens register page with destination to invited group.
      *
      * @Given /^(?:|I )open register page with prefilled "(?P<mail>[^"]+)" and destination to invited group "(?P<group_title>[^"]+)"$/
      */
-    public function openRegisterPage($mail, $group_title)
+    public function openRegisterPageDestinationGroup($mail, $group_title)
     {
       $group_content_id = $this->getGroupContentIdFromGroupTitle($group_title, $mail);
       $mail_encoded = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($mail));
       $page = '/user/register?invitee_mail=' . $mail_encoded . '&destination=/social-group-invite/' . $group_content_id . '/accepted';
+
+      $this->visitPath($page);
+    }
+
+    /**
+     * Opens register page with destination to invited node.
+     *
+     * @Given /^(?:|I )open register page with prefilled "(?P<mail>[^"]+)" and destination to invited node "(?P<node_title>[^"]+)"$/
+     */
+    public function openRegisterPageDestinationNode($mail, $node_title)
+    {
+      $nodes = \Drupal::entityTypeManager()->getStorage('node')
+        ->loadByProperties(['title' => $node_title]);
+      $node = reset($nodes);
+
+      $mail_encoded = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($mail));
+      $page = '/user/register?invitee_mail=' . $mail_encoded . '&destination=/node/' . $node->id();
 
       $this->visitPath($page);
     }
