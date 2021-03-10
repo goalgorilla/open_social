@@ -190,6 +190,16 @@ class ContentBuilder implements ContentBuilderInterface, TrustedCallbackInterfac
         ->getStorage($definition['entityTypeId'])
         ->loadMultiple($entities);
 
+      // @TODO: Fix this by making the entire codebase use a
+      // QueryInterface instead of a SelectInterface, so we can do
+      // the access check within the query itself.
+      // Now we cannot respect the range we set in the query.
+      foreach ($entities as $key => $entity) {
+        if ($entity->access('view') === FALSE) {
+          unset($entities[$key]);
+        }
+      }
+
       return $this->entityTypeManager
         ->getViewBuilder($definition['entityTypeId'])
         ->viewMultiple($entities, 'small_teaser');
