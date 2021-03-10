@@ -60,7 +60,7 @@ function social_topic_preprocess_node(array &$variables) {
           ->toString();
         $variables['topic_type'] = $topic_type_link;
 
-        if (!$topic->get('field_topic_type_icon')->isEmpty()) {
+        if ($topic->hasField('field_topic_type_icon') && !$topic->get('field_topic_type_icon')->isEmpty()) {
           $variables['topic_type_icon'] = $topic->get('field_topic_type_icon')->value;
         }
 
