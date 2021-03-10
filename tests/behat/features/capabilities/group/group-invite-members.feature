@@ -44,7 +44,7 @@ Feature: Send invite group email notifications
     And I should have an email with subject "site_manager_1 has invited you to join a group on Open Social." and in the content:
       | Hi, I would like to invite you to join my group Test-invite-group on Open Social. Kind regards, site_manager_1  View group	About Open Social |
 
-    # Register as new user and check if invite has been sent.
+    # Register as new user and accept invitation.
     Given I logout
     And I intend to create a user named "new_test_user"
     Then I open register page with prefilled "new_test_user@example.com" and destination to invited group "Test-invite-group"
@@ -54,9 +54,9 @@ Feature: Send invite group email notifications
       | Password | new_test_pass |
       | Confirm password | new_test_pass |
     And I press "Create new account"
-    Then I should see "You have been invited to join this group"
-    And I should see "Registration successful. You are now logged in."
-    And I should see "Accept"
+    Then I should see "Registration successful. You are now logged in."
+    And I should see "You have accepted the invitation"
+    And I should see "Joined"
 
     # Send invite to existing user.
     Given I logout

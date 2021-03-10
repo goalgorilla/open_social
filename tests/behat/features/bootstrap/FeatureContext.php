@@ -10,6 +10,7 @@ use Behat\Gherkin\Node\TableNode;
 use Behat\Mink\Exception\ElementNotFoundException;
 use Behat\MinkExtension\Context\RawMinkContext;
 use Drupal\DrupalExtension\Hook\Scope\EntityScope;
+use Drupal\ginvite\GroupInvitation as GroupInvitationWrapper;
 use Drupal\group\Entity\Group;
 use Drupal\locale\SourceString;
 use Behat\Mink\Selector\Xpath\Escaper;
@@ -643,6 +644,32 @@ class FeatureContext extends RawMinkContext implements Context
     }
 
     /**
+     * @param $group_title
+     * @param $mail
+     *
+     * @return null
+     */
+    public function getGroupContentIdFromGroupTitle($group_title, $mail) {
+
+      $properties = [
+        'gid' => $this->getGroupIdFromTitle($group_title),
+        'invitation_status' => 0,
+        'invitee_mail' => $mail
+      ];
+      $loader = \Drupal::service('ginvite.invitation_loader');
+      $invitations = $loader->loadByProperties($properties);
+
+      if ($invitations > 0) {
+        $invitation = reset($invitations);
+
+        if ($invitation instanceof GroupInvitationWrapper) {
+          $group_content = $invitation->getGroupContent();
+          return $group_content->id();
+        }
+      }
+    }
+
+    /**
      * Opens specified node page of type and with title.
      *
      * @Given /^(?:|I )open the "(?P<type>[^"]+)" node with title "(?P<title>[^"]+)"$/
@@ -679,9 +706,9 @@ class FeatureContext extends RawMinkContext implements Context
      */
     public function openRegisterPage($mail, $group_title)
     {
-      $group_id = $this->getGroupIdFromTitle($group_title);
+      $group_content_id = $this->getGroupContentIdFromGroupTitle($group_title, $mail);
       $mail_encoded = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($mail));
-      $page = '/user/register?invitee_mail=' . $mail_encoded . '&destination=/group/' . $group_id;
+      $page = '/user/register?invitee_mail=' . $mail_encoded . '&destination=/social-group-invite/' . $group_content_id . '/accepted';
 
       $this->visitPath($page);
     }
