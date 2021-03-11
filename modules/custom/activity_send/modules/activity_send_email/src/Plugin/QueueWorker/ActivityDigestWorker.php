@@ -107,11 +107,11 @@ class ActivityDigestWorker extends ActivitySendWorkerBase implements ContainerFa
       $user_storage = $this->entityTypeManager->getStorage('user');
       $message_storage = $this->entityTypeManager->getStorage('message');
       // Get target account.
-      /** @var \Drupal\Core\Session\AccountInterface $target */
+      /** @var \Drupal\user\Entity\User $target */
       $target = $user_storage->load($data['uid']);
 
       // Make sure we have an actual user account to work with.
-      if (!is_null($target) && $target->isActive()) {
+      if (!is_object($target) && $target->isActive()) {
         $langcode = $target->getPreferredLangcode();
         $digest_notifications = [
           '#theme' => 'digestmail',

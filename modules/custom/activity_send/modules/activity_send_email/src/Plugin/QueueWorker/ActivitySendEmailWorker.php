@@ -131,7 +131,7 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase implements Containe
 
     if (!empty($data['entity_id']) && !is_null($activity)) {
       // Check if activity related entity exist.
-      if (!$activity->getRelatedEntity()) {
+      if ($activity->getRelatedEntity() !== NULL) {
         $activity->delete();
         $this->activityNotifications->deleteNotificationsbyIds([$activity->id()]);
         return;
@@ -239,7 +239,7 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase implements Containe
   private function sendToFrequencyManager(array $parameters) {
     if (!empty($parameters['target_account'])) {
       $current_message_frequency = $parameters['current_message_frequency'];
-      /** @var \Drupal\social_user\Entity\User $target_account */
+      /** @var \Drupal\user\Entity\User $target_account */
       foreach ($parameters['target_account'] as $target_account) {
         if (!is_null($target_account) && !$target_account->isBlocked()) {
           // Only for users that have access to related content.
