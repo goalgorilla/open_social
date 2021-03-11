@@ -38,6 +38,21 @@ function social_swiftmail_sendgrid_queue_info_alter(&$queues) {
 }
 
 /**
+ * Implements hook_emailfrequency_info_alter().
+ */
+function social_swiftmail_sendgrid_emailfrequency_info_alter(&$frequency) {
+  // We override the immediately class, by now providing our custom
+  // SendMassEmailsImmediately which doesn't processes items one by one
+  // sending each individual emails.
+  // It rather collects all users from a batch with the same language, grabs
+  // the rendered message and sends it to Sendgrid using its substitution
+  // system to increase performance.
+  if (!empty($queues['immediately'])) {
+    $queues['immediately']['class'] = SendMassEmailsImmediately::class;
+  }
+}
+
+/**
  * Implements hook_mail().
  */
 function social_swiftmail_sendgrid_mail($key, &$message, $params) {
@@ -51,7 +66,7 @@ function social_swiftmail_sendgrid_mail($key, &$message, $params) {
   $message['body'][] = $body;
   // We can consider using text/html, the text should be formatted correctly
   // already.
-  if ($key === 'action_send_mass_email') {
+  if ($key === 'action_send_mass_email' || $key === 'activity_send_email') {
     $message['headers']['Content-Type'] = 'text/html; charset=utf-8';
   }
   // Lets ensure we pass along context data to our substitutions, so it knows
