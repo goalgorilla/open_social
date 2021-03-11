@@ -128,9 +128,9 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase implements Containe
     // First make sure it's an actual Activity entity.
     $activity_storage = $this->entityTypeManager->getStorage('activity');
 
-    /** @var \Drupal\activity_creator\Entity\Activity $activity */
     if (!empty($data['entity_id']) && ($activity = $activity_storage->load($data['entity_id']))) {
       // Check if activity related entity exist.
+      /** @var \Drupal\activity_creator\Entity\Activity $activity */
       if (!($activity->getRelatedEntity() instanceof EntityInterface)) {
         $activity->delete();
         $this->activityNotifications->deleteNotificationsbyIds([$activity->id()]);
