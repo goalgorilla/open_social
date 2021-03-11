@@ -3,12 +3,12 @@
 namespace Drupal\activity_send_email\Plugin\QueueWorker;
 
 use Drupal\activity_creator\ActivityNotifications;
-use Drupal\activity_creator\Entity\Activity;
 use Drupal\activity_send\Plugin\QueueWorker\ActivitySendWorkerBase;
 use Drupal\activity_send_email\EmailFrequencyManager;
 use Drupal\activity_send_email\Plugin\ActivityDestination\EmailActivityDestination;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Database\Connection;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Language\LanguageManager;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
@@ -129,11 +129,9 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase implements Containe
     $activity_storage = $this->entityTypeManager->getStorage('activity');
 
     /** @var \Drupal\activity_creator\Entity\Activity $activity */
-    $activity = $activity_storage->load($data['entity_id']);
-
-    if (!empty($data['entity_id']) && ($activity instanceof Activity)) {
+    if (!empty($data['entity_id']) && ($activity = $activity_storage->load($data['entity_id']))) {
       // Check if activity related entity exist.
-      if ($activity->getRelatedEntity() !== NULL) {
+      if (!($activity->getRelatedEntity() instanceof EntityInterface)) {
         $activity->delete();
         $this->activityNotifications->deleteNotificationsbyIds([$activity->id()]);
         return;
@@ -144,6 +142,7 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase implements Containe
       /** @var \Drupal\message\Entity\Message $message */
       $message = $message_storage->load($activity->field_activity_message->target_id);
       $message_template_id = $message->getTemplate()->id();
+
       if (empty($data['recipients'])) {
         $recipients = array_column($activity->field_activity_recipient_user->getValue(), 'target_id');
 
@@ -181,13 +180,16 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase implements Containe
         // Is the website multilingual.
         $is_multilingual = $this->languageManager->isMultilingual();
 
-        // Prepare the function parameters.
+        // Prepare an array of all details required to process the item.
         $parameters = [
           'activity' => $activity,
           'message' => $message,
           'message_template_id' => $message_template_id,
           'current_message_frequency' => $current_message_frequency,
         ];
+
+        // Get the settings for all users at once.
+        $parameters['all_users_email_settings'] = EmailActivityDestination::getSendEmailAllUsersSetting($recipients, $parameters['message_template_id']);
 
         // We want to give preference to users who have set notification
         // settings as 'immediately'.
@@ -201,26 +203,27 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase implements Containe
 
         foreach ($email_frequencies as $email_frequency) {
           if ($target_recipients = EmailActivityDestination::getSendEmailUsersIdsByFrequency($recipients, $message_template_id, $email_frequency)) {
-            // Get the settings for all users at once.
-            $parameters['all_users_email_settings'] = EmailActivityDestination::getSendEmailAllUsersSetting($target_recipients, $parameters['message_template_id']);
-
             if ($is_multilingual) {
-              // We also want to send emails to user per language.
+              // We also want to send emails to users per language in a given
+              // frequency.
               foreach ($languages = $this->languageManager->getLanguages() as $language) {
                 $langcode = $language->getId();
-                $body_text = EmailActivityDestination::getSendEmailOutputText($parameters['message'], $langcode);
-                $parameters['target_account'] = $user_storage->loadByProperties([
+                // Load all user by given language.
+                $parameters['target_accounts'] = $user_storage->loadByProperties([
                   'preferred_langcode' => $langcode,
                   'uid' => $target_recipients,
                 ]);
+                // Get the message text according to language.
+                $body_text = EmailActivityDestination::getSendEmailOutputText($parameters['message'], $langcode);
                 $parameters['body_text'] = $body_text;
+                // Send for further processing.
                 $this->sendToFrequencyManager($parameters);
               }
             }
             else {
-              $parameters['target_account'] = $user_storage->loadMultiple($recipients);
+              // We load all the target accounts.
+              $parameters['target_accounts'] = $user_storage->loadMultiple($target_recipients);
               $parameters['body_text'] = EmailActivityDestination::getSendEmailOutputText($message);
-              ;
               $this->sendToFrequencyManager($parameters);
             }
           }
@@ -239,10 +242,10 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase implements Containe
    * @throws \Drupal\Component\Plugin\Exception\PluginException
    */
   private function sendToFrequencyManager(array $parameters) {
-    if (!empty($parameters['target_account'])) {
+    if (!empty($parameters['target_accounts'])) {
       $current_message_frequency = $parameters['current_message_frequency'];
       /** @var \Drupal\user\Entity\User $target_account */
-      foreach ($parameters['target_account'] as $target_account) {
+      foreach ($parameters['target_accounts'] as $target_account) {
         if (($target_account instanceof User) && !$target_account->isBlocked()) {
           // Only for users that have access to related content.
           if ($parameters['activity']->getRelatedEntity()->access('view', $target_account)) {
