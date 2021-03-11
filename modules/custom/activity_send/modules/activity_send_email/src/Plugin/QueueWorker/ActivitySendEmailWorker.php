@@ -3,7 +3,6 @@
 namespace Drupal\activity_send_email\Plugin\QueueWorker;
 
 use Drupal\activity_creator\ActivityNotifications;
-use Drupal\activity_creator\Entity\Activity;
 use Drupal\activity_send\Plugin\QueueWorker\ActivitySendWorkerBase;
 use Drupal\activity_send_email\EmailFrequencyManager;
 use Drupal\activity_send_email\Plugin\ActivityDestination\EmailActivityDestination;
@@ -13,7 +12,6 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Language\LanguageManager;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Queue\QueueFactory;
-use Drupal\message\Entity\Message;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -194,7 +192,7 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase implements Containe
         $email_frequencies = [
           'immediately',
           'daily',
-          'weekly'
+          'weekly',
         ];
 
         $user_storage = $this->entityTypeManager->getStorage('user');
@@ -216,9 +214,11 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase implements Containe
                 $parameters['body_text'] = $body_text;
                 $this->sendToFrequencyManager($parameters);
               }
-            } else {
+            }
+            else {
               $parameters['target_account'] = $user_storage->loadMultiple($recipients);
-              $parameters['body_text'] = EmailActivityDestination::getSendEmailOutputText($message);;
+              $parameters['body_text'] = EmailActivityDestination::getSendEmailOutputText($message);
+              ;
               $this->sendToFrequencyManager($parameters);
             }
           }
@@ -230,11 +230,13 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase implements Containe
   /**
    * Send the queue items for further processing by frequency managers.
    *
-   * @param $parameters
+   * @param array $parameters
+   *   The array of message_tempalte_id, current_message_frequency,
+   *   target_account, activity entity, email body text.
    *
    * @throws \Drupal\Component\Plugin\Exception\PluginException
    */
-  private function sendToFrequencyManager($parameters) {
+  private function sendToFrequencyManager(array $parameters) {
     if (!empty($parameters['target_account'])) {
       $current_message_frequency = $parameters['current_message_frequency'];
       /** @var \Drupal\social_user\Entity\User $target_account */
