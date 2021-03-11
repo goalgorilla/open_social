@@ -1486,8 +1486,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Open Social\n"
 "POT-Creation-Date: 2021-02-20 00:32+0000\n"
-"PO-Revision-Date: 2021-03-10 22:03+0000\n"
-"Last-Translator: Denise Damian <denisedamian16@gmail.com>\n"
+"PO-Revision-Date: 2021-03-11 13:38+0000\n"
+"Last-Translator: Denis Blidariu <denis.blidariu@greenpeace.org>\n"
 "Language-Team: Romanian <https://translate.getopensocial.com/projects/gpcee/"
 "distribution/ro/>\n"
 "Language: ro\n"
@@ -1682,7 +1682,6 @@ msgid "0 downloads"
 msgstr "0 descărcări"
 
 #: modules/social_features/social_follow_taxonomy/config/install/views.view.following_tags.yml:0
-#, fuzzy
 msgid "1"
 msgid_plural "@count"
 msgstr[0] "1"
@@ -1825,7 +1824,6 @@ msgstr ""
 "înscrierile</a>"
 
 #: modules/social_features/social_album/config/install/views.view.albums.yml:0
-#, fuzzy
 msgid ""
 "<a href=\"/node/{{ raw_arguments.nid }}/image/{{ id }}/"
 "{{ field_post_image__target_id }}\" class=\"use-ajax\" data-dialog-type="
@@ -1857,7 +1855,6 @@ msgstr[2] ""
 "<b><em class=\"placeholder\">@count</em> persoane înscrise</b> sunt selectate"
 
 #: modules/social_features/social_group/src/Plugin/views/field/SocialGroupViewsBulkOperationsBulkForm.php:47
-#, fuzzy
 msgid "<b>@action</b>"
 msgstr "<b>@action</b>"
 
@@ -1899,12 +1896,16 @@ msgid ""
 "<h1 class=\"h4 section-title\">[view:total-rows] Enroll invite(s) to event: "
 "{{ arguments.nid }}</h1>"
 msgstr ""
+"<h1 class=\"h4 section-title\">[view:total-rows] Înscrie "
+"invitația(invitațiile) la eveniment: {{ arguments.nid }}</h1>"
 
 #: modules/social_features/social_event/config/install/views.view.event_manage_enrollment_requests.yml:0
 msgid ""
 "<h1 class=\"h4 section-title\">[view:total-rows] Enroll request(s) to event: "
 "{{ arguments.nid }}</h1>"
 msgstr ""
+"<h1 class=\"h4 section-title\">[view:total-rows] Înscrie cererea(cererile) "
+"la eveniment: {{ arguments.nid }}</h1>"
 
 #: modules/custom/sitewide_js/src/Form/SiteWideJSForm.php:37
 msgid ""
@@ -1912,6 +1913,9 @@ msgid ""
 "to the HTML template and therefore break both the front-end javascript "
 "applications and the layout for your website.</p>"
 msgstr ""
+"<h2>Atenție</h2><p>Ai grijă, în această secțiune poți efectua modificări la "
+"nivel de șablon HTML și, prin urmare, poți rupe atât aplicațiile javascript "
+"front-end, cât și aspectul site-ului tău web.</p>"
 
 #: modules/social_features/social_search/config/install/views.view.search_users.yml:0;0
 msgid "<h4 class=\"section-title\">Member results</h4>"
@@ -1934,24 +1938,32 @@ msgid ""
 "<i>Disabling this will simply hide the 'My Groups' button from the main "
 "navigation.</i>"
 msgstr ""
+"<i>Dezactivarea acestui lucru va ascunde butonul „Grupurile mele” din "
+"navigarea principală.</i>"
 
 #: modules/social_features/social_user/src/Form/SocialUserNavigationSettingsForm.php:79
 msgid ""
 "<i>Disabling this won't disable the Social Private Message feature, but only "
 "hide the icon from the navigation.</i>"
 msgstr ""
+"<i>Dezactivarea acestei opțiuni nu va dezactiva funcția Mesaj Privat, ci va "
+"ascunde doar pictograma din navigare.</i>"
 
 #: modules/social_features/social_mentions/config/install/message.template.create_mention_post_stream.yml:0
 msgid ""
 "<p><a href=\"\">[message:author:display-name]</a> mentioned <a href=\"\">"
 "[social_mentions:mentioned_user]</a> in a post</p>\n"
 msgstr ""
+"<p><a href=\"\">[message:author:display-name]</a> a menționat <a href=\"\""
+">[social_mentions:mentioned_user]</a> într-o postare</p>\n"
 
 #: modules/social_features/social_mentions/config/install/message.template.create_mention_comment_stream.yml:0
 msgid ""
 "<p><a href=\"\">[message:author:display-name]</a> mentioned<a href=\"\"> "
 "[social_mentions:mentioned_user] </a>in a comment</p>\n"
 msgstr ""
+"<p><a href=\"\">[message:author:display-name]</a> a menționat<a href=\"\"> "
+"[social_mentions:mentioned_user] </a>într-un comentariu</p>\n"
 
 #: modules/social_features/social_activity/config/install/message.template.create_post_profile_stream.yml:0
 msgid ""
@@ -1959,6 +1971,9 @@ msgid ""
 "a> &gt; <a href=\"[message:recipient-user-url]\">[activity:"
 "field_activity_recipient_user_display_name]</a></p>\n"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
+"a> &gt; <a href=\"[message:recipient-user-url]\""
+">[activity:field_activity_recipient_user_display_name]</a></p>\n"
 
 #: modules/social_features/social_event/modules/social_event_managers/config/optional/message.template.member_added_by_event_organiser.yml:0;0;0
 msgid ""
@@ -1975,6 +1990,10 @@ msgid ""
 "[social_comment:commented_content_type] in <a href=\"[message:gurl]\">"
 "[message:gtitle]</a></p>"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
+"a> și alți @count au comentat [social_comment:parent_entity_author]'s "
+"[social_comment:commented_content_type] la <a href=\"[message:gurl]\""
+">[message:gtitle]</a></p>"
 
 #: modules/social_features/social_activity/config/install/message.template.create_comment_community_node.yml:0
 msgid ""
@@ -1982,6 +2001,9 @@ msgid ""
 "a> and @count others commented on [social_comment:parent_entity_author]'s "
 "[social_comment:commented_content_type]</p>\n"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
+"a> și alți @count au comentat [social_comment:parent_entity_author]'s "
+"[social_comment:commented_content_type]</p>\n"
 
 #: modules/social_features/social_activity/config/install/message.template.create_comment_group_post.yml:0
 msgid ""
@@ -2010,6 +2032,11 @@ msgid ""
 "commented_content_type] <a href=\"[message:field_message_related_object:"
 "entity:url:absolute]\">[message:node-title]</a> you are following</p>\r\n"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
+"a> a comentat [social_comment:parent_entity_author]'s "
+"[social_comment:commented_content_type] <a href=\""
+"[message:field_message_related_object:entity:url:absolute]\">[message:node-"
+"title]</a> pe care îl urmărești </p>\n"
 
 #: modules/social_features/social_follow_content/config/install/message.template.create_comment_following_node.yml:0
 msgid ""
@@ -2170,12 +2197,17 @@ msgid ""
 "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
 "a> created an event in <a href=\"[message:gurl]\">[message:gtitle]</a></p>"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
+"a> a creat un eveniment în <a href=\"[message:gurl]\""
+">[message:gtitle]</a></p>"
 
 #: modules/social_features/social_activity/config/install/message.template.create_event_community.yml:0
 msgid ""
 "<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
 "a> created an event</p>"
 msgstr ""
+"<p><a href=\"[message:author:url:absolute]\">[message:author:display-name]</"
+"a> a creat un eveniment</p>"
 
 #: modules/social_features/social_like/config/install/message.template.create_like_node_or_post.yml:0;0;0
 msgid ""
@@ -2669,7 +2701,7 @@ msgstr ""
 
 #: modules/social_features/social_follow_content/config/install/message.template.create_comment_following_node.yml:0
 msgid "A person commented on content I am following"
-msgstr ""
+msgstr "O persoană a comentat conținutul pe care îl urmăresc"
 
 #: modules/social_features/social_activity/config/install/message.template.create_comment_author_node_post.yml:0
 msgid "A person commented on content created or organised by me"
@@ -2677,7 +2709,7 @@ msgstr ""
 
 #: modules/social_features/social_follow_taxonomy/modules/social_follow_tag/config/install/message.template.create_node_following_tag.yml:0
 msgid "A person create content with tag I am following"
-msgstr ""
+msgstr "O persoană creează conținut cu eticheta pe care o urmăresc"
 
 #: modules/social_features/social_activity/config/install/message.template.create_post_profile.yml:0
 msgid "A person created a post on my profile"
@@ -4446,7 +4478,7 @@ msgstr "Între"
 #: modules/social_features/social_landing_page/config/install/paragraphs.paragraphs_type.block.yml:0
 #: modules/social_features/social_topic/config/install/views.view.topics.yml:0
 msgid "Block"
-msgstr "Bloc"
+msgstr "Câmp"
 
 #: modules/social_features/social_group/config/install/views.view.group_managers.yml:0
 msgid "Block List managers"
@@ -5015,7 +5047,7 @@ msgstr "Conţinut"
 
 #: modules/social_features/social_follow_content/config/install/views.view.following.yml:0;0
 msgid "Content I follow"
-msgstr ""
+msgstr "Conținutul pe care îl urmăresc"
 
 #: modules/social_features/social_content_report/social_content_report.links.menu.yml:0
 msgid "Content Reporting"
@@ -5074,7 +5106,7 @@ msgstr ""
 #: modules/social_features/social_content_block/modules/social_group_content_block/config/install/field.field.block_content.custom_content_list.field_group_content_tag.yml:0
 #: modules/social_features/social_tagging/config/install/taxonomy.vocabulary.social_tagging.yml:0
 msgid "Content tags"
-msgstr ""
+msgstr "Etichete de conținut"
 
 #: modules/social_features/social_follow_content/config/install/views.view.following.yml:0
 #: modules/social_features/social_search/config/install/views.view.search_content.yml:0
@@ -5281,7 +5313,7 @@ msgstr ""
 
 #: modules/custom/social_tour/config/install/tour.tour.social_user.yml:0
 msgid "Create groups"
-msgstr ""
+msgstr "Crează grupuri"
 
 #: modules/custom/social_tour/config/install/tour.tour.social_user.yml:0
 msgid ""
@@ -5414,7 +5446,7 @@ msgstr "Data creării"
 
 #: modules/social_features/social_featured_content/templates/node--featured.html.twig:127
 msgid "Created on"
-msgstr ""
+msgstr "Creat la"
 
 #: modules/social_features/social_profile/social_profile.install:295
 msgid "Created profiles for @count users"
@@ -5874,7 +5906,7 @@ msgstr ""
 
 #: modules/social_features/social_topic/social_topic.install:33;366
 msgid "Discussion"
-msgstr ""
+msgstr "Discuţie"
 
 #: modules/social_features/social_user/src/Form/SocialUserNavigationSettingsForm.php:68
 msgid "Display icon configuration"
@@ -7028,7 +7060,7 @@ msgstr ""
 
 #: modules/social_features/social_follow_content/config/install/flag.flag.follow_content.yml:0;0
 msgid "Follow content"
-msgstr ""
+msgstr "Urmărește conținutul"
 
 #: modules/custom/social_tour/config/install/tour.tour.social_node_view.yml:0
 msgid "Follow functionality."
@@ -7053,7 +7085,7 @@ msgstr ""
 
 #: modules/social_features/social_follow_content/src/Plugin/ActivityContext/FollowContentActivityContext.php:10
 msgid "Following content activity context"
-msgstr ""
+msgstr "Urmărind contextul activității"
 
 #: modules/social_features/social_follow_taxonomy/modules/social_follow_tag/src/Plugin/ActivityContext/FollowTagActivityContext.php:11
 msgid "Following tag activity context"
@@ -7366,7 +7398,7 @@ msgstr ""
 #: modules/social_features/social_group/config/install/views.view.group_events.yml:0
 #: modules/social_features/social_group/config/install/views.view.group_topics.yml:0
 msgid "Group content Content"
-msgstr ""
+msgstr "Conținut despre conținutul grupului"
 
 #: modules/social_features/social_group/config/install/views.view.group_manage_members.yml:0
 msgid "Group content User"
@@ -7440,7 +7472,7 @@ msgstr ""
 
 #: modules/social_features/social_group/modules/social_group_default_route/social_group_default_route.module:60
 msgid "Group members landing tab"
-msgstr ""
+msgstr "Pagina de aterizare a membrilor grupului"
 
 #: modules/social_features/social_group/social_group.module:2621
 msgid "Group members only"
@@ -8057,7 +8089,7 @@ msgstr "Articole"
 #: modules/social_features/social_topic/config/install/views.view.topics.yml:0
 #: modules/social_features/social_user/config/install/views.view.user_admin_people.yml:0
 msgid "Items per page"
-msgstr "Elemente pe pagină"
+msgstr "Elemente per pagină"
 
 #: modules/custom/sitewide_js/src/Form/SiteWideJSForm.php:48
 msgid "JS Location"
@@ -8120,7 +8152,7 @@ msgstr ""
 
 #: modules/social_features/social_group/modules/social_group_default_route/social_group_default_route.module:86
 msgid "Landing tab for members"
-msgstr ""
+msgstr "Pagina de aterizare pentru membri"
 
 #: modules/social_features/social_group/modules/social_group_default_route/social_group_default_route.module:97
 msgid "Landing tab for non-members"
@@ -10281,6 +10313,8 @@ msgstr ""
 #: modules/social_features/social_follow_content/social_follow_content.info.yml:0
 msgid "Provides \"Follow Content\" flag type and related functionality."
 msgstr ""
+"Oferă tipul de semnalizare „Urmărește conținutul” și funcționalitatea "
+"aferentă."
 
 #: modules/social_features/social_follow_taxonomy/social_follow_taxonomy.info.yml:0
 msgid "Provides \"Follow Term\" flag type and related functionality."
@@ -11163,7 +11197,7 @@ msgstr ""
 
 #: modules/social_features/social_post/social_post.module:50
 msgid "Say something to the Community"
-msgstr ""
+msgstr "Spune ceva comunității"
 
 #: modules/social_features/social_post/social_post.module:39;40
 msgid "Say something to the group"
@@ -11431,6 +11465,8 @@ msgid ""
 "Selected tag will be displayed in a block with the options to follow this "
 "tag and see content relates to this tag."
 msgstr ""
+"Eticheta selectată va fi afișată într-un bloc cu opțiunile pentru a urma "
+"această etichetă și a vedea conținutul legat de această etichetă."
 
 #: modules/custom/social_graphql/src/Plugin/GraphQL/DataProducer/Field/Field.php:10
 msgid "Selects a field from an entity."
@@ -12142,7 +12178,7 @@ msgstr ""
 
 #: modules/social_features/social_follow_content/social_follow_content.info.yml:0
 msgid "Social Follow Content"
-msgstr ""
+msgstr "Urmărește conținutul social"
 
 #: modules/social_features/social_follow_taxonomy/modules/social_follow_landing_page/social_follow_landing_page.info.yml:0
 msgid "Social Follow Landing Page"
@@ -12601,7 +12637,7 @@ msgstr ""
 #: modules/social_features/social_topic/config/install/views.view.topics.yml:0
 #: modules/social_features/social_user/config/install/views.view.user_admin_people.yml:0
 msgid "Sort by"
-msgstr "Sortare după"
+msgstr "Sortează după"
 
 #: modules/social_features/social_profile/social_profile.views.inc:13;15
 msgid "Sort by profile entity"
@@ -12754,7 +12790,7 @@ msgstr ""
 
 #: modules/social_features/social_group/modules/social_group_default_route/social_group_default_route.module:37
 msgid "Tab Management"
-msgstr ""
+msgstr "Managementul Paginilor"
 
 #: modules/social_features/social_profile/config/install/core.entity_view_mode.profile.table.yml:0
 msgid "Table"
@@ -13311,7 +13347,7 @@ msgstr ""
 
 #: modules/custom/activity_logger/activity_logger.tokens.inc:28
 msgid "The related node title."
-msgstr ""
+msgstr "Titlul nodului aferent."
 
 #: modules/social_features/social_activity/config/install/message.template.event_request_approved.yml:0
 msgid "The request to enroll to an enrollment is approved"
@@ -13335,7 +13371,7 @@ msgstr[2] ""
 
 #: modules/social_features/social_group/modules/social_group_default_route/social_group_default_route.module:87
 msgid "The route (tab) a member lands on when going to a group."
-msgstr ""
+msgstr "Traseul (pagina) pe care aterizează un membru când merge la un grup."
 
 #: modules/social_features/social_group/modules/social_group_default_route/social_group_default_route.module:98
 msgid "The route (tab) a non-member lands on when going to a group."
@@ -13409,7 +13445,7 @@ msgstr ""
 
 #: modules/social_features/social_follow_taxonomy/social_follow_taxonomy.module:197
 msgid "The type of the content that is related to following term."
-msgstr ""
+msgstr "Tipul conținutului legat de următorul termen."
 
 #: modules/social_features/social_comment/social_comment.tokens.inc:48
 msgid "The type of the content that was commented on."
@@ -13484,7 +13520,7 @@ msgstr ""
 
 #: modules/social_features/social_featured_content/templates/node--featured.html.twig:156;161
 msgid "The visibility of this content is set to @visibility_label"
-msgstr ""
+msgstr "Vizibilitatea acestui conținut este setată la @visibility_label"
 
 #: modules/social_features/social_profile/modules/social_profile_privacy/social_profile_privacy.install:244
 msgid "The visibility option for no one field has been changed."
@@ -13939,11 +13975,11 @@ msgstr ""
 
 #: modules/social_features/social_follow_content/config/install/flag.flag.follow_content.yml:0
 msgid "Unfollow content"
-msgstr ""
+msgstr "Nu mai urmări conținutul"
 
 #: modules/social_features/social_follow_content/social_follow_content.module:157
 msgid "Unfollow this content"
-msgstr ""
+msgstr "Nu mai urmări acest conținut"
 
 #: social.profile:174
 msgid "Uninstalled %module_name module."
@@ -14340,7 +14376,7 @@ msgstr ""
 
 #: modules/social_features/social_follow_content/social_follow_content.module:110
 msgid "View content I'm following"
-msgstr ""
+msgstr "Vizualizează conținutul pe care îl urmăresc"
 
 #: modules/social_features/social_profile/modules/social_profile_privacy/social_profile_privacy.module:38;39
 #: modules/social_features/social_profile/modules/social_profile_privacy/social_profile_privacy.permissions.yml:0
@@ -14649,6 +14685,9 @@ msgid ""
 "created events by default. The event organiser will still be able to change "
 "this if they have the permission."
 msgstr ""
+"Când această setare este activată, utilizatorii anonimi au permisiunea de a "
+"se înregistra la evenimentele create recent. Organizatorul evenimentului va "
+"putea în continuare să schimbe acest lucru."
 
 #: modules/social_features/social_user/src/Form/SocialUserSettingsForm.php:40
 msgid "When visiting a profile the user will end up at this page first"
@@ -15470,11 +15509,11 @@ msgstr ""
 
 #: modules/social_features/social_event/src/Form/EnrollActionForm.php:396;406
 msgid "log in"
-msgstr ""
+msgstr "Autentificare"
 
 #: modules/custom/social_queue_storage/config/install/field.field.queue_storage_entity.email.field_message.yml:0
 msgid "message"
-msgstr ""
+msgstr "mesaj"
 
 #: modules/social_features/social_user/config/install/views.view.user_admin_people.yml:0
 msgid "more"
