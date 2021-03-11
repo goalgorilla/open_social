@@ -197,7 +197,7 @@ class Activity extends ContentEntityBase implements ActivityInterface {
   /**
    * Get related entity.
    *
-   * @return \Drupal\Core\Entity
+   * @return \Drupal\Core\Entity\ContentEntityBase
    *   Returns NULL or Entity object.
    */
   public function getRelatedEntity() {
