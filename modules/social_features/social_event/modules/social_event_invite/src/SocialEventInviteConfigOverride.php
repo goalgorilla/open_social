@@ -107,11 +107,7 @@ class SocialEventInviteConfigOverride implements ConfigFactoryOverrideInterface 
       return FALSE;
     }
 
-    // Using dependency injection causes ServiceCircularReferenceException and
-    // it was replaced with \Drupal call.
-    // @phpstan-ignore-next-line.
-    $path_alias_manager = \Drupal::service('path_alias.manager');
-    $path = $path_alias_manager->getPathByAlias($destination);
+    $path = $this->getPathByAlias($destination);
     $path = explode('/', $path);
     $id = array_pop($path);
 
@@ -139,6 +135,28 @@ class SocialEventInviteConfigOverride implements ConfigFactoryOverrideInterface 
     else {
       return TRUE;
     }
+  }
+
+  /**
+   * Given the alias, return the path it represents.
+   *
+   * @param string $alias
+   *   An alias.
+   *
+   * @return string
+   *   The path represented by alias, or the alias if no path was found.
+   */
+  private function getPathByAlias($alias) {
+    $query = $this->database->select('path_alias', 'base_table');
+    $query->condition('base_table.status', '1');
+    $query->fields('base_table', ['path']);
+    $query->condition('base_table.alias', $this->database->escapeLike($alias), 'LIKE');
+
+    if ($path = $query->execute()->fetchField()) {
+      return $path;
+    }
+
+    return $alias;
   }
 
   /**
