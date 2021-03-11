@@ -153,7 +153,7 @@ class SendActivityDestinationBase extends ActivityDestinationBase {
     // Get target account.
     if (isset($activity->field_activity_recipient_user) && !empty($activity->field_activity_recipient_user->target_id)) {
       $target_id = $activity->field_activity_recipient_user->target_id;
-      /** @var \Drupal\social_user\Entity\User $target_account */
+      /** @var \Drupal\user\Entity\User $target_account */
       $target_account = \Drupal::entityTypeManager()
         ->getStorage('user')
         ->load($target_id);

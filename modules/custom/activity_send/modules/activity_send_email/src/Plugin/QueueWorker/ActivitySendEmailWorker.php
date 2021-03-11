@@ -3,6 +3,7 @@
 namespace Drupal\activity_send_email\Plugin\QueueWorker;
 
 use Drupal\activity_creator\ActivityNotifications;
+use Drupal\activity_creator\Entity\Activity;
 use Drupal\activity_send\Plugin\QueueWorker\ActivitySendWorkerBase;
 use Drupal\activity_send_email\EmailFrequencyManager;
 use Drupal\activity_send_email\Plugin\ActivityDestination\EmailActivityDestination;
@@ -12,6 +13,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Language\LanguageManager;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Queue\QueueFactory;
+use Drupal\user\Entity\User;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -129,7 +131,7 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase implements Containe
     /** @var \Drupal\activity_creator\Entity\Activity $activity */
     $activity = $activity_storage->load($data['entity_id']);
 
-    if (!empty($data['entity_id']) && !is_null($activity)) {
+    if (!empty($data['entity_id']) && ($activity instanceof Activity)) {
       // Check if activity related entity exist.
       if ($activity->getRelatedEntity() !== NULL) {
         $activity->delete();
@@ -241,12 +243,12 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase implements Containe
       $current_message_frequency = $parameters['current_message_frequency'];
       /** @var \Drupal\user\Entity\User $target_account */
       foreach ($parameters['target_account'] as $target_account) {
-        if (!is_null($target_account) && !$target_account->isBlocked()) {
+        if (($target_account instanceof User) && !$target_account->isBlocked()) {
           // Only for users that have access to related content.
           if ($parameters['activity']->getRelatedEntity()->access('view', $target_account)) {
             // Retrieve the users email settings.
-            if (!empty($all_users_email_settings[$target_account->id()])) {
-              $current_message_frequency = $all_users_email_settings[$target_account->id()];
+            if (!empty($parameters['all_users_email_settings'][$target_account->id()])) {
+              $current_message_frequency = $parameters['all_users_email_settings'][$target_account->id()];
             }
             // Send item to EmailFrequency instance.
             $instance = $this->frequencyManager->createInstance($current_message_frequency);

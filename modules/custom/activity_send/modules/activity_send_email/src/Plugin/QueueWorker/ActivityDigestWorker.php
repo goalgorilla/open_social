@@ -2,6 +2,7 @@
 
 namespace Drupal\activity_send_email\Plugin\QueueWorker;
 
+use Drupal\activity_creator\Entity\Activity;
 use Drupal\activity_send\Plugin\QueueWorker\ActivitySendWorkerBase;
 use Drupal\activity_send_email\EmailFrequencyManager;
 use Drupal\activity_send_email\Plugin\ActivityDestination\EmailActivityDestination;
@@ -111,7 +112,7 @@ class ActivityDigestWorker extends ActivitySendWorkerBase implements ContainerFa
       $target = $user_storage->load($data['uid']);
 
       // Make sure we have an actual user account to work with.
-      if (!is_object($target) && $target->isActive()) {
+      if (is_object($target) && $target->isActive()) {
         $langcode = $target->getPreferredLangcode();
         $digest_notifications = [
           '#theme' => 'digestmail',
@@ -124,8 +125,8 @@ class ActivityDigestWorker extends ActivitySendWorkerBase implements ContainerFa
 
           // Only for users that have access to related content.
           if (
-            $activity &&
-            !is_null($activity->getRelatedEntity()) &&
+          ($activity instanceof Activity) &&
+            ($activity->getRelatedEntity() !== NULL) &&
             !$activity->getRelatedEntity()->access('view', $target)
           ) {
             continue;
