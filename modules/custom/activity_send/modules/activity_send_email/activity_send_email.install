@@ -6,6 +6,7 @@
  */
 
 use Drupal\Core\Database\Database;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Implements hook_uninstall().
@@ -21,6 +22,19 @@ function activity_send_email_uninstall() {
   foreach ($plugins as $frequency) {
     \Drupal::state()->delete('digest.' . $frequency['id'] . '.last_run');
   }
+}
+
+/**
+ * Implements hook_update_dependencies().
+ */
+function activity_send_email_update_dependencies() {
+  // Updating of ultimate cron configuration should be done after enabling of
+  // ultimate cron module.
+  $dependencies['activity_send_email'][10101] = [
+    'social_core' => 10101,
+  ];
+
+  return $dependencies;
 }
 
 /**
@@ -108,4 +122,19 @@ function activity_send_email_update_8001() {
   // Add the two tables.
   $schema = Database::getConnection()->schema();
   $schema->createTable('user_activity_digest', $spec['user_activity_digest']);
+}
+
+/**
+ * Installs ultimate cron configuration.
+ */
+function activity_send_email_update_10101(&$sandbox) {
+  $config_file = drupal_get_path('module', 'activity_send_email') . '/config/optional/ultimate_cron.job.activity_send_email_cron.yml';
+  if (is_file($config_file)) {
+    $settings = Yaml::parse(file_get_contents($config_file));
+    if (is_array($settings)) {
+      $update_config = \Drupal::configFactory()
+        ->getEditable('ultimate_cron.job.activity_send_email_cron');
+      $update_config->setData($settings)->save(TRUE);
+    }
+  }
 }

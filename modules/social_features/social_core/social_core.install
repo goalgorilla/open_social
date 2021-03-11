@@ -1309,3 +1309,13 @@ function social_core_update_8908() {
     }
   }
 }
+
+/**
+ * Install ultimate cron module.
+ */
+function social_core_update_10101() {
+  $modules = [
+    'ultimate_cron',
+  ];
+  \Drupal::service('module_installer')->install($modules);
+}

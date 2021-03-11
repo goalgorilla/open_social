@@ -1,0 +1,29 @@
+uuid: b5b40a9d-f16e-4b88-a529-0cd8367f62cb
+langcode: en
+status: true
+dependencies:
+  module:
+    - activity_send_email
+title: 'Creating digest queue items to process.'
+id: activity_send_email_cron
+weight: 0
+module: activity_send_email
+callback: activity_send_email_cron
+scheduler:
+  id: simple
+  configuration:
+    rules:
+      - '*/5+@ * * * *'
+launcher:
+  id: serial
+  configuration:
+    timeouts:
+      lock_timeout: 3600
+    launcher:
+      thread: 0
+logger:
+  id: database
+  configuration:
+    method: '3'
+    expire: 1209600
+    retain: 1000
