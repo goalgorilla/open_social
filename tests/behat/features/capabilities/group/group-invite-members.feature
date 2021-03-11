@@ -42,7 +42,7 @@ Feature: Send invite group email notifications
     And I wait for the queue to be empty
     Then I should see "Invite sent to new_test_user@example.com"
     And I should have an email with subject "site_manager_1 has invited you to join a group on Open Social." and in the content:
-      | Hi, I would like to invite you to join my group Test-invite-group on Open Social. Kind regards, site_manager_1  View group	About Open Social |
+      | Hi, I would like to invite you to join my group Test-invite-group on Open Social. Kind regards, site_manager_1  Accept invite	About Open Social |
 
     # Register as new user and accept invitation.
     Given I logout
@@ -76,7 +76,7 @@ Feature: Send invite group email notifications
     Then I should see "Invite sent to existing_user_1"
 
     And I should have an email with subject "site_manager_1 has invited you to join a group on Open Social." and in the content:
-      | Hi, I would like to invite you to join my group Test-invite-group on Open Social. Kind regards, site_manager_1  View group	About Open Social |
+      | Hi, I would like to invite you to join my group Test-invite-group on Open Social. Kind regards, site_manager_1  Accept invite	About Open Social |
 
     # Login and check if invite has been sent to existing user.
     Given I logout
