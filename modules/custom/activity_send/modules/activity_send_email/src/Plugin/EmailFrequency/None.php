@@ -4,7 +4,6 @@ namespace Drupal\activity_send_email\Plugin\EmailFrequency;
 
 use Drupal\activity_creator\Entity\Activity;
 use Drupal\activity_send_email\EmailFrequencyBase;
-use Drupal\message\Entity\Message;
 use Drupal\user\Entity\User;
 
 /**
@@ -22,6 +21,6 @@ class None extends EmailFrequencyBase {
   /**
    * {@inheritdoc}
    */
-  public function processItem(Activity $activity, Message $message, User $target) {}
+  public function processItem(Activity $activity, $body_text, User $target) {}
 
 }
