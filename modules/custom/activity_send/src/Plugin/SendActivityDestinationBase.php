@@ -143,7 +143,7 @@ class SendActivityDestinationBase extends ActivityDestinationBase {
    * @param \Drupal\activity_creator\Entity\Activity $activity
    *   The activity entity.
    *
-   * @return \Drupal\user\Entity\User
+   * @return \Drupal\user\Entity\User|null
    *   The target user account object.
    *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
@@ -159,6 +159,7 @@ class SendActivityDestinationBase extends ActivityDestinationBase {
         ->load($target_id);
       return $target_account;
     }
+    return NULL;
   }
 
   /**
