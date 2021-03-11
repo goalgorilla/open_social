@@ -10,10 +10,10 @@ use Drupal\activity_send_email\Plugin\ActivityDestination\EmailActivityDestinati
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Language\LanguageManager;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Queue\QueueFactory;
 use Drupal\message\Entity\Message;
-use Drupal\user\Entity\User;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -72,6 +72,13 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase implements Containe
   protected $queueFactory;
 
   /**
+   * The language manager.
+   *
+   * @var \Drupal\Core\Language\LanguageManager
+   */
+  protected $languageManager;
+
+  /**
    * {@inheritdoc}
    */
   public function __construct(
@@ -83,7 +90,8 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase implements Containe
     ActivityNotifications $activity_notifications,
     ConfigFactoryInterface $config_factory,
     EntityTypeManagerInterface $entity_type_manager,
-    QueueFactory $queue_factory
+    QueueFactory $queue_factory,
+    LanguageManager $language_manager
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->frequencyManager = $frequency_manager;
@@ -92,6 +100,7 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase implements Containe
     $this->swiftmailSettings = $config_factory->get('social_swiftmail.settings');
     $this->entityTypeManager = $entity_type_manager;
     $this->queueFactory = $queue_factory;
+    $this->languageManager = $language_manager;
   }
 
   /**
@@ -107,7 +116,8 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase implements Containe
       $container->get('activity_creator.activity_notifications'),
       $container->get('config.factory'),
       $container->get('entity_type.manager'),
-      $container->get('queue')
+      $container->get('queue'),
+      $container->get('language_manager')
     );
   }
 
@@ -117,7 +127,10 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase implements Containe
   public function processItem($data) {
     // First make sure it's an actual Activity entity.
     $activity_storage = $this->entityTypeManager->getStorage('activity');
+
+    /** @var \Drupal\activity_creator\Entity\Activity $activity */
     $activity = $activity_storage->load($data['entity_id']);
+
     if (!empty($data['entity_id']) && !is_null($activity)) {
       // Check if activity related entity exist.
       if (!$activity->getRelatedEntity()) {
@@ -128,11 +141,9 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase implements Containe
 
       // Get Message Template id.
       $message_storage = $this->entityTypeManager->getStorage('message');
+      /** @var \Drupal\message\Entity\Message $message */
       $message = $message_storage->load($activity->field_activity_message->target_id);
       $message_template_id = $message->getTemplate()->id();
-
-      // Get target account.
-      $user_storage = $this->entityTypeManager->getStorage('user');
       if (empty($data['recipients'])) {
         $recipients = array_column($activity->field_activity_recipient_user->getValue(), 'target_id');
 
@@ -140,17 +151,8 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase implements Containe
           // Split up by 50.
           $batches = array_chunk($recipients, 50);
 
+          // Create items for this queue again for further processing.
           foreach ($batches as $key => $batch_recipients) {
-            // Only for users that have access to related content.
-            foreach ($batch_recipients as $key => $batch_recipient) {
-              $recipient = $user_storage->load($batch_recipient);
-              if (
-                !is_null($activity->getRelatedEntity()) &&
-                !$activity->getRelatedEntity()->access('view', $recipient)
-              ) {
-                unset($batch_recipients[$key]);
-              }
-            }
             // Create same queue item, but with IDs of just 50 users.
             $batch_data = [
               'entity_id' => $data['entity_id'],
@@ -170,25 +172,84 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase implements Containe
         $recipients = $data['recipients'];
       }
 
-      // Load the user accounts.
-      $target_accounts = $user_storage->loadMultiple($recipients);
+      if (!empty($recipients)) {
+        // Grab the platform default "Email notification frequencies".
+        $template_frequencies = $this->swiftmailSettings->get('template_frequencies') ?: [];
+        // Determine email frequency to use, defaults to immediately.
+        $current_message_frequency = $template_frequencies[$message_template_id] ?? FREQUENCY_IMMEDIATELY;
 
-      foreach ($target_accounts as $target_account) {
-        if (!is_null($target_account)) {
-          // Retrieve the users email settings.
-          $user_email_settings = EmailActivityDestination::getSendEmailUserSettings($target_account);
+        // Is the website multilingual.
+        $is_multilingual = $this->languageManager->isMultilingual();
 
-          // Determine email frequency to use, defaults to immediately.
-          // @todo make these frequency constants?
-          $template_frequencies = $this->swiftmailSettings->get('template_frequencies') ?: [];
-          $frequency = isset($template_frequencies[$message_template_id]) ? $template_frequencies[$message_template_id] : 'immediately';
-          if (!empty($user_email_settings[$message_template_id])) {
-            $frequency = $user_email_settings[$message_template_id];
+        // Prepare the function parameters.
+        $parameters = [
+          'activity' => $activity,
+          'message' => $message,
+          'message_template_id' => $message_template_id,
+          'current_message_frequency' => $current_message_frequency,
+        ];
+
+        // We want to give preference to users who have set notification
+        // settings as 'immediately'.
+        $email_frequencies = [
+          'immediately',
+          'daily',
+          'weekly'
+        ];
+
+        $user_storage = $this->entityTypeManager->getStorage('user');
+
+        foreach ($email_frequencies as $email_frequency) {
+          if ($target_recipients = EmailActivityDestination::getSendEmailUsersIdsByFrequency($recipients, $message_template_id, $email_frequency)) {
+            // Get the settings for all users at once.
+            $parameters['all_users_email_settings'] = EmailActivityDestination::getSendEmailAllUsersSetting($target_recipients, $parameters['message_template_id']);
+
+            if ($is_multilingual) {
+              // We also want to send emails to user per language.
+              foreach ($languages = $this->languageManager->getLanguages() as $language) {
+                $langcode = $language->getId();
+                $body_text = EmailActivityDestination::getSendEmailOutputText($parameters['message'], $langcode);
+                $parameters['target_account'] = $user_storage->loadByProperties([
+                  'preferred_langcode' => $langcode,
+                  'uid' => $target_recipients,
+                ]);
+                $parameters['body_text'] = $body_text;
+                $this->sendToFrequencyManager($parameters);
+              }
+            } else {
+              $parameters['target_account'] = $user_storage->loadMultiple($recipients);
+              $parameters['body_text'] = EmailActivityDestination::getSendEmailOutputText($message);;
+              $this->sendToFrequencyManager($parameters);
+            }
           }
+        }
+      }
+    }
+  }
 
-          // Send item to EmailFrequency instance.
-          $instance = $this->frequencyManager->createInstance($frequency);
-          $instance->processItem($activity, $message, $target_account);
+  /**
+   * Send the queue items for further processing by frequency managers.
+   *
+   * @param $parameters
+   *
+   * @throws \Drupal\Component\Plugin\Exception\PluginException
+   */
+  private function sendToFrequencyManager($parameters) {
+    if (!empty($parameters['target_account'])) {
+      $current_message_frequency = $parameters['current_message_frequency'];
+      /** @var \Drupal\social_user\Entity\User $target_account */
+      foreach ($parameters['target_account'] as $target_account) {
+        if (!is_null($target_account) && !$target_account->isBlocked()) {
+          // Only for users that have access to related content.
+          if ($parameters['activity']->getRelatedEntity()->access('view', $target_account)) {
+            // Retrieve the users email settings.
+            if (!empty($all_users_email_settings[$target_account->id()])) {
+              $current_message_frequency = $all_users_email_settings[$target_account->id()];
+            }
+            // Send item to EmailFrequency instance.
+            $instance = $this->frequencyManager->createInstance($current_message_frequency);
+            $instance->processItem($parameters['activity'], $parameters['body_text'], $target_account);
+          }
         }
       }
     }
