@@ -157,8 +157,7 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase implements Containe
               'recipients' => $batch_recipients,
             ];
 
-            $queue = $this->queueFactory->get('activity_send_email_worker');
-            $queue->createItem($batch_data);
+            $this->createQueueItem('activity_send_email_worker', $batch_data);
           }
 
           // We split up in batches. We can stop processing this specific queue
