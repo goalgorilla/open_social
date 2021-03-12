@@ -5,6 +5,7 @@ namespace Drupal\social_user\Plugin\GraphQL\SchemaExtension;
 use Drupal\graphql\GraphQL\ResolverBuilder;
 use Drupal\graphql\GraphQL\ResolverRegistryInterface;
 use Drupal\graphql\Plugin\GraphQL\SchemaExtension\SdlSchemaExtensionPluginBase;
+use Drupal\social_user\GraphQL\UserActorTypeResolver;
 
 /**
  * Adds user data to the Open Social GraphQL API.
@@ -23,6 +24,9 @@ class UserSchemaExtension extends SdlSchemaExtensionPluginBase {
    */
   public function registerResolvers(ResolverRegistryInterface $registry) {
     $builder = new ResolverBuilder();
+
+    // Type resolvers.
+    $registry->addTypeResolver('Actor', new UserActorTypeResolver($registry->getTypeResolver('Actor')));
 
     // Root Query fields.
     $registry->addFieldResolver('Query', 'viewer',
