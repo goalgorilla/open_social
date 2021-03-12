@@ -1,13 +1,16 @@
 <?php
 
-use Drupal\social_user\Plugin\Action\SocialSendEmail;
-use Drupal\social_advanced_queue\Plugin\Action\SocialSendEmailAdvancedQueue;
-
 /**
  * @file
  * Module file for  Social Advanced Queue.
  */
 
+use Drupal\social_user\Plugin\Action\SocialSendEmail;
+use Drupal\social_advanced_queue\Plugin\Action\SocialSendEmailAdvancedQueue;
+
+/**
+ * Implements hook_action_info_alter().
+ */
 function social_advanced_queue_action_info_alter(&$definitions) {
   // The Send Email Action needs a new Queue Worker.
   // So we can extend it.

@@ -1,81 +1,95 @@
 <?php
 
-namespace Drupal\social_user\Plugin\AdvancedQueue\JobType;
+namespace Drupal\activity_send_email\Plugin\AdvancedQueue\JobType;
 
+use Drupal\activity_creator\ActivityNotifications;
+use Drupal\activity_send_email\EmailFrequencyManager;
 use Drupal\advancedqueue\Job;
 use Drupal\advancedqueue\JobResult;
 use Drupal\advancedqueue\Plugin\AdvancedQueue\JobType\JobTypeBase;
-use Drupal\Component\Utility\EmailValidatorInterface;
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Language\LanguageManagerInterface;
-use Drupal\Core\Logger\LoggerChannelTrait;
-use Drupal\Core\Mail\MailManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
-use Drupal\Core\StringTranslation\TranslationInterface;
+use Drupal\Core\Queue\QueueFactory;
 use Drupal\social_queue_storage\Entity\QueueStorageEntity;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Advanced Queue Job to process email to users.
+ * Advanced Queue Job to process email to users based on activities.
  *
  * @AdvancedQueueJobType(
- *   id = "user_email_queue",
- *   label = @Translation("User email processor"),
+ *   id = "activity_send_email_worker",
+ *   label = @Translation("Activity email processor"),
  *   max_retries = 0,
  *   retry_delay = 0,
  * )
  */
-class UserMailQueueJob extends JobTypeBase implements ContainerFactoryPluginInterface {
-
-  use LoggerChannelTrait;
+class ActivitySendEmailJob extends JobTypeBase implements ContainerFactoryPluginInterface {
 
   /**
-   * The mail manager.
+   * The email frequency manager.
    *
-   * @var \Drupal\Core\Mail\MailManagerInterface
+   * @var \Drupal\activity_send_email\EmailFrequencyManager
    */
-  protected $mailManager;
+  protected $frequencyManager;
 
   /**
-   * The entity storage.
-   *
-   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
-   */
-  protected $storage;
-
-  /**
-   * The database connection.
+   * Database services.
    *
    * @var \Drupal\Core\Database\Connection
    */
-  protected $connection;
+  protected $database;
 
   /**
-   * The language manager interface.
+   * The activity notification service.
    *
-   * @var \Drupal\Core\Language\LanguageManagerInterface
+   * @var \Drupal\activity_creator\ActivityNotifications
    */
-  protected $languageManager;
+  protected $activityNotifications;
 
   /**
-   * The Email validator service.
+   * Social mail settings.
    *
-   * @var \Drupal\Component\Utility\EmailValidatorInterface
+   * @var \Drupal\Core\Config\ImmutableConfig
    */
-  protected $emailValidator;
+  protected $swiftmailSettings;
+
+  /**
+   * The entity type manager.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  protected $entityTypeManager;
+
+  /**
+   * The queue service.
+   *
+   * @var \Drupal\Core\Queue\QueueFactory
+   */
+  protected $queueFactory;
 
   /**
    * {@inheritdoc}
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, MailManagerInterface $mail_manager, EntityTypeManagerInterface $entity_type_manager, TranslationInterface $string_translation, Connection $database, LanguageManagerInterface $language_manager, EmailValidatorInterface $email_validator) {
+  public function __construct(
+    array $configuration,
+    $plugin_id,
+    $plugin_definition,
+    EmailFrequencyManager $frequency_manager,
+    Connection $connection,
+    ActivityNotifications $activity_notifications,
+    ConfigFactoryInterface $config_factory,
+    EntityTypeManagerInterface $entity_type_manager,
+    QueueFactory $queue_factory
+  ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
-    $this->mailManager = $mail_manager;
-    $this->storage = $entity_type_manager;
-    $this->connection = $database;
-    $this->setStringTranslation($string_translation);
-    $this->languageManager = $language_manager;
-    $this->emailValidator = $email_validator;
+    $this->frequencyManager = $frequency_manager;
+    $this->database = $connection;
+    $this->activityNotifications = $activity_notifications;
+    $this->swiftmailSettings = $config_factory->get('social_swiftmail.settings');
+    $this->entityTypeManager = $entity_type_manager;
+    $this->queueFactory = $queue_factory;
   }
 
   /**
@@ -86,12 +100,12 @@ class UserMailQueueJob extends JobTypeBase implements ContainerFactoryPluginInte
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('plugin.manager.mail'),
-      $container->get('entity_type.manager'),
-      $container->get('string_translation'),
+      $container->get('plugin.manager.emailfrequency'),
       $container->get('database'),
-      $container->get('language_manager'),
-      $container->get('email.validator')
+      $container->get('activity_creator.activity_notifications'),
+      $container->get('config.factory'),
+      $container->get('entity_type.manager'),
+      $container->get('queue')
     );
   }
 
@@ -165,13 +179,9 @@ class UserMailQueueJob extends JobTypeBase implements ContainerFactoryPluginInte
    *   In case of anonymous users a display name will be given.
    */
   protected function sendMail(string $user_mail, string $langcode, QueueStorageEntity $mail_params, $display_name = NULL) {
-    $subject = $mail_params->get('field_subject');
-    $message = $mail_params->get('field_message');
-    $reply_to = $mail_params->get('field_reply_to');
-
     $context = [
-      'subject' => $subject->getValue(),
-      'message' => $message->getValue(),
+      'subject' => $mail_params->get('field_subject')->value,
+      'message' => $mail_params->get('field_message')->value,
     ];
 
     if ($display_name) {
@@ -181,7 +191,7 @@ class UserMailQueueJob extends JobTypeBase implements ContainerFactoryPluginInte
     // Attempt sending mail.
     $this->mailManager->mail('system', 'action_send_email', $user_mail, $langcode, [
       'context' => $context,
-    ], $reply_to->getValue());
+    ], $mail_params->get('field_reply_to')->value);
   }
 
   /**

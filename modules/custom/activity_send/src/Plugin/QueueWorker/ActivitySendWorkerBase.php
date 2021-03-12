@@ -14,7 +14,7 @@ abstract class ActivitySendWorkerBase extends QueueWorkerBase {
    *
    * @param string $queue_name
    *   The queue name.
-   * @param object $data
+   * @param array $data
    *   The $data which should be stored in the queue item.
    */
   protected function createQueueItem($queue_name, $data) {
