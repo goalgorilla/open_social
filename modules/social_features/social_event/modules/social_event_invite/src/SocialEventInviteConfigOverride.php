@@ -10,7 +10,7 @@ use Drupal\Core\Database\Connection;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
- * Provides an overridden block for Settings Tray testing.
+ * Provides an overridden elements.
  *
  * @package Drupal\social_event_invite
  */
@@ -65,6 +65,7 @@ class SocialEventInviteConfigOverride implements ConfigFactoryOverrideInterface 
 
     $config_name = 'user.settings';
 
+    // Skip email verification step on registration for user event invitation.
     if (in_array($config_name, $names, TRUE)) {
       $request = $this->requestStack->getCurrentRequest();
 
@@ -98,6 +99,7 @@ class SocialEventInviteConfigOverride implements ConfigFactoryOverrideInterface 
       return FALSE;
     }
 
+    // Get decoded email of invited user from params.
     $invitee_mail = base64_decode(str_replace(['-', '_'], [
       '+',
       '/',
@@ -107,6 +109,7 @@ class SocialEventInviteConfigOverride implements ConfigFactoryOverrideInterface 
       return FALSE;
     }
 
+    // Get event id to which user was invited from params.
     $path = $this->getPathByAlias($destination);
     $path = explode('/', $path);
     $id = array_pop($path);

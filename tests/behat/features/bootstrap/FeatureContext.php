@@ -708,7 +708,7 @@ class FeatureContext extends RawMinkContext implements Context
     {
       $group_content_id = $this->getGroupContentIdFromGroupTitle($group_title, $mail);
       $mail_encoded = str_replace(['+', '/', '='], ['-', '_', ''], base64_encode($mail));
-      $page = '/user/register?invitee_mail=' . $mail_encoded . '&destination=/social-group-invite/' . $group_content_id . '/accepted';
+      $page = '/user/register?invitee_mail=' . $mail_encoded . '&destination=/social-group-invite/' . $group_content_id . '/accept';
 
       $this->visitPath($page);
     }

@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Drupal\ginvite\Controller\InvitationOperations;
 
 /**
- * Handles Accepted operation for invited users.
+ * Handles Accept operation for invited users.
  */
 class SocialGroupInvitationOperations extends InvitationOperations {
 

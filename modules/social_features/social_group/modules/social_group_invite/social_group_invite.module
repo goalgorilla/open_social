@@ -558,12 +558,15 @@ function social_group_invite_tokens_alter(array &$replacements, array $context, 
   ) {
     $group_content = $context["data"]["group_content"];
     $group_content_id = $group_content->get('id')->getString();
-    $destination = 'destination=/social-group-invite/' . $group_content_id . '/accepted';
+    $destination = 'destination=/social-group-invite/' . $group_content_id . '/accept';
 
+    // Attach destination to accept invite. So, after sign up/sign step the
+    // invite will be accepted and user  will be redirected to the invited page.
     if (
       isset($context["tokens"]["register_link"]) &&
       $context["tokens"]["register_link"] === '[group_content:register_link]'
     ) {
+      // For new users for register_link token.
       $link = $replacements["[group_content:register_link]"];
       $replacements["[group_content:register_link]"] = "{$link}&{$destination}";
     }
@@ -571,6 +574,7 @@ function social_group_invite_tokens_alter(array &$replacements, array $context, 
       isset($context["tokens"]["my_invitations_link"]) &&
       $context["tokens"]["my_invitations_link"] === '[group_content:my_invitations_link]'
     ) {
+      // For existing users for my_invitations_link token.
       $group_invitations_link = Url::fromRoute('user.login', [], ['absolute' => TRUE])->toString();
       $replacements["[group_content:my_invitations_link]"] = "{$group_invitations_link}?{$destination}";
     }

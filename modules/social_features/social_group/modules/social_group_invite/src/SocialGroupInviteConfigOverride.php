@@ -10,7 +10,7 @@ use Drupal\Core\Database\Connection;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
- * Provides an overridden block for Settings Tray testing.
+ * Provides an overridden elements.
  *
  * @package Drupal\social_group_invite
  */
@@ -65,6 +65,7 @@ class SocialGroupInviteConfigOverride implements ConfigFactoryOverrideInterface 
 
     $config_name = 'user.settings';
 
+    // Skip email verification step on registration for user group invitation.
     if (in_array($config_name, $names, TRUE)) {
       $request = $this->requestStack->getCurrentRequest();
 
@@ -98,6 +99,7 @@ class SocialGroupInviteConfigOverride implements ConfigFactoryOverrideInterface 
       return FALSE;
     }
 
+    // Get decoded email of invited user from params.
     $invitee_mail = base64_decode(str_replace(['-', '_'], [
       '+',
       '/',
@@ -107,7 +109,8 @@ class SocialGroupInviteConfigOverride implements ConfigFactoryOverrideInterface 
       return FALSE;
     }
 
-    preg_match('/\/social-group-invite\/(\d+)+\/accepted/', $destination, $matches);
+    // Get group id to which user was invited from params.
+    preg_match('/\/social-group-invite\/(\d+)+\/accept/', $destination, $matches);
     $entity_id = array_pop($matches);
 
     if (empty($entity_id) || !is_numeric($entity_id)) {
