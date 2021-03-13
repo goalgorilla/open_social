@@ -14,10 +14,10 @@ abstract class ActivitySendWorkerBase extends QueueWorkerBase {
    *
    * @param string $queue_name
    *   The queue name.
-   * @param array $data
+   * @param object $data
    *   The $data which should be stored in the queue item.
    */
-  protected function createQueueItem($queue_name, array $data) {
+  protected function createQueueItem($queue_name, $data) {
     $queue = \Drupal::queue($queue_name);
     $queue->createItem($data);
   }
