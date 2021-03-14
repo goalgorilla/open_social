@@ -165,13 +165,18 @@ class UserMailQueueJob extends JobTypeBase implements ContainerFactoryPluginInte
    *   In case of anonymous users a display name will be given.
    */
   protected function sendMail(string $user_mail, string $langcode, QueueStorageEntity $mail_params, $display_name = NULL) {
-    $subject = $mail_params->get('field_subject');
-    $message = $mail_params->get('field_message');
-    $reply_to = $mail_params->get('field_reply_to');
+    $subject = $mail_params->get('field_subject')->getValue();
+    $message = $mail_params->get('field_message')->getValue();
+    $reply_to = $mail_params->get('field_reply_to')->getValue();
+    $reply = NULL;
+
+    if (!empty($reply_to)) {
+      $reply = $reply_to[0]['value'];
+    }
 
     $context = [
-      'subject' => $subject->getValue(),
-      'message' => $message->getValue(),
+      'subject' => $subject[0]['value'],
+      'message' => $message[0]['value'],
     ];
 
     if ($display_name) {
@@ -181,7 +186,7 @@ class UserMailQueueJob extends JobTypeBase implements ContainerFactoryPluginInte
     // Attempt sending mail.
     $this->mailManager->mail('system', 'action_send_email', $user_mail, $langcode, [
       'context' => $context,
-    ], $reply_to->getValue());
+    ], $reply);
   }
 
   /**
