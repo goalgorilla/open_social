@@ -1580,7 +1580,6 @@ function social_group_preprocess_profile(&$variables) {
  * Implements hook_preprocess_HOOK().
  */
 function social_group_preprocess_views_view(&$variables) {
-  if (!\Drupal::moduleHandler()->moduleExists('social_group_invite')) {
     /** @var \Drupal\views\ViewExecutable $view */
     $view = &$variables['view'];
 
@@ -1592,7 +1591,6 @@ function social_group_preprocess_views_view(&$variables) {
         ->getViewBuilder('block')
         ->view($entity);
     }
-  }
 }
 
 /**
