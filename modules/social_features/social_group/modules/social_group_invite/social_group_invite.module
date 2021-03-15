@@ -130,7 +130,7 @@ function social_group_invite_preprocess_views_view(&$variables) {
   // That is also why hook_menu_local_actions_alter won't work.
   // Get current group so we can build correct links.
   if ($view->id() === 'group_manage_members') {
-    if(_social_group_invite_current_type_enabled_invites()){
+    if (_social_group_invite_current_type_enabled_invites()) {
       $entity = \Drupal::entityTypeManager()->getStorage('block')
         ->load('socialinviteactionsblock');
       if (NULL !== $entity) {
