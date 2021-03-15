@@ -1,0 +1,69 @@
+<?php
+
+/**
+ * @file
+ * Install, update functions for the social_follow_tag_kpi module.
+ */
+
+function social_follow_tag_kpi_install() {
+
+  // Add KPI Blocks.
+  $blocks = _social_follow_tag_kpi_get_blocks_list();
+  _social_follow_tag_kpi_create_blocks($blocks);
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function social_follow_tag_kpi_uninstall() {
+  $blocks = _social_follow_tag_kpi_get_blocks_list();
+  _social_follow_tag_kpi_delete_blocks($blocks);
+}
+
+/**
+ * For getting blocks list.
+ *
+ * @return array
+ *   Blocks list.
+ */
+function _social_follow_tag_kpi_get_blocks_list() {
+  return [
+    'social_kpi_lite_tag_followers',
+  ];
+}
+
+/**
+ * Create block content.
+ *
+ * @param array $blocks
+ *   List of blocks.
+ */
+function _social_follow_tag_kpi_create_blocks(array $blocks) {
+  $path = drupal_get_path('module', 'social_follow_tag_kpi');
+  $block_content_path = "{$path}/content/block_content";
+  /** @var \Drupal\kpi_analytics\BlockContentCreator $block_content_creator */
+  $block_content_creator = \Drupal::service('kpi_analytics.block_content_creator');
+
+  foreach ($blocks as $block_id) {
+    $block_content_creator->setSource($block_content_path, $block_id);
+    $block_content_creator->create();
+  }
+}
+
+/**
+ * Delete block content.
+ *
+ * @param array $blocks
+ *   List of blocks to delete.
+ */
+function _social_follow_tag_kpi_delete_blocks(array $blocks) {
+  $path = drupal_get_path('module', 'social_follow_tag_kpi');
+  $block_content_path = "{$path}/content/block_content";
+
+  $block_content_creator = \Drupal::service('kpi_analytics.block_content_creator');
+
+  foreach ($blocks as $block_id) {
+    $block_content_creator->setSource($block_content_path, $block_id);
+    $block_content_creator->delete();
+  }
+}
