@@ -247,12 +247,12 @@ function social_book_update_8902() {
  * Add small_teaser view mode for book.
  */
 function social_book_update_8903() {
-  $config_path = drupal_get_path('module', 'social_book') . '/config/optional';
+  $config_path = drupal_get_path('module', 'social_book') . '/config/static';
   $source = new FileStorage($config_path);
   /** @var \Drupal\Core\Config\StorageInterface $config_storage */
   $config_storage = \Drupal::service('config.storage');
   $config_storage->write(
     'core.entity_view_display.node.book.small_teaser',
-    $source->read('core.entity_view_display.node.book.small_teaser')
+    $source->read('social_book_static_update_8903')
   );
 }
