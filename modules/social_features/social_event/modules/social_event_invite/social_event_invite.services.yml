@@ -15,5 +15,6 @@ services:
       - '@request_stack'
       - '@email.validator'
       - '@database'
+      - '@config.factory'
     tags:
       - {name: config.factory.override, priority: 10}

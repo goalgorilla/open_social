@@ -4,6 +4,7 @@ namespace Drupal\social_event_invite;
 
 use Drupal\Component\Utility\EmailValidatorInterface;
 use Drupal\Core\Cache\CacheableMetadata;
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Config\ConfigFactoryOverrideInterface;
 use Drupal\Core\Config\StorageInterface;
 use Drupal\Core\Database\Connection;
@@ -38,6 +39,13 @@ class SocialEventInviteConfigOverride implements ConfigFactoryOverrideInterface 
   protected $database;
 
   /**
+   * The config factory.
+   *
+   * @var \Drupal\Core\Config\ConfigFactoryInterface
+   */
+  protected $configFactory;
+
+  /**
    * Constructs the configuration override.
    *
    * @param \Symfony\Component\HttpFoundation\RequestStack $request_stack
@@ -46,15 +54,19 @@ class SocialEventInviteConfigOverride implements ConfigFactoryOverrideInterface 
    *   The email validator.
    * @param \Drupal\Core\Database\Connection $database
    *   The current active database's master connection.
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *   The Drupal configuration factory.
    */
   public function __construct(
     RequestStack $request_stack,
     EmailValidatorInterface $email_validator,
-    Connection $database
+    Connection $database,
+    ConfigFactoryInterface $config_factory
   ) {
     $this->requestStack = $request_stack;
     $this->emailValidator = $email_validator;
     $this->database = $database;
+    $this->configFactory = $config_factory;
   }
 
   /**
@@ -65,8 +77,19 @@ class SocialEventInviteConfigOverride implements ConfigFactoryOverrideInterface 
 
     $config_name = 'user.settings';
 
+    // Get default verify_mail users settings.
+    $verify_mail = $this->configFactory->getEditable($config_name)->get('verify_mail');
+
+    // Get email_verification status of social event invite settings.
+    $event_invite = $this->configFactory->getEditable('social_event_invite.settings');
+    $ignore_email_verification = $event_invite->get('email_verification');
+
     // Skip email verification step on registration for user event invitation.
-    if (in_array($config_name, $names, TRUE)) {
+    if (
+      in_array($config_name, $names, TRUE) &&
+      $ignore_email_verification === TRUE &&
+      $verify_mail === TRUE
+    ) {
       $request = $this->requestStack->getCurrentRequest();
 
       $invitee_mail = $request->query->get('invitee_mail', '');

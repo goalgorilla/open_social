@@ -494,6 +494,11 @@ function social_group_invite_form_social_group_form_alter(&$form, FormStateInter
     '#default_value' => $invite_config['invite_message'] ?? $default_message,
     '#required' => TRUE,
   ];
+  $form['group_invite']['email_verification'] = [
+    '#type' => 'checkbox',
+    '#title' => t('Allow invited user to skip email verification'),
+    '#default_value' => !empty($invite_config['email_verification']) ?? '',
+  ];
 
   $form['#submit'][] = '_social_group_invite_settings_submit';
 }
@@ -505,6 +510,7 @@ function _social_group_invite_settings_submit($form, FormStateInterface $form_st
   \Drupal::configFactory()->getEditable('social_group.settings')
     ->set('group_invite.invite_subject', $form_state->getValue('invite_subject'))
     ->set('group_invite.invite_message', $form_state->getValue('invite_message'))
+    ->set('group_invite.email_verification', $form_state->getValue('email_verification'))
     ->save();
 }
 
