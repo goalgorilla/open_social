@@ -7,6 +7,8 @@
 
 use Drupal\Component\Render\PlainTextOutput;
 use Drupal\social_swiftmail_sendgrid\Plugin\QueueWorker\MassUserMailQueueProcessor;
+use Drupal\social_swiftmail_sendgrid\Plugin\AdvancedQueue\JobType\MassUserMailQueueJob;
+use Drupal\social_swiftmail_sendgrid\Plugin\EmailFrequency\SendMassEmailsImmediately;
 
 /**
  * Implements hook_tokens_alter().
@@ -34,6 +36,10 @@ function social_swiftmail_sendgrid_queue_info_alter(&$queues) {
   // to Sendgrid using its substitution system to increase performance.
   if (!empty($queues['user_email_queue'])) {
     $queues['user_email_queue']['class'] = MassUserMailQueueProcessor::class;
+    // If we have advanced queue available, lets use that instead.
+    if (\Drupal::moduleHandler()->moduleExists('social_advanced_queue')) {
+      $queues['user_email_queue']['class'] = MassUserMailQueueJob::class;
+    }
   }
 }
 
