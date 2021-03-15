@@ -5,6 +5,7 @@ namespace Drupal\activity_send_email;
 use Drupal\activity_creator\Entity\Activity;
 use Drupal\Component\Plugin\PluginBase;
 use Drupal\Core\Database\Database;
+use Drupal\message\Entity\Message;
 use Drupal\user\Entity\User;
 
 /**
@@ -38,7 +39,7 @@ class EmailFrequencyBase extends PluginBase implements EmailFrequencyInterface {
   /**
    * {@inheritdoc}
    */
-  public function processItem(Activity $activity, $body_text, User $target) {
+  public function processItem(Activity $activity, Message $message, User $target, $body_text = NULL) {
     $db = Database::getConnection();
 
     // Insert incoming activities in our digest table.

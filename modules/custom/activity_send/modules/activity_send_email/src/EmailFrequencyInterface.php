@@ -4,6 +4,7 @@ namespace Drupal\activity_send_email;
 
 use Drupal\Component\Plugin\PluginInspectionInterface;
 use Drupal\activity_creator\Entity\Activity;
+use Drupal\message\Entity\Message;
 use Drupal\user\Entity\User;
 
 /**
@@ -40,11 +41,13 @@ interface EmailFrequencyInterface extends PluginInspectionInterface {
    *
    * @param \Drupal\activity_creator\Entity\Activity $activity
    *   The Activity object.
-   * @param string $body_text
-   *   The output text of message.
+   * @param \Drupal\message\Entity\Message $message
+   *   The Message object.
    * @param \Drupal\user\Entity\User $target
    *   The target user account.
+   * @param string|null $body_text
+   *   The output text of message.
    */
-  public function processItem(Activity $activity, $body_text, User $target);
+  public function processItem(Activity $activity, Message $message, User $target, $body_text = NULL);
 
 }

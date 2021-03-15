@@ -7,6 +7,7 @@ use Drupal\activity_send_email\EmailFrequencyBase;
 use Drupal\activity_send_email\Plugin\ActivityDestination\EmailActivityDestination;
 use Drupal\Core\Link;
 use Drupal\Core\Url;
+use Drupal\message\Entity\Message;
 use Drupal\user\Entity\User;
 
 /**
@@ -24,10 +25,14 @@ class Immediately extends EmailFrequencyBase {
   /**
    * {@inheritdoc}
    */
-  public function processItem(Activity $activity, $body_text, User $target) {
+  public function processItem(Activity $activity, Message $message, User $target, $body_text = NULL) {
     // Continue if we have text to send and the user is currently offline.
     if (isset($activity->field_activity_output_text) && EmailActivityDestination::isUserOffline($target)) {
       $langcode = $target->getPreferredLangcode();
+
+      if (!$body_text) {
+        $body_text = EmailActivityDestination::getSendEmailOutputText($message, $langcode);
+      }
 
       if ($langcode && !empty($body_text)) {
         $this->sendEmail($body_text, $langcode, $target);
