@@ -255,7 +255,7 @@ class ActivitySendEmailWorker extends ActivitySendWorkerBase implements Containe
             }
             // Send item to EmailFrequency instance.
             $instance = $this->frequencyManager->createInstance($current_message_frequency);
-            $instance->processItem($parameters['activity'], $parameters['body_text'], $target_account);
+            $instance->processItem($parameters['activity'], $parameters['message'], $target_account, $parameters['body_text']);
           }
         }
       }
