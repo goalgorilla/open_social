@@ -41,12 +41,15 @@ function _social_follow_tag_kpi_get_blocks_list() {
 function _social_follow_tag_kpi_create_blocks(array $blocks) {
   $path = drupal_get_path('module', 'social_follow_tag_kpi');
   $block_content_path = "{$path}/content/block_content";
+  $block_path = "{$path}/content/block";
   /** @var \Drupal\kpi_analytics\BlockContentCreator $block_content_creator */
   $block_content_creator = \Drupal::service('kpi_analytics.block_content_creator');
 
   foreach ($blocks as $block_id) {
     $block_content_creator->setSource($block_content_path, $block_id);
-    $block_content_creator->create();
+    if ($block_content_creator->create()) {
+      $block_content_creator->createBlockInstance($block_path, $block_id);
+    }
   }
 }
 
@@ -59,10 +62,15 @@ function _social_follow_tag_kpi_create_blocks(array $blocks) {
 function _social_follow_tag_kpi_delete_blocks(array $blocks) {
   $path = drupal_get_path('module', 'social_follow_tag_kpi');
   $block_content_path = "{$path}/content/block_content";
+  $block_path = "{$path}/content/block";
 
   $block_content_creator = \Drupal::service('kpi_analytics.block_content_creator');
+  $block_creator = \Drupal::service('kpi_analytics.block_creator');
 
   foreach ($blocks as $block_id) {
+    $block_creator->setSource($block_path, $block_id);
+    $block_creator->delete();
+
     $block_content_creator->setSource($block_content_path, $block_id);
     $block_content_creator->delete();
   }
