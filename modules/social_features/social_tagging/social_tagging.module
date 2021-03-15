@@ -101,19 +101,50 @@ function social_tagging_form_taxonomy_overview_terms_alter(&$form, FormStateInte
 }
 
 /**
+ * Implements hook_inline_entity_form_entity_form_alter().
+ *
+ * This hook allows to have a compatibility with "Inline Entity Form" module.
+ */
+function social_tagging_inline_entity_form_entity_form_alter(&$entity_form, &$form_state) {
+  // Act if the form has the tagging field.
+  if (isset($entity_form['social_tagging'])) {
+    // "Inline entity form" module has an entity object in the "form" variable.
+    social_tagging_social_tagging_field_form_alter($entity_form, $form_state, $entity_form['#entity']);
+  }
+}
+
+/**
  * Implements hook_form_alter().
  */
 function social_tagging_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   // Act if the form has the tagging field.
   if (isset($form['social_tagging'])) {
+    if (method_exists($form_state->getFormObject(), 'getEntity')) {
+      /** @var \Drupal\Core\Entity\EntityInterface $entity */
+      $entity = $form_state->getFormObject()->getEntity();
+      social_tagging_social_tagging_field_form_alter($form, $form_state, $entity);
+    }
+  }
+}
+
+/**
+ * Function do a changes related to social_tagging field.
+ *
+ * @param array $form
+ *   Form array.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   Form State object.
+ * @param \Drupal\Core\Entity\EntityInterface $form_entity
+ *   Entity object.
+ */
+function social_tagging_social_tagging_field_form_alter(array &$form, FormStateInterface &$form_state, EntityInterface $form_entity) {
+  if (!empty($form['social_tagging'])) {
     // Load tag config..
     $tag_settings = \Drupal::getContainer()->get('config.factory')->getEditable('social_tagging.settings');
-    /** @var \Drupal\Core\Entity\EntityBase $form_entity */
-    $form_entity = $form_state->getFormObject()->getEntity();
     // Switch for the entity_type.
     switch ($form_entity->getEntityTypeId()) {
       case 'node':
-        $type = $form_entity->type->entity->id();
+        $type = $form_entity->bundle();
         $tag_enabled = $tag_settings->get('tag_node_type_' . $type);
         break;
 
