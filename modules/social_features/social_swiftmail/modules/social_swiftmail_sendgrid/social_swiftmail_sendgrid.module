@@ -36,10 +36,22 @@ function social_swiftmail_sendgrid_queue_info_alter(&$queues) {
   // to Sendgrid using its substitution system to increase performance.
   if (!empty($queues['user_email_queue'])) {
     $queues['user_email_queue']['class'] = MassUserMailQueueProcessor::class;
-    // If we have advanced queue available, lets use that instead.
-    if (\Drupal::moduleHandler()->moduleExists('social_advanced_queue')) {
-      $queues['user_email_queue']['class'] = MassUserMailQueueJob::class;
-    }
+  }
+}
+
+/**
+ * Implements hook_advancedueue_job_type_info_alter().
+ */
+function social_swiftmail_advancedqueue_job_type_info_alter(&$info) {
+  // We override the user_email_queue class, by now providing our custom
+  // MassUserMailQueueProcessor which doesn't processes items one by one
+  // sending each individual emails.
+  // It rather collects all users from a batch, and sends one mail
+  // to Sendgrid using its substitution system to increase performance.
+  // This uses the advancedqueue Queue API instead of cores queue
+  // you see in hook_queue_info_alter.
+  if (!empty($info['user_email_queue'])) {
+    $info['user_email_queue']['class'] = MassUserMailQueueJob::class;
   }
 }
 
