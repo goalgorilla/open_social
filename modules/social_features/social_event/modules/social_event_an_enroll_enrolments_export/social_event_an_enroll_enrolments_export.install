@@ -1,0 +1,90 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the AN Enroll Export module.
+ */
+
+/**
+ * Implements hook_install().
+ */
+function social_event_an_enroll_enrolments_export_install() {
+  // Set the enroll export pluginsExportUser access based on their counterpart access.
+  _enrolments_export_plugin_access();
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function social_event_an_enroll_enrolments_export_uninstall() {
+  // Set the export plugins access based on their enroll counterpart access.
+  _enrolments_export_plugin_access(TRUE);
+}
+
+/**
+ * Implements hook_update_dependencies().
+ */
+function social_event_an_enroll_enrolments_export_update_dependencies() {
+  // Run the export plugins update hook only after the default export plugin
+  // hook is executed.
+  $dependencies['social_event_an_enroll_enrolments_export'][8001] = [
+    'social_user_export' => 8001,
+  ];
+
+  return $dependencies;
+}
+
+/**
+ * Set the enroll export plugins access based on their counterpart access.
+ */
+function social_event_an_enroll_enrolments_export_update_8001() {
+  _enrolments_export_plugin_access();
+}
+
+/**
+ * Sets the access for the export plugins.
+ *
+ * @param bool $reverse
+ *   Flip the keys and value of the mapping plugins.
+ */
+function _enrolments_export_plugin_access($reverse = FALSE) {
+  // Get the plugin mapping.
+  $mapping = _enrolments_export_plugin_mapping($reverse);
+
+  $config = \Drupal::getContainer()->get('config.factory')->getEditable('social_user_export.settings');
+  $plugins = $config->get('plugins');
+  // We now need to go through the plugins and add the plugin that should be
+  // active based on the currently active plugins (either existing or enroll
+  // plugins).
+  foreach ($plugins as $key => $value) {
+    foreach ($mapping as $existing_plugin => $new_plugin) {
+      if ($key === $existing_plugin && !empty($value)) {
+        $plugins[$new_plugin] = $new_plugin;
+      }
+    }
+  }
+
+  // Set the default export plugins normal users can use.
+  $config->set('plugins', $plugins)->save();
+}
+
+/**
+ * Retrieve a mapped list of normal plugins and enrollment plugins.
+ *
+ * @param bool $reverse
+ *   Flip the keys and value of the return array.
+ *
+ * @return array
+ *   A mapped list of normal plugins and their counterpart enrollment plugins.
+ */
+function _enrolments_export_plugin_mapping($reverse = FALSE) :array {
+  $mapping = [
+    'display_name' => 'enrolment_display_name',
+    'user_email' => 'enrolment_user_email',
+    'user_first_name' => 'enrolment_user_first_name',
+    'user_last_name' => 'enrolment_user_last_name',
+    'user_registration' => 'enrolment_user_registration',
+  ];
+
+  return $reverse ? array_flip($mapping) : $mapping;
+}

@@ -314,6 +314,10 @@ function social_group_preprocess_group(array &$variables) {
     // Add context, since we render join / invite only etc links in the block.
     $variables['#cache']['contexts'][] = 'group';
     $variables['#cache']['contexts'][] = 'user';
+    $about_url = Url::fromRoute('view.group_information.page_group_about', [
+      'group' => $group->id(),
+    ]);
+    $variables['about_url'] = $about_url;
     if ($group->getGroupType()->hasContentPlugin('group_node:event')) {
       $variables['group_events'] = $group_statistics->getGroupNodeCount($group, 'event');
       $variables['group_events_label'] = \Drupal::translation()->formatPlural($variables['group_events'],
@@ -595,7 +599,7 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
 
   // Set some helpful text on the group join form now it's there.
   if (in_array($form_id, $join_forms)) {
-    $markup = t('By submitting this form you will become a member of the group. Please fill out any available fields to complete your membership information.');
+    $markup = t('By submitting this form you will become a member of the group. As a member of the group you will begin to receive notifications about changes and interactions within the group. Your profile will also be included in group membership.');
 
     // When the user is accepting an invite, change the text to something more
     // meaningful.
@@ -644,9 +648,8 @@ function social_group_form_alter(&$form, FormStateInterface $form_state, $form_i
   if (in_array($form_id, $membership_add_forms, TRUE) && \Drupal::routeMatch()->getRouteName() !== 'grequest.group_request_membership_approve') {
     // Lets add the new select 2 widget to add members to a group.
     $form['entity_id']['widget'][0]['target_id'] = [
-      '#title' => t('Find people by name'),
+      '#title' => t('Find people by name or email address'),
       '#type' => 'select2',
-      '#description' => t('You can enter or paste multiple entries separated by comma or semicolon'),
       '#multiple' => TRUE,
       '#tags' => TRUE,
       '#autocomplete' => TRUE,
@@ -1045,11 +1048,10 @@ function _social_group_node_form_submit(array $form, FormStateInterface $form_st
  * Implements hook_field_widget_form_alter().
  */
 function social_group_field_widget_form_alter(&$element, FormStateInterface $form_state, $context) {
-
   /** @var \Drupal\Core\Field\FieldDefinitionInterface $field_definition */
   $field_definition = $context['items']->getFieldDefinition();
 
-  // Unset the public options on visibility field.
+  // Unset the visibility field options which are not enabled.
   if ($field_definition->getType() == 'entity_access_field') {
     $default_value = $context['items']->getValue();
     if (isset($default_value[0]['value'])) {
@@ -1066,6 +1068,8 @@ function social_group_field_widget_form_alter(&$element, FormStateInterface $for
     if (!empty($current_group)) {
       $group_type = $current_group->getGroupType();
       $group_type_id = $group_type->id();
+      // If it's an existing entity we dont need to set the default
+      // rather follow the saved one.
       if (!$entity->id()) {
         $element['#default_value'] = \Drupal::service('social_group.helper_service')->getDefaultGroupVisibility($group_type_id);
       }
@@ -1081,8 +1085,38 @@ function social_group_field_widget_form_alter(&$element, FormStateInterface $for
     foreach ($visibility_options as $visibility => $allowed) {
       $element[$visibility]['#disabled'] = !$allowed;
     }
-  }
 
+    // This contains the group that is passed back from the form_state as
+    // chosen by selecting a group in the $form['groups'] select widget.
+    // With this we can ensure that on validation the content visibility
+    // field is disabling the correct values based on the selected group.
+    if (!empty($form_state->getValue('groups'))) {
+      $group_id = NULL;
+      $group_value = $form_state->getValue('groups');
+      if (is_array($group_value)) {
+        $group_id = $group_value[0]['target_id'];
+      }
+      if (is_string($group_value)) {
+        $group_id = (int) $group_value;
+      }
+      // Load the correct group.
+      $selected_groups = Group::loadMultiple([$group_id]);
+
+      // Ensure we disable the correct visibility options.
+      foreach ($selected_groups as $current_group) {
+        if (!empty($current_group)) {
+          $group_type = $current_group->getGroupType();
+          $group_type_id = $group_type->id();
+
+          $visibility_options = social_group_get_allowed_visibility_options_per_group_type($group_type_id, NULL, NULL, $current_group);
+
+          foreach ($visibility_options as $visibility => $allowed) {
+            $element[$visibility]['#disabled'] = !$allowed;
+          }
+        }
+      }
+    }
+  }
 }
 
 /**
@@ -2018,6 +2052,17 @@ function social_group_entity_operation_alter(array &$operations, EntityInterface
 function social_group_social_group_default_route_tabs_alter(&$tabs) {
   // Unset some tabs created by group.
   unset($tabs['group.view'], $tabs['group.edit_form'], $tabs['group.content']);
+}
+
+/**
+ * Implements hook_social_path_manager_group_tabs_alter().
+ */
+function social_group_social_path_manager_group_tabs_alter(array &$tabs) {
+  // Unset some tabs created by group.
+  unset($tabs['group.view'], $tabs['group.edit_form'], $tabs['group.content']);
+
+  // Add manage members tab.
+  $tabs['social_group.membership'] = 'view.group_manage_members.page_group_manage_members';
 }
 
 /**

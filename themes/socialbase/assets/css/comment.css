@@ -35,6 +35,7 @@ a[id^="comment-"] {
   -webkit-box-flex: 1;
       -ms-flex: 1;
           flex: 1;
+  overflow-x: auto;
 }
 
 .comment__author {
@@ -194,6 +195,39 @@ details[open] .details__close-icon {
 .comment .photoswipe-gallery-custom {
   margin-top: .5rem;
 }
+
+/* Loading-throbber when comments are loading. */
+@-webkit-keyframes glyphicon-spin {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(359deg);
+    transform: rotate(359deg);
+  }
+}
+@keyframes glyphicon-spin {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(359deg);
+    transform: rotate(359deg);
+  }
+}
+
+.card__comment_section [data-big-pipe-placeholder-id]:first-child {
+  display: block;
+  width: 20px;
+  height: 20px;
+  margin: auto;
+  background: url("../images/icons/icon-autorenew.svg") no-repeat center center/auto 100%;
+  -webkit-animation: glyphicon-spin 1s infinite linear;
+          animation: glyphicon-spin 1s infinite linear;
+}
+
 @media (min-width: 600px) {
   .comment__avatar {
     margin-right: 12px;
@@ -205,11 +239,13 @@ details[open] .details__close-icon {
     display: none;
   }
 }
+
 @media (min-width: 900px) {
   .comments {
     margin-left: 56px;
   }
 }
+
 @media (max-width: 599px) {
   .comment-form .btn--comment-submit {
     padding-left: 6px;

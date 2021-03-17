@@ -5,6 +5,7 @@
  * Install, update and uninstall functions for the social_group_invite module.
  */
 
+use Drupal\Core\Config\FileStorage;
 use Drupal\group\Entity\GroupType;
 
 /**
@@ -77,5 +78,24 @@ function social_group_invite_update_8005() {
     $group_config->set('plugin_config.invitation_body', $invitation_body);
     $group_config->set('plugin_config.existing_user_invitation_body', $existing_user_invitation_body);
     $group_config->save();
+  }
+}
+
+/**
+ * Update group invite views().
+ */
+function social_group_invite_update_8006() {
+  $config_path = drupal_get_path('module', 'social_group_invite') . '/config/optional';
+  $source = new FileStorage($config_path);
+  /** @var \Drupal\Core\Config\StorageCacheInterface $config_storage */
+  $config_storage = \Drupal::service('config.storage');
+  $configs = [
+    'views.view.social_group_invitations',
+    'views.view.social_group_user_invitations',
+  ];
+
+  // Update config.
+  foreach ($configs as $config) {
+    $config_storage->write($config, $source->read($config));
   }
 }
