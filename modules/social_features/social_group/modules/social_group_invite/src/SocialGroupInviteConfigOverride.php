@@ -82,7 +82,7 @@ class SocialGroupInviteConfigOverride implements ConfigFactoryOverrideInterface 
 
     // Get email_verification of social group invite settings.
     $group_invite = $this->configFactory->getEditable('social_group.settings');
-    $ignore_email_verification = $group_invite->get('email_verification');
+    $ignore_email_verification = (bool) $group_invite->get('group_invite.email_verification');
 
     // Skip email verification step on registration for user group invitation.
     if (

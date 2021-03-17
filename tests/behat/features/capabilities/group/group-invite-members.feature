@@ -26,6 +26,13 @@ Feature: Send invite group email notifications
     And I should have an email with subject "Swift Mailer has been successfully configured!" and in the content:
       | This e-mail has been sent from Open Social by the Swift Mailer module. |
 
+    # Enable "Allow invited user to skip email verification" option for groups
+    When I go to "/admin/config/opensocial/social-group"
+    Then I click the element with css selector ".claro-details__summary"
+    And I should see "Allow invited user to skip email verification"
+    Then I check the box "email_verification"
+    And I press "Save configuration"
+
     # Send invite to the new user.
     Given I am logged in as "site_manager_1"
     When I click the xth "0" element with the css ".navbar-nav .profile"
