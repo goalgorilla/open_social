@@ -6,7 +6,7 @@ use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Render\RendererInterface;
-use Drupal\data_policy\Controller\DataPolicy as DataPolicyBase;
+use Drupal\data_policy\Controller\DataPolicy;
 use Drupal\data_policy\DataPolicyConsentManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -16,7 +16,7 @@ use Symfony\Component\HttpFoundation\Request;
  *
  *  Returns responses for Data policy route.
  */
-class DataPolicy extends DataPolicyBase {
+class GdprDataPolicy extends DataPolicy {
 
   /**
    * The entity type manager.
