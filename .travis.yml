@@ -56,7 +56,7 @@ before_install:
   # Pull Open Social from GitHub instead of Drupal's Packagist so all our dev branches are available.
   - composer config repositories.social git https://github.com/goalgorilla/open_social.git
   # 8.x-8.x-composer-update-to-10-branch has some composer breaking changes for scaffolding, we couldnt release but helps us with testing our update path.
-  - if [ "$TEST_SUITE" = "install_update" ]; then composer require drupal/social:dev-social-8.x-8.x-composer-update-to-10-branch --prefer-dist; fi
+  - if [ "$TEST_SUITE" = "install_update" ]; then composer require --update-with-dependencies drupal/social:dev-social-8.x-8.x-composer-update-to-10-branch --prefer-dist; fi
   # For Pull Requests that are not from Open Social's own repo we must overwrite the repository we set earlier so we can pull in the work done by the external contributor.
   - if [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ "$TRAVIS_PULL_REQUEST_SLUG" != "goalgorilla/open_social" ]; then composer config repositories.social git https://github.com/$TRAVIS_PULL_REQUEST_SLUG.git; fi
   - if [ "$TEST_SUITE" != "install_update" ] && [ "$TRAVIS_PULL_REQUEST" != "false" ]; then composer require drupal/social:dev-${BRANCH}#${COMMIT} --prefer-dist; fi
