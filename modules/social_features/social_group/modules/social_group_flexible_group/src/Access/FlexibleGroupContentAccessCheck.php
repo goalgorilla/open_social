@@ -8,6 +8,7 @@ use Drupal\Core\Routing\Access\AccessInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\group\Entity\GroupTypeInterface;
+use Drupal\group\GroupMembership;
 use Symfony\Component\Routing\Route;
 
 /**
@@ -47,6 +48,27 @@ class FlexibleGroupContentAccessCheck implements AccessInterface {
     $group = $parameters->get('group');
     if (!$group instanceof GroupInterface) {
       return AccessResult::allowed();
+    }
+
+    // Handling the visibility of a group.
+    if ($group->hasField('field_flexible_group_visibility')) {
+      $group_visibility_value = $group->field_flexible_group_visibility->value;
+      $account = \Drupal::currentUser();
+      $is_member = $group->getMember($account) instanceof GroupMembership;
+
+      switch ($group_visibility_value) {
+        case 'members':
+          if (!$is_member) {
+            return AccessResult::forbidden();
+          }
+          break;
+
+        case 'community':
+          if ($account->isAnonymous()) {
+            return AccessResult::forbidden();
+          }
+          break;
+      }
     }
 
     $type = $group->getGroupType();
