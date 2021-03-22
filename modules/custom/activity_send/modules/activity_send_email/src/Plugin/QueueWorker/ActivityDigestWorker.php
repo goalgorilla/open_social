@@ -125,6 +125,7 @@ class ActivityDigestWorker extends ActivitySendWorkerBase implements ContainerFa
 
           // Only for users that have access to related content.
           if (
+            $activity &&
             !is_null($activity->getRelatedEntity()) &&
             !$activity->getRelatedEntity()->access('view', $target)
           ) {
