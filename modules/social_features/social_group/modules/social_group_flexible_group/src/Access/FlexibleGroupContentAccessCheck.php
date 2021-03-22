@@ -31,7 +31,6 @@ class FlexibleGroupContentAccessCheck implements AccessInterface {
    */
   public function access(Route $route, RouteMatchInterface $route_match, AccountInterface $account) {
     $permission = $route->getRequirement('_flexible_group_content_visibility');
-    $group_permission = $route->getRequirement('_group_permission');
 
     // Don't interfere if no permission was specified.
     if ($permission === NULL) {
@@ -52,8 +51,7 @@ class FlexibleGroupContentAccessCheck implements AccessInterface {
 
     // Handling the visibility of a group.
     if ($group->hasField('field_flexible_group_visibility')) {
-      $group_visibility_value = $group->field_flexible_group_visibility->value;
-      $account = \Drupal::currentUser();
+      $group_visibility_value = $group->getFieldValue('field_flexible_group_visibility', 'value');
       $is_member = $group->getMember($account) instanceof GroupMembership;
 
       switch ($group_visibility_value) {
