@@ -801,15 +801,7 @@ function social_event_date_is_all_day(DrupalDateTime $date) {
 }
 
 /**
- * Add notification settings display on user Profile for the EO notification.
- *
- * @param array &$items
- *   An array of groups that contain a title and an array of templates that are
- *   contained in this settings group.
- * @param array $email_message_templates
- *   Message templates enabled for sending by email.
- *
- * @see activity_send_email_form_user_form_alter()
+ * Implement hook_activity_send_email_notifications_alter().
  */
 function social_event_activity_send_email_notifications_alter(array &$items, array $email_message_templates) {
   // If a activity_on_events_im_organizing template is enabled then we add it in

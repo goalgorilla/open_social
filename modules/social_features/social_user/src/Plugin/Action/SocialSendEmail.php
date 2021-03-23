@@ -149,6 +149,7 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
     // @todo make the chunk size configurable or dependable on the batch size.
     $chunk_size = 10;
     $chunks = array_chunk($objects, $chunk_size);
+    $data = [];
     foreach ($chunks as $chunk) {
       $users = [];
       // The chunk items contain entities, we want to perform an action on this.
@@ -161,11 +162,8 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
       $data['mail'] = $this->configuration['queue_storage_id'];
       // Add the list of user IDs.
       $data['users'] = $users;
-
-      // Put the $data in the queue item.
-      /** @var \Drupal\Core\Queue\QueueInterface $queue */
-      $queue = $this->queue->get('user_email_queue');
-      $queue->createItem($data);
+      // Create the Queue Item.
+      $this->createQueueItem('user_email_queue', $data);
     }
 
     // Add a clarifying message.
@@ -179,6 +177,21 @@ class SocialSendEmail extends ViewsBulkOperationsActionBase implements Container
   public function execute($entity = NULL) {
     /** @var \Drupal\user\UserInterface $entity */
     return $entity->id();
+  }
+
+  /**
+   * Create Queue Item.
+   *
+   * @param string $name
+   *   The name of the queue.
+   * @param array $data
+   *   The queue data.
+   */
+  public function createQueueItem($name, array $data) {
+    // Put the $data in the queue item.
+    /** @var \Drupal\Core\Queue\QueueInterface $queue */
+    $queue = $this->queue->get($name);
+    $queue->createItem($data);
   }
 
   /**

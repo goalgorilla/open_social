@@ -33,4 +33,15 @@ class Violation implements ViolationInterface {
     return $this->id;
   }
 
+  /**
+   * Magic method called during serialization to string.
+   *
+   * @return string
+   *   String representation of the object
+   */
+  public function __toString() : string {
+    $encoded = json_encode($this);
+    return $encoded === FALSE ? "" : $encoded;
+  }
+
 }
