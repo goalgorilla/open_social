@@ -98,6 +98,41 @@ class SocialProfileSettingsForm extends ConfigFormBase implements ContainerInjec
       ];
     }
 
+    $form['tagging'] = [
+      '#type' => 'details',
+      '#title' => $this->t('Tag settings'),
+      '#open' => TRUE,
+    ];
+
+    $form['tagging']['enable_profile_tagging'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Allow users to tag in profile.'),
+      '#required' => FALSE,
+      '#default_value' => $config->get('enable_profile_tagging'),
+      '#description' => $this->t('Determine whether users are allowed to tag profiles, view tags and filter on tags in profiles.'),
+    ];
+
+    $form['tagging']['allow_category_split'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Allow category split.'),
+      '#default_value' => $config->get('allow_category_split'),
+      '#required' => FALSE,
+      '#description' => $this->t("Determine if the main categories of the vocabulary will be used as separate tag fields or as a single tag field when using tags on profile."),
+    ];
+
+    $form['tagging']['use_category_parent'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Allow use a parent of category.'),
+      '#default_value' => $config->get('use_category_parent'),
+      '#required' => FALSE,
+      '#description' => $this->t("Determine if the parent of categories will be used with children tags."),
+      '#states' => [
+        'visible' => [
+          ':input[name="allow_category_split"]' => ['checked' => TRUE],
+        ],
+      ],
+    ];
+
     return parent::buildForm($form, $form_state);
   }
 
@@ -107,8 +142,11 @@ class SocialProfileSettingsForm extends ConfigFormBase implements ContainerInjec
   public function submitForm(array &$form, FormStateInterface $form_state) {
     // Save config.
     $config = $this->config('social_profile.settings');
-    $config->set('social_profile_show_email', $form_state->getValue('social_profile_show_email'))
-      ->save();
+    $config->set('social_profile_show_email', $form_state->getValue('social_profile_show_email'));
+    $config->set('enable_profile_tagging', $form_state->getValue('enable_profile_tagging'));
+    $config->set('allow_category_split', $form_state->getValue('allow_category_split'));
+    $config->set('use_category_parent', $form_state->getValue('use_category_parent'));
+    $config->save();
 
     // Check if the website is multilingual.
     if ($this->languageMananger->isMultilingual()) {
@@ -120,7 +158,7 @@ class SocialProfileSettingsForm extends ConfigFormBase implements ContainerInjec
     $query = $this->database->select('profile', 'p');
     $query->addField('p', 'profile_id');
     $query->condition('p.type', 'profile');
-    $query->condition('p.status', 1);
+    $query->condition('p.status', '1');
     $ids = $query->execute()->fetchCol();
 
     if (!empty($ids)) {
