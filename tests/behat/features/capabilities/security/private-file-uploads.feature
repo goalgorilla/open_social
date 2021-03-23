@@ -1,4 +1,4 @@
-@api @security @stability @perfect @critical @DS-3605 @DS-5350 @YANG-4759 @stability-1 @private-file-uploads
+@api @security @stability @perfect @critical @DS-3605 @DS-5350 @YANG-4759 @private-file-uploads
 Feature: Private files
   Benefit: Upload files to private file directory
   Role: As a LU
