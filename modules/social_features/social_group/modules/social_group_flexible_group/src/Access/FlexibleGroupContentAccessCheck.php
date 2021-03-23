@@ -2,7 +2,7 @@
 
 namespace Drupal\social_group_flexible_group\Access;
 
-use Drupal\group\Entity\GroupInterface;
+use Drupal\group\Entity\Group;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Routing\Access\AccessInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
@@ -45,7 +45,7 @@ class FlexibleGroupContentAccessCheck implements AccessInterface {
 
     // Don't interfere if the group isn't a real group.
     $group = $parameters->get('group');
-    if (!$group instanceof GroupInterface) {
+    if (!$group instanceof Group) {
       return AccessResult::allowed();
     }
 
