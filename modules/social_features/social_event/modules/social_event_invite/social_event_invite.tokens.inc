@@ -48,7 +48,13 @@ function social_event_invite_tokens($type, $tokens, array $data, array $options,
   $replacements = [];
   if ($type == 'social_event_invite') {
     foreach ($tokens as $name => $original) {
-      if ($name == 'register_link' && !empty($data['event_enrollment'])) {
+      if (
+        !empty($data['node']) &&
+        $name == 'register_link' &&
+        !empty($data['event_enrollment'])
+      ) {
+        $event = $data['node'];
+
         // Load the current Event enrollments so we can check duplicates.
         $storage = \Drupal::entityTypeManager()->getStorage('event_enrollment');
         /** @var \Drupal\social_event\EventEnrollmentInterface $event_enrollment */
@@ -60,7 +66,15 @@ function social_event_invite_tokens($type, $tokens, array $data, array $options,
           '_',
           '',
         ], base64_encode($mail));
-        $register_link = Url::fromRoute('user.register', ['invitee_mail' => $mail_encoded], ['absolute' => TRUE])
+
+        $destination = Url::fromRoute('entity.node.canonical', ['node' => $event->id()])->toString();
+
+        $options = [
+          'invitee_mail' => $mail_encoded,
+          'destination' => $destination,
+        ];
+
+        $register_link = Url::fromRoute('user.register', $options, ['absolute' => TRUE])
           ->toString();
         $replacements[$original] = $register_link;
       }
