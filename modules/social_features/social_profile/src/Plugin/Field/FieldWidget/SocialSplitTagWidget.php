@@ -9,7 +9,7 @@ use Drupal\social_profile\SocialProfileTagServiceInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Class SocialSplitTagWidget
+ * Class SocialSplitTagWidget.
  *
  * @FieldWidget (
  *   id = "social_split_tag",
@@ -115,6 +115,9 @@ class SocialSplitTagWidget extends Select2EntityReferenceWidget {
     return $element;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public static function validateElement(array $element, FormStateInterface $form_state) {
     /** @var \Drupal\social_profile\SocialProfileTagServiceInterface $profile_tag_service */
     $profile_tag_service = \Drupal::service('social_profile.tag_service');

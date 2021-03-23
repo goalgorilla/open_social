@@ -2,6 +2,11 @@
 
 namespace Drupal\social_profile;
 
+/**
+ * Interface SocialProfileTagServiceInterface
+ *
+ * @package Drupal\social_profile
+ */
 interface SocialProfileTagServiceInterface {
 
   /**
@@ -59,6 +64,7 @@ interface SocialProfileTagServiceInterface {
    * Returns converted tag name to machine readable.
    *
    * @param string $label
+   *   Label of term.
    *
    * @return string
    *   Tag machine name.

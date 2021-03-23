@@ -186,7 +186,7 @@ class SocialProfileTagService implements SocialProfileTagServiceInterface {
       $tree[$parent->id()]['title'] = $parent_label;
       $tree[$parent->id()]['tags'][$term->id()] = [
         'url' => $url,
-        'name' =>$term->getName(),
+        'name' => $term->getName(),
       ];
     }
     return $tree;
