@@ -3,7 +3,7 @@
 namespace Drupal\social_profile;
 
 /**
- * Interface SocialProfileTagServiceInterface
+ * Interface SocialProfileTagServiceInterface.
  *
  * @package Drupal\social_profile
  */
