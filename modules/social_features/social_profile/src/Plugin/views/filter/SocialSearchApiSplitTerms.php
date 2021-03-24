@@ -131,7 +131,7 @@ class SocialSearchApiSplitTerms extends SearchApiTerm {
     // Get the main categories.
     $categories = $this->profileTagService->getCategories();
 
-    //Get form values.
+    // Get form values.
     $form_values = $form_state->getValues();
     foreach ($categories as $tid => $category) {
       $field_name = 'profile_tagging_' . $this->profileTagService->tagLabelToMachineName($category);
