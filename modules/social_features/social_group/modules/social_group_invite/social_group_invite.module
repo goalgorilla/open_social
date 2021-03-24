@@ -110,25 +110,39 @@ function social_group_invite_preprocess_views_view(&$variables) {
   /** @var \Drupal\views\ViewExecutable $view */
   $view = &$variables['view'];
 
+  if ($view->id() === 'group_manage_members') {
+    $entity = \Drupal::entityTypeManager()->getStorage('block')
+      ->load('socialblue_local_actions');
+    $variables['header']['actions'] = \Drupal::entityTypeManager()
+      ->getViewBuilder('block')
+      ->view($entity);
+  }
+
   // See function social_group_preprocess_views_view(&$variables).
   // We have to override the local actions block.
   // and render our own block instance in the view for placement.
   // hook_theme_registry_alter will ensure our hooks is invoked later.
   // That is also why hook_menu_local_actions_alter won't work.
   // Get current group so we can build correct links.
-  if ($view->id() === 'group_manage_members' &&
-    _social_group_invite_current_type_enabled_invites()) {
-    $entity = \Drupal::entityTypeManager()->getStorage('block')
-      ->load('socialinviteactionsblock');
-
-    if (NULL !== $entity) {
-      $block_content = \Drupal::entityTypeManager()
+  if ($view->id() === 'group_manage_members') {
+    if (_social_group_invite_current_type_enabled_invites()) {
+      $entity = \Drupal::entityTypeManager()->getStorage('block')
+        ->load('socialinviteactionsblock');
+      if (NULL !== $entity) {
+        $block_content = \Drupal::entityTypeManager()
+          ->getViewBuilder('block')
+          ->view($entity);
+        if (!empty($block_content)) {
+          $variables['header']['actions'] = $block_content;
+        }
+      }
+    }
+    else {
+      $entity = \Drupal::entityTypeManager()->getStorage('block')
+        ->load('socialblue_local_actions');
+      $variables['header']['actions'] = \Drupal::entityTypeManager()
         ->getViewBuilder('block')
         ->view($entity);
-
-      if (!empty($block_content)) {
-        $variables['header']['actions'] = $block_content;
-      }
     }
   }
   // Implement button to go back to the group for our custom view.
