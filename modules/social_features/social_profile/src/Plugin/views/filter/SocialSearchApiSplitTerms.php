@@ -72,6 +72,7 @@ class SocialSearchApiSplitTerms extends SearchApiTerm {
         $options[$value] = $this->profileTagService->getChildrens($key);
       }
       $element['#options'] = $options;
+      return;
     }
 
     // Get selected values.
@@ -110,6 +111,36 @@ class SocialSearchApiSplitTerms extends SearchApiTerm {
         ];
       }
     }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function validateExposed(&$form, FormStateInterface $form_state) {
+    if (
+      $this->field !== 'field_profile_profile_tag' ||
+      !$this->profileTagService->allowSplit()
+    ) {
+      parent::validateExposed($form, $form_state);
+      return;
+    }
+
+    $profile_tag_values = [];
+    $identifier = $this->options['expose']['identifier'];
+
+    // Get the main categories.
+    $categories = $this->profileTagService->getCategories();
+
+    //Get form values.
+    $form_values = $form_state->getValues();
+    foreach ($categories as $tid => $category) {
+      $field_name = 'profile_tagging_' . $this->profileTagService->tagLabelToMachineName($category);
+      $profile_tag_values += $form_values[$field_name];
+      unset($form_values[$field_name]);
+    }
+    $form_values[$identifier] = $profile_tag_values;
+    $form_state->setValues($form_values);
+    parent::validateExposed($form, $form_state);
   }
 
 }
