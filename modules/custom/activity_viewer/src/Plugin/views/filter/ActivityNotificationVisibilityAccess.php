@@ -183,12 +183,17 @@ class ActivityNotificationVisibilityAccess extends FilterPluginBase {
       $or->condition($comments_on_content);
     }
 
+    // If the recipient user is the current logged in user,
+    // we can safely allow likes, group content (eg memberships) and
+    // event enrollment notifications as long as the recipient user
+    // is the current logged in user.
     if ($account->isAuthenticated()) {
-      $vote_access = new Condition('AND');
-      $vote_access->condition('activity__field_activity_entity.field_activity_entity_target_type', 'vote');
-      $vote_access->condition('activity__field_activity_recipient_user.field_activity_recipient_user_target_id', $account->id());
+      $recipient_related = new Condition('AND');
+      $types = ['node', 'post', 'comment'];
+      $recipient_related->condition('activity__field_activity_entity.field_activity_entity_target_type', $types, 'NOT IN');
+      $recipient_related->condition('activity__field_activity_recipient_user.field_activity_recipient_user_target_id', $account->id());
 
-      $or->condition($vote_access);
+      $or->condition($recipient_related);
     }
 
     // Lets add all the or conditions to the Views query.
