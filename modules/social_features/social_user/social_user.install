@@ -206,3 +206,18 @@ function social_user_update_8810() {
     'view blocked user',
   ]);
 }
+
+/**
+ * Migrate navigation settings into the correct format.
+ */
+function social_user_update_8811() {
+  $config = \Drupal::configFactory()->getEditable('social_user.navigation.settings');
+  // If someone manually changed the value in the form then skip it.
+  if (!is_bool($config->get('display_my_groups_icon'))) {
+    $config->set('display_my_groups_icon', $config->get('display_my_groups_icon') === 1 ? TRUE : FALSE);
+  }
+  if (!is_bool($config->get('display_social_private_message_icon'))) {
+    $config->set('display_social_private_message_icon', $config->get('display_social_private_message_icon') === 1 ? TRUE : FALSE);
+  }
+  $config->save();
+}
