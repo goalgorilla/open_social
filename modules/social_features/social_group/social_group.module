@@ -2098,7 +2098,7 @@ function social_group_social_user_account_header_create_links($context) {
  * site manager.
  */
 function social_group_social_user_account_header_items(array $context) {
-  if (\Drupal::config('social_user.navigation.settings')->get('display_my_groups_icon') !== 1) {
+  if (\Drupal::config('social_user.navigation.settings')->get('display_my_groups_icon') !== TRUE) {
     return [];
   }
 
