@@ -86,6 +86,7 @@ class SocialSplitTagWidget extends Select2EntityReferenceWidget {
       '#open' => TRUE,
       '#title' => $element['#title'],
       '#element_validate' => [[get_class($this), 'validateElement']],
+      '#access' => FALSE,
     ];
 
     // Get the main categories.
@@ -110,6 +111,8 @@ class SocialSplitTagWidget extends Select2EntityReferenceWidget {
           '#default_value' => $default_value,
           '#options' => $options,
         ];
+
+        $element['#access'] = TRUE;
       }
     }
     return $element;

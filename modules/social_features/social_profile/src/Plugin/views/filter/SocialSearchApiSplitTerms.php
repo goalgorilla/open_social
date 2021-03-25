@@ -84,6 +84,7 @@ class SocialSearchApiSplitTerms extends SearchApiTerm {
       '#type' => 'details',
       '#open' => TRUE,
       '#title' => $element['#title'],
+      '#access' => FALSE,
     ];
 
     // Get the main categories.
@@ -109,6 +110,8 @@ class SocialSearchApiSplitTerms extends SearchApiTerm {
           '#options' => $options,
           '#name' => 'profile_tag',
         ];
+
+        $element['#access'] = TRUE;
       }
     }
   }
@@ -135,8 +138,10 @@ class SocialSearchApiSplitTerms extends SearchApiTerm {
     $form_values = $form_state->getValues();
     foreach ($categories as $tid => $category) {
       $field_name = 'profile_tagging_' . $this->profileTagService->tagLabelToMachineName($category);
-      $profile_tag_values += $form_values[$field_name];
-      unset($form_values[$field_name]);
+      if (isset($form_values[$field_name])) {
+        $profile_tag_values += $form_values[$field_name];
+        unset($form_values[$field_name]);
+      }
     }
     $form_values[$identifier] = $profile_tag_values;
     $form_state->setValues($form_values);
