@@ -259,6 +259,13 @@ function social_comment_preprocess_comment(&$variables) {
   if (in_array(\Drupal::routeMatch()->getRouteName(), $allowed_routes) && $node->bundle() === 'dashboard' && $view_mode === 'activity_comment') {
     $variables['content']['links'] = [];
   }
+
+  if (
+    \Drupal::routeMatch()->getRouteName() === 'entity.node.canonical' &&
+    \Drupal::routeMatch()->getParameter('node')->bundle() === 'dashboard'
+  ) {
+    $variables['dashboard'] = TRUE;
+  }
 }
 
 /**
