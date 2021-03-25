@@ -77,7 +77,7 @@ function social_comment_upload_preprocess_comment(&$variables) {
       }
 
       if (($topic = $comment->getCommentedEntity()) instanceof NodeInterface) {
-        $variables['comment_count'] = ($topic->field_topic_comments) ? $topic->field_topic_comments->comment_count : 0;
+        $variables['comment_count'] = $topic->hasField('field_topic_comments') ? $topic->getFieldValue('field_topic_comments', 'comment_count') : 0;
         $variables['comment_url'] = $topic->toUrl()->toString();
       }
 

@@ -13,6 +13,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
+use Drupal\node\NodeInterface;
 use Drupal\social_comment\Entity\Comment;
 use Drupal\social_comment\SocialCommentFieldItemList;
 use Drupal\social_comment\SocialCommentViewBuilder;
@@ -309,7 +310,7 @@ function social_comment_comment_view(array &$build, EntityInterface $entity, Ent
         $node_view_display = 'activity_comment';
       }
 
-      if (!$node || $node->bundle() !== 'dashboard') {
+      if (!($node instanceof NodeInterface) || $node->bundle() !== 'dashboard') {
         // Teaser of commented entity.
         $build['commented_entity'] = \Drupal::entityTypeManager()
           ->getViewBuilder($commented_entity_type)
@@ -335,7 +336,7 @@ function social_comment_comment_view(array &$build, EntityInterface $entity, Ent
 
         $commented_entity_url = $commented_entity->toUrl('canonical', $link_options);
 
-        if (!$node || $node->bundle() !== 'dashboard') {
+        if (!($node instanceof NodeInterface) || $node->bundle() !== 'dashboard') {
           $build['comment_link'] = Link::fromTextAndUrl(
             t('Comment', [], ['context' => 'Comment Button']),
             $commented_entity_url
